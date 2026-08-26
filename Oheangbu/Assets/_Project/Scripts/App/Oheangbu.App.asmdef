@@ -1,0 +1,25 @@
+{
+    "name": "Oheangbu.App",
+    "rootNamespace": "Oheangbu.App",
+    "references": [
+        "Oheangbu.Core",
+        "Oheangbu.Data",
+        "Oheangbu.Drawing",
+        "Oheangbu.BrushRender",
+        "Oheangbu.Spellcraft",
+        "Oheangbu.Combat",
+        "Oheangbu.Presentation",
+        "PDollar",
+        "VContainer",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

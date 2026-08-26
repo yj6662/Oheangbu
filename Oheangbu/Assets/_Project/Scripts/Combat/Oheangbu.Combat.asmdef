@@ -1,0 +1,18 @@
+{
+    "name": "Oheangbu.Combat",
+    "rootNamespace": "Oheangbu.Combat",
+    "references": [
+        "Oheangbu.Core",
+        "Oheangbu.Data",
+        "Oheangbu.Spellcraft"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

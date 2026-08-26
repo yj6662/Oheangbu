@@ -1,0 +1,18 @@
+{
+    "name": "Oheangbu.Presentation",
+    "rootNamespace": "Oheangbu.Presentation",
+    "references": [
+        "Oheangbu.Core",
+        "Oheangbu.Data",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

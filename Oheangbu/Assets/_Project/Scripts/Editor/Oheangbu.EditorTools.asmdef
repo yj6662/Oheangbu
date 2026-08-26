@@ -1,0 +1,28 @@
+{
+    "name": "Oheangbu.EditorTools",
+    "rootNamespace": "Oheangbu.EditorTools",
+    "references": [
+        "Oheangbu.Core",
+        "Oheangbu.Data",
+        "Oheangbu.Drawing",
+        "Oheangbu.BrushRender",
+        "Oheangbu.Spellcraft",
+        "Oheangbu.Combat",
+        "Oheangbu.Presentation",
+        "Oheangbu.App",
+        "PDollar",
+        "VContainer",
+        "UniTask"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
