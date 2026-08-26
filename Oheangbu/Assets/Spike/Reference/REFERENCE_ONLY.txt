@@ -1,0 +1,6 @@
+REFERENCE ONLY — NOT PRODUCTION
+
+이 폴더의 에셋은 레거시(MandateOfInk) 참고 재료입니다.
+현 프로젝트의 어떤 시스템도 이 폴더를 참조하지 않아야 합니다.
+- T_InkStrokeAtlas.png: 구 InkStroke의 붓결 아틀라스 — Noise Cutout 셰이더 스파이크(SPEC-SPIKE-INK-LOOKDEV 예정)의 시각 참고용.
+원본은 레거시 프로젝트에 그대로 있으며, Spike 폴더 제거 시 함께 삭제됩니다.

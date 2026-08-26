@@ -1,0 +1,16 @@
+{
+    "name": "Oheangbu.BrushRender",
+    "rootNamespace": "Oheangbu.BrushRender",
+    "references": [
+        "Oheangbu.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

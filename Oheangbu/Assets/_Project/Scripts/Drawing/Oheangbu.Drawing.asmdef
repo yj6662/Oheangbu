@@ -1,0 +1,19 @@
+{
+    "name": "Oheangbu.Drawing",
+    "rootNamespace": "Oheangbu.Drawing",
+    "references": [
+        "Oheangbu.Core",
+        "Oheangbu.Data",
+        "PDollar",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

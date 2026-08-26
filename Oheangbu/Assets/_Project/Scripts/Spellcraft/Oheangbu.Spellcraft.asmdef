@@ -1,0 +1,17 @@
+{
+    "name": "Oheangbu.Spellcraft",
+    "rootNamespace": "Oheangbu.Spellcraft",
+    "references": [
+        "Oheangbu.Core",
+        "Oheangbu.Data"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
