@@ -16,6 +16,8 @@
 /[Aa]ssets/Hierarchy\ Designer*
 /[Aa]ssets/BuildReport*
 /[Aa]ssets/TutorialInfo*
+# 스파이크 측정 산출물(인식 벤치마크 CSV) — 세션마다 생기는 데이터, 리포 대상 아님
+/[Aa]ssets/Spike/BenchmarkResults/
 # ---- (여기까지 오행부 추가분) ----
 
 .utmp/
