@@ -46,6 +46,42 @@ namespace Oheangbu.Drawing
         public event Action<bool> Committed;            // true=성공(글자 방송됨) / false=불발
         public event Action LetterInterrupted;          // 피격 등으로 글자만 소멸
 
+        // 계측 전용 커밋 상세(SPEC-SPIKE-SPELL-RECOGNITION §5) — 자리별 인식 결과·분할 종류·소요시간.
+        // DrawnLetter(방송 계약)에는 넣지 않는다: 게임 로직이 쓸 값이 아니라 스파이크 관측값이기 때문.
+        public readonly struct CommitDiagnostics
+        {
+            public readonly bool Success;
+            public readonly string InitialName;
+            public readonly string MedialName;
+            public readonly string FinalName;
+            public readonly char Letter;             // 실패면 '\0'
+            public readonly int SplitGroupCount;     // 2 / 3 / 0(실패)
+            public readonly int StrokeCount;
+            public readonly int PointCount;
+            public readonly double ElapsedMilliseconds;
+            public readonly float WorstDistance;
+            public readonly float AverageDistance;
+
+            public CommitDiagnostics(bool success, string initialName, string medialName, string finalName,
+                char letter, int splitGroupCount, int strokeCount, int pointCount,
+                double elapsedMilliseconds, float worstDistance, float averageDistance)
+            {
+                Success = success;
+                InitialName = initialName;
+                MedialName = medialName;
+                FinalName = finalName;
+                Letter = letter;
+                SplitGroupCount = splitGroupCount;
+                StrokeCount = strokeCount;
+                PointCount = pointCount;
+                ElapsedMilliseconds = elapsedMilliseconds;
+                WorstDistance = worstDistance;
+                AverageDistance = averageDistance;
+            }
+        }
+
+        public event Action<CommitDiagnostics> CommitDiagnosed;
+
         private readonly List<StrokeData> _strokes = new List<StrokeData>();
         private readonly RecognitionPipeline _pipeline = new RecognitionPipeline();
 
@@ -204,6 +240,11 @@ namespace Oheangbu.Drawing
             {
                 _misfired?.Raise(); // 불발 — 먹만 소모(§3-3). 먹 차감은 구독자(경제 층) 몫
             }
+
+            CommitDiagnosed?.Invoke(new CommitDiagnostics(
+                success, result.InitialName, result.MedialName, result.FinalName,
+                success ? letter : '\0', result.SplitGroupCount, _strokes.Count, totalPoints,
+                _pipeline.LastElapsedMilliseconds, result.WorstDistance, result.AverageDistance));
 
             ExitMode(committed: success);
         }
