@@ -20,6 +20,13 @@
 ### DECISIONS — DECISIONS.md
 - Lifecycle: ACTIVE · Owns: 상태 전이 이력(사유 포함) 단독 소유 · 서술형 허용
 
+### PROJECT_STATUS — PROJECT_STATUS.md
+- Lifecycle: ACTIVE (2026-08-27 창설) · **설계 Authority 없음** — 실행 상태판(Now)
+- Owns: 현재 Phase · 마일스톤 체크 · Active Work · Blocker · Next · 최근 검증 요약
+- 역할 구분: BIBLE_INDEX=지식 라우터("무엇이 정본인가") / PROJECT_STATUS=실행 대시보드("지금 어디까지 왔나").
+  "다음에 뭘 하지?"는 PROJECT_STATUS, 실제 구현은 BIBLE_INDEX → Bible Section → Spec 경로.
+- 충돌 시 Spec/Bible/Git 실제 상태 우선. 설계 내용 복제 금지 — 참조만.
+
 ## Bibles
 
 ### Spellcraft — 오행부_Spellcraft_Bible_v0_1.md

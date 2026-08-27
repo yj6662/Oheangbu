@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File Tools/Check-StatusDrift.ps1",
+            "timeout": 30,
+            "statusMessage": "PROJECT_STATUS 드리프트 검사 중..."
+          }
+        ]
+      }
+    ]
+  }
+}
