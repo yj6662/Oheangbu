@@ -1,6 +1,6 @@
 # PROJECT_STATUS — 오행부
 
-Last Updated: 2026-08-27
+Last Updated: 2026-08-27 (PR #3 merge · 성능/GC 실측 완료)
 
 > **이 문서는 Authority가 없다.** 프로젝트의 실행 상태 스냅샷(Now)일 뿐이며,
 > 상태가 충돌하면 해당 Spec/Bible/Git의 실제 상태가 우선한다.
@@ -24,18 +24,19 @@ Last Updated: 2026-08-27
 - [x] 레거시(MandateOfInk) 1급 이식(PDollar·JamoMatcher·템플릿)
 
 ### M1 — Drawing Technology · **IN PROGRESS (막바지)**
-- [x] 획 기하 이식 — SPEC-MIG-BRUSH-STROKE: **PASS WITH CONDITIONS** (잔여: Profiler GC 실측 — 아래 Next 2와 동일 건)
+- [x] 획 기하 이식 — SPEC-MIG-BRUSH-STROKE: **PASS** (2026-08-27 승격 — 잔여 조건 전부 해소)
 - [x] 작도 입력 — SPEC-DRAWING-INPUT: **PASS / LOCKED**
 - [x] 인식 — SPEC-SPIKE-SPELL-RECOGNITION: **PASS / LOCKED** (최고 위험 가정 해소)
-- [x] 붓 획 렌더러 — SPEC-SPIKE-BRUSH-RENDERER: **TEST** (형태 언어 4축 구현·관성 폐기 확정 / 잔여: GC 실측)
-- [x] 먹 룩(셰이더) — SPEC-SPIKE-INK-LOOKDEV: **TEST** (2026-08-27 기능 작동 예준 확인 / 룩 백로그 4건 = §13)
+- [x] 붓 획 렌더러 — SPEC-SPIKE-BRUSH-RENDERER: **TEST** (형태 언어 4축 구현·관성 폐기 확정·GC 실측 완료 — 문서 판정만 잔여)
+- [x] 먹 룩(셰이더) — SPEC-SPIKE-INK-LOOKDEV: **PASS** (2026-08-27 승격)
+- [x] 수묵담채 룩 정본화 — SPEC-ART-INK-LOOK: **PASS** (2026-08-27 승격 — 모티프 소재 보강은 백로그)
 
 ### M2 — Vertical Slice (프롤로그 폐광) · **NOT STARTED**
 - 검수 기준: 슬롯 1+2 — "아무 지시 없이 색만 따라 첫 주막에 도착하는가"
 
 ## 3. Active Work
 
-**SPEC-ART-INK-LOOK: TEST** — 작도·술식 수묵담채 룩 (결정 3건 확정: Bloom 채택·팔레트+상태 바리에이션·거침 제안대로 — 구현·실측 중)
+**NONE** — 룩 스파이크 마감(3건 PASS 승격 2026-08-27). 다음 = SPEC-COMBAT-CORE-LOOP 초안.
 비고: 상태 드리프트 자동 검사 도입(Tools/Check-StatusDrift.ps1, SessionStart 훅 — 2026-08-27)
 
 ## 4. Blockers
@@ -44,11 +45,9 @@ Last Updated: 2026-08-27
 
 ## 5. Next
 
-1. SPEC-ART-INK-LOOK 결정→구현→실측(백로그 3건 해소 동반)
-2. 성능·GC 실측 — INK-LOOKDEV Validation 6·7 (SPEC-MIG-BRUSH-STROKE 잔여 조건 동반 해소)
-3. 스파이크 Exit 정리 — asmdef autoReferenced 복귀 + Spike 폴더 제거 (**Exit Blocking**)
-4. Core Combat Loop (프로토타입)
-5. 프롤로그 폐광 그레이박스 → 버티컬 슬라이스
+1. **SPEC-COMBAT-CORE-LOOP 초안** — Core Combat 프로토타입의 Spec(작도×전투 첫 결합)
+2. 스파이크 Exit 정리 — asmdef autoReferenced 복귀 + Spike 폴더 제거 (**Exit Blocking**, 전투 개발 씬 확보 후)
+3. 프롤로그 폐광 그레이박스 → 버티컬 슬라이스
 
 부기(사람 몫): DECISIONS 등재 후보 5건 대기(Q홀드/세·감쇠/불발/피격/패링 판정점 — 기록=예준) · COMBAT-PARRY 주석 등재.
 
@@ -63,7 +62,8 @@ Last Updated: 2026-08-27
 ## 7. Latest Validation
 
 - 인식(3차 측정): 정확도 97.27%(477표본) · 8획 처리 76.56→3.77ms(-95%) · p95 9.57ms — 기준(5ms) 미달이나 예준 수용, 기준 사후 이동 아님(SPEC §19.3)
-- 먹 룩: 셰이더 2종 컴파일 클린 · 정점색/농도 4단/갈필 지속/플래시/증발 스크린샷 검증 · 기능 작동 예준 확인(2026-08-27)
+- 먹 룩: 셰이더 컴파일 클린 · 정점색/갈필/플래시/증발/모티프 스크린샷 검증 · 기능 작동 예준 확인(2026-08-27)
+- 성능·GC(에디터 실측): 작도 중 리빌드의 상시 GC 할당 관찰 안 됨(배경치와 동일) · 프레임 평균 2.13ms — SPEC-ART-INK-LOOK §9.4
 
 ## 8. Risks
 

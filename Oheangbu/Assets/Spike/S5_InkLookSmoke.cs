@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Oheangbu.BrushRender;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,8 +8,11 @@ using UnityEngine.InputSystem;
 // SPEC-SPIKE-INK-LOOKDEV §13(육안 검수)의 보조 도구: 같은 획을 반복해 그릴 필요 없이
 // 농도 단계·번짐·증발·플래시를 키 하나로 재현한다. 스파이크 종료 시 Spike 폴더와 함께 제거.
 //   R = 데모 획 다시 생성(번짐이 처음부터 다시 진행)
-//   F = 술식 플래시(화 주홍, 위력 1.0)   G = 약한 플래시(위력 0.3)
+//   F = 술식 플래시(속성 순환, 위력 1.0)   G = 약한 플래시(위력 0.3)
 //   D = 먹 증발(디졸브)
+//   T = 작도 스트레스(매 프레임 점 추가 — 실사용 리빌드 경로)   M/N = 측정 시작/종료+로그
+// 측정은 ProfilerRecorder(GC Allocated In Frame)로 프레임당 힙 할당을 수집한다 —
+// SPEC-ART-INK-LOOK V6 · INK-LOOKDEV V6·7 · MIG 잔여 조건(Profiler GC)의 실측 도구.
 public sealed class S5_InkLookSmoke : MonoBehaviour
 {
     [SerializeField] private BrushStyleSO _style;
@@ -53,6 +57,28 @@ public sealed class S5_InkLookSmoke : MonoBehaviour
     private readonly List<Vector3> _motifBaseScales = new List<Vector3>();
     private float _letterSize;
 
+    // ---- 성능·GC 실측 (T=스트레스, M/N=측정 창) ----
+    private ProfilerRecorder _gcRecorder;
+    private bool _stress;
+    private BrushStrokeRenderer _stressStroke;
+    private float _stressPhase;
+    private bool _measuring;
+    private long _gcSum;
+    private long _gcMax;
+    private int _measureFrames;
+    private float _dtSum;
+    private float _dtMax;
+
+    private void Awake()
+    {
+        _gcRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Allocated In Frame");
+    }
+
+    private void OnDestroy()
+    {
+        _gcRecorder.Dispose();
+    }
+
     private void Start()
     {
         SpawnDemo();
@@ -69,9 +95,83 @@ public sealed class S5_InkLookSmoke : MonoBehaviour
             if (kb.fKey.wasPressedThisFrame) BeginFlash(1f);
             if (kb.gKey.wasPressedThisFrame) BeginFlash(0.3f);
             if (kb.dKey.wasPressedThisFrame) BeginDissolve();
+            if (kb.tKey.wasPressedThisFrame) ToggleStress();
+            if (kb.mKey.wasPressedThisFrame) BeginMeasure();
+            if (kb.nKey.wasPressedThisFrame) EndMeasureAndLog();
         }
 
+        if (_stress) TickStress();
         TickEffect();
+        TickMeasure();
+    }
+
+    // ---- 작도 스트레스: 매 프레임 점을 덧붙여 「그리는 중」 리빌드 경로를 실측한다 ----
+    // Chaikin·폭 저역·UV1·캡 재생성 전부 통과. 획이 길어지면 수필로 마감하고 새 획을 시작하며,
+    // 화면 획 수는 8개(합성 글자 최대 획 수)로 유지 — 넘치면 가장 오래된 획을 파괴(파괴 경로 포함 실측).
+    public void ToggleStress()
+    {
+        _stress = !_stress;
+        if (!_stress && _stressStroke != null)
+        {
+            _stressStroke.EndStroke();
+            _stressStroke = null;
+        }
+        Debug.Log($"[S5 Measure] stress={_stress}");
+    }
+
+    private void TickStress()
+    {
+        if (_style == null || _strokeMaterial == null) return;
+
+        if (_stressStroke == null || _stressStroke.Data.Points.Count > 240)
+        {
+            if (_stressStroke != null) _stressStroke.EndStroke();
+            while (_strokes.Count > 8)
+            {
+                var oldest = _strokes[0];
+                _strokes.RemoveAt(0);
+                if (oldest != null) Destroy(oldest.gameObject);
+            }
+            _stressStroke = CreateStroke();
+        }
+
+        // 리사주 궤적 — 손이 곡선을 긋는 흉내. 프레임당 2점(빠른 마우스 샘플의 상한 근사)
+        _stressPhase += Time.unscaledDeltaTime;
+        for (int i = 0; i < 2; i++)
+        {
+            float t = _stressPhase + i * 0.008f;
+            var pos = new Vector3(0.45f * Mathf.Sin(t * 0.9f), 0.30f * Mathf.Sin(t * 1.3f + 1.1f), 0f);
+            _stressStroke.AddPoint(pos, _style.BaseWidth, 0.9f, Time.time);
+        }
+    }
+
+    // ---- 측정 창: M으로 열고 N으로 닫으면 평균·최대 GC/프레임과 프레임 시간을 로그로 낸다 ----
+    public void BeginMeasure()
+    {
+        _gcSum = 0; _gcMax = 0; _measureFrames = 0; _dtSum = 0f; _dtMax = 0f;
+        _measuring = true;
+        Debug.Log($"[S5 Measure] begin (stress={_stress})");
+    }
+
+    public void EndMeasureAndLog()
+    {
+        _measuring = false;
+        if (_measureFrames == 0) { Debug.Log("[S5 Measure] no frames"); return; }
+        Debug.Log($"[S5 Measure] result stress={_stress} frames={_measureFrames} " +
+            $"gcAvg={_gcSum / (float)_measureFrames:F0}B/f gcMax={_gcMax}B " +
+            $"dtAvg={_dtSum / _measureFrames * 1000f:F2}ms dtMax={_dtMax * 1000f:F2}ms");
+    }
+
+    private void TickMeasure()
+    {
+        if (!_measuring) return;
+        long gc = _gcRecorder.Valid ? _gcRecorder.LastValue : 0;
+        _gcSum += gc;
+        if (gc > _gcMax) _gcMax = gc;
+        float dt = Time.unscaledDeltaTime;
+        _dtSum += dt;
+        if (dt > _dtMax) _dtMax = dt;
+        _measureFrames++;
     }
 
     private void SpawnDemo()
