@@ -3,6 +3,7 @@
 //           X=피격 시뮬(글자만 소멸·모드 유지) / 렌더 어댑터를 꺼도 인식 불변(어댑터 GO 비활성으로 확인).
 // 결과는 SO 채널(EC_DrawnLetter·EC_DrawMisfire) 구독으로 표시 — 방송 경로까지 통째로 검증한다.
 using System.Collections.Generic;
+using Oheangbu.App;
 using Oheangbu.Core.Domain;
 using Oheangbu.Core.Events;
 using Oheangbu.Drawing;
@@ -14,6 +15,10 @@ public sealed class S3_DrawingInputTest : MonoBehaviour
     [SerializeField] private DrawingInputController _controller;
     [SerializeField] private DrawnLetterEventChannelSO _letterDrawn;
     [SerializeField] private VoidEventChannelSO _misfired;
+
+    [Header("붓 표현 튜닝(SPEC-SPIKE-BRUSH-RENDERER) — 먹 풀 미구현이라 잔량을 손으로 흉내 낸다")]
+    [SerializeField] private BrushStrokeFeedAdapter _brushAdapter;
+    [SerializeField, Range(0f, 1f)] private float _inkNormalized = 1f;
 
     private readonly List<string> _log = new List<string>();
     private int _letterCount;
@@ -53,6 +58,17 @@ public sealed class S3_DrawingInputTest : MonoBehaviour
 
     private void Update()
     {
+        // 먹 잔량 주입 — 실제 먹 풀이 생기면 이 한 줄이 그 값으로 대체된다(어댑터는 읽기만 한다)
+        if (_brushAdapter != null) _brushAdapter.InkNormalized = _inkNormalized;
+
+        // 먹 잔량 조절: [ 는 감소, ] 는 증가 — 마름 곡선을 그으면서 바로 비교하기 위한 것
+        var kb = Keyboard.current;
+        if (kb != null)
+        {
+            if (kb.leftBracketKey.isPressed) _inkNormalized = Mathf.Max(0f, _inkNormalized - Time.unscaledDeltaTime * 0.5f);
+            if (kb.rightBracketKey.isPressed) _inkNormalized = Mathf.Min(1f, _inkNormalized + Time.unscaledDeltaTime * 0.5f);
+        }
+
         // X = 피격 시뮬레이션 — 글자만 소멸·모드 유지(§3-4) 확인용. 정식 연동은 전투 층 몫.
         var keyboard = Keyboard.current;
         if (keyboard != null && keyboard.xKey.wasPressedThisFrame && _controller != null)
@@ -67,8 +83,10 @@ public sealed class S3_DrawingInputTest : MonoBehaviour
         string mode = _controller != null && _controller.InDrawMode
             ? $"작도 모드 (획 {_controller.StrokeCount} · 점 {_controller.TotalPointCount})"
             : "대기 — Q를 누르고 있는 동안 작도";
-        GUI.Label(new Rect(10, 10, 1200, 24),
-            $"[S3 작도 입력] {mode} | 성공 {_letterCount} · 불발 {_misfireCount} | Q 홀드=작도, 떼면 발동 · X=피격 시뮬 · 어댑터 GO 끄면 렌더만 꺼져야 함");
+        GUI.Label(new Rect(10, 10, 1400, 24),
+            $"[S3 작도 입력] {mode} | 성공 {_letterCount} · 불발 {_misfireCount} | Q 홀드=작도, 떼면 발동 · X=피격 시뮬");
+        GUI.Label(new Rect(10, Screen.height - 28, 1400, 24),
+            $"먹 잔량 {_inkNormalized:P0}  [ 줄이기 / ] 늘리기 — 적을수록 획이 말라야 한다(ART-UI 보조 언어)");
         for (int i = 0; i < _log.Count; i++)
         {
             GUI.Label(new Rect(10, 36 + i * 22, 1200, 22), _log[_log.Count - 1 - i]);

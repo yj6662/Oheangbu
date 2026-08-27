@@ -9,21 +9,16 @@ namespace Oheangbu.BrushRender
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class BrushStrokeRenderer : MonoBehaviour
     {
-        // 먹색 기본값 = ART-COLOR 기본 팔레트의 먹(#2A2622). 실수치 조정은 데이터(인스펙터)에서.
-        [SerializeField] private Color _inkColor = new Color(0x2A / 255f, 0x26 / 255f, 0x22 / 255f, 1f);
-        [SerializeField, Min(0f)] private float _widthMultiplier = 1f;
-
-        [Header("수필(收筆) — 획 끝을 뾰족하게 빼는 미감 수치 [TEST — 스파이크에서 확정]")]
-        [SerializeField, Min(0)] private int _taperSteps = 3;
-        [SerializeField, Min(0f)] private float _taperLength = 0.05f;
-        [SerializeField, Range(0f, 1f)] private float _taperWidthKeep = 0.7f;
-        [SerializeField, Range(0f, 1f)] private float _taperInkLoss = 0.4f;
+        // 미감 수치는 전부 BrushStyleSO(데이터)에 있다 — 코드에 상수를 두지 않는다.
+        [SerializeField] private BrushStyleSO _style;
+        [SerializeField, Min(0f)] private float _widthMultiplier = 1f; // 전역 배율(번짐 연출 등의 훅)
 
         private readonly BrushStrokeData _data = new BrushStrokeData();
         private readonly RibbonMeshBuilder _builder = new RibbonMeshBuilder();
         private Mesh _mesh;
         private MeshRenderer _meshRenderer;
         private bool _dirty;
+        private Material _ownedMaterial; // 획별 인스턴스(스텐실 Ref·시드·플래시) — 파괴 시 동반 파괴
 
         public BrushStrokeData Data => _data;
 
@@ -41,36 +36,60 @@ namespace Oheangbu.BrushRender
             _meshRenderer.receiveShadows = false;
         }
 
-        // 머티리얼 주입 — 렌더러가 셰이더를 스스로 고르지 않는다(의존성 분리, §6)
-        public void Configure(Material material)
+        // 머티리얼 주입 — 렌더러가 셰이더를 스스로 고르지 않는다(의존성 분리, §6).
+        // ownsMaterial=true면 획별 인스턴스(스텐실 Ref는 MPB로 세팅 불가 — INK-LOOKDEV §11.1)로
+        // 취급해 파괴 시 함께 파괴한다. sortingOrder=같은 평면 투명 획들의 그리기 순서 고정.
+        public void Configure(Material material, BrushStyleSO style, bool ownsMaterial = false, int sortingOrder = 0)
         {
-            GetComponent<MeshRenderer>().sharedMaterial = material;
+            var renderer = GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.sortingOrder = sortingOrder;
+            _ownedMaterial = ownsMaterial ? material : null;
+            _style = style;
+            // widthMultiplier는 번짐 여유 폭 용도로 점유한다(INK-LOOKDEV §5.2) —
+            // 셰이더의 V 재매핑과 짝이므로 다른 연출에 재사용하지 말 것.
+            if (style != null) _widthMultiplier = 1f + style.BleedMargin;
         }
 
-        public void AddPoint(Vector3 localPosition, float width, float ink)
+        // 어댑터가 플래시·디졸브를 구동할 인스턴스 — 소유 인스턴스가 아니면 null(폴백 경로)
+        public Material OwnedMaterial => _ownedMaterial;
+
+        public void AddPoint(Vector3 localPosition, float width, float ink, float time)
         {
-            _data.Add(new BrushStrokePoint(localPosition, width, ink));
+            _data.Add(new BrushStrokePoint(localPosition, width, ink, time));
             _dirty = true;
         }
 
-        // 획 마무리 — 마지막 진행 방향으로 taper 점을 덧붙여 붓을 떼는 흔적을 남긴다(레거시 EndTaper 승계)
+        // 획 마무리 — 마지막 진행 방향으로 taper 점을 덧붙여 붓을 떼는 흔적을 남긴다(수필 收筆)
         public void EndStroke()
         {
             var points = _data.Points;
-            if (points.Count < 2 || _taperSteps <= 0) return;
+            if (_style == null || points.Count < 2 || _style.TaperSteps <= 0) return;
 
             var last = points[points.Count - 1];
-            Vector3 dir = last.Position - points[points.Count - 2].Position;
-            if (dir.sqrMagnitude <= 0f) return; // 같은 자리에서 뗀 붓은 taper를 만들 수 없다
+            // 수필 방향 = 마지막 N샘플의 현(chord) — 떼는 순간의 미세한 손 틀림이 꼬리를 꺾지 않게.
+            // 회봉은 「그어 온 방향」으로 거두는 것이지 떼는 순간의 방향을 따르는 게 아니다(§14).
+            int window = Mathf.Min(_style.TaperDirectionWindow, points.Count - 1);
+            Vector3 dir = last.Position - points[points.Count - 1 - window].Position;
+            if (dir.sqrMagnitude <= 0f)
+            {
+                dir = last.Position - points[points.Count - 2].Position; // 현이 0이면 구 방식 폴백
+                if (dir.sqrMagnitude <= 0f) return; // 같은 자리에서 뗀 붓은 taper를 만들 수 없다
+            }
             dir.Normalize();
 
-            for (int i = 1; i <= _taperSteps; i++)
+            int steps = _style.TaperSteps;
+            for (int i = 1; i <= steps; i++)
             {
-                float t = (float)i / _taperSteps;
+                float t = (float)i / steps;
+                // 선형(스파이크) 대신 SmoothStep — 붓이 「빠지는」 곡선. 끝은 0이 아니라
+                // 잔여 폭(TipWidth)까지만 줄고, 그 위를 회봉 캡이 둥글게 감싼다(§14)
+                float eased = Mathf.SmoothStep(0f, 1f, t);
                 AddPoint(
-                    last.Position + dir * (_taperLength * t),
-                    last.Width * (1f - t) * _taperWidthKeep,
-                    last.Ink * (1f - _taperInkLoss * t));
+                    last.Position + dir * (_style.TaperLength * eased),
+                    last.Width * Mathf.Lerp(1f, _style.TaperTipWidth, eased),
+                    last.Ink * (1f - _style.TaperInkLoss * eased),
+                    last.Time); // 수필 점은 마지막 점의 탄생 시각 상속 — 번짐 나이 연속
             }
         }
 
@@ -91,12 +110,18 @@ namespace Oheangbu.BrushRender
             // 변경이 있던 프레임만 리빌드 — 입력 수집(Update)과 표현 갱신의 순서를 고정한다
             if (!_dirty) return;
             _dirty = false;
-            _builder.Build(_data, _inkColor, _widthMultiplier, _mesh);
+            var inkColor = _style != null ? _style.InkColor : Color.black;
+            _builder.Build(_data, inkColor, _widthMultiplier,
+                _style != null ? _style.PositionSmoothing : 0,
+                _style != null ? _style.WidthSmoothing : 0,
+                _style != null ? _style.CapSegments : 0,
+                _mesh);
         }
 
         private void OnDestroy()
         {
             if (_mesh != null) Destroy(_mesh);
+            if (_ownedMaterial != null) Destroy(_ownedMaterial); // 획별 인스턴스 누수 방지(§11.1)
         }
     }
 }

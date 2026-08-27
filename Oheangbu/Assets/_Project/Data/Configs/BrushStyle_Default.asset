@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 135976c6d571294498e9dc681ef031ea, type: 3}
+  m_Name: BrushStyle_Default
+  m_EditorClassIdentifier: 
+  _inkColor: {r: 0.04, g: 0.037, b: 0.034, a: 1}
+  _baseWidth: 0.045
+  _fastSpeed: 2200
+  _minWidthFactor: 0.6
+  _maxWidthFactor: 1.25
+  _widthNoise: 0.12
+  _widthNoiseFrequency: 6
+  _speedSmoothing: 0.35
+  _startPressFactor: 1.1
+  _startPressSamples: 5
+  _taperSteps: 4
+  _taperLength: 0.05
+  _taperTipWidth: 0.35
+  _taperInkLoss: 0.25
+  _taperDirectionWindow: 5
+  _maxDensity: 1
+  _minDensity: 0.95
+  _paleThreshold: 0.1
+  _dryDensityFloor: 0.25
+  _bleedMargin: 0.15
+  _bleedTau: 0.45
+  _bleedStartWidth: 0.85
+  _noiseScale: 40
+  _crackStrength: 0.55
+  _edgeSoftness: 0.12
+  _edgeJitter: 0.07
+  _dissolveDuration: 0.4
+  _flashDuration: 0.6
+  _flashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _flashTint: 0.85
+  _flashAdd: 1.5
+  _fadeOutDuration: 0.35
+  _motifCount: 4
+  _motifSize: 0.22
+  _motifScatter: 0.08
+  _motifAngleJitter: 30
+  _powerAccuracyRange: {x: 1.6, y: 0.6}
+  _powerSpeedRange: {x: 4, y: 1}
+  _powerToFlashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.2
+      inSlope: 0
+      outSlope: 0.8
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.8
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _positionSmoothing: 1
+  _widthSmoothing: 1
+  _capSegments: 6

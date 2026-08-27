@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 794f3c7c82777fc46b916954a987e0ab, type: 3}
+  m_Name: ElementPalette_Test
+  m_EditorClassIdentifier: 
+  _entries:
+  - Name: "\uBAA9"
+    Initials: "\u3131"
+    Color: {r: 0.306, g: 0.502, b: 0.412, a: 1}
+    Motif: {fileID: 2800000, guid: d83324b40bb35594ab56c3e16a8c5eaf, type: 3}
+  - Name: "\uD654"
+    Initials: "\u3134"
+    Color: {r: 0.722, g: 0.361, b: 0.22, a: 1}
+    Motif: {fileID: 2800000, guid: 1f1c3ebfc815af64f83bfd0375fe1b0e, type: 3}
+  - Name: "\uD1A0"
+    Initials: "\u3141"
+    Color: {r: 0.69, g: 0.553, b: 0.29, a: 1}
+    Motif: {fileID: 2800000, guid: cedec319b9510fc4197a99af5d05df71, type: 3}
+  - Name: "\uAE08"
+    Initials: "\u3145"
+    Color: {r: 0.682, g: 0.706, b: 0.729, a: 1}
+    Motif: {fileID: 2800000, guid: 9beea4b305bdfef48a9cc97ffa47e2cc, type: 3}
+  - Name: "\uC218"
+    Initials: "\u3147"
+    Color: {r: 0.2, g: 0.278, b: 0.361, a: 1}
+    Motif: {fileID: 2800000, guid: a0ee8dfc105ecc64094607d742a77f6b, type: 3}
+  _fallback: {r: 0.16, g: 0.15, b: 0.13, a: 1}
+  _flashValueLift: 0.12
+  _corruptInk: {r: 0.2, g: 0.169, b: 0.212, a: 1}
+  _corruptMix: 0.55
+  _purityPaper: {r: 0.969, g: 0.945, b: 0.894, a: 1}
+  _purityMix: 0.35

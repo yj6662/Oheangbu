@@ -6,6 +6,7 @@
 
 1. **진입점 = `Docs/BIBLE_INDEX.md`** — 문서 상태·소유·핵심 Section ID의 유일한 정본.
 2. 작업 흐름: **TASK → BIBLE_INDEX → 관련 Bible(Section ID로 참조) → Spec → 기존 코드 → 구현 → Validation.**
+   작업이 명시되지 않은 세션은 **`Docs/PROJECT_STATUS.md`**(실행 상태판 — Authority 없음)로 현재 상태·다음 작업을 먼저 파악한다.
 3. 참조는 장 번호가 아니라 **Section ID**(예: COMBAT-PARRY, SPELL-BRUSH, LDB-GATING) 우선.
 4. 상태어는 5종만: **LOCKED / TEST / PROPOSED / TBD / LEGACY.** LOCKED 변경은 코드로 하지 않는다 — 설계 문답(DECISIONS.md 기록)이 먼저다.
 5. **글자 효과의 유일 정본 = `오행부_작도어휘_v0_1.csv`** (UTF-8-BOM, 120행). 바이블 내 글자 표는 열람용 미러 — 수정은 CSV에서만.
@@ -50,9 +51,10 @@
 | 오행부_ArtAudio_Bible_v0_1.md | 수묵 룩·색 어휘·발광·UI·국악 |
 | 오행부_Production_Bible_v0_1.md | 파이프라인·리깅·도구·스코프 |
 | DECISIONS.md | 전이 이력(사유 포함) |
+| PROJECT_STATUS.md | **실행 상태판(Now)** — Authority 없음, 충돌 시 Spec/Bible/Git 우선 |
 
 ## 현재 개발 단계 · 요청 해석 규칙
 
-- 문서 정본화: **헌법 + 하위 바이블 6권 완료**(Spellcraft·Combat·Narrative·LDB·A&A·Production) / Spatial=PLANNED(EA 실측 동반 착수 — 미창설이 정상 상태).
-- 다음 작업 = **스파이크 3종**: ① 작도 인식($1 Unistroke C# 포트 — 최고 위험 가정) ② 붓 획 Ribbon+Noise Cutout ③ 먹 셰이더·한지 머티리얼 → 이후 버티컬 슬라이스=프롤로그 폐광(슬롯 1+2 검수: "아무 지시 없이 색만 따라 첫 주막에 도착하는가").
+- **진행 상태·다음 작업의 정본 = `Docs/PROJECT_STATUS.md`** (Phase·마일스톤·Active Work·Blocker·Next — 동적 상태는 CLAUDE.md에 두지 않는다). 갱신 시점: Spec PASS · PR merge · 마일스톤/Blocker/Next 변경 — 설계 내용은 복제 금지.
+- 문서 정본화: **헌법 + 하위 바이블 6권 완료** / Spatial=PLANNED(EA 실측 동반 착수 — 미창설이 정상 상태).
 - **요청 해석 규칙**: 구현 요청 → Spec 작성부터(PROD-PIPELINE — 바로 코드로 가지 않는다) / 설계 변경 요청 → 문답·DECISIONS 기록부터(LOCKED은 코드로 우회 금지) / 모호하면 **기획 검토로 간주하고 확인**한다.

@@ -11,13 +11,15 @@ namespace Oheangbu.BrushRender
     {
         public readonly Vector3 Position; // 렌더러 로컬 좌표(작도면=로컬 XY 평면 전제)
         public readonly float Width;      // 이 지점의 획 폭
-        public readonly float Ink;        // 0~1 먹 농도 — 갈필·번짐 셰이더의 입력 예약(현재는 정점 알파로만 표현)
+        public readonly float Ink;        // 0~1 먹 농도 — 갈필·번짐 셰이더의 입력(정점 알파)
+        public readonly float Time;       // 점 탄생 시각(scaled) — 번짐 나이의 기준(UV1.x, SPEC-SPIKE-INK-LOOKDEV §2)
 
-        public BrushStrokePoint(Vector3 position, float width, float ink)
+        public BrushStrokePoint(Vector3 position, float width, float ink, float time)
         {
             Position = position;
             Width = width;
             Ink = ink;
+            Time = time;
         }
     }
 
