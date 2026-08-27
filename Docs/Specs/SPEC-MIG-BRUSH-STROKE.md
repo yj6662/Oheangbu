@@ -7,7 +7,7 @@
 | Type | MIGRATION |
 | State | TEST (구현 완료 · 검증 중 — CONST-STATUS) |
 | Lifecycle | ACTIVE |
-| Migration Result | **PASS WITH CONDITIONS** (§14) |
+| Migration Result | **PASS** — 잔여 조건(Profiler GC) 실측 완료로 승격(2026-08-27 예준 · §14) |
 
 ## 1. Authority
 
@@ -69,7 +69,7 @@ DrawingInput → RawStrokePoint[](입력 사실: position·timestamp)
 | GC | **명시적 반복 할당 제거만 완료.** 실제 GC Alloc 0 B 여부는 Profiler 실측 대기 [TEST] — 측정 전 "GC 0" 단정 금지 |
 | 실제 획 시각 확인 / Profiler / On-Off 회귀 | 미검증 (아래 조건) |
 
-## 14. Exit Criteria — PASS WITH CONDITIONS
+## 14. Exit Criteria — ~~PASS WITH CONDITIONS~~ → **PASS (2026-08-27 예준 승격 — 잔여 조건 전부 해소)**
 
 IMPLEMENTED ✅ → AUTOMATED SMOKE ✅ → HUMAN VISUAL ⏳ → PERFORMANCE ⏳
 
@@ -77,7 +77,9 @@ IMPLEMENTED ✅ → AUTOMATED SMOKE ✅ → HUMAN VISUAL ⏳ → PERFORMANCE ⏳
 
 - [x] 실제 드래그로 Ribbon 출력 확인 — 2026-08-20 예준 육안 확인
 - [x] 렌더러 on/off 인식 불변 — 구조 개정으로 승계 검증: SPEC-DRAWING-INPUT의 「어댑터 off 회귀」로 대체(2026-08-20 예준 검증, R 토글·구 드라이버는 소멸)
-- [ ] Unity Profiler GC Alloc 측정 — 유일 잔여 조건
+- [x] Unity Profiler GC Alloc 측정 — **실측 완료(2026-08-27)**: ProfilerRecorder(GC Allocated In Frame)로
+  작도 스트레스(연속 리빌드) vs 유휴 비교 — 리빌드 루프의 상시 GC 할당 관찰되지 않음(유휴 배경치와 동일,
+  차이는 노이즈 이내). 수치·방법·한계는 SPEC-ART-INK-LOOK §9.4가 정본. **PASS 승격 판정은 예준.**
 - [x] Mesh 정상 종료·taper 확인 — 2026-08-20 예준 육안 확인(Geometry 확인에 포함)
 
 ## 15. 후속 순서 (합의)
