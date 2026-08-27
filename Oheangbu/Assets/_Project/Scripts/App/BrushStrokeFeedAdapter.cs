@@ -288,7 +288,11 @@ namespace Oheangbu.App
             };
             foreach (var stroke in _strokes)
             {
-                if (stroke != null) group.Strokes.Add(stroke);
+                if (stroke == null) continue;
+                group.Strokes.Add(stroke);
+                // 소멸이 시작되는 순간 월드에 떼어놓는다(예준 지시) — 작도면은 화면(카메라 자식)이지만
+                // 다 쓴 글자는 세상에 남아 그 자리에서 빛나고 스러진다
+                stroke.transform.SetParent(null, true);
             }
             _strokes.Clear();
             _current = null;
@@ -333,7 +337,8 @@ namespace Oheangbu.App
                 var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 go.name = "SpellMotif";
                 Destroy(go.GetComponent<Collider>());
-                go.transform.SetParent(transform, true);
+                // 모티프도 월드에 남는 글자 곁에 — 카메라를 따라가지 않는다
+                go.transform.SetParent(null, true);
                 go.transform.rotation = transform.rotation
                     * Quaternion.Euler(0f, 0f, Random.Range(-_style.MotifAngleJitter, _style.MotifAngleJitter));
                 go.transform.position = position;

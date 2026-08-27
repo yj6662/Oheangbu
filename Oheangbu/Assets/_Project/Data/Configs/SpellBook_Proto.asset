@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 198f49fa974a72f459729ee2e6d30c68, type: 3}
+  m_Name: SpellBook_Proto
+  m_EditorClassIdentifier:
+  _entries:
+  - Letter: "가"
+    Kind: 0
+    Element: 0
+    BasePower: 12
+  - Letter: "고"
+    Kind: 1
+    Element: 0
+    BasePower: 9
+  - Letter: "어"
+    Kind: 2
+    Element: 4
+    BasePower: 0
+  - Letter: "서"
+    Kind: 2
+    Element: 3
+    BasePower: 0
+  - Letter: "거"
+    Kind: 2
+    Element: 0
+    BasePower: 0
+  - Letter: "너"
+    Kind: 2
+    Element: 1
+    BasePower: 0
+  - Letter: "머"
+    Kind: 2
+    Element: 2
+    BasePower: 0
+  _formRange: {x: 1.6, y: 0.6}
+  _speedRange: {x: 4, y: 1}
+  _powerCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0.7
+      outSlope: 0.7
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.7
+      outSlope: 0.7
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
