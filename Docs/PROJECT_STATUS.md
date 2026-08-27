@@ -36,7 +36,7 @@ Last Updated: 2026-08-27 (PR #3 merge · 성능/GC 실측 완료)
 
 ## 3. Active Work
 
-**NONE** — 룩 스파이크 마감(3건 PASS 승격 2026-08-27). 다음 = SPEC-COMBAT-CORE-LOOP 초안.
+**SPEC-COMBAT-CORE-LOOP: TEST** — 구현 완료(스모크 통과 — M2 진입). 다음 관문 = 예준 플레이 검증(§6 기준 7종·재미 메모)
 비고: 상태 드리프트 자동 검사 도입(Tools/Check-StatusDrift.ps1, SessionStart 훅 — 2026-08-27)
 
 ## 4. Blockers
@@ -45,7 +45,7 @@ Last Updated: 2026-08-27 (PR #3 merge · 성능/GC 실측 완료)
 
 ## 5. Next
 
-1. **SPEC-COMBAT-CORE-LOOP 초안** — Core Combat 프로토타입의 Spec(작도×전투 첫 결합)
+1. SPEC-COMBAT-CORE-LOOP 결정→구현(작도×전투 첫 결합 — M2 진입)
 2. 스파이크 Exit 정리 — asmdef autoReferenced 복귀 + Spike 폴더 제거 (**Exit Blocking**, 전투 개발 씬 확보 후)
 3. 프롤로그 폐광 그레이박스 → 버티컬 슬라이스
 
