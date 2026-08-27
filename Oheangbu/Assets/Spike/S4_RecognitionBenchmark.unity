@@ -182,9 +182,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.BrushStrokeFeedAdapter
   _input: {fileID: 417789902}
+  _style: {fileID: 11400000, guid: 399c728956350a244b4db9a8479f8c6e, type: 2}
   _strokeMaterial: {fileID: 0}
   _surfaceDistance: 1
-  _baseWidth: 0.01
 --- !u!114 &417789902
 MonoBehaviour:
   m_ObjectHideFlags: 0
