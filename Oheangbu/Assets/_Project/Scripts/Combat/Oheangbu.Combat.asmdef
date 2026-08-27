@@ -4,7 +4,8 @@
     "references": [
         "Oheangbu.Core",
         "Oheangbu.Data",
-        "Oheangbu.Spellcraft"
+        "Oheangbu.Spellcraft",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
