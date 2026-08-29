@@ -94,6 +94,7 @@ namespace Oheangbu.App
         private bool _pendingCastFailed;        // 배선이 알린 시전 불성립(먹 부족·미등재) — 플래시·문양 대신 불발 증발
         private GameObject _pendingFxPrefab;    // 어휘별 프리팹 스태시(_visualSet 조회) — 없으면 기본 슬롯
         private float _pendingFxScaleMul = 1f;
+        private float _pendingFxArcHeight; // 연출 포물선 높이(마 — §3.1) — 매핑 SO에서 읽기만
 
         // 표현용 상태 — 획 하나가 그려지는 동안의 붓 상태다. 인식 데이터와 공유하지 않는다.
         private Vector2 _lastInputScreen;  // 직전 입력 좌표 — 속도 측정용
@@ -312,10 +313,12 @@ namespace Oheangbu.App
             // 어휘별 시각 분화(FX-ASSETS §4.4) — 표현 조회만. 미등재면 기본 슬롯이 받는다
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
+            _pendingFxArcHeight = 0f;
             if (_visualSet != null && _visualSet.TryGet(letter.Letter, out var visual))
             {
                 _pendingFxPrefab = visual.FxPrefab;
                 _pendingFxScaleMul = visual.ScaleMul > 0f ? visual.ScaleMul : 1f;
+                _pendingFxArcHeight = Mathf.Max(0f, visual.ArcHeight);
             }
             _hasPendingFlash = true;
         }
@@ -340,6 +343,7 @@ namespace Oheangbu.App
             _pendingAttackDuration = 0f;
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
+            _pendingFxArcHeight = 0f;
         }
 
         // 피격(글자만 소멸)·조용한 취소 등 커밋 경로 밖의 소거 — 남아 있는 획을 증발시킨다.
@@ -399,15 +403,16 @@ namespace Oheangbu.App
             go.transform.localScale = Vector3.one * (letterSize * _style.PatternScale * _pendingFxScaleMul);
             go.SetActive(true); // 일부 에셋 프리팹은 비활성 자식 포함 — 루트만 보장
 
-            // 일제 연출(8차 검수 — 소): 프리팹이 SpikeVolleyEffect를 품으면 문양은 제자리 개화,
-            // 송곳 일제가 자체 시계로 목표를 향한다. 피해는 배선의 착탄 시계 그대로(연출≠실판정 §9-1)
-            var volley = go.GetComponentInChildren<SpikeVolleyEffect>(true);
-            if (_pendingAttack && volley != null)
+            // 자체 시계 연출(8차 검수 소 → P4 일반화): 프리팹이 SpellSequenceEffect를 품으면 문양은
+            // 제자리 개화, 연출(일제·솟음·전진)이 자체 시계로 목표를 향한다. 피해는 배선의 착탄 시계
+            // 그대로(연출≠실판정 §9-1)
+            var sequence = go.GetComponentInChildren<SpellSequenceEffect>(true);
+            if (_pendingAttack && sequence != null)
             {
-                Transform volleyTarget = _pendingAttackTarget;
+                Transform sequenceTarget = _pendingAttackTarget;
                 _pendingAttackTarget = null;
                 _pendingAttackDuration = 0f;
-                volley.Begin(bounds.center, volleyTarget, MissPoint(bounds.center), group.FlashColor);
+                sequence.Begin(bounds.center, sequenceTarget, MissPoint(bounds.center), group.FlashColor);
                 PatternEffectLifetime.AttachBloom(go, _style.PatternLifetime, group.FlashColor);
                 return;
             }
@@ -428,7 +433,7 @@ namespace Oheangbu.App
                 }
 
                 PatternEffectLifetime.AttachProjectile(go, _style.PatternLifetime, group.FlashColor,
-                    target, MissPoint(bounds.center), duration);
+                    target, MissPoint(bounds.center), duration, _pendingFxArcHeight);
             }
             else
             {

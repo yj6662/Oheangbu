@@ -11,6 +11,13 @@ namespace Oheangbu.Combat
         [SerializeField] private LockOn _lockOn;
 
         private InkPool _ink;
+        private int _lastExtractFrame = -1000; // int.MinValue 금지 — frameCount와의 뺄셈이 오버플로해 신호가 상시 참이 된다(6차 검수 버그)
+
+        // 표현 계층(App) 읽기 전용 신호 — 이번 순간 실제로 먹이 뽑히고 있는가·어디서.
+        // 판정·수치는 여기서 끝난다: 연출은 이 신호를 「읽기만」 한다(인식·필세 불가침과 같은 결).
+        // 프레임 기반 창 — 홀드는 매 프레임 틱이므로 벽시계 무관(저프레임에도 신호가 끊기지 않는다)
+        public bool IsExtracting => Time.frameCount - _lastExtractFrame <= 2;
+        public Vector3 ExtractSourcePosition { get; private set; }
 
         public void Init(InkPool ink)
         {
@@ -27,6 +34,9 @@ namespace Oheangbu.Combat
 
             target.TakeDamage(_config.HarvestDamagePerSecond * deltaTime, floorAtOneHp: true);
             _ink?.Gain(_config.HarvestInkPerSecond * deltaTime); // 먹 수급 — 교전·락온에 묶인 수입(먹 3원)
+
+            _lastExtractFrame = Time.frameCount;
+            ExtractSourcePosition = target.transform.position + Vector3.up * 1.1f; // 가슴 높이 — 먹이 뽑히는 자리
         }
     }
 }

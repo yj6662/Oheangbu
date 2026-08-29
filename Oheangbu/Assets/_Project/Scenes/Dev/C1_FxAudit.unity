@@ -268,6 +268,16 @@ MonoBehaviour:
   _faceCamera: 0
   _extraPrefabs:
   - {fileID: 3435796702431643263, guid: ce89fd5c599c7094183b79b90464dfbd, type: 3}
+  - {fileID: 4240623339685649371, guid: 4ae996ec731a040409129a04ea090d15, type: 3}
+  - {fileID: 3379538311734192927, guid: ec9d1b0cf84cf21438dc0515d17a1650, type: 3}
+  - {fileID: 9060677030549346097, guid: 181d75f1941e7644b83f5ad89d10558b, type: 3}
+  - {fileID: 4389055342655713742, guid: 04102a444261b5a4b93f05689657e03f, type: 3}
+  _extraTints:
+  - {r: 0.682, g: 0.706, b: 0.729, a: 1}
+  - {r: 0.722, g: 0.361, b: 0.22, a: 1}
+  - {r: 0.306, g: 0.502, b: 0.412, a: 1}
+  - {r: 0.2, g: 0.278, b: 0.361, a: 1}
+  - {r: 0.69, g: 0.553, b: 0.29, a: 1}
 --- !u!4 &1136771008
 Transform:
   m_ObjectHideFlags: 0
