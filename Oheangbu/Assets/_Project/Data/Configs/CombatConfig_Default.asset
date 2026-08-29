@@ -21,16 +21,27 @@ MonoBehaviour:
   _dodgeCooldown: 0.6
   _playerMaxHp: 100
   _lockOnCameraPull: 1
+  _shoulderStart: 1
+  _shoulderOffset: {x: 0, y: 0.55, z: -2.8}
+  _shoulderDrawOffset: {x: 0.35, y: 0.25, z: -0.2}
+  _cameraBlendSpeed: 8
+  _drawCloseupBlendSpeed: 20
+  _drawCloseupFov: 52
+  _shoulderPitchMin: -35
+  _shoulderPitchMax: 60
+  _bodyShowDistance: 0.8
   _inkStart: 1
   _spellInkCost: 0.15
   _misfireInkCost: 0.15
   _parryInkCost: 0.1
   _parryInkRefund: 0.15
-  _harvestInkGain: 0.05
   _harvestRange: 12
-  _harvestDamage: 2
-  _harvestCooldown: 0.5
+  _harvestInkPerSecond: 0.1
+  _harvestDamagePerSecond: 4
+  _spellProjectileSpeed: 18
   _parryWindow: 0.9
+  _guardDuration: 4
+  _guardBlockFactor: 0.5
   _halfParryDamageFactor: 0.4
   _parriesToBlossom: 3
   _blossomStunDuration: 4

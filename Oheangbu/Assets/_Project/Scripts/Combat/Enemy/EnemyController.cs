@@ -21,17 +21,22 @@ namespace Oheangbu.Combat
         [SerializeField] private Renderer _renderer;
         [SerializeField] private Element _rangedElement = Element.Fire; // 결정 2 — 화
 
+        private const float ParriedFlashDuration = 0.25f; // 패링 성공 플래시 — 연출 미세 시간(기술 상수)
+
         private ParryJudge _judge;
         private State _state = State.Idle;
         private Pattern _pattern;
         private float _stateUntil;
         private float _cooldown;
-        private IncomingAttack _currentAttack;
+        private float _impactTime;
         private Transform _projectile;
         private Vector3 _projectileStart;
         private Color _baseColor;
         private Color _elementColor = new Color(0.72f, 0.36f, 0.22f);
         private Color _neutralColor = new Color(0.45f, 0.43f, 0.41f);
+        private float _parriedFlashUntil;
+        private Color _parriedFlashColor;
+        private Color _stateTint; // 상태가 정한 기본 틴트 — 플래시 종료 시 복원 대상
 
         public event System.Action StunEnded; // 만개 소진 — 배선부가 그로기 리셋[TEST]에 쓴다
         public Element RangedElement => _rangedElement;
@@ -113,6 +118,18 @@ namespace Oheangbu.Combat
                     }
                     break;
             }
+
+            // 패링 성공 플래시 — 「튕겨냈다」의 응답(2차 플레이 검수: 살짝의 효과).
+            // 상태 틴트 위에 잠시 덮었다가, 끝나면 상태가 정한 색으로 복원한다(스턴 먹빛을 가리지 않게)
+            if (Time.time < _parriedFlashUntil)
+            {
+                SetColor(_parriedFlashColor);
+            }
+            else if (_parriedFlashUntil > 0f)
+            {
+                SetColor(_stateTint);
+                _parriedFlashUntil = 0f;
+            }
         }
 
         private void BeginTelegraph()
@@ -124,13 +141,8 @@ namespace Oheangbu.Combat
 
             if (_pattern == Pattern.Ranged)
             {
-                // 속성 공격만 패링 판정에 등록 — 무속성은 회피만이 답(COMBAT-DEFENSE 이원법)
-                _currentAttack = new IncomingAttack
-                {
-                    Element = _rangedElement,
-                    ImpactTime = _stateUntil + _config.ProjectileFlight,
-                };
-                _judge?.Register(_currentAttack);
+                // scaled time — 감속 중엔 비행도 함께 느려진다(작도할 시간을 주는 감속의 목적)
+                _impactTime = _stateUntil + _config.ProjectileFlight;
                 Tint(_elementColor);
             }
             else
@@ -158,42 +170,62 @@ namespace Oheangbu.Combat
 
         private void TickProjectile()
         {
-            var attack = _currentAttack;
-            if (attack == null) { EnterRecover(); return; }
-
-            // 정답 패링 = 피해 무효 — 받아쳐진 화염구는 그 자리에서 꺼진다
-            if (attack.Resolution == ParryOutcome.Success)
-            {
-                FinishProjectile();
-                return;
-            }
-
-            float remain = attack.ImpactTime - Time.time;
+            float remain = _impactTime - Time.time;
             float t = Mathf.Clamp01(1f - remain / Mathf.Max(_config.ProjectileFlight, 0.01f));
             _projectile.position = Vector3.Lerp(_projectileStart, _player.position, t);
 
             if (remain <= 0f)
             {
+                // 접점 = 눈높이에서 접근 방향으로 1m 앞 — 투사체 lerp 목표(플레이어 중심)는 몸 안이라,
+                // 방어막의 개념 위치(작도면 앵커와 같은 전방 1m)로 보정한다. 「글자가 선 곳에서 튕긴다」
+                Vector3 eye = _player.position + Vector3.up * 1.1f;
+                Vector3 approach = (_player.position - _projectileStart).normalized;
+                Vector3 contact = eye - approach * 1.0f;
+
+                // 판정점 = 임팩트 시각 — 방어막(작도 잔존) 상태 조회(2차 플레이 검수 확정).
+                // 무속성 근접은 애초에 조회하지 않는다(이원법 — 회피만이 답)
+                ParryOutcome outcome = _judge != null
+                    ? _judge.ResolveImpact(_rangedElement, Time.time, contact)
+                    : ParryOutcome.None;
+
                 float damage = _config.RangedDamage;
-                if (attack.Resolution == ParryOutcome.Half) damage *= _config.HalfParryDamageFactor; // 반성공=경감
-                _playerVitals?.TakeDamage(damage);
+                switch (outcome)
+                {
+                    case ParryOutcome.Success:
+                        damage = 0f; // 받아쳐진 화염구 — 방어막에 닿아 꺼진다
+                        FlashParried();
+                        break;
+                    case ParryOutcome.Half:
+                        damage *= _config.HalfParryDamageFactor;
+                        break;
+                    case ParryOutcome.Block:
+                        damage *= _config.GuardBlockFactor; // 일반 방어 구간 — 경감만
+                        break;
+                }
+                if (damage > 0f) _playerVitals?.TakeDamage(damage);
+
+                // ResolveImpact는 동기로 만개 연쇄(성공→그로기→Blossomed→EnterStun)를 부를 수 있다 —
+                // 상태가 이미 Stunned로 바뀌었으면 Recover로 덮지 않는다(프로젝타일은 CancelAttack이 정리)
+                if (_state != State.Flight) return;
                 FinishProjectile();
             }
+        }
+
+        private void FlashParried()
+        {
+            _parriedFlashUntil = Time.time + ParriedFlashDuration;
+            _parriedFlashColor = Color.Lerp(_elementColor, Color.white, 0.35f);
         }
 
         private void FinishProjectile()
         {
             _projectile.gameObject.SetActive(false);
-            _judge?.Clear();
-            _currentAttack = null;
             EnterRecover();
         }
 
         private void CancelAttack()
         {
             _projectile.gameObject.SetActive(false);
-            _judge?.Clear();
-            _currentAttack = null;
         }
 
         private void EnterRecover()
@@ -231,6 +263,12 @@ namespace Oheangbu.Combat
         }
 
         private void Tint(Color color)
+        {
+            _stateTint = color;
+            SetColor(color);
+        }
+
+        private void SetColor(Color color)
         {
             if (_renderer != null) _renderer.material.color = color;
         }

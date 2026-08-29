@@ -19,6 +19,7 @@ namespace Oheangbu.Combat
         [SerializeField] private DodgeAction _dodge;
         [SerializeField] private HarvestAction _harvest;
         [SerializeField] private LockOn _lockOn;
+        [SerializeField] private CameraRigController _cameraRig; // [실험 2026-08-27] 숄더뷰 피치 클램프 조회(없으면 기본 ±80)
 
         private CharacterController _controller;
         private InputAction _move;
@@ -47,7 +48,6 @@ namespace Oheangbu.Combat
         {
             _actions?.FindActionMap(MapName)?.Enable();
             if (_dodgeAction != null) _dodgeAction.performed += OnDodge;
-            if (_harvestAction != null) _harvestAction.performed += OnHarvest;
             if (_lockOnAction != null) _lockOnAction.performed += OnLockOn;
             if (_drawModeChanged != null) _drawModeChanged.Subscribe(OnDrawModeChanged);
             SetCursorLocked(true);
@@ -56,7 +56,6 @@ namespace Oheangbu.Combat
         private void OnDisable()
         {
             if (_dodgeAction != null) _dodgeAction.performed -= OnDodge;
-            if (_harvestAction != null) _harvestAction.performed -= OnHarvest;
             if (_lockOnAction != null) _lockOnAction.performed -= OnLockOn;
             if (_drawModeChanged != null) _drawModeChanged.Unsubscribe(OnDrawModeChanged);
             _actions?.FindActionMap(MapName)?.Disable();
@@ -67,18 +66,26 @@ namespace Oheangbu.Combat
         {
             if (_config == null) return;
 
-            // 시점 — 작도 중에는 마우스를 붓에게 양보한다
+            // 시점 — 작도 중에는 마우스를 붓에게 양보한다(마우스 look만 차단)
             if (!_drawing && _look != null)
             {
                 Vector2 look = _look.ReadValue<Vector2>() * _config.LookSensitivity;
                 transform.Rotate(0f, look.x, 0f);
-                _pitch = Mathf.Clamp(_pitch - look.y, -80f, 80f);
+                _pitch = ClampPitch(_pitch - look.y);
+            }
 
-                // 락온 소프트 당김(예준 검수 — 엘든링식): 카메라가 대상 쪽으로 은은히 끌리되
-                // 고정하지 않는다 — 마우스 입력이 항상 위에 얹히므로 언제든 시선을 뺄 수 있다
-                ApplyLockOnPull();
+            // 락온 소프트 당김(엘든링식): 카메라가 대상 쪽으로 은은히 끌리되 고정하지 않는다.
+            // 작도 중에도 락온이면 계속 돈다(2차 카메라 검수) — 결투 계약은 붓을 들어도 유지된다.
+            // 회전해도 작도는 안 깨진다: 작도면·획이 카메라-로컬이라 화면상 글자는 불변이다.
+            ApplyLockOnPull();
 
-                if (_cameraPivot != null) _cameraPivot.localEulerAngles = new Vector3(_pitch, 0f, 0f);
+            if (_cameraPivot != null) _cameraPivot.localEulerAngles = new Vector3(_pitch, 0f, 0f);
+
+            // 갈무리 = 홀드(3차 플레이 검수 확정) — 누르는 동안 붓이 상대의 먹을 뽑아낸다.
+            // 작도 중엔 마우스가 붓이므로 무효. scaled dt — 감속 중엔 채집도 함께 느려진다
+            if (!_drawing && _harvestAction != null && _harvestAction.IsPressed())
+            {
+                _harvest?.TickHarvest(Time.deltaTime);
             }
 
             // 이동 — 감속 중에도 scaled deltaTime을 그대로 쓴다(세상이 함께 느려진다)
@@ -111,7 +118,15 @@ namespace Oheangbu.Combat
             }
 
             float targetPitch = -Mathf.Asin(Mathf.Clamp(to.normalized.y, -1f, 1f)) * Mathf.Rad2Deg;
-            _pitch = Mathf.Clamp(Mathf.LerpAngle(_pitch, targetPitch, blend), -80f, 80f);
+            _pitch = ClampPitch(Mathf.LerpAngle(_pitch, targetPitch, blend));
+        }
+
+        // 숄더뷰는 카메라 오프셋 궤도가 지면을 관통하므로 클램프가 좁아진다 — 한계는 리그가 소유
+        private float ClampPitch(float pitch)
+        {
+            float min = -80f, max = 80f;
+            if (_cameraRig != null) _cameraRig.GetPitchLimits(out min, out max);
+            return Mathf.Clamp(pitch, min, max);
         }
 
         private void OnDodge(InputAction.CallbackContext _)
@@ -122,12 +137,6 @@ namespace Oheangbu.Combat
                 ? (transform.right * input.x + transform.forward * input.y).normalized
                 : transform.forward;
             _dodge?.TryDodge(direction);
-        }
-
-        private void OnHarvest(InputAction.CallbackContext _)
-        {
-            if (_drawing) return;
-            _harvest?.TryHarvest();
         }
 
         private void OnLockOn(InputAction.CallbackContext _)
