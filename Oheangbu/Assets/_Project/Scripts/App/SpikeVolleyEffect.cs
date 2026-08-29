@@ -8,7 +8,7 @@ namespace Oheangbu.App
     // 투사체 개별 파티클 없음 — 생성·발사·도착 시점에만 집중한다(예준 지시).
     // 피해는 배선의 단일 착탄 시계 그대로 — 연출≠실판정(SPEC-SPELL-FX-ASSETS §9-1).
     // 결합 프리팹의 자식(Volley)에 두고, 어댑터가 커밋 프레임에 Begin으로 떼어내 자체 시계로 굴린다.
-    public sealed class SpikeVolleyEffect : MonoBehaviour
+    public sealed class SpikeVolleyEffect : SpellSequenceEffect
     {
         [SerializeField] private Mesh _spikeMesh;
         [SerializeField] private Material _material;
@@ -59,7 +59,7 @@ namespace Oheangbu.App
         private Color _tint;
 
         // 커밋 프레임에 어댑터가 호출 — 문양(부모)의 수명과 분리해 자체로 달린다
-        public void Begin(Vector3 origin, Transform target, Vector3 fallbackPoint, Color tint)
+        public override void Begin(Vector3 origin, Transform target, Vector3 fallbackPoint, Color tint)
         {
             transform.SetParent(null, true);
             transform.position = origin;

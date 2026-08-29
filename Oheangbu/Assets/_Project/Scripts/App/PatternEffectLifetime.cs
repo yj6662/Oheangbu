@@ -16,6 +16,7 @@ namespace Oheangbu.App
         private const float FlightSafetyMargin = 1f; // 비행 안전핀 여유(초) — 예정 시간+여유를 넘기면 정리(기술 상수)
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
         private readonly List<Material> _ownedMaterials = new List<Material>();
         private Mode _mode;
@@ -27,6 +28,7 @@ namespace Oheangbu.App
         private float _flightDuration;
         private float _flightStart;
         private Vector3 _flightOrigin;
+        private float _arcHeight; // 연출 포물선 높이(마 — §3.1 B안). 같은 비행시간의 lerp에 수직 항만 얹는다
         private bool _arrived;
         private Transform _projectilePart;
         private Transform _explosionPart;
@@ -42,7 +44,7 @@ namespace Oheangbu.App
         // 공격 작도 — 문양 투사체: 배선이 확정한 비행시간으로 목표를 추적해 착탄 개화.
         // 피해는 배선이 같은 시각에 적용한다(피해=착탄 동기화 — 시계가 하나라 어긋나지 않는다)
         public static void AttachProjectile(GameObject go, float lifetime, Color tint,
-            Transform target, Vector3 fallbackPoint, float flightDuration)
+            Transform target, Vector3 fallbackPoint, float flightDuration, float arcHeight = 0f)
         {
             var self = Create(go, lifetime, tint, Mode.Projectile);
             self._targetTransform = target;
@@ -50,6 +52,7 @@ namespace Oheangbu.App
             self._flightDuration = Mathf.Max(0.05f, flightDuration);
             self._flightStart = Time.time;
             self._flightOrigin = go.transform.position;
+            self._arcHeight = Mathf.Max(0f, arcHeight);
             self.PrepareFlight();
             self.Restart();
         }
@@ -137,7 +140,14 @@ namespace Oheangbu.App
         // 색의 정본은 팔레트 하나다(색=의미 단일 출처). 비활성 자식 포함 — 착탄 개화부도 미리 물들인다.
         private void Tint(Color tint)
         {
-            foreach (var ps in GetComponentsInChildren<ParticleSystem>(true))
+            TintHierarchy(gameObject, tint, _ownedMaterials);
+        }
+
+        // 계층 전체 팔레트 틴트 — 자체 시계 연출(SpellSequenceEffect 파생)도 같은 색 규율을 쓴다(P4 공용화).
+        // ownedMaterials: 인스턴스화된 머티리얼 수거 목록 — 호출자가 수명 종료 시 Destroy 책임.
+        public static void TintHierarchy(GameObject root, Color tint, List<Material> ownedMaterials)
+        {
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true))
             {
                 var main = ps.main;
                 main.startColor = new ParticleSystem.MinMaxGradient(tint);
@@ -170,20 +180,19 @@ namespace Oheangbu.App
                 }
             }
 
-            foreach (var r in GetComponentsInChildren<Renderer>(true))
+            foreach (var r in root.GetComponentsInChildren<Renderer>(true))
             {
                 var material = r.material; // 인스턴스화 — 원본 에셋 머티리얼 보호
                 if (material == null) continue;
-                if (material.HasProperty(ColorId))
-                {
-                    // 파티클은 백색 중립화(색의 정본=startColor) / 메시(생성 모델 실체 — FX-ASSETS §4.2-2)는
-                    // startColor 경로가 없으므로 머티리얼에 직접 팔레트색을 물린다
-                    material.SetColor(ColorId, r is MeshRenderer ? tint : Color.white);
-                }
-                _ownedMaterials.Add(material);
+                // 파티클은 백색 중립화(색의 정본=startColor) / 메시(생성 모델 실체 — FX-ASSETS §4.2-2)는
+                // startColor 경로가 없으므로 머티리얼에 직접 팔레트색을 물린다 — URP는 _BaseColor가 정본 슬롯
+                Color meshColor = r is MeshRenderer ? tint : Color.white;
+                if (material.HasProperty(ColorId)) material.SetColor(ColorId, meshColor);
+                if (r is MeshRenderer && material.HasProperty(BaseColorId)) material.SetColor(BaseColorId, meshColor);
+                ownedMaterials?.Add(material);
             }
 
-            foreach (var light in GetComponentsInChildren<Light>(true))
+            foreach (var light in root.GetComponentsInChildren<Light>(true))
             {
                 light.color = tint; // 개화 순간의 광원 — 수 초 뒤 파괴되므로 지속 발광 아님
             }
@@ -228,6 +237,8 @@ namespace Oheangbu.App
             float t = (Time.time - _flightStart) / _flightDuration;
             Vector3 targetPos = CurrentTargetPos();
             Vector3 next = t >= 1f ? targetPos : Vector3.Lerp(_flightOrigin, targetPos, t);
+            // 포물선 아크(연출만): 양 끝 0이라 출발점·착탄점·비행시간이 전부 불변 — 판정 시계 무접촉
+            if (t < 1f) next += Vector3.up * (_arcHeight * 4f * t * (1f - t));
 
             // 허공 비행(대상 미확정)은 첫 장애물에서 개화 — 적·벽을 뚫고 지나가지 않는다(7차 검수 1).
             // 유도(대상 확정)는 보장 명중이라 차단하지 않는다 — 피해와 연출의 시계를 지킨다
@@ -238,6 +249,7 @@ namespace Oheangbu.App
                 return;
             }
 
+            Vector3 prev = transform.position;
             transform.position = next;
             if (t >= 1f)
             {
@@ -245,7 +257,8 @@ namespace Oheangbu.App
                 return;
             }
 
-            Vector3 dir = targetPos - transform.position;
+            // 아크 비행은 진행 방향(속도)을 향한다 — 포물선 따라 기수가 눕고 든다. 직선은 현행 유지
+            Vector3 dir = _arcHeight > 0f ? next - prev : targetPos - transform.position;
             if (dir.sqrMagnitude > 0.001f) transform.right = dir.normalized;
         }
 

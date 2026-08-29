@@ -19,6 +19,7 @@ namespace Oheangbu.App
         [SerializeField] private float _replayInterval = 4f; // 이펙트를 주기 재생 — 타이밍별 컷 확보
         [SerializeField] private bool _faceCamera; // Fly 개화부 감사용(문양 판 법선=로컬 +X)
         [SerializeField] private GameObject[] _extraPrefabs = new GameObject[0]; // 결합 프리팹 검수 — 실런타임 경로(AttachBloom)로 개화
+        [SerializeField] private Color[] _extraTints = new Color[0]; // _extraPrefabs 병렬 — 어휘별 팔레트 색 감사(알파 0=기본 금)
 
         private readonly List<GameObject> _spawned = new List<GameObject>();
         private float _nextReplay;
@@ -113,13 +114,15 @@ namespace Oheangbu.App
                 Vector3 pos = transform.position
                     + new Vector3(i * _spacing, 1.2f, -(rows + 1) * _spacing);
                 var go = Instantiate(prefab, pos, Quaternion.identity);
-                var auditTint = new Color(0.682f, 0.706f, 0.729f); // 금 팔레트 실측값 — 인게임과 동일 조건 감사(9차 검수)
-                var volley = go.GetComponentInChildren<SpikeVolleyEffect>(true);
-                if (volley != null)
+                var auditTint = _extraTints != null && i < _extraTints.Length && _extraTints[i].a > 0f
+                    ? _extraTints[i]
+                    : new Color(0.682f, 0.706f, 0.729f); // 기본=금 팔레트 실측값(9차 검수)
+                var sequence = go.GetComponentInChildren<SpellSequenceEffect>(true);
+                if (sequence != null)
                 {
-                    // 일제 연출 검수 — 전방 9m 허공 목표로 발화(실런타임 Begin 경로)
-                    volley.Begin(pos, null, pos + Vector3.forward * 9f + Vector3.up * 0.6f, auditTint);
-                    _spawned.Add(volley.gameObject);
+                    // 자체 시계 연출 검수 — 전방 4m(그리드 앞 여백·플랫폼 위) 허공 목표로 발화(실런타임 Begin 경로)
+                    sequence.Begin(pos, null, pos + Vector3.forward * 4f + Vector3.up * 0.6f, auditTint);
+                    _spawned.Add(sequence.gameObject);
                 }
                 PatternEffectLifetime.AttachBloom(go, 3f, auditTint);
                 _spawned.Add(go);

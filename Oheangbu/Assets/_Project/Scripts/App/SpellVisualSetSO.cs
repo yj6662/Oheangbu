@@ -16,6 +16,7 @@ namespace Oheangbu.App
             public string Letter;      // 완성형 글자 — SpellBook 미러와 같은 키
             public GameObject FxPrefab; // 결합 프리팹(문양±생성 모델) — Projectile/Explosion 자식명 규약
             public float ScaleMul;      // 글자 배율에 곱하는 보정(0 이하=1 취급)
+            public float ArcHeight;     // 연출 포물선 높이(m·0=직선) — 마의 §3.1 B안. 비행시간 불변
         }
 
         [SerializeField] private Entry[] _entries = Array.Empty<Entry>();
