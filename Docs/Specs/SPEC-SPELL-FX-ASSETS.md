@@ -2,7 +2,7 @@
 
 | 항목 | 값 |
 |---|---|
-| 상태 | **TEST** (2026-08-29 G1 통과 — 커버리지 감사 확정·소 파일럿 승인. PASS 관문=§6 전수) |
+| 상태 | **PASS** (2026-08-30 승격 — §6 전수 8항 통과[런 로그 P5]+예준 실플레이 게이트+예준 확정. 단서: 현행 아트=프로토타입 자리표시자, 릴리스 전 전면 개편 예정 — DECISIONS #133·#134) |
 | 작성 | 2026-08-29 |
 | 선행 | SPEC-COMBAT-CORE-LOOP §10.1(커밋 문양·문양 투사체·피해=착탄 동기화 구현 완료) · SPEC-ART-INK-LOOK PASS(담채 팔레트·플래시 규칙 정본) |
 | 근거 | SPELL-VOCAB(CSV 정본) · SPELL-INITIAL(초성 탄도 형상표) · ART-CHARTER · ART-COLOR · ART-INK · PROD-AIASSET · PROD-RIG · PROD-PIPELINE · COMBAT-ATTACK |
@@ -201,8 +201,8 @@ SpellFx_<글자> (루트 — PatternEffectLifetime 대상, 루트 ParticleSystem
 | P1 커버리지 감사 | 기존 에셋 후보 스폰·컷 → 감사 표 → **G1**: 생성 대상·순서 확정 + 본 Spec TEST 전이 | 0 |
 | P2 코드 준비 | SpellVisualSetSO+어댑터 매핑+메시 틴트 분기 — **생성물 없이** 기존 에셋만으로 어휘별 분화 선배선·검증 → **G2** | 0 |
 | P3 파일럿 1건 | 프롬프트 확인→preview(썸네일 게이트)→후처리→결합 프리팹→연출 궤적 훅→플레이모드 3컷 → **G3**(파이프라인 승인) | ≤40 |
-| P4 확산 | 잔여 대상 건당 미니 루프+경량 게이트. 연속 2건 preview 불합격=중단·문답. **진행(2026-08-29)**: 공통 골격 SpellSequenceEffect 일반화 → ① 노 재조합(SpellFx_No=Fly08+Bottom06 화염) ② 고 생성(가시 클러스터 3,082tris·1차 채택)+ThornRiseEffect ③ 오 생성(파도 crest 5,049tris·1차 채택)+GroundWaveEffect ④ 모 재조합(SpellFx_Mo=Fly04+Bottom20, GroundWaveEffect 공유) ⑤ 마 아크 항(Entry.ArcHeight=2.5 [TEST]) — 감사 컷 검증 완료, 잔여=예준 실플레이 게이트 | 10 실측 |
-| P5 통합 검증·문서 | §6 전수·런 로그 마감·PROJECT_STATUS 갱신·드리프트 0. 커밋=예준 지시 시만 | 0 |
+| P4 확산 | 잔여 대상 건당 미니 루프+경량 게이트. 연속 2건 preview 불합격=중단·문답. **진행(2026-08-29)**: 공통 골격 SpellSequenceEffect 일반화 → ① 노 재조합(SpellFx_No=Fly08+Bottom06 화염) ② 고 생성(가시 클러스터 3,082tris·1차 채택)+ThornRiseEffect ③ 오 생성(파도 crest 5,049tris·1차 채택)+GroundWaveEffect ④ 모 재조합(SpellFx_Mo=Fly04+Bottom20, GroundWaveEffect 공유) ⑤ 마 아크 항(Entry.ArcHeight=2.5 [TEST]) — 감사 컷 검증 완료·**예준 실플레이 게이트 통과(2026-08-30)** | 10 실측 |
+| P5 통합 검증·문서 | §6 전수·런 로그 마감·PROJECT_STATUS 갱신·드리프트 0. 커밋=예준 지시 시만. **완료(2026-08-30)**: 예준 실플레이 게이트(광역 4자+마 아크) 통과 후 §6 8항 전수 통과 — 결과 표·실측치=런 로그 P5 섹션(발광 정적+런타임·그레이스케일 판독·인식 코드 계층 증명·폴리 동시 총량 15,410 최대·프레임 4.23ms 최대 실측) | 0 |
 
 ## 8. 수치·예산 (전부 [TEST] 시작값)
 
