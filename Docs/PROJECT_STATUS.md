@@ -38,6 +38,10 @@ Last Updated: 2026-08-29 (PR #6 merge · 플레이 검수 1~7차 반영 + DECISI
 
 **SPEC-COMBAT-CORE-LOOP: TEST** — PR #6 머지(검수 1~7차: 잔존 방어막·갈무리 홀드·문양 개화/투사체·
 착탄 동기화·불발 통일). 검수 전이는 DECISIONS #128~132로 등재 완료. 잔여 관문 = §6 실플레이 검증 7종·재미 메모
+**SPEC-SPELL-FX-ASSETS: TEST** — 공격 작도 모델·VFX 파이프라인(Meshy→Blender→Unity) goal 런 진행 중.
+P0~P3 완료: 커버리지 감사(G1)·어휘별 시각 매핑(G2)·소 파일럿 관통(G3 — 결정 송곳 일제 연출, 검수 8~12차
+반영: 일제 재설계·색 중립화·가로 형성→회전 조준·궤적). 잔여 = 소 최종 판정 → P4 확산(고 가시·오 파도).
+런 로그=Tools/MeshyRuns(크레딧 실측 10 소모·잔액 1016)
 **카메라 실증 실험(§12)** — 숄더뷰+작도 클로즈업(V 토글, 결정 3의 검증 — 채택 시 DECISIONS 선행). 예준 실플레이 판정 대기
 비고: 상태 드리프트 자동 검사 도입(Tools/Check-StatusDrift.ps1, SessionStart 훅 — 2026-08-27)
 
