@@ -540,6 +540,7 @@ MonoBehaviour:
   _strokeMaterial: {fileID: 2100000, guid: 1cc288e785fc6cb4a81b07cf8c3e6f5c, type: 2}
   _motifMaterial: {fileID: 2100000, guid: bd2fb96307487d54abb159edcdf28761, type: 2}
   _commitPatternPrefab: {fileID: 8613232333380734222, guid: a97ce257277d3a8478674b56e65812ce, type: 3}
+  _visualSet: {fileID: 11400000, guid: 75fc0456243e8a2479ea93e29a052a95, type: 2}
   _spellBook: {fileID: 11400000, guid: 220e0d58dba03fa45b821ffe367e10fb, type: 2}
   _combatConfig: {fileID: 11400000, guid: 3c72e0f096c47d94290503c64ebe3d1c, type: 2}
   _elementPalette: {fileID: 11400000, guid: 24b9742d59480554b94796333b3ef423, type: 2}

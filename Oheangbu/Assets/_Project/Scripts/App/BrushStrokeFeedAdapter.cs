@@ -26,6 +26,7 @@ namespace Oheangbu.App
         [SerializeField] private Material _strokeMaterial;                // InkStroke 머티리얼 — 비우면 Sprites/Default 폴백(스텐실·증발·플래시 없음)
         [SerializeField] private Material _motifMaterial;                 // InkMotif 머티리얼 — 비우면 모티프 생략(플래시만)
         [SerializeField] private GameObject _commitPatternPrefab;         // [4차 검수] 커밋 문양(유료 에셋 슬롯 — §9 예외 4). 배정 시 모티프 대체, 비우면 복귀
+        [SerializeField] private SpellVisualSetSO _visualSet;             // [FX-ASSETS §4.4] 어휘별 시각 분화 — 미등재 글자=위 기본 슬롯 폴백
         [SerializeField] private SpellBookSO _spellBook;                  // 술식 종류 조회(공격=투사체/패링=제자리 개화) — 어휘 미러 읽기만
         [SerializeField] private CombatConfigSO _combatConfig;            // 허공 비행 속도 참조(읽기만) — 명중 비행시간은 배선이 밀어준다
         [SerializeField] private ElementPaletteSO _elementPalette;        // 술식 플래시 속성색(초성→오행, TEST)
@@ -91,6 +92,8 @@ namespace Oheangbu.App
         private Transform _pendingAttackTarget; // 배선이 밀어준 명중 대상(유도 추적) — 없으면 허공 착탄
         private float _pendingAttackDuration;   // 배선이 확정한 비행시간 — 피해 착탄 시각과 같은 시계
         private bool _pendingCastFailed;        // 배선이 알린 시전 불성립(먹 부족·미등재) — 플래시·문양 대신 불발 증발
+        private GameObject _pendingFxPrefab;    // 어휘별 프리팹 스태시(_visualSet 조회) — 없으면 기본 슬롯
+        private float _pendingFxScaleMul = 1f;
 
         // 표현용 상태 — 획 하나가 그려지는 동안의 붓 상태다. 인식 데이터와 공유하지 않는다.
         private Vector2 _lastInputScreen;  // 직전 입력 좌표 — 속도 측정용
@@ -306,6 +309,14 @@ namespace Oheangbu.App
             // 술식 종류도 읽기만 — 공격이면 문양이 투사체로 나간다(5차 검수). 미등재 글자=제자리 개화
             _pendingAttack = _spellBook != null && _spellBook.TryGet(letter.Letter, out var spell)
                 && spell.Kind != SpellKind.Parry;
+            // 어휘별 시각 분화(FX-ASSETS §4.4) — 표현 조회만. 미등재면 기본 슬롯이 받는다
+            _pendingFxPrefab = null;
+            _pendingFxScaleMul = 1f;
+            if (_visualSet != null && _visualSet.TryGet(letter.Letter, out var visual))
+            {
+                _pendingFxPrefab = visual.FxPrefab;
+                _pendingFxScaleMul = visual.ScaleMul > 0f ? visual.ScaleMul : 1f;
+            }
             _hasPendingFlash = true;
         }
 
@@ -327,6 +338,8 @@ namespace Oheangbu.App
             // OnLetterDrawn에서 지우면 안 된다: 채널 구독 순서상 배선의 푸시가 먼저 올 수 있다
             _pendingAttackTarget = null;
             _pendingAttackDuration = 0f;
+            _pendingFxPrefab = null;
+            _pendingFxScaleMul = 1f;
         }
 
         // 피격(글자만 소멸)·조용한 취소 등 커밋 경로 밖의 소거 — 남아 있는 획을 증발시킨다.
@@ -362,7 +375,7 @@ namespace Oheangbu.App
             if (isFlash)
             {
                 // 문양이 배정돼 있으면 모티프 대신 — 글자가 그 자리에서 전통 문양으로 변형된다(4차 검수) [TEST]
-                if (_commitPatternPrefab != null) SpawnPattern(group);
+                if (_pendingFxPrefab != null || _commitPatternPrefab != null) SpawnPattern(group);
                 else SpawnMotifs(group);
             }
             _fading.Add(group);
@@ -376,11 +389,28 @@ namespace Oheangbu.App
         {
             if (_style == null || !TryComputeLetterBounds(group, out Bounds bounds)) return;
 
+            // 어휘별 프리팹 우선(FX-ASSETS §4.4), 미등재=기본 슬롯 — 기존 동작 비파괴
+            GameObject prefab = _pendingFxPrefab != null ? _pendingFxPrefab : _commitPatternPrefab;
+            if (prefab == null) return;
+
             float letterSize = Mathf.Max(bounds.size.x, bounds.size.y, 0.01f);
-            var go = Instantiate(_commitPatternPrefab, bounds.center, transform.rotation);
+            var go = Instantiate(prefab, bounds.center, transform.rotation);
             go.name = "SpellPattern";
-            go.transform.localScale = Vector3.one * (letterSize * _style.PatternScale);
+            go.transform.localScale = Vector3.one * (letterSize * _style.PatternScale * _pendingFxScaleMul);
             go.SetActive(true); // 일부 에셋 프리팹은 비활성 자식 포함 — 루트만 보장
+
+            // 일제 연출(8차 검수 — 소): 프리팹이 SpikeVolleyEffect를 품으면 문양은 제자리 개화,
+            // 송곳 일제가 자체 시계로 목표를 향한다. 피해는 배선의 착탄 시계 그대로(연출≠실판정 §9-1)
+            var volley = go.GetComponentInChildren<SpikeVolleyEffect>(true);
+            if (_pendingAttack && volley != null)
+            {
+                Transform volleyTarget = _pendingAttackTarget;
+                _pendingAttackTarget = null;
+                _pendingAttackDuration = 0f;
+                volley.Begin(bounds.center, volleyTarget, MissPoint(bounds.center), group.FlashColor);
+                PatternEffectLifetime.AttachBloom(go, _style.PatternLifetime, group.FlashColor);
+                return;
+            }
 
             if (_pendingAttack)
             {

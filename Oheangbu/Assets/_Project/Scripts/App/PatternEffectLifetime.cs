@@ -60,10 +60,14 @@ namespace Oheangbu.App
             self._mode = mode;
             self._lifetime = Mathf.Max(0.2f, lifetime);
             self._startTime = Time.time;
-            self._projectilePart = go.transform.Find("Projectile");
-            self._explosionPart = go.transform.Find("Explosion");
-            var animator = go.GetComponent<Animator>();
-            if (animator != null) animator.enabled = false; // 비행·개화 타이밍은 이 컴포넌트가 소유
+            // 결합 프리팹(FX-ASSETS §4.3)은 문양 원본을 중첩 인스턴스로 품는다 —
+            // 이름 규약(Projectile/Explosion)을 깊이 무관하게 찾는다
+            self._projectilePart = FindDeep(go.transform, "Projectile");
+            self._explosionPart = FindDeep(go.transform, "Explosion");
+            foreach (var animator in go.GetComponentsInChildren<Animator>(true))
+            {
+                animator.enabled = false; // 비행·개화 타이밍은 이 컴포넌트가 소유(중첩 인스턴스 포함)
+            }
             self.Tint(tint);
             return self;
         }
@@ -99,6 +103,28 @@ namespace Oheangbu.App
             if (dir.sqrMagnitude > 0.001f) transform.right = dir.normalized;
         }
 
+        private static Gradient Whiten(Gradient source)
+        {
+            if (source == null) return null;
+            var keys = source.colorKeys;
+            for (int i = 0; i < keys.Length; i++) keys[i].color = Color.white;
+            var gradient = new Gradient();
+            gradient.SetKeys(keys, source.alphaKeys);
+            return gradient;
+        }
+
+        private static Transform FindDeep(Transform root, string name)
+        {
+            for (int i = 0; i < root.childCount; i++)
+            {
+                var child = root.GetChild(i);
+                if (child.name == name) return child;
+                var found = FindDeep(child, name);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
         private Vector3 CurrentTargetPos()
         {
             return _targetTransform != null
@@ -115,13 +141,45 @@ namespace Oheangbu.App
             {
                 var main = ps.main;
                 main.startColor = new ParticleSystem.MinMaxGradient(tint);
+                // colorOverLifetime에 박힌 에셋 고유색도 백색 중립화 — 9차 검수: 고유 청색이
+                // 금 팔레트를 뚫고 나왔다. 알파 키(페이드 곡선)는 보존 — 색만 팔레트 단일 출처로
+                var col = ps.colorOverLifetime;
+                if (col.enabled)
+                {
+                    var mmg = col.color;
+                    switch (mmg.mode)
+                    {
+                        case ParticleSystemGradientMode.Color:
+                            col.color = new ParticleSystem.MinMaxGradient(
+                                new Color(1f, 1f, 1f, mmg.color.a));
+                            break;
+                        case ParticleSystemGradientMode.TwoColors:
+                            col.color = new ParticleSystem.MinMaxGradient(
+                                new Color(1f, 1f, 1f, mmg.colorMin.a),
+                                new Color(1f, 1f, 1f, mmg.colorMax.a));
+                            break;
+                        case ParticleSystemGradientMode.Gradient:
+                        case ParticleSystemGradientMode.RandomColor:
+                            col.color = new ParticleSystem.MinMaxGradient(Whiten(mmg.gradient));
+                            break;
+                        case ParticleSystemGradientMode.TwoGradients:
+                            col.color = new ParticleSystem.MinMaxGradient(
+                                Whiten(mmg.gradientMin), Whiten(mmg.gradientMax));
+                            break;
+                    }
+                }
             }
 
             foreach (var r in GetComponentsInChildren<Renderer>(true))
             {
                 var material = r.material; // 인스턴스화 — 원본 에셋 머티리얼 보호
                 if (material == null) continue;
-                if (material.HasProperty(ColorId)) material.SetColor(ColorId, Color.white);
+                if (material.HasProperty(ColorId))
+                {
+                    // 파티클은 백색 중립화(색의 정본=startColor) / 메시(생성 모델 실체 — FX-ASSETS §4.2-2)는
+                    // startColor 경로가 없으므로 머티리얼에 직접 팔레트색을 물린다
+                    material.SetColor(ColorId, r is MeshRenderer ? tint : Color.white);
+                }
                 _ownedMaterials.Add(material);
             }
 
