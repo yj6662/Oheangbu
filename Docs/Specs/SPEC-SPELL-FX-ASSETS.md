@@ -65,8 +65,13 @@ CSV DTO 임포터와 함께 후속(COMBAT-CORE-LOOP §10.1 근사 명시의 연�
 [감사 통과 대상만] Meshy Text-to-3D preview (무텍스처 — refine 0회)
   → 썸네일 선검수(다운로드 전 게이트)
   → FBX+GLB 다운로드(스크래치)
-  → Blender MCP 후처리: 정리·데시메이트(§8)·피벗/축 정렬(비행·전진축=+X)·스케일 실측·FBX 익스포트
-     (Blender 미연결 폴백: Meshy FBX 직수령 + Unity 임포터 Scale Factor·부모 오프셋 보정)
+  → **Blender 반입 검수(정례 게이트 — 예준 확정 2026-08-29)**: Blender MCP로 먼저 임포트해 상태를
+     확인한 뒤에만 Unity로 넘긴다. 검수 항목 5: ① 트라이 수(§8 예산 대비) ② dimensions 실측
+     (정규화 전 원치수 기록) ③ 피벗 위치 ④ 정점 장축·첨단 방향(익스포트 후 Unity 메시 +Z가 되도록
+     정렬 — §4.2-6) ⑤ 뷰포트 스크린샷 육안(분리 파츠·구멍·잡면 유무)
+  → Blender 후처리: 정리·데시메이트(§8)·피벗 중심·최장축 1.0 정규화·머티리얼 제거·FBX 익스포트
+     (Blender 미연결 시: 검수 5항을 Unity 반입 직후 mesh bounds·인스펙터 실측으로 대체하고
+     **예외 런으로 런 로그에 기입** — 무검수 직반입 금지)
   → Unity Assets/_Project/Art/Generated/<글자>/ (gitignore — §4.7)
   → 결합 프리팹(§4.3) → SpellVisualSetSO 등재(§4.4)
 ```
@@ -98,7 +103,8 @@ topology=triangle, target_polycount=§8, should_remesh=true, target_formats=[glb
    **임포터·축 수칙(파일럿 실측 확정)**: ① Meshy FBX는 fileScale 0.01로 들어와 메시가 1/100 —
    반입 직후 `useFileScale=false` ② Blender 경유 FBX의 메시 정점은 Z-업 그대로다
    (`bakeAxisConversion`도 무효 — 12차 실측). **메시 기준축(첨단·비행축) = +Z**가 정본이며
-   런타임 코드(SpikeVolleyEffect 등)도 +Z 기준. 반입 직후 mesh bounds 실측으로 장축 검증이 수용 조건.
+   런타임 코드(SpikeVolleyEffect 등)도 +Z 기준. 축·치수의 1차 검증=Blender 반입 검수(§4.1 게이트),
+   Unity 반입 직후 mesh bounds 실측이 최종 확인 — 둘 다 수용 조건.
 7. **폴리 예산**: §8 표. 초과분은 Blender 데시메이트 수렴 후 재검.
 8. **수묵 정합 최종 판정 = 예준 육안**: 「담채인가, 네온인가 / 실체가 읽히는가」(§9 예외 2 —
    아트 디렉션은 사람 영역, PROD-CHARTER).
@@ -216,4 +222,5 @@ SpellFx_<글자> (루트 — PatternEffectLifetime 대상, 루트 ParticleSystem
 
 | 어휘 | task ID | 판정 | 산출물 |
 |---|---|---|---|
-| 소 | 01a04b40-37fd-7629-b0c9-8404a55221ac | 채택(2026-08-29 · 5크레딧·1차 시도·924tris) | SpikeBody_So.fbx(비추적) + SpellFx_So.prefab(배리언트) |
+| 소 | 01a04b40-37fd-7629-b0c9-8404a55221ac | 폐기(12차 검수 — 형태 단순, 결정형으로 대체) | SpikeBody_So.fbx(비추적·task ID로 복구 가능) |
+| 소 | 01a04ba5-66ef-7781-b03c-d271017c430a | 채택(2026-08-29 · 5크레딧·1차 시도·1035tris·각진 단결정) | CrystalSpike_So.fbx(비추적) + SpellFx_So.prefab(배리언트) |
