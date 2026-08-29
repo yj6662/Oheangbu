@@ -30,6 +30,18 @@ $Specs = @{
         Prompt          = "A single elongated sharp crystal spike, faceted hexagonal crystal shard, angular gemstone facets narrowing to a needle point, crystallized metal, stylized game projectile, clean bold silhouette, one single object centered, simple flat facets, no base, no decoration"
         TargetPolycount = 1000
     }
+    # 고(木 광역 — 영역 가시 일제 솟음)의 가시 클러스터 낱개. 곡직(曲直) — 굽은 생목의 결(P4 플랜 승인).
+    go = @{
+        Letter          = "고"
+        Prompt          = "A cluster of three gnarled curved wooden thorns, twisted living-wood spikes narrowing to sharp points, organic bramble growth, stylized game asset, clean bold silhouette, one single object centered, no base, no decoration"
+        TargetPolycount = 3000
+    }
+    # 오(水 광역 — 전진하는 느린 파도)의 파도 crest. 윤하(潤下) — 낮게 말려 덮치는 물마루(P4 플랜 승인).
+    o = @{
+        Letter          = "오"
+        Prompt          = "A single stylized curling ocean wave crest, smooth flowing curved water form breaking forward, wide arc shape, sculptural clean silhouette, one single object centered, simple smooth surfaces, no foam, no base, no decoration"
+        TargetPolycount = 5000
+    }
 }
 
 # ---- 키 로드 (.env — 값은 변수로만, 어떤 경로로도 출력하지 않는다) ----

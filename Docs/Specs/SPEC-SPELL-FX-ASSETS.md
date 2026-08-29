@@ -53,7 +53,9 @@ CSV 정본의 기본 공격 10자 중 **기존 에셋(전통 문양 이펙트)�
 ### 3.1 연출 궤적 — B안 **확정** (예준 2026-08-29)
 
 판정 시계는 불변, **연출만** 궤적 분화한다: 마=같은 비행시간의 lerp에 수직 아크 항(포물선 연출) /
-오·모=착탄 후 개화부가 지면을 전진(피해는 기존 단일 착탄 그대로). 연출과 실판정의 괴리
+오·모=**시전자 전방(커밋 문양 아래 지면)에서 형성돼 목표 방향으로 지면을 전진**(피해는 기존 단일
+착탄 그대로) [개정 2026-08-29 문답 — 구 「착탄 후 전진」에서 소 파일럿의 「커밋 자리 형성」 소환감
+문법으로 통일]. 연출과 실판정의 괴리
 (파도 「경로 타격」이 실제론 단일 타격)는 §9 예외 1로 명시 — 정식 궤도·판정 분화는
 CSV DTO 임포터와 함께 후속(COMBAT-CORE-LOOP §10.1 근사 명시의 연장).
 
@@ -100,11 +102,17 @@ topology=triangle, target_polycount=§8, should_remesh=true, target_formats=[glb
 6. **축·피벗 규격**: 투사체형=비행축 로컬 +X·피벗 후단 중심(`PatternEffectLifetime`이
    transform.right로 조준 — 기존 Fly 실측 관례). 지면 개화형(가시·파도)=업축 +Y·피벗 바닥 중심,
    전진형=전진축 +X. Unity 반입 후 실물 축 확인이 수용 조건(래퍼 회전 보정 허용).
-   **임포터·축 수칙(파일럿 실측 확정)**: ① Meshy FBX는 fileScale 0.01로 들어와 메시가 1/100 —
-   반입 직후 `useFileScale=false` ② Blender 경유 FBX의 메시 정점은 Z-업 그대로다
-   (`bakeAxisConversion`도 무효 — 12차 실측). **메시 기준축(첨단·비행축) = +Z**가 정본이며
-   런타임 코드(SpikeVolleyEffect 등)도 +Z 기준. 축·치수의 1차 검증=Blender 반입 검수(§4.1 게이트),
-   Unity 반입 직후 mesh bounds 실측이 최종 확인 — 둘 다 수용 조건.
+   **임포터·축 수칙(파일럿+P4 실측 개정)**: ① fileScale 함정은 **경로별로 다르다** — Meshy 직수령
+   FBX=fileScale 0.01+정점 m(→`useFileScale=false` 필요) / Blender 익스포트(`apply_scale_options=
+   'FBX_SCALE_ALL'`)=fileScale 1+정점 그대로(→임포터 기본값 유지). 반입 직후 bounds 실측이 유일한
+   판정 — 플래그를 맹목 적용하지 않는다(P4 실측: 소 수칙의 맹목 적용이 ×100 오류를 냈다).
+   ② Blender→Unity 반입은 메시를 **180°Y 회전 등가(X·Z 부호 반전)**로 들여온다 — 중심 피벗·준대칭
+   메시(소 결정)에선 안 보이고 바닥 피벗(고 가시)에서 실측 확정. 보상=Blender에서 180°X 선회전
+   (첨단·높이를 블렌더 −Z로) 후 피벗 재계산. ③ Blender 자동화에서 `ops.transform_apply`·
+   `obj.dimensions`는 MCP 실행 문맥에서 불신(무효·캐시 스테일 실측) — **matrix_world를 정점에
+   직접 굽고 정점 좌표 실측으로만 판정**한다. **Unity 메시 기준축 = 첨단·높이 +Z·전진 +Y**가
+   정본이며 런타임 코드(SpikeVolley·ThornRise·GroundWave)도 이 기준. 축·치수의 1차 검증=
+   Blender 반입 검수(§4.1 게이트), Unity mesh bounds 실측이 최종 확인 — 둘 다 수용 조건.
 7. **폴리 예산**: §8 표. 초과분은 Blender 데시메이트 수렴 후 재검.
 8. **수묵 정합 최종 판정 = 예준 육안**: 「담채인가, 네온인가 / 실체가 읽히는가」(§9 예외 2 —
    아트 디렉션은 사람 영역, PROD-CHARTER).
@@ -193,7 +201,7 @@ SpellFx_<글자> (루트 — PatternEffectLifetime 대상, 루트 ParticleSystem
 | P1 커버리지 감사 | 기존 에셋 후보 스폰·컷 → 감사 표 → **G1**: 생성 대상·순서 확정 + 본 Spec TEST 전이 | 0 |
 | P2 코드 준비 | SpellVisualSetSO+어댑터 매핑+메시 틴트 분기 — **생성물 없이** 기존 에셋만으로 어휘별 분화 선배선·검증 → **G2** | 0 |
 | P3 파일럿 1건 | 프롬프트 확인→preview(썸네일 게이트)→후처리→결합 프리팹→연출 궤적 훅→플레이모드 3컷 → **G3**(파이프라인 승인) | ≤40 |
-| P4 확산 | 잔여 대상 건당 미니 루프+경량 게이트. 연속 2건 preview 불합격=중단·문답 | 건당 ≤40 |
+| P4 확산 | 잔여 대상 건당 미니 루프+경량 게이트. 연속 2건 preview 불합격=중단·문답. **진행(2026-08-29)**: 공통 골격 SpellSequenceEffect 일반화 → ① 노 재조합(SpellFx_No=Fly08+Bottom06 화염) ② 고 생성(가시 클러스터 3,082tris·1차 채택)+ThornRiseEffect ③ 오 생성(파도 crest 5,049tris·1차 채택)+GroundWaveEffect ④ 모 재조합(SpellFx_Mo=Fly04+Bottom20, GroundWaveEffect 공유) ⑤ 마 아크 항(Entry.ArcHeight=2.5 [TEST]) — 감사 컷 검증 완료, 잔여=예준 실플레이 게이트 | 10 실측 |
 | P5 통합 검증·문서 | §6 전수·런 로그 마감·PROJECT_STATUS 갱신·드리프트 0. 커밋=예준 지시 시만 | 0 |
 
 ## 8. 수치·예산 (전부 [TEST] 시작값)
@@ -224,3 +232,5 @@ SpellFx_<글자> (루트 — PatternEffectLifetime 대상, 루트 ParticleSystem
 |---|---|---|---|
 | 소 | 01a04b40-37fd-7629-b0c9-8404a55221ac | 폐기(12차 검수 — 형태 단순, 결정형으로 대체) | SpikeBody_So.fbx(비추적·task ID로 복구 가능) |
 | 소 | 01a04ba5-66ef-7781-b03c-d271017c430a | 채택(2026-08-29 · 5크레딧·1차 시도·1035tris·각진 단결정) | CrystalSpike_So.fbx(비추적) + SpellFx_So.prefab(배리언트) |
+| 고 | 01a04bcf-5cd7-728d-b30e-87c819cc2373 | 채택(2026-08-29 · 5크레딧·1차 시도·3,082tris·굽은 가시 4갈래+기단 — 썸네일 게이트 통과) | ThornCluster_Go.fbx(비추적) + SpellFx_Go.prefab(배리언트) |
+| 오 | 01a04bcf-6228-7246-a9cc-45bc6d588b48 | 채택(2026-08-29 · 5크레딧·1차 시도·5,049tris·말리는 물마루 핀 — 썸네일 게이트 통과, 폭은 스케일·향후 지그재그 배치로) | WaveCrest_O.fbx(비추적) + SpellFx_O.prefab(배리언트) |
