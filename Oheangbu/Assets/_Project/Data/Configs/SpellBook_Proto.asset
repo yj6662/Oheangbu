@@ -21,6 +21,38 @@ MonoBehaviour:
     Kind: 1
     Element: 0
     BasePower: 9
+  - Letter: "나"
+    Kind: 0
+    Element: 1
+    BasePower: 12
+  - Letter: "노"
+    Kind: 1
+    Element: 1
+    BasePower: 9
+  - Letter: "마"
+    Kind: 0
+    Element: 2
+    BasePower: 16
+  - Letter: "모"
+    Kind: 1
+    Element: 2
+    BasePower: 9
+  - Letter: "사"
+    Kind: 0
+    Element: 3
+    BasePower: 8
+  - Letter: "소"
+    Kind: 1
+    Element: 3
+    BasePower: 8
+  - Letter: "아"
+    Kind: 0
+    Element: 4
+    BasePower: 12
+  - Letter: "오"
+    Kind: 1
+    Element: 4
+    BasePower: 9
   - Letter: "어"
     Kind: 2
     Element: 4

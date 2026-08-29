@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Oheangbu.BrushRender;
 using Oheangbu.Combat;
 using Oheangbu.Core.Domain;
@@ -45,6 +46,17 @@ namespace Oheangbu.App
         private GroggyMeter _groggy;
         private InkPool _ink;
 
+        // 날아가는 술식 [TEST 5차 검수] — 커밋 시 대상·착탄 시각 확정(유도 보장), 착탄에 피해.
+        // 적 화염구와 같은 문법: 시각이 규칙이고, 비행은 연출이 따라온다
+        private struct PendingCast
+        {
+            public EnemyVitals Target;
+            public float ImpactTime;
+            public float Power;
+        }
+
+        private readonly List<PendingCast> _pendingCasts = new List<PendingCast>();
+
         [Inject]
         public void Construct(SpellResolver resolver, ParryJudge judge, GroggyMeter groggy, InkPool ink)
         {
@@ -76,6 +88,7 @@ namespace Oheangbu.App
             if (_inkChanged != null) _inkChanged.Subscribe(OnInkChanged);
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
             if (_enemyVitals != null) _enemyVitals.Died += OnEnemyDied;
+            TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
         }
 
         private void OnDisable()
@@ -86,20 +99,38 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
             if (_enemyVitals != null) _enemyVitals.Died -= OnEnemyDied;
             UnhookServices();
+            _pendingCasts.Clear(); // 비활성 동안의 기한 지난 착탄이 재활성 시 유령 피해가 되지 않게
         }
 
         private bool _hooked;
 
         private void Update()
         {
-            // [Inject]는 씬 로드 직후 실행되므로 서비스 이벤트는 첫 프레임에 건다
-            if (!_hooked && _groggy != null)
+            TryHookServices();
+            TickPendingCasts();
+        }
+
+        // 착탄 시각 도래 = 피해 적용(피해=착탄 동기화 — 5차 검수). 대상이 먼저 죽었으면 허공이 된다
+        private void TickPendingCasts()
+        {
+            for (int i = _pendingCasts.Count - 1; i >= 0; i--)
             {
-                _groggy.Blossomed += OnBlossomed;
-                _groggy.Changed += RefreshHud;
-                if (_enemy != null) _enemy.StunEnded += OnStunEnded;
-                _hooked = true;
+                if (Time.time < _pendingCasts[i].ImpactTime) continue;
+                PendingCast pending = _pendingCasts[i];
+                _pendingCasts.RemoveAt(i);
+                if (pending.Target != null && pending.Target.IsAlive) pending.Target.TakeDamage(pending.Power);
             }
+        }
+
+        // [Inject]는 씬 로드 직후 실행되므로 서비스 이벤트는 OnEnable(재활성) 또는 첫 프레임에 건다
+        private void TryHookServices()
+        {
+            if (_hooked || _groggy == null) return;
+            _groggy.Blossomed += OnBlossomed;
+            _groggy.Changed += RefreshHud;
+            if (_judge != null) _judge.ImpactResolved += OnParryImpactResolved;
+            if (_enemy != null) _enemy.StunEnded += OnStunEnded;
+            _hooked = true;
         }
 
         private void UnhookServices()
@@ -107,6 +138,7 @@ namespace Oheangbu.App
             if (!_hooked) return;
             _groggy.Blossomed -= OnBlossomed;
             _groggy.Changed -= RefreshHud;
+            if (_judge != null) _judge.ImpactResolved -= OnParryImpactResolved;
             if (_enemy != null) _enemy.StunEnded -= OnStunEnded;
             _hooked = false;
         }
@@ -123,8 +155,10 @@ namespace Oheangbu.App
 
             if (!_resolver.TryResolve(letter, out SpellCast cast))
             {
-                // 프로토 미러 밖의 글자 — 효과 없음, 먹만 소모(불발 취급). CSV 완주는 임포터 이후
+                // 프로토 미러 밖의 글자 — 효과 없음, 먹만 소모(불발 취급). CSV 완주는 임포터 이후.
+                // 표현도 불발을 따른다(7차 검수) — 플래시·문양 대신 증발
                 _ink?.SpendClamped(_config.MisfireInkCost);
+                _brushAdapter?.NotifyCastFailed();
                 return;
             }
 
@@ -142,37 +176,88 @@ namespace Oheangbu.App
 
         private void ResolveParry(SpellCast cast)
         {
-            // 먹 부족 = 불발 취급(§10.1) — 판정 자체가 서지 않는다
-            if (_ink == null || !_ink.TrySpend(_config.ParryInkCost)) return;
-
-            ParryOutcome outcome = _judge != null ? _judge.Judge(cast.Element, Time.time) : ParryOutcome.None;
-            if (outcome == ParryOutcome.Success)
+            // 먹 부족 = 불발 취급(§10.1) — 방어막 자체가 서지 않고, 표현도 증발한다(7차 검수:
+            // 없는 방어를 개화로 보여주지 않는다)
+            if (_ink == null || !_ink.TrySpend(_config.ParryInkCost))
             {
-                _ink.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY)
-                _groggy?.AddFromParry();            // 그로기의 유일한 증가 경로(프로토)
+                _brushAdapter?.NotifyCastFailed();
+                return;
             }
-            // 반성공=경감·실패=무효과 — 피해 처리는 임팩트 시 적이 Resolution을 읽는다.
-            // 허공 시전(None)은 잔존 없음(CSV) — 먹만 쓰고 사라진다
+
+            // [TEST §10.1 2차 플레이 검수] 작도 잔존 방어막: 완성이 방어막을 세우고, 판정은 임팩트가 한다.
+            // 성공 보상(그로기·환급·이펙트)은 OnParryImpactResolved에서 — 판정점이 임팩트로 옮겨갔으므로.
+            // ⚠ 어휘 CSV 「허공 시전 잔존 없음」의 전이 실험 — 채택 시 DECISIONS+CSV 정본 반영 필요
+            _judge?.RaiseGuard(cast.Element, Time.time);
+        }
+
+        // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
+        private void OnParryImpactResolved(ParryOutcome outcome, Element guardElement, Vector3 impactPoint)
+        {
+            if (outcome != ParryOutcome.Success) return;
+            _ink?.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY)
+            _groggy?.AddFromParry();
+            _hud?.PulseReticle();                // 살짝의 효과 — 결투 계약의 고리가 응답한다
+
+            // 접점 버스트(임시 — 3차 검수): 투사체가 방어막에 부딪혀 꺼지는 자리에서
+            // 방어막 속성색 조각이 터진다. 색=팔레트 단일 출처(색=의미)
+            Color burst = _palette != null ? _palette.GetBaseColor(InitialOf(guardElement)) : Color.white;
+            ParryBurstEffect.Spawn(impactPoint, burst, Camera.main);
+        }
+
+        // Element → 초성(팔레트 키). 배속은 ElementRelations.FromInitial의 역방향(언어적 사실 — 밸런스 아님)
+        private static char InitialOf(Element element)
+        {
+            switch (element)
+            {
+                case Element.Fire: return 'ㄴ';
+                case Element.Earth: return 'ㅁ';
+                case Element.Metal: return 'ㅅ';
+                case Element.Water: return 'ㅇ';
+                default: return 'ㄱ'; // Wood
+            }
         }
 
         private void ResolveAttack(SpellCast cast)
         {
-            if (_ink == null || !_ink.TrySpend(_config.SpellInkCost)) return;
+            // 먹 부족 = 불발 취급 — 투사체(문양)도 나가지 않는다(7차 검수): 표현은 증발
+            if (_ink == null || !_ink.TrySpend(_config.SpellInkCost))
+            {
+                _brushAdapter?.NotifyCastFailed();
+                return;
+            }
 
             EnemyVitals target = _lockOn != null ? _lockOn.Target : null;
             if (target == null) target = FindFreeAimTarget();
-            if (target == null) return; // 허공 — 먹만 소모(락온 유도가 정석: COMBAT-ATTACK 조준 혼합)
+            if (target == null)
+            {
+                _brushAdapter?.SetPatternAttackTarget(null, 0f); // 허공 — 먹만 소모, 연출은 전방 허공 착탄
+                return;
+            }
 
-            // 프로토 절단면: 명중·피해 즉발(유도 보장). 투사체 연출은 후속 — 수치 검증이 먼저
-            target.TakeDamage(cast.Power);
+            // 피해=착탄 동기화(5차 검수 — 즉발 절단면 폐기): 커밋 시 대상·비행시간 확정 = 유도 보장
+            // (COMBAT-ATTACK 락온 유도). 문양 투사체 연출도 같은 비행시간을 쓴다 — 시각이 하나뿐이라 어긋나지 않는다
+            float speed = Mathf.Max(1f, _config.SpellProjectileSpeed);
+            float duration = Vector3.Distance(_playerTransform != null ? _playerTransform.position : transform.position,
+                target.transform.position) / speed;
+            _pendingCasts.Add(new PendingCast
+            {
+                Target = target,
+                ImpactTime = Time.time + duration,
+                Power = cast.Power,
+            });
+            _brushAdapter?.SetPatternAttackTarget(target.transform, duration);
         }
 
         private EnemyVitals FindFreeAimTarget()
         {
-            if (_enemyVitals == null || !_enemyVitals.IsAlive || _playerTransform == null) return null;
-            Vector3 to = _enemyVitals.transform.position - _playerTransform.position;
+            // 조준 기준 = 카메라(보는 곳이 곧 겨눈 곳) — 숄더뷰 실험의 어깨 오프셋 시차를 없애고,
+            // 1인칭에서도 yaw 전용이던 원뿔이 피치를 따라간다 [실험 2026-08-27]
+            var cam = Camera.main;
+            Transform origin = cam != null ? cam.transform : _playerTransform;
+            if (_enemyVitals == null || !_enemyVitals.IsAlive || origin == null) return null;
+            Vector3 to = _enemyVitals.transform.position - origin.position;
             if (to.magnitude > _freeAimRange) return null;
-            return Vector3.Angle(_playerTransform.forward, to) <= _freeAimAngle ? _enemyVitals : null;
+            return Vector3.Angle(origin.forward, to) <= _freeAimAngle ? _enemyVitals : null;
         }
 
         // 불발 — 먹만 소모(SPEC-DRAWING-INPUT §3-3의 첫 소비자)

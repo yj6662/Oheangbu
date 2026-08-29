@@ -68,6 +68,16 @@ namespace Oheangbu.BrushRender
         [SerializeField, Range(0f, 0.3f)] private float _edgeJitter = 0.07f;
         [Tooltip("피격·불발 시 먹이 증발하는 시간(초)")]
         [SerializeField, Min(0.05f)] private float _dissolveDuration = 0.4f;
+        [Tooltip("투시 농도 — 작도 중 몸·벽에 가려진 획이 비쳐 보이는 불투명도(3차 카메라 검수). 커밋 후엔 투시 없음")]
+        [SerializeField, Range(0f, 1f)] private float _xrayOpacity = 0.35f;
+
+        [Header("커밋 문양 — 글자가 그 자리에서 전통 문양으로 변형된다(4차 검수) [TEST]")]
+        [Tooltip("글자 크기 대비 문양 배율 — 개화부 원 크기(≈2.3m/유닛 스케일)를 감안한 시작값")]
+        [SerializeField, Min(0.1f)] private float _patternScale = 0.6f;
+        [Tooltip("문양 수명(초) — 70% 시점에 방출 중단(잔여 입자 자연 소멸), 끝에 파괴. 지속 발광 금지 규약 합치")]
+        [SerializeField, Min(0.2f)] private float _patternLifetime = 2.2f;
+        [Tooltip("허공(비명중) 공격의 착탄 거리(m) — 카메라 전방 이 지점에서 개화. 명중 비행은 CombatConfig 소유")]
+        [SerializeField, Min(2f)] private float _patternMissRange = 14f;
 
         [Header("술식 플래시 — 커밋 순간 속성색 발광(ART-INK 중등 광원: 순간만, 지속 금지)")]
         [SerializeField, Min(0.05f)] private float _flashDuration = 0.6f;
@@ -135,6 +145,10 @@ namespace Oheangbu.BrushRender
         public float EdgeSoftness => _edgeSoftness;
         public float DissolveDuration => _dissolveDuration;
         public float EdgeJitter => _edgeJitter;
+        public float XrayOpacity => _xrayOpacity;
+        public float PatternScale => _patternScale;
+        public float PatternLifetime => _patternLifetime;
+        public float PatternMissRange => _patternMissRange;
         public float FlashDuration => _flashDuration;
         public float FlashTint => _flashTint;
         public float FlashAdd => _flashAdd;

@@ -3,6 +3,17 @@
 //   정점색 rgb=먹색·a=먹 농도 / UV1.x=점 탄생 시각(번짐 나이).
 // 메시는 (1+_EdgeMargin)배 폭으로 온다(_widthMultiplier 훅) — V 재매핑으로 명목 가장자리를 안쪽에 둔다.
 // 인식 불가침: 이 파일은 표현 전용 — 무엇을 바꿔도 인식·판정은 불변이다.
+//
+// 2패스 차폐 규약(3차 카메라 검수 2026-08-28): 그리는 동안 글자는 몸·벽에 가려지되
+// 가려진 부분이 투시로 반투명하게 보인다.
+//   InkStroke(LEqual)  = 비차폐 프래그먼트 담당
+//   InkStrokeXray(Greater, SRPDefaultUnlit) = 차폐 프래그먼트를 _XrayOpacity 농도로
+// LEqual/Greater는 상호 배타·전수라 픽셀당 정확히 한 패스만 그린다 — 그리기 순서 무관
+// (URP는 태그 인덱스 순이라 Xray가 먼저일 수 있다). 커밋 시 어댑터가 Xray 패스를 끈다
+// (SetShaderPassEnabled — 유리판→세상 물체). 스텐실 자기겹침 1회 규약은 두 패스가 Ref를
+// 공유해 그대로 유지된다(clip된 프래그먼트는 스탬프 없음 — 발자국 동일).
+// 전제: 포워드 계열 렌더러 + renderer overrideStencilState=0. Deferred 전환·스텐실
+// 오버라이드 시 이 규약이 깨진다.
 Shader "Oheangbu/InkStroke"
 {
     Properties
@@ -27,6 +38,8 @@ Shader "Oheangbu/InkStroke"
         _FlashStrength("Flash Strength (0..1 = 곡선×위력)", Range(0, 1)) = 0
         _FlashTint("Flash Tint (먹→속성색 물듦 비율)", Range(0, 1)) = 0.85
         _FlashAdd("Flash Add (HDR 가산 — Bloom이 집는 성분)", Float) = 1.5
+
+        _XrayOpacity("Xray Opacity (가려진 획 투시 농도)", Range(0, 1)) = 0.35
     }
 
     SubShader
@@ -39,6 +52,131 @@ Shader "Oheangbu/InkStroke"
             "IgnoreProjector" = "True"
         }
 
+        HLSLINCLUDE
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+
+        struct Attributes
+        {
+            float4 positionOS : POSITION;
+            float4 color      : COLOR;      // rgb=먹색(sRGB), a=먹 농도
+            float2 uv         : TEXCOORD0;  // U=진행률, V=폭 방향
+            float2 uv1        : TEXCOORD1;  // x=점 탄생 시각
+        };
+
+        struct Varyings
+        {
+            float4 positionCS : SV_POSITION;
+            half4  color      : COLOR;
+            float2 uv         : TEXCOORD0;
+            float3 posOS      : TEXCOORD1;  // 노이즈 도메인(§11.1 — U 사용 금지)
+            float  birth      : TEXCOORD2;
+        };
+
+        CBUFFER_START(UnityPerMaterial)
+            half  _StencilRef;
+            half  _NoiseSeed;
+            half  _NoiseScale;
+            half  _CrackStrength;
+            half  _EdgeMargin;
+            half  _EdgeSoftness;
+            half  _BleedTau;
+            half  _BleedStartWidth;
+            half  _EdgeJitter;
+            half  _DissolveT;
+            half  _FadeMul;
+            half4 _FlashColor;
+            half  _FlashStrength;
+            half  _FlashTint;
+            half  _FlashAdd;
+            half  _XrayOpacity;
+        CBUFFER_END
+
+        // 전역 시계 — 어댑터가 프레임당 1회 Shader.SetGlobalFloat("_InkNow", Time.time).
+        // 번짐은 점 나이로 셰이더가 자율 진행한다(획별 갱신 없음 — §5.2).
+        // CBUFFER 밖에 둬야 전역 세팅이 머티리얼 값에 가려지지 않는다.
+        float _InkNow;
+
+        // 정수 해시 value noise 2옥타브 — 텍스처 없이 갈필 결을 만든다(§5.1)
+        float Hash(float2 p)
+        {
+            p = frac(p * float2(123.34, 456.21));
+            p += dot(p, p + 45.32);
+            return frac(p.x * p.y);
+        }
+
+        float ValueNoise(float2 p)
+        {
+            float2 i = floor(p);
+            float2 f = frac(p);
+            f = f * f * (3.0 - 2.0 * f);
+            return lerp(
+                lerp(Hash(i), Hash(i + float2(1, 0)), f.x),
+                lerp(Hash(i + float2(0, 1)), Hash(i + float2(1, 1)), f.x), f.y);
+        }
+
+        float Fbm(float2 p)
+        {
+            return ValueNoise(p) * 0.6 + ValueNoise(p * 2.13 + 17.7) * 0.4;
+        }
+
+        Varyings vert(Attributes v)
+        {
+            Varyings o;
+            o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
+            o.color = v.color;
+            o.uv = v.uv;
+            o.posOS = v.positionOS.xyz;
+            o.birth = v.uv1.x;
+            return o;
+        }
+
+        half4 FragInk(Varyings i)
+        {
+            // Color32 정점색은 Linear 프로젝트에서 무변환으로 올라온다 — 여기서 교정(§11.1)
+            half3 inkColor = SRGBToLinear(i.color.rgb);
+            half density = i.color.a;
+
+            // ---- 점 나이 번짐(§5.2): 그리는 순간 얇고, 빠르게 번지다 느려진다 ----
+            float age = max(_InkNow - i.birth, 0.0);
+            float bleed = 1.0 - exp(-age / max(_BleedTau, 1e-3));
+
+            // V 재매핑: s = 중앙 0 → 명목 가장자리 1 → 물리 가장자리 1+margin
+            float s = abs(i.uv.y - 0.5) * 2.0 * (1.0 + _EdgeMargin);
+            // 가장자리 지터(ART-INK-LOOK §4.3) — 종이 위 먹의 요철. 농도와 무관하게 항상 있고,
+            // 캡도 같은 V 규약이라 함께 거칠어진다(§4.4의 기필 반원 완화가 여기서 공짜로 온다)
+            s += (Fbm(i.posOS.xy * _NoiseScale * 1.7 + _NoiseSeed + 31.7) - 0.5) * 2.0 * _EdgeJitter;
+            // 보이는 가장자리가 시작 폭에서 여유 폭 끝까지 번져 나간다
+            float edge = lerp(_BleedStartWidth, 1.0 + _EdgeMargin, bleed);
+            // 번질수록 가장자리가 부드러워진다(먹이 종이에 스민 흔적)
+            float soft = _EdgeSoftness * (1.0 + bleed);
+            float edgeMask = 1.0 - smoothstep(edge - soft, edge, s);
+
+            // ---- 갈필(§3-2): 농도가 낮을수록 가장자리부터 갈라진다. 번짐이 틈을 메운다 ----
+            float noise = Fbm(i.posOS.xy * _NoiseScale + _NoiseSeed);
+            float dryness = 1.0 - density;
+            float crack = _CrackStrength * dryness * saturate(s);
+            // 번짐이 틈을 메우는 건 「젖은 먹」뿐이다 — 마른 붓(먹 부족)의 갈필은 남아야
+            // 먹 미터의 보조 언어(ART-UI: 먹 부족 시 갈필)가 시간이 지나도 읽힌다.
+            crack *= 1.0 - 0.6 * bleed * density;
+            // 증발 디졸브(§7): 같은 노이즈 임계를 전면으로 쓸어올려 갈필 틈부터 사라진다
+            float threshold = saturate(crack + _DissolveT * 1.25);
+            float inkMask = smoothstep(threshold, threshold + 0.08, noise);
+
+            float alpha = density * edgeMask * inkMask * _FadeMul;
+            // 사실상 투명한 프래그먼트는 스텐실 스탬프도 남기지 않는다(§11.1)
+            clip(alpha - 0.004);
+
+            // ---- 술식 플래시(ART-INK-LOOK §4.2·§4.5): 틴트가 주역, HDR 가산은 Bloom 몫 ----
+            // 틴트: 먹이 속성색으로 「물든다」 — LDR 안전, 피크에서도 속성이 색으로 읽힌다(백색 포화 금지).
+            // 가산: 담채 속성색 × _FlashAdd(HDR) — Bloom threshold를 넘겨 속성색 글로우가 번진다.
+            half3 baseColor = lerp(inkColor, _FlashColor.rgb, saturate(_FlashTint * _FlashStrength));
+            half3 rgb = baseColor * alpha;
+            rgb += _FlashColor.rgb * (_FlashAdd * _FlashStrength * edgeMask * inkMask * _FadeMul);
+            return half4(rgb, alpha);
+        }
+        ENDHLSL
+
         Pass
         {
             Name "InkStroke"
@@ -47,6 +185,7 @@ Shader "Oheangbu/InkStroke"
             // 프리멀티 알파 — 플래시를 알파와 독립된 가산 성분으로 얹기 위함(§11.1)
             Blend One OneMinusSrcAlpha
             ZWrite Off
+            ZTest LEqual
             Cull Off
             // 획 내 자기 겹침(캡·꺾임) 픽셀당 1회만 — 획 사이 겹침은 Ref가 달라 자연 누적(§5.3)
             Stencil
@@ -59,125 +198,39 @@ Shader "Oheangbu/InkStroke"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-                float4 color      : COLOR;      // rgb=먹색(sRGB), a=먹 농도
-                float2 uv         : TEXCOORD0;  // U=진행률, V=폭 방향
-                float2 uv1        : TEXCOORD1;  // x=점 탄생 시각
-            };
-
-            struct Varyings
-            {
-                float4 positionCS : SV_POSITION;
-                half4  color      : COLOR;
-                float2 uv         : TEXCOORD0;
-                float3 posOS      : TEXCOORD1;  // 노이즈 도메인(§11.1 — U 사용 금지)
-                float  birth      : TEXCOORD2;
-            };
-
-            CBUFFER_START(UnityPerMaterial)
-                half  _StencilRef;
-                half  _NoiseSeed;
-                half  _NoiseScale;
-                half  _CrackStrength;
-                half  _EdgeMargin;
-                half  _EdgeSoftness;
-                half  _BleedTau;
-                half  _BleedStartWidth;
-                half  _EdgeJitter;
-                half  _DissolveT;
-                half  _FadeMul;
-                half4 _FlashColor;
-                half  _FlashStrength;
-                half  _FlashTint;
-                half  _FlashAdd;
-            CBUFFER_END
-
-            // 전역 시계 — 어댑터가 프레임당 1회 Shader.SetGlobalFloat("_InkNow", Time.time).
-            // 번짐은 점 나이로 셰이더가 자율 진행한다(획별 갱신 없음 — §5.2)
-            float _InkNow;
-
-            // 정수 해시 value noise 2옥타브 — 텍스처 없이 갈필 결을 만든다(§5.1)
-            float Hash(float2 p)
-            {
-                p = frac(p * float2(123.34, 456.21));
-                p += dot(p, p + 45.32);
-                return frac(p.x * p.y);
-            }
-
-            float ValueNoise(float2 p)
-            {
-                float2 i = floor(p);
-                float2 f = frac(p);
-                f = f * f * (3.0 - 2.0 * f);
-                return lerp(
-                    lerp(Hash(i), Hash(i + float2(1, 0)), f.x),
-                    lerp(Hash(i + float2(0, 1)), Hash(i + float2(1, 1)), f.x), f.y);
-            }
-
-            float Fbm(float2 p)
-            {
-                return ValueNoise(p) * 0.6 + ValueNoise(p * 2.13 + 17.7) * 0.4;
-            }
-
-            Varyings vert(Attributes v)
-            {
-                Varyings o;
-                o.positionCS = TransformObjectToHClip(v.positionOS.xyz);
-                o.color = v.color;
-                o.uv = v.uv;
-                o.posOS = v.positionOS.xyz;
-                o.birth = v.uv1.x;
-                return o;
-            }
 
             half4 frag(Varyings i) : SV_Target
             {
-                // Color32 정점색은 Linear 프로젝트에서 무변환으로 올라온다 — 여기서 교정(§11.1)
-                half3 inkColor = SRGBToLinear(i.color.rgb);
-                half density = i.color.a;
+                return FragInk(i);
+            }
+            ENDHLSL
+        }
 
-                // ---- 점 나이 번짐(§5.2): 그리는 순간 얇고, 빠르게 번지다 느려진다 ----
-                float age = max(_InkNow - i.birth, 0.0);
-                float bleed = 1.0 - exp(-age / max(_BleedTau, 1e-3));
+        Pass
+        {
+            Name "InkStrokeXray"
+            Tags { "LightMode" = "SRPDefaultUnlit" }
 
-                // V 재매핑: s = 중앙 0 → 명목 가장자리 1 → 물리 가장자리 1+margin
-                float s = abs(i.uv.y - 0.5) * 2.0 * (1.0 + _EdgeMargin);
-                // 가장자리 지터(ART-INK-LOOK §4.3) — 종이 위 먹의 요철. 농도와 무관하게 항상 있고,
-                // 캡도 같은 V 규약이라 함께 거칠어진다(§4.4의 기필 반원 완화가 여기서 공짜로 온다)
-                s += (Fbm(i.posOS.xy * _NoiseScale * 1.7 + _NoiseSeed + 31.7) - 0.5) * 2.0 * _EdgeJitter;
-                // 보이는 가장자리가 시작 폭에서 여유 폭 끝까지 번져 나간다
-                float edge = lerp(_BleedStartWidth, 1.0 + _EdgeMargin, bleed);
-                // 번질수록 가장자리가 부드러워진다(먹이 종이에 스민 흔적)
-                float soft = _EdgeSoftness * (1.0 + bleed);
-                float edgeMask = 1.0 - smoothstep(edge - soft, edge, s);
+            Blend One OneMinusSrcAlpha
+            ZWrite Off
+            // 차폐된 프래그먼트만 — LEqual 패스와 상호 배타·전수라 픽셀당 한 패스만 그린다
+            ZTest Greater
+            Cull Off
+            Stencil
+            {
+                Ref [_StencilRef]
+                Comp NotEqual
+                Pass Replace
+            }
 
-                // ---- 갈필(§3-2): 농도가 낮을수록 가장자리부터 갈라진다. 번짐이 틈을 메운다 ----
-                float noise = Fbm(i.posOS.xy * _NoiseScale + _NoiseSeed);
-                float dryness = 1.0 - density;
-                float crack = _CrackStrength * dryness * saturate(s);
-                // 번짐이 틈을 메우는 건 「젖은 먹」뿐이다 — 마른 붓(먹 부족)의 갈필은 남아야
-                // 먹 미터의 보조 언어(ART-UI: 먹 부족 시 갈필)가 시간이 지나도 읽힌다.
-                crack *= 1.0 - 0.6 * bleed * density;
-                // 증발 디졸브(§7): 같은 노이즈 임계를 전면으로 쓸어올려 갈필 틈부터 사라진다
-                float threshold = saturate(crack + _DissolveT * 1.25);
-                float inkMask = smoothstep(threshold, threshold + 0.08, noise);
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
 
-                float alpha = density * edgeMask * inkMask * _FadeMul;
-                // 사실상 투명한 프래그먼트는 스텐실 스탬프도 남기지 않는다(§11.1)
-                clip(alpha - 0.004);
-
-                // ---- 술식 플래시(ART-INK-LOOK §4.2·§4.5): 틴트가 주역, HDR 가산은 Bloom 몫 ----
-                // 틴트: 먹이 속성색으로 「물든다」 — LDR 안전, 피크에서도 속성이 색으로 읽힌다(백색 포화 금지).
-                // 가산: 담채 속성색 × _FlashAdd(HDR) — Bloom threshold를 넘겨 속성색 글로우가 번진다.
-                half3 baseColor = lerp(inkColor, _FlashColor.rgb, saturate(_FlashTint * _FlashStrength));
-                half3 rgb = baseColor * alpha;
-                rgb += _FlashColor.rgb * (_FlashAdd * _FlashStrength * edgeMask * inkMask * _FadeMul);
-                return half4(rgb, alpha);
+            half4 frag(Varyings i) : SV_Target
+            {
+                // 프리멀티라 rgb·alpha 동시 스케일 = 불투명도 _XrayOpacity배의 동일한 먹
+                return FragInk(i) * _XrayOpacity;
             }
             ENDHLSL
         }
