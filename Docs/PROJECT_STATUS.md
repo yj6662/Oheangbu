@@ -1,6 +1,6 @@
 # PROJECT_STATUS — 오행부
 
-Last Updated: 2026-08-27 (PR #5 merge · 전투 코어 루프 프로토타입 + 카메라 실증 실험 착수)
+Last Updated: 2026-08-29 (PR #6 merge · 플레이 검수 1~7차 반영 + DECISIONS #128~132 이행 등재)
 
 > **이 문서는 Authority가 없다.** 프로젝트의 실행 상태 스냅샷(Now)일 뿐이며,
 > 상태가 충돌하면 해당 Spec/Bible/Git의 실제 상태가 우선한다.
@@ -36,7 +36,8 @@ Last Updated: 2026-08-27 (PR #5 merge · 전투 코어 루프 프로토타입 + 
 
 ## 3. Active Work
 
-**SPEC-COMBAT-CORE-LOOP: TEST** — PR #5 머지(1·2차 플레이 검수 반영 포함). 잔여 관문 = §6 실플레이 검증 7종·재미 메모
+**SPEC-COMBAT-CORE-LOOP: TEST** — PR #6 머지(검수 1~7차: 잔존 방어막·갈무리 홀드·문양 개화/투사체·
+착탄 동기화·불발 통일). 검수 전이는 DECISIONS #128~132로 등재 완료. 잔여 관문 = §6 실플레이 검증 7종·재미 메모
 **카메라 실증 실험(§12)** — 숄더뷰+작도 클로즈업(V 토글, 결정 3의 검증 — 채택 시 DECISIONS 선행). 예준 실플레이 판정 대기
 비고: 상태 드리프트 자동 검사 도입(Tools/Check-StatusDrift.ps1, SessionStart 훅 — 2026-08-27)
 
@@ -47,12 +48,10 @@ Last Updated: 2026-08-27 (PR #5 merge · 전투 코어 루프 프로토타입 + 
 ## 5. Next
 
 1. SPEC-COMBAT-CORE-LOOP §6 실플레이 검증 + 카메라 실험(§12) 판정 — 채택/철회/부분채택
-2. 스파이크 Exit 정리 — asmdef autoReferenced 복귀 + Spike 폴더 제거 (**Exit Blocking**, 전투 개발 씬 확보됨 — 착수 가능)
-3. 프롤로그 폐광 그레이박스 → 버티컬 슬라이스
-
-부기(사람 몫): DECISIONS 등재 대기(Q홀드/세·감쇠/불발/피격/패링 판정점 · **작도 잔존 방어막 — 확정됨,
-COMBAT-PARRY 창 기준·허공 잔존 없음 전이 + CSV 정본 반영 이행 대기** · 갈무리 홀드 전이 — 기록=예준) ·
-COMBAT-PARRY 주석 등재.
+2. **공격 작도 어휘 모델링·VFX 파이프라인** — goal 명령 자율 런(예준 주도): Blender MCP·Meshy AI 등으로
+   전 공격 작도의 모델·VFX 생성. PROD-AIASSET·PROD-RIG 준거, **착수는 Spec부터(PROD-PIPELINE)**
+3. 스파이크 Exit 정리 — asmdef autoReferenced 복귀 + Spike 폴더 제거 (**Exit Blocking**, 전투 개발 씬 확보됨 — 착수 가능)
+4. 프롤로그 폐광 그레이박스 → 버티컬 슬라이스
 
 ## 6. Deferred
 
@@ -64,6 +63,8 @@ COMBAT-PARRY 주석 등재.
 
 ## 7. Latest Validation
 
+- 전투 검수 3~7차(2026-08-28): 매 라운드 컴파일 에러 0 · 플레이모드 예외 0 · 상태 드리프트 0.
+  시각 최종 판정(카메라 채택·문양 룩)은 실플레이 몫
 - 인식(3차 측정): 정확도 97.27%(477표본) · 8획 처리 76.56→3.77ms(-95%) · p95 9.57ms — 기준(5ms) 미달이나 예준 수용, 기준 사후 이동 아님(SPEC §19.3)
 - 먹 룩: 셰이더 컴파일 클린 · 정점색/갈필/플래시/증발/모티프 스크린샷 검증 · 기능 작동 예준 확인(2026-08-27)
 - 성능·GC(에디터 실측): 작도 중 리빌드의 상시 GC 할당 관찰 안 됨(배경치와 동일) · 프레임 평균 2.13ms — SPEC-ART-INK-LOOK §9.4
