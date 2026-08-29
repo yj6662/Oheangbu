@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using Oheangbu.BrushRender;
+using Oheangbu.Combat;
 using Oheangbu.Core.Domain;
 using Oheangbu.Core.Events;
 using Oheangbu.Drawing;
+using Oheangbu.Spellcraft;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Oheangbu.App
 {
@@ -22,9 +25,14 @@ namespace Oheangbu.App
         [SerializeField] private BrushStyleSO _style;                     // 미감 수치 일체(데이터)
         [SerializeField] private Material _strokeMaterial;                // InkStroke 머티리얼 — 비우면 Sprites/Default 폴백(스텐실·증발·플래시 없음)
         [SerializeField] private Material _motifMaterial;                 // InkMotif 머티리얼 — 비우면 모티프 생략(플래시만)
+        [SerializeField] private GameObject _commitPatternPrefab;         // [4차 검수] 커밋 문양(유료 에셋 슬롯 — §9 예외 4). 배정 시 모티프 대체, 비우면 복귀
+        [SerializeField] private SpellBookSO _spellBook;                  // 술식 종류 조회(공격=투사체/패링=제자리 개화) — 어휘 미러 읽기만
+        [SerializeField] private CombatConfigSO _combatConfig;            // 허공 비행 속도 참조(읽기만) — 명중 비행시간은 배선이 밀어준다
         [SerializeField] private ElementPaletteSO _elementPalette;        // 술식 플래시 속성색(초성→오행, TEST)
         [SerializeField] private DrawnLetterEventChannelSO _letterDrawn;  // 커밋 글자 — 속성·위력 근사 원자료(읽기만)
-        [SerializeField, Min(0.01f)] private float _surfaceDistance = 1f; // 카메라 앞 작도면 거리 [TEST]
+        [SerializeField, Min(0.01f)] private float _surfaceDistance = 1f; // 눈(피벗) 앞 작도면 거리 [TEST]
+        [FormerlySerializedAs("_detachAnchor")]
+        [SerializeField] private Transform _eyeAnchor;                    // [실험] 눈=CameraPivot. 작도면을 카메라가 아니라 눈 앞에 앵커한다. 비우면 카메라 기준(기존)
 
         private static readonly int StencilRefId = Shader.PropertyToID("_StencilRef");
         private static readonly int NoiseSeedId = Shader.PropertyToID("_NoiseSeed");
@@ -45,6 +53,11 @@ namespace Oheangbu.App
         private static readonly int MotifStrengthId = Shader.PropertyToID("_Strength");
         private static readonly int MotifFadeId = Shader.PropertyToID("_FadeMul");
         private static readonly int InkNowId = Shader.PropertyToID("_InkNow");
+        private static readonly int XrayOpacityId = Shader.PropertyToID("_XrayOpacity");
+
+        // 투시 패스의 LightMode 태그명 — SetShaderPassEnabled는 패스 Name이 아니라 이 태그를 받는다.
+        // 그리는 동안 켜져 있고(인스턴스가 enabled 상속), 커밋(BeginFading)에서 끈다 — 유리판→세상 물체
+        private const string XrayPassTag = "SRPDefaultUnlit";
 
         private readonly List<BrushStrokeRenderer> _strokes = new List<BrushStrokeRenderer>();
         private BrushStrokeRenderer _current;
@@ -74,6 +87,10 @@ namespace Oheangbu.App
         private Color _pendingFlashColor;
         private float _pendingFlashPower;
         private Texture2D _pendingMotif;
+        private bool _pendingAttack; // 공격 작도인가 — 문양이 투사체로 날아갈지(5차 검수) 제자리 개화할지
+        private Transform _pendingAttackTarget; // 배선이 밀어준 명중 대상(유도 추적) — 없으면 허공 착탄
+        private float _pendingAttackDuration;   // 배선이 확정한 비행시간 — 피해 착탄 시각과 같은 시계
+        private bool _pendingCastFailed;        // 배선이 알린 시전 불성립(먹 부족·미등재) — 플래시·문양 대신 불발 증발
 
         // 표현용 상태 — 획 하나가 그려지는 동안의 붓 상태다. 인식 데이터와 공유하지 않는다.
         private Vector2 _lastInputScreen;  // 직전 입력 좌표 — 속도 측정용
@@ -84,6 +101,8 @@ namespace Oheangbu.App
         private float _lastSampleTime;
         private float _smoothedSpeed;   // 표현용 속도의 저역 통과 값
         private bool _hasSpeed;         // 첫 점은 이동거리 0이라 속도를 잴 수 없다 — 중립 폭으로 시작
+        private float _strokeScale = 1f; // 획 화면 등가 계수 — 깊이·FOV가 1인칭과 달라도 폭·수필·갈필 결이 화면상 동일
+        private float _baseFov;          // 작도 진입 전 기준 FOV(클로즈업 FOV 스냅과 무관한 등가 계산용)
 
         // 먹 잔량(0~1) — 지금은 밖에서 넣어준다(하네스 슬라이더).
         // 먹 풀이 생기면 이 값만 꽂으면 된다: 읽기 전용이며 여기서 먹을 깎지 않는다(SPEC §5.2).
@@ -91,6 +110,10 @@ namespace Oheangbu.App
 
         private void OnEnable()
         {
+            // 기준 FOV 캡처 — 씬 시작 시(작도 전)의 값. 클로즈업 FOV 스냅 이후의 획도 이 기준으로 등가 환산
+            var baseCam = Camera.main;
+            if (_baseFov <= 0f && baseCam != null) _baseFov = baseCam.fieldOfView;
+
             if (_input == null) return;
             _input.StrokeStarted += OnStrokeStarted;
             _input.StrokePointAdded += OnStrokePointAdded;
@@ -128,6 +151,7 @@ namespace Oheangbu.App
         {
             var go = new GameObject($"BrushStroke_{_strokes.Count}");
             go.transform.SetParent(transform, false);
+            go.transform.localScale = Vector3.one * ComputeStrokeScale();
             _current = go.AddComponent<BrushStrokeRenderer>();
 
             // 획마다 다른 결 — 같은 시드를 쓰면 모든 획이 똑같이 떨린다(폭 노이즈·갈필 공용)
@@ -190,8 +214,11 @@ namespace Oheangbu.App
             float speed = _smoothedSpeed;
 
             // 붓끝 관성은 폐기됐다(2026-08-27 예준 — BRUSH-RENDERER §11.1): 표현은 입력과 정확히 일치한다.
-            Vector3 world = cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, _surfaceDistance));
-            Vector3 local = transform.InverseTransformPoint(world);
+            // 깊이 = 눈(피벗) 앞 _surfaceDistance — 카메라가 뒤로 물러난 포즈(숄더뷰·클로즈업)에서도
+            // 작도면은 플레이어 모델 앞에 선다(2차 카메라 검수). 점은 획-로컬(÷스케일)로 저장 —
+            // 폭·수필·갈필 결의 화면 등가는 획 localScale이 담당한다.
+            Vector3 world = cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, EffectiveSurfaceDistance(cam)));
+            Vector3 local = transform.InverseTransformPoint(world) / _strokeScale;
 
             float traveled = _hasLastLocal ? Vector3.Distance(local, _lastLocal) : 0f;
             _lastLocal = local;
@@ -200,6 +227,30 @@ namespace Oheangbu.App
 
             // 탄생 시각은 scaled — 번짐(연출)의 시계와 같아야 한다(§5.2)
             _current.AddPoint(local, ComputeWidth(speed, traveled), ComputeInk(speed), Time.time);
+        }
+
+        // 작도면 유효 깊이 — 카메라가 아니라 눈(피벗) 앞 _surfaceDistance에 평면을 앵커한다(2차 카메라 검수).
+        // 카메라 블렌드·붐이 카메라를 움직여도 dot 항이 자동 상쇄해 평면은 항상 피벗 앞에 남는다.
+        // 1인칭(카메라=피벗)은 dot≈0이라 기존과 동일 — 대조군 보존.
+        private float EffectiveSurfaceDistance(Camera cam)
+        {
+            if (_eyeAnchor == null) return _surfaceDistance;
+            float toEye = Vector3.Dot(_eyeAnchor.position - cam.transform.position, cam.transform.forward);
+            return _surfaceDistance + Mathf.Max(0f, toEye);
+        }
+
+        // 획 화면 등가 계수 = 프러스텀 반높이 비 — 깊이가 멀어지거나 FOV가 스냅돼도
+        // 같은 제스처가 같은 화면 굵기·수필 길이·갈필 결을 남긴다(획 단위 고정)
+        private float ComputeStrokeScale()
+        {
+            _strokeScale = 1f;
+            var cam = Camera.main;
+            if (cam == null || _baseFov <= 0f) return _strokeScale;
+
+            float frustumNow = EffectiveSurfaceDistance(cam) * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            float frustumBase = _surfaceDistance * Mathf.Tan(_baseFov * 0.5f * Mathf.Deg2Rad);
+            if (frustumBase > 0.0001f) _strokeScale = frustumNow / frustumBase;
+            return _strokeScale;
         }
 
         // 폭 = 기본 × 속도(빠르면 가늘게) × 유기적 노이즈 × 기필(시작 눌림)
@@ -252,12 +303,17 @@ namespace Oheangbu.App
             _pendingMotif = _elementPalette != null ? _elementPalette.GetMotif(initial) : null;
             // 위력 근사 [TEST — §10 예외 2]: 정본은 Spellcraft. 표현은 근사치를 「읽기만」 한다.
             _pendingFlashPower = _style.EstimateFlashPower(letter.AverageDistance, letter.StrokeDuration);
+            // 술식 종류도 읽기만 — 공격이면 문양이 투사체로 나간다(5차 검수). 미등재 글자=제자리 개화
+            _pendingAttack = _spellBook != null && _spellBook.TryGet(letter.Letter, out var spell)
+                && spell.Kind != SpellKind.Parry;
             _hasPendingFlash = true;
         }
 
         private void OnCommitted(bool success)
         {
-            if (success && _hasPendingFlash)
+            // 시전 불성립(먹 부족·미등재 — 배선이 알림)은 인식이 성공했어도 불발 취급이다(§10.1) —
+            // 술식이 서지 않았는데 플래시·문양을 틀지 않는다(7차 검수)
+            if (success && _hasPendingFlash && !_pendingCastFailed)
             {
                 BeginFading(isFlash: true, _pendingFlashColor, _pendingFlashPower);
             }
@@ -266,6 +322,11 @@ namespace Oheangbu.App
                 BeginFading(isFlash: false, default, 0f); // 불발 — 먹 증발
             }
             _hasPendingFlash = false;
+            _pendingCastFailed = false;
+            // 명중 스태시는 커밋마다 무조건 소거 — 어떤 조기 반환 경로로도 다음 글자에 잔상이 새지 않게.
+            // OnLetterDrawn에서 지우면 안 된다: 채널 구독 순서상 배선의 푸시가 먼저 올 수 있다
+            _pendingAttackTarget = null;
+            _pendingAttackDuration = 0f;
         }
 
         // 피격(글자만 소멸)·조용한 취소 등 커밋 경로 밖의 소거 — 남아 있는 획을 증발시킨다.
@@ -290,14 +351,104 @@ namespace Oheangbu.App
             {
                 if (stroke == null) continue;
                 group.Strokes.Add(stroke);
-                // 소멸이 시작되는 순간 월드에 떼어놓는다(예준 지시) — 작도면은 화면(카메라 자식)이지만
-                // 다 쓴 글자는 세상에 남아 그 자리에서 빛나고 스러진다
+                // 소멸이 시작되는 순간 월드에 떼어놓는다(예준 지시) — 작도면이 이미 눈(피벗) 앞 평면이라
+                // 그 자리가 곧 「플레이어 모델 앞」이다. 유리판이었던 글자는 이제 세상 물체 —
+                // 투시 패스를 꺼서 차폐가 세상 규칙으로 돌아간다(3차 카메라 검수)
                 stroke.transform.SetParent(null, true);
+                stroke.OwnedMaterial?.SetShaderPassEnabled(XrayPassTag, false);
             }
             _strokes.Clear();
             _current = null;
-            if (isFlash) SpawnMotifs(group);
+            if (isFlash)
+            {
+                // 문양이 배정돼 있으면 모티프 대신 — 글자가 그 자리에서 전통 문양으로 변형된다(4차 검수) [TEST]
+                if (_commitPatternPrefab != null) SpawnPattern(group);
+                else SpawnMotifs(group);
+            }
             _fading.Add(group);
+        }
+
+        // 커밋 문양(4·5차 검수): 글자가 있던 자리에서 전통 문양으로 변형된다 — 색은 팔레트 속성색
+        // (색=의미 단일 출처 — group.FlashColor가 이미 속성 연동). 수명·틴트는 PatternEffectLifetime.
+        //   패링 작도 = 제자리 개화(방어막의 얼굴) / 공격 작도 = 문양 투사체가 날아가 착탄 개화.
+        // 피해 판정은 Combat의 즉발 그대로다(§11 절단면) — 여기는 연출만 후행한다 [TEST].
+        private void SpawnPattern(FadingGroup group)
+        {
+            if (_style == null || !TryComputeLetterBounds(group, out Bounds bounds)) return;
+
+            float letterSize = Mathf.Max(bounds.size.x, bounds.size.y, 0.01f);
+            var go = Instantiate(_commitPatternPrefab, bounds.center, transform.rotation);
+            go.name = "SpellPattern";
+            go.transform.localScale = Vector3.one * (letterSize * _style.PatternScale);
+            go.SetActive(true); // 일부 에셋 프리팹은 비활성 자식 포함 — 루트만 보장
+
+            if (_pendingAttack)
+            {
+                // 소비하며 비운다 — 다음 글자(패링·먹 부족 허공)에 잔상이 남지 않게
+                Transform target = _pendingAttackTarget;
+                float duration = _pendingAttackDuration;
+                _pendingAttackTarget = null;
+                _pendingAttackDuration = 0f;
+
+                if (target == null || duration <= 0f)
+                {
+                    // 허공 발사(비명중·먹 부족) — 조준(카메라) 전방으로 연출만 날아가 개화
+                    float speed = _combatConfig != null ? Mathf.Max(1f, _combatConfig.SpellProjectileSpeed) : 18f;
+                    duration = _style.PatternMissRange / speed;
+                }
+
+                PatternEffectLifetime.AttachProjectile(go, _style.PatternLifetime, group.FlashColor,
+                    target, MissPoint(bounds.center), duration);
+            }
+            else
+            {
+                PatternEffectLifetime.AttachBloom(go, _style.PatternLifetime, group.FlashColor);
+            }
+        }
+
+        // 배선(CombatLoopWiring)이 커밋 프레임에 밀어주는 명중 문맥 — 시각이 하나뿐이라 피해와 연출이 어긋나지 않는다.
+        // _letterDrawn(배선의 판정)이 Committed(여기 소비)보다 먼저 발화하는 순서에 기댄다(같은 프레임 보장).
+        public void SetPatternAttackTarget(Transform target, float flightDuration)
+        {
+            _pendingAttackTarget = target;
+            _pendingAttackDuration = flightDuration;
+        }
+
+        // 시전 불성립(먹 부족·미러 밖 글자) — 배선이 커밋 프레임에 알린다. 표현은 불발(증발)로 따른다
+        public void NotifyCastFailed()
+        {
+            _pendingCastFailed = true;
+        }
+
+        // 허공 착탄점 — 조준(카메라) 전방. 규칙이 아니라 연출의 목적지다
+        private Vector3 MissPoint(Vector3 origin)
+        {
+            var cam = Camera.main;
+            if (cam != null)
+            {
+                return cam.transform.position + cam.transform.forward * _style.PatternMissRange;
+            }
+            return origin + transform.forward * _style.PatternMissRange;
+        }
+
+        // 글자의 월드 경계 — 표현 점 전체를 감싼다(문양 위치·크기의 기준)
+        private static bool TryComputeLetterBounds(FadingGroup group, out Bounds bounds)
+        {
+            bounds = default;
+            bool has = false;
+            foreach (var stroke in group.Strokes)
+            {
+                if (stroke == null) continue;
+                var strokeTransform = stroke.transform;
+                var data = stroke.Data.Points;
+                for (int i = 0; i < data.Count; i++)
+                {
+                    Vector3 world = strokeTransform.TransformPoint(data[i].Position);
+                    if (!has) { bounds = new Bounds(world, Vector3.zero); has = true; }
+                    else bounds.Encapsulate(world);
+                }
+            }
+            return has;
         }
 
         // 속성 모티프(§4.6): 배경 그림이 아니라 「획 위 몇 곳에 붙는 작은 스프라이트」다 —
@@ -494,6 +645,7 @@ namespace Oheangbu.App
             material.SetFloat(EdgeJitterId, _style.EdgeJitter);
             material.SetFloat(FlashTintId, _style.FlashTint);
             material.SetFloat(FlashAddId, _style.FlashAdd);
+            material.SetFloat(XrayOpacityId, _style.XrayOpacity);
         }
 
         private Material GetFallbackMaterial()

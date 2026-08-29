@@ -88,9 +88,21 @@ namespace Oheangbu.App
             if (_groggyFill != null) _groggyFill.localScale = Vector3.one * Mathf.Clamp01(value);
         }
 
+        // 패링 성공 펄스 — 레티클이 살짝 부풀었다 가라앉는다(추가 UI 없이 화이트리스트 항목의 상태 표현)
+        public void PulseReticle()
+        {
+            _pulse = 1f;
+        }
+
+        private float _pulse;
+
         // 락온 대상 위에 레티클을 고정한다 — 비락온이면 숨김(그로기도 함께 안 보인다: 락온=결투 계약)
         public void UpdateReticle(Transform target, Camera cam)
         {
+            // 펄스 감쇠는 표시 여부와 무관하게 진행 — 비락온 중의 패링 성공이 다음 락온 때
+            // 유령 펄스로 재생되지 않는다. unscaled: 감속 중에도 같은 속도로 응답
+            _pulse = Mathf.Max(0f, _pulse - Time.unscaledDeltaTime * 4f);
+
             bool visible = target != null && cam != null;
             if (_reticle == null) return;
             _reticle.gameObject.SetActive(visible);
@@ -99,6 +111,7 @@ namespace Oheangbu.App
             Vector3 screen = cam.WorldToScreenPoint(target.position + Vector3.up * 1.1f);
             if (screen.z < 0f) { _reticle.gameObject.SetActive(false); return; }
             _reticle.position = screen;
+            _reticle.localScale = Vector3.one * (1f + 0.5f * _pulse * _pulse);
         }
     }
 }
