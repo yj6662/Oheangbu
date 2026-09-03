@@ -89,6 +89,7 @@ namespace Oheangbu.App
         private float _pendingFlashPower;
         private Texture2D _pendingMotif;
         private bool _pendingAttack; // 공격 작도인가 — 문양이 투사체로 날아갈지(5차 검수) 제자리 개화할지
+        private bool _pendingParry;  // 패링 작도인가 — 방어막 가독 타임라인(SPELL-FIDELITY §4.6) 적용 여부
         private Transform _pendingAttackTarget; // 배선이 밀어준 명중 대상(유도 추적) — 없으면 허공 착탄
         private float _pendingAttackDuration;   // 배선이 확정한 비행시간 — 피해 착탄 시각과 같은 시계
         private bool _pendingCastFailed;        // 배선이 알린 시전 불성립(먹 부족·미등재) — 플래시·문양 대신 불발 증발
@@ -308,8 +309,10 @@ namespace Oheangbu.App
             // 위력 근사 [TEST — §10 예외 2]: 정본은 Spellcraft. 표현은 근사치를 「읽기만」 한다.
             _pendingFlashPower = _style.EstimateFlashPower(letter.AverageDistance, letter.StrokeDuration);
             // 술식 종류도 읽기만 — 공격이면 문양이 투사체로 나간다(5차 검수). 미등재 글자=제자리 개화
-            _pendingAttack = _spellBook != null && _spellBook.TryGet(letter.Letter, out var spell)
-                && spell.Kind != SpellKind.Parry;
+            SpellBookSO.Entry spell = default;
+            bool known = _spellBook != null && _spellBook.TryGet(letter.Letter, out spell);
+            _pendingAttack = known && spell.Kind != SpellKind.Parry;
+            _pendingParry = known && spell.Kind == SpellKind.Parry;
             // 어휘별 시각 분화(FX-ASSETS §4.4) — 표현 조회만. 미등재면 기본 슬롯이 받는다
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
@@ -344,6 +347,7 @@ namespace Oheangbu.App
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
             _pendingFxArcHeight = 0f;
+            _pendingParry = false;
         }
 
         // 피격(글자만 소멸)·조용한 취소 등 커밋 경로 밖의 소거 — 남아 있는 획을 증발시킨다.
@@ -410,8 +414,12 @@ namespace Oheangbu.App
             if (_pendingAttack && sequence != null)
             {
                 Transform sequenceTarget = _pendingAttackTarget;
+                float sequenceDuration = _pendingAttackDuration;
                 _pendingAttackTarget = null;
                 _pendingAttackDuration = 0f;
+                // 판정 착탄 시계 전달(SPELL-FIDELITY §4.4) — 단일 유도 연출(가 랜스)의 동기 통로.
+                // 광역 자체 시계는 기본 no-op로 무시한다
+                if (sequenceDuration > 0f) sequence.SetImpactClock(sequenceDuration);
                 sequence.Begin(bounds.center, sequenceTarget, MissPoint(bounds.center), group.FlashColor);
                 PatternEffectLifetime.AttachBloom(go, _style.PatternLifetime, group.FlashColor);
                 return;
@@ -434,6 +442,13 @@ namespace Oheangbu.App
 
                 PatternEffectLifetime.AttachProjectile(go, _style.PatternLifetime, group.FlashColor,
                     target, MissPoint(bounds.center), duration, _pendingFxArcHeight);
+            }
+            else if (_pendingParry && _combatConfig != null)
+            {
+                // 방어막 가독(SPELL-FIDELITY §4.6): 문양 수명=GuardDuration — 방어막이 사는 동안
+                // 문양도 산다. 창(ParryWindow) 동안 진하게 → 은은 → 꼬리 1s 스러짐(수치 읽기만)
+                PatternEffectLifetime.AttachBloom(go, _combatConfig.GuardDuration, group.FlashColor,
+                    _combatConfig.ParryWindow, 1f);
             }
             else
             {

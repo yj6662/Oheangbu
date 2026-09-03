@@ -9,13 +9,18 @@ namespace Oheangbu.Spellcraft
         public readonly SpellKind Kind;
         public readonly Element Element;
         public readonly float Power; // 기본 위력 × 필세(형×세) — 이미 곱해진 최종치
+        public readonly AreaShape AreaShape; // 광역 실판정 형상 [#137] — None=단일 유지
+        public readonly float SpeedMul;      // 탄속 배율(정규화 완료 — 항상 양수)
 
-        public SpellCast(char letter, SpellKind kind, Element element, float power)
+        public SpellCast(char letter, SpellKind kind, Element element, float power,
+            AreaShape areaShape, float speedMul)
         {
             Letter = letter;
             Kind = kind;
             Element = element;
             Power = power;
+            AreaShape = areaShape;
+            SpeedMul = speedMul;
         }
     }
 
@@ -41,7 +46,9 @@ namespace Oheangbu.Spellcraft
             }
 
             float brush = _book.EvaluateBrushPower(letter.WorstJamoDistance, letter.StrokeDuration);
-            cast = new SpellCast(letter.Letter, entry.Kind, entry.Element, entry.BasePower * brush);
+            float speedMul = entry.ProjectileSpeedMul > 0f ? entry.ProjectileSpeedMul : 1f; // 미기입 데이터 안전
+            cast = new SpellCast(letter.Letter, entry.Kind, entry.Element, entry.BasePower * brush,
+                entry.AreaShape, speedMul);
             return true;
         }
     }

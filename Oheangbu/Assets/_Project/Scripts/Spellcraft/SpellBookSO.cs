@@ -12,6 +12,14 @@ namespace Oheangbu.Spellcraft
         Parry         // 상극+ㅓ 받아침 — 판정·보상은 Combat 소유(COMBAT-PARRY). 허공 시전 잔존 없음(CSV)
     }
 
+    // 광역 실판정 형상 [TEST — #137 §9-1 부분 해제]: None=현행 단일 판정 유지(연출만 광역).
+    // Cone=전방 부채꼴 다중 히트(노 — "화염 방사"). 원형·경로 기하는 후속 페이즈에서 추가.
+    public enum AreaShape
+    {
+        None,
+        Cone
+    }
+
     // 어휘 미러 [TEST · Temporary Exception §9-1] — 글자 효과의 정본은 오행부_작도어휘_v0_1.csv다.
     // 프로토 사용 어휘(가·고 + 패링 5자)만 수동 매핑하며, CSV DTO 임포터 도입 시 임포트 산출물로 대체된다.
     [CreateAssetMenu(menuName = "Oheangbu/Spellcraft/Spell Book", fileName = "SpellBook")]
@@ -26,6 +34,10 @@ namespace Oheangbu.Spellcraft
             public Element Element;
             [Tooltip("기본 위력 — 필세(형×세)가 여기에 곱해진다 [TEST]")]
             public float BasePower;
+            [Tooltip("광역 실판정 형상 [#137] — None=단일 판정 유지(연출만 광역)")]
+            public AreaShape AreaShape;
+            [Tooltip("탄속 배율 [SPELL-FIDELITY §4.3] — 0 이하=1 취급. 사=최속·아=느림(CSV 정본 이행). 판정·연출이 같은 시계를 나눠 쓴다")]
+            public float ProjectileSpeedMul;
         }
 
         [SerializeField] private Entry[] _entries;

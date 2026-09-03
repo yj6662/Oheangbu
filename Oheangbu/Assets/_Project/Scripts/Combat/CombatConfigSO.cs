@@ -58,8 +58,16 @@ namespace Oheangbu.Combat
         [SerializeField, Min(0f)] private float _harvestDamagePerSecond = 4f;
 
         [Header("술식 투사체 [TEST 5차 검수 2026-08-28 — 피해=착탄 동기화]")]
-        [Tooltip("공격 술식 투사체 속도(m/s) — 커밋 시 대상·비행시간 확정(락온 유도 보장), 착탄 시각에 피해")]
+        [Tooltip("공격 술식 투사체 속도(m/s) — 커밋 시 대상·비행시간 확정(락온 유도 보장), 착탄 시각에 피해. 글자별 배율은 SpellBook(규칙 계층)")]
         [SerializeField, Min(1f)] private float _spellProjectileSpeed = 18f;
+
+        [Header("광역 cone 실판정 [TEST — SPELL-FIDELITY §4.1 · #137 §9-1 부분 해제]")]
+        [Tooltip("전방 부채꼴 반각(도) — 수평 판정")]
+        [SerializeField, Range(5f, 90f)] private float _areaConeAngle = 40f;
+        [Tooltip("부채꼴 사거리(m)")]
+        [SerializeField, Min(1f)] private float _areaConeRange = 10f;
+        [Tooltip("커밋→판정까지 형성 딜레이(초) — 연출 분사 개시와 동기(§8 예외 1)")]
+        [SerializeField, Min(0f)] private float _areaImpactDelay = 0.4f;
 
         [Header("패링·방어막 [TEST 2차 플레이 검수 2026-08-28 — COMBAT-PARRY 전이 실험: 판정점=임팩트]")]
         [Tooltip("방어막 앞 구간(초) — 글자 완성 후 이 시간 안의 임팩트는 패링 3단 판정. 창 기준이 임팩트 전→완성 후로 전이")]
@@ -117,6 +125,9 @@ namespace Oheangbu.Combat
         public float HarvestInkPerSecond => _harvestInkPerSecond;
         public float HarvestDamagePerSecond => _harvestDamagePerSecond;
         public float SpellProjectileSpeed => _spellProjectileSpeed;
+        public float AreaConeAngle => _areaConeAngle;
+        public float AreaConeRange => _areaConeRange;
+        public float AreaImpactDelay => _areaImpactDelay;
         public float ParryWindow => _parryWindow;
         public float GuardDuration => _guardDuration;
         public float GuardBlockFactor => _guardBlockFactor;

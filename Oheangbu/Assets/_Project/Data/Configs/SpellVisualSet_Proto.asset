@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entries:
   - Letter: "\uAC00"
-    FxPrefab: {fileID: 8613232333380734222, guid: a97ce257277d3a8478674b56e65812ce, type: 3}
+    FxPrefab: {fileID: 6017897801319392543, guid: f54198441c6f1f34cae1adc9923ce103, type: 3}
     ScaleMul: 1
     ArcHeight: 0
   - Letter: "\uB098"
@@ -22,7 +22,7 @@ MonoBehaviour:
     ScaleMul: 1
     ArcHeight: 0
   - Letter: "\uB9C8"
-    FxPrefab: {fileID: 3926933123893621778, guid: bd9011ae9b9af4a4a93e7811cd52de1c, type: 3}
+    FxPrefab: {fileID: 1128056474401684328, guid: 15f89649fd977a84f9c11f4e7b0b345b, type: 3}
     ScaleMul: 1
     ArcHeight: 2.5
   - Letter: "\uC0AC"
@@ -51,5 +51,25 @@ MonoBehaviour:
     ArcHeight: 0
   - Letter: "\uC624"
     FxPrefab: {fileID: 9060677030549346097, guid: 181d75f1941e7644b83f5ad89d10558b, type: 3}
+    ScaleMul: 1
+    ArcHeight: 0
+  - Letter: "\uAC70"
+    FxPrefab: {fileID: 5806055680238298603, guid: fd88e3ad227601f4993f34ccc3a94308, type: 3}
+    ScaleMul: 1
+    ArcHeight: 0
+  - Letter: "\uB108"
+    FxPrefab: {fileID: 8441111138654954413, guid: dbeb5acb2a63ec84c99ae2c5b0aacff0, type: 3}
+    ScaleMul: 1
+    ArcHeight: 0
+  - Letter: "\uBA38"
+    FxPrefab: {fileID: 6815851129608147629, guid: 481ad962a82da0b47a6fcab7599a6080, type: 3}
+    ScaleMul: 1
+    ArcHeight: 0
+  - Letter: "\uC11C"
+    FxPrefab: {fileID: 1147970440194879023, guid: c62a815c4d22f0541b53731df78ed6f0, type: 3}
+    ScaleMul: 1
+    ArcHeight: 0
+  - Letter: "\uC5B4"
+    FxPrefab: {fileID: 1688980653121473688, guid: a2aa7a4abf8002745b7e35eb9ad71bb1, type: 3}
     ScaleMul: 1
     ArcHeight: 0
