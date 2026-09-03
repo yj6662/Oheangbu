@@ -11,7 +11,8 @@
         "Oheangbu.Presentation",
         "PDollar",
         "VContainer",
-        "UniTask"
+        "UniTask",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -17,10 +17,12 @@ namespace Oheangbu.App
         private Material _material;
         private float _startTime;
 
-        public static void Spawn(Vector3 position, Color color, Camera cam)
+        // scale: 아웃컴 소피드백 [SPELL-FIDELITY §4.6] — Success=1 / Half=축소(반쪽의 응답)
+        public static void Spawn(Vector3 position, Color color, Camera cam, float scale = 1f)
         {
             var go = new GameObject("ParryBurst");
             go.transform.position = position;
+            go.transform.localScale = Vector3.one * Mathf.Max(0.1f, scale);
             // 카메라를 바라보는 평면에서 퍼진다 — 어느 각도에서든 「막에 부딪혔다」로 읽히게
             if (cam != null) go.transform.rotation = Quaternion.LookRotation(go.transform.position - cam.transform.position);
             go.AddComponent<ParryBurstEffect>().Build(color);

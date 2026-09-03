@@ -32,11 +32,21 @@ namespace Oheangbu.App
         private bool _arrived;
         private Transform _projectilePart;
         private Transform _explosionPart;
+        private float _guardBrightWindow; // [§4.6] >0=가드 가독 타임라인(패링 방어막)
+        private float _guardFadeTail;
+        private bool _guardDimmed;
+        private Vector3 _guardBaseScale = Vector3.one; // 문양의 글자 비례 스케일 보존(페이드 기준)
 
-        // 패링 작도 — 글자 자리 제자리 개화
-        public static void AttachBloom(GameObject go, float lifetime, Color tint)
+        // 패링 작도 — 글자 자리 제자리 개화.
+        // 가드 프로파일 [SPELL-FIDELITY §4.6]: brightWindow>0이면 방어막 가독 타임라인 —
+        // 패링 창 동안 진하게 → 이후 은은(방출 감쇠) → 마지막 fadeTail에 스러짐(남은 방어 시간이 보인다)
+        public static void AttachBloom(GameObject go, float lifetime, Color tint,
+            float brightWindow = 0f, float fadeTail = 0f)
         {
             var self = Create(go, lifetime, tint, Mode.Bloom);
+            self._guardBrightWindow = Mathf.Max(0f, brightWindow);
+            self._guardFadeTail = Mathf.Clamp(fadeTail, 0f, lifetime * 0.5f);
+            self._guardBaseScale = go.transform.localScale;
             self.PrepareStationaryBloom();
             self.Restart();
         }
@@ -218,7 +228,35 @@ namespace Oheangbu.App
 
             float elapsed = Time.time - _startTime;
 
-            if (!_stopped && elapsed >= _lifetime * 0.7f)
+            if (_guardBrightWindow > 0f)
+            {
+                // 가드 가독 타임라인(§4.6): 창 종료 시 방출 감쇠(진함→은은), 꼬리 구간에 방출 중단+
+                // 스케일 스러짐 — 방어막의 남은 시간이 형태로 읽힌다
+                if (!_guardDimmed && elapsed >= _guardBrightWindow)
+                {
+                    _guardDimmed = true;
+                    foreach (var ps in GetComponentsInChildren<ParticleSystem>(true))
+                    {
+                        var emission = ps.emission;
+                        emission.rateOverTimeMultiplier *= 0.45f;
+                    }
+                }
+                float tailStart = _lifetime - _guardFadeTail;
+                if (!_stopped && _guardFadeTail > 0f && elapsed >= tailStart)
+                {
+                    _stopped = true;
+                    foreach (var ps in GetComponentsInChildren<ParticleSystem>(true))
+                    {
+                        ps.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+                    }
+                }
+                if (_stopped && _guardFadeTail > 0f)
+                {
+                    float fade = 1f - Mathf.Clamp01((elapsed - tailStart) / _guardFadeTail);
+                    transform.localScale = _guardBaseScale * Mathf.Max(0.01f, fade);
+                }
+            }
+            else if (!_stopped && elapsed >= _lifetime * 0.7f)
             {
                 _stopped = true;
                 foreach (var ps in GetComponentsInChildren<ParticleSystem>(true))

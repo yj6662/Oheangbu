@@ -11,68 +11,98 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 198f49fa974a72f459729ee2e6d30c68, type: 3}
   m_Name: SpellBook_Proto
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   _entries:
-  - Letter: "가"
+  - Letter: "\uAC00"
     Kind: 0
     Element: 0
     BasePower: 12
-  - Letter: "고"
+    AreaShape: 0
+    ProjectileSpeedMul: 1.3
+  - Letter: "\uACE0"
     Kind: 1
     Element: 0
     BasePower: 9
-  - Letter: "나"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uB098"
     Kind: 0
     Element: 1
     BasePower: 12
-  - Letter: "노"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uB178"
     Kind: 1
     Element: 1
     BasePower: 9
-  - Letter: "마"
+    AreaShape: 1
+    ProjectileSpeedMul: 0
+  - Letter: "\uB9C8"
     Kind: 0
     Element: 2
     BasePower: 16
-  - Letter: "모"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uBAA8"
     Kind: 1
     Element: 2
     BasePower: 9
-  - Letter: "사"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uC0AC"
     Kind: 0
     Element: 3
     BasePower: 8
-  - Letter: "소"
+    AreaShape: 0
+    ProjectileSpeedMul: 1.8
+  - Letter: "\uC18C"
     Kind: 1
     Element: 3
     BasePower: 8
-  - Letter: "아"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uC544"
     Kind: 0
     Element: 4
     BasePower: 12
-  - Letter: "오"
+    AreaShape: 0
+    ProjectileSpeedMul: 0.6
+  - Letter: "\uC624"
     Kind: 1
     Element: 4
     BasePower: 9
-  - Letter: "어"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uC5B4"
     Kind: 2
     Element: 4
     BasePower: 0
-  - Letter: "서"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uC11C"
     Kind: 2
     Element: 3
     BasePower: 0
-  - Letter: "거"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uAC70"
     Kind: 2
     Element: 0
     BasePower: 0
-  - Letter: "너"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uB108"
     Kind: 2
     Element: 1
     BasePower: 0
-  - Letter: "머"
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uBA38"
     Kind: 2
     Element: 2
     BasePower: 0
+    AreaShape: 0
+    ProjectileSpeedMul: 0
   _formRange: {x: 1.6, y: 0.6}
   _speedRange: {x: 4, y: 1}
   _powerCurve:

@@ -23,6 +23,14 @@ namespace Oheangbu.Combat
         [Tooltip("락온 소프트 당김(초당) — 엘든링식: 카메라가 대상 쪽으로 은은히 끌리되 고정되지 않는다. 0=끔")]
         [SerializeField, Range(0f, 10f)] private float _lockOnCameraPull = 2.5f;
 
+        [Header("락온 대상 선정 [TEST — DECISIONS #139 2026-09-03: 사거리 안·화면 안 후보 중 화면 중앙 최근접]")]
+        [Tooltip("락온 후보 사거리(m) — 카메라 기준")]
+        [SerializeField, Min(1f)] private float _lockOnRange = 20f;
+        [Tooltip("화면 밖 여유(뷰포트 비율) — 이만큼 벗어난 적까지 후보. 0=화면 안만")]
+        [SerializeField, Range(0f, 0.5f)] private float _lockOnViewportMargin = 0.05f;
+        [Tooltip("동률 가름 — 거리 가중(도/m): 화면 중앙 각에 더해 가까운 적을 우선")]
+        [SerializeField, Min(0f)] private float _lockOnDistanceWeight = 0.5f;
+
         [Header("카메라 [실험 2026-08-27] — 숄더뷰(V 토글)·작도 클로즈업. 채택=DECISIONS 문답 필요(결정 3)")]
         [Tooltip("시작 포즈를 숄더뷰로(실험 A/B 기본값). V키로 언제든 토글")]
         [SerializeField] private bool _shoulderStart = true;
@@ -58,8 +66,16 @@ namespace Oheangbu.Combat
         [SerializeField, Min(0f)] private float _harvestDamagePerSecond = 4f;
 
         [Header("술식 투사체 [TEST 5차 검수 2026-08-28 — 피해=착탄 동기화]")]
-        [Tooltip("공격 술식 투사체 속도(m/s) — 커밋 시 대상·비행시간 확정(락온 유도 보장), 착탄 시각에 피해")]
+        [Tooltip("공격 술식 투사체 속도(m/s) — 커밋 시 대상·비행시간 확정(락온 유도 보장), 착탄 시각에 피해. 글자별 배율은 SpellBook(규칙 계층)")]
         [SerializeField, Min(1f)] private float _spellProjectileSpeed = 18f;
+
+        [Header("광역 cone 실판정 [TEST — SPELL-FIDELITY §4.1 · #137 §9-1 부분 해제]")]
+        [Tooltip("전방 부채꼴 반각(도) — 수평 판정")]
+        [SerializeField, Range(5f, 90f)] private float _areaConeAngle = 40f;
+        [Tooltip("부채꼴 사거리(m)")]
+        [SerializeField, Min(1f)] private float _areaConeRange = 10f;
+        [Tooltip("커밋→판정까지 형성 딜레이(초) — 연출 분사 개시와 동기(§8 예외 1)")]
+        [SerializeField, Min(0f)] private float _areaImpactDelay = 0.4f;
 
         [Header("패링·방어막 [TEST 2차 플레이 검수 2026-08-28 — COMBAT-PARRY 전이 실험: 판정점=임팩트]")]
         [Tooltip("방어막 앞 구간(초) — 글자 완성 후 이 시간 안의 임팩트는 패링 3단 판정. 창 기준이 임팩트 전→완성 후로 전이")]
@@ -99,6 +115,9 @@ namespace Oheangbu.Combat
         public float DodgeCooldown => _dodgeCooldown;
         public float PlayerMaxHp => _playerMaxHp;
         public float LockOnCameraPull => _lockOnCameraPull;
+        public float LockOnRange => _lockOnRange;
+        public float LockOnViewportMargin => _lockOnViewportMargin;
+        public float LockOnDistanceWeight => _lockOnDistanceWeight;
         public bool ShoulderStart => _shoulderStart;
         public Vector3 ShoulderOffset => _shoulderOffset;
         public Vector3 ShoulderDrawOffset => _shoulderDrawOffset;
@@ -117,6 +136,9 @@ namespace Oheangbu.Combat
         public float HarvestInkPerSecond => _harvestInkPerSecond;
         public float HarvestDamagePerSecond => _harvestDamagePerSecond;
         public float SpellProjectileSpeed => _spellProjectileSpeed;
+        public float AreaConeAngle => _areaConeAngle;
+        public float AreaConeRange => _areaConeRange;
+        public float AreaImpactDelay => _areaImpactDelay;
         public float ParryWindow => _parryWindow;
         public float GuardDuration => _guardDuration;
         public float GuardBlockFactor => _guardBlockFactor;

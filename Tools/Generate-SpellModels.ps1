@@ -42,6 +42,12 @@ $Specs = @{
         Prompt          = "A single stylized curling ocean wave crest, smooth flowing curved water form breaking forward, wide arc shape, sculptural clean silhouette, one single object centered, simple smooth surfaces, no foam, no base, no decoration"
         TargetPolycount = 5000
     }
+    # 마(土 단일 — 포물선 바위)의 바위 실체. 가색(稼穡) — 던져진 흙의 무게(SPELL-FIDELITY §4.5).
+    ma = @{
+        Letter          = "마"
+        Prompt          = "A single rugged boulder rock, chunky angular stone with rough faceted surfaces, heavy compact mass, stylized game projectile, clean bold silhouette, one single object centered, simple low-poly facets, no base, no decoration, no moss"
+        TargetPolycount = 1000
+    }
 }
 
 # ---- 키 로드 (.env — 값은 변수로만, 어떤 경로로도 출력하지 않는다) ----

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Oheangbu.BrushRender;
 using Oheangbu.Combat;
@@ -31,6 +32,8 @@ namespace Oheangbu.App
         [SerializeField] private LockOn _lockOn;
         [SerializeField] private EnemyController _enemy;
         [SerializeField] private EnemyVitals _enemyVitals;
+        [Tooltip("씬의 전체 적 — 광역 cone 실판정 대상 [#137]. 전역 탐색 대신 씬 배선(싱글턴 금지)")]
+        [SerializeField] private EnemyVitals[] _enemies = System.Array.Empty<EnemyVitals>();
         [SerializeField] private Transform _playerTransform;
 
         [Header("표현")]
@@ -57,6 +60,16 @@ namespace Oheangbu.App
 
         private readonly List<PendingCast> _pendingCasts = new List<PendingCast>();
 
+        // 씬의 적 컨트롤러 전수 — _enemy + _enemies에서 파생(과녁처럼 컨트롤러 없는 적은 자연 제외, 중복 제거).
+        // 판정기 주입·텔레그래프 색·만개 스턴 배선은 적이 몇이든 이 파일의 몫이다
+        private readonly List<EnemyController> _controllers = new List<EnemyController>();
+
+        // 조준 후보 전수 — _enemyVitals + _enemies(중복 제거). 락온(LockOn)과 자유 조준이 같은 집합을 본다
+        private readonly List<EnemyVitals> _targets = new List<EnemyVitals>();
+
+        // 판정 결과의 표현 측 재방송(읽기 전용) — 하네스(패링장 판정판)가 구독한다. 규칙 분기는 OnParryImpactResolved 그대로
+        public event Action<ParryOutcome, Element, Vector3> ParryResolved;
+
         [Inject]
         public void Construct(SpellResolver resolver, ParryJudge judge, GroggyMeter groggy, InkPool ink)
         {
@@ -66,16 +79,43 @@ namespace Oheangbu.App
             _ink = ink;
         }
 
+        private void Awake()
+        {
+            CollectControllers();
+        }
+
+        private void CollectControllers()
+        {
+            _targets.Clear();
+            if (_enemyVitals != null) _targets.Add(_enemyVitals);
+            foreach (var vitals in _enemies)
+            {
+                if (vitals != null && !_targets.Contains(vitals)) _targets.Add(vitals);
+            }
+
+            _controllers.Clear();
+            if (_enemy != null) _controllers.Add(_enemy);
+            foreach (var vitals in _targets)
+            {
+                var controller = vitals.GetComponent<EnemyController>();
+                if (controller != null && !_controllers.Contains(controller)) _controllers.Add(controller);
+            }
+        }
+
         private void Start()
         {
-            _enemy?.Init(_judge);
-            _harvest?.Init(_ink);
-
-            // 텔레그래프 색 = 팔레트가 단일 출처(색=의미) — 화(ㄴ) 기본색 / 무속성=무채
-            if (_enemy != null && _palette != null)
+            // 텔레그래프 색 = 팔레트가 단일 출처(색=의미) — 적 자신의 원거리 속성 초성 기본색 / 무속성=무채
+            var neutral = new Color(0.45f, 0.43f, 0.41f);
+            foreach (var controller in _controllers)
             {
-                _enemy.SetTelegraphColors(_palette.GetBaseColor('ㄴ'), new Color(0.45f, 0.43f, 0.41f));
+                controller.Init(_judge);
+                if (_palette != null)
+                {
+                    controller.SetTelegraphColors(_palette.GetBaseColor(InitialOf(controller.RangedElement)), neutral);
+                }
             }
+            _harvest?.Init(_ink);
+            _lockOn?.SetCandidates(_targets); // 락온 후보=씬 배선 전수 — 선정 규칙은 LockOn이 소유(#139)
 
             _ink?.Broadcast();
             RefreshHud();
@@ -129,7 +169,7 @@ namespace Oheangbu.App
             _groggy.Blossomed += OnBlossomed;
             _groggy.Changed += RefreshHud;
             if (_judge != null) _judge.ImpactResolved += OnParryImpactResolved;
-            if (_enemy != null) _enemy.StunEnded += OnStunEnded;
+            foreach (var controller in _controllers) controller.StunEnded += OnStunEnded;
             _hooked = true;
         }
 
@@ -139,7 +179,10 @@ namespace Oheangbu.App
             _groggy.Blossomed -= OnBlossomed;
             _groggy.Changed -= RefreshHud;
             if (_judge != null) _judge.ImpactResolved -= OnParryImpactResolved;
-            if (_enemy != null) _enemy.StunEnded -= OnStunEnded;
+            foreach (var controller in _controllers)
+            {
+                if (controller != null) controller.StunEnded -= OnStunEnded;
+            }
             _hooked = false;
         }
 
@@ -193,6 +236,15 @@ namespace Oheangbu.App
         // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
         private void OnParryImpactResolved(ParryOutcome outcome, Element guardElement, Vector3 impactPoint)
         {
+            ParryResolved?.Invoke(outcome, guardElement, impactPoint);
+
+            // 반성공 소피드백 [SPELL-FIDELITY §4.6] — 보상 없이 축소 버스트만: 「반쪽으로 받아냈다」
+            if (outcome == ParryOutcome.Half && _palette != null)
+            {
+                ParryBurstEffect.Spawn(impactPoint,
+                    _palette.GetBaseColor(InitialOf(guardElement)), Camera.main, 0.5f);
+                return;
+            }
             if (outcome != ParryOutcome.Success) return;
             _ink?.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY)
             _groggy?.AddFromParry();
@@ -226,6 +278,13 @@ namespace Oheangbu.App
                 return;
             }
 
+            // 광역 실판정 [#137 — §9-1 부분 해제]: 형상이 있는 광역은 대상 조준 없이 영역 전수
+            if (cast.AreaShape == AreaShape.Cone)
+            {
+                ResolveConeAttack(cast);
+                return;
+            }
+
             EnemyVitals target = _lockOn != null ? _lockOn.Target : null;
             if (target == null) target = FindFreeAimTarget();
             if (target == null)
@@ -235,8 +294,9 @@ namespace Oheangbu.App
             }
 
             // 피해=착탄 동기화(5차 검수 — 즉발 절단면 폐기): 커밋 시 대상·비행시간 확정 = 유도 보장
-            // (COMBAT-ATTACK 락온 유도). 문양 투사체 연출도 같은 비행시간을 쓴다 — 시각이 하나뿐이라 어긋나지 않는다
-            float speed = Mathf.Max(1f, _config.SpellProjectileSpeed);
+            // (COMBAT-ATTACK 락온 유도). 문양 투사체 연출도 같은 비행시간을 쓴다 — 시각이 하나뿐이라 어긋나지 않는다.
+            // 탄속 배율=규칙 계층(SpellBook — 사=최속·아=느림): 판정·연출이 같은 시계를 나눠 쓴다(SPELL-FIDELITY §4.3)
+            float speed = Mathf.Max(1f, _config.SpellProjectileSpeed * cast.SpeedMul);
             float duration = Vector3.Distance(_playerTransform != null ? _playerTransform.position : transform.position,
                 target.transform.position) / speed;
             _pendingCasts.Add(new PendingCast
@@ -248,16 +308,57 @@ namespace Oheangbu.App
             _brushAdapter?.SetPatternAttackTarget(target.transform, duration);
         }
 
+        // 전방 cone 다중 히트 [#137 — 노 「화염 방사」]: 락온·조준과 무관하게 시전자 전방 부채꼴의
+        // 모든 생존 적에게 착탄을 예약한다. 판정 시각=형성 딜레이(연출의 분사 개시와 동기 — §8 예외 1).
+        // 대상 0체=허공 방사(먹만 소모). 연출은 자체 시계(SpellSequenceEffect)가 전방을 그린다
+        private void ResolveConeAttack(SpellCast cast)
+        {
+            Transform origin = _playerTransform != null ? _playerTransform : transform;
+            Vector3 forward = origin.forward;
+            forward.y = 0f;
+            if (forward.sqrMagnitude < 0.001f) forward = Vector3.forward;
+
+            float impactTime = Time.time + _config.AreaImpactDelay;
+            foreach (var enemy in _enemies)
+            {
+                if (enemy == null || !enemy.IsAlive) continue;
+                Vector3 to = enemy.transform.position - origin.position;
+                Vector3 flat = new Vector3(to.x, 0f, to.z); // 수평 판정 — 높이 차는 묻지 않는다 [TEST]
+                if (flat.magnitude > _config.AreaConeRange) continue;
+                if (Vector3.Angle(forward, flat) > _config.AreaConeAngle) continue;
+                _pendingCasts.Add(new PendingCast
+                {
+                    Target = enemy,
+                    ImpactTime = impactTime,
+                    Power = cast.Power,
+                });
+            }
+            _brushAdapter?.SetPatternAttackTarget(null, 0f); // 연출 목표=전방(자체 시계) — 유도 없음
+        }
+
         private EnemyVitals FindFreeAimTarget()
         {
             // 조준 기준 = 카메라(보는 곳이 곧 겨눈 곳) — 숄더뷰 실험의 어깨 오프셋 시차를 없애고,
             // 1인칭에서도 yaw 전용이던 원뿔이 피치를 따라간다 [실험 2026-08-27]
             var cam = Camera.main;
             Transform origin = cam != null ? cam.transform : _playerTransform;
-            if (_enemyVitals == null || !_enemyVitals.IsAlive || origin == null) return null;
-            Vector3 to = _enemyVitals.transform.position - origin.position;
-            if (to.magnitude > _freeAimRange) return null;
-            return Vector3.Angle(origin.forward, to) <= _freeAimAngle ? _enemyVitals : null;
+            if (origin == null) return null;
+
+            // 후보 = 씬 배선 전수(_targets) — 원뿔 안에서 시선에 가장 가까운 생존 적 1체.
+            // 다수 배치 씬에서도 규칙은 그대로다(전방 원뿔 명중·대상 하나) — 후보 집합만 넓어진다
+            EnemyVitals best = null;
+            float bestAngle = _freeAimAngle;
+            foreach (var candidate in _targets)
+            {
+                if (candidate == null || !candidate.IsAlive) continue;
+                Vector3 to = candidate.transform.position - origin.position;
+                if (to.magnitude > _freeAimRange) continue;
+                float angle = Vector3.Angle(origin.forward, to);
+                if (angle > bestAngle) continue;
+                best = candidate;
+                bestAngle = angle;
+            }
+            return best;
         }
 
         // 불발 — 먹만 소모(SPEC-DRAWING-INPUT §3-3의 첫 소비자)
@@ -275,7 +376,11 @@ namespace Oheangbu.App
 
         private void OnBlossomed()
         {
-            _enemy?.EnterStun(); // 만개 = 급소창(스턴 + 피해 증폭)
+            // 만개 = 급소창(스턴 + 피해 증폭) — 결투에 참여 중(활성)인 적 전수. 잠든 적(하네스 비활성)은 결투 밖이다
+            foreach (var controller in _controllers)
+            {
+                if (controller != null && controller.isActiveAndEnabled) controller.EnterStun();
+            }
         }
 
         private void OnStunEnded()

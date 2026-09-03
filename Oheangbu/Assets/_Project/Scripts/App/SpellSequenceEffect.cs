@@ -9,5 +9,9 @@ namespace Oheangbu.App
     {
         // origin=커밋 문양 중심 / target=락온 대상(없으면 null) / fallbackPoint=허공 착탄점 / tint=팔레트 속성색
         public abstract void Begin(Vector3 origin, Transform target, Vector3 fallbackPoint, Color tint);
+
+        // [SPELL-FIDELITY §4.4] 배선의 판정 착탄 시계(비행시간) 수신 훅 — Begin 직전에 호출된다.
+        // 단일 유도 연출(가 랜스)이 「피해=착탄 동기화」에 참여하는 통로. 광역 자체 시계는 무시(기본 no-op)
+        public virtual void SetImpactClock(float flightDuration) { }
     }
 }
