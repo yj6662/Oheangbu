@@ -11,18 +11,19 @@ using UnityEngine;
 
 namespace Oheangbu.EditorTools
 {
-    // [SPEC-DEV-SPELL-RANGE §2] 사격장 배치 빌더 — C1_SpellRange(C1_CombatLoop 복제본)에 과녁 6·실적 위치·
-    // 배선·디렉터를 결정적으로 구성한다. 재실행 가능(기존 과녁·디렉터를 지우고 다시 만든다).
-    // 배치표는 이 파일이 단일 출처 — Spec §2 표와 같이 움직인다.
+    // [SPEC-DEV-SPELL-RANGE §2] 사격장 배치 빌더 — C1_SpellRange에 과녁 6·실적 위치·배선·디렉터를 결정적으로 구성한다.
+    // 재실행 가능(기존 과녁·디렉터·선택대·귀환 포탈을 지우고 다시 만든다). 배치표는 이 파일이 단일 출처 — Spec §2 표와 같이 움직인다.
+    // 리그가 PlayerRig 프리팹 인스턴스여도 그대로 동작한다(TEST-HUB §3 — _enemies는 인스턴스 오버라이드).
     public static class SpellRangeSceneBuilder
     {
         private const string SceneName = "C1_SpellRange";
-        private const string DummyConfigPath = "Assets/_Project/Data/Configs/CombatConfig_RangeDummy.asset";
-        private const string DefaultConfigPath = "Assets/_Project/Data/Configs/CombatConfig_Default.asset";
-        private const string SpellBookPath = "Assets/_Project/Data/Configs/SpellBook_Proto.asset";
+        private const string DummyConfigPath = DevSceneKit.RangeDummyConfigPath;
+        private const string DefaultConfigPath = DevSceneKit.DefaultConfigPath;
+        private const string SpellBookPath = DevSceneKit.SpellBookPath;
 
-        private static readonly Vector3 Origin = new Vector3(0f, 1.1f, -6f); // 플레이어 시작점(캡슐 중심)
+        private static readonly Vector3 Origin = DevSceneKit.Spawn; // 플레이어 시작점(캡슐 중심)
         private static readonly Vector3 LiveEnemyPosition = new Vector3(-7f, 1.1f, -3f);
+        private static readonly Vector3 PedestalPosition = new Vector3(-4f, 0f, -6.5f);
 
         private struct DummySpec
         {
@@ -31,14 +32,15 @@ namespace Oheangbu.EditorTools
             public float Distance;
         }
 
+        // 2026-09-03 재배치(예준: 간격 벌리기 + 멀리) — cone 40°/10m 기준 IN 3(D1·D2·D3) / OUT 3(D4·D5=각 밖, D6=사거리 밖)
         private static readonly DummySpec[] Dummies =
         {
-            new DummySpec { Name = "D1", Angle = 0f, Distance = 6f },
-            new DummySpec { Name = "D2", Angle = -30f, Distance = 7f },
-            new DummySpec { Name = "D3", Angle = 30f, Distance = 7f },
-            new DummySpec { Name = "D4", Angle = -55f, Distance = 7f },
-            new DummySpec { Name = "D5", Angle = 45f, Distance = 6f },
-            new DummySpec { Name = "D6", Angle = 15f, Distance = 12f },
+            new DummySpec { Name = "D1", Angle = 0f, Distance = 8f },
+            new DummySpec { Name = "D2", Angle = -30f, Distance = 9f },
+            new DummySpec { Name = "D3", Angle = 30f, Distance = 9f },
+            new DummySpec { Name = "D4", Angle = -60f, Distance = 8f },
+            new DummySpec { Name = "D5", Angle = 60f, Distance = 8f },
+            new DummySpec { Name = "D6", Angle = 20f, Distance = 15f },
         };
 
         [MenuItem("Oheangbu/Dev/사격장 배치 재구성 (C1_SpellRange)")]
@@ -53,9 +55,7 @@ namespace Oheangbu.EditorTools
             if (scene.name != SceneName) return $"활성 씬이 {SceneName}이 아님: {scene.name}";
 
             GameObject enemy = GameObject.Find("Enemy");
-            GameObject player = GameObject.Find("Player");
-            GameObject systems = GameObject.Find("CombatSystems");
-            if (enemy == null || player == null || systems == null) return "루트(Enemy/Player/CombatSystems) 누락";
+            if (!DevSceneKit.FindRigParts(out var player, out var systems) || enemy == null) return "루트(Enemy/Player/CombatSystems) 누락";
 
             var dummyConfig = AssetDatabase.LoadAssetAtPath<CombatConfigSO>(DummyConfigPath);
             var defaultConfig = AssetDatabase.LoadAssetAtPath<CombatConfigSO>(DefaultConfigPath);
@@ -68,13 +68,8 @@ namespace Oheangbu.EditorTools
             var letterChannel = wiringSo.FindProperty("_letterDrawn").objectReferenceValue;
 
             // 재실행: 이전 산출물 제거
-            foreach (var spec in Dummies)
-            {
-                var old = GameObject.Find(spec.Name);
-                if (old != null) Object.DestroyImmediate(old);
-            }
-            var oldDirector = GameObject.Find("RangeDirector");
-            if (oldDirector != null) Object.DestroyImmediate(oldDirector);
+            foreach (var spec in Dummies) DevSceneKit.DestroyByName(spec.Name);
+            DevSceneKit.DestroyByName("RangeDirector", "Pedestal_Live", "Portal_Return");
 
             enemy.transform.position = LiveEnemyPosition;
 
@@ -91,15 +86,14 @@ namespace Oheangbu.EditorTools
                 if (controller != null) Object.DestroyImmediate(controller); // 과녁은 반격하지 않는다
 
                 var vitals = go.GetComponent<EnemyVitals>();
-                var vitalsSo = new SerializedObject(vitals);
-                vitalsSo.FindProperty("_config").objectReferenceValue = dummyConfig;
-                vitalsSo.ApplyModifiedPropertiesWithoutUndo();
+                DevSceneKit.SetRef(vitals, "_config", dummyConfig);
 
                 var dummy = go.AddComponent<SpellRangeDummy>();
                 var dummySo = new SerializedObject(dummy);
                 dummySo.FindProperty("_vitals").objectReferenceValue = vitals;
                 dummySo.FindProperty("_renderer").objectReferenceValue = go.GetComponent<Renderer>();
                 dummySo.FindProperty("_config").objectReferenceValue = dummyConfig;
+                dummySo.FindProperty("_caption").stringValue = spec.Name;
                 dummySo.ApplyModifiedPropertiesWithoutUndo();
 
                 dummies.Add(dummy);
@@ -107,12 +101,8 @@ namespace Oheangbu.EditorTools
             }
             enemies.Add(enemy.GetComponent<EnemyVitals>());
 
-            var enemiesProp = wiringSo.FindProperty("_enemies");
-            enemiesProp.arraySize = enemies.Count;
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                enemiesProp.GetArrayElementAtIndex(i).objectReferenceValue = enemies[i];
-            }
+            wiringSo = new SerializedObject(wiring);
+            DevSceneKit.SetObjectArray(wiringSo, "_enemies", enemies);
             wiringSo.ApplyModifiedPropertiesWithoutUndo();
 
             var directorGo = new GameObject("RangeDirector");
@@ -122,14 +112,17 @@ namespace Oheangbu.EditorTools
             directorSo.FindProperty("_spellBook").objectReferenceValue = spellBook;
             directorSo.FindProperty("_config").objectReferenceValue = defaultConfig;
             directorSo.FindProperty("_player").objectReferenceValue = player.transform;
-            var dummiesProp = directorSo.FindProperty("_dummies");
-            dummiesProp.arraySize = dummies.Count;
-            for (int i = 0; i < dummies.Count; i++)
-            {
-                dummiesProp.GetArrayElementAtIndex(i).objectReferenceValue = dummies[i];
-            }
-            directorSo.FindProperty("_liveEnemy").objectReferenceValue = enemy.GetComponent<EnemyController>();
+            DevSceneKit.SetObjectArray(directorSo, "_dummies", dummies);
             directorSo.ApplyModifiedPropertiesWithoutUndo();
+
+            // TEST-HUB 편입 — 실적 선택대·귀환 포탈·인터랙터(F/R 단일 지점)
+            var liveController = enemy.GetComponent<EnemyController>();
+            var pedestal = DevSceneKit.CreatePedestal("Pedestal_Live", PedestalPosition, new Vector3(Origin.x, 0f, Origin.z),
+                "실적 선택대", new[] { "실적(화) AI — 패링·갈무리·그로기 검증 때만 깨운다" },
+                liveController, false, DevSceneKit.ElementMaterial(liveController != null ? liveController.RangedElement : Element.Fire));
+            var returnPortal = DevSceneKit.AddReturnPortal();
+            DevSceneKit.AddInteractor(directorGo, player.transform, new List<DevInteractable> { pedestal, returnPortal });
+            DevSceneKit.PruneRigOverrides(player);
 
             EditorSceneManager.MarkSceneDirty(scene);
             bool saved = EditorSceneManager.SaveScene(scene);
@@ -138,14 +131,11 @@ namespace Oheangbu.EditorTools
 
         // 가상 시전(검증 보조·에디터 전용) — 작도 없이 글자 채널을 올린다. 원자료는 중간값(형 1.0·세 2.0s).
         // 인식 계층을 우회하는 것이지 대체하는 것이 아니다 — 판정·표현 계층의 원격 검증에만 쓴다.
-        private const string LetterChannelGuid = "c5b5038e37bdeff4abbb1ae079f460fb";
-
         public static string FireLetter(string letter)
         {
             if (!Application.isPlaying) return "플레이 모드 아님";
             if (string.IsNullOrEmpty(letter)) return "글자 없음";
-            var channel = AssetDatabase.LoadAssetAtPath<DrawnLetterEventChannelSO>(
-                AssetDatabase.GUIDToAssetPath(LetterChannelGuid));
+            var channel = DevSceneKit.LoadByGuid<DrawnLetterEventChannelSO>(DevSceneKit.LetterChannelGuid);
             if (channel == null) return "글자 채널 없음";
 
             char c = letter[0];
@@ -176,6 +166,45 @@ namespace Oheangbu.EditorTools
             }
             Physics.SyncTransforms();
             return FireLetter(letter) + $" @ yaw {yaw:0}°";
+        }
+
+        // 플레이 중 플레이어 이동(검증 보조) — 근접 표시·상호작용 반경 검증용. 캡슐 중심 높이 고정·피치 0
+        public static string MovePlayer(float x, float z, float yaw)
+        {
+            if (!Application.isPlaying) return "플레이 모드 아님";
+            var player = GameObject.Find("Player");
+            if (player == null) return "Player 없음";
+            player.transform.SetPositionAndRotation(new Vector3(x, Origin.y, z), Quaternion.Euler(0f, yaw, 0f));
+            var motor = player.GetComponent<PlayerMotor>();
+            if (motor != null)
+            {
+                var pitch = typeof(PlayerMotor).GetField("_pitch", BindingFlags.Instance | BindingFlags.NonPublic);
+                pitch?.SetValue(motor, 0f);
+            }
+            Physics.SyncTransforms();
+            return $"이동 ({x:0.##}, {z:0.##}) yaw {yaw:0}°";
+        }
+
+        // 플레이 중 락온 토글(검증 보조) — 현재 자세에서 LockOn 선정 결과를 이름으로 돌려준다
+        public static string ToggleLockOn()
+        {
+            if (!Application.isPlaying) return "플레이 모드 아님";
+            var player = GameObject.Find("Player");
+            var lockOn = player != null ? player.GetComponent<LockOn>() : null;
+            if (lockOn == null) return "LockOn 없음";
+            lockOn.Toggle();
+            return lockOn.Target != null ? $"락온: {lockOn.Target.name}" : "락온 없음(해제 또는 후보 없음)";
+        }
+
+        // 플레이 중 상호작용 원격 실행(검증 보조) — 이름으로 찾은 상호작용 대상의 Interact()
+        public static string InteractWith(string objectName)
+        {
+            if (!Application.isPlaying) return "플레이 모드 아님";
+            var go = GameObject.Find(objectName);
+            var interactable = go != null ? go.GetComponent<DevInteractable>() : null;
+            if (interactable == null) return $"상호작용 대상 없음: {objectName}";
+            interactable.Interact();
+            return $"상호작용 실행: {objectName}";
         }
 
         private static Jamo? MapInitial(int index)

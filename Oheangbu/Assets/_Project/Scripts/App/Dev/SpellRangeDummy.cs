@@ -15,9 +15,10 @@ namespace Oheangbu.App
         [SerializeField] private Renderer _renderer;
         [Tooltip("누적 피해 환산용(Hp01 × MaxHp) — 과녁 전용 설정(사실상 불사)")]
         [SerializeField] private CombatConfigSO _config;
+        [Tooltip("라벨 캡션 — 디렉터가 있으면 각·거리·IN/OUT으로 덮어쓴다")]
+        [SerializeField] private string _caption = "";
 
         private TextMesh _label;
-        private string _caption = "";
         private Color _baseColor;
         private float _flashUntil;
         private float _lastHp01 = 1f;
@@ -31,7 +32,7 @@ namespace Oheangbu.App
         private void Awake()
         {
             if (_renderer != null) _baseColor = _renderer.material.color;
-            _label = CreateLabel(transform, 1.5f);
+            _label = DevLabel.Create(transform, Vector3.up * 1.5f, 0.045f, TextAnchor.LowerCenter, DevLabel.Paper);
         }
 
         private void Start()
@@ -83,7 +84,7 @@ namespace Oheangbu.App
                     _flashUntil = 0f;
                 }
             }
-            FaceCamera(_label);
+            DevLabel.FaceCamera(_label);
         }
 
         private void RefreshLabel()
@@ -91,34 +92,6 @@ namespace Oheangbu.App
             if (_label == null) return;
             string state = _vitals != null && !_vitals.IsAlive ? " X" : "";
             _label.text = $"{_caption}{state}\n명중 {_hits} · 피해 {_damageTotal:0.#}";
-        }
-
-        // 하네스 공용 라벨 — 디렉터가 실적 라벨에도 쓴다
-        public static TextMesh CreateLabel(Transform parent, float height)
-        {
-            var go = new GameObject("Label");
-            go.transform.SetParent(parent, false);
-            go.transform.localPosition = Vector3.up * height;
-            var text = go.AddComponent<TextMesh>();
-            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (font != null)
-            {
-                text.font = font;
-                go.GetComponent<MeshRenderer>().material = font.material;
-            }
-            text.fontSize = 48;
-            text.characterSize = 0.045f; // 시작점에서 6~12m 과녁 라벨이 서로 겹치지 않는 크기(실측 0.08은 겹침)
-            text.anchor = TextAnchor.LowerCenter;
-            text.alignment = TextAlignment.Center;
-            text.color = new Color(0.95f, 0.93f, 0.88f);
-            return text;
-        }
-
-        public static void FaceCamera(TextMesh label)
-        {
-            var cam = Camera.main;
-            if (label == null || cam == null) return;
-            label.transform.rotation = Quaternion.LookRotation(label.transform.position - cam.transform.position);
         }
     }
 }

@@ -23,6 +23,14 @@ namespace Oheangbu.Combat
         [Tooltip("락온 소프트 당김(초당) — 엘든링식: 카메라가 대상 쪽으로 은은히 끌리되 고정되지 않는다. 0=끔")]
         [SerializeField, Range(0f, 10f)] private float _lockOnCameraPull = 2.5f;
 
+        [Header("락온 대상 선정 [TEST — DECISIONS #139 2026-09-03: 사거리 안·화면 안 후보 중 화면 중앙 최근접]")]
+        [Tooltip("락온 후보 사거리(m) — 카메라 기준")]
+        [SerializeField, Min(1f)] private float _lockOnRange = 20f;
+        [Tooltip("화면 밖 여유(뷰포트 비율) — 이만큼 벗어난 적까지 후보. 0=화면 안만")]
+        [SerializeField, Range(0f, 0.5f)] private float _lockOnViewportMargin = 0.05f;
+        [Tooltip("동률 가름 — 거리 가중(도/m): 화면 중앙 각에 더해 가까운 적을 우선")]
+        [SerializeField, Min(0f)] private float _lockOnDistanceWeight = 0.5f;
+
         [Header("카메라 [실험 2026-08-27] — 숄더뷰(V 토글)·작도 클로즈업. 채택=DECISIONS 문답 필요(결정 3)")]
         [Tooltip("시작 포즈를 숄더뷰로(실험 A/B 기본값). V키로 언제든 토글")]
         [SerializeField] private bool _shoulderStart = true;
@@ -107,6 +115,9 @@ namespace Oheangbu.Combat
         public float DodgeCooldown => _dodgeCooldown;
         public float PlayerMaxHp => _playerMaxHp;
         public float LockOnCameraPull => _lockOnCameraPull;
+        public float LockOnRange => _lockOnRange;
+        public float LockOnViewportMargin => _lockOnViewportMargin;
+        public float LockOnDistanceWeight => _lockOnDistanceWeight;
         public bool ShoulderStart => _shoulderStart;
         public Vector3 ShoulderOffset => _shoulderOffset;
         public Vector3 ShoulderDrawOffset => _shoulderDrawOffset;

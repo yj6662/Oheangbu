@@ -5,18 +5,13 @@ using Oheangbu.Core.Domain;
 using Oheangbu.Core.Events;
 using Oheangbu.Spellcraft;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-#if UNITY_EDITOR
-using UnityEditor.SceneManagement;
-#endif
 
 namespace Oheangbu.App
 {
     // [사격장 하네스 — SPEC-DEV-SPELL-RANGE] 실플레이 게이트의 계측·안내. 게임 규칙 무접촉 —
     // 글자 채널을 읽어 시전 시각을 재고, 과녁의 피격을 받아 착탄 지연·명중 집합을 콘솔에 남긴다.
     // 바닥 안내선(cone 부채꼴·시작점)은 CombatConfig 수치를 그대로 그린다 — 수치가 바뀌면 선도 따라간다.
-    // R=씬 재시작(전 상태 초기화) · F=실적 AI 깨우기/재우기. 키 직결은 하네스 편의(런타임 경로 아님).
+    // 키·실적 토글은 TEST-HUB 하네스(DevInteractor·DevEnemyWakePedestal)의 몫 — 여기는 계측만.
     public sealed class SpellRangeDirector : MonoBehaviour
     {
         private const int ArcSegments = 32;
@@ -30,16 +25,12 @@ namespace Oheangbu.App
 
         [Header("사격장")]
         [SerializeField] private SpellRangeDummy[] _dummies = System.Array.Empty<SpellRangeDummy>();
-        [Tooltip("패링·갈무리·그로기용 실적 — 시작은 잠든 상태(F로 깨움)")]
-        [SerializeField] private EnemyController _liveEnemy;
-        [SerializeField] private bool _liveEnemyAwakeAtStart;
         [Tooltip("시전 후 집계까지(초, 게임 시계) — 최장 비행(아 12m≈1.1s)보다 길게")]
         [SerializeField, Min(0.5f)] private float _reportDelay = 2.5f;
 
         private Vector3 _origin;
         private Vector3 _forward;
         private Material _guideMaterial;
-        private TextMesh _enemyLabel;
 
         // 진행 중 시전 1건의 계측
         private bool _casting;
@@ -58,13 +49,7 @@ namespace Oheangbu.App
             _forward = Flat(_player != null ? _player.forward : Vector3.forward).normalized;
             BuildGuides();
             CaptionDummies();
-            if (_liveEnemy != null)
-            {
-                _liveEnemy.enabled = _liveEnemyAwakeAtStart;
-                _enemyLabel = SpellRangeDummy.CreateLabel(_liveEnemy.transform, 1.5f);
-                RefreshEnemyLabel();
-            }
-            Debug.Log("[Range] 사격장 준비 — R: 재시작 · F: 실적 AI 토글 · 시전/착탄/집계는 콘솔(시간=게임 시계, 감속 포함)");
+            Debug.Log("[Range] 사격장 준비 — F: 상호작용(선택대·귀환) · R: 재시작 · 시전/착탄/집계는 콘솔(시간=게임 시계, 감속 포함)");
         }
 
         private void OnEnable()
@@ -92,14 +77,7 @@ namespace Oheangbu.App
 
         private void Update()
         {
-            var kb = Keyboard.current;
-            if (kb != null)
-            {
-                if (kb.rKey.wasPressedThisFrame) Restart();
-                if (kb.fKey.wasPressedThisFrame) ToggleLiveEnemy();
-            }
             if (_casting && Time.time >= _castTime + _reportDelay) Report();
-            SpellRangeDummy.FaceCamera(_enemyLabel);
         }
 
         // ---- 계측: 시전 → 착탄 → 집계 ----
@@ -213,33 +191,6 @@ namespace Oheangbu.App
             _hitDelay.Clear();
         }
 
-        // ---- 사격장 조작 ----
-
-        private void Restart()
-        {
-            Time.timeScale = 1f; // 작도 감속 중 재시작해도 새 씬이 정상 속도로 시작하게
-            string path = SceneManager.GetActiveScene().path;
-#if UNITY_EDITOR
-            EditorSceneManager.LoadSceneInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Single));
-#else
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-#endif
-        }
-
-        private void ToggleLiveEnemy()
-        {
-            if (_liveEnemy == null) return;
-            _liveEnemy.enabled = !_liveEnemy.enabled;
-            RefreshEnemyLabel();
-            Debug.Log($"[Range] 실적 AI {(_liveEnemy.enabled ? "활동" : "잠듦")}");
-        }
-
-        private void RefreshEnemyLabel()
-        {
-            if (_enemyLabel == null || _liveEnemy == null) return;
-            _enemyLabel.text = _liveEnemy.enabled ? "실적(AI) 활동\nF: 재우기" : "실적(AI) 잠듦\nF: 깨우기";
-        }
-
         // ---- 안내: 캡션·바닥 선 ----
 
         private void CaptionDummies()
@@ -261,10 +212,7 @@ namespace Oheangbu.App
 
         private void BuildGuides()
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
-            if (shader == null) shader = Shader.Find("Sprites/Default");
-            _guideMaterial = new Material(shader);
-            _guideMaterial.color = new Color(0.16f, 0.15f, 0.13f, 0.9f);
+            _guideMaterial = DevLabel.CreateUnlit(DevLabel.Ink);
 
             float angle = _config != null ? _config.AreaConeAngle : 40f;
             float range = _config != null ? _config.AreaConeRange : 10f;

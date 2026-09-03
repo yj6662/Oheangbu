@@ -4,7 +4,7 @@
 |---|---|
 | 상태 | **TEST** (2026-09-03 창설 — 예준 지시 "테스트환경 구축". 개발 도구 — 게임 규칙 무접촉) |
 | 작성 | 2026-09-03 |
-| 선행 | SPEC-SPELL-FIDELITY TEST(§6-2 cone 실측·§6-4 탄속 실측·§6-8 실플레이 게이트) · SPEC-COMBAT-CORE-LOOP TEST(§6 실플레이 7종) |
+| 선행 | SPEC-SPELL-FIDELITY TEST(§6-2 cone 실측·§6-4 탄속 실측·§6-8 실플레이 게이트) · SPEC-COMBAT-CORE-LOOP TEST(§6 실플레이 7종) · SPEC-DEV-TEST-HUB TEST(2026-09-03 허브 Room 편입 — 리그 프리팹·선택대·귀환 포탈) |
 | 근거 | PROD-PIPELINE(Validation) · 헌법 HUD 화이트리스트(게임 HUD 무추가 — 하네스 라벨은 월드 텍스트) · 싱글턴 금지(씬 배선) |
 
 ## 1. 목적
@@ -23,27 +23,32 @@ Production Bible의 「Validation 정의(자동 테스트·수동 체크리스�
 
 | 과녁 | 시작점 기준 | cone(40°/10m) 판정 | 용도 |
 |---|---|---|---|
-| D1 | 정면 6m | IN | 탄속 근거리 기준·랜스·바위 |
-| D2 | 좌 30° 7m | IN | cone 다중 명중 |
-| D3 | 우 30° 7m | IN | cone 다중 명중 |
-| D4 | 좌 55° 7m | OUT(각) | cone 각 경계 밖 |
-| D5 | 우 45° 6m | OUT(각) | cone 각 경계 근처 밖 |
-| D6 | 우 15° 12m | OUT(사거리) | 탄속 원거리 비교(사 0.37s / 아 1.11s 예상) |
-| 실적 | 좌 67° 7.6m | OUT | 패링·갈무리·그로기 — **시작은 잠듦(F로 깨움)** |
+| D1 | 정면 8m | IN | 탄속 근거리 기준·랜스·바위 (가 0.34s 예상) |
+| D2 | 좌 30° 9m | IN | cone 다중 명중 |
+| D3 | 우 30° 9m | IN | cone 다중 명중 |
+| D4 | 좌 60° 8m | OUT(각) | cone 각 경계 밖 |
+| D5 | 우 60° 8m | OUT(각) | cone 각 경계 밖 |
+| D6 | 우 20° 15m | OUT(사거리) | 탄속 원거리 비교(사 0.46s / 아 1.39s 예상) |
+
+(2026-09-03 재배치 — 예준: 간격 벌리기+멀리. 초판 6/7/12m 배치의 계측 기록은 §6.1에 그대로 둔다.)
+| 실적 | 좌 67° 7.6m | OUT | 패링·갈무리·그로기 — **시작은 잠듦 — 선택대(F)로 깨움** |
+| 선택대 | (−4, −6.5) | — | `Pedestal_Live`(TEST-HUB `DevEnemyWakePedestal`) — 실적 깨우기/재우기 |
+| 귀환 포탈 | (3, −9) | — | `Portal_Return` → `C1_TestHub` |
 
 - 과녁 = `EnemyVitals` + `SpellRangeDummy`(하네스) — `EnemyController` 없음(반격 없음). 설정은
   `CombatConfig_RangeDummy`(EnemyMaxHp 100000 — 사실상 불사, 그 외 Default와 동일).
 - 실적 = C1_CombatLoop의 적 그대로(Default 설정·락온 대상·`_enemyVitals` 단일 참조).
 - `CombatLoopWiring._enemies` = 과녁 6 + 실적 1 (cone 실판정 대상 전수 — 씬 배선).
-- 하네스 오브젝트 `RangeDirector`(`SpellRangeDirector`) — 채널 구독·계측·안내선·키.
+- 하네스 오브젝트 `RangeDirector`(`SpellRangeDirector` + `DevInteractor`) — 채널 구독·계측·안내선 / 키·상호작용(TEST-HUB 이관).
+- 플레이어 리그 = `PlayerRig` 프리팹 인스턴스(TEST-HUB §3, 2026-09-03 교체) — seam(`_enemies` 7 등)은 인스턴스 오버라이드.
 
 ## 3. 조작
 
 | 키 | 동작 |
 |---|---|
 | 기존 전부 | WASD·마우스·Q 작도·Shift 회피·Tab 락온(실적)·LMB 갈무리·V 카메라 실험 |
-| **R** | 씬 재시작 — 위치·HP·먹·과녁 전부 초기화(작도 감속 중이어도 정상 속도로) |
-| **F** | 실적 AI 깨우기/재우기(패링 검증 때만 깨운다) |
+| **R** | 씬 재시작 — 위치·HP·먹·과녁 전부 초기화(작도 감속 중이어도 정상 속도로). 키 리더=`DevInteractor`(TEST-HUB 공통) |
+| **F** | 상호작용 — 선택대: 실적 AI 깨우기/재우기(패링 검증 때만 깨운다) · 귀환 포탈: 허브로 |
 
 ## 4. 계측 출력 (콘솔 `[Range]` — 시간은 게임 시계, 작도 감속 포함)
 
@@ -69,7 +74,7 @@ Production Bible의 「Validation 정의(자동 테스트·수동 체크리스�
 | 1 | 컴파일 클린·플레이 진입 예외 0 · C1_CombatLoop 동작 불변(자유 조준 회귀 없음) |
 | 2 | 노 시전(시작점·정면) → 집계가 IN 3(D1·D2·D3)/OUT 3(D4·D5·D6)로 기하 예상과 일치 — SPELL-FIDELITY §6-2 증거 |
 | 3 | 사·아 시전(D6) → 착탄 지연이 예상(0.37s/1.11s)과 ±1프레임 — SPELL-FIDELITY §6-4 증거 |
-| 4 | R 재시작 후 과녁·먹·HP 초기화, F 토글로 실적 텔레그래프 개시/정지 |
+| 4 | R 재시작 후 과녁·먹·HP 초기화, 선택대 F로 실적 텔레그래프 개시/정지 |
 | 5 | 예준 실플레이 — 사격장이 게이트 판정에 쓸 만한가(안내선·라벨 가독·조작) |
 
 ### 6.1 검증 기록 (2026-09-03 — 가상 시전 원격 계측, 플레이모드 예외 0)
@@ -79,8 +84,11 @@ Production Bible의 「Validation 정의(자동 테스트·수동 체크리스�
 | 1 | 컴파일 클린 · 플레이 진입 예외 0 · C1_CombatLoop 불변은 코드 논증(후보 집합 [단일 적]=동일 결과) — 실플레이 미실행 |
 | 2 | **VALIDATED** — `노` @ 시작점 정면: 착탄 D1·D2·D3 +0.40s(예상 0.40) / 미명중 D4·D5·D6 · 「기하 예상과 일치」 |
 | 3 | **VALIDATED** — `사`→D6 +0.37s(예상 0.37) · `아`→D6 +1.11s(예상 1.11) · `가`→D1 +0.26s(예상 0.26) — 자유 조준 일반화가 yaw 15°에서 D6 선택 |
-| 4 | 미실측(R·F는 키 입력 — 예준 실플레이) |
+| 4 | 부분 — 선택대 깨움/재움은 원격 상호작용으로 VALIDATED(2026-09-03, 리그 프리팹 교체 후 재현 포함) · R/F 키 자체는 예준 실플레이 |
 | 5 | 예준 게이트 대기. 원격 컷: 안내선·라벨 가독 확인(라벨 크기 0.08→0.045 축소 — 겹침 교정) |
+
+재배치(8/9/15m) 재계측(2026-09-03): 노 → D1·D2·D3 +0.40s / D4·D5·D6 미명중 · 기하 일치 · 사 → D6 15m +0.46s(예상 0.46) ·
+Tab 락온이 과녁을 잡는다(#139 — 정면 D1·우30° D3·우20° D6·좌67° 실적).
 
 ## 7. Non-Goals
 
@@ -90,5 +98,6 @@ Production Bible의 「Validation 정의(자동 테스트·수동 체크리스�
 
 ## 8. Temporary Exceptions
 
-1. 하네스 키 직결(`Keyboard.current` R/F) — 개발 씬 전용. Cleanup Gate 없음(하네스와 함께 존속·소멸).
+1. 하네스 키 직결(`Keyboard.current` R/F) — SPEC-DEV-TEST-HUB §9-1로 통합(`DevInteractor` 단일 지점, 2026-09-03). 실적 AI 토글은
+   선택대 상호작용으로 이관 — `SpellRangeDirector`는 계측만 남는다.
 2. `CombatConfig_RangeDummy` = Default 복제본 — 사격장 전용이며 밸런스 정본 아님. Default 개정 시 재복제.

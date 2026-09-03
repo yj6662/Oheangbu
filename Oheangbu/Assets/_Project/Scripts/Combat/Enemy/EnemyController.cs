@@ -62,6 +62,23 @@ namespace Oheangbu.Combat
             if (_projectile != null) Destroy(_projectile.gameObject);
         }
 
+        // 잠듦(enabled=false)·씬 해제 — 진행 중 공격은 버린다: 비활성 중 지나간 임팩트 시각이 재활성 프레임의
+        // 유령 피해가 되지 않게. 죽은 적은 그대로 둔다. 스턴 중이었으면 급소창을 정상 종료로 닫는다
+        private void OnDisable()
+        {
+            if (_state == State.Dead) return;
+            if (_projectile != null) _projectile.gameObject.SetActive(false);
+            if (_state == State.Stunned)
+            {
+                if (_vitals != null) _vitals.DamageMultiplier = 1f;
+                StunEnded?.Invoke();
+            }
+            _state = State.Idle;
+            _cooldown = 1f;
+            _parriedFlashUntil = 0f;
+            if (gameObject.activeInHierarchy) Tint(_baseColor);
+        }
+
         public void Init(ParryJudge judge)
         {
             _judge = judge;

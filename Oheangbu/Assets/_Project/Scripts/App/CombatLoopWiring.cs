@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Oheangbu.BrushRender;
 using Oheangbu.Combat;
@@ -59,6 +60,16 @@ namespace Oheangbu.App
 
         private readonly List<PendingCast> _pendingCasts = new List<PendingCast>();
 
+        // 씬의 적 컨트롤러 전수 — _enemy + _enemies에서 파생(과녁처럼 컨트롤러 없는 적은 자연 제외, 중복 제거).
+        // 판정기 주입·텔레그래프 색·만개 스턴 배선은 적이 몇이든 이 파일의 몫이다
+        private readonly List<EnemyController> _controllers = new List<EnemyController>();
+
+        // 조준 후보 전수 — _enemyVitals + _enemies(중복 제거). 락온(LockOn)과 자유 조준이 같은 집합을 본다
+        private readonly List<EnemyVitals> _targets = new List<EnemyVitals>();
+
+        // 판정 결과의 표현 측 재방송(읽기 전용) — 하네스(패링장 판정판)가 구독한다. 규칙 분기는 OnParryImpactResolved 그대로
+        public event Action<ParryOutcome, Element, Vector3> ParryResolved;
+
         [Inject]
         public void Construct(SpellResolver resolver, ParryJudge judge, GroggyMeter groggy, InkPool ink)
         {
@@ -68,16 +79,43 @@ namespace Oheangbu.App
             _ink = ink;
         }
 
+        private void Awake()
+        {
+            CollectControllers();
+        }
+
+        private void CollectControllers()
+        {
+            _targets.Clear();
+            if (_enemyVitals != null) _targets.Add(_enemyVitals);
+            foreach (var vitals in _enemies)
+            {
+                if (vitals != null && !_targets.Contains(vitals)) _targets.Add(vitals);
+            }
+
+            _controllers.Clear();
+            if (_enemy != null) _controllers.Add(_enemy);
+            foreach (var vitals in _targets)
+            {
+                var controller = vitals.GetComponent<EnemyController>();
+                if (controller != null && !_controllers.Contains(controller)) _controllers.Add(controller);
+            }
+        }
+
         private void Start()
         {
-            _enemy?.Init(_judge);
-            _harvest?.Init(_ink);
-
-            // 텔레그래프 색 = 팔레트가 단일 출처(색=의미) — 화(ㄴ) 기본색 / 무속성=무채
-            if (_enemy != null && _palette != null)
+            // 텔레그래프 색 = 팔레트가 단일 출처(색=의미) — 적 자신의 원거리 속성 초성 기본색 / 무속성=무채
+            var neutral = new Color(0.45f, 0.43f, 0.41f);
+            foreach (var controller in _controllers)
             {
-                _enemy.SetTelegraphColors(_palette.GetBaseColor('ㄴ'), new Color(0.45f, 0.43f, 0.41f));
+                controller.Init(_judge);
+                if (_palette != null)
+                {
+                    controller.SetTelegraphColors(_palette.GetBaseColor(InitialOf(controller.RangedElement)), neutral);
+                }
             }
+            _harvest?.Init(_ink);
+            _lockOn?.SetCandidates(_targets); // 락온 후보=씬 배선 전수 — 선정 규칙은 LockOn이 소유(#139)
 
             _ink?.Broadcast();
             RefreshHud();
@@ -131,7 +169,7 @@ namespace Oheangbu.App
             _groggy.Blossomed += OnBlossomed;
             _groggy.Changed += RefreshHud;
             if (_judge != null) _judge.ImpactResolved += OnParryImpactResolved;
-            if (_enemy != null) _enemy.StunEnded += OnStunEnded;
+            foreach (var controller in _controllers) controller.StunEnded += OnStunEnded;
             _hooked = true;
         }
 
@@ -141,7 +179,10 @@ namespace Oheangbu.App
             _groggy.Blossomed -= OnBlossomed;
             _groggy.Changed -= RefreshHud;
             if (_judge != null) _judge.ImpactResolved -= OnParryImpactResolved;
-            if (_enemy != null) _enemy.StunEnded -= OnStunEnded;
+            foreach (var controller in _controllers)
+            {
+                if (controller != null) controller.StunEnded -= OnStunEnded;
+            }
             _hooked = false;
         }
 
@@ -195,6 +236,8 @@ namespace Oheangbu.App
         // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
         private void OnParryImpactResolved(ParryOutcome outcome, Element guardElement, Vector3 impactPoint)
         {
+            ParryResolved?.Invoke(outcome, guardElement, impactPoint);
+
             // 반성공 소피드백 [SPELL-FIDELITY §4.6] — 보상 없이 축소 버스트만: 「반쪽으로 받아냈다」
             if (outcome == ParryOutcome.Half && _palette != null)
             {
@@ -301,24 +344,21 @@ namespace Oheangbu.App
             Transform origin = cam != null ? cam.transform : _playerTransform;
             if (origin == null) return null;
 
-            // 후보 = 단일 적 + 씬 배선 전수(_enemies) — 원뿔 안에서 시선에 가장 가까운 생존 적 1체.
+            // 후보 = 씬 배선 전수(_targets) — 원뿔 안에서 시선에 가장 가까운 생존 적 1체.
             // 다수 배치 씬에서도 규칙은 그대로다(전방 원뿔 명중·대상 하나) — 후보 집합만 넓어진다
             EnemyVitals best = null;
             float bestAngle = _freeAimAngle;
-            Consider(_enemyVitals);
-            foreach (var enemy in _enemies) Consider(enemy);
-            return best;
-
-            void Consider(EnemyVitals candidate)
+            foreach (var candidate in _targets)
             {
-                if (candidate == null || !candidate.IsAlive) return;
+                if (candidate == null || !candidate.IsAlive) continue;
                 Vector3 to = candidate.transform.position - origin.position;
-                if (to.magnitude > _freeAimRange) return;
+                if (to.magnitude > _freeAimRange) continue;
                 float angle = Vector3.Angle(origin.forward, to);
-                if (angle > bestAngle) return;
+                if (angle > bestAngle) continue;
                 best = candidate;
                 bestAngle = angle;
             }
+            return best;
         }
 
         // 불발 — 먹만 소모(SPEC-DRAWING-INPUT §3-3의 첫 소비자)
@@ -336,7 +376,11 @@ namespace Oheangbu.App
 
         private void OnBlossomed()
         {
-            _enemy?.EnterStun(); // 만개 = 급소창(스턴 + 피해 증폭)
+            // 만개 = 급소창(스턴 + 피해 증폭) — 결투에 참여 중(활성)인 적 전수. 잠든 적(하네스 비활성)은 결투 밖이다
+            foreach (var controller in _controllers)
+            {
+                if (controller != null && controller.isActiveAndEnabled) controller.EnterStun();
+            }
         }
 
         private void OnStunEnded()

@@ -12,7 +12,8 @@
         "Oheangbu.App",
         "PDollar",
         "VContainer",
-        "UniTask"
+        "UniTask",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [
         "Editor"
