@@ -44,19 +44,127 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 718dbba7d0ae91a4298d7fdd40aba308, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.ThornRiseEffect
-  _thornMesh: {fileID: -8204214700100978946, guid: 02d6b79dde98f1b449a14b2f398485df, type: 3}
-  _material: {fileID: 2100000, guid: 3bb006a7573b273419dc6c30e28b7a5e, type: 2}
-  _count: 5
+  _vineMeshes:
+  - {fileID: 8231133253962554781, guid: 4619871de68ba5940b23031b09ea20ed, type: 3}
+  - {fileID: 3989065169175957681, guid: 8ba0875da0fa2bf4a97040503a6647f6, type: 3}
+  - {fileID: -2799113410020629567, guid: d61128426a9f11f4999b0bfcc2179b83, type: 3}
+  _material: {fileID: 2100000, guid: 1c389345e625a470310d5871e63448ec, type: 2}
+  _soilMaterial: {fileID: 2100000, guid: e16192f9a73d7da69634fe411840a099, type: 2}
+  _clodMesh: {fileID: 0}
+  _growTime: 0.2
+  _growTimeMin: 0.12
+  _spawnStagger: 0.1
+  _holdTime: 1.1
+  _witherTime: 0.35
+  _settleTail: 0.5
+  _soilLead: 0.04
+  _count: 18
+  _segRange: {x: 3, y: 5}
+  _maxSegments: 72
+  _runLength: 3.43
+  _ringRange: {x: 0.62, y: 0.88}
+  _ringYawJitter: 18
+  _inwardSpread: 25
+  _swirlStart: 0.75
+  _swirlMax: 0.75
+  _startSpread: 0.45
+  _weaveAmp: {x: 0.24, y: 0.33}
+  _weaveLambda: {x: 1.97, y: 2.66}
+  _weaveBias: 0.35
+  _meanderYaw: {x: 8, y: 18}
+  _meanderLambda: {x: 1.37, y: 2.4}
+  _jointOverlap: 0.07
+  _slowFactor: 4.4
+  _climaxSegs: 2
+  _writheFreq: 0.73
   _areaRadius: 1.6
-  _spawnInterval: 0.04
-  _riseTime: 0.16
-  _buriedDepth: 1.7
-  _holdTime: 0.7
-  _sinkTime: 0.35
-  _thornScale: 1.5
-  _tiltMax: 18
-  _burstShards: 3
-  _burstShardScale: 0.14
+  _spreadFraction: 0.95
+  _placeJitter: 0.26
+  _yawJitter: 15
+  _primaryMeshCount: 14
+  _vineScale: 1.9
+  _scaleJitter: {x: 0.85, y: 1.35}
+  _secondaryScaleMax: 1.1
+  _emergeScale: 1
+  _emergeTilt: 78
+  _settleTiltMax: 82
+  _layTilt: 78
+  _settleTiltMin: 74
+  _serpAmp: 0.07
+  _serpFreq: 2
+  _sproutSegsPerRun: 2
+  _sproutSites: 6
+  _grassPerSite: 4
+  _twigPerSite: 1
+  _sproutZ: {x: 0.12, y: 0.86}
+  _grassLen: {x: 0.3, y: 0.52}
+  _grassWidth: 0.055
+  _twigLen: {x: 0.26, y: 0.44}
+  _twigWidth: 0.018
+  _girthMin: 0.28
+  _girthTip: 0.78
+  _greenMax: 0.85
+  _greenFrom: 0.5
+  _sproutStart: 0.5
+  _meshSpine:
+  - {x: 0.0211, y: 0.0182, z: 0.0071, w: 0.0343}
+  - {x: 0.0146, y: 0.0126, z: 0.0049, w: 0.0237}
+  - {x: -0.0003, y: -0.0072, z: 0.0044, w: 0.0524}
+  _meshHalf:
+  - {x: 0.1294, y: 0.1939}
+  - {x: 0.0893, y: 0.1339}
+  - {x: 0.0619, y: 0.075}
+  _leafCount: 6
+  _leafSize: 0.115
+  _leafSpan: {x: 0.15, y: 0.94}
+  _leafLift: 0.012
+  _layTime: 0.35
+  _writheMul: 1
+  _curlAmp: 0.03
+  _waveK: 4.5
+  _droopTilt: 15
+  _rootSink: 0.076
+  _sinkDrop: 0.23
+  _sinkValue: 0.55
+  _inkSinkPortion: 0.6
+  _slopeAlign: 0.5
+  _swayAmp: 0.11
+  _swayDecay: 0.35
+  _riseSwayMul: 1.6
+  _soilClods: 12
+  _soilUpSpeed: {x: 2.2, y: 3.6}
+  _soilSideSpeed: {x: 0.4, y: 1}
+  _soilSize: {x: 0.05, y: 0.12}
+  _soilLife: {x: 0.35, y: 0.55}
+  _soilGravity: 1.4
+  _soilAlpha: 0.85
+  _soilAlphaHold: 0.7
+  _soilSizeCurve: {x: 1, y: 0.6}
+  _dustPuffs: 6
+  _dustUpSpeed: 0.25
+  _dustSideSpeed: 0.6
+  _dustSize: {x: 0.45, y: 0.8}
+  _dustLife: {x: 0.45, y: 0.65}
+  _dustGravity: -0.05
+  _dustAlpha: 0.28
+  _dustSizeCurve: {x: 0.6, y: 1.4}
+  _dustTintMix: 0.35
+  _dripCount: 3
+  _dripSpeed: 0.5
+  _dripSize: 0.04
+  _dripLife: 0.4
+  _dripAlpha: 0.6
+  _dripGravity: 1
+  _inkColor: {r: 0.16, g: 0.15, b: 0.13, a: 1}
+  _woodColor: {r: 0.541, g: 0.353, b: 0.2, a: 1}
+  _maxParticles: 256
+  _clodVines: 6
+  _clodsPerVine: 2
+  _clodScale: 0.07
+  _clodSpread: 0.5
+  _groundProbeUp: 3
+  _groundProbeDown: 8
+  _groundDrop: 1.2
 --- !u!1001 &9112410222118522612
 PrefabInstance:
   m_ObjectHideFlags: 0

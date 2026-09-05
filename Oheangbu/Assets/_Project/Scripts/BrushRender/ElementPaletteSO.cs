@@ -49,6 +49,8 @@ namespace Oheangbu.BrushRender
         [Tooltip("정화 = 한지 소지와 혼합 — 역번짐: 「어둠이 물러나 소지가 드러난다」(ART-INK LOCKED)")]
         [SerializeField, ColorUsage(false, false)] private Color _purityPaper = new Color(0.969f, 0.945f, 0.894f); // #F7F1E4
         [SerializeField, Range(0f, 1f)] private float _purityMix = 0.35f;
+        [Tooltip("갈색 — ART-COLOR 기본 팔레트(#8A5A33). 「재질의 색」 슬롯(목질 줄기 등)이며 오행 강조색과는 별개다 — 속성 식별은 강조색이 계속 담당한다(색+형태 이중 채널)")]
+        [SerializeField, ColorUsage(false, false)] private Color _woodBrown = new Color(0.541f, 0.353f, 0.200f); // #8A5A33
 
         public Color GetBaseColor(char initial)
         {
@@ -88,6 +90,15 @@ namespace Oheangbu.BrushRender
         {
             return Color.Lerp(GetBaseColor(initial), _corruptInk, _corruptMix);
         }
+
+        // 한지 소지(素地) — 역번짐 발광의 색 슬롯(ART-INK LOCKED: 「빛 퍼짐 = 먹의 물러남, 어둠이 밀려난
+        // 자리로 소지가 드러난다」). 술식의 밝기는 새 색을 더하는 것이 아니라 이 소지를 드러내는 것이므로,
+        // 표현 계층은 lerp(속성색, 소지, k)로만 명도를 올린다 — 상한이 소지색으로 하드 클램프되어
+        // 백색 포화가 산술적으로 불가능하고 색 단일 출처(팔레트)도 무손상이다.
+        public Color PaperColor => _purityPaper;
+
+        // 목질·흙 등 「재질의 색」 — 속성 강조색이 아니다(ART-COLOR 기본 팔레트 갈색)
+        public Color WoodColor => _woodBrown;
 
         // 정화 — 한지 소지 쪽으로 물러난 맑은 색
         public Color GetPurifiedColor(char initial)

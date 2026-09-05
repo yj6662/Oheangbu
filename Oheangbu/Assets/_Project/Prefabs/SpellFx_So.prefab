@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.SpikeVolleyEffect
   _spikeMesh: {fileID: -9037851627997230718, guid: 45f04ae021430fc47b795d8ef841f15f, type: 3}
-  _material: {fileID: 2100000, guid: 3bb006a7573b273419dc6c30e28b7a5e, type: 2}
+  _material: {fileID: 2100000, guid: bc1d82d63ab2f204ebd3c14c6b488162, type: 2}
   _count: 9
   _areaRadius: 1.4
   _spawnInterval: 0.07
@@ -63,6 +63,16 @@ MonoBehaviour:
   _impactShardScale: 0.16
   _trailTime: 0.18
   _trailWidth: 0.07
+  _trailMaterial: {fileID: 2100000, guid: d9162347bc0638041ba0f280025ddb70, type: 2}
+  _shardMesh: {fileID: 0}
+  _trailMinVertexDistance: 0.05
+  _holdRollDeg: 90
+  _flyRollDegPerSec: 540
+  _growXYLag: 0.05
+  _launchFlashLift: 0.12
+  _launchFlashTime: 0.08
+  _endLinger: 0.35
+  _ignoreLetterScale: 0
 --- !u!1001 &2323874921737054288
 PrefabInstance:
   m_ObjectHideFlags: 0
