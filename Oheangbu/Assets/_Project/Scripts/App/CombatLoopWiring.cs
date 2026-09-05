@@ -70,6 +70,9 @@ namespace Oheangbu.App
         // 판정 결과의 표현 측 재방송(읽기 전용) — 하네스(패링장 판정판)가 구독한다. 규칙 분기는 OnParryImpactResolved 그대로
         public event Action<ParryOutcome, Element, Vector3> ParryResolved;
 
+        // 시전 판정 계획 재방송(읽기 전용) — 하네스(사격장)가 계획 대 실제 착탄을 대조한다 [SPELL-AREA-SHAPES §3]
+        public event Action<CastPlan> CastPlanned;
+
         [Inject]
         public void Construct(SpellResolver resolver, ParryJudge judge, GroggyMeter groggy, InkPool ink)
         {
@@ -278,18 +281,22 @@ namespace Oheangbu.App
                 return;
             }
 
-            // 광역 실판정 [#137 — §9-1 부분 해제]: 형상이 있는 광역은 대상 조준 없이 영역 전수
-            if (cast.AreaShape == AreaShape.Cone)
+            // 광역 실판정 [#137 §9-1 해제 · #141 기하 3종]: 형상이 있는 광역은 형상별 판정 — 계획을 만들어
+            // 피해(PendingCast)·연출(어댑터→SetAreaPlan)·계측(CastPlanned)에 같은 시계로 준다
+            switch (cast.AreaShape)
             {
-                ResolveConeAttack(cast);
-                return;
+                case AreaShape.Cone: ResolveConeAttack(cast); return;
+                case AreaShape.Circle: ResolveCircleAttack(cast); return;
+                case AreaShape.Path: ResolvePathAttack(cast); return;
+                case AreaShape.Volley: ResolveVolleyAttack(cast); return;
             }
 
-            EnemyVitals target = _lockOn != null ? _lockOn.Target : null;
-            if (target == null) target = FindFreeAimTarget();
+            var plan = new CastPlan { Cast = cast };
+            EnemyVitals target = AimedTarget();
             if (target == null)
             {
                 _brushAdapter?.SetPatternAttackTarget(null, 0f); // 허공 — 먹만 소모, 연출은 전방 허공 착탄
+                CastPlanned?.Invoke(plan);
                 return;
             }
 
@@ -297,43 +304,178 @@ namespace Oheangbu.App
             // (COMBAT-ATTACK 락온 유도). 문양 투사체 연출도 같은 비행시간을 쓴다 — 시각이 하나뿐이라 어긋나지 않는다.
             // 탄속 배율=규칙 계층(SpellBook — 사=최속·아=느림): 판정·연출이 같은 시계를 나눠 쓴다(SPELL-FIDELITY §4.3)
             float speed = Mathf.Max(1f, _config.SpellProjectileSpeed * cast.SpeedMul);
-            float duration = Vector3.Distance(_playerTransform != null ? _playerTransform.position : transform.position,
-                target.transform.position) / speed;
-            _pendingCasts.Add(new PendingCast
-            {
-                Target = target,
-                ImpactTime = Time.time + duration,
-                Power = cast.Power,
-            });
+            float duration = Vector3.Distance(PlayerPosition(), target.transform.position) / speed;
+            Schedule(plan, target, Time.time + duration, cast.Power);
             _brushAdapter?.SetPatternAttackTarget(target.transform, duration);
+            CastPlanned?.Invoke(plan);
         }
 
+        // ---- 광역 형상별 판정 [SPELL-AREA-SHAPES §2] — 기하는 AreaGeometry(하네스와 공유), 수치는 SpellBook(0=기본값) ----
+
         // 전방 cone 다중 히트 [#137 — 노 「화염 방사」]: 락온·조준과 무관하게 시전자 전방 부채꼴의
-        // 모든 생존 적에게 착탄을 예약한다. 판정 시각=형성 딜레이(연출의 분사 개시와 동기 — §8 예외 1).
-        // 대상 0체=허공 방사(먹만 소모). 연출은 자체 시계(SpellSequenceEffect)가 전방을 그린다
+        // 모든 생존 적에게 착탄을 예약한다. 판정 시각=형성 딜레이(연출의 분사 개시와 동기).
+        // 대상 0체=허공 방사(먹만 소모). 반각·사거리는 CombatConfig가 정본(FIDELITY §8-1 승계)
         private void ResolveConeAttack(SpellCast cast)
         {
-            Transform origin = _playerTransform != null ? _playerTransform : transform;
-            Vector3 forward = origin.forward;
-            forward.y = 0f;
-            if (forward.sqrMagnitude < 0.001f) forward = Vector3.forward;
-
-            float impactTime = Time.time + _config.AreaImpactDelay;
-            foreach (var enemy in _enemies)
+            Vector3 origin = PlayerPosition();
+            Vector3 forward = PlayerForward();
+            float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
+            var plan = new CastPlan
+            {
+                Cast = cast,
+                Area = new AreaImpactPlan { Shape = AreaShape.Cone, Point = origin, Direction = forward, Length = _config.AreaConeRange, Delay = delay, Angle = _config.AreaConeAngle }, // Angle=연출 미러(판정은 아래 InCone이 _config를 직접 읽는다)
+            };
+            float impactTime = Time.time + delay;
+            foreach (var enemy in _targets)
             {
                 if (enemy == null || !enemy.IsAlive) continue;
-                Vector3 to = enemy.transform.position - origin.position;
-                Vector3 flat = new Vector3(to.x, 0f, to.z); // 수평 판정 — 높이 차는 묻지 않는다 [TEST]
-                if (flat.magnitude > _config.AreaConeRange) continue;
-                if (Vector3.Angle(forward, flat) > _config.AreaConeAngle) continue;
-                _pendingCasts.Add(new PendingCast
-                {
-                    Target = enemy,
-                    ImpactTime = impactTime,
-                    Power = cast.Power,
-                });
+                if (!AreaGeometry.InCone(origin, forward, enemy.transform.position, _config.AreaConeAngle, _config.AreaConeRange, out _, out _)) continue;
+                Schedule(plan, enemy, impactTime, cast.Power);
             }
             _brushAdapter?.SetPatternAttackTarget(null, 0f); // 연출 목표=전방(자체 시계) — 유도 없음
+            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            CastPlanned?.Invoke(plan);
+        }
+
+        // 원형 일제 [고 「지정 영역에서 가시 일제 솟음」]: 중심=조준 대상 위치(없으면 조준 전방 고정 거리),
+        // 반경 안 생존 적 전수가 같은 시각(형성 딜레이)에 맞는다. 연출(ThornRise)의 중심=계획의 점
+        private void ResolveCircleAttack(SpellCast cast)
+        {
+            float radius = cast.Area.Radius > 0f ? cast.Area.Radius : 2.5f;
+            float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
+            float aimRange = cast.Area.Length > 0f ? cast.Area.Length : _freeAimRange;
+            EnemyVitals target = AimedTarget();
+            Vector3 center = target != null ? target.transform.position : AimPoint(aimRange);
+            var plan = new CastPlan
+            {
+                Cast = cast,
+                Area = new AreaImpactPlan { Shape = AreaShape.Circle, Point = center, Radius = radius, Delay = delay },
+            };
+            float impactTime = Time.time + delay;
+            foreach (var enemy in _targets)
+            {
+                if (enemy == null || !enemy.IsAlive) continue;
+                if (!AreaGeometry.InCircle(center, enemy.transform.position, radius, out _)) continue;
+                Schedule(plan, enemy, impactTime, cast.Power);
+            }
+            _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
+            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            CastPlanned?.Invoke(plan);
+        }
+
+        // 경로 타격 [오 「전진하는 느린 파도」·모 「직선 경로 모래폭풍」]: 시전자 발치에서 대상(없으면 전방)으로
+        // 복도가 뻗고, 전선이 닿는 시각(차오름 + 경로 위 거리/속도)에 적별로 맞는다. 연출(GroundWave)이 같은 계획으로 전진
+        private void ResolvePathAttack(SpellCast cast)
+        {
+            float halfWidth = cast.Area.Radius > 0f ? cast.Area.Radius : 1.5f;
+            float length = cast.Area.Length > 0f ? cast.Area.Length : 14f;
+            float speed = cast.Area.Speed > 0f ? cast.Area.Speed : 6f;
+            float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
+            EnemyVitals target = AimedTarget();
+            Vector3 start = PlayerPosition();
+            Vector3 direction = target != null ? AreaGeometry.Flat(target.transform.position - start) : PlayerForward();
+            direction = direction.sqrMagnitude > 0.001f ? direction.normalized : PlayerForward();
+            var plan = new CastPlan
+            {
+                Cast = cast,
+                Area = new AreaImpactPlan { Shape = AreaShape.Path, Point = start, Direction = direction, Radius = halfWidth, Length = length, Speed = speed, Delay = delay },
+            };
+            foreach (var enemy in _targets)
+            {
+                if (enemy == null || !enemy.IsAlive) continue;
+                if (!AreaGeometry.InCorridor(start, direction, enemy.transform.position, halfWidth, length, out float along, out _)) continue;
+                Schedule(plan, enemy, Time.time + delay + along / speed, cast.Power);
+            }
+            _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
+            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            CastPlanned?.Invoke(plan);
+        }
+
+        // 다연발 [소 「다연발 송곳 속사」]: 전방 부채꼴 후보(각 오름차순)에 발수만큼 순환 배분 — 발당 위력=위력÷발수,
+        // 발 i 착탄 = 기준 딜레이 + i×간격 + 거리/탄속. 연출(SpikeVolley)이 발마다 그 대상·시각으로 발사. 후보 0=허공 속사
+        private void ResolveVolleyAttack(SpellCast cast)
+        {
+            float halfAngle = cast.Area.Angle > 0f ? cast.Area.Angle : 25f;
+            float range = cast.Area.Length > 0f ? cast.Area.Length : 16f;
+            float speed = cast.Area.Speed > 0f ? cast.Area.Speed : 32f;
+            float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
+            int shots = cast.Area.Shots > 0 ? cast.Area.Shots : 9;
+            float interval = cast.Area.Interval > 0f ? cast.Area.Interval : 0.1f;
+
+            Vector3 origin = PlayerPosition();
+            Vector3 forward = PlayerForward();
+            var candidates = new List<(EnemyVitals vitals, float angle)>();
+            foreach (var enemy in _targets)
+            {
+                if (enemy == null || !enemy.IsAlive) continue;
+                if (!AreaGeometry.InCone(origin, forward, enemy.transform.position, halfAngle, range, out float angle, out _)) continue;
+                candidates.Add((enemy, angle));
+            }
+            candidates.Sort((a, b) => a.angle.CompareTo(b.angle));
+
+            var plan = new CastPlan
+            {
+                Cast = cast,
+                Area = new AreaImpactPlan { Shape = AreaShape.Volley, Direction = forward, Length = range, Speed = speed, Delay = delay, Radius = halfAngle },
+            };
+            if (candidates.Count == 0)
+            {
+                plan.Area.Point = AimPoint(range);
+                _brushAdapter?.SetPatternAttackTarget(null, 0f);
+                _brushAdapter?.SetPatternAreaPlan(plan.Area);
+                CastPlanned?.Invoke(plan);
+                return;
+            }
+
+            float perShot = cast.Power / shots;
+            for (int i = 0; i < shots; i++)
+            {
+                var target = candidates[i % candidates.Count].vitals;
+                float flight = Vector3.Distance(origin, target.transform.position) / speed;
+                var hit = Schedule(plan, target, Time.time + delay + i * interval + flight, perShot);
+                plan.Area.Shots.Add(hit);
+            }
+            plan.Area.Point = candidates[0].vitals.transform.position;
+            _brushAdapter?.SetPatternAttackTarget(candidates[0].vitals.transform, 0f);
+            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            CastPlanned?.Invoke(plan);
+        }
+
+        // 착탄 예약 = 피해 시계(PendingCast) + 계획 기록 — 같은 값 한 번만
+        private PlannedHit Schedule(CastPlan plan, EnemyVitals target, float impactTime, float power)
+        {
+            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power });
+            var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power };
+            plan.Hits.Add(hit);
+            return hit;
+        }
+
+        private EnemyVitals AimedTarget()
+        {
+            EnemyVitals target = _lockOn != null ? _lockOn.Target : null;
+            return target != null ? target : FindFreeAimTarget();
+        }
+
+        private Vector3 PlayerPosition()
+        {
+            return _playerTransform != null ? _playerTransform.position : transform.position;
+        }
+
+        private Vector3 PlayerForward()
+        {
+            Vector3 forward = AreaGeometry.Flat(_playerTransform != null ? _playerTransform.forward : transform.forward);
+            return forward.sqrMagnitude > 0.001f ? forward.normalized : Vector3.forward;
+        }
+
+        // 무대상 조준점 — 조준(카메라) 전방 고정 거리, 높이는 플레이어(수평 판정)
+        private Vector3 AimPoint(float range)
+        {
+            var cam = Camera.main;
+            Transform origin = cam != null ? cam.transform : _playerTransform;
+            if (origin == null) return PlayerPosition() + Vector3.forward * range;
+            Vector3 point = origin.position + AreaGeometry.Flat(origin.forward).normalized * range;
+            point.y = PlayerPosition().y;
+            return point;
         }
 
         private EnemyVitals FindFreeAimTarget()

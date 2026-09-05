@@ -2,7 +2,7 @@
 
 | 항목 | 값 |
 |---|---|
-| 상태 | **TEST** (2026-09-02 창설 — 예준 전수 감사 문답: 미비 5건 전 항목 채택 + 방침 2건 확정[DECISIONS #137·#138]. PASS 관문=§6) |
+| 상태 | **PASS** (2026-09-03 승격 — §6 1~7 원격 계측·§6-8 예준 테스트 완료 선언(테스트 허브에서), PR #11 머지. 수치는 [TEST] 유지 — 손맛 튜닝 피드백은 후속. 창설 2026-09-02: 전수 감사 문답, 미비 5건 채택 + 방침 2건[DECISIONS #137·#138]) |
 | 작성 | 2026-09-02 |
 | 선행 | SPEC-COMBAT-CORE-LOOP TEST(판정 시계·명중 규칙) · SPEC-SPELL-FX-ASSETS PASS(프리팹 규약·§3.1 전방 형성 문법·임포터 수칙) |
 | 근거 | SPELL-VOCAB(CSV 정본 — 효과문 LOCKED) · COMBAT-ATTACK · ART-INK(발광 상한) · #134(아트=프로토타입) · #137(광역 실판정 개시) · #138(전용 구현 방침) |
@@ -60,6 +60,11 @@
 colorOverLifetime 백→틴트→먹빛 침전·순간 Light 1(수명 내 소멸). SpellFx_No 재구성=문양 Bloom
 유지+FlameJet 자식(Begin 시그니처 준수 — 어댑터 무수정 편입).
 
+**2026-09-03 개정(SPEC-SPELL-FX-REWORK §3.1)**: 화염 실체=불혀 메시 풀 30(+밑불 6) 항력 방사(`InkFlame` 불투명 clip 셰이더 —
+경계·먹 침전·끝부터 침식), 파티클 경로 폐기. 연출은 Cone 계획(Direction·Length·Angle·Delay)을 소비해 형성 딜레이·반각·도달이 판정과
+같은 값(§8 예외 1 해소), 점화=판정−`_sweepLead`(REWORK §8-9). Bottom06 FlameBurst 중첩 제거. 어댑터 Cone fallback=전방 끝점
+(AREA-SHAPES 작업의 방향 회귀 교정). 수치 정본=REWORK §7.
+
 ### 4.3 탄속 분화 (규칙 계층)
 
 `SpellBookSO.Entry.ProjectileSpeedMul`(0 이하=1 취급) → `SpellCast.SpeedMul` →
@@ -68,8 +73,8 @@ duration만 쓰므로 연출 자동 동기. 시각 규칙 소유=Spellcraft(탄�
 
 ### 4.4 가 — ThornLanceEffect / 4.5 마 — 바위
 
-- 가: 글자 자리→대상으로 가시 세그먼트 순차 성장 랜스(§7 수치). 메시=ThornCluster_Go 재사용
-  (자원 재사용 — #138 허용면). SpellFx_Ga 신설. 판정=현행 단일(도달 시계=탄속 mul과 일치).
+- 가: 글자 자리→대상으로 가시 세그먼트 순차 성장 랜스(§7 수치). 메시=CrystalSpike_So 재사용
+  (자원 재사용 — #138 허용면; 2026-09-03 정정 — 초판 「ThornCluster_Go」는 프리팹 실측과 불일치). SpellFx_Ga 신설. 판정=현행 단일(도달 시계=탄속 mul과 일치).
 - 마: Meshy preview 1건(바위 ≤1k tris·크레딧 예산 ≤10 — 썸네일 게이트·Blender 반입 검수 5항·
   런 로그 §4.6 전부 SPELL-FX 준용). 비행체 부착(법선 정렬+슬로 스핀)+착탄 흙 파편(SpikeImpactShard
   재사용). SpellFx_Ma 신설·ArcHeight 2.5 유지.
@@ -85,7 +90,7 @@ duration만 쓰므로 연출 자동 동기. 시각 규칙 소유=Spellcraft(탄�
 
 ## 5. Non-Goals
 
-- 고·소·오·모의 실판정 광역화(원형·경로 기하 — 후속 페이즈, #137에 명시)
+- 고·소·오·모의 실판정 광역화(원형·경로 기하 — 후속 페이즈, #137에 명시) → **SPEC-SPELL-AREA-SHAPES(2026-09-03)에서 착수**
 - 가 "근중거리" 사거리 제한(판정 사거리 분화 — 임포터 트랙)
 - 종성 변형 어휘·상합·버프 / 사운드 / 정식 필세 수식
 
@@ -104,7 +109,8 @@ duration만 쓰므로 연출 자동 동기. 시각 규칙 소유=Spellcraft(탄�
 
 검증 기록(2026-09-03, 사격장 `C1_SpellRange` — SPEC-DEV-SPELL-RANGE §6.1): **§6-2 VALIDATED**(cone 안 3체 착탄
 +0.40s·밖 3체 무피해, 기하 예상 일치) · **§6-4 판정 시계 VALIDATED**(사 0.37s/아 1.11s/가 0.26s = 거리/(18×배율)
-정확 일치 — 연출 착탄 일치 육안은 게이트 몫). 나머지 = 예준 게이트.
+정확 일치 — 연출 착탄 일치 육안은 게이트 몫). §6-3·5·6·7·8 = 예준 테스트 완료 선언(2026-09-03, 테스트 허브 실험실·패링장·사격장에서) → PASS.
+글자별 손맛 튜닝(방사감·탄속 체감·방어막 가독 수치)은 피드백이 오면 §7 수치 개정으로 받는다.
 
 ## 7. 수치 (전부 [TEST] 시작값)
 
@@ -118,6 +124,6 @@ duration만 쓰므로 연출 자동 동기. 시각 규칙 소유=Spellcraft(탄�
 
 ## 8. Temporary Exceptions
 
-1. cone 판정의 형성 딜레이 고정치(0.4s) — 연출 FormTime과 수동 동기. Cleanup: 수치 SO 승격(P7)
+1. ~~cone 판정의 형성 딜레이 고정치(0.4s) — 연출 FormTime과 수동 동기~~ → 해소(2026-09-03 FX-REWORK: FlameJet이 계획 Delay 소비)
 2. AreaShape enum은 미러(SpellBookSO) 확장 — 임포터 대체 시 CSV 파생 열로 승계
 3. 아트 최종성 없음(#134 승계)

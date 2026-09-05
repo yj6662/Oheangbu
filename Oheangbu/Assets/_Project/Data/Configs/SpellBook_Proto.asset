@@ -23,8 +23,15 @@ MonoBehaviour:
     Kind: 1
     Element: 0
     BasePower: 9
-    AreaShape: 0
+    AreaShape: 2
     ProjectileSpeedMul: 0
+    AreaAngle: 0
+    AreaRadius: 2.5
+    AreaLength: 10
+    AreaSpeed: 0
+    AreaImpactDelay: 0.3
+    VolleyShots: 0
+    VolleyInterval: 0
   - Letter: "\uB098"
     Kind: 0
     Element: 1
@@ -47,8 +54,15 @@ MonoBehaviour:
     Kind: 1
     Element: 2
     BasePower: 9
-    AreaShape: 0
+    AreaShape: 3
     ProjectileSpeedMul: 0
+    AreaAngle: 0
+    AreaRadius: 1.2
+    AreaLength: 12
+    AreaSpeed: 7
+    AreaImpactDelay: 0.4
+    VolleyShots: 0
+    VolleyInterval: 0
   - Letter: "\uC0AC"
     Kind: 0
     Element: 3
@@ -59,8 +73,15 @@ MonoBehaviour:
     Kind: 1
     Element: 3
     BasePower: 8
-    AreaShape: 0
+    AreaShape: 4
     ProjectileSpeedMul: 0
+    AreaAngle: 25
+    AreaRadius: 0
+    AreaLength: 16
+    AreaSpeed: 32
+    AreaImpactDelay: 1.45
+    VolleyShots: 9
+    VolleyInterval: 0.1
   - Letter: "\uC544"
     Kind: 0
     Element: 4
@@ -71,8 +92,15 @@ MonoBehaviour:
     Kind: 1
     Element: 4
     BasePower: 9
-    AreaShape: 0
+    AreaShape: 3
     ProjectileSpeedMul: 0
+    AreaAngle: 0
+    AreaRadius: 1.5
+    AreaLength: 14
+    AreaSpeed: 6
+    AreaImpactDelay: 0.45
+    VolleyShots: 0
+    VolleyInterval: 0
   - Letter: "\uC5B4"
     Kind: 2
     Element: 4

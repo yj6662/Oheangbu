@@ -112,6 +112,7 @@ namespace Oheangbu.EditorTools
             directorSo.FindProperty("_spellBook").objectReferenceValue = spellBook;
             directorSo.FindProperty("_config").objectReferenceValue = defaultConfig;
             directorSo.FindProperty("_player").objectReferenceValue = player.transform;
+            directorSo.FindProperty("_wiring").objectReferenceValue = wiring;
             DevSceneKit.SetObjectArray(directorSo, "_dummies", dummies);
             directorSo.ApplyModifiedPropertiesWithoutUndo();
 

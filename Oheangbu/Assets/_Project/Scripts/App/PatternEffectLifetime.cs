@@ -32,6 +32,7 @@ namespace Oheangbu.App
         private bool _arrived;
         private Transform _projectilePart;
         private Transform _explosionPart;
+        private Transform _bodyPart; // 실체 메시(마 Boulder 등 — 비행부와 함께 날고 착탄에 사라진다)
         private float _guardBrightWindow; // [§4.6] >0=가드 가독 타임라인(패링 방어막)
         private float _guardFadeTail;
         private bool _guardDimmed;
@@ -77,6 +78,8 @@ namespace Oheangbu.App
             // 이름 규약(Projectile/Explosion)을 깊이 무관하게 찾는다
             self._projectilePart = FindDeep(go.transform, "Projectile");
             self._explosionPart = FindDeep(go.transform, "Explosion");
+            // 실체 메시(마 Boulder) — Projectile/Explosion 어느 슬롯도 아니라 착탄 후에도 남던 것을 같은 이름 규약으로 거둔다
+            self._bodyPart = FindDeep(go.transform, "Boulder");
             foreach (var animator in go.GetComponentsInChildren<Animator>(true))
             {
                 animator.enabled = false; // 비행·개화 타이밍은 이 컴포넌트가 소유(중첩 인스턴스 포함)
@@ -310,6 +313,7 @@ namespace Oheangbu.App
             if (root != null) root.Stop(false, ParticleSystemStopBehavior.StopEmitting);
             if (_projectilePart != null) _projectilePart.gameObject.SetActive(false);
             if (_explosionPart != null) _explosionPart.gameObject.SetActive(true);
+            if (_bodyPart != null) _bodyPart.gameObject.SetActive(false); // 실체는 착탄과 함께 사라진다(개화만 남는다)
         }
 
         private void OnDestroy()

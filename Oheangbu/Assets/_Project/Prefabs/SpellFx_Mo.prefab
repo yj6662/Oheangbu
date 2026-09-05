@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &9061513815008496444
+--- !u!1 &6483496960189215314
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,136 +8,292 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6187359968330497942}
-  - component: {fileID: 811582410704437784}
+  - component: {fileID: 2793814335073797778}
+  - component: {fileID: 7752141832456726894}
   m_Layer: 0
-  m_Name: GroundWave
+  m_Name: SandStorm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6187359968330497942
+--- !u!4 &2793814335073797778
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9061513815008496444}
+  m_GameObject: {fileID: 6483496960189215314}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2241300516802931376}
+  m_Children: []
   m_Father: {fileID: 4389055342655713741}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &811582410704437784
+--- !u!114 &7752141832456726894
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9061513815008496444}
+  m_GameObject: {fileID: 6483496960189215314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b35e4b8989b098498fb07f39342684e, type: 3}
+  m_Script: {fileID: 11500000, guid: 46f2d2675b1c444298d751dd9278d202, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.GroundWaveEffect
-  _crest: {fileID: 0}
-  _crestExtraEuler: {x: 0, y: 0, z: 0}
-  _groundDrop: 1.2
-  _riseTime: 0.45
-  _buriedDepth: 1.8
-  _speed: 6
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.SandStormEffect
+  _frontMesh: {fileID: 1391824504125069097, guid: fb58bf92dbb1d164e9211a76d6922248, type: 3}
+  _frontMaterial: {fileID: 2100000, guid: bed2f0d826bd4907a8930466dc63f825, type: 2}
+  _dustMaterial: {fileID: 2100000, guid: 84acc48bfbb14286bfbc88e799a0ae72, type: 2}
+  _chunkMesh: {fileID: -467415405656861694, guid: 6740dfe84e180d646afa0071841bd553, type: 3}
+  _chunkMaterial: {fileID: 2100000, guid: 3bb006a7573b273419dc6c30e28b7a5e, type: 2}
+  _chunkUseCubeFallback: 0
+  _lobeExtraEuler: {x: 0, y: 0, z: 0}
+  _depthPrepass: 1
+  _inkColor: {r: 0.16, g: 0.15, b: 0.13, a: 1}
+  _riseTime: 0.4
+  _speed: 7
+  _travelLength: 12
+  _collapseTime: 0.6
+  _settleTime: 1.9
   _overshoot: 2.5
   _maxRange: 14
-  _sinkTime: 0.5
-  _bobAmplitude: 0.07
-  _bobFrequency: 2.6
---- !u!1001 &5469624268683098387
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 6187359968330497942}
-    m_Modifications:
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalRotation.w
+  _groundDrop: 1.2
+  _rayUp: 1.5
+  _rayDown: 4
+  _groundLift: 0.02
+  _frontScale: {x: 5, y: 2.8, z: 8.5}
+  _lobeBScale: 0.7
+  _lobeBOffset: {x: -0.6, y: 0, z: -0.75}
+  _lobeBYaw: -12
+  _lobeCScale: 0.6
+  _lobeCOffset: {x: 0.7, y: 0, z: -0.9}
+  _lobeCYaw: 10
+  _buriedDepth: 3
+  _groundSink: 0.12
+  _bobAmplitude: 0.05
+  _bobFrequency: 1.6
+  _yawJitterDeg: 3
+  _yawJitterFrequency: 0.9
+  _heightPulse: 0.08
+  _heightPulseFrequency: 1.1
+  _erodeStart: 1
+  _erodeFormed: 0.35
+  _valueSettle: 0.85
+  _collapseDrop: 0.25
+  _collapseHeight: 0.6
+  _rollRatePerMeter: 6
+  _rollRate: 30
+  _rollBurst: 10
+  _rollBurstDelay: 0.05
+  _rollOffset: {x: 0, y: 0.35, z: 0.2}
+  _rollSpeed: {x: 0.8, y: 1.8}
+  _rollPitch: -25
+  _rollConeAngle: 30
+  _rollConeRadius: 0.9
+  _rollInherit: 0.35
+  _rollDrag: 1.5
+  _rollNoise: 0.45
+  _rollNoiseFreq: 0.55
+  _rollNoiseScroll: 0.6
+  _rollLife: {x: 0.7, y: 1.1}
+  _rollSize: {x: 0.6, y: 1.1}
+  _rollAlpha: {x: 0.25, y: 0.45}
+  _rollSpin: 70
+  _rollGravity: 0.15
+  _rollMax: 120
+  _rollSizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.55
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.35
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6121149160608895910, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_Name
-      value: SandStorm
-      objectReference: {fileID: 0}
-    - target: {fileID: 6586298296514855897, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8547180430820640313, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8547180430899975432, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8547180431588040477, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8547180431744751408, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
---- !u!4 &2241300516802931376 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6121149160608895907, guid: 4d67bcbc3c76c374fa90dc5ffa6f838e, type: 3}
-  m_PrefabInstance: {fileID: 5469624268683098387}
-  m_PrefabAsset: {fileID: 0}
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1.35
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _rollOverLife:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 0}
+    key1: {r: 0.92, g: 0.92, b: 0.92, a: 1}
+    key2: {r: 0.85, g: 0.85, b: 0.85, a: 0.85}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 39321
+    ctime2: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 11796
+    atime2: 39321
+    atime3: 65535
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 4
+  _grainRatePerMeter: 12
+  _grainRate: 40
+  _grainBurst: 16
+  _grainBurstDelay: 0.1
+  _grainSize: {x: 0.03, y: 0.09}
+  _grainSpeed: {x: 2.5, y: 5}
+  _grainUpAngle: 20
+  _grainGravity: 0.6
+  _grainLife: {x: 0.35, y: 0.7}
+  _grainAlpha: {x: 0.6, y: 0.9}
+  _grainBrightness: 0.75
+  _grainBox: {x: 2.5, y: 0.3, z: 0.2}
+  _grainBoxOffset: {x: 0, y: 0.15, z: 0}
+  _grainStretch: 0.2
+  _grainLength: 1.4
+  _grainMax: 300
+  _grainOverLife:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 0.9}
+    key1: {r: 1, g: 1, b: 1, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  _hazeRatePerMeter: 6
+  _hazeRiseRate: 4
+  _hazeBurst: 6
+  _hazeSize: {x: 0.9, y: 1.6}
+  _hazeSpeed: {x: 0.3, y: 0.8}
+  _hazeLife: {x: 1.2, y: 1.8}
+  _hazeAlpha: {x: 0.2, y: 0.35}
+  _hazeBrightness: 0.88
+  _hazeNoise: 0.3
+  _hazeNoiseFreq: 0.4
+  _hazeNoiseScroll: 0.2
+  _hazeRotSpeed: 25
+  _hazeBox: {x: 2.4, y: 0.8, z: 0.6}
+  _hazeBoxOffset: {x: 0, y: 0.45, z: -0.4}
+  _hazeBoxEuler: {x: -140, y: 0, z: 0}
+  _hazeSortFudge: 0.5
+  _hazeMax: 160
+  _hazeSizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.7
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _hazeOverLife:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 0}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 16384
+    atime2: 65535
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 3
+  _chunkRatePerMeter: 1
+  _chunkSize: {x: 0.05, y: 0.12}
+  _chunkSpeed: {x: 2, y: 4}
+  _chunkLife: {x: 0.5, y: 0.7}
+  _chunkGravity: 1.2
+  _chunkSpin: 120
+  _chunkConeAngle: 30
+  _chunkConeRadius: 0.5
+  _chunkPitch: -45
+  _chunkMax: 4
 --- !u!1001 &7097614644008395619
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -210,6 +366,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7352224665994963057, guid: 481ad962a82da0b47a6fcab7599a6080, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7352224666031058473, guid: 481ad962a82da0b47a6fcab7599a6080, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -231,7 +391,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6815851129608147630, guid: 481ad962a82da0b47a6fcab7599a6080, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6187359968330497942}
+      addedObject: {fileID: 2793814335073797778}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 481ad962a82da0b47a6fcab7599a6080, type: 3}
 --- !u!4 &4389055342655713741 stripped

@@ -96,7 +96,8 @@ topology=triangle, target_polycount=§8, should_remesh=true, target_formats=[glb
 3. **발광 상한**: 생성 모델 머티리얼 Emission 0 고정. 순간 발광은 기존 규약(플래시·개화 파티클·
    수명 내 소멸하는 Light)만. 생성 모델이 스스로 빛나면 반려.
 4. **무PBR**: Metallic/Smoothness 미사용. 예외: 금(金)은 ART-COLOR 「광택질로 구분」 — 금 한정
-   림·그라디언트 셰이더 트릭으로 근사, 실PBR 금지 [TEST · §9 예외 3].
+   림·그라디언트 셰이더 트릭으로 근사, 실PBR 금지 [TEST · §9 예외 3]. (이행: `Oheangbu/InkMetal` 2026-09-03 — 소 한정
+   `M_SpellBodySpike_So`, 큐브맵 미샘플·피크 클램프 0.90. SPEC-SPELL-FX-REWORK §3.2)
 5. **무리깅**: 본·스키닝·블렌드셰이프 금지(PROD-RIG 기운 조항 준용). 움직임은 트랜스폼·셰이더
    (UV 스크롤·버텍스 오프셋)·파티클만.
 6. **축·피벗 규격**: 투사체형=비행축 로컬 +X·피벗 후단 중심(`PatternEffectLifetime`이
@@ -106,6 +107,8 @@ topology=triangle, target_polycount=§8, should_remesh=true, target_formats=[glb
    FBX=fileScale 0.01+정점 m(→`useFileScale=false` 필요) / Blender 익스포트(`apply_scale_options=
    'FBX_SCALE_ALL'`)=fileScale 1+정점 그대로(→임포터 기본값 유지). 반입 직후 bounds 실측이 유일한
    판정 — 플래그를 맹목 적용하지 않는다(P4 실측: 소 수칙의 맹목 적용이 ×100 오류를 냈다).
+   ② [2026-09-03 정정 — FX-REWORK 실측] 이 반전은 임포터 `bakeAxisConversion: 1`(초기 런의 수동 설정) 조건에서만 관측됐다. 기본값 0에서는
+   Blender→Unity **항등**(WaveLobe_O 등 4건 실측) — 신규 반입은 선회전 없이 들여오고 `MeshAxisProbe`(Scripts/Editor)로 판정한다. 아래 구 문구는 bake=1 이력.
    ② Blender→Unity 반입은 메시를 **180°Y 회전 등가(X·Z 부호 반전)**로 들여온다 — 중심 피벗·준대칭
    메시(소 결정)에선 안 보이고 바닥 피벗(고 가시)에서 실측 확정. 보상=Blender에서 180°X 선회전
    (첨단·높이를 블렌더 −Z로) 후 피벗 재계산. ③ Blender 자동화에서 `ops.transform_apply`·

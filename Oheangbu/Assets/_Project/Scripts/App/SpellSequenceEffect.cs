@@ -13,5 +13,9 @@ namespace Oheangbu.App
         // [SPELL-FIDELITY §4.4] 배선의 판정 착탄 시계(비행시간) 수신 훅 — Begin 직전에 호출된다.
         // 단일 유도 연출(가 랜스)이 「피해=착탄 동기화」에 참여하는 통로. 광역 자체 시계는 무시(기본 no-op)
         public virtual void SetImpactClock(float flightDuration) { }
+
+        // [SPELL-AREA-SHAPES §3] 광역 판정 계획 수신 훅 — Begin 직전에 호출된다. 경로(시작점·방향·속도·차오름)와
+        // 다연발(발 단위 대상·시각)이 판정과 같은 시계로 달리는 통로. 계획이 없는 연출은 무시(기본 no-op)
+        public virtual void SetAreaPlan(AreaImpactPlan plan) { }
     }
 }

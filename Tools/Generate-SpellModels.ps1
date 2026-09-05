@@ -42,6 +42,82 @@ $Specs = @{
         Prompt          = "A single stylized curling ocean wave crest, smooth flowing curved water form breaking forward, wide arc shape, sculptural clean silhouette, one single object centered, simple smooth surfaces, no foam, no base, no decoration"
         TargetPolycount = 5000
     }
+    # ---- 2026-09-03 실체 사실감 재작업(SPEC-SPELL-FX-REWORK, DECISIONS #142) ----
+    # 오 2차: o 1차 실측이 폭 12% 핀(×24 스케일로 벽) → 「폭이 주축인 로브」로 재생성, 3개 지그재그 조합.
+    o2 = @{
+        Letter          = "오"
+        Prompt          = "A single stylized breaking ocean wave, a thick curling crest rolling forward with a hooked overhanging lip, heavy rounded water mass beneath the curl, the crest line runs across the full width with a gently undulating lip edge, about as wide as it is tall and clearly wider than it is deep, sculptural clean silhouette, one single solid object centered, simple smooth surfaces, no foam particles, no droplets, no base plane, no decoration"
+        TargetPolycount = 3000
+    }
+    # 오 로브 변형 B(가파른 립·두 갈래) — G1 룩 게이트에서 3로브 반복감이 읽힐 때만 생성.
+    o3 = @{
+        Letter          = "오"
+        Prompt          = "A single stylized breaking ocean wave, a steep plunging crest with a thin overhanging lip beginning to split into two tongues, heavy rounded water mass beneath, crest line spanning the full width, about as wide as it is tall and clearly wider than it is deep, sculptural clean silhouette, one single solid object centered, simple smooth surfaces, no foam particles, no base plane, no decoration"
+        TargetPolycount = 3000
+    }
+    # 고 2차: go 1차가 납작 4갈래 뭉치(풀포기) → 한 줄기 세장 덩굴 가닥(세장비 ≥6:1). no downward hooks=셰이더 성장 전선(z 단조) 전제.
+    go2 = @{
+        Letter          = "고"
+        Prompt          = "A single thick bramble cane, one gnarled living-wood vine stem rising in a gentle S-curve, tapering to a sharp thorn tip, short curved thorns fused along the stem, twisted bark ridges, stylized game asset, clean bold silhouette, one single object centered, elongated vertical proportions, no base, no leaves, no separate parts, no downward hooks, no decoration"
+        TargetPolycount = 900
+    }
+    # 고 변형 B(나선 덩굴손 — 목 성질 「굽음·감김」) — go2 룩 게이트 통과 후에만.
+    go3 = @{
+        Letter          = "고"
+        Prompt          = "A single spiraling thorny vine tendril, one continuous living-wood stem coiling upward in a loose helix and tapering to a sharp point, small hooked thorns fused along the stem, stylized game asset, clean bold silhouette, one single object centered, elongated vertical proportions, no base, no leaves, no separate parts, no downward hooks, no decoration"
+        TargetPolycount = 900
+    }
+    # 고 4차(예준 2026-09-04 지시): 「사방에서 올라와 천천히 바닥을 휘감고, 바닥을 뚫기도 위로 솟기도 하는
+    # 나무 뿌리가 무작위로 자라는 듯한」 모습. 구현 = 긴 덩굴 1본이 아니라 **짧은 마디 체인**이다 —
+    # 관절 높이를 지면고+사인 기복으로 잡으면 마디 피치가 저절로 나와 흙을 뚫고 솟는다(셰이더는 지면고를 모른다).
+    # 따라서 필요한 것은 세장 줄기가 아니라 **마디 한 토막**(세장비 3:1). 폴리 = 마디가 최대 52개 깔리므로 12k/52 ≈ 230 상한.
+    go4 = @{
+        Letter          = "고"
+        Prompt          = "A single gnarled woody stick lying down horizontally, one short knotty rod of old wood resting on its side like a fallen twig, gently bent along its length into a shallow arc, a swollen knobby lump near the middle, both ends cut blunt and roughly equal in width, coarse fibrous bark ridges running lengthwise, the whole piece is long and low and lies flat, stylized low-poly game asset, clean bold silhouette, one single connected solid object centered, elongated horizontal bar proportions about four times longer than thick, no upright orientation, no standing pose, no trunk, no stump, no flared base, no cone shape, no pedestal, no root crown, no branching, no thorns, no leaves, no soil, no dirt, no rocks, no ground plane, no base, no separate parts, no decoration"
+        TargetPolycount = 200
+    }
+    # 고 5차(예준 2026-09-05): 「더 굵게 · Realistic 한 메시로 다시」.
+    # go4 산출이 저폴리 양식화로 나온 원인은 art_style이 아니라 프롬프트의 "stylized low-poly game asset,
+    # clean bold silhouette" — 양식화를 문구로 직접 지시하고 있었다. 그 문구를 걷어내고 사실적 어휘로 교체한다.
+    # 굵기: 세장비 4:1 -> 2.5:1. 폴리는 300(사실적 요철은 폴리를 먹는다) — 마디 수 상한으로 예산을 잠근다.
+    go5 = @{
+        Letter          = "고"
+        ArtStyle        = "realistic"
+        Prompt          = "A realistic long thick tree root lying horizontally on its side, a heavy woody root of an old tree stretching lengthwise, naturally gnarled and irregular with organic swellings and a knotted burl near the middle, deeply furrowed rough bark with wrinkled fibrous lengthwise grain, both ends broken off blunt and roughly equal in girth, slightly bent along its length, photorealistic natural organic form, highly detailed weathered wood, one single connected solid object centered, clearly longer than it is thick, elongated proportions about three times longer than thick, not a boulder or lump, no upright standing pose, no trunk, no stump, no flared base, no root crown, no branching, no leaves, no soil, no ground plane, no base, no separate parts"
+        TargetPolycount = 400
+    }
+    # 고 6차(예준 2026-09-05 「굵기도 좀 다양하고 모양도 다양하면」): go5의 가는 변종.
+    # 같은 사실적 어휘를 쓰되 성격을 가른다 — go5=굵고 옹이진 몸통 / go6=가늘고 길게 뻗으며 꼬인 곁뿌리.
+    # 효과 쪽은 _vineMeshes[] 배열과 _primaryMeshCount로 이미 A/B를 섞으므로 배선만 하면 된다.
+    go6 = @{
+        Letter          = "고"
+        ArtStyle        = "realistic"
+        Prompt          = "A single unbranched piece of old woody stick lying down horizontally, one solid rod of weathered wood resting on its side like a fallen branch, no forks and no side twigs, gently bent along its length into a shallow arc, a knotted swelling near the middle, both ends broken off blunt, deeply furrowed realistic bark with wrinkled lengthwise grain, photorealistic natural organic wood, highly detailed, one single connected solid object centered, slim rod proportions about four times longer than thick, no upright standing pose, no trunk, no stump, no root crown, no flared base, no branching, no twigs, no leaves, no soil, no ground plane, no base, no separate parts, no loose fragments"
+        TargetPolycount = 350
+    }
+    # 소 3차(조건부): 0단계(InkMetal+플랫 법선, 기존 CrystalSpike_So)에서 「결정이지 쇠가 아니다」 판정일 때만 — 벼린 사각 송곳.
+    so3 = @{
+        Letter          = "소"
+        Prompt          = "A single hand-forged iron awl spike, square cross-section tapering evenly to a long needle point, slightly twisted shaft, hammered faceted metal surface with crisp hard edges, short thick collar at the blunt end, stylized game projectile, clean bold silhouette, one single object centered, simple flat facets, no handle, no wooden parts, no base, no decoration"
+        TargetPolycount = 700
+    }
+    so3b = @{
+        Letter          = "소"
+        Prompt          = "A single forged steel spike, octagonal cross-section tapering evenly to a needle point, straight shaft, crisp flat facets with hard edges, short flared collar at the blunt end, hammered metal look, stylized game projectile, clean bold silhouette, one single object centered, simple flat facets, no handle, no base, no decoration"
+        TargetPolycount = 700
+    }
+    # 노(火 광역 — 화염 방사)의 불혀 낱개 — 30개 풀로 항력 방사(FlameJetEffect). 화 모티프 「불꽃 한 줄기」의 3D 번안.
+    no = @{
+        Letter          = "노"
+        Prompt          = "A single stylized flame tongue, one tall tapering tongue of fire rising from a rounded thick base to a sharp pointed tip, gently twisting as it rises, with two smaller side licks splitting off partway up, sculptural low-poly game effect mesh, clean bold silhouette, one single object centered, simple faceted surfaces, solid closed watertight mesh, no base plate, no embers, no sparks, no smoke, no decoration"
+        TargetPolycount = 400
+    }
+    # 모(土 광역 — 직선 경로 모래폭풍) 전면 벽 — 기본안은 Blender 메타볼 절차 생성(0크레딧). 이 키는 G1 게이트에서 「풍선/젤리」 판정 시에만.
+    mo = @{
+        Letter          = "모"
+        Prompt          = "A single stylized advancing dust storm front, a low wide rolling wall of dense billowing sand cloud, several bulging rounded lobes tumbling forward along the leading face, thick heavy mass at the bottom thinning toward the top, flat bottom resting on the ground, flat vertical cut on the rear side, clearly wider than tall and taller than deep, sculptural clean silhouette, one single solid object centered, simple smooth chunky forms, no ground plane, no base, no scattered particles, no decoration"
+        TargetPolycount = 2000
+    }
     # 마(土 단일 — 포물선 바위)의 바위 실체. 가색(稼穡) — 던져진 흙의 무게(SPELL-FIDELITY §4.5).
     ma = @{
         Letter          = "마"
@@ -74,7 +150,10 @@ switch ($Action) {
             target_polycount = $spec.TargetPolycount
             should_remesh    = $true
             target_formats   = @("glb", "fbx")
-        } | ConvertTo-Json
+        }
+        # 스펙이 ArtStyle을 지정하면 실어 보낸다(미지정 키는 API 기본값 — 기존 생성물 재현성 무손상)
+        if ($spec.ContainsKey("ArtStyle")) { $body["art_style"] = $spec.ArtStyle }
+        $body = $body | ConvertTo-Json
         $r = Invoke-RestMethod -Uri "https://api.meshy.ai/openapi/v2/text-to-3d" -Headers $headers `
             -Method Post -Body $body -ContentType "application/json"
         Write-Host "letter: $($spec.Letter)"

@@ -44,9 +44,7 @@ namespace Oheangbu.App
                 string element = DevElement.Name(entry.Element);
                 if (entry.Kind == SpellKind.AttackArea)
                 {
-                    string judge = entry.AreaShape == AreaShape.Cone && _config != null
-                        ? $"cone {_config.AreaConeAngle:0}°/{_config.AreaConeRange:0.#}m 판정 +{_config.AreaImpactDelay:0.##}s"
-                        : "판정=단일";
+                    string judge = DescribeJudge(entry);
                     area.Append(' ').Append(row.Letter).Append('(').Append(element).Append(") ").Append(row.Grammar)
                         .Append(" · ").Append(judge).Append('\n');
                 }
@@ -60,11 +58,36 @@ namespace Oheangbu.App
 
             var sb = new StringBuilder();
             sb.Append("[공격 어휘 — 기대 문법(미러 · 정본=작도어휘 CSV)]\n");
+            AppendBody(sb, single, area);
+            return sb.ToString();
+        }
+
+        // 판정 문구 — 형상별 수치는 SpellBook, cone만 CombatConfig(SPELL-AREA-SHAPES §2)
+        private string DescribeJudge(SpellBookSO.Entry entry)
+        {
+            switch (entry.AreaShape)
+            {
+                case AreaShape.Cone:
+                    return _config != null
+                        ? $"cone {_config.AreaConeAngle:0}°/{_config.AreaConeRange:0.#}m 판정 +{_config.AreaImpactDelay:0.##}s"
+                        : "cone";
+                case AreaShape.Circle:
+                    return $"원형 반경 {entry.AreaRadius:0.#}m 판정 +{entry.AreaImpactDelay:0.##}s";
+                case AreaShape.Path:
+                    return $"경로 반폭 {entry.AreaRadius:0.#}m·{entry.AreaLength:0.#}m·{entry.AreaSpeed:0.#}m/s(전선 도달 시각)";
+                case AreaShape.Volley:
+                    return $"다연발 {entry.VolleyShots}발 반각 {entry.AreaAngle:0}°/{entry.AreaLength:0.#}m(발당 위력÷{entry.VolleyShots})";
+                default:
+                    return "판정=단일";
+            }
+        }
+
+        private void AppendBody(StringBuilder sb, StringBuilder single, StringBuilder area)
+        {
             sb.Append("단일(락온 또는 시선 안 1체 · 착탄에 피해)\n").Append(single);
             sb.Append("광역(전방)\n").Append(area);
             float cost = _config != null ? _config.SpellInkCost : 0f;
             sb.Append("먹 ").Append(cost.ToString("0.##")).Append("/발 · 갈무리(LMB 홀드·락온 L1)로 회복 · R 재시작");
-            return sb.ToString();
         }
     }
 }
