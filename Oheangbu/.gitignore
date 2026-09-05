@@ -13,6 +13,16 @@
 # 에셋스토어 팩·에디터 확장(용량·라이선스 사유)
 /[Aa]ssets/JejumokGwana*
 /[Aa]ssets/KoreanTraditionalPattern_Effect*
+# 2026-09-04 신규 임포트분(유료 — 총 ~30GB): VFX·전통 재질·문양 노멀/데칼·볼류메트릭
+/[Aa]ssets/GabrielAguiarProductions*
+/[Aa]ssets/KoreanTraditional_SmartMaterials\ Vol.*
+/[Aa]ssets/KT_SmartMat_Vol_*
+/[Aa]ssets/KTP_Decal*
+/[Aa]ssets/KTP_Normal*
+/[Aa]ssets/Aura\ 2*
+/[Aa]ssets/PolyOne*
+# 임베디드 유료 패키지(OccaSoftware Buto — Asset Store EULA): Packages/에 자동 등록되지만 커밋 금지
+/[Pp]ackages/com.occasoftware.buto*
 /[Aa]ssets/Hierarchy\ Designer*
 /[Aa]ssets/BuildReport*
 /[Aa]ssets/TutorialInfo*

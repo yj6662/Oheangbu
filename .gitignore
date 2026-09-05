@@ -20,3 +20,6 @@ desktop.ini
 .env
 .env.*
 !.env.example
+
+# 로컬 원본 백업(생성 에셋 데시메이트 전 원본) — 리포 밖 보관, 절차는 런 로그에 기입
+Tools/MeshyRuns/_local/
