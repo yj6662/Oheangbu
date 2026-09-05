@@ -90,7 +90,7 @@ namespace Oheangbu.EditorTools
             var scene = DevSceneKit.NewEmptyScene();
             DevSceneKit.AddSceneBase();
             DevSceneKit.InstantiateRig(scene, DevSceneKit.Spawn, 0f);
-            DevSceneKit.FindRigParts(out var player, out _);
+            DevSceneKit.FindRigParts(out var player, out var systems);
 
             var l1 = DevSceneKit.CreateDummy("L1", new Vector3(0f, 1.1f, 0f), "L1");          // 정면 6m — 락온 대상
             var l2 = DevSceneKit.CreateDummy("L2", new Vector3(2.49f, 1.1f, 5.74f), "L2");    // 우 12° 12m — 유도·포물선·최속
@@ -127,6 +127,7 @@ namespace Oheangbu.EditorTools
             directorSo.FindProperty("_spellBook").objectReferenceValue = AssetDatabase.LoadAssetAtPath<SpellBookSO>(DevSceneKit.SpellBookPath);
             directorSo.FindProperty("_config").objectReferenceValue = AssetDatabase.LoadAssetAtPath<CombatConfigSO>(DevSceneKit.DefaultConfigPath);
             directorSo.FindProperty("_player").objectReferenceValue = player.transform;
+            directorSo.FindProperty("_wiring").objectReferenceValue = systems.GetComponent<CombatLoopWiring>();
             DevSceneKit.SetObjectArray(directorSo, "_dummies", dummies);
             directorSo.ApplyModifiedPropertiesWithoutUndo();
 

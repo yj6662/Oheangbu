@@ -6,7 +6,7 @@ namespace Oheangbu.App
     // [P4 — 오(水)·모(土) 공용 전진 연출] 커밋 문양 아래 지면에서 형성돼(솟음) 목표 방향으로
     // 느리게 전진하고, 사거리 끝에서 지면으로 가라앉는다(潤下 — 잔존·발광 없음).
     // 기점=시전자 전방(문답 확정 2026-08-29 — §3.1 개정: 소환감 문법 통일).
-    // 드레싱은 프리팹 자식이 소유: 오=파도 crest 메시(_crest) + 물 스밈 파티클 / 모=모래 파티클만.
+    // 모(土) 전용 — 오는 WaterWaveEffect(전용 구현, SPEC-SPELL-FX-REWORK §3.3)로 이관. _crest 경로는 LEGACY(참조 0).
     // 피해는 배선의 단일 착탄 시계 그대로 — 연출≠실판정(SPEC-SPELL-FX-ASSETS §9-1).
     public sealed class GroundWaveEffect : SpellSequenceEffect
     {
@@ -32,6 +32,13 @@ namespace Oheangbu.App
         private float _traveled;
         private Quaternion _crestBaseRot;
         private bool _emissionStopped;
+        private AreaImpactPlan _plan;
+
+        // 판정 계획 [SPELL-AREA-SHAPES §3] — 시작점·방향·길이·속도·차오름을 판정과 공유한다(직렬 값은 폴백)
+        public override void SetAreaPlan(AreaImpactPlan plan)
+        {
+            _plan = plan;
+        }
 
         public override void Begin(Vector3 origin, Transform target, Vector3 fallbackPoint, Color tint)
         {
@@ -49,6 +56,17 @@ namespace Oheangbu.App
             float distToGoal = flat.magnitude;
             _dir = flat.sqrMagnitude > 0.001f ? flat.normalized : Vector3.forward;
             _travelDistance = Mathf.Min(_maxRange, distToGoal + _overshoot);
+
+            if (_plan != null)
+            {
+                // 판정이 정한 복도 그대로 — 전선이 닿는 시각(차오름 + 거리/속도)이 피해 시각과 같아진다
+                Vector3 planDir = new Vector3(_plan.Direction.x, 0f, _plan.Direction.z);
+                if (planDir.sqrMagnitude > 0.001f) _dir = planDir.normalized;
+                if (_plan.Length > 0f) _travelDistance = _plan.Length;
+                if (_plan.Speed > 0f) _speed = _plan.Speed;
+                if (_plan.Delay > 0f) _riseTime = _plan.Delay;
+                transform.position = new Vector3(_plan.Point.x, start.y, _plan.Point.z);
+            }
 
             // crest: 높이+Z·전진+Y 메시를 세워 진행 방향으로 — LookRotation(up, dir)이 +Z→up·+Y→dir
             _crestBaseRot = Quaternion.LookRotation(Vector3.up, _dir) * Quaternion.Euler(_crestExtraEuler);

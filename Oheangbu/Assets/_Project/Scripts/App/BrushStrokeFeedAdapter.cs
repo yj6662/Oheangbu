@@ -92,6 +92,7 @@ namespace Oheangbu.App
         private bool _pendingParry;  // 패링 작도인가 — 방어막 가독 타임라인(SPELL-FIDELITY §4.6) 적용 여부
         private Transform _pendingAttackTarget; // 배선이 밀어준 명중 대상(유도 추적) — 없으면 허공 착탄
         private float _pendingAttackDuration;   // 배선이 확정한 비행시간 — 피해 착탄 시각과 같은 시계
+        private AreaImpactPlan _pendingAreaPlan; // 배선의 광역 판정 계획(SPELL-AREA-SHAPES) — 연출이 같은 시계로 받는다
         private bool _pendingCastFailed;        // 배선이 알린 시전 불성립(먹 부족·미등재) — 플래시·문양 대신 불발 증발
         private GameObject _pendingFxPrefab;    // 어휘별 프리팹 스태시(_visualSet 조회) — 없으면 기본 슬롯
         private float _pendingFxScaleMul = 1f;
@@ -344,6 +345,7 @@ namespace Oheangbu.App
             // OnLetterDrawn에서 지우면 안 된다: 채널 구독 순서상 배선의 푸시가 먼저 올 수 있다
             _pendingAttackTarget = null;
             _pendingAttackDuration = 0f;
+            _pendingAreaPlan = null;
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
             _pendingFxArcHeight = 0f;
@@ -415,12 +417,21 @@ namespace Oheangbu.App
             {
                 Transform sequenceTarget = _pendingAttackTarget;
                 float sequenceDuration = _pendingAttackDuration;
+                AreaImpactPlan areaPlan = _pendingAreaPlan;
                 _pendingAttackTarget = null;
                 _pendingAttackDuration = 0f;
+                _pendingAreaPlan = null;
                 // 판정 착탄 시계 전달(SPELL-FIDELITY §4.4) — 단일 유도 연출(가 랜스)의 동기 통로.
-                // 광역 자체 시계는 기본 no-op로 무시한다
+                // 광역은 판정 계획(SPELL-AREA-SHAPES §3)을 받는다 — 허공 착탄점도 계획의 점으로(중심·시작점 일치)
                 if (sequenceDuration > 0f) sequence.SetImpactClock(sequenceDuration);
-                sequence.Begin(bounds.center, sequenceTarget, MissPoint(bounds.center), group.FlashColor);
+                if (areaPlan != null) sequence.SetAreaPlan(areaPlan);
+                // Cone의 Point는 시전자 위치(AreaImpactPlan L21) — 목표점이 아니라 기점이므로 전방 끝점으로 환산(FX-REWORK §3.1 회귀 교정).
+                // Circle 중심·Path 시작점·Volley 대체점은 기존 의미 유지(고·오·모·소 무영향)
+                Vector3 fallback = areaPlan == null ? MissPoint(bounds.center)
+                    : areaPlan.Shape == AreaShape.Cone
+                        ? areaPlan.Point + AreaGeometry.Flat(areaPlan.Direction).normalized * Mathf.Max(1f, areaPlan.Length)
+                        : areaPlan.Point;
+                sequence.Begin(bounds.center, sequenceTarget, fallback, group.FlashColor);
                 PatternEffectLifetime.AttachBloom(go, _style.PatternLifetime, group.FlashColor);
                 return;
             }
@@ -462,6 +473,12 @@ namespace Oheangbu.App
         {
             _pendingAttackTarget = target;
             _pendingAttackDuration = flightDuration;
+        }
+
+        // 광역 판정 계획 — 같은 커밋 프레임에 배선이 밀어준다. 연출(SpellSequenceEffect)이 Begin 직전에 받는다
+        public void SetPatternAreaPlan(AreaImpactPlan plan)
+        {
+            _pendingAreaPlan = plan;
         }
 
         // 시전 불성립(먹 부족·미러 밖 글자) — 배선이 커밋 프레임에 알린다. 표현은 불발(증발)로 따른다
