@@ -1,0 +1,13 @@
+{
+    "unityVersion": "6000.3.9f1",
+    "project": "C:/Users/yj666/Oheangbu/Oheangbu/Assets",
+    "playing": false,
+    "compiling": false,
+    "scenes": [
+        "Assets/_Project/Art/C02_RigFaceLab/Scenes/Integrated_B2_C3_Review.unity"
+    ],
+    "sceneDirty": [
+        false
+    ],
+    "scope": "Independent C02 experiment; no canonical scene writes"
+}

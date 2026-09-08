@@ -1,0 +1,8 @@
+{
+    "id": "76ea7d9cd9d040c5adc5b37c9cff2d51",
+    "method": "Probe",
+    "status": "COMPLETE",
+    "result": "{\n    \"unityVersion\": \"6000.3.9f1\",\n    \"project\": \"C:/Users/yj666/Oheangbu/Oheangbu/Assets\",\n    \"playing\": false,\n    \"compiling\": false,\n    \"scenes\": [\n        \"Assets/_Project/Art/C02_RigFaceLab/Scenes/Face_C3_Review.unity\"\n    ],\n    \"sceneDirty\": [\n        false\n    ],\n    \"scope\": \"Independent C02 experiment; no canonical scene writes\"\n}",
+    "error": "",
+    "playing": false
+}

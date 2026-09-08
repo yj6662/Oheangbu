@@ -1,0 +1,8 @@
+{
+    "id": "2d8c2dcf1b8d48faa9a36541ec74611c",
+    "method": "BuildReview",
+    "status": "COMPLETE",
+    "result": "{\n    \"scene\": \"Assets/_Project/Art/C02_RigFaceLab/Scenes/Integrated_B1_C3_Review.unity\",\n    \"prefab\": \"Assets/_Project/Art/C02_RigFaceLab/Prefabs/Integrated_B1_C3_LabRig.prefab\",\n    \"controller\": \"Assets/_Project/Art/C02_RigFaceLab/Controllers/Integrated_B1_C3.controller\",\n    \"profile\": \"Assets/_Project/Art/C02_RigFaceLab/Profiles/Integrated_B1_C3.asset\",\n    \"states\": [\n        \"Idle\",\n        \"Walk\",\n        \"Run\",\n        \"Attack\"\n    ],\n    \"missingRequestedClips\": [],\n    \"removedFacialCurvesFromExperimentCopies\": [\n        \"Armature|LAB_B1_Idle:FaceLid_Left:blendShape.BlinkLeft\",\n        \"Armature|LAB_B1_Idle:FaceLid_Right:blendShape.BlinkRight\",\n        \"Armature|LAB_B1_Walk:FaceLid_Left:blendShape.BlinkLeft\",\n        \"Armature|LAB_B1_Walk:FaceLid_Right:blendShape.BlinkRight\",\n        \"Armature|LAB_B1_Run:FaceLid_Left:blendShape.BlinkLeft\",\n        \"Armature|LAB_B1_Run:FaceLid_Right:blendShape.BlinkRight\",\n        \"Armature|LAB_B1_Attack:FaceLid_Left:blendShape.BlinkLeft\",\n        \"Armature|LAB_B1_Attack:FaceLid_Right:blendShape.BlinkRight\"\n    ],\n    \"canonicalModified\": false,\n    \"runtimeStatus\": \"UNVERIFIED\",\n    \"cameraReference\": \"PlayerRig.prefab CameraPivot.y=0.7, CombatConfig_Default shoulder=(0,0.55,-2.8), camera FOV=60. Distance reference; no game controller or collision.\"\n}",
+    "error": "",
+    "playing": false
+}

@@ -1,0 +1,1 @@
+{"id": "2ecf9c9372d4424188fc80a294c15d14", "method": "StartCapture", "request": "{\"folder\":\"Final_Blink_Close\",\"mode\":\"face_sweep\",\"frames\":180,\"camera\":1,\"holdFrames\":15,\"stopPlayWhenComplete\":false}"}

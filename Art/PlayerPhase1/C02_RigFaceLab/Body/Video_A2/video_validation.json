@@ -1,0 +1,331 @@
+{
+  "status": "TECHNICAL_PASS",
+  "character_acceptance": "UNVERIFIED",
+  "visual_deformation": "UNVERIFIED",
+  "unity_runtime": "UNVERIFIED",
+  "validated_at_utc": "2026-09-08T21:05:44.119340+00:00",
+  "scope": "MP4 encoding and timing only; no visual, anatomical, rig, gameplay or Unity acceptance implied.",
+  "method": "Independent ffmpeg full decode with showinfo and strict error detection; exact integer PTS and frame durations; direct MP4 mdhd/stts sample-table cross-check.",
+  "ffmpeg_executable": "C:\\Users\\yj666\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+  "ffmpeg_version": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers",
+  "validator": "C:\\Users\\yj666\\Oheangbu\\Tools\\Blender\\AutoPlayerV1\\verify_videos.py",
+  "validator_sha256": "8ccc4c17c1aa585ad1117a39afad126dbe6a888da3e9bc69dac83903ff7f6a9e",
+  "manifest": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_A2\\progress.json",
+  "manifest_sha256": "6a34ab744798261d085e1319296e88f02daacb6ac7499268c705fef816aae4c2",
+  "manifest_status": "COMPLETE",
+  "manifest_checks": {
+    "render_manifest_complete": true,
+    "manifest_fps_30": true,
+    "manifest_resolution_1280x720": true,
+    "distinct_mp4_paths": true
+  },
+  "clip_count": 4,
+  "expected_total_frames": 252,
+  "actual_total_decoded_frames": 252,
+  "jobs": [
+    {
+      "label": "Run_Full_front",
+      "action": "C02_Run",
+      "view": "front",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_A2\\Run_Full_front.mp4",
+      "expected": {
+        "fps": 30,
+        "width": 1280,
+        "height": 720,
+        "frames": 20,
+        "duration_seconds": 0.6666666666666666,
+        "source_key_interval_seconds": 0.6333333333333333,
+        "last_sample_hold_seconds": 0.03333333333333333
+      },
+      "character_acceptance": "UNVERIFIED",
+      "bytes": 184377,
+      "sha256": "3560cc28c467521f69f2a4d2bcf7db487b08634a85763e0f30993f7e5ee6a71b",
+      "container": {
+        "timescale": 15360,
+        "mdhd_duration_ticks": 10240,
+        "duration_seconds": 0.6666666666666666,
+        "sample_count": 20,
+        "stts_duration_ticks": 10240,
+        "stts_runs": [
+          {
+            "sample_count": 20,
+            "sample_delta": 512
+          }
+        ],
+        "constant_sample_rate": true,
+        "sample_fps": "30"
+      },
+      "decode_returncode": 0,
+      "decoder_log_sha256": "6c980beb719f51bd3855a07e6dc9723796d5418aea5ce234097888717577e7b2",
+      "actual": {
+        "decoded_frames": 20,
+        "decoder_fps_rational": "30",
+        "fps": 30.0,
+        "time_base_rational": "1/15360",
+        "dimensions_seen": [
+          [
+            1280,
+            720
+          ]
+        ],
+        "pixel_formats": [
+          "yuv420p"
+        ],
+        "first_pts_seconds": 0.0,
+        "last_pts_seconds": 0.6333333333333333,
+        "presentation_duration_seconds": 0.6666666666666666,
+        "presentation_duration_rational": "2/3",
+        "frame_intervals_rational": [
+          "1/30"
+        ],
+        "frame_durations_rational": [
+          "1/30"
+        ]
+      },
+      "checks": {
+        "full_decode_without_error": true,
+        "frame_count_matches": true,
+        "decoded_indices_contiguous": true,
+        "resolution_1280x720": true,
+        "decoder_fps_30": true,
+        "constant_pts_spacing_1_over_30": true,
+        "frame_duration_1_over_30": true,
+        "first_pts_zero": true,
+        "duration_includes_final_sample": true,
+        "container_frame_count_matches": true,
+        "container_constant_fps_30": true,
+        "container_duration_matches": true,
+        "container_sample_duration_consistent": true
+      },
+      "status": "PASS"
+    },
+    {
+      "label": "Run_Axilla_back",
+      "action": "C02_Run",
+      "view": "back",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_A2\\Run_Axilla_back.mp4",
+      "expected": {
+        "fps": 30,
+        "width": 1280,
+        "height": 720,
+        "frames": 20,
+        "duration_seconds": 0.6666666666666666,
+        "source_key_interval_seconds": 0.6333333333333333,
+        "last_sample_hold_seconds": 0.03333333333333333
+      },
+      "character_acceptance": "UNVERIFIED",
+      "bytes": 1132884,
+      "sha256": "a85cf71ee57bfc691eddf76131ec6b0030ac52a4e3af28045b3f18b20884b1fb",
+      "container": {
+        "timescale": 15360,
+        "mdhd_duration_ticks": 10240,
+        "duration_seconds": 0.6666666666666666,
+        "sample_count": 20,
+        "stts_duration_ticks": 10240,
+        "stts_runs": [
+          {
+            "sample_count": 20,
+            "sample_delta": 512
+          }
+        ],
+        "constant_sample_rate": true,
+        "sample_fps": "30"
+      },
+      "decode_returncode": 0,
+      "decoder_log_sha256": "f28651feac5a329be6ba12c17228491f82c8442d4899d2959a5200bab290d82b",
+      "actual": {
+        "decoded_frames": 20,
+        "decoder_fps_rational": "30",
+        "fps": 30.0,
+        "time_base_rational": "1/15360",
+        "dimensions_seen": [
+          [
+            1280,
+            720
+          ]
+        ],
+        "pixel_formats": [
+          "yuv420p"
+        ],
+        "first_pts_seconds": 0.0,
+        "last_pts_seconds": 0.6333333333333333,
+        "presentation_duration_seconds": 0.6666666666666666,
+        "presentation_duration_rational": "2/3",
+        "frame_intervals_rational": [
+          "1/30"
+        ],
+        "frame_durations_rational": [
+          "1/30"
+        ]
+      },
+      "checks": {
+        "full_decode_without_error": true,
+        "frame_count_matches": true,
+        "decoded_indices_contiguous": true,
+        "resolution_1280x720": true,
+        "decoder_fps_30": true,
+        "constant_pts_spacing_1_over_30": true,
+        "frame_duration_1_over_30": true,
+        "first_pts_zero": true,
+        "duration_includes_final_sample": true,
+        "container_frame_count_matches": true,
+        "container_constant_fps_30": true,
+        "container_duration_matches": true,
+        "container_sample_duration_consistent": true
+      },
+      "status": "PASS"
+    },
+    {
+      "label": "Idle_Axilla_back",
+      "action": "C02_Idle",
+      "view": "back",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_A2\\Idle_Axilla_back.mp4",
+      "expected": {
+        "fps": 30,
+        "width": 1280,
+        "height": 720,
+        "frames": 121,
+        "duration_seconds": 4.033333333333333,
+        "source_key_interval_seconds": 4.0,
+        "last_sample_hold_seconds": 0.03333333333333333
+      },
+      "character_acceptance": "UNVERIFIED",
+      "bytes": 2350636,
+      "sha256": "ca5336b57d1300c3bbf703ebcc3701797b7b3e95c19bf8b40f128dfae15f12b1",
+      "container": {
+        "timescale": 15360,
+        "mdhd_duration_ticks": 61952,
+        "duration_seconds": 4.033333333333333,
+        "sample_count": 121,
+        "stts_duration_ticks": 61952,
+        "stts_runs": [
+          {
+            "sample_count": 121,
+            "sample_delta": 512
+          }
+        ],
+        "constant_sample_rate": true,
+        "sample_fps": "30"
+      },
+      "decode_returncode": 0,
+      "decoder_log_sha256": "9b8a9a222e937861246418d5115cc4c42f2a38af330f86c697836721edf16253",
+      "actual": {
+        "decoded_frames": 121,
+        "decoder_fps_rational": "30",
+        "fps": 30.0,
+        "time_base_rational": "1/15360",
+        "dimensions_seen": [
+          [
+            1280,
+            720
+          ]
+        ],
+        "pixel_formats": [
+          "yuv420p"
+        ],
+        "first_pts_seconds": 0.0,
+        "last_pts_seconds": 4.0,
+        "presentation_duration_seconds": 4.033333333333333,
+        "presentation_duration_rational": "121/30",
+        "frame_intervals_rational": [
+          "1/30"
+        ],
+        "frame_durations_rational": [
+          "1/30"
+        ]
+      },
+      "checks": {
+        "full_decode_without_error": true,
+        "frame_count_matches": true,
+        "decoded_indices_contiguous": true,
+        "resolution_1280x720": true,
+        "decoder_fps_30": true,
+        "constant_pts_spacing_1_over_30": true,
+        "frame_duration_1_over_30": true,
+        "first_pts_zero": true,
+        "duration_includes_final_sample": true,
+        "container_frame_count_matches": true,
+        "container_constant_fps_30": true,
+        "container_duration_matches": true,
+        "container_sample_duration_consistent": true
+      },
+      "status": "PASS"
+    },
+    {
+      "label": "Attack_Full_front",
+      "action": "C02_Attack",
+      "view": "front",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_A2\\Attack_Full_front.mp4",
+      "expected": {
+        "fps": 30,
+        "width": 1280,
+        "height": 720,
+        "frames": 91,
+        "duration_seconds": 3.033333333333333,
+        "source_key_interval_seconds": 3.0,
+        "last_sample_hold_seconds": 0.03333333333333333
+      },
+      "character_acceptance": "UNVERIFIED",
+      "bytes": 620237,
+      "sha256": "719f21ba56676c3be904234dd176617f421589e311ce6cd4a99a5b73939b8e4a",
+      "container": {
+        "timescale": 15360,
+        "mdhd_duration_ticks": 46592,
+        "duration_seconds": 3.033333333333333,
+        "sample_count": 91,
+        "stts_duration_ticks": 46592,
+        "stts_runs": [
+          {
+            "sample_count": 91,
+            "sample_delta": 512
+          }
+        ],
+        "constant_sample_rate": true,
+        "sample_fps": "30"
+      },
+      "decode_returncode": 0,
+      "decoder_log_sha256": "7be9cd359f7afdd9f206e81ff50d251af52b7951d940ac56b0e56725953f248e",
+      "actual": {
+        "decoded_frames": 91,
+        "decoder_fps_rational": "30",
+        "fps": 30.0,
+        "time_base_rational": "1/15360",
+        "dimensions_seen": [
+          [
+            1280,
+            720
+          ]
+        ],
+        "pixel_formats": [
+          "yuv420p"
+        ],
+        "first_pts_seconds": 0.0,
+        "last_pts_seconds": 3.0,
+        "presentation_duration_seconds": 3.033333333333333,
+        "presentation_duration_rational": "91/30",
+        "frame_intervals_rational": [
+          "1/30"
+        ],
+        "frame_durations_rational": [
+          "1/30"
+        ]
+      },
+      "checks": {
+        "full_decode_without_error": true,
+        "frame_count_matches": true,
+        "decoded_indices_contiguous": true,
+        "resolution_1280x720": true,
+        "decoder_fps_30": true,
+        "constant_pts_spacing_1_over_30": true,
+        "frame_duration_1_over_30": true,
+        "first_pts_zero": true,
+        "duration_includes_final_sample": true,
+        "container_frame_count_matches": true,
+        "container_constant_fps_30": true,
+        "container_duration_matches": true,
+        "container_sample_duration_consistent": true
+      },
+      "status": "PASS"
+    }
+  ]
+}

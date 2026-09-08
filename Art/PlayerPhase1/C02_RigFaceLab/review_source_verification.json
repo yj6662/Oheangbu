@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-09-08T22:11:30.053360+00:00",
+  "kind": "preservation_hash_comparison_not_quality_verdict",
+  "input": "preservation_before.json",
+  "protected_files": [
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\Candidate_C02_Repaired.blend",
+      "expected_sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2",
+      "actual_sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2",
+      "bytes": 18821670,
+      "status": "UNCHANGED"
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\candidate_result.json",
+      "expected_sha256": "48e8f23936be8bef4d563445110a9165f8829dcc7c29e611b09679fa6193173c",
+      "actual_sha256": "48e8f23936be8bef4d563445110a9165f8829dcc7c29e611b09679fa6193173c",
+      "bytes": 1422,
+      "status": "UNCHANGED"
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\FINAL_REPORT.md",
+      "expected_sha256": "d47d7d1dc47c94e88a5a32f2b7d6a108d4d9021469500c93b9c74f38c892b147",
+      "actual_sha256": "d47d7d1dc47c94e88a5a32f2b7d6a108d4d9021469500c93b9c74f38c892b147",
+      "bytes": 7359,
+      "status": "UNCHANGED"
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\cost_ledger.json",
+      "expected_sha256": "74f8745b7c2af5db681377476042e6456592968058769a4459ab2dce834e5d36",
+      "actual_sha256": "74f8745b7c2af5db681377476042e6456592968058769a4459ab2dce834e5d36",
+      "bytes": 30336,
+      "status": "UNCHANGED"
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\FitRigV3\\Dosa_Phase1_FitRigV3.blend",
+      "expected_sha256": "000051c3dbb2ea6fa2822c042baef26bdae819b26801185b01875978e961b222",
+      "actual_sha256": "000051c3dbb2ea6fa2822c042baef26bdae819b26801185b01875978e961b222",
+      "bytes": 84785573,
+      "status": "UNCHANGED"
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Prefabs\\Rig\\PlayerRig.prefab",
+      "expected_sha256": "92f5039f781a23734be106fd12fb69d61c289a8f595d2060a3c783ca6e7b641b",
+      "actual_sha256": "92f5039f781a23734be106fd12fb69d61c289a8f595d2060a3c783ca6e7b641b",
+      "bytes": 30226,
+      "status": "UNCHANGED"
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Scenes\\Dev\\C2_CodexWorld.unity",
+      "expected_sha256": "0b97dd6309336954a1790064cbd70fecaa25d35d5c7b78ceaba01cc0662f8fcb",
+      "actual_sha256": "0b97dd6309336954a1790064cbd70fecaa25d35d5c7b78ceaba01cc0662f8fcb",
+      "bytes": 2451242,
+      "status": "UNCHANGED"
+    }
+  ],
+  "baseline_copy": {
+    "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Baseline.blend",
+    "expected_sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2",
+    "actual_sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2",
+    "status": "UNCHANGED"
+  },
+  "all_recorded_files_unchanged": true,
+  "canonical_player_replaced": "not_inferred_from_hashes",
+  "additional_protected_files": [
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\ProjectSettings\\QualitySettings.asset",
+      "expected_sha256": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "actual_sha256": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "status": "UNCHANGED"
+    }
+  ],
+  "all_protected_files_unchanged": true
+}

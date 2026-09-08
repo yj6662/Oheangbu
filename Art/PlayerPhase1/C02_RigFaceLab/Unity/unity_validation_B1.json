@@ -1,0 +1,536 @@
+{
+  "status": "PARTIAL_UNVERIFIED_B1",
+  "scope": "Isolated Unity experiment, not canonical player replacement. B2 source correction pending.",
+  "model": "Integrated_B1_C3",
+  "import": {
+    "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/Integrated_B1_C3.fbx",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Final\\Integrated_B1_C3.fbx",
+    "sha256": "def017661c71276a38e0d3f8c3963b129a801ea250dd8e606c6d42cd3b1a18b5",
+    "unityVersion": "6000.3.9f1",
+    "scope": "Import and numeric technical checks only; artistic deformation and runtime remain UNVERIFIED until separately measured",
+    "animationType": "Human",
+    "avatarValid": true,
+    "avatarHuman": true,
+    "importBlendShapes": true,
+    "optimizeGameObjects": false,
+    "animationCompression": "Off",
+    "meshCompression": "Off",
+    "globalScale": 1.0,
+    "skinWeightsMode": "Custom",
+    "maximumImportedInfluences": 5,
+    "projectSkinWeights": "FourBones",
+    "minimumImportedWeight": 0.0010000000474974513,
+    "weldVertices": true,
+    "optimizeMeshVertices": true,
+    "renderedTriangles": 52784,
+    "vertices": 87788,
+    "rendererCount": 3,
+    "materialSlots": 3,
+    "uniqueDeformBones": 24,
+    "blendShapeCount": 2,
+    "bones": [
+      "Armature/Hips",
+      "Armature/Hips/LeftUpLeg",
+      "Armature/Hips/LeftUpLeg/LeftLeg",
+      "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+      "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+      "Armature/Hips/RightUpLeg",
+      "Armature/Hips/RightUpLeg/RightLeg",
+      "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+      "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+      "Armature/Hips/Spine02",
+      "Armature/Hips/Spine02/Spine01",
+      "Armature/Hips/Spine02/Spine01/Spine",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+      "Armature/Hips/Spine02/Spine01/Spine/neck",
+      "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+      "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+      "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand"
+    ],
+    "transforms": [
+      "",
+      "Armature",
+      "Armature/Hips",
+      "Armature/Hips/LeftUpLeg",
+      "Armature/Hips/LeftUpLeg/LeftLeg",
+      "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+      "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+      "Armature/Hips/RightUpLeg",
+      "Armature/Hips/RightUpLeg/RightLeg",
+      "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+      "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+      "Armature/Hips/Spine02",
+      "Armature/Hips/Spine02/Spine01",
+      "Armature/Hips/Spine02/Spine01/Spine",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+      "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+      "Armature/Hips/Spine02/Spine01/Spine/neck",
+      "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+      "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+      "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+      "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+      "C02_Mesh_0",
+      "FaceLid_Left",
+      "FaceLid_Right"
+    ],
+    "renderers": [
+      {
+        "path": "C02_Mesh_0",
+        "mesh": "C02_Mesh_0",
+        "vertices": 87101,
+        "triangles": 51760,
+        "submeshes": 1,
+        "bones": [
+          "Armature/Hips",
+          "Armature/Hips/LeftUpLeg",
+          "Armature/Hips/LeftUpLeg/LeftLeg",
+          "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+          "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+          "Armature/Hips/RightUpLeg",
+          "Armature/Hips/RightUpLeg/RightLeg",
+          "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+          "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+          "Armature/Hips/Spine02",
+          "Armature/Hips/Spine02/Spine01",
+          "Armature/Hips/Spine02/Spine01/Spine",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+          "Armature/Hips/Spine02/Spine01/Spine/neck",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront"
+        ],
+        "shapes": [],
+        "boundsCenter": {
+          "x": 0.0,
+          "y": -2.2351741790771484e-08,
+          "z": 0.8709676861763
+        },
+        "boundsSize": {
+          "x": 1.7500007152557373,
+          "y": 0.4967719316482544,
+          "z": 1.7419356107711792
+        },
+        "unweightedVertices": 0,
+        "nonfiniteWeights": 0,
+        "maxWeightSumError": 1.1920928955078125e-07,
+        "maxInfluences": 5,
+        "verticesAboveFourWeights": 297,
+        "materials": [
+          "Integrated_B1_C3_M0:Universal Render Pipeline/Lit"
+        ]
+      },
+      {
+        "path": "FaceLid_Left",
+        "mesh": "FaceLid_Left",
+        "vertices": 320,
+        "triangles": 512,
+        "submeshes": 1,
+        "bones": [
+          "Armature/Hips",
+          "Armature/Hips/LeftUpLeg",
+          "Armature/Hips/LeftUpLeg/LeftLeg",
+          "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+          "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+          "Armature/Hips/RightUpLeg",
+          "Armature/Hips/RightUpLeg/RightLeg",
+          "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+          "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+          "Armature/Hips/Spine02",
+          "Armature/Hips/Spine02/Spine01",
+          "Armature/Hips/Spine02/Spine01/Spine",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+          "Armature/Hips/Spine02/Spine01/Spine/neck",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront"
+        ],
+        "shapes": [
+          {
+            "name": "BlinkLeft",
+            "frameWeights": [
+              100.0
+            ],
+            "affectedVerticesAtLastFrame": 320,
+            "maximumDelta": 0.0070747192949056625
+          }
+        ],
+        "boundsCenter": {
+          "x": -0.026640623807907104,
+          "y": -0.11388719826936722,
+          "z": 1.5971238613128662
+        },
+        "boundsSize": {
+          "x": 0.025999998673796654,
+          "y": 0.008822321891784668,
+          "z": 0.006640315055847168
+        },
+        "unweightedVertices": 0,
+        "nonfiniteWeights": 0,
+        "maxWeightSumError": 0.0,
+        "maxInfluences": 1,
+        "verticesAboveFourWeights": 0,
+        "materials": [
+          "Integrated_B1_C3_M1:Universal Render Pipeline/Lit"
+        ]
+      },
+      {
+        "path": "FaceLid_Right",
+        "mesh": "FaceLid_Right",
+        "vertices": 367,
+        "triangles": 512,
+        "submeshes": 1,
+        "bones": [
+          "Armature/Hips",
+          "Armature/Hips/LeftUpLeg",
+          "Armature/Hips/LeftUpLeg/LeftLeg",
+          "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+          "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+          "Armature/Hips/RightUpLeg",
+          "Armature/Hips/RightUpLeg/RightLeg",
+          "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+          "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+          "Armature/Hips/Spine02",
+          "Armature/Hips/Spine02/Spine01",
+          "Armature/Hips/Spine02/Spine01/Spine",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+          "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+          "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+          "Armature/Hips/Spine02/Spine01/Spine/neck",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+          "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront"
+        ],
+        "shapes": [
+          {
+            "name": "BlinkRight",
+            "frameWeights": [
+              100.0
+            ],
+            "affectedVerticesAtLastFrame": 367,
+            "maximumDelta": 0.007529664784669876
+          }
+        ],
+        "boundsCenter": {
+          "x": 0.027499999850988388,
+          "y": -0.11360534280538559,
+          "z": 1.5971238613128662
+        },
+        "boundsSize": {
+          "x": 0.026000000536441803,
+          "y": 0.009458750486373901,
+          "z": 0.006640315055847168
+        },
+        "unweightedVertices": 0,
+        "nonfiniteWeights": 0,
+        "maxWeightSumError": 0.0,
+        "maxInfluences": 1,
+        "verticesAboveFourWeights": 0,
+        "materials": [
+          "Integrated_B1_C3_M1:Universal Render Pipeline/Lit"
+        ]
+      }
+    ],
+    "clips": [
+      {
+        "name": "Armature|C02_Attack",
+        "length": 3.000000238418579,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|C02_Idle",
+        "length": 4.0,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|C02_Run",
+        "length": 0.6333333849906921,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|C02_Walk",
+        "length": 1.033333420753479,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|DIAG_ArmsDown",
+        "length": 1.9666668176651,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|DIAG_DeepElbow",
+        "length": 1.9666668176651,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|DIAG_Overhead",
+        "length": 1.9666668176651,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|DIAG_Squat",
+        "length": 1.9666668176651,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_B1_Attack",
+        "length": 3.000000238418579,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_B1_Idle",
+        "length": 4.0,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_B1_Run",
+        "length": 0.6333333849906921,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_B1_Sequence",
+        "length": 11.000000953674316,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_B1_Walk",
+        "length": 1.033333420753479,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_DIAG_TorsoTwist",
+        "length": 2.433333396911621,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      },
+      {
+        "name": "Armature|LAB_Original_Sequence",
+        "length": 11.000000953674316,
+        "frameRate": 30.0,
+        "humanMotion": true,
+        "blendShapeCurves": [
+          "FaceLid_Left:blendShape.BlinkLeft",
+          "FaceLid_Right:blendShape.BlinkRight"
+        ]
+      }
+    ]
+  },
+  "checks": [
+    {
+      "name": "Humanoid structure",
+      "status": "PASS",
+      "details": "Own valid human Avatar; 24 deform bones, 52784 triangles, 3 renderers and 2 Blink channels. Structure does not imply faithful motion.",
+      "evidence": "Integrated_B1_C3_import_audit.json"
+    },
+    {
+      "name": "Humanoid Idle authored-pose reproduction",
+      "status": "FAIL",
+      "details": "At Idle normalized 0 Generic direct sampling has y=[0.001281,1.909360]m; Human original and source-Y-baked branches both [0.160730,1.783523]m. Root and floor offset=0. Parent source diagnosis: Idle Hips scale=1.1764704 while Run=1.0. B2 source repair pending.",
+      "evidence": "root_height_and_optimization_audit.json"
+    },
+    {
+      "name": "Generic source coordinates",
+      "status": "PASS",
+      "details": "Idle0 bounds match Blender source within export precision; Generic is not claimed as completed Humanoid path.",
+      "evidence": "root_height_and_optimization_audit.json"
+    },
+    {
+      "name": "Five-influence CPU evaluation",
+      "status": "PASS",
+      "details": "Actual imported 297 fifth-influence vertices affect CPU output; 16 poses, maximum FourBones vs Unlimited delta 13.1345mm; finite all.",
+      "evidence": "Integrated_B1_C3_skin_quality_comparison.json"
+    },
+    {
+      "name": "All 722 source fifth-influence retention",
+      "status": "FAIL",
+      "details": "Importer request minBoneWeight=0 persists as 0.001 in this Editor. 425 source fifth weights below .001 removed, 297 retained. Pose error against all722 original vertices is UNVERIFIED.",
+      "evidence": "Integrated_B1_C3_import_audit.json"
+    },
+    {
+      "name": "BlendShape values and ownership",
+      "status": "PASS",
+      "details": "0..1 controls map to 0..100; two Blink channels numeric 5-value tests finite, neutral returns to same coordinates, runtime overwriteCount0. Existing 8 raw constant-face bindings stripped only from four own body .anim copies; original FBX takes retained.",
+      "evidence": "Integrated_B1_C3_face_numeric.json"
+    },
+    {
+      "name": "Face appearance and general expressions",
+      "status": "UNVERIFIED",
+      "details": "Existing eye skins cover eyes; hair obstructs parts of the close camera. Only two partial blink channels, no eyeball/look/jaw/emotion channels. Three presets .35/.65/1 are partial eyelid closure, not emotion.",
+      "evidence": "Final_Blink_Close"
+    },
+    {
+      "name": "OptimizeGameObjects + Optimal compression",
+      "status": "MEASURED_NOT_ACCEPTED",
+      "details": "Separate exact-source import branch retained 2 shapes and 52784tris. 16 poses maximum same-order vertex delta17.3945mm vs OFF. Final asset remains both OFF; per-feature isolation, all-frame effect and GPU performance are UNVERIFIED.",
+      "evidence": "root_height_and_optimization_audit.json"
+    },
+    {
+      "name": "Full motion and face playback",
+      "status": "PASS_TECHNICAL",
+      "details": "Idle4s->Run6 cycles->Idle4s->Attack3s with .18s transitions; 1x30fps actual Play, 444frames/14.8sec; all overwriteCounts0. Logical target state differs from current state during crossfade; actual Run normalizedTime crosses6 during outgoing crossfade.",
+      "evidence": "Final_Sequence_Full_FixedGround/playback_events.json"
+    },
+    {
+      "name": "Ground and camera framing",
+      "status": "MEASURED",
+      "details": "Ground fixed worldY0 from source ground, root unchanged. The Human Idle gap is visible. Game-distance camera is isolated reference using project camera distances/FOV, not actual gameplay or collision.",
+      "evidence": "Integrated_B1_C3_camera_calibration.json"
+    },
+    {
+      "name": "Gameplay, physics, collision, performance",
+      "status": "UNVERIFIED",
+      "details": "No canonical controller, C2 runtime, Cloth or gameplay collision test; capture CPU timing is offscreen encoding throughput, not gameplay FPS.",
+      "evidence": ""
+    }
+  ],
+  "videos": [
+    {
+      "folder": "Final_Blink_Close",
+      "status": "TECHNICAL_PASS",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Unity\\Final_Blink_Close\\Final_Blink_Close.mp4",
+      "frames": 180,
+      "fps": 30,
+      "resolution": [
+        1280,
+        720
+      ],
+      "overwriteMaximum": 0,
+      "skinWeights": "Unlimited",
+      "artQuality": "UNVERIFIED"
+    },
+    {
+      "folder": "Final_Sequence_Full_FixedGround",
+      "status": "TECHNICAL_PASS",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Unity\\Final_Sequence_Full_FixedGround\\Final_Sequence_Full_FixedGround.mp4",
+      "frames": 444,
+      "fps": 30,
+      "resolution": [
+        1280,
+        720
+      ],
+      "overwriteMaximum": 0,
+      "skinWeights": "Unlimited",
+      "artQuality": "UNVERIFIED"
+    },
+    {
+      "folder": "Final_Sequence_GameReference",
+      "status": "TECHNICAL_PASS",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Unity\\Final_Sequence_GameReference\\Final_Sequence_GameReference.mp4",
+      "frames": 444,
+      "fps": 30,
+      "resolution": [
+        1280,
+        720
+      ],
+      "overwriteMaximum": 0,
+      "skinWeights": "Unlimited",
+      "artQuality": "UNVERIFIED"
+    }
+  ],
+  "qualitySettings": {
+    "before": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+    "after": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+    "status": "PASS_EXACT_RESTORED",
+    "note": "Audit import briefly serialized temporary PC skinWeights255. Exact baseline bytes verified by SHA after isolated255->4 correction; helper now scopes Unlimited only around CPU sampling, outside imports/controller serialization."
+  },
+  "remainingWork": "B2 source Idle-scale correction and bounded Human recheck; no further B1 art iterations."
+}

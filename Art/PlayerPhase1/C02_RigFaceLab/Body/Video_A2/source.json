@@ -1,0 +1,8 @@
+{
+  "stage": "A2",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\A2.blend",
+  "sha256": "0d768e7c9eb79de80fe6a18b5feecea17d2ae389e67d1b5fc614250af9dd0657",
+  "actual_source_model": true,
+  "actions_original_unchanged": true,
+  "camera_protocol": "body_compare_video.py"
+}

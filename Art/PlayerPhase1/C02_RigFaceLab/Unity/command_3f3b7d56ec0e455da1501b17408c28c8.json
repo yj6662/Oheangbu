@@ -1,0 +1,1 @@
+{"id": "3f3b7d56ec0e455da1501b17408c28c8", "method": "StartCapture", "request": "{\"folder\":\"B2_Final_GameDistance_Reference\",\"mode\":\"face_sweep\",\"frames\":1,\"camera\":2,\"holdFrames\":15,\"stopPlayWhenComplete\":false}"}

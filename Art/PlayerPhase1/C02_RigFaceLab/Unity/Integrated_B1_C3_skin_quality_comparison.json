@@ -1,0 +1,136 @@
+{
+    "status": "TECHNICAL_PASS",
+    "scope": "Actual imported model CPU BakeMesh comparison with FourBones versus Unlimited at 16 body-clip samples. This verifies skin-quality effect, not loss against the pre-FBX 722-vertex source or artistic deformation.",
+    "qualityBefore": "FourBones",
+    "qualityAfter": "FourBones",
+    "samples": [
+        {
+            "state": "Idle",
+            "normalizedTime": 0.0,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.01150122843682766,
+            "finite": true
+        },
+        {
+            "state": "Idle",
+            "normalizedTime": 0.25,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.012111734598875046,
+            "finite": true
+        },
+        {
+            "state": "Idle",
+            "normalizedTime": 0.5,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.011209385469555855,
+            "finite": true
+        },
+        {
+            "state": "Idle",
+            "normalizedTime": 0.75,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.010362107306718827,
+            "finite": true
+        },
+        {
+            "state": "Walk",
+            "normalizedTime": 0.0,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.011059898883104325,
+            "finite": true
+        },
+        {
+            "state": "Walk",
+            "normalizedTime": 0.25,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.013134496286511422,
+            "finite": true
+        },
+        {
+            "state": "Walk",
+            "normalizedTime": 0.5,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.009958235546946526,
+            "finite": true
+        },
+        {
+            "state": "Walk",
+            "normalizedTime": 0.75,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.006245563272386789,
+            "finite": true
+        },
+        {
+            "state": "Run",
+            "normalizedTime": 0.0,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.010747167281806469,
+            "finite": true
+        },
+        {
+            "state": "Run",
+            "normalizedTime": 0.25,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.011974174529314042,
+            "finite": true
+        },
+        {
+            "state": "Run",
+            "normalizedTime": 0.5,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.008266709744930268,
+            "finite": true
+        },
+        {
+            "state": "Run",
+            "normalizedTime": 0.75,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.01113660354167223,
+            "finite": true
+        },
+        {
+            "state": "Attack",
+            "normalizedTime": 0.0,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.005701811984181404,
+            "finite": true
+        },
+        {
+            "state": "Attack",
+            "normalizedTime": 0.25,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.0068717473186552528,
+            "finite": true
+        },
+        {
+            "state": "Attack",
+            "normalizedTime": 0.5,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.003973173908889294,
+            "finite": true
+        },
+        {
+            "state": "Attack",
+            "normalizedTime": 0.75,
+            "comparedVertices": 87788,
+            "verticesWithDifferentPositions": 297,
+            "maximumDeltaFourVsUnlimited": 0.005672572646290064,
+            "finite": true
+        }
+    ]
+}

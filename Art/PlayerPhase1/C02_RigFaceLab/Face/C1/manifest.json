@@ -1,0 +1,43 @@
+{
+  "candidate": "C1",
+  "stage": "C",
+  "attempt": 1,
+  "method": "Additive skinned eyelid curtains fitted to raycast face surface. Painted eye geometry remains static beneath them.",
+  "body_mesh_modified": false,
+  "body_vertex_changes": [],
+  "body_weights_modified": false,
+  "new_bones": 0,
+  "added_triangles": 1024,
+  "total_triangles": 52784,
+  "new_meshes": [
+    "FaceLid_Left",
+    "FaceLid_Right"
+  ],
+  "channels": [
+    "BlinkLeft",
+    "BlinkRight"
+  ],
+  "range_blender": [
+    0,
+    1
+  ],
+  "range_unity": [
+    0,
+    100
+  ],
+  "face_blink": {
+    "status": "FAIL",
+    "reason": "Right lid includes hair-contaminated surface samples, producing 34.27mm delta /36.34mm depth in Unity; replaced by C3"
+  },
+  "face_gaze": {
+    "status": "NOT_ATTEMPTED",
+    "reason": "No independent eyeball geometry in source"
+  },
+  "face_jaw": {
+    "status": "NOT_ATTEMPTED",
+    "reason": "Closed fused mouth; no mouth cavity established"
+  },
+  "neutral_source_face_geometry_exact": true,
+  "paid_requests": 0,
+  "adopted": false
+}

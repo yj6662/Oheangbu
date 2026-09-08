@@ -1,0 +1,123 @@
+{
+  "candidate": "C1",
+  "status": "PASS_SERIALIZATION_ONLY",
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Face\\C1\\Face_C1.fbx",
+  "source_blend": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Face\\C1\\Face_C1.blend",
+  "checks": [
+    {
+      "mesh": "C02_Mesh_0",
+      "value": 0,
+      "import_vertices": 87148,
+      "source_vertices": 87148,
+      "max_nearest_world_error_m": 1.6153891237991047e-06,
+      "status": "PASS"
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0,
+      "import_vertices": 297,
+      "source_vertices": 297,
+      "max_nearest_world_error_m": 2.3934808268677443e-07,
+      "status": "PASS"
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0,
+      "import_vertices": 297,
+      "source_vertices": 297,
+      "max_nearest_world_error_m": 2.504824863081012e-07,
+      "status": "PASS"
+    },
+    {
+      "mesh": "C02_Mesh_0",
+      "value": 0.5,
+      "import_vertices": 87148,
+      "source_vertices": 87148,
+      "max_nearest_world_error_m": 1.6153891237991047e-06,
+      "status": "PASS"
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0.5,
+      "import_vertices": 297,
+      "source_vertices": 297,
+      "max_nearest_world_error_m": 2.443120195039228e-07,
+      "status": "PASS"
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0.5,
+      "import_vertices": 297,
+      "source_vertices": 297,
+      "max_nearest_world_error_m": 2.504824863081012e-07,
+      "status": "PASS"
+    },
+    {
+      "mesh": "C02_Mesh_0",
+      "value": 1,
+      "import_vertices": 87148,
+      "source_vertices": 87148,
+      "max_nearest_world_error_m": 1.6153891237991047e-06,
+      "status": "PASS"
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 1,
+      "import_vertices": 297,
+      "source_vertices": 297,
+      "max_nearest_world_error_m": 2.3335903165389027e-07,
+      "status": "PASS"
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 1,
+      "import_vertices": 297,
+      "source_vertices": 297,
+      "max_nearest_world_error_m": 2.504824863081012e-07,
+      "status": "PASS"
+    }
+  ],
+  "source_bones": 24,
+  "imported_bones": 24,
+  "source_inventory": [
+    {
+      "name": "C02_Mesh_0",
+      "vertices": 87148,
+      "triangles": 51760,
+      "keys": []
+    },
+    {
+      "name": "FaceLid_Left",
+      "vertices": 297,
+      "triangles": 512,
+      "keys": [
+        "Basis",
+        "BlinkLeft"
+      ]
+    },
+    {
+      "name": "FaceLid_Right",
+      "vertices": 297,
+      "triangles": 512,
+      "keys": [
+        "Basis",
+        "BlinkRight"
+      ]
+    }
+  ],
+  "total_triangles": 52784,
+  "textures": [
+    {
+      "image": "texture_0",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Face\\Textures\\texture_0.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    }
+  ],
+  "method": "Empty-scene reimport. Every imported vertex compared with its nearest reference vertex in world space at simultaneous channel values 0/.5/1, with equal vertex counts and matching bone names. UV-split ordering and bijective correspondence are not assumed.",
+  "unity": "UNVERIFIED",
+  "anatomical_quality": "UNVERIFIED"
+}

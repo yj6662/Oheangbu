@@ -1,0 +1,10 @@
+{
+    "status": "TECHNICAL_PASS",
+    "scope": "Transient synthetic mesh: fifth influence retained by SetBoneWeights and evaluated by CPU BakeMesh. Candidate import, GPU visual output and performance require separate checks.",
+    "before": "FourBones",
+    "during": "Unlimited",
+    "after": "FourBones",
+    "storedInfluences": 5,
+    "expectedDelta": 0.07999999821186066,
+    "measuredDelta": 0.0800030529499054
+}

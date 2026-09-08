@@ -1,0 +1,38 @@
+{
+    "status": "COMPLETE",
+    "mode": "face_sweep",
+    "frameCount": 1,
+    "fps": 30,
+    "width": 1280,
+    "height": 720,
+    "duration": 0.03333333507180214,
+    "camera": "Game distance reference — not gameplay",
+    "cameraPosition": {
+        "x": -0.027245640754699708,
+        "y": 1.25,
+        "z": -2.801334857940674
+    },
+    "cameraEuler": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "cameraFov": 60.0,
+    "scope": "Actual Unity Play Mode frames, fixed game timestep and 1x animation speed. Synchronous offscreen URP capture; capture throughput is not gameplay performance.",
+    "visualQuality": "UNVERIFIED",
+    "skinWeights": "Unlimited",
+    "frames": [
+        {
+            "index": 0,
+            "time": 0.0,
+            "realtime": 86.5827407836914,
+            "state": "",
+            "normalizedState": 9.264579772949219,
+            "channel": "BlinkLeft",
+            "faceValue": 0.0,
+            "cpuRenderMilliseconds": 40.74599838256836,
+            "overwriteCount": 0
+        }
+    ],
+    "error": ""
+}

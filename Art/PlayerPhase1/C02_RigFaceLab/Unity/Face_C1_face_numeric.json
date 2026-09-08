@@ -1,0 +1,88 @@
+{
+    "status": "TECHNICAL_PASS",
+    "scope": "Imported BlendShape names, 0..1→0..100 transfer, finite CPU BakeMesh, neutral mesh return. Shape aesthetics, eye contact, runtime coexistence UNVERIFIED.",
+    "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/Face_C1.fbx",
+    "samples": [
+        {
+            "renderer": "FaceLid_Left",
+            "channel": "BlinkLeft",
+            "normalizedInput": 0.0,
+            "unityWeight": 0.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.0
+        },
+        {
+            "renderer": "FaceLid_Left",
+            "channel": "BlinkLeft",
+            "normalizedInput": 0.25,
+            "unityWeight": 25.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.0017686798237264157
+        },
+        {
+            "renderer": "FaceLid_Left",
+            "channel": "BlinkLeft",
+            "normalizedInput": 0.5,
+            "unityWeight": 50.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.0035373596474528314
+        },
+        {
+            "renderer": "FaceLid_Left",
+            "channel": "BlinkLeft",
+            "normalizedInput": 0.75,
+            "unityWeight": 75.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.005306039471179247
+        },
+        {
+            "renderer": "FaceLid_Left",
+            "channel": "BlinkLeft",
+            "normalizedInput": 1.0,
+            "unityWeight": 100.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.0070747192949056629
+        },
+        {
+            "renderer": "FaceLid_Right",
+            "channel": "BlinkRight",
+            "normalizedInput": 0.0,
+            "unityWeight": 0.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.0
+        },
+        {
+            "renderer": "FaceLid_Right",
+            "channel": "BlinkRight",
+            "normalizedInput": 0.25,
+            "unityWeight": 25.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.00856652483344078
+        },
+        {
+            "renderer": "FaceLid_Right",
+            "channel": "BlinkRight",
+            "normalizedInput": 0.5,
+            "unityWeight": 50.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.017133081331849099
+        },
+        {
+            "renderer": "FaceLid_Right",
+            "channel": "BlinkRight",
+            "normalizedInput": 0.75,
+            "unityWeight": 75.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.02569960057735443
+        },
+        {
+            "renderer": "FaceLid_Right",
+            "channel": "BlinkRight",
+            "normalizedInput": 1.0,
+            "unityWeight": 100.0,
+            "finite": true,
+            "maximumDeltaFromNeutral": 0.03426613286137581
+        }
+    ],
+    "neutralMaximumDelta": 0.0
+}

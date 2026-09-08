@@ -1,0 +1,151 @@
+{
+  "status": "DATA_PIPELINE_VERIFIED_WITH_QUALITY_LIMITATIONS",
+  "body_source": "Motion\\B2\\Motion_B2.blend",
+  "body_source_sha256": "9f51f7c5cd34af4dae3de17e970a608519dcb053c796ae3ef6ec3bb9ef89eb06",
+  "face_source": {
+    "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Face\\C3\\Face_C3.blend",
+    "objects": [
+      "FaceLid_Left",
+      "FaceLid_Right"
+    ],
+    "added_triangles": 1024,
+    "extra_bones": 0,
+    "source_body_geometry_changed": false,
+    "target_body_geometry_changed": false,
+    "target_body_weights_changed": false,
+    "requires": "Re-export complete selected body and both lids; validate with final body animation in Unity."
+  },
+  "blend": "Final/Integrated_B2_C3.blend",
+  "fbx": "Final/Integrated_B2_C3.fbx",
+  "fbx_sha256": "bd68dc1305eb1404050a95b60ee5c382cd9ba4baf168e59fc15d8f106c485616",
+  "meshes": [
+    {
+      "name": "C02_Mesh_0",
+      "vertices": 87148,
+      "triangles": 51760,
+      "max_influences": 5,
+      "shapes": [],
+      "material_slots": 1,
+      "modifiers": [
+        "ARMATURE"
+      ]
+    },
+    {
+      "name": "FaceLid_Left",
+      "vertices": 297,
+      "triangles": 512,
+      "max_influences": 1,
+      "shapes": [
+        "BlinkLeft"
+      ],
+      "material_slots": 1,
+      "modifiers": [
+        "ARMATURE"
+      ]
+    },
+    {
+      "name": "FaceLid_Right",
+      "vertices": 297,
+      "triangles": 512,
+      "max_influences": 1,
+      "shapes": [
+        "BlinkRight"
+      ],
+      "material_slots": 1,
+      "modifiers": [
+        "ARMATURE"
+      ]
+    }
+  ],
+  "total_triangles": 52784,
+  "bones": 24,
+  "new_cloth_bones": 0,
+  "new_face_bones": 0,
+  "textures": [
+    {
+      "image": "C02_original_texture.png",
+      "file": "Final\\Textures\\C02_original_texture.png",
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032",
+      "original_png_bytes_unchanged": true
+    }
+  ],
+  "fps": 30,
+  "clips": {
+    "C02_Attack": [
+      1.0,
+      91.0
+    ],
+    "C02_Idle": [
+      1.0,
+      121.0
+    ],
+    "C02_Run": [
+      1.0,
+      20.0
+    ],
+    "C02_Walk": [
+      1.0,
+      32.0
+    ],
+    "DIAG_ArmsDown": [
+      1.0,
+      60.0
+    ],
+    "DIAG_DeepElbow": [
+      1.0,
+      60.0
+    ],
+    "DIAG_Overhead": [
+      1.0,
+      60.0
+    ],
+    "DIAG_Squat": [
+      1.0,
+      60.0
+    ],
+    "LAB_B1_Attack": [
+      1.0,
+      91.0
+    ],
+    "LAB_B1_Idle": [
+      1.0,
+      121.0
+    ],
+    "LAB_B1_Run": [
+      1.0,
+      20.0
+    ],
+    "LAB_B1_Sequence": [
+      1.0,
+      331.0
+    ],
+    "LAB_B1_Walk": [
+      1.0,
+      32.0
+    ],
+    "LAB_B2_Idle": [
+      1.0,
+      121.0
+    ],
+    "LAB_B2_Sequence": [
+      1.0,
+      331.0
+    ],
+    "LAB_DIAG_TorsoTwist": [
+      1.0,
+      74.0
+    ],
+    "LAB_Original_Sequence": [
+      1.0,
+      331.0
+    ]
+  },
+  "blendshape_route": "BlinkLeft/Right 0..1 Blender -> 0..100 Unity, independent runtime controller; remove exporter constant-zero shape curves from Unity experimental body clip copies",
+  "skin_import_requirement": "Custom maxBonesPerVertex=5, renderer Auto, runtime Unlimited (temporary lab scope)",
+  "integrated_quality": "UNVERIFIED",
+  "canonical_replaced": false,
+  "additional_paid_credits": 0,
+  "export_status": "EXPORTED_AWAITING_ROUNDTRIP_AND_UNITY",
+  "roundtrip_evidence": "Final/fbx_roundtrip_B2_C3.json",
+  "unity_evidence": "Unity/unity_validation.json"
+}

@@ -1,0 +1,26 @@
+{
+    "status": "MEASURED",
+    "scope": "Ground is fixed at the unchanged character root Y (Blender source ground Z=0); it does not track deformed bounds. Fixed cameras use evaluated Idle frame0 geometry rather than conservative all-animation bounds. Character root and curves unchanged; pre-existing below-ground vertices are not hidden.",
+    "actualIdleMinimum": {
+        "x": -0.48664116859436037,
+        "y": 0.16072982549667359,
+        "z": -0.402103990316391
+    },
+    "actualIdleMaximum": {
+        "x": 0.4320981502532959,
+        "y": 1.7835228443145753,
+        "z": 0.39997461438179018
+    },
+    "originalGroundY": -0.33687448501586916,
+    "calibratedGroundY": 0.0,
+    "fullCameraPosition": {
+        "x": -0.027271509170532228,
+        "y": 0.972126305103302,
+        "z": 3.4068002700805666
+    },
+    "faceCameraPosition": {
+        "x": 0.1182807981967926,
+        "y": 1.6252409219741822,
+        "z": 0.7065959572792053
+    }
+}

@@ -1,0 +1,25 @@
+{
+  "source_blend": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Motion\\B1\\Motion_B1.blend",
+  "source_blend_sha256": "f1dd92cbfb365d38e6ff6ebbd98961a757202390dfe98802e3550fca30ac2e66",
+  "source_renderer": "Blender 5.0.1 Cycles (same 4 samples; initial CPU frames reused, remaining frames OptiX GPU)",
+  "status": "RENDER_SUPERSEDED_BY_EEVEE",
+  "resolution": [
+    1280,
+    720
+  ],
+  "fps": 30,
+  "expected_frames": 331,
+  "completed_frames": 60,
+  "left_panel": "Unmodified original C02 clips on A2 weights; generated comparison transitions",
+  "right_panel": "B1 cloned clips on same A2 weights; identical transition recipe",
+  "run_original_speed_cycles": 6,
+  "floor_square_m": 0.25,
+  "camera_follows_native_speed_mps": {
+    "Idle": 0.0,
+    "Run": 5.362285039688777,
+    "Walk": 1.5537527974691157,
+    "Attack": 0.0
+  },
+  "labels_inside_video": false,
+  "quality_verdict": "UNVERIFIED"
+}

@@ -63,6 +63,12 @@
 ### Spatial
 - Lifecycle: PLANNED — LDB 실배치 수치 표준. EA 실측과 함께 착수.
 
+### C02 리깅·동작·얼굴 독립 실험 — Specs/SPEC-C02-RIG-FACE-LAB.md
+- Lifecycle: ACTIVE · State: TEST
+- Owns: 사용자가 후속 대상으로 선택한 C02의 몸·의복 개선 → 동작/제한된 보조 움직임 → 기본 얼굴 기능 → 표정·별도 Unity 통합 검사. 근거=PROD-RIG/PROD-AIASSET, DECISIONS #188. C02 선택은 품질 승인이나 정본 채택이 아니다.
+- 이번 실험만 이전 2회 보정·국부 재구성/보조 본 금지·얼굴 제외를 사용자 지시에 따라 대체한다. 추가 유료 0, 단계별 A4/B3/C3/D3, 새 의복 변형 본 ≤12, 실제 착의 전신 ≤60k삼각형. 세부 계약은 해당 Spec이 소유한다.
+- 산출물: `Art/PlayerPhase1/C02_RigFaceLab/` 및 별도 Unity 검수 폴더. AutoPlayerV1/C02 원본·판정·비용, FitRigV3·C2·공용 PlayerRig는 보존한다. 항목별 실제 검수 결과와 사용자 미술 판단을 구분한다.
+
 ## Data
 
 ### 작도 어휘 — 오행부_작도어휘_v0_1.csv

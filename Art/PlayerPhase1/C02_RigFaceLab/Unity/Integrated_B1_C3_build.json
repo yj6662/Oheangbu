@@ -1,0 +1,26 @@
+{
+    "scene": "Assets/_Project/Art/C02_RigFaceLab/Scenes/Integrated_B1_C3_Review.unity",
+    "prefab": "Assets/_Project/Art/C02_RigFaceLab/Prefabs/Integrated_B1_C3_LabRig.prefab",
+    "controller": "Assets/_Project/Art/C02_RigFaceLab/Controllers/Integrated_B1_C3.controller",
+    "profile": "Assets/_Project/Art/C02_RigFaceLab/Profiles/Integrated_B1_C3.asset",
+    "states": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack"
+    ],
+    "missingRequestedClips": [],
+    "removedFacialCurvesFromExperimentCopies": [
+        "Armature|LAB_B1_Idle:FaceLid_Left:blendShape.BlinkLeft",
+        "Armature|LAB_B1_Idle:FaceLid_Right:blendShape.BlinkRight",
+        "Armature|LAB_B1_Walk:FaceLid_Left:blendShape.BlinkLeft",
+        "Armature|LAB_B1_Walk:FaceLid_Right:blendShape.BlinkRight",
+        "Armature|LAB_B1_Run:FaceLid_Left:blendShape.BlinkLeft",
+        "Armature|LAB_B1_Run:FaceLid_Right:blendShape.BlinkRight",
+        "Armature|LAB_B1_Attack:FaceLid_Left:blendShape.BlinkLeft",
+        "Armature|LAB_B1_Attack:FaceLid_Right:blendShape.BlinkRight"
+    ],
+    "canonicalModified": false,
+    "runtimeStatus": "UNVERIFIED",
+    "cameraReference": "PlayerRig.prefab CameraPivot.y=0.7, CombatConfig_Default shoulder=(0,0.55,-2.8), camera FOV=60. Distance reference; no game controller or collision."
+}

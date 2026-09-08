@@ -1,0 +1,1700 @@
+{
+    "status": "MEASURED_NOT_ART_APPROVAL",
+    "scope": "Independent byte-identical FBX branches: baseline Human, direct Generic source sampling, Human source-Y bake, and source-Y bake with compression Optimal / optimizeGameObjects. No root offsets, ground offsets, geometry or authored curves changed. Optimized comparison samples 16 poses, not all animation frames.",
+    "branches": [
+        {
+            "name": "Human_Original",
+            "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/Integrated_B1_C3.fbx",
+            "animationType": "Human",
+            "compression": "Off",
+            "method": "Own Animator + imported Humanoid clip, applyRootMotion=false, 1x, CPU BakeMesh",
+            "optimizeGameObjects": false,
+            "avatarValid": true,
+            "avatarHuman": true,
+            "shapes": 2,
+            "settings": [
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                }
+            ],
+            "samples": [
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.48664116859436037,
+                        "y": 0.1607297956943512,
+                        "z": -0.4021040201187134
+                    },
+                    "max": {
+                        "x": 0.43209806084632876,
+                        "y": 1.7835228443145753,
+                        "z": 0.3999744951725006
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.439821720123291,
+                        "y": 0.1688804179430008,
+                        "z": -0.49198389053344729
+                    },
+                    "max": {
+                        "x": 0.3947073221206665,
+                        "y": 1.7912137508392335,
+                        "z": 0.45497262477874758
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.4798392057418823,
+                        "y": 0.16416063904762269,
+                        "z": -0.372455894947052
+                    },
+                    "max": {
+                        "x": 0.45220351219177248,
+                        "y": 1.7794971466064454,
+                        "z": 0.3469298779964447
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.4967113137245178,
+                        "y": 0.1519140750169754,
+                        "z": -0.28235435485839846
+                    },
+                    "max": {
+                        "x": 0.4707977771759033,
+                        "y": 1.791933298110962,
+                        "z": 0.26306435465812685
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.4080570936203003,
+                        "y": -0.007699690759181976,
+                        "z": -0.2543942332267761
+                    },
+                    "max": {
+                        "x": 0.41489458084106448,
+                        "y": 1.7299689054489136,
+                        "z": 0.2589563727378845
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3059539794921875,
+                        "y": 0.03616228699684143,
+                        "z": -0.5570796132087708
+                    },
+                    "max": {
+                        "x": 0.49913954734802248,
+                        "y": 1.7205908298492432,
+                        "z": 0.5783583521842957
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.3757495880126953,
+                        "y": 0.005872488021850586,
+                        "z": -0.24011823534965516
+                    },
+                    "max": {
+                        "x": 0.4400789737701416,
+                        "y": 1.7248283624649048,
+                        "z": 0.33621034026145937
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3591058850288391,
+                        "y": 0.03511282801628113,
+                        "z": -0.583646297454834
+                    },
+                    "max": {
+                        "x": 0.3382173776626587,
+                        "y": 1.7215090990066529,
+                        "z": 0.5676507949829102
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.40526294708251955,
+                        "y": -0.016877174377441407,
+                        "z": -0.5184154510498047
+                    },
+                    "max": {
+                        "x": 0.37792396545410159,
+                        "y": 1.6495060920715333,
+                        "z": 0.4544137716293335
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3508446216583252,
+                        "y": -0.02953803539276123,
+                        "z": -0.7684024572372437
+                    },
+                    "max": {
+                        "x": 0.3672736883163452,
+                        "y": 1.6543920040130616,
+                        "z": 0.5166587829589844
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.35183990001678469,
+                        "y": -0.023298710584640504,
+                        "z": -0.6007585525512695
+                    },
+                    "max": {
+                        "x": 0.4326440095901489,
+                        "y": 1.6342012882232667,
+                        "z": 0.5495890974998474
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3541015386581421,
+                        "y": -0.03035104274749756,
+                        "z": -0.8023934364318848
+                    },
+                    "max": {
+                        "x": 0.3924170732498169,
+                        "y": 1.6458117961883546,
+                        "z": 0.5752288103103638
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.6908097267150879,
+                        "y": 0.0022553056478500368,
+                        "z": -0.291867196559906
+                    },
+                    "max": {
+                        "x": 0.5852947235107422,
+                        "y": 1.5454214811325074,
+                        "z": 0.32293447852134707
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.4589780867099762,
+                        "y": -0.03763025999069214,
+                        "z": -0.33235055208206179
+                    },
+                    "max": {
+                        "x": 0.7503800392150879,
+                        "y": 1.5600188970565797,
+                        "z": 0.48561298847198489
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.6652796864509583,
+                        "y": -0.06040152907371521,
+                        "z": -0.619743824005127
+                    },
+                    "max": {
+                        "x": 0.7653713822364807,
+                        "y": 1.5439469814300538,
+                        "z": 0.5209262371063232
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.28264427185058596,
+                        "y": 0.024892866611480714,
+                        "z": -0.3242495059967041
+                    },
+                    "max": {
+                        "x": 0.4473189115524292,
+                        "y": 1.5485804080963135,
+                        "z": 0.6468945741653442
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                }
+            ]
+        },
+        {
+            "name": "Generic_DirectOriginal",
+            "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/RootHeightAudit_1.fbx",
+            "animationType": "Generic",
+            "compression": "Off",
+            "method": "Original Generic AnimationClip.SampleAnimation: authored bone curves, no Mecanim root extraction",
+            "optimizeGameObjects": false,
+            "avatarValid": true,
+            "avatarHuman": false,
+            "shapes": 2,
+            "settings": [
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "lockRootHeightY": false,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                }
+            ],
+            "samples": [
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.47180700302124026,
+                        "y": 0.0012809336185455323,
+                        "z": -0.48927536606788638
+                    },
+                    "max": {
+                        "x": 0.4154503345489502,
+                        "y": 1.9093598127365113,
+                        "z": 0.6414371728897095
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.5205929279327393,
+                        "y": -0.004426360130310059,
+                        "z": -0.4617885649204254
+                    },
+                    "max": {
+                        "x": 0.5249567031860352,
+                        "y": 1.9018492698669434,
+                        "z": 0.6400932669639587
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.3491557836532593,
+                        "y": -0.0004961937665939331,
+                        "z": -0.4612984359264374
+                    },
+                    "max": {
+                        "x": 0.41781508922576907,
+                        "y": 1.899339199066162,
+                        "z": 0.6414989829063416
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.27018094062805178,
+                        "y": 0.0009224414825439453,
+                        "z": -0.5456923246383667
+                    },
+                    "max": {
+                        "x": 0.42128270864486697,
+                        "y": 1.9298433065414429,
+                        "z": 0.6576187014579773
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.42963504791259768,
+                        "y": -0.008083254098892212,
+                        "z": -0.16461563110351563
+                    },
+                    "max": {
+                        "x": 0.40193355083465578,
+                        "y": 1.7299696207046509,
+                        "z": 0.35581496357917788
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3304005265235901,
+                        "y": -0.011986032128334046,
+                        "z": -0.4761497378349304
+                    },
+                    "max": {
+                        "x": 0.4480380713939667,
+                        "y": 1.6724961996078492,
+                        "z": 0.6386139988899231
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.41801756620407107,
+                        "y": -0.006560981273651123,
+                        "z": -0.16533446311950684
+                    },
+                    "max": {
+                        "x": 0.3854175806045532,
+                        "y": 1.7124978303909302,
+                        "z": 0.4247233271598816
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.35151368379592898,
+                        "y": -0.008985906839370728,
+                        "z": -0.47677409648895266
+                    },
+                    "max": {
+                        "x": 0.3252684473991394,
+                        "y": 1.67775297164917,
+                        "z": 0.6275203824043274
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.39332079887390139,
+                        "y": -0.016833290457725526,
+                        "z": -0.4395948350429535
+                    },
+                    "max": {
+                        "x": 0.35167938470840456,
+                        "y": 1.649505853652954,
+                        "z": 0.5466360449790955
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3309222459793091,
+                        "y": 0.00988537073135376,
+                        "z": -0.6939535737037659
+                    },
+                    "max": {
+                        "x": 0.3620908260345459,
+                        "y": 1.6938291788101197,
+                        "z": 0.5550722479820252
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.3517758846282959,
+                        "y": -0.022005081176757814,
+                        "z": -0.539219856262207
+                    },
+                    "max": {
+                        "x": 0.39791107177734377,
+                        "y": 1.6349294185638428,
+                        "z": 0.6204043626785278
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3705523610115051,
+                        "y": 0.035999298095703128,
+                        "z": -0.7273285388946533
+                    },
+                    "max": {
+                        "x": 0.3647580146789551,
+                        "y": 1.7096621990203858,
+                        "z": 0.6361046433448792
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.0,
+                    "min": {
+                        "x": 0.07346603274345398,
+                        "y": 0.0022240281105041506,
+                        "z": -0.2293473184108734
+                    },
+                    "max": {
+                        "x": 0.7542214393615723,
+                        "y": 1.5454219579696656,
+                        "z": 0.9767876863479614
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.10856029391288758,
+                        "y": 0.0013759136199951172,
+                        "z": 0.9072064757347107
+                    },
+                    "max": {
+                        "x": 0.9325647950172424,
+                        "y": 1.6016796827316285,
+                        "z": 1.964032530784607
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.2844160795211792,
+                        "y": 0.010628581047058106,
+                        "z": 0.8209843039512634
+                    },
+                    "max": {
+                        "x": 1.07877516746521,
+                        "y": 1.614445686340332,
+                        "z": 1.9879802465438843
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.75,
+                    "min": {
+                        "x": 0.029046818614006044,
+                        "y": 0.04091930389404297,
+                        "z": 0.7026867866516113
+                    },
+                    "max": {
+                        "x": 0.8748266696929932,
+                        "y": 1.5645458698272706,
+                        "z": 1.5803887844085694
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                }
+            ]
+        },
+        {
+            "name": "Human_PreserveY",
+            "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/RootHeightAudit_2.fbx",
+            "animationType": "Human",
+            "compression": "Off",
+            "method": "Own Animator + imported Humanoid clip, applyRootMotion=false, 1x, CPU BakeMesh",
+            "optimizeGameObjects": false,
+            "avatarValid": true,
+            "avatarHuman": true,
+            "shapes": 2,
+            "settings": [
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                }
+            ],
+            "samples": [
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.48664116859436037,
+                        "y": 0.1607297956943512,
+                        "z": -0.4021040201187134
+                    },
+                    "max": {
+                        "x": 0.43209806084632876,
+                        "y": 1.7835228443145753,
+                        "z": 0.3999744951725006
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.439821720123291,
+                        "y": 0.15232141315937043,
+                        "z": -0.49198389053344729
+                    },
+                    "max": {
+                        "x": 0.3947073221206665,
+                        "y": 1.7746548652648926,
+                        "z": 0.45497265458106997
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.4798392057418823,
+                        "y": 0.15887561440467835,
+                        "z": -0.372455894947052
+                    },
+                    "max": {
+                        "x": 0.45220351219177248,
+                        "y": 1.774212121963501,
+                        "z": 0.3469298779964447
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.4967113137245178,
+                        "y": 0.16250331699848176,
+                        "z": -0.28235435485839846
+                    },
+                    "max": {
+                        "x": 0.4707977771759033,
+                        "y": 1.8025225400924683,
+                        "z": 0.26306435465812685
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.4080570936203003,
+                        "y": -0.007699690759181976,
+                        "z": -0.2543942332267761
+                    },
+                    "max": {
+                        "x": 0.41489458084106448,
+                        "y": 1.7299689054489136,
+                        "z": 0.2589563727378845
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3059539794921875,
+                        "y": -0.01207008957862854,
+                        "z": -0.5570796132087708
+                    },
+                    "max": {
+                        "x": 0.49913954734802248,
+                        "y": 1.672358512878418,
+                        "z": 0.5783583521842957
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.3757495880126953,
+                        "y": -0.006104044616222382,
+                        "z": -0.24011829495429994
+                    },
+                    "max": {
+                        "x": 0.4400789737701416,
+                        "y": 1.712851881980896,
+                        "z": 0.3362102806568146
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3591058850288391,
+                        "y": -0.00889858603477478,
+                        "z": -0.5836462378501892
+                    },
+                    "max": {
+                        "x": 0.3382173776626587,
+                        "y": 1.6774977445602418,
+                        "z": 0.5676507353782654
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.40526294708251955,
+                        "y": -0.016877174377441407,
+                        "z": -0.5184154510498047
+                    },
+                    "max": {
+                        "x": 0.37792396545410159,
+                        "y": 1.6495060920715333,
+                        "z": 0.4544137716293335
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3508446216583252,
+                        "y": 0.010484486818313599,
+                        "z": -0.7684024572372437
+                    },
+                    "max": {
+                        "x": 0.3672736883163452,
+                        "y": 1.6944146156311036,
+                        "z": 0.5166587829589844
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.35183990001678469,
+                        "y": -0.024082273244857789,
+                        "z": -0.6007585525512695
+                    },
+                    "max": {
+                        "x": 0.4326440095901489,
+                        "y": 1.6334177255630494,
+                        "z": 0.5495890974998474
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3541015386581421,
+                        "y": 0.034779906272888187,
+                        "z": -0.8023934364318848
+                    },
+                    "max": {
+                        "x": 0.3924170732498169,
+                        "y": 1.7109427452087403,
+                        "z": 0.5752288103103638
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.6908097267150879,
+                        "y": 0.0022553056478500368,
+                        "z": -0.291867196559906
+                    },
+                    "max": {
+                        "x": 0.5852947235107422,
+                        "y": 1.5454214811325074,
+                        "z": 0.32293447852134707
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.4589780867099762,
+                        "y": 0.004172727465629578,
+                        "z": -0.33235055208206179
+                    },
+                    "max": {
+                        "x": 0.7503800392150879,
+                        "y": 1.6018218994140626,
+                        "z": 0.48561298847198489
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.6652796864509583,
+                        "y": 0.010191142559051514,
+                        "z": -0.6197438836097717
+                    },
+                    "max": {
+                        "x": 0.7653713822364807,
+                        "y": 1.6145397424697877,
+                        "z": 0.5209262371063232
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.28264427185058596,
+                        "y": 0.04116934537887573,
+                        "z": -0.3242495059967041
+                    },
+                    "max": {
+                        "x": 0.4473189115524292,
+                        "y": 1.5648568868637086,
+                        "z": 0.6468945741653442
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0
+                }
+            ]
+        },
+        {
+            "name": "Human_PreserveY_Optimized",
+            "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/RootHeightAudit_3.fbx",
+            "animationType": "Human",
+            "compression": "Optimal",
+            "method": "Own Animator + imported Humanoid clip, applyRootMotion=false, 1x, CPU BakeMesh",
+            "optimizeGameObjects": true,
+            "avatarValid": true,
+            "avatarHuman": true,
+            "shapes": 2,
+            "settings": [
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "lockRootHeightY": true,
+                    "keepOriginalPositionY": true,
+                    "heightFromFeet": false,
+                    "lockRootRotation": false,
+                    "keepOriginalOrientation": false,
+                    "heightOffset": 0.0,
+                    "rotationOffset": 0.0
+                }
+            ],
+            "samples": [
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.48664185404777529,
+                        "y": 0.16072821617126466,
+                        "z": -0.40210407972335818
+                    },
+                    "max": {
+                        "x": 0.43209853768348696,
+                        "y": 1.7835235595703126,
+                        "z": 0.3999752700328827
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0000024275634586956586
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.4396349787712097,
+                        "y": 0.1519729495048523,
+                        "z": -0.4919946491718292
+                    },
+                    "max": {
+                        "x": 0.39314308762550356,
+                        "y": 1.7734706401824952,
+                        "z": 0.4547891616821289
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0031212845351547004
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.4803958833217621,
+                        "y": 0.15750247240066529,
+                        "z": -0.37304699420928957
+                    },
+                    "max": {
+                        "x": 0.45331770181655886,
+                        "y": 1.772733211517334,
+                        "z": 0.3475252389907837
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.002694199327379465
+                },
+                {
+                    "take": "Armature|LAB_B1_Idle",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.4967576265335083,
+                        "y": 0.16312521696090699,
+                        "z": -0.28239011764526369
+                    },
+                    "max": {
+                        "x": 0.4707878530025482,
+                        "y": 1.8027172088623047,
+                        "z": 0.2630760073661804
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0019498701440170408
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.4080578088760376,
+                        "y": -0.007701218128204346,
+                        "z": -0.254395067691803
+                    },
+                    "max": {
+                        "x": 0.414895236492157,
+                        "y": 1.72996985912323,
+                        "z": 0.2589568793773651
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0000023206764581118479
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.3062562048435211,
+                        "y": -0.013725340366363526,
+                        "z": -0.5565391778945923
+                    },
+                    "max": {
+                        "x": 0.4976484179496765,
+                        "y": 1.6712150573730469,
+                        "z": 0.5774252414703369
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.00545375794172287
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.37545108795166018,
+                        "y": -0.009144246578216553,
+                        "z": -0.24124357104301454
+                    },
+                    "max": {
+                        "x": 0.43986284732818606,
+                        "y": 1.7099616527557374,
+                        "z": 0.3348085880279541
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.004555071238428354
+                },
+                {
+                    "take": "Armature|LAB_B1_Walk",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3585800528526306,
+                        "y": -0.00854480266571045,
+                        "z": -0.5830466747283936
+                    },
+                    "max": {
+                        "x": 0.33913877606391909,
+                        "y": 1.6785931587219239,
+                        "z": 0.5684985518455505
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.00471528572961688
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.40526360273361208,
+                        "y": -0.016878783702850343,
+                        "z": -0.5184165239334106
+                    },
+                    "max": {
+                        "x": 0.377924382686615,
+                        "y": 1.6495070457458497,
+                        "z": 0.45441460609436037
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0000017091573454308673
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.35388919711112978,
+                        "y": 0.016135573387145997,
+                        "z": -0.766900897026062
+                    },
+                    "max": {
+                        "x": 0.36792510747909548,
+                        "y": 1.697664737701416,
+                        "z": 0.5038384795188904
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.016332637518644334
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.3524288535118103,
+                        "y": -0.02385801076889038,
+                        "z": -0.5982257127761841
+                    },
+                    "max": {
+                        "x": 0.432097852230072,
+                        "y": 1.6365180015563965,
+                        "z": 0.5460196137428284
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.006952816620469093
+                },
+                {
+                    "take": "Armature|LAB_B1_Run",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.3550886809825897,
+                        "y": 0.029201090335845948,
+                        "z": -0.801353394985199
+                    },
+                    "max": {
+                        "x": 0.39399483799934389,
+                        "y": 1.706310510635376,
+                        "z": 0.5632501840591431
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.01739448308944702
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.0,
+                    "min": {
+                        "x": -0.6908107399940491,
+                        "y": 0.002252817153930664,
+                        "z": -0.29186755418777468
+                    },
+                    "max": {
+                        "x": 0.585295557975769,
+                        "y": 1.5454224348068238,
+                        "z": 0.32293519377708437
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.0000029176230782468339
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.25,
+                    "min": {
+                        "x": -0.4584099054336548,
+                        "y": 0.0021134018898010256,
+                        "z": -0.3310774266719818
+                    },
+                    "max": {
+                        "x": 0.7486551403999329,
+                        "y": 1.6003050804138184,
+                        "z": 0.4900417625904083
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.012037084437906742
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.5,
+                    "min": {
+                        "x": -0.664278507232666,
+                        "y": 0.005654454231262207,
+                        "z": -0.6190383434295654
+                    },
+                    "max": {
+                        "x": 0.7653989195823669,
+                        "y": 1.6102238893508912,
+                        "z": 0.5212209224700928
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.005777040962129831
+                },
+                {
+                    "take": "Armature|LAB_B1_Attack",
+                    "time": 0.75,
+                    "min": {
+                        "x": -0.2836056649684906,
+                        "y": 0.03653043508529663,
+                        "z": -0.32548633217811587
+                    },
+                    "max": {
+                        "x": 0.45180776715278628,
+                        "y": 1.5632885694503785,
+                        "z": 0.6430160999298096
+                    },
+                    "root": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "vertices": 87788,
+                    "triangles": 52784,
+                    "finite": true,
+                    "maximumDeltaFromHumanPreserveY": 0.009648412466049195
+                }
+            ]
+        }
+    ],
+    "qualityBefore": "FourBones",
+    "qualityAfter": "FourBones"
+}

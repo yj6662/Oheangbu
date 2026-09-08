@@ -1,0 +1,87 @@
+{
+  "candidate": "C2",
+  "stage": "C",
+  "attempt": 2,
+  "method": "Two independent low-poly eyeball spheres with dark iris/pupil material regions and skinned gaze shape rotations; additive lids refitted to actual globe surface.",
+  "body_mesh_modified": false,
+  "body_vertex_changes": [],
+  "body_weights_modified": false,
+  "new_bones": 0,
+  "mesh_stats": [
+    {
+      "name": "C02_Mesh_0",
+      "vertices": 87148,
+      "triangles": 51760
+    },
+    {
+      "name": "FaceLid_Left",
+      "vertices": 297,
+      "triangles": 512
+    },
+    {
+      "name": "FaceLid_Right",
+      "vertices": 297,
+      "triangles": 512
+    },
+    {
+      "name": "FaceEye_Left",
+      "vertices": 418,
+      "triangles": 832
+    },
+    {
+      "name": "FaceEye_Right",
+      "vertices": 418,
+      "triangles": 832
+    }
+  ],
+  "added_triangles": 2688,
+  "total_triangles": 54448,
+  "channels": [
+    "BlinkLeft",
+    "BlinkRight",
+    "GazeLeft",
+    "GazeRight",
+    "GazeUp",
+    "GazeDown"
+  ],
+  "range_blender": [
+    0,
+    1
+  ],
+  "range_unity": [
+    0,
+    100
+  ],
+  "face_blink": {
+    "status": "FAIL",
+    "reason": "Separate eyeball remains exposed below closed lid"
+  },
+  "face_gaze": {
+    "status": "FAIL",
+    "reason": "Geometric gaze works but spherical whites are overexposed and materially change original neutral expression"
+  },
+  "face_jaw": {
+    "status": "NOT_ATTEMPTED",
+    "reason": "Source mouth remains a closed fused shell; opening requires local topology experiment"
+  },
+  "limitations": [
+    "Original static painted eye surface remains behind the inserted eyeballs; surrounding eye aperture has not been cut.",
+    "Gaze shape interpolation is a geometric approximation to rotation, at most 12 degrees.",
+    "Not an art acceptance."
+  ],
+  "centers_world_m": {
+    "Left": [
+      0.026640625670552254,
+      -0.10506018996238708,
+      1.5971484184265137
+    ],
+    "Right": [
+      -0.027499999850988388,
+      -0.106011301279068,
+      1.5971484184265137
+    ]
+  },
+  "radius_m": 0.0112,
+  "paid_requests": 0,
+  "adopted": false
+}

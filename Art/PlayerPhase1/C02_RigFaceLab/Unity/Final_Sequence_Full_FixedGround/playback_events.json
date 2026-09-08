@@ -1,0 +1,72 @@
+{
+    "status": "COMPLETE",
+    "scope": "Unity experiment Animator playback, in-place, root motion OFF; visual quality UNVERIFIED",
+    "playbackSpeed": 1.0,
+    "sampledFrames": 444,
+    "events": [
+        {
+            "name": "sequence_start",
+            "frame": 0,
+            "time": 0.0,
+            "state": "Idle",
+            "cycles": 1,
+            "duration": 4.0
+        },
+        {
+            "name": "step_end",
+            "frame": 120,
+            "time": 3.999997615814209,
+            "state": "Idle",
+            "cycles": 1,
+            "duration": 4.0
+        },
+        {
+            "name": "transition_start",
+            "frame": 120,
+            "time": 3.999997615814209,
+            "state": "Run",
+            "cycles": 6,
+            "duration": 3.8000001907348635
+        },
+        {
+            "name": "step_end",
+            "frame": 234,
+            "time": 7.799993991851807,
+            "state": "Run",
+            "cycles": 6,
+            "duration": 3.8000001907348635
+        },
+        {
+            "name": "transition_start",
+            "frame": 234,
+            "time": 7.799993991851807,
+            "state": "Idle",
+            "cycles": 1,
+            "duration": 4.0
+        },
+        {
+            "name": "step_end",
+            "frame": 354,
+            "time": 11.800044059753418,
+            "state": "Idle",
+            "cycles": 1,
+            "duration": 4.0
+        },
+        {
+            "name": "transition_start",
+            "frame": 354,
+            "time": 11.800044059753418,
+            "state": "Attack",
+            "cycles": 1,
+            "duration": 3.000000238418579
+        },
+        {
+            "name": "step_end",
+            "frame": 444,
+            "time": 14.800084114074707,
+            "state": "Attack",
+            "cycles": 1,
+            "duration": 3.000000238418579
+        }
+    ]
+}

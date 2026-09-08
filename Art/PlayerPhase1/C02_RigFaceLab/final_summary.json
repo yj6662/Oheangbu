@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "experiment": "C02_RigFaceLab",
+  "status": "PARTIAL_UNVERIFIED",
+  "execution_status": "COMPLETED_WITH_RECORDED_LIMITATIONS",
+  "completed_utc": "2026-09-08T22:11:26.732003+00:00",
+  "canonical_player_replaced": false,
+  "integrated_character_quality": "UNVERIFIED",
+  "attempts_used": {
+    "A": 2,
+    "B": 2,
+    "C": 3,
+    "D": 1
+  },
+  "attempt_limits": {
+    "A": 4,
+    "B": 3,
+    "C": 3,
+    "D": 3
+  },
+  "best_files": {
+    "A": "Body/A2.blend",
+    "B": "Motion/B2/Motion_B2.blend",
+    "C": "Face/C3/Face_C3.blend",
+    "D": "Face/D1/Face_D1.blend"
+  },
+  "best_integrated_file": "Final/Integrated_B2_C3.blend",
+  "verdicts": {
+    "body_clothing_deformation": {
+      "status": "UNVERIFIED",
+      "scope": "A2 left lower axilla improvement on unchanged clips; full integrated garment penetration and naturalness not passed."
+    },
+    "animation_naturalness": {
+      "status": "UNVERIFIED",
+      "reason": "Final Unity Play Mode sequence and blink captures completed with full decode verification and overwrite0. Whole-character naturalness, original Run/Attack limits and full contact quality remain unverified."
+    },
+    "secondary_motion": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "A2 has residual integrated-cloth uncertainty; no separate stable cloth region has been validated"
+    },
+    "face_blink": {
+      "status": "UNVERIFIED",
+      "scope": "Added bilateral eyelid coverage, neutral return and channel/binding verified. Residual intermediate contact and coarse appearance prevent full quality acceptance."
+    },
+    "face_gaze": {
+      "status": "FAIL",
+      "scope": "C2 local eyeballs were overexposed and failed closure. Retained C3 uses original fixed painted eyes."
+    },
+    "face_jaw": {
+      "status": "NOT_ATTEMPTED",
+      "scope": "Closed fused lip surface/no established oral cavity; three basic face candidates spent on blink and gaze. No claim that repair is impossible."
+    },
+    "face_expressions": {
+      "status": "PASS",
+      "scope": "Three presets drive existing bilateral eyelid-coverage channels only; facial emotion/art quality is not passed."
+    },
+    "fbx_roundtrip": {
+      "status": "PASS",
+      "scope": "B2 final FBX empty-scene reimport, 31 pose/blink cases and 93 mesh comparisons; nearest world error 1.40545683e-06m, same triangles/bones/keys/five-weight counts. Not art/contact acceptance."
+    },
+    "unity_integration": {
+      "status": "PASS",
+      "scope": "Isolated B2 Humanoid plus C3 lids imported with own Avatar; 444-frame sequence and 180-frame face sweep at 30fps in actual Play Mode, no channel overwrite. Idle Play first two frames minY4.074/4.094mm at fixed root and floor. Data integration only: source tiny-weight loss, full cloth/foot/art/gameplay/physics/performance and shadow appearance remain unresolved."
+    },
+    "art_review": {
+      "status": "UNVERIFIED",
+      "scope": "Comparison media provided for user judgement; no automated design approval."
+    }
+  },
+  "artifacts": {
+    "integrated_blend": {
+      "path": "Final/Integrated_B2_C3.blend",
+      "bytes": 22585611,
+      "sha256": "d3dd7dcb3fe1776025146e76f0391dacf8bd2e55252c80ecad93c1c8c87572ac"
+    },
+    "integrated_fbx": {
+      "path": "Final/Integrated_B2_C3.fbx",
+      "bytes": 14773948,
+      "sha256": "bd68dc1305eb1404050a95b60ee5c382cd9ba4baf168e59fc15d8f106c485616"
+    },
+    "original_texture": {
+      "path": "Final/Textures/C02_original_texture.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    "roundtrip": {
+      "path": "Final/fbx_roundtrip_B2_C3.json",
+      "bytes": 34053,
+      "sha256": "dbb628deb1562a9877fdaa14619d9874429f0bbe797de0262658c0158a26530a"
+    },
+    "body_comparison_before": {
+      "path": "Body/Video_Baseline/Run_Axilla_back.mp4",
+      "bytes": 1129874,
+      "sha256": "bbfe5f83cd621b37b07884d3af9a779b94fa9a09d0473cf68e24cf870c8ceb71"
+    },
+    "body_comparison_after": {
+      "path": "Body/Video_A2/Run_Axilla_back.mp4",
+      "bytes": 1132884,
+      "sha256": "a85cf71ee57bfc691eddf76131ec6b0030ac52a4e3af28045b3f18b20884b1fb"
+    },
+    "previous_b1_motion_comparison": {
+      "path": "Motion/B1/B1_Original_vs_Edited_Sequence.mp4",
+      "bytes": 3211930,
+      "sha256": "1196c1a14d25731f991e7789caf77acdb7ece36372998efa82c372345b96267e"
+    },
+    "face_video": {
+      "path": "Face/D1/Face_D1_Idle_Run_Attack_30fps.mp4",
+      "bytes": 5943677,
+      "sha256": "de7f831d887f965055021ac130317786b080cb4acffcd7c5ad587c6dd90a0d1a"
+    },
+    "unity_body_video": {
+      "path": "Unity/B2_Final_Sequence_Full/B2_Final_Sequence_Full.mp4",
+      "bytes": 5416655,
+      "sha256": "faade2f057ab8ff39e4313a25b750bf93db25be53de96be391b23107a65cd153"
+    },
+    "unity_face_video": {
+      "path": "Unity/B2_Final_Blink_Close/B2_Final_Blink_Close.mp4",
+      "bytes": 3247523,
+      "sha256": "5c177665f9543aba5ae1895f7181ced2d78f57406095f72c6fbd8ec7774b617a"
+    },
+    "unity_report": {
+      "path": "Unity/UNITY_REPORT.md",
+      "bytes": 7308,
+      "sha256": "a08268ac1ac1a6ef0cf3e62a38fff95895ecdbb011bdb86f49028f35c83e01a6"
+    }
+  },
+  "actual_triangles": 52784,
+  "triangle_limit": 60000,
+  "deform_bones": 24,
+  "new_clothing_bones": 0,
+  "blendshape_count": 2,
+  "renderer_count": 3,
+  "material_count": 2,
+  "additional_paid_requests": 0,
+  "additional_paid_credits": 0,
+  "historical_autoplayer_v1_credits": 123,
+  "historical_credits_are_new_spend": false,
+  "source_preservation": "review_source_verification.json",
+  "known_limits": [
+    "Integrated garment/body lacks reliable full penetration target.",
+    "B1 Run whole-mesh min -24.32mm and Attack support-window horizontal extent 147.56mm remain.",
+    "B2 corrects inherited Idle Hips scale 1.1764704 to 1 and re-solves pelvis/feet with fixed root and floor. Legacy B1 clips remain comparison checkpoints.",
+    "No new clothing secondary motion, finger articulation or brush-contact test.",
+    "C3 intermediate right lid local depth up to -0.287mm; no successful gaze or jaw motion.",
+    "Unity minimum imported influence clamps to .001; fifth-weight vertices 722 ->297 exactly match the original threshold distribution."
+  ]
+}
