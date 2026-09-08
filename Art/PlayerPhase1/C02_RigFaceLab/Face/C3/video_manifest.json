@@ -1,0 +1,318 @@
+{
+  "status": "ENCODED",
+  "error": "",
+  "frames": 60,
+  "fps": 30,
+  "duration_seconds": 2,
+  "video": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Face\\C3\\C3_Blink_30fps.mp4",
+  "timeline": [
+    {
+      "frame": 1,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 2,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 3,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 4,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 5,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 6,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 7,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 8,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 9,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 10,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 11,
+      "left": 0.125,
+      "right": 0.125
+    },
+    {
+      "frame": 12,
+      "left": 0.25,
+      "right": 0.25
+    },
+    {
+      "frame": 13,
+      "left": 0.375,
+      "right": 0.375
+    },
+    {
+      "frame": 14,
+      "left": 0.5,
+      "right": 0.5
+    },
+    {
+      "frame": 15,
+      "left": 0.625,
+      "right": 0.625
+    },
+    {
+      "frame": 16,
+      "left": 0.75,
+      "right": 0.75
+    },
+    {
+      "frame": 17,
+      "left": 0.875,
+      "right": 0.875
+    },
+    {
+      "frame": 18,
+      "left": 1.0,
+      "right": 1.0
+    },
+    {
+      "frame": 19,
+      "left": 1,
+      "right": 1
+    },
+    {
+      "frame": 20,
+      "left": 1,
+      "right": 1
+    },
+    {
+      "frame": 21,
+      "left": 1,
+      "right": 1
+    },
+    {
+      "frame": 22,
+      "left": 1,
+      "right": 1
+    },
+    {
+      "frame": 23,
+      "left": 1,
+      "right": 1
+    },
+    {
+      "frame": 24,
+      "left": 0.9,
+      "right": 0.9
+    },
+    {
+      "frame": 25,
+      "left": 0.8,
+      "right": 0.8
+    },
+    {
+      "frame": 26,
+      "left": 0.7,
+      "right": 0.7
+    },
+    {
+      "frame": 27,
+      "left": 0.6,
+      "right": 0.6
+    },
+    {
+      "frame": 28,
+      "left": 0.5,
+      "right": 0.5
+    },
+    {
+      "frame": 29,
+      "left": 0.4,
+      "right": 0.4
+    },
+    {
+      "frame": 30,
+      "left": 0.30000000000000004,
+      "right": 0.30000000000000004
+    },
+    {
+      "frame": 31,
+      "left": 0.19999999999999996,
+      "right": 0.19999999999999996
+    },
+    {
+      "frame": 32,
+      "left": 0.09999999999999998,
+      "right": 0.09999999999999998
+    },
+    {
+      "frame": 33,
+      "left": 0.0,
+      "right": 0.0
+    },
+    {
+      "frame": 34,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 35,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 36,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 37,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 38,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 39,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 40,
+      "left": 0.14285714285714285,
+      "right": 0
+    },
+    {
+      "frame": 41,
+      "left": 0.2857142857142857,
+      "right": 0
+    },
+    {
+      "frame": 42,
+      "left": 0.42857142857142855,
+      "right": 0
+    },
+    {
+      "frame": 43,
+      "left": 0.5714285714285714,
+      "right": 0
+    },
+    {
+      "frame": 44,
+      "left": 0.7142857142857143,
+      "right": 0
+    },
+    {
+      "frame": 45,
+      "left": 0.8571428571428571,
+      "right": 0
+    },
+    {
+      "frame": 46,
+      "left": 1.0,
+      "right": 0
+    },
+    {
+      "frame": 47,
+      "left": 1,
+      "right": 0
+    },
+    {
+      "frame": 48,
+      "left": 1,
+      "right": 0
+    },
+    {
+      "frame": 49,
+      "left": 1,
+      "right": 0
+    },
+    {
+      "frame": 50,
+      "left": 0.9,
+      "right": 0
+    },
+    {
+      "frame": 51,
+      "left": 0.8,
+      "right": 0
+    },
+    {
+      "frame": 52,
+      "left": 0.7,
+      "right": 0
+    },
+    {
+      "frame": 53,
+      "left": 0.6,
+      "right": 0
+    },
+    {
+      "frame": 54,
+      "left": 0.5,
+      "right": 0
+    },
+    {
+      "frame": 55,
+      "left": 0.4,
+      "right": 0
+    },
+    {
+      "frame": 56,
+      "left": 0.30000000000000004,
+      "right": 0
+    },
+    {
+      "frame": 57,
+      "left": 0.19999999999999996,
+      "right": 0
+    },
+    {
+      "frame": 58,
+      "left": 0.09999999999999998,
+      "right": 0
+    },
+    {
+      "frame": 59,
+      "left": 0,
+      "right": 0
+    },
+    {
+      "frame": 60,
+      "left": 0,
+      "right": 0
+    }
+  ],
+  "engine": "BLENDER_EEVEE",
+  "resolution": [
+    1280,
+    720
+  ],
+  "full_decode_returncode": 0,
+  "encoding_validation": "PASS_FULL_DECODE",
+  "visual_review_scope": "Agent viewed separate frame samples 12/16/20/28 and static 0/.25/.5/.75/1, front/threequarter/left. This is not a claim of watching every MP4 frame."
+}

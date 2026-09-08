@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "modelTextureScenePrefab": [
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Models\\Integrated_B2_C3.fbx",
+      "sha256": "bd68dc1305eb1404050a95b60ee5c382cd9ba4baf168e59fc15d8f106c485616",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Textures\\Integrated_B2_C3_M0_BaseColor.png",
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Textures\\Integrated_B2_C3_M1_BaseColor.png",
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Scenes\\Integrated_B2_C3_Review.unity",
+      "sha256": "6bc5baebd2b1a4eb8ae390d058c79a1e8ba2e03c668eac3de92250f7614c79c4",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Prefabs\\Integrated_B2_C3_LabRig.prefab",
+      "sha256": "9c203256ba2eb6e4d4c7816574ab2f77a412bac3868e4fd61454a4ad5ebe3d2e",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Controllers\\Integrated_B2_C3.controller",
+      "sha256": "eb75792c69ecfeef2b7670d5d75c995619d829e82434efff453bbd53fde6d8b3",
+      "exists": true
+    },
+    {
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\C02_RigFaceLab\\Profiles\\Integrated_B2_C3.asset",
+      "sha256": "a52a673aa825bbe31f69a74f8e1ef870c1bb6003c667f39944dc63ee6e885518",
+      "exists": true
+    }
+  ],
+  "prefabCameraReferences": "three nonzero internal fileIDs",
+  "qualitySettings": {
+    "before": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+    "after": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+    "status": "PASS",
+    "note": "Audit import briefly serialized temporary PC skinWeights255. Exact baseline bytes verified by SHA after isolated255->4 correction; helper now scopes Unlimited only around CPU sampling, outside imports/controller serialization."
+  },
+  "canonicalChanges": "None performed by Unity subtask; global protectedfile comparison owned by root"
+}

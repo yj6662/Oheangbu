@@ -1,0 +1,277 @@
+{
+  "source_blend": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Motion\\B1\\Motion_B1.blend",
+  "source_sha256": "f1dd92cbfb365d38e6ff6ebbd98961a757202390dfe98802e3550fca30ac2e66",
+  "kind": "frozen_B1_motion_numeric_comparison",
+  "frame_rate": 30,
+  "game_config_changed": false,
+  "probe_limit": "Rest lowest 15% of matching Foot-weight >=.7 vertices; these shoe probes do not establish all cloth/body contact or clinical foot contact. Support windows fixed from original height/vertical speed heuristic.",
+  "clips": [
+    {
+      "original": "C02_Idle",
+      "edited": "LAB_B1_Idle",
+      "duration_seconds": 4.0,
+      "native_translation_speed_mps": 0.0,
+      "support_probe_results": {
+        "Left": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.008845346847307565,
+            "support_window_extents_m": [
+              0.008845346847307565
+            ],
+            "minimum_sole_z_m": 0.004916723260654732,
+            "maximum_support_sole_z_m": 0.022174853782917836,
+            "loop_endpoint_foot_delta_m": 3.9842192752885e-06
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.0005441590492617045,
+            "support_window_extents_m": [
+              0.0005441590492617045
+            ],
+            "minimum_sole_z_m": 0.004996120221999578,
+            "maximum_support_sole_z_m": 0.005025132782195518,
+            "loop_endpoint_foot_delta_m": 0.0
+          }
+        },
+        "Right": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.043513670793207594,
+            "support_window_extents_m": [
+              0.043513670793207594
+            ],
+            "minimum_sole_z_m": 0.03289575503254483,
+            "maximum_support_sole_z_m": 0.04664736643476708,
+            "loop_endpoint_foot_delta_m": 5.2377528437984965e-06
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.002712862233242848,
+            "support_window_extents_m": [
+              0.002712862233242848
+            ],
+            "minimum_sole_z_m": 0.004435961147339018,
+            "maximum_support_sole_z_m": 0.005000259168440269,
+            "loop_endpoint_foot_delta_m": 0.0
+          }
+        }
+      },
+      "original_hips_net_m": [
+        2.391636371612549e-06,
+        4.0605664253234863e-07,
+        7.987022399902344e-06
+      ],
+      "edited_hips_net_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "original_mesh_min_z_m": 0.002408732718034101,
+      "edited_mesh_min_z_m": -0.009864247816855132
+    },
+    {
+      "original": "C02_Walk",
+      "edited": "LAB_B1_Walk",
+      "duration_seconds": 1.0333333333333334,
+      "native_translation_speed_mps": 1.5537527974691157,
+      "support_probe_results": {
+        "Left": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.008266556081711935,
+            "support_window_extents_m": [
+              0.008266556081711935
+            ],
+            "minimum_sole_z_m": -0.012998875089014872,
+            "maximum_support_sole_z_m": 0.00916223386312498,
+            "loop_endpoint_foot_delta_m": 2.777218592186302e-07
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.0034794151136805004,
+            "support_window_extents_m": [
+              0.0034794151136805004
+            ],
+            "minimum_sole_z_m": 0.0037078290348985243,
+            "maximum_support_sole_z_m": 0.007418851090546297,
+            "loop_endpoint_foot_delta_m": 0.0
+          }
+        },
+        "Right": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.017586879740931365,
+            "support_window_extents_m": [
+              0.016057474972026146,
+              0.017586879740931365
+            ],
+            "minimum_sole_z_m": 0.0015000982247271033,
+            "maximum_support_sole_z_m": 0.024539977955669645,
+            "loop_endpoint_foot_delta_m": 2.5955250101215067e-07
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.008815815353447647,
+            "support_window_extents_m": [
+              0.005147949972321263,
+              0.008815815353447647
+            ],
+            "minimum_sole_z_m": 0.004756474984665027,
+            "maximum_support_sole_z_m": 0.01698029480173524,
+            "loop_endpoint_foot_delta_m": 0.0
+          }
+        }
+      },
+      "original_hips_net_m": [
+        -2.4319160729646683e-07,
+        -3.1478703022003174e-06,
+        -2.384185791015625e-07
+      ],
+      "edited_hips_net_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "original_mesh_min_z_m": -0.020462996502302655,
+      "edited_mesh_min_z_m": -0.013621151142839683
+    },
+    {
+      "original": "C02_Run",
+      "edited": "LAB_B1_Run",
+      "duration_seconds": 0.6333333333333333,
+      "native_translation_speed_mps": 5.362285039688777,
+      "support_probe_results": {
+        "Left": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.007411542835322682,
+            "support_window_extents_m": [
+              0.007411542835322682
+            ],
+            "minimum_sole_z_m": 0.007595099040975439,
+            "maximum_support_sole_z_m": 0.013411538301150383,
+            "loop_endpoint_foot_delta_m": 4.254052392793637e-07
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.00019442114877155336,
+            "support_window_extents_m": [
+              0.00019442114877155336
+            ],
+            "minimum_sole_z_m": 0.005002069361461636,
+            "maximum_support_sole_z_m": 0.0054839657511420725,
+            "loop_endpoint_foot_delta_m": 0.0
+          }
+        },
+        "Right": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.006805899254251449,
+            "support_window_extents_m": [
+              0.006805899254251449
+            ],
+            "minimum_sole_z_m": -0.007795545880596055,
+            "maximum_support_sole_z_m": 0.00948605277792991,
+            "loop_endpoint_foot_delta_m": 3.556712341506112e-07
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.0019252579749646512,
+            "support_window_extents_m": [
+              0.0019252579749646512
+            ],
+            "minimum_sole_z_m": 0.004755018247179277,
+            "maximum_support_sole_z_m": 0.006788480130095476,
+            "loop_endpoint_foot_delta_m": 0.0
+          }
+        }
+      },
+      "original_hips_net_m": [
+        -4.76837158203125e-07,
+        1.519918441772461e-06,
+        1.7881393432617188e-06
+      ],
+      "edited_hips_net_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "original_mesh_min_z_m": -0.021959750161474556,
+      "edited_mesh_min_z_m": -0.02431896870615402
+    },
+    {
+      "original": "C02_Attack",
+      "edited": "LAB_B1_Attack",
+      "duration_seconds": 3.0,
+      "native_translation_speed_mps": 0.0,
+      "support_probe_results": {
+        "Left": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.032232070872919565,
+            "support_window_extents_m": [
+              0.032232070872919565,
+              0.0074260529312689845,
+              0.011053984549749842
+            ],
+            "minimum_sole_z_m": 0.007357126905982336,
+            "maximum_support_sole_z_m": 0.031977936506764504,
+            "loop_endpoint_foot_delta_m": 0.35674865557102076
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.014989928764108401,
+            "support_window_extents_m": [
+              0.014989928764108401,
+              0.0013434918825510243,
+              0.00898742199893385
+            ],
+            "minimum_sole_z_m": 0.005001180060181465,
+            "maximum_support_sole_z_m": 0.02307703443444442,
+            "loop_endpoint_foot_delta_m": 0.002600707108169917
+          }
+        },
+        "Right": {
+          "original": {
+            "maximum_support_window_horizontal_extent_m": 0.1986137553809492,
+            "support_window_extents_m": [
+              0.004383843862346786,
+              0.1986137553809492,
+              0.026209633341367965
+            ],
+            "minimum_sole_z_m": 0.018472034518300706,
+            "maximum_support_sole_z_m": 0.04269899749683592,
+            "loop_endpoint_foot_delta_m": 0.3673004379936501
+          },
+          "edited": {
+            "maximum_support_window_horizontal_extent_m": 0.14755955569210008,
+            "support_window_extents_m": [
+              0.0002836154103048842,
+              0.14755955569210008,
+              0.006494002411375466
+            ],
+            "minimum_sole_z_m": 0.004375827810708555,
+            "maximum_support_sole_z_m": 0.02973585777575094,
+            "loop_endpoint_foot_delta_m": 0.006098106905238381
+          }
+        }
+      },
+      "original_hips_net_m": [
+        0.28930091857910156,
+        0.23868955671787262,
+        0.0004955530166625977
+      ],
+      "edited_hips_net_m": [
+        5.960464477539063e-08,
+        2.9802322387695312e-08,
+        0.000495612621307373
+      ],
+      "original_mesh_min_z_m": 0.004508105415669705,
+      "edited_mesh_min_z_m": 0.0008737339629143331
+    }
+  ],
+  "original_bone_heads_max_difference_from_baseline_m": 0,
+  "scale_max_difference_from_original": 4.76837158203125e-07,
+  "animation_naturalness": {
+    "status": "UNVERIFIED",
+    "reason": "Numerical changes measured; final continuous visual/Unity behavior judgment separate"
+  },
+  "secondary_motion": {
+    "status": "NOT_ATTEMPTED",
+    "reason": "No validated stable integrated-cloth region selected"
+  },
+  "paid_requests": 0,
+  "original_motion_preservation": "PASS",
+  "scale_preservation": "PASS",
+  "no_finger_bones": true,
+  "actual_triangles": 51760,
+  "actual_bones": 24,
+  "maximum_vertex_influences": 5
+}

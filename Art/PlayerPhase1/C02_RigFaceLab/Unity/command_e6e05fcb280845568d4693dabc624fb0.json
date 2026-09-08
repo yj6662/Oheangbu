@@ -1,0 +1,1 @@
+{"id": "e6e05fcb280845568d4693dabc624fb0", "method": "StartCapture", "request": "{\"folder\":\"Final_Sequence_GameReference\",\"mode\":\"sequence_face\",\"frames\":600,\"camera\":2,\"holdFrames\":15,\"stopPlayWhenComplete\":true}"}

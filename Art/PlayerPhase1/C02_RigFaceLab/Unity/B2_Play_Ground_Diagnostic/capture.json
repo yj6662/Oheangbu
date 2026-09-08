@@ -1,0 +1,63 @@
+{
+    "status": "COMPLETE",
+    "mode": "sequence_face",
+    "frameCount": 2,
+    "fps": 30,
+    "width": 1280,
+    "height": 720,
+    "duration": 0.06666667014360428,
+    "camera": "Full body review",
+    "cameraPosition": {
+        "x": -0.027245640754699708,
+        "y": 0.8154916167259216,
+        "z": 3.406618595123291
+    },
+    "cameraEuler": {
+        "x": 0.0,
+        "y": 180.0,
+        "z": 0.0
+    },
+    "cameraFov": 38.0,
+    "scope": "Actual Unity Play Mode frames, fixed game timestep and 1x animation speed. Synchronous offscreen URP capture; capture throughput is not gameplay performance.",
+    "visualQuality": "UNVERIFIED",
+    "skinWeights": "Unlimited",
+    "frames": [
+        {
+            "index": 0,
+            "time": 0.0,
+            "realtime": 48.44724655151367,
+            "state": "Idle",
+            "normalizedState": 0.0,
+            "channel": "",
+            "faceValue": 0.0,
+            "cpuRenderMilliseconds": 131.5543975830078,
+            "overwriteCount": 0,
+            "worldBoundsMeasured": true,
+            "worldMinY": 0.004074126482009888,
+            "worldMaxY": 1.6269091367721558,
+            "groundY": 0.0,
+            "rootY": 0.0,
+            "lightShadowBias": 0.05000000074505806,
+            "lightShadowNormalBias": 0.4000000059604645
+        },
+        {
+            "index": 1,
+            "time": 0.03333333507180214,
+            "realtime": 49.001766204833987,
+            "state": "Idle",
+            "normalizedState": 0.008333333767950535,
+            "channel": "",
+            "faceValue": 0.0,
+            "cpuRenderMilliseconds": 74.76329803466797,
+            "overwriteCount": 0,
+            "worldBoundsMeasured": true,
+            "worldMinY": 0.004094451665878296,
+            "worldMaxY": 1.6268601417541505,
+            "groundY": 0.0,
+            "rootY": 0.0,
+            "lightShadowBias": 0.05000000074505806,
+            "lightShadowNormalBias": 0.4000000059604645
+        }
+    ],
+    "error": ""
+}

@@ -1,0 +1,257 @@
+{
+    "asset": "Assets/_Project/Art/C02_RigFaceLab/Models/B2_BodyProbe.fbx",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Motion\\B2\\C02_B2_Body_Motions.fbx",
+    "sha256": "33caeae68f50c7c740016189e2121b33b069e42d05c9b84306a53d6080583e7a",
+    "unityVersion": "6000.3.9f1",
+    "scope": "Import and numeric technical checks only; artistic deformation and runtime remain UNVERIFIED until separately measured",
+    "animationType": "Human",
+    "avatarValid": true,
+    "avatarHuman": true,
+    "importBlendShapes": true,
+    "optimizeGameObjects": false,
+    "animationCompression": "Off",
+    "meshCompression": "Off",
+    "globalScale": 1.0,
+    "skinWeightsMode": "Custom",
+    "maximumImportedInfluences": 5,
+    "projectSkinWeights": "FourBones",
+    "minimumImportedWeight": 0.0010000000474974514,
+    "weldVertices": true,
+    "optimizeMeshVertices": true,
+    "renderedTriangles": 51760,
+    "vertices": 87101,
+    "rendererCount": 1,
+    "materialSlots": 1,
+    "uniqueDeformBones": 24,
+    "blendShapeCount": 0,
+    "bones": [
+        "Armature/Hips",
+        "Armature/Hips/LeftUpLeg",
+        "Armature/Hips/LeftUpLeg/LeftLeg",
+        "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+        "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+        "Armature/Hips/RightUpLeg",
+        "Armature/Hips/RightUpLeg/RightLeg",
+        "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+        "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+        "Armature/Hips/Spine02",
+        "Armature/Hips/Spine02/Spine01",
+        "Armature/Hips/Spine02/Spine01/Spine",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+        "Armature/Hips/Spine02/Spine01/Spine/neck",
+        "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+        "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+        "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand"
+    ],
+    "transforms": [
+        "",
+        "Armature",
+        "Armature/Hips",
+        "Armature/Hips/LeftUpLeg",
+        "Armature/Hips/LeftUpLeg/LeftLeg",
+        "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+        "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+        "Armature/Hips/RightUpLeg",
+        "Armature/Hips/RightUpLeg/RightLeg",
+        "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+        "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+        "Armature/Hips/Spine02",
+        "Armature/Hips/Spine02/Spine01",
+        "Armature/Hips/Spine02/Spine01/Spine",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+        "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+        "Armature/Hips/Spine02/Spine01/Spine/neck",
+        "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+        "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+        "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+        "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+        "C02_Mesh_0"
+    ],
+    "renderers": [
+        {
+            "path": "C02_Mesh_0",
+            "mesh": "C02_Mesh_0",
+            "vertices": 87101,
+            "triangles": 51760,
+            "submeshes": 1,
+            "bones": [
+                "Armature/Hips",
+                "Armature/Hips/LeftUpLeg",
+                "Armature/Hips/LeftUpLeg/LeftLeg",
+                "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+                "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+                "Armature/Hips/RightUpLeg",
+                "Armature/Hips/RightUpLeg/RightLeg",
+                "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+                "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+                "Armature/Hips/Spine02",
+                "Armature/Hips/Spine02/Spine01",
+                "Armature/Hips/Spine02/Spine01/Spine",
+                "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+                "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+                "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+                "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+                "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+                "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+                "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+                "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+                "Armature/Hips/Spine02/Spine01/Spine/neck",
+                "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+                "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+                "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront"
+            ],
+            "shapes": [],
+            "boundsCenter": {
+                "x": 0.0,
+                "y": -2.2351741790771486e-8,
+                "z": 0.8709676861763
+            },
+            "boundsSize": {
+                "x": 1.7500007152557374,
+                "y": 0.4967719316482544,
+                "z": 1.7419356107711793
+            },
+            "unweightedVertices": 0,
+            "nonfiniteWeights": 0,
+            "maxWeightSumError": 1.1920928955078126e-7,
+            "maxInfluences": 5,
+            "verticesAboveFourWeights": 297,
+            "materials": [
+                "B2_BodyProbe_M0:Universal Render Pipeline/Lit"
+            ]
+        }
+    ],
+    "clips": [
+        {
+            "name": "Armature|C02_Attack",
+            "length": 3.000000238418579,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|C02_Idle",
+            "length": 4.0,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|C02_Run",
+            "length": 0.6333333849906921,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|C02_Walk",
+            "length": 1.033333420753479,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|DIAG_ArmsDown",
+            "length": 1.9666668176651,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|DIAG_DeepElbow",
+            "length": 1.9666668176651,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|DIAG_Overhead",
+            "length": 1.9666668176651,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|DIAG_Squat",
+            "length": 1.9666668176651,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B1_Attack",
+            "length": 3.000000238418579,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B1_Idle",
+            "length": 4.0,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B1_Run",
+            "length": 0.6333333849906921,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B1_Sequence",
+            "length": 11.000000953674317,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B1_Walk",
+            "length": 1.033333420753479,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B2_Idle",
+            "length": 4.0,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_B2_Sequence",
+            "length": 11.000000953674317,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_DIAG_TorsoTwist",
+            "length": 2.433333396911621,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        },
+        {
+            "name": "Armature|LAB_Original_Sequence",
+            "length": 11.000000953674317,
+            "frameRate": 30.0,
+            "humanMotion": true,
+            "blendShapeCurves": []
+        }
+    ]
+}

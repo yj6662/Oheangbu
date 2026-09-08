@@ -1,0 +1,17 @@
+{
+    "scene": "Assets/_Project/Art/C02_RigFaceLab/Scenes/B2_BodyProbe_Review.unity",
+    "prefab": "Assets/_Project/Art/C02_RigFaceLab/Prefabs/B2_BodyProbe_LabRig.prefab",
+    "controller": "Assets/_Project/Art/C02_RigFaceLab/Controllers/B2_BodyProbe.controller",
+    "profile": "Assets/_Project/Art/C02_RigFaceLab/Profiles/B2_BodyProbe.asset",
+    "states": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack"
+    ],
+    "missingRequestedClips": [],
+    "removedFacialCurvesFromExperimentCopies": [],
+    "canonicalModified": false,
+    "runtimeStatus": "UNVERIFIED",
+    "cameraReference": "PlayerRig.prefab CameraPivot.y=0.7, CombatConfig_Default shoulder=(0,0.55,-2.8), camera FOV=60. Distance reference; no game controller or collision."
+}

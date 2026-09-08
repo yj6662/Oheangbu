@@ -1,0 +1,15 @@
+# Local generated payloads stay outside the public repository (SPEC-SPELL-FX-ASSETS 4.7).
+*.blend
+*.blend[0-9]
+*.fbx
+*.glb
+*.png
+*.jpg
+*.mp4
+*.zip
+*.log
+*.pyc
+__pycache__/
+REVIEW.html
+*request*.json
+run_state.draft.json

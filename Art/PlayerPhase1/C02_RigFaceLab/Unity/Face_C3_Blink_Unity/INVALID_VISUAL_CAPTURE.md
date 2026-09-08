@@ -1,0 +1,1 @@
+FAILED_CAPTURE: all frames show background because the initial empty Humanoid controller changed the inspection pose. Encoding PASS is only timing/format, not visual validation. This clip must not be used as character evidence. Recapture pending.

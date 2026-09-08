@@ -1,0 +1,11 @@
+{
+  "action": "LAB_DIAG_TorsoTwist",
+  "frames": [
+    1,
+    74
+  ],
+  "fps": 30,
+  "amplitude_degrees": 35,
+  "axis": "anatomical spine bone local Y",
+  "production_motion": false
+}

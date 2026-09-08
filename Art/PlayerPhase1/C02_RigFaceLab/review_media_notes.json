@@ -1,0 +1,18 @@
+{
+  "kind": "explicit_visual_review_notes_not_model_quality_verdicts",
+  "files": {
+    "Unity/Face_C3_Blink_Unity/Face_C3_Blink_Unity.mp4": {
+      "status": "FAIL_VISUAL_CAPTURE",
+      "reason": "초기 카메라 밖에 모델이 있어 배경만 보이는 실패 캡처입니다.",
+      "scope": "MP4 디코딩 통과와 구분합니다. 얼굴 기능 또는 Unity 통합의 시각 검수 근거로 채택하지 않습니다.",
+      "source_record": "Unity/Face_C3_Blink_Unity/video_validation.json"
+    },
+    "Motion/B1/Diagnostics/B1_Sequence_FramingFail.mp4": {
+      "status": "FAIL_VISUAL_CAPTURE",
+      "reason": "첫 고정 구도에서 Attack 전진 구간의 발끝이 아래로 잘렸습니다.",
+      "scope": "시각 캡처 실패를 기록한 진단 자료입니다. 동작 데이터는 그대로 두고 전 프레임 경계 기반 고정 구도로 최종 영상을 다시 만들었습니다.",
+      "replacement": "Motion/B1/B1_Original_vs_Edited_Sequence.mp4",
+      "source_record": "Motion/REPORT.md"
+    }
+  }
+}

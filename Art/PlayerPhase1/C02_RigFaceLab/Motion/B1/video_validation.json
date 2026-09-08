@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "scope": "Complete MP4 decode, exact frame count, dimensions and frame rate only. Not character naturalness or Unity playback.",
+  "file": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Motion\\B1\\B1_Original_vs_Edited_Sequence.mp4",
+  "sha256": "1196c1a14d25731f991e7789caf77acdb7ece36372998efa82c372345b96267e",
+  "decoded_frames": 331,
+  "expected_frames": 331,
+  "metadata": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30.0
+  },
+  "returncode": 0,
+  "decoder_error_tail": null
+}

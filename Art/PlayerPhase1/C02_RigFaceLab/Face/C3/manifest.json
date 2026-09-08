@@ -1,0 +1,57 @@
+{
+  "candidate": "C3",
+  "stage": "C",
+  "attempt": 3,
+  "method": "Additive skinned eyelid curtains fitted to raycast face surface. Painted eye geometry remains static beneath them. Sampling excludes disconnected hair islands and excessive front depth, using the 448-triangle actual eye-landmark connected face patch.",
+  "body_mesh_modified": false,
+  "body_vertex_changes": [],
+  "body_weights_modified": false,
+  "new_bones": 0,
+  "added_triangles": 1024,
+  "total_triangles": 52784,
+  "new_meshes": [
+    "FaceLid_Left",
+    "FaceLid_Right"
+  ],
+  "channels": [
+    "BlinkLeft",
+    "BlinkRight"
+  ],
+  "range_blender": [
+    0,
+    1
+  ],
+  "range_unity": [
+    0,
+    100
+  ],
+  "face_blink": {
+    "status": "UNVERIFIED",
+    "implementation_status": "PASS",
+    "reason": "Bilateral skin-coverage channels, neutral return, Blender sampled closure, FBX serialization and Unity numerical/runtime control verified. Full eyelid contact and unobscured bilateral Unity closure/art review are not passed. Right half-closure has 5 sampled vertices up to 0.286795mm behind skin."
+  },
+  "face_gaze": {
+    "status": "FAIL",
+    "reason": "C2 real-eyeball reconstruction rejected; C3 retains original fixed painted eyes"
+  },
+  "face_jaw": {
+    "status": "NOT_ATTEMPTED",
+    "reason": "Source lips form a closed fused shell without established oral cavity; three basic face candidates spent on blink/gaze. No claim that topology repair is impossible."
+  },
+  "neutral_source_face_geometry_exact": true,
+  "paid_requests": 0,
+  "adopted": true,
+  "retained_for_integration": true,
+  "adoption_scope": "Experimental blink geometry only; not whole-face quality or canonical player approval.",
+  "unity": {
+    "technical_status": "PASS",
+    "scope": "Integrated_B1_C3 actual Play + LAB_B1_Idle; five channel values, neutral return and no Animator overwrite per Unity agent. Art/complete closure remain limited."
+  },
+  "evidence": [
+    "skin_component_validation.json",
+    "fbx_roundtrip.json",
+    "video_manifest.json",
+    "../D1/manifest.json",
+    "../../Unity/Integrated_Blink_Close/capture.json"
+  ]
+}

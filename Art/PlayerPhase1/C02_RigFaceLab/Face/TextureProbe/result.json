@@ -1,0 +1,14 @@
+[
+  {
+    "forced_load_before_filepath_change": false,
+    "initial_has_data": false,
+    "pixels_sha256": "cd9813bf8fa5db99c412f3ffd921840f09ffa6818c28f3034255c028b7497a01",
+    "png_sha256": "6def2a7d40ddcbb6cd8bc514215d9abc1c9d43e00a9a7d32cc639f5ad2536bd0"
+  },
+  {
+    "forced_load_before_filepath_change": true,
+    "initial_has_data": false,
+    "pixels_sha256": "31f1f7cf39db810fc5ddbee5d938d81e61aaae23fc2c755ce930bdc64715c8a7",
+    "png_sha256": "e26374d679314daa6fbb8cb72d76b34f866e62c34dc1debf6a2bf8a88f1a1628"
+  }
+]

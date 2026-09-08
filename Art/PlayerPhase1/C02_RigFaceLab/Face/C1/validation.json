@@ -1,0 +1,111 @@
+{
+  "candidate": "C1",
+  "preservation": {
+    "geometry_sha256": "8791ef36c2830c57a086864f23fbb88848b1edffbd340e6ca481c3fc58e361f9",
+    "weights_sha256": "be5bffef755d15fcd020595e7d56b4da493c63ddab89228eda76f8f4abe72184",
+    "geometry_unchanged": true,
+    "weights_unchanged": true
+  },
+  "checks": [
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.0002796873450279236,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 0
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.00027973949909210205,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 0
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0.25,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.00028474628925323486,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 1
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0.25,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": -0.007710590958595276,
+      "vertices_behind_source_over_0_1mm": 35,
+      "pupil_covered_samples_of_9": 0
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0.5,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.00028973817825317383,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 6
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0.5,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": -0.015622377395629883,
+      "vertices_behind_source_over_0_1mm": 23,
+      "pupil_covered_samples_of_9": 4
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0.75,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.00029480457305908203,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 9
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0.75,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": -0.01801176369190216,
+      "vertices_behind_source_over_0_1mm": 6,
+      "pupil_covered_samples_of_9": 8
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 1,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.000299796462059021,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 9
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 1,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.0002997368574142456,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 9
+    },
+    {
+      "mesh": "FaceLid_Left",
+      "value": 0,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.0002796873450279236,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 0
+    },
+    {
+      "mesh": "FaceLid_Right",
+      "value": 0,
+      "finite": true,
+      "minimum_vertex_offset_in_front_of_source_m": 0.00027973949909210205,
+      "vertices_behind_source_over_0_1mm": 0,
+      "pupil_covered_samples_of_9": 0
+    }
+  ],
+  "source_eyeballs": "NONE_SEPARATE",
+  "limits": "Occlusion of selected painted pupil landmarks only; no anatomical globe/lid contact claim. Surface-depth test uses the original fixed face shell.",
+  "face_blink": "UNVERIFIED_PENDING_CONTINUOUS_REVIEW",
+  "fbx_roundtrip": "PASS_SERIALIZATION_ONLY"
+}

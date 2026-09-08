@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "experiment": "C02_RigFaceLab",
+  "is_draft": false,
+  "note": "Live experimental state; no integrated character quality approval.",
+  "created_local_date": "2026-09-09",
+  "spec": "Docs/Specs/SPEC-C02-RIG-FACE-LAB.md",
+  "decision": 188,
+  "phase": "COMPLETED_WITH_RECORDED_LIMITATIONS",
+  "source": {
+    "candidate": "C02",
+    "selection_meaning": "follow_up_experiment_not_quality_approval",
+    "blend": "Art/PlayerPhase1/AutoPlayerV1/Candidates/C02/Candidate_C02_Repaired.blend",
+    "sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2",
+    "source_deformation": "UNVERIFIED",
+    "instructions": "Source/production-instructions.md",
+    "instructions_sha256": "51554304e5c8a05d07a24729624755bdb7541190d22c45b7c8931759ee06b6a6"
+  },
+  "baseline": {
+    "blend": "Baseline.blend",
+    "inventory": "baseline_inventory.json",
+    "preservation_record": "preservation_before.json",
+    "reported_triangles": 51760,
+    "reported_bones": 24,
+    "remeasure_after_modification": true
+  },
+  "limits": {
+    "additional_paid_credits": 0,
+    "additional_paid_requests": 0,
+    "rendered_clothed_body_triangles": 60000,
+    "new_clothing_deform_bones": 12,
+    "expression_presets": 4,
+    "attempts": {
+      "A": 4,
+      "B": 3,
+      "C": 3,
+      "D": 3
+    }
+  },
+  "historical_autoplayer_v1_credits": 123,
+  "historical_credits_are_new_spend": false,
+  "verdicts": {
+    "body_clothing_deformation": {
+      "status": "UNVERIFIED",
+      "scope": "A2 left lower axilla improvement on unchanged clips; full integrated garment penetration and naturalness not passed."
+    },
+    "animation_naturalness": {
+      "status": "UNVERIFIED",
+      "reason": "Final Unity Play Mode sequence and blink captures completed with full decode verification and overwrite0. Whole-character naturalness, original Run/Attack limits and full contact quality remain unverified."
+    },
+    "secondary_motion": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "A2 has residual integrated-cloth uncertainty; no separate stable cloth region has been validated"
+    },
+    "face_blink": {
+      "status": "UNVERIFIED",
+      "scope": "Added bilateral eyelid coverage, neutral return and channel/binding verified. Residual intermediate contact and coarse appearance prevent full quality acceptance."
+    },
+    "face_gaze": {
+      "status": "FAIL",
+      "scope": "C2 local eyeballs were overexposed and failed closure. Retained C3 uses original fixed painted eyes."
+    },
+    "face_jaw": {
+      "status": "NOT_ATTEMPTED",
+      "scope": "Closed fused lip surface/no established oral cavity; three basic face candidates spent on blink and gaze. No claim that repair is impossible."
+    },
+    "face_expressions": {
+      "status": "PASS",
+      "scope": "Three presets drive existing bilateral eyelid-coverage channels only; facial emotion/art quality is not passed."
+    },
+    "fbx_roundtrip": {
+      "status": "PASS",
+      "scope": "B2 final FBX empty-scene reimport, 31 pose/blink cases and 93 mesh comparisons; nearest world error 1.40545683e-06m, same triangles/bones/keys/five-weight counts. Not art/contact acceptance."
+    },
+    "unity_integration": {
+      "status": "PASS",
+      "scope": "Isolated B2 Humanoid plus C3 lids imported with own Avatar; 444-frame sequence and 180-frame face sweep at 30fps in actual Play Mode, no channel overwrite. Idle Play first two frames minY4.074/4.094mm at fixed root and floor. Data integration only: source tiny-weight loss, full cloth/foot/art/gameplay/physics/performance and shadow appearance remain unresolved."
+    },
+    "art_review": {
+      "status": "UNVERIFIED",
+      "scope": "Comparison media provided for user judgement; no automated design approval."
+    }
+  },
+  "canonical_player_replaced": false,
+  "attempts_used": {
+    "A": 2,
+    "B": 2,
+    "C": 3,
+    "D": 1
+  },
+  "best_files": {
+    "A": "Body/A2.blend",
+    "B": "Motion/B2/Motion_B2.blend",
+    "C": "Face/C3/Face_C3.blend",
+    "D": "Face/D1/Face_D1.blend"
+  },
+  "additional_paid_credits": 0,
+  "additional_paid_requests": 0,
+  "status": "PARTIAL_UNVERIFIED"
+}

@@ -1,0 +1,84 @@
+{
+  "status": "TECHNICAL_PASS",
+  "first_frame_nonbackground_pixels": 210637,
+  "content_presence_is_not_visual_quality": true,
+  "source": "actual Unity Play Mode camera render requests",
+  "art_quality": "UNVERIFIED",
+  "capture_timing_is_not_gameplay_performance": true,
+  "video": {
+    "label": "Final_Sequence_GameReference",
+    "action": "sequence_face",
+    "view": "Game distance reference \u2014 not gameplay",
+    "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Unity\\Final_Sequence_GameReference\\Final_Sequence_GameReference.mp4",
+    "expected": {
+      "fps": 30,
+      "width": 1280,
+      "height": 720,
+      "frames": 444,
+      "duration_seconds": 14.8,
+      "source_key_interval_seconds": null,
+      "last_sample_hold_seconds": 0.03333333333333333
+    },
+    "character_acceptance": "UNVERIFIED",
+    "bytes": 3767969,
+    "sha256": "2714c717760e193db0e5b3984b381276a4b3792e4810fdfd8c71aea9f4834fdf",
+    "container": {
+      "timescale": 15360,
+      "mdhd_duration_ticks": 227328,
+      "duration_seconds": 14.8,
+      "sample_count": 444,
+      "stts_duration_ticks": 227328,
+      "stts_runs": [
+        {
+          "sample_count": 444,
+          "sample_delta": 512
+        }
+      ],
+      "constant_sample_rate": true,
+      "sample_fps": "30"
+    },
+    "decode_returncode": 0,
+    "decoder_log_sha256": "72f83bafccd65f063d2815f6cda0c6924e818bb071e6f9494da47693fc631324",
+    "actual": {
+      "decoded_frames": 444,
+      "decoder_fps_rational": "30",
+      "fps": 30.0,
+      "time_base_rational": "1/15360",
+      "dimensions_seen": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "pixel_formats": [
+        "yuv420p"
+      ],
+      "first_pts_seconds": 0.0,
+      "last_pts_seconds": 14.766666666666667,
+      "presentation_duration_seconds": 14.8,
+      "presentation_duration_rational": "74/5",
+      "frame_intervals_rational": [
+        "1/30"
+      ],
+      "frame_durations_rational": [
+        "1/30"
+      ]
+    },
+    "checks": {
+      "full_decode_without_error": true,
+      "frame_count_matches": true,
+      "decoded_indices_contiguous": true,
+      "resolution_1280x720": true,
+      "decoder_fps_30": true,
+      "constant_pts_spacing_1_over_30": true,
+      "frame_duration_1_over_30": true,
+      "first_pts_zero": true,
+      "duration_includes_final_sample": true,
+      "container_frame_count_matches": true,
+      "container_constant_fps_30": true,
+      "container_duration_matches": true,
+      "container_sample_duration_consistent": true
+    },
+    "status": "PASS"
+  }
+}

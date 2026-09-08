@@ -1,0 +1,6 @@
+# Restore generated models, textures and authored motion copies from the local lab package.
+*.fbx
+*.png
+*.jpg
+*.anim
+# Keep .meta files so restored payloads retain their existing GUIDs.

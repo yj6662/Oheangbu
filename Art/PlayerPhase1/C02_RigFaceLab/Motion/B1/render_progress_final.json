@@ -1,0 +1,41 @@
+{
+  "source_blend": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Motion\\B1\\Motion_B1.blend",
+  "source_blend_sha256": "f1dd92cbfb365d38e6ff6ebbd98961a757202390dfe98802e3550fca30ac2e66",
+  "source_renderer": "Blender 5.0.1 EEVEE, 8 samples (whole sequence; interrupted Cycles frames not mixed)",
+  "status": "VIDEO_ENCODED",
+  "resolution": [
+    1280,
+    720
+  ],
+  "fps": 30,
+  "expected_frames": 331,
+  "completed_frames": 331,
+  "framing": {
+    "method": "Both evaluated mesh bounding boxes at all 331 integer frames, fixed 12% margin, same constant orthographic scale and center for both versions",
+    "camera_ortho_scale": 4.814589977264404,
+    "projected_bounds": [
+      -1.9281750917434692,
+      1.485967755317688,
+      -1.3348722755908966,
+      1.083169624209404
+    ],
+    "center_xz": [
+      -0.22110366821289062,
+      0.8016563284469044
+    ]
+  },
+  "left_panel": "Unmodified original C02 clips on A2 weights; generated comparison transitions",
+  "right_panel": "B1 cloned clips on same A2 weights; identical transition recipe",
+  "run_original_speed_cycles": 6,
+  "floor_square_m": 0.25,
+  "camera_follows_native_speed_mps": {
+    "Idle": 0.0,
+    "Run": 5.362285039688777,
+    "Walk": 1.5537527974691157,
+    "Attack": 0.0
+  },
+  "labels_inside_video": false,
+  "quality_verdict": "UNVERIFIED",
+  "mp4": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Motion\\B1\\B1_Original_vs_Edited_Sequence.mp4",
+  "mp4_sha256": "1196c1a14d25731f991e7789caf77acdb7ece36372998efa82c372345b96267e"
+}

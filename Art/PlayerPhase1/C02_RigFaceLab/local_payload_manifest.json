@@ -1,0 +1,170 @@
+{
+  "purpose": "Required local payload hashes; bytes are NOT backed up by this public Git checkpoint. Task IDs cannot reproduce local A2/B2/C3 edits.",
+  "payloads": [
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/B2_BodyProbe_Attack.anim",
+      "bytes": 5579620,
+      "sha256": "fdc8414fbb75cdeadb0a5135d62d35fe600b32304a949c5c405f9f9b35436578"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/B2_BodyProbe_Idle.anim",
+      "bytes": 7419934,
+      "sha256": "53062dfd0d4f4e73c9ade2c7bb91a55feb4a0c436072c81000d33115aec54d6f"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/B2_BodyProbe_Run.anim",
+      "bytes": 1297053,
+      "sha256": "1386386078ef3357365ae9810732424b2455da434b00249c0885b516089acace"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/B2_BodyProbe_Walk.anim",
+      "bytes": 2025692,
+      "sha256": "da20cea848e11c423169826c69a054f54d745c4277c41c01db5932763a138911"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B1_C3_Attack.anim",
+      "bytes": 5579150,
+      "sha256": "b1f697ae6ca218e486139949c5f9b71285ceb9310dd932b8b707bcd6a1a45432"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B1_C3_Idle.anim",
+      "bytes": 7419508,
+      "sha256": "a1cb642ef1cd317078d03f6a79a0745c1d468455c95602917fcb7a1c76531467"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B1_C3_Run.anim",
+      "bytes": 1297045,
+      "sha256": "eb7f800cd0a136d1510c4579deb30cdce0a9823830cb96a04a07e55e6455a06c"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B1_C3_Walk.anim",
+      "bytes": 2025664,
+      "sha256": "599158b148c5d25aa398c9512e07f2b016f9d97b7d49492f0c11fda8e0201f21"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B2_C3_Attack.anim",
+      "bytes": 5579150,
+      "sha256": "3401e3b8db6dfbb370a2d06d1fd08f529239ddac918ed5181f0f60a609f008be"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B2_C3_Idle.anim",
+      "bytes": 7420258,
+      "sha256": "a885fcd8073ba95c5d3fc9286d98cab3e09bc9a7a61cd989e6d79621ac16ee95"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B2_C3_Run.anim",
+      "bytes": 1297045,
+      "sha256": "a148756fc09a847dd9c2c2f16314586970739c9ad3e5a17a64309902ee8ae799"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B2_C3_Walk.anim",
+      "bytes": 2025664,
+      "sha256": "1b06231f3995dd1293c4a128c9bbf8f4ec772abcd472ac68a6b924989c6c7e93"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/B2_BodyProbe.fbx",
+      "bytes": 14594492,
+      "sha256": "33caeae68f50c7c740016189e2121b33b069e42d05c9b84306a53d6080583e7a"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/Face_C1.fbx",
+      "bytes": 3972988,
+      "sha256": "7755e3bfbf6babf1aab6410161aeb3097f6e72aabfb3f6982e2c65e1be4c3487"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/Face_C3.fbx",
+      "bytes": 3972620,
+      "sha256": "021e399b6630ecf88c692650cb9b5d4629d9854e96407b3d350148d53ca4edd3"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/Integrated_B1_C3.fbx",
+      "bytes": 13809484,
+      "sha256": "def017661c71276a38e0d3f8c3963b129a801ea250dd8e606c6d42cd3b1a18b5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/Integrated_B2_C3.fbx",
+      "bytes": 14773948,
+      "sha256": "bd68dc1305eb1404050a95b60ee5c382cd9ba4baf168e59fc15d8f106c485616"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/RootHeightAudit_1.fbx",
+      "bytes": 13809484,
+      "sha256": "def017661c71276a38e0d3f8c3963b129a801ea250dd8e606c6d42cd3b1a18b5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/RootHeightAudit_2.fbx",
+      "bytes": 13809484,
+      "sha256": "def017661c71276a38e0d3f8c3963b129a801ea250dd8e606c6d42cd3b1a18b5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Models/RootHeightAudit_3.fbx",
+      "bytes": 13809484,
+      "sha256": "def017661c71276a38e0d3f8c3963b129a801ea250dd8e606c6d42cd3b1a18b5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/B2_BodyProbe_M0_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/Face_C1_M0_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/Face_C3_M0_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/Integrated_B1_C3_M0_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/Integrated_B1_C3_M1_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/Integrated_B2_C3_M0_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/C02_RigFaceLab/Textures/Integrated_B2_C3_M1_BaseColor.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Art/PlayerPhase1/C02_RigFaceLab/Baseline.blend",
+      "bytes": 18821670,
+      "sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2"
+    },
+    {
+      "path": "Art/PlayerPhase1/C02_RigFaceLab/Final/Integrated_B2_C3.blend",
+      "bytes": 22585611,
+      "sha256": "d3dd7dcb3fe1776025146e76f0391dacf8bd2e55252c80ecad93c1c8c87572ac"
+    },
+    {
+      "path": "Art/PlayerPhase1/C02_RigFaceLab/Final/Integrated_B2_C3.fbx",
+      "bytes": 14773948,
+      "sha256": "bd68dc1305eb1404050a95b60ee5c382cd9ba4baf168e59fc15d8f106c485616"
+    },
+    {
+      "path": "Art/PlayerPhase1/C02_RigFaceLab/Final/Textures/C02_original_texture.png",
+      "bytes": 5504412,
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "path": "Art/PlayerPhase1/C02_RigFaceLab/Unity/B2_Final_Sequence_Full/B2_Final_Sequence_Full.mp4",
+      "bytes": 5416655,
+      "sha256": "faade2f057ab8ff39e4313a25b750bf93db25be53de96be391b23107a65cd153"
+    },
+    {
+      "path": "Art/PlayerPhase1/C02_RigFaceLab/Unity/B2_Final_Blink_Close/B2_Final_Blink_Close.mp4",
+      "bytes": 3247523,
+      "sha256": "5c177665f9543aba5ae1895f7181ced2d78f57406095f72c6fbd8ec7774b617a"
+    }
+  ]
+}

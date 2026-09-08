@@ -1,0 +1,132 @@
+{
+  "status": "PASS_DELIVERY_CHECKS_ONLY",
+  "quality": "UNVERIFIED",
+  "checks": [
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\Candidate_C02_Repaired.blend",
+      "pass": true
+    },
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\candidate_result.json",
+      "pass": true
+    },
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\FINAL_REPORT.md",
+      "pass": true
+    },
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\cost_ledger.json",
+      "pass": true
+    },
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\FitRigV3\\Dosa_Phase1_FitRigV3.blend",
+      "pass": true
+    },
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Prefabs\\Rig\\PlayerRig.prefab",
+      "pass": true
+    },
+    {
+      "check": "protected_source",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Scenes\\Dev\\C2_CodexWorld.unity",
+      "pass": true
+    },
+    {
+      "check": "baseline_copy",
+      "pass": true
+    },
+    {
+      "check": "global_quality_exact",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "integrated_blend",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "integrated_fbx",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "original_texture",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "roundtrip",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "body_comparison_before",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "body_comparison_after",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "previous_b1_motion_comparison",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "face_video",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "unity_body_video",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "unity_face_video",
+      "pass": true
+    },
+    {
+      "check": "artifact_hash",
+      "artifact": "unity_report",
+      "pass": true
+    },
+    {
+      "check": "unity_import_final_fbx",
+      "pass": true
+    },
+    {
+      "check": "original_texture",
+      "pass": true
+    },
+    {
+      "check": "recorded_full_media_decode",
+      "folder": "B2_Final_Blink_Close",
+      "pass": true
+    },
+    {
+      "check": "recorded_full_media_decode",
+      "folder": "B2_Final_Sequence_Full",
+      "pass": true
+    },
+    {
+      "check": "review_local_links",
+      "count": 561,
+      "broken": [],
+      "pass": true
+    },
+    {
+      "check": "additional_cost_zero",
+      "pass": true
+    }
+  ]
+}

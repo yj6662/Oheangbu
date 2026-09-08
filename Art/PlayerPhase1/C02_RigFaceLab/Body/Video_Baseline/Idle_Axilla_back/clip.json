@@ -1,0 +1,81 @@
+{
+  "action": "C02_Idle",
+  "view": "back",
+  "label": "Idle_Axilla_back",
+  "status": "PNG_COMPLETE_MP4_NOT_ENCODED",
+  "source_frame_start": 1,
+  "source_frame_end": 121,
+  "output_frame_start": 1,
+  "output_frame_end": 121,
+  "frame_count": 121,
+  "fps": 30,
+  "source_key_interval_seconds": 4.0,
+  "encoded_duration_seconds": 4.033333333333333,
+  "last_sample_hold_seconds": 0.03333333333333333,
+  "timing_note": "All integer frames inclusive. Last sample has one full 1/30s display interval.",
+  "frames_dir": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Idle_Axilla_back\\frames",
+  "mp4_path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Idle_Axilla_back.mp4",
+  "ffmpeg_argv": [
+    "ffmpeg",
+    "-hide_banner",
+    "-loglevel",
+    "warning",
+    "-n",
+    "-framerate",
+    "30",
+    "-start_number",
+    "1",
+    "-i",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Idle_Axilla_back\\frames\\frame_%06d.png",
+    "-frames:v",
+    "121",
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "fast",
+    "-crf",
+    "18",
+    "-pix_fmt",
+    "yuv420p",
+    "-r",
+    "30",
+    "-movflags",
+    "+faststart",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Idle_Axilla_back.mp4"
+  ],
+  "bounds_min": [
+    -0.5264410282721883,
+    -0.6754482881252102,
+    0.002408732718034101
+  ],
+  "bounds_max": [
+    0.5559678525633842,
+    0.6010892352218349,
+    1.9298398921674504
+  ],
+  "sampled_frames": 121,
+  "rendered_frames": 121,
+  "camera": {
+    "location": [
+      0.15000000596046448,
+      5.019999980926514,
+      1.1799999475479126
+    ],
+    "rotation_euler": [
+      -1.570796251296997,
+      -3.141592502593994,
+      -0.0
+    ],
+    "ortho_scale": 0.6499999761581421,
+    "target": [
+      0.15000000596046448,
+      0.019999999552965164,
+      1.1799999475479126
+    ],
+    "fixed_for_entire_clip": true,
+    "same_for_baseline_and_A2": true,
+    "lights_fixed": true
+  },
+  "last_source_frame": 121
+}

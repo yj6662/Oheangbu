@@ -1,0 +1,49 @@
+{
+    "status": "COMPLETE",
+    "mode": "face_sweep",
+    "frameCount": 2,
+    "fps": 30,
+    "width": 1280,
+    "height": 720,
+    "duration": 0.06666667014360428,
+    "camera": "Full body review",
+    "cameraPosition": {
+        "x": -0.1200951337814331,
+        "y": 0.8254944682121277,
+        "z": 5.205492973327637
+    },
+    "cameraEuler": {
+        "x": 0.0,
+        "y": 180.0,
+        "z": 0.0
+    },
+    "cameraFov": 38.0,
+    "scope": "Actual Unity Play Mode frames, fixed game timestep and 1x animation speed. Synchronous offscreen URP capture; capture throughput is not gameplay performance.",
+    "visualQuality": "UNVERIFIED",
+    "skinWeights": "FourBones",
+    "frames": [
+        {
+            "index": 0,
+            "time": 0.0,
+            "realtime": 144.09170532226563,
+            "state": "",
+            "normalizedState": 0.0,
+            "channel": "BlinkLeft",
+            "faceValue": 0.0,
+            "cpuRenderMilliseconds": 186.19979858398438,
+            "overwriteCount": 0
+        },
+        {
+            "index": 1,
+            "time": 0.03333333507180214,
+            "realtime": 144.16265869140626,
+            "state": "",
+            "normalizedState": 0.0,
+            "channel": "BlinkLeft",
+            "faceValue": 0.0,
+            "cpuRenderMilliseconds": 61.19810104370117,
+            "overwriteCount": 0
+        }
+    ],
+    "error": ""
+}

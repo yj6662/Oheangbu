@@ -1,0 +1,8 @@
+{
+  "stage": "Baseline",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\BaselineTests.blend",
+  "sha256": "2c165cd3496b14dd60ee5775f99c9238cdc524e4b8226b51d7b96a280aacd4a4",
+  "actual_source_model": true,
+  "actions_original_unchanged": true,
+  "camera_protocol": "body_compare_video.py"
+}

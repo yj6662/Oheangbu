@@ -1,0 +1,1 @@
+{"id": "60f72345f34a40e191b19b359c757fc2", "method": "StartCapture", "request": "{\"folder\":\"Final_Sequence_Full_FixedGround\",\"mode\":\"sequence_face\",\"frames\":600,\"camera\":0,\"holdFrames\":15,\"stopPlayWhenComplete\":false}"}

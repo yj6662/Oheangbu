@@ -1,0 +1,1 @@
+{"id": "1bd70963e6a34cfe980a8d8da2846d7e", "method": "StartCapture", "request": "{\"folder\":\"Integrated_Face_Probe\",\"mode\":\"face_sweep\",\"frames\":2,\"camera\":1,\"holdFrames\":15,\"stopPlayWhenComplete\":false}"}

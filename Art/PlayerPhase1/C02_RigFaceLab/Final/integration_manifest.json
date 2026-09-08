@@ -1,0 +1,149 @@
+{
+  "status": "EXPORTED_AWAITING_ROUNDTRIP_AND_UNITY",
+  "body_source": "Motion/B1/Motion_B1.blend",
+  "body_source_sha256": "f1dd92cbfb365d38e6ff6ebbd98961a757202390dfe98802e3550fca30ac2e66",
+  "face_source": {
+    "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Face\\C3\\Face_C3.blend",
+    "objects": [
+      "FaceLid_Left",
+      "FaceLid_Right"
+    ],
+    "added_triangles": 1024,
+    "extra_bones": 0,
+    "source_body_geometry_changed": false,
+    "target_body_geometry_changed": false,
+    "target_body_weights_changed": false,
+    "requires": "Re-export complete selected body and both lids; validate with final body animation in Unity."
+  },
+  "blend": "Final/Integrated_B1_C3.blend",
+  "fbx": "Final/Integrated_B1_C3.fbx",
+  "fbx_sha256": "def017661c71276a38e0d3f8c3963b129a801ea250dd8e606c6d42cd3b1a18b5",
+  "meshes": [
+    {
+      "name": "C02_Mesh_0",
+      "vertices": 87148,
+      "triangles": 51760,
+      "max_influences": 5,
+      "shapes": [],
+      "material_slots": 1,
+      "modifiers": [
+        "ARMATURE"
+      ]
+    },
+    {
+      "name": "FaceLid_Left",
+      "vertices": 297,
+      "triangles": 512,
+      "max_influences": 1,
+      "shapes": [
+        "BlinkLeft"
+      ],
+      "material_slots": 1,
+      "modifiers": [
+        "ARMATURE"
+      ]
+    },
+    {
+      "name": "FaceLid_Right",
+      "vertices": 297,
+      "triangles": 512,
+      "max_influences": 1,
+      "shapes": [
+        "BlinkRight"
+      ],
+      "material_slots": 1,
+      "modifiers": [
+        "ARMATURE"
+      ]
+    }
+  ],
+  "total_triangles": 52784,
+  "bones": 24,
+  "new_cloth_bones": 0,
+  "new_face_bones": 0,
+  "textures": [
+    {
+      "file": "Final/Textures/C02_original_texture.png",
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032",
+      "used_by": [
+        "Material_1",
+        "Material_1.001"
+      ],
+      "byte_identical_to_original": true
+    }
+  ],
+  "fps": 30,
+  "clips": {
+    "C02_Attack": [
+      1.0,
+      91.0
+    ],
+    "C02_Idle": [
+      1.0,
+      121.0
+    ],
+    "C02_Run": [
+      1.0,
+      20.0
+    ],
+    "C02_Walk": [
+      1.0,
+      32.0
+    ],
+    "DIAG_ArmsDown": [
+      1.0,
+      60.0
+    ],
+    "DIAG_DeepElbow": [
+      1.0,
+      60.0
+    ],
+    "DIAG_Overhead": [
+      1.0,
+      60.0
+    ],
+    "DIAG_Squat": [
+      1.0,
+      60.0
+    ],
+    "LAB_B1_Attack": [
+      1.0,
+      91.0
+    ],
+    "LAB_B1_Idle": [
+      1.0,
+      121.0
+    ],
+    "LAB_B1_Run": [
+      1.0,
+      20.0
+    ],
+    "LAB_B1_Sequence": [
+      1.0,
+      331.0
+    ],
+    "LAB_B1_Walk": [
+      1.0,
+      32.0
+    ],
+    "LAB_DIAG_TorsoTwist": [
+      1.0,
+      74.0
+    ],
+    "LAB_Original_Sequence": [
+      1.0,
+      331.0
+    ]
+  },
+  "blendshape_route": "Blender 0..1 -> Unity 0..100. Blender exporter includes constant-zero facial curves in all takes; Unity experimental body clip copies remove these two curves so explicit facial control has ownership. Original imported takes remain intact.",
+  "skin_import_requirement": "Custom maxBonesPerVertex=5, renderer Auto, runtime Unlimited (temporary lab scope)",
+  "integrated_quality": "UNVERIFIED",
+  "canonical_replaced": false,
+  "additional_paid_credits": 0,
+  "prior_texture_export_fbx_sha256": "673d773733e816713c912872ab2ff12a83d520a8607dcf8f7d27b85eb118fc43",
+  "texture_export_repair": {
+    "reason": "A lazily loaded C3 image loaded a stale transformed PNG after filepath reassignment. Source C3 and B1 pixels were identical. Both materials now share exact original packed PNG bytes.",
+    "evidence": "Face/TextureProbe/result.json",
+    "geometry_uv_weights_keys_animations_changed": false
+  }
+}

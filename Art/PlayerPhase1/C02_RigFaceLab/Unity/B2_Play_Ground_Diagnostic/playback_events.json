@@ -1,0 +1,16 @@
+{
+    "status": "INTERRUPTED",
+    "scope": "Unity experiment Animator playback, in-place, root motion OFF; visual quality UNVERIFIED",
+    "playbackSpeed": 1.0,
+    "sampledFrames": 2,
+    "events": [
+        {
+            "name": "sequence_start",
+            "frame": 0,
+            "time": 0.0,
+            "state": "Idle",
+            "cycles": 1,
+            "duration": 4.0
+        }
+    ]
+}

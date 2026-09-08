@@ -1,0 +1,84 @@
+{
+  "stage": "B",
+  "attempt": 2,
+  "attempts_used": {
+    "B": 2
+  },
+  "attempt_limit": 3,
+  "status": "PARTIAL_UNVERIFIED",
+  "selected_for_independent_integration": "B2",
+  "best_file": "Motion/B2/Motion_B2.blend",
+  "selection_scope": "Measured motion improvement on A2; not full body/cloth, animation naturalness or canonical-player approval",
+  "verdicts": {
+    "animation_naturalness": {
+      "status": "UNVERIFIED",
+      "reason": "Final Unity Play Mode sequence and blink captures completed with full decode verification and overwrite0. Whole-character naturalness, original Run/Attack limits and full contact quality remain unverified."
+    },
+    "secondary_motion": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "A2 has residual integrated-cloth uncertainty; no separate stable cloth region has been validated"
+    },
+    "weapon_grip": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "Unarmed source Attack; no finger-contact or brush attachment test"
+    }
+  },
+  "source": "Motion/B1/Motion_B1.blend",
+  "model": "Motion/B2/Motion_B2.blend",
+  "export": "Motion/B2/C02_B2_Body_Motions.fbx",
+  "evidence": [
+    "Motion/B1/motion_validation.json",
+    "Motion/B1/video_validation.json",
+    "Motion/B1/render_progress_final.json",
+    "Motion/B2/B2.json",
+    "Motion/B2/REPORT.md",
+    "Unity/B2_BodyProbe_camera_calibration.json",
+    "Unity/B2_BodyProbe_import_audit.json",
+    "Unity/UNITY_REPORT.md",
+    "Unity/unity_validation.json"
+  ],
+  "videos": [
+    "Motion/B1/B1_Original_vs_Edited_Sequence.mp4",
+    "Unity/B2_Final_Sequence_Full/B2_Final_Sequence_Full.mp4",
+    "Unity/B2_Final_Blink_Close/B2_Final_Blink_Close.mp4"
+  ],
+  "diagnostic_video": "Motion/B1/Diagnostics/B1_Sequence_FramingFail.mp4",
+  "additional_paid_credits": 0,
+  "paid_requests": 0,
+  "historical_autoplayer_credits": 123,
+  "canonical_player_replaced": false,
+  "previous_candidate": "Motion/B1/Motion_B1.blend",
+  "unity_idle_probe": {
+    "status": "PASS",
+    "scope": "Early Unity Humanoid Idle normalized-time0 bounds with fixed root and fixed ground only. Final capture evidence is recorded separately; overall quality remains unverified.",
+    "minimum_y_m": 0.004073917865753174,
+    "maximum_y_m": 1.6269092559814453,
+    "ground_y": 0.0,
+    "animation_type": "Human",
+    "avatar_valid": true,
+    "geometry_record": "Unity/B2_BodyProbe_camera_calibration.json",
+    "import_record": "Unity/B2_BodyProbe_import_audit.json"
+  },
+  "final_unity_capture_status": "COMPLETE",
+  "videos_scope": "B1 video is the preserved Blender comparison. B2 final videos are actual isolated Unity Play Mode captures; full quality remains unverified.",
+  "unity_final_capture": {
+    "status": "COMPLETE",
+    "scope": "Actual isolated Unity Play Mode, complete video decode and fixed-root/fixed-ground samples only; no whole-character naturalness or canonical-player approval.",
+    "sequence_video": "Unity/B2_Final_Sequence_Full/B2_Final_Sequence_Full.mp4",
+    "sequence_frames": 444,
+    "sequence_fps": 30,
+    "sequence_seconds": 14.8,
+    "blink_video": "Unity/B2_Final_Blink_Close/B2_Final_Blink_Close.mp4",
+    "blink_frames": 180,
+    "blink_fps": 30,
+    "overwrite_count": 0,
+    "play_idle_first_two_min_y_mm": [
+      4.074,
+      4.094
+    ],
+    "root_y": 0,
+    "ground_y": 0,
+    "report": "Unity/UNITY_REPORT.md",
+    "record": "Unity/unity_validation.json"
+  }
+}

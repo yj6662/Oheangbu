@@ -1,0 +1,1 @@
+{"id": "37391163e7b941d1ae891cd2110891d0", "method": "StartCapture", "request": "{\"folder\":\"B2_Play_Ground_Diagnostic\",\"mode\":\"sequence_face\",\"frames\":2,\"camera\":0,\"holdFrames\":15,\"stopPlayWhenComplete\":true}"}

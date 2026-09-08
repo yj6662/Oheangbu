@@ -1,0 +1,36 @@
+{
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\Candidate_C02_Repaired.blend",
+  "baseline": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Baseline.blend",
+  "baseline_sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2",
+  "files": {
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\Candidate_C02_Repaired.blend": {
+      "bytes": 18821670,
+      "sha256": "213650cc8a9d53c2ee0d607afdc456a731554183e15d48f10ea55066d72256c2"
+    },
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\Candidates\\C02\\candidate_result.json": {
+      "bytes": 1422,
+      "sha256": "48e8f23936be8bef4d563445110a9165f8829dcc7c29e611b09679fa6193173c"
+    },
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\FINAL_REPORT.md": {
+      "bytes": 7359,
+      "sha256": "d47d7d1dc47c94e88a5a32f2b7d6a108d4d9021469500c93b9c74f38c892b147"
+    },
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\AutoPlayerV1\\cost_ledger.json": {
+      "bytes": 30336,
+      "sha256": "74f8745b7c2af5db681377476042e6456592968058769a4459ab2dce834e5d36"
+    },
+    "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\FitRigV3\\Dosa_Phase1_FitRigV3.blend": {
+      "bytes": 84785573,
+      "sha256": "000051c3dbb2ea6fa2822c042baef26bdae819b26801185b01875978e961b222"
+    },
+    "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Prefabs\\Rig\\PlayerRig.prefab": {
+      "bytes": 30226,
+      "sha256": "92f5039f781a23734be106fd12fb69d61c289a8f595d2060a3c783ca6e7b641b"
+    },
+    "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Scenes\\Dev\\C2_CodexWorld.unity": {
+      "bytes": 2451242,
+      "sha256": "0b97dd6309336954a1790064cbd70fecaa25d35d5c7b78ceaba01cc0662f8fcb"
+    }
+  },
+  "created_at": "2026-09-08T20:39:15.877309+00:00"
+}

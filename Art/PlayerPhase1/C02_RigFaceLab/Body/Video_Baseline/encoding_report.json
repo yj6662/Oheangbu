@@ -1,0 +1,26 @@
+[
+  {
+    "label": "Run_Full_front",
+    "status": "ENCODED",
+    "error": "",
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Run_Full_front.mp4"
+  },
+  {
+    "label": "Run_Axilla_back",
+    "status": "ENCODED",
+    "error": "",
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Run_Axilla_back.mp4"
+  },
+  {
+    "label": "Idle_Axilla_back",
+    "status": "ENCODED",
+    "error": "",
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Idle_Axilla_back.mp4"
+  },
+  {
+    "label": "Attack_Full_front",
+    "status": "ENCODED",
+    "error": "",
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\C02_RigFaceLab\\Body\\Video_Baseline\\Attack_Full_front.mp4"
+  }
+]

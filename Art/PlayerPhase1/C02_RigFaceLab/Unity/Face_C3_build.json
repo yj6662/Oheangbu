@@ -1,0 +1,12 @@
+{
+    "scene": "Assets/_Project/Art/C02_RigFaceLab/Scenes/Face_C3_Review.unity",
+    "prefab": "Assets/_Project/Art/C02_RigFaceLab/Prefabs/Face_C3_LabRig.prefab",
+    "controller": "Assets/_Project/Art/C02_RigFaceLab/Controllers/Face_C3.controller",
+    "profile": "Assets/_Project/Art/C02_RigFaceLab/Profiles/Face_C3.asset",
+    "states": [],
+    "missingRequestedClips": [],
+    "removedFacialCurvesFromExperimentCopies": [],
+    "canonicalModified": false,
+    "runtimeStatus": "UNVERIFIED",
+    "cameraReference": "PlayerRig.prefab CameraPivot.y=0.7, CombatConfig_Default shoulder=(0,0.55,-2.8), camera FOV=60. Distance reference; no game controller or collision."
+}
