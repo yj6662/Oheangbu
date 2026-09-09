@@ -1,0 +1,27 @@
+{
+  "status": "PASS_RECOGNIZED_EVENT_RUNTIME_FIXTURE_ONLY",
+  "scene": "Assets/_Project/Scenes/Dev/C2_CodexWorld.unity",
+  "glyphs": [
+    "가",
+    "나",
+    "마",
+    "사",
+    "아",
+    "고",
+    "노",
+    "모",
+    "소",
+    "오",
+    "거",
+    "너",
+    "머",
+    "서",
+    "어"
+  ],
+  "maxImpactLatenessSeconds": 0.006175994873046875,
+  "originErrorMax": 0.0,
+  "cleanup": "OBSERVED_ZERO_TRACKED_RESIDUALS",
+  "sceneFileUnchanged": true,
+  "assetsUnchanged": true,
+  "limitations": "UNVERIFIED: physical input, recognizer/Raw samples, existing player's DI/channel wiring, user camera/movement/lock-on state transitions, actual enemy AI, incoming-attack parry outcomes, art/readability and performance. Two synthetic strokes represent event ordering, not the written glyph. Temporary targets have no controller/collider and fixture lock-on selects a camera-centred target. Existing gameplay can continue and may confound global spawn observations. Production stroke noise consumes Unity's global Random just as real drawing does; the harness does not reset unrelated gameplay RNG."
+}

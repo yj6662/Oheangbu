@@ -61,7 +61,17 @@ namespace Oheangbu.App.SpellVFX120
         private void OnGUI()
         {
             if (Catalog == null || Catalog.Entries.Length == 0) return;
-            if (_font != null) GUI.skin.font = _font;
+            Font previous = GUI.skin.font;
+            try
+            {
+                if (_font != null) GUI.skin.font = _font;
+                DrawControls();
+            }
+            finally { GUI.skin.font = previous; }
+        }
+
+        private void DrawControls()
+        {
             var e = Catalog.Entries[Index];
             GUILayout.BeginArea(new Rect(18, 18, 430, 230), GUI.skin.box);
             GUILayout.Label($"{Index + 1:000} / {Catalog.Entries.Length}   {e.Glyph}  {e.Profile.Title}");
@@ -79,7 +89,12 @@ namespace Oheangbu.App.SpellVFX120
             GUILayout.EndArea();
         }
 
-        private void OnDestroy() { DestroyFixture(_fixtureRoot); }
+        private void OnDestroy()
+        {
+            DestroyFixture(_fixtureRoot);
+            if (_active != null) Destroy(_active.gameObject);
+            if (_font != null) Destroy(_font);
+        }
 
         // Shared by the isolated review and edit-mode capture. No game scene calls this.
         // Existing review targets are reused; temporary figures have no gameplay/collision components.

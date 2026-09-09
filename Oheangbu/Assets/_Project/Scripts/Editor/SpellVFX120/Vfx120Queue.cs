@@ -27,7 +27,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             {
                 switch (command.method)
                 {
-                    case "Probe": response.result = "Unity=" + Application.unityVersion + "; playing=" + EditorApplication.isPlaying; break;
+                    case "Probe": response.result = "Unity=" + Application.unityVersion + "; playing=" + EditorApplication.isPlaying + "; scene=" + UnityEngine.SceneManagement.SceneManager.GetActiveScene().path; break;
                     case "Build": response.result = Vfx120Editor.Build(); break;
                     case "Audit": response.result = Vfx120Editor.AuditCatalog(); break;
                     case "Review": response.result = Vfx120Editor.Review(); break;
@@ -40,6 +40,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     case "AreaAudit": response.result = Vfx120AreaAudit.Run(); break;
                     case "RuntimeAudit": response.result = Vfx120RuntimeAudit.Start(); break;
                     case "RuntimePoll": response.result = Vfx120RuntimeAudit.Poll(); break;
+                    case "GameplayAudit": response.result = Vfx120GameplayAudit.Start(); break;
+                    case "GameplayCapture": response.result = Vfx120GameplayAudit.Start(0, true); break;
+                    case "GameplayPoll": response.result = Vfx120GameplayAudit.Poll(); break;
+                    case "GameplayCancel": response.result = Vfx120GameplayAudit.Cancel(); break;
+                    case "OpenWorld": response.result = OpenSavedScene("Assets/_Project/Scenes/Dev/C2_CodexWorld.unity"); break;
+                    case "OpenRange": response.result = OpenSavedScene("Assets/_Project/Scenes/Dev/C1_SpellRange.unity"); break;
                     case "RenderAudit": response.result = Vfx120RenderAudit.Run(); break;
                     case "Capture": response.result = Vfx120Capture.Start(command.request); break;
                     case "Play": EditorApplication.isPlaying = true; response.result = "PLAY_REQUESTED"; break;
@@ -50,6 +56,17 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             catch (Exception e) { response.status = "FAILED"; response.error = e.ToString(); }
             File.WriteAllText(Path.Combine(Vfx120Editor.Output, "response_" + command.id + ".json"), JsonUtility.ToJson(response, true));
+        }
+
+        static string OpenSavedScene(string path)
+        {
+            if (EditorApplication.isPlaying) throw new InvalidOperationException("Stop Play before opening a saved scene");
+            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+                if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty)
+                    throw new InvalidOperationException("Unsaved scene changes; saved scene was not replaced");
+            if (!File.Exists(path)) throw new FileNotFoundException("Scene is unavailable", path);
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene(path);
+            return path;
         }
     }
 }

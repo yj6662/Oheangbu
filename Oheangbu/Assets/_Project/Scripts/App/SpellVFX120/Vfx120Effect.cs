@@ -157,13 +157,17 @@ namespace Oheangbu.App.SpellVFX120
                 n = Mathf.Min(32, ReceivedAreaPlan.Shots.Count);
             _parts = new Transform[n]; _renderers = new Renderer[n];
             int accentCount = Mathf.Max(n, Vfx120CueMotion.GetRequiredAccentCount(Profile.Glyph));
+            accentCount = Mathf.Max(accentCount, Vfx120VariantMotion.GetSelfAccentCount(Profile));
+            accentCount = Mathf.Max(accentCount, Vfx120SummonMotion.GetAccentCount(Profile));
             _accents = new Transform[accentCount]; _accentRenderers = new Renderer[accentCount];
             for (int i = 0; i < n; i++)
             {
                 _parts[i] = MeshPart("Body_" + i, Profile.BodyMesh, Profile.BodyMaterial, out _renderers[i]);
             }
             for (int i = 0; i < accentCount; i++)
-                _accents[i] = MeshPart("Flecks_" + i, Profile.AccentMesh, Profile.InkMaterial, out _accentRenderers[i]);
+                _accents[i] = MeshPart("Flecks_" + i, Profile.AccentMesh,
+                    Profile.Behavior == Vfx120Behavior.Summon && Profile.Family == "Beast" ? Profile.BodyMaterial : Profile.InkMaterial,
+                    out _accentRenderers[i]);
             _seal = MeshPart("TraditionalMotif", QuadMesh.Value, Profile.PatternMaterial, out _sealRenderer);
             _ribbons = new LineRenderer[Mathf.Clamp(Profile.RibbonCount, 0, 3)];
             for (int i = 0; i < _ribbons.Length; i++)
@@ -263,6 +267,17 @@ namespace Oheangbu.App.SpellVFX120
                     local=Vector3.zero;axis=Vector3.forward;
                     partScale=Profile.PartScale*assembly*fade;
                 }
+                else if (Profile.Glyph == "무")
+                {
+                    // Earth cover stands on the caster's ground, with an open back for readability.
+                    float angle = Mathf.Lerp(-Mathf.PI * .65f, Mathf.PI * .65f, u);
+                    var bounds = Profile.BodyMesh.bounds.size;
+                    float height = 1.25f + .22f * Mathf.Cos(angle);
+                    partScale = new Vector3(.62f / bounds.x, height / bounds.y, .48f / bounds.z) * pulse;
+                    partCenter = new Vector3(0, _originGround + height * pulse * .5f + .015f, 0);
+                    local = new Vector3(Mathf.Sin(angle) * 1.25f, 0, Mathf.Cos(angle) * 1.25f);
+                    axis = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle));
+                }
                 if (authoritativeVolley && i < ReceivedAreaPlan.Shots.Count)
                 {
                     var shot = ReceivedAreaPlan.Shots[i];
@@ -299,6 +314,17 @@ namespace Oheangbu.App.SpellVFX120
             // Accent geometry has its own authored count; e.g. one tree has twelve leaves.
             for (int i = 0; i < _accents.Length; i++)
             {
+                if (Vfx120VariantMotion.TrySampleSelfAccent(Profile, Age, Life, _originGround, i, _accents.Length, out var selfPose))
+                {
+                    ApplyCuePose(_accents[i], _accentRenderers[i], selfPose, Color.Lerp(Profile.Pigment, Profile.Accent, .65f));
+                    continue;
+                }
+                if (Vfx120SummonMotion.TrySampleAccent(Profile, Age, Life, _parts[0].localPosition,
+                    _parts[0].localRotation, _parts[0].localScale, i, _accents.Length, out var summonPose))
+                {
+                    ApplyCuePose(_accents[i], _accentRenderers[i], summonPose, Color.Lerp(Profile.Pigment, Profile.Accent, i % 3 == 0 ? .8f : .25f));
+                    continue;
+                }
                 if (cueMotion && Vfx120CueMotion.TrySample(cueContext, Vfx120CueMotion.PartRole.Accent, i, _accents.Length, out var accentPose))
                 {
                     ApplyCuePose(_accents[i], _accentRenderers[i], accentPose, i % 3 == 0 ? Profile.Accent : Profile.Pigment);
@@ -325,7 +351,8 @@ namespace Oheangbu.App.SpellVFX120
             if (Profile.Glyph == "막") guard = false;
             bool wideGuard = IsWideGuard();
             bool castOnly = Profile.Behavior == Vfx120Behavior.Projectile || Profile.Behavior == Vfx120Behavior.Weapon;
-            float ground = Profile.Behavior == Vfx120Behavior.Bind || Profile.Behavior == Vfx120Behavior.Zone || Profile.Behavior == Vfx120Behavior.Burst || Profile.Behavior == Vfx120Behavior.Summon ? _targetGround : _originGround;
+            bool selfZone = Profile.Glyph == "넉" || Profile.Glyph == "국";
+            float ground = !selfZone && (Profile.Behavior == Vfx120Behavior.Bind || Profile.Behavior == Vfx120Behavior.Zone || Profile.Behavior == Vfx120Behavior.Burst || Profile.Behavior == Vfx120Behavior.Summon) ? _targetGround : _originGround;
             Vector3 sealCenter = guard && !wideGuard ? center : new Vector3(center.x, ground + .04f, center.z);
             if (castOnly) sealCenter = new Vector3(0, 0, .15f);
             _seal.localPosition = sealCenter;
@@ -480,7 +507,9 @@ namespace Oheangbu.App.SpellVFX120
             }
             var b = Profile.Behavior;
             if (Profile.Glyph == "국") return new Vector3(0, _originGround, 0);
-            if (Profile.Glyph == "넉") return new Vector3(0, .1f, 0);
+            if (Profile.Glyph == "넉") return new Vector3(0, _originGround + .14f, 0);
+            if (Profile.Glyph == "넌") return new Vector3(.48f, _originGround + 1.04f, .40f);
+            if (Profile.Glyph == "넘") return new Vector3(0, _originGround + 1.30f, .30f);
             if (b == Vfx120Behavior.Projectile) return Vector3.Lerp(Vector3.zero, _aim, Mathf.Clamp01(Age / Mathf.Max(.01f, _flight)));
             if (b == Vfx120Behavior.Wave)
             {

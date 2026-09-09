@@ -73,7 +73,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 p.BodyMesh = meshCache[d.family]; p.AccentMesh = meshCache[d.accentFamily];
                 bool solid = d.family != "Cloud" && d.family != "Flame" && d.family != "Ember" && d.family != "Ripple" && d.family != "Ribbon" && d.family != "WaveCrest" && d.family != "Sand";
                 float fluid = d.family == "WaveCrest" ? 1 : d.family == "Flame" ? 2 : d.family == "Sand" ? 3 : d.family == "Cloud" ? 4 : 0;
-                p.BodyMaterial = MaterialAt("M_Body_" + d.family, shader, null, false, solid, d.family == "Shard" || d.family == "Blade" ? 1 : 0, fluid);
+                if (d.glyph == "놈") { solid = false; fluid = 2; }
+                if (d.glyph == "옴") { solid = false; fluid = 1; }
+                string bodyKey = d.family == "Beast" ? d.family + "_" + d.glyph : d.family;
+                p.BodyMaterial = MaterialAt("M_Body_" + bodyKey, shader, null, false, solid, d.family == "Shard" || d.family == "Blade" || d.glyph == "솜" ? 1 : 0, fluid);
                 p.InkMaterial = ink; p.MistMaterial = mist;
                 p.Pigment = d.pigment; p.Accent = d.accent;
                 p.Count = d.count; p.Size = d.size; p.Duration = d.duration; p.Flight = d.flight;

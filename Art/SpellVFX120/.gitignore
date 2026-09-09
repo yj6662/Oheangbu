@@ -6,8 +6,7 @@ capture_progress.json
 review_file_validation.json
 *.blend1
 FirstPass/
-# Generated gallery uses final Stills/Clips, which are not completed at this checkpoint.
-REVIEW.html
+# REVIEW.html preserves the selected ThirdPass checkpoint; final clips remain unfinished.
 
 # Licensed source texture contact sheets remain local.
 AssetAudit/

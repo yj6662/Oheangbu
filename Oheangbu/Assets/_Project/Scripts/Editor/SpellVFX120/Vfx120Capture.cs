@@ -26,6 +26,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         [Serializable] class CaptureEvidence
         {
             public string glyph, title, status = "PRESENTATION_REVIEW_ONLY";
+            public string capturedUtc, loadedRuntimeAssemblyMvid, loadedRuntimeAssemblyLastWriteUtc;
             public bool demonstrationCues, gameplayConnectionVerified;
             public float impactTime, life;
             public float[] sampledSeconds;
@@ -52,6 +53,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             if (_r != null) throw new InvalidOperationException("A VFX capture is already running");
             if (EditorApplication.isPlaying) throw new InvalidOperationException("Capture requires edit review scene");
+            string runtimeAssembly = typeof(Vfx120Effect).Assembly.Location;
+            DateTime compiled = File.GetLastWriteTimeUtc(runtimeAssembly);
+            foreach (string source in Directory.GetFiles("Assets/_Project/Scripts/App/SpellVFX120", "*.cs", SearchOption.AllDirectories))
+                if (File.GetLastWriteTimeUtc(source) > compiled)
+                    throw new InvalidOperationException("Refresh/compile VFX scripts before capture: " + source);
             _r = string.IsNullOrEmpty(request) ? new Request() : JsonUtility.FromJson<Request>(request);
             _r.start = Mathf.Max(0, _r.start); _r.count = Mathf.Max(1, _r.count);
             _r.frames = Mathf.Clamp(_r.frames, 1, 5); _r.fps = Mathf.Clamp(_r.fps, 1, 120);
@@ -130,6 +136,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 seconds[i] = _r.clip ? i / _r.fps : SampleFractions[i] * _effect.Life;
             var evidence = new CaptureEvidence
             {
+                capturedUtc = DateTime.UtcNow.ToString("o"),
+                loadedRuntimeAssemblyMvid = typeof(Vfx120Effect).Assembly.ManifestModule.ModuleVersionId.ToString(),
+                loadedRuntimeAssemblyLastWriteUtc = File.GetLastWriteTimeUtc(typeof(Vfx120Effect).Assembly.Location).ToString("o"),
                 glyph = entry.Glyph, title = entry.Profile.Title, demonstrationCues = _r.demonstrationCues,
                 gameplayConnectionVerified = false, sampledSeconds = seconds,
                 impactTime = _effect.ReceivedImpactClock > 0 ? _effect.ReceivedImpactClock : entry.Profile.Flight,

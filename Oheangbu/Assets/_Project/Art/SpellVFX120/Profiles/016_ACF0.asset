@@ -23,7 +23,7 @@ MonoBehaviour:
   Layout: 5
   BodyMesh: {fileID: 4300000, guid: a56d873f092ef7f44860f906637fecc3, type: 2}
   AccentMesh: {fileID: 4300000, guid: a50ca8db1c4b5914c926f2ccd3dca4fa, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: b824c0f741dd89142bcf74f5b0cb15c0, type: 2}
+  BodyMaterial: {fileID: 2100000, guid: 0d756ff5cc956b645b642463689226b3, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}

@@ -42,6 +42,12 @@ namespace Oheangbu.App.SpellVFX120
                     ref center, ref local, ref axis, ref scale); break;
                 case '국': GrowingFooting(p, age, flight, life, index, count, originGround,
                     ref center, ref local, ref axis, ref scale); break;
+                case '넉': LowEmberRing(p, age, life, index, count, size, originGround,
+                    ref center, ref local, ref axis, ref scale); break;
+                case '넌': ForearmCharge(p, age, life, index, originGround,
+                    ref center, ref local, ref axis, ref scale); break;
+                case '넘': SteadfastPoints(p, age, life, index, originGround,
+                    ref center, ref local, ref axis, ref scale); break;
                 case '낫': FireSplit(p, age, flight, life, index, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
                 case '논': FireEndBurst(p, age, flight, life, u, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
                 case '망': StoneSkip(p, age, flight, life, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
@@ -57,6 +63,105 @@ namespace Oheangbu.App.SpellVFX120
                 case '솟':
                 case '송': MetalSalvo(p, glyph, age, flight, life, index, count, u, aim, size, ref center, ref local, ref axis, ref scale); break;
             }
+        }
+
+        // These three effects have caster-relative accents too. Calling only Apply
+        // would leave the generic flecks at the old head/target anchor.
+        public static int GetSelfAccentCount(Vfx120Profile p)
+        {
+            if (p == null) return 0;
+            switch (p.Glyph) { case "넉": return 12; case "넌": return 6; case "넘": return 3; default: return 0; }
+        }
+
+        public static bool TrySampleSelfAccent(Vfx120Profile p, float age, float life,
+            float originGround, int index, int count, out Vfx120CueMotion.Pose pose)
+        {
+            pose = new Vfx120CueMotion.Pose { Rotation = Quaternion.identity };
+            int wanted = GetSelfAccentCount(p);
+            if (wanted == 0) return false;
+            if (!Finite(age) || !Finite(life) || !Finite(originGround) || index < 0 || index >= count || index >= wanted)
+                return true; // Authored hidden pose; never fall back to the obsolete anchor.
+            float fade = Lifetime(age, life);
+            Vector3 point, axis, dimensions;
+            if (p.Glyph == "넉")
+            {
+                float a = index * Mathf.PI * 2 / wanted + age * .42f;
+                Vector3 radial = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                float rise = .5f + .5f * Mathf.Sin(age * 2.8f + index * 1.7f);
+                point = radial * Mathf.Max(.55f, p.Size * .98f);
+                point.y = originGround + .10f + rise * .18f;
+                axis = Direction(Vector3.up + radial * .18f);
+                dimensions = new Vector3(.065f, .035f, .15f);
+            }
+            else if (p.Glyph == "넌")
+            {
+                float a = index * Mathf.PI * 2 / wanted + age * 1.8f;
+                // An exposed point outside the right forearm, not inside the torso.
+                Vector3 charge = new Vector3(.48f, originGround + 1.04f, .40f);
+                point = charge + new Vector3(Mathf.Cos(a) * .09f, Mathf.Sin(a) * .12f, -.025f + (index % 2) * .07f);
+                axis = Direction(charge - point + Vector3.up * .08f);
+                float breathe = 1 + .09f * Mathf.Sin(age * 4 + index);
+                dimensions = new Vector3(.07f, .06f, .14f) * breathe;
+            }
+            else
+            {
+                point = SteadfastPoint(index, age, originGround) + Vector3.forward * .025f;
+                axis = Vector3.up;
+                dimensions = new Vector3(.035f, .035f, .075f);
+            }
+            pose.Position = point;
+            pose.Rotation = Face(axis);
+            pose.Scale = MeshSize(p.AccentMesh, dimensions, Vector3.one) * fade;
+            pose.Alpha = fade;
+            pose.Visible = fade > .001f;
+            return true;
+        }
+
+        private static void LowEmberRing(Vfx120Profile p, float age, float life, int index,
+            int count, float size, float ground, ref Vector3 center, ref Vector3 local,
+            ref Vector3 axis, ref Vector3 scale)
+        {
+            float a = index * Mathf.PI * 2 / count + age * .22f;
+            Vector3 radial = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+            float breath = .88f + .12f * Mathf.Sin(age * 3.2f + index * 1.3f);
+            axis = Direction(Vector3.up + radial * .24f);
+            scale = WorldSize(p, new Vector3(.105f, .08f, .24f * breath)) * Lifetime(age, life);
+            center = radial * Mathf.Max(.55f, size * .94f);
+            center.y = ground + HalfHeight(p, axis, scale) + .035f;
+            local = Vector3.zero;
+        }
+
+        private static void ForearmCharge(Vfx120Profile p, float age, float life, int index,
+            float ground, ref Vector3 center, ref Vector3 local, ref Vector3 axis, ref Vector3 scale)
+        {
+            center = new Vector3(.48f, ground + 1.04f, .40f);
+            local = Vector3.zero;
+            if (index >= 2) { scale = Vector3.zero; axis = Vector3.up; return; }
+            // Two short crossed ribbons form a held knot; six embers carry the charge.
+            float turn = age * .65f + index * Mathf.PI;
+            center += new Vector3(Mathf.Cos(turn) * .025f, Mathf.Sin(turn) * .035f, index * .035f);
+            axis = Direction(Vector3.up + Vector3.right * (index == 0 ? .7f : -.7f));
+            scale = WorldSize(p, new Vector3(.10f, .055f, .31f)) * Lifetime(age, life);
+        }
+
+        private static void SteadfastPoints(Vfx120Profile p, float age, float life, int index,
+            float ground, ref Vector3 center, ref Vector3 local, ref Vector3 axis, ref Vector3 scale)
+        {
+            center = SteadfastPoint(index, age, ground);
+            local = Vector3.zero;
+            // Seal lies in XZ. Pointing its Z upward turns its broad face forward.
+            axis = Direction(Vector3.up + Vector3.right * Mathf.Sin(age * .40f + index * 2) * .12f);
+            scale = index < 3
+                ? WorldSize(p, new Vector3(.145f, .032f, .19f)) * Lifetime(age, life)
+                : Vector3.zero;
+        }
+
+        private static Vector3 SteadfastPoint(int index, float age, float ground)
+        {
+            Vector3 point = index == 0 ? new Vector3(0, ground + 1.27f, .40f)
+                : new Vector3(index == 1 ? -.34f : .34f, ground + 1.43f, .26f);
+            float a = age * .48f + index * Mathf.PI * 2 / 3;
+            return point + new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0) * .025f;
         }
 
         // 곡: interwoven horizontal roots spread OUT from the selected floor point, then
@@ -188,10 +293,21 @@ namespace Oheangbu.App.SpellVFX120
         // so a later remesh preserves authored widths/heights without mutating vertices.
         private static Vector3 WorldSize(Vfx120Profile p, Vector3 dimensions)
         {
-            Vector3 extent = p.BodyMesh != null ? p.BodyMesh.bounds.size : new Vector3(.79318f, .24870f, 1);
+            return MeshSize(p.BodyMesh, dimensions, new Vector3(.79318f, .24870f, 1));
+        }
+
+        private static Vector3 MeshSize(Mesh mesh, Vector3 dimensions, Vector3 fallback)
+        {
+            Vector3 extent = mesh != null ? mesh.bounds.size : fallback;
             return new Vector3(Mathf.Max(0, dimensions.x) / Mathf.Max(.001f, extent.x),
                 Mathf.Max(0, dimensions.y) / Mathf.Max(.001f, extent.y),
                 Mathf.Max(0, dimensions.z) / Mathf.Max(.001f, extent.z));
+        }
+
+        private static Quaternion Face(Vector3 axis)
+        {
+            axis = Direction(axis);
+            return Quaternion.LookRotation(axis, Mathf.Abs(axis.y) > .98f ? Vector3.forward : Vector3.up);
         }
 
         private static float HalfHeight(Vfx120Profile p, Vector3 axis, Vector3 scale)

@@ -42,18 +42,33 @@ namespace Oheangbu.EditorTools
             public string target; public float plannedTime, actualTime, power, actualDamage, lateSeconds, frameDelta;
             public bool observed;
         }
+        [Serializable] private sealed class CaptureRow
+        {
+            public string glyph, phase, status = "REQUESTED", png, camera, error;
+            public int frame, width = 1280, height = 720, observedHitCount;
+            public float age, life, time, unscaledTime, timeScale, scheduledReferenceTime, observationLateness;
+            public float cameraFieldOfView, cameraAspect, cameraNear, cameraFar;
+            public Vector3 cameraPosition, cameraEulerAngles, effectOrigin, originViewport;
+            public bool cameraOrthographic, cameraStateRestored;
+            public double captureWallMilliseconds;
+        }
         [Serializable] private sealed class CaseRow
         {
             public string glyph, kind, shape, prefab, profile, spawnedGlyph, status = "RUNNING", error;
             public float commitTime, timeScale, receivedImpactClock, expectedImpactClock, receivedGuardClock;
             public float receivedBrightWindow, guardStart, inkBefore, inkAfter, expectedInkAfter;
             public float originError, maximumHitLateness, lastObservedEffectAge;
+            public float effectDeclaredLife, effectStartedAt, firstMissingTime = -1f, missingFrameAllowance, earlyDestructionSeconds;
+            public float scheduledImpactTime, forwardedImpactTime, impactScheduleError;
             public int commitFrame, spawnObservedFrame, plannedEvents, spawnedRoots, authoredComponents, legacyComponents;
             public int expectedHits, actualHits, observedUpdateFrames;
             public bool profileReferenceMatches, areaReferenceMatches, areaContentsUnchanged;
             public bool targetMatches, guardMatches, naturallyDestroyed, actualUpdateObserved, pendingContextCleared;
+            public bool lifetimeWithinObservedFrame;
             public string areaAtCast, areaAtFinish;
             public List<HitRow> hits = new List<HitRow>();
+            public string captureStatus = "DISABLED";
+            public List<CaptureRow> captures = new List<CaptureRow>();
         }
         [Serializable] private sealed class AssetRow
         {
@@ -62,13 +77,18 @@ namespace Oheangbu.EditorTools
         [Serializable] private sealed class Report
         {
             public string status, stage, output, scene, unityVersion, sourceWiring, sourceAdapter, sourceVisualSet;
-            public string scope = "15 production spell entries in actual Editor Play. A temporary CombatLoopWiring/SpellResolver/ParryJudge/InkPool and BrushStrokeFeedAdapter reuse the selected live scene's readonly settings. Accepted DrawnLetter plus low-level DrawingInputController events enter real subscribers; production event handlers invoke SpawnPattern and real Update schedules damage and advances/destroys VFX.";
+            public string scope = "15 production spell entries in actual Editor Play. A temporary CombatLoopWiring/SpellResolver/ParryJudge/InkPool and BrushStrokeFeedAdapter reuse the selected live scene's readonly settings. Accepted DrawnLetter plus low-level DrawingInputController events enter real subscribers; normal LateUpdate invokes SpawnPattern and real Update schedules damage and advances/destroys VFX.";
             public string limitations = "UNVERIFIED: physical input, recognizer/Raw samples, existing player's DI/channel wiring, user camera/movement/lock-on state transitions, actual enemy AI, incoming-attack parry outcomes, art/readability and performance. Two synthetic strokes represent event ordering, not the written glyph. Temporary targets have no controller/collider and fixture lock-on selects a camera-centred target. Existing gameplay can continue and may confound global spawn observations. Production stroke noise consumes Unity's global Random just as real drawing does; the harness does not reset unrelated gameplay RNG.";
             public string selection = "Only existing SpellVisualSet references are used; missing/new-profile mappings fail rather than being replaced by the harness.";
             public string sceneHashBefore, sceneHashAfter;
             public long startedUtcTicks;
             public int completed, failed, errors;
             public bool sceneFileUnchanged, assetsUnchanged, isolatedServices, cleanupCompleted;
+            public string cleanupStatus = "NOT_REQUESTED";
+            public int cleanupTrackedObjects, cleanupResidualObjects;
+            public bool captureFrames;
+            public string captureDirectory, captureStatus = "DISABLED";
+            public string captureScope = "Optional 1280x720 extra render of the actual live Camera.main state. No Sample/Begin, animation seek, time-scale change, camera move or fabricated impact is used. PNGs exclude screen-space overlay UI and are not a continuous video or art PASS. Extra camera render/readback/PNG encoding stalls the Editor: this run is not a CPU, GPU or frame-rate measurement.";
             public List<CaseRow> cases = new List<CaseRow>();
             public List<AssetRow> assets = new List<AssetRow>();
             public List<string> messages = new List<string>();
@@ -93,6 +113,9 @@ namespace Oheangbu.EditorTools
         private static Fixture _fixture;
         private static int _next, _lastFrame = -1, _waitFrame;
         private static readonly List<AssetSnapshot> _assets = new List<AssetSnapshot>();
+        private static readonly List<Object> _cleanupPending = new List<Object>();
+        private static bool _cleanupDiscoveryFailed;
+        private static double _cleanupRequestedAt;
         private static bool Active => _report != null && _report.status == "RUNNING";
         private static string Output => Path.Combine(Directory.GetParent(Application.dataPath).Parent.FullName, "Art/SpellVFX120/gameplay_audit.json");
 
@@ -117,7 +140,7 @@ namespace Oheangbu.EditorTools
             }
         }
 
-        public static string Start(int wiringInstanceId = 0)
+        public static string Start(int wiringInstanceId = 0, bool captureFrames = false)
         {
             if (Active) return Poll();
             if (!Application.isPlaying || EditorApplication.isPaused) return "{\"status\":\"NOT_RUN_PLAY_REQUIRED\"}";
@@ -128,9 +151,11 @@ namespace Oheangbu.EditorTools
             {
                 status = "RUNNING", stage = "PREFLIGHT", output = Output, scene = scene.path,
                 unityVersion = Application.unityVersion, startedUtcTicks = DateTime.UtcNow.Ticks,
-                sceneHashBefore = FileHash(scene.path)
+                sceneHashBefore = FileHash(scene.path), captureFrames = captureFrames,
+                captureStatus = captureFrames ? "RUNNING_UNVERIFIED" : "DISABLED",
+                captureDirectory = captureFrames ? Path.Combine(Path.GetDirectoryName(Output), "GameplayCapture", DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff")) : null
             };
-            _assets.Clear(); _next = 0; _lastFrame = -1;
+            _assets.Clear(); _cleanupPending.Clear(); _cleanupDiscoveryFailed = false; _next = 0; _lastFrame = -1;
             try
             {
                 var matches = new List<CombatLoopWiring>();
@@ -196,6 +221,7 @@ namespace Oheangbu.EditorTools
                 {
                     if (_next >= Glyphs.Length) { Finish(_report.failed == 0 && _report.errors == 0 ? "PASS_RECOGNIZED_EVENT_RUNTIME_FIXTURE_ONLY" : "FAIL_RUNTIME_FIXTURE", null); return; }
                     char glyph = Glyphs[_next++];
+                    _report.cleanupCompleted = false; _report.cleanupStatus = "ACTIVE_FIXTURE";
                     _fixture = new Fixture(glyph); _report.cases.Add(_fixture.row);
                     _waitFrame = Time.frameCount + 2; _report.stage = "WAIT_START"; Save();
                 }
@@ -215,7 +241,12 @@ namespace Oheangbu.EditorTools
                         _fixture.ValidateFinish(); EndCase();
                     }
                 }
-                else if (_report.stage == "CLEANUP_FRAME" && Time.frameCount >= _waitFrame) _report.stage = "NEXT_CASE";
+                else if (_report.stage == "CLEANUP_FRAME" && Time.frameCount >= _waitFrame)
+                {
+                    if (ObserveCleanup()) { _cleanupPending.Clear(); _report.stage = "NEXT_CASE"; Save(); }
+                    else if (EditorApplication.timeSinceStartup - _cleanupRequestedAt > 2)
+                        Abort("Fixture cleanup was not observed complete within two seconds; remaining objects/discovery are unverified.");
+                }
             }
             catch (Exception e)
             {
@@ -255,13 +286,19 @@ namespace Oheangbu.EditorTools
             private CastPlan plan;
             private string planBefore;
             private Vfx120Effect effect;
-            private bool disposed;
+            private bool disposed, committedEventSubmitted;
+            private float lastEffectFrameDelta;
+            private readonly bool[] capturedPhases = new bool[3];
+            private int lastCaptureFrame = -1;
+            private RenderTexture captureTarget;
+            private Texture2D captureReadback;
 
             public Fixture(char glyph)
             {
                 _book.TryGet(glyph, out spell); _visuals.TryGet(glyph, out var visual);
                 expectedProfile = visual.FxPrefab.GetComponent<Vfx120Effect>().Profile;
                 row = new CaseRow { glyph = glyph.ToString(), kind = spell.Kind.ToString(), shape = spell.AreaShape.ToString(), prefab = AssetDatabase.GetAssetPath(visual.FxPrefab), profile = AssetDatabase.GetAssetPath(expectedProfile) };
+                if (_report.captureFrames) row.captureStatus = "RUNNING_UNVERIFIED";
                 try
                 {
                 root = new GameObject("Vfx120GameplayAudit_" + glyph) { hideFlags = HideFlags.DontSave };
@@ -346,6 +383,7 @@ namespace Oheangbu.EditorTools
                 Jamo initial = new[] { Jamo.Giyeok, Jamo.Nieun, Jamo.Mieum, Jamo.Siot, Jamo.Ieung }[index % 5];
                 Jamo medial = index < 5 ? Jamo.A : index < 10 ? Jamo.O : Jamo.Eo;
                 letterChannel.Raise(new DrawnLetter(row.glyph[0], initial, medial, null, .8f, .75f, 1.2f, 1.4f, 2));
+                committedEventSubmitted = true;
                 RaiseInput("Committed", true);
                 RaiseInput("ModeExited"); // same ordering as successful DrawingInputController exit
                 row.inkAfter = ink.Value;
@@ -377,15 +415,16 @@ namespace Oheangbu.EditorTools
                 var candidates = new List<GameObject>();
                 foreach (var go in Patterns()) if (!beforePatterns.Contains(go.GetInstanceID())) candidates.Add(go);
                 row.spawnedRoots = candidates.Count; row.spawnObservedFrame = Time.frameCount;
+                var matches = new List<GameObject>();
                 foreach (var go in candidates)
                 {
                     var probe = go.GetComponent<Vfx120Effect>();
-                    // Only claim ownership when a new component received this fixture's actual bounds.
-                    if (probe != null && (probe.ReceivedOrigin - bounds.center).sqrMagnitude < .000001f)
-                    {
-                        ownedEffects.Add(go); effect = probe;
-                    }
+                    // Area identity/temporary targets distinguish the fixture from concurrent
+                    // real-player casts; guards additionally require the expected profile/bounds.
+                    if (probe != null && HasOwnContext(probe) && (probe.ReceivedOrigin - bounds.center).sqrMagnitude < .000001f) matches.Add(go);
                 }
+                if (matches.Count == 1) { ownedEffects.Add(matches[0]); effect = matches[0].GetComponent<Vfx120Effect>(); }
+                else if (matches.Count > 1) _cleanupDiscoveryFailed = true;
                 Need(candidates.Count == 1 && ownedEffects.Count == 1, "Expected one fixture spawn; found " + candidates.Count + ". Concurrent gameplay or missing/duplicate/legacy spawn confounds this case.");
                 row.authoredComponents = effect.GetComponentsInChildren<Vfx120Effect>(true).Length;
                 row.legacyComponents = effect.GetComponentsInChildren<PatternEffectLifetime>(true).Length;
@@ -403,6 +442,15 @@ namespace Oheangbu.EditorTools
                 row.expectedImpactClock = spell.Kind == SpellKind.AttackSingle
                     ? Vector3.Distance(player.position, plan.Hits[0].Target.transform.position) / Mathf.Max(1f, _config.SpellProjectileSpeed * plan.Cast.SpeedMul) : 0f;
                 Need(Mathf.Abs(row.receivedImpactClock - row.expectedImpactClock) < .00002f, "Authoritative impact duration was changed or invented.");
+                if (spell.Kind == SpellKind.AttackSingle)
+                {
+                    row.scheduledImpactTime = plan.Hits[0].ImpactTime;
+                    // Add the relative clock to the original commit time. This compares the
+                    // actual scheduled timestamp without precision loss from subtracting two large times.
+                    row.forwardedImpactTime = row.commitTime + row.receivedImpactClock;
+                    row.impactScheduleError = Mathf.Abs(row.forwardedImpactTime - row.scheduledImpactTime);
+                    Need(row.impactScheduleError <= .00002f, "Forwarded VFX clock differs from the actual scheduled impact timestamp.");
+                }
                 row.areaReferenceMatches = ReferenceEquals(effect.ReceivedAreaPlan, plan?.Area);
                 Need(row.areaReferenceMatches, "AreaImpactPlan identity was not forwarded unchanged.");
                 Transform expectedTarget = spell.Kind == SpellKind.Parry || spell.AreaShape == AreaShape.Cone ? null
@@ -416,23 +464,138 @@ namespace Oheangbu.EditorTools
                 row.pendingContextCleared = Get<Transform>(adapter, "_pendingAttackTarget") == null && Get<float>(adapter, "_pendingAttackDuration") == 0f
                     && Get<AreaImpactPlan>(adapter, "_pendingAreaPlan") == null && Get<GameObject>(adapter, "_pendingFxPrefab") == null;
                 Need(row.pendingContextCleared, "Adapter kept consumed cast context.");
-                finishAt = Time.time + effect.Life - effect.Age + .15f;
+                row.effectDeclaredLife = effect.Life;
+                row.effectStartedAt = Time.time - effect.Age;
+                finishAt = row.effectStartedAt + row.effectDeclaredLife + .15f;
                 if (plan != null) foreach (var hit in plan.Hits) finishAt = Mathf.Max(finishAt, hit.ImpactTime + .15f);
                 Observe();
             }
 
             public void Observe()
             {
-                if (effect == null) { row.naturallyDestroyed = true; return; }
+                if (effect == null)
+                {
+                    row.naturallyDestroyed = true;
+                    if (row.firstMissingTime < 0f)
+                    {
+                        row.firstMissingTime = Time.time;
+                        row.missingFrameAllowance = Mathf.Max(Time.deltaTime, lastEffectFrameDelta) + .001f;
+                        row.earlyDestructionSeconds = Mathf.Max(0, row.effectStartedAt + row.effectDeclaredLife - row.firstMissingTime);
+                        row.lifetimeWithinObservedFrame = row.earlyDestructionSeconds <= row.missingFrameAllowance;
+                    }
+                    return;
+                }
                 row.observedUpdateFrames++;
                 if (effect.Age > row.lastObservedEffectAge) row.actualUpdateObserved = true;
                 row.lastObservedEffectAge = effect.Age;
+                lastEffectFrameDelta = Time.deltaTime;
+                ObserveCapture();
+            }
+
+            private void ObserveCapture()
+            {
+                if (!_report.captureFrames || effect == null || lastCaptureFrame == Time.frameCount) return;
+                int phase = -1;
+                float referenceTime = row.effectStartedAt;
+                string phaseName = "spawn_observed";
+                if (!capturedPhases[0]) phase = 0;
+                else
+                {
+                    bool guard = spell.Kind == SpellKind.Parry;
+                    float eventTime = guard ? row.guardStart + row.receivedBrightWindow : float.PositiveInfinity;
+                    if (!guard && plan != null)
+                        foreach (var hit in plan.Hits) eventTime = Mathf.Min(eventTime, hit.ImpactTime);
+                    // A scheduled attack alone does not count as an observed impact. The real
+                    // EnemyVitals callback must already have fired; guards have no hit event.
+                    bool eventObserved = guard ? Time.time >= eventTime : actual.Count > 0;
+                    bool eventDue = !capturedPhases[1] && eventObserved;
+                    bool middleDue = !capturedPhases[2] && effect.Age >= effect.Life * .5f;
+                    if (eventDue && (!middleDue || eventTime <= row.effectStartedAt + effect.Life * .5f))
+                    {
+                        phase = 1; referenceTime = eventTime;
+                        phaseName = guard ? "guard_bright_window_end_observed" : "first_damage_observed";
+                    }
+                    else if (middleDue)
+                    {
+                        phase = 2; referenceTime = row.effectStartedAt + effect.Life * .5f;
+                        phaseName = "mid_lifetime_observed";
+                    }
+                }
+                if (phase < 0) return;
+                capturedPhases[phase] = true; lastCaptureFrame = Time.frameCount;
+                CaptureLiveCamera(phaseName, referenceTime);
+            }
+
+            private void CaptureLiveCamera(string phase, float referenceTime)
+            {
+                var shot = new CaptureRow
+                {
+                    glyph = row.glyph, phase = phase, frame = Time.frameCount,
+                    age = effect.Age, life = effect.Life, time = Time.time, unscaledTime = Time.unscaledTime,
+                    timeScale = Time.timeScale, scheduledReferenceTime = referenceTime,
+                    observationLateness = Time.time - referenceTime, observedHitCount = actual.Count,
+                    effectOrigin = effect.ReceivedOrigin
+                };
+                row.captures.Add(shot);
+                var timer = System.Diagnostics.Stopwatch.StartNew();
+                try
+                {
+                    var camera = Camera.main;
+                    Need(camera != null, "Live main camera disappeared before capture.");
+                    shot.camera = camera.name + "#" + camera.GetInstanceID();
+                    shot.cameraPosition = camera.transform.position; shot.cameraEulerAngles = camera.transform.eulerAngles;
+                    shot.cameraFieldOfView = camera.fieldOfView; shot.cameraAspect = camera.aspect;
+                    shot.cameraNear = camera.nearClipPlane; shot.cameraFar = camera.farClipPlane;
+                    shot.cameraOrthographic = camera.orthographic;
+                    shot.originViewport = camera.WorldToViewportPoint(shot.effectOrigin);
+                    if (captureTarget == null)
+                    {
+                        captureTarget = new RenderTexture(shot.width, shot.height, 24, RenderTextureFormat.ARGB32)
+                            { name = "Vfx120GameplayCaptureRT", hideFlags = HideFlags.DontSave };
+                        Need(captureTarget.Create(), "Capture render texture could not be created.");
+                        captureReadback = new Texture2D(shot.width, shot.height, TextureFormat.RGB24, false)
+                            { name = "Vfx120GameplayCaptureReadback", hideFlags = HideFlags.DontSave };
+                    }
+                    RenderTexture previousTarget = camera.targetTexture, previousActive = RenderTexture.active;
+                    // Retain the live camera projection/transform and restore its render target
+                    // even if rendering/readback throws. No presentation clocks are advanced here.
+                    try
+                    {
+                        camera.targetTexture = captureTarget;
+                        camera.Render();
+                        RenderTexture.active = captureTarget;
+                        captureReadback.ReadPixels(new Rect(0, 0, shot.width, shot.height), 0, 0);
+                        captureReadback.Apply(false, false);
+                    }
+                    finally
+                    {
+                        if (camera != null) camera.targetTexture = previousTarget;
+                        RenderTexture.active = previousActive;
+                        shot.cameraStateRestored = camera != null && camera.targetTexture == previousTarget && RenderTexture.active == previousActive;
+                    }
+                    Need(shot.cameraStateRestored, "Camera render-target restoration could not be confirmed.");
+                    Directory.CreateDirectory(_report.captureDirectory);
+                    shot.png = Path.Combine(_report.captureDirectory, row.glyph + "_" + phase + "_f" + shot.frame.ToString("D6") + ".png");
+                    File.WriteAllBytes(shot.png, captureReadback.EncodeToPNG());
+                    shot.status = "CAPTURED_VISUAL_REVIEW_REQUIRED";
+                }
+                catch (Exception e)
+                {
+                    shot.status = "FAILED_CAPTURE_UNVERIFIED"; shot.error = e.GetBaseException().Message;
+                    _report.messages.Add("Capture " + row.glyph + "/" + phase + ": " + shot.error);
+                }
+                finally
+                {
+                    timer.Stop(); shot.captureWallMilliseconds = timer.Elapsed.TotalMilliseconds;
+                    if (!string.IsNullOrEmpty(shot.png)) File.WriteAllText(Path.ChangeExtension(shot.png, ".json"), JsonUtility.ToJson(shot, true));
+                }
             }
 
             public void ValidateFinish()
             {
                 Observe(); Need(row.actualUpdateObserved, "No natural Vfx120Effect.Update progression observed.");
                 Need(row.naturallyDestroyed, "Effect outlived its declared scaled-time lifetime.");
+                Need(row.lifetimeWithinObservedFrame, "Effect disappeared before its declared lifetime (beyond the observed frame allowance).");
                 row.actualHits = actual.Count;
                 Need(actual.Count == row.expectedHits, "Actual damage callback count differs from CastPlanned.");
                 if (plan != null)
@@ -456,21 +619,124 @@ namespace Oheangbu.EditorTools
                 row.areaAtFinish = AreaText(plan?.Area);
                 row.areaContentsUnchanged = row.areaAtFinish == planBefore || (plan == null && row.areaAtFinish == "null");
                 Need(row.areaContentsUnchanged, "Presentation changed the authoritative area/shot plan.");
+                CompleteCaptureStatus();
+            }
+
+            private void CompleteCaptureStatus()
+            {
+                if (!_report.captureFrames) return;
+                bool complete = row.captures.Count == 3;
+                foreach (var shot in row.captures) complete &= shot.status == "CAPTURED_VISUAL_REVIEW_REQUIRED";
+                row.captureStatus = complete ? "THREE_ACTUAL_FRAMES_VISUAL_REVIEW_REQUIRED" : "INCOMPLETE_OR_FAILED_UNVERIFIED";
             }
 
             public void Dispose()
             {
                 if (disposed) return; disposed = true;
+                CompleteCaptureStatus();
+                // An abort may happen after the real LateUpdate spawned a detached effect but
+                // before InspectSpawn registered it. Recover only this fixture's own context.
+                RecoverUnobservedEffect();
+                TrackHierarchy(root);
+                TrackCleanup(letterChannel); TrackCleanup(inkChannel);
+                foreach (var owned in ownedEffects) TrackHierarchy(owned);
                 if (adapter != null)
                 {
+                    TrackStrokes(adapter);
+                    var fallback = Get<Material>(adapter, "_fallbackMaterial"); TrackCleanup(fallback);
                     adapter.enabled = false; // production adapter owns detached stroke cleanup
-                    var fallback = Get<Material>(adapter, "_fallbackMaterial"); if (fallback != null) Object.Destroy(fallback);
+                    if (fallback != null) Object.Destroy(fallback);
                 }
                 if (root != null) { root.SetActive(false); Object.Destroy(root); }
                 foreach (var owned in ownedEffects) if (owned != null) Object.Destroy(owned);
                 if (letterChannel != null) Object.Destroy(letterChannel);
                 if (inkChannel != null) Object.Destroy(inkChannel);
+                if (captureTarget != null) { TrackCleanup(captureTarget); captureTarget.Release(); Object.Destroy(captureTarget); }
+                if (captureReadback != null) { TrackCleanup(captureReadback); Object.Destroy(captureReadback); }
+                _report.cleanupCompleted = false; _report.cleanupStatus = "REQUESTED_UNVERIFIED";
+                _cleanupRequestedAt = EditorApplication.timeSinceStartup;
             }
+
+            private void RecoverUnobservedEffect()
+            {
+                if (!committedEventSubmitted || ownedEffects.Count > 0) return;
+                try
+                {
+                    var matches = new List<GameObject>();
+                    Bounds bounds = default; bool hasBounds = false;
+                    if (spell.Kind == SpellKind.Parry)
+                    {
+                        var groups = adapter != null ? Get<IList>(adapter, "_fading") : null;
+                        if (groups != null && groups.Count == 1) { bounds = StrokeBounds(adapter); hasBounds = true; }
+                    }
+                    foreach (var go in Patterns())
+                    {
+                        if (beforePatterns.Contains(go.GetInstanceID())) continue;
+                        var probe = go.GetComponent<Vfx120Effect>();
+                        if (probe == null || !HasOwnContext(probe)) continue;
+                        bool own = spell.Kind != SpellKind.Parry || (hasBounds && (probe.ReceivedOrigin - bounds.center).sqrMagnitude < .000001f);
+                        if (own) matches.Add(go);
+                    }
+                    if (matches.Count == 1) ownedEffects.Add(matches[0]);
+                    else if (matches.Count > 1)
+                    {
+                        _cleanupDiscoveryFailed = true;
+                        _report.messages.Add("Ambiguous detached FX ownership; no potentially unrelated gameplay object was deleted.");
+                    }
+                    else if (spell.Kind == SpellKind.Parry && !hasBounds)
+                    {
+                        _cleanupDiscoveryFailed = true;
+                        _report.messages.Add("Interrupted guard fixture has no retained stroke bounds; detached FX cleanup remains unverified.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    _cleanupDiscoveryFailed = true;
+                    _report.messages.Add("Detached FX recovery could not be verified: " + e.GetBaseException().Message);
+                }
+            }
+
+            private bool HasOwnContext(Vfx120Effect probe)
+            {
+                if (plan?.Area != null) return ReferenceEquals(probe.ReceivedAreaPlan, plan.Area);
+                if (plan != null && plan.Hits.Count > 0) return probe.ReceivedTarget == plan.Hits[0].Target.transform;
+                return spell.Kind == SpellKind.Parry && probe.Profile == expectedProfile && probe.ReceivedTarget == null && probe.ReceivedAreaPlan == null;
+            }
+        }
+
+        private static void TrackCleanup(Object value)
+        {
+            if (value == null || EditorUtility.IsPersistent(value)) return;
+            foreach (var prior in _cleanupPending) if (ReferenceEquals(prior, value)) return;
+            _cleanupPending.Add(value); _report.cleanupTrackedObjects++;
+        }
+        private static void TrackHierarchy(GameObject root)
+        {
+            if (root == null) return;
+            foreach (var child in root.GetComponentsInChildren<Transform>(true)) TrackCleanup(child.gameObject);
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true)) TrackCleanup(ps);
+        }
+        private static void TrackStrokes(BrushStrokeFeedAdapter adapter)
+        {
+            void Track(BrushStrokeRenderer stroke)
+            {
+                if (stroke == null) return;
+                TrackHierarchy(stroke.gameObject); TrackCleanup(stroke.OwnedMaterial);
+                var filter = stroke.GetComponent<MeshFilter>(); if (filter != null) TrackCleanup(filter.sharedMesh);
+            }
+            foreach (var stroke in Get<List<BrushStrokeRenderer>>(adapter, "_strokes")) Track(stroke);
+            foreach (var group in Get<IList>(adapter, "_fading"))
+                foreach (var stroke in (IEnumerable<BrushStrokeRenderer>)group.GetType().GetField("Strokes").GetValue(group)) Track(stroke);
+        }
+        private static bool ObserveCleanup()
+        {
+            int residual = 0;
+            foreach (var value in _cleanupPending) if (value != null) residual++;
+            _report.cleanupResidualObjects = residual;
+            _report.cleanupCompleted = residual == 0 && !_cleanupDiscoveryFailed;
+            _report.cleanupStatus = _report.cleanupCompleted ? "OBSERVED_ZERO_TRACKED_RESIDUALS"
+                : _cleanupDiscoveryFailed ? "UNVERIFIED_DETACHED_FX_DISCOVERY" : "REQUESTED_UNVERIFIED";
+            return _report.cleanupCompleted;
         }
 
         private static Bounds StrokeBounds(BrushStrokeFeedAdapter adapter)
@@ -535,7 +801,14 @@ namespace Oheangbu.EditorTools
                 _fixture.Dispose(); _fixture = null;
             }
             Application.logMessageReceived -= OnLog;
-            _report.status = status; _report.stage = "FINISHED"; _report.cleanupCompleted = true;
+            _report.status = status; _report.stage = "FINISHED";
+            if (_report.captureFrames)
+            {
+                bool complete = _report.cases.Count == Glyphs.Length;
+                foreach (var row in _report.cases) complete &= row.captureStatus == "THREE_ACTUAL_FRAMES_VISUAL_REVIEW_REQUIRED";
+                _report.captureStatus = complete ? "CAPTURED_45_ACTUAL_FRAMES_VISUAL_REVIEW_REQUIRED" : "INCOMPLETE_OR_FAILED_UNVERIFIED";
+            }
+            ObserveCleanup(); // Destroy is deferred; a request alone must never mean cleanup PASS.
             _report.sceneHashAfter = FileHash(_report.scene); _report.sceneFileUnchanged = _report.sceneHashBefore == _report.sceneHashAfter;
             _report.assetsUnchanged = true;
             foreach (var item in _assets)
@@ -556,6 +829,11 @@ namespace Oheangbu.EditorTools
             if (_report == null) return;
             Directory.CreateDirectory(Path.GetDirectoryName(Output));
             string json = JsonUtility.ToJson(_report, true); File.WriteAllText(Output, json);
+            if (_report.captureFrames && !string.IsNullOrEmpty(_report.captureDirectory))
+            {
+                Directory.CreateDirectory(_report.captureDirectory);
+                File.WriteAllText(Path.Combine(_report.captureDirectory, "capture_manifest.json"), json);
+            }
             SessionState.SetString(StateKey, JsonUtility.ToJson(_report));
         }
     }
