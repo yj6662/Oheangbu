@@ -76,6 +76,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return "CAPTURE_STARTED " + _directory;
         }
 
+        public static string Poll()
+        {
+            if (_p == null) return "{\"status\":\"IDLE\"}";
+            if (_r != null) { _p.index = _index; _p.frame = _frame; }
+            return JsonUtility.ToJson(_p, true);
+        }
+
         static void Tick()
         {
             if (_r == null || EditorApplication.isCompiling || EditorApplication.isUpdating) return;
@@ -145,7 +152,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 life = _effect.Life, primaryTarget = primary != null ? primary.name : "fallback point",
                 secondaryTarget = secondary != null ? secondary.name : "none",
                 eventSource = _r.demonstrationCues
-                    ? "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched."
+                    ? "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched."
                     : "No demonstration events. Only explicitly supplied presentation cues are sampled."
             };
             var area = _effect.ReceivedAreaPlan;

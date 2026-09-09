@@ -1,6 +1,6 @@
 # PROJECT_STATUS — 오행부
 
-**2026-09-09 · #189 술식 VFX 체크포인트:** 120칸(배정100·공백20), 기존15자 시전 연결. 후속 Stills600장과 C2 실제 카메라45장을 검토했다. 실제 Play120종 오류0·소멸120통과, 폰트 atlas 재질1 증가 원인은 미확정이다. 물·무기·금 낙인/요격·화염/모래의 후속 코드 보완은 재촬영 전이다. 최신 상태와 검증 한계는 [CHECKPOINT](Art/SpellVFX120/CHECKPOINT.md), Draft PR #14에 보존한다. 최종 미술·연속 영상·실전 입력 및 성능은 미검증이다.
+**2026-09-09 · #190 술식 VFX 체크포인트:** 120칸(배정100·공백20), 기존15자 시전 연결. 최신 스틸600장 전수 검토, 영상120개·9,191프레임 전체 디코드, 명암120쌍 촬영을 완료했다. C2 실제 카메라45장과 별도 진단45장을 보존한다. 실제 Play120종 오류0·Mesh증가0이며 재질1개 증가는 Editor TextCore 캐시 참조까지 확인했다. 엄·산·상 가시성 등 미술 결함, 영상 전수 미술 검수·실전 입력·성능은 남아 있다. 상세 구현·검증 한계는 [CHECKPOINT](Art/SpellVFX120/CHECKPOINT.md), Draft PR #14를 따른다.
 
 **2026-09-09 · #188 C02_RigFaceLab:** 별도 캐릭터 실험의 선택본은 몸·의복 A2, 동작 B2, 눈꺼풀 C3, 기존 눈꺼풀 2채널의 3프리셋 D1이다. B2는 원본 Idle의 확대 본 스케일을 수정했고 조기 Unity Humanoid Idle0 접지 minY=0.004074m를 확인했다. 실제 Unity 전신 시퀀스444프레임·눈꺼풀 근접180프레임(각30fps)의 전체 디코딩을 통과했고 덮어쓰기0을 확인했다. 고정 루트·지면에서 Idle 첫 두 표본 minY=4.074/4.094mm다. **전체 자연스러움·캐릭터 품질은 UNVERIFIED다.** C2·공용 PlayerRig는 캡슐 정본을 유지하며 교체하지 않았다. 이번 추가 유료 사용0, 과거 AutoPlayerV1의123크레딧은 별도 지출이다. 범위는 [Spec](Specs/SPEC-C02-RIG-FACE-LAB.md), 실제 결과·모델·영상은 [오프라인 REVIEW](../Art/PlayerPhase1/C02_RigFaceLab/REVIEW.html)·[동작 보고](../Art/PlayerPhase1/C02_RigFaceLab/Motion/REPORT.md)·[얼굴 보고](../Art/PlayerPhase1/C02_RigFaceLab/Face/REPORT.md)를 따른다. 아래 기존 상태 본문은 이전 이력으로 보존한다.
 

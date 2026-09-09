@@ -247,7 +247,8 @@ namespace Oheangbu.App.SpellVFX120
             return Mathf.Lerp(c.OriginGround, c.TargetGround,
                 Mathf.Clamp01(Vector3.Dot(c.Center - c.Origin, forward) / Mathf.Max(.01f, length)));
         }
-        private static float Life(in Context c) => Smooth(c.Age, .1f) * (1 - Smooth(c.Age - Mathf.Max(0, c.Life - .6f), .6f));
+        private static float Life(in Context c) => c.Age >= c.Life ? 0 :
+            Smooth(c.Age, .1f) * (1 - Smooth(c.Age - Mathf.Max(0, c.Life - .6f), Mathf.Min(.6f, c.Life)));
         private static float Smooth(float age, float seconds) { float t = Mathf.Clamp01(age / Mathf.Max(.001f, seconds)); return t * t * (3 - 2 * t); }
         private static Vector3 Flat(Vector3 direction) { direction.y = 0; return direction.sqrMagnitude > .000001f ? direction.normalized : Vector3.forward; }
         private static Quaternion Face(Vector3 axis) => Quaternion.LookRotation(axis.normalized, Mathf.Abs(axis.normalized.y) > .98f ? Vector3.forward : Vector3.up);

@@ -6,8 +6,12 @@ capture_progress.json
 review_file_validation.json
 *.blend1
 FirstPass/
-# REVIEW.html preserves the selected Stills checkpoint; final clips remain unfinished.
+# REVIEW.html selects FinalStills and the verified encoded clips.
 
 # Licensed source texture contact sheets remain local.
 AssetAudit/
 Blender/SourceTigerMotif_Detail.jpg
+
+# Full raw image sequences and duplicate local capture revisions.
+ClipFrames/*/
+ClipRevisions/

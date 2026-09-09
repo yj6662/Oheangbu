@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+  "id": "114_C639",
+  "glyph": "옹",
+  "verifiedAtUtc": "2026-09-09T02:34:49.085659+00:00",
+  "inputSha256": "15729d795c7f42ae02039f2b3987da6d93e56323e8ec52666f0959970bd35a7e",
+  "metadataSha256": "7f5a06044b9d4da9ef1aeb48f156389721d60ea077c33b252c7fee2c190007f8",
+  "outputSha256": "b8a3bdfc0e6ff2d1f0be2b522f34697059c879146a5715da0fad403234f88d07",
+  "outputBytes": 78028,
+  "settings": {
+    "codec": "libx264",
+    "fps": 24,
+    "crf": 19,
+    "preset": "medium",
+    "pixelFormat": "yuv420p",
+    "faststart": true
+  },
+  "ffmpegVersion": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers",
+  "validatorSha256": "6c91f756657ff4283e076dfc9547b0361fcfda8ef25eede266ed467e4ebc3e49",
+  "input": {
+    "inputSha256": "15729d795c7f42ae02039f2b3987da6d93e56323e8ec52666f0959970bd35a7e",
+    "metadataSha256": "7f5a06044b9d4da9ef1aeb48f156389721d60ea077c33b252c7fee2c190007f8",
+    "metadataPath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipFrames\\114_C639_capture.json",
+    "sequencePath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipFrames\\114_C639",
+    "frames": 98,
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "pngBytes": 7486443,
+    "life": 3.950000047683716,
+    "firstSampleSeconds": 0.0,
+    "lastSampleSeconds": 4.041666507720947,
+    "expectedDurationSeconds": 4.083333333333333,
+    "fullLifetimeSampled": true,
+    "captureStatus": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "captureSourceVersionMatch": "UNVERIFIED"
+  },
+  "verification": {
+    "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+    "checks": {
+      "fullDecodeWithoutError": true,
+      "h264Input": true,
+      "frameCountMatches": true,
+      "frameIndicesContiguous": true,
+      "fps24": true,
+      "allDimensionsMatchInput": true,
+      "allPixelFormatsYuv420p": true,
+      "everyTimestampMatches24fps": true,
+      "everyFrameDurationMatches24fps": true
+    },
+    "decodedFrames": 98,
+    "fpsRational": "24",
+    "timeBaseRational": "1/12288",
+    "dimensions": [
+      1280,
+      720
+    ],
+    "durationSeconds": 4.083333333333333,
+    "decodeLogSha256": "9fe9a0251294231d2038fb050b3d379fea433c36be1bad65968d1cee8fbceeef"
+  },
+  "artGameplayPerformance": "UNVERIFIED"
+}

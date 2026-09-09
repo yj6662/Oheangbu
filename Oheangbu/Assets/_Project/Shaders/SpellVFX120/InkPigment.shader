@@ -83,8 +83,10 @@ Shader "Oheangbu/VFX120/InkPigment"
                 {
                     float swirl=.5+.5*sin(i.uv.x*31+i.uv.y*15-_Age*5);
                     float edge=saturate(sin(saturate(i.uv.x)*3.14159)*sin(saturate(i.uv.y)*3.14159)*3);
-                    alpha*=edge*(.13+.30*swirl);
+                    alpha*=edge*(.20+.42*swirl);
                     rgb=lerp(_BaseColor.rgb,float3(.34,.24,.14),swirl*.5);
+                    float ridge=1-smoothstep(.05,.45,abs(i.uv.y-.48));
+                    rgb=lerp(rgb,rgb*.36,ridge*.6);
                 }
                 if(_Fluid>3.5) alpha*=.16;
                 float3 view=normalize(_WorldSpaceCameraPos-i.positionWS);

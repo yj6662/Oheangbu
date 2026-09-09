@@ -51,6 +51,7 @@ namespace Oheangbu.EditorTools
             public int savedVsync, savedTargetFps; public float savedTimeScale; public bool savedRunInBackground;
             public bool savedSettings, restored, sceneFileUnchanged, resumedAfterReload;
             public string lifetimeStatus, resourceStatus, cpuStatus;
+            public string resourceAttributionStatus = "NOT_RUN", resourceAttributionOutput;
             public List<string> messages = new List<string>();
             public List<LifeRow> lifetimes = new List<LifeRow>();
             public List<CpuPhase> cpu = new List<CpuPhase>();
@@ -355,7 +356,35 @@ namespace Oheangbu.EditorTools
             }
             _report.status = _report.failed == 0 && _report.completed == 120 && _report.errors == 0 && _report.newResources.Count == 0
                 ? "COMPLETED_RUNTIME_LIFETIME_CHECK_CPU_EDITOR_ONLY" : "COMPLETED_WITH_FINDINGS";
+            InspectNewMaterialReferences();
             ExitPlay();
+        }
+        private static void InspectNewMaterialReferences()
+        {
+            // All CPU/resource counters and verdicts are already final. This diagnostic
+            // cannot alter them, and an empty ID set must not trigger name-based discovery.
+            try
+            {
+                var newIds = new HashSet<int>();
+                foreach (var resource in _report.newResources) if (resource.kind == "Material") newIds.Add(resource.id);
+                if (newIds.Count == 0) { _report.resourceAttributionStatus = "SKIPPED_NO_NEW_MATERIAL_IDS"; return; }
+                var liveIds = new List<int>();
+                foreach (var material in Resources.FindObjectsOfTypeAll<Material>())
+                    if (material != null && !EditorUtility.IsPersistent(material) && newIds.Contains(material.GetInstanceID()))
+                        liveIds.Add(material.GetInstanceID());
+                if (liveIds.Count == 0) { _report.resourceAttributionStatus = "SKIPPED_NEW_MATERIALS_NO_LONGER_LOADED"; return; }
+                string json = Vfx120ResourceAttribution.Inspect(liveIds.ToArray());
+                var attribution = JsonUtility.FromJson<Vfx120ResourceAttribution.Report>(json);
+                if (attribution == null || string.IsNullOrEmpty(attribution.status))
+                    throw new InvalidOperationException("Resource attribution returned no status");
+                _report.resourceAttributionStatus = attribution.status;
+                _report.resourceAttributionOutput = attribution.output;
+            }
+            catch (Exception error)
+            {
+                _report.resourceAttributionStatus = "UNVERIFIED_DIAGNOSTIC_CALL_FAILED";
+                _report.messages.Add("Post-measurement resource attribution diagnostic: " + error);
+            }
         }
         private static Dictionary<int, ResourceRow> ResourcesNow()
         {

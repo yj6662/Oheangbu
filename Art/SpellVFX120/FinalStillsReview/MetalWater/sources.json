@@ -1,0 +1,3605 @@
+{
+  "scope": "FinalStills 073-120; every original represented once in final sheets; previous sheets for comparison; labels outside originals",
+  "records": [
+    {
+      "index": 73,
+      "glyph": "사",
+      "title": "은침의 일획",
+      "intent": "단일 대상에 즉발급 송곳(최속·저위력)",
+      "assigned": true,
+      "connected": true,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "사",
+        "title": "은침의 일획",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:51.7355735Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.1599999964237213,
+        "life": 1.059999942779541,
+        "sampledSeconds": [
+          0.07419999688863754,
+          0.23319998383522034,
+          0.44519996643066406,
+          0.678399920463562,
+          0.953999936580658
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\073_C0AC_0.png",
+          "sha256": "0bdae206d38ed4b45d112687e6f572f32a8a0dd128e63569a2b0671ba973e16c"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\073_C0AC_1.png",
+          "sha256": "1c9ec633e8dd35161898ee9bbd5e2bae918349326d1d958d07535fdea5ae1543"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\073_C0AC_2.png",
+          "sha256": "383f63ef14bf233f17f9a50d338b997e07caa251ffc8f608a139a0f6cdc74581"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\073_C0AC_3.png",
+          "sha256": "e779c93ed6fec243be7062d20271ca52f79b5cabda6c4f7e26b11c10f3a3008d"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\073_C0AC_4.png",
+          "sha256": "eb4a83033f6d96fec6099283c7a65ee541fa79be72355800bf7533ac83b769a6"
+        }
+      ]
+    },
+    {
+      "index": 74,
+      "glyph": "삭",
+      "title": "뒤까지 꿰는 은선",
+      "intent": "일자 관통 — 경로상 뒤의 적까지 피해",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "삭",
+        "title": "뒤까지 꿰는 은선",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:51.8660988Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.18000000715255737,
+        "life": 1.149999976158142,
+        "sampledSeconds": [
+          0.08049999922513962,
+          0.2529999911785126,
+          0.4829999804496765,
+          0.7359999418258667,
+          1.034999966621399
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\074_C0AD_0.png",
+          "sha256": "c48ea775dc884ef9c2c9fd25262c647c5064e7232ed2f74234d1e2181fbdad98"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\074_C0AD_1.png",
+          "sha256": "ccc6f62a3e2491785213d286efadc3eeb429f9006dbd0a9cdc424e8a0a067328"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\074_C0AD_2.png",
+          "sha256": "9038f7e71d1a34b98c1ea6ddec68793ede0793369028be014a1b1c71e0777b09"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\074_C0AD_3.png",
+          "sha256": "07f62eeff4eeb91af616acb4019688a2af25e2790b69642ab25add94cd1521c4"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\074_C0AD_4.png",
+          "sha256": "d2d83e8dd0d11c831433f35685a09afb3761211ae28b1fc3328f41a166a29bab"
+        }
+      ]
+    },
+    {
+      "index": 75,
+      "glyph": "산",
+      "title": "새겨지는 쇠 낙인",
+      "intent": "낙인 침 — 찍힌 대상이 짧게 받는 피해 증가(최속 마킹)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "산",
+        "title": "새겨지는 쇠 낙인",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:51.9968454Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.18000000715255737,
+        "life": 2.799999952316284,
+        "sampledSeconds": [
+          0.19599999487400055,
+          0.6159999966621399,
+          1.1759999990463257,
+          1.7919999361038208,
+          2.5199999809265137
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\075_C0B0_0.png",
+          "sha256": "ec8e2d2f88ed8888ec20943b992f65d80ee5b61092b05507265ff7c76bd33f68"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\075_C0B0_1.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\075_C0B0_2.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\075_C0B0_3.png",
+          "sha256": "84085cb0df3f0424dc1ff92bd47014d95fb048afad34453aec3c25297c93d00f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\075_C0B0_4.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        }
+      ]
+    },
+    {
+      "index": 76,
+      "glyph": "삼",
+      "title": "걸린 쇠 봉함",
+      "intent": "쇳가시 설치를 적 1체에 발사·부착(C4식). 부착 후 공격 진 명중 시 격발 — 큰 그로기+속성 피해(임시처리 TEST)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "삼",
+        "title": "걸린 쇠 봉함",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.1276744Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23000000417232513,
+        "life": 3.0999999046325684,
+        "sampledSeconds": [
+          0.21699999272823334,
+          0.6819999814033508,
+          1.3019999265670776,
+          1.9839998483657837,
+          2.7899997234344482
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\076_C0BC_0.png",
+          "sha256": "53d3ecc9fe0bfe0958e141c30988d43737b56afabe93cb12b114a529082b0ccb"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\076_C0BC_1.png",
+          "sha256": "964188208fa9cec5bff97bcfc7f56fb11ebaed5ec2a2e7162a57a8de1fe08642"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\076_C0BC_2.png",
+          "sha256": "bfe0394bdb7af89d6f23619834cf9ec4c01b43b9f9cec7d9e6719d7ce76e9d4a"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\076_C0BC_3.png",
+          "sha256": "cb3fb38c725419491ce8b2127562240743f60c9b1f358fbf68d11f9cc9fd91b2"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\076_C0BC_4.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        }
+      ]
+    },
+    {
+      "index": 77,
+      "glyph": "삿",
+      "title": "끊기지 않는 쇠끝",
+      "intent": "막을 수 없는 찌르기 — 가드·방벽·반사 자세를 무시하고 꽂힘(곧음의 극치)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "삿",
+        "title": "끊기지 않는 쇠끝",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.2536798Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.14000000059604645,
+        "life": 1.0399999618530273,
+        "sampledSeconds": [
+          0.07279999554157257,
+          0.2287999838590622,
+          0.4367999732494354,
+          0.6655999422073364,
+          0.9359999299049377
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\077_C0BF_0.png",
+          "sha256": "fc43090899a62de302cb24ab59da270a0359c9141f8dca1acc0f7b78e30df7d0"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\077_C0BF_1.png",
+          "sha256": "66b4b4156c1f979ab569e0be6c72ad668281071d081e6ed9fc6aa02782f937cd"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\077_C0BF_2.png",
+          "sha256": "d30fffd2dd2a20c03ae1f76b482b31e763b4bc87dac039aa895feaaacd1266dd"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\077_C0BF_3.png",
+          "sha256": "3f308ded6aaf284d0f7077de3ed5f8e62539a20223e41eb37c691647537eba3f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\077_C0BF_4.png",
+          "sha256": "f971cb4000b9dd141f02ccaf0d16265408f0bf91a355e20e6b149cac9a2519d2"
+        }
+      ]
+    },
+    {
+      "index": 78,
+      "glyph": "상",
+      "title": "허공을 묶는 냉침",
+      "intent": "얼리는 침 — 날아오는 적 투사체를 맞혀 얼려 떨어뜨림(요격)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "상",
+        "title": "허공을 묶는 냉침",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.3802573Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 1.899999976158142,
+        "sampledSeconds": [
+          0.13300000131130219,
+          0.4179999828338623,
+          0.7979999780654907,
+          1.215999960899353,
+          1.709999918937683
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\078_C0C1_0.png",
+          "sha256": "69b19ad32c123e1f225aa0b56c37a24d2d1aaa676aa97d78b34c22759a5d027b"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\078_C0C1_1.png",
+          "sha256": "86925645b2005875b58071e9d95bbb51107c6fd6a7afb8886ab12090cc650abc"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\078_C0C1_2.png",
+          "sha256": "5e6f3f5eca57b6f73a3b28529c7f98f00d756670265d5757204033bd9d535d21"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\078_C0C1_3.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\078_C0C1_4.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        }
+      ]
+    },
+    {
+      "index": 79,
+      "glyph": "서",
+      "title": "반듯한 금강판",
+      "intent": "금강 방벽으로 받아침 — 상극 초성+ㅓ 완성형(판정·보상=Combat 3장). 완성=잔존 방어막(앞 구간 패링 판정·뒤 구간 일반 경감 — 창·수치=Combat 3장)",
+      "assigned": true,
+      "connected": true,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "서",
+        "title": "반듯한 금강판",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.5128069Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.18000000715255737,
+        "life": 2.049999952316284,
+        "sampledSeconds": [
+          0.14350000023841858,
+          0.4509999752044678,
+          0.8609999418258667,
+          1.3119999170303345,
+          1.84499990940094
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\079_C11C_0.png",
+          "sha256": "f9db3020901cfd2cd687b1295ac76e689cf2456949aab235e98ff8e5dbd18f00"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\079_C11C_1.png",
+          "sha256": "fce1b1925c1ce3e4ff662a56296b3e660f30cdb6aed36fdcff8548da29947e12"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\079_C11C_2.png",
+          "sha256": "9d71b79f46d367243aab7bc0845e9f2ec47e2186d7809f062d3c1777abf8e142"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\079_C11C_3.png",
+          "sha256": "c8bdbae659c5565d4bca8d2c2089f696a2521eda2c4f64b401cd03d783cdef43"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\079_C11C_4.png",
+          "sha256": "b10f6d6b65fc6b71570428ed05912b09a671b764f889c23e0c08a0bc3548af4d"
+        }
+      ]
+    },
+    {
+      "index": 80,
+      "glyph": "석",
+      "title": "천천히 돌아가는 편경",
+      "intent": "작도 감쇠 여유 증가 지속(모드 체류 페널티 둔화)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "석",
+        "title": "천천히 돌아가는 편경",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.6518278Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23000000417232513,
+        "life": 3.5999999046325684,
+        "sampledSeconds": [
+          0.25200000405311584,
+          0.7919999957084656,
+          1.5119999647140503,
+          2.303999900817871,
+          3.239999771118164
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\080_C11D_0.png",
+          "sha256": "7924cd2441881e70542996f0b318c08f111c077d6d54db6e1ed1f4f2157ceccd"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\080_C11D_1.png",
+          "sha256": "1fc9665a188e01ccb34345455e58b0703939d1f786aa2c07cef8ecbe9b6c301e"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\080_C11D_2.png",
+          "sha256": "0b79de556daf3626750446282dda6d1c359550e84ee781b436aadd78ad7c742e"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\080_C11D_3.png",
+          "sha256": "9ab1f9bd5108de39c335152dffb969e7d768c7d45d0278a7790b62cdc8c75120"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\080_C11D_4.png",
+          "sha256": "e96965b37869f3ed7251c434408445f3cd2d9285bb11aca4e975cd9f90cf6919"
+        }
+      ]
+    },
+    {
+      "index": 81,
+      "glyph": "선",
+      "title": "앞을 여는 은깃",
+      "intent": "투사체 속도 증가",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "선",
+        "title": "앞을 여는 은깃",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.7942117Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2199999988079071,
+        "life": 2.799999952316284,
+        "sampledSeconds": [
+          0.19599999487400055,
+          0.6159999966621399,
+          1.1759999990463257,
+          1.7919999361038208,
+          2.5199999809265137
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\081_C120_0.png",
+          "sha256": "e192841dfd9750ab2e2f5d3d736b9373e40fd3d4e5066aed2d834209bfd11334"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\081_C120_1.png",
+          "sha256": "d7d1d7af029e77026e09ce9c003910b1984ff28e3fc1ffff2bcefc28107c3cc1"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\081_C120_2.png",
+          "sha256": "263f6cf7554f944285c1c97dc91b911d26c69afde54972f9e46bf4aefb7706e4"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\081_C120_3.png",
+          "sha256": "cd3f6f6038ea8dd9e8255c21773714ed57759f95e22108f67ac04d4fab37191f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\081_C120_4.png",
+          "sha256": "2e4e6356f3822cf38e86e2ee9f90522e1d98f662a016a568e95912fd920ff597"
+        }
+      ]
+    },
+    {
+      "index": 82,
+      "glyph": "섬",
+      "title": "읽히는 쇠눈",
+      "intent": "심안 — 적 속성 가독 강화, 적 투사체 궤적이 잘 읽힘",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png",
+      "capture": {
+        "glyph": "섬",
+        "title": "읽히는 쇠눈",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:52.9260013Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23000000417232513,
+        "life": 3.9000000953674316,
+        "sampledSeconds": [
+          0.27300000190734863,
+          0.8580000400543213,
+          1.6380000114440918,
+          2.496000051498413,
+          3.509999990463257
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\082_C12C_0.png",
+          "sha256": "4a5b39de0620e6dde0872775ff06f529723edee538f576a5e8cea7b5bff126f8"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\082_C12C_1.png",
+          "sha256": "68ab8aef1afaf209b7c73eb7c940f45f033bfaf7bbe6fb2f21cf5828f5571b87"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\082_C12C_2.png",
+          "sha256": "f4bfd01f56b96df9c56d5e184ce9984de572d4756fa359feafd5c9317d81afa2"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\082_C12C_3.png",
+          "sha256": "b9443084035dbc6c042f076613d92ea8190454b3f9fd6ff064a7ba16dc53c3ff"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\082_C12C_4.png",
+          "sha256": "4a4416a8dd755d63206aa7bc7d88d360337152766784effb4d4c6ebc84d14541"
+        }
+      ]
+    },
+    {
+      "index": 83,
+      "glyph": "섯",
+      "title": "벼린 은검",
+      "intent": "금검 변신(검 공통 스펙 — 동기)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "섯",
+        "title": "벼린 은검",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.0534604Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\083_C12F_0.png",
+          "sha256": "d3edb6c62a2e75298eb96c3542baf2b3ad4ad32a8daaf57993c30158fba13686"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\083_C12F_1.png",
+          "sha256": "5c90583a00b586904e5afd066c692a8363b5858ea887cfa4449eae3ff6a7626b"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\083_C12F_2.png",
+          "sha256": "61537ad8087faf2a1a93fe8a4fb2f441f376090ee81cb61b78b0565f246be71a"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\083_C12F_3.png",
+          "sha256": "c4c2836b5fe4926e8b81619223f3800a6ff247c4c5f7bd22f1d3d6bcaba5741d"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\083_C12F_4.png",
+          "sha256": "95ba13e91334dda71e80372f2e4249fd678af4a35fdf9453f97af5c0678697f4"
+        }
+      ]
+    },
+    {
+      "index": 84,
+      "glyph": "성",
+      "title": "곁침 잔탄",
+      "intent": "금 잔탄 동반",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "성",
+        "title": "곁침 잔탄",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.1844007Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2199999988079071,
+        "life": 2.200000047683716,
+        "sampledSeconds": [
+          0.15399999916553497,
+          0.48399999737739563,
+          0.9239999651908875,
+          1.4079999923706055,
+          1.9800000190734863
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\084_C131_0.png",
+          "sha256": "e6e8867962a580a2b8c1971bd72c833ad122fe83e6d2bbb0067b3179d8d9040f"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\084_C131_1.png",
+          "sha256": "50321722399c69c3dbdfa8b22ce1a796917f96e6e49b73a5d115da572b174f33"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\084_C131_2.png",
+          "sha256": "3130f31fe1acc412be8e94fe2678b6915aff4fb0c0374b79b6af689a678cf02d"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\084_C131_3.png",
+          "sha256": "f2fa0ae27c6a66104a94e7dfddff9448bae0b0380818d78238e37e328d86fba0"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\084_C131_4.png",
+          "sha256": "f4203eee3cc4598bae5335d96b471118262ba305be0420e6238fd1cb17f062bb"
+        }
+      ]
+    },
+    {
+      "index": 85,
+      "glyph": "소",
+      "title": "은살의 속사",
+      "intent": "다연발 송곳 속사(즉발)",
+      "assigned": true,
+      "connected": true,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "capture": {
+        "glyph": "소",
+        "title": "은살의 속사",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.3142782Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 2.200000047683716,
+        "sampledSeconds": [
+          0.15399999916553497,
+          0.48399999737739563,
+          0.9239999651908875,
+          1.4079999923706055,
+          1.9800000190734863
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+        "areaShape": "Volley",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 4.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "areaRadius": 1.4500000476837158,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.20000000298023224,
+        "areaSpeed": 12.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\085_C18C_0.png",
+          "sha256": "8f895d853ea4cf1ec226d7e9369ff8c63f787a462d70100b769c8a741cd24a7f"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\085_C18C_1.png",
+          "sha256": "0327d75040ad9c2b2ece7d2bc6f2aedc21b86ee4cae8f9b14e1871c6c7935766"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\085_C18C_2.png",
+          "sha256": "046039680c50a127d75388c5946a6c6a9ba364a9a1edc30a974dc663cfb95eb4"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\085_C18C_3.png",
+          "sha256": "80337227b96ec87c7088f3b78205f33ccffdcb09783c50026c1f581ec623e1da"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\085_C18C_4.png",
+          "sha256": "dab04c6d11c9416e7074c83f5553407dfd832525616ca096b9ef930fa3dd1f30"
+        }
+      ]
+    },
+    {
+      "index": 86,
+      "glyph": "속",
+      "title": "되튄 은가지",
+      "intent": "명중한 송곳이 튕겨 다른 표적으로 재발사(도탄 확산)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "속",
+        "title": "되튄 은가지",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.4473617Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23000000417232513,
+        "life": 2.549999952316284,
+        "sampledSeconds": [
+          0.1784999966621399,
+          0.5609999895095825,
+          1.0709999799728394,
+          1.6319999694824219,
+          2.294999837875366
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\086_C18D_0.png",
+          "sha256": "c18e12a32ed5565fadb33aa1d090444749ed9b9fe25fd98b655dc271f02e38f5"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\086_C18D_1.png",
+          "sha256": "a4be15cd504733949999cc4924ac2efeec40b933972886ef6a68c356d117e6c5"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\086_C18D_2.png",
+          "sha256": "4cf2f5fc4611ba2f0ed8fe2d9c5bb1fc83f1546e72c09f571322efed91888ac9"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\086_C18D_3.png",
+          "sha256": "e94cfb2fd014649ff4d2bd84bbc4b2e43c95518fd67fd9b16fa4ca7db7c7700d"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\086_C18D_4.png",
+          "sha256": "08ee4761f71d51ac10f3f88f0c5388ef8bc41aa39598adfb2c820b1392db7ed0"
+        }
+      ]
+    },
+    {
+      "index": 87,
+      "glyph": "손",
+      "title": "달아오른 침틀",
+      "intent": "총신 가열 — 연속 시전마다 다음 속사 위력 증가(자기 스택)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "손",
+        "title": "달아오른 침틀",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.5821501Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23000000417232513,
+        "life": 3.4000000953674316,
+        "sampledSeconds": [
+          0.23800000548362732,
+          0.7480000257492065,
+          1.4279999732971191,
+          2.1760001182556152,
+          3.059999942779541
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\087_C190_0.png",
+          "sha256": "6436ba4af1aa60c45e8ffe73a7aa5944fb59cad5786facfbdba3e8b0e438dee9"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\087_C190_1.png",
+          "sha256": "01964b2960360ad3150f990a12f5ebe87bf8fb6fd7cac705c15f27c88d7e7265"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\087_C190_2.png",
+          "sha256": "15dab65d0a3de00b3df9143e026c3ef63b187b32b3a0a7a77fdef820fc80aa4e"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\087_C190_3.png",
+          "sha256": "bafe1f34390564bd5290be2b2260aba404fc8220a558b2cc44d55d36b0600f1f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\087_C190_4.png",
+          "sha256": "42a0d49c18faeebbda9681ae7f6b015960580b76f6943d38c302dfb59254e641"
+        }
+      ]
+    },
+    {
+      "index": 88,
+      "glyph": "솜",
+      "title": "강철 짐승의 갈비",
+      "intent": "강철 짐승 소환수를 빚어 세움(재질=초성). 그로기 미축적·어그로 없음",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "솜",
+        "title": "강철 짐승의 갈비",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.7269261Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.47999998927116394,
+        "life": 4.5,
+        "sampledSeconds": [
+          0.3149999976158142,
+          0.9900000095367432,
+          1.8899999856948853,
+          2.879999876022339,
+          4.049999713897705
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\088_C19C_0.png",
+          "sha256": "de502f09a6f1d0ba2290a6eb887e338e021a89581996b330b3f0bd1b1cea75f4"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\088_C19C_1.png",
+          "sha256": "7793069ea3df016de165c10b11b8a67e9e4f37c3bc1e7a77204108f6643c7003"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\088_C19C_2.png",
+          "sha256": "a00c3bd63912e8e4f9056837d6990107ed210438c88902f8b5e18260fad6eb57"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\088_C19C_3.png",
+          "sha256": "5f9fb25ed746fd1d10bbae623a1fd5ebe8cf395af9e1dff15f313c699ad9d88c"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\088_C19C_4.png",
+          "sha256": "2df041b6ae954c05051447c36d5cfd2d6b19f2893159307734fd1bdb317cc8df"
+        }
+      ]
+    },
+    {
+      "index": 89,
+      "glyph": "솟",
+      "title": "갈수록 얇아지는 살",
+      "intent": "갈수록 예리 — 한 시전 안에서 뒤 탄일수록 위력 증가(벼림의 극치)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_118.png",
+      "capture": {
+        "glyph": "솟",
+        "title": "갈수록 얇아지는 살",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.8629538Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 1.899999976158142,
+        "sampledSeconds": [
+          0.13300000131130219,
+          0.4179999828338623,
+          0.7979999780654907,
+          1.215999960899353,
+          1.709999918937683
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\089_C19F_0.png",
+          "sha256": "75609a66214f6b8fab4adf08fb6d723f9075dbf1e37cbbed384bccaa48540629"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\089_C19F_1.png",
+          "sha256": "c9e72e99643cb61fd2f637d212e9f8531914ec8bf4bda5f3659b41e13d3d54ff"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\089_C19F_2.png",
+          "sha256": "79ea1d7702dc9058cc5f67b97a1ea195d73d45dee5e640e791c7939b74fb973b"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\089_C19F_3.png",
+          "sha256": "761cb4567477b8d9081fbd5cc30cc50dbdb6e2085d304c3c9f833b75b5fd2d3f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\089_C19F_4.png",
+          "sha256": "a24ee276d4c33fafd78f00ce6dee84a7c0ff6d7c6f8759a71f413b7d8a1349cb"
+        }
+      ]
+    },
+    {
+      "index": 90,
+      "glyph": "송",
+      "title": "별처럼 꺾인 요격막",
+      "intent": "요격 탄막 — 적 투사체 여럿을 얼려 일제 격추(상의 광역 짝)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_118.png",
+      "capture": {
+        "glyph": "송",
+        "title": "별처럼 꺾인 요격막",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:53.9961387Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2199999988079071,
+        "life": 2.700000047683716,
+        "sampledSeconds": [
+          0.18900001049041748,
+          0.593999981880188,
+          1.1339999437332153,
+          1.7280000448226929,
+          2.430000066757202
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\090_C1A1_0.png",
+          "sha256": "767b3b7e9f079db22050762bfc515cf8b1106e2aa25c739fd14c01c6898db68b"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\090_C1A1_1.png",
+          "sha256": "9897182fbbfa0bbc4d6677f08e26e2fdf40326bef3bf23e46b59afd61551485e"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\090_C1A1_2.png",
+          "sha256": "dcbfebe7b9aeba1e4b4fb3b74c477778ad0f985257e1afb3faa0688d37334d05"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\090_C1A1_3.png",
+          "sha256": "9dfc388a0e658802f9cbd8be6308784114abf46c5de7fdf12b87dbe84c643821"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\090_C1A1_4.png",
+          "sha256": "cd6ee5635ae7830e7a820bf8db0317e90331465882f13b598f684db3babb2e69"
+        }
+      ]
+    },
+    {
+      "index": 91,
+      "glyph": "수",
+      "title": "둘러선 금강살",
+      "intent": "금강 광역 결계 — 언제든 시전, 잠시 잔존. 패링 판정·보상 없음",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "수",
+        "title": "둘러선 금강살",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.1304590Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.27000001072883606,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\091_C218_0.png",
+          "sha256": "fab025628690f49f6a3f238deeb6513d88561c5a3bcfb5def2efd8a9816b9f05"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\091_C218_1.png",
+          "sha256": "05e2889b6e0f8ee2a801054fb0fe42478336fb30cc34ee411f928f34bd0239fb"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\091_C218_2.png",
+          "sha256": "1eabb5ac01dacef1c223651e0e4f147f97739f5755799dfe9670d9d75578b566"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\091_C218_3.png",
+          "sha256": "d7aacb048f9e61630cd0d76a2e3df5703b247ad2172a96dddb7351a99d963651"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\091_C218_4.png",
+          "sha256": "2929c1ceb52a19b35a140147a5355b28832db0b6cb50f33b6d2a93c5fed7673b"
+        }
+      ]
+    },
+    {
+      "index": 92,
+      "glyph": "숙",
+      "title": "은결의 매듭 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "capture": {
+        "glyph": "숙",
+        "title": "은결의 매듭 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.2714680Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 2.8499999046325684,
+        "sampledSeconds": [
+          0.19949999451637268,
+          0.6269999742507935,
+          1.1969999074935913,
+          1.8239998817443848,
+          2.56499981880188
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\092_C219_0.png",
+          "sha256": "c151803b2734ffc3f1585302480c76edeb11b34b6d3268f2886320afc0b35797"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\092_C219_1.png",
+          "sha256": "26c3175850e7d79b24942ba2d67aaea8973d85775b9b5caac3cbacdfb7d5d7ec"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\092_C219_2.png",
+          "sha256": "26687e4a283db24eeff72050e3694e350fcfe0f519e2a2bb0a7317d6a846b3bc"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\092_C219_3.png",
+          "sha256": "a8edb305e1b9ed782a41fe243b36b642d1c680687982282d43f44f126e1a5909"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\092_C219_4.png",
+          "sha256": "64f1aa78ae82f8109a907e233952a0eaa7972abb9b5bb305c353b9a64bd99628"
+        }
+      ]
+    },
+    {
+      "index": 93,
+      "glyph": "순",
+      "title": "회청 깃살 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "capture": {
+        "glyph": "순",
+        "title": "회청 깃살 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.4018807Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 3.0999999046325684,
+        "sampledSeconds": [
+          0.21699999272823334,
+          0.6819999814033508,
+          1.3019999265670776,
+          1.9839998483657837,
+          2.7899997234344482
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\093_C21C_0.png",
+          "sha256": "6d46bc3b3e4cb00c61e0423bfdf39e6835dd0294522accc8ee957e32f08108a5"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\093_C21C_1.png",
+          "sha256": "5e530334ad3852c53ae3376a12dc2928570bbc3770a7a896a6ed175803d9af3f"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\093_C21C_2.png",
+          "sha256": "a61cb9bbed78ce51f73f1370243c2b2a8cde5e4f601c9a0c905b4c698b4e119d"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\093_C21C_3.png",
+          "sha256": "1a0dbaa195469c57cdd764e217e3ff7e33cc9775fc5442f43b6b564fc64c0b74"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\093_C21C_4.png",
+          "sha256": "168f68d6af76053a43d5b9c851a4f87e5bc0b54015aa98cd635e49b836f192c2"
+        }
+      ]
+    },
+    {
+      "index": 94,
+      "glyph": "숨",
+      "title": "속이 빈 금함 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "capture": {
+        "glyph": "숨",
+        "title": "속이 빈 금함 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.5374473Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3199999928474426,
+        "life": 3.450000047683716,
+        "sampledSeconds": [
+          0.24150000512599945,
+          0.7590000033378601,
+          1.4490000009536743,
+          2.2079999446868896,
+          3.1050000190734863
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\094_C228_0.png",
+          "sha256": "ff92e91b04361b5c88f366d10ff52b652e3c467f26e65212eb2efc4040e10149"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\094_C228_1.png",
+          "sha256": "ab2dfd52c8c3b2d62ec6cbd8d9849ca51502f2ad7596ea23320f5aff72b2ee40"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\094_C228_2.png",
+          "sha256": "d0357e71025673da8fd6840f73a5228ef242050dc342634b35cb8a9114ce350e"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\094_C228_3.png",
+          "sha256": "179655e4b69f802349e62430babb2bca8495ccca63a00570380b5296351b9b74"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\094_C228_4.png",
+          "sha256": "c457c2113b2ce01efbcf3c773299a3264453981f51b226cb124e6af6ee8ec7b1"
+        }
+      ]
+    },
+    {
+      "index": 95,
+      "glyph": "숫",
+      "title": "바위를 가르는 은획",
+      "intent": "큰 바위를 잘라 길을 연다. 비전투 전용",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "숫",
+        "title": "바위를 가르는 은획",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.6673372Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.4000000059604645,
+        "life": 3.200000047683716,
+        "sampledSeconds": [
+          0.2240000069141388,
+          0.7039999961853027,
+          1.343999981880188,
+          2.0480000972747803,
+          2.879999876022339
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\095_C22B_0.png",
+          "sha256": "323964f7f766c991407293b826f980415c16b219e8611732dea4c6f7813a654a"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\095_C22B_1.png",
+          "sha256": "e38e5dc582bb6527db025750e3bce4af366921fc94a0b05c0fd696b6287f5b90"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\095_C22B_2.png",
+          "sha256": "031d0a3468d94f04d88e779b08042f3abd3febf11d2000bfb1434d970e86a480"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\095_C22B_3.png",
+          "sha256": "77f8e63af4ca3f23e93817d9540e8e671236f51c21464086bc909b396cddbe8c"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\095_C22B_4.png",
+          "sha256": "407fb2a0b21149b3924d67f28e03560969a911435836e01d8107d0a14f84062b"
+        }
+      ]
+    },
+    {
+      "index": 96,
+      "glyph": "숭",
+      "title": "뒤집힌 은방울 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_232.png",
+      "capture": {
+        "glyph": "숭",
+        "title": "뒤집힌 은방울 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.7958222Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 3.25,
+        "sampledSeconds": [
+          0.22750000655651093,
+          0.7149999737739563,
+          1.3650000095367432,
+          2.0799999237060547,
+          2.924999952316284
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\096_C22D_0.png",
+          "sha256": "d8812e604ccaf26b4b9d087ab9a8d0be3fb72c4ec3b18c2c972843c7051ed578"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\096_C22D_1.png",
+          "sha256": "a75bed3798d3c77e29d0330ea6da1bbfc60b62d1e1f613a6d37f5eb7f01e1523"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\096_C22D_2.png",
+          "sha256": "baf592ee494c41a2fcb7dae348715ddbf7fa8e5234ea54e8a0cb4b98f683b5a1"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\096_C22D_3.png",
+          "sha256": "6570605738cd95e00440e847f542289b202c29be00adb2cd00e16919bab6eb14"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\096_C22D_4.png",
+          "sha256": "96d5f8802dd8374255e82879979633aaae9ee6ba20b6e1e3fddcc7f8a8bedf7d"
+        }
+      ]
+    },
+    {
+      "index": 97,
+      "glyph": "아",
+      "title": "굽어 흐르는 먹방울",
+      "intent": "단일 대상에 느린 유도탄(각도 한계 내 비행 추적)",
+      "assigned": true,
+      "connected": true,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "아",
+        "title": "굽어 흐르는 먹방울",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:54.9336014Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 1.2000000476837158,
+        "life": 2.0999999046325684,
+        "sampledSeconds": [
+          0.1469999998807907,
+          0.4619999825954437,
+          0.8819999098777771,
+          1.3439998626708984,
+          1.8899998664855957
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\097_C544_0.png",
+          "sha256": "945cebe19bf34cedf2a814c7101761ce507c96f3ae5c95ebde159b54e6046677"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\097_C544_1.png",
+          "sha256": "b281210dff4720bef196602b280088be2ddbb727798b83984b064290e0233fa4"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\097_C544_2.png",
+          "sha256": "49a7d35e7fd98abc6854a2a54ec0e898538c46ca21280c2b2585a93ca51f9c18"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\097_C544_3.png",
+          "sha256": "dce0db1d70334fa8061bf9f4401ca6b2d2b6ecb564a648ab9f3ed36cbfaa3096"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\097_C544_4.png",
+          "sha256": "c8b0034ea05be198d2d86afff23e089ccd8deea08e7ab59ea73e717acc2d35e5"
+        }
+      ]
+    },
+    {
+      "index": 98,
+      "glyph": "악",
+      "title": "돌아오는 물매듭",
+      "intent": "명중 후 튕겨 되돌아와 같은 대상 재타격",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "capture": {
+        "glyph": "악",
+        "title": "돌아오는 물매듭",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.0663208Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 1.0,
+        "life": 3.0999999046325684,
+        "sampledSeconds": [
+          0.21699999272823334,
+          0.6819999814033508,
+          1.3019999265670776,
+          1.9839998483657837,
+          2.7899997234344482
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\098_C545_0.png",
+          "sha256": "0842e9a85a9d6fdc22965a7e9731af98f1174f9d5e5c3c0c201cb9223c1ea0fd"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\098_C545_1.png",
+          "sha256": "237c024d866b0fcdfb09e223b45f8073addab4306a3181db7d25d26cb0cc48f7"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\098_C545_2.png",
+          "sha256": "7c679de410bcc9f72d36e8e4fdfcabfae57f2ec2a2efcb3c00a3d1991f1f984d"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\098_C545_3.png",
+          "sha256": "5ca7c1a235118478cb12b7bfd47ede87177f287a73dd11aa8635734645a0957a"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\098_C545_4.png",
+          "sha256": "b0d79ae6b7bb186ed9dfdcf191b7e4413ef1ebd80ba69f5c53809355720c2477"
+        }
+      ]
+    },
+    {
+      "index": 99,
+      "glyph": "안",
+      "title": "나뉘는 물씨",
+      "intent": "명중 시 작은 물방울들로 갈라져 주변 적을 각자 추적(번짐 — 새 몸은 물 유지)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "안",
+        "title": "나뉘는 물씨",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.1993227Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 1.100000023841858,
+        "life": 2.8499999046325684,
+        "sampledSeconds": [
+          0.19949999451637268,
+          0.6269999742507935,
+          1.1969999074935913,
+          1.8239998817443848,
+          2.56499981880188
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\099_C548_0.png",
+          "sha256": "fda6ebebc02c25d320b40a51a2d4e4221091b489d52f485bca204bbe282f1dc0"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\099_C548_1.png",
+          "sha256": "a623dd4a1246380fb67b8ec97f8838ebc10c45c07a5a1a9209d68dd61fd6772e"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\099_C548_2.png",
+          "sha256": "0a03a0124642f5829825404eec5d909c80402acd91c1441776794b6ef1790d6c"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\099_C548_3.png",
+          "sha256": "6db519bc4f9a000e52257a7fabf458a596536ac6b59754b0d543da53a916bf6a"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\099_C548_4.png",
+          "sha256": "2c1d2136de25b9ba19347c1537bc62912641b0c0917188143423e3bc4891ac7e"
+        }
+      ]
+    },
+    {
+      "index": 100,
+      "glyph": "암",
+      "title": "닫힌 서리 봉인",
+      "intent": "서릿발 설치를 적 1체에 발사·부착(C4식). 부착 후 공격 진 명중 시 격발 — 큰 그로기+속성 피해(임시처리 TEST)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "capture": {
+        "glyph": "암",
+        "title": "닫힌 서리 봉인",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.3345666Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.8500000238418579,
+        "life": 3.1500000953674316,
+        "sampledSeconds": [
+          0.22050000727176666,
+          0.6930000185966492,
+          1.3229999542236328,
+          2.0160000324249268,
+          2.8350000381469727
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\100_C554_0.png",
+          "sha256": "e994bf7a361f728e0295f4869aedcc556be6a0cc7d5f608984c45f5e7bed3785"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\100_C554_1.png",
+          "sha256": "933f942edacab9b2f8fac5a82dd9884f614e53ce413ffb90c0c4f0e97f442a54"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\100_C554_2.png",
+          "sha256": "466b97a431e114fd3a818b6a8a50afc53947d5d2e38a9d76f5190766f224dfb7"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\100_C554_3.png",
+          "sha256": "3b50a1e82a16cdcde9a63a0c8f5ce5628a62f616650c3ca89286e225b1c15aaa"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\100_C554_4.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        }
+      ]
+    },
+    {
+      "index": 101,
+      "glyph": "앗",
+      "title": "한 번 깨지는 고드름",
+      "intent": "고드름 — 단일 얼림(행동 불가). 첫 피격에 깨지며 추가 피해 + 해제. 보스는 각 선례 준용 [TBD]",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "capture": {
+        "glyph": "앗",
+        "title": "한 번 깨지는 고드름",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.4603488Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.8500000238418579,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\101_C557_0.png",
+          "sha256": "aba409a87354cbf367baf95c73708746c102c3d52e56df25c43319736991a244"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\101_C557_1.png",
+          "sha256": "a363515b14996bb22ff987449df77a4aaa2d234e50a1b5ef59bee49a53da39a3"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\101_C557_2.png",
+          "sha256": "160e3080bc962adf047754402ab08526531236ddb006f6754595e55c3b492379"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\101_C557_3.png",
+          "sha256": "982d7b359370685c6f901c0d10f9dd270faaac17e00241e7401c91b65fa11c73"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\101_C557_4.png",
+          "sha256": "7930745cd6b7edee2e4807f0700f0f6d88e74a6ea6182f549a174700ac81b3de"
+        }
+      ]
+    },
+    {
+      "index": 102,
+      "glyph": "앙",
+      "title": "되돌아온 먹 한 모금",
+      "intent": "순환탄 — 명중 후 되돌아오며 먹 소폭 환급 + 체력 소폭 회복(동기 — 순환의 극치)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "앙",
+        "title": "되돌아온 먹 한 모금",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.5900708Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 1.0499999523162842,
+        "life": 3.0999999046325684,
+        "sampledSeconds": [
+          0.21699999272823334,
+          0.6819999814033508,
+          1.3019999265670776,
+          1.9839998483657837,
+          2.7899997234344482
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\102_C559_0.png",
+          "sha256": "32cc71f03b55c8604c08e6f9c8d2e3c16226d9ac9c5afe0708154566e7d886ff"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\102_C559_1.png",
+          "sha256": "2c92cd57210809a301feccb440388bbfe43681eb53e83f87f5e1125b440dbafa"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\102_C559_2.png",
+          "sha256": "d63ac45371de57e8df1e8b53438310b6742ea32f93d3d197184265d47d77ad92"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\102_C559_3.png",
+          "sha256": "b452757604ed12030382bb1f2840336d77e4c5ba46f6585140780738259b9224"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\102_C559_4.png",
+          "sha256": "d7e3ee6f239cbd97d76ef9191557656b3047c3c8ff5093a69a6c9e79c4826824"
+        }
+      ]
+    },
+    {
+      "index": 103,
+      "glyph": "어",
+      "title": "한 번 접히는 수막",
+      "intent": "수막으로 받아침 — 상극 초성+ㅓ 완성형(판정·보상=Combat 3장). 완성=잔존 방어막(앞 구간 패링 판정·뒤 구간 일반 경감 — 창·수치=Combat 3장)",
+      "assigned": true,
+      "connected": true,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "어",
+        "title": "한 번 접히는 수막",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.7198725Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 2.299999952316284,
+        "sampledSeconds": [
+          0.16099999845027924,
+          0.5059999823570251,
+          0.965999960899353,
+          1.4719998836517334,
+          2.069999933242798
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\103_C5B4_0.png",
+          "sha256": "b2de46b7ac2486f7fcacfe8bc6955a2e3f38d9a7a0e175829db74a1137f2cd21"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\103_C5B4_1.png",
+          "sha256": "a78f9c9493ff6d7a532f2e7730a14e02e05bc4a84de96467f9b8ccc06c652859"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\103_C5B4_2.png",
+          "sha256": "cc0a47ccef78b3871cc0679323882b723a04fc3d7f844b144ed11f02791e37cf"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\103_C5B4_3.png",
+          "sha256": "b5c81249dcea6196ae5a739cfe12eafeabd2a28401a31496b08832f2cffd6836"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\103_C5B4_4.png",
+          "sha256": "a9d4f99d50c06fe39f45018cc9ec90d9a20e04070243314c153f22ba35ca2baf"
+        }
+      ]
+    },
+    {
+      "index": 104,
+      "glyph": "억",
+      "title": "아껴 모은 먹방울",
+      "intent": "술식 먹 비용 감소 지속",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "억",
+        "title": "아껴 모은 먹방울",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.8553175Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.27000001072883606,
+        "life": 3.299999952316284,
+        "sampledSeconds": [
+          0.23099999129772186,
+          0.7260000109672546,
+          1.3859999179840088,
+          2.111999988555908,
+          2.9699997901916504
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\104_C5B5_0.png",
+          "sha256": "d153057273714de9d7bbc2e03bab85264a11dcbf049eb4eae62526bc76767d1c"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\104_C5B5_1.png",
+          "sha256": "a05a80cc48f2f9e0fb0ed1522be733f593a7d253c9a1c8e24af7d6ab3ca49432"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\104_C5B5_2.png",
+          "sha256": "88bb7ce6e8193c2dd4a78933667fa1d7d945c95c16dca105035827f7d505d9ee"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\104_C5B5_3.png",
+          "sha256": "d38674eff68bce8e932d24a8dd1ee94805207a7a691c3152b8dd159f6b400574"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\104_C5B5_4.png",
+          "sha256": "1801d980b0dad03e834d2a84979a041164ebc0c01b0f7bea3c1c618b6505a0b2"
+        }
+      ]
+    },
+    {
+      "index": 105,
+      "glyph": "언",
+      "title": "갈아 잇는 물실",
+      "intent": "옮겨붙는 불 — 직전과 다른 속성의 술식일 때 비용 할인(연쇄 장려)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "capture": {
+        "glyph": "언",
+        "title": "갈아 잇는 물실",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:55.9905137Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2800000011920929,
+        "life": 3.5999999046325684,
+        "sampledSeconds": [
+          0.25200000405311584,
+          0.7919999957084656,
+          1.5119999647140503,
+          2.303999900817871,
+          3.239999771118164
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\105_C5B8_0.png",
+          "sha256": "c79d04e7c57b8f9e39c54eeefed9e8cf5ffc90c3d84c04c1a6c03783f9cb14a4"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\105_C5B8_1.png",
+          "sha256": "072ad1ed08805916344ec281819245e4a79f393bf226883aa986f645bf5a2836"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\105_C5B8_2.png",
+          "sha256": "4423a4b8e46bd6dba65c509b9f6dcc14b1c419c522da2bc6f6e9a5b568f7399a"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\105_C5B8_3.png",
+          "sha256": "8e665c765812dca42aaffbe5495c05f8338299fd65b2450feac2ffa38a8478ac"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\105_C5B8_4.png",
+          "sha256": "8e20124707bca5e294d97cb5db66ecebe37e6dc0986520725dbd9a000ca206c9"
+        }
+      ]
+    },
+    {
+      "index": 106,
+      "glyph": "엄",
+      "title": "넓어진 먹그릇",
+      "intent": "먹 최대치 일시 확장 — 종료 시 초과분은 서서히 줄어드는 비축으로",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "capture": {
+        "glyph": "엄",
+        "title": "넓어진 먹그릇",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.1312354Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2800000011920929,
+        "life": 4.099999904632568,
+        "sampledSeconds": [
+          0.28700000047683716,
+          0.9019999504089355,
+          1.7219998836517334,
+          2.623999834060669,
+          3.68999981880188
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\106_C5C4_0.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\106_C5C4_1.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\106_C5C4_2.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\106_C5C4_3.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\106_C5C4_4.png",
+          "sha256": "bb6db747628a78b8d760d223de7a4a932047999e7bcdb82a26f24cb47ac11c7f"
+        }
+      ]
+    },
+    {
+      "index": 107,
+      "glyph": "엇",
+      "title": "청묵 유수검",
+      "intent": "수검 변신(검 공통 스펙)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "엇",
+        "title": "청묵 유수검",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.2640786Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\107_C5C7_0.png",
+          "sha256": "10d45f4d26897f050e501315c06de957808b99d1b70500a9f3268381f8cc1e14"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\107_C5C7_1.png",
+          "sha256": "cf591247c3a332f090a5e6ef59bcb8ffc0c5a26a3230e5be1878b7c61b55b8d0"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\107_C5C7_2.png",
+          "sha256": "ea4811532c2e538fe6762c055ec5edcb6afab9038170ab127d4bfa2595369bd4"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\107_C5C7_3.png",
+          "sha256": "5563296132af2807804f609f85a1de7623f577b8543fe0602e1be053312f27cd"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\107_C5C7_4.png",
+          "sha256": "2b55afcfbe0f9f08c42cce9bfc705ced577e17a1931e40527ec798ec8bc26aaf"
+        }
+      ]
+    },
+    {
+      "index": 108,
+      "glyph": "엉",
+      "title": "곁물 잔탄",
+      "intent": "수 잔탄 동반(동기)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "엉",
+        "title": "곁물 잔탄",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.4045498Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.7200000286102295,
+        "life": 2.700000047683716,
+        "sampledSeconds": [
+          0.18900001049041748,
+          0.593999981880188,
+          1.1339999437332153,
+          1.7280000448226929,
+          2.430000066757202
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\108_C5C9_0.png",
+          "sha256": "5a784192553eecf5abacb0b81688f8f309bfa5da69fd2df8021fce642d105ef3"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\108_C5C9_1.png",
+          "sha256": "25b197efcba779522dfe7d304337699407e075f98354e2f554f9ae0cda23ed70"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\108_C5C9_2.png",
+          "sha256": "a7d1e32800f568d3e625dcc4e6245f673077b2a5e8a9072ec4cb4f68df025339"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\108_C5C9_3.png",
+          "sha256": "97c42074248d0b941178aa0578b03d2f703a103d4ef7ec1dd67f72f5510789a9"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\108_C5C9_4.png",
+          "sha256": "7187ab5e4b5f502fa9b20f0f64b76c0d26bba807359badc486bdb260c2cd0803"
+        }
+      ]
+    },
+    {
+      "index": 109,
+      "glyph": "오",
+      "title": "한 줄 큰 물결",
+      "intent": "전진하는 느린 파도(즉발·경로 타격)",
+      "assigned": true,
+      "connected": true,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "오",
+        "title": "한 줄 큰 물결",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.5347149Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 3.422727108001709,
+        "sampledSeconds": [
+          0.23959089815616608,
+          0.7529999613761902,
+          1.4375452995300293,
+          2.1905453205108643,
+          3.0804543495178223
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+        "areaShape": "Path",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.800000011920929
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "areaRadius": 1.7000000476837158,
+        "areaAngle": 0.0,
+        "areaLength": 5.0,
+        "areaDelay": 0.44999998807907104,
+        "areaSpeed": 2.200000047683716
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\109_C624_0.png",
+          "sha256": "5c0d7be7b21801aa05dbd356aec23a7654f889329413eb9f077cd9d6ea6cc997"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\109_C624_1.png",
+          "sha256": "3a9afc9f5e1ace56087c71c5321a0e9c2d22ba6b7ae25ccdcb3ccb9a3355d329"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\109_C624_2.png",
+          "sha256": "048dfac5fd6d73762f10c0c5d7238e9ca3e029cfae1167b8db09744dfc6dd0d5"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\109_C624_3.png",
+          "sha256": "597c33a9b53aa4d3307232d3ed80cd711d41a2a21024869d0e8c47b54238d08b"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\109_C624_4.png",
+          "sha256": "9f112b56107b0bff1222edc3a811a4b1e935cfd2fbba79d6401cc7dde72b3fa8"
+        }
+      ]
+    },
+    {
+      "index": 110,
+      "glyph": "옥",
+      "title": "되감긴 조수",
+      "intent": "파도가 끝까지 갔다가 되돌아오며 2회 타격(조수 왕복)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "옥",
+        "title": "되감긴 조수",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.6729400Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.46000000834465027,
+        "life": 4.300000190734863,
+        "sampledSeconds": [
+          0.30100002884864807,
+          0.9460000395774841,
+          1.805999994277954,
+          2.752000093460083,
+          3.870000123977661
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\110_C625_0.png",
+          "sha256": "1d5f3469d41d93203baa39fe205a9d2f006fde2e33209d5d8d22aa9e58946223"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\110_C625_1.png",
+          "sha256": "3fd7b1b8c2ed6877bb9ffab94eb87b9d23ae7f8177124b889e227671330930e7"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\110_C625_2.png",
+          "sha256": "5205604001f5ccacca427b6558aafaef985a4b73fd4aa511cbbec0fd80f1f105"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\110_C625_3.png",
+          "sha256": "c3fe372811f46c067c6fa127634b3bf55df0760e316d386e58ee58175830b521"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\110_C625_4.png",
+          "sha256": "2ddd7f88521cdd648320e90a61951c3280f6b3cb134107a1eb479cc098c8eadd"
+        }
+      ]
+    },
+    {
+      "index": 111,
+      "glyph": "온",
+      "title": "씻겨 드러난 종이",
+      "intent": "경로상 적 장판·잔존물을 지우며 전진(정화 — 씻어 태움)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "온",
+        "title": "씻겨 드러난 종이",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.8261803Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.4399999976158142,
+        "life": 3.9000000953674316,
+        "sampledSeconds": [
+          0.27300000190734863,
+          0.8580000400543213,
+          1.6380000114440918,
+          2.496000051498413,
+          3.509999990463257
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\111_C628_0.png",
+          "sha256": "07643c7d01a9659bc676fc4114378938efe4803b8406233b0ec76138c2bc580c"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\111_C628_1.png",
+          "sha256": "206aa370daac04ca55f4d87a7f2bab37d21a3bb38a865693ff870b71201f8cac"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\111_C628_2.png",
+          "sha256": "232b894f84fcbf6a108b136424496785f739cf7c613b97eda23b00982a2b4742"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\111_C628_3.png",
+          "sha256": "4968acf3ab558c1101765a3067046c7b0c3aa222817d2c2d62e9ccb3964b0417"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\111_C628_4.png",
+          "sha256": "fc94665a51aaea08d397deb6524c0e1fe496432f50ca9ac79aa8396ae0325a48"
+        }
+      ]
+    },
+    {
+      "index": 112,
+      "glyph": "옴",
+      "title": "물결 짐승의 빈 배",
+      "intent": "물 짐승 소환수를 빚어 세움(재질=초성). 그로기 미축적·어그로 없음",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "옴",
+        "title": "물결 짐승의 빈 배",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:56.9826883Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.5600000023841858,
+        "life": 4.599999904632568,
+        "sampledSeconds": [
+          0.32199999690055847,
+          1.0119999647140503,
+          1.931999921798706,
+          2.943999767303467,
+          4.139999866485596
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\112_C634_0.png",
+          "sha256": "9ed10b317b608641e3d3de3a233580b6a9a222077896b828e3ac591ec384ac44"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\112_C634_1.png",
+          "sha256": "37c33c151d7db1fed5f75244d88ad7b7b4a954e8be638e6b0dd6a9666dbf2160"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\112_C634_2.png",
+          "sha256": "8f88ccb0a43dae04d8ba78002377b5d3e0768b5dfb53500e8f7bc47cd00a388b"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\112_C634_3.png",
+          "sha256": "ce3237f77cf674715112bbcc8a7a413124eadec922aaa3aa378581e5b0faf8ed"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\112_C634_4.png",
+          "sha256": "813ccc745a026830caec62990a835ebfb7b2181dd3a3436678cd818662fcf3e8"
+        }
+      ]
+    },
+    {
+      "index": 113,
+      "glyph": "옷",
+      "title": "식어 내리는 물비늘",
+      "intent": "식히는 물살 — 훑인 전원 공격력 잠시 감소(앗의 광역 짝)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "옷",
+        "title": "식어 내리는 물비늘",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:57.1477004Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 3.700000047683716,
+        "sampledSeconds": [
+          0.2590000033378601,
+          0.8140000104904175,
+          1.5540000200271606,
+          2.368000030517578,
+          3.3299999237060547
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\113_C637_0.png",
+          "sha256": "d3d4b54528c099a8bf66f192e683c28217e94f199e8bcb75c07c12fb85e36dcb"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\113_C637_1.png",
+          "sha256": "ee770ae65e86be7febba7d6c222c3537506da548455a4e331ba6b8448566f425"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\113_C637_2.png",
+          "sha256": "8f50096c15275199c90abe26837726f1fb7ffe64a6ef10a57ef6a556e4cd7663"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\113_C637_3.png",
+          "sha256": "a1f39e14275e8fd8a03ffc3cdb22f7182f215824af1a21fb733c3ee840b2016e"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\113_C637_4.png",
+          "sha256": "c6ce9b84ce3d26ba3eeb0342757a816f50261a53f5f234d5263a78a3199b65ec"
+        }
+      ]
+    },
+    {
+      "index": 114,
+      "glyph": "옹",
+      "title": "아래로 끌리는 큰물",
+      "intent": "가라앉히는 큰물 — 훑인 전원 잠시 굼뜨게, 공중의 적은 끌어내림(동기 — 깊음·낮춤)",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "옹",
+        "title": "아래로 끌리는 큰물",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:57.3505139Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.47999998927116394,
+        "life": 3.950000047683716,
+        "sampledSeconds": [
+          0.27650001645088196,
+          0.8690000176429749,
+          1.6589999198913574,
+          2.5279998779296875,
+          3.555000066757202
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\114_C639_0.png",
+          "sha256": "3e75ef9789846b8b491e66aa6eb5479a8cf4519ee5f7ff91da799e680095c2c8"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\114_C639_1.png",
+          "sha256": "2ff39951dd652283c97d9ef32c02dc4b32d67b5017ec6f1d04d6b8a50e63a52f"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\114_C639_2.png",
+          "sha256": "840b6bec0e76afa7815b069eec170fc8cabe66da51e1bae065b0ba518852a879"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\114_C639_3.png",
+          "sha256": "e0b8aee38fbee806199668a0f9813afc9d32acc7410fb37fd24351f1e043b73b"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\114_C639_4.png",
+          "sha256": "3817a911c63709a80ebb207123aad605884e230206880b6477b5403bc1174237"
+        }
+      ]
+    },
+    {
+      "index": 115,
+      "glyph": "우",
+      "title": "둘러선 물병풍",
+      "intent": "수막 광역 결계 — 언제든 시전, 잠시 잔존. 패링 판정·보상 없음",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "우",
+        "title": "둘러선 물병풍",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:57.5010264Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2800000011920929,
+        "life": 3.799999952316284,
+        "sampledSeconds": [
+          0.26600000262260437,
+          0.8359999656677246,
+          1.5959999561309814,
+          2.431999921798706,
+          3.419999837875366
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\115_C6B0_0.png",
+          "sha256": "c506faec2215299b741f1366e41bc783377f026458f65a7071e3e38428e29089"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\115_C6B0_1.png",
+          "sha256": "b0b4097b0dc668e38aa7122b38855e85f0d9041d8a9186cceee14eed8d4a3ccf"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\115_C6B0_2.png",
+          "sha256": "28826ab709f2cf9beeb6fa128801cf39cee256d95a199747ae63dbb2e9b9016b"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\115_C6B0_3.png",
+          "sha256": "dcfb22becd8ba9eb908680719a9a85ac67dce795401e136c4f1ffa72945e082b"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\115_C6B0_4.png",
+          "sha256": "8d3de6ef4e8877cd3110d5a2d86fa6c64c41160997b9257c36516fb7fd1af872"
+        }
+      ]
+    },
+    {
+      "index": 116,
+      "glyph": "욱",
+      "title": "솟은 물연적 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "capture": {
+        "glyph": "욱",
+        "title": "솟은 물연적 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:57.6534116Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3199999928474426,
+        "life": 3.0999999046325684,
+        "sampledSeconds": [
+          0.21699999272823334,
+          0.6819999814033508,
+          1.3019999265670776,
+          1.9839998483657837,
+          2.7899997234344482
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\116_C6B1_0.png",
+          "sha256": "283252d0d25c003251d7191d6fa660a3738352a100a69fa94bbc40818917655a"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\116_C6B1_1.png",
+          "sha256": "e459d68f0d45423fd63b000870414ac99cdb42d3e396b186754be3ce29db709a"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\116_C6B1_2.png",
+          "sha256": "c4caa643923e2765c2ea6f68936e3ff9fc6e6ffa2d79116d6754bbdbb5402f64"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\116_C6B1_3.png",
+          "sha256": "94179400e9342dea9a2e47959d50ceb2271fd82b67cd723b6b4c393699d27135"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\116_C6B1_4.png",
+          "sha256": "62d213770621aa794536588bf652557190ac666004b49cfe26b9a6689192133f"
+        }
+      ]
+    },
+    {
+      "index": 117,
+      "glyph": "운",
+      "title": "걷히는 물구름 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png",
+      "capture": {
+        "glyph": "운",
+        "title": "걷히는 물구름 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:57.7920235Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3400000035762787,
+        "life": 3.5999999046325684,
+        "sampledSeconds": [
+          0.25200000405311584,
+          0.7919999957084656,
+          1.5119999647140503,
+          2.303999900817871,
+          3.239999771118164
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\117_C6B4_0.png",
+          "sha256": "dacb4b7a5023405044b8501f374f5a40821ba7f5d947514df2b2191c86110a5e"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\117_C6B4_1.png",
+          "sha256": "bdb2dd6215b14508a79f4c583c438ef0cafc788d2db24498bef5e172e16fb95d"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\117_C6B4_2.png",
+          "sha256": "0fc51705205b8ee9d836bdb41b42c50192d4372f6b3757d26273137d5e9558ba"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\117_C6B4_3.png",
+          "sha256": "dcfec3aeced536ca63eacd53658101f26dc7aafbad3ef0bd31c791e02b7255ac"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\117_C6B4_4.png",
+          "sha256": "99d9d455f2676443d90fa5ffb78e151d78c3a0e86e4f9c4974454c4c80a288e2"
+        }
+      ]
+    },
+    {
+      "index": 118,
+      "glyph": "움",
+      "title": "품은 물방울 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "capture": {
+        "glyph": "움",
+        "title": "품은 물방울 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:57.9309596Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.33000001311302185,
+        "life": 3.3499999046325684,
+        "sampledSeconds": [
+          0.234499990940094,
+          0.7369999885559082,
+          1.406999945640564,
+          2.1439998149871826,
+          3.0149998664855957
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\118_C6C0_0.png",
+          "sha256": "4ef53131b0e92dd214652503889cc4b2a1892e9f0dee0be1cfe368ec4a185a3b"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\118_C6C0_1.png",
+          "sha256": "57b626435a5a1db5257843d1c492caf592c16dc1ca9994894dabfa00295c10c3"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\118_C6C0_2.png",
+          "sha256": "bc53aa987b3a662f30f76e78edb948ec7cdc2f6ea3d13e0f6763a797233e16de"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\118_C6C0_3.png",
+          "sha256": "a2d9437738f91933e593369f5d5dac32b21191a423b3efce3505b8583eee5217"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\118_C6C0_4.png",
+          "sha256": "3aad3377127933dbee5fd9a76eb1a417da17745b86c0471318cd631a6876fcd8"
+        }
+      ]
+    },
+    {
+      "index": 119,
+      "glyph": "웃",
+      "title": "흩어진 물부채 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "assigned": false,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "capture": {
+        "glyph": "웃",
+        "title": "흩어진 물부채 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:58.0894860Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 2.950000047683716,
+        "sampledSeconds": [
+          0.20650000870227814,
+          0.6489999890327454,
+          1.2389999628067017,
+          1.8880000114440918,
+          2.6549999713897705
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\119_C6C3_0.png",
+          "sha256": "80acd20467c1c0907596be902816863bbee36937e258ba9148751481ce4b26f7"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\119_C6C3_1.png",
+          "sha256": "d0fbd23138d81be25b0e6a614efbfcee04a007b4ff34a14e056fe9e739a3b165"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\119_C6C3_2.png",
+          "sha256": "cc3efa53b5686ff32fc595294bc18d311d6935a30a0dffc1a71f050054010d60"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\119_C6C3_3.png",
+          "sha256": "b94e7f3d0938c21fbda64c3572eb31e0178d179f89369865c59c0806891e01ab"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\119_C6C3_4.png",
+          "sha256": "3fecc7d5ec82f13250195647de50e0d90f225a73ecf6d549a212f1794edfb6bf"
+        }
+      ]
+    },
+    {
+      "index": 120,
+      "glyph": "웅",
+      "title": "씻은 먹의 자리",
+      "intent": "오염을 정화한다. 비전투 전용",
+      "assigned": true,
+      "connected": false,
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "capture": {
+        "glyph": "웅",
+        "title": "씻은 먹의 자리",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "capturedUtc": "2026-09-09T02:24:58.2292739Z",
+        "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+        "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 4.5,
+        "sampledSeconds": [
+          0.3149999976158142,
+          0.9900000095367432,
+          1.8899999856948853,
+          2.879999876022339,
+          4.049999713897705
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "files": [
+        {
+          "phase": 0,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\120_C6C5_0.png",
+          "sha256": "bc8eafa3500c87e16c94918e88d35b36d2f09feeb95d2eb7323ff471b831aa83"
+        },
+        {
+          "phase": 1,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\120_C6C5_1.png",
+          "sha256": "c19091271dc807b5edbc0087f1bbd4af9516bee5ef2b0cc6ce12a7243f98258f"
+        },
+        {
+          "phase": 2,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\120_C6C5_2.png",
+          "sha256": "8795cb991259e0028282a684eb0bcaaf8c62da999c9dde873ac9677517f30ef5"
+        },
+        {
+          "phase": 3,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\120_C6C5_3.png",
+          "sha256": "e801aa4e350dcdae825dba7d4cfd52811d1290346e5e3c07a06e0dfe6c872b4f"
+        },
+        {
+          "phase": 4,
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\FinalStills\\120_C6C5_4.png",
+          "sha256": "2e5a692bed528c4ddf6706bd4804ca00e8b3e2fde1bf48fd951cf49e48248fb5"
+        }
+      ]
+    }
+  ]
+}

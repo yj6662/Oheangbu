@@ -1,0 +1,49 @@
+{
+    "glyph": "머",
+    "phase": "guard_bright_window_end_observed",
+    "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+    "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\머_guard_bright_window_end_observed_f005711.png",
+    "camera": "DiagnosticCamera_NotPlayerView#-1413392",
+    "error": "",
+    "frame": 5711,
+    "width": 1280,
+    "height": 720,
+    "observedHitCount": 0,
+    "age": 0.8954052329063416,
+    "life": 4.0,
+    "time": 32.21068572998047,
+    "unscaledTime": 69.57279968261719,
+    "timeScale": 1.0,
+    "scheduledReferenceTime": 32.206764221191409,
+    "observationLateness": 0.0039215087890625,
+    "cameraFieldOfView": 60.0,
+    "cameraAspect": 1.7777777910232545,
+    "cameraNear": 0.30000001192092898,
+    "cameraFar": 1200.0,
+    "cameraPosition": {
+        "x": 0.0,
+        "y": 3.1113905906677248,
+        "z": 1.1999998092651368
+    },
+    "cameraEulerAngles": {
+        "x": 17.6796817779541,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "effectOrigin": {
+        "x": 0.012207865715026856,
+        "y": 2.8021950721740724,
+        "z": 2.1510157585144045
+    },
+    "originViewport": {
+        "x": 0.505946934223175,
+        "y": 0.49500057101249697,
+        "z": 1.0
+    },
+    "cameraOrthographic": false,
+    "cameraStateRestored": true,
+    "diagnosticCamera": true,
+    "fixtureStrokeVisibilityRestored": true,
+    "temporarilyHiddenFixtureRenderers": 2,
+    "captureWallMilliseconds": 45.7551
+}

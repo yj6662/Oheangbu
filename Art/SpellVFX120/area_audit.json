@@ -1,7 +1,7 @@
 {
     "status": "PASS_SPATIAL_CONTRACT_ONLY",
     "unityVersion": "6000.3.9f1",
-    "scope": "Actual VFX transforms: translated/rotated Path origin and front, width, Circle center/radius, Cone extent and supplied Volley impacts. No damage or art verdict.",
+    "scope": "Actual VFX transforms: translated/rotated Path origin and front, width, Circle center/radius, Cone extent, supplied Volley impacts, rising-ground water travel and short guard expiry. Edit-mode samples only; no damage, native Update/Destroy or art verdict.",
     "rows": [
         {
             "name": "path_plan_origin_direction_speed_and_width",
@@ -23,6 +23,30 @@
         },
         {
             "name": "volley_each_target_and_impact_clock",
+            "status": "PASS",
+            "error": "",
+            "maximumError": 0.0000030181381589500235
+        },
+        {
+            "name": "water_rising_ground_mid_travel_온",
+            "status": "PASS",
+            "error": "",
+            "maximumError": 0.00006103515625
+        },
+        {
+            "name": "water_rising_ground_mid_travel_옷",
+            "status": "PASS",
+            "error": "",
+            "maximumError": 0.0
+        },
+        {
+            "name": "water_rising_ground_mid_travel_옹",
+            "status": "PASS",
+            "error": "",
+            "maximumError": 0.0
+        },
+        {
+            "name": "water_short_guard_accents_expire_at_life",
             "status": "PASS",
             "error": "",
             "maximumError": 0.0

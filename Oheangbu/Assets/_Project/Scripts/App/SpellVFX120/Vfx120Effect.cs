@@ -41,6 +41,8 @@ namespace Oheangbu.App.SpellVFX120
         private Transform _seal;
         private Renderer _sealRenderer;
         private Vfx120Atmosphere _atmosphere;
+        private Vfx120EnvironmentMotion.Context _environmentGeometry = Vfx120EnvironmentMotion.Context.Create();
+        private Vfx120EnvironmentFixture _environmentFixture;
         private MaterialPropertyBlock _block;
         private Vector3 _aim;
         private float _flight;
@@ -58,6 +60,13 @@ namespace Oheangbu.App.SpellVFX120
 
         public override void SetImpactClock(float duration) { ReceivedImpactClock = duration; }
         public override void SetAreaPlan(AreaImpactPlan plan) { ReceivedAreaPlan = plan; }
+        // Coordinates are in this effect's local frame. Geometry is copied once on
+        // assignment; cue times and preview flags remain owned by Begin/Signal.
+        public void SetEnvironmentGeometry(Vfx120EnvironmentMotion.Context geometry)
+        {
+            _environmentGeometry = geometry;
+            _environmentGeometry.PathPoints = geometry.PathPoints == null ? null : (Vector3[])geometry.PathPoints.Clone();
+        }
         // Target transforms are actor roots, matching Begin's target convention (+1.1m chest).
         // Copies are made only when an adapter supplies new targets, never while sampling.
         public void SetSecondaryTargets(Transform secondary, Transform[] splitTargets = null)
@@ -125,6 +134,13 @@ namespace Oheangbu.App.SpellVFX120
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Path)
                 Life = Mathf.Max(Life, ReceivedAreaPlan.Delay + ReceivedAreaPlan.Length / Mathf.Max(.1f, ReceivedAreaPlan.Speed) + .7f);
             Build();
+            if (PreviewControlled && DemonstrationCues && Vfx120EnvironmentMotion.Supports(Profile))
+            {
+                bool ground = Profile.Glyph == "웅";
+                _environmentFixture = Vfx120EnvironmentFixture.Create(Profile.Glyph, transform,
+                    new Vector3(0, _targetGround + (ground ? .035f : 1.0f), 3.1f),
+                    ground ? Vector3.up : Vector3.back, true);
+            }
             Begun = true;
             Sample(0);
         }
@@ -152,6 +168,7 @@ namespace Oheangbu.App.SpellVFX120
         private void Build()
         {
             int n = Mathf.Clamp(Profile.Count, 1, 32);
+            if (Vfx120EnvironmentMotion.Supports(Profile)) n = Vfx120EnvironmentMotion.GetBodyCount(Profile);
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Path && Profile.Family == "WaveCrest") n = 1;
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley && ReceivedAreaPlan.Shots.Count > 0)
                 n = Mathf.Min(32, ReceivedAreaPlan.Shots.Count);
@@ -161,6 +178,7 @@ namespace Oheangbu.App.SpellVFX120
             accentCount = Mathf.Max(accentCount, Vfx120SummonMotion.GetAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120WeaponMotion.GetAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120WaterMotion.GetAccentCount(Profile));
+            accentCount = Mathf.Max(accentCount, Vfx120EnvironmentMotion.GetAccentCount(Profile));
             _accents = new Transform[accentCount]; _accentRenderers = new Renderer[accentCount];
             for (int i = 0; i < n; i++)
             {
@@ -217,6 +235,10 @@ namespace Oheangbu.App.SpellVFX120
             bool authoritativeVolley = ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley
                 && ReceivedAreaPlan.Shots.Count > 0;
             var cueContext = CueContext();
+            var environmentContext = EnvironmentContext();
+            if (_environmentFixture != null) _environmentFixture.Sample(environmentContext);
+            if (Vfx120EnvironmentMotion.Supports(Profile) && environmentContext.HasSurface)
+                center = environmentContext.SurfacePoint;
             var waterContext = Vfx120WaterMotion.Context.Create();
             waterContext.Age = Age; waterContext.Life = Life; waterContext.Flight = _flight;
             waterContext.Origin = Vector3.zero; waterContext.Target = _aim; waterContext.Center = center;
@@ -230,6 +252,11 @@ namespace Oheangbu.App.SpellVFX120
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Radius > 0) size = ReceivedAreaPlan.Radius;
             for (int i = 0; i < _parts.Length; i++)
             {
+                if (Vfx120EnvironmentMotion.TrySampleBody(Profile, environmentContext, i, _parts.Length, out var environmentBody))
+                {
+                    ApplyCuePose(_parts[i], _renderers[i], environmentBody, Profile.Pigment);
+                    continue;
+                }
                 float u = (i + .5f) / _parts.Length;
                 float delay = Profile.Stagger * u;
                 float pulse = Mathf.SmoothStep(0, 1, (Age - delay) / .25f) * fade;
@@ -309,7 +336,7 @@ namespace Oheangbu.App.SpellVFX120
                 if (axis.sqrMagnitude < .001f) axis = Vector3.up;
                 _parts[i].localRotation = Quaternion.LookRotation(axis, Mathf.Abs(axis.normalized.y) > .98f ? Vector3.forward : Vector3.up);
                 _parts[i].localScale = partScale;
-                if (Profile.Grounded && (Profile.Family == "Tree" || Profile.Family == "WaveCrest" || Profile.Behavior == Vfx120Behavior.Summon || Profile.Layout == Vfx120Layout.Field || Profile.Glyph == "막"))
+                if (Profile.Grounded && (HasSpatialPlan || !Vfx120WaterMotion.Supports(Profile)) && (Profile.Family == "Tree" || Profile.Family == "WaveCrest" || Profile.Behavior == Vfx120Behavior.Summon || Profile.Layout == Vfx120Layout.Field || Profile.Glyph == "막"))
                 {
                     var e = Profile.BodyMesh.bounds.extents;
                     Quaternion q = _parts[i].localRotation;
@@ -323,6 +350,12 @@ namespace Oheangbu.App.SpellVFX120
             // Accent geometry has its own authored count; e.g. one tree has twelve leaves.
             for (int i = 0; i < _accents.Length; i++)
             {
+                if (Vfx120EnvironmentMotion.TrySampleAccent(Profile, environmentContext, i, _accents.Length, out var environmentAccent))
+                {
+                    ApplyCuePose(_accents[i], _accentRenderers[i], environmentAccent,
+                        Vfx120EnvironmentMotion.GetAccentColor(Profile, i));
+                    continue;
+                }
                 if (Vfx120WaterMotion.TrySampleAccent(Profile, waterContext, i, _accents.Length, out var waterPose))
                 {
                     ApplyCuePose(_accents[i], _accentRenderers[i], waterPose, Vfx120WaterMotion.GetAccentColor(Profile, i));
@@ -392,6 +425,7 @@ namespace Oheangbu.App.SpellVFX120
             if (ReceivedGuardClock > 0 && Age > ReceivedGuardBrightWindow) sealAlpha *= .45f;
             if (cueMotion) SampleCueSeal(cueContext, ref sealAlpha);
             if (Profile.Glyph == "산" || Profile.Glyph == "상") sealAlpha = 0;
+            if (Vfx120EnvironmentMotion.Supports(Profile)) sealAlpha = 0;
             Tint(_sealRenderer, Profile.Accent, sealAlpha, 1 - fade);
             for (int r = 0; r < _ribbons.Length; r++)
             {
@@ -399,6 +433,7 @@ namespace Oheangbu.App.SpellVFX120
                 // The cue meshes already provide the attached/transfer trajectory.
                 // Generic orbit ribbons would falsely imply an active zone before a hit.
                 line.enabled = !cueMotion && !HasSpatialPlan && Profile.Glyph != "막"
+                    && !Vfx120EnvironmentMotion.Supports(Profile)
                     && Vfx120WaterMotion.GetAccentCount(Profile) == 0 && Profile.Behavior != Vfx120Behavior.Weapon;
                 if (!line.enabled) { line.widthMultiplier = 0; Tint(line, Profile.Ink, 0, 1); continue; }
                 for (int j = 0; j < 48; j++)
@@ -426,6 +461,21 @@ namespace Oheangbu.App.SpellVFX120
                 Tint(line, r == 1 ? Profile.Accent : Profile.Pigment, fade * .8f, 1 - fade);
             }
             if (_atmosphere != null) _atmosphere.Sample(Age, center, _flight, Life, PreviewControlled);
+        }
+
+        private Vfx120EnvironmentMotion.Context EnvironmentContext()
+        {
+            var context = _environmentGeometry;
+            context.Age = Age; context.Life = Life; context.Origin = Vector3.zero;
+            context.HitAt = HitAt; context.ReleaseAt = ReleaseAt;
+            context.PreviewControlled = PreviewControlled; context.DemonstrationCues = DemonstrationCues;
+            if (_environmentFixture != null) _environmentFixture.FillContext(ref context);
+            return context;
+        }
+
+        private void OnDestroy()
+        {
+            if (_environmentFixture != null) { _environmentFixture.Dispose(); _environmentFixture = null; }
         }
 
         private Vfx120CueMotion.Context CueContext()
@@ -604,20 +654,22 @@ namespace Oheangbu.App.SpellVFX120
                 float angle = (spread - .5f) * 2 * halfAngle;
                 Vector3 tongue = Quaternion.AngleAxis(angle, Vector3.up) * direction;
                 float ready = Mathf.SmoothStep(0, 1, Age / Mathf.Max(.05f, plan.Delay));
-                float jet = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(plan.Delay, plan.Delay + .20f, Age));
+                // The cone's damage occurs at Delay. Its visible reach must already
+                // arrive then, rather than beginning to unfold after damage.
+                float jet = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(Mathf.Max(0, plan.Delay - .22f), Mathf.Max(.01f, plan.Delay), Age));
                 float reach = Mathf.Max(0, plan.Length) * jet;
                 float visibleLength = Mathf.Max(.05f, reach * .48f);
                 local = tongue * reach * (row == 0 ? .25f : .75f);
                 local.y = .22f + .12f * Mathf.Sin(Age * 7 + index * 1.7f);
                 axis = (tongue + Vector3.up * (.10f + .09f * Mathf.Sin(Age * 6 + index))).normalized;
-                scale = Profile.PartScale * pulse;
+                scale = Profile.PartScale;
                 if (Profile.BodyMesh != null)
                     scale.z = visibleLength / Mathf.Max(.001f, Profile.BodyMesh.bounds.size.z);
                 scale.x *= Mathf.Lerp(.10f, .62f, jet);
                 if (Profile.BodyMesh != null)
                     scale.y = (.32f + .15f * Mathf.Sin(index * 2 + Age * 5)) / Mathf.Max(.001f, Profile.BodyMesh.bounds.size.y);
                 scale.y *= Mathf.Lerp(.10f, 1, jet);
-                scale *= ready;
+                scale *= ready * pulse;
             }
         }
 

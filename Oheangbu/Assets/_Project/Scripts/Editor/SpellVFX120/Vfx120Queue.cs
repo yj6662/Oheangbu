@@ -50,6 +50,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     case "OpenRange": response.result = OpenSavedScene("Assets/_Project/Scenes/Dev/C1_SpellRange.unity"); break;
                     case "RenderAudit": response.result = Vfx120RenderAudit.Run(); break;
                     case "Capture": response.result = Vfx120Capture.Start(command.request); break;
+                    case "CapturePoll": response.result = Vfx120Capture.Poll(); break;
                     case "Play": EditorApplication.isPlaying = true; response.result = "PLAY_REQUESTED"; break;
                     case "Stop": EditorApplication.isPlaying = false; response.result = "STOP_REQUESTED"; break;
                     default: throw new InvalidOperationException("Unknown scoped VFX command");
