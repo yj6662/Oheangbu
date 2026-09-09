@@ -1,0 +1,112 @@
+[
+  {
+    "family": "Beast",
+    "fbx": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\Beast_FolkTiger_B2.fbx",
+    "status": "PASS",
+    "scope": "Empty Blender scene FBX import with LINEAR vertex-color decoding; world-space geometry, triangle count and all exported colors. Unity runtime not tested here.",
+    "mesh_count": 1,
+    "triangles": 4500,
+    "vertices": 2352,
+    "max_world_vertex_error_m": 9.541398782175747e-08,
+    "max_rgba_error": 0,
+    "missing_color_attributes": 0,
+    "bounds_dimensions_blender": [
+      0.35965093970298767,
+      1.0000000596046448,
+      0.5620045363903046
+    ],
+    "imported_objects": [
+      {
+        "name": "Beast_FolkTiger_B2",
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            1.6292068494294654e-07,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6292068494294654e-07,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "color_attributes": [
+          {
+            "name": "Color",
+            "domain": "CORNER",
+            "type": "FLOAT_COLOR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "family": "StoneGuardian",
+    "fbx": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\StoneGuardian_Jangseung_B1.fbx",
+    "status": "PASS",
+    "scope": "Empty Blender scene FBX import with LINEAR vertex-color decoding; world-space geometry, triangle count and all exported colors. Unity runtime not tested here.",
+    "mesh_count": 1,
+    "triangles": 2720,
+    "vertices": 1448,
+    "max_world_vertex_error_m": 8.720680710894158e-08,
+    "max_rgba_error": 0,
+    "missing_color_attributes": 0,
+    "bounds_dimensions_blender": [
+      0.9096142649650574,
+      0.35693734884262085,
+      1.0
+    ],
+    "imported_objects": [
+      {
+        "name": "StoneGuardian_Jangseung_B1",
+        "matrix_world": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            1.6292068494294654e-07,
+            0.0
+          ],
+          [
+            0.0,
+            -1.6292068494294654e-07,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "color_attributes": [
+          {
+            "name": "Color",
+            "domain": "CORNER",
+            "type": "FLOAT_COLOR"
+          }
+        ]
+      }
+    ]
+  }
+]

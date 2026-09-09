@@ -1,0 +1,1982 @@
+[
+  {
+    "id": "013_ACE0",
+    "phase": 0,
+    "bbox": [
+      585,
+      340,
+      852,
+      434
+    ],
+    "changedPixels": 4339
+  },
+  {
+    "id": "013_ACE0",
+    "phase": 1,
+    "bbox": [
+      569,
+      283,
+      902,
+      462
+    ],
+    "changedPixels": 17688
+  },
+  {
+    "id": "013_ACE0",
+    "phase": 2,
+    "bbox": [
+      568,
+      283,
+      902,
+      462
+    ],
+    "changedPixels": 17712
+  },
+  {
+    "id": "013_ACE0",
+    "phase": 3,
+    "bbox": [
+      569,
+      283,
+      902,
+      462
+    ],
+    "changedPixels": 17637
+  },
+  {
+    "id": "013_ACE0",
+    "phase": 4,
+    "bbox": [
+      596,
+      343,
+      870,
+      456
+    ],
+    "changedPixels": 592
+  },
+  {
+    "id": "014_ACE1",
+    "phase": 0,
+    "bbox": [
+      581,
+      314,
+      856,
+      438
+    ],
+    "changedPixels": 4390
+  },
+  {
+    "id": "014_ACE1",
+    "phase": 1,
+    "bbox": [
+      579,
+      297,
+      856,
+      455
+    ],
+    "changedPixels": 12684
+  },
+  {
+    "id": "014_ACE1",
+    "phase": 2,
+    "bbox": [
+      579,
+      297,
+      856,
+      455
+    ],
+    "changedPixels": 12698
+  },
+  {
+    "id": "014_ACE1",
+    "phase": 3,
+    "bbox": [
+      579,
+      297,
+      856,
+      455
+    ],
+    "changedPixels": 12717
+  },
+  {
+    "id": "014_ACE1",
+    "phase": 4,
+    "bbox": [
+      601,
+      321,
+      832,
+      451
+    ],
+    "changedPixels": 5141
+  },
+  {
+    "id": "015_ACE4",
+    "phase": 0,
+    "bbox": [
+      647,
+      221,
+      784,
+      408
+    ],
+    "changedPixels": 1198
+  },
+  {
+    "id": "015_ACE4",
+    "phase": 1,
+    "bbox": [
+      589,
+      175,
+      848,
+      439
+    ],
+    "changedPixels": 16554
+  },
+  {
+    "id": "015_ACE4",
+    "phase": 2,
+    "bbox": [
+      589,
+      175,
+      848,
+      439
+    ],
+    "changedPixels": 16586
+  },
+  {
+    "id": "015_ACE4",
+    "phase": 3,
+    "bbox": [
+      589,
+      181,
+      848,
+      439
+    ],
+    "changedPixels": 13375
+  },
+  {
+    "id": "015_ACE4",
+    "phase": 4,
+    "bbox": [
+      658,
+      224,
+      762,
+      405
+    ],
+    "changedPixels": 241
+  },
+  {
+    "id": "016_ACF0",
+    "phase": 0,
+    "bbox": [
+      662,
+      287,
+      843,
+      434
+    ],
+    "changedPixels": 9057
+  },
+  {
+    "id": "016_ACF0",
+    "phase": 1,
+    "bbox": [
+      654,
+      287,
+      842,
+      434
+    ],
+    "changedPixels": 8811
+  },
+  {
+    "id": "016_ACF0",
+    "phase": 2,
+    "bbox": [
+      651,
+      290,
+      842,
+      434
+    ],
+    "changedPixels": 8472
+  },
+  {
+    "id": "016_ACF0",
+    "phase": 3,
+    "bbox": [
+      652,
+      296,
+      842,
+      434
+    ],
+    "changedPixels": 8753
+  },
+  {
+    "id": "016_ACF0",
+    "phase": 4,
+    "bbox": [
+      655,
+      299,
+      827,
+      428
+    ],
+    "changedPixels": 4930
+  },
+  {
+    "id": "017_ACF3",
+    "phase": 0,
+    "bbox": [
+      545,
+      307,
+      873,
+      463
+    ],
+    "changedPixels": 11263
+  },
+  {
+    "id": "017_ACF3",
+    "phase": 1,
+    "bbox": [
+      545,
+      307,
+      873,
+      463
+    ],
+    "changedPixels": 11212
+  },
+  {
+    "id": "017_ACF3",
+    "phase": 2,
+    "bbox": [
+      545,
+      307,
+      873,
+      463
+    ],
+    "changedPixels": 11214
+  },
+  {
+    "id": "017_ACF3",
+    "phase": 3,
+    "bbox": [
+      545,
+      307,
+      873,
+      463
+    ],
+    "changedPixels": 11265
+  },
+  {
+    "id": "017_ACF3",
+    "phase": 4,
+    "bbox": [
+      552,
+      326,
+      873,
+      461
+    ],
+    "changedPixels": 5536
+  },
+  {
+    "id": "018_ACF5",
+    "phase": 0,
+    "bbox": [
+      283,
+      266,
+      645,
+      609
+    ],
+    "changedPixels": 31562
+  },
+  {
+    "id": "018_ACF5",
+    "phase": 1,
+    "bbox": [
+      329,
+      252,
+      772,
+      585
+    ],
+    "changedPixels": 54923
+  },
+  {
+    "id": "018_ACF5",
+    "phase": 2,
+    "bbox": [
+      458,
+      232,
+      861,
+      495
+    ],
+    "changedPixels": 39505
+  },
+  {
+    "id": "018_ACF5",
+    "phase": 3,
+    "bbox": [
+      578,
+      215,
+      909,
+      448
+    ],
+    "changedPixels": 28838
+  },
+  {
+    "id": "018_ACF5",
+    "phase": 4,
+    "bbox": [
+      620,
+      208,
+      910,
+      406
+    ],
+    "changedPixels": 5759
+  },
+  {
+    "id": "019_AD6C",
+    "phase": 0,
+    "bbox": [
+      377,
+      193,
+      710,
+      538
+    ],
+    "changedPixels": 39292
+  },
+  {
+    "id": "019_AD6C",
+    "phase": 1,
+    "bbox": [
+      376,
+      189,
+      714,
+      540
+    ],
+    "changedPixels": 42145
+  },
+  {
+    "id": "019_AD6C",
+    "phase": 2,
+    "bbox": [
+      376,
+      189,
+      714,
+      540
+    ],
+    "changedPixels": 42090
+  },
+  {
+    "id": "019_AD6C",
+    "phase": 3,
+    "bbox": [
+      376,
+      189,
+      714,
+      540
+    ],
+    "changedPixels": 42098
+  },
+  {
+    "id": "019_AD6C",
+    "phase": 4,
+    "bbox": [
+      376,
+      202,
+      701,
+      536
+    ],
+    "changedPixels": 17409
+  },
+  {
+    "id": "020_AD6D",
+    "phase": 0,
+    "bbox": [
+      669,
+      184,
+      793,
+      412
+    ],
+    "changedPixels": 7567
+  },
+  {
+    "id": "020_AD6D",
+    "phase": 1,
+    "bbox": [
+      643,
+      91,
+      795,
+      412
+    ],
+    "changedPixels": 19090
+  },
+  {
+    "id": "020_AD6D",
+    "phase": 2,
+    "bbox": [
+      643,
+      91,
+      795,
+      412
+    ],
+    "changedPixels": 19086
+  },
+  {
+    "id": "020_AD6D",
+    "phase": 3,
+    "bbox": [
+      643,
+      91,
+      795,
+      413
+    ],
+    "changedPixels": 19097
+  },
+  {
+    "id": "020_AD6D",
+    "phase": 4,
+    "bbox": [
+      664,
+      124,
+      775,
+      412
+    ],
+    "changedPixels": 9341
+  },
+  {
+    "id": "021_AD70",
+    "phase": 0,
+    "bbox": [
+      447,
+      287,
+      559,
+      536
+    ],
+    "changedPixels": 1094
+  },
+  {
+    "id": "021_AD70",
+    "phase": 1,
+    "bbox": [
+      446,
+      293,
+      560,
+      537
+    ],
+    "changedPixels": 522
+  },
+  {
+    "id": "021_AD70",
+    "phase": 2,
+    "bbox": [
+      446,
+      297,
+      560,
+      537
+    ],
+    "changedPixels": 487
+  },
+  {
+    "id": "021_AD70",
+    "phase": 3,
+    "bbox": [
+      446,
+      297,
+      560,
+      537
+    ],
+    "changedPixels": 498
+  },
+  {
+    "id": "021_AD70",
+    "phase": 4,
+    "bbox": [
+      452,
+      305,
+      558,
+      535
+    ],
+    "changedPixels": 102
+  },
+  {
+    "id": "022_AD7C",
+    "phase": 0,
+    "bbox": [
+      421,
+      451,
+      582,
+      543
+    ],
+    "changedPixels": 2055
+  },
+  {
+    "id": "022_AD7C",
+    "phase": 1,
+    "bbox": [
+      420,
+      460,
+      583,
+      544
+    ],
+    "changedPixels": 919
+  },
+  {
+    "id": "022_AD7C",
+    "phase": 2,
+    "bbox": [
+      420,
+      462,
+      583,
+      544
+    ],
+    "changedPixels": 887
+  },
+  {
+    "id": "022_AD7C",
+    "phase": 3,
+    "bbox": [
+      420,
+      463,
+      583,
+      544
+    ],
+    "changedPixels": 880
+  },
+  {
+    "id": "022_AD7C",
+    "phase": 4,
+    "bbox": [
+      441,
+      466,
+      534,
+      536
+    ],
+    "changedPixels": 40
+  },
+  {
+    "id": "023_AD7F",
+    "phase": 0,
+    "bbox": [
+      434,
+      403,
+      611,
+      551
+    ],
+    "changedPixels": 1085
+  },
+  {
+    "id": "023_AD7F",
+    "phase": 1,
+    "bbox": [
+      384,
+      405,
+      620,
+      554
+    ],
+    "changedPixels": 418
+  },
+  {
+    "id": "023_AD7F",
+    "phase": 2,
+    "bbox": [
+      384,
+      408,
+      620,
+      555
+    ],
+    "changedPixels": 438
+  },
+  {
+    "id": "023_AD7F",
+    "phase": 3,
+    "bbox": [
+      384,
+      412,
+      620,
+      555
+    ],
+    "changedPixels": 434
+  },
+  {
+    "id": "023_AD7F",
+    "phase": 4,
+    "bbox": [
+      414,
+      416,
+      552,
+      479
+    ],
+    "changedPixels": 41
+  },
+  {
+    "id": "024_AD81",
+    "phase": 0,
+    "bbox": [
+      441,
+      411,
+      563,
+      537
+    ],
+    "changedPixels": 1121
+  },
+  {
+    "id": "024_AD81",
+    "phase": 1,
+    "bbox": [
+      440,
+      426,
+      566,
+      538
+    ],
+    "changedPixels": 1143
+  },
+  {
+    "id": "024_AD81",
+    "phase": 2,
+    "bbox": [
+      440,
+      428,
+      566,
+      538
+    ],
+    "changedPixels": 1158
+  },
+  {
+    "id": "024_AD81",
+    "phase": 3,
+    "bbox": [
+      440,
+      431,
+      566,
+      538
+    ],
+    "changedPixels": 1162
+  },
+  {
+    "id": "024_AD81",
+    "phase": 4,
+    "bbox": [
+      448,
+      435,
+      530,
+      505
+    ],
+    "changedPixels": 106
+  },
+  {
+    "id": "025_B098",
+    "phase": 0,
+    "bbox": [
+      468,
+      369,
+      546,
+      405
+    ],
+    "changedPixels": 376
+  },
+  {
+    "id": "025_B098",
+    "phase": 1,
+    "bbox": [
+      449,
+      328,
+      648,
+      444
+    ],
+    "changedPixels": 1608
+  },
+  {
+    "id": "025_B098",
+    "phase": 2,
+    "bbox": [
+      456,
+      284,
+      739,
+      360
+    ],
+    "changedPixels": 1189
+  },
+  {
+    "id": "025_B098",
+    "phase": 3,
+    "bbox": [
+      663,
+      272,
+      750,
+      336
+    ],
+    "changedPixels": 1826
+  },
+  {
+    "id": "025_B098",
+    "phase": 4,
+    "bbox": [
+      672,
+      294,
+      733,
+      327
+    ],
+    "changedPixels": 232
+  },
+  {
+    "id": "026_B099",
+    "phase": 0,
+    "bbox": [
+      696,
+      199,
+      749,
+      365
+    ],
+    "changedPixels": 4300
+  },
+  {
+    "id": "026_B099",
+    "phase": 1,
+    "bbox": [
+      687,
+      147,
+      751,
+      368
+    ],
+    "changedPixels": 6784
+  },
+  {
+    "id": "026_B099",
+    "phase": 2,
+    "bbox": [
+      687,
+      147,
+      751,
+      368
+    ],
+    "changedPixels": 6856
+  },
+  {
+    "id": "026_B099",
+    "phase": 3,
+    "bbox": [
+      687,
+      147,
+      751,
+      368
+    ],
+    "changedPixels": 6794
+  },
+  {
+    "id": "026_B099",
+    "phase": 4,
+    "bbox": [
+      698,
+      185,
+      737,
+      329
+    ],
+    "changedPixels": 1596
+  },
+  {
+    "id": "027_B09C",
+    "phase": 0,
+    "bbox": [
+      418,
+      316,
+      551,
+      477
+    ],
+    "changedPixels": 3820
+  },
+  {
+    "id": "027_B09C",
+    "phase": 1,
+    "bbox": [
+      409,
+      304,
+      675,
+      489
+    ],
+    "changedPixels": 10597
+  },
+  {
+    "id": "027_B09C",
+    "phase": 2,
+    "bbox": [
+      409,
+      283,
+      761,
+      489
+    ],
+    "changedPixels": 8535
+  },
+  {
+    "id": "027_B09C",
+    "phase": 3,
+    "bbox": [
+      409,
+      267,
+      749,
+      489
+    ],
+    "changedPixels": 7308
+  },
+  {
+    "id": "027_B09C",
+    "phase": 4,
+    "bbox": [
+      687,
+      274,
+      741,
+      322
+    ],
+    "changedPixels": 391
+  },
+  {
+    "id": "028_B0A8",
+    "phase": 0,
+    "bbox": [
+      693,
+      267,
+      745,
+      398
+    ],
+    "changedPixels": 1143
+  },
+  {
+    "id": "028_B0A8",
+    "phase": 1,
+    "bbox": [
+      691,
+      257,
+      745,
+      405
+    ],
+    "changedPixels": 1657
+  },
+  {
+    "id": "028_B0A8",
+    "phase": 2,
+    "bbox": [
+      687,
+      257,
+      747,
+      405
+    ],
+    "changedPixels": 1665
+  },
+  {
+    "id": "028_B0A8",
+    "phase": 3,
+    "bbox": [
+      688,
+      260,
+      748,
+      401
+    ],
+    "changedPixels": 1675
+  },
+  {
+    "id": "028_B0A8",
+    "phase": 4,
+    "bbox": [
+      696,
+      283,
+      745,
+      309
+    ],
+    "changedPixels": 299
+  },
+  {
+    "id": "029_B0AB",
+    "phase": 0,
+    "bbox": [
+      403,
+      298,
+      617,
+      494
+    ],
+    "changedPixels": 3317
+  },
+  {
+    "id": "029_B0AB",
+    "phase": 1,
+    "bbox": [
+      384,
+      261,
+      719,
+      529
+    ],
+    "changedPixels": 4232
+  },
+  {
+    "id": "029_B0AB",
+    "phase": 2,
+    "bbox": [
+      395,
+      261,
+      878,
+      529
+    ],
+    "changedPixels": 3179
+  },
+  {
+    "id": "029_B0AB",
+    "phase": 3,
+    "bbox": [
+      395,
+      261,
+      984,
+      529
+    ],
+    "changedPixels": 4095
+  },
+  {
+    "id": "029_B0AB",
+    "phase": 4,
+    "bbox": [
+      650,
+      270,
+      941,
+      339
+    ],
+    "changedPixels": 387
+  },
+  {
+    "id": "030_B0AD",
+    "phase": 0,
+    "bbox": [
+      473,
+      376,
+      541,
+      405
+    ],
+    "changedPixels": 130
+  },
+  {
+    "id": "030_B0AD",
+    "phase": 1,
+    "bbox": [
+      560,
+      332,
+      658,
+      369
+    ],
+    "changedPixels": 591
+  },
+  {
+    "id": "030_B0AD",
+    "phase": 2,
+    "bbox": [
+      668,
+      305,
+      738,
+      329
+    ],
+    "changedPixels": 338
+  },
+  {
+    "id": "030_B0AD",
+    "phase": 3,
+    "bbox": [
+      668,
+      307,
+      733,
+      329
+    ],
+    "changedPixels": 301
+  },
+  {
+    "id": "030_B0AD",
+    "phase": 4,
+    "bbox": [
+      694,
+      313,
+      722,
+      319
+    ],
+    "changedPixels": 2
+  },
+  {
+    "id": "031_B108",
+    "phase": 0,
+    "bbox": [
+      420,
+      273,
+      666,
+      518
+    ],
+    "changedPixels": 17729
+  },
+  {
+    "id": "031_B108",
+    "phase": 1,
+    "bbox": [
+      385,
+      270,
+      699,
+      519
+    ],
+    "changedPixels": 24502
+  },
+  {
+    "id": "031_B108",
+    "phase": 2,
+    "bbox": [
+      385,
+      270,
+      699,
+      519
+    ],
+    "changedPixels": 24154
+  },
+  {
+    "id": "031_B108",
+    "phase": 3,
+    "bbox": [
+      385,
+      270,
+      699,
+      519
+    ],
+    "changedPixels": 24138
+  },
+  {
+    "id": "031_B108",
+    "phase": 4,
+    "bbox": [
+      426,
+      273,
+      667,
+      517
+    ],
+    "changedPixels": 2248
+  },
+  {
+    "id": "032_B109",
+    "phase": 0,
+    "bbox": [
+      658,
+      314,
+      779,
+      398
+    ],
+    "changedPixels": 3211
+  },
+  {
+    "id": "032_B109",
+    "phase": 1,
+    "bbox": [
+      658,
+      314,
+      779,
+      398
+    ],
+    "changedPixels": 3696
+  },
+  {
+    "id": "032_B109",
+    "phase": 2,
+    "bbox": [
+      657,
+      314,
+      780,
+      405
+    ],
+    "changedPixels": 3759
+  },
+  {
+    "id": "032_B109",
+    "phase": 3,
+    "bbox": [
+      658,
+      314,
+      780,
+      395
+    ],
+    "changedPixels": 3662
+  },
+  {
+    "id": "032_B109",
+    "phase": 4,
+    "bbox": [
+      667,
+      323,
+      770,
+      405
+    ],
+    "changedPixels": 1508
+  },
+  {
+    "id": "033_B10C",
+    "phase": 0,
+    "bbox": [
+      477,
+      443,
+      528,
+      515
+    ],
+    "changedPixels": 266
+  },
+  {
+    "id": "033_B10C",
+    "phase": 1,
+    "bbox": [
+      474,
+      443,
+      531,
+      523
+    ],
+    "changedPixels": 402
+  },
+  {
+    "id": "033_B10C",
+    "phase": 2,
+    "bbox": [
+      476,
+      446,
+      531,
+      524
+    ],
+    "changedPixels": 394
+  },
+  {
+    "id": "033_B10C",
+    "phase": 3,
+    "bbox": [
+      476,
+      446,
+      531,
+      524
+    ],
+    "changedPixels": 392
+  },
+  {
+    "id": "033_B10C",
+    "phase": 4,
+    "bbox": [
+      485,
+      443,
+      527,
+      487
+    ],
+    "changedPixels": 29
+  },
+  {
+    "id": "034_B118",
+    "phase": 0,
+    "bbox": [
+      447,
+      401,
+      559,
+      537
+    ],
+    "changedPixels": 10934
+  },
+  {
+    "id": "034_B118",
+    "phase": 1,
+    "bbox": [
+      438,
+      400,
+      560,
+      537
+    ],
+    "changedPixels": 11009
+  },
+  {
+    "id": "034_B118",
+    "phase": 2,
+    "bbox": [
+      447,
+      400,
+      559,
+      537
+    ],
+    "changedPixels": 11007
+  },
+  {
+    "id": "034_B118",
+    "phase": 3,
+    "bbox": [
+      447,
+      400,
+      559,
+      537
+    ],
+    "changedPixels": 10980
+  },
+  {
+    "id": "034_B118",
+    "phase": 4,
+    "bbox": [
+      448,
+      427,
+      559,
+      536
+    ],
+    "changedPixels": 3014
+  },
+  {
+    "id": "035_B11B",
+    "phase": 0,
+    "bbox": [
+      454,
+      477,
+      557,
+      536
+    ],
+    "changedPixels": 1233
+  },
+  {
+    "id": "035_B11B",
+    "phase": 1,
+    "bbox": [
+      454,
+      478,
+      557,
+      536
+    ],
+    "changedPixels": 1599
+  },
+  {
+    "id": "035_B11B",
+    "phase": 2,
+    "bbox": [
+      454,
+      468,
+      557,
+      536
+    ],
+    "changedPixels": 1518
+  },
+  {
+    "id": "035_B11B",
+    "phase": 3,
+    "bbox": [
+      454,
+      469,
+      557,
+      536
+    ],
+    "changedPixels": 1513
+  },
+  {
+    "id": "035_B11B",
+    "phase": 4,
+    "bbox": [
+      465,
+      447,
+      535,
+      525
+    ],
+    "changedPixels": 651
+  },
+  {
+    "id": "036_B11D",
+    "phase": 0,
+    "bbox": [
+      480,
+      467,
+      533,
+      514
+    ],
+    "changedPixels": 668
+  },
+  {
+    "id": "036_B11D",
+    "phase": 1,
+    "bbox": [
+      464,
+      454,
+      554,
+      531
+    ],
+    "changedPixels": 1806
+  },
+  {
+    "id": "036_B11D",
+    "phase": 2,
+    "bbox": [
+      464,
+      454,
+      554,
+      531
+    ],
+    "changedPixels": 2089
+  },
+  {
+    "id": "036_B11D",
+    "phase": 3,
+    "bbox": [
+      464,
+      451,
+      554,
+      531
+    ],
+    "changedPixels": 1713
+  },
+  {
+    "id": "036_B11D",
+    "phase": 4,
+    "bbox": [
+      475,
+      462,
+      544,
+      517
+    ],
+    "changedPixels": 800
+  },
+  {
+    "id": "037_B178",
+    "phase": 0,
+    "bbox": [
+      641,
+      275,
+      784,
+      401
+    ],
+    "changedPixels": 2391
+  },
+  {
+    "id": "037_B178",
+    "phase": 1,
+    "bbox": [
+      584,
+      276,
+      907,
+      438
+    ],
+    "changedPixels": 17353
+  },
+  {
+    "id": "037_B178",
+    "phase": 2,
+    "bbox": [
+      584,
+      277,
+      907,
+      438
+    ],
+    "changedPixels": 17376
+  },
+  {
+    "id": "037_B178",
+    "phase": 3,
+    "bbox": [
+      585,
+      278,
+      906,
+      438
+    ],
+    "changedPixels": 16892
+  },
+  {
+    "id": "037_B178",
+    "phase": 4,
+    "bbox": [
+      632,
+      285,
+      857,
+      400
+    ],
+    "changedPixels": 529
+  },
+  {
+    "id": "038_B179",
+    "phase": 0,
+    "bbox": [
+      302,
+      322,
+      674,
+      599
+    ],
+    "changedPixels": 13060
+  },
+  {
+    "id": "038_B179",
+    "phase": 1,
+    "bbox": [
+      302,
+      301,
+      720,
+      598
+    ],
+    "changedPixels": 24673
+  },
+  {
+    "id": "038_B179",
+    "phase": 2,
+    "bbox": [
+      302,
+      242,
+      721,
+      598
+    ],
+    "changedPixels": 24584
+  },
+  {
+    "id": "038_B179",
+    "phase": 3,
+    "bbox": [
+      302,
+      320,
+      718,
+      598
+    ],
+    "changedPixels": 23311
+  },
+  {
+    "id": "038_B179",
+    "phase": 4,
+    "bbox": [
+      312,
+      284,
+      675,
+      597
+    ],
+    "changedPixels": 7472
+  },
+  {
+    "id": "039_B17C",
+    "phase": 0,
+    "bbox": [
+      430,
+      267,
+      851,
+      439
+    ],
+    "changedPixels": 7393
+  },
+  {
+    "id": "039_B17C",
+    "phase": 1,
+    "bbox": [
+      567,
+      267,
+      862,
+      442
+    ],
+    "changedPixels": 8395
+  },
+  {
+    "id": "039_B17C",
+    "phase": 2,
+    "bbox": [
+      577,
+      176,
+      889,
+      442
+    ],
+    "changedPixels": 22948
+  },
+  {
+    "id": "039_B17C",
+    "phase": 3,
+    "bbox": [
+      531,
+      95,
+      995,
+      442
+    ],
+    "changedPixels": 30897
+  },
+  {
+    "id": "039_B17C",
+    "phase": 4,
+    "bbox": [
+      578,
+      149,
+      918,
+      437
+    ],
+    "changedPixels": 1594
+  },
+  {
+    "id": "040_B188",
+    "phase": 0,
+    "bbox": [
+      637,
+      281,
+      839,
+      433
+    ],
+    "changedPixels": 8454
+  },
+  {
+    "id": "040_B188",
+    "phase": 1,
+    "bbox": [
+      629,
+      283,
+      839,
+      432
+    ],
+    "changedPixels": 8197
+  },
+  {
+    "id": "040_B188",
+    "phase": 2,
+    "bbox": [
+      636,
+      289,
+      838,
+      433
+    ],
+    "changedPixels": 8079
+  },
+  {
+    "id": "040_B188",
+    "phase": 3,
+    "bbox": [
+      638,
+      291,
+      839,
+      433
+    ],
+    "changedPixels": 8410
+  },
+  {
+    "id": "040_B188",
+    "phase": 4,
+    "bbox": [
+      639,
+      287,
+      823,
+      428
+    ],
+    "changedPixels": 4596
+  },
+  {
+    "id": "041_B18B",
+    "phase": 0,
+    "bbox": [
+      610,
+      327,
+      826,
+      432
+    ],
+    "changedPixels": 6124
+  },
+  {
+    "id": "041_B18B",
+    "phase": 1,
+    "bbox": [
+      600,
+      329,
+      865,
+      435
+    ],
+    "changedPixels": 10512
+  },
+  {
+    "id": "041_B18B",
+    "phase": 2,
+    "bbox": [
+      600,
+      331,
+      873,
+      435
+    ],
+    "changedPixels": 10593
+  },
+  {
+    "id": "041_B18B",
+    "phase": 3,
+    "bbox": [
+      600,
+      334,
+      873,
+      435
+    ],
+    "changedPixels": 10444
+  },
+  {
+    "id": "041_B18B",
+    "phase": 4,
+    "bbox": [
+      603,
+      334,
+      855,
+      434
+    ],
+    "changedPixels": 1501
+  },
+  {
+    "id": "042_B18D",
+    "phase": 0,
+    "bbox": [
+      562,
+      300,
+      852,
+      443
+    ],
+    "changedPixels": 10904
+  },
+  {
+    "id": "042_B18D",
+    "phase": 1,
+    "bbox": [
+      531,
+      303,
+      853,
+      443
+    ],
+    "changedPixels": 13445
+  },
+  {
+    "id": "042_B18D",
+    "phase": 2,
+    "bbox": [
+      531,
+      308,
+      853,
+      443
+    ],
+    "changedPixels": 13424
+  },
+  {
+    "id": "042_B18D",
+    "phase": 3,
+    "bbox": [
+      531,
+      314,
+      853,
+      443
+    ],
+    "changedPixels": 13338
+  },
+  {
+    "id": "042_B18D",
+    "phase": 4,
+    "bbox": [
+      548,
+      319,
+      853,
+      443
+    ],
+    "changedPixels": 8536
+  },
+  {
+    "id": "043_B204",
+    "phase": 0,
+    "bbox": [
+      361,
+      181,
+      721,
+      541
+    ],
+    "changedPixels": 43078
+  },
+  {
+    "id": "043_B204",
+    "phase": 1,
+    "bbox": [
+      360,
+      180,
+      721,
+      542
+    ],
+    "changedPixels": 45491
+  },
+  {
+    "id": "043_B204",
+    "phase": 2,
+    "bbox": [
+      360,
+      180,
+      721,
+      542
+    ],
+    "changedPixels": 45575
+  },
+  {
+    "id": "043_B204",
+    "phase": 3,
+    "bbox": [
+      360,
+      180,
+      722,
+      543
+    ],
+    "changedPixels": 45395
+  },
+  {
+    "id": "043_B204",
+    "phase": 4,
+    "bbox": [
+      360,
+      185,
+      722,
+      536
+    ],
+    "changedPixels": 20197
+  },
+  {
+    "id": "044_B205",
+    "phase": 0,
+    "bbox": [
+      435,
+      434,
+      558,
+      540
+    ],
+    "changedPixels": 2194
+  },
+  {
+    "id": "044_B205",
+    "phase": 1,
+    "bbox": [
+      429,
+      435,
+      560,
+      540
+    ],
+    "changedPixels": 1124
+  },
+  {
+    "id": "044_B205",
+    "phase": 2,
+    "bbox": [
+      429,
+      437,
+      560,
+      541
+    ],
+    "changedPixels": 1002
+  },
+  {
+    "id": "044_B205",
+    "phase": 3,
+    "bbox": [
+      427,
+      440,
+      561,
+      541
+    ],
+    "changedPixels": 1050
+  },
+  {
+    "id": "044_B205",
+    "phase": 4,
+    "bbox": [
+      462,
+      444,
+      558,
+      518
+    ],
+    "changedPixels": 486
+  },
+  {
+    "id": "045_B208",
+    "phase": 0,
+    "bbox": [
+      643,
+      295,
+      796,
+      420
+    ],
+    "changedPixels": 4465
+  },
+  {
+    "id": "045_B208",
+    "phase": 1,
+    "bbox": [
+      640,
+      282,
+      796,
+      420
+    ],
+    "changedPixels": 5590
+  },
+  {
+    "id": "045_B208",
+    "phase": 2,
+    "bbox": [
+      646,
+      280,
+      796,
+      420
+    ],
+    "changedPixels": 5089
+  },
+  {
+    "id": "045_B208",
+    "phase": 3,
+    "bbox": [
+      640,
+      276,
+      796,
+      420
+    ],
+    "changedPixels": 4870
+  },
+  {
+    "id": "045_B208",
+    "phase": 4,
+    "bbox": [
+      659,
+      284,
+      784,
+      397
+    ],
+    "changedPixels": 2309
+  },
+  {
+    "id": "046_B214",
+    "phase": 0,
+    "bbox": [
+      458,
+      426,
+      548,
+      532
+    ],
+    "changedPixels": 1789
+  },
+  {
+    "id": "046_B214",
+    "phase": 1,
+    "bbox": [
+      457,
+      428,
+      549,
+      532
+    ],
+    "changedPixels": 1275
+  },
+  {
+    "id": "046_B214",
+    "phase": 2,
+    "bbox": [
+      457,
+      430,
+      549,
+      532
+    ],
+    "changedPixels": 1275
+  },
+  {
+    "id": "046_B214",
+    "phase": 3,
+    "bbox": [
+      457,
+      432,
+      549,
+      532
+    ],
+    "changedPixels": 1271
+  },
+  {
+    "id": "046_B214",
+    "phase": 4,
+    "bbox": [
+      458,
+      435,
+      549,
+      532
+    ],
+    "changedPixels": 537
+  },
+  {
+    "id": "047_B217",
+    "phase": 0,
+    "bbox": [
+      387,
+      376,
+      617,
+      562
+    ],
+    "changedPixels": 5145
+  },
+  {
+    "id": "047_B217",
+    "phase": 1,
+    "bbox": [
+      381,
+      378,
+      623,
+      565
+    ],
+    "changedPixels": 5008
+  },
+  {
+    "id": "047_B217",
+    "phase": 2,
+    "bbox": [
+      381,
+      379,
+      623,
+      565
+    ],
+    "changedPixels": 5104
+  },
+  {
+    "id": "047_B217",
+    "phase": 3,
+    "bbox": [
+      381,
+      383,
+      623,
+      565
+    ],
+    "changedPixels": 5031
+  },
+  {
+    "id": "047_B217",
+    "phase": 4,
+    "bbox": [
+      381,
+      391,
+      622,
+      560
+    ],
+    "changedPixels": 776
+  },
+  {
+    "id": "048_B219",
+    "phase": 0,
+    "bbox": [
+      441,
+      352,
+      564,
+      535
+    ],
+    "changedPixels": 704
+  },
+  {
+    "id": "048_B219",
+    "phase": 1,
+    "bbox": [
+      439,
+      355,
+      564,
+      536
+    ],
+    "changedPixels": 458
+  },
+  {
+    "id": "048_B219",
+    "phase": 2,
+    "bbox": [
+      437,
+      349,
+      567,
+      537
+    ],
+    "changedPixels": 445
+  },
+  {
+    "id": "048_B219",
+    "phase": 3,
+    "bbox": [
+      446,
+      351,
+      567,
+      537
+    ],
+    "changedPixels": 463
+  },
+  {
+    "id": "048_B219",
+    "phase": 4,
+    "bbox": [
+      451,
+      361,
+      527,
+      474
+    ],
+    "changedPixels": 65
+  }
+]

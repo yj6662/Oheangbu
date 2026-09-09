@@ -1,0 +1,36 @@
+{
+    "glyph": "성",
+    "title": "곁침 잔탄",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.2199999988079071,
+    "life": 2.200000047683716,
+    "sampledSeconds": [
+        0.15399999916553498,
+        0.48399999737739565,
+        0.9239999651908875,
+        1.4079999923706055,
+        1.9800000190734864
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

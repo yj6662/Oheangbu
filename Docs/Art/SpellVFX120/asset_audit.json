@@ -1,0 +1,2178 @@
+{
+  "schema": "oheangbu.spell-vfx120.asset-audit.v1",
+  "generated": "2026-09-09",
+  "scope": "Read-only on-disk source and shader graph audit; no live Unity rendering or compile claims.",
+  "source_pack": "Assets/KoreanTraditionalPattern_Effect",
+  "counts": {
+    "prefab_count": 250,
+    "material_count": 3079,
+    "texture_count": 280,
+    "mesh_count": 10,
+    "particle_system_count": 11519,
+    "shader_counts": {
+      "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll.shadergraph": 1905,
+      "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AdditiveBlend_Scroll.shadergraph": 906,
+      "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph": 267,
+      "933532a4fcc9baf4fa0491de14d08ed7": 1
+    }
+  },
+  "particle_complexity": {
+    "min": 9,
+    "median": 14,
+    "max": 124,
+    "note": "Serialized component counts including inactive children; not measured live particles or drawcalls."
+  },
+  "shader_validation": {
+    "status": "STATIC_URP_TARGET_CONFIRMED_RUNTIME_UNVERIFIED",
+    "graphs": "All three graphs declare UniversalTarget and UniversalUnlitSubTarget; AlphaBlend two graphs alpha mode0, AdditiveBlend alpha mode2.",
+    "external_guid_resolution": {
+      "e823cd5b5d27c0f4b8256e7c12ee3e6d": "URP package Runtime/Materials/ParticlesUnlit.mat",
+      "933532a4fcc9baf4fa0491de14d08ed7": "URP package Shaders/Lit.shader"
+    },
+    "changes": "None. No shader repair required by static evidence; actual Unity shader compile/render remains a root-owned check."
+  },
+  "visual_review": {
+    "source_textures_seen": 280,
+    "method": "Six local thumbnail contact sheets, original RGBA composited onto neutral charcoal. All 250 numbered source motifs and 30 support textures opened; 36 selected motifs described explicitly.",
+    "classification_limit": "Motif morphology observed; exact cultural artifact/provenance and ethnic exclusivity not asserted."
+  },
+  "recommended_sources": [
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_2.png",
+      "guid": "ec6705e0645c42a439063fb372a306f3",
+      "size": [
+        500,
+        500
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": false,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_2.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "태극 중심 방사 꽃판",
+      "recommended_use": "작도 응축·균형 회복의 작은 중심",
+      "caution": "바깥 꽃잎은 유지하고 장시간 회전 마법진으로 만들지 않는다",
+      "alpha_mean": 8.627036,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_2.mat",
+          "guid": "ca5fcf5755e5b9541a10ddcc52f4974c",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-03.prefab",
+          "guid": "6196c8071a412a4499f2d8033458526e",
+          "particle_systems": 116,
+          "looping_systems": 3
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png",
+      "guid": "9ee9ae19231d7fb4fb8ba731bdfaec49",
+      "size": [
+        500,
+        500
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": false,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "모란형 꽃·잎 가지",
+      "recommended_use": "목 계열 회복·피어남",
+      "caution": "조밀한 선화이므로 작은 파편보다 한 번 피는 큰 실루엣에 적합",
+      "alpha_mean": 19.94508,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_3.mat",
+          "guid": "efe5e6b829bbdd7488e0c85d516b3a6f",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-04.prefab",
+          "guid": "b306aa7e51f03a942a0f30d0f422014c",
+          "particle_systems": 115,
+          "looping_systems": 2
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_5.png",
+      "guid": "a6d14c11731a95f41bd081b22875cb99",
+      "size": [
+        500,
+        500
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": false,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_5.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "눈·코·치아가 과장된 괴수 얼굴",
+      "recommended_use": "위압·막음의 짧은 얼굴 흔적",
+      "caution": "정확한 문화재명·도깨비 종류는 고증하지 않았음. 모든 공격에 얼굴을 붙이지 않는다",
+      "alpha_mean": 12.3477,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_5.mat",
+          "guid": "91445e1d61ff6a242a7c01eb3961eb73",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-06.prefab",
+          "guid": "6007b18dde91f0c42a17f3ba5c175578",
+          "particle_systems": 115,
+          "looping_systems": 2
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_8.png",
+      "guid": "fd7960aa5cf0ba04c9079f6e5a60f28e",
+      "size": [
+        500,
+        500
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": false,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_8.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "굵은 잎사귀 회전 꽃문",
+      "recommended_use": "목 회전·잎 소용돌이",
+      "caution": "흰 채움은 알파 마스크이며 흰 발광 재질을 강제하지 않는다",
+      "alpha_mean": 60.462052,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_8.mat",
+          "guid": "74bfd52bb5f4ad249a17ee11e36bbeb4",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+          "guid": "a97ce257277d3a8478674b56e65812ce",
+          "particle_systems": 115,
+          "looping_systems": 0
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_16.png",
+      "guid": "707ea5f045e65fa43a4827f83d0b2c69",
+      "size": [
+        2980,
+        1976
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_16.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "측면으로 펼친 연꽃",
+      "recommended_use": "회복·정화 바닥 전개",
+      "caution": "연꽃 실루엣으로 사용. 꽃의 여백을 오라로 채우지 않는다",
+      "alpha_mean": 7.24225759448958,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_16.mat",
+          "guid": "a0848227b5b9f7c40a8bfe12897f8bf8",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly02-08.prefab",
+          "guid": "6bc65c0b154b5c4469f892b63a6014bf",
+          "particle_systems": 97,
+          "looping_systems": 54
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "size": [
+        3262,
+        3262
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": false,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "원 안 네 방향 직각 회문",
+      "recommended_use": "금 방어·각진 봉인 가장자리",
+      "caution": "문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님",
+      "alpha_mean": 69.40967708345472,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat",
+          "guid": "c5459b93451d1924ba3ded1057255934",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab",
+          "guid": "0ed00e7e33480994d85c91e43884da40",
+          "particle_systems": 14,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "size": [
+        2505,
+        2505
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "잎과 줄기가 엮인 원형 당초 띠",
+      "recommended_use": "목 장벽·속박 흔적",
+      "caution": "가느다란 내부 선을 과도하게 축소하지 않는다",
+      "alpha_mean": 14.277007023876399,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_33.mat",
+          "guid": "983cdb7286c43424bbf012996255dea1",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom02-05.prefab",
+          "guid": "29977bd6259b44141ab19ff49345ad40",
+          "particle_systems": 15,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_47.png",
+      "guid": "c760c9164251cb5468fe125d64ab8bab",
+      "size": [
+        3298,
+        3298
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_47.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_001_050.jpg",
+      "observed_motif": "육각 벌집/귀갑형 격자가 채워진 원형 띠",
+      "recommended_use": "토·금 보호막 분할 경계",
+      "caution": "실제 거북 등 모델이 아닌 육각 격자 도안 관찰. 지나친 반복은 현대 에너지 쉴드처럼 보일 수 있음",
+      "alpha_mean": 16.619545502520776,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_47.mat",
+          "guid": "cafe20552e769c547b602662aba78a72",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly04-03.prefab",
+          "guid": "945f4b54b9e7d5b41ad7634e388a7c58",
+          "particle_systems": 102,
+          "looping_systems": 62
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_58.png",
+      "guid": "79269722e5c19194f9bb7b3cd9449dd3",
+      "size": [
+        3214,
+        3214
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_58.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_051_100.jpg",
+      "observed_motif": "여섯 방향 곡선 소용돌이와 점 테두리",
+      "recommended_use": "회오리·번짐 전환",
+      "caution": "원형 패턴을 그대로 누워 놓기보다 회전 획의 보조 레이어로 사용",
+      "alpha_mean": 13.224146536872558,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_58.mat",
+          "guid": "dd362b79265528c4b9de69f3db40bae4",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-07.prefab",
+          "guid": "0be0cc62a8aa53d48a2fe4cdfabdfb45",
+          "particle_systems": 9,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_66.png",
+      "guid": "34344866ee531a343b67bf8c6ef2c701",
+      "size": [
+        2191,
+        3009
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_66.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_051_100.jpg",
+      "observed_motif": "눈썹·코·웃는 입을 단순화한 탈 얼굴",
+      "recommended_use": "짧은 혼란·가호 실루엣",
+      "caution": "탈 계보와 배역은 미고증. 공포 네온 가면으로 바꾸지 않는다",
+      "alpha_mean": 15.94411562209765,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_66.mat",
+          "guid": "a93c1da48dfc86e4b9954b5a0840ade7",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly04-08.prefab",
+          "guid": "b813708bd68269b409b353da159b88ca",
+          "particle_systems": 93,
+          "looping_systems": 62
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "size": [
+        2902,
+        2949
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_051_100.jpg",
+      "observed_motif": "겹잎 연화형 꽃판",
+      "recommended_use": "정화·회복·목 발화",
+      "caution": "꽃판 회전보다 접혀 있던 잎이 펴지는 타이밍을 우선",
+      "alpha_mean": 9.735716577638836,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_67.mat",
+          "guid": "ce3ad83728386ec4b9121a828daaf0d5",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-05.prefab",
+          "guid": "6b9dea93b7a8cdb4eb0f0ca704f1bac1",
+          "particle_systems": 11,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_86.png",
+      "guid": "98823d6cf85fe3f479fd2e5a1ed5d642",
+      "size": [
+        3287,
+        3287
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": false,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_86.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_051_100.jpg",
+      "observed_motif": "새와 긴 잎 가지가 선으로 겹친 원형 장면",
+      "recommended_use": "목 잔상·바람의 생명 흔적",
+      "caution": "새/잎 형상이 보이나 종 미확인. 죽엽·대나무로 확정하지 않는다",
+      "alpha_mean": 4.70461477204268,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_86.mat",
+          "guid": "0bdfed00879f86a49bcd693aae03b9aa",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly04-05.prefab",
+          "guid": "9698098409aa35449bf7061bacc9104e",
+          "particle_systems": 93,
+          "looping_systems": 62
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "guid": "bd9bcc5c64747eb45b3ddf2153d39d87",
+      "size": [
+        2545,
+        2512
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_051_100.jpg",
+      "observed_motif": "가늘고 촘촘한 방사 선이 채워진 원판",
+      "recommended_use": "금 방사 파편·부채꼴 확산 외곽",
+      "caution": "실제 접부채 물건이 아닌 방사 선문. 촘촘한 선의 모아레와 축소 가독성 점검",
+      "alpha_mean": 15.85446986097381,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_95.mat",
+          "guid": "9cf2df6b34257f94180edb526c4c4b1f",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-07.prefab",
+          "guid": "ff5401b22ecc16f4d97c2f490bf9e1db",
+          "particle_systems": 96,
+          "looping_systems": 63
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_97.png",
+      "guid": "a0141b9f8048b49499482538208ca9c1",
+      "size": [
+        2108,
+        2108
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_97.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_051_100.jpg",
+      "observed_motif": "큰 다섯 꽃잎과 점 띠",
+      "recommended_use": "회복 맥동·작은 보호문",
+      "caution": "자세한 식물 종은 미확인",
+      "alpha_mean": 9.382128801817599,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_97.mat",
+          "guid": "bf513241160cd8b439d7385138b55180",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-09.prefab",
+          "guid": "a52351acff817e141bd05449f428e758",
+          "particle_systems": 96,
+          "looping_systems": 63
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "size": [
+        3164,
+        3231
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_101_150.jpg",
+      "observed_motif": "곡선 화염/당초가 반복되는 열린 테두리",
+      "recommended_use": "화 확산의 잔상·역번짐 경계",
+      "caution": "의미 없는 영구 발광 링으로 쓰지 않는다",
+      "alpha_mean": 11.82779908292024,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_110.mat",
+          "guid": "13e8a2dbd83bbd14382842b4058f4031",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom08-05.prefab",
+          "guid": "a84bb0fae36dfd84f94b48b8999a275d",
+          "particle_systems": 12,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_118.png",
+      "guid": "58a46fb51e3808d4eb7fbb63232d1056",
+      "size": [
+        3136,
+        3136
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_118.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_101_150.jpg",
+      "observed_motif": "사각 틀 안 길고 둥근 방사 꽃잎 원판",
+      "recommended_use": "방사·부채꼴 외곽",
+      "caution": "사각 프레임은 선택적으로 제외. 실제 부채 또는 특정 꽃 종류로 단정하지 않는다",
+      "alpha_mean": 9.92834213364874,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_118.mat",
+          "guid": "bba8387a09b36bb44a7caca68c1788f1",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom08-07.prefab",
+          "guid": "dbaf37e8df58c5d49b6eab00fcfb2c6c",
+          "particle_systems": 12,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "size": [
+        2532,
+        2532
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_101_150.jpg",
+      "observed_motif": "네 방향으로 맞물린 직선 띠",
+      "recommended_use": "금 교차·방벽·부적 선",
+      "caution": "전통 창호 실물 검증이 아닌 선형 무늬 관찰",
+      "alpha_mean": 12.475552579431929,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_126.mat",
+          "guid": "ea04626c396818c43b36233dd9712e4d",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-02.prefab",
+          "guid": "ad110f2de151fcb4686fd59e00fdbae0",
+          "particle_systems": 10,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_136.png",
+      "guid": "20665ca85b8a35f4bbac6e77ddd4b6bf",
+      "size": [
+        3072,
+        3044
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_136.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_101_150.jpg",
+      "observed_motif": "끝이 안으로 감긴 여덟 방향 곡선 띠",
+      "recommended_use": "속박 해제·막 전개",
+      "caution": "정확한 전통 명칭은 단정하지 않음",
+      "alpha_mean": 17.601968224718025,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_136.mat",
+          "guid": "de84ed4aefe3f544b898df2af41828f6",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom11-03.prefab",
+          "guid": "5f9df618382b7be4dbc691bc791dfa58",
+          "particle_systems": 12,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_139.png",
+      "guid": "fa8a4207fff320845a1bfaf48258291b",
+      "size": [
+        3137,
+        3137
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_139.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_101_150.jpg",
+      "observed_motif": "중심이 빈 가늘고 길쭉한 방사 띠",
+      "recommended_use": "금 찌르기·절단 방사 외곽",
+      "caution": "부채형 읽기의 단순 선재료. 공업용 톱니/기계 바퀴가 되지 않게 먹 손맛과 결합",
+      "alpha_mean": 17.28317461775599,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_139.mat",
+          "guid": "d3b097c14d8d9554386f6369c42d0773",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom11-06.prefab",
+          "guid": "4b5b744eed6eff740b18329f73c2381b",
+          "particle_systems": 12,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_147.png",
+      "guid": "2df0882b9c252ed4ca30798aa03710f7",
+      "size": [
+        1904,
+        1904
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_147.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_101_150.jpg",
+      "observed_motif": "가늘고 긴 꽃잎의 방사 꽃판",
+      "recommended_use": "금 파편 방사·잔상",
+      "caution": "국화형으로 보이나 특정 꽃 종 미고증",
+      "alpha_mean": 12.94953293817527,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_147.mat",
+          "guid": "88b61408589337641a5e505035676993",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+          "guid": "6d16deff01a6f3d4eaab534e1199c60a",
+          "particle_systems": 25,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_156.png",
+      "guid": "b0b15c3127ed4f54c97a8eb9775be711",
+      "size": [
+        3054,
+        3307
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_156.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_151_200.jpg",
+      "observed_motif": "굵은 겹잎 연화형 원판",
+      "recommended_use": "회복·보호·목 장벽 중심",
+      "caution": "축소 가독성이 다른 얇은 선화보다 유리",
+      "alpha_mean": 34.77555200821262,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_156.mat",
+          "guid": "b7121674cc9a78149bfb3954a66fea94",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-08.prefab",
+          "guid": "09b0ce9577707c64bb7ae6f3990c54ee",
+          "particle_systems": 118,
+          "looping_systems": 57
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_185.png",
+      "guid": "d373d084440d1404bb057f2020bc9b51",
+      "size": [
+        3307,
+        3105
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_185.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_151_200.jpg",
+      "observed_motif": "세 갈래 태극 중심과 잎",
+      "recommended_use": "기운 결합·회수 중심",
+      "caution": "순수 로고를 모든 술식에 반복해 붙이지 않는다",
+      "alpha_mean": 4.556823154125319,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_185.mat",
+          "guid": "f36180bddb0e1ef43a095eaa5d8481a2",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-08.prefab",
+          "guid": "254cb5bf543faa540b6fb176a227ab09",
+          "particle_systems": 9,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "guid": "bbc8d17547ab4354b893b0db57140d2b",
+      "size": [
+        2471,
+        2471
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_151_200.jpg",
+      "observed_motif": "긴 잎과 작은 꽃이 선 난초형 가지",
+      "recommended_use": "목 회복·새순·정화",
+      "caution": "굵은 덩굴이나 줄기를 대체할 모델은 아님",
+      "alpha_mean": 18.40290387515823,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_192.mat",
+          "guid": "0b581557edf30084ab909dc575b2d228",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom16-06.prefab",
+          "guid": "2def814922379fc4891b7b2ee5ac7416",
+          "particle_systems": 10,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_199.png",
+      "guid": "c88df73650f6b56459fc223c25ae50bd",
+      "size": [
+        2080,
+        2080
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_199.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_151_200.jpg",
+      "observed_motif": "사슴·나무·해/구름이 있는 원판",
+      "recommended_use": "보호·지속 생명 연출의 드문 상징",
+      "caution": "동물명 외 구체적인 십장생 구성과 유물 출처는 미고증",
+      "alpha_mean": 15.203552144970415,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_199.mat",
+          "guid": "ae969019662535647b11ec5fd190c15d",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom16-03.prefab",
+          "guid": "e88c873e23509254bbd03c1520190cd1",
+          "particle_systems": 10,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_200.png",
+      "guid": "2f986124027b29c46aa84df06871eb1d",
+      "size": [
+        3036,
+        1757
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_200.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_151_200.jpg",
+      "observed_motif": "가느다란 잎 끝이 퍼진 한 송이 연꽃",
+      "recommended_use": "회복의 한 번 펼침·상승",
+      "caution": "얇은 선화. 256px 이하 다량 입자보다 중간 크기 사용",
+      "alpha_mean": 7.672225646632367,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_200.mat",
+          "guid": "482df1a3280b2a14e9a81e9e6c808c6e",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom17-08.prefab",
+          "guid": "0195fc51f7491d548b9a379c465301b3",
+          "particle_systems": 10,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "size": [
+        2841,
+        1381
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "겹친 반원 물결이 긴 초승달 띠를 이룸",
+      "recommended_use": "수 파동·흐름·수면 충격",
+      "caution": "단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합",
+      "alpha_mean": 22.244692068477995,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_204.mat",
+          "guid": "6e39f0c3e07d5cf40ac61945ed157a87",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom17-03.prefab",
+          "guid": "aaeef02eadb438446ade885a0a830318",
+          "particle_systems": 10,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_210.png",
+      "guid": "6ae90742140305744b3c98abc409b6d5",
+      "size": [
+        2502,
+        3126
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_210.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "꽃잎이 위로 열린 연꽃과 두 꽃봉오리",
+      "recommended_use": "정화·생명·흡수",
+      "caution": "세부 선이 많아 중심 주목 레이어로 제한",
+      "alpha_mean": 19.080154941945356,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_210.mat",
+          "guid": "86cbb6437364eec4abb178806fcdc372",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly09-04.prefab",
+          "guid": "2ecb7866d51ddcb44b0ec6ceb27dac29",
+          "particle_systems": 124,
+          "looping_systems": 69
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_214.png",
+      "guid": "1c95531b9aa3046449273cb5743bb9ce",
+      "size": [
+        3274,
+        2202
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_214.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "무늬가 채워진 대칭 나비",
+      "recommended_use": "목 번짐 전달·회복 잔상",
+      "caution": "공용 Butterfly의 전기 파랑을 그대로 복제하지 않음",
+      "alpha_mean": 11.825119691822339,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_214.mat",
+          "guid": "6a7d2bf5aec98cd43a73bf7fc7ed77ad",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly09-08.prefab",
+          "guid": "46d566386b19e3f49b78f8a4ba28f178",
+          "particle_systems": 124,
+          "looping_systems": 69
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_225.png",
+      "guid": "13e8cb84c6f6dcf4cabd645337adf903",
+      "size": [
+        2803,
+        3164
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_225.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "삼태극 중심과 팔괘 도안",
+      "recommended_use": "기운 결합·해제·봉인",
+      "caution": "팔괘는 방향/음양 의미가 있다. 임의 글자처럼 섞지 않고 드물게",
+      "alpha_mean": 6.297590219617504,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_225.mat",
+          "guid": "a6edc8c6ed3e9b447be22368f8137ebd",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+          "guid": "149c3e5576af8dc48937ee46e592393c",
+          "particle_systems": 16,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_226.png",
+      "guid": "15a4ff0837d50e3418232e2d17120ad3",
+      "size": [
+        3114,
+        3020
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_226.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "큰 세 곡선의 삼태극 원",
+      "recommended_use": "수 회전·기운 회수",
+      "caution": "알파 평균 약1.3%의 얇은 선. 실루엣을 채우는 새 먹 획과 결합",
+      "alpha_mean": 3.4270400285827303,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_226.mat",
+          "guid": "1630f82f258104f4d8f6d90126e9949e",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-02.prefab",
+          "guid": "f1bbbbfe0e6857048b8e5ed8d74fe5d9",
+          "particle_systems": 16,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_227.png",
+      "guid": "e3ba1013c815d6d448d893aa07711968",
+      "size": [
+        2746,
+        3283
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_227.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "큰 입·눈·눈썹의 탈/괴면 얼굴",
+      "recommended_use": "위압·격발 순간의 짧은 얼굴 흔적",
+      "caution": "정확한 문화재/탈 배역 미고증. 신체 소환 모델 아님",
+      "alpha_mean": 5.768683116516057,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_227.mat",
+          "guid": "f4395eff838f8f04da6e506359174f83",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+          "guid": "5afa2a32d5a12864c9ed106274815d59",
+          "particle_systems": 89,
+          "looping_systems": 53
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "size": [
+        3307,
+        3307
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "점 띠 안 다층 매듭형 꽃원",
+      "recommended_use": "묶음·봉인·갈무리",
+      "caution": "금속 네온 마법진 대신 먹 끈이 잠깐 조여드는 표현",
+      "alpha_mean": 14.8427213023405,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_228.mat",
+          "guid": "d9712722f6615eb49853d477f680b0f1",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom19-03.prefab",
+          "guid": "36cd9e0c35d9d694b9f83d0ad4ace49b",
+          "particle_systems": 10,
+          "looping_systems": 1
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_232.png",
+      "guid": "957f88d89d7cf5244b6b80ed7a71d570",
+      "size": [
+        2867,
+        2607
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_232.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "위가 둥글고 양끝이 안으로 감긴 구름",
+      "recommended_use": "수·목 상승·시전 잔기·회수",
+      "caution": "굵고 단순하여 잔상/가벼운 메쉬 파편으로 적합",
+      "alpha_mean": 18.32295907466001,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_232.mat",
+          "guid": "b00d421878d6d36488d289df17727b0f",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-07.prefab",
+          "guid": "07de186f1843f344e84415d133fa1f90",
+          "particle_systems": 89,
+          "looping_systems": 53
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_233.png",
+      "guid": "1b96419ddcede10448adbcadecb07493",
+      "size": [
+        3111,
+        2133
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_233.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "꽃줄기 아래 반복 산봉우리형 선",
+      "recommended_use": "토 파동·땅의 솟음",
+      "caution": "문양을 산 지형으로 과장하지 않고 보조 경계로 사용",
+      "alpha_mean": 10.613182538315488,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_233.mat",
+          "guid": "c778985266c188f478c1fa06527a0174",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-09.prefab",
+          "guid": "7e5e89015022e1948bf61315d1975424",
+          "particle_systems": 89,
+          "looping_systems": 53
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png",
+      "guid": "8a47062cd755f15418417f33c9918ade",
+      "size": [
+        3084,
+        1654
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "좌우 대칭으로 접힌 구름형 선",
+      "recommended_use": "막의 닫힘·구름 번짐",
+      "caution": "사각 외곽은 필요할 때만 쓰고 지속 패널 UI로 만들지 않음",
+      "alpha_mean": 23.417382025573346,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_236.mat",
+          "guid": "1907f3f97c15ca5449a3c53fcf9541ad",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-08.prefab",
+          "guid": "59769601e23879b49bf7f688ff93376c",
+          "particle_systems": 89,
+          "looping_systems": 53
+        }
+      ]
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_247.png",
+      "guid": "f7048ddfbedda5141aff07292beaf1ac",
+      "size": [
+        2787,
+        2787
+      ],
+      "mode": "RGBA",
+      "maxTextureSize": 2048,
+      "mipmap_enabled": true,
+      "unity_asset_path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_247.png",
+      "visual_status": "VISUALLY_REVIEWED_SOURCE_THUMBNAIL",
+      "evidence": "Art/SpellVFX120/AssetAudit/traditional_201_250.jpg",
+      "observed_motif": "삼태극 주위의 잎 띠",
+      "recommended_use": "갈무리·기운의 되돌림",
+      "caution": "태극 도형의 읽기를 유지하되 회전 속도를 절제",
+      "alpha_mean": 13.712476773023143,
+      "rgba_extrema": [
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          255,
+          255
+        ],
+        [
+          0,
+          255
+        ]
+      ],
+      "recommended_material_work": "Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).",
+      "source_materials": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_247.mat",
+          "guid": "928558445b03716408ec3170f59b0b83",
+          "shader": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph"
+        }
+      ],
+      "source_prefab_examples": [
+        {
+          "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom20-02.prefab",
+          "guid": "158831ffe97f81648a6db65accbe5cc2",
+          "particle_systems": 11,
+          "looping_systems": 1
+        }
+      ]
+    }
+  ],
+  "mesh_sources": [
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Aura.FBX",
+      "guid": "25c437cf483e79a44839a8f42e06407b",
+      "source_vertices": 801,
+      "source_polygons": 800,
+      "triangles_if_fan_triangulated": 1550,
+      "bounds_min": [
+        -40.521949768066406,
+        -40.58893585205078,
+        -24.197219848632812
+      ],
+      "bounds_max": [
+        40.521934509277344,
+        40.588924407958984,
+        26.366844177246094
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Fx_Light_01.FBX",
+      "guid": "9320d2472e156a04887fa42d4b85af83",
+      "source_vertices": 264,
+      "source_polygons": 200,
+      "triangles_if_fan_triangulated": 400,
+      "bounds_min": [
+        -68.40081024169922,
+        -68.40079498291016,
+        -6.8166680335998535
+      ],
+      "bounds_max": [
+        68.4007797241211,
+        68.40079498291016,
+        40.07247543334961
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Fx_Light_02.FBX",
+      "guid": "6362f8418f02f4943a594380b945ec75",
+      "source_vertices": 192,
+      "source_polygons": 128,
+      "triangles_if_fan_triangulated": 256,
+      "bounds_min": [
+        -68.40081024169922,
+        -68.40079498291016,
+        -6.816667556762695
+      ],
+      "bounds_max": [
+        68.4007797241211,
+        68.40079498291016,
+        40.07246398925781
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Fx_Light_03.FBX",
+      "guid": "e219e85d806e22c4aa9d76b8b7d1afa7",
+      "source_vertices": 45,
+      "source_polygons": 30,
+      "triangles_if_fan_triangulated": 60,
+      "bounds_min": [
+        -65.27729797363281,
+        -76.7380599975586,
+        -4.372112274169922
+      ],
+      "bounds_max": [
+        80.68717193603516,
+        76.7380599975586,
+        68.7410888671875
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Light_01.FBX",
+      "guid": "b59fef5c60e722c4d9fa6a18210fcf2e",
+      "source_vertices": 204,
+      "source_polygons": 135,
+      "triangles_if_fan_triangulated": 270,
+      "bounds_min": [
+        -74.43730163574219,
+        -37.96268844604492,
+        0.0
+      ],
+      "bounds_max": [
+        74.43728637695312,
+        37.962684631347656,
+        48.666542053222656
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Light_02.FBX",
+      "guid": "d2ac9432cd2d208439842be20586c3b0",
+      "source_vertices": 180,
+      "source_polygons": 120,
+      "triangles_if_fan_triangulated": 240,
+      "bounds_min": [
+        -37.791927337646484,
+        -37.79191589355469,
+        0.004999999422580004
+      ],
+      "bounds_max": [
+        37.79192352294922,
+        37.79195022583008,
+        36.843109130859375
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Light_03.FBX",
+      "guid": "87e5430a48208df4ab02f32c3c2bbc65",
+      "source_vertices": 360,
+      "source_polygons": 240,
+      "triangles_if_fan_triangulated": 480,
+      "bounds_min": [
+        -74.81958770751953,
+        -74.81959533691406,
+        0.0
+      ],
+      "bounds_max": [
+        74.81964874267578,
+        74.81961822509766,
+        48.666542053222656
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/line.FBX",
+      "guid": "2bd2d3966483f3c40b9d7d1e476c6739",
+      "source_vertices": 606,
+      "source_polygons": 1000,
+      "triangles_if_fan_triangulated": 1000,
+      "bounds_min": [
+        -51.931983947753906,
+        -51.457664489746094,
+        -1.4796030521392822
+      ],
+      "bounds_max": [
+        48.28009033203125,
+        43.72503662109375,
+        101.11956787109375
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/Ringtrail.FBX",
+      "guid": "469d8d3b681564446a636b074b9f98d6",
+      "source_vertices": 480,
+      "source_polygons": 400,
+      "triangles_if_fan_triangulated": 800,
+      "bounds_min": [
+        -43.46951675415039,
+        -43.46951675415039,
+        -9.948431968688965
+      ],
+      "bounds_max": [
+        43.46951675415039,
+        43.46951675415039,
+        10.002226829528809
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    },
+    {
+      "path": "Oheangbu/Assets/KoreanTraditionalPattern_Effect/Meshs/ShockWave.FBX",
+      "guid": "eede9bcfaa5c69f4eb7f3d14ebe7f7ee",
+      "source_vertices": 120,
+      "source_polygons": 120,
+      "triangles_if_fan_triangulated": 120,
+      "bounds_min": [
+        -33.172367095947266,
+        -33.17186737060547,
+        0.0
+      ],
+      "bounds_max": [
+        33.172367095947266,
+        33.17186737060547,
+        0.009999999776482582
+      ],
+      "validation": "FBX_BINARY_GEOMETRY_READ; local geometry only, importer transforms not evaluated"
+    }
+  ],
+  "related_catalog_sources": [
+    {
+      "path": "Assets/KoreanTraditionalFestival/Prefabs/SM_BaeghogiFlag.prefab",
+      "guid": "abc00000000012669197557308873451",
+      "name": "SM_BaeghogiFlag",
+      "preview": "Screenshots/AssetCatalog/Thumbnails/abc00000000012669197557308873451.png",
+      "triangles": 8870,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "문자·문양이 있는 사각 천과 가로대·깃대가 있는 깃발 확인. 실제 문자 내용·시대 적합성은 별도.",
+      "brokenMaterials": 0,
+      "missingMesh": 0
+    },
+    {
+      "path": "Assets/KoreanTraditionalFestival/Prefabs/SM_CheonglyonggiFlag.prefab",
+      "guid": "abc00000000010097277526959275748",
+      "name": "SM_CheonglyonggiFlag",
+      "preview": "Screenshots/AssetCatalog/Thumbnails/abc00000000010097277526959275748.png",
+      "triangles": 8891,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "사각 깃발 천·문자·깃대가 있는 깃발 확인.",
+      "brokenMaterials": 0,
+      "missingMesh": 0
+    },
+    {
+      "path": "Assets/KoreanTraditionalFestival/Prefabs/SM_HyeonmugiFlag.prefab",
+      "guid": "abc00000000008658664164131974082",
+      "name": "SM_HyeonmugiFlag",
+      "preview": "Screenshots/AssetCatalog/Thumbnails/abc00000000008658664164131974082.png",
+      "triangles": 8856,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "세로 깃대와 문자·문양이 있는 사각 또는 길게 늘어진 천이 확인됨. 깃발의 문구·상징 고증은 별도.",
+      "brokenMaterials": 0,
+      "missingMesh": 0
+    },
+    {
+      "path": "Assets/KoreanTraditionalFestival/Prefabs/SM_JujaggiFlag.prefab",
+      "guid": "abc00000000006787403695415131718",
+      "name": "SM_JujaggiFlag",
+      "preview": "Screenshots/AssetCatalog/Thumbnails/abc00000000006787403695415131718.png",
+      "triangles": 8891,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "세로 깃대와 문자·문양이 있는 사각 또는 길게 늘어진 천이 확인됨. 깃발의 문구·상징 고증은 별도.",
+      "brokenMaterials": 0,
+      "missingMesh": 0
+    },
+    {
+      "path": "Assets/KoreanTraditionalFestival/Prefabs/SM_LineFan.prefab",
+      "guid": "abc00000000005867910821400615466",
+      "name": "SM_LineFan",
+      "preview": "Screenshots/AssetCatalog/Thumbnails/abc00000000005867910821400615466.png",
+      "triangles": 4206,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "부채꼴 골조·손잡이·짚 면을 가진 부채 확인.",
+      "brokenMaterials": 0,
+      "missingMesh": 0
+    },
+    {
+      "path": "Assets/KoreanTraditionalFestival/Prefabs/SM_TownFlag1.prefab",
+      "guid": "abc00000000011659131672705900464",
+      "name": "SM_TownFlag1",
+      "preview": "Screenshots/AssetCatalog/Thumbnails/abc00000000011659131672705900464.png",
+      "triangles": 9375,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 붉은 테두리와 흰 세로 글자 면을 가진 긴 깃발을 확인했다. 문구 판독까지 한 것은 아니다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "brokenMaterials": 0,
+      "missingMesh": 0
+    }
+  ],
+  "paid_generation_gap": {
+    "required_now": false,
+    "reason": "Cloud, lotus, wave, talisman strips, arcs, streaks and wind/ink surfaces can be assembled from these masks and simple new geometry; none of the currently identified VFX geometry gaps requires a paid generative model.",
+    "conditional_gap": "A close-up fully three-dimensional culturally specific creature or instrument absent from the current pack could justify Meshy/Blender after a specific spell demands it. Do not replace readable brush geometry with unnecessary high-poly generic fantasy models."
+  },
+  "excluded_from_default_motif_pool": [
+    "Pattern_26/183: script/religious-sign-like motif, exact reading not verified",
+    "Pattern_52/56/76/78/120/133/134/149/182/211/215/245: character-bearing auspicious or seal motifs; do not assign arbitrary spell meanings",
+    "Pattern_162/212: explicit manji/wan-style religious motif; only if intended semantic context supports it",
+    "Public Arrow_02 and Tech_*: modern arrow/panel language does not establish Korean aesthetics",
+    "Public Ball/Butterfly/Thunder/lighting_00: saturated blue or glossy electric RGB; use independent monochrome coverage only when appropriate"
+  ],
+  "source_mutation": false,
+  "paid_asset_exported": false,
+  "evidence_local_only": "Art/SpellVFX120/AssetAudit/"
+}

@@ -1,0 +1,36 @@
+{
+    "glyph": "마",
+    "title": "덩이진 황토 포환",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.949999988079071,
+    "life": 1.8499999046325684,
+    "sampledSeconds": [
+        0.12949998676776887,
+        0.40699997544288638,
+        0.7769999504089356,
+        1.1839998960494996,
+        1.6649998426437379
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

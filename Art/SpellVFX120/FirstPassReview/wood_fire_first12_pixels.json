@@ -1,0 +1,652 @@
+[
+  {
+    "id": "001_AC00",
+    "phase": 0,
+    "bbox": [
+      471,
+      376,
+      547,
+      405
+    ],
+    "changedPixels": 241
+  },
+  {
+    "id": "001_AC00",
+    "phase": 1,
+    "bbox": [
+      507,
+      333,
+      672,
+      426
+    ],
+    "changedPixels": 1073
+  },
+  {
+    "id": "001_AC00",
+    "phase": 2,
+    "bbox": [
+      669,
+      304,
+      753,
+      328
+    ],
+    "changedPixels": 668
+  },
+  {
+    "id": "001_AC00",
+    "phase": 3,
+    "bbox": [
+      669,
+      297,
+      738,
+      335
+    ],
+    "changedPixels": 480
+  },
+  {
+    "id": "001_AC00",
+    "phase": 4,
+    "bbox": null,
+    "changedPixels": 0
+  },
+  {
+    "id": "002_AC01",
+    "phase": 0,
+    "bbox": [
+      647,
+      144,
+      798,
+      418
+    ],
+    "changedPixels": 9459
+  },
+  {
+    "id": "002_AC01",
+    "phase": 1,
+    "bbox": [
+      637,
+      138,
+      802,
+      419
+    ],
+    "changedPixels": 19593
+  },
+  {
+    "id": "002_AC01",
+    "phase": 2,
+    "bbox": [
+      637,
+      144,
+      802,
+      419
+    ],
+    "changedPixels": 19568
+  },
+  {
+    "id": "002_AC01",
+    "phase": 3,
+    "bbox": [
+      637,
+      143,
+      802,
+      419
+    ],
+    "changedPixels": 19532
+  },
+  {
+    "id": "002_AC01",
+    "phase": 4,
+    "bbox": [
+      652,
+      160,
+      783,
+      416
+    ],
+    "changedPixels": 3848
+  },
+  {
+    "id": "003_AC04",
+    "phase": 0,
+    "bbox": [
+      426,
+      322,
+      592,
+      476
+    ],
+    "changedPixels": 2876
+  },
+  {
+    "id": "003_AC04",
+    "phase": 1,
+    "bbox": [
+      423,
+      303,
+      739,
+      480
+    ],
+    "changedPixels": 3326
+  },
+  {
+    "id": "003_AC04",
+    "phase": 2,
+    "bbox": [
+      423,
+      286,
+      725,
+      479
+    ],
+    "changedPixels": 2675
+  },
+  {
+    "id": "003_AC04",
+    "phase": 3,
+    "bbox": [
+      423,
+      288,
+      722,
+      479
+    ],
+    "changedPixels": 2698
+  },
+  {
+    "id": "003_AC04",
+    "phase": 4,
+    "bbox": [
+      671,
+      297,
+      718,
+      326
+    ],
+    "changedPixels": 51
+  },
+  {
+    "id": "004_AC10",
+    "phase": 0,
+    "bbox": [
+      691,
+      266,
+      745,
+      406
+    ],
+    "changedPixels": 1506
+  },
+  {
+    "id": "004_AC10",
+    "phase": 1,
+    "bbox": [
+      689,
+      260,
+      747,
+      407
+    ],
+    "changedPixels": 1908
+  },
+  {
+    "id": "004_AC10",
+    "phase": 2,
+    "bbox": [
+      691,
+      260,
+      747,
+      407
+    ],
+    "changedPixels": 1890
+  },
+  {
+    "id": "004_AC10",
+    "phase": 3,
+    "bbox": [
+      691,
+      263,
+      747,
+      407
+    ],
+    "changedPixels": 1890
+  },
+  {
+    "id": "004_AC10",
+    "phase": 4,
+    "bbox": [
+      691,
+      284,
+      744,
+      407
+    ],
+    "changedPixels": 290
+  },
+  {
+    "id": "005_AC13",
+    "phase": 0,
+    "bbox": [
+      473,
+      368,
+      564,
+      405
+    ],
+    "changedPixels": 415
+  },
+  {
+    "id": "005_AC13",
+    "phase": 1,
+    "bbox": [
+      447,
+      313,
+      719,
+      458
+    ],
+    "changedPixels": 2633
+  },
+  {
+    "id": "005_AC13",
+    "phase": 2,
+    "bbox": [
+      493,
+      289,
+      777,
+      409
+    ],
+    "changedPixels": 1673
+  },
+  {
+    "id": "005_AC13",
+    "phase": 3,
+    "bbox": [
+      665,
+      290,
+      770,
+      328
+    ],
+    "changedPixels": 686
+  },
+  {
+    "id": "005_AC13",
+    "phase": 4,
+    "bbox": null,
+    "changedPixels": 0
+  },
+  {
+    "id": "006_AC15",
+    "phase": 0,
+    "bbox": [
+      472,
+      373,
+      545,
+      405
+    ],
+    "changedPixels": 154
+  },
+  {
+    "id": "006_AC15",
+    "phase": 1,
+    "bbox": [
+      447,
+      325,
+      670,
+      444
+    ],
+    "changedPixels": 1063
+  },
+  {
+    "id": "006_AC15",
+    "phase": 2,
+    "bbox": [
+      447,
+      290,
+      751,
+      435
+    ],
+    "changedPixels": 727
+  },
+  {
+    "id": "006_AC15",
+    "phase": 3,
+    "bbox": [
+      667,
+      274,
+      748,
+      333
+    ],
+    "changedPixels": 798
+  },
+  {
+    "id": "006_AC15",
+    "phase": 4,
+    "bbox": [
+      694,
+      296,
+      722,
+      319
+    ],
+    "changedPixels": 3
+  },
+  {
+    "id": "007_AC70",
+    "phase": 0,
+    "bbox": [
+      422,
+      299,
+      651,
+      500
+    ],
+    "changedPixels": 15304
+  },
+  {
+    "id": "007_AC70",
+    "phase": 1,
+    "bbox": [
+      378,
+      295,
+      699,
+      504
+    ],
+    "changedPixels": 22626
+  },
+  {
+    "id": "007_AC70",
+    "phase": 2,
+    "bbox": [
+      378,
+      295,
+      699,
+      504
+    ],
+    "changedPixels": 22557
+  },
+  {
+    "id": "007_AC70",
+    "phase": 3,
+    "bbox": [
+      378,
+      295,
+      699,
+      504
+    ],
+    "changedPixels": 22575
+  },
+  {
+    "id": "007_AC70",
+    "phase": 4,
+    "bbox": [
+      442,
+      299,
+      651,
+      504
+    ],
+    "changedPixels": 2037
+  },
+  {
+    "id": "008_AC71",
+    "phase": 0,
+    "bbox": [
+      421,
+      304,
+      582,
+      547
+    ],
+    "changedPixels": 3894
+  },
+  {
+    "id": "008_AC71",
+    "phase": 1,
+    "bbox": [
+      408,
+      282,
+      582,
+      546
+    ],
+    "changedPixels": 13664
+  },
+  {
+    "id": "008_AC71",
+    "phase": 2,
+    "bbox": [
+      406,
+      232,
+      581,
+      547
+    ],
+    "changedPixels": 14160
+  },
+  {
+    "id": "008_AC71",
+    "phase": 3,
+    "bbox": [
+      416,
+      237,
+      578,
+      547
+    ],
+    "changedPixels": 13742
+  },
+  {
+    "id": "008_AC71",
+    "phase": 4,
+    "bbox": [
+      422,
+      249,
+      569,
+      534
+    ],
+    "changedPixels": 1847
+  },
+  {
+    "id": "009_AC74",
+    "phase": 0,
+    "bbox": [
+      450,
+      205,
+      559,
+      532
+    ],
+    "changedPixels": 1442
+  },
+  {
+    "id": "009_AC74",
+    "phase": 1,
+    "bbox": [
+      396,
+      193,
+      596,
+      547
+    ],
+    "changedPixels": 28920
+  },
+  {
+    "id": "009_AC74",
+    "phase": 2,
+    "bbox": [
+      395,
+      176,
+      596,
+      547
+    ],
+    "changedPixels": 29393
+  },
+  {
+    "id": "009_AC74",
+    "phase": 3,
+    "bbox": [
+      407,
+      166,
+      583,
+      547
+    ],
+    "changedPixels": 20379
+  },
+  {
+    "id": "009_AC74",
+    "phase": 4,
+    "bbox": [
+      455,
+      242,
+      528,
+      356
+    ],
+    "changedPixels": 34
+  },
+  {
+    "id": "010_AC80",
+    "phase": 0,
+    "bbox": [
+      404,
+      112,
+      597,
+      555
+    ],
+    "changedPixels": 16481
+  },
+  {
+    "id": "010_AC80",
+    "phase": 1,
+    "bbox": [
+      399,
+      0,
+      597,
+      554
+    ],
+    "changedPixels": 26880
+  },
+  {
+    "id": "010_AC80",
+    "phase": 2,
+    "bbox": [
+      395,
+      0,
+      596,
+      554
+    ],
+    "changedPixels": 28027
+  },
+  {
+    "id": "010_AC80",
+    "phase": 3,
+    "bbox": [
+      404,
+      84,
+      596,
+      554
+    ],
+    "changedPixels": 25744
+  },
+  {
+    "id": "010_AC80",
+    "phase": 4,
+    "bbox": [
+      405,
+      17,
+      596,
+      553
+    ],
+    "changedPixels": 13584
+  },
+  {
+    "id": "011_AC83",
+    "phase": 0,
+    "bbox": [
+      456,
+      397,
+      557,
+      535
+    ],
+    "changedPixels": 827
+  },
+  {
+    "id": "011_AC83",
+    "phase": 1,
+    "bbox": [
+      456,
+      478,
+      557,
+      535
+    ],
+    "changedPixels": 831
+  },
+  {
+    "id": "011_AC83",
+    "phase": 2,
+    "bbox": [
+      456,
+      479,
+      557,
+      535
+    ],
+    "changedPixels": 828
+  },
+  {
+    "id": "011_AC83",
+    "phase": 3,
+    "bbox": [
+      456,
+      479,
+      557,
+      535
+    ],
+    "changedPixels": 834
+  },
+  {
+    "id": "011_AC83",
+    "phase": 4,
+    "bbox": [
+      484,
+      481,
+      533,
+      521
+    ],
+    "changedPixels": 163
+  },
+  {
+    "id": "012_AC85",
+    "phase": 0,
+    "bbox": [
+      477,
+      468,
+      536,
+      525
+    ],
+    "changedPixels": 479
+  },
+  {
+    "id": "012_AC85",
+    "phase": 1,
+    "bbox": [
+      460,
+      453,
+      559,
+      529
+    ],
+    "changedPixels": 1497
+  },
+  {
+    "id": "012_AC85",
+    "phase": 2,
+    "bbox": [
+      458,
+      453,
+      559,
+      529
+    ],
+    "changedPixels": 1508
+  },
+  {
+    "id": "012_AC85",
+    "phase": 3,
+    "bbox": [
+      458,
+      453,
+      559,
+      529
+    ],
+    "changedPixels": 1490
+  },
+  {
+    "id": "012_AC85",
+    "phase": 4,
+    "bbox": [
+      473,
+      472,
+      544,
+      496
+    ],
+    "changedPixels": 64
+  }
+]

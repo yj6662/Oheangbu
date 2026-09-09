@@ -1,0 +1,38 @@
+[
+  {
+    "family": "Beast",
+    "mesh_object": "Beast_FolkTiger_B2",
+    "fbx": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\Beast_FolkTiger_B2.fbx",
+    "obj": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\Beast_FolkTiger_B2.obj",
+    "source_samples": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\Beast_FolkTiger_B2_source_samples.json",
+    "vertices": 2352,
+    "triangles": 4500,
+    "material_slots": 1,
+    "vertex_color_attribute": "Color",
+    "vertex_color_domain": "POINT",
+    "distinct_rgb_rounded_3": 9,
+    "blender_to_unity": "(x,y,z)->(x,z,-y)",
+    "local_pivot": "bounds center, max dimension1",
+    "fbx_sha256": "827f1abf64c948ca88c672d9bc4f09d3af5e08c8735a566f39fc31abc543f64b",
+    "rig": "none; effect mesh only",
+    "textures_required": false
+  },
+  {
+    "family": "StoneGuardian",
+    "mesh_object": "StoneGuardian_Jangseung_B1",
+    "fbx": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\StoneGuardian_Jangseung_B1.fbx",
+    "obj": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\StoneGuardian_Jangseung_B1.obj",
+    "source_samples": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\StoneGuardian_Jangseung_B1_source_samples.json",
+    "vertices": 1448,
+    "triangles": 2720,
+    "material_slots": 1,
+    "vertex_color_attribute": "Color",
+    "vertex_color_domain": "POINT",
+    "distinct_rgb_rounded_3": 768,
+    "blender_to_unity": "(x,y,z)->(x,z,-y)",
+    "local_pivot": "bounds center, max dimension1",
+    "fbx_sha256": "132303f8e32462b524507f09f24285452ce22452a548aec03dac37edd92ca487",
+    "rig": "none; effect mesh only",
+    "textures_required": false
+  }
+]

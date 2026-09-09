@@ -1,0 +1,23 @@
+[
+  {
+    "family": "Ring",
+    "vertices": 455,
+    "tris": 768,
+    "boundary_edges_at_1e_6": 12,
+    "nonmanifold_edges_at_1e_6": 12,
+    "inward_face_test": 0,
+    "pole_y_spreads": []
+  },
+  {
+    "family": "Rock",
+    "vertices": 117,
+    "tris": 168,
+    "boundary_edges_at_1e_6": 56,
+    "nonmanifold_edges_at_1e_6": 56,
+    "inward_face_test": 0,
+    "pole_y_spreads": [
+      0.166566223,
+      0.197160006
+    ]
+  }
+]

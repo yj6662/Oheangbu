@@ -1,0 +1,741 @@
+{
+  "status": "MANIFEST_SCHEMA_AND_SOURCE_VALIDATED_NOT_RUNTIME_PROOF",
+  "count": 120,
+  "assigned": 100,
+  "connected": 15,
+  "unconnectedAssigned": 85,
+  "intentionalBlanks": 20,
+  "sourceSha256": "45f1affebb69946e43575dcbbec21db7ab11fcefd397eec744651391e657a291",
+  "manifestSha256": "6ce7b6de3325b019dce0469a51e998eb38505b53dce87115f5ba6887b28c479b",
+  "uniqueNumericShapeMotionSignatures": 120,
+  "patterns": [
+    {
+      "glyph": "가",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "각",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "exists": true
+    },
+    {
+      "glyph": "간",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png",
+      "guid": "9ee9ae19231d7fb4fb8ba731bdfaec49",
+      "exists": true
+    },
+    {
+      "glyph": "감",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "갓",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "guid": "bbc8d17547ab4354b893b0db57140d2b",
+      "exists": true
+    },
+    {
+      "glyph": "강",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "거",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "걱",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png",
+      "guid": "9ee9ae19231d7fb4fb8ba731bdfaec49",
+      "exists": true
+    },
+    {
+      "glyph": "건",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_210.png",
+      "guid": "6ae90742140305744b3c98abc409b6d5",
+      "exists": true
+    },
+    {
+      "glyph": "검",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png",
+      "guid": "9ee9ae19231d7fb4fb8ba731bdfaec49",
+      "exists": true
+    },
+    {
+      "glyph": "것",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "겅",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "guid": "bbc8d17547ab4354b893b0db57140d2b",
+      "exists": true
+    },
+    {
+      "glyph": "고",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "guid": "bbc8d17547ab4354b893b0db57140d2b",
+      "exists": true
+    },
+    {
+      "glyph": "곡",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "곤",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "곰",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "곳",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "guid": "bbc8d17547ab4354b893b0db57140d2b",
+      "exists": true
+    },
+    {
+      "glyph": "공",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "구",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "국",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "군",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_86.png",
+      "guid": "98823d6cf85fe3f479fd2e5a1ed5d642",
+      "exists": true
+    },
+    {
+      "glyph": "굼",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "굿",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png",
+      "guid": "bbc8d17547ab4354b893b0db57140d2b",
+      "exists": true
+    },
+    {
+      "glyph": "궁",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "나",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "낙",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "난",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_156.png",
+      "guid": "b0b15c3127ed4f54c97a8eb9775be711",
+      "exists": true
+    },
+    {
+      "glyph": "남",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "낫",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_58.png",
+      "guid": "79269722e5c19194f9bb7b3cd9449dd3",
+      "exists": true
+    },
+    {
+      "glyph": "낭",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "너",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "넉",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "넌",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "exists": true
+    },
+    {
+      "glyph": "넘",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "넛",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "넝",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "노",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "녹",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_210.png",
+      "guid": "6ae90742140305744b3c98abc409b6d5",
+      "exists": true
+    },
+    {
+      "glyph": "논",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_156.png",
+      "guid": "b0b15c3127ed4f54c97a8eb9775be711",
+      "exists": true
+    },
+    {
+      "glyph": "놈",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "놋",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "농",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_232.png",
+      "guid": "957f88d89d7cf5244b6b80ed7a71d570",
+      "exists": true
+    },
+    {
+      "glyph": "누",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+      "guid": "f09358bfab5f3a541896a88baf641ecb",
+      "exists": true
+    },
+    {
+      "glyph": "눅",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_200.png",
+      "guid": "2f986124027b29c46aa84df06871eb1d",
+      "exists": true
+    },
+    {
+      "glyph": "눈",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+      "guid": "92b48435c77fac54b804248fcfbf0713",
+      "exists": true
+    },
+    {
+      "glyph": "눔",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "눗",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_139.png",
+      "guid": "fa8a4207fff320845a1bfaf48258291b",
+      "exists": true
+    },
+    {
+      "glyph": "눙",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "마",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "막",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "만",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "맘",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "맛",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "망",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "머",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "먹",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "먼",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "멈",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "exists": true
+    },
+    {
+      "glyph": "멋",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "멍",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "모",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_58.png",
+      "guid": "79269722e5c19194f9bb7b3cd9449dd3",
+      "exists": true
+    },
+    {
+      "glyph": "목",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "몬",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "몸",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "못",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "몽",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_232.png",
+      "guid": "957f88d89d7cf5244b6b80ed7a71d570",
+      "exists": true
+    },
+    {
+      "glyph": "무",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "묵",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "문",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "뭄",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "뭇",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "뭉",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "사",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "삭",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "산",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "삼",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "삿",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "상",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "서",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "석",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "선",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "섬",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png",
+      "guid": "8a47062cd755f15418417f33c9918ade",
+      "exists": true
+    },
+    {
+      "glyph": "섯",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "성",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "소",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "guid": "bd9bcc5c64747eb45b3ddf2153d39d87",
+      "exists": true
+    },
+    {
+      "glyph": "속",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "손",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "솜",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "솟",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_118.png",
+      "guid": "58a46fb51e3808d4eb7fbb63232d1056",
+      "exists": true
+    },
+    {
+      "glyph": "송",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_118.png",
+      "guid": "58a46fb51e3808d4eb7fbb63232d1056",
+      "exists": true
+    },
+    {
+      "glyph": "수",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "숙",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "exists": true
+    },
+    {
+      "glyph": "순",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "guid": "bd9bcc5c64747eb45b3ddf2153d39d87",
+      "exists": true
+    },
+    {
+      "glyph": "숨",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png",
+      "guid": "366d97adb41f5324a8ca349d9eed4262",
+      "exists": true
+    },
+    {
+      "glyph": "숫",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "숭",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_232.png",
+      "guid": "957f88d89d7cf5244b6b80ed7a71d570",
+      "exists": true
+    },
+    {
+      "glyph": "아",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "악",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "exists": true
+    },
+    {
+      "glyph": "안",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "암",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "앗",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png",
+      "guid": "b0e88649d9b865540bc1dc9855fd57d9",
+      "exists": true
+    },
+    {
+      "glyph": "앙",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "어",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "억",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "언",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+      "guid": "80763f3fc9d9c1d4f88013b55e13bc1e",
+      "exists": true
+    },
+    {
+      "glyph": "엄",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "엇",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "엉",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "오",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "옥",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "온",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "옴",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "옷",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "옹",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "우",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    },
+    {
+      "glyph": "욱",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "운",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png",
+      "guid": "8a47062cd755f15418417f33c9918ade",
+      "exists": true
+    },
+    {
+      "glyph": "움",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_67.png",
+      "guid": "f112e123701bd4941a853f72bbfc05e6",
+      "exists": true
+    },
+    {
+      "glyph": "웃",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_95.png",
+      "guid": "bd9bcc5c64747eb45b3ddf2153d39d87",
+      "exists": true
+    },
+    {
+      "glyph": "웅",
+      "pattern": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+      "guid": "9a699dfb854a25f49b5a7b916bdf1616",
+      "exists": true
+    }
+  ],
+  "notes": [
+    "One Beast body per summon proposal; not a gameplay summon-count rule.",
+    "One Blade per weapon silhouette; not a weapon state-machine implementation.",
+    "Rising thorn fields use Field, not the downward Rain evaluator.",
+    "Water projectile silhouette uses scaled Ember geometry with Ripple/Ribbon accent.",
+    "Colors and numeric uniqueness are not acceptance evidence for 120 distinct rendered effects.",
+    "Some semantic choreography needs per-glyph runtime evaluators; serialized design is not implementation."
+  ]
+}

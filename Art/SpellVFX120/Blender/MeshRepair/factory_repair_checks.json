@@ -1,0 +1,203 @@
+{
+  "validation": "Factory C# \u002B actual Unity math, data-only Mesh substitute; no Unity Editor calls",
+  "families": [
+    {
+      "family": "Thorn",
+      "vertices": 172,
+      "triangles": 300,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 4,
+      "positionWeldNonmanifoldEdges": 4,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0.89725316
+    },
+    {
+      "family": "Vine",
+      "vertices": 452,
+      "triangles": 726,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 66,
+      "positionWeldNonmanifoldEdges": 66,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.3545551
+    },
+    {
+      "family": "Leaf",
+      "vertices": 185,
+      "triangles": 298,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 40,
+      "positionWeldNonmanifoldEdges": 40,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.1755164
+    },
+    {
+      "family": "Flame",
+      "vertices": 342,
+      "triangles": 596,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.5370845
+    },
+    {
+      "family": "Ember",
+      "vertices": 50,
+      "triangles": 80,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.6024776
+    },
+    {
+      "family": "Cloud",
+      "vertices": 76,
+      "triangles": 148,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Sand",
+      "vertices": 12,
+      "triangles": 20,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Rock",
+      "vertices": 93,
+      "triangles": 168,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Shard",
+      "vertices": 16,
+      "triangles": 28,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Blade",
+      "vertices": 163,
+      "triangles": 276,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.3279399
+    },
+    {
+      "family": "Ring",
+      "vertices": 455,
+      "triangles": 768,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Ripple",
+      "vertices": 230,
+      "triangles": 224,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 230,
+      "positionWeldNonmanifoldEdges": 230,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Ribbon",
+      "vertices": 46,
+      "triangles": 44,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 46,
+      "positionWeldNonmanifoldEdges": 46,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Lotus",
+      "vertices": 676,
+      "triangles": 976,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 284,
+      "positionWeldNonmanifoldEdges": 284,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.4567804
+    },
+    {
+      "family": "Seal",
+      "vertices": 26,
+      "triangles": 24,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 26,
+      "positionWeldNonmanifoldEdges": 26,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    },
+    {
+      "family": "Beast",
+      "vertices": 925,
+      "triangles": 1572,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 0,
+      "positionWeldNonmanifoldEdges": 0,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.3460263
+    },
+    {
+      "family": "Tree",
+      "vertices": 1602,
+      "triangles": 2368,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 504,
+      "positionWeldNonmanifoldEdges": 504,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 1.8651849
+    },
+    {
+      "family": "WaveCrest",
+      "vertices": 989,
+      "triangles": 1848,
+      "finite": true,
+      "degenerateTriangles": 0,
+      "positionWeldBoundaryEdges": 128,
+      "positionWeldNonmanifoldEdges": 128,
+      "reversedFaceNormals": 0,
+      "maxDuplicateNormalError": 0
+    }
+  ]
+}

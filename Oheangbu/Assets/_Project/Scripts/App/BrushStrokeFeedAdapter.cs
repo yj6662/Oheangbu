@@ -413,6 +413,35 @@ namespace Oheangbu.App
             // 제자리 개화, 연출(일제·솟음·전진)이 자체 시계로 목표를 향한다. 피해는 배선의 착탄 시계
             // 그대로(연출≠실판정 §9-1)
             var sequence = go.GetComponentInChildren<SpellSequenceEffect>(true);
+            if (sequence is SpellVFX120.Vfx120Effect authored)
+            {
+                // 신규 연출은 루트 수명과 다색 팔레트를 소유한다. 기존 문양의
+                // AttachBloom/TintHierarchy를 겹쳐 적용하지 않는다.
+                Transform authoredTarget = _pendingAttackTarget;
+                float authoredDuration = _pendingAttackDuration;
+                AreaImpactPlan authoredPlan = _pendingAreaPlan;
+                _pendingAttackTarget = null;
+                _pendingAttackDuration = 0f;
+                _pendingAreaPlan = null;
+
+                if (_pendingAttack)
+                {
+                    if (authoredDuration > 0f) authored.SetImpactClock(authoredDuration);
+                    if (authoredPlan != null) authored.SetAreaPlan(authoredPlan);
+                    Vector3 authoredFallback = authoredPlan == null ? MissPoint(bounds.center)
+                        : authoredPlan.Shape == AreaShape.Cone
+                            ? authoredPlan.Point + AreaGeometry.Flat(authoredPlan.Direction).normalized * Mathf.Max(1f, authoredPlan.Length)
+                            : authoredPlan.Point;
+                    authored.Begin(bounds.center, authoredTarget, authoredFallback, group.FlashColor);
+                }
+                else
+                {
+                    if (_pendingParry && _combatConfig != null)
+                        authored.SetGuardClock(_combatConfig.GuardDuration, _combatConfig.ParryWindow);
+                    authored.Begin(bounds.center, null, bounds.center, group.FlashColor);
+                }
+                return;
+            }
             if (_pendingAttack && sequence != null)
             {
                 Transform sequenceTarget = _pendingAttackTarget;

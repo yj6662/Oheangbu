@@ -1,0 +1,78 @@
+{
+  "output": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-compile-20260909-093211",
+  "unityVersion": "6000.3.9f1",
+  "scope": "Static C# compilation only; no Unity launch, source generators, import, runtime or shader execution. Checkpoint Oheangbu dependencies rebuilt in order; external package/Unity references from installed Editor. Editor compilation includes the proposed explicit Universal.Runtime reference.",
+  "rows": [
+    {
+      "assembly": "Oheangbu.Core",
+      "sources": 10,
+      "exitCode": 0,
+      "diagnostics": []
+    },
+    {
+      "assembly": "Oheangbu.Data",
+      "sources": 0,
+      "exitCode": 0,
+      "diagnostics": [
+        "warning CS2008: No source files specified."
+      ]
+    },
+    {
+      "assembly": "Oheangbu.Drawing",
+      "sources": 5,
+      "exitCode": 0,
+      "diagnostics": []
+    },
+    {
+      "assembly": "Oheangbu.BrushRender",
+      "sources": 5,
+      "exitCode": 0,
+      "diagnostics": []
+    },
+    {
+      "assembly": "Oheangbu.Spellcraft",
+      "sources": 2,
+      "exitCode": 0,
+      "diagnostics": []
+    },
+    {
+      "assembly": "Oheangbu.Combat",
+      "sources": 13,
+      "exitCode": 0,
+      "diagnostics": []
+    },
+    {
+      "assembly": "Oheangbu.Presentation",
+      "sources": 0,
+      "exitCode": 0,
+      "diagnostics": [
+        "warning CS2008: No source files specified."
+      ]
+    },
+    {
+      "assembly": "Oheangbu.App",
+      "sources": 38,
+      "exitCode": 0,
+      "diagnostics": [
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(66,55): warning CS0414: The field 'ThornRiseEffect._emergeScale' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(68,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMax' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(70,56): warning CS0414: The field 'ThornRiseEffect._layTilt' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(71,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMin' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(112,52): warning CS0414: The field 'ThornRiseEffect._swayDecay' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(60,46): warning CS0414: The field 'ThornRiseEffect._primaryMeshCount' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(67,56): warning CS0414: The field 'ThornRiseEffect._emergeTilt' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(63,51): warning CS0414: The field 'ThornRiseEffect._vineScale' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(103,56): warning CS0414: The field 'ThornRiseEffect._droopTilt' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(65,51): warning CS0414: The field 'ThornRiseEffect._secondaryScaleMax' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(99,52): warning CS0414: The field 'ThornRiseEffect._layTime' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(59,49): warning CS0414: The field 'ThornRiseEffect._yawJitter' is assigned but its value is never used"
+      ]
+    },
+    {
+      "assembly": "Oheangbu.EditorTools",
+      "sources": 18,
+      "exitCode": 0,
+      "diagnostics": []
+    }
+  ]
+}

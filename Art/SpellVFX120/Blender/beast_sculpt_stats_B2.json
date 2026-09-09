@@ -1,0 +1,21 @@
+{
+  "normalization_scale": 0.6780921383469606,
+  "normalization_offset_blender": [
+    -0.0,
+    -0.04444568604230881,
+    -0.03641526401042938
+  ],
+  "name": "Beast_FolkTiger_B2",
+  "vertices": 2352,
+  "triangles": 4500,
+  "materials": 1,
+  "skeleton_bones": 0,
+  "source": "UnitySource_Beast; rebuilt joined volumes after visible seams and toy-like head diagnosis",
+  "changes": [
+    "Fused shoulders/haunches/paws to remove broken joint seams",
+    "Broader forehead, round inner ears, pale cheeks and muzzle",
+    "Iris and slit pupils, tapered brows, cheek marks, whiskers",
+    "Dark flank/tail striping as exported vertex color; no extra texture dependency",
+    "Lower curved tail and four separated padded feet"
+  ]
+}

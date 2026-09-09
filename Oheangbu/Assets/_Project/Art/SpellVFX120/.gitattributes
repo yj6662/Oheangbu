@@ -1,0 +1,5 @@
+*.asset linguist-generated=true
+**/*.asset linguist-generated=true
+**/*.prefab linguist-generated=true
+**/*.mat linguist-generated=true
+**/*.meta linguist-generated=true
