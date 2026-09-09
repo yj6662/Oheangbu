@@ -12,6 +12,99 @@ namespace Oheangbu.EditorTools.SpellVFX120
     // Does not alter palettes, assets, gameplay actors or the saved camera.
     public static class Vfx120ParticleColorProbe
     {
+        // Cross-render the same sampled geometry. All overrides belong to the
+        // disposable instance; camera and render targets are restored even on failure.
+        public static string RibbonCrossRender()
+        {
+            if (EditorApplication.isPlaying || Camera.main == null) throw new InvalidOperationException("Edit review camera required");
+            var camera=Camera.main;
+            var catalog=AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(Vfx120Editor.AssetRoot+"/Data/VFX120_Catalog.asset");
+            string folder=Path.Combine(Vfx120Editor.Output,"RibbonCross_"+DateTime.UtcNow.ToString("yyyyMMdd_HHmmssfff"));
+            Directory.CreateDirectory(folder);
+            var oldTarget=camera.targetTexture;var oldActive=RenderTexture.active;
+            var oldPosition=camera.transform.position;var oldRotation=camera.transform.rotation;
+            GameObject root=null,primitive=null;Material unlit=null;RenderTexture rt=null;Texture2D read=null;Mesh rebuilt=null;
+            var report=new StringBuilder();
+            try
+            {
+                rt=new RenderTexture(1280,720,24,RenderTextureFormat.ARGB32);rt.Create();
+                read=new Texture2D(1280,720,TextureFormat.RGB24,false);
+                root=UnityEngine.Object.Instantiate(catalog.Entries[74].Prefab);root.hideFlags=HideFlags.DontSave;
+                var fx=root.GetComponent<Vfx120Effect>();fx.PreviewControlled=true;fx.DemonstrationCues=true;
+                fx.Begin(new Vector3(0,1,0),GameObject.Find("VFX Target")?.transform,new Vector3(0,1,4),Color.white);
+                fx.Sample(fx.Life*.42f);
+                var accents=new List<MeshRenderer>();
+                foreach(var mr in root.GetComponentsInChildren<MeshRenderer>())if(mr.name.StartsWith("Flecks_"))accents.Add(mr);
+                foreach(var mr in accents)
+                {
+                    var mat=mr.sharedMaterial;
+                    report.AppendLine(mr.name+" material="+mat.name+" shader="+mat.shader.name+" supported="+mat.shader.isSupported
+                        +" passCount="+mat.passCount+" layer="+mr.gameObject.layer+" cameraMask="+camera.cullingMask+" forceOff="+mr.forceRenderingOff
+                        +" active="+mr.gameObject.activeInHierarchy+" shadow="+mr.shadowCastingMode+" renderLayers="+mr.renderingLayerMask);
+                    foreach(string key in new[]{"_Alpha","_Erode","_Pattern","_Soft","_Body","_Fluid","_ZWrite"})report.AppendLine(key+"="+mat.GetFloat(key));
+                    report.AppendLine("BaseMapST="+mat.GetTextureScale("_BaseMap")+","+mat.GetTextureOffset("_BaseMap"));
+                }
+                var original=fx.Profile.AccentMesh;
+                report.AppendLine("mesh="+AssetDatabase.GetAssetPath(original)+" readable="+original.isReadable+" buffers="+original.vertexBufferCount+" indexFormat="+original.indexFormat);
+                foreach(var a in original.GetVertexAttributes())report.AppendLine("attribute="+a);
+                for(int s=0;s<original.subMeshCount;s++)
+                {
+                    var sm=original.GetSubMesh(s);
+                    report.AppendLine("submesh="+s+" topology="+sm.topology+" indexStart="+sm.indexStart+" indexCount="+sm.indexCount+" base="+sm.baseVertex+" first="+sm.firstVertex+" vertexCount="+sm.vertexCount);
+                }
+                var vertices=original.vertices;var indices=original.triangles;
+                for(int i=0;i<Mathf.Min(vertices.Length,8);i++)report.AppendLine("vertex="+i+" p="+vertices[i].ToString("F6"));
+                report.AppendLine("firstIndices="+string.Join(",",new ArraySegment<int>(indices,0,Mathf.Min(18,indices.Length))));
+                Action<string> save=name=>
+                {
+                    camera.targetTexture=rt;camera.Render();RenderTexture.active=rt;
+                    read.ReadPixels(new Rect(0,0,1280,720),0,0);read.Apply();
+                    File.WriteAllBytes(Path.Combine(folder,name+".png"),read.EncodeToPNG());
+                };
+                save("01_original");
+                unlit=new Material(Shader.Find("Universal Render Pipeline/Unlit"));unlit.SetColor("_BaseColor",Color.red);
+                unlit.SetFloat("_Cull",0);
+                foreach(var mr in accents){mr.sharedMaterial=unlit;mr.SetPropertyBlock(null);}
+                save("02_unlit_ribbons");
+                fx.Sample(fx.Life*.42f);
+                foreach(var mr in accents)mr.sharedMaterial=fx.Profile.InkMaterial;
+                primitive=GameObject.CreatePrimitive(PrimitiveType.Cube);primitive.hideFlags=HideFlags.DontSave;
+                var cube=primitive.GetComponent<MeshFilter>().sharedMesh;
+                primitive.SetActive(false);
+                foreach(var mr in accents)mr.GetComponent<MeshFilter>().sharedMesh=cube;
+                save("03_ink_cubes");
+                foreach(var mr in accents){mr.GetComponent<MeshFilter>().sharedMesh=fx.Profile.AccentMesh;mr.sharedMaterial=unlit;mr.SetPropertyBlock(null);}
+                var focus=accents[0].bounds.center;
+                camera.transform.position=focus+new Vector3(.45f,.20f,-1.0f);
+                camera.transform.LookAt(focus);
+                save("04_close_unlit");
+                fx.Sample(fx.Life*.42f);
+                foreach(var mr in accents)mr.sharedMaterial=fx.Profile.InkMaterial;
+                save("05_close_ink");
+                camera.transform.SetPositionAndRotation(oldPosition,oldRotation);
+                rebuilt=new Mesh{name="Probe_ReconstructedRibbon"};rebuilt.vertices=vertices;rebuilt.triangles=indices;
+                rebuilt.colors=original.colors;rebuilt.uv=original.uv;rebuilt.RecalculateNormals();rebuilt.RecalculateBounds();
+                foreach(var mr in accents)mr.GetComponent<MeshFilter>().sharedMesh=rebuilt;
+                save("06_reconstructed_ink");
+                foreach(var mr in accents){mr.sharedMaterial=unlit;mr.SetPropertyBlock(null);}
+                save("07_reconstructed_unlit");
+                root.transform.position+=Vector3.left*1.5f;
+                save("08_reconstructed_clear_space");
+                File.WriteAllText(Path.Combine(folder,"probe.txt"),report.ToString());
+                return folder;
+            }
+            finally
+            {
+                camera.targetTexture=oldTarget;RenderTexture.active=oldActive;
+                camera.transform.SetPositionAndRotation(oldPosition,oldRotation);
+                if(root!=null)UnityEngine.Object.DestroyImmediate(root);
+                if(primitive!=null)UnityEngine.Object.DestroyImmediate(primitive);
+                if(unlit!=null)UnityEngine.Object.DestroyImmediate(unlit);
+                if(rt!=null){rt.Release();UnityEngine.Object.DestroyImmediate(rt);}
+                if(read!=null)UnityEngine.Object.DestroyImmediate(read);
+                if(rebuilt!=null)UnityEngine.Object.DestroyImmediate(rebuilt);
+            }
+        }
         public static string RibbonProbe()
         {
             var catalog = AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(Vfx120Editor.AssetRoot + "/Data/VFX120_Catalog.asset");

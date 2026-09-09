@@ -1,0 +1,39 @@
+{
+    "glyph": "삿",
+    "title": "끊기지 않는 쇠끝",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T03:35:45.9777649Z",
+    "loadedRuntimeAssemblyMvid": "342487b4-3642-4071-b5aa-d8d32f60a6d7",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T03:34:45.9675412Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.14000000059604646,
+    "life": 1.0399999618530274,
+    "sampledSeconds": [
+        0.07279999554157257,
+        0.2287999838590622,
+        0.4367999732494354,
+        0.6655999422073364,
+        0.9359999299049377
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

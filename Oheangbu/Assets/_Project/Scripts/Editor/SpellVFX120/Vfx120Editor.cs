@@ -50,7 +50,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 ValidateMesh(generated);
                 var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
                 if (existing == null) { AssetDatabase.CreateAsset(generated, path); existing = generated; }
-                else { EditorUtility.CopySerialized(generated, existing); UnityEngine.Object.DestroyImmediate(generated); }
+                else { CopyRenderableMesh(generated, existing); UnityEngine.Object.DestroyImmediate(generated); }
                 meshCache[family] = existing;
             }
             var body = MaterialAt("M_Pigment", shader, null, false);
@@ -102,6 +102,117 @@ namespace Oheangbu.EditorTools.SpellVFX120
             EditorUtility.SetDirty(catalog); EditorUtility.SetDirty(visualSet);
             AssetDatabase.SaveAssets();
             return AuditCatalog();
+        }
+
+        // CopySerialized can leave a Mesh with readable arrays but no native vertex
+        // buffer in this Editor session. Populate native Mesh data explicitly while
+        // retaining the existing asset GUID and all authored geometry attributes.
+        static void CopyRenderableMesh(Mesh source, Mesh destination)
+        {
+            if(source.blendShapeCount!=0 || source.bindposes.Length!=0)
+                throw new InvalidOperationException("VFX catalog copy only supports unskinned meshes");
+            var vertices=source.vertices;var normals=source.normals;var tangents=source.tangents;var colors=source.colors;
+            var uv=new List<Vector4>[8];for(int channel=0;channel<8;channel++){uv[channel]=new List<Vector4>();source.GetUVs(channel,uv[channel]);}
+            var indices=new int[source.subMeshCount][];var topology=new UnityEngine.MeshTopology[source.subMeshCount];
+            for(int i=0;i<indices.Length;i++){indices[i]=source.GetIndices(i);topology[i]=source.GetTopology(i);}
+            string name=source.name;var bounds=source.bounds;var format=source.indexFormat;
+            destination.Clear(false);destination.indexFormat=format;destination.name=name;destination.vertices=vertices;
+            if(normals.Length>0)destination.normals=normals;if(tangents.Length>0)destination.tangents=tangents;
+            if(colors.Length>0)destination.colors=colors;
+            for(int channel=0;channel<8;channel++)if(uv[channel].Count>0)destination.SetUVs(channel,uv[channel]);
+            destination.subMeshCount=indices.Length;
+            for(int i=0;i<indices.Length;i++)destination.SetIndices(indices[i],topology[i],i,false);
+            destination.bounds=bounds;destination.UploadMeshData(false);EditorUtility.SetDirty(destination);
+            if(destination.vertexBufferCount<1)throw new InvalidOperationException("Native VFX mesh buffer was not rebuilt: "+name);
+        }
+
+        public static string RepairMeshBuffers()
+        {
+            if(EditorApplication.isPlaying)throw new InvalidOperationException("Repair requires Edit mode");
+            var catalog=AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(AssetRoot+"/Data/VFX120_Catalog.asset");
+            var meshes=new HashSet<Mesh>();foreach(var entry in catalog.Entries){meshes.Add(entry.Profile.BodyMesh);meshes.Add(entry.Profile.AccentMesh);}
+            string folder=Path.Combine(Output,"MeshBufferRepair_"+DateTime.UtcNow.ToString("yyyyMMdd_HHmmssfff"));Directory.CreateDirectory(folder);
+            var report=new System.Text.StringBuilder("Mesh buffer repair: asset identity and CPU geometry retained\n");
+            int repaired=0;
+            foreach(var mesh in meshes)
+            {
+                if(mesh==null)continue;
+                int before=mesh.vertexBufferCount;string path=AssetDatabase.GetAssetPath(mesh);
+                if(before==0 && mesh.vertexCount>0)
+                {
+                    File.Copy(path,Path.Combine(folder,Path.GetFileName(path)),false);
+                    CopyRenderableMesh(mesh,mesh);repaired++;
+                }
+                report.AppendLine(mesh.name+" vertexBuffers="+before+"->"+mesh.vertexBufferCount+" vertices="+mesh.vertexCount+" triangles="+mesh.triangles.Length/3);
+            }
+            AssetDatabase.SaveAssets();report.AppendLine("repaired="+repaired+" checked="+meshes.Count);
+            File.WriteAllText(Path.Combine(folder,"repair.txt"),report.ToString());return folder;
+        }
+
+        public static string NativeMeshCopyProbe()
+        {
+            Mesh source=null,serialized=null,native=null;
+            try
+            {
+                source=Vfx120MeshFactory.Build("Ribbon");serialized=new Mesh();native=new Mesh();
+                EditorUtility.CopySerialized(source,serialized);CopyRenderableMesh(source,native);
+                string result="generated="+source.vertexBufferCount+" CopySerialized="+serialized.vertexBufferCount+" nativeSetters="+native.vertexBufferCount;
+                UnityEngine.Object.DestroyImmediate(source);source=null;
+                result+="; after source destroy CopySerialized="+serialized.vertexBufferCount+" nativeSetters="+native.vertexBufferCount;
+                File.WriteAllText(Path.Combine(Output,"native_mesh_copy_probe.txt"),result);return result;
+            }
+            finally{if(source!=null)UnityEngine.Object.DestroyImmediate(source);if(serialized!=null)UnityEngine.Object.DestroyImmediate(serialized);if(native!=null)UnityEngine.Object.DestroyImmediate(native);}
+        }
+
+        [Serializable] class GuardianPartEntry { public int index; public string name; public float[] pivot_unity; public int triangles; }
+        [Serializable] class GuardianManifest { public GuardianPartEntry[] parts; public float[] right_fist_contact_unity; }
+        public static string ImportGuardianParts()
+        {
+            if(EditorApplication.isPlaying)throw new InvalidOperationException("Import requires Edit mode");
+            string input=Path.Combine(Output,"Blender/GuardianParts");
+            var manifest=JsonUtility.FromJson<GuardianManifest>(File.ReadAllText(Path.Combine(input,"guardian_parts_manifest.json")));
+            if(manifest.parts.Length!=Vfx120GuardianMotion.PartCount)throw new InvalidOperationException("Expected 11 guardian parts");
+            EnsureFolder(AssetRoot+"/Meshes/GuardianParts");EnsureFolder(AssetRoot+"/Blender");
+            string modelPath=AssetRoot+"/Blender/StoneGuardian_Jangseung_Parts_B2.fbx";
+            File.Copy(Path.Combine(input,"StoneGuardian_Jangseung_Parts_B2.fbx"),modelPath,true);
+            AssetDatabase.ImportAsset(modelPath,ImportAssetOptions.ForceSynchronousImport);
+            var importer=(ModelImporter)AssetImporter.GetAtPath(modelPath);
+            importer.isReadable=true;importer.importAnimation=false;importer.materialImportMode=ModelImporterMaterialImportMode.None;
+            importer.meshCompression=ModelImporterMeshCompression.Off;importer.SaveAndReimport();
+            var model=AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            var filters=model.GetComponentsInChildren<MeshFilter>(true);
+            if(filters.Length!=manifest.parts.Length)throw new InvalidOperationException("FBX mesh count changed");
+            var profile=AssetDatabase.LoadAssetAtPath<Vfx120Profile>(AssetRoot+"/Profiles/064_BAB8.asset");
+            var meshes=new Mesh[filters.Length];var pivots=new Vector3[filters.Length];var assembled=new List<Vector3>();
+            var report=new System.Text.StringBuilder("Guardian Unity import: original coordinates, no per-part normalization\n");
+            int total=0;
+            foreach(var part in manifest.parts)
+            {
+                var filter=filters.Single(f=>f.name=="GuardianPart_"+part.name);
+                var source=filter.sharedMesh;var mesh=UnityEngine.Object.Instantiate(source);mesh.name="GuardianPart_"+part.name;
+                var matrix=filter.transform.localToWorldMatrix;
+                var pivot=new Vector3(part.pivot_unity[0],part.pivot_unity[1],part.pivot_unity[2]);
+                var vertices=mesh.vertices;var normals=mesh.normals;
+                for(int i=0;i<vertices.Length;i++){vertices[i]=matrix.MultiplyPoint3x4(vertices[i]);assembled.Add(vertices[i]);vertices[i]-=pivot;}
+                for(int i=0;i<normals.Length;i++)normals[i]=matrix.inverse.transpose.MultiplyVector(normals[i]).normalized;
+                mesh.vertices=vertices;mesh.normals=normals;mesh.RecalculateTangents();mesh.RecalculateBounds();
+                if(mesh.triangles.Length/3!=part.triangles)throw new InvalidOperationException("Part triangle mismatch "+part.name);
+                string path=AssetRoot+"/Meshes/GuardianParts/"+part.name+".asset";
+                var existing=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+                if(existing==null){AssetDatabase.CreateAsset(mesh,path);existing=mesh;}
+                else{CopyRenderableMesh(mesh,existing);UnityEngine.Object.DestroyImmediate(mesh);}
+                meshes[part.index]=existing;pivots[part.index]=pivot;total+=part.triangles;
+                report.AppendLine(part.name+" triangles="+part.triangles+" pivot="+pivot.ToString("F6")+" nativeBuffers="+existing.vertexBufferCount);
+            }
+            var reference=profile.BodyMesh.vertices;float maxError=0;
+            foreach(var vertex in assembled){float nearest=float.PositiveInfinity;foreach(var original in reference)nearest=Mathf.Min(nearest,(vertex-original).sqrMagnitude);maxError=Mathf.Max(maxError,Mathf.Sqrt(nearest));}
+            foreach(var vertex in reference){float nearest=float.PositiveInfinity;foreach(var original in assembled)nearest=Mathf.Min(nearest,(vertex-original).sqrMagnitude);maxError=Mathf.Max(maxError,Mathf.Sqrt(nearest));}
+            report.AppendLine("totalTriangles="+total+" maxBidirectionalOriginalError="+maxError.ToString("R"));
+            File.WriteAllText(Path.Combine(input,"unity_import.txt"),report.ToString());
+            if(total!=2720||maxError>0.00001f)throw new InvalidOperationException("Guardian import geometry mismatch; profile not assigned. Error="+maxError);
+            profile.GuardianMeshes=meshes;profile.GuardianPivots=pivots;
+            var contact=manifest.right_fist_contact_unity;profile.GuardianFistContact=new Vector3(contact[0],contact[1],contact[2]);
+            EditorUtility.SetDirty(profile);AssetDatabase.SaveAssets();return Path.Combine(input,"unity_import.txt");
         }
 
         public static string AuditCatalog()

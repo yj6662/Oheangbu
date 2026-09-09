@@ -1,0 +1,782 @@
+{
+  "status": "PARTITION_NUMERIC_CHECK_ONLY",
+  "source_object": "StoneGuardian_Jangseung_B1",
+  "source_blend": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\SpellVFX120_MeshLab.blend",
+  "source_triangles": 2720,
+  "exported_triangles": 2720,
+  "source_components": 44,
+  "parts": [
+    {
+      "index": 0,
+      "name": "Pelvis",
+      "object": "GuardianPart_Pelvis",
+      "parent_index": -1,
+      "pivot_unity": [
+        0.0,
+        -0.24381116032600403,
+        -0.03742083162069321
+      ],
+      "pivot_blender": [
+        0.0,
+        0.03742083162069321,
+        -0.24381116032600403
+      ],
+      "vertices": 56,
+      "triangles": 104,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 1,
+      "name": "Torso",
+      "object": "GuardianPart_Torso",
+      "parent_index": 0,
+      "pivot_unity": [
+        0.0,
+        -0.17472654581069946,
+        -0.046056412160396576
+      ],
+      "pivot_blender": [
+        0.0,
+        0.046056412160396576,
+        -0.17472654581069946
+      ],
+      "vertices": 138,
+      "triangles": 256,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 1.666000468656264e-08,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 2,
+      "name": "Head",
+      "object": "GuardianPart_Head",
+      "parent_index": 1,
+      "pivot_unity": [
+        0.0,
+        0.12464016675949097,
+        -0.03569371998310089
+      ],
+      "pivot_blender": [
+        0.0,
+        0.03569371998310089,
+        0.12464016675949097
+      ],
+      "vertices": 710,
+      "triangles": 1336,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 7.450580596923828e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 3,
+      "name": "LeftArm",
+      "object": "GuardianPart_LeftArm",
+      "parent_index": 1,
+      "pivot_unity": [
+        -0.23028209805488586,
+        0.04979848861694336,
+        -0.04317788779735565
+      ],
+      "pivot_blender": [
+        -0.23028209805488586,
+        0.04317788779735565,
+        0.04979848861694336
+      ],
+      "vertices": 34,
+      "triangles": 64,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 1.862645149230957e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 4,
+      "name": "LeftFist",
+      "object": "GuardianPart_LeftFist",
+      "parent_index": 3,
+      "pivot_unity": [
+        -0.28785261511802673,
+        -0.15169832110404968,
+        -0.02302820421755314
+      ],
+      "pivot_blender": [
+        -0.28785261511802673,
+        0.02302820421755314,
+        -0.15169832110404968
+      ],
+      "vertices": 170,
+      "triangles": 320,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 5,
+      "name": "RightArm",
+      "object": "GuardianPart_RightArm",
+      "parent_index": 1,
+      "pivot_unity": [
+        0.23028209805488586,
+        0.04979848861694336,
+        -0.04317788779735565
+      ],
+      "pivot_blender": [
+        0.23028209805488586,
+        0.04317788779735565,
+        0.04979848861694336
+      ],
+      "vertices": 34,
+      "triangles": 64,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 1.862645149230957e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 6,
+      "name": "RightFist",
+      "object": "GuardianPart_RightFist",
+      "parent_index": 5,
+      "pivot_unity": [
+        0.28785261511802673,
+        -0.15169832110404968,
+        -0.02302820421755314
+      ],
+      "pivot_blender": [
+        0.28785261511802673,
+        0.02302820421755314,
+        -0.15169832110404968
+      ],
+      "vertices": 170,
+      "triangles": 320,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 7,
+      "name": "LeftLeg",
+      "object": "GuardianPart_LeftLeg",
+      "parent_index": 0,
+      "pivot_unity": [
+        -0.10362694412469864,
+        -0.28411054611206055,
+        -0.028785254806280136
+      ],
+      "pivot_blender": [
+        -0.10362694412469864,
+        0.028785254806280136,
+        -0.28411054611206055
+      ],
+      "vertices": 34,
+      "triangles": 64,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 8,
+      "name": "LeftFoot",
+      "object": "GuardianPart_LeftFoot",
+      "parent_index": 7,
+      "pivot_unity": [
+        -0.10362694412469864,
+        -0.4251583218574524,
+        0.01151411235332489
+      ],
+      "pivot_blender": [
+        -0.10362694412469864,
+        -0.01151411235332489,
+        -0.4251583218574524
+      ],
+      "vertices": 34,
+      "triangles": 64,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 9,
+      "name": "RightLeg",
+      "object": "GuardianPart_RightLeg",
+      "parent_index": 0,
+      "pivot_unity": [
+        0.10362694412469864,
+        -0.28411054611206055,
+        -0.028785254806280136
+      ],
+      "pivot_blender": [
+        0.10362694412469864,
+        0.028785254806280136,
+        -0.28411054611206055
+      ],
+      "vertices": 34,
+      "triangles": 64,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    },
+    {
+      "index": 10,
+      "name": "RightFoot",
+      "object": "GuardianPart_RightFoot",
+      "parent_index": 9,
+      "pivot_unity": [
+        0.10362694412469864,
+        -0.4251583218574524,
+        0.01151411235332489
+      ],
+      "pivot_blender": [
+        0.10362694412469864,
+        -0.01151411235332489,
+        -0.4251583218574524
+      ],
+      "vertices": 34,
+      "triangles": 64,
+      "material_slots": 1,
+      "uv_layers": [
+        "UVMap"
+      ],
+      "color_attributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "data_type": "FLOAT_COLOR"
+        }
+      ],
+      "max_rest_vertex_error_m": 3.725290298461914e-09,
+      "max_uv_error": 0.0,
+      "max_color_channel_error": 0.0
+    }
+  ],
+  "components": [
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        0.6399999856948853,
+        -2.9802322387695312e-08
+      ],
+      "part": "Torso"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        0.29999998211860657,
+        0.015000008046627045
+      ],
+      "part": "Pelvis"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.4000000059604645,
+        0.809999942779541,
+        0.004999980330467224
+      ],
+      "part": "Torso"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.5,
+        0.5899999737739563,
+        0.03500000014901161
+      ],
+      "part": "LeftArm"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.6000000238418579,
+        0.34999996423721313,
+        0.13999998569488525
+      ],
+      "part": "LeftFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.47499996423721313,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "LeftFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.5550000071525574,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "LeftFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.6349999904632568,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "LeftFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.7149999141693115,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "LeftFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.18000000715255737,
+        0.09999998658895493,
+        0.030000001192092896
+      ],
+      "part": "LeftLeg"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.17999999225139618,
+        -0.07000000774860382,
+        0.14499998092651367
+      ],
+      "part": "LeftFoot"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.4000000059604645,
+        0.809999942779541,
+        0.004999980330467224
+      ],
+      "part": "Torso"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.5,
+        0.5899999737739563,
+        0.03500000014901161
+      ],
+      "part": "RightArm"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.6000000238418579,
+        0.34999996423721313,
+        0.13999998569488525
+      ],
+      "part": "RightFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.47499996423721313,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "RightFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.5550000071525574,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "RightFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.6349999904632568,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "RightFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.7149999141693115,
+        0.3199999928474426,
+        0.30799999833106995
+      ],
+      "part": "RightFist"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.18000000715255737,
+        0.09999998658895493,
+        0.030000001192092896
+      ],
+      "part": "RightLeg"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.17999999225139618,
+        -0.07000000774860382,
+        0.14499998092651367
+      ],
+      "part": "RightFoot"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        1.190000057220459,
+        0.01799999177455902
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        1.4900000095367432,
+        0.004999987781047821
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        1.5670000314712524,
+        -0.01999998837709427
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 62,
+      "source_center_y_up": [
+        -0.09999999403953552,
+        1.2819998264312744,
+        0.1979999840259552
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 42,
+      "source_center_y_up": [
+        -0.10000000149011612,
+        1.2799999713897705,
+        0.21799996495246887
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 22,
+      "source_center_y_up": [
+        -0.10419262200593948,
+        1.3356781005859375,
+        0.2147901952266693
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 22,
+      "source_center_y_up": [
+        -0.09977667778730392,
+        1.0971829891204834,
+        0.2211475521326065
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 62,
+      "source_center_y_up": [
+        0.09999999403953552,
+        1.2819998264312744,
+        0.1979999840259552
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 42,
+      "source_center_y_up": [
+        0.10000000149011612,
+        1.2799999713897705,
+        0.21799996495246887
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 22,
+      "source_center_y_up": [
+        0.10448242723941803,
+        1.3353300094604492,
+        0.21211928129196167
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 22,
+      "source_center_y_up": [
+        0.09948569536209106,
+        1.0972013473510742,
+        0.2201104760169983
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        1.1829999685287476,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 20,
+      "source_center_y_up": [
+        -0.029999999329447746,
+        1.0889999866485596,
+        0.26499998569488525
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 20,
+      "source_center_y_up": [
+        0.029999999329447746,
+        1.0889999866485596,
+        0.26499998569488525
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.0,
+        1.0149999856948853,
+        0.19900000095367432
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.12099999934434891,
+        1.0149999856948853,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.0729999989271164,
+        1.0149999856948853,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        -0.02499999850988388,
+        1.0149999856948853,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.022999998182058334,
+        1.0149999856948853,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.07100000232458115,
+        1.0149999856948853,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 34,
+      "source_center_y_up": [
+        0.11900000274181366,
+        1.0149999856948853,
+        0.2150000035762787
+      ],
+      "part": "Head"
+    },
+    {
+      "vertices": 18,
+      "source_center_y_up": [
+        -0.0879184678196907,
+        0.7589059472084045,
+        0.23800402879714966
+      ],
+      "part": "Torso"
+    },
+    {
+      "vertices": 18,
+      "source_center_y_up": [
+        0.0879184678196907,
+        0.7589059472084045,
+        0.23800402879714966
+      ],
+      "part": "Torso"
+    },
+    {
+      "vertices": 22,
+      "source_center_y_up": [
+        -0.00016099214553833008,
+        0.35595494508743286,
+        0.21255096793174744
+      ],
+      "part": "Pelvis"
+    }
+  ],
+  "full_body_normalized_height": 1.0,
+  "forward": "Unity +Z",
+  "up": "Unity +Y",
+  "right_fist_contact_unity": [
+    0.3425446152687073,
+    -0.23229707777500153,
+    0.15198618173599243
+  ],
+  "source_preserved": true,
+  "new_vertices_added": 0,
+  "triangles_removed": 0,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\Blender\\GuardianParts\\StoneGuardian_Jangseung_Parts_B2.fbx",
+  "fbx_sha256": "f9feeb69263d796332f066095857e1b8579acfbe70117d038438d540b64a1468",
+  "unity_import": "Import every named MeshFilter. Keep per-part pivot-local vertices; do not center/normalize each part. Use pivot_unity in shared body coordinates.",
+  "unverified": [
+    "FBX empty-scene roundtrip",
+    "Unity import",
+    "joint intersection during motion",
+    "foot support during walking",
+    "visual quality",
+    "UV/color numeric roundtrip"
+  ]
+}

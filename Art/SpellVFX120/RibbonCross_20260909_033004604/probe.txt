@@ -1,0 +1,52 @@
+Flecks_0 material=M_Ink shader=Oheangbu/VFX120/InkPigment supported=True passCount=1 layer=0 cameraMask=-1 forceOff=False active=True shadow=Off renderLayers=1
+_Alpha=1
+_Erode=0
+_Pattern=0
+_Soft=0
+_Body=0
+_Fluid=0
+_ZWrite=0
+BaseMapST=(1.00, 1.00),(0.00, 0.00)
+Flecks_1 material=M_Ink shader=Oheangbu/VFX120/InkPigment supported=True passCount=1 layer=0 cameraMask=-1 forceOff=False active=True shadow=Off renderLayers=1
+_Alpha=1
+_Erode=0
+_Pattern=0
+_Soft=0
+_Body=0
+_Fluid=0
+_ZWrite=0
+BaseMapST=(1.00, 1.00),(0.00, 0.00)
+Flecks_2 material=M_Ink shader=Oheangbu/VFX120/InkPigment supported=True passCount=1 layer=0 cameraMask=-1 forceOff=False active=True shadow=Off renderLayers=1
+_Alpha=1
+_Erode=0
+_Pattern=0
+_Soft=0
+_Body=0
+_Fluid=0
+_ZWrite=0
+BaseMapST=(1.00, 1.00),(0.00, 0.00)
+Flecks_3 material=M_Ink shader=Oheangbu/VFX120/InkPigment supported=True passCount=1 layer=0 cameraMask=-1 forceOff=False active=True shadow=Off renderLayers=1
+_Alpha=1
+_Erode=0
+_Pattern=0
+_Soft=0
+_Body=0
+_Fluid=0
+_ZWrite=0
+BaseMapST=(1.00, 1.00),(0.00, 0.00)
+mesh=Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset readable=True buffers=0 indexFormat=UInt16
+attribute=(attr=Position fmt=Float32 dim=3 stream=0)
+attribute=(attr=Normal fmt=Float32 dim=3 stream=0)
+attribute=(attr=Tangent fmt=Float32 dim=4 stream=0)
+attribute=(attr=Color fmt=Float32 dim=4 stream=0)
+attribute=(attr=TexCoord0 fmt=Float32 dim=2 stream=0)
+submesh=0 topology=Triangles indexStart=0 indexCount=132 base=0 first=0 vertexCount=46
+vertex=0 p=(-0.026646, 0.069056, -0.500000)
+vertex=1 p=(-0.022646, 0.069056, -0.500000)
+vertex=2 p=(-0.004119, 0.055412, -0.454545)
+vertex=3 p=(0.067650, 0.065260, -0.454545)
+vertex=4 p=(0.029989, 0.022120, -0.409091)
+vertex=5 p=(0.129800, 0.050037, -0.409091)
+vertex=6 p=(0.054247, -0.023761, -0.363636)
+vertex=7 p=(0.171103, 0.026902, -0.363636)
+firstIndices=0,1,3,0,3,2,2,3,5,2,5,4,4,5,7,4,7,6

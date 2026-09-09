@@ -23,6 +23,31 @@ MonoBehaviour:
   Layout: 10
   BodyMesh: {fileID: 4300000, guid: 0bf9c9a43c2528142aea16074ce759c9, type: 2}
   AccentMesh: {fileID: 4300000, guid: 53f2a5b79ccd76040b22ed6c965a87c0, type: 2}
+  GuardianMeshes:
+  - {fileID: 4300000, guid: 433ab089569bc1b4592af2869b49fce6, type: 2}
+  - {fileID: 4300000, guid: 2a4b796cb5ad57f49af656131efbd99f, type: 2}
+  - {fileID: 4300000, guid: 38aedd6ae2cf66f47a6dc36be0d4bb31, type: 2}
+  - {fileID: 4300000, guid: dcf5a042a12a9954b989db2e667a5d39, type: 2}
+  - {fileID: 4300000, guid: 0e3c656a5ceec804b890117447aa3a35, type: 2}
+  - {fileID: 4300000, guid: 2e4911263b036ca4590a9d38eaec4a9f, type: 2}
+  - {fileID: 4300000, guid: e40ce527be6410a4f970c417a7917467, type: 2}
+  - {fileID: 4300000, guid: 2e8cbbca39486704287ad6ba8c22dbb4, type: 2}
+  - {fileID: 4300000, guid: 2b151e2da2ca76b44bf968b6558a421e, type: 2}
+  - {fileID: 4300000, guid: 575238baa6edcf94fb18cf18ee489590, type: 2}
+  - {fileID: 4300000, guid: 47e31323172f9b74d854ee338937ac3c, type: 2}
+  GuardianPivots:
+  - {x: 0, y: -0.24381116, z: -0.03742083}
+  - {x: 0, y: -0.17472655, z: -0.046056412}
+  - {x: 0, y: 0.12464017, z: -0.03569372}
+  - {x: -0.2302821, y: 0.04979849, z: -0.043177888}
+  - {x: -0.28785262, y: -0.15169832, z: -0.023028204}
+  - {x: 0.2302821, y: 0.04979849, z: -0.043177888}
+  - {x: 0.28785262, y: -0.15169832, z: -0.023028204}
+  - {x: -0.103626944, y: -0.28411055, z: -0.028785255}
+  - {x: -0.103626944, y: -0.42515832, z: 0.011514112}
+  - {x: 0.103626944, y: -0.28411055, z: -0.028785255}
+  - {x: 0.103626944, y: -0.42515832, z: 0.011514112}
+  GuardianFistContact: {x: 0.34254462, y: -0.23229708, z: 0.15198618}
   BodyMaterial: {fileID: 2100000, guid: 4440aec3d4bab7948b838a5e96a1e191, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 19378912170973d4e8e3aa5c3bdd470e, type: 2}

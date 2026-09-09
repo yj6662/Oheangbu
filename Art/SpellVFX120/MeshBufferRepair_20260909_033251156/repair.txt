@@ -1,0 +1,22 @@
+Mesh buffer repair: asset identity and CPU geometry retained
+SM_Vfx120_Thorn vertexBuffers=1->1 vertices=172 triangles=300
+SM_Vfx120_Leaf vertexBuffers=1->1 vertices=185 triangles=298
+SM_Vfx120_Vine vertexBuffers=1->1 vertices=452 triangles=726
+SM_Vfx120_Seal vertexBuffers=1->1 vertices=26 triangles=24
+SM_Vfx120_Ribbon vertexBuffers=0->1 vertices=46 triangles=44
+SM_Vfx120_Lotus vertexBuffers=1->1 vertices=676 triangles=976
+SM_Vfx120_Tree vertexBuffers=1->1 vertices=1602 triangles=2368
+SM_Vfx120_Blade vertexBuffers=1->1 vertices=163 triangles=276
+Beast vertexBuffers=1->1 vertices=3160 triangles=4500
+SM_Vfx120_Flame vertexBuffers=1->1 vertices=342 triangles=596
+SM_Vfx120_Ember vertexBuffers=1->1 vertices=50 triangles=80
+SM_Vfx120_Shard vertexBuffers=1->1 vertices=16 triangles=28
+SM_Vfx120_Cloud vertexBuffers=1->1 vertices=76 triangles=148
+SM_Vfx120_Rock vertexBuffers=1->1 vertices=93 triangles=168
+SM_Vfx120_Sand vertexBuffers=1->1 vertices=12 triangles=20
+SM_Vfx120_Ripple vertexBuffers=1->1 vertices=230 triangles=224
+StoneGuardian vertexBuffers=1->1 vertices=1832 triangles=2720
+SM_Vfx120_BridgeSlab vertexBuffers=1->1 vertices=34 triangles=64
+SM_Vfx120_Ring vertexBuffers=1->1 vertices=455 triangles=768
+SM_Vfx120_WaveCrest vertexBuffers=1->1 vertices=989 triangles=1848
+repaired=1 checked=20

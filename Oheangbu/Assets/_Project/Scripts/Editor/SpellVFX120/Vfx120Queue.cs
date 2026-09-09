@@ -30,6 +30,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     case "Probe": response.result = "Unity=" + Application.unityVersion + "; playing=" + EditorApplication.isPlaying + "; scene=" + UnityEngine.SceneManagement.SceneManager.GetActiveScene().path; break;
                     case "ParticleColorProbe": response.result = Vfx120ParticleColorProbe.Run(); break;
                     case "RibbonProbe": response.result = Vfx120ParticleColorProbe.RibbonProbe(); break;
+                    case "RibbonCrossRender": response.result = Vfx120ParticleColorProbe.RibbonCrossRender(); break;
+                    case "RepairMeshBuffers": response.result = Vfx120Editor.RepairMeshBuffers(); break;
+                    case "ImportGuardianParts": response.result = Vfx120Editor.ImportGuardianParts(); break;
+                    case "NativeMeshCopyProbe": response.result = Vfx120Editor.NativeMeshCopyProbe(); break;
+                    case "PlayerInputAudit": response.result = Vfx120PlayerInputAudit.Start(); break;
+                    case "PlayerInputPoll": response.result = Vfx120PlayerInputAudit.Poll(); break;
+                    case "PlayerInputCancel": response.result = Vfx120PlayerInputAudit.Cancel(); break;
                     case "Build": response.result = Vfx120Editor.Build(); break;
                     case "Audit": response.result = Vfx120Editor.AuditCatalog(); break;
                     case "Review": response.result = Vfx120Editor.Review(); break;

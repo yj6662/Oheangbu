@@ -18,6 +18,11 @@ namespace Oheangbu.App.SpellVFX120
         public Vfx120Layout Layout;
         public Mesh BodyMesh;
         public Mesh AccentMesh;
+        // Optional rigid stone rig in the original normalized full-body space.
+        // The source whole-body mesh remains available for provenance/fallback.
+        public Mesh[] GuardianMeshes;
+        public Vector3[] GuardianPivots;
+        public Vector3 GuardianFistContact;
         public Material BodyMaterial;
         public Material InkMaterial;
         public Material PatternMaterial;

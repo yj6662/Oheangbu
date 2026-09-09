@@ -32,6 +32,11 @@ namespace Oheangbu.App.SpellVFX120
         public float ParryAt { get; private set; } = -1;
         public float BreakAt { get; private set; } = -1;
         public int SignalCount { get; private set; }
+        private float _summonStrikeAt = -1;
+        public void SetSummonStrikeClock(float seconds) { _summonStrikeAt = seconds; }
+        private bool HasGuardianRig => Profile.Glyph == "몸" && Profile.GuardianMeshes != null
+            && Profile.GuardianMeshes.Length == Vfx120GuardianMotion.PartCount && Profile.GuardianPivots != null
+            && Profile.GuardianPivots.Length == Vfx120GuardianMotion.PartCount;
 
         private Transform[] _parts;
         private Renderer[] _renderers;
@@ -168,6 +173,7 @@ namespace Oheangbu.App.SpellVFX120
         private void Build()
         {
             int n = Mathf.Clamp(Profile.Count, 1, 32);
+            if (HasGuardianRig) n = Vfx120GuardianMotion.PartCount;
             if (Vfx120EnvironmentMotion.Supports(Profile)) n = Vfx120EnvironmentMotion.GetBodyCount(Profile);
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Path && Profile.Family == "WaveCrest") n = 1;
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley && ReceivedAreaPlan.Shots.Count > 0)
@@ -181,10 +187,11 @@ namespace Oheangbu.App.SpellVFX120
             accentCount = Mathf.Max(accentCount, Vfx120EnvironmentMotion.GetAccentCount(Profile));
             bool projectileAccents = !HasSpatialPlan && !(ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley);
             if (projectileAccents) accentCount = Mathf.Max(accentCount, Vfx120VariantMotion.GetProjectileAccentCount(Profile));
+            if (HasGuardianRig) accentCount = 0;
             _accents = new Transform[accentCount]; _accentRenderers = new Renderer[accentCount];
             for (int i = 0; i < n; i++)
             {
-                _parts[i] = MeshPart("Body_" + i, Profile.BodyMesh, Profile.BodyMaterial, out _renderers[i]);
+                _parts[i] = MeshPart("Body_" + i, HasGuardianRig ? Profile.GuardianMeshes[i] : Profile.BodyMesh, Profile.BodyMaterial, out _renderers[i]);
             }
             for (int i = 0; i < accentCount; i++)
                 _accents[i] = MeshPart("Flecks_" + i, projectileAccents && Profile.Glyph == "만" ? Profile.BodyMesh : Profile.AccentMesh,
@@ -234,6 +241,16 @@ namespace Oheangbu.App.SpellVFX120
             float grow = Mathf.SmoothStep(0, 1, Age / Mathf.Min(.28f, _flight));
             float arrive = Mathf.SmoothStep(0, 1, (Age - _flight) / .22f);
             Vector3 center = Center();
+            var guardianContext = new Vfx120GuardianMotion.Context();
+            if (HasGuardianRig)
+            {
+                guardianContext = new Vfx120GuardianMotion.Context { Age = Age, Life = Life, FormationTime = _flight,
+                    Height = Profile.PartScale.y, OriginGround = _originGround, TargetGround = _targetGround,
+                    StrikeAt = _summonStrikeAt, HitAt = HitAt, Demonstration = PreviewControlled && DemonstrationCues,
+                    HasTarget = ReceivedTarget != null, Target = _aim, Pivots = Profile.GuardianPivots,
+                    RightFistContact = Profile.GuardianFistContact };
+                if (Vfx120GuardianMotion.TrySampleAnchor(guardianContext, out var anchorPoint, out _)) center = anchorPoint;
+            }
             bool authoritativeVolley = ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley
                 && ReceivedAreaPlan.Shots.Count > 0;
             bool projectileMotion = !HasSpatialPlan && !authoritativeVolley && Vfx120VariantMotion.GetProjectileAccentCount(Profile) > 0;
@@ -257,6 +274,14 @@ namespace Oheangbu.App.SpellVFX120
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Radius > 0) size = ReceivedAreaPlan.Radius;
             for (int i = 0; i < _parts.Length; i++)
             {
+                if (HasGuardianRig)
+                {
+                    if (Vfx120GuardianMotion.TrySampleBody(guardianContext, i, out var guardianPose))
+                        ApplyCuePose(_parts[i], _renderers[i], guardianPose,
+                            Color.Lerp(Profile.Pigment, Profile.Accent, i == 2 ? .32f : i % 3 == 0 ? .14f : .03f));
+                    else _renderers[i].enabled = false;
+                    continue;
+                }
                 if (Vfx120EnvironmentMotion.TrySampleBody(Profile, environmentContext, i, _parts.Length, out var environmentBody))
                 {
                     ApplyCuePose(_parts[i], _renderers[i], environmentBody, Profile.Pigment);
@@ -417,6 +442,7 @@ namespace Oheangbu.App.SpellVFX120
             bool castOnly = Profile.Behavior == Vfx120Behavior.Projectile || Profile.Behavior == Vfx120Behavior.Weapon;
             bool selfZone = Profile.Glyph == "넉" || Profile.Glyph == "국";
             float ground = !selfZone && (Profile.Behavior == Vfx120Behavior.Bind || Profile.Behavior == Vfx120Behavior.Zone || Profile.Behavior == Vfx120Behavior.Burst || Profile.Behavior == Vfx120Behavior.Summon) ? _targetGround : _originGround;
+            if (HasGuardianRig) ground = center.y;
             Vector3 sealCenter = guard && !wideGuard ? center : new Vector3(center.x, ground + .04f, center.z);
             if (castOnly) sealCenter = new Vector3(0, 0, .15f);
             _seal.localPosition = sealCenter;
@@ -443,7 +469,7 @@ namespace Oheangbu.App.SpellVFX120
                 var line = _ribbons[r];
                 // The cue meshes already provide the attached/transfer trajectory.
                 // Generic orbit ribbons would falsely imply an active zone before a hit.
-                line.enabled = !cueMotion && !projectileMotion && !HasSpatialPlan && Profile.Glyph != "막"
+                line.enabled = !HasGuardianRig && !cueMotion && !projectileMotion && !HasSpatialPlan && Profile.Glyph != "막"
                     && !Vfx120EnvironmentMotion.Supports(Profile)
                     && Vfx120WaterMotion.GetAccentCount(Profile) == 0 && Profile.Behavior != Vfx120Behavior.Weapon;
                 if (!line.enabled) { line.widthMultiplier = 0; Tint(line, Profile.Ink, 0, 1); continue; }

@@ -1,13 +1,13 @@
 {
   "status": "PASS_STATIC_CSHARP_ONLY",
-  "utc": "2026-09-09T03:20:00.254928+00:00",
+  "utc": "2026-09-09T04:01:50.337724+00:00",
   "worktree": "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint",
-  "output": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef",
+  "output": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u",
   "unityVersion": "6000.3.9f1",
   "scope": "Latest main-based checkpoint sources freshly enumerated and compiled in dependency order using installed Unity/package references and prior response options. All nine Oheangbu DLLs and reference DLLs are rebuilt from this worktree in a new temporary directory. No analyzers or source generators run.",
   "limitations": "No Unity launch, AssetDatabase import, shader compilation, Play execution, player build or visual validation. Reflection member names, resource ownership and runtime behavior remain outside this compile check.",
   "assemblies": 9,
-  "sourceCount": 99,
+  "sourceCount": 102,
   "errorCount": 0,
   "warningCount": 14,
   "rows": [
@@ -17,7 +17,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 0,
-      "elapsedSeconds": 0.766,
+      "elapsedSeconds": 0.751,
       "diagnostics": [],
       "sourceFiles": [
         {
@@ -65,13 +65,13 @@
         "path": "Oheangbu/Assets/_Project/Scripts/Core/Oheangbu.Core.asmdef",
         "sha256": "5af792ff289ad1ea8b345619dda5e83751373437a9e7c4704ba2143ed17614f8"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.rsp",
-      "responseSha256": "eb0daa7f58f913a8e23c8152c2ff38f99803cbdaf2a5630f5b70e6b0da78ff1f",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.rsp",
+      "responseSha256": "e9686bd3a79edfc765186f3805a67be0fd92f7b9782bb7f4d67f2ac3825cdefb",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Core.rsp",
       "priorResponseSha256": "c872aada8d7d4e7c1461a708a573b70b20a7985a2259d3da7cc4860ef5994c59",
       "rebuiltProjectReferences": [],
       "externalReferenceCount": 331,
-      "outputSha256": "fa97984f128b58c4c99415eb09b8f76c222c465d6145e1fe0fb0d63c7a4379bb"
+      "outputSha256": "88efdb597e6d06d846b4ddfb39ec66cc7d1adeedd6d9ec77afef49d88eef37c6"
     },
     {
       "assembly": "Oheangbu.Data",
@@ -79,7 +79,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 1,
-      "elapsedSeconds": 0.608,
+      "elapsedSeconds": 0.604,
       "diagnostics": [
         "warning CS2008: No source files specified."
       ],
@@ -88,18 +88,18 @@
         "path": "Oheangbu/Assets/_Project/Scripts/Data/Oheangbu.Data.asmdef",
         "sha256": "7df3e47ac34ade44ac29a980c14b5a98c6369459936347d54ca2422bcc6445fe"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.rsp",
-      "responseSha256": "8557f6f5d165688c23070d0fd194b45a15e15beab0572c1d9d26f79d79bdc3e9",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.rsp",
+      "responseSha256": "b79117f2d8b0f006061ac2125310440c55a2af0e849f1f715383a566ed0855a8",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Data.rsp",
       "priorResponseSha256": "1b490fb4b46d20c1d17af14f757e4bbd5be6752893ab0539f447f951040d13ce",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         }
       ],
       "externalReferenceCount": 329,
-      "outputSha256": "a73632b1d1295fc3a6d5515100a5083b9c720820e6f549ea1325aa60f95c89ca"
+      "outputSha256": "bd33d343ca057b3d2a8c1ef76dab979bf2e4812159c158d80396b9e74f992732"
     },
     {
       "assembly": "Oheangbu.Drawing",
@@ -107,7 +107,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 0,
-      "elapsedSeconds": 0.778,
+      "elapsedSeconds": 0.765,
       "diagnostics": [],
       "sourceFiles": [
         {
@@ -135,22 +135,22 @@
         "path": "Oheangbu/Assets/_Project/Scripts/Drawing/Oheangbu.Drawing.asmdef",
         "sha256": "34c3270d468d061b3186d23edb6e8d90c7c1d673978b62cda38b9d5b62fd5dcb"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Drawing.rsp",
-      "responseSha256": "36619a6539c47cfcae6ffb72252674eb82c744602b16b5d56224c7dc30ed8704",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Drawing.rsp",
+      "responseSha256": "b7efbf312d04cc26d74c01e5dea48b8acb71d7163cab2918485c034130af2295",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Drawing.rsp",
       "priorResponseSha256": "e564332ca0993a83b2c03a8d8dfae5cb54b3c057f082ac98890faa1fae4415be",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.ref.dll",
           "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
         }
       ],
       "externalReferenceCount": 331,
-      "outputSha256": "93f14ee768fc8f472f45d15ba15bc0a9d8b5effbcdca538717dd3f690107e0a1"
+      "outputSha256": "7e4467ce3f58294f302014632056b093743abc2bc29686ef770314977aaacc1d"
     },
     {
       "assembly": "Oheangbu.BrushRender",
@@ -158,7 +158,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 0,
-      "elapsedSeconds": 0.758,
+      "elapsedSeconds": 0.754,
       "diagnostics": [],
       "sourceFiles": [
         {
@@ -186,18 +186,18 @@
         "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/Oheangbu.BrushRender.asmdef",
         "sha256": "e3741655f0b9baf365eb923db0003aad7c2c248bf732d7a7f020b4919fdc49dd"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.BrushRender.rsp",
-      "responseSha256": "3b9cf5a254820d8e626582744cacab74b4a7427e99ea23b9bc8d51fa06599fa6",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.BrushRender.rsp",
+      "responseSha256": "4bf14241b8c50f6af4adb702b4caa6e6c3d9a5ffbfb24404b6ad6918be059600",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.BrushRender.rsp",
       "priorResponseSha256": "a1cc8df9d47ebfa6d9f357b72c6d27001b014a5f8858a51384dadc8301211553",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         }
       ],
       "externalReferenceCount": 329,
-      "outputSha256": "716e2b74413c2de1fa234fa58f99f9380214932fe85661010976384d0c15899c"
+      "outputSha256": "bb9aadc9bb0826444e5193659810df31f9cf0f539e5ecb8369cdf8d2a610d49f"
     },
     {
       "assembly": "Oheangbu.Spellcraft",
@@ -205,7 +205,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 0,
-      "elapsedSeconds": 0.743,
+      "elapsedSeconds": 0.742,
       "diagnostics": [],
       "sourceFiles": [
         {
@@ -221,22 +221,22 @@
         "path": "Oheangbu/Assets/_Project/Scripts/Spellcraft/Oheangbu.Spellcraft.asmdef",
         "sha256": "c2e56589b549d22209da7df785815d62b952bb7ac12456dc0a0e4eae39d209d0"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Spellcraft.rsp",
-      "responseSha256": "11ffc979890e9aff3c9d658c86b84ae56b80d63390f9e5c4640a498d87c79bd9",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Spellcraft.rsp",
+      "responseSha256": "b9ab37eb9448133c24681a58bdc177bab662dda91aa50e7a6d3be00505674fb6",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Spellcraft.rsp",
       "priorResponseSha256": "7ccd87de95d3a834162db0481ccdf9add066ea4fca268d4b43315bfd7460f36b",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.ref.dll",
           "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
         }
       ],
       "externalReferenceCount": 329,
-      "outputSha256": "6b47a1a90bf299c0e587fea0c5bca616d92ac898cbf9adfabca0190f3a408cc1"
+      "outputSha256": "ab01d328b32d49d9c12dd1e9a184432a746f14de04511190075aa289211a578c"
     },
     {
       "assembly": "Oheangbu.Combat",
@@ -244,7 +244,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 0,
-      "elapsedSeconds": 0.789,
+      "elapsedSeconds": 0.773,
       "diagnostics": [],
       "sourceFiles": [
         {
@@ -304,26 +304,26 @@
         "path": "Oheangbu/Assets/_Project/Scripts/Combat/Oheangbu.Combat.asmdef",
         "sha256": "efe48b1ecc2e08ea952dd561b188a627d0a556e6370f43e3a7c4c6ccab97ed65"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Combat.rsp",
-      "responseSha256": "02a4a5a6d2ae6cdc4f0e5ec74516c555a7708580574d291ee432aa592621fb97",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Combat.rsp",
+      "responseSha256": "f79e199646e37869b5f91bbd95c6d7c18e31e4a4688aa8ca4b9a5a7792e7d3cc",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Combat.rsp",
       "priorResponseSha256": "d3119cfd8287cbae4530daea51bcac60e5df10b8de61a5fec283a01e8b6c721b",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.ref.dll",
           "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Spellcraft.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Spellcraft.ref.dll",
           "sha256": "5432cb1a1f30054368927b3e57fbed91968093d3cedd65d1cd6754d5de8fe432"
         }
       ],
       "externalReferenceCount": 330,
-      "outputSha256": "a6b76034bd93affda8e8c22bc1606cf1f0f60c6525f28482080eb18762cd32ef"
+      "outputSha256": "708f37524322ebb1e7f472959dacc2d67fc31c68a9280f66cb42f8a9e86f030f"
     },
     {
       "assembly": "Oheangbu.Presentation",
@@ -331,7 +331,7 @@
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 1,
-      "elapsedSeconds": 0.614,
+      "elapsedSeconds": 0.635,
       "diagnostics": [
         "warning CS2008: No source files specified."
       ],
@@ -340,43 +340,43 @@
         "path": "Oheangbu/Assets/_Project/Scripts/Presentation/Oheangbu.Presentation.asmdef",
         "sha256": "5b36cf847a876e7df604e3e5e140b0ecd8d7380265a72146bf0e2cfe73d1161c"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Presentation.rsp",
-      "responseSha256": "c2c6ee9fdc2ded60f362a321a3becde657f8c6cdab22295a1414604e7551eac2",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Presentation.rsp",
+      "responseSha256": "17e5e7f3658401274505650d5375d7351925291a72f03320a306617fb61b685e",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Presentation.rsp",
       "priorResponseSha256": "a00cfe95b8c8f8068dd3180826cd71b551bc8a635badbb9847baa416a7dee85b",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.ref.dll",
           "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
         }
       ],
       "externalReferenceCount": 330,
-      "outputSha256": "a0d8e0eb2b4faf0c8a7e13f8d68958668080c072acf5df8437041b21263f87dc"
+      "outputSha256": "b1997a8fb7f4d929dc0e205ede02243ae17f11329df8048fbc8d1ba09dc41644"
     },
     {
       "assembly": "Oheangbu.App",
-      "sources": 43,
+      "sources": 44,
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 12,
-      "elapsedSeconds": 0.937,
+      "elapsedSeconds": 0.927,
       "diagnostics": [
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(99,52): warning CS0414: The field 'ThornRiseEffect._layTime' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(71,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMin' is assigned but its value is never used",
         "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(63,51): warning CS0414: The field 'ThornRiseEffect._vineScale' is assigned but its value is never used",
         "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(112,52): warning CS0414: The field 'ThornRiseEffect._swayDecay' is assigned but its value is never used",
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(70,56): warning CS0414: The field 'ThornRiseEffect._layTilt' is assigned but its value is never used",
         "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(60,46): warning CS0414: The field 'ThornRiseEffect._primaryMeshCount' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(65,51): warning CS0414: The field 'ThornRiseEffect._secondaryScaleMax' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(99,52): warning CS0414: The field 'ThornRiseEffect._layTime' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(70,56): warning CS0414: The field 'ThornRiseEffect._layTilt' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(68,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMax' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(103,56): warning CS0414: The field 'ThornRiseEffect._droopTilt' is assigned but its value is never used",
         "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(59,49): warning CS0414: The field 'ThornRiseEffect._yawJitter' is assigned but its value is never used",
         "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(67,56): warning CS0414: The field 'ThornRiseEffect._emergeTilt' is assigned but its value is never used",
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(103,56): warning CS0414: The field 'ThornRiseEffect._droopTilt' is assigned but its value is never used",
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(68,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMax' is assigned but its value is never used",
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(65,51): warning CS0414: The field 'ThornRiseEffect._secondaryScaleMax' is assigned but its value is never used",
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(66,55): warning CS0414: The field 'ThornRiseEffect._emergeScale' is assigned but its value is never used",
-        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(71,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMin' is assigned but its value is never used"
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(66,55): warning CS0414: The field 'ThornRiseEffect._emergeScale' is assigned but its value is never used"
       ],
       "sourceFiles": [
         {
@@ -497,7 +497,7 @@
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.cs",
-          "sha256": "6383dbe08af0899868f7e3fa64407cba804d3f42ffeaae4f4c85819def00034d"
+          "sha256": "1b15909f3d9619207564218868659c3d0ff1a569243f181b3ab83778b1ca8208"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120EnvironmentFixture.cs",
@@ -508,8 +508,12 @@
           "sha256": "56841e479e4dd56d900cf617de321460d46af4573d2a522a824ee846d3a02be9"
         },
         {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120GuardianMotion.cs",
+          "sha256": "67fc33b5bb1437e01850a66a2a1edb9f58cad34be3d7fc64a7ed71290c76fdcf"
+        },
+        {
           "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Profile.cs",
-          "sha256": "9c43bd35800bdf0ecf57a9a0e4f0740cde76ff3bfd1f2d38062f3bf98cbcb21f"
+          "sha256": "b0b54405669412638301fffd8ecc29dcdceb50b35e5fad34eed435ed76dffa1e"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Review.cs",
@@ -556,50 +560,50 @@
         "path": "Oheangbu/Assets/_Project/Scripts/App/Oheangbu.App.asmdef",
         "sha256": "1cd03a1509432870ae30d14b655ae6e92a2b240e93e038021236e75d4ada3423"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.App.rsp",
-      "responseSha256": "86f1c6063ebc0c46c4fbf571e00213ed42475cc847f1958fd40b8eec864eaee2",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.App.rsp",
+      "responseSha256": "91a4577d7bca6ce393a5b70aee14f0e7250a3a45ea7ff99984af5907218454fd",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.App.rsp",
       "priorResponseSha256": "36c15535dbbe837f3b6276d5088aa960e857d7f94a79b784a08b085bf7cb59b6",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.ref.dll",
           "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Drawing.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Drawing.ref.dll",
           "sha256": "274547d3301bed60986846e7955e34057609fd1bcfe65673c2da035841a935ff"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.BrushRender.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.BrushRender.ref.dll",
           "sha256": "7f49bfd8d16419efbf145d6f44dcd7be95cd65c158ff11cb9957ff5e897df9bc"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Spellcraft.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Spellcraft.ref.dll",
           "sha256": "5432cb1a1f30054368927b3e57fbed91968093d3cedd65d1cd6754d5de8fe432"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Combat.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Combat.ref.dll",
           "sha256": "b34c58d0bab86dc3067ae00f01d3b652db22a4e1d730a329a37dcd39c63cd6a9"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Presentation.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Presentation.ref.dll",
           "sha256": "1ebd0317f3493c52299535222ce1fdedcc6287ffc2ba0c504b41da1bc5e5fc52"
         }
       ],
       "externalReferenceCount": 333,
-      "outputSha256": "b626e28ed7bde604afd0c3330dd8cf13b9d94f512ba78dfcdd14306f9c3897a5"
+      "outputSha256": "2ceb570d0b51a0aa31732a15e7354dedc75e09d8e4d8805c11d3b540333eecff"
     },
     {
       "assembly": "Oheangbu.EditorTools",
-      "sources": 21,
+      "sources": 23,
       "exitCode": 0,
       "errorCount": 0,
       "warningCount": 0,
-      "elapsedSeconds": 0.94,
+      "elapsedSeconds": 0.951,
       "diagnostics": [],
       "sourceFiles": [
         {
@@ -632,7 +636,7 @@
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Capture.cs",
-          "sha256": "11bf9d30c6a87d7354960970245e771c4fbf5bc1c978e82e560a495509e57ee4"
+          "sha256": "eab6b3fd81b4564210da150db9591245f88f2b32ce475944c3eb837b8ee74315"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ContrastAudit.cs",
@@ -640,7 +644,7 @@
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Editor.cs",
-          "sha256": "dc024a5ae41fcda6fa39b7b0c97489b06f0c7943c16542d42326ce78cc2e00dd"
+          "sha256": "57059df02584b7e3d127938dcd21ce914eafd3e6f1bfb091f319a09949e95c24"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120MeshFactory.cs",
@@ -648,11 +652,11 @@
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ParticleColorProbe.cs",
-          "sha256": "3477b664df08a8ad07ec20189e41c25fbe56b79f782fdcf5e2f876c5bca3184e"
+          "sha256": "83d4f50ad26c7d48cc855d968e09af3ffaa9b6dcc8a91cc9f91dc7bcb0c24ee8"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Queue.cs",
-          "sha256": "2cbc559268d431c9fa0333df37f95a0e3d283a6b2c468fc5976b3ffc00c5d446"
+          "sha256": "4b13c973be954722d69913807ccf10b809bd69341823c289bdf380cca1f529f9"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120RenderAudit.cs",
@@ -679,8 +683,16 @@
           "sha256": "d572870b92cec7f1c648ce3deb04192bc60389c39bd4ab6dce1d8d77b8b32408"
         },
         {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120GuardianAudit.cs",
+          "sha256": "9c2cb1f71b72b16f26429304256da0ba0efa8d7d3d8754d08ea6882837852d4b"
+        },
+        {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120MotionAudit.cs",
           "sha256": "0e78aa42e417c490f379ca2f689e6253a326175fc0b86323d12599346e2a713d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120PlayerInputAudit.cs",
+          "sha256": "04006e0c1da7a71335adfa3a29d0a3d78d69e77e7e7cdcce148efbe3e72ff078"
         },
         {
           "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120RuntimeAudit.cs",
@@ -689,48 +701,48 @@
       ],
       "asmdef": {
         "path": "Oheangbu/Assets/_Project/Scripts/Editor/Oheangbu.EditorTools.asmdef",
-        "sha256": "8a20ac6e010dda9e63db6075fc4464bb2bb14d79c35c39ef7750a025940f0a3f"
+        "sha256": "17d2e3f8b2fefc50d1b537b55a4b4415549c2b9fc0166ded0cf123a6872ba6be"
       },
-      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.EditorTools.rsp",
-      "responseSha256": "c44bf9d277478a4553d9518162754a9ae9441d1acad8a3f9ad8e8adfd0baa389",
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.EditorTools.rsp",
+      "responseSha256": "ff2462e163fe99cea1b39f646215eaeb18b9629241314c67aa616647ce1b6d44",
       "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.EditorTools.rsp",
       "priorResponseSha256": "a1a87249cbb21f500d347230a3a4ad24a2047d00018fb3414031a180a4110986",
       "rebuiltProjectReferences": [
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Core.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Core.ref.dll",
           "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Data.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Data.ref.dll",
           "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Drawing.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Drawing.ref.dll",
           "sha256": "274547d3301bed60986846e7955e34057609fd1bcfe65673c2da035841a935ff"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.BrushRender.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.BrushRender.ref.dll",
           "sha256": "7f49bfd8d16419efbf145d6f44dcd7be95cd65c158ff11cb9957ff5e897df9bc"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Spellcraft.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Spellcraft.ref.dll",
           "sha256": "5432cb1a1f30054368927b3e57fbed91968093d3cedd65d1cd6754d5de8fe432"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Combat.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Combat.ref.dll",
           "sha256": "b34c58d0bab86dc3067ae00f01d3b652db22a4e1d730a329a37dcd39c63cd6a9"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.Presentation.ref.dll",
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.Presentation.ref.dll",
           "sha256": "1ebd0317f3493c52299535222ce1fdedcc6287ffc2ba0c504b41da1bc5e5fc52"
         },
         {
-          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-bnh8c7ef\\Oheangbu.App.ref.dll",
-          "sha256": "c2ab03bea8459f990d90dacc96efbe773868d9cc299eba9cf34349f241fcdbaa"
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-4nnoz03u\\Oheangbu.App.ref.dll",
+          "sha256": "a571ddc709473c578bb59ee1c1a1d3742143fa8dcc2c87864e67194facf8d16f"
         }
       ],
-      "externalReferenceCount": 343,
-      "outputSha256": "2a14231fff82bc67abb1352f1f6d3d9ef95807cfb0dbc68e89341fe0b6075f35"
+      "externalReferenceCount": 344,
+      "outputSha256": "6d34693dc83d9b1a0ebf480d6d5361f14894bae7bcc44e3b98e5bed9d6ef528f"
     }
   ],
   "sourceChangesDuringCompile": [],
@@ -763,6 +775,6 @@
   ],
   "priorReportSha256": "d373517074152a39a2c4219f705d5691106ab6c278917d9b9c49cbda5e191442",
   "compilerSha256": "ea9a1028a70517e38ff4bbd1b0f07c44a4706aad442475da548e7170cadd89b6",
-  "scriptSha256": "eeb10f65cc2ae5a2769c0d28fd6abc10735baafa59e9d3af8075bc071e855e7b",
-  "elapsedSeconds": 8.033
+  "scriptSha256": "fb151e508d3bb6d640b45056f105d74cef57b124286550dcf09bccc387acae7d",
+  "elapsedSeconds": 7.37
 }
