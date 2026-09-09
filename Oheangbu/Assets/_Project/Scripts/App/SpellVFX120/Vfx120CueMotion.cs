@@ -67,6 +67,8 @@ namespace Oheangbu.App.SpellVFX120
                 case "녹": return 8;
                 case "안": return 6;
                 case "검": return 12;
+                case "산": return 4;
+                case "상": return 6;
                 default: return 0;
             }
         }
@@ -87,6 +89,8 @@ namespace Oheangbu.App.SpellVFX120
                 case "녹": pose = HitHealingLotus(context, role, index, count); return true;
                 case "안": pose = SplitDroplet(context, role, index, count); return true;
                 case "검": pose = PlantedTree(context, role, index, count); return true;
+                case "산": pose = NeedleDiamondMark(context, role, index); return true;
+                case "상": pose = InterceptFrostShell(context, role, index); return true;
                 default: return false;
             }
         }
@@ -374,6 +378,123 @@ namespace Oheangbu.App.SpellVFX120
             return Make(pLeaf, Face(new Vector3(Mathf.Cos(a), .20f + Mathf.Sin(c.Age + index) * .08f, Mathf.Sin(a))),
                 new Vector3(.33f, .25f, .40f) * canopy, leafAlpha);
         }
+
+        // 산: the supplied flight clock controls one straight needle. Arrival leaves
+        // four separate edge strokes on the supplied front-surface proxy, not a solid
+        // seal disc. This visual mark never applies a damage multiplier or issues a hit.
+        // Accent contract: Vfx120MeshFactory.Ribbon, normalized bounds documented below.
+        private static Pose NeedleDiamondMark(in Context c, PartRole role, int index)
+        {
+            Vector3 axis = Incoming(c);
+            Vector3 surface = FrontSurface(c);
+            float flight = NeedleFlight(c);
+            Vector3 needleScale = Vector3.Scale(c.BaseScale, new Vector3(.28f, .34f, .90f));
+            // Shard's normalized local +Z tip is at .5: the tip, not its centre,
+            // travels from Origin to the front proxy at exactly ImpactTime.
+            Vector3 tip = Vector3.Lerp(c.Origin, surface, Mathf.Clamp01(c.Age / flight));
+            if (role == PartRole.Body)
+            {
+                if (index != 0) return Hidden(tip);
+                float alpha = Smooth(0, Mathf.Min(.06f, flight * .30f), c.Age)
+                    * (1 - Smooth(flight, flight + .10f, c.Age)) * LifeFade(c);
+                return Make(tip - axis * (needleScale.z * .5f), Face(axis), needleScale, alpha);
+            }
+            if (index >= 4 || c.Age < flight) return Hidden(surface);
+
+            float settle = Smooth(flight, flight + .10f, c.Age);
+            float radiusX = Mathf.Clamp(Mathf.Abs(c.BaseScale.x) * .60f, .25f, .42f);
+            float radiusY = Mathf.Clamp(Mathf.Abs(c.BaseScale.z) * .60f, .32f, .50f);
+            Vector2 from = DiamondVertex(index, radiusX, radiusY);
+            Vector2 to = DiamondVertex(index + 1, radiusX, radiusY);
+            Vector3 a = surface + PlaneOffset(axis, from.x, from.y) - axis * .025f;
+            Vector3 b = surface + PlaneOffset(axis, to.x, to.y) - axis * .025f;
+            Vector3 direction = SafeDirection(b - a);
+            // Small gaps at all corners keep the diamond open. No rotating ring,
+            // growing filled plate or extra generic accents after the four strokes.
+            float end = Finite(c.Duration) && c.Duration > flight ? c.Duration : flight + .8f;
+            float span = Mathf.Min(.72f, (end - flight) * .48f);
+            float eraseStart = end - span + index * span * .15f;
+            float erased = Smooth(eraseStart, Mathf.Min(end, eraseStart + span * .45f), c.Age);
+            float length = Vector3.Distance(a, b) * .86f * (1 - .72f * erased);
+            Vector3 center = (a + b) * .5f - axis * ((1 - settle) * .06f);
+            return Make(center, Quaternion.LookRotation(direction, -axis),
+                RibbonDimensions(.038f, .012f, length), settle * (1 - erased));
+        }
+
+        // 상: the nominal flight may expire without a hit. Only an externally supplied
+        // HitAt creates frost around Target. The falling shell is an independent visual;
+        // no projectile transform, velocity, collision, freeze state or damage is changed.
+        // A review may supply an explicitly labelled example HitAt upstream.
+        private static Pose InterceptFrostShell(in Context c, PartRole role, int index)
+        {
+            Vector3 axis = Incoming(c);
+            float flight = NeedleFlight(c);
+            bool hit = Issued(c.HitAt, c.Age);
+            Vector3 needleScale = Vector3.Scale(c.BaseScale, new Vector3(.22f, .22f, .80f));
+            Vector3 tip = Vector3.Lerp(c.Origin, c.Target, Mathf.Clamp01(c.Age / flight));
+            if (role == PartRole.Body)
+            {
+                if (index != 0) return Hidden(tip);
+                float extinguish = hit ? 1 - Smooth(0, .10f, c.Age - c.HitAt)
+                    : 1 - Smooth(flight + .02f, flight + .25f, c.Age);
+                return Make(tip - axis * (needleScale.z * .5f), Face(axis), needleScale,
+                    Smooth(0, Mathf.Min(.055f, flight * .28f), c.Age) * extinguish * LifeFade(c));
+            }
+            if (!hit || index >= 6) return Hidden(c.Target);
+
+            float age = c.Age - c.HitAt;
+            float close = Smooth(0, .16f, age);
+            Vector3 normal = FrostFaceNormal(axis, index);
+            float radius = Mathf.Lerp(.44f, .25f, close);
+            float fallAge = Mathf.Max(0, age - .24f);
+            float floorRoom = Mathf.Max(0, c.Target.y - c.GroundY - .34f);
+            float drop = Mathf.Min(.75f, Mathf.Min(floorRoom, fallAge * fallAge * 1.65f));
+            float split = Smooth(.39f, .86f, age);
+            Vector3 center = c.Target - Vector3.up * drop;
+            Vector3 p = center + normal * (radius + split * (.10f + (index % 3) * .035f));
+            // This floor limit is a visual use of the already supplied GroundY, not
+            // a new collision query or a claim that the real intercepted object fell.
+            p.y = Mathf.Max(p.y, c.GroundY + .18f);
+            Vector3 lengthAxis = PlaneOffset(normal, 0, 1);
+            Quaternion rotation = Quaternion.LookRotation(lengthAxis, normal);
+            rotation = Quaternion.AngleAxis(split * (index % 2 == 0 ? 52f : -47f), normal) * rotation;
+            float vanish = 1 - Smooth(.63f + (index % 3) * .04f, 1.10f, age);
+            return Make(p, rotation, RibbonDimensions(.18f, .025f, .35f),
+                Smooth(0, .055f, age) * vanish * LifeFade(c));
+        }
+
+        private static float NeedleFlight(in Context c) =>
+            Finite(c.ImpactTime) && c.ImpactTime > 0 ? c.ImpactTime : .05f;
+
+        private static Vector2 DiamondVertex(int index, float x, float y)
+        {
+            switch (index % 4)
+            {
+                case 0: return new Vector2(0, y);
+                case 1: return new Vector2(x, 0);
+                case 2: return new Vector2(0, -y);
+                default: return new Vector2(-x, 0);
+            }
+        }
+
+        private static Vector3 FrostFaceNormal(Vector3 incoming, int index)
+        {
+            switch (index)
+            {
+                case 0: return PlaneOffset(incoming, 1, 0);
+                case 1: return PlaneOffset(incoming, -1, 0);
+                case 2: return PlaneOffset(incoming, 0, 1);
+                case 3: return PlaneOffset(incoming, 0, -1);
+                case 4: return incoming;
+                default: return -incoming;
+            }
+        }
+
+        private static Vector3 RibbonDimensions(float width, float thickness, float length) =>
+            // Current normalized Ribbon.asset full bounds: (.37591594, .33159078, 1).
+            // Compress its lateral/depth waves into a slim stroke or rigid shell shard.
+            // If the source mesh changes, these two glyphs need bounds revalidation.
+            new Vector3(width / .37591594f, thickness / .33159078f, length);
 
         private static float FirstCueAfter(float earliest, float a, float b)
         {

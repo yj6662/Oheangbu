@@ -42,6 +42,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     case "RuntimePoll": response.result = Vfx120RuntimeAudit.Poll(); break;
                     case "GameplayAudit": response.result = Vfx120GameplayAudit.Start(); break;
                     case "GameplayCapture": response.result = Vfx120GameplayAudit.Start(0, true); break;
+                    case "GameplayDiagnosticCapture": response.result = Vfx120GameplayAudit.Start(0, true, true); break;
+                    case "ContrastAudit": response.result = Vfx120ContrastAudit.Run(); break;
                     case "GameplayPoll": response.result = Vfx120GameplayAudit.Poll(); break;
                     case "GameplayCancel": response.result = Vfx120GameplayAudit.Cancel(); break;
                     case "OpenWorld": response.result = OpenSavedScene("Assets/_Project/Scenes/Dev/C2_CodexWorld.unity"); break;

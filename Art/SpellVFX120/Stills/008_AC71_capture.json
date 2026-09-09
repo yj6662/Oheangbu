@@ -1,0 +1,39 @@
+{
+    "glyph": "걱",
+    "title": "서서히 돋는 싹",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T01:28:39.7172022Z",
+    "loadedRuntimeAssemblyMvid": "3d055876-9a44-4237-8ca7-37434d3bf2ed",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T01:05:20.8173918Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.23999999463558198,
+    "life": 3.299999952316284,
+    "sampledSeconds": [
+        0.23099999129772187,
+        0.7260000109672546,
+        1.3859999179840088,
+        2.111999988555908,
+        2.9699997901916506
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

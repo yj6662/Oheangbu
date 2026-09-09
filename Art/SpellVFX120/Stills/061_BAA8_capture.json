@@ -1,0 +1,39 @@
+{
+    "glyph": "모",
+    "title": "모래의 긴 획",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T01:28:48.3794253Z",
+    "loadedRuntimeAssemblyMvid": "3d055876-9a44-4237-8ca7-37434d3bf2ed",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T01:05:20.8173918Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.4000000059604645,
+    "life": 3.372727155685425,
+    "sampledSeconds": [
+        0.23609089851379395,
+        0.7419999837875366,
+        1.4165453910827637,
+        2.1585452556610109,
+        3.035454273223877
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+    "areaShape": "Path",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.800000011920929
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.0
+    },
+    "areaRadius": 1.5499999523162842,
+    "areaAngle": 0.0,
+    "areaLength": 5.0,
+    "areaDelay": 0.4000000059604645,
+    "areaSpeed": 2.200000047683716
+}

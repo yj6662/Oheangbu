@@ -50,6 +50,8 @@ namespace Oheangbu.EditorTools
             public float cameraFieldOfView, cameraAspect, cameraNear, cameraFar;
             public Vector3 cameraPosition, cameraEulerAngles, effectOrigin, originViewport;
             public bool cameraOrthographic, cameraStateRestored;
+            public bool diagnosticCamera, fixtureStrokeVisibilityRestored;
+            public int temporarilyHiddenFixtureRenderers;
             public double captureWallMilliseconds;
         }
         [Serializable] private sealed class CaseRow
@@ -68,6 +70,9 @@ namespace Oheangbu.EditorTools
             public string areaAtCast, areaAtFinish;
             public List<HitRow> hits = new List<HitRow>();
             public string captureStatus = "DISABLED";
+            public bool groundedDiagnosticFixture;
+            public Vector3 diagnosticGroundCenter, fixturePlayerPosition;
+            public List<Vector3> fixtureTargetPositions = new List<Vector3>();
             public List<CaptureRow> captures = new List<CaptureRow>();
         }
         [Serializable] private sealed class AssetRow
@@ -86,7 +91,7 @@ namespace Oheangbu.EditorTools
             public bool sceneFileUnchanged, assetsUnchanged, isolatedServices, cleanupCompleted;
             public string cleanupStatus = "NOT_REQUESTED";
             public int cleanupTrackedObjects, cleanupResidualObjects;
-            public bool captureFrames;
+            public bool captureFrames, diagnosticCamera;
             public string captureDirectory, captureStatus = "DISABLED";
             public string captureScope = "Optional 1280x720 extra render of the actual live Camera.main state. No Sample/Begin, animation seek, time-scale change, camera move or fabricated impact is used. PNGs exclude screen-space overlay UI and are not a continuous video or art PASS. Extra camera render/readback/PNG encoding stalls the Editor: this run is not a CPU, GPU or frame-rate measurement.";
             public List<CaseRow> cases = new List<CaseRow>();
@@ -117,7 +122,9 @@ namespace Oheangbu.EditorTools
         private static bool _cleanupDiscoveryFailed;
         private static double _cleanupRequestedAt;
         private static bool Active => _report != null && _report.status == "RUNNING";
-        private static string Output => Path.Combine(Directory.GetParent(Application.dataPath).Parent.FullName, "Art/SpellVFX120/gameplay_audit.json");
+        private static string ReportPath(bool diagnosticCamera) => Path.Combine(Directory.GetParent(Application.dataPath).Parent.FullName,
+            diagnosticCamera ? "Art/SpellVFX120/gameplay_diagnostic_camera_audit.json" : "Art/SpellVFX120/gameplay_audit.json");
+        private static string Output => ReportPath(_report != null && _report.diagnosticCamera);
 
         static Vfx120GameplayAudit()
         {
@@ -140,7 +147,7 @@ namespace Oheangbu.EditorTools
             }
         }
 
-        public static string Start(int wiringInstanceId = 0, bool captureFrames = false)
+        public static string Start(int wiringInstanceId = 0, bool captureFrames = false, bool diagnosticCamera = false)
         {
             if (Active) return Poll();
             if (!Application.isPlaying || EditorApplication.isPaused) return "{\"status\":\"NOT_RUN_PLAY_REQUIRED\"}";
@@ -149,12 +156,18 @@ namespace Oheangbu.EditorTools
             if (Time.timeScale <= 0f || Camera.main == null) return "{\"status\":\"NOT_RUN_RUNNING_TIME_AND_MAIN_CAMERA_REQUIRED\"}";
             _report = new Report
             {
-                status = "RUNNING", stage = "PREFLIGHT", output = Output, scene = scene.path,
+                status = "RUNNING", stage = "PREFLIGHT", output = ReportPath(diagnosticCamera), scene = scene.path,
                 unityVersion = Application.unityVersion, startedUtcTicks = DateTime.UtcNow.Ticks,
-                sceneHashBefore = FileHash(scene.path), captureFrames = captureFrames,
+                sceneHashBefore = FileHash(scene.path), captureFrames = captureFrames, diagnosticCamera = diagnosticCamera,
                 captureStatus = captureFrames ? "RUNNING_UNVERIFIED" : "DISABLED",
-                captureDirectory = captureFrames ? Path.Combine(Path.GetDirectoryName(Output), "GameplayCapture", DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff")) : null
+                captureDirectory = captureFrames ? Path.Combine(Path.GetDirectoryName(ReportPath(diagnosticCamera)), "GameplayCapture",
+                    DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff") + (diagnosticCamera ? "-diagnostic" : "")) : null
             };
+            if (diagnosticCamera)
+            {
+                _report.captureScope = "DIAGNOSTIC CAMERA ONLY, not the player's view/DI test: disabled temporary camera observes a raycast-grounded fixture in the live C2 scene. Only this fixture adapter receives a projection-camera override. Original player/camera/tag/transform/settings remain untouched; real LockOn still selects through original Camera.main. Only this fixture's two synthetic stroke Renderers are temporarily hidden during capture, with state restored. Actual SpawnPattern/Update/damage events remain authoritative; no Sample/time seek or invented hit. Extra render/readback/encoding makes performance UNVERIFIED.";
+                _report.limitations += " Diagnostic mode uses collider-free box markers, not real enemy models/AI. Ground selection is a small raycast/slope/clearance probe, not navigation or collision certification; only one selected view is tested.";
+            }
             _assets.Clear(); _cleanupPending.Clear(); _cleanupDiscoveryFailed = false; _next = 0; _lastFrame = -1;
             try
             {
@@ -292,6 +305,9 @@ namespace Oheangbu.EditorTools
             private int lastCaptureFrame = -1;
             private RenderTexture captureTarget;
             private Texture2D captureReadback;
+            private Camera diagnosticView;
+            private Mesh diagnosticMarkerMesh;
+            private Material diagnosticMarkerMaterial;
 
             public Fixture(char glyph)
             {
@@ -318,12 +334,22 @@ namespace Oheangbu.EditorTools
                 Vector3 forward = AreaGeometry.Flat(cam.transform.forward).normalized;
                 Need(forward.sqrMagnitude > .5f, "Near-vertical camera cannot define the test corridor.");
                 Vector3 first = cam.transform.position + cam.transform.forward * 6f;
-                player.SetPositionAndRotation(first - forward * 6f, Quaternion.LookRotation(forward));
+                Vector3 playerPosition = first - forward * 6f;
+                if (_report.diagnosticCamera) CreateDiagnosticView(cam, forward, out first, out playerPosition);
+                player.SetPositionAndRotation(playerPosition, Quaternion.LookRotation(forward));
+                row.fixturePlayerPosition = player.position;
                 for (int i = 0; i < targets.Length; i++)
                 {
                     targets[i] = Child("FixtureTarget" + i).AddComponent<EnemyVitals>();
                     Set(targets[i], "_config", _config);
                     targets[i].transform.position = first + (i == 0 ? Vector3.zero : player.right * (i == 1 ? -.6f : .6f) + forward * .65f);
+                    if (_report.diagnosticCamera)
+                    {
+                        Need(TryDiagnosticGround(targets[i].transform.position, out Vector3 ground), "Diagnostic target lost its verified ground surface.");
+                        targets[i].transform.position = ground + Vector3.up * .025f;
+                        CreateTargetMarker(targets[i].transform);
+                    }
+                    row.fixtureTargetPositions.Add(targets[i].transform.position);
                 }
                 var wiringObject = Child("ProductionCombatLoopWiring"); wiring = wiringObject.AddComponent<CombatLoopWiring>();
                 Set(wiring, "_letterDrawn", letterChannel); Set(wiring, "_inkChanged", inkChannel);
@@ -360,12 +386,103 @@ namespace Oheangbu.EditorTools
                 go.transform.SetParent(root.transform, false); return go;
             }
 
+            private void CreateDiagnosticView(Camera original, Vector3 forward, out Vector3 target, out Vector3 caster)
+            {
+                target = caster = default;
+                var projectionField = adapter.GetType().GetField("_projectionCamera", Hidden);
+                Need(projectionField != null, "Diagnostic camera requires the existing adapter projection-camera field; original Camera.main was not changed.");
+                Vector3 side = Vector3.Cross(Vector3.up, forward);
+                bool found = false;
+                float[] distances = { 15f, 12f, 18f };
+                float[] offsets = { 0f, -3f, 3f };
+                foreach (float distance in distances)
+                {
+                    foreach (float offset in offsets)
+                    {
+                        Vector3 candidate = original.transform.position + forward * distance + side * offset;
+                        if (!TryDiagnosticGround(candidate, out Vector3 ground) || !TryDiagnosticGround(ground - forward * 6f, out Vector3 playerGround)) continue;
+                        if (Mathf.Abs(ground.y - playerGround.y) > .65f) continue;
+                        bool flatTargets = true;
+                        for (int i = -1; i <= 1; i += 2)
+                            flatTargets &= TryDiagnosticGround(ground + side * (.6f * i) + forward * .65f, out Vector3 neighbour) && Mathf.Abs(neighbour.y - ground.y) <= .35f;
+                        if (!flatTargets) continue;
+                        Vector3 viewport = original.WorldToViewportPoint(ground + Vector3.up * .025f);
+                        if (viewport.z <= 0 || viewport.x < .05f || viewport.x > .95f || viewport.y < .05f || viewport.y > .95f
+                            || Vector3.Distance(original.transform.position, ground) >= _config.LockOnRange - .5f) continue;
+                        Vector3 cameraPoint = ground - forward * 8f + Vector3.up * 3f;
+                        if (TryDiagnosticGround(cameraPoint, out Vector3 cameraGround) && cameraGround.y > cameraPoint.y - .35f) continue;
+                        Vector3 look = ground + Vector3.up * .45f;
+                        if (Physics.Linecast(cameraPoint, look, out _, ~0, QueryTriggerInteraction.Ignore)) continue;
+                        target = ground + Vector3.up * .025f; caster = playerGround + Vector3.up * .025f;
+                        diagnosticView = Child("DiagnosticCamera_NotPlayerView").AddComponent<Camera>();
+                        diagnosticView.CopyFrom(original); diagnosticView.enabled = false;
+                        diagnosticView.targetTexture = null; diagnosticView.rect = new Rect(0, 0, 1, 1); diagnosticView.aspect = 16f / 9f;
+                        diagnosticView.transform.SetPositionAndRotation(cameraPoint, Quaternion.LookRotation(look - cameraPoint, Vector3.up));
+                        // Copy rendering options only. Never copy the live camera's stack or scripts.
+                        var sourceData = original.GetComponent("UniversalAdditionalCameraData");
+                        if (sourceData != null)
+                        {
+                            var destinationData = diagnosticView.gameObject.AddComponent(sourceData.GetType());
+                            foreach (string name in new[] { "renderPostProcessing", "renderShadows", "volumeLayerMask", "antialiasing", "antialiasingQuality", "stopNaN", "dithering", "requiresColorOption", "requiresDepthOption" })
+                            {
+                                var property = sourceData.GetType().GetProperty(name);
+                                if (property != null && property.CanRead && property.CanWrite) property.SetValue(destinationData, property.GetValue(sourceData));
+                            }
+                        }
+                        projectionField.SetValue(adapter, diagnosticView);
+                        row.groundedDiagnosticFixture = true; row.diagnosticGroundCenter = ground;
+                        found = true; break;
+                    }
+                    if (found) break;
+                }
+                Need(found, "No clear, nearly level diagnostic ground/view was found within the unchanged live Camera.main lock-on bounds; diagnostic images remain unverified.");
+            }
+
+            private bool TryDiagnosticGround(Vector3 horizontal, out Vector3 point)
+            {
+                point = default;
+                var livePlayer = Get<Transform>(_source, "_playerTransform");
+                float referenceY = livePlayer != null ? livePlayer.position.y : Camera.main.transform.position.y - 2f;
+                Vector3 from = new Vector3(horizontal.x, Mathf.Max(referenceY, Camera.main.transform.position.y) + 30f, horizontal.z);
+                float best = float.PositiveInfinity; bool found = false;
+                foreach (var hit in Physics.RaycastAll(from, Vector3.down, 70f, ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (hit.collider == null || hit.collider.gameObject.scene != _source.gameObject.scene || hit.normal.y < .95f) continue;
+                    if (livePlayer != null && (hit.collider.transform == livePlayer || hit.collider.transform.IsChildOf(livePlayer))) continue;
+                    float heightDelta = Mathf.Abs(hit.point.y - referenceY);
+                    if (heightDelta > 3f) continue;
+                    // Prefer actual terrain when a roof/platform and terrain overlap the ray.
+                    float score = heightDelta + (hit.collider is TerrainCollider ? 0f : 10f);
+                    if (score >= best) continue;
+                    point = hit.point; best = score; found = true;
+                }
+                return found;
+            }
+
+            private void CreateTargetMarker(Transform target)
+            {
+                if (diagnosticMarkerMesh == null)
+                {
+                    diagnosticMarkerMesh = new Mesh { name = "DiagnosticTargetBox_NoCollider", hideFlags = HideFlags.DontSave };
+                    diagnosticMarkerMesh.vertices = new[] { new Vector3(-.22f, 0, -.18f), new Vector3(.22f, 0, -.18f), new Vector3(.22f, 1.5f, -.18f), new Vector3(-.22f, 1.5f, -.18f), new Vector3(-.22f, 0, .18f), new Vector3(.22f, 0, .18f), new Vector3(.22f, 1.5f, .18f), new Vector3(-.22f, 1.5f, .18f) };
+                    diagnosticMarkerMesh.triangles = new[] { 0,2,1,0,3,2,4,5,6,4,6,7,0,4,7,0,7,3,1,2,6,1,6,5,0,1,5,0,5,4,3,7,6,3,6,2 };
+                    diagnosticMarkerMesh.RecalculateNormals(); diagnosticMarkerMesh.RecalculateBounds();
+                    Shader shader = Shader.Find("Universal Render Pipeline/Lit"); Need(shader != null, "Diagnostic marker shader is missing.");
+                    diagnosticMarkerMaterial = new Material(shader) { name = "DiagnosticTargetNeutral", hideFlags = HideFlags.DontSave };
+                    diagnosticMarkerMaterial.SetColor("_BaseColor", new Color(.23f, .21f, .20f, 1));
+                }
+                var marker = new GameObject("DiagnosticTargetMarker_NotEnemyModel") { hideFlags = HideFlags.DontSave };
+                marker.transform.SetParent(target, false);
+                marker.AddComponent<MeshFilter>().sharedMesh = diagnosticMarkerMesh;
+                marker.AddComponent<MeshRenderer>().sharedMaterial = diagnosticMarkerMaterial;
+            }
+
             public void Commit()
             {
                 // Public production selector; no private target/health/guard state is forced.
                 lockOn.Toggle(); Need(lockOn.Target != null, "Fixture target is outside the current camera/lock-on bounds.");
                 foreach (var go in Patterns()) beforePatterns.Add(go.GetInstanceID());
-                Rect rect = Camera.main.pixelRect;
+                Rect rect = (diagnosticView != null ? diagnosticView : Camera.main).pixelRect;
                 Need(rect.width > 0 && rect.height > 0, "Main camera has no viewport.");
                 for (int stroke = 0; stroke < 2; stroke++)
                 {
@@ -534,13 +651,13 @@ namespace Oheangbu.EditorTools
                     age = effect.Age, life = effect.Life, time = Time.time, unscaledTime = Time.unscaledTime,
                     timeScale = Time.timeScale, scheduledReferenceTime = referenceTime,
                     observationLateness = Time.time - referenceTime, observedHitCount = actual.Count,
-                    effectOrigin = effect.ReceivedOrigin
+                    effectOrigin = effect.ReceivedOrigin, diagnosticCamera = diagnosticView != null
                 };
                 row.captures.Add(shot);
                 var timer = System.Diagnostics.Stopwatch.StartNew();
                 try
                 {
-                    var camera = Camera.main;
+                    var camera = diagnosticView != null ? diagnosticView : Camera.main;
                     Need(camera != null, "Live main camera disappeared before capture.");
                     shot.camera = camera.name + "#" + camera.GetInstanceID();
                     shot.cameraPosition = camera.transform.position; shot.cameraEulerAngles = camera.transform.eulerAngles;
@@ -557,10 +674,27 @@ namespace Oheangbu.EditorTools
                             { name = "Vfx120GameplayCaptureReadback", hideFlags = HideFlags.DontSave };
                     }
                     RenderTexture previousTarget = camera.targetTexture, previousActive = RenderTexture.active;
+                    var hiddenRenderers = new List<Renderer>(); var hiddenStates = new List<bool>();
                     // Retain the live camera projection/transform and restore its render target
                     // even if rendering/readback throws. No presentation clocks are advanced here.
                     try
                     {
+                        if (diagnosticView != null)
+                        {
+                            void Hide(BrushStrokeRenderer stroke)
+                            {
+                                if (stroke == null) return;
+                                foreach (var renderer in stroke.GetComponentsInChildren<Renderer>(true))
+                                {
+                                    if (hiddenRenderers.Contains(renderer)) continue;
+                                    hiddenRenderers.Add(renderer); hiddenStates.Add(renderer.enabled); renderer.enabled = false;
+                                }
+                            }
+                            foreach (var stroke in Get<List<BrushStrokeRenderer>>(adapter, "_strokes")) Hide(stroke);
+                            foreach (var group in Get<IList>(adapter, "_fading"))
+                                foreach (var stroke in (IEnumerable<BrushStrokeRenderer>)group.GetType().GetField("Strokes").GetValue(group)) Hide(stroke);
+                            shot.temporarilyHiddenFixtureRenderers = hiddenRenderers.Count;
+                        }
                         camera.targetTexture = captureTarget;
                         camera.Render();
                         RenderTexture.active = captureTarget;
@@ -571,9 +705,17 @@ namespace Oheangbu.EditorTools
                     {
                         if (camera != null) camera.targetTexture = previousTarget;
                         RenderTexture.active = previousActive;
+                        shot.fixtureStrokeVisibilityRestored = true;
+                        for (int i = 0; i < hiddenRenderers.Count; i++)
+                        {
+                            if (hiddenRenderers[i] == null) { shot.fixtureStrokeVisibilityRestored = false; continue; }
+                            hiddenRenderers[i].enabled = hiddenStates[i];
+                            shot.fixtureStrokeVisibilityRestored &= hiddenRenderers[i].enabled == hiddenStates[i];
+                        }
                         shot.cameraStateRestored = camera != null && camera.targetTexture == previousTarget && RenderTexture.active == previousActive;
                     }
                     Need(shot.cameraStateRestored, "Camera render-target restoration could not be confirmed.");
+                    Need(shot.fixtureStrokeVisibilityRestored, "Diagnostic fixture stroke visibility restoration could not be confirmed.");
                     Directory.CreateDirectory(_report.captureDirectory);
                     shot.png = Path.Combine(_report.captureDirectory, row.glyph + "_" + phase + "_f" + shot.frame.ToString("D6") + ".png");
                     File.WriteAllBytes(shot.png, captureReadback.EncodeToPNG());
@@ -653,6 +795,8 @@ namespace Oheangbu.EditorTools
                 if (inkChannel != null) Object.Destroy(inkChannel);
                 if (captureTarget != null) { TrackCleanup(captureTarget); captureTarget.Release(); Object.Destroy(captureTarget); }
                 if (captureReadback != null) { TrackCleanup(captureReadback); Object.Destroy(captureReadback); }
+                if (diagnosticMarkerMesh != null) { TrackCleanup(diagnosticMarkerMesh); Object.Destroy(diagnosticMarkerMesh); }
+                if (diagnosticMarkerMaterial != null) { TrackCleanup(diagnosticMarkerMaterial); Object.Destroy(diagnosticMarkerMaterial); }
                 _report.cleanupCompleted = false; _report.cleanupStatus = "REQUESTED_UNVERIFIED";
                 _cleanupRequestedAt = EditorApplication.timeSinceStartup;
             }

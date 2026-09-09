@@ -83,14 +83,15 @@ Shader "Oheangbu/VFX120/InkPigment"
                 {
                     float swirl=.5+.5*sin(i.uv.x*31+i.uv.y*15-_Age*5);
                     float edge=saturate(sin(saturate(i.uv.x)*3.14159)*sin(saturate(i.uv.y)*3.14159)*3);
-                    alpha*=edge*(.06+.20*swirl);
-                    rgb=lerp(_BaseColor.rgb,float3(.55,.43,.28),swirl*.45);
+                    alpha*=edge*(.13+.30*swirl);
+                    rgb=lerp(_BaseColor.rgb,float3(.34,.24,.14),swirl*.5);
                 }
                 if(_Fluid>3.5) alpha*=.16;
                 float3 view=normalize(_WorldSpaceCameraPos-i.positionWS);
                 float rim=pow(1-saturate(abs(dot(normalize(i.normalWS),view))),3);
                 rgb=lerp(rgb,rgb*.22,rim*_Body*.8);
                 float glint=pow(saturate(dot(reflect(-normalize(float3(-.4,.8,-.3)),normalize(i.normalWS)),view)),45);
+                rgb*=lerp(1,.38+.8*saturate(dot(normalize(i.normalWS),normalize(float3(-.4,.8,-.3)))),_Metal);
                 rgb+=_BaseColor.rgb*glint*_Metal*.45;
                 if(_Body>.5) { clip(_Alpha-.001); clip(tooth-(1-saturate(_Alpha))); alpha=1; }
                 if(_Soft>.5) alpha*=i.color.a;

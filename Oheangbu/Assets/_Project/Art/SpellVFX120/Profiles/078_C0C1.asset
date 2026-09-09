@@ -21,7 +21,7 @@ MonoBehaviour:
   Behavior: 0
   Layout: 0
   BodyMesh: {fileID: 4300000, guid: 6be74a07f798d5e4cae1a161041e674d, type: 2}
-  AccentMesh: {fileID: 4300000, guid: c2fdf1a13f35a8a4c9203e652b48d8de, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 7bc417ca647d78d4b8fed5c3cb2d5e4f, type: 2}
   BodyMaterial: {fileID: 2100000, guid: 3121206a7a266a74eb8381f61748fe92, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 2accb574061a1ce48b89a1bf927dc182, type: 2}
@@ -92,7 +92,7 @@ MonoBehaviour:
     \uBB36\uB294 \uB0C9\uCE68: \uC791\uC740 \uAE08\uC18D \uCE68\uACFC \uD45C\uC801
     \uD22C\uC0AC\uCCB4 \uC8FC\uBCC0\uC758 \uAC01\uC9C4 \uC11C\uB9AC\uB048\uC640 \uC9C1\uC120
     \uC694\uACA9 \uB4A4 \uC801 \uD22C\uC0AC\uCCB4\uC5D0 \uC11C\uB9AC\uAC00 \uB2EB\uD798\uAC00
-    \uD751\uBC31\uC5D0\uC11C\uB3C4 \uBCF4\uC5EC\uC57C \uD55C\uB2E4.\"},\"authoredDefinitionOverrides\":{\"accentFamily\":\"Ripple\"},\"previewNumericAuthoring\":{\"count\":1,\"size\":0.4,\"partScale\":{\"x\":0.55,\"y\":0.52,\"z\":0.9},\"flight\":0.2,\"turns\":0.06,\"lift\":0.05,\"stagger\":0.0,\"ribbons\":1,\"grounded\":false,\"mist\":false},\"patternEvidence\":{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\",\"guid\":\"b0e88649d9b865540bc1dc9855fd57d9\",\"size\":[2532,2532],\"mode\":\"RGBA\",\"maxTextureSize\":2048,\"mipmap_enabled\":true,\"unity_asset_path\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\",\"visual_status\":\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\",\"evidence\":\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\",\"observed_motif\":\"\uB124
+    \uD751\uBC31\uC5D0\uC11C\uB3C4 \uBCF4\uC5EC\uC57C \uD55C\uB2E4.\"},\"authoredDefinitionOverrides\":{\"accentFamily\":\"Ribbon\"},\"previewNumericAuthoring\":{\"count\":1,\"size\":0.4,\"partScale\":{\"x\":0.55,\"y\":0.52,\"z\":0.9},\"flight\":0.2,\"turns\":0.06,\"lift\":0.05,\"stagger\":0.0,\"ribbons\":1,\"grounded\":false,\"mist\":false},\"patternEvidence\":{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\",\"guid\":\"b0e88649d9b865540bc1dc9855fd57d9\",\"size\":[2532,2532],\"mode\":\"RGBA\",\"maxTextureSize\":2048,\"mipmap_enabled\":true,\"unity_asset_path\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\",\"visual_status\":\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\",\"evidence\":\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\",\"observed_motif\":\"\uB124
     \uBC29\uD5A5\uC73C\uB85C \uB9DE\uBB3C\uB9B0 \uC9C1\uC120 \uB760\",\"recommended_use\":\"\uAE08
     \uAD50\uCC28\xB7\uBC29\uBCBD\xB7\uBD80\uC801 \uC120\",\"caution\":\"\uC804\uD1B5
     \uCC3D\uD638 \uC2E4\uBB3C \uAC80\uC99D\uC774 \uC544\uB2CC \uC120\uD615 \uBB34\uB2AC

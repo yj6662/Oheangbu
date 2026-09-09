@@ -1,0 +1,39 @@
+{
+    "glyph": "가",
+    "title": "생죽의 첫 마디",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T01:28:35.9363609Z",
+    "loadedRuntimeAssemblyMvid": "3d055876-9a44-4237-8ca7-37434d3bf2ed",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T01:05:20.8173918Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.6000000238418579,
+    "life": 1.5,
+    "sampledSeconds": [
+        0.10500000417232514,
+        0.32999998331069949,
+        0.6299999952316284,
+        0.9599999785423279,
+        1.3499999046325684
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}
