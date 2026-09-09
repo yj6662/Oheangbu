@@ -26,6 +26,8 @@ namespace Oheangbu.App.SpellVFX120
             // Optional, read-only to this function. No targets are found or selected here.
             public Vector3[] SecondaryPoints;
             public Vector3 BaseScale;
+            // Actual source bounds; used only by the two Ribbon needle follow-ups.
+            public Vector3 AccentBoundsSize;
             public float GroundY;
             // Relative seconds; -1 means the cue has never been issued.
             public float HitAt;
@@ -39,6 +41,7 @@ namespace Oheangbu.App.SpellVFX120
                     Glyph = glyph, Duration = 3, ImpactTime = .6f,
                     Origin = Vector3.zero, Target = Vector3.forward * 4,
                     BaseScale = Vector3.one, GroundY = -1,
+                    AccentBoundsSize = new Vector3(.37591594f, .33159078f, 1),
                     HitAt = -1, TargetDefeatedAt = -1, ReleaseAt = -1
                 };
             }
@@ -417,8 +420,8 @@ namespace Oheangbu.App.SpellVFX120
             float erased = Smooth(eraseStart, Mathf.Min(end, eraseStart + span * .45f), c.Age);
             float length = Vector3.Distance(a, b) * .86f * (1 - .72f * erased);
             Vector3 center = (a + b) * .5f - axis * ((1 - settle) * .06f);
-            return Make(center, Quaternion.LookRotation(direction, -axis),
-                RibbonDimensions(.038f, .012f, length), settle * (1 - erased));
+            return NeedleRibbon(c, center, direction, -axis,
+                .055f, .018f, length, settle * (1 - erased));
         }
 
         // 상: the nominal flight may expire without a hit. Only an externally supplied
@@ -444,23 +447,30 @@ namespace Oheangbu.App.SpellVFX120
 
             float age = c.Age - c.HitAt;
             float close = Smooth(0, .16f, age);
-            Vector3 normal = FrostFaceNormal(axis, index);
-            float radius = Mathf.Lerp(.44f, .25f, close);
+            float angle = (index + .5f) * (Mathf.PI * 2 / 6);
+            Vector3 radial = PlaneOffset(axis, Mathf.Cos(angle), Mathf.Sin(angle));
+            Vector3 tangent = PlaneOffset(axis, -Mathf.Sin(angle), Mathf.Cos(angle));
+            float radius = Mathf.Lerp(.44f, .29f, close);
             float fallAge = Mathf.Max(0, age - .24f);
             float floorRoom = Mathf.Max(0, c.Target.y - c.GroundY - .34f);
             float drop = Mathf.Min(.75f, Mathf.Min(floorRoom, fallAge * fallAge * 1.65f));
             float split = Smooth(.39f, .86f, age);
-            Vector3 center = c.Target - Vector3.up * drop;
-            Vector3 p = center + normal * (radius + split * (.10f + (index % 3) * .035f));
+            // The old six axial faces put two fragments behind/inside the target,
+            // and side fragments behind the review target's arms. Show the near
+            // hemisphere of the shell on the incoming side, not camera-facing UI.
+            // This is an attachment proxy, not a measured projectile surface.
+            Vector3 center = c.Target - axis * (.32f + split * .10f) - Vector3.up * drop;
+            Vector3 p = center + radial * (radius + split * (.10f + (index % 3) * .035f));
             // This floor limit is a visual use of the already supplied GroundY, not
             // a new collision query or a claim that the real intercepted object fell.
             p.y = Mathf.Max(p.y, c.GroundY + .18f);
-            Vector3 lengthAxis = PlaneOffset(normal, 0, 1);
-            Quaternion rotation = Quaternion.LookRotation(lengthAxis, normal);
-            rotation = Quaternion.AngleAxis(split * (index % 2 == 0 ? 52f : -47f), normal) * rotation;
+            Vector3 normal = SafeDirection(-axis + radial * .30f);
+            // Tangential facets first close around the target, then separate and
+            // tumble down. Keep a broad face during the readable interception beat.
+            Quaternion tumble = Quaternion.AngleAxis(split * (index % 2 == 0 ? 52f : -47f), normal);
             float vanish = 1 - Smooth(.63f + (index % 3) * .04f, 1.10f, age);
-            return Make(p, rotation, RibbonDimensions(.18f, .025f, .35f),
-                Smooth(0, .055f, age) * vanish * LifeFade(c));
+            return NeedleRibbon(c, p, tumble * tangent, normal,
+                .18f, .030f, .30f, Smooth(0, .055f, age) * vanish * LifeFade(c));
         }
 
         private static float NeedleFlight(in Context c) =>
@@ -477,24 +487,21 @@ namespace Oheangbu.App.SpellVFX120
             }
         }
 
-        private static Vector3 FrostFaceNormal(Vector3 incoming, int index)
+        private static Pose NeedleRibbon(in Context c, Vector3 center, Vector3 lengthAxis,
+            Vector3 normal, float width, float thickness, float length, float alpha)
         {
-            switch (index)
-            {
-                case 0: return PlaneOffset(incoming, 1, 0);
-                case 1: return PlaneOffset(incoming, -1, 0);
-                case 2: return PlaneOffset(incoming, 0, 1);
-                case 3: return PlaneOffset(incoming, 0, -1);
-                case 4: return incoming;
-                default: return -incoming;
-            }
+            Vector3 bounds = c.AccentBoundsSize;
+            if (!Finite(bounds) || bounds.x <= .0001f || bounds.y <= .0001f || bounds.z <= .0001f)
+                bounds = new Vector3(.37591594f, .33159078f, 1);
+            // Ribbon is a twisted strip: at its widest middle section the across
+            // vector is (cos(1.5), sin(1.5), 0), almost local +Y, not +X.
+            // Preserve that Y width, compress X depth, then roll Y into the visible
+            // stroke plane. Flattening Y first erased the middle of each old stroke.
+            Quaternion facing = Quaternion.LookRotation(SafeDirection(lengthAxis), normal)
+                * Quaternion.AngleAxis(-90, Vector3.forward);
+            return Make(center, facing,
+                new Vector3(thickness / bounds.x, width / bounds.y, length / bounds.z), alpha);
         }
-
-        private static Vector3 RibbonDimensions(float width, float thickness, float length) =>
-            // Current normalized Ribbon.asset full bounds: (.37591594, .33159078, 1).
-            // Compress its lateral/depth waves into a slim stroke or rigid shell shard.
-            // If the source mesh changes, these two glyphs need bounds revalidation.
-            new Vector3(width / .37591594f, thickness / .33159078f, length);
 
         private static float FirstCueAfter(float earliest, float a, float b)
         {

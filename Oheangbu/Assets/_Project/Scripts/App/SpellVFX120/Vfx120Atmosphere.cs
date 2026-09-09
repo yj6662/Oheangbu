@@ -215,6 +215,9 @@ namespace Oheangbu.App.SpellVFX120
             var color = ps.colorOverLifetime; color.enabled = true; color.color = gradient;
             var emission = ps.emission; emission.enabled = true; emission.rateOverTime = 0; emission.rateOverDistance = 0;
             var renderer = ps.GetComponent<ParticleSystemRenderer>();
+            // InkPigment consumes ordinary COLOR/UV streams and has no Shuriken
+            // procedural-instancing setup. Do not feed its mesh particles that layout.
+            renderer.enableGPUInstancing = false;
             renderer.renderMode = mesh ? ParticleSystemRenderMode.Mesh : ParticleSystemRenderMode.Billboard;
             if (mesh) renderer.mesh = _profile.AccentMesh;
             renderer.sharedMaterial = mesh ? _profile.InkMaterial : _profile.MistMaterial;

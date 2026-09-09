@@ -40,6 +40,9 @@ namespace Oheangbu.App.SpellVFX120
             if (p == null) return Color.white;
             // Cleanup ribbons are dark residue, not additional bright water splashes.
             if (p.Glyph == "온" && index >= 4) return p.Ink;
+            if (p.Glyph == "엄") return Color.Lerp(p.Pigment, p.Accent, index % 2 == 0 ? .74f : .22f);
+            if (p.Glyph == "옷") return index < 5 ? p.Accent : Color.Lerp(p.Pigment, p.Accent, .24f);
+            if (p.Glyph == "옹") return Color.Lerp(p.Pigment, p.Accent, index < 6 ? .28f : .72f);
             return (index & 1) == 0 ? p.Accent : p.Pigment;
         }
 
@@ -53,16 +56,18 @@ namespace Oheangbu.App.SpellVFX120
             if (p.Glyph == "엄")
             {
                 center = Bottle(c);
-                axis = Vector3.up; // Ripple XY faces upward: two small vessel rims.
+                axis = Vector3.up; // Ripple XY faces upward: foot and lip of the vessel.
                 if (index > 1) return true;
                 float cue = HitTime(c);
                 float expand = cue < 0 ? 0 : Smooth(c.Age - cue, .38f);
                 float release = ReleaseTime(c);
                 float drain = release < 0 ? 1 : 1 - Smooth(c.Age - release, .60f);
-                float diameter = index == 0 ? .19f : .31f;
-                float opening = index == 0 ? 1 : expand * drain;
-                center.y += index == 0 ? .012f : .068f * opening;
-                scale = Size(p.BodyMesh, new Vector3(diameter, diameter, .025f)) * fade * opening;
+                float fill = expand * drain;
+                float diameter = index == 0 ? .25f : Mathf.Lerp(.28f, .48f, fill);
+                center.y += index == 0 ? .012f : .045f + .195f * fill;
+                // A visible empty foot/lip remains when the contents drain; disappearance
+                // is still controlled by the real lifetime, not by a fabricated refill.
+                scale = Size(p.BodyMesh, new Vector3(diameter, diameter, .035f)) * fade;
                 return true;
             }
             if (p.Glyph == "우")
@@ -129,10 +134,18 @@ namespace Oheangbu.App.SpellVFX120
                 float drain = release < 0 ? 1 : 1 - Smooth(c.Age - release, .62f);
                 float a = index * Mathf.PI * 2 / wanted;
                 Vector3 radial = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
-                point = Bottle(c) + radial * (.065f + .065f * fill);
-                point.y += .020f + .030f * fill * drain;
-                rotation = Face(new Vector3(-radial.z, .25f, radial.x));
-                dimensions = new Vector3(.030f, .012f, .095f) * fill * drain;
+                float contents = fill * drain;
+                Vector3 lower = Bottle(c) + radial * .105f + Vector3.up * .014f;
+                Vector3 upper = Bottle(c) + radial * Mathf.Lerp(.14f, .23f, contents)
+                    + Vector3.up * (.045f + .195f * contents);
+                Vector3 stave = upper - lower;
+                Vector3 tangent = Vector3.Cross(Vector3.up, radial);
+                point = (lower + upper) * .5f;
+                // Six broad curved Ribbon staves give the vessel a side silhouette;
+                // six tiny horizontal splashes did not survive the distant camera.
+                rotation = Quaternion.LookRotation(stave.normalized, Vector3.Cross(stave, tangent).normalized);
+                dimensions = new Vector3(Mathf.Lerp(.13f, .24f, contents), .055f, stave.magnitude);
+                alpha *= Smooth(c.Age - cue, .12f);
             }
             else if (p.Glyph == "우")
             {
@@ -143,8 +156,8 @@ namespace Oheangbu.App.SpellVFX120
                 float sway = Mathf.Sin(c.Age * 1.35f + index * .7f) * .03f;
                 point = c.Origin + radial * (radius + sway);
                 point.y = c.OriginGround + height * .5f + .030f;
-                // Ribbon lies XZ with its normal along Y: Z up, Y radial makes a
-                // vertical water panel inside each outward-facing Ripple frame.
+                // Author a panel in XZ with Y radial and Z upward. The shared
+                // Ribbon's actual Y-wide strip is mapped into this plane below.
                 rotation = Quaternion.LookRotation(Vector3.up, radial);
                 dimensions = new Vector3(2 * radius * Mathf.Sin(Mathf.PI / wanted) * .84f, .018f, height);
                 alpha *= .46f;
@@ -165,8 +178,13 @@ namespace Oheangbu.App.SpellVFX120
                 alpha *= fade;
             }
             pose.Position = point;
-            pose.Rotation = rotation;
-            pose.Scale = Size(p.AccentMesh, dimensions);
+            // All five water profiles use the same 46-vertex Ribbon accent (GUID
+            // 7bc417ca647d78d4b8fed5c3cb2d5e4f). Its middle across-vector is
+            // (.070737, .997495, 0): width is local Y, not local X. Authoring a
+            // broad XZ panel while crushing Y to depth erased its readable middle.
+            // Preserve Y width first, then roll it into the authored XZ plane.
+            pose.Rotation = rotation * Quaternion.AngleAxis(-90, Vector3.forward);
+            pose.Scale = Size(p.AccentMesh, new Vector3(dimensions.y, dimensions.x, dimensions.z));
             pose.Alpha = Mathf.Clamp01(alpha);
             pose.Visible = pose.Alpha > .001f && pose.Scale.sqrMagnitude > .000001f;
             return true;
@@ -176,57 +194,89 @@ namespace Oheangbu.App.SpellVFX120
             Vector3 contact, Vector3 forward, Vector3 right, out Vector3 point,
             out Quaternion rotation, out Vector3 dimensions, out float alpha)
         {
-            Vector3 groundPoint = new Vector3(contact.x, c.TargetGround + .045f, contact.z);
+            // Keep residue in front of the struck body, where its silhouette is not
+            // swallowed by legs. The supplied cleanup point itself remains unchanged.
+            Vector3 groundPoint = new Vector3(contact.x, c.TargetGround + .055f, contact.z)
+                - forward * .62f + right * .14f;
+            float released = CueReleaseFade(c, .38f);
             if (i < 4)
             {
                 // Pale strips appear ONLY at the supplied cleanup event site, never
                 // as an unconditional alteration of the terrain or its material.
-                point = groundPoint + right * ((i - 1.5f) * .27f) - forward * .32f;
+                point = groundPoint + right * ((i - 1.5f) * .30f) - forward * .20f;
                 rotation = Face(forward);
-                dimensions = new Vector3(.18f, .014f, .82f) * Smooth(t, .24f);
-                alpha = .62f * (1 - Smooth(t - 1.20f, .55f));
+                dimensions = new Vector3(.23f, .055f, 1.05f) * Smooth(t, .24f);
+                alpha = .88f * (1 - Smooth(t - 1.65f, .40f)) * released;
                 return;
             }
             int thread = i - 4;
-            float phase = Mathf.Clamp01((t - thread * .045f) / .72f);
-            float angle = thread * Mathf.PI * 2 / 8 + phase * Mathf.PI * 1.75f;
-            float radius = (1 - phase) * (.25f + thread * .032f);
+            float delayed = t - thread * .065f;
+            float phase = Mathf.Clamp01(delayed / 1.35f);
+            float angle = thread * Mathf.PI * 2 / 8 + phase * Mathf.PI * 1.35f;
+            float radius = Mathf.Lerp(.62f + (thread % 3) * .075f, .10f, phase);
             Vector3 outward = right * Mathf.Cos(angle) + forward * Mathf.Sin(angle);
-            point = groundPoint + outward * radius + Vector3.up * (Mathf.Sin(phase * Mathf.PI) * .26f);
-            rotation = Face(-outward + Vector3.up * .35f);
-            dimensions = new Vector3(.036f, .015f, .23f) * (1 - phase * .75f);
-            alpha = Mathf.Sin(phase * Mathf.PI) * .95f;
+            float length = Mathf.Lerp(.52f, .24f, phase);
+            point = groundPoint + outward * radius
+                + Vector3.up * (.18f + Mathf.Sin(phase * Mathf.PI) * .72f);
+            point.y = Mathf.Max(c.TargetGround + length * .5f + .055f, point.y);
+            rotation = Quaternion.LookRotation((Vector3.up * .70f - outward * .55f).normalized, -forward);
+            dimensions = new Vector3(.115f, .075f, length);
+            // Hold opacity through the readable part of the lift; Alpha also drives
+            // grain erosion in the shared shader, so a sine fade erased thin strands.
+            alpha = Smooth(delayed, .14f) * (1 - Smooth(delayed - 1.25f, .38f)) * released;
         }
 
         private static void Cooling(in Context c, int i, float t, Vector3 contact,
             Vector3 forward, Vector3 right, out Vector3 point, out Quaternion rotation,
             out Vector3 dimensions, out float alpha)
         {
-            float phase = Mathf.Clamp01((t - i * .025f) / 1.35f);
-            float u = i / 9f;
-            // Thin wet seams run down the struck upper body and arms; never tall spikes.
-            point = contact + right * ((u - .5f) * .68f) - forward * .18f;
-            point.y = Mathf.Max(c.TargetGround + .035f, contact.y + .20f - phase * .76f);
-            rotation = Face(Vector3.down + right * (u - .5f) * .2f);
-            dimensions = new Vector3(.047f, .015f, .22f + .09f * Mathf.Sin(u * Mathf.PI));
-            alpha = Smooth(t - i * .025f, .12f) * (1 - Smooth(phase - .68f, .32f));
+            int seam = i % 5;
+            bool droplet = i >= 5;
+            float delayed = t - seam * .045f - (droplet ? .22f : 0);
+            float phase = Mathf.Clamp01(delayed / 1.55f);
+            float lateral = (seam - 2) * .235f;
+            float length = droplet ? .24f : .48f + .12f * (1 - Mathf.Abs(seam - 2) * .5f);
+            float top = Mathf.Clamp(contact.y + .24f, c.TargetGround + .98f, c.TargetGround + 1.45f);
+            // Five broad wet seams lie on the visible front of the upper body, with
+            // five shorter drops below. They slide rather than forming a tall cage.
+            point = contact + right * lateral - forward * (droplet ? .48f : .40f);
+            point.y = Mathf.Max(c.TargetGround + length * .5f + .055f,
+                top - (droplet ? .38f : .10f) - phase * (droplet ? .82f : .58f));
+            rotation = Quaternion.LookRotation((Vector3.down + right * Mathf.Sin(t * 2.2f + seam) * .045f).normalized, -forward);
+            dimensions = new Vector3(droplet ? .105f : .145f, .065f, length);
+            alpha = Smooth(delayed, .14f) * (1 - Smooth(delayed - 1.30f, .36f)) * CueReleaseFade(c, .32f);
         }
 
         private static void Lowering(in Context c, int i, float t, Vector3 contact,
             Vector3 forward, Vector3 right, out Vector3 point, out Quaternion rotation,
             out Vector3 dimensions, out float alpha)
         {
-            float a = i * Mathf.PI * 2 / 10;
-            Vector3 radial = right * Mathf.Cos(a) + forward * Mathf.Sin(a);
-            float strength = Smooth(t - i * .018f, .18f);
-            float bottom = c.TargetGround + .035f;
-            float top = Mathf.Max(bottom + .22f, contact.y + .20f);
-            float length = (top - bottom) * strength;
-            point = contact + radial * (.20f + i % 2 * .055f);
-            point.y = top - length * .5f;
-            rotation = Face(Vector3.down + radial * .08f);
-            dimensions = new Vector3(.029f, .013f, length);
-            alpha = strength * (1 - Smooth(t - 1.35f, .42f));
+            float delayed = t - i * .035f;
+            float strength = Smooth(delayed, .20f);
+            float bottom = c.TargetGround + .065f;
+            if (i < 6)
+            {
+                // A front semicircle remains outside the .44m torso and the arms.
+                // Long falling bands reach the ground, unlike 옷's short wet seams.
+                float a = (.08f + i * .168f) * Mathf.PI;
+                Vector3 radial = right * Mathf.Cos(a) - forward * Mathf.Sin(a);
+                float top = Mathf.Clamp(contact.y + .38f, bottom + .95f, c.TargetGround + 1.58f);
+                float length = (top - bottom) * strength;
+                point = contact + right * Mathf.Cos(a) * .63f - forward * Mathf.Sin(a) * .48f;
+                point.y = top - length * .5f;
+                rotation = Quaternion.LookRotation(Vector3.down, radial);
+                dimensions = new Vector3(.105f + .018f * Mathf.Sin(t * 2.8f + i), .070f, length);
+            }
+            else
+            {
+                float a = ((i - 6) + .5f) * Mathf.PI / 4;
+                Vector3 radial = right * Mathf.Cos(a) - forward * Mathf.Sin(a);
+                point = contact + radial * .48f;
+                point.y = bottom;
+                rotation = Quaternion.LookRotation(-radial, Vector3.up);
+                dimensions = new Vector3(.21f, .045f, .72f) * strength;
+            }
+            alpha = strength * (1 - Smooth(delayed - 1.55f, .42f)) * CueReleaseFade(c, .32f);
         }
 
         private static float HitTime(in Context c)
@@ -239,8 +289,19 @@ namespace Oheangbu.App.SpellVFX120
             if (Finite(c.ReleaseAt) && c.ReleaseAt >= 0) return c.ReleaseAt;
             return c.PreviewControlled && c.DemonstrationCues ? c.Life * .76f : -1;
         }
-        private static Vector3 Bottle(in Context c) => c.HasBottlePoint ? c.BottlePoint
-            : new Vector3(c.Origin.x - .28f, c.OriginGround + .92f, c.Origin.z + .22f);
+        private static Vector3 Bottle(in Context c)
+        {
+            if (c.HasBottlePoint) return c.BottlePoint;
+            Vector3 forward = Flat(c.Target - c.Origin), right = Vector3.Cross(Vector3.up, forward);
+            Vector3 point = c.Origin + right * .66f - forward * .34f;
+            point.y = c.OriginGround + .98f;
+            return point;
+        }
+        private static float CueReleaseFade(in Context c, float seconds)
+        {
+            float release = ReleaseTime(c);
+            return release < 0 ? 1 : 1 - Smooth(c.Age - release, seconds);
+        }
         private static float Ground(in Context c, Vector3 forward)
         {
             float length = new Vector2(c.Target.x - c.Origin.x, c.Target.z - c.Origin.z).magnitude;

@@ -96,7 +96,9 @@ Shader "Oheangbu/VFX120/InkPigment"
                 rgb*=lerp(1,.38+.8*saturate(dot(normalize(i.normalWS),normalize(float3(-.4,.8,-.3)))),_Metal);
                 rgb+=_BaseColor.rgb*glint*_Metal*.45;
                 if(_Body>.5) { clip(_Alpha-.001); clip(tooth-(1-saturate(_Alpha))); alpha=1; }
-                if(_Soft>.5) alpha*=i.color.a;
+                // Mesh particles also carry lifetime alpha in COLOR. Ignoring it left
+                // dying leaf/shard silhouettes fully opaque until they disappeared.
+                alpha*=i.color.a;
                 clip(alpha-.006);
                 return half4(min(rgb,.92),alpha);
             }

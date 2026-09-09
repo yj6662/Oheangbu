@@ -179,14 +179,16 @@ namespace Oheangbu.App.SpellVFX120
             accentCount = Mathf.Max(accentCount, Vfx120WeaponMotion.GetAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120WaterMotion.GetAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120EnvironmentMotion.GetAccentCount(Profile));
+            bool projectileAccents = !HasSpatialPlan && !(ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley);
+            if (projectileAccents) accentCount = Mathf.Max(accentCount, Vfx120VariantMotion.GetProjectileAccentCount(Profile));
             _accents = new Transform[accentCount]; _accentRenderers = new Renderer[accentCount];
             for (int i = 0; i < n; i++)
             {
                 _parts[i] = MeshPart("Body_" + i, Profile.BodyMesh, Profile.BodyMaterial, out _renderers[i]);
             }
             for (int i = 0; i < accentCount; i++)
-                _accents[i] = MeshPart("Flecks_" + i, Profile.AccentMesh,
-                    Profile.Behavior == Vfx120Behavior.Summon && Profile.Family == "Beast" ? Profile.BodyMaterial : Profile.InkMaterial,
+                _accents[i] = MeshPart("Flecks_" + i, projectileAccents && Profile.Glyph == "만" ? Profile.BodyMesh : Profile.AccentMesh,
+                    projectileAccents && Profile.Glyph == "만" || Profile.Behavior == Vfx120Behavior.Summon && Profile.Family == "Beast" ? Profile.BodyMaterial : Profile.InkMaterial,
                     out _accentRenderers[i]);
             _seal = MeshPart("TraditionalMotif", QuadMesh.Value, Profile.PatternMaterial, out _sealRenderer);
             _ribbons = new LineRenderer[Mathf.Clamp(Profile.RibbonCount, 0, 3)];
@@ -234,6 +236,9 @@ namespace Oheangbu.App.SpellVFX120
             Vector3 center = Center();
             bool authoritativeVolley = ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley
                 && ReceivedAreaPlan.Shots.Count > 0;
+            bool projectileMotion = !HasSpatialPlan && !authoritativeVolley && Vfx120VariantMotion.GetProjectileAccentCount(Profile) > 0;
+            if (projectileMotion && Vfx120VariantMotion.TrySampleProjectileCenter(Profile, Age, _flight, Life, _aim, _targetGround, out var projectileCenter))
+                center = projectileCenter;
             var cueContext = CueContext();
             var environmentContext = EnvironmentContext();
             if (_environmentFixture != null) _environmentFixture.Sample(environmentContext);
@@ -350,6 +355,12 @@ namespace Oheangbu.App.SpellVFX120
             // Accent geometry has its own authored count; e.g. one tree has twelve leaves.
             for (int i = 0; i < _accents.Length; i++)
             {
+                if (projectileMotion && Vfx120VariantMotion.TrySampleProjectileAccent(Profile, Age, _flight, Life,
+                    _aim, _targetGround, i, _accents.Length, out var projectileAccent))
+                {
+                    ApplyCuePose(_accents[i], _accentRenderers[i], projectileAccent, Color.Lerp(Profile.Pigment, Profile.Accent, i % 3 == 0 ? .45f : .1f));
+                    continue;
+                }
                 if (Vfx120EnvironmentMotion.TrySampleAccent(Profile, environmentContext, i, _accents.Length, out var environmentAccent))
                 {
                     ApplyCuePose(_accents[i], _accentRenderers[i], environmentAccent,
@@ -364,7 +375,7 @@ namespace Oheangbu.App.SpellVFX120
                 if (Vfx120WeaponMotion.TrySample(Profile, Age, Life, _parts[0].localPosition,
                     _parts[0].localRotation, _parts[0].localScale, i, out var weaponPose))
                 {
-                    ApplyCuePose(_accents[i], _accentRenderers[i], weaponPose, Color.Lerp(Profile.Pigment, Profile.Accent, .55f));
+                    ApplyCuePose(_accents[i], _accentRenderers[i], weaponPose, Vfx120WeaponMotion.GetAccentColor(Profile, i));
                     continue;
                 }
                 if (Vfx120VariantMotion.TrySampleSelfAccent(Profile, Age, Life, _originGround, i, _accents.Length, out var selfPose))
@@ -432,7 +443,7 @@ namespace Oheangbu.App.SpellVFX120
                 var line = _ribbons[r];
                 // The cue meshes already provide the attached/transfer trajectory.
                 // Generic orbit ribbons would falsely imply an active zone before a hit.
-                line.enabled = !cueMotion && !HasSpatialPlan && Profile.Glyph != "막"
+                line.enabled = !cueMotion && !projectileMotion && !HasSpatialPlan && Profile.Glyph != "막"
                     && !Vfx120EnvironmentMotion.Supports(Profile)
                     && Vfx120WaterMotion.GetAccentCount(Profile) == 0 && Profile.Behavior != Vfx120Behavior.Weapon;
                 if (!line.enabled) { line.widthMultiplier = 0; Tint(line, Profile.Ink, 0, 1); continue; }
@@ -484,6 +495,7 @@ namespace Oheangbu.App.SpellVFX120
             context.Age = Age; context.Duration = Life; context.ImpactTime = _flight;
             context.Origin = Vector3.zero; context.Target = _aim;
             context.BaseScale = Profile.PartScale; context.GroundY = _targetGround;
+            context.AccentBoundsSize = Profile.AccentMesh != null ? Profile.AccentMesh.bounds.size : context.AccentBoundsSize;
             context.HitAt = IsAttachedSeal() ? AdditionalHitAt : HitAt;
             context.TargetDefeatedAt = TargetDefeatedAt;
             context.ReleaseAt = Profile.Glyph == "검" ? FirstIssued(ReleaseAt, BreakAt) : ReleaseAt;

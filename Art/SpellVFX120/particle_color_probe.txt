@@ -1,0 +1,20 @@
+Actual 것 particle data at 1.47s
+ContinuousMaterial render=Billboard gpuInstancing=True streams=Position,Normal,Color,UV base=RGBA(1.000, 1.000, 1.000, 1.000) shader=Oheangbu/VFX120/InkPigment
+particle 0 start=RGBA(255, 255, 255, 255) current=RGBA(85, 123, 102, 84) remaining=0.4073098
+particle 1 start=RGBA(255, 255, 255, 255) current=RGBA(65, 108, 86, 79) remaining=0.4435523
+particle 2 start=RGBA(255, 255, 255, 255) current=RGBA(50, 77, 62, 68) remaining=0.2096427
+particle 3 start=RGBA(255, 255, 255, 255) current=RGBA(20, 19, 17, 3) remaining=0.01153617
+particle 4 start=RGBA(255, 255, 255, 255) current=RGBA(38, 54, 44, 43) remaining=0.1200501
+particle 5 start=RGBA(255, 255, 255, 255) current=RGBA(66, 109, 87, 80) remaining=0.3605383
+particle 6 start=RGBA(255, 255, 255, 255) current=RGBA(124, 150, 130, 93) remaining=0.3694114
+particle 7 start=RGBA(255, 255, 255, 255) current=RGBA(130, 154, 134, 94) remaining=0.6538673
+LeafSparkGrainDrop render=Mesh gpuInstancing=True streams=Position,Normal,Color,UV base=RGBA(1.000, 1.000, 1.000, 1.000) shader=Oheangbu/VFX120/InkPigment
+particle 0 start=RGBA(255, 255, 255, 255) current=RGBA(50, 79, 63, 118) remaining=0.3585448
+particle 1 start=RGBA(255, 255, 255, 255) current=RGBA(71, 114, 92, 139) remaining=0.4481546
+particle 2 start=RGBA(255, 255, 255, 255) current=RGBA(43, 64, 52, 92) remaining=0.1964905
+particle 3 start=RGBA(255, 255, 255, 255) current=RGBA(126, 151, 131, 160) remaining=0.9412523
+particle 4 start=RGBA(255, 255, 255, 255) current=RGBA(86, 124, 103, 145) remaining=0.7794742
+particle 5 start=RGBA(255, 255, 255, 255) current=RGBA(32, 42, 35, 50) remaining=0.1724091
+particle 6 start=RGBA(255, 255, 255, 255) current=RGBA(40, 58, 48, 82) remaining=0.2902317
+particle 7 start=RGBA(255, 255, 255, 255) current=RGBA(24, 26, 22, 18) remaining=0.04359872
+mesh=SM_Vfx120_Leaf colors=185 first=RGBA(1.000, 1.000, 1.000, 1.000)

@@ -28,6 +28,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 switch (command.method)
                 {
                     case "Probe": response.result = "Unity=" + Application.unityVersion + "; playing=" + EditorApplication.isPlaying + "; scene=" + UnityEngine.SceneManagement.SceneManager.GetActiveScene().path; break;
+                    case "ParticleColorProbe": response.result = Vfx120ParticleColorProbe.Run(); break;
+                    case "RibbonProbe": response.result = Vfx120ParticleColorProbe.RibbonProbe(); break;
                     case "Build": response.result = Vfx120Editor.Build(); break;
                     case "Audit": response.result = Vfx120Editor.AuditCatalog(); break;
                     case "Review": response.result = Vfx120Editor.Review(); break;

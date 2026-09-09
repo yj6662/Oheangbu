@@ -7,6 +7,10 @@ namespace Oheangbu.App.SpellVFX120
     {
         public static int GetAccentCount(Vfx120Profile p) => p != null && p.Behavior == Vfx120Behavior.Weapon ? 8 : 0;
 
+        public static Color GetAccentColor(Vfx120Profile p, int index) => p.Glyph == "것"
+            ? Color.Lerp(p.Pigment, p.Accent, index % 2 == 0 ? .12f : .78f)
+            : Color.Lerp(p.Pigment, p.Accent, .55f);
+
         public static bool TrySample(Vfx120Profile p, float age, float life, Vector3 body,
             Quaternion rotation, Vector3 scale, int index, out Vfx120CueMotion.Pose pose)
         {
@@ -27,7 +31,7 @@ namespace Oheangbu.App.SpellVFX120
                 point.x = side * (.09f + along * .045f);
                 point.y += Mathf.Sin(age * 1.8f + index) * .025f;
                 axis = new Vector3(side, .12f, .40f);
-                dimensions = new Vector3(.18f, .045f, .31f) * (.8f + along * .2f);
+                dimensions = new Vector3(.22f, .045f, .35f) * (.8f + along * .2f);
             }
             else if (glyph == '넛')
             {
@@ -60,6 +64,9 @@ namespace Oheangbu.App.SpellVFX120
             pose.Position = body + rotation * point;
             pose.Rotation = rotation * Quaternion.LookRotation(axis,
                 Mathf.Abs(axis.normalized.y) > .98f ? Vector3.forward : Vector3.up);
+            // Leaves have their broad face in XZ. An alternating fold exposes that
+            // face from shoulder height instead of showing eight almost edge-on slivers.
+            if (glyph == '것') pose.Rotation *= Quaternion.AngleAxis(side * 38, Vector3.forward);
             pose.Scale = new Vector3(dimensions.x / Mathf.Max(.001f, meshSize.x),
                 dimensions.y / Mathf.Max(.001f, meshSize.y), dimensions.z / Mathf.Max(.001f, meshSize.z)) * fade;
             pose.Alpha = fade * (glyph == '엇' ? .55f : .9f);

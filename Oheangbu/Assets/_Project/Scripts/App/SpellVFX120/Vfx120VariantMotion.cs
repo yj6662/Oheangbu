@@ -50,7 +50,8 @@ namespace Oheangbu.App.SpellVFX120
                     ref center, ref local, ref axis, ref scale); break;
                 case '낫': FireSplit(p, age, flight, life, index, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
                 case '논': FireEndBurst(p, age, flight, life, u, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
-                case '망': StoneSkip(p, age, flight, life, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
+                case '만': StoneBurst(p, age, flight, life, aim, size, ref center, ref local, ref axis, ref scale); break;
+                case '망': StoneSkip(p, age, flight, life, aim, size, targetGround, ref center, ref local, ref axis, ref scale); break;
                 case '목': DelayedStone(p, age, flight, life, index, u, aim, size, ref center, ref local, ref axis, ref scale); break;
                 case '악':
                 case '앙': WaterReturn(p, glyph == '악', age, flight, life, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
@@ -64,6 +65,92 @@ namespace Oheangbu.App.SpellVFX120
                 case '송': MetalSalvo(p, glyph, age, flight, life, index, count, u, aim, size, ref center, ref local, ref axis, ref scale); break;
             }
         }
+
+        // The caller reuses the BodyMesh/BodyMaterial for 만's solid fragments. 망
+        // keeps the authored Ripple accent mesh/material. No objects are created here.
+        public static int GetProjectileAccentCount(Vfx120Profile p)
+        {
+            if (p == null) return 0;
+            return p.Glyph == "만" ? 8 : p.Glyph == "망" ? 2 : 0;
+        }
+
+        // Use this for secondary emitter anchors too; the old generic projectile
+        // center leaves 망's dust suspended at the target's chest. Area/volley plans
+        // remain authoritative and must take priority in the caller.
+        public static bool TrySampleProjectileCenter(Vfx120Profile p, float age, float flight,
+            float life, Vector3 aim, float targetGround, out Vector3 center)
+        {
+            center = Vector3.zero;
+            if (GetProjectileAccentCount(p) == 0) return false;
+            if (!ProjectileInputs(p, age, flight, life, aim, targetGround)) return true;
+            Vector3 local = Vector3.zero, axis = Vector3.forward, scale = Vector3.zero;
+            if (p.Glyph == "만")
+                StoneBurst(p, age, flight, life, aim, p.Size, ref center, ref local, ref axis, ref scale);
+            else
+                StoneSkip(p, age, flight, life, aim, p.Size, targetGround, ref center, ref local, ref axis, ref scale);
+            return true;
+        }
+
+        public static bool TrySampleProjectileAccent(Vfx120Profile p, float age, float flight,
+            float life, Vector3 aim, float targetGround, int index, int count,
+            out Vfx120CueMotion.Pose pose)
+        {
+            pose = new Vfx120CueMotion.Pose { Rotation = Quaternion.identity };
+            int wanted = GetProjectileAccentCount(p);
+            if (wanted == 0) return false;
+            if (!ProjectileInputs(p, age, flight, life, aim, targetGround)
+                || age >= life || index < 0 || index >= count || index >= wanted) return true;
+            float elapsed = age - flight;
+            if (p.Glyph == "만")
+            {
+                // One unchanged impact clock, followed by a visual shell fracture.
+                // Different launch velocities make separated clods, not an orbit.
+                if (elapsed < 0) return true;
+                float span = PostSpan(flight, life, 1.1f);
+                float t = Phase(elapsed, span);
+                float fade = (1 - Ease(Phase(t - .58f, .42f))) * Lifetime(age, life);
+                float variation = (index * 5 % wanted) / (float)(wanted - 1);
+                float a = index * Mathf.PI * 2 / wanted + .19f;
+                Vector3 radial = new Vector3(Mathf.Cos(a), 0, Mathf.Sin(a));
+                float width = .12f + .09f * variation;
+                Vector3 dimensions = new Vector3(width, width * (.76f + .12f * (index % 2)), width * 1.16f);
+                pose.Scale = WorldSize(p, dimensions) * fade;
+                pose.Rotation = Quaternion.AngleAxis(elapsed * (175 + 31 * index), Direction(radial + Vector3.up * .6f))
+                    * Face(radial + Vector3.up * .35f);
+                float travel = Mathf.Min(elapsed, span);
+                Vector3 point = aim + radial * (.07f + travel * (1.05f + .82f * variation));
+                point.y += travel * (.58f + variation * .78f) - 3.6f * travel * travel;
+                // Analytic settling is a presentation fixture, not a physics hit.
+                point.y = Mathf.Max(point.y, targetGround + MeshBottomOffset(p.BodyMesh, pose.Rotation, pose.Scale) + .018f);
+                pose.Position = point;
+                pose.Alpha = fade;
+                pose.Visible = fade > .001f;
+                return true;
+            }
+            // Exactly two ground-contact pulses, synchronized with the body below.
+            // The second is a visual illustration; no second damage event is emitted.
+            float bounceSpan = PostSpan(flight, life, .85f);
+            float contactAge = flight + (index == 0 ? 0 : bounceSpan);
+            elapsed = age - contactAge;
+            float pulseSpan = Mathf.Min(.34f, Mathf.Max(.001f, life - contactAge));
+            if (elapsed < 0 || elapsed >= pulseSpan) return true;
+            float progress = Phase(elapsed, pulseSpan);
+            float alpha = (1 - Ease(progress)) * Lifetime(age, life);
+            float diameter = Mathf.Lerp(.38f, Mathf.Max(.95f, p.Size * 2.2f), Ease(progress));
+            pose.Position = new Vector3(aim.x, targetGround + .025f, aim.z)
+                + FlatDirection(aim) * (index == 0 ? 0 : p.Size * 2.6f);
+            pose.Rotation = Face(Vector3.up); // Ripple's XY face becomes horizontal.
+            pose.Scale = MeshSize(p.AccentMesh, new Vector3(diameter, diameter, .016f), Vector3.one);
+            pose.Alpha = alpha;
+            pose.Visible = alpha > .001f;
+            return true;
+        }
+
+        private static bool ProjectileInputs(Vfx120Profile p, float age, float flight,
+            float life, Vector3 aim, float ground)
+            => p != null && Finite(age) && age >= 0 && Finite(flight) && flight > 0
+                && Finite(life) && life > 0 && Finite(aim) && Finite(ground)
+                && Finite(p.Size) && p.Size >= 0 && Finite(p.PartScale) && Finite(p.Lift);
 
         // These three effects have caster-relative accents too. Calling only Apply
         // would leave the generic flecks at the old head/target anchor.
@@ -353,23 +440,55 @@ namespace Oheangbu.App.SpellVFX120
             scale = Sized(p, age, life, age < flight ? new Vector3(.35f, .45f, .85f) : Vector3.one * (1.25f - post * .4f));
         }
 
-        private static void StoneSkip(Vfx120Profile p, float age, float flight, float life,
-            Vector3 aim, Vector3 forward, float size,
+        private static void StoneBurst(Vfx120Profile p, float age, float flight, float life,
+            Vector3 aim, float size,
             ref Vector3 center, ref Vector3 local, ref Vector3 axis, ref Vector3 scale)
         {
-            // CSV: first impact and ONE further forward skip, i.e. two contact points total.
             float t = Phase(age, flight);
-            float post = Phase(age - flight, PostSpan(flight, life, .85f));
-            Vector3 groundForward = FlatDirection(forward);
-            center = age <= flight
-                ? aim * t + Vector3.up * (4 * t * (1 - t) * Mathf.Max(.22f, size * .75f))
-                : aim + groundForward * (size * 2.6f * post) + Vector3.up * (Mathf.Sin(post * Mathf.PI) * size * .62f);
+            float arc = Mathf.Max(.4f, p.Lift);
+            center = aim * t + Vector3.up * (4 * t * (1 - t) * arc);
             local = Vector3.zero;
-            axis = age <= flight ? forward + Vector3.up * ((1 - 2 * t) * .45f)
-                : groundForward + Vector3.up * (Mathf.Cos(post * Mathf.PI) * .55f);
-            // Brief flattening at each contact, without changing any mesh vertices.
-            float contact = age <= flight ? 1 - Ease(Phase(flight - age, flight * .16f)) : Mathf.Abs(Mathf.Cos(post * Mathf.PI));
-            scale = Sized(p, age, life, new Vector3(1 + contact * .05f, 1 - contact * .12f, 1));
+            axis = Direction(aim + Vector3.up * (4 * (1 - 2 * t) * arc));
+            float splitSpan = Mathf.Min(.13f, PostSpan(flight, life, 1.1f) * .18f);
+            float shell = 1 - Ease(Phase(age - flight, splitSpan));
+            scale = Sized(p, age, life, Vector3.one) * shell;
+        }
+
+        private static void StoneSkip(Vfx120Profile p, float age, float flight, float life,
+            Vector3 aim, float size, float ground,
+            ref Vector3 center, ref Vector3 local, ref Vector3 axis, ref Vector3 scale)
+        {
+            // One unchanged first-contact clock, then one forward presentation skip.
+            // Use the sampled FLOOR height, never the target's chest-height aim.y.
+            float t = Phase(age, flight);
+            float bounceSpan = PostSpan(flight, life, .85f);
+            float post = Phase(age - flight, bounceSpan);
+            Vector3 forward = FlatDirection(aim);
+            float contactDistance = age <= flight ? Mathf.Abs(age - flight)
+                : Mathf.Min(age - flight, Mathf.Abs(age - flight - bounceSpan));
+            float contact = 1 - Ease(Phase(contactDistance, .085f));
+            axis = Direction(forward + Vector3.up * (age <= flight
+                ? Mathf.Sin(t * Mathf.PI) * .18f : Mathf.Sin(post * Mathf.PI * 2) * .28f));
+            scale = Sized(p, age, life, new Vector3(1 + contact * .06f, 1 - contact * .14f, 1));
+            float floorCenter = ground + MeshBottomOffset(p.BodyMesh, Face(axis), scale) + .018f;
+            Vector3 contactPoint = new Vector3(aim.x, floorCenter, aim.z);
+            center = age <= flight
+                ? contactPoint * t + Vector3.up * (4 * t * (1 - t) * Mathf.Max(.28f, size * .8f))
+                : contactPoint + forward * (size * 2.6f * post)
+                    + Vector3.up * (4 * post * (1 - post) * Mathf.Max(.45f, size * .95f));
+            local = Vector3.zero;
+        }
+
+        // Oriented bounds support even a remeshed, non-centered pivot. It is a
+        // conservative floor clearance, not mesh/terrain collision simulation.
+        private static float MeshBottomOffset(Mesh mesh, Quaternion rotation, Vector3 scale)
+        {
+            Bounds bounds = mesh != null ? mesh.bounds : new Bounds(Vector3.zero, Vector3.one);
+            Vector3 e = bounds.extents;
+            float half = Mathf.Abs((rotation * Vector3.right).y * scale.x) * e.x
+                + Mathf.Abs((rotation * Vector3.up).y * scale.y) * e.y
+                + Mathf.Abs((rotation * Vector3.forward).y * scale.z) * e.z;
+            return half - (rotation * Vector3.Scale(bounds.center, scale)).y;
         }
 
         private static void DelayedStone(Vfx120Profile p, float age, float flight, float life,
