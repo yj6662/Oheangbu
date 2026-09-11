@@ -1,0 +1,11 @@
+{
+"id":"038_B179","version":"61","key":"NOK_038","glyph":"녹","title":"녹 · 화염 뒤 회복 문양",
+"audit":"single_play_B179.json","build":"fire_healing_038_build.json","scope":"nok61_scope_check.json","previous":"NO_037_REVIEW.html",
+"intro":"화염이 명중한 뒤 지면에 금빛 회복 문양이 펼쳐집니다. 허공 시전과 일반 명중 시각만으로 회복 영역은 나타나지 않습니다.",
+"changes":["KTP Pattern_156을 발동·타격·회복 문양으로 사용했다.","ConfirmFireHealingHit에 활성 대상과 접촉·지면 위치를 전달해야 회복 문양을 생성한다.","일반 명중 시계와 회복 확인을 분리했다. 대상 없는 요청은 거절한다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양3개/6tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak","fireHealingPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 적 판별·피해·HP 회복 연결은 미구현이다. 호출자가 적 명중을 확인한 뒤 표현 API를 호출해야 한다.","영상과 Play 검사에서는 진단용 대상을 전달한다. 실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.8초에 진단용 대상 명중을 제공한다. 별도 검사에서 명중 시계만 있는 허공 시전과 null 대상은 회복 문양을 만들지 않는 것을 확인했다.",
+"detailLabels":["화염 명중","회복 영역 문양"]
+}

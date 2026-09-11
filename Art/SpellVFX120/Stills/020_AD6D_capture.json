@@ -1,0 +1,39 @@
+{
+    "glyph": "국",
+    "title": "신목의 디딤",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T01:28:41.6614394Z",
+    "loadedRuntimeAssemblyMvid": "3d055876-9a44-4237-8ca7-37434d3bf2ed",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T01:05:20.8173918Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.44999998807907107,
+    "life": 4.400000095367432,
+    "sampledSeconds": [
+        0.30799999833106997,
+        0.9679999947547913,
+        1.847999930381775,
+        2.815999984741211,
+        3.9600000381469728
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

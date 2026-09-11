@@ -1,0 +1,29 @@
+{
+  "id": "002_AC01",
+  "version": "15",
+  "key": "GAK_002",
+  "glyph": "각",
+  "title": "얽힌 뿌리 매듭",
+  "audit": "botanical_play_audit.json",
+  "build": "botanical_build.json",
+  "scope": "giyeok_botanical_source_recheck.json",
+  "previous": "GA_001_REVIEW.html",
+  "before": "KTPIntegratedStills13/002_AC01_1.png",
+  "intro": "실제 Seyeonjeong 나무뿌리 다섯 개가 표적 둘레에서 드러난다.",
+  "changes": [
+    "실제 Seyeonjeong 나무뿌리 다섯 개가 표적 둘레에서 드러난다.",
+    "원본 모델·UV·수피/잎 텍스처와 KTP 발동·타격을 재사용한다. 기존 제작 버전15의 원본을 유지했다.",
+    "최종 취합 때 자산44개의 현재 파일 해시가 당시 검사와 동일함을 확인했다. 영상과 실제 Play는 버전15 기록이며 이번에 다시 촬영했다고 표기하지 않는다."
+  ],
+  "cost": "본체 16,525tris. KTP 입자 비용은 별도다. 공유 원본을 사용한다.",
+  "limits": [
+    "뿌리는 강체 원형이며 적 몸에 맞춰 굽는 스키닝·충돌 대응은 없다.",
+    "비주얼 최종 판정은 사용자 검토 대기다.",
+    "최신 공통 런타임에서의 재촬영·전체 실전 동작·동시 사용 성능은 미검증이다."
+  ],
+  "captureNote": "버전15의1280×720·24fps 영상. 진단용 목표/Path를 사용했다. 초기13과 채택15를 비교한다. 촬영과 당시 Play의 MVID가 일치한다.",
+  "detailLabels": [
+    "진행 단계",
+    "소멸 단계"
+  ]
+}

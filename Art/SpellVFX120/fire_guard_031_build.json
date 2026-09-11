@@ -1,0 +1,9 @@
+{
+    "glyph": "너",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_FIRE_CURTAIN_EXPLICIT_PARRY_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 2,
+    "scope": "Rising fire curtain and KTP motif; successful Fire parry signal adapter connected. No combat timing or reward changes."
+}

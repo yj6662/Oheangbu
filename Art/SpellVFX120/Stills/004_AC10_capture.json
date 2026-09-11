@@ -1,0 +1,39 @@
+{
+    "glyph": "감",
+    "title": "덩굴 봉인 씨방",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T01:28:38.9938803Z",
+    "loadedRuntimeAssemblyMvid": "3d055876-9a44-4237-8ca7-37434d3bf2ed",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T01:05:20.8173918Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.550000011920929,
+    "life": 3.0999999046325685,
+    "sampledSeconds": [
+        0.21699999272823335,
+        0.6819999814033508,
+        1.3019999265670777,
+        1.9839998483657838,
+        2.7899997234344484
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

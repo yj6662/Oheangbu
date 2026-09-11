@@ -35,9 +35,10 @@ namespace Oheangbu.Spellcraft
         public readonly float ImpactDelay; // 형성 딜레이 — Circle 판정 시각 / Path 차오름 / Volley 기준
         public readonly int Shots;         // Volley 발수
         public readonly float Interval;    // Volley 발사 간격
+        public readonly bool ScatterVolley;
 
         public AreaSpec(AreaShape shape, float angle, float radius, float length, float speed,
-            float impactDelay, int shots, float interval)
+            float impactDelay, int shots, float interval, bool scatterVolley = false)
         {
             Shape = shape;
             Angle = angle;
@@ -47,6 +48,7 @@ namespace Oheangbu.Spellcraft
             ImpactDelay = impactDelay;
             Shots = shots;
             Interval = interval;
+            ScatterVolley = scatterVolley;
         }
     }
 
@@ -84,10 +86,11 @@ namespace Oheangbu.Spellcraft
             public int VolleyShots;
             [Tooltip("Volley 발사 간격(s)")]
             public float VolleyInterval;
+            public bool ScatterVolley;
 
             public AreaSpec ToAreaSpec()
             {
-                return new AreaSpec(AreaShape, AreaAngle, AreaRadius, AreaLength, AreaSpeed, AreaImpactDelay, VolleyShots, VolleyInterval);
+                return new AreaSpec(AreaShape, AreaAngle, AreaRadius, AreaLength, AreaSpeed, AreaImpactDelay, VolleyShots, VolleyInterval, ScatterVolley);
             }
         }
 

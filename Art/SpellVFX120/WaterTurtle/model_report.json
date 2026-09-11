@@ -1,0 +1,19 @@
+{
+  "triangles": 16648,
+  "sourceActualTriangles": 16648,
+  "requestedPolycount": 16000,
+  "vertices": 8326,
+  "materials": 1,
+  "dimensions": [
+    2.365703582763672,
+    3.5999999046325684,
+    1.5913736820220947
+  ],
+  "sourceHashBefore": "2c176f1cb0c77cc5a84ca4ec118c83d7235da53039cd17c73e45c4353403704d",
+  "sourceHashAfter": "2c176f1cb0c77cc5a84ca4ec118c83d7235da53039cd17c73e45c4353403704d",
+  "meshyCredits": 35,
+  "rigged": false,
+  "edits": "Normalize to metres, centre/ground origin, weld coincident vertices, recalculate normals, smooth shading, preserve silhouette and UV, desaturate source BaseColor via Blender bake. No rig or sculpt redesign.",
+  "supportPlaneRigidRotationRadians": 0,
+  "clubShorteningM": 0
+}

@@ -1,0 +1,17 @@
+{
+    "family": "StoneGuardian",
+    "vertices": 1832,
+    "triangles": 2720,
+    "colors": 1832,
+    "bounds": {
+        "x": 0.9096143245697022,
+        "y": 1.0,
+        "z": 0.35693731904029848
+    },
+    "originalDimensions": {
+        "x": 0.9096142649650574,
+        "y": 0.9999999403953552,
+        "z": 0.3569372892379761
+    },
+    "transformDeterminant": 0.9999998807907105
+}

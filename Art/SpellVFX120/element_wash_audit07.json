@@ -1,0 +1,1823 @@
+{
+    "status": "PASS_EDIT_SPATIAL_NATIVE_BODY_CONTRACT_ONLY",
+    "capturedUtc": "2026-09-09T07:05:36.1907557Z",
+    "unityVersion": "6000.3.9f1",
+    "appMvid": "a0b2c72f-09e5-4166-bc57-acce5e0b42be",
+    "runtimeSourceSha256": "8D016E2FFC815B5C3150EA6C321658E766BFB3664B71F373294E7700B7D045A6",
+    "authority": "EDIT_PREVIEW_DIAGNOSTIC_AREA_PLANS_NOT_GAMEPLAY",
+    "scope": "Actual native carrier endpoints/width and Path position versus issued Delay/Speed/Length; live preview particles, expiry, reverse seek, re-Begin, fallbacks and source immutability.",
+    "limits": "Carrier anchors are not a bound on every particle/billboard. Rendered coverage/art, real Update/Destroy, performance and actual damage timing remain UNVERIFIED. NaN tests invoke only the new body-build rejection branch; legacy whole-effect invalid-input safety is NOT claimed.",
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "cleanupObserved": true,
+    "sourcesUnchanged": true,
+    "rows": [
+        {
+            "name": "spatial_clock_lifetime_reverse_rebegin_0",
+            "glyph": "노",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 1.7999999523162842,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.00001823902130126953,
+            "maximumLiveParticles": 56,
+            "maximumCapacity": 88,
+            "maximumSystems": 10,
+            "nativeConfigured": true,
+            "oldBodyAbsent": true,
+            "noGameplaySignals": true,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.003566678147763014,
+                        "y": 0.8999999761581421,
+                        "z": 0.007000000216066837
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.18000000715255738,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.003566678147763014,
+                        "y": 0.8999999761581421,
+                        "z": 0.007000000216066837
+                    },
+                    "liveParticles": 27,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.2900000214576721,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 1.7833393812179566,
+                        "y": 0.8999999761581421,
+                        "z": 3.5000009536743166
+                    },
+                    "liveParticles": 43,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.4000000059604645,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 51,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.6000000238418579,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 53,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.8999999761581421,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 56,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.6000000238418579,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 53,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.7999999523162842,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.899999976158142,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.6000000238418579,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 53,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.6000000238418579,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 53,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.6000000238418579,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 53,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.899999976158142,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.566678285598755,
+                        "y": 0.8999999761581421,
+                        "z": 7.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                }
+            ]
+        },
+        {
+            "name": "spatial_clock_lifetime_reverse_rebegin_1",
+            "glyph": "노",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 1.7999999523162842,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0000407099723815918,
+            "maximumLiveParticles": 59,
+            "maximumCapacity": 88,
+            "maximumSystems": 10,
+            "nativeConfigured": true,
+            "oldBodyAbsent": true,
+            "noGameplaySignals": true,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.0008602363523095846,
+                        "y": 0.8999999761581421,
+                        "z": 0.0030000004917383196
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.5299999713897705,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.0008602363523095846,
+                        "y": 0.8999999761581421,
+                        "z": 0.0030000004917383196
+                    },
+                    "liveParticles": 57,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.6399999856948853,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.4301181435585022,
+                        "y": 0.8999999761581421,
+                        "z": 1.5000003576278687
+                    },
+                    "liveParticles": 54,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.75,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 59,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.949999988079071,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 58,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.25,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 45,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.949999988079071,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 58,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.7999999523162842,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.899999976158142,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.949999988079071,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 58,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.949999988079071,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 58,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.949999988079071,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 58,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.899999976158142,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                }
+            ]
+        },
+        {
+            "name": "spatial_clock_lifetime_reverse_rebegin_2",
+            "glyph": "노",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 1.7999999523162842,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0000407099723815918,
+            "maximumLiveParticles": 58,
+            "maximumCapacity": 88,
+            "maximumSystems": 10,
+            "nativeConfigured": true,
+            "oldBodyAbsent": true,
+            "noGameplaySignals": true,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 30,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.5,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 58,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 30,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.7999999523162842,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.899999976158142,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 30,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 30,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 30,
+                    "systems": 10,
+                    "capacity": 88
+                },
+                {
+                    "age": 1.899999976158142,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9000244140625,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 0.8602362871170044,
+                        "y": 0.8999999761581421,
+                        "z": 3.0000007152557375
+                    },
+                    "liveParticles": 0,
+                    "systems": 10,
+                    "capacity": 88
+                }
+            ]
+        },
+        {
+            "name": "missing_plan_fallback",
+            "glyph": "노",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 0.0,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0,
+            "maximumLiveParticles": 0,
+            "maximumCapacity": 0,
+            "maximumSystems": 0,
+            "nativeConfigured": false,
+            "oldBodyAbsent": false,
+            "noGameplaySignals": false,
+            "planUnchanged": true,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "wrong_shape_fallback",
+            "glyph": "노",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 0.0,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0,
+            "maximumLiveParticles": 0,
+            "maximumCapacity": 0,
+            "maximumSystems": 0,
+            "nativeConfigured": false,
+            "oldBodyAbsent": false,
+            "noGameplaySignals": false,
+            "planUnchanged": true,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "nan_new_body_rejection_only",
+            "glyph": "노",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "Rejected new native body only: Point,Direction,Length,Delay,Angle; legacy malformed Begin was not exercised.",
+            "life": 0.0,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0,
+            "maximumLiveParticles": 0,
+            "maximumCapacity": 0,
+            "maximumSystems": 0,
+            "nativeConfigured": false,
+            "oldBodyAbsent": false,
+            "noGameplaySignals": false,
+            "planUnchanged": false,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "spatial_clock_lifetime_reverse_rebegin_0",
+            "glyph": "모",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 3.433333396911621,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.000040531158447265625,
+            "maximumLiveParticles": 126,
+            "maximumCapacity": 154,
+            "maximumSystems": 7,
+            "nativeConfigured": true,
+            "oldBodyAbsent": true,
+            "noGameplaySignals": true,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 0.18000000715255738,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 48,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 0.2900000214576721,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 70,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 0.4000000059604645,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 88,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.5666667222976685,
+                    "carrierWorldPosition": {
+                        "x": 1005.1063232421875,
+                        "y": 1000.9200439453125,
+                        "z": 1000.7952270507813
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 126,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 2.7333333492279054,
+                    "carrierWorldPosition": {
+                        "x": 1007.2127075195313,
+                        "y": 1000.9200439453125,
+                        "z": 1003.5904541015625
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 118,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.5666667222976685,
+                    "carrierWorldPosition": {
+                        "x": 1005.1063232421875,
+                        "y": 1000.9200439453125,
+                        "z": 1000.7952270507813
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 126,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.433333396911621,
+                    "carrierWorldPosition": {
+                        "x": 1007.2127075195313,
+                        "y": 1000.9200439453125,
+                        "z": 1003.5904541015625
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.5333333015441896,
+                    "carrierWorldPosition": {
+                        "x": 1007.2127075195313,
+                        "y": 1000.9200439453125,
+                        "z": 1003.5904541015625
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.5666667222976685,
+                    "carrierWorldPosition": {
+                        "x": 1005.1063232421875,
+                        "y": 1000.9200439453125,
+                        "z": 1000.7952270507813
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 126,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.5666667222976685,
+                    "carrierWorldPosition": {
+                        "x": 1005.1063232421875,
+                        "y": 1000.9200439453125,
+                        "z": 1000.7952270507813
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 126,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.5666667222976685,
+                    "carrierWorldPosition": {
+                        "x": 1005.1063232421875,
+                        "y": 1000.9200439453125,
+                        "z": 1000.7952270507813
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 126,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.5333333015441896,
+                    "carrierWorldPosition": {
+                        "x": 1007.2127075195313,
+                        "y": 1000.9200439453125,
+                        "z": 1003.5904541015625
+                    },
+                    "carrierScale": {
+                        "x": 3.1999998092651369,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                }
+            ]
+        },
+        {
+            "name": "spatial_clock_lifetime_reverse_rebegin_1",
+            "glyph": "모",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 3.757692337036133,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.00003921985626220703,
+            "maximumLiveParticles": 121,
+            "maximumCapacity": 154,
+            "maximumSystems": 7,
+            "nativeConfigured": true,
+            "oldBodyAbsent": true,
+            "noGameplaySignals": true,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 0.5299999713897705,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 105,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 0.6399999856948853,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 104,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 0.75,
+                    "carrierWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1000.9200439453125,
+                        "z": 998.0
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 105,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.9038461446762086,
+                    "carrierWorldPosition": {
+                        "x": 1001.6755981445313,
+                        "y": 1000.9200439453125,
+                        "z": 998.7042236328125
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 109,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.057692289352417,
+                    "carrierWorldPosition": {
+                        "x": 1000.3511352539063,
+                        "y": 1000.9200439453125,
+                        "z": 999.4083862304688
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 121,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.9038461446762086,
+                    "carrierWorldPosition": {
+                        "x": 1001.6755981445313,
+                        "y": 1000.9200439453125,
+                        "z": 998.7042236328125
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 109,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.757692337036133,
+                    "carrierWorldPosition": {
+                        "x": 1000.3511352539063,
+                        "y": 1000.9200439453125,
+                        "z": 999.4083862304688
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.857692241668701,
+                    "carrierWorldPosition": {
+                        "x": 1000.3511352539063,
+                        "y": 1000.9200439453125,
+                        "z": 999.4083862304688
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.9038461446762086,
+                    "carrierWorldPosition": {
+                        "x": 1001.6755981445313,
+                        "y": 1000.9200439453125,
+                        "z": 998.7042236328125
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 109,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.9038461446762086,
+                    "carrierWorldPosition": {
+                        "x": 1001.6755981445313,
+                        "y": 1000.9200439453125,
+                        "z": 998.7042236328125
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 109,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 1.9038461446762086,
+                    "carrierWorldPosition": {
+                        "x": 1001.6755981445313,
+                        "y": 1000.9200439453125,
+                        "z": 998.7042236328125
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 109,
+                    "systems": 7,
+                    "capacity": 154
+                },
+                {
+                    "age": 3.857692241668701,
+                    "carrierWorldPosition": {
+                        "x": 1000.3511352539063,
+                        "y": 1000.9200439453125,
+                        "z": 999.4083862304688
+                    },
+                    "carrierScale": {
+                        "x": 1.3000001907348633,
+                        "y": 1.0,
+                        "z": 1.000000238418579
+                    },
+                    "liveParticles": 0,
+                    "systems": 7,
+                    "capacity": 154
+                }
+            ]
+        },
+        {
+            "name": "missing_plan_fallback",
+            "glyph": "모",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 0.0,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0,
+            "maximumLiveParticles": 0,
+            "maximumCapacity": 0,
+            "maximumSystems": 0,
+            "nativeConfigured": false,
+            "oldBodyAbsent": false,
+            "noGameplaySignals": false,
+            "planUnchanged": true,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "wrong_shape_fallback",
+            "glyph": "모",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 0.0,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0,
+            "maximumLiveParticles": 0,
+            "maximumCapacity": 0,
+            "maximumSystems": 0,
+            "nativeConfigured": false,
+            "oldBodyAbsent": false,
+            "noGameplaySignals": false,
+            "planUnchanged": true,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "nan_new_body_rejection_only",
+            "glyph": "모",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "Rejected new native body only: Point,Direction,Length,Delay,Radius,Speed; legacy malformed Begin was not exercised.",
+            "life": 0.0,
+            "maximumPositionError": 0.0,
+            "maximumExtentError": 0.0,
+            "maximumLiveParticles": 0,
+            "maximumCapacity": 0,
+            "maximumSystems": 0,
+            "nativeConfigured": false,
+            "oldBodyAbsent": false,
+            "noGameplaySignals": false,
+            "planUnchanged": false,
+            "profileUnchanged": false,
+            "samples": []
+        }
+    ],
+    "sources": [
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_61.mat",
+            "diskBefore": "4F3FC2CDDF6E545BCDE88D65C8374129B12DA9A2960FD96087CA8A07B80484CA",
+            "diskAfter": "4F3FC2CDDF6E545BCDE88D65C8374129B12DA9A2960FD96087CA8A07B80484CA",
+            "dependencyBefore": "30260fbcddde85396614f468fea11c04",
+            "dependencyAfter": "30260fbcddde85396614f468fea11c04",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/037_B178.asset",
+            "diskBefore": "C8E875CBC94654F367B15E0CB19AF067FE03A224D65F739415230FDD2107E7C5",
+            "diskAfter": "C8E875CBC94654F367B15E0CB19AF067FE03A224D65F739415230FDD2107E7C5",
+            "dependencyBefore": "73b6eaa32fb77b5c63a93b61de38107a",
+            "dependencyAfter": "73b6eaa32fb77b5c63a93b61de38107a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_61.png",
+            "diskBefore": "99D9647CE25D4ED1D0C3BD06A33D9B8823F2D7E6200AE2DF82BECE938522125B",
+            "diskAfter": "99D9647CE25D4ED1D0C3BD06A33D9B8823F2D7E6200AE2DF82BECE938522125B",
+            "dependencyBefore": "693e21cfd83ba4c91a60a125a0fcae5f",
+            "dependencyAfter": "693e21cfd83ba4c91a60a125a0fcae5f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Mask.png",
+            "diskBefore": "656C44C5EA63A72A25351B3FD9607EAEF0EC53E167D5889AA88730F8F3CEB051",
+            "diskAfter": "656C44C5EA63A72A25351B3FD9607EAEF0EC53E167D5889AA88730F8F3CEB051",
+            "dependencyBefore": "f506064999bf3ed79673dbb7a77426c9",
+            "dependencyAfter": "f506064999bf3ed79673dbb7a77426c9",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Shaders/SpellVFX120/InkPigment.shader",
+            "diskBefore": "931DCA5B27594C3C8D6524E88FCED992C2417778BE29A7B7EEAB66926A511F98",
+            "diskAfter": "931DCA5B27594C3C8D6524E88FCED992C2417778BE29A7B7EEAB66926A511F98",
+            "dependencyBefore": "d80e6f0559884c8d5193d3c7cb33cd17",
+            "dependencyAfter": "d80e6f0559884c8d5193d3c7cb33cd17",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Catalog/KTP_Cast_Fire.prefab",
+            "diskBefore": "22FB52F610DC6C4391676C0F77EA34A98505C1C3A06EA89B9646E273CF7AE04B",
+            "diskAfter": "22FB52F610DC6C4391676C0F77EA34A98505C1C3A06EA89B9646E273CF7AE04B",
+            "dependencyBefore": "be96e386d9ec44ecf616af3ac8736645",
+            "dependencyAfter": "be96e386d9ec44ecf616af3ac8736645",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Aura.png",
+            "diskBefore": "8D2DF4E91A19F722FADAB962285FA8321F32482BA7C4654FC327B94258CFB74D",
+            "diskAfter": "8D2DF4E91A19F722FADAB962285FA8321F32482BA7C4654FC327B94258CFB74D",
+            "dependencyBefore": "cd485bf1cc2181610bde824654b070f8",
+            "dependencyAfter": "cd485bf1cc2181610bde824654b070f8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph",
+            "diskBefore": "C4BFA24297865B43A1B8A806E5003479A665352DF4854F71D99AF258A26FDFE0",
+            "diskAfter": "C4BFA24297865B43A1B8A806E5003479A665352DF4854F71D99AF258A26FDFE0",
+            "dependencyBefore": "6e13308860cfabfd80f4e30f2c0ff2f8",
+            "dependencyAfter": "6e13308860cfabfd80f4e30f2c0ff2f8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_50.png",
+            "diskBefore": "D9E89493B347D8C7B0E95CD2B563F5E1B14AC3D21FB30A8612257C2B2771A67C",
+            "diskAfter": "D9E89493B347D8C7B0E95CD2B563F5E1B14AC3D21FB30A8612257C2B2771A67C",
+            "dependencyBefore": "0f4a07db658c0fb606fa707714b19c8c",
+            "dependencyAfter": "0f4a07db658c0fb606fa707714b19c8c",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Mask_03.png",
+            "diskBefore": "EAA98E13D9430AE395C215DA74A9B1072BC20B3F2B65C1B8FEFAA2CDE515EFD7",
+            "diskAfter": "EAA98E13D9430AE395C215DA74A9B1072BC20B3F2B65C1B8FEFAA2CDE515EFD7",
+            "dependencyBefore": "7399626fad5b5a47d6ad51d8eb5e6ac0",
+            "dependencyAfter": "7399626fad5b5a47d6ad51d8eb5e6ac0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/Light_00.mat",
+            "diskBefore": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "diskAfter": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "dependencyBefore": "4653a8a55f8cf600f83fd102dd5c7a95",
+            "dependencyAfter": "4653a8a55f8cf600f83fd102dd5c7a95",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/SpellVFX120/Vfx120Profile.cs",
+            "diskBefore": "905F28CA3BA2B2883A819500E26060622FC42CCA900288763CA6FB48FC56A41E",
+            "diskAfter": "905F28CA3BA2B2883A819500E26060622FC42CCA900288763CA6FB48FC56A41E",
+            "dependencyBefore": "fcaa3471e56e34923506b62e134da3e0",
+            "dependencyAfter": "fcaa3471e56e34923506b62e134da3e0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset",
+            "diskBefore": "5680A18A78615D811469F13BA72121332434DA79FAB27BD8E950A54F18037B7A",
+            "diskAfter": "5680A18A78615D811469F13BA72121332434DA79FAB27BD8E950A54F18037B7A",
+            "dependencyBefore": "c97e036438bb15047bb9e3c99eb9dfea",
+            "dependencyAfter": "c97e036438bb15047bb9e3c99eb9dfea",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/RingWave.png",
+            "diskBefore": "EDD89519849651B158B4CA200A69FA2586DAAE4CA4ED0B97CB4EC3D33A05DF4D",
+            "diskAfter": "EDD89519849651B158B4CA200A69FA2586DAAE4CA4ED0B97CB4EC3D33A05DF4D",
+            "dependencyBefore": "fed19559f03b707c060c2c415dab66af",
+            "dependencyAfter": "fed19559f03b707c060c2c415dab66af",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/line.png",
+            "diskBefore": "F507D1B6DBEBA63D0BE341D6439D4FB0DCEC8E04BEE7CA5B97A9AE10376C6429",
+            "diskAfter": "F507D1B6DBEBA63D0BE341D6439D4FB0DCEC8E04BEE7CA5B97A9AE10376C6429",
+            "dependencyBefore": "30c1d9a277ef76e59d1ee8be30e57c90",
+            "dependencyAfter": "30c1d9a277ef76e59d1ee8be30e57c90",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.shadergraph/Editor/Importers/ShaderGraphMetadata.cs",
+            "diskBefore": "C86716F1ECC1257883B2C67DDCB00D612D7B302E215E8BBAEB8E919F16202385",
+            "diskAfter": "C86716F1ECC1257883B2C67DDCB00D612D7B302E215E8BBAEB8E919F16202385",
+            "dependencyBefore": "f8071be88d95205b55ba6341c44e0dff",
+            "dependencyAfter": "f8071be88d95205b55ba6341c44e0dff",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Ink.mat",
+            "diskBefore": "8BC892C667B1957BE5303C84A748754F329CCC3A5CB44C3E30181BC346568EE1",
+            "diskAfter": "8BC892C667B1957BE5303C84A748754F329CCC3A5CB44C3E30181BC346568EE1",
+            "dependencyBefore": "bf98793a7213124b74305095581f6510",
+            "dependencyAfter": "bf98793a7213124b74305095581f6510",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/RingWave.mat",
+            "diskBefore": "FECEC728E8A8C69E6849FFB9F1811A18CC84DE7AB1C10691DAAECB1FE4495783",
+            "diskAfter": "FECEC728E8A8C69E6849FFB9F1811A18CC84DE7AB1C10691DAAECB1FE4495783",
+            "dependencyBefore": "61c6e42ffcd24a07e37cf0d9275e4fb1",
+            "dependencyAfter": "61c6e42ffcd24a07e37cf0d9275e4fb1",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/PF_KTP_FlameCone.prefab",
+            "diskBefore": "656FC87E76DE090FCF9BC67E1BE345EACEF44CC3CD6367ECDA219AABBE6FF8A6",
+            "diskAfter": "656FC87E76DE090FCF9BC67E1BE345EACEF44CC3CD6367ECDA219AABBE6FF8A6",
+            "dependencyBefore": "135dce09b76588ae6c6b2372644813a0",
+            "dependencyAfter": "135dce09b76588ae6c6b2372644813a0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Noise.png",
+            "diskBefore": "6D93FC86873DDF709B091801370102FEC83E3599F1AD78F4E4A0F2C3CE332F96",
+            "diskAfter": "6D93FC86873DDF709B091801370102FEC83E3599F1AD78F4E4A0F2C3CE332F96",
+            "dependencyBefore": "0d606b0de1edecd7a64c5b02134fde92",
+            "dependencyAfter": "0d606b0de1edecd7a64c5b02134fde92",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll.shadergraph",
+            "diskBefore": "A958EDCD43F934DB95F9CAB3FF5D9B38DA77C2D8B65DDDB66C7054FCFFA93C42",
+            "diskAfter": "A958EDCD43F934DB95F9CAB3FF5D9B38DA77C2D8B65DDDB66C7054FCFFA93C42",
+            "dependencyBefore": "fca7a611e4634e5fab188405310741f8",
+            "dependencyAfter": "fca7a611e4634e5fab188405310741f8",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Editor/AssetVersion.cs",
+            "diskBefore": "96ED27E15286CDA1FDADA6923E804887B6447A905B38360E0F5561F79CD0344C",
+            "diskAfter": "96ED27E15286CDA1FDADA6923E804887B6447A905B38360E0F5561F79CD0344C",
+            "dependencyBefore": "86773f09236e0883a920d40a1fe555e0",
+            "dependencyAfter": "86773f09236e0883a920d40a1fe555e0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_SoftEarthWash.mat",
+            "diskBefore": "9CA61DDD1531A5A11072BAEC49E6497BA60E75ABC83F0360DCB5B1B5C2445765",
+            "diskAfter": "9CA61DDD1531A5A11072BAEC49E6497BA60E75ABC83F0360DCB5B1B5C2445765",
+            "dependencyBefore": "d7ae90e7c905e4a4db2019831f51c2f7",
+            "dependencyAfter": "d7ae90e7c905e4a4db2019831f51c2f7",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/TrailLight.png",
+            "diskBefore": "F3D421A2226501C13E7F9C0EBA8E59893D8C56902FACDE68BC78707F98CBA6C4",
+            "diskAfter": "F3D421A2226501C13E7F9C0EBA8E59893D8C56902FACDE68BC78707F98CBA6C4",
+            "dependencyBefore": "4cf12e13e4685d52e5866eb41951f305",
+            "dependencyAfter": "4cf12e13e4685d52e5866eb41951f305",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset",
+            "diskBefore": "1C9F4D9C2C2F7859741544FF4675AF9BC2143681801395DD941E4B0886FE18E7",
+            "diskAfter": "1C9F4D9C2C2F7859741544FF4675AF9BC2143681801395DD941E4B0886FE18E7",
+            "dependencyBefore": "7e546de9a51d680d701d101e4e186e73",
+            "dependencyAfter": "7e546de9a51d680d701d101e4e186e73",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/par_Fire.png",
+            "diskBefore": "369845CEF9CE2CC35F5B2A16B8AF53BF7DE56C7693FE28BFDEFC969B42776392",
+            "diskAfter": "369845CEF9CE2CC35F5B2A16B8AF53BF7DE56C7693FE28BFDEFC969B42776392",
+            "dependencyBefore": "b09a63b63071777fbdd62fceff268fd5",
+            "dependencyAfter": "b09a63b63071777fbdd62fceff268fd5",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.shadergraph/Editor/Importers/ShaderGraphImporter.cs",
+            "diskBefore": "572A4DD745EB8D77AFE20F19DC34DA1B4CA7E6C13A6E74FE7287F75DBF04108F",
+            "diskAfter": "572A4DD745EB8D77AFE20F19DC34DA1B4CA7E6C13A6E74FE7287F75DBF04108F",
+            "dependencyBefore": "3cc5ef258c4352df79526e46b58e727b",
+            "dependencyAfter": "3cc5ef258c4352df79526e46b58e727b",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/ExlosionAura_02.mat",
+            "diskBefore": "38D9F560D3FAFB03BD52C20834E11B07F09A61CB8BF9FE8F77D0878D88B1029A",
+            "diskAfter": "38D9F560D3FAFB03BD52C20834E11B07F09A61CB8BF9FE8F77D0878D88B1029A",
+            "dependencyBefore": "7aeb5066435c2063020366a738ff565c",
+            "dependencyAfter": "7aeb5066435c2063020366a738ff565c",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Prefabs/037_B178.prefab",
+            "diskBefore": "579A50CE6E378AEC995BE1F5401E9D464301FBF42036C5C86994229BC8220AC6",
+            "diskAfter": "579A50CE6E378AEC995BE1F5401E9D464301FBF42036C5C86994229BC8220AC6",
+            "dependencyBefore": "2fc66651a706dd4f635a2e8fbf8d46c1",
+            "dependencyAfter": "2fc66651a706dd4f635a2e8fbf8d46c1",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/ExlosionAura_00.mat",
+            "diskBefore": "325F519779E432FE45612FE85D0928C4C76C0E5C5A988716BA7F151F5078F7F8",
+            "diskAfter": "325F519779E432FE45612FE85D0928C4C76C0E5C5A988716BA7F151F5078F7F8",
+            "dependencyBefore": "1e26bf5bef800a0d68d912815e032366",
+            "dependencyAfter": "1e26bf5bef800a0d68d912815e032366",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Shader/AdditiveBlend_Scroll.shadergraph",
+            "diskBefore": "9674E808A871D9A1E599FBE5E7795B47A43D8DA0E94CC5A0B1A20078F84ADD2B",
+            "diskAfter": "9674E808A871D9A1E599FBE5E7795B47A43D8DA0E94CC5A0B1A20078F84ADD2B",
+            "dependencyBefore": "9681c9bdf1159e8adbadb44bbfe1d0b0",
+            "dependencyAfter": "9681c9bdf1159e8adbadb44bbfe1d0b0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+            "diskBefore": "1A5B23116972911A1DD866C85B4B38F1AAD5967D121655EDB62928DDACE0F9F9",
+            "diskAfter": "1A5B23116972911A1DD866C85B4B38F1AAD5967D121655EDB62928DDACE0F9F9",
+            "dependencyBefore": "5d37e9e47f90426d83e32b5797d4408d",
+            "dependencyAfter": "5d37e9e47f90426d83e32b5797d4408d",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/Light_01.mat",
+            "diskBefore": "A582A29BB0F81DEA653E3EE284049AEDFF3F3BAFED7759C76A238DD18B558621",
+            "diskAfter": "A582A29BB0F81DEA653E3EE284049AEDFF3F3BAFED7759C76A238DD18B558621",
+            "dependencyBefore": "0857e891d364bca31ea685dea7fa9b32",
+            "dependencyAfter": "0857e891d364bca31ea685dea7fa9b32",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_50.mat",
+            "diskBefore": "1CC1BA6B5F18CB89B6CC02EAEF2FA4D3B1A6D1DDE5986E4B3E2567F6413E49A7",
+            "diskAfter": "1CC1BA6B5F18CB89B6CC02EAEF2FA4D3B1A6D1DDE5986E4B3E2567F6413E49A7",
+            "dependencyBefore": "df1ed1e1f3a4b303caaf8d2bf89eb6a4",
+            "dependencyAfter": "df1ed1e1f3a4b303caaf8d2bf89eb6a4",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Meshs/line.FBX",
+            "diskBefore": "7BE5DD17080AA4C8C0360ABBB08E0B4971140569CF8C5BE832F30BC1C429693B",
+            "diskAfter": "7BE5DD17080AA4C8C0360ABBB08E0B4971140569CF8C5BE832F30BC1C429693B",
+            "dependencyBefore": "3397131d8240c018d691205277efe23e",
+            "dependencyAfter": "3397131d8240c018d691205277efe23e",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png",
+            "diskBefore": "DD99969F5086453C35F74C8F056EF1A10360A4F1D21DD26E071D719B007133D0",
+            "diskAfter": "DD99969F5086453C35F74C8F056EF1A10360A4F1D21DD26E071D719B007133D0",
+            "dependencyBefore": "7d43e349c8e206401b0629158462c8a3",
+            "dependencyAfter": "7d43e349c8e206401b0629158462c8a3",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_PigmentDust.mat",
+            "diskBefore": "C557730803585FB94447256C69871A467439B6ED61EF94AAEFCF1F540C0E5547",
+            "diskAfter": "C557730803585FB94447256C69871A467439B6ED61EF94AAEFCF1F540C0E5547",
+            "dependencyBefore": "4082021d7fb6ffda99eb18d0dddcf4d8",
+            "dependencyAfter": "4082021d7fb6ffda99eb18d0dddcf4d8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/star_00.png",
+            "diskBefore": "C8943E32ACB8DA9224EA74AC6EB29504A3BD9CF9F83566E470082419CBC5EF13",
+            "diskAfter": "C8943E32ACB8DA9224EA74AC6EB29504A3BD9CF9F83566E470082419CBC5EF13",
+            "dependencyBefore": "75855deb885db25ed22e8faa37a53164",
+            "dependencyAfter": "75855deb885db25ed22e8faa37a53164",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly04-06/Line.mat",
+            "diskBefore": "D79CD46F0C8498C4066D5F6E808C6DA59492D242D31247A5456334CF2322DDA9",
+            "diskAfter": "D79CD46F0C8498C4066D5F6E808C6DA59492D242D31247A5456334CF2322DDA9",
+            "dependencyBefore": "cc08ca3e137632da6d70613afb4868ee",
+            "dependencyAfter": "cc08ca3e137632da6d70613afb4868ee",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Noise_01.png",
+            "diskBefore": "9F604130D401F7CD028F15EEA095EA98527ADF99F5CF0FC3E71441BDCA1BFFCE",
+            "diskAfter": "9F604130D401F7CD028F15EEA095EA98527ADF99F5CF0FC3E71441BDCA1BFFCE",
+            "dependencyBefore": "accd8d4f14aff780fa79ecd40b84bfbc",
+            "dependencyAfter": "accd8d4f14aff780fa79ecd40b84bfbc",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly04-06/par_line.mat",
+            "diskBefore": "4950954C75C3301F22258890A4E9A2A8DFD7A968BC1452C6A7EAB244D685D4AB",
+            "diskAfter": "4950954C75C3301F22258890A4E9A2A8DFD7A968BC1452C6A7EAB244D685D4AB",
+            "dependencyBefore": "221eb511a7b0cb829105cba6e6e99602",
+            "dependencyAfter": "221eb511a7b0cb829105cba6e6e99602",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly04-06/pointLight.mat",
+            "diskBefore": "B38B56A08CC1E728BCC616DD7BD26AC82B91041A3A9910FF49734918D8119E3E",
+            "diskAfter": "B38B56A08CC1E728BCC616DD7BD26AC82B91041A3A9910FF49734918D8119E3E",
+            "dependencyBefore": "4f63ed956811c17a4c953645cbea5fcd",
+            "dependencyAfter": "4f63ed956811c17a4c953645cbea5fcd",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Meshs/ShockWave.FBX",
+            "diskBefore": "9296907E5F54CE8FE916EABAF748C4546B2A2611ADD51D30BEA0CB8250980C8E",
+            "diskAfter": "9296907E5F54CE8FE916EABAF748C4546B2A2611ADD51D30BEA0CB8250980C8E",
+            "dependencyBefore": "8f79f89fea0f390f1bf3b17493400845",
+            "dependencyAfter": "8f79f89fea0f390f1bf3b17493400845",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.cs",
+            "diskBefore": "B45D14E77A07B189B066FD70AD6E612E6111700527B35F955B47E1D932569199",
+            "diskAfter": "B45D14E77A07B189B066FD70AD6E612E6111700527B35F955B47E1D932569199",
+            "dependencyBefore": "e4e0663f2234aca4a12f4278e4fb9bed",
+            "dependencyAfter": "e4e0663f2234aca4a12f4278e4fb9bed",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat",
+            "diskBefore": "B25BD1FC30E102A8A1E83916F35DF36AB71D30B1F6386969ED19F0D1BC0FB18E",
+            "diskAfter": "B25BD1FC30E102A8A1E83916F35DF36AB71D30B1F6386969ED19F0D1BC0FB18E",
+            "dependencyBefore": "5b1afe28774acaa4194654c3da251cb0",
+            "dependencyAfter": "5b1afe28774acaa4194654c3da251cb0",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Runtime/Materials/ParticlesUnlit.mat",
+            "diskBefore": "9AD30A782B59F1D14AF9323078D5F85C56F6AECE4F6B849FCCB6563573A0DED1",
+            "diskAfter": "9AD30A782B59F1D14AF9323078D5F85C56F6AECE4F6B849FCCB6563573A0DED1",
+            "dependencyBefore": "aa862bff269d59d834f13819255630e6",
+            "dependencyAfter": "aa862bff269d59d834f13819255630e6",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly04-06/Light_00.mat",
+            "diskBefore": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "diskAfter": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "dependencyBefore": "69ee7c890286fefa16baf54c9af3cb0b",
+            "dependencyAfter": "69ee7c890286fefa16baf54c9af3cb0b",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlit.shader",
+            "diskBefore": "1CD8356CF8CB67F065B7D2F67B071190A675A98C8CDEA5A45028C0CB3C9E1E18",
+            "diskAfter": "1CD8356CF8CB67F065B7D2F67B071190A675A98C8CDEA5A45028C0CB3C9E1E18",
+            "dependencyBefore": "fdbab01af904257d9faff67c1ab01e08",
+            "dependencyAfter": "fdbab01af904257d9faff67c1ab01e08",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_110.mat",
+            "diskBefore": "4860E10555A72235802B527389AA0A056B959BA35AE9667ACF55C12013C7B0CA",
+            "diskAfter": "4860E10555A72235802B527389AA0A056B959BA35AE9667ACF55C12013C7B0CA",
+            "dependencyBefore": "9f977463a83b40be14c445b83dea79d7",
+            "dependencyAfter": "9f977463a83b40be14c445b83dea79d7",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/ExlosionAura_01.mat",
+            "diskBefore": "7EDF64C7788937AF63A8B824848C5F13364D47A743B85D55358B65D5C3A77826",
+            "diskAfter": "7EDF64C7788937AF63A8B824848C5F13364D47A743B85D55358B65D5C3A77826",
+            "dependencyBefore": "1b292fa22c7c3b37656a38282fdf7079",
+            "dependencyAfter": "1b292fa22c7c3b37656a38282fdf7079",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly03-01/par_line.mat",
+            "diskBefore": "4950954C75C3301F22258890A4E9A2A8DFD7A968BC1452C6A7EAB244D685D4AB",
+            "diskAfter": "4950954C75C3301F22258890A4E9A2A8DFD7A968BC1452C6A7EAB244D685D4AB",
+            "dependencyBefore": "32e4c3223407e3870e93fd2e1c4b0a49",
+            "dependencyAfter": "32e4c3223407e3870e93fd2e1c4b0a49",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Catalog/KTP_Impact_Fire.prefab",
+            "diskBefore": "9480BE921EB4A024A769EB2E2614DE227DD82F2BB81620F23A107B0719BC6B38",
+            "diskAfter": "9480BE921EB4A024A769EB2E2614DE227DD82F2BB81620F23A107B0719BC6B38",
+            "dependencyBefore": "8e35eca9779b87471a969cfbb86ceabd",
+            "dependencyAfter": "8e35eca9779b87471a969cfbb86ceabd",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/UniversalMetadata.cs",
+            "diskBefore": "88083201BA4B354BDE926DECEDD11354A32B41A69E49EFCD08EABE095CB15A5A",
+            "diskAfter": "88083201BA4B354BDE926DECEDD11354A32B41A69E49EFCD08EABE095CB15A5A",
+            "dependencyBefore": "e26a8175135b417ece24fef629a33623",
+            "dependencyAfter": "e26a8175135b417ece24fef629a33623",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat",
+            "diskBefore": "A79F6EE52F6C31FC482ABF73B04F915EA3DFF0CBFE8EE7351E4F5A57AA94E8F1",
+            "diskAfter": "A79F6EE52F6C31FC482ABF73B04F915EA3DFF0CBFE8EE7351E4F5A57AA94E8F1",
+            "dependencyBefore": "960643f9fe6857c5d72b0d2fd2085c0e",
+            "dependencyAfter": "960643f9fe6857c5d72b0d2fd2085c0e",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader",
+            "diskBefore": "E081D792DFFE8C5D94DDB681A61B7AB6474880E605BA97116F202AD6F5B3BEFD",
+            "diskAfter": "E081D792DFFE8C5D94DDB681A61B7AB6474880E605BA97116F202AD6F5B3BEFD",
+            "dependencyBefore": "d79f5afb7032dc6d2e744e5c2d7dcf35",
+            "dependencyAfter": "d79f5afb7032dc6d2e744e5c2d7dcf35",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/Ring_Energy_02.mat",
+            "diskBefore": "905A27408A81460E1C010800B16A18FD0A30C6A7B489B8956696467EB72475C7",
+            "diskAfter": "905A27408A81460E1C010800B16A18FD0A30C6A7B489B8956696467EB72475C7",
+            "dependencyBefore": "62cc5934ea60a17b8c3798250da3f773",
+            "dependencyAfter": "62cc5934ea60a17b8c3798250da3f773",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_147.png",
+            "diskBefore": "EFE9C419BE1170FDB93CDACF896C802750D3FB9F08AB9C9590E5802CE405E0C8",
+            "diskAfter": "EFE9C419BE1170FDB93CDACF896C802750D3FB9F08AB9C9590E5802CE405E0C8",
+            "dependencyBefore": "660a6dc9e991010e84cfb25484976aa1",
+            "dependencyAfter": "660a6dc9e991010e84cfb25484976aa1",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/par_line.mat",
+            "diskBefore": "259AD4E51964633E68F5A766309EAEFFD69284BCC6DE32F3B6BD559789049725",
+            "diskAfter": "259AD4E51964633E68F5A766309EAEFFD69284BCC6DE32F3B6BD559789049725",
+            "dependencyBefore": "bf65c1ce47b7b2e1361c00d2ce1c675a",
+            "dependencyAfter": "bf65c1ce47b7b2e1361c00d2ce1c675a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/ExlosionAura_00_sup.mat",
+            "diskBefore": "07E7A682E873B58C4F52CF54A6718FC1B5C4E3B62BEDFF644E725FEE557309CB",
+            "diskAfter": "07E7A682E873B58C4F52CF54A6718FC1B5C4E3B62BEDFF644E725FEE557309CB",
+            "dependencyBefore": "e54eefaff503342db6017e23168d9fc4",
+            "dependencyAfter": "e54eefaff503342db6017e23168d9fc4",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Mask_04.png",
+            "diskBefore": "74BD99DBCB3B103DFDB98A1EA71F3D427875720CF9BBC3D28E4F0526E08835E1",
+            "diskAfter": "74BD99DBCB3B103DFDB98A1EA71F3D427875720CF9BBC3D28E4F0526E08835E1",
+            "dependencyBefore": "750851f4986982ad9c26112268a9df87",
+            "dependencyAfter": "750851f4986982ad9c26112268a9df87",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Sand.mat",
+            "diskBefore": "0603FF20A234F3C908AAB15944F89449E9E1CCE9672A92DE192FDD2B72F64B8B",
+            "diskAfter": "0603FF20A234F3C908AAB15944F89449E9E1CCE9672A92DE192FDD2B72F64B8B",
+            "dependencyBefore": "4ac85acd509a045276a8689eb2862883",
+            "dependencyAfter": "4ac85acd509a045276a8689eb2862883",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Catalog/KTP_Impact_Earth.prefab",
+            "diskBefore": "CA8C82A122D790D2A07CBA00A05834AC499071942A03D073007D25EE12F144A0",
+            "diskAfter": "CA8C82A122D790D2A07CBA00A05834AC499071942A03D073007D25EE12F144A0",
+            "dependencyBefore": "c43b3844d1a394698fe2e153270b236e",
+            "dependencyAfter": "c43b3844d1a394698fe2e153270b236e",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/PF_KTP_SandFront.prefab",
+            "diskBefore": "379D40F1948F4944376E024713F189CBE6DC234A0F0D2CCF1AA258E335365557",
+            "diskAfter": "379D40F1948F4944376E024713F189CBE6DC234A0F0D2CCF1AA258E335365557",
+            "dependencyBefore": "596650123c05f6b0d2726aa5c40606e9",
+            "dependencyAfter": "596650123c05f6b0d2726aa5c40606e9",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Sand.asset",
+            "diskBefore": "1782D0C17B85DBEE55B5C362A302FCF8E21E2257D061628344D3915C8E6F88E5",
+            "diskAfter": "1782D0C17B85DBEE55B5C362A302FCF8E21E2257D061628344D3915C8E6F88E5",
+            "dependencyBefore": "9e1abccde5cf209fa6738a71b8263756",
+            "dependencyAfter": "9e1abccde5cf209fa6738a71b8263756",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/Light_00.mat",
+            "diskBefore": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "diskAfter": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "dependencyBefore": "d77c0192c5f49d3440e018194d2a2021",
+            "dependencyAfter": "d77c0192c5f49d3440e018194d2a2021",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/ExlosionAura_00.mat",
+            "diskBefore": "8C37420D2B1AD4739DC54299FC1BEDA2987A625C92651ECF8FCC08A7C33EB763",
+            "diskAfter": "8C37420D2B1AD4739DC54299FC1BEDA2987A625C92651ECF8FCC08A7C33EB763",
+            "dependencyBefore": "98e06dd238f87e7c23e63d68676905c3",
+            "dependencyAfter": "98e06dd238f87e7c23e63d68676905c3",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Catalog/KTP_Cast_Earth.prefab",
+            "diskBefore": "2638A8B5AD44C78637ADBFEE59F9BA54172BEE82B31823E1FAF0197A6A321C74",
+            "diskAfter": "2638A8B5AD44C78637ADBFEE59F9BA54172BEE82B31823E1FAF0197A6A321C74",
+            "dependencyBefore": "c931bc3e3287732ba23f97b0bca7bcaf",
+            "dependencyAfter": "c931bc3e3287732ba23f97b0bca7bcaf",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/061_BAA8.asset",
+            "diskBefore": "7012BBA108194278A4E3DE69ECECAB67D10371A6AD225A44CECD82F7DA74DE23",
+            "diskAfter": "7012BBA108194278A4E3DE69ECECAB67D10371A6AD225A44CECD82F7DA74DE23",
+            "dependencyBefore": "55aee692e8de45dc71b1e8be58053787",
+            "dependencyAfter": "55aee692e8de45dc71b1e8be58053787",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_58.png",
+            "diskBefore": "FC634D9756ABF4281BC974A005D45800E569097E5F4376586CE58795D846F037",
+            "diskAfter": "FC634D9756ABF4281BC974A005D45800E569097E5F4376586CE58795D846F037",
+            "dependencyBefore": "30e29f06101b8fe79eb7324a4d33a43a",
+            "dependencyAfter": "30e29f06101b8fe79eb7324a4d33a43a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/ExlosionAura_01.mat",
+            "diskBefore": "DA3FFD202DB106014C2A2B84DAA51CF5E7FA83EF08205743FD2113293EA14461",
+            "diskAfter": "DA3FFD202DB106014C2A2B84DAA51CF5E7FA83EF08205743FD2113293EA14461",
+            "dependencyBefore": "a4704011daf443ec9fbe8e10f0a5b5f8",
+            "dependencyAfter": "a4704011daf443ec9fbe8e10f0a5b5f8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_250.png",
+            "diskBefore": "C9D2EE7C286D8B236085B3A7DB1EAFD25C9709B5DED79DE37CE8B2D4EFCA20AC",
+            "diskAfter": "C9D2EE7C286D8B236085B3A7DB1EAFD25C9709B5DED79DE37CE8B2D4EFCA20AC",
+            "dependencyBefore": "74426dbaca57d5565a4278b664a88680",
+            "dependencyAfter": "74426dbaca57d5565a4278b664a88680",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Cloud.asset",
+            "diskBefore": "BDDAEDEDFB56B5E59F9450DAFDB04B4B55B83A0D3AD568E64C03E4578CB749F6",
+            "diskAfter": "BDDAEDEDFB56B5E59F9450DAFDB04B4B55B83A0D3AD568E64C03E4578CB749F6",
+            "dependencyBefore": "8608b5abb070e16e06b534e6969042ea",
+            "dependencyAfter": "8608b5abb070e16e06b534e6969042ea",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_250.mat",
+            "diskBefore": "23A062CBF7086D2114B40078B0C4B4F7351DD780E1814728AFCBC0EE65217A70",
+            "diskAfter": "23A062CBF7086D2114B40078B0C4B4F7351DD780E1814728AFCBC0EE65217A70",
+            "dependencyBefore": "e112fbd44496f7ed612d46f16c95b514",
+            "dependencyAfter": "e112fbd44496f7ed612d46f16c95b514",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_58.mat",
+            "diskBefore": "D925B00EBE696ACE187E80F079B6CEE459D34C280257D00E050AB4D30187BAA0",
+            "diskAfter": "D925B00EBE696ACE187E80F079B6CEE459D34C280257D00E050AB4D30187BAA0",
+            "dependencyBefore": "d24c570bc7e3faca29d1cb0aa41c1f78",
+            "dependencyAfter": "d24c570bc7e3faca29d1cb0aa41c1f78",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Prefabs/061_BAA8.prefab",
+            "diskBefore": "FD0FB4B8F96AF23FA3E3B39D133DA5216FA4F1B7411432EF9A8B56F1E11DF0D7",
+            "diskAfter": "FD0FB4B8F96AF23FA3E3B39D133DA5216FA4F1B7411432EF9A8B56F1E11DF0D7",
+            "dependencyBefore": "8d8ee98aa00df6dd281655cc98b5f177",
+            "dependencyAfter": "8d8ee98aa00df6dd281655cc98b5f177",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_147.mat",
+            "diskBefore": "4F41A3128CC3B54B40D5AC1A6575294263EFBE5FBC83182D51D04AE94B91B882",
+            "diskAfter": "4F41A3128CC3B54B40D5AC1A6575294263EFBE5FBC83182D51D04AE94B91B882",
+            "dependencyBefore": "3d361fd5acdd4b740f263b04d9838a44",
+            "dependencyAfter": "3d361fd5acdd4b740f263b04d9838a44",
+            "unchanged": true
+        }
+    ],
+    "messages": []
+}

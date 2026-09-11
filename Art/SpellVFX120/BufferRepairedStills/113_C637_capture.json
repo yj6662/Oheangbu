@@ -1,0 +1,39 @@
+{
+    "glyph": "옷",
+    "title": "식어 내리는 물비늘",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T03:35:50.6470750Z",
+    "loadedRuntimeAssemblyMvid": "342487b4-3642-4071-b5aa-d8d32f60a6d7",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T03:34:45.9675412Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.44999998807907107,
+    "life": 3.700000047683716,
+    "sampledSeconds": [
+        0.2590000033378601,
+        0.8140000104904175,
+        1.5540000200271607,
+        2.368000030517578,
+        3.3299999237060549
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

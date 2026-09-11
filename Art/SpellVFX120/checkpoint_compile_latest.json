@@ -1,0 +1,1395 @@
+{
+  "status": "PASS_STATIC_CSHARP_ONLY",
+  "utc": "2026-09-11T05:40:49.989171+00:00",
+  "worktree": "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint",
+  "output": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6",
+  "unityVersion": "6000.3.9f1",
+  "scope": "Latest main-based checkpoint sources freshly enumerated and compiled in dependency order using installed Unity/package references and prior response options. All nine Oheangbu DLLs and reference DLLs are rebuilt from this worktree in a new temporary directory. No analyzers or source generators run.",
+  "limitations": "No Unity launch, AssetDatabase import, shader compilation, Play execution, player build or visual validation. Reflection member names, resource ownership and runtime behavior remain outside this compile check.",
+  "assemblies": 9,
+  "sourceCount": 255,
+  "errorCount": 0,
+  "warningCount": 16,
+  "rows": [
+    {
+      "assembly": "Oheangbu.Core",
+      "sources": 10,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "elapsedSeconds": 0.922,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/DrawnLetter.cs",
+          "sha256": "4334b654b2fdd3c7be6b8e4f5b645b534f982aba50ca601eaa1d83807fc06d08"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/Element.cs",
+          "sha256": "4be15a7262b40aa0c8f232c832ab0fd603db52a17e021523c287cadfd32ff1d0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/Jamo.cs",
+          "sha256": "bb63e6529aa6e72e8047ce83d892b00993a18e541bcadc926390bdf2700965f4"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/StrokeData.cs",
+          "sha256": "7009b8f43ab3cea10b63b5ab7831c489930712430772cae2cad651943cf9fec1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/StrokePoint.cs",
+          "sha256": "53705b63e6cd111463844f78df20ffb6b8ca38f982ef30b10a9c918c697f617d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/BoolEventChannelSO.cs",
+          "sha256": "c81fba1423b76a8c476daf30a5c14a3c3d0b78cc9fadeea0039bd1a1248145ef"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/DrawnLetterEventChannelSO.cs",
+          "sha256": "a8a21f0b61cd73080b30d207422ac9eb6bc86def267fb91dcd7bb1f42bade844"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/EventChannelSO.cs",
+          "sha256": "26e8c31d1e61a311de20efc1010defa2fe721701521ed04466fa63bdf42870d6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/FloatEventChannelSO.cs",
+          "sha256": "43cf1fbc5384e988fa48a8b1fefd8e5d73cf0c6399f37bb5a71203ed40982dc7"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/VoidEventChannelSO.cs",
+          "sha256": "c756d1ca90461bc92f10cc99d4f5b1ca757df216fe7b9fd2d562c4cbf5e60cf4"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Core/Oheangbu.Core.asmdef",
+        "sha256": "5af792ff289ad1ea8b345619dda5e83751373437a9e7c4704ba2143ed17614f8"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.rsp",
+      "responseSha256": "03232a7b354320b3aa4907c2a340da14a53a95b09a17e0c8ba04ff55fe035db1",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Core.rsp",
+      "priorResponseSha256": "c872aada8d7d4e7c1461a708a573b70b20a7985a2259d3da7cc4860ef5994c59",
+      "rebuiltProjectReferences": [],
+      "externalReferenceCount": 331,
+      "outputSha256": "959ede0c848a6ee72e6f47fff048790a5220ed3dd6a070d517350ee398be2c55"
+    },
+    {
+      "assembly": "Oheangbu.Data",
+      "sources": 0,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 1,
+      "elapsedSeconds": 0.599,
+      "diagnostics": [
+        "warning CS2008: No source files specified."
+      ],
+      "sourceFiles": [],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Data/Oheangbu.Data.asmdef",
+        "sha256": "7df3e47ac34ade44ac29a980c14b5a98c6369459936347d54ca2422bcc6445fe"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.rsp",
+      "responseSha256": "cf962c411c73e7458a4c83b404a1e6ffca1f3d5c8702c4132579f04b18fb1a1c",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Data.rsp",
+      "priorResponseSha256": "1b490fb4b46d20c1d17af14f757e4bbd5be6752893ab0539f447f951040d13ce",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        }
+      ],
+      "externalReferenceCount": 329,
+      "outputSha256": "778b0f71ade7f0b24920d77d11d57ed14bfa00b70e90eceb2daa7890bac6d733"
+    },
+    {
+      "assembly": "Oheangbu.Drawing",
+      "sources": 5,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "elapsedSeconds": 0.735,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/DrawingInputController.cs",
+          "sha256": "946efea6d23ff35954ac5f1c10d0a4da91deaba85666c1b93d749cde7a69c899"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/HangulComposer.cs",
+          "sha256": "7bd15233eaca379304f181792020ee6d9311c854eac042012a0965be20a56b82"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/JamoMatcher.cs",
+          "sha256": "9e7b0006bd3ee8be8b6853fad79aa5a73a2c9c974439784bee392e11129b7704"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/JamoTemplateLibrarySO.cs",
+          "sha256": "b0a7d0be34da107e69f4f238b699cb1937539312a99013b00ad6bd72fabab603"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/RecognitionPipeline.cs",
+          "sha256": "8dc0bf61e85f4a4323cf0c4e15c4a3a05eae9fea16f25fa21342da8b92fe6fed"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Drawing/Oheangbu.Drawing.asmdef",
+        "sha256": "34c3270d468d061b3186d23edb6e8d90c7c1d673978b62cda38b9d5b62fd5dcb"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Drawing.rsp",
+      "responseSha256": "2b584ae46a7e12bfbe9ee0c03d0032d6954ed63916905d7e3988bf392185f330",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Drawing.rsp",
+      "priorResponseSha256": "e564332ca0993a83b2c03a8d8dfae5cb54b3c057f082ac98890faa1fae4415be",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.ref.dll",
+          "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
+        }
+      ],
+      "externalReferenceCount": 331,
+      "outputSha256": "efdf5b7c8cbfc4329f6264fce481c75fefbec3332058e4ab9b4cbda00c20dbb9"
+    },
+    {
+      "assembly": "Oheangbu.BrushRender",
+      "sources": 5,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "elapsedSeconds": 0.72,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/BrushStrokeData.cs",
+          "sha256": "39c5128e71864480817a578a4a61dd11f49746858fe7b463d480cf0d2d2dd176"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/BrushStrokeRenderer.cs",
+          "sha256": "175b7e297b7b13cce6509eb65071cebda18e1e10b58139b1fc6f94ef430a0fd0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/BrushStyleSO.cs",
+          "sha256": "d96cf4e568cb798fb5da005ccb286bcd1eb92c595802269b65bc3c8ac373c3d9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/ElementPaletteSO.cs",
+          "sha256": "59a96fb1ca1a76dd01c308b75025f83da3746ffd76dab22b97ad7e52ddb6b7df"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/RibbonMeshBuilder.cs",
+          "sha256": "e71d580f51701fa7bcbf685e031ade04e1c3941107f6c4e41a9b9b7c19d21298"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/Oheangbu.BrushRender.asmdef",
+        "sha256": "e3741655f0b9baf365eb923db0003aad7c2c248bf732d7a7f020b4919fdc49dd"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.BrushRender.rsp",
+      "responseSha256": "60f03aa00c0d37bbc372d68fe60447bf8e4ceaed3f760d4315cd233053ab0447",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.BrushRender.rsp",
+      "priorResponseSha256": "a1cc8df9d47ebfa6d9f357b72c6d27001b014a5f8858a51384dadc8301211553",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        }
+      ],
+      "externalReferenceCount": 329,
+      "outputSha256": "18fb824932a8ae52966c7501e45d965d3f873b38e1af9c9d1a02397baf44d922"
+    },
+    {
+      "assembly": "Oheangbu.Spellcraft",
+      "sources": 2,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "elapsedSeconds": 0.713,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Spellcraft/SpellBookSO.cs",
+          "sha256": "8ed6947a4f70b9ce0d92cccf7fecc7f5e6dd004ad497e2b7b8ec45ecf5045c5c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Spellcraft/SpellResolver.cs",
+          "sha256": "03f6e700f5f62c18d08d7f13a58d8d9c24a7c29bb1ba8e0d102a3fb22a530acd"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Spellcraft/Oheangbu.Spellcraft.asmdef",
+        "sha256": "c2e56589b549d22209da7df785815d62b952bb7ac12456dc0a0e4eae39d209d0"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Spellcraft.rsp",
+      "responseSha256": "012b259a04faa6070b470cf1827ac4d1815b252a9ec52e8430a5d57889dd37d4",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Spellcraft.rsp",
+      "priorResponseSha256": "7ccd87de95d3a834162db0481ccdf9add066ea4fca268d4b43315bfd7460f36b",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.ref.dll",
+          "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
+        }
+      ],
+      "externalReferenceCount": 329,
+      "outputSha256": "ebf2fe90a549fc814177860c304af1b3693035ec3004dcce23fac2f1ff65e6cd"
+    },
+    {
+      "assembly": "Oheangbu.Combat",
+      "sources": 13,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "elapsedSeconds": 0.75,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/AreaGeometry.cs",
+          "sha256": "76125febe9df2c6f06297b823a0e3d3af06792c13ad1ff9f9574ae7ef4c85620"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/CombatConfigSO.cs",
+          "sha256": "19682b7a6be1e6337bfa79f4ddb073b4c0a1a7138b15cc86398e819a5ec9061c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Enemy/EnemyController.cs",
+          "sha256": "7023d666ad462381a60752811ab32ae99c576923df30275099a8486482ce4c1c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Enemy/EnemyVitals.cs",
+          "sha256": "ba6bfdb99a97c1e0550a36a994bff0a6ba3aa4b3925084bda546e5c2e7be788a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/GroggyMeter.cs",
+          "sha256": "2bed7c3a16f29a743e38203d9b4def3215ebe3e83c8ea8d6e9190ce2629cf57b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/ParryJudge.cs",
+          "sha256": "808f51fb9ee9840e24ce62ddd6e3dc591bf4f62fa2caa39ccbd9336c797bcfa9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/CameraRigController.cs",
+          "sha256": "cc1e5d43bab9c7995076278758e46a01417e2f87d84194f0d8c0c09e390d267f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/DodgeAction.cs",
+          "sha256": "c896756beca60ccefffb152b27ffba552f33b325e8bbe721f9c67c0d2080d655"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/HarvestAction.cs",
+          "sha256": "7acd07a5d1d108cb97ce8db84327e894546e2e0ded0692dfda67a4bd6c4f3836"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/InkPool.cs",
+          "sha256": "c6696ab33feba9414feb8816495e127990013e52106ba17c81903321d840c63a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/LockOn.cs",
+          "sha256": "28a72f71805f7e1c7b82a80e56c17b37b1c26f71a4e56ad210a9c7e8a506e75d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/PlayerMotor.cs",
+          "sha256": "e581809176698becfa6042609ace858b0e1aecafd3d2fbab314c9414a07c7183"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/PlayerVitals.cs",
+          "sha256": "769ba5f3e46ee533944721b7e6bca834f6719db712954b8d79308888016e7a34"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Combat/Oheangbu.Combat.asmdef",
+        "sha256": "efe48b1ecc2e08ea952dd561b188a627d0a556e6370f43e3a7c4c6ccab97ed65"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Combat.rsp",
+      "responseSha256": "a6c296dd37e8589782233e6a06107d128f5eb5700bd466df3ba95417693040bc",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Combat.rsp",
+      "priorResponseSha256": "d3119cfd8287cbae4530daea51bcac60e5df10b8de61a5fec283a01e8b6c721b",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.ref.dll",
+          "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Spellcraft.ref.dll",
+          "sha256": "d4709aae166b79c5fda6a0fa86ca4005ba87e401227ecb5460c9390a0b481ef3"
+        }
+      ],
+      "externalReferenceCount": 330,
+      "outputSha256": "ca7277d9c92e9186944a5325bfef0a7f7c5675041eb3bfe0bb61ed65087918ba"
+    },
+    {
+      "assembly": "Oheangbu.Presentation",
+      "sources": 0,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 1,
+      "elapsedSeconds": 0.594,
+      "diagnostics": [
+        "warning CS2008: No source files specified."
+      ],
+      "sourceFiles": [],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Presentation/Oheangbu.Presentation.asmdef",
+        "sha256": "5b36cf847a876e7df604e3e5e140b0ecd8d7380265a72146bf0e2cfe73d1161c"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Presentation.rsp",
+      "responseSha256": "626d419eb6ee0ba00e48c685a5c5c16d523a4f7c41746af72e2ce1b2b0650196",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.Presentation.rsp",
+      "priorResponseSha256": "a00cfe95b8c8f8068dd3180826cd71b551bc8a635badbb9847baa416a7dee85b",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.ref.dll",
+          "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
+        }
+      ],
+      "externalReferenceCount": 330,
+      "outputSha256": "fc579ef68b7838974290ce53b2d32645b065a0b620178a931f1e0e8d5117a558"
+    },
+    {
+      "assembly": "Oheangbu.App",
+      "sources": 94,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 12,
+      "elapsedSeconds": 1.282,
+      "diagnostics": [
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(103,56): warning CS0414: The field 'ThornRiseEffect._droopTilt' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(66,55): warning CS0414: The field 'ThornRiseEffect._emergeScale' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(63,51): warning CS0414: The field 'ThornRiseEffect._vineScale' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(60,46): warning CS0414: The field 'ThornRiseEffect._primaryMeshCount' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(71,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMin' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(68,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMax' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(112,52): warning CS0414: The field 'ThornRiseEffect._swayDecay' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(67,56): warning CS0414: The field 'ThornRiseEffect._emergeTilt' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(65,51): warning CS0414: The field 'ThornRiseEffect._secondaryScaleMax' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(99,52): warning CS0414: The field 'ThornRiseEffect._layTime' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(70,56): warning CS0414: The field 'ThornRiseEffect._layTilt' is assigned but its value is never used",
+        "Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(59,49): warning CS0414: The field 'ThornRiseEffect._yawJitter' is assigned but its value is never used"
+      ],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/AreaImpactPlan.cs",
+          "sha256": "a8862ce9e1d0403398a9fecde8095a99344999b8e82cd6cf6306abd3d7d19c66"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/AreaSpikePlanner.cs",
+          "sha256": "089d1a1a2442c58352e5a1baf2bdaa3a23a09cb796906b2ed37ec6204a32ccc4"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/BrushStrokeFeedAdapter.cs",
+          "sha256": "8dbc77db13c5c9af5cded42130f34cec5d403a79b65a7358c7cc7176ececff16"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/CombatLifetimeScope.cs",
+          "sha256": "e18d7d8f7e8182e2dc6e041002131e28328885d3e307118657423d243968ff75"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/CombatLoopWiring.cs",
+          "sha256": "727925b90cbd9a15ae468406424bbad376c8a11f158c0b2eed755dee89732e3e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevElement.cs",
+          "sha256": "1625fe339e60c9d09755b18e0ec82ad34f36333d5c47321bc84b7b4dfeacde0f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevEnemyWakePedestal.cs",
+          "sha256": "2d9dec96c4b8b1bf2da48b8c4c7caa7f51cb36f01abefcc7679132ca5acc70cd"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevInfoBoard.cs",
+          "sha256": "d0895267cc859ed182d8f222fb7edaa271b72d21d4d1b7be06992f2bd833370d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevInteractable.cs",
+          "sha256": "1451434c1374fdd76a3015719a7b666d0fba2f2376f471cda82da54868eaa473"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevInteractor.cs",
+          "sha256": "55a0ee37d9c0ec80be97bbf6193a136b3bc0af020fb2d3386b734a860ce85cd0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevLabel.cs",
+          "sha256": "9ef948cb6ac3f3ae309dc42d3bcf23ccb273f4bf2877b87ee24b34d05092c296"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevSceneFlow.cs",
+          "sha256": "b2e3efc7fab0f2cf1ab894a8706bf981a7b87b54d614d686cf21e5b22d40587d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevScenePortal.cs",
+          "sha256": "6062de47afc45b665232da4ff8df50b71ada91c4f7656511f9a8e56449e4bdda"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/EffectLabBoard.cs",
+          "sha256": "e5a1ca7f9ec0c2c860fa2b46e913d76a2862b41a949e76dc860068928da09ddb"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/ParryRangeDirector.cs",
+          "sha256": "f1013dc77049369775f8e7936f0a423d799368bcb1d63f11ac4942e074d8a968"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/SpellRangeDirector.cs",
+          "sha256": "451235c2fc9a3285dbf05223bc96cf044cfc93b797271902505e62a3684ec1ba"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/SpellRangeDummy.cs",
+          "sha256": "52b5d876522d7d8d031011bc3dda355edb7029c1568c828599147c7c0b6cc71f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/FlameJetEffect.cs",
+          "sha256": "405166a8bf0032ba93ce280ed62b864a5482304b3ffa0bfe0d28dffb350cb338"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/GroundWaveEffect.cs",
+          "sha256": "52a0fda0c9dad1ef45985afc6d3bde97ab9703feaf0a049aba0ce9ee6e15b5bf"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/HarvestInkStreamEffect.cs",
+          "sha256": "013c5b6b6edfaf2de59d2478e3129f8e474a91a1b1d4f8a8d3d54d2c98b8c0f6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/HudController.cs",
+          "sha256": "583b91f3ee619be6871e395d5f9d9111abf6c34a7af331190c99e6ac65f8e949"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/ParryBurstEffect.cs",
+          "sha256": "906c886326324ef2bdfaae57dcc0159503dcc4c3bce1cca005b74182c68fc203"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/PatternAuditSpawner.cs",
+          "sha256": "d5ec02c1b5927c731a083293537415c2ee3b4d5cffdec42802ef8c18d01d4808"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/PatternEffectLifetime.cs",
+          "sha256": "52c5f5e5fef532886e3f0489e02964b0c60980bed6f5d8250445f4097e4d0e11"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/RootLifetimeScope.cs",
+          "sha256": "c6f8d81e78f555c0db6f0dedbfc2e0e96e50dee500851f2b5a9c51aef086684c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SandStormEffect.cs",
+          "sha256": "e9c7f14fc42328e2763c757341875fa90b362461d62b8bd05205a11ef2d58af5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellSequenceEffect.cs",
+          "sha256": "af2acad7e5c51b5aeb8c0e0b492c9c1c09d501c7d7a6ea3b44fec4ed39bca93d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/DokkaebiClubVfx.cs",
+          "sha256": "d4fb63f83d523e89f354cdc90c3e498b789c847dd3fc9e03ae5a2a8817ea84a0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/FireHaetaeVfx.cs",
+          "sha256": "52282600984334887e649aae9fcd2b95fb6bd7424fdbcf420fdaf59c58dba8e1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/FixedWardVfx.cs",
+          "sha256": "d3bfd282f2426173d6ff884a78aa0cea16f04d0929f29087596ce47d9cf42340"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/KtpContactEffect.cs",
+          "sha256": "83c7337aed029ad35f6a7b16a8b2b5c6ef4644d95b4290a61b9675821b258832"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/KtpContactProfile.cs",
+          "sha256": "5586940f95c98ca7114132bde44446f517d959201ca40ecbf5856877f4eb115f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/MetalTigerVfx.cs",
+          "sha256": "1532ac2a25b998c61124f9492e89ee5c917618a5bc4080287e06bba67fd8f28a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/ProceduralRiftPath.cs",
+          "sha256": "2ba8a5d8510fba8c3f2ed124d1e9b869eee1f19f76cea72cccc09a8ca95e527a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/StoneDokkaebiVfx.cs",
+          "sha256": "49c6e58b642329b9955291b073fefc493908349b28777b2325f2dca4367c04ea"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Atmosphere.cs",
+          "sha256": "6f876f0b0a36994e7968713fc1247a7fec589f0c484e73e05013a362901eb3f6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120BloomReviewFixture.cs",
+          "sha256": "91f57515b18fcc13349ab30f10cbd4cead37451a5022b83e8bd1ea53d5c0acfc"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Catalog.cs",
+          "sha256": "e28343ff938fd0d759bbf8c5073623955aac59af90ffdacab418978036d6a2f9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120CompanionSeedReviewFixture.cs",
+          "sha256": "48887844ee1d4728d201191ae2dc656745613e096d5ccbcd4d334dc8c1e98086"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120CueMotion.cs",
+          "sha256": "8e0e5276347f80724edb81f6a9b5900f4867d5171c9d3ffba516be133d5f30a6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.AreaRemake.cs",
+          "sha256": "369a8fa3fd0f5dccca6a595294e979deb9c6e305274397382912523708b3d80d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.BambooBolt.cs",
+          "sha256": "cd9e04dd45dc8a6f291f0ce6ad94d6191a323242dd41d9f4f993c506222ca8c5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.BambooGuard.cs",
+          "sha256": "08054a998b3cb0e4897935ae4ca731c497b6564aa7b0aefa3e31925abd00b38c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.BambooSpikes.cs",
+          "sha256": "ec950b62fec20489295c4d03cdcc7a79cb993a751615c7891c1b16df5a909b7c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.Bloom.cs",
+          "sha256": "7dacb79f4ef704c244a99d5a34f57849c9b5c735db5430b7db900cf5f4ba8733"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.Botanical.cs",
+          "sha256": "a63de6fa84de2e443ab210bca8cc61ad06200d0c760d958d0af72dbdff935eee"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.CompanionSeeds.cs",
+          "sha256": "9b90e46db3394e079ea53bb9d6ea5dd3da120a6a04a2ec19923e0d7994cd18a5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.cs",
+          "sha256": "44f6238510b98a3ed1d133bf61b086d11e2174fd1b7a50685248f38257c2e950"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.EarthRift.cs",
+          "sha256": "b3b8bee40b777e73071c05edc2690b9a986e3c0c1cd3a39c3b49ba4f4906e483"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.ElementWash.cs",
+          "sha256": "8d016e2ffc815b5c3150ea6c321658e766bfb3664b71f373294e7700b7d045a6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.FireAura.cs",
+          "sha256": "cb3629c4b810a322f1a95413be9b012327dc7f04d53f41600cd454e9dd50d29e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.FireBolt.cs",
+          "sha256": "8fc26b4f93d5d0bbd26205ce147a80098f03a9dc35d0b6d2ffc394e28d5584e9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.FireCompanions.cs",
+          "sha256": "139e60b81fb7f2e0380f6f9c5fe0fbaa74f93ac56c4efb2ca432ac5fdf9c2eee"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.FireGuard.cs",
+          "sha256": "a9b08ed2fff4072fefb2f03307d0e0432c2205481783ba7610b53d3b4277ee68"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.LeafCut.cs",
+          "sha256": "1341f68bc1b0d311f5ed0a2a8cdadcdfdeac5412a8a4eeced33aff605311f00b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.ProceduralRift.cs",
+          "sha256": "00989e63289e76cf79360195d8e75b2718af995431e7a48f8fd0fa9669fc8e31"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.Regrowth.cs",
+          "sha256": "e33f398f8366575a2045951220f21ecd0fc1ad94be2edbcb7fef19686ffd51f2"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.RootLift.cs",
+          "sha256": "a82335d741943cc9414dae1dfe4bfc3d00982a325e04b8c0ff5fd47b5f86eab9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.SeedPod.cs",
+          "sha256": "a25e1072ad1118afd26e7f64b9ed16a813cfd95d4ce5d719519deb3003d34a54"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.SeedTransfer.cs",
+          "sha256": "de71d3c606350dc4d68edcb98135340cb918c49615c3d12b2aead71ef8d1c00c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.StakeField.cs",
+          "sha256": "e861f670953d2b5122275ed120666eb0c7549e35662291ee5177c51fba1f8155"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.VineField.cs",
+          "sha256": "2e8d417a8e5b43e554fafd76381e2e2f021e940f8f3c23909a07498efd148676"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.WetRoot.cs",
+          "sha256": "cb04264a3a0de27006eb651f81f5fa01905b83cfec2a201aa717fb9650bf4e83"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.WoodLift.cs",
+          "sha256": "f0fddbea165ae003e07a0789386ac28c5076d7a776055f3d8a4f34add04a61c6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.WoodSword.cs",
+          "sha256": "30b04f1e243d8285471ff3c5fafac733c2fb0b7bc02754b7ef75ab9734e53935"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.WoodWard.cs",
+          "sha256": "7c61af89a112bb91e055c3a7eee5232d4b3d8d0b571283299f663c66d9b5afee"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120EnvironmentFixture.cs",
+          "sha256": "75d6f9e035e23599a55d14416df9ccb6484c54d4b11c31e594d72eb4e06ba7d0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120EnvironmentMotion.cs",
+          "sha256": "56841e479e4dd56d900cf617de321460d46af4573d2a522a824ee846d3a02be9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120FrostCordMotion.cs",
+          "sha256": "b86cbe7c7e585973d5e0ac4e936a799518da6e8b11b22182ddd4bea1631e7c6e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120GuardianMotion.cs",
+          "sha256": "e42cbadccb8d725dbbba5496b3ff2bddf0501aa1be4d8aff4f1d707294e51eb4"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120InterceptionMotion.cs",
+          "sha256": "35ef99c8f0466f4b319f35396a882fa7ae84444f3684d69fc1dce49b9a0506f6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120InterceptionReviewFixture.cs",
+          "sha256": "a79239bac61a2ce815b25d3a8b67cc3515829150cd41371a70f8e9e434c7679c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120LaunchPoint.cs",
+          "sha256": "718b5bcb03d3d797640fdab98707326bb2d786cd786d840f640fa2359fe64884"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120MeshySummon.cs",
+          "sha256": "c5788034f701dc2a78e16015dcc907bdd2921977998ac55be4fd60f8496548c7"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120MetalDetailMotion.cs",
+          "sha256": "ef6aa3475bbf4a48b55becfc4a50045d63ae11c78036dfc26b070a5f45c5e081"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Profile.cs",
+          "sha256": "c9d2b2662c3cdacb956ca2ddbbb76048a60941270015eb46b92a38f46190d9e0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120RegrowthReviewFixture.cs",
+          "sha256": "c52372834129405620b4dc5d9cd8e12f90141ae311e895ca84436bed1df59716"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Review.cs",
+          "sha256": "d18df43498f5154e3d2fc483def9ffc6f993fe7b1beaeb86579933fa86b353a4"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120SeedTransferReviewFixture.cs",
+          "sha256": "7940399b221c8548a65869cc6a450042480d217d5ad92d618e3781728d2ff1d2"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120SummonMotion.cs",
+          "sha256": "b720d8109d0b5b9e153adfceb58535959e9253780527d6319eeaa7953301ae27"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120TraditionalMotif.cs",
+          "sha256": "7a57185d6ee8febc4834f5e1964ae021929b76c0db5875ef471a4d49b185b904"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120VariantMotion.cs",
+          "sha256": "f92f3624b038da86c1c51e6f5eb0a8d816befd7ed8caaba383ddea2ed481ea46"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120VineFieldReviewFixture.cs",
+          "sha256": "fd7eb72398b1d19b066fc521444e1c716eaf56042f9ec995a7846b4119476c1a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120VineMeshOwner.cs",
+          "sha256": "4e788b6482246ea2692ff8c0e5f0dd03544dc463f452f5bbe7092f328fc86d8d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120WaterMotion.cs",
+          "sha256": "1e0e8a1a18086f822fc0714a361656893d5a9476cd75def8fe3a36e1c0f5080e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120WeaponMotion.cs",
+          "sha256": "4d63653848975d8190d231388ec6dbb68a5796f846bbb6e918efbc64bceced86"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120WoodSwordReviewFixture.cs",
+          "sha256": "c15b5ef2da6d3be2a3d9bcea6b045a34972e03b1db1dc762cfbcd6d993ccaf8c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/WaterTurtleVfx.cs",
+          "sha256": "937de11197e6db0eca8d91784825cc0133f5d9e4017127aad50a0152c8de0a34"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/WoodDeerVfx.cs",
+          "sha256": "aa9ba4602a8ce6b8d28d77f7bc1f899aa129e1fa3bbe2f005bfdd50a9040934d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVisualSetSO.cs",
+          "sha256": "101c8462e551ed7bb188b47aca06d8c755283507562d12f40a6a75bb9de90580"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpikeVolleyEffect.cs",
+          "sha256": "d5acc7e9927ab2a6274fab4884a86320ad18c29ba1ce888cf1bb1fc08b1b48d3"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/ThornLanceEffect.cs",
+          "sha256": "e18e932e43cc03adbbcf9c2a5082fc478f61bc1e97421d844d66e626e620a316"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/ThornRiseEffect.cs",
+          "sha256": "6d75ed6dbfa4c66da3da21f0e38c1f88c53078709429eeee75334b5474f6cd3f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/WaterWaveEffect.cs",
+          "sha256": "d9c0696bd248956817e3ceb50a144a37b372f954f4a12f7c59fefce3377febb6"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/App/Oheangbu.App.asmdef",
+        "sha256": "673cc4f1e341e1773541caa310920b9de2621ce65b41e78fb6b1f3947f99ffe7"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.App.rsp",
+      "responseSha256": "c7f81c562a6ec71e994c4c9c14edce4020eba63feb6b18210d19ef4b0c008051",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.App.rsp",
+      "priorResponseSha256": "36c15535dbbe837f3b6276d5088aa960e857d7f94a79b784a08b085bf7cb59b6",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.ref.dll",
+          "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Drawing.ref.dll",
+          "sha256": "274547d3301bed60986846e7955e34057609fd1bcfe65673c2da035841a935ff"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.BrushRender.ref.dll",
+          "sha256": "7f49bfd8d16419efbf145d6f44dcd7be95cd65c158ff11cb9957ff5e897df9bc"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Spellcraft.ref.dll",
+          "sha256": "d4709aae166b79c5fda6a0fa86ca4005ba87e401227ecb5460c9390a0b481ef3"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Combat.ref.dll",
+          "sha256": "63bdfb3ccb4ac1c4b5ba9ba1632914805f549217155e75d3bb72a66bf3f2773f"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Presentation.ref.dll",
+          "sha256": "1ebd0317f3493c52299535222ce1fdedcc6287ffc2ba0c504b41da1bc5e5fc52"
+        }
+      ],
+      "externalReferenceCount": 335,
+      "outputSha256": "2f0dc6718549ccfefefd8d214aab972b4c9aa4688fb17194ff157e2fdb334c22"
+    },
+    {
+      "assembly": "Oheangbu.EditorTools",
+      "sources": 126,
+      "exitCode": 0,
+      "errorCount": 0,
+      "warningCount": 2,
+      "elapsedSeconds": 1.352,
+      "diagnostics": [
+        "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\SpellVFX120\\Vfx120StoneBodyBuilder.cs(64,50): warning CS0618: 'ShaderUtil.GetPropertyCount(Shader)' is obsolete: 'Use Shader.GetPropertyCount instead.'",
+        "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\SpellVFX120\\Vfx120StoneBodyBuilder.cs(64,99): warning CS0618: 'ShaderUtil.GetPropertyName(Shader, int)' is obsolete: 'Use Shader.GetPropertyName instead.'"
+      ],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/DevSceneKit.cs",
+          "sha256": "eb965f7d7b7c83dca896210e653b3d234c6b25f946394cd0b0214f64293ec02c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/FlameJetAudit.cs",
+          "sha256": "3955b4d73167300ca46f375a4c12bf75d63f4a62472f0c9e5732fad7ff0460f1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/FxReworkWiring.cs",
+          "sha256": "35302a5fe58bd37ef342d317b4cd517509a502dd2d5ccb34aab431cd4c9339c9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/JamoTemplateLibraryFiller.cs",
+          "sha256": "e4a6bc9f4c9b3bc896073a720997804c21a5bd4d6643a3e9c30caa6bd1aa004e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/MeshAxisProbe.cs",
+          "sha256": "2fe64420dcf286d093511c2478b4eb773784e0579be90828342e774a9af226c6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/PlayerRigPrefabTool.cs",
+          "sha256": "90f5fcd5605eb75eb6fcb17a193b2e37aa9ba8cbef6c3f3593a5ee6ca40d6ebc"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellRangeSceneBuilder.cs",
+          "sha256": "472fc6633dcab51a184cd595d7332de622ddb7c9a35902989c1ab8a19b61b509"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/DokkaebiClubBuild.cs",
+          "sha256": "af44558192a22623e26fc91b09af8e4d3ff1c6ac075ea378fc8dee35f25f9056"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/DokkaebiClubReview.cs",
+          "sha256": "9eba576ac98aab7dab1ab49673d5288a57e592e5de23a9560beb664ff251a3c5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/FireHaetaeBuild.cs",
+          "sha256": "fcc5d414904de1c02ba4da0f4e0edeaca6a7c2d6227b3a532b0e9af9408be30a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/FireHaetaeReview.cs",
+          "sha256": "407d68af6fafef5bca237eae33fc0b85a552d63b3e1d91cefab85cd1236e5eaf"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/FixedWardBuild.cs",
+          "sha256": "174f0dffe6008f65af98157a98f1c7431802101050a04e003ddcdbac0d34b241"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/FixedWardReview.cs",
+          "sha256": "14d27ec0554d08aacc83855e3d9bf0e43ddaaca507ab37d7e14732bc8e692127"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaBranchBuild.cs",
+          "sha256": "3119c26f5fd78976d887435025d0a13af3da9a249b5992a382aef131a7158b83"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaBranchCapture.cs",
+          "sha256": "1864f77f047c5611419f9822d8bce6612fef0aaa86fe153ebaa083fd150bfdc8"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFiveAudit.cs",
+          "sha256": "db20188684d5846bc84ad18984ab50accaf3d26fe3bd6622dec5dba15453409d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFiveBuild.cs",
+          "sha256": "0d35711c00c40d45cf9cff393224c0efceaa6e21d43aae848f780593cf43ee56"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFiveCapture.cs",
+          "sha256": "f499fbeb1470168210699665eb51756c626ebefeb2d3744ab7d518e32136a1c8"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFlowAudit.cs",
+          "sha256": "928a5049241c615cbf52fec667a3198ebca991a8686c6089bb9dfc7714494ff0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFlowBuild.cs",
+          "sha256": "ec604fb26c6f1857803fd23b8709ff48af2de8d3ca556d6f8b32689607fb0150"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFlowCapture.cs",
+          "sha256": "7cc1be7bbc0e9038efe8b59c7098bf65598e4022a674bb8db686a9cb0d0a2b61"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaFlowRegression.cs",
+          "sha256": "4352c10573df27e71eb5bc216f3b6becfbd27c4e8c895cedd2378df683f8f50c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaNaturalBuild.cs",
+          "sha256": "f621d1070e081763d6f99cc4529fbf723344c9ba302efd7cb5ecce4bca041429"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaNaturalCapture.cs",
+          "sha256": "669c2bceecef5d80aadc9cb0c3f3e40b228a6ce230b5119340655eb2bfaee5d2"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaRegressionAudit.cs",
+          "sha256": "f1655b0fb9513c89f11fdbdf105eff4d3468fa84f99ab5bdfad24ab971a8f14e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaRiftAudit.cs",
+          "sha256": "264e654c724d75640431f501b3ef6b863f7badb21cd7922acf28760787b8aab9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaRiftBuild.cs",
+          "sha256": "3b6149b0bf6f3553c1a682a3f21a094cdafb5c4746f7a8a802a9fe323769376e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaRiftCapture.cs",
+          "sha256": "b911989ec6dc75b6b821255bbddb73dc7187271e28d2279323d5762b568c2c86"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaRiftRegression.cs",
+          "sha256": "9c8ba66f19d535e21f0b4668e8472ed97a2633acf7bb710c5d30de5f534b9d7d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaWideAudit.cs",
+          "sha256": "feb4a6b0050e1cdd0b3e98f461c6f81a7402726ed65cada1916ab4076c17bf91"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaWideBuild.cs",
+          "sha256": "e767306c2bf6f6b5e6c52dadc0520e0cb25ebfc63456ac956e4cb9b95f4a8279"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaWideCapture.cs",
+          "sha256": "202706c44c9065301ac97661f2138704780675c7f3622e642596adce3e8b380d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpAreaWideRegression.cs",
+          "sha256": "150ba676de8445f1fc1874537579f01900895f39a4919e5dccb9e00ba19911fe"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpBasicSixAudit.cs",
+          "sha256": "a99436c8aeb904da698e84969bc880e130e1e3d2d4f6a842df69854e135a24f8"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpBasicSixBuild.cs",
+          "sha256": "9059c3f102f81a477efa728fa6614a84fa668a5cd8839338bab9a09fa8f67f25"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpBasicSixCapture.cs",
+          "sha256": "6a6c345bdc793f3d4ea54076698a257a657e2e9acd343a76f7bdd3fd29004527"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpContactAudit.cs",
+          "sha256": "817d61f2eb260c1e70acbf116e5ff4efb276cd8ae39cf8df92502ad0e392c678"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpContactBuild.cs",
+          "sha256": "117b4774790d5ffaec777e3ce0e2d6b73043695d899e5d67340ccbd286cefb87"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpEmphasisAudit.cs",
+          "sha256": "ea237cd8e25db8cfef5813995d29ba79c47ea51472e2368854cd1038de927b34"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpEmphasisBuild.cs",
+          "sha256": "d1259217e073907b776fa2dd75dfe302bb5cd92476b01dc86cd1a2b5a24da569"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpEmphasisCapture.cs",
+          "sha256": "841bd488b6a51e9e7c7cd1b7c4499a45000b2fb4fab356f273e5ec560d4af596"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpOffsetGuardBuild.cs",
+          "sha256": "ca6a62675a49b0563529789d476eb13b1fb77cce10a93332609866966a77da22"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpOriginalBuild.cs",
+          "sha256": "5a683419598778b059c7415a30f40be05a2fdcf984c1b4d2aa8ab91017e77bc0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpOriginalPlayAudit.cs",
+          "sha256": "a79daede6252555ca7d2c7515116d28b849c2930bf003626aa4ca3722a8223b8"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpOriginalReview.cs",
+          "sha256": "a84a25a62817f35c8acc456bda897e016dd1ae5d6dc0de5163644a636cbd2067"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpQuickCastBuild.cs",
+          "sha256": "000bdeff7d313648d2ad3643e4d10ec07bb2ba96b20ab4ac66e6d002f4716525"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/KtpRectShieldBuild.cs",
+          "sha256": "878c72d439eb3ca50d7cf5a76698c76a60d410ea89bd3b2e723bad974a1eb567"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/MetalTigerBuild.cs",
+          "sha256": "73b2592563eed3079a13315967817bf7a0d5af739bcdd0dd84459bece8ce47f8"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/MetalTigerReview.cs",
+          "sha256": "396e902cda23286b7fa0ddac3adc3100fa3f68ee2fbe4776a9e65b5d888dc400"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/StoneDokkaebiBuild.cs",
+          "sha256": "8f009824112cbc627579350a2100d4295b35583126bc50b25f0c7e2af4b53790"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/StoneDokkaebiReview.cs",
+          "sha256": "a3c9c5eb6aac53356e80987202859850560484a883078139fe33d0c0b666aa0c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/StoneJangseungBuild.cs",
+          "sha256": "14c2bec39cfb51ba6ef78319947741bcb76db32ff5a8e6e2b32609aa47d94b38"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/StoneJangseungReview.cs",
+          "sha256": "e92f9c08ab0d711d774711ccc06bc2b08be9cfa360c26baac96bc1148b2a42e9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120AttachedFlameBuilder.cs",
+          "sha256": "a60f119c4dffb5bb87e9b67083091ad9c2a4b046395e9b2cf035ab43a7beebc0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120BambooBoltBuilder.cs",
+          "sha256": "cde6eacb9176901a15dd7d2c7b6d9faac0056410d8057cf6329aa10d0a9f79d2"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120BambooGuardBuilder.cs",
+          "sha256": "dca06f5ebfd3125be89b0ba9736899d5661aef205c7be942dc559a380febb847"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120BambooSpikeBuilder.cs",
+          "sha256": "3e2e01265c628a857ab31248787a7e57fec9f969fc1c65f63a1458524ae29b52"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120BloomBuilder.cs",
+          "sha256": "b74da3318fd7ece516a002d5e9b9a690fa97455fdd59759b63e5fbf0b05b488f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120BotanicalAudit.cs",
+          "sha256": "6cbf243d0f7a8df616093cb23eeb5c79a35d79d56ccd91b3babd89843f0ead7b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120BotanicalBuilder.cs",
+          "sha256": "29ea132deb225b94c63ec5eafe47093d46021cb037f6c4022c72dbd94ef6e669"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Capture.cs",
+          "sha256": "64cc368533a946af8447a08f4746782a2cf76dcc47d5b2d11fcfc5f2e02e4cee"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120CompanionSeedBuilder.cs",
+          "sha256": "157ffcde79250dfef26857424bf72ef425c380121754d6441a4cdc2e229da8a3"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ContrastAudit.cs",
+          "sha256": "cc1a986fe35f67114d147834811fdd47929a2efed0371b5019e6aa5729f0612b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Editor.cs",
+          "sha256": "eba3d7dc2727e289442b55b70600c70ba01113742eb5b62e119502e915122516"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ElementWashAudit.cs",
+          "sha256": "471039db0f2fc7135f57dac900fd2cb45cd723bd7405105a6a8dc3641259d2be"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ElementWashBuilder.cs",
+          "sha256": "7e5d3f7ac1bbca6340e5a75d4ea56beb90f5cd4a12bc9af329b55b30be1ffd64"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120EmberChargeBuilder.cs",
+          "sha256": "4776a0e2704c541045c603f413a557d5ffb1d65b9ba6a3ce455da966d4752abb"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireAuraBuilder.cs",
+          "sha256": "407f8dac923825f363e0a018e6e0337241a72e168ef367318a2cf8afb7ff11f6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireBackblastBuilder.cs",
+          "sha256": "34a2337bb99b60af46332dc1598afb219a0b392fd73666ee64c5cb5dd4211648"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireBoltBuilder.cs",
+          "sha256": "3ea91154936195e993e4a584675e754efbd48f188cef85180c7cd088e53d020f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireBurnBuilder.cs",
+          "sha256": "eeb65034f8e227b8886346702656dcaaf2ffa2b5772bb0a19cf06eaf0ab66ac7"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireCompanionsBuilder.cs",
+          "sha256": "499fe692bb33689eee9be7afacec7cadc16cf30bc698cce715373a99f1e70310"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireEmpowerBuilder.cs",
+          "sha256": "0361f2ff640b4c4f067fba8e2535666ab36be70888e2fa9e5a2d13e4855af6ba"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireGuardBuilder.cs",
+          "sha256": "1fb6094c738fa4802d307332ebc7d69a92ed1cc35bc59a2edaa217800ee99a59"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireHealingBuilder.cs",
+          "sha256": "479ad76750e888abb1fdb7f101f52f27fb60cada59a1035459dbd3c004297c45"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireJetBuilder.cs",
+          "sha256": "ea578499552f38bd8a84b59a6d3fefcf39da62dccd2674d88256f81f33436501"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireMeltBuilder.cs",
+          "sha256": "be9da5783a78089de41074f0ba3817f8b1914a9dfdfb36f4da54fde4cb3f699d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireResolveBuilder.cs",
+          "sha256": "02b728a3c26184bafe248496f592049fa2b0895af8218e19820300049a68cb51"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireSteamBuilder.cs",
+          "sha256": "78b5571925c401505b948a04ba1219763279750cc406985ed01d5ed45f41621b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireSummonBuilder.cs",
+          "sha256": "bb02301d40bc2b96606c87b235bbddc3fa9316cfcde4a5955bf051ccb8e93f2e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireSwordBuilder.cs",
+          "sha256": "2c5b9528b62ec659643a22b1e7dfb71e19f4a9565ff37eb651322627c04ed588"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FireWardBuilder.cs",
+          "sha256": "771b4b5d075a7de2b0613046f619f64d0855fe1789147a757de80e04466fc71a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FlameCrescentBuilder.cs",
+          "sha256": "ee78ddec7069cd5b4f0a55fe9280ccb2b812794c121c92a976f24aa025b8d8c5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FrostCaptureFixture.cs",
+          "sha256": "ea496a50c6befd4a3ce14f068813b61ace42c6485bb09d5ebb075aae2cfe9f7d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120FrostDetailBuilder.cs",
+          "sha256": "f72ec4ac87b67351ae999b10bcc486ab337e356ebf68ef70da37068a834e926b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120HeavyFlameBuilder.cs",
+          "sha256": "7d8d0fd2595f9a1c79433e5c2dec35f0386cf04cfb228b6f8eca242845a6caf1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120InterceptionBuilder.cs",
+          "sha256": "668a86cc6ef91b34b2fe762d84ca959c7f8f5970e26c1a24e4c452133db06504"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120LeafCutBuilder.cs",
+          "sha256": "ac50ead9be82206d057d7c17a86bb1fee973b5d040c8bc6137296fe173dbfdeb"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120MeshFactory.cs",
+          "sha256": "3ed5c65c31296f29b50faffdd7d8d3b5ae4cc8bc04171e33150d853b5cf94ae2"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120MeshyBuilder.cs",
+          "sha256": "412ddbf0784063bee62f48b81f9b64ddbb801765339b24f1959b13da5bca92c9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120MetalDetailBuilder.cs",
+          "sha256": "c6f76ded96478f33ff18490f05ee6f7e79b9db9614120a48c6594c4b09e071f5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ParticleColorProbe.cs",
+          "sha256": "83d4f50ad26c7d48cc855d968e09af3ffaa9b6dcc8a91cc9f91dc7bcb0c24ee8"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120PiercingFlameBuilder.cs",
+          "sha256": "54698598a99969e2efe39fa46d43b01461417b031675a838be653cda7bb882c3"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Queue.cs",
+          "sha256": "6782b9fe2510fbd39a90f5fb8f200081e804eb8cdb8e40b19b06542944aa39e4"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120RegrowthBuilder.cs",
+          "sha256": "2bb46fe14221b8814fb61df6cce13c3919cd2cadb23008190616bbbf44010002"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120RenderAudit.cs",
+          "sha256": "f9bb176bef1dfe8ba9dc56592da0cc0800aee0dd1460da03121a50d56607b681"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120ResourceAttribution.cs",
+          "sha256": "8cca2c4c3e4b379ac41fecd14e2f0725c5ba953c8e11881e054b4468cbec7d1c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120RootLiftBuilder.cs",
+          "sha256": "bc966c003bd0cd2a536fd3788670adbf8c24b71442db2c801b345fe660d1ec9c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120SeedPodBuilder.cs",
+          "sha256": "f4a5733f445997fa8fdef5e4de29acec0a0b8c67aaa4562e33cb6330ad9e11d1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120SeedTransferBuilder.cs",
+          "sha256": "095fd78f9c06064b6056987115860e9d4117a7d45a434fa14f6248f61b5c7871"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120SpeedCaptureFixture.cs",
+          "sha256": "59d0a41de9d42757b39191f1fe4ac472e053a2693c8ebfc2a2636af342798aee"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120StakeFieldBuilder.cs",
+          "sha256": "3572a8140d4d20431d69e86aed580f53e3717693816fb13f19a65d270de929f6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120StoneBodyBuilder.cs",
+          "sha256": "0b3fd79de8d765376b9e4684e179b15380d7e439f9c4a836cf0816cc0c943b85"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120TraditionalAudit.cs",
+          "sha256": "9875eeba3f50dd94b3cfac86c5f2dad20beddfc3ea4f6b3b1db0289e248d4dfa"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120TraditionalBuilder.cs",
+          "sha256": "2b0ced9e25226c1e67c6c215570fa7ea3b808e20fc500ac504997acb78342a32"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120TraditionalCapture.cs",
+          "sha256": "f9455fb1cfe22abf47e85b03ba8cb94b6569657f337e206e346e6b716c930b50"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120TraditionalCatalogBuilder.cs",
+          "sha256": "b38e22d2228efcc7df561a1c29f1f35fbb1eb4c9b5aedda036c523ccb411dee1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120TraditionalPlayAudit.cs",
+          "sha256": "042bcfa2baee3d7671232a3a45215fa10f3419ecdf0876c33eddd4f9afcdc439"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120VineFieldBuilder.cs",
+          "sha256": "d957e71869ee59597b1bd2e4132363d47c367323eb1bb0ea702d53475783d3a0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120WaterWaveTuning.cs",
+          "sha256": "4f94e28e4145d8d0005a928c83735082c4ae71b67b69b5d30080b6af87275c92"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120WetRootBuilder.cs",
+          "sha256": "e02bcb3e4ca814eb622ca4ac3848393195ad2c95270c60ae399fe892d7843e67"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120WoodLiftBuilder.cs",
+          "sha256": "62e9499eb5720d64d86bd798882c737b6c8b418d2a1d2b1630ba70228ef6b262"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120WoodSwordBuilder.cs",
+          "sha256": "459b677d76e36dc6ef1cb809fd01ef0f94aaa3696b1b0cad4bf0f270860d33a1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120WoodWardBuilder.cs",
+          "sha256": "d5f592f71e587fbefc2cc0079b5ee446f2f93f198ea53a75658dfc494a0f866b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/WaterTurtleBuild.cs",
+          "sha256": "8ffc90254c5637f118318c6589cf66fe416cb43b88e1dc0dd5e8bbba0d504088"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/WaterTurtleReview.cs",
+          "sha256": "4fc2236eb543006291bd0362623d9feee2e8113f20c07653c824ef46839e3b9c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/WoodDeerBuild.cs",
+          "sha256": "c2583e9e2e2dc481a1d75510a6498bd3fc36e4060b94fbc72b4b0e7317f2e490"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/WoodDeerReview.cs",
+          "sha256": "64e5cfa43a2231927aab1a4df6dcf00bd0a363ea440ffe1df52e5b3d0a25eda7"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/TestHubSceneBuilder.cs",
+          "sha256": "36298994f3d00b61d0ac4daf42ff7362d1bb8f9ee186b743357b87921df8c53d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120AdapterAudit.cs",
+          "sha256": "df37ec8d63130e22b849b408bb6507b7f03950eb005ee728eba056e037358f6f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120AreaAudit.cs",
+          "sha256": "7a11e10e4bfa16d402d2e10bfca47dab299a306077b06a6905ce3335d53c3c57"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120GameplayAudit.cs",
+          "sha256": "d572870b92cec7f1c648ce3deb04192bc60389c39bd4ab6dce1d8d77b8b32408"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120GuardianAudit.cs",
+          "sha256": "1a150e1a13ae0fb16d269ecea4b6733879fd3a7674b3dec871445f0fc54ec6bc"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120MotionAudit.cs",
+          "sha256": "0e78aa42e417c490f379ca2f689e6253a326175fc0b86323d12599346e2a713d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120PlayerInputAudit.cs",
+          "sha256": "987f2acff2824f9d34e4fb6389e12a14354760d1d46bdbb39b52c9d7457c8b98"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120RuntimeAudit.cs",
+          "sha256": "d35e38b2e833f205c54bf99a1bb27f1f0e62c41f6bf7b6d65358a9e955e98e47"
+        }
+      ],
+      "asmdef": {
+        "path": "Oheangbu/Assets/_Project/Scripts/Editor/Oheangbu.EditorTools.asmdef",
+        "sha256": "17d2e3f8b2fefc50d1b537b55a4b4415549c2b9fc0166ded0cf123a6872ba6be"
+      },
+      "responseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.EditorTools.rsp",
+      "responseSha256": "aab8b11463e088e401b13ea702861c514cc32bb64eaa7c6a808eb59cca42ca7c",
+      "priorResponseFile": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-current-compile-20260909-020130-39bsv3uk\\Oheangbu.EditorTools.rsp",
+      "priorResponseSha256": "a1a87249cbb21f500d347230a3a4ad24a2047d00018fb3414031a180a4110986",
+      "rebuiltProjectReferences": [
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Core.ref.dll",
+          "sha256": "a6d91671a6942ec833de731c2213b15a1b296a3e5a5a47762d70b992e350ab43"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Data.ref.dll",
+          "sha256": "66aa87b73d9e84795f772649f2f71b1cd2a889eb46de3a852277182b47fa5c2d"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Drawing.ref.dll",
+          "sha256": "274547d3301bed60986846e7955e34057609fd1bcfe65673c2da035841a935ff"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.BrushRender.ref.dll",
+          "sha256": "7f49bfd8d16419efbf145d6f44dcd7be95cd65c158ff11cb9957ff5e897df9bc"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Spellcraft.ref.dll",
+          "sha256": "d4709aae166b79c5fda6a0fa86ca4005ba87e401227ecb5460c9390a0b481ef3"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Combat.ref.dll",
+          "sha256": "63bdfb3ccb4ac1c4b5ba9ba1632914805f549217155e75d3bb72a66bf3f2773f"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.Presentation.ref.dll",
+          "sha256": "1ebd0317f3493c52299535222ce1fdedcc6287ffc2ba0c504b41da1bc5e5fc52"
+        },
+        {
+          "path": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-latest-compile-20260909-u5nfdvx6\\Oheangbu.App.ref.dll",
+          "sha256": "c399dfaadf79c122c4483d14435c3eccff4e241d3320472ab23ca590b0d11d50"
+        }
+      ],
+      "externalReferenceCount": 344,
+      "outputSha256": "1c17949a6b1b049b6521a5997814fb61190a287ca2bcf07de119a0f29ff54ed6"
+    }
+  ],
+  "sourceChangesDuringCompile": [],
+  "sourcesAddedDuringCompile": [],
+  "requiredNewSources": [
+    {
+      "name": "Vfx120WeaponMotion.cs",
+      "included": true
+    },
+    {
+      "name": "Vfx120WaterMotion.cs",
+      "included": true
+    },
+    {
+      "name": "Vfx120ContrastAudit.cs",
+      "included": true
+    },
+    {
+      "name": "Vfx120ResourceAttribution.cs",
+      "included": true
+    },
+    {
+      "name": "Vfx120EnvironmentMotion.cs",
+      "included": true
+    },
+    {
+      "name": "Vfx120EnvironmentFixture.cs",
+      "included": true
+    }
+  ],
+  "priorReportSha256": "d373517074152a39a2c4219f705d5691106ab6c278917d9b9c49cbda5e191442",
+  "compilerSha256": "ea9a1028a70517e38ff4bbd1b0f07c44a4706aad442475da548e7170cadd89b6",
+  "scriptSha256": "fb151e508d3bb6d640b45056f105d74cef57b124286550dcf09bccc387acae7d",
+  "elapsedSeconds": 9.086
+}

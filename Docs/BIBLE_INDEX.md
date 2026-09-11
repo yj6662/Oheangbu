@@ -2,6 +2,10 @@
 
 모든 작업의 진입점. **문서의 동적 상태(버전·생성 여부·정본 규칙)는 이 파일이 단독 소유한다** — 헌법 7.1은 역할·권한만 규정(2026-08-17 개정). 라우팅: Task → BIBLE_INDEX → 해당 Bible의 Section ID → (필요 시) DECISIONS 이력 → Spec → Code.
 
+## 술식 VFX120 체크포인트 [TEST]
+
+- [범위·표현 계약](Specs/SPEC-SPELL-VFX120.md) · [검증·미완료 항목](Art/SpellVFX120/CHECKPOINT.md) · [미술 방향](Art/SpellVFX120/VISUAL_DIRECTION.md).
+
 ## 규약
 
 - 어휘 분리: **내용 상태(State) = 5종**(LOCKED/TEST/PROPOSED/TBD/LEGACY — 헌법 CONST-STATUS) / **파일 생명주기(Lifecycle) = ACTIVE·PLANNED·ARCHIVED.** 혼용 금지.

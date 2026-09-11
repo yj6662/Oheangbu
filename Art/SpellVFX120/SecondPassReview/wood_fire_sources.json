@@ -1,0 +1,2790 @@
+{
+  "manifestSHA256": "464b32ecde08bbb44a815cf8ec14c1049148c0a1d526c6c8f0c4a7543931b0f2",
+  "count": 48,
+  "records": [
+    {
+      "index": 1,
+      "id": "001_AC00",
+      "glyph": "가",
+      "title": "생죽의 첫 마디",
+      "intent": "단일 대상에 곧게 뻗는 생목 가시(근중거리)",
+      "family": "Thorn",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "가",
+        "title": "생죽의 첫 마디",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.6000000238418579,
+        "life": 1.5,
+        "sampledSeconds": [
+          0.10500000417232513,
+          0.32999998331069946,
+          0.6299999952316284,
+          0.9599999785423279,
+          1.3499999046325684
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\001_AC00_0.png",
+        "Art\\SpellVFX120\\SecondPass\\001_AC00_1.png",
+        "Art\\SpellVFX120\\SecondPass\\001_AC00_2.png",
+        "Art\\SpellVFX120\\SecondPass\\001_AC00_3.png",
+        "Art\\SpellVFX120\\SecondPass\\001_AC00_4.png"
+      ]
+    },
+    {
+      "index": 2,
+      "id": "002_AC01",
+      "glyph": "각",
+      "title": "얽힌 뿌리 매듭",
+      "intent": "완전 속박 — 대상 행동 불가(보스는 둔화). 시간 만료로만 해제 — 묶인 대상 타격 가능, 추가 피해 없음",
+      "family": "Vine",
+      "behavior": "Bind",
+      "sameRowCrop": [
+        404,
+        108,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "각",
+        "title": "얽힌 뿌리 매듭",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.550000011920929,
+        "life": 3.4000000953674316,
+        "sampledSeconds": [
+          0.23800000548362732,
+          0.7480000257492065,
+          1.4279999732971191,
+          2.1760001182556152,
+          3.059999942779541
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\002_AC01_0.png",
+        "Art\\SpellVFX120\\SecondPass\\002_AC01_1.png",
+        "Art\\SpellVFX120\\SecondPass\\002_AC01_2.png",
+        "Art\\SpellVFX120\\SecondPass\\002_AC01_3.png",
+        "Art\\SpellVFX120\\SecondPass\\002_AC01_4.png"
+      ]
+    },
+    {
+      "index": 3,
+      "id": "003_AC04",
+      "glyph": "간",
+      "title": "옮겨 심는 씨눈",
+      "intent": "박힌 가시의 불씨 — 대상이 쓰러지거나 시간이 지나면 가장 가까운 적에게 옮아 같은 피해(번짐)",
+      "family": "Thorn",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        362,
+        214,
+        1036,
+        588
+      ],
+      "evidence": {
+        "glyph": "간",
+        "title": "옮겨 심는 씨눈",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.6000000238418579,
+        "life": 2.5999999046325684,
+        "sampledSeconds": [
+          0.18199999630451202,
+          0.5719999670982361,
+          1.091999888420105,
+          1.6639999151229858,
+          2.3399999141693115
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\003_AC04_0.png",
+        "Art\\SpellVFX120\\SecondPass\\003_AC04_1.png",
+        "Art\\SpellVFX120\\SecondPass\\003_AC04_2.png",
+        "Art\\SpellVFX120\\SecondPass\\003_AC04_3.png",
+        "Art\\SpellVFX120\\SecondPass\\003_AC04_4.png"
+      ]
+    },
+    {
+      "index": 4,
+      "id": "004_AC10",
+      "glyph": "감",
+      "title": "덩굴 봉인 씨방",
+      "intent": "덩굴 표식 설치를 적 1체에 발사·부착(C4식). 부착 후 공격 진 명중 시 격발 — 큰 그로기+속성 피해(임시처리 TEST)",
+      "family": "Seal",
+      "behavior": "Bind",
+      "sameRowCrop": [
+        404,
+        208,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "감",
+        "title": "덩굴 봉인 씨방",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.550000011920929,
+        "life": 3.0999999046325684,
+        "sampledSeconds": [
+          0.21699999272823334,
+          0.6819999814033508,
+          1.3019999265670776,
+          1.9839998483657837,
+          2.7899997234344482
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\004_AC10_0.png",
+        "Art\\SpellVFX120\\SecondPass\\004_AC10_1.png",
+        "Art\\SpellVFX120\\SecondPass\\004_AC10_2.png",
+        "Art\\SpellVFX120\\SecondPass\\004_AC10_3.png",
+        "Art\\SpellVFX120\\SecondPass\\004_AC10_4.png"
+      ]
+    },
+    {
+      "index": 5,
+      "id": "005_AC13",
+      "glyph": "갓",
+      "title": "숨을 끊는 외잎",
+      "intent": "숨통 가르기 — 체력이 낮은 대상에게 큰 추가 피해(처형)",
+      "family": "Leaf",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "갓",
+        "title": "숨을 끊는 외잎",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.4000000059604645,
+        "life": 1.2999999523162842,
+        "sampledSeconds": [
+          0.09099999815225601,
+          0.28599998354911804,
+          0.5459999442100525,
+          0.8319999575614929,
+          1.1699999570846558
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\005_AC13_0.png",
+        "Art\\SpellVFX120\\SecondPass\\005_AC13_1.png",
+        "Art\\SpellVFX120\\SecondPass\\005_AC13_2.png",
+        "Art\\SpellVFX120\\SecondPass\\005_AC13_3.png",
+        "Art\\SpellVFX120\\SecondPass\\005_AC13_4.png"
+      ]
+    },
+    {
+      "index": 6,
+      "id": "006_AC15",
+      "glyph": "강",
+      "title": "틈을 찾는 젖은 뿌리",
+      "intent": "젖은 가시 — 갑주 틈으로 스며 방어력 무시 피해",
+      "family": "Vine",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "강",
+        "title": "틈을 찾는 젖은 뿌리",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.5799999833106995,
+        "life": 1.4800000190734863,
+        "sampledSeconds": [
+          0.10360000282526016,
+          0.3255999982357025,
+          0.6215999722480774,
+          0.9472000002861023,
+          1.3320000171661377
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\006_AC15_0.png",
+        "Art\\SpellVFX120\\SecondPass\\006_AC15_1.png",
+        "Art\\SpellVFX120\\SecondPass\\006_AC15_2.png",
+        "Art\\SpellVFX120\\SecondPass\\006_AC15_3.png",
+        "Art\\SpellVFX120\\SecondPass\\006_AC15_4.png"
+      ]
+    },
+    {
+      "index": 7,
+      "id": "007_AC70",
+      "glyph": "거",
+      "title": "한 번 휘는 대울",
+      "intent": "덩굴 방벽으로 받아침 — 상극 초성+ㅓ 완성형(판정·보상=Combat 3장). 완성=잔존 방어막(앞 구간 패링 판정·뒤 구간 일반 경감 — 창·수치=Combat 3장)",
+      "family": "Vine",
+      "behavior": "Shield",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "거",
+        "title": "한 번 휘는 대울",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 2.0999999046325684,
+        "sampledSeconds": [
+          0.1469999998807907,
+          0.4619999825954437,
+          0.8819999098777771,
+          1.3439998626708984,
+          1.8899998664855957
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\007_AC70_0.png",
+        "Art\\SpellVFX120\\SecondPass\\007_AC70_1.png",
+        "Art\\SpellVFX120\\SecondPass\\007_AC70_2.png",
+        "Art\\SpellVFX120\\SecondPass\\007_AC70_3.png",
+        "Art\\SpellVFX120\\SecondPass\\007_AC70_4.png"
+      ]
+    },
+    {
+      "index": 8,
+      "id": "008_AC71",
+      "glyph": "걱",
+      "title": "서서히 돋는 싹",
+      "intent": "오랫동안 천천히 체력 회복(지속 재생 — 동기)",
+      "family": "Leaf",
+      "behavior": "Heal",
+      "sameRowCrop": [
+        386,
+        212,
+        1036,
+        567
+      ],
+      "evidence": {
+        "glyph": "걱",
+        "title": "서서히 돋는 싹",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23999999463558197,
+        "life": 3.299999952316284,
+        "sampledSeconds": [
+          0.23099999129772186,
+          0.7260000109672546,
+          1.3859999179840088,
+          2.111999988555908,
+          2.9699997901916504
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\008_AC71_0.png",
+        "Art\\SpellVFX120\\SecondPass\\008_AC71_1.png",
+        "Art\\SpellVFX120\\SecondPass\\008_AC71_2.png",
+        "Art\\SpellVFX120\\SecondPass\\008_AC71_3.png",
+        "Art\\SpellVFX120\\SecondPass\\008_AC71_4.png"
+      ]
+    },
+    {
+      "index": 9,
+      "id": "009_AC74",
+      "glyph": "건",
+      "title": "한 번 피는 생기",
+      "intent": "짧고 크게 체력 회복(단기 대폭)",
+      "family": "Leaf",
+      "behavior": "Heal",
+      "sameRowCrop": [
+        375,
+        146,
+        1036,
+        567
+      ],
+      "evidence": {
+        "glyph": "건",
+        "title": "한 번 피는 생기",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2199999988079071,
+        "life": 1.4500000476837158,
+        "sampledSeconds": [
+          0.101500004529953,
+          0.3190000057220459,
+          0.609000027179718,
+          0.9280000329017639,
+          1.3050000667572021
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\009_AC74_0.png",
+        "Art\\SpellVFX120\\SecondPass\\009_AC74_1.png",
+        "Art\\SpellVFX120\\SecondPass\\009_AC74_2.png",
+        "Art\\SpellVFX120\\SecondPass\\009_AC74_3.png",
+        "Art\\SpellVFX120\\SecondPass\\009_AC74_4.png"
+      ]
+    },
+    {
+      "index": 10,
+      "id": "010_AC80",
+      "glyph": "검",
+      "title": "그늘을 심는 나무",
+      "intent": "나무를 심어 그 영역 안에서 회복 — 나무는 시간 경과 또는 피격 시 소멸",
+      "family": "Tree",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        127,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "검",
+        "title": "그늘을 심는 나무",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 4.599999904632568,
+        "sampledSeconds": [
+          0.32199999690055847,
+          1.0119999647140503,
+          1.931999921798706,
+          2.943999767303467,
+          4.139999866485596
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\010_AC80_0.png",
+        "Art\\SpellVFX120\\SecondPass\\010_AC80_1.png",
+        "Art\\SpellVFX120\\SecondPass\\010_AC80_2.png",
+        "Art\\SpellVFX120\\SecondPass\\010_AC80_3.png",
+        "Art\\SpellVFX120\\SecondPass\\010_AC80_4.png"
+      ]
+    },
+    {
+      "index": 11,
+      "id": "011_AC83",
+      "glyph": "것",
+      "title": "죽절 검",
+      "intent": "목검 변신(검 공통 스펙: 작도 불가·클릭=검격·상극 검격 그로기 소폭·먹 소진 해제)",
+      "family": "Blade",
+      "behavior": "Weapon",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        555
+      ],
+      "evidence": {
+        "glyph": "것",
+        "title": "죽절 검",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\011_AC83_0.png",
+        "Art\\SpellVFX120\\SecondPass\\011_AC83_1.png",
+        "Art\\SpellVFX120\\SecondPass\\011_AC83_2.png",
+        "Art\\SpellVFX120\\SecondPass\\011_AC83_3.png",
+        "Art\\SpellVFX120\\SecondPass\\011_AC83_4.png"
+      ]
+    },
+    {
+      "index": 12,
+      "id": "012_AC85",
+      "glyph": "겅",
+      "title": "곁가지 잔탄",
+      "intent": "모든 술식에 목 소투사체 동반(잔탄 몸=목)",
+      "family": "Thorn",
+      "behavior": "Buff",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "겅",
+        "title": "곁가지 잔탄",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 2.4000000953674316,
+        "sampledSeconds": [
+          0.1680000126361847,
+          0.527999997138977,
+          1.0080000162124634,
+          1.5360000133514404,
+          2.1600000858306885
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\012_AC85_0.png",
+        "Art\\SpellVFX120\\SecondPass\\012_AC85_1.png",
+        "Art\\SpellVFX120\\SecondPass\\012_AC85_2.png",
+        "Art\\SpellVFX120\\SecondPass\\012_AC85_3.png",
+        "Art\\SpellVFX120\\SecondPass\\012_AC85_4.png"
+      ]
+    },
+    {
+      "index": 13,
+      "id": "013_ACE0",
+      "glyph": "고",
+      "title": "일제 죽창",
+      "intent": "지정 영역에서 가시 일제 솟음(즉발)",
+      "family": "Thorn",
+      "behavior": "Burst",
+      "sameRowCrop": [
+        404,
+        190,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "고",
+        "title": "일제 죽창",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3499999940395355,
+        "life": 1.899999976158142,
+        "sampledSeconds": [
+          0.13300000131130219,
+          0.4179999828338623,
+          0.7979999780654907,
+          1.215999960899353,
+          1.709999918937683
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+        "areaShape": "Circle",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 4.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "areaRadius": 1.75,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.3499999940395355,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\013_ACE0_0.png",
+        "Art\\SpellVFX120\\SecondPass\\013_ACE0_1.png",
+        "Art\\SpellVFX120\\SecondPass\\013_ACE0_2.png",
+        "Art\\SpellVFX120\\SecondPass\\013_ACE0_3.png",
+        "Art\\SpellVFX120\\SecondPass\\013_ACE0_4.png"
+      ]
+    },
+    {
+      "index": 14,
+      "id": "014_ACE1",
+      "glyph": "곡",
+      "title": "낮게 엮는 넝쿨",
+      "intent": "영역에 덩굴이 일정 시간 퍼져 잔존 — 이동 감속장",
+      "family": "Vine",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "곡",
+        "title": "낮게 엮는 넝쿨",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3799999952316284,
+        "life": 4.199999809265137,
+        "sampledSeconds": [
+          0.2939999997615814,
+          0.9239999651908875,
+          1.7639998197555542,
+          2.687999725341797,
+          3.7799997329711914
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\014_ACE1_0.png",
+        "Art\\SpellVFX120\\SecondPass\\014_ACE1_1.png",
+        "Art\\SpellVFX120\\SecondPass\\014_ACE1_2.png",
+        "Art\\SpellVFX120\\SecondPass\\014_ACE1_3.png",
+        "Art\\SpellVFX120\\SecondPass\\014_ACE1_4.png"
+      ]
+    },
+    {
+      "index": 15,
+      "id": "015_ACE4",
+      "glyph": "곤",
+      "title": "뿌리의 들어올림",
+      "intent": "영역의 적들을 짧게 쳐올림 — 광역 인터럽트(예열 끊기, 완화형)",
+      "family": "Vine",
+      "behavior": "Burst",
+      "sameRowCrop": [
+        404,
+        155,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "곤",
+        "title": "뿌리의 들어올림",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3400000035762787,
+        "life": 1.5499999523162842,
+        "sampledSeconds": [
+          0.10849999636411667,
+          0.3409999907016754,
+          0.6509999632835388,
+          0.9919999241828918,
+          1.3949998617172241
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\015_ACE4_0.png",
+        "Art\\SpellVFX120\\SecondPass\\015_ACE4_1.png",
+        "Art\\SpellVFX120\\SecondPass\\015_ACE4_2.png",
+        "Art\\SpellVFX120\\SecondPass\\015_ACE4_3.png",
+        "Art\\SpellVFX120\\SecondPass\\015_ACE4_4.png"
+      ]
+    },
+    {
+      "index": 16,
+      "id": "016_ACF0",
+      "glyph": "곰",
+      "title": "나무결 짐승의 빈 몸",
+      "intent": "덩굴·나무 짐승 소환수를 빚어 세움(재질=초성). 그로기 미축적·어그로 없음",
+      "family": "Beast",
+      "behavior": "Summon",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "곰",
+        "title": "나무결 짐승의 빈 몸",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.550000011920929,
+        "life": 4.699999809265137,
+        "sampledSeconds": [
+          0.32899999618530273,
+          1.0339999198913574,
+          1.9739998579025269,
+          3.007999897003174,
+          4.229999542236328
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\016_ACF0_0.png",
+        "Art\\SpellVFX120\\SecondPass\\016_ACF0_1.png",
+        "Art\\SpellVFX120\\SecondPass\\016_ACF0_2.png",
+        "Art\\SpellVFX120\\SecondPass\\016_ACF0_3.png",
+        "Art\\SpellVFX120\\SecondPass\\016_ACF0_4.png"
+      ]
+    },
+    {
+      "index": 17,
+      "id": "017_ACF3",
+      "glyph": "곳",
+      "title": "잔존하는 가시밭",
+      "intent": "굳은 가시밭 — 솟은 가시가 잠시 남아 밟는 적에게 피해(피해 장판)",
+      "family": "Thorn",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "곳",
+        "title": "잔존하는 가시밭",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3499999940395355,
+        "life": 4.300000190734863,
+        "sampledSeconds": [
+          0.30100002884864807,
+          0.9460000395774841,
+          1.805999994277954,
+          2.752000093460083,
+          3.870000123977661
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\017_ACF3_0.png",
+        "Art\\SpellVFX120\\SecondPass\\017_ACF3_1.png",
+        "Art\\SpellVFX120\\SecondPass\\017_ACF3_2.png",
+        "Art\\SpellVFX120\\SecondPass\\017_ACF3_3.png",
+        "Art\\SpellVFX120\\SecondPass\\017_ACF3_4.png"
+      ]
+    },
+    {
+      "index": 18,
+      "id": "018_ACF5",
+      "glyph": "공",
+      "title": "걸어가는 수풀",
+      "intent": "흐르는 수풀 — 뿌리 파도가 전진하며 소폭 피해, 파도 뒤의 플레이어에게 은엄폐 제공(이동식 엄폐)",
+      "family": "Vine",
+      "behavior": "Wave",
+      "sameRowCrop": [
+        263,
+        188,
+        1036,
+        629
+      ],
+      "evidence": {
+        "glyph": "공",
+        "title": "걸어가는 수풀",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.4000000059604645,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\018_ACF5_0.png",
+        "Art\\SpellVFX120\\SecondPass\\018_ACF5_1.png",
+        "Art\\SpellVFX120\\SecondPass\\018_ACF5_2.png",
+        "Art\\SpellVFX120\\SecondPass\\018_ACF5_3.png",
+        "Art\\SpellVFX120\\SecondPass\\018_ACF5_4.png"
+      ]
+    },
+    {
+      "index": 19,
+      "id": "019_AD6C",
+      "glyph": "구",
+      "title": "둘러선 대숲 결계",
+      "intent": "덩굴 광역 결계 — 언제든 시전, 잠시 잔존. 패링 판정·보상 없음",
+      "family": "Vine",
+      "behavior": "Shield",
+      "sameRowCrop": [
+        297,
+        150,
+        1036,
+        607
+      ],
+      "evidence": {
+        "glyph": "구",
+        "title": "둘러선 대숲 결계",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2800000011920929,
+        "life": 3.5999999046325684,
+        "sampledSeconds": [
+          0.25200000405311584,
+          0.7919999957084656,
+          1.5119999647140503,
+          2.303999900817871,
+          3.239999771118164
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\019_AD6C_0.png",
+        "Art\\SpellVFX120\\SecondPass\\019_AD6C_1.png",
+        "Art\\SpellVFX120\\SecondPass\\019_AD6C_2.png",
+        "Art\\SpellVFX120\\SecondPass\\019_AD6C_3.png",
+        "Art\\SpellVFX120\\SecondPass\\019_AD6C_4.png"
+      ]
+    },
+    {
+      "index": 20,
+      "id": "020_AD6D",
+      "glyph": "국",
+      "title": "신목의 디딤",
+      "intent": "나무가 발밑에서 솟아올라 위로 오른다(수직 이동). 비전투 전용",
+      "family": "Vine",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        71,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "국",
+        "title": "신목의 디딤",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 4.400000095367432,
+        "sampledSeconds": [
+          0.30799999833106995,
+          0.9679999947547913,
+          1.847999930381775,
+          2.815999984741211,
+          3.9600000381469727
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\020_AD6D_0.png",
+        "Art\\SpellVFX120\\SecondPass\\020_AD6D_1.png",
+        "Art\\SpellVFX120\\SecondPass\\020_AD6D_2.png",
+        "Art\\SpellVFX120\\SecondPass\\020_AD6D_3.png",
+        "Art\\SpellVFX120\\SecondPass\\020_AD6D_4.png"
+      ]
+    },
+    {
+      "index": 21,
+      "id": "021_AD70",
+      "glyph": "군",
+      "title": "푸른 바람의 솟대 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Vine",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        557
+      ],
+      "evidence": {
+        "glyph": "군",
+        "title": "푸른 바람의 솟대 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3199999928474426,
+        "life": 3.0,
+        "sampledSeconds": [
+          0.21000000834465027,
+          0.6599999666213989,
+          1.2599999904632568,
+          1.9199999570846558,
+          2.6999998092651367
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\021_AD70_0.png",
+        "Art\\SpellVFX120\\SecondPass\\021_AD70_1.png",
+        "Art\\SpellVFX120\\SecondPass\\021_AD70_2.png",
+        "Art\\SpellVFX120\\SecondPass\\021_AD70_3.png",
+        "Art\\SpellVFX120\\SecondPass\\021_AD70_4.png"
+      ]
+    },
+    {
+      "index": 22,
+      "id": "022_AD7C",
+      "glyph": "굼",
+      "title": "접힌 잎배 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Leaf",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        396,
+        214,
+        1036,
+        559
+      ],
+      "evidence": {
+        "glyph": "굼",
+        "title": "접힌 잎배 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 3.299999952316284,
+        "sampledSeconds": [
+          0.23099999129772186,
+          0.7260000109672546,
+          1.3859999179840088,
+          2.111999988555908,
+          2.9699997901916504
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\022_AD7C_0.png",
+        "Art\\SpellVFX120\\SecondPass\\022_AD7C_1.png",
+        "Art\\SpellVFX120\\SecondPass\\022_AD7C_2.png",
+        "Art\\SpellVFX120\\SecondPass\\022_AD7C_3.png",
+        "Art\\SpellVFX120\\SecondPass\\022_AD7C_4.png"
+      ]
+    },
+    {
+      "index": 23,
+      "id": "023_AD7F",
+      "glyph": "굿",
+      "title": "솔가지 부채 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Leaf",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        341,
+        214,
+        1036,
+        578
+      ],
+      "evidence": {
+        "glyph": "굿",
+        "title": "솔가지 부채 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.25,
+        "life": 2.6500000953674316,
+        "sampledSeconds": [
+          0.18550001084804535,
+          0.5830000042915344,
+          1.1130000352859497,
+          1.6959999799728394,
+          2.384999990463257
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\023_AD7F_0.png",
+        "Art\\SpellVFX120\\SecondPass\\023_AD7F_1.png",
+        "Art\\SpellVFX120\\SecondPass\\023_AD7F_2.png",
+        "Art\\SpellVFX120\\SecondPass\\023_AD7F_3.png",
+        "Art\\SpellVFX120\\SecondPass\\023_AD7F_4.png"
+      ]
+    },
+    {
+      "index": 24,
+      "id": "024_AD81",
+      "glyph": "궁",
+      "title": "씨앗의 둥근 뜰 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Vine",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        385,
+        214,
+        1036,
+        554
+      ],
+      "evidence": {
+        "glyph": "궁",
+        "title": "씨앗의 둥근 뜰 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 3.4000000953674316,
+        "sampledSeconds": [
+          0.23800000548362732,
+          0.7480000257492065,
+          1.4279999732971191,
+          2.1760001182556152,
+          3.059999942779541
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\024_AD81_0.png",
+        "Art\\SpellVFX120\\SecondPass\\024_AD81_1.png",
+        "Art\\SpellVFX120\\SecondPass\\024_AD81_2.png",
+        "Art\\SpellVFX120\\SecondPass\\024_AD81_3.png",
+        "Art\\SpellVFX120\\SecondPass\\024_AD81_4.png"
+      ]
+    },
+    {
+      "index": 25,
+      "id": "025_B098",
+      "glyph": "나",
+      "title": "날아가는 붉은 숯",
+      "intent": "단일 대상에 불덩이 투사(표준 탄속·위력 기준선)",
+      "family": "Flame",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "나",
+        "title": "날아가는 붉은 숯",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.699999988079071,
+        "life": 1.5999999046325684,
+        "sampledSeconds": [
+          0.1119999960064888,
+          0.351999968290329,
+          0.6719999313354492,
+          1.0239999294281006,
+          1.4399998188018799
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\025_B098_0.png",
+        "Art\\SpellVFX120\\SecondPass\\025_B098_1.png",
+        "Art\\SpellVFX120\\SecondPass\\025_B098_2.png",
+        "Art\\SpellVFX120\\SecondPass\\025_B098_3.png",
+        "Art\\SpellVFX120\\SecondPass\\025_B098_4.png"
+      ]
+    },
+    {
+      "index": 26,
+      "id": "026_B099",
+      "glyph": "낙",
+      "title": "뿌리박힌 불꽃",
+      "intent": "적중 대상에 뿌리박힌 화염 — 지속 피해",
+      "family": "Flame",
+      "behavior": "Bind",
+      "sameRowCrop": [
+        404,
+        116,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "낙",
+        "title": "뿌리박힌 불꽃",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.6200000047683716,
+        "life": 3.200000047683716,
+        "sampledSeconds": [
+          0.2240000069141388,
+          0.7039999961853027,
+          1.343999981880188,
+          2.0480000972747803,
+          2.879999876022339
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\026_B099_0.png",
+        "Art\\SpellVFX120\\SecondPass\\026_B099_1.png",
+        "Art\\SpellVFX120\\SecondPass\\026_B099_2.png",
+        "Art\\SpellVFX120\\SecondPass\\026_B099_3.png",
+        "Art\\SpellVFX120\\SecondPass\\026_B099_4.png"
+      ]
+    },
+    {
+      "index": 27,
+      "id": "027_B09C",
+      "glyph": "난",
+      "title": "응축한 홍염 덩이",
+      "intent": "순수 대화력 — 부가 효과 없이 최대 위력의 한 방(타오름의 극치)",
+      "family": "Flame",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        389,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "난",
+        "title": "응축한 홍염 덩이",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.7799999713897705,
+        "life": 1.6799999475479126,
+        "sampledSeconds": [
+          0.11759999394416809,
+          0.36959999799728394,
+          0.7055999636650085,
+          1.0751999616622925,
+          1.5119999647140503
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\027_B09C_0.png",
+        "Art\\SpellVFX120\\SecondPass\\027_B09C_1.png",
+        "Art\\SpellVFX120\\SecondPass\\027_B09C_2.png",
+        "Art\\SpellVFX120\\SecondPass\\027_B09C_3.png",
+        "Art\\SpellVFX120\\SecondPass\\027_B09C_4.png"
+      ]
+    },
+    {
+      "index": 28,
+      "id": "028_B0A8",
+      "glyph": "남",
+      "title": "꺼지지 않는 봉인 불씨",
+      "intent": "불씨 설치를 적 1체에 발사·부착(C4식). 부착 후 공격 진 명중 시 격발 — 큰 그로기+속성 피해(임시처리 TEST)",
+      "family": "Ember",
+      "behavior": "Bind",
+      "sameRowCrop": [
+        404,
+        206,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "남",
+        "title": "꺼지지 않는 봉인 불씨",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.6000000238418579,
+        "life": 3.0,
+        "sampledSeconds": [
+          0.21000000834465027,
+          0.6599999666213989,
+          1.2599999904632568,
+          1.9199999570846558,
+          2.6999998092651367
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\028_B0A8_0.png",
+        "Art\\SpellVFX120\\SecondPass\\028_B0A8_1.png",
+        "Art\\SpellVFX120\\SecondPass\\028_B0A8_2.png",
+        "Art\\SpellVFX120\\SecondPass\\028_B0A8_3.png",
+        "Art\\SpellVFX120\\SecondPass\\028_B0A8_4.png"
+      ]
+    },
+    {
+      "index": 29,
+      "id": "029_B0AB",
+      "glyph": "낫",
+      "title": "갈라지는 화월",
+      "intent": "명중 후 초승달 화염 두 줄기가 부채꼴로 갈라져 나감(2차 참격 — 새 몸=화)",
+      "family": "Flame",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        383,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "낫",
+        "title": "갈라지는 화월",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.6499999761581421,
+        "life": 2.1500000953674316,
+        "sampledSeconds": [
+          0.15050001442432404,
+          0.47300001978874207,
+          0.902999997138977,
+          1.3760000467300415,
+          1.9350000619888306
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\029_B0AB_0.png",
+        "Art\\SpellVFX120\\SecondPass\\029_B0AB_1.png",
+        "Art\\SpellVFX120\\SecondPass\\029_B0AB_2.png",
+        "Art\\SpellVFX120\\SecondPass\\029_B0AB_3.png",
+        "Art\\SpellVFX120\\SecondPass\\029_B0AB_4.png"
+      ]
+    },
+    {
+      "index": 30,
+      "id": "030_B0AD",
+      "glyph": "낭",
+      "title": "갑주 속 잔열",
+      "intent": "파고드는 열 — 방어력 무시 피해(강과 같은 짓·다른 몸, 잠정 유지)",
+      "family": "Ember",
+      "behavior": "Projectile",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "낭",
+        "title": "갑주 속 잔열",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.5600000023841858,
+        "life": 1.4600000381469727,
+        "sampledSeconds": [
+          0.10220000147819519,
+          0.32120001316070557,
+          0.6132000088691711,
+          0.9344000220298767,
+          1.3140000104904175
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\030_B0AD_0.png",
+        "Art\\SpellVFX120\\SecondPass\\030_B0AD_1.png",
+        "Art\\SpellVFX120\\SecondPass\\030_B0AD_2.png",
+        "Art\\SpellVFX120\\SecondPass\\030_B0AD_3.png",
+        "Art\\SpellVFX120\\SecondPass\\030_B0AD_4.png"
+      ]
+    },
+    {
+      "index": 31,
+      "id": "031_B108",
+      "glyph": "너",
+      "title": "접어 올린 화막",
+      "intent": "화막으로 받아침 — 상극 초성+ㅓ 완성형(판정·보상=Combat 3장). 완성=잔존 방어막(앞 구간 패링 판정·뒤 구간 일반 경감 — 창·수치=Combat 3장)",
+      "family": "Flame",
+      "behavior": "Shield",
+      "sameRowCrop": [
+        401,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "너",
+        "title": "접어 올린 화막",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 2.25,
+        "sampledSeconds": [
+          0.1574999988079071,
+          0.4950000047683716,
+          0.9449999928474426,
+          1.4399999380111694,
+          2.0249998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\031_B108_0.png",
+        "Art\\SpellVFX120\\SecondPass\\031_B108_1.png",
+        "Art\\SpellVFX120\\SecondPass\\031_B108_2.png",
+        "Art\\SpellVFX120\\SecondPass\\031_B108_3.png",
+        "Art\\SpellVFX120\\SecondPass\\031_B108_4.png"
+      ]
+    },
+    {
+      "index": 32,
+      "id": "032_B109",
+      "glyph": "넉",
+      "title": "발치의 화로 고리",
+      "intent": "근접한 적에게 지속 피해 오라",
+      "family": "Ember",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "넉",
+        "title": "발치의 화로 고리",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.25999999046325684,
+        "life": 3.9000000953674316,
+        "sampledSeconds": [
+          0.27300000190734863,
+          0.8580000400543213,
+          1.6380000114440918,
+          2.496000051498413,
+          3.509999990463257
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\032_B109_0.png",
+        "Art\\SpellVFX120\\SecondPass\\032_B109_1.png",
+        "Art\\SpellVFX120\\SecondPass\\032_B109_2.png",
+        "Art\\SpellVFX120\\SecondPass\\032_B109_3.png",
+        "Art\\SpellVFX120\\SecondPass\\032_B109_4.png"
+      ]
+    },
+    {
+      "index": 33,
+      "id": "033_B10C",
+      "glyph": "넌",
+      "title": "한 획의 붉은 장전",
+      "intent": "다음 한 번의 공격 대폭 증폭(동기)",
+      "family": "Ribbon",
+      "behavior": "Buff",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "넌",
+        "title": "한 획의 붉은 장전",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.23999999463558197,
+        "life": 2.4000000953674316,
+        "sampledSeconds": [
+          0.1680000126361847,
+          0.527999997138977,
+          1.0080000162124634,
+          1.5360000133514404,
+          2.1600000858306885
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\033_B10C_0.png",
+        "Art\\SpellVFX120\\SecondPass\\033_B10C_1.png",
+        "Art\\SpellVFX120\\SecondPass\\033_B10C_2.png",
+        "Art\\SpellVFX120\\SecondPass\\033_B10C_3.png",
+        "Art\\SpellVFX120\\SecondPass\\033_B10C_4.png"
+      ]
+    },
+    {
+      "index": 34,
+      "id": "034_B118",
+      "glyph": "넘",
+      "title": "고요한 화심",
+      "intent": "부동심 — 지속 중 피격이 작도를 끊지 못함(피해는 받음)",
+      "family": "Seal",
+      "behavior": "Buff",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        557
+      ],
+      "evidence": {
+        "glyph": "넘",
+        "title": "고요한 화심",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.25,
+        "life": 3.700000047683716,
+        "sampledSeconds": [
+          0.2590000033378601,
+          0.8140000104904175,
+          1.5540000200271606,
+          2.368000030517578,
+          3.3299999237060547
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\034_B118_0.png",
+        "Art\\SpellVFX120\\SecondPass\\034_B118_1.png",
+        "Art\\SpellVFX120\\SecondPass\\034_B118_2.png",
+        "Art\\SpellVFX120\\SecondPass\\034_B118_3.png",
+        "Art\\SpellVFX120\\SecondPass\\034_B118_4.png"
+      ]
+    },
+    {
+      "index": 35,
+      "id": "035_B11B",
+      "glyph": "넛",
+      "title": "숯심 화검",
+      "intent": "화검 변신(검 공통 스펙)",
+      "family": "Blade",
+      "behavior": "Weapon",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        556
+      ],
+      "evidence": {
+        "glyph": "넛",
+        "title": "숯심 화검",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.20000000298023224,
+        "life": 3.5,
+        "sampledSeconds": [
+          0.24500000476837158,
+          0.7699999809265137,
+          1.46999990940094,
+          2.240000009536743,
+          3.1499998569488525
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\035_B11B_0.png",
+        "Art\\SpellVFX120\\SecondPass\\035_B11B_1.png",
+        "Art\\SpellVFX120\\SecondPass\\035_B11B_2.png",
+        "Art\\SpellVFX120\\SecondPass\\035_B11B_3.png",
+        "Art\\SpellVFX120\\SecondPass\\035_B11B_4.png"
+      ]
+    },
+    {
+      "index": 36,
+      "id": "036_B11D",
+      "glyph": "넝",
+      "title": "곁불 잔탄",
+      "intent": "화 잔탄 동반",
+      "family": "Ember",
+      "behavior": "Buff",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "넝",
+        "title": "곁불 잔탄",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.44999998807907104,
+        "life": 2.3499999046325684,
+        "sampledSeconds": [
+          0.16449999809265137,
+          0.5169999599456787,
+          0.9869999289512634,
+          1.503999948501587,
+          2.114999771118164
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\036_B11D_0.png",
+        "Art\\SpellVFX120\\SecondPass\\036_B11D_1.png",
+        "Art\\SpellVFX120\\SecondPass\\036_B11D_2.png",
+        "Art\\SpellVFX120\\SecondPass\\036_B11D_3.png",
+        "Art\\SpellVFX120\\SecondPass\\036_B11D_4.png"
+      ]
+    },
+    {
+      "index": 37,
+      "id": "037_B178",
+      "glyph": "노",
+      "title": "땅을 훑는 홍염",
+      "intent": "지정 영역에 화염 방사(즉발)",
+      "family": "Flame",
+      "behavior": "Burst",
+      "sameRowCrop": [
+        397,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "노",
+        "title": "땅을 훑는 홍염",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3499999940395355,
+        "life": 1.7999999523162842,
+        "sampledSeconds": [
+          0.12600000202655792,
+          0.3959999978542328,
+          0.7559999823570251,
+          1.1519999504089355,
+          1.619999885559082
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+        "areaShape": "Cone",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        },
+        "areaRadius": 1.4500000476837158,
+        "areaAngle": 32.0,
+        "areaLength": 2.9000000953674316,
+        "areaDelay": 0.3499999940395355,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\037_B178_0.png",
+        "Art\\SpellVFX120\\SecondPass\\037_B178_1.png",
+        "Art\\SpellVFX120\\SecondPass\\037_B178_2.png",
+        "Art\\SpellVFX120\\SecondPass\\037_B178_3.png",
+        "Art\\SpellVFX120\\SecondPass\\037_B178_4.png"
+      ]
+    },
+    {
+      "index": 38,
+      "id": "038_B179",
+      "glyph": "녹",
+      "title": "불 속에 핀 안식",
+      "intent": "광역 화염 + 적 명중 지점에서 회복존 분출(플레이어 진입 시 HP 회복). 허공 시전 시 회복존 없음",
+      "family": "Lotus",
+      "behavior": "Heal",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "녹",
+        "title": "불 속에 핀 안식",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.4000000059604645,
+        "life": 4.0,
+        "sampledSeconds": [
+          0.2800000011920929,
+          0.8799999952316284,
+          1.6799999475479126,
+          2.559999942779541,
+          3.5999999046325684
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\038_B179_0.png",
+        "Art\\SpellVFX120\\SecondPass\\038_B179_1.png",
+        "Art\\SpellVFX120\\SecondPass\\038_B179_2.png",
+        "Art\\SpellVFX120\\SecondPass\\038_B179_3.png",
+        "Art\\SpellVFX120\\SecondPass\\038_B179_4.png"
+      ]
+    },
+    {
+      "index": 39,
+      "id": "039_B17C",
+      "glyph": "논",
+      "title": "끝에서 뒤집히는 불",
+      "intent": "역화 — 방사 끝점에서 크게 터지는 이단 구조",
+      "family": "Flame",
+      "behavior": "Burst",
+      "sameRowCrop": [
+        404,
+        64,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "논",
+        "title": "끝에서 뒤집히는 불",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.7200000286102295,
+        "life": 2.299999952316284,
+        "sampledSeconds": [
+          0.16099999845027924,
+          0.5059999823570251,
+          0.965999960899353,
+          1.4719998836517334,
+          2.069999933242798
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\039_B17C_0.png",
+        "Art\\SpellVFX120\\SecondPass\\039_B17C_1.png",
+        "Art\\SpellVFX120\\SecondPass\\039_B17C_2.png",
+        "Art\\SpellVFX120\\SecondPass\\039_B17C_3.png",
+        "Art\\SpellVFX120\\SecondPass\\039_B17C_4.png"
+      ]
+    },
+    {
+      "index": 40,
+      "id": "040_B188",
+      "glyph": "놈",
+      "title": "불꽃 짐승의 갈기",
+      "intent": "불꽃 짐승 소환수를 빚어 세움(재질=초성). 그로기 미축적·어그로 없음",
+      "family": "Beast",
+      "behavior": "Summon",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "놈",
+        "title": "불꽃 짐승의 갈기",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.5199999809265137,
+        "life": 4.599999904632568,
+        "sampledSeconds": [
+          0.32199999690055847,
+          1.0119999647140503,
+          1.931999921798706,
+          2.943999767303467,
+          4.139999866485596
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\040_B188_0.png",
+        "Art\\SpellVFX120\\SecondPass\\040_B188_1.png",
+        "Art\\SpellVFX120\\SecondPass\\040_B188_2.png",
+        "Art\\SpellVFX120\\SecondPass\\040_B188_3.png",
+        "Art\\SpellVFX120\\SecondPass\\040_B188_4.png"
+      ]
+    },
+    {
+      "index": 41,
+      "id": "041_B18B",
+      "glyph": "놋",
+      "title": "녹아내리는 쇠빛",
+      "intent": "갑주 녹이기 — 훑인 전원 방어력 감소(맛의 광역 짝)",
+      "family": "Shard",
+      "behavior": "Burst",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "놋",
+        "title": "녹아내리는 쇠빛",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.3799999952316284,
+        "life": 2.4000000953674316,
+        "sampledSeconds": [
+          0.1680000126361847,
+          0.527999997138977,
+          1.0080000162124634,
+          1.5360000133514404,
+          2.1600000858306885
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\041_B18B_0.png",
+        "Art\\SpellVFX120\\SecondPass\\041_B18B_1.png",
+        "Art\\SpellVFX120\\SecondPass\\041_B18B_2.png",
+        "Art\\SpellVFX120\\SecondPass\\041_B18B_3.png",
+        "Art\\SpellVFX120\\SecondPass\\041_B18B_4.png"
+      ]
+    },
+    {
+      "index": 42,
+      "id": "042_B18D",
+      "glyph": "농",
+      "title": "김이 된 불막",
+      "intent": "수증기 장막 — 방사 자리에 김 잔존, 안의 적 명중률 감소",
+      "family": "Cloud",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "농",
+        "title": "김이 된 불막",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.4000000059604645,
+        "life": 4.5,
+        "sampledSeconds": [
+          0.3149999976158142,
+          0.9900000095367432,
+          1.8899999856948853,
+          2.879999876022339,
+          4.049999713897705
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\042_B18D_0.png",
+        "Art\\SpellVFX120\\SecondPass\\042_B18D_1.png",
+        "Art\\SpellVFX120\\SecondPass\\042_B18D_2.png",
+        "Art\\SpellVFX120\\SecondPass\\042_B18D_3.png",
+        "Art\\SpellVFX120\\SecondPass\\042_B18D_4.png"
+      ]
+    },
+    {
+      "index": 43,
+      "id": "043_B204",
+      "glyph": "누",
+      "title": "둘러선 화로벽",
+      "intent": "화막 광역 결계 — 언제든 시전, 잠시 잔존. 패링 판정·보상 없음",
+      "family": "Flame",
+      "behavior": "Shield",
+      "sameRowCrop": [
+        276,
+        174,
+        1036,
+        622
+      ],
+      "evidence": {
+        "glyph": "누",
+        "title": "둘러선 화로벽",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2800000011920929,
+        "life": 3.700000047683716,
+        "sampledSeconds": [
+          0.2590000033378601,
+          0.8140000104904175,
+          1.5540000200271606,
+          2.368000030517578,
+          3.3299999237060547
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\043_B204_0.png",
+        "Art\\SpellVFX120\\SecondPass\\043_B204_1.png",
+        "Art\\SpellVFX120\\SecondPass\\043_B204_2.png",
+        "Art\\SpellVFX120\\SecondPass\\043_B204_3.png",
+        "Art\\SpellVFX120\\SecondPass\\043_B204_4.png"
+      ]
+    },
+    {
+      "index": 44,
+      "id": "044_B205",
+      "glyph": "눅",
+      "title": "떠오른 잿꽃 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Lotus",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        360,
+        214,
+        1036,
+        560
+      ],
+      "evidence": {
+        "glyph": "눅",
+        "title": "떠오른 잿꽃 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 2.9000000953674316,
+        "sampledSeconds": [
+          0.203000009059906,
+          0.6380000114440918,
+          1.218000054359436,
+          1.8560000658035278,
+          2.6100001335144043
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\044_B205_0.png",
+        "Art\\SpellVFX120\\SecondPass\\044_B205_1.png",
+        "Art\\SpellVFX120\\SecondPass\\044_B205_2.png",
+        "Art\\SpellVFX120\\SecondPass\\044_B205_3.png",
+        "Art\\SpellVFX120\\SecondPass\\044_B205_4.png"
+      ]
+    },
+    {
+      "index": 45,
+      "id": "045_B208",
+      "glyph": "눈",
+      "title": "덩굴을 태운 길",
+      "intent": "덩굴을 불로 태워 길을 연다. 비전투 전용",
+      "family": "Flame",
+      "behavior": "Zone",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        551
+      ],
+      "evidence": {
+        "glyph": "눈",
+        "title": "덩굴을 태운 길",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.36000001430511475,
+        "life": 3.799999952316284,
+        "sampledSeconds": [
+          0.26600000262260437,
+          0.8359999656677246,
+          1.5959999561309814,
+          2.431999921798706,
+          3.419999837875366
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\045_B208_0.png",
+        "Art\\SpellVFX120\\SecondPass\\045_B208_1.png",
+        "Art\\SpellVFX120\\SecondPass\\045_B208_2.png",
+        "Art\\SpellVFX120\\SecondPass\\045_B208_3.png",
+        "Art\\SpellVFX120\\SecondPass\\045_B208_4.png"
+      ]
+    },
+    {
+      "index": 46,
+      "id": "046_B214",
+      "glyph": "눔",
+      "title": "접힌 주홍 봉함 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Seal",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        552
+      ],
+      "evidence": {
+        "glyph": "눔",
+        "title": "접힌 주홍 봉함 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 3.299999952316284,
+        "sampledSeconds": [
+          0.23099999129772186,
+          0.7260000109672546,
+          1.3859999179840088,
+          2.111999988555908,
+          2.9699997901916504
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\046_B214_0.png",
+        "Art\\SpellVFX120\\SecondPass\\046_B214_1.png",
+        "Art\\SpellVFX120\\SecondPass\\046_B214_2.png",
+        "Art\\SpellVFX120\\SecondPass\\046_B214_3.png",
+        "Art\\SpellVFX120\\SecondPass\\046_B214_4.png"
+      ]
+    },
+    {
+      "index": 47,
+      "id": "047_B217",
+      "glyph": "눗",
+      "title": "날아오른 재 부채 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Flame",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        343,
+        214,
+        1036,
+        585
+      ],
+      "evidence": {
+        "glyph": "눗",
+        "title": "날아오른 재 부채 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.2800000011920929,
+        "life": 2.75,
+        "sampledSeconds": [
+          0.19249999523162842,
+          0.6050000190734863,
+          1.1549999713897705,
+          1.7599999904632568,
+          2.4749999046325684
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\047_B217_0.png",
+        "Art\\SpellVFX120\\SecondPass\\047_B217_1.png",
+        "Art\\SpellVFX120\\SecondPass\\047_B217_2.png",
+        "Art\\SpellVFX120\\SecondPass\\047_B217_3.png",
+        "Art\\SpellVFX120\\SecondPass\\047_B217_4.png"
+      ]
+    },
+    {
+      "index": 48,
+      "id": "048_B219",
+      "glyph": "눙",
+      "title": "잠긴 홍등 씨앗 후보",
+      "intent": "미배정 — 의도적 공백(필드 5자 제한)",
+      "family": "Ember",
+      "behavior": "Reserve",
+      "sameRowCrop": [
+        404,
+        214,
+        1036,
+        553
+      ],
+      "evidence": {
+        "glyph": "눙",
+        "title": "잠긴 홍등 씨앗 후보",
+        "status": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "gameplayConnectionVerified": false,
+        "impactTime": 0.30000001192092896,
+        "life": 3.25,
+        "sampledSeconds": [
+          0.22750000655651093,
+          0.7149999737739563,
+          1.3650000095367432,
+          2.0799999237060547,
+          2.924999952316284
+        ],
+        "primaryTarget": "VFX Target",
+        "secondaryTarget": "VFX Secondary Target",
+        "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+        "areaPlanSource": "none",
+        "areaShape": "",
+        "areaPoint": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaDirection": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "areaRadius": 0.0,
+        "areaAngle": 0.0,
+        "areaLength": 0.0,
+        "areaDelay": 0.0,
+        "areaSpeed": 0.0
+      },
+      "images": [
+        "Art\\SpellVFX120\\SecondPass\\048_B219_0.png",
+        "Art\\SpellVFX120\\SecondPass\\048_B219_1.png",
+        "Art\\SpellVFX120\\SecondPass\\048_B219_2.png",
+        "Art\\SpellVFX120\\SecondPass\\048_B219_3.png",
+        "Art\\SpellVFX120\\SecondPass\\048_B219_4.png"
+      ]
+    }
+  ]
+}

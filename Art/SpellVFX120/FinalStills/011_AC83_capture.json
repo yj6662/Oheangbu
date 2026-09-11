@@ -1,0 +1,39 @@
+{
+    "glyph": "것",
+    "title": "죽절 검",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T02:24:43.2247790Z",
+    "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.20000000298023225,
+    "life": 3.5,
+    "sampledSeconds": [
+        0.24500000476837159,
+        0.7699999809265137,
+        1.46999990940094,
+        2.240000009536743,
+        3.1499998569488527
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

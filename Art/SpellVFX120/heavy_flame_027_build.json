@@ -1,0 +1,9 @@
+{
+    "glyph": "난",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_COMPACT_TRAVEL_SINGLE_HEAVY_IMPACT_PATTERN_CLEANUP",
+    "particleSystems": 10,
+    "maxParticleCapacity": 528,
+    "patternTris": 2,
+    "scope": "Dense travelling fire, simultaneous three flame tongues and Pattern156 impact. No secondary damage or added hit."
+}

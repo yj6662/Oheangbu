@@ -1,0 +1,708 @@
+{
+    "status": "BUILT_NOT_RENDER_VERIFIED",
+    "generatedUtc": "2026-09-09T07:36:42.4628692Z",
+    "sourcePolicy": "Exact vendor leaf ParticleSystems cloned. Fire flipbook/UV and alpha timing retained. Soil clods reuse normalized copies of C2 InkRock_L_LOD2 (540tris) and InkRock_K_LOD2 (900tris), with existing ink shading. Source assets untouched; no full demo root, generated solid plate, runtime script or per-instance material clone.",
+    "derivedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_SoftEarthWash.mat",
+    "mask": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Mask.png",
+    "materialAdaptation": "Two persistent shared copies of Smoke_Trail_00 keep AlphaBlend/flow and Mask.png soft edges. Earth roll 1/3: Noise_01.png cloud core, Emission=.65/Opacity=.85. Other rolls/charcoal/grains: original sparse Noise.png, Emission=.65/Opacity=1.2. Original materials unchanged. Fire shares par_Fire. Accompanying seal NativeScale=.30 and contact-only NativeImpactScale=.42 now opt into hierarchy PS scaling; spatial body dimensions are separate.",
+    "timePolicy": "All local PS loop with duration=1.3s, startDelay=0, prewarm=false, one small startup burst then rate-over-time. Source Smoke rate-over-distance=13 replaced because local deterministic carrier must sustain without dependence on editor dragging. Fire source nonlooping3.5s changed to looping. Per-particle lifetimes/alpha/size variations produce turnover; outer Life/release is runtime-owned. HoldAt=-1, no clock or gameplay changes.",
+    "validationLimit": "Structural budget/material checks performed by Build. Art, bounds after camera-facing billboards/nonuniform carrier scale, local-depth overlap, actual Life/Delay/Path and performance require root Unity capture. No art PASS is inferred from this build report.",
+    "sources": [
+        {
+            "prefab": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+            "child": "Fire_01",
+            "material": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+            "shader": "Shader Graphs/AdditiveBlend_Scroll",
+            "texture": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/par_Fire.png",
+            "materialGuid": "153ea4fe1817b8d45a153708bd023508",
+            "looping": false,
+            "localSimulation": true,
+            "flipbook": true,
+            "duration": 3.5,
+            "delay": 0.25,
+            "lifeMin": 0.5,
+            "lifeMax": 1.0,
+            "rateTime": 15.0,
+            "rateDistance": 0.0,
+            "maxParticles": 1000,
+            "tilesX": 8,
+            "tilesY": 1,
+            "alphaKeys": [
+                {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                {
+                    "x": 0.15529106557369233,
+                    "y": 1.0
+                },
+                {
+                    "x": 0.8388952612876892,
+                    "y": 1.0
+                },
+                {
+                    "x": 1.0,
+                    "y": 0.0
+                }
+            ]
+        },
+        {
+            "prefab": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+            "child": "Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+            "material": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly10-01/Smoke_Trail_00.mat",
+            "shader": "Shader Graphs/AlphaBlend_Scroll",
+            "texture": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Noise.png",
+            "materialGuid": "833ba2d905149654a9d20a87a47495e9",
+            "looping": true,
+            "localSimulation": false,
+            "flipbook": false,
+            "duration": 5.0,
+            "delay": 0.0,
+            "lifeMin": 0.30000001192092898,
+            "lifeMax": 0.5,
+            "rateTime": 0.0,
+            "rateDistance": 13.0,
+            "maxParticles": 1000,
+            "tilesX": 1,
+            "tilesY": 1,
+            "alphaKeys": [
+                {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                {
+                    "x": 0.20930799841880799,
+                    "y": 1.0
+                },
+                {
+                    "x": 0.5450522899627686,
+                    "y": 0.7529411911964417
+                },
+                {
+                    "x": 1.0,
+                    "y": 0.0
+                }
+            ]
+        }
+    ],
+    "bodies": [
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/PF_KTP_FlameCone.prefab",
+            "glyph": "노",
+            "coordinateContract": "+Z 0..1; authored half-width X approaches 1 at Z=1; Y intended 0..0.6. Carrier scales X by Length*tan(half-angle), Z by Length. Sprite edges may extend beyond emitter envelope; actual bounds UNVERIFIED.",
+            "systems": 10,
+            "capacity": 182,
+            "layers": [
+                {
+                    "name": "FirePocket_0",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": -0.04500000178813934,
+                        "y": 0.14000000059604646,
+                        "z": 0.20000000298023225
+                    },
+                    "shapeBox": {
+                        "x": 0.10239999741315842,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.3199999928474426,
+                        "y": 0.47360000014305117
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 11.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "FirePocket_1",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": 0.10999999940395355,
+                        "y": 0.15000000596046449,
+                        "z": 0.3700000047683716
+                    },
+                    "shapeBox": {
+                        "x": 0.10239999741315842,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.3199999928474426,
+                        "y": 0.47360000014305117
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 13.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "FirePocket_2",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": -0.30000001192092898,
+                        "y": 0.1599999964237213,
+                        "z": 0.5299999713897705
+                    },
+                    "shapeBox": {
+                        "x": 0.07999999821186066,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3700000047683716
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 15.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "FirePocket_3",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": 0.33000001311302187,
+                        "y": 0.17000000178813935,
+                        "z": 0.6399999856948853
+                    },
+                    "shapeBox": {
+                        "x": 0.07999999821186066,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3700000047683716
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 11.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "FirePocket_4",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": -0.6600000262260437,
+                        "y": 0.15000000596046449,
+                        "z": 0.8500000238418579
+                    },
+                    "shapeBox": {
+                        "x": 0.07999999821186066,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3700000047683716
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 13.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "FirePocket_5",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": -0.03999999910593033,
+                        "y": 0.18000000715255738,
+                        "z": 0.8100000023841858
+                    },
+                    "shapeBox": {
+                        "x": 0.11520000547170639,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.36000001430511477,
+                        "y": 0.532800018787384
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 15.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "FirePocket_6",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": 0.6600000262260437,
+                        "y": 0.15000000596046449,
+                        "z": 0.8600000143051148
+                    },
+                    "shapeBox": {
+                        "x": 0.07999999821186066,
+                        "y": 0.014999999664723874,
+                        "z": 0.03500000014901161
+                    },
+                    "lifetime": {
+                        "x": 0.3400000035762787,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3700000047683716
+                    },
+                    "sizeY": {
+                        "x": 0.5699999928474426,
+                        "y": 0.9399999976158142
+                    },
+                    "rate": 11.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 18
+                },
+                {
+                    "name": "CharredGap_0",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": -0.10999999940395355,
+                        "y": 0.1599999964237213,
+                        "z": 0.5
+                    },
+                    "shapeBox": {
+                        "x": 0.14000000059604646,
+                        "y": 0.014999999664723874,
+                        "z": 0.05000000074505806
+                    },
+                    "lifetime": {
+                        "x": 0.41999998688697817,
+                        "y": 0.699999988079071
+                    },
+                    "sizeX": {
+                        "x": 0.2800000011920929,
+                        "y": 0.46000000834465029
+                    },
+                    "sizeY": {
+                        "x": 0.36000001430511477,
+                        "y": 0.5799999833106995
+                    },
+                    "rate": 9.0,
+                    "startAlpha": 0.3499999940395355,
+                    "capacity": 16
+                },
+                {
+                    "name": "CharredGap_1",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": 0.2199999988079071,
+                        "y": 0.12999999523162843,
+                        "z": 0.8399999737739563
+                    },
+                    "shapeBox": {
+                        "x": 0.14000000059604646,
+                        "y": 0.014999999664723874,
+                        "z": 0.05000000074505806
+                    },
+                    "lifetime": {
+                        "x": 0.41999998688697817,
+                        "y": 0.699999988079071
+                    },
+                    "sizeX": {
+                        "x": 0.2800000011920929,
+                        "y": 0.46000000834465029
+                    },
+                    "sizeY": {
+                        "x": 0.36000001430511477,
+                        "y": 0.5799999833106995
+                    },
+                    "rate": 9.0,
+                    "startAlpha": 0.3499999940395355,
+                    "capacity": 16
+                },
+                {
+                    "name": "BrokenEmberTips",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab/Fire_01",
+                    "sharedMaterial": "Assets/KoreanTraditionalPattern_Effect/Materials/Bottom/Bottom05-01/par_Fire.mat",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.2199999988079071,
+                        "z": 0.75
+                    },
+                    "shapeBox": {
+                        "x": 1.0499999523162842,
+                        "y": 0.10000000149011612,
+                        "z": 0.18000000715255738
+                    },
+                    "lifetime": {
+                        "x": 0.23999999463558198,
+                        "y": 0.41999998688697817
+                    },
+                    "sizeX": {
+                        "x": 0.014999999664723874,
+                        "y": 0.03099999949336052
+                    },
+                    "sizeY": {
+                        "x": 0.02500000037252903,
+                        "y": 0.05400000140070915
+                    },
+                    "rate": 18.0,
+                    "startAlpha": 0.5,
+                    "capacity": 24
+                }
+            ]
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/PF_KTP_SandFront.prefab",
+            "glyph": "모",
+            "coordinateContract": "Pivot at front center. Emitter X width 1 (-.5..+.5); overlapping soft billboards can extend beyond that envelope. Carrier scales X by PathRadius*2 and follows authoritative Path head. Actual visible coverage is a separate visual check.",
+            "systems": 10,
+            "capacity": 226,
+            "layers": [
+                {
+                    "name": "EarthRoll_0",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": -0.38999998569488528,
+                        "y": 0.4000000059604645,
+                        "z": -0.02500000037252903
+                    },
+                    "shapeBox": {
+                        "x": 0.02800000086426735,
+                        "y": 0.02500000037252903,
+                        "z": 0.04500000178813934
+                    },
+                    "lifetime": {
+                        "x": 0.4300000071525574,
+                        "y": 0.7200000286102295
+                    },
+                    "sizeX": {
+                        "x": 0.5623999834060669,
+                        "y": 0.7599999904632568
+                    },
+                    "sizeY": {
+                        "x": 1.1060000658035279,
+                        "y": 1.5800000429153443
+                    },
+                    "rate": 27.0,
+                    "startAlpha": 1.0,
+                    "capacity": 30
+                },
+                {
+                    "name": "EarthRoll_1",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_SoftEarthWash.mat",
+                    "position": {
+                        "x": -0.20000000298023225,
+                        "y": 0.5299999713897705,
+                        "z": 0.03500000014901161
+                    },
+                    "shapeBox": {
+                        "x": 0.02800000086426735,
+                        "y": 0.02500000037252903,
+                        "z": 0.04500000178813934
+                    },
+                    "lifetime": {
+                        "x": 0.4300000071525574,
+                        "y": 0.7200000286102295
+                    },
+                    "sizeX": {
+                        "x": 0.6956000328063965,
+                        "y": 0.9399999976158142
+                    },
+                    "sizeY": {
+                        "x": 1.3020000457763672,
+                        "y": 1.8600000143051148
+                    },
+                    "rate": 31.0,
+                    "startAlpha": 0.23999999463558198,
+                    "capacity": 30
+                },
+                {
+                    "name": "EarthRoll_2",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": 0.03500000014901161,
+                        "y": 0.5699999928474426,
+                        "z": 0.014999999664723874
+                    },
+                    "shapeBox": {
+                        "x": 0.02800000086426735,
+                        "y": 0.02500000037252903,
+                        "z": 0.04500000178813934
+                    },
+                    "lifetime": {
+                        "x": 0.4300000071525574,
+                        "y": 0.7200000286102295
+                    },
+                    "sizeX": {
+                        "x": 0.6956000328063965,
+                        "y": 0.9399999976158142
+                    },
+                    "sizeY": {
+                        "x": 1.46999990940094,
+                        "y": 2.0999999046325685
+                    },
+                    "rate": 27.0,
+                    "startAlpha": 1.0,
+                    "capacity": 30
+                },
+                {
+                    "name": "EarthRoll_3",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_SoftEarthWash.mat",
+                    "position": {
+                        "x": 0.23499999940395356,
+                        "y": 0.46000000834465029,
+                        "z": -0.03500000014901161
+                    },
+                    "shapeBox": {
+                        "x": 0.02800000086426735,
+                        "y": 0.02500000037252903,
+                        "z": 0.04500000178813934
+                    },
+                    "lifetime": {
+                        "x": 0.4300000071525574,
+                        "y": 0.7200000286102295
+                    },
+                    "sizeX": {
+                        "x": 0.6956000328063965,
+                        "y": 0.9399999976158142
+                    },
+                    "sizeY": {
+                        "x": 1.1060000658035279,
+                        "y": 1.5800000429153443
+                    },
+                    "rate": 31.0,
+                    "startAlpha": 0.23999999463558198,
+                    "capacity": 30
+                },
+                {
+                    "name": "EarthRoll_4",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": 0.4050000011920929,
+                        "y": 0.36000001430511477,
+                        "z": 0.004999999888241291
+                    },
+                    "shapeBox": {
+                        "x": 0.02800000086426735,
+                        "y": 0.02500000037252903,
+                        "z": 0.04500000178813934
+                    },
+                    "lifetime": {
+                        "x": 0.4300000071525574,
+                        "y": 0.7200000286102295
+                    },
+                    "sizeX": {
+                        "x": 0.5623999834060669,
+                        "y": 0.7599999904632568
+                    },
+                    "sizeY": {
+                        "x": 1.1060000658035279,
+                        "y": 1.5800000429153443
+                    },
+                    "rate": 27.0,
+                    "startAlpha": 1.0,
+                    "capacity": 30
+                },
+                {
+                    "name": "FineEarthScatter",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.15000000596046449,
+                        "z": -0.009999999776482582
+                    },
+                    "shapeBox": {
+                        "x": 0.8999999761581421,
+                        "y": 0.10000000149011612,
+                        "z": 0.10999999940395355
+                    },
+                    "lifetime": {
+                        "x": 0.25999999046325686,
+                        "y": 0.47999998927116396
+                    },
+                    "sizeX": {
+                        "x": 0.012000000104308129,
+                        "y": 0.028999999165534974
+                    },
+                    "sizeY": {
+                        "x": 0.014000000432133675,
+                        "y": 0.03500000014901161
+                    },
+                    "rate": 43.0,
+                    "startAlpha": 0.6200000047683716,
+                    "capacity": 40
+                },
+                {
+                    "name": "LowTrailingEarth",
+                    "source": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab/Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_LooseEarthGrains.mat",
+                    "position": {
+                        "x": -0.03999999910593033,
+                        "y": 0.10999999940395355,
+                        "z": -0.10000000149011612
+                    },
+                    "shapeBox": {
+                        "x": 0.6899999976158142,
+                        "y": 0.009999999776482582,
+                        "z": 0.029999999329447748
+                    },
+                    "lifetime": {
+                        "x": 0.36000001430511477,
+                        "y": 0.5899999737739563
+                    },
+                    "sizeX": {
+                        "x": 0.11999999731779099,
+                        "y": 0.2199999988079071
+                    },
+                    "sizeY": {
+                        "x": 0.07999999821186066,
+                        "y": 0.1599999964237213
+                    },
+                    "rate": 18.0,
+                    "startAlpha": 0.2199999988079071,
+                    "capacity": 24
+                },
+                {
+                    "name": "Clod_0",
+                    "source": "Assets/_Project/Art/CodexWorld/RockKit/Meshes/InkRock_L_LOD2.asset",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_EarthClods.mat",
+                    "position": {
+                        "x": -0.28999999165534975,
+                        "y": 0.17000000178813935,
+                        "z": 0.05000000074505806
+                    },
+                    "shapeBox": {
+                        "x": 0.03999999910593033,
+                        "y": 0.014999999664723874,
+                        "z": 0.05999999865889549
+                    },
+                    "lifetime": {
+                        "x": 0.47999998927116396,
+                        "y": 0.6000000238418579
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3400000035762787
+                    },
+                    "sizeY": {
+                        "x": 0.3799999952316284,
+                        "y": 0.49000000953674319
+                    },
+                    "rate": 3.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 4
+                },
+                {
+                    "name": "Clod_1",
+                    "source": "Assets/_Project/Art/CodexWorld/RockKit/Meshes/InkRock_K_LOD2.asset",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_EarthClods.mat",
+                    "position": {
+                        "x": 0.02500000037252903,
+                        "y": 0.23999999463558198,
+                        "z": 0.02500000037252903
+                    },
+                    "shapeBox": {
+                        "x": 0.03999999910593033,
+                        "y": 0.014999999664723874,
+                        "z": 0.05999999865889549
+                    },
+                    "lifetime": {
+                        "x": 0.47999998927116396,
+                        "y": 0.6000000238418579
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3400000035762787
+                    },
+                    "sizeY": {
+                        "x": 0.550000011920929,
+                        "y": 0.6600000262260437
+                    },
+                    "rate": 3.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 4
+                },
+                {
+                    "name": "Clod_2",
+                    "source": "Assets/_Project/Art/CodexWorld/RockKit/Meshes/InkRock_L_LOD2.asset",
+                    "sharedMaterial": "Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_KTP_EarthClods.mat",
+                    "position": {
+                        "x": 0.3199999928474426,
+                        "y": 0.15000000596046449,
+                        "z": -0.014999999664723874
+                    },
+                    "shapeBox": {
+                        "x": 0.03999999910593033,
+                        "y": 0.014999999664723874,
+                        "z": 0.05999999865889549
+                    },
+                    "lifetime": {
+                        "x": 0.47999998927116396,
+                        "y": 0.6000000238418579
+                    },
+                    "sizeX": {
+                        "x": 0.25,
+                        "y": 0.3400000035762787
+                    },
+                    "sizeY": {
+                        "x": 0.3799999952316284,
+                        "y": 0.49000000953674319
+                    },
+                    "rate": 3.0,
+                    "startAlpha": 0.949999988079071,
+                    "capacity": 4
+                }
+            ]
+        }
+    ]
+}

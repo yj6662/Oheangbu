@@ -1,0 +1,2534 @@
+{
+  "status": "VISUAL_SAMPLE_REVIEW_COMPLETED_WITH_FINDINGS_NOT_ART_PASS",
+  "utc": "2026-09-09T02:53:32.535097+00:00",
+  "source": "Current Clips 2026-09-09T02:28 revision; no original PNG/video changed",
+  "clipCount": 24,
+  "samplesPerClip": 12,
+  "sampleCount": 288,
+  "encodingReportSha256": "1afef6f20ba9d4fd2c354ac5e0e5f6c01a3b186cb701cada523ae9f6c5e13c7c",
+  "rows": [
+    {
+      "id": "049_B9C8",
+      "glyph": "마",
+      "sourceVideo": "Art/SpellVFX120/Clips/049_B9C8.mp4",
+      "sourceVideoSha256": "2912aeace94179eacbed86957fa88a28660a8e80be452dab6ad61d1a6d49ad24",
+      "sourceMetadataSha256": "0eb1a993a2eb9cdf08b1d70b317fbb8f954d3194b7d900607fb5742414a65035",
+      "capturedUtc": "2026-09-09T02:28:03.8191941Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 1.8499999046325684,
+      "impactSeconds": 0.949999988079071,
+      "encodedFrames": 47,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/049_B9C8_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0000_t000.000.png",
+          "sha256": "d0430a706c9f266acc7f1e25bbe082144e78fdbb87c495e38c67c0b2e0184867"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0006_t000.250.png",
+          "sha256": "279ec3fe1ad3e7f4813637d4b327bc8928a8cd9d4284fe8d796bc1661ed79576"
+        },
+        {
+          "frameIndex": 13,
+          "timestampSeconds": 0.5416666666666666,
+          "sourceSampledSeconds": 0.5416666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0013_t000.542.png",
+          "sha256": "8dc6db9c9d4d6da4495301704bf4e19ad1a1cf1c43f7fef1d6cb29e9f495c2e6"
+        },
+        {
+          "frameIndex": 19,
+          "timestampSeconds": 0.7916666666666666,
+          "sourceSampledSeconds": 0.7916666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0019_t000.792.png",
+          "sha256": "d2a0e6464107f1d3903a4814b2189c378d583285dc34302dce84d5aa13606521"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0022_t000.917.png",
+          "sha256": "c87c1509e6f1b6453871d8feb07b8b21c9da8499a7da724af8af91c51ebf5e62"
+        },
+        {
+          "frameIndex": 24,
+          "timestampSeconds": 1.0,
+          "sourceSampledSeconds": 1.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0024_t001.000.png",
+          "sha256": "3e417caace5d3ca99d2668d6cbe96f3a91cd07a60fb6fce762be22c32e99d3a8"
+        },
+        {
+          "frameIndex": 26,
+          "timestampSeconds": 1.0833333333333333,
+          "sourceSampledSeconds": 1.0833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0026_t001.083.png",
+          "sha256": "e28b66538d4403b303fff49ac3591ef4dcbaada7c7d43e1b8d60e503c6745167"
+        },
+        {
+          "frameIndex": 31,
+          "timestampSeconds": 1.2916666666666667,
+          "sourceSampledSeconds": 1.2916666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0031_t001.292.png",
+          "sha256": "b9b91206b78cb9a81f655241eae3e4841dbf1d5c3f1971fd8dc6ef0b862b84b6"
+        },
+        {
+          "frameIndex": 36,
+          "timestampSeconds": 1.5,
+          "sourceSampledSeconds": 1.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0036_t001.500.png",
+          "sha256": "9de18fcbc582e8961f0785d3e7da96d99c38fcc0ad8a5e39e043a120f151ba41"
+        },
+        {
+          "frameIndex": 38,
+          "timestampSeconds": 1.5833333333333333,
+          "sourceSampledSeconds": 1.5833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0038_t001.583.png",
+          "sha256": "48a0819a434d2dd69cc505395e16e0d17cf116b0d4de591bbc46f5577d444ec2"
+        },
+        {
+          "frameIndex": 42,
+          "timestampSeconds": 1.75,
+          "sourceSampledSeconds": 1.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0042_t001.750.png",
+          "sha256": "4f9a32cfc8084878d6c7c989be3f394aca0b64962612e23fdb193069b8dd8492"
+        },
+        {
+          "frameIndex": 46,
+          "timestampSeconds": 1.9166666666666667,
+          "sourceSampledSeconds": 1.9166666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/049_B9C8/049_B9C8_f0046_t001.917.png",
+          "sha256": "f0dba58f3c88dfe451afdb55cf101ea78d954ac76daeee19f75406553f2fa29e"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "050_B9C9",
+      "glyph": "막",
+      "sourceVideo": "Art/SpellVFX120/Clips/050_B9C9.mp4",
+      "sourceVideoSha256": "5f03a8048a6e5e6ca21ddaff3cba84271c0f7b6b5ec3772b6a946dc871d69a6f",
+      "sourceMetadataSha256": "0702c3d1e154cb59ce6b27574c0d44f008b4fcd83ac3617f87892b0114efa8bf",
+      "capturedUtc": "2026-09-09T02:28:05.0175370Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.9000000953674316,
+      "impactSeconds": 0.949999988079071,
+      "encodedFrames": 96,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/050_B9C9_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0000_t000.000.png",
+          "sha256": "bedcce4e34e37f884d43cf2a07872e32775a525d5b757227efee10c304544f70"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0006_t000.250.png",
+          "sha256": "45daddd5b55c866dccc0791da742adfd32ea5d86d8f288d1a6fd14cd7e5684ff"
+        },
+        {
+          "frameIndex": 13,
+          "timestampSeconds": 0.5416666666666666,
+          "sourceSampledSeconds": 0.5416666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0013_t000.542.png",
+          "sha256": "20bf6442f0e4a041012ac11f36f0d191f302fea2ec60b2f70f3b788e1a3aaca1"
+        },
+        {
+          "frameIndex": 19,
+          "timestampSeconds": 0.7916666666666666,
+          "sourceSampledSeconds": 0.7916666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0019_t000.792.png",
+          "sha256": "e692a66acf93ee46ab05984057c5ee6515fdc38b505ee0fda932dc0107efe871"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0022_t000.917.png",
+          "sha256": "5ed420326ee5c241b834f561e4d396afc3c8fc378ca1108ef92a00722cc33dcf"
+        },
+        {
+          "frameIndex": 24,
+          "timestampSeconds": 1.0,
+          "sourceSampledSeconds": 1.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0024_t001.000.png",
+          "sha256": "8d480b956ccfcd1f86571aafb4dae66199379319bbc7680301584bf21007b170"
+        },
+        {
+          "frameIndex": 26,
+          "timestampSeconds": 1.0833333333333333,
+          "sourceSampledSeconds": 1.0833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0026_t001.083.png",
+          "sha256": "84fcce22e9470effbc100118098a9251d7da477f39bf0a32ac27c9190ca396e6"
+        },
+        {
+          "frameIndex": 31,
+          "timestampSeconds": 1.2916666666666667,
+          "sourceSampledSeconds": 1.2916666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0031_t001.292.png",
+          "sha256": "17129f94ea0f3c66fcf65e78a51370ac2a51775f21443b8395db53ee9991c0f8"
+        },
+        {
+          "frameIndex": 38,
+          "timestampSeconds": 1.5833333333333333,
+          "sourceSampledSeconds": 1.5833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0038_t001.583.png",
+          "sha256": "9f1d9bb1dc9448f04689f8f1cc427bbbbf29fe4e3ece90773a4a45fb9fd4d237"
+        },
+        {
+          "frameIndex": 75,
+          "timestampSeconds": 3.125,
+          "sourceSampledSeconds": 3.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0075_t003.125.png",
+          "sha256": "747ffa75e8cbb27f65bda8ee58288c1ffcfdc7428e316e179a115e46a9b2916b"
+        },
+        {
+          "frameIndex": 88,
+          "timestampSeconds": 3.6666666666666665,
+          "sourceSampledSeconds": 3.6666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0088_t003.667.png",
+          "sha256": "a166e45205cd25c486b4d1d644ea93536ccfcf1576e7b03ea4f3e38b4aeea0b2"
+        },
+        {
+          "frameIndex": 95,
+          "timestampSeconds": 3.9583333333333335,
+          "sourceSampledSeconds": 3.9583332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/050_B9C9/050_B9C9_f0095_t003.958.png",
+          "sha256": "b9dc2dbe2dafe6abbf3430858bdaef6653bc99c534bde615aa2dd559b43e209a"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "051_B9CC",
+      "glyph": "만",
+      "sourceVideo": "Art/SpellVFX120/Clips/051_B9CC.mp4",
+      "sourceVideoSha256": "a26a089f88b0cf303c401d3635bd1f6a31cc56adadbf952356e22bb89af4c574",
+      "sourceMetadataSha256": "dc8343615bae4f8eee05b9e001251918ea70da0ea24df0872944acd6e070355d",
+      "capturedUtc": "2026-09-09T02:28:07.5012526Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 2.299999952316284,
+      "impactSeconds": 0.949999988079071,
+      "encodedFrames": 58,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/051_B9CC_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0000_t000.000.png",
+          "sha256": "7e3f37b42a5fbc042608417155006508c442eed440eae12144d63c5dcab585f5"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0006_t000.250.png",
+          "sha256": "ef8d67eb71a601bd5f4c76b68abbde249d76d8f1d6407ed1f101d633a04a31ec"
+        },
+        {
+          "frameIndex": 13,
+          "timestampSeconds": 0.5416666666666666,
+          "sourceSampledSeconds": 0.5416666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0013_t000.542.png",
+          "sha256": "57ab94287080a6335ea4198c89e6fb593d3f680b101bbcddff485b55fdacc7e2"
+        },
+        {
+          "frameIndex": 19,
+          "timestampSeconds": 0.7916666666666666,
+          "sourceSampledSeconds": 0.7916666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0019_t000.792.png",
+          "sha256": "4e3a81770bb0aa38f6c9c4cc240cb07902e0e46ecbba8367105c9def80d47471"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0022_t000.917.png",
+          "sha256": "c73cdd3e858536e59bbf351e6a267b3d2396ba4e35a2e9697d3aa93a03924ffe"
+        },
+        {
+          "frameIndex": 24,
+          "timestampSeconds": 1.0,
+          "sourceSampledSeconds": 1.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0024_t001.000.png",
+          "sha256": "eacd8f03b9cb7c441d46bf7bf0c13297f2355d343386c8ba5afc80700021b78a"
+        },
+        {
+          "frameIndex": 26,
+          "timestampSeconds": 1.0833333333333333,
+          "sourceSampledSeconds": 1.0833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0026_t001.083.png",
+          "sha256": "e99dae4bc5da8fd0ccdfc5e4ae38a62a10c7ad6e9b2cc482dfa1ab10de05941e"
+        },
+        {
+          "frameIndex": 31,
+          "timestampSeconds": 1.2916666666666667,
+          "sourceSampledSeconds": 1.2916666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0031_t001.292.png",
+          "sha256": "853aabbaea70646f329a2e0450bc7641ce609b8e9728c435329c3572aded0d12"
+        },
+        {
+          "frameIndex": 38,
+          "timestampSeconds": 1.5833333333333333,
+          "sourceSampledSeconds": 1.5833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0038_t001.583.png",
+          "sha256": "e7a91be341f382ed1e808ea569eabcf5190617cdc39230a7ec65bb39952dfb5a"
+        },
+        {
+          "frameIndex": 44,
+          "timestampSeconds": 1.8333333333333333,
+          "sourceSampledSeconds": 1.8333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0044_t001.833.png",
+          "sha256": "efe7470e06df56ec8bc21fd7b3a1fb4b008421cc1a03ae99100b37b34d101170"
+        },
+        {
+          "frameIndex": 52,
+          "timestampSeconds": 2.1666666666666665,
+          "sourceSampledSeconds": 2.1666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0052_t002.167.png",
+          "sha256": "73e3165f2c57816fa764ae5604517a7d7e1cbcbb3c31dc6b7d4c31a319e466ae"
+        },
+        {
+          "frameIndex": 57,
+          "timestampSeconds": 2.375,
+          "sourceSampledSeconds": 2.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/051_B9CC/051_B9CC_f0057_t002.375.png",
+          "sha256": "238f8f57b0e20b995a8bbc2be8f46db9c5614c527352268211436c80dcb46098"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "052_B9D8",
+      "glyph": "맘",
+      "sourceVideo": "Art/SpellVFX120/Clips/052_B9D8.mp4",
+      "sourceVideoSha256": "a38a439792f8b3b4a9c690630aa4359636f2b08843ebec6694c6dad5129d0d72",
+      "sourceMetadataSha256": "826eb304284e7a3641d72866a12e218a1e3645a1f1d5196fc0848d6e4e670921",
+      "capturedUtc": "2026-09-09T02:28:08.9532848Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.3499999046325684,
+      "impactSeconds": 0.7200000286102295,
+      "encodedFrames": 83,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/052_B9D8_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0000_t000.000.png",
+          "sha256": "7ed60884676b688db1244e92e4bfabb6f2906983a5f8d9ca9583f523ad7f1824"
+        },
+        {
+          "frameIndex": 3,
+          "timestampSeconds": 0.125,
+          "sourceSampledSeconds": 0.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0003_t000.125.png",
+          "sha256": "300e76c0ca3bd304e27cb44cf3ed389bb4b29d4c561b8c2b92f5cf7bb925e10f"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0011_t000.458.png",
+          "sha256": "b6fae6695098cf4de990dfde59accb8167d57f636624693957538a850a9a2f9c"
+        },
+        {
+          "frameIndex": 18,
+          "timestampSeconds": 0.75,
+          "sourceSampledSeconds": 0.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0018_t000.750.png",
+          "sha256": "7edd054fd90eb33e87cbd45cf32fffc06fa48ef007e27256e7d5b5eae116b62a"
+        },
+        {
+          "frameIndex": 36,
+          "timestampSeconds": 1.5,
+          "sourceSampledSeconds": 1.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0036_t001.500.png",
+          "sha256": "3fc2022628d6798b792b5fc05b69bda4e4223c9b8883599406fbd71599ac43f7"
+        },
+        {
+          "frameIndex": 38,
+          "timestampSeconds": 1.5833333333333333,
+          "sourceSampledSeconds": 1.5833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0038_t001.583.png",
+          "sha256": "9d1afef6c0b86dd41facf654971e498903d2009f13dc89b13f6206a801098b9d"
+        },
+        {
+          "frameIndex": 40,
+          "timestampSeconds": 1.6666666666666667,
+          "sourceSampledSeconds": 1.6666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0040_t001.667.png",
+          "sha256": "ed5fe797d3c3bfcb1f8df89297559e9e94a985ca7a0baaa413c32e1e9c3ac9f8"
+        },
+        {
+          "frameIndex": 42,
+          "timestampSeconds": 1.75,
+          "sourceSampledSeconds": 1.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0042_t001.750.png",
+          "sha256": "1966fcc8e0fbbc72738ecd618868de6fdee8cca40ffe362e1ec2a91c8888e454"
+        },
+        {
+          "frameIndex": 47,
+          "timestampSeconds": 1.9583333333333333,
+          "sourceSampledSeconds": 1.9583333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0047_t001.958.png",
+          "sha256": "6930e47639114d829a49751cb53c618337ef259abb5f527b0419a44cfa98f945"
+        },
+        {
+          "frameIndex": 64,
+          "timestampSeconds": 2.6666666666666665,
+          "sourceSampledSeconds": 2.6666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0064_t002.667.png",
+          "sha256": "5f68fe586cc3c082a3c1484cfc2e60950d8ec3bc796da8899a12b8ddf749d6ad"
+        },
+        {
+          "frameIndex": 76,
+          "timestampSeconds": 3.1666666666666665,
+          "sourceSampledSeconds": 3.1666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0076_t003.167.png",
+          "sha256": "16fdf138bfdc91354e0c33ecb0930312a4912c890cb326e61b002aaf183125a8"
+        },
+        {
+          "frameIndex": 82,
+          "timestampSeconds": 3.4166666666666665,
+          "sourceSampledSeconds": 3.4166667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/052_B9D8/052_B9D8_f0082_t003.417.png",
+          "sha256": "f0ad63570453ec11dc9beb9d4a57d3cc414ce7880206db70dd71b931c2d96d2b"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "053_B9DB",
+      "glyph": "맛",
+      "sourceVideo": "Art/SpellVFX120/Clips/053_B9DB.mp4",
+      "sourceVideoSha256": "b7583e5dc5e37baf222ff6071f9112c5a6859b08027bb0b30e1e6a4041f99328",
+      "sourceMetadataSha256": "d6fc678e8712ee547c252ce4c951957139381881f6d8f61e3baf399845e07c2f",
+      "capturedUtc": "2026-09-09T02:28:11.1447219Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 1.75,
+      "impactSeconds": 0.8500000238418579,
+      "encodedFrames": 45,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/053_B9DB_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0000_t000.000.png",
+          "sha256": "c37d772fa71cb7140530ae043492dda0ee8ae27f186c4c3e4aadf000b4fb1fb7"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0006_t000.250.png",
+          "sha256": "85c144eeaa417ae150d999e20a265a340ff935e8077cd830e07422445af7a40d"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0011_t000.458.png",
+          "sha256": "82dfd4d569cc35b6538c218e95149a3a75dd54106657bccc365d7dad825cb6fa"
+        },
+        {
+          "frameIndex": 17,
+          "timestampSeconds": 0.7083333333333334,
+          "sourceSampledSeconds": 0.7083333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0017_t000.708.png",
+          "sha256": "e8d5427ac149cbaf53072392ffaec64a687d0b85b4d9326637b60cf8eff2861b"
+        },
+        {
+          "frameIndex": 19,
+          "timestampSeconds": 0.7916666666666666,
+          "sourceSampledSeconds": 0.7916666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0019_t000.792.png",
+          "sha256": "9c381bcbdd91295a2533efe124f7edf5b1395f353b368791758066e700a52dd5"
+        },
+        {
+          "frameIndex": 21,
+          "timestampSeconds": 0.875,
+          "sourceSampledSeconds": 0.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0021_t000.875.png",
+          "sha256": "5e953edec64ab7217bf1c4d51f690d209180de304bb3101c90e1c391d84dc465"
+        },
+        {
+          "frameIndex": 23,
+          "timestampSeconds": 0.9583333333333334,
+          "sourceSampledSeconds": 0.9583333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0023_t000.958.png",
+          "sha256": "2e30bc3825d9d7e5cac137c128488fb8a66c7ca5e770ac917655831fddf41205"
+        },
+        {
+          "frameIndex": 28,
+          "timestampSeconds": 1.1666666666666667,
+          "sourceSampledSeconds": 1.1666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0028_t001.167.png",
+          "sha256": "d0d9ecc692dce30f14983d8e21fa7731ff1ea5fbcfa7e4bbdc0f2b4ca3142e2a"
+        },
+        {
+          "frameIndex": 34,
+          "timestampSeconds": 1.4166666666666667,
+          "sourceSampledSeconds": 1.4166666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0034_t001.417.png",
+          "sha256": "a7aab356be4378e0bc9e5d54df888b27fc3b1c7bba3559c1e43dca9d1a808707"
+        },
+        {
+          "frameIndex": 35,
+          "timestampSeconds": 1.4583333333333333,
+          "sourceSampledSeconds": 1.4583333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0035_t001.458.png",
+          "sha256": "ea3c0b10e8e7dd55b897f400ca0ab293538bbeab4ff59f2d4452808a27d27b8c"
+        },
+        {
+          "frameIndex": 39,
+          "timestampSeconds": 1.625,
+          "sourceSampledSeconds": 1.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0039_t001.625.png",
+          "sha256": "e7fa12a2285ad2073f175c7a74085ec724c303925600e117f552f5c1f8572335"
+        },
+        {
+          "frameIndex": 44,
+          "timestampSeconds": 1.8333333333333333,
+          "sourceSampledSeconds": 1.8333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/053_B9DB/053_B9DB_f0044_t001.833.png",
+          "sha256": "9c4bff58168274f126448dc6c8ad9471024be5f6529878b586c8155bc14e35ec"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "054_B9DD",
+      "glyph": "망",
+      "sourceVideo": "Art/SpellVFX120/Clips/054_B9DD.mp4",
+      "sourceVideoSha256": "7af30a2fe54b961d17988356397bb423f701fae8e8c26befdd558fe6450f4d3a",
+      "sourceMetadataSha256": "654d5d032964748d0d8a4a76785211d554863add5731c0445803a3f87e20ea3c",
+      "capturedUtc": "2026-09-09T02:28:12.2811559Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 2.6500000953674316,
+      "impactSeconds": 0.8799999952316284,
+      "encodedFrames": 66,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/054_B9DD_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0000_t000.000.png",
+          "sha256": "d9906c278d382159ea35eb13b39c31c360f8bbc58fcc6883b41f161b83f962f4"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0006_t000.250.png",
+          "sha256": "8e76cf582651657f5206f78e082f59df6af568bc109941526694a779c07927e5"
+        },
+        {
+          "frameIndex": 12,
+          "timestampSeconds": 0.5,
+          "sourceSampledSeconds": 0.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0012_t000.500.png",
+          "sha256": "f1d32cbc186c910c67e8536dfa83904bac744bddcf2462f8f38be595f6ae7a70"
+        },
+        {
+          "frameIndex": 17,
+          "timestampSeconds": 0.7083333333333334,
+          "sourceSampledSeconds": 0.7083333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0017_t000.708.png",
+          "sha256": "bad281c36eb42b02b06abf0d1e251afd22ed3c2419e4144e7e8db7a20a1429f1"
+        },
+        {
+          "frameIndex": 20,
+          "timestampSeconds": 0.8333333333333334,
+          "sourceSampledSeconds": 0.8333333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0020_t000.833.png",
+          "sha256": "6c49a7a67aba1faf95eec9a2130c90d84614ecaca03167e408deec0e98ec682c"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0022_t000.917.png",
+          "sha256": "e8b468b5a3b786c981782dd13249d77a95a3fc7ae4d8a8ee9cf51929e2da3d3d"
+        },
+        {
+          "frameIndex": 24,
+          "timestampSeconds": 1.0,
+          "sourceSampledSeconds": 1.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0024_t001.000.png",
+          "sha256": "30159c7818aad78ad983a3858aafafc71b9d2379d4d42b9a5da91bc061f67cf4"
+        },
+        {
+          "frameIndex": 29,
+          "timestampSeconds": 1.2083333333333333,
+          "sourceSampledSeconds": 1.2083333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0029_t001.208.png",
+          "sha256": "f138fed46e0e4d039229e53ae5309aa6efbd85d5c4ff71ddf3202a2cc84a7784"
+        },
+        {
+          "frameIndex": 36,
+          "timestampSeconds": 1.5,
+          "sourceSampledSeconds": 1.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0036_t001.500.png",
+          "sha256": "c8796e2866d8e28ed570e2eef0c4d112b93143ed400eed950990fdef40af2155"
+        },
+        {
+          "frameIndex": 51,
+          "timestampSeconds": 2.125,
+          "sourceSampledSeconds": 2.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0051_t002.125.png",
+          "sha256": "22d88e258cf8903e5f7e1b0e8b2b5e16946d4d56f240b3fbefca5bc9dab921fc"
+        },
+        {
+          "frameIndex": 60,
+          "timestampSeconds": 2.5,
+          "sourceSampledSeconds": 2.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0060_t002.500.png",
+          "sha256": "d6c632f67914d897e15ff127528b67c8dd90626d7e0f26159c9ebf17caecee4a"
+        },
+        {
+          "frameIndex": 65,
+          "timestampSeconds": 2.7083333333333335,
+          "sourceSampledSeconds": 2.7083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/054_B9DD/054_B9DD_f0065_t002.708.png",
+          "sha256": "5264b1346028941120b52efde09a555e9d37a42149101df900c3bd0cad47519c"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "055_BA38",
+      "glyph": "머",
+      "sourceVideo": "Art/SpellVFX120/Clips/055_BA38.mp4",
+      "sourceVideoSha256": "3362d26d8697e1becbda43655bd2475b7187c404e9f014b0e96ed0274c043666",
+      "sourceMetadataSha256": "2bc5eecc3460e1162ca339bdc419857a3572031c9f3ee618dedf6af2ebf768ab",
+      "capturedUtc": "2026-09-09T02:28:14.0505202Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 2.299999952316284,
+      "impactSeconds": 0.20000000298023224,
+      "encodedFrames": 58,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/055_BA38_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0000_t000.000.png",
+          "sha256": "a79317d6c0264d85514f6df453cc3cd083ac4db66aa7eaac247fdd94af6c9a3e"
+        },
+        {
+          "frameIndex": 3,
+          "timestampSeconds": 0.125,
+          "sourceSampledSeconds": 0.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0003_t000.125.png",
+          "sha256": "eec57903fdb64fb8e7fdf906e9f84af9077a7cab4b0222f8aa05a409f50f5cd0"
+        },
+        {
+          "frameIndex": 7,
+          "timestampSeconds": 0.2916666666666667,
+          "sourceSampledSeconds": 0.2916666567325592,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0007_t000.292.png",
+          "sha256": "60f16d16c9ed1effeecdc486f725c55e8604360fcbc913be53ed0ac42e9ceb41"
+        },
+        {
+          "frameIndex": 13,
+          "timestampSeconds": 0.5416666666666666,
+          "sourceSampledSeconds": 0.5416666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0013_t000.542.png",
+          "sha256": "b714c4c1ae90f20fa9f39c380454222482d1ea14c7ca44eccbe3e1a29a219360"
+        },
+        {
+          "frameIndex": 20,
+          "timestampSeconds": 0.8333333333333334,
+          "sourceSampledSeconds": 0.8333333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0020_t000.833.png",
+          "sha256": "850d43f9c005338a97609922a2bf11971dccb2933726d1f93e6c994fcb9e5090"
+        },
+        {
+          "frameIndex": 26,
+          "timestampSeconds": 1.0833333333333333,
+          "sourceSampledSeconds": 1.0833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0026_t001.083.png",
+          "sha256": "433bd52aa3d8ffda45576319d66bf481cfdedf9373392196f0e9e979af8b728b"
+        },
+        {
+          "frameIndex": 33,
+          "timestampSeconds": 1.375,
+          "sourceSampledSeconds": 1.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0033_t001.375.png",
+          "sha256": "e1df8d5d2f71414862b78e810df2fdfee2e8057ec3af476196af4e19861987d3"
+        },
+        {
+          "frameIndex": 40,
+          "timestampSeconds": 1.6666666666666667,
+          "sourceSampledSeconds": 1.6666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0040_t001.667.png",
+          "sha256": "9fe92dd796590f6bae951f8ff27a4f54f5a18f413b41689c50efbe3d59bd6275"
+        },
+        {
+          "frameIndex": 45,
+          "timestampSeconds": 1.875,
+          "sourceSampledSeconds": 1.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0045_t001.875.png",
+          "sha256": "44b444a106341943a67a05e06a02b03a77b55c0fbd4dd3846ce5bf114cbaf00c"
+        },
+        {
+          "frameIndex": 50,
+          "timestampSeconds": 2.0833333333333335,
+          "sourceSampledSeconds": 2.0833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0050_t002.083.png",
+          "sha256": "574d89d16295dbcb01ea4d42818a5c835a1dde26d84522d8766c7d0f2f343d4e"
+        },
+        {
+          "frameIndex": 54,
+          "timestampSeconds": 2.25,
+          "sourceSampledSeconds": 2.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0054_t002.250.png",
+          "sha256": "05a2f8a3001854809d6dea057a15c82000c72a8c827f96d73502f2a2bf04174a"
+        },
+        {
+          "frameIndex": 57,
+          "timestampSeconds": 2.375,
+          "sourceSampledSeconds": 2.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/055_BA38/055_BA38_f0057_t002.375.png",
+          "sha256": "da69ab0a202cf1b9d52fe17fc8ba219a74d28b79f49e23a569d4c6bbb0fd3c81"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "056_BA39",
+      "glyph": "먹",
+      "sourceVideo": "Art/SpellVFX120/Clips/056_BA39.mp4",
+      "sourceVideoSha256": "ee8a4088b06727228881054ff98fc855f9f4440c0563fdab66560df1ba0346ff",
+      "sourceMetadataSha256": "e2a27acdb57ca38c2c40fd61ca4b2c2d1b58ccb8a571b6d4c243d9077962e87d",
+      "capturedUtc": "2026-09-09T02:28:15.6318975Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.700000047683716,
+      "impactSeconds": 0.25,
+      "encodedFrames": 92,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/056_BA39_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0000_t000.000.png",
+          "sha256": "ac651ac09540b249cf1c8045e7f448361dd028231b2dcf13ed035ff294496129"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0004_t000.167.png",
+          "sha256": "d3684440c5652039fda2ac045b966a36e9a5ecd162faf017f66121e20df2d590"
+        },
+        {
+          "frameIndex": 12,
+          "timestampSeconds": 0.5,
+          "sourceSampledSeconds": 0.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0012_t000.500.png",
+          "sha256": "d77ac2878998fdd2f3fba216d97c52bee184f796a3d180373597bab1ada6435f"
+        },
+        {
+          "frameIndex": 21,
+          "timestampSeconds": 0.875,
+          "sourceSampledSeconds": 0.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0021_t000.875.png",
+          "sha256": "0769d7933098e911a0ecb1441f7ba0e09e1cd3a559450a0fc41405658f1b9c9a"
+        },
+        {
+          "frameIndex": 32,
+          "timestampSeconds": 1.3333333333333333,
+          "sourceSampledSeconds": 1.3333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0032_t001.333.png",
+          "sha256": "89149a4506d2e0a6b7a364a594c8e7d5558bd30b94a806e937f564729631e596"
+        },
+        {
+          "frameIndex": 43,
+          "timestampSeconds": 1.7916666666666667,
+          "sourceSampledSeconds": 1.7916666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0043_t001.792.png",
+          "sha256": "876a719dc8671237503836bbb9d5a2a979c3affe72abcacae38a9d677ff38909"
+        },
+        {
+          "frameIndex": 53,
+          "timestampSeconds": 2.2083333333333335,
+          "sourceSampledSeconds": 2.2083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0053_t002.208.png",
+          "sha256": "b3a236e9a560c5425046ed5cb66fcaab279edf71859fe3605f70eec2597a77f5"
+        },
+        {
+          "frameIndex": 64,
+          "timestampSeconds": 2.6666666666666665,
+          "sourceSampledSeconds": 2.6666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0064_t002.667.png",
+          "sha256": "dd4cae81ea7086adc6f48a2eb57d0eba1f4211af291ce8aec8522bd9ebaa7567"
+        },
+        {
+          "frameIndex": 73,
+          "timestampSeconds": 3.0416666666666665,
+          "sourceSampledSeconds": 3.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0073_t003.042.png",
+          "sha256": "2da79dd4adfd83501865c42aea40b6c0aa6aa4a894fdeab166c9ea47aff5190d"
+        },
+        {
+          "frameIndex": 80,
+          "timestampSeconds": 3.3333333333333335,
+          "sourceSampledSeconds": 3.3333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0080_t003.333.png",
+          "sha256": "fd3d061fc1f7cdf1588d0ed2240c4a2be5677e995006c9d91cc00e186779782d"
+        },
+        {
+          "frameIndex": 86,
+          "timestampSeconds": 3.5833333333333335,
+          "sourceSampledSeconds": 3.5833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0086_t003.583.png",
+          "sha256": "55237e31176f1f2768cd264a707448482f38d8bb04ace31ea5493a6d8889132b"
+        },
+        {
+          "frameIndex": 91,
+          "timestampSeconds": 3.7916666666666665,
+          "sourceSampledSeconds": 3.7916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/056_BA39/056_BA39_f0091_t003.792.png",
+          "sha256": "8477da956bdfb627c8b21f8716732c8b7613ca15e5963cc7dd9fdbd4ff003244"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "057_BA3C",
+      "glyph": "먼",
+      "sourceVideo": "Art/SpellVFX120/Clips/057_BA3C.mp4",
+      "sourceVideoSha256": "5cf99a4345d6283e6b4d14e7ccd1844ca1b0619c85b14bd75d8fcd976075ecd7",
+      "sourceMetadataSha256": "73037f3b015e35f17a823ecbe3b537cd087a8776aed5d55fd7575719da692e3d",
+      "capturedUtc": "2026-09-09T02:28:17.9886922Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.75,
+      "impactSeconds": 0.25,
+      "encodedFrames": 93,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/057_BA3C_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0000_t000.000.png",
+          "sha256": "ae3d765a13fdced18f797d7d88aaebc6552e483f25c6dffd28fe88fb286a18ec"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0004_t000.167.png",
+          "sha256": "4aa58af5d63833ef0435ed7867bb0694827cfc01acc682688b94d92c08157b37"
+        },
+        {
+          "frameIndex": 12,
+          "timestampSeconds": 0.5,
+          "sourceSampledSeconds": 0.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0012_t000.500.png",
+          "sha256": "1746eb9941575144d7c5c1e3fc484d57b9c58ae00ae95ccb56efa13a42260c61"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0022_t000.917.png",
+          "sha256": "9adff64c4b79b01385b378b8955f2d33421651c43d745ba6541b9c7fd017e1fd"
+        },
+        {
+          "frameIndex": 32,
+          "timestampSeconds": 1.3333333333333333,
+          "sourceSampledSeconds": 1.3333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0032_t001.333.png",
+          "sha256": "afee551bceafc4871498d3f37855a3b7f97239f8be85e8cab50b1a78958ecfb4"
+        },
+        {
+          "frameIndex": 43,
+          "timestampSeconds": 1.7916666666666667,
+          "sourceSampledSeconds": 1.7916666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0043_t001.792.png",
+          "sha256": "74254dd162007568d297c83f02a2c8f7ae7977af95476f4f59ee9ae36f988a40"
+        },
+        {
+          "frameIndex": 54,
+          "timestampSeconds": 2.25,
+          "sourceSampledSeconds": 2.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0054_t002.250.png",
+          "sha256": "ad484b5422db912b6121749008f0ea9398548d4ab89820c9fa0ddb527cd46e04"
+        },
+        {
+          "frameIndex": 65,
+          "timestampSeconds": 2.7083333333333335,
+          "sourceSampledSeconds": 2.7083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0065_t002.708.png",
+          "sha256": "16daea674373e66d0a68951cfb1963cf96ddb48948a85210a2bb64a6324d06c0"
+        },
+        {
+          "frameIndex": 74,
+          "timestampSeconds": 3.0833333333333335,
+          "sourceSampledSeconds": 3.0833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0074_t003.083.png",
+          "sha256": "f87d9ec07527f7e1a025573e69201ee65c9b36e58f76d98d317996651f3524e2"
+        },
+        {
+          "frameIndex": 81,
+          "timestampSeconds": 3.375,
+          "sourceSampledSeconds": 3.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0081_t003.375.png",
+          "sha256": "368c79e626728da2fc43357effa9772f68e5c18a9b01db8503ba8769cabff842"
+        },
+        {
+          "frameIndex": 87,
+          "timestampSeconds": 3.625,
+          "sourceSampledSeconds": 3.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0087_t003.625.png",
+          "sha256": "6c9f56169dbcada1341569cba17e40c6ab45172bba4be7bce9eff1cc19d4e2b5"
+        },
+        {
+          "frameIndex": 92,
+          "timestampSeconds": 3.8333333333333335,
+          "sourceSampledSeconds": 3.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/057_BA3C/057_BA3C_f0092_t003.833.png",
+          "sha256": "766365c05d7819dff9fedf3aa41b8480ea567668147e011890218b3cc91ca572"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "058_BA48",
+      "glyph": "멈",
+      "sourceVideo": "Art/SpellVFX120/Clips/058_BA48.mp4",
+      "sourceVideoSha256": "1356c5bd317c8ab4705355ac7a2f492a4254674756b1c3d8d24b6c077cb5e8d5",
+      "sourceMetadataSha256": "2a982b966230fdd418e72e9d6bf0028a787f3857f6377d61f7fd0b31bb00fe41",
+      "capturedUtc": "2026-09-09T02:28:20.4110701Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.950000047683716,
+      "impactSeconds": 0.27000001072883606,
+      "encodedFrames": 98,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/058_BA48_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0000_t000.000.png",
+          "sha256": "6acac880a61330f986ed2948ba98625cce7857f17bd57bbe368af36c82fce001"
+        },
+        {
+          "frameIndex": 5,
+          "timestampSeconds": 0.20833333333333334,
+          "sourceSampledSeconds": 0.2083333283662796,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0005_t000.208.png",
+          "sha256": "01f6371378a4a3c703b1c7b309c672820b6d8f70039e22f0875e64469c06dd77"
+        },
+        {
+          "frameIndex": 12,
+          "timestampSeconds": 0.5,
+          "sourceSampledSeconds": 0.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0012_t000.500.png",
+          "sha256": "1b90dd7b3d461efbbba195aaed6765d5b78dcb1457cf4878f24f506be24efb2e"
+        },
+        {
+          "frameIndex": 23,
+          "timestampSeconds": 0.9583333333333334,
+          "sourceSampledSeconds": 0.9583333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0023_t000.958.png",
+          "sha256": "638190a39678451c660e71eee4979bbac5dddb4902e19c33d1c100eb6d59ea13"
+        },
+        {
+          "frameIndex": 34,
+          "timestampSeconds": 1.4166666666666667,
+          "sourceSampledSeconds": 1.4166666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0034_t001.417.png",
+          "sha256": "4cd2637e859fed07eea7a3354ef7f967935badc5b9c7f5ee71fd3b433d674b6f"
+        },
+        {
+          "frameIndex": 46,
+          "timestampSeconds": 1.9166666666666667,
+          "sourceSampledSeconds": 1.9166666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0046_t001.917.png",
+          "sha256": "82f21568dcedf49e988c16f17cccc62ed6974f1a5f14351c65f044fe22561464"
+        },
+        {
+          "frameIndex": 57,
+          "timestampSeconds": 2.375,
+          "sourceSampledSeconds": 2.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0057_t002.375.png",
+          "sha256": "735a6e678edc5bda62019f6e661d659333083f91bc1aa9b437f88e09a8040866"
+        },
+        {
+          "frameIndex": 68,
+          "timestampSeconds": 2.8333333333333335,
+          "sourceSampledSeconds": 2.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0068_t002.833.png",
+          "sha256": "2fd87534360ff706ac1c5c752a87aec20506af4397d02dd022a388cbc9df69fd"
+        },
+        {
+          "frameIndex": 78,
+          "timestampSeconds": 3.25,
+          "sourceSampledSeconds": 3.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0078_t003.250.png",
+          "sha256": "ac697b4c583860e8d6957e59aa06db52233bfd258ef20362c5b4325618c1d3d5"
+        },
+        {
+          "frameIndex": 85,
+          "timestampSeconds": 3.5416666666666665,
+          "sourceSampledSeconds": 3.5416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0085_t003.542.png",
+          "sha256": "1048b3297baacc15e74701c1282b256c7779c6493710fdd3cc6bb74fe40a2d2c"
+        },
+        {
+          "frameIndex": 92,
+          "timestampSeconds": 3.8333333333333335,
+          "sourceSampledSeconds": 3.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0092_t003.833.png",
+          "sha256": "8e88fcb6ebb96e94a60ddc44b4a1b4d449dee8a10f6ffc3bea74aa022ef5811c"
+        },
+        {
+          "frameIndex": 97,
+          "timestampSeconds": 4.041666666666667,
+          "sourceSampledSeconds": 4.041666507720947,
+          "path": "Art/SpellVFX120/VideoReview/Earth/058_BA48/058_BA48_f0097_t004.042.png",
+          "sha256": "8e88fcb6ebb96e94a60ddc44b4a1b4d449dee8a10f6ffc3bea74aa022ef5811c"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "059_BA4B",
+      "glyph": "멋",
+      "sourceVideo": "Art/SpellVFX120/Clips/059_BA4B.mp4",
+      "sourceVideoSha256": "8292c119779bc03bf222d2d2a6b79662c3fdd63fcc82f40dec0da4d1bf1450ef",
+      "sourceMetadataSha256": "7556819449514ced7b4b169a8ccaf453ce05b9cd973bc73e5f1ce633f2384551",
+      "capturedUtc": "2026-09-09T02:28:22.9600467Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.5,
+      "impactSeconds": 0.20000000298023224,
+      "encodedFrames": 87,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/059_BA4B_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0000_t000.000.png",
+          "sha256": "38db496b847c36b17abd232494d67dac2d955723e66c058ee9f51b1d336751c7"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0004_t000.167.png",
+          "sha256": "b9b369648529f150c40de2c4b8301ffa424a69c1fc7e91a9c9067d8162ad506d"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0011_t000.458.png",
+          "sha256": "d7995113efb306712efffbb18cb2a6e3f79c6047de13150104a92b58e836db6e"
+        },
+        {
+          "frameIndex": 20,
+          "timestampSeconds": 0.8333333333333334,
+          "sourceSampledSeconds": 0.8333333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0020_t000.833.png",
+          "sha256": "c405a9dc6172ac2108d7334bb1512ab19751c438ebb6ff3980492ea1c1c5a7ac"
+        },
+        {
+          "frameIndex": 30,
+          "timestampSeconds": 1.25,
+          "sourceSampledSeconds": 1.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0030_t001.250.png",
+          "sha256": "db81971af117b5ff617e51df584276001417644d9fce0d0d5d88970e24ae2d57"
+        },
+        {
+          "frameIndex": 40,
+          "timestampSeconds": 1.6666666666666667,
+          "sourceSampledSeconds": 1.6666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0040_t001.667.png",
+          "sha256": "991ee1d48574a415ba0f60ae58523e42d30977685901db740ea42b9293936403"
+        },
+        {
+          "frameIndex": 50,
+          "timestampSeconds": 2.0833333333333335,
+          "sourceSampledSeconds": 2.0833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0050_t002.083.png",
+          "sha256": "135019caf4ebd9116c11870819911ee707b6cbe9b3f3a14ecd030e83f11697d2"
+        },
+        {
+          "frameIndex": 60,
+          "timestampSeconds": 2.5,
+          "sourceSampledSeconds": 2.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0060_t002.500.png",
+          "sha256": "adb5b673c528c5ed3082485ec60f338a83153ae61eb72238ad1dbd34e5f1c60e"
+        },
+        {
+          "frameIndex": 69,
+          "timestampSeconds": 2.875,
+          "sourceSampledSeconds": 2.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0069_t002.875.png",
+          "sha256": "e2cbfd3b26077e26dbb5f6215bba12ad8bbcd6c7781306281def271abb00634f"
+        },
+        {
+          "frameIndex": 76,
+          "timestampSeconds": 3.1666666666666665,
+          "sourceSampledSeconds": 3.1666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0076_t003.167.png",
+          "sha256": "bf09be6e20a5fb6dd6e926347b42564fb8a4272cfb0ff07e2f129b133835d06b"
+        },
+        {
+          "frameIndex": 81,
+          "timestampSeconds": 3.375,
+          "sourceSampledSeconds": 3.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0081_t003.375.png",
+          "sha256": "0f6c0978e0c8b0c9d96a8da3fab37683c0a2032124917cf68904ce04b9a718fc"
+        },
+        {
+          "frameIndex": 86,
+          "timestampSeconds": 3.5833333333333335,
+          "sourceSampledSeconds": 3.5833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/059_BA4B/059_BA4B_f0086_t003.583.png",
+          "sha256": "676612cab5327dd9df3a6bcdaaca0f7f76d8b0f86d583b7f4ced7a53396aab91"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "060_BA4D",
+      "glyph": "멍",
+      "sourceVideo": "Art/SpellVFX120/Clips/060_BA4D.mp4",
+      "sourceVideoSha256": "6856c80bb97b1f814c1e02745b859a6081e3200ea0e213beaa832d7da8b5fa32",
+      "sourceMetadataSha256": "4df6b6c59b1360120f9c98a7bd6ae11f2a6f4bafeca04c88105a330667616b60",
+      "capturedUtc": "2026-09-09T02:28:25.1956009Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 2.549999952316284,
+      "impactSeconds": 0.5799999833106995,
+      "encodedFrames": 64,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/060_BA4D_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0000_t000.000.png",
+          "sha256": "9abc61c016fcd4c7edcdf5532ac297ad6afe2c6a0a041dc5cb937ea72b0cce31"
+        },
+        {
+          "frameIndex": 3,
+          "timestampSeconds": 0.125,
+          "sourceSampledSeconds": 0.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0003_t000.125.png",
+          "sha256": "98c71ea09fb78984b3cecae03ee5d00b79fe23a5c8b08500ab96826e07e3dc4c"
+        },
+        {
+          "frameIndex": 8,
+          "timestampSeconds": 0.3333333333333333,
+          "sourceSampledSeconds": 0.3333333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0008_t000.333.png",
+          "sha256": "b6fc30d0fdcda5be3a2d9971e507e8736f19aebce9adc5862d40a0abef07673e"
+        },
+        {
+          "frameIndex": 15,
+          "timestampSeconds": 0.625,
+          "sourceSampledSeconds": 0.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0015_t000.625.png",
+          "sha256": "1e9f0f3ab7a6ab494234443ef9d269c39da99310115047d813ecc8e93473e85c"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0022_t000.917.png",
+          "sha256": "5379641462f7438c8356b02b0d420a1fe91dc2140713a2cc0c7d59a42ea1cc81"
+        },
+        {
+          "frameIndex": 29,
+          "timestampSeconds": 1.2083333333333333,
+          "sourceSampledSeconds": 1.2083333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0029_t001.208.png",
+          "sha256": "e89729f6bc13e590400dcdd4f0e3617b493c3d761a41cec97eab66e9504d15b0"
+        },
+        {
+          "frameIndex": 37,
+          "timestampSeconds": 1.5416666666666667,
+          "sourceSampledSeconds": 1.5416666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0037_t001.542.png",
+          "sha256": "015c8d47c95cd1e0f157b1710fa11dc6326bf2fb8d7c14ba13e95cb1aca62a73"
+        },
+        {
+          "frameIndex": 44,
+          "timestampSeconds": 1.8333333333333333,
+          "sourceSampledSeconds": 1.8333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0044_t001.833.png",
+          "sha256": "284da495f8962e3343c3464e97d5febc15803d7060325d1cca724d8eb59d8339"
+        },
+        {
+          "frameIndex": 50,
+          "timestampSeconds": 2.0833333333333335,
+          "sourceSampledSeconds": 2.0833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0050_t002.083.png",
+          "sha256": "0a2a1d88fccfadae98c20fc598d984699f7ad35941484a792e1a010beb4cfa03"
+        },
+        {
+          "frameIndex": 55,
+          "timestampSeconds": 2.2916666666666665,
+          "sourceSampledSeconds": 2.2916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0055_t002.292.png",
+          "sha256": "8862456436685052108caff891d2ee057376b3e0f1b5838a6968adbfd7710f08"
+        },
+        {
+          "frameIndex": 59,
+          "timestampSeconds": 2.4583333333333335,
+          "sourceSampledSeconds": 2.4583332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0059_t002.458.png",
+          "sha256": "522938e6346c9b327300c26381c06a6c5c8bd47e570f9e2458add9add0c374b8"
+        },
+        {
+          "frameIndex": 63,
+          "timestampSeconds": 2.625,
+          "sourceSampledSeconds": 2.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/060_BA4D/060_BA4D_f0063_t002.625.png",
+          "sha256": "81706627b25435461f12ca9bf6f02fa0f5d720a17c37de9c50656ea36801d0a0"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "061_BAA8",
+      "glyph": "모",
+      "sourceVideo": "Art/SpellVFX120/Clips/061_BAA8.mp4",
+      "sourceVideoSha256": "a9f86f967898fa44dcaaa686e4aaebcebf9d0dc25081aba21ec6246d65bc3a1d",
+      "sourceMetadataSha256": "c1e01cdec4b796b0fcec4904e66327f4884bd35b885c94cc4dece0d75d9ae874",
+      "capturedUtc": "2026-09-09T02:28:26.8119181Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.372727155685425,
+      "impactSeconds": 0.4000000059604645,
+      "encodedFrames": 84,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/061_BAA8_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0000_t000.000.png",
+          "sha256": "01c11b9b88db3ad4fd5174ebf374194d87c1333700d3d63d65cfaff482fa79a6"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0004_t000.167.png",
+          "sha256": "aa9260abc08a98da04d5324c12a8dd84b72a7ad349f5bd3d4feab66836c55595"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0011_t000.458.png",
+          "sha256": "3449a36178c70cc452dc5cb40ddf9fb9c48582c68c5ada358c25000f60e26695"
+        },
+        {
+          "frameIndex": 19,
+          "timestampSeconds": 0.7916666666666666,
+          "sourceSampledSeconds": 0.7916666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0019_t000.792.png",
+          "sha256": "2ea787d8f2b8ea50a937d07ea5f405520143a133ba69a9e6ff7af6828d8e63e6"
+        },
+        {
+          "frameIndex": 29,
+          "timestampSeconds": 1.2083333333333333,
+          "sourceSampledSeconds": 1.2083333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0029_t001.208.png",
+          "sha256": "7867887e697e06b4e805ff0890d6715bdcd3154a4c3ae64cec68c9a12e89a48a"
+        },
+        {
+          "frameIndex": 39,
+          "timestampSeconds": 1.625,
+          "sourceSampledSeconds": 1.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0039_t001.625.png",
+          "sha256": "48be9d04afd2e28ecd68a62c1939d86580bd4e6350c2331afea28c5c88075168"
+        },
+        {
+          "frameIndex": 49,
+          "timestampSeconds": 2.0416666666666665,
+          "sourceSampledSeconds": 2.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0049_t002.042.png",
+          "sha256": "abf54feb644aac89b2426a66e0a47a68e7c9ea97e2b428e617003b474d9032ae"
+        },
+        {
+          "frameIndex": 58,
+          "timestampSeconds": 2.4166666666666665,
+          "sourceSampledSeconds": 2.4166667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0058_t002.417.png",
+          "sha256": "d0cc36e06dba5af8ab6067d3af376538a56a96270d5d8897b987158f52fe96d2"
+        },
+        {
+          "frameIndex": 66,
+          "timestampSeconds": 2.75,
+          "sourceSampledSeconds": 2.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0066_t002.750.png",
+          "sha256": "d2934cc0797a9f718229c980732ff4dab74aff574191b8a92d94e45c4a8a4668"
+        },
+        {
+          "frameIndex": 73,
+          "timestampSeconds": 3.0416666666666665,
+          "sourceSampledSeconds": 3.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0073_t003.042.png",
+          "sha256": "b4d41127500466dab5a83dca33f323e26bc8f1cc52a78b524832d35f156fc94b"
+        },
+        {
+          "frameIndex": 79,
+          "timestampSeconds": 3.2916666666666665,
+          "sourceSampledSeconds": 3.2916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0079_t003.292.png",
+          "sha256": "e244914bb5148ed5db6ffd8b0d3d76b7deb26d83d1955c9ed9d8a86ecb17c1c0"
+        },
+        {
+          "frameIndex": 83,
+          "timestampSeconds": 3.4583333333333335,
+          "sourceSampledSeconds": 3.4583332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/061_BAA8/061_BAA8_f0083_t003.458.png",
+          "sha256": "0c3cbc4764a85d75c21ac2626d813f39399ae3e6a870a0bb43c240d59a06d0d2"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "062_BAA9",
+      "glyph": "목",
+      "sourceVideo": "Art/SpellVFX120/Clips/062_BAA9.mp4",
+      "sourceVideoSha256": "c0b9b8c80b548a6e0169c58d2c6db65c00c25bc79daf5a351da17b065b38d2df",
+      "sourceMetadataSha256": "e3c880bbbd33863c3ff5166b4962036cdfd6adeb94d4b2b37e3acd684b27e2a8",
+      "capturedUtc": "2026-09-09T02:28:29.0964527Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.450000047683716,
+      "impactSeconds": 0.550000011920929,
+      "encodedFrames": 86,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/062_BAA9_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0000_t000.000.png",
+          "sha256": "7cf703e23cd93256c00246b6c9cea0400fe950c162abd611053708739d82a9f0"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0004_t000.167.png",
+          "sha256": "4cf24bc432ef98f92c9a7c223cfd5b7eb9b6ee6749c5e1bed2a3c312e32cdfeb"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0011_t000.458.png",
+          "sha256": "003f1012e67afc79ac2cf1080f970feefaf21f257755984c9e9ca46fe68a78b4"
+        },
+        {
+          "frameIndex": 20,
+          "timestampSeconds": 0.8333333333333334,
+          "sourceSampledSeconds": 0.8333333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0020_t000.833.png",
+          "sha256": "9ccf7e67b36b055e5aa062bcdeb5d20a9bcb8f241e5ea04fb82fa096c609e970"
+        },
+        {
+          "frameIndex": 30,
+          "timestampSeconds": 1.25,
+          "sourceSampledSeconds": 1.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0030_t001.250.png",
+          "sha256": "55e1145c24c665950590a195fe11e76a0a5198e05d45cd073ba789a80f043b0f"
+        },
+        {
+          "frameIndex": 40,
+          "timestampSeconds": 1.6666666666666667,
+          "sourceSampledSeconds": 1.6666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0040_t001.667.png",
+          "sha256": "4783f437158ea258faf7cbea5a396ec1db521b74b231ef455bb1bc71eb0eb0cd"
+        },
+        {
+          "frameIndex": 50,
+          "timestampSeconds": 2.0833333333333335,
+          "sourceSampledSeconds": 2.0833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0050_t002.083.png",
+          "sha256": "72fd24c48ab3674ea1e5b223b879deabee4ffdac5d525073f28ea52e6f8691ee"
+        },
+        {
+          "frameIndex": 60,
+          "timestampSeconds": 2.5,
+          "sourceSampledSeconds": 2.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0060_t002.500.png",
+          "sha256": "6fd41f28703b5dc77087edbc386e9e21b19a8ebfba9a39a3b39b04d6cce3ec6f"
+        },
+        {
+          "frameIndex": 68,
+          "timestampSeconds": 2.8333333333333335,
+          "sourceSampledSeconds": 2.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0068_t002.833.png",
+          "sha256": "b397c635908484e0fa527779c370161af5df7486678a7a65d91ec160c3d22680"
+        },
+        {
+          "frameIndex": 75,
+          "timestampSeconds": 3.125,
+          "sourceSampledSeconds": 3.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0075_t003.125.png",
+          "sha256": "f0a6d4319a232d9733048d7580ffab6818ac81eac636da4a0d44a95f83fbe1b2"
+        },
+        {
+          "frameIndex": 80,
+          "timestampSeconds": 3.3333333333333335,
+          "sourceSampledSeconds": 3.3333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0080_t003.333.png",
+          "sha256": "2f68c3bea287eb52a2e10a58fb3190da94cb21a8a3f2ab4029cc8c6ae1d7141c"
+        },
+        {
+          "frameIndex": 85,
+          "timestampSeconds": 3.5416666666666665,
+          "sourceSampledSeconds": 3.5416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/062_BAA9/062_BAA9_f0085_t003.542.png",
+          "sha256": "ced6c855a43de97f7738cfbbb2ebdd6de53073ccdcba98dacd9021d3782634ac"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "063_BAAC",
+      "glyph": "몬",
+      "sourceVideo": "Art/SpellVFX120/Clips/063_BAAC.mp4",
+      "sourceVideoSha256": "b5c9b33665befeaab30a0e0bac25b0ecb60b5245e596433cfaa80185f4cb32ff",
+      "sourceMetadataSha256": "2c9dd132caace60562e2d28dabf2911ad465fb406df2cc52db5cf479a88fef20",
+      "capturedUtc": "2026-09-09T02:28:31.5861962Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.0999999046325684,
+      "impactSeconds": 0.4000000059604645,
+      "encodedFrames": 77,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/063_BAAC_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0000_t000.000.png",
+          "sha256": "59296046972a3c7cfb6857b5a4b6b75409aa0abb731af5ff06f230e6fb7e7f67"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0004_t000.167.png",
+          "sha256": "4fc78673bb888a2aa9e5549077ce2032ee575107da797933b3b43854844bc127"
+        },
+        {
+          "frameIndex": 10,
+          "timestampSeconds": 0.4166666666666667,
+          "sourceSampledSeconds": 0.4166666567325592,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0010_t000.417.png",
+          "sha256": "f238973650450ec510018d5b58404f8f1d5c175fd5b0000aa36ed91e15e071f2"
+        },
+        {
+          "frameIndex": 18,
+          "timestampSeconds": 0.75,
+          "sourceSampledSeconds": 0.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0018_t000.750.png",
+          "sha256": "6bed419ee2529ec8045d446d1caad35ec9c397f1a2447d8365b15c79657132cd"
+        },
+        {
+          "frameIndex": 27,
+          "timestampSeconds": 1.125,
+          "sourceSampledSeconds": 1.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0027_t001.125.png",
+          "sha256": "6331ba7f073390bdbb5086e42a36a33734708c5b7179ad36a4694760e063ad19"
+        },
+        {
+          "frameIndex": 36,
+          "timestampSeconds": 1.5,
+          "sourceSampledSeconds": 1.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0036_t001.500.png",
+          "sha256": "d96634201e724cbf59cf9f0ded31a645737643db0ce1b4752fddc691e54ec047"
+        },
+        {
+          "frameIndex": 45,
+          "timestampSeconds": 1.875,
+          "sourceSampledSeconds": 1.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0045_t001.875.png",
+          "sha256": "25fee83f7dce5d1851d76982ba902a6b601fd16c9f972c0419180ee77f2f8305"
+        },
+        {
+          "frameIndex": 54,
+          "timestampSeconds": 2.25,
+          "sourceSampledSeconds": 2.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0054_t002.250.png",
+          "sha256": "d7fb57d21731ac4598b497fe831abbf0cec12985831007a56c99828e85761772"
+        },
+        {
+          "frameIndex": 61,
+          "timestampSeconds": 2.5416666666666665,
+          "sourceSampledSeconds": 2.5416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0061_t002.542.png",
+          "sha256": "a867756e0b5a1d57f44eacb880d6cade134f0a0d1cd9df7562392de0661e48c3"
+        },
+        {
+          "frameIndex": 67,
+          "timestampSeconds": 2.7916666666666665,
+          "sourceSampledSeconds": 2.7916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0067_t002.792.png",
+          "sha256": "ed17cd5e4b7284c70df5c003b2269be5634980a064f20553cee9289a1a67c7bf"
+        },
+        {
+          "frameIndex": 72,
+          "timestampSeconds": 3.0,
+          "sourceSampledSeconds": 3.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0072_t003.000.png",
+          "sha256": "e2c9d880cff888d200ad02e6a858fa65bdb49143c510afe820ef1d7e626117ee"
+        },
+        {
+          "frameIndex": 76,
+          "timestampSeconds": 3.1666666666666665,
+          "sourceSampledSeconds": 3.1666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/063_BAAC/063_BAAC_f0076_t003.167.png",
+          "sha256": "9e3e3d5a0657d4e3fd721d57f593baff944c7a9237974a5467bcab3134b12157"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "sourceVideo": "Art/SpellVFX120/Clips/064_BAB8.mp4",
+      "sourceVideoSha256": "c3685b41f33bed721e93dace4654f491d8c34bdb79304c1180486550e4e8535a",
+      "sourceMetadataSha256": "e1f45ba6003c67a2152076b7776a08940cc69bb0f25900d04248abd3e921d57c",
+      "capturedUtc": "2026-09-09T02:28:33.7446052Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 4.699999809265137,
+      "impactSeconds": 0.6000000238418579,
+      "encodedFrames": 116,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/064_BAB8_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0000_t000.000.png",
+          "sha256": "6efaebceaafdd5f374bcb06d90d40e7b2d3e084574febddb6eca59dd073aacf9"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0006_t000.250.png",
+          "sha256": "06cb647b719555a90901b5de0cd7da6e0c6a36f31b32567f70afb3ebd9049d54"
+        },
+        {
+          "frameIndex": 15,
+          "timestampSeconds": 0.625,
+          "sourceSampledSeconds": 0.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0015_t000.625.png",
+          "sha256": "b62d05d6d89a3a0b0d056c0595899e401d619d178998ccbc86e56458c42e0635"
+        },
+        {
+          "frameIndex": 27,
+          "timestampSeconds": 1.125,
+          "sourceSampledSeconds": 1.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0027_t001.125.png",
+          "sha256": "c3e4a0590189d7a63c3bb6fdc6ed9faeaa3b0d85ed9e811e3afe5d0234bf5496"
+        },
+        {
+          "frameIndex": 41,
+          "timestampSeconds": 1.7083333333333333,
+          "sourceSampledSeconds": 1.7083333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0041_t001.708.png",
+          "sha256": "e72263fe2a0962a47f06a244786a251949a540840f69159b1df33fa0e8a8b774"
+        },
+        {
+          "frameIndex": 54,
+          "timestampSeconds": 2.25,
+          "sourceSampledSeconds": 2.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0054_t002.250.png",
+          "sha256": "572b23446edbdb2899b7ee1f368500a324e7ff0ab337c553ae35f69a42540a99"
+        },
+        {
+          "frameIndex": 68,
+          "timestampSeconds": 2.8333333333333335,
+          "sourceSampledSeconds": 2.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0068_t002.833.png",
+          "sha256": "743c8a5411382512401d0aac76565b4545b83dfca887d7cad8d4419cbd398429"
+        },
+        {
+          "frameIndex": 81,
+          "timestampSeconds": 3.375,
+          "sourceSampledSeconds": 3.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0081_t003.375.png",
+          "sha256": "ea2ca163b33a5d9ee19a70f4c46e7e316eb486aa8f71cefb34a454272b0d9826"
+        },
+        {
+          "frameIndex": 92,
+          "timestampSeconds": 3.8333333333333335,
+          "sourceSampledSeconds": 3.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0092_t003.833.png",
+          "sha256": "c4bd24e4aee8a90664acb08a4daa1b415d07eda411cdd460a10318b1d0fe3777"
+        },
+        {
+          "frameIndex": 102,
+          "timestampSeconds": 4.25,
+          "sourceSampledSeconds": 4.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0102_t004.250.png",
+          "sha256": "6c523b7669509f092f44ce4388a352b757d882da5c0ceaf6a4263dcb5d810f5a"
+        },
+        {
+          "frameIndex": 109,
+          "timestampSeconds": 4.541666666666667,
+          "sourceSampledSeconds": 4.541666507720947,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0109_t004.542.png",
+          "sha256": "a016fd2791c34be203477ba9ef37bfcce9bc513a7622ce9bf4e30175d25fb15e"
+        },
+        {
+          "frameIndex": 115,
+          "timestampSeconds": 4.791666666666667,
+          "sourceSampledSeconds": 4.791666507720947,
+          "path": "Art/SpellVFX120/VideoReview/Earth/064_BAB8/064_BAB8_f0115_t004.792.png",
+          "sha256": "f63231e52c33c2d0322a7cb9ac97459cfd133eb7de0505a90804351e471788f0"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "065_BABB",
+      "glyph": "못",
+      "sourceVideo": "Art/SpellVFX120/Clips/065_BABB.mp4",
+      "sourceVideoSha256": "c9213b416fd28c4bd720b437635b12894e0a08abd832ab00195d70f2451832a2",
+      "sourceMetadataSha256": "4c5a356384239438b789a422241fee8272403d72c32c96b76c7d75300b20b57f",
+      "capturedUtc": "2026-09-09T02:28:37.0681874Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 2.799999952316284,
+      "impactSeconds": 0.4000000059604645,
+      "encodedFrames": 70,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/065_BABB_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0000_t000.000.png",
+          "sha256": "81a9a16c57ab64999a9a41bea7472126b5621b9cde6934e04ad75a461f8edc03"
+        },
+        {
+          "frameIndex": 3,
+          "timestampSeconds": 0.125,
+          "sourceSampledSeconds": 0.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0003_t000.125.png",
+          "sha256": "8540cbdb8d46a42d9774db93eed37536d54e7cd93b488a9183a16f9c226ada1c"
+        },
+        {
+          "frameIndex": 9,
+          "timestampSeconds": 0.375,
+          "sourceSampledSeconds": 0.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0009_t000.375.png",
+          "sha256": "4452f01996898a8caba138520576e11121ab8d8e1c1c6a273e0d5250b4912ff7"
+        },
+        {
+          "frameIndex": 16,
+          "timestampSeconds": 0.6666666666666666,
+          "sourceSampledSeconds": 0.6666666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0016_t000.667.png",
+          "sha256": "17cbe3508fdffcdcc485a3ef2def77f129cf85fbe25b32163336010b0519adcf"
+        },
+        {
+          "frameIndex": 24,
+          "timestampSeconds": 1.0,
+          "sourceSampledSeconds": 1.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0024_t001.000.png",
+          "sha256": "2d37460409ee46654bb8b82963fa3b7fed29a5f25e40afc0ae92f2a1eef341f4"
+        },
+        {
+          "frameIndex": 32,
+          "timestampSeconds": 1.3333333333333333,
+          "sourceSampledSeconds": 1.3333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0032_t001.333.png",
+          "sha256": "d220d9c21840f6900a079e84a8eaa10a6062b5795782ecafbb115ed478e1d35b"
+        },
+        {
+          "frameIndex": 40,
+          "timestampSeconds": 1.6666666666666667,
+          "sourceSampledSeconds": 1.6666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0040_t001.667.png",
+          "sha256": "ec81a46ce2a2a35da64f120aa99ce8393f4a648777a6725fb20aa256952898cf"
+        },
+        {
+          "frameIndex": 48,
+          "timestampSeconds": 2.0,
+          "sourceSampledSeconds": 2.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0048_t002.000.png",
+          "sha256": "fc7db6e42c9c82abe433ee05c8294c1c312c5e438d1bcf71e19e29cb341e6f4f"
+        },
+        {
+          "frameIndex": 55,
+          "timestampSeconds": 2.2916666666666665,
+          "sourceSampledSeconds": 2.2916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0055_t002.292.png",
+          "sha256": "b818fefea7bccd8f76cc6ab3ee2caf174524b64026b28af7f8a1c9d2491467f1"
+        },
+        {
+          "frameIndex": 60,
+          "timestampSeconds": 2.5,
+          "sourceSampledSeconds": 2.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0060_t002.500.png",
+          "sha256": "2fb5c0d8bed9dee3c8aa1809d64e3c51169d03505aea084cfc4e8f3dbaf254f0"
+        },
+        {
+          "frameIndex": 65,
+          "timestampSeconds": 2.7083333333333335,
+          "sourceSampledSeconds": 2.7083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0065_t002.708.png",
+          "sha256": "6a09b5861e19527cdf7e2eec4acba4ed14c039b00be91902e837c531fb4d4520"
+        },
+        {
+          "frameIndex": 69,
+          "timestampSeconds": 2.875,
+          "sourceSampledSeconds": 2.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/065_BABB/065_BABB_f0069_t002.875.png",
+          "sha256": "a7de44fac05ec67c44232539709f4a472b4e9e2aa7c755ca64e36f1682135569"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "066_BABD",
+      "glyph": "몽",
+      "sourceVideo": "Art/SpellVFX120/Clips/066_BABD.mp4",
+      "sourceVideoSha256": "d2d1bcec60b95f97d0ee69ea9f55a65b0c829e078bef90100f54c9271a3621fb",
+      "sourceMetadataSha256": "082d702c90b9ce217a72dd2ad188fc3306b1e2ab56ab2fe7789b83793dd2a6bd",
+      "capturedUtc": "2026-09-09T02:28:39.0236823Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 4.5,
+      "impactSeconds": 0.41999998688697815,
+      "encodedFrames": 111,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/066_BABD_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0000_t000.000.png",
+          "sha256": "10f22d9639c99aff8054bdc35bd64c6fe9704d293123d9852863a0b8206cdeb7"
+        },
+        {
+          "frameIndex": 5,
+          "timestampSeconds": 0.20833333333333334,
+          "sourceSampledSeconds": 0.2083333283662796,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0005_t000.208.png",
+          "sha256": "f5f2bb9a555d1f99a7b76682ef88bef6db7c5f046cbe70cc4fdcb3a1039944f5"
+        },
+        {
+          "frameIndex": 14,
+          "timestampSeconds": 0.5833333333333334,
+          "sourceSampledSeconds": 0.5833333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0014_t000.583.png",
+          "sha256": "a5b4ef5eedaec4dcf1f3047f1e6bda533332b9255415d207ab3d288ce61b5d13"
+        },
+        {
+          "frameIndex": 26,
+          "timestampSeconds": 1.0833333333333333,
+          "sourceSampledSeconds": 1.0833333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0026_t001.083.png",
+          "sha256": "52038bbc1a7cc9d048789c2284fa559826b1acc4597289daa1ad278340a5c667"
+        },
+        {
+          "frameIndex": 39,
+          "timestampSeconds": 1.625,
+          "sourceSampledSeconds": 1.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0039_t001.625.png",
+          "sha256": "00136d103d94f5f9d1bb42214b1eefb545d0929370c76b72d59665bfc4d0bf1e"
+        },
+        {
+          "frameIndex": 52,
+          "timestampSeconds": 2.1666666666666665,
+          "sourceSampledSeconds": 2.1666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0052_t002.167.png",
+          "sha256": "c9f74b6b89d4665a1acc747169ebc71e177e9779dcf195fcf17ec1b763092f03"
+        },
+        {
+          "frameIndex": 65,
+          "timestampSeconds": 2.7083333333333335,
+          "sourceSampledSeconds": 2.7083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0065_t002.708.png",
+          "sha256": "64e2b44cac1a7cc30f2661cac9754e2ac3e5b44e5495cadf1e91907df6e6a05e"
+        },
+        {
+          "frameIndex": 78,
+          "timestampSeconds": 3.25,
+          "sourceSampledSeconds": 3.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0078_t003.250.png",
+          "sha256": "ba272dcb25c6016297328994db02627eea4c2fc0995f187791f20c541dee0ca4"
+        },
+        {
+          "frameIndex": 89,
+          "timestampSeconds": 3.7083333333333335,
+          "sourceSampledSeconds": 3.7083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0089_t003.708.png",
+          "sha256": "665c741cc4a23eb60004984d1bc66f5848bad51737899d8cd6a98a8f905daef4"
+        },
+        {
+          "frameIndex": 97,
+          "timestampSeconds": 4.041666666666667,
+          "sourceSampledSeconds": 4.041666507720947,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0097_t004.042.png",
+          "sha256": "d55fd90a49805601f99e643179a9ba48b3b24c30bd6d4feea2ffa9cb1b2907e1"
+        },
+        {
+          "frameIndex": 105,
+          "timestampSeconds": 4.375,
+          "sourceSampledSeconds": 4.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0105_t004.375.png",
+          "sha256": "a318a43940a634441ba0b33cf9872f72611fbbb16c352add59eb52a31c3245ce"
+        },
+        {
+          "frameIndex": 110,
+          "timestampSeconds": 4.583333333333333,
+          "sourceSampledSeconds": 4.583333492279053,
+          "path": "Art/SpellVFX120/VideoReview/Earth/066_BABD/066_BABD_f0110_t004.583.png",
+          "sha256": "ddae1c36d7dd8d0107041de321b979b170625b037aa0c05a34129f0f0a0ec442"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "067_BB34",
+      "glyph": "무",
+      "sourceVideo": "Art/SpellVFX120/Clips/067_BB34.mp4",
+      "sourceVideoSha256": "430442ad6f581e955a641809e72e5096609feb098cefc57d55e5be55191a15ea",
+      "sourceMetadataSha256": "cd4f75e0968dc330e9e5c6f15e910481416938f463fd610ad2bf87e033454889",
+      "capturedUtc": "2026-09-09T02:28:42.2701976Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.799999952316284,
+      "impactSeconds": 0.30000001192092896,
+      "encodedFrames": 94,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/067_BB34_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0000_t000.000.png",
+          "sha256": "05d9426bab98161f9f1003436728c01913c8254aedaf7a5a91fc158eb61c9ecf"
+        },
+        {
+          "frameIndex": 5,
+          "timestampSeconds": 0.20833333333333334,
+          "sourceSampledSeconds": 0.2083333283662796,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0005_t000.208.png",
+          "sha256": "8a553b48d88eeea3f9f708562f3ba6f52915e25f582d29f9ddbac080a63ddfb2"
+        },
+        {
+          "frameIndex": 12,
+          "timestampSeconds": 0.5,
+          "sourceSampledSeconds": 0.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0012_t000.500.png",
+          "sha256": "f34a7770ce8469a7aaaee0f055ba4e1288ae643c8e090bb00e110f2ac2c5fcce"
+        },
+        {
+          "frameIndex": 22,
+          "timestampSeconds": 0.9166666666666666,
+          "sourceSampledSeconds": 0.9166666865348816,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0022_t000.917.png",
+          "sha256": "fdd16f9ca9125c635287a4b94f2a858250e90ae550d1c685bee6301133fd1f83"
+        },
+        {
+          "frameIndex": 33,
+          "timestampSeconds": 1.375,
+          "sourceSampledSeconds": 1.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0033_t001.375.png",
+          "sha256": "3814832dbf7c1a33a79cae7345bfb1096ea86338d5139e31f02bf470215ce817"
+        },
+        {
+          "frameIndex": 44,
+          "timestampSeconds": 1.8333333333333333,
+          "sourceSampledSeconds": 1.8333333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0044_t001.833.png",
+          "sha256": "076e0145f3e751a5179953f50e42dc31a53573283a5d7203089bafc73246e5eb"
+        },
+        {
+          "frameIndex": 55,
+          "timestampSeconds": 2.2916666666666665,
+          "sourceSampledSeconds": 2.2916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0055_t002.292.png",
+          "sha256": "b5a6c580c9289cbcc5b00dd57d7fb2b839d2512fa8e9c697d71f39166d6b3f0b"
+        },
+        {
+          "frameIndex": 66,
+          "timestampSeconds": 2.75,
+          "sourceSampledSeconds": 2.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0066_t002.750.png",
+          "sha256": "5e7a5f926e2d5734c2b17c837da87ce364750a981bb7d6c3d49477ef48f30dcd"
+        },
+        {
+          "frameIndex": 75,
+          "timestampSeconds": 3.125,
+          "sourceSampledSeconds": 3.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0075_t003.125.png",
+          "sha256": "f7183b91a9a5567c9abfb73879f49d8ab4e2fc91a68239c6e4f824feb0fbe16d"
+        },
+        {
+          "frameIndex": 82,
+          "timestampSeconds": 3.4166666666666665,
+          "sourceSampledSeconds": 3.4166667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0082_t003.417.png",
+          "sha256": "3adbe2295d96df4279404ca129e2a1e34b87e966e67034daa1b5cd9c3305cd6a"
+        },
+        {
+          "frameIndex": 88,
+          "timestampSeconds": 3.6666666666666665,
+          "sourceSampledSeconds": 3.6666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0088_t003.667.png",
+          "sha256": "d5bae819386ac993f46f6c2cc752d7633eb8a085342ca5d13baf1c00841ab525"
+        },
+        {
+          "frameIndex": 93,
+          "timestampSeconds": 3.875,
+          "sourceSampledSeconds": 3.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/067_BB34/067_BB34_f0093_t003.875.png",
+          "sha256": "ffea5c72942895624932955215adac12a3c2b623854f2e3b0e55ad8a0b41a996"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "068_BB35",
+      "glyph": "묵",
+      "sourceVideo": "Art/SpellVFX120/Clips/068_BB35.mp4",
+      "sourceVideoSha256": "fe3ba8e379d3d38b3b65a4d54a4ca8945ac120dc3fd1fde073e602c4986c59a0",
+      "sourceMetadataSha256": "73a11b262e7fc93dbc63d1e504ddde8b6eca1408d22dbec90d8f4316d9b19800",
+      "capturedUtc": "2026-09-09T02:28:45.0106475Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.4000000953674316,
+      "impactSeconds": 0.3199999928474426,
+      "encodedFrames": 84,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/068_BB35_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0000_t000.000.png",
+          "sha256": "42ae2e924b77ef8706c14fa8d642f93fe113659b5c1139bb1767e905c269e84f"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0004_t000.167.png",
+          "sha256": "97cbb1e47afce97c756849c9c1c910b7a1b427950b4966bb71424da5e23218f6"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0011_t000.458.png",
+          "sha256": "585d7f29e49dbd5ec2fae3a1850b64ac1bab6fee6095a68f824eb3f880a0d337"
+        },
+        {
+          "frameIndex": 20,
+          "timestampSeconds": 0.8333333333333334,
+          "sourceSampledSeconds": 0.8333333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0020_t000.833.png",
+          "sha256": "076fb73f433ee0d8aa23151edab1b18da7d756c99d3b14f524fcfb52827720c8"
+        },
+        {
+          "frameIndex": 29,
+          "timestampSeconds": 1.2083333333333333,
+          "sourceSampledSeconds": 1.2083333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0029_t001.208.png",
+          "sha256": "67d954820e6f6082b55977cd8244d75dd7d3e324aa4713bb379b999068348483"
+        },
+        {
+          "frameIndex": 39,
+          "timestampSeconds": 1.625,
+          "sourceSampledSeconds": 1.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0039_t001.625.png",
+          "sha256": "f409c6c129a05d392d9a4df7c2345640c2e29ea3695a2716e339658020f6c2ff"
+        },
+        {
+          "frameIndex": 49,
+          "timestampSeconds": 2.0416666666666665,
+          "sourceSampledSeconds": 2.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0049_t002.042.png",
+          "sha256": "a265836030765890f4e8bc4cb502493a3b246d683ec60200eb625eebef49e550"
+        },
+        {
+          "frameIndex": 59,
+          "timestampSeconds": 2.4583333333333335,
+          "sourceSampledSeconds": 2.4583332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0059_t002.458.png",
+          "sha256": "fde2117097e71f3e3157a306065592393823763e6e9ab452d7615022d84545c9"
+        },
+        {
+          "frameIndex": 67,
+          "timestampSeconds": 2.7916666666666665,
+          "sourceSampledSeconds": 2.7916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0067_t002.792.png",
+          "sha256": "49aa0917506320abf730da0853ba42ba9478fe5f40595bfa578ab4e5161f068b"
+        },
+        {
+          "frameIndex": 73,
+          "timestampSeconds": 3.0416666666666665,
+          "sourceSampledSeconds": 3.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0073_t003.042.png",
+          "sha256": "a5711c20f6442cc509c0d75f802079491ffa18504cdeaf100a71d5847f2d7bd4"
+        },
+        {
+          "frameIndex": 79,
+          "timestampSeconds": 3.2916666666666665,
+          "sourceSampledSeconds": 3.2916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0079_t003.292.png",
+          "sha256": "c8642234e260388b0def8b6acf4c0246d22ec30cfa01821dff0a21e2921830e9"
+        },
+        {
+          "frameIndex": 83,
+          "timestampSeconds": 3.4583333333333335,
+          "sourceSampledSeconds": 3.4583332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/068_BB35/068_BB35_f0083_t003.458.png",
+          "sha256": "f62b36178a0075417d72183485220cfeeb14a956ac7ad5202d585e3ce24885c9"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "069_BB38",
+      "glyph": "문",
+      "sourceVideo": "Art/SpellVFX120/Clips/069_BB38.mp4",
+      "sourceVideoSha256": "0e18bdb66ec9bebeb960910824d7ba9bbee8062dda365f0edb9eefb486e35fd3",
+      "sourceMetadataSha256": "bb5b338f77459f6433143129132d94e9278a8c5ce335abd701c437ffb46cea0d",
+      "capturedUtc": "2026-09-09T02:28:47.2253751Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.1500000953674316,
+      "impactSeconds": 0.3199999928474426,
+      "encodedFrames": 78,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/069_BB38_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0000_t000.000.png",
+          "sha256": "46dffd367e85d0770a87f7d6c169f104fe1dbeb9e3e8e7cf0ecd77c91d9aedb9"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0004_t000.167.png",
+          "sha256": "9470d05a74a91af13fc39e9dcf3384bb6a148437cb01daa695b4a111f9390f0e"
+        },
+        {
+          "frameIndex": 10,
+          "timestampSeconds": 0.4166666666666667,
+          "sourceSampledSeconds": 0.4166666567325592,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0010_t000.417.png",
+          "sha256": "00fa87a4d0af70d0afdadd5cdafd9ea5962fb94407e6e6c419b729709e65d69b"
+        },
+        {
+          "frameIndex": 18,
+          "timestampSeconds": 0.75,
+          "sourceSampledSeconds": 0.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0018_t000.750.png",
+          "sha256": "fc875f569be2096b62f66d7158ca575191902a801417b46374af93dd0831e24f"
+        },
+        {
+          "frameIndex": 27,
+          "timestampSeconds": 1.125,
+          "sourceSampledSeconds": 1.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0027_t001.125.png",
+          "sha256": "a54841dbd97b4ccda03e0fc53e29215ac9162d2d639af8d8a66b1c56630398ca"
+        },
+        {
+          "frameIndex": 36,
+          "timestampSeconds": 1.5,
+          "sourceSampledSeconds": 1.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0036_t001.500.png",
+          "sha256": "ecf962fa028f6e8632e6820ce5626d3f1c07c8e2103bf566aab002fcd8818af9"
+        },
+        {
+          "frameIndex": 45,
+          "timestampSeconds": 1.875,
+          "sourceSampledSeconds": 1.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0045_t001.875.png",
+          "sha256": "b7ef19deef0f30f6a2c620c3900c4f2809a3fed8f88ae80701b911c2764a604f"
+        },
+        {
+          "frameIndex": 54,
+          "timestampSeconds": 2.25,
+          "sourceSampledSeconds": 2.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0054_t002.250.png",
+          "sha256": "62d07634b3182ecb8ded24c3f31ba0718dddf894d5453df610a834b80a8257d1"
+        },
+        {
+          "frameIndex": 62,
+          "timestampSeconds": 2.5833333333333335,
+          "sourceSampledSeconds": 2.5833332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0062_t002.583.png",
+          "sha256": "a1af74c9df5f95e72abd89449231a9298d1400092a09dc1b4585340405feeb1b"
+        },
+        {
+          "frameIndex": 68,
+          "timestampSeconds": 2.8333333333333335,
+          "sourceSampledSeconds": 2.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0068_t002.833.png",
+          "sha256": "7a6200703536983d93aad591ad5aefd670914c505b516c4fb85278dc046f0e80"
+        },
+        {
+          "frameIndex": 73,
+          "timestampSeconds": 3.0416666666666665,
+          "sourceSampledSeconds": 3.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0073_t003.042.png",
+          "sha256": "ae685c01782ccb7ab8c67df0222936432e28b68029b7d85cf3969a56f898e5f8"
+        },
+        {
+          "frameIndex": 77,
+          "timestampSeconds": 3.2083333333333335,
+          "sourceSampledSeconds": 3.2083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/069_BB38/069_BB38_f0077_t003.208.png",
+          "sha256": "a98d4bcea0d44fe69db3937d21f9266560f29d7ca63923e86cfad00b274e98af"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "070_BB44",
+      "glyph": "뭄",
+      "sourceVideo": "Art/SpellVFX120/Clips/070_BB44.mp4",
+      "sourceVideoSha256": "424bea32d99638cadeaffd265a0c16d4651cab8d48d7034ed2496f432e178da5",
+      "sourceMetadataSha256": "8cf1c9e625ca667a869e97b2edebc573140b38c75b2dca4c9180b51af950053b",
+      "capturedUtc": "2026-09-09T02:28:49.2143239Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 4.650000095367432,
+      "impactSeconds": 0.44999998807907104,
+      "encodedFrames": 114,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/070_BB44_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0000_t000.000.png",
+          "sha256": "2565fc12ce4edebf70a39c58cbaf0234917c03367500902b6b1d5f7599b0b68c"
+        },
+        {
+          "frameIndex": 6,
+          "timestampSeconds": 0.25,
+          "sourceSampledSeconds": 0.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0006_t000.250.png",
+          "sha256": "d3c4e87c2d5444963c0c646be96b35f708967c2211a3b710b64c316cb36fbed8"
+        },
+        {
+          "frameIndex": 15,
+          "timestampSeconds": 0.625,
+          "sourceSampledSeconds": 0.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0015_t000.625.png",
+          "sha256": "b0c740d4e54a27531b05ff34ddfc0354a32ee92ffe33138c359986f3aa80ef8a"
+        },
+        {
+          "frameIndex": 27,
+          "timestampSeconds": 1.125,
+          "sourceSampledSeconds": 1.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0027_t001.125.png",
+          "sha256": "924008a211410f5f318ba3c01d089b28c114cf9ace4aa240c694fef3deedc696"
+        },
+        {
+          "frameIndex": 40,
+          "timestampSeconds": 1.6666666666666667,
+          "sourceSampledSeconds": 1.6666666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0040_t001.667.png",
+          "sha256": "931a9a18dfe8fa299006c2dcd61b8f8efc89966ecc4426e3396264355783211b"
+        },
+        {
+          "frameIndex": 54,
+          "timestampSeconds": 2.25,
+          "sourceSampledSeconds": 2.25,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0054_t002.250.png",
+          "sha256": "820261588d3c35e76b59c9c4096d9c9b2cc69d42f1901c2fb783d30b44a3021e"
+        },
+        {
+          "frameIndex": 67,
+          "timestampSeconds": 2.7916666666666665,
+          "sourceSampledSeconds": 2.7916667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0067_t002.792.png",
+          "sha256": "577b7ac8907f056cebd342d17d64a0dcc789b58dedf1a3f091e6b65bbc234f1b"
+        },
+        {
+          "frameIndex": 80,
+          "timestampSeconds": 3.3333333333333335,
+          "sourceSampledSeconds": 3.3333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0080_t003.333.png",
+          "sha256": "29b5b517d9ca27817bce93ee14bc6a02a69983dd2792f3d37d35ac4f86e1373f"
+        },
+        {
+          "frameIndex": 92,
+          "timestampSeconds": 3.8333333333333335,
+          "sourceSampledSeconds": 3.8333332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0092_t003.833.png",
+          "sha256": "fb235369b357062761797fb53197179e48e7167ef19293da23122dd2e49d29ab"
+        },
+        {
+          "frameIndex": 100,
+          "timestampSeconds": 4.166666666666667,
+          "sourceSampledSeconds": 4.166666507720947,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0100_t004.167.png",
+          "sha256": "a87e1a5fcd4fc2bd3e5f069c8be93ee1763b151a0c01e472e9529d97432ad1d3"
+        },
+        {
+          "frameIndex": 108,
+          "timestampSeconds": 4.5,
+          "sourceSampledSeconds": 4.5,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0108_t004.500.png",
+          "sha256": "d47270cdcbf3a1453822ae983b95d71f1576f40d3fcf6112dfbc1a6c708d8ae4"
+        },
+        {
+          "frameIndex": 113,
+          "timestampSeconds": 4.708333333333333,
+          "sourceSampledSeconds": 4.708333492279053,
+          "path": "Art/SpellVFX120/VideoReview/Earth/070_BB44/070_BB44_f0113_t004.708.png",
+          "sha256": "db2ffdc1a58a717db9d001e8af962935baac3649ff0fa8a7c4f726e5df94cc12"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "071_BB47",
+      "glyph": "뭇",
+      "sourceVideo": "Art/SpellVFX120/Clips/071_BB47.mp4",
+      "sourceVideoSha256": "681a2951b0a1d344d0665026a9e54b416da582dde1702d0b08c765066ec3ded8",
+      "sourceMetadataSha256": "c57abc3bc39d6ef8c446a6ec864ed181f724ae6bde685cc3533be03c3788e6c4",
+      "capturedUtc": "2026-09-09T02:28:52.4332380Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 2.950000047683716,
+      "impactSeconds": 0.3199999928474426,
+      "encodedFrames": 74,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/071_BB47_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0000_t000.000.png",
+          "sha256": "332f1ea344b5a9977c9b2dcc0567f2db5876cf8869b6dfd3d0eef760ea5f1bd7"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0004_t000.167.png",
+          "sha256": "f674657c4b0c11c0363d005b119337630476a085faf5cdb733380f3faf4b66bc"
+        },
+        {
+          "frameIndex": 9,
+          "timestampSeconds": 0.375,
+          "sourceSampledSeconds": 0.375,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0009_t000.375.png",
+          "sha256": "2f060053d811a812edaa7dd24b5cd56e0bf10465dad910466a0dfe809015bb29"
+        },
+        {
+          "frameIndex": 17,
+          "timestampSeconds": 0.7083333333333334,
+          "sourceSampledSeconds": 0.7083333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0017_t000.708.png",
+          "sha256": "d4faa8aafecbbb88d37b9ba4e640d9189aafedfc4e12e0293425c6d57cc0e39e"
+        },
+        {
+          "frameIndex": 25,
+          "timestampSeconds": 1.0416666666666667,
+          "sourceSampledSeconds": 1.0416666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0025_t001.042.png",
+          "sha256": "1c2e116654b584de27a49a80e4f3c17302ae277ebd4a844cde9f1a00f9f8c4a0"
+        },
+        {
+          "frameIndex": 34,
+          "timestampSeconds": 1.4166666666666667,
+          "sourceSampledSeconds": 1.4166666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0034_t001.417.png",
+          "sha256": "d03a5d10b6808699d49b49146a1f1ef8b289c8c557e4dce1df37c84760a10ac5"
+        },
+        {
+          "frameIndex": 42,
+          "timestampSeconds": 1.75,
+          "sourceSampledSeconds": 1.75,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0042_t001.750.png",
+          "sha256": "257c4a1791b6d969fa49cf92423f4722f8c712b80bf9f579c42322145e625837"
+        },
+        {
+          "frameIndex": 51,
+          "timestampSeconds": 2.125,
+          "sourceSampledSeconds": 2.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0051_t002.125.png",
+          "sha256": "26a400b4c8c1a89d9d53fb7852f40863d41921727cc6683b4bd7f1f148d8924d"
+        },
+        {
+          "frameIndex": 58,
+          "timestampSeconds": 2.4166666666666665,
+          "sourceSampledSeconds": 2.4166667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0058_t002.417.png",
+          "sha256": "b496b7d32102a5706da2ea0df37711e7e31c22d2a8b61df39ea2feddbbe075b0"
+        },
+        {
+          "frameIndex": 64,
+          "timestampSeconds": 2.6666666666666665,
+          "sourceSampledSeconds": 2.6666667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0064_t002.667.png",
+          "sha256": "a256d8debd07eb1e684c7ba7b3800e8297e77ca96904967831f1a8488bdb4eba"
+        },
+        {
+          "frameIndex": 69,
+          "timestampSeconds": 2.875,
+          "sourceSampledSeconds": 2.875,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0069_t002.875.png",
+          "sha256": "ec2c4659d893c35de7b8a457c4d7f769f20f0a3007ae5c2f5af16d24ddf4217b"
+        },
+        {
+          "frameIndex": 73,
+          "timestampSeconds": 3.0416666666666665,
+          "sourceSampledSeconds": 3.0416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/071_BB47/071_BB47_f0073_t003.042.png",
+          "sha256": "4267e8451ba625d019a3907dd4afd1eca72f720e20b2c46a6c5636126a50d832"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    },
+    {
+      "id": "072_BB49",
+      "glyph": "뭉",
+      "sourceVideo": "Art/SpellVFX120/Clips/072_BB49.mp4",
+      "sourceVideoSha256": "08e5a318fccfa77e41117699da45df6e06a4778181134a7015054950a39d6e7f",
+      "sourceMetadataSha256": "4e47c0dd554f669d8f94d67550a31e5b80d010f7d748ab82851e394d6c2ee3b2",
+      "capturedUtc": "2026-09-09T02:28:54.3408191Z",
+      "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+      "captureStatus": "PRESENTATION_REVIEW_ONLY",
+      "gameplayConnectionVerified": false,
+      "lifeSeconds": 3.549999952316284,
+      "impactSeconds": 0.3400000035762787,
+      "encodedFrames": 88,
+      "sheet": "Art/SpellVFX120/VideoReview/Earth/072_BB49_motion.jpg",
+      "sheetLayout": "3 columns by 4 rows, chronological row-major, unlabelled extracted pixels; times in this JSON",
+      "samples": [
+        {
+          "frameIndex": 0,
+          "timestampSeconds": 0.0,
+          "sourceSampledSeconds": 0.0,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0000_t000.000.png",
+          "sha256": "f11ee804f25c42f6971cfb441d40cc03b64af54f5d8ab308fdb77fbd1ac646cd"
+        },
+        {
+          "frameIndex": 4,
+          "timestampSeconds": 0.16666666666666666,
+          "sourceSampledSeconds": 0.1666666716337204,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0004_t000.167.png",
+          "sha256": "820a98463c1edd437985860945315c38b661a8217748b2e30cc8db798973b285"
+        },
+        {
+          "frameIndex": 11,
+          "timestampSeconds": 0.4583333333333333,
+          "sourceSampledSeconds": 0.4583333432674408,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0011_t000.458.png",
+          "sha256": "757d3e7a032e38516a6d61cac5a82ad78fe8b227e74a1e0f794b305fdf549a96"
+        },
+        {
+          "frameIndex": 20,
+          "timestampSeconds": 0.8333333333333334,
+          "sourceSampledSeconds": 0.8333333134651184,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0020_t000.833.png",
+          "sha256": "f4edf3b8b2604cb94337a5ad99a79d4db6e65e4baddb3e272361aec7b3681c6f"
+        },
+        {
+          "frameIndex": 31,
+          "timestampSeconds": 1.2916666666666667,
+          "sourceSampledSeconds": 1.2916666269302368,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0031_t001.292.png",
+          "sha256": "6db7f1d2e65c1679ee056494a16d31c8bed389af3f6c54a6015ffad2733ebce4"
+        },
+        {
+          "frameIndex": 41,
+          "timestampSeconds": 1.7083333333333333,
+          "sourceSampledSeconds": 1.7083333730697632,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0041_t001.708.png",
+          "sha256": "828b0757640b75ff70b5b13e2f5c8184ec60371b71895dbf919f2454d5668fbb"
+        },
+        {
+          "frameIndex": 51,
+          "timestampSeconds": 2.125,
+          "sourceSampledSeconds": 2.125,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0051_t002.125.png",
+          "sha256": "38be4960c0fa5f6e34a7e574c0cf8ad25dab956c27c6263744555b0e2ad95d6e"
+        },
+        {
+          "frameIndex": 61,
+          "timestampSeconds": 2.5416666666666665,
+          "sourceSampledSeconds": 2.5416667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0061_t002.542.png",
+          "sha256": "b638ecde6b842452f34da25f546cd1fa2ed0b702f1abb1f6bb82782f87e764bc"
+        },
+        {
+          "frameIndex": 70,
+          "timestampSeconds": 2.9166666666666665,
+          "sourceSampledSeconds": 2.9166667461395264,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0070_t002.917.png",
+          "sha256": "6bf0fafd3a3b6bffc01c9b412e1c172f532d06ffa9ea376ec40e4c63829baec1"
+        },
+        {
+          "frameIndex": 77,
+          "timestampSeconds": 3.2083333333333335,
+          "sourceSampledSeconds": 3.2083332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0077_t003.208.png",
+          "sha256": "51e108b64818ff227e47d9d6f59ec3fad408817200da5adf44115dc433129183"
+        },
+        {
+          "frameIndex": 83,
+          "timestampSeconds": 3.4583333333333335,
+          "sourceSampledSeconds": 3.4583332538604736,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0083_t003.458.png",
+          "sha256": "6904800d6a3fe9b3dc7fb838a49049947a11856e49e6f7f56fd734e1e68323b0"
+        },
+        {
+          "frameIndex": 87,
+          "timestampSeconds": 3.625,
+          "sourceSampledSeconds": 3.625,
+          "path": "Art/SpellVFX120/VideoReview/Earth/072_BB49/072_BB49_f0087_t003.625.png",
+          "sha256": "6904800d6a3fe9b3dc7fb838a49049947a11856e49e6f7f56fd734e1e68323b0"
+        }
+      ],
+      "sourceVideoUnchanged": true,
+      "motionSheetVisuallyOpened": true,
+      "lastSampleAfterAuthoredLife": true
+    }
+  ],
+  "reviewCompletedUtc": "2026-09-09T02:59:37.025912+00:00",
+  "report": "Docs/Art/SpellVFX120/VIDEO_EARTH_REVIEW.md",
+  "limitations": "12 temporal samples per clip plus selected full-resolution views; not every-frame realtime playback, no gameplay/CPU/physical collision verification. Current source equivalence is unverified."
+}

@@ -1,0 +1,56 @@
+import json
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2]
+OUT=ROOT/'Art/SpellVFX120/AreaFive'
+scope=json.loads((OUT/'scope.json').read_text(encoding='utf-8'))
+audits=[json.loads((OUT/n).read_text(encoding='utf-8')) for n in ['audit.json','contact_audit.json','ktp_contact_play_audit.json']]
+if any(a['status']!='PASS' for a in audits):raise RuntimeError('Audit failed')
+rows=[json.loads((OUT/g/'report.json').read_text(encoding='utf-8')) for g in '고노소모오']
+table='\n'.join(f"| {r['glyph']} | {len(r['clips'])} | {r['clips'][1]['damageEvents']} | {r['clips'][1]['uniqueContacts']} | {r['clips'][1]['outsideHits']} |" for r in rows)
+report=f'''# 고·노·소·모·오 광역 VFX 재제작
+
+2026-09-10. 구현 및 아래 기술 검사 통과, 사용자 비주얼 검토 대기.
+
+## 변경
+
+- 고: 고정 형상의 속 빈 대나무 17개(각 288 tris, 총 4,896 tris). 마디·사선 절단면·재사용 대나무 색/노멀 텍스처. 위치를 범위 안에 확정하고 시전별 순서를 섞으며 양수 간격을 정규화한다. Delay부터 Delay+0.6초까지 돌출, 각 0.12초 상승. 적마다 가까운 가시의 완료 시각에 기존 위력 1회. 마지막 돌출 이후 최소 0.7초 수명, 길이 축소 대신 섬유 방향 디졸브.
+- 노: 기존 화염 플립북의 짧은 원뿔 방사와 적은 연기. 기존 CombatConfig의 부채꼴 범위와 피해 지연 유지.
+- 소: 8삼각형 금속 송곳 9개와 짧은 은빛 선. 계획의 LaunchTime/ImpactTime을 읽고 한 문양에서 순차 발사한다. 빈 대상 목록에서도 9발을 표시하며 허공 명중 효과는 만들지 않는다.
+- 모: 낮고 넓은 모래·돌 입자 전선과 짧은 먼지. 실제 설정 속도 7m/s, Delay 0.4초 유지.
+- 오: PolyOne / Water URP의 물 셰이더와 재질을 별도로 복제했다. 원본 Time 입력을 _EffectTime으로 바꾸고, 561정점/1,024삼각형 메시를 변형한다. 마루 높이 0.75~1.15m, 평균 0.95m, 주기 1초와 좌우 위상차. 메시 큰 물결과 셰이더 잔물결·포말은 같은 경과 시간을 사용한다. 실제 경로 속도 6m/s, Delay 0.45초 유지. 큰 셰이더 변위는 0으로 두어 지면 고정을 유지한다.
+- 노·소 발사구는 카메라 뷰포트(0.60,0.40), 깊이1.6m에서 확정 후 월드에 남는다. 고·모·오는 지면 문양. 문양 수명 기본0.32초, 소는 마지막 발 이후0.16초 안에 복귀한다.
+- 접촉은 확정 피해의 단일 경로에서 선택한다. 기본 공격 확대 배율3.5의 절반인1.75, 문양 수명0.25초, 파편0.45초. 다른 글자와 일반 피격 경로는 유지했다.
+
+## 촬영 결과
+
+| 술식 | 전후·두 시점 영상 | 수정 플레이 피해 | 고유 접촉 효과 | 범위 밖 피해 |
+|---|---:|---:|---:|---:|
+{table}
+
+20개 MP4와40개 정지 이미지, 모두1920×1080. 영상은24fps·6초이고 프레임별 JPG도 남겼다. MP420개 전체 디코딩 오류0. 같은 C2 카메라·위치·표적을 사용했다. 촬영 시작 시 최대 시스템 커밋 사용률 {scope['maxCommitRatio']:.1%}; 85% 이상 새 촬영 금지, 클립마다 RenderTexture/Texture2D/임시 리그를 해제했다.
+
+## 기술 검사
+
+- 통과: 광역 수치·재생 검사 {len(audits[0]['checks'])}개.17개 시각 유일성, 동일 seed 재현, 가까운 가시와 피해 시각 일치, 적당1회 예약, 범위 밖 제외, 0/1/다수 대상 및 다연발 시간·할당, 비행 중 사망 시 접촉 없음.
+- 통과:30·60·120fps 및0.2배 감속에 해당하는 경과 시간으로 표현을 샘플링했다. 가시 완료, 계획 불변, 본체 입자 실제 방출, 수면 변위 범위, 루트 스케일 고정, 물 셰이더 컴파일과 수면 경계,8도 경사 물결 경계 지면 오차를 검사했다. 세부 판정은 audit.json.
+- 통과: 기존 기본10종 접촉 회귀 {len(audits[1]['checks'])}개와 기존 받아치기·피격 검사 {len(audits[2]['checks'])}개.
+- 통과: 캡처20개 모두 예정 피해 수=실제 피해 수=고유 접촉 수. 허공 중복 폭발 없음, 종료 후 효과 루트 소멸, 런타임 오류0.
+- 통과: 해시 비교에서 변경한 프로필은 다섯 개뿐이다. 다른115개와 KTP·PolyOne 공급자 원본을 보존했다. 기존 비교 페이지·영상과 Baseline_글자.asset도 유지했다.
+
+## 검증 범위와 남은 판단
+
+- 촬영은 임시 캡슐 표적3개와 범위 밖 표적1개에 실제 CombatLoopWiring Resolve/예약 피해를 적용한 런타임 시험이다. 손글씨 입력·인식부터 적 AI까지의 실제 전투는 **미검증**이다.
+- ‘고’ 기존 표현도 새 순차 피해 계획으로 재생했다. 과거 동시 피해 게임 빌드를 재현한 영상은 아니다.
+- 30·60·120fps는 수치 샘플링 검사다. 각 설정에서 전체 게임을 실행한 성능·입력 검사는 **미검증**이다.
+- 복잡한 지형 전체, 벽과 다른 투명 효과가 겹치는 모든 구도, 다수 동시 시전 성능은 **미검증**이다. 촬영/8도 경사 표본 검사를 전 장면 검증으로 간주하지 않는다.
+- 문양의 한국적 느낌, 실제 불·물처럼 느껴지는 정도와 최종 크기·밝기는 **사용자 비주얼 검토 대기**다. 전역 노출/블룸 변경 없음.
+
+## 파일
+
+- AREA_FIVE_REVIEW.html: 통합 비교 페이지.
+- AreaFive/글자/: MP4·JPG·report.json·settings.json.
+- AreaFive/audit.json, contact_audit.json, ktp_contact_play_audit.json, scope.json: 검사 증거.
+- Unity Assets/_Project/Art/SpellVFX120/AreaFive/: 분리한 기존 프로필, 새 본체·재질·물 셰이더·접촉 프리팹.
+'''
+(OUT/'REPORT.md').write_text(report,encoding='utf-8')
+print('REPORT written',sum(len(a['checks']) for a in audits),'checks')

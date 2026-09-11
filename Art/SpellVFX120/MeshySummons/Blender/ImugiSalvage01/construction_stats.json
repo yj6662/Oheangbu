@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Reused_Meshy_Head_Horns_Beard",
+    "source_tris_after_crop_cap": 4280
+  },
+  {
+    "name": "Reused_Meshy_NeckScales_ReformedBody",
+    "source_tris_after_crop_cap": 974
+  },
+  {
+    "name": "Reused_Meshy_ClawedFoot_Donor",
+    "source_tris_after_crop_cap": 1140
+  },
+  {
+    "final_tris": 22000,
+    "vertices": 11108,
+    "raw_union_tris": 942080,
+    "dimensions": [
+      1.3204047679901123,
+      4.560638427734375,
+      0.8358747959136963
+    ]
+  }
+]

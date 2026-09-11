@@ -1,0 +1,105 @@
+{
+  "self_imposed_run_cap": 35,
+  "combined_two_summon_cap": 70,
+  "balance_before": 258,
+  "price_source": "https://docs.meshy.ai/en/api/pricing",
+  "endpoint": "/openapi/v1/image-to-3d",
+  "input_policy": "Only generated production concept uploaded; source research images remain local.",
+  "requests": [
+    {
+      "name": "WaterTurtle",
+      "id": "112_C634",
+      "glyph": "옴",
+      "mode": "image",
+      "config": {
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_texture": true,
+        "enable_pbr": true,
+        "texture_resolution": "2k",
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 16000,
+        "image_enhancement": false,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "input_file": "Concept.png",
+      "input_sha256": "28cce7c45ad40a824bb0260be1d28c53fdb943dacf65a6da3a0ce38884d3b7c6",
+      "expected_credits": 35,
+      "reserved_credits": 35,
+      "consumed_credits": 35,
+      "status": "SUCCEEDED",
+      "task_id": "01a08d1b-f1b4-70a2-bb71-618347b713d2",
+      "progress": 100,
+      "files": [
+        {
+          "path": "112_C634\\image\\model_url.glb",
+          "bytes": 10134084,
+          "sha256": "2c176f1cb0c77cc5a84ca4ec118c83d7235da53039cd17c73e45c4353403704d",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 16648,
+            "primitive_vertices": 19107,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "112_C634\\image\\model_urls_glb.glb",
+          "bytes": 10134084,
+          "sha256": "2c176f1cb0c77cc5a84ca4ec118c83d7235da53039cd17c73e45c4353403704d",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 16648,
+            "primitive_vertices": 19107,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "112_C634\\image\\model_urls_fbx.fbx",
+          "bytes": 15061564,
+          "sha256": "81f4d10ad7fdef38eb8e58cdcd737b4c0abf7c0187506a2d63af029a55c1a0fc"
+        },
+        {
+          "path": "112_C634\\image\\thumbnail_url.png",
+          "bytes": 105066,
+          "sha256": "129f06457d74b8ddfcb25b5e409895512d707716988f424fd7b50fb1834897e6"
+        },
+        {
+          "path": "112_C634\\image\\texture_urls_0_base_color.png",
+          "bytes": 6437200,
+          "sha256": "2e0ff99ce0c4feca55d8212ff5bcdf128b8a029bd32a6eca1ecb5bdfaaa292e9"
+        },
+        {
+          "path": "112_C634\\image\\texture_urls_0_metallic.png",
+          "bytes": 19092,
+          "sha256": "e1a1fe7dfff53c1d41daa5050d706c9ec84dbbff1058bd5dd6bee83b5b8f210e"
+        },
+        {
+          "path": "112_C634\\image\\texture_urls_0_roughness.png",
+          "bytes": 1704115,
+          "sha256": "222b7c645ed0142ad1dea21515c4eadee4e5036dec9c9effb22006dcdf88d467"
+        },
+        {
+          "path": "112_C634\\image\\texture_urls_0_normal.png",
+          "bytes": 6174102,
+          "sha256": "3dc005e9c26d79c0c2a4c9d7b0f9ccadfd7e9644a5f87ab0b0a3da1ef1434e74"
+        }
+      ]
+    }
+  ],
+  "balance_after": 223
+}

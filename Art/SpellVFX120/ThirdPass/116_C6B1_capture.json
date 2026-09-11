@@ -1,0 +1,36 @@
+{
+    "glyph": "욱",
+    "title": "솟은 물연적 후보",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.3199999928474426,
+    "life": 3.0999999046325685,
+    "sampledSeconds": [
+        0.21699999272823335,
+        0.6819999814033508,
+        1.3019999265670777,
+        1.9839998483657838,
+        2.7899997234344484
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

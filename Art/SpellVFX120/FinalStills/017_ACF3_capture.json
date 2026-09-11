@@ -1,0 +1,39 @@
+{
+    "glyph": "곳",
+    "title": "잔존하는 가시밭",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T02:24:44.1071192Z",
+    "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.3499999940395355,
+    "life": 4.300000190734863,
+    "sampledSeconds": [
+        0.30100002884864809,
+        0.9460000395774841,
+        1.805999994277954,
+        2.752000093460083,
+        3.870000123977661
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

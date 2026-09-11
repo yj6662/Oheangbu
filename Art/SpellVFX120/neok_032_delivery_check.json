@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal55/032_B109.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated55/032_B109.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills55/032_B109_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills55/032_B109_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills55/032_B109_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/032_B109_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills55/032_B109_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NEOK_032_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NEO_031_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "fire_aura_032_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "neok55_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B109.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills55",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills55",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames55",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames55",
+      "mvid_match": true
+    }
+  ]
+}

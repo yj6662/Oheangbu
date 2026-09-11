@@ -1,0 +1,54 @@
+{
+  "sourceHashBefore": "d7bc294c3dd0d9801d870c93e2c2e73a2e978bfaebc583c7d208d90310b381f3",
+  "sourceHashAfter": "d7bc294c3dd0d9801d870c93e2c2e73a2e978bfaebc583c7d208d90310b381f3",
+  "shoulderHeight": 1.5,
+  "scale": 1.1781129556348378,
+  "sourceShoulder": 1.27322256565094,
+  "feet": [
+    [
+      0.3821886479854584,
+      0.7397891283035278,
+      0.0
+    ],
+    [
+      0.1534496247768402,
+      0.8350458741188049,
+      0.0
+    ],
+    [
+      0.09860382229089737,
+      -0.15105094015598297,
+      0.0
+    ],
+    [
+      -0.10920000076293945,
+      -0.10847566276788712,
+      0.0
+    ]
+  ],
+  "parts": [
+    {
+      "name": "WoodDeer_Body",
+      "tris": 12543,
+      "vertices": 6264,
+      "materials": 1
+    },
+    {
+      "name": "WoodDeer_Roots",
+      "tris": 3088,
+      "vertices": 1572,
+      "materials": 1
+    },
+    {
+      "name": "WoodDeer_Leaves",
+      "tris": 80,
+      "vertices": 100,
+      "materials": 1
+    }
+  ],
+  "totalTris": 15711,
+  "materials": 3,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\WoodDeer\\SM_WoodDeer.fbx",
+  "meshGenerationCredits": 0,
+  "rigged": false
+}

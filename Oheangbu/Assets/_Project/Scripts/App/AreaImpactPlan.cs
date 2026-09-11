@@ -10,11 +10,16 @@ namespace Oheangbu.App
     {
         public EnemyVitals Target;
         public float ImpactTime;
+        public float LaunchTime;
+        public Vector3 ImpactPoint;
+        public bool HasImpactPoint;
         public float Power;
     }
 
     // 광역 판정 계획 [SPELL-AREA-SHAPES §3] — 배선이 만들고 연출(SpellSequenceEffect.SetAreaPlan)이 받는다.
     // 중심·방향·운동 수치는 연출의 정본(프리팹 직렬 값은 폴백), Shots는 발 단위 대상·시각(Volley)
+    public sealed class PlannedSpike { public Vector3 Point; public float RiseAt; }
+
     public sealed class AreaImpactPlan
     {
         public AreaShape Shape;
@@ -25,6 +30,11 @@ namespace Oheangbu.App
         public float Length;
         public float Speed;
         public float Delay;
+        public float CreatedAt = Time.time;
+        public int ShotCount;
+        public int VisualSeed; // One seed per cast; presentation never changes damage or Unity random state.
+        public float ShotInterval;
+        public readonly List<PlannedSpike> Spikes = new List<PlannedSpike>();
         public readonly List<PlannedHit> Shots = new List<PlannedHit>();
     }
 

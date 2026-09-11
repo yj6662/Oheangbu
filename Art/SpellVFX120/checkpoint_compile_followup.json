@@ -1,0 +1,470 @@
+{
+  "status": "PASS_STATIC_CSHARP_ONLY",
+  "utc": "2026-09-09T01:21:21.4146504Z",
+  "worktree": "C:/Users/yj666/.codex/worktrees/oheangbu-vfx120-checkpoint",
+  "output": "C:\\Users\\yj666\\AppData\\Local\\Temp\\oheangbu-vfx120-followup-compile-20260909-102111",
+  "unityVersion": "6000.3.9f1",
+  "scope": "Main-based checkpoint sources compiled in dependency order against actual installed Unity/Package references. Fresh recursive source list includes Vfx120SummonMotion.cs. Oheangbu dependency assemblies rebuilt from this worktree rather than using dirty root project binaries. Reuses prior actual Unity response options; no analyzers or source generators executed.",
+  "limitations": "No Unity launch, AssetDatabase import, shader compilation, Play re-execution, player build or visual validation. Static compilation does not validate reflection member names or runtime behavior.",
+  "assemblies": 9,
+  "sourceCount": 92,
+  "errorCount": 0,
+  "editorUrpReferenceDeclared": true,
+  "rows": [
+    {
+      "assembly": "Oheangbu.Core",
+      "sources": 10,
+      "exitCode": 0,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/DrawnLetter.cs",
+          "sha256": "4334b654b2fdd3c7be6b8e4f5b645b534f982aba50ca601eaa1d83807fc06d08"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/Element.cs",
+          "sha256": "4be15a7262b40aa0c8f232c832ab0fd603db52a17e021523c287cadfd32ff1d0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/Jamo.cs",
+          "sha256": "bb63e6529aa6e72e8047ce83d892b00993a18e541bcadc926390bdf2700965f4"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/StrokeData.cs",
+          "sha256": "7009b8f43ab3cea10b63b5ab7831c489930712430772cae2cad651943cf9fec1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Domain/StrokePoint.cs",
+          "sha256": "53705b63e6cd111463844f78df20ffb6b8ca38f982ef30b10a9c918c697f617d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/BoolEventChannelSO.cs",
+          "sha256": "c81fba1423b76a8c476daf30a5c14a3c3d0b78cc9fadeea0039bd1a1248145ef"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/DrawnLetterEventChannelSO.cs",
+          "sha256": "a8a21f0b61cd73080b30d207422ac9eb6bc86def267fb91dcd7bb1f42bade844"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/EventChannelSO.cs",
+          "sha256": "26e8c31d1e61a311de20efc1010defa2fe721701521ed04466fa63bdf42870d6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/FloatEventChannelSO.cs",
+          "sha256": "43cf1fbc5384e988fa48a8b1fefd8e5d73cf0c6399f37bb5a71203ed40982dc7"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Core/Events/VoidEventChannelSO.cs",
+          "sha256": "c756d1ca90461bc92f10cc99d4f5b1ca757df216fe7b9fd2d562c4cbf5e60cf4"
+        }
+      ]
+    },
+    {
+      "assembly": "Oheangbu.Data",
+      "sources": 0,
+      "exitCode": 0,
+      "diagnostics": [
+        "warning CS2008: No source files specified."
+      ],
+      "sourceFiles": []
+    },
+    {
+      "assembly": "Oheangbu.Drawing",
+      "sources": 5,
+      "exitCode": 0,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/DrawingInputController.cs",
+          "sha256": "946efea6d23ff35954ac5f1c10d0a4da91deaba85666c1b93d749cde7a69c899"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/HangulComposer.cs",
+          "sha256": "7bd15233eaca379304f181792020ee6d9311c854eac042012a0965be20a56b82"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/JamoMatcher.cs",
+          "sha256": "9e7b0006bd3ee8be8b6853fad79aa5a73a2c9c974439784bee392e11129b7704"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/JamoTemplateLibrarySO.cs",
+          "sha256": "b0a7d0be34da107e69f4f238b699cb1937539312a99013b00ad6bd72fabab603"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Drawing/RecognitionPipeline.cs",
+          "sha256": "8dc0bf61e85f4a4323cf0c4e15c4a3a05eae9fea16f25fa21342da8b92fe6fed"
+        }
+      ]
+    },
+    {
+      "assembly": "Oheangbu.BrushRender",
+      "sources": 5,
+      "exitCode": 0,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/BrushStrokeData.cs",
+          "sha256": "39c5128e71864480817a578a4a61dd11f49746858fe7b463d480cf0d2d2dd176"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/BrushStrokeRenderer.cs",
+          "sha256": "175b7e297b7b13cce6509eb65071cebda18e1e10b58139b1fc6f94ef430a0fd0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/BrushStyleSO.cs",
+          "sha256": "d96cf4e568cb798fb5da005ccb286bcd1eb92c595802269b65bc3c8ac373c3d9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/ElementPaletteSO.cs",
+          "sha256": "59a96fb1ca1a76dd01c308b75025f83da3746ffd76dab22b97ad7e52ddb6b7df"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/BrushRender/RibbonMeshBuilder.cs",
+          "sha256": "e71d580f51701fa7bcbf685e031ade04e1c3941107f6c4e41a9b9b7c19d21298"
+        }
+      ]
+    },
+    {
+      "assembly": "Oheangbu.Spellcraft",
+      "sources": 2,
+      "exitCode": 0,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Spellcraft/SpellBookSO.cs",
+          "sha256": "46f36793cf44a34fceb22f90deea786eed95b665a541c9c9e7ee25aa14abdd23"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Spellcraft/SpellResolver.cs",
+          "sha256": "03f6e700f5f62c18d08d7f13a58d8d9c24a7c29bb1ba8e0d102a3fb22a530acd"
+        }
+      ]
+    },
+    {
+      "assembly": "Oheangbu.Combat",
+      "sources": 13,
+      "exitCode": 0,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/AreaGeometry.cs",
+          "sha256": "76125febe9df2c6f06297b823a0e3d3af06792c13ad1ff9f9574ae7ef4c85620"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/CombatConfigSO.cs",
+          "sha256": "19682b7a6be1e6337bfa79f4ddb073b4c0a1a7138b15cc86398e819a5ec9061c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Enemy/EnemyController.cs",
+          "sha256": "7023d666ad462381a60752811ab32ae99c576923df30275099a8486482ce4c1c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Enemy/EnemyVitals.cs",
+          "sha256": "ba6bfdb99a97c1e0550a36a994bff0a6ba3aa4b3925084bda546e5c2e7be788a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/GroggyMeter.cs",
+          "sha256": "2bed7c3a16f29a743e38203d9b4def3215ebe3e83c8ea8d6e9190ce2629cf57b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/ParryJudge.cs",
+          "sha256": "d22f929afe6ca1281ea7bd3c0449e8a7fb116841d1c0d7a3af5c31991a1026a5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/CameraRigController.cs",
+          "sha256": "cc1e5d43bab9c7995076278758e46a01417e2f87d84194f0d8c0c09e390d267f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/DodgeAction.cs",
+          "sha256": "c896756beca60ccefffb152b27ffba552f33b325e8bbe721f9c67c0d2080d655"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/HarvestAction.cs",
+          "sha256": "7acd07a5d1d108cb97ce8db84327e894546e2e0ded0692dfda67a4bd6c4f3836"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/InkPool.cs",
+          "sha256": "c6696ab33feba9414feb8816495e127990013e52106ba17c81903321d840c63a"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/LockOn.cs",
+          "sha256": "28a72f71805f7e1c7b82a80e56c17b37b1c26f71a4e56ad210a9c7e8a506e75d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/PlayerMotor.cs",
+          "sha256": "e581809176698becfa6042609ace858b0e1aecafd3d2fbab314c9414a07c7183"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Combat/Player/PlayerVitals.cs",
+          "sha256": "769ba5f3e46ee533944721b7e6bca834f6719db712954b8d79308888016e7a34"
+        }
+      ]
+    },
+    {
+      "assembly": "Oheangbu.Presentation",
+      "sources": 0,
+      "exitCode": 0,
+      "diagnostics": [
+        "warning CS2008: No source files specified."
+      ],
+      "sourceFiles": []
+    },
+    {
+      "assembly": "Oheangbu.App",
+      "sources": 39,
+      "exitCode": 0,
+      "diagnostics": [
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(67,56): warning CS0414: The field 'ThornRiseEffect._emergeTilt' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(71,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMin' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(70,56): warning CS0414: The field 'ThornRiseEffect._layTilt' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(103,56): warning CS0414: The field 'ThornRiseEffect._droopTilt' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(66,55): warning CS0414: The field 'ThornRiseEffect._emergeScale' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(60,46): warning CS0414: The field 'ThornRiseEffect._primaryMeshCount' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(99,52): warning CS0414: The field 'ThornRiseEffect._layTime' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(63,51): warning CS0414: The field 'ThornRiseEffect._vineScale' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(65,51): warning CS0414: The field 'ThornRiseEffect._secondaryScaleMax' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(68,56): warning CS0414: The field 'ThornRiseEffect._settleTiltMax' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(59,49): warning CS0414: The field 'ThornRiseEffect._yawJitter' is assigned but its value is never used",
+        "C:\\Users\\yj666\\.codex\\worktrees\\oheangbu-vfx120-checkpoint\\Oheangbu\\Assets\\_Project\\Scripts\\App\\ThornRiseEffect.cs(112,52): warning CS0414: The field 'ThornRiseEffect._swayDecay' is assigned but its value is never used"
+      ],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/AreaImpactPlan.cs",
+          "sha256": "7179fc565054be7b28904f772f657df36082fb5a1ff90b4d0201955c023eb090"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/BrushStrokeFeedAdapter.cs",
+          "sha256": "401735875408d5badd011c57b9fdc57842ea4dd17dee3ae831684adbc4d40f34"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/CombatLifetimeScope.cs",
+          "sha256": "e18d7d8f7e8182e2dc6e041002131e28328885d3e307118657423d243968ff75"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/CombatLoopWiring.cs",
+          "sha256": "7b56b5a00f883ab69623f723371b13eea803e37c4cc6f9f02405095d57c0de2b"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevElement.cs",
+          "sha256": "1625fe339e60c9d09755b18e0ec82ad34f36333d5c47321bc84b7b4dfeacde0f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevEnemyWakePedestal.cs",
+          "sha256": "2d9dec96c4b8b1bf2da48b8c4c7caa7f51cb36f01abefcc7679132ca5acc70cd"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevInfoBoard.cs",
+          "sha256": "d0895267cc859ed182d8f222fb7edaa271b72d21d4d1b7be06992f2bd833370d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevInteractable.cs",
+          "sha256": "1451434c1374fdd76a3015719a7b666d0fba2f2376f471cda82da54868eaa473"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevInteractor.cs",
+          "sha256": "55a0ee37d9c0ec80be97bbf6193a136b3bc0af020fb2d3386b734a860ce85cd0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevLabel.cs",
+          "sha256": "9ef948cb6ac3f3ae309dc42d3bcf23ccb273f4bf2877b87ee24b34d05092c296"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevSceneFlow.cs",
+          "sha256": "b2e3efc7fab0f2cf1ab894a8706bf981a7b87b54d614d686cf21e5b22d40587d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/DevScenePortal.cs",
+          "sha256": "6062de47afc45b665232da4ff8df50b71ada91c4f7656511f9a8e56449e4bdda"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/EffectLabBoard.cs",
+          "sha256": "e5a1ca7f9ec0c2c860fa2b46e913d76a2862b41a949e76dc860068928da09ddb"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/ParryRangeDirector.cs",
+          "sha256": "f1013dc77049369775f8e7936f0a423d799368bcb1d63f11ac4942e074d8a968"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/SpellRangeDirector.cs",
+          "sha256": "451235c2fc9a3285dbf05223bc96cf044cfc93b797271902505e62a3684ec1ba"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/Dev/SpellRangeDummy.cs",
+          "sha256": "52b5d876522d7d8d031011bc3dda355edb7029c1568c828599147c7c0b6cc71f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/FlameJetEffect.cs",
+          "sha256": "405166a8bf0032ba93ce280ed62b864a5482304b3ffa0bfe0d28dffb350cb338"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/GroundWaveEffect.cs",
+          "sha256": "52a0fda0c9dad1ef45985afc6d3bde97ab9703feaf0a049aba0ce9ee6e15b5bf"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/HarvestInkStreamEffect.cs",
+          "sha256": "013c5b6b6edfaf2de59d2478e3129f8e474a91a1b1d4f8a8d3d54d2c98b8c0f6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/HudController.cs",
+          "sha256": "583b91f3ee619be6871e395d5f9d9111abf6c34a7af331190c99e6ac65f8e949"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/ParryBurstEffect.cs",
+          "sha256": "906c886326324ef2bdfaae57dcc0159503dcc4c3bce1cca005b74182c68fc203"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/PatternAuditSpawner.cs",
+          "sha256": "d5ec02c1b5927c731a083293537415c2ee3b4d5cffdec42802ef8c18d01d4808"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/PatternEffectLifetime.cs",
+          "sha256": "52c5f5e5fef532886e3f0489e02964b0c60980bed6f5d8250445f4097e4d0e11"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/RootLifetimeScope.cs",
+          "sha256": "c6f8d81e78f555c0db6f0dedbfc2e0e96e50dee500851f2b5a9c51aef086684c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SandStormEffect.cs",
+          "sha256": "e9c7f14fc42328e2763c757341875fa90b362461d62b8bd05205a11ef2d58af5"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellSequenceEffect.cs",
+          "sha256": "af2acad7e5c51b5aeb8c0e0b492c9c1c09d501c7d7a6ea3b44fec4ed39bca93d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Atmosphere.cs",
+          "sha256": "6d10ea081115a5f8cf44055e292bbf177f91acbd7e624ab9af0143e49139d710"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Catalog.cs",
+          "sha256": "e28343ff938fd0d759bbf8c5073623955aac59af90ffdacab418978036d6a2f9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120CueMotion.cs",
+          "sha256": "22a8915ea4a83fd510e9b2c6c4d15f6589ca2784f3afcd2ed2be6fa22985da70"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.cs",
+          "sha256": "cdf571ba22baa055fbd3afbe0fcb5960981b5d07da964a492ead7ecf8c3d9c2f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Profile.cs",
+          "sha256": "9c43bd35800bdf0ecf57a9a0e4f0740cde76ff3bfd1f2d38062f3bf98cbcb21f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120Review.cs",
+          "sha256": "0ab422e1e01efa98eafa58f78aa21fb524a01dbd31bacad491600262aff80515"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120SummonMotion.cs",
+          "sha256": "3693fcbd990cf2674bfb80f134e34ca5fa07b9e4229efb1f8bd0d92c581cc27e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVFX120/Vfx120VariantMotion.cs",
+          "sha256": "d54a70af22e6f6da46b4163c923c1eb8d8a81eab43e1e8eb8ea336e7231d2c24"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpellVisualSetSO.cs",
+          "sha256": "101c8462e551ed7bb188b47aca06d8c755283507562d12f40a6a75bb9de90580"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/SpikeVolleyEffect.cs",
+          "sha256": "d5acc7e9927ab2a6274fab4884a86320ad18c29ba1ce888cf1bb1fc08b1b48d3"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/ThornLanceEffect.cs",
+          "sha256": "e18e932e43cc03adbbcf9c2a5082fc478f61bc1e97421d844d66e626e620a316"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/ThornRiseEffect.cs",
+          "sha256": "6d75ed6dbfa4c66da3da21f0e38c1f88c53078709429eeee75334b5474f6cd3f"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/App/WaterWaveEffect.cs",
+          "sha256": "d9c0696bd248956817e3ceb50a144a37b372f954f4a12f7c59fefce3377febb6"
+        }
+      ]
+    },
+    {
+      "assembly": "Oheangbu.EditorTools",
+      "sources": 18,
+      "exitCode": 0,
+      "diagnostics": [],
+      "sourceFiles": [
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/DevSceneKit.cs",
+          "sha256": "eb965f7d7b7c83dca896210e653b3d234c6b25f946394cd0b0214f64293ec02c"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/FlameJetAudit.cs",
+          "sha256": "3955b4d73167300ca46f375a4c12bf75d63f4a62472f0c9e5732fad7ff0460f1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/FxReworkWiring.cs",
+          "sha256": "35302a5fe58bd37ef342d317b4cd517509a502dd2d5ccb34aab431cd4c9339c9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/JamoTemplateLibraryFiller.cs",
+          "sha256": "e4a6bc9f4c9b3bc896073a720997804c21a5bd4d6643a3e9c30caa6bd1aa004e"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/MeshAxisProbe.cs",
+          "sha256": "2fe64420dcf286d093511c2478b4eb773784e0579be90828342e774a9af226c6"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/PlayerRigPrefabTool.cs",
+          "sha256": "90f5fcd5605eb75eb6fcb17a193b2e37aa9ba8cbef6c3f3593a5ee6ca40d6ebc"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellRangeSceneBuilder.cs",
+          "sha256": "472fc6633dcab51a184cd595d7332de622ddb7c9a35902989c1ab8a19b61b509"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Capture.cs",
+          "sha256": "707533ee6a2e26af6dc564ee703fcc0672f57d8b9c3adabc65e312d67bf84706"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Editor.cs",
+          "sha256": "72f42e325316ed6756c1cf26c3758d94598ede1c912adb42ffd5cf9805d0c8e9"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120MeshFactory.cs",
+          "sha256": "3ed5c65c31296f29b50faffdd7d8d3b5ae4cc8bc04171e33150d853b5cf94ae2"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120Queue.cs",
+          "sha256": "1d6243a5821e5601bd964e35cfd409f9af90e217ab80beff79b87dee794db5c0"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120/Vfx120RenderAudit.cs",
+          "sha256": "f9bb176bef1dfe8ba9dc56592da0cc0800aee0dd1460da03121a50d56607b681"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/TestHubSceneBuilder.cs",
+          "sha256": "36298994f3d00b61d0ac4daf42ff7362d1bb8f9ee186b743357b87921df8c53d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120AdapterAudit.cs",
+          "sha256": "deb64c188ffe046dc94769212f23f8e56d053537088be1935b195ce038a85f44"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120AreaAudit.cs",
+          "sha256": "a3214d0b418e67e5d88ed8768eeb2e4c203ce82bb2d2662943d2983b4ab27bc1"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120GameplayAudit.cs",
+          "sha256": "8f286733cc37a39b9d9e632356056afd51b05af16d743ebccfad950806793509"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120MotionAudit.cs",
+          "sha256": "0e78aa42e417c490f379ca2f689e6253a326175fc0b86323d12599346e2a713d"
+        },
+        {
+          "path": "Oheangbu/Assets/_Project/Scripts/Editor/Vfx120RuntimeAudit.cs",
+          "sha256": "012dd01cae9904b4652faf5fc52c7db58c80b77607c12928ebad7757f022abc2"
+        }
+      ]
+    }
+  ]
+}

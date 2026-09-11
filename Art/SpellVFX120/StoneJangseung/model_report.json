@@ -1,0 +1,25 @@
+{
+  "triangles": 16500,
+  "vertices": 8252,
+  "materials": 1,
+  "dimensions": [
+    0.7306896448135376,
+    0.871174693107605,
+    2.075000047683716
+  ],
+  "sourceHashBefore": "e2fa7b6e8604457ae5173994dcd311d143b3dc5287717a0614df8ae2538b8d79",
+  "sourceHashAfter": "e2fa7b6e8604457ae5173994dcd311d143b3dc5287717a0614df8ae2538b8d79",
+  "meshyCredits": 35,
+  "requestedPolycount": 12000,
+  "sourceActualTriangles": 11491,
+  "rigged": false,
+  "edits": {
+    "crownVertices": 1330,
+    "baseVertices": 1264,
+    "eyeVertices": 628,
+    "replacementMonolith": true,
+    "roundStoneEyesAdded": 2,
+    "voxelUnionM": 0.012,
+    "preDecimationTriangles": 101864
+  }
+}

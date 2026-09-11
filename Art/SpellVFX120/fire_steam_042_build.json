@@ -1,0 +1,9 @@
+{
+    "glyph": "농",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_FLAME_THEN_STEAM_ONLY_CONTACTS_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Short flame followed by lingering steam; no accuracy debuff or visibility rules."
+}

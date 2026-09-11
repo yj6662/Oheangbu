@@ -1,0 +1,36 @@
+{
+    "glyph": "섬",
+    "title": "읽히는 쇠눈",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.23000000417232514,
+    "life": 3.9000000953674318,
+    "sampledSeconds": [
+        0.27300000190734866,
+        0.8580000400543213,
+        1.6380000114440919,
+        2.496000051498413,
+        3.509999990463257
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

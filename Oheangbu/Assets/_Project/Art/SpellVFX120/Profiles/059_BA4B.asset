@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fce1bb2a44d8854aa49fbfeafa592cb, type: 3}
+  m_Name: 059_BA4B
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.SpellVFX120.Vfx120Profile
+  Glyph: "\uBA4B"
+  Title: "\uD604\uBB34\uC554 \uAC80"
+  Intent: "\uD1A0\uAC80 \uBCC0\uC2E0(\uAC80 \uACF5\uD1B5 \uC2A4\uD399)"
+  Family: Blade
+  Assigned: 1
+  Behavior: 6
+  Layout: 0
+  BodyMesh: {fileID: 4300000, guid: 8e1c7169a75b87b419a22295791041ca, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 902945cc53e164a4faebe2060c87a3ee, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: 55b31219459530440939ea8fc12a0b72, type: 2}
+  InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 19378912170973d4e8e3aa5c3bdd470e, type: 2}
+  MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 5591618528751999182, guid: 2ad741f9163e4af44b6ce6a2f78ef0c9, type: 3}
+  NativeImpactPrefab: {fileID: 5086923116799032211, guid: b9f4ad1bad8ecab459057c8bafba1680, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.48
+  NativeImpactScale: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
+  Pigment: {r: 0.5921569, g: 0.4509804, b: 0.2627451, a: 1}
+  Accent: {r: 0.73333335, g: 0.7529412, b: 0.7176471, a: 1}
+  Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
+  Count: 1
+  RibbonCount: 1
+  Size: 0.22
+  PartScale: {x: 1.18, y: 1.35, z: 1.36}
+  Duration: 3.5
+  Flight: 0.2
+  Turns: 0
+  Lift: 0.12
+  Stagger: 0
+  UseMist: 1
+  Grounded: 0
+  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png
+  RecipeJson: "{\"design\":{\"index\":59,\"glyph\":\"\uBA4B\",\"initial\":\"\u3141\",\"element\":\"\uD1A0\",\"vowel\":\"\u3153\",\"final\":\"\u3145\",\"frame\":\"\uC74C\xB7\uB2E8\uC77C\",\"classification\":\"\uBC84\uD504\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uD1A0\uAC80
+    \uBCC0\uC2E0(\uAC80 \uACF5\uD1B5 \uC2A4\uD399)\",\"sourceNote\":\"\",\"visualTitle\":\"\uD604\uBB34\uC554
+    \uAC80\",\"shape\":\"\uB05D\uC774 \uB113\uACE0 \uB0A0\uC774 \uBD88\uADDC\uCE59\uD55C
+    \uBB34\uAC70\uC6B4 \uB3CC\uAC80\",\"motion\":\"\uAC80\uACA9 \uD6C4 \uAD75\uC740
+    \uC9E7\uC740 \uBA3C\uC9C0 \uD68D\uC774 \uC870\uAE08 \uB2A6\uAC8C \uB530\uB77C\uC634\",\"pattern\":\"\uC900\uBC95
+    \uB3CC\uACB0\",\"accent\":\"\uC11D\uD68C \uD68C\uBC31 \uBAA8\uC11C\uB9AC\",\"cast\":\"\uB3CC
+    \uC870\uAC01\uC774 \uBD93\uC744 \uC911\uC2EC\uC73C\uB85C \uB9DE\uBB3C\uB824 \uB0A0\uC744
+    \uC774\uB8F8\",\"travel\":\"\uC18C\uCF13\uC744 \uB530\uB77C \uC774\uB3D9 \uB3CC
+    \uBB34\uAC8C\uB294 \uC794\uC0C1 \uAE38\uC774\uB85C\uB9CC \uD45C\uD604\",\"impact\":\"\uAC80\uACA9
+    \uC811\uC810 \uC544\uB798\uC5D0 \uB0AE\uACE0 \uB113\uC740 \uADE0\uC5F4 \uC790\uAD6D\",\"resolve\":\"\uB05D\uB3CC\uBD80\uD130
+    \uBD80\uC11C\uC9C0\uACE0 \uBA39 \uBA3C\uC9C0\uB294 \uC989\uC2DC \uB0AE\uAC8C
+    \uAC00\uB77C\uC549\uC74C\",\"material\":{\"primary\":\"\uBB34\uAD11 \uD759\uACB0\xB7\uC900\uBC95
+    \uB3CC\uBA74\xB7\uBE60\uB974\uAC8C \uAC00\uB77C\uC549\uB294 \uBA3C\uC9C0\",\"emission\":\"\uC2DC\uC804/\uC811\uC810
+    \uC21C\uAC04\uB9CC \uD5C8\uC6A9; \uC9C0\uC18D\uC740 \uBA85\uB3C4\xB7\uB18D\uB3C4\xB7\uAD11\uD0DD\uC73C\uB85C
+    \uD45C\uD604\"},\"recipe\":{\"primitive\":\"Blade\",\"secondaryPrimitives\":[\"Sand\",\"Shard\"],\"layout\":\"Spear\",\"behavior\":\"Weapon\",\"count\":5,\"layers\":4,\"scale\":1.28,\"duration\":3.5,\"countMeaning\":\"\uC804\uC2DC
+    VFX\uC758 \uC8FC \uD615\uC0C1 \uC218; \uAC8C\uC784 \uD22C\uC0AC\uCCB4\xB7\uD53C\uD574
+    \uD2F1\xB7\uC18C\uD658 \uAC1C\uCCB4 \uC218\uAC00 \uC544\uB2D8\",\"durationMeaning\":\"\uCD08
+    \uB2E8\uC704 \uAC80\uC218 \uD0C0\uC784\uB77C\uC778 \uAE30\uBCF8\uAC12. \uC2E4\uC81C
+    \uC218\uBA85\xB7\uB2E8\uACC4\uB294 \uAC8C\uC784 \uC774\uBCA4\uD2B8\uB97C \uB530\uB974\uBA70
+    \uC774 \uAC12\uC73C\uB85C \uD310\uC815 \uC2DC\uAC04\uC744 \uBCC0\uACBD\uD558\uC9C0
+    \uC54A\uC74C\",\"scaleMeaning\":\"\uBBF8\uD130\uB97C \uAE30\uC900\uC73C\uB85C
+    \uD55C \uAC80\uC218 \uD504\uB9AC\uD339 \uAE30\uBCF8 \uD06C\uAE30; \uC2E4\uC81C
+    \uACF5\uACA9 \uBC18\uACBD\uACFC \uC774\uB3D9\uAC70\uB9AC\uB294 \uAC8C\uC784 \uB370\uC774\uD130
+    \uC5F0\uACB0\",\"phaseFractions\":{\"cast\":[0,0.16],\"travel\":[0.16,0.52],\"impact\":[0.52,0.7],\"resolve\":[0.7,1]},\"phaseTexts\":[\"\uB3CC
+    \uC870\uAC01\uC774 \uBD93\uC744 \uC911\uC2EC\uC73C\uB85C \uB9DE\uBB3C\uB824 \uB0A0\uC744
+    \uC774\uB8F8\",\"\uC18C\uCF13\uC744 \uB530\uB77C \uC774\uB3D9 \uB3CC \uBB34\uAC8C\uB294
+    \uC794\uC0C1 \uAE38\uC774\uB85C\uB9CC \uD45C\uD604\",\"\uAC80\uACA9 \uC811\uC810
+    \uC544\uB798\uC5D0 \uB0AE\uACE0 \uB113\uC740 \uADE0\uC5F4 \uC790\uAD6D\",\"\uB05D\uB3CC\uBD80\uD130
+    \uBD80\uC11C\uC9C0\uACE0 \uBA39 \uBA3C\uC9C0\uB294 \uC989\uC2DC \uB0AE\uAC8C
+    \uAC00\uB77C\uC549\uC74C\"],\"motionSignature\":\"\uAC80\uACA9 \uD6C4 \uAD75\uC740
+    \uC9E7\uC740 \uBA3C\uC9C0 \uD68D\uC774 \uC870\uAE08 \uB2A6\uAC8C \uB530\uB77C\uC634\",\"geometrySignature\":\"\uB05D\uC774
+    \uB113\uACE0 \uB0A0\uC774 \uBD88\uADDC\uCE59\uD55C \uBB34\uAC70\uC6B4 \uB3CC\uAC80\",\"palette\":{\"primary\":\"#977343\",\"secondary\":\"#BBC0B7\",\"ink\":\"#2A2622\",\"paper\":\"#DED7C8\"},\"emissionPulseMaxNormalizedTime\":0.1,\"continuousEmission\":false,\"dispatchMode\":\"ExistingGameplayEvents\",\"raycastOrDamageAllowed\":false},\"verification\":\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\",\"patternSources\":[{\"unity_asset_path\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"guid\":\"366d97adb41f5324a8ca349d9eed4262\",\"observed_motif\":\"\uC6D0
+    \uC548 \uB124 \uBC29\uD5A5 \uC9C1\uAC01 \uD68C\uBB38\",\"evidence\":\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\",\"caution\":\"\uBB38\uC0B4\uACFC
+    \uB2EE\uC740 \uAE30\uD558 \uB3C4\uC548\uC774\uBA70 \uC2E4\uC81C \uCC3D\uD638
+    \uAD6C\uC870\uB85C \uD310\uC815\uD55C \uAC83\uC740 \uC544\uB2D8\",\"maskChannel\":\"A\",\"reuse\":\"\uAC80\uC218\uD55C
+    \uC54C\uD30C \uBB38\uC591\uC744 \uC2E0\uADDC shape\uC758 \uC791\uC740 \uBA74/\uB760\uC5D0
+    \uBC30\uCE58; \uC6D0\uBCF8 VFX prefab \uC7AC\uC0DD \uAE08\uC9C0\"},{\"unity_asset_path\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\",\"guid\":\"b0e88649d9b865540bc1dc9855fd57d9\",\"observed_motif\":\"\uB124
+    \uBC29\uD5A5\uC73C\uB85C \uB9DE\uBB3C\uB9B0 \uC9C1\uC120 \uB760\",\"evidence\":\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\",\"caution\":\"\uC804\uD1B5
+    \uCC3D\uD638 \uC2E4\uBB3C \uAC80\uC99D\uC774 \uC544\uB2CC \uC120\uD615 \uBB34\uB2AC
+    \uAD00\uCC30\",\"maskChannel\":\"A\",\"reuse\":\"\uAC80\uC218\uD55C \uC54C\uD30C
+    \uBB38\uC591\uC744 \uC2E0\uADDC shape\uC758 \uC791\uC740 \uBA74/\uB760\uC5D0
+    \uBC30\uCE58; \uC6D0\uBCF8 VFX prefab \uC7AC\uC0DD \uAE08\uC9C0\"}],\"patternSourceMissing\":[],\"patternInterpretation\":\"pattern
+    \uD544\uB4DC\uB294 \uB514\uC790\uC778 \uBAA9\uD45C \uB3C4\uC0C1\uC774\uB2E4.
+    patternSources\uC758 \uC2E4\uC81C \uAD00\uCC30 \uB3C4\uC0C1\uACFC \uB2E4\uB978
+    \uD56D\uBAA9\uC740 \uADF8 \uC774\uB984\uC73C\uB85C \uC6D0\uBCF8\uC758 \uC815\uCCB4\uB97C
+    \uB2E8\uC815\uD558\uC9C0 \uC54A\uACE0 shape\uC6A9 \uC0C8 \uBA54\uC2DC/\uB9AC\uBCF8\uC73C\uB85C
+    \uAD6C\uC131\uD55C\uB2E4.\",\"requiredVisualEvents\":[\"WeaponFormEntered\",\"WeaponSocketUpdated\",\"SwordHit\",\"WeaponFormExited\"],\"readability\":\"\uD604\uBB34\uC554
+    \uAC80: \uB05D\uC774 \uB113\uACE0 \uB0A0\uC774 \uBD88\uADDC\uCE59\uD55C \uBB34\uAC70\uC6B4
+    \uB3CC\uAC80\uC640 \uAC80\uACA9 \uD6C4 \uAD75\uC740 \uC9E7\uC740 \uBA3C\uC9C0
+    \uD68D\uC774 \uC870\uAE08 \uB2A6\uAC8C \uB530\uB77C\uC634\uAC00 \uD751\uBC31\uC5D0\uC11C\uB3C4
+    \uBCF4\uC5EC\uC57C \uD55C\uB2E4.\"},\"authoredDefinitionOverrides\":{},\"previewNumericAuthoring\":{\"count\":1,\"size\":0.22,\"partScale\":{\"x\":1.18,\"y\":1.35,\"z\":1.36},\"flight\":0.2,\"turns\":0.0,\"lift\":0.12,\"stagger\":0.0,\"ribbons\":1,\"grounded\":false,\"mist\":true},\"patternEvidence\":{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"guid\":\"366d97adb41f5324a8ca349d9eed4262\",\"size\":[3262,3262],\"mode\":\"RGBA\",\"maxTextureSize\":2048,\"mipmap_enabled\":false,\"unity_asset_path\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"visual_status\":\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\",\"evidence\":\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\",\"observed_motif\":\"\uC6D0
+    \uC548 \uB124 \uBC29\uD5A5 \uC9C1\uAC01 \uD68C\uBB38\",\"recommended_use\":\"\uAE08
+    \uBC29\uC5B4\xB7\uAC01\uC9C4 \uBD09\uC778 \uAC00\uC7A5\uC790\uB9AC\",\"caution\":\"\uBB38\uC0B4\uACFC
+    \uB2EE\uC740 \uAE30\uD558 \uB3C4\uC548\uC774\uBA70 \uC2E4\uC81C \uCC3D\uD638
+    \uAD6C\uC870\uB85C \uD310\uC815\uD55C \uAC83\uC740 \uC544\uB2D8\",\"alpha_mean\":69.40967708345472,\"rgba_extrema\":[[255,255],[255,255],[255,255],[0,255]],\"recommended_material_work\":\"Reuse
+    alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask
+    (RGB is solid white).\",\"source_materials\":[{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat\",\"guid\":\"c5459b93451d1924ba3ded1057255934\",\"shader\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\"}],\"source_prefab_examples\":[{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab\",\"guid\":\"0ed00e7e33480994d85c91e43884da40\",\"particle_systems\":14,\"looping_systems\":1}]},\"dispatchStatus\":\"REVIEW_ONLY_UNCONNECTED\",\"runtimeLimit\":\"Recipe
+    data alone does not implement per-glyph gameplay event choreography; inspect
+    runtime and real capture separately.\"}"

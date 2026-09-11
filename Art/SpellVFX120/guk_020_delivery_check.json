@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal43/020_AD6D.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated43/020_AD6D.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GOT_017_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GUK_020_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills43/020_AD6D_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills43/020_AD6D_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills43/020_AD6D_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/020_AD6D_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills43/020_AD6D_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "guk43_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_AD6D.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "wood_lift_020_build.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills43",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills43",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames43",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames43",
+      "mvid_match": true
+    }
+  ]
+}

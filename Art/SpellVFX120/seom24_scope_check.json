@@ -1,0 +1,14 @@
+{
+  "glyph": "섬",
+  "untouched": {
+    "Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\Profiles\\087_C190.asset": true,
+    "Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\Profiles\\080_C11D.asset": true
+  },
+  "changedFields": [
+    "BodyMesh",
+    "Count",
+    "RibbonCount",
+    "PartScale"
+  ],
+  "visualReview": "AWAITING_USER"
+}

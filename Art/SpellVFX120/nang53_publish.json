@@ -1,0 +1,11 @@
+{
+"id":"030_B0AD","version":"53","key":"NANG_030","glyph":"낭","title":"낭 · 관통하는 열기",
+"audit":"single_play_B0AD.json","build":"piercing_flame_030_build.json","scope":"nang53_scope_check.json","previous":"NAT_029_REVIEW.html",
+"intro":"좁게 모인 화염이 명중 지점을 지나 뻗고, 접촉 지점에는 전통 문양이 남습니다.",
+"changes":["명중 이후 화염 방출기가 0.36초 동안 2.16m 전진하며 관통 열기를 표현한다.","작고 긴 화염 꼬리와 제한된 흔들림으로 일반 불덩이와 구분했다.","KTP Pattern_110 명중 문양은 이동하는 화염과 분리해 접촉 위치에 둔다.","명중 신호 없는 시전은 관통·명중 문양을 만들지 않는다. 다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양1개/2tris. 공유 재질4개. KTP 동반 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireParticlePeak","firePatternPeak","firePenetrationPeak","fireImpact"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","관통 연출이며 방어력 무시·피해·다중 타격 규칙은 구현하지 않았다.","실제 전투 입력과 다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.6초에 진단용 명중 시각을 제공한다. 별도 검사에서 명중 없는 경우의 관통 연출 억제와 수명 종료 정리를 확인했다.",
+"detailLabels":["명중 문양과 관통","열기 소멸"]
+}

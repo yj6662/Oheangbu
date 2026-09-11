@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "outsideProfiles": 96,
+  "changed": [],
+  "baseline": "ga36_untouched_profiles_before.json",
+  "scope": "Profiles outside initial giyeok remained unchanged during the scoped finish."
+}

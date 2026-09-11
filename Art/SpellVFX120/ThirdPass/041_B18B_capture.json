@@ -1,0 +1,36 @@
+{
+    "glyph": "놋",
+    "title": "녹아내리는 쇠빛",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.3799999952316284,
+    "life": 2.4000000953674318,
+    "sampledSeconds": [
+        0.1680000126361847,
+        0.527999997138977,
+        1.0080000162124634,
+        1.5360000133514405,
+        2.1600000858306886
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

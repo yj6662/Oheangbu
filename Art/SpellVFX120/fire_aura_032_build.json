@@ -1,0 +1,9 @@
+{
+    "glyph": "넉",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_RING_REPEATED_CONTACT_MARK_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Circular flame field plus confirmed hit motif. Latest-contact feedback slot reused; gameplay DOT not added."
+}

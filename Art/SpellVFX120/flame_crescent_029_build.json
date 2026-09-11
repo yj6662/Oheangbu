@@ -1,0 +1,10 @@
+{
+    "glyph": "낫",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_CONFIRMED_IMPACT_TWO_CRESCENTS_AND_CLEANUP",
+    "particleSystems": 9,
+    "maxParticleCapacity": 592,
+    "patternTris": 2,
+    "emitterMeshTris": 48,
+    "scope": "Two crescent emitters diverge after supplied impact; no secondary damage or collision queries."
+}

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54323ed3a2536049a1a9884239b7dce, type: 3}
+  m_Name: KTP_ContactProfile
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.SpellVFX120.KtpContactProfile
+  Parries:
+  - Element: 0
+    Source: {fileID: 5023849406344518014, guid: a97ce257277d3a8478674b56e65812ce, type: 3}
+  - Element: 1
+    Source: {fileID: 5462539086460949562, guid: 42922e53f4a0bea4aa957719785e879e, type: 3}
+  - Element: 2
+    Source: {fileID: 2326031602051356113, guid: 5afa2a32d5a12864c9ed106274815d59, type: 3}
+  - Element: 3
+    Source: {fileID: 310556613315223650, guid: bd9011ae9b9af4a4a93e7811cd52de1c, type: 3}
+  - Element: 4
+    Source: {fileID: 26203807542700346, guid: db918b36e8fa4464a9ff945523bbd72e, type: 3}
+  PlayerHit: {fileID: 5462539086460949562, guid: 42922e53f4a0bea4aa957719785e879e, type: 3}
+  SpellProfiles:
+  - {fileID: 11400000, guid: 559752dd45a7acb41a20b66d2fd8e4be, type: 2}
+  - {fileID: 11400000, guid: c81b48a136b6f584bb61498b42cd2020, type: 2}
+  - {fileID: 11400000, guid: dd5c7fdb56a2e6f45ae5490af103e3b7, type: 2}
+  - {fileID: 11400000, guid: 97e528277128d3348a6a1863a2eb1d50, type: 2}
+  - {fileID: 11400000, guid: 13697480a13a4c04fbf58fb6501a7164, type: 2}
+  - {fileID: 11400000, guid: 13b4079074daca14f8661b4af3b51bb5, type: 2}
+  - {fileID: 11400000, guid: 3bb7a800cbcffff4da600f03b4a82429, type: 2}
+  - {fileID: 11400000, guid: 13475db8ef1a2d64ca695966feaf6745, type: 2}
+  - {fileID: 11400000, guid: 8df00eac8ecebfa47bbc76e00eb51467, type: 2}
+  - {fileID: 11400000, guid: aae762a62a37740459596071caa0f22b, type: 2}
+  - {fileID: 11400000, guid: 90b71129eb6cfe94187419a425d0c031, type: 2}
+  - {fileID: 11400000, guid: aa5794d1419f4ef4185cc00b90e8db56, type: 2}
+  - {fileID: 11400000, guid: f0dcf7d10b4acaf47b67aa34dbf512fe, type: 2}
+  - {fileID: 11400000, guid: eb412ed8c44bf5047b12253f5b84c531, type: 2}
+  - {fileID: 11400000, guid: d77d73d47a71b8c488d3d809d19c5af7, type: 2}
+  SourceEuler: {x: 0, y: 90, z: 0}
+  ParryScale: 0.22
+  HalfScale: 0.5
+  PlayerHitScale: 0.09
+  PlayerHitDistance: 1.6
+  PlayerHitOffset: {x: 0, y: -0.12}

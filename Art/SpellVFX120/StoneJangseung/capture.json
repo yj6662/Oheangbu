@@ -1,0 +1,24 @@
+{
+    "status": "PASS_DIAGNOSTIC_VISUAL_PENDING",
+    "mvid": "e443c08b-f850-4b86-98aa-116dd23e3cff",
+    "limitation": "Static exterior / summon VFX only. No rig, gameplay summon, AI or combat.",
+    "clips": [
+        {
+            "view": "play",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\StoneJangseung\\play",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.8407487273216248,
+            "footError": 0.007999996654689312
+        },
+        {
+            "view": "external",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\StoneJangseung\\external",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.8330035209655762,
+            "footError": 0.007999996654689312
+        }
+    ],
+    "errors": []
+}

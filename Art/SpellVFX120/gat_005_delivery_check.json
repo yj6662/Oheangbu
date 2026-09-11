@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal39/005_AC13.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated39/005_AC13.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GAM_004_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GAT_005_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills39/005_AC13_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills39/005_AC13_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills39/005_AC13_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/005_AC13_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills39/005_AC13_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "gat39_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "leaf_cut_005_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_AC13.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills39",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills39",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames39",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames39",
+      "mvid_match": true
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal15/010_AC80.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated15/010_AC80.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GA_001_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GEOM_010_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills15/010_AC80_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills15/010_AC80_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills15/010_AC80_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills13/010_AC80_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills15/010_AC80_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "botanical_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "botanical_play_audit.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "giyeok_botanical_source_recheck.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills15",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills15",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames15",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames15",
+      "mvid_match": true
+    }
+  ]
+}

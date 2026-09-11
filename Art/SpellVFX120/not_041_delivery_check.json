@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal64/041_B18B.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated64/041_B18B.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills64/041_B18B_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills64/041_B18B_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills64/041_B18B_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/041_B18B_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills64/041_B18B_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NOM_040_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NOT_041_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "fire_melt_041_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "not64_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B18B.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills64",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills64",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames64",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames64",
+      "mvid_match": true
+    }
+  ]
+}

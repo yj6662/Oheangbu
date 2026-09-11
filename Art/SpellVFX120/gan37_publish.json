@@ -1,0 +1,34 @@
+{
+  "id": "003_AC04",
+  "version": "37",
+  "key": "GAN_003",
+  "glyph": "간",
+  "title": "옮겨 심는 씨눈",
+  "audit": "single_play_AC04.json",
+  "build": "seed_transfer_003_build.json",
+  "scope": "gan37_scope_check.json",
+  "previous": "GA_001_REVIEW.html",
+  "intro": "되굽은 가시에 작은 씨눈이 매달립니다. 전이 신호가 오면 씨눈만 빠져나와 다음 지점으로 곡선을 그리며 이동하고, 명중 확인 뒤 껍질과 잎눈이 열립니다.",
+  "changes": [
+    "짧은 굽은 가시와 세 역가시를 별도 메시로 제작했다. 씨눈은 두 개의 두께 있는 껍질로 구성했다.",
+    "대나무 수피와 KTP Pattern_192 잎눈, 기존 KTP 발동·명중 연출을 재사용한다.",
+    "RequestSeedTransfer는 지정된 수신자만 읽는다. 타깃 탐색·사망·만료 판단과 피해는 실행하지 않는다. ConfirmSeedTransferHit 이후 껍질이 열린다.",
+    "자산 원본을 보존하고 다른119개 프로필의 불변을 확인했다."
+  ],
+  "cost": "가시140tris + 씨눈 껍질640tris + KTP 표식2tris = 총782tris. 메시 렌더러4개, 런타임 메시 복제0개. KTP 파티클 별도.",
+  "metrics": [
+    "transferRequested",
+    "transferHit",
+    "transferVisibleFrames"
+  ],
+  "limits": [
+    "카탈로그 시연용 전이·명중 신호를 사용했다. 실제 적 사망·씨앗 만료·가까운 적 탐색·전이 피해는 미연결이다.",
+    "비주얼 최종 판정은 사용자 검토 대기다.",
+    "움직이는 적 사이 전이와 다중 동시 사용 성능은 미검증이다."
+  ],
+  "captureNote": "1280×720·24fps. 전이1.3초, 도착 확인1.85초. 다음 대상은 고정된 진단 지점이며 화면 속 실루엣을 실제 적 AI로 취급하지 않는다.",
+  "detailLabels": [
+    "전이 준비",
+    "전이 뒤 껍질 소멸"
+  ]
+}

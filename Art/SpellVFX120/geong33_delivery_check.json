@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal33/012_AC85.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated33/012_AC85.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GEONG_012_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GEOT_011_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalFrames33/012_AC85/0037.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalFrames33/012_AC85/0043.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills33/012_AC85_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/012_AC85_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills33/012_AC85_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "companion_seed_012_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "geong33_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_AC85.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills33",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills33",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames33",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames33",
+      "mvid_match": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+    "glyph": "눈",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_EXPLICIT_PATH_PROGRESS_COMPLETION_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Noncombat burn-front VFX follows a supplied segment; no environment destruction or damage."
+}

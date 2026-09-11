@@ -1,0 +1,11 @@
+{
+"id":"036_B11D","version":"59","key":"NEONG_036","glyph":"넝","title":"넝 · 곁불씨",
+"audit":"single_play_B11D.json","build":"fire_companions_036_build.json","scope":"neong59_scope_check.json","previous":"NEOT_035_REVIEW.html",
+"intro":"세 불씨가 곁에 머물다가 각각 발사됩니다. 확인된 명중 지점마다 전통 문양과 불티가 나타납니다.",
+"changes":["세 불씨에 독립적인 대기·발사·명중 상태를 구성했다.","LaunchFirePellet·ConfirmFirePelletHit 신호로 각각 제어한다. 중복 발사·명중과 발사 전 명중을 거절한다.","KTP Pattern_136을 대기 불씨와 각 명중 위치에 사용했다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System21개/입자용량 총336개, 문양3개/6tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["firePelletPeak","firePelletLaunches","firePelletContacts"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 자동 표적 선정·공격 보조·피해 연결은 미구현이다. 외부 발사·명중 신호를 받는 VFX다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.6·0.9·1.2초 발사,1.05·1.35·1.65초 명중 진단 신호. 별도 검사에서 명중 없는 도착과 중복 신호 거절·종료 정리를 확인했다.",
+"detailLabels":["세 불씨 대기","개별 명중 문양"]
+}

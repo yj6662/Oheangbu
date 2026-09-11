@@ -1,0 +1,471 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using Oheangbu.App.SpellVFX120;
+
+namespace Oheangbu.EditorTools.SpellVFX120
+{
+    /// <summary>
+    /// Curated KTP particle bodies, not a combat or clock implementation.
+    /// Flame: +Z 0..1, half-width follows Z, emitter core Y 0..0.6.
+    /// Sand: width X=1; overlapping soft billboards form a low advancing soil crest.
+    /// These are authored envelopes, NOT measured renderer/particle bounds.
+    /// Runtime owns Cone Delay expansion, Path head placement and final release/fade.
+    /// Both bodies sustain local simulation; HoldAt must remain -1.
+    /// </summary>
+    public static class Vfx120ElementWashBuilder
+    {
+        public const string Output = "Assets/_Project/Art/SpellVFX120/Traditional/Bodies";
+        public const string FlamePath = Output + "/PF_KTP_FlameCone.prefab";
+        public const string SandPath = Output + "/PF_KTP_SandFront.prefab";
+        const string Pack = "Assets/KoreanTraditionalPattern_Effect/";
+        const string FirePrefab = Pack + "Prefabs/Bottom/Bottom05-01.prefab";
+        const string FireChild = "Fire_01";
+        const string SmokePrefab = Pack + "Prefabs/Fly/Fly10-01.prefab";
+        const string SmokeChild = "Projectile/FxTrail_08/Smoke_Trail/Smoke_Trail_00";
+        const string FireMaterial = Pack + "Materials/Bottom/Bottom05-01/par_Fire.mat";
+        const string SmokeMaterial = Pack + "Materials/Fly/Fly10-01/Smoke_Trail_00.mat";
+        const string EdgeMask = Pack + "Textures/PublicTexture/Mask.png";
+        const string EarthCloud = Pack + "Textures/PublicTexture/Noise_01.png";
+        const string DustMaterial = Output + "/M_KTP_SoftEarthWash.mat";
+        const string DetailMaterial = Output + "/M_KTP_LooseEarthGrains.mat";
+        const string RockFolder = "Assets/_Project/Art/CodexWorld/RockKit/Meshes/";
+
+        [Serializable] sealed class SourceInfo
+        {
+            public string prefab, child, material, shader, texture, materialGuid;
+            public bool looping, localSimulation, flipbook;
+            public float duration, delay, lifeMin, lifeMax, rateTime, rateDistance;
+            public int maxParticles, tilesX, tilesY;
+            public Vector2[] alphaKeys;
+        }
+        [Serializable] sealed class LayerInfo
+        {
+            public string name, source, sharedMaterial;
+            public Vector3 position, shapeBox;
+            public Vector2 lifetime, sizeX, sizeY;
+            public float rate, startAlpha;
+            public int capacity;
+        }
+        [Serializable] sealed class BodyInfo
+        {
+            public string path, glyph, coordinateContract;
+            public int systems, capacity;
+            public LayerInfo[] layers;
+        }
+        [Serializable] sealed class BuildReport
+        {
+            public string status = "BUILT_NOT_RENDER_VERIFIED";
+            public string generatedUtc, sourcePolicy, derivedMaterial, mask;
+            public string materialAdaptation, timePolicy, validationLimit;
+            public SourceInfo[] sources;
+            public BodyInfo[] bodies;
+        }
+
+        public static string Build()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("Build particle body prefabs in Edit Mode only.");
+            // Resolve and inspect sources before creating output. Full Fly demo trees
+            // include unrelated projectiles: only the exact leaf PS is instantiated.
+            var fireSource = Source(FirePrefab, FireChild, FireMaterial);
+            var smokeSource = Source(SmokePrefab, SmokeChild, SmokeMaterial);
+            var sourceInfo = new[] { Describe(fireSource, FirePrefab, FireChild), Describe(smokeSource, SmokePrefab, SmokeChild) };
+            var catalog = AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(Vfx120Editor.AssetRoot + "/Data/VFX120_Catalog.asset");
+            if (catalog == null) throw new FileNotFoundException("VFX120 catalog is missing.");
+            var no = catalog.Entries.Single(x => x.Profile != null && x.Profile.Glyph == "노").Profile;
+            var mo = catalog.Entries.Single(x => x.Profile != null && x.Profile.Glyph == "모").Profile;
+            EnsureFolder(Output);
+            var dustMaterial = SoftMaskedMaterial(smokeSource.GetComponent<ParticleSystemRenderer>().sharedMaterial);
+            var detailMaterial = LooseMaskedMaterial(smokeSource.GetComponent<ParticleSystemRenderer>().sharedMaterial);
+            var flameRoot = new GameObject("PF_KTP_FlameCone");
+            var sandRoot = new GameObject("PF_KTP_SandFront");
+            try
+            {
+                var flameRows = new List<LayerInfo>();
+                var sandRows = new List<LayerInfo>();
+                MakeFlame(flameRoot, fireSource, smokeSource, detailMaterial, flameRows);
+                MakeSand(sandRoot, smokeSource, dustMaterial, detailMaterial, sandRows);
+                AddEarthClods(sandRoot, smokeSource, mo.BodyMaterial, sandRows);
+                var flameReport = Validate(flameRoot, FlamePath, "노",
+                    "+Z 0..1; authored half-width X approaches 1 at Z=1; Y intended 0..0.6. Carrier scales X by Length*tan(half-angle), Z by Length. Sprite edges may extend beyond emitter envelope; actual bounds UNVERIFIED.", flameRows);
+                var sandReport = Validate(sandRoot, SandPath, "모",
+                    "Pivot at front center. Emitter X width 1 (-.5..+.5); overlapping soft billboards can extend beyond that envelope. Carrier scales X by PathRadius*2 and follows authoritative Path head. Actual visible coverage is a separate visual check.", sandRows);
+                var flame = PrefabUtility.SaveAsPrefabAsset(flameRoot, FlamePath);
+                var sand = PrefabUtility.SaveAsPrefabAsset(sandRoot, SandPath);
+                if (flame == null || sand == null) throw new InvalidOperationException("Could not save element wash prefabs.");
+                no.NativeBodyPrefab = flame; no.NativeBodyMotion = Vfx120NativeBodyMotion.FlameCone;
+                mo.NativeBodyPrefab = sand; mo.NativeBodyMotion = Vfx120NativeBodyMotion.SandFront;
+                // Contact seals accompany the spatial body instead of obscuring its direction.
+                no.NativeScale = .30f; mo.NativeScale = .30f;
+                no.NativeImpactScale = .42f; mo.NativeImpactScale = .42f;
+                EditorUtility.SetDirty(no); EditorUtility.SetDirty(mo);
+                AssetDatabase.SaveAssets();
+                var report = new BuildReport {
+                    generatedUtc = DateTime.UtcNow.ToString("o"), sources = sourceInfo,
+                    sourcePolicy = "Exact vendor leaf ParticleSystems cloned. Fire flipbook/UV and alpha timing retained. Soil clods reuse normalized copies of C2 InkRock_L_LOD2 (540tris) and InkRock_K_LOD2 (900tris), with existing ink shading. Source assets untouched; no full demo root, generated solid plate, runtime script or per-instance material clone.",
+                    derivedMaterial = DustMaterial, mask = EdgeMask,
+                    materialAdaptation = "Two persistent shared copies of Smoke_Trail_00 keep AlphaBlend/flow and Mask.png soft edges. Earth roll 1/3: Noise_01.png cloud core, Emission=.65/Opacity=.85. Other rolls/charcoal/grains: original sparse Noise.png, Emission=.65/Opacity=1.2. Original materials unchanged. Fire shares par_Fire. Accompanying seal NativeScale=.30 and contact-only NativeImpactScale=.42 now opt into hierarchy PS scaling; spatial body dimensions are separate.",
+                    timePolicy = "All local PS loop with duration=1.3s, startDelay=0, prewarm=false, one small startup burst then rate-over-time. Source Smoke rate-over-distance=13 replaced because local deterministic carrier must sustain without dependence on editor dragging. Fire source nonlooping3.5s changed to looping. Per-particle lifetimes/alpha/size variations produce turnover; outer Life/release is runtime-owned. HoldAt=-1, no clock or gameplay changes.",
+                    validationLimit = "Structural budget/material checks performed by Build. Art, bounds after camera-facing billboards/nonuniform carrier scale, local-depth overlap, actual Life/Delay/Path and performance require root Unity capture. No art PASS is inferred from this build report.",
+                    bodies = new[] { flameReport, sandReport }
+                };
+                Directory.CreateDirectory(Vfx120Editor.Output);
+                var json = JsonUtility.ToJson(report, true);
+                File.WriteAllText(Path.Combine(Vfx120Editor.Output, "element_wash_build.json"), json);
+                return "BUILT_ELEMENT_WASH_2_FLAME_PS_" + flameReport.systems + "_CAP_" + flameReport.capacity
+                    + "_SAND_PS_" + sandReport.systems + "_CAP_" + sandReport.capacity + "_VISUAL_UNVERIFIED";
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(flameRoot);
+                UnityEngine.Object.DestroyImmediate(sandRoot);
+            }
+        }
+
+        static void MakeFlame(GameObject root, ParticleSystem fire, ParticleSystem smoke, Material dust, List<LayerInfo> rows)
+        {
+            // Unequal pockets leave dark gaps; no evenly spaced row of flame cards.
+            var centers = new[] {
+                new Vector3(-.045f,.14f,.20f), new Vector3(.11f,.15f,.37f),
+                new Vector3(-.30f,.16f,.53f), new Vector3(.33f,.17f,.64f),
+                new Vector3(-.66f,.15f,.85f), new Vector3(-.04f,.18f,.81f),
+                new Vector3(.66f,.15f,.86f)
+            };
+            for (int i = 0; i < centers.Length; i++)
+            {
+                float width = i < 2 ? .32f : i == 5 ? .36f : .25f;
+                var ps = Clone(fire, root, "FirePocket_" + i, centers[i], 6101u + (uint)i, null);
+                Configure(ps, 18, 11 + i % 3 * 2, new Vector2(.34f,.59f),
+                    new Vector2(width, width * 1.48f), new Vector2(.57f,.94f), .95f, .90f,
+                    new Vector3(width * .32f,.015f,.035f), 1);
+                float outward = centers[i].x * .32f;
+                Velocity(ps, new Vector2(outward-.018f,outward+.018f), new Vector2(.12f,.24f), new Vector2(.24f,.42f));
+                var main = ps.main; main.startRotation = new ParticleSystem.MinMaxCurve(-.18f,.18f);
+                // Keep the 8x1 source flipbook and its grow/fade envelope. Slow the
+                // vendor's tumbling so a rising tongue does not turn upside down.
+                var spin = ps.rotationOverLifetime; spin.enabled = true; spin.separateAxes = false;
+                spin.z = new ParticleSystem.MinMaxCurve(-.22f,.22f);
+                SizeEnvelope(ps, .48f, 1f, .26f);
+                rows.Add(Layer(ps, FirePrefab + "/" + FireChild));
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                var ps = Clone(smoke, root, "CharredGap_" + i,
+                    i == 0 ? new Vector3(-.11f,.16f,.50f) : new Vector3(.22f,.13f,.84f), 6201u + (uint)i, dust);
+                Configure(ps, 16, 9, new Vector2(.42f,.70f), new Vector2(.28f,.46f),
+                    new Vector2(.36f,.58f), .35f, .11f, new Vector3(.14f,.015f,.05f), 1);
+                Velocity(ps, new Vector2(-.018f,.018f), new Vector2(.10f,.19f), new Vector2(-.035f,0));
+                SizeEnvelope(ps, .60f, 1f, .80f); rows.Add(Layer(ps, SmokePrefab + "/" + SmokeChild));
+            }
+            var ember = Clone(fire, root, "BrokenEmberTips", new Vector3(0,.22f,.75f), 6301, null);
+            Configure(ember, 24, 18, new Vector2(.24f,.42f), new Vector2(.015f,.031f),
+                new Vector2(.025f,.054f), .50f, .72f, new Vector3(1.05f,.10f,.18f), 2);
+            Velocity(ember, new Vector2(-.06f,.06f), new Vector2(.30f,.60f), new Vector2(-.01f,.02f));
+            SizeEnvelope(ember, .85f, .8f, .04f); rows.Add(Layer(ember, FirePrefab + "/" + FireChild));
+        }
+
+        static void MakeSand(GameObject root, ParticleSystem smoke, Material dust, Material detail, List<LayerInfo> rows)
+        {
+            var centers = new[] {
+                new Vector3(-.39f,.40f,-.025f), new Vector3(-.20f,.53f,.035f),
+                new Vector3(.035f,.57f,.015f), new Vector3(.235f,.46f,-.035f),
+                new Vector3(.405f,.36f,.005f)
+            };
+            for (int i = 0; i < centers.Length; i++)
+            {
+                float width = i == 0 || i == 4 ? .76f : .94f;
+                float height = i == 2 ? 2.10f : i == 1 ? 1.86f : 1.58f;
+                bool core = i == 1 || i == 3;
+                var ps = Clone(smoke, root, "EarthRoll_" + i, centers[i], 7101u + (uint)i, core ? dust : detail);
+                Configure(ps, 30, 27 + i % 2 * 4, new Vector2(.43f,.72f),
+                    new Vector2(width * .74f,width), new Vector2(height * .70f,height),
+                    core ? .24f : 1f, i % 2 == 0 ? .70f : .48f, new Vector3(.028f,.025f,.045f), 2);
+                Velocity(ps, new Vector2(-.012f,.012f), new Vector2(.11f,.22f), new Vector2(-.075f,-.025f));
+                SizeEnvelope(ps, .55f, 1f, .68f);
+                var spin = ps.rotationOverLifetime; spin.enabled = true; spin.separateAxes = false;
+                spin.z = new ParticleSystem.MinMaxCurve(-.42f,.42f);
+                rows.Add(Layer(ps, SmokePrefab + "/" + SmokeChild));
+            }
+            var grains = Clone(smoke, root, "FineEarthScatter", new Vector3(0,.15f,-.01f), 7201, detail);
+            Configure(grains, 40, 43, new Vector2(.26f,.48f), new Vector2(.012f,.029f),
+                new Vector2(.014f,.035f), .62f, .66f, new Vector3(.90f,.10f,.11f), 4);
+            Velocity(grains, new Vector2(-.065f,.065f), new Vector2(.16f,.38f), new Vector2(-.18f,-.055f));
+            SizeEnvelope(grains, .8f, 1f, .12f); rows.Add(Layer(grains, SmokePrefab + "/" + SmokeChild));
+            var drag = Clone(smoke, root, "LowTrailingEarth", new Vector3(-.04f,.11f,-.10f), 7301, detail);
+            Configure(drag, 24, 18, new Vector2(.36f,.59f), new Vector2(.12f,.22f),
+                new Vector2(.08f,.16f), .22f, .45f, new Vector3(.69f,.01f,.03f), 2);
+            Velocity(drag, new Vector2(-.025f,.025f), new Vector2(.02f,.07f), new Vector2(-.09f,-.035f));
+            SizeEnvelope(drag, .7f, 1f, .6f); rows.Add(Layer(drag, SmokePrefab + "/" + SmokeChild));
+        }
+
+        static ParticleSystem Source(string path, string child, string expectedMaterial)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            var t = prefab == null ? null : prefab.transform.Find(child);
+            var ps = t == null ? null : t.GetComponent<ParticleSystem>();
+            if (ps == null || t.childCount != 0 || t.GetComponents<MonoBehaviour>().Length != 0)
+                throw new InvalidOperationException("Expected exact script-free leaf PS: " + path + "/" + child);
+            var renderer = t.GetComponent<ParticleSystemRenderer>();
+            if (renderer == null || renderer.sharedMaterials.Length != 1
+                || AssetDatabase.GetAssetPath(renderer.sharedMaterial) != expectedMaterial)
+                throw new InvalidOperationException("Source material changed: " + path + "/" + child);
+            MaterialValid(renderer.sharedMaterial);
+            return ps;
+        }
+
+        static Material SoftMaskedMaterial(Material source)
+        {
+            foreach (string property in new[] { "_Mask", "_MaskTiling", "_Emission", "_MainTex" })
+                if (!source.HasProperty(property)) throw new InvalidOperationException("Shader lacks actual property " + property);
+            var mask = AssetDatabase.LoadAssetAtPath<Texture2D>(EdgeMask);
+            if (mask == null) throw new FileNotFoundException(EdgeMask);
+            var cloud = AssetDatabase.LoadAssetAtPath<Texture2D>(EarthCloud);
+            if (cloud == null) throw new FileNotFoundException(EarthCloud);
+            var material = AssetDatabase.LoadAssetAtPath<Material>(DustMaterial);
+            if (material == null)
+            {
+                material = new Material(source) { name = "M_KTP_SoftEarthWash" };
+                AssetDatabase.CreateAsset(material, DustMaterial);
+            }
+            else EditorUtility.CopySerialized(source, material);
+            material.name = "M_KTP_SoftEarthWash";
+            material.SetTexture("_Mask", mask);
+            material.SetTexture("_MainTex", cloud);
+            material.SetVector("_MaskTiling", new Vector4(1,1,0,0));
+            material.SetFloat("_Emission", .65f);
+            if (material.HasProperty("_Opacity")) material.SetFloat("_Opacity", .85f);
+            MaterialValid(material);
+            if (material.GetTexture("_Mask") != mask || material.GetTexture("_MainTex") != cloud)
+                throw new InvalidOperationException("Derived material lost its vendor cloud or edge mask.");
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        static Material LooseMaskedMaterial(Material source)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(DetailMaterial);
+            if (material == null)
+            {
+                material = new Material(source);
+                AssetDatabase.CreateAsset(material, DetailMaterial);
+            }
+            else EditorUtility.CopySerialized(source, material);
+            material.name = "M_KTP_LooseEarthGrains";
+            material.SetTexture("_Mask", AssetDatabase.LoadAssetAtPath<Texture2D>(EdgeMask));
+            material.SetVector("_MaskTiling", new Vector4(1,1,0,0));
+            material.SetFloat("_Emission", .65f);
+            material.SetFloat("_Opacity", 1.2f);
+            MaterialValid(material); EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        static void AddEarthClods(GameObject root, ParticleSystem source, Material inkSource, List<LayerInfo> rows)
+        {
+            if (inkSource == null || inkSource.shader.name != "Oheangbu/VFX120/InkPigment")
+                throw new InvalidOperationException("Expected existing ink body material for UV-less C2 clods.");
+            string path = Output + "/M_KTP_EarthClods.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null) { material = new Material(inkSource); AssetDatabase.CreateAsset(material, path); }
+            else EditorUtility.CopySerialized(inkSource, material);
+            material.name = "M_KTP_EarthClods";
+            material.SetFloat("_Fluid", 0); material.SetFloat("_Pattern", 0); material.SetFloat("_Soft", 0);
+            material.SetFloat("_Body", 1); material.SetFloat("_Alpha", 1); material.SetFloat("_Erode", 0);
+            material.SetFloat("_Metal", 0); material.SetFloat("_ZWrite", 0);
+            material.SetColor("_BaseColor", new Color(.42f,.40f,.37f,1));
+            MaterialValid(material); EditorUtility.SetDirty(material);
+            Mesh l = NormalizedClod("L"), k = NormalizedClod("K");
+            var positions = new[] { new Vector3(-.29f,.17f,.05f), new Vector3(.025f,.24f,.025f), new Vector3(.32f,.15f,-.015f) };
+            for (int i=0; i<3; i++)
+            {
+                var ps = Clone(source, root, "Clod_"+i, positions[i], (uint)(8101+i), material);
+                Configure(ps, 4, 3, new Vector2(.48f,.60f), new Vector2(.25f,.34f),
+                    new Vector2(i==1?.55f:.38f,i==1?.66f:.49f), .95f, .85f, new Vector3(.04f,.015f,.06f), 1);
+                var main=ps.main; main.startSizeZ=new ParticleSystem.MinMaxCurve(.42f,.58f);
+                main.startRotation3D=true; main.startRotationX=new ParticleSystem.MinMaxCurve(-.12f,.12f);
+                main.startRotationY=new ParticleSystem.MinMaxCurve(-.45f,.45f);
+                main.startRotationZ=new ParticleSystem.MinMaxCurve(-.08f,.08f);
+                var uv=ps.textureSheetAnimation; uv.enabled=false;
+                var spin=ps.rotationOverLifetime; spin.enabled=false;
+                Velocity(ps,new Vector2(-.02f,.02f),new Vector2(.02f,.045f),new Vector2(-.12f,-.06f));
+                SizeEnvelope(ps,.88f,1f,.85f);
+                var color=ps.colorOverLifetime; color.enabled=true;
+                var gradient=new Gradient(); gradient.SetKeys(new[] {new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)},
+                    new[] {new GradientAlphaKey(0,0),new GradientAlphaKey(1,.12f),new GradientAlphaKey(1,.52f),new GradientAlphaKey(0,1)});
+                color.color=gradient;
+                var renderer=ps.GetComponent<ParticleSystemRenderer>(); renderer.renderMode=ParticleSystemRenderMode.Mesh;
+                renderer.mesh=i==1?k:l; renderer.alignment=ParticleSystemRenderSpace.Local;
+                rows.Add(Layer(ps,RockFolder+"InkRock_"+(i==1?"K":"L")+"_LOD2.asset"));
+            }
+        }
+
+        static Mesh NormalizedClod(string key)
+        {
+            var source=AssetDatabase.LoadAssetAtPath<Mesh>(RockFolder+"InkRock_"+key+"_LOD2.asset");
+            if(source==null) throw new FileNotFoundException("Missing approved C2 rock "+key);
+            string path=Output+"/M_Clod_"+key+".asset";
+            var copy=UnityEngine.Object.Instantiate(source); copy.name="M_Clod_"+key;
+            var bounds=source.bounds; var vertices=copy.vertices;
+            for(int i=0;i<vertices.Length;i++)
+                vertices[i]=new Vector3((vertices[i].x-bounds.center.x)/Mathf.Max(.001f,bounds.size.x),
+                    (vertices[i].y-bounds.center.y)/Mathf.Max(.001f,bounds.size.y),
+                    (vertices[i].z-bounds.center.z)/Mathf.Max(.001f,bounds.size.z));
+            copy.vertices=vertices;
+            // This derivative is anisotropically normalized; update normals while
+            // leaving the source geometry/UVs/vertex colors completely untouched.
+            copy.RecalculateNormals(); copy.RecalculateBounds();
+            var asset=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if(asset==null) { AssetDatabase.CreateAsset(copy,path); asset=copy; }
+            else { EditorUtility.CopySerialized(copy,asset); UnityEngine.Object.DestroyImmediate(copy); EditorUtility.SetDirty(asset); }
+            return asset;
+        }
+
+        static ParticleSystem Clone(ParticleSystem source, GameObject root, string name, Vector3 position, uint seed, Material material)
+        {
+            var copy = UnityEngine.Object.Instantiate(source.gameObject, root.transform, false);
+            copy.name = name; copy.SetActive(true);
+            copy.transform.localPosition = position; copy.transform.localRotation = Quaternion.identity;
+            copy.transform.localScale = Vector3.one;
+            var ps = copy.GetComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.useAutoRandomSeed = false; ps.randomSeed = seed;
+            var renderer = copy.GetComponent<ParticleSystemRenderer>();
+            if (material != null) renderer.sharedMaterial = material;
+            renderer.enabled = true; renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            renderer.alignment = ParticleSystemRenderSpace.View; renderer.minParticleSize = 0;
+            renderer.maxParticleSize = .5f; renderer.sortMode = ParticleSystemSortMode.Distance;
+            renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            return ps;
+        }
+
+        static void Configure(ParticleSystem ps, int capacity, float rate, Vector2 life, Vector2 sizeX, Vector2 sizeY,
+            float alpha, float grey, Vector3 shapeSize, short initialCount)
+        {
+            var main = ps.main; main.duration = 1.3f; main.loop = true; main.prewarm = false;
+            main.startDelay = 0; main.playOnAwake = false; main.stopAction = ParticleSystemStopAction.None;
+            main.simulationSpeed = 1; main.useUnscaledTime = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local; main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+            main.maxParticles = capacity; main.startLifetime = Range(life); main.startSpeed = 0;
+            main.gravityModifier = 0; main.startSize3D = true; main.startSizeX = Range(sizeX);
+            main.startSizeY = Range(sizeY); main.startSizeZ = 1;
+            main.startRotation3D = false; main.startRotation = new ParticleSystem.MinMaxCurve(-.45f,.45f);
+            main.startColor = new Color(grey,grey,grey,alpha);
+            var emission = ps.emission; emission.enabled = true; emission.rateOverDistance = 0;
+            emission.rateOverTime = rate; emission.SetBursts(new[] { new ParticleSystem.Burst(0, initialCount) });
+            var shape = ps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Box;
+            shape.position = Vector3.zero; shape.rotation = Vector3.zero; shape.scale = shapeSize;
+            shape.randomDirectionAmount = 0; shape.sphericalDirectionAmount = 0; shape.randomPositionAmount = 0;
+            var color = ps.colorOverLifetime;
+            if (color.enabled) color.color = WhiteWithOriginalAlpha(color.color);
+            var colorSpeed = ps.colorBySpeed; colorSpeed.enabled = false;
+            var inherited = ps.inheritVelocity; inherited.enabled = false;
+            var force = ps.forceOverLifetime; force.enabled = false;
+            var external = ps.externalForces; external.enabled = false;
+            var noise = ps.noise; noise.enabled = false;
+            var clamp = ps.limitVelocityOverLifetime; clamp.enabled = false;
+            var sizeSpeed = ps.sizeBySpeed; sizeSpeed.enabled = false;
+            var rotationSpeed = ps.rotationBySpeed; rotationSpeed.enabled = false;
+            var collision = ps.collision; collision.enabled = false;
+            var trigger = ps.trigger; trigger.enabled = false;
+            var lights = ps.lights; lights.enabled = false;
+            var sub = ps.subEmitters; sub.enabled = false;
+            var trails = ps.trails; trails.enabled = false;
+        }
+
+        static void Velocity(ParticleSystem ps, Vector2 x, Vector2 y, Vector2 z)
+        {
+            var v = ps.velocityOverLifetime; v.enabled = true; v.space = ParticleSystemSimulationSpace.Local;
+            // All XYZ use the same TwoConstants mode, including zero, to avoid the
+            // mixed curve-mode runtime error observed in the earlier particle audit.
+            v.x = Range(x); v.y = Range(y); v.z = Range(z);
+            v.orbitalX = Range(Vector2.zero); v.orbitalY = Range(Vector2.zero); v.orbitalZ = Range(Vector2.zero);
+            v.radial = Range(Vector2.zero); v.speedModifier = 1;
+        }
+        static ParticleSystem.MinMaxCurve Range(Vector2 v) => new ParticleSystem.MinMaxCurve(v.x,v.y);
+        static void SizeEnvelope(ParticleSystem ps, float initial, float middle, float end)
+        {
+            var s = ps.sizeOverLifetime; s.enabled = true; s.separateAxes = false;
+            s.size = new ParticleSystem.MinMaxCurve(1, new AnimationCurve(
+                new Keyframe(0,initial),new Keyframe(.32f,middle),new Keyframe(1,end)));
+        }
+        static ParticleSystem.MinMaxGradient WhiteWithOriginalAlpha(ParticleSystem.MinMaxGradient original)
+        {
+            Gradient White(Gradient g)
+            {
+                var result = new Gradient();
+                result.SetKeys(new[] { new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1) },
+                    g == null ? new[] { new GradientAlphaKey(0,0),new GradientAlphaKey(1,.18f),new GradientAlphaKey(0,1) } : g.alphaKeys);
+                return result;
+            }
+            if (original.mode == ParticleSystemGradientMode.TwoGradients)
+                return new ParticleSystem.MinMaxGradient(White(original.gradientMin),White(original.gradientMax));
+            return new ParticleSystem.MinMaxGradient(White(original.gradient));
+        }
+        static SourceInfo Describe(ParticleSystem ps, string prefab, string child)
+        {
+            var m = ps.main; var r = ps.GetComponent<ParticleSystemRenderer>(); var uv = ps.textureSheetAnimation;
+            var c = ps.colorOverLifetime.color.gradient;
+            return new SourceInfo {
+                prefab= prefab, child=child, material=AssetDatabase.GetAssetPath(r.sharedMaterial), shader=r.sharedMaterial.shader.name,
+                texture=AssetDatabase.GetAssetPath(r.sharedMaterial.GetTexture("_MainTex")),
+                materialGuid=AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(r.sharedMaterial)),
+                looping=m.loop, duration=m.duration, delay=m.startDelay.constantMax, lifeMin=m.startLifetime.constantMin,
+                lifeMax=m.startLifetime.constantMax, rateTime=ps.emission.rateOverTime.constantMax,
+                rateDistance=ps.emission.rateOverDistance.constantMax, maxParticles=m.maxParticles,
+                localSimulation=m.simulationSpace==ParticleSystemSimulationSpace.Local,
+                flipbook=uv.enabled, tilesX=uv.numTilesX, tilesY=uv.numTilesY,
+                alphaKeys=c==null?Array.Empty<Vector2>():c.alphaKeys.Select(k=>new Vector2(k.time,k.alpha)).ToArray()
+            };
+        }
+        static LayerInfo Layer(ParticleSystem ps, string source)
+        {
+            var m=ps.main;
+            return new LayerInfo {
+                name=ps.name, source=source, sharedMaterial=AssetDatabase.GetAssetPath(ps.GetComponent<ParticleSystemRenderer>().sharedMaterial),
+                position=ps.transform.localPosition, shapeBox=ps.shape.scale,
+                lifetime=new Vector2(m.startLifetime.constantMin,m.startLifetime.constantMax),
+                sizeX=new Vector2(m.startSizeX.constantMin,m.startSizeX.constantMax),
+                sizeY=new Vector2(m.startSizeY.constantMin,m.startSizeY.constantMax),
+                rate=ps.emission.rateOverTime.constantMax, startAlpha=m.startColor.color.a,capacity=m.maxParticles
+            };
+        }
+        static BodyInfo Validate(GameObject root, string path, string glyph, string contract, List<LayerInfo> rows)
+        {
+            var systems=root.GetComponentsInChildren<ParticleSystem>(true);
+            int capacity=systems.Sum(p=>p.main.maxParticles);
+            if(systems.Length>12||systems.Length<1||capacity>240) throw new InvalidOperationException("Body budget exceeded: "+root.name);
+            if(root.GetComponentsInChildren<MonoBehaviour>(true).Length!=0 || root.GetComponentsInChildren<Animator>(true).Length!=0
+                ||root.GetComponentsInChildren<Collider>(true).Length!=0 ||root.GetComponentsInChildren<Light>(true).Length!=0)
+                throw new InvalidOperationException("Body must contain only transform/PS/renderer: "+root.name);
+            foreach(var ps in systems)
+            {
+                if(!ps.main.loop||ps.main.simulationSpace!=ParticleSystemSimulationSpace.Local||ps.main.playOnAwake
+                    ||ps.subEmitters.enabled||ps.collision.enabled||ps.lights.enabled)
+                    throw new InvalidOperationException("Unexpected particle setting: "+ps.name);
+                var renderer=ps.GetComponent<ParticleSystemRenderer>();
+                bool clod=ps.name.StartsWith("Clod_",StringComparison.Ordinal) && renderer.renderMode==ParticleSystemRenderMode.Mesh
+                    && renderer.mesh!=null && renderer.mesh.vertexCount>100;
+                if(renderer.renderMode!=ParticleSystemRenderMode.Billboard&&!clod) throw new InvalidOperationException("Unexpected solid carrier.");
+                MaterialValid(renderer.sharedMaterial);
+                if(!EditorUtility.IsPersistent(renderer.sharedMaterial)) throw new InvalidOperationException("Nonshared material detected.");
+            }
+            return new BodyInfo {path=path,glyph=glyph,coordinateContract=contract,systems=systems.Length,capacity=capacity,layers=rows.ToArray()};
+        }
+        static void MaterialValid(Material material)
+        {
+            if(material==null||material.shader==null||!material.shader.isSupported
+                ||ShaderUtil.GetShaderMessages(material.shader).Any(m=>m.severity.ToString()=="Error"))
+                throw new InvalidOperationException("Unsupported or erroneous source shader: "+(material==null?"null":material.name));
+        }
+        static void EnsureFolder(string path)
+        {
+            if(AssetDatabase.IsValidFolder(path))return;
+            int slash=path.LastIndexOf('/');EnsureFolder(path.Substring(0,slash));
+            AssetDatabase.CreateFolder(path.Substring(0,slash),path.Substring(slash+1));
+        }
+    }
+}

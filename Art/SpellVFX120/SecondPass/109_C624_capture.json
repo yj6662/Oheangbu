@@ -1,0 +1,36 @@
+{
+    "glyph": "오",
+    "title": "한 줄 큰 물결",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.44999998807907107,
+    "life": 3.422727108001709,
+    "sampledSeconds": [
+        0.23959089815616609,
+        0.7529999613761902,
+        1.4375452995300294,
+        2.1905453205108644,
+        3.0804543495178224
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+    "areaShape": "Path",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.800000011920929
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.0
+    },
+    "areaRadius": 1.7000000476837159,
+    "areaAngle": 0.0,
+    "areaLength": 5.0,
+    "areaDelay": 0.44999998807907107,
+    "areaSpeed": 2.200000047683716
+}

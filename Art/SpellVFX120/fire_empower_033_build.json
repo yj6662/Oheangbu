@@ -1,0 +1,10 @@
+{
+    "glyph": "넌",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_PREPARE_CONSUME_MISS_CONFIRMED_HIT_ONCE_CLEANUP",
+    "pattern": "Assets/_Project/Art/SpellVFX120/FireBolt/M_EmberSeal_136.mat",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Empower consumption and confirmed hit are separate, one-use signals. No attack multiplier implementation."
+}

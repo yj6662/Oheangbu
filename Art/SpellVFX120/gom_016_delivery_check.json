@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal44/016_ACF0.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated44/016_ACF0.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GOM_016_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GON_015_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills44/016_ACF0_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills44/016_ACF0_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills44/016_ACF0_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/016_ACF0_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills44/016_ACF0_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "gom44_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "meshy_unity_import.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_ACF0.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills44",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills44",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames44",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames44",
+      "mvid_match": true
+    }
+  ]
+}

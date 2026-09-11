@@ -1,0 +1,2167 @@
+{
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870",
+  "status": "PASS_RECOGNIZED_EVENT_RUNTIME_FIXTURE_ONLY",
+  "captureStatus": "CAPTURED_45_ACTUAL_FRAMES_VISUAL_REVIEW_REQUIRED",
+  "rows": [
+    {
+      "glyph": "가",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\01_가_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "가",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\가_spawn_observed_f000006.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 6,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.06329359859228134,
+          "life": 1.1564102172851562,
+          "time": 0.5118147134780884,
+          "unscaledTime": 44.84473419189453,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 0.44852110743522644,
+          "observationLateness": 0.06329360604286194,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 75.2078
+        },
+        {
+          "glyph": "가",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\가_first_damage_observed_f000010.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 10,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.19741851091384888,
+          "life": 1.1564102172851562,
+          "time": 0.6459396481513977,
+          "unscaledTime": 44.978858947753906,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 0.6446568965911865,
+          "observationLateness": 0.0012827515602111816,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 33.6299
+        },
+        {
+          "glyph": "가",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\가_mid_lifetime_observed_f000062.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 62,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.579333484172821,
+          "life": 1.1564102172851562,
+          "time": 1.0278546810150146,
+          "unscaledTime": 45.36077117919922,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 1.026726245880127,
+          "observationLateness": 0.0011284351348876953,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 41.6554
+        }
+      ]
+    },
+    {
+      "glyph": "나",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\02_나_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "나",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\나_spawn_observed_f000172.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 172,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.00982570182532072,
+          "life": 1.25,
+          "time": 1.8650683164596558,
+          "unscaledTime": 46.1979866027832,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 1.8552426099777222,
+          "observationLateness": 0.009825706481933594,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 55.453300000000006
+        },
+        {
+          "glyph": "나",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\나_first_damage_observed_f000210.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 210,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.32522720098495483,
+          "life": 1.25,
+          "time": 2.1804697513580322,
+          "unscaledTime": 46.51338577270508,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 2.1790599822998047,
+          "observationLateness": 0.001409769058227539,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.7036
+        },
+        {
+          "glyph": "나",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\나_mid_lifetime_observed_f000247.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 247,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.6254624724388123,
+          "life": 1.25,
+          "time": 2.4807052612304688,
+          "unscaledTime": 46.813621520996094,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 2.4802427291870117,
+          "observationLateness": 0.00046253204345703125,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 44.763600000000004
+        }
+      ]
+    },
+    {
+      "glyph": "마",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\03_마_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "마",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\마_spawn_observed_f000363.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 363,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.006878500338643789,
+          "life": 1.7999999523162842,
+          "time": 3.327037811279297,
+          "unscaledTime": 47.65995407104492,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 3.3201591968536377,
+          "observationLateness": 0.00687861442565918,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 49.4103
+        },
+        {
+          "glyph": "마",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\마_first_damage_observed_f000403.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 403,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.3281717896461487,
+          "life": 1.7999999523162842,
+          "time": 3.6483311653137207,
+          "unscaledTime": 47.98124694824219,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 3.646134376525879,
+          "observationLateness": 0.002196788787841797,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.529700000000005
+        },
+        {
+          "glyph": "마",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\마_mid_lifetime_observed_f000486.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 486,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.9010568857192993,
+          "life": 1.7999999523162842,
+          "time": 4.221216201782227,
+          "unscaledTime": 48.554134368896484,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 4.22015905380249,
+          "observationLateness": 0.0010571479797363281,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 42.973
+        }
+      ]
+    },
+    {
+      "glyph": "사",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\04_사_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "사",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\사_spawn_observed_f000654.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 654,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.008522101677954197,
+          "life": 1.085185170173645,
+          "time": 5.347907543182373,
+          "unscaledTime": 49.680824279785156,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 5.339385509490967,
+          "observationLateness": 0.00852203369140625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 47.3686
+        },
+        {
+          "glyph": "사",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\사_first_damage_observed_f000672.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 672,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.1780501902103424,
+          "life": 1.085185170173645,
+          "time": 5.517435550689697,
+          "unscaledTime": 49.8503532409668,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 5.5161638259887695,
+          "observationLateness": 0.0012717247009277344,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 42.0158
+        },
+        {
+          "glyph": "사",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\사_mid_lifetime_observed_f000720.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 720,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.5452616214752197,
+          "life": 1.085185170173645,
+          "time": 5.884646892547607,
+          "unscaledTime": 50.21756362915039,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 5.8819780349731445,
+          "observationLateness": 0.0026688575744628906,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.976600000000005
+        }
+      ]
+    },
+    {
+      "glyph": "아",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\05_아_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "아",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\아_spawn_observed_f000835.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 835,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.007562797516584396,
+          "life": 1.9500000476837158,
+          "time": 6.649651527404785,
+          "unscaledTime": 50.98257064819336,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 6.642088890075684,
+          "observationLateness": 0.0075626373291015625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 46.567800000000005
+        },
+        {
+          "glyph": "아",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\아_first_damage_observed_f000908.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 908,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.5476340651512146,
+          "life": 1.9500000476837158,
+          "time": 7.189723014831543,
+          "unscaledTime": 51.522640228271484,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 7.188971519470215,
+          "observationLateness": 0.000751495361328125,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 46.4983
+        },
+        {
+          "glyph": "아",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\아_mid_lifetime_observed_f000971.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 971,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 0.9751579761505127,
+          "life": 1.9500000476837158,
+          "time": 7.617247104644775,
+          "unscaledTime": 51.950164794921875,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 7.617088794708252,
+          "observationLateness": 0.0001583099365234375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 42.0428
+        }
+      ]
+    },
+    {
+      "glyph": "고",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\06_고_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "고",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\고_spawn_observed_f001146.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1146,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.016179705038666725,
+          "life": 1.899999976158142,
+          "time": 8.873736381530762,
+          "unscaledTime": 53.2066535949707,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 8.857556343078613,
+          "observationLateness": 0.016180038452148438,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 49.945100000000004
+        },
+        {
+          "glyph": "고",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\고_first_damage_observed_f001161.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1161,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 3,
+          "age": 0.2929464280605316,
+          "life": 1.899999976158142,
+          "time": 9.150503158569336,
+          "unscaledTime": 53.483421325683594,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 9.1441011428833,
+          "observationLateness": 0.006402015686035156,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 57.065900000000006
+        },
+        {
+          "glyph": "고",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\고_mid_lifetime_observed_f001235.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1235,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 3,
+          "age": 0.9566638469696045,
+          "life": 1.899999976158142,
+          "time": 9.814221382141113,
+          "unscaledTime": 54.14714050292969,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 9.80755615234375,
+          "observationLateness": 0.006665229797363281,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 57.072500000000005
+        }
+      ]
+    },
+    {
+      "glyph": "노",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\07_노_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "노",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\노_spawn_observed_f001391.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1391,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.010881795547902584,
+          "life": 1.7999999523162842,
+          "time": 10.993496894836426,
+          "unscaledTime": 55.326412200927734,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 10.98261547088623,
+          "observationLateness": 0.010881423950195312,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 46.255900000000004
+        },
+        {
+          "glyph": "노",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\노_first_damage_observed_f001437.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1437,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 3,
+          "age": 0.3910279870033264,
+          "life": 1.7999999523162842,
+          "time": 11.373642921447754,
+          "unscaledTime": 55.70656204223633,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 11.372540473937988,
+          "observationLateness": 0.001102447509765625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 41.6608
+        },
+        {
+          "glyph": "노",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\노_mid_lifetime_observed_f001508.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1508,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 3,
+          "age": 0.9066148996353149,
+          "life": 1.7999999523162842,
+          "time": 11.889229774475098,
+          "unscaledTime": 56.22214889526367,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 11.882615089416504,
+          "observationLateness": 0.00661468505859375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 40.7288
+        }
+      ]
+    },
+    {
+      "glyph": "모",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\08_모_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "모",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\모_spawn_observed_f001664.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1664,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.00916379690170288,
+          "life": 2.8142857551574707,
+          "time": 13.020137786865234,
+          "unscaledTime": 57.35305404663086,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 13.010973930358887,
+          "observationLateness": 0.009163856506347656,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 42.5932
+        },
+        {
+          "glyph": "모",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\모_first_damage_observed_f001844.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1844,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 1.2490813732147217,
+          "life": 2.8142857551574707,
+          "time": 14.260056495666504,
+          "unscaledTime": 58.59297180175781,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 14.258769989013672,
+          "observationLateness": 0.0012865066528320312,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 43.9962
+        },
+        {
+          "glyph": "모",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\모_mid_lifetime_observed_f001860.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 1860,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 3,
+          "age": 1.412371277809143,
+          "life": 2.8142857551574707,
+          "time": 14.423345565795898,
+          "unscaledTime": 58.756263732910156,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 14.418116569519043,
+          "observationLateness": 0.005228996276855469,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 52.6632
+        }
+      ]
+    },
+    {
+      "glyph": "소",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\09_소_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "소",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\소_spawn_observed_f002071.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 2071,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.011022795923054218,
+          "life": 3.146014451980591,
+          "time": 16.072965621948242,
+          "unscaledTime": 60.4058837890625,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 16.06194305419922,
+          "observationLateness": 0.011022567749023438,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 44.9558
+        },
+        {
+          "glyph": "소",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\소_mid_lifetime_observed_f002266.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 2266,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 1.5774726867675781,
+          "life": 3.146014451980591,
+          "time": 17.639415740966797,
+          "unscaledTime": 61.97233200073242,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 17.634950637817383,
+          "observationLateness": 0.0044651031494140625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.2802
+        },
+        {
+          "glyph": "소",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\소_first_damage_observed_f002267.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 2267,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 1.6297029256820679,
+          "life": 3.146014451980591,
+          "time": 17.691646575927734,
+          "unscaledTime": 62.02456283569336,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 17.68680191040039,
+          "observationLateness": 0.00484466552734375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 50.357200000000006
+        }
+      ]
+    },
+    {
+      "glyph": "오",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\10_오_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "오",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\오_spawn_observed_f002490.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 2490,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.008649199269711971,
+          "life": 3.4833333492279053,
+          "time": 19.444746017456055,
+          "unscaledTime": 63.77766418457031,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 19.43609619140625,
+          "observationLateness": 0.008649826049804688,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 44.566
+        },
+        {
+          "glyph": "오",
+          "phase": "first_damage_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\오_first_damage_observed_f002687.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 2687,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 1,
+          "age": 1.4407612085342407,
+          "life": 3.4833333492279053,
+          "time": 20.87685775756836,
+          "unscaledTime": 65.20977783203125,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 20.876670837402344,
+          "observationLateness": 0.000186920166015625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 53.9665
+        },
+        {
+          "glyph": "오",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\오_mid_lifetime_observed_f002724.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 2724,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 3,
+          "age": 1.7470941543579102,
+          "life": 3.4833333492279053,
+          "time": 21.183189392089844,
+          "unscaledTime": 65.51610565185547,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 21.177762985229492,
+          "observationLateness": 0.0054264068603515625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 48.9082
+        }
+      ]
+    },
+    {
+      "glyph": "거",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\11_거_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "거",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\거_spawn_observed_f003029.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 3029,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.007050297688692808,
+          "life": 4.0,
+          "time": 23.153528213500977,
+          "unscaledTime": 67.48644256591797,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 23.1464786529541,
+          "observationLateness": 0.007049560546875,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 47.577200000000005
+        },
+        {
+          "glyph": "거",
+          "phase": "guard_bright_window_end_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\거_guard_bright_window_end_observed_f003153.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 3153,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.8985481858253479,
+          "life": 4.0,
+          "time": 24.045026779174805,
+          "unscaledTime": 68.37794494628906,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 24.038772583007812,
+          "observationLateness": 0.0062541961669921875,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 43.7438
+        },
+        {
+          "glyph": "거",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\거_mid_lifetime_observed_f003312.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 3312,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 2.004080295562744,
+          "life": 4.0,
+          "time": 25.150558471679688,
+          "unscaledTime": 69.48347473144531,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 25.1464786529541,
+          "observationLateness": 0.0040798187255859375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.093900000000005
+        }
+      ]
+    },
+    {
+      "glyph": "너",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\12_너_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "너",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\너_spawn_observed_f003652.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 3652,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.007053897250443697,
+          "life": 4.0,
+          "time": 27.37776756286621,
+          "unscaledTime": 71.71068572998047,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 27.37071418762207,
+          "observationLateness": 0.007053375244140625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 41.4772
+        },
+        {
+          "glyph": "너",
+          "phase": "guard_bright_window_end_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\너_guard_bright_window_end_observed_f003791.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 3791,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.8943754434585571,
+          "life": 4.0,
+          "time": 28.265090942382812,
+          "unscaledTime": 72.59800720214844,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 28.26450538635254,
+          "observationLateness": 0.0005855560302734375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 41.549800000000005
+        },
+        {
+          "glyph": "너",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\너_mid_lifetime_observed_f003959.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 3959,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 2.0002715587615967,
+          "life": 4.0,
+          "time": 29.370986938476562,
+          "unscaledTime": 73.70390319824219,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 29.37071418762207,
+          "observationLateness": 0.0002727508544921875,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 44.426100000000005
+        }
+      ]
+    },
+    {
+      "glyph": "머",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\13_머_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "머",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\머_spawn_observed_f004314.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 4314,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.008596102707087994,
+          "life": 4.0,
+          "time": 31.61278533935547,
+          "unscaledTime": 75.9457015991211,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 31.604188919067383,
+          "observationLateness": 0.008596420288085938,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.475100000000005
+        },
+        {
+          "glyph": "머",
+          "phase": "guard_bright_window_end_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\머_guard_bright_window_end_observed_f004451.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 4451,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.892583966255188,
+          "life": 4.0,
+          "time": 32.49677276611328,
+          "unscaledTime": 76.8296890258789,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 32.49404525756836,
+          "observationLateness": 0.002727508544921875,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 43.2607
+        },
+        {
+          "glyph": "머",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\머_mid_lifetime_observed_f004617.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 4617,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 2.0008885860443115,
+          "life": 4.0,
+          "time": 33.605079650878906,
+          "unscaledTime": 77.93799591064453,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 33.60418701171875,
+          "observationLateness": 0.00089263916015625,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 44.5292
+        }
+      ]
+    },
+    {
+      "glyph": "서",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\14_서_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "서",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\서_spawn_observed_f004935.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 4935,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.007070302031934261,
+          "life": 4.0,
+          "time": 35.83694839477539,
+          "unscaledTime": 80.16986846923828,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 35.82987976074219,
+          "observationLateness": 0.007068634033203125,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 46.4904
+        },
+        {
+          "glyph": "서",
+          "phase": "guard_bright_window_end_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\서_guard_bright_window_end_observed_f005058.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 5058,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.8961184620857239,
+          "life": 4.0,
+          "time": 36.72599792480469,
+          "unscaledTime": 81.05891418457031,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 36.721702575683594,
+          "observationLateness": 0.00429534912109375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 44.4527
+        },
+        {
+          "glyph": "서",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\서_mid_lifetime_observed_f005211.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 5211,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 2.004087209701538,
+          "life": 4.0,
+          "time": 37.83396530151367,
+          "unscaledTime": 82.16688537597656,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 37.82987976074219,
+          "observationLateness": 0.004085540771484375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 45.199200000000005
+        }
+      ]
+    },
+    {
+      "glyph": "어",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCaptureReview\\15_어_actual_three_frames.png",
+      "shots": [
+        {
+          "glyph": "어",
+          "phase": "spawn_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\어_spawn_observed_f005513.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 5513,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.009239300154149532,
+          "life": 4.0,
+          "time": 40.08226013183594,
+          "unscaledTime": 84.41517639160156,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 40.073020935058594,
+          "observationLateness": 0.00923919677734375,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 48.612700000000004
+        },
+        {
+          "glyph": "어",
+          "phase": "guard_bright_window_end_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\어_guard_bright_window_end_observed_f005628.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 5628,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 0.8884450197219849,
+          "life": 4.0,
+          "time": 40.961463928222656,
+          "unscaledTime": 85.29438018798828,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 40.96096420288086,
+          "observationLateness": 0.000499725341796875,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 47.2186
+        },
+        {
+          "glyph": "어",
+          "phase": "mid_lifetime_observed",
+          "status": "CAPTURED_VISUAL_REVIEW_REQUIRED",
+          "png": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-012702-870\\어_mid_lifetime_observed_f005767.png",
+          "camera": "Main Camera#1052856",
+          "error": "",
+          "frame": 5767,
+          "width": 1280,
+          "height": 720,
+          "observedHitCount": 0,
+          "age": 2.0007171630859375,
+          "life": 4.0,
+          "time": 42.073734283447266,
+          "unscaledTime": 86.40665435791016,
+          "timeScale": 1.0,
+          "scheduledReferenceTime": 42.073020935058594,
+          "observationLateness": 0.000713348388671875,
+          "cameraFieldOfView": 60.0,
+          "cameraAspect": 1.7777777910232544,
+          "cameraNear": 0.30000001192092896,
+          "cameraFar": 1200.0,
+          "cameraPosition": {
+            "x": 0.0,
+            "y": 2.3299999237060547,
+            "z": -5.800000190734863
+          },
+          "cameraEulerAngles": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "effectOrigin": {
+            "x": 0.04639005661010742,
+            "y": 2.3080596923828125,
+            "z": -2.0
+          },
+          "originViewport": {
+            "x": 0.505946934223175,
+            "y": 0.4949997663497925,
+            "z": 3.8000001907348633
+          },
+          "cameraOrthographic": false,
+          "cameraStateRestored": true,
+          "captureWallMilliseconds": 48.8393
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+    "status": "RESTORED_ORIGINAL_THREE_FIELDS_ONLY",
+    "generatedUtc": "2026-09-09T10:07:52.5258028Z",
+    "mesh": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset",
+    "material": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat",
+    "originalLedger": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\water_roll20_original.json",
+    "profileBeforeOperation": "{\"Glyph\":\"오\",\"Title\":\"한 줄 큰 물결\",\"Intent\":\"전진하는 느린 파도(즉발·경로 타격)\",\"Family\":\"WaveCrest\",\"Assigned\":true,\"Behavior\":9,\"Layout\":7,\"BodyMesh\":{\"instanceID\":-2128564},\"AccentMesh\":{\"instanceID\":-1049636},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-2128578},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1052644},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1132680},\"NativeImpactPrefab\":{\"instanceID\":1132788},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.30000001192092898,\"NativeImpactScale\":0.36000001430511477,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.1725490242242813,\"g\":0.27450981736183169,\"b\":0.3529411852359772,\"a\":1.0},\"Accent\":{\"r\":0.7333333492279053,\"g\":0.7529411911964417,\"b\":0.7176470756530762,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":1,\"RibbonCount\":3,\"Size\":1.7000000476837159,\"PartScale\":{\"x\":3.5,\"y\":1.899999976158142,\"z\":1.350000023841858},\"Duration\":3.200000047683716,\"Flight\":0.44999998807907107,\"Turns\":0.25,\"Lift\":0.0,\"Stagger\":0.07500000298023224,\"UseMist\":false,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":109,\\\"glyph\\\":\\\"오\\\",\\\"initial\\\":\\\"ㅇ\\\",\\\"element\\\":\\\"수\\\",\\\"vowel\\\":\\\"ㅗ\\\",\\\"final\\\":\\\"무\\\",\\\"frame\\\":\\\"양·광역\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"전진하는 느린 파도(즉발·경로 타격)\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"한 줄 큰 물결\\\",\\\"shape\\\":\\\"폭이 넓고 높이가 낮은 청묵 물마루\\\",\\\"motion\\\":\\\"천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴\\\",\\\"pattern\\\":\\\"수파·운문 테두리\\\",\\\"accent\\\":\\\"회백 물거품\\\",\\\"cast\\\":\\\"지면의 굵은 먹 가로획이 부풀어 물마루가 됨\\\",\\\"travel\\\":\\\"앞면은 짙고 뒤는 투명 지면 궤도 유지\\\",\\\"impact\\\":\\\"적 접점에만 작은 물갈래가 위로 올라옴\\\",\\\"resolve\\\":\\\"물마루가 앞쪽으로 넘어져 낮은 물결로 퍼진 뒤 사라짐\\\",\\\"material\\\":{\\\"primary\\\":\\\"짙은 청묵 핵·얇은 젖은 외피·회백 파문\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Ripple\\\",\\\"secondaryPrimitives\\\":[\\\"Ribbon\\\"],\\\"layout\\\":\\\"Wave\\\",\\\"behavior\\\":\\\"Wave\\\",\\\"count\\\":7,\\\"layers\\\":4,\\\"scale\\\":2.65,\\\"duration\\\":3.2,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"지면의 굵은 먹 가로획이 부풀어 물마루가 됨\\\",\\\"앞면은 짙고 뒤는 투명 지면 궤도 유지\\\",\\\"적 접점에만 작은 물갈래가 위로 올라옴\\\",\\\"물마루가 앞쪽으로 넘어져 낮은 물결로 퍼진 뒤 사라짐\\\"],\\\"motionSignature\\\":\\\"천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴\\\",\\\"geometrySignature\\\":\\\"폭이 넓고 높이가 낮은 청묵 물마루\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#2C465A\\\",\\\"secondary\\\":\\\"#BBC0B7\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"guid\\\":\\\"9a699dfb854a25f49b5a7b916bdf1616\\\",\\\"observed_motif\\\":\\\"겹친 반원 물결이 긴 초승달 띠를 이룸\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png\\\",\\\"guid\\\":\\\"8a47062cd755f15418417f33c9918ade\\\",\\\"observed_motif\\\":\\\"좌우 대칭으로 접힌 구름형 선\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"사각 외곽은 필요할 때만 쓰고 지속 패널 UI로 만들지 않음\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"CastCommitted\\\",\\\"ProjectileOrWaveMoved\\\",\\\"Impact\\\",\\\"Expired\\\"],\\\"readability\\\":\\\"한 줄 큰 물결: 폭이 넓고 높이가 낮은 청묵 물마루와 천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{},\\\"previewNumericAuthoring\\\":{\\\"count\\\":7,\\\"size\\\":1.7,\\\"partScale\\\":{\\\"x\\\":1.7,\\\"y\\\":1.15,\\\"z\\\":1.28},\\\"flight\\\":0.45,\\\"turns\\\":0.25,\\\"lift\\\":0.86,\\\"stagger\\\":0.075,\\\"ribbons\\\":3,\\\"grounded\\\":true,\\\"mist\\\":false},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"guid\\\":\\\"9a699dfb854a25f49b5a7b916bdf1616\\\",\\\"size\\\":[2841,1381],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":true,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"observed_motif\\\":\\\"겹친 반원 물결이 긴 초승달 띠를 이룸\\\",\\\"recommended_use\\\":\\\"수 파동·흐름·수면 충격\\\",\\\"caution\\\":\\\"단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합\\\",\\\"alpha_mean\\\":22.244692068477995,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_204.mat\\\",\\\"guid\\\":\\\"6e39f0c3e07d5cf40ac61945ed157a87\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom17-03.prefab\\\",\\\"guid\\\":\\\"aaeef02eadb438446ade885a0a830318\\\",\\\"particle_systems\\\":10,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"BASELINE_GAMEPLAY_ADAPTER\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+    "profileAfterOperation": "{\"Glyph\":\"오\",\"Title\":\"한 줄 큰 물결\",\"Intent\":\"전진하는 느린 파도(즉발·경로 타격)\",\"Family\":\"WaveCrest\",\"Assigned\":true,\"Behavior\":9,\"Layout\":7,\"BodyMesh\":{\"instanceID\":-1108684},\"AccentMesh\":{\"instanceID\":-1049636},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-2027354},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1052644},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1132680},\"NativeImpactPrefab\":{\"instanceID\":1132788},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.30000001192092898,\"NativeImpactScale\":0.36000001430511477,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.1725490242242813,\"g\":0.27450981736183169,\"b\":0.3529411852359772,\"a\":1.0},\"Accent\":{\"r\":0.7333333492279053,\"g\":0.7529411911964417,\"b\":0.7176470756530762,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":1,\"RibbonCount\":3,\"Size\":1.7000000476837159,\"PartScale\":{\"x\":3.5,\"y\":3.0999999046325685,\"z\":2.200000047683716},\"Duration\":3.200000047683716,\"Flight\":0.44999998807907107,\"Turns\":0.25,\"Lift\":0.0,\"Stagger\":0.07500000298023224,\"UseMist\":false,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":109,\\\"glyph\\\":\\\"오\\\",\\\"initial\\\":\\\"ㅇ\\\",\\\"element\\\":\\\"수\\\",\\\"vowel\\\":\\\"ㅗ\\\",\\\"final\\\":\\\"무\\\",\\\"frame\\\":\\\"양·광역\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"전진하는 느린 파도(즉발·경로 타격)\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"한 줄 큰 물결\\\",\\\"shape\\\":\\\"폭이 넓고 높이가 낮은 청묵 물마루\\\",\\\"motion\\\":\\\"천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴\\\",\\\"pattern\\\":\\\"수파·운문 테두리\\\",\\\"accent\\\":\\\"회백 물거품\\\",\\\"cast\\\":\\\"지면의 굵은 먹 가로획이 부풀어 물마루가 됨\\\",\\\"travel\\\":\\\"앞면은 짙고 뒤는 투명 지면 궤도 유지\\\",\\\"impact\\\":\\\"적 접점에만 작은 물갈래가 위로 올라옴\\\",\\\"resolve\\\":\\\"물마루가 앞쪽으로 넘어져 낮은 물결로 퍼진 뒤 사라짐\\\",\\\"material\\\":{\\\"primary\\\":\\\"짙은 청묵 핵·얇은 젖은 외피·회백 파문\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Ripple\\\",\\\"secondaryPrimitives\\\":[\\\"Ribbon\\\"],\\\"layout\\\":\\\"Wave\\\",\\\"behavior\\\":\\\"Wave\\\",\\\"count\\\":7,\\\"layers\\\":4,\\\"scale\\\":2.65,\\\"duration\\\":3.2,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"지면의 굵은 먹 가로획이 부풀어 물마루가 됨\\\",\\\"앞면은 짙고 뒤는 투명 지면 궤도 유지\\\",\\\"적 접점에만 작은 물갈래가 위로 올라옴\\\",\\\"물마루가 앞쪽으로 넘어져 낮은 물결로 퍼진 뒤 사라짐\\\"],\\\"motionSignature\\\":\\\"천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴\\\",\\\"geometrySignature\\\":\\\"폭이 넓고 높이가 낮은 청묵 물마루\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#2C465A\\\",\\\"secondary\\\":\\\"#BBC0B7\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"guid\\\":\\\"9a699dfb854a25f49b5a7b916bdf1616\\\",\\\"observed_motif\\\":\\\"겹친 반원 물결이 긴 초승달 띠를 이룸\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png\\\",\\\"guid\\\":\\\"8a47062cd755f15418417f33c9918ade\\\",\\\"observed_motif\\\":\\\"좌우 대칭으로 접힌 구름형 선\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"사각 외곽은 필요할 때만 쓰고 지속 패널 UI로 만들지 않음\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"CastCommitted\\\",\\\"ProjectileOrWaveMoved\\\",\\\"Impact\\\",\\\"Expired\\\"],\\\"readability\\\":\\\"한 줄 큰 물결: 폭이 넓고 높이가 낮은 청묵 물마루와 천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{},\\\"previewNumericAuthoring\\\":{\\\"count\\\":7,\\\"size\\\":1.7,\\\"partScale\\\":{\\\"x\\\":1.7,\\\"y\\\":1.15,\\\"z\\\":1.28},\\\"flight\\\":0.45,\\\"turns\\\":0.25,\\\"lift\\\":0.86,\\\"stagger\\\":0.075,\\\"ribbons\\\":3,\\\"grounded\\\":true,\\\"mist\\\":false},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"guid\\\":\\\"9a699dfb854a25f49b5a7b916bdf1616\\\",\\\"size\\\":[2841,1381],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":true,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"observed_motif\\\":\\\"겹친 반원 물결이 긴 초승달 띠를 이룸\\\",\\\"recommended_use\\\":\\\"수 파동·흐름·수면 충격\\\",\\\"caution\\\":\\\"단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합\\\",\\\"alpha_mean\\\":22.244692068477995,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_204.mat\\\",\\\"guid\\\":\\\"6e39f0c3e07d5cf40ac61945ed157a87\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom17-03.prefab\\\",\\\"guid\\\":\\\"aaeef02eadb438446ade885a0a830318\\\",\\\"particle_systems\\\":10,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"BASELINE_GAMEPLAY_ADAPTER\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+    "scope": "ONE_STATIC_ROLLING_CREST_CANDIDATE; editor structure/source preservation only. Runtime position, animation/lifetime, contact coverage and art are UNVERIFIED.",
+    "geometry": "48 X intervals, 48 samples around one closed asymmetric Bezier section. Side points collapse to one vertex each; UV seam duplicates are position-welded for topology validation. +Z travel, one left-biased broad crest, lagging sides. Bounds centre is zero. Source Pattern204 UVs wrap uniformly around the section.",
+    "originalSourcesUnchanged": true,
+    "otherProfileFieldsUnchanged": true,
+    "profileCount": 1,
+    "appliedScale": {
+        "x": 3.5,
+        "y": 3.0999999046325685,
+        "z": 2.200000047683716
+    },
+    "fullLocalDimensions": {
+        "x": 3.5,
+        "y": 1.0385000705718995,
+        "z": 0.7706287503242493
+    },
+    "original": {
+        "capturedUtc": "2026-09-09T10:05:02.1897218Z",
+        "profilePath": "Assets/_Project/Art/SpellVFX120/Profiles/109_C624.asset",
+        "profileGuid": "d77d73d47a71b8c488d3d809d19c5af7",
+        "profileBefore": "{\"Glyph\":\"오\",\"Title\":\"한 줄 큰 물결\",\"Intent\":\"전진하는 느린 파도(즉발·경로 타격)\",\"Family\":\"WaveCrest\",\"Assigned\":true,\"Behavior\":9,\"Layout\":7,\"BodyMesh\":{\"instanceID\":-1108684},\"AccentMesh\":{\"instanceID\":-1049636},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-2027354},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1052644},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1132680},\"NativeImpactPrefab\":{\"instanceID\":1132788},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.30000001192092898,\"NativeImpactScale\":0.36000001430511477,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.1725490242242813,\"g\":0.27450981736183169,\"b\":0.3529411852359772,\"a\":1.0},\"Accent\":{\"r\":0.7333333492279053,\"g\":0.7529411911964417,\"b\":0.7176470756530762,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":1,\"RibbonCount\":3,\"Size\":1.7000000476837159,\"PartScale\":{\"x\":3.5,\"y\":3.0999999046325685,\"z\":2.200000047683716},\"Duration\":3.200000047683716,\"Flight\":0.44999998807907107,\"Turns\":0.25,\"Lift\":0.0,\"Stagger\":0.07500000298023224,\"UseMist\":false,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":109,\\\"glyph\\\":\\\"오\\\",\\\"initial\\\":\\\"ㅇ\\\",\\\"element\\\":\\\"수\\\",\\\"vowel\\\":\\\"ㅗ\\\",\\\"final\\\":\\\"무\\\",\\\"frame\\\":\\\"양·광역\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"전진하는 느린 파도(즉발·경로 타격)\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"한 줄 큰 물결\\\",\\\"shape\\\":\\\"폭이 넓고 높이가 낮은 청묵 물마루\\\",\\\"motion\\\":\\\"천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴\\\",\\\"pattern\\\":\\\"수파·운문 테두리\\\",\\\"accent\\\":\\\"회백 물거품\\\",\\\"cast\\\":\\\"지면의 굵은 먹 가로획이 부풀어 물마루가 됨\\\",\\\"travel\\\":\\\"앞면은 짙고 뒤는 투명 지면 궤도 유지\\\",\\\"impact\\\":\\\"적 접점에만 작은 물갈래가 위로 올라옴\\\",\\\"resolve\\\":\\\"물마루가 앞쪽으로 넘어져 낮은 물결로 퍼진 뒤 사라짐\\\",\\\"material\\\":{\\\"primary\\\":\\\"짙은 청묵 핵·얇은 젖은 외피·회백 파문\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Ripple\\\",\\\"secondaryPrimitives\\\":[\\\"Ribbon\\\"],\\\"layout\\\":\\\"Wave\\\",\\\"behavior\\\":\\\"Wave\\\",\\\"count\\\":7,\\\"layers\\\":4,\\\"scale\\\":2.65,\\\"duration\\\":3.2,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"지면의 굵은 먹 가로획이 부풀어 물마루가 됨\\\",\\\"앞면은 짙고 뒤는 투명 지면 궤도 유지\\\",\\\"적 접점에만 작은 물갈래가 위로 올라옴\\\",\\\"물마루가 앞쪽으로 넘어져 낮은 물결로 퍼진 뒤 사라짐\\\"],\\\"motionSignature\\\":\\\"천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴\\\",\\\"geometrySignature\\\":\\\"폭이 넓고 높이가 낮은 청묵 물마루\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#2C465A\\\",\\\"secondary\\\":\\\"#BBC0B7\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"guid\\\":\\\"9a699dfb854a25f49b5a7b916bdf1616\\\",\\\"observed_motif\\\":\\\"겹친 반원 물결이 긴 초승달 띠를 이룸\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png\\\",\\\"guid\\\":\\\"8a47062cd755f15418417f33c9918ade\\\",\\\"observed_motif\\\":\\\"좌우 대칭으로 접힌 구름형 선\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"사각 외곽은 필요할 때만 쓰고 지속 패널 UI로 만들지 않음\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"CastCommitted\\\",\\\"ProjectileOrWaveMoved\\\",\\\"Impact\\\",\\\"Expired\\\"],\\\"readability\\\":\\\"한 줄 큰 물결: 폭이 넓고 높이가 낮은 청묵 물마루와 천천히 전진하며 가운데보다 옆 끝이 늦게 따라옴가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{},\\\"previewNumericAuthoring\\\":{\\\"count\\\":7,\\\"size\\\":1.7,\\\"partScale\\\":{\\\"x\\\":1.7,\\\"y\\\":1.15,\\\"z\\\":1.28},\\\"flight\\\":0.45,\\\"turns\\\":0.25,\\\"lift\\\":0.86,\\\"stagger\\\":0.075,\\\"ribbons\\\":3,\\\"grounded\\\":true,\\\"mist\\\":false},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"guid\\\":\\\"9a699dfb854a25f49b5a7b916bdf1616\\\",\\\"size\\\":[2841,1381],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":true,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"observed_motif\\\":\\\"겹친 반원 물결이 긴 초승달 띠를 이룸\\\",\\\"recommended_use\\\":\\\"수 파동·흐름·수면 충격\\\",\\\"caution\\\":\\\"단독 모티프는 동아시아 공통 어휘. 한국적 색·붓 획과 조합\\\",\\\"alpha_mean\\\":22.244692068477995,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_204.mat\\\",\\\"guid\\\":\\\"6e39f0c3e07d5cf40ac61945ed157a87\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom17-03.prefab\\\",\\\"guid\\\":\\\"aaeef02eadb438446ade885a0a830318\\\",\\\"particle_systems\\\":10,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"BASELINE_GAMEPLAY_ADAPTER\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+        "bodyMesh": {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset",
+            "guid": "8dc62cee493301741b0b6a1697f9984d",
+            "localId": 4300000
+        },
+        "bodyMaterial": {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat",
+            "guid": "67dbd48f0b4ab424b8778496f47f5b8d",
+            "localId": 2100000
+        },
+        "partScale": {
+            "x": 3.5,
+            "y": 3.0999999046325685,
+            "z": 2.200000047683716
+        },
+        "sources": [
+            {
+                "path": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset",
+                "before": "b1062987ca72c1240ec4e42f1377758641f47ba2feb16e33bfd0e62858822076",
+                "after": "",
+                "unchanged": false
+            },
+            {
+                "path": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset.meta",
+                "before": "342d868f423a0b1ec7a4a7c91bcf0152807a37cebe9458ccf924c96756202a2f",
+                "after": "",
+                "unchanged": false
+            },
+            {
+                "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat",
+                "before": "aa8520cc97f29ee51a8584c13f9d77899bf5533cceb97de4aba28a7c3f20dc89",
+                "after": "",
+                "unchanged": false
+            },
+            {
+                "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat.meta",
+                "before": "f08b1c1ebfcc65917fe3e8fca0cf10f8d5fd236d411f971719af01ca963f7e85",
+                "after": "",
+                "unchanged": false
+            },
+            {
+                "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+                "before": "4fd250926ced4385c4ec0dacc62c8dc4f448ceb89a325a767152971842f8d63a",
+                "after": "",
+                "unchanged": false
+            },
+            {
+                "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png.meta",
+                "before": "802043abd136744c379cdb8134fb6c414ead9cbe7232dee761faac937e251f49",
+                "after": "",
+                "unchanged": false
+            }
+        ]
+    },
+    "statistics": {
+        "vertices": 0,
+        "triangles": 0,
+        "weldedVertices": 0,
+        "weldedEdges": 0,
+        "boundaryEdges": 0,
+        "nonManifoldEdges": 0,
+        "degenerateTriangles": 0,
+        "euler": 0,
+        "submeshes": 0,
+        "vertexBuffers": 0,
+        "xSegments": 0,
+        "ringPoints": 0,
+        "minimumTriangleArea": 0.0,
+        "signedVolume": 0.0,
+        "bounds": {
+            "m_Center": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "m_Extent": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        "finite": false,
+        "unitNormals": false,
+        "completeUvAndColor": false,
+        "weldedClosed": false,
+        "smoothSeamNormals": false
+    },
+    "sourceChecks": [
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset",
+            "before": "b1062987ca72c1240ec4e42f1377758641f47ba2feb16e33bfd0e62858822076",
+            "after": "b1062987ca72c1240ec4e42f1377758641f47ba2feb16e33bfd0e62858822076",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset.meta",
+            "before": "342d868f423a0b1ec7a4a7c91bcf0152807a37cebe9458ccf924c96756202a2f",
+            "after": "342d868f423a0b1ec7a4a7c91bcf0152807a37cebe9458ccf924c96756202a2f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat",
+            "before": "aa8520cc97f29ee51a8584c13f9d77899bf5533cceb97de4aba28a7c3f20dc89",
+            "after": "aa8520cc97f29ee51a8584c13f9d77899bf5533cceb97de4aba28a7c3f20dc89",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat.meta",
+            "before": "f08b1c1ebfcc65917fe3e8fca0cf10f8d5fd236d411f971719af01ca963f7e85",
+            "after": "f08b1c1ebfcc65917fe3e8fca0cf10f8d5fd236d411f971719af01ca963f7e85",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png",
+            "before": "4fd250926ced4385c4ec0dacc62c8dc4f448ceb89a325a767152971842f8d63a",
+            "after": "4fd250926ced4385c4ec0dacc62c8dc4f448ceb89a325a767152971842f8d63a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png.meta",
+            "before": "802043abd136744c379cdb8134fb6c414ead9cbe7232dee761faac937e251f49",
+            "after": "802043abd136744c379cdb8134fb6c414ead9cbe7232dee761faac937e251f49",
+            "unchanged": true
+        }
+    ]
+}

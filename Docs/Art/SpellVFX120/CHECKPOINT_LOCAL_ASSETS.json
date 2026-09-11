@@ -1,0 +1,432 @@
+{
+  "date": "2026-09-11",
+  "copiedCount": 3147,
+  "rootIndexUnchanged": true,
+  "excludedLocalAssets": [
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/AreaFive/AreaWater.shadergraph",
+      "bytes": 165109,
+      "sha256": "1abf2305eb704af92273ea89095cde948c4d31cbf54a460522a53c3de42363a8"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/Blender/StoneGuardian_Jangseung_Parts_B2.fbx",
+      "bytes": 125244,
+      "sha256": "f9feeb69263d796332f066095857e1b8579acfbe70117d038438d540b64a1468"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/DokkaebiClub/SM_DokkaebiClub.fbx",
+      "bytes": 726252,
+      "sha256": "25808fe40d06997988b1f8846b69f3f8e25dda591d0c67c8c7e8e441c6abb92d"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/SM_FireHaetae.fbx",
+      "bytes": 548124,
+      "sha256": "761860dd319dab8dd8693cad988a907f85dee9d77f4a1799f9eb3413b0001db5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FixedWards/WardWater.shadergraph",
+      "bytes": 167404,
+      "sha256": "19144e41dfabecb552980f1ef737cda9c2aa2c9f25b03a26583a0cad3074a854"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_0_0.prefab",
+      "bytes": 1080314,
+      "sha256": "473de78b560f41322f374c19975a4217e2dbab13392c090150856dc4e9599fe3"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_0_1.prefab",
+      "bytes": 1567315,
+      "sha256": "9aa397f6f8cf9208960794efabfbc3ebfa6c53c7b1d4b607b5ca67002b5f9ff9"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_0_2.prefab",
+      "bytes": 2993095,
+      "sha256": "1465d4987762337be999ad3fedee1cd4efd272750c4245c53f466147ede5f50d"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_0_3.prefab",
+      "bytes": 1070253,
+      "sha256": "c31f61a8aa1009b295f29733fe12c66d7b8df2c2e882729c90af52b5bf0a10c8"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_1_0.prefab",
+      "bytes": 711784,
+      "sha256": "c0fb01190cc50511b03875082e9755f8881800465f29fc5291ac8178dd7e42db"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_1_1.prefab",
+      "bytes": 2039046,
+      "sha256": "2a3d2691b08661ee71f3aeda046ea00d2c2da8a8d1d8539e7cd9eef63ac74139"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_1_2.prefab",
+      "bytes": 1309106,
+      "sha256": "3c0104126aea90c7db59710e8b1e5a4b39dcc129fdb797c364dcedbbad6a024f"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_1_3.prefab",
+      "bytes": 1196757,
+      "sha256": "95a1956866d9563ffc44e66516c4011de3bdc3681c258125cab889722f67c04e"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_2_0.prefab",
+      "bytes": 2993074,
+      "sha256": "05658cea50e9145fa5420688e377104c2cfdd2cd7e399df2b49fb9172adc6c71"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_2_1.prefab",
+      "bytes": 1327937,
+      "sha256": "eb6c602a3a49e5aa85719cfb9bdfdd0302e71843348c8a8616142e1a45e1b9c1"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_2_2.prefab",
+      "bytes": 2993058,
+      "sha256": "8e6e1ef6e1f6fa0873e06000004600f2f11ff07edf2744f4a9930e130d3e853d"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_2_3.prefab",
+      "bytes": 1663103,
+      "sha256": "390316d3722a5b175ac801156bc547311a0a86c90a1ba04949b83aeaf552fc84"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_3_0.prefab",
+      "bytes": 1707639,
+      "sha256": "fe49f71ff9a9b76ebc01c61b069730f232d9076378081190f4e68dce2927d26c"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_3_1.prefab",
+      "bytes": 1584287,
+      "sha256": "fd2f8ac16a6ec3241a0bc79249ac658f0022272036c44e9de160ac29016f7dea"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_3_2.prefab",
+      "bytes": 1904845,
+      "sha256": "4ce254b597cb481e13b242fea1348fd8af0b8b3549931bf18bf29e571cc9cf6d"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_3_3.prefab",
+      "bytes": 1663097,
+      "sha256": "f32ed371d80cf81d2be97915c17b7cfe8aaf749f32ce223cfc7e5b79a23c1fff"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_4_0.prefab",
+      "bytes": 1071224,
+      "sha256": "092504615f2e257e58225e9e1b249d2c64231c654dab50d82d52c1a9891a1447"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_4_1.prefab",
+      "bytes": 1327950,
+      "sha256": "aa1302baff7d190130bd5369870c9432a255c5b23268b7e2f31d9e854153052f"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_4_2.prefab",
+      "bytes": 1071242,
+      "sha256": "5415650a2f590a2055198b303910e071a5b40ffabddcc92aef6d2b80da9d9cf9"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/KtpOriginal/Original_4_3.prefab",
+      "bytes": 1071224,
+      "sha256": "7496a92f4b86baccfece6cb59366ab88d393b2208faf62bcba10745a1fee37a4"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MetalTiger/SM_MetalTiger.fbx",
+      "bytes": 562204,
+      "sha256": "e381410d96fe1ca5cb63d145972db1816b746ad00b903de25eae923df438f01e"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/Models/Beast_FolkTiger_B2.fbx",
+      "bytes": 298780,
+      "sha256": "827f1abf64c948ca88c672d9bc4f09d3af5e08c8735a566f39fc31abc543f64b"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/Models/StoneGuardian_Jangseung_B1.fbx",
+      "bytes": 159244,
+      "sha256": "132303f8e32462b524507f09f24285452ce22452a548aec03dac37edd92ca487"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneDokkaebi/SM_StoneDokkaebi.fbx",
+      "bytes": 523724,
+      "sha256": "5a64bc7c18e6a748207c6b9395073fc848c077f635cb43cd97c84524a93152db"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneJangseung/SM_StoneJangseung.fbx",
+      "bytes": 507388,
+      "sha256": "65fd0279e9d9870870665c2d9a6dcaa13e121c1b1768baffd60797a20ba10fbd"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WaterTurtle/SM_WaterTurtle.fbx",
+      "bytes": 705756,
+      "sha256": "5449abf734ac5812f35c664404cc7ebc11e8ad558c2304b0f6cb0786409ddc45"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbx",
+      "bytes": 612092,
+      "sha256": "1b79b2fee7e9672cd37500e2ccb319fe090393c52e4d2c719393d65ceff8dba6"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbm/T_WoodDeer_BaseColor.png",
+      "bytes": 4517784,
+      "sha256": "9924710a14bfc0b3a0fcd28dacbbbfeda3f71a06241da0c7d9b0988efdff3d01"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbm/T_WoodDeer_Normal.png",
+      "bytes": 4474527,
+      "sha256": "a161418f0727149fd829f2275da5b4dc33a41d58ea7790cd79e1566238773119"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/Textures/T_WoodDeer_BaseColor.png",
+      "bytes": 4517784,
+      "sha256": "9924710a14bfc0b3a0fcd28dacbbbfeda3f71a06241da0c7d9b0988efdff3d01"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/Textures/T_WoodDeer_Normal.png",
+      "bytes": 4474527,
+      "sha256": "a161418f0727149fd829f2275da5b4dc33a41d58ea7790cd79e1566238773119"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WaterTurtle/SM_WaterTurtle.fbm/T_WaterTurtle_BaseColor.png",
+      "bytes": 7095146,
+      "sha256": "091d580201998a8745ffb9fe8ae0483394627f9687dcf9a7a9dcd6e0ea986381"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WaterTurtle/SM_WaterTurtle.fbm/T_WaterTurtle_Normal.png",
+      "bytes": 6174102,
+      "sha256": "3dc005e9c26d79c0c2a4c9d7b0f9ccadfd7e9644a5f87ab0b0a3da1ef1434e74"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WaterTurtle/Textures/T_WaterTurtle_BaseColor.png",
+      "bytes": 7095146,
+      "sha256": "091d580201998a8745ffb9fe8ae0483394627f9687dcf9a7a9dcd6e0ea986381"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/WaterTurtle/Textures/T_WaterTurtle_Normal.png",
+      "bytes": 6174102,
+      "sha256": "3dc005e9c26d79c0c2a4c9d7b0f9ccadfd7e9644a5f87ab0b0a3da1ef1434e74"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneJangseung/SM_StoneJangseung.fbm/T_StoneJangseung_BaseColor.png",
+      "bytes": 3255161,
+      "sha256": "8f026f483ded195910afeeda3dac9a4c000932bbaaec8e7a1f0152a111b91ac5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneJangseung/SM_StoneJangseung.fbm/T_StoneJangseung_Normal.png",
+      "bytes": 6671572,
+      "sha256": "146a7e147861f941da6dfb6db57c86df07037b65b180414c09e084d412bbbbee"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneJangseung/Textures/T_StoneJangseung_BaseColor.png",
+      "bytes": 3255161,
+      "sha256": "8f026f483ded195910afeeda3dac9a4c000932bbaaec8e7a1f0152a111b91ac5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneJangseung/Textures/T_StoneJangseung_Normal.png",
+      "bytes": 6671572,
+      "sha256": "146a7e147861f941da6dfb6db57c86df07037b65b180414c09e084d412bbbbee"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneDokkaebi/SM_StoneDokkaebi.fbm/T_StoneDokkaebi_BaseColor.png",
+      "bytes": 6341936,
+      "sha256": "aa19ad4930bd58fd458cdeaf59110ef003cffa25eab4bbc5f76b89bf5fbbb743"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneDokkaebi/SM_StoneDokkaebi.fbm/T_StoneDokkaebi_Normal.png",
+      "bytes": 7853222,
+      "sha256": "cb53f0f384e5a6697f86ae2f37ad251546174cd7ee880af67165463806b90bff"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneDokkaebi/Textures/T_StoneDokkaebi_BaseColor.png",
+      "bytes": 6341936,
+      "sha256": "aa19ad4930bd58fd458cdeaf59110ef003cffa25eab4bbc5f76b89bf5fbbb743"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/StoneDokkaebi/Textures/T_StoneDokkaebi_Normal.png",
+      "bytes": 7853222,
+      "sha256": "cb53f0f384e5a6697f86ae2f37ad251546174cd7ee880af67165463806b90bff"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MetalTiger/SM_MetalTiger.fbm/T_MetalTiger_BaseColor.png",
+      "bytes": 6190094,
+      "sha256": "a62ee13b0b49b6c4b609c0b978d980b8ae42e493a5a138c62b8f272789a030fb"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MetalTiger/SM_MetalTiger.fbm/T_MetalTiger_Normal.png",
+      "bytes": 5744390,
+      "sha256": "765c252b712ecc43a0100bdb1dbd451055cb55973bbc7cb1ad802ec592bac7a3"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MetalTiger/Textures/T_MetalTiger_BaseColor.png",
+      "bytes": 6190094,
+      "sha256": "a62ee13b0b49b6c4b609c0b978d980b8ae42e493a5a138c62b8f272789a030fb"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MetalTiger/Textures/T_MetalTiger_Normal.png",
+      "bytes": 5744390,
+      "sha256": "765c252b712ecc43a0100bdb1dbd451055cb55973bbc7cb1ad802ec592bac7a3"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/SM_Summon_016_ACF0.fbx",
+      "bytes": 1224876,
+      "sha256": "3e91fa361c630f28becf4d332ed157a621bf5a852b2dc2b3f5bb728d095f777d"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/SM_Summon_040_B188.fbx",
+      "bytes": 1281052,
+      "sha256": "63bd384e503f27c82fc3f3177fd404a5cbe10da6274b4ee37154682f71f18cd1"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/SM_Summon_088_C19C.fbx",
+      "bytes": 1340380,
+      "sha256": "35a8501007e6af2ceda8c6aefaf8a9840dd8624b22711e034040cea1f2fa4c28"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/Textures/T_088_C19C_BaseColor.png",
+      "bytes": 5963450,
+      "sha256": "4431aec8e02a705a7bf4f95d8ceb3608a2ffbacdc1806898fbc15adc1d6d09b8"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/Textures/T_088_C19C_MetallicSmoothness.png",
+      "bytes": 97445,
+      "sha256": "3e6f03a02b918bd9c25ce9897b1f8f0eb70fd81ccd5b3327bf96972a77ac265c"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/Textures/T_088_C19C_Metallic_Original.png",
+      "bytes": 1563808,
+      "sha256": "ed133e17ff37c107de247553b479374e3ac1ef3cc1cc125e0bada9916b5fd14c"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/Textures/T_088_C19C_Normal.png",
+      "bytes": 5744390,
+      "sha256": "765c252b712ecc43a0100bdb1dbd451055cb55973bbc7cb1ad802ec592bac7a3"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/Textures/T_088_C19C_Roughness_Min065.png",
+      "bytes": 19907,
+      "sha256": "419c52c3423b57d6e7740e0c02c56bf7894968aa50979a35eafe441faa566c76"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/Textures/T_088_C19C_Roughness_Original.png",
+      "bytes": 1486446,
+      "sha256": "2e1cde56ee47a2d104140203e058c048b924098252b21d4f18ba023cd9a5728b"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/Textures/T_040_B188_BaseColor.png",
+      "bytes": 5418519,
+      "sha256": "e1795524e12b5ccee755494e5f7129ffc35a3e36bccc90dbbb0c67f04a0ea0fa"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/Textures/T_040_B188_MetallicSmoothness.png",
+      "bytes": 78122,
+      "sha256": "3a8d5c95f52f1bb33885826d96e3d0022f3e0e9519b42bac2dfd7ef5ba0a3a8c"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/Textures/T_040_B188_Metallic_Original.png",
+      "bytes": 32959,
+      "sha256": "1ac4a9a5583596f2e233602e6653ec0f8e25f9369413af431cf8e01f4a075049"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/Textures/T_040_B188_Normal.png",
+      "bytes": 4453211,
+      "sha256": "6a8dc862d6ccb39d51ac682ac29f0bcfa76a4dbc7f4f1cbe921fcc688cc1a8d4"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/Textures/T_040_B188_Roughness_Min065.png",
+      "bytes": 8534,
+      "sha256": "3c065f6d110d3b5fb6f3c76e9702a0971c53d911831910aaf6d1a68c95423df2"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/Textures/T_040_B188_Roughness_Original.png",
+      "bytes": 1395906,
+      "sha256": "249ed3467dedfb4dd02031db55cf24abe821f0f112fa363cbad74cb53658c039"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/Textures/T_016_ACF0_BaseColor.png",
+      "bytes": 5302104,
+      "sha256": "225429d376b312e04a9d2c4f9ba91e83a0099bae499822c0fb7a813924ac159b"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/Textures/T_016_ACF0_MetallicSmoothness.png",
+      "bytes": 136380,
+      "sha256": "4325bb79e5466c635c63e7a925a5b0455d6272cbbbdca94788a109bd989c1bd8"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/Textures/T_016_ACF0_Metallic_Original.png",
+      "bytes": 41978,
+      "sha256": "6d3480a5fb2eab1ec0c599a34f73fc3b07c32bd796f83b23fc4e85c915271963"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/Textures/T_016_ACF0_Normal.png",
+      "bytes": 6107891,
+      "sha256": "008c722a53f8dc3dd2056f36851bd60adbb624158c662c475207af533af79cbf"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/Textures/T_016_ACF0_Roughness_Min065.png",
+      "bytes": 49987,
+      "sha256": "e5c77364974975672e7a222bca9e83d66e8b68df69c9be68b852648f6561c74e"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/Textures/T_016_ACF0_Roughness_Original.png",
+      "bytes": 1319034,
+      "sha256": "5cfec4fd7c3d92cbda78e65269bcf2bfbea67576bb14ab1f0662a36b4ab36e71"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/SM_FireHaetae.fbm/T_FireHaetae_BaseColor.png",
+      "bytes": 4953040,
+      "sha256": "2093a0536b9abf53fc17fb31653919f1543bcab4fa3b3fcca6d1e94e598c3e1a"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/SM_FireHaetae.fbm/T_FireHaetae_Normal.png",
+      "bytes": 4453211,
+      "sha256": "6a8dc862d6ccb39d51ac682ac29f0bcfa76a4dbc7f4f1cbe921fcc688cc1a8d4"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/Textures/T_FireHaetae_BaseColor.png",
+      "bytes": 4953040,
+      "sha256": "2093a0536b9abf53fc17fb31653919f1543bcab4fa3b3fcca6d1e94e598c3e1a"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/Textures/T_FireHaetae_EmberMask.png",
+      "bytes": 591162,
+      "sha256": "48d4368fbe32f8d7ca4d6fe8fd93847d7beea0ceb4ad5d4e373da1ac976bacad"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/Textures/T_FireHaetae_Normal.png",
+      "bytes": 4453211,
+      "sha256": "6a8dc862d6ccb39d51ac682ac29f0bcfa76a4dbc7f4f1cbe921fcc688cc1a8d4"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/DokkaebiClub/SM_DokkaebiClub.fbm/T_DokkaebiClub_BaseColor.png",
+      "bytes": 7188034,
+      "sha256": "eeebf89755a66efce60bfb749f00caf9bbd3fba5f805f0f412e0399b124e0120"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/DokkaebiClub/SM_DokkaebiClub.fbm/T_DokkaebiClub_Normal.png",
+      "bytes": 6008449,
+      "sha256": "eff83601cf7475bb54a869f763cc30f9dcd942f4c9be23d2920f5faa4a24baba"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/DokkaebiClub/Textures/T_DokkaebiClub_BaseColor.png",
+      "bytes": 7188034,
+      "sha256": "eeebf89755a66efce60bfb749f00caf9bbd3fba5f805f0f412e0399b124e0120"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/DokkaebiClub/Textures/T_DokkaebiClub_Normal.png",
+      "bytes": 6008449,
+      "sha256": "eff83601cf7475bb54a869f763cc30f9dcd942f4c9be23d2920f5faa4a24baba"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_Clod_K.asset",
+      "bytes": 50359,
+      "sha256": "867d9a489eeb1db27132bf4e5bb1ad039fe2990d5946c6c81d27b4b75f134a20"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Art/SpellVFX120/Traditional/Bodies/M_Clod_L.asset",
+      "bytes": 31653,
+      "sha256": "20f4dbae10df87ef550a8d3afd38bef1881dcea2ad281ae658a7c9453ab8e3b1"
+    }
+  ],
+  "notes": [
+    "Source .env and private API responses are not copied.",
+    "Licensed source copies and generated 3D binaries/textures remain local per existing repository policy. GUID metadata and generation/build tools are preserved.",
+    "Raw frame sequences and delivery ZIPs remain local; selected frames and completed MP4 reviews are included."
+  ]
+}

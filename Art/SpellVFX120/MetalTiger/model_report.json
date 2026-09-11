@@ -1,0 +1,15 @@
+{
+  "triangles": 12414,
+  "vertices": 6204,
+  "materials": 1,
+  "dimensions": [
+    1.084836483001709,
+    3.0669167041778564,
+    1.399999976158142
+  ],
+  "sourceHashBefore": "d7bc294c3dd0d9801d870c93e2c2e73a2e978bfaebc583c7d208d90310b381f3",
+  "sourceHashAfter": "d7bc294c3dd0d9801d870c93e2c2e73a2e978bfaebc583c7d208d90310b381f3",
+  "maxBodyPositionErrorM": 0.0,
+  "meshyCredits": 0,
+  "rigged": false
+}

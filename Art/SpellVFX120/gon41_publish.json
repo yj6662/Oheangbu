@@ -1,0 +1,34 @@
+{
+  "id": "015_ACE4",
+  "version": "41",
+  "key": "GON_015",
+  "glyph": "곤",
+  "title": "뿌리의 들어올림",
+  "audit": "single_play_ACE4.json",
+  "build": "root_lift_015_build.json",
+  "scope": "gon41_scope_check.json",
+  "previous": "GANG_006_REVIEW.html",
+  "intro": "세 갈래의 실제 나무뿌리가 지면에서 동시에 치솟아 안쪽을 받칩니다. 잠깐 열린 뒤 접혀 지면으로 돌아갑니다.",
+  "changes": [
+    "Seyeonjeong의 실제 뿌리 메시·UV·수피를 재사용했다. 각의 결박 배치와 달리 세 뿌리가 짧게 치솟고 바로 접힌다.",
+    "KTP Pattern_192 지면 잎흔적과 발동·타격을 사용했다. 원본 뿌리 자산은 변경하지 않았다.",
+    "Circle 중심·반경·Delay를 복사해 사용한다. 올라오는 중 메시 크기는 고정하고 아래 지면 절단을 적용한다. 지면 탐침은 생성 때 세 번만 실행한다.",
+    "공간 계획 없는 경우 조용히 유지하고 구형 형상을 되살리지 않는다. 검사기 네임스페이스 누락은 고친 뒤 재컴파일했다. 다른119개 프로필은 변경하지 않았다."
+  ],
+  "cost": "뿌리3305tris ×3 + 지면 문양6tris = 총9921tris. MeshRenderer6개, 공유 메시 사용, 런타임 메시 복제0개. KTP 파티클 별도.",
+  "metrics": [
+    "rootLiftMaxRise",
+    "rootLiftWithdrawn",
+    "rootLiftVisibleFrames"
+  ],
+  "limits": [
+    "영상은 카탈로그의 원형 계획으로 촬영했다. 실제 적 쳐올리기·인터럽트·피해는 미연결이다.",
+    "뿌리의 접촉감과 들어올리는 인상은 사용자 검토 대기다.",
+    "급경사·복층 지형·다중 동시 사용 성능은 미검증이다."
+  ],
+  "captureNote": "1280×720·24fps. 전달된 Delay까지 치솟고0.12초 뒤 접기 시작,0.58초 뒤 철수한다. 카탈로그 반경을 실제 게임 판정으로 사용하지 않는다.",
+  "detailLabels": [
+    "치솟는 단계",
+    "철수 뒤"
+  ]
+}

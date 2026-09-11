@@ -1,0 +1,163 @@
+{
+    "status": "READ_ONLY_SNAPSHOT_NO_LEAK_VERDICT",
+    "capturedUtc": "2026-09-09T04:25:41.1794790Z",
+    "unityVersion": "6000.3.9f1",
+    "output": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120/resource_attribution.json",
+    "selectionMode": "EXPLICIT_IDS",
+    "scope": "Post-measurement, read-only ownership snapshot. Explicit IDs are looked up among already loaded materials. Without IDs, nonpersistent materials whose name contains Atlas AND whose shader looks like a font shader are candidates only. Names do not prove ownership or justify excluding resource growth. No leak/art/performance PASS is produced.",
+    "limitations": "Only already loaded assemblies/resources are inspected. Font asset data uses fields, never dynamic font/material/atlas getters. Renderer.sharedMaterials and existing TMP component fields identify some consumers, not all native/UI Toolkit owners. An empty result is not proof of no reference. Static cache reads require an existing callback or a side-effect-free initializer check. A dictionary-only initializer may create empty managed cache storage, but cannot create the matching Material. No resource factory, font request, cache cleanup, GC or UnloadUnusedAssets is called. Run only after timing/resource counters stop.",
+    "isPlaying": true,
+    "resourceSetUnchangedByInspection": true,
+    "leakPass": false,
+    "frame": 15112,
+    "loadedMaterialCount": 4125,
+    "textCoreFontCount": 3936,
+    "tmpFontCount": 0,
+    "rendererCount": 27,
+    "tmpComponentCount": 0,
+    "elapsedMilliseconds": 98.2565,
+    "materials": [
+        {
+            "requestedId": -1624238,
+            "status": "READ",
+            "selection": "EXPLICIT_IDS",
+            "shader": "Hidden/TextCore/Editor/Distance Field SSD",
+            "attribution": "EDITOR_FONT_ATLAS_AND_FALLBACK_CACHE_ID_MATCH",
+            "limitation": "Ownership describes current references, not allocation trigger, expected cache growth, cleanup policy or leak absence.",
+            "material": {
+                "id": -1624238,
+                "width": 0,
+                "height": 0,
+                "name": "MALGUN Atlas Material + MALGUN Atlas 1",
+                "type": "UnityEngine.Material",
+                "hideFlags": "HideAndDontSave",
+                "assetPath": "",
+                "persistent": false
+            },
+            "mainTexture": {
+                "id": -1250248,
+                "width": 1024,
+                "height": 1024,
+                "name": "MALGUN Atlas 1",
+                "type": "UnityEngine.Texture2D",
+                "hideFlags": "HideAndDontSave",
+                "assetPath": "",
+                "persistent": false
+            },
+            "fontReferences": [
+                {
+                    "font": {
+                        "id": 14624,
+                        "width": 0,
+                        "height": 0,
+                        "name": "Malgun Gothic SDF",
+                        "type": "UnityEngine.TextCore.Text.FontAsset",
+                        "hideFlags": "HideAndDontSave",
+                        "assetPath": "Library/unity editor resources",
+                        "persistent": true
+                    },
+                    "sourceFont": {
+                        "id": 0,
+                        "width": 0,
+                        "height": 0,
+                        "name": "",
+                        "type": "",
+                        "hideFlags": "",
+                        "assetPath": "",
+                        "persistent": false
+                    },
+                    "editorSourceFont": {
+                        "id": 0,
+                        "width": 0,
+                        "height": 0,
+                        "name": "",
+                        "type": "",
+                        "hideFlags": "",
+                        "assetPath": "",
+                        "persistent": false
+                    },
+                    "material": {
+                        "id": 14636,
+                        "width": 0,
+                        "height": 0,
+                        "name": "MALGUN Atlas Material",
+                        "type": "UnityEngine.Material",
+                        "hideFlags": "HideAndDontSave",
+                        "assetPath": "Library/unity editor resources",
+                        "persistent": true
+                    },
+                    "family": "Malgun Gothic",
+                    "style": "Regular",
+                    "populationMode": "DynamicOS",
+                    "isEditorFont": "True",
+                    "internalDynamicOS": "True",
+                    "directMaterialReference": false,
+                    "matchingAtlasIndices": [
+                        1
+                    ],
+                    "atlases": [
+                        {
+                            "id": 14628,
+                            "width": 1024,
+                            "height": 1024,
+                            "name": "MALGUN Atlas",
+                            "type": "UnityEngine.Texture2D",
+                            "hideFlags": "HideAndDontSave",
+                            "assetPath": "Library/unity editor resources",
+                            "persistent": true
+                        },
+                        {
+                            "id": -1250248,
+                            "width": 1024,
+                            "height": 1024,
+                            "name": "MALGUN Atlas 1",
+                            "type": "UnityEngine.Texture2D",
+                            "hideFlags": "HideAndDontSave",
+                            "assetPath": "",
+                            "persistent": false
+                        }
+                    ],
+                    "unavailableFields": []
+                }
+            ],
+            "cacheReferences": [
+                {
+                    "cacheType": "UnityEngine.TextCore.Text.MaterialManager",
+                    "field": "s_FallbackMaterials",
+                    "key": "62865435061304",
+                    "referencedField": "fallbackMaterial",
+                    "materialId": -1624238,
+                    "sourceMaterialId": 14636,
+                    "textureId": -1250248,
+                    "referenceCount": -1
+                }
+            ],
+            "consumers": []
+        }
+    ],
+    "caches": [
+        {
+            "type": "UnityEngine.TextCore.Text.MaterialManager",
+            "field": "s_FallbackMaterials",
+            "assembly": "UnityEngine.TextCoreTextEngineModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+            "status": "READ_EXISTING_REFERENCES",
+            "initializationEvidence": "INITIALIZER_ONLY_EMPTY_MANAGED_DICTIONARIES_OR_NO_INITIALIZER",
+            "reason": "",
+            "entries": 1,
+            "matchingEntries": 1
+        },
+        {
+            "type": "TMPro.TMP_MaterialManager",
+            "field": "m_fallbackMaterials",
+            "assembly": "Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+            "status": "UNVERIFIED",
+            "initializationEvidence": "",
+            "reason": "No existing OnPreRender Canvas callback proves TMP cache initialization; static read skipped to avoid subscribing it",
+            "entries": 0,
+            "matchingEntries": 0
+        }
+    ],
+    "resourcesAppearedDuringInspection": [],
+    "resourceIdsDisappearedDuringInspection": [],
+    "errors": []
+}

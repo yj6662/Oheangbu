@@ -1,0 +1,11 @@
+{
+    "glyph": "나",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_PARTICLES_KTP_HIT_MOTIF_PATH_LIFETIME_30_60_120_SAMPLING",
+    "art": "AWAITING_USER_REVIEW",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "bodyMeshTriangles": 0,
+    "sources": "KTP/PublicTexture/par_Fire.png (8x1 atlas), Noise_02.png, pointLight.png; existing KTP cast/impact prefabs",
+    "scope": "Visual combustion only; no damage, speed, lights, collisions or gameplay edits"
+}

@@ -1,0 +1,667 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-09T05:04:02.696655+00:00",
+  "self_imposed_run_cap": 175,
+  "budget_basis": "Conservative implementation cap: 5 previews at 25 plus 5 refinements at 10. This is not described as a user-set credit limit.",
+  "balance_start": 568,
+  "price_checked_at": "2026-09-09T05:04:02.696666+00:00",
+  "price_source": "https://docs.meshy.ai/en/api/pricing",
+  "api_source": "https://docs.meshy.ai/en/api/text-to-3d",
+  "prices": {
+    "meshy7_ultra_preview": 25,
+    "meshy7_refine_2k_pbr": 10
+  },
+  "input_policy": "Authored text only. No KTP or other paid asset images uploaded.",
+  "automatic_post_retries": false,
+  "requests": [
+    {
+      "name": "016_ACF0_preview",
+      "id": "016_ACF0",
+      "glyph": "곰",
+      "family": "RootDeer",
+      "mode": "preview",
+      "created_at": "2026-09-09T05:04:12.126124+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "A fully three-dimensional ancient root-and-vine guardian deer inspired by Korean minhwa deer and longevity paintings. Dignified heavy neck, long deer torso, four distinct weight-bearing legs with substantial cloven hooves, clear open space between legs, organic branching antlers that read as old living wood. Broad interwoven roots form anatomy, thick continuous wooden tendons, restrained carved surface grain, a few broad leaf forms only. Alert neutral standing pose, head raised, legs slightly apart, antlers and ears clearly separated. Believable flowing anatomy with a readable silhouette from front, sides and back. Game creature, complete freestanding body. No pedestal, ground slab, text, clothing, jewelry, thin tangled twigs, tiny foliage clusters or toy proportions.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "config_sha256": "31565182efb574fd5f51e595d2bd1d227b0d9c18e6ff3dc9665ab928c1c66cde",
+      "task_id": "01a0848d-6469-73fa-9bca-ae73c0ca2d53",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:08:57.116481+00:00",
+      "files": [
+        {
+          "path": "Source\\016_ACF0\\preview\\model_urls_glb.glb",
+          "bytes": 561016,
+          "sha256": "811b70210f3bea78217bd2cb5f115771194f347640cf6cd0980bc2824264f76a",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12543,
+            "primitive_vertices": 15147,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Source\\016_ACF0\\preview\\model_urls_fbx.fbx",
+          "bytes": 538524,
+          "sha256": "792fd116b6b033839110f317294adb1df37ff9b5fc354c76e5b25184220e22c3"
+        },
+        {
+          "path": "Source\\016_ACF0\\preview\\thumbnail_url.png",
+          "bytes": 77996,
+          "sha256": "21d7978051bd79bf492ee62caef50548590b3fbcea1f6e41200e78d257ecb747"
+        }
+      ],
+      "geometry_review": {
+        "decision": "ACCEPTED_FOR_REFINE",
+        "notes": "Actual downloaded thumbnail viewed. Complete deer silhouette, substantial branching antlers, ears and distinct hooves visible; no pedestal. Neck has fibrous forms, but torso is smooth rather than strongly interwoven roots. Accept as deer geometry for bark texturing, not final art/rig pass. Hidden-side leg separation and full root detail remain unverified.",
+        "reviewed_at": "2026-09-09T05:08:01.234735+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "040_B188_preview",
+      "id": "040_B188",
+      "glyph": "놈",
+      "family": "FireHaetae",
+      "mode": "preview",
+      "created_at": "2026-09-09T05:04:14.393229+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "A powerful four-legged fire guardian beast inspired by traditional Korean haetae stone sculptures. Broad short muzzle, large watchful eyes under curled eyebrows, strong chest and haunches, thick rounded paws. Sculptural mane shaped as broad curling flame masses around neck and back, with substantial three-dimensional curved volume rather than thin cards. A short sturdy horn, curled tail. Functional neutral standing stance with all four legs individually separated and open gaps under belly and between paws, head lifted, mouth slightly open. Complete freestanding creature with convincing anatomy and dignified Korean guardian character, not a western dragon. No pedestal, ground slab, writing, armor, jewelry, attached scene, tiny floating particles or rigid rectangular blocks.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "config_sha256": "116d946e3f765611882fb1a03026e82c9b658e30105cd174a1c230a305ab4ac7",
+      "task_id": "01a0848d-6d33-7195-98cc-131621a47663",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:08:57.525241+00:00",
+      "files": [
+        {
+          "path": "Source\\040_B188\\preview\\model_urls_glb.glb",
+          "bytes": 584564,
+          "sha256": "f8bee9302cef411d6e19e2b568dc97636860fb361ee3c4fe1a2b0f2444d9df59",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12532,
+            "primitive_vertices": 15885,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Source\\040_B188\\preview\\model_urls_fbx.fbx",
+          "bytes": 558172,
+          "sha256": "5fb8dccbd5b2315fbb875f8c9f16d7fabfca3aae11fb834fb5a1f8f16379bf64"
+        },
+        {
+          "path": "Source\\040_B188\\preview\\thumbnail_url.png",
+          "bytes": 89575,
+          "sha256": "ee727b0e49743d0df536e5a6aa67686bc76edc31c4264556b86bddbf4683f639"
+        }
+      ],
+      "geometry_review": {
+        "decision": "ACCEPTED_FOR_REFINE",
+        "notes": "Actual downloaded thumbnail viewed. Broad short muzzle, curled brows, heavy paws, substantial curling flame mane read as guardian haetae. One forepaw is raised rather than all-feet neutral stance; ornamental rounded chest forms need later review. Accept geometry for material preview. Full four-limb underside and rigging remain unverified.",
+        "reviewed_at": "2026-09-09T05:08:01.243704+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "064_BAB8_preview",
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "family": "StoneJangseung",
+      "mode": "preview",
+      "created_at": "2026-09-09T05:04:16.766689+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "A heavy anthropomorphic stone guardian inspired by Korean seok-jangseung village guardian sculptures. Tall rectangular expressive face with exaggerated watchful eyes, broad carved nose and prominently exposed uneven large teeth. Broad shoulders, thick torso, two strong separated arms ending in recognizable closed hands, two sturdy separated legs and broad feet. Substantial rounded weathered granite volumes, sculpted organic joints and curved muscular stone contours, not stacked cubes. Neutral ready stance, elbows slightly bent, hands held away from torso, clear gaps at armpits and between thighs. Entire freestanding three-dimensional creature, resolved front and back. No base, pedestal, ground slab, inscriptions, text, hat signage, armor, Minecraft blocks, voxel shapes or toy style.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "config_sha256": "4bad9424f60adb6d8df064e2a299894ac659da85279804b71e95d67617ceb6ca",
+      "task_id": "01a0848d-7686-708c-9920-6cc132a7fb47",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:08:57.922528+00:00",
+      "files": [
+        {
+          "path": "Source\\064_BAB8\\preview\\model_urls_glb.glb",
+          "bytes": 570932,
+          "sha256": "727e8e0f95102d2dee37e91c25fd6051424161337f24ec14a7e9622cf8d5cc44",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12473,
+            "primitive_vertices": 15470,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Source\\064_BAB8\\preview\\model_urls_fbx.fbx",
+          "bytes": 546956,
+          "sha256": "3cb6f29937f6074923f65fcafac1f1096bfa4587ab99883253945295dee6787d"
+        },
+        {
+          "path": "Source\\064_BAB8\\preview\\thumbnail_url.png",
+          "bytes": 118068,
+          "sha256": "cb716c0cfe135deba65a65b80f64a9f85b65b236dbacf29a546ef013b2b00327"
+        }
+      ],
+      "geometry_review": {
+        "decision": "REJECTED_GEOMETRY",
+        "notes": "Actual downloaded thumbnail viewed. Rectangular guardian face exists but model includes obvious shoulder armor, bracers, skirt-like belt pieces and round ornamental buckle with possible inscription. This violates the unarmored weathered stone guardian/no writing direction. No refine or automatic retry.",
+        "reviewed_at": "2026-09-09T05:08:01.251147+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "088_C19C_preview",
+      "id": "088_C19C",
+      "glyph": "솜",
+      "family": "IronMinhwaTiger",
+      "mode": "preview",
+      "created_at": "2026-09-09T05:04:19.240745+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "A proud forged-iron guardian tiger inspired by the proportions and expression of Korean minhwa tiger paintings. Wide confident face, rounded muzzle and paws, alert slightly exaggerated eyes, curved powerful back, substantial haunches, continuous S-shaped tail held clear of body. Four distinct legs with clearly separated rounded paws, open gaps beneath belly. Strong organic tiger anatomy rendered as a continuous forged metal animal, shallow sculptural stripe grooves flowing across the body, not plates of armor. Functional neutral standing pose with head slightly raised and legs comfortably apart, readable front, side and back silhouettes. Complete freestanding three-dimensional beast. No pedestal, base, writing, jewels, armor, weapons, mechanical hinges, toy style or tangled thin whiskers.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "config_sha256": "ef7709a5737a3239d18db8e67b0259486c288e5d7dfbe99cb38ae467e66e2535",
+      "task_id": "01a0848d-8026-76cb-9dd8-30e815e6496d",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:08:58.333208+00:00",
+      "files": [
+        {
+          "path": "Source\\088_C19C\\preview\\model_urls_glb.glb",
+          "bytes": 655952,
+          "sha256": "c90dedff582bd943e74aa3cda8e6d223ab4869424b82d7f6860847f908216f5d",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12414,
+            "primitive_vertices": 18138,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Source\\088_C19C\\preview\\model_urls_fbx.fbx",
+          "bytes": 581420,
+          "sha256": "16e58a317c26a69eb0d9e0477d202f80cf5100c3ddf8a8da7466a16db86e2253"
+        },
+        {
+          "path": "Source\\088_C19C\\preview\\thumbnail_url.png",
+          "bytes": 65657,
+          "sha256": "9e2a8164be96d7b5ec714f84b30ad05c6b13858b622fe78f1d03edcac88da67b"
+        }
+      ],
+      "geometry_review": {
+        "decision": "ACCEPTED_FOR_REFINE",
+        "notes": "Actual downloaded thumbnail viewed. Full tiger anatomy with four legs, rounded paws, curved back and curling tail, open lower-leg gaps, no base or attached armor. Face/proportions lean naturalistic rather than strongly exaggerated minhwa; iron/ink texture is appropriate next preview. Accept for refine, not final cultural-style or rig pass.",
+        "reviewed_at": "2026-09-09T05:08:01.258983+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "112_C634_preview",
+      "id": "112_C634",
+      "glyph": "옴",
+      "family": "InkWaterImugi",
+      "mode": "preview",
+      "created_at": "2026-09-09T05:04:21.663433+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "A water guardian imugi inspired by Korean ink-painting serpentine dragons. Long thick muscular horizontal S-shaped body, substantial overlapping scales, broad expressive dragon head, branching antlers and flowing water-like mane built from thick rounded sculptural curls. Four small but distinct clawed legs spaced along the body, all separated from the torso, thick tapering tail continuing the horizontal S silhouette. Calm functional hovering-ready neutral pose with space under the belly and clear gaps between limbs and body, head looking forward. Freestanding 3D creature with resolved underside and back. Heavy flowing anatomy, not a western winged dragon. No wings, pedestal, sea base, thin fin sheets, hair cards, text, jewels, armor, tiny floating particles or narrow tangled strands.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "config_sha256": "a3d7df15fdb2112ece7d44c8f0b076e2730bfcbcb71125ac36d6e7dd6f4c6de0",
+      "task_id": "01a0848d-89bc-71c5-b980-a3018a03f0b9",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:08:58.719873+00:00",
+      "files": [
+        {
+          "path": "Source\\112_C634\\preview\\model_urls_glb.glb",
+          "bytes": 645340,
+          "sha256": "ee2579c886ec3615bdf1b692826d02b8f6437e2f7d14c90bb5b4a3f93f3db21d",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12528,
+            "primitive_vertices": 17785,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Source\\112_C634\\preview\\model_urls_fbx.fbx",
+          "bytes": 580140,
+          "sha256": "54336ec33a33faf9a2778f8ec676c60b23b87e4170b0973a2022b65286c3f624"
+        },
+        {
+          "path": "Source\\112_C634\\preview\\thumbnail_url.png",
+          "bytes": 80978,
+          "sha256": "98a4fe77089881d2a5620e386ee5200899c52164c4e1ad770ab893e626f22c55"
+        }
+      ],
+      "geometry_review": {
+        "decision": "REJECTED_GEOMETRY",
+        "notes": "Actual downloaded thumbnail viewed. Upright long-necked dragon with vertical torso and dominant hind legs, rather than horizontal thick S-bodied imugi. Thin spines and arm-like forelimbs fail requested robust water-guardian silhouette. No refine or automatic retry.",
+        "reviewed_at": "2026-09-09T05:08:01.266864+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "016_ACF0_refine",
+      "id": "016_ACF0",
+      "glyph": "곰",
+      "family": "RootDeer",
+      "mode": "refine",
+      "created_at": "2026-09-09T05:08:01.865862+00:00",
+      "config": {
+        "mode": "refine",
+        "preview_task_id": "01a0848d-6469-73fa-9bca-ae73c0ca2d53",
+        "ai_model": "meshy-7",
+        "texture_resolution": "2k",
+        "enable_pbr": true,
+        "texture_prompt": "Weathered grey-brown hardwood and old roots, deep charcoal grain, subdued moss green in crevices. Natural matte bark, low saturation Korean ink-painting palette, subtle weathering, dark hooves. Broad tonal planes, no bright magic glow, no gold, no jewelry, no painted text.",
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 10,
+      "reserved_credits": 10,
+      "consumed_credits": 10,
+      "status": "SUCCEEDED",
+      "config_sha256": "1c148f92c368a9c12d78a283d52eb0150e3f379f5c7f91891428920cf8d68d56",
+      "task_id": "01a08490-e5c8-711a-b21c-2e9f77f68757",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:08:59.132778+00:00",
+      "files": [
+        {
+          "path": "Source\\016_ACF0\\refine\\model_urls_glb.glb",
+          "bytes": 9202804,
+          "sha256": "b4dc379bdd8d237eec46c6d17345190d9d7cc6660c6d580299a076fcb31f8844",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12543,
+            "primitive_vertices": 15147,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included.",
+            "skins": 0,
+            "animations": 0
+          }
+        },
+        {
+          "path": "Source\\016_ACF0\\refine\\model_urls_fbx.fbx",
+          "bytes": 13319484,
+          "sha256": "91e4200f4383e6a78e8747c06f9ab75cba3aa46e82a460bc407e7e8743f968eb"
+        },
+        {
+          "path": "Source\\016_ACF0\\refine\\thumbnail_url.png",
+          "bytes": 87472,
+          "sha256": "e3480e80dc69a3bd85f585a82ceb08cf89da325b5db4d7e312eee182d2da915a",
+          "image": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA"
+          }
+        },
+        {
+          "path": "Source\\016_ACF0\\refine\\texture_urls_0_base_color.png",
+          "bytes": 5302104,
+          "sha256": "225429d376b312e04a9d2c4f9ba91e83a0099bae499822c0fb7a813924ac159b",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB"
+          }
+        },
+        {
+          "path": "Source\\016_ACF0\\refine\\texture_urls_0_metallic.png",
+          "bytes": 41978,
+          "sha256": "6d3480a5fb2eab1ec0c599a34f73fc3b07c32bd796f83b23fc4e85c915271963",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "L"
+          }
+        },
+        {
+          "path": "Source\\016_ACF0\\refine\\texture_urls_0_roughness.png",
+          "bytes": 1319034,
+          "sha256": "5cfec4fd7c3d92cbda78e65269bcf2bfbea67576bb14ab1f0662a36b4ab36e71",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "L"
+          }
+        },
+        {
+          "path": "Source\\016_ACF0\\refine\\texture_urls_0_normal.png",
+          "bytes": 6107891,
+          "sha256": "008c722a53f8dc3dd2056f36851bd60adbb624158c662c475207af533af79cbf",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB"
+          }
+        }
+      ],
+      "material_review": {
+        "reviewed_at": "2026-09-09T05:12:13.380223+00:00",
+        "status": "IMPORT_CANDIDATE_LOCAL_REWORK_REMAINS",
+        "notes": "Refined thumbnail and actual base-color image viewed. Texture is strongly grey/white rather than brown root wood; smooth deer torso remains. Geometry is an import candidate but root anatomy/material direction still needs local rework. No final art pass."
+      }
+    },
+    {
+      "name": "040_B188_refine",
+      "id": "040_B188",
+      "glyph": "놈",
+      "family": "FireHaetae",
+      "mode": "refine",
+      "created_at": "2026-09-09T05:08:03.657116+00:00",
+      "config": {
+        "mode": "refine",
+        "preview_task_id": "01a0848d-6d33-7195-98cc-131621a47663",
+        "ai_model": "meshy-7",
+        "texture_resolution": "2k",
+        "enable_pbr": true,
+        "texture_prompt": "Dark charcoal and weathered reddish clay body, muted burnt sienna flame mane with sparse warm ember orange recessed accents. Matte, rough sculptural surfaces with natural carved grooves. Low saturation, restrained Korean temple guardian palette. No luminous neon, jewels, metallic armor or painted symbols.",
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 10,
+      "reserved_credits": 10,
+      "consumed_credits": 10,
+      "status": "SUCCEEDED",
+      "config_sha256": "8975ddb9e5da60c561e77f1235872083366c5928ac38cdd8e1d8958ff309b376",
+      "task_id": "01a08490-ecd3-7058-b976-6405be0a1bdd",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:09:02.035580+00:00",
+      "files": [
+        {
+          "path": "Source\\040_B188\\refine\\model_urls_glb.glb",
+          "bytes": 7247804,
+          "sha256": "ffed15156d45fc261fa27b55c4c3b2f58595d963183d71cc7865d02174b7e491",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12532,
+            "primitive_vertices": 15885,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included.",
+            "skins": 0,
+            "animations": 0
+          }
+        },
+        {
+          "path": "Source\\040_B188\\refine\\model_urls_fbx.fbx",
+          "bytes": 11868748,
+          "sha256": "6a55c194e6ab60167e71b7b546af1e4b7e5ae6a0d085868cee1ec546cad03e71"
+        },
+        {
+          "path": "Source\\040_B188\\refine\\thumbnail_url.png",
+          "bytes": 100208,
+          "sha256": "0281db4ab459b43a574133154fd9c37fbcacc6bd6a839b13f26cbc2730b6282e",
+          "image": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA"
+          }
+        },
+        {
+          "path": "Source\\040_B188\\refine\\texture_urls_0_base_color.png",
+          "bytes": 5418519,
+          "sha256": "e1795524e12b5ccee755494e5f7129ffc35a3e36bccc90dbbb0c67f04a0ea0fa",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB"
+          }
+        },
+        {
+          "path": "Source\\040_B188\\refine\\texture_urls_0_metallic.png",
+          "bytes": 32959,
+          "sha256": "1ac4a9a5583596f2e233602e6653ec0f8e25f9369413af431cf8e01f4a075049",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "L"
+          }
+        },
+        {
+          "path": "Source\\040_B188\\refine\\texture_urls_0_roughness.png",
+          "bytes": 1395906,
+          "sha256": "249ed3467dedfb4dd02031db55cf24abe821f0f112fa363cbad74cb53658c039",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "L"
+          }
+        },
+        {
+          "path": "Source\\040_B188\\refine\\texture_urls_0_normal.png",
+          "bytes": 4453211,
+          "sha256": "6a8dc862d6ccb39d51ac682ac29f0bcfa76a4dbc7f4f1cbe921fcc688cc1a8d4",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB"
+          }
+        }
+      ],
+      "material_review": {
+        "reviewed_at": "2026-09-09T05:12:13.380233+00:00",
+        "status": "IMPORT_CANDIDATE_LOCAL_REWORK_REMAINS",
+        "notes": "Refined thumbnail viewed. Black charcoal body and orange broad flame curls read clearly. The response is relatively glossy and bright versus the intended matte muted look. Raised forepaw and decorative chest forms require local review. No final art or four-leg rig pass."
+      }
+    },
+    {
+      "name": "088_C19C_refine",
+      "id": "088_C19C",
+      "glyph": "솜",
+      "family": "IronMinhwaTiger",
+      "mode": "refine",
+      "created_at": "2026-09-09T05:08:05.327611+00:00",
+      "config": {
+        "mode": "refine",
+        "preview_task_id": "01a0848d-8026-76cb-9dd8-30e815e6496d",
+        "ai_model": "meshy-7",
+        "texture_resolution": "2k",
+        "enable_pbr": true,
+        "texture_prompt": "Blackened forged iron with restrained dark steel highlights, matte hammered surface and gentle graphite-grey ridges. Recessed tiger stripes in darker charcoal, subtle oxidized brown weathering. Dignified low saturation metal, no polished gold, no gems, no attached armor, no colorful paint, no neon glow.",
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 10,
+      "reserved_credits": 10,
+      "consumed_credits": 10,
+      "status": "SUCCEEDED",
+      "config_sha256": "5f1f2cd1f42e3c4aef98fc1b5c5c1d510310ac88e9485656b6cb9b4fa766ba1e",
+      "task_id": "01a08490-f350-722e-baf5-3b03233e3707",
+      "progress": 100,
+      "polled_at": "2026-09-09T05:09:04.767826+00:00",
+      "files": [
+        {
+          "path": "Source\\088_C19C\\refine\\model_urls_glb.glb",
+          "bytes": 9612780,
+          "sha256": "9b00b6dddd42e10fbd906b6d684c036d5272e80d094d2d5ee3e9382cbe1b7312",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12414,
+            "primitive_vertices": 18138,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included.",
+            "skins": 0,
+            "animations": 0
+          }
+        },
+        {
+          "path": "Source\\088_C19C\\refine\\model_urls_fbx.fbx",
+          "bytes": 15349852,
+          "sha256": "bfc5d67b380bb679c9654e3d9d766be135538a5ba2b3c663b08dc6562c4ef449"
+        },
+        {
+          "path": "Source\\088_C19C\\refine\\thumbnail_url.png",
+          "bytes": 80909,
+          "sha256": "c86bf811ffbe757b8812d2460f5c8d76533ee1564a9444539b2a0dac2c1e81b2",
+          "image": {
+            "width": 512,
+            "height": 512,
+            "mode": "RGBA"
+          }
+        },
+        {
+          "path": "Source\\088_C19C\\refine\\texture_urls_0_base_color.png",
+          "bytes": 5963450,
+          "sha256": "4431aec8e02a705a7bf4f95d8ceb3608a2ffbacdc1806898fbc15adc1d6d09b8",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB"
+          }
+        },
+        {
+          "path": "Source\\088_C19C\\refine\\texture_urls_0_metallic.png",
+          "bytes": 1563808,
+          "sha256": "ed133e17ff37c107de247553b479374e3ac1ef3cc1cc125e0bada9916b5fd14c",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "L"
+          }
+        },
+        {
+          "path": "Source\\088_C19C\\refine\\texture_urls_0_roughness.png",
+          "bytes": 1486446,
+          "sha256": "2e1cde56ee47a2d104140203e058c048b924098252b21d4f18ba023cd9a5728b",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "L"
+          }
+        },
+        {
+          "path": "Source\\088_C19C\\refine\\texture_urls_0_normal.png",
+          "bytes": 5744390,
+          "sha256": "765c252b712ecc43a0100bdb1dbd451055cb55973bbc7cb1ad802ec592bac7a3",
+          "image": {
+            "width": 2048,
+            "height": 2048,
+            "mode": "RGB"
+          }
+        }
+      ],
+      "material_review": {
+        "reviewed_at": "2026-09-09T05:12:13.380238+00:00",
+        "status": "IMPORT_CANDIDATE_LOCAL_REWORK_REMAINS",
+        "notes": "Refined thumbnail viewed. Dark metal tiger and sculptural stripe grooves read distinctly. Mouth/face has warmer pale accents and polished highlights; adjust roughness/palette locally. Minhwa exaggeration is restrained rather than strong. No final cultural-style or rig pass."
+      }
+    }
+  ],
+  "balance_after_generation": 413,
+  "generation_finished_at": "2026-09-09T05:10:14.402776+00:00",
+  "generation_status": "COMPLETE_THREE_TEXTURED_TWO_GEOMETRY_REJECTED",
+  "final_consumed_credits": 155,
+  "further_paid_requests_stopped": true
+}

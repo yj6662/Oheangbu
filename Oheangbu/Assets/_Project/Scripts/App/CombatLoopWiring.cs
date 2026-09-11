@@ -39,6 +39,8 @@ namespace Oheangbu.App
         [Header("표현")]
         [SerializeField] private ElementPaletteSO _palette;
         [SerializeField] private HudController _hud;
+        [SerializeField] private SpellVFX120.KtpContactProfile _contactVfx;
+        private readonly List<SpellVFX120.KtpContactEffect> _contacts = new List<SpellVFX120.KtpContactEffect>();
 
         [Header("비락온 자유 조준의 프로토 근사(§10.1) — 전방 원뿔 명중")]
         [SerializeField, Range(1f, 45f)] private float _freeAimAngle = 15f;
@@ -55,8 +57,12 @@ namespace Oheangbu.App
         {
             public EnemyVitals Target;
             public float ImpactTime;
+            public Element Element;
+            public char Letter;
             public float Power;
         }
+        private char _guardVisualLetter;
+        private uint _guardVisualRevision;
 
         private readonly List<PendingCast> _pendingCasts = new List<PendingCast>();
 
@@ -85,6 +91,8 @@ namespace Oheangbu.App
         private void Awake()
         {
             CollectControllers();
+            if (_contactVfx == null)
+                _contactVfx = Resources.Load<SpellVFX120.KtpContactProfile>(SpellVFX120.KtpContactProfile.ResourcePath);
         }
 
         private void CollectControllers()
@@ -143,6 +151,9 @@ namespace Oheangbu.App
             if (_enemyVitals != null) _enemyVitals.Died -= OnEnemyDied;
             UnhookServices();
             _pendingCasts.Clear(); // 비활성 동안의 기한 지난 착탄이 재활성 시 유령 피해가 되지 않게
+            _guardVisualLetter = default;
+            foreach (var effect in _contacts) if (effect != null) Destroy(effect.gameObject);
+            _contacts.Clear();
         }
 
         private bool _hooked;
@@ -151,6 +162,7 @@ namespace Oheangbu.App
         {
             TryHookServices();
             TickPendingCasts();
+            _contacts.RemoveAll(effect => effect == null);
         }
 
         // 착탄 시각 도래 = 피해 적용(피해=착탄 동기화 — 5차 검수). 대상이 먼저 죽었으면 허공이 된다
@@ -161,7 +173,13 @@ namespace Oheangbu.App
                 if (Time.time < _pendingCasts[i].ImpactTime) continue;
                 PendingCast pending = _pendingCasts[i];
                 _pendingCasts.RemoveAt(i);
-                if (pending.Target != null && pending.Target.IsAlive) pending.Target.TakeDamage(pending.Power);
+                if (pending.Target != null && pending.Target.IsAlive)
+                {
+                    var point=pending.Target.transform.position+Vector3.up*.8f;
+                    bool positive=pending.Power*pending.Target.DamageMultiplier>0;
+                    pending.Target.TakeDamage(pending.Power);
+                    if(positive&&_contactVfx!=null)SpawnContact(_contactVfx.ParrySource(pending.Element),point,_contactVfx.ParryScale,pending.Element,pending.Letter);
+                }
             }
         }
 
@@ -222,6 +240,7 @@ namespace Oheangbu.App
 
         private void ResolveParry(SpellCast cast)
         {
+            _guardVisualLetter = default;
             // 먹 부족 = 불발 취급(§10.1) — 방어막 자체가 서지 않고, 표현도 증발한다(7차 검수:
             // 없는 방어를 개화로 보여주지 않는다)
             if (_ink == null || !_ink.TrySpend(_config.ParryInkCost))
@@ -234,15 +253,27 @@ namespace Oheangbu.App
             // 성공 보상(그로기·환급·이펙트)은 OnParryImpactResolved에서 — 판정점이 임팩트로 옮겨갔으므로.
             // ⚠ 어휘 CSV 「허공 시전 잔존 없음」의 전이 실험 — 채택 시 DECISIONS+CSV 정본 반영 필요
             _judge?.RaiseGuard(cast.Element, Time.time);
+            if (_judge != null) { _guardVisualLetter = cast.Letter; _guardVisualRevision = _judge.GuardRevision; }
         }
 
         // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
         private void OnParryImpactResolved(ParryOutcome outcome, Element guardElement, Vector3 impactPoint)
         {
             ParryResolved?.Invoke(outcome, guardElement, impactPoint);
+            bool originalContact = false;
+            if (_contactVfx != null && (outcome == ParryOutcome.Success || outcome == ParryOutcome.Half))
+            {
+                float scale = _contactVfx.ParryScale * (outcome == ParryOutcome.Half ? _contactVfx.HalfScale : 1f);
+                char letter = _judge != null && _guardVisualRevision == _judge.GuardRevision ? _guardVisualLetter : default;
+                originalContact = SpawnContact(_contactVfx.ParrySource(guardElement), impactPoint, scale,guardElement,letter);
+            }
+            if(outcome == ParryOutcome.Success || outcome == ParryOutcome.Fail || outcome == ParryOutcome.None)
+                _guardVisualLetter = default;
+            bool authoredGuardContact = outcome == ParryOutcome.Success && ((guardElement == Element.Wood
+                && SpellVFX120.Vfx120Effect.TrySignalBambooParry(impactPoint, originalContact)) || (guardElement == Element.Fire && SpellVFX120.Vfx120Effect.TrySignalFireParry(impactPoint, originalContact)));
 
             // 반성공 소피드백 [SPELL-FIDELITY §4.6] — 보상 없이 축소 버스트만: 「반쪽으로 받아냈다」
-            if (outcome == ParryOutcome.Half && _palette != null)
+            if (outcome == ParryOutcome.Half && !originalContact && _palette != null)
             {
                 ParryBurstEffect.Spawn(impactPoint,
                     _palette.GetBaseColor(InitialOf(guardElement)), Camera.main, 0.5f);
@@ -256,7 +287,31 @@ namespace Oheangbu.App
             // 접점 버스트(임시 — 3차 검수): 투사체가 방어막에 부딪혀 꺼지는 자리에서
             // 방어막 속성색 조각이 터진다. 색=팔레트 단일 출처(색=의미)
             Color burst = _palette != null ? _palette.GetBaseColor(InitialOf(guardElement)) : Color.white;
-            ParryBurstEffect.Spawn(impactPoint, burst, Camera.main);
+            if (!originalContact && !authoredGuardContact) ParryBurstEffect.Spawn(impactPoint, burst, Camera.main);
+        }
+
+        private bool SpawnContact(GameObject source, Vector3 point, float scale, Element? element=null, char letter=default)
+        {
+            var emphasis = _contactVfx.ForSpell(letter);
+            if(emphasis != null) scale *= emphasis.KtpContactMultiplier;
+            bool elementalGuard=emphasis!=null&&emphasis.KtpPatternShield&&emphasis.GuardContactPrefab!=null;
+            if(elementalGuard)source=emphasis.GuardContactPrefab;
+            bool areaContact=emphasis!=null&&emphasis.AreaContactPrefab!=null;
+            if(areaContact)source=emphasis.AreaContactPrefab;
+            var cam = Camera.main;
+            if(!elementalGuard&&emphasis!=null&&cam!=null&&emphasis.KtpContactSurfaceOffset>0)
+                point+=(cam.transform.position-point).normalized*emphasis.KtpContactSurfaceOffset;
+            var facing = cam != null ? cam.transform.rotation : Quaternion.identity;
+            var effect = SpellVFX120.KtpContactEffect.Spawn(source, point,
+                areaContact?facing:elementalGuard?(emphasis.KtpRectShield?facing:Quaternion.identity):facing * Quaternion.Euler(_contactVfx.SourceEuler), scale, gameObject.scene);
+            if (effect == null) return false;
+            if(!elementalGuard&&!areaContact)
+            {
+                if(emphasis != null) effect.ApplyElementColor(emphasis.Pigment, emphasis.KtpContactBrightness>0?emphasis.KtpContactBrightness:emphasis.KtpBrightness);
+                else if(element.HasValue&&_palette!=null)effect.ApplyElementColor(_palette.GetBaseColor(InitialOf(element.Value)));
+            }
+            _contacts.Add(effect);
+            return true;
         }
 
         // Element → 초성(팔레트 키). 배속은 ElementRelations.FromInitial의 역방향(언어적 사실 — 밸런스 아님)
@@ -339,6 +394,8 @@ namespace Oheangbu.App
 
         // 원형 일제 [고 「지정 영역에서 가시 일제 솟음」]: 중심=조준 대상 위치(없으면 조준 전방 고정 거리),
         // 반경 안 생존 적 전수가 같은 시각(형성 딜레이)에 맞는다. 연출(ThornRise)의 중심=계획의 점
+        private int _areaSpikeSeed;
+        private int _scatterVolleySeed;
         private void ResolveCircleAttack(SpellCast cast)
         {
             float radius = cast.Area.Radius > 0f ? cast.Area.Radius : 2.5f;
@@ -351,12 +408,14 @@ namespace Oheangbu.App
                 Cast = cast,
                 Area = new AreaImpactPlan { Shape = AreaShape.Circle, Point = center, Radius = radius, Delay = delay },
             };
+            if(cast.Letter=='고') AreaSpikePlanner.Fill(plan.Area, ++_areaSpikeSeed);
             float impactTime = Time.time + delay;
             foreach (var enemy in _targets)
             {
                 if (enemy == null || !enemy.IsAlive) continue;
                 if (!AreaGeometry.InCircle(center, enemy.transform.position, radius, out _)) continue;
-                Schedule(plan, enemy, impactTime, cast.Power);
+                float at=cast.Letter=='고'?Time.time+AreaSpikePlanner.NearestRise(plan.Area,enemy.transform.position):impactTime;
+                Schedule(plan, enemy, at, cast.Power);
             }
             _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
             _brushAdapter?.SetPatternAreaPlan(plan.Area);
@@ -365,6 +424,7 @@ namespace Oheangbu.App
 
         // 경로 타격 [오 「전진하는 느린 파도」·모 「직선 경로 모래폭풍」]: 시전자 발치에서 대상(없으면 전방)으로
         // 복도가 뻗고, 전선이 닿는 시각(차오름 + 경로 위 거리/속도)에 적별로 맞는다. 연출(GroundWave)이 같은 계획으로 전진
+        private int _earthRiftSeed;
         private void ResolvePathAttack(SpellCast cast)
         {
             float halfWidth = cast.Area.Radius > 0f ? cast.Area.Radius : 1.5f;
@@ -378,7 +438,7 @@ namespace Oheangbu.App
             var plan = new CastPlan
             {
                 Cast = cast,
-                Area = new AreaImpactPlan { Shape = AreaShape.Path, Point = start, Direction = direction, Radius = halfWidth, Length = length, Speed = speed, Delay = delay },
+                Area = new AreaImpactPlan { Shape = AreaShape.Path, Point = start, Direction = direction, Radius = halfWidth, Length = length, Speed = speed, Delay = delay, VisualSeed = cast.Letter == '모' ? ++_earthRiftSeed : 0 },
             };
             foreach (var enemy in _targets)
             {
@@ -416,8 +476,33 @@ namespace Oheangbu.App
             var plan = new CastPlan
             {
                 Cast = cast,
-                Area = new AreaImpactPlan { Shape = AreaShape.Volley, Direction = forward, Length = range, Speed = speed, Delay = delay, Radius = halfAngle },
+                Area = new AreaImpactPlan { Shape = AreaShape.Volley, Direction = forward, Length = range, Speed = speed, Delay = delay, Radius = halfAngle, CreatedAt=Time.time, ShotCount=shots, ShotInterval=interval },
             };
+            if (cast.Area.ScatterVolley)
+            {
+                // Stratified fan directions are fixed once. Only rays crossing a target reserve damage.
+                var random=new System.Random(++_scatterVolleySeed);int[] order=new int[shots];
+                for(int i=0;i<shots;i++)order[i]=i;
+                for(int i=shots-1;i>0;i--){int j=random.Next(i+1);int n=order[i];order[i]=order[j];order[j]=n;}
+                for(int i=0;i<shots;i++)
+                {
+                    float angle=((order[i]+.2f+(float)random.NextDouble()*.6f)/shots*2-1)*halfAngle;
+                    Vector3 ray=Quaternion.AngleAxis(angle,Vector3.up)*forward;
+                    EnemyVitals hitTarget=null;float distance=range;
+                    foreach(var candidate in candidates)
+                    {
+                        Vector3 relative=AreaGeometry.Flat(candidate.vitals.transform.position-origin);float along=Vector3.Dot(relative,ray);
+                        if(along<=0||along>distance||(relative-ray*along).sqrMagnitude>.65f*.65f)continue;
+                        hitTarget=candidate.vitals;distance=along;
+                    }
+                    float launch=Time.time+delay+i*interval,impact=launch+distance/speed;
+                    var hit=hitTarget!=null?Schedule(plan,hitTarget,impact,cast.Power/shots):new PlannedHit{ImpactTime=impact};
+                    hit.LaunchTime=launch;hit.HasImpactPoint=true;hit.ImpactPoint=origin+ray*distance+Vector3.up*(.65f+(float)random.NextDouble()*.8f);
+                    plan.Area.Shots.Add(hit);
+                }
+                plan.Area.Point=origin+forward*range;
+                _brushAdapter?.SetPatternAttackTarget(null,0f);_brushAdapter?.SetPatternAreaPlan(plan.Area);CastPlanned?.Invoke(plan);return;
+            }
             if (candidates.Count == 0)
             {
                 plan.Area.Point = AimPoint(range);
@@ -433,6 +518,7 @@ namespace Oheangbu.App
                 var target = candidates[i % candidates.Count].vitals;
                 float flight = Vector3.Distance(origin, target.transform.position) / speed;
                 var hit = Schedule(plan, target, Time.time + delay + i * interval + flight, perShot);
+                hit.LaunchTime=Time.time+delay+i*interval;
                 plan.Area.Shots.Add(hit);
             }
             plan.Area.Point = candidates[0].vitals.transform.position;
@@ -444,7 +530,7 @@ namespace Oheangbu.App
         // 착탄 예약 = 피해 시계(PendingCast) + 계획 기록 — 같은 값 한 번만
         private PlannedHit Schedule(CastPlan plan, EnemyVitals target, float impactTime, float power)
         {
-            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power });
+            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter });
             var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power };
             plan.Hits.Add(hit);
             return hit;
@@ -510,10 +596,18 @@ namespace Oheangbu.App
         }
 
         // 피격 = 작도 중단(COMBAT-ATTACK 기본 규칙) — 글자만 소멸·모드 유지(SPEC-DRAWING-INPUT §3)
-        private void OnPlayerDamaged(float _)
+        private void OnPlayerDamaged(float damage)
         {
             _drawingInput?.InterruptLetter();
             RefreshHud();
+            var cam = Camera.main;
+            if (damage > 0 && _contactVfx != null && cam != null)
+            {
+                var offset = _contactVfx.PlayerHitOffset;
+                var point = cam.transform.TransformPoint(new Vector3(offset.x, offset.y,
+                    Mathf.Max(cam.nearClipPlane + .2f, _contactVfx.PlayerHitDistance)));
+                SpawnContact(_contactVfx.PlayerHit, point, _contactVfx.PlayerHitScale);
+            }
         }
 
         private void OnBlossomed()

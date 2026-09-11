@@ -1,0 +1,414 @@
+{
+  "sourceReport": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\gameplay_diagnostic_camera_audit.json",
+  "reportSha256": "af25426cce81007c052afa531a9b5ec132b6b3660724aa8cf05b352f5406b5a2",
+  "captureDirectory": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic",
+  "scope": "Unmodified actual camera frames stacked vertically in ascending observed time; no overlays, color edits, scaling, or simulated replacement. Diagnostic camera, not player view.",
+  "sourceCount": 45,
+  "rows": [
+    {
+      "glyph": "가",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\01_가_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\가_spawn_observed_f000005.png",
+          "phase": "spawn_observed",
+          "age": 0.07421780377626419,
+          "observedHits": 0,
+          "sha256": "13f4dd30cba906797d87f79eb00b9baac2d852f970b7c3567bcef5a84f36e147"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\가_first_damage_observed_f000006.png",
+          "phase": "first_damage_observed",
+          "age": 0.26604151725769043,
+          "observedHits": 1,
+          "sha256": "d54a6a90179d241c032c21f6c4e4ebd33325b47cd7ac9e8a02d7e814f5b02e30"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\가_mid_lifetime_observed_f000057.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.5804806351661682,
+          "observedHits": 1,
+          "sha256": "ce3a870a2565e68d7d3be1ff889e7fc88f82c29e2e9a760658087f7d757fe3fa"
+        }
+      ]
+    },
+    {
+      "glyph": "나",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\02_나_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\나_spawn_observed_f000208.png",
+          "phase": "spawn_observed",
+          "age": 0.007256101351231337,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\나_first_damage_observed_f000255.png",
+          "phase": "first_damage_observed",
+          "age": 0.3260553777217865,
+          "observedHits": 1,
+          "sha256": "c8f1db705149e18a1a7688b109077631728a56cce808448322e3daa6b2e9c3db"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\나_mid_lifetime_observed_f000303.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.6269972324371338,
+          "observedHits": 1,
+          "sha256": "da22032c0238d38a2da6af445968557308b9c681c8fccdbf0383738cc584ffac"
+        }
+      ]
+    },
+    {
+      "glyph": "마",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\03_마_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\마_spawn_observed_f000451.png",
+          "phase": "spawn_observed",
+          "age": 0.0062407031655311584,
+          "observedHits": 0,
+          "sha256": "d85cd4b5bc80b34b875c945e92ede1b52f83d5a442aa5fcb436221e106bbd873"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\마_first_damage_observed_f000504.png",
+          "phase": "first_damage_observed",
+          "age": 0.3330068290233612,
+          "observedHits": 1,
+          "sha256": "8c23e3e80171f746e48a17f7f0c002ab35b6b47070276109869f6813b4162230"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\마_mid_lifetime_observed_f000612.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.9000357985496521,
+          "observedHits": 1,
+          "sha256": "8bf2f2197b77276bde11f4d0cd085425c0996abf6bbf559a228703d04b4a1635"
+        }
+      ]
+    },
+    {
+      "glyph": "사",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\04_사_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\사_spawn_observed_f000829.png",
+          "phase": "spawn_observed",
+          "age": 0.007209800183773041,
+          "observedHits": 0,
+          "sha256": "d0b6c86e1af6b0294fd7ec7fc03b5e93cba3bfa83a33fdbe628b02c728447696"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\사_first_damage_observed_f000849.png",
+          "phase": "first_damage_observed",
+          "age": 0.17948631942272186,
+          "observedHits": 1,
+          "sha256": "28ab029ed46d5f1f7fe1a75eabb30d55e287126317b5e31a8cdc6de784df4695"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\사_mid_lifetime_observed_f000911.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.547768771648407,
+          "observedHits": 1,
+          "sha256": "03996ab67be5b7e92a2d46fbfbb65e838275a463e2d3af0b17fdd1a8ed1f95ed"
+        }
+      ]
+    },
+    {
+      "glyph": "아",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\05_아_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\아_spawn_observed_f001041.png",
+          "phase": "spawn_observed",
+          "age": 0.005531498230993748,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\아_first_damage_observed_f001117.png",
+          "phase": "first_damage_observed",
+          "age": 0.5582985281944275,
+          "observedHits": 1,
+          "sha256": "31dd9e143a50e40d0e38e6724d6f2756fadf873cb3241bd2a6973a98c9b67973"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\아_mid_lifetime_observed_f001170.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.9764167070388794,
+          "observedHits": 1,
+          "sha256": "907ec9e52451dd86de5c899e8a5a53e35bd847455ef7df3cc755d1c8b34f8994"
+        }
+      ]
+    },
+    {
+      "glyph": "고",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\06_고_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\고_spawn_observed_f001386.png",
+          "phase": "spawn_observed",
+          "age": 0.007252302952110767,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\고_first_damage_observed_f001424.png",
+          "phase": "first_damage_observed",
+          "age": 0.2939508855342865,
+          "observedHits": 3,
+          "sha256": "5adbdf14a7da59f1a2f33d65aa0ba0e382cc814a8245ac6ae7dd9ed5f8be7609"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\고_mid_lifetime_observed_f001532.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.9521938562393188,
+          "observedHits": 3,
+          "sha256": "53ec2168906794844eb890053f53808bf7848128af353006cf6a5e0345e393de"
+        }
+      ]
+    },
+    {
+      "glyph": "노",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\07_노_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\노_spawn_observed_f001753.png",
+          "phase": "spawn_observed",
+          "age": 0.0069784014485776424,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\노_first_damage_observed_f001817.png",
+          "phase": "first_damage_observed",
+          "age": 0.3950408101081848,
+          "observedHits": 3,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\노_mid_lifetime_observed_f001907.png",
+          "phase": "mid_lifetime_observed",
+          "age": 0.9000502824783325,
+          "observedHits": 3,
+          "sha256": "f6826289e5b380b7a94b2b966ad7bab8de7a893ae0b4615560499dfde1b8ba8d"
+        }
+      ]
+    },
+    {
+      "glyph": "모",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\08_모_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\모_spawn_observed_f002116.png",
+          "phase": "spawn_observed",
+          "age": 0.007407199591398239,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\모_first_damage_observed_f002313.png",
+          "phase": "first_damage_observed",
+          "age": 1.2518450021743774,
+          "observedHits": 1,
+          "sha256": "7fe87f0962790b6473b786a8a055aea7ad301c183594c747d28366a1931bac62"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\모_mid_lifetime_observed_f002325.png",
+          "phase": "mid_lifetime_observed",
+          "age": 1.4108004570007324,
+          "observedHits": 3,
+          "sha256": "c3451a8528a1299a4b234a4fe52624af6279a710bdd21d0f1a1f214e1642fe99"
+        }
+      ]
+    },
+    {
+      "glyph": "소",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\09_소_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\소_spawn_observed_f002634.png",
+          "phase": "spawn_observed",
+          "age": 0.007291000336408615,
+          "observedHits": 0,
+          "sha256": "2ac51fdb478463f9e0d7d5044c81a2b036ec8e299a70fd4d8959615842419c98"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\소_mid_lifetime_observed_f002951.png",
+          "phase": "mid_lifetime_observed",
+          "age": 1.5756198167800903,
+          "observedHits": 0,
+          "sha256": "d7a4be990b7694ad085e52804b4a3ea46918183c4f2710cfc41e5a54009f8a40"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\소_first_damage_observed_f002953.png",
+          "phase": "first_damage_observed",
+          "age": 1.6315687894821167,
+          "observedHits": 1,
+          "sha256": "776103cb0c215475c7c04f337a0b9265bb29187d8345264867d45ef0861e5c77"
+        }
+      ]
+    },
+    {
+      "glyph": "오",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\10_오_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\오_spawn_observed_f003257.png",
+          "phase": "spawn_observed",
+          "age": 0.00705109816044569,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\오_first_damage_observed_f003521.png",
+          "phase": "first_damage_observed",
+          "age": 1.4456008672714233,
+          "observedHits": 1,
+          "sha256": "4dd35ebdaa4805fcc12ab092293b213dd7670e3f703d63d0efd9b18c9da3501e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\오_mid_lifetime_observed_f003568.png",
+          "phase": "mid_lifetime_observed",
+          "age": 1.741769790649414,
+          "observedHits": 3,
+          "sha256": "66536186ec598ae12f2bc7b18e3892be58ff26461a444dfda503b13cf749e572"
+        }
+      ]
+    },
+    {
+      "glyph": "거",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\11_거_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\거_spawn_observed_f003911.png",
+          "phase": "spawn_observed",
+          "age": 0.010589299723505974,
+          "observedHits": 0,
+          "sha256": "cf256f187dc622a4e4e54a363b1c80ca6789a29afc69b60aa0a35285d2fe9dfc"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\거_guard_bright_window_end_observed_f004055.png",
+          "phase": "guard_bright_window_end_observed",
+          "age": 0.8945380449295044,
+          "observedHits": 0,
+          "sha256": "8b05948589197234839cb992282630c6f5f7844e6749635f0687ee29204fd34b"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\거_mid_lifetime_observed_f004274.png",
+          "phase": "mid_lifetime_observed",
+          "age": 2.002918243408203,
+          "observedHits": 0,
+          "sha256": "171b3a93e80c3e4a4cf043eac7e12dfc8ac94b0d4beed666f55e804263711c9a"
+        }
+      ]
+    },
+    {
+      "glyph": "너",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\12_너_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\너_spawn_observed_f004725.png",
+          "phase": "spawn_observed",
+          "age": 0.011118799448013306,
+          "observedHits": 0,
+          "sha256": "1c445fa8cc99797a8ac818069885339ce815ae904d80f25705ac57f1318e515e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\너_guard_bright_window_end_observed_f004869.png",
+          "phase": "guard_bright_window_end_observed",
+          "age": 0.895372211933136,
+          "observedHits": 0,
+          "sha256": "4c122e79e738bd70ec0833eb078136a69b942d15ba9bf33470b621e7172b3c06"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\너_mid_lifetime_observed_f005091.png",
+          "phase": "mid_lifetime_observed",
+          "age": 2.002161979675293,
+          "observedHits": 0,
+          "sha256": "9b155aa1fc143e865748f431d78b0cbc9765e81b26f34e1e82319eb977511a2d"
+        }
+      ]
+    },
+    {
+      "glyph": "머",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\13_머_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\머_spawn_observed_f005538.png",
+          "phase": "spawn_observed",
+          "age": 0.006754698231816292,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\머_guard_bright_window_end_observed_f005711.png",
+          "phase": "guard_bright_window_end_observed",
+          "age": 0.8954052329063416,
+          "observedHits": 0,
+          "sha256": "320b040fb3945908a1e5cd9868c8a68038d2e69087f66088aedc481411340a64"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\머_mid_lifetime_observed_f005931.png",
+          "phase": "mid_lifetime_observed",
+          "age": 2.004387855529785,
+          "observedHits": 0,
+          "sha256": "9a643614966c97863991476194469929f6b166da7c4c0cb9543508f5d7e176fb"
+        }
+      ]
+    },
+    {
+      "glyph": "서",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\14_서_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\서_spawn_observed_f006410.png",
+          "phase": "spawn_observed",
+          "age": 0.005174702499061823,
+          "observedHits": 0,
+          "sha256": "2b2f5a0527d10fb2c1504924ee0323fc447139fa959754f6de976689fd55510e"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\서_guard_bright_window_end_observed_f006589.png",
+          "phase": "guard_bright_window_end_observed",
+          "age": 0.8977035880088806,
+          "observedHits": 0,
+          "sha256": "9a283bf0ab8bf5e34a6ea648aab7764f4cac1538cb2254b7449fe84cc7a3b2dd"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\서_mid_lifetime_observed_f006822.png",
+          "phase": "mid_lifetime_observed",
+          "age": 2.0041000843048096,
+          "observedHits": 0,
+          "sha256": "b68dbd1047e1cb7c558b9e99dbc5ab17b222097461762f0c8128afe6ba6a28e5"
+        }
+      ]
+    },
+    {
+      "glyph": "어",
+      "sheet": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayDiagnosticReview\\15_어_three_actual_frames.png",
+      "sources": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\어_spawn_observed_f007307.png",
+          "phase": "spawn_observed",
+          "age": 0.00661690067499876,
+          "observedHits": 0,
+          "sha256": "724c7cb76c051fcc252c13b04599e7bebf4e41c48edfbe34977ec2d6cffbf9d0"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\어_guard_bright_window_end_observed_f007487.png",
+          "phase": "guard_bright_window_end_observed",
+          "age": 0.898192822933197,
+          "observedHits": 0,
+          "sha256": "f82c808a26714256cd86b4a828001c52fc4d57da627bf79f809b5ff8074e886d"
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\GameplayCapture\\20260909-021340-911-diagnostic\\어_mid_lifetime_observed_f007712.png",
+          "phase": "mid_lifetime_observed",
+          "age": 2.000406503677368,
+          "observedHits": 0,
+          "sha256": "01f009c9c19572bc121cf02e57057a3580e1a581a0a496da4bd574c24fe108ee"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,775 @@
+{
+  "schema": 1,
+  "status": "VERIFIED_SELECTED_ONLY_COVERAGE_INCOMPLETE",
+  "startedAtUtc": "2026-09-09T09:37:54.207518+00:00",
+  "input": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19",
+  "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19",
+  "manifest": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\build_manifest.json",
+  "manifestSha256": "a876f2aae2dc940afa195d25ea044982134061f55e46131c84bbfed17124d92e",
+  "expectedCoverage": 120,
+  "selectionMode": "EXPLICIT_IDS",
+  "selectedIds": [
+    "050_B9C9",
+    "070_BB44",
+    "109_C624"
+  ],
+  "selectedCount": 3,
+  "expectedSelectedCoverage": 3,
+  "verifiedCoverage": 3,
+  "selectedCoverageComplete": true,
+  "coverage120": false,
+  "settings": {
+    "codec": "libx264",
+    "fps": 24,
+    "crf": 19,
+    "preset": "medium",
+    "pixelFormat": "yuv420p",
+    "faststart": true
+  },
+  "artGameplayPerformance": "UNVERIFIED",
+  "scope": "Complete PNG sequences encoded to H264 and fully decoded. File/timing verification only. PNGs are never deleted. Selection EXPLICIT_IDS: 050_B9C9, 070_BB44, 109_C624. Other catalog entries are NOT_SELECTED, not missing captures. expectedCoverage/coverage120 refer to the full catalog; expectedSelectedCoverage/selectedCoverageComplete refer only to this run.",
+  "results": [
+    {
+      "id": "001_AC00",
+      "glyph": "가",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "002_AC01",
+      "glyph": "각",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "003_AC04",
+      "glyph": "간",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "004_AC10",
+      "glyph": "감",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "005_AC13",
+      "glyph": "갓",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "006_AC15",
+      "glyph": "강",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "007_AC70",
+      "glyph": "거",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "008_AC71",
+      "glyph": "걱",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "009_AC74",
+      "glyph": "건",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "010_AC80",
+      "glyph": "검",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "011_AC83",
+      "glyph": "것",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "012_AC85",
+      "glyph": "겅",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "013_ACE0",
+      "glyph": "고",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "014_ACE1",
+      "glyph": "곡",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "015_ACE4",
+      "glyph": "곤",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "016_ACF0",
+      "glyph": "곰",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "017_ACF3",
+      "glyph": "곳",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "018_ACF5",
+      "glyph": "공",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "019_AD6C",
+      "glyph": "구",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "020_AD6D",
+      "glyph": "국",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "021_AD70",
+      "glyph": "군",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "022_AD7C",
+      "glyph": "굼",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "023_AD7F",
+      "glyph": "굿",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "024_AD81",
+      "glyph": "궁",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "025_B098",
+      "glyph": "나",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "026_B099",
+      "glyph": "낙",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "027_B09C",
+      "glyph": "난",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "028_B0A8",
+      "glyph": "남",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "029_B0AB",
+      "glyph": "낫",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "030_B0AD",
+      "glyph": "낭",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "031_B108",
+      "glyph": "너",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "032_B109",
+      "glyph": "넉",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "033_B10C",
+      "glyph": "넌",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "034_B118",
+      "glyph": "넘",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "035_B11B",
+      "glyph": "넛",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "036_B11D",
+      "glyph": "넝",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "037_B178",
+      "glyph": "노",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "038_B179",
+      "glyph": "녹",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "039_B17C",
+      "glyph": "논",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "040_B188",
+      "glyph": "놈",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "041_B18B",
+      "glyph": "놋",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "042_B18D",
+      "glyph": "농",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "043_B204",
+      "glyph": "누",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "044_B205",
+      "glyph": "눅",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "045_B208",
+      "glyph": "눈",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "046_B214",
+      "glyph": "눔",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "047_B217",
+      "glyph": "눗",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "048_B219",
+      "glyph": "눙",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "049_B9C8",
+      "glyph": "마",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "050_B9C9",
+      "glyph": "막",
+      "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+      "input": {
+        "inputSha256": "9323db39cd00caaa70cdd0a23752501be0cd39dc43c424500d60c3303217bee5",
+        "metadataSha256": "acc51cd132c18e829a8a7fe0370ae4da5a57e2cd4f790df149d29ff5f1637a09",
+        "metadataPath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19\\050_B9C9_capture.json",
+        "sequencePath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19\\050_B9C9",
+        "frames": 96,
+        "width": 1280,
+        "height": 720,
+        "fps": 24,
+        "pngBytes": 50901373,
+        "life": 3.9000000953674316,
+        "firstSampleSeconds": 0.0,
+        "lastSampleSeconds": 3.9583332538604736,
+        "expectedDurationSeconds": 4.0,
+        "fullLifetimeSampled": true,
+        "captureStatus": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "captureSourceVersionMatch": "UNVERIFIED"
+      },
+      "action": "ENCODED_AND_DECODED",
+      "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19\\050_B9C9.mp4",
+      "sidecar": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19\\050_B9C9_encoding.json",
+      "outputSha256": "c20df11279eb323d0c9833b4532cd8fa0e6e2f97ec5fdbf7dee4bf5f938092e1",
+      "verification": {
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+        "checks": {
+          "fullDecodeWithoutError": true,
+          "h264Input": true,
+          "frameCountMatches": true,
+          "frameIndicesContiguous": true,
+          "fps24": true,
+          "allDimensionsMatchInput": true,
+          "allPixelFormatsYuv420p": true,
+          "everyTimestampMatches24fps": true,
+          "everyFrameDurationMatches24fps": true
+        },
+        "decodedFrames": 96,
+        "fpsRational": "24",
+        "timeBaseRational": "1/12288",
+        "dimensions": [
+          1280,
+          720
+        ],
+        "durationSeconds": 4.0,
+        "decodeLogSha256": "d911a378ef1c44e9ef90417b5a5171da7e52d55b5658ed7f3ccda1cea837ad84"
+      }
+    },
+    {
+      "id": "051_B9CC",
+      "glyph": "만",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "052_B9D8",
+      "glyph": "맘",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "053_B9DB",
+      "glyph": "맛",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "054_B9DD",
+      "glyph": "망",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "055_BA38",
+      "glyph": "머",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "056_BA39",
+      "glyph": "먹",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "057_BA3C",
+      "glyph": "먼",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "058_BA48",
+      "glyph": "멈",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "059_BA4B",
+      "glyph": "멋",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "060_BA4D",
+      "glyph": "멍",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "061_BAA8",
+      "glyph": "모",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "062_BAA9",
+      "glyph": "목",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "063_BAAC",
+      "glyph": "몬",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "065_BABB",
+      "glyph": "못",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "066_BABD",
+      "glyph": "몽",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "067_BB34",
+      "glyph": "무",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "068_BB35",
+      "glyph": "묵",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "069_BB38",
+      "glyph": "문",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "070_BB44",
+      "glyph": "뭄",
+      "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+      "input": {
+        "inputSha256": "4b06ea4f4761de8e09645310672be8eafe69107e5e2898bac3bf2cb7a95c7720",
+        "metadataSha256": "9efa8c01adb1899744ecb16330ecf717c2b341187c269152ae28180ba4756460",
+        "metadataPath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19\\070_BB44_capture.json",
+        "sequencePath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19\\070_BB44",
+        "frames": 114,
+        "width": 1280,
+        "height": 720,
+        "fps": 24,
+        "pngBytes": 61283207,
+        "life": 4.650000095367432,
+        "firstSampleSeconds": 0.0,
+        "lastSampleSeconds": 4.708333492279053,
+        "expectedDurationSeconds": 4.75,
+        "fullLifetimeSampled": true,
+        "captureStatus": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "captureSourceVersionMatch": "UNVERIFIED"
+      },
+      "action": "ENCODED_AND_DECODED",
+      "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19\\070_BB44.mp4",
+      "sidecar": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19\\070_BB44_encoding.json",
+      "outputSha256": "fd766988d4729cbeb90949a2042b1538948a14cfb63b81b280f0b69fb5597203",
+      "verification": {
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+        "checks": {
+          "fullDecodeWithoutError": true,
+          "h264Input": true,
+          "frameCountMatches": true,
+          "frameIndicesContiguous": true,
+          "fps24": true,
+          "allDimensionsMatchInput": true,
+          "allPixelFormatsYuv420p": true,
+          "everyTimestampMatches24fps": true,
+          "everyFrameDurationMatches24fps": true
+        },
+        "decodedFrames": 114,
+        "fpsRational": "24",
+        "timeBaseRational": "1/12288",
+        "dimensions": [
+          1280,
+          720
+        ],
+        "durationSeconds": 4.75,
+        "decodeLogSha256": "126a82b65d75b8ca34ee9a3a1b5fe23113a953a6231d19f4557775f7ac0421fa"
+      }
+    },
+    {
+      "id": "071_BB47",
+      "glyph": "뭇",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "072_BB49",
+      "glyph": "뭉",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "073_C0AC",
+      "glyph": "사",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "074_C0AD",
+      "glyph": "삭",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "075_C0B0",
+      "glyph": "산",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "076_C0BC",
+      "glyph": "삼",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "077_C0BF",
+      "glyph": "삿",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "078_C0C1",
+      "glyph": "상",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "079_C11C",
+      "glyph": "서",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "080_C11D",
+      "glyph": "석",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "081_C120",
+      "glyph": "선",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "082_C12C",
+      "glyph": "섬",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "083_C12F",
+      "glyph": "섯",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "084_C131",
+      "glyph": "성",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "085_C18C",
+      "glyph": "소",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "086_C18D",
+      "glyph": "속",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "087_C190",
+      "glyph": "손",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "088_C19C",
+      "glyph": "솜",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "089_C19F",
+      "glyph": "솟",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "090_C1A1",
+      "glyph": "송",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "091_C218",
+      "glyph": "수",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "092_C219",
+      "glyph": "숙",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "093_C21C",
+      "glyph": "순",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "094_C228",
+      "glyph": "숨",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "095_C22B",
+      "glyph": "숫",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "096_C22D",
+      "glyph": "숭",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "097_C544",
+      "glyph": "아",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "098_C545",
+      "glyph": "악",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "099_C548",
+      "glyph": "안",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "100_C554",
+      "glyph": "암",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "101_C557",
+      "glyph": "앗",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "102_C559",
+      "glyph": "앙",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "103_C5B4",
+      "glyph": "어",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "104_C5B5",
+      "glyph": "억",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "105_C5B8",
+      "glyph": "언",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "106_C5C4",
+      "glyph": "엄",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "107_C5C7",
+      "glyph": "엇",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "108_C5C9",
+      "glyph": "엉",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "109_C624",
+      "glyph": "오",
+      "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+      "input": {
+        "inputSha256": "2d2202cd43146bbae5751778a3f7d547672ef796872cfffbb8feff84e01f8ef0",
+        "metadataSha256": "a3ef8e5757525c3419da6b18650a7573be1a2e5b04f9a2c3ac3921f04b5ecfef",
+        "metadataPath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19\\109_C624_capture.json",
+        "sequencePath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\KTPExternalFrames19\\109_C624",
+        "frames": 85,
+        "width": 1280,
+        "height": 720,
+        "fps": 24,
+        "pngBytes": 42973896,
+        "life": 3.422727108001709,
+        "firstSampleSeconds": 0.0,
+        "lastSampleSeconds": 3.5,
+        "expectedDurationSeconds": 3.5416666666666665,
+        "fullLifetimeSampled": true,
+        "captureStatus": "PRESENTATION_REVIEW_ONLY",
+        "demonstrationCues": true,
+        "captureSourceVersionMatch": "UNVERIFIED"
+      },
+      "action": "ENCODED_AND_DECODED",
+      "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19\\109_C624.mp4",
+      "sidecar": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\ClipsKTPExternal19\\109_C624_encoding.json",
+      "outputSha256": "516d6305b72607156e77821264287febe7c97ca41422364f77ad9d79c4d73fa0",
+      "verification": {
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY",
+        "checks": {
+          "fullDecodeWithoutError": true,
+          "h264Input": true,
+          "frameCountMatches": true,
+          "frameIndicesContiguous": true,
+          "fps24": true,
+          "allDimensionsMatchInput": true,
+          "allPixelFormatsYuv420p": true,
+          "everyTimestampMatches24fps": true,
+          "everyFrameDurationMatches24fps": true
+        },
+        "decodedFrames": 85,
+        "fpsRational": "24",
+        "timeBaseRational": "1/12288",
+        "dimensions": [
+          1280,
+          720
+        ],
+        "durationSeconds": 3.5416666666666665,
+        "decodeLogSha256": "68d62ca6f9631ab6ca28f567f9c46a30034813f76a9beae704015c298698b95b"
+      }
+    },
+    {
+      "id": "110_C625",
+      "glyph": "옥",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "111_C628",
+      "glyph": "온",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "112_C634",
+      "glyph": "옴",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "113_C637",
+      "glyph": "옷",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "114_C639",
+      "glyph": "옹",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "115_C6B0",
+      "glyph": "우",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "116_C6B1",
+      "glyph": "욱",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "117_C6B4",
+      "glyph": "운",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "118_C6C0",
+      "glyph": "움",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "119_C6C3",
+      "glyph": "웃",
+      "status": "NOT_SELECTED"
+    },
+    {
+      "id": "120_C6C5",
+      "glyph": "웅",
+      "status": "NOT_SELECTED"
+    }
+  ],
+  "ffmpeg": "C:\\Users\\yj666\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+  "ffmpegVersion": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers",
+  "validatorSha256": "86cb8205e892c5a468119332d5c3fdc0e592744ab4d27452cdd1823ebcf431c3",
+  "finishedAtUtc": "2026-09-09T09:37:56.640980+00:00"
+}

@@ -1,0 +1,346 @@
+{
+    "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+    "unityVersion": "6000.3.9f1",
+    "output": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120/native_particle_audit.json",
+    "mode": "EDIT_MODE_SEEDED_NATIVE_PREVIEW_SAMPLES_ONLY",
+    "scope": "Ten representatives (two per element), actual effect Begin/Sample with PreviewControlled=true. At 30/60/120 probe grids: peak-minus-one-frame, exact common peak, end-minus-one-frame, exact Life, then peak replay. Native particle buffers are read for finite position/velocity/size/rotation/lifetime, <=360 budget, repeatable common-time state and zero end count. No per-frame whole-life simulation or image rendering.",
+    "runtime": "UNVERIFIED: these fps values define approach probes, not continuous Play frame rates. Native runtime Update/timeScale/culling/concurrent-instance leakage and gameplay timing remain untested.",
+    "visuals": "UNVERIFIED: valid particles/counts do not demonstrate rendered visibility, optical color, collision-free flight or art quality. Local-space preview does not prove a world-space historical emitter trail.",
+    "passed": 10,
+    "failed": 0,
+    "temporarySceneClosed": true,
+    "fps": [
+        30,
+        60,
+        120
+    ],
+    "rows": [
+        {
+            "glyph": "가",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 1.5,
+            "peakTime": 0.7790000438690186,
+            "emissionEndsAt": 0.9500000476837158,
+            "maximumParticleLifetime": 0.5249999761581421,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 2,
+            "particleBudget": 120,
+            "peakParticles": 28,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                24,
+                4
+            ]
+        },
+        {
+            "glyph": "곰",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 4.699999809265137,
+            "peakTime": 2.8904998302459719,
+            "emissionEndsAt": 3.5249998569488527,
+            "maximumParticleLifetime": 1.149999976158142,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 2,
+            "particleBudget": 120,
+            "peakParticles": 38,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                31,
+                7
+            ]
+        },
+        {
+            "glyph": "나",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 1.5999999046325684,
+            "peakTime": 0.8323000073432922,
+            "emissionEndsAt": 1.0149999856948853,
+            "maximumParticleLifetime": 0.559999942779541,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 3,
+            "particleBudget": 120,
+            "peakParticles": 41,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                25,
+                10,
+                6
+            ]
+        },
+        {
+            "glyph": "논",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 2.299999952316284,
+            "peakTime": 1.205399990081787,
+            "emissionEndsAt": 1.4700000286102296,
+            "maximumParticleLifetime": 0.8049999475479126,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 3,
+            "particleBudget": 168,
+            "peakParticles": 59,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                35,
+                16,
+                8
+            ]
+        },
+        {
+            "glyph": "마",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 1.8499999046325684,
+            "peakTime": 0.965549886226654,
+            "emissionEndsAt": 1.1774998903274537,
+            "maximumParticleLifetime": 0.6474999785423279,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 3,
+            "particleBudget": 120,
+            "peakParticles": 39,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                23,
+                11,
+                5
+            ]
+        },
+        {
+            "glyph": "목",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 3.450000047683716,
+            "peakTime": 2.0295000076293947,
+            "emissionEndsAt": 2.4750001430511476,
+            "maximumParticleLifetime": 0.949999988079071,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 3,
+            "particleBudget": 168,
+            "peakParticles": 71,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                37,
+                27,
+                7
+            ]
+        },
+        {
+            "glyph": "사",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 1.059999942779541,
+            "peakTime": 0.5444799661636353,
+            "emissionEndsAt": 0.6639999747276306,
+            "maximumParticleLifetime": 0.3709999620914459,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 2,
+            "particleBudget": 120,
+            "peakParticles": 37,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                30,
+                7
+            ]
+        },
+        {
+            "glyph": "소",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 1.7000000476837159,
+            "peakTime": 0.979900062084198,
+            "emissionEndsAt": 1.1950000524520875,
+            "maximumParticleLifetime": 0.47999998927116396,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 2,
+            "particleBudget": 184,
+            "peakParticles": 59,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                46,
+                13
+            ]
+        },
+        {
+            "glyph": "앗",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 3.5,
+            "peakTime": 2.316499948501587,
+            "emissionEndsAt": 2.825000047683716,
+            "maximumParticleLifetime": 0.6499999761581421,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 2,
+            "particleBudget": 184,
+            "peakParticles": 72,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                57,
+                15
+            ]
+        },
+        {
+            "glyph": "옥",
+            "status": "PASS_SEEDED_NATIVE_PREVIEW_ONLY",
+            "error": "",
+            "life": 4.300000190734863,
+            "peakTime": 2.9725000858306886,
+            "emissionEndsAt": 3.625000238418579,
+            "maximumParticleLifetime": 0.6499999761581421,
+            "maximumSameTimeDelta": 0.0,
+            "systems": 2,
+            "particleBudget": 120,
+            "peakParticles": 42,
+            "endParticles": 0,
+            "samples": 15,
+            "repeatComparisons": 5,
+            "peakPerSystem": [
+                33,
+                9
+            ]
+        }
+    ],
+    "materials": [
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Thorn.mat",
+            "kind": "Material",
+            "before": "c6cfc224ddf7c5618fab9c1668e25f16d82eabc982c493765f819a17f77aeb09",
+            "after": "c6cfc224ddf7c5618fab9c1668e25f16d82eabc982c493765f819a17f77aeb09",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Ink.mat",
+            "kind": "Material",
+            "before": "fe509ffe2871af4d274f3326cc1df6b64056378d49e1b2314821031e09754292",
+            "after": "fe509ffe2871af4d274f3326cc1df6b64056378d49e1b2314821031e09754292",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_33.mat",
+            "kind": "Material",
+            "before": "02bdc16d6762fdd56e9f833a931d295d9234bb4b177180cbcb4f933788170543",
+            "after": "02bdc16d6762fdd56e9f833a931d295d9234bb4b177180cbcb4f933788170543",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_PigmentDust.mat",
+            "kind": "Material",
+            "before": "bafc662b5756122c86a0b322d95718e146c564d1ce42fa40a0d5256ee42ae1ff",
+            "after": "bafc662b5756122c86a0b322d95718e146c564d1ce42fa40a0d5256ee42ae1ff",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_곰.mat",
+            "kind": "Material",
+            "before": "03e999d60fd47000b9cc96ccbb103eceb7a5f8b6ccf0220dccb3942fb48bac85",
+            "after": "03e999d60fd47000b9cc96ccbb103eceb7a5f8b6ccf0220dccb3942fb48bac85",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat",
+            "kind": "Material",
+            "before": "bff2e7753e32fc7fcf8e7d9f329282bcc3d2aecf39d603f5300407bcfa2dc6a9",
+            "after": "bff2e7753e32fc7fcf8e7d9f329282bcc3d2aecf39d603f5300407bcfa2dc6a9",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_110.mat",
+            "kind": "Material",
+            "before": "6e2a62226c0fd894b5085d021f042906a42b9671c2a11ecbfb15dea9d2805441",
+            "after": "6e2a62226c0fd894b5085d021f042906a42b9671c2a11ecbfb15dea9d2805441",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_156.mat",
+            "kind": "Material",
+            "before": "39f222077d0d4cd63f2a9f5e621e6424890b1c65ccae8e252d231c6112a814a4",
+            "after": "39f222077d0d4cd63f2a9f5e621e6424890b1c65ccae8e252d231c6112a814a4",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat",
+            "kind": "Material",
+            "before": "65404f8711968db398de59e16b37f928e79f2ef32a5b5160f882828895927f75",
+            "after": "65404f8711968db398de59e16b37f928e79f2ef32a5b5160f882828895927f75",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_25.mat",
+            "kind": "Material",
+            "before": "011cc0c8c6cd15201805af6140e1eec32db9990363ddd055385a8356b6e57740",
+            "after": "011cc0c8c6cd15201805af6140e1eec32db9990363ddd055385a8356b6e57740",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_126.mat",
+            "kind": "Material",
+            "before": "e5d17e67d358f7eea7768e2b410c0d869eec94432f736ecf857917c0f7aa7ce4",
+            "after": "e5d17e67d358f7eea7768e2b410c0d869eec94432f736ecf857917c0f7aa7ce4",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat",
+            "kind": "Material",
+            "before": "8427f946ba10c516d641718e44969e208cef12bc0b09c2b48789ecedf47416fd",
+            "after": "8427f946ba10c516d641718e44969e208cef12bc0b09c2b48789ecedf47416fd",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_95.mat",
+            "kind": "Material",
+            "before": "af7b922ba14126b9822831ed60a7e8d83f10c249a46e12748a0f7bdb975ff9fc",
+            "after": "af7b922ba14126b9822831ed60a7e8d83f10c249a46e12748a0f7bdb975ff9fc",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat",
+            "kind": "Material",
+            "before": "5be88c309f33e84d84996ce13013e3b2785e4136a626ea3ba34dc8e2f59a4c01",
+            "after": "5be88c309f33e84d84996ce13013e3b2785e4136a626ea3ba34dc8e2f59a4c01",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_204.mat",
+            "kind": "Material",
+            "before": "24839355bffd470b0bed7db3cea7b151f0699255adb938c0113c8ddcc49ed5c1",
+            "after": "24839355bffd470b0bed7db3cea7b151f0699255adb938c0113c8ddcc49ed5c1",
+            "status": "PASS_UNCHANGED",
+            "error": ""
+        }
+    ],
+    "errors": []
+}

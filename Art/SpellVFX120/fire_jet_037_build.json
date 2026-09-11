@@ -1,0 +1,9 @@
+{
+    "glyph": "노",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_DIRECTIONAL_JET_SUPPLIED_IMPACT_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Directional continuous flame; existing supplied impact clock drives contact motif. No attack timings or damage rules changed."
+}

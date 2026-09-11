@@ -1,0 +1,32 @@
+{
+  "id": "016_ACF0",
+  "version": "44",
+  "key": "GOM_016",
+  "glyph": "곰",
+  "title": "숲을 부르는 사슴",
+  "audit": "single_play_ACF0.json",
+  "build": "meshy_unity_import.json",
+  "scope": "gom44_scope_check.json",
+  "previous": "GON_015_REVIEW.html",
+  "intro": "Meshy 7으로 만든 사슴이 KTP 소환 문양에서 모습을 드러내고, 수명이 끝나면 사라집니다. 현재는 정적 소환 형태입니다.",
+  "changes": [
+    "기존 Meshy 7 사슴과 Blender 정리본을 보존했다. 새 유료 생성은 요청하지 않았다.",
+    "현재 소환 프로필을 최신 공통 런타임에서 다시 촬영하고 단독 Update·수명을 확인했다.",
+    "KTP 소환진·발동과 연결된 정적 MeshRenderer를 사용한다. 리그나 보행·공격 애니메이션은 포함하지 않는다."
+  ],
+  "cost": "사슴 실측12,543tris·15,132정점·MeshRenderer1개. 스키닝·Animator0개. KTP 소환진·발동은 별도 비용이다. 이번 마무리의 Meshy 추가 소비0크레딧.",
+  "metrics": [
+    "modelVisibleFrames",
+    "modelRendererCount"
+  ],
+  "limits": [
+    "정적 소환 VFX다. 소환수 보행·공격·전투 AI·스키닝은 미구현이다.",
+    "사슴과 소환진의 비주얼 최종 판정은 사용자 검토 대기다.",
+    "여러 소환수 동시 사용 성능은 미검증이다."
+  ],
+  "captureNote": "1280×720·24fps. 현재 프로필의 등장을 두 시점으로 다시 촬영했다. 이전21과 현재44는 같은 생성 모델이며 공통 런타임과 촬영 시점이 다르다.",
+  "detailLabels": [
+    "등장",
+    "소멸"
+  ]
+}

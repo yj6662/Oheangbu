@@ -1,0 +1,57 @@
+{
+    "glyph": "공",
+    "title": "걸어가는 수풀",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T08:29:29.9473113Z",
+    "loadedRuntimeAssemblyMvid": "fb3d4381-ac41-49ee-aef2-ed6b874f010e",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T08:27:20.6611623Z",
+    "captureScene": "Assets/_Project/Scenes/Dev/C2_CodexWorld.unity",
+    "cameraScene": "Assets/_Project/Scenes/Dev/C2_CodexWorld.unity",
+    "cameraName": "Main Camera",
+    "cameraPosition": {
+        "x": 0.0,
+        "y": 1.7999999523162842,
+        "z": -3.0
+    },
+    "cameraEuler": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "cameraFov": 60.0,
+    "cameraOrthographicSize": 5.0,
+    "cameraOrthographic": false,
+    "renderWidth": 1280,
+    "renderHeight": 720,
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.4000000059604645,
+    "life": 3.5,
+    "sampledSeconds": [
+        0.24500000476837159,
+        0.7699999809265137,
+        1.46999990940094,
+        2.240000009536743,
+        3.1499998569488527
+    ],
+    "primaryTarget": "Review-only Primary",
+    "secondaryTarget": "Review-only Secondary",
+    "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. 몸 guardian uses an illustrative strike at max(formation+0.55,life*0.55). No gameplay events are dispatched.",
+    "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+    "areaShape": "Path",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.800000011920929
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.0
+    },
+    "areaRadius": 1.5499999523162842,
+    "areaAngle": 0.0,
+    "areaLength": 5.0,
+    "areaDelay": 0.4000000059604645,
+    "areaSpeed": 2.200000047683716
+}

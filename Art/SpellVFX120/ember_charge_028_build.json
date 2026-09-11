@@ -1,0 +1,9 @@
+{
+    "glyph": "남",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_HOLD_EXPLICIT_DETONATION_ONCE_AND_CLEANUP",
+    "particleSystems": 8,
+    "maxParticleCapacity": 464,
+    "patternTris": 2,
+    "scope": "Attachment and explicit detonation visual only; no automatic C4/damage."
+}

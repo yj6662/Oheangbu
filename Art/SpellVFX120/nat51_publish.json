@@ -1,0 +1,11 @@
+{
+"id":"029_B0AB","version":"51","key":"NAT_029","glyph":"낫","title":"낫 · 갈라지는 초승달 화염",
+"audit":"single_play_B0AB.json","build":"flame_crescent_029_build.json","scope":"nat51_scope_check.json","previous":"NAM_028_REVIEW.html",
+"intro":"명중 지점에 전통 문양이 펼쳐지고, 두 초승달 화염이 좌우로 갈라져 나갑니다.",
+"changes":["제공된 명중 시각 이후에만 좌우 초승달 방출기를 전개한다.","초승달 면에서 화염 입자를 방출하고 좌우 32도 방향으로 이동시켜 두 갈래를 구분했다.","KTP Pattern_110 명중 문양과 KTP 화염 아틀라스·불티·연기를 결합했다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System9개/입자용량592개. 문양2tris, 공유 방출용 초승달 메시48tris(표면 방출 계산용). 공유 재질4개. KTP 동반 효과 비용 별도.",
+"metrics":["fireParticlePeak","firePatternPeak","fireSplitPeak","fireImpact"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","2차 화염은 표현이며 추가 피해·충돌 판정은 연결하지 않았다.","실제 전투 입력과 다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.6초에 진단용 명중 시각을 제공한다. 편집기 검사에서는 명중 전 분리 없음과 명중 후 두 방출기의 분리를 확인했다.",
+"detailLabels":["명중과 분리","화염 소멸"]
+}

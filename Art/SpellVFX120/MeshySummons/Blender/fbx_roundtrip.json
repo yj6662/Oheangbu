@@ -1,0 +1,222 @@
+{
+  "method": "FBX exported at final Unity path imported into an empty Blender scene; source model objects untouched; no Unity calls",
+  "boundsToleranceMeters": 1e-05,
+  "models": [
+    {
+      "id": "016_ACF0",
+      "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\016_ACF0\\SM_Summon_016_ACF0.fbx",
+      "meshObjects": 1,
+      "triangles": 12543,
+      "expectedTriangles": 12543,
+      "boundsExpected": {
+        "min": [
+          -0.37396159768104553,
+          -0.7817148566246033,
+          0.0
+        ],
+        "max": [
+          0.3739616274833679,
+          0.7817147970199585,
+          2.1999998092651367
+        ]
+      },
+      "boundsActual": {
+        "min": [
+          -0.37396159768104553,
+          -0.7817144989967346,
+          -1.066510293412648e-07
+        ],
+        "max": [
+          0.3739616274833679,
+          0.7817147970199585,
+          2.1999998092651367
+        ]
+      },
+      "maxBoundsDifferenceMeters": 3.5762786865234375e-07,
+      "uvLayers": [
+        1
+      ],
+      "armatures": 0,
+      "materials": [
+        {
+          "name": "M_Summon_016_ACF0.001",
+          "imageMaps": [
+            {
+              "name": "T_016_ACF0_BaseColor.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\016_ACF0\\Textures\\T_016_ACF0_BaseColor.png",
+              "exists": true
+            },
+            {
+              "name": "T_016_ACF0_Normal.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\016_ACF0\\Textures\\T_016_ACF0_Normal.png",
+              "exists": true
+            },
+            {
+              "name": "T_016_ACF0_Roughness_Min065.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\016_ACF0\\Textures\\T_016_ACF0_Roughness_Min065.png",
+              "exists": true
+            }
+          ]
+        }
+      ],
+      "geometryStatus": "PASS",
+      "runtimeAndRigStatus": "UNVERIFIED"
+    },
+    {
+      "id": "040_B188",
+      "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\040_B188\\SM_Summon_040_B188.fbx",
+      "meshObjects": 1,
+      "triangles": 12532,
+      "expectedTriangles": 12532,
+      "boundsExpected": {
+        "min": [
+          -0.48915648460388184,
+          -1.13554847240448,
+          0.0
+        ],
+        "max": [
+          0.4891565144062042,
+          1.1355485916137695,
+          1.5499999523162842
+        ]
+      },
+      "boundsActual": {
+        "min": [
+          -0.48915648460388184,
+          -1.1355482339859009,
+          -4.62443203730345e-08
+        ],
+        "max": [
+          0.4891565144062042,
+          1.135548710823059,
+          1.5500000715255737
+        ]
+      },
+      "maxBoundsDifferenceMeters": 2.384185791015625e-07,
+      "uvLayers": [
+        1
+      ],
+      "armatures": 0,
+      "materials": [
+        {
+          "name": "M_Summon_040_B188.001",
+          "imageMaps": [
+            {
+              "name": "T_040_B188_BaseColor.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\040_B188\\Textures\\T_040_B188_BaseColor.png",
+              "exists": true
+            },
+            {
+              "name": "T_040_B188_Normal.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\040_B188\\Textures\\T_040_B188_Normal.png",
+              "exists": true
+            },
+            {
+              "name": "T_040_B188_Roughness_Min065.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\040_B188\\Textures\\T_040_B188_Roughness_Min065.png",
+              "exists": true
+            }
+          ]
+        }
+      ],
+      "geometryStatus": "PASS",
+      "runtimeAndRigStatus": "UNVERIFIED"
+    },
+    {
+      "id": "088_C19C",
+      "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\088_C19C\\SM_Summon_088_C19C.fbx",
+      "meshObjects": 1,
+      "triangles": 12414,
+      "expectedTriangles": 12414,
+      "boundsExpected": {
+        "min": [
+          -0.5424183011054993,
+          -1.5334583520889282,
+          0.0
+        ],
+        "max": [
+          0.5424182415008545,
+          1.5334583520889282,
+          1.399999976158142
+        ]
+      },
+      "boundsActual": {
+        "min": [
+          -0.5424183011054993,
+          -1.5334582328796387,
+          -9.441413340027793e-08
+        ],
+        "max": [
+          0.5424182415008545,
+          1.5334583520889282,
+          1.4000002145767212
+        ]
+      },
+      "maxBoundsDifferenceMeters": 2.384185791015625e-07,
+      "uvLayers": [
+        1
+      ],
+      "armatures": 0,
+      "materials": [
+        {
+          "name": "M_Summon_088_C19C.001",
+          "imageMaps": [
+            {
+              "name": "T_088_C19C_BaseColor.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\088_C19C\\Textures\\T_088_C19C_BaseColor.png",
+              "exists": true
+            },
+            {
+              "name": "T_088_C19C_Normal.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\088_C19C\\Textures\\T_088_C19C_Normal.png",
+              "exists": true
+            },
+            {
+              "name": "T_088_C19C_Roughness_Min065.png.001",
+              "size": [
+                2048,
+                2048
+              ],
+              "filepath": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\MeshySummons\\088_C19C\\Textures\\T_088_C19C_Roughness_Min065.png",
+              "exists": true
+            }
+          ]
+        }
+      ],
+      "geometryStatus": "PASS",
+      "runtimeAndRigStatus": "UNVERIFIED"
+    }
+  ]
+}

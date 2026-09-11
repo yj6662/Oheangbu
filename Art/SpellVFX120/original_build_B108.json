@@ -1,0 +1,15 @@
+{
+    "glyph": "너",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireGuard_031.prefab|||2.25|0.2|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireGuard_031.prefab|||2.25|0.2|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+    ],
+    "systems": 44,
+    "capacity": 44000,
+    "sourcePreserved": true
+}

@@ -1,0 +1,36 @@
+{
+    "glyph": "소",
+    "title": "은살의 속사",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.20000000298023225,
+    "life": 2.1999990940093996,
+    "sampledSeconds": [
+        0.1539999395608902,
+        0.4839997887611389,
+        0.9239996075630188,
+        1.4079993963241578,
+        1.9799991846084595
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+    "areaShape": "Volley",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 4.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.0
+    },
+    "areaRadius": 1.4500000476837159,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.20000000298023225,
+    "areaSpeed": 12.0
+}

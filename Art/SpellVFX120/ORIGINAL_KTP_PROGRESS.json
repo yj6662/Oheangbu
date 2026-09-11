@@ -1,0 +1,1504 @@
+{
+  "rows": [
+    {
+      "glyph": "가",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/BambooBolt/VFX120_BambooBolt_001.asset|Assets/_Project/Art/SpellVFX120/BambooBolt/M_BambooBolt_001.mat||||1.1|0.6|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/BambooBolt/VFX120_BambooBolt_001.asset|Assets/_Project/Art/SpellVFX120/BambooBolt/M_BambooBolt_001.mat||||1.1|0.6|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "각",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Vine.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Vine.mat||Assets/_Project/Art/SpellVFX120/Botanical/PF_RootBind.prefab||3.4|0.55|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Vine.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Vine.mat||Assets/_Project/Art/SpellVFX120/Botanical/PF_RootBind.prefab||3.4|0.55|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "간",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/SeedTransfer/VFX120_SeedThorn_003.asset|Assets/_Project/Art/SpellVFX120/SeedTransfer/M_TransferSeed_003.mat||||2.6|0.6|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/SeedTransfer/VFX120_SeedThorn_003.asset|Assets/_Project/Art/SpellVFX120/SeedTransfer/M_TransferSeed_003.mat||||2.6|0.6|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "감",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/SeedPod/VFX120_SeedPod_004.asset|Assets/_Project/Art/SpellVFX120/SeedPod/M_SeedPod_004.mat||||3.1|0.55|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/SeedPod/VFX120_SeedPod_004.asset|Assets/_Project/Art/SpellVFX120/SeedPod/M_SeedPod_004.mat||||3.1|0.55|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "갓",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/LeafCut/VFX120_LeafCutHalf_005.asset|Assets/_Project/Art/SpellVFX120/LeafCut/M_LeafCut_005.mat||||0.9|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/LeafCut/VFX120_LeafCutHalf_005.asset|Assets/_Project/Art/SpellVFX120/LeafCut/M_LeafCut_005.mat||||0.9|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "강",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/WetRoot/VFX120_WetThorn_006.asset|Assets/_Project/Art/SpellVFX120/WetRoot/M_WetRoot_006.mat||||1.3|0.58|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/WetRoot/VFX120_WetThorn_006.asset|Assets/_Project/Art/SpellVFX120/WetRoot/M_WetRoot_006.mat||||1.3|0.58|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "거",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/BambooGuard/VFX120_BambooGuard_007.asset|Assets/_Project/Art/SpellVFX120/BambooGuard/M_BambooGuard_007.mat||||2.1|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/BambooGuard/VFX120_BambooGuard_007.asset|Assets/_Project/Art/SpellVFX120/BambooGuard/M_BambooGuard_007.mat||||2.1|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "걱",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Regrowth/VFX120_RegrowthStem_008.asset|Assets/_Project/Art/SpellVFX120/Regrowth/M_RegrowthStem_008.mat||||3.3|0.24|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Regrowth/VFX120_RegrowthStem_008.asset|Assets/_Project/Art/SpellVFX120/Regrowth/M_RegrowthStem_008.mat||||3.3|0.24|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "건",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Bloom/VFX120_BloomLeaf_009.asset|Assets/_Project/Art/SpellVFX120/Bloom/M_BloomLeaf_009.mat||||1.45|0.22|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Bloom/VFX120_BloomLeaf_009.asset|Assets/_Project/Art/SpellVFX120/Bloom/M_BloomLeaf_009.mat||||1.45|0.22|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "검",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Tree.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Tree.mat||Assets/_Project/Art/SpellVFX120/Botanical/PF_PlantedTree.prefab||4.6|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Tree.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Tree.mat||Assets/_Project/Art/SpellVFX120/Botanical/PF_PlantedTree.prefab||4.6|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "것",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/WoodSword/VFX120_WoodSword_011.asset|Assets/_Project/Art/SpellVFX120/WoodSword/M_WoodSword_011.mat||||3.5|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/WoodSword/VFX120_WoodSword_011.asset|Assets/_Project/Art/SpellVFX120/WoodSword/M_WoodSword_011.mat||||3.5|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "겅",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/CompanionSeeds/VFX120_CompanionSeedShell_012.asset|Assets/_Project/Art/SpellVFX120/CompanionSeeds/M_CompanionSeed_012.mat||||2.4|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/CompanionSeeds/VFX120_CompanionSeedShell_012.asset|Assets/_Project/Art/SpellVFX120/CompanionSeeds/M_CompanionSeed_012.mat||||2.4|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "고",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/BambooSpikes/VFX120_BambooSpike_013.asset|Assets/_Project/Art/SpellVFX120/BambooSpikes/M_BambooSpike_013.mat||||1.9|0.35|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/BambooSpikes/VFX120_BambooSpike_013.asset|Assets/_Project/Art/SpellVFX120/BambooSpikes/M_BambooSpike_013.mat||||1.9|0.35|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "곡",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/VineField/VFX120_VineField_014.asset|Assets/_Project/Art/SpellVFX120/VineField/M_VineStem_014.mat||||4.2|0.38|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/VineField/VFX120_VineField_014.asset|Assets/_Project/Art/SpellVFX120/VineField/M_VineStem_014.mat||||4.2|0.38|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "곤",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/RootLift/VFX120_RootPalm_015.asset|Assets/_Project/Art/SpellVFX120/RootLift/M_RootPalm_015.mat||||1.55|0.34|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/RootLift/VFX120_RootPalm_015.asset|Assets/_Project/Art/SpellVFX120/RootLift/M_RootPalm_015.mat||||1.55|0.34|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "곰",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_곰.mat|||Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/PF_Summon_016_ACF0.prefab|4.7|0.55|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_곰.mat|||Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/PF_Summon_016_ACF0.prefab|4.7|0.55|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "곳",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/StakeField/VFX120_HardStake_017.asset|Assets/_Project/Art/SpellVFX120/StakeField/M_HardStake_017.mat||||4.3|0.35|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/StakeField/VFX120_HardStake_017.asset|Assets/_Project/Art/SpellVFX120/StakeField/M_HardStake_017.mat||||4.3|0.35|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "공",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Vine.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Vine.mat||Assets/_Project/Art/SpellVFX120/Botanical/PF_BambooFront.prefab||3.5|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Vine.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Vine.mat||Assets/_Project/Art/SpellVFX120/Botanical/PF_BambooFront.prefab||3.5|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "구",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/WoodWard/VFX120_WoodWardSupport_019.asset|Assets/_Project/Art/SpellVFX120/WoodWard/M_WoodWard_019.mat||||3.6|0.28|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/WoodWard/VFX120_WoodWardSupport_019.asset|Assets/_Project/Art/SpellVFX120/WoodWard/M_WoodWard_019.mat||||3.6|0.28|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "국",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/WoodLift/VFX120_WoodLiftTrunk_020.asset|Assets/_Project/Art/SpellVFX120/WoodLift/M_WoodLift_020.mat||||4.4|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/WoodLift/VFX120_WoodLiftTrunk_020.asset|Assets/_Project/Art/SpellVFX120/WoodLift/M_WoodLift_020.mat||||4.4|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+      ],
+      "systems": 56,
+      "capacity": 56000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "나",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireBolt_025.prefab|||1.25|0.7|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireBolt_025.prefab|||1.25|0.7|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "낙",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_AttachedFlame_026.prefab|||4.2|0.62|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_AttachedFlame_026.prefab|||4.2|0.62|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "난",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_HeavyFlame_027.prefab|||1.55|0.78|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_HeavyFlame_027.prefab|||1.55|0.78|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "남",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_EmberCharge_028.prefab|||3.2|0.6|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_EmberCharge_028.prefab|||3.2|0.6|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "낫",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FlameCrescent_029.prefab|||1.8|0.65|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FlameCrescent_029.prefab|||1.8|0.65|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "낭",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_PiercingFlame_030.prefab|||1.8|0.56|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_PiercingFlame_030.prefab|||1.8|0.56|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "너",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireGuard_031.prefab|||2.25|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireGuard_031.prefab|||2.25|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "넉",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireAura_032.prefab|||3.2|0.26|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireAura_032.prefab|||3.2|0.26|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "넌",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireEmpower_033.prefab|||2.6|0.24|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireEmpower_033.prefab|||2.6|0.24|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "넘",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Seal.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Seal.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireResolve_034.prefab|||3.2|0.25|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Seal.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Seal.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireResolve_034.prefab|||3.2|0.25|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "넛",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireSword_035.prefab|||2.4|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireSword_035.prefab|||2.4|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "넝",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireCompanions_036.prefab|||2.7|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireCompanions_036.prefab|||2.7|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "노",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireJet_037.prefab|||2.4|0.35|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireJet_037.prefab|||2.4|0.35|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "녹",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Lotus.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Lotus.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireHealing_038.prefab|||3.4|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Lotus.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Lotus.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireHealing_038.prefab|||3.4|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "논",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireBackblast_039.prefab|||2.4|0.72|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireBackblast_039.prefab|||2.4|0.72|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "놈",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_놈.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireSummon_040.prefab||Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/PF_Summon_040_B188.prefab|4.6|0.52|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_놈.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireSummon_040.prefab||Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/PF_Summon_040_B188.prefab|4.6|0.52|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "놋",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireMelt_041.prefab|||3.2|0.38|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireMelt_041.prefab|||3.2|0.38|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "농",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Cloud.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Cloud.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireSteam_042.prefab|||4.6|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Cloud.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Cloud.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireSteam_042.prefab|||4.6|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "누",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireWard_043.prefab|||4|0.28|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireWard_043.prefab|||4|0.28|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "눈",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireBurn_045.prefab|||3.4|0.36|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Flame.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireBurn_045.prefab|||3.4|0.36|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+      ],
+      "systems": 44,
+      "capacity": 44000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "마",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||1.8|0.95|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||1.8|0.95|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "막",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_Rock_K_LOD2_Unit.asset|Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_Rock_K.mat||||3.9|0.95|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_Rock_K_LOD2_Unit.asset|Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_Rock_K.mat||||3.9|0.95|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "만",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.3|0.95|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.3|0.95|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "맘",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Seal.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Seal.mat||||3.35|0.72|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Seal.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Seal.mat||||3.35|0.72|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "맛",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||1.65|0.85|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||1.65|0.85|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "망",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.65|0.88|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.65|0.88|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "머",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.3|0.2|True",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.3|0.2|True",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "먹",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.7|0.25|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.7|0.25|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "먼",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Thorn.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Thorn.mat||||3.75|0.25|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Thorn.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Thorn.mat||||3.75|0.25|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "멈",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||3.95|0.27|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||3.95|0.27|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "멋",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.5|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.5|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "멍",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.55|0.58|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||2.55|0.58|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "모",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Sand.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Sand.mat|Assets/_Project/Art/SpellVFX120/Traditional/Bodies/PF_KTP_SandFront.prefab|||2.65|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Sand.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Sand.mat|Assets/_Project/Art/SpellVFX120/Traditional/Bodies/PF_KTP_SandFront.prefab|||2.65|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "목",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Thorn.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Thorn.mat||||3.45|0.55|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Thorn.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Thorn.mat||||3.45|0.55|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "몬",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Seal.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Seal.mat||||3.1|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Seal.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Seal.mat||||3.1|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "몸",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/StoneGuardian.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_StoneGuardian.mat||||4.7|0.6|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/StoneGuardian.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_StoneGuardian.mat||||4.7|0.6|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "못",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Sand.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Sand.mat||||2.8|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Sand.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Sand.mat||||2.8|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "몽",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Cloud.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Cloud.mat||||4.5|0.42|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Cloud.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Cloud.mat||||4.5|0.42|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "무",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||3.8|0.3|True",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat||||3.8|0.3|True",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "뭄",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_StoneBridge_1_LOD3_Unit.asset|Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_StoneBridge_1.mat||||4.65|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_StoneBridge_1_LOD3_Unit.asset|Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_StoneBridge_1.mat||||4.65|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 75,
+      "capacity": 75000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "사",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||0.75|0.16|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||0.75|0.16|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "삭",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.15|0.18|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.15|0.18|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "산",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.8|0.18|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.8|0.18|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "삼",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.1|0.23|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.1|0.23|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "삿",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||0.85|0.14|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||0.85|0.14|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "상",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_FrostNeedle_078.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.9|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_FrostNeedle_078.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.9|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "서",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.05|0.18|True",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.05|0.18|True",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "석",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_080_Chime.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.6|0.23|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_080_Chime.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.6|0.23|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "선",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_081_SpeedFeather.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.8|0.22|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_081_SpeedFeather.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.8|0.22|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "섬",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_082_OpenArcs.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat||||3.9|0.23|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_082_OpenArcs.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat||||3.9|0.23|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "섯",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.5|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.5|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "성",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.2|0.22|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.2|0.22|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "소",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.7|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.7|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "속",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.55|0.23|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.55|0.23|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "손",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_087_OpenFerrule.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ring.mat||||3.4|0.23|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_MetalDetail_087_OpenFerrule.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ring.mat||||3.4|0.23|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "솜",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_솜.mat|||Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/PF_Summon_088_C19C.prefab|4.5|0.48|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_솜.mat|||Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/PF_Summon_088_C19C.prefab|4.5|0.48|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "솟",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.9|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||1.9|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "송",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_FrostNeedle_078.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.7|0.22|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/MetalDetails/VFX120_FrostNeedle_078.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||2.7|0.22|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "수",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.5|0.27|True",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.5|0.27|True",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "숫",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.2|0.4|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.2|0.4|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly08-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom18-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+      ],
+      "systems": 57,
+      "capacity": 57000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "아",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||1.95|1.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||1.95|1.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "악",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||3.1|1|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||3.1|1|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "안",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||2.85|1.1|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||2.85|1.1|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "암",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Lotus.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Lotus.mat||||3.15|0.85|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Lotus.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Lotus.mat||||3.15|0.85|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "앗",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.5|0.85|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Shard.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat||||3.5|0.85|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "앙",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||3.1|1.05|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||3.1|1.05|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "어",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||2.3|0.2|True",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||2.3|0.2|True",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "억",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||3.3|0.27|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||3.3|0.27|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "언",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat||||3.6|0.28|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat||||3.6|0.28|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "엄",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||4.1|0.28|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||4.1|0.28|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "엇",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.5|0.2|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Blade.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Blade.mat||||3.5|0.2|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "엉",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||2.7|0.72|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ember.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ember.mat||||2.7|0.72|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "오",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat||||3.2|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterWave.mat||||3.2|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "옥",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||4.3|0.46|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||4.3|0.46|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "온",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||3.9|0.44|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||3.9|0.44|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "옴",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_옴.mat||||4.6|0.56|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_옴.mat||||4.6|0.56|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "옷",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||3.7|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||3.7|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "옹",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||3.95|0.48|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||3.95|0.48|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "우",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||3.8|0.28|True",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||3.8|0.28|True",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    },
+    {
+      "glyph": "웅",
+      "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+      "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||4.5|0.45|False",
+      "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ripple.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ripple.mat||||4.5|0.45|False",
+      "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+      ],
+      "systems": 38,
+      "capacity": 38000,
+      "sourcePreserved": true
+    }
+  ]
+}

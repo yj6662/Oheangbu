@@ -1,0 +1,11 @@
+{
+"id":"041_B18B","version":"64","key":"NOT_041","glyph":"놋","title":"놋 · 달아오른 갑주",
+"audit":"single_play_B18B.json","build":"fire_melt_041_build.json","scope":"not64_scope_check.json","previous":"NOM_040_REVIEW.html",
+"intro":"목표 영역에 불꽃이 타오르고, 명중 지점에서 뜨거운 불티가 아래로 떨어집니다. 문양은 밝아졌다가 지워집니다.",
+"changes":["KTP Pattern_126을 영역과 명중 문양에 사용했다.","명중 불티에 아래 방향 속도와 중력을 적용했다.","명중 문양의 가장자리가 소멸하도록 침식 값을 구동한다.","다른119개 프로필은 보존했다."],
+"cost":"Particle System7개/입자용량432개, 문양4tris. 공유 재질4개. KTP 시전 효과 비용 별도.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 갑옷 변형·방어력 감소·피해 연결은 미구현이다. 외부 명중 신호를 받는 표현이다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps. 진단용 명중 신호3회를 제공한다. 반복 명중 문양과 입자·수명 종료 정리를 검사했다.",
+"detailLabels":["화염 영역","명중과 소멸"]
+}

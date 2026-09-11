@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal46/025_B098.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated46/025_B098.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GIYEOK_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills46/025_B098_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills46/025_B098_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills46/025_B098_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills45/025_B098_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills46/025_B098_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NA_025_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "fire_bolt_025_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "na45_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B098.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills46",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills46",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames46",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames46",
+      "mvid_match": true
+    }
+  ]
+}

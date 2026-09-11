@@ -1,0 +1,39 @@
+{
+    "glyph": "몸",
+    "title": "흙으로 빚은 산인",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T02:24:50.4988341Z",
+    "loadedRuntimeAssemblyMvid": "b1585efb-3382-4d75-824d-c4ec2bf9d6e9",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T02:22:34.5471902Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.6000000238418579,
+    "life": 4.699999809265137,
+    "sampledSeconds": [
+        0.32899999618530276,
+        1.0339999198913575,
+        1.9739998579025269,
+        3.007999897003174,
+        4.229999542236328
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. No gameplay events are dispatched.",
+    "areaPlanSource": "none",
+    "areaShape": "",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "areaRadius": 0.0,
+    "areaAngle": 0.0,
+    "areaLength": 0.0,
+    "areaDelay": 0.0,
+    "areaSpeed": 0.0
+}

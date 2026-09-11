@@ -1,0 +1,13 @@
+Guardian Unity import: original coordinates, no per-part normalization
+Pelvis triangles=104 pivot=(0.000000, -0.243811, -0.037421) nativeBuffers=1
+Torso triangles=256 pivot=(0.000000, -0.174727, -0.046056) nativeBuffers=1
+Head triangles=1336 pivot=(0.000000, 0.124640, -0.035694) nativeBuffers=1
+LeftArm triangles=64 pivot=(-0.230282, 0.049798, -0.043178) nativeBuffers=1
+LeftFist triangles=320 pivot=(-0.287853, -0.151698, -0.023028) nativeBuffers=1
+RightArm triangles=64 pivot=(0.230282, 0.049798, -0.043178) nativeBuffers=1
+RightFist triangles=320 pivot=(0.287853, -0.151698, -0.023028) nativeBuffers=1
+LeftLeg triangles=64 pivot=(-0.103627, -0.284111, -0.028785) nativeBuffers=1
+LeftFoot triangles=64 pivot=(-0.103627, -0.425158, 0.011514) nativeBuffers=1
+RightLeg triangles=64 pivot=(0.103627, -0.284111, -0.028785) nativeBuffers=1
+RightFoot triangles=64 pivot=(0.103627, -0.425158, 0.011514) nativeBuffers=1
+totalTriangles=2720 maxBidirectionalOriginalError=6.82857E-08

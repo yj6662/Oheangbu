@@ -1,0 +1,11 @@
+from pathlib import Path
+r=Path('Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120')
+s=(r/'Vfx120FireAuraBuilder.cs').read_text(encoding='utf-8')
+s=s.replace('Vfx120FireAuraBuilder','Vfx120FireResolveBuilder').replace('032_B109','034_B118').replace('PF_FireAura_032','PF_FireResolve_034').replace('fire_aura_032','fire_resolve_034').replace('glyph="넉"','glyph="넘"')
+s=s.replace('new Vector3(0,-.78f,0)','new Vector3(0,-.45f,0)').replace('shape.radius=1.5f','shape.radius=.48f').replace('(.6f,1.1f)','(.3f,.6f)').replace('(.18f,.34f)','(.09f,.18f)').replace('em.rateOverTime=140','em.rateOverTime=80')
+s=s.replace('p.PatternMaterial=AssetDatabase.LoadAssetAtPath<Material>(folder+"/M_HeavyHit_156.mat");','''string mp=folder+"/M_Resolve_126.mat";var material=AssetDatabase.LoadAssetAtPath<Material>(mp);if(material==null){material=new Material(AssetDatabase.LoadAssetAtPath<Material>(folder+"/M_HitPattern_110.mat"));AssetDatabase.CreateAsset(material,mp);}material.SetTexture("_BaseMap",AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png"));EditorUtility.SetDirty(material);p.PatternMaterial=material;''')
+s=s.replace('Circular flame field plus confirmed hit motif. Latest-contact feedback slot reused; gameplay DOT not added.','Steady close-body flame and Pattern126; hit feedback does not stop emission. No damage immunity or gameplay interruption rules added.')
+s=s.replace('e.Sample(e.Life);','e.Sample(1.6f);if(e.FireAuraParticles==0)throw new Exception("Fire interrupted by hit");e.Sample(e.Life);').replace('PASS_RING_REPEATED_CONTACT_MARK_AND_CLEANUP','PASS_STEADY_FLAME_REPEATED_HIT_NO_INTERRUPTION_CLEANUP')
+(r/'Vfx120FireResolveBuilder.cs').write_text(s,encoding='utf-8')
+p=r/'Vfx120Queue.cs';s=p.read_text(encoding='utf-8').replace('case "FireAuraBuild":','case "FireResolveBuild": response.result=Vfx120FireResolveBuilder.Build(); break;\n                    case "FireAuraBuild":');p.write_text(s,encoding='utf-8')
+p=r/'Vfx120TraditionalPlayAudit.cs';s=p.read_text(encoding='utf-8').replace('(row.glyph!="넉"||row.fireAuraParticlePeak','((row.glyph!="넉"&&row.glyph!="넘")||row.fireAuraParticlePeak');p.write_text(s,encoding='utf-8')

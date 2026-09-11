@@ -27,6 +27,8 @@ namespace Oheangbu.Combat
         private Element _guardElement;
         private float _guardStart = float.NegativeInfinity;
         private bool _hasGuard;
+        // Identifies replacement guards for presentation without changing combat rules.
+        public uint GuardRevision { get; private set; }
 
         // 임팩트가 방어막에 닿았을 때(None 제외) — 배선부가 성공 보상(그로기·먹·이펙트)을 이행한다.
         // 방어막 속성·접점은 표현(접점 버스트)에 필요한 문맥 — 판정 규칙에는 불개입
@@ -40,6 +42,7 @@ namespace Oheangbu.Combat
         // 글자 완성 = 방어막 생성. 새 방어막은 이전 것을 대체한다(동시 1장) [TEST]
         public void RaiseGuard(Element element, float now)
         {
+            GuardRevision++;
             _guardElement = element;
             _guardStart = now;
             _hasGuard = true;

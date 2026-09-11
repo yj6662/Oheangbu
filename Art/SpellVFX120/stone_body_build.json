@@ -1,0 +1,424 @@
+{
+    "status": "BUILT_STRUCTURAL_CHECKS_ONLY_VISUAL_RUNTIME_UNVERIFIED",
+    "generatedUtc": "2026-09-09T09:21:12.7726184Z",
+    "geometryPolicy": "Exactly one static, single-submesh LOD per profile. Original index order, UV channels, normals and colors retained. Source tangents and handedness are transformed when present; when source tangent count is zero, tangents are explicitly recalculated only on the owned derivative using its existing UVs, normals and indices, and recorded per source. Mesh native setters rebuild buffers. Imported prefab transforms are used once; no extra FBX axis or unit conversion. Each rotated bounds axis is centered and independently normalized to [-.5,+.5]. Bridge source +X maps to canonical +Z. Count=1 and Size=1; authored dimensions are PartScale. Source proportions therefore change deliberately, without changing vertex/triangle counts.",
+    "runtimeLimit": "Editor build only; no scene, collider, skeleton, motion, combat timing or field gate is created. Placement, ground contact, bridge formation/reveal, lifetime and visual quality remain UNVERIFIED. Ground anchor and _Formation are supplied by runtime. One whole bridge retains its deck, supports and original UV atlas; it is not copied eight times.",
+    "materialLimit": "Owned shared BotanicalSurface materials retain source base/normal maps and base UV transform. TintStrength=0, Saturation=.6, AlphaClip=0, profile Pigment=(.75,.72,.66). Unresolved vendor AO is deliberately omitted. No source material or importer mutation.",
+    "sourceFilesUnchanged": true,
+    "sources": [
+        {
+            "glyph": "막",
+            "prefab": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "child": "SM_Rock_K_LOD2",
+            "model": "Assets/SeyeonjeongPavilion/Mesh/Rock/SM_Rock_K.fbx",
+            "modelGuid": "abc00000000018220012472531968812",
+            "meshOutput": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_Rock_K_LOD2_Unit.asset",
+            "materialSource": "Assets/SeyeonjeongPavilion/Material/Rock/MI_Rock_K.mat",
+            "materialOutput": "Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_Rock_K.mat",
+            "baseMap": "Assets/SeyeonjeongPavilion/Texture/Rock/T_Rock_K_BC.png",
+            "normalMap": "Assets/SeyeonjeongPavilion/Texture/Rock/T_Rock_K_N.png",
+            "originalAxes": "Imported rock height Y, broad irregular faces in XZ; original pivot near centre, below-pivot stone retained.",
+            "normalization": "S(1/rotatedBounds.size) * T(-rotatedBounds.center) * R(canonicalEuler) * meshToRoot; unit dimensions in X/Y/Z, centre zero. Nonuniform normalization uses inverse-transpose normals.",
+            "meshLocalId": 4300004,
+            "vertices": 704,
+            "triangles": 1006,
+            "submeshes": 1,
+            "sourceBoneWeights": 0,
+            "sourceBindposes": 0,
+            "sourceUv0Count": 704,
+            "sourceNormalCount": 704,
+            "sourceTangentCount": 0,
+            "derivativeTangentCount": 704,
+            "uvDimensions": [
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "originalMeshBounds": {
+                "m_Center": {
+                    "x": 0.04833120107650757,
+                    "y": 0.038974761962890628,
+                    "z": 0.22197872400283814
+                },
+                "m_Extent": {
+                    "x": 1.9945104122161866,
+                    "y": 0.9947121143341065,
+                    "z": 2.0365192890167238
+                }
+            },
+            "prefabBounds": {
+                "m_Center": {
+                    "x": 0.048331379890441897,
+                    "y": 0.038974761962890628,
+                    "z": 0.2219787836074829
+                },
+                "m_Extent": {
+                    "x": 1.9945106506347657,
+                    "y": 0.9947121143341065,
+                    "z": 2.0365192890167238
+                }
+            },
+            "rotatedBounds": {
+                "m_Center": {
+                    "x": 0.048331379890441897,
+                    "y": 0.038974761962890628,
+                    "z": 0.2219787836074829
+                },
+                "m_Extent": {
+                    "x": 1.9945106506347657,
+                    "y": 0.9947121143341065,
+                    "z": 2.0365192890167238
+                }
+            },
+            "canonicalBounds": {
+                "m_Center": {
+                    "x": -4.470348358154297e-8,
+                    "y": 0.0,
+                    "z": -1.4901161193847657e-8
+                },
+                "m_Extent": {
+                    "x": 0.4999999403953552,
+                    "y": 0.5,
+                    "z": 0.5
+                }
+            },
+            "authoredBounds": {
+                "m_Center": {
+                    "x": -5.960464477539063e-8,
+                    "y": 1.1920928955078126e-7,
+                    "z": 0.0
+                },
+                "m_Extent": {
+                    "x": 0.7249999046325684,
+                    "y": 0.9250001311302185,
+                    "z": 0.42500001192092898
+                }
+            },
+            "meshToRoot": {
+                "e00": 1.0,
+                "e01": 0.0,
+                "e02": 0.0,
+                "e03": 0.0,
+                "e10": 0.0,
+                "e11": 1.0,
+                "e12": 0.0,
+                "e13": 0.0,
+                "e20": 0.0,
+                "e21": 0.0,
+                "e22": 1.0,
+                "e23": 0.0,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "normalizationMatrix": {
+                "e00": 0.2506880462169647,
+                "e01": 0.0,
+                "e02": 0.0,
+                "e03": -0.012116098776459694,
+                "e10": 0.0,
+                "e11": 0.5026580095291138,
+                "e12": 0.0,
+                "e13": -0.01959097571671009,
+                "e20": 0.0,
+                "e21": 0.0,
+                "e22": 0.24551694095134736,
+                "e23": -0.054499551653862,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "canonicalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "authoredScale": {
+                "x": 1.4500000476837159,
+                "y": 1.850000023841858,
+                "z": 0.8500000238418579
+            },
+            "sourceAoCopied": false,
+            "nativeVertexBufferPresent": true,
+            "derivativeTangentsRebuilt": true
+        },
+        {
+            "glyph": "뭄",
+            "prefab": "Assets/SeyeonjeongPavilion/Prefabs/SM_StoneBridge_1.prefab",
+            "child": "SM_StoneBridge_1_LOD3",
+            "model": "Assets/SeyeonjeongPavilion/Mesh/Rock/SM_StoneBridge_1.fbx",
+            "modelGuid": "abc00000000010069731995249673025",
+            "meshOutput": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_StoneBridge_1_LOD3_Unit.asset",
+            "materialSource": "Assets/SeyeonjeongPavilion/Material/Rock/MI_StoneBridge_1.mat",
+            "materialOutput": "Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_StoneBridge_1.mat",
+            "baseMap": "Assets/SeyeonjeongPavilion/Texture/Rock/T_StoneBridge_1_BC.png",
+            "normalMap": "Assets/SeyeonjeongPavilion/Texture/Rock/T_StoneBridge_1_N.png",
+            "originalAxes": "Imported bridge long axis X, height Y, cross-deck width Z; near-bottom source pivot. Rotation -90Y maps +X to +Z.",
+            "normalization": "S(1/rotatedBounds.size) * T(-rotatedBounds.center) * R(canonicalEuler) * meshToRoot; unit dimensions in X/Y/Z, centre zero. Nonuniform normalization uses inverse-transpose normals.",
+            "meshLocalId": 4300006,
+            "vertices": 2892,
+            "triangles": 3375,
+            "submeshes": 1,
+            "sourceBoneWeights": 0,
+            "sourceBindposes": 0,
+            "sourceUv0Count": 2892,
+            "sourceNormalCount": 2892,
+            "sourceTangentCount": 0,
+            "derivativeTangentCount": 2892,
+            "uvDimensions": [
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "originalMeshBounds": {
+                "m_Center": {
+                    "x": -0.0009655952453613281,
+                    "y": 0.5721962451934815,
+                    "z": -0.0012852251529693604
+                },
+                "m_Extent": {
+                    "x": 1.5258070230484009,
+                    "y": 0.5731198787689209,
+                    "z": 0.9466873407363892
+                }
+            },
+            "prefabBounds": {
+                "m_Center": {
+                    "x": -0.0009655952453613281,
+                    "y": 0.5721963047981262,
+                    "z": -0.001285254955291748
+                },
+                "m_Extent": {
+                    "x": 1.5258070230484009,
+                    "y": 0.5731198787689209,
+                    "z": 0.9466873407363892
+                }
+            },
+            "rotatedBounds": {
+                "m_Center": {
+                    "x": 0.0012853145599365235,
+                    "y": 0.5721963047981262,
+                    "z": -0.0009655952453613281
+                },
+                "m_Extent": {
+                    "x": 0.9466874003410339,
+                    "y": 0.5731198787689209,
+                    "z": 1.5258069038391114
+                }
+            },
+            "canonicalBounds": {
+                "m_Center": {
+                    "x": -2.9802322387695315e-8,
+                    "y": -1.4901161193847657e-8,
+                    "z": 0.0
+                },
+                "m_Extent": {
+                    "x": 0.4999999701976776,
+                    "y": 0.4999999403953552,
+                    "z": 0.5
+                }
+            },
+            "authoredBounds": {
+                "m_Center": {
+                    "x": -5.960464477539063e-8,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "m_Extent": {
+                    "x": 0.8249999284744263,
+                    "y": 0.32499995827674868,
+                    "z": 2.3499999046325685
+                }
+            },
+            "meshToRoot": {
+                "e00": 1.0,
+                "e01": 0.0,
+                "e02": 0.0,
+                "e03": 0.0,
+                "e10": 0.0,
+                "e11": 1.0,
+                "e12": 0.0,
+                "e13": 0.0,
+                "e20": 0.0,
+                "e21": 0.0,
+                "e22": 1.0,
+                "e23": 0.0,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "normalizationMatrix": {
+                "e00": 3.1480638540415387e-8,
+                "e01": 0.0,
+                "e02": -0.5281574130058289,
+                "e03": -0.0006788484752178192,
+                "e10": 0.0,
+                "e11": 0.8724178075790405,
+                "e12": 0.0,
+                "e13": -0.4991942346096039,
+                "e20": 0.32769542932510378,
+                "e21": 0.0,
+                "e22": 1.9532171435798774e-8,
+                "e23": 0.0003164211811963469,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "canonicalEuler": {
+                "x": 0.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "authoredScale": {
+                "x": 1.649999976158142,
+                "y": 0.6499999761581421,
+                "z": 4.699999809265137
+            },
+            "sourceAoCopied": false,
+            "nativeVertexBufferPresent": true,
+            "derivativeTangentsRebuilt": true
+        }
+    ],
+    "profiles": [
+        {
+            "glyph": "막",
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/050_B9C9.asset",
+            "sha256Before": "0a0a70e1bc230385a0ca7725a63278f53a75cdeb729c2b0d125dda19d50ba649",
+            "sha256After": "c349c12afbfdec8d9300d2116fbd82c47b429e56a1a14ac4c6bef5e6c4d30268",
+            "jsonBefore": "{\"Glyph\":\"막\",\"Title\":\"박힌 돌문\",\"Intent\":\"낙하 지점에 바위가 뿌리내려 엄폐물로 잔존\",\"Family\":\"Rock\",\"Assigned\":true,\"Behavior\":3,\"Layout\":10,\"BodyMesh\":{\"instanceID\":-1049748},\"AccentMesh\":{\"instanceID\":-1049762},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-1110512},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1050076},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1130418},\"NativeImpactPrefab\":{\"instanceID\":1130526},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.47999998927116396,\"NativeImpactScale\":1.0,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.5921568870544434,\"g\":0.45098039507865908,\"b\":0.26274511218070986,\"a\":1.0},\"Accent\":{\"r\":0.5137255191802979,\"g\":0.5882353186607361,\"b\":0.6117647290229797,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":3,\"RibbonCount\":0,\"Size\":0.6800000071525574,\"PartScale\":{\"x\":1.5499999523162842,\"y\":1.75,\"z\":1.600000023841858},\"Duration\":3.9000000953674318,\"Flight\":0.949999988079071,\"Turns\":0.0,\"Lift\":1.4500000476837159,\"Stagger\":0.03999999910593033,\"UseMist\":true,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":50,\\\"glyph\\\":\\\"막\\\",\\\"initial\\\":\\\"ㅁ\\\",\\\"element\\\":\\\"토\\\",\\\"vowel\\\":\\\"ㅏ\\\",\\\"final\\\":\\\"ㄱ\\\",\\\"frame\\\":\\\"양·단일\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"낙하 지점에 바위가 뿌리내려 엄폐물로 잔존\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"박힌 돌문\\\",\\\"shape\\\":\\\"낙하 돌핵이 서며 생기는 두꺼운 비대칭 석문\\\",\\\"motion\\\":\\\"포물선 뒤 착지에서 수직으로 고정\\\",\\\"pattern\\\":\\\"돌결·사각 회문\\\",\\\"accent\\\":\\\"돌의 회청색\\\",\\\"cast\\\":\\\"돌덩이 안에 세로 균열을 만듦\\\",\\\"travel\\\":\\\"회전이 점차 멈추며 넓은 면을 전면으로 돌림\\\",\\\"impact\\\":\\\"착탄에 돌뿌리가 땅을 잡고 엄폐 실루엣이 섬\\\",\\\"resolve\\\":\\\"잔존 종료에 상단부터 큰 조각으로 갈라져 가라앉음\\\",\\\"material\\\":{\\\"primary\\\":\\\"무광 흙결·준법 돌면·빠르게 가라앉는 먼지\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Rock\\\",\\\"secondaryPrimitives\\\":[\\\"Sand\\\",\\\"Shard\\\"],\\\"layout\\\":\\\"Pillar\\\",\\\"behavior\\\":\\\"Shield\\\",\\\"count\\\":7,\\\"layers\\\":4,\\\"scale\\\":1.95,\\\"duration\\\":3.9,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"돌덩이 안에 세로 균열을 만듦\\\",\\\"회전이 점차 멈추며 넓은 면을 전면으로 돌림\\\",\\\"착탄에 돌뿌리가 땅을 잡고 엄폐 실루엣이 섬\\\",\\\"잔존 종료에 상단부터 큰 조각으로 갈라져 가라앉음\\\"],\\\"motionSignature\\\":\\\"포물선 뒤 착지에서 수직으로 고정\\\",\\\"geometrySignature\\\":\\\"낙하 돌핵이 서며 생기는 두꺼운 비대칭 석문\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#977343\\\",\\\"secondary\\\":\\\"#83969C\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\\\",\\\"guid\\\":\\\"b0e88649d9b865540bc1dc9855fd57d9\\\",\\\"observed_motif\\\":\\\"네 방향으로 맞물린 직선 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\\\",\\\"caution\\\":\\\"전통 창호 실물 검증이 아닌 선형 무늬 관찰\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"CastCommitted\\\",\\\"ProjectileOrWaveMoved\\\",\\\"Impact\\\",\\\"Expired\\\"],\\\"readability\\\":\\\"박힌 돌문: 낙하 돌핵이 서며 생기는 두꺼운 비대칭 석문와 포물선 뒤 착지에서 수직으로 고정가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{\\\"family\\\":\\\"Rock\\\",\\\"accentFamily\\\":\\\"Sand\\\"},\\\"previewNumericAuthoring\\\":{\\\"count\\\":3,\\\"size\\\":0.68,\\\"partScale\\\":{\\\"x\\\":1.55,\\\"y\\\":1.75,\\\"z\\\":1.6},\\\"flight\\\":0.95,\\\"turns\\\":0.0,\\\"lift\\\":1.45,\\\"stagger\\\":0.04,\\\"ribbons\\\":0,\\\"grounded\\\":true,\\\"mist\\\":true},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"size\\\":[3262,3262],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":false,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"recommended_use\\\":\\\"금 방어·각진 봉인 가장자리\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"alpha_mean\\\":69.40967708345472,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat\\\",\\\"guid\\\":\\\"c5459b93451d1924ba3ded1057255934\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab\\\",\\\"guid\\\":\\\"0ed00e7e33480994d85c91e43884da40\\\",\\\"particle_systems\\\":14,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+            "jsonAfter": "{\"Glyph\":\"막\",\"Title\":\"박힌 돌문\",\"Intent\":\"낙하 지점에 바위가 뿌리내려 엄폐물로 잔존\",\"Family\":\"Rock\",\"Assigned\":true,\"Behavior\":3,\"Layout\":10,\"BodyMesh\":{\"instanceID\":-2027194},\"AccentMesh\":{\"instanceID\":-1049762},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-2027218},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1050076},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1130418},\"NativeImpactPrefab\":{\"instanceID\":1130526},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.3199999928474426,\"NativeImpactScale\":0.44999998807907107,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.75,\"g\":0.7200000286102295,\"b\":0.6600000262260437,\"a\":1.0},\"Accent\":{\"r\":0.5137255191802979,\"g\":0.5882353186607361,\"b\":0.6117647290229797,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":1,\"RibbonCount\":0,\"Size\":1.0,\"PartScale\":{\"x\":1.4500000476837159,\"y\":1.850000023841858,\"z\":0.8500000238418579},\"Duration\":3.9000000953674318,\"Flight\":0.949999988079071,\"Turns\":0.0,\"Lift\":1.4500000476837159,\"Stagger\":0.03999999910593033,\"UseMist\":true,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":50,\\\"glyph\\\":\\\"막\\\",\\\"initial\\\":\\\"ㅁ\\\",\\\"element\\\":\\\"토\\\",\\\"vowel\\\":\\\"ㅏ\\\",\\\"final\\\":\\\"ㄱ\\\",\\\"frame\\\":\\\"양·단일\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"낙하 지점에 바위가 뿌리내려 엄폐물로 잔존\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"박힌 돌문\\\",\\\"shape\\\":\\\"낙하 돌핵이 서며 생기는 두꺼운 비대칭 석문\\\",\\\"motion\\\":\\\"포물선 뒤 착지에서 수직으로 고정\\\",\\\"pattern\\\":\\\"돌결·사각 회문\\\",\\\"accent\\\":\\\"돌의 회청색\\\",\\\"cast\\\":\\\"돌덩이 안에 세로 균열을 만듦\\\",\\\"travel\\\":\\\"회전이 점차 멈추며 넓은 면을 전면으로 돌림\\\",\\\"impact\\\":\\\"착탄에 돌뿌리가 땅을 잡고 엄폐 실루엣이 섬\\\",\\\"resolve\\\":\\\"잔존 종료에 상단부터 큰 조각으로 갈라져 가라앉음\\\",\\\"material\\\":{\\\"primary\\\":\\\"무광 흙결·준법 돌면·빠르게 가라앉는 먼지\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Rock\\\",\\\"secondaryPrimitives\\\":[\\\"Sand\\\",\\\"Shard\\\"],\\\"layout\\\":\\\"Pillar\\\",\\\"behavior\\\":\\\"Shield\\\",\\\"count\\\":7,\\\"layers\\\":4,\\\"scale\\\":1.95,\\\"duration\\\":3.9,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"돌덩이 안에 세로 균열을 만듦\\\",\\\"회전이 점차 멈추며 넓은 면을 전면으로 돌림\\\",\\\"착탄에 돌뿌리가 땅을 잡고 엄폐 실루엣이 섬\\\",\\\"잔존 종료에 상단부터 큰 조각으로 갈라져 가라앉음\\\"],\\\"motionSignature\\\":\\\"포물선 뒤 착지에서 수직으로 고정\\\",\\\"geometrySignature\\\":\\\"낙하 돌핵이 서며 생기는 두꺼운 비대칭 석문\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#977343\\\",\\\"secondary\\\":\\\"#83969C\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\\\",\\\"guid\\\":\\\"b0e88649d9b865540bc1dc9855fd57d9\\\",\\\"observed_motif\\\":\\\"네 방향으로 맞물린 직선 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\\\",\\\"caution\\\":\\\"전통 창호 실물 검증이 아닌 선형 무늬 관찰\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"CastCommitted\\\",\\\"ProjectileOrWaveMoved\\\",\\\"Impact\\\",\\\"Expired\\\"],\\\"readability\\\":\\\"박힌 돌문: 낙하 돌핵이 서며 생기는 두꺼운 비대칭 석문와 포물선 뒤 착지에서 수직으로 고정가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{\\\"family\\\":\\\"Rock\\\",\\\"accentFamily\\\":\\\"Sand\\\"},\\\"previewNumericAuthoring\\\":{\\\"count\\\":3,\\\"size\\\":0.68,\\\"partScale\\\":{\\\"x\\\":1.55,\\\"y\\\":1.75,\\\"z\\\":1.6},\\\"flight\\\":0.95,\\\"turns\\\":0.0,\\\"lift\\\":1.45,\\\"stagger\\\":0.04,\\\"ribbons\\\":0,\\\"grounded\\\":true,\\\"mist\\\":true},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"size\\\":[3262,3262],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":false,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"recommended_use\\\":\\\"금 방어·각진 봉인 가장자리\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"alpha_mean\\\":69.40967708345472,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat\\\",\\\"guid\\\":\\\"c5459b93451d1924ba3ded1057255934\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab\\\",\\\"guid\\\":\\\"0ed00e7e33480994d85c91e43884da40\\\",\\\"particle_systems\\\":14,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+            "meshBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Rock.asset",
+            "meshAfter": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_Rock_K_LOD2_Unit.asset",
+            "materialBefore": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat",
+            "materialAfter": "Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_Rock_K.mat"
+        },
+        {
+            "glyph": "뭄",
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/070_BB44.asset",
+            "sha256Before": "ad6134c226be4c6cc6b2d83047add2754eef9fab212f3d611586a15e6b7f0084",
+            "sha256After": "a9c66eec2ee862503706a823eb40f774980840edb4952f143e2ac8ca55efca43",
+            "jsonBefore": "{\"Glyph\":\"뭄\",\"Title\":\"이어지는 흙다리\",\"Intent\":\"땅을 생성해 다리를 만든다. 비전투 전용(최후 어휘)\",\"Family\":\"BridgeSlab\",\"Assigned\":true,\"Behavior\":4,\"Layout\":5,\"BodyMesh\":{\"instanceID\":-1259582},\"AccentMesh\":{\"instanceID\":-1049762},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-1260428},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1050076},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1130418},\"NativeImpactPrefab\":{\"instanceID\":0},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.47999998927116396,\"NativeImpactScale\":1.0,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.5921568870544434,\"g\":0.45098039507865908,\"b\":0.26274511218070986,\"a\":1.0},\"Accent\":{\"r\":0.7686274647712708,\"g\":0.6823529601097107,\"b\":0.48235294222831728,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":8,\"RibbonCount\":1,\"Size\":1.850000023841858,\"PartScale\":{\"x\":1.5,\"y\":1.0,\"z\":0.7200000286102295},\"Duration\":4.650000095367432,\"Flight\":0.44999998807907107,\"Turns\":0.019999999552965165,\"Lift\":0.0,\"Stagger\":0.5799999833106995,\"UseMist\":true,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":70,\\\"glyph\\\":\\\"뭄\\\",\\\"initial\\\":\\\"ㅁ\\\",\\\"element\\\":\\\"토\\\",\\\"vowel\\\":\\\"ㅜ\\\",\\\"final\\\":\\\"ㅁ\\\",\\\"frame\\\":\\\"음·광역\\\",\\\"classification\\\":\\\"필드\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"땅을 생성해 다리를 만든다. 비전투 전용(최후 어휘)\\\",\\\"sourceNote\\\":\\\"게이트 배치=LDB\\\",\\\"visualTitle\\\":\\\"이어지는 흙다리\\\",\\\"shape\\\":\\\"넓은 편석 단과 아래로 얽힌 흙뿌리\\\",\\\"motion\\\":\\\"가까운 발판부터 먼 발판으로 수평 조립\\\",\\\"pattern\\\":\\\"산형 준법·사각 기단\\\",\\\"accent\\\":\\\"밝은 마른 황토\\\",\\\"cast\\\":\\\"가장자리 바닥에 굵은 가로획을 찍음\\\",\\\"travel\\\":\\\"실제 다리 경로를 따라 돌단이 순서대로 내려앉음\\\",\\\"impact\\\":\\\"마지막 단이 맞물릴 때 아래 흙뿌리들이 연결\\\",\\\"resolve\\\":\\\"생성물 상태에 맞춰 먼지만 걷히고 단단한 돌결로 안정\\\",\\\"material\\\":{\\\"primary\\\":\\\"무광 흙결·준법 돌면·빠르게 가라앉는 먼지\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Rock\\\",\\\"secondaryPrimitives\\\":[\\\"Sand\\\",\\\"Shard\\\"],\\\"layout\\\":\\\"Field\\\",\\\"behavior\\\":\\\"Zone\\\",\\\"count\\\":8,\\\"layers\\\":4,\\\"scale\\\":3.05,\\\"duration\\\":4.65,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"가장자리 바닥에 굵은 가로획을 찍음\\\",\\\"실제 다리 경로를 따라 돌단이 순서대로 내려앉음\\\",\\\"마지막 단이 맞물릴 때 아래 흙뿌리들이 연결\\\",\\\"생성물 상태에 맞춰 먼지만 걷히고 단단한 돌결로 안정\\\"],\\\"motionSignature\\\":\\\"가까운 발판부터 먼 발판으로 수평 조립\\\",\\\"geometrySignature\\\":\\\"넓은 편석 단과 아래로 얽힌 흙뿌리\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#977343\\\",\\\"secondary\\\":\\\"#C4AE7B\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\\\",\\\"guid\\\":\\\"b0e88649d9b865540bc1dc9855fd57d9\\\",\\\"observed_motif\\\":\\\"네 방향으로 맞물린 직선 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\\\",\\\"caution\\\":\\\"전통 창호 실물 검증이 아닌 선형 무늬 관찰\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"FieldGateAuthorized\\\",\\\"BridgeBuildProgress\\\",\\\"BridgeReady\\\"],\\\"readability\\\":\\\"이어지는 흙다리: 넓은 편석 단과 아래로 얽힌 흙뿌리와 가까운 발판부터 먼 발판으로 수평 조립가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{},\\\"previewNumericAuthoring\\\":{\\\"count\\\":8,\\\"size\\\":1.85,\\\"partScale\\\":{\\\"x\\\":1.4,\\\"y\\\":0.62,\\\"z\\\":1.1},\\\"flight\\\":0.45,\\\"turns\\\":0.02,\\\"lift\\\":0.25,\\\"stagger\\\":0.58,\\\"ribbons\\\":1,\\\"grounded\\\":true,\\\"mist\\\":true},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"size\\\":[3262,3262],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":false,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"recommended_use\\\":\\\"금 방어·각진 봉인 가장자리\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"alpha_mean\\\":69.40967708345472,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat\\\",\\\"guid\\\":\\\"c5459b93451d1924ba3ded1057255934\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab\\\",\\\"guid\\\":\\\"0ed00e7e33480994d85c91e43884da40\\\",\\\"particle_systems\\\":14,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+            "jsonAfter": "{\"Glyph\":\"뭄\",\"Title\":\"이어지는 흙다리\",\"Intent\":\"땅을 생성해 다리를 만든다. 비전투 전용(최후 어휘)\",\"Family\":\"BridgeSlab\",\"Assigned\":true,\"Behavior\":4,\"Layout\":5,\"BodyMesh\":{\"instanceID\":-2027252},\"AccentMesh\":{\"instanceID\":-1049762},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-2027276},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1050076},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1130418},\"NativeImpactPrefab\":{\"instanceID\":0},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.3199999928474426,\"NativeImpactScale\":0.44999998807907107,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.75,\"g\":0.7200000286102295,\"b\":0.6600000262260437,\"a\":1.0},\"Accent\":{\"r\":0.7686274647712708,\"g\":0.6823529601097107,\"b\":0.48235294222831728,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":1,\"RibbonCount\":1,\"Size\":1.0,\"PartScale\":{\"x\":1.649999976158142,\"y\":0.6499999761581421,\"z\":4.699999809265137},\"Duration\":4.650000095367432,\"Flight\":0.44999998807907107,\"Turns\":0.019999999552965165,\"Lift\":0.0,\"Stagger\":0.5799999833106995,\"UseMist\":true,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":70,\\\"glyph\\\":\\\"뭄\\\",\\\"initial\\\":\\\"ㅁ\\\",\\\"element\\\":\\\"토\\\",\\\"vowel\\\":\\\"ㅜ\\\",\\\"final\\\":\\\"ㅁ\\\",\\\"frame\\\":\\\"음·광역\\\",\\\"classification\\\":\\\"필드\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"땅을 생성해 다리를 만든다. 비전투 전용(최후 어휘)\\\",\\\"sourceNote\\\":\\\"게이트 배치=LDB\\\",\\\"visualTitle\\\":\\\"이어지는 흙다리\\\",\\\"shape\\\":\\\"넓은 편석 단과 아래로 얽힌 흙뿌리\\\",\\\"motion\\\":\\\"가까운 발판부터 먼 발판으로 수평 조립\\\",\\\"pattern\\\":\\\"산형 준법·사각 기단\\\",\\\"accent\\\":\\\"밝은 마른 황토\\\",\\\"cast\\\":\\\"가장자리 바닥에 굵은 가로획을 찍음\\\",\\\"travel\\\":\\\"실제 다리 경로를 따라 돌단이 순서대로 내려앉음\\\",\\\"impact\\\":\\\"마지막 단이 맞물릴 때 아래 흙뿌리들이 연결\\\",\\\"resolve\\\":\\\"생성물 상태에 맞춰 먼지만 걷히고 단단한 돌결로 안정\\\",\\\"material\\\":{\\\"primary\\\":\\\"무광 흙결·준법 돌면·빠르게 가라앉는 먼지\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Rock\\\",\\\"secondaryPrimitives\\\":[\\\"Sand\\\",\\\"Shard\\\"],\\\"layout\\\":\\\"Field\\\",\\\"behavior\\\":\\\"Zone\\\",\\\"count\\\":8,\\\"layers\\\":4,\\\"scale\\\":3.05,\\\"duration\\\":4.65,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"가장자리 바닥에 굵은 가로획을 찍음\\\",\\\"실제 다리 경로를 따라 돌단이 순서대로 내려앉음\\\",\\\"마지막 단이 맞물릴 때 아래 흙뿌리들이 연결\\\",\\\"생성물 상태에 맞춰 먼지만 걷히고 단단한 돌결로 안정\\\"],\\\"motionSignature\\\":\\\"가까운 발판부터 먼 발판으로 수평 조립\\\",\\\"geometrySignature\\\":\\\"넓은 편석 단과 아래로 얽힌 흙뿌리\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#977343\\\",\\\"secondary\\\":\\\"#C4AE7B\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png\\\",\\\"guid\\\":\\\"b0e88649d9b865540bc1dc9855fd57d9\\\",\\\"observed_motif\\\":\\\"네 방향으로 맞물린 직선 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_101_150.jpg\\\",\\\"caution\\\":\\\"전통 창호 실물 검증이 아닌 선형 무늬 관찰\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"FieldGateAuthorized\\\",\\\"BridgeBuildProgress\\\",\\\"BridgeReady\\\"],\\\"readability\\\":\\\"이어지는 흙다리: 넓은 편석 단과 아래로 얽힌 흙뿌리와 가까운 발판부터 먼 발판으로 수평 조립가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{},\\\"previewNumericAuthoring\\\":{\\\"count\\\":8,\\\"size\\\":1.85,\\\"partScale\\\":{\\\"x\\\":1.4,\\\"y\\\":0.62,\\\"z\\\":1.1},\\\"flight\\\":0.45,\\\"turns\\\":0.02,\\\"lift\\\":0.25,\\\"stagger\\\":0.58,\\\"ribbons\\\":1,\\\"grounded\\\":true,\\\"mist\\\":true},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"guid\\\":\\\"366d97adb41f5324a8ca349d9eed4262\\\",\\\"size\\\":[3262,3262],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":false,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"observed_motif\\\":\\\"원 안 네 방향 직각 회문\\\",\\\"recommended_use\\\":\\\"금 방어·각진 봉인 가장자리\\\",\\\"caution\\\":\\\"문살과 닮은 기하 도안이며 실제 창호 구조로 판정한 것은 아님\\\",\\\"alpha_mean\\\":69.40967708345472,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat\\\",\\\"guid\\\":\\\"c5459b93451d1924ba3ded1057255934\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab\\\",\\\"guid\\\":\\\"0ed00e7e33480994d85c91e43884da40\\\",\\\"particle_systems\\\":14,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}",
+            "meshBefore": "Assets/_Project/Art/SpellVFX120/Meshes/BridgeSlab.asset",
+            "meshAfter": "Assets/_Project/Art/SpellVFX120/StoneBodies/Meshes/SM_StoneBridge_1_LOD3_Unit.asset",
+            "materialBefore": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_BridgeSlab.mat",
+            "materialAfter": "Assets/_Project/Art/SpellVFX120/StoneBodies/Materials/M_SM_StoneBridge_1.mat"
+        }
+    ],
+    "sourceFiles": [
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Rock/MI_Rock_K.mat",
+            "sha256Before": "a9ad9e9bf0f5166bccb9aa916924c33014a9886b0719719b86cf9a85489ec44c",
+            "sha256After": "a9ad9e9bf0f5166bccb9aa916924c33014a9886b0719719b86cf9a85489ec44c"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Rock/MI_Rock_K.mat.meta",
+            "sha256Before": "a41afd382cc4a63ae348a9e7a03e685bb38f8a5e9feb0dc804fe82abc8b7fa48",
+            "sha256After": "a41afd382cc4a63ae348a9e7a03e685bb38f8a5e9feb0dc804fe82abc8b7fa48"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Rock/MI_StoneBridge_1.mat",
+            "sha256Before": "2198ccdcc9b72c1f4c7dcf59e29cd25a0cdd00d7643ca1e2177843f54c96feba",
+            "sha256After": "2198ccdcc9b72c1f4c7dcf59e29cd25a0cdd00d7643ca1e2177843f54c96feba"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Rock/MI_StoneBridge_1.mat.meta",
+            "sha256Before": "714e8b16e51389b6557b395b9ae948f5ae373929601cd2d4c1b5a9b4901f9468",
+            "sha256After": "714e8b16e51389b6557b395b9ae948f5ae373929601cd2d4c1b5a9b4901f9468"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Rock/SM_Rock_K.fbx",
+            "sha256Before": "8edd6c7aacaf959a28345613badb290292551509cfbe654b19afc4c3e73e35a8",
+            "sha256After": "8edd6c7aacaf959a28345613badb290292551509cfbe654b19afc4c3e73e35a8"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Rock/SM_Rock_K.fbx.meta",
+            "sha256Before": "1480c18f7625fdfcbeedb0c35c4831c0a1cc572669f884b7b6b1345dcb4579ef",
+            "sha256After": "1480c18f7625fdfcbeedb0c35c4831c0a1cc572669f884b7b6b1345dcb4579ef"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Rock/SM_StoneBridge_1.fbx",
+            "sha256Before": "28c2541e7a20c1eece89c7234ccc889d882097b1356c2e43881859063ac5cac8",
+            "sha256After": "28c2541e7a20c1eece89c7234ccc889d882097b1356c2e43881859063ac5cac8"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Rock/SM_StoneBridge_1.fbx.meta",
+            "sha256Before": "e113d875b83c8cca859f3f0e02f92797c5f037d4dec2dd3750b806d71967f766",
+            "sha256After": "e113d875b83c8cca859f3f0e02f92797c5f037d4dec2dd3750b806d71967f766"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "sha256Before": "b820c787c8a6ef757b306e5bd3ed5d5d0af5bc201ada2a5adbc1003a57fea4fc",
+            "sha256After": "b820c787c8a6ef757b306e5bd3ed5d5d0af5bc201ada2a5adbc1003a57fea4fc"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab.meta",
+            "sha256Before": "fd8faa4a0b44018df8b8d59347864bac4543c64f649fdf4390d2a1aaa6a17b4d",
+            "sha256After": "fd8faa4a0b44018df8b8d59347864bac4543c64f649fdf4390d2a1aaa6a17b4d"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_StoneBridge_1.prefab",
+            "sha256Before": "02c8873dc51e1731df77b441ad37c2489a06a5eafd1b455069a4767ca7586027",
+            "sha256After": "02c8873dc51e1731df77b441ad37c2489a06a5eafd1b455069a4767ca7586027"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_StoneBridge_1.prefab.meta",
+            "sha256Before": "147dc989709380c9b1a7114bfea9dd04e421d28fd8c99ed9029b233d45b6768b",
+            "sha256After": "147dc989709380c9b1a7114bfea9dd04e421d28fd8c99ed9029b233d45b6768b"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_Rock_K_BC.png",
+            "sha256Before": "a0a778b578cb1a981cf0ca201d1bf90854a42b8ee54d6c5554189e14ea263ab0",
+            "sha256After": "a0a778b578cb1a981cf0ca201d1bf90854a42b8ee54d6c5554189e14ea263ab0"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_Rock_K_BC.png.meta",
+            "sha256Before": "b22ec6bde768e7cdcf15ab4db122de8a15c5d4f660371686a4046bea7d5ca54f",
+            "sha256After": "b22ec6bde768e7cdcf15ab4db122de8a15c5d4f660371686a4046bea7d5ca54f"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_Rock_K_N.png",
+            "sha256Before": "ed8ddbfa3539a2eb4f7e65aead3f904d1964171eb407d0a42cbd3f5f8a4e5a10",
+            "sha256After": "ed8ddbfa3539a2eb4f7e65aead3f904d1964171eb407d0a42cbd3f5f8a4e5a10"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_Rock_K_N.png.meta",
+            "sha256Before": "00ec93ed2f35b5135233960a83c58377cb4c5b50b1cb42fd4345f2c24aba14a9",
+            "sha256After": "00ec93ed2f35b5135233960a83c58377cb4c5b50b1cb42fd4345f2c24aba14a9"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_StoneBridge_1_BC.png",
+            "sha256Before": "ad2568f014d467b8b1226cb27379f1d72b7117ed28c9ccdfe1ef2932e786076d",
+            "sha256After": "ad2568f014d467b8b1226cb27379f1d72b7117ed28c9ccdfe1ef2932e786076d"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_StoneBridge_1_BC.png.meta",
+            "sha256Before": "7367696cd20c5959f035b0beb7472ec6df857b6652e6e1f971c11c3554e24f67",
+            "sha256After": "7367696cd20c5959f035b0beb7472ec6df857b6652e6e1f971c11c3554e24f67"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_StoneBridge_1_N.png",
+            "sha256Before": "20bd26b8256cfec73f31e60d09d5bee8e5e67434c1824b16b19d291ee7db2f24",
+            "sha256After": "20bd26b8256cfec73f31e60d09d5bee8e5e67434c1824b16b19d291ee7db2f24"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Rock/T_StoneBridge_1_N.png.meta",
+            "sha256Before": "ed3b289e8a2ac807a5a2374057468d37ff268d9047440e4ac2f1010c1aa1e8da",
+            "sha256After": "ed3b289e8a2ac807a5a2374057468d37ff268d9047440e4ac2f1010c1aa1e8da"
+        }
+    ]
+}

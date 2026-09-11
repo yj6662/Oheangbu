@@ -1,0 +1,25 @@
+{
+  "status": "PASS_GEOMETRY_ROUNDTRIP_ONLY",
+  "meshes": 11,
+  "triangles": 2720,
+  "max_bidirectional_rest_error_m": 6.999184876121944e-08,
+  "names": [
+    "GuardianPart_Head.001",
+    "GuardianPart_LeftArm.001",
+    "GuardianPart_LeftFist.001",
+    "GuardianPart_LeftFoot.001",
+    "GuardianPart_LeftLeg.001",
+    "GuardianPart_Pelvis.001",
+    "GuardianPart_RightArm.001",
+    "GuardianPart_RightFist.001",
+    "GuardianPart_RightFoot.001",
+    "GuardianPart_RightLeg.001",
+    "GuardianPart_Torso.001"
+  ],
+  "unverified": [
+    "UV/color roundtrip equality",
+    "animated joint intersections",
+    "Unity import",
+    "art quality"
+  ]
+}

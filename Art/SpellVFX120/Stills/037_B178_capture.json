@@ -1,0 +1,39 @@
+{
+    "glyph": "노",
+    "title": "땅을 훑는 홍염",
+    "status": "PRESENTATION_REVIEW_ONLY",
+    "capturedUtc": "2026-09-09T01:28:44.3830526Z",
+    "loadedRuntimeAssemblyMvid": "3d055876-9a44-4237-8ca7-37434d3bf2ed",
+    "loadedRuntimeAssemblyLastWriteUtc": "2026-09-09T01:05:20.8173918Z",
+    "demonstrationCues": true,
+    "gameplayConnectionVerified": false,
+    "impactTime": 0.3499999940395355,
+    "life": 1.7999999523162842,
+    "sampledSeconds": [
+        0.12600000202655793,
+        0.3959999978542328,
+        0.7559999823570252,
+        1.1519999504089356,
+        1.619999885559082
+    ],
+    "primaryTarget": "VFX Target",
+    "secondaryTarget": "VFX Secondary Target",
+    "eventSource": "Review-only: hit at flight for 녹/안; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. No gameplay events are dispatched.",
+    "areaPlanSource": "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN",
+    "areaShape": "Cone",
+    "areaPoint": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0
+    },
+    "areaDirection": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.0
+    },
+    "areaRadius": 1.4500000476837159,
+    "areaAngle": 32.0,
+    "areaLength": 2.9000000953674318,
+    "areaDelay": 0.3499999940395355,
+    "areaSpeed": 0.0
+}

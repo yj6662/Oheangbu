@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 198f49fa974a72f459729ee2e6d30c68, type: 3}
+  m_Name: BaselineSpellBook
+  m_EditorClassIdentifier:
+  _entries:
+  - Letter: "\uAC00"
+    Kind: 0
+    Element: 0
+    BasePower: 12
+    AreaShape: 0
+    ProjectileSpeedMul: 1.3
+  - Letter: "\uACE0"
+    Kind: 1
+    Element: 0
+    BasePower: 9
+    AreaShape: 2
+    ProjectileSpeedMul: 0
+    AreaAngle: 0
+    AreaRadius: 2.5
+    AreaLength: 10
+    AreaSpeed: 0
+    AreaImpactDelay: 0.3
+    VolleyShots: 0
+    VolleyInterval: 0
+  - Letter: "\uB098"
+    Kind: 0
+    Element: 1
+    BasePower: 12
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uB178"
+    Kind: 1
+    Element: 1
+    BasePower: 9
+    AreaShape: 1
+    ProjectileSpeedMul: 0
+  - Letter: "\uB9C8"
+    Kind: 0
+    Element: 2
+    BasePower: 16
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uBAA8"
+    Kind: 1
+    Element: 2
+    BasePower: 9
+    AreaShape: 3
+    ProjectileSpeedMul: 0
+    AreaAngle: 0
+    AreaRadius: 1.2
+    AreaLength: 12
+    AreaSpeed: 7
+    AreaImpactDelay: 0.4
+    VolleyShots: 0
+    VolleyInterval: 0
+  - Letter: "\uC0AC"
+    Kind: 0
+    Element: 3
+    BasePower: 8
+    AreaShape: 0
+    ProjectileSpeedMul: 1.8
+  - Letter: "\uC18C"
+    Kind: 1
+    Element: 3
+    BasePower: 8
+    AreaShape: 4
+    ProjectileSpeedMul: 0
+    AreaAngle: 25
+    AreaRadius: 0
+    AreaLength: 16
+    AreaSpeed: 32
+    AreaImpactDelay: 1.45
+    VolleyShots: 9
+    VolleyInterval: 0.1
+  - Letter: "\uC544"
+    Kind: 0
+    Element: 4
+    BasePower: 12
+    AreaShape: 0
+    ProjectileSpeedMul: 0.6
+  - Letter: "\uC624"
+    Kind: 1
+    Element: 4
+    BasePower: 9
+    AreaShape: 3
+    ProjectileSpeedMul: 0
+    AreaAngle: 0
+    AreaRadius: 1.5
+    AreaLength: 14
+    AreaSpeed: 6
+    AreaImpactDelay: 0.45
+    VolleyShots: 0
+    VolleyInterval: 0
+  - Letter: "\uC5B4"
+    Kind: 2
+    Element: 4
+    BasePower: 0
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uC11C"
+    Kind: 2
+    Element: 3
+    BasePower: 0
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uAC70"
+    Kind: 2
+    Element: 0
+    BasePower: 0
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uB108"
+    Kind: 2
+    Element: 1
+    BasePower: 0
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  - Letter: "\uBA38"
+    Kind: 2
+    Element: 2
+    BasePower: 0
+    AreaShape: 0
+    ProjectileSpeedMul: 0
+  _formRange: {x: 1.6, y: 0.6}
+  _speedRange: {x: 4, y: 1}
+  _powerCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0.7
+      outSlope: 0.7
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.7
+      outSlope: 0.7
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

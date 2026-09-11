@@ -1,0 +1,20 @@
+{
+  "normalization_scale": 0.5757052427106641,
+  "normalization_offset_blender": [
+    -0.0,
+    0.046056412160396576,
+    -0.416522741317749
+  ],
+  "name": "StoneGuardian_Jangseung_B1",
+  "vertices": 1448,
+  "triangles": 2720,
+  "materials": 1,
+  "skeleton_bones": 0,
+  "source": "New Blender geometry informed by inspected Korean tal/guardian face motifs; not a scanned historical artifact",
+  "changes": [
+    "Upright two-footed stone guardian, broad layered shoulders and heavy fists",
+    "Long pillar face, raised curved eyebrows, blunt long nose and incised mouth",
+    "Short broad cap, pale eyes and individual worn stone teeth",
+    "Separate family silhouette; no shared tiger torso or tail"
+  ]
+}

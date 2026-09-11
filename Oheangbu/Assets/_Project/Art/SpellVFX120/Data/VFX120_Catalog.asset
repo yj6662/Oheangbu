@@ -1,0 +1,495 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8825444ab0c912b428fb9d1db4d0b715, type: 3}
+  m_Name: VFX120_Catalog
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.SpellVFX120.Vfx120Catalog
+  Entries:
+  - Glyph: "\uAC00"
+    Profile: {fileID: 11400000, guid: 559752dd45a7acb41a20b66d2fd8e4be, type: 2}
+    Prefab: {fileID: 2344853942090535229, guid: 7bdc844d4e61a464e9100801ff9bea54, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uAC01"
+    Profile: {fileID: 11400000, guid: 7b883c790531cc64e955f323764daaca, type: 2}
+    Prefab: {fileID: 1698299381879411253, guid: 21dcb0948bd8b4740ab1e6b950b20ea6, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC04"
+    Profile: {fileID: 11400000, guid: 6880d51d17a80d94d82b5b7a0881931d, type: 2}
+    Prefab: {fileID: 5338215740178399596, guid: 19d2bfd12e8309445abf0a007c7dde0b, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC10"
+    Profile: {fileID: 11400000, guid: 862ee5587b63f914982e0ffe70e8b3fe, type: 2}
+    Prefab: {fileID: 5863358794606293533, guid: 79769344e1bdf894e9a7a7221b7312de, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC13"
+    Profile: {fileID: 11400000, guid: 611832ac7eb2db64ba40e82efd85f27c, type: 2}
+    Prefab: {fileID: 5334497657849543792, guid: 8e44e2c6d7154764db3f889239ba701b, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC15"
+    Profile: {fileID: 11400000, guid: bdf027a666812e94cb8d3344ab3dc930, type: 2}
+    Prefab: {fileID: 2253556534301963578, guid: 674e860f11e993147833f972cacb5107, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC70"
+    Profile: {fileID: 11400000, guid: c81b48a136b6f584bb61498b42cd2020, type: 2}
+    Prefab: {fileID: 1929936069363992105, guid: e310efb6b3cc738458e488ce8ea2050c, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uAC71"
+    Profile: {fileID: 11400000, guid: 752a5be596d2bce46ae0b60bcb1b4a12, type: 2}
+    Prefab: {fileID: 3711486557339930803, guid: 01f58c92e88eaec4eb617ae1da4a1e4c, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC74"
+    Profile: {fileID: 11400000, guid: 4659ba357f7ac2348852a279aedb2941, type: 2}
+    Prefab: {fileID: 6579251560378175461, guid: ea7edfc7de1c118408c81bc67c311c0d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC80"
+    Profile: {fileID: 11400000, guid: d4719e97b6dc68740ae41a081fe382f2, type: 2}
+    Prefab: {fileID: 601584804096573386, guid: cf32f210e50b78d419eab9753ce69985, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC83"
+    Profile: {fileID: 11400000, guid: b8ad0db7c3037bb4ba8bf065129eaa5a, type: 2}
+    Prefab: {fileID: 34564411249303414, guid: f50d9c4721872c440b04ab60484fbb66, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAC85"
+    Profile: {fileID: 11400000, guid: a8b2f227de5150847bb4c07ce8abe768, type: 2}
+    Prefab: {fileID: 8538969986971137562, guid: d8c00b8112ad3734ab7520e897b119da, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uACE0"
+    Profile: {fileID: 11400000, guid: 90b71129eb6cfe94187419a425d0c031, type: 2}
+    Prefab: {fileID: 6374697159925932669, guid: 1f961bc7faf421e47b29f5db95d895a5, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uACE1"
+    Profile: {fileID: 11400000, guid: 8eb015c36cb9e4441b38a729e3cf6334, type: 2}
+    Prefab: {fileID: 1504206715555418451, guid: 9c6ef7f25891016438ecff17a937e0d5, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uACE4"
+    Profile: {fileID: 11400000, guid: 6e158f6148eb73b4d995a1e351633a9c, type: 2}
+    Prefab: {fileID: 6294737673976000523, guid: e6ef6438196c39f4c9db87aa670327dc, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uACF0"
+    Profile: {fileID: 11400000, guid: 77b1576d95288364481d4a049d618b57, type: 2}
+    Prefab: {fileID: 3656692024030344957, guid: 0109fcbda1923644ea5624c133fa6e86, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uACF3"
+    Profile: {fileID: 11400000, guid: ce1fe704995265d49833c36cf57e6ee1, type: 2}
+    Prefab: {fileID: 2762855266158385537, guid: 86c4fa38cfe9f25408d0f07a7e831c91, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uACF5"
+    Profile: {fileID: 11400000, guid: ec3a6d9c4623506429bfff04c92def13, type: 2}
+    Prefab: {fileID: 103645495177450249, guid: fa6eee346df55644495dc73cb31c3a79, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAD6C"
+    Profile: {fileID: 11400000, guid: 3e5cba26b4318964d9f3917704fc116a, type: 2}
+    Prefab: {fileID: 8996790907809243290, guid: 5e1da2d819fb7ac40b744841fa7fc3d1, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAD6D"
+    Profile: {fileID: 11400000, guid: 635738603ef8fb14c8477a3e42c8bdf1, type: 2}
+    Prefab: {fileID: 4350215266179041677, guid: 1c4a97d29f1fbea4fb27e07684d57232, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAD70"
+    Profile: {fileID: 11400000, guid: 629b55eb0ff2db94e86e1fe93eff7dac, type: 2}
+    Prefab: {fileID: 3528880467506669720, guid: d2c041eb329d95f4b8f46fddac2624c8, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAD7C"
+    Profile: {fileID: 11400000, guid: 8cb876c75c704ed47bd2a8b035691c94, type: 2}
+    Prefab: {fileID: 7362687786113354051, guid: 1ddf886bd362d4045a849553b6cb4ce2, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAD7F"
+    Profile: {fileID: 11400000, guid: c1c648476915d484abdc6328c3bcf8df, type: 2}
+    Prefab: {fileID: 6714282192911696203, guid: b48b1656add265e4c9b561e66551c972, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uAD81"
+    Profile: {fileID: 11400000, guid: ab5ce76f246153c48901f1ec94c96cb1, type: 2}
+    Prefab: {fileID: 435256865408384317, guid: c84d772fe94cfec408d3eeb8e749d81f, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB098"
+    Profile: {fileID: 11400000, guid: dd5c7fdb56a2e6f45ae5490af103e3b7, type: 2}
+    Prefab: {fileID: 5439455590755023677, guid: 858c1f7c45b7efc408bfb1455966c6fa, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uB099"
+    Profile: {fileID: 11400000, guid: 590a57e26626a444ba6b3ea11200a95e, type: 2}
+    Prefab: {fileID: 848957648390336338, guid: 0a4079d1742e54343839b024617446d3, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB09C"
+    Profile: {fileID: 11400000, guid: 7d8d1584d6c17cc47bea99e7c36755c6, type: 2}
+    Prefab: {fileID: 693384449708438957, guid: 37545dc4317387145aef35fffdb0d027, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB0A8"
+    Profile: {fileID: 11400000, guid: 3b728548b5f84454fbf5df8ff7ee224f, type: 2}
+    Prefab: {fileID: 1197425207774094231, guid: f0ed170f333be9145beac638f640511f, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB0AB"
+    Profile: {fileID: 11400000, guid: 1ac75289b1ecb3a4dbd77e5164c3d9b3, type: 2}
+    Prefab: {fileID: 2278463844348475589, guid: 5dcec76d70ab748418e059c41ed6a815, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB0AD"
+    Profile: {fileID: 11400000, guid: e88846f77f1397e489d67c46596d7f25, type: 2}
+    Prefab: {fileID: 6679130122438826742, guid: acbfac13b8e3e39438f60b1274f6cce6, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB108"
+    Profile: {fileID: 11400000, guid: 97e528277128d3348a6a1863a2eb1d50, type: 2}
+    Prefab: {fileID: 8252973723171233272, guid: dcc169ada865ce24498ff2a5073fc9ea, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uB109"
+    Profile: {fileID: 11400000, guid: 946ae4c91b4637047ac2433f9df13aea, type: 2}
+    Prefab: {fileID: 8674223835205265027, guid: f0b049aabaa5d5f43bf80ec1a78c8774, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB10C"
+    Profile: {fileID: 11400000, guid: 7cc814c6555d3e84db272fe7405e4c3c, type: 2}
+    Prefab: {fileID: 8246605448644846607, guid: 531a23eccb53d3f4d8fda49d44652435, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB118"
+    Profile: {fileID: 11400000, guid: 2bc66c379d75614499598459e102d4bb, type: 2}
+    Prefab: {fileID: 2658361881705187264, guid: 37812e4dc925601449e55b2485f734f6, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB11B"
+    Profile: {fileID: 11400000, guid: 482e03f1fe9602843bf647a065b39456, type: 2}
+    Prefab: {fileID: 8960519153199826988, guid: c35cb3c8f9d38b24e886a58561a7360b, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB11D"
+    Profile: {fileID: 11400000, guid: 94f596e83b3231345986d5f58bcff086, type: 2}
+    Prefab: {fileID: 3796449581241836155, guid: 12ee9de94e893304c912f143bb714b55, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB178"
+    Profile: {fileID: 11400000, guid: aa5794d1419f4ef4185cc00b90e8db56, type: 2}
+    Prefab: {fileID: 6402891975245101464, guid: 9f80149aa9068a243af345c8f8312301, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uB179"
+    Profile: {fileID: 11400000, guid: 200ab5afabbc80649adbddefc0e2265f, type: 2}
+    Prefab: {fileID: 479271788675776938, guid: 5a30d5c43e33dc24581f352923e4940e, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB17C"
+    Profile: {fileID: 11400000, guid: 6ce1b4e4f03033145809a4128c1b6811, type: 2}
+    Prefab: {fileID: 4945226607589423291, guid: a365f159762f8c044bc50575f762ee57, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB188"
+    Profile: {fileID: 11400000, guid: 5b4952f043d922746a2857193a66080f, type: 2}
+    Prefab: {fileID: 627144444179623283, guid: b40c6d68e254d694f95b55be45ff070d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB18B"
+    Profile: {fileID: 11400000, guid: b46fc4a6d92a42c48a2e9882e036d83a, type: 2}
+    Prefab: {fileID: 7188524546323475273, guid: 9d006d04ee1caf542bdf6d35ad2ccc33, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB18D"
+    Profile: {fileID: 11400000, guid: cf2a0599b85370c4487e7667bb4d0fba, type: 2}
+    Prefab: {fileID: 1268869168175373945, guid: 6ac98121a19d7b140b6cede224307531, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB204"
+    Profile: {fileID: 11400000, guid: 024c4686221120a49ae752e4f249d5b1, type: 2}
+    Prefab: {fileID: 3974251134679378380, guid: 3f8a87e8b98de79459911f5b978af33c, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB205"
+    Profile: {fileID: 11400000, guid: c80e847a58f93a84095af880bd48d293, type: 2}
+    Prefab: {fileID: 1310637922821744244, guid: a2fcd55738c436e4d9bf008e6f85eab5, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB208"
+    Profile: {fileID: 11400000, guid: 849cfee7dfea05f40af46f9e66cb190b, type: 2}
+    Prefab: {fileID: 7175677681840037772, guid: e8a30640df600ea428eba11c10fab7c1, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB214"
+    Profile: {fileID: 11400000, guid: 9ac1483f3f8975b4ebf74ae5f7126d9e, type: 2}
+    Prefab: {fileID: 1632735753965098203, guid: 34fbacfb0c99ff0479c48ed5f5c728cd, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB217"
+    Profile: {fileID: 11400000, guid: a31c38bd55d47c440a6bed1e725a2ad4, type: 2}
+    Prefab: {fileID: 2978778607144357452, guid: ed81ed6fd0dd3a142a34a89e1ba0b228, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB219"
+    Profile: {fileID: 11400000, guid: f1028f58010fe5f48afcd7cda2290abc, type: 2}
+    Prefab: {fileID: 82920175337105125, guid: 0e0215a7b87700648a81211df189901f, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB9C8"
+    Profile: {fileID: 11400000, guid: 13b4079074daca14f8661b4af3b51bb5, type: 2}
+    Prefab: {fileID: 1988380568612882623, guid: 6c9dd40fcb2e8ac4da23c857fdbefebe, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uB9C9"
+    Profile: {fileID: 11400000, guid: 1689ce87b5114b243948610ba80166eb, type: 2}
+    Prefab: {fileID: 924046198882813720, guid: 2baa513bb507d544bb9a5041e4f6552e, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB9CC"
+    Profile: {fileID: 11400000, guid: e058364ee951bc140b9dcd2011153f52, type: 2}
+    Prefab: {fileID: 2282998045738663197, guid: f6b19c17913b14543a3c2b0f683f3c17, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB9D8"
+    Profile: {fileID: 11400000, guid: 59d72abe412bc334081b899b1ab84418, type: 2}
+    Prefab: {fileID: 4554458869664335846, guid: df7d793dc43799b44a7f98b713dba61b, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB9DB"
+    Profile: {fileID: 11400000, guid: e6d16e0b7fd38e94aa3f1f9d283dd1ed, type: 2}
+    Prefab: {fileID: 7361659330912885727, guid: c6d5a48c58afcbb419bc0337a585dfb9, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uB9DD"
+    Profile: {fileID: 11400000, guid: 3de51ba7783c6e34b971adc3b3716791, type: 2}
+    Prefab: {fileID: 910225968261494016, guid: a78c149747b239b45b44055cccfbd689, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBA38"
+    Profile: {fileID: 11400000, guid: 8df00eac8ecebfa47bbc76e00eb51467, type: 2}
+    Prefab: {fileID: 3499599768109779245, guid: 69fc02333172b214f880127a3d3cc6a3, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uBA39"
+    Profile: {fileID: 11400000, guid: e40883b8b6d35524ca41454cc7d3872b, type: 2}
+    Prefab: {fileID: 1147956441650722081, guid: fae535821cf4ea348a5e4e72872414c6, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBA3C"
+    Profile: {fileID: 11400000, guid: a408c16160b8c4a4e8340f2dc486d095, type: 2}
+    Prefab: {fileID: 7229415718708270745, guid: 47baeac112c12ff4fb176cb0412891a5, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBA48"
+    Profile: {fileID: 11400000, guid: 011b9e954b8bd4c479f5555b8b103725, type: 2}
+    Prefab: {fileID: 7565720818921052571, guid: e146e0c7387213047a18e4bad3fb726f, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBA4B"
+    Profile: {fileID: 11400000, guid: 98eb90e88a5fe23429b6e2bde4633a60, type: 2}
+    Prefab: {fileID: 9201672602868020881, guid: 21c89aa0ec47a854f8255d75486bdca4, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBA4D"
+    Profile: {fileID: 11400000, guid: 81d8480777b632f4683cfc5fc7a39c4a, type: 2}
+    Prefab: {fileID: 6315261671116795610, guid: 155e25a5971425b499242486ead9a81e, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBAA8"
+    Profile: {fileID: 11400000, guid: eb412ed8c44bf5047b12253f5b84c531, type: 2}
+    Prefab: {fileID: 4351909024885782546, guid: 18ab0708be2e4084ca922b3d4d50043d, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uBAA9"
+    Profile: {fileID: 11400000, guid: 1bed5caf779ffcd49a6267ae4d83ac17, type: 2}
+    Prefab: {fileID: 5594697773123912400, guid: 28f7529ae8cdb264ca959e0ce3a38233, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBAAC"
+    Profile: {fileID: 11400000, guid: 5b1a72aaefaaff8489850955d20edcad, type: 2}
+    Prefab: {fileID: 4210140674324551832, guid: 275b622e86b2d3f4a847da2d15b4151d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBAB8"
+    Profile: {fileID: 11400000, guid: 36d1a5e33283cad4ea144c9788090a0b, type: 2}
+    Prefab: {fileID: 5658636006904228724, guid: 95db9eb673039be4aabd74141e646aca, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBABB"
+    Profile: {fileID: 11400000, guid: eef7d72ca95fbe943933dd52645139fa, type: 2}
+    Prefab: {fileID: 7610907805182814594, guid: 0fdf5765ebc874547b9df880af47c1b6, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBABD"
+    Profile: {fileID: 11400000, guid: 7c2325614136cd74b8721f2ea1b3a178, type: 2}
+    Prefab: {fileID: 7516207173004628639, guid: 93468c488bf47dd4a9e4cd7e66e37223, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBB34"
+    Profile: {fileID: 11400000, guid: 8e67cbe8f59b88b40ba8903cb3cacafd, type: 2}
+    Prefab: {fileID: 7562997987141849129, guid: 54486a0fad7ff3c4e9af98e74f942534, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBB35"
+    Profile: {fileID: 11400000, guid: 4f3ef101f2c3c5c43a87ea7d25be99ed, type: 2}
+    Prefab: {fileID: 7157682191334632074, guid: d602b65e72a22ab40846c3d875631712, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBB38"
+    Profile: {fileID: 11400000, guid: 06dbfa3cf45f30548a053ccfee2cbf1c, type: 2}
+    Prefab: {fileID: 317881168393546082, guid: 5a8bc36086c581b44a33e4bea1fbfc6d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBB44"
+    Profile: {fileID: 11400000, guid: 92a78a8330cb3a643b122544b6a6dc6b, type: 2}
+    Prefab: {fileID: 8711347359624025383, guid: 758abe39d09f73f4dad402e89c2a5206, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBB47"
+    Profile: {fileID: 11400000, guid: 2e94b47ebe2acb946a60d4eabf8b5823, type: 2}
+    Prefab: {fileID: 3976053665324321049, guid: 5c2ae8c31fe19d54e9b66d3e311b7377, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uBB49"
+    Profile: {fileID: 11400000, guid: 35c1460beed1f5f41b28ff044e19c7c9, type: 2}
+    Prefab: {fileID: 4270651942878119719, guid: 77d81aae25a8a45499c6205a5b1c7b65, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC0AC"
+    Profile: {fileID: 11400000, guid: 13697480a13a4c04fbf58fb6501a7164, type: 2}
+    Prefab: {fileID: 2896980815585147456, guid: 64b353bc1fb80104b947d37a67d4fcd1, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uC0AD"
+    Profile: {fileID: 11400000, guid: d593e0fd172edab4098fc4499c053122, type: 2}
+    Prefab: {fileID: 2963129403018673901, guid: d72ed3382424721499bf0b439ee541bf, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC0B0"
+    Profile: {fileID: 11400000, guid: 221ff8a234d808a4795225b958a131a8, type: 2}
+    Prefab: {fileID: 7708725311979220834, guid: 25cbb7dfd9bd71348b7e04c7b523830d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC0BC"
+    Profile: {fileID: 11400000, guid: 713ecc34fa1febf41b75c1d0af520d63, type: 2}
+    Prefab: {fileID: 5276946018609457754, guid: 1a0298d0c1368a444bcdcfc7b695e4c1, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC0BF"
+    Profile: {fileID: 11400000, guid: 1c1ba44fb4e21134ab777e9bd8817b80, type: 2}
+    Prefab: {fileID: 2192749632870703278, guid: ea1930fe18772aa4088be40789ed405f, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC0C1"
+    Profile: {fileID: 11400000, guid: 66c7dd607cf4b164c9ca508dbe966ffb, type: 2}
+    Prefab: {fileID: 7447817913255746614, guid: 9e64aaef12f5f474c855d802d351f690, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC11C"
+    Profile: {fileID: 11400000, guid: 13475db8ef1a2d64ca695966feaf6745, type: 2}
+    Prefab: {fileID: 3494498463319683430, guid: 3761e2695bbe2d1438da3e9af4d485c4, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uC11D"
+    Profile: {fileID: 11400000, guid: 044f7b9d141745d4ea38b084e2718ade, type: 2}
+    Prefab: {fileID: 8391583669806262905, guid: 90a1de44c3c1b2340845988599bf9836, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC120"
+    Profile: {fileID: 11400000, guid: 5726f41e83da75e40b209a4e5ca545bd, type: 2}
+    Prefab: {fileID: 6709909147552836559, guid: 8a489be7a8b5d0c44bbcd675d75e071d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC12C"
+    Profile: {fileID: 11400000, guid: 2f7c639916503cb4cad907484c08410b, type: 2}
+    Prefab: {fileID: 5546135802184337333, guid: 07fe1240a4967ab4c86dba6224cdc051, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC12F"
+    Profile: {fileID: 11400000, guid: ad6482379aa839046abc5e283343cb26, type: 2}
+    Prefab: {fileID: 4818201511500698253, guid: c14ebe4275cc10a4f85e8f68fef4e7d1, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC131"
+    Profile: {fileID: 11400000, guid: 51e38c3b0b0d6774093e980accd4bd54, type: 2}
+    Prefab: {fileID: 4803545166376091907, guid: 10e698f00b810c647bfa01ba743e0025, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC18C"
+    Profile: {fileID: 11400000, guid: f0dcf7d10b4acaf47b67aa34dbf512fe, type: 2}
+    Prefab: {fileID: 3322080526170726531, guid: 3b6fbbb38f55606499d7f347500b0f77, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uC18D"
+    Profile: {fileID: 11400000, guid: f8ae0bc31834ed5438e1439792e5d3e2, type: 2}
+    Prefab: {fileID: 5064387331973204960, guid: bd8582b10c02a3047ab527979ce6695f, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC190"
+    Profile: {fileID: 11400000, guid: 126b466c4f54c6041b1340b3f9b5ff52, type: 2}
+    Prefab: {fileID: 3304922806303924715, guid: 6285345da18164446a3050efb5cb800b, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC19C"
+    Profile: {fileID: 11400000, guid: 83bc7186f18b82f4e93f185e968682ee, type: 2}
+    Prefab: {fileID: 9051014426415437042, guid: cd732e3ad56e16e45aa800513f8d8597, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC19F"
+    Profile: {fileID: 11400000, guid: fce4950260071f34d9187738c5b87190, type: 2}
+    Prefab: {fileID: 5115197099752079050, guid: b769d4431ac72ac4ebbdfa31e7914d9c, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC1A1"
+    Profile: {fileID: 11400000, guid: 8c1fe838ed9d5b241afff871e7a5057f, type: 2}
+    Prefab: {fileID: 5015068937794748754, guid: c1ca7265bcd104d4db903a2ee7b16e34, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC218"
+    Profile: {fileID: 11400000, guid: 3606b51d79c43ff45b1d7eeb4c9e89ae, type: 2}
+    Prefab: {fileID: 2243547114380949220, guid: d8955295c136e184fbcb88863a65de15, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC219"
+    Profile: {fileID: 11400000, guid: c2256d9048384b242b87d9a6ad7bae5e, type: 2}
+    Prefab: {fileID: 6610920940741352626, guid: 952ca00b083dd5541b578cbaeec18ab8, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC21C"
+    Profile: {fileID: 11400000, guid: e902700aa786eda4e9eac3c387232aa8, type: 2}
+    Prefab: {fileID: 5409694480595471382, guid: 6a10b8e0a9a070f4b8b0f1dff1829421, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC228"
+    Profile: {fileID: 11400000, guid: 673a82bfc340a104da4f0370788a8a65, type: 2}
+    Prefab: {fileID: 7926758810517536314, guid: 543167dd998ad8b4998f0a9b297e5804, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC22B"
+    Profile: {fileID: 11400000, guid: 1779092bbb360734d99e14ebedba323e, type: 2}
+    Prefab: {fileID: 1463439667644897242, guid: 3f7ec23b5d0c28946bc3be5bea692fce, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC22D"
+    Profile: {fileID: 11400000, guid: 2695c3bdecf2da8449df26b53aa8ff10, type: 2}
+    Prefab: {fileID: 2514596233500653823, guid: 695da668563f04d48a6f08ed7f31a1b9, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC544"
+    Profile: {fileID: 11400000, guid: 3bb7a800cbcffff4da600f03b4a82429, type: 2}
+    Prefab: {fileID: 137799057313000371, guid: 897898a5453cc7b4e8b4063b6ad38874, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uC545"
+    Profile: {fileID: 11400000, guid: 8d31d603eff07354ca553fdbacd622c0, type: 2}
+    Prefab: {fileID: 102789167953305613, guid: 91bad1819a40e2b4b92f7c013db17073, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC548"
+    Profile: {fileID: 11400000, guid: 0ecd8a1f66283a143bbdae02eaec20bb, type: 2}
+    Prefab: {fileID: 5439817744933809435, guid: d4d5e6522c7eff54896a03b9818ca1ec, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC554"
+    Profile: {fileID: 11400000, guid: 74c782d541f434b4ab7422440de47ec7, type: 2}
+    Prefab: {fileID: 1074571038340556414, guid: 369e44df2ef1e664ab68a5f0705cf0b7, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC557"
+    Profile: {fileID: 11400000, guid: 3ca9ce6b99ca0a744b0ac7a45e223228, type: 2}
+    Prefab: {fileID: 8160980173319188905, guid: 81ad2a6c50a7d134887c13e9d88922f3, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC559"
+    Profile: {fileID: 11400000, guid: 3ab83871c127afb479f4539269446da8, type: 2}
+    Prefab: {fileID: 5198105025881704574, guid: ad54a86fb49f4cb46852730decf6e762, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC5B4"
+    Profile: {fileID: 11400000, guid: aae762a62a37740459596071caa0f22b, type: 2}
+    Prefab: {fileID: 205470080289546032, guid: 6a31d5266f681dc4d80a9a6bf16b6841, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uC5B5"
+    Profile: {fileID: 11400000, guid: 34084520d897d84469d1161b1a1d4ade, type: 2}
+    Prefab: {fileID: 5645062613943350829, guid: 7b5d903cb8937ae42b0a212c16185736, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC5B8"
+    Profile: {fileID: 11400000, guid: 49d201aaf55d2854daf3d091004eea97, type: 2}
+    Prefab: {fileID: 1193504328230671950, guid: f7b8971f2e37cad4ea67daf9c4cf5bd3, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC5C4"
+    Profile: {fileID: 11400000, guid: 047b89cab1421ca409255760839639f7, type: 2}
+    Prefab: {fileID: 8116972172782700530, guid: d9f4b19379bc13f40a991ea1db61c311, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC5C7"
+    Profile: {fileID: 11400000, guid: 98de282a53ad7ce429105bb26043d444, type: 2}
+    Prefab: {fileID: 2724699348458767131, guid: 7745094154db8814ca73d9171dc2389d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC5C9"
+    Profile: {fileID: 11400000, guid: 7d9ea28460b57a845820e4319398514d, type: 2}
+    Prefab: {fileID: 2500777604250988740, guid: 564b93cca8fe2f949b19f529b988da72, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC624"
+    Profile: {fileID: 11400000, guid: d77d73d47a71b8c488d3d809d19c5af7, type: 2}
+    Prefab: {fileID: 7171626259139457862, guid: d09bbad35fb507d4eab77cd1583524ab, type: 3}
+    GameplayConnected: 1
+  - Glyph: "\uC625"
+    Profile: {fileID: 11400000, guid: 35f7e53a94a16a74399185f78b383ebb, type: 2}
+    Prefab: {fileID: 7219795858093525499, guid: 2211b537474c75245b82b773a49b0735, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC628"
+    Profile: {fileID: 11400000, guid: 79dfa47fd7ee49d4d81b586b35a7563d, type: 2}
+    Prefab: {fileID: 4553851892009761487, guid: 2aa781cc8fcea64408879fc06bfe406d, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC634"
+    Profile: {fileID: 11400000, guid: 24f556ca07393fb47a6da65cf77abf17, type: 2}
+    Prefab: {fileID: 4546840977777463539, guid: 60e20f241bf1901489c1494ffd4e67c8, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC637"
+    Profile: {fileID: 11400000, guid: 5dc300ba1de841349bdec7c19061dff6, type: 2}
+    Prefab: {fileID: 9206408076090611257, guid: 749f4452a90e2754889fbd7a0aa316e0, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC639"
+    Profile: {fileID: 11400000, guid: ef8363e46cffdec4fa52cc6028ff59ee, type: 2}
+    Prefab: {fileID: 3829573047388325272, guid: 56fa1ae2e82e44743ad35019f1806125, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC6B0"
+    Profile: {fileID: 11400000, guid: 9f0bc2f19f2a3464b82f8d7a7536d1ce, type: 2}
+    Prefab: {fileID: 7576563637427158009, guid: 5dd9bebdb89cf174caceb4680d24bed1, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC6B1"
+    Profile: {fileID: 11400000, guid: 4a663b6abd9ca3d43a09841c9815df73, type: 2}
+    Prefab: {fileID: 3609914502735148711, guid: 63add556213330441a37c9744744fe29, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC6B4"
+    Profile: {fileID: 11400000, guid: 66d7dfef4b3ae654eaa98d1fa0a85582, type: 2}
+    Prefab: {fileID: 3302878754048691049, guid: 58940b5d976f4de4ab7a44820898ef94, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC6C0"
+    Profile: {fileID: 11400000, guid: c406fb52af224cf4b91ff8aa4d7d1a92, type: 2}
+    Prefab: {fileID: 5782032333828088198, guid: f0c701351e2e2b245bf602b5ca214ab1, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC6C3"
+    Profile: {fileID: 11400000, guid: fae59179375c67547ad67e305d9e72b6, type: 2}
+    Prefab: {fileID: 551555998873655564, guid: 6fcea0868c725c44b9ae6508c7de36db, type: 3}
+    GameplayConnected: 0
+  - Glyph: "\uC6C5"
+    Profile: {fileID: 11400000, guid: d88acb8dabd620f47932099fc1734a67, type: 2}
+    Prefab: {fileID: 4716584599779706940, guid: fd0ef7180bcf9b14b8ae4f22419ee880, type: 3}
+    GameplayConnected: 0

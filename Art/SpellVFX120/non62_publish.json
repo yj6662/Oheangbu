@@ -1,0 +1,11 @@
+{
+"id":"039_B17C","version":"62","key":"NON_039","glyph":"논","title":"논 · 방사 뒤 역화",
+"audit":"single_play_B17C.json","build":"fire_backblast_039_build.json","scope":"non62_scope_check.json","previous":"NOK_038_REVIEW.html",
+"intro":"전방 화염 방사가 멎으면 뒤쪽에 문양이 펼쳐지고 큰 화염이 터집니다.",
+"changes":["전방 화염과 종료 후 후방 폭발을 분리했다.","EndFireBackblast 신호를 한 번만 받아 방출을 중단하고 지정한 후방 위치에서 폭발한다.","KTP Pattern_156을 발동구와 큰 폭발 문양에 사용했다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양2개/4tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 술식 종료 이벤트·후방 피해 연결은 미구현이다. 외부 종료 신호를 받는 표현이다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.1.2초에 진단용 종료 신호와 후방 폭발 위치를 전달한다. 별도 검사에서 종료 전 폭발 없음과 중복 종료 거절·수명 종료 정리를 확인했다.",
+"detailLabels":["전방 방사","후방 폭발"]
+}

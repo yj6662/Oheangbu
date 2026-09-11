@@ -1,0 +1,11 @@
+{
+"id":"034_B118","version":"57","key":"NEOM_034","glyph":"넘","title":"넘 · 흔들리지 않는 화인",
+"audit":"single_play_B118.json","build":"fire_resolve_034_build.json","scope":"neom57_scope_check.json","previous":"NEON_033_REVIEW.html",
+"intro":"몸 가까이 작은 화염과 각진 고리 문양이 유지됩니다. 피격 문양이 반응해도 유지 화염은 끊기지 않습니다.",
+"changes":["KTP Pattern_126을 유지·피격 문양으로 사용했다.","몸 주변 반경0.48m에 낮은 화염을 두어 넉의 광역 화염과 구분했다.","반복 피격 신호가 유지 화염을 중단하거나 소모하지 않는다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양2개/4tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 피격 중단 억제 규칙·몸 소켓 연결은 미구현이다. 생성 원점과 외부 피격 신호를 사용하는 표현이다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.6·1.3·2.0초에 진단용 피격 신호를 제공한다. 별도 검사에서 반복 피격 이후 유지 화염과 수명 종료 정리를 확인했다.",
+"detailLabels":["유지 화인","피격 후 유지"]
+}

@@ -1,0 +1,22 @@
+{
+  "status": "FAILED_EDITOR_CRASH",
+  "utc": "2026-09-09T10:30:28.621052+00:00",
+  "request": "0853228a5acd4c888db9bd7cf4b6698c",
+  "pollId": "4d5af7dbb8894c38aaaa7b9818221f46",
+  "lastProgress": {
+    "status": "RUNNING",
+    "folder": "KTPIntegratedFrames21",
+    "error": "",
+    "index": 9,
+    "frame": 0,
+    "completed": 9,
+    "total": 120,
+    "demonstrationCues": true
+  },
+  "completedProfiles": 9,
+  "partialProfile": "010_AC80",
+  "partialFrames": 17,
+  "cause": "D3D12 CheckDeviceStatus / fence wait / native crash; Unity process absent",
+  "originalFramesPreserved": true,
+  "nextEditorBackend": "D3D11 command-line override, no PlayerSettings edit"
+}

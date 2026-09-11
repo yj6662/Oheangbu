@@ -1,0 +1,24 @@
+{
+    "status": "PASS_DIAGNOSTIC_VISUAL_PENDING",
+    "mvid": "90cb4cbb-ea4a-4f72-80af-a3cb88117a32",
+    "limitation": "Static exterior / summon VFX only. No rig, gameplay summon, AI or combat.",
+    "clips": [
+        {
+            "view": "play",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\DokkaebiClub\\play",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.8269109725952148,
+            "footError": 0.008000042289495469
+        },
+        {
+            "view": "external",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\DokkaebiClub\\external",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.820457935333252,
+            "footError": 0.008000042289495469
+        }
+    ],
+    "errors": []
+}

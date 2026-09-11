@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal60/037_B178.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated60/037_B178.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills60/037_B178_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills60/037_B178_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills60/037_B178_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/037_B178_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills60/037_B178_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NEONG_036_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NO_037_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "fire_jet_037_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "no60_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B178.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills60",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills60",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames60",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames60",
+      "mvid_match": true
+    }
+  ]
+}

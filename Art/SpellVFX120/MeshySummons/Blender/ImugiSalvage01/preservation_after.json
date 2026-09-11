@@ -1,0 +1,29 @@
+{
+  "files": {
+    "Retry02": {
+      "unchanged": true,
+      "before_sha256": "9c08640d71ee38ffd66998d4cc1d19b340448a9f310ee00d58da9c1c7cf01c75",
+      "path": "C:/Users/yj666/Oheangbu/Art/SpellVFX120/MeshySummons/Retry02/112_C634/preview/model_urls_glb.glb",
+      "after_sha256": "9c08640d71ee38ffd66998d4cc1d19b340448a9f310ee00d58da9c1c7cf01c75"
+    },
+    "original_blend": {
+      "unchanged": true,
+      "before_sha256": "d7bc294c3dd0d9801d870c93e2c2e73a2e978bfaebc583c7d208d90310b381f3",
+      "path": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshySummons\\Blender\\MeshySummons_Source.blend",
+      "after_sha256": "d7bc294c3dd0d9801d870c93e2c2e73a2e978bfaebc583c7d208d90310b381f3"
+    },
+    "Source": {
+      "unchanged": true,
+      "before_sha256": "ee2579c886ec3615bdf1b692826d02b8f6437e2f7d14c90bb5b4a3f93f3db21d",
+      "path": "C:/Users/yj666/Oheangbu/Art/SpellVFX120/MeshySummons/Source/112_C634/preview/model_urls_glb.glb",
+      "after_sha256": "ee2579c886ec3615bdf1b692826d02b8f6437e2f7d14c90bb5b4a3f93f3db21d"
+    }
+  },
+  "all_unchanged": true,
+  "blender_restored": {
+    "evidence": "Blender MCP open_mainfile result verified",
+    "scene": "MeshySummonsLab",
+    "dirty": false,
+    "filepath": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshySummons\\Blender\\MeshySummons_Source.blend"
+  }
+}

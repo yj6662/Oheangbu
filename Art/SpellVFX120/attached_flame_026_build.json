@@ -1,0 +1,9 @@
+{
+    "glyph": "낙",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_LATE_BURN_PATTERN_ATTACHMENT_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 2,
+    "scope": "Attached rising flame and persistent KTP motif; no damage ticks implemented."
+}

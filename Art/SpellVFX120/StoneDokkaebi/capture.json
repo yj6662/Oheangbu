@@ -1,0 +1,24 @@
+{
+    "status": "PASS_DIAGNOSTIC_VISUAL_PENDING",
+    "mvid": "ede5fd52-4368-49e2-a597-20471ddc3ae3",
+    "limitation": "Static exterior / summon VFX only. No rig, gameplay summon, AI or combat.",
+    "clips": [
+        {
+            "view": "play",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\StoneDokkaebi\\play",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.7771369218826294,
+            "footError": 0.008000016212463379
+        },
+        {
+            "view": "external",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\StoneDokkaebi\\external",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.7822420001029968,
+            "footError": 0.008000016212463379
+        }
+    ],
+    "errors": []
+}

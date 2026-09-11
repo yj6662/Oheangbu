@@ -1,0 +1,171 @@
+[
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Beast.obj",
+    "status": "IMPORTED",
+    "vertices": 1129,
+    "triangles": 1572,
+    "blender_dimensions": [
+      0.3657571077346802,
+      1.0,
+      0.6462363600730896
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Blade.obj",
+    "status": "IMPORTED",
+    "vertices": 179,
+    "triangles": 276,
+    "blender_dimensions": [
+      0.3166996240615845,
+      1.0,
+      0.05672461539506912
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Cloud.obj",
+    "status": "IMPORTED",
+    "vertices": 76,
+    "triangles": 148,
+    "blender_dimensions": [
+      1.0,
+      0.691588819026947,
+      0.03271028399467468
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Ember.obj",
+    "status": "IMPORTED",
+    "vertices": 50,
+    "triangles": 80,
+    "blender_dimensions": [
+      0.29196974635124207,
+      1.0,
+      0.1790197193622589
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Flame.obj",
+    "status": "IMPORTED",
+    "vertices": 342,
+    "triangles": 596,
+    "blender_dimensions": [
+      0.6684333086013794,
+      1.0,
+      0.17171643674373627
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Leaf.obj",
+    "status": "IMPORTED",
+    "vertices": 185,
+    "triangles": 298,
+    "blender_dimensions": [
+      0.4684115946292877,
+      1.0,
+      0.11025748401880264
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Lotus.obj",
+    "status": "IMPORTED",
+    "vertices": 696,
+    "triangles": 976,
+    "blender_dimensions": [
+      1.0,
+      0.5687930583953857,
+      1.0
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Ribbon.obj",
+    "status": "FAIL_EMPTY_OBJ"
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Ring.obj",
+    "status": "IMPORTED",
+    "vertices": 455,
+    "triangles": 768,
+    "blender_dimensions": [
+      0.999999463558197,
+      0.06367506086826324,
+      1.0
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Ripple.obj",
+    "status": "IMPORTED",
+    "vertices": 230,
+    "triangles": 224,
+    "blender_dimensions": [
+      1.0,
+      0.02347380295395851,
+      0.9850845336914062
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Rock.obj",
+    "status": "IMPORTED",
+    "vertices": 117,
+    "triangles": 168,
+    "blender_dimensions": [
+      1.0,
+      0.8718721866607666,
+      0.89750736951828
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Sand.obj",
+    "status": "IMPORTED",
+    "vertices": 12,
+    "triangles": 20,
+    "blender_dimensions": [
+      0.8367346525192261,
+      1.0,
+      0.12244897335767746
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Seal.obj",
+    "status": "IMPORTED",
+    "vertices": 26,
+    "triangles": 24,
+    "blender_dimensions": [
+      0.3499999940395355,
+      1.0,
+      0.1216839849948883
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Shard.obj",
+    "status": "IMPORTED",
+    "vertices": 16,
+    "triangles": 28,
+    "blender_dimensions": [
+      0.3449999988079071,
+      1.0,
+      0.18000000715255737
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Thorn.obj",
+    "status": "IMPORTED",
+    "vertices": 172,
+    "triangles": 300,
+    "blender_dimensions": [
+      0.3393481969833374,
+      1.0,
+      0.20537246763706207
+    ]
+  },
+  {
+    "file": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\MeshSources\\Vine.obj",
+    "status": "IMPORTED",
+    "vertices": 452,
+    "triangles": 726,
+    "blender_dimensions": [
+      0.7931810617446899,
+      1.0,
+      0.24869784712791443
+    ]
+  }
+]

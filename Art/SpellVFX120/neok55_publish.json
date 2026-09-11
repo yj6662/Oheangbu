@@ -1,0 +1,11 @@
+{
+"id":"032_B109","version":"55","key":"NEOK_032","glyph":"넉","title":"넉 · 둘러 타는 화염",
+"audit":"single_play_B109.json","build":"fire_aura_032_build.json","scope":"neok55_scope_check.json","previous":"NEO_031_REVIEW.html",
+"intro":"낮은 원형 화염과 바닥 문양이 영역을 드러내고, 명중 신호가 들어온 위치에 문양과 불티가 나타납니다.",
+"changes":["반경1.5m의 얇은 원형 방출 영역에 상승 화염·불티·연기를 배치했다.","KTP Pattern_156을 바닥과 명중 지점에 사용했다.","SignalFireAuraHit로 반복 명중의 위치와 문양 반응을 전달한다. 명중이 없으면 타격 연출은 발생하지 않는다.","기존 NativeField·NativeImpact 중복을 제거했다. 다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양2개/4tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","지속 피해 게임 규칙과 실제 적 명중 연결은 미구현이다. 외부 명중 신호를 받을 수 있는 VFX를 제작했다.","명중 표현은 최근 접점 한 슬롯을 재사용한다. 동시 다수 접점의 개별 지속 표시는 제공하지 않는다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.6·1.3·2.0초에 진단용 명중 신호를 제공한다. 별도 검사에서 신호 없는 상태, 반복 명중, 종료 정리를 확인했다.",
+"detailLabels":["반복 명중 문양","잔여 화염"]
+}

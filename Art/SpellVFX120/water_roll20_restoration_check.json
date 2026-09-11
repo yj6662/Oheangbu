@@ -1,0 +1,29 @@
+{
+  "status": "RESTORED_ORIGINAL_REFERENCES_AND_PROFILE_FIELDS",
+  "sourceUnchanged": true,
+  "otherFieldsUnchanged": true,
+  "fullProfileFieldDifferences": [],
+  "mainCapture": [
+    {
+      "phase": 0,
+      "pngBytesMatch": true
+    },
+    {
+      "phase": 1,
+      "pngBytesMatch": false
+    },
+    {
+      "phase": 2,
+      "pngBytesMatch": false
+    },
+    {
+      "phase": 3,
+      "pngBytesMatch": true
+    },
+    {
+      "phase": 4,
+      "pngBytesMatch": true
+    }
+  ],
+  "scope": "Profile equality and 5 fixed-camera PNG byte comparisons. No gameplay or overall art approval."
+}
