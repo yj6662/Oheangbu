@@ -21,10 +21,46 @@ MonoBehaviour:
   Layout: 0
   BodyMesh: {fileID: 4300000, guid: 6be74a07f798d5e4cae1a161041e674d, type: 2}
   AccentMesh: {fileID: 4300000, guid: 7bc417ca647d78d4b8fed5c3cb2d5e4f, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 3121206a7a266a74eb8381f61748fe92, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 2accb574061a1ce48b89a1bf927dc182, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 2866213863888069097, guid: 52d7c24325724364598ad1f55da68456, type: 3}
+  NativeImpactPrefab: {fileID: 3059679275553059787, guid: ad232046e6e415949a1749b25d8fd852, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.48
+  NativeImpactScale: 1
+  KtpEmphasis: 1
+  KtpCastMultiplier: 0.55
+  KtpImpactMultiplier: 2
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 3.5
+  KtpBrightness: 2.2
+  KtpCastOffset: {x: 0, y: 0, z: -0.65}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 1
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 1
+  LaunchViewport: {x: 0.6, y: 0.4}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 3.5
+  KtpContactSurfaceOffset: 0.4
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.6509804, g: 0.6901961, b: 0.6784314, a: 1}
   Accent: {r: 0.5137255, g: 0.5882353, b: 0.6117647, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}

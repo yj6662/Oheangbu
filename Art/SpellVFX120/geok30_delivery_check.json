@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal30/008_AC71.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated30/008_AC71.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GEOK_008_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GU_019_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalFrames30/008_AC71/0052.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalFrames30/008_AC71/0074.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills30/008_AC71_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/008_AC71_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills30/008_AC71_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "geok30_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "regrowth_008_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_AC71.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills30",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills30",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames30",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames30",
+      "mvid_match": true
+    }
+  ]
+}

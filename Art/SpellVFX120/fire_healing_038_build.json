@@ -1,0 +1,9 @@
+{
+    "glyph": "녹",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_AIR_NO_HEAL_CONFIRMED_TARGET_HEAL_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 6,
+    "scope": "Healing floor requires explicit confirmed target. Cast clock alone cannot create healing. No health recovery logic added."
+}

@@ -22,10 +22,65 @@ MonoBehaviour:
   Layout: 4
   BodyMesh: {fileID: 4300000, guid: 6be74a07f798d5e4cae1a161041e674d, type: 2}
   AccentMesh: {fileID: 4300000, guid: 7bc417ca647d78d4b8fed5c3cb2d5e4f, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 3121206a7a266a74eb8381f61748fe92, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 19378912170973d4e8e3aa5c3bdd470e, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 736925618618619073, guid: 210d3bc2ea32dd142a0415f660dbc5c2, type: 3}
+  NativeImpactPrefab: {fileID: 3059679275553059787, guid: ad232046e6e415949a1749b25d8fd852, type: 3}
+  NativeFieldPrefab: {fileID: 4020363518650280579, guid: 8562382c12cfea24cafdd23881af99e3, type: 3}
+  NativeFieldRole: 3
+  NativeScale: 0.52
+  NativeImpactScale: 1
+  KtpEmphasis: 0
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1
+  KtpBrightness: 1
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 0
+  AreaContactPrefab: {fileID: 0}
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 0
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 0
+  EarthRift: 0
+  BranchedEarthRift: 0
+  ProceduralEarthRift: 0
+  WardKind: 3
+  WardRadius: 3
+  WardHeight: 2.2
+  WardFormation: 0.45
+  WardFade: 0.5
+  WardMaterial: {fileID: 2100000, guid: 4da596b132d34454f875b4e75abea20b, type: 2}
+  WardWaterMaterial: {fileID: 0}
+  WardPatternPrefab: {fileID: 3973588590582613269, guid: cefc93bb84aabdd44840382409f2301d, type: 3}
+  WardContactPrefab: {fileID: 2418522473297130227, guid: 0b8fa00b9b37a5a4f8f104422fdd52a8, type: 3}
+  WardDebrisPrefab: {fileID: 9025783034750801399, guid: e384e358959223f49ab7a63b47829f54, type: 3}
+  NativeReplaceBody: 1
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.6509804, g: 0.6901961, b: 0.6784314, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
@@ -33,7 +88,7 @@ MonoBehaviour:
   RibbonCount: 0
   Size: 1.88
   PartScale: {x: 1.1, y: 0.9, z: 1.88}
-  Duration: 3.5
+  Duration: 4
   Flight: 0.27
   Turns: 0.02
   Lift: 1.4

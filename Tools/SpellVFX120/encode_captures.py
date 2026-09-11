@@ -2,6 +2,10 @@
 
     python Tools/SpellVFX120/encode_captures.py --limit 1
     python Tools/SpellVFX120/encode_captures.py
+    python Tools/SpellVFX120/encode_captures.py --ids 064_BAB8,066_BABD
+
+--ids can be repeated, is deduplicated, and runs in catalog order. It cannot be
+combined with --limit, whose meaning remains the first N entries of the catalog.
 
 Input: ClipFrames/001_AC00/0000.png and ClipFrames/001_AC00_capture.json.
 Only technical encoding/timing is verified. Art, gameplay and source-version
@@ -20,6 +24,7 @@ import re
 import struct
 import subprocess
 import sys
+import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,9 +50,42 @@ def sha256(path: Path) -> str:
 
 
 def write_json(path: Path, value: dict) -> None:
-    temporary = path.with_name(path.name + '.writing')
-    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    temporary.replace(path)
+    temporary = path.with_name(f'{path.name}.{uuid.uuid4().hex}.writing')
+    text = json.dumps(value, ensure_ascii=False, indent=2) + '\n'
+    try:
+        # Antivirus/indexers can briefly deny a Windows rename. Retry only that
+        # specific error, at most three times (0.35 seconds total backoff).
+        for attempt, delay in enumerate((0, .05, .10, .20)):
+            if delay:
+                time.sleep(delay)
+            try:
+                temporary.write_text(text, encoding='utf-8')
+                temporary.replace(path)
+                return
+            except OSError as error:
+                if getattr(error, 'winerror', None) != 5 or attempt == 3:
+                    raise
+    finally:
+        # Only this call's uniquely named temporary JSON, never another writer's file.
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+def select_catalog(catalog: list[tuple[str, str]], ids: list[str] | None,
+                   limit: int | None) -> tuple[list[tuple[str, str]], str]:
+    if ids is None:
+        return catalog[:limit] if limit is not None else catalog, 'CATALOG_PREFIX' if limit is not None else 'FULL_CATALOG'
+    if limit is not None:
+        raise ValueError('--ids cannot be combined with --limit')
+    requested = {ident.strip().upper() for group in ids for ident in group.split(',') if ident.strip()}
+    if not requested:
+        raise ValueError('--ids must contain at least one catalog ID')
+    unknown = sorted(requested - {ident for ident, _ in catalog})
+    if unknown:
+        raise ValueError('Unknown catalog ID(s): ' + ', '.join(unknown))
+    return [entry for entry in catalog if entry[0] in requested], 'EXPLICIT_IDS'
 
 
 def run(command: list[str], timeout: float) -> subprocess.CompletedProcess:
@@ -228,7 +266,10 @@ def main() -> int:
     parser.add_argument('--output', type=Path, default=ART / 'Clips')
     parser.add_argument('--manifest', type=Path, default=ART / 'build_manifest.json')
     parser.add_argument('--ffmpeg', type=Path, default=DEFAULT_FFMPEG)
-    parser.add_argument('--limit', type=int, help='Inspect/encode only the first N catalog entries; never claims 120 coverage.')
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument('--limit', type=int, help='Inspect/encode only the first N catalog entries; never claims 120 coverage.')
+    selection.add_argument('--ids', action='append', metavar='ID[,ID...]',
+                           help='Only these catalog IDs; may be repeated. Duplicates removed; catalog order retained. Exclusive with --limit.')
     parser.add_argument('--timeout', type=float, default=180, help='Seconds per encoding or decoding command.')
     args = parser.parse_args()
     if args.limit is not None and not 1 <= args.limit <= 120:
@@ -244,16 +285,27 @@ def main() -> int:
     if any(not isinstance(s['glyph'], str) or len(s['glyph']) != 1 for s in definitions):
         parser.error('Manifest glyphs must be single Unicode characters')
     catalog = [(f'{i:03d}_{ord(s["glyph"]):04X}', s['glyph']) for i, s in enumerate(definitions, 1)]
+    try:
+        selected, selection_mode = select_catalog(catalog, args.ids, args.limit)
+    except ValueError as error:
+        parser.error(str(error))
+    selected_ids = [ident for ident, _ in selected]
+    selected_set = set(selected_ids)
     output.mkdir(parents=True, exist_ok=True)
     report_path = output / 'encoding_report.json'
     report = {'schema': SCHEMA, 'status': 'RUNNING', 'startedAtUtc': utc_now(),
               'input': str(folder), 'output': str(output), 'manifest': str(args.manifest.resolve()),
               'manifestSha256': sha256(args.manifest), 'expectedCoverage': 120,
-              'selectedCount': args.limit or 120, 'verifiedCoverage': 0, 'coverage120': False,
+              'selectionMode': selection_mode, 'selectedIds': selected_ids,
+              'selectedCount': len(selected), 'expectedSelectedCoverage': len(selected),
+              'verifiedCoverage': 0, 'selectedCoverageComplete': False, 'coverage120': False,
               'settings': SETTINGS, 'artGameplayPerformance': 'UNVERIFIED',
-              'scope': 'Complete PNG sequences encoded to H264 and fully decoded. File/timing verification only. PNGs are never deleted.',
-              'results': [{'id': ident, 'glyph': glyph, 'status': 'NOT_SELECTED' if i >= (args.limit or 120) else 'NOT_INSPECTED'}
-                          for i, (ident, glyph) in enumerate(catalog)]}
+              'scope': ('Complete PNG sequences encoded to H264 and fully decoded. File/timing verification only. PNGs are never deleted. '
+                        f'Selection {selection_mode}: {", ".join(selected_ids)}. '
+                        'Other catalog entries are NOT_SELECTED, not missing captures. expectedCoverage/coverage120 refer to the full catalog; '
+                        'expectedSelectedCoverage/selectedCoverageComplete refer only to this run.'),
+              'results': [{'id': ident, 'glyph': glyph, 'status': 'NOT_SELECTED' if ident not in selected_set else 'NOT_INSPECTED'}
+                          for ident, glyph in catalog]}
     write_json(report_path, report)
     try:
         if not ffmpeg.is_file():
@@ -264,10 +316,12 @@ def main() -> int:
         version = version_result.stdout.splitlines()[0]
         validator_hash = sha256(Path(__file__))
         report.update(ffmpeg=str(ffmpeg), ffmpegVersion=version, validatorSha256=validator_hash)
-        for i, (ident, glyph) in enumerate(catalog[:args.limit or 120]):
+        catalog_index = {ident: i for i, (ident, _) in enumerate(catalog)}
+        for ident, glyph in selected:
             row = encode_one(folder, output, ident, glyph, ffmpeg, version, validator_hash, args.timeout)
-            report['results'][i] = row
+            report['results'][catalog_index[ident]] = row
             report['verifiedCoverage'] = sum(r['status'] == 'VERIFIED_ENCODING_AND_TIMING_ONLY' for r in report['results'])
+            report['selectedCoverageComplete'] = report['verifiedCoverage'] == len(selected)
             write_json(report_path, report)
             print(json.dumps({'id': ident, 'status': row['status'], 'action': row.get('action'),
                               'error': row.get('error')}, ensure_ascii=False), flush=True)

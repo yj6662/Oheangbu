@@ -432,13 +432,24 @@ namespace Oheangbu.App
                         : authoredPlan.Shape == AreaShape.Cone
                             ? authoredPlan.Point + AreaGeometry.Flat(authoredPlan.Direction).normalized * Mathf.Max(1f, authoredPlan.Length)
                             : authoredPlan.Point;
-                    authored.Begin(bounds.center, authoredTarget, authoredFallback, group.FlashColor);
+                    var launchPoint=SpellVFX120.Vfx120LaunchPoint.Resolve(authored.Profile,Camera.main,bounds.center);
+                    authored.Begin(launchPoint, authoredTarget, authoredFallback, group.FlashColor);
                 }
                 else
                 {
                     if (_pendingParry && _combatConfig != null)
                         authored.SetGuardClock(_combatConfig.GuardDuration, _combatConfig.ParryWindow);
-                    authored.Begin(bounds.center, null, bounds.center, group.FlashColor);
+                    Vector3 guardDirectionPoint = bounds.center;
+                    if (SpellVFX120.Vfx120Effect.IsBambooGuard(authored.Profile)||authored.Profile.KtpPatternShield)
+                    {
+                        var camera = Camera.main;
+                        Vector3 facing = camera != null ? camera.transform.forward : transform.forward;
+                        facing.y = 0;
+                        if (facing.sqrMagnitude < .001f) facing = transform.forward;
+                        guardDirectionPoint += facing.normalized;
+                    }
+                    authored.Begin(bounds.center, null, guardDirectionPoint, group.FlashColor);
+                    if (_pendingParry) { SpellVFX120.Vfx120Effect.SelectBambooGuard(authored); SpellVFX120.Vfx120Effect.SelectFireGuard(authored); }
                 }
                 return;
             }

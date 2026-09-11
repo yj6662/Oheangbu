@@ -1,0 +1,11 @@
+{
+"id":"031_B108","version":"54","key":"NEO_031","glyph":"너","title":"너 · 솟아오르는 화막",
+"audit":"single_play_B108.json","build":"fire_guard_031_build.json","scope":"neo54_scope_check.json","previous":"NANG_030_REVIEW.html",
+"intro":"아래에서 솟는 불꽃이 화막을 이루고 전통 문양이 방어 면을 잡습니다. 패링 성공 신호에 문양과 불티가 반응합니다.",
+"changes":["기존 형상 대신 폭1.65m의 하단 방출 영역에서 상승하는 화염·연기·불티를 구성했다.","KTP Pattern_110을 유지 문양으로 사용하고 패링 시 밝아지도록 했다.","기존 Fire 패링 성공 콜백에 전용 반응을 연결했다. 판정 창·환급·그로기 규칙은 유지한다.","동일 술식의 기존 NativeField 중복을 제거했다. 다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양1개/2tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireGuardParticlePeak","fireGuardPulsePeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 패링 콜백은 연결했으나 적의 공격과 사용자 입력으로 수행하는 전투 통합 검사는 미검증이다.","다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps. 영상과 단독 Play에서0.36초에 진단용 패링 신호를 제공한다. 별도 검사에서는 신호 없이 임의 반응하지 않는 상태와 종료 정리를 확인했다.",
+"detailLabels":["패링 반응","잔존 화막"]
+}

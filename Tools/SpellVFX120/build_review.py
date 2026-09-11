@@ -2,7 +2,8 @@
 
 No server, deployment, network dependency, or Unity mutation. Run again after capture:
     python Tools/SpellVFX120/build_review.py --stills-folder SecondPass --stage "2차 캡처"
-The selected folder is never silently replaced by another capture version.
+The selected still folder remains the baseline. --latest-overrides explicitly opts
+into verified newer clips and matching sequence stills from named capture folders.
 An existing image is evidence of capture only, not an artistic or gameplay PASS.
 """
 from __future__ import annotations
@@ -18,6 +19,131 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = ROOT / 'Art/SpellVFX120'
+VERIFIED_ENCODING = 'VERIFIED_ENCODING_AND_TIMING_ONLY'
+LATEST_CLIP_FOLDERS = ('CueMotionClipsB3', 'CueReviewClipsB4', 'CueWorldClipsB4')
+SAMPLE_FRACTIONS = (.07, .22, .42, .64, .9)
+
+
+def sha256(path: Path) -> str:
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
+def contained_path(output: Path, value: str | Path) -> Path:
+    path = (output / value).resolve()
+    if path == output or not path.is_relative_to(output):
+        raise ValueError('Media paths must remain inside output-dir')
+    return path
+
+
+def recorded_time(value: str | None) -> float:
+    try:
+        stamp = datetime.fromisoformat((value or '').replace('Z', '+00:00'))
+        return stamp.timestamp() if stamp.tzinfo is not None else 0
+    except (ValueError, TypeError):
+        return 0
+
+
+def scene_label(evidence: dict, folder: str) -> tuple[str, str]:
+    scene = evidence.get('captureScene')
+    if scene:
+        return ('C2 월드' if scene.endswith('/C2_CodexWorld.unity') else Path(scene).stem,
+                'CAPTURE_METADATA')
+    if folder == 'CueMotionClipsB3':
+        # Confirmed by the B3 review; these older capture JSONs lack scene fields.
+        return 'C2 후방 시점 (운영 기록 · 장면 JSON 미기록)', 'REVIEW_CONTEXT_NOT_METADATA'
+    return '장면 미기록', 'NOT_RECORDED'
+
+
+def verified_clip(output: Path, folder: str, ident: str, glyph: str) -> tuple[dict | None, dict]:
+    """Use the encoder's evidence only after rechecking its video and metadata hashes.
+
+    No file mtime or folder name implies a capture revision, art PASS or game PASS.
+    Source sequence bytes are checked separately before using their PNGs as stills.
+    """
+    relative = f'{folder}/{ident}.mp4'
+    path = contained_path(output, relative)
+    audit = {'id': ident, 'path': relative, 'state': 'NOT_CAPTURED'}
+    if not path.is_file():
+        return None, audit
+    sidecar = contained_path(output, f'{folder}/{ident}_encoding.json')
+    try:
+        data = json.loads(sidecar.read_text(encoding='utf-8-sig'))
+        checks = data.get('verification', {}).get('checks', {})
+        required = ('fullDecodeWithoutError', 'h264Input', 'frameCountMatches', 'frameIndicesContiguous',
+                    'fps24', 'allDimensionsMatchInput', 'allPixelFormatsYuv420p',
+                    'everyTimestampMatches24fps', 'everyFrameDurationMatches24fps')
+        if (data.get('id') != ident or data.get('glyph') != glyph or
+                data.get('status') != VERIFIED_ENCODING or
+                data.get('verification', {}).get('status') != VERIFIED_ENCODING or
+                not all(checks.get(key) is True for key in required)):
+            raise ValueError('ENCODING_EVIDENCE_INVALID')
+        if path.stat().st_size < 128 or sha256(path) != data.get('outputSha256'):
+            raise ValueError('VIDEO_HASH_MISMATCH')
+        source = data.get('input', {})
+        metadata_path = contained_path(output, source['metadataPath'])
+        if sha256(metadata_path) != data.get('metadataSha256'):
+            raise ValueError('CAPTURE_METADATA_HASH_MISMATCH')
+        evidence = capture_metadata(metadata_path, glyph)
+        if evidence['state'] != 'RECORDED':
+            raise ValueError(evidence['state'])
+        scene, scene_source = scene_label(evidence, folder)
+        relative_meta = metadata_path.relative_to(output).as_posix()
+        audit['state'] = 'VIDEO_AND_CAPTURE_HASH_MATCH_ENCODING_EVIDENCE'
+        return {'path': quote(relative), 'expected': relative, 'version': folder,
+                'isOverride': folder != 'Clips', 'scene': scene, 'sceneSource': scene_source,
+                'capturedUtc': evidence.get('capturedUtc'),
+                'capturedTimestamp': recorded_time(evidence.get('capturedUtc')),
+                'runtimeMvid': evidence.get('loadedRuntimeAssemblyMvid'),
+                'encoding': VERIFIED_ENCODING, 'evidenceState': audit['state'],
+                'sourceVersionMatchesCurrent': 'UNVERIFIED',
+                'artGameplayPerformance': 'UNVERIFIED',
+                'scope': '연출 시연 · 인코딩·시간 검증만 · 미술/실제 게임 통과 아님',
+                'capture': evidence, 'captureMetadataPath': quote(relative_meta),
+                'encodingMetadataPath': quote(sidecar.relative_to(output).as_posix()),
+                'sourceInput': source, 'inputSha256': data.get('inputSha256')}, audit
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        audit['state'] = 'REJECTED_ENCODING_EVIDENCE'
+        audit['reason'] = str(error)
+        return None, audit
+
+
+def sequence_stills(output: Path, clip: dict) -> tuple[list[dict] | None, dict]:
+    """Tie selected PNGs to the already decoded video via the encoder's full input hash."""
+    audit = {'clip': clip['expected'], 'state': 'SOURCE_SEQUENCE_UNVERIFIED'}
+    try:
+        source = clip['sourceInput']
+        sequence = contained_path(output, source['sequencePath'])
+        metadata = contained_path(output, source['metadataPath'])
+        times = clip['capture']['sampledSeconds']
+        if not times or len(times) != source['frames']:
+            raise ValueError('SOURCE_FRAME_COUNT_MISMATCH')
+        expected = {f'{i:04d}.png' for i in range(len(times))}
+        if {p.name for p in sequence.glob('*.png')} != expected:
+            raise ValueError('SOURCE_SEQUENCE_INCOMPLETE')
+        digest = hashlib.sha256(metadata.read_bytes())
+        for i in range(len(times)):
+            name = f'{i:04d}.png'
+            digest.update(name.encode('ascii') + b'\0')
+            digest.update(bytes.fromhex(sha256(sequence / name)))
+        if digest.hexdigest() != clip['inputSha256']:
+            raise ValueError('SOURCE_SEQUENCE_HASH_MISMATCH')
+        life = float(source['life'])
+        media = []
+        for phase, fraction in enumerate(SAMPLE_FRACTIONS):
+            frame = min(range(len(times)), key=lambda i: abs(times[i] - life * fraction))
+            path = sequence / f'{frame:04d}.png'
+            present, check = image_state(path)
+            if not present:
+                raise ValueError(check['state'])
+            relative = path.relative_to(output).as_posix()
+            media.append({'phase': phase, 'frame': frame, 'seconds': times[frame],
+                          'path': quote(relative), 'expected': relative, 'inspection': check})
+        audit['state'] = 'FULL_SEQUENCE_HASH_MATCH_ENCODING_INPUT'
+        return media, audit
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        audit['reason'] = str(error)
+        return None, audit
 
 
 def capture_metadata(path: Path, glyph: str) -> dict:
@@ -31,7 +157,9 @@ def capture_metadata(path: Path, glyph: str) -> dict:
         return {'state': 'RECORDED', 'sampledSeconds': data.get('sampledSeconds', []),
                 'status': data.get('status'), 'demonstrationCues': data.get('demonstrationCues'),
                 'gameplayConnectionVerified': data.get('gameplayConnectionVerified'),
-                'eventSource': data.get('eventSource')}
+                'eventSource': data.get('eventSource'), 'capturedUtc': data.get('capturedUtc'),
+                'loadedRuntimeAssemblyMvid': data.get('loadedRuntimeAssemblyMvid'),
+                'captureScene': data.get('captureScene'), 'cameraName': data.get('cameraName')}
     except (OSError, ValueError, AttributeError):
         return {'state': 'UNREADABLE_CAPTURE_METADATA'}
 
@@ -62,6 +190,10 @@ def main() -> None:
                         help='Capture folder inside output-dir, e.g. SecondPass or ThirdPass. No fallback or mixing.')
     parser.add_argument('--stage', help='Captured version label; defaults to the selected folder name.')
     parser.add_argument('--title', default='오행부 · 120 술식 VFX 검수', help='Review page title.')
+    parser.add_argument('--latest-overrides', action='store_true',
+                        help='Consider known B3/B4 clip folders; adopt only verified, newer recorded captures.')
+    parser.add_argument('--clip-overrides', action='append', default=[], metavar='FOLDER',
+                        help='Additional clip folder inside output-dir; repeatable (e.g. WaterClipsB5).')
     args = parser.parse_args()
     output = args.output_dir.resolve()
     stills = (output / args.stills_folder).resolve()
@@ -71,13 +203,21 @@ def main() -> None:
         parser.error('--stills-folder must be a directory')
     stills_relative = stills.relative_to(output).as_posix()
     stage = args.stage or stills.name
+    override_folders = list(LATEST_CLIP_FOLDERS) if args.latest_overrides else []
+    for folder in args.clip_overrides:
+        try:
+            relative = contained_path(output, folder).relative_to(output).as_posix()
+        except ValueError as error:
+            parser.error(str(error))
+        if relative != 'Clips' and relative not in override_folders:
+            override_folders.append(relative)
     output.mkdir(parents=True, exist_ok=True)
     direction_path = ROOT / 'Docs/Art/SpellVFX120/visual_direction_draft.json'
     manifest_path = output / 'build_manifest.json'
     direction = json.loads(direction_path.read_text(encoding='utf-8-sig'))
     manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
     definitions = {item['glyph']: item for item in manifest['spells']}
-    records, media_checks = [], []
+    records, media_checks, clip_checks, sequence_checks = [], [], [], []
     captured_mtimes = []
     for source in direction['spells']:
         item = definitions[source['glyph']]
@@ -88,15 +228,41 @@ def main() -> None:
         for phase in range(5):
             relative = f'{stills_relative}/{ident}_{phase}.png'
             present, check = image_state(output / relative)
-            if present:
-                captured_mtimes.append((output / relative).stat().st_mtime)
             media.append({'phase': phase, 'path': quote(relative) if present else None,
                           'expected': relative, 'inspection': check})
-            media_checks.append({'id': ident, 'phase': phase, 'path': relative, **check})
-        clip_relative = f'Clips/{ident}.mp4'
-        clip = output / clip_relative
-        # Browser-decoding and original-speed validation are separate from this listing.
-        clip_present = clip.is_file() and clip.stat().st_size >= 128
+        candidates = []
+        for folder in ['Clips', *override_folders]:
+            candidate, check = verified_clip(output, folder, ident, source['glyph'])
+            clip_checks.append(check)
+            if candidate:
+                candidates.append(candidate)
+        # Capture time in hash-checked JSON determines order, never encode/file mtime.
+        # An undated candidate is still accessible, but cannot silently replace a dated one.
+        candidates.sort(key=lambda c: (c['capturedTimestamp'], c['version']), reverse=True)
+        selected_clip = candidates[0] if candidates else None
+        still_version, still_kind = stills_relative, 'SELECTED_BASELINE_STILLS'
+        still_scene, still_scene_source = scene_label(evidence, stills_relative)
+        baseline_stamp = recorded_time(evidence.get('capturedUtc'))
+        if (selected_clip and selected_clip['isOverride'] and selected_clip['capturedTimestamp'] > 0
+                and selected_clip['capturedTimestamp'] > baseline_stamp):
+            newer_media, check = sequence_stills(output, selected_clip)
+            sequence_checks.append(check)
+            if newer_media:
+                media = newer_media
+                evidence = selected_clip['capture']
+                evidence_relative = selected_clip['sourceInput']['metadataPath']
+                evidence_relative = contained_path(output, evidence_relative).relative_to(output).as_posix()
+                still_version, still_kind = selected_clip['version'], 'VERIFIED_CLIP_SOURCE_FRAMES'
+                still_scene, still_scene_source = selected_clip['scene'], selected_clip['sceneSource']
+        for entry in media:
+            entry.setdefault('seconds', evidence.get('sampledSeconds', [])[entry['phase']]
+                             if len(evidence.get('sampledSeconds', [])) == 5 else None)
+            if entry['path']:
+                captured_mtimes.append((output / entry['expected']).stat().st_mtime)
+            media_checks.append({'id': ident, 'phase': entry['phase'], 'path': entry['expected'],
+                                 'version': still_version, **entry['inspection']})
+        public_candidates = [{k: v for k, v in c.items() if k not in
+                              ('sourceInput', 'inputSha256', 'capturedTimestamp')} for c in candidates]
         status = 'blank' if not item['assigned'] else ('connected' if item['connected'] else 'asset')
         records.append({
             'index': source['index'], 'id': ident, 'glyph': source['glyph'],
@@ -113,8 +279,12 @@ def main() -> None:
             'sourceNote': source['sourceNote'], 'media': media,
             'capture': evidence,
             'captureMetadataPath': quote(evidence_relative) if evidence['state'] == 'RECORDED' else None,
-            'clip': clip_relative if clip_present else None,
-            'clipExpected': clip_relative, 'previewDuration': item['duration'],
+            'stillVersion': still_version, 'stillKind': still_kind,
+            'stillScene': still_scene, 'stillSceneSource': still_scene_source,
+            'clip': selected_clip['path'] if selected_clip else None,
+            'clipEvidence': public_candidates[0] if public_candidates else None,
+            'clipVariants': public_candidates,
+            'clipExpected': f'Clips/{ident}.mp4', 'previewDuration': item['duration'],
             'capturedCount': sum(x['path'] is not None for x in media)
         })
     if len(records) != 120 or len({r['glyph'] for r in records}) != 120:
@@ -127,30 +297,42 @@ def main() -> None:
         'intentionalBlanks': sum(r['status'] == 'blank' for r in records),
         'capturedStills': sum(r['capturedCount'] for r in records),
         'expectedStills': 600, 'presentVideos': sum(r['clip'] is not None for r in records),
+        'overrideVideos': sum(bool(r['clipEvidence'] and r['clipEvidence']['isOverride']) for r in records),
+        'baselineVideos': sum(bool(r['clipEvidence'] and not r['clipEvidence']['isOverride']) for r in records),
+        'overrideStills': sum(r['stillKind'] == 'VERIFIED_CLIP_SOURCE_FRAMES' for r in records),
+        'all120Latest': False, 'all120GameplayPass': False, 'all120ArtPass': False,
+        'clipOverrideFolders': override_folders,
+        'selectedVideoVersions': {version: sum(bool(r['clipEvidence'] and r['clipEvidence']['version'] == version)
+                                             for r in records)
+                                 for version in sorted({r['clipEvidence']['version'] for r in records if r['clipEvidence']})},
         'sourceSha256': hashlib.sha256(direction_path.read_bytes()).hexdigest(),
         'manifestSha256': hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         'pageTitle': args.title,
         'captureVersion': {
             'stage': stage, 'stillsFolder': stills_relative,
             'metadataFiles': sum(r['capture']['state'] == 'RECORDED' for r in records),
-            'sourceMatch': 'UNVERIFIED_CAPTURE_SOURCE_REVISION_NOT_RECORDED',
+            'sourceMatch': 'RECORDED_MVID_WHERE_AVAILABLE_CURRENT_SOURCE_MATCH_UNVERIFIED',
             'fileModifiedRangeUtc': [datetime.fromtimestamp(t, timezone.utc).isoformat()
                                      for t in (min(captured_mtimes), max(captured_mtimes))] if captured_mtimes else [],
             'fileDatesAreCaptureProof': False,
-            'note': '선택한 폴더의 촬영본입니다. 파일 시각은 촬영 당시 소스 버전을 증명하지 않습니다.'
+            'note': '기본 스틸 폴더에 검증된 최신 선택 영상의 원본 프레임만 명시적으로 덮어 표시합니다. 항목별 버전은 다릅니다.'
         },
         'sourceDescription': '설명·색상·배정은 페이지 생성 시점의 설계 및 build_manifest입니다. 촬영 당시 소스와 일치는 미검증입니다.',
-        'videoSource': 'Clips/ 공용 영상 폴더. 선택한 이미지 버전과 영상 버전의 일치는 미검증입니다.',
+        'videoSource': '구버전 Clips와 지정한 후속 후보 폴더를 함께 검사했습니다. 실제 파일/촬영 기록 해시가 인코딩 증거와 맞는 영상만 표시합니다. 전체 120종 최신 또는 게임 통과를 뜻하지 않습니다.',
+        'clipEvidenceChecks': clip_checks,
+        'sequenceEvidenceChecks': sequence_checks,
         'warnings': [m for m in media_checks if m['state'] != 'NOT_CAPTURED' and
                      (m['state'] != 'PNG_HEADER_PRESENT' or not m.get('aspect16x9', False) or not m.get('atLeast720p', False))],
         'media': media_checks
     }
-    payload = json.dumps({'spells': records, 'census': {k:v for k,v in census.items() if k != 'media'}},
+    payload = json.dumps({'spells': records, 'census': {k:v for k,v in census.items() if k not in
+                         ('media', 'clipEvidenceChecks', 'sequenceEvidenceChecks')}},
                          ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
     template = HTML_TEMPLATE.replace('__PAGE_TITLE__', html.escape(args.title)).replace('__DATA__', payload)
     (output / 'REVIEW.html').write_text(template, encoding='utf-8')
     (output / 'review_file_validation.json').write_text(json.dumps(census, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
-    print(json.dumps({k:v for k,v in census.items() if k not in ('media', 'warnings')}, ensure_ascii=False))
+    print(json.dumps({k:v for k,v in census.items() if k not in
+                     ('media', 'warnings', 'clipEvidenceChecks', 'sequenceEvidenceChecks')}, ensure_ascii=False))
 
 
 HTML_TEMPLATE = r'''<!doctype html>
@@ -170,9 +352,9 @@ dialog{border:1px solid #605f52;padding:0;width:min(1330px,96vw);max-height:95vh
 </head>
 <body>
 <header>
-<p class="eyebrow">오행부 / 신규 술식 시각 검수</p>
+<p class="eyebrow">오행부 / 제작 중 · 미술 승인 전</p>
 <h1>__PAGE_TITLE__</h1>
-<p class="intro">카드를 열면 같은 술식의 다섯 시간 샘플과 의도한 동작을 함께 볼 수 있습니다. 영상은 파일이 있는 항목에서 재생할 수 있습니다.</p>
+<p class="intro">카드를 열면 술식별 촬영 버전·장면과 다섯 시간 샘플을 볼 수 있습니다. 검증된 후속 영상이 있는 항목만 갱신하며, 나머지는 구버전 자료를 유지합니다. 전체 120종의 최신 촬영이나 게임·미술 통과를 뜻하지 않습니다.</p>
 <div class="statistics" id="statistics"></div>
 <p class="notice" id="captureVersion"></p>
 <p class="notice">기존 술식 15자는 카탈로그상 대응 항목입니다. 실제 플레이어 연결·판정·미술 완성은 별도 검수합니다. 나머지 85자는 자산 검수 대상이며, 미배정 20자는 시각 후보입니다.</p>
@@ -200,13 +382,13 @@ const DATA=JSON.parse(document.getElementById('review-data').textContent);
 const spells=DATA.spells, census=DATA.census;
 const $=id=>document.getElementById(id);
 const labels={connected:'기존 술식 대응',asset:'자산 검수 대상',blank:'미배정 · 시각 후보'};
-let element='all',filtered=spells,selected=null,phase=2,mediaMode='still';
+let element='all',filtered=spells,selected=null,phase=2,mediaMode='still',clipIndex=0;
 function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
 function pill(s){return node('span','pill '+s.status,labels[s.status]);}
 function placeholder(s,detail=false){const n=node('div','placeholder');n.append(node('strong','',s.glyph),node('small','',detail?'아직 촬영하지 않은 샘플입니다.':'미촬영'));return n;}
 function stat(n,t){const s=node('span','stat');s.append(node('b','',String(n)),document.createTextNode(t));return s;}
-$('statistics').append(stat(census.count,'술식'),stat(census.capturedStills+'/'+census.expectedStills,'이미지'),stat(census.presentVideos+'/120','영상'),stat(census.connected,'기존 술식 대응'),stat(census.intentionalBlanks,'미배정'));
-$('captureVersion').textContent='촬영본: '+census.captureVersion.stage+' ('+census.captureVersion.stillsFolder+'/). '+census.sourceDescription;
+$('statistics').append(stat(census.count,'술식'),stat(census.overrideVideos,'후속 선택 영상'),stat(census.baselineVideos,'기본 구영상'),stat(census.capturedStills+'/'+census.expectedStills,'이미지'),stat(census.connected,'기존 술식 대응'));
+$('captureVersion').textContent='기본 스틸: '+census.captureVersion.stage+' ('+census.captureVersion.stillsFolder+'/). 후속 '+census.overrideStills+'종은 검증된 영상 원본 프레임입니다. 항목별 버전이 다릅니다. '+census.sourceDescription;
 $('generated').textContent='파일 목록 갱신: '+new Date(census.generatedAtUtc).toLocaleString('ko-KR');
 for(const [value,label] of [['all','전체'],['목','목 · 나무'],['화','화 · 불'],['토','토 · 흙'],['금','금 · 쇠'],['수','수 · 물']]){
  const b=node('button','',label);b.type='button';b.dataset.element=value;b.setAttribute('aria-pressed',String(value===element));
@@ -221,7 +403,8 @@ function render(){
   const shot=chosenStill(s);if(shot){const img=node('img','thumb');img.loading='lazy';img.decoding='async';img.alt=s.glyph+' '+s.title+' 실제 촬영';img.src=shot.path;img.addEventListener('error',()=>{button.replaceChildren(placeholder(s));},{once:true});button.append(img);}else button.append(placeholder(s));
   button.addEventListener('click',()=>openSpell(s));const body=node('div','card-body'),title=node('div','card-title');title.append(node('span','glyph',s.glyph),node('h2','',s.title));
   const foot=node('div','card-footer');foot.append(pill(s),node('span','capture-count',s.capturedCount+'/5장'+(s.clip?' · 영상':'')));
-  body.append(title,node('p','meta',String(s.index).padStart(3,'0')+' · '+s.element+' · '+s.category),node('p','intent',s.intent),foot);card.append(button,body);$('grid').append(card);
+  const version=(s.clipEvidence?.isOverride?'후속 선택':'기본 자료')+' · '+s.stillVersion;
+  body.append(title,node('p','meta',String(s.index).padStart(3,'0')+' · '+s.element+' · '+s.category),node('p','meta',version+' · '+s.stillScene),node('p','intent',s.intent),foot);card.append(button,body);$('grid').append(card);
  }
  $('resultCount').textContent=filtered.length+'개 표시 / 전체 120개';$('empty').hidden=filtered.length!==0;
 }
@@ -229,20 +412,25 @@ function showMedia(){
  const s=selected,stage=$('mediaStage');stage.replaceChildren();$('phaseTabs').replaceChildren();
  $('stillTab').setAttribute('aria-selected',String(mediaMode==='still'));$('clipTab').setAttribute('aria-selected',String(mediaMode==='clip'));
  if(mediaMode==='clip'){
-  if(s.clip){const v=node('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=s.clip;v.setAttribute('aria-label',s.glyph+' 실제 동작 검수 영상');v.addEventListener('error',()=>{stage.replaceChildren(placeholder(s,true));$('mediaCaption').textContent='영상 파일을 재생할 수 없습니다. 파일 검사 보고서를 확인하세요.';},{once:true});stage.append(v);$('mediaCaption').textContent=s.clip+' · 원래 재생 속도로 확인하세요. '+census.videoSource;}
+  const clip=s.clipVariants[clipIndex];
+  if(clip){const v=node('video');v.controls=true;v.preload='metadata';v.playsInline=true;v.src=clip.path;v.setAttribute('aria-label',s.glyph+' '+clip.version+' 연출 시연 영상');v.addEventListener('error',()=>{stage.replaceChildren(placeholder(s,true));$('mediaCaption').textContent='영상 파일을 재생할 수 없습니다. 파일 검사 보고서를 확인하세요.';},{once:true});stage.append(v);$('mediaCaption').textContent=clip.version+' · '+clip.scene+' · 촬영 '+(clip.capturedUtc||'미기록')+' · MVID '+(clip.runtimeMvid||'미기록')+' · '+clip.scope+' · 1배속';
+   for(let i=0;i<s.clipVariants.length;i++){const c=s.clipVariants[i],b=node('button','',(i===0?'선택 · ':'비교 · ')+c.version+' / '+c.scene);b.role='tab';b.setAttribute('aria-selected',String(i===clipIndex));b.addEventListener('click',()=>{clipIndex=i;showMedia();});$('phaseTabs').append(b);}
+  }
   else{stage.append(placeholder(s,true));$('mediaCaption').textContent='동작 영상 미촬영 · 예정 파일: '+s.clipExpected;}
  }else{
   const sample=s.media[phase];if(sample.path){const img=node('img');img.src=sample.path;img.alt=s.glyph+' 검수 샘플 '+(phase+1);img.addEventListener('error',()=>{stage.replaceChildren(placeholder(s,true));$('mediaCaption').textContent='촬영 파일을 읽을 수 없습니다. 갤러리를 다시 생성해 주세요.';},{once:true});stage.append(img);
-   const info=sample.inspection,seconds=s.capture.sampledSeconds?.[phase];$('mediaCaption').textContent=census.captureVersion.stage+' · '+sample.expected+' · '+info.width+' × '+info.height+(info.aspect16x9?' · 16:9':' · 화면 비율 확인 필요')+(Number.isFinite(seconds)?' · 시작 후 '+seconds.toFixed(3)+'초':' · 촬영 시점 미기록');
+   const info=sample.inspection,seconds=sample.seconds;$('mediaCaption').textContent=s.stillVersion+' · '+s.stillScene+' · '+sample.expected+' · '+info.width+' × '+info.height+(Number.isFinite(seconds)?' · 시작 후 '+seconds.toFixed(3)+'초':' · 촬영 시점 미기록')+(s.stillKind==='VERIFIED_CLIP_SOURCE_FRAMES'?' · 선택 영상과 원본 해시 일치':' · 기본 스틸; 영상과 동일 촬영 여부 별도 확인');
   }else{stage.append(placeholder(s,true));$('mediaCaption').textContent='샘플 '+(phase+1)+' 미촬영 · 예정 파일: '+sample.expected;}
   for(let i=0;i<5;i++){const b=node('button','',String(i+1)+(s.media[i].path?'':' · 미촬영'));b.role='tab';b.setAttribute('aria-selected',String(i===phase));b.addEventListener('click',()=>{phase=i;showMedia();});$('phaseTabs').append(b);}
  }
 }
 function openSpell(s){
- selected=s;phase=s.media[2].path?2:Math.max(0,s.media.findIndex(m=>m.path));mediaMode='still';$('dialogTitle').textContent=s.glyph+' · '+s.title;$('dialogStatus').replaceChildren(pill(s));
+ selected=s;phase=s.media[2].path?2:Math.max(0,s.media.findIndex(m=>m.path));mediaMode='still';clipIndex=0;$('dialogTitle').textContent=s.glyph+' · '+s.title;$('dialogStatus').replaceChildren(pill(s));
  $('intentText').textContent=s.intent;$('readabilityText').textContent=s.readability;$('shapeText').textContent=s.shape;$('motionText').textContent=s.motion;$('accentText').textContent='보조색 · '+s.accentName;
  $('swatches').replaceChildren();for(const [key,label] of [['primary','기본 안료'],['secondary','보조 안료'],['ink','먹'],['paper','소지']]){const sw=node('span','swatch');sw.style.backgroundColor=s.palette[key];sw.title=label+' '+s.palette[key];sw.setAttribute('aria-label',sw.title);$('swatches').append(sw);}
  const source=$('sourceBox');source.replaceChildren(node('p','', '현재 설계의 문양 원료 · '+s.patternName),node('p','source-path',s.pattern),node('p','', 'KoreanTraditionalPattern_Effect의 검수한 알파 문양입니다. 촬영본과 현재 설계의 일치는 미검증입니다.'));
+ source.append(node('p','', '표시 스틸: '+s.stillVersion+' / '+s.stillScene),node('p','source-path','촬영 MVID: '+(s.capture.loadedRuntimeAssemblyMvid||'미기록')));
+ if(s.clipEvidence){const p=node('p'),a=node('a','','선택 영상 인코딩·해시 기록');a.href=s.clipEvidence.encodingMetadataPath;a.target='_blank';a.rel='noopener';p.append(a);source.append(p);}
  if(s.captureMetadataPath){const p=node('p'),a=node('a','','촬영 기록');a.href=s.captureMetadataPath;a.target='_blank';a.rel='noopener';p.append(a,document.createTextNode(s.capture.demonstrationCues?' · 연출 검수용 시연 이벤트 포함':''));source.append(p);}
  $('phaseDescriptions').replaceChildren();for(const [key,label] of [['cast','시전'],['travel','이동·전개'],['impact','명중·작용'],['resolve','소멸·복귀']]){const block=node('div','phase');block.append(node('b','',label),node('p','',s[key]));$('phaseDescriptions').append(block);}
  $('detailNote').textContent=(s.status==='blank'?'이 글자는 의도적 공백입니다. 연출은 시각 후보이며 전투 효과나 해금을 배정하지 않았습니다. ':s.status==='asset'?'현재 게임 이벤트 연결이 확인되지 않은 자산 검수 대상입니다. ':'카탈로그상 기존 술식 대응 항목입니다. 실제 플레이어 연결·시전·판정은 별도 검수합니다. ')+(s.sourceNote?'원본 비고: '+s.sourceNote+' ':'')+'4단계 설명과 색상은 현재 설계입니다. 촬영본의 완성·동작 통과를 뜻하지 않습니다.';

@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal37/003_AC04.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated37/003_AC04.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GAN_003_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GA_001_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills37/003_AC04_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills37/003_AC04_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills37/003_AC04_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/003_AC04_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills37/003_AC04_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "gan37_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "seed_transfer_003_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_AC04.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills37",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills37",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames37",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames37",
+      "mvid_match": true
+    }
+  ]
+}

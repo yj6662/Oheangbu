@@ -4,8 +4,8 @@
 
 ## 검토 자료
 
-- [실제 RuntimeAudit](../../../Art/SpellVFX120/runtime_audit.json)
-- [종료 직후 출처 스냅샷](../../../Art/SpellVFX120/resource_attribution.json), 촬영 UTC `2026-09-09T02:16:52.9073227Z`, Unity `6000.3.9f1`, Play frame `14654`
+- [실제 RuntimeAudit](C:/Users/yj666/Oheangbu/Art/SpellVFX120/runtime_audit.json)
+- [종료 직후 출처 스냅샷](C:/Users/yj666/Oheangbu/Art/SpellVFX120/resource_attribution.json), 촬영 UTC `2026-09-09T02:16:52.9073227Z`, Unity `6000.3.9f1`, Play frame `14654`
 - RuntimeAudit SHA256: `0d83dfef91adce60cf5acfc9a15a80e4bb1a8dea834848d036d780aed3e38f4b`
 - 출처 스냅샷 SHA256: `de1334493f1561b921f656278aa16f35fbefccbabd93712bfb7b5ae4407bbee6`
 

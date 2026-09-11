@@ -22,10 +22,77 @@ MonoBehaviour:
   Layout: 5
   BodyMesh: {fileID: 4300000, guid: a56d873f092ef7f44860f906637fecc3, type: 2}
   AccentMesh: {fileID: 4300000, guid: 6be74a07f798d5e4cae1a161041e674d, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 526d061b2bc46774ebead0e8c921b629, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 19378912170973d4e8e3aa5c3bdd470e, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 736925618618619073, guid: 210d3bc2ea32dd142a0415f660dbc5c2, type: 3}
+  NativeImpactPrefab: {fileID: 3059679275553059787, guid: ad232046e6e415949a1749b25d8fd852, type: 3}
+  NativeFieldPrefab: {fileID: 7604984991659029790, guid: 41002dc724e8b3648b5433b782eed565, type: 3}
+  NativeFieldRole: 2
+  NativeScale: 0.65
+  NativeImpactScale: 1
+  KtpEmphasis: 0
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1
+  KtpBrightness: 1
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 0
+  AreaContactPrefab: {fileID: 0}
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 0
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 0
+  EarthRift: 0
+  BranchedEarthRift: 0
+  ProceduralEarthRift: 0
+  WardKind: 0
+  WardRadius: 3
+  WardHeight: 2.2
+  WardFormation: 0.45
+  WardFade: 0.5
+  WardMaterial: {fileID: 0}
+  WardWaterMaterial: {fileID: 0}
+  WardPatternPrefab: {fileID: 0}
+  WardContactPrefab: {fileID: 0}
+  WardDebrisPrefab: {fileID: 0}
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 7730987548316347064, guid: 47823db67d8ba714da001d389247cd39, type: 3}
+  WoodDeerPresentation: 0
+  WoodDeerPrefab: {fileID: 0}
+  WoodDeerSeal: {fileID: 0}
+  WoodDeerDebris: {fileID: 0}
+  FireHaetaePresentation: 0
+  FireHaetaePrefab: {fileID: 0}
+  FireHaetaeSeal: {fileID: 0}
+  FireHaetaeDebris: {fileID: 0}
+  MetalTigerPresentation: 1
+  MetalTigerPrefab: {fileID: 7594516013625672468, guid: a7e6115135f1fcd40b60213d16de675b, type: 3}
+  MetalTigerSeal: {fileID: 1013418847714976101, guid: e1d0147f984b37b4dabceff291e53bf3, type: 3}
+  MetalTigerDebris: {fileID: 2641625965289127474, guid: d04462b1154881e4ca5a43da5e10ace7, type: 3}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.6509804, g: 0.6901961, b: 0.6784314, a: 1}
   Accent: {r: 0.6509804, g: 0.69803923, b: 0.627451, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}

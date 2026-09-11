@@ -24,10 +24,28 @@ MonoBehaviour:
   Layout: 9
   BodyMesh: {fileID: 4300000, guid: 6f79404ccc5b4a24597edd8fb2fe53ab, type: 2}
   AccentMesh: {fileID: 4300000, guid: 6be74a07f798d5e4cae1a161041e674d, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 4604ba8ebc40a914a9822f16360207cf, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: d91caed86a333ee45ae9dfcb78665ee7, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 1997781007263551571, guid: d7308758c1f09c941a978b3bb220233b, type: 3}
+  NativeImpactPrefab: {fileID: 2516397040406900782, guid: 36034aaf993a30945af811af803c438f, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.48
+  NativeImpactScale: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.17254902, g: 0.27450982, b: 0.3529412, a: 1}
   Accent: {r: 0.6509804, g: 0.69803923, b: 0.627451, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}

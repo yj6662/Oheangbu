@@ -1,0 +1,15 @@
+{
+    "glyph": "옥",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||4.3|0.46|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/WaveCrest.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat||||4.3|0.46|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom15-01.prefab"
+    ],
+    "systems": 38,
+    "capacity": 38000,
+    "sourcePreserved": true
+}

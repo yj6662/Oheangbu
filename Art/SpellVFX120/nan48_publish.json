@@ -1,0 +1,11 @@
+{
+ "id":"027_B09C","version":"48","key":"NAN_027","glyph":"난","title":"난 · 응축 화염의 일격",
+ "audit":"single_play_B09C.json","build":"heavy_flame_027_build.json","scope":"nan48_scope_check.json","previous":"NAK_026_REVIEW.html",
+ "intro":"밀집된 화염탄이 접점에서 세 방향으로 퍼지며, 큰 겹꽃 문양이 한 번 펼쳐집니다.",
+ "changes":["난의 비행 화염은 수명이 짧고 밀집된 입자로 구성해 긴 꼬리를 줄였다.","명중 시 세 화염 줄기가 동시에 방사된다. 추가 명중·2차 피해는 생성하지 않는다.","KTP Pattern_156 겹꽃 문양과 기존 발동·타격 연출을 사용한다. 나·낙의 Pattern_110과 다른 형태다.","다른119개 프로필을 보존하고 원본 KTP 에셋을 변경하지 않았다."],
+ "cost":"전용 Particle System10개, 입자 상한528개. 명중 문양1개/2tris. 공유 재질4개, 런타임 메시·재질 복제0. KTP 동반 효과의 입자·그리기 비용 별도.",
+ "metrics":["fireParticlePeak","firePatternPeak","fireImpact"],
+ "limits":["ㄴ 계열 난의 VFX 시안이며 비주얼 판정은 사용자 검토 대기입니다.","실제 최대 위력·피해 연결은 미구현이다. 단독 검사는 주어진 명중 시각을 소비하는 표현 검사다.","동시 시전 GPU 비용·실제 적 전투·손글씨 입력 경로는 이번 항목에서 미검증이다."],
+ "captureNote":"1280×720·24fps 기본/외부 시점. 명중 시각을 제공한 시연이며 추가 타격을 발생시키지 않는다.",
+ "detailLabels":["명중 겹꽃 문양","불티와 소멸"]
+}

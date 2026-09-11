@@ -1,0 +1,1644 @@
+{
+    "status": "PASS_BOTANICAL_EDIT_CONTRACTS_ONLY",
+    "capturedUtc": "2026-09-09T08:40:12.6312700Z",
+    "unityVersion": "6000.3.9f1",
+    "appMvid": "fb3d4381-ac41-49ee-aef2-ed6b874f010e",
+    "botanicalRuntimeSourceSha256": "A63DE6FA84DE2E443AB210BCA8CC61AD06200D0C760D958D0AF72DBDFF935EEE",
+    "authority": "EDIT_PREVIEW_SUPPLIED_PLANS_AND_CUES_NOT_GAMEPLAY",
+    "scope": "Three real botanical catalog entries: target tracking, Path center/time and authored stem pivot spacing, planted-tree release, repeat/reverse/expiry/re-Begin and source preservation.",
+    "limits": "No art, foliage coverage/hit geometry, real Update/Destroy, gameplay, rendering, shader clipping correctness, runtime allocation rate or performance PASS. Below-ground emergence at frame zero is intentional. Material-clone checks cover the botanical subtree only.",
+    "inventory": {
+        "status": "INVENTORY_ONLY_NOT_BUILT_OR_TESTED",
+        "scope": "Read actual imported source meshes/materials. Build() does not generate or change assets.",
+        "rows": [
+            {
+                "glyph": "각",
+                "kind": "RootBind",
+                "profile": "Assets/_Project/Art/SpellVFX120/Profiles/002_AC01.asset",
+                "source": "Assets/_Project/Art/SpellVFX120/Botanical/PF_RootBind.prefab",
+                "directChildren": 5,
+                "meshRenderers": 5,
+                "triangles": 16525,
+                "colliders": 0,
+                "scripts": 0
+            },
+            {
+                "glyph": "검",
+                "kind": "PlantedTree",
+                "profile": "Assets/_Project/Art/SpellVFX120/Profiles/010_AC80.asset",
+                "source": "Assets/_Project/Art/SpellVFX120/Botanical/PF_PlantedTree.prefab",
+                "directChildren": 1,
+                "meshRenderers": 1,
+                "triangles": 6826,
+                "colliders": 0,
+                "scripts": 0
+            },
+            {
+                "glyph": "공",
+                "kind": "BambooFront",
+                "profile": "Assets/_Project/Art/SpellVFX120/Profiles/018_ACF5.asset",
+                "source": "Assets/_Project/Art/SpellVFX120/Botanical/PF_BambooFront.prefab",
+                "directChildren": 7,
+                "meshRenderers": 7,
+                "triangles": 19733,
+                "colliders": 0,
+                "scripts": 0
+            }
+        ],
+        "error": ""
+    },
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "sourcesUnchanged": true,
+    "cleanupObserved": true,
+    "rows": [
+        {
+            "name": "placement_repeat_reverse_expiry_rebegin_0",
+            "glyph": "각",
+            "kind": "RootBind",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 3.4000000953674318,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 0.0,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.17499999701976777,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.17499999701976777,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 1.25,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 1.25,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 999.0999755859375,
+                        "y": 1001.0,
+                        "z": 1004.2000122070313
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 3.4000000953674318,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 3.5,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 5
+                }
+            ]
+        },
+        {
+            "name": "placement_repeat_reverse_expiry_rebegin_0",
+            "glyph": "공",
+            "kind": "BambooFront",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 3.5,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 4.1961669694501327e-8,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.20000000298023225,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.4000000059604645,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.4000000059604645,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 1.600000023841858,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.5451049804688,
+                        "y": 1001.0,
+                        "z": 1000.5714721679688
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.600000023841858,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.5451049804688,
+                        "y": 1001.0,
+                        "z": 1000.5714721679688
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 2.799999952316284,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1005.0902099609375,
+                        "y": 1001.0,
+                        "z": 1003.1430053710938
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 2.799999952316284,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1005.0902099609375,
+                        "y": 1001.0,
+                        "z": 1003.1430053710938
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.600000023841858,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.5451049804688,
+                        "y": 1001.0,
+                        "z": 1000.5714721679688
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 3.5,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1005.0902099609375,
+                        "y": 1001.0,
+                        "z": 1003.1430053710938
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 3.5999999046325685,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1005.0902099609375,
+                        "y": 1001.0,
+                        "z": 1003.1430053710938
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 1.600000023841858,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.5451049804688,
+                        "y": 1001.0,
+                        "z": 1000.5714721679688
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.600000023841858,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.5451049804688,
+                        "y": 1001.0,
+                        "z": 1000.5714721679688
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.600000023841858,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.5451049804688,
+                        "y": 1001.0,
+                        "z": 1000.5714721679688
+                    },
+                    "enabledRenderers": 7
+                }
+            ]
+        },
+        {
+            "name": "placement_repeat_reverse_expiry_rebegin_1",
+            "glyph": "공",
+            "kind": "BambooFront",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 3.5,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 2.0980834847250663e-8,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.699999988079071,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.699999988079071,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 1002.0,
+                        "y": 1001.0,
+                        "z": 998.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 1.6722222566604615,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1000.5323486328125,
+                        "y": 1001.0,
+                        "z": 998.953125
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.6722222566604615,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1000.5323486328125,
+                        "y": 1001.0,
+                        "z": 998.953125
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 2.644444465637207,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 999.0646362304688,
+                        "y": 1001.0,
+                        "z": 999.90625
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 2.644444465637207,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 999.0646362304688,
+                        "y": 1001.0,
+                        "z": 999.90625
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.6722222566604615,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1000.5323486328125,
+                        "y": 1001.0,
+                        "z": 998.953125
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 3.5,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 999.0646362304688,
+                        "y": 1001.0,
+                        "z": 999.90625
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 3.5999999046325685,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 999.0646362304688,
+                        "y": 1001.0,
+                        "z": 999.90625
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 1.6722222566604615,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1000.5323486328125,
+                        "y": 1001.0,
+                        "z": 998.953125
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.6722222566604615,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1000.5323486328125,
+                        "y": 1001.0,
+                        "z": 998.953125
+                    },
+                    "enabledRenderers": 7
+                },
+                {
+                    "age": 1.6722222566604615,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1000.5323486328125,
+                        "y": 1001.0,
+                        "z": 998.953125
+                    },
+                    "enabledRenderers": 7
+                }
+            ]
+        },
+        {
+            "name": "missing_path_fallback",
+            "glyph": "공",
+            "kind": "BambooFront",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 0.0,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 0.0,
+            "planUnchanged": false,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "incompatible_plan_fallback",
+            "glyph": "공",
+            "kind": "BambooFront",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 0.0,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 0.0,
+            "planUnchanged": false,
+            "profileUnchanged": false,
+            "samples": []
+        },
+        {
+            "name": "placement_repeat_reverse_expiry_rebegin_0",
+            "glyph": "검",
+            "kind": "PlantedTree",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 4.599999904632568,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 0.0,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.17499999701976777,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.17499999701976777,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 1.25,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 1.25,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 4.599999904632568,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 4.699999809265137,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 1.4500000476837159,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 998.0,
+                        "y": 1001.0,
+                        "z": 1005.0
+                    },
+                    "enabledRenderers": 1
+                }
+            ]
+        },
+        {
+            "name": "placement_repeat_reverse_expiry_rebegin_1",
+            "glyph": "검",
+            "kind": "PlantedTree",
+            "status": "PASS_EDIT_CONTRACT_ONLY",
+            "detail": "",
+            "life": 4.599999904632568,
+            "maximumCenterError": 0.0,
+            "maximumPivotError": 0.0,
+            "planUnchanged": true,
+            "profileUnchanged": true,
+            "samples": [
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.0,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.17499999701976777,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.17499999701976777,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.3499999940395355,
+                    "opacity": 0.008333333767950535,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 1.25,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 1.25,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 4.599999904632568,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 4.699999809265137,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 1.4500000476837159,
+                    "opacity": 0.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 0
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                },
+                {
+                    "age": 0.9500000476837158,
+                    "opacity": 1.0,
+                    "hostWorldPosition": {
+                        "x": 1003.0,
+                        "y": 1001.2000122070313,
+                        "z": 1004.0
+                    },
+                    "enabledRenderers": 1
+                }
+            ]
+        }
+    ],
+    "sources": [
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_8.png",
+            "diskBefore": "0E6FB19B05A08B0E382DE0A635D595010008D4D02485C0CE527B1929F0AD2D99",
+            "diskAfter": "0E6FB19B05A08B0E382DE0A635D595010008D4D02485C0CE527B1929F0AD2D99",
+            "dependencyBefore": "766ce51154ee2e9fc3c3d7d8d48f7741",
+            "dependencyAfter": "766ce51154ee2e9fc3c3d7d8d48f7741",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly05-06/Ring_Energy_02.mat",
+            "diskBefore": "584C644D9831BC0A0EA011A770FDA729A46A2C42963F9AC0FEBFEA50C40B399B",
+            "diskAfter": "584C644D9831BC0A0EA011A770FDA729A46A2C42963F9AC0FEBFEA50C40B399B",
+            "dependencyBefore": "5a3faed741771bd7807527f12d2fa43a",
+            "dependencyAfter": "5a3faed741771bd7807527f12d2fa43a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Shaders/SpellVFX120/InkPigment.shader",
+            "diskBefore": "931DCA5B27594C3C8D6524E88FCED992C2417778BE29A7B7EEAB66926A511F98",
+            "diskAfter": "931DCA5B27594C3C8D6524E88FCED992C2417778BE29A7B7EEAB66926A511F98",
+            "dependencyBefore": "d80e6f0559884c8d5193d3c7cb33cd17",
+            "dependencyAfter": "d80e6f0559884c8d5193d3c7cb33cd17",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_N.png",
+            "diskBefore": "8448C0404ED1649238454BE05C31DE5E717730955318A165C9914BB082585C2C",
+            "diskAfter": "8448C0404ED1649238454BE05C31DE5E717730955318A165C9914BB082585C2C",
+            "dependencyBefore": "c17d2419b1c6fc63d187533f58fb3296",
+            "dependencyAfter": "c17d2419b1c6fc63d187533f58fb3296",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/par_line.mat",
+            "diskBefore": "986130B095B72E6335589203FA202C0A3431A54CE6CD978FF75C13B704B0495B",
+            "diskAfter": "986130B095B72E6335589203FA202C0A3431A54CE6CD978FF75C13B704B0495B",
+            "dependencyBefore": "11cd313752f147f6f52e21439ee25085",
+            "dependencyAfter": "11cd313752f147f6f52e21439ee25085",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Aura.png",
+            "diskBefore": "8D2DF4E91A19F722FADAB962285FA8321F32482BA7C4654FC327B94258CFB74D",
+            "diskAfter": "8D2DF4E91A19F722FADAB962285FA8321F32482BA7C4654FC327B94258CFB74D",
+            "dependencyBefore": "cd485bf1cc2181610bde824654b070f8",
+            "dependencyAfter": "cd485bf1cc2181610bde824654b070f8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph",
+            "diskBefore": "C4BFA24297865B43A1B8A806E5003479A665352DF4854F71D99AF258A26FDFE0",
+            "diskAfter": "C4BFA24297865B43A1B8A806E5003479A665352DF4854F71D99AF258A26FDFE0",
+            "dependencyBefore": "6e13308860cfabfd80f4e30f2c0ff2f8",
+            "dependencyAfter": "6e13308860cfabfd80f4e30f2c0ff2f8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Prefabs/002_AC01.prefab",
+            "diskBefore": "11AE236EC073C2E1512F652F5491C7AB1D95927A002CFB5B7AB9F652D1C833A4",
+            "diskAfter": "11AE236EC073C2E1512F652F5491C7AB1D95927A002CFB5B7AB9F652D1C833A4",
+            "dependencyBefore": "895bb199b525f0c666072eaf1f7946b4",
+            "dependencyAfter": "895bb199b525f0c666072eaf1f7946b4",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_228.mat",
+            "diskBefore": "C3A0971470B101076AE9DCD8C1D9383FE9AFDF17ECE64D4A0DA292FAFDB79DB5",
+            "diskAfter": "C3A0971470B101076AE9DCD8C1D9383FE9AFDF17ECE64D4A0DA292FAFDB79DB5",
+            "dependencyBefore": "d1783dcb3713e9331f2122c38589263c",
+            "dependencyAfter": "d1783dcb3713e9331f2122c38589263c",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Shaders/SpellVFX120/BotanicalSurface.shader",
+            "diskBefore": "D9045E60D705C3E898265F544A0BBCA475E13F7D1E643F856F98247BA6ED524C",
+            "diskAfter": "D9045E60D705C3E898265F544A0BBCA475E13F7D1E643F856F98247BA6ED524C",
+            "dependencyBefore": "ab63e03a5966c16169f9d8e5af0cc323",
+            "dependencyAfter": "ab63e03a5966c16169f9d8e5af0cc323",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/SpellVFX120/Vfx120Profile.cs",
+            "diskBefore": "4EA2DA514AD4DD097D697C8939DDE98AEC4FAEFE670EAEBB87309EE6EE581566",
+            "diskAfter": "4EA2DA514AD4DD097D697C8939DDE98AEC4FAEFE670EAEBB87309EE6EE581566",
+            "dependencyBefore": "defe8c1994404681dd5056da12d4edda",
+            "dependencyAfter": "defe8c1994404681dd5056da12d4edda",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/line.png",
+            "diskBefore": "F507D1B6DBEBA63D0BE341D6439D4FB0DCEC8E04BEE7CA5B97A9AE10376C6429",
+            "diskAfter": "F507D1B6DBEBA63D0BE341D6439D4FB0DCEC8E04BEE7CA5B97A9AE10376C6429",
+            "dependencyBefore": "30c1d9a277ef76e59d1ee8be30e57c90",
+            "dependencyAfter": "30c1d9a277ef76e59d1ee8be30e57c90",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.shadergraph/Editor/Importers/ShaderGraphMetadata.cs",
+            "diskBefore": "C86716F1ECC1257883B2C67DDCB00D612D7B302E215E8BBAEB8E919F16202385",
+            "diskAfter": "C86716F1ECC1257883B2C67DDCB00D612D7B302E215E8BBAEB8E919F16202385",
+            "dependencyBefore": "f8071be88d95205b55ba6341c44e0dff",
+            "dependencyAfter": "f8071be88d95205b55ba6341c44e0dff",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Ink.mat",
+            "diskBefore": "8BC892C667B1957BE5303C84A748754F329CCC3A5CB44C3E30181BC346568EE1",
+            "diskAfter": "8BC892C667B1957BE5303C84A748754F329CCC3A5CB44C3E30181BC346568EE1",
+            "dependencyBefore": "bf98793a7213124b74305095581f6510",
+            "dependencyAfter": "bf98793a7213124b74305095581f6510",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Vine.mat",
+            "diskBefore": "358D809E122FB5F59B8C4E3BC2371EEECBE3CB29AD91861D1420279F444F2FBE",
+            "diskAfter": "358D809E122FB5F59B8C4E3BC2371EEECBE3CB29AD91861D1420279F444F2FBE",
+            "dependencyBefore": "97ecfe1ac6a54a21bdd9eecd89ead938",
+            "dependencyAfter": "97ecfe1ac6a54a21bdd9eecd89ead938",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Noise.png",
+            "diskBefore": "6D93FC86873DDF709B091801370102FEC83E3599F1AD78F4E4A0F2C3CE332F96",
+            "diskAfter": "6D93FC86873DDF709B091801370102FEC83E3599F1AD78F4E4A0F2C3CE332F96",
+            "dependencyBefore": "0d606b0de1edecd7a64c5b02134fde92",
+            "dependencyAfter": "0d606b0de1edecd7a64c5b02134fde92",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll.shadergraph",
+            "diskBefore": "A958EDCD43F934DB95F9CAB3FF5D9B38DA77C2D8B65DDDB66C7054FCFFA93C42",
+            "diskAfter": "A958EDCD43F934DB95F9CAB3FF5D9B38DA77C2D8B65DDDB66C7054FCFFA93C42",
+            "dependencyBefore": "fca7a611e4634e5fab188405310741f8",
+            "dependencyAfter": "fca7a611e4634e5fab188405310741f8",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Editor/AssetVersion.cs",
+            "diskBefore": "96ED27E15286CDA1FDADA6923E804887B6447A905B38360E0F5561F79CD0344C",
+            "diskAfter": "96ED27E15286CDA1FDADA6923E804887B6447A905B38360E0F5561F79CD0344C",
+            "dependencyBefore": "86773f09236e0883a920d40a1fe555e0",
+            "dependencyAfter": "86773f09236e0883a920d40a1fe555e0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/KTP_Cast_LeafBloom.prefab",
+            "diskBefore": "6C395D0E575EFC765BF4D77EF85C3F3D75DF6B7A8A034BA86ABD787A7440A98C",
+            "diskAfter": "6C395D0E575EFC765BF4D77EF85C3F3D75DF6B7A8A034BA86ABD787A7440A98C",
+            "dependencyBefore": "616d380f4de2fce56ce769d7a310b49f",
+            "dependencyAfter": "616d380f4de2fce56ce769d7a310b49f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Light_00.mat",
+            "diskBefore": "A8D3D8D41D3C88CB5223AC180CED5C2C6E0799F4FE651D33CC8A4E8C666D786E",
+            "diskAfter": "A8D3D8D41D3C88CB5223AC180CED5C2C6E0799F4FE651D33CC8A4E8C666D786E",
+            "dependencyBefore": "e8a28b009bb4731ae62368b90aab56a2",
+            "dependencyAfter": "e8a28b009bb4731ae62368b90aab56a2",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/TrailLight.png",
+            "diskBefore": "F3D421A2226501C13E7F9C0EBA8E59893D8C56902FACDE68BC78707F98CBA6C4",
+            "diskAfter": "F3D421A2226501C13E7F9C0EBA8E59893D8C56902FACDE68BC78707F98CBA6C4",
+            "dependencyBefore": "4cf12e13e4685d52e5866eb41951f305",
+            "dependencyAfter": "4cf12e13e4685d52e5866eb41951f305",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.shadergraph/Editor/Importers/ShaderGraphImporter.cs",
+            "diskBefore": "572A4DD745EB8D77AFE20F19DC34DA1B4CA7E6C13A6E74FE7287F75DBF04108F",
+            "diskAfter": "572A4DD745EB8D77AFE20F19DC34DA1B4CA7E6C13A6E74FE7287F75DBF04108F",
+            "dependencyBefore": "3cc5ef258c4352df79526e46b58e727b",
+            "dependencyAfter": "3cc5ef258c4352df79526e46b58e727b",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_03.mat",
+            "diskBefore": "6B616369F6BFFBA6E519055852D931D922FD3199FC48D5AAF268DE6125A15BBE",
+            "diskAfter": "6B616369F6BFFBA6E519055852D931D922FD3199FC48D5AAF268DE6125A15BBE",
+            "dependencyBefore": "1717a76c177d22416abe8e3878351c64",
+            "dependencyAfter": "1717a76c177d22416abe8e3878351c64",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png",
+            "diskBefore": "7D49E79D473C88DA584225896C6E51DFC9740CC0C7B11DD07252669DF6FF5428",
+            "diskAfter": "7D49E79D473C88DA584225896C6E51DFC9740CC0C7B11DD07252669DF6FF5428",
+            "dependencyBefore": "d998740fbad49c23081d77c706086b7d",
+            "dependencyAfter": "d998740fbad49c23081d77c706086b7d",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly05-06/Light_00.mat",
+            "diskBefore": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "diskAfter": "6BB4533287F87DE0AEAA14BBAE24B52FB9A44573611BE0D4E751AFC78F2F5A12",
+            "dependencyBefore": "e30a35ffa7480fb70c3d2044e8b5e6b2",
+            "dependencyAfter": "e30a35ffa7480fb70c3d2044e8b5e6b2",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Shader/AdditiveBlend_Scroll.shadergraph",
+            "diskBefore": "9674E808A871D9A1E599FBE5E7795B47A43D8DA0E94CC5A0B1A20078F84ADD2B",
+            "diskAfter": "9674E808A871D9A1E599FBE5E7795B47A43D8DA0E94CC5A0B1A20078F84ADD2B",
+            "dependencyBefore": "9681c9bdf1159e8adbadb44bbfe1d0b0",
+            "dependencyAfter": "9681c9bdf1159e8adbadb44bbfe1d0b0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Star.png",
+            "diskBefore": "69BB3FFE167328BFB6A4625A7AB19B3D621B318A4CFFA93EEC377DEBEEC9146B",
+            "diskAfter": "69BB3FFE167328BFB6A4625A7AB19B3D621B318A4CFFA93EEC377DEBEEC9146B",
+            "dependencyBefore": "04bda15bef9802bd7c25b3a382fd3bbf",
+            "dependencyAfter": "04bda15bef9802bd7c25b3a382fd3bbf",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_38.mat",
+            "diskBefore": "73B48BC9A2B68D4D5F17CF7805568133F588FD87FFA38F0BF606BBF4704B9712",
+            "diskAfter": "73B48BC9A2B68D4D5F17CF7805568133F588FD87FFA38F0BF606BBF4704B9712",
+            "dependencyBefore": "7ea043f668c2067215bf13f167d86da4",
+            "dependencyAfter": "7ea043f668c2067215bf13f167d86da4",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Light_01.mat",
+            "diskBefore": "A582A29BB0F81DEA653E3EE284049AEDFF3F3BAFED7759C76A238DD18B558621",
+            "diskAfter": "A582A29BB0F81DEA653E3EE284049AEDFF3F3BAFED7759C76A238DD18B558621",
+            "dependencyBefore": "5917ddc462e2373f30bc5c83a0e85236",
+            "dependencyAfter": "5917ddc462e2373f30bc5c83a0e85236",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/PF_RootBind.prefab",
+            "diskBefore": "38E034FD578F0262C4B674C52E7ABB3C63E47E2D43E9BBEF1511D1B71117D249",
+            "diskAfter": "38E034FD578F0262C4B674C52E7ABB3C63E47E2D43E9BBEF1511D1B71117D249",
+            "dependencyBefore": "cadcf797dfefbc8577b965c3a2489445",
+            "dependencyAfter": "cadcf797dfefbc8577b965c3a2489445",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/pointLight.png",
+            "diskBefore": "FB4782944F31AD242B3CD410ED9044A9C2FA89C8BFBD258FBABA9A8FBB7EEBE2",
+            "diskAfter": "FB4782944F31AD242B3CD410ED9044A9C2FA89C8BFBD258FBABA9A8FBB7EEBE2",
+            "dependencyBefore": "da246843550ae41acd856a9330bf12a6",
+            "dependencyAfter": "da246843550ae41acd856a9330bf12a6",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly05-06/pointLight.mat",
+            "diskBefore": "63CCDDB78B327BA0A4A3E638E4D506FC7EB9ACEC39BA49907293E763B619F8CD",
+            "diskAfter": "63CCDDB78B327BA0A4A3E638E4D506FC7EB9ACEC39BA49907293E763B619F8CD",
+            "dependencyBefore": "d95f0a54f7234dddb12ce1b8164ca79c",
+            "dependencyAfter": "d95f0a54f7234dddb12ce1b8164ca79c",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Mask_04.png",
+            "diskBefore": "74BD99DBCB3B103DFDB98A1EA71F3D427875720CF9BBC3D28E4F0526E08835E1",
+            "diskAfter": "74BD99DBCB3B103DFDB98A1EA71F3D427875720CF9BBC3D28E4F0526E08835E1",
+            "dependencyBefore": "750851f4986982ad9c26112268a9df87",
+            "dependencyAfter": "750851f4986982ad9c26112268a9df87",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_PigmentDust.mat",
+            "diskBefore": "C557730803585FB94447256C69871A467439B6ED61EF94AAEFCF1F540C0E5547",
+            "diskAfter": "C557730803585FB94447256C69871A467439B6ED61EF94AAEFCF1F540C0E5547",
+            "dependencyBefore": "4082021d7fb6ffda99eb18d0dddcf4d8",
+            "dependencyAfter": "4082021d7fb6ffda99eb18d0dddcf4d8",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/PublicTexture/Noise_01.png",
+            "diskBefore": "9F604130D401F7CD028F15EEA095EA98527ADF99F5CF0FC3E71441BDCA1BFFCE",
+            "diskAfter": "9F604130D401F7CD028F15EEA095EA98527ADF99F5CF0FC3E71441BDCA1BFFCE",
+            "dependencyBefore": "accd8d4f14aff780fa79ecd40b84bfbc",
+            "dependencyAfter": "accd8d4f14aff780fa79ecd40b84bfbc",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_00.mat",
+            "diskBefore": "7837CAD24510C519BEF74EFC6D5E065A29B928B98C43FD999DC48C1C6836C7A2",
+            "diskAfter": "7837CAD24510C519BEF74EFC6D5E065A29B928B98C43FD999DC48C1C6836C7A2",
+            "dependencyBefore": "1ad649d449f436a79b3bd093407f0c6e",
+            "dependencyAfter": "1ad649d449f436a79b3bd093407f0c6e",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Root_0_Bark.mat",
+            "diskBefore": "DBE6A08539133DD32CE8AF7704C2597993A8BF5156262E0DBE9187B0B9629E65",
+            "diskAfter": "DBE6A08539133DD32CE8AF7704C2597993A8BF5156262E0DBE9187B0B9629E65",
+            "dependencyBefore": "f4028cd8baeb7e4b37630e9af124540b",
+            "dependencyAfter": "f4028cd8baeb7e4b37630e9af124540b",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_02.mat",
+            "diskBefore": "AE0307BA997B3260EEDADAB8977F402F17C847B55B823A3DC0B2AE60720C95DE",
+            "diskAfter": "AE0307BA997B3260EEDADAB8977F402F17C847B55B823A3DC0B2AE60720C95DE",
+            "dependencyBefore": "f58a2a09c8aae91731617ee1c6989a29",
+            "dependencyAfter": "f58a2a09c8aae91731617ee1c6989a29",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.cs",
+            "diskBefore": "39711E264939FF5CF5DA4A533F53EC95AF5A50C2A07BB437179DB034939F42A9",
+            "diskAfter": "39711E264939FF5CF5DA4A533F53EC95AF5A50C2A07BB437179DB034939F42A9",
+            "dependencyBefore": "ddb8feb9f2eada7a174af00c3760007f",
+            "dependencyAfter": "ddb8feb9f2eada7a174af00c3760007f",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Runtime/Materials/ParticlesUnlit.mat",
+            "diskBefore": "9AD30A782B59F1D14AF9323078D5F85C56F6AECE4F6B849FCCB6563573A0DED1",
+            "diskAfter": "9AD30A782B59F1D14AF9323078D5F85C56F6AECE4F6B849FCCB6563573A0DED1",
+            "dependencyBefore": "aa862bff269d59d834f13819255630e6",
+            "dependencyAfter": "aa862bff269d59d834f13819255630e6",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_38.png",
+            "diskBefore": "0E87CD2A143F3225EDD010AB77434626CC806BE8B26EBF4A8F186566CDA5467F",
+            "diskAfter": "0E87CD2A143F3225EDD010AB77434626CC806BE8B26EBF4A8F186566CDA5467F",
+            "dependencyBefore": "7b18a00f69ac24af958c007470a7be7c",
+            "dependencyAfter": "7b18a00f69ac24af958c007470a7be7c",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlit.shader",
+            "diskBefore": "1CD8356CF8CB67F065B7D2F67B071190A675A98C8CDEA5A45028C0CB3C9E1E18",
+            "diskAfter": "1CD8356CF8CB67F065B7D2F67B071190A675A98C8CDEA5A45028C0CB3C9E1E18",
+            "dependencyBefore": "fdbab01af904257d9faff67c1ab01e08",
+            "dependencyAfter": "fdbab01af904257d9faff67c1ab01e08",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Traditional/KTP_Impact_LeafBurst.prefab",
+            "diskBefore": "1D2C93BA6FFAC33B497766874C3456AFF2C08C36C1BACF56DC01E8935899E36C",
+            "diskAfter": "1D2C93BA6FFAC33B497766874C3456AFF2C08C36C1BACF56DC01E8935899E36C",
+            "dependencyBefore": "d7da99fef0291ad76bd4f8e8aaa4ad5f",
+            "dependencyAfter": "d7da99fef0291ad76bd4f8e8aaa4ad5f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Vine.asset",
+            "diskBefore": "419E1F4FF2C49E11403E7857FA3582B1C9FAB5885CAF8E2A58AD08608392426F",
+            "diskAfter": "419E1F4FF2C49E11403E7857FA3582B1C9FAB5885CAF8E2A58AD08608392426F",
+            "dependencyBefore": "8d23315897a99a0c3f12a48d003ccf0f",
+            "dependencyAfter": "8d23315897a99a0c3f12a48d003ccf0f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_01.mat",
+            "diskBefore": "6B73819176AADBD8366A5B2DAA4DB4917F4564A0BE2C14DFCECC07C6469680DF",
+            "diskAfter": "6B73819176AADBD8366A5B2DAA4DB4917F4564A0BE2C14DFCECC07C6469680DF",
+            "dependencyBefore": "f9269edb7c30de12b9dc3d87f39e0b68",
+            "dependencyAfter": "f9269edb7c30de12b9dc3d87f39e0b68",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Leaf.asset",
+            "diskBefore": "E428765BF9B702327E6DDF64612779E685ADD7914643A07D81A2E6872B227561",
+            "diskAfter": "E428765BF9B702327E6DDF64612779E685ADD7914643A07D81A2E6872B227561",
+            "dependencyBefore": "6b1e423851a3666befa33162152384cf",
+            "dependencyAfter": "6b1e423851a3666befa33162152384cf",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_8.mat",
+            "diskBefore": "62A016E837F4CD4C4B490EDACB32FD245F5C2A889FA4F61713AC66058206FBB9",
+            "diskAfter": "62A016E837F4CD4C4B490EDACB32FD245F5C2A889FA4F61713AC66058206FBB9",
+            "dependencyBefore": "97f2b47c74e24d2a9155114e449200c0",
+            "dependencyAfter": "97f2b47c74e24d2a9155114e449200c0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+            "diskBefore": "FD4815168545994EA8FAE2D7D219993BE476A797D5DA156B3FCE69DFEEE6CF87",
+            "diskAfter": "FD4815168545994EA8FAE2D7D219993BE476A797D5DA156B3FCE69DFEEE6CF87",
+            "dependencyBefore": "92b5969fc969de2865b5746792581ce6",
+            "dependencyAfter": "92b5969fc969de2865b5746792581ce6",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/002_AC01.asset",
+            "diskBefore": "7F178C068D10BCA4522D7796E32F2564F686392CE051F892E937E29F0DC20A1E",
+            "diskAfter": "7F178C068D10BCA4522D7796E32F2564F686392CE051F892E937E29F0DC20A1E",
+            "dependencyBefore": "6dcd3aa0f63c31389ee6e45de5131033",
+            "dependencyAfter": "6dcd3aa0f63c31389ee6e45de5131033",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_BC.png",
+            "diskBefore": "887133C3A3A0E337CF548F336AFD5C12CFFEF11E2B65C229695039AA233CFFB9",
+            "diskAfter": "887133C3A3A0E337CF548F336AFD5C12CFFEF11E2B65C229695039AA233CFFB9",
+            "dependencyBefore": "542158edb76596347284c1023bc2fc00",
+            "dependencyAfter": "542158edb76596347284c1023bc2fc00",
+            "unchanged": true
+        },
+        {
+            "path": "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/UniversalMetadata.cs",
+            "diskBefore": "88083201BA4B354BDE926DECEDD11354A32B41A69E49EFCD08EABE095CB15A5A",
+            "diskAfter": "88083201BA4B354BDE926DECEDD11354A32B41A69E49EFCD08EABE095CB15A5A",
+            "dependencyBefore": "e26a8175135b417ece24fef629a33623",
+            "dependencyAfter": "e26a8175135b417ece24fef629a33623",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly05-06/Star.mat",
+            "diskBefore": "7EEB115C6BD74B7A0588F79AE3F46BA407D834385E7AFA6C1A0664149A9DE106",
+            "diskAfter": "7EEB115C6BD74B7A0588F79AE3F46BA407D834385E7AFA6C1A0664149A9DE106",
+            "dependencyBefore": "0e460554985dc37acd9ad455d9536e80",
+            "dependencyAfter": "0e460554985dc37acd9ad455d9536e80",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png",
+            "diskBefore": "23418CBB5CD614429FA477827FBACA62B8914DFFA450C031554C3B974B4D9FF9",
+            "diskAfter": "23418CBB5CD614429FA477827FBACA62B8914DFFA450C031554C3B974B4D9FF9",
+            "dependencyBefore": "deffa51a0c30d56aa4057bd036aa083a",
+            "dependencyAfter": "deffa51a0c30d56aa4057bd036aa083a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_33.mat",
+            "diskBefore": "7BE56FE21131A98D747FFC9FCFEE924E6218158A1E354CB3A8D371E03BCCEAA3",
+            "diskAfter": "7BE56FE21131A98D747FFC9FCFEE924E6218158A1E354CB3A8D371E03BCCEAA3",
+            "dependencyBefore": "44dd2f375065886691c8782ca47497df",
+            "dependencyAfter": "44dd2f375065886691c8782ca47497df",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_BC.png",
+            "diskBefore": "2352B354B1A244285F6DC381144E1122191406F27F0315F26C54963953346A72",
+            "diskAfter": "2352B354B1A244285F6DC381144E1122191406F27F0315F26C54963953346A72",
+            "dependencyBefore": "60586967e58b9fa0f6f7d50f48298973",
+            "dependencyAfter": "60586967e58b9fa0f6f7d50f48298973",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_BC.png",
+            "diskBefore": "A17508BD7137CF7F2938C2CA293DE5A3D3524EEFDD5009AEC4A55C43620B131A",
+            "diskAfter": "A17508BD7137CF7F2938C2CA293DE5A3D3524EEFDD5009AEC4A55C43620B131A",
+            "dependencyBefore": "14d4d6367e3380eb7819b94114c1fc73",
+            "dependencyAfter": "14d4d6367e3380eb7819b94114c1fc73",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+            "diskBefore": "9B34C571A3A3DC0AD27F69BF971F08C8E31941162A8B3457E65853C8D609E299",
+            "diskAfter": "9B34C571A3A3DC0AD27F69BF971F08C8E31941162A8B3457E65853C8D609E299",
+            "dependencyBefore": "ab0dc98ab74d683df8c7501000606e23",
+            "dependencyAfter": "ab0dc98ab74d683df8c7501000606e23",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Bamboo_0_Bark.mat",
+            "diskBefore": "9BE80B609333A695B34F2F2CEC584BA6124BF4F00DF5B6A45172F55D0165418D",
+            "diskAfter": "9BE80B609333A695B34F2F2CEC584BA6124BF4F00DF5B6A45172F55D0165418D",
+            "dependencyBefore": "1110c9ebe2e3cab09e83d5ab653eb991",
+            "dependencyAfter": "1110c9ebe2e3cab09e83d5ab653eb991",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_N.png",
+            "diskBefore": "955EF05B2A6C33E58126BF40424C1B05D35EA266C38D1FF3CBF19F5C03249A3F",
+            "diskAfter": "955EF05B2A6C33E58126BF40424C1B05D35EA266C38D1FF3CBF19F5C03249A3F",
+            "dependencyBefore": "64ad34aca04deeb865f76308764423d1",
+            "dependencyAfter": "64ad34aca04deeb865f76308764423d1",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Prefabs/018_ACF5.prefab",
+            "diskBefore": "26974E8170E6AFA904F2DEB66789CB00F68AB150D141E7F8B6B146573F38707E",
+            "diskAfter": "26974E8170E6AFA904F2DEB66789CB00F68AB150D141E7F8B6B146573F38707E",
+            "dependencyBefore": "6520e898a3c7a527744e384fa0eeebd3",
+            "dependencyAfter": "6520e898a3c7a527744e384fa0eeebd3",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/PF_BambooFront.prefab",
+            "diskBefore": "82C9E6360D69BF84D9867CBEABD50FDA5A0BA1035A53CA25F47FE2CDF374479C",
+            "diskAfter": "82C9E6360D69BF84D9867CBEABD50FDA5A0BA1035A53CA25F47FE2CDF374479C",
+            "dependencyBefore": "b1347e7d437335e07032ba1532e5f18f",
+            "dependencyAfter": "b1347e7d437335e07032ba1532e5f18f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_N.png",
+            "diskBefore": "EADB32543FA724831FF46BFC7E28CD9475D965366A45728CAF7B871439295492",
+            "diskAfter": "EADB32543FA724831FF46BFC7E28CD9475D965366A45728CAF7B871439295492",
+            "dependencyBefore": "6ddac2e095ac1829e888f9ebcda3946a",
+            "dependencyAfter": "6ddac2e095ac1829e888f9ebcda3946a",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/018_ACF5.asset",
+            "diskBefore": "4F58358B5619FBFFEADC0BFAA0841315019A57A252A285237628F2DC2D85735E",
+            "diskAfter": "4F58358B5619FBFFEADC0BFAA0841315019A57A252A285237628F2DC2D85735E",
+            "dependencyBefore": "1f624a18072e1a6c00900bb8b8dd1c36",
+            "dependencyAfter": "1f624a18072e1a6c00900bb8b8dd1c36",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Bamboo_1_Cutout.mat",
+            "diskBefore": "91777851622C4F1473C841B843062953CC0078913CC8B449C41E65188A08514F",
+            "diskAfter": "91777851622C4F1473C841B843062953CC0078913CC8B449C41E65188A08514F",
+            "dependencyBefore": "9ad54a9b8d3d0be5f89c1824ac6c7d87",
+            "dependencyAfter": "9ad54a9b8d3d0be5f89c1824ac6c7d87",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_Leaf_N.png",
+            "diskBefore": "DB85AAE0B364DBED0507B6C040913346201703B41C6A145F1686191D9D9B1E2C",
+            "diskAfter": "DB85AAE0B364DBED0507B6C040913346201703B41C6A145F1686191D9D9B1E2C",
+            "dependencyBefore": "27b126d706e8f041e4c7683524cee77f",
+            "dependencyAfter": "27b126d706e8f041e4c7683524cee77f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_Flower_3_BC.png",
+            "diskBefore": "6D443870DB165B215A37D694DA1B2AD02DA7C34C9C6B6F8E76792B9B1E00123A",
+            "diskAfter": "6D443870DB165B215A37D694DA1B2AD02DA7C34C9C6B6F8E76792B9B1E00123A",
+            "dependencyBefore": "cf3adccc53af49b0a762887c17a0b7d1",
+            "dependencyAfter": "cf3adccc53af49b0a762887c17a0b7d1",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/010_AC80.asset",
+            "diskBefore": "0FC3A283B3E8B0A778C8D3A84A52FB7BD6424D7AAC357493438D20D353F3120F",
+            "diskAfter": "0FC3A283B3E8B0A778C8D3A84A52FB7BD6424D7AAC357493438D20D353F3120F",
+            "dependencyBefore": "606f986fbdab0faa3df8db250a77dad2",
+            "dependencyAfter": "606f986fbdab0faa3df8db250a77dad2",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Tree.mat",
+            "diskBefore": "EF132DA52C58F5ED1E4CBC430B39DFADAADE6841FB40B37080BC21933DBD339C",
+            "diskAfter": "EF132DA52C58F5ED1E4CBC430B39DFADAADE6841FB40B37080BC21933DBD339C",
+            "dependencyBefore": "c583abc97d92f30b7eff54cb6af6b31f",
+            "dependencyAfter": "c583abc97d92f30b7eff54cb6af6b31f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/PF_PlantedTree.prefab",
+            "diskBefore": "F2FA5A67313293B2F34ADCC0BDAA48BC8676F3B2D4C3D1631FF309C6CAD69E99",
+            "diskAfter": "F2FA5A67313293B2F34ADCC0BDAA48BC8676F3B2D4C3D1631FF309C6CAD69E99",
+            "dependencyBefore": "a7b910693836b428fcf0e3b01ad91eb0",
+            "dependencyAfter": "a7b910693836b428fcf0e3b01ad91eb0",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_Leaf_1_BC.png",
+            "diskBefore": "89B6E54FE7F7C9BD77799A1865FB469592872D97A41283929B0DF496E4849DDD",
+            "diskAfter": "89B6E54FE7F7C9BD77799A1865FB469592872D97A41283929B0DF496E4849DDD",
+            "dependencyBefore": "6a428c4785ebc051312b077d94280f88",
+            "dependencyAfter": "6a428c4785ebc051312b077d94280f88",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Meshes/Tree.asset",
+            "diskBefore": "94A012D8BB9322D9B4422A0E266BCE07A1413D582DDFBC6CD844E63FD120B5FC",
+            "diskAfter": "94A012D8BB9322D9B4422A0E266BCE07A1413D582DDFBC6CD844E63FD120B5FC",
+            "dependencyBefore": "e2da70c6d95a43e58357855481119051",
+            "dependencyAfter": "e2da70c6d95a43e58357855481119051",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Tree_0_Cutout.mat",
+            "diskBefore": "82CCD79F189CCCA9450CB07CEFA1A6996BC26386C4DC5BBC30AF12473BA8F090",
+            "diskAfter": "82CCD79F189CCCA9450CB07CEFA1A6996BC26386C4DC5BBC30AF12473BA8F090",
+            "dependencyBefore": "41cf336447d30ec72fb96dc1becc796c",
+            "dependencyAfter": "41cf336447d30ec72fb96dc1becc796c",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png",
+            "diskBefore": "1F6FFE089A292372E09566B73D01B45AB94DE84861A34D6F0913049871DD3ACE",
+            "diskAfter": "1F6FFE089A292372E09566B73D01B45AB94DE84861A34D6F0913049871DD3ACE",
+            "dependencyBefore": "acbe4b65688fc9cd9a3600dcae636295",
+            "dependencyAfter": "acbe4b65688fc9cd9a3600dcae636295",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_N.png",
+            "diskBefore": "BAE90C500946F73DC7FF8A9A5AEE8DE915DE8C2F0A92BF04483D4EB478805AD3",
+            "diskAfter": "BAE90C500946F73DC7FF8A9A5AEE8DE915DE8C2F0A92BF04483D4EB478805AD3",
+            "dependencyBefore": "21137b2ae0118fc69c7b46dc30e21f5c",
+            "dependencyAfter": "21137b2ae0118fc69c7b46dc30e21f5c",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Tree.asset",
+            "diskBefore": "305DAA64E260D2AFB9729E9BDAD9E665B50308044DC953F1DF3B345F1348D0A8",
+            "diskAfter": "305DAA64E260D2AFB9729E9BDAD9E665B50308044DC953F1DF3B345F1348D0A8",
+            "dependencyBefore": "ac9e50b3ade4a6ab9acb58db1dfb747b",
+            "dependencyAfter": "ac9e50b3ade4a6ab9acb58db1dfb747b",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_Flower_2_N.png",
+            "diskBefore": "27F59E74C62B33646C411543BD8BA55BFC0242E1D7CE99698D65B11A6FA637F5",
+            "diskAfter": "27F59E74C62B33646C411543BD8BA55BFC0242E1D7CE99698D65B11A6FA637F5",
+            "dependencyBefore": "19a47c21c1fbd3bcc4146aad65d59c8f",
+            "dependencyAfter": "19a47c21c1fbd3bcc4146aad65d59c8f",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Tree_1_Cutout.mat",
+            "diskBefore": "5778F2A553F0C98784EC6B2C0618F02005567D161A232C22E18AD072DCF5461E",
+            "diskAfter": "5778F2A553F0C98784EC6B2C0618F02005567D161A232C22E18AD072DCF5461E",
+            "dependencyBefore": "3806c56a51acd5a79672f1bf57132391",
+            "dependencyAfter": "3806c56a51acd5a79672f1bf57132391",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Tree_2_Bark.mat",
+            "diskBefore": "1239A949006BA1EA0D82340C4D951CF8B7356E61BFE936A35CE7EFFB3EDE9FD9",
+            "diskAfter": "1239A949006BA1EA0D82340C4D951CF8B7356E61BFE936A35CE7EFFB3EDE9FD9",
+            "dependencyBefore": "a18cd209bcd1cc6a1d6fc2b04cb29b9e",
+            "dependencyAfter": "a18cd209bcd1cc6a1d6fc2b04cb29b9e",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_3.mat",
+            "diskBefore": "A695E5B36223281DE2581EC163BFE628A77144B7402B17C1E210B0079118A56D",
+            "diskAfter": "A695E5B36223281DE2581EC163BFE628A77144B7402B17C1E210B0079118A56D",
+            "dependencyBefore": "907f8772b73ec30baca25c5805868d3d",
+            "dependencyAfter": "907f8772b73ec30baca25c5805868d3d",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_BC.png",
+            "diskBefore": "EC4BAD049EE18E165DDEFCE3A52312F711EE3E6EEB3B1838F2167D6B871B3D06",
+            "diskAfter": "EC4BAD049EE18E165DDEFCE3A52312F711EE3E6EEB3B1838F2167D6B871B3D06",
+            "dependencyBefore": "6e5024286a56661d445f36d6a9f1dfa1",
+            "dependencyAfter": "6e5024286a56661d445f36d6a9f1dfa1",
+            "unchanged": true
+        },
+        {
+            "path": "Assets/_Project/Art/SpellVFX120/Prefabs/010_AC80.prefab",
+            "diskBefore": "1879EF58A0C18AEF8900844F9A5739FB4522707528E2966CE27364A8697B5D67",
+            "diskAfter": "1879EF58A0C18AEF8900844F9A5739FB4522707528E2966CE27364A8697B5D67",
+            "dependencyBefore": "52425946bad4be189d19f724866c9326",
+            "dependencyAfter": "52425946bad4be189d19f724866c9326",
+            "unchanged": true
+        }
+    ],
+    "messages": []
+}

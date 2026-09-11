@@ -20,27 +20,45 @@ MonoBehaviour:
   Assigned: 1
   Behavior: 8
   Layout: 10
-  BodyMesh: {fileID: 4300000, guid: e40e55c13472ba24080359ee1af560c9, type: 2}
-  AccentMesh: {fileID: 4300000, guid: 2b3bcdbf3ef4ed14d9e21ea45de455ed, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: 484b2381918c5a847931b33e4b5eb3b4, type: 2}
+  BodyMesh: {fileID: 4300000, guid: a50f40ace3f9dab45a0fb46d63b6d325, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 2ddbe5eb8d1be874ab7dcf3d4fea80f3, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: 57b985ddf0109e1409b35b3a2c9ae421, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 0ef9f30423d21374b93dd440ee845b82, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4856323850948656824, guid: e57453308a1b60c4082845d066fdee35, type: 3}
+  NativeImpactPrefab: {fileID: 4604452158487232088, guid: f89f2f212562d4f4d8154dbaab5621d9, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.3
+  NativeImpactScale: 0.45
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.25882354, g: 0.43137255, b: 0.34509805, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 6
-  RibbonCount: 1
+  Count: 3
+  RibbonCount: 0
   Size: 1.65
-  PartScale: {x: 1.95, y: 1.5, z: 1.65}
+  PartScale: {x: 1, y: 1, z: 1}
   Duration: 1.55
   Flight: 0.34
   Turns: 0.1
   Lift: 1.9
   Stagger: 0.055
-  UseMist: 1
+  UseMist: 0
   Grounded: 1
-  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png
+  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png
   RecipeJson: "{\"design\":{\"index\":15,\"glyph\":\"\uACE4\",\"initial\":\"\u3131\",\"element\":\"\uBAA9\",\"vowel\":\"\u3157\",\"final\":\"\u3134\",\"frame\":\"\uC591\xB7\uAD11\uC5ED\",\"classification\":\"\uACF5\uACA9\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uC601\uC5ED\uC758
     \uC801\uB4E4\uC744 \uC9E7\uAC8C \uCCD0\uC62C\uB9BC \u2014 \uAD11\uC5ED \uC778\uD130\uB7FD\uD2B8(\uC608\uC5F4
     \uB04A\uAE30, \uC644\uD654\uD615)\",\"sourceNote\":\"\",\"visualTitle\":\"\uBFCC\uB9AC\uC758

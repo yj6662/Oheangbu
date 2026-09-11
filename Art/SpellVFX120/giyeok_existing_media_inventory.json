@@ -1,0 +1,42 @@
+[
+  {
+    "id": "002_AC01",
+    "videos": [
+      {
+        "folder": "ClipsKTPIntegrated15",
+        "bytes": 136551,
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY"
+      }
+    ]
+  },
+  {
+    "id": "010_AC80",
+    "videos": [
+      {
+        "folder": "ClipsKTPIntegrated15",
+        "bytes": 251999,
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY"
+      }
+    ]
+  },
+  {
+    "id": "018_ACF5",
+    "videos": [
+      {
+        "folder": "ClipsKTPIntegrated15",
+        "bytes": 700424,
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY"
+      }
+    ]
+  },
+  {
+    "id": "016_ACF0",
+    "videos": [
+      {
+        "folder": "ClipsKTPIntegrated04",
+        "bytes": 287157,
+        "status": "VERIFIED_ENCODING_AND_TIMING_ONLY"
+      }
+    ]
+  }
+]

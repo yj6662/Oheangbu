@@ -1,0 +1,9 @@
+{
+    "glyph": "놋",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_FIRE_FIELD_REPEATED_MELT_CONTACTS_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Target-area fire with falling hot droplets and eroding contact motif. No armor reduction rules."
+}

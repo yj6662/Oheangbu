@@ -20,27 +20,46 @@ MonoBehaviour:
   Assigned: 1
   Behavior: 4
   Layout: 10
-  BodyMesh: {fileID: 4300000, guid: e40e55c13472ba24080359ee1af560c9, type: 2}
-  AccentMesh: {fileID: 4300000, guid: a50ca8db1c4b5914c926f2ccd3dca4fa, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: 484b2381918c5a847931b33e4b5eb3b4, type: 2}
-  InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
+  BodyMesh: {fileID: 4300000, guid: 475f1496e8cc41042932bc59412596e4, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 7cad7efc4aca68042b8b130baadfab2f, type: 2}
+  GuardianMeshes:
+  - {fileID: 4300000, guid: 885ab7c3cfdd845489ac8815a3a8965f, type: 2}
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: 09559323bfb83374189c61bc4a6bc935, type: 2}
+  InkMaterial: {fileID: 2100000, guid: 186733ac41af0da4f9127cd32770b9d8, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: ff14fcbde1f731a4995144ad3af3311e, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4856323850948656824, guid: e57453308a1b60c4082845d066fdee35, type: 3}
+  NativeImpactPrefab: {fileID: 4604452158487232088, guid: f89f2f212562d4f4d8154dbaab5621d9, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.28
+  NativeImpactScale: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.25882354, g: 0.43137255, b: 0.34509805, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 7
-  RibbonCount: 2
+  Count: 1
+  RibbonCount: 0
   Size: 0.62
-  PartScale: {x: 1.6, y: 1.4, z: 2.35}
+  PartScale: {x: 1, y: 1, z: 1}
   Duration: 4.4
   Flight: 0.45
   Turns: 0.1
   Lift: 2.2
   Stagger: 0.52
-  UseMist: 1
+  UseMist: 0
   Grounded: 1
-  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png
+  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png
   RecipeJson: "{\"design\":{\"index\":20,\"glyph\":\"\uAD6D\",\"initial\":\"\u3131\",\"element\":\"\uBAA9\",\"vowel\":\"\u315C\",\"final\":\"\u3131\",\"frame\":\"\uC74C\xB7\uAD11\uC5ED\",\"classification\":\"\uD544\uB4DC\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uB098\uBB34\uAC00
     \uBC1C\uBC11\uC5D0\uC11C \uC19F\uC544\uC62C\uB77C \uC704\uB85C \uC624\uB978\uB2E4(\uC218\uC9C1
     \uC774\uB3D9). \uBE44\uC804\uD22C \uC804\uC6A9\",\"sourceNote\":\"\uAC8C\uC774\uD2B8

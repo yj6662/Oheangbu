@@ -22,23 +22,41 @@ MonoBehaviour:
   Layout: 11
   BodyMesh: {fileID: 4300000, guid: 45ef77b38a2300d419ee09949588e0aa, type: 2}
   AccentMesh: {fileID: 4300000, guid: c926273f58c26514cb1823a649eaa45e, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 208e75c38a3aa4c489d1fd8161d8dbb1, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 34741ad8cb7825942b952982d6d23299, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4512632043434834548, guid: 4a9bdf38414bd8143a9ab7df5315caad, type: 3}
+  NativeImpactPrefab: {fileID: 5830926714111392629, guid: cc07ca9a3a55a1548bd7efe03b76ff34, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.48
+  NativeImpactScale: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 8333907299875026693, guid: d8bec6e7c3f033940b105da71b789051, type: 3}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.74509805, g: 0.32941177, b: 0.23137255, a: 1}
   Accent: {r: 0.6862745, g: 0.4509804, b: 0.3372549, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 10
-  RibbonCount: 2
+  Count: 1
+  RibbonCount: 0
   Size: 1
   PartScale: {x: 0.85, y: 0.68, z: 1.25}
-  Duration: 3.8
+  Duration: 3.4
   Flight: 0.36
   Turns: 0.65
   Lift: 1.1
   Stagger: 0.22
-  UseMist: 1
+  UseMist: 0
   Grounded: 1
   SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png
   RecipeJson: "{\"design\":{\"index\":45,\"glyph\":\"\uB208\",\"initial\":\"\u3134\",\"element\":\"\uD654\",\"vowel\":\"\u315C\",\"final\":\"\u3134\",\"frame\":\"\uC74C\xB7\uAD11\uC5ED\",\"classification\":\"\uD544\uB4DC\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uB369\uAD74\uC744

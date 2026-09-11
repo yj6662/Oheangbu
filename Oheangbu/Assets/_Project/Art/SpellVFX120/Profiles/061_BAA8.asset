@@ -21,10 +21,55 @@ MonoBehaviour:
   Layout: 7
   BodyMesh: {fileID: 4300000, guid: 902945cc53e164a4faebe2060c87a3ee, type: 2}
   AccentMesh: {fileID: 4300000, guid: 1a37b77d7f0cde2488cddc9351ba6a24, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 72a71f45ab56fe140bdb210f9c6ebbb8, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 4afb114d0a9a30f408436f4393a7316b, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 1944454805194403752, guid: 4ceb76828ca3942438c97e7f9e120d59, type: 3}
+  NativeImpactPrefab: {fileID: 5086923116799032211, guid: b9f4ad1bad8ecab459057c8bafba1680, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.3
+  NativeImpactScale: 0.42
+  KtpEmphasis: 1
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1.75
+  KtpBrightness: 2.2
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6, y: 0.4}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0.15
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 4
+  AreaContactPrefab: {fileID: 269864490955763999, guid: 898beba94ef67934b810e0e7911398d8, type: 3}
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 1
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 1
+  EarthRift: 1
+  BranchedEarthRift: 1
+  ProceduralEarthRift: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 8964243159006853594, guid: 9d38f4903d3a099489b8b35b2b070baf, type: 3}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.5921569, g: 0.4509804, b: 0.2627451, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}

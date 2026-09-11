@@ -1,0 +1,11 @@
+{
+"id":"028_B0A8","version":"49","key":"NAM_028","glyph":"남","title":"남 · 봉인 불씨의 격발",
+"audit":"single_play_B0A8.json","build":"ember_charge_028_build.json","scope":"nam49_scope_check.json","previous":"NAN_027_REVIEW.html",
+"intro":"작은 불씨와 봉인 문양이 붙어 남습니다. 격발 신호가 들어오면 문양이 크게 펼쳐지며 화염이 터집니다.",
+"changes":["남의 부착·유지·격발을 분리했다. 명중 시각만으로 폭발을 자동 실행하지 않는다.","DetonateEmberCharge 표현 신호를 한 번만 받으며 부착 이전·중복·수명 밖 요청을 거절한다.","KTP Pattern_136의 열린 매듭 테두리를 작은 봉인과 격발 문양에 사용하고 기존 화염·불티·연기와 결합했다.","다른119개 프로필과 원본 에셋은 보존했다."],
+"cost":"전용 Particle System8개/입자용량464개, 문양1개/2tris. 공유 재질4개. KTP 동반 효과 비용 별도, 런타임 메시·재질 복제0.",
+"metrics":["fireParticlePeak","firePatternPeak","fireImpact"],
+"limits":["남의 표현 시안이며 비주얼 판정은 사용자 검토 대기입니다.","공격 진 명중에 따른 실제 C4 격발·피해·그로기 연결은 미구현이다. 영상과 단독 Play는1.8초에 진단용 격발 신호를 제공한다.","실제 전투·동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.6초 부착과1.8초 격발 시연. 편집기 검사에서는 격발 없이 유지되는 상태와 중복 요청 거절도 확인했다.",
+"detailLabels":["봉인 유지","격발 후 소멸"]
+}

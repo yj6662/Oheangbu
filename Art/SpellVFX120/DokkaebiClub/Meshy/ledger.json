@@ -1,0 +1,105 @@
+{
+  "self_imposed_run_cap": 35,
+  "combined_two_summon_cap": 70,
+  "balance_before": 293,
+  "price_source": "https://docs.meshy.ai/en/api/pricing",
+  "endpoint": "/openapi/v1/image-to-3d",
+  "input_policy": "Only generated production concept uploaded; source research images remain local.",
+  "requests": [
+    {
+      "name": "DokkaebiClub",
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "mode": "image",
+      "config": {
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_texture": true,
+        "enable_pbr": true,
+        "texture_resolution": "2k",
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 16000,
+        "image_enhancement": false,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "input_file": "Concept.png",
+      "input_sha256": "0afa0070c4f4bd506de033902e7b12ebdb5b71aa9d5e1342f481d56c8fdff1d5",
+      "expected_credits": 35,
+      "reserved_credits": 35,
+      "consumed_credits": 35,
+      "status": "SUCCEEDED",
+      "task_id": "01a08d04-4ed8-7328-897c-237cdc8ca602",
+      "progress": 100,
+      "files": [
+        {
+          "path": "064_BAB8\\image\\model_url.glb",
+          "bytes": 10957212,
+          "sha256": "a0c7eb0fc585c73814186b2af37ec4d5d8d96c376aab19c06369a711469f3a4b",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 16653,
+            "primitive_vertices": 22137,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "064_BAB8\\image\\model_urls_glb.glb",
+          "bytes": 10957212,
+          "sha256": "a0c7eb0fc585c73814186b2af37ec4d5d8d96c376aab19c06369a711469f3a4b",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 16653,
+            "primitive_vertices": 22137,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "064_BAB8\\image\\model_urls_fbx.fbx",
+          "bytes": 17025420,
+          "sha256": "270cef4afd125c8de078518e9fa0a47b387f3c794dbe6ae2e4c23b91a7bca25d"
+        },
+        {
+          "path": "064_BAB8\\image\\thumbnail_url.png",
+          "bytes": 227294,
+          "sha256": "564a48625b66e49c16a704bc96b31071c152a4b98926c956325b3cd263386031"
+        },
+        {
+          "path": "064_BAB8\\image\\texture_urls_0_base_color.png",
+          "bytes": 6698490,
+          "sha256": "9e0f4d9171cb1ee2d2cf2ac296e725e635d2b60c7cf6f25c364693a0e687fa75"
+        },
+        {
+          "path": "064_BAB8\\image\\texture_urls_0_metallic.png",
+          "bytes": 1788175,
+          "sha256": "f1ddb0362a6f8d29681fd5c401badcea912d3a29bc526e27ae42676a69e86110"
+        },
+        {
+          "path": "064_BAB8\\image\\texture_urls_0_roughness.png",
+          "bytes": 1772935,
+          "sha256": "f259a270b2cdfac8024b9daa628d7d6322bf5abe168c9cb28fea7999bd37ae67"
+        },
+        {
+          "path": "064_BAB8\\image\\texture_urls_0_normal.png",
+          "bytes": 6008449,
+          "sha256": "eff83601cf7475bb54a869f763cc30f9dcd942f4c9be23d2920f5faa4a24baba"
+        }
+      ]
+    }
+  ],
+  "balance_after": 258
+}

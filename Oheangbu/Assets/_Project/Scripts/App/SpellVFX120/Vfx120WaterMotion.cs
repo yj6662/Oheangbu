@@ -92,22 +92,25 @@ namespace Oheangbu.App.SpellVFX120
             if (p.Glyph == "온")
             {
                 if (index > 0) return true;
-                // A low narrow leading wash leaves room behind it for cleanup threads.
-                dimensions = new Vector3(widthAll, .31f, .60f);
+                // Give the rolled crest a readable cross-section. Cleanup still rises
+                // behind this leading wash rather than becoming a second wall.
+                dimensions = new Vector3(widthAll, .55f, .65f);
             }
             else if (p.Glyph == "옷")
             {
                 if (index > 1) return true;
                 float side = index == 0 ? -1 : 1;
-                center += right * side * widthAll * .24f - forward * index * .12f;
-                dimensions = new Vector3(widthAll * .48f, .19f, .78f);
+                center += right * side * widthAll * .22f - forward * index * .16f;
+                // Overlapping tapered crests read as a divided current, without the
+                // disconnected pair of rectangular tiles in the first review.
+                dimensions = new Vector3(widthAll * .58f, .44f, .68f);
             }
             else
             {
                 if (index > 0) return true;
                 // Broad and shallow, with a long dark trough. Height must not turn the
                 // lowering verb into a taller copy of the ordinary wave.
-                dimensions = new Vector3(widthAll * 1.13f, .20f, 1.30f);
+                dimensions = new Vector3(widthAll * 1.13f, .32f, 1.12f);
             }
             scale = Size(p.BodyMesh, dimensions) * rise * fade;
             center.y = ground + dimensions.y * rise * fade * .5f + .025f;

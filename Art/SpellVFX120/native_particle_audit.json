@@ -224,120 +224,120 @@
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Thorn.mat",
             "kind": "Material",
-            "before": "2f28f4d98e3b36b45a71aa629f65b6fd0243cd0b78d26c9115a9459379247b6c",
-            "after": "2f28f4d98e3b36b45a71aa629f65b6fd0243cd0b78d26c9115a9459379247b6c",
+            "before": "c6cfc224ddf7c5618fab9c1668e25f16d82eabc982c493765f819a17f77aeb09",
+            "after": "c6cfc224ddf7c5618fab9c1668e25f16d82eabc982c493765f819a17f77aeb09",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Ink.mat",
             "kind": "Material",
-            "before": "4fcef73c1bc66bbabaa2e9238a3724cdfa5d859972f92e761adadb9be53ed99f",
-            "after": "4fcef73c1bc66bbabaa2e9238a3724cdfa5d859972f92e761adadb9be53ed99f",
+            "before": "fe509ffe2871af4d274f3326cc1df6b64056378d49e1b2314821031e09754292",
+            "after": "fe509ffe2871af4d274f3326cc1df6b64056378d49e1b2314821031e09754292",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_33.mat",
             "kind": "Material",
-            "before": "614ede22cf8a8a9776f56b7e2181cdcfeef22421f775be99a78557c7cb49a8b5",
-            "after": "614ede22cf8a8a9776f56b7e2181cdcfeef22421f775be99a78557c7cb49a8b5",
+            "before": "02bdc16d6762fdd56e9f833a931d295d9234bb4b177180cbcb4f933788170543",
+            "after": "02bdc16d6762fdd56e9f833a931d295d9234bb4b177180cbcb4f933788170543",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_PigmentDust.mat",
             "kind": "Material",
-            "before": "c4137cab1f1d526ab19896514972b7b7d8a0f2e80abc7c86f746899f9c125463",
-            "after": "c4137cab1f1d526ab19896514972b7b7d8a0f2e80abc7c86f746899f9c125463",
+            "before": "bafc662b5756122c86a0b322d95718e146c564d1ce42fa40a0d5256ee42ae1ff",
+            "after": "bafc662b5756122c86a0b322d95718e146c564d1ce42fa40a0d5256ee42ae1ff",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
-            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast.mat",
+            "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_곰.mat",
             "kind": "Material",
-            "before": "ce844682c2bc38428e2a13021c74a26740fe12a7edc023b5679d3a4409907d61",
-            "after": "ce844682c2bc38428e2a13021c74a26740fe12a7edc023b5679d3a4409907d61",
+            "before": "03e999d60fd47000b9cc96ccbb103eceb7a5f8b6ccf0220dccb3942fb48bac85",
+            "after": "03e999d60fd47000b9cc96ccbb103eceb7a5f8b6ccf0220dccb3942fb48bac85",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Flame.mat",
             "kind": "Material",
-            "before": "c601be6078bf90c7c4bfd6de56dfd963ab8e5f258688a94bf0b35aab2acc9f7d",
-            "after": "c601be6078bf90c7c4bfd6de56dfd963ab8e5f258688a94bf0b35aab2acc9f7d",
+            "before": "bff2e7753e32fc7fcf8e7d9f329282bcc3d2aecf39d603f5300407bcfa2dc6a9",
+            "after": "bff2e7753e32fc7fcf8e7d9f329282bcc3d2aecf39d603f5300407bcfa2dc6a9",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_110.mat",
             "kind": "Material",
-            "before": "c601f1f53147621e125e9f2f327e69c6456c8b31443ae1ca4ba6140437f35e6c",
-            "after": "c601f1f53147621e125e9f2f327e69c6456c8b31443ae1ca4ba6140437f35e6c",
+            "before": "6e2a62226c0fd894b5085d021f042906a42b9671c2a11ecbfb15dea9d2805441",
+            "after": "6e2a62226c0fd894b5085d021f042906a42b9671c2a11ecbfb15dea9d2805441",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_156.mat",
             "kind": "Material",
-            "before": "072325d59a426a63b380cf386701ea3916dc0cd543ddf35c52501a06a9a45ce7",
-            "after": "072325d59a426a63b380cf386701ea3916dc0cd543ddf35c52501a06a9a45ce7",
+            "before": "39f222077d0d4cd63f2a9f5e621e6424890b1c65ccae8e252d231c6112a814a4",
+            "after": "39f222077d0d4cd63f2a9f5e621e6424890b1c65ccae8e252d231c6112a814a4",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Rock.mat",
             "kind": "Material",
-            "before": "f6c957503780e0716827c155d5afcc6a5fc71ae4e3636e77268bd19689a693be",
-            "after": "f6c957503780e0716827c155d5afcc6a5fc71ae4e3636e77268bd19689a693be",
+            "before": "65404f8711968db398de59e16b37f928e79f2ef32a5b5160f882828895927f75",
+            "after": "65404f8711968db398de59e16b37f928e79f2ef32a5b5160f882828895927f75",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_25.mat",
             "kind": "Material",
-            "before": "8e14168e7a7bd98263570c901cfa44786128b2e63a88392d70c2db687cd42f08",
-            "after": "8e14168e7a7bd98263570c901cfa44786128b2e63a88392d70c2db687cd42f08",
+            "before": "011cc0c8c6cd15201805af6140e1eec32db9990363ddd055385a8356b6e57740",
+            "after": "011cc0c8c6cd15201805af6140e1eec32db9990363ddd055385a8356b6e57740",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_126.mat",
             "kind": "Material",
-            "before": "bcc902ebffd297fff3c0e411eead98ca77f6acaeb6c8e33fd0e42254ebd186a6",
-            "after": "bcc902ebffd297fff3c0e411eead98ca77f6acaeb6c8e33fd0e42254ebd186a6",
+            "before": "e5d17e67d358f7eea7768e2b410c0d869eec94432f736ecf857917c0f7aa7ce4",
+            "after": "e5d17e67d358f7eea7768e2b410c0d869eec94432f736ecf857917c0f7aa7ce4",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_Shard.mat",
             "kind": "Material",
-            "before": "9fa9ee1523f3cbfc790f92464fe968ffe62f6e6a281d0318124dde6b62ea5230",
-            "after": "9fa9ee1523f3cbfc790f92464fe968ffe62f6e6a281d0318124dde6b62ea5230",
+            "before": "8427f946ba10c516d641718e44969e208cef12bc0b09c2b48789ecedf47416fd",
+            "after": "8427f946ba10c516d641718e44969e208cef12bc0b09c2b48789ecedf47416fd",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_95.mat",
             "kind": "Material",
-            "before": "85385be63c87f8325b129047cb7526d02a6ef867045a2e411e7310f599c42cca",
-            "after": "85385be63c87f8325b129047cb7526d02a6ef867045a2e411e7310f599c42cca",
+            "before": "af7b922ba14126b9822831ed60a7e8d83f10c249a46e12748a0f7bdb975ff9fc",
+            "after": "af7b922ba14126b9822831ed60a7e8d83f10c249a46e12748a0f7bdb975ff9fc",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Body_WaveCrest.mat",
             "kind": "Material",
-            "before": "4f2dbd66a82387e8fa66fd1bb559ac8e94521f328d46ec0d5dc1d0638479662b",
-            "after": "4f2dbd66a82387e8fa66fd1bb559ac8e94521f328d46ec0d5dc1d0638479662b",
+            "before": "5be88c309f33e84d84996ce13013e3b2785e4136a626ea3ba34dc8e2f59a4c01",
+            "after": "5be88c309f33e84d84996ce13013e3b2785e4136a626ea3ba34dc8e2f59a4c01",
             "status": "PASS_UNCHANGED",
             "error": ""
         },
         {
             "path": "Assets/_Project/Art/SpellVFX120/Materials/M_Motif_Pattern_204.mat",
             "kind": "Material",
-            "before": "46ec7108d321508fe83e3f963c438242c1dc53db9edad94600d08e1f8f254732",
-            "after": "46ec7108d321508fe83e3f963c438242c1dc53db9edad94600d08e1f8f254732",
+            "before": "24839355bffd470b0bed7db3cea7b151f0699255adb938c0113c8ddcc49ed5c1",
+            "after": "24839355bffd470b0bed7db3cea7b151f0699255adb938c0113c8ddcc49ed5c1",
             "status": "PASS_UNCHANGED",
             "error": ""
         }

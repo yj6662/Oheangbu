@@ -20,27 +20,82 @@ MonoBehaviour:
   Assigned: 1
   Behavior: 3
   Layout: 4
-  BodyMesh: {fileID: 4300000, guid: e40e55c13472ba24080359ee1af560c9, type: 2}
-  AccentMesh: {fileID: 4300000, guid: a50ca8db1c4b5914c926f2ccd3dca4fa, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: 484b2381918c5a847931b33e4b5eb3b4, type: 2}
+  BodyMesh: {fileID: 4300000, guid: 539b25f38ee4d7040849f80dddecd0b2, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 73f449ff11756ad4bab8a5751597dbd8, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: 19078e9a44a3d1c45a3c11cb9cc2f011, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 886a0f0b15545b7468d8d4aa94d892be, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4856323850948656824, guid: e57453308a1b60c4082845d066fdee35, type: 3}
+  NativeImpactPrefab: {fileID: 4604452158487232088, guid: f89f2f212562d4f4d8154dbaab5621d9, type: 3}
+  NativeFieldPrefab: {fileID: 2601342595647422444, guid: 6096dae1f9baf354a8a7f7fb62542f8f, type: 3}
+  NativeFieldRole: 3
+  NativeScale: 0.32
+  NativeImpactScale: 1
+  KtpEmphasis: 0
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1
+  KtpBrightness: 1
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 0
+  AreaContactPrefab: {fileID: 0}
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 0
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 0
+  EarthRift: 0
+  BranchedEarthRift: 0
+  ProceduralEarthRift: 0
+  WardKind: 1
+  WardRadius: 3
+  WardHeight: 2.2
+  WardFormation: 0.45
+  WardFade: 0.5
+  WardMaterial: {fileID: 2100000, guid: f6af704f53910494ea02fae4497c2e38, type: 2}
+  WardWaterMaterial: {fileID: 0}
+  WardPatternPrefab: {fileID: 6973544287147482524, guid: c3aa55873f500f24fb0e634b8babfc14, type: 3}
+  WardContactPrefab: {fileID: 3959589870976682561, guid: 173b8297be30af24aba1fd2d53930259, type: 3}
+  WardDebrisPrefab: {fileID: 7920386492372995844, guid: 3622c026de0ea414c9bf3933738898da, type: 3}
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.25882354, g: 0.43137255, b: 0.34509805, a: 1}
   Accent: {r: 0.8862745, g: 0.8666667, b: 0.78039217, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 11
-  RibbonCount: 1
+  Count: 6
+  RibbonCount: 0
   Size: 1.85
-  PartScale: {x: 1.1, y: 0.82, z: 2.15}
-  Duration: 3.6
+  PartScale: {x: 1, y: 1, z: 1}
+  Duration: 4
   Flight: 0.28
   Turns: 0.08
   Lift: 1.5
   Stagger: 0.12
   UseMist: 0
   Grounded: 1
-  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png
+  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_126.png
   RecipeJson: "{\"design\":{\"index\":19,\"glyph\":\"\uAD6C\",\"initial\":\"\u3131\",\"element\":\"\uBAA9\",\"vowel\":\"\u315C\",\"final\":\"\uBB34\",\"frame\":\"\uC74C\xB7\uAD11\uC5ED\",\"classification\":\"\uBC29\uBCBD\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uB369\uAD74
     \uAD11\uC5ED \uACB0\uACC4 \u2014 \uC5B8\uC81C\uB4E0 \uC2DC\uC804, \uC7A0\uC2DC
     \uC794\uC874. \uD328\uB9C1 \uD310\uC815\xB7\uBCF4\uC0C1 \uC5C6\uC74C\",\"sourceNote\":\"\",\"visualTitle\":\"\uB458\uB7EC\uC120

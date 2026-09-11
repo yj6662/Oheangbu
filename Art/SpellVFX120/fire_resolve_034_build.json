@@ -1,0 +1,9 @@
+{
+    "glyph": "넘",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_STEADY_FLAME_REPEATED_HIT_NO_INTERRUPTION_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Steady close-body flame and Pattern126; hit feedback does not stop emission. No damage immunity or gameplay interruption rules added."
+}

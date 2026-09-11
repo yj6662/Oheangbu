@@ -20,19 +20,55 @@ MonoBehaviour:
   Assigned: 1
   Behavior: 0
   Layout: 0
-  BodyMesh: {fileID: 4300000, guid: 2b3bcdbf3ef4ed14d9e21ea45de455ed, type: 2}
-  AccentMesh: {fileID: 4300000, guid: a50ca8db1c4b5914c926f2ccd3dca4fa, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: 4d09b218c52390a4880015b432b4141d, type: 2}
-  InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
+  BodyMesh: {fileID: 4300000, guid: dcec1bf376849ff4e8dc7c0d95652895, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 885ab7c3cfdd845489ac8815a3a8965f, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: f1311838c88f8f04b9175131c5d559df, type: 2}
+  InkMaterial: {fileID: 2100000, guid: c651cddc9981c1443b35ba9cdd34ede6, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 04573adb6972ecb4fb16f1630801dddc, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 7321196316226497494, guid: 64a1cd442dbb2fc44936ed06ee6f7c71, type: 3}
+  NativeImpactPrefab: {fileID: 4604452158487232088, guid: f89f2f212562d4f4d8154dbaab5621d9, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.24
+  NativeImpactScale: 0.5
+  KtpEmphasis: 1
+  KtpCastMultiplier: 1.1
+  KtpImpactMultiplier: 2
+  KtpFieldMultiplier: 1.5
+  KtpContactMultiplier: 3.5
+  KtpBrightness: 2.2
+  KtpCastOffset: {x: 0, y: 0, z: -0.65}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 1
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 1
+  LaunchViewport: {x: 0.6, y: 0.4}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 3.5
+  KtpContactSurfaceOffset: 0.4
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.25882354, g: 0.43137255, b: 0.34509805, a: 1}
   Accent: {r: 0.5529412, g: 0.60784316, b: 0.40784314, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
   Count: 1
-  RibbonCount: 1
+  RibbonCount: 0
   Size: 0.72
-  PartScale: {x: 0.85, y: 0.72, z: 1.15}
+  PartScale: {x: 1, y: 1, z: 1}
   Duration: 1.1
   Flight: 0.6
   Turns: 0

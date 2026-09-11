@@ -24,18 +24,36 @@ MonoBehaviour:
   Layout: 9
   BodyMesh: {fileID: 4300000, guid: c926273f58c26514cb1823a649eaa45e, type: 2}
   AccentMesh: {fileID: 4300000, guid: 6f79404ccc5b4a24597edd8fb2fe53ab, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: a804ec43f33c72043bd11bc8666a58da, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: d91caed86a333ee45ae9dfcb78665ee7, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 957640b3f9039cf489fad462df9a266a, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4512632043434834548, guid: 4a9bdf38414bd8143a9ab7df5315caad, type: 3}
+  NativeImpactPrefab: {fileID: 5830926714111392629, guid: cc07ca9a3a55a1548bd7efe03b76ff34, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.3
+  NativeImpactScale: 0.8
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 363252453194617709, guid: dcf48f22b641ed44a9d49c78330896f0, type: 3}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.74509805, g: 0.32941177, b: 0.23137255, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 5
-  RibbonCount: 1
+  Count: 1
+  RibbonCount: 0
   Size: 0.3
   PartScale: {x: 0.72, y: 0.72, z: 0.65}
-  Duration: 3
+  Duration: 3.2
   Flight: 0.6
   Turns: 0.08
   Lift: 0.18

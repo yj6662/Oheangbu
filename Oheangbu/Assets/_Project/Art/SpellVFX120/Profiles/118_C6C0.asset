@@ -22,10 +22,25 @@ MonoBehaviour:
   Layout: 9
   BodyMesh: {fileID: 4300000, guid: c2fdf1a13f35a8a4c9203e652b48d8de, type: 2}
   AccentMesh: {fileID: 4300000, guid: 7bc417ca647d78d4b8fed5c3cb2d5e4f, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: a453f083b7fa5964dbbc00fac1c58868, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: d91caed86a333ee45ae9dfcb78665ee7, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  NativeCastPrefab: {fileID: 9221389099317194298, guid: 455efde1242f4c84d9a6cb947d599709, type: 3}
+  NativeImpactPrefab: {fileID: 0}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.4
+  NativeImpactScale: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.17254902, g: 0.27450982, b: 0.3529412, a: 1}
   Accent: {r: 0.73333335, g: 0.7529412, b: 0.7176471, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}

@@ -1,0 +1,18 @@
+{
+    "status": "INCOMPLETE",
+    "mvid": "e41536f2-7fe1-44ea-a8eb-23290b47546a",
+    "limitation": "Static exterior / summon VFX only. No rig, gameplay summon, AI or combat.",
+    "clips": [
+        {
+            "view": "play",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\WoodDeer\\play",
+            "frames": 3,
+            "ended": false,
+            "commitRatio": 0.8503462672233582,
+            "footError": 0.00800003670156002
+        }
+    ],
+    "errors": [
+        "System.Exception: Memory >=85%; stopped with partial frames preserved\r\n  at Oheangbu.EditorTools.SpellVFX120.WoodDeerReview.Tick () [0x00096] in C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Scripts\\Editor\\SpellVFX120\\WoodDeerReview.cs:39 "
+    ]
+}

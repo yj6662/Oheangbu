@@ -17,7 +17,7 @@ namespace Oheangbu.EditorTools
         const string AssetRoot = "Assets/_Project/Art/SpellVFX120/";
         [Serializable] sealed class Report
         {
-            public string status = "DIAGNOSTIC_ONLY", capturedUtc, unityVersion, appMvid, output;
+            public string status = "DIAGNOSTIC_ONLY", capturedUtc, unityVersion, appMvid, output, frameProbeOutput;
             public string overlapMethod = "UNVERIFIED: triangle intersection intentionally deferred. This first audit only identifies detached parts, actual joint pivots and fist contact error.";
             public string targetMethod = "TargetPoint equals ReceivedTarget.position+(0,1.1,0). Contact is transformed by actual Body_6, not recomputed through motion solver.";
             public string limitations = "No render, gameplay, CPU budget or production animation PASS. noDemo intentionally has no scheduled/actual hit cue. Ground sampling remains the existing effect's Begin implementation.";
@@ -45,6 +45,65 @@ namespace Oheangbu.EditorTools
             public Vector3 actualVertexBoundsCenter, actualVertexBoundsSize;
             public float parentPivotDistance, authoredParentPivotDistance, minimumVertexY;
         }
+        [Serializable] sealed class ManifestPart { public int index; public string name; public float[] pivot_unity; }
+        [Serializable] sealed class Manifest { public ManifestPart[] parts; }
+        [Serializable] sealed class FrameReport
+        {
+            public string status = "READ_ONLY_FRAME_DIAGNOSTIC", capturedUtc, fbxPath, manifestPath;
+            public string matrixOrder = "Row-major localToWorldMatrix, 16 floats";
+            public List<FrameNode> nodes = new List<FrameNode>();
+        }
+        [Serializable] sealed class FrameNode
+        {
+            public string name, meshName;
+            public int partIndex, vertices, triangles;
+            public Vector3 manifestPivot, actualNodeOrigin, localPosition, localScale, worldScale;
+            public Quaternion localRotation, worldRotation;
+            public float determinant, originToManifestError, originToXMirroredManifestError;
+            public float[] localToWorld;
+            public Vector3 meshLocalBoundsCenter, meshLocalBoundsSize, transformedVertexBoundsCenter, transformedVertexBoundsSize;
+        }
+
+        public static string FrameProbe()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stopped Edit mode only.");
+            string root = Directory.GetParent(Application.dataPath).Parent.FullName;
+            string output = Path.Combine(root, "Art/SpellVFX120/guardian_frame_probe.json");
+            var report = new FrameReport { capturedUtc = DateTime.UtcNow.ToString("o"),
+                fbxPath = AssetRoot + "Blender/StoneGuardian_Jangseung_Parts_B2.fbx",
+                manifestPath = Path.Combine(root, "Art/SpellVFX120/Blender/GuardianParts/guardian_parts_manifest.json") };
+            var manifest = JsonUtility.FromJson<Manifest>(File.ReadAllText(report.manifestPath));
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(report.fbxPath);
+            if (model == null) throw new InvalidOperationException("Source FBX unavailable for frame probe.");
+            foreach (var filter in model.GetComponentsInChildren<MeshFilter>(true))
+            {
+                ManifestPart part = null;
+                foreach (var candidate in manifest.parts)
+                    if (filter.name == "GuardianPart_" + candidate.name) { part = candidate; break; }
+                if (part == null) throw new InvalidOperationException("Unmapped source FBX node: " + filter.name);
+                var transform = filter.transform; var matrix = transform.localToWorldMatrix; var mesh = filter.sharedMesh;
+                var pivot = new Vector3(part.pivot_unity[0], part.pivot_unity[1], part.pivot_unity[2]);
+                var nodeOrigin = matrix.MultiplyPoint3x4(Vector3.zero);
+                var vertices = mesh.vertices;
+                var bounds = new Bounds(matrix.MultiplyPoint3x4(vertices[0]), Vector3.zero);
+                foreach (var vertex in vertices) bounds.Encapsulate(matrix.MultiplyPoint3x4(vertex));
+                var node = new FrameNode { name = filter.name, partIndex = part.index, meshName = mesh.name,
+                    vertices = mesh.vertexCount, triangles = mesh.triangles.Length / 3,
+                    manifestPivot = pivot, actualNodeOrigin = nodeOrigin, localPosition = transform.localPosition,
+                    localScale = transform.localScale, worldScale = transform.lossyScale,
+                    localRotation = transform.localRotation, worldRotation = transform.rotation,
+                    determinant = matrix.determinant, localToWorld = new float[16],
+                    originToManifestError = Vector3.Distance(nodeOrigin, pivot),
+                    originToXMirroredManifestError = Vector3.Distance(nodeOrigin, new Vector3(-pivot.x, pivot.y, pivot.z)),
+                    meshLocalBoundsCenter = mesh.bounds.center, meshLocalBoundsSize = mesh.bounds.size,
+                    transformedVertexBoundsCenter = bounds.center, transformedVertexBoundsSize = bounds.size };
+                for (int r = 0; r < 4; r++) for (int c = 0; c < 4; c++) node.localToWorld[r * 4 + c] = matrix[r, c];
+                report.nodes.Add(node);
+            }
+            Directory.CreateDirectory(Path.GetDirectoryName(output));
+            File.WriteAllText(output, JsonUtility.ToJson(report, true));
+            return output;
+        }
         public static string Run()
         {
             var report = new Report { capturedUtc = DateTime.UtcNow.ToString("o"), unityVersion = Application.unityVersion,
@@ -57,6 +116,7 @@ namespace Oheangbu.EditorTools
             try
             {
                 if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stopped Edit mode only.");
+                report.frameProbeOutput = FrameProbe();
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetRoot + "Prefabs/064_BAB8.prefab");
                 if (prefab == null) throw new InvalidOperationException("Guardian prefab missing.");
                 Transform primary = GameObject.Find("VFX Target")?.transform;

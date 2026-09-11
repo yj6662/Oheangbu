@@ -1,0 +1,8 @@
+from pathlib import Path
+import json
+from original_scope import call
+R=Path(__file__).resolve().parents[2];O=R/'Art/SpellVFX120/StoneDokkaebi'
+if (O/'capture.json').exists():assert json.loads((O/'capture.json').read_text())['status']!='RUNNING'
+results={name:call(method,None) for name,method in [('WoodDeer','WoodDeerAudit'),('FireHaetae','FireHaetaeAudit'),('MetalTiger','MetalTigerAudit')]}
+data=dict(status='PASS' if all(value.startswith('PASS ') for value in results.values()) else 'FAIL',results=results)
+(O/'regression.json').write_text(json.dumps(data,indent=2));print(data)

@@ -1,0 +1,9 @@
+{
+    "glyph": "낭",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_CONFIRMED_CONTACT_PENETRATION_MOTIF_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 2,
+    "scope": "Narrow fire jet continues beyond supplied contact; stationary hit motif. No armor/damage rules changed."
+}

@@ -22,23 +22,41 @@ MonoBehaviour:
   Layout: 2
   BodyMesh: {fileID: 4300000, guid: 6be74a07f798d5e4cae1a161041e674d, type: 2}
   AccentMesh: {fileID: 4300000, guid: c926273f58c26514cb1823a649eaa45e, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 3121206a7a266a74eb8381f61748fe92, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 19378912170973d4e8e3aa5c3bdd470e, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 8f9e38f654d5a6c4d9cb30c8001b1ec8, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4512632043434834548, guid: 4a9bdf38414bd8143a9ab7df5315caad, type: 3}
+  NativeImpactPrefab: {fileID: 5830926714111392629, guid: cc07ca9a3a55a1548bd7efe03b76ff34, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.48
+  NativeImpactScale: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 1186360710482207247, guid: 8340917a0fcae9a45a6aa2f7a4417ba7, type: 3}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.74509805, g: 0.32941177, b: 0.23137255, a: 1}
   Accent: {r: 0.6862745, g: 0.4509804, b: 0.3372549, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 11
-  RibbonCount: 1
+  Count: 1
+  RibbonCount: 0
   Size: 1.5
   PartScale: {x: 0.82, y: 0.68, z: 0.95}
-  Duration: 2.4
+  Duration: 3.2
   Flight: 0.38
   Turns: 0.08
   Lift: 0.6
   Stagger: 0.08
-  UseMist: 1
+  UseMist: 0
   Grounded: 1
   SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_25.png
   RecipeJson: "{\"design\":{\"index\":41,\"glyph\":\"\uB18B\",\"initial\":\"\u3134\",\"element\":\"\uD654\",\"vowel\":\"\u3157\",\"final\":\"\u3145\",\"frame\":\"\uC591\xB7\uAD11\uC5ED\",\"classification\":\"\uACF5\uACA9\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uAC11\uC8FC

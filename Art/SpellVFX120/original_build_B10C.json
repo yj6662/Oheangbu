@@ -1,0 +1,15 @@
+{
+    "glyph": "넌",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireEmpower_033.prefab|||2.6|0.24|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Ribbon.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Ribbon.mat|Assets/_Project/Art/SpellVFX120/FireBolt/PF_FireEmpower_033.prefab|||2.6|0.24|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom05-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom09-01.prefab"
+    ],
+    "systems": 44,
+    "capacity": 44000,
+    "sourcePreserved": true
+}

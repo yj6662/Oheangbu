@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal34/013_ACE0.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated34/013_ACE0.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GEONG_012_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GO_013_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills34/013_ACE0_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills34/013_ACE0_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills34/013_ACE0_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/013_ACE0_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills34/013_ACE0_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "bamboo_spike_013_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "go34_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_ACE0.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills34",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills34",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames34",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames34",
+      "mvid_match": true
+    }
+  ]
+}

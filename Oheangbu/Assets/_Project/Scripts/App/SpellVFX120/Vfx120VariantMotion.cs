@@ -53,6 +53,8 @@ namespace Oheangbu.App.SpellVFX120
                 case '만': StoneBurst(p, age, flight, life, aim, size, ref center, ref local, ref axis, ref scale); break;
                 case '망': StoneSkip(p, age, flight, life, aim, size, targetGround, ref center, ref local, ref axis, ref scale); break;
                 case '목': DelayedStone(p, age, flight, life, index, u, aim, size, ref center, ref local, ref axis, ref scale); break;
+                case '몽': GroundFog(p, age, flight, life, index, count, aim, size, targetGround,
+                    ref center, ref local, ref axis, ref scale); break;
                 case '악':
                 case '앙': WaterReturn(p, glyph == '악', age, flight, life, aim, forward, size, ref center, ref local, ref axis, ref scale); break;
                 case '옥': Tide(p, age, flight, life, aim, ref center, ref local, ref axis, ref scale); break;
@@ -64,6 +66,106 @@ namespace Oheangbu.App.SpellVFX120
                 case '솟':
                 case '송': MetalSalvo(p, glyph, age, flight, life, index, count, u, aim, size, ref center, ref local, ref axis, ref scale); break;
             }
+        }
+
+        // 몽 is muddy ground fog, not the rising steam of 농. The same reviewed
+        // cloud-head mesh stays recognizable, but two low layers slide across one
+        // another. No new hit, accuracy, target or terrain rule is inferred here.
+        private static void GroundFog(Vfx120Profile p, float age, float flight, float life,
+            int index, int count, Vector3 aim, float size, float ground,
+            ref Vector3 center, ref Vector3 local, ref Vector3 axis, ref Vector3 scale)
+        {
+            local = scale = Vector3.zero;
+            axis = FlatDirection(aim);
+            center = new Vector3(aim.x, ground + .018f, aim.z);
+            if (age < 0 || age >= life || life <= 0 || size <= 0) return;
+            bool core = index % 3 == 0;
+            float intro = Ease(Phase(age - flight * .30f - index * .027f, .34f));
+            float settle = Ease(Phase(age - life * .73f, life * .25f));
+            float phase = age * (core ? .95f : -.62f) + index * 1.73f;
+            float angle = index * 2.399963f;
+            float radius = size * (core ? .25f : .64f) * (1 - settle * .72f);
+            Vector3 forward = FlatDirection(aim), right = Right(forward);
+            Vector3 offset = right * (Mathf.Cos(angle) * radius
+                    + Mathf.Sin(phase) * size * (core ? .23f : .17f) * (1 - settle))
+                + forward * (Mathf.Sin(angle) * radius * .70f
+                    + Mathf.Cos(phase * .73f) * size * .08f * (1 - settle));
+            // Cloud's broad face is XZ; the old Field axis made these all stand up.
+            // A small changing pitch keeps an irregular low skyline, not a flat decal.
+            float yaw = Mathf.Sin(phase * .61f) * .27f + (core ? -.18f : .18f);
+            float pitch = (core ? .10f : .29f) + Mathf.Sin(phase + .7f) * .065f;
+            axis = Direction(forward * Mathf.Cos(yaw) + right * Mathf.Sin(yaw)
+                + Vector3.up * pitch * (1 - settle * .85f));
+            float breathe = 1 + .10f * Mathf.Sin(phase * 1.12f);
+            Vector3 dimensions = new Vector3(p.PartScale.x * (core ? .99f : .91f) * breathe,
+                .040f + .018f * (1 + Mathf.Sin(phase)) * .5f,
+                p.PartScale.z * (core ? .59f : .54f) / breathe);
+            float envelope = intro * Lifetime(age, life);
+            dimensions.x *= 1 - settle * .60f;
+            dimensions.y *= 1 - settle * .82f;
+            dimensions.z *= 1 - settle * .60f;
+            scale = WorldSize(p, dimensions) * envelope;
+            center += offset * intro;
+            center.y = ground + MeshBottomOffset(p.BodyMesh, Face(axis), scale) + .018f;
+        }
+
+        // Called only for 몽, immediately before the normal body Tint. Alpha remains
+        // a density input: the existing shared Cloud shader multiplies it by .16.
+        // Do not change shared Cloud materials (농 and other glyphs use them too).
+        public static bool TrySampleGroundFogBodyTint(Vfx120Profile p, float age, float life,
+            int index, out Color color, out float opacityMultiplier)
+        {
+            color = Color.white; opacityMultiplier = 1;
+            if (p == null || p.Glyph != "몽") return false;
+            if (!Finite(age) || !Finite(life) || age < 0 || age >= life || life <= 0 || index < 0)
+            { opacityMultiplier = 0; return true; }
+            bool core = index % 3 == 0;
+            float breathing = .5f + .5f * Mathf.Sin(age * (core ? .95f : -.62f) + index * 1.73f);
+            color = core ? Color.Lerp(p.Ink, p.Pigment, .40f + breathing * .09f)
+                : Color.Lerp(p.Pigment, p.Accent, .47f + breathing * .22f);
+            color.a = 1;
+            float settle = Ease(Phase(age - life * .73f, life * .25f));
+            opacityMultiplier = (core ? 2.60f : 1.65f) * (1 - settle * .35f);
+            return true;
+        }
+
+        public static int GetGroundFogAccentCount(Vfx120Profile p)
+            => p != null && p.Glyph == "몽" ? 12 : 0;
+
+        // Twelve small smudges translate with the fog, then settle into its center.
+        // Endpoints fade before a cycle wraps: no teleporting specks or rising orbit.
+        public static bool TrySampleGroundFogAccent(Vfx120Profile p, float age, float flight,
+            float life, Vector3 aim, float size, float ground, int index, int count,
+            out Vfx120CueMotion.Pose pose)
+        {
+            pose = new Vfx120CueMotion.Pose { Rotation = Quaternion.identity };
+            int wanted = GetGroundFogAccentCount(p);
+            if (wanted == 0) return false;
+            if (!ProjectileInputs(p, age, flight, life, aim, ground) || !Finite(size)
+                || size <= 0 || age >= life || index < 0 || index >= count || index >= wanted) return true;
+            float elapsed = age - flight * .45f - index * .014f;
+            if (elapsed < 0) return true;
+            float direction = (index & 1) == 0 ? 1 : -1;
+            float cycle = Mathf.Repeat(elapsed * .39f + index * .173f, 1);
+            float softEnds = Ease(Phase(cycle, .16f)) * (1 - Ease(Phase(cycle - .78f, .22f)));
+            float settle = Ease(Phase(age - life * .73f, life * .25f));
+            float fade = Lifetime(age, life) * Ease(Phase(elapsed, .22f)) * softEnds;
+            Vector3 forward = FlatDirection(aim), right = Right(forward);
+            float lane = (index / 2) / 5f - .5f;
+            Vector3 offset = right * ((cycle - .5f) * size * 1.52f * direction)
+                + forward * (lane * size * 1.12f + Mathf.Sin(cycle * Mathf.PI * 2 + index) * size * .035f);
+            offset *= 1 - settle * .80f;
+            Vector3 axis = Direction(right * direction + forward * Mathf.Sin(cycle * Mathf.PI * 2 + index) * .18f);
+            pose.Rotation = Face(axis);
+            float grainSize = .83f + .17f * Mathf.Sin(index * 2.41f);
+            pose.Scale = MeshSize(p.AccentMesh, new Vector3(.073f, .017f, .22f) * grainSize,
+                new Vector3(.83673f, .12245f, 1)) * fade * (1 - settle * .4f);
+            pose.Position = new Vector3(aim.x, ground, aim.z) + offset;
+            pose.Position.y += MeshBottomOffset(p.AccentMesh, pose.Rotation, pose.Scale)
+                + .024f + (.035f + .075f * (index % 3) / 2f) * (1 - settle);
+            pose.Alpha = fade * .78f;
+            pose.Visible = pose.Alpha > .001f;
+            return true;
         }
 
         // The caller reuses the BodyMesh/BodyMaterial for 만's solid fragments. 망

@@ -1,0 +1,11 @@
+{
+"id":"037_B178","version":"60","key":"NO_037","glyph":"노","title":"노 · 화염 방사",
+"audit":"single_play_B178.json","build":"fire_jet_037_build.json","scope":"no60_scope_check.json","previous":"NEONG_036_REVIEW.html",
+"intro":"시전 문양에서 전방으로 화염이 퍼져 나갑니다. 기존 공격이 전달하는 명중 시각에 접촉 문양과 불티가 나타납니다.",
+"changes":["지속적인 전방 화염과 뒤따르는 불티·연기를 제작했다.","KTP Pattern_110을 발동구와 명중 지점에 사용했다.","기존 공격 어댑터의 명중 시각을 읽는다. 피해·시전 타이밍은 수정하지 않았다.","기존 중복 필드·임팩트를 제거하고 다른119개 프로필을 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양2개/4tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","기존 공격 연결은 유지했지만 실제 입력·적 공격·광역 다중 대상의 전투 통합 검사는 미검증이다.","명중 문양은 대표 접점 한 곳을 표시한다. 실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps. 편집기 검사는 명시적0.6초 명중 시각을 사용하고, 영상은 프로필의 시연 시각을 사용한다. 실제 Play는 검사기가 제공한 명중 시각을 따른다.",
+"detailLabels":["전방 화염","명중 문양"]
+}

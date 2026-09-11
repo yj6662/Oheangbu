@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal38/004_AC10.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated38/004_AC10.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GAM_004_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "GAN_003_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills38/004_AC10_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills38/004_AC10_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills38/004_AC10_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/004_AC10_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills38/004_AC10_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "gam38_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "seed_pod_004_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_AC10.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills38",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills38",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames38",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames38",
+      "mvid_match": true
+    }
+  ]
+}

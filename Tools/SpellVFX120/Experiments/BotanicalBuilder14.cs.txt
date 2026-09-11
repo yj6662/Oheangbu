@@ -1,0 +1,442 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using Oheangbu.App.SpellVFX120;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
+
+namespace Oheangbu.EditorTools.SpellVFX120
+{
+    /// <summary>Reuses imported botanical geometry. No source importer, combat clock or scene is modified.</summary>
+    public static class Vfx120BotanicalBuilder
+    {
+        public const string Output = "Assets/_Project/Art/SpellVFX120/Botanical";
+        public const string RootPath = Output + "/PF_RootBind.prefab";
+        public const string BambooPath = Output + "/PF_BambooFront.prefab";
+        public const string TreePath = Output + "/PF_PlantedTree.prefab";
+        const string Pack = "Assets/SeyeonjeongPavilion/";
+        const string Surface = "Oheangbu/VFX120/BotanicalSurface";
+
+        [Serializable] sealed class FileEvidence { public string path, sha256Before, sha256After; }
+        [Serializable] sealed class MaterialEvidence
+        {
+            public string source, sourceGuid, output, baseMap, normalMap;
+            public bool leaf, sourceAoCopied;
+        }
+        [Serializable] sealed class SourceEvidence
+        {
+            public string key, prefab, model, modelGuid, meshName, meshOutput, normalization;
+            public long meshLocalId;
+            public int vertices, triangles;
+            public int[] submeshTriangles;
+            public Bounds originalMeshBounds, originalPrefabBounds, canonicalBounds;
+            public Matrix4x4 meshToPrefab;
+            public Vector3 anchor, canonicalEuler;
+            public float divisor;
+            public MaterialEvidence[] materials;
+        }
+        [Serializable] sealed class PartEvidence
+        {
+            public string name, mesh;
+            public Vector3 position, euler, scale;
+            public Bounds bounds;
+            public float minY, maxY, groundCorrection;
+        }
+        [Serializable] sealed class BodyEvidence
+        {
+            public string glyph, prefab, kind, contract;
+            public int parts, totalTriangles;
+            public Bounds actualVisualBounds;
+            public PartEvidence[] children;
+        }
+        [Serializable] sealed class ProfileEvidence
+        {
+            public string glyph, path, sha256Before, botanicalPrefabBefore, kindBefore, jsonBefore;
+        }
+        [Serializable] sealed class Report
+        {
+            public string status = "BUILT_STRUCTURALLY_VALID_VISUAL_UNVERIFIED";
+            public string generatedUtc, geometryPolicy, placementLimit, runtimeLimit;
+            public bool sourceFilesUnchanged;
+            public SourceEvidence[] sources;
+            public BodyEvidence[] bodies;
+            public ProfileEvidence[] profilesBefore;
+            public FileEvidence[] sourceFiles;
+        }
+        sealed class Source
+        {
+            public string key;
+            public Mesh mesh;
+            public Material[] sourceMaterials;
+            public Matrix4x4 toPrefab;
+            public SourceEvidence evidence;
+        }
+        sealed class Prepared
+        {
+            public Mesh mesh;
+            public Material[] materials;
+            public SourceEvidence evidence;
+        }
+
+        public static string Build()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("Botanical build requires Edit Mode.");
+            var shader = Shader.Find(Surface);
+            if (shader == null || !shader.isSupported)
+                throw new InvalidOperationException("Import the supported BotanicalSurface shader first.");
+            if (ShaderUtil.GetShaderMessages(shader).Any(m => m.severity.ToString() == "Error"))
+                throw new InvalidOperationException("BotanicalSurface has shader compile errors.");
+            var catalog = AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(Vfx120Editor.AssetRoot + "/Data/VFX120_Catalog.asset");
+            if (catalog == null) throw new InvalidOperationException("VFX120 catalog is missing.");
+            var glyphs = new[] { "각", "공", "검" };
+            var profiles = glyphs.Select(g => catalog.Entries.Single(e => e.Glyph == g && e.Profile != null && e.Profile.Glyph == g).Profile).ToArray();
+            var before = profiles.Select(p => new ProfileEvidence {
+                glyph = p.Glyph, path = AssetDatabase.GetAssetPath(p), sha256Before = Hash(AssetDatabase.GetAssetPath(p)),
+                botanicalPrefabBefore = AssetDatabase.GetAssetPath(p.BotanicalPrefab), kindBefore = p.BotanicalKind.ToString(),
+                jsonBefore = JsonUtility.ToJson(p)
+            }).ToArray();
+            var hashes = new Dictionary<string, FileEvidence>(StringComparer.Ordinal);
+            var sources = new[] {
+                ReadSource("Root", "SM_TreeRoot_1", 2, 3305, hashes),
+                ReadSource("Bamboo", "SM_Henonis_1", 1, 2819, hashes),
+                ReadSource("Tree", "SM_MeliaAzedarach_Summer_1", 3, 6826, hashes)
+            };
+            foreach (var folder in new[] { Output, Output + "/Meshes", Output + "/Materials" }) EnsureFolder(folder);
+            var prepared = sources.Select(s => Prepare(s, shader)).ToArray();
+            var scene = EditorSceneManager.NewPreviewScene();
+            try
+            {
+                var root = NewRoot("PF_RootBind", scene);
+                var bamboo = NewRoot("PF_BambooFront", scene);
+                var tree = NewRoot("PF_PlantedTree", scene);
+                var rootParts = MakeRoots(root, prepared[0]);
+                var bambooParts = MakeBamboo(bamboo, prepared[1]);
+                var treeParts = new[] { Part(tree, "Tree_00", prepared[2], Vector3.zero, Quaternion.Euler(0, -18, 0), 2.8f) };
+                var bodies = new[] {
+                    Describe(root, "각", RootPath, Vfx120BotanicalKind.RootBind, rootParts,
+                        "Five rigid branched roots. Attachment pivots radius .38..55m; forks face inward/up. Each source has maximum bounds dimension 1m before authored uniform scale. Ground correction is measured from transformed vertices."),
+                    Describe(bamboo, "공", BambooPath, Vfx120BotanicalKind.BambooFront, bambooParts,
+                        "Seven whole LOD1 bamboos in two staggered rows. Stem pivot X range is within 2m and Z range within .7m; heights 1.35..2.1m. Leaf visual bounds intentionally extend beyond pivot envelope. Visual bounds are NOT issued Path hit width."),
+                    Describe(tree, "검", TreePath, Vfx120BotanicalKind.PlantedTree, treeParts,
+                        "One leafy asymmetric tree, height 2.8m; flowers, leaves and bark retain separate original UV/textures and cutoff. Canonical bottom Y=0, maximum visual height measured after yaw.")
+                };
+                var prefabs = new[] {
+                    PrefabUtility.SaveAsPrefabAsset(root, RootPath), PrefabUtility.SaveAsPrefabAsset(bamboo, BambooPath),
+                    PrefabUtility.SaveAsPrefabAsset(tree, TreePath)
+                };
+                if (prefabs.Any(p => p == null)) throw new InvalidOperationException("Botanical prefab save failed.");
+                foreach (var evidence in hashes.Values)
+                {
+                    evidence.sha256After = Hash(evidence.path);
+                    if (evidence.sha256After != evidence.sha256Before)
+                        throw new InvalidOperationException("Source changed during build: " + evidence.path);
+                }
+                var kinds = new[] { Vfx120BotanicalKind.RootBind, Vfx120BotanicalKind.BambooFront, Vfx120BotanicalKind.PlantedTree };
+                for (int i = 0; i < profiles.Length; i++)
+                {
+                    profiles[i].BotanicalPrefab = prefabs[i]; profiles[i].BotanicalKind = kinds[i];
+                    profiles[i].NativeScale = .4f; profiles[i].NativeImpactScale = .65f;
+                    EditorUtility.SetDirty(profiles[i]); AssetDatabase.SaveAssetIfDirty(profiles[i]);
+                }
+                var report = new Report {
+                    generatedUtc = DateTime.UtcNow.ToString("o"), sourceFilesUnchanged = true,
+                    geometryPolicy = "Imported prefab MeshFilter geometry only. Rigid rotation/translation and uniform normalization; topology, submesh order, normals/tangents and all source UV channels preserved. No new mesh primitive, skin, collider, particle, animation or source importer mutation. Shared owned materials omit unresolved source AO.",
+                    placementLimit = "Root anchor uses the imported negative-X terminal band (the thick cut end of this source); this anatomical choice and fork/target contact need visual review. Roots remain rigid rather than skinned wrapping. Bamboo includes original leaf cards on 3D stems; branch silhouettes are not repeated generated S plates. Whole leaf bounds may exceed the stem placement envelope.",
+                    runtimeLimit = "No gameplay or combat timing modified. Companion KTP source geometry is preserved while NativeScale=.4 and NativeImpactScale=.65 reduce foreground plate dominance. Runtime owns emergence, release, ground clipping and light sway. Contact coverage, readability and performance remain UNVERIFIED until separate evidence.",
+                    sources = prepared.Select(p => p.evidence).ToArray(), bodies = bodies, profilesBefore = before,
+                    sourceFiles = hashes.Values.OrderBy(h => h.path, StringComparer.Ordinal).ToArray()
+                };
+                Directory.CreateDirectory(Vfx120Editor.Output);
+                var reportPath = Path.Combine(Vfx120Editor.Output, "botanical_build.json");
+                File.WriteAllText(reportPath, JsonUtility.ToJson(report, true));
+                return "BUILT, visual UNVERIFIED: roots 5x3305=16525; bamboo 7x2819=19733; leafy tree 6826 tris. " + reportPath;
+            }
+            finally { EditorSceneManager.ClosePreviewScene(scene); }
+        }
+
+        static Source ReadSource(string key, string name, int lod, int expectedTriangles, Dictionary<string, FileEvidence> hashes)
+        {
+            string path = Pack + "Prefabs/" + name + ".prefab";
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null) throw new FileNotFoundException(path);
+            var filter = prefab.GetComponentsInChildren<MeshFilter>(true).Single(f => f.name == name + "_LOD" + lod);
+            var mesh = filter.sharedMesh;
+            var renderer = filter.GetComponent<MeshRenderer>();
+            if (mesh == null || renderer == null || !mesh.isReadable || mesh.blendShapeCount != 0 || mesh.bindposes.Length != 0)
+                throw new InvalidOperationException("Readable static source required: " + name);
+            var tris = Enumerable.Range(0, mesh.subMeshCount).Select(i => {
+                if (mesh.GetTopology(i) != MeshTopology.Triangles || mesh.GetIndexCount(i) % 3 != 0)
+                    throw new InvalidOperationException("Source must contain triangle submeshes.");
+                return checked((int)mesh.GetIndexCount(i) / 3);
+            }).ToArray();
+            if (tris.Sum() != expectedTriangles || mesh.uv.Length != mesh.vertexCount)
+                throw new InvalidOperationException("Source topology/UV differs from audited LOD: " + name);
+            var mats = renderer.sharedMaterials;
+            if (mats.Length != mesh.subMeshCount || mats.Any(m => m == null))
+                throw new InvalidOperationException("Material slots do not match source submeshes: " + name);
+            string model = AssetDatabase.GetAssetPath(mesh);
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(mesh, out string guid, out long localId);
+            var matrix = prefab.transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+            if (matrix.determinant <= 0) throw new InvalidOperationException("Unexpected reflected prefab transform: " + name);
+            Track(path, hashes); Track(model, hashes);
+            foreach (var mat in mats)
+            {
+                Track(AssetDatabase.GetAssetPath(mat), hashes);
+                var bc = SourceTexture(mat, "_BaseMap"); var normal = SourceTexture(mat, "_BumpMap");
+                Track(AssetDatabase.GetAssetPath(bc), hashes); Track(AssetDatabase.GetAssetPath(normal), hashes);
+            }
+            return new Source { key = key, mesh = mesh, sourceMaterials = mats, toPrefab = matrix,
+                evidence = new SourceEvidence { key = key, prefab = path, model = model, modelGuid = guid, meshLocalId = localId,
+                    meshName = mesh.name, vertices = mesh.vertexCount, triangles = tris.Sum(), submeshTriangles = tris,
+                    originalMeshBounds = mesh.bounds, originalPrefabBounds = BoundsOf(mesh.vertices.Select(matrix.MultiplyPoint3x4)), meshToPrefab = matrix }
+            };
+        }
+
+        static Prepared Prepare(Source source, Shader shader)
+        {
+            var points = source.mesh.vertices.Select(source.toPrefab.MultiplyPoint3x4).ToArray();
+            var bounds = BoundsOf(points);
+            Vector3 anchor; Quaternion rotation;
+            float divisor;
+            if (source.key == "Root")
+            {
+                divisor = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+                // The source's +X cut end is -X in the Unity import. Do not apply
+                // the FBX's raw Z-up/90-degree conversion again to this MeshFilter.
+                var terminal = points.Where(p => p.x <= bounds.min.x + bounds.size.x * .09f).ToArray();
+                var mean = terminal.Aggregate(Vector3.zero, (a, b) => a + b) / terminal.Length;
+                anchor = new Vector3(bounds.min.x, mean.y, mean.z);
+                rotation = Quaternion.Euler(0, -90, 0);
+                source.evidence.normalization = "(prefab-space vertex - negative-X terminal anchor) rotated -90Y, divided by max original bounds.size; fork runs +Z. Source terminal choice requires render review.";
+            }
+            else
+            {
+                divisor = bounds.size.y; rotation = Quaternion.identity;
+                // Use the basal band rather than canopy center, so off-center
+                // source crowns do not shift each stem away from its authored pivot.
+                var basal = points.Where(p => p.y <= bounds.min.y + bounds.size.y * .035f).ToArray();
+                var mean = basal.Aggregate(Vector3.zero, (a, b) => a + b) / basal.Length;
+                anchor = new Vector3(mean.x, bounds.min.y, mean.z);
+                source.evidence.normalization = "Imported prefab Y-up height normalized to 1m; basal-band XZ center is pivot; actual minimum Y is zero. Whole source silhouette and UV retained.";
+            }
+            if (!Finite(divisor) || divisor <= .00001f) throw new InvalidOperationException("Degenerate source bounds.");
+            var transform = Matrix4x4.Scale(Vector3.one / divisor) * Matrix4x4.Rotate(rotation)
+                * Matrix4x4.Translate(-anchor) * source.toPrefab;
+            string meshPath = Output + "/Meshes/Mesh_" + source.key + ".asset";
+            var mesh = UpsertMesh(source.mesh, transform, meshPath);
+            var mats = new Material[source.sourceMaterials.Length];
+            var materialRows = new MaterialEvidence[mats.Length];
+            for (int i = 0; i < mats.Length; i++)
+            {
+                var original = source.sourceMaterials[i];
+                bool leaf = original.HasProperty("_AlphaClip") && original.GetFloat("_AlphaClip") > .5f;
+                string matPath = Output + "/Materials/M_" + source.key + "_" + i + (leaf ? "_Cutout" : "_Bark") + ".mat";
+                mats[i] = UpsertMaterial(original, shader, matPath, leaf);
+                materialRows[i] = new MaterialEvidence { source = AssetDatabase.GetAssetPath(original),
+                    sourceGuid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(original)), output = matPath,
+                    baseMap = AssetDatabase.GetAssetPath(SourceTexture(original, "_BaseMap")),
+                    normalMap = AssetDatabase.GetAssetPath(SourceTexture(original, "_BumpMap")), leaf = leaf, sourceAoCopied = false };
+            }
+            var e = source.evidence;
+            e.meshOutput = meshPath; e.canonicalBounds = mesh.bounds; e.anchor = anchor;
+            e.canonicalEuler = rotation.eulerAngles; e.divisor = divisor; e.materials = materialRows;
+            return new Prepared { mesh = mesh, materials = mats, evidence = e };
+        }
+
+        static Mesh UpsertMesh(Mesh source, Matrix4x4 matrix, string path)
+        {
+            var mesh = Owned<Mesh>(path);
+            bool create = mesh == null;
+            if (create) mesh = new Mesh();
+            // Native Mesh APIs retain/rebuild GPU buffers; CopySerialized alone
+            // previously left some otherwise-valid project meshes unrenderable.
+            mesh.Clear(false); mesh.name = Path.GetFileNameWithoutExtension(path); mesh.indexFormat = source.indexFormat;
+            var positions = source.vertices.Select(matrix.MultiplyPoint3x4).ToArray();
+            if (positions.Any(p => !Finite(p.x) || !Finite(p.y) || !Finite(p.z)))
+                throw new InvalidOperationException("Nonfinite normalized vertices.");
+            mesh.vertices = positions;
+            var normalMatrix = matrix.inverse.transpose;
+            var normals = source.normals;
+            if (normals.Length == positions.Length) mesh.normals = normals.Select(n => normalMatrix.MultiplyVector(n).normalized).ToArray();
+            var tangents = source.tangents;
+            if (tangents.Length == positions.Length)
+            {
+                for (int i = 0; i < tangents.Length; i++)
+                {
+                    var v = matrix.MultiplyVector(new Vector3(tangents[i].x, tangents[i].y, tangents[i].z)).normalized;
+                    tangents[i] = new Vector4(v.x, v.y, v.z, tangents[i].w);
+                }
+                mesh.tangents = tangents;
+            }
+            var colors = source.colors;
+            if (colors.Length == positions.Length) mesh.colors = colors;
+            for (int i = 0; i < 8; i++)
+            {
+                var uv = new List<Vector4>(); source.GetUVs(i, uv);
+                if (uv.Count > 0) mesh.SetUVs(i, uv);
+            }
+            mesh.subMeshCount = source.subMeshCount;
+            for (int i = 0; i < source.subMeshCount; i++) mesh.SetIndices(source.GetIndices(i), MeshTopology.Triangles, i, false);
+            if (normals.Length != positions.Length) mesh.RecalculateNormals();
+            mesh.RecalculateBounds(); mesh.UploadMeshData(false);
+            if (mesh.vertexBufferCount < 1) throw new InvalidOperationException("Normalized mesh has no native vertex buffer.");
+            if (create) AssetDatabase.CreateAsset(mesh, path);
+            EditorUtility.SetDirty(mesh); AssetDatabase.SaveAssetIfDirty(mesh);
+            return mesh;
+        }
+
+        static Material UpsertMaterial(Material source, Shader shader, string path, bool leaf)
+        {
+            var mat = Owned<Material>(path);
+            bool create = mat == null;
+            if (create) mat = new Material(shader); else mat.shader = shader;
+            mat.name = Path.GetFileNameWithoutExtension(path);
+            foreach (var property in new[] { "_BaseMap", "_BumpMap", "_BumpScale", "_BaseColor", "_Tint", "_TintStrength", "_Saturation", "_AlphaClip", "_Cutoff", "_Visibility" })
+                if (!mat.HasProperty(property)) throw new InvalidOperationException("BotanicalSurface property missing: " + property);
+            mat.SetTexture("_BaseMap", SourceTexture(source, "_BaseMap"));
+            mat.SetTexture("_BumpMap", SourceTexture(source, "_BumpMap"));
+            mat.SetTextureScale("_BaseMap", source.GetTextureScale("_BaseMap"));
+            mat.SetTextureOffset("_BaseMap", source.GetTextureOffset("_BaseMap"));
+            mat.SetFloat("_BumpScale", .7f); mat.SetColor("_BaseColor", Color.white);
+            mat.SetColor("_Tint", new Color(.38f, .48f, .39f, 1)); mat.SetFloat("_TintStrength", leaf ? .33f : .18f);
+            mat.SetFloat("_Saturation", .65f); mat.SetFloat("_AlphaClip", leaf ? 1 : 0);
+            mat.SetFloat("_Cutoff", source.HasProperty("_Cutoff") ? source.GetFloat("_Cutoff") : .4f);
+            mat.SetFloat("_Visibility", 1);
+            mat.enableInstancing = true; mat.renderQueue = -1;
+            if (create) AssetDatabase.CreateAsset(mat, path);
+            EditorUtility.SetDirty(mat); AssetDatabase.SaveAssetIfDirty(mat);
+            return mat;
+        }
+
+        static PartEvidence[] MakeRoots(GameObject root, Prepared source)
+        {
+            var result = new List<PartEvidence>();
+            float[] angles = { 12, 86, 157, 231, 301 };
+            float[] radii = { .46f, .39f, .54f, .43f, .50f };
+            float[] sizes = { 1.90f, 2.05f, 2.20f, 1.85f, 2.10f };
+            for (int i = 0; i < angles.Length; i++)
+            {
+                float a = angles[i] * Mathf.Deg2Rad;
+                var radial = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                var inwardUp = (-radial + Vector3.up * (1.8f + .08f * (i % 2))).normalized;
+                result.Add(Part(root, "Root_" + i.ToString("00"), source, radial * radii[i],
+                    Quaternion.LookRotation(inwardUp, Vector3.up), sizes[i]));
+            }
+            return result.ToArray();
+        }
+
+        static PartEvidence[] MakeBamboo(GameObject root, Prepared source)
+        {
+            var positions = new[] { new Vector3(-.84f, 0, -.20f), new Vector3(-.27f, 0, -.25f),
+                new Vector3(.31f, 0, -.17f), new Vector3(.87f, 0, -.23f),
+                new Vector3(-.60f, 0, .24f), new Vector3(.02f, 0, .29f), new Vector3(.62f, 0, .21f) };
+            float[] heights = { 1.55f, 1.88f, 1.35f, 1.72f, 2.10f, 1.66f, 1.96f };
+            float[] yaw = { -23, 34, -51, 18, 79, -76, 52 };
+            return positions.Select((p, i) => Part(root, "Bamboo_" + i.ToString("00"), source, p,
+                Quaternion.Euler(0, yaw[i], 0), heights[i])).ToArray();
+        }
+
+        static PartEvidence Part(GameObject parent, string name, Prepared source, Vector3 position, Quaternion rotation, float scale)
+        {
+            var part = new GameObject(name);
+            part.transform.SetParent(parent.transform, false);
+            part.transform.localPosition = position; part.transform.localRotation = rotation; part.transform.localScale = Vector3.one * scale;
+            var bounds = BoundsOf(source.mesh.vertices.Select(part.transform.localToWorldMatrix.MultiplyPoint3x4));
+            // Preview roots are identity at the origin. Seat actual source vertices,
+            // not a rotated local AABB, so root tips cannot start below the floor.
+            float correction = -bounds.min.y;
+            part.transform.localPosition += Vector3.up * correction;
+            part.AddComponent<MeshFilter>().sharedMesh = source.mesh;
+            var renderer = part.AddComponent<MeshRenderer>(); renderer.sharedMaterials = source.materials;
+            renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
+            renderer.lightProbeUsage = LightProbeUsage.Off; renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            bounds = BoundsOf(source.mesh.vertices.Select(part.transform.localToWorldMatrix.MultiplyPoint3x4));
+            return new PartEvidence { name = name, mesh = AssetDatabase.GetAssetPath(source.mesh), position = part.transform.localPosition,
+                euler = part.transform.localEulerAngles, scale = part.transform.localScale, bounds = bounds,
+                minY = bounds.min.y, maxY = bounds.max.y, groundCorrection = correction };
+        }
+
+        static BodyEvidence Describe(GameObject root, string glyph, string path, Vfx120BotanicalKind kind, PartEvidence[] parts, string contract)
+        {
+            if (root.transform.childCount != parts.Length || root.GetComponentsInChildren<Transform>(true).Length != parts.Length + 1)
+                throw new InvalidOperationException("Botanical prefab must have only direct mesh children.");
+            if (root.GetComponentsInChildren<Collider>(true).Length != 0 || root.GetComponentsInChildren<MonoBehaviour>(true).Length != 0
+                || root.GetComponentsInChildren<ParticleSystem>(true).Length != 0 || root.GetComponentsInChildren<Animator>(true).Length != 0
+                || root.GetComponentsInChildren<Animation>(true).Length != 0)
+                throw new InvalidOperationException("Unexpected runtime component in botanical prefab.");
+            int tris = 0; var bounds = parts[0].bounds;
+            foreach (Transform child in root.transform)
+            {
+                var mesh = child.GetComponent<MeshFilter>()?.sharedMesh;
+                var renderer = child.GetComponent<MeshRenderer>();
+                if (mesh == null || renderer == null || child.GetComponents<Component>().Length != 3
+                    || renderer.sharedMaterials.Length != mesh.subMeshCount)
+                    throw new InvalidOperationException("Each botanical child requires exactly Transform/MeshFilter/MeshRenderer.");
+                for (int i = 0; i < mesh.subMeshCount; i++) tris += checked((int)mesh.GetIndexCount(i) / 3);
+            }
+            foreach (var part in parts)
+            {
+                bounds.Encapsulate(part.bounds);
+                if (Mathf.Abs(part.minY) > .0001f || !Finite(part.maxY)) throw new InvalidOperationException("Part ground seating failed.");
+            }
+            return new BodyEvidence { glyph = glyph, prefab = path, kind = kind.ToString(), contract = contract,
+                parts = parts.Length, totalTriangles = tris, actualVisualBounds = bounds, children = parts };
+        }
+
+        static Texture SourceTexture(Material source, string name)
+        {
+            var texture = source.HasProperty(name) ? source.GetTexture(name) : null;
+            if (texture == null || string.IsNullOrEmpty(AssetDatabase.GetAssetPath(texture)))
+                throw new InvalidOperationException("Missing source texture " + source.name + "/" + name);
+            return texture;
+        }
+        static T Owned<T>(string path) where T : Object
+        {
+            if (!path.StartsWith(Output + "/", StringComparison.Ordinal)) throw new InvalidOperationException("Output scope violation.");
+            var existing = AssetDatabase.LoadMainAssetAtPath(path);
+            if (existing != null && !(existing is T)) throw new InvalidOperationException("Different asset type occupies " + path);
+            return existing as T;
+        }
+        static GameObject NewRoot(string name, Scene scene)
+        { var root = new GameObject(name); SceneManager.MoveGameObjectToScene(root, scene); return root; }
+        static Bounds BoundsOf(IEnumerable<Vector3> vertices)
+        {
+            using (var it = vertices.GetEnumerator())
+            {
+                if (!it.MoveNext()) throw new InvalidOperationException("Empty source geometry.");
+                var bounds = new Bounds(it.Current, Vector3.zero);
+                while (it.MoveNext()) bounds.Encapsulate(it.Current);
+                return bounds;
+            }
+        }
+        static bool Finite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
+        static void Track(string path, Dictionary<string, FileEvidence> evidence)
+        {
+            foreach (var item in new[] { path, path + ".meta" })
+            {
+                if (evidence.ContainsKey(item)) continue;
+                evidence.Add(item, new FileEvidence { path = item, sha256Before = Hash(item) });
+            }
+        }
+        static string Hash(string assetPath)
+        {
+            if (string.IsNullOrEmpty(assetPath)) throw new InvalidOperationException("Cannot hash an empty asset path.");
+            string absolute = Path.Combine(Directory.GetParent(Application.dataPath).FullName, assetPath);
+            using (var input = File.OpenRead(absolute)) using (var sha = SHA256.Create())
+                return BitConverter.ToString(sha.ComputeHash(input)).Replace("-", "").ToLowerInvariant();
+        }
+        static void EnsureFolder(string folder)
+        {
+            if (AssetDatabase.IsValidFolder(folder)) return;
+            int split = folder.LastIndexOf('/'); EnsureFolder(folder.Substring(0, split));
+            AssetDatabase.CreateFolder(folder.Substring(0, split), folder.Substring(split + 1));
+        }
+    }
+}

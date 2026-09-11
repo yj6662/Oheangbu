@@ -1,0 +1,165 @@
+{
+  "schema": 2,
+  "started_at": "2026-09-10T20:00:58.733572+00:00",
+  "original_ledger_sha256": "be30427f835042e8e41f9b953d8381dcd962b85640de8dfc9e75000a7ae7b265",
+  "prior_summon_batches_actual_credits": 240,
+  "self_imposed_run_cap": 35,
+  "budget_basis": "Self-imposed cap 35: one Meshy 7 Ultra preview at 25 and one refine at 10. No automatic paid retries. Separate from earlier batches; not a user-set limit.",
+  "balance_start": 328,
+  "price_checked_at": "2026-09-10T20:00:58.734272+00:00",
+  "price_source": "https://docs.meshy.ai/en/api/pricing",
+  "api_source": "https://docs.meshy.ai/en/api/text-to-3d",
+  "prices": {
+    "meshy7_ultra_preview": 25,
+    "meshy7_refine_2k_pbr": 10
+  },
+  "input_policy": "Authored text only. No KTP or other paid asset images uploaded.",
+  "automatic_post_retries": false,
+  "requests": [
+    {
+      "name": "064_BAB8_preview",
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "family": "StoneJangseung",
+      "mode": "preview",
+      "created_at": "2026-09-10T20:00:59.321333+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "One Korean stone jangseung guardian totem, sophisticated dark fantasy game prop. Single tall chunky tapered granite pillar, broad flat stable base, NO arms or legs. Face carved directly into upper third: huge protruding rounded stone eyes beneath sweeping joined brows, broad triangular blunt nose with curled nostrils, sly asymmetrical smile and few broad square teeth. Crown is a simple broken rock ridge, no hat or horns. Refined strong silhouette, restrained geometric carving and deliberate chisel planes. Lower column bears three shallow abstract flowing earth-seal grooves, NOT writing. Original stylized interpretation of weathered Korean village guardian stones, dignified and slightly mischievous. No humanoid torso, armor, weapons, pedestal, letters, jewelry or modern objects.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "balance_before": 328,
+      "config_sha256": "964b64ddabdef5c9d0b49e936bb23c4463ac16acf679b989f0222995662ddb6d",
+      "task_id": "01a08ce8-c6f7-74d2-8ba6-2ef9d76c9b1c",
+      "progress": 100,
+      "polled_at": "2026-09-10T20:04:29.378499+00:00",
+      "files": [
+        {
+          "path": "064_BAB8\\preview\\model_urls_glb.glb",
+          "bytes": 487120,
+          "sha256": "6987c7aec52e3ea24279424fcd3f070ee4f9f8ff82ac10748ed51f012730a47c",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 11491,
+            "primitive_vertices": 13035,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "064_BAB8\\preview\\model_urls_fbx.fbx",
+          "bytes": 491196,
+          "sha256": "a622c913b377ff69590c21067b4e7c6d9b9e3bbe58ccd93839dfe943aca7729a"
+        },
+        {
+          "path": "064_BAB8\\preview\\thumbnail_url.png",
+          "bytes": 73082,
+          "sha256": "b9b2390d654f59e7c58f1624013df1f57597a607777c0c3937cf708cfb994029"
+        }
+      ],
+      "geometry_review": {
+        "decision": "ACCEPTED_FOR_REFINE",
+        "notes": "Pillar and expressive carved face usable as a rough base. Generated crown and architectural plinth are excessive; shorten crown, soften base and restore large rounded stone eyes locally. Not final visual approval.",
+        "reviewed_at": "2026-09-10T20:03:22.400081+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "064_BAB8_refine",
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "family": "StoneJangseung",
+      "mode": "refine",
+      "created_at": "2026-09-10T20:03:22.985580+00:00",
+      "config": {
+        "mode": "refine",
+        "preview_task_id": "01a08ce8-c6f7-74d2-8ba6-2ef9d76c9b1c",
+        "ai_model": "meshy-7",
+        "texture_resolution": "2k",
+        "enable_pbr": true,
+        "texture_prompt": "Muted warm grey weathered granite, broad mineral variation, subtle ochre dust in cracks and sparse dark green moss near the base. Carved eye sockets and mouth read clearly with dark recesses, raised eyes and brows remain stone. Matte rough stone and fine pores; no polished marble, metal, gold, lava, bright glowing eyes, lettering, painted colors or white plaster.",
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 10,
+      "reserved_credits": 10,
+      "consumed_credits": 10,
+      "status": "SUCCEEDED",
+      "balance_before": 303,
+      "config_sha256": "4a8952831fe8163b554aed67bc195d1aea135a2370cd0433f4e4e7f48b98e9b9",
+      "task_id": "01a08cea-f835-74ec-b25d-57c22f2b130b",
+      "progress": 100,
+      "polled_at": "2026-09-10T20:04:29.785785+00:00",
+      "files": [
+        {
+          "path": "064_BAB8\\refine\\model_urls_glb.glb",
+          "bytes": 7996220,
+          "sha256": "e2fa7b6e8604457ae5173994dcd311d143b3dc5287717a0614df8ae2538b8d79",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 11491,
+            "primitive_vertices": 13035,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "064_BAB8\\refine\\model_urls_fbx.fbx",
+          "bytes": 12639036,
+          "sha256": "18459849381b582ca405108324fcb24f054130fbc56bd0018386b0689760034b"
+        },
+        {
+          "path": "064_BAB8\\refine\\thumbnail_url.png",
+          "bytes": 90431,
+          "sha256": "af5edf39ca2772c19f76719a33b42122c2f84f956b606b7294bd682d74889b7e"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_base_color.png",
+          "bytes": 5595048,
+          "sha256": "5e4d4a2ece80cb5bfe8885e4152fb856a2179893a9dad0a171f1394a10b1d876"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_metallic.png",
+          "bytes": 19157,
+          "sha256": "e43b25c4bfeefa0ccad38950f89dc070113c4225a11046b02a61b296bf76c0bb"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_roughness.png",
+          "bytes": 1389030,
+          "sha256": "da6e379d6fff77fd192db2c5e6d072d71643fbbd76412f69dec7708c66dd064a"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_normal.png",
+          "bytes": 5134312,
+          "sha256": "fdbe3889a147b4f7d05e8adca5583ab76c24765de3a5e28ab9267012259a4f7e"
+        }
+      ]
+    }
+  ],
+  "balance_latest": 293,
+  "balance_checked_at": "2026-09-10T20:04:32.963309+00:00",
+  "original_ledger_preserved": true
+}

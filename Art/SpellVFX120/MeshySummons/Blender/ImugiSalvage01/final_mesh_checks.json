@@ -1,0 +1,22 @@
+{
+  "status": "STATIC_SALVAGE_NOT_ART_APPROVED",
+  "vertices": 10924,
+  "triangles": 21872,
+  "dimensions_m": [
+    1.3204047679901123,
+    4.560638427734375,
+    0.8358747959136963
+  ],
+  "connected_components": 1,
+  "removed_micro_components": 60,
+  "removed_vertices": 184,
+  "boundary_edges": 0,
+  "nonmanifold_edges": 0,
+  "zero_area_faces": 0,
+  "finite_coordinates": true,
+  "armatures": 0,
+  "animations": 0,
+  "new_uv": false,
+  "pbr": false,
+  "unity_imported": false
+}

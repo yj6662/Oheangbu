@@ -1,0 +1,1753 @@
+{
+    "status": "DIAGNOSTIC_ONLY",
+    "capturedUtc": "2026-09-09T04:09:24.4932042Z",
+    "unityVersion": "6000.3.9f1",
+    "appMvid": "c23be67a-0786-4db7-a613-7c400fd083f9",
+    "output": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120/guardian_anatomy_audit.json",
+    "overlapMethod": "UNVERIFIED: triangle intersection intentionally deferred. This first audit only identifies detached parts, actual joint pivots and fist contact error.",
+    "targetMethod": "TargetPoint equals ReceivedTarget.position+(0,1.1,0). Contact is transformed by actual Body_6, not recomputed through motion solver.",
+    "limitations": "No render, gameplay, CPU budget or production animation PASS. noDemo intentionally has no scheduled/actual hit cue. Ground sampling remains the existing effect's Begin implementation.",
+    "temporarySceneClosed": true,
+    "loadedSceneDirtyFlagsUnchanged": true,
+    "samples": [
+        {
+            "scenario": "primary_demo",
+            "phase": "exact_055_life",
+            "targetName": "Fallback transform only",
+            "targetGeometryStatus": "SURFACE_TEST_DEFERRED",
+            "demo": true,
+            "finite": true,
+            "contactExpected": true,
+            "age": 2.5850000381469728,
+            "life": 4.699999809265137,
+            "hitAt": -1.0,
+            "targetPointErrorMeters": 0.08022919297218323,
+            "rightArmAboveHeadMeters": 0.0,
+            "rightFistAboveHeadMeters": 0.17759323120117188,
+            "signalCount": 0,
+            "targetPoint": {
+                "x": 0.0,
+                "y": 1.100000023841858,
+                "z": 4.0
+            },
+            "actualRightFistContact": {
+                "x": -0.032415539026260379,
+                "y": 1.1102821826934815,
+                "z": 3.927334785461426
+            },
+            "actualRightShoulder": {
+                "x": -0.3955659866333008,
+                "y": 1.2254722118377686,
+                "z": 3.1132709980010988
+            },
+            "actualRightElbow": {
+                "x": -0.16685433685779572,
+                "y": 1.1598360538482667,
+                "z": 3.5106348991394045
+            },
+            "parts": [
+                {
+                    "index": 0,
+                    "vertices": 75,
+                    "triangles": 104,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Pelvis",
+                    "objectName": "Body_0",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Pelvis.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.6180773973464966,
+                        "y": 0.5874456167221069,
+                        "z": 3.579707384109497
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.6138364672660828,
+                        "y": 0.5874455571174622,
+                        "z": 3.5825912952423097
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8262489438056946,
+                        "y": 0.3546344041824341,
+                        "z": 0.8771588206291199
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.46780866384506228,
+                        "z": 0.0,
+                        "w": 0.8838297724723816
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.6081507802009583,
+                        "y": 0.5874455571174622,
+                        "z": 3.5843615531921388
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.7592788934707642,
+                        "y": 0.3546344041824341,
+                        "z": 0.8023576736450195
+                    },
+                    "parentPivotDistance": 0.0,
+                    "authoredParentPivotDistance": 0.0,
+                    "minimumVertexY": 0.4101283550262451
+                },
+                {
+                    "index": 1,
+                    "vertices": 194,
+                    "triangles": 256,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Torso",
+                    "objectName": "Body_1",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Torso.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.6337875723838806,
+                        "y": 0.7394317388534546,
+                        "z": 3.5690245628356935
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.1999998092651369,
+                        "z": 2.1999998092651369
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.5894914865493774,
+                        "y": 1.0144494771957398,
+                        "z": 3.583299160003662
+                    },
+                    "rendererBoundsSize": {
+                        "x": 1.164515733718872,
+                        "y": 0.9387292265892029,
+                        "z": 1.594527244567871
+                    },
+                    "worldRotation": {
+                        "x": 0.048115186393260959,
+                        "y": 0.5711348652839661,
+                        "z": -0.037729691714048389,
+                        "w": 0.8185757994651794
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.5702300071716309,
+                        "y": 1.0159896612167359,
+                        "z": 3.588818073272705
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.946936845779419,
+                        "y": 0.9197342395782471,
+                        "z": 1.4807310104370118
+                    },
+                    "parentPivotDistance": 0.15316890180110932,
+                    "authoredParentPivotDistance": 0.1531689465045929,
+                    "minimumVertexY": 0.5561225414276123
+                },
+                {
+                    "index": 2,
+                    "vertices": 891,
+                    "triangles": 1336,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Head",
+                    "objectName": "Body_2",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Head.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.535674512386322,
+                        "y": 1.3903356790542603,
+                        "z": 3.60033917427063
+                    },
+                    "lossyScale": {
+                        "x": 2.1999998092651369,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.4947507679462433,
+                        "y": 1.7857084274291993,
+                        "z": 3.611694812774658
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8988585472106934,
+                        "y": 0.9017003774642944,
+                        "z": 0.8892696499824524
+                    },
+                    "worldRotation": {
+                        "x": 0.015962811186909677,
+                        "y": 0.521196722984314,
+                        "z": -0.022420836612582208,
+                        "w": 0.8529926538467407
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.5120669007301331,
+                        "y": 1.7871743440628052,
+                        "z": 3.59551739692688
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.7550414800643921,
+                        "y": 0.8842036724090576,
+                        "z": 0.8173251152038574
+                    },
+                    "parentPivotDistance": 0.6590012907981873,
+                    "authoredParentPivotDistance": 0.6590012311935425,
+                    "minimumVertexY": 1.3450725078582764
+                },
+                {
+                    "index": 3,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftArm",
+                    "objectName": "Body_3",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftArm.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.7448939681053162,
+                        "y": 1.2323710918426514,
+                        "z": 4.064365386962891
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.23002678155899049,
+                        "y": 0.8150279521942139,
+                        "z": 3.095249652862549
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.555145263671875,
+                        "y": 0.6253554821014404,
+                        "z": 0.5184717178344727
+                    },
+                    "worldRotation": {
+                        "x": -0.14830559492111207,
+                        "y": 0.5588567852973938,
+                        "z": 0.015073664486408234,
+                        "w": 0.8157557249069214
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.23002684116363526,
+                        "y": 0.8150280117988586,
+                        "z": 3.095249652862549
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.48355209827423098,
+                        "y": 0.5902036428451538,
+                        "z": 0.44799041748046877
+                    },
+                    "parentPivotDistance": 0.7075990438461304,
+                    "authoredParentPivotDistance": 0.707598865032196,
+                    "minimumVertexY": 0.5199261903762817
+                },
+                {
+                    "index": 4,
+                    "vertices": 210,
+                    "triangles": 320,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftFist",
+                    "objectName": "Body_4",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftFist.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.6677735447883606,
+                        "y": 0.838132381439209,
+                        "z": 4.294894218444824
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000286102295,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 0.0388602614402771,
+                        "y": 0.6506257057189941,
+                        "z": 3.0923686027526857
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8146995306015015,
+                        "y": 0.7449744939804077,
+                        "z": 0.6960340738296509
+                    },
+                    "worldRotation": {
+                        "x": -0.3674132525920868,
+                        "y": 0.5330527424812317,
+                        "z": 0.16853153705596925,
+                        "w": 0.7432761788368225
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 0.03175044059753418,
+                        "y": 0.639593780040741,
+                        "z": 3.0899105072021486
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6835380792617798,
+                        "y": 0.6486121416091919,
+                        "z": 0.6108341217041016
+                    },
+                    "parentPivotDistance": 0.46315792202949526,
+                    "authoredParentPivotDistance": 0.4631579518318176,
+                    "minimumVertexY": 0.315287709236145
+                },
+                {
+                    "index": 5,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightArm",
+                    "objectName": "Body_5",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightArm.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.3955659866333008,
+                        "y": 1.2254722118377686,
+                        "z": 3.1132709980010988
+                    },
+                    "lossyScale": {
+                        "x": 2.1999998092651369,
+                        "y": 2.1999998092651369,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.2580835819244385,
+                        "y": 1.8070919513702393,
+                        "z": 3.657541513442993
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.5614024996757507,
+                        "y": 0.5252023935317993,
+                        "z": 0.5799029469490051
+                    },
+                    "worldRotation": {
+                        "x": -0.66696697473526,
+                        "y": 0.2742215096950531,
+                        "z": -0.10053771734237671,
+                        "w": 0.6854559183120728
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.2580835819244385,
+                        "y": 1.8070919513702393,
+                        "z": 3.657541275024414
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.4679298400878906,
+                        "y": 0.45000505447387698,
+                        "z": 0.5631132125854492
+                    },
+                    "parentPivotDistance": 0.707598865032196,
+                    "authoredParentPivotDistance": 0.707598865032196,
+                    "minimumVertexY": 1.5820894241333008
+                },
+                {
+                    "index": 6,
+                    "vertices": 210,
+                    "triangles": 320,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightFist",
+                    "objectName": "Body_6",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightFist.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.16685433685779572,
+                        "y": 1.1598360538482667,
+                        "z": 3.5106348991394045
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.2134137153625489,
+                        "y": 2.071139335632324,
+                        "z": 3.7447242736816408
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8090130686759949,
+                        "y": 0.8127946853637695,
+                        "z": 0.6814779043197632
+                    },
+                    "worldRotation": {
+                        "x": -0.25298917293548586,
+                        "y": 0.11392137408256531,
+                        "z": -0.3468347489833832,
+                        "w": 0.8959487080574036
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.2191834449768067,
+                        "y": 2.065450429916382,
+                        "z": 3.739027500152588
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6741995811462402,
+                        "y": 0.682837963104248,
+                        "z": 0.6104040145874023
+                    },
+                    "parentPivotDistance": 0.46315786242485049,
+                    "authoredParentPivotDistance": 0.4631579518318176,
+                    "minimumVertexY": 1.7240314483642579
+                },
+                {
+                    "index": 7,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftLeg",
+                    "objectName": "Body_7",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftLeg.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.7305622696876526,
+                        "y": 0.498786985874176,
+                        "z": 3.778912305831909
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.4741721749305725,
+                        "y": 0.3341352939605713,
+                        "z": 3.4018681049346926
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.49560368061065676,
+                        "y": 0.4559585452079773,
+                        "z": 0.47214317321777346
+                    },
+                    "worldRotation": {
+                        "x": -2.5936887881173157e-15,
+                        "y": 0.46780866384506228,
+                        "z": 1.3728323550315516e-15,
+                        "w": 0.8838297724723816
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.4741721749305725,
+                        "y": 0.3341352939605713,
+                        "z": 3.4018683433532717
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.4243842363357544,
+                        "y": 0.45595860481262209,
+                        "z": 0.4009237289428711
+                    },
+                    "parentPivotDistance": 0.24534831941127778,
+                    "authoredParentPivotDistance": 0.24534840881824494,
+                    "minimumVertexY": 0.10615599155426026
+                },
+                {
+                    "index": 8,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftFoot",
+                    "objectName": "Body_8",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftFoot.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.6572481393814087,
+                        "y": 0.188481867313385,
+                        "z": 3.828765869140625
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.3537275195121765,
+                        "y": 0.11882156133651734,
+                        "z": 3.4837703704833986
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.7411013245582581,
+                        "y": 0.18998277187347413,
+                        "z": 0.6841257810592651
+                    },
+                    "worldRotation": {
+                        "x": -7.073696021089198e-16,
+                        "y": 0.46780866384506228,
+                        "z": 3.7440881206779607e-16,
+                        "w": 0.8838297724723816
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.3537275195121765,
+                        "y": 0.11882156133651734,
+                        "z": 3.4837703704833986
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6930282115936279,
+                        "y": 0.18998277187347413,
+                        "z": 0.6360530853271484
+                    },
+                    "parentPivotDistance": 0.3227221667766571,
+                    "authoredParentPivotDistance": 0.3227221965789795,
+                    "minimumVertexY": 0.023830175399780275
+                },
+                {
+                    "index": 9,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightLeg",
+                    "objectName": "Body_9",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightLeg.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.4741721749305725,
+                        "y": 0.498786985874176,
+                        "z": 3.4018681049346926
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.7305622696876526,
+                        "y": 0.3341352939605713,
+                        "z": 3.778912305831909
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.49560368061065676,
+                        "y": 0.4559585452079773,
+                        "z": 0.47214317321777346
+                    },
+                    "worldRotation": {
+                        "x": 2.5936887881173157e-15,
+                        "y": 0.46780866384506228,
+                        "z": -1.3728323550315516e-15,
+                        "w": 0.8838297724723816
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.7305622696876526,
+                        "y": 0.3341352939605713,
+                        "z": 3.7789125442504885
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.4243842363357544,
+                        "y": 0.45595860481262209,
+                        "z": 0.4009237289428711
+                    },
+                    "parentPivotDistance": 0.2453484833240509,
+                    "authoredParentPivotDistance": 0.24534840881824494,
+                    "minimumVertexY": 0.10615599155426026
+                },
+                {
+                    "index": 10,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightFoot",
+                    "objectName": "Body_10",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightFoot.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.4008580148220062,
+                        "y": 0.188481867313385,
+                        "z": 3.451721668243408
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.6101175546646118,
+                        "y": 0.11882156133651734,
+                        "z": 3.8608145713806154
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.7411013245582581,
+                        "y": 0.18998277187347413,
+                        "z": 0.6841257810592651
+                    },
+                    "worldRotation": {
+                        "x": 7.073696021089198e-16,
+                        "y": 0.46780866384506228,
+                        "z": -3.7440881206779607e-16,
+                        "w": 0.8838297724723816
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.6101175546646118,
+                        "y": 0.11882156133651734,
+                        "z": 3.8608145713806154
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6930282115936279,
+                        "y": 0.18998277187347413,
+                        "z": 0.6360530853271484
+                    },
+                    "parentPivotDistance": 0.3227221965789795,
+                    "authoredParentPivotDistance": 0.3227221965789795,
+                    "minimumVertexY": 0.023830175399780275
+                }
+            ],
+            "bodyIndicesAboveHead": [
+                6
+            ]
+        },
+        {
+            "scenario": "secondary_p2_demo",
+            "phase": "exact_055_life",
+            "targetName": "Fallback transform only",
+            "targetGeometryStatus": "SURFACE_TEST_DEFERRED",
+            "demo": true,
+            "finite": true,
+            "contactExpected": true,
+            "age": 2.5850000381469728,
+            "life": 4.699999809265137,
+            "hitAt": -1.0,
+            "targetPointErrorMeters": 0.09186916053295136,
+            "rightArmAboveHeadMeters": 0.0,
+            "rightFistAboveHeadMeters": 0.1738138198852539,
+            "signalCount": 0,
+            "targetPoint": {
+                "x": 2.299999952316284,
+                "y": 1.100000023841858,
+                "z": 5.099999904632568
+            },
+            "actualRightFistContact": {
+                "x": 2.232755184173584,
+                "y": 1.1182360649108887,
+                "z": 5.040120601654053
+            },
+            "actualRightShoulder": {
+                "x": 1.574865698814392,
+                "y": 1.296649694442749,
+                "z": 4.45428991317749
+            },
+            "actualRightElbow": {
+                "x": 1.9414870738983155,
+                "y": 1.1954796314239503,
+                "z": 4.718616962432861
+            },
+            "parts": [
+                {
+                    "index": 0,
+                    "vertices": 75,
+                    "triangles": 104,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Pelvis",
+                    "objectName": "Body_0",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Pelvis.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.5637831687927247,
+                        "y": 0.6586230993270874,
+                        "z": 4.970963478088379
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.5688347816467286,
+                        "y": 0.6586230397224426,
+                        "z": 4.971848964691162
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6315637230873108,
+                        "y": 0.3546344041824341,
+                        "z": 0.7878521680831909
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.6431804299354553,
+                        "z": 0.0,
+                        "w": 0.765714704990387
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.5675036907196046,
+                        "y": 0.6586230397224426,
+                        "z": 4.970963478088379
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6048493385314941,
+                        "y": 0.3546344041824341,
+                        "z": 0.7620296478271484
+                    },
+                    "parentPivotDistance": 0.0,
+                    "authoredParentPivotDistance": 0.0,
+                    "minimumVertexY": 0.4813058376312256
+                },
+                {
+                    "index": 1,
+                    "vertices": 194,
+                    "triangles": 256,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Torso",
+                    "objectName": "Body_1",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Torso.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.5450701713562012,
+                        "y": 0.8106092214584351,
+                        "z": 4.967683792114258
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.5913183689117432,
+                        "y": 1.0856269598007203,
+                        "z": 4.9624857902526859
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8095189332962036,
+                        "y": 0.9387292265892029,
+                        "z": 1.4961557388305665
+                    },
+                    "worldRotation": {
+                        "x": 0.039106838405132297,
+                        "y": 0.7304770350456238,
+                        "z": -0.047002725303173068,
+                        "w": 0.680194616317749
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.5788066387176514,
+                        "y": 1.0871671438217164,
+                        "z": 4.959598541259766
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.7037258148193359,
+                        "y": 0.9197342395782471,
+                        "z": 1.4676780700683594
+                    },
+                    "parentPivotDistance": 0.15316890180110932,
+                    "authoredParentPivotDistance": 0.1531689465045929,
+                    "minimumVertexY": 0.6273000240325928
+                },
+                {
+                    "index": 2,
+                    "vertices": 891,
+                    "triangles": 1336,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Head",
+                    "objectName": "Body_2",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Head.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.647382378578186,
+                        "y": 1.4615131616592408,
+                        "z": 4.955894470214844
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.1999998092651369,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.6893563270568848,
+                        "y": 1.8568859100341797,
+                        "z": 4.9494218826293949
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6845595836639404,
+                        "y": 0.9017003774642944,
+                        "z": 0.7300418615341187
+                    },
+                    "worldRotation": {
+                        "x": 0.010891919024288655,
+                        "y": 0.6888914108276367,
+                        "z": -0.025275906547904016,
+                        "w": 0.724341869354248
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.6900391578674317,
+                        "y": 1.8583518266677857,
+                        "z": 4.941793918609619
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.611750602722168,
+                        "y": 0.8842036724090576,
+                        "z": 0.7078065872192383
+                    },
+                    "parentPivotDistance": 0.6590012907981873,
+                    "authoredParentPivotDistance": 0.6590012311935425,
+                    "minimumVertexY": 1.4162499904632569
+                },
+                {
+                    "index": 3,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftArm",
+                    "objectName": "Body_3",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftArm.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.6474257707595826,
+                        "y": 1.3035485744476319,
+                        "z": 5.464906215667725
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.7183603048324586,
+                        "y": 0.8862054347991943,
+                        "z": 4.369807243347168
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.5114413499832153,
+                        "y": 0.6253554821014404,
+                        "z": 0.3920099437236786
+                    },
+                    "worldRotation": {
+                        "x": -0.14182119071483613,
+                        "y": 0.7178804278373718,
+                        "z": 0.04591856524348259,
+                        "w": 0.6800190806388855
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.718360424041748,
+                        "y": 0.8862054944038391,
+                        "z": 4.369807720184326
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.47331905364990237,
+                        "y": 0.5902036428451538,
+                        "z": 0.3669462203979492
+                    },
+                    "parentPivotDistance": 0.7075987458229065,
+                    "authoredParentPivotDistance": 0.707598865032196,
+                    "minimumVertexY": 0.5911036729812622
+                },
+                {
+                    "index": 4,
+                    "vertices": 210,
+                    "triangles": 320,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftFist",
+                    "objectName": "Body_4",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftFist.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.8125001192092896,
+                        "y": 0.9093098640441895,
+                        "z": 5.643348693847656
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000286102295,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.962289810180664,
+                        "y": 0.7218032479286194,
+                        "z": 4.25663948059082
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6998461484909058,
+                        "y": 0.7449744939804077,
+                        "z": 0.5718751549720764
+                    },
+                    "worldRotation": {
+                        "x": -0.32376593351364138,
+                        "y": 0.677414059638977,
+                        "z": 0.24201442301273347,
+                        "w": 0.6145851016044617
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.9520162343978882,
+                        "y": 0.710771381855011,
+                        "z": 4.258576393127441
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6292331218719482,
+                        "y": 0.6486121416091919,
+                        "z": 0.5379848480224609
+                    },
+                    "parentPivotDistance": 0.46315810084342959,
+                    "authoredParentPivotDistance": 0.4631579518318176,
+                    "minimumVertexY": 0.38646531105041506
+                },
+                {
+                    "index": 5,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightArm",
+                    "objectName": "Body_5",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightArm.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.574865698814392,
+                        "y": 1.296649694442749,
+                        "z": 4.45428991317749
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.1999998092651369,
+                        "z": 2.1999998092651369
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.0569753646850587,
+                        "y": 1.887965202331543,
+                        "z": 5.326404571533203
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6848551630973816,
+                        "y": 0.5586085319519043,
+                        "z": 0.656973659992218
+                    },
+                    "worldRotation": {
+                        "x": -0.6474624872207642,
+                        "y": 0.4362247586250305,
+                        "z": 0.027848470956087114,
+                        "w": 0.6242793798446655
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.0569753646850587,
+                        "y": 1.8879653215408326,
+                        "z": 5.326404571533203
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.5761089324951172,
+                        "y": 0.47119832038879397,
+                        "z": 0.5967559814453125
+                    },
+                    "parentPivotDistance": 0.7075990438461304,
+                    "authoredParentPivotDistance": 0.707598865032196,
+                    "minimumVertexY": 1.6523661613464356
+                },
+                {
+                    "index": 6,
+                    "vertices": 210,
+                    "triangles": 320,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightFist",
+                    "objectName": "Body_6",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightFist.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.9414870738983155,
+                        "y": 1.1954796314239503,
+                        "z": 4.718616962432861
+                    },
+                    "lossyScale": {
+                        "x": 2.1999998092651369,
+                        "y": 2.200000047683716,
+                        "z": 2.200000047683716
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.1444475650787354,
+                        "y": 2.1392998695373537,
+                        "z": 5.392775058746338
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8033490180969238,
+                        "y": 0.7974120378494263,
+                        "z": 0.8082189559936523
+                    },
+                    "worldRotation": {
+                        "x": -0.29891395568847659,
+                        "y": 0.3155369460582733,
+                        "z": -0.3072834610939026,
+                        "w": 0.8465599417686462
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.136162281036377,
+                        "y": 2.1345553398132326,
+                        "z": 5.383318901062012
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6433553695678711,
+                        "y": 0.6794242858886719,
+                        "z": 0.6801528930664063
+                    },
+                    "parentPivotDistance": 0.4631580710411072,
+                    "authoredParentPivotDistance": 0.4631579518318176,
+                    "minimumVertexY": 1.7948431968688965
+                },
+                {
+                    "index": 7,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftLeg",
+                    "objectName": "Body_7",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftLeg.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.5431382656097413,
+                        "y": 0.5699644088745117,
+                        "z": 5.1987996101379398
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.6218539476394654,
+                        "y": 0.405312716960907,
+                        "z": 4.749687194824219
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.43921294808387759,
+                        "y": 0.4559585452079773,
+                        "z": 0.3671913146972656
+                    },
+                    "worldRotation": {
+                        "x": -2.247068083024279e-15,
+                        "y": 0.6431804299354553,
+                        "z": 1.8874786682340686e-15,
+                        "w": 0.765714704990387
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.6218540668487549,
+                        "y": 0.405312716960907,
+                        "z": 4.749687194824219
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.41734743118286135,
+                        "y": 0.4559584856033325,
+                        "z": 0.3453254699707031
+                    },
+                    "parentPivotDistance": 0.2453484833240509,
+                    "authoredParentPivotDistance": 0.24534840881824494,
+                    "minimumVertexY": 0.17733347415924073
+                },
+                {
+                    "index": 8,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftFoot",
+                    "objectName": "Body_8",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftFoot.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.6304657459259034,
+                        "y": 0.2596592903137207,
+                        "z": 5.214105606079102
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.7653205394744874,
+                        "y": 0.18999898433685304,
+                        "z": 4.774832725524902
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6812615394592285,
+                        "y": 0.18998277187347413,
+                        "z": 0.506351888179779
+                    },
+                    "worldRotation": {
+                        "x": -6.128367017888404e-16,
+                        "y": 0.6431804299354553,
+                        "z": 5.147668565788231e-16,
+                        "w": 0.765714704990387
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.7653205394744874,
+                        "y": 0.18999898433685304,
+                        "z": 4.774832248687744
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6665024757385254,
+                        "y": 0.18998277187347413,
+                        "z": 0.4915933609008789
+                    },
+                    "parentPivotDistance": 0.3227222263813019,
+                    "authoredParentPivotDistance": 0.3227221965789795,
+                    "minimumVertexY": 0.09500759840011597
+                },
+                {
+                    "index": 9,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightLeg",
+                    "objectName": "Body_9",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightLeg.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.6218540668487549,
+                        "y": 0.5699644088745117,
+                        "z": 4.749687194824219
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.5431383848190308,
+                        "y": 0.405312716960907,
+                        "z": 5.1987996101379398
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.43921294808387759,
+                        "y": 0.4559585452079773,
+                        "z": 0.3671913146972656
+                    },
+                    "worldRotation": {
+                        "x": 2.247068083024279e-15,
+                        "y": 0.6431804299354553,
+                        "z": -1.8874786682340686e-15,
+                        "w": 0.765714704990387
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.5431383848190308,
+                        "y": 0.405312716960907,
+                        "z": 5.198800086975098
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.41734766960144045,
+                        "y": 0.4559584856033325,
+                        "z": 0.3453254699707031
+                    },
+                    "parentPivotDistance": 0.24534828960895539,
+                    "authoredParentPivotDistance": 0.24534840881824494,
+                    "minimumVertexY": 0.17733347415924073
+                },
+                {
+                    "index": 10,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightFoot",
+                    "objectName": "Body_10",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightFoot.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": 1.709181547164917,
+                        "y": 0.2596592903137207,
+                        "z": 4.764993190765381
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": 1.6866048574447632,
+                        "y": 0.18999898433685304,
+                        "z": 5.223945140838623
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6812615394592285,
+                        "y": 0.18998277187347413,
+                        "z": 0.506351888179779
+                    },
+                    "worldRotation": {
+                        "x": 6.128367017888404e-16,
+                        "y": 0.6431804299354553,
+                        "z": -5.147668565788231e-16,
+                        "w": 0.765714704990387
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": 1.6866048574447632,
+                        "y": 0.18999898433685304,
+                        "z": 5.223945617675781
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.6665022373199463,
+                        "y": 0.18998277187347413,
+                        "z": 0.4915924072265625
+                    },
+                    "parentPivotDistance": 0.3227222263813019,
+                    "authoredParentPivotDistance": 0.3227221965789795,
+                    "minimumVertexY": 0.09500759840011597
+                }
+            ],
+            "bodyIndicesAboveHead": [
+                6
+            ]
+        },
+        {
+            "scenario": "primary_noDemo",
+            "phase": "exact_055_life",
+            "targetName": "Fallback transform only",
+            "targetGeometryStatus": "SURFACE_TEST_DEFERRED",
+            "demo": false,
+            "finite": true,
+            "contactExpected": false,
+            "age": 2.5850000381469728,
+            "life": 4.699999809265137,
+            "hitAt": -1.0,
+            "targetPointErrorMeters": 3.331211566925049,
+            "rightArmAboveHeadMeters": 0.0,
+            "rightFistAboveHeadMeters": 0.0,
+            "signalCount": 0,
+            "targetPoint": {
+                "x": 0.0,
+                "y": 1.100000023841858,
+                "z": 4.0
+            },
+            "actualRightFistContact": {
+                "x": -0.45335474610328677,
+                "y": 0.5837798118591309,
+                "z": 0.7404056787490845
+            },
+            "actualRightShoulder": {
+                "x": -0.8345822691917419,
+                "y": 1.2060697078704835,
+                "z": 0.4274732172489166
+            },
+            "actualRightElbow": {
+                "x": -0.7033025026321411,
+                "y": 0.761918306350708,
+                "z": 0.42423948645591738
+            },
+            "parts": [
+                {
+                    "index": 0,
+                    "vertices": 75,
+                    "triangles": 104,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Pelvis",
+                    "objectName": "Body_0",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Pelvis.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.3056904077529908,
+                        "y": 0.5636154413223267,
+                        "z": 0.6232144236564636
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.3038407564163209,
+                        "y": 0.5636153817176819,
+                        "z": 0.627997875213623
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8479467630386353,
+                        "y": 0.3546344041824341,
+                        "z": 0.7378879189491272
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.18343517184257508,
+                        "z": 0.0,
+                        "w": 0.9830318689346314
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.3056904077529908,
+                        "y": 0.5636153817176819,
+                        "z": 0.6299000978469849
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.7940022945404053,
+                        "y": 0.3546344041824341,
+                        "z": 0.6914470195770264
+                    },
+                    "parentPivotDistance": 0.0,
+                    "authoredParentPivotDistance": 0.0,
+                    "minimumVertexY": 0.38629817962646487
+                },
+                {
+                    "index": 1,
+                    "vertices": 194,
+                    "triangles": 256,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Torso",
+                    "objectName": "Body_1",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Torso.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.3125420808792115,
+                        "y": 0.7156015634536743,
+                        "z": 0.6054946780204773
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.306201696395874,
+                        "y": 0.9942363500595093,
+                        "z": 0.6165921092033386
+                    },
+                    "rendererBoundsSize": {
+                        "x": 1.5714116096496583,
+                        "y": 0.8711395859718323,
+                        "z": 1.0898221731185914
+                    },
+                    "worldRotation": {
+                        "x": -0.000629171438049525,
+                        "y": 0.18343408405780793,
+                        "z": -0.0033717392943799497,
+                        "w": 0.9830260872840881
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.3070977926254273,
+                        "y": 0.9942363500595093,
+                        "z": 0.6101791262626648
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 1.4714572429656983,
+                        "y": 0.8663156032562256,
+                        "z": 0.9416688680648804
+                    },
+                    "parentPivotDistance": 0.1531689167022705,
+                    "authoredParentPivotDistance": 0.1531689465045929,
+                    "minimumVertexY": 0.5610785484313965
+                },
+                {
+                    "index": 2,
+                    "vertices": 891,
+                    "triangles": 1336,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "Head",
+                    "objectName": "Body_2",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/Head.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.300106167793274,
+                        "y": 1.3741928339004517,
+                        "z": 0.625128984451294
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.2898005247116089,
+                        "y": 1.771247386932373,
+                        "z": 0.644228994846344
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.8626344799995422,
+                        "y": 0.8621268272399902,
+                        "z": 0.8158063888549805
+                    },
+                    "worldRotation": {
+                        "x": -0.000629171438049525,
+                        "y": 0.18343408405780793,
+                        "z": -0.0033717392943799497,
+                        "w": 0.9830260872840881
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.3015872240066529,
+                        "y": 1.7711541652679444,
+                        "z": 0.6080484390258789
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.8031976222991943,
+                        "y": 0.8603119850158691,
+                        "z": 0.7159016132354736
+                    },
+                    "parentPivotDistance": 0.6590012311935425,
+                    "authoredParentPivotDistance": 0.6590012311935425,
+                    "minimumVertexY": 1.3409981727600098
+                },
+                {
+                    "index": 3,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftArm",
+                    "objectName": "Body_3",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftArm.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.7796132564544678,
+                        "y": 1.2130203247070313,
+                        "z": 0.7928852438926697
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.7045329809188843,
+                        "y": 0.9265660047531128,
+                        "z": 0.417925626039505
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.423783540725708,
+                        "y": 0.5086938738822937,
+                        "z": 0.4652720093727112
+                    },
+                    "worldRotation": {
+                        "x": -0.000629171438049525,
+                        "y": 0.18343408405780793,
+                        "z": -0.0033717392943799497,
+                        "w": 0.9830260872840881
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.7045329213142395,
+                        "y": 0.9265661239624023,
+                        "z": 0.4179255962371826
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.3772956132888794,
+                        "y": 0.5084018707275391,
+                        "z": 0.41928207874298098
+                    },
+                    "parentPivotDistance": 0.707598865032196,
+                    "authoredParentPivotDistance": 0.707598865032196,
+                    "minimumVertexY": 0.6723651885986328
+                },
+                {
+                    "index": 4,
+                    "vertices": 210,
+                    "triangles": 320,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftFist",
+                    "objectName": "Body_4",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftFist.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.8845912218093873,
+                        "y": 0.7706066370010376,
+                        "z": 0.8810045123100281
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -0.534906268119812,
+                        "y": 0.6217319965362549,
+                        "z": 0.5112151503562927
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6273708939552307,
+                        "y": 0.484579861164093,
+                        "z": 0.6283869743347168
+                    },
+                    "worldRotation": {
+                        "x": -0.000629171438049525,
+                        "y": 0.18343408405780793,
+                        "z": -0.0033717392943799497,
+                        "w": 0.9830260872840881
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -0.5403873920440674,
+                        "y": 0.6217319965362549,
+                        "z": 0.514460563659668
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.5606226921081543,
+                        "y": 0.4841177463531494,
+                        "z": 0.5796899795532227
+                    },
+                    "parentPivotDistance": 0.46315792202949526,
+                    "authoredParentPivotDistance": 0.4631579518318176,
+                    "minimumVertexY": 0.3796731233596802
+                },
+                {
+                    "index": 5,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightArm",
+                    "objectName": "Body_5",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightArm.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.8345822691917419,
+                        "y": 1.2060697078704835,
+                        "z": 0.4274732172489166
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.8858215808868409,
+                        "y": 0.9352544546127319,
+                        "z": 0.874690592288971
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.423783540725708,
+                        "y": 0.5086938738822937,
+                        "z": 0.4652720093727112
+                    },
+                    "worldRotation": {
+                        "x": -0.000629171438049525,
+                        "y": 0.18343408405780793,
+                        "z": -0.0033717392943799497,
+                        "w": 0.9830260872840881
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.8858217000961304,
+                        "y": 0.9352543354034424,
+                        "z": 0.874690592288971
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.37729573249816897,
+                        "y": 0.5084018707275391,
+                        "z": 0.41928207874298098
+                    },
+                    "parentPivotDistance": 0.7075989246368408,
+                    "authoredParentPivotDistance": 0.707598865032196,
+                    "minimumVertexY": 0.6810534000396729
+                },
+                {
+                    "index": 6,
+                    "vertices": 210,
+                    "triangles": 320,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightFist",
+                    "objectName": "Body_6",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightFist.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -0.7033025026321411,
+                        "y": 0.761918306350708,
+                        "z": 0.42423948645591738
+                    },
+                    "lossyScale": {
+                        "x": 2.200000047683716,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.952452540397644,
+                        "y": 0.6321580410003662,
+                        "z": 1.0593332052230836
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6273708939552307,
+                        "y": 0.484579861164093,
+                        "z": 0.6283869743347168
+                    },
+                    "worldRotation": {
+                        "x": -0.000629171438049525,
+                        "y": 0.18343408405780793,
+                        "z": -0.0033717392943799497,
+                        "w": 0.9830260872840881
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.957934021949768,
+                        "y": 0.6321579813957214,
+                        "z": 1.0602948665618897
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.5606229305267334,
+                        "y": 0.48411762714385989,
+                        "z": 0.5751223564147949
+                    },
+                    "parentPivotDistance": 0.4631579518318176,
+                    "authoredParentPivotDistance": 0.4631579518318176,
+                    "minimumVertexY": 0.3900991678237915
+                },
+                {
+                    "index": 7,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftLeg",
+                    "objectName": "Body_7",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftLeg.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.5114758014678956,
+                        "y": 0.47495681047439577,
+                        "z": 0.723153829574585
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.0862019062042237,
+                        "y": 0.310305118560791,
+                        "z": 0.5587145686149597
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.42511647939682009,
+                        "y": 0.4559585452079773,
+                        "z": 0.47583431005477908
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.18343517184257508,
+                        "z": 0.0,
+                        "w": 0.9830318689346314
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.0862019062042237,
+                        "y": 0.310305118560791,
+                        "z": 0.5587145090103149
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.3794388771057129,
+                        "y": 0.45595860481262209,
+                        "z": 0.4301568269729614
+                    },
+                    "parentPivotDistance": 0.24534845352172852,
+                    "authoredParentPivotDistance": 0.24534840881824494,
+                    "minimumVertexY": 0.08232581615447998
+                },
+                {
+                    "index": 8,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "LeftFoot",
+                    "objectName": "Body_8",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/LeftFoot.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.479501485824585,
+                        "y": 0.16465169191360475,
+                        "z": 0.8058459758758545
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.033672571182251,
+                        "y": 0.09499138593673706,
+                        "z": 0.6945658922195435
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6018413305282593,
+                        "y": 0.18998277187347413,
+                        "z": 0.7250133156776428
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.18343517184257508,
+                        "z": 0.0,
+                        "w": 0.9830318689346314
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.033672571182251,
+                        "y": 0.09499138593673706,
+                        "z": 0.6945658922195435
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.5710091590881348,
+                        "y": 0.18998277187347413,
+                        "z": 0.694180965423584
+                    },
+                    "parentPivotDistance": 0.3227221965789795,
+                    "authoredParentPivotDistance": 0.3227221965789795,
+                    "minimumVertexY": 0.0
+                },
+                {
+                    "index": 9,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightLeg",
+                    "objectName": "Body_9",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightLeg.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.086201786994934,
+                        "y": 0.47495681047439577,
+                        "z": 0.5587145090103149
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.5114758014678956,
+                        "y": 0.310305118560791,
+                        "z": 0.723153829574585
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.42511647939682009,
+                        "y": 0.4559585452079773,
+                        "z": 0.47583431005477908
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.18343517184257508,
+                        "z": 0.0,
+                        "w": 0.9830318689346314
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.5114758014678956,
+                        "y": 0.310305118560791,
+                        "z": 0.723153829574585
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.3794388771057129,
+                        "y": 0.45595860481262209,
+                        "z": 0.4301567077636719
+                    },
+                    "parentPivotDistance": 0.24534842371940614,
+                    "authoredParentPivotDistance": 0.24534840881824494,
+                    "minimumVertexY": 0.08232581615447998
+                },
+                {
+                    "index": 10,
+                    "vertices": 42,
+                    "triangles": 64,
+                    "nativeBuffers": 1,
+                    "anatomicalPart": "RightFoot",
+                    "objectName": "Body_10",
+                    "meshPath": "Assets/_Project/Art/SpellVFX120/Meshes/GuardianParts/RightFoot.asset",
+                    "rendererEnabled": true,
+                    "worldPosition": {
+                        "x": -1.0542274713516236,
+                        "y": 0.16465169191360475,
+                        "z": 0.6414066553115845
+                    },
+                    "lossyScale": {
+                        "x": 2.200000286102295,
+                        "y": 2.200000047683716,
+                        "z": 2.200000286102295
+                    },
+                    "rendererBoundsCenter": {
+                        "x": -1.4589464664459229,
+                        "y": 0.09499138593673706,
+                        "z": 0.8590052127838135
+                    },
+                    "rendererBoundsSize": {
+                        "x": 0.6018413305282593,
+                        "y": 0.18998277187347413,
+                        "z": 0.7250133156776428
+                    },
+                    "worldRotation": {
+                        "x": 0.0,
+                        "y": 0.18343517184257508,
+                        "z": 0.0,
+                        "w": 0.9830318689346314
+                    },
+                    "actualVertexBoundsCenter": {
+                        "x": -1.4589464664459229,
+                        "y": 0.09499138593673706,
+                        "z": 0.8590052127838135
+                    },
+                    "actualVertexBoundsSize": {
+                        "x": 0.5710091590881348,
+                        "y": 0.18998277187347413,
+                        "z": 0.694180965423584
+                    },
+                    "parentPivotDistance": 0.3227221965789795,
+                    "authoredParentPivotDistance": 0.3227221965789795,
+                    "minimumVertexY": 0.0
+                }
+            ],
+            "bodyIndicesAboveHead": []
+        }
+    ],
+    "errors": []
+}

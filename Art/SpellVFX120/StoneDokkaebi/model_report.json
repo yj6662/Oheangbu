@@ -1,0 +1,32 @@
+{
+  "triangles": 12547,
+  "vertices": 6269,
+  "materials": 1,
+  "dimensions": [
+    1.678687572479248,
+    0.8796646595001221,
+    1.8321999311447144
+  ],
+  "sourceHashBefore": "8cbeeb22e3a978b85ee4e1b9caf4405ee9eba275438dc22f72fd9d1d69db7fbd",
+  "sourceHashAfter": "8cbeeb22e3a978b85ee4e1b9caf4405ee9eba275438dc22f72fd9d1d69db7fbd",
+  "meshyCredits": 35,
+  "requestedPolycount": 12000,
+  "sourceActualTriangles": 12547,
+  "rigged": false,
+  "edits": {
+    "hornVertices": 959,
+    "handVertices": 832,
+    "handCenters": {
+      "-1": [
+        -0.4789533317089081,
+        -0.08722131699323654,
+        0.7697219252586365
+      ],
+      "1": [
+        0.48057034611701965,
+        -0.0820583701133728,
+        0.766399085521698
+      ]
+    }
+  }
+}

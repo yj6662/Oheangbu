@@ -1,31 +1,31 @@
 {
-    "status": "RESOURCE_SET_CHANGED_DURING_INSPECTION_ATTRIBUTION_UNVERIFIED",
-    "capturedUtc": "2026-09-09T02:16:52.9073227Z",
+    "status": "READ_ONLY_SNAPSHOT_NO_LEAK_VERDICT",
+    "capturedUtc": "2026-09-09T04:25:41.1794790Z",
     "unityVersion": "6000.3.9f1",
     "output": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120/resource_attribution.json",
     "selectionMode": "EXPLICIT_IDS",
     "scope": "Post-measurement, read-only ownership snapshot. Explicit IDs are looked up among already loaded materials. Without IDs, nonpersistent materials whose name contains Atlas AND whose shader looks like a font shader are candidates only. Names do not prove ownership or justify excluding resource growth. No leak/art/performance PASS is produced.",
     "limitations": "Only already loaded assemblies/resources are inspected. Font asset data uses fields, never dynamic font/material/atlas getters. Renderer.sharedMaterials and existing TMP component fields identify some consumers, not all native/UI Toolkit owners. An empty result is not proof of no reference. Static cache reads require an existing callback or a side-effect-free initializer check. A dictionary-only initializer may create empty managed cache storage, but cannot create the matching Material. No resource factory, font request, cache cleanup, GC or UnloadUnusedAssets is called. Run only after timing/resource counters stop.",
     "isPlaying": true,
-    "resourceSetUnchangedByInspection": false,
+    "resourceSetUnchangedByInspection": true,
     "leakPass": false,
-    "frame": 14654,
-    "loadedMaterialCount": 3817,
-    "textCoreFontCount": 3631,
+    "frame": 15112,
+    "loadedMaterialCount": 4125,
+    "textCoreFontCount": 3936,
     "tmpFontCount": 0,
-    "rendererCount": 142,
+    "rendererCount": 27,
     "tmpComponentCount": 0,
-    "elapsedMilliseconds": 178.5488,
+    "elapsedMilliseconds": 98.2565,
     "materials": [
         {
-            "requestedId": -1428682,
+            "requestedId": -1624238,
             "status": "READ",
             "selection": "EXPLICIT_IDS",
             "shader": "Hidden/TextCore/Editor/Distance Field SSD",
             "attribution": "EDITOR_FONT_ATLAS_AND_FALLBACK_CACHE_ID_MATCH",
             "limitation": "Ownership describes current references, not allocation trigger, expected cache growth, cleanup policy or leak absence.",
             "material": {
-                "id": -1428682,
+                "id": -1624238,
                 "width": 0,
                 "height": 0,
                 "name": "MALGUN Atlas Material + MALGUN Atlas 1",
@@ -126,7 +126,7 @@
                     "field": "s_FallbackMaterials",
                     "key": "62865435061304",
                     "referencedField": "fallbackMaterial",
-                    "materialId": -1428682,
+                    "materialId": -1624238,
                     "sourceMaterialId": 14636,
                     "textureId": -1250248,
                     "referenceCount": -1
@@ -157,298 +157,7 @@
             "matchingEntries": 0
         }
     ],
-    "resourcesAppearedDuringInspection": [
-        {
-            "id": 6660,
-            "width": 0,
-            "height": 0,
-            "name": "handlesgo-unnamed",
-            "type": "UnityEngine.Material",
-            "hideFlags": "HideAndDontSave",
-            "assetPath": "Library/unity editor resources",
-            "persistent": true
-        },
-        {
-            "id": 6688,
-            "width": 0,
-            "height": 0,
-            "name": "handlesgo-material",
-            "type": "UnityEngine.Material",
-            "hideFlags": "HideAndDontSave",
-            "assetPath": "Library/unity editor resources",
-            "persistent": true
-        },
-        {
-            "id": 6710,
-            "width": 0,
-            "height": 0,
-            "name": "handlesgo-no name",
-            "type": "UnityEngine.Material",
-            "hideFlags": "HideAndDontSave",
-            "assetPath": "Library/unity editor resources",
-            "persistent": true
-        },
-        {
-            "id": 6750,
-            "width": 0,
-            "height": 0,
-            "name": "__checker",
-            "type": "UnityEngine.Material",
-            "hideFlags": "HideAndDontSave",
-            "assetPath": "Library/unity editor resources",
-            "persistent": true
-        },
-        {
-            "id": 86232,
-            "width": 0,
-            "height": 0,
-            "name": "ExlosionAura_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 86234,
-            "width": 0,
-            "height": 0,
-            "name": "par_line",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/par_line.mat",
-            "persistent": true
-        },
-        {
-            "id": 86236,
-            "width": 0,
-            "height": 0,
-            "name": "Pattern_8",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_8.mat",
-            "persistent": true
-        },
-        {
-            "id": 86436,
-            "width": 0,
-            "height": 0,
-            "name": "ExlosionAura_03",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_03.mat",
-            "persistent": true
-        },
-        {
-            "id": 86438,
-            "width": 0,
-            "height": 0,
-            "name": "ExlosionAura_02",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_02.mat",
-            "persistent": true
-        },
-        {
-            "id": 86440,
-            "width": 0,
-            "height": 0,
-            "name": "Light_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Light_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 86442,
-            "width": 0,
-            "height": 0,
-            "name": "Light_01",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Light_01.mat",
-            "persistent": true
-        },
-        {
-            "id": 86444,
-            "width": 0,
-            "height": 0,
-            "name": "ExlosionAura_01",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/ExlosionAura_01.mat",
-            "persistent": true
-        },
-        {
-            "id": 89814,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_Light_01",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_Light_01.mat",
-            "persistent": true
-        },
-        {
-            "id": 89864,
-            "width": 0,
-            "height": 0,
-            "name": "RingTrail",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/RingTrail.mat",
-            "persistent": true
-        },
-        {
-            "id": 89900,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_Light_02",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_Light_02.mat",
-            "persistent": true
-        },
-        {
-            "id": 89950,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_Light_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_Light_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 89978,
-            "width": 0,
-            "height": 0,
-            "name": "Thunder",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Thunder.mat",
-            "persistent": true
-        },
-        {
-            "id": 90038,
-            "width": 0,
-            "height": 0,
-            "name": "Impact",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Impact.mat",
-            "persistent": true
-        },
-        {
-            "id": 93688,
-            "width": 0,
-            "height": 0,
-            "name": "TrailLight_02",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/TrailLight_02.mat",
-            "persistent": true
-        },
-        {
-            "id": 93690,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 93696,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_01",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_01.mat",
-            "persistent": true
-        },
-        {
-            "id": 93706,
-            "width": 0,
-            "height": 0,
-            "name": "TrailLight_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/TrailLight_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 93728,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_02",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_02.mat",
-            "persistent": true
-        },
-        {
-            "id": 93736,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_Flame_01",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_Flame_01.mat",
-            "persistent": true
-        },
-        {
-            "id": 93742,
-            "width": 0,
-            "height": 0,
-            "name": "TrailLight_01",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/TrailLight_01.mat",
-            "persistent": true
-        },
-        {
-            "id": 93750,
-            "width": 0,
-            "height": 0,
-            "name": "Trail_Flame_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Trail_Flame_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 93752,
-            "width": 0,
-            "height": 0,
-            "name": "Smoke_Trail_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/Smoke_Trail_00.mat",
-            "persistent": true
-        },
-        {
-            "id": 93764,
-            "width": 0,
-            "height": 0,
-            "name": "pointLight",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/pointLight.mat",
-            "persistent": true
-        },
-        {
-            "id": 93782,
-            "width": 0,
-            "height": 0,
-            "name": "RingSmoke_00",
-            "type": "UnityEngine.Material",
-            "hideFlags": "None",
-            "assetPath": "Assets/KoreanTraditionalPattern_Effect/Materials/Fly/Fly01-01/RingSmoke_00.mat",
-            "persistent": true
-        }
-    ],
+    "resourcesAppearedDuringInspection": [],
     "resourceIdsDisappearedDuringInspection": [],
     "errors": []
 }

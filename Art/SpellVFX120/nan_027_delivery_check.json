@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal48/027_B09C.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated48/027_B09C.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills48/027_B09C_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills48/027_B09C_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills48/027_B09C_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/027_B09C_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills48/027_B09C_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NAK_026_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NAN_027_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "heavy_flame_027_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "nan48_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B09C.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills48",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills48",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames48",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames48",
+      "mvid_match": true
+    }
+  ]
+}

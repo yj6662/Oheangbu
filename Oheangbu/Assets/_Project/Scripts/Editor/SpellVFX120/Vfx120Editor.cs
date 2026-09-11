@@ -191,7 +191,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var filter=filters.Single(f=>f.name=="GuardianPart_"+part.name);
                 var source=filter.sharedMesh;var mesh=UnityEngine.Object.Instantiate(source);mesh.name="GuardianPart_"+part.name;
                 var matrix=filter.transform.localToWorldMatrix;
-                var pivot=new Vector3(part.pivot_unity[0],part.pivot_unity[1],part.pivot_unity[2]);
+                // The manifest uses the author's right-handed Y-up coordinates.
+                // Unity's imported FBX reflects X. Geometry and semantic pivots
+                // must receive the same conversion; whole-body symmetry hid this
+                // mismatch in the earlier unordered vertex-cloud comparison.
+                var pivot=GuardianImportedPoint(part.pivot_unity);
+                float nodePivotError=Vector3.Distance(matrix.MultiplyPoint3x4(Vector3.zero),pivot);
+                if(nodePivotError>0.00001f)throw new InvalidOperationException("FBX pivot basis changed: "+part.name+" error="+nodePivotError);
                 var vertices=mesh.vertices;var normals=mesh.normals;
                 for(int i=0;i<vertices.Length;i++){vertices[i]=matrix.MultiplyPoint3x4(vertices[i]);assembled.Add(vertices[i]);vertices[i]-=pivot;}
                 for(int i=0;i<normals.Length;i++)normals[i]=matrix.inverse.transpose.MultiplyVector(normals[i]).normalized;
@@ -202,7 +208,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 if(existing==null){AssetDatabase.CreateAsset(mesh,path);existing=mesh;}
                 else{CopyRenderableMesh(mesh,existing);UnityEngine.Object.DestroyImmediate(mesh);}
                 meshes[part.index]=existing;pivots[part.index]=pivot;total+=part.triangles;
-                report.AppendLine(part.name+" triangles="+part.triangles+" pivot="+pivot.ToString("F6")+" nativeBuffers="+existing.vertexBufferCount);
+                report.AppendLine(part.name+" triangles="+part.triangles+" pivot="+pivot.ToString("F6")+" nodePivotError="+nodePivotError.ToString("R")+" nativeBuffers="+existing.vertexBufferCount);
             }
             var reference=profile.BodyMesh.vertices;float maxError=0;
             foreach(var vertex in assembled){float nearest=float.PositiveInfinity;foreach(var original in reference)nearest=Mathf.Min(nearest,(vertex-original).sqrMagnitude);maxError=Mathf.Max(maxError,Mathf.Sqrt(nearest));}
@@ -211,8 +217,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
             File.WriteAllText(Path.Combine(input,"unity_import.txt"),report.ToString());
             if(total!=2720||maxError>0.00001f)throw new InvalidOperationException("Guardian import geometry mismatch; profile not assigned. Error="+maxError);
             profile.GuardianMeshes=meshes;profile.GuardianPivots=pivots;
-            var contact=manifest.right_fist_contact_unity;profile.GuardianFistContact=new Vector3(contact[0],contact[1],contact[2]);
+            profile.GuardianFistContact=GuardianImportedPoint(manifest.right_fist_contact_unity);
             EditorUtility.SetDirty(profile);AssetDatabase.SaveAssets();return Path.Combine(input,"unity_import.txt");
+        }
+
+        static Vector3 GuardianImportedPoint(float[] authorPoint)
+        {
+            if(authorPoint==null||authorPoint.Length!=3)throw new InvalidOperationException("Invalid guardian author point");
+            return new Vector3(-authorPoint[0],authorPoint[1],authorPoint[2]);
         }
 
         public static string AuditCatalog()
@@ -225,9 +237,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
             foreach (var e in c.Entries)
             {
                 var p = e.Profile;
+                if(p==null){a.nullReferences++;continue;}
                 if (e.Prefab == null || p == null || p.BodyMesh == null || p.AccentMesh == null || p.PatternMaterial == null || p.PatternMaterial.mainTexture == null) a.nullReferences++;
                 if (p.BodyMaterial == null || ShaderUtil.ShaderHasError(p.BodyMaterial.shader)) a.shaderErrors++;
                 meshes.Add(p.BodyMesh); meshes.Add(p.AccentMesh);
+                if(p.Glyph=="몸")
+                {
+                    if(p.GuardianMeshes==null||p.GuardianMeshes.Length!=11||p.GuardianPivots==null||p.GuardianPivots.Length!=11)a.nullReferences++;
+                    if(p.GuardianMeshes!=null)foreach(var mesh in p.GuardianMeshes){meshes.Add(mesh);if(mesh==null)a.nullReferences++;}
+                }
             }
             foreach (var mesh in meshes) { try { ValidateMesh(mesh); } catch { a.invalidMeshes++; } }
             string json = JsonUtility.ToJson(a, true); Directory.CreateDirectory(Output); File.WriteAllText(Path.Combine(Output, "asset_validation.json"), json); return json;
@@ -349,6 +367,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             if (mesh == null || mesh.vertexCount < 3 || mesh.triangles.Length < 3)
                 throw new InvalidOperationException("Empty VFX mesh");
+            if(mesh.vertexBufferCount<1)throw new InvalidOperationException("Missing native vertex buffer: "+mesh.name);
             foreach (var v in mesh.vertices)
                 if (float.IsNaN(v.x) || float.IsNaN(v.y) || float.IsNaN(v.z) || float.IsInfinity(v.x) || float.IsInfinity(v.y) || float.IsInfinity(v.z))
                     throw new InvalidOperationException("Non-finite VFX mesh: " + mesh.name);

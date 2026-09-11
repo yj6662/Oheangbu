@@ -28,6 +28,9 @@ namespace Oheangbu.App.SpellVFX120
             public Vector3 BaseScale;
             // Actual source bounds; used only by the two Ribbon needle follow-ups.
             public Vector3 AccentBoundsSize;
+            public bool FrostCords;
+            public bool InterceptionFan;
+            public Vfx120InterceptionMotion.Target[] Interceptions;
             public float GroundY;
             // Relative seconds; -1 means the cue has never been issued.
             public float HitAt;
@@ -71,7 +74,8 @@ namespace Oheangbu.App.SpellVFX120
                 case "안": return 6;
                 case "검": return 12;
                 case "산": return 4;
-                case "상": return 6;
+                case "상": return 3;
+                case "송": return Vfx120InterceptionMotion.MaxTargets * 3;
                 default: return 0;
             }
         }
@@ -93,7 +97,11 @@ namespace Oheangbu.App.SpellVFX120
                 case "안": pose = SplitDroplet(context, role, index, count); return true;
                 case "검": pose = PlantedTree(context, role, index, count); return true;
                 case "산": pose = NeedleDiamondMark(context, role, index); return true;
-                case "상": pose = InterceptFrostShell(context, role, index); return true;
+                case "상": pose = context.FrostCords ? Vfx120FrostCordMotion.Sample(context, role, index)
+                    : InterceptFrostShell(context, role, index); return true;
+                case "송":
+                    if (!context.InterceptionFan) return false;
+                    pose = Vfx120InterceptionMotion.Sample(context, role, index); return true;
                 default: return false;
             }
         }

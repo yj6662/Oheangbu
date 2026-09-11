@@ -13,6 +13,7 @@ Shader "Oheangbu/VFX120/InkPigment"
         _Metal("Worked metal glint", Float) = 0
         _ZWrite("Depth write", Float) = 0
         _Fluid("Material motion: water 1, flame 2, sand 3, mist 4", Float) = 0
+        _WaterMotif("Source water motif on crest",Range(0,1))=0
     }
     SubShader
     {
@@ -33,7 +34,7 @@ Shader "Oheangbu/VFX120/InkPigment"
             TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
             CBUFFER_START(UnityPerMaterial)
             float4 _BaseMap_ST, _BaseColor;
-            float _Alpha, _Erode, _Age, _Pattern, _Soft, _Body, _Metal, _ZWrite, _Fluid;
+            float _Alpha, _Erode, _Age, _Pattern, _Soft, _Body, _Metal, _ZWrite, _Fluid, _WaterMotif;
             CBUFFER_END
             Varyings vert(Attributes v)
             {
@@ -66,11 +67,22 @@ Shader "Oheangbu/VFX120/InkPigment"
                     float flow=sin(i.uv.x*43+sin(i.uv.y*19-_Age*4)*1.8+_Age*2);
                     float crest=smoothstep(.30,.49,i.uv.y)*(1-smoothstep(.68,.91,i.uv.y));
                     float foam=crest*smoothstep(-.1,.68,flow)*(.65+.35*tooth);
-                    float edge=smoothstep(0,.06,i.uv.x)*(1-smoothstep(.94,1,i.uv.x));
-                    float base=smoothstep(0,.09,i.uv.y)*(1-smoothstep(.93,1,i.uv.y));
-                    rgb=lerp(_BaseColor.rgb*.9,float3(.25,.47,.48),.38+crest*.18);
-                    rgb=lerp(rgb,float3(.71,.79,.73),foam*.88)*grain;
-                    alpha=_Alpha*edge*base*(.52+foam*.42)*smoothstep(_Erode-.12,_Erode+.12,tooth);
+                    // Reuse the pack's alpha water-band ornament on the curved
+                    // crest itself. RGB is white in the source, never a mask.
+                    foam=lerp(foam,foam*.55+pattern*crest*.75,_WaterMotif);
+                    // A tapered wash with an uneven wet edge replaces the filled UV
+                    // rectangle. Keep the crest connected; noise only breaks the rim.
+                    float edge=smoothstep(0,.20,i.uv.x)*(1-smoothstep(.80,1,i.uv.x));
+                    float wetEdge=.045*sin(i.uv.x*25-_Age*1.7)+.022*sin(i.uv.x*61+_Age*2.3);
+                    float foot=smoothstep(.025+wetEdge,.22+wetEdge,i.uv.y);
+                    float lip=1-smoothstep(.80+wetEdge,1+wetEdge,i.uv.y);
+                    float wash=edge*foot*lip;
+                    // Preserve the rolled mesh's normal shading instead of replacing
+                    // it with one flat blue fill. Pale foam remains a broken contour.
+                    float waterLight=.42+.58*saturate(dot(normalize(i.normalWS),normalize(float3(-.4,.8,-.3))));
+                    rgb=lerp(_BaseColor.rgb*.85,float3(.20,.36,.39),.30+crest*.16)*waterLight;
+                    rgb=lerp(rgb,float3(.65,.76,.70),foam*.80)*grain*i.color.rgb;
+                    alpha=_Alpha*wash*(.40+foam*.50)*smoothstep(_Erode-.12,_Erode+.12,tooth);
                 }
                 if(_Fluid>1.5 && _Fluid<2.5)
                 {

@@ -1,0 +1,9 @@
+{
+    "glyph": "논",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_JET_EXPLICIT_END_REAR_BLAST_ONCE_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "scope": "Forward jet stops on explicit end; rear explosion and motif. No extra damage logic."
+}

@@ -1,0 +1,11 @@
+{
+"id":"033_B10C","version":"56","key":"NEON_033","glyph":"넌","title":"넌 · 응축한 불씨의 강화",
+"audit":"single_play_B10C.json","build":"fire_empower_033_build.json","scope":"neon56_scope_check.json","previous":"NEOK_032_REVIEW.html",
+"intro":"작은 화염과 봉인 문양으로 강화 준비를 표현합니다. 소비 시 봉인이 사라지고, 확인된 명중 지점에서 큰 문양과 화염이 펼쳐집니다.",
+"changes":["KTP Pattern_136의 준비 문양과 작은 원형 화염을 구성했다.","ConsumeFireEmpower와 ConfirmFireEmpowerHit를 분리했다. 강화 소비만으로 타격 문양을 만들지 않는다.","소비와 명중은 각각 한 번만 수락한다. 종료 시 입자·문양을 정리한다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양2개/4tris. 공유 재질4개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 다음 공격의 위력 증가와 장비 소켓 연결은 미구현이다. 준비 위치는 VFX 생성 원점이다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.1.2초 소비,1.4초 명중 진단 신호. 별도 검사에서 빗나간 소비의 타격 연출 억제, 중복 신호 거절, 종료 정리를 확인했다.",
+"detailLabels":["강화 준비","소비 후 명중"]
+}

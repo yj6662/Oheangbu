@@ -1,0 +1,15 @@
+{
+    "glyph": "건",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/Bloom/VFX120_BloomLeaf_009.asset|Assets/_Project/Art/SpellVFX120/Bloom/M_BloomLeaf_009.mat||||1.45|0.22|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/Bloom/VFX120_BloomLeaf_009.asset|Assets/_Project/Art/SpellVFX120/Bloom/M_BloomLeaf_009.mat||||1.45|0.22|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+    ],
+    "systems": 56,
+    "capacity": 56000,
+    "sourcePreserved": true
+}

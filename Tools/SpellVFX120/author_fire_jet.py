@@ -1,0 +1,12 @@
+from pathlib import Path
+r=Path('Oheangbu/Assets/_Project/Scripts/Editor/SpellVFX120')
+s=(r/'Vfx120FireAuraBuilder.cs').read_text(encoding='utf-8').replace('Vfx120FireAuraBuilder','Vfx120FireJetBuilder').replace('032_B109','037_B178').replace('PF_FireAura_032','PF_FireJet_037').replace('fire_aura_032','fire_jet_037').replace('glyph="넉"','glyph="노"')
+s=s.replace('new Vector3(0,-.78f,0)','Vector3.zero').replace('shape.shapeType=ParticleSystemShapeType.Circle;shape.radius=1.5f;shape.radiusThickness=.12f;shape.rotation=new Vector3(90,0,0);','shape.shapeType=ParticleSystemShapeType.Cone;shape.radius=.12f;shape.angle=10;')
+s=s.replace('v.x=new ParticleSystem.MinMaxCurve(-.12f,.12f);v.y=new ParticleSystem.MinMaxCurve(.6f,1.1f);v.z=new ParticleSystem.MinMaxCurve(-.12f,.12f);','v.x=new ParticleSystem.MinMaxCurve(-.55f,.55f);v.y=new ParticleSystem.MinMaxCurve(.1f,.65f);v.z=new ParticleSystem.MinMaxCurve(4.5f,5.5f);')
+s=s.replace('(.4f,.6f)','(.45f,.7f)').replace('(.18f,.34f)','(.25f,.5f)').replace('em.rateOverTime=140','em.rateOverTime=150').replace('p.Duration=3.2f','p.Duration=2.4f').replace('M_HeavyHit_156.mat','M_HitPattern_110.mat')
+s=s.replace('Circular flame field plus confirmed hit motif. Latest-contact feedback slot reused; gameplay DOT not added.','Directional continuous flame; existing supplied impact clock drives contact motif. No attack timings or damage rules changed.')
+s=s.replace('e.SignalFireAuraHit(new Vector3(1,1,0));','e.SetImpactClock(.31f);').replace('e.Sample(1);e.SignalFireAuraHit(new Vector3(-1,1,0));e.Sample(1.02f);if(e.FireAuraContacts!=2||e.FireAuraMarkOpacity<.8f)throw new Exception("Repeat contact failed");','e.Sample(1);if(e.FireAuraContacts!=1||e.FireAuraParticles==0)throw new Exception("Jet/clock failed");')
+s=s.replace('PASS_RING_REPEATED_CONTACT_MARK_AND_CLEANUP','PASS_DIRECTIONAL_JET_SUPPLIED_IMPACT_AND_CLEANUP')
+(r/'Vfx120FireJetBuilder.cs').write_text(s,encoding='utf-8')
+p=r/'Vfx120Queue.cs';s=p.read_text(encoding='utf-8').replace('case "FireAuraBuild":','case "FireJetBuild": response.result=Vfx120FireJetBuilder.Build(); break;\n                    case "FireAuraBuild":');p.write_text(s,encoding='utf-8')
+p=r/'Vfx120TraditionalPlayAudit.cs';s=p.read_text(encoding='utf-8').replace('if(Vfx120Effect.IsFireSword(t.effect.Profile)){','if(Vfx120Effect.IsFireJet(t.effect.Profile)){}else if(Vfx120Effect.IsFireSword(t.effect.Profile)){').replace('(row.glyph!="넌"&&row.glyph!="넛")','(row.glyph!="넌"&&row.glyph!="넛"&&row.glyph!="노")');p.write_text(s,encoding='utf-8')

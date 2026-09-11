@@ -22,17 +22,58 @@ MonoBehaviour:
   Layout: 7
   BodyMesh: {fileID: 4300000, guid: 8dc62cee493301741b0b6a1697f9984d, type: 2}
   AccentMesh: {fileID: 4300000, guid: 7bc417ca647d78d4b8fed5c3cb2d5e4f, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: abcfbc14410033b43bd48287e4c8c581, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: 67dbd48f0b4ab424b8778496f47f5b8d, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: a6686a90d410c96468eccce24fbd5468, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 8492253965010623433, guid: 8e64adacf0fc6e04d8e0e0df04a0df57, type: 3}
+  NativeImpactPrefab: {fileID: 2516397040406900782, guid: 36034aaf993a30945af811af803c438f, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.3
+  NativeImpactScale: 0.36
+  KtpEmphasis: 1
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1.75
+  KtpBrightness: 2.2
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6, y: 0.4}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0.15
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 5
+  AreaContactPrefab: {fileID: 2642556947912290066, guid: 360f55ca86a44b6439baf5c050167738, type: 3}
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 1
+  AreaFlowRevision: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 5539060088274930575, guid: 387820f8c9ceee04a9a03c50236879f9, type: 3}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.17254902, g: 0.27450982, b: 0.3529412, a: 1}
   Accent: {r: 0.73333335, g: 0.7529412, b: 0.7176471, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
   Count: 1
   RibbonCount: 3
   Size: 1.7
-  PartScale: {x: 3.5, y: 2, z: 2.2}
+  PartScale: {x: 3.5, y: 3.1, z: 2.2}
   Duration: 3.2
   Flight: 0.45
   Turns: 0.25

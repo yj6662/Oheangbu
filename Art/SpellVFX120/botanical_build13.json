@@ -1,0 +1,1011 @@
+{
+    "status": "BUILT_STRUCTURALLY_VALID_VISUAL_UNVERIFIED",
+    "generatedUtc": "2026-09-09T08:19:31.8346046Z",
+    "geometryPolicy": "Imported prefab MeshFilter geometry only. Rigid rotation/translation and uniform normalization; topology, submesh order, normals/tangents and all source UV channels preserved. No new mesh primitive, skin, collider, particle, animation or source importer mutation. Shared owned materials omit unresolved source AO.",
+    "placementLimit": "Root anchor uses the imported negative-X terminal band (the thick cut end of this source); this anatomical choice and fork/target contact need visual review. Roots remain rigid rather than skinned wrapping. Bamboo includes original leaf cards on 3D stems; branch silhouettes are not repeated generated S plates. Whole leaf bounds may exceed the stem placement envelope.",
+    "runtimeLimit": "No timing, native motif, gameplay or existing procedural field modified here. Runtime owns emergence, release, ground clipping and light sway. The scene, contact coverage, camera readability, final lifetime and performance remain UNVERIFIED.",
+    "sourceFilesUnchanged": true,
+    "sources": [
+        {
+            "key": "Root",
+            "prefab": "Assets/SeyeonjeongPavilion/Prefabs/SM_TreeRoot_1.prefab",
+            "model": "Assets/SeyeonjeongPavilion/Mesh/Plant/SM_TreeRoot_1.fbx",
+            "modelGuid": "abc00000000012698429353536892855",
+            "meshName": "SM_TreeRoot_1_LOD2",
+            "meshOutput": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+            "normalization": "(prefab-space vertex - negative-X terminal anchor) rotated -90Y, divided by max original bounds.size; fork runs +Z. Source terminal choice requires render review.",
+            "meshLocalId": 4300004,
+            "vertices": 4977,
+            "triangles": 3305,
+            "submeshTriangles": [
+                3305
+            ],
+            "originalMeshBounds": {
+                "m_Center": {
+                    "x": 0.31494641304016116,
+                    "y": -0.1250901222229004,
+                    "z": 0.06651592254638672
+                },
+                "m_Extent": {
+                    "x": 1.68239164352417,
+                    "y": 0.3117140233516693,
+                    "z": 1.317589282989502
+                }
+            },
+            "originalPrefabBounds": {
+                "m_Center": {
+                    "x": 0.31494641304016116,
+                    "y": -0.1250901222229004,
+                    "z": 0.06651592254638672
+                },
+                "m_Extent": {
+                    "x": 1.68239164352417,
+                    "y": 0.3117140233516693,
+                    "z": 1.317589282989502
+                }
+            },
+            "canonicalBounds": {
+                "m_Center": {
+                    "x": 0.08216781914234162,
+                    "y": 0.045719586312770846,
+                    "z": 0.4999999701976776
+                },
+                "m_Extent": {
+                    "x": 0.391582190990448,
+                    "y": 0.09264015406370163,
+                    "z": 0.4999999701976776
+                }
+            },
+            "meshToPrefab": {
+                "e00": 1.0,
+                "e01": 0.0,
+                "e02": 0.0,
+                "e03": 0.0,
+                "e10": 0.0,
+                "e11": 1.0,
+                "e12": 0.0,
+                "e13": 0.0,
+                "e20": 0.0,
+                "e21": 0.0,
+                "e22": 1.0,
+                "e23": 0.0,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "anchor": {
+                "x": -1.3674452304840088,
+                "y": -0.2789266109466553,
+                "z": 0.34299272298812868
+            },
+            "canonicalEuler": {
+                "x": 0.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "divisor": 3.36478328704834,
+            "materials": [
+                {
+                    "source": "Assets/SeyeonjeongPavilion/Material/Plant/MI_TreeRoot.mat",
+                    "sourceGuid": "abc00000000015868989045944545487",
+                    "output": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Root_Bark.mat",
+                    "baseMap": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_BC.png",
+                    "normalMap": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_N.png",
+                    "leaf": false,
+                    "sourceAoCopied": false
+                }
+            ]
+        },
+        {
+            "key": "Bamboo",
+            "prefab": "Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab",
+            "model": "Assets/SeyeonjeongPavilion/Mesh/Tree/SM_Henonis_1.fbx",
+            "modelGuid": "abc00000000002245228765892127024",
+            "meshName": "SM_Henonis_1_LOD1",
+            "meshOutput": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+            "normalization": "Imported prefab Y-up height normalized to 1m; basal-band XZ center is pivot; actual minimum Y is zero. Whole source silhouette and UV retained.",
+            "meshLocalId": 4300002,
+            "vertices": 4685,
+            "triangles": 2819,
+            "submeshTriangles": [
+                1255,
+                1564
+            ],
+            "originalMeshBounds": {
+                "m_Center": {
+                    "x": 0.06140071153640747,
+                    "y": 1.9417552947998047,
+                    "z": 0.04075193405151367
+                },
+                "m_Extent": {
+                    "x": 1.1164519786834717,
+                    "y": 1.9419901371002198,
+                    "z": 1.1662054061889649
+                }
+            },
+            "originalPrefabBounds": {
+                "m_Center": {
+                    "x": 0.061400771141052249,
+                    "y": 1.9417551755905152,
+                    "z": 0.04075193405151367
+                },
+                "m_Extent": {
+                    "x": 1.1164519786834717,
+                    "y": 1.9419901371002198,
+                    "z": 1.1662054061889649
+                }
+            },
+            "canonicalBounds": {
+                "m_Center": {
+                    "x": 0.016153663396835328,
+                    "y": 0.5,
+                    "z": 0.010557785630226136
+                },
+                "m_Extent": {
+                    "x": 0.2874504625797272,
+                    "y": 0.5,
+                    "z": 0.30026036500930788
+                }
+            },
+            "meshToPrefab": {
+                "e00": 1.0,
+                "e01": 0.0,
+                "e02": 0.0,
+                "e03": 0.0,
+                "e10": 0.0,
+                "e11": 1.0,
+                "e12": 0.0,
+                "e13": 0.0,
+                "e20": 0.0,
+                "e21": 0.0,
+                "e22": 1.0,
+                "e23": 0.0,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "anchor": {
+                "x": -0.001339794136583805,
+                "y": -0.00023496150970458984,
+                "z": -0.0002543031587265432
+            },
+            "canonicalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "divisor": 3.8839802742004396,
+            "materials": [
+                {
+                    "source": "Assets/SeyeonjeongPavilion/Material/Tree/MI_Henonis.mat",
+                    "sourceGuid": "abc00000000012456525710769959072",
+                    "output": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Bamboo_Bark.mat",
+                    "baseMap": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_BC.png",
+                    "normalMap": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_N.png",
+                    "leaf": false,
+                    "sourceAoCopied": false
+                },
+                {
+                    "source": "Assets/SeyeonjeongPavilion/Material/Tree/MI_Henonis_Leaf.mat",
+                    "sourceGuid": "abc00000000006135124290407168081",
+                    "output": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Bamboo_Leaf.mat",
+                    "baseMap": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_BC.png",
+                    "normalMap": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_N.png",
+                    "leaf": true,
+                    "sourceAoCopied": false
+                }
+            ]
+        },
+        {
+            "key": "Tree",
+            "prefab": "Assets/SeyeonjeongPavilion/Prefabs/SM_MeliaAzedarach_Winter_1.prefab",
+            "model": "Assets/SeyeonjeongPavilion/Mesh/Tree/SM_MeliaAzedarach_Winter_1.fbx",
+            "modelGuid": "abc00000000003294337539678740007",
+            "meshName": "SM_MeliaAzedarach_Winter_1_LOD2",
+            "meshOutput": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Tree.asset",
+            "normalization": "Imported prefab Y-up height normalized to 1m; basal-band XZ center is pivot; actual minimum Y is zero. Whole source silhouette and UV retained.",
+            "meshLocalId": 4300004,
+            "vertices": 5782,
+            "triangles": 4443,
+            "submeshTriangles": [
+                4443
+            ],
+            "originalMeshBounds": {
+                "m_Center": {
+                    "x": 0.6123425960540772,
+                    "y": 6.624914646148682,
+                    "z": -1.2621004581451417
+                },
+                "m_Extent": {
+                    "x": 5.899679183959961,
+                    "y": 6.776484966278076,
+                    "z": 5.367779731750488
+                }
+            },
+            "originalPrefabBounds": {
+                "m_Center": {
+                    "x": 0.6123428344726563,
+                    "y": 6.624914646148682,
+                    "z": -1.2621006965637208
+                },
+                "m_Extent": {
+                    "x": 5.899679183959961,
+                    "y": 6.776485443115234,
+                    "z": 5.367779731750488
+                }
+            },
+            "canonicalBounds": {
+                "m_Center": {
+                    "x": 0.04446013271808624,
+                    "y": 0.4999999701976776,
+                    "z": -0.08117933571338654
+                },
+                "m_Extent": {
+                    "x": 0.43530523777008059,
+                    "y": 0.4999999701976776,
+                    "z": 0.3960592746734619
+                }
+            },
+            "meshToPrefab": {
+                "e00": 1.0,
+                "e01": 0.0,
+                "e02": 0.0,
+                "e03": 0.0,
+                "e10": 0.0,
+                "e11": 1.0,
+                "e12": 0.0,
+                "e13": 0.0,
+                "e20": 0.0,
+                "e21": 0.0,
+                "e22": 1.0,
+                "e23": 0.0,
+                "e30": 0.0,
+                "e31": 0.0,
+                "e32": 0.0,
+                "e33": 1.0
+            },
+            "anchor": {
+                "x": 0.009775708429515362,
+                "y": -0.15157079696655274,
+                "z": -0.161879301071167
+            },
+            "canonicalEuler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "divisor": 13.552970886230469,
+            "materials": [
+                {
+                    "source": "Assets/SeyeonjeongPavilion/Material/Tree/MI_MeliaAzedarach_1.mat",
+                    "sourceGuid": "abc00000000013162694245672964873",
+                    "output": "Assets/_Project/Art/SpellVFX120/Botanical/Materials/M_Tree_Bark.mat",
+                    "baseMap": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_BC.png",
+                    "normalMap": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_N.png",
+                    "leaf": false,
+                    "sourceAoCopied": false
+                }
+            ]
+        }
+    ],
+    "bodies": [
+        {
+            "glyph": "각",
+            "prefab": "Assets/_Project/Art/SpellVFX120/Botanical/PF_RootBind.prefab",
+            "kind": "RootBind",
+            "contract": "Five rigid branched roots. Attachment pivots radius .38..55m; forks face inward/up. Each source has maximum bounds dimension 1m before authored uniform scale. Ground correction is measured from transformed vertices.",
+            "parts": 5,
+            "totalTriangles": 16525,
+            "actualVisualBounds": {
+                "m_Center": {
+                    "x": 0.030860722064971925,
+                    "y": 0.474242240190506,
+                    "z": -0.027816712856292726
+                },
+                "m_Extent": {
+                    "x": 0.616721510887146,
+                    "y": 0.474242240190506,
+                    "z": 0.5496519804000855
+                }
+            },
+            "children": [
+                {
+                    "name": "Root_00",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+                    "position": {
+                        "x": 0.09563938528299332,
+                        "y": -0.0008941888809204102,
+                        "z": 0.44994792342185976
+                    },
+                    "euler": {
+                        "x": 315.0,
+                        "y": 192.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.159999966621399,
+                        "y": 1.159999966621399,
+                        "z": 1.159999966621399
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": -0.0751851499080658,
+                            "y": 0.4400968551635742,
+                            "z": 0.09451448917388916
+                        },
+                        "m_Extent": {
+                            "x": 0.4855792224407196,
+                            "y": 0.4400968551635742,
+                            "z": 0.362920343875885
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 0.8801937103271484,
+                    "groundCorrection": -0.0008941888809204102
+                },
+                {
+                    "name": "Root_01",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+                    "position": {
+                        "x": 0.3890499770641327,
+                        "y": -0.0007703006267547607,
+                        "z": 0.02720503695309162
+                    },
+                    "euler": {
+                        "x": 312.7973937988281,
+                        "y": 266.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0399999618530274,
+                        "y": 1.0399999618530274,
+                        "z": 1.0399999618530274
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.05467689037322998,
+                            "y": 0.4073692560195923,
+                            "z": 0.08746352791786194
+                        },
+                        "m_Extent": {
+                            "x": 0.33321404457092287,
+                            "y": 0.4073692560195923,
+                            "z": 0.39694106578826907
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 0.8147385120391846,
+                    "groundCorrection": -0.0007703006267547607
+                },
+                {
+                    "name": "Root_02",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+                    "position": {
+                        "x": 0.21099483966827393,
+                        "y": -0.0009635686874389648,
+                        "z": -0.49707263708114626
+                    },
+                    "euler": {
+                        "x": 315.0,
+                        "y": 337.0,
+                        "z": -0.0000012074181086063618
+                    },
+                    "scale": {
+                        "x": 1.25,
+                        "y": 1.25,
+                        "z": 1.25
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.19683781266212464,
+                            "y": 0.474242240190506,
+                            "z": -0.12032189965248108
+                        },
+                        "m_Extent": {
+                            "x": 0.45074450969696047,
+                            "y": 0.474242240190506,
+                            "z": 0.4571467936038971
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 0.948484480381012,
+                    "groundCorrection": -0.0009635686874389648
+                },
+                {
+                    "name": "Root_03",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+                    "position": {
+                        "x": -0.334172785282135,
+                        "y": -0.0008073151111602783,
+                        "z": -0.27060773968696597
+                    },
+                    "euler": {
+                        "x": 312.7973937988281,
+                        "y": 51.00000762939453,
+                        "z": -0.000002513286972316564
+                    },
+                    "scale": {
+                        "x": 1.090000033378601,
+                        "y": 1.090000033378601,
+                        "z": 1.090000033378601
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": -0.05083844065666199,
+                            "y": 0.42695435881614687,
+                            "z": -0.21282848715782166
+                        },
+                        "m_Extent": {
+                            "x": 0.4421451687812805,
+                            "y": 0.42695435881614687,
+                            "z": 0.3525404632091522
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 0.8539087176322937,
+                    "groundCorrection": -0.0008073151111602783
+                },
+                {
+                    "name": "Root_04",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Root.asset",
+                    "position": {
+                        "x": -0.42858371138572695,
+                        "y": -0.0009250342845916748,
+                        "z": 0.2575189471244812
+                    },
+                    "euler": {
+                        "x": 315.0,
+                        "y": 120.99998474121094,
+                        "z": 0.0000024148366719600746
+                    },
+                    "scale": {
+                        "x": 1.2000000476837159,
+                        "y": 1.2000000476837159,
+                        "z": 1.2000000476837159
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": -0.20841187238693238,
+                            "y": 0.4552725851535797,
+                            "z": -0.006272435188293457
+                        },
+                        "m_Extent": {
+                            "x": 0.3774489164352417,
+                            "y": 0.4552725851535797,
+                            "z": 0.5281076431274414
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 0.9105451703071594,
+                    "groundCorrection": -0.0009250342845916748
+                }
+            ]
+        },
+        {
+            "glyph": "공",
+            "prefab": "Assets/_Project/Art/SpellVFX120/Botanical/PF_BambooFront.prefab",
+            "kind": "BambooFront",
+            "contract": "Seven whole LOD1 bamboos in two staggered rows. Stem pivot X range is within 2m and Z range within .7m; heights 1.35..2.1m. Leaf visual bounds intentionally extend beyond pivot envelope. Visual bounds are NOT issued Path hit width.",
+            "parts": 7,
+            "totalTriangles": 19733,
+            "actualVisualBounds": {
+                "m_Center": {
+                    "x": 0.048011183738708499,
+                    "y": 1.0499999523162842,
+                    "z": 0.024256646633148195
+                },
+                "m_Extent": {
+                    "x": 1.3408629894256592,
+                    "y": 1.0499999523162842,
+                    "z": 0.7843524813652039
+                }
+            },
+            "children": [
+                {
+                    "name": "Bamboo_00",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": -0.8399999737739563,
+                        "y": 0.0,
+                        "z": -0.20000000298023225
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 337.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.5499999523162842,
+                        "y": 1.5499999523162842,
+                        "z": 1.5499999523162842
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": -0.8588464856147766,
+                            "y": 0.7749999761581421,
+                            "z": -0.2064869999885559
+                        },
+                        "m_Extent": {
+                            "x": 0.43400532007217409,
+                            "y": 0.7749999761581421,
+                            "z": 0.45426076650619509
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 1.5499999523162842,
+                    "groundCorrection": 0.0
+                },
+                {
+                    "name": "Bamboo_01",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": -0.27000001072883608,
+                        "y": 0.0,
+                        "z": -0.25
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 34.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.8799999952316285,
+                        "y": 1.8799999952316285,
+                        "z": 1.8799999952316285
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": -0.28134608268737795,
+                            "y": 0.9399999976158142,
+                            "z": -0.23724699020385743
+                        },
+                        "m_Extent": {
+                            "x": 0.5285161733627319,
+                            "y": 0.9399999976158142,
+                            "z": 0.5228488445281982
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 1.8799999952316285,
+                    "groundCorrection": 0.0
+                },
+                {
+                    "name": "Bamboo_02",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": 0.3100000023841858,
+                        "y": 0.0,
+                        "z": -0.17000000178813935
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 309.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.350000023841858,
+                        "y": 1.350000023841858,
+                        "z": 1.350000023841858
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.29061323404312136,
+                            "y": 0.675000011920929,
+                            "z": -0.1907021403312683
+                        },
+                        "m_Extent": {
+                            "x": 0.37525689601898196,
+                            "y": 0.675000011920929,
+                            "z": 0.3776790499687195
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 1.350000023841858,
+                    "groundCorrection": 0.0
+                },
+                {
+                    "name": "Bamboo_03",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": 0.8700000047683716,
+                        "y": 0.0,
+                        "z": -0.23000000417232514
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 18.000001907348634,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.7200000286102296,
+                        "y": 1.7200000286102296,
+                        "z": 1.7200000286102296
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.8874596953392029,
+                            "y": 0.8600000143051148,
+                            "z": -0.2250920534133911
+                        },
+                        "m_Extent": {
+                            "x": 0.50141441822052,
+                            "y": 0.8600000143051148,
+                            "z": 0.508419394493103
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 1.7200000286102296,
+                    "groundCorrection": 0.0
+                },
+                {
+                    "name": "Bamboo_04",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": -0.6000000238418579,
+                        "y": 0.0,
+                        "z": 0.23999999463558198
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 79.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 2.0999999046325685,
+                        "y": 2.0999999046325685,
+                        "z": 2.0999999046325685
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": -0.5762718319892883,
+                            "y": 1.0499999523162842,
+                            "z": 0.21975788474082948
+                        },
+                        "m_Extent": {
+                            "x": 0.6133143305778503,
+                            "y": 1.0499999523162842,
+                            "z": 0.5888512134552002
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 2.0999999046325685,
+                    "groundCorrection": 0.0
+                },
+                {
+                    "name": "Bamboo_05",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": 0.019999999552965165,
+                        "y": 0.0,
+                        "z": 0.28999999165534975
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 284.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.659999966621399,
+                        "y": 1.659999966621399,
+                        "z": 1.659999966621399
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.012335449457168579,
+                            "y": 0.8299999833106995,
+                            "z": 0.3092450797557831
+                        },
+                        "m_Extent": {
+                            "x": 0.49665889143943789,
+                            "y": 0.8299999833106995,
+                            "z": 0.4865660071372986
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 1.659999966621399,
+                    "groundCorrection": 0.0
+                },
+                {
+                    "name": "Bamboo_06",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Bamboo.asset",
+                    "position": {
+                        "x": 0.6200000047683716,
+                        "y": 0.0,
+                        "z": 0.20999999344348908
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 52.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.9600000381469727,
+                        "y": 1.9600000381469727,
+                        "z": 1.9600000381469727
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.5909878611564636,
+                            "y": 0.9800000190734863,
+                            "z": 0.25267916917800906
+                        },
+                        "m_Extent": {
+                            "x": 0.5690222382545471,
+                            "y": 0.9800000190734863,
+                            "z": 0.5475795269012451
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 1.9600000381469727,
+                    "groundCorrection": 0.0
+                }
+            ]
+        },
+        {
+            "glyph": "검",
+            "prefab": "Assets/_Project/Art/SpellVFX120/Botanical/PF_PlantedTree.prefab",
+            "kind": "PlantedTree",
+            "contract": "One leafless crooked tree, height 2.5m, source proportions and UV preserved. Canonical bottom Y=0, maximum visual height measured after yaw.",
+            "parts": 1,
+            "totalTriangles": 4443,
+            "actualVisualBounds": {
+                "m_Center": {
+                    "x": 0.10792815685272217,
+                    "y": 1.2499998807907105,
+                    "z": -0.19125938415527345
+                },
+                "m_Extent": {
+                    "x": 1.078686237335205,
+                    "y": 1.2499998807907105,
+                    "z": 0.9839416742324829
+                }
+            },
+            "children": [
+                {
+                    "name": "Tree_00",
+                    "mesh": "Assets/_Project/Art/SpellVFX120/Botanical/Meshes/Mesh_Tree.asset",
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "euler": {
+                        "x": 0.0,
+                        "y": 342.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 2.5,
+                        "y": 2.5,
+                        "z": 2.5
+                    },
+                    "bounds": {
+                        "m_Center": {
+                            "x": 0.10792815685272217,
+                            "y": 1.2499998807907105,
+                            "z": -0.19125938415527345
+                        },
+                        "m_Extent": {
+                            "x": 1.078686237335205,
+                            "y": 1.2499998807907105,
+                            "z": 0.9839416742324829
+                        }
+                    },
+                    "minY": 0.0,
+                    "maxY": 2.499999761581421,
+                    "groundCorrection": 0.0
+                }
+            ]
+        }
+    ],
+    "profilesBefore": [
+        {
+            "glyph": "각",
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/002_AC01.asset",
+            "sha256Before": "829b7fe9354f67a0dde649de82fdfa8018c99ff74503acd6f409991b87efa38a",
+            "botanicalPrefabBefore": "",
+            "kindBefore": "None",
+            "jsonBefore": "{\"Glyph\":\"각\",\"Title\":\"얽힌 뿌리 매듭\",\"Intent\":\"완전 속박 — 대상 행동 불가(보스는 둔화). 시간 만료로만 해제 — 묶인 대상 타격 가능, 추가 피해 없음\",\"Family\":\"Vine\",\"Assigned\":true,\"Behavior\":1,\"Layout\":8,\"BodyMesh\":{\"instanceID\":-1049608},\"AccentMesh\":{\"instanceID\":-1049594},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-1108746},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1049952},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1127538},\"NativeImpactPrefab\":{\"instanceID\":1127734},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.47999998927116396,\"NativeImpactScale\":1.0,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.25882354378700259,\"g\":0.4313725531101227,\"b\":0.3450980484485626,\"a\":1.0},\"Accent\":{\"r\":0.7686274647712708,\"g\":0.6823529601097107,\"b\":0.48235294222831728,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":8,\"RibbonCount\":2,\"Size\":0.9200000166893005,\"PartScale\":{\"x\":1.100000023841858,\"y\":0.8999999761581421,\"z\":2.049999952316284},\"Duration\":3.4000000953674318,\"Flight\":0.550000011920929,\"Turns\":0.30000001192092898,\"Lift\":1.7000000476837159,\"Stagger\":0.2199999988079071,\"UseMist\":false,\"Grounded\":false,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":2,\\\"glyph\\\":\\\"각\\\",\\\"initial\\\":\\\"ㄱ\\\",\\\"element\\\":\\\"목\\\",\\\"vowel\\\":\\\"ㅏ\\\",\\\"final\\\":\\\"ㄱ\\\",\\\"frame\\\":\\\"양·단일\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"완전 속박 — 대상 행동 불가(보스는 둔화). 시간 만료로만 해제 — 묶인 대상 타격 가능, 추가 피해 없음\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"얽힌 뿌리 매듭\\\",\\\"shape\\\":\\\"대상을 세로로 감싸는 열린 덩굴 새장\\\",\\\"motion\\\":\\\"아래에서 위로 두 덩굴이 엇갈려 감김\\\",\\\"pattern\\\":\\\"매듭형 당초\\\",\\\"accent\\\":\\\"마른 등나무 황갈색\\\",\\\"cast\\\":\\\"발치의 두 뿌리끝이 서로 마주봄\\\",\\\"travel\\\":\\\"대상 몸 바깥을 타고 올라가며 관절은 가리지 않음\\\",\\\"impact\\\":\\\"두 덩굴이 가슴 옆에서 닫혀 고정\\\",\\\"resolve\\\":\\\"만료 시 매듭부터 풀리고 덩굴이 발치로 물러남\\\",\\\"material\\\":{\\\"primary\\\":\\\"젖은 나무결·갈필 잎 섬유\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Vine\\\",\\\"secondaryPrimitives\\\":[\\\"Leaf\\\",\\\"Ribbon\\\"],\\\"layout\\\":\\\"Cage\\\",\\\"behavior\\\":\\\"Bind\\\",\\\"count\\\":8,\\\"layers\\\":4,\\\"scale\\\":1.55,\\\"duration\\\":3.4,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"발치의 두 뿌리끝이 서로 마주봄\\\",\\\"대상 몸 바깥을 타고 올라가며 관절은 가리지 않음\\\",\\\"두 덩굴이 가슴 옆에서 닫혀 고정\\\",\\\"만료 시 매듭부터 풀리고 덩굴이 발치로 물러남\\\"],\\\"motionSignature\\\":\\\"아래에서 위로 두 덩굴이 엇갈려 감김\\\",\\\"geometrySignature\\\":\\\"대상을 세로로 감싸는 열린 덩굴 새장\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#426E58\\\",\\\"secondary\\\":\\\"#C4AE7B\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png\\\",\\\"guid\\\":\\\"80763f3fc9d9c1d4f88013b55e13bc1e\\\",\\\"observed_motif\\\":\\\"점 띠 안 다층 매듭형 꽃원\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"금속 네온 마법진 대신 먹 끈이 잠깐 조여드는 표현\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png\\\",\\\"guid\\\":\\\"92b48435c77fac54b804248fcfbf0713\\\",\\\"observed_motif\\\":\\\"잎과 줄기가 엮인 원형 당초 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"가느다란 내부 선을 과도하게 축소하지 않는다\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"TargetBound\\\",\\\"BoundExpired\\\"],\\\"readability\\\":\\\"각은 닫힌 세로 새장이고 앗은 아래로 긴 각진 얼음이다. 각은 일반 피격에 깨지는 연출을 재생하지 않는다.\\\"},\\\"authoredDefinitionOverrides\\\":{\\\"family\\\":\\\"Vine\\\",\\\"accentFamily\\\":\\\"Leaf\\\"},\\\"previewNumericAuthoring\\\":{\\\"count\\\":8,\\\"size\\\":0.92,\\\"partScale\\\":{\\\"x\\\":1.1,\\\"y\\\":0.9,\\\"z\\\":2.05},\\\"flight\\\":0.55,\\\"turns\\\":0.3,\\\"lift\\\":1.7,\\\"stagger\\\":0.22,\\\"ribbons\\\":2,\\\"grounded\\\":false,\\\"mist\\\":false},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png\\\",\\\"guid\\\":\\\"80763f3fc9d9c1d4f88013b55e13bc1e\\\",\\\"size\\\":[3307,3307],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":true,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_228.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"observed_motif\\\":\\\"점 띠 안 다층 매듭형 꽃원\\\",\\\"recommended_use\\\":\\\"묶음·봉인·갈무리\\\",\\\"caution\\\":\\\"금속 네온 마법진 대신 먹 끈이 잠깐 조여드는 표현\\\",\\\"alpha_mean\\\":14.8427213023405,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_228.mat\\\",\\\"guid\\\":\\\"d9712722f6615eb49853d477f680b0f1\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom19-03.prefab\\\",\\\"guid\\\":\\\"36cd9e0c35d9d694b9f83d0ad4ace49b\\\",\\\"particle_systems\\\":10,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}"
+        },
+        {
+            "glyph": "공",
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/018_ACF5.asset",
+            "sha256Before": "3baf87f5961e37d2ae59b29861711513650b6c2a9e053f9edaa2fd6c74de294a",
+            "botanicalPrefabBefore": "",
+            "kindBefore": "None",
+            "jsonBefore": "{\"Glyph\":\"공\",\"Title\":\"걸어가는 수풀\",\"Intent\":\"흐르는 수풀 — 뿌리 파도가 전진하며 소폭 피해, 파도 뒤의 플레이어에게 은엄폐 제공(이동식 엄폐)\",\"Family\":\"Vine\",\"Assigned\":true,\"Behavior\":9,\"Layout\":7,\"BodyMesh\":{\"instanceID\":-1049608},\"AccentMesh\":{\"instanceID\":-1049594},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-1108746},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1049888},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1127538},\"NativeImpactPrefab\":{\"instanceID\":1127734},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.47999998927116396,\"NativeImpactScale\":1.0,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.25882354378700259,\"g\":0.4313725531101227,\"b\":0.3450980484485626,\"a\":1.0},\"Accent\":{\"r\":0.6509804129600525,\"g\":0.6980392336845398,\"b\":0.6274510025978088,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":11,\"RibbonCount\":2,\"Size\":1.5499999523162842,\"PartScale\":{\"x\":1.649999976158142,\"y\":1.25,\"z\":2.0999999046325685},\"Duration\":3.5,\"Flight\":0.4000000059604645,\"Turns\":0.18000000715255738,\"Lift\":1.5499999523162842,\"Stagger\":0.18000000715255738,\"UseMist\":false,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":18,\\\"glyph\\\":\\\"공\\\",\\\"initial\\\":\\\"ㄱ\\\",\\\"element\\\":\\\"목\\\",\\\"vowel\\\":\\\"ㅗ\\\",\\\"final\\\":\\\"ㅇ\\\",\\\"frame\\\":\\\"양·광역\\\",\\\"classification\\\":\\\"공격\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"흐르는 수풀 — 뿌리 파도가 전진하며 소폭 피해, 파도 뒤의 플레이어에게 은엄폐 제공(이동식 엄폐)\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"걸어가는 수풀\\\",\\\"shape\\\":\\\"넓은 뿌리 말림과 후면의 잎 장막\\\",\\\"motion\\\":\\\"바닥 뿌리 두루마리가 전진하며 잎을 뒤에 세움\\\",\\\"pattern\\\":\\\"수평 당초·송엽\\\",\\\"accent\\\":\\\"회녹색 뒷면\\\",\\\"cast\\\":\\\"두루마리 끝처럼 뿌리 띠를 앞으로 펼침\\\",\\\"travel\\\":\\\"전면은 낮고 뒷면은 몸을 가릴 만큼 높은 잎 실루엣\\\",\\\"impact\\\":\\\"전면 접촉에서만 가지 파동 후면 엄폐는 고요\\\",\\\"resolve\\\":\\\"마지막 뿌리가 펴진 뒤 뒤 잎부터 차례로 접힘\\\",\\\"material\\\":{\\\"primary\\\":\\\"젖은 나무결·갈필 잎 섬유\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Vine\\\",\\\"secondaryPrimitives\\\":[\\\"Leaf\\\",\\\"Ribbon\\\"],\\\"layout\\\":\\\"Wave\\\",\\\"behavior\\\":\\\"Wave\\\",\\\"count\\\":15,\\\"layers\\\":4,\\\"scale\\\":2.55,\\\"duration\\\":3.5,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"두루마리 끝처럼 뿌리 띠를 앞으로 펼침\\\",\\\"전면은 낮고 뒷면은 몸을 가릴 만큼 높은 잎 실루엣\\\",\\\"전면 접촉에서만 가지 파동 후면 엄폐는 고요\\\",\\\"마지막 뿌리가 펴진 뒤 뒤 잎부터 차례로 접힘\\\"],\\\"motionSignature\\\":\\\"바닥 뿌리 두루마리가 전진하며 잎을 뒤에 세움\\\",\\\"geometrySignature\\\":\\\"넓은 뿌리 말림과 후면의 잎 장막\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#426E58\\\",\\\"secondary\\\":\\\"#A6B2A0\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png\\\",\\\"guid\\\":\\\"92b48435c77fac54b804248fcfbf0713\\\",\\\"observed_motif\\\":\\\"잎과 줄기가 엮인 원형 당초 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"가느다란 내부 선을 과도하게 축소하지 않는다\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_236.png\\\",\\\"guid\\\":\\\"8a47062cd755f15418417f33c9918ade\\\",\\\"observed_motif\\\":\\\"좌우 대칭으로 접힌 구름형 선\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_201_250.jpg\\\",\\\"caution\\\":\\\"사각 외곽은 필요할 때만 쓰고 지속 패널 UI로 만들지 않음\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"CastCommitted\\\",\\\"ProjectileOrWaveMoved\\\",\\\"Impact\\\",\\\"Expired\\\"],\\\"readability\\\":\\\"이동식 엄폐의 뒷면은 잎면이 높고 앞면은 낮은 뿌리. 곡/곳과 바닥원 복제를 하지 않는다.\\\"},\\\"authoredDefinitionOverrides\\\":{},\\\"previewNumericAuthoring\\\":{\\\"count\\\":11,\\\"size\\\":1.55,\\\"partScale\\\":{\\\"x\\\":1.65,\\\"y\\\":1.25,\\\"z\\\":2.1},\\\"flight\\\":0.4,\\\"turns\\\":0.18,\\\"lift\\\":1.55,\\\"stagger\\\":0.18,\\\"ribbons\\\":2,\\\"grounded\\\":true,\\\"mist\\\":false},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png\\\",\\\"guid\\\":\\\"92b48435c77fac54b804248fcfbf0713\\\",\\\"size\\\":[2505,2505],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":true,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"observed_motif\\\":\\\"잎과 줄기가 엮인 원형 당초 띠\\\",\\\"recommended_use\\\":\\\"목 장벽·속박 흔적\\\",\\\"caution\\\":\\\"가느다란 내부 선을 과도하게 축소하지 않는다\\\",\\\"alpha_mean\\\":14.277007023876399,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_33.mat\\\",\\\"guid\\\":\\\"983cdb7286c43424bbf012996255dea1\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom02-05.prefab\\\",\\\"guid\\\":\\\"29977bd6259b44141ab19ff49345ad40\\\",\\\"particle_systems\\\":15,\\\"looping_systems\\\":1}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}"
+        },
+        {
+            "glyph": "검",
+            "path": "Assets/_Project/Art/SpellVFX120/Profiles/010_AC80.asset",
+            "sha256Before": "c09e000a498e579b385a6f5d39774e3cb1ed6889619822e63c646415f2b37873",
+            "botanicalPrefabBefore": "",
+            "kindBefore": "None",
+            "jsonBefore": "{\"Glyph\":\"검\",\"Title\":\"그늘을 심는 나무\",\"Intent\":\"나무를 심어 그 영역 안에서 회복 — 나무는 시간 경과 또는 피격 시 소멸\",\"Family\":\"Tree\",\"Assigned\":true,\"Behavior\":4,\"Layout\":5,\"BodyMesh\":{\"instanceID\":-1108516},\"AccentMesh\":{\"instanceID\":-1049594},\"GuardianMeshes\":[],\"GuardianPivots\":[],\"GuardianFistContact\":{\"x\":0.0,\"y\":0.0,\"z\":0.0},\"BodyMaterial\":{\"instanceID\":-1109060},\"InkMaterial\":{\"instanceID\":-1049818},\"PatternMaterial\":{\"instanceID\":-1050014},\"MistMaterial\":{\"instanceID\":-1049832},\"NativeCastPrefab\":{\"instanceID\":1127538},\"NativeImpactPrefab\":{\"instanceID\":0},\"NativeFieldPrefab\":{\"instanceID\":0},\"NativeFieldRole\":2,\"NativeScale\":0.47999998927116396,\"NativeImpactScale\":1.0,\"NativeReplaceBody\":false,\"NativeBodyPrefab\":{\"instanceID\":0},\"NativeBodyMotion\":0,\"BotanicalPrefab\":{\"instanceID\":0},\"BotanicalKind\":0,\"SummonPrefab\":{\"instanceID\":0},\"SummonScale\":1.0,\"SummonYaw\":0.0,\"Pigment\":{\"r\":0.25882354378700259,\"g\":0.4313725531101227,\"b\":0.3450980484485626,\"a\":1.0},\"Accent\":{\"r\":0.5058823823928833,\"g\":0.6392157077789307,\"b\":0.5921568870544434,\"a\":1.0},\"Ink\":{\"r\":0.07500000298023224,\"g\":0.06499999761581421,\"b\":0.057999998331069949,\"a\":1.0},\"Count\":1,\"RibbonCount\":2,\"Size\":2.299999952316284,\"PartScale\":{\"x\":2.5999999046325685,\"y\":2.5999999046325685,\"z\":2.5999999046325685},\"Duration\":4.599999904632568,\"Flight\":0.44999998807907107,\"Turns\":0.20000000298023225,\"Lift\":0.0,\"Stagger\":0.3199999928474426,\"UseMist\":false,\"Grounded\":true,\"SourcePattern\":\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png\",\"RecipeJson\":\"{\\\"design\\\":{\\\"index\\\":10,\\\"glyph\\\":\\\"검\\\",\\\"initial\\\":\\\"ㄱ\\\",\\\"element\\\":\\\"목\\\",\\\"vowel\\\":\\\"ㅓ\\\",\\\"final\\\":\\\"ㅁ\\\",\\\"frame\\\":\\\"음·단일\\\",\\\"classification\\\":\\\"버프\\\",\\\"assignment\\\":\\\"ASSIGNED_EXISTING_GAMEPLAY\\\",\\\"gameplayEffectVerbatim\\\":\\\"나무를 심어 그 영역 안에서 회복 — 나무는 시간 경과 또는 피격 시 소멸\\\",\\\"sourceNote\\\":\\\"\\\",\\\"visualTitle\\\":\\\"그늘을 심는 나무\\\",\\\"shape\\\":\\\"낮고 비뚤어진 소나무 관형 실루엣과 그늘 원\\\",\\\"motion\\\":\\\"뿌리 굵기 성장 후 가지가 늦게 펴짐\\\",\\\"pattern\\\":\\\"당초 뿌리·송엽\\\",\\\"accent\\\":\\\"연한 비색 그늘\\\",\\\"cast\\\":\\\"땅의 먹 점이 뿌리 별 모양으로 퍼짐\\\",\\\"travel\\\":\\\"투사 이동 없이 지면에서 나무를 세움\\\",\\\"impact\\\":\\\"회복 범위는 잎 그늘과 성긴 바닥 문양으로 표시\\\",\\\"resolve\\\":\\\"피격 소멸은 가지 흔들림 후 낙엽 만료는 먹이 뿌리로 회수\\\",\\\"material\\\":{\\\"primary\\\":\\\"젖은 나무결·갈필 잎 섬유\\\",\\\"emission\\\":\\\"시전/접점 순간만 허용; 지속은 명도·농도·광택으로 표현\\\"},\\\"recipe\\\":{\\\"primitive\\\":\\\"Vine\\\",\\\"secondaryPrimitives\\\":[\\\"Leaf\\\",\\\"Ribbon\\\"],\\\"layout\\\":\\\"Pillar\\\",\\\"behavior\\\":\\\"Heal\\\",\\\"count\\\":13,\\\"layers\\\":4,\\\"scale\\\":2.1,\\\"duration\\\":4.6,\\\"countMeaning\\\":\\\"전시 VFX의 주 형상 수; 게임 투사체·피해 틱·소환 개체 수가 아님\\\",\\\"durationMeaning\\\":\\\"초 단위 검수 타임라인 기본값. 실제 수명·단계는 게임 이벤트를 따르며 이 값으로 판정 시간을 변경하지 않음\\\",\\\"scaleMeaning\\\":\\\"미터를 기준으로 한 검수 프리팹 기본 크기; 실제 공격 반경과 이동거리는 게임 데이터 연결\\\",\\\"phaseFractions\\\":{\\\"cast\\\":[0,0.16],\\\"travel\\\":[0.16,0.52],\\\"impact\\\":[0.52,0.7],\\\"resolve\\\":[0.7,1]},\\\"phaseTexts\\\":[\\\"땅의 먹 점이 뿌리 별 모양으로 퍼짐\\\",\\\"투사 이동 없이 지면에서 나무를 세움\\\",\\\"회복 범위는 잎 그늘과 성긴 바닥 문양으로 표시\\\",\\\"피격 소멸은 가지 흔들림 후 낙엽 만료는 먹이 뿌리로 회수\\\"],\\\"motionSignature\\\":\\\"뿌리 굵기 성장 후 가지가 늦게 펴짐\\\",\\\"geometrySignature\\\":\\\"낮고 비뚤어진 소나무 관형 실루엣과 그늘 원\\\",\\\"palette\\\":{\\\"primary\\\":\\\"#426E58\\\",\\\"secondary\\\":\\\"#81A397\\\",\\\"ink\\\":\\\"#2A2622\\\",\\\"paper\\\":\\\"#DED7C8\\\"},\\\"emissionPulseMaxNormalizedTime\\\":0.1,\\\"continuousEmission\\\":false,\\\"dispatchMode\\\":\\\"ExistingGameplayEvents\\\",\\\"raycastOrDamageAllowed\\\":false},\\\"verification\\\":\\\"NOT_IMPLEMENTED_BY_THIS_DESIGN_FILE\\\",\\\"patternSources\\\":[{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png\\\",\\\"guid\\\":\\\"9ee9ae19231d7fb4fb8ba731bdfaec49\\\",\\\"observed_motif\\\":\\\"모란형 꽃·잎 가지\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"조밀한 선화이므로 작은 파편보다 한 번 피는 큰 실루엣에 적합\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"},{\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_33.png\\\",\\\"guid\\\":\\\"92b48435c77fac54b804248fcfbf0713\\\",\\\"observed_motif\\\":\\\"잎과 줄기가 엮인 원형 당초 띠\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"caution\\\":\\\"가느다란 내부 선을 과도하게 축소하지 않는다\\\",\\\"maskChannel\\\":\\\"A\\\",\\\"reuse\\\":\\\"검수한 알파 문양을 신규 shape의 작은 면/띠에 배치; 원본 VFX prefab 재생 금지\\\"}],\\\"patternSourceMissing\\\":[],\\\"patternInterpretation\\\":\\\"pattern 필드는 디자인 목표 도상이다. patternSources의 실제 관찰 도상과 다른 항목은 그 이름으로 원본의 정체를 단정하지 않고 shape용 새 메시/리본으로 구성한다.\\\",\\\"requiredVisualEvents\\\":[\\\"BuffApplied\\\",\\\"BuffRelevantEvent\\\",\\\"BuffExpired\\\"],\\\"readability\\\":\\\"그늘을 심는 나무: 낮고 비뚤어진 소나무 관형 실루엣과 그늘 원와 뿌리 굵기 성장 후 가지가 늦게 펴짐가 흑백에서도 보여야 한다.\\\"},\\\"authoredDefinitionOverrides\\\":{\\\"family\\\":\\\"Vine\\\",\\\"accentFamily\\\":\\\"Leaf\\\"},\\\"previewNumericAuthoring\\\":{\\\"count\\\":5,\\\"size\\\":0.66,\\\"partScale\\\":{\\\"x\\\":1.35,\\\"y\\\":1.1,\\\"z\\\":1.95},\\\"flight\\\":0.45,\\\"turns\\\":0.2,\\\"lift\\\":1.6,\\\"stagger\\\":0.32,\\\"ribbons\\\":2,\\\"grounded\\\":true,\\\"mist\\\":false},\\\"patternEvidence\\\":{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png\\\",\\\"guid\\\":\\\"9ee9ae19231d7fb4fb8ba731bdfaec49\\\",\\\"size\\\":[500,500],\\\"mode\\\":\\\"RGBA\\\",\\\"maxTextureSize\\\":2048,\\\"mipmap_enabled\\\":false,\\\"unity_asset_path\\\":\\\"Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png\\\",\\\"visual_status\\\":\\\"VISUALLY_REVIEWED_SOURCE_THUMBNAIL\\\",\\\"evidence\\\":\\\"Art/SpellVFX120/AssetAudit/traditional_001_050.jpg\\\",\\\"observed_motif\\\":\\\"모란형 꽃·잎 가지\\\",\\\"recommended_use\\\":\\\"목 계열 회복·피어남\\\",\\\"caution\\\":\\\"조밀한 선화이므로 작은 파편보다 한 번 피는 큰 실루엣에 적합\\\",\\\"alpha_mean\\\":19.94508,\\\"rgba_extrema\\\":[[255,255],[255,255],[255,255],[0,255]],\\\"recommended_material_work\\\":\\\"Reuse alpha coverage, tint RGB with new ink shader. Do not use RGB luminance as mask (RGB is solid white).\\\",\\\"source_materials\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_3.mat\\\",\\\"guid\\\":\\\"efe5e6b829bbdd7488e0c85d516b3a6f\\\",\\\"shader\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\\\"}],\\\"source_prefab_examples\\\":[{\\\"path\\\":\\\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-04.prefab\\\",\\\"guid\\\":\\\"b306aa7e51f03a942a0f30d0f422014c\\\",\\\"particle_systems\\\":115,\\\"looping_systems\\\":2}]},\\\"dispatchStatus\\\":\\\"REVIEW_ONLY_UNCONNECTED\\\",\\\"runtimeLimit\\\":\\\"Recipe data alone does not implement per-glyph gameplay event choreography; inspect runtime and real capture separately.\\\"}\"}"
+        }
+    ],
+    "sourceFiles": [
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Plant/MI_TreeRoot.mat",
+            "sha256Before": "2eb23e468c3c77501168a69507ccc3a259a22232f387d4c7176b25de98a445ff",
+            "sha256After": "2eb23e468c3c77501168a69507ccc3a259a22232f387d4c7176b25de98a445ff"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Plant/MI_TreeRoot.mat.meta",
+            "sha256Before": "8130acd28a4b61826d6a578c870ca11236dd62cfac0e6df39a8511e8b01e1837",
+            "sha256After": "8130acd28a4b61826d6a578c870ca11236dd62cfac0e6df39a8511e8b01e1837"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Tree/MI_Henonis.mat",
+            "sha256Before": "678278e2d83d32ae50faa594663758eb820688020d024f89fb8eb8514e0a7a2a",
+            "sha256After": "678278e2d83d32ae50faa594663758eb820688020d024f89fb8eb8514e0a7a2a"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Tree/MI_Henonis.mat.meta",
+            "sha256Before": "7f01dbd9a6400aeab64df29e5e71a366eff94a7970c774222fc6569fd6c91f02",
+            "sha256After": "7f01dbd9a6400aeab64df29e5e71a366eff94a7970c774222fc6569fd6c91f02"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Tree/MI_Henonis_Leaf.mat",
+            "sha256Before": "d2f67d0e153d7d2f781d928e02148a81958a05c9eed6ddf6e5b1022f2e742287",
+            "sha256After": "d2f67d0e153d7d2f781d928e02148a81958a05c9eed6ddf6e5b1022f2e742287"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Tree/MI_Henonis_Leaf.mat.meta",
+            "sha256Before": "6694d3fe1258e470ca5158c3b57f2630ba599480801be69eb73abeaef42b0ade",
+            "sha256After": "6694d3fe1258e470ca5158c3b57f2630ba599480801be69eb73abeaef42b0ade"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Tree/MI_MeliaAzedarach_1.mat",
+            "sha256Before": "1c3c0b089aaa218b4929b6b476505e25f9fd984527cfb8d487d87e16b78d8af0",
+            "sha256After": "1c3c0b089aaa218b4929b6b476505e25f9fd984527cfb8d487d87e16b78d8af0"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Material/Tree/MI_MeliaAzedarach_1.mat.meta",
+            "sha256Before": "8390616b6acba5062eda37681a366c2c381d46825194df30c376b20c3532346e",
+            "sha256After": "8390616b6acba5062eda37681a366c2c381d46825194df30c376b20c3532346e"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Plant/SM_TreeRoot_1.fbx",
+            "sha256Before": "b53a4c1d0156009f7ba884b84c02a6839b5eed9f57db82fb65ecd34c66540479",
+            "sha256After": "b53a4c1d0156009f7ba884b84c02a6839b5eed9f57db82fb65ecd34c66540479"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Plant/SM_TreeRoot_1.fbx.meta",
+            "sha256Before": "9adf45dc132b46787d40b9ed51f353fefa7c0f7e0dfa98b431fed6c8a01641f2",
+            "sha256After": "9adf45dc132b46787d40b9ed51f353fefa7c0f7e0dfa98b431fed6c8a01641f2"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Tree/SM_Henonis_1.fbx",
+            "sha256Before": "90fd219b145ad0584157c8be893b60c1713532eccdb432eab584e228ea03d884",
+            "sha256After": "90fd219b145ad0584157c8be893b60c1713532eccdb432eab584e228ea03d884"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Tree/SM_Henonis_1.fbx.meta",
+            "sha256Before": "257b452cb249a103dac60a2e299eb01f44b5b03ce7cfa2b9b2327f1f3dfaa6d6",
+            "sha256After": "257b452cb249a103dac60a2e299eb01f44b5b03ce7cfa2b9b2327f1f3dfaa6d6"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Tree/SM_MeliaAzedarach_Winter_1.fbx",
+            "sha256Before": "611be85ee75ddf3903cf46b965a8298f04780ee4f80325751d8cc5752ac314a1",
+            "sha256After": "611be85ee75ddf3903cf46b965a8298f04780ee4f80325751d8cc5752ac314a1"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Mesh/Tree/SM_MeliaAzedarach_Winter_1.fbx.meta",
+            "sha256Before": "c5b633d9caff5e7ab0756d3ba706a125a752716a0ee338cf5fbe92b5e9f462da",
+            "sha256After": "c5b633d9caff5e7ab0756d3ba706a125a752716a0ee338cf5fbe92b5e9f462da"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab",
+            "sha256Before": "69ed946afb1d105fc606212e0f7fd9c86b9ae67b95955da92cb355c906559ed9",
+            "sha256After": "69ed946afb1d105fc606212e0f7fd9c86b9ae67b95955da92cb355c906559ed9"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab.meta",
+            "sha256Before": "ce8406e40d97b530d48523f12da9dc537b2633cc97aec76fd9cb6ef2b27d4a9d",
+            "sha256After": "ce8406e40d97b530d48523f12da9dc537b2633cc97aec76fd9cb6ef2b27d4a9d"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_MeliaAzedarach_Winter_1.prefab",
+            "sha256Before": "4e0e378e8e3e33f47a53e6baf31fdcdedf421d8025814cab7dced6916fa1ad34",
+            "sha256After": "4e0e378e8e3e33f47a53e6baf31fdcdedf421d8025814cab7dced6916fa1ad34"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_MeliaAzedarach_Winter_1.prefab.meta",
+            "sha256Before": "b8dec62484b9bfbe442b540c7f45c6da2cda5844ad25a017aa00dd297e815f92",
+            "sha256After": "b8dec62484b9bfbe442b540c7f45c6da2cda5844ad25a017aa00dd297e815f92"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_TreeRoot_1.prefab",
+            "sha256Before": "49fd25485cb044e154af2db06ba82f50c59e30ece489950158c442ca2cd890c9",
+            "sha256After": "49fd25485cb044e154af2db06ba82f50c59e30ece489950158c442ca2cd890c9"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Prefabs/SM_TreeRoot_1.prefab.meta",
+            "sha256Before": "c6c69378be53f83bf709790a156788477a32956924b8b8f11046fba1a3438e42",
+            "sha256After": "c6c69378be53f83bf709790a156788477a32956924b8b8f11046fba1a3438e42"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_BC.png",
+            "sha256Before": "887133c3a3a0e337cf548f336afd5c12cffef11e2b65c229695039aa233cffb9",
+            "sha256After": "887133c3a3a0e337cf548f336afd5c12cffef11e2b65c229695039aa233cffb9"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_BC.png.meta",
+            "sha256Before": "9529d98fcb2574a8297ee53be8cc7967a861a0fdbdf35d9ed0d2ee0f41a68e14",
+            "sha256After": "9529d98fcb2574a8297ee53be8cc7967a861a0fdbdf35d9ed0d2ee0f41a68e14"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_N.png",
+            "sha256Before": "8448c0404ed1649238454be05c31de5e717730955318a165c9914bb082585c2c",
+            "sha256After": "8448c0404ed1649238454be05c31de5e717730955318a165c9914bb082585c2c"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Plant/T_TreeRoot_N.png.meta",
+            "sha256Before": "8d5e9622685224d56d45210855cb655e7f9dd9b55c49b339ef5dcdabfc13b7f5",
+            "sha256After": "8d5e9622685224d56d45210855cb655e7f9dd9b55c49b339ef5dcdabfc13b7f5"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_BC.png",
+            "sha256Before": "a17508bd7137cf7f2938c2ca293de5a3d3524eefdd5009aec4a55c43620b131a",
+            "sha256After": "a17508bd7137cf7f2938c2ca293de5a3d3524eefdd5009aec4a55c43620b131a"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_BC.png.meta",
+            "sha256Before": "eb22f7f17e5ae0ad8fd1da07d7f3d676ac8c0ccc88dcd5f23ac2d82f16ebb5b0",
+            "sha256After": "eb22f7f17e5ae0ad8fd1da07d7f3d676ac8c0ccc88dcd5f23ac2d82f16ebb5b0"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_BC.png",
+            "sha256Before": "2352b354b1a244285f6dc381144e1122191406f27f0315f26c54963953346a72",
+            "sha256After": "2352b354b1a244285f6dc381144e1122191406f27f0315f26c54963953346a72"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_BC.png.meta",
+            "sha256Before": "6994e68b641e34e3937f0714b4bb31cf0b2017c03d1c1a9c218bc44a7ee2ddd3",
+            "sha256After": "6994e68b641e34e3937f0714b4bb31cf0b2017c03d1c1a9c218bc44a7ee2ddd3"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_N.png",
+            "sha256Before": "eadb32543fa724831ff46bfc7e28cd9475d965366a45728caf7b871439295492",
+            "sha256After": "eadb32543fa724831ff46bfc7e28cd9475d965366a45728caf7b871439295492"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_Leaf_N.png.meta",
+            "sha256Before": "7b5d6bf0b98a7f023a07be949e29c88708530065d8193709ce24511acac3c919",
+            "sha256After": "7b5d6bf0b98a7f023a07be949e29c88708530065d8193709ce24511acac3c919"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_N.png",
+            "sha256Before": "955ef05b2a6c33e58126bf40424c1b05d35ea266c38d1ff3cbf19f5c03249a3f",
+            "sha256After": "955ef05b2a6c33e58126bf40424c1b05d35ea266c38d1ff3cbf19f5c03249a3f"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_Henonis_N.png.meta",
+            "sha256Before": "b786e5cbecb482e64057cfd29cd97a84f245f87658849ec8c84dc0bfb1f2374a",
+            "sha256After": "b786e5cbecb482e64057cfd29cd97a84f245f87658849ec8c84dc0bfb1f2374a"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_BC.png",
+            "sha256Before": "ec4bad049ee18e165ddefce3a52312f711ee3e6eeb3b1838f2167d6b871b3d06",
+            "sha256After": "ec4bad049ee18e165ddefce3a52312f711ee3e6eeb3b1838f2167d6b871b3d06"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_BC.png.meta",
+            "sha256Before": "39278f9cce359cbf1f99624705035a431f30fccbc224cbfc669a2d0fcff7f9c8",
+            "sha256After": "39278f9cce359cbf1f99624705035a431f30fccbc224cbfc669a2d0fcff7f9c8"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_N.png",
+            "sha256Before": "bae90c500946f73dc7ff8a9a5aee8de915de8c2f0a92bf04483d4eb478805ad3",
+            "sha256After": "bae90c500946f73dc7ff8a9a5aee8de915de8c2f0a92bf04483d4eb478805ad3"
+        },
+        {
+            "path": "Assets/SeyeonjeongPavilion/Texture/Tree/T_MeliaAzedarach_1_N.png.meta",
+            "sha256Before": "e8eccba39cb4f52cc63ac3aebb61cac44609342d1c663842e0ac55b7c2eefc9c",
+            "sha256After": "e8eccba39cb4f52cc63ac3aebb61cac44609342d1c663842e0ac55b7c2eefc9c"
+        }
+    ]
+}

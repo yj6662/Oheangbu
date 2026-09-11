@@ -1,0 +1,165 @@
+{
+  "schema": 2,
+  "started_at": "2026-09-10T19:36:16.973863+00:00",
+  "original_ledger_sha256": "be30427f835042e8e41f9b953d8381dcd962b85640de8dfc9e75000a7ae7b265",
+  "prior_summon_batches_actual_credits": 205,
+  "self_imposed_run_cap": 35,
+  "budget_basis": "Self-imposed cap 35: one Meshy 7 Ultra preview at 25 and one refine at 10. No automatic paid retries. Separate from earlier batches; not a user-set limit.",
+  "balance_start": 363,
+  "price_checked_at": "2026-09-10T19:36:16.974278+00:00",
+  "price_source": "https://docs.meshy.ai/en/api/pricing",
+  "api_source": "https://docs.meshy.ai/en/api/text-to-3d",
+  "prices": {
+    "meshy7_ultra_preview": 25,
+    "meshy7_refine_2k_pbr": 10
+  },
+  "input_policy": "Authored text only. No KTP or other paid asset images uploaded.",
+  "automatic_post_retries": false,
+  "requests": [
+    {
+      "name": "064_BAB8_preview",
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "family": "StoneDokkaebi",
+      "mode": "preview",
+      "created_at": "2026-09-10T19:36:36.284699+00:00",
+      "config": {
+        "mode": "preview",
+        "prompt": "A Korean folk dokkaebi made entirely of natural weathered rock. Squat broad pear-shaped boulder torso, very wide shoulders, oversized chunky stone fists, short bowed legs and two broad bare rock feet. Huge expressive carved eyes, thick curved eyebrows, bulbous flat nose, lopsided mischievous toothy grin with two short blunt tusks, two tiny worn stone horns. Amusing but powerful village guardian, not evil. Bare stone anatomy flows continuously, rounded eroded granite masses with broad shallow cracks. Neutral standing pose, fists hanging beside hips, clear gaps under arms and between feet. Complete freestanding creature. No armor, belt, boots, clothing, weapons, pedestal, lettering, jewels or glowing lava. No Minecraft cubes, knight or robot.",
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": true,
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 12000,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 25,
+      "reserved_credits": 25,
+      "consumed_credits": 25,
+      "status": "SUCCEEDED",
+      "balance_before": 363,
+      "config_sha256": "7ad1149dfc24cbb3dad14bf890b378706a10f51be6dbfd1d649e60baa39dd7ef",
+      "task_id": "01a08cd2-73e5-70f0-85d5-e4a8d11f6e68",
+      "progress": 100,
+      "polled_at": "2026-09-10T19:44:48.244461+00:00",
+      "files": [
+        {
+          "path": "064_BAB8\\preview\\model_urls_glb.glb",
+          "bytes": 496080,
+          "sha256": "36384d2c01552a3224e4a2b5d49d63192b7ccfdc13de0ae42be93efd83c9d62a",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12547,
+            "primitive_vertices": 13117,
+            "meshes": 1,
+            "materials": 0,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "064_BAB8\\preview\\model_urls_fbx.fbx",
+          "bytes": 526108,
+          "sha256": "aba7c27dd599e0bb7132c1cab8dc4ec213e94c6befb437156a4b122aac56f74d"
+        },
+        {
+          "path": "064_BAB8\\preview\\thumbnail_url.png",
+          "bytes": 99852,
+          "sha256": "9d0011348e304a28aafc26566fe4d4b4c9d9eac16ff3b2d910ce17c6b9e7ed28"
+        }
+      ],
+      "geometry_review": {
+        "decision": "ACCEPTED_FOR_REFINE",
+        "notes": "Reusable broad unarmored dokkaebi base with expressive face. Not final visual approval: shorten tall horns and enlarge stone hands locally in Blender.",
+        "reviewed_at": "2026-09-10T19:43:05.297192+00:00",
+        "scope": "Actual preview thumbnail visual check. Full turntable, rigging and Unity runtime remain unverified."
+      }
+    },
+    {
+      "name": "064_BAB8_refine",
+      "id": "064_BAB8",
+      "glyph": "몸",
+      "family": "StoneDokkaebi",
+      "mode": "refine",
+      "created_at": "2026-09-10T19:43:09.523374+00:00",
+      "config": {
+        "mode": "refine",
+        "preview_task_id": "01a08cd2-73e5-70f0-85d5-e4a8d11f6e68",
+        "ai_model": "meshy-7",
+        "texture_resolution": "2k",
+        "enable_pbr": true,
+        "texture_prompt": "Warm grey granite and dusty muted ochre clay in broad natural cracks. Rough matte weathered stone with fine mineral grain. Dark carved recesses emphasize expressive eyes, eyebrows and smiling mouth. Teeth and tiny horns are the same stone. Sparse moss stains in sheltered creases only. No metal, lava, bright glow, jewelry, paint, lettering, armor or clothing.",
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "expected_credits": 10,
+      "reserved_credits": 10,
+      "consumed_credits": 10,
+      "status": "SUCCEEDED",
+      "balance_before": 338,
+      "config_sha256": "967ab9b2dade76ae71e105178b428af9447becd8ceed4738dfd82a94faf3f309",
+      "task_id": "01a08cd8-740e-7164-aeca-c6899b3fdf1c",
+      "progress": 100,
+      "polled_at": "2026-09-10T19:44:48.630561+00:00",
+      "files": [
+        {
+          "path": "064_BAB8\\refine\\model_urls_glb.glb",
+          "bytes": 8966516,
+          "sha256": "8cbeeb22e3a978b85ee4e1b9caf4405ee9eba275438dc22f72fd9d1d69db7fbd",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 12547,
+            "primitive_vertices": 13117,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "064_BAB8\\refine\\model_urls_fbx.fbx",
+          "bytes": 14381084,
+          "sha256": "7b6ba13ee77bf1e7f01f11ebbdea8ebf945c5ae1748c4dfe45e12cee3be4913d"
+        },
+        {
+          "path": "064_BAB8\\refine\\thumbnail_url.png",
+          "bytes": 116428,
+          "sha256": "1f32ca9c849281b262e265c9524d83322f953b0e28953f689ce5cc59a432a483"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_base_color.png",
+          "bytes": 6398472,
+          "sha256": "b637874e5ebbd3f5225deb802a000bca5351dd4cc6f789ea5da5ce3f37632e6f"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_metallic.png",
+          "bytes": 31350,
+          "sha256": "b70e7d45a453f122a13ef7da2981b75193f9fd1e7891c8ca0b013871311b3624"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_roughness.png",
+          "bytes": 1394946,
+          "sha256": "ef7ce17ab2c9a11d1262d1722dbaea2e42e9a9abccb213a3d39350cac890a960"
+        },
+        {
+          "path": "064_BAB8\\refine\\texture_urls_0_normal.png",
+          "bytes": 6020432,
+          "sha256": "255d8884e560a3961d9320b66f13239930c1106151804d25a2563e5648e2d7ae"
+        }
+      ]
+    }
+  ],
+  "balance_latest": 328,
+  "balance_checked_at": "2026-09-10T19:44:52.181446+00:00",
+  "original_ledger_preserved": true
+}

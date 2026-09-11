@@ -1,0 +1,12 @@
+{
+  "glyph": "석",
+  "untouched": {
+    "Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\Profiles\\087_C190.asset": true,
+    "Oheangbu\\Assets\\_Project\\Art\\SpellVFX120\\Profiles\\082_C12C.asset": true
+  },
+  "changedFields": [
+    "BodyMesh",
+    "PartScale"
+  ],
+  "visualReview": "AWAITING_USER"
+}

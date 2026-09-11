@@ -21,19 +21,37 @@ MonoBehaviour:
   Assigned: 1
   Behavior: 0
   Layout: 11
-  BodyMesh: {fileID: 4300000, guid: 2b3bcdbf3ef4ed14d9e21ea45de455ed, type: 2}
-  AccentMesh: {fileID: 4300000, guid: a50ca8db1c4b5914c926f2ccd3dca4fa, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: 4d09b218c52390a4880015b432b4141d, type: 2}
+  BodyMesh: {fileID: 4300000, guid: dad3020809ffc6448b612727f4c4ddf5, type: 2}
+  AccentMesh: {fileID: 4300000, guid: c0648465f9d2d584d9d9dabf44ccf25a, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: 147db48a4d39de140929c17de95eff3e, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: dd3d0f93fb19cd74ebb16ee336653aab, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 8596f314d7f325c458ff742b46102ee8, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 4856323850948656824, guid: e57453308a1b60c4082845d066fdee35, type: 3}
+  NativeImpactPrefab: {fileID: 4604452158487232088, guid: f89f2f212562d4f4d8154dbaab5621d9, type: 3}
+  NativeFieldPrefab: {fileID: 0}
+  NativeFieldRole: 2
+  NativeScale: 0.22
+  NativeImpactScale: 0.38
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.25882354, g: 0.43137255, b: 0.34509805, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
   Count: 1
-  RibbonCount: 2
+  RibbonCount: 0
   Size: 0.62
-  PartScale: {x: 0.72, y: 0.64, z: 0.94}
+  PartScale: {x: 1, y: 1, z: 1}
   Duration: 2.6
   Flight: 0.6
   Turns: 0.65
@@ -41,7 +59,7 @@ MonoBehaviour:
   Stagger: 0.05
   UseMist: 0
   Grounded: 0
-  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_3.png
+  SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_192.png
   RecipeJson: "{\"design\":{\"index\":3,\"glyph\":\"\uAC04\",\"initial\":\"\u3131\",\"element\":\"\uBAA9\",\"vowel\":\"\u314F\",\"final\":\"\u3134\",\"frame\":\"\uC591\xB7\uB2E8\uC77C\",\"classification\":\"\uACF5\uACA9\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uBC15\uD78C
     \uAC00\uC2DC\uC758 \uBD88\uC528 \u2014 \uB300\uC0C1\uC774 \uC4F0\uB7EC\uC9C0\uAC70\uB098
     \uC2DC\uAC04\uC774 \uC9C0\uB098\uBA74 \uAC00\uC7A5 \uAC00\uAE4C\uC6B4 \uC801\uC5D0\uAC8C

@@ -1,0 +1,24 @@
+{
+    "status": "PASS_DIAGNOSTIC_VISUAL_PENDING",
+    "mvid": "4dc0ba58-86fc-4046-813f-df0bb10eff9c",
+    "limitation": "Static exterior / summon VFX only. No rig, gameplay summon, AI or combat.",
+    "clips": [
+        {
+            "view": "play",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\WaterTurtle\\play",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.8218227624893189,
+            "footError": 0.008000016212463379
+        },
+        {
+            "view": "external",
+            "folder": "C:\\Users\\yj666\\Oheangbu\\Art/SpellVFX120\\WaterTurtle\\external",
+            "frames": 132,
+            "ended": true,
+            "commitRatio": 0.8284443020820618,
+            "footError": 0.008000016212463379
+        }
+    ],
+    "errors": []
+}

@@ -1,0 +1,71 @@
+{
+    "status": "BUILT_SOURCE_PRESERVED",
+    "sources": [
+        {
+            "role": "Wood",
+            "path": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+            "guid": "a97ce257277d3a8478674b56e65812ce",
+            "sha256": "2D3A687BB11139DB7A5431A530B9C151FD81549DAFCEE64AEA400AA520EDC216",
+            "localId": 5023849406344518014,
+            "systems": 13,
+            "capacity": 13000,
+            "inPreview": true,
+            "shadersSupported": true
+        },
+        {
+            "role": "Fire",
+            "path": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+            "guid": "42922e53f4a0bea4aa957719785e879e",
+            "sha256": "C6EA0405BBB39B0EEE7C8BE2E293171C488C63523C25067490D9D169EAF489F4",
+            "localId": 5462539086460949562,
+            "systems": 17,
+            "capacity": 17000,
+            "inPreview": true,
+            "shadersSupported": true
+        },
+        {
+            "role": "Earth",
+            "path": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+            "guid": "5afa2a32d5a12864c9ed106274815d59",
+            "sha256": "7031F6AA92AB7AAD320326786EDD16DC167A65B2AC20707FADE15278B586D40F",
+            "localId": 2326031602051356113,
+            "systems": 11,
+            "capacity": 11000,
+            "inPreview": true,
+            "shadersSupported": true
+        },
+        {
+            "role": "Metal",
+            "path": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly07-01.prefab",
+            "guid": "bd9011ae9b9af4a4a93e7811cd52de1c",
+            "sha256": "38740B8564003B1296BA7ABA29DAB193375FC8A72C22B332E9BEEF02EC7D3E24",
+            "localId": 310556613315223650,
+            "systems": 13,
+            "capacity": 13000,
+            "inPreview": true,
+            "shadersSupported": true
+        },
+        {
+            "role": "Water",
+            "path": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-01.prefab",
+            "guid": "db918b36e8fa4464a9ff945523bbd72e",
+            "sha256": "7685130CF252CF09573F1C413408AC32BBB5C413C3CE260AFAA8FC2FDDA875AE",
+            "localId": 26203807542700346,
+            "systems": 11,
+            "capacity": 11000,
+            "inPreview": true,
+            "shadersSupported": true
+        },
+        {
+            "role": "PlayerHit",
+            "path": "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly03-01.prefab",
+            "guid": "42922e53f4a0bea4aa957719785e879e",
+            "sha256": "C6EA0405BBB39B0EEE7C8BE2E293171C488C63523C25067490D9D169EAF489F4",
+            "localId": 5462539086460949562,
+            "systems": 17,
+            "capacity": 17000,
+            "inPreview": true,
+            "shadersSupported": true
+        }
+    ]
+}

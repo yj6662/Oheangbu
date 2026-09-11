@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal61/038_B179.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated61/038_B179.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills61/038_B179_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills61/038_B179_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills61/038_B179_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/038_B179_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills61/038_B179_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NOK_038_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NO_037_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "fire_healing_038_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "nok61_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B179.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills61",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills61",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames61",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames61",
+      "mvid_match": true
+    }
+  ]
+}

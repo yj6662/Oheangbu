@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "changed": [
+    "Oheangbu/Assets/_Project/Art/SpellVFX120/Profiles/019_AD6C.asset",
+    "Oheangbu/Assets/_Project/Art/SpellVFX120/Profiles/043_B204.asset",
+    "Oheangbu/Assets/_Project/Art/SpellVFX120/Profiles/067_BB34.asset",
+    "Oheangbu/Assets/_Project/Art/SpellVFX120/Profiles/091_C218.asset",
+    "Oheangbu/Assets/_Project/Art/SpellVFX120/Profiles/115_C6B0.asset"
+  ],
+  "other115ProfilesUnchanged": true,
+  "spellBookUnchanged": true,
+  "supplierAssetsUnchanged": true,
+  "clips": 10,
+  "stills": 20,
+  "maxCommitRatio": 0.7979808449745178,
+  "auditChecks": 425
+}

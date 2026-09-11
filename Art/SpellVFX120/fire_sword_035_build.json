@@ -1,0 +1,9 @@
+{
+    "glyph": "넛",
+    "status": "AUTHORED_AWAITING_USER_VISUAL_REVIEW",
+    "technicalCheck": "PASS_GRIP_FIRE_CONFIRMED_MOTIF_AND_CLEANUP",
+    "particleSystems": 7,
+    "maxParticleCapacity": 432,
+    "patternTris": 4,
+    "bladeTris": 8
+}

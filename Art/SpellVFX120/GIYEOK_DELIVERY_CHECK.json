@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "assigned": 20,
+  "blankCount": 4,
+  "verifiedVideos": 40,
+  "referencedFiles": 239,
+  "missing": [],
+  "runtimeAudits": 20,
+  "visualReview": "AWAITING_USER_REVIEW",
+  "inputAudit": "PASS_THREE_SEPARATE_INPUT_RUNS",
+  "inputGlyphs": "가고거",
+  "sceneRestoredToEdit": true
+}

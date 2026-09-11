@@ -1,0 +1,87 @@
+{
+    "status": "STATIC_IMPORT_AND_PROFILE_CONNECTION_ONLY",
+    "runtime": "UNVERIFIED",
+    "animation": "NOT_AUTHORED",
+    "art": "PROVISIONAL",
+    "actualTriangles": 37489,
+    "models": [
+        {
+            "id": "016_ACF0",
+            "prefab": "Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/PF_Summon_016_ACF0.prefab",
+            "shader": "Universal Render Pipeline/Lit",
+            "requestedPolycount": 12000,
+            "actualTriangles": 12543,
+            "vertices": 15132,
+            "renderers": 1,
+            "skins": 0,
+            "animators": 0,
+            "size": {
+                "x": 0.7479232549667358,
+                "y": 2.1999998092651369,
+                "z": 1.5634297132492066
+            },
+            "bottom": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "shaderSupported": true,
+            "baseMap": true,
+            "normalMap": true,
+            "maskMap": true,
+            "triangleMatch": true
+        },
+        {
+            "id": "040_B188",
+            "prefab": "Assets/_Project/Art/SpellVFX120/MeshySummons/040_B188/PF_Summon_040_B188.prefab",
+            "shader": "Universal Render Pipeline/Lit",
+            "requestedPolycount": 12000,
+            "actualTriangles": 12532,
+            "vertices": 15880,
+            "renderers": 1,
+            "skins": 0,
+            "animators": 0,
+            "size": {
+                "x": 0.9783129692077637,
+                "y": 1.5500000715255738,
+                "z": 2.271097183227539
+            },
+            "bottom": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "shaderSupported": true,
+            "baseMap": true,
+            "normalMap": true,
+            "maskMap": true,
+            "triangleMatch": true
+        },
+        {
+            "id": "088_C19C",
+            "prefab": "Assets/_Project/Art/SpellVFX120/MeshySummons/088_C19C/PF_Summon_088_C19C.prefab",
+            "shader": "Universal Render Pipeline/Lit",
+            "requestedPolycount": 12000,
+            "actualTriangles": 12414,
+            "vertices": 18137,
+            "renderers": 1,
+            "skins": 0,
+            "animators": 0,
+            "size": {
+                "x": 1.084836483001709,
+                "y": 1.4000003337860108,
+                "z": 3.0669167041778566
+            },
+            "bottom": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "shaderSupported": true,
+            "baseMap": true,
+            "normalMap": true,
+            "maskMap": true,
+            "triangleMatch": true
+        }
+    ]
+}

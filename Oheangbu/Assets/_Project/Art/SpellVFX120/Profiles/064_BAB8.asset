@@ -36,22 +36,94 @@ MonoBehaviour:
   - {fileID: 4300000, guid: 575238baa6edcf94fb18cf18ee489590, type: 2}
   - {fileID: 4300000, guid: 47e31323172f9b74d854ee338937ac3c, type: 2}
   GuardianPivots:
-  - {x: 0, y: -0.24381116, z: -0.03742083}
-  - {x: 0, y: -0.17472655, z: -0.046056412}
-  - {x: 0, y: 0.12464017, z: -0.03569372}
-  - {x: -0.2302821, y: 0.04979849, z: -0.043177888}
-  - {x: -0.28785262, y: -0.15169832, z: -0.023028204}
+  - {x: -0, y: -0.24381116, z: -0.03742083}
+  - {x: -0, y: -0.17472655, z: -0.046056412}
+  - {x: -0, y: 0.12464017, z: -0.03569372}
   - {x: 0.2302821, y: 0.04979849, z: -0.043177888}
   - {x: 0.28785262, y: -0.15169832, z: -0.023028204}
-  - {x: -0.103626944, y: -0.28411055, z: -0.028785255}
-  - {x: -0.103626944, y: -0.42515832, z: 0.011514112}
+  - {x: -0.2302821, y: 0.04979849, z: -0.043177888}
+  - {x: -0.28785262, y: -0.15169832, z: -0.023028204}
   - {x: 0.103626944, y: -0.28411055, z: -0.028785255}
   - {x: 0.103626944, y: -0.42515832, z: 0.011514112}
-  GuardianFistContact: {x: 0.34254462, y: -0.23229708, z: 0.15198618}
+  - {x: -0.103626944, y: -0.28411055, z: -0.028785255}
+  - {x: -0.103626944, y: -0.42515832, z: 0.011514112}
+  GuardianFistContact: {x: -0.34254462, y: -0.23229708, z: 0.15198618}
   BodyMaterial: {fileID: 2100000, guid: 4440aec3d4bab7948b838a5e96a1e191, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 19378912170973d4e8e3aa5c3bdd470e, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 5591618528751999182, guid: 2ad741f9163e4af44b6ce6a2f78ef0c9, type: 3}
+  NativeImpactPrefab: {fileID: 5086923116799032211, guid: b9f4ad1bad8ecab459057c8bafba1680, type: 3}
+  NativeFieldPrefab: {fileID: 9213351629237540616, guid: 83b5595f3b555db4289b820752071f84, type: 3}
+  NativeFieldRole: 2
+  NativeScale: 0.65
+  NativeImpactScale: 1
+  KtpEmphasis: 0
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1
+  KtpBrightness: 1
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 0
+  AreaContactPrefab: {fileID: 0}
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 0
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 0
+  EarthRift: 0
+  BranchedEarthRift: 0
+  ProceduralEarthRift: 0
+  WardKind: 0
+  WardRadius: 3
+  WardHeight: 2.2
+  WardFormation: 0.45
+  WardFade: 0.5
+  WardMaterial: {fileID: 0}
+  WardWaterMaterial: {fileID: 0}
+  WardPatternPrefab: {fileID: 0}
+  WardContactPrefab: {fileID: 0}
+  WardDebrisPrefab: {fileID: 0}
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  WoodDeerPresentation: 0
+  WoodDeerPrefab: {fileID: 0}
+  WoodDeerSeal: {fileID: 0}
+  WoodDeerDebris: {fileID: 0}
+  FireHaetaePresentation: 0
+  FireHaetaePrefab: {fileID: 0}
+  FireHaetaeSeal: {fileID: 0}
+  FireHaetaeDebris: {fileID: 0}
+  MetalTigerPresentation: 0
+  MetalTigerPrefab: {fileID: 0}
+  MetalTigerSeal: {fileID: 0}
+  MetalTigerDebris: {fileID: 0}
+  DokkaebiClubPresentation: 1
+  DokkaebiClubPrefab: {fileID: 4859521925260051080, guid: 291099305e90c0640ac251c968588744, type: 3}
+  DokkaebiClubSeal: {fileID: 3981482791533067891, guid: 16972f2db041b2b4c85e95503a45f3a1, type: 3}
+  DokkaebiClubDebris: {fileID: 8252621134891875414, guid: 6333750a75c6c5a4ea798bd1c520163f, type: 3}
+  StoneDokkaebiPresentation: 0
+  StoneDokkaebiPrefab: {fileID: 3369803038395786302, guid: 688d63d177c6b884eb71a153b94c1255, type: 3}
+  StoneDokkaebiSeal: {fileID: 6729123738570677, guid: aedcb71654e8acf48891503880325f29, type: 3}
+  StoneDokkaebiDebris: {fileID: 4478574011276766406, guid: 3ed5eea8deb43db4da1168f288cef14f, type: 3}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.5921569, g: 0.4509804, b: 0.2627451, a: 1}
   Accent: {r: 0.6509804, g: 0.69803923, b: 0.627451, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}

@@ -1,0 +1,325 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using Oheangbu.App.SpellVFX120;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
+
+namespace Oheangbu.EditorTools.SpellVFX120
+{
+    // Optional visual candidate for the existing 오. No input, AreaPlan, clock,
+    // collision, native motif, count, or source mesh/material is edited here.
+    public static class Vfx120WaterRollBuilder
+    {
+        private const string MeshPath = "Assets/_Project/Art/SpellVFX120/Meshes/WaterRoll20.asset";
+        private const string MaterialPath = "Assets/_Project/Art/SpellVFX120/Materials/M_Body_KTP_WaterRoll20.mat";
+        private const string PatternPath = "Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_204.png";
+        private const int XSegments = 48, RingPoints = 48;
+        [Serializable] private sealed class AssetRef { public string path, guid; public long localId; }
+        [Serializable] private sealed class SourceHash { public string path, before, after; public bool unchanged; }
+        [Serializable] private sealed class Original
+        {
+            public string capturedUtc, profilePath, profileGuid, profileBefore;
+            public AssetRef bodyMesh, bodyMaterial;
+            public Vector3 partScale;
+            public List<SourceHash> sources = new List<SourceHash>();
+        }
+        [Serializable] private sealed class MeshStats
+        {
+            public int vertices, triangles, weldedVertices, weldedEdges, boundaryEdges, nonManifoldEdges, degenerateTriangles, euler;
+            public int submeshes, vertexBuffers, xSegments, ringPoints;
+            public float minimumTriangleArea, signedVolume;
+            public Bounds bounds;
+            public bool finite, unitNormals, completeUvAndColor, weldedClosed, smoothSeamNormals;
+        }
+        [Serializable] private sealed class Report
+        {
+            public string status, generatedUtc, mesh, material, originalLedger, profileBeforeOperation, profileAfterOperation;
+            public string scope = "ONE_STATIC_ROLLING_CREST_CANDIDATE; editor structure/source preservation only. Runtime position, animation/lifetime, contact coverage and art are UNVERIFIED.";
+            public string geometry = "48 X intervals, 48 samples around one closed asymmetric Bezier section. Side points collapse to one vertex each; UV seam duplicates are position-welded for topology validation. +Z travel, one left-biased broad crest, lagging sides. Bounds centre is zero. Source Pattern204 UVs wrap uniformly around the section.";
+            public bool originalSourcesUnchanged, otherProfileFieldsUnchanged;
+            public int profileCount;
+            public Vector3 appliedScale, fullLocalDimensions;
+            public Original original;
+            public MeshStats statistics;
+            public List<SourceHash> sourceChecks = new List<SourceHash>();
+        }
+        private static string LedgerPath => Path.Combine(Vfx120Editor.Output, "water_roll20_original.json");
+
+        public static string Build()
+        {
+            RequireEdit();
+            var profile = Profile();
+            Require(profile.Count == 1, "오 must already use Count=1; this candidate never changes Count.");
+            var original = ReadOrCaptureOriginal(profile);
+            var basis = Resolve<Material>(original.bodyMaterial);
+            var oldMesh = Resolve<Mesh>(original.bodyMesh);
+            Require(basis != null && oldMesh != null, "Original body references are unavailable.");
+            Require(basis.shader != null && basis.shader.isSupported && basis.HasProperty("_RolledWater"),
+                "Source shader must expose supported _RolledWater before building.");
+            int property = Enumerable.Range(0, basis.shader.GetPropertyCount())
+                .First(i => basis.shader.GetPropertyName(i) == "_RolledWater");
+            var propertyType = basis.shader.GetPropertyType(property);
+            Require(propertyType == ShaderPropertyType.Float || propertyType == ShaderPropertyType.Range,
+                "_RolledWater must be Float or Range.");
+            Require(basis.HasProperty("_BaseMap") && AssetDatabase.GetAssetPath(basis.GetTexture("_BaseMap")) == PatternPath,
+                "Original 오19 material must still reference Pattern204.");
+            var checks = CheckSources(original);
+            Require(checks.All(s => s.unchanged), "An original source differs from the first-build ledger; do not overwrite that baseline.");
+            var existingMesh = Owned<Mesh>(MeshPath); var material = Owned<Material>(MaterialPath);
+            string before = JsonUtility.ToJson(profile), unchanged = OtherFields(profile);
+            var candidate = MakeMesh();
+            try
+            {
+                Validate(candidate); // Reject invalid geometry before writing any owned asset.
+                EnsureFolder(Path.GetDirectoryName(MeshPath).Replace('\\', '/'));
+                EnsureFolder(Path.GetDirectoryName(MaterialPath).Replace('\\', '/'));
+                Mesh mesh;
+                if (existingMesh == null) { mesh = candidate; AssetDatabase.CreateAsset(mesh, MeshPath); }
+                else { mesh = existingMesh; CopyNative(candidate, mesh); }
+                if (material == null)
+                {
+                    material = new Material(basis) { name = "M_Body_KTP_WaterRoll20" };
+                    AssetDatabase.CreateAsset(material, MaterialPath);
+                }
+                else { material.shader = basis.shader; material.CopyPropertiesFromMaterial(basis); }
+                material.SetFloat("_RolledWater", 1);
+                EditorUtility.SetDirty(mesh); EditorUtility.SetDirty(material);
+                AssetDatabase.SaveAssetIfDirty(mesh); AssetDatabase.SaveAssetIfDirty(material);
+                var stats = Validate(mesh);
+                profile.BodyMesh = mesh; profile.BodyMaterial = material;
+                profile.PartScale = new Vector3(profile.PartScale.x, 1.9f, 1.35f);
+                Require(OtherFields(profile) == unchanged, "A field outside BodyMesh/BodyMaterial/PartScale changed.");
+                EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
+                checks = CheckSources(original);
+                var report = new Report {
+                    status = "BUILT_CANDIDATE_RENDER_AND_RUNTIME_UNVERIFIED", generatedUtc = DateTime.UtcNow.ToString("O"),
+                    mesh = MeshPath, material = MaterialPath, originalLedger = Path.GetFullPath(LedgerPath), original = original,
+                    profileBeforeOperation = before, profileAfterOperation = JsonUtility.ToJson(profile), statistics = stats,
+                    originalSourcesUnchanged = checks.All(s => s.unchanged), otherProfileFieldsUnchanged = OtherFields(profile) == unchanged,
+                    profileCount = profile.Count, appliedScale = profile.PartScale,
+                    fullLocalDimensions = Vector3.Scale(mesh.bounds.size, profile.PartScale), sourceChecks = checks
+                };
+                if (!report.originalSourcesUnchanged || !report.otherProfileFieldsUnchanged) report.status = "FAIL_PRESERVATION";
+                WriteReport("water_roll20_build.json", report);
+                return JsonUtility.ToJson(report, true);
+            }
+            finally { if (candidate != null && !AssetDatabase.Contains(candidate)) Object.DestroyImmediate(candidate); }
+        }
+
+        public static string Restore()
+        {
+            RequireEdit();
+            Require(File.Exists(LedgerPath), "No original ledger; nothing can be safely restored.");
+            var profile = Profile(); var original = ReadOriginal(profile);
+            var mesh = Resolve<Mesh>(original.bodyMesh); var material = Resolve<Material>(original.bodyMaterial);
+            Require(mesh != null && material != null, "Original mesh/material unavailable.");
+            var checks = CheckSources(original);
+            Require(checks.All(s => s.unchanged), "Original sources changed; restore requires review rather than a guessed replacement.");
+            string before = JsonUtility.ToJson(profile), unchanged = OtherFields(profile);
+            profile.BodyMesh = mesh; profile.BodyMaterial = material; profile.PartScale = original.partScale;
+            Require(OtherFields(profile) == unchanged, "Restore changed an unrelated profile field.");
+            EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
+            var report = new Report {
+                status = "RESTORED_ORIGINAL_THREE_FIELDS_ONLY", generatedUtc = DateTime.UtcNow.ToString("O"), original = original,
+                originalLedger = Path.GetFullPath(LedgerPath), profileBeforeOperation = before, profileAfterOperation = JsonUtility.ToJson(profile),
+                mesh = AssetDatabase.GetAssetPath(mesh), material = AssetDatabase.GetAssetPath(material), profileCount = profile.Count,
+                appliedScale = profile.PartScale, fullLocalDimensions = Vector3.Scale(mesh.bounds.size, profile.PartScale),
+                sourceChecks = CheckSources(original), otherProfileFieldsUnchanged = OtherFields(profile) == unchanged
+            };
+            report.originalSourcesUnchanged = report.sourceChecks.All(s => s.unchanged);
+            if (!report.originalSourcesUnchanged || !report.otherProfileFieldsUnchanged) report.status = "FAIL_RESTORE_PRESERVATION";
+            WriteReport("water_roll20_restore.json", report);
+            return JsonUtility.ToJson(report, true);
+        }
+
+        private static Mesh MakeMesh()
+        {
+            // (z,y) cubic control polygons. The final straight base closes the volume.
+            var controls = new[] {
+                new[] { new Vector2(-.5f,0), new Vector2(-.36f,.03f), new Vector2(-.43f,.35f), new Vector2(-.24f,.58f) },
+                new[] { new Vector2(-.24f,.58f), new Vector2(-.05f,.85f), new Vector2(.28f,.76f), new Vector2(.38f,.46f) },
+                new[] { new Vector2(.38f,.46f), new Vector2(.47f,.34f), new Vector2(.43f,.20f), new Vector2(.35f,.36f) },
+                new[] { new Vector2(.35f,.36f), new Vector2(.31f,.43f), new Vector2(.24f,.52f), new Vector2(.14f,.45f) },
+                new[] { new Vector2(.14f,.45f), new Vector2(.03f,.30f), new Vector2(.22f,.10f), new Vector2(.50f,0) },
+                new[] { new Vector2(.50f,0), new Vector2(1f/6,0), new Vector2(-1f/6,0), new Vector2(-.50f,0) }
+            };
+            int[] subdivisions = { 8, 10, 8, 8, 10, 4 };
+            var section = new List<Vector2>(); var foam = new List<float>();
+            for (int segment = 0; segment < controls.Length; segment++)
+                for (int j = 0; j < subdivisions[segment]; j++)
+                {
+                    float t = j / (float)subdivisions[segment], a = 1-t; var c = controls[segment];
+                    var p = a*a*a*c[0] + 3*a*a*t*c[1] + 3*a*t*t*c[2] + t*t*t*c[3];
+                    section.Add(p); foam.Add(segment == 1 ? 1f : segment == 0 ? .65f : segment == 2 ? .5f : .025f);
+                }
+            Require(section.Count == RingPoints, "Unexpected cross-section subdivision.");
+            var vertices = new List<Vector3>(); var uv = new List<Vector2>(); var colours = new List<Color>();
+            vertices.Add(new Vector3(-.5f,0,-.25f)); uv.Add(new Vector2(0,.5f)); colours.Add(new Color(0,0,1,1));
+            float maximumSectionHeight = section.Max(p => p.y);
+            for (int i = 1; i < XSegments; i++)
+            {
+                float u = i / (float)XSegments, x = u-.5f;
+                float envelope = Mathf.Pow(Mathf.Max(0,1-4*x*x), .7f);
+                float height = envelope*(1-.42f*x), lag = -x*x;
+                for (int j = 0; j <= RingPoints; j++)
+                {
+                    int k = j % RingPoints; var p = section[k];
+                    vertices.Add(new Vector3(x,p.y*height,p.x*envelope+lag));
+                    uv.Add(new Vector2(u,j/(float)RingPoints));
+                    colours.Add(new Color(p.y*height, Mathf.Pow(p.y/maximumSectionHeight,4)*foam[k]*envelope,1,1));
+                }
+            }
+            int right = vertices.Count;
+            vertices.Add(new Vector3(.5f,0,-.25f)); uv.Add(new Vector2(1,.5f)); colours.Add(new Color(0,0,1,1));
+            float maxHeight = vertices.Max(v => v.y);
+            for (int i = 0; i < colours.Count; i++) { var c=colours[i]; c.r /= maxHeight; colours[i]=c; }
+            var bounds = new Bounds(vertices[0],Vector3.zero); foreach (var v in vertices) bounds.Encapsulate(v);
+            for (int i = 0; i < vertices.Count; i++) vertices[i] -= bounds.center;
+            var triangles = new List<int>();
+            for (int j = 0; j < RingPoints; j++) { triangles.Add(0); triangles.Add(2+j); triangles.Add(1+j); }
+            for (int ring = 0; ring < XSegments-2; ring++)
+                for (int j = 0; j < RingPoints; j++)
+                {
+                    int a=1+ring*(RingPoints+1)+j, b=a+RingPoints+1, c=a+1, d=b+1;
+                    triangles.Add(a); triangles.Add(c); triangles.Add(b);
+                    triangles.Add(c); triangles.Add(d); triangles.Add(b);
+                }
+            int last=1+(XSegments-2)*(RingPoints+1);
+            for (int j = 0; j < RingPoints; j++) { triangles.Add(right); triangles.Add(last+j); triangles.Add(last+j+1); }
+            var mesh = new Mesh { name="WaterRoll20", indexFormat=IndexFormat.UInt16 };
+            mesh.SetVertices(vertices); mesh.SetUVs(0,uv); mesh.SetColors(colours); mesh.SetTriangles(triangles,0);
+            mesh.RecalculateNormals();
+            // Smooth only coincident seam vertices; preserve a real UV seam.
+            var normals=mesh.normals; var groups=new Dictionary<Vector3,List<int>>();
+            for(int i=0;i<vertices.Count;i++) { if(!groups.TryGetValue(vertices[i],out var ids)) groups[vertices[i]]=ids=new List<int>(); ids.Add(i); }
+            foreach(var ids in groups.Values) { Vector3 normal=Vector3.zero; foreach(int i in ids) normal+=normals[i]; normal.Normalize(); foreach(int i in ids) normals[i]=normal; }
+            mesh.normals=normals; mesh.RecalculateTangents(); CentreBounds(mesh); mesh.UploadMeshData(false);
+            return mesh;
+        }
+        private static void CopyNative(Mesh source, Mesh destination)
+        {
+            destination.Clear(false); destination.name="WaterRoll20"; destination.indexFormat=source.indexFormat;
+            destination.vertices=source.vertices; destination.normals=source.normals; destination.tangents=source.tangents;
+            destination.uv=source.uv; destination.colors=source.colors;
+            destination.subMeshCount=1; destination.SetIndices(source.GetIndices(0),MeshTopology.Triangles,0,false);
+            CentreBounds(destination); destination.UploadMeshData(false);
+        }
+        private static void CentreBounds(Mesh mesh)
+        {
+            mesh.RecalculateBounds(); Require(mesh.bounds.center.magnitude<2e-6f,"Mesh centre drift.");
+            var extent=Vector3.zero;
+            foreach(var v in mesh.vertices) extent=Vector3.Max(extent,new Vector3(Mathf.Abs(v.x),Mathf.Abs(v.y),Mathf.Abs(v.z)));
+            mesh.bounds=new Bounds(Vector3.zero,extent*2); // Exact centre for runtime's ground clamp.
+        }
+        private static MeshStats Validate(Mesh mesh)
+        {
+            var vertices=mesh.vertices; var normals=mesh.normals; var uv=mesh.uv; var colors=mesh.colors; var indices=mesh.triangles;
+            var stats=new MeshStats { vertices=vertices.Length,triangles=indices.Length/3,bounds=mesh.bounds,submeshes=mesh.subMeshCount,
+                vertexBuffers=mesh.vertexBufferCount,xSegments=XSegments,ringPoints=RingPoints,finite=true,unitNormals=true,
+                completeUvAndColor=uv.Length==vertices.Length&&colors.Length==vertices.Length,smoothSeamNormals=true,minimumTriangleArea=float.MaxValue };
+            Require(indices.Length%3==0 && indices.Length>0 && stats.triangles<=5000 && stats.submeshes==1,"Triangle/submesh budget invalid.");
+            Require(normals.Length==vertices.Length && stats.completeUvAndColor,"Incomplete vertex channels.");
+            var welded=new Dictionary<Vector3,int>(); var vertexIds=new int[vertices.Length]; var sums=new Dictionary<int,Vector3>();
+            for(int i=0;i<vertices.Length;i++)
+            {
+                stats.finite &= Finite(vertices[i])&&Finite(normals[i])&&Finite(uv[i].x)&&Finite(uv[i].y)
+                    &&Finite(colors[i].r)&&Finite(colors[i].g)&&Finite(colors[i].b)&&Finite(colors[i].a);
+                stats.unitNormals &= Mathf.Abs(normals[i].magnitude-1)<.001f;
+                if(!welded.TryGetValue(vertices[i],out int id)) { id=welded.Count; welded.Add(vertices[i],id); sums[id]=normals[i]; }
+                else stats.smoothSeamNormals &= Vector3.Distance(sums[id],normals[i])<1e-5f;
+                vertexIds[i]=id;
+            }
+            var edges=new Dictionary<ulong,int>(); var orientations=new Dictionary<ulong,int>();
+            for(int i=0;i<indices.Length;i+=3)
+            {
+                int a=indices[i],b=indices[i+1],c=indices[i+2];
+                Require(a>=0&&a<vertices.Length&&b>=0&&b<vertices.Length&&c>=0&&c<vertices.Length,"Out-of-range index.");
+                float area=Vector3.Cross(vertices[b]-vertices[a],vertices[c]-vertices[a]).magnitude*.5f;
+                stats.minimumTriangleArea=Mathf.Min(stats.minimumTriangleArea,area); if(area<1e-10f)stats.degenerateTriangles++;
+                stats.signedVolume+=Vector3.Dot(vertices[a],Vector3.Cross(vertices[b],vertices[c]))/6;
+                AddEdge(vertexIds[a],vertexIds[b],edges,orientations); AddEdge(vertexIds[b],vertexIds[c],edges,orientations); AddEdge(vertexIds[c],vertexIds[a],edges,orientations);
+            }
+            stats.weldedVertices=welded.Count; stats.weldedEdges=edges.Count;
+            stats.boundaryEdges=edges.Count(e=>e.Value==1); stats.nonManifoldEdges=edges.Count(e=>e.Value!=2||orientations[e.Key]!=0);
+            stats.euler=stats.weldedVertices-stats.weldedEdges+stats.triangles;
+            stats.weldedClosed=stats.boundaryEdges==0&&stats.nonManifoldEdges==0&&stats.euler==2&&stats.signedVolume>0;
+            Require(stats.finite&&stats.unitNormals&&stats.smoothSeamNormals&&stats.weldedClosed&&stats.degenerateTriangles==0
+                &&stats.vertexBuffers>0&&mesh.bounds.center==Vector3.zero&&Mathf.Abs(mesh.bounds.size.x-1)<1e-6f,"Water roll geometry validation failed: "+JsonUtility.ToJson(stats));
+            return stats;
+        }
+        private static void AddEdge(int a,int b,Dictionary<ulong,int> edges,Dictionary<ulong,int> orientation)
+        {
+            Require(a!=b,"Collapsed welded edge."); ulong key=((ulong)(uint)Mathf.Min(a,b)<<32)|(uint)Mathf.Max(a,b);
+            edges.TryGetValue(key,out int count); edges[key]=count+1; orientation.TryGetValue(key,out int winding); orientation[key]=winding+(a<b?1:-1);
+        }
+        private static Vfx120Profile Profile()
+        {
+            var catalog=AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(Vfx120Editor.AssetRoot+"/Data/VFX120_Catalog.asset");
+            Require(catalog!=null,"Catalog missing."); var profile=catalog.Entries.Single(e=>e.Glyph=="오").Profile;
+            Require(profile!=null&&profile.Glyph=="오"&&profile.BodyMesh!=null&&profile.BodyMaterial!=null,"Existing 오 unavailable."); return profile;
+        }
+        private static Original ReadOrCaptureOriginal(Vfx120Profile profile)
+        {
+            if(File.Exists(LedgerPath)) return ReadOriginal(profile);
+            Require(AssetDatabase.GetAssetPath(profile.BodyMesh)!=MeshPath&&AssetDatabase.GetAssetPath(profile.BodyMaterial)!=MaterialPath,"Candidate already assigned without an original ledger.");
+            var original=new Original { capturedUtc=DateTime.UtcNow.ToString("O"),profilePath=AssetDatabase.GetAssetPath(profile),
+                profileGuid=AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(profile)),profileBefore=JsonUtility.ToJson(profile),
+                bodyMesh=Reference(profile.BodyMesh),bodyMaterial=Reference(profile.BodyMaterial),partScale=profile.PartScale };
+            foreach(string path in new[] { original.bodyMesh.path,original.bodyMaterial.path,PatternPath }.Distinct())
+                foreach(string item in new[] { path,path+".meta" })
+                { Require(File.Exists(Absolute(item)),"Missing original source: "+item); original.sources.Add(new SourceHash {path=item,before=Hash(Absolute(item))}); }
+            Directory.CreateDirectory(Vfx120Editor.Output);
+            // CreateNew prevents retries from replacing the only original baseline.
+            using(var stream=new FileStream(LedgerPath,FileMode.CreateNew,FileAccess.Write))
+            using(var writer=new StreamWriter(stream,new UTF8Encoding(false))) writer.Write(JsonUtility.ToJson(original,true));
+            return original;
+        }
+        private static Original ReadOriginal(Vfx120Profile profile)
+        {
+            var original=JsonUtility.FromJson<Original>(File.ReadAllText(LedgerPath));
+            Require(original!=null&&original.profilePath==AssetDatabase.GetAssetPath(profile)
+                &&original.profileGuid==AssetDatabase.AssetPathToGUID(original.profilePath),"Original ledger belongs to another profile."); return original;
+        }
+        private static AssetRef Reference(Object value)
+        {
+            Require(AssetDatabase.TryGetGUIDAndLocalFileIdentifier(value,out string guid,out long localId),"Source asset identity unavailable.");
+            return new AssetRef {path=AssetDatabase.GetAssetPath(value),guid=guid,localId=localId};
+        }
+        private static T Resolve<T>(AssetRef reference) where T:Object
+        {
+            Require(reference!=null&&AssetDatabase.AssetPathToGUID(reference.path)==reference.guid,"Original asset GUID changed.");
+            return AssetDatabase.LoadAllAssetsAtPath(reference.path).OfType<T>().SingleOrDefault(a=>
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(a,out string guid,out long id)&&guid==reference.guid&&id==reference.localId);
+        }
+        private static List<SourceHash> CheckSources(Original original) => original.sources.Select(s=> {
+            string after=Hash(Absolute(s.path)); return new SourceHash {path=s.path,before=s.before,after=after,unchanged=s.before==after}; }).ToList();
+        private static string OtherFields(Vfx120Profile profile)
+        {
+            var copy=Object.Instantiate(profile);
+            try { copy.BodyMesh=null; copy.BodyMaterial=null; copy.PartScale=Vector3.zero; return JsonUtility.ToJson(copy); }
+            finally { Object.DestroyImmediate(copy); }
+        }
+        private static T Owned<T>(string path) where T:Object
+        {
+            var any=AssetDatabase.LoadMainAssetAtPath(path); Require(any==null||any is T,"Owned output path has an unexpected type: "+path); return any as T;
+        }
+        private static void EnsureFolder(string path)
+        {
+            if(AssetDatabase.IsValidFolder(path))return; string parent=Path.GetDirectoryName(path).Replace('\\','/');
+            EnsureFolder(parent); AssetDatabase.CreateFolder(parent,Path.GetFileName(path));
+        }
+        private static void RequireEdit()=>Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Edit Mode required; this tool does not stop Play.");
+        private static bool Finite(float v)=>!float.IsNaN(v)&&!float.IsInfinity(v);
+        private static bool Finite(Vector3 v)=>Finite(v.x)&&Finite(v.y)&&Finite(v.z);
+        private static void Require(bool condition,string message) { if(!condition)throw new InvalidOperationException(message); }
+        private static string Absolute(string path)=>Path.GetFullPath(Path.Combine(Application.dataPath,"..",path));
+        private static string Hash(string path) { if(!File.Exists(path))return "MISSING"; using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant(); }
+        private static void WriteReport(string name,Report report) { Directory.CreateDirectory(Vfx120Editor.Output); File.WriteAllText(Path.Combine(Vfx120Editor.Output,name),JsonUtility.ToJson(report,true),new UTF8Encoding(false)); }
+    }
+}

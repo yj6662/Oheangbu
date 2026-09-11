@@ -1,0 +1,35 @@
+{
+  "id": "020_AD6D",
+  "version": "43",
+  "key": "GUK_020",
+  "glyph": "국",
+  "title": "신목의 디딤",
+  "audit": "single_play_AD6D.json",
+  "build": "wood_lift_020_build.json",
+  "scope": "guk43_scope_check.json",
+  "previous": "GOT_017_REVIEW.html",
+  "intro": "세 줄기로 꼬인 나무가 올라오며, 가지가 넓은 발판을 받칩니다. 목표 높이에 머무는 동안 잎이 펴지고, 해제 때 잎부터 접힙니다.",
+  "changes": [
+    "꼬인 나무줄기·발판 지지 가지·불규칙한 나무 발판 메시를 새로 제작했다. 보유 수피·잎 텍스처를 재사용한다.",
+    "KTP 잎흔적과 발동 연출을 사용하고 비전투용이므로 공격 타격은 연결하지 않았다.",
+    "ConfigureWoodLift로 기반 위치·지원 높이 상한을 받고 SetWoodLiftHeight가 공급한 현재 높이만 표시한다. 2.4m 길이의 고정 메시를 지하에서 올리며 늘리지 않는다. 최대 지원 높이는2.4m다.",
+    "콜라이더·플레이어 이동·피해를 만들지 않는다. 높이 범위·계획 전 비활성·해제 중복 방지·수명을 검사했고 다른119개 프로필을 보존했다."
+  ],
+  "cost": "줄기·지지 가지1572tris + 발판80tris + 잎48tris + KTP 흔적2tris = 총1702tris. MeshRenderer6개, 런타임 메시 복제0개. KTP 파티클 별도.",
+  "metrics": [
+    "woodLiftPlan",
+    "woodLiftMaxHeight",
+    "woodLiftReleased",
+    "woodLiftVisibleFrames"
+  ],
+  "limits": [
+    "영상은2.1m 높이 변화를 공급한 카탈로그 시연이다. 실제 비전투 시전·플랫폼 충돌·캐릭터 수직 이동은 미연결이다.",
+    "줄기·발판·잎 동작의 비주얼은 사용자 검토 대기다.",
+    "2.4m 초과 높이·동적 지형·동시 사용 성능은 미검증이다."
+  ],
+  "captureNote": "1280×720·24fps. 시연 높이는0.35~1.8초에2.1m로 상승하고3.5초에 해제된다. 이 높이 곡선은 검수 도우미가 공급하며 플레이어를 움직이지 않는다.",
+  "detailLabels": [
+    "상승 중",
+    "해제 단계"
+  ]
+}

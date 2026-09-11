@@ -6,10 +6,24 @@ namespace Oheangbu.App.SpellVFX120
 {
     // Presentation only. The supplied combat clock is never advanced or re-issued here.
     // Meshes/materials are shared assets; per-instance pigment and erosion use property blocks.
-    public sealed class Vfx120Effect : SpellSequenceEffect
+    public sealed partial class Vfx120Effect : SpellSequenceEffect
     {
         public Vfx120Profile Profile;
         public bool PreviewControlled;
+        public FixedWardVfx FixedWard {get;private set;}
+        public WoodDeerVfx WoodDeer {get;private set;}
+        public FireHaetaeVfx FireHaetae {get;private set;}
+        public MetalTigerVfx MetalTiger {get;private set;}
+        public DokkaebiClubVfx DokkaebiClub {get;private set;}
+        private void ClearDokkaebiClub(){if(DokkaebiClub==null)return;DokkaebiClub.Dispose();if(Application.isPlaying)Destroy(DokkaebiClub);else DestroyImmediate(DokkaebiClub);DokkaebiClub=null;}
+        public WaterTurtleVfx WaterTurtle {get;private set;}
+        private void ClearWaterTurtle(){if(WaterTurtle==null)return;WaterTurtle.Dispose();if(Application.isPlaying)Destroy(WaterTurtle);else DestroyImmediate(WaterTurtle);WaterTurtle=null;}
+        public StoneDokkaebiVfx StoneDokkaebi {get;private set;}
+        private void ClearStoneDokkaebi(){if(StoneDokkaebi==null)return;StoneDokkaebi.Dispose();if(Application.isPlaying)Destroy(StoneDokkaebi);else DestroyImmediate(StoneDokkaebi);StoneDokkaebi=null;}
+        private void ClearMetalTiger(){if(MetalTiger==null)return;MetalTiger.Dispose();if(Application.isPlaying)Destroy(MetalTiger);else DestroyImmediate(MetalTiger);MetalTiger=null;}
+        private void ClearFireHaetae(){if(FireHaetae==null)return;FireHaetae.Dispose();if(Application.isPlaying)Destroy(FireHaetae);else DestroyImmediate(FireHaetae);FireHaetae=null;}
+        private void ClearWoodDeer(){if(WoodDeer==null)return;WoodDeer.Dispose();if(Application.isPlaying)Destroy(WoodDeer);else DestroyImmediate(WoodDeer);WoodDeer=null;}
+        private void ClearFixedWard(){if(FixedWard==null)return;FixedWard.Dispose();if(Application.isPlaying)Destroy(FixedWard);else DestroyImmediate(FixedWard);FixedWard=null;}
         // Both flags are required. No production Begin/Update enables demonstration cues.
         public bool DemonstrationCues;
         public enum Cue { None, Hit, TargetDefeated, Release, Parry, Break }
@@ -21,6 +35,37 @@ namespace Oheangbu.App.SpellVFX120
         public Vector3 ReceivedOrigin { get; private set; }
         public Vector3 ReceivedFallback { get; private set; }
         public Transform ReceivedTarget { get; private set; }
+        private Transform _projectileVisualAnchor;
+        private float _projectileVisualLaunchedAt;
+        private Vfx120InterceptionMotion.Target[] _interceptions;
+        // Call after Begin. Positions and times are local to this effect. A caller's
+        // array is copied once and never mutated by the presentation instance.
+        public void SetInterceptionTargets(Vfx120InterceptionMotion.Target[] targets)
+        {
+            if (targets == null) { _interceptions = null; return; }
+            int count = Mathf.Min(Vfx120InterceptionMotion.MaxTargets, targets.Length);
+            _interceptions = new Vfx120InterceptionMotion.Target[count];
+            System.Array.Copy(targets, _interceptions, count);
+        }
+        public bool ConfirmInterception(int index, Vector3 localPoint, float at)
+        {
+            if (_interceptions == null || index < 0 || index >= _interceptions.Length
+                || !Vfx120InterceptionMotion.Finite(localPoint) || float.IsNaN(at) || float.IsInfinity(at)) return false;
+            if (_interceptions[index].HitConfirmed) return false;
+            var t = _interceptions[index]; t.Point = localPoint; t.HitAt = at; t.HitConfirmed = true;
+            if (!Vfx120InterceptionMotion.Confirmed(t, Life)) return false;
+            _interceptions[index] = t; return true;
+        }
+        // Optional presentation attachment. Caller supplies the actual projectile and
+        // its launch time relative to this effect; neither its pose nor speed is written.
+        public void SetProjectileVisualAnchor(Transform anchor, float launchedAt)
+        {
+            _projectileVisualAnchor = anchor;
+            _projectileVisualLaunchedAt = float.IsNaN(launchedAt) || float.IsInfinity(launchedAt)
+                ? Age : Mathf.Max(0, launchedAt);
+        }
+        // Read-only, already sampled ground height for presentation capture proxies.
+        public float TargetGroundWorldY => transform.TransformPoint(new Vector3(0, _targetGround, 0)).y;
         public AreaImpactPlan ReceivedAreaPlan { get; private set; }
         public int PartCount => _parts == null ? 0 : _parts.Length;
         public bool Begun { get; private set; }
@@ -32,6 +77,17 @@ namespace Oheangbu.App.SpellVFX120
         public float ParryAt { get; private set; } = -1;
         public float BreakAt { get; private set; } = -1;
         public int SignalCount { get; private set; }
+        public Vfx120TraditionalMotif NativeCast => _nativeCast;
+        public Vfx120TraditionalMotif NativeImpact => _nativeImpact;
+        public Vfx120TraditionalMotif NativeField => _nativeField;
+        public bool NativeFieldConfigured { get; private set; }
+        public bool NativeReplacesProcedural => _nativeReplaceProcedural;
+        public float NativeImpactStartedAt { get; private set; } = -1;
+        public string NativeDiagnostic { get; private set; } = "UNASSIGNED";
+        public Vfx120MeshySummon MeshyModel => _meshySummon;
+        public bool MeshyConfigured { get; private set; }
+        public string MeshyDiagnostic { get; private set; } = "UNASSIGNED";
+        private bool ReplacesProcedural => _nativeReplaceProcedural || MeshyConfigured || NativeBodyConfigured || BotanicalConfigured || BambooGuardConfigured || WoodWardConfigured || RegrowthConfigured || BloomConfigured || WoodSwordConfigured || CompanionSeedsConfigured || IsBambooSpikes(Profile) || IsVineField(Profile) || IsBambooBolt(Profile) || IsSeedTransfer(Profile) || IsSeedPod(Profile) || IsLeafCut(Profile) || IsWetRoot(Profile) || IsRootLift(Profile) || IsStakeField(Profile) || IsWoodLift(Profile) || IsFireBolt(Profile) || IsFireGuard(Profile) || IsFireAura(Profile) || IsFireCompanions(Profile);
         private float _summonStrikeAt = -1;
         public void SetSummonStrikeClock(float seconds) { _summonStrikeAt = seconds; }
         private bool HasGuardianRig => Profile.Glyph == "몸" && Profile.GuardianMeshes != null
@@ -46,6 +102,9 @@ namespace Oheangbu.App.SpellVFX120
         private Transform _seal;
         private Renderer _sealRenderer;
         private Vfx120Atmosphere _atmosphere;
+        private Vfx120TraditionalMotif _nativeCast, _nativeImpact, _nativeField;
+        private Vfx120MeshySummon _meshySummon;
+        private bool _nativeReplaceProcedural, _nativeImpactAttempted;
         private Vfx120EnvironmentMotion.Context _environmentGeometry = Vfx120EnvironmentMotion.Context.Create();
         private Vfx120EnvironmentFixture _environmentFixture;
         private MaterialPropertyBlock _block;
@@ -62,6 +121,7 @@ namespace Oheangbu.App.SpellVFX120
         private static readonly int AlphaId = Shader.PropertyToID("_Alpha");
         private static readonly int ErodeId = Shader.PropertyToID("_Erode");
         private static readonly int AgeId = Shader.PropertyToID("_Age");
+        private static readonly int SoftId = Shader.PropertyToID("_Soft");
 
         public override void SetImpactClock(float duration) { ReceivedImpactClock = duration; }
         public override void SetAreaPlan(AreaImpactPlan plan) { ReceivedAreaPlan = plan; }
@@ -100,6 +160,10 @@ namespace Oheangbu.App.SpellVFX120
                 case Cue.Break: if (BreakAt < 0) BreakAt = at; break;
             }
             SignalCount++;
+            // This only consumes the already-issued visual hit cue. It cannot issue
+            // a hit, retime damage, or extend Life. Repeated hits do not multiply motifs.
+            if (cue == Cue.Hit && !PreviewControlled && Profile != null && !IsEmberCharge && !Vfx120InterceptionMotion.IsPrepared(Profile) && !IsBambooGuard(Profile) && !IsBloom(Profile) && !IsWoodSword(Profile) && !IsBambooSpikes(Profile) && !IsSeedPod(Profile) && !IsLeafCut(Profile) && !IsWetRoot(Profile) && !IsRootLift(Profile) && !IsStakeField(Profile))
+                TryStartNativeImpact(at);
         }
         public void SetGuardClock(float duration, float brightWindow)
         {
@@ -109,6 +173,47 @@ namespace Oheangbu.App.SpellVFX120
 
         public override void Begin(Vector3 origin, Transform target, Vector3 fallbackPoint, Color tint)
         {
+            if (Begun) ClearGenerated();
+            ClearFixedWard();
+            ClearWoodDeer();
+            ClearFireHaetae();
+            ClearMetalTiger();
+            ClearDokkaebiClub();
+            ClearWaterTurtle();
+            ClearStoneDokkaebi();
+            ClearAreaRemake();
+            Begun = false;
+            _projectileVisualAnchor = null; _projectileVisualLaunchedAt = 0;
+            _interceptions = null;
+            ClearMeshy(); MeshyConfigured = false; MeshyDiagnostic = "UNASSIGNED";
+            ClearBotanical();
+            ClearBambooGuard();
+            ClearWoodWard();
+            ClearRegrowth();
+            ClearBloom();
+            ClearWoodSword();
+            ClearCompanionSeeds();
+            ClearBambooSpikes();
+            ClearVineField();
+            ClearBambooBolt();
+            ClearSeedTransfer();
+            ClearSeedPod();
+            ClearLeafCut();
+            ClearWetRoot();
+            ClearRootLift();
+            ClearStakeField();
+            ClearWoodLift();
+            ClearFireBolt();
+            ClearFireGuard();
+            ClearFireAura();
+            ClearFireCompanions();
+            ClearNative();
+            NativeBodyConfigured = false;
+            NativeBodyDiagnostic = "UNASSIGNED";
+            NativeFieldConfigured = _nativeReplaceProcedural = _nativeImpactAttempted = false;
+            _externalGuardContact = false;
+            NativeImpactStartedAt = -1;
+            NativeDiagnostic = "UNASSIGNED";
             HitAt = AdditionalHitAt = TargetDefeatedAt = ReleaseAt = ParryAt = BreakAt = -1;
             SignalCount = 0;
             ReceivedOrigin = origin;
@@ -139,7 +244,7 @@ namespace Oheangbu.App.SpellVFX120
             if (ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Path)
                 Life = Mathf.Max(Life, ReceivedAreaPlan.Delay + ReceivedAreaPlan.Length / Mathf.Max(.1f, ReceivedAreaPlan.Speed) + .7f);
             Build();
-            if (PreviewControlled && DemonstrationCues && Vfx120EnvironmentMotion.Supports(Profile))
+            if (!ReplacesProcedural && PreviewControlled && DemonstrationCues && Vfx120EnvironmentMotion.Supports(Profile))
             {
                 bool ground = Profile.Glyph == "웅";
                 _environmentFixture = Vfx120EnvironmentFixture.Create(Profile.Glyph, transform,
@@ -172,6 +277,47 @@ namespace Oheangbu.App.SpellVFX120
 
         private void Build()
         {
+            if(Profile.WoodDeerPresentation){Life=WoodDeerVfx.ReviewLife;WoodDeer=gameObject.AddComponent<WoodDeerVfx>();WoodDeer.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if(Profile.FireHaetaePresentation){Life=FireHaetaeVfx.ReviewLife;FireHaetae=gameObject.AddComponent<FireHaetaeVfx>();FireHaetae.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if(Profile.MetalTigerPresentation){Life=MetalTigerVfx.ReviewLife;MetalTiger=gameObject.AddComponent<MetalTigerVfx>();MetalTiger.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if(Profile.DokkaebiClubPresentation){Life=DokkaebiClubVfx.ReviewLife;DokkaebiClub=gameObject.AddComponent<DokkaebiClubVfx>();DokkaebiClub.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if(Profile.WaterTurtlePresentation){Life=WaterTurtleVfx.ReviewLife;WaterTurtle=gameObject.AddComponent<WaterTurtleVfx>();WaterTurtle.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if(Profile.StoneDokkaebiPresentation){Life=StoneDokkaebiVfx.ReviewLife;StoneDokkaebi=gameObject.AddComponent<StoneDokkaebiVfx>();StoneDokkaebi.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if(Profile.WardKind!=Vfx120WardKind.None){Life=Profile.Duration;FixedWard=gameObject.AddComponent<FixedWardVfx>();FixedWard.Configure(Profile,ReceivedOrigin,transform.forward);return;}
+            if (Profile.AreaRemake != Vfx120AreaRemake.None) { BuildAreaRemake(); return; }
+            BuildNative();
+            BuildBambooGuard();
+            BuildWoodWard();
+            BuildRegrowth();
+            BuildBloom();
+            BuildWoodSword();
+            BuildCompanionSeeds();
+            BuildBambooSpikes();
+            BuildVineField();
+            BuildBambooBolt();
+            BuildSeedTransfer();
+            BuildSeedPod();
+            BuildLeafCut();
+            BuildWetRoot();
+            BuildRootLift();
+            BuildStakeField();
+            BuildWoodLift();
+            BuildFireBolt();
+            BuildFireGuard();
+            BuildFireAura();
+            BuildFireCompanions();
+            BuildElementWash();
+            BuildMeshy();
+            BuildBotanical();
+            if (ReplacesProcedural)
+            {
+                // Configure succeeded before suppressing the old generator. No disabled
+                // duplicate atmosphere or mesh hierarchy is built behind the native field.
+                _parts = new Transform[0]; _renderers = new Renderer[0];
+                _accents = new Transform[0]; _accentRenderers = new Renderer[0];
+                _ribbons = new LineRenderer[0];
+                return;
+            }
             int n = Mathf.Clamp(Profile.Count, 1, 32);
             if (HasGuardianRig) n = Vfx120GuardianMotion.PartCount;
             if (Vfx120EnvironmentMotion.Supports(Profile)) n = Vfx120EnvironmentMotion.GetBodyCount(Profile);
@@ -181,6 +327,7 @@ namespace Oheangbu.App.SpellVFX120
             _parts = new Transform[n]; _renderers = new Renderer[n];
             int accentCount = Mathf.Max(n, Vfx120CueMotion.GetRequiredAccentCount(Profile.Glyph));
             accentCount = Mathf.Max(accentCount, Vfx120VariantMotion.GetSelfAccentCount(Profile));
+            accentCount = Mathf.Max(accentCount, Vfx120VariantMotion.GetGroundFogAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120SummonMotion.GetAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120WeaponMotion.GetAccentCount(Profile));
             accentCount = Mathf.Max(accentCount, Vfx120WaterMotion.GetAccentCount(Profile));
@@ -188,6 +335,7 @@ namespace Oheangbu.App.SpellVFX120
             bool projectileAccents = !HasSpatialPlan && !(ReceivedAreaPlan != null && ReceivedAreaPlan.Shape == AreaShape.Volley);
             if (projectileAccents) accentCount = Mathf.Max(accentCount, Vfx120VariantMotion.GetProjectileAccentCount(Profile));
             if (HasGuardianRig) accentCount = 0;
+            if (Vfx120MetalDetailMotion.SuppressGenericAccents(Profile)) accentCount = 0;
             _accents = new Transform[accentCount]; _accentRenderers = new Renderer[accentCount];
             for (int i = 0; i < n; i++)
             {
@@ -198,6 +346,9 @@ namespace Oheangbu.App.SpellVFX120
                     projectileAccents && Profile.Glyph == "만" || Profile.Behavior == Vfx120Behavior.Summon && Profile.Family == "Beast" ? Profile.BodyMaterial : Profile.InkMaterial,
                     out _accentRenderers[i]);
             _seal = MeshPart("TraditionalMotif", QuadMesh.Value, Profile.PatternMaterial, out _sealRenderer);
+            // Summons retain their current creature/body. Only the ground seal is replaced.
+            // Setting the GO inactive prevents later renderer.enabled writes restoring it.
+            if (NativeFieldConfigured) _seal.gameObject.SetActive(false);
             _ribbons = new LineRenderer[Mathf.Clamp(Profile.RibbonCount, 0, 3)];
             for (int i = 0; i < _ribbons.Length; i++)
             {
@@ -221,6 +372,9 @@ namespace Oheangbu.App.SpellVFX120
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             var mr = go.AddComponent<MeshRenderer>(); mr.sharedMaterial = material;
             mr.shadowCastingMode = ShadowCastingMode.Off; mr.receiveShadows = false;
+            if (label.StartsWith("Body_") && (Profile.Glyph == "막" || Profile.Glyph == "뭄")
+                && material != null && material.HasProperty("_Visibility"))
+            { mr.shadowCastingMode = ShadowCastingMode.On; mr.receiveShadows = true; }
             renderer = mr; return go.transform;
         }
 
@@ -236,7 +390,42 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (!Begun || Profile == null) return;
             Age = Mathf.Max(0, seconds);
+            if(FixedWard!=null){FixedWard.Sample(Age);return;}
+            if(WoodDeer!=null){WoodDeer.Sample(Age);return;}
+            if(FireHaetae!=null){FireHaetae.Sample(Age);return;}
+            if(MetalTiger!=null){MetalTiger.Sample(Age);return;}
+            if(DokkaebiClub!=null){DokkaebiClub.Sample(Age);return;}
+            if(WaterTurtle!=null){WaterTurtle.Sample(Age);return;}
+            if(StoneDokkaebi!=null){StoneDokkaebi.Sample(Age);return;}
+            if(Profile.AreaRemake != Vfx120AreaRemake.None) { SampleAreaRemake(); return; }
+            if(IsEmberCharge&&PreviewControlled&&DemonstrationCues&&Age>=1.8f&&EmberChargeDetonatedAt<0)DetonateEmberCharge(1.8f);
             _aim = transform.InverseTransformPoint(TargetPoint());
+            SampleNative();
+            SampleBambooGuard();
+            SampleWoodWard();
+            SampleRegrowth();
+            SampleBloom();
+            SampleWoodSword();
+            SampleCompanionSeeds();
+            SampleBambooSpikes();
+            SampleVineField();
+            SampleBambooBolt();
+            SampleSeedTransfer();
+            SampleSeedPod();
+            SampleLeafCut();
+            SampleWetRoot();
+            SampleRootLift();
+            SampleStakeField();
+            SampleWoodLift();
+            SampleFireBolt();
+            SampleFireGuard();
+            SampleFireAura();
+            SampleFireCompanions();
+            SampleOriginalContacts();
+            if(Profile.UseOriginalKtp&&IsBambooBolt(Profile)){if(_boltInk!=null)_boltInk.enabled=false;if(_boltLeaves!=null)foreach(var leaf in _boltLeaves)if(leaf!=null)leaf.enabled=false;}
+            SampleMeshy();
+            SampleBotanical();
+            if (ReplacesProcedural) return;
             float fade = 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(Life - .7f, Life, Age));
             float grow = Mathf.SmoothStep(0, 1, Age / Mathf.Min(.28f, _flight));
             float arrive = Mathf.SmoothStep(0, 1, (Age - _flight) / .22f);
@@ -315,7 +504,13 @@ namespace Oheangbu.App.SpellVFX120
                 }
                 Vector3 partCenter = center;
                 Vector3 partScale = Vector3.Scale(Profile.PartScale, new Vector3(1, 1, length)) * pulse;
-                Vfx120VariantMotion.Apply(Profile, Age, _flight, Life, i, _parts.Length, _aim, ref partCenter, ref local, ref axis, ref partScale, size, _originGround, _targetGround);
+                if (!Vfx120MetalDetailMotion.TryApply(Profile, Age, _flight, Life, i, _parts.Length, _aim,
+                    ref partCenter, ref local, ref axis, ref partScale, size, _originGround, _targetGround,
+                    Profile.Glyph == "선" && _projectileVisualAnchor != null,
+                    _projectileVisualAnchor != null ? transform.InverseTransformPoint(_projectileVisualAnchor.position) : Vector3.zero,
+                    _projectileVisualAnchor != null ? transform.InverseTransformDirection(_projectileVisualAnchor.forward) : Vector3.forward,
+                    _projectileVisualLaunchedAt))
+                    Vfx120VariantMotion.Apply(Profile, Age, _flight, Life, i, _parts.Length, _aim, ref partCenter, ref local, ref axis, ref partScale, size, _originGround, _targetGround);
                 Vfx120WaterMotion.Apply(Profile, waterContext, i, _parts.Length, ref partCenter, ref local, ref axis, ref partScale);
                 if (HasSpatialPlan)
                     ApplyAreaPose(u, pulse, ref partCenter, ref local, ref axis, ref partScale);
@@ -325,6 +520,8 @@ namespace Oheangbu.App.SpellVFX120
                     // A Shield classification must not pull this attack back to the caster.
                     partCenter = center; local = Vector3.zero; axis = Vector3.forward;
                     partScale = i == 0 ? Profile.PartScale * pulse : Vector3.zero;
+                    if (Profile.BodyMaterial != null && Profile.BodyMaterial.HasProperty("_Visibility"))
+                        partScale = i == 0 ? Profile.PartScale * grow : Vector3.zero;
                 }
                 else if (Profile.Glyph == "뭄")
                 {
@@ -332,6 +529,15 @@ namespace Oheangbu.App.SpellVFX120
                     partCenter=new Vector3(0,_originGround+.12f,.65f+i*.66f);
                     local=Vector3.zero;axis=Vector3.forward;
                     partScale=Profile.PartScale*assembly*fade;
+                    if (Profile.BodyMaterial != null && Profile.BodyMaterial.HasProperty("_Formation"))
+                    {
+                        // One UV-preserving bridge is revealed from the near bank.
+                        // Never multiply the complete bridge into a row of eight copies.
+                        partScale=Profile.PartScale;
+                        var b=Profile.BodyMesh.bounds;
+                        partCenter=new Vector3(0,_originGround-b.min.y*partScale.y+.015f,
+                            .45f-b.min.z*partScale.z);
+                    }
                 }
                 else if (Profile.Glyph == "무")
                 {
@@ -366,20 +572,31 @@ namespace Oheangbu.App.SpellVFX120
                 if (axis.sqrMagnitude < .001f) axis = Vector3.up;
                 _parts[i].localRotation = Quaternion.LookRotation(axis, Mathf.Abs(axis.normalized.y) > .98f ? Vector3.forward : Vector3.up);
                 _parts[i].localScale = partScale;
-                if (Profile.Grounded && (HasSpatialPlan || !Vfx120WaterMotion.Supports(Profile)) && (Profile.Family == "Tree" || Profile.Family == "WaveCrest" || Profile.Behavior == Vfx120Behavior.Summon || Profile.Layout == Vfx120Layout.Field || Profile.Glyph == "막"))
+                bool nearBankBridge = Profile.Glyph == "뭄" && Profile.BodyMaterial != null
+                    && Profile.BodyMaterial.HasProperty("_Formation");
+                if (!nearBankBridge && Profile.Grounded && (HasSpatialPlan || !Vfx120WaterMotion.Supports(Profile)) && (Profile.Family == "Tree" || Profile.Family == "WaveCrest" || Profile.Behavior == Vfx120Behavior.Summon || Profile.Layout == Vfx120Layout.Field || Profile.Glyph == "막"))
                 {
                     var e = Profile.BodyMesh.bounds.extents;
                     Quaternion q = _parts[i].localRotation;
                     float halfY = Mathf.Abs((q * Vector3.right).y) * e.x * partScale.x + Mathf.Abs((q * Vector3.up).y) * e.y * partScale.y + Mathf.Abs((q * Vector3.forward).y) * e.z * partScale.z;
                     var position = _parts[i].localPosition;
-                    position.y = Mathf.Max(position.y, _targetGround + halfY + .015f);
+                    float seating = Profile.Glyph == "막" && Profile.BodyMaterial != null
+                        && Profile.BodyMaterial.HasProperty("_Visibility") ? -.16f : .015f;
+                    position.y = Mathf.Max(position.y, _targetGround + halfY + seating);
                     _parts[i].localPosition = position;
                 }
-                Tint(_renderers[i], Color.Lerp(Profile.Pigment, Profile.Accent, (i % 4) * .14f), pulse, 1 - fade);
+                if(Vfx120VariantMotion.TrySampleGroundFogBodyTint(Profile,Age,Life,i,out var fogTint,out var fogOpacity))
+                    Tint(_renderers[i],fogTint,pulse*fogOpacity,1-fade,true);
+                else Tint(_renderers[i], Color.Lerp(Profile.Pigment, Profile.Accent, (i % 4) * .14f), pulse, 1 - fade);
             }
             // Accent geometry has its own authored count; e.g. one tree has twelve leaves.
             for (int i = 0; i < _accents.Length; i++)
             {
+                if(Vfx120VariantMotion.TrySampleGroundFogAccent(Profile,Age,_flight,Life,_aim,size,_targetGround,i,_accents.Length,out var fogAccent))
+                {
+                    ApplyCuePose(_accents[i],_accentRenderers[i],fogAccent,Color.Lerp(Profile.Ink,Profile.Pigment,i%3==0?.40f:.16f));
+                    continue;
+                }
                 if (projectileMotion && Vfx120VariantMotion.TrySampleProjectileAccent(Profile, Age, _flight, Life,
                     _aim, _targetGround, i, _accents.Length, out var projectileAccent))
                 {
@@ -461,7 +678,7 @@ namespace Oheangbu.App.SpellVFX120
             if (castOnly) sealAlpha *= 1 - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.18f, .5f, Age));
             if (ReceivedGuardClock > 0 && Age > ReceivedGuardBrightWindow) sealAlpha *= .45f;
             if (cueMotion) SampleCueSeal(cueContext, ref sealAlpha);
-            if (Profile.Glyph == "산" || Profile.Glyph == "상") sealAlpha = 0;
+            if (Profile.Glyph == "산" || Profile.Glyph == "상" || Vfx120InterceptionMotion.IsPrepared(Profile)) sealAlpha = 0;
             if (Vfx120EnvironmentMotion.Supports(Profile)) sealAlpha = 0;
             Tint(_sealRenderer, Profile.Accent, sealAlpha, 1 - fade);
             for (int r = 0; r < _ribbons.Length; r++)
@@ -497,7 +714,13 @@ namespace Oheangbu.App.SpellVFX120
                 line.widthMultiplier = (.016f + .015f * r) * grow * fade;
                 Tint(line, r == 1 ? Profile.Accent : Profile.Pigment, fade * .8f, 1 - fade);
             }
-            if (_atmosphere != null) _atmosphere.Sample(Age, center, _flight, Life, PreviewControlled);
+            if (_atmosphere != null)
+            {
+                var atmosphereCenter=center;
+                // Cloud emitters add .7 m internally. Mud fog stays at ankle level.
+                if(Profile.Glyph=="몽")atmosphereCenter.y=_targetGround-.60f;
+                _atmosphere.Sample(Age, atmosphereCenter, _flight, Life, PreviewControlled);
+            }
         }
 
         private Vfx120EnvironmentMotion.Context EnvironmentContext()
@@ -512,7 +735,313 @@ namespace Oheangbu.App.SpellVFX120
 
         private void OnDestroy()
         {
+            ClearWoodDeer();
+            ClearFireHaetae();
+            ClearMetalTiger();
+            ClearDokkaebiClub();
+            ClearWaterTurtle();
+            ClearStoneDokkaebi();
+            ClearFixedWard();
+            ClearAreaRemake();
+            ClearBotanical();
+            ClearBambooGuard();
+            ClearWoodWard();
+            ClearRegrowth();
+            ClearBloom();
+            ClearWoodSword();
+            ClearCompanionSeeds();
+            ClearBambooSpikes();
+            ClearVineField();
+            ClearBambooBolt();
+            ClearSeedTransfer();
+            ClearSeedPod();
+            ClearLeafCut();
+            ClearWetRoot();
+            ClearRootLift();
+            ClearStakeField();
+            ClearWoodLift();
+            ClearFireBolt();
+            ClearFireGuard();
+            ClearFireAura();
+            ClearFireCompanions();
+            ClearMeshy();
+            ClearNative();
             if (_environmentFixture != null) { _environmentFixture.Dispose(); _environmentFixture = null; }
+        }
+
+        private void BuildMeshy()
+        {
+            if (Profile.SummonPrefab == null) return;
+            if (float.IsNaN(Profile.SummonScale) || float.IsInfinity(Profile.SummonScale) || Profile.SummonScale <= 0
+                || float.IsNaN(Profile.SummonYaw) || float.IsInfinity(Profile.SummonYaw))
+            { MeshyDiagnostic = "SCALE_OR_YAW_INVALID_PROCEDURAL_FALLBACK"; return; }
+            Vector3 point = new Vector3(_aim.x, _targetGround + .01f, _aim.z);
+            if (_nativeField != null)
+            {
+                // Match the actual circle's horizontal center. Its raised transparent
+                // floor decal is +.06; the model's authored ground pivot is +.01.
+                point = _nativeField.transform.localPosition;
+                point.y = (Profile.NativeFieldRole == Vfx120TraditionalMotif.Role.Shield ? _originGround : _targetGround) + .01f;
+            }
+            else if (HasSpatialPlan)
+            {
+                point = transform.InverseTransformPoint(ReceivedAreaPlan.Point);
+                point.y = _targetGround + .01f;
+            }
+            var host = new GameObject("MeshySummon");
+            host.transform.SetParent(transform, false);
+            host.transform.localPosition = point;
+            host.transform.localRotation = Quaternion.Euler(0, Profile.SummonYaw, 0);
+            host.transform.localScale = Vector3.one * Profile.SummonScale;
+            var summon = host.AddComponent<Vfx120MeshySummon>();
+            if (!summon.Configure(Profile.SummonPrefab, Life, PreviewControlled))
+            {
+                MeshyDiagnostic = summon.Diagnostic + " (procedural fallback preserved)";
+                DisposeNativeHost(host);
+                return;
+            }
+            _meshySummon = summon; MeshyConfigured = true;
+            MeshyDiagnostic = summon.Diagnostic;
+        }
+
+        private void SampleMeshy()
+        {
+            if (_meshySummon == null) return;
+            if (PreviewControlled) _meshySummon.Sample(Age);
+            else if (Age >= Life) ClearMeshy();
+        }
+
+        private void ClearMeshy()
+        {
+            if (_meshySummon == null) return;
+            var host = _meshySummon.gameObject;
+            _meshySummon.Clear(); _meshySummon = null;
+            DisposeNativeHost(host);
+        }
+
+        private void ClearGenerated()
+        {
+            // Re-Begin owns only this effect's previous generated children. Replacing a
+            // procedural model with a Meshy source must not leave the previous body alive.
+            if (_parts != null) foreach (var part in _parts) if (part != null) DisposeNativeHost(part.gameObject);
+            if (_accents != null) foreach (var part in _accents) if (part != null) DisposeNativeHost(part.gameObject);
+            if (_ribbons != null) foreach (var ribbon in _ribbons) if (ribbon != null) DisposeNativeHost(ribbon.gameObject);
+            if (_seal != null) DisposeNativeHost(_seal.gameObject);
+            if (_atmosphere != null) DisposeNativeHost(_atmosphere.gameObject);
+            if (_environmentFixture != null) _environmentFixture.Dispose();
+            _parts = null; _renderers = null; _accents = null; _accentRenderers = null;
+            _ribbons = null; _seal = null; _sealRenderer = null; _atmosphere = null; _environmentFixture = null;
+        }
+
+        private void BuildNative()
+        {
+            if (Profile.NativeCastPrefab != null)
+                _nativeCast = CreateNative(Profile.NativeCastPrefab, Vfx120TraditionalMotif.Role.Cast,
+                    new Vector3(0, 0, .65f), Mathf.Min(1.2f, Life));
+            if (Profile.NativeFieldPrefab != null)
+            {
+                var role = Profile.NativeFieldRole;
+                if (role != Vfx120TraditionalMotif.Role.Summon && role != Vfx120TraditionalMotif.Role.Shield)
+                    NativeDiagnostic = "FIELD_ROLE_UNSUPPORTED_FALLBACK";
+                else
+                {
+                    Vector3 point = role == Vfx120TraditionalMotif.Role.Shield
+                        ? new Vector3(0, _originGround + .06f, 0)
+                        : new Vector3(_aim.x, _targetGround + .06f, _aim.z);
+                    if(Profile.KtpPatternShield && role==Vfx120TraditionalMotif.Role.Shield)point=new Vector3(0,0,.7f);
+                    if (role == Vfx120TraditionalMotif.Role.Summon && HasSpatialPlan)
+                    {
+                        point = transform.InverseTransformPoint(ReceivedAreaPlan.Point);
+                        point.y = _targetGround + .06f;
+                    }
+                    _nativeField = CreateNative(Profile.NativeFieldPrefab, role, point, Life);
+                    NativeFieldConfigured = _nativeField != null;
+                    _nativeReplaceProcedural = NativeFieldConfigured && Profile.NativeReplaceBody;
+                }
+            }
+        }
+
+        private Vfx120TraditionalMotif CreateNative(GameObject source, Vfx120TraditionalMotif.Role role,
+            Vector3 position, float lifetime)
+        {
+            if (source == null || lifetime <= 0 || float.IsNaN(Profile.NativeScale)
+                || float.IsInfinity(Profile.NativeScale) || Profile.NativeScale <= 0
+                || (role == Vfx120TraditionalMotif.Role.Impact && (float.IsNaN(Profile.NativeImpactScale)
+                    || float.IsInfinity(Profile.NativeImpactScale) || Profile.NativeImpactScale <= 0)))
+            { NativeDiagnostic = "NATIVE_SETTINGS_INVALID_FALLBACK"; return null; }
+            var host = new GameObject("Native_" + role);
+            host.transform.SetParent(transform, false);
+            host.transform.localPosition = position;
+            host.transform.localScale = Vector3.one * Profile.NativeScale
+                * (role == Vfx120TraditionalMotif.Role.Impact ? Profile.NativeImpactScale : 1f);
+            if (Profile.KtpEmphasis)
+            {
+                float multiplier = role == Vfx120TraditionalMotif.Role.Cast ? Profile.KtpCastMultiplier
+                    : role == Vfx120TraditionalMotif.Role.Impact ? Profile.KtpImpactMultiplier : Profile.KtpFieldMultiplier;
+                host.transform.localScale *= float.IsFinite(multiplier) && multiplier > 0 ? multiplier : 1f;
+                host.transform.localPosition += role == Vfx120TraditionalMotif.Role.Cast ? Profile.KtpCastOffset
+                    : role == Vfx120TraditionalMotif.Role.Impact ? Profile.KtpImpactOffset : Profile.KtpFieldOffset;
+            }
+            var motif = host.AddComponent<Vfx120TraditionalMotif>();
+            var options = Vfx120TraditionalMotif.Settings.DefaultFor(role);
+            options.PreserveAuthored=Profile.UseOriginalKtp;
+            options.Brightness = Profile.KtpEmphasis ? Profile.KtpBrightness : 1f;
+            options.PatternFocus = Profile.KtpEmphasis;
+            options.FiniteWindow = Profile.KtpPatternShield && role==Vfx120TraditionalMotif.Role.Shield;
+            options.Sustain=Profile.UseOriginalKtp&&(role==Vfx120TraditionalMotif.Role.Shield||role==Vfx120TraditionalMotif.Role.Summon);
+            options.Lifetime = lifetime;
+            options.FadeSeconds = Mathf.Min(options.FadeSeconds, lifetime);
+            options.PreviewControlled = PreviewControlled;
+            // Local/Shape-scaled vendor PS otherwise ignore the companion seal's
+            // authored carrier scale. Opt in only for the new spatial body profiles.
+            options.HierarchyScaling = Profile.NativeBodyPrefab != null || Profile.BotanicalPrefab != null
+                || Profile.Glyph == "오" || Profile.Glyph == "막" || Profile.Glyph == "뭄"
+                || Vfx120FrostCordMotion.IsPrepared(Profile) || Vfx120InterceptionMotion.IsPrepared(Profile) || IsBambooGuard(Profile) || IsWoodWard(Profile) || IsRegrowth(Profile) || IsBloom(Profile) || IsWoodSword(Profile) || IsCompanionSeeds(Profile) || IsBambooSpikes(Profile) || IsVineField(Profile) || IsBambooBolt(Profile) || IsSeedTransfer(Profile) || IsSeedPod(Profile) || IsLeafCut(Profile) || IsWetRoot(Profile) || IsRootLift(Profile) || IsStakeField(Profile) || IsWoodLift(Profile) || IsFireBolt(Profile) || IsFireGuard(Profile) || IsFireAura(Profile) || IsFireCompanions(Profile);
+            // Curated source already owns its offset/rotation correction. Do not
+            // normalize ContentTransform or modify the authored child hierarchy here.
+            if (!motif.Configure(source, Profile.Pigment, Profile.Ink, role, options))
+            {
+                NativeDiagnostic = role + ": " + motif.Diagnostic + " (procedural fallback preserved)";
+                DisposeNativeHost(host);
+                return null;
+            }
+            if (NativeDiagnostic == "UNASSIGNED") NativeDiagnostic = "CONFIGURED_RUNTIME_VISUAL_UNVERIFIED";
+            return motif;
+        }
+
+        private bool _externalGuardContact;
+        private float NativeImpactClock()
+        {
+            if (_externalGuardContact && (IsBambooGuard(Profile) || IsFireGuard(Profile))) return -1;
+            if(IsFireGuard(Profile))return FireGuardClock;
+            if(IsEmberCharge)return EmberChargeDetonatedAt;
+            if(IsSeedPod(Profile))return SeedPodDetonatedAt;
+            if(IsLeafCut(Profile))return LeafCutAt;
+            if(IsWetRoot(Profile))return WetRootAt;
+            if(IsRootLift(Profile))return RootLiftConfigured?RootLiftDelay:-1;
+            if(IsStakeField(Profile))return StakeFieldConfigured?StakeFieldDelay:-1;
+            if (IsBambooSpikes(Profile)) return BambooSpikesConfigured ? BambooSpikesDelay : -1;
+            if (IsWoodSword(Profile)) return WoodSwordContactClock;
+            if (IsBloom(Profile)) return BloomClock;
+            if (IsBambooGuard(Profile)) return BambooParryClock;
+            if (Vfx120InterceptionMotion.IsPrepared(Profile))
+            {
+                int first = Vfx120InterceptionMotion.FirstConfirmed(_interceptions, Life);
+                return first >= 0 ? _interceptions[first].HitAt : -1;
+            }
+            // Profile.Flight alone is an illustrative duration, not an issued impact.
+            // Existing attack adapters explicitly provide ReceivedImpactClock.
+            if (HitAt >= 0) return HitAt;
+            if (ReceivedImpactClock > 0) return _flight;
+            return PreviewControlled && DemonstrationCues && (!Profile.UseOriginalKtp || Profile.Behavior==Vfx120Behavior.Projectile || Profile.Behavior==Vfx120Behavior.Bind || Profile.Behavior==Vfx120Behavior.Burst || Profile.Behavior==Vfx120Behavior.Wave || IsFireBolt(Profile) || IsFireJet(Profile)) ? _flight : -1;
+        }
+
+        private Vector3 NativeImpactPoint()
+        {
+            if(IsSeedPod(Profile))return transform.InverseTransformPoint(PodPoint());
+            if(IsLeafCut(Profile))return transform.InverseTransformPoint(_cutPoint);
+            if(IsWetRoot(Profile))return transform.InverseTransformPoint(_wetAt>=0?WetPoint(0,0):TargetPoint());
+            if (IsWoodSword(Profile)) return transform.InverseTransformPoint(_swordContactPoint);
+            if (IsBloom(Profile)) return new Vector3(0,.02f,.18f);
+            if (IsBambooGuard(Profile)) return _guardContact;
+            if (Vfx120InterceptionMotion.IsPrepared(Profile))
+            {
+                int first = Vfx120InterceptionMotion.FirstConfirmed(_interceptions, Life);
+                if (first >= 0) return _interceptions[first].Point;
+            }
+            // Circle/Path plans own a ground impact/start point; Cone's point is
+            // the caster, so its existing resolved target/fallback remains the impact.
+            if (HasSpatialPlan && ReceivedAreaPlan.Shape != AreaShape.Cone)
+                return transform.InverseTransformPoint(ReceivedAreaPlan.Point);
+            return transform.InverseTransformPoint(TargetPoint());
+        }
+
+        private void TryStartNativeImpact(float at)
+        {
+            if (Profile.UseOriginalKtp && !PreviewControlled) return;
+            if (_nativeImpactAttempted || Profile.NativeImpactPrefab == null || at < 0 || at >= Life) return;
+            _nativeImpactAttempted = true;
+            _nativeImpact = CreateNative(Profile.NativeImpactPrefab, Vfx120TraditionalMotif.Role.Impact,
+                NativeImpactPoint(), Mathf.Min(1.6f, Life - at));
+            if (_nativeImpact != null) NativeImpactStartedAt = at;
+        }
+
+        private readonly System.Collections.Generic.List<Vfx120TraditionalMotif> _originalContacts=new System.Collections.Generic.List<Vfx120TraditionalMotif>();
+        private readonly System.Collections.Generic.List<float> _originalContactTimes=new System.Collections.Generic.List<float>();
+        public bool ConfirmOriginalImpact(Vector3 worldPoint)
+        {
+            if(Profile==null||!Profile.UseOriginalKtp||Age>=Life||!Vfx120InterceptionMotion.Finite(worldPoint))return false;
+            var fx=CreateNative(Profile.NativeImpactPrefab,Vfx120TraditionalMotif.Role.Impact,transform.InverseTransformPoint(worldPoint),1);
+            if(fx==null)return false;_originalContacts.Add(fx);_originalContactTimes.Add(Age);return true;
+        }
+        private void SampleOriginalContacts()
+        {
+            for(int i=_originalContacts.Count-1;i>=0;i--){var fx=_originalContacts[i];if(fx==null){_originalContacts.RemoveAt(i);_originalContactTimes.RemoveAt(i);continue;}if(PreviewControlled)fx.Sample(Age-_originalContactTimes[i]);}
+        }
+        private void SampleNative()
+        {
+            SampleElementWash();
+            if (PreviewControlled)
+            {
+                if (_nativeCast != null) _nativeCast.Sample(Age);
+                if (_nativeField != null) _nativeField.Sample(Age);
+            }
+            float impactAt = NativeImpactClock();
+            if (!(Profile.UseOriginalKtp&&(IsFireAura(Profile)||IsFireCompanions(Profile)||IsCompanionSeeds(Profile))) && Profile.NativeImpactPrefab != null && impactAt >= 0 && Age >= impactAt && Age < Life)
+                TryStartNativeImpact(impactAt);
+            if (PreviewControlled && _nativeImpact != null)
+            {
+                // A preview can seek backwards without manufacturing or repeating Signal.
+                float impactAge = NativeImpactStartedAt >= 0 ? Age - NativeImpactStartedAt : -1;
+                _nativeImpact.Sample(impactAge);
+            }
+            // The existing root Life remains the hard boundary even if a source's
+            // authored particles/Animator would otherwise run longer.
+            if (Age >= Life)
+            {
+                if(Profile.UseOriginalKtp&&PreviewControlled){if(_nativeField!=null)_nativeField.Release();return;}
+                if (PreviewControlled)
+                {
+                    if (_nativeCast != null) _nativeCast.Sample(_nativeCast.EndsAt);
+                    if (_nativeField != null) _nativeField.Sample(_nativeField.EndsAt);
+                    if (_nativeImpact != null) _nativeImpact.Sample(_nativeImpact.EndsAt);
+                }
+                else if(Profile.UseOriginalKtp)ReleaseOriginalTails();
+                else ClearNative();
+            }
+        }
+
+        private void ReleaseOriginalTails()
+        {
+            foreach(var contact in _originalContacts){var fx=contact;ReleaseOriginalTail(ref fx,false);}_originalContacts.Clear();_originalContactTimes.Clear();
+            ReleaseOriginalTail(ref _nativeCast,false);ReleaseOriginalTail(ref _nativeImpact,false);ReleaseOriginalTail(ref _nativeField,true);
+        }
+        private static void ReleaseOriginalTail(ref Vfx120TraditionalMotif motif,bool release)
+        {
+            if(motif==null)return;if(release)motif.Release();
+            if(motif.IsComplete){ClearNative(ref motif);return;}
+            motif.transform.SetParent(null,true);motif.DestroyHostOnCompletion=true;motif=null;
+        }
+        private void ClearNative()
+        {
+            foreach(var contact in _originalContacts){var fx=contact;ClearNative(ref fx);}_originalContacts.Clear();_originalContactTimes.Clear();
+            ClearNative(ref _nativeCast); ClearNative(ref _nativeImpact); ClearNative(ref _nativeField);
+            ClearNative(ref _nativeBody);
+        }
+
+        private static void ClearNative(ref Vfx120TraditionalMotif motif)
+        {
+            if (motif == null) return;
+            var host = motif.gameObject;
+            motif.Clear(); motif = null;
+            DisposeNativeHost(host);
+        }
+
+        private static void DisposeNativeHost(GameObject host)
+        {
+            if (host == null) return;
+            host.SetActive(false);
+            if (Application.isPlaying) Destroy(host); else DestroyImmediate(host);
         }
 
         private Vfx120CueMotion.Context CueContext()
@@ -521,6 +1050,9 @@ namespace Oheangbu.App.SpellVFX120
             context.Age = Age; context.Duration = Life; context.ImpactTime = _flight;
             context.Origin = Vector3.zero; context.Target = _aim;
             context.BaseScale = Profile.PartScale; context.GroundY = _targetGround;
+            context.FrostCords = Vfx120FrostCordMotion.IsPrepared(Profile);
+            context.InterceptionFan = Vfx120InterceptionMotion.IsPrepared(Profile);
+            context.Interceptions = _interceptions;
             context.AccentBoundsSize = Profile.AccentMesh != null ? Profile.AccentMesh.bounds.size : context.AccentBoundsSize;
             context.HitAt = IsAttachedSeal() ? AdditionalHitAt : HitAt;
             context.TargetDefeatedAt = TargetDefeatedAt;
@@ -613,7 +1145,10 @@ namespace Oheangbu.App.SpellVFX120
                 float t = Mathf.Clamp01(Age / Mathf.Max(.01f, _flight));
                 Vector3 end = _aim;
                 if (Profile.Glyph == "막")
-                    end.y = _targetGround + (Profile.BodyMesh != null ? Profile.BodyMesh.bounds.extents.y * Profile.PartScale.y : .5f) + .015f;
+                {
+                    float seating = Profile.BodyMaterial != null && Profile.BodyMaterial.HasProperty("_Visibility") ? -.16f : .015f;
+                    end.y = _targetGround + (Profile.BodyMesh != null ? Profile.BodyMesh.bounds.extents.y * Profile.PartScale.y : .5f) + seating;
+                }
                 return Vector3.Lerp(Vector3.zero, end, t) + Vector3.up * (4 * t * (1 - t) * Mathf.Max(.4f, Profile.Lift));
             }
             var b = Profile.Behavior;
@@ -757,10 +1292,18 @@ namespace Oheangbu.App.SpellVFX120
             return glyph == '구' || glyph == '누' || glyph == '무' || glyph == '수' || glyph == '우';
         }
 
-        private void Tint(Renderer renderer, Color color, float alpha, float erode)
+        private void Tint(Renderer renderer, Color color, float alpha, float erode, bool softFog = false)
         {
             _block.Clear(); _block.SetColor(ColorId, color); _block.SetFloat(AlphaId, alpha);
             _block.SetFloat(ErodeId, erode); _block.SetFloat(AgeId, Age);
+            // Source-textured stone shares the cutout surface with botanical assets.
+            // Its rigid geometry fades by visibility instead of stretching at expiry.
+            _block.SetFloat("_Visibility", alpha);
+            if (Profile.Glyph == "뭄")
+                _block.SetFloat("_Formation", Mathf.SmoothStep(0, 1, Age / .95f));
+            // Only muddy fog body layers feather their UV edges. Shared Cloud
+            // materials, native particle instances and other glyphs stay unchanged.
+            if(softFog)_block.SetFloat(SoftId,.75f);
             renderer.SetPropertyBlock(_block);
         }
 

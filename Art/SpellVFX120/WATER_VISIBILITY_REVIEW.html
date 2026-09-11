@@ -1,0 +1,8 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>우 · 내부 시야 개선</title>
+<style>body{max-width:1700px;margin:auto;padding:25px;background:#171b19;color:#eee;font:17px/1.6 system-ui}.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}video,img{width:100%}button{padding:12px;margin:8px;background:#345044;color:white;border:0}a{color:#acdcd8}@media(max-width:800px){.pair{grid-template-columns:1fr}}</style>
+<h1>우 · 내부 시야 개선</h1><p>수막의 강한 반사와 굴절을 줄이고, 내부 패널 문양을 옅게 조정했습니다.</p>
+<p>VFX 진단 영상 · 실제 방어 미연결. 수정판은5.5초입니다. 메모리85% 제한으로 외부 재촬영은 중단했습니다.</p>
+<div class="pair"><section><h2>수정 전 · 내부</h2><video controls preload="metadata" src="FixedWards/WaterVisibilityBefore/play.mp4"></video></section><section><h2>수정 후 · 내부</h2><video controls preload="metadata" src="FixedWards/WaterVisibility/play.mp4"></video></section></div>
+<button onclick="document.querySelectorAll('video').forEach(v=>{v.currentTime=0;v.play()})">함께 재생</button><button onclick="document.querySelectorAll('video').forEach(v=>{v.pause();v.currentTime=20/24})">동일 순간 비교</button>
+<div class="pair"><img alt="수정 전" src="FixedWards/WaterVisibilityBefore/play_before.jpg"><img alt="수정 후" src="FixedWards/WaterVisibility/after.jpg"></div>
+<p>우 수치검사85개 통과. 외부 시점 재촬영·실제 방어는 미검증. <a href="FixedWards/WaterVisibility/REPORT.md">변경과 검증 기록</a> · <a href="FIXED_WARDS_REVIEW.html#우">이전5종 검토</a></p></html>

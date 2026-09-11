@@ -35,7 +35,8 @@ namespace Oheangbu.App.SpellVFX120
             _active.PreviewControlled = true;
             _active.DemonstrationCues = DemonstrationCues;
             Transform primary = GameObject.Find("VFX Target")?.transform;
-            if (DemonstrationCues)
+            if (DemonstrationCues && (entry.Glyph == "송" || entry.Glyph == "걱" || entry.Glyph == "건" || entry.Glyph == "것" || entry.Glyph == "겅")) primary = null;
+            else if (DemonstrationCues)
             {
                 PrepareDemonstrationTargets(entry.Glyph == "안", out primary, out var secondary,
                     out var split, out _fixtureRoot);
@@ -43,12 +44,37 @@ namespace Oheangbu.App.SpellVFX120
                 _active.SetAreaPlan(CreateDemonstrationAreaPlan(entry.Profile));
             }
             _active.Begin(new Vector3(0, 1, 0), primary, new Vector3(0, 1, 4), Color.white);
+            if (DemonstrationCues && entry.Glyph == "송")
+                _fixtureRoot = Vfx120InterceptionReviewFixture.Create(_active);
+            if (DemonstrationCues && entry.Glyph == "걱")
+                _fixtureRoot = Vfx120RegrowthReviewFixture.Create(_active);
+            if (DemonstrationCues && entry.Glyph == "건")
+                _fixtureRoot = Vfx120BloomReviewFixture.Create(_active);
+            if (DemonstrationCues && entry.Glyph == "것")
+                _fixtureRoot = Vfx120WoodSwordReviewFixture.Create(_active);
+            if (DemonstrationCues && entry.Glyph == "겅")
+                _fixtureRoot = Vfx120CompanionSeedReviewFixture.Create(_active);
             _playStart = Time.time;
             _replayAt = Time.time + _active.Life + .7f;
         }
         private void Update()
         {
+            if (_active != null && _active.Profile.Glyph == "걱" && _fixtureRoot != null)
+                _fixtureRoot.GetComponent<Vfx120RegrowthReviewFixture>()?.Sample(Time.time - _playStart);
+            if (_active != null && _active.Profile.Glyph == "것" && _fixtureRoot != null)
+                _fixtureRoot.GetComponent<Vfx120WoodSwordReviewFixture>()?.Sample(Time.time - _playStart);
+            if (_active != null && _active.Profile.Glyph == "겅" && _fixtureRoot != null)
+                _fixtureRoot.GetComponent<Vfx120CompanionSeedReviewFixture>()?.Sample(Time.time - _playStart);
+            if (_active != null && _active.Profile.Glyph=="곡") Vfx120VineFieldReviewFixture.Sample(_active,Time.time-_playStart);
+            if (_active != null && _active.Profile.Glyph=="간") Vfx120SeedTransferReviewFixture.Sample(_active,Time.time-_playStart);
+            if (_active != null && _active.Profile.Glyph=="감") Vfx120SeedPodReviewFixture.Sample(_active,Time.time-_playStart);
+            if (_active != null && _active.Profile.Glyph=="갓") Vfx120LeafCutReviewFixture.Sample(_active,Time.time-_playStart);
+            if (_active != null && _active.Profile.Glyph=="강") Vfx120WetRootReviewFixture.Sample(_active,Time.time-_playStart);
+            if (_active != null && _active.Profile.Glyph=="곳") Vfx120StakeFieldReviewFixture.Sample(_active,Time.time-_playStart);
+            if (_active != null && _active.Profile.Glyph=="국") Vfx120WoodLiftReviewFixture.Sample(_active,Time.time-_playStart);
             if (_active != null) _active.Sample(Time.time - _playStart);
+            if (_active != null && _active.Profile.Glyph == "송" && _fixtureRoot != null)
+                _fixtureRoot.GetComponent<Vfx120InterceptionReviewFixture>()?.Sample(Time.time - _playStart);
             var keys = Keyboard.current;
             if (keys != null)
             {
@@ -127,12 +153,12 @@ namespace Oheangbu.App.SpellVFX120
             var plan = new AreaImpactPlan { Direction = Vector3.forward, Delay = profile.Flight, Radius = profile.Size };
             switch (profile.Glyph)
             {
-                case "고":
+                case "고": case "곡": case "곤": case "곳":
                     plan.Shape = AreaShape.Circle; plan.Point = new Vector3(0, 0, 4); return plan;
                 case "노":
                     plan.Shape = AreaShape.Cone; plan.Point = new Vector3(0, 1, 0);
                     plan.Angle = 32; plan.Length = Mathf.Max(2.5f, profile.Size * 2); return plan;
-                case "모": case "오":
+                case "공": case "모": case "오":
                     plan.Shape = AreaShape.Path; plan.Point = new Vector3(0, 0, .8f);
                     plan.Length = 5; plan.Speed = 2.2f; return plan;
                 case "소":

@@ -1,0 +1,11 @@
+{
+"id":"035_B11B","version":"58","key":"NEOT_035","glyph":"넛","title":"넛 · 불검",
+"audit":"single_play_B11B.json","build":"fire_sword_035_build.json","scope":"neot58_scope_check.json","previous":"NEOM_034_REVIEW.html",
+"intro":"얇은 칼날을 따라 화염이 흐릅니다. 휘두를 때 불티가 남고, 확인된 명중 지점에 전통 문양이 펼쳐집니다.",
+"changes":["길이1.25m 중심 칼날과 표면을 따라 방출하는 화염·불티를 제작했다.","SetFireSwordGrip으로 위치·회전을 받는다. 영상은 진단용 궤적으로 검을 휘두른다.","KTP Pattern_110을 검의 작은 문양과 명중 문양으로 사용했다. 명중 문양은 검 회전과 분리된다.","다른119개 프로필은 보존했다."],
+"cost":"전용 Particle System7개/입자용량432개, 문양4tris·칼날8tris. 공유 재질5개. KTP 시전 효과 비용 별도. 추가 물리 질의 없음.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","실제 플레이어 장비 교체·손 소켓·공격 판정 연결은 미구현이다. 외부 위치·회전·명중 신호를 받는 표현을 제작했다.","실제 전투·다중 동시 시전 성능은 미검증이다."],
+"captureNote":"1280×720·24fps.0.5~1.1초에 진단용 휘두르기,0.85초 명중 신호. 별도 검사에서 파지 위치 오차1mm 이하와 명중 전 타격 없음, 종료 정리를 확인했다.",
+"detailLabels":["불검 형성","휘두르기와 명중"]
+}

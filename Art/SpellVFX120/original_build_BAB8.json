@@ -1,0 +1,15 @@
+{
+    "glyph": "몸",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/StoneGuardian.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_StoneGuardian.mat||||4.7|0.6|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/StoneGuardian.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_StoneGuardian.mat||||4.7|0.6|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-03.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom14-01.prefab"
+    ],
+    "systems": 75,
+    "capacity": 75000,
+    "sourcePreserved": true
+}

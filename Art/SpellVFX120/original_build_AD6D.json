@@ -1,0 +1,15 @@
+{
+    "glyph": "국",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/WoodLift/VFX120_WoodLiftTrunk_020.asset|Assets/_Project/Art/SpellVFX120/WoodLift/M_WoodLift_020.mat||||4.4|0.45|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/WoodLift/VFX120_WoodLiftTrunk_020.asset|Assets/_Project/Art/SpellVFX120/WoodLift/M_WoodLift_020.mat||||4.4|0.45|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+    ],
+    "systems": 56,
+    "capacity": 56000,
+    "sourcePreserved": true
+}

@@ -85,9 +85,10 @@ namespace Oheangbu.App.SpellVFX120
             Vector3 right = Vector3.Cross(Vector3.up, forward);
             Vector3 start = -right * (c.Height * .58f) + forward * .70f;
             start.y = c.OriginGround;
-            // Side-on approach exposes both the face and the striking arm without
-            // turning toward the camera or putting the torso at the target's XZ.
-            Vector3 stop = c.HasTarget ? c.Target - forward * (c.Height * .17f) - right * (c.Height * .25f) : start;
+            // Approach the target's outer flank and strike back toward it. This
+            // leaves the striking shoulder outside the torso/target overlap; the
+            // facing still follows the actual target, with no camera dependency.
+            Vector3 stop = c.HasTarget ? c.Target + forward * (c.Height * .12f) + right * (c.Height * .28f) : start;
             stop.y = c.HasTarget ? c.TargetGround : c.OriginGround;
             float strikeAt = c.StrikeAt;
             if (strikeAt < 0 && c.Demonstration && c.HasTarget)
@@ -155,7 +156,10 @@ namespace Oheangbu.App.SpellVFX120
             Vector3 targetVector = c.Target - shoulder;
             Vector3 direction = targetVector.sqrMagnitude > .00001f ? targetVector.normalized : p.Facing * Vector3.forward;
             float distance = Mathf.Clamp(targetVector.magnitude, Mathf.Abs(a - b) + .005f, a + b - .005f);
-            Vector3 outside = torsoRotation * Vector3.right;
+            // Keep the elbow on the authored limb's side after FBX handedness
+            // conversion; anatomical labels alone do not define the imported X.
+            float side = Mathf.Sign(c.Pivots[(int)Part.RightArm].x - c.Pivots[(int)Part.Torso].x);
+            Vector3 outside = torsoRotation * (Vector3.right * (side == 0 ? 1 : side));
             Vector3 bend = Vector3.ProjectOnPlane(outside, direction);
             if (bend.sqrMagnitude < .00001f) bend = Vector3.ProjectOnPlane(Vector3.up, direction);
             bend.Normalize();

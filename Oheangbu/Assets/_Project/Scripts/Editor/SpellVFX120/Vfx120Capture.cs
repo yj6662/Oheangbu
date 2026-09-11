@@ -16,6 +16,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // Zero captures the complete authored lifetime. Explicit durations remain supported.
             public float fps = 24, duration;
             public string folder = "Stills";
+            public bool externalCamera;
+            public bool hideTemporaryTargets;
+            public Vector3 cameraPosition = new Vector3(4, 3, -4);
+            public Vector3 cameraTarget = new Vector3(0, 1, 2);
         }
         [Serializable] class Progress
         {
@@ -27,6 +31,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             public string glyph, title, status = "PRESENTATION_REVIEW_ONLY";
             public string capturedUtc, loadedRuntimeAssemblyMvid, loadedRuntimeAssemblyLastWriteUtc;
+            public string graphicsApi, graphicsDevice, profileDependencyHash;
+            public string captureScene, cameraScene, cameraName;
+            public Vector3 cameraPosition, cameraEuler;
+            public float cameraFov, cameraOrthographicSize;
+            public bool cameraOrthographic;
+            public int renderWidth, renderHeight;
             public bool demonstrationCues, gameplayConnectionVerified;
             public float impactTime, life;
             public float[] sampledSeconds;
@@ -43,6 +53,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static Vfx120Effect _effect;
         static GameObject _fixtureRoot;
         static Camera _camera;
+        static GameObject _externalCamera;
         static RenderTexture _target;
         static Texture2D _readback;
         static int _index, _frame;
@@ -65,6 +76,18 @@ namespace Oheangbu.EditorTools.SpellVFX120
             _catalog = AssetDatabase.LoadAssetAtPath<Vfx120Catalog>(Vfx120Editor.AssetRoot + "/Data/VFX120_Catalog.asset");
             _camera = Camera.main;
             if (_catalog == null || _camera == null) { _r = null; throw new InvalidOperationException("Open VFX review first"); }
+            if (_r.externalCamera)
+            {
+                Camera sourceCamera = _camera;
+                _externalCamera = new GameObject("VFX External Inspection Camera") { hideFlags = HideFlags.HideAndDontSave };
+                _camera = _externalCamera.AddComponent<Camera>();
+                _camera.CopyFrom(sourceCamera); _camera.enabled = false;
+                var sourceData = sourceCamera.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+                if (sourceData != null)
+                    EditorUtility.CopySerialized(sourceData, _externalCamera.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>());
+                _camera.transform.position = _r.cameraPosition;
+                _camera.transform.rotation = Quaternion.LookRotation(_r.cameraTarget - _r.cameraPosition, Vector3.up);
+            }
             _index = _r.start; _frame = 0;
             _directory = Path.Combine(Vfx120Editor.Output, _r.folder); Directory.CreateDirectory(_directory);
             _target = new RenderTexture(_r.width, _r.height, 24, RenderTextureFormat.ARGB32); _target.Create();
@@ -81,6 +104,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (_p == null) return "{\"status\":\"IDLE\"}";
             if (_r != null) { _p.index = _index; _p.frame = _frame; }
             return JsonUtility.ToJson(_p, true);
+        }
+
+        public static string Cancel()
+        {
+            if (_r != null) Finish("Cancelled by capture owner; partial frames preserved.");
+            return Poll();
         }
 
         static void Tick()
@@ -100,16 +129,60 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     Transform secondary = null;
                     if (_r.demonstrationCues)
                     {
-                        Vfx120Review.PrepareDemonstrationTargets(e.Glyph == "안", out primary, out secondary,
-                            out var splitTargets, out _fixtureRoot);
-                        _effect.SetSecondaryTargets(secondary, splitTargets);
+                        if (e.Glyph == "상")
+                            Vfx120FrostCaptureFixture.Create(out primary, out _fixtureRoot);
+                        else if (e.Glyph == "선")
+                        {
+                            primary = null;
+                            _fixtureRoot = Vfx120SpeedCaptureFixture.Create();
+                        }
+                        else if (e.Glyph == "송" || e.Glyph == "걱" || e.Glyph == "건" || e.Glyph == "것" || e.Glyph == "겅") primary = null;
+                        else
+                        {
+                            Vfx120Review.PrepareDemonstrationTargets(e.Glyph == "안", out primary, out secondary,
+                                out var splitTargets, out _fixtureRoot);
+                            _effect.SetSecondaryTargets(secondary, splitTargets);
+                        }
                         _effect.SetAreaPlan(Vfx120Review.CreateDemonstrationAreaPlan(e.Profile));
                     }
                     _effect.Begin(new Vector3(0, 1, 0), primary, new Vector3(0, 1, 4), Color.white);
+                    if (_r.demonstrationCues && e.Glyph == "송")
+                        _fixtureRoot = Vfx120InterceptionReviewFixture.Create(_effect);
+                    if (_r.demonstrationCues && e.Glyph == "걱")
+                        _fixtureRoot = Vfx120RegrowthReviewFixture.Create(_effect);
+                    if (_r.demonstrationCues && e.Glyph == "건")
+                        _fixtureRoot = Vfx120BloomReviewFixture.Create(_effect);
+                    if (_r.demonstrationCues && e.Glyph == "것")
+                        _fixtureRoot = Vfx120WoodSwordReviewFixture.Create(_effect);
+                    if (_r.demonstrationCues && e.Glyph == "겅")
+                        _fixtureRoot = Vfx120CompanionSeedReviewFixture.Create(_effect);
+                    // Only hide newly-created diagnostic silhouettes for model inspection.
+                    // Scene targets and gameplay actors are never modified by this option.
+                    if (_r.hideTemporaryTargets && _fixtureRoot != null)
+                        foreach (var renderer in _fixtureRoot.GetComponentsInChildren<Renderer>()) renderer.enabled = false;
                     SaveEvidence(e, primary, secondary);
                 }
                 float t = _r.clip ? _frame / Mathf.Max(1, _r.fps) : SampleFractions[Mathf.Min(_frame, 4)] * _effect.Life;
+                if (_r.demonstrationCues && e.Glyph == "선")
+                    Vfx120SpeedCaptureFixture.Sample(_fixtureRoot, _effect, t);
+                if (_r.demonstrationCues && e.Glyph == "걱" && _fixtureRoot != null)
+                    _fixtureRoot.GetComponent<Vfx120RegrowthReviewFixture>().Sample(t);
+                if (_r.demonstrationCues && e.Glyph == "것" && _fixtureRoot != null)
+                    _fixtureRoot.GetComponent<Vfx120WoodSwordReviewFixture>().Sample(t);
+                if (_r.demonstrationCues && e.Glyph == "겅" && _fixtureRoot != null)
+                    _fixtureRoot.GetComponent<Vfx120CompanionSeedReviewFixture>().Sample(t);
+                if (_r.demonstrationCues && e.Glyph=="곡") Vfx120VineFieldReviewFixture.Sample(_effect,t);
+                if (_r.demonstrationCues && e.Glyph=="간") Vfx120SeedTransferReviewFixture.Sample(_effect,t);
+                if (_r.demonstrationCues && e.Glyph=="감") Vfx120SeedPodReviewFixture.Sample(_effect,t);
+                if (_r.demonstrationCues && e.Glyph=="갓") Vfx120LeafCutReviewFixture.Sample(_effect,t);
+                if (_r.demonstrationCues && e.Glyph=="강") Vfx120WetRootReviewFixture.Sample(_effect,t);
+                if (_r.demonstrationCues && e.Glyph=="곳") Vfx120StakeFieldReviewFixture.Sample(_effect,t);
+                if (_r.demonstrationCues && e.Glyph=="국") Vfx120WoodLiftReviewFixture.Sample(_effect,t);
                 _effect.Sample(t);
+                if (_r.demonstrationCues && e.Glyph == "송" && _fixtureRoot != null)
+                    _fixtureRoot.GetComponent<Vfx120InterceptionReviewFixture>().Sample(t);
+                if (_r.demonstrationCues && e.Glyph == "상")
+                    Vfx120FrostCaptureFixture.Sample(_fixtureRoot, t, e.Profile.Flight, _effect.TargetGroundWorldY);
                 var previous = _camera.targetTexture; var active = RenderTexture.active;
                 try
                 {
@@ -144,6 +217,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var evidence = new CaptureEvidence
             {
                 capturedUtc = DateTime.UtcNow.ToString("o"),
+                graphicsApi = SystemInfo.graphicsDeviceType.ToString(),
+                graphicsDevice = SystemInfo.graphicsDeviceName,
+                profileDependencyHash = AssetDatabase.GetAssetDependencyHash(AssetDatabase.GetAssetPath(_effect.Profile)).ToString(),
+                captureScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().path,
+                cameraScene = _camera.gameObject.scene.path, cameraName = _camera.name,
+                cameraPosition = _camera.transform.position, cameraEuler = _camera.transform.eulerAngles,
+                cameraFov = _camera.fieldOfView, cameraOrthographic = _camera.orthographic,
+                cameraOrthographicSize = _camera.orthographicSize, renderWidth = _r.width, renderHeight = _r.height,
                 loadedRuntimeAssemblyMvid = typeof(Vfx120Effect).Assembly.ManifestModule.ModuleVersionId.ToString(),
                 loadedRuntimeAssemblyLastWriteUtc = File.GetLastWriteTimeUtc(typeof(Vfx120Effect).Assembly.Location).ToString("o"),
                 glyph = entry.Glyph, title = entry.Profile.Title, demonstrationCues = _r.demonstrationCues,
@@ -155,7 +236,32 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     ? "Review-only: hit at flight for 녹/안/상; later C4 hit or 간 defeat at max(flight+0.3,life*0.48); 검 release at life*0.77. Water support cues use hit=max(flight+0.1,life*0.28), release=life*0.76 when absent. 눈/숫/웅 use isolated environment props and hit=life*0.18, release=life*0.52. 몸 guardian uses an illustrative strike at max(formation+0.55,life*0.55). No gameplay events are dispatched."
                     : "No demonstration events. Only explicitly supplied presentation cues are sampled."
             };
+            if (Vfx120Effect.IsBloom(entry.Profile)) evidence.impactTime = _effect.BloomClock;
             var area = _effect.ReceivedAreaPlan;
+            if (entry.Glyph == "상" && _r.demonstrationCues)
+                evidence.eventSource += " 상 uses a capture-only 7.5cm projectile proxy: authored approach/fall, synthetic HitAt=Flight; no actual enemy projectile or freeze/collision gameplay is tested.";
+            if (entry.Glyph == "선" && _r.demonstrationCues)
+                evidence.eventSource += " 선 uses SetProjectileVisualAnchor with a capture-only needle launched at 0.4s and moved 2.8m by the fixture; no gameplay speed/buff comparison is tested.";
+            if (entry.Glyph == "송" && _r.demonstrationCues)
+                evidence.eventSource += " 송 receives six explicit review-only interception plans: arrivals/hits at 0.4..0.525s, proxy approach/fall. No real enemy projectile, collision, freeze or damage is exercised.";
+            if (entry.Glyph == "거" && _r.demonstrationCues)
+                evidence.eventSource += " 거 uses a synthetic parry at 0.36s and default 0.55s bright window; this does not exercise enemy collision, ParryJudge or rewards.";
+            if (entry.Glyph == "구" && _r.demonstrationCues)
+                evidence.eventSource += " 구 uses synthetic support hits at 0.95s (index 1) and 1.6s (index 4); no actual collision/mitigation or parry reward is exercised.";
+            if (entry.Glyph == "걱" && _r.demonstrationCues)
+                evidence.eventSource += " 걱: six synthetic growth ticks at 0.45..2.7s; sliding ankle proxy moves 0.65m and turns 18 degrees. No actual walking animation, Health healing or buff owner is exercised.";
+            if (entry.Glyph == "건" && _r.demonstrationCues)
+                evidence.eventSource += " 건: a static receiver capsule and synthetic one-shot bloom at 0.28s. No actual Health, buff, player or healing event is exercised.";
+            if (entry.Glyph == "것" && _r.demonstrationCues)
+            {
+                evidence.impactTime = 1.15f;
+                evidence.eventSource += " 것: synthetic grip trajectory/swing from 0.8..1.45s and one supplied contact at 1.15s. Two recent pose traces use at most 32 points. No player hand rig, brush replacement, drawing lockout, collision or sword damage is exercised.";
+            }
+            if (entry.Glyph == "겅" && _r.demonstrationCues)
+            {
+                evidence.impactTime = 1.45f;
+                evidence.eventSource += " 겅: one synthetic primary projectile launches at 0.4s, arrives at 1.45s; separate seed confirmations at 1.45s and 1.61s. No actual spell, extra damage, collision or buff is exercised.";
+            }
             evidence.areaPlanSource = area != null ? "REVIEW_PROFILE_ILLUSTRATION_NOT_COMBAT_PLAN" : "none";
             if (area != null)
             {
@@ -180,6 +286,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Vfx120Review.DestroyFixture(_fixtureRoot); _fixtureRoot = null;
             if (_target != null) { _target.Release(); UnityEngine.Object.DestroyImmediate(_target); }
             if (_readback != null) UnityEngine.Object.DestroyImmediate(_readback);
+            if (_externalCamera != null) UnityEngine.Object.DestroyImmediate(_externalCamera);
+            _externalCamera = null;
             _r = null;
         }
     }

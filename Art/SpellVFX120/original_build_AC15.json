@@ -1,0 +1,15 @@
+{
+    "glyph": "강",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/WetRoot/VFX120_WetThorn_006.asset|Assets/_Project/Art/SpellVFX120/WetRoot/M_WetRoot_006.mat||||1.3|0.58|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/WetRoot/VFX120_WetThorn_006.asset|Assets/_Project/Art/SpellVFX120/WetRoot/M_WetRoot_006.mat||||1.3|0.58|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+    ],
+    "systems": 56,
+    "capacity": 56000,
+    "sourcePreserved": true
+}

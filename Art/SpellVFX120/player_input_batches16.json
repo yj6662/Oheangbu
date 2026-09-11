@@ -1,0 +1,47 @@
+{
+  "startedUtc": "2026-09-09T09:38:16.180968+00:00",
+  "scope": "Three normal Play entries; existing XML strokes, real input/recognition/DI and VFX. No ink injection. No real-target damage, free handwriting, performance or art claim.",
+  "batches": [
+    {
+      "batchId": 1,
+      "status": "PASS_OBSERVED_SELECTED_BATCH_INPUT_CASTS",
+      "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\PlayerInputBatches\\batch01_20260909-093928-097-dbc1e797.json",
+      "requestedGlyphs": "가나마사아",
+      "completed": 5,
+      "failed": 0,
+      "errors": 0,
+      "cleanupStatus": "OBSERVED_INPUT_AND_EFFECT_CLEANUP",
+      "configuredTargets": 0,
+      "inkBefore": 1.0,
+      "inkAfter": 0.2500000596046448
+    },
+    {
+      "batchId": 2,
+      "status": "PASS_OBSERVED_SELECTED_BATCH_INPUT_CASTS",
+      "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\PlayerInputBatches\\batch02_20260909-094127-463-9ff22fe4.json",
+      "requestedGlyphs": "고노모소오",
+      "completed": 5,
+      "failed": 0,
+      "errors": 0,
+      "cleanupStatus": "OBSERVED_INPUT_AND_EFFECT_CLEANUP",
+      "configuredTargets": 0,
+      "inkBefore": 1.0,
+      "inkAfter": 0.2500000596046448
+    },
+    {
+      "batchId": 3,
+      "status": "PASS_OBSERVED_SELECTED_BATCH_INPUT_CASTS",
+      "output": "C:\\Users\\yj666\\Oheangbu\\Art\\SpellVFX120\\PlayerInputBatches\\batch03_20260909-094324-263-42b12fcd.json",
+      "requestedGlyphs": "거너머서어",
+      "completed": 5,
+      "failed": 0,
+      "errors": 0,
+      "cleanupStatus": "OBSERVED_INPUT_AND_EFFECT_CLEANUP",
+      "configuredTargets": 0,
+      "inkBefore": 1.0,
+      "inkAfter": 0.49999991059303284
+    }
+  ],
+  "status": "PASS_OBSERVED_15_REGISTERED_INPUT_CASTS_ONLY",
+  "finishedUtc": "2026-09-09T09:44:17.424393+00:00"
+}

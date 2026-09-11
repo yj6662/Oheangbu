@@ -24,15 +24,51 @@ MonoBehaviour:
   Layout: 2
   BodyMesh: {fileID: 4300000, guid: 45ef77b38a2300d419ee09949588e0aa, type: 2}
   AccentMesh: {fileID: 4300000, guid: c926273f58c26514cb1823a649eaa45e, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
   BodyMaterial: {fileID: 2100000, guid: 208e75c38a3aa4c489d1fd8161d8dbb1, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: abeddae657a9e8445b204adfbbd31318, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: c2cf9e4b422a7ac448bfef735a9367e1, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 0}
+  NativeImpactPrefab: {fileID: 5830926714111392629, guid: cc07ca9a3a55a1548bd7efe03b76ff34, type: 3}
+  NativeFieldPrefab: {fileID: 9208405393128503798, guid: 9d854a6e874331c41bcdc9ad836eaa78, type: 3}
+  NativeFieldRole: 3
+  NativeScale: 0.52
+  NativeImpactScale: 1
+  KtpEmphasis: 1
+  KtpCastMultiplier: 1.1
+  KtpImpactMultiplier: 2
+  KtpFieldMultiplier: 1.923077
+  KtpContactMultiplier: 2
+  KtpBrightness: 2.2
+  KtpCastOffset: {x: 0, y: 0, z: -0.65}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 1
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 5270844645846891668, guid: c00ab6b620b1873428175c8a00d738af, type: 3}
+  KtpRectShield: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 3014496098005184797, guid: b4dccb4830f404848ae1874d4509181e, type: 3}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.74509805, g: 0.32941177, b: 0.23137255, a: 1}
   Accent: {r: 0.76862746, g: 0.68235296, b: 0.48235294, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 8
-  RibbonCount: 1
+  Count: 1
+  RibbonCount: 0
   Size: 1.12
   PartScale: {x: 0.95, y: 0.78, z: 1.45}
   Duration: 2.25
@@ -40,7 +76,7 @@ MonoBehaviour:
   Turns: 0.1
   Lift: 0.66
   Stagger: 0.018
-  UseMist: 1
+  UseMist: 0
   Grounded: 0
   SourcePattern: Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_110.png
   RecipeJson: "{\"design\":{\"index\":31,\"glyph\":\"\uB108\",\"initial\":\"\u3134\",\"element\":\"\uD654\",\"vowel\":\"\u3153\",\"final\":\"\uBB34\",\"frame\":\"\uC74C\xB7\uB2E8\uC77C\",\"classification\":\"\uD328\uB9C1\",\"assignment\":\"ASSIGNED_EXISTING_GAMEPLAY\",\"gameplayEffectVerbatim\":\"\uD654\uB9C9\uC73C\uB85C

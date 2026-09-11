@@ -23,19 +23,55 @@ MonoBehaviour:
   Assigned: 1
   Behavior: 3
   Layout: 2
-  BodyMesh: {fileID: 4300000, guid: e40e55c13472ba24080359ee1af560c9, type: 2}
-  AccentMesh: {fileID: 4300000, guid: a50ca8db1c4b5914c926f2ccd3dca4fa, type: 2}
-  BodyMaterial: {fileID: 2100000, guid: 484b2381918c5a847931b33e4b5eb3b4, type: 2}
+  BodyMesh: {fileID: 4300000, guid: 86dd74fb61482e845b867c7e02a7fbcf, type: 2}
+  AccentMesh: {fileID: 4300000, guid: 561335ff83c11c444a1b72d8b2e05046, type: 2}
+  GuardianMeshes: []
+  GuardianPivots: []
+  GuardianFistContact: {x: 0, y: 0, z: 0}
+  BodyMaterial: {fileID: 2100000, guid: a69618b70cae3ce4593d83fad286a1f2, type: 2}
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
-  PatternMaterial: {fileID: 2100000, guid: 46fb12ae82533554b81231c2b7751c98, type: 2}
+  PatternMaterial: {fileID: 2100000, guid: 6b1d04932b5f2404b9292d88567469e2, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 1
+  NativeCastPrefab: {fileID: 0}
+  NativeImpactPrefab: {fileID: 4604452158487232088, guid: f89f2f212562d4f4d8154dbaab5621d9, type: 3}
+  NativeFieldPrefab: {fileID: 7461664016872212884, guid: 16ddbd258f61ab741b3eb49a1adc4994, type: 3}
+  NativeFieldRole: 3
+  NativeScale: 0.32
+  NativeImpactScale: 0.42
+  KtpEmphasis: 1
+  KtpCastMultiplier: 1.1
+  KtpImpactMultiplier: 2
+  KtpFieldMultiplier: 3.125
+  KtpContactMultiplier: 2
+  KtpBrightness: 2.2
+  KtpCastOffset: {x: 0, y: 0, z: -0.65}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 1
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 3959589870976682561, guid: 173b8297be30af24aba1fd2d53930259, type: 3}
+  KtpRectShield: 1
+  NativeReplaceBody: 0
+  NativeBodyPrefab: {fileID: 0}
+  NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
+  SummonPrefab: {fileID: 0}
+  SummonScale: 1
+  SummonYaw: 0
   Pigment: {r: 0.25882354, g: 0.43137255, b: 0.34509805, a: 1}
   Accent: {r: 0.8862745, g: 0.8666667, b: 0.78039217, a: 1}
   Ink: {r: 0.075, g: 0.065, b: 0.058, a: 1}
-  Count: 7
-  RibbonCount: 1
+  Count: 1
+  RibbonCount: 0
   Size: 1
-  PartScale: {x: 1.1, y: 0.85, z: 1.55}
+  PartScale: {x: 1, y: 1, z: 1}
   Duration: 2.1
   Flight: 0.2
   Turns: 0.12

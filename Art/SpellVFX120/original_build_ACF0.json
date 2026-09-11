@@ -1,0 +1,15 @@
+{
+    "glyph": "곰",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_곰.mat|||Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/PF_Summon_016_ACF0.prefab|4.7|0.55|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/Meshes/Beast.asset|Assets/_Project/Art/SpellVFX120/Materials/M_Body_Beast_곰.mat|||Assets/_Project/Art/SpellVFX120/MeshySummons/016_ACF0/PF_Summon_016_ACF0.prefab|4.7|0.55|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+    ],
+    "systems": 56,
+    "capacity": 56000,
+    "sourcePreserved": true
+}

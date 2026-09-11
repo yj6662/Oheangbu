@@ -1,0 +1,88 @@
+{
+  "status": "PASS",
+  "links": [
+    {
+      "path": "ClipsKTPExternal56/033_B10C.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "ClipsKTPIntegrated56/033_B10C.mp4",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills56/033_B10C_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills56/033_B10C_2.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPExternalStills56/033_B10C_4.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills21/033_B10C_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTPIntegratedStills56/033_B10C_1.png",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "KTP_REWORK.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NEOK_032_REVIEW.html",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "NEON_033_REPORT.md",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "fire_empower_033_build.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "neon56_scope_check.json",
+      "exists": true,
+      "http": 200
+    },
+    {
+      "path": "single_play_B10C.json",
+      "exists": true,
+      "http": 200
+    }
+  ],
+  "media": [
+    {
+      "folder": "KTPIntegratedStills56",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalStills56",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPIntegratedFrames56",
+      "mvid_match": true
+    },
+    {
+      "folder": "KTPExternalFrames56",
+      "mvid_match": true
+    }
+  ]
+}

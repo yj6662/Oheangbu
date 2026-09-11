@@ -1,0 +1,155 @@
+{
+  "status": "PASS_TECHNICAL_DELIVERY_ONLY",
+  "completed": 20,
+  "reviewPages": 20,
+  "encodedClips": 40,
+  "unchangedProfiles": 100,
+  "changedProfiles": [
+    "025_B098.asset",
+    "026_B099.asset",
+    "027_B09C.asset",
+    "028_B0A8.asset",
+    "029_B0AB.asset",
+    "030_B0AD.asset",
+    "031_B108.asset",
+    "032_B109.asset",
+    "033_B10C.asset",
+    "034_B118.asset",
+    "035_B11B.asset",
+    "036_B11D.asset",
+    "037_B178.asset",
+    "038_B179.asset",
+    "039_B17C.asset",
+    "040_B188.asset",
+    "041_B18B.asset",
+    "042_B18D.asset",
+    "043_B204.asset",
+    "045_B208.asset"
+  ],
+  "latestRuntimeMvid": "57426fe7-f1b5-4e9d-9998-d45f89fb37dd",
+  "latestSequentialAudit": "nieun_final_play_audit.json",
+  "visual": "USER_REVIEW_PENDING",
+  "gameplay": "NOT_FULLY_INTEGRATED",
+  "evidence": [
+    {
+      "glyph": "나",
+      "review": "NA_025_REVIEW.html",
+      "version": 46,
+      "captureMvid": "d23ac031-21a3-4ff3-8238-227d6b75f818"
+    },
+    {
+      "glyph": "낙",
+      "review": "NAK_026_REVIEW.html",
+      "version": 50,
+      "captureMvid": "474aed9f-26f2-417e-b507-ac95104dac90"
+    },
+    {
+      "glyph": "난",
+      "review": "NAN_027_REVIEW.html",
+      "version": 48,
+      "captureMvid": "02bfd379-010a-471c-abfd-a453f321b463"
+    },
+    {
+      "glyph": "남",
+      "review": "NAM_028_REVIEW.html",
+      "version": 49,
+      "captureMvid": "474aed9f-26f2-417e-b507-ac95104dac90"
+    },
+    {
+      "glyph": "낫",
+      "review": "NAT_029_REVIEW.html",
+      "version": 52,
+      "captureMvid": "cfb13185-f177-464b-9782-f426afe3d8ac"
+    },
+    {
+      "glyph": "낭",
+      "review": "NANG_030_REVIEW.html",
+      "version": 53,
+      "captureMvid": "0b61c3b4-2b13-4937-a2c0-318bc51d3033"
+    },
+    {
+      "glyph": "너",
+      "review": "NEO_031_REVIEW.html",
+      "version": 54,
+      "captureMvid": "d36757fe-481e-4004-9852-5c8b9ca731b3"
+    },
+    {
+      "glyph": "넉",
+      "review": "NEOK_032_REVIEW.html",
+      "version": 55,
+      "captureMvid": "f42b5009-c2ef-4023-997d-4222f4d48bfd"
+    },
+    {
+      "glyph": "넌",
+      "review": "NEON_033_REVIEW.html",
+      "version": 56,
+      "captureMvid": "66fb12a3-2253-4320-8032-7402ff5972cb"
+    },
+    {
+      "glyph": "넘",
+      "review": "NEOM_034_REVIEW.html",
+      "version": 57,
+      "captureMvid": "cbd0263b-be64-40ca-acc4-36857cdb28f7"
+    },
+    {
+      "glyph": "넛",
+      "review": "NEOT_035_REVIEW.html",
+      "version": 58,
+      "captureMvid": "53490c38-c561-4b11-b0d8-6a2852f88f95"
+    },
+    {
+      "glyph": "넝",
+      "review": "NEONG_036_REVIEW.html",
+      "version": 59,
+      "captureMvid": "9a634f1f-6818-4f01-ac07-4261e2d06768"
+    },
+    {
+      "glyph": "노",
+      "review": "NO_037_REVIEW.html",
+      "version": 60,
+      "captureMvid": "b70863e6-8d4a-468f-b1ef-73a89c5e379a"
+    },
+    {
+      "glyph": "녹",
+      "review": "NOK_038_REVIEW.html",
+      "version": 61,
+      "captureMvid": "c40e034f-cfaa-4614-a5a6-37df3a5bc976"
+    },
+    {
+      "glyph": "논",
+      "review": "NON_039_REVIEW.html",
+      "version": 62,
+      "captureMvid": "85824104-6e9d-4617-8882-5c67b0ef0610"
+    },
+    {
+      "glyph": "놈",
+      "review": "NOM_040_REVIEW.html",
+      "version": 63,
+      "captureMvid": "e90c97db-6e38-47e2-887d-5410088938c4"
+    },
+    {
+      "glyph": "놋",
+      "review": "NOT_041_REVIEW.html",
+      "version": 64,
+      "captureMvid": "f98f4e57-58f9-4e7a-90d6-f2ebd070043e"
+    },
+    {
+      "glyph": "농",
+      "review": "NONG_042_REVIEW.html",
+      "version": 65,
+      "captureMvid": "544c9e2b-6a85-4261-86e5-28e27ec1de01"
+    },
+    {
+      "glyph": "누",
+      "review": "NU_043_REVIEW.html",
+      "version": 66,
+      "captureMvid": "bfd0a33b-3e7d-4416-9f66-b46660732a08"
+    },
+    {
+      "glyph": "눈",
+      "review": "NUN_045_REVIEW.html",
+      "version": 67,
+      "captureMvid": "57426fe7-f1b5-4e9d-9998-d45f89fb37dd"
+    }
+  ]
+}

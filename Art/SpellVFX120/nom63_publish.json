@@ -1,0 +1,11 @@
+{
+"id":"040_B188","version":"63","key":"NOM_040","glyph":"놈","title":"놈 · 화염 소환수",
+"audit":"single_play_B188.json","build":"fire_summon_040_build.json","scope":"nom63_scope_check.json","previous":"NON_039_REVIEW.html",
+"intro":"기존 Meshy 소환수가 문양 위에 나타납니다. 발치와 몸 주변에 화염이 흐르고, 명중 신호가 들어온 위치에 문양이 반응합니다.",
+"changes":["기존 Meshy7 모델과 재질을 재사용했다. 원본 작업 ID01a08490-ecd3-7058-b976-6405be0a1bdd 기록을 보존했다.","KTP Pattern_156 소환진을 모델의 지면 위치에 맞췄다.","발치 화염과 몸 주변 불꽃·불티를 추가했다. 명중 표현은 외부 신호를 받는다.","다른119개 프로필과 소환수 원본을 보존했다. 추가 Meshy 크레딧0."],
+"cost":"추가 Particle System7개/입자용량432개, 문양4tris. Meshy 원본12,532tris(원본 통계 기준). KTP 시전 효과 비용 별도.",
+"metrics":["fireAuraParticlePeak","fireAuraContacts","fireAuraMarkPeak","modelRendererCount","modelVisibleFrames"],
+"limits":["비주얼 판정은 사용자 검토 대기입니다.","기존 소환수는 정적 모델이며 새 보행·공격 애니메이션이나 AI·피해 규칙은 구현하지 않았다.","실제 전투·다중 동시 소환 성능은 미검증이다."],
+"captureNote":"1280×720·24fps. 기존 소환·소멸 표현을 유지하며 진단용 명중 신호3회를 제공한다. Meshy 모델 구성, 화염과 문양, 종료 정리를 확인한다.",
+"detailLabels":["소환수와 화염","소환진과 명중"]
+}

@@ -1,0 +1,50 @@
+import json
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'Art/SpellVFX120/AreaFlow'
+scope=json.loads((OUT/'scope.json').read_text(encoding='utf-8'))
+audits=[json.loads((OUT/n).read_text(encoding='utf-8')) for n in ['audit.json','contact_audit.json','ktp_contact_play_audit.json']]
+assert all(a['status']=='PASS' for a in audits)
+rows=[json.loads((OUT/g/'report.json').read_text(encoding='utf-8')) for g in '고노소오']
+table='\n'.join(f"| {r['glyph']} | {r['clips'][0]['damageEvents']} | {r['clips'][1]['damageEvents']} | {r['clips'][1]['uniqueContacts']} | {r['clips'][1]['outsideHits']} |" for r in rows)
+text=f'''# 광역 술식 지속·방향·물결 수정 — 2026-09-10
+
+사용자 요청에 따라 고·노·소·오의 표현만 변경했다. 모는 대체 아이디어만 제안했으며 회오리 설정을 유지했다. 이전 AreaWide 프로필·영상과 AreaFive의 낮은 물결 원본을 보존했다.
+
+## 구현
+
+- **고:** 전체 효과 수명1.9→4.6초, 지면 문양1.25→4.1초. 마지막 가시가 솟은 뒤에도 오래 남고 마지막0.3초 동안 섬유 소멸한다. 추가 피해·지속 피해는 없다.
+- **노:** 화면 정규좌표(0.65,0.32), 깊이1.6m의 작은 문양·발사구. ConeVolume 전체에서 입자를 생성하던 방식에서 좁은 발사구→앞으로 흐르는 입자 궤적으로 변경했다. 분출 구간은 Delay−0.12~Delay+1.68초, 약1.8초. 가까운 입자는 작고 멀어질수록 퍼진다. 화염140·연기20 상한을 유지하고 생성률은450→350,35→20으로 줄였다. 문양 배율0.32→0.18·알파0.85→0.55. 시전 순간 위치와 방향을 월드에 고정한다. 기존 부채꼴 피해1회를 유지하며 연속 피해는 추가하지 않았다.
+- **소:** 화면 위(0.5,1.2), 깊이3.2m의 공통 발생점에서 기존24개의 산개 종점으로 내려꽂는다. 새 종점·대상 탐색·명중 시각 변경은 없다. 따라서 이동 경로의 시각적 길이가 늘어난 만큼 화면상 속도는 달라질 수 있다.
+- **오:** AreaFive의 물 메시·PolyOne 물 재질로 복귀하고, 이전0.75~1.15m의 좌우 위상차가 있는 물결을 사용한다. 실제 폭12m·위력5·속도6m/s는 유지했다. 양옆35% 구간에서 매끄럽게 높이를 줄이고 끝을 지면에 고정한다. 별도 ShoreFoam Particle System을 추가하여 양옆·앞뒤 접촉선의 낮은 수면을 따라 포말이 흩어지도록 했다. 마루 포말64개·경계 포말128개 상한. 수면·포말은 같은 효과 시간을 따른다.
+
+## 모 제안 — 구현 대기
+
+1. **사토쇄도(추천):** 낮고 넓은 모래·자갈 전선. 앞의 작은 돌이 튀고 뒤에는 얇은 먼지만 남는다. 넓은 약한 공격을 읽기 쉽고 시야를 덜 가린다.
+2. **지맥 분출:** 부채꼴 균열을 따라 짧은 돌가루 분출이 순차 전진한다. 발생원 KTP 문양에서 힘이 땅으로 퍼지는 인상을 준다.
+3. **흙너울:** 낮은 흙 능선들이 부서지며 밀려가고 모래가 양옆으로 흘러내린다. 물 파도와는 각진 흙 조각·거친 입자로 구분한다.
+
+## 시험 표적 전후 비교
+
+동일 C2·고정 카메라, 표적9개와 범위 밖 표적1개. 기존판은 직전 AreaWide 사본, 수정판은 새 프로필을 사용한다.
+
+| 술식 | 기존 피해 횟수 | 수정 피해 횟수 | 수정 고유 접촉 | 범위 밖 피해 |
+|---|---:|---:|---:|---:|
+{table}
+
+## 검증
+
+- **통과:** 광역{len(audits[0]['checks'])}개·기본10종 접촉{len(audits[1]['checks'])}개·기존 접촉{len(audits[2]['checks'])}개, 총{sum(len(a['checks']) for a in audits)}개.
+- **통과:** 긴 가시 유지·1초 이후 화염 지속·노 우측 하단/소 화면 위 발사 좌표·경계 포말 생성·물결 높이/완만한 끝·8도 경사 지면 경계, 효과 시간30/60/120fps 및0.2배 감속 샘플링.
+- **통과:** SpellBook 전체 파일과 다른116개 프로필·공급자 원본 해시 불변. 모 프로필·프리팹 불변. 실제 예약 피해와 공통 접촉 경로, 중복/종료 검사.
+- **통과:** 1080p·24fps·6초 영상16개 전체 디코딩, 정지 이미지32개. 한 클립씩 촬영·자원 해제. 촬영 시작 최대 커밋 {scope['maxCommitRatio']:.1%},85% 이상 중단 기준 유지.
+- **미검증:** 실제 손글씨 입력·적 AI 전투 전체, 모든 카메라 피치/벽 근처/급격한 지형, 전체 게임의30/60/120fps 성능, 여러 동시 시전.
+- **사용자 검토 대기:** 화염의 가림 정도·연속 방사 느낌, 상단 송곳의 경사, 물결과 경계 포말의 미술 품질. 기술 통과를 비주얼 승인으로 처리하지 않았다.
+
+결과: AREA_FLOW_REVIEW.html, AreaFlow/글자/ 영상·연속 프레임·settings.json·report.json, audit.json/contact_audit.json/ktp_contact_play_audit.json/scope.json. Unity 별도 수정 자산은 Assets/_Project/Art/SpellVFX120/AreaFlow에 있다.
+'''
+(OUT/'REPORT.md').write_text(text,encoding='utf-8')
+status=ROOT/'Docs/PROJECT_STATUS.md'
+entry=f"**2026-09-10 · 광역 지속·방향·물결 수정:** 고의 가시4.6초·문양4.1초, 노의 우측 하단 화염방사 약1.8초, 소의 화면 위에서 아래로 향하는24발, 오의 이전 낮은 물결·폭12m·완만한 끝단·경계 포말을 적용했다. 모는 대체 아이디어3개만 제안했다. C2 전후·두 시점1080p 영상16개·이미지32개, 기술 검사{sum(len(a['checks']) for a in audits)}개 통과. SpellBook 전체·다른116프로필·공급자 원본 보존. 촬영 시작 최대 커밋{scope['maxCommitRatio']:.1%}. 사용자 미술 판단·전체 입력/적 AI 전투·성능은 미검증. [비교](http://127.0.0.1:8771/AREA_FLOW_REVIEW.html) · [보고서](../Art/SpellVFX120/AreaFlow/REPORT.md). 아래는 이전 이력이다.\n\n"
+current=status.read_text(encoding='utf-8')
+if not current.startswith('**2026-09-10 · 광역 지속·방향·물결 수정:'):status.write_text(entry+current,encoding='utf-8')
+print('Report written',sum(len(a['checks']) for a in audits),'checks')

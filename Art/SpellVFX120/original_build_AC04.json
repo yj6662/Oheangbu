@@ -1,0 +1,15 @@
+{
+    "glyph": "간",
+    "status": "BUILT_AWAITING_RUNTIME_AND_USER_REVIEW",
+    "bodyBefore": "Assets/_Project/Art/SpellVFX120/SeedTransfer/VFX120_SeedThorn_003.asset|Assets/_Project/Art/SpellVFX120/SeedTransfer/M_TransferSeed_003.mat||||2.6|0.6|False",
+    "bodyAfter": "Assets/_Project/Art/SpellVFX120/SeedTransfer/VFX120_SeedThorn_003.asset|Assets/_Project/Art/SpellVFX120/SeedTransfer/M_TransferSeed_003.mat||||2.6|0.6|False",
+    "sources": [
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly06-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly01-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom12-01.prefab",
+        "Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom04-01.prefab"
+    ],
+    "systems": 56,
+    "capacity": 56000,
+    "sourcePreserved": true
+}

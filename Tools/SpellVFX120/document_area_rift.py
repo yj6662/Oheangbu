@@ -1,0 +1,50 @@
+import json
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2];OUT=ROOT/'Art/SpellVFX120/AreaRift'
+scope=json.loads((OUT/'scope.json').read_text(encoding='utf-8'))
+audits=[json.loads((OUT/n).read_text(encoding='utf-8')) for n in ['audit.json','contact_audit.json','ktp_contact_play_audit.json']]
+assert all(a['status']=='PASS' for a in audits)
+count=sum(len(a['checks']) for a in audits)
+rows=[json.loads((OUT/g/'report.json').read_text(encoding='utf-8')) for g in '고노소모']
+table='\n'.join(f"| {r['glyph']} | {r['clips'][0]['damageEvents']} | {r['clips'][1]['damageEvents']} | {r['clips'][1]['uniqueContacts']} | {r['clips'][1]['outsideHits']} |" for r in rows)
+text=f'''# 가시성·지맥 분출 수정 — 2026-09-10
+
+사용자 피드백에 따라 고·노·소·모만 수정했다. 이전 AreaFlow 프로필과 영상을 보존했다. 오는 변경하지 않았다.
+
+## 변경
+
+| 술식 | 이전 | 수정 |
+|---|---|---|
+| 고 | 수명4.6초·문양4.1초 | 수명3초·문양2.65초. 기존 가시 상승·피해 횟수 유지 |
+| 노 | 발사점(0.65,0.32), 넓게 분산된 불꽃 | (0.65,0.12)로 하강. 입자85%를 기존 반각의22%에 집중하고 나머지는65% 범위로 퍼뜨림. 화염 색 밝기 강화, 연기 생성률20→10 및 알파0.1, 입자 크기 감소. 약1.8초 방사 유지 |
+| 소 | 가는 비발광 금속 송곳·얇은 잔상 | 송곳 횡단면2.8배·길이1.15배, 은빛 발광 재질. 잔상 시작 너비0.018→0.05·길이 증가. 기존24발·위쪽 발생점·종점·피해 시각 유지 |
+| 모 | 높은 회오리 | 일곱 갈래 균열과 낮은 돌가루·자갈의 순차 분출. 폭12m·위력5·속도7m/s 유지 |
+
+모의 균열은 지면 높이를 샘플링한 경로를 따라 부채꼴로 퍼진다. 균열 전선은 기존 피해 전선과 같은 경과 시간·속도로 전진한다. 약1.2m 간격의 지점에 분출을 모으고 먼지는0.8m, 자갈은1.25m 이내의 낮은 궤적으로 움직인다. 표현용 선이며 실제 지형을 절개하거나 콜라이더를 추가하지 않는다. 입자 상한은 먼지100·자갈96, 균열 LineRenderer7개다. 회오리용 나선 위치 계산을 이 프로필에서는 사용하지 않는다.
+
+노의 핵심 불꽃을 좁혀 가림을 줄이되 기존 부채꼴 피해는 유지했다. 이번에는 시각적 선명도를 수정했으며 연속 피해를 추가하지 않았다. 소는 폴리곤이나 발수 증가 없이 기존 메시 배율·재질·잔상을 조정했다. 발광이 임포트 때 꺼지는 문제를 발견해 EmissiveIsBlack 상태를 해제하고 최종 임포트 후 발광 키워드 유지 검사를 통과했다.
+
+## 전후 시험 표적
+
+동일 C2·고정 카메라·표적9개와 범위 밖 표적1개. 이전 설정과 이번 설정에 동일한 예약 피해 경로를 사용했다.
+
+| 술식 | 이전 피해 횟수 | 수정 피해 횟수 | 수정 고유 접촉 | 범위 밖 피해 |
+|---|---:|---:|---:|---:|
+{table}
+
+## 검증 범위
+
+- **통과:** 광역{len(audits[0]['checks'])}개·기본10종 접촉{len(audits[1]['checks'])}개·기존 접촉{len(audits[2]['checks'])}개, 총{count}개.
+- **통과:** 고3초 뒤 메시 숨김, 소 두께·잔상·발광 임포트, 노 더 낮은 발사 좌표·1초 이후 방사, 모 낮은 파편과 균열 전선의 시간 일치·폭 이내 위치. 30/60/120fps 및0.2배 감속에 해당하는 효과 시간 샘플링.
+- **통과:** SpellBook 파일 전체·다른116프로필·공급자 원본 해시 불변. 기존 오 프로필 유지. 피해 횟수·예약·접촉 중복·범위 밖·효과 종료 검사.
+- **통과:** 1080p·24fps·6초 영상16개 디코딩, 정지 이미지32개. 한 클립씩 촬영·자원 해제. 촬영 시작 최대 시스템 커밋 {scope['maxCommitRatio']:.1%},85% 중단 기준 유지.
+- **미검증:** 손글씨 입력부터 적 AI까지 전체 전투, 실제 게임 프레임레이트 성능, 모든 지형·카메라 각도와 다중 동시 시전.
+- **사용자 검토 대기:** 소 가시성, 노 화면 가림·화염 줄기, 모 균열/분출의 최종 미술 품질.
+
+결과물은 AREA_RIFT_REVIEW.html, AreaRift/글자/ 영상·프레임·settings.json·report.json, 검사 JSON과 scope.json이다. Unity 사본은 Assets/_Project/Art/SpellVFX120/AreaRift에 있다.
+'''
+(OUT/'REPORT.md').write_text(text,encoding='utf-8')
+status=ROOT/'Docs/PROJECT_STATUS.md';current=status.read_text(encoding='utf-8')
+entry=f"**2026-09-10 · 가시성·지맥 분출:** 고3초, 노 발사구 높이12%·집중 화염·연기 감소, 소 두께/은빛 발광/잔상 강화, 모 일곱 갈래 균열·낮은 돌가루 분출 적용. C2 비교영상16개·이미지32개, 기술 검사{count}개 통과. 오는 유지. SpellBook·다른116프로필·공급자 원본 보존. 촬영 시작 최대 커밋{scope['maxCommitRatio']:.1%}. 미술 판단·전체 입력/AI·성능은 미검증. [비교](http://127.0.0.1:8771/AREA_RIFT_REVIEW.html) · [보고서](../Art/SpellVFX120/AreaRift/REPORT.md). 아래는 이전 이력이다.\n\n"
+if not current.startswith('**2026-09-10 · 가시성·지맥 분출:'):status.write_text(entry+current,encoding='utf-8')
+print('Report written',count,'checks')
