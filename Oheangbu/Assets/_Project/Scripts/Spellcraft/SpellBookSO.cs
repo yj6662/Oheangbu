@@ -9,7 +9,8 @@ namespace Oheangbu.Spellcraft
     {
         AttackSingle, // 단일 유도 (가 — "단일 대상에 곧게 뻗는 생목 가시")
         AttackArea,   // 영역 즉발 (고 — "지정 영역에서 가시 일제 솟음")
-        Parry         // 상극+ㅓ 받아침 — 판정·보상은 Combat 소유(COMBAT-PARRY). 허공 시전 잔존 없음(CSV)
+        Parry,        // 상극+ㅓ 받아침 — 판정·보상은 Combat 소유(COMBAT-PARRY). 허공 시전 잔존 없음(CSV)
+        Summon        // 소환 표현 전용 시전 — 이동·공격·피해·어그로 규칙을 부여하지 않는다
     }
 
     // 광역 실판정 형상 [TEST — #137 §9-1 해제 · #141 기하 3종]: None=단일 판정(연출만 광역).

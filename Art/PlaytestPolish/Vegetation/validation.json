@@ -1,0 +1,1594 @@
+{
+    "utc": "2026-09-14T02:00:20.2976984Z",
+    "scope": "Static source, population, route clearance, material fade tests. Runtime rendering, performance, walking and final visuals remain unverified.",
+    "checks": [
+        "PASS derivative palette prepared",
+        "PASS four-direction tree atlases",
+        "PASS owned grass mesh/card/ground-cover tiers",
+        "PASS supplier dependency hashes unchanged",
+        "PASS instanced render dependencies",
+        "PASS original materials preserved; derivative owns material edits",
+        "PASS vegetation shader compile",
+        "PASS typed road-edge clearance permits low grass and excludes trunks",
+        "PASS rotated rectangle excludes by actual orientation, not expanded AABB",
+        "PASS continuous tree material opacity through the mesh/card/canopy bands",
+        "PASS five-region deterministic population, same tree identities in near/far, route exclusions including low grass footprints"
+    ],
+    "unverified": [
+        "Actual 1080p frame/GPU/overdraw cost and memory after this change",
+        "User walking/vehicle clearance and collision pool saturation",
+        "Visible LOD transitions including fixed trees, water edges and sloped patches",
+        "Ground density, route guidance, realm boundaries, final art approval"
+    ],
+    "passed": true,
+    "prototypes": 73,
+    "viewsPerTree": 4,
+    "sourceTrees": 5,
+    "sourceGrass": 2,
+    "sourceShrubs": 7,
+    "passages": 12572,
+    "typedAreas": 262,
+    "palette": [
+        {
+            "id": "Cheongrim_SM_Henonis_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab",
+            "sourceHash": "3d384c4d0e04e3d5f281260172d1f128",
+            "actualPreparedSize": {
+                "x": 2.2329039573669435,
+                "y": 3.8837454319000246,
+                "z": 2.3324108123779299
+            },
+            "triangles": [
+                1410,
+                717,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_UlmusDavidiana_Summer_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab",
+            "sourceHash": "16dc32b5875d90ba2a056508a0c28c8c",
+            "actualPreparedSize": {
+                "x": 13.16024398803711,
+                "y": 13.573953628540039,
+                "z": 11.096601486206055
+            },
+            "triangles": [
+                13636,
+                6818,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_PinusDensiflora_Spring_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_PinusDensiflora_Spring_2.prefab",
+            "sourceHash": "a726544bf64fb12166e18453cf33c4c3",
+            "actualPreparedSize": {
+                "x": 3.3933849334716799,
+                "y": 6.128237724304199,
+                "z": 3.1822848320007326
+            },
+            "triangles": [
+                13979,
+                6990,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_Deparia_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_1.prefab",
+            "sourceHash": "b6181ba49a4d9bb9a5bb81a06be5b544",
+            "actualPreparedSize": {
+                "x": 0.9153881072998047,
+                "y": 0.37210699915885928,
+                "z": 0.989947497844696
+            },
+            "triangles": [
+                2064,
+                1032
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_Henonis_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_2.prefab",
+            "sourceHash": "cb335c4ce0a28edf51ce721a2a77edcf",
+            "actualPreparedSize": {
+                "x": 2.2261714935302736,
+                "y": 3.922708034515381,
+                "z": 2.3650593757629396
+            },
+            "triangles": [
+                2732,
+                1366
+            ],
+            "parts": [
+                2,
+                2
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_Grass",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.8451119065284729,
+                "y": 0.5,
+                "z": 1.076857328414917
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheongrim_SM_Rock_L",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab",
+            "sourceHash": "3a7148d87ec81a07187ce307f332ae93",
+            "actualPreparedSize": {
+                "x": 0.8938722610473633,
+                "y": 0.5338594913482666,
+                "z": 1.1107654571533204
+            },
+            "triangles": [
+                600,
+                300
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_Rock_K",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "sourceHash": "eca5129df24e0d60458492134a8f5077",
+            "actualPreparedSize": {
+                "x": 3.989020824432373,
+                "y": 1.9870688915252686,
+                "z": 4.07255744934082
+            },
+            "triangles": [
+                2012,
+                1006
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_M_WoodLog",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab",
+            "sourceHash": "2c0d06093e3eea0294eaf3958149986e",
+            "actualPreparedSize": {
+                "x": 0.23441796004772187,
+                "y": 0.1806746870279312,
+                "z": 2.299999952316284
+            },
+            "triangles": [
+                12,
+                12
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_M_WoodenBox",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab",
+            "sourceHash": "03dac6fbb5e2d78134c0a75bb63229f5",
+            "actualPreparedSize": {
+                "x": 0.7941857576370239,
+                "y": 0.8500000238418579,
+                "z": 0.8291584253311157
+            },
+            "triangles": [
+                484,
+                484
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_052_Pot",
+            "source": "Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab",
+            "sourceHash": "3ff5334f468320e67e186928e723148a",
+            "actualPreparedSize": {
+                "x": 0.3939717710018158,
+                "y": 0.6499999761581421,
+                "z": 0.3965141475200653
+            },
+            "triangles": [
+                6266,
+                6266
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_UlmusDavidiana_Summer_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab",
+            "sourceHash": "16dc32b5875d90ba2a056508a0c28c8c",
+            "actualPreparedSize": {
+                "x": 13.16024398803711,
+                "y": 13.573953628540039,
+                "z": 11.096601486206055
+            },
+            "triangles": [
+                13636,
+                6818,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_PinusDensiflora_Spring_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_PinusDensiflora_Spring_2.prefab",
+            "sourceHash": "a726544bf64fb12166e18453cf33c4c3",
+            "actualPreparedSize": {
+                "x": 3.3933849334716799,
+                "y": 6.128237724304199,
+                "z": 3.1822848320007326
+            },
+            "triangles": [
+                13979,
+                6990,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_Deparia_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_1.prefab",
+            "sourceHash": "b6181ba49a4d9bb9a5bb81a06be5b544",
+            "actualPreparedSize": {
+                "x": 0.9153881072998047,
+                "y": 0.37210699915885928,
+                "z": 0.989947497844696
+            },
+            "triangles": [
+                2064,
+                1032
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_Grass",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.8451119065284729,
+                "y": 0.5,
+                "z": 1.076857328414917
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hwanggyeong_SM_Rock_L",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab",
+            "sourceHash": "3a7148d87ec81a07187ce307f332ae93",
+            "actualPreparedSize": {
+                "x": 0.8938722610473633,
+                "y": 0.5338594913482666,
+                "z": 1.1107654571533204
+            },
+            "triangles": [
+                600,
+                300
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_Rock_K",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "sourceHash": "eca5129df24e0d60458492134a8f5077",
+            "actualPreparedSize": {
+                "x": 3.989020824432373,
+                "y": 1.9870688915252686,
+                "z": 4.07255744934082
+            },
+            "triangles": [
+                2012,
+                1006
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_M_WoodLog",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab",
+            "sourceHash": "2c0d06093e3eea0294eaf3958149986e",
+            "actualPreparedSize": {
+                "x": 0.23441796004772187,
+                "y": 0.1806746870279312,
+                "z": 2.299999952316284
+            },
+            "triangles": [
+                12,
+                12
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_M_WoodenBox",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab",
+            "sourceHash": "03dac6fbb5e2d78134c0a75bb63229f5",
+            "actualPreparedSize": {
+                "x": 0.7941857576370239,
+                "y": 0.8500000238418579,
+                "z": 0.8291584253311157
+            },
+            "triangles": [
+                484,
+                484
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_052_Pot",
+            "source": "Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab",
+            "sourceHash": "3ff5334f468320e67e186928e723148a",
+            "actualPreparedSize": {
+                "x": 0.3939717710018158,
+                "y": 0.6499999761581421,
+                "z": 0.3965141475200653
+            },
+            "triangles": [
+                6266,
+                6266
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_MeliaAzedarach_Winter_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_MeliaAzedarach_Winter_1.prefab",
+            "sourceHash": "251d4c2a547780ca2b05e9db5984786b",
+            "actualPreparedSize": {
+                "x": 12.696660041809082,
+                "y": 14.012922286987305,
+                "z": 12.102988243103028
+            },
+            "triangles": [
+                4443,
+                2221,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_PinusDensiflora_Spring_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_PinusDensiflora_Spring_2.prefab",
+            "sourceHash": "a726544bf64fb12166e18453cf33c4c3",
+            "actualPreparedSize": {
+                "x": 3.3933849334716799,
+                "y": 6.128237724304199,
+                "z": 3.1822848320007326
+            },
+            "triangles": [
+                13979,
+                6990,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_Deparia_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_1.prefab",
+            "sourceHash": "b6181ba49a4d9bb9a5bb81a06be5b544",
+            "actualPreparedSize": {
+                "x": 0.9153881072998047,
+                "y": 0.37210699915885928,
+                "z": 0.989947497844696
+            },
+            "triangles": [
+                2064,
+                1032
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_Grass",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.8451119065284729,
+                "y": 0.5,
+                "z": 1.076857328414917
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Jeokro_SM_Rock_L",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab",
+            "sourceHash": "3a7148d87ec81a07187ce307f332ae93",
+            "actualPreparedSize": {
+                "x": 0.8938722610473633,
+                "y": 0.5338594913482666,
+                "z": 1.1107654571533204
+            },
+            "triangles": [
+                600,
+                300
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_Rock_K",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "sourceHash": "eca5129df24e0d60458492134a8f5077",
+            "actualPreparedSize": {
+                "x": 3.989020824432373,
+                "y": 1.9870688915252686,
+                "z": 4.07255744934082
+            },
+            "triangles": [
+                2012,
+                1006
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_M_WoodLog",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab",
+            "sourceHash": "2c0d06093e3eea0294eaf3958149986e",
+            "actualPreparedSize": {
+                "x": 0.23441796004772187,
+                "y": 0.1806746870279312,
+                "z": 2.299999952316284
+            },
+            "triangles": [
+                12,
+                12
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_M_WoodenBox",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab",
+            "sourceHash": "03dac6fbb5e2d78134c0a75bb63229f5",
+            "actualPreparedSize": {
+                "x": 0.7941857576370239,
+                "y": 0.8500000238418579,
+                "z": 0.8291584253311157
+            },
+            "triangles": [
+                484,
+                484
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_052_Pot",
+            "source": "Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab",
+            "sourceHash": "3ff5334f468320e67e186928e723148a",
+            "actualPreparedSize": {
+                "x": 0.3939717710018158,
+                "y": 0.6499999761581421,
+                "z": 0.3965141475200653
+            },
+            "triangles": [
+                6266,
+                6266
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_PinusDensiflora_Spring_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_PinusDensiflora_Spring_2.prefab",
+            "sourceHash": "a726544bf64fb12166e18453cf33c4c3",
+            "actualPreparedSize": {
+                "x": 3.3933849334716799,
+                "y": 6.128237724304199,
+                "z": 3.1822848320007326
+            },
+            "triangles": [
+                13979,
+                6990,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_MeliaAzedarach_Winter_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_MeliaAzedarach_Winter_1.prefab",
+            "sourceHash": "251d4c2a547780ca2b05e9db5984786b",
+            "actualPreparedSize": {
+                "x": 12.696660041809082,
+                "y": 14.012922286987305,
+                "z": 12.102988243103028
+            },
+            "triangles": [
+                4443,
+                2221,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_Deparia_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_1.prefab",
+            "sourceHash": "b6181ba49a4d9bb9a5bb81a06be5b544",
+            "actualPreparedSize": {
+                "x": 0.9153881072998047,
+                "y": 0.37210699915885928,
+                "z": 0.989947497844696
+            },
+            "triangles": [
+                2064,
+                1032
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_Grass",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.8451119065284729,
+                "y": 0.5,
+                "z": 1.076857328414917
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheolong_SM_Rock_L",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab",
+            "sourceHash": "3a7148d87ec81a07187ce307f332ae93",
+            "actualPreparedSize": {
+                "x": 0.8938722610473633,
+                "y": 0.5338594913482666,
+                "z": 1.1107654571533204
+            },
+            "triangles": [
+                600,
+                300
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_Rock_K",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "sourceHash": "eca5129df24e0d60458492134a8f5077",
+            "actualPreparedSize": {
+                "x": 3.989020824432373,
+                "y": 1.9870688915252686,
+                "z": 4.07255744934082
+            },
+            "triangles": [
+                2012,
+                1006
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_M_WoodLog",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab",
+            "sourceHash": "2c0d06093e3eea0294eaf3958149986e",
+            "actualPreparedSize": {
+                "x": 0.23441796004772187,
+                "y": 0.1806746870279312,
+                "z": 2.299999952316284
+            },
+            "triangles": [
+                12,
+                12
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_M_WoodenBox",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab",
+            "sourceHash": "03dac6fbb5e2d78134c0a75bb63229f5",
+            "actualPreparedSize": {
+                "x": 0.7941857576370239,
+                "y": 0.8500000238418579,
+                "z": 0.8291584253311157
+            },
+            "triangles": [
+                484,
+                484
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_052_Pot",
+            "source": "Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab",
+            "sourceHash": "3ff5334f468320e67e186928e723148a",
+            "actualPreparedSize": {
+                "x": 0.3939717710018158,
+                "y": 0.6499999761581421,
+                "z": 0.3965141475200653
+            },
+            "triangles": [
+                6266,
+                6266
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_Salixpierotii_Summer_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Salixpierotii_Summer_1.prefab",
+            "sourceHash": "072d8593afa2f81d6d8cad9da236beb9",
+            "actualPreparedSize": {
+                "x": 10.437934875488282,
+                "y": 13.842656135559082,
+                "z": 10.667606353759766
+            },
+            "triangles": [
+                9255,
+                4628,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_UlmusDavidiana_Summer_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab",
+            "sourceHash": "16dc32b5875d90ba2a056508a0c28c8c",
+            "actualPreparedSize": {
+                "x": 13.16024398803711,
+                "y": 13.573953628540039,
+                "z": 11.096601486206055
+            },
+            "triangles": [
+                13636,
+                6818,
+                2,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_Deparia_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_1.prefab",
+            "sourceHash": "b6181ba49a4d9bb9a5bb81a06be5b544",
+            "actualPreparedSize": {
+                "x": 0.9153881072998047,
+                "y": 0.37210699915885928,
+                "z": 0.989947497844696
+            },
+            "triangles": [
+                2064,
+                1032
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_PhragmitesAustralis_2",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_PhragmitesAustralis_2.prefab",
+            "sourceHash": "821d5f36c7da9bac94e3c2b4bc1c9cff",
+            "actualPreparedSize": {
+                "x": 1.5618155002593995,
+                "y": 1.8518922328948975,
+                "z": 1.0449312925338746
+            },
+            "triangles": [
+                2062,
+                1031
+            ],
+            "parts": [
+                2,
+                2
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_Grass",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.8451119065284729,
+                "y": 0.5,
+                "z": 1.076857328414917
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hyeongang_SM_Rock_L",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab",
+            "sourceHash": "3a7148d87ec81a07187ce307f332ae93",
+            "actualPreparedSize": {
+                "x": 0.8938722610473633,
+                "y": 0.5338594913482666,
+                "z": 1.1107654571533204
+            },
+            "triangles": [
+                600,
+                300
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_Rock_K",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab",
+            "sourceHash": "eca5129df24e0d60458492134a8f5077",
+            "actualPreparedSize": {
+                "x": 3.989020824432373,
+                "y": 1.9870688915252686,
+                "z": 4.07255744934082
+            },
+            "triangles": [
+                2012,
+                1006
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_M_WoodLog",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab",
+            "sourceHash": "2c0d06093e3eea0294eaf3958149986e",
+            "actualPreparedSize": {
+                "x": 0.23441796004772187,
+                "y": 0.1806746870279312,
+                "z": 2.299999952316284
+            },
+            "triangles": [
+                12,
+                12
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_M_WoodenBox",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab",
+            "sourceHash": "03dac6fbb5e2d78134c0a75bb63229f5",
+            "actualPreparedSize": {
+                "x": 0.7941857576370239,
+                "y": 0.8500000238418579,
+                "z": 0.8291584253311157
+            },
+            "triangles": [
+                484,
+                484
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_052_Pot",
+            "source": "Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab",
+            "sourceHash": "3ff5334f468320e67e186928e723148a",
+            "actualPreparedSize": {
+                "x": 0.3939717710018158,
+                "y": 0.6499999761581421,
+                "z": 0.3965141475200653
+            },
+            "triangles": [
+                6266,
+                6266
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_Grass_Haenggung",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheongrim_SM_YMC_Grass_01_H",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Grass_01_H.prefab",
+            "sourceHash": "38f1818e4cdba1142b01e2678fa1a9f9",
+            "actualPreparedSize": {
+                "x": 0.9549664258956909,
+                "y": 0.29968583583831789,
+                "z": 1.1743452548980713
+            },
+            "triangles": [
+                2612,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheongrim_SM_Deparia_3",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_3.prefab",
+            "sourceHash": "3bc156e7a4edb5b5e13e25269584397c",
+            "actualPreparedSize": {
+                "x": 1.0727992057800294,
+                "y": 0.5314478874206543,
+                "z": 1.5348865985870362
+            },
+            "triangles": [
+                5744,
+                2872
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_SM_Bush",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_Bush.prefab",
+            "sourceHash": "266635a493fe4da7816c3c54ec71b054",
+            "actualPreparedSize": {
+                "x": 1.097511887550354,
+                "y": 0.8355264067649841,
+                "z": 1.1059954166412354
+            },
+            "triangles": [
+                40788,
+                40788,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_Grass_Haenggung",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hwanggyeong_SM_YMC_Grass_01_H",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Grass_01_H.prefab",
+            "sourceHash": "38f1818e4cdba1142b01e2678fa1a9f9",
+            "actualPreparedSize": {
+                "x": 0.9549664258956909,
+                "y": 0.29968583583831789,
+                "z": 1.1743452548980713
+            },
+            "triangles": [
+                2612,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hwanggyeong_SM_Deparia_3",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_3.prefab",
+            "sourceHash": "3bc156e7a4edb5b5e13e25269584397c",
+            "actualPreparedSize": {
+                "x": 1.0727992057800294,
+                "y": 0.5314478874206543,
+                "z": 1.5348865985870362
+            },
+            "triangles": [
+                5744,
+                2872
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hwanggyeong_SM_Bush",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_Bush.prefab",
+            "sourceHash": "266635a493fe4da7816c3c54ec71b054",
+            "actualPreparedSize": {
+                "x": 1.097511887550354,
+                "y": 0.8355264067649841,
+                "z": 1.1059954166412354
+            },
+            "triangles": [
+                40788,
+                40788,
+                2
+            ],
+            "parts": [
+                2,
+                2,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_Grass_Haenggung",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Jeokro_SM_YMC_Grass_01_H",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Grass_01_H.prefab",
+            "sourceHash": "38f1818e4cdba1142b01e2678fa1a9f9",
+            "actualPreparedSize": {
+                "x": 0.9549664258956909,
+                "y": 0.29968583583831789,
+                "z": 1.1743452548980713
+            },
+            "triangles": [
+                2612,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Jeokro_SM_Deparia_3",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_3.prefab",
+            "sourceHash": "3bc156e7a4edb5b5e13e25269584397c",
+            "actualPreparedSize": {
+                "x": 1.0727992057800294,
+                "y": 0.5314478874206543,
+                "z": 1.5348865985870362
+            },
+            "triangles": [
+                5744,
+                2872
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Jeokro_SM_YMC_Bush_01_Small",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Bush_01_Small.prefab",
+            "sourceHash": "e6caa6c58a3b5f6aaf1d1cdd391bb022",
+            "actualPreparedSize": {
+                "x": 2.2731242179870607,
+                "y": 1.9357479810714722,
+                "z": 1.6549378633499146
+            },
+            "triangles": [
+                44516,
+                44516,
+                2
+            ],
+            "parts": [
+                3,
+                3,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_Grass_Haenggung",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheolong_SM_YMC_Grass_01_H",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Grass_01_H.prefab",
+            "sourceHash": "38f1818e4cdba1142b01e2678fa1a9f9",
+            "actualPreparedSize": {
+                "x": 0.9549664258956909,
+                "y": 0.29968583583831789,
+                "z": 1.1743452548980713
+            },
+            "triangles": [
+                2612,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheolong_SM_Deparia_3",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_3.prefab",
+            "sourceHash": "3bc156e7a4edb5b5e13e25269584397c",
+            "actualPreparedSize": {
+                "x": 1.0727992057800294,
+                "y": 0.5314478874206543,
+                "z": 1.5348865985870362
+            },
+            "triangles": [
+                5744,
+                2872
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheolong_SM_YMC_Bush_01_Small",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Bush_01_Small.prefab",
+            "sourceHash": "e6caa6c58a3b5f6aaf1d1cdd391bb022",
+            "actualPreparedSize": {
+                "x": 2.2731242179870607,
+                "y": 1.9357479810714722,
+                "z": 1.6549378633499146
+            },
+            "triangles": [
+                44516,
+                44516,
+                2
+            ],
+            "parts": [
+                3,
+                3,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_Grass_Haenggung",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hyeongang_SM_YMC_Grass_01_H",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Grass_01_H.prefab",
+            "sourceHash": "38f1818e4cdba1142b01e2678fa1a9f9",
+            "actualPreparedSize": {
+                "x": 0.9549664258956909,
+                "y": 0.29968583583831789,
+                "z": 1.1743452548980713
+            },
+            "triangles": [
+                2612,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hyeongang_SM_Deparia_3",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Deparia_3.prefab",
+            "sourceHash": "3bc156e7a4edb5b5e13e25269584397c",
+            "actualPreparedSize": {
+                "x": 1.0727992057800294,
+                "y": 0.5314478874206543,
+                "z": 1.5348865985870362
+            },
+            "triangles": [
+                5744,
+                2872
+            ],
+            "parts": [
+                1,
+                1
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Hyeongang_SM_PhragmitesAustralis_1",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_PhragmitesAustralis_1.prefab",
+            "sourceHash": "93ab25c53ecfdeae7088089201f5f649",
+            "actualPreparedSize": {
+                "x": 0.8425770998001099,
+                "y": 2.138015031814575,
+                "z": 0.8944993019104004
+            },
+            "triangles": [
+                2538,
+                1269
+            ],
+            "parts": [
+                2,
+                2
+            ],
+            "groundPatch": false
+        },
+        {
+            "id": "Cheongrim_LowGroundFill",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hwanggyeong_LowGroundFill",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Jeokro_LowGroundFill",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Cheolong_LowGroundFill",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        },
+        {
+            "id": "Hyeongang_LowGroundFill",
+            "source": "Assets/SeyeonjeongPavilion/Prefabs/SM_Grass.prefab",
+            "sourceHash": "1d19c50bee299499f897bd868c66ace9",
+            "actualPreparedSize": {
+                "x": 0.862739086151123,
+                "y": 0.28447699546813967,
+                "z": 1.04264235496521
+            },
+            "triangles": [
+                16,
+                2,
+                2
+            ],
+            "parts": [
+                1,
+                1,
+                1
+            ],
+            "groundPatch": true
+        }
+    ],
+    "cells": [
+        {
+            "trees": 421,
+            "shrubs": 1426,
+            "grass": 12564,
+            "cover": 16,
+            "lowGrass": 11486,
+            "lowGrassBlocked": 0,
+            "lowGrassDuplicateIds": 0,
+            "duplicateTreeIds": 0,
+            "treePlacementMismatches": 0,
+            "blockedInstances": 0,
+            "minimumTreeHeight": 4.781972408294678,
+            "maximumTreeHeight": 18.074851989746095,
+            "finite": true,
+            "scope": "Deterministic population generation; not visibility, gameplay traversal or measured FPS."
+        },
+        {
+            "trees": 630,
+            "shrubs": 2108,
+            "grass": 17701,
+            "cover": 72,
+            "lowGrass": 18107,
+            "lowGrassBlocked": 0,
+            "lowGrassDuplicateIds": 0,
+            "duplicateTreeIds": 0,
+            "treePlacementMismatches": 0,
+            "blockedInstances": 0,
+            "minimumTreeHeight": 3.0374019145965578,
+            "maximumTreeHeight": 18.143207550048829,
+            "finite": true,
+            "scope": "Deterministic population generation; not visibility, gameplay traversal or measured FPS."
+        },
+        {
+            "trees": 472,
+            "shrubs": 1418,
+            "grass": 12736,
+            "cover": 190,
+            "lowGrass": 13776,
+            "lowGrassBlocked": 0,
+            "lowGrassDuplicateIds": 0,
+            "duplicateTreeIds": 0,
+            "treePlacementMismatches": 0,
+            "blockedInstances": 0,
+            "minimumTreeHeight": 4.800352096557617,
+            "maximumTreeHeight": 18.21107292175293,
+            "finite": true,
+            "scope": "Deterministic population generation; not visibility, gameplay traversal or measured FPS."
+        },
+        {
+            "trees": 520,
+            "shrubs": 1823,
+            "grass": 15738,
+            "cover": 90,
+            "lowGrass": 16107,
+            "lowGrassBlocked": 0,
+            "lowGrassDuplicateIds": 0,
+            "duplicateTreeIds": 0,
+            "treePlacementMismatches": 0,
+            "blockedInstances": 0,
+            "minimumTreeHeight": 4.784971237182617,
+            "maximumTreeHeight": 18.174243927001954,
+            "finite": true,
+            "scope": "Deterministic population generation; not visibility, gameplay traversal or measured FPS."
+        },
+        {
+            "trees": 477,
+            "shrubs": 2038,
+            "grass": 17422,
+            "cover": 324,
+            "lowGrass": 14854,
+            "lowGrassBlocked": 0,
+            "lowGrassDuplicateIds": 0,
+            "duplicateTreeIds": 0,
+            "treePlacementMismatches": 0,
+            "blockedInstances": 0,
+            "minimumTreeHeight": 4.794920444488525,
+            "maximumTreeHeight": 18.056921005249025,
+            "finite": true,
+            "scope": "Deterministic population generation; not visibility, gameplay traversal or measured FPS."
+        }
+    ]
+}

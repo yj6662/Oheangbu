@@ -1,0 +1,39 @@
+{
+    "label": "entry_final_baseline",
+    "utc": "2026-09-11T22:38:51.7226134Z",
+    "status": "MEASURED",
+    "scope": "Unity Editor play, stationary 1920x1080 offscreen target. Not a standalone FPS guarantee.",
+    "gpuStatus": "MEASURED",
+    "dressing": false,
+    "poseStable": true,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 120,
+    "cpuSamples": 120,
+    "gpuSamples": 117,
+    "residentCells": 0,
+    "residentInstances": 0,
+    "drawCalls": 0,
+    "drawnInstances": 0,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 1988.087646484375,
+        "y": 134.71531677246095,
+        "z": 711.3671264648438
+    },
+    "euler": {
+        "x": 0.00013755069812759757,
+        "y": 181.6800079345703,
+        "z": 2.0355550198972866e-13
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.7645934820175171,
+    "frameMedianMs": 2.769897924736142,
+    "frameP95Ms": 5.280902609229088,
+    "cpuMedianMs": 2.7546,
+    "cpuP95Ms": 4.8463,
+    "gpuMedianMs": 1.137664,
+    "gpuP95Ms": 1.362944,
+    "allocatedMiB": 1881.283694267273
+}

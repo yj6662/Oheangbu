@@ -1,0 +1,84 @@
+{
+  "task_id": "01a09229-c3b0-7076-b94a-51fc08481f6b",
+  "config": {
+    "ai_model": "meshy-7",
+    "model_type": "standard",
+    "ultra_mode": false,
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "4k",
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 8000,
+    "image_enhancement": false,
+    "target_formats": [
+      "glb",
+      "fbx"
+    ]
+  },
+  "consumed_credits": 30,
+  "files": [
+    {
+      "path": "Roof\\image\\model_url.glb",
+      "bytes": 25520124,
+      "sha256": "79aa3b0eae4505668387d7e1e5b0de996e60dff0632e772c20b92e1811bcecce",
+      "geometry": {
+        "status": "GLB_ACCESSOR_COUNTS",
+        "unique_mesh_triangles": 7650,
+        "primitive_vertices": 12693,
+        "meshes": 1,
+        "materials": 1,
+        "primitive_modes": [
+          4
+        ],
+        "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+      }
+    },
+    {
+      "path": "Roof\\image\\model_urls_glb.glb",
+      "bytes": 25520124,
+      "sha256": "79aa3b0eae4505668387d7e1e5b0de996e60dff0632e772c20b92e1811bcecce",
+      "geometry": {
+        "status": "GLB_ACCESSOR_COUNTS",
+        "unique_mesh_triangles": 7650,
+        "primitive_vertices": 12693,
+        "meshes": 1,
+        "materials": 1,
+        "primitive_modes": [
+          4
+        ],
+        "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+      }
+    },
+    {
+      "path": "Roof\\image\\model_urls_fbx.fbx",
+      "bytes": 42865516,
+      "sha256": "68200ff20152f9eade270a6ec9e61806af7a3b7e10f76cb0bf2945ba6d6f8033"
+    },
+    {
+      "path": "Roof\\image\\thumbnail_url.png",
+      "bytes": 100350,
+      "sha256": "f24f72f9837fd54fba661a6e220e79ff91468bb9d20d47efc84a83da9decd786"
+    },
+    {
+      "path": "Roof\\image\\texture_urls_0_base_color.png",
+      "bytes": 21280507,
+      "sha256": "d9c68574545be7e02ab0938f3e0e08b4e6993575de2972ad4a1a785d1d423d98"
+    },
+    {
+      "path": "Roof\\image\\texture_urls_0_metallic.png",
+      "bytes": 1382014,
+      "sha256": "ef94863a2c20e67e2e52befecbdf7d5ff8d9d444f9bf774c4b5430ac6ed10383"
+    },
+    {
+      "path": "Roof\\image\\texture_urls_0_roughness.png",
+      "bytes": 1396294,
+      "sha256": "75fb2d8c93450d53194b32883f2ff8b8f3c1bb872a074bdf82281dd47674aee5"
+    },
+    {
+      "path": "Roof\\image\\texture_urls_0_normal.png",
+      "bytes": 18425475,
+      "sha256": "d0a419c5885a0396f55645450af58abc5f430bef22e21b30cb4212c71833745d"
+    }
+  ]
+}

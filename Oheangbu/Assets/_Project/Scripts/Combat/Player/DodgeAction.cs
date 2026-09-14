@@ -12,15 +12,25 @@ namespace Oheangbu.Combat
         private float _invulnerableUntil;
         private float _cooldownUntil;
         private Vector3 _dashVelocity;
+        private float _dashStarted;
 
         public bool IsInvulnerable => Time.time < _invulnerableUntil;
+        public bool IsDashing => Time.time < _dashUntil;
+        public Vector3 Direction => _dashVelocity.sqrMagnitude > 0f ? _dashVelocity.normalized : Vector3.zero;
+        public float Progress => IsDashing ? Mathf.Clamp01((Time.time - _dashStarted) / Mathf.Max(_dashUntil - _dashStarted, 0.0001f)) : 1f;
 
-        public bool TryDodge(Vector3 direction)
+        public bool TryDodge(Vector3 direction) => TryDodge(direction, 0f);
+        public void Cancel() { _dashUntil = _invulnerableUntil = 0f; _dashVelocity = Vector3.zero; }
+
+        // Only the opt-in crouch roll changes travel duration. Distance and immunity stay in CombatConfig.
+        public bool TryDodge(Vector3 direction, float durationOverride)
         {
-            if (_config == null || Time.time < _cooldownUntil) return false;
-            float speed = _config.DodgeDistance / Mathf.Max(_config.DodgeDuration, 0.01f);
+            if (_config == null || IsDashing || Time.time < _cooldownUntil) return false;
+            float duration = durationOverride > 0f ? Mathf.Clamp(durationOverride, .4f, 1.2f) : _config.DodgeDuration;
+            float speed = _config.DodgeDistance / Mathf.Max(duration, 0.01f);
             _dashVelocity = direction.normalized * speed;
-            _dashUntil = Time.time + _config.DodgeDuration;
+            _dashStarted = Time.time;
+            _dashUntil = Time.time + duration;
             _invulnerableUntil = Time.time + _config.DodgeInvulnerable; // 즉발 — 입력 프레임부터 무적
             _cooldownUntil = Time.time + _config.DodgeCooldown;
             return true;

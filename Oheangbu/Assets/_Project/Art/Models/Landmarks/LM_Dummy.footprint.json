@@ -1,0 +1,36 @@
+{
+ "name": "LM_Dummy",
+ "polygon": [
+  [
+   -3.0,
+   -2.0
+  ],
+  [
+   3.0,
+   -2.0
+  ],
+  [
+   3.0,
+   2.0
+  ],
+  [
+   -3.0,
+   2.0
+  ]
+ ],
+ "polygonFlat": [
+  -3.0,
+  -2.0,
+  3.0,
+  -2.0,
+  3.0,
+  2.0,
+  -3.0,
+  2.0
+ ],
+ "groundOffset": 0.0,
+ "contractVersion": 1,
+ "tris": 192,
+ "sha256": "88b480251a798bb30f1174910dc9fa99619b9be579dd5f2400d5ccca98eb7ee2",
+ "axisMap": "polygon = Blender XY (Unity XZ 대응은 임포트 실측으로 확정)"
+}

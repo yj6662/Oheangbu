@@ -51,6 +51,10 @@ namespace Oheangbu.BrushRender
         [SerializeField, Range(0f, 1f)] private float _purityMix = 0.35f;
         [Tooltip("갈색 — ART-COLOR 기본 팔레트(#8A5A33). 「재질의 색」 슬롯(목질 줄기 등)이며 오행 강조색과는 별개다 — 속성 식별은 강조색이 계속 담당한다(색+형태 이중 채널)")]
         [SerializeField, ColorUsage(false, false)] private Color _woodBrown = new Color(0.541f, 0.353f, 0.200f); // #8A5A33
+        [Tooltip("먹 — ART-COLOR 기본 팔레트(#2A2622). 월드 톤 램프의 어두운 끝·먹선·원석 탁화의 혼합 축(#153 정식 필드). 초성 폴백(_fallback)과는 별개")]
+        [SerializeField, ColorUsage(false, false)] private Color _ink = new Color(0.165f, 0.149f, 0.133f); // #2A2622
+        [Tooltip("원석 탁화 — 「날것 마석 빛은 원석에만, 탁하게」(ArtAudio:32): 광맥 실체색 = lerp(오행색, 먹, k). 오염의 검보라 탁화와 다른 축(#152)")]
+        [SerializeField, Range(0f, 1f)] private float _rawTurbidity = 0.25f;
 
         public Color GetBaseColor(char initial)
         {
@@ -99,6 +103,15 @@ namespace Oheangbu.BrushRender
 
         // 목질·흙 등 「재질의 색」 — 속성 강조색이 아니다(ART-COLOR 기본 팔레트 갈색)
         public Color WoodColor => _woodBrown;
+
+        // 먹 — 월드 톤 램프의 어두운 끝(#153). 환경 재질·포스트의 먹선·씻김 종점이 전부 이 한 값을 읽는다
+        public Color InkColor => _ink;
+
+        // 광맥 원석(날것 마석) — 오행색의 먹 탁화(#152). 오염(GetCorruptColor)과 축이 다르다: 탁하되 검보라로 가지 않는다
+        public Color GetRawVeinColor(char initial)
+        {
+            return Color.Lerp(GetBaseColor(initial), _ink, _rawTurbidity);
+        }
 
         // 정화 — 한지 소지 쪽으로 물러난 맑은 색
         public Color GetPurifiedColor(char initial)

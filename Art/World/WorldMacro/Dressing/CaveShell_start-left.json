@@ -1,0 +1,39 @@
+{
+    "label": "CaveShell_start-left",
+    "utc": "2026-09-14T18:44:27.9940593Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 336,
+    "residentInstances": 12,
+    "drawCalls": 4,
+    "drawnInstances": 8,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 3284.83984375,
+        "y": 197.32366943359376,
+        "z": 1190.323974609375
+    },
+    "euler": {
+        "x": 0.0,
+        "y": 29.999929428100587,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.8016178011894226,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

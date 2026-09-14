@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e83ea8a6a204499951bcd8024f040fb, type: 3}
+  m_Name: TerrainSynth_GeumpyoRoad
+  m_EditorClassIdentifier:
+  seed: 20260906
+  macroAmplitude: 60
+  macroWavelengthM: 400
+  ridgedOctaves: 5
+  lacunarity: 2
+  gain: 0.5
+  domainWarp: 0.35
+  thermalIterations: 16
+  talusDeg: 35
+  erosionMaskEnabled: 1
+  valleyFloorY: 100
+  valleyHalfWidthM: 80
+  valleyAxisKnots:
+  - {x: 200, y: 155, z: 150}
+  - {x: 190, y: 140, z: 300}
+  - {x: 170, y: 110, z: 450}
+  - {x: 150, y: 97, z: 560}
+  - {x: 140, y: 98, z: 680}
+  spikeSeedImport: 1
+  spikeSeedBlendM: 20
+  spikeSeedYawDeg: 0

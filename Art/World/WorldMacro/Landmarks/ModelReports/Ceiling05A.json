@@ -1,0 +1,413 @@
+{
+  "asset": "Ceiling05A",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\BillemotdonggulLavaTubePack\\Mesh\\SM_Ceiling05A.fbx",
+  "source_prefab": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\BillemotdonggulLavaTubePack\\Prefabs\\SM_Ceiling05A.prefab",
+  "source_sha256": "abf3f30865405b9c115d2f9500e789eb47b04d7f40d2242bf60c2074817054c1",
+  "source_prefab_sha256": "de3afa3e37fc80949ca99859c95334f23ad126b4cbf09b2c77e63dfcd8648a7a",
+  "lods": [
+    {
+      "name": "LM_Ceiling05A_LOD0",
+      "vertices": 11090,
+      "triangles": 14880,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -0.78856360912323,
+          -5.152620792388916,
+          -4.943941116333008
+        ],
+        "maximum": [
+          2.2348170280456543,
+          6.336358547210693,
+          5.017623424530029
+        ],
+        "size": [
+          3.0233806371688843,
+          11.48897933959961,
+          9.961564540863037
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_Ceiling05A",
+          "triangles": 14880
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 15000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        0.006183922290802002,
+        -0.0002570152282714844,
+        0.004536628723144531
+      ],
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Ceiling05A_LOD0.fbx",
+      "export_sha256": "0a63d33a5c40fdbfe6fa78092d3046750fa7605b591625e9f9d1d71d779cf660",
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Ceiling05A_LOD0",
+            "vertices": 11090,
+            "triangles": 14880,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -0.78856360912323,
+                -5.152621746063232,
+                -4.943942070007324
+              ],
+              "maximum": [
+                2.2348170280456543,
+                6.33635950088501,
+                5.017624378204346
+              ],
+              "size": [
+                3.0233806371688843,
+                11.488981246948242,
+                9.96156644821167
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_Ceiling05A",
+                "triangles": 14880
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 14880,
+        "bounds_blender_world": {
+          "minimum": [
+            -0.78856360912323,
+            -5.152621746063232,
+            -4.943942070007324
+          ],
+          "maximum": [
+            2.2348170280456543,
+            6.33635950088501,
+            5.017624378204346
+          ],
+          "size": [
+            3.0233806371688843,
+            11.488981246948242,
+            9.96156644821167
+          ]
+        },
+        "bounds_max_error_m": 9.5367431640625e-07,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true
+    },
+    {
+      "name": "LM_Ceiling05A_LOD1",
+      "vertices": 5987,
+      "triangles": 6943,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -0.7910117506980896,
+          -5.15201473236084,
+          -4.943941116333008
+        ],
+        "maximum": [
+          2.248521327972412,
+          6.336358547210693,
+          5.017623424530029
+        ],
+        "size": [
+          3.0395330786705017,
+          11.488373279571533,
+          9.961564540863037
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_Ceiling05A",
+          "triangles": 6943
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 7000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        0.022336363792419434,
+        -0.0008630752563476562,
+        0.004536628723144531
+      ],
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Ceiling05A_LOD1.fbx",
+      "export_sha256": "e18500029c47632ab820135d3e61d6989dc631ad4ce7ca09cc4c7e0287d2e34c",
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Ceiling05A_LOD1",
+            "vertices": 5987,
+            "triangles": 6943,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -0.7910117506980896,
+                -5.152015686035156,
+                -4.943942070007324
+              ],
+              "maximum": [
+                2.248521327972412,
+                6.33635950088501,
+                5.017624378204346
+              ],
+              "size": [
+                3.0395330786705017,
+                11.488375186920166,
+                9.96156644821167
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_Ceiling05A",
+                "triangles": 6943
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 6943,
+        "bounds_blender_world": {
+          "minimum": [
+            -0.7910117506980896,
+            -5.152015686035156,
+            -4.943942070007324
+          ],
+          "maximum": [
+            2.248521327972412,
+            6.33635950088501,
+            5.017624378204346
+          ],
+          "size": [
+            3.0395330786705017,
+            11.488375186920166,
+            9.96156644821167
+          ]
+        },
+        "bounds_max_error_m": 9.5367431640625e-07,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true
+    },
+    {
+      "name": "LM_Ceiling05A_LOD2",
+      "vertices": 3002,
+      "triangles": 2976,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -0.7810881733894348,
+          -5.139902591705322,
+          -4.917178153991699
+        ],
+        "maximum": [
+          2.1968252658843994,
+          6.336358547210693,
+          4.957685947418213
+        ],
+        "size": [
+          2.9779134392738342,
+          11.476261138916016,
+          9.874864101409912
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_Ceiling05A",
+          "triangles": 2976
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 3000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        -0.03928327560424805,
+        -0.012975215911865234,
+        -0.08216381072998047
+      ],
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Ceiling05A_LOD2.fbx",
+      "export_sha256": "2bc5c00b9a3adc9d9fb4dce769ceac9af0039b9ca56ca895c9a315b58a6b34a4",
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Ceiling05A_LOD2",
+            "vertices": 3002,
+            "triangles": 2976,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -0.7810881733894348,
+                -5.139903545379639,
+                -4.917179107666016
+              ],
+              "maximum": [
+                2.1968252658843994,
+                6.33635950088501,
+                4.957686901092529
+              ],
+              "size": [
+                2.9779134392738342,
+                11.476263046264648,
+                9.874866008758545
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_Ceiling05A",
+                "triangles": 2976
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 2976,
+        "bounds_blender_world": {
+          "minimum": [
+            -0.7810881733894348,
+            -5.139903545379639,
+            -4.917179107666016
+          ],
+          "maximum": [
+            2.1968252658843994,
+            6.33635950088501,
+            4.957686901092529
+          ],
+          "size": [
+            2.9779134392738342,
+            11.476263046264648,
+            9.874866008758545
+          ]
+        },
+        "bounds_max_error_m": 9.5367431640625e-07,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true
+    }
+  ],
+  "method": "Sequential Blender collapse decimation; UV layers and material-index data retained; no texture bake or redesign.",
+  "unity_runtime_validation": "UNVERIFIED",
+  "visual_art_validation": "UNVERIFIED",
+  "axis_contract": "Blender import axes retained; transforms baked into geometry, original origin retained. Export forward -Z, up Y, metres, scale 1. Unity ground offset must use actual imported Renderer.bounds.min.y.",
+  "started_commit_ratio": 0.8078556184117699,
+  "imported_objects": [
+    {
+      "name": "SM_Ceiling05A",
+      "triangles": 79983,
+      "bounds": {
+        "minimum": [
+          -0.788971483707428,
+          -5.152878284454346,
+          -4.945357799530029
+        ],
+        "maximum": [
+          2.2282252311706543,
+          6.336359024047852,
+          5.01167106628418
+        ],
+        "size": [
+          3.0171967148780823,
+          11.489237308502197,
+          9.957028865814209
+        ]
+      }
+    },
+    {
+      "name": "SM_Ceiling05A_ConvexHulls",
+      "triangles": 108,
+      "bounds": {
+        "minimum": [
+          -0.8644766211509705,
+          -5.069690227508545,
+          -4.9882893562316895
+        ],
+        "maximum": [
+          2.2882776260375977,
+          6.4297380447387695,
+          5.075028896331787
+        ],
+        "size": [
+          3.152754247188568,
+          11.499428272247314,
+          10.063318252563477
+        ]
+      }
+    }
+  ],
+  "ignored_collision_objects": [
+    "SM_Ceiling05A_ConvexHulls"
+  ],
+  "source_visual": {
+    "name": "SM_Ceiling05A",
+    "vertices": 46672,
+    "triangles": 79983,
+    "uv_layers": [
+      "UVmap_0",
+      "UVmap_1"
+    ],
+    "bounds_blender_world": {
+      "minimum": [
+        -0.788971483707428,
+        -5.1528778076171875,
+        -4.945357322692871
+      ],
+      "maximum": [
+        2.2282252311706543,
+        6.336358547210693,
+        5.0116705894470215
+      ],
+      "size": [
+        3.0171967148780823,
+        11.48923635482788,
+        9.957027912139893
+      ]
+    },
+    "materials": [
+      {
+        "slot": 0,
+        "name": "MI_Ceiling05A",
+        "triangles": 79983
+      }
+    ],
+    "nonfinite_vertices": 0
+  },
+  "prefab_material_bindings": [
+    {
+      "slot": 0,
+      "guid": "abc00000000000006274860754123193",
+      "unity_material": "Assets/BillemotdonggulLavaTubePack/Material/MI_Ceiling05A.mat"
+    }
+  ],
+  "after_import_commit_ratio": 0.8053933766487836,
+  "source_preserved": true,
+  "elapsed_seconds": 4.19088339805603,
+  "ended_commit_ratio": 0.8034860319871296,
+  "status": "PASS_GEOMETRY_EXPORT"
+}

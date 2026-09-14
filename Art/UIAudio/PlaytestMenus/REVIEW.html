@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>오행부 · 플레이테스트 메뉴 검토</title>
+<style>
+@font-face{font-family:NotoMenu;src:url('../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/Fonts/NotoSansCJKkr-Regular.otf') format('opentype');font-display:swap}
+:root{--ink:#262b28;--muted:#626962;--paper:#eee6d2;--paper2:#ddd2b8;--seal:#8f3229;--line:rgba(38,43,40,.18);--night:#171b19}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--night);color:var(--ink);font-family:NotoMenu,"Malgun Gothic",sans-serif;line-height:1.65}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.025),transparent 42%),radial-gradient(circle at 75% 12%,rgba(161,126,76,.13),transparent 34%);pointer-events:none}
+a{color:inherit;text-underline-offset:3px}.shell{width:min(1460px,calc(100% - 32px));margin:24px auto 70px;background:var(--paper);background-image:linear-gradient(rgba(239,231,210,.88),rgba(239,231,210,.88)),url('../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/HanjiSurface.png');box-shadow:0 24px 90px #0008}
+.hero{padding:clamp(34px,6vw,86px);min-height:430px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:56px;align-items:end;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:12px;letter-spacing:.19em;color:var(--seal);margin:0 0 8px}h1{font-size:clamp(44px,7vw,92px);line-height:1.05;margin:0 0 24px;font-weight:500;letter-spacing:-.055em}h2,h3,p{margin-top:0}.hero-copy{font-size:20px;color:var(--muted);max-width:720px}.scope{border-left:3px solid var(--seal);padding:18px 22px;background:#fff4}.scope strong{display:block;margin-bottom:6px}
+.nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow:auto;padding:12px 20px;background:#eee6d2ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}.nav a{white-space:nowrap;text-decoration:none;padding:6px 10px;border-radius:3px}.nav a:hover{background:#fff7}
+main{padding:clamp(18px,4vw,58px)}.section-lead{max-width:840px;margin:0 0 32px;color:var(--muted)}.page-card{padding:34px 0 48px;border-top:1px solid var(--line)}.page-card>header{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:18px;align-items:start}.page-card h2{font-size:32px;margin-bottom:6px;font-weight:500}.number{font-family:serif;font-size:26px;color:var(--seal)}
+.badge{display:inline-block;white-space:nowrap;padding:5px 10px;border:1px solid;border-radius:999px;font-size:12px;letter-spacing:.04em}.pass{color:#315d46;background:#e0eadf}.findings{color:#873a30;background:#f1dcd4}.filed{color:#625830;background:#eee6bc}.unverified{color:#686c67;background:#e2e1db}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:22px;margin:24px 0}.shot{margin:0;background:#171b19;padding:10px;box-shadow:0 8px 24px #51482e30}.shot a{display:block}.shot img{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain;background:#0e100f}.shot figcaption{color:#d7d0bd;font-size:13px;padding:10px 6px 3px}.empty{min-height:150px;display:grid;place-items:center;text-align:center;padding:25px;border:1px dashed #897f6a;color:var(--muted);background:#fff3}
+.evidence-links{font-size:14px;color:var(--muted)}.evidence-links a{margin-right:6px}.evidence{margin-top:40px;padding-top:35px;border-top:2px solid var(--ink)}.validation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}.validation-card{background:#fff5;border:1px solid var(--line);padding:18px}.validation-card h3{margin:10px 0 4px;font-size:17px;word-break:break-all}.validation-card p{font-size:14px;color:var(--muted)}details{margin-top:14px}pre{white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto;background:#1b1e1c;color:#e9e2d0;padding:12px;font-size:11px}
+.provenance{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:24px}.provenance article{padding:20px;border:1px solid var(--line);background:#fff4}.findings-list{margin:12px 0 0;padding-left:20px;color:#873a30}.build-links{margin:14px 0 0;overflow-wrap:anywhere}footer{padding:30px clamp(18px,4vw,58px);border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+@media(max-width:760px){.shell{width:100%;margin:0}.hero{grid-template-columns:1fr;gap:24px;min-height:0}.page-card>header{grid-template-columns:38px 1fr}.page-card>header .badge{grid-column:2}main{padding-top:28px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style></head><body><div class="shell">
+<header class="hero"><div><p class="eyebrow">EXTERNAL PLAYTEST · MENU REVIEW</p><h1>여정을 위한<br>한지 메뉴</h1><p class="hero-copy">한국어 한지 메뉴, 지속 탐험 지도, 석경 수집 상태를 실제 생성물과 런타임 증거로 검토합니다.</p><p>2026-09-15: 기록첩 메뉴를 제거했습니다. 이전 화면의 기록 탭은 당시 구현이며 현재 기능이 아닙니다. 새 런타임 캡처는 아직 없습니다.</p></div><aside class="scope"><strong>현재 증거 경계</strong>스크린샷은 런타임 진단 상태 설정으로 만든 정지 이미지입니다. 현재 실제 캡처 해상도는 1920x1080입니다. 720p·1080p·1440p·울트라와이드 표기는 분석 보고서이며 해당 해상도의 실제 캡처를 뜻하지 않습니다. 수동 보행·동영상·사람의 청취 검토는 아직 수행하지 않았습니다.</aside></header>
+<nav class="nav"><a href="#pages">화면</a><a href="#title">타이틀 로비</a><a href="#hud">플레이 HUD</a><a href="#pause">일시정지</a><a href="#inventory">소지품</a><a href="#codex">술식 도감</a><a href="#chapae">차패</a><a href="#options">옵션</a><a href="#map_cave">폐광 상세 지도</a><a href="#map">탐험 지도</a><a href="#map_fold">지도 접힘</a><a href="#controls">조작</a><a href="#technical">기술 요약</a><a href="#evidence">검증</a><a href="#builds">빌드</a><a href="#sources">출처</a></nav>
+<main><section id="pages"><p class="eyebrow">SCREEN INDEX</p><h2>화면별 검토</h2><p class="section-lead">Screenshots/의 실제 파일만 표시합니다. 이미지는 원본에 연결되며, 캡처가 없다는 사실을 검증 통과로 바꾸지 않습니다.</p>
+        <section class="page-card" id="title">
+          <header><span class="number">01</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>타이틀 로비</h2><p>이어하기·새 게임·옵션·조작 안내와 저장 상태</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/title_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/title_1920x1080.png" alt="title 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>title_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_title.json">capture_title.json</a> · <a href="Validation/layout_title_large_review.json">layout_title_large_review.json</a></p>
+        </section>
+        <section class="page-card" id="hud">
+          <header><span class="number">02</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>플레이 HUD</h2><p>체력·먹·레티클·한국어 상호작용 안내</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/hud_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/hud_1920x1080.png" alt="hud 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>hud_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_hud.json">capture_hud.json</a></p>
+        </section>
+        <section class="page-card" id="pause">
+          <header><span class="number">03</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>일시정지</h2><p>시간 정지와 여정 복귀 동선</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/pause_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/pause_1920x1080.png" alt="pause 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>pause_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_pause.json">capture_pause.json</a></p>
+        </section>
+        <section class="page-card" id="inventory">
+          <header><span class="number">04</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>소지품</h2><p>실제 저장 소지품과 석경 파편</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/inventory_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/inventory_1920x1080.png" alt="inventory 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>inventory_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_inventory.json">capture_inventory.json</a></p>
+        </section>
+        <section class="page-card" id="codex">
+          <header><span class="number">05</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>술식 도감</h2><p>발견한 글자와 오행 설명</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/codex_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/codex_1920x1080.png" alt="codex 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>codex_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_codex.json">capture_codex.json</a></p>
+        </section>
+        <section class="page-card" id="chapae">
+          <header><span class="number">06</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>차패</h2><p>아직 새겨지지 않은 덕목과 획득한 소유자 이력</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/chapae_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/chapae_1920x1080.png" alt="chapae 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>chapae_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_chapae.json">capture_chapae.json</a></p>
+        </section>
+        <section class="page-card" id="options">
+          <header><span class="number">07</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>옵션</h2><p>화면·음량·조작·접근성 설정</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/options_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/options_1920x1080.png" alt="options 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>options_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_options.json">capture_options.json</a></p>
+        </section>
+        <section class="page-card" id="map_cave">
+          <header><span class="number">08</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>폐광 상세 지도</h2><p>실제 보행 바닥·진입 경사·동굴 내부 경로</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/map_cave_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/map_cave_1920x1080.png" alt="map cave 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>map_cave_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_map_cave.json">capture_map_cave.json</a></p>
+        </section>
+        <section class="page-card" id="map">
+          <header><span class="number">09</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>탐험 지도</h2><p>발견 영역·마커·핀·현재 위치</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/map_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/map_1920x1080.png" alt="map 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>map_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_map.json">capture_map.json</a></p>
+        </section>
+        <section class="page-card" id="map_fold">
+          <header><span class="number">10</span><div><p class="eyebrow">PLAYTEST MENU</p><h2>지도 접힘</h2><p>여섯 한지 패널의 펼침과 역방향 닫힘</p></div><span class="badge pass">보고된 PASS</span></header>
+          <div class="shots">
+    <figure class="shot">
+      <a href="Screenshots/map_fold_1920x1080.png" target="_blank" rel="noopener" title="원본 크기로 열기">
+        <img loading="lazy" src="Screenshots/map_fold_1920x1080.png" alt="map fold 1920x1080 런타임 진단 캡처">
+      </a>
+      <figcaption><strong>map_fold_1920x1080.png</strong><br>런타임 진단 상태 설정 캡처 · 클릭하면 원본 크기로 열림</figcaption>
+    </figure></div>
+          <p class="evidence-links"><strong>검증 자료</strong> · <a href="Validation/capture_map_fold.json">capture_map_fold.json</a></p>
+        </section></section>
+<section class="evidence" id="controls"><p class="eyebrow">CONTROL CONTRACT</p><h2>현재 조작 안내</h2><p class="section-lead">현재 구현과 배포 문구를 대조할 기준입니다. 스크린샷이나 파일 존재만으로 실제 입력 성공을 판정하지 않습니다.</p><div class="provenance"><article><h3>지도 핀</h3><p>M으로 지도를 열고 발견한 야외 영역을 좌클릭합니다. 드래그는 이동, 휠은 확대·축소이며 동굴 상세에서는 핀을 놓지 않습니다.</p></article><article><h3>술식 작도</h3><p>Q와 마우스 좌클릭을 누른 채 획을 그리고 Q를 놓아 시전합니다.</p></article></div></section>
+<section class="evidence" id="technical"><p class="eyebrow">LATEST TECHNICAL EVIDENCE</p><h2>최근 자동 검증 요약</h2><p class="section-lead">런타임·고급 수명주기·레이아웃 보고서의 명시 판정만 요약합니다. 네이티브 장치 입력, 실제 디스플레이 가독성, 사람의 음향 청취, GPU·기기 성능은 아직 검증하지 않았습니다.</p><div class="validation-grid"><article class="validation-card"><div><span class="badge pass">보고된 PASS</span><h3>메뉴·저장·수집</h3><p>명시 검사 22/22; 수집 이벤트 5, 고유 묶음 5, 파편 20. 합성 키보드 입력과 격리 저장 슬롯 기반.</p></div><a href="Validation/menu_runtime_checks.json">menu_runtime_checks.json</a></article><article class="validation-card"><div><span class="badge pass">보고된 PASS</span><h3>차량 일시정지·지도 수명주기</h3><p>명시 검사 7/7; 지도 열기·닫기 20회, 텍스처 증감 0, 측정 평균 Map.Tick 0.0868ms. 진단 설정과 합성 입력 기반.</p></div><a href="Validation/menu_advanced_review.json">menu_advanced_review.json</a></article><article class="validation-card"><div><span class="badge pass">보고된 PASS</span><h3>기본 배율 레이아웃</h3><p>1280x720·1920x1080·2560x1440·3440x1440은 CanvasScaler 계산과 활성 텍스트 크기 분석 결과입니다. 실제 화면 캡처 해상도와 구분합니다.</p></div><a href="Validation/layout_review.json">layout_review.json</a></article><article class="validation-card"><div><span class="badge pass">보고된 PASS</span><h3>큰 UI·텍스트 배율</h3><p>UiScale 1.20 / TextScale 1.25 분석에서 텍스트 넘침 0건이 보고되었습니다. 실제 확대 화면의 미술·가독성 판단과 구분합니다.</p></div><a href="Validation/layout_large_review.json">layout_large_review.json</a></article></div></section>
+<section class="evidence" id="evidence"><p class="eyebrow">VALIDATION LEDGER</p><h2>검증 자료</h2><p class="section-lead">PASS는 보고서 안의 명시적 판정만 반영합니다. 자료 있음은 파일이 존재하지만 자동 판정 근거가 부족하다는 뜻입니다.</p><div class="validation-grid">
+        <article class="validation-card">
+          <div><span class="badge filed">자료 있음</span><h3>installation_validation.txt</h3><p>PASS menu/theme/font/state references · 명시 검사 2/3</p></div>
+          <a href="installation_validation.txt">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>PASS menu/theme/font/state references
+PASS: v2-&gt;v3, 5 bundles/20 fragments, idempotent collection, Base64 discovery, duplicate save skip, temporary save recovery
+WORLD_MAP_VALID projection+mine+zone+discovery+spoilers</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_chapae.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_chapae.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:54:21.1827736Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;chapae&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;차패&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4055655269,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7111905813217163,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7110583186149597,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\chapae_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1271947,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:54:21.3809269Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_codex.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_codex.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:50:58.5420171Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;codex&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;술식 도감&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4082190475,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.708361029624939,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7085019946098328,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\codex_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 991903,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:50:58.7586674Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_hud.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_hud.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:51:57.2352838Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;hud&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4085094608,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7047173976898193,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7049827575683594,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\hud_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 2896200,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:51:57.4752073Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_inventory.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_inventory.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:53:14.8710821Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;inventory&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;소지품&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4094498007,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7090751528739929,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7091804146766663,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\inventory_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1282572,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:53:15.1102450Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_map.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_map.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:51:58.2565021Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;map&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;지도&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4085177467,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7048258781433105,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7049502730369568,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\map_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1363926,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:51:58.8155470Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_map_cave.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_map_cave.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:51:00.5504379Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;map_cave&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;지도&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4083419530,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7078570127487183,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7077324390411377,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:/Users/yj666/Oheangbu/Art/UIAudio/PlaytestMenus/Screenshots/map_cave_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1553155,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:51:01.1122951Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_map_fold.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_map_fold.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:51:03.0653342Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;map_fold&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;지도&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4083402944,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7082603573799133,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7082560658454895,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\map_fold_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1799048,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:51:03.7500052Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_options.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_options.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:54:22.1888370Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;options&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;옵션&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4056006737,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.7099043726921082,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7099217176437378,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\options_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1256944,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:54:22.3897340Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_pause.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_pause.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:54:20.1720436Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;pause&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+  &quot;page&quot;: &quot;일시정지&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 4055127588,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.710780918598175,
+  &quot;systemCommitRatioAtIssue&quot;: 0.7112406492233276,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\pause_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 1248844,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:54:20.3974542Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>capture_title.json</h3><p>PASS</p></div>
+          <a href="Validation/capture_title.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:54:00.2801101Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;id&quot;: &quot;title&quot;,
+  &quot;scope&quot;: &quot;Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.&quot;,
+  &quot;setup&quot;: &quot;direct diagnostic page setup; no synthetic input used for this still&quot;,
+  &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_Playtest_Title.unity&quot;,
+  &quot;page&quot;: &quot;&quot;,
+  &quot;width&quot;: 1920,
+  &quot;height&quot;: 1080,
+  &quot;totalAllocatedBytes&quot;: 2106024174,
+  &quot;systemMemoryBytes&quot;: 33945550848,
+  &quot;systemCommitRatio&quot;: 0.6685003042221069,
+  &quot;systemCommitRatioAtIssue&quot;: 0.6685515642166138,
+  &quot;memoryBelow85Percent&quot;: true,
+  &quot;screenshotWritten&quot;: true,
+  &quot;screenshot&quot;: &quot;C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\title_1920x1080.png&quot;,
+  &quot;screenshotBytes&quot;: 617333,
+  &quot;screenshotUtc&quot;: &quot;2026-09-13T18:54:00.5100629Z&quot;,
+  &quot;failure&quot;: &quot;&quot;
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>layout_large_review.json</h3><p>PASS</p></div>
+          <a href="Validation/layout_large_review.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:54:17.9276767Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;scope&quot;: &quot;Analytical CanvasScaler and runtime adaptive-panel fit at four target resolutions plus actual active uGUI Text preferred-size checks for each diagnostic page. No Game View resolution was changed.&quot;,
+  &quot;mode&quot;: &quot;UNPERSISTED_PREVIEW UiScale=1.20 TextScale=1.25; reverted in finally&quot;,
+  &quot;uiScale&quot;: 1.2000000476837158,
+  &quot;textScale&quot;: 1.25,
+  &quot;actualCanvasRect&quot;: &quot;(x:-800.00, y:-450.00, width:1600.00, height:900.00)&quot;,
+  &quot;samples&quot;: [
+    {
+      &quot;resolution&quot;: &quot;1280x720&quot;,
+      &quot;logicalWidth&quot;: 1599.9998779296875,
+      &quot;logicalHeight&quot;: 899.9999389648438,
+      &quot;runtimeFrameScale&quot;: 0.9288887977600098,
+      &quot;runtimeTitleScale&quot;: 0.9181415438652039,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;1920x1080&quot;,
+      &quot;logicalWidth&quot;: 1599.9998779296875,
+      &quot;logicalHeight&quot;: 899.9999389648438,
+      &quot;runtimeFrameScale&quot;: 0.9288887977600098,
+      &quot;runtimeTitleScale&quot;: 0.9181415438652039,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;2560x1440&quot;,
+      &quot;logicalWidth&quot;: 1599.9998779296875,
+      &quot;logicalHeight&quot;: 899.9999389648438,
+      &quot;runtimeFrameScale&quot;: 0.9288887977600098,
+      &quot;runtimeTitleScale&quot;: 0.9181415438652039,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;3440x1440&quot;,
+      &quot;logicalWidth&quot;: 1854.7236328125,
+      &quot;logicalHeight&quot;: 776.3959350585938,
+      &quot;runtimeFrameScale&quot;: 0.7915510535240173,
+      &quot;runtimeTitleScale&quot;: 0.7814114093780518,
+      &quot;fixedPanelsFit&quot;: true
+    }
+  ],
+  &quot;inspectedPages&quot;: [
+    &quot;일시정지&quot;,
+    &quot;소지품&quot;,
+    &quot;기록&quot;,
+    &quot;술식 도감&quot;,
+    &quot;차패&quot;,
+    &quot;옵션/화면&quot;,
+    &quot;옵션/소리&quot;,
+    &quot;옵션/조작&quot;,
+    &quot;옵션/접근성&quot;
+  ],
+  &quot;textOverflows&quot;: [],
+  &quot;failures&quot;: []
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>layout_review.json</h3><p>PASS</p></div>
+          <a href="Validation/layout_review.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:54:18.9981137Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;scope&quot;: &quot;Analytical CanvasScaler and runtime adaptive-panel fit at four target resolutions plus actual active uGUI Text preferred-size checks for each diagnostic page. No Game View resolution was changed.&quot;,
+  &quot;mode&quot;: &quot;CURRENT_CONFIRMED_SETTINGS&quot;,
+  &quot;uiScale&quot;: 1.0,
+  &quot;textScale&quot;: 1.0,
+  &quot;actualCanvasRect&quot;: &quot;(x:-960.00, y:-540.00, width:1920.00, height:1080.00)&quot;,
+  &quot;samples&quot;: [
+    {
+      &quot;resolution&quot;: &quot;1280x720&quot;,
+      &quot;logicalWidth&quot;: 1920.0,
+      &quot;logicalHeight&quot;: 1080.0,
+      &quot;runtimeFrameScale&quot;: 1.0,
+      &quot;runtimeTitleScale&quot;: 1.0,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;1920x1080&quot;,
+      &quot;logicalWidth&quot;: 1920.0,
+      &quot;logicalHeight&quot;: 1080.0,
+      &quot;runtimeFrameScale&quot;: 1.0,
+      &quot;runtimeTitleScale&quot;: 1.0,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;2560x1440&quot;,
+      &quot;logicalWidth&quot;: 1920.0,
+      &quot;logicalHeight&quot;: 1080.0,
+      &quot;runtimeFrameScale&quot;: 1.0,
+      &quot;runtimeTitleScale&quot;: 1.0,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;3440x1440&quot;,
+      &quot;logicalWidth&quot;: 2225.668212890625,
+      &quot;logicalHeight&quot;: 931.6751098632812,
+      &quot;runtimeFrameScale&quot;: 0.9640834331512451,
+      &quot;runtimeTitleScale&quot;: 0.9531804323196411,
+      &quot;fixedPanelsFit&quot;: true
+    }
+  ],
+  &quot;inspectedPages&quot;: [
+    &quot;일시정지&quot;,
+    &quot;소지품&quot;,
+    &quot;기록&quot;,
+    &quot;술식 도감&quot;,
+    &quot;차패&quot;,
+    &quot;옵션/화면&quot;,
+    &quot;옵션/소리&quot;,
+    &quot;옵션/조작&quot;,
+    &quot;옵션/접근성&quot;
+  ],
+  &quot;textOverflows&quot;: [],
+  &quot;failures&quot;: []
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>layout_title_large_review.json</h3><p>PASS</p></div>
+          <a href="Validation/layout_title_large_review.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:53:43.8582726Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;scope&quot;: &quot;Analytical CanvasScaler and runtime adaptive-panel fit at four target resolutions plus actual active uGUI Text preferred-size checks for each diagnostic page. No Game View resolution was changed.&quot;,
+  &quot;mode&quot;: &quot;UNPERSISTED_PREVIEW UiScale=1.20 TextScale=1.25; reverted in finally&quot;,
+  &quot;uiScale&quot;: 1.2000000476837158,
+  &quot;textScale&quot;: 1.25,
+  &quot;actualCanvasRect&quot;: &quot;(x:-800.00, y:-450.00, width:1600.00, height:900.00)&quot;,
+  &quot;samples&quot;: [
+    {
+      &quot;resolution&quot;: &quot;1280x720&quot;,
+      &quot;logicalWidth&quot;: 1599.9998779296875,
+      &quot;logicalHeight&quot;: 899.9999389648438,
+      &quot;runtimeFrameScale&quot;: 0.9288887977600098,
+      &quot;runtimeTitleScale&quot;: 0.9181415438652039,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;1920x1080&quot;,
+      &quot;logicalWidth&quot;: 1599.9998779296875,
+      &quot;logicalHeight&quot;: 899.9999389648438,
+      &quot;runtimeFrameScale&quot;: 0.9288887977600098,
+      &quot;runtimeTitleScale&quot;: 0.9181415438652039,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;2560x1440&quot;,
+      &quot;logicalWidth&quot;: 1599.9998779296875,
+      &quot;logicalHeight&quot;: 899.9999389648438,
+      &quot;runtimeFrameScale&quot;: 0.9288887977600098,
+      &quot;runtimeTitleScale&quot;: 0.9181415438652039,
+      &quot;fixedPanelsFit&quot;: true
+    },
+    {
+      &quot;resolution&quot;: &quot;3440x1440&quot;,
+      &quot;logicalWidth&quot;: 1854.7236328125,
+      &quot;logicalHeight&quot;: 776.3959350585938,
+      &quot;runtimeFrameScale&quot;: 0.7915510535240173,
+      &quot;runtimeTitleScale&quot;: 0.7814114093780518,
+      &quot;fixedPanelsFit&quot;: true
+    }
+  ],
+  &quot;inspectedPages&quot;: [
+    &quot;title&quot;,
+    &quot;옵션/화면&quot;,
+    &quot;옵션/소리&quot;,
+    &quot;옵션/조작&quot;,
+    &quot;옵션/접근성&quot;
+  ],
+  &quot;textOverflows&quot;: [],
+  &quot;failures&quot;: []
+}</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>menu_advanced_review.json</h3><p>PASS · 명시 검사 7/7</p></div>
+          <a href="Validation/menu_advanced_review.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:35:11.9179204Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;saveIsolationSuffix&quot;: &quot;_menu20260914&quot;,
+  &quot;scope&quot;: &quot;Editor Play Mode QA in a suffixed save. Seat boarding/exit and menu opening are diagnostic setup APIs; W/E/V/Space are injected InputSystem events, not native device input.&quot;,
+  &quot;elapsedFrames&quot;: 7884,
+  &quot;mapCycles&quot;: 20,
+  &quot;objectsBefore&quot;: 6647,
+  &quot;objectsAfter&quot;: 6602,
+  &quot;objectDelta&quot;: -45,
+  &quot;texturesBefore&quot;: 1729,
+  &quot;texturesAfter&quot;: 1729,
+  &quot;textureDelta&quot;: 0,
+  &quot;allocatedBefore&quot;: 4076500118,
+  &quot;allocatedAfter&quot;: 4078515391,
+  &quot;allocatedDelta&quot;: 2015273,
+  &quot;reservedBefore&quot;: 5297041408,
+  &quot;reservedAfter&quot;: 5297041408,
+  &quot;reservedDelta&quot;: 0,
+  &quot;mapTickSamplesBefore&quot;: 4164,
+  &quot;mapTickSamplesAfter&quot;: 7885,
+  &quot;mapLastTickMilliseconds&quot;: 0.1012,
+  &quot;mapMeanTickMilliseconds&quot;: 0.08684749524413438,
+  &quot;mapResourceMeasurement&quot;: &quot;MEASURED after clean settings phase&quot;,
+  &quot;focusGateInputReleaseEvidence&quot;: &quot;Application remained focused; this report still does not claim native input-device QA.&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;id&quot;: &quot;occupied-pause-established&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;detail&quot;: &quot;boarding=diagnostic Seat.TryBoard; page=일시정지, occupied=True&quot;
+    },
+    {
+      &quot;id&quot;: &quot;paused-vehicle-input-is-suppressed&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;detail&quot;: &quot;input=synthetic W+E+V+Space; distance=0.0000, throttle=0.000, braking=True, viewUnchanged=True&quot;
+    },
+    {
+      &quot;id&quot;: &quot;seat-exit-cleanup&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;detail&quot;: &quot;exit=diagnostic Seat.TryExit&quot;
+    },
+    {
+      &quot;id&quot;: &quot;settings-preview-begins-without-display-change&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;detail&quot;: &quot;preview=diagnostic Settings.Preview; resolution=1920x1080, paused=True&quot;
+    },
+    {
+      &quot;id&quot;: &quot;settings-preview-auto-rolls-back-while-paused&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;detail&quot;: &quot;elapsed=15.26s, </pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge findings">확인 필요</span><h3>menu_input_partial_before_inn_fixture_fix.json</h3><p>FAIL · 명시 검사 16/16 · 과거 시도이며 현재 판정이 아님</p></div>
+          <a href="Validation/menu_input_partial_before_inn_fixture_fix.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:24:55.9783855Z&quot;,
+  &quot;status&quot;: &quot;FAIL&quot;,
+  &quot;scope&quot;: &quot;Editor Play Mode technical QA using injected Input System keyboard state. It is not native handwriting, natural walking, controller/device, listening, or user approval evidence.&quot;,
+  &quot;inputEvidence&quot;: &quot;synthetic InputSystem.QueueStateEvent keyboard events&quot;,
+  &quot;saveIsolationSuffix&quot;: &quot;_menu20260914&quot;,
+  &quot;elapsedFrames&quot;: 160,
+  &quot;collectionEvents&quot;: 3,
+  &quot;uniqueBundlesCollected&quot;: 3,
+  &quot;fragmentItemsCollected&quot;: 13,
+  &quot;knownSpellLetters&quot;: 13,
+  &quot;productionSlotUntouchedByContract&quot;: true,
+  &quot;before&quot;: {
+    &quot;frame&quot;: 2,
+    &quot;width&quot;: 1920,
+    &quot;height&quot;: 1080,
+    &quot;totalAllocatedBytes&quot;: 4081222036,
+    &quot;reservedBytes&quot;: 5303328768,
+    &quot;monoHeapBytes&quot;: 2283388928,
+    &quot;systemMemoryMb&quot;: 32373,
+    &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+    &quot;page&quot;: &quot;&quot;,
+    &quot;gateBlocked&quot;: false,
+    &quot;applicationFocused&quot;: true,
+    &quot;gateReleasePending&quot;: false,
+    &quot;gateFocusOwnsBlock&quot;: false,
+    &quot;gateNeutralFrames&quot;: 0,
+    &quot;pauseActive&quot;: false,
+    &quot;drawing&quot;: false,
+    &quot;vehicleOccupied&quot;: false,
+    &quot;timeScale&quot;: 1.0,
+    &quot;playerHp01&quot;: 1.0,
+    &quot;hudInk01&quot;: 1.0,
+    &quot;collectedBundles&quot;: 0,
+    &quot;collectedFragments&quot;: 0
+  },
+  &quot;after&quot;: {
+    &quot;frame&quot;: 162,
+    &quot;width&quot;: 1920,
+    &quot;height&quot;: 1080,
+    &quot;totalAllocatedBytes&quot;: 4083287019,
+    &quot;reservedBytes&quot;: 5303328768,
+    &quot;monoHeapBytes&quot;: 2283388928,
+    &quot;systemMemoryMb&quot;: 32373,
+    &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+    &quot;page&quot;: &quot;&quot;,
+    &quot;gateBlocked&quot;: true,
+    &quot;applicationFocused&quot;: true,
+    &quot;gateReleasePending&quot;: true,
+    &quot;gateFocusOwnsBlock&quot;: false,
+    &quot;gateNeutralFrames&quot;: 0,
+    &quot;pauseActive&quot;: false,
+    &quot;drawing&quot;: false,
+    &quot;vehicleOccupied&quot;: false,
+    &quot;timeScale&quot;: 1.0,
+    &quot;playerHp01&quot;: 1.0,
+    &quot;hudInk01&quot;: 1.0,
+    &quot;col</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>menu_runtime_checks.json</h3><p>PASS · 명시 검사 22/22</p></div>
+          <a href="Validation/menu_runtime_checks.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:35:43.5212245Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;scope&quot;: &quot;Editor Play Mode technical QA using injected Input System keyboard state. It is not native handwriting, natural walking, controller/device, listening, or user approval evidence.&quot;,
+  &quot;inputEvidence&quot;: &quot;synthetic InputSystem.QueueStateEvent keyboard events&quot;,
+  &quot;saveIsolationSuffix&quot;: &quot;_menu20260914&quot;,
+  &quot;elapsedFrames&quot;: 229,
+  &quot;collectionEvents&quot;: 5,
+  &quot;uniqueBundlesCollected&quot;: 5,
+  &quot;fragmentItemsCollected&quot;: 20,
+  &quot;knownSpellLetters&quot;: 20,
+  &quot;productionSlotUntouchedByContract&quot;: true,
+  &quot;before&quot;: {
+    &quot;frame&quot;: 16156,
+    &quot;width&quot;: 1920,
+    &quot;height&quot;: 1080,
+    &quot;totalAllocatedBytes&quot;: 4078493796,
+    &quot;reservedBytes&quot;: 5297041408,
+    &quot;monoHeapBytes&quot;: 2283388928,
+    &quot;systemMemoryMb&quot;: 32373,
+    &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+    &quot;page&quot;: &quot;&quot;,
+    &quot;gateBlocked&quot;: false,
+    &quot;applicationFocused&quot;: true,
+    &quot;gateReleasePending&quot;: false,
+    &quot;gateFocusOwnsBlock&quot;: false,
+    &quot;gateNeutralFrames&quot;: 0,
+    &quot;pauseActive&quot;: false,
+    &quot;drawing&quot;: false,
+    &quot;vehicleOccupied&quot;: false,
+    &quot;timeScale&quot;: 1.0,
+    &quot;playerHp01&quot;: 1.0,
+    &quot;hudInk01&quot;: 1.0,
+    &quot;collectedBundles&quot;: 5,
+    &quot;collectedFragments&quot;: 20
+  },
+  &quot;after&quot;: {
+    &quot;frame&quot;: 16385,
+    &quot;width&quot;: 1920,
+    &quot;height&quot;: 1080,
+    &quot;totalAllocatedBytes&quot;: 4079352943,
+    &quot;reservedBytes&quot;: 5297041408,
+    &quot;monoHeapBytes&quot;: 2283388928,
+    &quot;systemMemoryMb&quot;: 32373,
+    &quot;scene&quot;: &quot;Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity&quot;,
+    &quot;page&quot;: &quot;&quot;,
+    &quot;gateBlocked&quot;: false,
+    &quot;applicationFocused&quot;: true,
+    &quot;gateReleasePending&quot;: false,
+    &quot;gateFocusOwnsBlock&quot;: false,
+    &quot;gateNeutralFrames&quot;: 0,
+    &quot;pauseActive&quot;: false,
+    &quot;drawing&quot;: false,
+    &quot;vehicleOccupied&quot;: false,
+    &quot;timeScale&quot;: 1.0,
+    &quot;playerHp01&quot;: 1.0,
+    &quot;hudInk01&quot;: 1.0,</pre></details>
+        </article>
+        <article class="validation-card">
+          <div><span class="badge pass">보고된 PASS</span><h3>seed_review.json</h3><p>PASS</p></div>
+          <a href="Validation/seed_review.json">원본 자료</a>
+          <details><summary>내용 일부</summary><pre>{
+  &quot;utc&quot;: &quot;2026-09-13T18:35:29.9117219Z&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;scope&quot;: &quot;Curated review fixture created only in the active suffixed review save. Collections use WorldMacroPlaytestSession.TryCollectFragmentBundle; records use WorldMacroPlaytestSession.Interact after explicit diagnostic teleport.&quot;,
+  &quot;saveIsolationSuffix&quot;: &quot;_menu20260914&quot;,
+  &quot;bundleCount&quot;: 5,
+  &quot;fragmentItemCount&quot;: 20,
+  &quot;knownSpellCount&quot;: 20,
+  &quot;recordCount&quot;: 4,
+  &quot;collectionEvents&quot;: 5,
+  &quot;interactionEvents&quot;: 3,
+  &quot;dataSources&quot;: [
+    &quot;fixture setup: temporarily released background focus gate for synchronous diagnostic collection; native input acceptance is unverified&quot;,
+    &quot;bundle capital: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport&quot;,
+    &quot;bundle exit: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport&quot;,
+    &quot;bundle inn: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport&quot;,
+    &quot;bundle pass: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport&quot;,
+    &quot;bundle start: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport&quot;,
+    &quot;record record.mine_inquiry: WorldMacroPlaytestSession.Interact(mine_inquiry) after diagnostic teleport&quot;,
+    &quot;fixture navigation: closed interaction detail and released gate immediately between records; this bypass is setup-only, not input-path evidence&quot;,
+    &quot;record record.logger: WorldMacroPlaytestSession.Interact(logger) after diagnostic teleport&quot;,
+    &quot;fixture navigation: closed interaction detail and released gate immediately between records; this bypass is setup-only, not input-path evidence&quot;,
+    &quot;record record.herbalist: already present in review save&quot;,
+    &quot;record record.worker_satchel: WorldMacroPlaytestSession.Interact(worker_satchel) after d</pre></details>
+        </article></div></section>
+<section class="evidence" id="builds"><p class="eyebrow">BUILD CANDIDATES</p><h2>빌드 후보와 보고서</h2><p class="section-lead">BUILD_INFO가 있는 후보만 표시합니다. qaComplete=false는 자동 검사가 일부 통과했더라도 사람의 플레이 검토가 끝나지 않았다는 뜻입니다. 오래된 가이드의 조작 불일치도 후보별로 표시합니다.</p><p class="build-links"><strong>빌드 공통 보고서</strong> · <a href="../../../Builds/Playtest-20260915/preflight_latest.json">preflight_latest.json</a></p><div class="validation-grid">
+        <article class="validation-card build-card">
+          <div><span class="badge filed">자료 있음</span><h3>20260913T194504Z</h3><p>build=Succeeded; qaComplete=false</p></div>
+          <p class="build-links"><a href="../../../Builds/Playtest-20260915/20260913T194504Z/BUILD_INFO.json">BUILD_INFO.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T194504Z/package_report.json">package_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T194504Z/release_build_report.json">release_build_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T194504Z/ui_smoke.json">ui_smoke.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T194504Z/TEST_GUIDE.txt">TEST_GUIDE.txt</a> · <a href="../../../Builds/Playtest-20260915/20260913T194504Z/README_%ED%94%8C%EB%A0%88%EC%9D%B4%ED%85%8C%EC%8A%A4%ED%8A%B8.txt">README_플레이테스트.txt</a> · <a href="../../../Builds/Playtest-20260915/Oheangbu_UI_Playtest_20260913T194504Z.zip">Oheangbu_UI_Playtest_20260913T194504Z.zip</a></p>
+        </article>
+        <article class="validation-card build-card">
+          <div><span class="badge filed">자료 있음</span><h3>20260913T185536Z</h3><p>build=Succeeded; qaComplete=false</p></div>
+          <p class="build-links"><a href="../../../Builds/Playtest-20260915/20260913T185536Z/BUILD_INFO.json">BUILD_INFO.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T185536Z/package_report.json">package_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T185536Z/release_build_report.json">release_build_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T185536Z/ui_smoke.json">ui_smoke.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T185536Z/TEST_GUIDE.txt">TEST_GUIDE.txt</a> · <a href="../../../Builds/Playtest-20260915/20260913T185536Z/README_%ED%94%8C%EB%A0%88%EC%9D%B4%ED%85%8C%EC%8A%A4%ED%8A%B8.txt">README_플레이테스트.txt</a> · <a href="../../../Builds/Playtest-20260915/Oheangbu_UI_Playtest_20260913T185536Z.zip">Oheangbu_UI_Playtest_20260913T185536Z.zip</a></p>
+        </article>
+        <article class="validation-card build-card">
+          <div><span class="badge filed">자료 있음</span><h3>20260913T170336Z</h3><p>build=Succeeded; startup=PASS_STARTUP_SAVE_RENDER_PERFORMANCE_UNVERIFIED; restart=PASS_RESTART_SAVE_RENDER_PERFORMANCE_UNVERIFIED; qaComplete=false</p></div>
+          <p class="build-links"><a href="../../../Builds/Playtest-20260915/20260913T170336Z/BUILD_INFO.json">BUILD_INFO.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T170336Z/package_report.json">package_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T170336Z/release_build_report.json">release_build_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T170336Z/smoke_start.json">smoke_start.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T170336Z/smoke_restart.json">smoke_restart.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T170336Z/TEST_GUIDE.txt">TEST_GUIDE.txt</a> · <a href="../../../Builds/Playtest-20260915/20260913T170336Z/README_%ED%94%8C%EB%A0%88%EC%9D%B4%ED%85%8C%EC%8A%A4%ED%8A%B8.txt">README_플레이테스트.txt</a> · <a href="../../../Builds/Playtest-20260915/Oheangbu_Playtest_20260913T170336Z.zip">Oheangbu_Playtest_20260913T170336Z.zip</a></p>
+        </article>
+        <article class="validation-card build-card">
+          <div><span class="badge filed">자료 있음</span><h3>20260913T154956Z</h3><p>build=Succeeded; startup=PASS_STARTUP_SAVE_RENDER_PERFORMANCE_UNVERIFIED; restart=PASS_RESTART_SAVE_RENDER_PERFORMANCE_UNVERIFIED; qaComplete=false</p></div>
+          <p class="build-links"><a href="../../../Builds/Playtest-20260915/20260913T154956Z/BUILD_INFO.json">BUILD_INFO.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T154956Z/package_report.json">package_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T154956Z/release_build_report.json">release_build_report.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T154956Z/smoke_start.json">smoke_start.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T154956Z/smoke_restart.json">smoke_restart.json</a> · <a href="../../../Builds/Playtest-20260915/20260913T154956Z/TEST_GUIDE.txt">TEST_GUIDE.txt</a> · <a href="../../../Builds/Playtest-20260915/20260913T154956Z/README_%ED%94%8C%EB%A0%88%EC%9D%B4%ED%85%8C%EC%8A%A4%ED%8A%B8.txt">README_플레이테스트.txt</a> · <a href="../../../Builds/Playtest-20260915/Oheangbu_Playtest_20260913T154956Z.zip">Oheangbu_Playtest_20260913T154956Z.zip</a></p>
+        </article></div></section>
+<section class="evidence" id="sources"><p class="eyebrow">ASSET &amp; PRESERVATION</p><h2>자산과 보존 원장</h2><div class="provenance">
+<article><h3>한국어 글꼴</h3><p>Noto Sans CJK KR Regular · SIL Open Font License 1.1</p><p><a href="../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/Fonts/NotoSansCJKkr-Regular.otf">포함 OTF</a> · <a href="../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/Fonts/NotoSansCJKkr-LICENSE.txt">포함 라이선스</a> · <a href="https://github.com/notofonts/noto-cjk/tree/main/Sans/OTF/Korean">공식 Noto 저장소</a> · <a href="https://openfontlicense.org/open-font-license-official-text/">OFL 원문</a></p></article>
+<article><h3>한지와 지도</h3><p><a href="../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/HanjiSurface.png">HanjiSurface.png</a> · <a href="../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/TitlePalace.png">TitlePalace.png</a> · <a href="../../../Oheangbu/Assets/_Project/Art/UI/PlaytestMenus/PlaytestTheme.asset">PlaytestTheme.asset</a> · <a href="../../../Oheangbu/Assets/_Project/Resources/WorldMap/WorldMapBase.png">WorldMapBase.png</a> · <a href="../../../Oheangbu/Assets/_Project/Resources/WorldMap/WorldMapBakedData.asset">WorldMapBakedData.asset</a></p></article>
+<article><h3>기존 결과 보존</h3><p><a href="Backups/W_WorldMacro_Playtest.before-menus.unity">메뉴 설치 전 플레이 씬</a> · SHA-256 27d65c9d6341da68…</p><p><a href="../PlaytestFeedback/REVIEW.html">이전 HUD·효과음 검토</a> · <a href="../PlaytestFeedback/REPORT.md">이전 기술 보고서</a></p></article>
+<article><h3>기준 문서</h3><p><a href="../../../Docs/Specs/SPEC-PLAYTEST-MENUS.md">SPEC-PLAYTEST-MENUS</a> · <a href="REPORT.md">생성된 증거 보고서</a></p></article>
+</div></section></main><footer>오행부 플레이테스트 메뉴 검토 · 오프라인 정적 문서 · 외부 CDN과 자동 재생 없음</footer>
+</div></body></html>

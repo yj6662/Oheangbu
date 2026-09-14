@@ -1,0 +1,84 @@
+{
+  "part": "Wheel",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Meshy\\Wheel\\image\\model_urls_glb.glb",
+  "sourceSha256": "14d9e8f4a64c7c69251cea7daaa24187d066e49bcbe9ced84270bc5ae3cf735f",
+  "sourcePreserved": true,
+  "conversion": "glTF B=metallic,G=roughness -> Unity R=metallic,A=1-roughness; source factors applied; AO in G",
+  "maps": [
+    {
+      "role": "BaseColor",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_BaseColor.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "8e92c1264f96707e849cb8077d193d16532b90a2a0af5cd648dff41feed513d5"
+    },
+    {
+      "role": "Normal",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_Normal.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "f3fbe77429aea3094692b40cd4926ca9a19398f3956405faae2117dfa0a1fc11"
+    },
+    {
+      "role": "MetallicSmoothness",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_MetallicSmoothness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "da8ad6992e492fd414ed19c12a1e717fd3c88a00bec8a8ad7b4081265c520c30"
+    },
+    {
+      "role": "Occlusion",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_Occlusion.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "7c0594743467c32547fee7837ff75515331c4bd6d8e96b153f0c7adffab4cac2"
+    }
+  ],
+  "sourceRequested4K": true,
+  "actualSourceSizes": {
+    "baseColor": [
+      4096,
+      4096
+    ],
+    "normal": [
+      4096,
+      4096
+    ],
+    "metallicRoughness": [
+      2048,
+      2048
+    ]
+  },
+  "emissionMaskStatus": "NOT_APPLICABLE",
+  "entry": {
+    "part": "Wheel",
+    "material": "Wheel_Surface",
+    "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_BaseColor.png",
+    "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_Normal.png",
+    "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_MetallicSmoothness.png",
+    "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_Occlusion.png",
+    "engineEmissionMask": "",
+    "emissionMaskVerified": false,
+    "useConstantMaterial": false,
+    "baseColorFactor": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "normalScale": 1,
+    "sourceUvSet": 0,
+    "baseColorSpace": "sRGB",
+    "dataMapSpace": "Linear",
+    "metallicChannel": "R",
+    "smoothnessChannel": "A"
+  }
+}

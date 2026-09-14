@@ -20,6 +20,7 @@ TASK → BIBLE_INDEX(라우팅) → 관련 Bible·의존성 확인 → Implement
 
 - Spec 계층: 향후 /Specs 디렉터리로 분리(예고 — BIBLE_INDEX 규약). Spec은 Bible의 Section ID를 인용하고, 수치는 데이터 층(SO/CSV)을 가리킨다.
 - Validation의 정의(자동 테스트·수동 체크리스트 구분)는 [TBD].
+- **도사 V2 선행 게이트(2026-09-08, DECISIONS #177): 모델·리깅·정적 Cloth/장식 진단 → 같은 버전의 수치 검사와 다각도 시각 검사가 모두 통과한 RIG_PASS → 제작 애니메이션·동적 격리 검수 → C2 → 공유 PlayerRig.** RIG_PASS 전에는 기존 제작 클립 재타게팅을 포함한 애니메이션 제작·Meshy 모션 요청을 진행하지 않는다. 임시 직접 본 포즈·정적 임포트와 제작 모션 없는 천의 정착/중단/리셋 검사는 선행 게이트에 포함한다. 메시·본/rest·웨이트·관련 import 설정이 바뀌면 해당 통과 기록을 새 버전에 재사용하지 않는다. 구체 기준·증거=SPEC-PLAYER-DOSA §6.
 
 ## 3장 — 리깅·캐릭터 규격 [PROD-RIG] [구조 LOCKED · 세부 원천 참조]
 
@@ -28,7 +29,7 @@ TASK → BIBLE_INDEX(라우팅) → 관련 Bible·의존성 확인 → Implement
 - 짐승형: Generic Rig + 발 IK(Raycast). 범 가족(백호·산군·필드 범)·물든 영물.
 - 기계형: 강체 부품 분리 리깅(무스키닝) — 텍스처 늘어짐 원천 차단. 장영실 탑승 기체·메카천수관음·기관술 적.
 - 다중 팔(천수관음): 팔 그룹화(Main/Strike/Visual) + 착지=IK Target·Raycast, 타격 위치 0.3~0.5초 전 확정(읽기 윤리의 구현 번역). 지역 불상은 이 골격의 파생.
-- 옷: 주요 캐릭터만 Cloth 시뮬(Magica Cloth 2), 나머지는 Cloth Bones+Secondary Motion. 기운(오라): 리깅하지 않음 — Shader+VFX 계층(발광 상한 규칙은 Art & Audio 소관).
+- 옷: 주요 캐릭터의 Cloth 시뮬과 Cloth Bones/Secondary Motion을 구분한다. **도사 V2는 사용자 선택에 따라 Unity 기본 Cloth + 직접 작성한 보조 본을 사용하고 유료 천 플러그인을 도입하지 않는다**(2026-09-08, #177). 기존 Magica Cloth 2 표기는 도사 V2의 필수 의존성이 아니다. 천 고정점·자유 영역·신체 충돌체·보조 본의 역할은 구현 Spec과 데이터가 소유한다. 기운(오라)은 리깅하지 않으며 Shader+VFX 계층을 사용한다(발광 상한 규칙은 Art & Audio 소관).
 - 소환수(SPELL-COL-M): 고정형(토템·포탑형) 우선 구현, 여력 시 이동형 승격 — 3/5 획득 개정으로 사용 구간 2/5 확보, 승격 우선순위 재평가 여지.
 - 세부 수치·본 카운트·구현 절차: 참고_codex_리깅애니메이션대화.md 원천 — 착수 시 본 장으로 승격 등재.
 
@@ -36,14 +37,21 @@ TASK → BIBLE_INDEX(라우팅) → 관련 Bible·의존성 확인 → Implement
 
 - Unity 6 / URP · C#. DI=VContainer · 비동기=UniTask · asmdef 모듈 · SO 이벤트 채널 · 데이터 주도(SO/DTO). 전역 싱글턴(The Last One) 폐기 — LEGACY.
 - Odin Inspector & Serializer: 에디터/인스펙터 계층 한정, 런타임 코어는 Odin-독립. 퍼블릭 리포 금지.
-- 헝겊: Magica Cloth 2. 스트로크 인식: $1 Unistroke Recognizer C# 포트 — 최고 위험 가정, 스파이크 검증 [TBD].
+- 헝겊: 도사 V2는 Unity 기본 Cloth + 직접 작성 보조 본(#177), 유료 플러그인 추가 없음. 다른 캐릭터의 기존 Magica Cloth 2 검토와 구분한다. 스트로크 인식: $1 Unistroke Recognizer C# 포트 — 최고 위험 가정, 스파이크 검증 [TBD].
 - 붓 획 렌더링: Ribbon Mesh + Noise Cutout(갈필) — 인식 로직 무접촉(좌표 기록 유지, 렌더러만 교체).
 - MIT 의존성(VContainer·UniTask) 크레딧 고지 의무.
 
 ## 5장 — AI 에셋 파이프라인 [PROD-AIASSET] [LOCKED]
 
 - Meshy(3D 기본 메시) · Recraft(UI/2D/SVG) · Suno(음악 — 저작권 보증 불확실, 릴리스 음원은 human-in-the-loop 필수). 상용이므로 유료 플랜 상업 이용권 확보.
+- **모델 확보 순서(2026-09-07, DECISIONS #171): 수령 에셋 전수 검수·분류 → 필요한 씬에 맞는 기존 자산 재사용 → 실제로 없는 모델만 Meshy 생성 → Blender MCP 정리 → Unity 임포트·재검수.** 모든 프리팹을 실제 기하와 재질로 확인하며 이름만으로 완료 판정하지 않는다. 원장에는 출처/GUID·실제 렌더 썸네일·모델 의미·재질 상태·LOD/삼각형·배치 적합성을 남긴다. 구체 도구·결과=SPEC-ASSET-INTAKE 및 `Docs/Assets/`.
+- **깨진 셰이더의 원본 복구와 씬 수묵화는 별도 단계다.** 원본의 텍스처·노멀·투명/컷아웃·양면 의미를 보존하여 URP 호환 상태를 복원하고, 모든 에셋을 하나의 Ink 셰이더로 덮어쓰지 않는다. 장면에 쓸 때 프로젝트 소유 재질/프리팹 변형으로 ART-COLOR/ART-INK를 적용한다. 무텍스처 룩 실험은 수령 원본의 정보를 제거하는 근거가 아니다.
+- 이후 모델 선택은 `Docs/Assets/ModelCatalog.reviewed.json`/`.csv`의 검토 반영 분류·상태·메모를 우선한다. 자동 감사 원본과 자동 분류 원값은 보존한다. 불확실 용도·원본 누락·애니메이션 데이터 확인과 실제 재생·씬 배치 검증을 구분한다. 현재 수령 검사 결과와 한계는 `Docs/Assets/AssetIntakeReport.md`가 기록한다.
+- 모델 배치는 공간 역할·시대·실루엣·규모·접지·콜라이더·가시 거리로 판단한다. 부족 모델의 Blender 정리에는 축/단위/피벗·노멀·불필요 기하·재질 슬롯·용도별 LOD/충돌/리깅을 포함한다. 폴리 수 증감만으로 품질을 판정하지 않으며 매끈해야 할 암반 면이 불필요하게 갈라지지 않게 한다. 생성 작업 ID·원본·수정본·Unity 결과를 연결해 기록한다.
+- **도사 V2 제작 원장(#177):** 신규 Meshy 상한200크레딧은 V1의 실제35/45크레딧과 별도 집계한다. 생성/리깅/모션·실패/재시도의 실제 차감 근거, 원본/수정본·텍스처·본/rest·웨이트 해시, export/import 설정·도구 버전, 수치/시각 검수 증거를 연결한다. 원본은 보존하며 게이트 통과 파일을 미리 만들지 않는다. [PlayerV2 제작 원장 계약](C:/Users/yj666/Oheangbu/Art/PlayerV2/README.md)과 Spec §6을 따른다. V2의 RIG_PASS·격리 검수·C2 검수가 완료되기 전 기존 공용 리그를 대체하지 않는다.
 - 맵: Terrain 중심 전환 + Cliff Mesh 하이브리드, 반복 자동화(Codex+MCP)는 §26~30 원천 — 착수 시 승격.
+- **전체 지형 제작 지침(2026-09-11, DECISIONS #205·#206):** 산계·수계·분지를 먼저 설계하고 정착지와 길을 배치한다. 전체 지도에서 넓은 평야를 일정량 확보하지 않으며 정착·이동·조우에 필요한 적당한 평지를 둔다. 길 양옆에서 산과 언덕이 대부분 읽히도록 자연스러운 가지능선·산자락을 보완하되 반복되는 양쪽 산벽을 만들지 않는다. 땅·산 농도 조정은 매크로 씬의 소유 재질에서 비교하고 승인된 C2 원본과 기존 게임 기능은 보존한다. 상세 기준과 같은 버전의 측정·정지 이미지 검수는 SPEC-WORLD-MACRO가 소유한다.
+- 월드 룩과 배치의 현재 기준 씬은 `C2_CodexWorld`(DECISIONS #170, 구현=SPEC-DEV-CODEX-WORLD). 이 선택은 첫 월드맵의 전체 스케일·Terrain 구조·게임플레이 검증 완료를 뜻하지 않는다.
 - 폰트: 눈누 사전 검증. 민속 1차 자료: 국립민속박물관 folkency·실록 DB·구비문학대계.
 
 ## 6장 — 스코프 운용 [PROD-SCOPE] [LOCKED — 2026-08-17 수정 채택, CONST-SCOPE 개정 완료]

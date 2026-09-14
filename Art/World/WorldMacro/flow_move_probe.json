@@ -1,0 +1,284 @@
+{
+    "status": "BOUNDED_WINDOWS_REACHED_NOT_FULL_TRAVERSAL",
+    "utc": "2026-09-11T13:14:18.6882281Z",
+    "scope": "Temporary bare CharacterController copied from PlayerRig, Move calls at explicit 1/60s, actual static scene colliders. Edit-mode diagnostic, not real input, PlayerMotor lifecycle, gameplay or full-route traversal.",
+    "sceneFileSha256": "44f64beb896c3efe9e7d7c7e239c412e72c58a85a9777dfaa46ac56696d76754",
+    "sheetSha256": "3995a8d0723a126cc0db7aee8db08c317eafcdfa3c7b9782018f7140452ee937",
+    "auditUtc": "2026-09-11T13:14:13.0595035Z",
+    "selection": "At most four 20m windows, both directions. With HIGH findings: largest support step, steep collider/footprint, upper-body obstruction, and a control. Without HIGH findings: current CapitalSouthBridge apron-to-terrain boundary, Road_Gate_CapitalReservation gate-center endpoint, largest remaining warning-route surface/capsule cross slope, and one ordinary control. Gate window starts at its route endpoint and does not certify the whole inbound approach. Findings on the same physical place may belong to multiple routes; windows are not unique world-obstacle counts.",
+    "capsule": {
+        "sourcePrefab": "Assets/_Project/Prefabs/Rig/PlayerRig.prefab",
+        "sourceController": "PlayerRig/Player",
+        "sourceMotorConfig": "Assets/_Project/Data/Configs/CombatConfig_Default.asset",
+        "height": 2.0,
+        "radius": 0.5,
+        "stepOffset": 0.30000001192092898,
+        "slopeLimit": 45.0,
+        "skinWidth": 0.07999999821186066,
+        "minMoveDistance": 0.0010000000474974514,
+        "moveSpeed": 4.5,
+        "gravity": -20.0,
+        "center": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "sourceScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "layer": 0,
+        "collisionMask": -1
+    },
+    "segments": [
+        {
+            "routeId": "Road_CapitalSouthBridge_SouthPost",
+            "direction": "forward",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "REGRESSION_CAPITAL_SOUTH_APRON",
+            "start": {
+                "x": 191.5408172607422,
+                "y": 52.49315643310547,
+                "z": -1553.096923828125
+            },
+            "end": {
+                "x": 183.94766235351563,
+                "y": 54.7989501953125,
+                "z": -1543.1058349609375
+            },
+            "startChainageM": 82.0,
+            "targetChainageM": 102.0,
+            "reachedChainageM": 101.72411346435547,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.383333683013916,
+            "actualPlanarTravelM": 19.722808837890626,
+            "maxLateralErrorM": 0.00007967392593855038,
+            "selectionChainageM": 92.0,
+            "finalFootClearanceM": 0.0934906005859375,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 263,
+            "groundedFrames": 263,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Road_CapitalSouthBridge_SouthPost",
+            "direction": "reverse",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "REGRESSION_CAPITAL_SOUTH_APRON",
+            "start": {
+                "x": 183.80824279785157,
+                "y": 54.72941207885742,
+                "z": -1543.3438720703125
+            },
+            "end": {
+                "x": 191.44509887695313,
+                "y": 52.56406021118164,
+                "z": -1552.8382568359375
+            },
+            "startChainageM": 102.0,
+            "targetChainageM": 82.0,
+            "reachedChainageM": 82.27584838867188,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.383333683013916,
+            "actualPlanarTravelM": 19.68851089477539,
+            "maxLateralErrorM": 0.000054258656746242195,
+            "selectionChainageM": 92.0,
+            "finalFootClearanceM": 0.08461380004882813,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 263,
+            "groundedFrames": 210,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Road_Gate_CapitalReservation",
+            "direction": "forward",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "REGRESSION_GATE_CENTER",
+            "start": {
+                "x": -270.0,
+                "y": 100.7137451171875,
+                "z": -1260.0
+            },
+            "end": {
+                "x": -279.58758544921877,
+                "y": 99.26150512695313,
+                "z": -1258.589599609375
+            },
+            "startChainageM": 0.0,
+            "targetChainageM": 20.0,
+            "reachedChainageM": 19.724960327148439,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.383333683013916,
+            "actualPlanarTravelM": 19.67780303955078,
+            "maxLateralErrorM": 0.00017212500097230077,
+            "selectionChainageM": 0.0,
+            "finalFootClearanceM": 0.12220001220703125,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 263,
+            "groundedFrames": 224,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Road_Gate_CapitalReservation",
+            "direction": "reverse",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "REGRESSION_GATE_CENTER",
+            "start": {
+                "x": -279.405029296875,
+                "y": 99.12071990966797,
+                "z": -1258.3839111328125
+            },
+            "end": {
+                "x": -270.2684631347656,
+                "y": 100.77883911132813,
+                "z": -1260.0596923828125
+            },
+            "startChainageM": 20.0,
+            "targetChainageM": 0.0,
+            "reachedChainageM": 0.2750193178653717,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.383333683013916,
+            "actualPlanarTravelM": 19.6893253326416,
+            "maxLateralErrorM": 0.0001456442550988868,
+            "selectionChainageM": 0.0,
+            "finalFootClearanceM": 0.11865234375,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 263,
+            "groundedFrames": 263,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Return_CapitalSouthBridge_SouthGate",
+            "direction": "forward",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "REGRESSION_MAX_REMAINING_SLOPE",
+            "start": {
+                "x": -858.4656372070313,
+                "y": 58.98478317260742,
+                "z": -1872.0982666015625
+            },
+            "end": {
+                "x": -878.24169921875,
+                "y": 65.65116882324219,
+                "z": -1872.0
+            },
+            "startChainageM": 1238.0,
+            "targetChainageM": 1258.0,
+            "reachedChainageM": 1257.7353515625,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.400000095367432,
+            "actualPlanarTravelM": 19.799983978271486,
+            "maxLateralErrorM": 0.0496826171875,
+            "selectionChainageM": 1248.0,
+            "finalFootClearanceM": 0.24365997314453126,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 264,
+            "groundedFrames": 264,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Return_CapitalSouthBridge_SouthGate",
+            "direction": "reverse",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "REGRESSION_MAX_REMAINING_SLOPE",
+            "start": {
+                "x": -878.4646606445313,
+                "y": 65.64459228515625,
+                "z": -1872.1005859375
+            },
+            "end": {
+                "x": -858.7203979492188,
+                "y": 59.14682388305664,
+                "z": -1872.0
+            },
+            "startChainageM": 1258.0,
+            "targetChainageM": 1238.0,
+            "reachedChainageM": 1238.214111328125,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.400000095367432,
+            "actualPlanarTravelM": 19.799945831298829,
+            "maxLateralErrorM": 0.0294189453125,
+            "selectionChainageM": 1248.0,
+            "finalFootClearanceM": 0.23963546752929688,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 264,
+            "groundedFrames": 58,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Trail_Inn_Logging",
+            "direction": "forward",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "CONTROL_NO_SAMPLED_HIGH",
+            "start": {
+                "x": 1964.546875,
+                "y": 134.27285766601563,
+                "z": 712.86865234375
+            },
+            "end": {
+                "x": 1957.9127197265625,
+                "y": 134.47840881347657,
+                "z": 731.4444580078125
+            },
+            "startChainageM": 22.0,
+            "targetChainageM": 42.0,
+            "reachedChainageM": 41.724945068359378,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.383333683013916,
+            "actualPlanarTravelM": 19.72494125366211,
+            "maxLateralErrorM": 0.00013959301577415317,
+            "selectionChainageM": 32.0,
+            "finalFootClearanceM": 0.080230712890625,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 263,
+            "groundedFrames": 263,
+            "sideCollisionFrames": 0
+        },
+        {
+            "routeId": "Trail_Inn_Logging",
+            "direction": "reverse",
+            "status": "REACHED_WINDOW_END",
+            "reason": "",
+            "selectionCode": "CONTROL_NO_SAMPLED_HIGH",
+            "start": {
+                "x": 1957.8201904296875,
+                "y": 134.45314025878907,
+                "z": 731.7034912109375
+            },
+            "end": {
+                "x": 1964.4544677734375,
+                "y": 134.2994842529297,
+                "z": 713.127685546875
+            },
+            "startChainageM": 42.0,
+            "targetChainageM": 22.0,
+            "reachedChainageM": 22.27504539489746,
+            "targetDistanceM": 20.0,
+            "durationSeconds": 4.383333683013916,
+            "actualPlanarTravelM": 19.724977493286134,
+            "maxLateralErrorM": 0.00013959284115117043,
+            "selectionChainageM": 32.0,
+            "finalFootClearanceM": 0.0801544189453125,
+            "finalHasSupport": true,
+            "finalGrounded": true,
+            "frames": 263,
+            "groundedFrames": 263,
+            "sideCollisionFrames": 0
+        }
+    ]
+}

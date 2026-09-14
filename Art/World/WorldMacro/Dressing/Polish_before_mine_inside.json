@@ -1,0 +1,39 @@
+{
+    "label": "Polish_before_mine_inside",
+    "utc": "2026-09-13T09:06:40.1415988Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 353,
+    "residentInstances": 50143,
+    "drawCalls": 31,
+    "drawnInstances": 5068,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 3406.619384765625,
+        "y": 197.3936767578125,
+        "z": 1129.252197265625
+    },
+    "euler": {
+        "x": 0.0,
+        "y": 209.99993896484376,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.43422064185142519,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

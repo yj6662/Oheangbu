@@ -1,3 +1,4 @@
+using Oheangbu.Core;
 using Oheangbu.Core.Events;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,7 +9,8 @@ namespace Oheangbu.Combat
     // 작도 중(_modeChanged=true)에는 시점 회전·회피를 멈추고 커서를 푼다 — 마우스가 붓이 되는 동안.
     // 이동은 유지한다(§10.1 [제안]). 액션맵 이름·바인딩은 데이터(.inputactions) — 코드는 이름만 안다.
     [RequireComponent(typeof(CharacterController))]
-    public sealed class PlayerMotor : MonoBehaviour
+    [DefaultExecutionOrder(-100)]
+    public sealed partial class PlayerMotor : MonoBehaviour
     {
         private const string MapName = "Gameplay";
 
@@ -20,6 +22,7 @@ namespace Oheangbu.Combat
         [SerializeField] private HarvestAction _harvest;
         [SerializeField] private LockOn _lockOn;
         [SerializeField] private CameraRigController _cameraRig; // [실험 2026-08-27] 숄더뷰 피치 클램프 조회(없으면 기본 ±80)
+        public GameplayRuntimeStateSO RuntimeState;
 
         private CharacterController _controller;
         private InputAction _move;
@@ -32,6 +35,7 @@ namespace Oheangbu.Combat
         private bool _drawing;
 
         public bool IsDrawing => _drawing;
+        public void ResetMotion(){_verticalVelocity=0;_pitch=0;ResetLocomotion();}
 
         private void Awake()
         {
@@ -42,6 +46,7 @@ namespace Oheangbu.Combat
             _dodgeAction = map?.FindAction("Dodge", true);
             _harvestAction = map?.FindAction("Harvest", true);
             _lockOnAction = map?.FindAction("LockOn", true);
+            InitializeLocomotion();
         }
 
         private void OnEnable()
@@ -51,10 +56,12 @@ namespace Oheangbu.Combat
             if (_lockOnAction != null) _lockOnAction.performed += OnLockOn;
             if (_drawModeChanged != null) _drawModeChanged.Subscribe(OnDrawModeChanged);
             SetCursorLocked(true);
+            EnableLocomotion();
         }
 
         private void OnDisable()
         {
+            DisableLocomotion();
             if (_dodgeAction != null) _dodgeAction.performed -= OnDodge;
             if (_lockOnAction != null) _lockOnAction.performed -= OnLockOn;
             if (_drawModeChanged != null) _drawModeChanged.Unsubscribe(OnDrawModeChanged);
@@ -65,31 +72,38 @@ namespace Oheangbu.Combat
         private void Update()
         {
             if (_config == null) return;
+            if (RuntimeState != null && RuntimeState.InputBlocked) { SuspendLocomotionInput(); return; }
+            if (HasLocomotion && Time.deltaTime <= 0f) return;
 
+            float yawBeforeInput = transform.eulerAngles.y;
             // 시점 — 작도 중에는 마우스를 붓에게 양보한다(마우스 look만 차단)
             if (!_drawing && _look != null)
             {
-                Vector2 look = _look.ReadValue<Vector2>() * _config.LookSensitivity;
+                float preference = RuntimeState != null ? RuntimeState.LookSensitivity : 1f;
+                Vector2 look = _look.ReadValue<Vector2>() * (_config.LookSensitivity * preference);
                 transform.Rotate(0f, look.x, 0f);
-                _pitch = ClampPitch(_pitch - look.y);
+                float vertical = RuntimeState != null && RuntimeState.InvertLookY ? -look.y : look.y;
+                _pitch = ClampPitch(_pitch - vertical);
             }
 
             // 락온 소프트 당김(엘든링식): 카메라가 대상 쪽으로 은은히 끌리되 고정하지 않는다.
             // 작도 중에도 락온이면 계속 돈다(2차 카메라 검수) — 결투 계약은 붓을 들어도 유지된다.
             // 회전해도 작도는 안 깨진다: 작도면·획이 카메라-로컬이라 화면상 글자는 불변이다.
             ApplyLockOnPull();
+            if (HasLocomotion && Time.deltaTime > 0) _actualYawSpeed = Mathf.DeltaAngle(yawBeforeInput, transform.eulerAngles.y) / Time.deltaTime;
 
             if (_cameraPivot != null) _cameraPivot.localEulerAngles = new Vector3(_pitch, 0f, 0f);
 
             // 갈무리 = 홀드(3차 플레이 검수 확정) — 누르는 동안 붓이 상대의 먹을 뽑아낸다.
             // 작도 중엔 마우스가 붓이므로 무효. scaled dt — 감속 중엔 채집도 함께 느려진다
-            if (!_drawing && _harvestAction != null && _harvestAction.IsPressed())
+            if (!_drawing && CanHarvestNow && _harvestAction != null && _harvestAction.IsPressed())
             {
                 _harvest?.TickHarvest(Time.deltaTime);
             }
 
             // 이동 — 감속 중에도 scaled deltaTime을 그대로 쓴다(세상이 함께 느려진다)
             Vector2 input = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
+            if (HasLocomotion) { UpdateLocomotion(input); return; }
             Vector3 planar = (transform.right * input.x + transform.forward * input.y) * _config.MoveSpeed;
             if (_dodge != null && _dodge.TryGetDashVelocity(out Vector3 dash)) planar = dash;
 
@@ -131,16 +145,23 @@ namespace Oheangbu.Combat
 
         private void OnDodge(InputAction.CallbackContext _)
         {
+            if (RuntimeState != null && RuntimeState.InputBlocked) return;
             if (_drawing) return; // 작도 중 회피 없음 — 작도는 무방비의 시간이다(감속이 그 대가)
+            if (HasLocomotion && (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsDodging
+                || (IsCrouching && !_locomotion.CrouchRollEnabled)
+                || (_harvest != null && _harvest.IsExtracting))) return;
             Vector2 input = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
             Vector3 direction = input.sqrMagnitude > 0.01f
                 ? (transform.right * input.x + transform.forward * input.y).normalized
                 : transform.forward;
-            _dodge?.TryDodge(direction);
+            bool roll = HasLocomotion && IsCrouching && _locomotion.CrouchRollEnabled;
+            if (_dodge != null && _dodge.TryDodge(direction, roll ? _locomotion.CrouchRollSeconds : 0f))
+                _rolling = roll;
         }
 
         private void OnLockOn(InputAction.CallbackContext _)
         {
+            if (RuntimeState != null && RuntimeState.InputBlocked) return;
             _lockOn?.Toggle();
         }
 

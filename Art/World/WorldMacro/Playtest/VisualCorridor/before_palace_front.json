@@ -1,0 +1,39 @@
+{
+    "label": "VisualCorridor_palace_front",
+    "utc": "2026-09-13T14:23:36.5784553Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 591,
+    "residentInstances": 52660,
+    "drawCalls": 23,
+    "drawnInstances": 3851,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -300.0,
+        "y": 79.0,
+        "z": -700.0
+    },
+    "euler": {
+        "x": 357.4015197753906,
+        "y": 180.0,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.45701202750205996,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

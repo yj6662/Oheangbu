@@ -1,0 +1,19 @@
+{
+    "status": "NO_ACTUAL_OBSERVER_DRAW_CACHE",
+    "observer": "Main Camera",
+    "scope": "Cached actual observer draw submissions, not GPU profiler pass counts. Triangles use the selected submesh index count; shadow-casting visible geometry is additionally eligible for shadow passes. Frustum tests are conservative, without terrain occlusion or authored-instance deletion.",
+    "optimized": false,
+    "frame": 1,
+    "residentCells": 8,
+    "residentInstances": 262601,
+    "drawCalls": 0,
+    "submittedInstances": 0,
+    "candidates": 0,
+    "frustumRejected": 0,
+    "distanceRejected": 0,
+    "visibleTriangles": 0,
+    "shadowEligibleTriangles": 0,
+    "billboardInstances": 0,
+    "lastPacketBuildMilliseconds": 0.0,
+    "batches": []
+}

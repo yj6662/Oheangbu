@@ -1,0 +1,43 @@
+{
+  "entries": [
+    {
+      "part": "Cabin",
+      "material": "Cabin_Material_0",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Cabin_Image_0.jpg",
+      "normal": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Cabin_Image_2.jpg",
+      "metallicRoughness": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Cabin_Image_1.jpg",
+      "baseColorSpace": "sRGB",
+      "normalColorSpace": "Non-Color",
+      "metallicRoughnessColorSpace": "Non-Color",
+      "metallicChannel": "B",
+      "roughnessChannel": "G",
+      "note": "Original glTF packed maps. A shader using albedo/normal only does not apply the packed metallic/roughness map."
+    },
+    {
+      "part": "Roof",
+      "material": "Roof_Material_0",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Roof_Image_0.jpg",
+      "normal": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Roof_Image_2.jpg",
+      "metallicRoughness": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Roof_Image_1.jpg",
+      "baseColorSpace": "sRGB",
+      "normalColorSpace": "Non-Color",
+      "metallicRoughnessColorSpace": "Non-Color",
+      "metallicChannel": "B",
+      "roughnessChannel": "G",
+      "note": "Original glTF packed maps. A shader using albedo/normal only does not apply the packed metallic/roughness map."
+    },
+    {
+      "part": "Wheel",
+      "material": "Wheel_Material_0",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Wheel_Image_0.jpg",
+      "normal": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Wheel_Image_2.jpg",
+      "metallicRoughness": "Assets/_Project/Art/World/WorldMacro/Palanquin/Textures/Wheel_Image_1.jpg",
+      "baseColorSpace": "sRGB",
+      "normalColorSpace": "Non-Color",
+      "metallicRoughnessColorSpace": "Non-Color",
+      "metallicChannel": "B",
+      "roughnessChannel": "G",
+      "note": "Original glTF packed maps. A shader using albedo/normal only does not apply the packed metallic/roughness map."
+    }
+  ]
+}

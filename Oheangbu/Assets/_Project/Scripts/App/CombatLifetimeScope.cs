@@ -15,6 +15,8 @@ namespace Oheangbu.App
         [SerializeField] private CombatConfigSO _config;
         [SerializeField] private SpellBookSO _spellBook;
         [SerializeField] private FloatEventChannelSO _inkChanged;
+        [SerializeField] private Prologue.PrologueSession _prologue;
+        [SerializeField] private World.WorldMacroPlaytestSession _macroPlaytest;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -26,6 +28,8 @@ namespace Oheangbu.App
             builder.Register<GroggyMeter>(Lifetime.Singleton);
             builder.Register<InkPool>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<CombatLoopWiring>();
+            if(_prologue!=null) builder.RegisterComponent(_prologue);
+            if(_macroPlaytest!=null) builder.RegisterComponent(_macroPlaytest);
         }
     }
 }

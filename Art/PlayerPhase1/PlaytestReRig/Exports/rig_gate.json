@@ -1,0 +1,26 @@
+{
+  "status": "HAND_RIG_PASS",
+  "scope": "hands_and_upper_body",
+  "sourceFbxSha256": "db1599d97b36051b19458a4704673ce602aecf345a26158d404cf5f6650bed1b",
+  "staticNumericsPass": true,
+  "staticVisualPass": true,
+  "unityImportPass": true,
+  "evidence": [
+    "Validation/static_checks.json",
+    "Validation/hand_contact.json",
+    "Validation/fbx_roundtrip.json",
+    "Unity/import_inspection.json",
+    "Images/grip_oblique_final.png",
+    "Images/grip_palm_final.png",
+    "Images/arms_down.png",
+    "Images/arms_raised.png",
+    "Images/elbow_flex.png",
+    "Validation/hand_surface_sampling.json"
+  ],
+  "limits": [
+    "0.5mm triangle sampling passed on the fitted static grasp. Finite sampling is not proof for every future motion.",
+    "Lower-body gait, live runtime camera/harvest, and cloth physics are outside this scoped gate.",
+    "Close hand preserves original C02 texture and coarse silhouette; visual final approval remains with user."
+  ],
+  "socketFrameNote": "GripReference_R includes the existing brush GripSocket original 90 degree frame; mesh and static contact pose unchanged."
+}

@@ -1,0 +1,93 @@
+{
+  "part": "Engine",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Meshy\\Engine\\image\\model_urls_glb.glb",
+  "sourceSha256": "1f608fc43eb7c7d7b387a72c16c89829e986ac563242b30ef6d86d960706acb2",
+  "sourcePreserved": true,
+  "conversion": "glTF B=metallic,G=roughness -> Unity R=metallic,A=1-roughness; source factors applied; AO in G",
+  "maps": [
+    {
+      "role": "BaseColor",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_BaseColor.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "c3edb0b44bd272fd9658b33c32a6e41ddc1fe60f25bcbe8d888922591bc51289"
+    },
+    {
+      "role": "Normal",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_Normal.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "3d6cb1efefa23582b3ed8c9faeaa958456a6351e09d954368fdd69d9b0a27075"
+    },
+    {
+      "role": "MetallicSmoothness",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_MetallicSmoothness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "48301ac2a2558a78c57df5586862676f722a0488854de2311d97ff0b97ded074"
+    },
+    {
+      "role": "Occlusion",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_Occlusion.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "7c0594743467c32547fee7837ff75515331c4bd6d8e96b153f0c7adffab4cac2"
+    },
+    {
+      "role": "EmissionCandidateMask",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_EmissionCandidateMask.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "5530bcab4ba1f707897175f2bf1d84e05236e8b9a945bfcb7718821793fe7c89"
+    }
+  ],
+  "sourceRequested4K": true,
+  "actualSourceSizes": {
+    "baseColor": [
+      4096,
+      4096
+    ],
+    "normal": [
+      4096,
+      4096
+    ],
+    "metallicRoughness": [
+      2048,
+      2048
+    ]
+  },
+  "emissionMaskStatus": "UNVERIFIED_CANDIDATE_ONLY",
+  "entry": {
+    "part": "Engine",
+    "material": "Engine_Surface",
+    "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_BaseColor.png",
+    "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_Normal.png",
+    "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_MetallicSmoothness.png",
+    "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_Occlusion.png",
+    "engineEmissionMask": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_EmissionCandidateMask.png",
+    "emissionMaskVerified": false,
+    "useConstantMaterial": false,
+    "baseColorFactor": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "normalScale": 1,
+    "sourceUvSet": 0,
+    "baseColorSpace": "sRGB",
+    "dataMapSpace": "Linear",
+    "metallicChannel": "R",
+    "smoothnessChannel": "A"
+  }
+}

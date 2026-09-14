@@ -1,0 +1,1692 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bb2d09406160f4c9d8c607386f935a, type: 3}
+  m_Name: ContentPositions
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.World.WorldMacroContentSheetSO
+  Version: content-layout-v1
+  Entries:
+  - Id: mine_inquiry
+    Label: "\uBB34\uB108\uC9C4 \uAC31\uB3C4 \uC870\uC0AC"
+    Realm: Cheongrim
+    Anchor: Cave
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uB3CC\uC774 \uC548\uCABD\uC73C\uB85C \uD769\uC5B4\uC84C\uB2E4. \uC9C0\uC9C0\uBAA9\uC5D0\uB294
+      \uBD88\uD0C4 \uC904\uC758 \uD754\uC801\uC774 \uB0A8\uC544 \uC788\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -5, y: 0, z: -18}
+    Position: {x: 3286.1702, y: 195.80368, z: 1182.6278}
+    Yaw: 29.999998
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: mine_beast
+    Label: "\uD3ED\uD30C\uB85C \uD480\uB824\uB09C \uC9D0\uC2B9"
+    Realm: Cheongrim
+    Anchor: Cave
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: NeutralMelee
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -16, y: 0, z: -35}
+    Position: {x: 3336.4355, y: 195.80368, z: 1161.69}
+    Yaw: 29.999998
+    Radius: 4
+    ActivationDistance: 220
+    Count: 2
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: mine_fire
+    Label: "\uD654\uB9E5\uC5D0 \uBB3C\uB4E0 \uC9D0\uC2B9"
+    Realm: Cheongrim
+    Anchor: Mine
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: FireRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: 35, y: 0, z: 55}
+    Position: {x: 3378.6191, y: 194.90823, z: 1080.7548}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: mine_return
+    Label: "\uD3D0\uAD11 \uC0C1\uBD80 \uAD6D \uC608\uACE0"
+    Realm: Cheongrim
+    Anchor: Cave
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: "\uAD6D"
+    Text: "\uC808\uBCBD \uC704\uC5D0 \uC624\uB798\uB41C \uC791\uC5C5\uB300\uAC00
+      \uBCF4\uC778\uB2E4. \uC9C0\uAE08\uC740 \uB2FF\uC9C0 \uC54A\uB294\uB2E4. \uBCF8\uC120
+      \uD1B5\uACFC \uC870\uAC74\uC740 \uC544\uB2C8\uB2E4."
+    Requires: 
+    Kind: 7
+    Offset: {x: 35, y: 0, z: 30}
+    Position: {x: 3434.618, y: 189.55896, z: 1131.3447}
+    Yaw: 29.999998
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: geumpyo_inn
+    Label: "\uAE08\uD45C \uC8FC\uB9C9"
+    Realm: Cheongrim
+    Anchor: Inn
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uC7A0\uC2DC \uC228\uC744 \uACE0\uB978\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -20, y: 0, z: -10}
+    Position: {x: 2000.2706, y: 133.28409, z: 682.5294}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: herbalist
+    Label: "\uC794\uB958 \uC57D\uCD08\uAFBC"
+    Realm: Cheongrim
+    Anchor: Inn
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uC57D\uCD08\uAFBC: \uAD11\uC0B0 \uCABD\uC5D0\uC11C \uC654\uC18C? \uC624\uB298\uC740
+      \uB354 \uAE4A\uC774 \uB4E4\uC5B4\uAC00\uC9C0 \uB9C8\uC2DC\uC624. \uC232\uC758
+      \uBFCC\uB9AC\uAC00 \uAE38\uC744 \uC0BC\uD0A4\uACE0 \uC788\uC18C."
+    Requires: 
+    Kind: 1
+    Offset: {x: -13, y: 0, z: -14}
+    Position: {x: 2001.9706, y: 133.2141, z: 682.0294}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: logger
+    Label: "\uB3CC\uC544\uC628 \uBC8C\uBAA9\uAFBC"
+    Realm: Cheongrim
+    Anchor: Inn
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uBC8C\uBAA9\uAFBC: \uC0B0 \uB108\uBA38 \uBC8C\uBAA9 \uB9C8\uC744\uC774
+      \uBE44\uC5C8\uC18C. \uAE08\uD45C \uBE44\uC11D\uC744 \uC9C0\uB098\uBA74 \uAE38\uBAA9
+      \uC5ED\uCC38\uC774 \uB098\uC62C \uAC8C\uC694."
+    Requires: 
+    Kind: 1
+    Offset: {x: -27, y: 0, z: -12}
+    Position: {x: 1995.9706, y: 133.2141, z: 682.0294}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: geumpyo_stone
+    Label: "\uAE08\uD45C \uBE44\uC11D"
+    Realm: Cheongrim
+    Anchor: Cheongrim
+    Source: LDB-LENSES; LDB-REALMS
+    Stage: EA
+    Role: 
+    Text: "\uBD09\uC0B0 \uCD9C\uC785\uC744 \uAE08\uD558\uB294 \uAD00\uC758 \uAE00\uC528
+      \uC544\uB798, \uB098\uBB34\uAFBC\uB4E4\uC774 \uB0A8\uAE34 \uC791\uC740 \uD760\uC9D1\uC774
+      \uACB9\uCCD0 \uC788\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: 32, y: 0, z: 25}
+    Position: {x: 2022, y: 136.05891, z: 835}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: logging_dungeon
+    Label: "\uBC84\uB824\uC9C4 \uBC8C\uBAA9\uC7A5 \uCC3D\uACE0"
+    Realm: Cheongrim
+    Anchor: Logging
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: Warehouse
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 40, y: 0, z: -55}
+    Position: {x: 2010, y: 147.08289, z: 1305}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: metal_lesson
+    Label: "\uB369\uAD74\uC774 \uBA4E\uC740 \uCCA0\uCC45"
+    Realm: Cheongrim
+    Anchor: Logging
+    Source: "LDB-REALMS: \uCCAD\uB8E1 \uAE08 \uCC28\uB2E8 \uC120\uD589 \uD559\uC2B5"
+    Stage: EA
+    Role: MetalBlocksGrowth
+    Text: "\uBD80\uB7EC\uC9C4 \uC1E0\uB3C4\uB07C\uC640 \uCCA0\uCC45\uC5D0 \uB2FF\uC740
+      \uB369\uAD74\uB9CC \uAC80\uAC8C \uB9C8\uB978 \uCC44 \uBA48\uCDB0 \uC788\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: 20, y: 0, z: -20}
+    Position: {x: 1978.6877, y: 147.05188, z: 1344.0042}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: logging_pack
+    Label: "\uC801\uC7AC\uC7A5 \uC9D0\uC2B9 \uBB34\uB9AC"
+    Realm: Cheongrim
+    Anchor: Logging
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: WoodRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -38, y: 0, z: 30}
+    Position: {x: 1950.6558, y: 146.8636, z: 1374.9015}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: deep_pack
+    Label: "\uC2EC\uBD80 \uD3EC\uBC15 \uBB34\uB9AC"
+    Realm: Cheongrim
+    Anchor: DeepForest
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: WoodRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -46, y: 0, z: -32}
+    Position: {x: 2187.726, y: 201.82367, z: 1920.7565}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: root_dungeon
+    Label: "\uBFCC\uB9AC \uAD74"
+    Realm: Cheongrim
+    Anchor: DeepForest
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: Mine
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 90, y: 0, z: 35}
+    Position: {x: 2524.2961, y: 156.81593, z: 1952.0063}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: hunter_inn
+    Label: "\uC0AC\uB0E5\uAFBC \uC8FC\uB9C9"
+    Realm: Cheongrim
+    Anchor: DeepForest
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uC131\uC5ED\uC73C\uB85C \uAC00\uAE30 \uC804 \uB9C8\uC9C0\uB9C9 \uC0AC\uB78C\uC758
+      \uC628\uAE30\uAC00 \uB0A8\uC544 \uC788\uB2E4. \uD734\uC2DD \uC5F0\uACB0 \uC608\uC815
+      \uC9C0\uC810\uC774\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -150, y: 0, z: -90}
+    Position: {x: 2130, y: 206.31715, z: 1850}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: hunter
+    Label: "\uC232\uAE38 \uC0AC\uB0E5\uAFBC"
+    Realm: Cheongrim
+    Anchor: DeepForest
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\u201C\uC800 \uD070 \uB098\uBB34 \uC55E \uAE08\uC904\uC740 \uB118\uC9C0
+      \uB9C8\uC2DC\uC624. \uC774\uC57C\uAE30\uB294 \uC774\uCABD\uC5D0\uC11C\uB3C4
+      \uB4E4\uC744 \uC218 \uC788\uC18C.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -144, y: 0, z: -96}
+    Position: {x: 2136, y: 206.03181, z: 1844}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: tree_warning
+    Label: "\uC2E0\uBAA9 \uAE08\uC904\uACFC \uC7A5\uC2B9"
+    Realm: Cheongrim
+    Anchor: Tree
+    Source: "LDB-REALMS: \uC2E0\uBAA9 \uC635\uC158 \uBCF4\uC2A4"
+    Stage: EA
+    Role: 
+    Text: "\uAC00\uC9C0 \uB9D0\uB77C\uB294 \uB9D0\uB4E4\uC774 \uAE08\uC904\uC5D0
+      \uACB9\uACB9\uC774 \uBB36\uC5EC \uC788\uB2E4. \uC601\uC5ED \uC9C4\uC785\uC740
+      \uC120\uD0DD\uC774\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -42, y: 0, z: -40}
+    Position: {x: 2748, y: 176.46709, z: 2260}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: sacred_tree
+    Label: "\uC2E0\uBAA9 \uC601\uC5ED"
+    Realm: Cheongrim
+    Anchor: Tree
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: WoodFieldBoss
+    Text: "\uC120\uD0DD\uD615 \uD544\uB4DC \uBCF4\uC2A4 \uC601\uC5ED. \uBCF4\uC2A4
+      \uD589\uB3D9\xB7\uACF5\uACA9\uC740 \uC544\uC9C1 \uC5F0\uACB0\uD558\uC9C0 \uC54A\uC558\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 0, y: 0, z: 24}
+    Position: {x: 3040.8875, y: 194.3357, z: 2704.7776}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: azure_dragon
+    Label: "\uCCAD\uB8E1 \uC131\uC5ED"
+    Realm: Cheongrim
+    Anchor: Dragon
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: WoodMajorBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 18, y: 0, z: 18}
+    Position: {x: 2248, y: 200.22269, z: 2114}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: dragon_dual
+    Label: "\uC131\uC5ED\uC758 \uB450 \uC804\uC2B9"
+    Realm: Cheongrim
+    Anchor: Dragon
+    Source: LDB-LENSES; NARR-LENSES
+    Stage: EA
+    Role: 
+    Text: "\uBE44\uC11D\uC5D0\uB294 \u201C\uB098\uB77C\uAC00 \uC138\uC6B4 \uC218\uD638\uC2E0\uC218\u201D,
+      \uB0A1\uC740 \uB098\uBB34\uD328\uC5D0\uB294 \u201C\uC232\uC758 \uC8FC\uC778\u201D\uC774\uB77C
+      \uC801\uD600 \uC788\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -30, y: 0, z: -35}
+    Position: {x: 2200, y: 201.44139, z: 2061}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: jeongdam_j1
+    Label: "\uC815\uB2F4 \xB7 \uAE38\uBAA9 \uC5ED\uCC38"
+    Realm: Cheongrim
+    Anchor: PostStation
+    Source: NARR-CHARACTERS; NARR-STORYLINE J1
+    Stage: EA
+    Role: 
+    Text: "\u201C\uC624\uB79C\uB9CC\uC774\uAD70. \uD3D0\uAD11\uC744 \uB2E4\uB140\uC654\uB2E4\uC9C0?
+      \uC0C1\uACBD\uAE38\uB3C4 \uC804 \uAC19\uC9C0 \uC54A\uB124. \uAC1D\uC8FC \uCABD
+      \uC0AC\uC815\uBD80\uD130 \uC54C\uC544\uBCF4\uAC8C.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -18, y: 0, z: -10}
+    Position: {x: 1901.046, y: 133.71182, z: 580.6888}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: wangso_w1
+    Label: "\uC655\uC18C \xB7 \uAC1D\uC8FC \uBD84\uC18C"
+    Realm: Cheongrim
+    Anchor: MerchantBranch
+    Source: NARR-CHARACTERS; NARR-STORYLINE W1
+    Stage: EA
+    Role: 
+    Text: "\u201C\uBD09\uC778\uC744 \uAC74\uB4DC\uB9AC\uC9C0 \uC54A\uACE0 \uBCF8\uC810\uAE4C\uC9C0
+      \uC62E\uACA8 \uC8FC\uC2E4 \uBD84\uC744 \uCC3E\uACE0 \uC788\uC5B4\uC694. \uAE09\uD788
+      \uC815\uD558\uC2E4 \uC77C\uC740 \uC544\uB2C8\uC5D0\uC694.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -18, y: 0, z: -14}
+    Position: {x: 1380.6877, y: 277.1582, z: 38.004105}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: cargo_contract
+    Label: "\uBD09\uC778 \uD654\uBB3C \uC758\uB8B0 \uC9C0\uC810"
+    Realm: Cheongrim
+    Anchor: MerchantBranch
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uBD09\uC778 \uD654\uBB3C \uD638\uC1A1 \uC218\uC8FC\uC640 \uC0C1\uACBD
+      \uAC00\uB3C4 \uB3D9\uD589\uC758 \uBC30\uCE58 \uC9C0\uC810. \uC2E4\uC81C \uC758\uB8B0
+      \uC218\uB77D\uC740 \uC544\uC9C1 \uC5F0\uACB0\uD558\uC9C0 \uC54A\uC558\uB2E4."
+    Requires: wangso_w1
+    Kind: 3
+    Offset: {x: -10, y: 0, z: -23}
+    Position: {x: 1400, y: 280.02716, z: 25}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: shrine_c_entrance
+    Label: "\uCCAD\uB9BC \uC131\uD669\uB2F9 \xB7 entrance"
+    Realm: Cheongrim
+    Anchor: Mine
+    Source: LDB-CHECKPOINT
+    Stage: EA
+    Role: Shrine
+    Text: "\uC870\uC6A9\uD55C \uC131\uD669\uB2F9. \uC7AC\uC2DC\uB3C4\xB7\uD68C\uBCF5
+      \uC5F0\uACB0 \uC608\uC815 \uC9C0\uC810."
+    Requires: 
+    Kind: 6
+    Offset: {x: -25, y: 0, z: -10}
+    Position: {x: 3001, y: 441.18002, z: 460}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: shrine_c_logging
+    Label: "\uCCAD\uB9BC \uC131\uD669\uB2F9 \xB7 logging"
+    Realm: Cheongrim
+    Anchor: Logging
+    Source: LDB-CHECKPOINT
+    Stage: EA
+    Role: Shrine
+    Text: "\uC870\uC6A9\uD55C \uC131\uD669\uB2F9. \uC7AC\uC2DC\uB3C4\xB7\uD68C\uBCF5
+      \uC5F0\uACB0 \uC608\uC815 \uC9C0\uC810."
+    Requires: 
+    Kind: 6
+    Offset: {x: -40, y: 0, z: -45}
+    Position: {x: 1930, y: 148.51042, z: 1315}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: shrine_c_fork
+    Label: "\uCCAD\uB9BC \uC131\uD669\uB2F9 \xB7 fork"
+    Realm: Cheongrim
+    Anchor: DeepForest
+    Source: LDB-CHECKPOINT
+    Stage: EA
+    Role: Shrine
+    Text: "\uC870\uC6A9\uD55C \uC131\uD669\uB2F9. \uC7AC\uC2DC\uB3C4\xB7\uD68C\uBCF5
+      \uC5F0\uACB0 \uC608\uC815 \uC9C0\uC810."
+    Requires: 
+    Kind: 6
+    Offset: {x: -48, y: 0, z: -58}
+    Position: {x: 2232, y: 187.54967, z: 1882}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: shrine_c_dragon
+    Label: "\uCCAD\uB9BC \uC131\uD669\uB2F9 \xB7 dragon"
+    Realm: Cheongrim
+    Anchor: Dragon
+    Source: LDB-CHECKPOINT
+    Stage: EA
+    Role: Shrine
+    Text: "\uC870\uC6A9\uD55C \uC131\uD669\uB2F9. \uC7AC\uC2DC\uB3C4\xB7\uD68C\uBCF5
+      \uC5F0\uACB0 \uC608\uC815 \uC9C0\uC810."
+    Requires: 
+    Kind: 6
+    Offset: {x: -45, y: 0, z: -75}
+    Position: {x: 2185, y: 202.6219, z: 2021}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: burned_camp
+    Label: "\uBC84\uB824\uC9C4 \uD654\uB9E5 \uC9C4\uC9C0"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Warehouse
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: -100, y: 0, z: 90}
+    Position: {x: -450, y: 39.04378, z: -3440}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: war_tomb
+    Label: "\uC804\uBAB0\uC790 \uBB18\uC5ED"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Tomb
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 150, y: 0, z: -100}
+    Position: {x: -200, y: 38.017944, z: -3630}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: fire_line
+    Label: "\uBD88\uD0C4 \uCC38\uD638 \uC9D0\uC2B9"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: FireRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: 55, y: 0, z: 105}
+    Position: {x: -295, y: 35.4213, z: -3425}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: ash_pack
+    Label: "\uC7AC\uBC2D\uC758 \uBB34\uC18D\uC131 \uC9D0\uC2B9"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: NeutralMelee
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -75, y: 0, z: -55}
+    Position: {x: -428.55737, y: 39.878662, z: -3561.2651}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: suzaku
+    Label: "\uC8FC\uC791 \uD654\uB9E5 \uC544\uB808\uB098"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: FireMajorBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 220, y: 0, z: 210}
+    Position: {x: -189.4746, y: 37.548443, z: -3327.9229}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: war_elder
+    Label: "\uC704\uB839\uAC1D"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: 
+    Text: "\u201C\uC774\uAE34 \uC790\uC758 \uAE00\uC5D0 \uC8FD\uC740 \uC790\uC758
+      \uC774\uB984\uC774 \uB2E4 \uB4E4\uC5B4\uAC08 \uC218 \uC788\uACA0\uC18C.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -40, y: 0, z: -150}
+    Position: {x: -390, y: 39.143326, z: -3680}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: war_official
+    Label: "\uD68C\uAD70\uC758 \uAD00\uCC2C \uBE44\uBB38"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: "LDB-LENSES: \uD68C\uAD70 \uB2E4\uC911\uC804\uC2B9"
+    Stage: Tour
+    Role: 
+    Text: "\uBE44\uBB38\uC740 \uC758\uAC70\uB77C \uC801\uB294\uB2E4. \uC2B9\uB9AC\uC758
+      \uB0A0\uC9DC \uC544\uB798 \uC774\uB984 \uC5C6\uB294 \uB3CC\uBB34\uB364\uC774
+      \uC774\uC5B4\uC9C4\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -25, y: 0, z: -120}
+    Position: {x: -375, y: 39.433567, z: -3650}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: war_song
+    Label: "\uB3CC\uBB34\uB364\uC758 \uAD6C\uC804"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: "LDB-LENSES: \uD68C\uAD70 \uB2E4\uC911\uC804\uC2B9"
+    Stage: Tour
+    Role: 
+    Text: "\uC720\uBBFC\uC758 \uB178\uB798\uB294 \uAC19\uC740 \uB0A0\uC744 \uBC30\uC2E0\uC774\uB77C
+      \uBD80\uB978\uB2E4."
+    Requires: 
+    Kind: 3
+    Offset: {x: 110, y: 0, z: -130}
+    Position: {x: -240, y: 36.67512, z: -3660}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: south_inn
+    Label: "\uC7AC\uAE38 \uC8FC\uB9C9"
+    Realm: Jeokro
+    Anchor: SouthBridge
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: 
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: 80, y: 0, z: -100}
+    Position: {x: -1320, y: 29.88816, z: -2500}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: war_shrine
+    Label: "\uC704\uB839 \uC131\uD669\uB2F9"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Shrine
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: 180, y: 0, z: 150}
+    Position: {x: -170, y: 36.166977, z: -3380}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: ash_revisit
+    Label: "\uC7AC \uC704 \uB369\uAD74 \uC7A5\uBCBD \uC608\uACE0"
+    Realm: Jeokro
+    Anchor: Jeokro
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: "\uB208"
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 7
+    Offset: {x: 150, y: 0, z: 60}
+    Position: {x: -200, y: 34.354946, z: -3470}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: armory
+    Label: "\uBC84\uB824\uC9C4 \uAD70\uAE30\uACE0"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Warehouse
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 105, y: 0, z: -80}
+    Position: {x: -2288.4214, y: 125.310555, z: 223.86838}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: exile_tomb
+    Label: "\uC131\uC678 \uC61B \uBB18\uC5ED"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Tomb
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: -135, y: 0, z: 95}
+    Position: {x: -2046.5818, y: 128.80115, z: 240.49136}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: iron_patrol
+    Label: "\uC131\uC678 \uB2E8\uC77C \uAE08 \uBCD1\uC878"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: MetalRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: 95, y: 0, z: 70}
+    Position: {x: -2204.7612, y: 127.85962, z: 98.96457}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: gate_beasts
+    Label: "\uACE0\uAC1C \uC55E \uBB3C\uB4E0 \uC9D0\uC2B9"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: NeutralMelee
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -90, y: 0, z: -90}
+    Position: {x: -2125.4763, y: 125.92719, z: 318.0647}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: white_tiger
+    Label: "\uBC31\uD638 \uC131\uACFD \uBC16 \uC544\uB808\uB098"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: MetalMajorBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: -170, y: 0, z: 195}
+    Position: {x: -1808.6882, y: 247.09232, z: 94.3642}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: smith
+    Label: "\uCCA0\uC639 \uB300\uC7A5\uC7A5\uC774"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: 
+    Text: "\u201C\uC131\uBCBD\uC744 \uBC84\uD2F0\uB294 \uAC74 \uB3CC\uB9CC\uC774
+      \uC544\uB2C8\uC9C0. \uAE08 \uAC04 \uC1E0\uB3C4 \uC774\uC5B4 \uC4F0\uB294 \uC0AC\uB78C\uC774
+      \uC788\uC5B4\uC57C \uD574.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -82, y: 0, z: -40}
+    Position: {x: -2089.8027, y: 125.52656, z: 299.99152}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: exile_scholar
+    Label: "\uD3D0\uC11C\uC6D0\uC758 \uC720\uBC30 \uBB38\uC778"
+    Realm: Cheolong
+    Anchor: Cheolong
+    Source: "LDB-LENSES: \uD3D0\uC11C\uC6D0"
+    Stage: Tour
+    Role: 
+    Text: "\u201C\uC9C0\uC6CC\uC9C4 \uC904\uC740 \uBE48 \uC904\uC774 \uC544\uB2C8\uC624.
+      \uB0A8\uC740 \uAE00\uC758 \uC0AC\uC774\uB97C \uC77D\uC5B4 \uBCF4\uC2DC\uC624.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -180, y: 0, z: -120}
+    Position: {x: -2420, y: 110.64634, z: 230}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: exile_manuscript
+    Label: "\uD3D0\uC11C\uC6D0 \uD544\uC0AC\uBCF8"
+    Realm: Cheolong
+    Anchor: Cheolong
+    Source: LDB-LENSES
+    Stage: Tour
+    Role: 
+    Text: "\uAC70\uB460\uC758 \uBC95 \uC544\uB798 \uC9C0\uC6CC\uC9C4 \uC774\uB984\uC774
+      \uC5EC\uBC31\uC5D0 \uB2E4\uC2DC \uC801\uD600 \uC788\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -185, y: 0, z: -115}
+    Position: {x: -2425, y: 110.279106, z: 235}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: fort_inn
+    Label: "\uC131\uC678 \uC8FC\uB9C9"
+    Realm: Cheolong
+    Anchor: WestPass
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: 
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -48, y: 0, z: -45}
+    Position: {x: -2120.9539, y: 124.66584, z: 401.68878}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: fort_shrine
+    Label: "\uBC31\uD638 \uAE38\uBAA9 \uC131\uD669\uB2F9"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Shrine
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -150, y: 0, z: 140}
+    Position: {x: -1957.585, y: 164.84184, z: 160.8428}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: rubble_revisit
+    Label: "\uBB34\uB108\uC9C4 \uC131\uBCBD \uBC14\uC704"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: "\uC22B"
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 7
+    Offset: {x: -100, y: 0, z: 105}
+    Position: {x: -2018.3862, y: 133.66457, z: 166.15369}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: sunken_store
+    Label: "\uC7A0\uAE34 \uC800\uC790\uC758 \uAC74\uC870 \uCC3D\uACE0"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Warehouse
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: -125, y: 0, z: -85}
+    Position: {x: -123.03436, y: 159.66858, z: 4177.7744}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: old_tomb
+    Label: "\uC61B \uB3C4\uC74D \uAD50\uC678 \uBB18\uC5ED"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Tomb
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 160, y: 0, z: 70}
+    Position: {x: 180, y: 154.70174, z: 4390}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: river_beasts
+    Label: "\uBB3C\uAC00\uC758 \uC218\uC18D\uC131 \uC9D0\uC2B9"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: WaterRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -70, y: 0, z: 100}
+    Position: {x: -50, y: 153.65065, z: 4420}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: ruin_guard
+    Label: "\uD3D0\uB3C4\uC74D \uACE8\uBAA9 \uC9D0\uC2B9"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: NeutralMelee
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: 80, y: 0, z: -130}
+    Position: {x: 100, y: 158.24234, z: 4190}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: black_tortoise
+    Label: "\uD604\uBB34 \uAD81\uD130 \uC544\uB808\uB098"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: WaterMajorBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 210, y: 0, z: 170}
+    Position: {x: 230, y: 152.49648, z: 4490}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: refugee_elder
+    Label: "\uC61B \uAD81\uD130\uC758 \uC720\uBBFC \uC7A5\uB85C"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: "LDB-LENSES: \uACE0\uB824 \uC720\uBBFC \uC575\uCEE4"
+    Stage: Tour
+    Role: 
+    Text: "\u201C\uC11C\uC6B8\uC744 \uC62E\uACA8\uB3C4 \uBB3C\uAE38\uAE4C\uC9C0 \uB370\uB824\uAC08
+      \uC218\uB294 \uC5C6\uC5C8\uC9C0. \uC5EC\uAE30\uC5D0\uB3C4 \uC0AC\uB78C\uC740
+      \uC0B4\uC558\uC18C.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -45, y: 0, z: -48}
+    Position: {x: -25, y: 158.78972, z: 4272}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: water_inn
+    Label: "\uC218\uC0C1 \uB9C8\uC744 \uBB3C\uAC00 \uC8FC\uB9C9"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: 
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -120, y: 0, z: -150}
+    Position: {x: -100, y: 159.36243, z: 4170}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: tortoise_shrine
+    Label: "\uC61B \uAD81\uD130 \uC131\uD669\uB2F9"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: Shrine
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: 160, y: 0, z: 130}
+    Position: {x: 180, y: 152.39157, z: 4450}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: w2_revelation
+    Label: "\uD604\uAC15\uC758 \uC218\uC0C1\uD55C \uC190\uAE38"
+    Realm: Hyeongang
+    Anchor: Hyeongang
+    Source: "NARR-STORYLINE: \uC2AC\uB86F4 \uD604\uAC15"
+    Stage: Tour
+    Role: 
+    Text: "\uC655\uC18C \uC7AC\uD68C\uC640 \uC815\uCCB4 \uB178\uCD9C\uC758 \uD6C4\uC18D
+      \uC11C\uC0AC \uC9C0\uC810. \uC2E4\uC81C \uBD84\uAE30\xB7\uC9C4\uC601 \uC120\uD0DD\uC740
+      \uBBF8\uC5F0\uACB0."
+    Requires: 
+    Kind: 3
+    Offset: {x: -90, y: 0, z: -55}
+    Position: {x: -81.312256, y: 158.83676, z: 4269.004}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: pollution_revisit
+    Label: "\uC624\uC5FC \uC218\uC5ED \uC815\uD654 \uC608\uACE0"
+    Realm: Hyeongang
+    Anchor: NorthBridge
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Tour
+    Role: "\uC6C5"
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 7
+    Offset: {x: -55, y: 0, z: 55}
+    Position: {x: -661.67285, y: 130.3287, z: 3234.453}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: gap_revisit
+    Label: "\uBB34\uB108\uC9C4 \uB2E4\uB9AC \uB108\uBA38 \uC608\uACE0"
+    Realm: Hyeongang
+    Anchor: OldCapitalCreekBridge
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Return
+    Role: "\uBB44"
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 7
+    Offset: {x: 70, y: 0, z: 40}
+    Position: {x: 90.01509, y: 159.02748, z: 4099.4307}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: temple_legacy
+    Label: "\uC228\uC740 \uC0AC\uCC30 \xB7 \uB808\uAC70\uC2DC \uB358\uC804"
+    Realm: Hyeongang
+    Anchor: Temple
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Late
+    Role: Temple
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 70, y: 0, z: 95}
+    Position: {x: -1142.3436, y: 183.24095, z: 4466.9893}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: monk_scholar
+    Label: "\uC2B9\uBCF5 \uC785\uC740 \uC120\uBE44"
+    Realm: Hyeongang
+    Anchor: Temple
+    Source: "LDB-LENSES: \uBD88\uAD50 \uC575\uCEE4"
+    Stage: Late
+    Role: 
+    Text: "\u201C\uBD93\uC744 \uB193\uC740 \uC0AC\uB78C\uC774 \uAE00\uC744 \uC78A\uC740
+      \uAC83\uC740 \uC544\uB2C8\uC9C0\uC694.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -24, y: 0, z: -45}
+    Position: {x: -1144.954, y: 180.46028, z: 4603.0693}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: sutra_comment
+    Label: "\uBD88\uACBD \uC8FC\uC11D\uC758 \uBE48 \uC790\uB9AC"
+    Realm: Hyeongang
+    Anchor: Temple
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Late
+    Role: 
+    Text: "\uBD09\uC548 \uAE30\uB85D\uC758 \uD55C \uB300\uBAA9\uC774 \uB3C4\uB824\uB0B4\uC84C\uB2E4.
+      \uB0A8\uC740 \uC8FC\uC11D\uC740 \uB2E4\uB978 \uC5ED\uC0AC\uB97C \uAC00\uB9AC\uD0A8\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -18, y: 0, z: -42}
+    Position: {x: -1150.954, y: 181.05493, z: 4600.0693}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: hyeonun_meeting
+    Label: "\uD604\uC6B4 \uC120\uC0AC \uB300\uBA74 \uC704\uCE58"
+    Realm: Hyeongang
+    Anchor: Temple
+    Source: LDB-BOSSPLACEMENT; NARR-STORYLINE
+    Stage: Late
+    Role: 
+    Text: "\uBCF4\uC2A4\uC804 \uC9C1\uC804 \uBE44\uC804\uD22C \uB300\uBA74\uACFC
+      \uC655\uC18C \uC9C4\uD589\uB3C4\uBCC4 \uB300\uC0AC \uC608\uC57D."
+    Requires: 
+    Kind: 3
+    Offset: {x: 30, y: 0, z: 55}
+    Position: {x: -1210, y: 195.79234, z: 4498.3804}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: hyeonun
+    Label: "\uD604\uC6B4 \uC120\uC0AC \uC544\uB808\uB098"
+    Realm: Hyeongang
+    Anchor: Temple
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Late
+    Role: HumanBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 100, y: 0, z: 160}
+    Position: {x: -1141.693, y: 180.82802, z: 4488.749}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: mechanical_buddha
+    Label: "\uBA54\uCE74\uCC9C\uC218\uAD00\uC74C \uC544\uB808\uB098"
+    Realm: Hyeongang
+    Anchor: Temple
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: Late
+    Role: MechanicalBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: -115, y: 0, z: 180}
+    Position: {x: -1076.3123, y: 176.73679, z: 4377.3843}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: capital_tomb
+    Label: "\uC131\uC800 \uAD50\uC678 \uBB18\uC5ED"
+    Realm: Hwanggyeong
+    Anchor: SouthPost
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: Tomb
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: 85, y: 0, z: -70}
+    Position: {x: -62.171173, y: 163.48038, z: -1439.7716}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: merchant_cellar
+    Label: "\uAC1D\uC8FC \uC9C0\uD558 \uCC3D\uACE0 \uC2DC\uC548"
+    Realm: Hwanggyeong
+    Anchor: SouthPost
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: Warehouse
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 4
+    Offset: {x: -90, y: 0, z: -100}
+    Position: {x: -227.7598, y: 145.467, z: -1450.735}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: earth_checkpoint
+    Label: "\uAC00\uB3C4 \uD1A0 \uC18D\uC131 \uAC80\uBB38\uBCD1"
+    Realm: Hwanggyeong
+    Anchor: SouthPost
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: EarthRanged
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: 55, y: 0, z: -50}
+    Position: {x: 211.91078, y: 248.46478, z: -1334.1426}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: outer_road_beasts
+    Label: "\uAC00\uB3C4 \uBB34\uC18D\uC131 \uC9D0\uC2B9"
+    Realm: Hwanggyeong
+    Anchor: EastPass
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: NeutralMelee
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 0
+    Offset: {x: -60, y: 0, z: -130}
+    Position: {x: 1030.503, y: 335.9222, z: 108.01645}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 3
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: south_gate_boss
+    Label: "\uB0A8\uBB38\uC758 \uB0AF\uC120 \uC7A5\uC218"
+    Realm: Hwanggyeong
+    Anchor: SouthGate
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: EarthGateBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 0, y: 0, z: -55}
+    Position: {x: -267.30753, y: 139.36415, z: -1374.9396}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: capital_inn
+    Label: "\uB0A8\uBB38 \uBC16 \uC8FC\uB9C9"
+    Realm: Hwanggyeong
+    Anchor: SouthPost
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -36, y: 0, z: -35}
+    Position: {x: 160, y: 240.36696, z: -1347}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: road_inn
+    Label: "\uC0C1\uACBD \uAC00\uB3C4 \uC8FC\uB9C9"
+    Realm: Hwanggyeong
+    Anchor: EastPass
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: 100, y: 0, z: -85}
+    Position: {x: 1152, y: 312.57104, z: 107}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: merchant_head
+    Label: "\uAC1D\uC8FC \uBCF8\uC810 \uC778\uB3C4 \uB2F4\uB2F9"
+    Realm: Hwanggyeong
+    Anchor: SouthPost
+    Source: "NARR-STORYLINE: W1 \uC131\uC800 \uC778\uB3C4"
+    Stage: EA
+    Role: 
+    Text: "\u201C\uBD09\uC778\uC774 \uADF8\uB300\uB85C\uAD70\uC694. \uC9D0\uC740
+      \uC774\uCABD\uC5D0 \uB0B4\uB824 \uB450\uC2DC\uBA74 \uB429\uB2C8\uB2E4.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -44, y: 0, z: -28}
+    Position: {x: 152, y: 238.59393, z: -1340}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: cargo_delivery
+    Label: "\uBD09\uC778 \uD654\uBB3C \uC778\uB3C4 \uC9C0\uC810"
+    Realm: Hwanggyeong
+    Anchor: SouthPost
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uAC1D\uC8FC \uBCF8\uC810\uC758 \uD654\uBB3C \uC778\uB3C4 \uC704\uCE58.
+      \uCEA0\uD398\uC778 \uD638\uC1A1\xB7\uBCF4\uC0C1\uC740 \uBBF8\uC5F0\uACB0."
+    Requires: cargo_contract
+    Kind: 3
+    Offset: {x: -39, y: 0, z: -22}
+    Position: {x: 157, y: 240.8034, z: -1334}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: capital_notice
+    Label: "\uAD6D\uC0C1\uACFC \uACC4\uC5C4 \uBC29\uBB38"
+    Realm: Hwanggyeong
+    Anchor: SouthGate
+    Source: LDB-HWANGGYEONG; NARR-STORYLINE
+    Stage: EA
+    Role: 
+    Text: "\uAD6D\uC0C1 \uC911 \uD1B5\uD589\uC744 \uC81C\uD55C\uD55C\uB2E4\uB294
+      \uBC29\uC774 \uC131\uBB38 \uC55E\uC5D0 \uBD99\uC5B4 \uC788\uB2E4."
+    Requires: 
+    Kind: 2
+    Offset: {x: -33, y: 0, z: -95}
+    Position: {x: -303, y: 135.2893, z: -1355}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: south_shrine
+    Label: "\uB0A8\uBB38 \uC55E \uC131\uD669\uB2F9"
+    Realm: Hwanggyeong
+    Anchor: SouthGate
+    Source: LDB-REALMS; NARR-STORYLINE
+    Stage: EA
+    Role: Shrine
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 6
+    Offset: {x: -45, y: 0, z: -120}
+    Position: {x: -315, y: 140.64052, z: -1380}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: archive_clerk
+    Label: "\uC0AC\uACE0\uC758 \uC11C\uB9AC"
+    Realm: Hwanggyeong
+    Anchor: Palace
+    Source: "LDB-LENSES: \uC0AC\uACE0 \uC815\uC0AC \uC575\uCEE4"
+    Stage: City
+    Role: 
+    Text: "\u201C\uAE30\uB85D\uC740 \uB0A8\uACA8 \uB450\uB294 \uAC83\uC774\uC9C0,
+      \uC544\uBB34\uC5D0\uAC8C\uB098 \uB0B4\uC5B4 \uC8FC\uB294 \uAC83\uC740 \uC544\uB2D9\uB2C8\uB2E4.\u201D"
+    Requires: 
+    Kind: 1
+    Offset: {x: -95, y: 0, z: -55}
+    Position: {x: -205, y: 74.47855, z: -733.13776}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: city_jeongdam
+    Label: "\uC815\uB2F4 \uAD00\uC544 \uC7AC\uD68C \uC704\uCE58"
+    Realm: Hwanggyeong
+    Anchor: Hwanggyeong
+    Source: NARR-CHARACTERS; NARR-STORYLINE J2
+    Stage: Return
+    Role: 
+    Text: "\uC815\uB2F4\uC758 \uAD00\uC544 \uBCF8\uAC70\uC9C0\uC640 \uD6C4\uBC18
+      \uBAA9\uACA9 \uC7A5\uBA74\uC758 \uBC30\uCE58 \uD6C4\uBCF4. \uC778\uBB3C\uC744
+      \uB3D9\uC2DC\uC5D0 \uBCF5\uC81C\uD558\uC9C0 \uC54A\uB294\uB2E4."
+    Requires: 
+    Kind: 3
+    Offset: {x: -85, y: 0, z: 50}
+    Position: {x: -385, y: 72.2589, z: -580}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 220
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: fallen_dragon
+    Label: "\uAC1C\uCC9C\uC758 \uC774\uBB34\uAE30"
+    Realm: Hwanggyeong
+    Anchor: CapitalBridge
+    Source: LDB-HWANGGYEONG; COMBAT-BOSS
+    Stage: Return
+    Role: FallenDragon
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 90, y: 0, z: 40}
+    Position: {x: -941.79285, y: 59.710175, z: -611.45996}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: sangun
+    Label: "\uC778\uC655\uC0B0 \uC0B0\uAD70 \uC601\uC5ED"
+    Realm: Hwanggyeong
+    Anchor: Hwanggyeong
+    Source: "LDB-BOSSPLACEMENT: \uC0B0\uAD70 \uC778\uC655\uC0B0"
+    Stage: Return
+    Role: TigerFieldBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: -600, y: 0, z: 350}
+    Position: {x: -900, y: 65.63823, z: -280}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: final_sovereign
+    Label: "\uAD81\uC131 \uC548 \uCD5C\uC885 \uB300\uBA74"
+    Realm: Hwanggyeong
+    Anchor: Palace
+    Source: NARR-FINALE; LDB-BOSSPLACEMENT
+    Stage: Finale
+    Role: FinalTwoPhase
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 0, y: 0, z: 90}
+    Position: {x: -300, y: 77.6238, z: -878.13776}
+    Yaw: 180
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: muhak
+    Label: "\uC655\uC2ED\uB9AC \uD0DC\uADF9 \uBB38\uC9C0\uAE30 \uC704\uCE58"
+    Realm: Hwanggyeong
+    Anchor: Hwanggyeong
+    Source: "LDB-BOSSPLACEMENT: \uBB34\uD559 \uC655\uC2ED\uB9AC"
+    Stage: Finale
+    Role: SecretHumanBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 650, y: 0, z: -150}
+    Position: {x: 445.96088, y: 170.3026, z: -777.2594}
+    Yaw: 0
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST
+  - Id: machine_hand
+    Label: "\uAE30\uACC4\uC758 \uC190 \uACF5\uBC29 \uC544\uB808\uB098 \uD6C4\uBCF4"
+    Realm: Cheolong
+    Anchor: Fortress
+    Source: "COMBAT-BOSS: \uC7A5\uC601\uC2E4, \uC9C0\uC5ED \uBBF8\uC815 TEST \uC81C\uC791
+      \uD574\uC11D"
+    Stage: Late
+    Role: MechanicalBoss
+    Text: "\uBC30\uCE58 \uCD08\uC548\uC785\uB2C8\uB2E4. \uC804\uD22C\xB7\uBCF4\uC0C1\xB7\uC9C4\uD589
+      \uC5F0\uACB0\uC740 \uBCC4\uB3C4 \uAD6C\uD604 \uB300\uC0C1\uC785\uB2C8\uB2E4."
+    Requires: 
+    Kind: 5
+    Offset: {x: 210, y: 0, z: 160}
+    Position: {x: -2239.0554, y: 126.48235, z: 45.03279}
+    Yaw: 150
+    Radius: 4
+    ActivationDistance: 500
+    Count: 1
+    Resolved: 1
+    Preserve: 1
+    State: TEST

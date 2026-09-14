@@ -1,0 +1,41 @@
+{
+  "part": "Cabin",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Meshy\\Cabin\\image\\model_urls_glb.glb",
+  "source_sha256": "48ea111aaa1944799e6c69e1c91e3cd0f950ec08b2f3dde202a5d352e983c17a",
+  "raw": {
+    "vertices": 24306,
+    "triangles": 13690,
+    "size_unity_m": {
+      "x": 1.9039509892463684,
+      "y": 1.3657479286193848,
+      "z": 1.2367299795150757
+    },
+    "bounds_blender": {
+      "minimum": [
+        -0.9530419707298279,
+        -0.614948034286499,
+        -0.6821909546852112
+      ],
+      "maximum": [
+        0.9509090185165405,
+        0.6217819452285767,
+        0.6835569739341736
+      ]
+    },
+    "uv_layers": [
+      "UVMap"
+    ],
+    "materials": [
+      "Material_0"
+    ],
+    "nonfinite_vertices": 0
+  },
+  "runtime_verification": "UNVERIFIED",
+  "views": [
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_raw_front.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_raw_back.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_raw_side.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_raw_top.png"
+  ],
+  "status": "INSPECT_ONLY"
+}

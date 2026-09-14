@@ -1,0 +1,90 @@
+{
+    "scope": "Spatial/temporal numerical tests and actual driver material calls in edit mode; not a player-input travel test.",
+    "utc": "2026-09-11T13:08:58.4039356Z",
+    "checks": [
+        {
+            "name": "normalized region weights including unassigned gaps",
+            "pass": true,
+            "measured": 2.384185791015625e-7,
+            "limit": 0.000009999999747378752
+        },
+        {
+            "name": "maximum parameter delta over 1m at 100m-grid origins",
+            "pass": true,
+            "measured": 0.0000641942024230957,
+            "limit": 0.0020000000949949028
+        },
+        {
+            "name": "actual authored routes maximum <=4m parameter delta",
+            "pass": true,
+            "measured": 0.0002549886703491211,
+            "limit": 0.004999999888241291
+        },
+        {
+            "name": "2s transition frame rate 30",
+            "pass": true,
+            "measured": 1.1920928955078126e-7,
+            "limit": 0.000009999999747378752
+        },
+        {
+            "name": "2s transition frame rate 60",
+            "pass": true,
+            "measured": 1.7881393432617188e-7,
+            "limit": 0.000009999999747378752
+        },
+        {
+            "name": "2s transition frame rate 120",
+            "pass": true,
+            "measured": 1.1920928955078126e-7,
+            "limit": 0.000009999999747378752
+        },
+        {
+            "name": "height does not change regional sky",
+            "pass": true,
+            "measured": 0.0,
+            "limit": 9.999999974752428e-7
+        },
+        {
+            "name": "one transient material reused",
+            "pass": true,
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "authored sky material unchanged",
+            "pass": true,
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "shared cloud scale",
+            "pass": true,
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "shared cloud speed",
+            "pass": true,
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "horizon matches original",
+            "pass": true,
+            "measured": 0.0,
+            "limit": 9.999999974752428e-7
+        },
+        {
+            "name": "actual driver 2s material interpolation",
+            "pass": true,
+            "measured": 8.429369557916289e-8,
+            "limit": 0.000019999999494757503
+        }
+    ],
+    "limitations": [
+        "Sky visual approval belongs to the user.",
+        "No real-input full route traversal or 30/60/120fps rendered movie.",
+        "Frame-rate tests use constant target with explicit dt; spatial route sweeps are separate.",
+        "Ground, fog, sun, ambient and reflection settings remain unchanged."
+    ]
+}

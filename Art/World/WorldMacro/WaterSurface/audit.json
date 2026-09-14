@@ -1,0 +1,88 @@
+{
+    "scope": "Authored meshes, shader compilation and explicit scaled-time material sampling; not player walking or swimming.",
+    "shaderErrors": 0,
+    "surfaceCount": 6,
+    "totalTriangles": 65554,
+    "materialInstances": 1,
+    "depthTexture": true,
+    "opaqueTexture": true,
+    "sharedMaterial": true,
+    "noWaterColliders": true,
+    "frozenTimeStable": true,
+    "sourceTimeUnchanged": true,
+    "maxClockDifference": 0.0,
+    "surfaces": [
+        {
+            "name": "Water_HyeonMain",
+            "vertices": 13788,
+            "triangles": 24496,
+            "missingTangent": 0,
+            "missingColor": 0,
+            "downwardTriangles": 0,
+            "minimumUvAlong": 0.0,
+            "maximumUvAlong": 11910.41796875,
+            "minimumAlpha": 0.0,
+            "maximumAlpha": 1.0
+        },
+        {
+            "name": "Water_CheongTributary",
+            "vertices": 8875,
+            "triangles": 14770,
+            "missingTangent": 0,
+            "missingColor": 0,
+            "downwardTriangles": 0,
+            "minimumUvAlong": 0.0,
+            "maximumUvAlong": 7254.6904296875,
+            "minimumAlpha": 0.0,
+            "maximumAlpha": 1.0
+        },
+        {
+            "name": "Water_WesternTributary",
+            "vertices": 7364,
+            "triangles": 9120,
+            "missingTangent": 0,
+            "missingColor": 0,
+            "downwardTriangles": 0,
+            "minimumUvAlong": 0.0,
+            "maximumUvAlong": 4813.65771484375,
+            "minimumAlpha": 0.0,
+            "maximumAlpha": 1.0
+        },
+        {
+            "name": "Water_SongakCreek",
+            "vertices": 2807,
+            "triangles": 4168,
+            "missingTangent": 0,
+            "missingColor": 0,
+            "downwardTriangles": 0,
+            "minimumUvAlong": 0.0,
+            "maximumUvAlong": 2050.364990234375,
+            "minimumAlpha": 0.0,
+            "maximumAlpha": 1.0
+        },
+        {
+            "name": "Water_SouthernCreek",
+            "vertices": 3979,
+            "triangles": 6520,
+            "missingTangent": 0,
+            "missingColor": 0,
+            "downwardTriangles": 0,
+            "minimumUvAlong": 0.0,
+            "maximumUvAlong": 3214.678466796875,
+            "minimumAlpha": 0.0,
+            "maximumAlpha": 1.0
+        },
+        {
+            "name": "Water_EastDrain",
+            "vertices": 3654,
+            "triangles": 6480,
+            "missingTangent": 0,
+            "missingColor": 0,
+            "downwardTriangles": 0,
+            "minimumUvAlong": 0.0,
+            "maximumUvAlong": 3140.951904296875,
+            "minimumAlpha": 0.0,
+            "maximumAlpha": 1.0
+        }
+    ]
+}

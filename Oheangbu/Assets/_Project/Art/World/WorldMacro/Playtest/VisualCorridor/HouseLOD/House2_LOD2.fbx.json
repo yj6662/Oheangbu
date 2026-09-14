@@ -1,0 +1,73 @@
+{
+  "utc": "2026-09-13T14:56:55.688407+00:00",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\House_2\\house2 .fbx",
+  "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Playtest\\VisualCorridor\\HouseLOD\\House2_LOD2.fbx",
+  "method": "Blender collapse decimate on joined disconnected source meshes; source transforms, material slots and UV layers retained",
+  "sourceTriangles": 86400,
+  "targetTriangles": 7800,
+  "outputTriangles": 7683,
+  "sourceMeshObjects": 338,
+  "materialSlots": [
+    "Roof_01",
+    "Ground_03",
+    "Ground_02",
+    "Ground_01_02",
+    "Ground_01_01",
+    "Roof_02",
+    "Ground_04",
+    "Wood_02",
+    "Roof_ACC",
+    "Door",
+    "Wood_01",
+    "Stone"
+  ],
+  "uvLayers": [
+    "UVW"
+  ],
+  "sourceBounds": {
+    "min": [
+      -11.312153816223145,
+      -3.383157253265381,
+      -7.097839329617273e-07
+    ],
+    "max": [
+      11.312153816223145,
+      3.38315749168396,
+      5.339128017425537
+    ],
+    "size": [
+      22.62430763244629,
+      6.766314744949341,
+      5.33912872720947
+    ],
+    "center": [
+      0.0,
+      1.1920928955078125e-07,
+      2.669563653820802
+    ]
+  },
+  "outputBounds": {
+    "min": [
+      -11.31783390045166,
+      -3.382354259490967,
+      -0.006178245879709721
+    ],
+    "max": [
+      11.305679321289062,
+      3.38315749168396,
+      5.33111047744751
+    ],
+    "size": [
+      22.623513221740723,
+      6.765511751174927,
+      5.3372887233272195
+    ],
+    "center": [
+      -0.006077289581298828,
+      0.00040161609649658203,
+      2.6624661157839
+    ]
+  },
+  "commitBefore": 0.5902416534503512,
+  "commitAfter": 0.6141013058331009
+}

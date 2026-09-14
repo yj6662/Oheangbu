@@ -107,6 +107,13 @@ namespace Oheangbu.BrushRender
 
         private void LateUpdate()
         {
+            FlushMesh();
+        }
+
+        // 최종 카메라 이후 생성된 획도 그 프레임에 그릴 수 있는 명시적 완료 지점.
+        // dirty 가드로 자동 LateUpdate와 함께 호출해도 같은 메시를 두 번 만들지 않는다.
+        public void FlushMesh()
+        {
             // 변경이 있던 프레임만 리빌드 — 입력 수집(Update)과 표현 갱신의 순서를 고정한다
             if (!_dirty) return;
             _dirty = false;

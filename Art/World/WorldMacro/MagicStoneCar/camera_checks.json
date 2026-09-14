@@ -1,0 +1,88 @@
+{
+    "utc": "2026-09-11T22:37:58.5437898Z",
+    "status": "PASS_BOUNDED_CAMERA_API",
+    "scope": "Actual camera ownership and SphereCast functions in Play. A temporary collider is inserted into each camera ray then removed. No walking, simulated keyboard input, general-world camera traversal or comfort approval.",
+    "checks": [
+        {
+            "name": "player OnEnable preserves feet",
+            "status": "PASS",
+            "detail": "Same-frame disable/enable; no CharacterController.Move call."
+        },
+        {
+            "name": "player shoulder offset active",
+            "status": "PASS",
+            "detail": "Actual shoulder camera; cap remains visible."
+        },
+        {
+            "name": "player SphereCast response",
+            "status": "PASS",
+            "detail": "Before 2.755m / blocked 1.383m; fixture clearance 0.230m. Temporary collider, no rendered wall."
+        },
+        {
+            "name": "public boarding",
+            "status": "PASS",
+            "detail": "Actual TryBoard; no key synthesis or player relocation."
+        },
+        {
+            "name": "vehicle starts in shoulder view",
+            "status": "PASS",
+            "detail": "StartInSeatedView=false."
+        },
+        {
+            "name": "V path switches to first person",
+            "status": "PASS",
+            "detail": "Actual ToggleView method shared with V input."
+        },
+        {
+            "name": "first-person preserves authored seat pitch",
+            "status": "PASS",
+            "detail": "Actual neutral-input camera: authored 12.000deg / observed 12.000deg after permitted body-sway removal. SeatTiltFollow=0.30 applies to the body, not the socket."
+        },
+        {
+            "name": "V path returns to shoulder",
+            "status": "PASS",
+            "detail": "Same camera owner remains active."
+        },
+        {
+            "name": "vehicle SphereCast response",
+            "status": "PASS",
+            "detail": "Before 6.053m / blocked 3.192m; fixture clearance 0.400m. Temporary collider, no rendered wall."
+        },
+        {
+            "name": "safe public exit",
+            "status": "PASS",
+            "detail": "가마에서 내렸습니다."
+        },
+        {
+            "name": "post-exit OnEnable preserves exit feet",
+            "status": "PASS",
+            "detail": "Restores explicit exit feet rather than shoulder camera position."
+        },
+        {
+            "name": "player shoulder restored after exit",
+            "status": "PASS",
+            "detail": "Player owns input/camera again."
+        },
+        {
+            "name": "reboarding",
+            "status": "PASS",
+            "detail": "가마에 탑승했습니다."
+        },
+        {
+            "name": "second safe exit",
+            "status": "PASS",
+            "detail": "가마에서 내렸습니다."
+        }
+    ],
+    "samples": [],
+    "cleanupComplete": true,
+    "maximumDisplacementM": 0.0,
+    "maximumFrameDelta": 0.0,
+    "pausedGameSeconds": 0.0,
+    "pausedRealSeconds": 0.0,
+    "frontContacts": 0,
+    "rearContacts": 0,
+    "activationTimes": [],
+    "sampleCount": 0,
+    "sampling": "At most 60Hz during active VFX, 15Hz otherwise, plus phase changes. Contact callbacks remain continuous."
+}

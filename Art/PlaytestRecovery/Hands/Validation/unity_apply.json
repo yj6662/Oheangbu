@@ -1,0 +1,20 @@
+{
+    "status": "A_HAND_APPLIED_RUNTIME_QA_PENDING",
+    "model": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+    "profile": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/PlayerGesture_GripA.asset",
+    "prefab": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/PF_Player_C02_GripA.prefab",
+    "sourceSha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f",
+    "humanoid": true,
+    "sceneApplied": true,
+    "existingControllerPreserved": true,
+    "fingers": 30,
+    "bodyTriangles": 59486,
+    "nearTriangles": 7140,
+    "samples": 803180,
+    "sampledStaticPenetrationMeters": 0.00016143593529704958,
+    "unverified": [
+        "Current Unity skin/contact and stroke endpoint accuracy require fresh runtime checks.",
+        "Selected A image is an appearance reference, not proof of exact image reproduction.",
+        "Sitting terrain/cloth contact and native user input remain unverified."
+    ]
+}

@@ -1,0 +1,899 @@
+{
+    "status": "MEASURED_BLOCKOUT_NOT_GAMEPLAY",
+    "checks": [
+        {
+            "name": "isolated macro scene",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "five realms",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "unique site ids",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "sites within irregular footprint",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "irregular footprint differs from allocation rectangle",
+            "status": "PASS",
+            "detail": "75.14 km² / 96.00 km²"
+        },
+        {
+            "name": "mesh and material references",
+            "status": "PASS",
+            "detail": "0"
+        },
+        {
+            "name": "shader compile errors",
+            "status": "PASS",
+            "detail": "0"
+        },
+        {
+            "name": "global terrain and background shared lattice seams",
+            "status": "PASS",
+            "detail": "height=0, normal=0"
+        },
+        {
+            "name": "background continuation render only",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "surface sampler matches actual terrain collider",
+            "status": "PASS",
+            "detail": "samples=1112; misses=0; max error=0.00003m"
+        },
+        {
+            "name": "terrain independent of route authoring",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_Mine_Inn",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_Bridge_Inn",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_Inn_Logging",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_Logging_Deep",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_Deep_Dragon",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_Deep_TreeBridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_TreeBridge_Tree",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_TreeBridge_Logging",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Inn_Post",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Post_Merchant",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Merchant_Pass",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Pass_SouthPost",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_SouthPost_Gate",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Gate_CapitalReservation",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Capital_WestBridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_WestBridge_WestPass",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_WestPass_Cheolong",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_WestPass_NorthPass",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_NorthPass_Bridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_NorthBridge_OldCreek",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_OldCreek_OldCapital",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_OldCapital_TempleBridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Trail_TempleBridge_Temple",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Cheolong_WesternFork",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_WesternFork_SouthBridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_SouthBridge_Jeokro",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_Jeokro_CapitalSouthBridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Road_CapitalSouthBridge_SouthPost",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_NorthPass_NorthCapitalPass",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_NorthCapitalPass_Capital",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_Cheongrim_Inn",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_Inn_EastFoothillPass",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_EastFoothillPass_Capital",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_Jeokro_SouthSaddle",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_SouthSaddle_CapitalSouthBridge",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route endpoints Return_CapitalSouthBridge_SouthGate",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "route samples within geographic footprint",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "water crossings supported by actual bridge decks",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "reserved world route graph connected",
+            "status": "PASS",
+            "detail": "Mine,EastBridge,Inn,Logging,PostStation,Cheongrim,EastFoothillPass,DeepForest,ForestBridge,MerchantBranch,Hwanggyeong,Dragon,Tree,EastPass,SouthGate,CapitalBridge,NorthCapitalPass,SouthPost,CapitalSouthBridge,WestPass,NorthPass,Jeokro,SouthSaddle,Cheolong,NorthBridge,SouthBridge,WesternForkBridge,OldCapitalCreekBridge,Hyeongang,TempleBridge,OldTemple"
+        },
+        {
+            "name": "all five regional anchors connected to capital",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "rivers flow downhill",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "tributary confluences agree",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "river centerlines below visible water",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "no stacked global fog",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "inspection camera exists",
+            "status": "PASS",
+            "detail": ""
+        }
+    ],
+    "routes": [
+        {
+            "id": "Trail_Mine_Inn",
+            "from": "Mine",
+            "to": "EastBridge",
+            "carriage": false,
+            "lengthM": 1161.3756103515625,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 34.99131393432617,
+            "p95GradeDeg": 24.997827529907228,
+            "maxBridgeApproachGradeDeg": 16.406021118164064,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 258.0834655761719,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_Bridge_Inn",
+            "from": "EastBridge",
+            "to": "Inn",
+            "carriage": false,
+            "lengthM": 365.4252624511719,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 5.695096015930176,
+            "p95GradeDeg": 5.303481578826904,
+            "maxBridgeApproachGradeDeg": 9.962458610534668,
+            "minTurnRadiusM": 16.058841705322267,
+            "travelSecondsAtConstantSpeed": 81.20561218261719,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_Inn_Logging",
+            "from": "Inn",
+            "to": "Logging",
+            "carriage": false,
+            "lengthM": 663.1671752929688,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 8.463257789611817,
+            "p95GradeDeg": 7.682380199432373,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 217.484130859375,
+            "travelSecondsAtConstantSpeed": 147.3704833984375,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_Logging_Deep",
+            "from": "Logging",
+            "to": "DeepForest",
+            "carriage": false,
+            "lengthM": 693.2311401367188,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 9.956425666809082,
+            "p95GradeDeg": 9.446206092834473,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 64.67680358886719,
+            "travelSecondsAtConstantSpeed": 154.05136108398438,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_Deep_Dragon",
+            "from": "DeepForest",
+            "to": "Dragon",
+            "carriage": false,
+            "lengthM": 166.46766662597657,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 12.920130729675293,
+            "p95GradeDeg": 12.278656959533692,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 117.51614379882813,
+            "travelSecondsAtConstantSpeed": 36.99281311035156,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_Deep_TreeBridge",
+            "from": "DeepForest",
+            "to": "ForestBridge",
+            "carriage": false,
+            "lengthM": 574.1555786132813,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 10.957205772399903,
+            "p95GradeDeg": 10.081497192382813,
+            "maxBridgeApproachGradeDeg": 26.08173370361328,
+            "minTurnRadiusM": 8.868860244750977,
+            "travelSecondsAtConstantSpeed": 127.59012603759766,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_TreeBridge_Tree",
+            "from": "ForestBridge",
+            "to": "Tree",
+            "carriage": false,
+            "lengthM": 291.1280212402344,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 19.116050720214845,
+            "p95GradeDeg": 19.116050720214845,
+            "maxBridgeApproachGradeDeg": 38.881080627441409,
+            "minTurnRadiusM": 7.586446762084961,
+            "travelSecondsAtConstantSpeed": 64.69511413574219,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_TreeBridge_Logging",
+            "from": "ForestBridge",
+            "to": "Logging",
+            "carriage": false,
+            "lengthM": 1278.6815185546875,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 13.456551551818848,
+            "p95GradeDeg": 8.18825912475586,
+            "maxBridgeApproachGradeDeg": 26.08173370361328,
+            "minTurnRadiusM": 12.365730285644532,
+            "travelSecondsAtConstantSpeed": 284.1514587402344,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Inn_Post",
+            "from": "Inn",
+            "to": "PostStation",
+            "carriage": true,
+            "lengthM": 135.97018432617188,
+            "widthM": 8.0,
+            "maxGradeDeg": 2.530001401901245,
+            "p95GradeDeg": 2.4645509719848635,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 1117.8096923828125,
+            "travelSecondsAtConstantSpeed": 9.712156295776368,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Post_Merchant",
+            "from": "PostStation",
+            "to": "MerchantBranch",
+            "carriage": true,
+            "lengthM": 1251.656494140625,
+            "widthM": 8.0,
+            "maxGradeDeg": 28.316144943237306,
+            "p95GradeDeg": 18.96143341064453,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 89.40403747558594,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Merchant_Pass",
+            "from": "MerchantBranch",
+            "to": "EastPass",
+            "carriage": true,
+            "lengthM": 766.5687255859375,
+            "widthM": 8.0,
+            "maxGradeDeg": 27.701541900634767,
+            "p95GradeDeg": 16.988344192504884,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 54.75490951538086,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Pass_SouthPost",
+            "from": "EastPass",
+            "to": "SouthPost",
+            "carriage": true,
+            "lengthM": 2387.7685546875,
+            "widthM": 8.0,
+            "maxGradeDeg": 22.731948852539064,
+            "p95GradeDeg": 14.110054969787598,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 170.55490112304688,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_SouthPost_Gate",
+            "from": "SouthPost",
+            "to": "SouthGate",
+            "carriage": true,
+            "lengthM": 1683.0147705078125,
+            "widthM": 8.0,
+            "maxGradeDeg": 19.644838333129884,
+            "p95GradeDeg": 13.55290699005127,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 120.21533966064453,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Gate_CapitalReservation",
+            "from": "SouthGate",
+            "to": "Hwanggyeong",
+            "carriage": true,
+            "lengthM": 704.6925659179688,
+            "widthM": 8.0,
+            "maxGradeDeg": 12.63922119140625,
+            "p95GradeDeg": 9.437191009521485,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 20.48268699645996,
+            "travelSecondsAtConstantSpeed": 50.335182189941409,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Capital_WestBridge",
+            "from": "Hwanggyeong",
+            "to": "CapitalBridge",
+            "carriage": true,
+            "lengthM": 752.24267578125,
+            "widthM": 8.0,
+            "maxGradeDeg": 5.521924018859863,
+            "p95GradeDeg": 4.598360061645508,
+            "maxBridgeApproachGradeDeg": 4.458471775054932,
+            "minTurnRadiusM": 17.394596099853517,
+            "travelSecondsAtConstantSpeed": 53.73162078857422,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_WestBridge_WestPass",
+            "from": "CapitalBridge",
+            "to": "WestPass",
+            "carriage": true,
+            "lengthM": 3436.384521484375,
+            "widthM": 8.0,
+            "maxGradeDeg": 13.531289100646973,
+            "p95GradeDeg": 6.204079627990723,
+            "maxBridgeApproachGradeDeg": 5.748758316040039,
+            "minTurnRadiusM": 10.48810863494873,
+            "travelSecondsAtConstantSpeed": 245.45603942871095,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_WestPass_Cheolong",
+            "from": "WestPass",
+            "to": "Cheolong",
+            "carriage": true,
+            "lengthM": 181.21728515625,
+            "widthM": 8.0,
+            "maxGradeDeg": 4.493300437927246,
+            "p95GradeDeg": 4.493300437927246,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 100000.0,
+            "travelSecondsAtConstantSpeed": 12.944091796875,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_WestPass_NorthPass",
+            "from": "WestPass",
+            "to": "NorthPass",
+            "carriage": true,
+            "lengthM": 7048.6455078125,
+            "widthM": 8.0,
+            "maxGradeDeg": 16.21997833251953,
+            "p95GradeDeg": 8.874855995178223,
+            "maxBridgeApproachGradeDeg": 9.358097076416016,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 503.47467041015627,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_NorthPass_Bridge",
+            "from": "NorthPass",
+            "to": "NorthBridge",
+            "carriage": true,
+            "lengthM": 1888.2977294921875,
+            "widthM": 8.0,
+            "maxGradeDeg": 19.32870864868164,
+            "p95GradeDeg": 14.147417068481446,
+            "maxBridgeApproachGradeDeg": 19.58433723449707,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 134.87840270996095,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_NorthBridge_OldCreek",
+            "from": "NorthBridge",
+            "to": "OldCapitalCreekBridge",
+            "carriage": true,
+            "lengthM": 1277.4962158203125,
+            "widthM": 8.0,
+            "maxGradeDeg": 8.705196380615235,
+            "p95GradeDeg": 4.897589683532715,
+            "maxBridgeApproachGradeDeg": 12.04076862335205,
+            "minTurnRadiusM": 8.77070140838623,
+            "travelSecondsAtConstantSpeed": 91.2497329711914,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_OldCreek_OldCapital",
+            "from": "OldCapitalCreekBridge",
+            "to": "Hyeongang",
+            "carriage": true,
+            "lengthM": 261.6142272949219,
+            "widthM": 8.0,
+            "maxGradeDeg": 4.518733024597168,
+            "p95GradeDeg": 4.518733024597168,
+            "maxBridgeApproachGradeDeg": 6.6351213455200199,
+            "minTurnRadiusM": 78.09254455566406,
+            "travelSecondsAtConstantSpeed": 18.686731338500978,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_OldCapital_TempleBridge",
+            "from": "Hyeongang",
+            "to": "TempleBridge",
+            "carriage": false,
+            "lengthM": 1440.9140625,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 15.84072494506836,
+            "p95GradeDeg": 7.366917610168457,
+            "maxBridgeApproachGradeDeg": 33.13235855102539,
+            "minTurnRadiusM": 8.439786911010743,
+            "travelSecondsAtConstantSpeed": 320.203125,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Trail_TempleBridge_Temple",
+            "from": "TempleBridge",
+            "to": "OldTemple",
+            "carriage": false,
+            "lengthM": 220.30873107910157,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 0.0,
+            "p95GradeDeg": 0.0,
+            "maxBridgeApproachGradeDeg": 29.831777572631837,
+            "minTurnRadiusM": 7.824883937835693,
+            "travelSecondsAtConstantSpeed": 48.957496643066409,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Cheolong_WesternFork",
+            "from": "Cheolong",
+            "to": "WesternForkBridge",
+            "carriage": true,
+            "lengthM": 1816.657470703125,
+            "widthM": 8.0,
+            "maxGradeDeg": 7.544656753540039,
+            "p95GradeDeg": 6.053511142730713,
+            "maxBridgeApproachGradeDeg": 21.154621124267579,
+            "minTurnRadiusM": 7.674193859100342,
+            "travelSecondsAtConstantSpeed": 129.76124572753907,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_WesternFork_SouthBridge",
+            "from": "WesternForkBridge",
+            "to": "SouthBridge",
+            "carriage": true,
+            "lengthM": 1703.27197265625,
+            "widthM": 8.0,
+            "maxGradeDeg": 4.891408443450928,
+            "p95GradeDeg": 3.2932190895080568,
+            "maxBridgeApproachGradeDeg": 13.071075439453125,
+            "minTurnRadiusM": 7.666053771972656,
+            "travelSecondsAtConstantSpeed": 121.66228485107422,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_SouthBridge_Jeokro",
+            "from": "SouthBridge",
+            "to": "Jeokro",
+            "carriage": true,
+            "lengthM": 3880.8525390625,
+            "widthM": 8.0,
+            "maxGradeDeg": 13.862597465515137,
+            "p95GradeDeg": 4.932101249694824,
+            "maxBridgeApproachGradeDeg": 15.433756828308106,
+            "minTurnRadiusM": 7.787271499633789,
+            "travelSecondsAtConstantSpeed": 277.2037658691406,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_Jeokro_CapitalSouthBridge",
+            "from": "Jeokro",
+            "to": "CapitalSouthBridge",
+            "carriage": true,
+            "lengthM": 5646.86669921875,
+            "widthM": 8.0,
+            "maxGradeDeg": 20.69928550720215,
+            "p95GradeDeg": 7.479457855224609,
+            "maxBridgeApproachGradeDeg": 40.706546783447269,
+            "minTurnRadiusM": 12.095159530639649,
+            "travelSecondsAtConstantSpeed": 403.3476257324219,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Road_CapitalSouthBridge_SouthPost",
+            "from": "CapitalSouthBridge",
+            "to": "SouthPost",
+            "carriage": true,
+            "lengthM": 1963.3150634765625,
+            "widthM": 8.0,
+            "maxGradeDeg": 28.985553741455079,
+            "p95GradeDeg": 16.353975296020509,
+            "maxBridgeApproachGradeDeg": 36.71892547607422,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 140.23678588867188,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_NorthPass_NorthCapitalPass",
+            "from": "NorthPass",
+            "to": "NorthCapitalPass",
+            "carriage": false,
+            "lengthM": 2056.149169921875,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 40.015403747558597,
+            "p95GradeDeg": 20.768373489379884,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 11.401754379272461,
+            "travelSecondsAtConstantSpeed": 456.9220275878906,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_NorthCapitalPass_Capital",
+            "from": "NorthCapitalPass",
+            "to": "Hwanggyeong",
+            "carriage": false,
+            "lengthM": 2344.268310546875,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 24.38357925415039,
+            "p95GradeDeg": 20.160886764526368,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 520.948486328125,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_Cheongrim_Inn",
+            "from": "Cheongrim",
+            "to": "Inn",
+            "carriage": false,
+            "lengthM": 110.31381225585938,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 2.402456045150757,
+            "p95GradeDeg": 2.402456045150757,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 100000.0,
+            "travelSecondsAtConstantSpeed": 24.51418113708496,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_Inn_EastFoothillPass",
+            "from": "Inn",
+            "to": "EastFoothillPass",
+            "carriage": false,
+            "lengthM": 1338.6171875,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 27.783897399902345,
+            "p95GradeDeg": 22.931808471679689,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 8.062257766723633,
+            "travelSecondsAtConstantSpeed": 297.4704895019531,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_EastFoothillPass_Capital",
+            "from": "EastFoothillPass",
+            "to": "Hwanggyeong",
+            "carriage": false,
+            "lengthM": 2289.8330078125,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 14.869282722473145,
+            "p95GradeDeg": 13.533555030822754,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 15.552748680114746,
+            "travelSecondsAtConstantSpeed": 508.8517761230469,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_Jeokro_SouthSaddle",
+            "from": "Jeokro",
+            "to": "SouthSaddle",
+            "carriage": false,
+            "lengthM": 1841.478271484375,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 22.5374698638916,
+            "p95GradeDeg": 17.149812698364259,
+            "maxBridgeApproachGradeDeg": 0.0,
+            "minTurnRadiusM": 12.041594505310059,
+            "travelSecondsAtConstantSpeed": 409.2174072265625,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_SouthSaddle_CapitalSouthBridge",
+            "from": "SouthSaddle",
+            "to": "CapitalSouthBridge",
+            "carriage": false,
+            "lengthM": 1865.974365234375,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 30.526269912719728,
+            "p95GradeDeg": 26.117036819458009,
+            "maxBridgeApproachGradeDeg": 40.706546783447269,
+            "minTurnRadiusM": 8.184277534484864,
+            "travelSecondsAtConstantSpeed": 414.6609802246094,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        },
+        {
+            "id": "Return_CapitalSouthBridge_SouthGate",
+            "from": "CapitalSouthBridge",
+            "to": "SouthGate",
+            "carriage": false,
+            "lengthM": 816.97314453125,
+            "widthM": 2.200000047683716,
+            "maxGradeDeg": 27.84923553466797,
+            "p95GradeDeg": 24.420421600341798,
+            "maxBridgeApproachGradeDeg": 36.71892547607422,
+            "minTurnRadiusM": 12.27099609375,
+            "travelSecondsAtConstantSpeed": 181.54959106445313,
+            "outsideSamples": 0,
+            "waterSamplesWithoutBridge": 0
+        }
+    ],
+    "rivers": [
+        {
+            "id": "HyeonMain",
+            "parent": "",
+            "lengthM": 11910.4384765625,
+            "maxRiseM": 0.0,
+            "confluenceGapM": 0.0,
+            "confluenceLevelErrorM": 0.0,
+            "minBedDepthM": 1.8339653015136719,
+            "dryCenterSamples": 0
+        },
+        {
+            "id": "CheongTributary",
+            "parent": "HyeonMain",
+            "lengthM": 7254.7060546875,
+            "maxRiseM": 0.0,
+            "confluenceGapM": 0.0,
+            "confluenceLevelErrorM": 0.0,
+            "minBedDepthM": 2.5290699005126955,
+            "dryCenterSamples": 0
+        },
+        {
+            "id": "WesternTributary",
+            "parent": "HyeonMain",
+            "lengthM": 4813.65625,
+            "maxRiseM": 0.0,
+            "confluenceGapM": 0.0,
+            "confluenceLevelErrorM": 0.0,
+            "minBedDepthM": 2.4234962463378908,
+            "dryCenterSamples": 0
+        },
+        {
+            "id": "SongakCreek",
+            "parent": "HyeonMain",
+            "lengthM": 2050.366943359375,
+            "maxRiseM": 0.0,
+            "confluenceGapM": 0.0,
+            "confluenceLevelErrorM": 0.0,
+            "minBedDepthM": 2.127044677734375,
+            "dryCenterSamples": 0
+        },
+        {
+            "id": "SouthernCreek",
+            "parent": "HyeonMain",
+            "lengthM": 3214.682861328125,
+            "maxRiseM": 0.0,
+            "confluenceGapM": 0.0,
+            "confluenceLevelErrorM": 0.0,
+            "minBedDepthM": 2.1271018981933595,
+            "dryCenterSamples": 0
+        },
+        {
+            "id": "EastDrain",
+            "parent": "",
+            "lengthM": 3140.950927734375,
+            "maxRiseM": 0.0,
+            "confluenceGapM": 0.0,
+            "confluenceLevelErrorM": 0.0,
+            "minBedDepthM": 2.1432647705078127,
+            "dryCenterSamples": 0
+        }
+    ],
+    "terrainChunks": 88,
+    "sites": 31,
+    "terrainTriangles": 587034,
+    "totalMeshTriangles": 894273,
+    "footprintKm2": 75.14044952392578,
+    "boundsKm2": 96.0,
+    "maxSeamHeightErrorM": 0.0,
+    "maxSeamNormalError": 0.0,
+    "systemCommitRatio": 0.8303367495536804,
+    "movement": "Route surface samples and constant-speed camera-distance calculation; not vehicle physics or gameplay traversal."
+}

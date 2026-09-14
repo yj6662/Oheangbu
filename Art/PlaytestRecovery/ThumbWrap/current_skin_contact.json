@@ -1,0 +1,612 @@
+{
+    "status": "PASS_CURRENT_POSE_VERTEX_CONTACT_ONLY",
+    "utc": "2026-09-14T10:29:11.6960219Z",
+    "sourceFbxSha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f",
+    "skinWeightsBefore": "Unlimited",
+    "skinWeightsDuring": "Unlimited",
+    "skinWeightsAfter": "Unlimited",
+    "error": "",
+    "sourceModelPath": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+    "gestureProfilePath": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/PlayerGesture_GripA.asset",
+    "gestureProfileSha256": "1ca232fa694d0f7fc225ae8003b0478f7036515dc25e01dee1e79daae42e176f",
+    "boundSkins": [
+        {
+            "renderer": "C02_Mesh_0",
+            "assetPath": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+            "sha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f",
+            "nearArm": false,
+            "vertices": 91352,
+            "triangles": 58462
+        },
+        {
+            "renderer": "FaceLid_Left",
+            "assetPath": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+            "sha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f",
+            "nearArm": false,
+            "vertices": 321,
+            "triangles": 512
+        },
+        {
+            "renderer": "FaceLid_Right",
+            "assetPath": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+            "sha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f",
+            "nearArm": false,
+            "vertices": 372,
+            "triangles": 512
+        },
+        {
+            "renderer": "C02_Mesh_0",
+            "assetPath": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Near/SM_C02_Mesh_0_GripA.asset",
+            "sha256": "053390b79dcf9330586b41c14ea87e30e536b3ed33950f266637d0afbc4be6f2",
+            "nearArm": true,
+            "vertices": 8637,
+            "triangles": 7140
+        },
+        {
+            "renderer": "DosaBrushV2_Bristles",
+            "assetPath": "Assets/_Project/Art/Characters/DosaV2/Models/SM_DosaBrushV2.fbx",
+            "sha256": "0409e058ed16a5953465e10a47d39ee6fe19ee63d780b6db66d9239b9c1da2c6",
+            "nearArm": false,
+            "vertices": 1848,
+            "triangles": 3456
+        },
+        {
+            "renderer": "DosaBrushV2_Bristles",
+            "assetPath": "Assets/_Project/Art/Characters/DosaV2/Models/SM_DosaBrushV2.fbx",
+            "sha256": "0409e058ed16a5953465e10a47d39ee6fe19ee63d780b6db66d9239b9c1da2c6",
+            "nearArm": false,
+            "vertices": 1848,
+            "triangles": 3456
+        }
+    ],
+    "method": "Actual current-pose SkinnedMeshRenderer.BakeMesh(useScale=true), full imported influences under Unlimited. Scale-compensated baked vertices are transformed by the complete renderer local chain exactly once. Two-sided ray/triangle intersections against the actual rigid shaft mesh, radially about GripSocket to fixed Bristle_01. Hand vertices require >=0.1 right-hand influence; distal patches require >=0.7 distal-finger influence. No primitive-cylinder approximation or gameplay colliders.",
+    "bakeScaleConventionSource": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SkinnedMeshRenderer.BakeMesh.html",
+    "uncompensatedComparison": "Diagnostic comparison only: useScale=false already includes renderer scale, so applying the complete renderer matrix again can double-scale vertices. This previous measurement is retained below for comparison, never used for contact acceptance.",
+    "limitations": [
+        "Single actual live pose only. Closest distal vertex gap and worst sampled vertex penetration do not prove continuous triangle contact or all-motion safety.",
+        "Measurements use local transform chains relative to the player to limit world-coordinate cancellation. Unity's actual BakeMesh precision remains part of the result."
+    ],
+    "playerTransformsPreserved": true,
+    "qualityRestored": true,
+    "temporaryMeshesReleased": true,
+    "allFinite": true,
+    "bakeConventionValidated": true,
+    "frame": 3096,
+    "shaftTriangles": 1224,
+    "handVertices": 2726,
+    "shaftRayHits": 2726,
+    "shaftRayMisses": 0,
+    "worstVertex": 29865,
+    "maximumPenetrationMeters": 0.0003683120012283325,
+    "rayRadiusMeters": 0.07999999821186066,
+    "manualLbsMaximumPenetrationMeters": 0.000332782045006752,
+    "maximumBakeVersusManualLbsMeters": 0.0001228520559379831,
+    "meanBakeVersusManualLbsMeters": 0.00012261539814062417,
+    "uncompensatedMaximumBakeVersusManualLbsMeters": 0.004353538621217012,
+    "uncompensatedMeanBakeVersusManualLbsMeters": 0.003866111394017935,
+    "maximumFingerPoseErrorDegrees": 0.0,
+    "actualGripPositionErrorMeters": 0.0,
+    "maximumHandInfluences": 3,
+    "bodyRenderers": [
+        "C02_Mesh_0",
+        "FaceLid_Left",
+        "FaceLid_Right"
+    ],
+    "shaftRenderers": [
+        "DosaBrushV2_Handle"
+    ],
+    "shaftAxisInGrip": {
+        "x": -0.0013651992194354535,
+        "y": 0.9999976754188538,
+        "z": -0.0016593202017247677
+    },
+    "worstSkinInGrip": {
+        "x": 0.001153945573605597,
+        "y": 0.003931755665689707,
+        "z": -0.01887333206832409
+    },
+    "playerWorldPosition": {
+        "x": 3406.619384765625,
+        "y": 195.70367431640626,
+        "z": 1129.252197265625
+    },
+    "handWorldScale": {
+        "x": 1.0046303272247315,
+        "y": 1.0046316385269166,
+        "z": 1.0046310424804688
+    },
+    "brushWorldScale": {
+        "x": 1.000000238418579,
+        "y": 1.0000004768371583,
+        "z": 1.0000005960464478
+    },
+    "actualGripInHand": {
+        "x": 0.010124078020453453,
+        "y": 0.07458849251270294,
+        "z": 0.033915139734745029
+    },
+    "worstManualLbsInGrip": {
+        "x": -0.020353149622678758,
+        "y": 0.020360885187983514,
+        "z": -0.017603177577257158
+    },
+    "worstBakeInGrip": {
+        "x": -0.020388353615999223,
+        "y": 0.0204740222543478,
+        "z": -0.017570722848176957
+    },
+    "currentFingerPoses": [
+        {
+            "name": "RightHandThumb1",
+            "localPosition": {
+                "x": -0.026994457468390466,
+                "y": 0.03274913132190704,
+                "z": 0.013002327643334866
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "localRotation": {
+                "x": -0.33027398586273196,
+                "y": -0.8265742659568787,
+                "z": 0.26157742738723757,
+                "w": -0.3731907904148102
+            },
+            "expectedLocalRotation": {
+                "x": 0.3302740156650543,
+                "y": 0.8265742659568787,
+                "z": -0.26157742738723757,
+                "w": 0.3731907904148102
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandThumb2",
+            "localPosition": {
+                "x": -5.587934559514451e-9,
+                "y": 0.02837381698191166,
+                "z": -8.195637946073475e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.23300400376319886,
+                "y": 0.1611577272415161,
+                "z": 0.020031891763210298,
+                "w": -0.9588201642036438
+            },
+            "expectedLocalRotation": {
+                "x": -0.23300401866436006,
+                "y": -0.1611577272415161,
+                "z": -0.020031893625855447,
+                "w": 0.9588201642036438
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandThumb3",
+            "localPosition": {
+                "x": -1.2107191693644382e-8,
+                "y": 0.027563106268644334,
+                "z": -1.6950069436916238e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.24669888615608216,
+                "y": 0.17062799632549287,
+                "z": 0.021209614351391794,
+                "w": -0.9537168741226196
+            },
+            "expectedLocalRotation": {
+                "x": -0.24669891595840455,
+                "y": -0.17062801122665406,
+                "z": -0.02120961621403694,
+                "w": 0.9537169337272644
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandIndex1",
+            "localPosition": {
+                "x": -0.016703542321920396,
+                "y": 0.08307842165231705,
+                "z": -0.009247694164514542
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0000001192092896,
+                "z": 0.9999999403953552
+            },
+            "localRotation": {
+                "x": -0.0819709450006485,
+                "y": -0.9694764614105225,
+                "z": -0.22145837545394898,
+                "w": -0.06597331166267395
+            },
+            "expectedLocalRotation": {
+                "x": 0.0819709450006485,
+                "y": 0.9694764614105225,
+                "z": 0.22145837545394898,
+                "w": 0.06597331166267395
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandIndex2",
+            "localPosition": {
+                "x": -1.161242391134465e-8,
+                "y": 0.03635445237159729,
+                "z": -7.555353676025334e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0000001192092896,
+                "z": 1.0000001192092896
+            },
+            "localRotation": {
+                "x": 0.6156883239746094,
+                "y": -0.007790825329720974,
+                "z": 0.00019709898333530873,
+                "w": -0.7879512906074524
+            },
+            "expectedLocalRotation": {
+                "x": -0.6156883239746094,
+                "y": 0.007790824864059687,
+                "z": -0.00019709898333530873,
+                "w": 0.7879512310028076
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandIndex3",
+            "localPosition": {
+                "x": 3.492458322540415e-9,
+                "y": 0.02370944619178772,
+                "z": 8.45175023300726e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.23342521488666535,
+                "y": -0.0029537228401750328,
+                "z": 0.00007490749703720212,
+                "w": -0.9723702669143677
+            },
+            "expectedLocalRotation": {
+                "x": -0.23342521488666535,
+                "y": 0.0029537228401750328,
+                "z": -0.00007490749703720212,
+                "w": 0.9723702669143677
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandMiddle1",
+            "localPosition": {
+                "x": 0.002305572386831045,
+                "y": 0.07542524486780167,
+                "z": -0.008958055637776852
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": -0.07889650017023087,
+                "y": -0.9625613689422607,
+                "z": -0.25013425946235659,
+                "w": -0.0684392899274826
+            },
+            "expectedLocalRotation": {
+                "x": 0.07889650017023087,
+                "y": 0.9625613689422607,
+                "z": 0.25013425946235659,
+                "w": 0.0684392899274826
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandMiddle2",
+            "localPosition": {
+                "x": -8.149070751528598e-9,
+                "y": 0.04370243474841118,
+                "z": 4.6449702750805957e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.6193017363548279,
+                "y": -0.006518769543617964,
+                "z": -3.9986513655776437e-8,
+                "w": -0.7851260304450989
+            },
+            "expectedLocalRotation": {
+                "x": -0.6193017363548279,
+                "y": 0.006518769543617964,
+                "z": 3.9986513655776437e-8,
+                "w": 0.7851260304450989
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandMiddle3",
+            "localPosition": {
+                "x": -1.1379595044047619e-8,
+                "y": 0.02850155718624592,
+                "z": -4.74392329863349e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.29914578795433047,
+                "y": -0.003148795571178198,
+                "z": 3.575016194190539e-8,
+                "w": -0.9542022347450256
+            },
+            "expectedLocalRotation": {
+                "x": -0.29914578795433047,
+                "y": 0.003148795571178198,
+                "z": -3.575016194190539e-8,
+                "w": 0.9542022347450256
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandRing1",
+            "localPosition": {
+                "x": 0.021152520552277566,
+                "y": 0.06796716153621674,
+                "z": -0.006684477906674147
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998807907105,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": -0.0843038484454155,
+                "y": -0.9783958792686462,
+                "z": -0.17791949212551118,
+                "w": -0.0630803257226944
+            },
+            "expectedLocalRotation": {
+                "x": 0.0843038484454155,
+                "y": 0.9783958792686462,
+                "z": 0.17791949212551118,
+                "w": 0.0630803257226944
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandRing2",
+            "localPosition": {
+                "x": -1.3969835066518499e-8,
+                "y": 0.04094254970550537,
+                "z": -1.824227666702427e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.5760831236839294,
+                "y": -0.006472663953900337,
+                "z": -1.152618054334198e-7,
+                "w": -0.8173655271530151
+            },
+            "expectedLocalRotation": {
+                "x": -0.5760831236839294,
+                "y": 0.006472663953900337,
+                "z": 1.152618054334198e-7,
+                "w": 0.8173655271530151
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandRing3",
+            "localPosition": {
+                "x": -9.080393326144076e-9,
+                "y": 0.02670166827738285,
+                "z": -1.6132248958911078e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.39240220189094546,
+                "y": -0.004408877808600664,
+                "z": 1.9815640683873427e-8,
+                "w": -0.9197831749916077
+            },
+            "expectedLocalRotation": {
+                "x": -0.39240220189094546,
+                "y": 0.004408877808600664,
+                "z": -1.9815640683873427e-8,
+                "w": 0.9197831749916077
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandPinky1",
+            "localPosition": {
+                "x": 0.039155010133981708,
+                "y": 0.05551467090845108,
+                "z": -0.004997427109628916
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": -0.10042537748813629,
+                "y": -0.9927560091018677,
+                "z": -0.03930330649018288,
+                "w": -0.05296706035733223
+            },
+            "expectedLocalRotation": {
+                "x": 0.1004253700375557,
+                "y": 0.9927560091018677,
+                "z": 0.03930329531431198,
+                "w": 0.05296706035733223
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandPinky2",
+            "localPosition": {
+                "x": -6.111803507735658e-9,
+                "y": 0.034164104610681537,
+                "z": -1.0163055463863202e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.4615814685821533,
+                "y": -0.012434154748916626,
+                "z": -0.001007838174700737,
+                "w": -0.8870101571083069
+            },
+            "expectedLocalRotation": {
+                "x": -0.4615814685821533,
+                "y": 0.012434154748916626,
+                "z": 0.001007838174700737,
+                "w": 0.8870101571083069
+            },
+            "rotationErrorDegrees": 0.0
+        },
+        {
+            "name": "RightHandPinky3",
+            "localPosition": {
+                "x": -6.28642649047606e-9,
+                "y": 0.022280845791101457,
+                "z": -2.676387680367043e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "localRotation": {
+                "x": 0.5566689372062683,
+                "y": -0.014995776116847992,
+                "z": -0.0012154800351709128,
+                "w": -0.8305982351303101
+            },
+            "expectedLocalRotation": {
+                "x": -0.5566689372062683,
+                "y": 0.014995776116847992,
+                "z": 0.0012154800351709128,
+                "w": 0.8305982351303101
+            },
+            "rotationErrorDegrees": 0.0
+        }
+    ],
+    "fingers": [
+        {
+            "digit": "Thumb",
+            "distalVertices": 209,
+            "shaftRayHits": 209,
+            "closestSkinGapMeters": 0.00011961907148361206,
+            "maximumPenetrationMeters": 0.0,
+            "manualLbsClosestSkinGapMeters": 0.00009483285248279572,
+            "manualLbsMaximumPenetrationMeters": 0.0,
+            "closestVertex": 29860,
+            "closestSkinInGrip": {
+                "x": 0.006525703240185976,
+                "y": 0.005363553296774626,
+                "z": -0.0174445528537035
+            },
+            "initialContactThresholdPass": true
+        },
+        {
+            "digit": "Index",
+            "distalVertices": 102,
+            "shaftRayHits": 102,
+            "closestSkinGapMeters": 0.0006798841059207916,
+            "maximumPenetrationMeters": 0.0,
+            "manualLbsClosestSkinGapMeters": 0.0006938911974430084,
+            "manualLbsMaximumPenetrationMeters": 0.0,
+            "closestVertex": 30626,
+            "closestSkinInGrip": {
+                "x": 0.015132411383092404,
+                "y": 0.028230134397745134,
+                "z": 0.0059354184195399288
+            },
+            "initialContactThresholdPass": true
+        },
+        {
+            "digit": "Middle",
+            "distalVertices": 115,
+            "shaftRayHits": 115,
+            "closestSkinGapMeters": 0.0007184483110904694,
+            "maximumPenetrationMeters": 0.0,
+            "manualLbsClosestSkinGapMeters": 0.0007103551179170609,
+            "manualLbsMaximumPenetrationMeters": 0.0,
+            "closestVertex": 89543,
+            "closestSkinInGrip": {
+                "x": 0.013929144479334355,
+                "y": 0.015263838693499565,
+                "z": 0.01163119450211525
+            },
+            "initialContactThresholdPass": true
+        },
+        {
+            "digit": "Ring",
+            "distalVertices": 141,
+            "shaftRayHits": 141,
+            "closestSkinGapMeters": 0.0006866548210382462,
+            "maximumPenetrationMeters": 0.0,
+            "manualLbsClosestSkinGapMeters": 0.000703832134604454,
+            "manualLbsMaximumPenetrationMeters": 0.0,
+            "closestVertex": 89828,
+            "closestSkinInGrip": {
+                "x": 0.015952784568071367,
+                "y": -0.009148484095931054,
+                "z": 0.01020047627389431
+            },
+            "initialContactThresholdPass": true
+        },
+        {
+            "digit": "Pinky",
+            "distalVertices": 114,
+            "shaftRayHits": 114,
+            "closestSkinGapMeters": 0.0006291382014751434,
+            "maximumPenetrationMeters": 0.0,
+            "manualLbsClosestSkinGapMeters": 0.0005862507969141007,
+            "manualLbsMaximumPenetrationMeters": 0.0,
+            "closestVertex": 29431,
+            "closestSkinInGrip": {
+                "x": 0.018605930730700494,
+                "y": -0.025594230741262437,
+                "z": -0.0034865227062255146
+            },
+            "initialContactThresholdPass": true
+        }
+    ]
+}

@@ -6,6 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Project/Scenes/World/W_Playtest_Title.unity
+    guid: 5bc8f457f7468d9449a44a125294029f
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity
+    guid: 842657f8e6caf9147883e016835ad59e
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/W_Cheongrim_FarSet.unity
+    guid: 5cde3251d564e2c47a241cfc53c99651
+  - enabled: 1
     path: Assets/_Project/Scenes/Dev/C1_TestHub.unity
     guid: 7fb6c465852a22647871ce285244c894
   - enabled: 1
@@ -21,8 +30,17 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/Dev/C1_CombatLoop.unity
     guid: 4f07da8a6aa412f44af7cdb416e0c155
   - enabled: 1
+    path: Assets/_Project/Scenes/Dev/C1_WorldLookdev.unity
+    guid: dd463529ffae89448b3d6bae988799e5
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/_Project/Scenes/Dev/C2_CodexWorld.unity
+    guid: 540216ab608d55f4796cbe656a470e40
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/W_Cheongrim_Prologue.unity
+    guid: e4d53e0b10fbb1d4daf4dc83f8e2a03d
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

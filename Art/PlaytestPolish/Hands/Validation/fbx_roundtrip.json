@@ -1,0 +1,8 @@
+{
+  "status": "PASS_FBX_MARKER_VERTEX_CONTACT",
+  "maximum_vertex_penetration_m": 0.0,
+  "samples": 1817,
+  "right_finger_markers": 15,
+  "bones": 54,
+  "scope": "Blender blank-scene FBX reimport with actual brush and imported local pose markers. Unity skin/contact remains a separate check."
+}

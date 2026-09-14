@@ -45,6 +45,7 @@ namespace Oheangbu.App
         [Header("비락온 자유 조준의 프로토 근사(§10.1) — 전방 원뿔 명중")]
         [SerializeField, Range(1f, 45f)] private float _freeAimAngle = 15f;
         [SerializeField, Min(1f)] private float _freeAimRange = 20f;
+        [SerializeField] private bool _environmentOcclusion;
 
         private SpellResolver _resolver;
         private ParryJudge _judge;
@@ -60,6 +61,7 @@ namespace Oheangbu.App
             public Element Element;
             public char Letter;
             public float Power;
+            public Vector3 Origin;
         }
         private char _guardVisualLetter;
         private uint _guardVisualRevision;
@@ -78,6 +80,15 @@ namespace Oheangbu.App
 
         // 시전 판정 계획 재방송(읽기 전용) — 하네스(사격장)가 계획 대 실제 착탄을 대조한다 [SPELL-AREA-SHAPES §3]
         public event Action<CastPlan> CastPlanned;
+
+        // 먹 지출까지 승인된 소환의 표현 포즈 재방송. 전투 대상·피해·AI는 만들지 않는다.
+        public event Action<SpellCast, Vector3, Vector3> SummonAccepted;
+
+        // 먹 지출과 규칙 분기를 통과한 실제 시전. 인식 성공만으로는 발화하지 않는다.
+        public event Action<SpellCast, Vector3, Vector3> CastAccepted;
+
+        // 예약만 된 계획이 아니라 실제 생존 대상에게 적용된 술식 착탄.
+        public event Action<Vector3, Element> EnemyHitResolved;
 
         [Inject]
         public void Construct(SpellResolver resolver, ParryJudge judge, GroggyMeter groggy, InkPool ink)
@@ -138,6 +149,7 @@ namespace Oheangbu.App
             if (_misfired != null) _misfired.Subscribe(OnMisfired);
             if (_inkChanged != null) _inkChanged.Subscribe(OnInkChanged);
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
+            if (_playerVitals != null) _playerVitals.HpChanged += RefreshHud;
             if (_enemyVitals != null) _enemyVitals.Died += OnEnemyDied;
             TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
         }
@@ -148,6 +160,7 @@ namespace Oheangbu.App
             if (_misfired != null) _misfired.Unsubscribe(OnMisfired);
             if (_inkChanged != null) _inkChanged.Unsubscribe(OnInkChanged);
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
+            if (_playerVitals != null) _playerVitals.HpChanged -= RefreshHud;
             if (_enemyVitals != null) _enemyVitals.Died -= OnEnemyDied;
             UnhookServices();
             _pendingCasts.Clear(); // 비활성 동안의 기한 지난 착탄이 재활성 시 유령 피해가 되지 않게
@@ -173,11 +186,12 @@ namespace Oheangbu.App
                 if (Time.time < _pendingCasts[i].ImpactTime) continue;
                 PendingCast pending = _pendingCasts[i];
                 _pendingCasts.RemoveAt(i);
-                if (pending.Target != null && pending.Target.IsAlive)
+                if (pending.Target != null && pending.Target.IsAlive && TargetVisible(pending.Target,pending.Origin))
                 {
                     var point=pending.Target.transform.position+Vector3.up*.8f;
                     bool positive=pending.Power*pending.Target.DamageMultiplier>0;
                     pending.Target.TakeDamage(pending.Power);
+                    if(positive)EnemyHitResolved?.Invoke(point,pending.Element);
                     if(positive&&_contactVfx!=null)SpawnContact(_contactVfx.ParrySource(pending.Element),point,_contactVfx.ParryScale,pending.Element,pending.Letter);
                 }
             }
@@ -189,6 +203,7 @@ namespace Oheangbu.App
             if (_hooked || _groggy == null) return;
             _groggy.Blossomed += OnBlossomed;
             _groggy.Changed += RefreshHud;
+            if (_ink != null) _ink.Gained += OnInkReceived;
             if (_judge != null) _judge.ImpactResolved += OnParryImpactResolved;
             foreach (var controller in _controllers) controller.StunEnded += OnStunEnded;
             _hooked = true;
@@ -199,6 +214,7 @@ namespace Oheangbu.App
             if (!_hooked) return;
             _groggy.Blossomed -= OnBlossomed;
             _groggy.Changed -= RefreshHud;
+            if (_ink != null) _ink.Gained -= OnInkReceived;
             if (_judge != null) _judge.ImpactResolved -= OnParryImpactResolved;
             foreach (var controller in _controllers)
             {
@@ -206,6 +222,8 @@ namespace Oheangbu.App
             }
             _hooked = false;
         }
+
+        private void OnInkReceived(float received) { _hud?.NotifyInkGained(received); }
 
         private void LateUpdate()
         {
@@ -235,7 +253,26 @@ namespace Oheangbu.App
                 case SpellKind.AttackArea:
                     ResolveAttack(cast);
                     break;
+                case SpellKind.Summon:
+                    ResolveSummon(cast);
+                    break;
             }
+        }
+
+        private void ResolveSummon(SpellCast cast)
+        {
+            // 소환도 기존 일반 술식 비용을 한 번만 쓴다. 4.6초는 표현 프리뷰 수명이며 경제 수치가 아니다.
+            if (_ink == null || !_ink.TrySpend(_config.SpellInkCost))
+            {
+                _brushAdapter?.NotifyCastFailed();
+                return;
+            }
+
+            Vector3 origin = PlayerPosition();
+            Vector3 forward = PlayerForward();
+            _brushAdapter?.SetPatternSummonPose(cast.Letter, origin, forward);
+            CastAccepted?.Invoke(cast, origin, forward);
+            SummonAccepted?.Invoke(cast, origin, forward);
         }
 
         private void ResolveParry(SpellCast cast)
@@ -254,6 +291,7 @@ namespace Oheangbu.App
             // ⚠ 어휘 CSV 「허공 시전 잔존 없음」의 전이 실험 — 채택 시 DECISIONS+CSV 정본 반영 필요
             _judge?.RaiseGuard(cast.Element, Time.time);
             if (_judge != null) { _guardVisualLetter = cast.Letter; _guardVisualRevision = _judge.GuardRevision; }
+            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
         }
 
         // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
@@ -335,6 +373,8 @@ namespace Oheangbu.App
                 _brushAdapter?.NotifyCastFailed();
                 return;
             }
+
+            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
 
             // 광역 실판정 [#137 §9-1 해제 · #141 기하 3종]: 형상이 있는 광역은 형상별 판정 — 계획을 만들어
             // 피해(PendingCast)·연출(어댑터→SetAreaPlan)·계측(CastPlanned)에 같은 시계로 준다
@@ -530,7 +570,7 @@ namespace Oheangbu.App
         // 착탄 예약 = 피해 시계(PendingCast) + 계획 기록 — 같은 값 한 번만
         private PlannedHit Schedule(CastPlan plan, EnemyVitals target, float impactTime, float power)
         {
-            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter });
+            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter, Origin=_playerTransform!=null?_playerTransform.position+Vector3.up*.4f:Vector3.zero });
             var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power };
             plan.Hits.Add(hit);
             return hit;
@@ -539,7 +579,17 @@ namespace Oheangbu.App
         private EnemyVitals AimedTarget()
         {
             EnemyVitals target = _lockOn != null ? _lockOn.Target : null;
-            return target != null ? target : FindFreeAimTarget();
+            return target != null && TargetVisible(target,PlayerPosition()+Vector3.up*.4f) ? target : FindFreeAimTarget();
+        }
+
+        private bool TargetVisible(EnemyVitals target,Vector3 origin)
+        {
+            if(!_environmentOcclusion)return true;
+            if(target==null)return false;
+            Vector3 delta=target.transform.position+Vector3.up*.4f-origin;
+            foreach(var hit in Physics.RaycastAll(origin,delta.normalized,delta.magnitude,1,QueryTriggerInteraction.Ignore))
+                if(!hit.transform.IsChildOf(target.transform) && (_playerTransform==null||!hit.transform.IsChildOf(_playerTransform)))return false;
+            return true;
         }
 
         private Vector3 PlayerPosition()
@@ -578,7 +628,7 @@ namespace Oheangbu.App
             float bestAngle = _freeAimAngle;
             foreach (var candidate in _targets)
             {
-                if (candidate == null || !candidate.IsAlive) continue;
+                if (candidate == null || !candidate.IsAlive || !TargetVisible(candidate,origin.position)) continue;
                 Vector3 to = candidate.transform.position - origin.position;
                 if (to.magnitude > _freeAimRange) continue;
                 float angle = Vector3.Angle(origin.forward, to);
@@ -599,7 +649,6 @@ namespace Oheangbu.App
         private void OnPlayerDamaged(float damage)
         {
             _drawingInput?.InterruptLetter();
-            RefreshHud();
             var cam = Camera.main;
             if (damage > 0 && _contactVfx != null && cam != null)
             {

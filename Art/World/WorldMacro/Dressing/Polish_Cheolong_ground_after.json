@@ -1,0 +1,39 @@
+{
+    "label": "Polish_Cheolong_ground_after",
+    "utc": "2026-09-14T02:15:29.8692012Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 421,
+    "residentInstances": 927085,
+    "drawCalls": 107,
+    "drawnInstances": 66780,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -2337.91796875,
+        "y": 122.40118408203125,
+        "z": 200.6104278564453
+    },
+    "euler": {
+        "x": 357.0826110839844,
+        "y": 33.24299240112305,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.5863591432571411,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

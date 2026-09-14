@@ -1,0 +1,20 @@
+{
+    "status": "TECHNICAL_PASS",
+    "command": "validate",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "profile": "Assets/_Project/Art/World/WorldMacro/Playtest/HUD/WorldMacroHudSkinProfile.asset",
+    "profileScriptBound": true,
+    "exactlyOneHud": true,
+    "exactlyOnePresenter": true,
+    "presenterBound": true,
+    "fourSpritesBound": true,
+    "fallbackLocalToPlaytest": true,
+    "legacyPreviewPromptInactive": true,
+    "spritePaths": [
+        "Assets/_Project/Art/World/WorldMacro/Playtest/HUD/Textures/hp_stroke.png",
+        "Assets/_Project/Art/World/WorldMacro/Playtest/HUD/Textures/ink_bottle.png",
+        "Assets/_Project/Art/World/WorldMacro/Playtest/HUD/Textures/lock_ring.png",
+        "Assets/_Project/Art/World/WorldMacro/Playtest/HUD/Textures/prompt_paper.png"
+    ],
+    "failures": []
+}

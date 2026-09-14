@@ -1,0 +1,65 @@
+{
+  "status": "COPIED_EXISTING_TEXTURES",
+  "textures": [
+    {
+      "name": "C02_original_texture.png",
+      "path": "Textures\\C02_original_texture.png",
+      "sha256": "146f6acb6d30310961e862fe1df5eae930bfd6de5e747f386d1cf9811973c032"
+    },
+    {
+      "name": "Image_0.010",
+      "path": "Textures\\Image_0.010.png",
+      "sha256": "229d2246b9d2f911c27a09002e3cfd3098e86941d1dee7a09279cf15f7aecfd0"
+    },
+    {
+      "name": "Image_1.006",
+      "path": "Textures\\Image_1.006.png",
+      "sha256": "5464986c881bf4adaba90d59252fa4f185b067fbc8abaa50b95e612a152246fc"
+    },
+    {
+      "name": "Image_2",
+      "path": "Textures\\Image_2",
+      "sha256": "f2af095f727b40e22b00561ea973ff5a6cfa9d8a42aef15fc32f04f82247445e"
+    },
+    {
+      "name": "Image_2.001",
+      "path": "Textures\\Image_2",
+      "sha256": "f2af095f727b40e22b00561ea973ff5a6cfa9d8a42aef15fc32f04f82247445e"
+    },
+    {
+      "name": "Image_2.010",
+      "path": "Textures\\Image_2.010.png",
+      "sha256": "1e8d27edea92b975c386be7ec21dcdc740f2420eb94dfbdf3dbbcef4b5bd0711"
+    },
+    {
+      "name": "T_DosaBrushV2_BaseColor",
+      "path": "Textures\\T_DosaBrushV2_BaseColor",
+      "sha256": "73351761e38926820d1add71af7b1e20d41384de4b646258e8d5720438f8d224"
+    },
+    {
+      "name": "T_DosaBrushV2_BaseColor.001",
+      "path": "Textures\\T_DosaBrushV2_BaseColor",
+      "sha256": "73351761e38926820d1add71af7b1e20d41384de4b646258e8d5720438f8d224"
+    },
+    {
+      "name": "T_DosaBrushV2_Bristles_BaseColor",
+      "path": "Textures\\T_DosaBrushV2_Bristles_BaseColor.png",
+      "sha256": "3823fe17618f8fd30813fa5691347fd7a9865871ddecbb21917c880fa41c2d56"
+    },
+    {
+      "name": "T_DosaBrushV2_Bristles_BaseColor.001",
+      "path": "Textures\\T_DosaBrushV2_Bristles_BaseColor.png",
+      "sha256": "3823fe17618f8fd30813fa5691347fd7a9865871ddecbb21917c880fa41c2d56"
+    },
+    {
+      "name": "T_DosaBrushV2_Bristles_Normal",
+      "path": "Textures\\T_DosaBrushV2_Bristles_Normal.png",
+      "sha256": "252555e679a209fb22b10d6ef7ae67e912026678d881bbc61db442bf79bb0cd4"
+    },
+    {
+      "name": "T_DosaBrushV2_Bristles_Normal.001",
+      "path": "Textures\\T_DosaBrushV2_Bristles_Normal.png",
+      "sha256": "252555e679a209fb22b10d6ef7ae67e912026678d881bbc61db442bf79bb0cd4"
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+    "utc": "2026-09-11T22:31:48.0133396Z",
+    "view": "seated",
+    "file": "seated.png",
+    "scope": "Composed static camera at actual model sockets; not a live boarding or camera collision test.",
+    "width": 1920,
+    "height": 1080,
+    "commitBefore": 0.6844879984855652,
+    "commitAfter": 0.6848829984664917,
+    "position": {
+        "x": 1990.470703125,
+        "y": 135.40769958496095,
+        "z": 708.2858276367188
+    },
+    "target": {
+        "x": 1989.406494140625,
+        "y": 132.2890167236328,
+        "z": 693.6522827148438
+    },
+    "playing": false,
+    "seatedView": false,
+    "occupied": false,
+    "enginePhase": "OFF",
+    "variants": {
+        "anyCompilingBefore": false,
+        "anyCompilingAfter": false,
+        "checkedPasses": 34,
+        "compiledNow": 0,
+        "passes": [
+            {
+                "material": "Cabin_Surface",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Cabin_Surface",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Cabin_Surface",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Cabin_Surface",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Roof_Surface",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Roof_Surface",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Roof_Surface",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Roof_Surface",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Surface",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Surface",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Surface",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Surface",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Core",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Core",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Core",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Engine_Core",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Support_DarkBrass_Surface",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Support_DarkBrass_Surface",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Support_DarkBrass_Surface",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Support_DarkBrass_Surface",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "MagicStoneLanternGlass_Core",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "MagicStoneLanternGlass_Core",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "MagicStoneLanternGlass_Core",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "MagicStoneLanternGlass_Core",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "DriveVent",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "DriveVent",
+                "pass": "DepthNormalsOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Wheel_Surface",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Wheel_Surface",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Wheel_Surface",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "Wheel_Surface",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "RunningGear_DarkMetal",
+                "pass": "ForwardLit",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "RunningGear_DarkMetal",
+                "pass": "ShadowCaster",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "RunningGear_DarkMetal",
+                "pass": "DepthOnly",
+                "compiledBefore": true,
+                "compiledAfter": true
+            },
+            {
+                "material": "RunningGear_DarkMetal",
+                "pass": "DepthNormals",
+                "compiledBefore": true,
+                "compiledAfter": true
+            }
+        ]
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "utc": "2026-09-13T23:58:48.8754607Z",
+    "status": "PASS",
+    "majorGeography": "Illustration and authored river vectors are visible initially. Roads/trails remain per-cell masked; facilities remain discovered-ID gated.",
+    "evidence": "Editor data checks only; actual visual readability, native map input and output performance require runtime capture.",
+    "tiles": "Five cropped, registered samples of the same generated illustration; crisp local detail comes from authored runtime vectors, not invented texture detail.",
+    "projection": "Unchanged north-up XZ bounds; exact outline alpha from source data. Illustrative mountain symbols are artistic approximations; river/route/marker coordinates remain authoritative.",
+    "issues": []
+}

@@ -1,0 +1,40 @@
+{
+  "utc": "2026-09-13T23:33:03.992442+00:00",
+  "files": [
+    {
+      "source": "Oheangbu/Assets/_Project/Scripts/Data/World/WorldMacroDressingSheetSO.cs",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\WorldMacroDressingSheetSO.cs",
+      "sha256": "28d7a73b3da234f114300bb586fe2776f846c897d02bc393f99a0710b6fc57ab"
+    },
+    {
+      "source": "Oheangbu/Assets/_Project/Scripts/App/World/Dressing/WorldMacroDressingRenderer.cs",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\WorldMacroDressingRenderer.cs",
+      "sha256": "2960f2b8a8d0ab3dfe33bcf786645fa7e208871a6a0fa45281711d285fd2f838"
+    },
+    {
+      "source": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroDressingAuthoring.cs",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\WorldMacroDressingAuthoring.cs",
+      "sha256": "6ac8506c5dbe55aa1626b41bdcd75640284bf78e8d8a0c4b93611510d879e2de"
+    },
+    {
+      "source": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroDressingAssets.cs",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\WorldMacroDressingAssets.cs",
+      "sha256": "19d817c50a7bf690abf7c3910ce37bfe9526a12d6e08529f84668636c6c020aa"
+    },
+    {
+      "source": "Oheangbu/Assets/_Project/Shaders/WorldMacroVegetation.shader",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\WorldMacroVegetation.shader",
+      "sha256": "38a051d64acbb0e421697f4d04b4684ad660957ee44d54d4ee32f8831c25243c"
+    },
+    {
+      "source": "Oheangbu/Assets/_Project/Art/World/WorldMacro/Playtest/VisualCorridor/Dressing_VisualCorridor.asset",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\Dressing_VisualCorridor.asset",
+      "sha256": "20060f0c1ba553bf7acb26276a309d101c2234d4fb590df21a16d7ec4eb6de4d"
+    },
+    {
+      "source": "Oheangbu/Assets/_Project/Art/World/WorldMacro/Dressing/Dressing.asset",
+      "baseline": "Art\\PlaytestPolish\\Vegetation\\Baseline\\Dressing.asset",
+      "sha256": "7b1505cbb06bbd328d5b4910ef2e407db25764d680760cd7b701774674ecb73e"
+    }
+  ]
+}

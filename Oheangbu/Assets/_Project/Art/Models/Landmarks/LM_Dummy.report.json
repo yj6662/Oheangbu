@@ -1,0 +1,138 @@
+{
+ "name": "LM_Dummy",
+ "result": "PASS",
+ "contractVersion": 1,
+ "blender": "5.0.1",
+ "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\Blender\\LM_Dummy.blend",
+ "skirtMin": -0.5,
+ "tris": 192,
+ "checks": [
+  {
+   "id": "render_object",
+   "ok": true,
+   "detail": "LM_<Name> mesh object = LM_Dummy"
+  },
+  {
+   "id": "unit_system",
+   "ok": true,
+   "detail": "system=METRIC scale_length=1.0"
+  },
+  {
+   "id": "collider_object",
+   "ok": true,
+   "detail": "['LM_Dummy_col']"
+  },
+  {
+   "id": "footprint_object",
+   "ok": true,
+   "detail": "LM_Dummy_fp"
+  },
+  {
+   "id": "transform_applied:LM_Dummy",
+   "ok": true,
+   "detail": "scale=(1.0, 1.0, 1.0) rot=(0.0, 0.0, 0.0)"
+  },
+  {
+   "id": "transform_applied:LM_Dummy_col",
+   "ok": true,
+   "detail": "scale=(1.0, 1.0, 1.0) rot=(0.0, 0.0, 0.0)"
+  },
+  {
+   "id": "transform_applied:LM_Dummy_fp",
+   "ok": true,
+   "detail": "scale=(1.0, 1.0, 1.0) rot=(0.0, 0.0, 0.0)"
+  },
+  {
+   "id": "render_tris",
+   "ok": true,
+   "detail": "192 <= 8000"
+  },
+  {
+   "id": "collider_tris",
+   "ok": true,
+   "detail": "12 <= 2000"
+  },
+  {
+   "id": "manifold",
+   "ok": true,
+   "detail": "non-manifold edges = 0"
+  },
+  {
+   "id": "ngon",
+   "ok": true,
+   "detail": "faces with > 4 verts = 0"
+  },
+  {
+   "id": "collider_manifold:LM_Dummy_col",
+   "ok": true,
+   "detail": "non-manifold edges = 0"
+  },
+  {
+   "id": "material_slot",
+   "ok": true,
+   "detail": "slots=['InkWorld_Rock'] (expected 1 of ['InkWorld_Rock', 'InkWorld_Wood'])"
+  },
+  {
+   "id": "no_uv",
+   "ok": true,
+   "detail": "uv_layers=0"
+  },
+  {
+   "id": "no_vertex_color",
+   "ok": true,
+   "detail": "color_attributes=0"
+  },
+  {
+   "id": "skirt",
+   "ok": true,
+   "detail": "min z -0.600 <= -0.500"
+  },
+  {
+   "id": "footprint_loop",
+   "ok": true,
+   "detail": "4 vertices, single closed loop"
+  },
+  {
+   "id": "footprint_planar",
+   "ok": true,
+   "detail": "z mean 0.0000, spread 0.0000"
+  },
+  {
+   "id": "pivot",
+   "ok": true,
+   "detail": "pivot=(0.000, 0.000, 0.000) footprint center=(0.000, 0.000)"
+  },
+  {
+   "id": "pivot_shared:LM_Dummy_col",
+   "ok": true,
+   "detail": "offset 0.0000"
+  },
+  {
+   "id": "pivot_shared:LM_Dummy_fp",
+   "ok": true,
+   "detail": "offset 0.0000"
+  }
+ ],
+ "fbx": "C:\\Users\\yj666\\Oheangbu\\Tools\\Blender\\_out\\LM_Dummy\\LM_Dummy.fbx",
+ "sha256": "88b480251a798bb30f1174910dc9fa99619b9be579dd5f2400d5ccca98eb7ee2",
+ "fbxBytes": 19292,
+ "dimensions_m": [
+  6.2945,
+  4.3534,
+  3.7735
+ ],
+ "fbxOptions": {
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "apply_unit_scale": true,
+  "apply_scale_options": "FBX_SCALE_UNITS",
+  "bake_space_transform": true,
+  "use_mesh_modifiers": true,
+  "mesh_smooth_type": "OFF",
+  "path_mode": "STRIP",
+  "object_types": [
+   "MESH"
+  ],
+  "add_leaf_bones": false
+ }
+}

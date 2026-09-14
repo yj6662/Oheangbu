@@ -1,0 +1,104 @@
+{
+    "utc": "2026-09-14T01:42:19.5683151Z",
+    "baseline": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\Vegetation/Baseline/ShrubLod/Dressing_BeforeShrubCards.asset",
+    "passed": true,
+    "rows": [
+        {
+            "prototype": "Cheongrim_SM_Bush",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_Bush.prefab",
+            "sourceHashBefore": "266635a493fe4da7816c3c54ec71b054",
+            "sourceHashAfter": "266635a493fe4da7816c3c54ec71b054",
+            "atlas": "Assets/_Project/Art/World/WorldMacro/Playtest/VegetationPolish/Billboards/abc00000000007976607041879561395_Shrub4_a541c144320d3871841d16070396a089.png",
+            "trianglesBefore": [
+                40788,
+                40788
+            ],
+            "trianglesAfter": [
+                40788,
+                40788,
+                2
+            ],
+            "sourceLodGroups": 0,
+            "sourceLodLevels": 1,
+            "atlasViews": 4,
+            "nearLevelPreserved": true,
+            "middleLevelPreserved": true,
+            "sourcePreserved": true,
+            "passed": true,
+            "scope": "Original close and middle levels retained. Owned four-view card appended; rendering transitions and GPU cost require separate runtime measurement."
+        },
+        {
+            "prototype": "Hwanggyeong_SM_Bush",
+            "source": "Assets/HwaseongHaenggung/Prefabs/SM_Bush.prefab",
+            "sourceHashBefore": "266635a493fe4da7816c3c54ec71b054",
+            "sourceHashAfter": "266635a493fe4da7816c3c54ec71b054",
+            "atlas": "Assets/_Project/Art/World/WorldMacro/Playtest/VegetationPolish/Billboards/abc00000000007976607041879561395_Shrub4_a541c144320d3871841d16070396a089.png",
+            "trianglesBefore": [
+                40788,
+                40788
+            ],
+            "trianglesAfter": [
+                40788,
+                40788,
+                2
+            ],
+            "sourceLodGroups": 0,
+            "sourceLodLevels": 1,
+            "atlasViews": 4,
+            "nearLevelPreserved": true,
+            "middleLevelPreserved": true,
+            "sourcePreserved": true,
+            "passed": true,
+            "scope": "Original close and middle levels retained. Owned four-view card appended; rendering transitions and GPU cost require separate runtime measurement."
+        },
+        {
+            "prototype": "Jeokro_SM_YMC_Bush_01_Small",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Bush_01_Small.prefab",
+            "sourceHashBefore": "e6caa6c58a3b5f6aaf1d1cdd391bb022",
+            "sourceHashAfter": "e6caa6c58a3b5f6aaf1d1cdd391bb022",
+            "atlas": "Assets/_Project/Art/World/WorldMacro/Playtest/VegetationPolish/Billboards/abc00000000001209417167274145849_Shrub4_6cd2217714cd25e6f1953d328a26ec27.png",
+            "trianglesBefore": [
+                44516,
+                44516
+            ],
+            "trianglesAfter": [
+                44516,
+                44516,
+                2
+            ],
+            "sourceLodGroups": 0,
+            "sourceLodLevels": 1,
+            "atlasViews": 4,
+            "nearLevelPreserved": true,
+            "middleLevelPreserved": true,
+            "sourcePreserved": true,
+            "passed": true,
+            "scope": "Original close and middle levels retained. Owned four-view card appended; rendering transitions and GPU cost require separate runtime measurement."
+        },
+        {
+            "prototype": "Cheolong_SM_YMC_Bush_01_Small",
+            "source": "Assets/YongmeoriCoast/Prefabs/SM_YMC_Bush_01_Small.prefab",
+            "sourceHashBefore": "e6caa6c58a3b5f6aaf1d1cdd391bb022",
+            "sourceHashAfter": "e6caa6c58a3b5f6aaf1d1cdd391bb022",
+            "atlas": "Assets/_Project/Art/World/WorldMacro/Playtest/VegetationPolish/Billboards/abc00000000001209417167274145849_Shrub4_6cd2217714cd25e6f1953d328a26ec27.png",
+            "trianglesBefore": [
+                44516,
+                44516
+            ],
+            "trianglesAfter": [
+                44516,
+                44516,
+                2
+            ],
+            "sourceLodGroups": 0,
+            "sourceLodLevels": 1,
+            "atlasViews": 4,
+            "nearLevelPreserved": true,
+            "middleLevelPreserved": true,
+            "sourcePreserved": true,
+            "passed": true,
+            "scope": "Original close and middle levels retained. Owned four-view card appended; rendering transitions and GPU cost require separate runtime measurement."
+        }
+    ],
+    "scope": "Two original heavy shrub species, four existing regional prototypes. Existing close/middle meshes, IDs, placement, density, source textures retained. Owned four-view cards appended. No terrain regeneration, gameplay, screenshot or build. Runtime transition/color/GPU tests remain unverified."
+}

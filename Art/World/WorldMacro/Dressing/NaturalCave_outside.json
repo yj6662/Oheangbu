@@ -1,0 +1,39 @@
+{
+    "label": "NaturalCave_outside",
+    "utc": "2026-09-14T18:09:54.6025707Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 330,
+    "residentInstances": 197,
+    "drawCalls": 29,
+    "drawnInstances": 410,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 3382.42333984375,
+        "y": 198.67367553710938,
+        "z": 1099.34326171875
+    },
+    "euler": {
+        "x": 358.1602478027344,
+        "y": 329.85894775390627,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.7704421281814575,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

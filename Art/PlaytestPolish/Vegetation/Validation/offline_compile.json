@@ -1,0 +1,38 @@
+{
+  "utc": "2026-09-13T23:56:02.419269+00:00",
+  "status": "PASS",
+  "scope": "Seven scoped C# sources compiled with Unity 6000.3.9 Roslyn and existing Unity reference response file into an isolated diagnostic DLL outside Assets. Not a Unity domain reload, shader compile or player build.",
+  "sources": [
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\Data\\World\\WorldMacroDressingSheetSO.cs",
+      "sha256": "ec3fe54e2789cfe24676dc30d7bb4d36e2762075c485cfd5630b79d343782ae6"
+    },
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\App\\World\\Dressing\\WorldMacroDressingRenderer.cs",
+      "sha256": "7860a1a848b38868f931dad5600b3b15d922f402672cadc8505ed31647c82500"
+    },
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\App\\World\\Dressing\\WorldMacroDressingDense.cs",
+      "sha256": "493f86f28f3ced1b80fc641a54ee904c5702be9d024de02197c8d045e34dcd92"
+    },
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\WorldMacro\\WorldMacroDressingAuthoring.cs",
+      "sha256": "f2e8d4e7bcb2b2c4e05f18479e6019ff0fbf3c27690558828c85733501644344"
+    },
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\WorldMacro\\WorldMacroDressingAssets.cs",
+      "sha256": "ea46b3ffaae4c74dbff02c8533d8d943b464fd0f035118a99746cfbc3115873e"
+    },
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\WorldMacro\\WorldMacroVegetationPolishAssets.cs",
+      "sha256": "6f6071d7abf8402a53b8b6f11b107f3d6231f98a4fae44e43b9fdcce7728d0cc"
+    },
+    {
+      "path": "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\WorldMacro\\WorldMacroVegetationPolish.cs",
+      "sha256": "535c8b82b1f32e1f1b90af6819a1c036248936a8aff15f9728026e0cbe92f694"
+    }
+  ],
+  "unity_runtime": "UNVERIFIED",
+  "shader": "UNVERIFIED",
+  "performance_120fps": "UNVERIFIED"
+}

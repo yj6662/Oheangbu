@@ -11,6 +11,27 @@ namespace Oheangbu.Combat
     // 상태머신 패턴(아키텍처 절대 규칙) — Idle → Telegraph → Impact/Flight → Recover, 별도로 Stunned.
     public sealed class EnemyController : MonoBehaviour
     {
+        public enum AttackMode { LegacyDistance, MeleeOnly, RangedOnly }
+        [SerializeField] private AttackMode _attackMode;
+        [SerializeField] private bool _environmentOcclusion;
+        public bool AttackEnabled {get;set;} = true;
+        public bool AttackInProgress => _state != State.Idle && _state != State.Dead;
+        public bool IsStunned => _state == State.Stunned;
+        public void ResetEncounter() { CancelAttack(); _vitals?.Restore(); _parriedFlashUntil=0; EnterIdle(); }
+        public void StopAttack() { if(_state!=State.Dead && _state!=State.Stunned){CancelAttack();EnterIdle();} }
+        public bool HasLineOfSight()
+        {
+            if(!_environmentOcclusion)return true;
+            if(_player==null)return false;
+            Vector3 a=transform.position+Vector3.up*.4f,b=_player.position+Vector3.up*.4f;
+            return !Obstructed(a,b);
+        }
+        bool Obstructed(Vector3 a,Vector3 b)
+        {
+            var hits=Physics.RaycastAll(a,(b-a).normalized,(b-a).magnitude,~0,QueryTriggerInteraction.Ignore);
+            foreach(var hit in hits) if(!hit.transform.IsChildOf(transform) && !hit.transform.IsChildOf(_player))return true;
+            return false;
+        }
         private enum State { Idle, Telegraph, Flight, Recover, Stunned, Dead }
         private enum Pattern { Melee, Ranged }
 
@@ -111,7 +132,8 @@ namespace Oheangbu.Combat
             {
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
-                    if (_cooldown <= 0f && Distance() <= _config.EnemyEngageRange) BeginTelegraph();
+                    float range = _attackMode==AttackMode.MeleeOnly ? _config.MeleeRange : _config.EnemyEngageRange;
+                    if (AttackEnabled && _cooldown <= 0f && Distance() <= range && HasLineOfSight()) BeginTelegraph();
                     break;
 
                 case State.Telegraph:
@@ -151,7 +173,7 @@ namespace Oheangbu.Combat
 
         private void BeginTelegraph()
         {
-            _pattern = Distance() <= _config.EnemyMeleePreferRange ? Pattern.Melee : Pattern.Ranged;
+            _pattern = _attackMode==AttackMode.MeleeOnly ? Pattern.Melee : _attackMode==AttackMode.RangedOnly ? Pattern.Ranged : Distance() <= _config.EnemyMeleePreferRange ? Pattern.Melee : Pattern.Ranged;
             float duration = _pattern == Pattern.Melee ? _config.MeleeTelegraph : _config.RangedTelegraph;
             _state = State.Telegraph;
             _stateUntil = Time.time + duration;
@@ -173,7 +195,7 @@ namespace Oheangbu.Combat
             if (_pattern == Pattern.Melee)
             {
                 // 근접 임팩트 즉발 — 무적(회피) 판정은 PlayerVitals가 안다
-                if (Distance() <= _config.MeleeRange) _playerVitals?.TakeDamage(_config.MeleeDamage);
+                if (AttackEnabled && Distance() <= _config.MeleeRange && HasLineOfSight()) _playerVitals?.TakeDamage(_config.MeleeDamage);
                 EnterRecover();
             }
             else
@@ -187,6 +209,7 @@ namespace Oheangbu.Combat
 
         private void TickProjectile()
         {
+            if(_environmentOcclusion && (!AttackEnabled || !HasLineOfSight())) {FinishProjectile();return;}
             float remain = _impactTime - Time.time;
             float t = Mathf.Clamp01(1f - remain / Mathf.Max(_config.ProjectileFlight, 0.01f));
             _projectile.position = Vector3.Lerp(_projectileStart, _player.position, t);
@@ -242,7 +265,7 @@ namespace Oheangbu.Combat
 
         private void CancelAttack()
         {
-            _projectile.gameObject.SetActive(false);
+            if(_projectile!=null)_projectile.gameObject.SetActive(false);
         }
 
         private void EnterRecover()

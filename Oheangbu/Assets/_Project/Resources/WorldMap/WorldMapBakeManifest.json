@@ -1,0 +1,20 @@
+{
+    "version": 3,
+    "revision": "20260911:macro-first-section-2",
+    "projection": "north-up XZ; u=(x-minX)/(maxX-minX), v=(z-minZ)/(maxZ-minZ)",
+    "discovery": "32m outline-clipped cells; 96m reveal radius",
+    "routePolicy": "crisp runtime vector rivers/routes; actual surface MainPath replaces macro mine routes; cave detail uses the authored walkable floor and ramp mesh footprints",
+    "ownedAssets": [
+        "Assets/_Project/Resources/WorldMap/WorldMapBase.png",
+        "Assets/_Project/Resources/WorldMap/WorldMapBakedData.asset",
+        "Assets/_Project/Resources/WorldMap/WorldMapBakeManifest.json"
+    ],
+    "inputs": [
+        "Assets/_Project/Art/World/WorldMacro/WorldMacroSheet.asset",
+        "Assets/_Project/Art/World/WorldMacro/Playtest/Playtest.asset",
+        "Assets/_Project/Art/World/WorldMacro/Landmarks/Landmarks.asset",
+        "Assets/_Project/Art/World/WorldMacro/Playtest/VisualCorridor/VisualCorridor.asset",
+        "Assets/_Project/Art/World/WorldMacro/Landmarks/Prefabs/Cave.prefab",
+        "Assets/_Project/Art/World/WorldMacro/Playtest/PolishMeshes/Cave_Ramp_Closed.asset"
+    ]
+}

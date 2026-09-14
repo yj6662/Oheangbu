@@ -18,6 +18,10 @@ namespace Oheangbu.Combat
         public event Action HpChanged;
 
         public float Hp01 => _config != null && _config.PlayerMaxHp > 0f ? _hp / _config.PlayerMaxHp : 0f;
+        public void Restore(float fraction = 1f)
+        { _hp = (_config != null ? _config.PlayerMaxHp : 100f) * Mathf.Clamp01(fraction); HpChanged?.Invoke(); }
+        public void ApplyFatalFall()
+        { if(_hp<=0)return; _hp=0; HpChanged?.Invoke(); Died?.Invoke(); }
 
         private void Awake()
         {

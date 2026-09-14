@@ -1,0 +1,10 @@
+{
+    "status": "PASS_PURE_MATH_ONLY",
+    "scope": "Pure presentation rotation checks. No scene/Animator/input mutation; not actual grip or naturalness approval.",
+    "axisCases": 147,
+    "fingerCycles": 100,
+    "maximumAxisError": 6.194296133799071e-7,
+    "maximumFingerReturnDegrees": 0.0,
+    "invalidQuaternionRejected": true,
+    "zeroAxisFinite": true
+}

@@ -1,0 +1,17 @@
+{
+    "meaning": "Editor synchronous Camera.Render CPU duration, representative view, 1080p; excludes gameplay. Not GPU frame time or standalone FPS. Unity allocated memory includes Editor caches; system commit is all processes.",
+    "rows": [
+        {
+            "scene": "Assets/_Project/Scenes/World/W_Cheongrim_Prologue.unity",
+            "status": "SAMPLED",
+            "width": 1920,
+            "height": 1080,
+            "samples": 24,
+            "cameraRenderCpuMs": 1.8720583333333334,
+            "unityAllocatedBytes": 2929499917,
+            "systemCommit": 0.8365251421928406,
+            "sampledBatches": 232,
+            "sampledTriangles": 3908510
+        }
+    ]
+}

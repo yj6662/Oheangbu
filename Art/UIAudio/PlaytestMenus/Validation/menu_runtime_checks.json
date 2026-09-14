@@ -1,0 +1,179 @@
+{
+    "utc": "2026-09-13T18:35:43.5212245Z",
+    "status": "PASS",
+    "scope": "Editor Play Mode technical QA using injected Input System keyboard state. It is not native handwriting, natural walking, controller/device, listening, or user approval evidence.",
+    "inputEvidence": "synthetic InputSystem.QueueStateEvent keyboard events",
+    "saveIsolationSuffix": "_menu20260914",
+    "elapsedFrames": 229,
+    "collectionEvents": 5,
+    "uniqueBundlesCollected": 5,
+    "fragmentItemsCollected": 20,
+    "knownSpellLetters": 20,
+    "productionSlotUntouchedByContract": true,
+    "before": {
+        "frame": 16156,
+        "width": 1920,
+        "height": 1080,
+        "totalAllocatedBytes": 4078493796,
+        "reservedBytes": 5297041408,
+        "monoHeapBytes": 2283388928,
+        "systemMemoryMb": 32373,
+        "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+        "page": "",
+        "gateBlocked": false,
+        "applicationFocused": true,
+        "gateReleasePending": false,
+        "gateFocusOwnsBlock": false,
+        "gateNeutralFrames": 0,
+        "pauseActive": false,
+        "drawing": false,
+        "vehicleOccupied": false,
+        "timeScale": 1.0,
+        "playerHp01": 1.0,
+        "hudInk01": 1.0,
+        "collectedBundles": 5,
+        "collectedFragments": 20
+    },
+    "after": {
+        "frame": 16385,
+        "width": 1920,
+        "height": 1080,
+        "totalAllocatedBytes": 4079352943,
+        "reservedBytes": 5297041408,
+        "monoHeapBytes": 2283388928,
+        "systemMemoryMb": 32373,
+        "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+        "page": "",
+        "gateBlocked": false,
+        "applicationFocused": true,
+        "gateReleasePending": false,
+        "gateFocusOwnsBlock": false,
+        "gateNeutralFrames": 0,
+        "pauseActive": false,
+        "drawing": false,
+        "vehicleOccupied": false,
+        "timeScale": 1.0,
+        "playerHp01": 1.0,
+        "hudInk01": 1.0,
+        "collectedBundles": 5,
+        "collectedFragments": 20
+    },
+    "checks": [
+        {
+            "id": "isolated-save-slot",
+            "status": "PASS",
+            "detail": "running suffix=_menu20260914"
+        },
+        {
+            "id": "save-slot-primary-inspection",
+            "status": "PASS",
+            "detail": "C:\\Users\\yj666\\AppData\\Local\\Temp\\OheangbuMenuReview-1eaafb79411e452da966b0575d3a2b8d\\review-slot.json"
+        },
+        {
+            "id": "save-slot-corrupt-primary-recovers-backup",
+            "status": "PASS",
+            "detail": "backup"
+        },
+        {
+            "id": "save-slot-new-game-archives-all-artifacts",
+            "status": "PASS",
+            "detail": "C:\\Users\\yj666\\AppData\\Local\\Temp\\OheangbuMenuReview-1eaafb79411e452da966b0575d3a2b8d\\review-slot.archive-20260913-183542-384"
+        },
+        {
+            "id": "pause-opens-through-menu-action",
+            "status": "PASS",
+            "detail": "page=일시정지"
+        },
+        {
+            "id": "unfinished-draw-cancelled",
+            "status": "PASS",
+            "detail": "committedEvents=0, diagnosedEvents=0"
+        },
+        {
+            "id": "pause-blocks-gameplay",
+            "status": "PASS",
+            "detail": "gate=True, timeScale=0"
+        },
+        {
+            "id": "blocked-w-f-q-have-no-gameplay-effect",
+            "status": "PASS",
+            "detail": "drawing=False, distance=0"
+        },
+        {
+            "id": "closing-key-does-not-resume-same-frame",
+            "status": "PASS",
+            "detail": "gate=True, releasePending=True"
+        },
+        {
+            "id": "map-open-fold-duration",
+            "status": "PASS",
+            "detail": "waited>=0.45s unscaled"
+        },
+        {
+            "id": "map-close-keeps-pause-during-fold",
+            "status": "PASS",
+            "detail": "sampleAt=0.123s"
+        },
+        {
+            "id": "map-close-finishes-before-input-resume",
+            "status": "PASS",
+            "detail": "foldElapsed=0.255s; neutralComplete=true"
+        },
+        {
+            "id": "bundle-capital-fires-once",
+            "status": "PASS",
+            "detail": "collectionEvents=1"
+        },
+        {
+            "id": "bundle-exit-fires-once",
+            "status": "PASS",
+            "detail": "collectionEvents=2"
+        },
+        {
+            "id": "bundle-inn-fires-once",
+            "status": "PASS",
+            "detail": "collectionEvents=3"
+        },
+        {
+            "id": "duplicate-f-near-inn-opens-legitimate-interaction",
+            "status": "PASS",
+            "detail": "page=상세, interaction is separate from the already-collected bundle"
+        },
+        {
+            "id": "legitimate-interaction-closes-through-escape",
+            "status": "PASS",
+            "detail": "page cleared; closing Escape remains gated until neutral"
+        },
+        {
+            "id": "bundle-pass-fires-once",
+            "status": "PASS",
+            "detail": "collectionEvents=4"
+        },
+        {
+            "id": "bundle-start-fires-once",
+            "status": "PASS",
+            "detail": "collectionEvents=5"
+        },
+        {
+            "id": "five-bundles-and-twenty-fragments",
+            "status": "PASS",
+            "detail": "events=5, bundles=5, fragments=20, letters=20"
+        },
+        {
+            "id": "player-hp-and-ink-unchanged",
+            "status": "PASS",
+            "detail": "hp=1.000, ink=1.000"
+        },
+        {
+            "id": "review-state-restored-to-isolated-slot",
+            "status": "PASS",
+            "detail": "saved=True, ui=True, pose=True, pageCleared=True"
+        }
+    ],
+    "failures": [],
+    "unverified": [
+        "Vehicle occupancy pause behavior: no occupied vehicle fixture was forced.",
+        "Native keyboard/mouse/controller device input.",
+        "Manual handwriting and human visual/audio approval."
+    ]
+}

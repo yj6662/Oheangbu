@@ -1,0 +1,56 @@
+{
+    "utc": "2026-09-13T18:54:17.9276767Z",
+    "status": "PASS",
+    "scope": "Analytical CanvasScaler and runtime adaptive-panel fit at four target resolutions plus actual active uGUI Text preferred-size checks for each diagnostic page. No Game View resolution was changed.",
+    "mode": "UNPERSISTED_PREVIEW UiScale=1.20 TextScale=1.25; reverted in finally",
+    "uiScale": 1.2000000476837159,
+    "textScale": 1.25,
+    "actualCanvasRect": "(x:-800.00, y:-450.00, width:1600.00, height:900.00)",
+    "samples": [
+        {
+            "resolution": "1280x720",
+            "logicalWidth": 1599.9998779296875,
+            "logicalHeight": 899.9999389648438,
+            "runtimeFrameScale": 0.9288887977600098,
+            "runtimeTitleScale": 0.9181415438652039,
+            "fixedPanelsFit": true
+        },
+        {
+            "resolution": "1920x1080",
+            "logicalWidth": 1599.9998779296875,
+            "logicalHeight": 899.9999389648438,
+            "runtimeFrameScale": 0.9288887977600098,
+            "runtimeTitleScale": 0.9181415438652039,
+            "fixedPanelsFit": true
+        },
+        {
+            "resolution": "2560x1440",
+            "logicalWidth": 1599.9998779296875,
+            "logicalHeight": 899.9999389648438,
+            "runtimeFrameScale": 0.9288887977600098,
+            "runtimeTitleScale": 0.9181415438652039,
+            "fixedPanelsFit": true
+        },
+        {
+            "resolution": "3440x1440",
+            "logicalWidth": 1854.7236328125,
+            "logicalHeight": 776.3959350585938,
+            "runtimeFrameScale": 0.7915510535240173,
+            "runtimeTitleScale": 0.7814114093780518,
+            "fixedPanelsFit": true
+        }
+    ],
+    "inspectedPages": [
+        "일시정지",
+        "소지품",
+        "기록",
+        "술식 도감",
+        "차패",
+        "옵션/화면",
+        "옵션/소리",
+        "옵션/조작",
+        "옵션/접근성"
+    ],
+    "textOverflows": [],
+    "failures": []
+}

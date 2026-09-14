@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 863d2e8b547548e4686b3c2fd1775ef7, type: 3}
+  m_Name: PlayerVisual_DosaV2_PlayableDraft
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.PlayerVisualProfileSO
+  Controller: {fileID: 22100000, guid: 2d5376d42cbac9e49907f59d98369247, type: 2}
+  ModelHeight: 1.75
+  WalkClipSpeed: 1.6
+  RunClipSpeed: 4.5
+  WalkSourceSpeeds: {x: 1.3236568, y: 1.0345914, z: 1.1931835, w: 1.3375752}
+  RunSourceSpeeds: {x: 4.0614147, y: 1.9534202, z: 1.984207, w: 2.303079}
+  MotionDamping: 12
+  FeetWeight: 0.8
+  MaxPelvisLowering: 0.25
+  FootRayUp: 0.28
+  FootRayDown: 0.5
+  FootSoleOffset: 0.005
+  MaxFootCorrection: 0.14
+  FootContactHeight: 0.075
+  GroundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  NearRootCameraOffset: {x: 0, y: -1.45, z: -0.05}
+  RestTipViewport: {x: 0.72, y: 0.32}
+  RestTipDepth: 1.05
+  NearClipPlane: 0.01
+  RelaxedBrushCarry: 1
+  CarryWristOffset: {x: 0.08, y: -0.44, z: 0.035}
+  CarryBrushDirection: {x: 0.16, y: -0.72, z: 0.68}
+  CarryElbowPole: {x: 0.12, y: -0.2, z: -0.12}
+  CarryBrushRoll: -90
+  CarryGaitInfluence: 0.2
+  CarryMaximumSwing: 0.045

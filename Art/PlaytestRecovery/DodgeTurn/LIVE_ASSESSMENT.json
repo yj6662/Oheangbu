@@ -1,0 +1,749 @@
+{
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestRecovery\\DodgeTurn\\Live\\20260914-110803\\live_input.json",
+  "status": "RECORDED_REQUIRES_ASSESSMENT",
+  "error": "",
+  "restored": true,
+  "phases": {
+    "settle": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        0,
+        0
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        210.0,
+        210.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "look45": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        0,
+        0
+      ],
+      "lookRange": [
+        45.0,
+        45.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        255.0,
+        255.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "hold45": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        0,
+        0
+      ],
+      "lookRange": [
+        45.0,
+        45.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        255.0,
+        255.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "look89": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        0,
+        0
+      ],
+      "lookRange": [
+        45.0,
+        89.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        255.0,
+        299.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "hold89": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        0,
+        0
+      ],
+      "lookRange": [
+        89.0,
+        89.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        299.0,
+        299.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "look100": {
+      "states": [
+        "Locomotion",
+        "TurnRight"
+      ],
+      "turnSerial": [
+        0,
+        1
+      ],
+      "lookRange": [
+        10.0,
+        90.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        300.0
+      ],
+      "yawRange": [
+        299.0,
+        310.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.5319409645316449
+    },
+    "turn_right": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        1,
+        1
+      ],
+      "lookRange": [
+        10.0,
+        10.0
+      ],
+      "bodyYawRange": [
+        300.0,
+        300.0
+      ],
+      "yawRange": [
+        310.0,
+        310.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "hold100": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        1,
+        1
+      ],
+      "lookRange": [
+        10.0,
+        10.0
+      ],
+      "bodyYawRange": [
+        300.0,
+        300.0
+      ],
+      "yawRange": [
+        310.0,
+        310.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "look_left": {
+      "states": [
+        "Locomotion",
+        "TurnLeft"
+      ],
+      "turnSerial": [
+        1,
+        2
+      ],
+      "lookRange": [
+        -90.0,
+        10.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        300.0
+      ],
+      "yawRange": [
+        190.0,
+        310.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.5319409645316449
+    },
+    "turn_left": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        -20.0,
+        -20.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "idle": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        -20.0,
+        -20.0
+      ],
+      "bodyYawRange": [
+        210.0,
+        210.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "dodge_forward": {
+      "states": [
+        "Locomotion",
+        "Dodge",
+        "65125873"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        -20.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        190.0,
+        210.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 13,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 3.1433464922284844,
+      "leftFootDisplacement": 3.1221913590768655
+    },
+    "dodge_back": {
+      "states": [
+        "Locomotion",
+        "Dodge"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        190.0,
+        190.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 9,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 2.981228865242664,
+      "leftFootDisplacement": 2.981228865242664
+    },
+    "dodge_left": {
+      "states": [
+        "Locomotion",
+        "Dodge"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        190.0,
+        190.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 10,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 2.978117481574448,
+      "leftFootDisplacement": 2.978117481574448
+    },
+    "dodge_right": {
+      "states": [
+        "Locomotion",
+        "Dodge"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        190.0,
+        190.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 13,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 3.018756505512944,
+      "leftFootDisplacement": 3.018756505512944
+    },
+    "crouch": {
+      "states": [
+        "Locomotion",
+        "Crouch"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        190.0,
+        190.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.3530497830726577
+    },
+    "roll_forward": {
+      "states": [
+        "Crouch",
+        "CrouchRoll"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        -170.0,
+        190.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 53,
+      "dodgeSamples": 53,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 3.051107901988065,
+      "leftFootDisplacement": 3.051107901988065
+    },
+    "crouch_hold": {
+      "states": [
+        "Crouch"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        0.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        -170.0,
+        -170.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "roll_right": {
+      "states": [
+        "Crouch",
+        "CrouchRoll"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        -90.0,
+        0.0
+      ],
+      "bodyYawRange": [
+        -170.0,
+        -80.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 49,
+      "dodgeSamples": 49,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 3.0475156575122258,
+      "leftFootDisplacement": 3.2418904455672672
+    },
+    "crouch_return": {
+      "states": [
+        "Crouch"
+      ],
+      "turnSerial": [
+        2,
+        2
+      ],
+      "lookRange": [
+        -90.0,
+        -90.0
+      ],
+      "bodyYawRange": [
+        -80.0,
+        -80.0
+      ],
+      "yawRange": [
+        190.0,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "crouch_look": {
+      "states": [
+        "Crouch",
+        "CrouchTurnRight"
+      ],
+      "turnSerial": [
+        2,
+        3
+      ],
+      "lookRange": [
+        -90.0,
+        90.0
+      ],
+      "bodyYawRange": [
+        -80.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        190.0
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.26262351831184316
+    },
+    "crouch_turn": {
+      "states": [
+        "Crouch"
+      ],
+      "turnSerial": [
+        3,
+        3
+      ],
+      "lookRange": [
+        20.000003814697266,
+        20.000003814697266
+      ],
+      "bodyYawRange": [
+        10.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        30.000003814697266
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": true,
+      "heightEnd": 1.25,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "stand": {
+      "states": [
+        "Crouch",
+        "Locomotion"
+      ],
+      "turnSerial": [
+        3,
+        3
+      ],
+      "lookRange": [
+        20.000003814697266,
+        20.000003814697266
+      ],
+      "bodyYawRange": [
+        10.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        30.000003814697266
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.3530497830726577
+    },
+    "pause_open": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        3,
+        3
+      ],
+      "lookRange": [
+        20.000003814697266,
+        20.000003814697266
+      ],
+      "bodyYawRange": [
+        10.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        30.000003814697266
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "pause_inputs": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        3,
+        3
+      ],
+      "lookRange": [
+        20.000003814697266,
+        20.000003814697266
+      ],
+      "bodyYawRange": [
+        10.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        30.000003814697266
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "pause_close": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        3,
+        3
+      ],
+      "lookRange": [
+        20.000003814697266,
+        20.000003814697266
+      ],
+      "bodyYawRange": [
+        10.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        30.000003814697266
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    },
+    "after_menu": {
+      "states": [
+        "Locomotion"
+      ],
+      "turnSerial": [
+        3,
+        3
+      ],
+      "lookRange": [
+        20.000003814697266,
+        20.000003814697266
+      ],
+      "bodyYawRange": [
+        10.0,
+        10.0
+      ],
+      "yawRange": [
+        30.000003814697266,
+        30.000003814697266
+      ],
+      "rollSamples": 0,
+      "dodgeSamples": 0,
+      "crouchEnd": false,
+      "heightEnd": 1.75,
+      "displacement": 0.0,
+      "leftFootDisplacement": 0.0
+    }
+  }
+}

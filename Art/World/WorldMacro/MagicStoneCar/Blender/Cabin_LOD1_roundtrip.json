@@ -1,0 +1,158 @@
+{
+  "lod": 1,
+  "targetTriangles": 8000,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Cabin_LOD1.fbx",
+  "fbxSha256": "21f236a2364440b8c21b3271957de85f387ca8a4cddcff583aedc9b495d16254",
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Cabin_LOD1.blend",
+  "normalization": {
+    "yawBlenderDegrees": 90.0,
+    "fitMode": "uniform",
+    "axisFactors": [
+      1.3911791189174147,
+      1.3911791189174147,
+      1.3911791189174147
+    ],
+    "targetEnvelopeUnity": [
+      1.8,
+      1.9,
+      2.9
+    ],
+    "actual": {
+      "vertices": 6654,
+      "triangles": 13690,
+      "size_unity_m": {
+        "x": 1.720513105392456,
+        "y": 1.899999976158142,
+        "z": 2.6487367153167725
+      },
+      "bounds_blender": {
+        "minimum": [
+          -0.860256552696228,
+          -1.3243683576583862,
+          0.0
+        ],
+        "maximum": [
+          0.860256552696228,
+          1.3243683576583862,
+          1.899999976158142
+        ]
+      },
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Cabin_Surface"
+      ],
+      "nonfinite_vertices": 0
+    },
+    "localEdit": {
+      "frontOpeningFacesRemoved": 648,
+      "cutEdgeNeedleFacesRemoved": 0,
+      "reason": "Open actual forward seated sightline; preserve side lattice, sill, top beam and outer uprights"
+    }
+  },
+  "simplification": {
+    "before": 13040,
+    "target": 8000,
+    "actual": 7873,
+    "maxBoundsDriftM": 0.0027571916580200195
+  },
+  "beforeExport": {
+    "triangles": 7873,
+    "vertices": 3790,
+    "meshCount": 1,
+    "materials": [
+      "Cabin_Surface"
+    ],
+    "uvLayers": {
+      "MagicStoneCar_Cabin": 1
+    },
+    "nonfinite": 0,
+    "boundsBlender": {
+      "minimum": [
+        -0.8577054142951965,
+        -1.3240994215011597,
+        0.0007068412378430367
+      ],
+      "maximum": [
+        0.8587155342102051,
+        1.3216111660003662,
+        1.899999976158142
+      ]
+    },
+    "actualBounds": {
+      "center": {
+        "x": 0.0005050599575042725,
+        "y": 0.9503533840179443,
+        "z": 0.0012441277503967285
+      },
+      "size": {
+        "x": 1.7164209485054016,
+        "y": 1.899293134920299,
+        "z": 2.645710587501526
+      }
+    }
+  },
+  "images": [],
+  "roundtrip": {
+    "status": "PASS_GEOMETRY",
+    "boundsErrorM": 3.5762786865234375e-07,
+    "uvPresent": true,
+    "actual": {
+      "triangles": 7873,
+      "vertices": 3790,
+      "meshCount": 1,
+      "materials": [
+        "Cabin_Surface"
+      ],
+      "uvLayers": {
+        "MagicStoneCar_Cabin": 1
+      },
+      "nonfinite": 0,
+      "boundsBlender": {
+        "minimum": [
+          -0.8577054142951965,
+          -1.3240994215011597,
+          0.0007066259277053177
+        ],
+        "maximum": [
+          0.8587155342102051,
+          1.3216115236282349,
+          1.9000002145767212
+        ]
+      },
+      "actualBounds": {
+        "center": {
+          "x": 0.0005050599575042725,
+          "y": 0.9503534436225891,
+          "z": 0.0012439489364624023
+        },
+        "size": {
+          "x": 1.7164209485054016,
+          "y": 1.8992935886490159,
+          "z": 2.6457109451293945
+        }
+      }
+    },
+    "importedObjects": [
+      {
+        "name": "MagicStoneCar_Cabin",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

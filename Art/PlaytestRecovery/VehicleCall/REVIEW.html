@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>오행부 · 자동차 호출</title>
+<style>
+body{margin:0;background:#171c1b;color:#e7e0cc;font:17px/1.8 system-ui,sans-serif}main{max-width:1250px;margin:auto;padding:48px 24px}h1{font-size:38px;margin:0}h2{margin-top:44px;color:#cab687}p{max-width:960px}small{color:#aaa99b}kbd{background:#c4a668;color:#191a15;border-radius:5px;padding:4px 13px;font:bold 22px system-ui}figure{margin:26px 0;background:#232a27;padding:12px;border:1px solid #41473e}img{width:100%;height:auto;display:block}figcaption{padding:10px 4px}a{color:#ccb984}strong{color:#eac181}.rules{display:flex;gap:18px;flex-wrap:wrap}.rules div{padding:20px;background:#28312d;border-left:3px solid #b79d68;flex:1;min-width:230px}.note{border:1px solid #a07850;padding:18px}
+</style>
+<main><small>오행부 / 2026.09.15 / 플레이테스트</small><h1>오행부를 꺼내 자동차 부르기</h1>
+<p><kbd>G</kbd>로 임시 오행부를 꺼내 조작하고 집어넣습니다. 관청 의뢰를 확인한 뒤 큰길에서 호출하고, <kbd>E</kbd>로 탑승하세요.</p>
+<div class="rules"><div><b>1.8초 손동작</b><br>약 0.94초의 조작 순간에 호출<br>세계 시간은 계속 흐릅니다.</div><div><b>하차 후 30m</b><br>2초 유예 후 바깥에서 0.75초 유지하면 회수합니다.</div><div><b>자동차 한 대 유지</b><br>회수 후 G로 다시 호출<br>기존 운전·차량 시점 유지</div></div>
+<h2>조작과 복귀</h2>
+<figure><img src="operate.png" alt="가슴 앞에서 임시 오행부를 조작하는 외부 시점"><figcaption>조작 중 · 외부 시점. 다섯 소켓의 앞면은 캐릭터를 향하며 이 구도에는 뒷면이 보입니다.</figcaption></figure>
+<figure><img src="operate-shoulder.png" alt="오른쪽에서 오행부를 조작하는 숄더 시점"><figcaption>숄더 시점 · 플레이 카메라 위치를 사용했습니다. 오행부가 일부 몸에 가려지는 현재 구도도 그대로 남겼습니다.</figcaption></figure>
+<figure><img src="stow.png" alt="자동차 호출 이후 오행부를 허리로 내리는 모습"><figcaption>호출 후 집어넣는 중간 자세 · 배경에 호출된 자동차가 보입니다. 동작 종료 시 소품은 숨겨지고 기존 붓 자세로 돌아갑니다.</figcaption></figure>
+<p class="note"><strong>임시 외형입니다.</strong> 판은 2,200 tris·3재질이며 기존 골격의 절차 IK 동작을 사용합니다. 손가락과 판 일부 겹침 및 소매 접촉은 후속 보정이 필요합니다. 최종 파지 품질 승인을 대신하지 않습니다.</p>
+<h2>실행 검사</h2><p>Unity Play에서 가상 G를 실제 InputSystem 갱신에 전달했습니다. 호출·입력 차단·메뉴 및 피격 취소·승하차·거리 회수·동일 차량 재호출을 포함한 <b>26항목 통과</b>, 최종 외형 변경 후 동작 7항목도 재확인했습니다.</p>
+<p>거리 검사는 제한된 진단 위치 이동으로 진행했습니다. 사람의 직접 보행, 포커스 상실·사망 취소, 정확한 30m 경계 왕복은 미검증입니다. 회수 상태의 앱 재실행 영속화는 이번에 추가하지 않았습니다.</p>
+<p><a href="REPORT.md">기술 보고서·잔여 문제</a> · <a href="runtime_checks.json">통합 검사 26항목</a> · <a href="visual_checks.json">최종 표시 검사</a></p>
+<small>1920×1080 순차 정지 렌더 / HUD 제외 / 새 빌드·영상 없음 / 기존 씬과 이전 외형 자료 보존</small></main></html>

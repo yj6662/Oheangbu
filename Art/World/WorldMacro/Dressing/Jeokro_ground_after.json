@@ -1,0 +1,38 @@
+{
+    "label": "Jeokro_ground_after",
+    "utc": "2026-09-11T22:24:23.4189584Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 464,
+    "residentInstances": 42364,
+    "drawCalls": 22,
+    "drawnInstances": 4799,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -479.90155029296877,
+        "y": 40.90614700317383,
+        "z": -3665.395751953125
+    },
+    "euler": {
+        "x": 359.311767578125,
+        "y": 32.96052169799805,
+        "z": 2.6682350551254787e-8
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.7587536573410034,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

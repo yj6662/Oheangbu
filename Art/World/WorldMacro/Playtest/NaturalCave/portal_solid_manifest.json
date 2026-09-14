@@ -1,0 +1,9 @@
+{
+  "method": "original terrain height field minus authored cave air; marching tetrahedra",
+  "step_metres": 1,
+  "vertices": 82219,
+  "triangles": 163028,
+  "source_height_min": -1.138458251953125,
+  "source_height_max": 77.1876220703125,
+  "seconds": 1.8987398147583008
+}

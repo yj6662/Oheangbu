@@ -26,6 +26,7 @@ namespace Oheangbu.EditorTools
         public const string ParryRangeScenePath = "Assets/_Project/Scenes/Dev/C1_ParryRange.unity";
         public const string SpellRangeScenePath = "Assets/_Project/Scenes/Dev/C1_SpellRange.unity";
         public const string CombatLoopScenePath = "Assets/_Project/Scenes/Dev/C1_CombatLoop.unity";
+        public const string WorldLookdevScenePath = "Assets/_Project/Scenes/Dev/C1_WorldLookdev.unity";
         public const string DefaultConfigPath = "Assets/_Project/Data/Configs/CombatConfig_Default.asset";
         public const string RangeDummyConfigPath = "Assets/_Project/Data/Configs/CombatConfig_RangeDummy.asset";
         public const string ParryRangeConfigPath = "Assets/_Project/Data/Configs/CombatConfig_ParryRange.asset";
@@ -66,6 +67,22 @@ namespace Oheangbu.EditorTools
             material.SetFloat("_Smoothness", 0.1f);
             material.SetColor("_EmissionColor", Color.black);
             material.DisableKeyword("_EMISSION");
+            AssetDatabase.CreateAsset(material, path);
+            return material;
+        }
+
+        // 프로젝트 셰이더 재질 — 없을 때만 만들고 configure를 1회 적용(튜닝값은 재질이 든다 — 코드가 덮지 않는다).
+        // 월드 룩 재질은 색 프로퍼티가 없다(색 = _Oh* 전역, SPEC-SPIKE-WORLD-LOOKDEV §5-8)
+        public static Material EnsureMaterial(string fileName, string shaderName, System.Action<Material> configure)
+        {
+            string path = $"{MaterialFolder}/{fileName}.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material != null) return material;
+            var shader = Shader.Find(shaderName);
+            if (shader == null) throw new System.InvalidOperationException($"셰이더 없음: {shaderName}");
+            EnsureFolder(MaterialFolder);
+            material = new Material(shader);
+            configure?.Invoke(material);
             AssetDatabase.CreateAsset(material, path);
             return material;
         }
@@ -271,6 +288,13 @@ namespace Oheangbu.EditorTools
                 new[] { "C1_TestHub로 돌아간다" }, HubScenePath, "F: 귀환");
         }
 
+        // 시작점이 공통 Spawn이 아닌 씬용(월드 룩 씬 — 막장 스폰)
+        public static DevScenePortal AddReturnPortal(Vector3 position, Vector3 faceTarget)
+        {
+            return CreatePortal("Portal_Return", position, faceTarget, "허브로 귀환",
+                new[] { "C1_TestHub로 돌아간다" }, HubScenePath, "F: 귀환");
+        }
+
         // 선택대 = 낮은 돌단 + (선택) 속성색 캡
         public static DevEnemyWakePedestal CreatePedestal(string name, Vector3 position, Vector3 faceTarget,
             string title, string[] description, EnemyController enemy, bool awakeAtStart, Material capMaterial)
@@ -323,7 +347,7 @@ namespace Oheangbu.EditorTools
             return interactor;
         }
 
-        private static GameObject AddCube(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
+        public static GameObject AddCube(Transform parent, string name, Vector3 localPosition, Vector3 localScale, Material material)
         {
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.name = name;

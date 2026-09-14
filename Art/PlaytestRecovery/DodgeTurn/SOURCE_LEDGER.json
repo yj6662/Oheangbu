@@ -1,0 +1,72 @@
+[
+  {
+    "file": "Stand To Roll.fbx",
+    "sha256": "183ad2f4cc22dc06345c84c0a54f59963aa01e3e6bb930b34887dab766f58b52",
+    "bytes": 642320,
+    "source": "https://www.mixamo.com/",
+    "character": "X Bot",
+    "format": "FBX Binary",
+    "skin": false,
+    "fps": 60,
+    "keyframeReduction": "none",
+    "overdrive": 50,
+    "trim": "full source",
+    "downloadDate": "2026-09-14"
+  },
+  {
+    "file": "Standing Dodge Backward.fbx",
+    "sha256": "d089c7546451759a43d830e52ab28f21d792a93ddcf2d27af484cd225102bc88",
+    "bytes": 576704,
+    "source": "https://www.mixamo.com/",
+    "character": "X Bot",
+    "format": "FBX Binary",
+    "skin": false,
+    "fps": 60,
+    "keyframeReduction": "none",
+    "overdrive": 50,
+    "trim": "full source",
+    "downloadDate": "2026-09-14"
+  },
+  {
+    "file": "Standing Dodge Forward.fbx",
+    "sha256": "b51ce89af75b4bea3f5be9324f49a4c63cd29f6a76aa87e443db4bdcaca35106",
+    "bytes": 453568,
+    "source": "https://www.mixamo.com/",
+    "character": "X Bot",
+    "format": "FBX Binary",
+    "skin": false,
+    "fps": 60,
+    "keyframeReduction": "none",
+    "overdrive": 50,
+    "trim": "full source",
+    "downloadDate": "2026-09-14"
+  },
+  {
+    "file": "Standing Dodge Left.fbx",
+    "sha256": "08337a439f89bfec6b4900152399f289c65286f7646f6a62c3bb2e08b74f1250",
+    "bytes": 447088,
+    "source": "https://www.mixamo.com/",
+    "character": "X Bot",
+    "format": "FBX Binary",
+    "skin": false,
+    "fps": 60,
+    "keyframeReduction": "none",
+    "overdrive": 50,
+    "trim": "full source",
+    "downloadDate": "2026-09-14"
+  },
+  {
+    "file": "Standing Dodge Right.fbx",
+    "sha256": "91b741fa12f0ad2698f9a45a1c5776d20da711b74440117193b1778a9d0805fb",
+    "bytes": 447088,
+    "source": "https://www.mixamo.com/",
+    "character": "X Bot",
+    "format": "FBX Binary",
+    "skin": false,
+    "fps": 60,
+    "keyframeReduction": "none",
+    "overdrive": 50,
+    "trim": "full source",
+    "downloadDate": "2026-09-14"
+  }
+]

@@ -1,0 +1,245 @@
+{
+    "scope": "1920x1080 stills only. Same pose and FOV per before/after pair. Visual judgement belongs to the user. Ground views do not relocate the actual capsule.",
+    "views": [
+        {
+            "id": "Cheongrim_aerial",
+            "region": "Cheongrim",
+            "kind": "aerial",
+            "label": "청림 조감",
+            "before": "Cheongrim_aerial_before",
+            "after": "Cheongrim_aerial_after",
+            "note": "조감 촬영에서만 거리 담채 .10, 원경 식생 확장. 적용 전후에 동일하며 런타임 설정은 복원됨.",
+            "position": {
+                "x": 3440.0,
+                "y": 1784.8995361328125,
+                "z": -1190.0
+            },
+            "target": {
+                "x": 1990.0,
+                "y": 214.89955139160157,
+                "z": 810.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Cheongrim_ground",
+            "region": "Cheongrim",
+            "kind": "ground",
+            "label": "청림 어깨 높이 지상 구도",
+            "before": "Cheongrim_ground_before",
+            "after": "Cheongrim_ground_after",
+            "note": "기존 검사 경로에서 뒤로 2.5m 이동한 구도. 실제 플레이어를 옮기지 않으며 캡슐 가시성·통행 성공을 의미하지 않음.",
+            "position": {
+                "x": 1939.989013671875,
+                "y": 134.9388427734375,
+                "z": 634.2703247070313
+            },
+            "target": {
+                "x": 1982.0,
+                "y": 136.1636199951172,
+                "z": 700.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Jeokro_aerial",
+            "region": "Jeokro",
+            "kind": "aerial",
+            "label": "적로 조감",
+            "before": "Jeokro_aerial_before",
+            "after": "Jeokro_aerial_after",
+            "note": "조감 촬영에서만 거리 담채 .10, 원경 식생 확장. 적용 전후에 동일하며 런타임 설정은 복원됨.",
+            "position": {
+                "x": 1100.0,
+                "y": 1686.4237060546875,
+                "z": -5530.0
+            },
+            "target": {
+                "x": -350.0,
+                "y": 116.42371368408203,
+                "z": -3530.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Jeokro_ground",
+            "region": "Jeokro",
+            "kind": "ground",
+            "label": "적로 어깨 높이 지상 구도",
+            "before": "Jeokro_ground_before",
+            "after": "Jeokro_ground_after",
+            "note": "기존 검사 경로에서 뒤로 2.5m 이동한 구도. 실제 플레이어를 옮기지 않으며 캡슐 가시성·통행 성공을 의미하지 않음.",
+            "position": {
+                "x": -479.90155029296877,
+                "y": 40.90614700317383,
+                "z": -3665.395751953125
+            },
+            "target": {
+                "x": -230.0,
+                "y": 46.42371368408203,
+                "z": -3280.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Cheolong_aerial",
+            "region": "Cheolong",
+            "kind": "aerial",
+            "label": "철옹 조감",
+            "before": "Cheolong_aerial_before",
+            "after": "Cheolong_aerial_after",
+            "note": "조감 촬영에서만 거리 담채 .10, 원경 식생 확장. 적용 전후에 동일하며 런타임 설정은 복원됨.",
+            "position": {
+                "x": -790.0,
+                "y": 1774.5040283203125,
+                "z": -1650.0
+            },
+            "target": {
+                "x": -2240.0,
+                "y": 204.50399780273438,
+                "z": 350.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Cheolong_ground",
+            "region": "Cheolong",
+            "kind": "ground",
+            "label": "철옹 어깨 높이 지상 구도",
+            "before": "Cheolong_ground_before",
+            "after": "Cheolong_ground_after",
+            "note": "기존 검사 경로에서 뒤로 2.5m 이동한 구도. 실제 플레이어를 옮기지 않으며 캡슐 가시성·통행 성공을 의미하지 않음.",
+            "position": {
+                "x": -2337.91796875,
+                "y": 122.40118408203125,
+                "z": 200.6104278564453
+            },
+            "target": {
+                "x": -2240.0,
+                "y": 131.50399780273438,
+                "z": 350.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Hyeongang_aerial",
+            "region": "Hyeongang",
+            "kind": "aerial",
+            "label": "현강 조감",
+            "before": "Hyeongang_aerial_before",
+            "after": "Hyeongang_aerial_after",
+            "note": "조감 촬영에서만 거리 담채 .10, 원경 식생 확장. 적용 전후에 동일하며 런타임 설정은 복원됨.",
+            "position": {
+                "x": 1470.0,
+                "y": 1804.247802734375,
+                "z": 2320.0
+            },
+            "target": {
+                "x": 20.0,
+                "y": 234.2477569580078,
+                "z": 4320.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Hyeongang_ground",
+            "region": "Hyeongang",
+            "kind": "ground",
+            "label": "현강 어깨 높이 지상 구도",
+            "before": "Hyeongang_ground_before",
+            "after": "Hyeongang_ground_after",
+            "note": "기존 검사 경로에서 뒤로 2.5m 이동한 구도. 실제 플레이어를 옮기지 않으며 캡슐 가시성·통행 성공을 의미하지 않음.",
+            "position": {
+                "x": 20.565237045288087,
+                "y": 163.5392608642578,
+                "z": 4056.930419921875
+            },
+            "target": {
+                "x": 20.0,
+                "y": 162.2477569580078,
+                "z": 4320.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Hwanggyeong_aerial",
+            "region": "Hwanggyeong",
+            "kind": "aerial",
+            "label": "황경 조감",
+            "before": "Hwanggyeong_aerial_before",
+            "after": "Hwanggyeong_aerial_after",
+            "note": "조감 촬영에서만 거리 담채 .10, 원경 식생 확장. 적용 전후에 동일하며 런타임 설정은 복원됨.",
+            "position": {
+                "x": 1150.0,
+                "y": 1722.8387451171875,
+                "z": -2630.0
+            },
+            "target": {
+                "x": -300.0,
+                "y": 152.8387908935547,
+                "z": -630.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "Hwanggyeong_ground",
+            "region": "Hwanggyeong",
+            "kind": "ground",
+            "label": "황경 어깨 높이 지상 구도",
+            "before": "Hwanggyeong_ground_before",
+            "after": "Hwanggyeong_ground_after",
+            "note": "기존 검사 경로에서 뒤로 2.5m 이동한 구도. 실제 플레이어를 옮기지 않으며 캡슐 가시성·통행 성공을 의미하지 않음.",
+            "position": {
+                "x": -391.8135070800781,
+                "y": 93.98583221435547,
+                "z": -1264.6334228515625
+            },
+            "target": {
+                "x": -270.0,
+                "y": 105.66374969482422,
+                "z": -1260.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "boundary_1",
+            "region": "Boundary",
+            "kind": "boundary",
+            "label": "강토 경계 군락 혼합 1",
+            "before": "boundary_1_before",
+            "after": "boundary_1_after",
+            "note": "실제 가도 Road_Post_Merchant를 따라 지역 폴리곤이 바뀌는 지점. 64m 군락과 경계 양쪽 약150m 혼합 검토.",
+            "position": {
+                "x": 1540.800048828125,
+                "y": 258.6453552246094,
+                "z": 180.8000030517578
+            },
+            "target": {
+                "x": 1410.0,
+                "y": 285.4063720703125,
+                "z": 48.0
+            },
+            "fov": 60.0
+        },
+        {
+            "id": "boundary_2",
+            "region": "Boundary",
+            "kind": "boundary",
+            "label": "강토 경계 군락 혼합 2",
+            "before": "boundary_2_before",
+            "after": "boundary_2_after",
+            "note": "실제 가도 Road_WestBridge_WestPass를 따라 지역 폴리곤이 바뀌는 지점. 64m 군락과 경계 양쪽 약150m 혼합 검토.",
+            "position": {
+                "x": -1792.0,
+                "y": 64.67887878417969,
+                "z": -1040.0
+            },
+            "target": {
+                "x": -2040.0,
+                "y": 74.3548355102539,
+                "z": -944.0
+            },
+            "fov": 60.0
+        }
+    ]
+}

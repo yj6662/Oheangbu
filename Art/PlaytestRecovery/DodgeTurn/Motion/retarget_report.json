@@ -1,0 +1,115 @@
+{
+  "status": "DERIVATIVE_REQUIRES_UNITY_AND_VISUAL_QA",
+  "sourceBlend": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\Locomotion\\Blender\\Player_Locomotion_Derivative.blend",
+  "sourceSha256": "fbff6aa186fe87e18e735785a78fe978f83cc86a49152b46aed4e5c7ea869dc3",
+  "clips": [
+    {
+      "name": "DodgeForward",
+      "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestRecovery\\DodgeTurn\\Sources\\Standing Dodge Forward.fbx",
+      "sha256": "b51ce89af75b4bea3f5be9324f49a4c63cd29f6a76aa87e443db4bdcaca35106",
+      "sourceFrames": [
+        1.0,
+        60.0
+      ],
+      "duration": 0.9833333333333333,
+      "sourcePlanarTravel": [
+        -2.7417627279646695e-08,
+        -2.157984733581543,
+        5.960464477539063e-08
+      ],
+      "verticalCorrection": -0.03853271156549454,
+      "sourceUpperBodyPreserved": true
+    },
+    {
+      "name": "DodgeBack",
+      "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestRecovery\\DodgeTurn\\Sources\\Standing Dodge Backward.fbx",
+      "sha256": "d089c7546451759a43d830e52ab28f21d792a93ddcf2d27af484cd225102bc88",
+      "sourceFrames": [
+        1.0,
+        98.0
+      ],
+      "duration": 1.6166666666666667,
+      "sourcePlanarTravel": [
+        -4.768480721395463e-08,
+        2.1906163692474365,
+        5.960464477539063e-08
+      ],
+      "verticalCorrection": -0.02708274871110916,
+      "sourceUpperBodyPreserved": true
+    },
+    {
+      "name": "DodgeLeft",
+      "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestRecovery\\DodgeTurn\\Sources\\Standing Dodge Left.fbx",
+      "sha256": "08337a439f89bfec6b4900152399f289c65286f7646f6a62c3bb2e08b74f1250",
+      "sourceFrames": [
+        1.0,
+        58.0
+      ],
+      "duration": 0.95,
+      "sourcePlanarTravel": [
+        1.867868423461914,
+        -9.073614819499198e-06,
+        2.384185791015625e-07
+      ],
+      "verticalCorrection": -0.013319171965122223,
+      "sourceUpperBodyPreserved": true
+    },
+    {
+      "name": "DodgeRight",
+      "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestRecovery\\DodgeTurn\\Sources\\Standing Dodge Right.fbx",
+      "sha256": "91b741fa12f0ad2698f9a45a1c5776d20da711b74440117193b1778a9d0805fb",
+      "sourceFrames": [
+        1.0,
+        58.0
+      ],
+      "duration": 0.95,
+      "sourcePlanarTravel": [
+        -1.919674277305603,
+        5.628764483844861e-06,
+        1.1920928955078125e-07
+      ],
+      "verticalCorrection": -0.030139513313770294,
+      "sourceUpperBodyPreserved": true
+    },
+    {
+      "name": "CrouchRoll",
+      "source": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestRecovery\\DodgeTurn\\Sources\\Stand To Roll.fbx",
+      "sha256": "183ad2f4cc22dc06345c84c0a54f59963aa01e3e6bb930b34887dab766f58b52",
+      "sourceFrames": [
+        31.0,
+        109.0
+      ],
+      "duration": 1.3,
+      "sourcePlanarTravel": [
+        0.07279515266418457,
+        -3.8989336490631104,
+        0.00898975133895874
+      ],
+      "verticalCorrection": -0.10117819160223007,
+      "sourceUpperBodyPreserved": true
+    }
+  ],
+  "surfaceClearance": {
+    "DodgeForward": {
+      "maximumLift": 0.04691758313775063,
+      "method": "Evaluated full C02 skin minimum, 5-frame conservative envelope; no limb stretching"
+    },
+    "DodgeBack": {
+      "maximumLift": 0.052637460917234424,
+      "method": "Evaluated full C02 skin minimum, 5-frame conservative envelope; no limb stretching"
+    },
+    "DodgeLeft": {
+      "maximumLift": 0.05005677351355553,
+      "method": "Evaluated full C02 skin minimum, 5-frame conservative envelope; no limb stretching"
+    },
+    "DodgeRight": {
+      "maximumLift": 0.03499370934069157,
+      "method": "Evaluated full C02 skin minimum, 5-frame conservative envelope; no limb stretching"
+    },
+    "CrouchRoll": {
+      "maximumLift": 0.3657895543575287,
+      "method": "Evaluated full C02 skin minimum, 5-frame conservative envelope; no limb stretching"
+    }
+  },
+  "fbxSha256": "90987ac6e9986205c4aa4f70ddfbaf1ec630924855d513935add039b25dc0457"
+}

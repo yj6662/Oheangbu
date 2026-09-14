@@ -1,0 +1,804 @@
+{
+  "asset": "Byeolchu",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\HwaseongHaenggung\\Meshes\\Buildings\\SM_Byeolchu.fbx",
+  "source_prefab": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\HwaseongHaenggung\\Prefabs\\SM_Byeolchu.prefab",
+  "source_sha256": "483776072c08c2bc713fada5f4da7741710b1e8b6d1dce7db7f9f345baf58a04",
+  "source_prefab_sha256": "06844fa7612bcee3cdd6d21b01b6ce5a2129b619b2f544478016a6c5a30e5f67",
+  "lods": [
+    {
+      "name": "LM_Byeolchu_LOD0",
+      "vertices": 29782,
+      "triangles": 44494,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -6.3095011711120605,
+          -10.115142822265625,
+          -0.03580469265580177
+        ],
+        "maximum": [
+          7.488558769226074,
+          8.965982437133789,
+          7.1137518882751465
+        ],
+        "size": [
+          13.798059940338135,
+          19.081125259399414,
+          7.149556580930948
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_KoreanWood_1",
+          "triangles": 21967
+        },
+        {
+          "slot": 1,
+          "name": "M_BlackTile",
+          "triangles": 16442
+        },
+        {
+          "slot": 2,
+          "name": "MI_KoreanWall_1",
+          "triangles": 880
+        },
+        {
+          "slot": 3,
+          "name": "MI_R_Roof",
+          "triangles": 1374
+        },
+        {
+          "slot": 4,
+          "name": "MI_R_BrickConcrete",
+          "triangles": 124
+        },
+        {
+          "slot": 5,
+          "name": "MI_Metal",
+          "triangles": 902
+        },
+        {
+          "slot": 6,
+          "name": "MI_KoreanPaper_1",
+          "triangles": 37
+        },
+        {
+          "slot": 7,
+          "name": "MI_KoreanFloor_1",
+          "triangles": 48
+        },
+        {
+          "slot": 8,
+          "name": "MI_KoreanWood_4",
+          "triangles": 1600
+        },
+        {
+          "slot": 9,
+          "name": "MI_KoreanStone_1",
+          "triangles": 1112
+        },
+        {
+          "slot": 10,
+          "name": "MI_KoreanBrick_2",
+          "triangles": 8
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 45000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        -0.003726482391357422,
+        -0.00519561767578125,
+        -0.008432388305664062
+      ],
+      "source_bounds_preserved": true,
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Byeolchu_LOD0.fbx",
+      "export_sha256": "cf691a0cbd79a88ef7ae6221e3bb46f01250ddfe146e95f98e0627538f10c236",
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Byeolchu_LOD0",
+            "vertices": 29782,
+            "triangles": 44494,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -6.3095011711120605,
+                -10.115142822265625,
+                -0.03580722212791443
+              ],
+              "maximum": [
+                7.488558769226074,
+                8.965984344482422,
+                7.113754749298096
+              ],
+              "size": [
+                13.798059940338135,
+                19.081127166748047,
+                7.14956197142601
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_KoreanWood_1",
+                "triangles": 21967
+              },
+              {
+                "slot": 1,
+                "name": "M_BlackTile",
+                "triangles": 16442
+              },
+              {
+                "slot": 2,
+                "name": "MI_KoreanWall_1",
+                "triangles": 880
+              },
+              {
+                "slot": 3,
+                "name": "MI_R_Roof",
+                "triangles": 1374
+              },
+              {
+                "slot": 4,
+                "name": "MI_R_BrickConcrete",
+                "triangles": 124
+              },
+              {
+                "slot": 5,
+                "name": "MI_Metal",
+                "triangles": 902
+              },
+              {
+                "slot": 6,
+                "name": "MI_KoreanPaper_1",
+                "triangles": 37
+              },
+              {
+                "slot": 7,
+                "name": "MI_KoreanFloor_1",
+                "triangles": 48
+              },
+              {
+                "slot": 8,
+                "name": "MI_KoreanWood_4",
+                "triangles": 1600
+              },
+              {
+                "slot": 9,
+                "name": "MI_KoreanStone_1",
+                "triangles": 1112
+              },
+              {
+                "slot": 10,
+                "name": "MI_KoreanBrick_2",
+                "triangles": 8
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 44494,
+        "bounds_blender_world": {
+          "minimum": [
+            -6.3095011711120605,
+            -10.115142822265625,
+            -0.03580722212791443
+          ],
+          "maximum": [
+            7.488558769226074,
+            8.965984344482422,
+            7.113754749298096
+          ],
+          "size": [
+            13.798059940338135,
+            19.081127166748047,
+            7.14956197142601
+          ]
+        },
+        "bounds_max_error_m": 2.86102294921875e-06,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true,
+      "before_fbx_validation_triangles": 44640
+    },
+    {
+      "name": "LM_Byeolchu_LOD1",
+      "vertices": 13422,
+      "triangles": 14364,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -6.3095011711120605,
+          -10.095368385314941,
+          -0.03580469265580177
+        ],
+        "maximum": [
+          7.468791484832764,
+          8.918611526489258,
+          7.12121057510376
+        ],
+        "size": [
+          13.778292655944824,
+          19.0139799118042,
+          7.1570152677595615
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_KoreanWood_1",
+          "triangles": 5891
+        },
+        {
+          "slot": 1,
+          "name": "M_BlackTile",
+          "triangles": 5861
+        },
+        {
+          "slot": 2,
+          "name": "MI_KoreanWall_1",
+          "triangles": 335
+        },
+        {
+          "slot": 3,
+          "name": "MI_R_Roof",
+          "triangles": 400
+        },
+        {
+          "slot": 4,
+          "name": "MI_R_BrickConcrete",
+          "triangles": 52
+        },
+        {
+          "slot": 5,
+          "name": "MI_Metal",
+          "triangles": 782
+        },
+        {
+          "slot": 6,
+          "name": "MI_KoreanPaper_1",
+          "triangles": 37
+        },
+        {
+          "slot": 7,
+          "name": "MI_KoreanFloor_1",
+          "triangles": 48
+        },
+        {
+          "slot": 8,
+          "name": "MI_KoreanWood_4",
+          "triangles": 382
+        },
+        {
+          "slot": 9,
+          "name": "MI_KoreanStone_1",
+          "triangles": 568
+        },
+        {
+          "slot": 10,
+          "name": "MI_KoreanBrick_2",
+          "triangles": 8
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 15000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        -0.02349376678466797,
+        -0.0723409652709961,
+        -0.0009737014770507812
+      ],
+      "source_bounds_preserved": true,
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Byeolchu_LOD1.fbx",
+      "export_sha256": "c38bd64fe4ad27d077991574287c8decfd670e13886a86a315bc1cc809b81b75",
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Byeolchu_LOD1",
+            "vertices": 13422,
+            "triangles": 14364,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -6.3095011711120605,
+                -10.095368385314941,
+                -0.035807207226753235
+              ],
+              "maximum": [
+                7.468791484832764,
+                8.91861343383789,
+                7.121213436126709
+              ],
+              "size": [
+                13.778292655944824,
+                19.013981819152832,
+                7.157020643353462
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_KoreanWood_1",
+                "triangles": 5891
+              },
+              {
+                "slot": 1,
+                "name": "M_BlackTile",
+                "triangles": 5861
+              },
+              {
+                "slot": 2,
+                "name": "MI_KoreanWall_1",
+                "triangles": 335
+              },
+              {
+                "slot": 3,
+                "name": "MI_R_Roof",
+                "triangles": 400
+              },
+              {
+                "slot": 4,
+                "name": "MI_R_BrickConcrete",
+                "triangles": 52
+              },
+              {
+                "slot": 5,
+                "name": "MI_Metal",
+                "triangles": 782
+              },
+              {
+                "slot": 6,
+                "name": "MI_KoreanPaper_1",
+                "triangles": 37
+              },
+              {
+                "slot": 7,
+                "name": "MI_KoreanFloor_1",
+                "triangles": 48
+              },
+              {
+                "slot": 8,
+                "name": "MI_KoreanWood_4",
+                "triangles": 382
+              },
+              {
+                "slot": 9,
+                "name": "MI_KoreanStone_1",
+                "triangles": 568
+              },
+              {
+                "slot": 10,
+                "name": "MI_KoreanBrick_2",
+                "triangles": 8
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 14364,
+        "bounds_blender_world": {
+          "minimum": [
+            -6.3095011711120605,
+            -10.095368385314941,
+            -0.035807207226753235
+          ],
+          "maximum": [
+            7.468791484832764,
+            8.91861343383789,
+            7.121213436126709
+          ],
+          "size": [
+            13.778292655944824,
+            19.013981819152832,
+            7.157020643353462
+          ]
+        },
+        "bounds_max_error_m": 2.86102294921875e-06,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true,
+      "before_fbx_validation_triangles": 14880
+    },
+    {
+      "name": "LM_Byeolchu_LOD2",
+      "vertices": 13422,
+      "triangles": 14364,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -6.3095011711120605,
+          -10.095368385314941,
+          -0.03580469265580177
+        ],
+        "maximum": [
+          7.468791484832764,
+          8.918611526489258,
+          7.12121057510376
+        ],
+        "size": [
+          13.778292655944824,
+          19.0139799118042,
+          7.1570152677595615
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_KoreanWood_1",
+          "triangles": 5891
+        },
+        {
+          "slot": 1,
+          "name": "M_BlackTile",
+          "triangles": 5861
+        },
+        {
+          "slot": 2,
+          "name": "MI_KoreanWall_1",
+          "triangles": 335
+        },
+        {
+          "slot": 3,
+          "name": "MI_R_Roof",
+          "triangles": 400
+        },
+        {
+          "slot": 4,
+          "name": "MI_R_BrickConcrete",
+          "triangles": 52
+        },
+        {
+          "slot": 5,
+          "name": "MI_Metal",
+          "triangles": 782
+        },
+        {
+          "slot": 6,
+          "name": "MI_KoreanPaper_1",
+          "triangles": 37
+        },
+        {
+          "slot": 7,
+          "name": "MI_KoreanFloor_1",
+          "triangles": 48
+        },
+        {
+          "slot": 8,
+          "name": "MI_KoreanWood_4",
+          "triangles": 382
+        },
+        {
+          "slot": 9,
+          "name": "MI_KoreanStone_1",
+          "triangles": 568
+        },
+        {
+          "slot": 10,
+          "name": "MI_KoreanBrick_2",
+          "triangles": 8
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 15000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        -0.02349376678466797,
+        -0.0723409652709961,
+        -0.0009737014770507812
+      ],
+      "source_bounds_preserved": true,
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Byeolchu_LOD2.fbx",
+      "export_sha256": "a6f4dd2ae83cbb11462fd666c75615fe17638be7aab9c9c2e059b4a2c3d7f394",
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Byeolchu_LOD2",
+            "vertices": 13422,
+            "triangles": 14364,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -6.3095011711120605,
+                -10.095368385314941,
+                -0.035807207226753235
+              ],
+              "maximum": [
+                7.468791484832764,
+                8.91861343383789,
+                7.121213436126709
+              ],
+              "size": [
+                13.778292655944824,
+                19.013981819152832,
+                7.157020643353462
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_KoreanWood_1",
+                "triangles": 5891
+              },
+              {
+                "slot": 1,
+                "name": "M_BlackTile",
+                "triangles": 5861
+              },
+              {
+                "slot": 2,
+                "name": "MI_KoreanWall_1",
+                "triangles": 335
+              },
+              {
+                "slot": 3,
+                "name": "MI_R_Roof",
+                "triangles": 400
+              },
+              {
+                "slot": 4,
+                "name": "MI_R_BrickConcrete",
+                "triangles": 52
+              },
+              {
+                "slot": 5,
+                "name": "MI_Metal",
+                "triangles": 782
+              },
+              {
+                "slot": 6,
+                "name": "MI_KoreanPaper_1",
+                "triangles": 37
+              },
+              {
+                "slot": 7,
+                "name": "MI_KoreanFloor_1",
+                "triangles": 48
+              },
+              {
+                "slot": 8,
+                "name": "MI_KoreanWood_4",
+                "triangles": 382
+              },
+              {
+                "slot": 9,
+                "name": "MI_KoreanStone_1",
+                "triangles": 568
+              },
+              {
+                "slot": 10,
+                "name": "MI_KoreanBrick_2",
+                "triangles": 8
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 14364,
+        "bounds_blender_world": {
+          "minimum": [
+            -6.3095011711120605,
+            -10.095368385314941,
+            -0.035807207226753235
+          ],
+          "maximum": [
+            7.468791484832764,
+            8.91861343383789,
+            7.121213436126709
+          ],
+          "size": [
+            13.778292655944824,
+            19.013981819152832,
+            7.157020643353462
+          ]
+        },
+        "bounds_max_error_m": 2.86102294921875e-06,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true,
+      "before_fbx_validation_triangles": 14880
+    }
+  ],
+  "method": "Coincident FBX split-vertex weld (0.01mm), sequential collapse; UV loops/material indices retained; no texture bake or redesign.",
+  "unity_runtime_validation": "UNVERIFIED",
+  "visual_art_validation": "UNVERIFIED",
+  "axis_contract": "Blender import axes retained; transforms baked into geometry, original origin retained. Export forward -Z, up Y, metres, scale 1. Unity ground offset must use actual imported Renderer.bounds.min.y.",
+  "started_commit_ratio": 0.803416339782079,
+  "imported_objects": [
+    {
+      "name": "SM_Byeolchu",
+      "triangles": 263250,
+      "bounds": {
+        "minimum": [
+          -6.309844970703125,
+          -10.118525505065918,
+          -0.03580489382147789
+        ],
+        "maximum": [
+          7.491941452026367,
+          8.967796325683594,
+          7.122184753417969
+        ],
+        "size": [
+          13.801786422729492,
+          19.08632183074951,
+          7.157989647239447
+        ]
+      }
+    }
+  ],
+  "ignored_collision_objects": [],
+  "source_visual": {
+    "name": "SM_Byeolchu",
+    "vertices": 344591,
+    "triangles": 263250,
+    "uv_layers": [
+      "UVmap_0",
+      "UVmap_1"
+    ],
+    "bounds_blender_world": {
+      "minimum": [
+        -6.309844970703125,
+        -10.118525505065918,
+        -0.03580469265580177
+      ],
+      "maximum": [
+        7.491941452026367,
+        8.967795372009277,
+        7.1221842765808105
+      ],
+      "size": [
+        13.801786422729492,
+        19.086320877075195,
+        7.157988969236612
+      ]
+    },
+    "materials": [
+      {
+        "slot": 0,
+        "name": "MI_KoreanWood_1",
+        "triangles": 84901
+      },
+      {
+        "slot": 1,
+        "name": "M_BlackTile",
+        "triangles": 148568
+      },
+      {
+        "slot": 2,
+        "name": "MI_KoreanWall_1",
+        "triangles": 927
+      },
+      {
+        "slot": 3,
+        "name": "MI_R_Roof",
+        "triangles": 9398
+      },
+      {
+        "slot": 4,
+        "name": "MI_R_BrickConcrete",
+        "triangles": 748
+      },
+      {
+        "slot": 5,
+        "name": "MI_Metal",
+        "triangles": 6406
+      },
+      {
+        "slot": 6,
+        "name": "MI_KoreanPaper_1",
+        "triangles": 8226
+      },
+      {
+        "slot": 7,
+        "name": "MI_KoreanFloor_1",
+        "triangles": 48
+      },
+      {
+        "slot": 8,
+        "name": "MI_KoreanWood_4",
+        "triangles": 2768
+      },
+      {
+        "slot": 9,
+        "name": "MI_KoreanStone_1",
+        "triangles": 1244
+      },
+      {
+        "slot": 10,
+        "name": "MI_KoreanBrick_2",
+        "triangles": 16
+      }
+    ],
+    "nonfinite_vertices": 0
+  },
+  "coincident_vertex_cleanup": {
+    "before_vertices": 344591,
+    "after_vertices": 147566,
+    "merge_distance_m": 1e-05
+  },
+  "prefab_material_bindings": [
+    {
+      "slot": 0,
+      "guid": "abc00000000000378510867108395071",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_1.mat"
+    },
+    {
+      "slot": 1,
+      "guid": "abc00000000013536118150340190256",
+      "unity_material": "Assets/HwaseongHaenggung/Material/Additions/M_BlackTile.mat"
+    },
+    {
+      "slot": 2,
+      "guid": "abc00000000006960240924952980542",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWall_1.mat"
+    },
+    {
+      "slot": 3,
+      "guid": "abc00000000004934170793764722915",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Roof.mat"
+    },
+    {
+      "slot": 4,
+      "guid": "abc00000000016748740287876020873",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_BrickConcrete.mat"
+    },
+    {
+      "slot": 5,
+      "guid": "abc00000000003887760593944507777",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_Metal.mat"
+    },
+    {
+      "slot": 6,
+      "guid": "abc00000000017556615246628206000",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanPaper_1.mat"
+    },
+    {
+      "slot": 7,
+      "guid": "abc00000000012041702405475218536",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanFloor_1.mat"
+    },
+    {
+      "slot": 8,
+      "guid": "abc00000000014976349613034265160",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_4.mat"
+    },
+    {
+      "slot": 9,
+      "guid": "abc00000000001247809319891771507",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanStone_1.mat"
+    },
+    {
+      "slot": 10,
+      "guid": "abc00000000016318133197809632774",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanBrick_2.mat"
+    }
+  ],
+  "after_import_commit_ratio": 0.875047428592125,
+  "lod2_budget_exception": "Original 5k target relaxed: stable LOD1 copy retained after collapse artifact; approved derivative budget exception.",
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Landmarks\\ModelReports\\LM_Byeolchu_LODs.blend",
+  "source_preserved": true,
+  "elapsed_seconds": 61.092108964920044,
+  "ended_commit_ratio": 0.8055640638055881,
+  "status": "PASS_GEOMETRY_EXPORT",
+  "finalization": "Validated FBX meshes re-exported; second independent import must have exact triangle counts. No additional decimation."
+}

@@ -1,0 +1,24 @@
+{
+    "view": "seated",
+    "file": "seated.png",
+    "utc": "2026-09-11T19:54:44.6081554Z",
+    "scenePath": "Assets/_Project/Scenes/World/W_WorldMacro_Blockout.unity",
+    "scope": "Static assembly composition. Seated capture uses SeatSocket but does not enter a live vehicle or validate driving.",
+    "position": {
+        "x": 1990.4381103515625,
+        "y": 135.40769958496095,
+        "z": 707.8369750976563
+    },
+    "target": {
+        "x": 1989.35009765625,
+        "y": 135.40769958496095,
+        "z": 692.87646484375
+    },
+    "width": 1920,
+    "height": 1080,
+    "commitBefore": 0.7055220603942871,
+    "commitAfter": 0.708072304725647,
+    "fieldOfView": 60.0,
+    "nearClip": 0.07999999821186066,
+    "synchronousShaderCompilation": true
+}

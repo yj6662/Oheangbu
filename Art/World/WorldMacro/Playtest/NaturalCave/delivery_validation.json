@@ -1,0 +1,31 @@
+{
+  "image_dimensions": {
+    "deep": [
+      1920,
+      1080
+    ],
+    "chamber": [
+      1920,
+      1080
+    ],
+    "outside": [
+      1920,
+      1080
+    ],
+    "mountain": [
+      1920,
+      1080
+    ],
+    "inn": [
+      1920,
+      1080
+    ]
+  },
+  "broken_review_links": [],
+  "geometry_record": "Geometry renderers=21 tris=318673",
+  "completion_email_sent": [
+    "UNREAD",
+    "SENT",
+    "INBOX"
+  ]
+}

@@ -1,0 +1,10 @@
+﻿source,C02 clip,seconds,rate,status
+Walk With Briefcase.fbx,WalkForward,1.033,1.4156,원본 보존 / C02 파생
+Run With Sword.fbx,RunForward,0.8,1.5576,원본 보존 / C02 파생
+Start Walking.fbx,StartForward,0.317,1,원본 보존 / C02 파생
+Crouch Walk Forward.fbx,CrouchForward,1.133,0.767,원본 보존 / C02 파생
+Crouch Walk Back.fbx,CrouchBack,1.217,1.1052,원본 보존 / C02 파생
+Crouch Walk Left.fbx,CrouchLeft,1.15,0.9077,원본 보존 / C02 파생
+Crouch Walk Right.fbx,CrouchRight,1.25,1.0465,원본 보존 / C02 파생
+Left Turn.fbx,TurnLeft,0.85,1,원본 보존 / C02 파생
+Right Turn.fbx,TurnRight,1.033,1,원본 보존 / C02 파생

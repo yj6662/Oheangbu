@@ -1,0 +1,2916 @@
+{
+    "sourceFbxSha256": "db1599d97b36051b19458a4704673ce602aecf345a26158d404cf5f6650bed1b",
+    "gestureProfileSha256": "66ad784f5d7211c30f2fcfd6705a28361383d17795595ef48fe9a43d181a58c4",
+    "gestureCodeSha256": "52ca8c9935183a0ba3dd21410417c73d2e92c5fe8e6e62491bb139c7de34002a",
+    "status": "PASS_SYNTHETIC_PRESENTATION_ONLY",
+    "utc": "2026-09-13T21:59:02.0016784Z",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "captureState": "",
+    "image": "",
+    "error": "",
+    "scope": "Synthetic presentation-state evaluation on the installed runtime rig. No native input, mode channel, recognizer, cast, damage or reward dispatch. A temporary disabled 1920x1080 camera supplies projection; the actual gameplay camera is not moved.",
+    "unityFrame": 2,
+    "passed": 60,
+    "failed": 0,
+    "unverified": 0,
+    "strokeEvents": 0,
+    "commitEvents": 0,
+    "rawPointsBefore": 0,
+    "rawPointsAfter": 0,
+    "restorationComplete": true,
+    "gameplayCameraPreserved": true,
+    "timeScalePreserved": true,
+    "rawStrokeStatePreserved": true,
+    "leasesPreserved": true,
+    "noGameplayDrawingEvents": true,
+    "timeScaleBefore": 1.0,
+    "timeScaleAfter": 1.0,
+    "checks": [
+        {
+            "name": "center_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.01287841796875,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.01287841796875,
+                "UpperArmLengthErrorMeters": 8.940696716308594e-8,
+                "ForearmLengthErrorMeters": 7.450580596923828e-8,
+                "ShaftLengthErrorMeters": 0.000059217214584350586,
+                "UpperArmWorldCoordinateDeltaMeters": 0.00008952617645263672,
+                "ForearmWorldCoordinateDeltaMeters": 0.00007997453212738037,
+                "ShaftSpanMeters": 0.4853389263153076,
+                "BrushWorldScaleError": 8.429369700024836e-7,
+                "NearShoulderCorrectionMeters": 0.0020076653454452755,
+                "NearEndpointCorrectionMeters": 0.0020076653454452755,
+                "NearTipErrorBeforeCorrectionPixels": 1.4701238870620728,
+                "EffectTipWorld": {
+                    "x": 3407.379150390625,
+                    "y": 197.8036651611328,
+                    "z": 1130.5684814453125
+                },
+                "WorldWristTarget": {
+                    "x": 3406.428466796875,
+                    "y": 197.05247497558595,
+                    "z": 1129.3765869140625
+                },
+                "NearWristTarget": {
+                    "x": 3407.579833984375,
+                    "y": 197.69248962402345,
+                    "z": 1131.2808837890625
+                }
+            }
+        },
+        {
+            "name": "center_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "center_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 8.95262E-05m.",
+            "observed": 8.940696716308594e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "center_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48534m.",
+            "observed": 0.000059217214584350586,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "center_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 8.429369700024836e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-left_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.2594108581542969,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.2594108581542969,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 5.960464477539063e-8,
+                "ShaftLengthErrorMeters": 0.000024944543838500977,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0002003312110900879,
+                "ForearmWorldCoordinateDeltaMeters": 0.00005720555782318115,
+                "ShaftSpanMeters": 0.48542308807373049,
+                "BrushWorldScaleError": 5.59141142275621e-7,
+                "NearShoulderCorrectionMeters": 0.017272556200623514,
+                "NearEndpointCorrectionMeters": 0.003591252723708749,
+                "NearTipErrorBeforeCorrectionPixels": 4.968504428863525,
+                "EffectTipWorld": {
+                    "x": 3408.2646484375,
+                    "y": 198.18309020996095,
+                    "z": 1130.7532958984375
+                },
+                "WorldWristTarget": {
+                    "x": 3406.4296875,
+                    "y": 197.08889770507813,
+                    "z": 1129.2003173828125
+                },
+                "NearWristTarget": {
+                    "x": 3407.90576171875,
+                    "y": 197.8463134765625,
+                    "z": 1131.310791015625
+                }
+            }
+        },
+        {
+            "name": "top-left_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-left_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 0.000200331m.",
+            "observed": 5.960464477539063e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-left_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48542m.",
+            "observed": 0.000024944543838500977,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-left_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 5.59141142275621e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-right_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.062208689749240878,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.062208689749240878,
+                "UpperArmLengthErrorMeters": 2.9802322387695315e-8,
+                "ForearmLengthErrorMeters": 4.470348358154297e-8,
+                "ShaftLengthErrorMeters": 0.00007030367851257324,
+                "UpperArmWorldCoordinateDeltaMeters": 0.00021791458129882813,
+                "ForearmWorldCoordinateDeltaMeters": 0.00009901821613311768,
+                "ShaftSpanMeters": 0.48546844720840456,
+                "BrushWorldScaleError": 4.915124804938387e-7,
+                "NearShoulderCorrectionMeters": 0.7706894874572754,
+                "NearEndpointCorrectionMeters": 0.0009501157328486443,
+                "NearTipErrorBeforeCorrectionPixels": 1.0250917673110963,
+                "EffectTipWorld": {
+                    "x": 3406.835693359375,
+                    "y": 198.290283203125,
+                    "z": 1131.357177734375
+                },
+                "WorldWristTarget": {
+                    "x": 3406.431396484375,
+                    "y": 197.05809020996095,
+                    "z": 1129.3651123046875
+                },
+                "NearWristTarget": {
+                    "x": 3407.52587890625,
+                    "y": 198.015869140625,
+                    "z": 1131.346923828125
+                }
+            }
+        },
+        {
+            "name": "top-right_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-right_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 0.000217915m.",
+            "observed": 4.470348358154297e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-right_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48547m.",
+            "observed": 0.00007030367851257324,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top-right_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 4.915124804938387e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-left_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.15968802571296693,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.15968802571296693,
+                "UpperArmLengthErrorMeters": 5.960464477539063e-8,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.00003668665885925293,
+                "UpperArmWorldCoordinateDeltaMeters": 0.000044465065002441406,
+                "ForearmWorldCoordinateDeltaMeters": 0.000038504600524902344,
+                "ShaftSpanMeters": 0.4854348301887512,
+                "BrushWorldScaleError": 6.419616624953051e-7,
+                "NearShoulderCorrectionMeters": 0.45500409603118899,
+                "NearEndpointCorrectionMeters": 0.003995595965534449,
+                "NearTipErrorBeforeCorrectionPixels": 4.627779483795166,
+                "EffectTipWorld": {
+                    "x": 3408.3125,
+                    "y": 197.3504180908203,
+                    "z": 1130.5733642578125
+                },
+                "WorldWristTarget": {
+                    "x": 3406.420166015625,
+                    "y": 197.03500366210938,
+                    "z": 1129.1676025390625
+                },
+                "NearWristTarget": {
+                    "x": 3407.942138671875,
+                    "y": 197.74652099609376,
+                    "z": 1131.0745849609375
+                }
+            }
+        },
+        {
+            "name": "bottom-left_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-left_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 4.44651E-05m.",
+            "observed": 5.960464477539063e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-left_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48543m.",
+            "observed": 0.00003668665885925293,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-left_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 6.419616624953051e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-right_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.28432801365852358,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.28432801365852358,
+                "UpperArmLengthErrorMeters": 2.9802322387695315e-8,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0000699460506439209,
+                "UpperArmWorldCoordinateDeltaMeters": 0.000265657901763916,
+                "ForearmWorldCoordinateDeltaMeters": 0.00017303228378295898,
+                "ShaftSpanMeters": 0.48532819747924807,
+                "BrushWorldScaleError": 0.0000010392425338068279,
+                "NearShoulderCorrectionMeters": 0.6097158789634705,
+                "NearEndpointCorrectionMeters": 0.0007774235564284027,
+                "NearTipErrorBeforeCorrectionPixels": 0.8366003036499023,
+                "EffectTipWorld": {
+                    "x": 3406.833740234375,
+                    "y": 197.31625366210938,
+                    "z": 1131.3568115234375
+                },
+                "WorldWristTarget": {
+                    "x": 3406.40869140625,
+                    "y": 197.062744140625,
+                    "z": 1129.3470458984375
+                },
+                "NearWristTarget": {
+                    "x": 3407.464599609375,
+                    "y": 197.71762084960938,
+                    "z": 1131.3426513671875
+                }
+            }
+        },
+        {
+            "name": "bottom-right_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-right_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 0.000265658m.",
+            "observed": 2.9802322387695315e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-right_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48533m.",
+            "observed": 0.0000699460506439209,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom-right_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 0.0000010392425338068279,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "left_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.09693020582199097,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.09693020582199097,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 5.960464477539063e-8,
+                "ShaftLengthErrorMeters": 0.000042319297790527344,
+                "UpperArmWorldCoordinateDeltaMeters": 0.000047266483306884766,
+                "ForearmWorldCoordinateDeltaMeters": 0.0000521540641784668,
+                "ShaftSpanMeters": 0.48535582423210146,
+                "BrushWorldScaleError": 9.156639180218917e-7,
+                "NearShoulderCorrectionMeters": 0.013107482343912125,
+                "NearEndpointCorrectionMeters": 0.0036703755613416435,
+                "NearTipErrorBeforeCorrectionPixels": 4.3447136878967289,
+                "EffectTipWorld": {
+                    "x": 3408.30615234375,
+                    "y": 197.8036651611328,
+                    "z": 1130.5970458984375
+                },
+                "WorldWristTarget": {
+                    "x": 3406.41943359375,
+                    "y": 197.05929565429688,
+                    "z": 1129.2247314453125
+                },
+                "NearWristTarget": {
+                    "x": 3407.932373046875,
+                    "y": 197.70152282714845,
+                    "z": 1131.2318115234375
+                }
+            }
+        },
+        {
+            "name": "left_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "left_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 5.21541E-05m.",
+            "observed": 5.960464477539063e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "left_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48536m.",
+            "observed": 0.000042319297790527344,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "left_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 9.156639180218917e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "right_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.3355501592159271,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.3355501592159271,
+                "UpperArmLengthErrorMeters": 5.960464477539063e-8,
+                "ForearmLengthErrorMeters": 7.450580596923828e-8,
+                "ShaftLengthErrorMeters": 0.000036835670471191406,
+                "UpperArmWorldCoordinateDeltaMeters": 0.000054389238357543945,
+                "ForearmWorldCoordinateDeltaMeters": 0.0001816004514694214,
+                "ShaftSpanMeters": 0.48543497920036318,
+                "BrushWorldScaleError": 7.152557373046875e-7,
+                "NearShoulderCorrectionMeters": 0.6822766065597534,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.3355501592159271,
+                "EffectTipWorld": {
+                    "x": 3406.751708984375,
+                    "y": 197.8036651611328,
+                    "z": 1131.334716796875
+                },
+                "WorldWristTarget": {
+                    "x": 3406.451171875,
+                    "y": 197.0541229248047,
+                    "z": 1129.394287109375
+                },
+                "NearWristTarget": {
+                    "x": 3407.493408203125,
+                    "y": 197.87294006347657,
+                    "z": 1131.30419921875
+                }
+            }
+        },
+        {
+            "name": "right_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "right_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 0.000181601m.",
+            "observed": 7.450580596923828e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "right_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48544m.",
+            "observed": 0.000036835670471191406,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "right_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 7.152557373046875e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.002685546875,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.002685546875,
+                "UpperArmLengthErrorMeters": 8.940696716308594e-8,
+                "ForearmLengthErrorMeters": 5.960464477539063e-8,
+                "ShaftLengthErrorMeters": 0.000011175870895385742,
+                "UpperArmWorldCoordinateDeltaMeters": 0.00016066431999206543,
+                "ForearmWorldCoordinateDeltaMeters": 0.0000270158052444458,
+                "ShaftSpanMeters": 0.4853869676589966,
+                "BrushWorldScaleError": 6.419616624953051e-7,
+                "NearShoulderCorrectionMeters": 0.010253326036036015,
+                "NearEndpointCorrectionMeters": 0.001968584256246686,
+                "NearTipErrorBeforeCorrectionPixels": 1.8245598077774048,
+                "EffectTipWorld": {
+                    "x": 3407.513671875,
+                    "y": 198.36985778808595,
+                    "z": 1130.8017578125
+                },
+                "WorldWristTarget": {
+                    "x": 3406.42529296875,
+                    "y": 197.0528564453125,
+                    "z": 1129.3363037109375
+                },
+                "NearWristTarget": {
+                    "x": 3407.631591796875,
+                    "y": 197.91053771972657,
+                    "z": 1131.3751220703125
+                }
+            }
+        },
+        {
+            "name": "top_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 0.000160664m.",
+            "observed": 8.940696716308594e-8,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48539m.",
+            "observed": 0.000011175870895385742,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "top_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 6.419616624953051e-7,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom_near_tip_pixels",
+            "status": "PASS",
+            "detail": "Measured by the actual runtime solver against a 1920x1080 synthetic camera endpoint.",
+            "observed": 0.009931564331054688,
+            "limit": 2.0,
+            "pose": {
+                "Bound": true,
+                "NearBound": true,
+                "NearVisible": true,
+                "TipReachable": true,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": true,
+                "CalibratedFingers": 30,
+                "MissingFingers": 0,
+                "State": 1,
+                "DrawingWeight": 1.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.009931564331054688,
+                "UpperArmLengthErrorMeters": 1.1920928955078126e-7,
+                "ForearmLengthErrorMeters": 7.450580596923828e-8,
+                "ShaftLengthErrorMeters": 0.00005605816841125488,
+                "UpperArmWorldCoordinateDeltaMeters": 0.000018894672393798828,
+                "ForearmWorldCoordinateDeltaMeters": 0.0000064373016357421878,
+                "ShaftSpanMeters": 0.4853420853614807,
+                "BrushWorldScaleError": 0.0000011980384897469776,
+                "NearShoulderCorrectionMeters": 0.6274533271789551,
+                "NearEndpointCorrectionMeters": 0.0022273575887084009,
+                "NearTipErrorBeforeCorrectionPixels": 1.8515435457229615,
+                "EffectTipWorld": {
+                    "x": 3407.45556640625,
+                    "y": 197.1722869873047,
+                    "z": 1130.7008056640625
+                },
+                "WorldWristTarget": {
+                    "x": 3406.405029296875,
+                    "y": 197.06407165527345,
+                    "z": 1129.306884765625
+                },
+                "NearWristTarget": {
+                    "x": 3407.607421875,
+                    "y": 197.81637573242188,
+                    "z": 1131.0301513671875
+                }
+            }
+        },
+        {
+            "name": "bottom_grip_socket",
+            "status": "PASS",
+            "detail": "Hand grip socket to brush socket; visible skin contact is checked separately.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom_fixed_arm_segments",
+            "status": "PASS",
+            "detail": "Current transform-hierarchy segment displacement, including scale, before world translation. The same 0.2 mm limit is retained. Rounded world-coordinate delta for comparison: 1.88947E-05m.",
+            "observed": 1.1920928955078126e-7,
+            "limit": 0.00019999999494757503,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom_rigid_grip_ferrule_span",
+            "status": "PASS",
+            "detail": "GripSocket to fixed first bristle bone/ferrule anchor. Nonzero measured span: 0.48534m.",
+            "observed": 0.00005605816841125488,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "bottom_brush_unit_world_scale",
+            "status": "PASS",
+            "detail": "Brush root world scale deviation from (1,1,1).",
+            "observed": 0.0000011980384897469776,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "near_bristle_fixture_bends",
+            "status": "PASS",
+            "detail": "Direct bristle diagnostic stimulus, not a native stroke.",
+            "observed": 27.504560470581056,
+            "limit": 0.009999999776482582,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "near_bristle_exit_resets",
+            "status": "PASS",
+            "detail": "Actual visibility boundary resets the hidden chain.",
+            "observed": 0.0,
+            "limit": 0.0010000000474974514,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "near_bristle_reentry_neutral",
+            "status": "PASS",
+            "detail": "Re-entry begins without the prior stroke curvature.",
+            "observed": 0.0,
+            "limit": 0.0010000000474974514,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "pause_pose_stays_sampled",
+            "status": "PASS",
+            "detail": "Time scale zero with unchanged synthetic drawing state; no native menu input.",
+            "observed": 0.0,
+            "limit": 0.05000000074505806,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "paused_cancel_hides_near",
+            "status": "PASS",
+            "detail": "Synthetic cancellation state; the actual drawing controller's input and mode events are not dispatched.",
+            "observed": 0.0,
+            "limit": 0.0,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "disable_releases_skinning",
+            "status": "PASS",
+            "detail": "Actual component OnDisable, no scene unload.",
+            "observed": 0.0,
+            "limit": 0.0,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "reenable_rebinds_once",
+            "status": "PASS",
+            "detail": "Binding restored without a duplicate lease.",
+            "observed": 1.0,
+            "limit": 1.0,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "forty_gesture_cycles_finger_drift",
+            "status": "PASS",
+            "detail": "Real installed finger transforms after 40 synchronous carry/draw evaluations, not 40 rendered input cycles.",
+            "observed": 0.0,
+            "limit": 0.05000000074505806,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "harvest_predicate_aims_brush",
+            "status": "PASS",
+            "detail": "Read-only predicate backing fields supplied by the diagnostic; TickHarvest, damage and ink gain are never called.",
+            "observed": 0.9997498989105225,
+            "limit": 0.949999988079071,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "scalar_response_30hz_scale_1.00",
+            "status": "PASS",
+            "detail": "Pure response equation over one unscaled second. Game scale is intentionally absent from that equation; no real frame-rate or slowed rendering test.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "scalar_response_30hz_scale_0.35",
+            "status": "PASS",
+            "detail": "Pure response equation over one unscaled second. Game scale is intentionally absent from that equation; no real frame-rate or slowed rendering test.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "scalar_response_60hz_scale_1.00",
+            "status": "PASS",
+            "detail": "Pure response equation over one unscaled second. Game scale is intentionally absent from that equation; no real frame-rate or slowed rendering test.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "scalar_response_60hz_scale_0.35",
+            "status": "PASS",
+            "detail": "Pure response equation over one unscaled second. Game scale is intentionally absent from that equation; no real frame-rate or slowed rendering test.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "scalar_response_120hz_scale_1.00",
+            "status": "PASS",
+            "detail": "Pure response equation over one unscaled second. Game scale is intentionally absent from that equation; no real frame-rate or slowed rendering test.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        },
+        {
+            "name": "scalar_response_120hz_scale_0.35",
+            "status": "PASS",
+            "detail": "Pure response equation over one unscaled second. Game scale is intentionally absent from that equation; no real frame-rate or slowed rendering test.",
+            "observed": 0.0,
+            "limit": 0.00009999999747378752,
+            "pose": {
+                "Bound": false,
+                "NearBound": false,
+                "NearVisible": false,
+                "TipReachable": false,
+                "Paused": false,
+                "Seated": false,
+                "ShaftMeasurementAvailable": false,
+                "CalibratedFingers": 0,
+                "MissingFingers": 0,
+                "State": 0,
+                "DrawingWeight": 0.0,
+                "HarvestWeight": 0.0,
+                "GripErrorMeters": 0.0,
+                "NearTipErrorPixels": 0.0,
+                "UpperArmLengthErrorMeters": 0.0,
+                "ForearmLengthErrorMeters": 0.0,
+                "ShaftLengthErrorMeters": 0.0,
+                "UpperArmWorldCoordinateDeltaMeters": 0.0,
+                "ForearmWorldCoordinateDeltaMeters": 0.0,
+                "ShaftSpanMeters": 0.0,
+                "BrushWorldScaleError": 0.0,
+                "NearShoulderCorrectionMeters": 0.0,
+                "NearEndpointCorrectionMeters": 0.0,
+                "NearTipErrorBeforeCorrectionPixels": 0.0,
+                "EffectTipWorld": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "WorldWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "NearWristTarget": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        }
+    ],
+    "limitations": [
+        "Repeated evaluations occur synchronously inside one Editor command, not distinct rendered gameplay frames.",
+        "30/60/120 Hz checks cover the scalar unscaled response equation only. Real frame-rate, slow-motion, input-to-camera transition and walking tests remain unverified.",
+        "Socket/endpoint/bone measurements do not prove visible skin/shaft contact or sleeve penetration. The separate contact report and visual review are required.",
+        "Screenshots show a labelled-in-report synthetic pose using the current C2 camera composition. Native draw-mode camera entry, hit interruption and actual harvesting are not claimed."
+    ]
+}

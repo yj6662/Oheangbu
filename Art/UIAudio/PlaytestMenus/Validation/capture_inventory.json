@@ -1,0 +1,21 @@
+{
+    "utc": "2026-09-13T18:53:14.8710821Z",
+    "status": "PASS",
+    "id": "inventory",
+    "scope": "Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.",
+    "setup": "direct diagnostic page setup; no synthetic input used for this still",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "page": "소지품",
+    "width": 1920,
+    "height": 1080,
+    "totalAllocatedBytes": 4094498007,
+    "systemMemoryBytes": 33945550848,
+    "systemCommitRatio": 0.7090751528739929,
+    "systemCommitRatioAtIssue": 0.7091804146766663,
+    "memoryBelow85Percent": true,
+    "screenshotWritten": true,
+    "screenshot": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\inventory_1920x1080.png",
+    "screenshotBytes": 1282572,
+    "screenshotUtc": "2026-09-13T18:53:15.1102450Z",
+    "failure": ""
+}

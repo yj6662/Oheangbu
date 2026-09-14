@@ -19,6 +19,9 @@ namespace Oheangbu.App
     //
     // 여기서 「표현용」 속도를 다시 측정한다 — 인식이 쓰는 StrokePoint.Time을 읽어오지 않는다.
     // 이 컴포넌트를 통째로 꺼도 인식 결과는 그대로다(인식 불가침의 어댑터 층 증명).
+    // CameraRigController.Update → 이 LateUpdate → BrushStrokeRenderer.LateUpdate(0)
+    // → PlayerVisualDriver(1000) → HarvestInkStreamEffect(2000). 판정은 원래 Update에서 끝난다.
+    [DefaultExecutionOrder(-1000)]
     public sealed class BrushStrokeFeedAdapter : MonoBehaviour
     {
         [SerializeField] private DrawingInputController _input;
@@ -34,6 +37,7 @@ namespace Oheangbu.App
         [SerializeField, Min(0.01f)] private float _surfaceDistance = 1f; // 눈(피벗) 앞 작도면 거리 [TEST]
         [FormerlySerializedAs("_detachAnchor")]
         [SerializeField] private Transform _eyeAnchor;                    // [실험] 눈=CameraPivot. 작도면을 카메라가 아니라 눈 앞에 앵커한다. 비우면 카메라 기준(기존)
+        [SerializeField] private Camera _projectionCamera;              // 실제 플레이 카메라. 미배선 씬은 Camera.main 사용
 
         private static readonly int StencilRefId = Shader.PropertyToID("_StencilRef");
         private static readonly int NoiseSeedId = Shader.PropertyToID("_NoiseSeed");
@@ -61,6 +65,9 @@ namespace Oheangbu.App
         private const string XrayPassTag = "SRPDefaultUnlit";
 
         private readonly List<BrushStrokeRenderer> _strokes = new List<BrushStrokeRenderer>();
+        // 각 획의 로컬 단위/px를 고정하고 현재 카메라 평면의 transform만 갱신한다.
+        // 카메라 블렌드·붐·FOV 변화 중 정지한 포인터도 획 전체와 같은 화면 위치를 유지한다.
+        private readonly List<float> _strokeUnitsPerPixel = new List<float>();
         private BrushStrokeRenderer _current;
         private Material _fallbackMaterial;
         private int _stencilRef; // 1..255 순환 — 살아있는 획이 없을 때 리셋(§11.1)
@@ -90,6 +97,7 @@ namespace Oheangbu.App
         private Texture2D _pendingMotif;
         private bool _pendingAttack; // 공격 작도인가 — 문양이 투사체로 날아갈지(5차 검수) 제자리 개화할지
         private bool _pendingParry;  // 패링 작도인가 — 방어막 가독 타임라인(SPELL-FIDELITY §4.6) 적용 여부
+        private bool _pendingSummon; // 소환 작도인가 — 승인된 플레이어 발 위치·전방에서 정적 표현만 시작
         private Transform _pendingAttackTarget; // 배선이 밀어준 명중 대상(유도 추적) — 없으면 허공 착탄
         private float _pendingAttackDuration;   // 배선이 확정한 비행시간 — 피해 착탄 시각과 같은 시계
         private AreaImpactPlan _pendingAreaPlan; // 배선의 광역 판정 계획(SPELL-AREA-SHAPES) — 연출이 같은 시계로 받는다
@@ -97,6 +105,22 @@ namespace Oheangbu.App
         private GameObject _pendingFxPrefab;    // 어휘별 프리팹 스태시(_visualSet 조회) — 없으면 기본 슬롯
         private float _pendingFxScaleMul = 1f;
         private float _pendingFxArcHeight; // 연출 포물선 높이(마 — §3.1) — 매핑 SO에서 읽기만
+        private char _pendingSummonLetter;
+        private Vector3 _pendingSummonOrigin;
+        private Vector3 _pendingSummonForward;
+        private bool _hasPendingSummonPose;
+
+        // 실험용 정적 표현은 글자별 하나만 유지한다. 다섯 글자를 모두 띄워도 최대 다섯이며 재시전은 같은 글자를 교체한다.
+        private const int MaxActiveSummons = 5;
+        private readonly Dictionary<char, GameObject> _activeSummons = new Dictionary<char, GameObject>();
+        private readonly LinkedList<char> _summonOrder = new LinkedList<char>();
+        private readonly Dictionary<char, Vector3> _summonPositions = new Dictionary<char, Vector3>();
+        private readonly List<char> _expiredSummons = new List<char>(MaxActiveSummons);
+        private bool _suppressSummonRelease;
+
+        // 실제 정적 소환 표현의 생성·소멸 경계. 시전 승인 이벤트와 달리 프리팹 인스턴스 수명을 따른다.
+        public event System.Action<char, Vector3> SummonPresentationStarted;
+        public event System.Action<char, Vector3> SummonPresentationReleased;
 
         // 표현용 상태 — 획 하나가 그려지는 동안의 붓 상태다. 인식 데이터와 공유하지 않는다.
         private Vector2 _lastInputScreen;  // 직전 입력 좌표 — 속도 측정용
@@ -110,14 +134,40 @@ namespace Oheangbu.App
         private float _strokeScale = 1f; // 획 화면 등가 계수 — 깊이·FOV가 1인칭과 달라도 폭·수필·갈필 결이 화면상 동일
         private float _baseFov;          // 작도 진입 전 기준 FOV(클로즈업 FOV 스냅과 무관한 등가 계산용)
 
+        private enum VisualEventKind { Start, Point, End, Letter, Commit, Evaporate, AttackTarget, AreaPlan, SummonPose, CastFailed }
+
+        private struct VisualEvent
+        {
+            public VisualEventKind Kind;
+            public Vector2 Screen;
+            public float UnscaledTime;
+            public float ScaledTime;
+            public float Ink;
+            public bool Success;
+            public DrawnLetter Letter;
+            public Transform Target;
+            public float Duration;
+            public AreaImpactPlan Plan;
+            public char SummonLetter;
+            public Vector3 Origin;
+            public Vector3 Forward;
+        }
+
+        // 입력 이벤트 시점의 순서와 시계를 보존한다. 여러 start/end/commit도 덮어쓰지 않는다.
+        private readonly List<VisualEvent> _visualEvents = new List<VisualEvent>(64);
+        private readonly List<BrushStrokeRenderer> _dirtyStrokes = new List<BrushStrokeRenderer>();
+        private bool _hasStrokeEndpoint;
+        private Vector2 _strokeEndpointScreen;
+
         // 먹 잔량(0~1) — 지금은 밖에서 넣어준다(하네스 슬라이더).
         // 먹 풀이 생기면 이 값만 꽂으면 된다: 읽기 전용이며 여기서 먹을 깎지 않는다(SPEC §5.2).
         public float InkNormalized { get; set; } = 1f;
 
         private void OnEnable()
         {
+            _suppressSummonRelease = false;
             // 기준 FOV 캡처 — 씬 시작 시(작도 전)의 값. 클로즈업 FOV 스냅 이후의 획도 이 기준으로 등가 환산
-            var baseCam = Camera.main;
+            var baseCam = ProjectionCamera;
             if (_baseFov <= 0f && baseCam != null) _baseFov = baseCam.fieldOfView;
 
             if (_input == null) return;
@@ -132,6 +182,7 @@ namespace Oheangbu.App
 
         private void OnDisable()
         {
+            _suppressSummonRelease = true;
             if (_input != null)
             {
                 _input.StrokeStarted -= OnStrokeStarted;
@@ -142,6 +193,8 @@ namespace Oheangbu.App
                 _input.LetterInterrupted -= EvaporateRemaining;
             }
             if (_letterDrawn != null) _letterDrawn.Unsubscribe(OnLetterDrawn);
+            _visualEvents.Clear();
+            _dirtyStrokes.Clear();
             DestroyAllImmediate(); // 비활성 시에는 연출 없이 정리
         }
 
@@ -151,13 +204,135 @@ namespace Oheangbu.App
             // scaled time: 일시정지하면 먹 번짐도 멈추는 게 자연스럽다.
             Shader.SetGlobalFloat(InkNowId, Time.time);
             TickFading();
+            PruneSummons();
+        }
+
+        private Camera ProjectionCamera => _projectionCamera != null ? _projectionCamera : Camera.main;
+
+        // PlayerVisualDriver는 이 매핑을 사용한다. 획 중에는 현재 렌더 획의 마지막 Raw 샘플,
+        // 획 사이에는 매 프레임 수집한 포인터를 준다(2px 샘플 간격을 표현에서 바꾸지 않음).
+        public bool TryGetVisualPointer(out Camera camera, out Vector2 screen, out Vector3 worldInkPoint)
+        {
+            camera = ProjectionCamera;
+            screen = default;
+            worldInkPoint = default;
+            if (camera == null || _input == null || !_input.InDrawMode || !_input.HasPointer) return false;
+            screen = _input.IsStroking && _hasStrokeEndpoint ? _strokeEndpointScreen : _input.PointerScreenPosition;
+            worldInkPoint = ProjectScreenPoint(camera, screen);
+            return true;
+        }
+
+        public bool TryProjectScreenPoint(Vector2 screen, out Vector3 worldInkPoint)
+        {
+            var camera = ProjectionCamera;
+            worldInkPoint = camera != null ? ProjectScreenPoint(camera, screen) : default;
+            return camera != null;
+        }
+
+        private Vector3 ProjectScreenPoint(Camera camera, Vector2 screen)
+        {
+            return camera.ScreenToWorldPoint(new Vector3(screen.x, screen.y, EffectiveSurfaceDistance(camera)));
+        }
+
+        private void LateUpdate()
+        {
+            var camera = ProjectionCamera;
+            if (camera != null)
+            {
+                for (int i = 0; i < _strokes.Count; i++)
+                    if (_strokes[i] != null) UpdateStrokeFrame(_strokes[i].transform, _strokeUnitsPerPixel[i], camera);
+            }
+
+            // 처리 중 추가된 이벤트도 순서대로 소비한다. 판정 채널을 다시 발행하지 않는다.
+            for (int i = 0; i < _visualEvents.Count; i++)
+            {
+                var e = _visualEvents[i];
+                switch (e.Kind)
+                {
+                    case VisualEventKind.Start: ApplyStrokeStarted(e.UnscaledTime); break;
+                    case VisualEventKind.Point: ApplyStrokePointAdded(e.Screen, e.UnscaledTime, e.ScaledTime, e.Ink); break;
+                    case VisualEventKind.End: ApplyStrokeEnded(); break;
+                    case VisualEventKind.Letter: ApplyLetterDrawn(e.Letter); break;
+                    case VisualEventKind.Commit: ApplyCommitted(e.Success, e.ScaledTime); break;
+                    case VisualEventKind.Evaporate: BeginFading(false, default, 0f, e.ScaledTime); break;
+                    case VisualEventKind.AttackTarget: _pendingAttackTarget = e.Target; _pendingAttackDuration = e.Duration; break;
+                    case VisualEventKind.AreaPlan: _pendingAreaPlan = e.Plan; break;
+                    case VisualEventKind.SummonPose:
+                        _pendingSummonLetter = e.SummonLetter;
+                        _pendingSummonOrigin = e.Origin;
+                        _pendingSummonForward = e.Forward;
+                        _hasPendingSummonPose = true;
+                        break;
+                    case VisualEventKind.CastFailed: _pendingCastFailed = true; break;
+                }
+            }
+            _visualEvents.Clear();
+            // LateUpdate 도중 새로 생성한 컴포넌트의 Unity 스케줄링에 기대지 않는다.
+            // 같은 프레임에 끝나고 분리된 획도 포함해 최종 메시를 지금 확정한다.
+            for (int i = 0; i < _dirtyStrokes.Count; i++)
+                if (_dirtyStrokes[i] != null) _dirtyStrokes[i].FlushMesh();
+            _dirtyStrokes.Clear();
+        }
+
+        private static VisualEvent CaptureEvent(VisualEventKind kind)
+        {
+            return new VisualEvent { Kind = kind, UnscaledTime = Time.unscaledTime, ScaledTime = Time.time };
         }
 
         private void OnStrokeStarted()
         {
+            _visualEvents.Add(CaptureEvent(VisualEventKind.Start));
+        }
+
+        private void OnStrokePointAdded(Vector2 screen)
+        {
+            var e = CaptureEvent(VisualEventKind.Point);
+            e.Screen = screen;
+            e.Ink = InkNormalized;
+            _visualEvents.Add(e);
+        }
+
+        private void OnStrokeEnded() => _visualEvents.Add(CaptureEvent(VisualEventKind.End));
+
+        private void OnLetterDrawn(DrawnLetter letter)
+        {
+            var e = CaptureEvent(VisualEventKind.Letter);
+            e.Letter = letter;
+            _visualEvents.Add(e);
+        }
+
+        private void OnCommitted(bool success)
+        {
+            var e = CaptureEvent(VisualEventKind.Commit);
+            e.Success = success;
+            _visualEvents.Add(e);
+        }
+
+        private void EvaporateRemaining() => _visualEvents.Add(CaptureEvent(VisualEventKind.Evaporate));
+
+        private float WorldUnitsPerPixel(Camera camera)
+        {
+            float halfHeight = camera.orthographic ? camera.orthographicSize
+                : EffectiveSurfaceDistance(camera) * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            return 2f * halfHeight / Mathf.Max(1, camera.pixelHeight);
+        }
+
+        private void UpdateStrokeFrame(Transform stroke, float unitsPerPixel, Camera camera)
+        {
+            _strokeScale = WorldUnitsPerPixel(camera) / Mathf.Max(0.0000001f, unitsPerPixel);
+            stroke.SetPositionAndRotation(ProjectScreenPoint(camera, Vector2.zero), camera.transform.rotation);
+            var parentScale = stroke.parent != null ? stroke.parent.lossyScale : Vector3.one;
+            stroke.localScale = new Vector3(_strokeScale / parentScale.x, _strokeScale / parentScale.y, _strokeScale / parentScale.z);
+        }
+
+        private void ApplyStrokeStarted(float unscaledTime)
+        {
             var go = new GameObject($"BrushStroke_{_strokes.Count}");
             go.transform.SetParent(transform, false);
-            go.transform.localScale = Vector3.one * ComputeStrokeScale();
+            var camera = ProjectionCamera;
+            float unitsPerPixel = camera != null ? WorldUnitsPerPixel(camera) / ComputeStrokeScale() : 1f;
+            _strokeUnitsPerPixel.Add(unitsPerPixel);
+            if (camera != null) UpdateStrokeFrame(go.transform, unitsPerPixel, camera);
             _current = go.AddComponent<BrushStrokeRenderer>();
 
             // 획마다 다른 결 — 같은 시드를 쓰면 모든 획이 똑같이 떨린다(폭 노이즈·갈필 공용)
@@ -190,16 +365,16 @@ namespace Oheangbu.App
             _sampleInStroke = 0;
             _hasLastLocal = false;
             _hasSpeed = false;
-            _lastSampleTime = Time.unscaledTime;
+            _lastSampleTime = unscaledTime;
+            _hasStrokeEndpoint = false;
         }
 
-        private void OnStrokePointAdded(Vector2 screen)
+        private void ApplyStrokePointAdded(Vector2 screen, float now, float scaledTime, float ink)
         {
             if (_current == null || _style == null) return;
-            var cam = Camera.main;
+            var cam = ProjectionCamera;
             if (cam == null) return;
 
-            float now = Time.unscaledTime;
             float dt = Mathf.Max(now - _lastSampleTime, 0.0001f);
 
             if (_sampleInStroke == 0) _lastInputScreen = screen;
@@ -223,8 +398,8 @@ namespace Oheangbu.App
             // 깊이 = 눈(피벗) 앞 _surfaceDistance — 카메라가 뒤로 물러난 포즈(숄더뷰·클로즈업)에서도
             // 작도면은 플레이어 모델 앞에 선다(2차 카메라 검수). 점은 획-로컬(÷스케일)로 저장 —
             // 폭·수필·갈필 결의 화면 등가는 획 localScale이 담당한다.
-            Vector3 world = cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, EffectiveSurfaceDistance(cam)));
-            Vector3 local = transform.InverseTransformPoint(world) / _strokeScale;
+            Vector3 world = ProjectScreenPoint(cam, screen);
+            Vector3 local = _current.transform.InverseTransformPoint(world);
 
             float traveled = _hasLastLocal ? Vector3.Distance(local, _lastLocal) : 0f;
             _lastLocal = local;
@@ -232,15 +407,18 @@ namespace Oheangbu.App
             _sampleInStroke++;
 
             // 탄생 시각은 scaled — 번짐(연출)의 시계와 같아야 한다(§5.2)
-            _current.AddPoint(local, ComputeWidth(speed, traveled), ComputeInk(speed), Time.time);
+            _current.AddPoint(local, ComputeWidth(speed, traveled), ComputeInk(speed, ink), scaledTime);
+            if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
+            _strokeEndpointScreen = screen;
+            _hasStrokeEndpoint = true;
         }
 
         // 작도면 유효 깊이 — 카메라가 아니라 눈(피벗) 앞 _surfaceDistance에 평면을 앵커한다(2차 카메라 검수).
         // 카메라 블렌드·붐이 카메라를 움직여도 dot 항이 자동 상쇄해 평면은 항상 피벗 앞에 남는다.
         // 1인칭(카메라=피벗)은 dot≈0이라 기존과 동일 — 대조군 보존.
-        private float EffectiveSurfaceDistance(Camera cam)
+        public float EffectiveSurfaceDistance(Camera cam)
         {
-            if (_eyeAnchor == null) return _surfaceDistance;
+            if (cam == null || _eyeAnchor == null) return _surfaceDistance;
             float toEye = Vector3.Dot(_eyeAnchor.position - cam.transform.position, cam.transform.forward);
             return _surfaceDistance + Mathf.Max(0f, toEye);
         }
@@ -250,7 +428,7 @@ namespace Oheangbu.App
         private float ComputeStrokeScale()
         {
             _strokeScale = 1f;
-            var cam = Camera.main;
+            var cam = ProjectionCamera;
             if (cam == null || _baseFov <= 0f) return _strokeScale;
 
             float frustumNow = EffectiveSurfaceDistance(cam) * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
@@ -285,23 +463,25 @@ namespace Oheangbu.App
 
         // 농도 = 속도(빠르면 옅게) × 먹 잔량(적을수록 마름)
         // 잔량은 읽기만 한다 — 먹을 깎는 것은 Combat 소유다(SPEC §5.2의 방향 규칙).
-        private float ComputeInk(float speed)
+        private float ComputeInk(float speed, float ink)
         {
             float density = _hasSpeed ? _style.SpeedToDensity(speed) : _style.MaxDensity;
-            return density * _style.InkChargeToDensity(InkNormalized);
+            return density * _style.InkChargeToDensity(ink);
         }
 
-        private void OnStrokeEnded()
+        private void ApplyStrokeEnded()
         {
             if (_current == null) return;
             _current.EndStroke();
+            if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
             _current = null;
+            _hasStrokeEndpoint = false;
         }
 
         // ---- 소멸 연출 (SPEC-SPIKE-INK-LOOKDEV §7) ----
 
         // _letterDrawn은 Committed(bool)보다 먼저, 같은 프레임에 발화한다 — 여기서 속성색·위력 근사를 스태시
-        private void OnLetterDrawn(DrawnLetter letter)
+        private void ApplyLetterDrawn(DrawnLetter letter)
         {
             if (_style == null) return;
             char initial = InitialToChar(letter.Initial);
@@ -312,8 +492,9 @@ namespace Oheangbu.App
             // 술식 종류도 읽기만 — 공격이면 문양이 투사체로 나간다(5차 검수). 미등재 글자=제자리 개화
             SpellBookSO.Entry spell = default;
             bool known = _spellBook != null && _spellBook.TryGet(letter.Letter, out spell);
-            _pendingAttack = known && spell.Kind != SpellKind.Parry;
+            _pendingAttack = known && (spell.Kind == SpellKind.AttackSingle || spell.Kind == SpellKind.AttackArea);
             _pendingParry = known && spell.Kind == SpellKind.Parry;
+            _pendingSummon = known && spell.Kind == SpellKind.Summon;
             // 어휘별 시각 분화(FX-ASSETS §4.4) — 표현 조회만. 미등재면 기본 슬롯이 받는다
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
@@ -327,17 +508,17 @@ namespace Oheangbu.App
             _hasPendingFlash = true;
         }
 
-        private void OnCommitted(bool success)
+        private void ApplyCommitted(bool success, float scaledTime)
         {
             // 시전 불성립(먹 부족·미등재 — 배선이 알림)은 인식이 성공했어도 불발 취급이다(§10.1) —
             // 술식이 서지 않았는데 플래시·문양을 틀지 않는다(7차 검수)
             if (success && _hasPendingFlash && !_pendingCastFailed)
             {
-                BeginFading(isFlash: true, _pendingFlashColor, _pendingFlashPower);
+                BeginFading(isFlash: true, _pendingFlashColor, _pendingFlashPower, scaledTime);
             }
             else
             {
-                BeginFading(isFlash: false, default, 0f); // 불발 — 먹 증발
+                BeginFading(isFlash: false, default, 0f, scaledTime); // 불발 — 먹 증발
             }
             _hasPendingFlash = false;
             _pendingCastFailed = false;
@@ -350,22 +531,22 @@ namespace Oheangbu.App
             _pendingFxScaleMul = 1f;
             _pendingFxArcHeight = 0f;
             _pendingParry = false;
+            _pendingSummon = false;
+            _pendingSummonLetter = default;
+            _pendingSummonOrigin = default;
+            _pendingSummonForward = default;
+            _hasPendingSummonPose = false;
         }
 
         // 피격(글자만 소멸)·조용한 취소 등 커밋 경로 밖의 소거 — 남아 있는 획을 증발시킨다.
         // 커밋 직후의 ModeExited는 _strokes가 이미 비어 있어 아무 일도 하지 않는다.
-        private void EvaporateRemaining()
+        private void BeginFading(bool isFlash, Color flashColor, float flashPower, float scaledTime)
         {
-            BeginFading(isFlash: false, default, 0f);
-        }
-
-        private void BeginFading(bool isFlash, Color flashColor, float flashPower)
-        {
-            if (_strokes.Count == 0) { _current = null; return; }
+            if (_strokes.Count == 0) { _current = null; _hasStrokeEndpoint = false; return; }
 
             var group = new FadingGroup
             {
-                StartTime = Time.time,
+                StartTime = scaledTime,
                 IsFlash = isFlash,
                 FlashColor = flashColor,
                 FlashPower = flashPower,
@@ -381,7 +562,9 @@ namespace Oheangbu.App
                 stroke.OwnedMaterial?.SetShaderPassEnabled(XrayPassTag, false);
             }
             _strokes.Clear();
+            _strokeUnitsPerPixel.Clear();
             _current = null;
+            _hasStrokeEndpoint = false;
             if (isFlash)
             {
                 // 문양이 배정돼 있으면 모티프 대신 — 글자가 그 자리에서 전통 문양으로 변형된다(4차 검수) [TEST]
@@ -424,6 +607,21 @@ namespace Oheangbu.App
                 _pendingAttackDuration = 0f;
                 _pendingAreaPlan = null;
 
+                if (_pendingSummon)
+                {
+                    if (!_hasPendingSummonPose || _pendingSummonLetter == default)
+                    {
+                        Destroy(go);
+                        return;
+                    }
+                    Vector3 forward = Vector3.ProjectOnPlane(_pendingSummonForward, Vector3.up);
+                    if (forward.sqrMagnitude < .001f) forward = transform.forward;
+                    forward.Normalize();
+                    authored.Begin(_pendingSummonOrigin, null, _pendingSummonOrigin + forward * 4f, group.FlashColor);
+                    TrackSummon(_pendingSummonLetter, go);
+                    return;
+                }
+
                 if (_pendingAttack)
                 {
                     if (authoredDuration > 0f) authored.SetImpactClock(authoredDuration);
@@ -432,7 +630,8 @@ namespace Oheangbu.App
                         : authoredPlan.Shape == AreaShape.Cone
                             ? authoredPlan.Point + AreaGeometry.Flat(authoredPlan.Direction).normalized * Mathf.Max(1f, authoredPlan.Length)
                             : authoredPlan.Point;
-                    var launchPoint=SpellVFX120.Vfx120LaunchPoint.Resolve(authored.Profile,Camera.main,bounds.center);
+                    var launchCamera=_projectionCamera!=null?_projectionCamera:Camera.main;
+                    var launchPoint=SpellVFX120.Vfx120LaunchPoint.Resolve(authored.Profile,launchCamera,bounds.center);
                     authored.Begin(launchPoint, authoredTarget, authoredFallback, group.FlashColor);
                 }
                 else
@@ -442,7 +641,7 @@ namespace Oheangbu.App
                     Vector3 guardDirectionPoint = bounds.center;
                     if (SpellVFX120.Vfx120Effect.IsBambooGuard(authored.Profile)||authored.Profile.KtpPatternShield)
                     {
-                        var camera = Camera.main;
+                        var camera = _projectionCamera != null ? _projectionCamera : Camera.main;
                         Vector3 facing = camera != null ? camera.transform.forward : transform.forward;
                         facing.y = 0;
                         if (facing.sqrMagnitude < .001f) facing = transform.forward;
@@ -511,26 +710,44 @@ namespace Oheangbu.App
         // _letterDrawn(배선의 판정)이 Committed(여기 소비)보다 먼저 발화하는 순서에 기댄다(같은 프레임 보장).
         public void SetPatternAttackTarget(Transform target, float flightDuration)
         {
-            _pendingAttackTarget = target;
-            _pendingAttackDuration = flightDuration;
+            if (!isActiveAndEnabled) return;
+            var e = CaptureEvent(VisualEventKind.AttackTarget);
+            e.Target = target;
+            e.Duration = flightDuration;
+            _visualEvents.Add(e);
         }
 
         // 광역 판정 계획 — 같은 커밋 프레임에 배선이 밀어준다. 연출(SpellSequenceEffect)이 Begin 직전에 받는다
         public void SetPatternAreaPlan(AreaImpactPlan plan)
         {
-            _pendingAreaPlan = plan;
+            if (!isActiveAndEnabled) return;
+            var e = CaptureEvent(VisualEventKind.AreaPlan);
+            e.Plan = plan;
+            _visualEvents.Add(e);
+        }
+
+        // 승인된 시전의 실제 플레이어 포즈. 작도 좌표는 소환 지면 좌표로 사용하지 않는다.
+        public void SetPatternSummonPose(char letter, Vector3 origin, Vector3 forward)
+        {
+            if (!isActiveAndEnabled) return;
+            var e = CaptureEvent(VisualEventKind.SummonPose);
+            e.SummonLetter = letter;
+            e.Origin = origin;
+            e.Forward = forward;
+            _visualEvents.Add(e);
         }
 
         // 시전 불성립(먹 부족·미러 밖 글자) — 배선이 커밋 프레임에 알린다. 표현은 불발(증발)로 따른다
         public void NotifyCastFailed()
         {
-            _pendingCastFailed = true;
+            if (!isActiveAndEnabled) return;
+            _visualEvents.Add(CaptureEvent(VisualEventKind.CastFailed));
         }
 
         // 허공 착탄점 — 조준(카메라) 전방. 규칙이 아니라 연출의 목적지다
         private Vector3 MissPoint(Vector3 origin)
         {
-            var cam = Camera.main;
+            var cam = ProjectionCamera;
             if (cam != null)
             {
                 return cam.transform.position + cam.transform.forward * _style.PatternMissRange;
@@ -712,6 +929,7 @@ namespace Oheangbu.App
                 if (stroke != null) Destroy(stroke.gameObject);
             }
             _strokes.Clear();
+            _strokeUnitsPerPixel.Clear();
             foreach (var group in _fading)
             {
                 foreach (var stroke in group.Strokes)
@@ -721,7 +939,86 @@ namespace Oheangbu.App
                 DestroyMotifs(group);
             }
             _fading.Clear();
+            ClearActiveSummons();
             _current = null;
+            _hasStrokeEndpoint = false;
+        }
+
+        private void TrackSummon(char letter, GameObject presentation)
+        {
+            PruneSummons();
+            if (_activeSummons.TryGetValue(letter, out var previous) && previous != null && previous != presentation)
+            {
+                Vector3 releasePosition = previous.transform.position;
+                previous.SetActive(false);
+                DestroyOwned(previous);
+                NotifySummonReleased(letter, releasePosition);
+            }
+            _activeSummons[letter] = presentation;
+            _summonPositions[letter] = presentation.transform.position;
+            _summonOrder.Remove(letter);
+            _summonOrder.AddLast(letter);
+            SummonPresentationStarted?.Invoke(letter, presentation.transform.position);
+            while (_activeSummons.Count > MaxActiveSummons && _summonOrder.First != null)
+            {
+                char oldest = _summonOrder.First.Value;
+                _summonOrder.RemoveFirst();
+                if (!_activeSummons.TryGetValue(oldest, out var evicted)) continue;
+                _activeSummons.Remove(oldest);
+                Vector3 releasePosition = evicted != null ? evicted.transform.position
+                    : (_summonPositions.TryGetValue(oldest, out var remembered) ? remembered : transform.position);
+                _summonPositions.Remove(oldest);
+                if (evicted != null) { evicted.SetActive(false); DestroyOwned(evicted); }
+                NotifySummonReleased(oldest, releasePosition);
+            }
+        }
+
+        private void PruneSummons()
+        {
+            _expiredSummons.Clear();
+            foreach (var pair in _activeSummons) if (pair.Value == null) _expiredSummons.Add(pair.Key);
+            foreach (char letter in _expiredSummons)
+            {
+                Vector3 position = _summonPositions.TryGetValue(letter, out var remembered)
+                    ? remembered : transform.position;
+                _activeSummons.Remove(letter);
+                _summonPositions.Remove(letter);
+                _summonOrder.Remove(letter);
+                NotifySummonReleased(letter, position);
+            }
+        }
+
+        private void ClearActiveSummons()
+        {
+            foreach (var pair in _activeSummons)
+            {
+                GameObject presentation = pair.Value;
+                Vector3 position = presentation != null ? presentation.transform.position
+                    : (_summonPositions.TryGetValue(pair.Key, out var remembered) ? remembered : transform.position);
+                if (presentation != null) { presentation.SetActive(false); DestroyOwned(presentation); }
+                NotifySummonReleased(pair.Key, position);
+            }
+            _activeSummons.Clear();
+            _summonPositions.Clear();
+            _summonOrder.Clear();
+        }
+
+        private void NotifySummonReleased(char letter, Vector3 position)
+        {
+            if (!_suppressSummonRelease && isActiveAndEnabled)
+                SummonPresentationReleased?.Invoke(letter, position);
+        }
+
+        private static void DestroyOwned(GameObject instance)
+        {
+            if (instance == null) return;
+            if (Application.isPlaying) Destroy(instance);
+            else DestroyImmediate(instance);
+        }
+
+        public int ActiveSummonPresentationCount
+        {
+            get { PruneSummons(); return _activeSummons.Count; }
         }
 
         // 초성 Jamo → 문자 — 한글 자모라는 언어적 사실의 번역(밸런스 수치 아님)

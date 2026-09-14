@@ -1,0 +1,3656 @@
+[
+  {
+    "label": "황경 도성 → 청림 외림",
+    "from": [
+      -300.0,
+      -630.0
+    ],
+    "to": [
+      1990.0,
+      810.0
+    ],
+    "straightDistanceM": 2705.12,
+    "samples": [
+      {
+        "distanceM": 0.0,
+        "heightM": 72.51
+      },
+      {
+        "distanceM": 9.02,
+        "heightM": 72.35
+      },
+      {
+        "distanceM": 18.03,
+        "heightM": 72.18
+      },
+      {
+        "distanceM": 27.05,
+        "heightM": 72.0
+      },
+      {
+        "distanceM": 36.07,
+        "heightM": 71.82
+      },
+      {
+        "distanceM": 45.09,
+        "heightM": 71.64
+      },
+      {
+        "distanceM": 54.1,
+        "heightM": 71.45
+      },
+      {
+        "distanceM": 63.12,
+        "heightM": 71.25
+      },
+      {
+        "distanceM": 72.14,
+        "heightM": 71.05
+      },
+      {
+        "distanceM": 81.15,
+        "heightM": 70.91
+      },
+      {
+        "distanceM": 90.17,
+        "heightM": 70.77
+      },
+      {
+        "distanceM": 99.19,
+        "heightM": 70.62
+      },
+      {
+        "distanceM": 108.2,
+        "heightM": 70.47
+      },
+      {
+        "distanceM": 117.22,
+        "heightM": 70.31
+      },
+      {
+        "distanceM": 126.24,
+        "heightM": 70.16
+      },
+      {
+        "distanceM": 135.26,
+        "heightM": 69.97
+      },
+      {
+        "distanceM": 144.27,
+        "heightM": 69.76
+      },
+      {
+        "distanceM": 153.29,
+        "heightM": 69.57
+      },
+      {
+        "distanceM": 162.31,
+        "heightM": 69.4
+      },
+      {
+        "distanceM": 171.32,
+        "heightM": 69.32
+      },
+      {
+        "distanceM": 180.34,
+        "heightM": 69.31
+      },
+      {
+        "distanceM": 189.36,
+        "heightM": 69.33
+      },
+      {
+        "distanceM": 198.38,
+        "heightM": 69.39
+      },
+      {
+        "distanceM": 207.39,
+        "heightM": 69.49
+      },
+      {
+        "distanceM": 216.41,
+        "heightM": 69.62
+      },
+      {
+        "distanceM": 225.43,
+        "heightM": 69.78
+      },
+      {
+        "distanceM": 234.44,
+        "heightM": 69.97
+      },
+      {
+        "distanceM": 243.46,
+        "heightM": 70.2
+      },
+      {
+        "distanceM": 252.48,
+        "heightM": 70.47
+      },
+      {
+        "distanceM": 261.5,
+        "heightM": 70.86
+      },
+      {
+        "distanceM": 270.51,
+        "heightM": 71.73
+      },
+      {
+        "distanceM": 279.53,
+        "heightM": 72.63
+      },
+      {
+        "distanceM": 288.55,
+        "heightM": 73.74
+      },
+      {
+        "distanceM": 297.56,
+        "heightM": 74.91
+      },
+      {
+        "distanceM": 306.58,
+        "heightM": 76.09
+      },
+      {
+        "distanceM": 315.6,
+        "heightM": 77.26
+      },
+      {
+        "distanceM": 324.61,
+        "heightM": 78.45
+      },
+      {
+        "distanceM": 333.63,
+        "heightM": 79.63
+      },
+      {
+        "distanceM": 342.65,
+        "heightM": 80.82
+      },
+      {
+        "distanceM": 351.67,
+        "heightM": 82.02
+      },
+      {
+        "distanceM": 360.68,
+        "heightM": 83.31
+      },
+      {
+        "distanceM": 369.7,
+        "heightM": 84.65
+      },
+      {
+        "distanceM": 378.72,
+        "heightM": 86.01
+      },
+      {
+        "distanceM": 387.73,
+        "heightM": 87.39
+      },
+      {
+        "distanceM": 396.75,
+        "heightM": 88.78
+      },
+      {
+        "distanceM": 405.77,
+        "heightM": 90.19
+      },
+      {
+        "distanceM": 414.79,
+        "heightM": 91.61
+      },
+      {
+        "distanceM": 423.8,
+        "heightM": 93.04
+      },
+      {
+        "distanceM": 432.82,
+        "heightM": 94.49
+      },
+      {
+        "distanceM": 441.84,
+        "heightM": 95.89
+      },
+      {
+        "distanceM": 450.85,
+        "heightM": 97.41
+      },
+      {
+        "distanceM": 459.87,
+        "heightM": 99.45
+      },
+      {
+        "distanceM": 468.89,
+        "heightM": 101.53
+      },
+      {
+        "distanceM": 477.91,
+        "heightM": 103.68
+      },
+      {
+        "distanceM": 486.92,
+        "heightM": 105.88
+      },
+      {
+        "distanceM": 495.94,
+        "heightM": 108.13
+      },
+      {
+        "distanceM": 504.96,
+        "heightM": 110.45
+      },
+      {
+        "distanceM": 513.97,
+        "heightM": 112.82
+      },
+      {
+        "distanceM": 522.99,
+        "heightM": 115.24
+      },
+      {
+        "distanceM": 532.01,
+        "heightM": 117.72
+      },
+      {
+        "distanceM": 541.02,
+        "heightM": 120.26
+      },
+      {
+        "distanceM": 550.04,
+        "heightM": 122.63
+      },
+      {
+        "distanceM": 559.06,
+        "heightM": 124.93
+      },
+      {
+        "distanceM": 568.08,
+        "heightM": 127.24
+      },
+      {
+        "distanceM": 577.09,
+        "heightM": 129.57
+      },
+      {
+        "distanceM": 586.11,
+        "heightM": 131.74
+      },
+      {
+        "distanceM": 595.13,
+        "heightM": 133.65
+      },
+      {
+        "distanceM": 604.14,
+        "heightM": 135.51
+      },
+      {
+        "distanceM": 613.16,
+        "heightM": 137.31
+      },
+      {
+        "distanceM": 622.18,
+        "heightM": 139.06
+      },
+      {
+        "distanceM": 631.2,
+        "heightM": 140.75
+      },
+      {
+        "distanceM": 640.21,
+        "heightM": 142.27
+      },
+      {
+        "distanceM": 649.23,
+        "heightM": 143.37
+      },
+      {
+        "distanceM": 658.25,
+        "heightM": 144.38
+      },
+      {
+        "distanceM": 667.26,
+        "heightM": 145.31
+      },
+      {
+        "distanceM": 676.28,
+        "heightM": 146.14
+      },
+      {
+        "distanceM": 685.3,
+        "heightM": 146.89
+      },
+      {
+        "distanceM": 694.32,
+        "heightM": 147.54
+      },
+      {
+        "distanceM": 703.33,
+        "heightM": 148.1
+      },
+      {
+        "distanceM": 712.35,
+        "heightM": 148.58
+      },
+      {
+        "distanceM": 721.37,
+        "heightM": 148.96
+      },
+      {
+        "distanceM": 730.38,
+        "heightM": 149.26
+      },
+      {
+        "distanceM": 739.4,
+        "heightM": 150.33
+      },
+      {
+        "distanceM": 748.42,
+        "heightM": 151.63
+      },
+      {
+        "distanceM": 757.43,
+        "heightM": 152.91
+      },
+      {
+        "distanceM": 766.45,
+        "heightM": 154.17
+      },
+      {
+        "distanceM": 775.47,
+        "heightM": 155.41
+      },
+      {
+        "distanceM": 784.49,
+        "heightM": 156.64
+      },
+      {
+        "distanceM": 793.5,
+        "heightM": 157.85
+      },
+      {
+        "distanceM": 802.52,
+        "heightM": 159.05
+      },
+      {
+        "distanceM": 811.54,
+        "heightM": 160.22
+      },
+      {
+        "distanceM": 820.55,
+        "heightM": 161.38
+      },
+      {
+        "distanceM": 829.57,
+        "heightM": 163.06
+      },
+      {
+        "distanceM": 838.59,
+        "heightM": 166.04
+      },
+      {
+        "distanceM": 847.61,
+        "heightM": 169.1
+      },
+      {
+        "distanceM": 856.62,
+        "heightM": 172.26
+      },
+      {
+        "distanceM": 865.64,
+        "heightM": 175.49
+      },
+      {
+        "distanceM": 874.66,
+        "heightM": 178.81
+      },
+      {
+        "distanceM": 883.67,
+        "heightM": 182.22
+      },
+      {
+        "distanceM": 892.69,
+        "heightM": 185.58
+      },
+      {
+        "distanceM": 901.71,
+        "heightM": 188.79
+      },
+      {
+        "distanceM": 910.73,
+        "heightM": 191.85
+      },
+      {
+        "distanceM": 919.74,
+        "heightM": 194.76
+      },
+      {
+        "distanceM": 928.76,
+        "heightM": 198.85
+      },
+      {
+        "distanceM": 937.78,
+        "heightM": 203.08
+      },
+      {
+        "distanceM": 946.79,
+        "heightM": 207.14
+      },
+      {
+        "distanceM": 955.81,
+        "heightM": 211.03
+      },
+      {
+        "distanceM": 964.83,
+        "heightM": 214.76
+      },
+      {
+        "distanceM": 973.84,
+        "heightM": 218.32
+      },
+      {
+        "distanceM": 982.86,
+        "heightM": 221.72
+      },
+      {
+        "distanceM": 991.88,
+        "heightM": 224.95
+      },
+      {
+        "distanceM": 1000.9,
+        "heightM": 228.01
+      },
+      {
+        "distanceM": 1009.91,
+        "heightM": 230.91
+      },
+      {
+        "distanceM": 1018.93,
+        "heightM": 233.91
+      },
+      {
+        "distanceM": 1027.95,
+        "heightM": 237.49
+      },
+      {
+        "distanceM": 1036.96,
+        "heightM": 241.0
+      },
+      {
+        "distanceM": 1045.98,
+        "heightM": 244.25
+      },
+      {
+        "distanceM": 1055.0,
+        "heightM": 247.51
+      },
+      {
+        "distanceM": 1064.02,
+        "heightM": 250.78
+      },
+      {
+        "distanceM": 1073.03,
+        "heightM": 254.06
+      },
+      {
+        "distanceM": 1082.05,
+        "heightM": 257.36
+      },
+      {
+        "distanceM": 1091.07,
+        "heightM": 260.66
+      },
+      {
+        "distanceM": 1100.08,
+        "heightM": 263.98
+      },
+      {
+        "distanceM": 1109.1,
+        "heightM": 267.31
+      },
+      {
+        "distanceM": 1118.12,
+        "heightM": 270.62
+      },
+      {
+        "distanceM": 1127.14,
+        "heightM": 274.23
+      },
+      {
+        "distanceM": 1136.15,
+        "heightM": 278.19
+      },
+      {
+        "distanceM": 1145.17,
+        "heightM": 282.49
+      },
+      {
+        "distanceM": 1154.19,
+        "heightM": 287.13
+      },
+      {
+        "distanceM": 1163.2,
+        "heightM": 292.1
+      },
+      {
+        "distanceM": 1172.22,
+        "heightM": 297.42
+      },
+      {
+        "distanceM": 1181.24,
+        "heightM": 303.08
+      },
+      {
+        "distanceM": 1190.25,
+        "heightM": 309.25
+      },
+      {
+        "distanceM": 1199.27,
+        "heightM": 315.7
+      },
+      {
+        "distanceM": 1208.29,
+        "heightM": 321.28
+      },
+      {
+        "distanceM": 1217.31,
+        "heightM": 325.39
+      },
+      {
+        "distanceM": 1226.32,
+        "heightM": 329.82
+      },
+      {
+        "distanceM": 1235.34,
+        "heightM": 334.56
+      },
+      {
+        "distanceM": 1244.36,
+        "heightM": 339.63
+      },
+      {
+        "distanceM": 1253.37,
+        "heightM": 345.0
+      },
+      {
+        "distanceM": 1262.39,
+        "heightM": 350.7
+      },
+      {
+        "distanceM": 1271.41,
+        "heightM": 356.71
+      },
+      {
+        "distanceM": 1280.43,
+        "heightM": 363.04
+      },
+      {
+        "distanceM": 1289.44,
+        "heightM": 369.68
+      },
+      {
+        "distanceM": 1298.46,
+        "heightM": 376.64
+      },
+      {
+        "distanceM": 1307.48,
+        "heightM": 379.13
+      },
+      {
+        "distanceM": 1316.49,
+        "heightM": 381.03
+      },
+      {
+        "distanceM": 1325.51,
+        "heightM": 382.9
+      },
+      {
+        "distanceM": 1334.53,
+        "heightM": 384.58
+      },
+      {
+        "distanceM": 1343.55,
+        "heightM": 384.45
+      },
+      {
+        "distanceM": 1352.56,
+        "heightM": 384.19
+      },
+      {
+        "distanceM": 1361.58,
+        "heightM": 383.79
+      },
+      {
+        "distanceM": 1370.6,
+        "heightM": 383.25
+      },
+      {
+        "distanceM": 1379.61,
+        "heightM": 382.57
+      },
+      {
+        "distanceM": 1388.63,
+        "heightM": 381.76
+      },
+      {
+        "distanceM": 1397.65,
+        "heightM": 379.94
+      },
+      {
+        "distanceM": 1406.66,
+        "heightM": 376.73
+      },
+      {
+        "distanceM": 1415.68,
+        "heightM": 373.32
+      },
+      {
+        "distanceM": 1424.7,
+        "heightM": 369.69
+      },
+      {
+        "distanceM": 1433.72,
+        "heightM": 365.85
+      },
+      {
+        "distanceM": 1442.73,
+        "heightM": 361.79
+      },
+      {
+        "distanceM": 1451.75,
+        "heightM": 357.53
+      },
+      {
+        "distanceM": 1460.77,
+        "heightM": 353.06
+      },
+      {
+        "distanceM": 1469.78,
+        "heightM": 348.38
+      },
+      {
+        "distanceM": 1478.8,
+        "heightM": 343.48
+      },
+      {
+        "distanceM": 1487.82,
+        "heightM": 338.73
+      },
+      {
+        "distanceM": 1496.84,
+        "heightM": 337.13
+      },
+      {
+        "distanceM": 1505.85,
+        "heightM": 335.87
+      },
+      {
+        "distanceM": 1514.87,
+        "heightM": 334.77
+      },
+      {
+        "distanceM": 1523.89,
+        "heightM": 333.84
+      },
+      {
+        "distanceM": 1532.9,
+        "heightM": 333.07
+      },
+      {
+        "distanceM": 1541.92,
+        "heightM": 332.47
+      },
+      {
+        "distanceM": 1550.94,
+        "heightM": 332.02
+      },
+      {
+        "distanceM": 1559.96,
+        "heightM": 331.75
+      },
+      {
+        "distanceM": 1568.97,
+        "heightM": 331.63
+      },
+      {
+        "distanceM": 1577.99,
+        "heightM": 331.68
+      },
+      {
+        "distanceM": 1587.01,
+        "heightM": 331.42
+      },
+      {
+        "distanceM": 1596.02,
+        "heightM": 330.57
+      },
+      {
+        "distanceM": 1605.04,
+        "heightM": 329.58
+      },
+      {
+        "distanceM": 1614.06,
+        "heightM": 328.46
+      },
+      {
+        "distanceM": 1623.07,
+        "heightM": 327.21
+      },
+      {
+        "distanceM": 1632.09,
+        "heightM": 325.82
+      },
+      {
+        "distanceM": 1641.11,
+        "heightM": 324.55
+      },
+      {
+        "distanceM": 1650.13,
+        "heightM": 323.18
+      },
+      {
+        "distanceM": 1659.14,
+        "heightM": 321.61
+      },
+      {
+        "distanceM": 1668.16,
+        "heightM": 319.85
+      },
+      {
+        "distanceM": 1677.18,
+        "heightM": 317.89
+      },
+      {
+        "distanceM": 1686.19,
+        "heightM": 315.02
+      },
+      {
+        "distanceM": 1695.21,
+        "heightM": 312.1
+      },
+      {
+        "distanceM": 1704.23,
+        "heightM": 309.15
+      },
+      {
+        "distanceM": 1713.25,
+        "heightM": 306.18
+      },
+      {
+        "distanceM": 1722.26,
+        "heightM": 303.17
+      },
+      {
+        "distanceM": 1731.28,
+        "heightM": 300.14
+      },
+      {
+        "distanceM": 1740.3,
+        "heightM": 297.09
+      },
+      {
+        "distanceM": 1749.31,
+        "heightM": 294.0
+      },
+      {
+        "distanceM": 1758.33,
+        "heightM": 290.89
+      },
+      {
+        "distanceM": 1767.35,
+        "heightM": 287.75
+      },
+      {
+        "distanceM": 1776.37,
+        "heightM": 284.27
+      },
+      {
+        "distanceM": 1785.38,
+        "heightM": 280.68
+      },
+      {
+        "distanceM": 1794.4,
+        "heightM": 277.1
+      },
+      {
+        "distanceM": 1803.42,
+        "heightM": 273.65
+      },
+      {
+        "distanceM": 1812.43,
+        "heightM": 270.32
+      },
+      {
+        "distanceM": 1821.45,
+        "heightM": 267.13
+      },
+      {
+        "distanceM": 1830.47,
+        "heightM": 264.05
+      },
+      {
+        "distanceM": 1839.48,
+        "heightM": 261.11
+      },
+      {
+        "distanceM": 1848.5,
+        "heightM": 258.29
+      },
+      {
+        "distanceM": 1857.52,
+        "heightM": 255.6
+      },
+      {
+        "distanceM": 1866.54,
+        "heightM": 253.04
+      },
+      {
+        "distanceM": 1875.55,
+        "heightM": 250.79
+      },
+      {
+        "distanceM": 1884.57,
+        "heightM": 248.71
+      },
+      {
+        "distanceM": 1893.59,
+        "heightM": 246.79
+      },
+      {
+        "distanceM": 1902.6,
+        "heightM": 245.04
+      },
+      {
+        "distanceM": 1911.62,
+        "heightM": 243.45
+      },
+      {
+        "distanceM": 1920.64,
+        "heightM": 242.02
+      },
+      {
+        "distanceM": 1929.66,
+        "heightM": 240.76
+      },
+      {
+        "distanceM": 1938.67,
+        "heightM": 239.59
+      },
+      {
+        "distanceM": 1947.69,
+        "heightM": 238.37
+      },
+      {
+        "distanceM": 1956.71,
+        "heightM": 237.16
+      },
+      {
+        "distanceM": 1965.72,
+        "heightM": 235.38
+      },
+      {
+        "distanceM": 1974.74,
+        "heightM": 233.11
+      },
+      {
+        "distanceM": 1983.76,
+        "heightM": 230.87
+      },
+      {
+        "distanceM": 1992.78,
+        "heightM": 228.67
+      },
+      {
+        "distanceM": 2001.79,
+        "heightM": 226.5
+      },
+      {
+        "distanceM": 2010.81,
+        "heightM": 224.36
+      },
+      {
+        "distanceM": 2019.83,
+        "heightM": 222.25
+      },
+      {
+        "distanceM": 2028.84,
+        "heightM": 220.17
+      },
+      {
+        "distanceM": 2037.86,
+        "heightM": 218.12
+      },
+      {
+        "distanceM": 2046.88,
+        "heightM": 216.11
+      },
+      {
+        "distanceM": 2055.89,
+        "heightM": 214.29
+      },
+      {
+        "distanceM": 2064.91,
+        "heightM": 215.48
+      },
+      {
+        "distanceM": 2073.93,
+        "heightM": 216.72
+      },
+      {
+        "distanceM": 2082.95,
+        "heightM": 218.01
+      },
+      {
+        "distanceM": 2091.96,
+        "heightM": 219.27
+      },
+      {
+        "distanceM": 2100.98,
+        "heightM": 220.29
+      },
+      {
+        "distanceM": 2110.0,
+        "heightM": 221.07
+      },
+      {
+        "distanceM": 2119.01,
+        "heightM": 221.6
+      },
+      {
+        "distanceM": 2128.03,
+        "heightM": 221.89
+      },
+      {
+        "distanceM": 2137.05,
+        "heightM": 221.93
+      },
+      {
+        "distanceM": 2146.07,
+        "heightM": 221.72
+      },
+      {
+        "distanceM": 2155.08,
+        "heightM": 222.1
+      },
+      {
+        "distanceM": 2164.1,
+        "heightM": 223.03
+      },
+      {
+        "distanceM": 2173.12,
+        "heightM": 223.92
+      },
+      {
+        "distanceM": 2182.13,
+        "heightM": 224.77
+      },
+      {
+        "distanceM": 2191.15,
+        "heightM": 225.6
+      },
+      {
+        "distanceM": 2200.17,
+        "heightM": 226.39
+      },
+      {
+        "distanceM": 2209.19,
+        "heightM": 227.15
+      },
+      {
+        "distanceM": 2218.2,
+        "heightM": 227.87
+      },
+      {
+        "distanceM": 2227.22,
+        "heightM": 228.56
+      },
+      {
+        "distanceM": 2236.24,
+        "heightM": 229.18
+      },
+      {
+        "distanceM": 2245.25,
+        "heightM": 228.66
+      },
+      {
+        "distanceM": 2254.27,
+        "heightM": 222.64
+      },
+      {
+        "distanceM": 2263.29,
+        "heightM": 216.83
+      },
+      {
+        "distanceM": 2272.3,
+        "heightM": 211.21
+      },
+      {
+        "distanceM": 2281.32,
+        "heightM": 205.8
+      },
+      {
+        "distanceM": 2290.34,
+        "heightM": 200.6
+      },
+      {
+        "distanceM": 2299.36,
+        "heightM": 195.6
+      },
+      {
+        "distanceM": 2308.37,
+        "heightM": 190.81
+      },
+      {
+        "distanceM": 2317.39,
+        "heightM": 186.21
+      },
+      {
+        "distanceM": 2326.41,
+        "heightM": 181.83
+      },
+      {
+        "distanceM": 2335.42,
+        "heightM": 177.64
+      },
+      {
+        "distanceM": 2344.44,
+        "heightM": 174.12
+      },
+      {
+        "distanceM": 2353.46,
+        "heightM": 170.93
+      },
+      {
+        "distanceM": 2362.48,
+        "heightM": 167.74
+      },
+      {
+        "distanceM": 2371.49,
+        "heightM": 164.55
+      },
+      {
+        "distanceM": 2380.51,
+        "heightM": 161.35
+      },
+      {
+        "distanceM": 2389.53,
+        "heightM": 158.24
+      },
+      {
+        "distanceM": 2398.54,
+        "heightM": 155.22
+      },
+      {
+        "distanceM": 2407.56,
+        "heightM": 152.17
+      },
+      {
+        "distanceM": 2416.58,
+        "heightM": 149.09
+      },
+      {
+        "distanceM": 2425.6,
+        "heightM": 145.97
+      },
+      {
+        "distanceM": 2434.61,
+        "heightM": 143.13
+      },
+      {
+        "distanceM": 2443.63,
+        "heightM": 142.25
+      },
+      {
+        "distanceM": 2452.65,
+        "heightM": 141.3
+      },
+      {
+        "distanceM": 2461.66,
+        "heightM": 140.29
+      },
+      {
+        "distanceM": 2470.68,
+        "heightM": 139.2
+      },
+      {
+        "distanceM": 2479.7,
+        "heightM": 138.05
+      },
+      {
+        "distanceM": 2488.71,
+        "heightM": 136.84
+      },
+      {
+        "distanceM": 2497.73,
+        "heightM": 135.56
+      },
+      {
+        "distanceM": 2506.75,
+        "heightM": 134.21
+      },
+      {
+        "distanceM": 2515.77,
+        "heightM": 132.8
+      },
+      {
+        "distanceM": 2524.78,
+        "heightM": 131.32
+      },
+      {
+        "distanceM": 2533.8,
+        "heightM": 130.76
+      },
+      {
+        "distanceM": 2542.82,
+        "heightM": 130.8
+      },
+      {
+        "distanceM": 2551.83,
+        "heightM": 130.89
+      },
+      {
+        "distanceM": 2560.85,
+        "heightM": 131.0
+      },
+      {
+        "distanceM": 2569.87,
+        "heightM": 131.14
+      },
+      {
+        "distanceM": 2578.89,
+        "heightM": 131.31
+      },
+      {
+        "distanceM": 2587.9,
+        "heightM": 131.51
+      },
+      {
+        "distanceM": 2596.92,
+        "heightM": 131.73
+      },
+      {
+        "distanceM": 2605.94,
+        "heightM": 131.98
+      },
+      {
+        "distanceM": 2614.95,
+        "heightM": 132.26
+      },
+      {
+        "distanceM": 2623.97,
+        "heightM": 132.56
+      },
+      {
+        "distanceM": 2632.99,
+        "heightM": 132.84
+      },
+      {
+        "distanceM": 2642.01,
+        "heightM": 133.13
+      },
+      {
+        "distanceM": 2651.02,
+        "heightM": 133.42
+      },
+      {
+        "distanceM": 2660.04,
+        "heightM": 133.71
+      },
+      {
+        "distanceM": 2669.06,
+        "heightM": 134.0
+      },
+      {
+        "distanceM": 2678.07,
+        "heightM": 134.29
+      },
+      {
+        "distanceM": 2687.09,
+        "heightM": 134.58
+      },
+      {
+        "distanceM": 2696.11,
+        "heightM": 134.76
+      },
+      {
+        "distanceM": 2705.12,
+        "heightM": 134.93
+      }
+    ]
+  },
+  {
+    "label": "황경 도성 → 현강 옛 도읍",
+    "from": [
+      -300.0,
+      -630.0
+    ],
+    "to": [
+      20.0,
+      4320.0
+    ],
+    "straightDistanceM": 4960.33,
+    "samples": [
+      {
+        "distanceM": 0.0,
+        "heightM": 72.51
+      },
+      {
+        "distanceM": 16.53,
+        "heightM": 72.39
+      },
+      {
+        "distanceM": 33.07,
+        "heightM": 72.26
+      },
+      {
+        "distanceM": 49.6,
+        "heightM": 72.13
+      },
+      {
+        "distanceM": 66.14,
+        "heightM": 72.0
+      },
+      {
+        "distanceM": 82.67,
+        "heightM": 71.39
+      },
+      {
+        "distanceM": 99.21,
+        "heightM": 70.63
+      },
+      {
+        "distanceM": 115.74,
+        "heightM": 69.88
+      },
+      {
+        "distanceM": 132.28,
+        "heightM": 69.14
+      },
+      {
+        "distanceM": 148.81,
+        "heightM": 68.4
+      },
+      {
+        "distanceM": 165.34,
+        "heightM": 68.34
+      },
+      {
+        "distanceM": 181.88,
+        "heightM": 68.34
+      },
+      {
+        "distanceM": 198.41,
+        "heightM": 68.36
+      },
+      {
+        "distanceM": 214.95,
+        "heightM": 68.39
+      },
+      {
+        "distanceM": 231.48,
+        "heightM": 68.48
+      },
+      {
+        "distanceM": 248.02,
+        "heightM": 69.57
+      },
+      {
+        "distanceM": 264.55,
+        "heightM": 70.67
+      },
+      {
+        "distanceM": 281.09,
+        "heightM": 71.78
+      },
+      {
+        "distanceM": 297.62,
+        "heightM": 72.9
+      },
+      {
+        "distanceM": 314.15,
+        "heightM": 74.52
+      },
+      {
+        "distanceM": 330.69,
+        "heightM": 77.98
+      },
+      {
+        "distanceM": 347.22,
+        "heightM": 81.44
+      },
+      {
+        "distanceM": 363.76,
+        "heightM": 84.91
+      },
+      {
+        "distanceM": 380.29,
+        "heightM": 88.37
+      },
+      {
+        "distanceM": 396.83,
+        "heightM": 92.71
+      },
+      {
+        "distanceM": 413.36,
+        "heightM": 98.57
+      },
+      {
+        "distanceM": 429.9,
+        "heightM": 104.44
+      },
+      {
+        "distanceM": 446.43,
+        "heightM": 110.31
+      },
+      {
+        "distanceM": 462.96,
+        "heightM": 116.19
+      },
+      {
+        "distanceM": 479.5,
+        "heightM": 121.85
+      },
+      {
+        "distanceM": 496.03,
+        "heightM": 127.27
+      },
+      {
+        "distanceM": 512.57,
+        "heightM": 132.65
+      },
+      {
+        "distanceM": 529.1,
+        "heightM": 137.98
+      },
+      {
+        "distanceM": 545.64,
+        "heightM": 143.27
+      },
+      {
+        "distanceM": 562.17,
+        "heightM": 148.49
+      },
+      {
+        "distanceM": 578.71,
+        "heightM": 153.68
+      },
+      {
+        "distanceM": 595.24,
+        "heightM": 158.85
+      },
+      {
+        "distanceM": 611.77,
+        "heightM": 164.0
+      },
+      {
+        "distanceM": 628.31,
+        "heightM": 169.13
+      },
+      {
+        "distanceM": 644.84,
+        "heightM": 172.21
+      },
+      {
+        "distanceM": 661.38,
+        "heightM": 174.88
+      },
+      {
+        "distanceM": 677.91,
+        "heightM": 177.61
+      },
+      {
+        "distanceM": 694.45,
+        "heightM": 180.39
+      },
+      {
+        "distanceM": 710.98,
+        "heightM": 183.22
+      },
+      {
+        "distanceM": 727.52,
+        "heightM": 182.7
+      },
+      {
+        "distanceM": 744.05,
+        "heightM": 182.13
+      },
+      {
+        "distanceM": 760.58,
+        "heightM": 181.59
+      },
+      {
+        "distanceM": 777.12,
+        "heightM": 181.1
+      },
+      {
+        "distanceM": 793.65,
+        "heightM": 180.88
+      },
+      {
+        "distanceM": 810.19,
+        "heightM": 182.34
+      },
+      {
+        "distanceM": 826.72,
+        "heightM": 183.8
+      },
+      {
+        "distanceM": 843.26,
+        "heightM": 185.27
+      },
+      {
+        "distanceM": 859.79,
+        "heightM": 186.74
+      },
+      {
+        "distanceM": 876.33,
+        "heightM": 188.0
+      },
+      {
+        "distanceM": 892.86,
+        "heightM": 188.64
+      },
+      {
+        "distanceM": 909.39,
+        "heightM": 189.26
+      },
+      {
+        "distanceM": 925.93,
+        "heightM": 189.88
+      },
+      {
+        "distanceM": 942.46,
+        "heightM": 190.41
+      },
+      {
+        "distanceM": 959.0,
+        "heightM": 190.22
+      },
+      {
+        "distanceM": 975.53,
+        "heightM": 189.15
+      },
+      {
+        "distanceM": 992.07,
+        "heightM": 188.12
+      },
+      {
+        "distanceM": 1008.6,
+        "heightM": 187.11
+      },
+      {
+        "distanceM": 1025.14,
+        "heightM": 186.15
+      },
+      {
+        "distanceM": 1041.67,
+        "heightM": 187.74
+      },
+      {
+        "distanceM": 1058.2,
+        "heightM": 191.2
+      },
+      {
+        "distanceM": 1074.74,
+        "heightM": 194.67
+      },
+      {
+        "distanceM": 1091.27,
+        "heightM": 198.14
+      },
+      {
+        "distanceM": 1107.81,
+        "heightM": 201.62
+      },
+      {
+        "distanceM": 1124.34,
+        "heightM": 207.27
+      },
+      {
+        "distanceM": 1140.88,
+        "heightM": 213.69
+      },
+      {
+        "distanceM": 1157.41,
+        "heightM": 220.07
+      },
+      {
+        "distanceM": 1173.95,
+        "heightM": 226.4
+      },
+      {
+        "distanceM": 1190.48,
+        "heightM": 232.69
+      },
+      {
+        "distanceM": 1207.01,
+        "heightM": 240.04
+      },
+      {
+        "distanceM": 1223.55,
+        "heightM": 247.43
+      },
+      {
+        "distanceM": 1240.08,
+        "heightM": 254.71
+      },
+      {
+        "distanceM": 1256.62,
+        "heightM": 261.88
+      },
+      {
+        "distanceM": 1273.15,
+        "heightM": 268.95
+      },
+      {
+        "distanceM": 1289.69,
+        "heightM": 276.29
+      },
+      {
+        "distanceM": 1306.22,
+        "heightM": 283.55
+      },
+      {
+        "distanceM": 1322.76,
+        "heightM": 290.71
+      },
+      {
+        "distanceM": 1339.29,
+        "heightM": 297.79
+      },
+      {
+        "distanceM": 1355.82,
+        "heightM": 304.25
+      },
+      {
+        "distanceM": 1372.36,
+        "heightM": 308.24
+      },
+      {
+        "distanceM": 1388.89,
+        "heightM": 312.2
+      },
+      {
+        "distanceM": 1405.43,
+        "heightM": 316.12
+      },
+      {
+        "distanceM": 1421.96,
+        "heightM": 320.0
+      },
+      {
+        "distanceM": 1438.5,
+        "heightM": 323.27
+      },
+      {
+        "distanceM": 1455.03,
+        "heightM": 325.39
+      },
+      {
+        "distanceM": 1471.57,
+        "heightM": 327.52
+      },
+      {
+        "distanceM": 1488.1,
+        "heightM": 329.65
+      },
+      {
+        "distanceM": 1504.63,
+        "heightM": 331.8
+      },
+      {
+        "distanceM": 1521.17,
+        "heightM": 333.89
+      },
+      {
+        "distanceM": 1537.7,
+        "heightM": 335.96
+      },
+      {
+        "distanceM": 1554.24,
+        "heightM": 338.08
+      },
+      {
+        "distanceM": 1570.77,
+        "heightM": 340.24
+      },
+      {
+        "distanceM": 1587.31,
+        "heightM": 342.44
+      },
+      {
+        "distanceM": 1603.84,
+        "heightM": 344.68
+      },
+      {
+        "distanceM": 1620.38,
+        "heightM": 346.95
+      },
+      {
+        "distanceM": 1636.91,
+        "heightM": 349.27
+      },
+      {
+        "distanceM": 1653.44,
+        "heightM": 351.62
+      },
+      {
+        "distanceM": 1669.98,
+        "heightM": 354.02
+      },
+      {
+        "distanceM": 1686.51,
+        "heightM": 359.67
+      },
+      {
+        "distanceM": 1703.05,
+        "heightM": 366.23
+      },
+      {
+        "distanceM": 1719.58,
+        "heightM": 372.82
+      },
+      {
+        "distanceM": 1736.12,
+        "heightM": 379.46
+      },
+      {
+        "distanceM": 1752.65,
+        "heightM": 386.14
+      },
+      {
+        "distanceM": 1769.19,
+        "heightM": 389.46
+      },
+      {
+        "distanceM": 1785.72,
+        "heightM": 392.62
+      },
+      {
+        "distanceM": 1802.25,
+        "heightM": 395.82
+      },
+      {
+        "distanceM": 1818.79,
+        "heightM": 399.07
+      },
+      {
+        "distanceM": 1835.32,
+        "heightM": 402.26
+      },
+      {
+        "distanceM": 1851.86,
+        "heightM": 404.5
+      },
+      {
+        "distanceM": 1868.39,
+        "heightM": 406.78
+      },
+      {
+        "distanceM": 1884.93,
+        "heightM": 409.09
+      },
+      {
+        "distanceM": 1901.46,
+        "heightM": 411.44
+      },
+      {
+        "distanceM": 1918.0,
+        "heightM": 414.65
+      },
+      {
+        "distanceM": 1934.53,
+        "heightM": 420.44
+      },
+      {
+        "distanceM": 1951.06,
+        "heightM": 426.21
+      },
+      {
+        "distanceM": 1967.6,
+        "heightM": 431.96
+      },
+      {
+        "distanceM": 1984.13,
+        "heightM": 437.69
+      },
+      {
+        "distanceM": 2000.67,
+        "heightM": 444.39
+      },
+      {
+        "distanceM": 2017.2,
+        "heightM": 452.52
+      },
+      {
+        "distanceM": 2033.74,
+        "heightM": 460.55
+      },
+      {
+        "distanceM": 2050.27,
+        "heightM": 468.5
+      },
+      {
+        "distanceM": 2066.81,
+        "heightM": 476.35
+      },
+      {
+        "distanceM": 2083.34,
+        "heightM": 483.62
+      },
+      {
+        "distanceM": 2099.87,
+        "heightM": 490.41
+      },
+      {
+        "distanceM": 2116.41,
+        "heightM": 497.15
+      },
+      {
+        "distanceM": 2132.94,
+        "heightM": 503.84
+      },
+      {
+        "distanceM": 2149.48,
+        "heightM": 510.48
+      },
+      {
+        "distanceM": 2166.01,
+        "heightM": 516.59
+      },
+      {
+        "distanceM": 2182.55,
+        "heightM": 522.81
+      },
+      {
+        "distanceM": 2199.08,
+        "heightM": 529.19
+      },
+      {
+        "distanceM": 2215.62,
+        "heightM": 535.67
+      },
+      {
+        "distanceM": 2232.15,
+        "heightM": 542.25
+      },
+      {
+        "distanceM": 2248.68,
+        "heightM": 541.34
+      },
+      {
+        "distanceM": 2265.22,
+        "heightM": 539.26
+      },
+      {
+        "distanceM": 2281.75,
+        "heightM": 537.38
+      },
+      {
+        "distanceM": 2298.29,
+        "heightM": 535.68
+      },
+      {
+        "distanceM": 2314.82,
+        "heightM": 534.17
+      },
+      {
+        "distanceM": 2331.36,
+        "heightM": 531.87
+      },
+      {
+        "distanceM": 2347.89,
+        "heightM": 529.44
+      },
+      {
+        "distanceM": 2364.43,
+        "heightM": 526.86
+      },
+      {
+        "distanceM": 2380.96,
+        "heightM": 524.13
+      },
+      {
+        "distanceM": 2397.49,
+        "heightM": 521.54
+      },
+      {
+        "distanceM": 2414.03,
+        "heightM": 520.38
+      },
+      {
+        "distanceM": 2430.56,
+        "heightM": 519.09
+      },
+      {
+        "distanceM": 2447.1,
+        "heightM": 517.68
+      },
+      {
+        "distanceM": 2463.63,
+        "heightM": 516.15
+      },
+      {
+        "distanceM": 2480.17,
+        "heightM": 513.4
+      },
+      {
+        "distanceM": 2496.7,
+        "heightM": 508.14
+      },
+      {
+        "distanceM": 2513.24,
+        "heightM": 502.97
+      },
+      {
+        "distanceM": 2529.77,
+        "heightM": 497.89
+      },
+      {
+        "distanceM": 2546.3,
+        "heightM": 492.91
+      },
+      {
+        "distanceM": 2562.84,
+        "heightM": 486.42
+      },
+      {
+        "distanceM": 2579.37,
+        "heightM": 478.15
+      },
+      {
+        "distanceM": 2595.91,
+        "heightM": 470.03
+      },
+      {
+        "distanceM": 2612.44,
+        "heightM": 462.06
+      },
+      {
+        "distanceM": 2628.98,
+        "heightM": 454.24
+      },
+      {
+        "distanceM": 2645.51,
+        "heightM": 447.91
+      },
+      {
+        "distanceM": 2662.05,
+        "heightM": 442.48
+      },
+      {
+        "distanceM": 2678.58,
+        "heightM": 437.05
+      },
+      {
+        "distanceM": 2695.11,
+        "heightM": 431.62
+      },
+      {
+        "distanceM": 2711.65,
+        "heightM": 426.2
+      },
+      {
+        "distanceM": 2728.18,
+        "heightM": 420.79
+      },
+      {
+        "distanceM": 2744.72,
+        "heightM": 415.35
+      },
+      {
+        "distanceM": 2761.25,
+        "heightM": 409.86
+      },
+      {
+        "distanceM": 2777.79,
+        "heightM": 404.32
+      },
+      {
+        "distanceM": 2794.32,
+        "heightM": 398.73
+      },
+      {
+        "distanceM": 2810.86,
+        "heightM": 394.74
+      },
+      {
+        "distanceM": 2827.39,
+        "heightM": 390.89
+      },
+      {
+        "distanceM": 2843.92,
+        "heightM": 387.02
+      },
+      {
+        "distanceM": 2860.46,
+        "heightM": 383.11
+      },
+      {
+        "distanceM": 2876.99,
+        "heightM": 379.53
+      },
+      {
+        "distanceM": 2893.53,
+        "heightM": 381.26
+      },
+      {
+        "distanceM": 2910.06,
+        "heightM": 382.59
+      },
+      {
+        "distanceM": 2926.6,
+        "heightM": 383.54
+      },
+      {
+        "distanceM": 2943.13,
+        "heightM": 384.1
+      },
+      {
+        "distanceM": 2959.67,
+        "heightM": 384.98
+      },
+      {
+        "distanceM": 2976.2,
+        "heightM": 388.3
+      },
+      {
+        "distanceM": 2992.73,
+        "heightM": 391.58
+      },
+      {
+        "distanceM": 3009.27,
+        "heightM": 394.82
+      },
+      {
+        "distanceM": 3025.8,
+        "heightM": 398.02
+      },
+      {
+        "distanceM": 3042.34,
+        "heightM": 400.59
+      },
+      {
+        "distanceM": 3058.87,
+        "heightM": 402.11
+      },
+      {
+        "distanceM": 3075.41,
+        "heightM": 403.64
+      },
+      {
+        "distanceM": 3091.94,
+        "heightM": 405.18
+      },
+      {
+        "distanceM": 3108.48,
+        "heightM": 406.73
+      },
+      {
+        "distanceM": 3125.01,
+        "heightM": 407.13
+      },
+      {
+        "distanceM": 3141.54,
+        "heightM": 406.39
+      },
+      {
+        "distanceM": 3158.08,
+        "heightM": 405.59
+      },
+      {
+        "distanceM": 3174.61,
+        "heightM": 404.72
+      },
+      {
+        "distanceM": 3191.15,
+        "heightM": 403.79
+      },
+      {
+        "distanceM": 3207.68,
+        "heightM": 401.34
+      },
+      {
+        "distanceM": 3224.22,
+        "heightM": 398.18
+      },
+      {
+        "distanceM": 3240.75,
+        "heightM": 395.06
+      },
+      {
+        "distanceM": 3257.29,
+        "heightM": 391.99
+      },
+      {
+        "distanceM": 3273.82,
+        "heightM": 388.96
+      },
+      {
+        "distanceM": 3290.35,
+        "heightM": 389.93
+      },
+      {
+        "distanceM": 3306.89,
+        "heightM": 391.87
+      },
+      {
+        "distanceM": 3323.42,
+        "heightM": 393.88
+      },
+      {
+        "distanceM": 3339.96,
+        "heightM": 395.97
+      },
+      {
+        "distanceM": 3356.49,
+        "heightM": 398.14
+      },
+      {
+        "distanceM": 3373.03,
+        "heightM": 400.01
+      },
+      {
+        "distanceM": 3389.56,
+        "heightM": 401.89
+      },
+      {
+        "distanceM": 3406.1,
+        "heightM": 403.8
+      },
+      {
+        "distanceM": 3422.63,
+        "heightM": 405.72
+      },
+      {
+        "distanceM": 3439.16,
+        "heightM": 407.54
+      },
+      {
+        "distanceM": 3455.7,
+        "heightM": 408.59
+      },
+      {
+        "distanceM": 3472.23,
+        "heightM": 409.7
+      },
+      {
+        "distanceM": 3488.77,
+        "heightM": 410.88
+      },
+      {
+        "distanceM": 3505.3,
+        "heightM": 412.13
+      },
+      {
+        "distanceM": 3521.84,
+        "heightM": 413.59
+      },
+      {
+        "distanceM": 3538.37,
+        "heightM": 415.57
+      },
+      {
+        "distanceM": 3554.91,
+        "heightM": 417.69
+      },
+      {
+        "distanceM": 3571.44,
+        "heightM": 419.94
+      },
+      {
+        "distanceM": 3587.97,
+        "heightM": 422.34
+      },
+      {
+        "distanceM": 3604.51,
+        "heightM": 420.66
+      },
+      {
+        "distanceM": 3621.04,
+        "heightM": 413.45
+      },
+      {
+        "distanceM": 3637.58,
+        "heightM": 406.5
+      },
+      {
+        "distanceM": 3654.11,
+        "heightM": 399.79
+      },
+      {
+        "distanceM": 3670.65,
+        "heightM": 393.33
+      },
+      {
+        "distanceM": 3687.18,
+        "heightM": 384.1
+      },
+      {
+        "distanceM": 3703.72,
+        "heightM": 372.7
+      },
+      {
+        "distanceM": 3720.25,
+        "heightM": 361.32
+      },
+      {
+        "distanceM": 3736.78,
+        "heightM": 349.96
+      },
+      {
+        "distanceM": 3753.32,
+        "heightM": 338.6
+      },
+      {
+        "distanceM": 3769.85,
+        "heightM": 324.9
+      },
+      {
+        "distanceM": 3786.39,
+        "heightM": 310.26
+      },
+      {
+        "distanceM": 3802.92,
+        "heightM": 295.53
+      },
+      {
+        "distanceM": 3819.46,
+        "heightM": 280.73
+      },
+      {
+        "distanceM": 3835.99,
+        "heightM": 265.86
+      },
+      {
+        "distanceM": 3852.53,
+        "heightM": 253.98
+      },
+      {
+        "distanceM": 3869.06,
+        "heightM": 242.46
+      },
+      {
+        "distanceM": 3885.59,
+        "heightM": 230.88
+      },
+      {
+        "distanceM": 3902.13,
+        "heightM": 219.23
+      },
+      {
+        "distanceM": 3918.66,
+        "heightM": 207.67
+      },
+      {
+        "distanceM": 3935.2,
+        "heightM": 200.94
+      },
+      {
+        "distanceM": 3951.73,
+        "heightM": 194.19
+      },
+      {
+        "distanceM": 3968.27,
+        "heightM": 187.42
+      },
+      {
+        "distanceM": 3984.8,
+        "heightM": 180.63
+      },
+      {
+        "distanceM": 4001.34,
+        "heightM": 174.25
+      },
+      {
+        "distanceM": 4017.87,
+        "heightM": 169.78
+      },
+      {
+        "distanceM": 4034.4,
+        "heightM": 165.28
+      },
+      {
+        "distanceM": 4050.94,
+        "heightM": 160.74
+      },
+      {
+        "distanceM": 4067.47,
+        "heightM": 156.18
+      },
+      {
+        "distanceM": 4084.01,
+        "heightM": 152.5
+      },
+      {
+        "distanceM": 4100.54,
+        "heightM": 150.61
+      },
+      {
+        "distanceM": 4117.08,
+        "heightM": 148.68
+      },
+      {
+        "distanceM": 4133.61,
+        "heightM": 146.73
+      },
+      {
+        "distanceM": 4150.14,
+        "heightM": 144.74
+      },
+      {
+        "distanceM": 4166.68,
+        "heightM": 143.2
+      },
+      {
+        "distanceM": 4183.21,
+        "heightM": 142.15
+      },
+      {
+        "distanceM": 4199.75,
+        "heightM": 141.13
+      },
+      {
+        "distanceM": 4216.28,
+        "heightM": 140.14
+      },
+      {
+        "distanceM": 4232.82,
+        "heightM": 139.17
+      },
+      {
+        "distanceM": 4249.35,
+        "heightM": 138.61
+      },
+      {
+        "distanceM": 4265.89,
+        "heightM": 138.22
+      },
+      {
+        "distanceM": 4282.42,
+        "heightM": 137.75
+      },
+      {
+        "distanceM": 4298.95,
+        "heightM": 137.2
+      },
+      {
+        "distanceM": 4315.49,
+        "heightM": 136.57
+      },
+      {
+        "distanceM": 4332.02,
+        "heightM": 137.68
+      },
+      {
+        "distanceM": 4348.56,
+        "heightM": 139.29
+      },
+      {
+        "distanceM": 4365.09,
+        "heightM": 140.92
+      },
+      {
+        "distanceM": 4381.63,
+        "heightM": 142.57
+      },
+      {
+        "distanceM": 4398.16,
+        "heightM": 144.26
+      },
+      {
+        "distanceM": 4414.7,
+        "heightM": 145.73
+      },
+      {
+        "distanceM": 4431.23,
+        "heightM": 147.16
+      },
+      {
+        "distanceM": 4447.76,
+        "heightM": 148.56
+      },
+      {
+        "distanceM": 4464.3,
+        "heightM": 149.93
+      },
+      {
+        "distanceM": 4480.83,
+        "heightM": 151.27
+      },
+      {
+        "distanceM": 4497.37,
+        "heightM": 152.63
+      },
+      {
+        "distanceM": 4513.9,
+        "heightM": 153.99
+      },
+      {
+        "distanceM": 4530.44,
+        "heightM": 155.35
+      },
+      {
+        "distanceM": 4546.97,
+        "heightM": 156.71
+      },
+      {
+        "distanceM": 4563.51,
+        "heightM": 157.89
+      },
+      {
+        "distanceM": 4580.04,
+        "heightM": 158.5
+      },
+      {
+        "distanceM": 4596.57,
+        "heightM": 159.14
+      },
+      {
+        "distanceM": 4613.11,
+        "heightM": 159.82
+      },
+      {
+        "distanceM": 4629.64,
+        "heightM": 160.53
+      },
+      {
+        "distanceM": 4646.18,
+        "heightM": 160.78
+      },
+      {
+        "distanceM": 4662.71,
+        "heightM": 160.27
+      },
+      {
+        "distanceM": 4679.25,
+        "heightM": 159.73
+      },
+      {
+        "distanceM": 4695.78,
+        "heightM": 159.17
+      },
+      {
+        "distanceM": 4712.32,
+        "heightM": 158.59
+      },
+      {
+        "distanceM": 4728.85,
+        "heightM": 158.29
+      },
+      {
+        "distanceM": 4745.38,
+        "heightM": 158.24
+      },
+      {
+        "distanceM": 4761.92,
+        "heightM": 158.23
+      },
+      {
+        "distanceM": 4778.45,
+        "heightM": 158.25
+      },
+      {
+        "distanceM": 4794.99,
+        "heightM": 158.31
+      },
+      {
+        "distanceM": 4811.52,
+        "heightM": 158.44
+      },
+      {
+        "distanceM": 4828.06,
+        "heightM": 158.58
+      },
+      {
+        "distanceM": 4844.59,
+        "heightM": 158.7
+      },
+      {
+        "distanceM": 4861.13,
+        "heightM": 158.79
+      },
+      {
+        "distanceM": 4877.66,
+        "heightM": 158.87
+      },
+      {
+        "distanceM": 4894.19,
+        "heightM": 158.09
+      },
+      {
+        "distanceM": 4910.73,
+        "heightM": 157.18
+      },
+      {
+        "distanceM": 4927.26,
+        "heightM": 156.27
+      },
+      {
+        "distanceM": 4943.8,
+        "heightM": 155.37
+      },
+      {
+        "distanceM": 4960.33,
+        "heightM": 154.47
+      }
+    ]
+  },
+  {
+    "label": "적로 전장 → 철옹 관성",
+    "from": [
+      -350.0,
+      -3530.0
+    ],
+    "to": [
+      -2240.0,
+      350.0
+    ],
+    "straightDistanceM": 4315.84,
+    "samples": [
+      {
+        "distanceM": 0.0,
+        "heightM": 37.76
+      },
+      {
+        "distanceM": 14.39,
+        "heightM": 37.68
+      },
+      {
+        "distanceM": 28.77,
+        "heightM": 37.75
+      },
+      {
+        "distanceM": 43.16,
+        "heightM": 37.86
+      },
+      {
+        "distanceM": 57.54,
+        "heightM": 38.02
+      },
+      {
+        "distanceM": 71.93,
+        "heightM": 38.23
+      },
+      {
+        "distanceM": 86.32,
+        "heightM": 38.48
+      },
+      {
+        "distanceM": 100.7,
+        "heightM": 38.77
+      },
+      {
+        "distanceM": 115.09,
+        "heightM": 38.61
+      },
+      {
+        "distanceM": 129.48,
+        "heightM": 38.13
+      },
+      {
+        "distanceM": 143.86,
+        "heightM": 37.68
+      },
+      {
+        "distanceM": 158.25,
+        "heightM": 37.26
+      },
+      {
+        "distanceM": 172.63,
+        "heightM": 36.87
+      },
+      {
+        "distanceM": 187.02,
+        "heightM": 36.52
+      },
+      {
+        "distanceM": 201.41,
+        "heightM": 36.41
+      },
+      {
+        "distanceM": 215.79,
+        "heightM": 36.36
+      },
+      {
+        "distanceM": 230.18,
+        "heightM": 36.32
+      },
+      {
+        "distanceM": 244.56,
+        "heightM": 36.3
+      },
+      {
+        "distanceM": 258.95,
+        "heightM": 36.3
+      },
+      {
+        "distanceM": 273.34,
+        "heightM": 36.31
+      },
+      {
+        "distanceM": 287.72,
+        "heightM": 36.6
+      },
+      {
+        "distanceM": 302.11,
+        "heightM": 37.03
+      },
+      {
+        "distanceM": 316.5,
+        "heightM": 37.57
+      },
+      {
+        "distanceM": 330.88,
+        "heightM": 38.2
+      },
+      {
+        "distanceM": 345.27,
+        "heightM": 38.93
+      },
+      {
+        "distanceM": 359.65,
+        "heightM": 39.76
+      },
+      {
+        "distanceM": 374.04,
+        "heightM": 41.4
+      },
+      {
+        "distanceM": 388.43,
+        "heightM": 43.8
+      },
+      {
+        "distanceM": 402.81,
+        "heightM": 46.15
+      },
+      {
+        "distanceM": 417.2,
+        "heightM": 48.45
+      },
+      {
+        "distanceM": 431.58,
+        "heightM": 50.71
+      },
+      {
+        "distanceM": 445.97,
+        "heightM": 52.93
+      },
+      {
+        "distanceM": 460.36,
+        "heightM": 55.39
+      },
+      {
+        "distanceM": 474.74,
+        "heightM": 58.48
+      },
+      {
+        "distanceM": 489.13,
+        "heightM": 61.78
+      },
+      {
+        "distanceM": 503.52,
+        "heightM": 65.12
+      },
+      {
+        "distanceM": 517.9,
+        "heightM": 68.35
+      },
+      {
+        "distanceM": 532.29,
+        "heightM": 71.48
+      },
+      {
+        "distanceM": 546.67,
+        "heightM": 74.7
+      },
+      {
+        "distanceM": 561.06,
+        "heightM": 79.31
+      },
+      {
+        "distanceM": 575.45,
+        "heightM": 83.81
+      },
+      {
+        "distanceM": 589.83,
+        "heightM": 88.22
+      },
+      {
+        "distanceM": 604.22,
+        "heightM": 92.52
+      },
+      {
+        "distanceM": 618.6,
+        "heightM": 96.72
+      },
+      {
+        "distanceM": 632.99,
+        "heightM": 100.81
+      },
+      {
+        "distanceM": 647.38,
+        "heightM": 105.87
+      },
+      {
+        "distanceM": 661.76,
+        "heightM": 111.13
+      },
+      {
+        "distanceM": 676.15,
+        "heightM": 117.92
+      },
+      {
+        "distanceM": 690.53,
+        "heightM": 124.58
+      },
+      {
+        "distanceM": 704.92,
+        "heightM": 131.06
+      },
+      {
+        "distanceM": 719.31,
+        "heightM": 137.36
+      },
+      {
+        "distanceM": 733.69,
+        "heightM": 142.84
+      },
+      {
+        "distanceM": 748.08,
+        "heightM": 148.06
+      },
+      {
+        "distanceM": 762.47,
+        "heightM": 153.27
+      },
+      {
+        "distanceM": 776.85,
+        "heightM": 158.47
+      },
+      {
+        "distanceM": 791.24,
+        "heightM": 163.66
+      },
+      {
+        "distanceM": 805.62,
+        "heightM": 168.85
+      },
+      {
+        "distanceM": 820.01,
+        "heightM": 173.35
+      },
+      {
+        "distanceM": 834.4,
+        "heightM": 177.42
+      },
+      {
+        "distanceM": 848.78,
+        "heightM": 181.96
+      },
+      {
+        "distanceM": 863.17,
+        "heightM": 187.68
+      },
+      {
+        "distanceM": 877.55,
+        "heightM": 193.58
+      },
+      {
+        "distanceM": 891.94,
+        "heightM": 199.68
+      },
+      {
+        "distanceM": 906.33,
+        "heightM": 206.65
+      },
+      {
+        "distanceM": 920.71,
+        "heightM": 214.85
+      },
+      {
+        "distanceM": 935.1,
+        "heightM": 223.07
+      },
+      {
+        "distanceM": 949.49,
+        "heightM": 231.32
+      },
+      {
+        "distanceM": 963.87,
+        "heightM": 239.6
+      },
+      {
+        "distanceM": 978.26,
+        "heightM": 247.91
+      },
+      {
+        "distanceM": 992.64,
+        "heightM": 256.04
+      },
+      {
+        "distanceM": 1007.03,
+        "heightM": 263.09
+      },
+      {
+        "distanceM": 1021.42,
+        "heightM": 269.87
+      },
+      {
+        "distanceM": 1035.8,
+        "heightM": 276.89
+      },
+      {
+        "distanceM": 1050.19,
+        "heightM": 284.21
+      },
+      {
+        "distanceM": 1064.57,
+        "heightM": 291.5
+      },
+      {
+        "distanceM": 1078.96,
+        "heightM": 298.75
+      },
+      {
+        "distanceM": 1093.35,
+        "heightM": 306.31
+      },
+      {
+        "distanceM": 1107.73,
+        "heightM": 313.62
+      },
+      {
+        "distanceM": 1122.12,
+        "heightM": 320.68
+      },
+      {
+        "distanceM": 1136.51,
+        "heightM": 327.51
+      },
+      {
+        "distanceM": 1150.89,
+        "heightM": 334.08
+      },
+      {
+        "distanceM": 1165.28,
+        "heightM": 340.41
+      },
+      {
+        "distanceM": 1179.66,
+        "heightM": 345.38
+      },
+      {
+        "distanceM": 1194.05,
+        "heightM": 349.8
+      },
+      {
+        "distanceM": 1208.44,
+        "heightM": 353.92
+      },
+      {
+        "distanceM": 1222.82,
+        "heightM": 354.2
+      },
+      {
+        "distanceM": 1237.21,
+        "heightM": 353.11
+      },
+      {
+        "distanceM": 1251.59,
+        "heightM": 351.12
+      },
+      {
+        "distanceM": 1265.98,
+        "heightM": 341.59
+      },
+      {
+        "distanceM": 1280.37,
+        "heightM": 326.41
+      },
+      {
+        "distanceM": 1294.75,
+        "heightM": 309.32
+      },
+      {
+        "distanceM": 1309.14,
+        "heightM": 290.31
+      },
+      {
+        "distanceM": 1323.53,
+        "heightM": 269.39
+      },
+      {
+        "distanceM": 1337.91,
+        "heightM": 246.56
+      },
+      {
+        "distanceM": 1352.3,
+        "heightM": 219.35
+      },
+      {
+        "distanceM": 1366.68,
+        "heightM": 188.81
+      },
+      {
+        "distanceM": 1381.07,
+        "heightM": 158.7
+      },
+      {
+        "distanceM": 1395.46,
+        "heightM": 129.44
+      },
+      {
+        "distanceM": 1409.84,
+        "heightM": 103.59
+      },
+      {
+        "distanceM": 1424.23,
+        "heightM": 79.82
+      },
+      {
+        "distanceM": 1438.61,
+        "heightM": 61.64
+      },
+      {
+        "distanceM": 1453.0,
+        "heightM": 54.76
+      },
+      {
+        "distanceM": 1467.39,
+        "heightM": 48.59
+      },
+      {
+        "distanceM": 1481.77,
+        "heightM": 43.13
+      },
+      {
+        "distanceM": 1496.16,
+        "heightM": 38.37
+      },
+      {
+        "distanceM": 1510.55,
+        "heightM": 34.31
+      },
+      {
+        "distanceM": 1524.93,
+        "heightM": 31.15
+      },
+      {
+        "distanceM": 1539.32,
+        "heightM": 30.88
+      },
+      {
+        "distanceM": 1553.7,
+        "heightM": 30.96
+      },
+      {
+        "distanceM": 1568.09,
+        "heightM": 31.36
+      },
+      {
+        "distanceM": 1582.48,
+        "heightM": 32.15
+      },
+      {
+        "distanceM": 1596.86,
+        "heightM": 33.11
+      },
+      {
+        "distanceM": 1611.25,
+        "heightM": 34.15
+      },
+      {
+        "distanceM": 1625.63,
+        "heightM": 35.86
+      },
+      {
+        "distanceM": 1640.02,
+        "heightM": 37.7
+      },
+      {
+        "distanceM": 1654.41,
+        "heightM": 39.58
+      },
+      {
+        "distanceM": 1668.79,
+        "heightM": 41.52
+      },
+      {
+        "distanceM": 1683.18,
+        "heightM": 43.5
+      },
+      {
+        "distanceM": 1697.56,
+        "heightM": 45.53
+      },
+      {
+        "distanceM": 1711.95,
+        "heightM": 46.89
+      },
+      {
+        "distanceM": 1726.34,
+        "heightM": 47.41
+      },
+      {
+        "distanceM": 1740.72,
+        "heightM": 47.27
+      },
+      {
+        "distanceM": 1755.11,
+        "heightM": 46.49
+      },
+      {
+        "distanceM": 1769.5,
+        "heightM": 45.25
+      },
+      {
+        "distanceM": 1783.88,
+        "heightM": 44.06
+      },
+      {
+        "distanceM": 1798.27,
+        "heightM": 42.86
+      },
+      {
+        "distanceM": 1812.65,
+        "heightM": 41.68
+      },
+      {
+        "distanceM": 1827.04,
+        "heightM": 40.62
+      },
+      {
+        "distanceM": 1841.43,
+        "heightM": 39.68
+      },
+      {
+        "distanceM": 1855.81,
+        "heightM": 38.85
+      },
+      {
+        "distanceM": 1870.2,
+        "heightM": 38.14
+      },
+      {
+        "distanceM": 1884.58,
+        "heightM": 37.39
+      },
+      {
+        "distanceM": 1898.97,
+        "heightM": 36.28
+      },
+      {
+        "distanceM": 1913.36,
+        "heightM": 35.05
+      },
+      {
+        "distanceM": 1927.74,
+        "heightM": 33.69
+      },
+      {
+        "distanceM": 1942.13,
+        "heightM": 32.27
+      },
+      {
+        "distanceM": 1956.52,
+        "heightM": 31.67
+      },
+      {
+        "distanceM": 1970.9,
+        "heightM": 31.44
+      },
+      {
+        "distanceM": 1985.29,
+        "heightM": 32.15
+      },
+      {
+        "distanceM": 1999.67,
+        "heightM": 32.94
+      },
+      {
+        "distanceM": 2014.06,
+        "heightM": 33.81
+      },
+      {
+        "distanceM": 2028.45,
+        "heightM": 34.75
+      },
+      {
+        "distanceM": 2042.83,
+        "heightM": 35.76
+      },
+      {
+        "distanceM": 2057.22,
+        "heightM": 36.86
+      },
+      {
+        "distanceM": 2071.6,
+        "heightM": 37.79
+      },
+      {
+        "distanceM": 2085.99,
+        "heightM": 38.74
+      },
+      {
+        "distanceM": 2100.38,
+        "heightM": 39.71
+      },
+      {
+        "distanceM": 2114.76,
+        "heightM": 40.71
+      },
+      {
+        "distanceM": 2129.15,
+        "heightM": 41.34
+      },
+      {
+        "distanceM": 2143.54,
+        "heightM": 41.23
+      },
+      {
+        "distanceM": 2157.92,
+        "heightM": 41.26
+      },
+      {
+        "distanceM": 2172.31,
+        "heightM": 41.49
+      },
+      {
+        "distanceM": 2186.69,
+        "heightM": 41.87
+      },
+      {
+        "distanceM": 2201.08,
+        "heightM": 42.39
+      },
+      {
+        "distanceM": 2215.47,
+        "heightM": 43.08
+      },
+      {
+        "distanceM": 2229.85,
+        "heightM": 43.91
+      },
+      {
+        "distanceM": 2244.24,
+        "heightM": 44.75
+      },
+      {
+        "distanceM": 2258.62,
+        "heightM": 45.57
+      },
+      {
+        "distanceM": 2273.01,
+        "heightM": 46.46
+      },
+      {
+        "distanceM": 2287.4,
+        "heightM": 47.41
+      },
+      {
+        "distanceM": 2301.78,
+        "heightM": 48.43
+      },
+      {
+        "distanceM": 2316.17,
+        "heightM": 49.12
+      },
+      {
+        "distanceM": 2330.56,
+        "heightM": 49.97
+      },
+      {
+        "distanceM": 2344.94,
+        "heightM": 51.32
+      },
+      {
+        "distanceM": 2359.33,
+        "heightM": 52.5
+      },
+      {
+        "distanceM": 2373.71,
+        "heightM": 53.53
+      },
+      {
+        "distanceM": 2388.1,
+        "heightM": 54.39
+      },
+      {
+        "distanceM": 2402.49,
+        "heightM": 55.09
+      },
+      {
+        "distanceM": 2416.87,
+        "heightM": 55.8
+      },
+      {
+        "distanceM": 2431.26,
+        "heightM": 57.06
+      },
+      {
+        "distanceM": 2445.64,
+        "heightM": 58.28
+      },
+      {
+        "distanceM": 2460.03,
+        "heightM": 59.46
+      },
+      {
+        "distanceM": 2474.42,
+        "heightM": 60.6
+      },
+      {
+        "distanceM": 2488.8,
+        "heightM": 61.7
+      },
+      {
+        "distanceM": 2503.19,
+        "heightM": 62.91
+      },
+      {
+        "distanceM": 2517.58,
+        "heightM": 65.1
+      },
+      {
+        "distanceM": 2531.96,
+        "heightM": 67.12
+      },
+      {
+        "distanceM": 2546.35,
+        "heightM": 68.96
+      },
+      {
+        "distanceM": 2560.73,
+        "heightM": 70.63
+      },
+      {
+        "distanceM": 2575.12,
+        "heightM": 72.13
+      },
+      {
+        "distanceM": 2589.51,
+        "heightM": 73.45
+      },
+      {
+        "distanceM": 2603.89,
+        "heightM": 75.43
+      },
+      {
+        "distanceM": 2618.28,
+        "heightM": 77.84
+      },
+      {
+        "distanceM": 2632.66,
+        "heightM": 80.58
+      },
+      {
+        "distanceM": 2647.05,
+        "heightM": 83.63
+      },
+      {
+        "distanceM": 2661.44,
+        "heightM": 87.01
+      },
+      {
+        "distanceM": 2675.82,
+        "heightM": 90.36
+      },
+      {
+        "distanceM": 2690.21,
+        "heightM": 93.27
+      },
+      {
+        "distanceM": 2704.59,
+        "heightM": 96.64
+      },
+      {
+        "distanceM": 2718.98,
+        "heightM": 100.3
+      },
+      {
+        "distanceM": 2733.37,
+        "heightM": 104.27
+      },
+      {
+        "distanceM": 2747.75,
+        "heightM": 108.53
+      },
+      {
+        "distanceM": 2762.14,
+        "heightM": 113.09
+      },
+      {
+        "distanceM": 2776.53,
+        "heightM": 118.62
+      },
+      {
+        "distanceM": 2790.91,
+        "heightM": 125.72
+      },
+      {
+        "distanceM": 2805.3,
+        "heightM": 133.82
+      },
+      {
+        "distanceM": 2819.68,
+        "heightM": 142.92
+      },
+      {
+        "distanceM": 2834.07,
+        "heightM": 153.01
+      },
+      {
+        "distanceM": 2848.46,
+        "heightM": 164.11
+      },
+      {
+        "distanceM": 2862.84,
+        "heightM": 172.03
+      },
+      {
+        "distanceM": 2877.23,
+        "heightM": 174.26
+      },
+      {
+        "distanceM": 2891.61,
+        "heightM": 177.7
+      },
+      {
+        "distanceM": 2906.0,
+        "heightM": 182.37
+      },
+      {
+        "distanceM": 2920.39,
+        "heightM": 188.25
+      },
+      {
+        "distanceM": 2934.77,
+        "heightM": 195.34
+      },
+      {
+        "distanceM": 2949.16,
+        "heightM": 202.98
+      },
+      {
+        "distanceM": 2963.55,
+        "heightM": 205.46
+      },
+      {
+        "distanceM": 2977.93,
+        "heightM": 208.12
+      },
+      {
+        "distanceM": 2992.32,
+        "heightM": 210.95
+      },
+      {
+        "distanceM": 3006.7,
+        "heightM": 213.96
+      },
+      {
+        "distanceM": 3021.09,
+        "heightM": 217.15
+      },
+      {
+        "distanceM": 3035.48,
+        "heightM": 220.51
+      },
+      {
+        "distanceM": 3049.86,
+        "heightM": 223.04
+      },
+      {
+        "distanceM": 3064.25,
+        "heightM": 225.53
+      },
+      {
+        "distanceM": 3078.63,
+        "heightM": 228.12
+      },
+      {
+        "distanceM": 3093.02,
+        "heightM": 230.8
+      },
+      {
+        "distanceM": 3107.41,
+        "heightM": 233.58
+      },
+      {
+        "distanceM": 3121.79,
+        "heightM": 236.46
+      },
+      {
+        "distanceM": 3136.18,
+        "heightM": 238.86
+      },
+      {
+        "distanceM": 3150.57,
+        "heightM": 240.76
+      },
+      {
+        "distanceM": 3164.95,
+        "heightM": 242.3
+      },
+      {
+        "distanceM": 3179.34,
+        "heightM": 243.48
+      },
+      {
+        "distanceM": 3193.72,
+        "heightM": 244.29
+      },
+      {
+        "distanceM": 3208.11,
+        "heightM": 244.75
+      },
+      {
+        "distanceM": 3222.5,
+        "heightM": 246.1
+      },
+      {
+        "distanceM": 3236.88,
+        "heightM": 251.06
+      },
+      {
+        "distanceM": 3251.27,
+        "heightM": 256.34
+      },
+      {
+        "distanceM": 3265.65,
+        "heightM": 261.92
+      },
+      {
+        "distanceM": 3280.04,
+        "heightM": 267.82
+      },
+      {
+        "distanceM": 3294.43,
+        "heightM": 274.03
+      },
+      {
+        "distanceM": 3308.81,
+        "heightM": 280.12
+      },
+      {
+        "distanceM": 3323.2,
+        "heightM": 285.62
+      },
+      {
+        "distanceM": 3337.59,
+        "heightM": 291.19
+      },
+      {
+        "distanceM": 3351.97,
+        "heightM": 296.84
+      },
+      {
+        "distanceM": 3366.36,
+        "heightM": 302.56
+      },
+      {
+        "distanceM": 3380.74,
+        "heightM": 308.37
+      },
+      {
+        "distanceM": 3395.13,
+        "heightM": 314.19
+      },
+      {
+        "distanceM": 3409.52,
+        "heightM": 318.85
+      },
+      {
+        "distanceM": 3423.9,
+        "heightM": 322.68
+      },
+      {
+        "distanceM": 3438.29,
+        "heightM": 326.75
+      },
+      {
+        "distanceM": 3452.67,
+        "heightM": 331.08
+      },
+      {
+        "distanceM": 3467.06,
+        "heightM": 335.65
+      },
+      {
+        "distanceM": 3481.45,
+        "heightM": 340.48
+      },
+      {
+        "distanceM": 3495.83,
+        "heightM": 343.16
+      },
+      {
+        "distanceM": 3510.22,
+        "heightM": 345.89
+      },
+      {
+        "distanceM": 3524.61,
+        "heightM": 348.7
+      },
+      {
+        "distanceM": 3538.99,
+        "heightM": 351.59
+      },
+      {
+        "distanceM": 3553.38,
+        "heightM": 354.55
+      },
+      {
+        "distanceM": 3567.76,
+        "heightM": 357.59
+      },
+      {
+        "distanceM": 3582.15,
+        "heightM": 358.52
+      },
+      {
+        "distanceM": 3596.54,
+        "heightM": 358.05
+      },
+      {
+        "distanceM": 3610.92,
+        "heightM": 356.87
+      },
+      {
+        "distanceM": 3625.31,
+        "heightM": 355.09
+      },
+      {
+        "distanceM": 3639.69,
+        "heightM": 352.71
+      },
+      {
+        "distanceM": 3654.08,
+        "heightM": 349.75
+      },
+      {
+        "distanceM": 3668.47,
+        "heightM": 346.24
+      },
+      {
+        "distanceM": 3682.85,
+        "heightM": 342.14
+      },
+      {
+        "distanceM": 3697.24,
+        "heightM": 337.41
+      },
+      {
+        "distanceM": 3711.62,
+        "heightM": 332.05
+      },
+      {
+        "distanceM": 3726.01,
+        "heightM": 326.06
+      },
+      {
+        "distanceM": 3740.4,
+        "heightM": 319.43
+      },
+      {
+        "distanceM": 3754.78,
+        "heightM": 312.23
+      },
+      {
+        "distanceM": 3769.17,
+        "heightM": 304.2
+      },
+      {
+        "distanceM": 3783.56,
+        "heightM": 293.71
+      },
+      {
+        "distanceM": 3797.94,
+        "heightM": 282.87
+      },
+      {
+        "distanceM": 3812.33,
+        "heightM": 271.69
+      },
+      {
+        "distanceM": 3826.71,
+        "heightM": 260.18
+      },
+      {
+        "distanceM": 3841.1,
+        "heightM": 248.44
+      },
+      {
+        "distanceM": 3855.49,
+        "heightM": 236.86
+      },
+      {
+        "distanceM": 3869.87,
+        "heightM": 225.18
+      },
+      {
+        "distanceM": 3884.26,
+        "heightM": 213.39
+      },
+      {
+        "distanceM": 3898.64,
+        "heightM": 201.49
+      },
+      {
+        "distanceM": 3913.03,
+        "heightM": 189.49
+      },
+      {
+        "distanceM": 3927.42,
+        "heightM": 177.57
+      },
+      {
+        "distanceM": 3941.8,
+        "heightM": 168.7
+      },
+      {
+        "distanceM": 3956.19,
+        "heightM": 160.57
+      },
+      {
+        "distanceM": 3970.58,
+        "heightM": 153.64
+      },
+      {
+        "distanceM": 3984.96,
+        "heightM": 147.15
+      },
+      {
+        "distanceM": 3999.35,
+        "heightM": 141.08
+      },
+      {
+        "distanceM": 4013.73,
+        "heightM": 135.44
+      },
+      {
+        "distanceM": 4028.12,
+        "heightM": 133.14
+      },
+      {
+        "distanceM": 4042.51,
+        "heightM": 131.42
+      },
+      {
+        "distanceM": 4056.89,
+        "heightM": 129.83
+      },
+      {
+        "distanceM": 4071.28,
+        "heightM": 128.39
+      },
+      {
+        "distanceM": 4085.66,
+        "heightM": 127.1
+      },
+      {
+        "distanceM": 4100.05,
+        "heightM": 125.95
+      },
+      {
+        "distanceM": 4114.44,
+        "heightM": 125.54
+      },
+      {
+        "distanceM": 4128.82,
+        "heightM": 125.47
+      },
+      {
+        "distanceM": 4143.21,
+        "heightM": 125.47
+      },
+      {
+        "distanceM": 4157.6,
+        "heightM": 125.45
+      },
+      {
+        "distanceM": 4171.98,
+        "heightM": 125.39
+      },
+      {
+        "distanceM": 4186.37,
+        "heightM": 125.28
+      },
+      {
+        "distanceM": 4200.75,
+        "heightM": 125.09
+      },
+      {
+        "distanceM": 4215.14,
+        "heightM": 124.88
+      },
+      {
+        "distanceM": 4229.53,
+        "heightM": 124.72
+      },
+      {
+        "distanceM": 4243.91,
+        "heightM": 124.62
+      },
+      {
+        "distanceM": 4258.3,
+        "heightM": 124.58
+      },
+      {
+        "distanceM": 4272.68,
+        "heightM": 124.59
+      },
+      {
+        "distanceM": 4287.07,
+        "heightM": 124.61
+      },
+      {
+        "distanceM": 4301.46,
+        "heightM": 124.57
+      },
+      {
+        "distanceM": 4315.84,
+        "heightM": 124.56
+      }
+    ]
+  }
+]

@@ -1,0 +1,266 @@
+[
+  {
+    "variant": "A",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_A.fbx",
+    "sourceWorldDimensions": [
+      9.6051664352417,
+      4.801004409790039,
+      3.988124370574951
+    ],
+    "normalizationMetres": 9.6051664352417,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_A.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_A_LOD0.002",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_A_LOD1.002",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_A_LOD2.002",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_A_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "C",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_C.fbx",
+    "sourceWorldDimensions": [
+      3.474769115447998,
+      5.104667663574219,
+      2.3476645946502686
+    ],
+    "normalizationMetres": 5.104667663574219,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_C.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_C_LOD0.001",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_C_LOD1.001",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_C_LOD2.001",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_C_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "D",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_D.fbx",
+    "sourceWorldDimensions": [
+      8.669965744018555,
+      6.249639511108398,
+      2.6414284706115723
+    ],
+    "normalizationMetres": 8.669965267181396,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_D.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_D_LOD0.001",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_D_LOD1.001",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_D_LOD2.001",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_D_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "F",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_F.fbx",
+    "sourceWorldDimensions": [
+      2.0813140869140625,
+      2.0978469848632812,
+      1.3674952983856201
+    ],
+    "normalizationMetres": 2.0978469848632812,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_F.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_F_LOD0.001",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_F_LOD1.001",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_F_LOD2.001",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_F_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "I",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_I.fbx",
+    "sourceWorldDimensions": [
+      1.4441156387329102,
+      2.077362060546875,
+      1.2141755819320679
+    ],
+    "normalizationMetres": 2.0773619413375854,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_I.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_I_LOD0.001",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_I_LOD1.001",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_I_LOD2.001",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_I_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "K",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_K.fbx",
+    "sourceWorldDimensions": [
+      3.989020824432373,
+      4.07255744934082,
+      1.9870688915252686
+    ],
+    "normalizationMetres": 4.072557687759399,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_K.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_K_LOD0.001",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_K_LOD1.001",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_K_LOD2.001",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_K_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "L",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_L.fbx",
+    "sourceWorldDimensions": [
+      0.8938722610473633,
+      1.1107654571533203,
+      0.5338594913482666
+    ],
+    "normalizationMetres": 1.1107654571533203,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_L.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_L_LOD0.001",
+        "vertices": 3608,
+        "triangles": 7212
+      },
+      {
+        "name": "InkRock_L_LOD1.001",
+        "vertices": 1011,
+        "triangles": 2018
+      },
+      {
+        "name": "InkRock_L_LOD2.001",
+        "vertices": 272,
+        "triangles": 540
+      },
+      {
+        "name": "InkRock_L_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  },
+  {
+    "variant": "N",
+    "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\SeyeonjeongPavilion\\Mesh\\Rock\\SM_Rock_N.fbx",
+    "sourceWorldDimensions": [
+      3.6710948944091797,
+      3.6832237243652344,
+      1.029621958732605
+    ],
+    "normalizationMetres": 3.683223605155945,
+    "output": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\CodexWorld\\RockKit\\InkRock_N.fbx",
+    "meshes": [
+      {
+        "name": "InkRock_N_LOD0.001",
+        "vertices": 6002,
+        "triangles": 12000
+      },
+      {
+        "name": "InkRock_N_LOD1.001",
+        "vertices": 1682,
+        "triangles": 3360
+      },
+      {
+        "name": "InkRock_N_LOD2.001",
+        "vertices": 452,
+        "triangles": 900
+      },
+      {
+        "name": "InkRock_N_COL.001",
+        "vertices": 82,
+        "triangles": 160
+      }
+    ]
+  }
+]

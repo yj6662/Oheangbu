@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8083a2ec90c0e74e88825641f463570, type: 3}
+  m_Name: MagicStoneCarVfxProfile
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.World.Vehicle.MagicStoneCarVfxProfileSO
+  IgnitionSeconds: 0.2
+  PatternSeconds: 0.4
+  VentSeconds: 0.45
+  CooldownSeconds: 1
+  StoppedSpeed: 0.25
+  MovingSpeed: 0.8
+  PedalThreshold: 0.1
+  MinimumMotorTorque: 1
+  CoreColour: {r: 0.1, g: 0.65, b: 0.8, a: 1}
+  PeakEmission: 2.2
+  RunningEmission: 0.22
+  IdleEmission: 0
+  EmissionResponse: 0.15
+  VentParticles: 18
+  PatternPrefab: {fileID: 2305383518937715219, guid: 2a8d458a912f07640acf024310fc8664, type: 3}

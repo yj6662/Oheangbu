@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b4e447225694215922184c2250ddea3, type: 3}
+  m_Name: BrushDeformation_DosaV2
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.BrushDeformationProfileSO
+  NominalTotalLength: 0.9
+  NominalShaftLength: 0.6416083
+  FullBendSpeed: 1.5
+  MaximumBendDegrees: 28
+  BendDistributionPower: 1.7
+  BendResponse: 22
+  RecoveryResponse: 12
+  MaximumSplay: 0.65
+  SplayResponse: 18
+  SplayRecoveryResponse: 10
+  ResetAfterGap: 0.5

@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39bf4dd4417410c4182c3bd6de05318d, type: 3}
+  m_Name: RegionalSkyProfile
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.World.RegionalInkSkyProfile
+  BlendDistance: 1200
+  ResponseSeconds: 2
+  DefaultRealm: 1
+  Regions:
+  - Realm: 1
+    Horizon: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+    Zenith: {r: 0.72360003, g: 0.71848, b: 0.6512, a: 1}
+    Cloud: {r: 0.5752, g: 0.57514, b: 0.5032, a: 1}
+    CloudDensity: 0.14
+  - Realm: 0
+    Horizon: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+    Zenith: {r: 0.66216004, g: 0.71032, b: 0.67072004, a: 1}
+    Cloud: {r: 0.50608003, g: 0.56596, b: 0.52516, a: 1}
+    CloudDensity: 0.17
+  - Realm: 2
+    Horizon: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+    Zenith: {r: 0.72872, g: 0.68776, b: 0.64000005, a: 1}
+    Cloud: {r: 0.58096004, g: 0.54058, b: 0.49060002, a: 1}
+    CloudDensity: 0.12
+  - Realm: 3
+    Horizon: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+    Zenith: {r: 0.72232, g: 0.74296, b: 0.72144, a: 1}
+    Cloud: {r: 0.57376003, g: 0.60267997, b: 0.58222, a: 1}
+    CloudDensity: 0.16
+  - Realm: 4
+    Horizon: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+    Zenith: {r: 0.6452, g: 0.67448, b: 0.66256005, a: 1}
+    Cloud: {r: 0.48700002, g: 0.52564, b: 0.51598, a: 1}
+    CloudDensity: 0.2

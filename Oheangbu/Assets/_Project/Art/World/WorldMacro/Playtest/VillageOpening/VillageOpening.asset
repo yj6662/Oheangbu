@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d93164c66ea481c97636f28f366477a, type: 3}
+  m_Name: VillageOpening
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.World.WorldMacroOpeningProfileSO
+  Enabled: 1
+  StartFeet: {x: 1911.1, y: 133.32, z: 645.9}
+  StartYaw: 270
+  Commission:
+    Id: village_commission
+    Kind: 3
+    Position: {x: 1908.8, y: 133.3, z: 645}
+    Prompt: "\uC544\uC804\uC5D0\uAC8C \uD3D0\uAD11 \uC870\uC0AC \uC758\uB8B0 \uD655\uC778"
+    Text: "\uB3D9\uCABD \uD3D0\uAD11\uC5D0\uC11C \uD3ED\uD30C \uC18C\uB9AC\uAC00
+      \uB0AC\uC18C. \uD604\uC7A5\uC5D0 \uB0A8\uC740 \uD754\uC801\uC744 \uC0B4\uD3B4\uBCF4\uACE0
+      \uB3CC\uC544\uC640 \uC8FC\uC2DC\uC624. \uC544\uC9C1 \uB204\uAC00, \uC65C \uADF8\uB7F0
+      \uAC83\uC778\uC9C0\uB294 \uBAA8\uB974\uC624.\n\nG\uB97C \uB204\uB974\uBA74
+      \uC624\uD589\uBD80\uB85C \uC790\uB3D9\uCC28\uB97C \uBD80\uB97C \uC218 \uC788\uC18C.
+      \uD070\uAE38\uC744 \uB530\uB77C \uAE08\uD45C \uC8FC\uB9C9 \uCABD\uC73C\uB85C
+      \uAC00\uBA74 \uD3D0\uAD11\uC73C\uB85C \uC774\uC5B4\uC9C0\uB294 \uC0B0\uAE38\uC774
+      \uB098\uC624\uC624. \uC881\uC740 \uAE38\uC740 \uAC78\uC5B4\uC11C \uC0B4\uD3B4\uBCF4\uC2DC\uC624.\n\n\uB0B4\uB9B0
+      \uB4A4 \uBA40\uC5B4\uC9C0\uBA74 \uCC28\uB294 \uC624\uD589\uBD80\uB85C \uB3CC\uC544\uC624\uB2C8,
+      \uC8FC\uCC28\uD55C \uACF3\uC744 \uCC3E\uC544 \uB3CC\uC544\uC62C \uD544\uC694\uB294
+      \uC5C6\uC18C. \uD070\uAE38\uC5D0\uC11C G\uB85C \uB2E4\uC2DC \uBD80\uB974\uBA74
+      \uB418\uC624."
+    Currency: 0
+    Radius: 3.1
+  EvidenceInteractionId: mine_inquiry
+  IntroductionTitle: "\uAD00\uCCAD\uC5D0\uC11C \uBC1B\uC740 \uBD80\uB984"
+  IntroductionText: "\uAD00\uCCAD \uC544\uC804\uC5D0\uAC8C \uD3D0\uAD11 \uD3ED\uD30C
+    \uC870\uC0AC \uC758\uB8B0\uB97C \uD655\uC778\uD55C\uB2E4.\n\n\uC544\uC804\uC5D0\uAC8C
+    \uB2E4\uAC00\uAC00 [F]\uB97C \uB204\uB974\uC138\uC694."
+  BeforeCommissionObjective: "\uAD00\uCCAD \uC544\uC804\uC5D0\uAC8C \uD3D0\uAD11
+    \uD3ED\uD30C \uC870\uC0AC \uC758\uB8B0\uB97C \uD655\uC778\uD55C\uB2E4 [F]"
+  BeforeVehicleObjective: "G\uB85C \uC790\uB3D9\uCC28\uB97C \uBD80\uB978 \uB4A4,
+    \uAE08\uD45C \uC8FC\uB9C9 \uCABD \uD070\uAE38\uB85C \uC774\uB3D9\uD55C\uB2E4"
+  BeforeEvidenceObjective: "\uAE08\uD45C \uC8FC\uB9C9\uC5D0\uC11C \uB3D9\uCABD \uC0B0\uAE38\uC744
+    \uB530\uB77C \uD3D0\uAD11\uC73C\uB85C \uAC00\uC11C \uD3ED\uD30C \uD754\uC801\uC744
+    \uC870\uC0AC\uD55C\uB2E4"

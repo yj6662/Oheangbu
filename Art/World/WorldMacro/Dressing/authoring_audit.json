@@ -1,0 +1,50 @@
+{
+    "utc": "2026-09-11T22:40:26.3593735Z",
+    "scope": "Deterministic authoring and source-preservation checks. Not a camera, visual, collision traversal or FPS pass.",
+    "region": "Hwanggyeong",
+    "cells": 1225,
+    "prototypes": 48,
+    "storyClusters": 11,
+    "fixedPlacements": 112,
+    "textureCopies": 36,
+    "meshCopies": 26,
+    "validHabitatSamples": 4531381,
+    "treeSamples": 4520090,
+    "shrubSamples": 4528350,
+    "grassSamples": 4531381,
+    "rockSamples": 4487451,
+    "maskChecks": 14700,
+    "maskMismatches": 0,
+    "completedRegions": [
+        "Cheongrim",
+        "Jeokro",
+        "Cheolong",
+        "Hyeongang",
+        "Hwanggyeong"
+    ],
+    "checks": [
+        "PASS geography, actual water meshes, landmark placement and staging fingerprint",
+        "PASS unique 256m cells",
+        "PASS finite terrain lattice and full habitat/region arrays",
+        "PASS shared meshes and instancing materials",
+        "PASS reviewed source prefab paths retained",
+        "PASS source prefabs, meshes and material/texture dependencies unchanged",
+        "PASS all selected LOD meshes use standalone copies; no retained source FBX subassets",
+        "PASS native-import texture copies at most 1024px (grass 512px)",
+        "PASS texture copy colour/normal space and unreadable runtime settings",
+        "PASS vegetation shader compile",
+        "PASS source prefab renderers are not instantiated in the world",
+        "PASS bounded distance and collider settings",
+        "PASS read-only sampled actual water/route/building/manual exclusion rebake",
+        "PASS persistent fixed placement IDs and source prototype links",
+        "PASS fixed props on measured dry terrain"
+    ],
+    "commit": 0.6839553117752075,
+    "fingerprint": "e8c5dbdd761d2813b922b1ae839f10b8021b7eeddae5b075a1a02c77a4cc23a7",
+    "unverified": [
+        "User visual density and silhouette review",
+        "Runtime frame time and GPU overdraw",
+        "New vegetation collision walking and vehicle traversal",
+        "Camera passage and billboard transition"
+    ]
+}

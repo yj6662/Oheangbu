@@ -1,0 +1,9 @@
+{
+  "method": "Existing body skin, rear pelvis patch selected in unchanged rest space z=.79-.96, |x|<.16, y>.025. Not garment collision validation.",
+  "patchVertices": 2329,
+  "buttMinimumZ": 0.039234694093465805,
+  "buttMaximumZ": 0.24911567568778992,
+  "bodyMaximumZ": 1.040756344795227,
+  "bodyMinimumZ": 0.004072882235050201,
+  "hipsWorldZ": 0.3200000822544098
+}

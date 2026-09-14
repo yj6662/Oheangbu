@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.HarvestInkStreamEffect
   _harvest: {fileID: 6662627666480878760}
-  _sinkAnchor: {fileID: 6955357096533571519}
+  _sinkAnchor: {fileID: 4953724609607990054}
   _dropletMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   _material: {fileID: 2100000, guid: 3bb006a7573b273419dc6c30e28b7a5e, type: 2}
   _inkColor: {r: 0.16, g: 0.15, b: 0.13, a: 1}
@@ -198,7 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f59327c65314ed2428f328d0d95deb62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Oheangbu.Combat::Oheangbu.Combat.LockOn
-  _target: {fileID: 0}
   _config: {fileID: 11400000, guid: 3c72e0f096c47d94290503c64ebe3d1c, type: 2}
 --- !u!114 &6662627666480878760
 MonoBehaviour:
@@ -572,7 +571,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4953724609607990054
 Transform:
   m_ObjectHideFlags: 0
@@ -698,7 +697,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2147483647
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -961,3 +960,4 @@ MonoBehaviour:
   _letterDrawn: {fileID: 11400000, guid: c5b5038e37bdeff4abbb1ae079f460fb, type: 2}
   _surfaceDistance: 1
   _eyeAnchor: {fileID: 6947963281234312863}
+  _projectionCamera: {fileID: 0}

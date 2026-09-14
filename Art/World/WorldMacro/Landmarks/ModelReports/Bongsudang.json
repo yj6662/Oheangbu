@@ -1,0 +1,1510 @@
+{
+  "asset": "Bongsudang",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\HwaseongHaenggung\\Meshes\\Buildings\\SM_Bongsudang.fbx",
+  "source_prefab": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\HwaseongHaenggung\\Prefabs\\SM_Bongsudang.prefab",
+  "source_sha256": "290099f8aa790d7bc46f3da998d6f9efa73b2db8b79c8ce913aede3b92053794",
+  "source_prefab_sha256": "d2902fb751a90989fcd01938dca46a886b52f132abf0e3abce372060ae9cb1d6",
+  "lods": [
+    {
+      "name": "LM_Bongsudang_LOD0",
+      "vertices": 100082,
+      "triangles": 143178,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -20.814321517944336,
+          -15.196041107177734,
+          1.0068636129290098e-06
+        ],
+        "maximum": [
+          20.811786651611328,
+          15.197929382324219,
+          11.876160621643066
+        ],
+        "size": [
+          41.626108169555664,
+          30.393970489501953,
+          11.876159614779453
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_KoreanWood_2",
+          "triangles": 5898
+        },
+        {
+          "slot": 1,
+          "name": "MI_W_Pink_4",
+          "triangles": 176
+        },
+        {
+          "slot": 2,
+          "name": "MI_KoreanWood_5",
+          "triangles": 60311
+        },
+        {
+          "slot": 3,
+          "name": "MI_Metal",
+          "triangles": 12168
+        },
+        {
+          "slot": 4,
+          "name": "MI_KoreanPaper_1",
+          "triangles": 319
+        },
+        {
+          "slot": 5,
+          "name": "MI_KoreanStone_1",
+          "triangles": 4834
+        },
+        {
+          "slot": 6,
+          "name": "MI_W_Pink_1",
+          "triangles": 68
+        },
+        {
+          "slot": 7,
+          "name": "MI_KoreanPaper_2",
+          "triangles": 774
+        },
+        {
+          "slot": 8,
+          "name": "MI_KoreanWood_4",
+          "triangles": 6099
+        },
+        {
+          "slot": 9,
+          "name": "MI_KoreanWood_3",
+          "triangles": 3890
+        },
+        {
+          "slot": 10,
+          "name": "MI_RoyalStair_1",
+          "triangles": 252
+        },
+        {
+          "slot": 11,
+          "name": "MI_KoreanFloor_3",
+          "triangles": 66
+        },
+        {
+          "slot": 12,
+          "name": "MI_R_Roof",
+          "triangles": 32494
+        },
+        {
+          "slot": 13,
+          "name": "MI_KoreanBrick_2",
+          "triangles": 8
+        },
+        {
+          "slot": 14,
+          "name": "MI_Koreantile_1",
+          "triangles": 222
+        },
+        {
+          "slot": 15,
+          "name": "MI_BronzeBurner",
+          "triangles": 442
+        },
+        {
+          "slot": 16,
+          "name": "MI_R_BrickConcrete",
+          "triangles": 1295
+        },
+        {
+          "slot": 17,
+          "name": "MI_R_Buyeon_1",
+          "triangles": 5801
+        },
+        {
+          "slot": 18,
+          "name": "MI_R_Decors_2",
+          "triangles": 789
+        },
+        {
+          "slot": 19,
+          "name": "MI_R_Dancheong_2",
+          "triangles": 2806
+        },
+        {
+          "slot": 20,
+          "name": "MI_R_Green",
+          "triangles": 1960
+        },
+        {
+          "slot": 21,
+          "name": "MI_R_Decors_1",
+          "triangles": 790
+        },
+        {
+          "slot": 22,
+          "name": "MI_R_Dancheong_1",
+          "triangles": 967
+        },
+        {
+          "slot": 23,
+          "name": "MI_R_Woods_1",
+          "triangles": 483
+        },
+        {
+          "slot": 24,
+          "name": "MI_R_Sign_BSD_1",
+          "triangles": 14
+        },
+        {
+          "slot": 25,
+          "name": "MI_R_Ceiling_1",
+          "triangles": 4
+        },
+        {
+          "slot": 26,
+          "name": "MI_R_Sign_BSD_2",
+          "triangles": 14
+        },
+        {
+          "slot": 27,
+          "name": "MI_KoreanWood_1",
+          "triangles": 234
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 145000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        -0.0049457550048828125,
+        0.0018892288208007812,
+        0.009537696838378906
+      ],
+      "source_bounds_preserved": true,
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Bongsudang_LOD0.fbx",
+      "export_sha256": "5768fce02cb1f5b1ac8181374142e913b0439d066517b5ef64830854c0f59ef9",
+      "before_fbx_validation_triangles": 143839,
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Bongsudang_LOD0",
+            "vertices": 100082,
+            "triangles": 143178,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -20.814321517944336,
+                -15.196041107177734,
+                -3.2809277854539687e-06
+              ],
+              "maximum": [
+                20.811786651611328,
+                15.197933197021484,
+                11.876164436340332
+              ],
+              "size": [
+                41.626108169555664,
+                30.39397430419922,
+                11.876167717268117
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_KoreanWood_2",
+                "triangles": 5898
+              },
+              {
+                "slot": 1,
+                "name": "MI_W_Pink_4",
+                "triangles": 176
+              },
+              {
+                "slot": 2,
+                "name": "MI_KoreanWood_5",
+                "triangles": 60311
+              },
+              {
+                "slot": 3,
+                "name": "MI_Metal",
+                "triangles": 12168
+              },
+              {
+                "slot": 4,
+                "name": "MI_KoreanPaper_1",
+                "triangles": 319
+              },
+              {
+                "slot": 5,
+                "name": "MI_KoreanStone_1",
+                "triangles": 4834
+              },
+              {
+                "slot": 6,
+                "name": "MI_W_Pink_1",
+                "triangles": 68
+              },
+              {
+                "slot": 7,
+                "name": "MI_KoreanPaper_2",
+                "triangles": 774
+              },
+              {
+                "slot": 8,
+                "name": "MI_KoreanWood_4",
+                "triangles": 6099
+              },
+              {
+                "slot": 9,
+                "name": "MI_KoreanWood_3",
+                "triangles": 3890
+              },
+              {
+                "slot": 10,
+                "name": "MI_RoyalStair_1",
+                "triangles": 252
+              },
+              {
+                "slot": 11,
+                "name": "MI_KoreanFloor_3",
+                "triangles": 66
+              },
+              {
+                "slot": 12,
+                "name": "MI_R_Roof",
+                "triangles": 32494
+              },
+              {
+                "slot": 13,
+                "name": "MI_KoreanBrick_2",
+                "triangles": 8
+              },
+              {
+                "slot": 14,
+                "name": "MI_Koreantile_1",
+                "triangles": 222
+              },
+              {
+                "slot": 15,
+                "name": "MI_BronzeBurner",
+                "triangles": 442
+              },
+              {
+                "slot": 16,
+                "name": "MI_R_BrickConcrete",
+                "triangles": 1295
+              },
+              {
+                "slot": 17,
+                "name": "MI_R_Buyeon_1",
+                "triangles": 5801
+              },
+              {
+                "slot": 18,
+                "name": "MI_R_Decors_2",
+                "triangles": 789
+              },
+              {
+                "slot": 19,
+                "name": "MI_R_Dancheong_2",
+                "triangles": 2806
+              },
+              {
+                "slot": 20,
+                "name": "MI_R_Green",
+                "triangles": 1960
+              },
+              {
+                "slot": 21,
+                "name": "MI_R_Decors_1",
+                "triangles": 790
+              },
+              {
+                "slot": 22,
+                "name": "MI_R_Dancheong_1",
+                "triangles": 967
+              },
+              {
+                "slot": 23,
+                "name": "MI_R_Woods_1",
+                "triangles": 483
+              },
+              {
+                "slot": 24,
+                "name": "MI_R_Sign_BSD_1",
+                "triangles": 14
+              },
+              {
+                "slot": 25,
+                "name": "MI_R_Ceiling_1",
+                "triangles": 4
+              },
+              {
+                "slot": 26,
+                "name": "MI_R_Sign_BSD_2",
+                "triangles": 14
+              },
+              {
+                "slot": 27,
+                "name": "MI_KoreanWood_1",
+                "triangles": 234
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 143178,
+        "bounds_blender_world": {
+          "minimum": [
+            -20.814321517944336,
+            -15.196041107177734,
+            -3.2809277854539687e-06
+          ],
+          "maximum": [
+            20.811786651611328,
+            15.197933197021484,
+            11.876164436340332
+          ],
+          "size": [
+            41.626108169555664,
+            30.39397430419922,
+            11.876167717268117
+          ]
+        },
+        "bounds_max_error_m": 4.2877913983829785e-06,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true
+    },
+    {
+      "name": "LM_Bongsudang_LOD1",
+      "vertices": 44429,
+      "triangles": 35055,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -20.813678741455078,
+          -15.196040153503418,
+          1.1316822110529756e-06
+        ],
+        "maximum": [
+          20.795475006103516,
+          15.172072410583496,
+          11.808028221130371
+        ],
+        "size": [
+          41.609153747558594,
+          30.368112564086914,
+          11.80802708944816
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_KoreanWood_2",
+          "triangles": 1267
+        },
+        {
+          "slot": 1,
+          "name": "MI_W_Pink_4",
+          "triangles": 44
+        },
+        {
+          "slot": 2,
+          "name": "MI_KoreanWood_5",
+          "triangles": 5709
+        },
+        {
+          "slot": 3,
+          "name": "MI_Metal",
+          "triangles": 9814
+        },
+        {
+          "slot": 4,
+          "name": "MI_KoreanPaper_1",
+          "triangles": 289
+        },
+        {
+          "slot": 5,
+          "name": "MI_KoreanStone_1",
+          "triangles": 1488
+        },
+        {
+          "slot": 6,
+          "name": "MI_W_Pink_1",
+          "triangles": 17
+        },
+        {
+          "slot": 7,
+          "name": "MI_KoreanPaper_2",
+          "triangles": 158
+        },
+        {
+          "slot": 8,
+          "name": "MI_KoreanWood_4",
+          "triangles": 1091
+        },
+        {
+          "slot": 9,
+          "name": "MI_KoreanWood_3",
+          "triangles": 511
+        },
+        {
+          "slot": 10,
+          "name": "MI_RoyalStair_1",
+          "triangles": 100
+        },
+        {
+          "slot": 11,
+          "name": "MI_KoreanFloor_3",
+          "triangles": 66
+        },
+        {
+          "slot": 12,
+          "name": "MI_R_Roof",
+          "triangles": 10567
+        },
+        {
+          "slot": 13,
+          "name": "MI_KoreanBrick_2",
+          "triangles": 8
+        },
+        {
+          "slot": 14,
+          "name": "MI_Koreantile_1",
+          "triangles": 222
+        },
+        {
+          "slot": 15,
+          "name": "MI_BronzeBurner",
+          "triangles": 174
+        },
+        {
+          "slot": 16,
+          "name": "MI_R_BrickConcrete",
+          "triangles": 751
+        },
+        {
+          "slot": 17,
+          "name": "MI_R_Buyeon_1",
+          "triangles": 1276
+        },
+        {
+          "slot": 18,
+          "name": "MI_R_Decors_2",
+          "triangles": 201
+        },
+        {
+          "slot": 19,
+          "name": "MI_R_Dancheong_2",
+          "triangles": 652
+        },
+        {
+          "slot": 20,
+          "name": "MI_R_Green",
+          "triangles": 260
+        },
+        {
+          "slot": 21,
+          "name": "MI_R_Decors_1",
+          "triangles": 150
+        },
+        {
+          "slot": 22,
+          "name": "MI_R_Dancheong_1",
+          "triangles": 10
+        },
+        {
+          "slot": 23,
+          "name": "MI_R_Woods_1",
+          "triangles": 163
+        },
+        {
+          "slot": 24,
+          "name": "MI_R_Sign_BSD_1",
+          "triangles": 5
+        },
+        {
+          "slot": 25,
+          "name": "MI_R_Ceiling_1",
+          "triangles": 4
+        },
+        {
+          "slot": 26,
+          "name": "MI_R_Sign_BSD_2",
+          "triangles": 6
+        },
+        {
+          "slot": 27,
+          "name": "MI_KoreanWood_1",
+          "triangles": 52
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 40000,
+      "within_triangle_limit": true,
+      "source_bounds_size_delta_m": [
+        -0.021900177001953125,
+        -0.02396869659423828,
+        -0.05859482849291453
+      ],
+      "source_bounds_preserved": true,
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Bongsudang_LOD1.fbx",
+      "export_sha256": "d344f3bd0ff6415a5878234dffefdb168482e9b6c8c090e5cabf8eaee1b17684",
+      "before_fbx_validation_triangles": 39680,
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Bongsudang_LOD1",
+            "vertices": 44429,
+            "triangles": 35055,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -20.813678741455078,
+                -15.196040153503418,
+                -3.1488141303270822e-06
+              ],
+              "maximum": [
+                20.795475006103516,
+                15.172075271606445,
+                11.808032035827637
+              ],
+              "size": [
+                41.609153747558594,
+                30.368115425109863,
+                11.808035184641767
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_KoreanWood_2",
+                "triangles": 1267
+              },
+              {
+                "slot": 1,
+                "name": "MI_W_Pink_4",
+                "triangles": 44
+              },
+              {
+                "slot": 2,
+                "name": "MI_KoreanWood_5",
+                "triangles": 5709
+              },
+              {
+                "slot": 3,
+                "name": "MI_Metal",
+                "triangles": 9814
+              },
+              {
+                "slot": 4,
+                "name": "MI_KoreanPaper_1",
+                "triangles": 289
+              },
+              {
+                "slot": 5,
+                "name": "MI_KoreanStone_1",
+                "triangles": 1488
+              },
+              {
+                "slot": 6,
+                "name": "MI_W_Pink_1",
+                "triangles": 17
+              },
+              {
+                "slot": 7,
+                "name": "MI_KoreanPaper_2",
+                "triangles": 158
+              },
+              {
+                "slot": 8,
+                "name": "MI_KoreanWood_4",
+                "triangles": 1091
+              },
+              {
+                "slot": 9,
+                "name": "MI_KoreanWood_3",
+                "triangles": 511
+              },
+              {
+                "slot": 10,
+                "name": "MI_RoyalStair_1",
+                "triangles": 100
+              },
+              {
+                "slot": 11,
+                "name": "MI_KoreanFloor_3",
+                "triangles": 66
+              },
+              {
+                "slot": 12,
+                "name": "MI_R_Roof",
+                "triangles": 10567
+              },
+              {
+                "slot": 13,
+                "name": "MI_KoreanBrick_2",
+                "triangles": 8
+              },
+              {
+                "slot": 14,
+                "name": "MI_Koreantile_1",
+                "triangles": 222
+              },
+              {
+                "slot": 15,
+                "name": "MI_BronzeBurner",
+                "triangles": 174
+              },
+              {
+                "slot": 16,
+                "name": "MI_R_BrickConcrete",
+                "triangles": 751
+              },
+              {
+                "slot": 17,
+                "name": "MI_R_Buyeon_1",
+                "triangles": 1276
+              },
+              {
+                "slot": 18,
+                "name": "MI_R_Decors_2",
+                "triangles": 201
+              },
+              {
+                "slot": 19,
+                "name": "MI_R_Dancheong_2",
+                "triangles": 652
+              },
+              {
+                "slot": 20,
+                "name": "MI_R_Green",
+                "triangles": 260
+              },
+              {
+                "slot": 21,
+                "name": "MI_R_Decors_1",
+                "triangles": 150
+              },
+              {
+                "slot": 22,
+                "name": "MI_R_Dancheong_1",
+                "triangles": 10
+              },
+              {
+                "slot": 23,
+                "name": "MI_R_Woods_1",
+                "triangles": 163
+              },
+              {
+                "slot": 24,
+                "name": "MI_R_Sign_BSD_1",
+                "triangles": 5
+              },
+              {
+                "slot": 25,
+                "name": "MI_R_Ceiling_1",
+                "triangles": 4
+              },
+              {
+                "slot": 26,
+                "name": "MI_R_Sign_BSD_2",
+                "triangles": 6
+              },
+              {
+                "slot": 27,
+                "name": "MI_KoreanWood_1",
+                "triangles": 52
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 35055,
+        "bounds_blender_world": {
+          "minimum": [
+            -20.813678741455078,
+            -15.196040153503418,
+            -3.1488141303270822e-06
+          ],
+          "maximum": [
+            20.795475006103516,
+            15.172075271606445,
+            11.808032035827637
+          ],
+          "size": [
+            41.609153747558594,
+            30.368115425109863,
+            11.808035184641767
+          ]
+        },
+        "bounds_max_error_m": 4.280496341380058e-06,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true
+    },
+    {
+      "name": "LM_Bongsudang_LOD2",
+      "vertices": 44429,
+      "triangles": 35055,
+      "uv_layers": [
+        "UVmap_0",
+        "UVmap_1"
+      ],
+      "bounds_blender_world": {
+        "minimum": [
+          -20.813678741455078,
+          -15.196040153503418,
+          -3.1488141303270822e-06
+        ],
+        "maximum": [
+          20.795475006103516,
+          15.172075271606445,
+          11.808032035827637
+        ],
+        "size": [
+          41.609153747558594,
+          30.368115425109863,
+          11.808035184641767
+        ]
+      },
+      "materials": [
+        {
+          "slot": 0,
+          "name": "MI_KoreanWood_2",
+          "triangles": 1267
+        },
+        {
+          "slot": 1,
+          "name": "MI_W_Pink_4",
+          "triangles": 44
+        },
+        {
+          "slot": 2,
+          "name": "MI_KoreanWood_5",
+          "triangles": 5709
+        },
+        {
+          "slot": 3,
+          "name": "MI_Metal",
+          "triangles": 9814
+        },
+        {
+          "slot": 4,
+          "name": "MI_KoreanPaper_1",
+          "triangles": 289
+        },
+        {
+          "slot": 5,
+          "name": "MI_KoreanStone_1",
+          "triangles": 1488
+        },
+        {
+          "slot": 6,
+          "name": "MI_W_Pink_1",
+          "triangles": 17
+        },
+        {
+          "slot": 7,
+          "name": "MI_KoreanPaper_2",
+          "triangles": 158
+        },
+        {
+          "slot": 8,
+          "name": "MI_KoreanWood_4",
+          "triangles": 1091
+        },
+        {
+          "slot": 9,
+          "name": "MI_KoreanWood_3",
+          "triangles": 511
+        },
+        {
+          "slot": 10,
+          "name": "MI_RoyalStair_1",
+          "triangles": 100
+        },
+        {
+          "slot": 11,
+          "name": "MI_KoreanFloor_3",
+          "triangles": 66
+        },
+        {
+          "slot": 12,
+          "name": "MI_R_Roof",
+          "triangles": 10567
+        },
+        {
+          "slot": 13,
+          "name": "MI_KoreanBrick_2",
+          "triangles": 8
+        },
+        {
+          "slot": 14,
+          "name": "MI_Koreantile_1",
+          "triangles": 222
+        },
+        {
+          "slot": 15,
+          "name": "MI_BronzeBurner",
+          "triangles": 174
+        },
+        {
+          "slot": 16,
+          "name": "MI_R_BrickConcrete",
+          "triangles": 751
+        },
+        {
+          "slot": 17,
+          "name": "MI_R_Buyeon_1",
+          "triangles": 1276
+        },
+        {
+          "slot": 18,
+          "name": "MI_R_Decors_2",
+          "triangles": 201
+        },
+        {
+          "slot": 19,
+          "name": "MI_R_Dancheong_2",
+          "triangles": 652
+        },
+        {
+          "slot": 20,
+          "name": "MI_R_Green",
+          "triangles": 260
+        },
+        {
+          "slot": 21,
+          "name": "MI_R_Decors_1",
+          "triangles": 150
+        },
+        {
+          "slot": 22,
+          "name": "MI_R_Dancheong_1",
+          "triangles": 10
+        },
+        {
+          "slot": 23,
+          "name": "MI_R_Woods_1",
+          "triangles": 163
+        },
+        {
+          "slot": 24,
+          "name": "MI_R_Sign_BSD_1",
+          "triangles": 5
+        },
+        {
+          "slot": 25,
+          "name": "MI_R_Ceiling_1",
+          "triangles": 4
+        },
+        {
+          "slot": 26,
+          "name": "MI_R_Sign_BSD_2",
+          "triangles": 6
+        },
+        {
+          "slot": 27,
+          "name": "MI_KoreanWood_1",
+          "triangles": 52
+        }
+      ],
+      "nonfinite_vertices": 0,
+      "requested_triangle_limit": 12000,
+      "within_triangle_limit": false,
+      "source_bounds_size_delta_m": [
+        -0.021900177001953125,
+        -0.023965835571289062,
+        -0.058586733299307525
+      ],
+      "source_bounds_preserved": true,
+      "fallback": "Previous stable LOD retained; automated collapse rejected for geometry bounds.",
+      "rejected_collapse": {
+        "triangles": 22114,
+        "size_delta_m": [
+          0.15227127075195312,
+          -0.06500911712646484,
+          10.37566823615839
+        ]
+      },
+      "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Bongsudang_LOD2.fbx",
+      "export_sha256": "f300a8243899f227f7f55a6fb751ec13ce41c486a2f22863662e32b2d56ec1d6",
+      "before_fbx_validation_triangles": 39680,
+      "roundtrip": {
+        "objects": [
+          {
+            "name": "LM_Bongsudang_LOD2",
+            "vertices": 44429,
+            "triangles": 35055,
+            "uv_layers": [
+              "UVmap_0",
+              "UVmap_1"
+            ],
+            "bounds_blender_world": {
+              "minimum": [
+                -20.813678741455078,
+                -15.196040153503418,
+                -3.1488141303270822e-06
+              ],
+              "maximum": [
+                20.795475006103516,
+                15.172075271606445,
+                11.808032035827637
+              ],
+              "size": [
+                41.609153747558594,
+                30.368115425109863,
+                11.808035184641767
+              ]
+            },
+            "materials": [
+              {
+                "slot": 0,
+                "name": "MI_KoreanWood_2",
+                "triangles": 1267
+              },
+              {
+                "slot": 1,
+                "name": "MI_W_Pink_4",
+                "triangles": 44
+              },
+              {
+                "slot": 2,
+                "name": "MI_KoreanWood_5",
+                "triangles": 5709
+              },
+              {
+                "slot": 3,
+                "name": "MI_Metal",
+                "triangles": 9814
+              },
+              {
+                "slot": 4,
+                "name": "MI_KoreanPaper_1",
+                "triangles": 289
+              },
+              {
+                "slot": 5,
+                "name": "MI_KoreanStone_1",
+                "triangles": 1488
+              },
+              {
+                "slot": 6,
+                "name": "MI_W_Pink_1",
+                "triangles": 17
+              },
+              {
+                "slot": 7,
+                "name": "MI_KoreanPaper_2",
+                "triangles": 158
+              },
+              {
+                "slot": 8,
+                "name": "MI_KoreanWood_4",
+                "triangles": 1091
+              },
+              {
+                "slot": 9,
+                "name": "MI_KoreanWood_3",
+                "triangles": 511
+              },
+              {
+                "slot": 10,
+                "name": "MI_RoyalStair_1",
+                "triangles": 100
+              },
+              {
+                "slot": 11,
+                "name": "MI_KoreanFloor_3",
+                "triangles": 66
+              },
+              {
+                "slot": 12,
+                "name": "MI_R_Roof",
+                "triangles": 10567
+              },
+              {
+                "slot": 13,
+                "name": "MI_KoreanBrick_2",
+                "triangles": 8
+              },
+              {
+                "slot": 14,
+                "name": "MI_Koreantile_1",
+                "triangles": 222
+              },
+              {
+                "slot": 15,
+                "name": "MI_BronzeBurner",
+                "triangles": 174
+              },
+              {
+                "slot": 16,
+                "name": "MI_R_BrickConcrete",
+                "triangles": 751
+              },
+              {
+                "slot": 17,
+                "name": "MI_R_Buyeon_1",
+                "triangles": 1276
+              },
+              {
+                "slot": 18,
+                "name": "MI_R_Decors_2",
+                "triangles": 201
+              },
+              {
+                "slot": 19,
+                "name": "MI_R_Dancheong_2",
+                "triangles": 652
+              },
+              {
+                "slot": 20,
+                "name": "MI_R_Green",
+                "triangles": 260
+              },
+              {
+                "slot": 21,
+                "name": "MI_R_Decors_1",
+                "triangles": 150
+              },
+              {
+                "slot": 22,
+                "name": "MI_R_Dancheong_1",
+                "triangles": 10
+              },
+              {
+                "slot": 23,
+                "name": "MI_R_Woods_1",
+                "triangles": 163
+              },
+              {
+                "slot": 24,
+                "name": "MI_R_Sign_BSD_1",
+                "triangles": 5
+              },
+              {
+                "slot": 25,
+                "name": "MI_R_Ceiling_1",
+                "triangles": 4
+              },
+              {
+                "slot": 26,
+                "name": "MI_R_Sign_BSD_2",
+                "triangles": 6
+              },
+              {
+                "slot": 27,
+                "name": "MI_KoreanWood_1",
+                "triangles": 52
+              }
+            ],
+            "nonfinite_vertices": 0
+          }
+        ],
+        "triangles": 35055,
+        "bounds_blender_world": {
+          "minimum": [
+            -20.813678741455078,
+            -15.196040153503418,
+            -3.1488141303270822e-06
+          ],
+          "maximum": [
+            20.795475006103516,
+            15.172075271606445,
+            11.808032035827637
+          ],
+          "size": [
+            41.609153747558594,
+            30.368115425109863,
+            11.808035184641767
+          ]
+        },
+        "bounds_max_error_m": 0,
+        "material_slot_names_order_preserved": true
+      },
+      "roundtrip_pass": true,
+      "cached_bounds_before_dependency_update": {
+        "minimum": [
+          -20.987850189208984,
+          -15.196040153503418,
+          0.013136252760887146
+        ],
+        "maximum": [
+          20.795475006103516,
+          15.13103199005127,
+          22.25542640686035
+        ],
+        "size": [
+          41.7833251953125,
+          30.327072143554688,
+          22.242290154099464
+        ]
+      },
+      "bounds_validation_note": "Fallback data assignment left Blender object.bound_box cache stale; actual independent FBX-import bounds matched stable LOD1 within 0.01mm and are used here. The generator now updates dependency graph before recording bounds."
+    }
+  ],
+  "method": "Coincident FBX split-vertex weld (0.01mm), sequential collapse; UV loops/material indices retained; no texture bake or redesign.",
+  "unity_runtime_validation": "UNVERIFIED",
+  "visual_art_validation": "UNVERIFIED",
+  "axis_contract": "Blender import axes retained; transforms baked into geometry, original origin retained. Export forward -Z, up Y, metres, scale 1. Unity ground offset must use actual imported Renderer.bounds.min.y.",
+  "started_commit_ratio": 0.8065838901122298,
+  "imported_objects": [
+    {
+      "name": "SM_Bongsudang",
+      "triangles": 1857720,
+      "bounds": {
+        "minimum": [
+          -20.815526962280273,
+          -15.196040153503418,
+          -1.1492290923342807e-06
+        ],
+        "maximum": [
+          20.815526962280273,
+          15.196041107177734,
+          11.866623878479004
+        ],
+        "size": [
+          41.63105392456055,
+          30.392081260681152,
+          11.866625027708096
+        ]
+      }
+    }
+  ],
+  "ignored_collision_objects": [],
+  "source_visual": {
+    "name": "SM_Bongsudang",
+    "vertices": 2978268,
+    "triangles": 1857720,
+    "uv_layers": [
+      "UVmap_0",
+      "UVmap_1"
+    ],
+    "bounds_blender_world": {
+      "minimum": [
+        -20.815526962280273,
+        -15.196040153503418,
+        1.0068636129290098e-06
+      ],
+      "maximum": [
+        20.815526962280273,
+        15.196041107177734,
+        11.866622924804688
+      ],
+      "size": [
+        41.63105392456055,
+        30.392081260681152,
+        11.866621917941075
+      ]
+    },
+    "materials": [
+      {
+        "slot": 0,
+        "name": "MI_KoreanWood_2",
+        "triangles": 18210
+      },
+      {
+        "slot": 1,
+        "name": "MI_W_Pink_4",
+        "triangles": 528
+      },
+      {
+        "slot": 2,
+        "name": "MI_KoreanWood_5",
+        "triangles": 367372
+      },
+      {
+        "slot": 3,
+        "name": "MI_Metal",
+        "triangles": 701488
+      },
+      {
+        "slot": 4,
+        "name": "MI_KoreanPaper_1",
+        "triangles": 176884
+      },
+      {
+        "slot": 5,
+        "name": "MI_KoreanStone_1",
+        "triangles": 9940
+      },
+      {
+        "slot": 6,
+        "name": "MI_W_Pink_1",
+        "triangles": 204
+      },
+      {
+        "slot": 7,
+        "name": "MI_KoreanPaper_2",
+        "triangles": 1332
+      },
+      {
+        "slot": 8,
+        "name": "MI_KoreanWood_4",
+        "triangles": 16364
+      },
+      {
+        "slot": 9,
+        "name": "MI_KoreanWood_3",
+        "triangles": 6816
+      },
+      {
+        "slot": 10,
+        "name": "MI_RoyalStair_1",
+        "triangles": 912
+      },
+      {
+        "slot": 11,
+        "name": "MI_KoreanFloor_3",
+        "triangles": 66
+      },
+      {
+        "slot": 12,
+        "name": "MI_R_Roof",
+        "triangles": 428996
+      },
+      {
+        "slot": 13,
+        "name": "MI_KoreanBrick_2",
+        "triangles": 16
+      },
+      {
+        "slot": 14,
+        "name": "MI_Koreantile_1",
+        "triangles": 222
+      },
+      {
+        "slot": 15,
+        "name": "MI_BronzeBurner",
+        "triangles": 31838
+      },
+      {
+        "slot": 16,
+        "name": "MI_R_BrickConcrete",
+        "triangles": 8833
+      },
+      {
+        "slot": 17,
+        "name": "MI_R_Buyeon_1",
+        "triangles": 32003
+      },
+      {
+        "slot": 18,
+        "name": "MI_R_Decors_2",
+        "triangles": 5775
+      },
+      {
+        "slot": 19,
+        "name": "MI_R_Dancheong_2",
+        "triangles": 12334
+      },
+      {
+        "slot": 20,
+        "name": "MI_R_Green",
+        "triangles": 12485
+      },
+      {
+        "slot": 21,
+        "name": "MI_R_Decors_1",
+        "triangles": 9840
+      },
+      {
+        "slot": 22,
+        "name": "MI_R_Dancheong_1",
+        "triangles": 11936
+      },
+      {
+        "slot": 23,
+        "name": "MI_R_Woods_1",
+        "triangles": 1098
+      },
+      {
+        "slot": 24,
+        "name": "MI_R_Sign_BSD_1",
+        "triangles": 36
+      },
+      {
+        "slot": 25,
+        "name": "MI_R_Ceiling_1",
+        "triangles": 8
+      },
+      {
+        "slot": 26,
+        "name": "MI_R_Sign_BSD_2",
+        "triangles": 36
+      },
+      {
+        "slot": 27,
+        "name": "MI_KoreanWood_1",
+        "triangles": 2148
+      }
+    ],
+    "nonfinite_vertices": 0
+  },
+  "coincident_vertex_cleanup": {
+    "before_vertices": 2978268,
+    "after_vertices": 972808,
+    "merge_distance_m": 1e-05
+  },
+  "prefab_material_bindings": [
+    {
+      "slot": 0,
+      "guid": "abc00000000006797035264603814510",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_2.mat"
+    },
+    {
+      "slot": 1,
+      "guid": "abc00000000011298167641015455771",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_W_Pink_4.mat"
+    },
+    {
+      "slot": 2,
+      "guid": "abc00000000007209508453123637243",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_5.mat"
+    },
+    {
+      "slot": 3,
+      "guid": "abc00000000003887760593944507777",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_Metal.mat"
+    },
+    {
+      "slot": 4,
+      "guid": "abc00000000017556615246628206000",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanPaper_1.mat"
+    },
+    {
+      "slot": 5,
+      "guid": "abc00000000001247809319891771507",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanStone_1.mat"
+    },
+    {
+      "slot": 6,
+      "guid": "abc00000000012103129933933321196",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_W_Pink_1.mat"
+    },
+    {
+      "slot": 7,
+      "guid": "abc00000000007066397023932725877",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanPaper_2.mat"
+    },
+    {
+      "slot": 8,
+      "guid": "abc00000000014976349613034265160",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_4.mat"
+    },
+    {
+      "slot": 9,
+      "guid": "abc00000000005293573005416422305",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_3.mat"
+    },
+    {
+      "slot": 10,
+      "guid": "abc00000000015877825506953951178",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_RoyalStair_1.mat"
+    },
+    {
+      "slot": 11,
+      "guid": "abc00000000001768072301207876858",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanFloor_3.mat"
+    },
+    {
+      "slot": 12,
+      "guid": "abc00000000004934170793764722915",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Roof.mat"
+    },
+    {
+      "slot": 13,
+      "guid": "abc00000000016318133197809632774",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanBrick_2.mat"
+    },
+    {
+      "slot": 14,
+      "guid": "abc00000000018444264578413789802",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_Koreantile_1.mat"
+    },
+    {
+      "slot": 15,
+      "guid": "abc00000000015799694847424961112",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_BronzeBurner.mat"
+    },
+    {
+      "slot": 16,
+      "guid": "abc00000000016748740287876020873",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_BrickConcrete.mat"
+    },
+    {
+      "slot": 17,
+      "guid": "abc00000000005152374349464403763",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Buyeon_1.mat"
+    },
+    {
+      "slot": 18,
+      "guid": "abc00000000007433458838340987626",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Decors_2.mat"
+    },
+    {
+      "slot": 19,
+      "guid": "abc00000000010623060289702310353",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Dancheong_2.mat"
+    },
+    {
+      "slot": 20,
+      "guid": "abc00000000002351381853600431856",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Green.mat"
+    },
+    {
+      "slot": 21,
+      "guid": "abc00000000006921496729349352011",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Decors_1.mat"
+    },
+    {
+      "slot": 22,
+      "guid": "abc00000000004254352377145237052",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Dancheong_1.mat"
+    },
+    {
+      "slot": 23,
+      "guid": "abc00000000010358410530690171489",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Woods_1.mat"
+    },
+    {
+      "slot": 24,
+      "guid": "abc00000000014710543061954993294",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Sign_BSD_1.mat"
+    },
+    {
+      "slot": 25,
+      "guid": "abc00000000012020755257017709312",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Ceiling_1.mat"
+    },
+    {
+      "slot": 26,
+      "guid": "abc00000000014526407902551797599",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Sign_BSD_2.mat"
+    },
+    {
+      "slot": 27,
+      "guid": "abc00000000000378510867108395071",
+      "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_1.mat"
+    }
+  ],
+  "after_import_commit_ratio": 0.8597520955769666,
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Landmarks\\ModelReports\\LM_Bongsudang_LODs.blend",
+  "source_preserved": true,
+  "elapsed_seconds": 56.79759097099304,
+  "ended_commit_ratio": 0.7998084545341424,
+  "status": "PASS_GEOMETRY_WITH_BUDGET_EXCEPTION",
+  "lod2_budget_exception": "12k collapse rejected; final actual FBX 35055-triangle stable LOD1 retained. Original LOD0 120k target relaxed to approved 80k-150k range; requested145k actual143178."
+}

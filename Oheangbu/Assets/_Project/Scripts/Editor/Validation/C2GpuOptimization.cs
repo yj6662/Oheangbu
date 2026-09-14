@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEditor.Rendering;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
+
+namespace Oheangbu.EditorTools
+{
+    public static class C2GpuOptimization
+    {
+        [Serializable] public sealed class Report
+        {
+            public string status, backup, error, scope;
+            public int meshRenderers, unbatchedForGpu, materialsInstanced, occluders, occludees;
+            public bool gpuSupported, gpuEnabled, occlusionEnabled;
+        }
+        public static string Apply()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode || SceneManager.GetActiveScene().name != "C2_CodexWorld") throw new InvalidOperationException("Saved C2 Edit Mode required");
+            var scene = SceneManager.GetActiveScene(); if (scene.isDirty) throw new InvalidOperationException("Save C2 edits before optimization");
+            var pipeline = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>("Assets/Settings/PC_RPAsset.asset");
+            var report = new Report { status = "APPLYING", scope = "GPU Resident Drawer + GPU occlusion, DOTS-compatible C2 shaders, repeated mesh instancing. Scene static-batching flags removed for GPU path. Resolution, shadow quality/distance, SSAO and physics unchanged." };
+            report.gpuSupported = pipeline.IsGPUResidentDrawerSupportedBySRP(out string reason, out _);
+            if (!report.gpuSupported) throw new InvalidOperationException(reason);
+            report.backup = Path.GetFullPath("../Art/Performance/Backups/GpuCulling_" + DateTime.Now.ToString("yyyyMMdd_HHmmss")); Directory.CreateDirectory(report.backup);
+            File.Copy(scene.path, report.backup + "/C2_CodexWorld.unity"); File.Copy("Assets/Settings/PC_RPAsset.asset", report.backup + "/PC_RPAsset.asset");
+            var renderers = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<MeshRenderer>(true)).ToArray(); report.meshRenderers = renderers.Length;
+            foreach (var r in renderers)
+            {
+                var flags = GameObjectUtility.GetStaticEditorFlags(r.gameObject);
+                if ((flags & StaticEditorFlags.BatchingStatic) != 0) { GameObjectUtility.SetStaticEditorFlags(r.gameObject, flags & ~StaticEditorFlags.BatchingStatic); report.unbatchedForGpu++; }
+                r.allowOcclusionWhenDynamic = true;
+            }
+            foreach (var material in renderers.SelectMany(r => r.sharedMaterials).Where(m => m != null).Distinct())
+            {
+                if (!material.enableInstancing && AssetDatabase.GetAssetPath(material).StartsWith("Assets/_Project/"))
+                { string path = AssetDatabase.GetAssetPath(material); string backup = report.backup + "/" + path; Directory.CreateDirectory(Path.GetDirectoryName(backup)); File.Copy(path, backup); material.enableInstancing = true; EditorUtility.SetDirty(material); report.materialsInstanced++; }
+            }
+            pipeline.gpuResidentDrawerMode = GPUResidentDrawerMode.InstancedDrawing;
+            SetKeepAllVariants();
+            pipeline.gpuResidentDrawerEnableOcclusionCullingInCameras = true;
+            EditorUtility.SetDirty(pipeline); EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
+            report.status = "APPLIED_PENDING_RUNTIME"; report.gpuEnabled = true; report.occlusionEnabled = true;
+            Directory.CreateDirectory("Screenshots/Performance"); string json = JsonUtility.ToJson(report, true); File.WriteAllText("Screenshots/Performance/gpu-culling-apply.json", json); return json;
+        }
+        public static string RuntimeStatus()
+        {
+            var pipeline = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
+            var shaders = Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).SelectMany(r => r.sharedMaterials).Where(m => m != null).Select(m => m.shader).Distinct();
+            return "GPU mode=" + pipeline.gpuResidentDrawerMode + ", actual GPU occlusion=" + GPUResidentDrawer.IsInstanceOcclusionCullingEnabled()
+                + ", static-batched=" + Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Count(r => r.isPartOfStaticBatch)
+                + "\nShader errors=" + string.Join(",", shaders.Where(ShaderUtil.ShaderHasError).Select(s => s.name));
+        }
+        public static string EnsureVariantSettings()
+        {
+            SetKeepAllVariants();
+            AssetDatabase.SaveAssets(); GPUResidentDrawer.ReinitializeIfNeeded();
+            return EditorGraphicsSettings.batchRendererGroupShaderStrippingMode.ToString();
+        }
+        static void SetKeepAllVariants()
+        {
+            var settings = new SerializedObject(GraphicsSettings.GetGraphicsSettings());
+            var stripping = settings.FindProperty("m_BrgStripping");
+            if (stripping == null) throw new InvalidOperationException("BRG shader stripping setting unavailable");
+            stripping.intValue = (int)BatchRendererGroupStrippingMode.KeepAll;
+            settings.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(settings.targetObject);
+        }
+        static EditorWindow gameView; static bool wasMaximized;
+        public static string FocusGameView()
+        {
+            var type = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.GameView");
+            gameView = EditorWindow.GetWindow(type); wasMaximized = gameView.maximized;
+            gameView.maximized = true; gameView.Focus();
+            return "Game View maximized for isolated Editor timing; restore with RestoreGameView.";
+        }
+        public static string RestoreGameView()
+        {
+            if (gameView != null) gameView.maximized = wasMaximized;
+            gameView = null; return "Restored Game View layout.";
+        }
+    }
+}

@@ -1,0 +1,163 @@
+{
+  "lod": 2,
+  "targetTriangles": 4000,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Cabin_LOD2.fbx",
+  "fbxSha256": "4d0483afcaa6d3fa067de80b9b7ceae0c7f400719d6d431d33e6fcb822d4b4de",
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Cabin_LOD2.blend",
+  "normalization": {
+    "yawBlenderDegrees": 90.0,
+    "fitMode": "uniform",
+    "axisFactors": [
+      1.3911791189174147,
+      1.3911791189174147,
+      1.3911791189174147
+    ],
+    "targetEnvelopeUnity": [
+      1.8,
+      1.9,
+      2.9
+    ],
+    "actual": {
+      "vertices": 6654,
+      "triangles": 13690,
+      "size_unity_m": {
+        "x": 1.720513105392456,
+        "y": 1.899999976158142,
+        "z": 2.6487367153167725
+      },
+      "bounds_blender": {
+        "minimum": [
+          -0.860256552696228,
+          -1.3243683576583862,
+          0.0
+        ],
+        "maximum": [
+          0.860256552696228,
+          1.3243683576583862,
+          1.899999976158142
+        ]
+      },
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Cabin_Surface"
+      ],
+      "nonfinite_vertices": 0
+    },
+    "localEdit": {
+      "frontOpeningFacesRemoved": 648,
+      "cutEdgeNeedleFacesRemoved": 0,
+      "reason": "Open actual forward seated sightline; preserve side lattice, sill, top beam and outer uprights"
+    }
+  },
+  "simplification": {
+    "before": 13040,
+    "target": 4000,
+    "actual": 3928,
+    "maxBoundsDriftM": 0.009253093041479588
+  },
+  "beforeExport": {
+    "triangles": 3928,
+    "vertices": 1811,
+    "meshCount": 1,
+    "materials": [
+      "Cabin_Surface"
+    ],
+    "uvLayers": {
+      "MagicStoneCar_Cabin": 1
+    },
+    "nonfinite": 0,
+    "boundsBlender": {
+      "minimum": [
+        -0.858487606048584,
+        -1.3253509998321533,
+        0.009253093041479588
+      ],
+      "maximum": [
+        0.8586248159408569,
+        1.319873571395874,
+        1.8982399702072144
+      ]
+    },
+    "actualBounds": {
+      "center": {
+        "x": 6.860494613647461e-05,
+        "y": 0.9537465572357178,
+        "z": 0.0027387142181396484
+      },
+      "size": {
+        "x": 1.717112421989441,
+        "y": 1.8889868771657348,
+        "z": 2.6452245712280273
+      }
+    }
+  },
+  "images": [
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_LOD2_front.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_LOD2_back.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_LOD2_side.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Cabin_LOD2_top.png"
+  ],
+  "roundtrip": {
+    "status": "PASS_GEOMETRY",
+    "boundsErrorM": 3.5762786865234375e-07,
+    "uvPresent": true,
+    "actual": {
+      "triangles": 3928,
+      "vertices": 1811,
+      "meshCount": 1,
+      "materials": [
+        "Cabin_Surface"
+      ],
+      "uvLayers": {
+        "MagicStoneCar_Cabin": 1
+      },
+      "nonfinite": 0,
+      "boundsBlender": {
+        "minimum": [
+          -0.858487606048584,
+          -1.3253509998321533,
+          0.009252877905964851
+        ],
+        "maximum": [
+          0.8586248159408569,
+          1.3198739290237427,
+          1.8982402086257935
+        ]
+      },
+      "actualBounds": {
+        "center": {
+          "x": 6.860494613647461e-05,
+          "y": 0.9537465572357178,
+          "z": 0.0027385354042053223
+        },
+        "size": {
+          "x": 1.717112421989441,
+          "y": 1.8889873307198286,
+          "z": 2.645224928855896
+        }
+      }
+    },
+    "importedObjects": [
+      {
+        "name": "MagicStoneCar_Cabin",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

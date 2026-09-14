@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "generatedUtc": "2026-09-11T22:41:46.586010+00:00",
+  "status": "FINAL_STATIONARY_COMPARISON_RECORDED",
+  "scope": "Unity Editor Play at one stationary entrance camera, 1920x1080 offscreen target, 120 samples per run. Not full-world traversal, collision stress, stand-alone benchmark or 120fps guarantee.",
+  "targetFrameBudgetMs": 8.333333333333334,
+  "comparisonPolicy": {
+    "includedRoles": [
+      "baseline",
+      "optimized",
+      "uncached"
+    ],
+    "positionToleranceM": 0.02,
+    "angleToleranceDeg": 0.05,
+    "fieldOfViewToleranceDeg": 0.001,
+    "baselineMeaning": "Dressing disabled and prior cone forest restored. Same final camera pose.",
+    "uncachedMeaning": "Draw packets forced to rebuild each frame; camera/player stationary. Does not simulate movement or new-cell streaming."
+  },
+  "poseComparison": [
+    {
+      "role": "baseline",
+      "positionDistanceM": 0.0,
+      "maximumWrappedEulerDifferenceDeg": 0.0,
+      "fieldOfViewDifferenceDeg": 0.0,
+      "samePoseWithinTolerance": true
+    },
+    {
+      "role": "optimized",
+      "positionDistanceM": 0.0001068115234375,
+      "maximumWrappedEulerDifferenceDeg": 0.00048142747255042195,
+      "fieldOfViewDifferenceDeg": 0.0,
+      "samePoseWithinTolerance": true
+    },
+    {
+      "role": "uncached",
+      "positionDistanceM": 0.0,
+      "maximumWrappedEulerDifferenceDeg": 0.0,
+      "fieldOfViewDifferenceDeg": 0.0,
+      "samePoseWithinTolerance": true
+    }
+  ],
+  "measurements": [
+    {
+      "role": "baseline",
+      "file": "entry_final_baseline_performance.json",
+      "sha256": "66c4a7bf2d27c3120557ba5e41584e1931c08e19f6aebd1b6bf8f8c670d12bd9",
+      "label": "entry_final_baseline",
+      "utc": "2026-09-11T22:38:51.7226134Z",
+      "status": "MEASURED",
+      "scope": "Unity Editor play, stationary 1920x1080 offscreen target. Not a standalone FPS guarantee.",
+      "gpuStatus": "MEASURED",
+      "dressing": false,
+      "poseStable": true,
+      "aerialWashOverride": false,
+      "rebuildEachFrame": false,
+      "samples": 120,
+      "cpuSamples": 120,
+      "gpuSamples": 117,
+      "residentCells": 0,
+      "residentInstances": 0,
+      "drawCalls": 0,
+      "drawnInstances": 0,
+      "colliders": 0,
+      "colliderOverflow": 0,
+      "position": {
+        "x": 1988.087646484375,
+        "y": 134.71531677246094,
+        "z": 711.3671264648438
+      },
+      "euler": {
+        "x": 0.00013755069812759757,
+        "y": 181.6800079345703,
+        "z": 2.0355550198972866e-13
+      },
+      "fieldOfView": 60.0,
+      "commitRatio": 0.7645934820175171,
+      "frameMedianMs": 2.769897924736142,
+      "frameP95Ms": 5.280902609229088,
+      "cpuMedianMs": 2.7546,
+      "cpuP95Ms": 4.8463,
+      "gpuMedianMs": 1.137664,
+      "gpuP95Ms": 1.362944,
+      "allocatedMiB": 1881.283694267273
+    },
+    {
+      "role": "optimized",
+      "file": "entry_optimized_performance.json",
+      "sha256": "84975ea3d487c8ea5ab4e1d82d5829f82b0dbd1cec867632885686cac22273ab",
+      "label": "entry_optimized",
+      "utc": "2026-09-11T22:37:59.0583503Z",
+      "status": "MEASURED",
+      "scope": "Unity Editor play, stationary 1920x1080 offscreen target. Not a standalone FPS guarantee.",
+      "gpuStatus": "MEASURED",
+      "dressing": true,
+      "poseStable": true,
+      "aerialWashOverride": false,
+      "rebuildEachFrame": false,
+      "samples": 120,
+      "cpuSamples": 120,
+      "gpuSamples": 115,
+      "residentCells": 457,
+      "residentInstances": 83323,
+      "drawCalls": 38,
+      "drawnInstances": 8069,
+      "colliders": 0,
+      "colliderOverflow": 0,
+      "position": {
+        "x": 1988.087646484375,
+        "y": 134.71542358398438,
+        "z": 711.3671264648438
+      },
+      "euler": {
+        "x": 0.0006189781706780195,
+        "y": 181.6800079345703,
+        "z": 1.6284440159178293e-12
+      },
+      "fieldOfView": 60.0,
+      "commitRatio": 0.7936960458755493,
+      "frameMedianMs": 4.399596247822046,
+      "frameP95Ms": 5.814101547002792,
+      "cpuMedianMs": 4.357,
+      "cpuP95Ms": 5.9112,
+      "gpuMedianMs": 2.399744,
+      "gpuP95Ms": 3.01184,
+      "allocatedMiB": 1875.8171005249023
+    },
+    {
+      "role": "uncached",
+      "file": "entry_uncached_performance.json",
+      "sha256": "c5866f71c0a1e8defda551af36528948627ad91efed275d4489ff48edb2f85e6",
+      "label": "entry_uncached",
+      "utc": "2026-09-11T22:38:25.7815935Z",
+      "status": "MEASURED",
+      "scope": "Unity Editor play, stationary 1920x1080 offscreen target. Not a standalone FPS guarantee. Draw packets rebuilt every frame to measure uncached CPU cost. Camera and player remain stationary; this is not traversal measurement.",
+      "gpuStatus": "MEASURED",
+      "dressing": true,
+      "poseStable": true,
+      "aerialWashOverride": false,
+      "rebuildEachFrame": true,
+      "samples": 120,
+      "cpuSamples": 120,
+      "gpuSamples": 120,
+      "residentCells": 457,
+      "residentInstances": 83323,
+      "drawCalls": 38,
+      "drawnInstances": 8069,
+      "colliders": 0,
+      "colliderOverflow": 0,
+      "position": {
+        "x": 1988.087646484375,
+        "y": 134.71531677246094,
+        "z": 711.3671264648438
+      },
+      "euler": {
+        "x": 0.00013755069812759757,
+        "y": 181.6800079345703,
+        "z": 2.0355550198972866e-13
+      },
+      "fieldOfView": 60.0,
+      "commitRatio": 0.7620798349380493,
+      "frameMedianMs": 6.726204417645931,
+      "frameP95Ms": 8.292404003441334,
+      "cpuMedianMs": 6.7772,
+      "cpuP95Ms": 8.2345,
+      "gpuMedianMs": 2.39872,
+      "gpuP95Ms": 2.985984,
+      "allocatedMiB": 1879.0854768753052
+    }
+  ],
+  "excludedExploratoryFiles": [
+    {
+      "file": "entry_before_performance.json",
+      "reason": "Earlier camera at (1985.6913,134.7152,708.7893), yaw105.3875. Do not compare directly with final yaw181.6800 to claim optimization improvement."
+    },
+    {
+      "file": "entry_after_performance.json",
+      "reason": "Earlier camera at (1985.6913,134.7152,708.7893), yaw105.3875. Do not compare directly with final yaw181.6800 to claim optimization improvement."
+    }
+  ],
+  "pointBudgetObservation": {
+    "optimizedFrameP95WithinBudget": true,
+    "uncachedFrameP95WithinBudget": true,
+    "optimizedCpuP95WithinBudget": true,
+    "uncachedCpuP95WithinBudget": true,
+    "maximumFrameTimeNotRecorded": true
+  },
+  "limits": [
+    "All three final runs record 0 active dressing colliders; no pooled-collider stress cost measured.",
+    "GPU frame samples are available but Editor-wide timings do not isolate a stand-alone build or pure dressing render cost.",
+    "8069 drawn instances count mesh/LOD submissions, not unique plants.",
+    "83,323 resident records include resident near/far data; not the number drawn in one view.",
+    "No moving camera, new-cell streaming, full route, all-region peak density, collisions, keyboard or comfort verification.",
+    "No per-frame GC allocation recorder; allocatedMiB is total allocated Unity memory, not GC bytes per frame.",
+    "P95 below 8.33ms does not imply every frame was below the target or that whole-map 120fps is achieved."
+  ]
+}

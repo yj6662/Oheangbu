@@ -1,0 +1,27 @@
+{
+    "status": "FORWARD_RATE_UPDATED_REQUIRES_FOOTCHECK",
+    "command": "recalibrate_forward",
+    "scope": "Derivative Humanoid clips and opt-in movement. Synthetic pose/math checks are separate from native input and terrain play.",
+    "clips": [
+        {
+            "name": "WalkForward",
+            "source": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkForward.anim",
+            "method": "Isolated current C02,121 samples; total signed weighted-sole travel / total time across verified authored stance pairs. Geometry unchanged. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 1.033333420753479,
+            "nativeSupportSpeed": 1.0942776203155518,
+            "requestedSpeed": 2.200000047683716,
+            "playbackRate": 2.0104587078094484,
+            "supportSamples": 138
+        }
+    ],
+    "pass": [
+        "Only forward walk playback rate updated from 1.779315 to 2.010459; clips, model, other directions, motor speed and scene untouched."
+    ],
+    "fail": [],
+    "unverified": [
+        "Native keyboard play, slopes, stairs, visual cloth/sitting contact and camera framing",
+        "Full gameplay jump/landing/air gate and repeated seating transitions"
+    ]
+}

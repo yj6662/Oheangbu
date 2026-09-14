@@ -1,0 +1,87 @@
+{
+  "live": "Art\\PlaytestRecovery\\DodgeTurn\\Live\\20260914-110803\\live_input.json",
+  "checks": [
+    {
+      "name": "실제 Play 입력 루프·정리",
+      "status": "통과",
+      "detail": "Virtual keyboard/mouse injected through real InputSystem and live scene frames; local tests, no native-user or full-route evidence."
+    },
+    {
+      "name": "45도 시선 / 발 유지",
+      "status": "통과",
+      "detail": "양 발 최대 변위 0.000mm, 몸 방향 고정, Turn 미진입"
+    },
+    {
+      "name": "89도 시선 / 발 유지",
+      "status": "통과",
+      "detail": "양 발 최대 변위 0.000mm, 몸 방향 고정, Turn 미진입"
+    },
+    {
+      "name": "look100",
+      "status": "통과",
+      "detail": "TurnRight, 회전 누적 1회"
+    },
+    {
+      "name": "look_left",
+      "status": "통과",
+      "detail": "TurnLeft, 회전 누적 2회"
+    },
+    {
+      "name": "crouch_look",
+      "status": "통과",
+      "detail": "CrouchTurnRight, 회전 누적 3회"
+    },
+    {
+      "name": "dodge_forward",
+      "status": "통과",
+      "detail": "새 방향 클립을 사용하는 Dodge 상태 진입"
+    },
+    {
+      "name": "dodge_back",
+      "status": "통과",
+      "detail": "새 방향 클립을 사용하는 Dodge 상태 진입"
+    },
+    {
+      "name": "dodge_left",
+      "status": "통과",
+      "detail": "새 방향 클립을 사용하는 Dodge 상태 진입"
+    },
+    {
+      "name": "dodge_right",
+      "status": "통과",
+      "detail": "새 방향 클립을 사용하는 Dodge 상태 진입"
+    },
+    {
+      "name": "roll_forward",
+      "status": "통과",
+      "detail": "구르기 → Crouch 복귀, 높이 1.25m 유지"
+    },
+    {
+      "name": "roll_right",
+      "status": "통과",
+      "detail": "구르기 → Crouch 복귀, 높이 1.25m 유지"
+    },
+    {
+      "name": "구르기 이후 유령 회피 없음",
+      "status": "통과",
+      "detail": "서기 전환에서 남은 Dodge 트리거 없음"
+    },
+    {
+      "name": "메뉴 입력 차단·복원",
+      "status": "통과",
+      "detail": "메뉴 중 W·Shift·C 차단, 닫은 뒤 시간 배율 1 / 입력 복원"
+    },
+    {
+      "name": "C02 리타깃·Unity 클립",
+      "status": "통과",
+      "detail": "5클립 ×121자세,54본 원본 바인드 비교. 실제 지형 관통 합격과 구분"
+    }
+  ],
+  "unverified": [
+    "사용자 직접 입력의 동작 만족도와 최종 외형 승인",
+    "30·60·120fps 강제 조건 및 감속 전체 조합",
+    "계단·급경사·낮은 천장 구르기와 전투 피격·탑승 교차 검사",
+    "모든 메시 면 단위 의상·손·붓 관통 검사"
+  ],
+  "buildCreated": false
+}

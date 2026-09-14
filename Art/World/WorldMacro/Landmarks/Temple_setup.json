@@ -1,0 +1,25 @@
+{
+    "id": "Temple",
+    "scope": "Static appearance and authored access. User walking, full interior and boss content unverified.",
+    "position": {
+        "x": -1180.0,
+        "y": 189.4739990234375,
+        "z": 4553.38037109375
+    },
+    "courtyard": {
+        "x": 42.0,
+        "y": 60.0
+    },
+    "roadClearance": 52.46828842163086,
+    "riverClearance": 34.703338623046878,
+    "terrainRelief": 7.5630340576171879,
+    "caveMinimumFloorClearance": 0.0,
+    "caveRampMaxGrade": 0.0,
+    "lod0Triangles": 144122,
+    "allStoredTriangles": 172850,
+    "renderers": 86,
+    "colliders": 74,
+    "missingMaterials": 0,
+    "entryPresent": true,
+    "dryFootprint": true
+}

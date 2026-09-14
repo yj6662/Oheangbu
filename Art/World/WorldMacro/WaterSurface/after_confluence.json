@@ -1,0 +1,16 @@
+{
+    "id": "after_confluence",
+    "scope": "Fixed 1920x1080 camera; explicit shader-time still image, not a video.",
+    "position": {
+        "x": -1374.56396484375,
+        "y": 160.97271728515626,
+        "z": -2214.327880859375
+    },
+    "target": {
+        "x": -1400.0,
+        "y": 24.0,
+        "z": -2400.0
+    },
+    "waterTime": 0.0,
+    "commitRatio": 0.8403149247169495
+}

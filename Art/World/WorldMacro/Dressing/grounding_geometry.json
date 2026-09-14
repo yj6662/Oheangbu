@@ -1,0 +1,370 @@
+{
+    "utc": "2026-09-11T22:16:31.5718111Z",
+    "scope": "Cached selected-LOD geometry roots only; actual scene traversal remains unverified.",
+    "entries": [
+        {
+            "id": "Cheongrim_SM_Henonis_1",
+            "before": [
+                -0.001994609832763672,
+                0.7376996278762817
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 1,
+            "contactSamples": 2
+        },
+        {
+            "id": "Cheongrim_SM_UlmusDavidiana_Summer_2",
+            "before": [
+                0.01219320297241211,
+                0.010655403137207032
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 4
+        },
+        {
+            "id": "Cheongrim_SM_PinusDensiflora_Spring_2",
+            "before": [
+                -0.007193565368652344,
+                0.019192218780517579
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Cheongrim_SM_Deparia_1",
+            "before": [
+                -0.0004197657108306885,
+                -0.0004197657108306885
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 8
+        },
+        {
+            "id": "Cheongrim_SM_Henonis_2",
+            "before": [
+                -0.0001251697540283203,
+                0.0032575130462646486
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 4
+        },
+        {
+            "id": "Cheongrim_SM_Rock_L",
+            "before": [
+                -0.0006829500198364258,
+                -0.0003288388252258301
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Cheongrim_SM_Rock_K",
+            "before": [
+                -0.0004680156707763672,
+                0.0013346672058105469
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Hwanggyeong_SM_UlmusDavidiana_Summer_2",
+            "before": [
+                0.01219320297241211,
+                0.010655403137207032
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 4
+        },
+        {
+            "id": "Hwanggyeong_SM_PinusDensiflora_Spring_2",
+            "before": [
+                -0.007193565368652344,
+                0.019192218780517579
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Hwanggyeong_SM_Deparia_1",
+            "before": [
+                -0.0004197657108306885,
+                -0.0004197657108306885
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 8
+        },
+        {
+            "id": "Hwanggyeong_SM_Rock_L",
+            "before": [
+                -0.0006829500198364258,
+                -0.0003288388252258301
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Hwanggyeong_SM_Rock_K",
+            "before": [
+                -0.0004680156707763672,
+                0.0013346672058105469
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Jeokro_SM_MeliaAzedarach_Winter_1",
+            "before": [
+                -0.013820648193359375,
+                0.010326385498046875
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 7
+        },
+        {
+            "id": "Jeokro_SM_PinusDensiflora_Spring_2",
+            "before": [
+                -0.007193565368652344,
+                0.019192218780517579
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Jeokro_SM_Deparia_1",
+            "before": [
+                -0.0004197657108306885,
+                -0.0004197657108306885
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 8
+        },
+        {
+            "id": "Jeokro_SM_Rock_L",
+            "before": [
+                -0.0006829500198364258,
+                -0.0003288388252258301
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Jeokro_SM_Rock_K",
+            "before": [
+                -0.0004680156707763672,
+                0.0013346672058105469
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Cheolong_SM_PinusDensiflora_Spring_2",
+            "before": [
+                -0.007193565368652344,
+                0.019192218780517579
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Cheolong_SM_MeliaAzedarach_Winter_1",
+            "before": [
+                -0.013820648193359375,
+                0.010326385498046875
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 7
+        },
+        {
+            "id": "Cheolong_SM_Deparia_1",
+            "before": [
+                -0.0004197657108306885,
+                -0.0004197657108306885
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 8
+        },
+        {
+            "id": "Cheolong_SM_Rock_L",
+            "before": [
+                -0.0006829500198364258,
+                -0.0003288388252258301
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Cheolong_SM_Rock_K",
+            "before": [
+                -0.0004680156707763672,
+                0.0013346672058105469
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Hyeongang_SM_Salixpierotii_Summer_1",
+            "before": [
+                0.18168354034423829,
+                0.21343994140625
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 5
+        },
+        {
+            "id": "Hyeongang_SM_UlmusDavidiana_Summer_2",
+            "before": [
+                0.01219320297241211,
+                0.010655403137207032
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 4
+        },
+        {
+            "id": "Hyeongang_SM_Deparia_1",
+            "before": [
+                -0.0004197657108306885,
+                -0.0004197657108306885
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 8
+        },
+        {
+            "id": "Hyeongang_SM_PhragmitesAustralis_2",
+            "before": [
+                0.0,
+                0.0
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 6
+        },
+        {
+            "id": "Hyeongang_SM_Rock_L",
+            "before": [
+                -0.0006829500198364258,
+                -0.0003288388252258301
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        },
+        {
+            "id": "Hyeongang_SM_Rock_K",
+            "before": [
+                -0.0004680156707763672,
+                0.0013346672058105469
+            ],
+            "after": [
+                0.0,
+                0.0
+            ],
+            "retainedStructuralParts": 0,
+            "contactSamples": 9
+        }
+    ]
+}

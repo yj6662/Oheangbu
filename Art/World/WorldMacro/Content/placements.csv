@@ -1,0 +1,84 @@
+﻿ID,이름,지역,종류,진행단계,기준지점,X,Y,Z,Bible,검토내용
+mine_inquiry,무너진 갱도 조사,청림,물증·조사,EA,Cave,3363.33,199.09,1104.3,LDB-REALMS; NARR-STORYLINE,잘린 심지와 바깥으로 튄 암편이 남았다. 광맥의 폭주만으로 생긴 흔적은 아닌 듯하다.
+mine_beast,폭파로 풀려난 짐승,청림,일반 적,EA,Cave,3393.14,192.7,1069.61,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+mine_fire,화맥에 물든 짐승,청림,일반 적,EA,Mine,3029.83,444.79,488.5,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+mine_return,폐광 상부 국 예고,청림,재방문 기믹,EA,Cave,3434.62,189.56,1131.34,LDB-REALMS; NARR-STORYLINE,절벽 위에 오래된 작업대가 보인다. 지금은 닿지 않는다. 본선 통과 조건은 아니다.
+geumpyo_inn,금표 주막,청림,휴식 후보,EA,Inn,1962.0,133.2,690.0,LDB-REALMS; NARR-STORYLINE,약초와 젖은 나무 냄새가 섞인다. 휴식·저장 서비스 연결 예정 지점이다.
+herbalist,잔류 약초꾼,청림,NPC,EA,Inn,1957.69,133.14,690.0,LDB-REALMS; NARR-STORYLINE,“잎이 무성하다고 다 살아 있는 숲은 아니오. 물든 심부에선 뿌리부터 보시오.”
+logger,돌아온 벌목꾼,청림,NPC,EA,Inn,1955.0,133.11,688.0,LDB-REALMS; NARR-STORYLINE,“쇠가 박힌 자리만 뿌리가 멈췄소. 창고 뒤 철책을 보면 알 거요.”
+geumpyo_stone,금표 비석,청림,물증·조사,EA,Cheongrim,2022.0,136.06,835.0,LDB-LENSES; LDB-REALMS,"봉산 출입을 금하는 관의 글씨 아래, 나무꾼들이 남긴 작은 흠집이 겹쳐 있다."
+logging_dungeon,버려진 벌목장 창고,청림,던전,EA,Logging,2010.0,147.08,1305.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+metal_lesson,덩굴이 멎은 철책,청림,물증·조사,EA,Logging,1978.69,147.05,1344.0,LDB-REALMS: 청룡 금 차단 선행 학습,부러진 쇠도끼와 철책에 닿은 덩굴만 검게 마른 채 멈춰 있다.
+logging_pack,적재장 짐승 무리,청림,일반 적,EA,Logging,1950.66,146.86,1374.9,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+deep_pack,심부 포박 무리,청림,일반 적,EA,DeepForest,2187.73,201.82,1920.76,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+root_dungeon,뿌리 굴,청림,던전,EA,DeepForest,2524.3,156.82,1952.01,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+hunter_inn,사냥꾼 주막,청림,휴식 후보,EA,DeepForest,2130.0,206.32,1850.0,LDB-REALMS; NARR-STORYLINE,성역으로 가기 전 마지막 사람의 온기가 남아 있다. 휴식 연결 예정 지점이다.
+hunter,숲길 사냥꾼,청림,NPC,EA,DeepForest,2136.0,206.03,1844.0,LDB-REALMS; NARR-STORYLINE,“저 큰 나무 앞 금줄은 넘지 마시오. 이야기는 이쪽에서도 들을 수 있소.”
+tree_warning,신목 금줄과 장승,청림,물증·조사,EA,Tree,2748.0,176.47,2260.0,LDB-REALMS: 신목 옵션 보스,가지 말라는 말들이 금줄에 겹겹이 묶여 있다. 영역 진입은 선택이다.
+sacred_tree,신목 영역,청림,보스,EA,Tree,3040.89,194.34,2704.78,LDB-REALMS; NARR-STORYLINE,선택형 필드 보스 영역. 보스 행동·공격은 아직 연결하지 않았다.
+azure_dragon,청룡 성역,청림,보스,EA,Dragon,2248.0,200.22,2114.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+dragon_dual,성역의 두 전승,청림,물증·조사,EA,Dragon,2200.0,201.44,2061.0,LDB-LENSES; NARR-LENSES,"비석에는 “나라가 세운 수호신수”, 낡은 나무패에는 “숲의 주인”이라 적혀 있다."
+jeongdam_j1,정담 · 길목 역참,청림,NPC,EA,PostStation,1901.05,133.71,580.69,NARR-CHARACTERS; NARR-STORYLINE J1,“오랜만이군. 폐광을 다녀왔다지? 상경길도 전 같지 않네. 객주 쪽 사정부터 알아보게.”
+wangso_w1,왕소 · 객주 분소,청림,NPC,EA,MerchantBranch,1380.69,277.16,38.0,NARR-CHARACTERS; NARR-STORYLINE W1,“봉인을 건드리지 않고 본점까지 옮겨 주실 분을 찾고 있어요. 급히 정하실 일은 아니에요.”
+cargo_contract,봉인 화물 의뢰 지점,청림,이벤트,EA,MerchantBranch,1400.0,280.03,25.0,LDB-REALMS; NARR-STORYLINE,봉인 화물 호송 수주와 상경 가도 동행의 배치 지점. 실제 의뢰 수락은 아직 연결하지 않았다.
+shrine_c_entrance,청림 성황당 · entrance,청림,휴식 후보,EA,Mine,3001.0,441.18,460.0,LDB-CHECKPOINT,조용한 성황당. 재시도·회복 연결 예정 지점.
+shrine_c_logging,청림 성황당 · logging,청림,휴식 후보,EA,Logging,1930.0,148.51,1315.0,LDB-CHECKPOINT,조용한 성황당. 재시도·회복 연결 예정 지점.
+shrine_c_fork,청림 성황당 · fork,청림,휴식 후보,EA,DeepForest,2232.0,187.55,1882.0,LDB-CHECKPOINT,조용한 성황당. 재시도·회복 연결 예정 지점.
+shrine_c_dragon,청림 성황당 · dragon,청림,휴식 후보,EA,Dragon,2185.0,202.62,2021.0,LDB-CHECKPOINT,조용한 성황당. 재시도·회복 연결 예정 지점.
+burned_camp,버려진 화맥 진지,적로,던전,Tour,Jeokro,-450.0,39.04,-3440.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+war_tomb,전몰자 묘역,적로,던전,Tour,Jeokro,-200.0,38.02,-3630.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+fire_line,불탄 참호 짐승,적로,일반 적,Tour,Jeokro,-295.0,35.42,-3425.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+ash_pack,재밭의 무속성 짐승,적로,일반 적,Tour,Jeokro,-428.56,39.88,-3561.27,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+suzaku,주작 화맥 아레나,적로,보스,Tour,Jeokro,-189.47,37.55,-3327.92,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+war_elder,위령객,적로,NPC,Tour,Jeokro,-390.0,39.14,-3680.0,LDB-REALMS; NARR-STORYLINE,“이긴 자의 글에 죽은 자의 이름이 다 들어갈 수 있겠소.”
+war_official,회군의 관찬 비문,적로,물증·조사,Tour,Jeokro,-375.0,39.43,-3650.0,LDB-LENSES: 회군 다중전승,비문은 의거라 적는다. 승리의 날짜 아래 이름 없는 돌무덤이 이어진다.
+war_song,돌무덤의 구전,적로,이벤트,Tour,Jeokro,-240.0,36.68,-3660.0,LDB-LENSES: 회군 다중전승,유민의 노래는 같은 날을 배신이라 부른다.
+south_inn,재길 주막,적로,휴식 후보,Tour,SouthBridge,-1320.0,29.89,-2500.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+war_shrine,위령 성황당,적로,휴식 후보,Tour,Jeokro,-170.0,36.17,-3380.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+ash_revisit,재 위 덩굴 장벽 예고,적로,재방문 기믹,Tour,Jeokro,-200.0,34.35,-3470.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+armory,버려진 군기고,철옹,던전,Tour,Fortress,-2288.42,125.31,223.87,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+exile_tomb,성외 옛 묘역,철옹,던전,Tour,Fortress,-2046.58,128.8,240.49,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+iron_patrol,성외 단일 금 병졸,철옹,일반 적,Tour,Fortress,-2204.76,127.86,98.96,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+gate_beasts,고개 앞 물든 짐승,철옹,일반 적,Tour,Fortress,-2125.48,125.93,318.06,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+white_tiger,백호 성곽 밖 아레나,철옹,보스,Tour,Fortress,-1808.69,247.09,94.36,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+smith,철옹 대장장이,철옹,NPC,Tour,Fortress,-2089.8,125.53,299.99,LDB-REALMS; NARR-STORYLINE,“성벽을 버티는 건 돌만이 아니지. 금 간 쇠도 이어 쓰는 사람이 있어야 해.”
+exile_scholar,폐서원의 유배 문인,철옹,NPC,Tour,Cheolong,-2420.0,110.65,230.0,LDB-LENSES: 폐서원,“지워진 줄은 빈 줄이 아니오. 남은 글의 사이를 읽어 보시오.”
+exile_manuscript,폐서원 필사본,철옹,물증·조사,Tour,Cheolong,-2425.0,110.28,235.0,LDB-LENSES,거둠의 법 아래 지워진 이름이 여백에 다시 적혀 있다.
+fort_inn,성외 주막,철옹,휴식 후보,Tour,WestPass,-2120.95,124.67,401.69,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+fort_shrine,백호 길목 성황당,철옹,휴식 후보,Tour,Fortress,-1957.58,164.84,160.84,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+rubble_revisit,무너진 성벽 바위,철옹,재방문 기믹,Tour,Fortress,-2018.39,133.66,166.15,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+sunken_store,잠긴 저자의 건조 창고,현강,던전,Tour,Hyeongang,-123.03,159.67,4177.77,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+old_tomb,옛 도읍 교외 묘역,현강,던전,Tour,Hyeongang,180.0,154.7,4390.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+river_beasts,물가의 수속성 짐승,현강,일반 적,Tour,Hyeongang,-50.0,153.65,4420.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+ruin_guard,폐도읍 골목 짐승,현강,일반 적,Tour,Hyeongang,100.0,158.24,4190.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+black_tortoise,현무 궁터 아레나,현강,보스,Tour,Hyeongang,230.0,152.5,4490.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+refugee_elder,옛 궁터의 유민 장로,현강,NPC,Tour,Hyeongang,-25.0,158.79,4272.0,LDB-LENSES: 고려 유민 앵커,“서울을 옮겨도 물길까지 데려갈 수는 없었지. 여기에도 사람은 살았소.”
+water_inn,수상 마을 물가 주막,현강,휴식 후보,Tour,Hyeongang,-100.0,159.36,4170.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+tortoise_shrine,옛 궁터 성황당,현강,휴식 후보,Tour,Hyeongang,180.0,152.39,4450.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+w2_revelation,현강의 수상한 손길,현강,이벤트,Tour,Hyeongang,-81.31,158.84,4269.0,NARR-STORYLINE: 슬롯4 현강,왕소 재회와 정체 노출의 후속 서사 지점. 실제 분기·진영 선택은 미연결.
+pollution_revisit,오염 수역 정화 예고,현강,재방문 기믹,Tour,NorthBridge,-661.67,130.33,3234.45,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+gap_revisit,무너진 다리 너머 예고,현강,재방문 기믹,Return,OldCapitalCreekBridge,90.02,159.03,4099.43,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+temple_legacy,숨은 사찰 · 레거시 던전,현강,던전,Late,Temple,-1142.34,183.24,4466.99,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+monk_scholar,승복 입은 선비,현강,NPC,Late,Temple,-1144.95,180.46,4603.07,LDB-LENSES: 불교 앵커,“붓을 놓은 사람이 글을 잊은 것은 아니지요.”
+sutra_comment,불경 주석의 빈 자리,현강,물증·조사,Late,Temple,-1150.95,181.05,4600.07,LDB-REALMS; NARR-STORYLINE,봉안 기록의 한 대목이 도려내졌다. 남은 주석은 다른 역사를 가리킨다.
+hyeonun_meeting,현운 선사 대면 위치,현강,이벤트,Late,Temple,-1210.0,195.79,4498.38,LDB-BOSSPLACEMENT; NARR-STORYLINE,보스전 직전 비전투 대면과 왕소 진행도별 대사 예약.
+hyeonun,현운 선사 아레나,현강,보스,Late,Temple,-1141.69,180.83,4488.75,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+mechanical_buddha,메카천수관음 아레나,현강,보스,Late,Temple,-1076.31,176.74,4377.38,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+capital_tomb,성저 교외 묘역,황경,던전,EA,SouthPost,-62.17,163.48,-1439.77,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+merchant_cellar,객주 지하 창고 시안,황경,던전,EA,SouthPost,-227.76,145.47,-1450.73,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+earth_checkpoint,가도 토 속성 검문병,황경,일반 적,EA,SouthPost,211.91,248.46,-1334.14,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+outer_road_beasts,가도 무속성 짐승,황경,일반 적,EA,EastPass,1030.5,335.92,108.02,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+south_gate_boss,남문의 낯선 장수,황경,보스,EA,SouthGate,-267.31,139.36,-1374.94,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+capital_inn,남문 밖 주막,황경,휴식 후보,EA,SouthPost,160.0,240.37,-1347.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+road_inn,상경 가도 주막,황경,휴식 후보,EA,EastPass,1152.0,312.57,107.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+merchant_head,객주 본점 인도 담당,황경,NPC,EA,SouthPost,152.0,238.59,-1340.0,NARR-STORYLINE: W1 성저 인도,“봉인이 그대로군요. 짐은 이쪽에 내려 두시면 됩니다.”
+cargo_delivery,봉인 화물 인도 지점,황경,이벤트,EA,SouthPost,157.0,240.8,-1334.0,LDB-REALMS; NARR-STORYLINE,객주 본점의 화물 인도 위치. 캠페인 호송·보상은 미연결.
+capital_notice,국상과 계엄 방문,황경,물증·조사,EA,SouthGate,-303.0,135.29,-1355.0,LDB-HWANGGYEONG; NARR-STORYLINE,국상 중 통행을 제한한다는 방이 성문 앞에 붙어 있다.
+south_shrine,남문 앞 성황당,황경,휴식 후보,EA,SouthGate,-315.0,140.64,-1380.0,LDB-REALMS; NARR-STORYLINE,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+archive_clerk,사고의 서리,황경,NPC,City,Palace,-205.0,74.48,-733.14,LDB-LENSES: 사고 정사 앵커,"“기록은 남겨 두는 것이지, 아무에게나 내어 주는 것은 아닙니다.”"
+city_jeongdam,정담 관아 재회 위치,황경,이벤트,Return,Hwanggyeong,-385.0,72.26,-580.0,NARR-CHARACTERS; NARR-STORYLINE J2,정담의 관아 본거지와 후반 목격 장면의 배치 후보. 인물을 동시에 복제하지 않는다.
+fallen_dragon,개천의 이무기,황경,보스,Return,CapitalBridge,-941.79,59.71,-611.46,LDB-HWANGGYEONG; COMBAT-BOSS,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+sangun,인왕산 산군 영역,황경,보스,Return,Hwanggyeong,-900.0,65.64,-280.0,LDB-BOSSPLACEMENT: 산군 인왕산,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+final_sovereign,궁성 안 최종 대면,황경,보스,Finale,Palace,-300.0,77.62,-878.14,NARR-FINALE; LDB-BOSSPLACEMENT,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+muhak,왕십리 태극 문지기 위치,황경,보스,Finale,Hwanggyeong,445.96,170.3,-777.26,LDB-BOSSPLACEMENT: 무학 왕십리,배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.
+machine_hand,기계의 손 공방 아레나 후보,철옹,보스,Late,Fortress,-2239.06,126.48,45.03,"COMBAT-BOSS: 장영실, 지역 미정 TEST 제작 해석",배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.

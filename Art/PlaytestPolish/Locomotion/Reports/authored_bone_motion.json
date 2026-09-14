@@ -1,0 +1,8 @@
+{
+  "method": "Actual Blender rest and121 world-space bone transform samples per action, 54 bones; quaternion+position, fixed unit scale. Used to bake through the approved Unity avatar without inferring another T pose.",
+  "fbxSha256": "f9c9dfe0eff436580ef3e85c0b0edce06ac6b8995cf7860324f0888e947a194a",
+  "metadataSha256": "bd4b93965b5d57b204b6c4ae01b76edd27bb970e8beee962185620786b40d1e9",
+  "bones": 54,
+  "clips": 14,
+  "bytes": 12739143
+}

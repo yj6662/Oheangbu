@@ -1,0 +1,26 @@
+{
+    "utc": "2026-09-13T16:54:06.9437728Z",
+    "status": "FINDINGS",
+    "scope": "Actual W_WorldMacro_Playtest current HUD state and one 1920x1080 still. No input synthesis, gameplay-state mutation, automatic walking, audio judgment, or user visual approval.",
+    "width": 1920,
+    "height": 1080,
+    "hudHp01": 1.0,
+    "playerHp01": 1.0,
+    "hudInk01": 1.0,
+    "hudGroggy01": 0.0,
+    "skinned": true,
+    "presenterActive": true,
+    "interactionStateMatches": true,
+    "oneCanvas": true,
+    "oneAudioListener": false,
+    "screenshotWritten": true,
+    "renderedSampleValid": true,
+    "screenshot": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro/Playtest/HUD/RuntimeReview\\hud_actual_1080p.png",
+    "presentationStateInjected": false,
+    "stills": [
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro/Playtest/HUD/RuntimeReview\\hud_actual_1080p.png"
+    ],
+    "failures": [
+        "Scene must have exactly one active AudioListener."
+    ]
+}

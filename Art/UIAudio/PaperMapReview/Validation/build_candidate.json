@@ -1,0 +1,11 @@
+{
+  "candidateFolder": "C:/Users/yj666/Oheangbu/Builds/Playtest-20260915/20260913T194504Z",
+  "executable": "C:/Users/yj666/Oheangbu/Builds/Playtest-20260915/20260913T194504Z/Oheangbu_Playtest.exe",
+  "archive": "C:/Users/yj666/Oheangbu/Builds/Playtest-20260915/Oheangbu_UI_Playtest_20260913T194504Z.zip",
+  "buildReport": "C:/Users/yj666/Oheangbu/Builds/Playtest-20260915/20260913T194504Z/release_build_report.json",
+  "smokeReport": "C:/Users/yj666/Oheangbu/Builds/Playtest-20260915/20260913T194504Z/ui_smoke.json",
+  "packageReport": "C:/Users/yj666/Oheangbu/Builds/Playtest-20260915/20260913T194504Z/package_report.json",
+  "paperRuntimeReport": "C:/Users/yj666/Oheangbu/Art/UIAudio/PaperMapReview/Validation/20260913-194416-061-69aa84/paper_review.json",
+  "qaComplete": false,
+  "scope": "Two perpendicular paper folds, worn hanji, map interaction and independent Windows build candidate. Native collection input and human visual/playthrough approval remain unverified."
+}

@@ -1,0 +1,21 @@
+{
+    "utc": "2026-09-13T18:51:57.2352838Z",
+    "status": "PASS",
+    "id": "hud",
+    "scope": "Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.",
+    "setup": "direct diagnostic page setup; no synthetic input used for this still",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "page": "",
+    "width": 1920,
+    "height": 1080,
+    "totalAllocatedBytes": 4085094608,
+    "systemMemoryBytes": 33945550848,
+    "systemCommitRatio": 0.7047173976898193,
+    "systemCommitRatioAtIssue": 0.7049827575683594,
+    "memoryBelow85Percent": true,
+    "screenshotWritten": true,
+    "screenshot": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\hud_1920x1080.png",
+    "screenshotBytes": 2896200,
+    "screenshotUtc": "2026-09-13T18:51:57.4752073Z",
+    "failure": ""
+}
