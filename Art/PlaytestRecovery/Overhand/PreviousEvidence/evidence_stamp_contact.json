@@ -1,0 +1,380 @@
+{
+    "utc": "2026-09-14T08:24:18.1662500Z",
+    "command": "contact",
+    "bodyModel": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+    "gestureProfile": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/PlayerGesture_GripA.asset",
+    "appearanceProfile": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/PlayerAppearance_Locomotion.asset",
+    "controller": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/AC_PlaytestLocomotion.controller",
+    "motorProfile": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/PlayerLocomotion.asset",
+    "dependencies": [
+        {
+            "path": "Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B2_C3_Idle.anim",
+            "sha256": "a885fcd8073ba95c5d3fc9286d98cab3e09bc9a7a61cd989e6d79621ac16ee95"
+        },
+        {
+            "path": "Assets/_Project/Art/C02_RigFaceLab/Animations/Integrated_B2_C3_Idle.anim.meta",
+            "sha256": "bcd944d01605a6c29577929a6cc6251f69c6c9f97277742b7a98b57dabaa2ba9"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/DosaV2/Models/SM_DosaBrushV2.fbx",
+            "sha256": "0409e058ed16a5953465e10a47d39ee6fe19ee63d780b6db66d9239b9c1da2c6"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/DosaV2/Models/SM_DosaBrushV2.fbx.meta",
+            "sha256": "7a592ff4cf6c4a7d28e544ca9febe25dcd12bf93a0bdef34d71ff2f191de504c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeBack.anim",
+            "sha256": "f0b10b2643f09753ff8ef1977eb3074bc2f75693139b57fc1ea45edba821f2da"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeBack.anim.meta",
+            "sha256": "079e16b83cc6ddc2467a63a63079df7234649e701d3d0fc3d306ca187a7f1306"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeForward.anim",
+            "sha256": "507595218aa318b2edb531bbb23a8239266afc7384029e158395eea8ab29b6d2"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeForward.anim.meta",
+            "sha256": "c745d52f73783de32fc8425c18d71e1d17d1589ae9bbd017f558e2525245e853"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeLeft.anim",
+            "sha256": "a0b26d84e504bb21dbdaefe91e822681cbd7a4e80abc5f94722b7953cb93d89f"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeLeft.anim.meta",
+            "sha256": "bdbd60add4b15b66a080d85a34c285d8cd7afec00eb25edff5c1d3e1d967cf89"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeRight.anim",
+            "sha256": "29052c40275a6fa3c1ce7bf59bc8fe91dda9cf4545e6253390a094b97169de85"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/DodgeRight.anim.meta",
+            "sha256": "f7611eb51675e76f7a6d2c87492f51ad6c043b235f6a0ed4e182d45a1911a45a"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/JumpFall.anim",
+            "sha256": "0d70bcd6ba26856c84a7cbe243d3f25b76ed33377ad3d3be85e56b2d97ddc8b2"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/JumpFall.anim.meta",
+            "sha256": "9174826e9c5ec0baafdf2a018e7b57d5977463d11783394bc22d25879f485577"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/JumpRise.anim",
+            "sha256": "3e6846eded644b98130ceaca26cb5b35beecd145e3ba7c8b44346c93a68bdbaa"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/JumpRise.anim.meta",
+            "sha256": "03b4b83d215128e7b63c9558d1fdd31a72b099aac431f36fe25b460b53eab5b3"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/Land.anim",
+            "sha256": "7e8783f6e02b1cf3d5fe1f110f514f5a975512255dbc95881201d9a32cd7e603"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/Land.anim.meta",
+            "sha256": "70c93db0d9a171bde3aceb82a91a627ecac8f5d10eddfaf6909784deeb47da8c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/RunBack.anim",
+            "sha256": "d9e40cce5c780d5299593f9a641aa586fd0f0ce4e33714fdcabb55bc30427809"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/RunBack.anim.meta",
+            "sha256": "b2d2a7ebe3cfcd65270ec90a43694035685806287bdb57b328b950e5224e9513"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/RunLeft.anim",
+            "sha256": "5b9c5af7b4bc2e9b98b90d6f066629a08fce1f6a5d6d1b9344fc648b6f2eb67e"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/RunLeft.anim.meta",
+            "sha256": "f8696069984801017e0812bd4624d015aed47e96141d7811902fcf1ebe7b557c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/RunRight.anim",
+            "sha256": "a3270b69a452614b4fb6a4b4741f54aeaecf54092aaffa5a9f64ae1108123908"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/RunRight.anim.meta",
+            "sha256": "15acaa125dda5a1ea2ef7f8ab0bf2c09297430a98a261fc897ad7300c7ded3c0"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/SitDown.anim",
+            "sha256": "7abc6e0f9ffa568fe70a4633119470c6fe01dcf71a128555ae5870130a997c79"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/SitDown.anim.meta",
+            "sha256": "0c5dd2b415ea78ec651dca209b694ca8eab3cc6d0ffc7f1885314c6b3486e1ba"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/SitIdle.anim",
+            "sha256": "665cec598a6120d2491b8ff75d436b04fa101bd148468c2ad6620926ae334b2c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/SitIdle.anim.meta",
+            "sha256": "0ec71951d2ffe4353048c3048e45348bc1149c601124f70b1bca1ddb48ec2652"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/StandUp.anim",
+            "sha256": "35d8acc79005b8b7ab51b292eafcba69aafd197dfa556a449db19049eafc0fea"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/StandUp.anim.meta",
+            "sha256": "10ceaa47952d403073c831ea03b734da5852cd3bec0dd43d81a471bd1f2e928b"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkBack.anim",
+            "sha256": "a501a971c5257ca2b137f685c4ffcdb34af8ad9ac2db250f6bf360485bd1befc"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkBack.anim.meta",
+            "sha256": "25edc44a914dc45a6405171bdc25c15b0ccbabf11c6ad56847576ecf700595f7"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkLeft.anim",
+            "sha256": "8143fc97a9a365b6526ecb63c7f039a0129812ef986df14a583c0eb337d14e79"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkLeft.anim.meta",
+            "sha256": "43dd750f39f3908bebe7a92bf971a55e1454ec5fcc37f5d9cade36a56a7cf3ed"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkRight.anim",
+            "sha256": "a439aded3fade637fb97e5aecb61677c5f43797fdbb6d8745503322a25c27ca8"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestLocomotion/Animations/WalkRight.anim.meta",
+            "sha256": "eb0b417bf08866c6ab962e18a363463c3f2f51aba5cb42a38548b43266a2f2c1"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestReRig/Brush/BrushDeformation_ReRig.asset",
+            "sha256": "618ed06ec03180e8fff1d65e7e2a566ed86107fb94c5db9f8b8bf659b2d8e0eb"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestReRig/Brush/BrushDeformation_ReRig.asset.meta",
+            "sha256": "1cf2227236f09b2dba21608446b99cae41a4aa20bc5b68e715d5fd15c670d818"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx",
+            "sha256": "db1599d97b36051b19458a4704673ce602aecf345a26158d404cf5f6650bed1b"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx.meta",
+            "sha256": "e801c5798e7edfe46c7783931f515ed62190968cc0f201e6ee18d3cd00de5dbc"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Near/SM_C02_Mesh_0_GripA.asset",
+            "sha256": "053390b79dcf9330586b41c14ea87e30e536b3ed33950f266637d0afbc4be6f2"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Near/SM_C02_Mesh_0_GripA.asset.meta",
+            "sha256": "99a6383360615adf73d1b46d6c4ce641603ba87731cfc0ba7f9cc3f9661b082f"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/PlayerGesture_GripA.asset",
+            "sha256": "e63add71812b721f1b341a0c9a0d4ac5dbad6650c66dcbe448d4f66ea46653f3"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/PlayerGesture_GripA.asset.meta",
+            "sha256": "fea86ffa35cf4c8f4e6511864b67c5b02511429da178cf24cf4f2420215c61e1"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx",
+            "sha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryGripA/Player_C02_GripA.fbx.meta",
+            "sha256": "c6f0479184e4847e10473db3945005dba6efc8ecd5b3f87225a233b5c1e33d5c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/AC_PlaytestLocomotion.controller",
+            "sha256": "6061df2ee586dce8795d7a37de3913304e8a5ccf75e137f8456fa7c440b23f5e"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/AC_PlaytestLocomotion.controller.meta",
+            "sha256": "6e754e9ddfb6531ae5dae6d87086e3635bff4a5455a56c189b8c50545c113bcb"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchBack.anim",
+            "sha256": "074b361d484d32087bd6ee975991162420afc0278068c29be297bc8d4941c6d5"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchBack.anim.meta",
+            "sha256": "72da4c9e13aefb134fefa83a8347f2c737651f6ccf7f4c908225718d4b0dae05"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchForward.anim",
+            "sha256": "f4b0a28877954e9d2f67fc3c5f23de42e9db70931cebcc03685a479a108fd7b0"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchForward.anim.meta",
+            "sha256": "ad157db931ea4d99ab09dc0b04389ad759ca071626687d1b845e354e9cd3e95f"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchIdle.anim",
+            "sha256": "78f159a90eaf8e706b927b87f8ac82ae03193f7bb46868fb142eebf74792ead3"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchIdle.anim.meta",
+            "sha256": "2e7246cf6b2330ac220b90c345f94aca622fbea7ed05fff11726ad619a8e5d39"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchLeft.anim",
+            "sha256": "b627d0f0343dc525a08bf03474dc43e795823d59c3ebb75af815ef17aebcae17"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchLeft.anim.meta",
+            "sha256": "dc7b69368972d0d9c8f2d98d7efd0e422291c85ec404bb336ffec6dcb746a2db"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchRight.anim",
+            "sha256": "04d6d4c5b982472281260d9b551c17ed3ff442c4196083d9216e6a6a83973700"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/CrouchRight.anim.meta",
+            "sha256": "92ac3807d2dd274eac6d6630f4f509c875704b54d067239e961e3778e04d1f42"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/RunForward.anim",
+            "sha256": "b5d093dd2c4753d093aa74848c5186614c4df91f64aeb20f3c87b023e1865649"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/RunForward.anim.meta",
+            "sha256": "0565f4bc57126cef9dec011006b6e6a0089cad18511b8047af5d76f37403da7a"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/StartForward.anim",
+            "sha256": "0513900650d2a35ee9d84027be41c3c0245af89c757fc77549374948579eb1b5"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/StartForward.anim.meta",
+            "sha256": "939d55285c3258ff8cdf27ffcb85d807582e669d308259f1ff6c48080f030ee2"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/TurnLeft.anim",
+            "sha256": "80dd706922cd116bf54531242b149026db109811dd25ab66b38ca37a98d4536c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/TurnLeft.anim.meta",
+            "sha256": "336fb073680b3692fe614b25dfb58d1877136db5c0dd4a32550fdb37ee88eb8f"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/TurnRight.anim",
+            "sha256": "81d93b35b5634ad2d21a7bf035545b304ae08738bf8f7ee292bc4337c50e4773"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/TurnRight.anim.meta",
+            "sha256": "f98fe27dc6d5a7e584d631715aa40ce7245c587c3753aa4f32c40f9695eb442f"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/WalkForward.anim",
+            "sha256": "6efc116d9d261ac1538235d15f582fa4b3d794daaebd26b92a9a9ced5a32c1e5"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/Animations/WalkForward.anim.meta",
+            "sha256": "2c1e06685be0427e2cfe76e4dfed1bf41eb0dad01e74a564443a050316fd45e3"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/PlayerAppearance_Locomotion.asset",
+            "sha256": "b952658dea2f079d5ce511beb094ebe270ba1d9a07c5f383fff47c4d48d351fd"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/PlayerAppearance_Locomotion.asset.meta",
+            "sha256": "6c3ff2a74cd19677c2e605018c532c16328d0d445ae92a62f742b77950984ea9"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/PlayerLocomotion.asset",
+            "sha256": "261929b527b2bb1e5ecc564bb0f07e29667e94fa8e1d8c4d74261abd3734752c"
+        },
+        {
+            "path": "Assets/_Project/Art/Characters/PlaytestRecoveryMotion/PlayerLocomotion.asset.meta",
+            "sha256": "9ff213d12a090dec43631c1c8510a108ba1c88d6daaf160840e0940b1031fbfe"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerAppearance.cs",
+            "sha256": "35c5cfdbde651dd7a71cc44061ad366f6d57f58f34317dbe5718ee0aada5b0c4"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerAppearance.cs.meta",
+            "sha256": "0ad3ff6cebe81ed336a7b4fcaa98bb9060e2bdce4230c4bc05d722fec42d4bfa"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerAppearanceProfile.cs",
+            "sha256": "9b31e402312b703c9432972ac457e1ee222c394026b3a836d2f2102c9531711b"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerAppearanceProfile.cs.meta",
+            "sha256": "772b6505b0346cc927490845457ad32497bd6ea7ce61d80fd15f138ad0c01859"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerFootPlacement.cs",
+            "sha256": "4fddc4e72138126ed5a7b7ac654522cc9faa65682c58267fcae971bba3fa988a"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerFootPlacement.cs.meta",
+            "sha256": "764e8cc521d3dc3b3f7a6ea9ace1035490e67ebb307b71417e735e94a11cfa4f"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerGestureProfile.cs",
+            "sha256": "73dcc505d7d9c1bbf89e6fcd21ce84e1f6edc0509caba97105cf18e0a03e67fc"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerGestureProfile.cs.meta",
+            "sha256": "a5c8039426eaac7510ffc1a2470b00f88bc22db4052cdc766d7d73c83d45ec0e"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerGestureRig.cs",
+            "sha256": "65bf42b4582ff5c33d32274c52769f7185a600333272f6424697ffa85cef8d81"
+        },
+        {
+            "path": "Assets/_Project/Scripts/App/World/WorldMacroPlayerGestureRig.cs.meta",
+            "sha256": "2776e0488d6844a0b38a5143fab17834f0eae124d9b2193438e679af915867ed"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Combat/Player/PlayerLocomotionProfileSO.cs",
+            "sha256": "6cff32fd416835baa63017667b77a923e6d371d7265f10cc59ff1d5b79a99c16"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Combat/Player/PlayerLocomotionProfileSO.cs.meta",
+            "sha256": "069ffda4881be563057ab1a2ec49a49a38606b61a38a847da17a0ee41366fbcf"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Combat/Player/PlayerMotor.Locomotion.cs",
+            "sha256": "d4ec7c9bef7e5faded1f3415a526d629972baf60ab9e8020748586c7859b2393"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Combat/Player/PlayerMotor.Locomotion.cs.meta",
+            "sha256": "24a78a12d0ca0f852409b2cb71a83a72e7115c2f3f8c00da9b729f57aa838212"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Combat/Player/PlayerMotor.cs",
+            "sha256": "a911e3103c6ff771223add416dad5ad706c2448d3fa9e64fbaf6d6faa9534190"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Combat/Player/PlayerMotor.cs.meta",
+            "sha256": "b7a239722252188e8e8e26d5d220596f6a39b306d59d95c6ea8ea3c67cdc381c"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Presentation/BrushBristleRig.cs",
+            "sha256": "cea13ef82a580ab70388d069e33c7bd920dca6db2eb671f4736d86aae8cf374b"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Presentation/BrushBristleRig.cs.meta",
+            "sha256": "821fcfc749495cae98df247b0cce31a40fb1efc37dea57bb1b4fdd173e425f66"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Presentation/PlayerVisualIK.cs",
+            "sha256": "c1a36b73aeecbbad61d6afaafdeeb721af5653ddedc56441133a0a79f8755166"
+        },
+        {
+            "path": "Assets/_Project/Scripts/Presentation/PlayerVisualIK.cs.meta",
+            "sha256": "9264da4c372abfd25a73d5a4573584acb1e650e17c57bd97173eafd45117ab7e"
+        }
+    ],
+    "scope": "Asset/code identity at this scoped hand diagnostic. No native input, whole-cloth or complete gameplay acceptance."
+}

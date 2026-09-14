@@ -1,0 +1,17 @@
+{
+    "status": "STATIC_UNITY_CONFIGURATION_PASS_RUNTIME_UNVERIFIED",
+    "command": "validate",
+    "scope": "Derivative Humanoid clips and opt-in movement. Synthetic pose/math checks are separate from native input and terrain play.",
+    "clips": [],
+    "pass": [
+        "Opt-in motor profile walk 2.2 / run 5.5 / jump .75",
+        "Directional controller and eighteen Humanoid clips",
+        "Scene opted in without changing source profile",
+        "Foot-placement adapter present"
+    ],
+    "fail": [],
+    "unverified": [
+        "Native keyboard play, slopes, stairs, visual cloth/sitting contact and camera framing",
+        "Full gameplay jump/landing/air gate and repeated seating transitions"
+    ]
+}

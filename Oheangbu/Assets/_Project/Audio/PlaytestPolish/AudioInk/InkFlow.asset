@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f66b188b6cd44bdd82a1d51b40033aaf, type: 3}
+  m_Name: InkFlow
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.HarvestInkFlowProfileSO
+  Material: {fileID: 2100000, guid: 4fd80dae00b195444ab537a93f53a29f, type: 2}
+  InkColor: {r: 0.105, g: 0.095, b: 0.08, a: 0.92}
+  FineThreads: 2
+  Points: 32
+  RootWidth: 0.036
+  TipWidth: 0.006
+  Spread: 0.055
+  Sag: 0.12
+  RevealSeconds: 0.22
+  ReleaseSeconds: 0.18
+  FlowMetersPerSecond: 2.6
+  Droplets: 12
+  DropletSize: 0.018

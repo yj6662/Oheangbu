@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef246fea1b05fa842906ca3d35977c0a, type: 3}
+  m_Name: MagicStoneCarProfile
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.World.Vehicle.WorldMacroPalanquinProfileSO
+  Mass: 780
+  CentreOfMass: {x: 0, y: 0.75, z: 0}
+  HullCentre: {x: 0, y: 2.02, z: 0}
+  HullSize: {x: 1.8, y: 2.15, z: 3}
+  LinearDamping: 0.06
+  AngularDamping: 0.8
+  SolverIterations: 12
+  SolverVelocityIterations: 4
+  WheelRadius: 0.6
+  WheelMass: 25
+  SuspensionDistance: 0.28
+  SuspensionSpring: 26000
+  SuspensionDamper: 3400
+  SuspensionTarget: 0.5
+  ForceApplicationHeight: 0.15
+  WheelDamping: 0.6
+  ForwardFriction: 1.1
+  SidewaysFriction: 1.35
+  AntiRollForce: 2200
+  ForwardSpeed: 14
+  ReverseSpeed: 4
+  MotorTorque: 2100
+  FrontDriveShare: 0.5
+  BrakeTorquePerWheel: 2800
+  ParkingBrakeTorquePerWheel: 4000
+  DirectionChangeSpeed: 0.45
+  ThrottleResponse: 2
+  BrakeResponse: 5
+  LowSpeedSteerAngle: 32
+  HighSpeedSteerAngle: 10
+  SteerDegreesPerSecond: 80
+  BodyResponse: 0.22
+  PitchDegreesPerAcceleration: 0.5
+  RollDegreesPerAcceleration: 0.65
+  MaximumPitch: 4
+  MaximumRoll: 5
+  MaximumVisualHeave: 0.035
+  MaximumSampleAcceleration: 15
+  BoardingDistance: 2.9
+  BoardingMaximumSpeed: 0.8
+  ExitMaximumSpeed: 0.8
+  ExitSideDistance: 2.05
+  ExitEndDistance: 2.85
+  ExitGroundProbeUp: 2
+  ExitGroundProbeDown: 3
+  ExitClearance: 0.025
+  EnvironmentMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  CameraResponse: 0.12
+  SeatTiltFollow: 0.3
+  MouseSensitivity: 0.12
+  SeatYawLimit: 85
+  PitchLimits: {x: -45, y: 55}
+  ExternalDistance: 6
+  ExternalPivotHeight: 0.2
+  ExternalShoulderOffset: 0.8
+  CameraCollisionRadius: 0.2
+  CameraMinimumDistance: 0.45

@@ -1,0 +1,6 @@
+{
+  "method": "Source ankle trajectories, C02 fixed-length two-bone IK. Original upper body keys retained.",
+  "clampedSamples": 0,
+  "maxSolveErrorMeters": 2.862419592186592e-07,
+  "fbxSha256": "d6cffb4007bce2118789d93848d515bde477238ff5fab96d2d9d45d69a8292ce"
+}

@@ -1,0 +1,5328 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67b9a9739ca47f140a48a56da35acde9, type: 3}
+  m_Name: VisualCorridor
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.World.WorldMacroVisualCorridorSO
+  Seed: 20260915
+  TrailWidth: 3.2
+  MainPathWidth: 4.1
+  ForestDensity: 0.55
+  RockDensity: 0.34
+  Scope: Static visual corridor only. Existing terrain, routes, content, progression,
+    player, and owned asset reuse are preserved.
+  Sources:
+  - Id: MineMountain_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_4
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_5
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_6
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_7
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_8
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_9
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_10
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_11
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_12
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_13
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_14
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_15
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_16
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_17
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_18
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_19
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_20
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_21
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_22
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_23
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_24
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_25
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_26
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_27
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_28
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_29
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_30
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_31
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_32
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_33
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_34
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_35
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_36
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_37
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_38
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_39
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_40
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_41
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_42
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_43
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_44
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_45
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_46
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_47
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_48
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_49
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_50
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_51
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_52
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_53
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_54
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_55
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_56
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_57
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_58
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_59
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_60
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_61
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_62
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_63
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_64
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_65
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_66
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_67
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_68
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_69
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_70
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_71
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_72
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_73
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_74
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_75
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_76
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_77
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_78
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_79
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: MineMountain_80
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineMountain_81
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_4
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_5
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_6
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_7
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_8
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_9
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_10
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_11
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_12
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_13
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_14
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_15
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_16
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_17
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_18
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_19
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_20
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_21
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_22
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_23
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_24
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_25
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_26
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_27
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_28
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_29
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_30
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_31
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_32
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_33
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_34
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_35
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_36
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_37
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_38
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_39
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_40
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_41
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_42
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_43
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_44
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_45
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_46
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_47
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_48
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_49
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_50
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_51
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_52
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_53
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_54
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_55
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_56
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_57
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_58
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_59
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_60
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_61
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_62
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_63
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_64
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_65
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_66
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_67
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_68
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_69
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_70
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_71
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_72
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_73
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_74
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_75
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_76
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_77
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_78
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_79
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_80
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_81
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_82
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_83
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_84
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_85
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_86
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_87
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_88
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_89
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_90
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_91
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_92
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_93
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_94
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_95
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_96
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_97
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_98
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_99
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_100
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Cheongrim_101
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Cheongrim_102
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Henonis_1.prefab
+    SourceHash: 3d384c4d0e04e3d5f281260172d1f128
+    LodCount: 4
+    TriangleCount: 2131
+  - Id: Cheongrim_103
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_4
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_5
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_6
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_7
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_8
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_9
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_10
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_11
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_12
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_13
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_14
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_15
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_16
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_17
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_18
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_19
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_20
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_21
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_22
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_23
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_24
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_25
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_26
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_27
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_28
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_29
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_30
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_31
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_32
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_33
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_34
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_35
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_36
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_37
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_38
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_39
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_40
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_41
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_42
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_43
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_44
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_45
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_46
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_47
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_48
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_49
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_50
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_51
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_52
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_53
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_54
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_55
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_56
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_57
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_58
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_59
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_60
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: CapitalRoad_61
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_62
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_63
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: CapitalRoad_64
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: MineRock_-1_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_-1_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_-1_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_-1_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_1_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_1_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_1_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineRock_1_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: MineStack
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 2
+    TriangleCount: 24
+  - Id: Logging_Logs
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 2
+    TriangleCount: 24
+  - Id: DeepForest_Logs
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 2
+    TriangleCount: 24
+  - Id: CAP_GATE_ARCH
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_FortificationArch.prefab
+    SourceHash: a12c667c30bab8a1a483f4e89c4efb92
+    LodCount: 1
+    TriangleCount: 600
+  - Id: CAP_GATE_COLUMN_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Column.prefab
+    SourceHash: 395f3391312d94f52aef78c648e18505
+    LodCount: 1
+    TriangleCount: 60
+  - Id: CAP_GATE_COLUMN_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Column.prefab
+    SourceHash: 395f3391312d94f52aef78c648e18505
+    LodCount: 1
+    TriangleCount: 60
+  - Id: CAP_GATE_COLUMN_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Column.prefab
+    SourceHash: 395f3391312d94f52aef78c648e18505
+    LodCount: 1
+    TriangleCount: 60
+  - Id: CAP_GATE_COLUMN_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Column.prefab
+    SourceHash: 395f3391312d94f52aef78c648e18505
+    LodCount: 1
+    TriangleCount: 60
+  - Id: CAP_GATE_COLUMN_4
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Column.prefab
+    SourceHash: 395f3391312d94f52aef78c648e18505
+    LodCount: 1
+    TriangleCount: 60
+  - Id: CAP_GATE_COLUMN_5
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Column.prefab
+    SourceHash: 395f3391312d94f52aef78c648e18505
+    LodCount: 1
+    TriangleCount: 60
+  - Id: CAP_GATE_CROSSBEAM
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Crossbeam.prefab
+    SourceHash: 85af760fbf983df7a929a3addd938fd0
+    LodCount: 1
+    TriangleCount: 1686
+  - Id: CAP_GATE_RAFTER
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Rafter.prefab
+    SourceHash: 45d3d9e1d761fc6175319802c06604d0
+    LodCount: 1
+    TriangleCount: 5616
+  - Id: CAP_GATE_ROOF
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_B_GateHouse_Roof_001.prefab
+    SourceHash: 341568b3caa452ae05b44ffbd1cc8295
+    LodCount: 1
+    TriangleCount: 88006
+  - Id: CAP_SOUTH_WALL_W_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_4
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_5
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_6
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_7
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_8
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_9
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_10
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_W_11
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_4
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_5
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_6
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_7
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_8
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_9
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_10
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_SOUTH_WALL_E_11
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: CAP_WALL_PAVILION_W
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_WALL_PAVILION_E
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_HOUSE_R0_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R0_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R1_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R1_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R2_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R2_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R3_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R3_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R4_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R4_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R5_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R5_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R6_E
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_HOUSE_R6_W
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_MARKET_BOX_W0
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: CAP_MARKET_BOX_W1
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: CAP_MARKET_SACK_W0
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice.prefab
+    SourceHash: aeab7856724af55e1338a220f616336e
+    LodCount: 4
+    TriangleCount: 9420
+  - Id: CAP_MARKET_BASKET_W0
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_Basket.prefab
+    SourceHash: 3adb4079ea9992d4f37bb84c292dc6cd
+    LodCount: 4
+    TriangleCount: 7683
+  - Id: CAP_MARKET_POT_W0
+    SourcePath: Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab
+    SourceHash: 3ff5334f468320e67e186928e723148a
+    LodCount: 1
+    TriangleCount: 6266
+  - Id: CAP_MARKET_BOX_E0
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: CAP_MARKET_SACK_E0
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice.prefab
+    SourceHash: aeab7856724af55e1338a220f616336e
+    LodCount: 4
+    TriangleCount: 9420
+  - Id: CAP_MARKET_SACK_E1
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice.prefab
+    SourceHash: aeab7856724af55e1338a220f616336e
+    LodCount: 4
+    TriangleCount: 9420
+  - Id: CAP_MARKET_BASKET_E0
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_Basket.prefab
+    SourceHash: 3adb4079ea9992d4f37bb84c292dc6cd
+    LodCount: 4
+    TriangleCount: 7683
+  - Id: CAP_MARKET_POT_E0
+    SourcePath: Assets/Korea_TreasureProps/Prefabs/SM_052_Pot.prefab
+    SourceHash: 3ff5334f468320e67e186928e723148a
+    LodCount: 1
+    TriangleCount: 6266
+  - Id: CAP_MARKET_TIMBER_N0
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_MARKET_TIMBER_N1
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_CITY_PAVILION_W
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_PAVILION_N
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_PROPERTY_WALL_W0
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_1.prefab
+    SourceHash: ba3141fd5283e563f750aaf434768b5d
+    LodCount: 1
+    TriangleCount: 6036
+  - Id: CAP_PROPERTY_WALL_W1
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_1.prefab
+    SourceHash: ba3141fd5283e563f750aaf434768b5d
+    LodCount: 1
+    TriangleCount: 6036
+  - Id: CAP_PROPERTY_WALL_E0
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_1.prefab
+    SourceHash: ba3141fd5283e563f750aaf434768b5d
+    LodCount: 1
+    TriangleCount: 6036
+  - Id: CAP_PROPERTY_WALL_E1
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_1.prefab
+    SourceHash: ba3141fd5283e563f750aaf434768b5d
+    LodCount: 1
+    TriangleCount: 6036
+  - Id: CAP_PROPERTY_WALL_NW
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_2.prefab
+    SourceHash: 87655d89286dac17b49fcdf80dafa290
+    LodCount: 1
+    TriangleCount: 3242
+  - Id: CAP_PROPERTY_WALL_NE
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_2.prefab
+    SourceHash: 87655d89286dac17b49fcdf80dafa290
+    LodCount: 1
+    TriangleCount: 3242
+  - Id: CAP_PALACE_PAVING_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_4
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_5
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_6
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_7
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_8
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_9
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_10
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_11
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_12
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_13
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_14
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_15
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_16
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_17
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_18
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_PAVING_19
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_4
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_5
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_6
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_7
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_8
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_9
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_10
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_11
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_12
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_13
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_14
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_15
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_16
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_SPUR_17
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_BarbicanFloor_001.prefab
+    SourceHash: d33f36bf995dce5db19af16eb98b5490
+    LodCount: 1
+    TriangleCount: 32
+  - Id: CAP_PALACE_APPROACH_DECK_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_4
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_5
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_6
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_7
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_8
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_9
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_10
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_APPROACH_DECK_11
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Floor.prefab
+    SourceHash: 77857e84e68a547d8c540542e67960a7
+    LodCount: 1
+    TriangleCount: 12
+  - Id: CAP_PALACE_EDGE_W_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_W_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_W_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_W_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_E_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_E_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_E_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_PALACE_EDGE_E_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW_Stone.prefab
+    SourceHash: 786aa1138e2cfdaf7a86d70d61849078
+    LodCount: 1
+    TriangleCount: 842
+  - Id: CAP_CITY_OWNED_00
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_01
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_02
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_03
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_04
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_05
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_06
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_07
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_08
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_09
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_10
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_11
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_12
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_13
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_14
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_15
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_16
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_17
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_18
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_19
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_20
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_21
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_22
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_23
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_24
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_25
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_26
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_27
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_28
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_29
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_30
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_31
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_32
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_33
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_34
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_35
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_36
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_37
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_38
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_39
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_40
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_41
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_42
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_43
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_44
+    SourcePath: Assets/House_2/house2 .fbx
+    SourceHash: 930e6f982161ec599adb090d42ea9fda
+    LodCount: 1
+    TriangleCount: 86400
+  - Id: CAP_CITY_OWNED_45
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_46
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: CAP_CITY_OWNED_47
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: Blast_Cord
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_Rope.prefab
+    SourceHash: a7699f3a8ba6cd7017401f17bb79d25f
+    LodCount: 4
+    TriangleCount: 14701
+  - Id: Exit_Transport_Basket
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_Basket.prefab
+    SourceHash: 3adb4079ea9992d4f37bb84c292dc6cd
+    LodCount: 4
+    TriangleCount: 7683
+  Placements:
+  - Id: MineMountain_0
+    SourceId: MineMountain_0
+    Group: 02_MountainAndForest
+    Position: {x: 3385.7932, y: 195.62894, z: 1117.8123}
+    Size: {x: 0, y: 1.2321038, z: 0}
+    Yaw: 145.1279
+    Solid: 0
+  - Id: MineMountain_1
+    SourceId: MineMountain_1
+    Group: 02_MountainAndForest
+    Position: {x: 3366.038, y: 198.07622, z: 1096.0946}
+    Size: {x: 0, y: 12.643598, z: 0}
+    Yaw: 330.90857
+    Solid: 0
+  - Id: MineMountain_2
+    SourceId: MineMountain_2
+    Group: 02_MountainAndForest
+    Position: {x: 3381.6138, y: 193.43967, z: 1062.2623}
+    Size: {x: 0, y: 0.8520145, z: 0}
+    Yaw: 237.90614
+    Solid: 0
+  - Id: MineMountain_3
+    SourceId: MineMountain_3
+    Group: 02_MountainAndForest
+    Position: {x: 3370.345, y: 201.45026, z: 1202.3855}
+    Size: {x: 0, y: 14.153712, z: 0}
+    Yaw: 282.7158
+    Solid: 0
+  - Id: MineMountain_4
+    SourceId: MineMountain_4
+    Group: 02_MountainAndForest
+    Position: {x: 3402.4165, y: 198.18512, z: 1211.4027}
+    Size: {x: 0, y: 10.151532, z: 0}
+    Yaw: 247.18228
+    Solid: 0
+  - Id: MineMountain_5
+    SourceId: MineMountain_5
+    Group: 02_MountainAndForest
+    Position: {x: 3399.5337, y: 197.70705, z: 1196.4965}
+    Size: {x: 0, y: 1.2341127, z: 0}
+    Yaw: 328.67175
+    Solid: 0
+  - Id: MineMountain_6
+    SourceId: MineMountain_6
+    Group: 02_MountainAndForest
+    Position: {x: 3407.197, y: 203.91867, z: 1351.8284}
+    Size: {x: 0, y: 1.474628, z: 0}
+    Yaw: 269.099
+    Solid: 0
+  - Id: MineMountain_7
+    SourceId: MineMountain_7
+    Group: 02_MountainAndForest
+    Position: {x: 3402.3867, y: 204.19305, z: 1344.7294}
+    Size: {x: 0, y: 14.373857, z: 0}
+    Yaw: 295.5985
+    Solid: 0
+  - Id: MineMountain_8
+    SourceId: MineMountain_8
+    Group: 02_MountainAndForest
+    Position: {x: 3369.6724, y: 207.71632, z: 1345.5992}
+    Size: {x: 0, y: 11.554428, z: 0}
+    Yaw: 47.656834
+    Solid: 0
+  - Id: MineMountain_9
+    SourceId: MineMountain_9
+    Group: 02_MountainAndForest
+    Position: {x: 3378.4622, y: 206.90498, z: 1351.8687}
+    Size: {x: 0, y: 0.9464413, z: 0}
+    Yaw: 298.7477
+    Solid: 0
+  - Id: MineMountain_10
+    SourceId: MineMountain_10
+    Group: 02_MountainAndForest
+    Position: {x: 3408.824, y: 211.37553, z: 1510.2477}
+    Size: {x: 0, y: 11.049081, z: 0}
+    Yaw: 244.67943
+    Solid: 0
+  - Id: MineMountain_11
+    SourceId: MineMountain_11
+    Group: 02_MountainAndForest
+    Position: {x: 3382.0906, y: 213.93587, z: 1507.0426}
+    Size: {x: 0, y: 14.564578, z: 0}
+    Yaw: 89.24419
+    Solid: 0
+  - Id: MineMountain_12
+    SourceId: MineMountain_12
+    Group: 02_MountainAndForest
+    Position: {x: 3386.8582, y: 224.30844, z: 1679.943}
+    Size: {x: 0, y: 1.0413643, z: 0}
+    Yaw: 344.1496
+    Solid: 0
+  - Id: MineMountain_13
+    SourceId: MineMountain_13
+    Group: 02_MountainAndForest
+    Position: {x: 3392.4897, y: 229.14954, z: 1761.1353}
+    Size: {x: 0, y: 1.5161707, z: 0}
+    Yaw: 45.24215
+    Solid: 0
+  - Id: MineMountain_14
+    SourceId: MineMountain_14
+    Group: 02_MountainAndForest
+    Position: {x: 3423.7537, y: 230.78867, z: 1787.8397}
+    Size: {x: 0, y: 10.1216, z: 0}
+    Yaw: 3.2913735
+    Solid: 0
+  - Id: MineMountain_15
+    SourceId: MineMountain_15
+    Group: 02_MountainAndForest
+    Position: {x: 3424.559, y: 228.95647, z: 1767.5962}
+    Size: {x: 0, y: 13.505924, z: 0}
+    Yaw: 156.46506
+    Solid: 0
+  - Id: MineMountain_16
+    SourceId: MineMountain_16
+    Group: 02_MountainAndForest
+    Position: {x: 3392.7693, y: 230.43733, z: 1778.3724}
+    Size: {x: 0, y: 1.3548295, z: 0}
+    Yaw: 256.08368
+    Solid: 0
+  - Id: MineMountain_17
+    SourceId: MineMountain_17
+    Group: 02_MountainAndForest
+    Position: {x: 3406.7346, y: 299.1561, z: 1932.2686}
+    Size: {x: 0, y: 1.5892305, z: 0}
+    Yaw: 313.92844
+    Solid: 0
+  - Id: MineMountain_18
+    SourceId: MineMountain_18
+    Group: 02_MountainAndForest
+    Position: {x: 3436.5364, y: 287.6202, z: 1922.98}
+    Size: {x: 0, y: 13.277895, z: 0}
+    Yaw: 5.190406
+    Solid: 0
+  - Id: MineMountain_19
+    SourceId: MineMountain_19
+    Group: 02_MountainAndForest
+    Position: {x: 3422.8726, y: 300.84265, z: 1942.0314}
+    Size: {x: 0, y: 14.148967, z: 0}
+    Yaw: 268.4586
+    Solid: 0
+  - Id: MineMountain_20
+    SourceId: MineMountain_20
+    Group: 02_MountainAndForest
+    Position: {x: 3414.1519, y: 300.91724, z: 1938.2283}
+    Size: {x: 0, y: 1.252333, z: 0}
+    Yaw: 203.17021
+    Solid: 0
+  - Id: MineMountain_21
+    SourceId: MineMountain_21
+    Group: 02_MountainAndForest
+    Position: {x: 3347.9146, y: 348.48538, z: 1994.4933}
+    Size: {x: 0, y: 0.94670504, z: 0}
+    Yaw: 195.40974
+    Solid: 0
+  - Id: MineMountain_22
+    SourceId: MineMountain_22
+    Group: 02_MountainAndForest
+    Position: {x: 3334.6516, y: 353.06534, z: 1973.8945}
+    Size: {x: 0, y: 10.131167, z: 0}
+    Yaw: 89.99374
+    Solid: 0
+  - Id: MineMountain_23
+    SourceId: MineMountain_23
+    Group: 02_MountainAndForest
+    Position: {x: 3344.0098, y: 350.31757, z: 2007.4764}
+    Size: {x: 0, y: 11.091931, z: 0}
+    Yaw: 158.98134
+    Solid: 0
+  - Id: MineMountain_24
+    SourceId: MineMountain_24
+    Group: 02_MountainAndForest
+    Position: {x: 3360.807, y: 343.04446, z: 1992.6476}
+    Size: {x: 0, y: 0.63368624, z: 0}
+    Yaw: 319.02112
+    Solid: 0
+  - Id: MineMountain_25
+    SourceId: MineMountain_25
+    Group: 02_MountainAndForest
+    Position: {x: 3197.882, y: 370.2499, z: 2036.5579}
+    Size: {x: 0, y: 1.2812302, z: 0}
+    Yaw: 262.68753
+    Solid: 0
+  - Id: MineMountain_26
+    SourceId: MineMountain_26
+    Group: 02_MountainAndForest
+    Position: {x: 3213.8494, y: 356.7518, z: 2073.5198}
+    Size: {x: 0, y: 14.198992, z: 0}
+    Yaw: 295.46722
+    Solid: 0
+  - Id: MineMountain_27
+    SourceId: MineMountain_27
+    Group: 02_MountainAndForest
+    Position: {x: 3199.4797, y: 367.72, z: 2044.2386}
+    Size: {x: 0, y: 14.619687, z: 0}
+    Yaw: 226.20448
+    Solid: 0
+  - Id: MineMountain_28
+    SourceId: MineMountain_28
+    Group: 02_MountainAndForest
+    Position: {x: 3214.0671, y: 364.32956, z: 2035.6702}
+    Size: {x: 0, y: 1.2717905, z: 0}
+    Yaw: 161.91313
+    Solid: 0
+  - Id: MineMountain_29
+    SourceId: MineMountain_29
+    Group: 02_MountainAndForest
+    Position: {x: 3064.3599, y: 439.70187, z: 2095.9302}
+    Size: {x: 0, y: 0.98030496, z: 0}
+    Yaw: 332.99222
+    Solid: 0
+  - Id: MineMountain_30
+    SourceId: MineMountain_30
+    Group: 02_MountainAndForest
+    Position: {x: 3050.4731, y: 450.5815, z: 2084.348}
+    Size: {x: 0, y: 13.39096, z: 0}
+    Yaw: 240.67014
+    Solid: 0
+  - Id: MineMountain_31
+    SourceId: MineMountain_31
+    Group: 02_MountainAndForest
+    Position: {x: 3040.6216, y: 459.88095, z: 2072.9475}
+    Size: {x: 0, y: 1.2654748, z: 0}
+    Yaw: 292.72223
+    Solid: 0
+  - Id: MineMountain_32
+    SourceId: MineMountain_32
+    Group: 02_MountainAndForest
+    Position: {x: 2972.6064, y: 471.4943, z: 2030.9786}
+    Size: {x: 0, y: 1.0292404, z: 0}
+    Yaw: 189.01656
+    Solid: 0
+  - Id: MineMountain_33
+    SourceId: MineMountain_33
+    Group: 02_MountainAndForest
+    Position: {x: 2982.854, y: 478.23938, z: 2004.9246}
+    Size: {x: 0, y: 14.066345, z: 0}
+    Yaw: 119.66113
+    Solid: 0
+  - Id: MineMountain_34
+    SourceId: MineMountain_34
+    Group: 02_MountainAndForest
+    Position: {x: 2987.3318, y: 482.11142, z: 1991.3448}
+    Size: {x: 0, y: 12.182055, z: 0}
+    Yaw: 216.29709
+    Solid: 0
+  - Id: MineMountain_35
+    SourceId: MineMountain_35
+    Group: 02_MountainAndForest
+    Position: {x: 2974.7927, y: 472.88712, z: 2022.1075}
+    Size: {x: 0, y: 0.9009253, z: 0}
+    Yaw: 289.6953
+    Solid: 0
+  - Id: MineMountain_36
+    SourceId: MineMountain_36
+    Group: 02_MountainAndForest
+    Position: {x: 2899.8335, y: 447.22006, z: 1932.1093}
+    Size: {x: 0, y: 1.0798693, z: 0}
+    Yaw: 174.18588
+    Solid: 0
+  - Id: MineMountain_37
+    SourceId: MineMountain_37
+    Group: 02_MountainAndForest
+    Position: {x: 2863.643, y: 431.87103, z: 1941.1332}
+    Size: {x: 0, y: 10.954246, z: 0}
+    Yaw: 123.049416
+    Solid: 0
+  - Id: MineMountain_38
+    SourceId: MineMountain_38
+    Group: 02_MountainAndForest
+    Position: {x: 2871.3457, y: 435.54968, z: 1940.5509}
+    Size: {x: 0, y: 14.814687, z: 0}
+    Yaw: 6.4426465
+    Solid: 0
+  - Id: MineMountain_39
+    SourceId: MineMountain_39
+    Group: 02_MountainAndForest
+    Position: {x: 2855.016, y: 427.5311, z: 1910.4508}
+    Size: {x: 0, y: 1.5713124, z: 0}
+    Yaw: 327.8713
+    Solid: 0
+  - Id: MineMountain_40
+    SourceId: MineMountain_40
+    Group: 02_MountainAndForest
+    Position: {x: 2772.9521, y: 410.04108, z: 1831.5421}
+    Size: {x: 0, y: 1.0164424, z: 0}
+    Yaw: 92.430374
+    Solid: 0
+  - Id: MineMountain_41
+    SourceId: MineMountain_41
+    Group: 02_MountainAndForest
+    Position: {x: 2780.7385, y: 407.3385, z: 1794.7249}
+    Size: {x: 0, y: 11.036035, z: 0}
+    Yaw: 219.9736
+    Solid: 0
+  - Id: MineMountain_42
+    SourceId: MineMountain_42
+    Group: 02_MountainAndForest
+    Position: {x: 2809.2363, y: 422.44733, z: 1828.2803}
+    Size: {x: 0, y: 10.51009, z: 0}
+    Yaw: 186.13022
+    Solid: 0
+  - Id: MineMountain_43
+    SourceId: MineMountain_43
+    Group: 02_MountainAndForest
+    Position: {x: 2819.9373, y: 425.6099, z: 1826.6208}
+    Size: {x: 0, y: 1.5402026, z: 0}
+    Yaw: 31.602972
+    Solid: 0
+  - Id: MineMountain_44
+    SourceId: MineMountain_44
+    Group: 02_MountainAndForest
+    Position: {x: 2694.927, y: 314.50046, z: 1693.7484}
+    Size: {x: 0, y: 1.0083295, z: 0}
+    Yaw: 30.278055
+    Solid: 0
+  - Id: MineMountain_45
+    SourceId: MineMountain_45
+    Group: 02_MountainAndForest
+    Position: {x: 2682.6086, y: 294.4914, z: 1658.8984}
+    Size: {x: 0, y: 0.93182206, z: 0}
+    Yaw: 216.60571
+    Solid: 0
+  - Id: MineMountain_46
+    SourceId: MineMountain_46
+    Group: 02_MountainAndForest
+    Position: {x: 2673.1082, y: 260.09592, z: 1555.0631}
+    Size: {x: 0, y: 1.1192179, z: 0}
+    Yaw: 354.11115
+    Solid: 0
+  - Id: MineMountain_47
+    SourceId: MineMountain_47
+    Group: 02_MountainAndForest
+    Position: {x: 2655.0295, y: 259.78058, z: 1585.4542}
+    Size: {x: 0, y: 10.718871, z: 0}
+    Yaw: 309.93094
+    Solid: 0
+  - Id: MineMountain_48
+    SourceId: MineMountain_48
+    Group: 02_MountainAndForest
+    Position: {x: 2661.6213, y: 264.0286, z: 1591.1835}
+    Size: {x: 0, y: 13.830915, z: 0}
+    Yaw: 11.199566
+    Solid: 0
+  - Id: MineMountain_49
+    SourceId: MineMountain_49
+    Group: 02_MountainAndForest
+    Position: {x: 2655.0825, y: 253.27948, z: 1561.166}
+    Size: {x: 0, y: 1.5568249, z: 0}
+    Yaw: 61.01523
+    Solid: 0
+  - Id: MineMountain_50
+    SourceId: MineMountain_50
+    Group: 02_MountainAndForest
+    Position: {x: 2652.5608, y: 242.66193, z: 1477.1621}
+    Size: {x: 0, y: 1.1361766, z: 0}
+    Yaw: 112.36037
+    Solid: 0
+  - Id: MineMountain_51
+    SourceId: MineMountain_51
+    Group: 02_MountainAndForest
+    Position: {x: 2655.1392, y: 243.61992, z: 1501.1134}
+    Size: {x: 0, y: 10.9549465, z: 0}
+    Yaw: 74.89762
+    Solid: 0
+  - Id: MineMountain_52
+    SourceId: MineMountain_52
+    Group: 02_MountainAndForest
+    Position: {x: 2644.6826, y: 240.70708, z: 1453.124}
+    Size: {x: 0, y: 14.070489, z: 0}
+    Yaw: 256.74966
+    Solid: 0
+  - Id: MineMountain_53
+    SourceId: MineMountain_53
+    Group: 02_MountainAndForest
+    Position: {x: 2644.3079, y: 239.03693, z: 1469.8962}
+    Size: {x: 0, y: 0.8598219, z: 0}
+    Yaw: 250.15051
+    Solid: 0
+  - Id: MineMountain_54
+    SourceId: MineMountain_54
+    Group: 02_MountainAndForest
+    Position: {x: 2567.3179, y: 203.14157, z: 1337.3035}
+    Size: {x: 0, y: 1.561477, z: 0}
+    Yaw: 183.33762
+    Solid: 0
+  - Id: MineMountain_55
+    SourceId: MineMountain_55
+    Group: 02_MountainAndForest
+    Position: {x: 2564.3967, y: 201.35011, z: 1318.6881}
+    Size: {x: 0, y: 12.160979, z: 0}
+    Yaw: 19.913042
+    Solid: 0
+  - Id: MineMountain_56
+    SourceId: MineMountain_56
+    Group: 02_MountainAndForest
+    Position: {x: 2585.2644, y: 213.77289, z: 1310.9275}
+    Size: {x: 0, y: 1.5830414, z: 0}
+    Yaw: 241.75078
+    Solid: 0
+  - Id: MineMountain_57
+    SourceId: MineMountain_57
+    Group: 02_MountainAndForest
+    Position: {x: 2496.7449, y: 163.2167, z: 1139.7789}
+    Size: {x: 0, y: 1.2528703, z: 0}
+    Yaw: 113.63817
+    Solid: 0
+  - Id: MineMountain_58
+    SourceId: MineMountain_58
+    Group: 02_MountainAndForest
+    Position: {x: 2490.5818, y: 159.63835, z: 1142.1393}
+    Size: {x: 0, y: 11.589582, z: 0}
+    Yaw: 213.81026
+    Solid: 0
+  - Id: MineMountain_59
+    SourceId: MineMountain_59
+    Group: 02_MountainAndForest
+    Position: {x: 2500.024, y: 165.60562, z: 1155.7603}
+    Size: {x: 0, y: 12.373121, z: 0}
+    Yaw: 38.69152
+    Solid: 0
+  - Id: MineMountain_60
+    SourceId: MineMountain_60
+    Group: 02_MountainAndForest
+    Position: {x: 2525.9946, y: 181.0032, z: 1165.8157}
+    Size: {x: 0, y: 1.1746998, z: 0}
+    Yaw: 289.02277
+    Solid: 0
+  - Id: MineMountain_61
+    SourceId: MineMountain_61
+    Group: 02_MountainAndForest
+    Position: {x: 2456.1414, y: 138.25366, z: 1016.5306}
+    Size: {x: 0, y: 0.7824943, z: 0}
+    Yaw: 291.6753
+    Solid: 0
+  - Id: MineMountain_62
+    SourceId: MineMountain_62
+    Group: 02_MountainAndForest
+    Position: {x: 2479.4307, y: 151.92558, z: 998.56744}
+    Size: {x: 0, y: 11.272458, z: 0}
+    Yaw: 307.8318
+    Solid: 0
+  - Id: MineMountain_63
+    SourceId: MineMountain_63
+    Group: 02_MountainAndForest
+    Position: {x: 2436.6028, y: 129.26733, z: 1018.12744}
+    Size: {x: 0, y: 10.58649, z: 0}
+    Yaw: 182.66249
+    Solid: 0
+  - Id: MineMountain_64
+    SourceId: MineMountain_64
+    Group: 02_MountainAndForest
+    Position: {x: 2440.088, y: 130.52364, z: 1012.8547}
+    Size: {x: 0, y: 0.73268783, z: 0}
+    Yaw: 3.3809905
+    Solid: 0
+  - Id: MineMountain_65
+    SourceId: MineMountain_65
+    Group: 02_MountainAndForest
+    Position: {x: 2390.2083, y: 118.87358, z: 859.23315}
+    Size: {x: 0, y: 1.3959183, z: 0}
+    Yaw: 244.07787
+    Solid: 0
+  - Id: MineMountain_66
+    SourceId: MineMountain_66
+    Group: 02_MountainAndForest
+    Position: {x: 2374.3923, y: 116.97448, z: 851.39844}
+    Size: {x: 0, y: 11.514747, z: 0}
+    Yaw: 349.6497
+    Solid: 0
+  - Id: MineMountain_67
+    SourceId: MineMountain_67
+    Group: 02_MountainAndForest
+    Position: {x: 2435.915, y: 130.55705, z: 880.93384}
+    Size: {x: 0, y: 14.205654, z: 0}
+    Yaw: 125.91937
+    Solid: 0
+  - Id: MineMountain_68
+    SourceId: MineMountain_68
+    Group: 02_MountainAndForest
+    Position: {x: 2415.3596, y: 123.74793, z: 857.35394}
+    Size: {x: 0, y: 1.3547655, z: 0}
+    Yaw: 240.92972
+    Solid: 0
+  - Id: MineMountain_69
+    SourceId: MineMountain_69
+    Group: 02_MountainAndForest
+    Position: {x: 2319.7104, y: 111.37353, z: 798.77246}
+    Size: {x: 0, y: 13.000403, z: 0}
+    Yaw: 88.116295
+    Solid: 0
+  - Id: MineMountain_70
+    SourceId: MineMountain_70
+    Group: 02_MountainAndForest
+    Position: {x: 2315.5098, y: 109.927925, z: 805.00903}
+    Size: {x: 0, y: 13.967247, z: 0}
+    Yaw: 287.10468
+    Solid: 0
+  - Id: MineMountain_71
+    SourceId: MineMountain_71
+    Group: 02_MountainAndForest
+    Position: {x: 2348.9658, y: 113.99017, z: 832.0504}
+    Size: {x: 0, y: 0.9865761, z: 0}
+    Yaw: 47.597424
+    Solid: 0
+  - Id: MineMountain_72
+    SourceId: MineMountain_72
+    Group: 02_MountainAndForest
+    Position: {x: 2175.4253, y: 121.99719, z: 872.1811}
+    Size: {x: 0, y: 1.4838392, z: 0}
+    Yaw: 11.508532
+    Solid: 0
+  - Id: MineMountain_73
+    SourceId: MineMountain_73
+    Group: 02_MountainAndForest
+    Position: {x: 2209.5522, y: 114.50861, z: 825.5771}
+    Size: {x: 0, y: 10.788099, z: 0}
+    Yaw: 236.56082
+    Solid: 0
+  - Id: MineMountain_74
+    SourceId: MineMountain_74
+    Group: 02_MountainAndForest
+    Position: {x: 2209.8691, y: 116.61798, z: 860.09454}
+    Size: {x: 0, y: 11.700712, z: 0}
+    Yaw: 187.90175
+    Solid: 0
+  - Id: MineMountain_75
+    SourceId: MineMountain_75
+    Group: 02_MountainAndForest
+    Position: {x: 2227.0388, y: 114.912704, z: 858.8876}
+    Size: {x: 0, y: 1.1335297, z: 0}
+    Yaw: 247.83328
+    Solid: 0
+  - Id: MineMountain_76
+    SourceId: MineMountain_76
+    Group: 02_MountainAndForest
+    Position: {x: 2169.8716, y: 121.4316, z: 854.5528}
+    Size: {x: 0, y: 0.9349359, z: 0}
+    Yaw: 347.87872
+    Solid: 0
+  - Id: MineMountain_77
+    SourceId: MineMountain_77
+    Group: 02_MountainAndForest
+    Position: {x: 2150.715, y: 127.83883, z: 875.7659}
+    Size: {x: 0, y: 11.866187, z: 0}
+    Yaw: 229.7929
+    Solid: 0
+  - Id: MineMountain_78
+    SourceId: MineMountain_78
+    Group: 02_MountainAndForest
+    Position: {x: 2153.75, y: 126.42969, z: 870.229}
+    Size: {x: 0, y: 1.4549899, z: 0}
+    Yaw: 172.35362
+    Solid: 0
+  - Id: MineMountain_79
+    SourceId: MineMountain_79
+    Group: 02_MountainAndForest
+    Position: {x: 2061.237, y: 132.90622, z: 759.7578}
+    Size: {x: 0, y: 1.1876541, z: 0}
+    Yaw: 254.43375
+    Solid: 0
+  - Id: MineMountain_80
+    SourceId: MineMountain_80
+    Group: 02_MountainAndForest
+    Position: {x: 2054.4812, y: 131.86664, z: 731.25305}
+    Size: {x: 0, y: 14.489407, z: 0}
+    Yaw: 307.09668
+    Solid: 0
+  - Id: MineMountain_81
+    SourceId: MineMountain_81
+    Group: 02_MountainAndForest
+    Position: {x: 2044.0911, y: 134.92458, z: 769.73413}
+    Size: {x: 0, y: 0.9601331, z: 0}
+    Yaw: 304.07816
+    Solid: 0
+  - Id: Cheongrim_0
+    SourceId: Cheongrim_0
+    Group: 02_MountainAndForest
+    Position: {x: 1946.7573, y: 133.30548, z: 744.02313}
+    Size: {x: 0, y: 0.6554105, z: 0}
+    Yaw: 175.80074
+    Solid: 0
+  - Id: Cheongrim_1
+    SourceId: Cheongrim_1
+    Group: 02_MountainAndForest
+    Position: {x: 1940.232, y: 132.30562, z: 723.27454}
+    Size: {x: 0, y: 16.934696, z: 0}
+    Yaw: 171.19453
+    Solid: 0
+  - Id: Cheongrim_2
+    SourceId: Cheongrim_2
+    Group: 02_MountainAndForest
+    Position: {x: 1978.6078, y: 133.74799, z: 748.4393}
+    Size: {x: 0, y: 16.007534, z: 0}
+    Yaw: 55.221863
+    Solid: 0
+  - Id: Cheongrim_3
+    SourceId: Cheongrim_3
+    Group: 02_MountainAndForest
+    Position: {x: 1975.6439, y: 133.20193, z: 724.83887}
+    Size: {x: 0, y: 1.5373974, z: 0}
+    Yaw: 273.67117
+    Solid: 0
+  - Id: Cheongrim_4
+    SourceId: Cheongrim_4
+    Group: 02_MountainAndForest
+    Position: {x: 1970.2349, y: 133.79233, z: 741.9087}
+    Size: {x: 0, y: 17.94865, z: 0}
+    Yaw: 17.529125
+    Solid: 0
+  - Id: Cheongrim_5
+    SourceId: Cheongrim_5
+    Group: 02_MountainAndForest
+    Position: {x: 1947.2745, y: 132.90108, z: 729.6175}
+    Size: {x: 0, y: 16.5803, z: 0}
+    Yaw: 209.01668
+    Solid: 0
+  - Id: Cheongrim_6
+    SourceId: Cheongrim_6
+    Group: 02_MountainAndForest
+    Position: {x: 1977.919, y: 133.34694, z: 737.6563}
+    Size: {x: 0, y: 0.6418299, z: 0}
+    Yaw: 298.7765
+    Solid: 0
+  - Id: Cheongrim_7
+    SourceId: Cheongrim_7
+    Group: 02_MountainAndForest
+    Position: {x: 1933.2957, y: 132.65022, z: 743.67065}
+    Size: {x: 0, y: 13.782986, z: 0}
+    Yaw: 292.62482
+    Solid: 0
+  - Id: Cheongrim_8
+    SourceId: Cheongrim_8
+    Group: 02_MountainAndForest
+    Position: {x: 1927.151, y: 134.82019, z: 865.12994}
+    Size: {x: 0, y: 0.84670347, z: 0}
+    Yaw: 351.29758
+    Solid: 0
+  - Id: Cheongrim_9
+    SourceId: Cheongrim_9
+    Group: 02_MountainAndForest
+    Position: {x: 1968.1163, y: 134.78203, z: 844.76953}
+    Size: {x: 0, y: 14.336576, z: 0}
+    Yaw: 242.85912
+    Solid: 0
+  - Id: Cheongrim_10
+    SourceId: Cheongrim_10
+    Group: 02_MountainAndForest
+    Position: {x: 1962.0582, y: 135.01196, z: 858.47327}
+    Size: {x: 0, y: 16.236435, z: 0}
+    Yaw: 2.4186492
+    Solid: 0
+  - Id: Cheongrim_11
+    SourceId: Cheongrim_11
+    Group: 02_MountainAndForest
+    Position: {x: 1941.2512, y: 134.85379, z: 834.511}
+    Size: {x: 0, y: 1.0216573, z: 0}
+    Yaw: 74.28147
+    Solid: 0
+  - Id: Cheongrim_12
+    SourceId: Cheongrim_12
+    Group: 02_MountainAndForest
+    Position: {x: 1968.7745, y: 134.72105, z: 837.0597}
+    Size: {x: 0, y: 16.094797, z: 0}
+    Yaw: 277.76596
+    Solid: 0
+  - Id: Cheongrim_13
+    SourceId: Cheongrim_13
+    Group: 02_MountainAndForest
+    Position: {x: 1970.7488, y: 134.94562, z: 851.1358}
+    Size: {x: 0, y: 16.913918, z: 0}
+    Yaw: 143.17245
+    Solid: 0
+  - Id: Cheongrim_14
+    SourceId: Cheongrim_14
+    Group: 02_MountainAndForest
+    Position: {x: 1936.6212, y: 134.95769, z: 845.2356}
+    Size: {x: 0, y: 1.3494933, z: 0}
+    Yaw: 279.76312
+    Solid: 0
+  - Id: Cheongrim_15
+    SourceId: Cheongrim_15
+    Group: 02_MountainAndForest
+    Position: {x: 1929.7349, y: 132.06189, z: 934.98254}
+    Size: {x: 0, y: 1.4275086, z: 0}
+    Yaw: 327.5254
+    Solid: 0
+  - Id: Cheongrim_16
+    SourceId: Cheongrim_16
+    Group: 02_MountainAndForest
+    Position: {x: 1962.3309, y: 133.38249, z: 924.09656}
+    Size: {x: 0, y: 14.500812, z: 0}
+    Yaw: 214.98068
+    Solid: 0
+  - Id: Cheongrim_17
+    SourceId: Cheongrim_17
+    Group: 02_MountainAndForest
+    Position: {x: 1976.5563, y: 134.38754, z: 954.06665}
+    Size: {x: 0, y: 17.651684, z: 0}
+    Yaw: 250.43161
+    Solid: 0
+  - Id: Cheongrim_18
+    SourceId: Cheongrim_18
+    Group: 02_MountainAndForest
+    Position: {x: 1935.5968, y: 132.23473, z: 933.283}
+    Size: {x: 0, y: 0.876983, z: 0}
+    Yaw: 277.43924
+    Solid: 0
+  - Id: Cheongrim_19
+    SourceId: Cheongrim_19
+    Group: 02_MountainAndForest
+    Position: {x: 1982.8707, y: 134.52179, z: 940.417}
+    Size: {x: 0, y: 13.832396, z: 0}
+    Yaw: 239.8024
+    Solid: 0
+  - Id: Cheongrim_20
+    SourceId: Cheongrim_20
+    Group: 02_MountainAndForest
+    Position: {x: 1982.884, y: 134.55154, z: 948.6351}
+    Size: {x: 0, y: 16.012276, z: 0}
+    Yaw: 166.42944
+    Solid: 0
+  - Id: Cheongrim_21
+    SourceId: Cheongrim_21
+    Group: 02_MountainAndForest
+    Position: {x: 1965.3307, y: 133.80443, z: 952.44617}
+    Size: {x: 0, y: 1.1492057, z: 0}
+    Yaw: 321.46216
+    Solid: 0
+  - Id: Cheongrim_22
+    SourceId: Cheongrim_22
+    Group: 02_MountainAndForest
+    Position: {x: 1937.7745, y: 132.46567, z: 954.979}
+    Size: {x: 0, y: 16.328646, z: 0}
+    Yaw: 258.85916
+    Solid: 0
+  - Id: Cheongrim_23
+    SourceId: Cheongrim_23
+    Group: 02_MountainAndForest
+    Position: {x: 1976.7052, y: 134.04024, z: 921.2027}
+    Size: {x: 0, y: 15.491698, z: 0}
+    Yaw: 251.10416
+    Solid: 0
+  - Id: Cheongrim_24
+    SourceId: Cheongrim_24
+    Group: 02_MountainAndForest
+    Position: {x: 1977.3228, y: 134.45633, z: 1048.2881}
+    Size: {x: 0, y: 0.9095303, z: 0}
+    Yaw: 108.75551
+    Solid: 0
+  - Id: Cheongrim_25
+    SourceId: Cheongrim_25
+    Group: 02_MountainAndForest
+    Position: {x: 1974.473, y: 134.92749, z: 1032.8975}
+    Size: {x: 0, y: 14.382101, z: 0}
+    Yaw: 58.100697
+    Solid: 0
+  - Id: Cheongrim_26
+    SourceId: Cheongrim_26
+    Group: 02_MountainAndForest
+    Position: {x: 1975.6074, y: 134.77533, z: 1036.4263}
+    Size: {x: 0, y: 1.1676115, z: 0}
+    Yaw: 301.62897
+    Solid: 0
+  - Id: Cheongrim_27
+    SourceId: Cheongrim_27
+    Group: 02_MountainAndForest
+    Position: {x: 1971.3079, y: 134.30536, z: 1056.2648}
+    Size: {x: 0, y: 14.859957, z: 0}
+    Yaw: 13.459075
+    Solid: 0
+  - Id: Cheongrim_28
+    SourceId: Cheongrim_28
+    Group: 02_MountainAndForest
+    Position: {x: 1941.0426, y: 133.91968, z: 1048.49}
+    Size: {x: 0, y: 16.672878, z: 0}
+    Yaw: 200.8547
+    Solid: 0
+  - Id: Cheongrim_29
+    SourceId: Cheongrim_29
+    Group: 02_MountainAndForest
+    Position: {x: 1924.7009, y: 133.5941, z: 1058.1062}
+    Size: {x: 0, y: 0.68076074, z: 0}
+    Yaw: 168.8283
+    Solid: 0
+  - Id: Cheongrim_30
+    SourceId: Cheongrim_30
+    Group: 02_MountainAndForest
+    Position: {x: 1964.167, y: 134.64764, z: 1028.2334}
+    Size: {x: 0, y: 14.295308, z: 0}
+    Yaw: 105.45301
+    Solid: 0
+  - Id: Cheongrim_31
+    SourceId: Cheongrim_31
+    Group: 02_MountainAndForest
+    Position: {x: 1921.2134, y: 133.49443, z: 1049.2273}
+    Size: {x: 0, y: 14.627472, z: 0}
+    Yaw: 284.4702
+    Solid: 0
+  - Id: Cheongrim_32
+    SourceId: Cheongrim_32
+    Group: 02_MountainAndForest
+    Position: {x: 1925.4087, y: 136.57814, z: 1148.1913}
+    Size: {x: 0, y: 1.2745225, z: 0}
+    Yaw: 339.7476
+    Solid: 0
+  - Id: Cheongrim_33
+    SourceId: Cheongrim_33
+    Group: 02_MountainAndForest
+    Position: {x: 1940.9175, y: 134.20932, z: 1127.3239}
+    Size: {x: 0, y: 16.339165, z: 0}
+    Yaw: 111.485634
+    Solid: 0
+  - Id: Cheongrim_34
+    SourceId: Cheongrim_34
+    Group: 02_MountainAndForest
+    Position: {x: 1931.0487, y: 136.14993, z: 1149.2576}
+    Size: {x: 0, y: 14.211914, z: 0}
+    Yaw: 97.06935
+    Solid: 0
+  - Id: Cheongrim_35
+    SourceId: Cheongrim_35
+    Group: 02_MountainAndForest
+    Position: {x: 1960.9835, y: 132.83318, z: 1126.524}
+    Size: {x: 0, y: 0.85482025, z: 0}
+    Yaw: 298.75815
+    Solid: 0
+  - Id: Cheongrim_36
+    SourceId: Cheongrim_36
+    Group: 02_MountainAndForest
+    Position: {x: 1963.4285, y: 133.55936, z: 1149.1799}
+    Size: {x: 0, y: 14.1253605, z: 0}
+    Yaw: 324.32993
+    Solid: 0
+  - Id: Cheongrim_37
+    SourceId: Cheongrim_37
+    Group: 02_MountainAndForest
+    Position: {x: 1985.2717, y: 132.58382, z: 1127.9226}
+    Size: {x: 0, y: 16.388264, z: 0}
+    Yaw: 347.1838
+    Solid: 0
+  - Id: Cheongrim_38
+    SourceId: Cheongrim_38
+    Group: 02_MountainAndForest
+    Position: {x: 1966.6104, y: 132.91891, z: 1140.1763}
+    Size: {x: 0, y: 1.264145, z: 0}
+    Yaw: 4.2780056
+    Solid: 0
+  - Id: Cheongrim_39
+    SourceId: Cheongrim_39
+    Group: 02_MountainAndForest
+    Position: {x: 1924.0386, y: 135.1799, z: 1119.3588}
+    Size: {x: 0, y: 16.070932, z: 0}
+    Yaw: 21.09346
+    Solid: 0
+  - Id: Cheongrim_40
+    SourceId: Cheongrim_40
+    Group: 02_MountainAndForest
+    Position: {x: 1974.2975, y: 132.70596, z: 1133.4385}
+    Size: {x: 0, y: 13.796426, z: 0}
+    Yaw: 335.6804
+    Solid: 0
+  - Id: Cheongrim_41
+    SourceId: Cheongrim_41
+    Group: 02_MountainAndForest
+    Position: {x: 1946.5997, y: 141.4359, z: 1221.8413}
+    Size: {x: 0, y: 0.9891746, z: 0}
+    Yaw: 252.04637
+    Solid: 0
+  - Id: Cheongrim_42
+    SourceId: Cheongrim_42
+    Group: 02_MountainAndForest
+    Position: {x: 1940.3038, y: 146.99124, z: 1259.2285}
+    Size: {x: 0, y: 16.128036, z: 0}
+    Yaw: 76.40008
+    Solid: 0
+  - Id: Cheongrim_43
+    SourceId: Cheongrim_43
+    Group: 02_MountainAndForest
+    Position: {x: 1928.6176, y: 147.47119, z: 1251.7789}
+    Size: {x: 0, y: 13.959087, z: 0}
+    Yaw: 97.92658
+    Solid: 0
+  - Id: Cheongrim_44
+    SourceId: Cheongrim_44
+    Group: 02_MountainAndForest
+    Position: {x: 1970.9686, y: 143.31586, z: 1248.979}
+    Size: {x: 0, y: 1.0713999, z: 0}
+    Yaw: 217.23906
+    Solid: 0
+  - Id: Cheongrim_45
+    SourceId: Cheongrim_45
+    Group: 02_MountainAndForest
+    Position: {x: 1965.4861, y: 141.29666, z: 1230.109}
+    Size: {x: 0, y: 13.646918, z: 0}
+    Yaw: 8.148853
+    Solid: 0
+  - Id: Cheongrim_46
+    SourceId: Cheongrim_46
+    Group: 02_MountainAndForest
+    Position: {x: 1926.9893, y: 144.66054, z: 1228.7416}
+    Size: {x: 0, y: 17.729311, z: 0}
+    Yaw: 84.6864
+    Solid: 0
+  - Id: Cheongrim_47
+    SourceId: Cheongrim_47
+    Group: 02_MountainAndForest
+    Position: {x: 1972.556, y: 141.05656, z: 1232.5879}
+    Size: {x: 0, y: 0.8669313, z: 0}
+    Yaw: 193.6578
+    Solid: 0
+  - Id: Cheongrim_48
+    SourceId: Cheongrim_48
+    Group: 02_MountainAndForest
+    Position: {x: 1929.3191, y: 145.15813, z: 1234.0693}
+    Size: {x: 0, y: 16.107426, z: 0}
+    Yaw: 13.873603
+    Solid: 0
+  - Id: Cheongrim_49
+    SourceId: Cheongrim_49
+    Group: 02_MountainAndForest
+    Position: {x: 1944.0723, y: 147.48795, z: 1351.445}
+    Size: {x: 0, y: 1.022369, z: 0}
+    Yaw: 283.16687
+    Solid: 0
+  - Id: Cheongrim_50
+    SourceId: Cheongrim_50
+    Group: 02_MountainAndForest
+    Position: {x: 1932.5195, y: 149.46037, z: 1377.3102}
+    Size: {x: 0, y: 16.439426, z: 0}
+    Yaw: 118.44134
+    Solid: 0
+  - Id: Cheongrim_51
+    SourceId: Cheongrim_51
+    Group: 02_MountainAndForest
+    Position: {x: 1970.4663, y: 146.7279, z: 1350.687}
+    Size: {x: 0, y: 1.2844651, z: 0}
+    Yaw: 314.80084
+    Solid: 0
+  - Id: Cheongrim_52
+    SourceId: Cheongrim_52
+    Group: 02_MountainAndForest
+    Position: {x: 1941.001, y: 147.85638, z: 1365.9534}
+    Size: {x: 0, y: 15.220097, z: 0}
+    Yaw: 95.3907
+    Solid: 0
+  - Id: Cheongrim_53
+    SourceId: Cheongrim_53
+    Group: 02_MountainAndForest
+    Position: {x: 1975.4521, y: 146.84427, z: 1335.2858}
+    Size: {x: 0, y: 15.595102, z: 0}
+    Yaw: 105.67789
+    Solid: 0
+  - Id: Cheongrim_54
+    SourceId: Cheongrim_54
+    Group: 02_MountainAndForest
+    Position: {x: 1944.2976, y: 147.45776, z: 1357.9282}
+    Size: {x: 0, y: 13.406587, z: 0}
+    Yaw: 299.46283
+    Solid: 0
+  - Id: Cheongrim_55
+    SourceId: Cheongrim_55
+    Group: 02_MountainAndForest
+    Position: {x: 1967.7949, y: 147.07425, z: 1343.7411}
+    Size: {x: 0, y: 17.161299, z: 0}
+    Yaw: 109.754555
+    Solid: 0
+  - Id: Cheongrim_56
+    SourceId: Cheongrim_56
+    Group: 02_MountainAndForest
+    Position: {x: 2043.1298, y: 149.4743, z: 1411.3228}
+    Size: {x: 0, y: 1.0692027, z: 0}
+    Yaw: 60.047768
+    Solid: 0
+  - Id: Cheongrim_57
+    SourceId: Cheongrim_57
+    Group: 02_MountainAndForest
+    Position: {x: 2004.3678, y: 149.57484, z: 1457.907}
+    Size: {x: 0, y: 17.219522, z: 0}
+    Yaw: 163.91182
+    Solid: 0
+  - Id: Cheongrim_58
+    SourceId: Cheongrim_58
+    Group: 02_MountainAndForest
+    Position: {x: 2033.6925, y: 148.79134, z: 1405.2756}
+    Size: {x: 0, y: 16.020235, z: 0}
+    Yaw: 333.29532
+    Solid: 0
+  - Id: Cheongrim_59
+    SourceId: Cheongrim_59
+    Group: 02_MountainAndForest
+    Position: {x: 2038.658, y: 149.04066, z: 1413.4373}
+    Size: {x: 0, y: 1.1945822, z: 0}
+    Yaw: 229.25397
+    Solid: 0
+  - Id: Cheongrim_60
+    SourceId: Cheongrim_60
+    Group: 02_MountainAndForest
+    Position: {x: 1990.3535, y: 148.03937, z: 1437.3325}
+    Size: {x: 0, y: 15.532265, z: 0}
+    Yaw: 346.32785
+    Solid: 0
+  - Id: Cheongrim_61
+    SourceId: Cheongrim_61
+    Group: 02_MountainAndForest
+    Position: {x: 2002.4946, y: 148.9081, z: 1452.2015}
+    Size: {x: 0, y: 16.873629, z: 0}
+    Yaw: 173.29913
+    Solid: 0
+  - Id: Cheongrim_62
+    SourceId: Cheongrim_62
+    Group: 02_MountainAndForest
+    Position: {x: 2017.9451, y: 147.2378, z: 1412.2795}
+    Size: {x: 0, y: 1.2285361, z: 0}
+    Yaw: 174.14537
+    Solid: 0
+  - Id: Cheongrim_63
+    SourceId: Cheongrim_63
+    Group: 02_MountainAndForest
+    Position: {x: 1989.5602, y: 148.73856, z: 1445.2872}
+    Size: {x: 0, y: 13.761201, z: 0}
+    Yaw: 58.149483
+    Solid: 0
+  - Id: Cheongrim_64
+    SourceId: Cheongrim_64
+    Group: 02_MountainAndForest
+    Position: {x: 2106.6963, y: 152.50414, z: 1492.0619}
+    Size: {x: 0, y: 1.0772703, z: 0}
+    Yaw: 326.16754
+    Solid: 0
+  - Id: Cheongrim_65
+    SourceId: Cheongrim_65
+    Group: 02_MountainAndForest
+    Position: {x: 2101.9604, y: 155.05745, z: 1538.8533}
+    Size: {x: 0, y: 14.188387, z: 0}
+    Yaw: 240.5006
+    Solid: 0
+  - Id: Cheongrim_66
+    SourceId: Cheongrim_66
+    Group: 02_MountainAndForest
+    Position: {x: 2126.18, y: 151.53654, z: 1512.726}
+    Size: {x: 0, y: 13.00501, z: 0}
+    Yaw: 182.58511
+    Solid: 0
+  - Id: Cheongrim_67
+    SourceId: Cheongrim_67
+    Group: 02_MountainAndForest
+    Position: {x: 2113.5347, y: 152.03304, z: 1495.969}
+    Size: {x: 0, y: 1.4953415, z: 0}
+    Yaw: 130.50653
+    Solid: 0
+  - Id: Cheongrim_68
+    SourceId: Cheongrim_68
+    Group: 02_MountainAndForest
+    Position: {x: 2119.9824, y: 151.60832, z: 1499.4205}
+    Size: {x: 0, y: 16.027464, z: 0}
+    Yaw: 43.311554
+    Solid: 0
+  - Id: Cheongrim_69
+    SourceId: Cheongrim_69
+    Group: 02_MountainAndForest
+    Position: {x: 2126.6152, y: 151.10509, z: 1493.9803}
+    Size: {x: 0, y: 14.576475, z: 0}
+    Yaw: 155.9001
+    Solid: 0
+  - Id: Cheongrim_70
+    SourceId: Cheongrim_70
+    Group: 02_MountainAndForest
+    Position: {x: 2096.003, y: 154.49332, z: 1528.0865}
+    Size: {x: 0, y: 0.8369454, z: 0}
+    Yaw: 309.76752
+    Solid: 0
+  - Id: Cheongrim_71
+    SourceId: Cheongrim_71
+    Group: 02_MountainAndForest
+    Position: {x: 2110.6914, y: 152.28978, z: 1479.6019}
+    Size: {x: 0, y: 15.613383, z: 0}
+    Yaw: 340.0243
+    Solid: 0
+  - Id: Cheongrim_72
+    SourceId: Cheongrim_72
+    Group: 02_MountainAndForest
+    Position: {x: 2174.1687, y: 148.8001, z: 1565.9911}
+    Size: {x: 0, y: 1.5982182, z: 0}
+    Yaw: 243.89839
+    Solid: 0
+  - Id: Cheongrim_73
+    SourceId: Cheongrim_73
+    Group: 02_MountainAndForest
+    Position: {x: 2165.2278, y: 157.9968, z: 1608.2986}
+    Size: {x: 0, y: 17.36877, z: 0}
+    Yaw: 265.17862
+    Solid: 0
+  - Id: Cheongrim_74
+    SourceId: Cheongrim_74
+    Group: 02_MountainAndForest
+    Position: {x: 2191.09, y: 148.036, z: 1577.4423}
+    Size: {x: 0, y: 15.956585, z: 0}
+    Yaw: 128.50572
+    Solid: 0
+  - Id: Cheongrim_75
+    SourceId: Cheongrim_75
+    Group: 02_MountainAndForest
+    Position: {x: 2171.0605, y: 153.6406, z: 1594.9275}
+    Size: {x: 0, y: 1.2268224, z: 0}
+    Yaw: 289.6638
+    Solid: 0
+  - Id: Cheongrim_76
+    SourceId: Cheongrim_76
+    Group: 02_MountainAndForest
+    Position: {x: 2161.1836, y: 153.95702, z: 1588.944}
+    Size: {x: 0, y: 16.35679, z: 0}
+    Yaw: 50.59313
+    Solid: 0
+  - Id: Cheongrim_77
+    SourceId: Cheongrim_77
+    Group: 02_MountainAndForest
+    Position: {x: 2142.7522, y: 156.2505, z: 1587.0555}
+    Size: {x: 0, y: 16.792826, z: 0}
+    Yaw: 57.715725
+    Solid: 0
+  - Id: Cheongrim_78
+    SourceId: Cheongrim_78
+    Group: 02_MountainAndForest
+    Position: {x: 2157.0674, y: 154.29752, z: 1588.0177}
+    Size: {x: 0, y: 0.74524105, z: 0}
+    Yaw: 231.73964
+    Solid: 0
+  - Id: Cheongrim_79
+    SourceId: Cheongrim_79
+    Group: 02_MountainAndForest
+    Position: {x: 2201.6343, y: 144.9321, z: 1562.4161}
+    Size: {x: 0, y: 14.404189, z: 0}
+    Yaw: 225.89337
+    Solid: 0
+  - Id: Cheongrim_80
+    SourceId: Cheongrim_80
+    Group: 02_MountainAndForest
+    Position: {x: 2242.619, y: 150.78758, z: 1679.3895}
+    Size: {x: 0, y: 1.1672144, z: 0}
+    Yaw: 352.20834
+    Solid: 0
+  - Id: Cheongrim_81
+    SourceId: Cheongrim_81
+    Group: 02_MountainAndForest
+    Position: {x: 2230.245, y: 153.66615, z: 1668.5387}
+    Size: {x: 0, y: 17.47927, z: 0}
+    Yaw: 50.360508
+    Solid: 0
+  - Id: Cheongrim_82
+    SourceId: Cheongrim_82
+    Group: 02_MountainAndForest
+    Position: {x: 2238.9878, y: 153.5573, z: 1688.1555}
+    Size: {x: 0, y: 16.608448, z: 0}
+    Yaw: 308.76538
+    Solid: 0
+  - Id: Cheongrim_83
+    SourceId: Cheongrim_83
+    Group: 02_MountainAndForest
+    Position: {x: 2266.5537, y: 142.49704, z: 1644.1362}
+    Size: {x: 0, y: 0.8258034, z: 0}
+    Yaw: 256.8358
+    Solid: 0
+  - Id: Cheongrim_84
+    SourceId: Cheongrim_84
+    Group: 02_MountainAndForest
+    Position: {x: 2273.9426, y: 142.5497, z: 1655.5813}
+    Size: {x: 0, y: 16.753126, z: 0}
+    Yaw: 341.1345
+    Solid: 0
+  - Id: Cheongrim_85
+    SourceId: Cheongrim_85
+    Group: 02_MountainAndForest
+    Position: {x: 2261.2358, y: 143.96925, z: 1653.3922}
+    Size: {x: 0, y: 17.722286, z: 0}
+    Yaw: 234.83122
+    Solid: 0
+  - Id: Cheongrim_86
+    SourceId: Cheongrim_86
+    Group: 02_MountainAndForest
+    Position: {x: 2260.6477, y: 144.29391, z: 1657.4354}
+    Size: {x: 0, y: 1.2605746, z: 0}
+    Yaw: 94.41725
+    Solid: 0
+  - Id: Cheongrim_87
+    SourceId: Cheongrim_87
+    Group: 02_MountainAndForest
+    Position: {x: 2256.0725, y: 143.1563, z: 1636.4867}
+    Size: {x: 0, y: 14.156169, z: 0}
+    Yaw: 148.11859
+    Solid: 0
+  - Id: Cheongrim_88
+    SourceId: Cheongrim_88
+    Group: 02_MountainAndForest
+    Position: {x: 2246.6604, y: 157.98929, z: 1731.1981}
+    Size: {x: 0, y: 1.1097313, z: 0}
+    Yaw: 332.875
+    Solid: 0
+  - Id: Cheongrim_89
+    SourceId: Cheongrim_89
+    Group: 02_MountainAndForest
+    Position: {x: 2255.12, y: 156.14316, z: 1741.4133}
+    Size: {x: 0, y: 13.275172, z: 0}
+    Yaw: 329.05756
+    Solid: 0
+  - Id: Cheongrim_90
+    SourceId: Cheongrim_90
+    Group: 02_MountainAndForest
+    Position: {x: 2283.1777, y: 150.26225, z: 1760.9288}
+    Size: {x: 0, y: 17.284935, z: 0}
+    Yaw: 223.06267
+    Solid: 0
+  - Id: Cheongrim_91
+    SourceId: Cheongrim_91
+    Group: 02_MountainAndForest
+    Position: {x: 2284.128, y: 150.43039, z: 1764.94}
+    Size: {x: 0, y: 0.85156554, z: 0}
+    Yaw: 87.67633
+    Solid: 0
+  - Id: Cheongrim_92
+    SourceId: Cheongrim_92
+    Group: 02_MountainAndForest
+    Position: {x: 2240.5784, y: 161.30678, z: 1735.38}
+    Size: {x: 0, y: 13.190193, z: 0}
+    Yaw: 165.39104
+    Solid: 0
+  - Id: Cheongrim_93
+    SourceId: Cheongrim_93
+    Group: 02_MountainAndForest
+    Position: {x: 2255.3352, y: 157.2381, z: 1749.1034}
+    Size: {x: 0, y: 13.878977, z: 0}
+    Yaw: 293.17062
+    Solid: 0
+  - Id: Cheongrim_94
+    SourceId: Cheongrim_94
+    Group: 02_MountainAndForest
+    Position: {x: 2259.7715, y: 156.70248, z: 1756.5204}
+    Size: {x: 0, y: 1.0003619, z: 0}
+    Yaw: 223.189
+    Solid: 0
+  - Id: Cheongrim_95
+    SourceId: Cheongrim_95
+    Group: 02_MountainAndForest
+    Position: {x: 2299.0864, y: 146.13715, z: 1739.6674}
+    Size: {x: 0, y: 15.893888, z: 0}
+    Yaw: 24.112383
+    Solid: 0
+  - Id: Cheongrim_96
+    SourceId: Cheongrim_96
+    Group: 02_MountainAndForest
+    Position: {x: 2262.1008, y: 170.8716, z: 1852.0281}
+    Size: {x: 0, y: 1.1391029, z: 0}
+    Yaw: 167.79396
+    Solid: 0
+  - Id: Cheongrim_97
+    SourceId: Cheongrim_97
+    Group: 02_MountainAndForest
+    Position: {x: 2284.9893, y: 162.72708, z: 1855.1505}
+    Size: {x: 0, y: 17.34066, z: 0}
+    Yaw: 118.23848
+    Solid: 0
+  - Id: Cheongrim_98
+    SourceId: Cheongrim_98
+    Group: 02_MountainAndForest
+    Position: {x: 2256.4995, y: 173.14342, z: 1851.5364}
+    Size: {x: 0, y: 13.57674, z: 0}
+    Yaw: 18.11223
+    Solid: 0
+  - Id: Cheongrim_99
+    SourceId: Cheongrim_99
+    Group: 02_MountainAndForest
+    Position: {x: 2300.1575, y: 157.59604, z: 1854.9972}
+    Size: {x: 0, y: 0.8336121, z: 0}
+    Yaw: 86.641754
+    Solid: 0
+  - Id: Cheongrim_100
+    SourceId: Cheongrim_100
+    Group: 02_MountainAndForest
+    Position: {x: 2286.6003, y: 159.18053, z: 1838.2052}
+    Size: {x: 0, y: 15.490781, z: 0}
+    Yaw: 85.32638
+    Solid: 0
+  - Id: Cheongrim_101
+    SourceId: Cheongrim_101
+    Group: 02_MountainAndForest
+    Position: {x: 2290.2534, y: 162.11542, z: 1862.79}
+    Size: {x: 0, y: 1.1729276, z: 0}
+    Yaw: 297.21353
+    Solid: 0
+  - Id: Cheongrim_102
+    SourceId: Cheongrim_102
+    Group: 02_MountainAndForest
+    Position: {x: 2302.8828, y: 154.37946, z: 1837.4874}
+    Size: {x: 0, y: 16.768879, z: 0}
+    Yaw: 265.89603
+    Solid: 0
+  - Id: Cheongrim_103
+    SourceId: Cheongrim_103
+    Group: 02_MountainAndForest
+    Position: {x: 2252.2173, y: 175.67116, z: 1855.9841}
+    Size: {x: 0, y: 14.717863, z: 0}
+    Yaw: 155.90053
+    Solid: 0
+  - Id: CapitalRoad_0
+    SourceId: CapitalRoad_0
+    Group: 02_MountainAndForest
+    Position: {x: 1912.1553, y: 133.14412, z: 608.4493}
+    Size: {x: 0, y: 1.1577308, z: 0}
+    Yaw: 183.65977
+    Solid: 0
+  - Id: CapitalRoad_1
+    SourceId: CapitalRoad_1
+    Group: 02_MountainAndForest
+    Position: {x: 1962.7587, y: 133.13408, z: 691.0621}
+    Size: {x: 0, y: 14.658544, z: 0}
+    Yaw: 256.72693
+    Solid: 0
+  - Id: CapitalRoad_2
+    SourceId: CapitalRoad_2
+    Group: 02_MountainAndForest
+    Position: {x: 2006.422, y: 133.31288, z: 704.27014}
+    Size: {x: 0, y: 11.312195, z: 0}
+    Yaw: 198.39133
+    Solid: 0
+  - Id: CapitalRoad_3
+    SourceId: CapitalRoad_3
+    Group: 02_MountainAndForest
+    Position: {x: 1714.811, y: 157.7118, z: 647.31116}
+    Size: {x: 0, y: 1.1109982, z: 0}
+    Yaw: 174.3958
+    Solid: 0
+  - Id: CapitalRoad_4
+    SourceId: CapitalRoad_4
+    Group: 02_MountainAndForest
+    Position: {x: 1680.3126, y: 182.80019, z: 715.70135}
+    Size: {x: 0, y: 10.425802, z: 0}
+    Yaw: 36.50518
+    Solid: 0
+  - Id: CapitalRoad_5
+    SourceId: CapitalRoad_5
+    Group: 02_MountainAndForest
+    Position: {x: 1559.16, y: 224.52927, z: 592.3778}
+    Size: {x: 0, y: 0.697621, z: 0}
+    Yaw: 166.52946
+    Solid: 0
+  - Id: CapitalRoad_6
+    SourceId: CapitalRoad_6
+    Group: 02_MountainAndForest
+    Position: {x: 1581.2611, y: 241.74426, z: 515.9432}
+    Size: {x: 0, y: 11.703311, z: 0}
+    Yaw: 35.83751
+    Solid: 0
+  - Id: CapitalRoad_7
+    SourceId: CapitalRoad_7
+    Group: 02_MountainAndForest
+    Position: {x: 1543.9277, y: 231.84024, z: 540.8666}
+    Size: {x: 0, y: 10.253523, z: 0}
+    Yaw: 160.54576
+    Solid: 0
+  - Id: CapitalRoad_8
+    SourceId: CapitalRoad_8
+    Group: 02_MountainAndForest
+    Position: {x: 1619.0304, y: 233.15918, z: 268.2081}
+    Size: {x: 0, y: 1.0794017, z: 0}
+    Yaw: 281.3602
+    Solid: 0
+  - Id: CapitalRoad_9
+    SourceId: CapitalRoad_9
+    Group: 02_MountainAndForest
+    Position: {x: 1654.9215, y: 230.13208, z: 354.8156}
+    Size: {x: 0, y: 10.088815, z: 0}
+    Yaw: 260.52936
+    Solid: 0
+  - Id: CapitalRoad_10
+    SourceId: CapitalRoad_10
+    Group: 02_MountainAndForest
+    Position: {x: 1617.231, y: 232.99248, z: 341.62735}
+    Size: {x: 0, y: 12.043814, z: 0}
+    Yaw: 143.43375
+    Solid: 0
+  - Id: CapitalRoad_11
+    SourceId: CapitalRoad_11
+    Group: 02_MountainAndForest
+    Position: {x: 1463.361, y: 275.76324, z: 116.904655}
+    Size: {x: 0, y: 0.6948174, z: 0}
+    Yaw: 63.294437
+    Solid: 0
+  - Id: CapitalRoad_12
+    SourceId: CapitalRoad_12
+    Group: 02_MountainAndForest
+    Position: {x: 1494.5101, y: 258.0117, z: 165.61348}
+    Size: {x: 0, y: 13.253003, z: 0}
+    Yaw: 25.460691
+    Solid: 0
+  - Id: CapitalRoad_13
+    SourceId: CapitalRoad_13
+    Group: 02_MountainAndForest
+    Position: {x: 1454.4368, y: 277.96817, z: 109.63662}
+    Size: {x: 0, y: 12.731404, z: 0}
+    Yaw: 193.63976
+    Solid: 0
+  - Id: CapitalRoad_14
+    SourceId: CapitalRoad_14
+    Group: 02_MountainAndForest
+    Position: {x: 1306.3153, y: 261.71866, z: 2.8117542}
+    Size: {x: 0, y: 1.5933536, z: 0}
+    Yaw: 35.21798
+    Solid: 0
+  - Id: CapitalRoad_15
+    SourceId: CapitalRoad_15
+    Group: 02_MountainAndForest
+    Position: {x: 1334.578, y: 261.29413, z: 38.17624}
+    Size: {x: 0, y: 11.972826, z: 0}
+    Yaw: 355.65756
+    Solid: 0
+  - Id: CapitalRoad_16
+    SourceId: CapitalRoad_16
+    Group: 02_MountainAndForest
+    Position: {x: 1290.9166, y: 260.944, z: -12.431681}
+    Size: {x: 0, y: 14.497335, z: 0}
+    Yaw: 155.10211
+    Solid: 0
+  - Id: CapitalRoad_17
+    SourceId: CapitalRoad_17
+    Group: 02_MountainAndForest
+    Position: {x: 1256.3937, y: 260.6927, z: 455.18143}
+    Size: {x: 0, y: 1.0172557, z: 0}
+    Yaw: 84.82674
+    Solid: 0
+  - Id: CapitalRoad_18
+    SourceId: CapitalRoad_18
+    Group: 02_MountainAndForest
+    Position: {x: 1261.9008, y: 261.96634, z: 339.09338}
+    Size: {x: 0, y: 13.6572485, z: 0}
+    Yaw: 204.19681
+    Solid: 0
+  - Id: CapitalRoad_19
+    SourceId: CapitalRoad_19
+    Group: 02_MountainAndForest
+    Position: {x: 1223.7631, y: 267.29944, z: 364.38312}
+    Size: {x: 0, y: 14.01906, z: 0}
+    Yaw: 174.59077
+    Solid: 0
+  - Id: CapitalRoad_20
+    SourceId: CapitalRoad_20
+    Group: 02_MountainAndForest
+    Position: {x: 1079.2141, y: 324.3483, z: 246.74837}
+    Size: {x: 0, y: 1.0269265, z: 0}
+    Yaw: 14.551807
+    Solid: 0
+  - Id: CapitalRoad_21
+    SourceId: CapitalRoad_21
+    Group: 02_MountainAndForest
+    Position: {x: 1092.9061, y: 320.64523, z: 258.5776}
+    Size: {x: 0, y: 12.365441, z: 0}
+    Yaw: 71.66995
+    Solid: 0
+  - Id: CapitalRoad_22
+    SourceId: CapitalRoad_22
+    Group: 02_MountainAndForest
+    Position: {x: 1028.8861, y: 332.46872, z: 152.39496}
+    Size: {x: 0, y: 10.304839, z: 0}
+    Yaw: 56.845093
+    Solid: 0
+  - Id: CapitalRoad_23
+    SourceId: CapitalRoad_23
+    Group: 02_MountainAndForest
+    Position: {x: 1269.0234, y: 256.28232, z: 385.2774}
+    Size: {x: 0, y: 0.8798015, z: 0}
+    Yaw: 186.639
+    Solid: 0
+  - Id: CapitalRoad_24
+    SourceId: CapitalRoad_24
+    Group: 02_MountainAndForest
+    Position: {x: 1337.923, y: 244.06815, z: 411.3924}
+    Size: {x: 0, y: 10.909724, z: 0}
+    Yaw: 204.99623
+    Solid: 0
+  - Id: CapitalRoad_25
+    SourceId: CapitalRoad_25
+    Group: 02_MountainAndForest
+    Position: {x: 1226.3011, y: 265.95352, z: 417.95923}
+    Size: {x: 0, y: 10.638501, z: 0}
+    Yaw: 329.0397
+    Solid: 0
+  - Id: CapitalRoad_26
+    SourceId: CapitalRoad_26
+    Group: 02_MountainAndForest
+    Position: {x: 1272.7424, y: 252.56522, z: 59.199356}
+    Size: {x: 0, y: 1.320055, z: 0}
+    Yaw: 277.79715
+    Solid: 0
+  - Id: CapitalRoad_27
+    SourceId: CapitalRoad_27
+    Group: 02_MountainAndForest
+    Position: {x: 1324.7637, y: 251.60464, z: 66.06453}
+    Size: {x: 0, y: 13.56475, z: 0}
+    Yaw: 1.3141707
+    Solid: 0
+  - Id: CapitalRoad_28
+    SourceId: CapitalRoad_28
+    Group: 02_MountainAndForest
+    Position: {x: 1031.3494, y: 233.73418, z: -179.35643}
+    Size: {x: 0, y: 0.6776674, z: 0}
+    Yaw: 25.540916
+    Solid: 0
+  - Id: CapitalRoad_29
+    SourceId: CapitalRoad_29
+    Group: 02_MountainAndForest
+    Position: {x: 1074.4248, y: 215.99295, z: -181.20628}
+    Size: {x: 0, y: 14.765202, z: 0}
+    Yaw: 23.461859
+    Solid: 0
+  - Id: CapitalRoad_30
+    SourceId: CapitalRoad_30
+    Group: 02_MountainAndForest
+    Position: {x: 1048.4551, y: 234.34865, z: -163.27597}
+    Size: {x: 0, y: 12.3549385, z: 0}
+    Yaw: 51.54107
+    Solid: 0
+  - Id: CapitalRoad_31
+    SourceId: CapitalRoad_31
+    Group: 02_MountainAndForest
+    Position: {x: 802.6694, y: 206.507, z: -352.76306}
+    Size: {x: 0, y: 0.70949924, z: 0}
+    Yaw: 246.57007
+    Solid: 0
+  - Id: CapitalRoad_32
+    SourceId: CapitalRoad_32
+    Group: 02_MountainAndForest
+    Position: {x: 785.0053, y: 198.48709, z: -383.36777}
+    Size: {x: 0, y: 14.897374, z: 0}
+    Yaw: 228.95001
+    Solid: 0
+  - Id: CapitalRoad_33
+    SourceId: CapitalRoad_33
+    Group: 02_MountainAndForest
+    Position: {x: 762.73474, y: 204.47607, z: -357.73468}
+    Size: {x: 0, y: 12.573956, z: 0}
+    Yaw: 63.52747
+    Solid: 0
+  - Id: CapitalRoad_34
+    SourceId: CapitalRoad_34
+    Group: 02_MountainAndForest
+    Position: {x: 534.30286, y: 180.37328, z: -459.50473}
+    Size: {x: 0, y: 1.191422, z: 0}
+    Yaw: 43.669468
+    Solid: 0
+  - Id: CapitalRoad_35
+    SourceId: CapitalRoad_35
+    Group: 02_MountainAndForest
+    Position: {x: 493.96106, y: 184.17989, z: -466.69275}
+    Size: {x: 0, y: 10.717199, z: 0}
+    Yaw: 107.20457
+    Solid: 0
+  - Id: CapitalRoad_36
+    SourceId: CapitalRoad_36
+    Group: 02_MountainAndForest
+    Position: {x: 548.84576, y: 186.3609, z: -402.66196}
+    Size: {x: 0, y: 12.414196, z: 0}
+    Yaw: 273.2152
+    Solid: 0
+  - Id: CapitalRoad_37
+    SourceId: CapitalRoad_37
+    Group: 02_MountainAndForest
+    Position: {x: 408.23212, y: 174.31285, z: -665.9258}
+    Size: {x: 0, y: 1.1987795, z: 0}
+    Yaw: 270.52652
+    Solid: 0
+  - Id: CapitalRoad_38
+    SourceId: CapitalRoad_38
+    Group: 02_MountainAndForest
+    Position: {x: 450.33347, y: 171.55792, z: -757.49585}
+    Size: {x: 0, y: 10.812994, z: 0}
+    Yaw: 349.72644
+    Solid: 0
+  - Id: CapitalRoad_39
+    SourceId: CapitalRoad_39
+    Group: 02_MountainAndForest
+    Position: {x: 439.0515, y: 178.01958, z: -687.6821}
+    Size: {x: 0, y: 11.934312, z: 0}
+    Yaw: 229.79564
+    Solid: 0
+  - Id: CapitalRoad_40
+    SourceId: CapitalRoad_40
+    Group: 02_MountainAndForest
+    Position: {x: 422.81155, y: 210.36304, z: -1032.5413}
+    Size: {x: 0, y: 11.252856, z: 0}
+    Yaw: 355.3956
+    Solid: 0
+  - Id: CapitalRoad_41
+    SourceId: CapitalRoad_41
+    Group: 02_MountainAndForest
+    Position: {x: 425.87094, y: 216.0183, z: -1103.373}
+    Size: {x: 0, y: 11.935632, z: 0}
+    Yaw: 212.61063
+    Solid: 0
+  - Id: CapitalRoad_42
+    SourceId: CapitalRoad_42
+    Group: 02_MountainAndForest
+    Position: {x: 286.05072, y: 242.74731, z: -1288.0708}
+    Size: {x: 0, y: 0.9362044, z: 0}
+    Yaw: 326.72607
+    Solid: 0
+  - Id: CapitalRoad_43
+    SourceId: CapitalRoad_43
+    Group: 02_MountainAndForest
+    Position: {x: 317.45477, y: 237.08882, z: -1258.6862}
+    Size: {x: 0, y: 11.524085, z: 0}
+    Yaw: 232.81425
+    Solid: 0
+  - Id: CapitalRoad_44
+    SourceId: CapitalRoad_44
+    Group: 02_MountainAndForest
+    Position: {x: 300.11224, y: 238.5052, z: -1215.8234}
+    Size: {x: 0, y: 10.749208, z: 0}
+    Yaw: 317.32672
+    Solid: 0
+  - Id: CapitalRoad_45
+    SourceId: CapitalRoad_45
+    Group: 02_MountainAndForest
+    Position: {x: 373.9229, y: 222.58472, z: -1165.2129}
+    Size: {x: 0, y: 0.8170868, z: 0}
+    Yaw: 215.71426
+    Solid: 0
+  - Id: CapitalRoad_46
+    SourceId: CapitalRoad_46
+    Group: 02_MountainAndForest
+    Position: {x: 339.44016, y: 230.6558, z: -1249.7587}
+    Size: {x: 0, y: 12.871632, z: 0}
+    Yaw: 216.40709
+    Solid: 0
+  - Id: CapitalRoad_47
+    SourceId: CapitalRoad_47
+    Group: 02_MountainAndForest
+    Position: {x: 330.2421, y: 232.4153, z: -1201.4667}
+    Size: {x: 0, y: 11.632788, z: 0}
+    Yaw: 207.11964
+    Solid: 0
+  - Id: CapitalRoad_48
+    SourceId: CapitalRoad_48
+    Group: 02_MountainAndForest
+    Position: {x: 464.6725, y: 172.17252, z: -814.7031}
+    Size: {x: 0, y: 1.2015568, z: 0}
+    Yaw: 200.85608
+    Solid: 0
+  - Id: CapitalRoad_49
+    SourceId: CapitalRoad_49
+    Group: 02_MountainAndForest
+    Position: {x: 495.0407, y: 177.22063, z: -867.7101}
+    Size: {x: 0, y: 14.801213, z: 0}
+    Yaw: 111.967514
+    Solid: 0
+  - Id: CapitalRoad_50
+    SourceId: CapitalRoad_50
+    Group: 02_MountainAndForest
+    Position: {x: 464.22818, y: 182.4882, z: -898.27655}
+    Size: {x: 0, y: 14.600144, z: 0}
+    Yaw: 44.25277
+    Solid: 0
+  - Id: CapitalRoad_51
+    SourceId: CapitalRoad_51
+    Group: 02_MountainAndForest
+    Position: {x: 242.23969, y: 120.60871, z: -663.4569}
+    Size: {x: 0, y: 0.80948174, z: 0}
+    Yaw: 261.9566
+    Solid: 0
+  - Id: CapitalRoad_52
+    SourceId: CapitalRoad_52
+    Group: 02_MountainAndForest
+    Position: {x: 299.2996, y: 137.27325, z: -722.36743}
+    Size: {x: 0, y: 10.572592, z: 0}
+    Yaw: 308.50754
+    Solid: 0
+  - Id: CapitalRoad_53
+    SourceId: CapitalRoad_53
+    Group: 02_MountainAndForest
+    Position: {x: 336.53577, y: 151.56096, z: -715.89307}
+    Size: {x: 0, y: 12.1421585, z: 0}
+    Yaw: 96.31476
+    Solid: 0
+  - Id: CapitalRoad_54
+    SourceId: CapitalRoad_54
+    Group: 02_MountainAndForest
+    Position: {x: -29.372383, y: 79.51902, z: -1036.5894}
+    Size: {x: 0, y: 0.8861948, z: 0}
+    Yaw: 124.1588
+    Solid: 0
+  - Id: CapitalRoad_55
+    SourceId: CapitalRoad_55
+    Group: 02_MountainAndForest
+    Position: {x: -1.3334694, y: 81.3792, z: -1021.62823}
+    Size: {x: 0, y: 11.386438, z: 0}
+    Yaw: 88.89303
+    Solid: 0
+  - Id: CapitalRoad_56
+    SourceId: CapitalRoad_56
+    Group: 02_MountainAndForest
+    Position: {x: -26.722845, y: 79.70062, z: -1031.4443}
+    Size: {x: 0, y: 14.64051, z: 0}
+    Yaw: 286.7202
+    Solid: 0
+  - Id: CapitalRoad_57
+    SourceId: CapitalRoad_57
+    Group: 02_MountainAndForest
+    Position: {x: -331.3321, y: 102.32928, z: -1279.2646}
+    Size: {x: 0, y: 1.2432886, z: 0}
+    Yaw: 167.29404
+    Solid: 0
+  - Id: CapitalRoad_58
+    SourceId: CapitalRoad_58
+    Group: 02_MountainAndForest
+    Position: {x: -279.80853, y: 111.322784, z: -1288.5359}
+    Size: {x: 0, y: 13.609323, z: 0}
+    Yaw: 186.24907
+    Solid: 0
+  - Id: CapitalRoad_59
+    SourceId: CapitalRoad_59
+    Group: 02_MountainAndForest
+    Position: {x: -256.59988, y: 83.27208, z: -1203.5879}
+    Size: {x: 0, y: 10.864242, z: 0}
+    Yaw: 99.81734
+    Solid: 0
+  - Id: CapitalRoad_60
+    SourceId: CapitalRoad_60
+    Group: 02_MountainAndForest
+    Position: {x: -166.64035, y: 75.951256, z: -1023.1032}
+    Size: {x: 0, y: 0.9121817, z: 0}
+    Yaw: 36.719257
+    Solid: 0
+  - Id: CapitalRoad_61
+    SourceId: CapitalRoad_61
+    Group: 02_MountainAndForest
+    Position: {x: -138.66234, y: 76.79832, z: -959.8144}
+    Size: {x: 0, y: 13.015056, z: 0}
+    Yaw: 93.499176
+    Solid: 0
+  - Id: CapitalRoad_62
+    SourceId: CapitalRoad_62
+    Group: 02_MountainAndForest
+    Position: {x: -142.78902, y: 75.79638, z: -1061.0862}
+    Size: {x: 0, y: 10.662892, z: 0}
+    Yaw: 178.67009
+    Solid: 0
+  - Id: CapitalRoad_63
+    SourceId: CapitalRoad_63
+    Group: 02_MountainAndForest
+    Position: {x: -213.07793, y: 74.683975, z: -726.0112}
+    Size: {x: 0, y: 12.56777, z: 0}
+    Yaw: 253.98839
+    Solid: 0
+  - Id: CapitalRoad_64
+    SourceId: CapitalRoad_64
+    Group: 02_MountainAndForest
+    Position: {x: -203.12967, y: 74.37405, z: -729.24603}
+    Size: {x: 0, y: 14.137635, z: 0}
+    Yaw: 285.43246
+    Solid: 0
+  - Id: MineRock_-1_0
+    SourceId: MineRock_-1_0
+    Group: 02_MountainAndForest
+    Position: {x: 3372.7305, y: 195.9286, z: 1084.1548}
+    Size: {x: 0, y: 2.1, z: 0}
+    Yaw: -25
+    Solid: 0
+  - Id: MineRock_-1_1
+    SourceId: MineRock_-1_1
+    Group: 02_MountainAndForest
+    Position: {x: 3370.8706, y: 196.2507, z: 1081.5336}
+    Size: {x: 0, y: 2.3, z: 0}
+    Yaw: 36
+    Solid: 0
+  - Id: MineRock_-1_2
+    SourceId: MineRock_-1_2
+    Group: 02_MountainAndForest
+    Position: {x: 3369.0107, y: 196.5747, z: 1078.9121}
+    Size: {x: 0, y: 2.5, z: 0}
+    Yaw: 97
+    Solid: 0
+  - Id: MineRock_-1_3
+    SourceId: MineRock_-1_3
+    Group: 02_MountainAndForest
+    Position: {x: 3367.151, y: 197.00708, z: 1076.2909}
+    Size: {x: 0, y: 2.6999998, z: 0}
+    Yaw: 158
+    Solid: 0
+  - Id: MineRock_1_0
+    SourceId: MineRock_1_0
+    Group: 02_MountainAndForest
+    Position: {x: 3384.5083, y: 193.83463, z: 1077.3547}
+    Size: {x: 0, y: 2.1, z: 0}
+    Yaw: 59
+    Solid: 0
+  - Id: MineRock_1_1
+    SourceId: MineRock_1_1
+    Group: 02_MountainAndForest
+    Position: {x: 3383.168, y: 193.84044, z: 1074.4335}
+    Size: {x: 0, y: 2.3, z: 0}
+    Yaw: 120
+    Solid: 0
+  - Id: MineRock_1_2
+    SourceId: MineRock_1_2
+    Group: 02_MountainAndForest
+    Position: {x: 3381.8281, y: 193.84622, z: 1071.5122}
+    Size: {x: 0, y: 2.5, z: 0}
+    Yaw: 181
+    Solid: 0
+  - Id: MineRock_1_3
+    SourceId: MineRock_1_3
+    Group: 02_MountainAndForest
+    Position: {x: 3380.4878, y: 193.85219, z: 1068.591}
+    Size: {x: 0, y: 2.6999998, z: 0}
+    Yaw: 242
+    Solid: 0
+  - Id: MineStack
+    SourceId: MineStack
+    Group: 02_MountainAndForest
+    Position: {x: 3385.5476, y: 193.86751, z: 1076.7548}
+    Size: {x: 2.8, y: 0, z: 0}
+    Yaw: 48
+    Solid: 0
+  - Id: Logging_Logs
+    SourceId: Logging_Logs
+    Group: 02_MountainAndForest
+    Position: {x: 1984, y: 146.63097, z: 1370}
+    Size: {x: 3.2, y: 0, z: 0}
+    Yaw: 22
+    Solid: 0
+  - Id: DeepForest_Logs
+    SourceId: DeepForest_Logs
+    Group: 02_MountainAndForest
+    Position: {x: 2294, y: 175.44078, z: 1950}
+    Size: {x: 3.2, y: 0, z: 0}
+    Yaw: 81
+    Solid: 0
+  - Id: CAP_GATE_ARCH
+    SourceId: CAP_GATE_ARCH
+    Group: SouthGate_AssetAssembly
+    Position: {x: -279, y: 105.64756, z: -1276}
+    Size: {x: 0, y: 13.125, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_GATE_COLUMN_0
+    SourceId: CAP_GATE_COLUMN_0
+    Group: SouthGate_AssetAssembly
+    Position: {x: -285.5, y: 118.39756, z: -1278.6875}
+    Size: {x: 0, y: 4.75, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_COLUMN_1
+    SourceId: CAP_GATE_COLUMN_1
+    Group: SouthGate_AssetAssembly
+    Position: {x: -285.5, y: 118.39756, z: -1273.3125}
+    Size: {x: 0, y: 4.75, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_COLUMN_2
+    SourceId: CAP_GATE_COLUMN_2
+    Group: SouthGate_AssetAssembly
+    Position: {x: -279, y: 118.39756, z: -1278.6875}
+    Size: {x: 0, y: 4.75, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_COLUMN_3
+    SourceId: CAP_GATE_COLUMN_3
+    Group: SouthGate_AssetAssembly
+    Position: {x: -279, y: 118.39756, z: -1273.3125}
+    Size: {x: 0, y: 4.75, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_COLUMN_4
+    SourceId: CAP_GATE_COLUMN_4
+    Group: SouthGate_AssetAssembly
+    Position: {x: -272.5, y: 118.39756, z: -1278.6875}
+    Size: {x: 0, y: 4.75, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_COLUMN_5
+    SourceId: CAP_GATE_COLUMN_5
+    Group: SouthGate_AssetAssembly
+    Position: {x: -272.5, y: 118.39756, z: -1273.3125}
+    Size: {x: 0, y: 4.75, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_CROSSBEAM
+    SourceId: CAP_GATE_CROSSBEAM
+    Group: SouthGate_AssetAssembly
+    Position: {x: -279, y: 122.58506, z: -1276}
+    Size: {x: 19.75, y: 0, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_RAFTER
+    SourceId: CAP_GATE_RAFTER
+    Group: SouthGate_AssetAssembly
+    Position: {x: -279, y: 123.46006, z: -1276}
+    Size: {x: 22, y: 0, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_GATE_ROOF
+    SourceId: CAP_GATE_ROOF
+    Group: SouthGate_AssetAssembly
+    Position: {x: -279, y: 124.77256, z: -1276}
+    Size: {x: 23.125, y: 0, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_SOUTH_WALL_W_0
+    SourceId: CAP_SOUTH_WALL_W_0
+    Group: SouthWall_TerrainModules
+    Position: {x: -291.5, y: 104.88153, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_1
+    SourceId: CAP_SOUTH_WALL_W_1
+    Group: SouthWall_TerrainModules
+    Position: {x: -299.5, y: 104.18249, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_2
+    SourceId: CAP_SOUTH_WALL_W_2
+    Group: SouthWall_TerrainModules
+    Position: {x: -307.5, y: 103.44672, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_3
+    SourceId: CAP_SOUTH_WALL_W_3
+    Group: SouthWall_TerrainModules
+    Position: {x: -315.5, y: 102.62202, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_4
+    SourceId: CAP_SOUTH_WALL_W_4
+    Group: SouthWall_TerrainModules
+    Position: {x: -323.5, y: 101.79951, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_5
+    SourceId: CAP_SOUTH_WALL_W_5
+    Group: SouthWall_TerrainModules
+    Position: {x: -331.5, y: 100.9893, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_6
+    SourceId: CAP_SOUTH_WALL_W_6
+    Group: SouthWall_TerrainModules
+    Position: {x: -339.5, y: 100.16031, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_7
+    SourceId: CAP_SOUTH_WALL_W_7
+    Group: SouthWall_TerrainModules
+    Position: {x: -347.5, y: 99.2079, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_8
+    SourceId: CAP_SOUTH_WALL_W_8
+    Group: SouthWall_TerrainModules
+    Position: {x: -355.5, y: 98.38901, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_9
+    SourceId: CAP_SOUTH_WALL_W_9
+    Group: SouthWall_TerrainModules
+    Position: {x: -363.5, y: 97.46935, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_10
+    SourceId: CAP_SOUTH_WALL_W_10
+    Group: SouthWall_TerrainModules
+    Position: {x: -371.5, y: 96.85477, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_W_11
+    SourceId: CAP_SOUTH_WALL_W_11
+    Group: SouthWall_TerrainModules
+    Position: {x: -379.5, y: 96.348175, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_0
+    SourceId: CAP_SOUTH_WALL_E_0
+    Group: SouthWall_TerrainModules
+    Position: {x: -266.5, y: 106.629776, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_1
+    SourceId: CAP_SOUTH_WALL_E_1
+    Group: SouthWall_TerrainModules
+    Position: {x: -258.5, y: 107.34228, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_2
+    SourceId: CAP_SOUTH_WALL_E_2
+    Group: SouthWall_TerrainModules
+    Position: {x: -250.5, y: 108.25708, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_3
+    SourceId: CAP_SOUTH_WALL_E_3
+    Group: SouthWall_TerrainModules
+    Position: {x: -242.5, y: 109.22943, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_4
+    SourceId: CAP_SOUTH_WALL_E_4
+    Group: SouthWall_TerrainModules
+    Position: {x: -234.5, y: 110.29823, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_5
+    SourceId: CAP_SOUTH_WALL_E_5
+    Group: SouthWall_TerrainModules
+    Position: {x: -226.5, y: 111.40054, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_6
+    SourceId: CAP_SOUTH_WALL_E_6
+    Group: SouthWall_TerrainModules
+    Position: {x: -218.5, y: 112.4288, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_7
+    SourceId: CAP_SOUTH_WALL_E_7
+    Group: SouthWall_TerrainModules
+    Position: {x: -210.5, y: 113.4179, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_8
+    SourceId: CAP_SOUTH_WALL_E_8
+    Group: SouthWall_TerrainModules
+    Position: {x: -202.5, y: 114.37109, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_9
+    SourceId: CAP_SOUTH_WALL_E_9
+    Group: SouthWall_TerrainModules
+    Position: {x: -194.5, y: 115.317764, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_10
+    SourceId: CAP_SOUTH_WALL_E_10
+    Group: SouthWall_TerrainModules
+    Position: {x: -186.5, y: 116.48334, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_SOUTH_WALL_E_11
+    SourceId: CAP_SOUTH_WALL_E_11
+    Group: SouthWall_TerrainModules
+    Position: {x: -178.5, y: 117.735054, z: -1276}
+    Size: {x: 8.15, y: 6.1, z: 2.5}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_WALL_PAVILION_W
+    SourceId: CAP_WALL_PAVILION_W
+    Group: SouthWall_TerrainModules
+    Position: {x: -351, y: 104.53834, z: -1276}
+    Size: {x: 0, y: 5.4, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_WALL_PAVILION_E
+    SourceId: CAP_WALL_PAVILION_E
+    Group: SouthWall_TerrainModules
+    Position: {x: -207, y: 119.58142, z: -1276}
+    Size: {x: 0, y: 5.4, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: CAP_HOUSE_R0_E
+    SourceId: CAP_HOUSE_R0_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -194.2112, y: 86.97638, z: -1195.5702}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -50
+    Solid: 1
+  - Id: CAP_HOUSE_R0_W
+    SourceId: CAP_HOUSE_R0_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -221.7888, y: 79.41217, z: -1172.4298}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -50
+    Solid: 1
+  - Id: CAP_HOUSE_R1_E
+    SourceId: CAP_HOUSE_R1_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -158.88098, y: 76.80571, z: -1125.5623}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -72
+    Solid: 1
+  - Id: CAP_HOUSE_R1_W
+    SourceId: CAP_HOUSE_R1_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -193.11902, y: 75.50285, z: -1114.4377}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -72
+    Solid: 1
+  - Id: CAP_HOUSE_R2_E
+    SourceId: CAP_HOUSE_R2_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -146.17517, y: 75.48376, z: -1070.5051}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -82
+    Solid: 1
+  - Id: CAP_HOUSE_R2_W
+    SourceId: CAP_HOUSE_R2_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -181.82483, y: 75.06242, z: -1065.4949}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -82
+    Solid: 1
+  - Id: CAP_HOUSE_R3_E
+    SourceId: CAP_HOUSE_R3_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -142, y: 77.432, z: -1008}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -90
+    Solid: 1
+  - Id: CAP_HOUSE_R3_W
+    SourceId: CAP_HOUSE_R3_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -178, y: 75.96363, z: -1008}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -90
+    Solid: 1
+  - Id: CAP_HOUSE_R4_E
+    SourceId: CAP_HOUSE_R4_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -142, y: 76.91692, z: -948}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -90
+    Solid: 1
+  - Id: CAP_HOUSE_R4_W
+    SourceId: CAP_HOUSE_R4_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -178, y: 75.52716, z: -948}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -90
+    Solid: 1
+  - Id: CAP_HOUSE_R5_E
+    SourceId: CAP_HOUSE_R5_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -177.62456, y: 73.75193, z: -714.16736}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -127
+    Solid: 1
+  - Id: CAP_HOUSE_R5_W
+    SourceId: CAP_HOUSE_R5_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -206.37544, y: 74.45702, z: -735.83264}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -127
+    Solid: 1
+  - Id: CAP_HOUSE_R6_E
+    SourceId: CAP_HOUSE_R6_E
+    Group: GateStreet_HouseFrontage
+    Position: {x: -243.49615, y: 71.77681, z: -643.0519}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -136
+    Solid: 1
+  - Id: CAP_HOUSE_R6_W
+    SourceId: CAP_HOUSE_R6_W
+    Group: GateStreet_HouseFrontage
+    Position: {x: -268.50385, y: 74.15935, z: -668.9481}
+    Size: {x: 18, y: 4.4, z: 5.5}
+    Yaw: -136
+    Solid: 1
+  - Id: CAP_MARKET_BOX_W0
+    SourceId: CAP_MARKET_BOX_W0
+    Group: GateStreet_MarketEdges
+    Position: {x: -176, y: 75.21629, z: -1087}
+    Size: {x: 1.1, y: 1.2, z: 1.1}
+    Yaw: 17
+    Solid: 1
+  - Id: CAP_MARKET_BOX_W1
+    SourceId: CAP_MARKET_BOX_W1
+    Group: GateStreet_MarketEdges
+    Position: {x: -178, y: 75.23068, z: -1085}
+    Size: {x: 0.9, y: 1, z: 0.9}
+    Yaw: -8
+    Solid: 1
+  - Id: CAP_MARKET_SACK_W0
+    SourceId: CAP_MARKET_SACK_W0
+    Group: GateStreet_MarketEdges
+    Position: {x: -173.5, y: 75.167114, z: -1084}
+    Size: {x: 1.05, y: 0.9, z: 0.55}
+    Yaw: 73
+    Solid: 0
+  - Id: CAP_MARKET_BASKET_W0
+    SourceId: CAP_MARKET_BASKET_W0
+    Group: GateStreet_MarketEdges
+    Position: {x: -174.5, y: 75.19388, z: -1086}
+    Size: {x: 0.7, y: 0, z: 0}
+    Yaw: -21
+    Solid: 0
+  - Id: CAP_MARKET_POT_W0
+    SourceId: CAP_MARKET_POT_W0
+    Group: GateStreet_MarketEdges
+    Position: {x: -174.3, y: 75.17877, z: -1084.5}
+    Size: {x: 0.48, y: 0, z: 0}
+    Yaw: 11
+    Solid: 0
+  - Id: CAP_MARKET_BOX_E0
+    SourceId: CAP_MARKET_BOX_E0
+    Group: GateStreet_MarketEdges
+    Position: {x: -149, y: 77.08275, z: -1018}
+    Size: {x: 1.15, y: 1.25, z: 1.15}
+    Yaw: -14
+    Solid: 1
+  - Id: CAP_MARKET_SACK_E0
+    SourceId: CAP_MARKET_SACK_E0
+    Group: GateStreet_MarketEdges
+    Position: {x: -146.7, y: 77.19456, z: -1016.5}
+    Size: {x: 1.1, y: 0.9, z: 0.55}
+    Yaw: 101
+    Solid: 0
+  - Id: CAP_MARKET_SACK_E1
+    SourceId: CAP_MARKET_SACK_E1
+    Group: GateStreet_MarketEdges
+    Position: {x: -148.5, y: 77.14239, z: -1015}
+    Size: {x: 0.9, y: 0.75, z: 0.5}
+    Yaw: 82
+    Solid: 0
+  - Id: CAP_MARKET_BASKET_E0
+    SourceId: CAP_MARKET_BASKET_E0
+    Group: GateStreet_MarketEdges
+    Position: {x: -144.8, y: 77.25733, z: -1017.5}
+    Size: {x: 0.7, y: 0, z: 0}
+    Yaw: 32
+    Solid: 0
+  - Id: CAP_MARKET_POT_E0
+    SourceId: CAP_MARKET_POT_E0
+    Group: GateStreet_MarketEdges
+    Position: {x: -144.2, y: 77.30511, z: -1015.7}
+    Size: {x: 0.5, y: 0, z: 0}
+    Yaw: -26
+    Solid: 0
+  - Id: CAP_MARKET_TIMBER_N0
+    SourceId: CAP_MARKET_TIMBER_N0
+    Group: GateStreet_MarketEdges
+    Position: {x: -242, y: 74.18471, z: -681}
+    Size: {x: 0.45, y: 0.35, z: 2.8}
+    Yaw: 6
+    Solid: 1
+  - Id: CAP_MARKET_TIMBER_N1
+    SourceId: CAP_MARKET_TIMBER_N1
+    Group: GateStreet_MarketEdges
+    Position: {x: -240.9, y: 74.18727, z: -681.4}
+    Size: {x: 0.45, y: 0.35, z: 2.5}
+    Yaw: -4
+    Solid: 1
+  - Id: CAP_CITY_PAVILION_W
+    SourceId: CAP_CITY_PAVILION_W
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -347, y: 72.25471, z: -653}
+    Size: {x: 0, y: 5.7, z: 0}
+    Yaw: 12
+    Solid: 1
+  - Id: CAP_CITY_PAVILION_N
+    SourceId: CAP_CITY_PAVILION_N
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -294, y: 72.284485, z: -603}
+    Size: {x: 0, y: 6.1, z: 0}
+    Yaw: 180
+    Solid: 1
+  - Id: CAP_PROPERTY_WALL_W0
+    SourceId: CAP_PROPERTY_WALL_W0
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -360, y: 72.65158, z: -680}
+    Size: {x: 0, y: 1.8, z: 4.3}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PROPERTY_WALL_W1
+    SourceId: CAP_PROPERTY_WALL_W1
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -360, y: 72.40336, z: -674.8}
+    Size: {x: 0, y: 1.8, z: 4.3}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PROPERTY_WALL_E0
+    SourceId: CAP_PROPERTY_WALL_E0
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -205, y: 73.642944, z: -690}
+    Size: {x: 0, y: 1.8, z: 4.3}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PROPERTY_WALL_E1
+    SourceId: CAP_PROPERTY_WALL_E1
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -205, y: 73.35581, z: -684.8}
+    Size: {x: 0, y: 1.8, z: 4.3}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PROPERTY_WALL_NW
+    SourceId: CAP_PROPERTY_WALL_NW
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -337, y: 71.73595, z: -625}
+    Size: {x: 0, y: 1.8, z: 2.2}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_PROPERTY_WALL_NE
+    SourceId: CAP_PROPERTY_WALL_NE
+    Group: CityCentre_RoofsAndPropertyWalls
+    Position: {x: -259, y: 71.31039, z: -625}
+    Size: {x: 0, y: 1.8, z: 2.2}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_PALACE_PAVING_0
+    SourceId: CAP_PALACE_PAVING_0
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -751.5}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_1
+    SourceId: CAP_PALACE_PAVING_1
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -754.32}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_2
+    SourceId: CAP_PALACE_PAVING_2
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -757.14}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_3
+    SourceId: CAP_PALACE_PAVING_3
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -759.96}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_4
+    SourceId: CAP_PALACE_PAVING_4
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -762.78}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_5
+    SourceId: CAP_PALACE_PAVING_5
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -765.6}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_6
+    SourceId: CAP_PALACE_PAVING_6
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -768.42}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_7
+    SourceId: CAP_PALACE_PAVING_7
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -771.24}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_8
+    SourceId: CAP_PALACE_PAVING_8
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -774.06}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_9
+    SourceId: CAP_PALACE_PAVING_9
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -776.88}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_10
+    SourceId: CAP_PALACE_PAVING_10
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -779.7}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_11
+    SourceId: CAP_PALACE_PAVING_11
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -782.52}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_12
+    SourceId: CAP_PALACE_PAVING_12
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -785.34}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_13
+    SourceId: CAP_PALACE_PAVING_13
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -788.16}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_14
+    SourceId: CAP_PALACE_PAVING_14
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -790.98}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_15
+    SourceId: CAP_PALACE_PAVING_15
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -793.8}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_16
+    SourceId: CAP_PALACE_PAVING_16
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -796.62}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_17
+    SourceId: CAP_PALACE_PAVING_17
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -799.44}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_18
+    SourceId: CAP_PALACE_PAVING_18
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -802.26}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_PAVING_19
+    SourceId: CAP_PALACE_PAVING_19
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.94299, z: -805.08}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_0
+    SourceId: CAP_PALACE_SPUR_0
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -205, y: 74.41182, z: -713}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_1
+    SourceId: CAP_PALACE_SPUR_1
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -210.23529, y: 74.56424, z: -713.0294}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_2
+    SourceId: CAP_PALACE_SPUR_2
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -215.47058, y: 74.7817, z: -713.05884}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_3
+    SourceId: CAP_PALACE_SPUR_3
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -220.70589, y: 74.998276, z: -713.08826}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_4
+    SourceId: CAP_PALACE_SPUR_4
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -225.94118, y: 75.20476, z: -713.1177}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_5
+    SourceId: CAP_PALACE_SPUR_5
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -231.17647, y: 75.39396, z: -713.14703}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_6
+    SourceId: CAP_PALACE_SPUR_6
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -236.41176, y: 75.58061, z: -713.17645}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_7
+    SourceId: CAP_PALACE_SPUR_7
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -241.64706, y: 75.728195, z: -713.2059}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_8
+    SourceId: CAP_PALACE_SPUR_8
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -246.88235, y: 75.78984, z: -713.2353}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_9
+    SourceId: CAP_PALACE_SPUR_9
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -252.11765, y: 75.81553, z: -713.2647}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_10
+    SourceId: CAP_PALACE_SPUR_10
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -257.35294, y: 75.833115, z: -713.2941}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_11
+    SourceId: CAP_PALACE_SPUR_11
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -262.58823, y: 75.82743, z: -713.32355}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_12
+    SourceId: CAP_PALACE_SPUR_12
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -267.82352, y: 75.768585, z: -713.35297}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_13
+    SourceId: CAP_PALACE_SPUR_13
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -273.05884, y: 75.73027, z: -713.3823}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_14
+    SourceId: CAP_PALACE_SPUR_14
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -278.29413, y: 75.77654, z: -713.41174}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_15
+    SourceId: CAP_PALACE_SPUR_15
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -283.52942, y: 75.80809, z: -713.44116}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_16
+    SourceId: CAP_PALACE_SPUR_16
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -288.7647, y: 75.840034, z: -713.4706}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_SPUR_17
+    SourceId: CAP_PALACE_SPUR_17
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -294, y: 75.879395, z: -713.5}
+    Size: {x: 2.9, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_APPROACH_DECK_0
+    SourceId: CAP_PALACE_APPROACH_DECK_0
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.59138, z: -712.875}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_1
+    SourceId: CAP_PALACE_APPROACH_DECK_1
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.65791, z: -715.50116}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_2
+    SourceId: CAP_PALACE_APPROACH_DECK_2
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.72445, z: -718.1273}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_3
+    SourceId: CAP_PALACE_APPROACH_DECK_3
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.790985, z: -720.7535}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_4
+    SourceId: CAP_PALACE_APPROACH_DECK_4
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.85752, z: -723.37964}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_5
+    SourceId: CAP_PALACE_APPROACH_DECK_5
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.92406, z: -726.0058}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_6
+    SourceId: CAP_PALACE_APPROACH_DECK_6
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 75.99059, z: -728.63196}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_7
+    SourceId: CAP_PALACE_APPROACH_DECK_7
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.05713, z: -731.2581}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_8
+    SourceId: CAP_PALACE_APPROACH_DECK_8
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.123665, z: -733.8843}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_9
+    SourceId: CAP_PALACE_APPROACH_DECK_9
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.1902, z: -736.51044}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_10
+    SourceId: CAP_PALACE_APPROACH_DECK_10
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.25674, z: -739.1366}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_APPROACH_DECK_11
+    SourceId: CAP_PALACE_APPROACH_DECK_11
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -300, y: 76.32327, z: -741.76276}
+    Size: {x: 5.25, y: 0, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_PALACE_EDGE_W_0
+    SourceId: CAP_PALACE_EDGE_W_0
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -303.2, y: 75.974815, z: -716}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_W_1
+    SourceId: CAP_PALACE_EDGE_W_1
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -303.2, y: 76.10254, z: -723.6}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_W_2
+    SourceId: CAP_PALACE_EDGE_W_2
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -303.2, y: 76.23027, z: -731.2}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_W_3
+    SourceId: CAP_PALACE_EDGE_W_3
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -303.2, y: 76.357994, z: -738.8}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_E_0
+    SourceId: CAP_PALACE_EDGE_E_0
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -296.8, y: 75.974815, z: -716}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_E_1
+    SourceId: CAP_PALACE_EDGE_E_1
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -296.8, y: 76.10254, z: -723.6}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_E_2
+    SourceId: CAP_PALACE_EDGE_E_2
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -296.8, y: 76.23027, z: -731.2}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_PALACE_EDGE_E_3
+    SourceId: CAP_PALACE_EDGE_E_3
+    Group: Palace_Forecourt_AssetSurface
+    Position: {x: -296.8, y: 76.357994, z: -738.8}
+    Size: {x: 7.7, y: 0, z: 0}
+    Yaw: 90
+    Solid: 0
+  - Id: CAP_CITY_OWNED_00
+    SourceId: CAP_CITY_OWNED_00
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -285.5229, y: 75.42649, z: -1160.6018}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_01
+    SourceId: CAP_CITY_OWNED_01
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -394.96753, y: 72.58223, z: -1150.4476}
+    Size: {x: 0, y: 5.7385006, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_02
+    SourceId: CAP_CITY_OWNED_02
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -309.549, y: 74.158905, z: -1115.6918}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_03
+    SourceId: CAP_CITY_OWNED_03
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -339.9791, y: 73.88539, z: -1101.5906}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_04
+    SourceId: CAP_CITY_OWNED_04
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -181.97276, y: 75.50163, z: -1043.11}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_05
+    SourceId: CAP_CITY_OWNED_05
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -200.8635, y: 76.15332, z: -973.42847}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_06
+    SourceId: CAP_CITY_OWNED_06
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -524.79987, y: 74.50853, z: -931.44995}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_07
+    SourceId: CAP_CITY_OWNED_07
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -359.49695, y: 75.10194, z: -930.5979}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_08
+    SourceId: CAP_CITY_OWNED_08
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -527.3132, y: 74.88205, z: -878.33655}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_09
+    SourceId: CAP_CITY_OWNED_09
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -400.97864, y: 75.31851, z: -870.92163}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_10
+    SourceId: CAP_CITY_OWNED_10
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -196.03955, y: 76.532364, z: -842.3431}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_11
+    SourceId: CAP_CITY_OWNED_11
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -268.72748, y: 77.229095, z: -841.30316}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_12
+    SourceId: CAP_CITY_OWNED_12
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -131.88155, y: 75.34976, z: -829.2542}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_13
+    SourceId: CAP_CITY_OWNED_13
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -238.99997, y: 76.96199, z: -828.92633}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_14
+    SourceId: CAP_CITY_OWNED_14
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -311.27283, y: 76.66432, z: -820.17145}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_15
+    SourceId: CAP_CITY_OWNED_15
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -430.35678, y: 75.07491, z: -800.6897}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_16
+    SourceId: CAP_CITY_OWNED_16
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -238.06921, y: 76.90812, z: -797.7001}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_17
+    SourceId: CAP_CITY_OWNED_17
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -548.8553, y: 74.25316, z: -794.5383}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_18
+    SourceId: CAP_CITY_OWNED_18
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -117.28494, y: 74.53878, z: -794.1969}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_19
+    SourceId: CAP_CITY_OWNED_19
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -583.2306, y: 74.167145, z: -791.9254}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_20
+    SourceId: CAP_CITY_OWNED_20
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -368.64328, y: 76.10238, z: -783}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_21
+    SourceId: CAP_CITY_OWNED_21
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -404.60413, y: 75.59091, z: -782.58057}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_22
+    SourceId: CAP_CITY_OWNED_22
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -148.59569, y: 74.9028, z: -746.2198}
+    Size: {x: 0, y: 5.0026903, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_23
+    SourceId: CAP_CITY_OWNED_23
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -562.706, y: 74.67414, z: -745.41724}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_24
+    SourceId: CAP_CITY_OWNED_24
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -377.6485, y: 75.53099, z: -738.66626}
+    Size: {x: 0, y: 5.227806, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_25
+    SourceId: CAP_CITY_OWNED_25
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -82.98187, y: 73.42498, z: -735.44763}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_26
+    SourceId: CAP_CITY_OWNED_26
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -431.69232, y: 74.51938, z: -731.30774}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_27
+    SourceId: CAP_CITY_OWNED_27
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -318.75067, y: 75.91582, z: -694.47125}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_28
+    SourceId: CAP_CITY_OWNED_28
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -203.95815, y: 73.96842, z: -681.7425}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_29
+    SourceId: CAP_CITY_OWNED_29
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -74.621216, y: 72.30838, z: -655.1516}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_30
+    SourceId: CAP_CITY_OWNED_30
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -150.15308, y: 71.15953, z: -650.93567}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_31
+    SourceId: CAP_CITY_OWNED_31
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -606.1865, y: 75.50497, z: -613.604}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_32
+    SourceId: CAP_CITY_OWNED_32
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -459.8754, y: 73.47385, z: -591.9796}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_33
+    SourceId: CAP_CITY_OWNED_33
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -551.3581, y: 75.45361, z: -580.57806}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_34
+    SourceId: CAP_CITY_OWNED_34
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -56.42241, y: 71.35072, z: -578.56775}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_35
+    SourceId: CAP_CITY_OWNED_35
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -625.6317, y: 75.46169, z: -578.3677}
+    Size: {x: 0, y: 5.986533, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_36
+    SourceId: CAP_CITY_OWNED_36
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -159.99411, y: 70.1587, z: -575.5609}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_37
+    SourceId: CAP_CITY_OWNED_37
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -325.11908, y: 71.39462, z: -528.96515}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_38
+    SourceId: CAP_CITY_OWNED_38
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -366.07907, y: 71.244934, z: -524.2404}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_39
+    SourceId: CAP_CITY_OWNED_39
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -64.51961, y: 71.43242, z: -517.6131}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_40
+    SourceId: CAP_CITY_OWNED_40
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -585.58636, y: 72.8885, z: -511.85892}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_41
+    SourceId: CAP_CITY_OWNED_41
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -247.47694, y: 69.932205, z: -504.768}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_42
+    SourceId: CAP_CITY_OWNED_42
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -525.6766, y: 72.66374, z: -504.76614}
+    Size: {x: 0, y: 5.788847, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_43
+    SourceId: CAP_CITY_OWNED_43
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -325.29626, y: 68.900696, z: -484.53278}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_44
+    SourceId: CAP_CITY_OWNED_44
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -272.89377, y: 69.27449, z: -472.6931}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 90
+    Solid: 1
+  - Id: CAP_CITY_OWNED_45
+    SourceId: CAP_CITY_OWNED_45
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -158.59477, y: 68.29067, z: -457.93152}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_46
+    SourceId: CAP_CITY_OWNED_46
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -529.83734, y: 70.72205, z: -455.55548}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: CAP_CITY_OWNED_47
+    SourceId: CAP_CITY_OWNED_47
+    Group: Citywide_OwnedBuildingReplacement
+    Position: {x: -557.9429, y: 70.46877, z: -434.9984}
+    Size: {x: 0, y: 6, z: 0}
+    Yaw: 0
+    Solid: 1
+  - Id: Blast_Cord
+    SourceId: Blast_Cord
+    Group: Playtest_EarlyArt
+    Position: {x: 3407.4675, y: 195.75368, z: 1124.7211}
+    Size: {x: 1.1, y: 0.18, z: 1.1}
+    Yaw: 61
+    Solid: 0
+  - Id: Exit_Transport_Basket
+    SourceId: Exit_Transport_Basket
+    Group: Playtest_EarlyArt
+    Position: {x: 3396.0083, y: 193.72278, z: 1097.2733}
+    Size: {x: 0.8, y: 0.6, z: 0.8}
+    Yaw: 18
+    Solid: 0
+  Views:
+  - Id: mine_exit
+    Eye: {x: 3380.13, y: 198.04465, z: 1119.6735}
+    Target: {x: 3381.37, y: 200.31741, z: 1151.6221}
+  - Id: mountain_path
+    Eye: {x: 3394.6626, y: 213.65796, z: 1494.0653}
+    Target: {x: 3396.29, y: 216.5606, z: 1535.9877}
+  - Id: forest_approach
+    Eye: {x: 2066.501, y: 153.66577, z: 1474.5011}
+    Target: {x: 2094.7678, y: 155.77872, z: 1502.7678}
+  - Id: capital_approach
+    Eye: {x: -215, y: 141.99239, z: -1365}
+    Target: {x: -270, y: 108.66374, z: -1260}
+  - Id: gate_street
+    Eye: {x: -262.875, y: 94.59781, z: -1239.75}
+    Target: {x: -160, y: 80.24538, z: -970}
+  - Id: palace_front
+    Eye: {x: -300, y: 77.4281, z: -700}
+    Target: {x: -300, y: 82.868, z: -788.138}
+  - Id: capital_aerial
+    Eye: {x: -105, y: 245, z: -1010}
+    Target: {x: -275, y: 88, z: -920}
+  - Id: gate_close
+    Eye: {x: -279, y: 92.12591, z: -1238}
+    Target: {x: -279, y: 113.64756, z: -1276}

@@ -1,0 +1,111 @@
+{
+    "status": "PREPARED_LIVE_QA_PENDING",
+    "command": "natural_prepare",
+    "scope": "Derivative Humanoid clips and opt-in movement. Synthetic pose/math checks are separate from native input and terrain play.",
+    "clips": [
+        {
+            "name": "WalkForward",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/WalkForward.anim",
+            "method": "Isolated current C02,121 samples; total signed weighted-sole travel / total time across verified authored stance pairs. Geometry unchanged. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 1.033333420753479,
+            "nativeSupportSpeed": 1.5372612476348878,
+            "requestedSpeed": 2.200000047683716,
+            "playbackRate": 1.4311165809631348,
+            "supportSamples": 120
+        },
+        {
+            "name": "RunForward",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/RunForward.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 0.7000000476837158,
+            "nativeSupportSpeed": 4.035892963409424,
+            "requestedSpeed": 5.5,
+            "playbackRate": 1.3627715110778809,
+            "supportSamples": 53
+        },
+        {
+            "name": "WalkBack",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/WalkBack.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 1.2000000476837159,
+            "nativeSupportSpeed": 1.0614312887191773,
+            "requestedSpeed": 2.200000047683716,
+            "playbackRate": 2.0726730823516847,
+            "supportSamples": 134
+        },
+        {
+            "name": "RunBack",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/RunBack.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 0.6333333849906921,
+            "nativeSupportSpeed": 3.0200204849243166,
+            "requestedSpeed": 5.5,
+            "playbackRate": 1.821179747581482,
+            "supportSamples": 71
+        },
+        {
+            "name": "WalkLeft",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/WalkLeft.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 1.033333420753479,
+            "nativeSupportSpeed": 1.609163522720337,
+            "requestedSpeed": 2.200000047683716,
+            "playbackRate": 1.367169976234436,
+            "supportSamples": 118
+        },
+        {
+            "name": "RunLeft",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/RunLeft.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 0.6666666865348816,
+            "nativeSupportSpeed": 4.165592670440674,
+            "requestedSpeed": 5.5,
+            "playbackRate": 1.3203402757644654,
+            "supportSamples": 63
+        },
+        {
+            "name": "WalkRight",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/WalkRight.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 1.033333420753479,
+            "nativeSupportSpeed": 1.6033673286437989,
+            "requestedSpeed": 2.200000047683716,
+            "playbackRate": 1.3721122741699219,
+            "supportSamples": 117
+        },
+        {
+            "name": "RunRight",
+            "source": "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/Animations/RunRight.anim",
+            "method": "Isolated current C02,121 samples; median signed weighted-sole velocity in verified authored support windows, |vertical velocity| < .55m/s. Runtime slip checked separately.",
+            "humanoid": true,
+            "finite": true,
+            "duration": 0.6666666865348816,
+            "nativeSupportSpeed": 4.2140374183654789,
+            "requestedSpeed": 5.5,
+            "playbackRate": 1.3051615953445435,
+            "supportSamples": 66
+        }
+    ],
+    "pass": [
+        "Official Mixamo locomotion source directions replace inherited C02 leg abduction. Prior dodge, crouch roll, look-turn and seated clips retained."
+    ],
+    "fail": [],
+    "unverified": [
+        "Native keyboard play, slopes, stairs, visual cloth/sitting contact and camera framing",
+        "Full gameplay jump/landing/air gate and repeated seating transitions"
+    ]
+}

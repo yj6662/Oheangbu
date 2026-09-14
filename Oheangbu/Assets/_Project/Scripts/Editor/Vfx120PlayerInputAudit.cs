@@ -28,7 +28,8 @@ namespace Oheangbu.EditorTools
     // These are replayed registered-template strokes, not a handwriting accuracy study.
     public static class Vfx120PlayerInputAudit
     {
-        private const string ScenePath = "Assets/_Project/Scenes/Dev/C2_CodexWorld.unity";
+        private const string DefaultScenePath = "Assets/_Project/Scenes/Dev/C2_CodexWorld.unity";
+        private static string ScenePath = DefaultScenePath;
         private const string LegacyGlyphs = "가노머";
         private static readonly string[] BatchGlyphs = { "가나마사아", "고노모소오", "거너머서어" };
         private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -120,9 +121,16 @@ namespace Oheangbu.EditorTools
         private static string _glyphs = LegacyGlyphs;
 
         public static string Run() => Start();
-        public static string Start() => StartSelection(LegacyGlyphs, 0);
+        public static string Start() { ScenePath=DefaultScenePath;return StartSelection(LegacyGlyphs, 0); }
+        public static string StartPrologue()
+        {
+            if(_running)return Poll();
+            ScenePath="Assets/_Project/Scenes/World/W_Cheongrim_Prologue.unity";
+            return StartSelection("아아어",5);
+        }
         public static string StartSingle(string glyph)
         {
+            if(!_running)ScenePath=DefaultScenePath;
             if(string.IsNullOrEmpty(glyph)||glyph.Length!=1||!"가고거".Contains(glyph))return "BLOCKED: select one registered giyeok glyph";
             return StartSelection(glyph,4);
         }
@@ -130,6 +138,7 @@ namespace Oheangbu.EditorTools
         // batches; using the same depleted InkPool is rejected, never repaired here.
         public static string StartBatch(int batch)
         {
+            if(!_running)ScenePath=DefaultScenePath;
             if (batch < 1 || batch > BatchGlyphs.Length) return "BLOCKED: batch must be 1, 2 or 3.";
             return StartSelection(BatchGlyphs[batch - 1], batch);
         }

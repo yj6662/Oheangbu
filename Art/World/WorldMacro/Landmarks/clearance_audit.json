@@ -1,0 +1,95 @@
+{
+    "scope": "Static authored geometry and capsule-volume probes only; no walking, combat or runtime LOD validation.",
+    "checks": [
+        {
+            "name": "Palace existing-route clearance",
+            "status": "PASS",
+            "detail": "61.94m beyond footprint bounding radius"
+        },
+        {
+            "name": "Palace river and dry-ground clearance",
+            "status": "PASS",
+            "detail": "653.78m beyond nominal bank / dry footprint True / actual terrain relief 1.70m"
+        },
+        {
+            "name": "Palace entry ground",
+            "status": "PASS",
+            "detail": "0.040m"
+        },
+        {
+            "name": "Palace entry passage capsule-volume",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "Fortress existing-route clearance",
+            "status": "PASS",
+            "detail": "33.85m beyond footprint bounding radius"
+        },
+        {
+            "name": "Fortress river and dry-ground clearance",
+            "status": "PASS",
+            "detail": "235.49m beyond nominal bank / dry footprint True / actual terrain relief 2.70m"
+        },
+        {
+            "name": "Fortress entry ground",
+            "status": "PASS",
+            "detail": "0.040m"
+        },
+        {
+            "name": "Fortress entry passage capsule-volume",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "Cave existing-route clearance",
+            "status": "PASS",
+            "detail": "721.63m beyond footprint bounding radius"
+        },
+        {
+            "name": "Cave river and dry-ground clearance",
+            "status": "PASS",
+            "detail": "23.19m beyond nominal bank / dry footprint True / actual terrain relief 3.81m"
+        },
+        {
+            "name": "Cave entry ground",
+            "status": "PASS",
+            "detail": "0.040m"
+        },
+        {
+            "name": "Cave entry passage capsule-volume",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "Temple existing-route clearance",
+            "status": "PASS",
+            "detail": "15.85m beyond footprint bounding radius"
+        },
+        {
+            "name": "Temple river and dry-ground clearance",
+            "status": "PASS",
+            "detail": "34.70m beyond nominal bank / dry footprint True / actual terrain relief 7.56m"
+        },
+        {
+            "name": "Temple entry ground",
+            "status": "PASS",
+            "detail": "0.040m"
+        },
+        {
+            "name": "Temple entry passage capsule-volume",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "textured shader compilation",
+            "status": "PASS",
+            "detail": ""
+        },
+        {
+            "name": "capsule dimensions",
+            "status": "PASS",
+            "detail": "1.75m height / 0.56m diameter / 1.62m eye"
+        }
+    ]
+}

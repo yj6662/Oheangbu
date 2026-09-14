@@ -1,0 +1,13 @@
+{
+  "status": "BRUSH_DIRECTION_CORRECTED_VISUAL_EDGE_ISSUE_REMAINS",
+  "checks": 96,
+  "failedChecks": [],
+  "minimumThumbSideDot": 0.9608044624328613,
+  "maximumTipErrorPixels": 0.2823277413845062,
+  "maximumWristBendDegrees": 40.027957916259766,
+  "contactStatus": "PASS_CURRENT_POSE_VERTEX_CONTACT_ONLY",
+  "sampledVertexPenetrationMeters": 0.0,
+  "profileSha256": "a1b4f8182e077cc0d6656904be296b365aba8a2b78e1889788a2899040943dc4",
+  "visualEdgeStatus": "FAIL_TOP_RIGHT_HAND_OUTSIDE_FRAME",
+  "newBuild": false
+}

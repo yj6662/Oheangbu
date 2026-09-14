@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cfa8b355d5d4b5eb009da73ac1e576c, type: 3}
+  m_Name: WorldScale_Cheongrim
+  m_EditorClassIdentifier:
+  walkSpeedMps: 4.5
+  eyeHeight: 1.8
+  cameraFar: 2800
+  farSetRatio: 0.64
+  paperFadeStartRatio: 0.15
+  paperFadeEndRatio: 0.65
+  paperKeep: 0.55
+  paperStrength: 0.9
+  normalEdgeFadeDistance: 140
+  ridgeLayerCount: 4
+  ridgeRadiusRatios:
+  - 0.5
+  - 0.67
+  - 0.83
+  - 1
+  ridgeElevationDeg:
+  - 6
+  - 7.5
+  - 9
+  - 10.5
+  ridgeNoiseAmp: 0.25
+  sinmokNotchDeg: 8
+  sinmokNotchScale: 0.75
+  rimElevationMaxDeg: 4
+  checkpointMaxWalkMinutes: 3.5
+  bossShrineSeconds: 30
+  innTargetWalkMinutes: 2.5
+  areaWalkMinutesMin: 10
+  areaWalkMinutesMax: 15
+  trailCorridorWidth: 6
+  trailMaxGradeDeg: 15
+  trailCrossGradeDeg: 5
+  rampMaxGradeDeg: 30
+  rampMaxLengthM: 20
+  gadoMinWidth: 6
+  gadoMaxGradeDeg: 12
+  gadoMinTurnRadius: 12
+  maxWalkableDropM: 2
+  oneWayDropMinM: 0.35
+  cliffSlopeDeg: 55
+  boundarySlopeDeg: 60
+  boundaryBandM: 40
+  fordMaxDepth: 0.3
+  deepMinDepth: 1.5
+  sillMinHeight: 0.6
+  parapetMinHeight: 0.8
+  sightlineMinAngularDeg: 0.8
+  beaconFarPlateM: 25
+  loggingTowerHeightM: 8
+  vegetationMaxInstances: 1500

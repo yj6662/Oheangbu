@@ -1,0 +1,614 @@
+{
+  "part": "Engine",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Meshy\\Engine\\image\\model_urls_glb.glb",
+  "sourceSha256": "1f608fc43eb7c7d7b387a72c16c89829e986ac563242b30ef6d86d960706acb2",
+  "sourcePreserved": true,
+  "materials": [
+    {
+      "name": "Engine_Surface",
+      "textures": {
+        "Base Color": {
+          "asset_path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/Engine_Image_0.jpg",
+          "sha256": "c3f5df460458519407903c087825f21695157e5b3d1b176e0356720e62494fe7",
+          "color_space": "sRGB"
+        },
+        "Metallic": {
+          "asset_path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/Engine_Image_1.jpg",
+          "sha256": "2a53be67896886cc4f513751d49e5a516c3f760f9ac553ad6289f1fd31d76780",
+          "color_space": "Non-Color"
+        },
+        "Roughness": {
+          "asset_path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/Engine_Image_1.jpg",
+          "sha256": "2a53be67896886cc4f513751d49e5a516c3f760f9ac553ad6289f1fd31d76780",
+          "color_space": "Non-Color"
+        },
+        "Normal": {
+          "asset_path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/Engine_Image_2.jpg",
+          "sha256": "fd2e095ffa06eea47e950b8edbf530e7746ad83164bac7bc203d50a0b4d3d48a",
+          "color_space": "Non-Color"
+        }
+      },
+      "Alpha": 1.0
+    }
+  ],
+  "levels": [
+    {
+      "lod": 0,
+      "targetTriangles": 8000,
+      "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Engine_LOD0.fbx",
+      "fbxSha256": "249735788244b0480f49874a77067efae3f5e8afc3373aec6f9e677a3eb01439",
+      "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Engine_LOD0.blend",
+      "normalization": {
+        "yawBlenderDegrees": -90.0,
+        "fitMode": "uniform",
+        "axisFactors": [
+          1.0548701464463086,
+          1.0548701464463086,
+          1.0548701464463086
+        ],
+        "targetEnvelopeUnity": [
+          1.6,
+          1.15,
+          2.0
+        ],
+        "actual": {
+          "vertices": 4033,
+          "triangles": 8269,
+          "size_unity_m": {
+            "x": 1.0429743528366089,
+            "y": 0.8172321319580078,
+            "z": 2.0
+          },
+          "bounds_blender": {
+            "minimum": [
+              -0.5214871764183044,
+              -1.0,
+              0.0
+            ],
+            "maximum": [
+              0.5214871764183044,
+              1.0,
+              0.8172321319580078
+            ]
+          },
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Engine_Surface"
+          ],
+          "nonfinite_vertices": 0
+        }
+      },
+      "simplification": {
+        "before": 8269,
+        "target": 8000,
+        "actual": 7879,
+        "maxBoundsDriftM": 0.0
+      },
+      "beforeExport": {
+        "triangles": 7879,
+        "vertices": 3850,
+        "meshCount": 2,
+        "materials": [
+          "Engine_Surface"
+        ],
+        "uvLayers": {
+          "MagicStoneCar_Engine": 1,
+          "MagicStoneCore": 1
+        },
+        "nonfinite": 0,
+        "boundsBlender": {
+          "minimum": [
+            -0.5214871764183044,
+            -1.0,
+            0.0
+          ],
+          "maximum": [
+            0.5214871764183044,
+            1.0,
+            0.8172321319580078
+          ]
+        },
+        "actualBounds": {
+          "center": {
+            "x": 0.0,
+            "y": 0.4086160659790039,
+            "z": -0.0
+          },
+          "size": {
+            "x": 1.0429743528366089,
+            "y": 0.8172321319580078,
+            "z": 2.0
+          }
+        }
+      },
+      "images": [
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_front.png",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_back.png",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_side.png",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_top.png"
+      ],
+      "roundtrip": {
+        "status": "PASS_GEOMETRY",
+        "boundsErrorM": 1.7881393432617188e-07,
+        "uvPresent": true,
+        "actual": {
+          "triangles": 7879,
+          "vertices": 3850,
+          "meshCount": 2,
+          "materials": [
+            "Engine_Surface"
+          ],
+          "uvLayers": {
+            "MagicStoneCar_Engine": 1,
+            "MagicStoneCore": 1
+          },
+          "nonfinite": 0,
+          "boundsBlender": {
+            "minimum": [
+              -0.5214871764183044,
+              -1.0,
+              -1.6292068494294654e-07
+            ],
+            "maximum": [
+              0.5214871764183044,
+              1.0000001192092896,
+              0.8172323107719421
+            ]
+          },
+          "actualBounds": {
+            "center": {
+              "x": 0.0,
+              "y": 0.4086160659790039,
+              "z": -5.960464477539063e-08
+            },
+            "size": {
+              "x": 1.0429743528366089,
+              "y": 0.8172324736926271,
+              "z": 2.0000001192092896
+            }
+          }
+        },
+        "importedObjects": [
+          {
+            "name": "MagicStoneCar_Engine",
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotationEulerDegrees": [
+              -9.334667642611415e-06,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "name": "MagicStoneCore",
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotationEulerDegrees": [
+              -9.334667642611415e-06,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "lod": 1,
+      "targetTriangles": 4000,
+      "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Engine_LOD1.fbx",
+      "fbxSha256": "1fdc89d9c29f49b954895d7cbb698ace5f99560ff6e117c480c9b03c17ca0502",
+      "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Engine_LOD1.blend",
+      "normalization": {
+        "yawBlenderDegrees": -90.0,
+        "fitMode": "uniform",
+        "axisFactors": [
+          1.0548701464463086,
+          1.0548701464463086,
+          1.0548701464463086
+        ],
+        "targetEnvelopeUnity": [
+          1.6,
+          1.15,
+          2.0
+        ],
+        "actual": {
+          "vertices": 4033,
+          "triangles": 8269,
+          "size_unity_m": {
+            "x": 1.0429743528366089,
+            "y": 0.8172321319580078,
+            "z": 2.0
+          },
+          "bounds_blender": {
+            "minimum": [
+              -0.5214871764183044,
+              -1.0,
+              0.0
+            ],
+            "maximum": [
+              0.5214871764183044,
+              1.0,
+              0.8172321319580078
+            ]
+          },
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Engine_Surface"
+          ],
+          "nonfinite_vertices": 0
+        }
+      },
+      "simplification": {
+        "before": 8269,
+        "target": 4000,
+        "actual": 3937,
+        "maxBoundsDriftM": 0.004828214645385742
+      },
+      "beforeExport": {
+        "triangles": 3937,
+        "vertices": 1879,
+        "meshCount": 2,
+        "materials": [
+          "Engine_Surface"
+        ],
+        "uvLayers": {
+          "MagicStoneCar_Engine": 1,
+          "MagicStoneCore": 1
+        },
+        "nonfinite": 0,
+        "boundsBlender": {
+          "minimum": [
+            -0.5193819403648376,
+            -1.0,
+            0.0005118573317304254
+          ],
+          "maximum": [
+            0.5217393040657043,
+            0.9951717853546143,
+            0.8197142481803894
+          ]
+        },
+        "actualBounds": {
+          "center": {
+            "x": 0.0011786818504333496,
+            "y": 0.41011306643486023,
+            "z": 0.002414107322692871
+          },
+          "size": {
+            "x": 1.041121244430542,
+            "y": 0.819202390848659,
+            "z": 1.9951717853546143
+          }
+        }
+      },
+      "images": [],
+      "roundtrip": {
+        "status": "PASS_GEOMETRY",
+        "boundsErrorM": 1.7881393432617188e-07,
+        "uvPresent": true,
+        "actual": {
+          "triangles": 3937,
+          "vertices": 1879,
+          "meshCount": 2,
+          "materials": [
+            "Engine_Surface"
+          ],
+          "uvLayers": {
+            "MagicStoneCar_Engine": 1,
+            "MagicStoneCore": 1
+          },
+          "nonfinite": 0,
+          "boundsBlender": {
+            "minimum": [
+              -0.5193819403648376,
+              -1.0,
+              0.0005116952233947814
+            ],
+            "maximum": [
+              0.5217393040657043,
+              0.9951719045639038,
+              0.8197144269943237
+            ]
+          },
+          "actualBounds": {
+            "center": {
+              "x": 0.0011786818504333496,
+              "y": 0.41011306643486023,
+              "z": 0.0024140477180480957
+            },
+            "size": {
+              "x": 1.041121244430542,
+              "y": 0.819202731770929,
+              "z": 1.9951719045639038
+            }
+          }
+        },
+        "importedObjects": [
+          {
+            "name": "MagicStoneCar_Engine",
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotationEulerDegrees": [
+              -9.334667642611415e-06,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "name": "MagicStoneCore",
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotationEulerDegrees": [
+              -9.334667642611415e-06,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "lod": 2,
+      "targetTriangles": 2000,
+      "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Engine_LOD2.fbx",
+      "fbxSha256": "7b320858d950611de8262a1785cced2b883049c01eb4e43281bd2ce40a75cde7",
+      "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Engine_LOD2.blend",
+      "normalization": {
+        "yawBlenderDegrees": -90.0,
+        "fitMode": "uniform",
+        "axisFactors": [
+          1.0548701464463086,
+          1.0548701464463086,
+          1.0548701464463086
+        ],
+        "targetEnvelopeUnity": [
+          1.6,
+          1.15,
+          2.0
+        ],
+        "actual": {
+          "vertices": 4033,
+          "triangles": 8269,
+          "size_unity_m": {
+            "x": 1.0429743528366089,
+            "y": 0.8172321319580078,
+            "z": 2.0
+          },
+          "bounds_blender": {
+            "minimum": [
+              -0.5214871764183044,
+              -1.0,
+              0.0
+            ],
+            "maximum": [
+              0.5214871764183044,
+              1.0,
+              0.8172321319580078
+            ]
+          },
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "Engine_Surface"
+          ],
+          "nonfinite_vertices": 0
+        }
+      },
+      "simplification": {
+        "before": 8269,
+        "target": 2000,
+        "actual": 1967,
+        "maxBoundsDriftM": 0.014964103698730469
+      },
+      "beforeExport": {
+        "triangles": 1967,
+        "vertices": 890,
+        "meshCount": 2,
+        "materials": [
+          "Engine_Surface"
+        ],
+        "uvLayers": {
+          "MagicStoneCar_Engine": 1,
+          "MagicStoneCore": 1
+        },
+        "nonfinite": 0,
+        "boundsBlender": {
+          "minimum": [
+            -0.506523072719574,
+            -0.9950297474861145,
+            0.005910825449973345
+          ],
+          "maximum": [
+            0.5211116671562195,
+            0.9921327829360962,
+            0.8197142481803894
+          ]
+        },
+        "actualBounds": {
+          "center": {
+            "x": 0.007294297218322754,
+            "y": 0.4128125309944153,
+            "z": 0.0014484822750091553
+          },
+          "size": {
+            "x": 1.0276347398757935,
+            "y": 0.8138034227304161,
+            "z": 1.9871625304222107
+          }
+        }
+      },
+      "images": [
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_front.png",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_back.png",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_side.png",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_top.png"
+      ],
+      "roundtrip": {
+        "status": "PASS_GEOMETRY",
+        "boundsErrorM": 1.7881393432617188e-07,
+        "uvPresent": true,
+        "actual": {
+          "triangles": 1967,
+          "vertices": 890,
+          "meshCount": 2,
+          "materials": [
+            "Engine_Surface"
+          ],
+          "uvLayers": {
+            "MagicStoneCar_Engine": 1,
+            "MagicStoneCore": 1
+          },
+          "nonfinite": 0,
+          "boundsBlender": {
+            "minimum": [
+              -0.506523072719574,
+              -0.9950296878814697,
+              0.005910663865506649
+            ],
+            "maximum": [
+              0.5211116671562195,
+              0.9921329021453857,
+              0.8197144269943237
+            ]
+          },
+          "actualBounds": {
+            "center": {
+              "x": 0.007294297218322754,
+              "y": 0.4128125309944153,
+              "z": 0.0014483928680419922
+            },
+            "size": {
+              "x": 1.0276347398757935,
+              "y": 0.8138037631288171,
+              "z": 1.9871625900268555
+            }
+          }
+        },
+        "importedObjects": [
+          {
+            "name": "MagicStoneCar_Engine",
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotationEulerDegrees": [
+              -9.334667642611415e-06,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          {
+            "name": "MagicStoneCore",
+            "location": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "rotationEulerDegrees": [
+              -9.334667642611415e-06,
+              0.0,
+              0.0
+            ],
+            "scale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "core": {
+    "status": "PASS_ORIGINAL_CENTRAL_LENS_SURFACE",
+    "sourceFaces": 31,
+    "regionUnity": [
+      -0.2,
+      0.2,
+      0.15,
+      0.6,
+      0.72,
+      1.1
+    ],
+    "core": {
+      "vertices": 26,
+      "triangles": 37,
+      "size_unity_m": {
+        "x": 0.2059813216328621,
+        "y": 0.21045607328414917,
+        "z": 0.03960198163986206
+      },
+      "bounds_blender": {
+        "minimum": [
+          -0.0936782956123352,
+          -0.9955177903175354,
+          0.29271697998046875
+        ],
+        "maximum": [
+          0.11230302602052689,
+          -0.9559158086776733,
+          0.5031730532646179
+        ]
+      },
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Engine_Surface"
+      ],
+      "nonfinite_vertices": 0
+    },
+    "verifiedSemanticCore": true,
+    "inspectionEvidence": [
+      "Images/EngineCore_isolated.png",
+      "Images/EngineCore_region.png"
+    ],
+    "scope": "Central cyan lens faces only; original UV. No glow material/runtime claim."
+  },
+  "status": "PASS_GEOMETRY",
+  "visualQuality": "STATIC_SHAPE_REVIEWED_NOT_USER_APPROVED",
+  "runtime": "UNVERIFIED"
+}

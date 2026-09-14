@@ -132,3 +132,27 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+# 룩 검수 캡처 산출물(ScreenCapture) — 리포 대상 아님(승인 컷만 Docs/Refs에 별도)
+/Screenshots/
+
+# Locally licensed environment packs
+/Assets/BillemotdonggulLavaTubePack/
+/Assets/BillemotdonggulLavaTubePack.meta
+/Assets/House_1/
+/Assets/House_1.meta
+/Assets/House_2/
+/Assets/House_2.meta
+/Assets/HwaseongForteressGate/
+/Assets/HwaseongForteressGate.meta
+/Assets/HwaseongHaenggung/
+/Assets/HwaseongHaenggung.meta
+/Assets/Korea_TreasureProps/
+/Assets/Korea_TreasureProps.meta
+/Assets/KoreanTraditionalFestival/
+/Assets/KoreanTraditionalFestival.meta
+/Assets/KTinteractiveProp/
+/Assets/KTinteractiveProp.meta
+/Assets/SeyeonjeongPavilion/
+/Assets/SeyeonjeongPavilion.meta
+/Assets/YongmeoriCoast/
+/Assets/YongmeoriCoast.meta

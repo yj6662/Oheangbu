@@ -1,0 +1,28 @@
+{
+    "status": "PASS",
+    "scope": "Asset wiring/import only; actual device output and artistic judgement unverified",
+    "checks": [
+        "PCM preload: brush_stroke.wav",
+        "PCM preload: cast_earth.wav",
+        "PCM preload: cast_fire.wav",
+        "PCM preload: cast_metal.wav",
+        "PCM preload: cast_water.wav",
+        "PCM preload: cast_wood.wav",
+        "PCM preload: harvest.wav",
+        "PCM preload: harvest_end.wav",
+        "PCM preload: harvest_loop.wav",
+        "PCM preload: harvest_start.wav",
+        "PCM preload: impact.wav",
+        "PCM preload: interact.wav",
+        "PCM preload: parry.wav",
+        "PCM preload: player_hit.wav",
+        "PCM preload: rest.wav",
+        "PCM preload: summon_appear.wav",
+        "PCM preload: summon_release.wav",
+        "PCM preload: ui_back.wav",
+        "PCM preload: ui_confirm.wav",
+        "PCM preload: ui_paper.wav",
+        "Master > SFX > Harvest; Master > UI"
+    ],
+    "failures": []
+}

@@ -1,16 +1,11 @@
 using Oheangbu.Core.Events;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 namespace Oheangbu.Combat
 {
-    // [실험 2026-08-27] 숄더뷰 + 작도 클로즈업 카메라 — SPEC-COMBAT-CORE-LOOP §10.1 실증.
-    // 결정 3(1인칭)에 대한 실험이지 전이가 아니다 — 채택하려면 DECISIONS 문답이 먼저다.
-    //
-    // 상태는 2층이다: 베이스 모드(1인칭↔숄더뷰 정중앙 상단, V 토글) + 작도 오버레이(클로즈업 =
-    // 살짝 우측·상단 — 추후 이 프레임에 팔·붓이 렌더된다). 작도 중 V는 무시한다 —
-    // 종료 시 복귀처가 항상 결정적이어야 한다.
+    // 비작도는 숄더뷰, 작도는 기존 근접 오버레이를 사용한다(사용자 결정 2026-09-08).
+    // V로 기반 시점을 바꾸지 않으며 작도 종료 시 항상 숄더 오프셋으로 복귀한다.
     // 작도면은 카메라 자식(화면 고정)이므로 마우스↔작도 1:1 매핑은 어느 포즈에서든 유지된다 —
     // 포즈 이동만으로는 글자 화면 크기가 변하지 않으므로, 클로즈업 체감은 FOV 스냅이 담당한다.
     public sealed class CameraRigController : MonoBehaviour
@@ -26,12 +21,26 @@ namespace Oheangbu.Combat
 
         private Camera _cam;
         private bool _drawing;
-        private bool _shoulder;
+        private bool _shoulder = true;
         private Vector3 _localPose;   // 붐 적용 전의 블렌드 상태(카메라 localPosition과 분리)
         private float _boom01 = 1f;   // 충돌 붐 비율 — 축소는 즉시, 복원은 점진
         private float _baseFov;
+        private bool _drawingPresentationActive;
 
         public bool IsShoulder => _shoulder;
+        public bool IsDrawingCloseup => _drawing;
+        public bool IsBodyVisible => !_drawingPresentationActive && _config != null && _camera != null
+            && _camera.localPosition.sqrMagnitude > _config.BodyShowDistance * _config.BodyShowDistance;
+
+        // 표현 리그는 작도 전환 중에도 월드 몸과 근접 팔이 겹치지 않게 표시 소유권만 넘겨받는다.
+        public void SetDrawingPresentationActive(bool active)
+        {
+            _drawingPresentationActive = active;
+            // A presentation pass can switch after this camera's Update. Apply visibility now
+            // so a newly visible close-up arm cannot overlap the world body for one frame.
+            ApplyBodyVisibility(IsBodyVisible);
+        }
+        public void SetBodyRenderers(Renderer[] renderers) { _bodyRenderers = renderers; }
 
         // 숄더뷰는 피치 궤도가 지면·벽을 관통하므로 좁은 클램프를 쓴다 — PlayerMotor가 조회
         public void GetPitchLimits(out float min, out float max)
@@ -57,7 +66,7 @@ namespace Oheangbu.Combat
         private void OnEnable()
         {
             if (_drawModeChanged != null) _drawModeChanged.Subscribe(OnDrawModeChanged);
-            _shoulder = _config != null && _config.ShoulderStart;
+            _shoulder = true;
             if (_camera != null) _localPose = _camera.localPosition;
         }
 
@@ -70,15 +79,7 @@ namespace Oheangbu.Combat
         {
             if (_config == null || _camera == null || _cameraPivot == null) return;
 
-            var kb = Keyboard.current; // [실험] 토글 전용 직결 — Spec §9 예외, Exit=Gameplay 액션맵 승격
-            if (!_drawing && kb != null && kb.vKey.wasPressedThisFrame)
-            {
-                _shoulder = !_shoulder;
-            }
-
-            Vector3 target = !_shoulder ? Vector3.zero
-                : _drawing ? _config.ShoulderDrawOffset
-                : _config.ShoulderOffset;
+            Vector3 target = _drawing ? _config.ShoulderDrawOffset : _config.ShoulderOffset;
 
             // 클로즈업 진입은 빠른 블렌드(컷은 어색 — 3차 검수), 평시·복귀는 부드럽게.
             // 감속(작도 timeScale)과 무관하게 같은 속도 — 카메라는 세상 밖의 눈이다.
@@ -93,7 +94,7 @@ namespace Oheangbu.Combat
             // 블렌드·클로즈업·붐 어느 경로로 눈에 접근해도 니어클립 단면 잔상이 없다.
             // 숨김은 ShadowsOnly(그림자 유지) — 몸체는 HUD가 아니므로 화이트리스트 무관.
             float show = _config.BodyShowDistance;
-            ApplyBodyVisibility(_camera.localPosition.sqrMagnitude > show * show);
+            ApplyBodyVisibility(!_drawingPresentationActive && _camera.localPosition.sqrMagnitude > show * show);
         }
 
         // 피벗→목표 지점 SphereCast — 지면·벽에 막히면 즉시 당겨 붙이고, 풀리면 점진 복원.
@@ -119,9 +120,8 @@ namespace Oheangbu.Combat
             // FOV는 스냅 — 작도 점이 찍히기 전에 확정돼야 마우스↔작도 1:1이 깨지지 않는다.
             // 포즈는 Update의 빠른 블렌드(진입 속도) — 컷은 어색하다는 3차 검수.
             // 블렌드 중 시작한 획의 미세한 평면 뒤틀림은 수용된 트레이드오프(Spec §12).
-            // 1인칭은 대조군으로 무변경.
             if (_cam == null || _config == null) return;
-            bool closeup = drawing && _shoulder && _config.DrawCloseupFov > 0f;
+            bool closeup = drawing && _config.DrawCloseupFov > 0f;
             _cam.fieldOfView = closeup ? _config.DrawCloseupFov : _baseFov;
         }
 

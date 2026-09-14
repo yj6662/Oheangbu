@@ -1,0 +1,17 @@
+{
+    "status": "TEST",
+    "scope": "Authored dimensions and floor-supported spawn only. Walking validation belongs to the user.",
+    "height": 1.75,
+    "diameter": 0.5600000023841858,
+    "eyeHeight": 1.6200000047683716,
+    "skin": 0.029999999329447748,
+    "step": 0.30000001192092898,
+    "renderedHeight": 1.75,
+    "renderedWidth": 0.5600000023841858,
+    "walkSpeed": 4.5,
+    "position": {
+        "x": 1982.0,
+        "y": 131.9727020263672,
+        "z": 640.0
+    }
+}

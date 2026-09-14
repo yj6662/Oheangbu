@@ -1,0 +1,26 @@
+{
+    "utc": "2026-09-13T14:44:01.9176814Z",
+    "status": "MEASURED",
+    "scope": "Unity Editor Play, fixed 1920x1080 offscreen camera, 30 warmup + 120 samples. Editor overhead included; zero GPU timing means unavailable, not zero cost.",
+    "combat": true,
+    "cameraPosition": {
+        "x": 2000.2706298828125,
+        "y": 135.2941131591797,
+        "z": 677.929443359375
+    },
+    "cameraEuler": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "medianFrameMs": 12.442701496183873,
+    "p95FrameMs": 14.527501538395882,
+    "medianCpuMs": 12.5659,
+    "medianGpuMs": 5.153536,
+    "allocatedMiB": 3640.306215286255,
+    "reservedMiB": 4751.3046875,
+    "frameSamples": 120,
+    "cpuSamples": 120,
+    "gpuSamples": 120,
+    "commit": 0.6405460238456726
+}

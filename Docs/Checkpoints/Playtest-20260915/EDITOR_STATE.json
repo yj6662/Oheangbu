@@ -1,0 +1,14 @@
+{
+  "editor_get_state": {
+    "success": false,
+    "error": "Cannot connect to http://localhost:8090. Unity instance may be down.",
+    "suggestion": "Unity may be recompiling scripts (Domain Reload). Wait 3-5 seconds and retry.",
+    "hint": "Check if server is running: Window > UnitySkills > Start Server"
+  },
+  "console_get_stats": {
+    "success": false,
+    "error": "Cannot connect to http://localhost:8090. Unity instance may be down.",
+    "suggestion": "Unity may be recompiling scripts (Domain Reload). Wait 3-5 seconds and retry.",
+    "hint": "Check if server is running: Window > UnitySkills > Start Server"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "reason": "Repeated unresponsive cleanup after successful saved navigation preparation; commit gate rejected build",
+  "sceneSavedAt": "2026-09-13T15:41:42.7512306Z",
+  "sceneSha256": "1E3A16CC294109CE8580FB258988C6805EF67B2C8273A3912C285FDE11644D61",
+  "processId": 14116,
+  "responding": false,
+  "utc": "2026-09-13T15:44:59.4940290Z"
+}

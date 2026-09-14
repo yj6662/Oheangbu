@@ -1,0 +1,2428 @@
+{
+    "utc": "2026-09-12T10:57:16.8713995Z",
+    "scope": "First-pass content positions and accessible modular dungeon layouts. NPC/evidence F inspection is preview only; no campaign quests, boss AI or reward gates are declared complete.",
+    "entries": [
+        {
+            "Id": "mine_inquiry",
+            "Label": "무너진 갱도 조사",
+            "Realm": "Cheongrim",
+            "Anchor": "Cave",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "잘린 심지와 바깥으로 튄 암편이 남았다. 광맥의 폭주만으로 생긴 흔적은 아닌 듯하다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -5.0,
+                "y": 0.0,
+                "z": -18.0
+            },
+            "Position": {
+                "x": 3363.334228515625,
+                "y": 199.0910186767578,
+                "z": 1104.3028564453125
+            },
+            "Yaw": 29.999998092651368,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "mine_beast",
+            "Label": "폭파로 풀려난 짐승",
+            "Realm": "Cheongrim",
+            "Anchor": "Cave",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "NeutralMelee",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -16.0,
+                "y": 0.0,
+                "z": -35.0
+            },
+            "Position": {
+                "x": 3393.1435546875,
+                "y": 192.70091247558595,
+                "z": 1069.60986328125
+            },
+            "Yaw": 29.999998092651368,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 2,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "mine_fire",
+            "Label": "화맥에 물든 짐승",
+            "Realm": "Cheongrim",
+            "Anchor": "Mine",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "FireRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": 35.0,
+                "y": 0.0,
+                "z": 55.0
+            },
+            "Position": {
+                "x": 3029.83154296875,
+                "y": 444.794677734375,
+                "z": 488.49615478515627
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "mine_return",
+            "Label": "폐광 상부 국 예고",
+            "Realm": "Cheongrim",
+            "Anchor": "Cave",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "국",
+            "Text": "절벽 위에 오래된 작업대가 보인다. 지금은 닿지 않는다. 본선 통과 조건은 아니다.",
+            "Requires": "",
+            "Kind": 7,
+            "Offset": {
+                "x": 35.0,
+                "y": 0.0,
+                "z": 30.0
+            },
+            "Position": {
+                "x": 3434.617919921875,
+                "y": 189.5589599609375,
+                "z": 1131.3447265625
+            },
+            "Yaw": 29.999998092651368,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "geumpyo_inn",
+            "Label": "금표 주막",
+            "Realm": "Cheongrim",
+            "Anchor": "Inn",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "약초와 젖은 나무 냄새가 섞인다. 휴식·저장 서비스 연결 예정 지점이다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -20.0,
+                "y": 0.0,
+                "z": -10.0
+            },
+            "Position": {
+                "x": 1962.0,
+                "y": 133.2049102783203,
+                "z": 690.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "herbalist",
+            "Label": "잔류 약초꾼",
+            "Realm": "Cheongrim",
+            "Anchor": "Inn",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "“잎이 무성하다고 다 살아 있는 숲은 아니오. 물든 심부에선 뿌리부터 보시오.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -13.0,
+                "y": 0.0,
+                "z": -14.0
+            },
+            "Position": {
+                "x": 1957.687744140625,
+                "y": 133.14195251464845,
+                "z": 690.0040893554688
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "logger",
+            "Label": "돌아온 벌목꾼",
+            "Realm": "Cheongrim",
+            "Anchor": "Inn",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "“쇠가 박힌 자리만 뿌리가 멈췄소. 창고 뒤 철책을 보면 알 거요.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -27.0,
+                "y": 0.0,
+                "z": -12.0
+            },
+            "Position": {
+                "x": 1955.0,
+                "y": 133.10633850097657,
+                "z": 688.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "geumpyo_stone",
+            "Label": "금표 비석",
+            "Realm": "Cheongrim",
+            "Anchor": "Cheongrim",
+            "Source": "LDB-LENSES; LDB-REALMS",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "봉산 출입을 금하는 관의 글씨 아래, 나무꾼들이 남긴 작은 흠집이 겹쳐 있다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": 32.0,
+                "y": 0.0,
+                "z": 25.0
+            },
+            "Position": {
+                "x": 2022.0,
+                "y": 136.0589141845703,
+                "z": 835.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "logging_dungeon",
+            "Label": "버려진 벌목장 창고",
+            "Realm": "Cheongrim",
+            "Anchor": "Logging",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "Warehouse",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 40.0,
+                "y": 0.0,
+                "z": -55.0
+            },
+            "Position": {
+                "x": 2010.0,
+                "y": 147.0828857421875,
+                "z": 1305.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "metal_lesson",
+            "Label": "덩굴이 멎은 철책",
+            "Realm": "Cheongrim",
+            "Anchor": "Logging",
+            "Source": "LDB-REALMS: 청룡 금 차단 선행 학습",
+            "Stage": "EA",
+            "Role": "MetalBlocksGrowth",
+            "Text": "부러진 쇠도끼와 철책에 닿은 덩굴만 검게 마른 채 멈춰 있다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": 20.0,
+                "y": 0.0,
+                "z": -20.0
+            },
+            "Position": {
+                "x": 1978.687744140625,
+                "y": 147.0518798828125,
+                "z": 1344.004150390625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "logging_pack",
+            "Label": "적재장 짐승 무리",
+            "Realm": "Cheongrim",
+            "Anchor": "Logging",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "WoodRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -38.0,
+                "y": 0.0,
+                "z": 30.0
+            },
+            "Position": {
+                "x": 1950.65576171875,
+                "y": 146.8636016845703,
+                "z": 1374.9014892578125
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "deep_pack",
+            "Label": "심부 포박 무리",
+            "Realm": "Cheongrim",
+            "Anchor": "DeepForest",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "WoodRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -46.0,
+                "y": 0.0,
+                "z": -32.0
+            },
+            "Position": {
+                "x": 2187.72607421875,
+                "y": 201.82366943359376,
+                "z": 1920.7564697265625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "root_dungeon",
+            "Label": "뿌리 굴",
+            "Realm": "Cheongrim",
+            "Anchor": "DeepForest",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "Mine",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 90.0,
+                "y": 0.0,
+                "z": 35.0
+            },
+            "Position": {
+                "x": 2524.296142578125,
+                "y": 156.81593322753907,
+                "z": 1952.00634765625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "hunter_inn",
+            "Label": "사냥꾼 주막",
+            "Realm": "Cheongrim",
+            "Anchor": "DeepForest",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "성역으로 가기 전 마지막 사람의 온기가 남아 있다. 휴식 연결 예정 지점이다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -150.0,
+                "y": 0.0,
+                "z": -90.0
+            },
+            "Position": {
+                "x": 2130.0,
+                "y": 206.31715393066407,
+                "z": 1850.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "hunter",
+            "Label": "숲길 사냥꾼",
+            "Realm": "Cheongrim",
+            "Anchor": "DeepForest",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "“저 큰 나무 앞 금줄은 넘지 마시오. 이야기는 이쪽에서도 들을 수 있소.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -144.0,
+                "y": 0.0,
+                "z": -96.0
+            },
+            "Position": {
+                "x": 2136.0,
+                "y": 206.0318145751953,
+                "z": 1844.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "tree_warning",
+            "Label": "신목 금줄과 장승",
+            "Realm": "Cheongrim",
+            "Anchor": "Tree",
+            "Source": "LDB-REALMS: 신목 옵션 보스",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "가지 말라는 말들이 금줄에 겹겹이 묶여 있다. 영역 진입은 선택이다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -42.0,
+                "y": 0.0,
+                "z": -40.0
+            },
+            "Position": {
+                "x": 2748.0,
+                "y": 176.4670867919922,
+                "z": 2260.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "sacred_tree",
+            "Label": "신목 영역",
+            "Realm": "Cheongrim",
+            "Anchor": "Tree",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "WoodFieldBoss",
+            "Text": "선택형 필드 보스 영역. 보스 행동·공격은 아직 연결하지 않았다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 24.0
+            },
+            "Position": {
+                "x": 3040.887451171875,
+                "y": 194.335693359375,
+                "z": 2704.777587890625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "azure_dragon",
+            "Label": "청룡 성역",
+            "Realm": "Cheongrim",
+            "Anchor": "Dragon",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "WoodMajorBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 18.0,
+                "y": 0.0,
+                "z": 18.0
+            },
+            "Position": {
+                "x": 2248.0,
+                "y": 200.22268676757813,
+                "z": 2114.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "dragon_dual",
+            "Label": "성역의 두 전승",
+            "Realm": "Cheongrim",
+            "Anchor": "Dragon",
+            "Source": "LDB-LENSES; NARR-LENSES",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "비석에는 “나라가 세운 수호신수”, 낡은 나무패에는 “숲의 주인”이라 적혀 있다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -30.0,
+                "y": 0.0,
+                "z": -35.0
+            },
+            "Position": {
+                "x": 2200.0,
+                "y": 201.44139099121095,
+                "z": 2061.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "jeongdam_j1",
+            "Label": "정담 · 길목 역참",
+            "Realm": "Cheongrim",
+            "Anchor": "PostStation",
+            "Source": "NARR-CHARACTERS; NARR-STORYLINE J1",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "“오랜만이군. 폐광을 다녀왔다지? 상경길도 전 같지 않네. 객주 쪽 사정부터 알아보게.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -18.0,
+                "y": 0.0,
+                "z": -10.0
+            },
+            "Position": {
+                "x": 1901.0460205078125,
+                "y": 133.71182250976563,
+                "z": 580.6887817382813
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "wangso_w1",
+            "Label": "왕소 · 객주 분소",
+            "Realm": "Cheongrim",
+            "Anchor": "MerchantBranch",
+            "Source": "NARR-CHARACTERS; NARR-STORYLINE W1",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "“봉인을 건드리지 않고 본점까지 옮겨 주실 분을 찾고 있어요. 급히 정하실 일은 아니에요.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -18.0,
+                "y": 0.0,
+                "z": -14.0
+            },
+            "Position": {
+                "x": 1380.687744140625,
+                "y": 277.158203125,
+                "z": 38.00410461425781
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "cargo_contract",
+            "Label": "봉인 화물 의뢰 지점",
+            "Realm": "Cheongrim",
+            "Anchor": "MerchantBranch",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "봉인 화물 호송 수주와 상경 가도 동행의 배치 지점. 실제 의뢰 수락은 아직 연결하지 않았다.",
+            "Requires": "wangso_w1",
+            "Kind": 3,
+            "Offset": {
+                "x": -10.0,
+                "y": 0.0,
+                "z": -23.0
+            },
+            "Position": {
+                "x": 1400.0,
+                "y": 280.02716064453127,
+                "z": 25.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "shrine_c_entrance",
+            "Label": "청림 성황당 · entrance",
+            "Realm": "Cheongrim",
+            "Anchor": "Mine",
+            "Source": "LDB-CHECKPOINT",
+            "Stage": "EA",
+            "Role": "Shrine",
+            "Text": "조용한 성황당. 재시도·회복 연결 예정 지점.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -25.0,
+                "y": 0.0,
+                "z": -10.0
+            },
+            "Position": {
+                "x": 3001.0,
+                "y": 441.1800231933594,
+                "z": 460.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "shrine_c_logging",
+            "Label": "청림 성황당 · logging",
+            "Realm": "Cheongrim",
+            "Anchor": "Logging",
+            "Source": "LDB-CHECKPOINT",
+            "Stage": "EA",
+            "Role": "Shrine",
+            "Text": "조용한 성황당. 재시도·회복 연결 예정 지점.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -40.0,
+                "y": 0.0,
+                "z": -45.0
+            },
+            "Position": {
+                "x": 1930.0,
+                "y": 148.5104217529297,
+                "z": 1315.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "shrine_c_fork",
+            "Label": "청림 성황당 · fork",
+            "Realm": "Cheongrim",
+            "Anchor": "DeepForest",
+            "Source": "LDB-CHECKPOINT",
+            "Stage": "EA",
+            "Role": "Shrine",
+            "Text": "조용한 성황당. 재시도·회복 연결 예정 지점.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -48.0,
+                "y": 0.0,
+                "z": -58.0
+            },
+            "Position": {
+                "x": 2232.0,
+                "y": 187.54966735839845,
+                "z": 1882.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "shrine_c_dragon",
+            "Label": "청림 성황당 · dragon",
+            "Realm": "Cheongrim",
+            "Anchor": "Dragon",
+            "Source": "LDB-CHECKPOINT",
+            "Stage": "EA",
+            "Role": "Shrine",
+            "Text": "조용한 성황당. 재시도·회복 연결 예정 지점.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -45.0,
+                "y": 0.0,
+                "z": -75.0
+            },
+            "Position": {
+                "x": 2185.0,
+                "y": 202.6219024658203,
+                "z": 2021.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "burned_camp",
+            "Label": "버려진 화맥 진지",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Warehouse",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": -100.0,
+                "y": 0.0,
+                "z": 90.0
+            },
+            "Position": {
+                "x": -450.0,
+                "y": 39.04378128051758,
+                "z": -3440.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "war_tomb",
+            "Label": "전몰자 묘역",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Tomb",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 150.0,
+                "y": 0.0,
+                "z": -100.0
+            },
+            "Position": {
+                "x": -200.0,
+                "y": 38.0179443359375,
+                "z": -3630.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "fire_line",
+            "Label": "불탄 참호 짐승",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "FireRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": 55.0,
+                "y": 0.0,
+                "z": 105.0
+            },
+            "Position": {
+                "x": -295.0,
+                "y": 35.42129898071289,
+                "z": -3425.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "ash_pack",
+            "Label": "재밭의 무속성 짐승",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "NeutralMelee",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -75.0,
+                "y": 0.0,
+                "z": -55.0
+            },
+            "Position": {
+                "x": -428.557373046875,
+                "y": 39.878662109375,
+                "z": -3561.26513671875
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "suzaku",
+            "Label": "주작 화맥 아레나",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "FireMajorBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 220.0,
+                "y": 0.0,
+                "z": 210.0
+            },
+            "Position": {
+                "x": -189.47459411621095,
+                "y": 37.54844284057617,
+                "z": -3327.9228515625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "war_elder",
+            "Label": "위령객",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "“이긴 자의 글에 죽은 자의 이름이 다 들어갈 수 있겠소.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -40.0,
+                "y": 0.0,
+                "z": -150.0
+            },
+            "Position": {
+                "x": -390.0,
+                "y": 39.14332580566406,
+                "z": -3680.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "war_official",
+            "Label": "회군의 관찬 비문",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-LENSES: 회군 다중전승",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "비문은 의거라 적는다. 승리의 날짜 아래 이름 없는 돌무덤이 이어진다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -25.0,
+                "y": 0.0,
+                "z": -120.0
+            },
+            "Position": {
+                "x": -375.0,
+                "y": 39.43356704711914,
+                "z": -3650.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "war_song",
+            "Label": "돌무덤의 구전",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-LENSES: 회군 다중전승",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "유민의 노래는 같은 날을 배신이라 부른다.",
+            "Requires": "",
+            "Kind": 3,
+            "Offset": {
+                "x": 110.0,
+                "y": 0.0,
+                "z": -130.0
+            },
+            "Position": {
+                "x": -240.0,
+                "y": 36.67512130737305,
+                "z": -3660.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "south_inn",
+            "Label": "재길 주막",
+            "Realm": "Jeokro",
+            "Anchor": "SouthBridge",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": 80.0,
+                "y": 0.0,
+                "z": -100.0
+            },
+            "Position": {
+                "x": -1320.0,
+                "y": 29.888160705566408,
+                "z": -2500.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "war_shrine",
+            "Label": "위령 성황당",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Shrine",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": 180.0,
+                "y": 0.0,
+                "z": 150.0
+            },
+            "Position": {
+                "x": -170.0,
+                "y": 36.16697692871094,
+                "z": -3380.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "ash_revisit",
+            "Label": "재 위 덩굴 장벽 예고",
+            "Realm": "Jeokro",
+            "Anchor": "Jeokro",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "눈",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 7,
+            "Offset": {
+                "x": 150.0,
+                "y": 0.0,
+                "z": 60.0
+            },
+            "Position": {
+                "x": -200.0,
+                "y": 34.35494613647461,
+                "z": -3470.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "armory",
+            "Label": "버려진 군기고",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Warehouse",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 105.0,
+                "y": 0.0,
+                "z": -80.0
+            },
+            "Position": {
+                "x": -2288.42138671875,
+                "y": 125.31055450439453,
+                "z": 223.86837768554688
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "exile_tomb",
+            "Label": "성외 옛 묘역",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Tomb",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": -135.0,
+                "y": 0.0,
+                "z": 95.0
+            },
+            "Position": {
+                "x": -2046.581787109375,
+                "y": 128.8011474609375,
+                "z": 240.49136352539063
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "iron_patrol",
+            "Label": "성외 단일 금 병졸",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "MetalRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": 95.0,
+                "y": 0.0,
+                "z": 70.0
+            },
+            "Position": {
+                "x": -2204.76123046875,
+                "y": 127.859619140625,
+                "z": 98.96456909179688
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "gate_beasts",
+            "Label": "고개 앞 물든 짐승",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "NeutralMelee",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -90.0,
+                "y": 0.0,
+                "z": -90.0
+            },
+            "Position": {
+                "x": -2125.476318359375,
+                "y": 125.92719268798828,
+                "z": 318.064697265625
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "white_tiger",
+            "Label": "백호 성곽 밖 아레나",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "MetalMajorBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": -170.0,
+                "y": 0.0,
+                "z": 195.0
+            },
+            "Position": {
+                "x": -1808.688232421875,
+                "y": 247.09231567382813,
+                "z": 94.36419677734375
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "smith",
+            "Label": "철옹 대장장이",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "“성벽을 버티는 건 돌만이 아니지. 금 간 쇠도 이어 쓰는 사람이 있어야 해.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -82.0,
+                "y": 0.0,
+                "z": -40.0
+            },
+            "Position": {
+                "x": -2089.802734375,
+                "y": 125.52655792236328,
+                "z": 299.99151611328127
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "exile_scholar",
+            "Label": "폐서원의 유배 문인",
+            "Realm": "Cheolong",
+            "Anchor": "Cheolong",
+            "Source": "LDB-LENSES: 폐서원",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "“지워진 줄은 빈 줄이 아니오. 남은 글의 사이를 읽어 보시오.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -180.0,
+                "y": 0.0,
+                "z": -120.0
+            },
+            "Position": {
+                "x": -2420.0,
+                "y": 110.6463394165039,
+                "z": 230.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "exile_manuscript",
+            "Label": "폐서원 필사본",
+            "Realm": "Cheolong",
+            "Anchor": "Cheolong",
+            "Source": "LDB-LENSES",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "거둠의 법 아래 지워진 이름이 여백에 다시 적혀 있다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -185.0,
+                "y": 0.0,
+                "z": -115.0
+            },
+            "Position": {
+                "x": -2425.0,
+                "y": 110.27910614013672,
+                "z": 235.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "fort_inn",
+            "Label": "성외 주막",
+            "Realm": "Cheolong",
+            "Anchor": "WestPass",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -48.0,
+                "y": 0.0,
+                "z": -45.0
+            },
+            "Position": {
+                "x": -2120.953857421875,
+                "y": 124.66584014892578,
+                "z": 401.68878173828127
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "fort_shrine",
+            "Label": "백호 길목 성황당",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Shrine",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -150.0,
+                "y": 0.0,
+                "z": 140.0
+            },
+            "Position": {
+                "x": -1957.5849609375,
+                "y": 164.8418426513672,
+                "z": 160.84280395507813
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "rubble_revisit",
+            "Label": "무너진 성벽 바위",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "숫",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 7,
+            "Offset": {
+                "x": -100.0,
+                "y": 0.0,
+                "z": 105.0
+            },
+            "Position": {
+                "x": -2018.38623046875,
+                "y": 133.66456604003907,
+                "z": 166.1536865234375
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "sunken_store",
+            "Label": "잠긴 저자의 건조 창고",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Warehouse",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": -125.0,
+                "y": 0.0,
+                "z": -85.0
+            },
+            "Position": {
+                "x": -123.03436279296875,
+                "y": 159.6685791015625,
+                "z": 4177.7744140625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "old_tomb",
+            "Label": "옛 도읍 교외 묘역",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Tomb",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 160.0,
+                "y": 0.0,
+                "z": 70.0
+            },
+            "Position": {
+                "x": 180.0,
+                "y": 154.7017364501953,
+                "z": 4390.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "river_beasts",
+            "Label": "물가의 수속성 짐승",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "WaterRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -70.0,
+                "y": 0.0,
+                "z": 100.0
+            },
+            "Position": {
+                "x": -50.0,
+                "y": 153.65065002441407,
+                "z": 4420.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "ruin_guard",
+            "Label": "폐도읍 골목 짐승",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "NeutralMelee",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": 80.0,
+                "y": 0.0,
+                "z": -130.0
+            },
+            "Position": {
+                "x": 100.0,
+                "y": 158.24234008789063,
+                "z": 4190.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "black_tortoise",
+            "Label": "현무 궁터 아레나",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "WaterMajorBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 210.0,
+                "y": 0.0,
+                "z": 170.0
+            },
+            "Position": {
+                "x": 230.0,
+                "y": 152.49647521972657,
+                "z": 4490.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "refugee_elder",
+            "Label": "옛 궁터의 유민 장로",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-LENSES: 고려 유민 앵커",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "“서울을 옮겨도 물길까지 데려갈 수는 없었지. 여기에도 사람은 살았소.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -45.0,
+                "y": 0.0,
+                "z": -48.0
+            },
+            "Position": {
+                "x": -25.0,
+                "y": 158.7897186279297,
+                "z": 4272.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "water_inn",
+            "Label": "수상 마을 물가 주막",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -120.0,
+                "y": 0.0,
+                "z": -150.0
+            },
+            "Position": {
+                "x": -100.0,
+                "y": 159.3624267578125,
+                "z": 4170.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "tortoise_shrine",
+            "Label": "옛 궁터 성황당",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "Shrine",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": 160.0,
+                "y": 0.0,
+                "z": 130.0
+            },
+            "Position": {
+                "x": 180.0,
+                "y": 152.39157104492188,
+                "z": 4450.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "w2_revelation",
+            "Label": "현강의 수상한 손길",
+            "Realm": "Hyeongang",
+            "Anchor": "Hyeongang",
+            "Source": "NARR-STORYLINE: 슬롯4 현강",
+            "Stage": "Tour",
+            "Role": "",
+            "Text": "왕소 재회와 정체 노출의 후속 서사 지점. 실제 분기·진영 선택은 미연결.",
+            "Requires": "",
+            "Kind": 3,
+            "Offset": {
+                "x": -90.0,
+                "y": 0.0,
+                "z": -55.0
+            },
+            "Position": {
+                "x": -81.312255859375,
+                "y": 158.83676147460938,
+                "z": 4269.00390625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "pollution_revisit",
+            "Label": "오염 수역 정화 예고",
+            "Realm": "Hyeongang",
+            "Anchor": "NorthBridge",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Tour",
+            "Role": "웅",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 7,
+            "Offset": {
+                "x": -55.0,
+                "y": 0.0,
+                "z": 55.0
+            },
+            "Position": {
+                "x": -661.6728515625,
+                "y": 130.32870483398438,
+                "z": 3234.452880859375
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "gap_revisit",
+            "Label": "무너진 다리 너머 예고",
+            "Realm": "Hyeongang",
+            "Anchor": "OldCapitalCreekBridge",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Return",
+            "Role": "뭄",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 7,
+            "Offset": {
+                "x": 70.0,
+                "y": 0.0,
+                "z": 40.0
+            },
+            "Position": {
+                "x": 90.01509094238281,
+                "y": 159.02748107910157,
+                "z": 4099.4306640625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "temple_legacy",
+            "Label": "숨은 사찰 · 레거시 던전",
+            "Realm": "Hyeongang",
+            "Anchor": "Temple",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Late",
+            "Role": "Temple",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 70.0,
+                "y": 0.0,
+                "z": 95.0
+            },
+            "Position": {
+                "x": -1142.3436279296875,
+                "y": 183.24095153808595,
+                "z": 4466.9892578125
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "monk_scholar",
+            "Label": "승복 입은 선비",
+            "Realm": "Hyeongang",
+            "Anchor": "Temple",
+            "Source": "LDB-LENSES: 불교 앵커",
+            "Stage": "Late",
+            "Role": "",
+            "Text": "“붓을 놓은 사람이 글을 잊은 것은 아니지요.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -24.0,
+                "y": 0.0,
+                "z": -45.0
+            },
+            "Position": {
+                "x": -1144.9539794921875,
+                "y": 180.4602813720703,
+                "z": 4603.0693359375
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "sutra_comment",
+            "Label": "불경 주석의 빈 자리",
+            "Realm": "Hyeongang",
+            "Anchor": "Temple",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Late",
+            "Role": "",
+            "Text": "봉안 기록의 한 대목이 도려내졌다. 남은 주석은 다른 역사를 가리킨다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -18.0,
+                "y": 0.0,
+                "z": -42.0
+            },
+            "Position": {
+                "x": -1150.9539794921875,
+                "y": 181.054931640625,
+                "z": 4600.0693359375
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "hyeonun_meeting",
+            "Label": "현운 선사 대면 위치",
+            "Realm": "Hyeongang",
+            "Anchor": "Temple",
+            "Source": "LDB-BOSSPLACEMENT; NARR-STORYLINE",
+            "Stage": "Late",
+            "Role": "",
+            "Text": "보스전 직전 비전투 대면과 왕소 진행도별 대사 예약.",
+            "Requires": "",
+            "Kind": 3,
+            "Offset": {
+                "x": 30.0,
+                "y": 0.0,
+                "z": 55.0
+            },
+            "Position": {
+                "x": -1210.0,
+                "y": 195.79234313964845,
+                "z": 4498.38037109375
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "hyeonun",
+            "Label": "현운 선사 아레나",
+            "Realm": "Hyeongang",
+            "Anchor": "Temple",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Late",
+            "Role": "HumanBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 100.0,
+                "y": 0.0,
+                "z": 160.0
+            },
+            "Position": {
+                "x": -1141.6929931640625,
+                "y": 180.82801818847657,
+                "z": 4488.7490234375
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "mechanical_buddha",
+            "Label": "메카천수관음 아레나",
+            "Realm": "Hyeongang",
+            "Anchor": "Temple",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "Late",
+            "Role": "MechanicalBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": -115.0,
+                "y": 0.0,
+                "z": 180.0
+            },
+            "Position": {
+                "x": -1076.312255859375,
+                "y": 176.73678588867188,
+                "z": 4377.38427734375
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "capital_tomb",
+            "Label": "성저 교외 묘역",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthPost",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "Tomb",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": 85.0,
+                "y": 0.0,
+                "z": -70.0
+            },
+            "Position": {
+                "x": -62.171173095703128,
+                "y": 163.48037719726563,
+                "z": -1439.7716064453125
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "merchant_cellar",
+            "Label": "객주 지하 창고 시안",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthPost",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "Warehouse",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 4,
+            "Offset": {
+                "x": -90.0,
+                "y": 0.0,
+                "z": -100.0
+            },
+            "Position": {
+                "x": -227.75979614257813,
+                "y": 145.4669952392578,
+                "z": -1450.7349853515625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "earth_checkpoint",
+            "Label": "가도 토 속성 검문병",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthPost",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "EarthRanged",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": 55.0,
+                "y": 0.0,
+                "z": -50.0
+            },
+            "Position": {
+                "x": 211.91078186035157,
+                "y": 248.46478271484376,
+                "z": -1334.142578125
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "outer_road_beasts",
+            "Label": "가도 무속성 짐승",
+            "Realm": "Hwanggyeong",
+            "Anchor": "EastPass",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "NeutralMelee",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 0,
+            "Offset": {
+                "x": -60.0,
+                "y": 0.0,
+                "z": -130.0
+            },
+            "Position": {
+                "x": 1030.5030517578125,
+                "y": 335.9222106933594,
+                "z": 108.01644897460938
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 3,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "south_gate_boss",
+            "Label": "남문의 낯선 장수",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthGate",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "EarthGateBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -55.0
+            },
+            "Position": {
+                "x": -267.3075256347656,
+                "y": 139.36415100097657,
+                "z": -1374.9395751953125
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "capital_inn",
+            "Label": "남문 밖 주막",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthPost",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -36.0,
+                "y": 0.0,
+                "z": -35.0
+            },
+            "Position": {
+                "x": 160.0,
+                "y": 240.36695861816407,
+                "z": -1347.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "road_inn",
+            "Label": "상경 가도 주막",
+            "Realm": "Hwanggyeong",
+            "Anchor": "EastPass",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": 100.0,
+                "y": 0.0,
+                "z": -85.0
+            },
+            "Position": {
+                "x": 1152.0,
+                "y": 312.571044921875,
+                "z": 107.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "merchant_head",
+            "Label": "객주 본점 인도 담당",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthPost",
+            "Source": "NARR-STORYLINE: W1 성저 인도",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "“봉인이 그대로군요. 짐은 이쪽에 내려 두시면 됩니다.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -44.0,
+                "y": 0.0,
+                "z": -28.0
+            },
+            "Position": {
+                "x": 152.0,
+                "y": 238.59393310546876,
+                "z": -1340.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "cargo_delivery",
+            "Label": "봉인 화물 인도 지점",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthPost",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "객주 본점의 화물 인도 위치. 캠페인 호송·보상은 미연결.",
+            "Requires": "cargo_contract",
+            "Kind": 3,
+            "Offset": {
+                "x": -39.0,
+                "y": 0.0,
+                "z": -22.0
+            },
+            "Position": {
+                "x": 157.0,
+                "y": 240.80340576171876,
+                "z": -1334.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "capital_notice",
+            "Label": "국상과 계엄 방문",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthGate",
+            "Source": "LDB-HWANGGYEONG; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "",
+            "Text": "국상 중 통행을 제한한다는 방이 성문 앞에 붙어 있다.",
+            "Requires": "",
+            "Kind": 2,
+            "Offset": {
+                "x": -33.0,
+                "y": 0.0,
+                "z": -95.0
+            },
+            "Position": {
+                "x": -303.0,
+                "y": 135.289306640625,
+                "z": -1355.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "south_shrine",
+            "Label": "남문 앞 성황당",
+            "Realm": "Hwanggyeong",
+            "Anchor": "SouthGate",
+            "Source": "LDB-REALMS; NARR-STORYLINE",
+            "Stage": "EA",
+            "Role": "Shrine",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 6,
+            "Offset": {
+                "x": -45.0,
+                "y": 0.0,
+                "z": -120.0
+            },
+            "Position": {
+                "x": -315.0,
+                "y": 140.64051818847657,
+                "z": -1380.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "archive_clerk",
+            "Label": "사고의 서리",
+            "Realm": "Hwanggyeong",
+            "Anchor": "Palace",
+            "Source": "LDB-LENSES: 사고 정사 앵커",
+            "Stage": "City",
+            "Role": "",
+            "Text": "“기록은 남겨 두는 것이지, 아무에게나 내어 주는 것은 아닙니다.”",
+            "Requires": "",
+            "Kind": 1,
+            "Offset": {
+                "x": -95.0,
+                "y": 0.0,
+                "z": -55.0
+            },
+            "Position": {
+                "x": -205.0,
+                "y": 74.47855377197266,
+                "z": -733.1377563476563
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "city_jeongdam",
+            "Label": "정담 관아 재회 위치",
+            "Realm": "Hwanggyeong",
+            "Anchor": "Hwanggyeong",
+            "Source": "NARR-CHARACTERS; NARR-STORYLINE J2",
+            "Stage": "Return",
+            "Role": "",
+            "Text": "정담의 관아 본거지와 후반 목격 장면의 배치 후보. 인물을 동시에 복제하지 않는다.",
+            "Requires": "",
+            "Kind": 3,
+            "Offset": {
+                "x": -85.0,
+                "y": 0.0,
+                "z": 50.0
+            },
+            "Position": {
+                "x": -385.0,
+                "y": 72.25890350341797,
+                "z": -580.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 220.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "fallen_dragon",
+            "Label": "개천의 이무기",
+            "Realm": "Hwanggyeong",
+            "Anchor": "CapitalBridge",
+            "Source": "LDB-HWANGGYEONG; COMBAT-BOSS",
+            "Stage": "Return",
+            "Role": "FallenDragon",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 90.0,
+                "y": 0.0,
+                "z": 40.0
+            },
+            "Position": {
+                "x": -941.7928466796875,
+                "y": 59.710174560546878,
+                "z": -611.4599609375
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "sangun",
+            "Label": "인왕산 산군 영역",
+            "Realm": "Hwanggyeong",
+            "Anchor": "Hwanggyeong",
+            "Source": "LDB-BOSSPLACEMENT: 산군 인왕산",
+            "Stage": "Return",
+            "Role": "TigerFieldBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": -600.0,
+                "y": 0.0,
+                "z": 350.0
+            },
+            "Position": {
+                "x": -900.0,
+                "y": 65.63822937011719,
+                "z": -280.0
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "final_sovereign",
+            "Label": "궁성 안 최종 대면",
+            "Realm": "Hwanggyeong",
+            "Anchor": "Palace",
+            "Source": "NARR-FINALE; LDB-BOSSPLACEMENT",
+            "Stage": "Finale",
+            "Role": "FinalTwoPhase",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 90.0
+            },
+            "Position": {
+                "x": -300.0,
+                "y": 77.6238021850586,
+                "z": -878.1377563476563
+            },
+            "Yaw": 180.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "muhak",
+            "Label": "왕십리 태극 문지기 위치",
+            "Realm": "Hwanggyeong",
+            "Anchor": "Hwanggyeong",
+            "Source": "LDB-BOSSPLACEMENT: 무학 왕십리",
+            "Stage": "Finale",
+            "Role": "SecretHumanBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 650.0,
+                "y": 0.0,
+                "z": -150.0
+            },
+            "Position": {
+                "x": 445.96087646484377,
+                "y": 170.30259704589845,
+                "z": -777.2593994140625
+            },
+            "Yaw": 0.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        },
+        {
+            "Id": "machine_hand",
+            "Label": "기계의 손 공방 아레나 후보",
+            "Realm": "Cheolong",
+            "Anchor": "Fortress",
+            "Source": "COMBAT-BOSS: 장영실, 지역 미정 TEST 제작 해석",
+            "Stage": "Late",
+            "Role": "MechanicalBoss",
+            "Text": "배치 초안입니다. 전투·보상·진행 연결은 별도 구현 대상입니다.",
+            "Requires": "",
+            "Kind": 5,
+            "Offset": {
+                "x": 210.0,
+                "y": 0.0,
+                "z": 160.0
+            },
+            "Position": {
+                "x": -2239.055419921875,
+                "y": 126.48235321044922,
+                "z": 45.03279113769531
+            },
+            "Yaw": 150.0,
+            "Radius": 4.0,
+            "ActivationDistance": 500.0,
+            "Count": 1,
+            "Resolved": true,
+            "Preserve": true,
+            "State": "TEST"
+        }
+    ],
+    "checks": [
+        "PASS unique persistent content IDs",
+        "PASS every content entry has an actual scene object",
+        "PASS resolved finite positions within world outline",
+        "PASS event prerequisite references exist",
+        "PASS Bible section provenance on all entries",
+        "PASS layout preview does not alter existing combat/save state",
+        "PASS content approach capsules outside existing structures",
+        "PASS dungeon centre-route capsule clearance: 0 blocked / 1408 samples (not user traversal)"
+    ],
+    "conflicts": [],
+    "enemyObjects": 79,
+    "dungeons": 11,
+    "npcs": 12,
+    "events": 15
+}

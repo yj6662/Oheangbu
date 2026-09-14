@@ -1,0 +1,39 @@
+{
+    "label": "Polish_forest_approach_before",
+    "utc": "2026-09-14T01:20:07.6099062Z",
+    "status": "MEASURED",
+    "scope": "Unity Editor play, stationary 1920x1080 offscreen target. Not a standalone FPS guarantee.",
+    "gpuStatus": "MEASURED",
+    "dressing": true,
+    "poseStable": true,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 180,
+    "cpuSamples": 180,
+    "gpuSamples": 179,
+    "residentCells": 445,
+    "residentInstances": 78858,
+    "drawCalls": 31,
+    "drawnInstances": 6325,
+    "colliders": 11,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 2064.52099609375,
+        "y": 154.24667358398438,
+        "z": 1472.521240234375
+    },
+    "euler": {
+        "x": 0.0,
+        "y": 45.0001220703125,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.5950112342834473,
+    "frameMedianMs": 6.069898139685392,
+    "frameP95Ms": 7.862301543354988,
+    "cpuMedianMs": 6.0618,
+    "cpuP95Ms": 7.7169,
+    "gpuMedianMs": 3.209984,
+    "gpuP95Ms": 3.442944,
+    "allocatedMiB": 4685.712823867798
+}

@@ -1,0 +1,32 @@
+{
+  "status": "HAND_CONTACT_NUMERIC_PASS",
+  "method": "Actual shaft mesh radial ray intersections; hand skin after linear blend skinning. Closest distal skin contact, not socket distance. Separate dense triangle sampling report is required.",
+  "max_penetration_m": 0,
+  "closest_pad_gap_m": {
+    "Thumb": 0.0002997116207986827,
+    "Index": 0.0009003645424272913,
+    "Middle": 0.0009554472574317963,
+    "Ring": 0.00030011456975840775,
+    "Pinky": 0.0002999391003189987
+  },
+  "max_rest_skin_correction_m": 0.0023605066752779447,
+  "corrected_vertices": 48,
+  "surface_correction_iterations": [
+    {
+      "iteration": 0,
+      "penetration_m": 0.0024769552954348045,
+      "faces_corrected": 27
+    },
+    {
+      "iteration": 1,
+      "penetration_m": 0.0001716302349282911,
+      "faces_corrected": 0
+    }
+  ],
+  "shaft_scale": [
+    1,
+    1,
+    1
+  ],
+  "source_fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\Characters\\DosaV2\\Models\\SM_DosaBrushV2.fbx"
+}

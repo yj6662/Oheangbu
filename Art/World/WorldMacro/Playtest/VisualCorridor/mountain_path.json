@@ -1,0 +1,39 @@
+{
+    "label": "VisualCorridor_mountain_path",
+    "utc": "2026-09-13T15:05:11.2217716Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 356,
+    "residentInstances": 54353,
+    "drawCalls": 31,
+    "drawnInstances": 5799,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 3394.66259765625,
+        "y": 213.657958984375,
+        "z": 1494.0653076171875
+    },
+    "euler": {
+        "x": 356.042236328125,
+        "y": 2.2231268882751467,
+        "z": -6.6860508241006759e-9
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.7071515321731567,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

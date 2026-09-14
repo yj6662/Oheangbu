@@ -1,0 +1,1319 @@
+{
+  "scope": "ModelCatalog indices 1280..1535; pageIndices.json mapping for sheet_19..23; 1317 has no renderable source geometry",
+  "reviews": [
+    {
+      "index": 1280,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_19.png의 128px 실물 렌더 확인. 긴 손잡이 아래 가로로 넓은 목재 머리가 달린 밀대형 도구다. 직각 T자 실루엣을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1281,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 굵은 통나무를 파낸 원통형 절구가 보인다. 위쪽 입구와 두꺼운 나무 벽을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1282,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 긴 가는 자루 끝에 둥근 갈색 바가지가 달린 국자형 도구다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1283,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 굵고 곧은 나무 막대 형태의 절굿공이이다. 별도 가로 머리는 보이지 않는다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1284,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 낮은 나무 짐판 앞에 긴 손잡이와 연결 끈이 달린 운반 도구를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1285,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 긴 손잡이 끝에 부챗살처럼 벌어진 갈퀴가 보인다. 농기구 분류와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1286,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 노란 낟알이 달린 벼 줄기가 여러 포기 묶여 있다. 식량 완제품보다 생육 중인 벼 식생이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "식생/농경 작물",
+      "label": "이삭이 달린 벼 군집"
+    },
+    {
+      "index": 1287,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 납작하게 펼쳐진 밝은 짚 사각 판이다. 세워 쌓는 볏짚 뭉치보다 짚자리/포장용 짚판 형태다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "생활 소품/짚·직물",
+      "label": "펼친 짚자리·짚판"
+    },
+    {
+      "index": 1288,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짧은 녹색 벼 모가 여러 포기 모여 있다. 농경 식생으로 판독된다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "식생/농경 작물",
+      "label": "벼 모 포기"
+    },
+    {
+      "index": 1289,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 길게 접힌 굵은 짚줄과 고리가 보인다. 줄/직물 분류와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1290,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짚으로 짜고 여러 줄로 묶은 직육면체 저장 꾸러미를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1291,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 한쪽이 넓고 얕게 열린 삼각형 짚 바구니가 보인다. 삼태기형 운반 소품이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1292,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 가로대에 줄과 고리가 매달린 저울 구조가 보인다. 매다는 계량 도구다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1293,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 모자와 짚옷, 벌린 팔을 가진 허수아비를 확인했다. 농경지 장식 분류와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1294,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 가운데를 묶은 긴 벼/짚 다발을 확인했다. 낟알 쪽이 한쪽으로 벌어져 있다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1295,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 굽은 검은 날과 짧은 밝은 자루를 가진 낫이다. 농기구 실루엣이 명확하다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1296,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 묶인 자루 끝에 굵은 갈색 줄기가 넓게 퍼진 빗자루를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1297,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 긴 연결대와 아래로 반복된 톱니가 있는 써레형 농기구이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1298,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짚을 엮은 신발 두 짝을 확인했다. 짚신 한 쌍의 위/옆면이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1299,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 길쭉하게 엮인 짚신 두 짝이다. 1298과 형태/배치가 다른 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1300,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 경사진 목재 받침 위 굵은 작업부가 있는 탈곡용 목조 장치를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1301,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 세 구획으로 나뉜 긴 납작한 짚자리이다. 입체 선풍기 형태는 없으며 농경 작업용 바닥자리로 분류한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "생활 소품/농경",
+      "label": "농경 작업용 긴 짚자리"
+    },
+    {
+      "index": 1302,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 어두운 긴 막대에 꼬인 끈/섬유가 감겨 있다. 횃불 몸체이며 불꽃 이펙트는 보이지 않는다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1303,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 붉은 테두리와 흰 세로 글자 면을 가진 긴 깃발을 확인했다. 문구 판독까지 한 것은 아니다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1304,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 파란 테두리와 흰 세로 면을 가진 긴 깃발이다. 1303과 색/문양 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1305,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 좁은 세로 글자 면과 파란 가장자리의 깃발을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1306,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 붉은 가장자리와 세로 글자 배열이 있는 긴 깃발이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1307,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 낮은 테두리와 얕은 바닥을 가진 둥근 짚 쟁반을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1308,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 가운데가 빈 흰 천 고리와 길게 달린 끈이 보인다. 머리에 이는 받침 소품 계열이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1309,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짚줄을 둥글게 감은 고리와 길게 빠진 끝이 보인다. 줄/받침 소품이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1310,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짚 섬유를 사각형으로 엮고 고정 끈을 단 펼친 우장이다. 원본384px에서 표면 섬유와 여러 고리 끈까지 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "복식/의복·모자",
+      "label": "펼쳐 놓은 짚 우장"
+    },
+    {
+      "index": 1311,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 앞이 넓게 들리고 뒤에 짧은 손잡이가 있는 얕은 키형 짚 바구니를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1312,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 붉고 파란 삼각 기가 한 축에 여러 장 달려 있다. 깃발의 별도 도형 계열이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1313,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 붉고 파란 삼각 깃발 묶음이다. 1312와 펄럭이는 방향/형태가 다른 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1314,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 가느다란 삼각 지지대 아래 긴 목재 물통이 매달린 용두레 조립물이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1315,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 세 가는 목재가 상부에서 만나 서는 지지대만 보인다. 용두레 받침 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1316,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 가운데가 파인 긴 목재 통과 길게 뻗은 자루가 보인다. 용두레의 물통 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1317,
+      "reviewStatus": "UNRESOLVED_SOURCE",
+      "notes": "원장 렌더 실패 및 원본 참조 누락 확인. 렌더 가능한 메시가 없어 시각 형상을 확인하지 못했다. 원본 수면 메시 GUID 부재로 보존 중인 Plane이며 임의 평면으로 대체해 검토 완료 처리하지 않는다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "유틸리티/원본 누락",
+      "label": "원본 메시가 없는 수면 Plane"
+    },
+    {
+      "index": 1318,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짧은 줄기 위에 넓게 퍼진 황갈색 잎 수관이 있다. 가을 활엽수 계열 형태를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1319,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 둥글고 조금 높은 황갈색 수관의 나무이다. 1318과 수관 비율이 다른 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1320,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 작은 줄기 위에 넓게 퍼진 밝은 녹색 활엽 수관을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1321,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 밝은 녹색 잎이 둥글게 뭉친 수목이다. 1320과 실루엣이 다른 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1322,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짙은 녹색 잎과 넓게 벌어진 가지를 가진 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1323,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짙고 둥근 녹색 수관의 나무를 확인했다. 여름 수목 변형에 해당한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1324,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 잎이 없는 밝은 갈색 줄기와 옆으로 벌어진 잔가지가 보인다. 겨울 수목 형태다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1325,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 잎 없이 갈라지는 가지와 짧은 줄기를 가진 겨울 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1326,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 거친 사각 석재 기반 위에 낮은 중앙 단이 있는 초석/받침을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1327,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 두께가 있고 완만하게 굽은 갈색 목재 보가 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1328,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 길고 가는 곧은 갈색 보를 확인했다. 지붕 구조 목재와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1329,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 노란 작은 꽃과 넓은 녹색 잎이 여러 줄기에 달린 초본이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1330,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 노란 꽃이 달린 가는 줄기와 녹색 잎을 가진 초본 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1331,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짙고 조밀한 녹색 잎 수관과 짧은 가지를 가진 작은 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1332,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 넓게 퍼진 짙은 녹색 수관을 가진 작은 나무이다. 1331과 가지 배치가 다르다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1333,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 둥글고 조밀한 짙은 녹색 잎 수관의 작은 나무를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1334,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 짙은 녹색 잎과 짧게 벌어진 가지가 보이는 작은 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1335,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 넓고 불규칙한 짙은 녹색 수관의 작은 나무를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1336,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 조밀한 녹색 잎이 남아 있는 작은 나무이다. Winter 이름과 별개로 실제 잎이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1337,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 넓게 퍼진 녹색 수관이 남은 작은 수목이다. 잎 없는 겨울 나무와 구별된다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1338,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 불규칙한 녹색 수관과 아래로 드러난 짧은 가지가 있는 작은 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1339,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 여러 가는 잎이 방사형으로 뻗는 낮은 풀 포기를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1340,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 낮은 풀 포기 여러 개가 가로로 묶여 있다. 초본 군락 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1341,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 얇고 긴 잎이 중심에서 퍼진 낮은 풀을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1342,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 사각 나무틀 안에 평행 판재가 채워진 넓은 천장판이다. 판형 구조가 확인된다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1343,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 양 끝이 약간 들린 어두운 곡선 기와 마루 부재가 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1344,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 줄기와 벌어진 가지 사이로 성긴 녹색 잎 수관이 보이는 작은 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1345,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_20.png의 128px 실물 렌더 확인. 낮고 성긴 녹색 수관에 여러 가지가 드러난 작은 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1346,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 녹색 잎이 성기게 퍼지고 가지 사이 빈 공간이 큰 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1347,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 짧은 줄기에서 가지가 비대칭으로 퍼지는 녹색 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1348,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 성긴 녹색 수관과 드러난 가지를 가진 작은 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1349,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 몇 개의 굵은 가지 끝에 녹색 잎이 모인 수목 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1350,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 성긴 녹색 잎이 남은 수목이다. Winter라는 이름에도 실제 수관이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1351,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 얇은 가지 사이로 성긴 녹색 잎이 남은 작은 나무를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1352,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 여러 가늘고 갈라진 잎이 수평으로 펼쳐진 고사리형 초본이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1353,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 가운데 줄기에서 양옆으로 긴 잎이 뻗은 고사리형 초본을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1354,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 낮게 퍼지고 잎이 여러 방향으로 펼쳐진 고사리형 식생이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1355,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 큰 잎이 좌우로 벌어진 고사리형 초본 변형을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1356,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 어두운 목판과 하단 보강대가 있는 높고 좁은 문짝이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1357,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 어두운 직사각 문짝과 하단의 가로 구획을 확인했다. 1356의 표면 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1358,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 높고 좁은 어두운 목판 문짝이다. 문양 세부는 작지만 형상은 확인된다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1359,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 어두운 갈색 판재로 구성된 좁은 문짝을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1360,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 세로 목판과 어두운 테두리를 가진 높은 문짝이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1361,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 어두운 목재 문짝에 하단 가로 구획이 보인다. 문/창호 분류와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1362,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 폭이 좁고 높은 갈색 목판 문짝을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1363,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 높고 조금 넓은 어두운 직사각 문짝이다. 목판 면이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1364,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 어두운 목판과 가장자리 틀을 가진 직사각 문짝을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1365,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 높고 넓은 어두운 갈색 문짝이다. 하단에 가로 테두리가 있다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1366,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 높은 직사각 목판 문짝이다. 미세 문양 판독과 별개로 문 부재 형상을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1367,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 어두운 갈색 목판과 하단 보강선이 있는 좁은 문짝이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1368,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 넓고 낮은 직사각 목판 문짝을 확인했다. 이전 좁은 변형과 종횡비가 다르다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1369,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 가로로 넓은 어두운 목판 문짝을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1370,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 중앙 나무 판면과 위아래 열린 격자 칸을 가진 높은 창호 문짝이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1371,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 밝은 목재 틀, 중앙 판면, 위아래 열린 칸살을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1372,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 중앙 목판과 위아래 칸살로 구성된 높은 창호 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1373,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 밝은 목재의 열린 격자와 중앙 판면이 있는 좁은 문짝이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1374,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 여러 직사각 칸으로 끝까지 나뉜 높은 열린 격자틀이다. 중앙 막힌 판은 없다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1375,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 길게 늘어진 검은 금속 막대/끈과 밝은 굽은 하단 고리가 보인다. 문걸이 부속이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1376,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 상단 고정구와 중간 고리, 굽은 아래 고리가 있는 긴 문걸이 부속이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1377,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 상단 부착각이 다른 긴 검은 문걸이와 밝은 아래 고리를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1378,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 검은 세로 막대와 중간 장식, 굽은 하부 고리가 있는 문걸이 부속이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1379,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 상단이 옆으로 뻗은 긴 검은 부속과 밝은 하단 고리가 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1380,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 긴 검은 문걸이 부속과 굽은 하단 고리를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1381,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 매우 가는 세로 축과 밝은 하단 고리가 보인다. 가는 문걸이 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1382,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 가는 세로 축에 작은 연결부와 하단 고리가 있는 문걸이 부속이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1383,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 큰 타원 고리와 작은 위쪽 고리가 연결된 검은 금속 문고리이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1384,
+      "reviewStatus": "NEEDS_ALTERNATE_VIEW",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. EMPTY_REVIEW 표식 외에 수생 식물 형상이 보이지 않는다. 후면/상부 재렌더가 필요하며 실제 잎 형태 확인 완료로 세지 않는다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1385,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 물 위에 흩어진 듯한 작은 황록색 잎점 군집이 보인다. 넓게 펼쳐지는 수생 식물 표면이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1386,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 얇고 넓은 회색 정사각 바닥판을 확인했다. 어두운 측면 두께가 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1387,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 넓은 개구부와 아래 장식 패널, 위쪽 걸림부가 있는 어두운 문틀이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1388,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 높은 개구부와 하단 장식 패널이 있는 짙은 갈색 문틀을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1389,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 가로로 넓은 개구부와 낮은 하단 패널이 있는 문틀이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1390,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 상단과 좌우 하단 테두리만 남은 큰 사각 문틀을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1391,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 밝은 갈색 상단 장식과 큰 열린 사각 개구부를 가진 문틀이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1392,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 중앙 큰 개구부 옆에 작은 격자 칸이 있는 밝은 목재 틀이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1393,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 중심에서 가늘고 긴 녹색 잎이 방사형으로 뻗는 풀 포기이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1394,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 구멍과 굽은 외곽을 가진 불규칙한 지면 패치가 보인다. 완전한 사각 지형판과 다르다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1395,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 한쪽으로 좁아지는 삼각형에 가까운 얇은 지면 패치를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1396,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 밝은 돌/흙 무늬가 있는 얇은 직사각 지면판이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1397,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 직사각 지면판과 거친 밝은 표면을 확인했다. 1396의 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1398,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 넓은 사각 흙/돌 표면 패치를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1399,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 한쪽 모서리와 가장자리가 불규칙한 넓은 지면판이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1400,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 밝고 거친 표면의 넓은 사각 지면판을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1401,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 가장자리가 완만하게 굴곡진 낮은 지면 패치이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1402,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 여러 세로 줄기에 짙은 잎이 뭉쳐 붙은 키 있는 식생이다. 낮은 잔디와 다른 군집 형태다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1403,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 세로로 긴 줄기 군집에 잎이 층으로 붙은 식생 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1404,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 흰 꽃송이와 넓은 녹색 잎을 가진 관목/큰 초본 형상이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1405,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 여러 흰 꽃송이와 녹색 잎이 모인 관목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1406,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 갈색 꽃송이와 줄기, 일부 잎이 남아 있는 겨울 관목 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1407,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 갈색 꽃송이와 마른 잎/줄기가 모인 식생이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1408,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 낮게 벌어진 가지와 성긴 녹색 잎 덩어리로 구성된 관목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1409,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_21.png의 128px 실물 렌더 확인. 작은 줄기에서 비대칭으로 퍼지는 녹색 관목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1410,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 낮고 성긴 녹색 잎 관목을 확인했다. 가지 사이 공간이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1411,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 얇은 가지 끝에 녹색 잎이 모인 비대칭 관목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1412,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 낮게 옆으로 퍼진 녹색 관목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1413,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 가느다란 가지를 가진 비대칭 녹색 관목 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1414,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎이 남아 있는 낮은 녹색 관목이다. 잎 없는 겨울 초목과 구별된다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1415,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 녹색 잎과 성긴 가지를 가진 작은 관목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1416,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 황금빛 잎과 낮게 휘어진 가지가 있는 수목이다. 가을 수관 형태와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1417,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 둥글고 높은 황갈색 수관과 휘어진 줄기를 가진 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1418,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 밝은 녹색 잎이 옆으로 퍼진 낮은 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1419,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 밝은 녹색의 둥근 수관과 휘어진 줄기가 있는 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1420,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 녹색 잎이 조밀하게 퍼진 낮은 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1421,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 둥근 녹색 수관과 아래로 드러난 굽은 줄기를 가진 수목 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1422,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎이 없는 적갈색 줄기와 옆으로 벌어진 가지를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1423,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎 없이 잔가지가 위로 퍼진 겨울 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1424,
+      "reviewStatus": "UNCERTAIN",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 흰색에 가까운 넓은 지형판에 아래로 떨어지는 절벽 같은 돌출부가 보인다. 형상은 확인되지만 원본 지형 레이어의 외형 복원은 미완으로 별도 검토가 필요하다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1425,
+      "reviewStatus": "UNCERTAIN",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 회백색 노이즈가 있는 넓은 골짜기 지형판을 확인했다. 원본 지형 레이어 색/혼합 외형이 복원됐다고 판정하지 않는다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1426,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 곧고 긴 갈색 각목 한 개가 보인다. 완성 마루가 아니라 마루 조립용 장부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/목재",
+      "label": "마루 조립용 긴 각목"
+    },
+    {
+      "index": 1427,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 여러 나무 판재로 이루어진 낮은 정사각 마루 모듈을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1428,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 가로로 긴 목재 판넬을 확인했다. 바닥/마루 측면 또는 벽판으로 조립할 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/바닥·포장",
+      "label": "가로 목재 마루 패널"
+    },
+    {
+      "index": 1429,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 짙은 갈색 잎이 비대칭으로 뭉친 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1430,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 황갈색 잎이 성기게 달린 가는 수목이다. 1429와 다른 가지 밀도이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1431,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 짙은 녹색 잎이 큰 덩어리로 붙은 비대칭 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1432,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎이 성기고 가는 가지가 드러난 녹색 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1433,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 짙은 녹색 수관이 한쪽으로 넓게 퍼진 나무를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1434,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 성긴 녹색 잎과 많은 가는 가지가 있는 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1435,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎 없이 여러 방향으로 굽은 어두운 가지가 보이는 겨울 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1436,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎 없이 가늘고 촘촘한 가지가 퍼진 겨울 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1437,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 검은 직사각 현판에 밝은 한자 획이 있다. 현판 형상은 확인되며 문구 정확성 검증은 별도다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1438,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 어두운 얇은 마루 띠가 한쪽으로 굽어 있다. 지붕 마루 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1439,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 넓은 둥근 녹색 잎 여러 장 가운데 분홍빛 꽃이 있는 수생 식물 군집이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1440,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 둥근 잎 여러 장과 흰 꽃이 모인 수생 식물 군집을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1441,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 작고 넓게 퍼진 잎과 분홍빛 꽃이 있는 수생 식물 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1442,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 여러 둥근 잎과 흰 꽃이 보이는 수생 식물 군집이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1443,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 긴 녹색 줄기 끝에 넓고 둥근 잎 한 장이 달린 수생 잎 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1444,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 옆으로 휜 긴 줄기와 원반형 녹색 잎 한 장을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1445,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 갈색을 띤 넓은 둥근 잎과 긴 줄기가 보인다. 수생 잎의 표면 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1446,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 짧은 줄기 또는 잎면만 보이는 둥근 수생 잎을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1447,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 원통형 목재 기둥 위에 짧은 가로 받침 장식이 보인다. 지붕을 받치는 기둥 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1448,
+      "reviewStatus": "UNCERTAIN",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 갈색 원통 기둥과 상부 받침 형상은 확인했다. 소스 내장 재질 연결 복구와 원본 외형 복원은 별개이며 WorldGrid 대체 슬롯 외형 검토가 남아 있다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1449,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 낮고 길게 쌓은 석재와 평평한 윗면을 가진 보/수로 가장자리 조립물이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1450,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 낮게 옆으로 기는 줄기와 넓은 녹색 잎이 이어진 덩굴 군집을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1451,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 바닥을 따라 넓게 퍼진 녹색 덩굴 잎 군집이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1452,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 넓은 녹색 잎들이 낮은 줄기를 따라 이어지는 덩굴 식생을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1453,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 갈색 이삭과 긴 가는 잎을 가진 키 큰 갈대형 초본이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1454,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 갈색 이삭이 한쪽으로 휜 키 큰 초본 군집을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1455,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 장식 없이 길게 뻗은 원통형 갈색 기둥을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1456,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 줄기 한 그루 없이 녹색 침엽과 가지가 비스듬히 뭉친 부재다. 원본384px에서 수관/가지 덩어리임을 확인했으며 독립 수목 분류를 수정한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다.",
+      "category": "식생/가지·수관",
+      "label": "소나무 잎·가지 덩어리"
+    },
+    {
+      "index": 1457,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 길게 드러난 줄기 위에 여러 덩어리의 짙은 침엽 수관이 모인 소나무형 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1458,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 긴 줄기 위 둥글게 모인 침엽 수관의 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1459,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 붉은빛 줄기와 위쪽에 뭉친 짙은 녹색 침엽 수관이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1460,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 긴 줄기 위쪽으로 여러 수관 덩어리가 모인 소나무형 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1461,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 길게 드러난 줄기와 침엽 수관을 가진 나무이다. Winter라는 이름에도 잎이 남아 있다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1462,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 상부에 짙은 녹색 수관이 남은 침엽수형 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1463,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 굽은 줄기와 옆으로 벌어진 여러 침엽 수관이 보인다. 독립 수목 형태다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1464,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 높은 가지와 비대칭 침엽 수관을 가진 소나무형 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1465,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 굽은 줄기 위 여러 짙은 녹색 수관이 비대칭으로 펼쳐진 침엽수형 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1466,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 가지가 위로 갈라지고 잎이 층을 이룬 소나무형 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1467,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 넓고 조밀한 붉은 갈색 수관의 활엽수이다. 가을 잎 표현과 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1468,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 불규칙하게 넓게 퍼진 적갈색 수관의 활엽수 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1469,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 넓고 조밀한 녹색 수관과 짧게 보이는 줄기를 가진 활엽수이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1470,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 녹색 잎이 둥글고 넓게 퍼진 활엽수를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1471,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 잎 없이 촘촘한 잔가지가 둥글게 퍼진 겨울 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1472,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 짧은 줄기와 넓게 벌어진 잔가지만 남은 겨울 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1473,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_22.png의 128px 실물 렌더 확인. 두 덩어리가 이어진 듯 길게 굴곡진 회갈색 암석이다. 자연 바위 분류와 부합한다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1474,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 비스듬한 상부 면과 불규칙한 외곽을 가진 회색 암석이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1475,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 갈색과 어두운 얼룩이 있는 둥글고 두꺼운 바위를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1476,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 길고 납작하게 눕고 윗면에 여러 굴곡이 있는 밝은 회색 바위이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1477,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 옆으로 긴 어두운 회색 바위를 확인했다. 상부와 측면 굴곡이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1478,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 한쪽 끝이 높은 갈색 삼각형 덩어리의 바위를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1479,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 두껍고 둥근 갈색 바위에 거친 표면과 색 얼룩이 있다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1480,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 회색의 낮고 넓은 둥근 바위를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1481,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 한쪽 모서리가 높고 노란빛 아래 면이 있는 쐐기형 바위이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1482,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 상부가 납작하고 옆면이 꺾인 세로형 암석이다. 여러 지질 면이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1483,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 둥근 윗면과 수평 얼룩이 있는 낮고 두꺼운 갈색 바위이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1484,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 좁고 높으며 여러 면이 갈라진 회색 바위를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1485,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 옆으로 길고 가운데가 낮게 패인 갈색 바위이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1486,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 높이 차가 있는 넓은 회색 바위와 비스듬한 면을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1487,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 아주 낮고 넓은 밝은 회색 바위이다. 윗면이 평평한 디딤 암반 후보 형태다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1488,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 삼각 쐐기처럼 비스듬히 누운 어두운 회색 바위를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1489,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 납작하고 넓은 갈색 암석 덩어리를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1490,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 양쪽 끝이 높고 가운데가 얕게 파인 밝은 갈색 바위이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1491,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 높이 차와 여러 꺾인 면을 가진 어두운 회색 자연 바위이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1492,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 둥글고 넓게 누운 회색 바위이다. Turtle 이름의 도상 여부는 별도이고 자연 암석 형상은 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1493,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 곡선 처마와 여러 줄의 기와가 있는 넓은 지붕 조각이다. 완성 건물은 아니다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1494,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 길고 좁은 기와열 지붕판을 확인했다. 1493보다 단순한 지붕 구간이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1495,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 평행한 나무 서까래가 반복된 넓은 지붕 받침 판을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1496,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 평행 목재가 가늘게 반복된 긴 지붕 지지판이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1497,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 세 변의 검은 테두리와 내부 기와/목재가 있는 삼각형 지붕 조각이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1498,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 옆으로 퍼진 황갈색 수관과 굽은 줄기를 가진 가을 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1499,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 더 높고 둥근 황갈색 수관을 가진 나무를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1500,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 넓게 벌어진 밝은 녹색 수관과 가는 줄기의 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1501,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 둥글게 모인 녹색 잎과 드러난 줄기를 가진 수목 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1502,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 밝은 녹색 잎이 조밀하게 퍼진 넓은 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1503,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 높은 녹색 수관과 가는 줄기가 있는 나무이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1504,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 잎 없이 옆으로 길게 드리워지는 잔가지와 줄기만 보이는 겨울 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1505,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 많은 잔가지가 둥글게 퍼진 잎 없는 겨울 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1506,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 원본384px에서 넓은 판석 윗판·양쪽 석조 받침·아래 열린 통수 공간을 확인했다. 작은 돌다리/수로 덮개 형상이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 조립체/다리",
+      "label": "통수 공간이 있는 작은 판석 다리"
+    },
+    {
+      "index": 1507,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 원본384px에서 흙을 채운 두꺼운 석축 블록임을 확인했다. 통행 상판 전체가 아니라 다리 받침/교대 성격의 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/기단·수로",
+      "label": "흙을 채운 석축 교대"
+    },
+    {
+      "index": 1508,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 둥근 모서리와 평평한 긴 윗면을 가진 가공석 블록이다. 자연 암석보다 석축 부재에 가깝다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/석재",
+      "label": "긴 가공 석재 블록"
+    },
+    {
+      "index": 1509,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 세로로 서고 모서리가 닳은 직사각 돌 블록을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/석재",
+      "label": "모서리가 닳은 세로 돌 블록"
+    },
+    {
+      "index": 1510,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 둥글고 두꺼운 돌 블록이다. 가공석/석축 부재로 쓸 수 있는 형태다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/석재",
+      "label": "둥근 모서리의 돌 블록"
+    },
+    {
+      "index": 1511,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 모서리가 닳은 긴 직사각 석재 블록을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/석재",
+      "label": "긴 직사각 돌 블록"
+    },
+    {
+      "index": 1512,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 작은 직사각형에 가까운 두꺼운 돌 블록을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/석재",
+      "label": "짧은 직사각 돌 블록"
+    },
+    {
+      "index": 1513,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 불규칙한 석재를 쌓아 네 단 정도로 만든 계단을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1514,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 낮고 긴 돌담 구간을 확인했다. 불규칙한 자연석이 두 줄 이상 쌓여 있다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1515,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 길고 낮은 돌담 모듈이다. 윗면과 돌 쌓임 면이 보인다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1516,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 1515보다 두꺼운 낮은 돌담 구간을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1517,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 높이와 두께가 조금 더 큰 직선 석축 모듈이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1518,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 짧고 두꺼우며 여러 단의 돌이 쌓인 돌담 구간이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1519,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 매우 길고 낮은 직선 돌담 구간을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1520,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 돌로 원형 테두리를 두르고 내부를 흙으로 채운 낮은 원형 단이다. 직선 담장이 아닌 화단/기단 모듈이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다.",
+      "category": "건축 부재/기단·수로",
+      "label": "흙을 채운 원형 석축 화단·기단"
+    },
+    {
+      "index": 1521,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 완만하게 휘어진 돌담 모듈을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1522,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 불규칙하게 굽고 길게 이어지는 낮은 돌담 구간이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다."
+    },
+    {
+      "index": 1523,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 가느다란 갈색 뿌리가 여러 갈래로 수평으로 퍼져 있다. 지면 노출 뿌리 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1524,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 긴 주뿌리에서 잔뿌리가 여러 방향으로 갈라진 낮은 뿌리 부재다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1525,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 여러 가는 갈색 뿌리가 낮고 넓게 뻗은 묶음이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1526,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 황갈색 잎이 성기게 달린 넓은 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1527,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 조밀한 황갈색 수관과 짧게 드러난 줄기를 가진 가을 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1528,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 넓고 성긴 녹색 수관을 가진 활엽수이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1529,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 조밀한 녹색 수관과 짧게 벌어진 가지의 수목을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1530,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 밝은 녹색 잎이 비대칭으로 퍼진 활엽수이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1531,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 둥글고 조밀한 녹색 수관을 가진 수목 변형이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1532,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 잎 없이 굵은 가지가 옆으로 크게 갈라지는 겨울 수목이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1533,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 잎 없는 가는 줄기와 위로 벌어진 잔가지를 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1534,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 짙은 녹색 잎이 위로 모여 있는 키 큰 관목형 식생이다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    },
+    {
+      "index": 1535,
+      "reviewStatus": "VISUALLY_REVIEWED",
+      "notes": "sheet_23.png의 128px 실물 렌더 확인. 녹색 수관이 둥글게 뭉친 관목형 식생을 확인했다. 이 기록은 형상 분류 검토이며 최종 재질 아트 PASS가 아니다. 수종 학명/계절의 정확성은 파일명을 넘어 별도 동정한 것이 아니다."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+    "id": "Cave_aerial",
+    "file": "Cave_aerial.png",
+    "caption": "동굴 — 배치 조감",
+    "utc": "2026-09-11T19:46:57.6021857Z",
+    "scenePath": "Assets/_Project/Scenes/World/W_WorldMacro_Blockout.unity",
+    "landmark": "Cave",
+    "view": "aerial",
+    "sourceCamera": "Macro_Review_Camera",
+    "scope": "Current macro scene and copied main-camera rendering settings. A still-image composition, not a player walk, entrance-clearance test, gameplay or content-completion claim.",
+    "position": {
+        "x": 3418.31982421875,
+        "y": 244.06527709960938,
+        "z": 1044.723388671875
+    },
+    "target": {
+        "x": 3400.0185546875,
+        "y": 201.56527709960938,
+        "z": 1113.024658203125
+    },
+    "entryFootPosition": {
+        "x": 3378.619384765625,
+        "y": 194.8882293701172,
+        "z": 1080.7547607421875
+    },
+    "boundsCenter": {
+        "x": 3400.0185546875,
+        "y": 201.56527709960938,
+        "z": 1113.024658203125
+    },
+    "boundsSize": {
+        "x": 43.994140625,
+        "y": 18.765960693359376,
+        "z": 60.611328125
+    },
+    "eyeHeightM": 1.6200000047683716,
+    "fieldOfView": 60.0,
+    "nearClipM": 0.07999999821186066,
+    "farClipM": 22000.0,
+    "commitBefore": 0.681960940361023,
+    "commitAfter": 0.6851401925086975,
+    "aerialStandOffM": 50.0,
+    "aerialBoundsFit": true,
+    "aerialWashOverride": true,
+    "regionalSkyPreviewRequested": true,
+    "width": 1920,
+    "height": 1080,
+    "rendererCount": 31,
+    "framingNote": "Mesh bounds fit the aerial frame with a 10% framing margin."
+}

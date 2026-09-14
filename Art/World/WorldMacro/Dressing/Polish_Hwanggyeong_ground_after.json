@@ -1,0 +1,39 @@
+{
+    "label": "Polish_Hwanggyeong_ground_after",
+    "utc": "2026-09-14T01:27:16.3078362Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 584,
+    "residentInstances": 1096405,
+    "drawCalls": 141,
+    "drawnInstances": 116692,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -391.8135070800781,
+        "y": 93.98583221435547,
+        "z": -1264.6334228515625
+    },
+    "euler": {
+        "x": 354.52789306640627,
+        "y": 87.82170104980469,
+        "z": -4.28841104849198e-7
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.5852013230323792,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

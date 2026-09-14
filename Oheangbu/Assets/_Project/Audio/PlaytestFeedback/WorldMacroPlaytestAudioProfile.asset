@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3dc76335ba26d4fa54d67fab909569, type: 3}
+  m_Name: WorldMacroPlaytestAudioProfile
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.World.WorldMacroPlaytestAudioProfileSO
+  BrushStroke:
+    Clip: {fileID: 8300000, guid: c501d2ff82080e144a5076f57f4a54ba, type: 3}
+    Volume: 0.42
+    SpatialBlend: 0
+    Cooldown: 0
+  CastWood:
+    Clip: {fileID: 8300000, guid: d7c941a7f665908439011bede3649737, type: 3}
+    Volume: 0.64
+    SpatialBlend: 0
+    Cooldown: 0
+  CastFire:
+    Clip: {fileID: 8300000, guid: ff8f5d2a8737f1e43b079384c9ae4548, type: 3}
+    Volume: 0.64
+    SpatialBlend: 0
+    Cooldown: 0
+  CastEarth:
+    Clip: {fileID: 8300000, guid: 1f84235459f0ddf4aa5e21ac705cad99, type: 3}
+    Volume: 0.64
+    SpatialBlend: 0
+    Cooldown: 0
+  CastMetal:
+    Clip: {fileID: 8300000, guid: d92669ecde9b614499c948a1ba2b3c60, type: 3}
+    Volume: 0.64
+    SpatialBlend: 0
+    Cooldown: 0
+  CastWater:
+    Clip: {fileID: 8300000, guid: f0cdb022ce76b784aa3bc4bfd93e7297, type: 3}
+    Volume: 0.64
+    SpatialBlend: 0
+    Cooldown: 0
+  Impact:
+    Clip: {fileID: 8300000, guid: 239d3cb408238a34d9252acf405ebf3d, type: 3}
+    Volume: 0.72
+    SpatialBlend: 1
+    Cooldown: 0.055
+  PlayerHit:
+    Clip: {fileID: 8300000, guid: addde7ea018ba89428579b26be63ebd4, type: 3}
+    Volume: 0.78
+    SpatialBlend: 0
+    Cooldown: 0.08
+  Parry:
+    Clip: {fileID: 8300000, guid: c4e2c4d825c203041b5d888ab189b1f0, type: 3}
+    Volume: 0.82
+    SpatialBlend: 1
+    Cooldown: 0.08
+  Harvest:
+    Clip: {fileID: 8300000, guid: 3d918afd64a699340b7f6962eca393b3, type: 3}
+    Volume: 0.48
+    SpatialBlend: 1
+    Cooldown: 1.2
+  Interact:
+    Clip: {fileID: 8300000, guid: 26d42d33a5073214ba239809ae933460, type: 3}
+    Volume: 0.5
+    SpatialBlend: 1
+    Cooldown: 0.1
+  Rest:
+    Clip: {fileID: 8300000, guid: c2f78c429384f1f4aa7d0b30f1bcdfce, type: 3}
+    Volume: 0.58
+    SpatialBlend: 1
+    Cooldown: 0.25
+  SummonAppear:
+    Clip: {fileID: 8300000, guid: 5064c7aae2e5be64fb92359a8a3d02b2, type: 3}
+    Volume: 0.78
+    SpatialBlend: 1
+    Cooldown: 0.05
+  SummonRelease:
+    Clip: {fileID: 8300000, guid: 2c8f96e0d8778b749adbaf912a80573e, type: 3}
+    Volume: 0.62
+    SpatialBlend: 1
+    Cooldown: 0.05

@@ -1,0 +1,21 @@
+{
+    "utc": "2026-09-13T18:54:20.1720436Z",
+    "status": "PASS",
+    "id": "pause",
+    "scope": "Actual uGUI Game View capture staged through EditorApplication.update. Page setup is diagnostic and is not natural gameplay input evidence.",
+    "setup": "direct diagnostic page setup; no synthetic input used for this still",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "page": "일시정지",
+    "width": 1920,
+    "height": 1080,
+    "totalAllocatedBytes": 4055127588,
+    "systemMemoryBytes": 33945550848,
+    "systemCommitRatio": 0.710780918598175,
+    "systemCommitRatioAtIssue": 0.7112406492233276,
+    "memoryBelow85Percent": true,
+    "screenshotWritten": true,
+    "screenshot": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PlaytestMenus\\Screenshots\\pause_1920x1080.png",
+    "screenshotBytes": 1248844,
+    "screenshotUtc": "2026-09-13T18:54:20.3974542Z",
+    "failure": ""
+}

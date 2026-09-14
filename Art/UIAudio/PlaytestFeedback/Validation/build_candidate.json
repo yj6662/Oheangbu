@@ -1,0 +1,126 @@
+{
+  "status": "BUILD_CANDIDATE_CREATED_NOT_QA_COMPLETE",
+  "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+  "buildResult": "Succeeded",
+  "totalErrors": 0,
+  "totalWarnings": 581,
+  "totalSeconds": 52.9698297,
+  "buildSettingsRestored": true,
+  "buildSettingsFileRestored": true,
+  "buildSettingsHashBefore": "A888CED3EDDA358D63E8D752AA985FC8D0751D73456C3651AA218C9C51A67941",
+  "buildSettingsHashAfter": "A888CED3EDDA358D63E8D752AA985FC8D0751D73456C3651AA218C9C51A67941",
+  "candidate": "Builds/Playtest-20260915/20260913T170336Z",
+  "previousCandidatePreserved": true,
+  "checks": [
+    {
+      "name": "editor is idle",
+      "pass": true,
+      "detail": "playingOrChanging=False; compiling=False"
+    },
+    {
+      "name": "scripts compiled without errors",
+      "pass": true,
+      "detail": "EditorUtility.scriptCompilationFailed=False"
+    },
+    {
+      "name": "pinned Unity editor",
+      "pass": true,
+      "detail": "expected=6000.3.9f1; actual=6000.3.9f1"
+    },
+    {
+      "name": "Windows x64 support",
+      "pass": true,
+      "detail": "StandaloneWindows64 build support must be installed."
+    },
+    {
+      "name": "Standalone Mono backend",
+      "pass": true,
+      "detail": "backend=Mono2x; project settings are read only."
+    },
+    {
+      "name": "commit capacity below stop line",
+      "pass": true,
+      "detail": "commitRatio=64.3 %; required <85%. Build does not start at or above the stop line."
+    },
+    {
+      "name": "saved playtest scene exists",
+      "pass": true,
+      "detail": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity"
+    },
+    {
+      "name": "active playtest scene is saved",
+      "pass": true,
+      "detail": "isDirty=False"
+    },
+    {
+      "name": "TEST spell book has five non-attack summons",
+      "pass": true,
+      "detail": "Expected 곰/놈/몸/솜/옴 as Summon with zero power and no attack area."
+    },
+    {
+      "name": "saved scene playtest session",
+      "pass": true,
+      "detail": "sessions=1"
+    },
+    {
+      "name": "no diagnostic save suffix in release",
+      "pass": true,
+      "detail": "Release uses the normal player slot, never an automated diagnostic fixture."
+    },
+    {
+      "name": "saved scene combat walker",
+      "pass": true,
+      "detail": "walkers=1"
+    },
+    {
+      "name": "saved scene Recraft HUD",
+      "pass": true,
+      "detail": "Expected one optional playtest HUD skin and one session presenter."
+    },
+    {
+      "name": "saved scene ElevenLabs SFX",
+      "pass": true,
+      "detail": "Expected one bounded audio component with all fourteen mono cue references."
+    },
+    {
+      "name": "one active play camera audio listener",
+      "pass": true,
+      "detail": "Active listeners=1; listener must follow the same walking and driving camera."
+    },
+    {
+      "name": "saved scene player appearance",
+      "pass": true,
+      "detail": "appearances=1; expected installed C02 Humanoid with renderer ownership and root motion off."
+    },
+    {
+      "name": "player profile script binding",
+      "pass": true,
+      "detail": "Expected profile asset and reload-safe MonoScript Assets/_Project/Scripts/App/World/WorldMacroPlayerAppearanceProfile.cs"
+    },
+    {
+      "name": "owned readable player materials",
+      "pass": true,
+      "detail": "Assets/_Project/Art/World/WorldMacro/Playtest/PlayerAppearance/Materials/M_C02_A2B2C3_0_Playtest.mat,Assets/_Project/Art/World/WorldMacro/Playtest/PlayerAppearance/Materials/M_C02_A2B2C3_1_Playtest.mat"
+    },
+    {
+      "name": "saved scene uses TEST spell book",
+      "pass": true,
+      "detail": "combatScopes=1; brushAdapters=1; expected=Assets/_Project/Data/World/SpellBook_WorldMacroSummon_TEST.asset"
+    },
+    {
+      "name": "explicit scene exposed to legacy build preprocessors",
+      "pass": true,
+      "detail": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity|enabled=True|guid=842657f8e6caf9147883e016835ad59e"
+    },
+    {
+      "name": "EditorBuildSettings scene list restored",
+      "pass": true,
+      "detail": "Restored exact path/enabled/GUID order after BuildPlayer."
+    },
+    {
+      "name": "EditorBuildSettings asset bytes restored",
+      "pass": true,
+      "detail": "before=A888CED3EDDA358D63E8D752AA985FC8D0751D73456C3651AA218C9C51A67941; during=A888CED3EDDA358D63E8D752AA985FC8D0751D73456C3651AA218C9C51A67941; after=A888CED3EDDA358D63E8D752AA985FC8D0751D73456C3651AA218C9C51A67941; file=C:\\Users\\yj666\\Oheangbu\\Oheangbu\\ProjectSettings\\EditorBuildSettings.asset"
+    }
+  ]
+}

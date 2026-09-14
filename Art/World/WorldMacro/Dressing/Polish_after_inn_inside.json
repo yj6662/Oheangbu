@@ -1,0 +1,39 @@
+{
+    "label": "Polish_after_inn_inside",
+    "utc": "2026-09-13T09:15:07.6350255Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 467,
+    "residentInstances": 81772,
+    "drawCalls": 35,
+    "drawnInstances": 7593,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 1998.9705810546875,
+        "y": 134.69740295410157,
+        "z": 681.5294189453125
+    },
+    "euler": {
+        "x": 356.5663757324219,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.4312635064125061,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

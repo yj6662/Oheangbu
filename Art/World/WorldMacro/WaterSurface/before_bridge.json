@@ -1,0 +1,16 @@
+{
+    "id": "before_bridge",
+    "scope": "Fixed 1920x1080 camera; explicit shader-time still image, not a video.",
+    "position": {
+        "x": -1340.0,
+        "y": 52.0,
+        "z": -2460.0
+    },
+    "target": {
+        "x": -1400.0,
+        "y": 24.0,
+        "z": -2400.0
+    },
+    "waterTime": 0.0,
+    "commitRatio": 0.8066272139549255
+}

@@ -42,7 +42,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6e7730f74bc81e4abba7acfff16b982, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.SpellVFX120.Vfx120Effect
   Profile: {fileID: 11400000, guid: c81b48a136b6f584bb61498b42cd2020, type: 2}
   PreviewControlled: 0

@@ -1,0 +1,38 @@
+{
+    "label": "Hyeongang_ground_before",
+    "utc": "2026-09-11T22:25:03.6173084Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": false,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 0,
+    "residentInstances": 0,
+    "drawCalls": 0,
+    "drawnInstances": 0,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 20.565237045288087,
+        "y": 163.5392608642578,
+        "z": 4056.930419921875
+    },
+    "euler": {
+        "x": 0.28128284215927126,
+        "y": 359.87689208984377,
+        "z": 2.605541823963442e-11
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.6451473832130432,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

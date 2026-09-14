@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52745356e72942e6aa7be8739edffea2, type: 3}
+  m_Name: PlayerLocomotion
+  m_EditorClassIdentifier: Oheangbu.Combat::Oheangbu.Combat.PlayerLocomotionProfileSO
+  WalkSpeed: 2.2
+  RunSpeed: 5.5
+  CrouchSpeed: 1.2
+  CrouchRollEnabled: 1
+  PreserveAuthoredFootRoll: 1
+  CrouchRollSeconds: 0.8
+  CrouchingHeight: 1.25
+  CrouchingEyeHeight: 1.1
+  CrouchTransitionSeconds: 0.22
+  Acceleration: 16
+  Deceleration: 22
+  AirAcceleration: 4
+  JumpHeight: 0.75
+  GroundSnap: 0.24
+  GroundStickSpeed: 2
+  SitDownSeconds: 0.55
+  StandUpSeconds: 0.45
+  SittingHeight: 0.95
+  SittingEyeHeight: 0.78
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295

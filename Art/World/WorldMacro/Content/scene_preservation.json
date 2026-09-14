@@ -1,0 +1,9 @@
+{
+  "baselineRecords": 6183,
+  "changedExistingExceptSceneRoots": [
+    "900242580"
+  ],
+  "changedExcludingDressingDiagnosticCounters": [],
+  "newRecords": 3680,
+  "meaning": "Existing scene records compared to pre-content snapshot. SceneRoots registry excluded. Dressing counters are reset statistics, not placement changes."
+}

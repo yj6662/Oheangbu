@@ -1,0 +1,15 @@
+{
+  "status": "PASS_SAMPLED_STATIC_SURFACE",
+  "sourceFbxSha256": "dc7ec359628e5cdd0a6da3d853927b68f867efea269022c8a66159e15a749e2f",
+  "sampling_step_m": 0.0005,
+  "triangles": 3422,
+  "samples": 847134,
+  "ray_misses": 0,
+  "maximum_sampled_penetration_m": 0.00021735028265513698,
+  "worst_point": [
+    -0.7890734672546387,
+    -0.03870166465640068,
+    1.3197224140167236
+  ],
+  "scope": "Current fitted right-hand grasp. Triangle interior grid with <=0.5mm edge step and actual shaft radial ray; finite sampling, not analytic intersection proof or future-motion validation."
+}

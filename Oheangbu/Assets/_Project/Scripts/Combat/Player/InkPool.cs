@@ -12,6 +12,9 @@ namespace Oheangbu.Combat
         private float _value;
 
         public float Value => _value;
+        // Positive income only. Restore, spending and an already-full pool never produce feedback.
+        public event System.Action<float> Gained;
+        public void Restore(float fraction=1f) { _value=Mathf.Clamp01(fraction); Broadcast(); }
 
         public InkPool(CombatConfigSO config, FloatEventChannelSO changedChannel)
         {
@@ -37,8 +40,11 @@ namespace Oheangbu.Combat
 
         public void Gain(float amount)
         {
+            float previous = _value;
             _value = Mathf.Clamp01(_value + amount);
             _changed?.Raise(_value);
+            float received = _value - previous;
+            if (received > 0f) Gained?.Invoke(received);
         }
 
         // 초기 방송 — 구독자가 늦게 붙어도 첫 값을 받도록 배선부가 부른다

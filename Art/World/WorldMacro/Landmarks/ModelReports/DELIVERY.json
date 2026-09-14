@@ -1,0 +1,750 @@
+{
+  "validation": "Blender geometry/FBX roundtrip verified; Unity rendering, colliders, LOD transitions and art review are not verified by this derivative task.",
+  "items": [
+    {
+      "asset": "Bongsudang",
+      "status": "PASS_GEOMETRY_WITH_BUDGET_EXCEPTION",
+      "source_visual_triangles": 1857720,
+      "lods": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Bongsudang_LOD0.fbx",
+          "requested_limit": 145000,
+          "actual_fbx_triangles": 143178,
+          "bounds_blender_world": {
+            "minimum": [
+              -20.814321517944336,
+              -15.196041107177734,
+              -3.2809277854539687e-06
+            ],
+            "maximum": [
+              20.811786651611328,
+              15.197933197021484,
+              11.876164436340332
+            ],
+            "size": [
+              41.626108169555664,
+              30.39397430419922,
+              11.876167717268117
+            ]
+          },
+          "materials": 28,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.0049457550048828125,
+            0.0018892288208007812,
+            0.009537696838378906
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Bongsudang_LOD1.fbx",
+          "requested_limit": 40000,
+          "actual_fbx_triangles": 35055,
+          "bounds_blender_world": {
+            "minimum": [
+              -20.813678741455078,
+              -15.196040153503418,
+              -3.1488141303270822e-06
+            ],
+            "maximum": [
+              20.795475006103516,
+              15.172075271606445,
+              11.808032035827637
+            ],
+            "size": [
+              41.609153747558594,
+              30.368115425109863,
+              11.808035184641767
+            ]
+          },
+          "materials": 28,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.021900177001953125,
+            -0.02396869659423828,
+            -0.05859482849291453
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Bongsudang_LOD2.fbx",
+          "requested_limit": 12000,
+          "actual_fbx_triangles": 35055,
+          "bounds_blender_world": {
+            "minimum": [
+              -20.813678741455078,
+              -15.196040153503418,
+              -3.1488141303270822e-06
+            ],
+            "maximum": [
+              20.795475006103516,
+              15.172075271606445,
+              11.808032035827637
+            ],
+            "size": [
+              41.609153747558594,
+              30.368115425109863,
+              11.808035184641767
+            ]
+          },
+          "materials": 28,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.021900177001953125,
+            -0.023965835571289062,
+            -0.058586733299307525
+          ]
+        }
+      ],
+      "source_preserved": true,
+      "prefab_material_bindings": [
+        {
+          "slot": 0,
+          "guid": "abc00000000006797035264603814510",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_2.mat"
+        },
+        {
+          "slot": 1,
+          "guid": "abc00000000011298167641015455771",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_W_Pink_4.mat"
+        },
+        {
+          "slot": 2,
+          "guid": "abc00000000007209508453123637243",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_5.mat"
+        },
+        {
+          "slot": 3,
+          "guid": "abc00000000003887760593944507777",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_Metal.mat"
+        },
+        {
+          "slot": 4,
+          "guid": "abc00000000017556615246628206000",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanPaper_1.mat"
+        },
+        {
+          "slot": 5,
+          "guid": "abc00000000001247809319891771507",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanStone_1.mat"
+        },
+        {
+          "slot": 6,
+          "guid": "abc00000000012103129933933321196",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_W_Pink_1.mat"
+        },
+        {
+          "slot": 7,
+          "guid": "abc00000000007066397023932725877",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanPaper_2.mat"
+        },
+        {
+          "slot": 8,
+          "guid": "abc00000000014976349613034265160",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_4.mat"
+        },
+        {
+          "slot": 9,
+          "guid": "abc00000000005293573005416422305",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_3.mat"
+        },
+        {
+          "slot": 10,
+          "guid": "abc00000000015877825506953951178",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_RoyalStair_1.mat"
+        },
+        {
+          "slot": 11,
+          "guid": "abc00000000001768072301207876858",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanFloor_3.mat"
+        },
+        {
+          "slot": 12,
+          "guid": "abc00000000004934170793764722915",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Roof.mat"
+        },
+        {
+          "slot": 13,
+          "guid": "abc00000000016318133197809632774",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanBrick_2.mat"
+        },
+        {
+          "slot": 14,
+          "guid": "abc00000000018444264578413789802",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_Koreantile_1.mat"
+        },
+        {
+          "slot": 15,
+          "guid": "abc00000000015799694847424961112",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_BronzeBurner.mat"
+        },
+        {
+          "slot": 16,
+          "guid": "abc00000000016748740287876020873",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_BrickConcrete.mat"
+        },
+        {
+          "slot": 17,
+          "guid": "abc00000000005152374349464403763",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Buyeon_1.mat"
+        },
+        {
+          "slot": 18,
+          "guid": "abc00000000007433458838340987626",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Decors_2.mat"
+        },
+        {
+          "slot": 19,
+          "guid": "abc00000000010623060289702310353",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Dancheong_2.mat"
+        },
+        {
+          "slot": 20,
+          "guid": "abc00000000002351381853600431856",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Green.mat"
+        },
+        {
+          "slot": 21,
+          "guid": "abc00000000006921496729349352011",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Decors_1.mat"
+        },
+        {
+          "slot": 22,
+          "guid": "abc00000000004254352377145237052",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Dancheong_1.mat"
+        },
+        {
+          "slot": 23,
+          "guid": "abc00000000010358410530690171489",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Woods_1.mat"
+        },
+        {
+          "slot": 24,
+          "guid": "abc00000000014710543061954993294",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Sign_BSD_1.mat"
+        },
+        {
+          "slot": 25,
+          "guid": "abc00000000012020755257017709312",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Ceiling_1.mat"
+        },
+        {
+          "slot": 26,
+          "guid": "abc00000000014526407902551797599",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Sign_BSD_2.mat"
+        },
+        {
+          "slot": 27,
+          "guid": "abc00000000000378510867108395071",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_1.mat"
+        }
+      ],
+      "blender_source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Landmarks\\ModelReports\\LM_Bongsudang_LODs.blend"
+    },
+    {
+      "asset": "Byeolchu",
+      "status": "PASS_GEOMETRY_EXPORT",
+      "source_visual_triangles": 263250,
+      "lods": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Byeolchu_LOD0.fbx",
+          "requested_limit": 45000,
+          "actual_fbx_triangles": 44494,
+          "bounds_blender_world": {
+            "minimum": [
+              -6.3095011711120605,
+              -10.115142822265625,
+              -0.03580722212791443
+            ],
+            "maximum": [
+              7.488558769226074,
+              8.965984344482422,
+              7.113754749298096
+            ],
+            "size": [
+              13.798059940338135,
+              19.081127166748047,
+              7.14956197142601
+            ]
+          },
+          "materials": 11,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.003726482391357422,
+            -0.00519561767578125,
+            -0.008432388305664062
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Byeolchu_LOD1.fbx",
+          "requested_limit": 15000,
+          "actual_fbx_triangles": 14364,
+          "bounds_blender_world": {
+            "minimum": [
+              -6.3095011711120605,
+              -10.095368385314941,
+              -0.035807207226753235
+            ],
+            "maximum": [
+              7.468791484832764,
+              8.91861343383789,
+              7.121213436126709
+            ],
+            "size": [
+              13.778292655944824,
+              19.013981819152832,
+              7.157020643353462
+            ]
+          },
+          "materials": 11,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.02349376678466797,
+            -0.0723409652709961,
+            -0.0009737014770507812
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Byeolchu_LOD2.fbx",
+          "requested_limit": 15000,
+          "actual_fbx_triangles": 14364,
+          "bounds_blender_world": {
+            "minimum": [
+              -6.3095011711120605,
+              -10.095368385314941,
+              -0.035807207226753235
+            ],
+            "maximum": [
+              7.468791484832764,
+              8.91861343383789,
+              7.121213436126709
+            ],
+            "size": [
+              13.778292655944824,
+              19.013981819152832,
+              7.157020643353462
+            ]
+          },
+          "materials": 11,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.02349376678466797,
+            -0.0723409652709961,
+            -0.0009737014770507812
+          ]
+        }
+      ],
+      "source_preserved": true,
+      "prefab_material_bindings": [
+        {
+          "slot": 0,
+          "guid": "abc00000000000378510867108395071",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_1.mat"
+        },
+        {
+          "slot": 1,
+          "guid": "abc00000000013536118150340190256",
+          "unity_material": "Assets/HwaseongHaenggung/Material/Additions/M_BlackTile.mat"
+        },
+        {
+          "slot": 2,
+          "guid": "abc00000000006960240924952980542",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWall_1.mat"
+        },
+        {
+          "slot": 3,
+          "guid": "abc00000000004934170793764722915",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_Roof.mat"
+        },
+        {
+          "slot": 4,
+          "guid": "abc00000000016748740287876020873",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_R_BrickConcrete.mat"
+        },
+        {
+          "slot": 5,
+          "guid": "abc00000000003887760593944507777",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_Metal.mat"
+        },
+        {
+          "slot": 6,
+          "guid": "abc00000000017556615246628206000",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanPaper_1.mat"
+        },
+        {
+          "slot": 7,
+          "guid": "abc00000000012041702405475218536",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanFloor_1.mat"
+        },
+        {
+          "slot": 8,
+          "guid": "abc00000000014976349613034265160",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanWood_4.mat"
+        },
+        {
+          "slot": 9,
+          "guid": "abc00000000001247809319891771507",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanStone_1.mat"
+        },
+        {
+          "slot": 10,
+          "guid": "abc00000000016318133197809632774",
+          "unity_material": "Assets/HwaseongHaenggung/Material/MI_KoreanBrick_2.mat"
+        }
+      ],
+      "blender_source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Landmarks\\ModelReports\\LM_Byeolchu_LODs.blend"
+    },
+    {
+      "asset": "Wall05B",
+      "status": "PASS_GEOMETRY_EXPORT",
+      "source_visual_triangles": 62500,
+      "lods": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Wall05B_LOD0.fbx",
+          "requested_limit": 15000,
+          "actual_fbx_triangles": 14879,
+          "bounds_blender_world": {
+            "minimum": [
+              -0.4677552878856659,
+              -5.586376190185547,
+              -1.4293991327285767
+            ],
+            "maximum": [
+              2.492823600769043,
+              6.1061015129089355,
+              2.3642375469207764
+            ],
+            "size": [
+              2.960578888654709,
+              11.692477703094482,
+              3.793636679649353
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.006926447153091431,
+            -0.006495952606201172,
+            -0.0022542476654052734
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Wall05B_LOD1.fbx",
+          "requested_limit": 7000,
+          "actual_fbx_triangles": 6943,
+          "bounds_blender_world": {
+            "minimum": [
+              -0.4691683351993561,
+              -5.586376190185547,
+              -1.4293991327285767
+            ],
+            "maximum": [
+              2.4925777912139893,
+              6.1061015129089355,
+              2.367119312286377
+            ],
+            "size": [
+              2.9617461264133453,
+              11.692477703094482,
+              3.7965184450149536
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.005759209394454956,
+            -0.006495952606201172,
+            0.0006275177001953125
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Wall05B_LOD2.fbx",
+          "requested_limit": 3000,
+          "actual_fbx_triangles": 2976,
+          "bounds_blender_world": {
+            "minimum": [
+              -0.4653818607330322,
+              -5.586376190185547,
+              -1.4317203760147095
+            ],
+            "maximum": [
+              2.482464551925659,
+              6.108539581298828,
+              2.367119312286377
+            ],
+            "size": [
+              2.9478464126586914,
+              11.694915771484375,
+              3.7988396883010864
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.019658923149108887,
+            -0.004057884216308594,
+            0.002948760986328125
+          ]
+        }
+      ],
+      "source_preserved": true,
+      "prefab_material_bindings": [
+        {
+          "slot": 0,
+          "guid": "abc00000000012734680320034797949",
+          "unity_material": "Assets/BillemotdonggulLavaTubePack/Material/MI_Wall05B.mat"
+        }
+      ],
+      "blender_source": null
+    },
+    {
+      "asset": "Floor02B",
+      "status": "PASS_GEOMETRY_EXPORT",
+      "source_visual_triangles": 62500,
+      "lods": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Floor02B_LOD0.fbx",
+          "requested_limit": 15000,
+          "actual_fbx_triangles": 14879,
+          "bounds_blender_world": {
+            "minimum": [
+              -2.4909133911132812,
+              -4.998784065246582,
+              -0.5432837009429932
+            ],
+            "maximum": [
+              4.080129623413086,
+              3.7733442783355713,
+              0.5312793850898743
+            ],
+            "size": [
+              6.571043014526367,
+              8.772128343582153,
+              1.0745630860328674
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            0.0,
+            -0.0062830448150634766,
+            -0.008236467838287354
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Floor02B_LOD1.fbx",
+          "requested_limit": 7000,
+          "actual_fbx_triangles": 6944,
+          "bounds_blender_world": {
+            "minimum": [
+              -2.4909133911132812,
+              -4.998784065246582,
+              -0.5482999682426453
+            ],
+            "maximum": [
+              4.080129623413086,
+              3.773716926574707,
+              0.5269619226455688
+            ],
+            "size": [
+              6.571043014526367,
+              8.772500991821289,
+              1.0752618908882141
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            0.0,
+            -0.005910396575927734,
+            -0.007537662982940674
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Floor02B_LOD2.fbx",
+          "requested_limit": 3000,
+          "actual_fbx_triangles": 2976,
+          "bounds_blender_world": {
+            "minimum": [
+              -2.4709959030151367,
+              -4.998784065246582,
+              -0.5583146214485168
+            ],
+            "maximum": [
+              4.075710296630859,
+              3.7707009315490723,
+              0.5519448518753052
+            ],
+            "size": [
+              6.546706199645996,
+              8.769484996795654,
+              1.110259473323822
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.024336814880371094,
+            -0.0089263916015625,
+            0.027459919452667236
+          ]
+        }
+      ],
+      "source_preserved": true,
+      "prefab_material_bindings": [
+        {
+          "slot": 0,
+          "guid": "abc00000000015061052067341038419",
+          "unity_material": "Assets/BillemotdonggulLavaTubePack/Material/M_Floor02B.mat"
+        }
+      ],
+      "blender_source": null
+    },
+    {
+      "asset": "Ceiling05A",
+      "status": "PASS_GEOMETRY_EXPORT",
+      "source_visual_triangles": 79983,
+      "lods": [
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Ceiling05A_LOD0.fbx",
+          "requested_limit": 15000,
+          "actual_fbx_triangles": 14880,
+          "bounds_blender_world": {
+            "minimum": [
+              -0.78856360912323,
+              -5.152621746063232,
+              -4.943942070007324
+            ],
+            "maximum": [
+              2.2348170280456543,
+              6.33635950088501,
+              5.017624378204346
+            ],
+            "size": [
+              3.0233806371688843,
+              11.488981246948242,
+              9.96156644821167
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            0.006183922290802002,
+            -0.0002570152282714844,
+            0.004536628723144531
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Ceiling05A_LOD1.fbx",
+          "requested_limit": 7000,
+          "actual_fbx_triangles": 6943,
+          "bounds_blender_world": {
+            "minimum": [
+              -0.7910117506980896,
+              -5.152015686035156,
+              -4.943942070007324
+            ],
+            "maximum": [
+              2.248521327972412,
+              6.33635950088501,
+              5.017624378204346
+            ],
+            "size": [
+              3.0395330786705017,
+              11.488375186920166,
+              9.96156644821167
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            0.022336363792419434,
+            -0.0008630752563476562,
+            0.004536628723144531
+          ]
+        },
+        {
+          "path": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\Landmarks\\Models\\LM_Ceiling05A_LOD2.fbx",
+          "requested_limit": 3000,
+          "actual_fbx_triangles": 2976,
+          "bounds_blender_world": {
+            "minimum": [
+              -0.7810881733894348,
+              -5.139903545379639,
+              -4.917179107666016
+            ],
+            "maximum": [
+              2.1968252658843994,
+              6.33635950088501,
+              4.957686901092529
+            ],
+            "size": [
+              2.9779134392738342,
+              11.476263046264648,
+              9.874866008758545
+            ]
+          },
+          "materials": 1,
+          "uv_layers": [
+            "UVmap_0",
+            "UVmap_1"
+          ],
+          "source_size_delta_m": [
+            -0.03928327560424805,
+            -0.012975215911865234,
+            -0.08216381072998047
+          ]
+        }
+      ],
+      "source_preserved": true,
+      "prefab_material_bindings": [
+        {
+          "slot": 0,
+          "guid": "abc00000000000006274860754123193",
+          "unity_material": "Assets/BillemotdonggulLavaTubePack/Material/MI_Ceiling05A.mat"
+        }
+      ],
+      "blender_source": null
+    }
+  ]
+}

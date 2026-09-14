@@ -18,6 +18,8 @@ namespace Oheangbu.Combat
         public float DamageMultiplier { get; set; } = 1f;
 
         public bool IsAlive => _hp > 0f;
+        public void Restore()
+        { _hp=_config!=null?_config.EnemyMaxHp:60f; DamageMultiplier=1f; HpChanged?.Invoke(); }
         public float Hp01 => _config != null && _config.EnemyMaxHp > 0f ? _hp / _config.EnemyMaxHp : 0f;
 
         private void Awake()

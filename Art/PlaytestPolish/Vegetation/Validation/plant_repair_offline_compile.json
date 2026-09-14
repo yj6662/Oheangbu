@@ -1,0 +1,24 @@
+{
+  "utc": "2026-09-14T01:24:05.5219757Z",
+  "status": "PASS_COMPILE_ONLY",
+  "scope": "Roslyn compilation using existing Unity references, outside Assets. No Unity invocation.",
+  "sources": [
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroVegetationPlantRepair.cs",
+      "sha256": "b970628bbf9c77648991f6af2155be414aa12a7fac9e391949d6b7c4116ae8a7"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroDressingAssets.cs",
+      "sha256": "c395f7ee112603c1329c5c78dc274364089e503c5178ab533c31162cdf115730"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroVegetationPolish.cs",
+      "sha256": "dc154559306ecf047169cf00d7a42c75fef2f2c77a170361c0e464f00d5b22e8"
+    }
+  ],
+  "diagnosis": "12 active missing BaseMap materials: Jeokro and Cheolong YMC shrub branch/leaf/twig at both LODs. Supplier shader custom mappings verified; original BC/NM/Opacity maps are each 1024x1024.",
+  "unverified": [
+    "refreshplants runtime execution by root",
+    "Actual final shrub colors/cutout and rendering cost"
+  ]
+}

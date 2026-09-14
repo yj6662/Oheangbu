@@ -1,0 +1,122 @@
+using System;
+using UnityEngine;
+
+namespace Oheangbu.Data.World
+{
+    /// <summary>Macro-only environment. Geography remains owned by WorldMacroSheetSO.</summary>
+    [CreateAssetMenu(menuName="Oheangbu/World/Macro Dressing")]
+    public sealed class WorldMacroDressingSheetSO : ScriptableObject
+    {
+        public enum Kind { Tree, Shrub, Grass, Rock, Prop }
+        [Serializable] public sealed class Part { public Mesh Mesh; public int Submesh; public Material Material; public Matrix4x4 Local=Matrix4x4.identity; }
+        [Serializable] public sealed class Level { public Part[] Parts=Array.Empty<Part>(); }
+        [Serializable] public sealed class Prototype
+        {
+            public string Id,SourcePath,SourceHash; public RealmId Realm; public Kind Category; public float Weight=1;
+            public Vector2 Scale=new Vector2(.8f,1.2f); public Vector3 Size; public float Radius=.2f;
+            public bool WetBank; public Level[] Lods=Array.Empty<Level>();
+            public bool GroundPatch,LowInfill; public int BillboardViews=1,PolishVersion;
+            public float MaximumAltitude=10000,MaximumSlope=90;
+            // Actual selected-LOD bottom vertices, normalized with the render geometry.
+            public Vector3[] GroundPoints=Array.Empty<Vector3>();
+        }
+        [Serializable] public sealed class Cell
+        {
+            public int X,Z,Owner; public Vector3 Centre; public float MinHeight,MaxHeight;
+            // 17x17 heights match the existing sixteen-metre triangle lattice.
+            public float[] Heights; // no per-instance transforms are serialized
+            // 64x64 four-metre habitats: low bits 1 dry/2 damp/3 settlement;
+            // bits8/16/32/64 independently allow tree/shrub/grass/rock.
+            public byte[] Habitat;
+            // 17x17 x five normalized region weights. Boundary blend +/-150m.
+            public byte[] RealmWeights;
+        }
+        [Serializable] public sealed class PreserveArea
+        {
+            public string Id; public Vector3 Centre; public Vector2 HalfSize; public float Yaw;
+            public bool ExcludeProcedural=true;
+            public bool LimitHeight;
+            public float MinimumY,MaximumY;
+            // Bit per Kind; old sheets continue to exclude all categories.
+            public int AffectedKinds=31;
+            public bool TypedClearance;
+            public Vector4 Padding=new Vector4(1.2f,.55f,.02f,1.2f);
+        }
+        [Serializable] public sealed class Passage
+        {
+            public string Id; public Vector3 A,B; public float Width;
+        }
+        [Serializable] public sealed class StoryCluster
+        {
+            public string Id,AnchorId,Theme;public RealmId Realm;public Vector3 Centre;public float Radius=80;
+            public float TreeDensity=1,ShrubDensity=1,GrassDensity=1,RockDensity=1;
+            public string PlacementNote="Environment vignette reservation; no quest or reward added.";
+        }
+        [Serializable] public sealed class FixedPlacement
+        {
+            public string Id,ClusterId,PrototypeId;public Vector3 Position,Euler;public float Scale=1;
+            // Authoring creates once; later region bakes preserve these exact user-editable transforms.
+            public bool Preserve=true;
+        }
+        public WorldMacroSheetSO Geography;
+        public int Seed=20260912,CellSize=256;
+        public int PaletteVersion;
+        // Opt-in derivative. Serialized baseline sheets retain their previous appearance.
+        public bool DenseVegetation;
+        public int DenseRealmMask=31;
+        public float DenseTreeSpacing=7.5f,DenseShrubSpacing=4.5f,DenseGrassSpacing=1.6f;
+        public float GrassMeshDistance=50,GroundCoverDistance=420,GroundCoverSpacing=8;
+        // A separate seeded layer preserves every existing tall-vegetation placement.
+        public bool LowGrassInfill;
+        public float LowGrassSpacing=1.25f,LowGrassDensity=.9f,LowGrassMeshDistance=20,LowGrassDistance=110;
+        public Vector4 DensityGain=new Vector4(1.45f,1.6f,1.8f,1);
+        public Passage[] Passages=Array.Empty<Passage>();
+        public float RegionBlend=300,GrassDistance=80,ShrubDistance=220,TreeDistance=800,ForestDistance=3200;
+        public float TreeSpacing=11,ShrubSpacing=8,GrassSpacing=2.5f,RockSpacing=24;
+        public float TreeNear=65,TreeMiddle=180,CollisionRadius=38,VehiclePredictionSeconds=3;
+        public int CellsPerFrame=1,ColliderPoolSize=384;
+        public float[] RealmDensity={.9f,.58f,.52f,.65f,.76f}; // RealmId order, not polygon order
+        public string[] CompletedRegions=Array.Empty<string>();
+        public Prototype[] Prototypes=Array.Empty<Prototype>();
+        public Cell[] Cells=Array.Empty<Cell>();
+        public PreserveArea[] PreservedAreas=Array.Empty<PreserveArea>();
+        public StoryCluster[] StoryClusters=Array.Empty<StoryCluster>();
+        public FixedPlacement[] FixedPlacements=Array.Empty<FixedPlacement>();
+        public string SourceFingerprint;
+
+        public static bool Excludes(PreserveArea area,Vector3 position,Kind kind)
+        {
+            if(!area.ExcludeProcedural||(area.AffectedKinds&(1<<(int)kind))==0)return false;
+            if(area.LimitHeight&&(position.y<area.MinimumY||position.y>area.MaximumY))return false;
+            var q=Quaternion.Euler(0,-area.Yaw,0)*(position-area.Centre);
+            float pad=area.TypedClearance?(kind==Kind.Tree?area.Padding.x:kind==Kind.Shrub?area.Padding.y:kind==Kind.Grass?area.Padding.z:area.Padding.w):2;
+            return Mathf.Abs(q.x)<area.HalfSize.x+pad&&Mathf.Abs(q.z)<area.HalfSize.y+pad;
+        }
+        public static float PassageEdgeDistance(Passage route,Vector3 position)
+        {
+            var a=new Vector2(route.A.x,route.A.z);var b=new Vector2(route.B.x,route.B.z);var p=new Vector2(position.x,position.z);var d=b-a;
+            float t=d.sqrMagnitude<.0001f?0:Mathf.Clamp01(Vector2.Dot(p-a,d)/d.sqrMagnitude);
+            return Vector2.Distance(p,a+d*t)-route.Width*.5f;
+        }
+        public static float Height(Cell cell,float x,float z,Vector2 origin)
+        {
+            float u=Mathf.Clamp((x-origin.x)/16,0,15.99999f),v=Mathf.Clamp((z-origin.y)/16,0,15.99999f);
+            int ix=Mathf.FloorToInt(u),iz=Mathf.FloorToInt(v);u-=ix;v-=iz;int a=iz*17+ix;
+            float h=cell.Heights[a],b=cell.Heights[a+1],c=cell.Heights[a+17];
+            return u+v<=1?h+(b-h)*u+(c-h)*v:cell.Heights[a+18]+(c-cell.Heights[a+18])*(1-u)+(b-cell.Heights[a+18])*(1-v);
+        }
+        public static float Slope(Cell c,float x,float z,Vector2 origin)
+        {return Mathf.Acos(Mathf.Clamp01(Normal(c,x,z,origin).y))*Mathf.Rad2Deg;}
+        public static Vector3 Normal(Cell c,float x,float z,Vector2 origin)
+        {
+            float u=Mathf.Clamp((x-origin.x)/16,0,15.99999f),v=Mathf.Clamp((z-origin.y)/16,0,15.99999f);
+            int ix=(int)u,iz=(int)v,a=iz*17+ix;float dx,dz;
+            if(u-ix+v-iz<=1){dx=(c.Heights[a+1]-c.Heights[a])/16;dz=(c.Heights[a+17]-c.Heights[a])/16;}
+            else{dx=(c.Heights[a+18]-c.Heights[a+17])/16;dz=(c.Heights[a+18]-c.Heights[a+1])/16;}
+            return new Vector3(-dx,1,-dz).normalized;
+        }
+        public static uint Hash(int x,int z,int seed)
+        {unchecked{uint h=(uint)x*374761393u+(uint)z*668265263u+(uint)seed*2246822519u;h=(h^(h>>13))*1274126177u;return h^(h>>16);}}
+        public static float Unit(uint h)=>(h&0xffffff)/16777216f;
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "label": "Hwanggyeong_ground_before",
+    "utc": "2026-09-11T22:25:23.1329537Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": false,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 0,
+    "residentInstances": 0,
+    "drawCalls": 0,
+    "drawnInstances": 0,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -391.8135070800781,
+        "y": 93.98583221435547,
+        "z": -1264.6334228515625
+    },
+    "euler": {
+        "x": 354.52789306640627,
+        "y": 87.82170104980469,
+        "z": -4.28841104849198e-7
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.6518445014953613,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

@@ -1,0 +1,566 @@
+{
+    "status": "SYNTHETIC_MOTOR_PASS_NATIVE_UNVERIFIED",
+    "scope": "PLAY-MODE SYNTHETIC: isolated temporary CharacterController and ground at y=-1000; real PlayerMotor scaled steps and action eligibility, dedicated virtual-device state injection inside an actual Dynamic input update. No OS input, live-player movement, save, damage/reward, animation or whole-route play.",
+    "checks": [
+        {
+            "name": "virtual held action precondition",
+            "status": "PASS",
+            "detail": "Temporary action enabled/controls: True/1, True/1; update=Dynamic; device values=1/1; action phases=Performed/Performed; dedicated device=24. Both actual virtual controls and action state must read held before eligibility tests.",
+            "measured": 2.0,
+            "limit": 2.0
+        },
+        {
+            "name": "initial ground acquired",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.05000000074505806
+        },
+        {
+            "name": "same-frame held draw intent blocks harvest before drawing state",
+            "status": "PASS",
+            "detail": "Real CanHarvestNow is evaluated with a held draw action while _drawing remains false; native Q/LMB ordering remains unverified.",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "jump starts 30fps scale 1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.4772257804870609,
+            "limit": 5.4772257804870609
+        },
+        {
+            "name": "air jump/dodge/draw rejected 30/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "real CharacterController apex 30/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.74951171875,
+            "limit": 0.75
+        },
+        {
+            "name": "landing acquired 30/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.030029296875,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "held harvest not resumed on landing 30/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh harvest release accepted 30/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "jump starts 30fps scale 0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.4772257804870609,
+            "limit": 5.4772257804870609
+        },
+        {
+            "name": "air jump/dodge/draw rejected 30/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "real CharacterController apex 30/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.74951171875,
+            "limit": 0.75
+        },
+        {
+            "name": "landing acquired 30/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.04156494140625,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "held harvest not resumed on landing 30/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh harvest release accepted 30/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "jump starts 60fps scale 1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.4772257804870609,
+            "limit": 5.4772257804870609
+        },
+        {
+            "name": "air jump/dodge/draw rejected 60/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "real CharacterController apex 60/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.74951171875,
+            "limit": 0.75
+        },
+        {
+            "name": "landing acquired 60/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.030029296875,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "held harvest not resumed on landing 60/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh harvest release accepted 60/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "jump starts 60fps scale 0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.4772257804870609,
+            "limit": 5.4772257804870609
+        },
+        {
+            "name": "air jump/dodge/draw rejected 60/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "real CharacterController apex 60/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.74810791015625,
+            "limit": 0.75
+        },
+        {
+            "name": "landing acquired 60/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0423583984375,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "held harvest not resumed on landing 60/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh harvest release accepted 60/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "jump starts 120fps scale 1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.4772257804870609,
+            "limit": 5.4772257804870609
+        },
+        {
+            "name": "air jump/dodge/draw rejected 120/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "real CharacterController apex 120/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.74951171875,
+            "limit": 0.75
+        },
+        {
+            "name": "landing acquired 120/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.033203125,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "held harvest not resumed on landing 120/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh harvest release accepted 120/1",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "jump starts 120fps scale 0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.4772257804870609,
+            "limit": 5.4772257804870609
+        },
+        {
+            "name": "air jump/dodge/draw rejected 120/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "real CharacterController apex 120/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.74066162109375,
+            "limit": 0.75
+        },
+        {
+            "name": "landing acquired 120/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.04107666015625,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "held harvest not resumed on landing 120/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh harvest release accepted 120/0.2",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "jump rejected during drawing",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "jump rejected while harvest held",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "actual walk speed",
+            "status": "PASS",
+            "detail": "",
+            "measured": 2.199983596801758,
+            "limit": 2.200000047683716
+        },
+        {
+            "name": "held sprint actual speed",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.499972820281982,
+            "limit": 5.5
+        },
+        {
+            "name": "diagonal sprint normalized",
+            "status": "PASS",
+            "detail": "",
+            "measured": 5.500062465667725,
+            "limit": 5.5
+        },
+        {
+            "name": "menu release has no stale planar drift",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "stationary sit complete",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "pause preserves sit without accepting action",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "movement gets up preserving foot height",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.02996826171875,
+            "limit": 0.029999999329447748
+        },
+        {
+            "name": "harvest held during seated getup stays cancelled",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "fresh release after getup restores harvest eligibility",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "synthetic damage notification cancels sit",
+            "status": "PASS",
+            "detail": "Only the presentation/motor notification is invoked; no HP, reward or save is changed.",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "crouch capsule/feet 30",
+            "status": "PASS",
+            "detail": "feetDelta=0; crouch=True; center=(0.00, 0.63, 0.00)",
+            "measured": 1.25,
+            "limit": 1.25
+        },
+        {
+            "name": "crouch speed overrides held sprint 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.1999987363815308,
+            "limit": 1.2000000476837159
+        },
+        {
+            "name": "crouch rejects jump/dodge 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "crouch permits draw/harvest 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "C ignored during draw 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "C ignored during harvest hold 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "low ceiling blocks stand/boarding 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.25,
+            "limit": 1.25
+        },
+        {
+            "name": "menu preserves crouch 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "boarding explicitly restores stand 30",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.75,
+            "limit": 1.75
+        },
+        {
+            "name": "crouch capsule/feet 60",
+            "status": "PASS",
+            "detail": "feetDelta=0; crouch=True; center=(0.00, 0.63, 0.00)",
+            "measured": 1.25,
+            "limit": 1.25
+        },
+        {
+            "name": "crouch speed overrides held sprint 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.1999987363815308,
+            "limit": 1.2000000476837159
+        },
+        {
+            "name": "crouch rejects jump/dodge 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "crouch permits draw/harvest 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "C ignored during draw 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "C ignored during harvest hold 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "low ceiling blocks stand/boarding 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.25,
+            "limit": 1.25
+        },
+        {
+            "name": "menu preserves crouch 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "boarding explicitly restores stand 60",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.75,
+            "limit": 1.75
+        },
+        {
+            "name": "crouch capsule/feet 120",
+            "status": "PASS",
+            "detail": "feetDelta=0; crouch=True; center=(0.00, 0.63, 0.00)",
+            "measured": 1.25,
+            "limit": 1.25
+        },
+        {
+            "name": "crouch speed overrides held sprint 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.1999987363815308,
+            "limit": 1.2000000476837159
+        },
+        {
+            "name": "crouch rejects jump/dodge 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 0.0,
+            "limit": 0.0
+        },
+        {
+            "name": "crouch permits draw/harvest 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "C ignored during draw 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "C ignored during harvest hold 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "low ceiling blocks stand/boarding 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.25,
+            "limit": 1.25
+        },
+        {
+            "name": "menu preserves crouch 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.0,
+            "limit": 1.0
+        },
+        {
+            "name": "boarding explicitly restores stand 120",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.75,
+            "limit": 1.75
+        },
+        {
+            "name": "unconfigured motor leaves legacy entry gate available",
+            "status": "PASS",
+            "detail": "",
+            "measured": 1.75,
+            "limit": 1.75
+        }
+    ],
+    "resourcesReleased": true,
+    "timeRestored": true,
+    "unverified": [
+        "Native Ctrl/Space/C/Q interactions and real-time Animator transitions",
+        "Current-scene terrain, slope/stair contacts, art and foot skin",
+        "Real pause menu and occupied vehicle UI integration"
+    ]
+}

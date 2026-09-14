@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3068affb06cf4511b91e85c15e1d7f7b, type: 3}
+  m_Name: PlayerAppearance_Locomotion
+  m_EditorClassIdentifier: Oheangbu.App:Oheangbu.App.World:WorldMacroPlayerAppearanceProfile
+  Controller: {fileID: 9100000, guid: 649b5ffa579453f4f95eff909438e005, type: 2}
+  Idle: {fileID: 7400000, guid: 3c8211710d690e44cbc55c2419d19569, type: 2}
+  Walk: {fileID: 7400000, guid: e9288e13d6fbf6046b9ef2af83bb0e0a, type: 2}
+  Run: {fileID: 7400000, guid: 50f7fb307e0ac3440b43ca5c16021fcb, type: 2}
+  DirectionalLocomotion: 1
+  RecoveryMotions: 1
+  IdleLookTurn: 1
+  NaturalLocomotion: 1
+  CrouchRoll: {fileID: 7400000, guid: 877a808d11288894081866cc24527722, type: 2}
+  IdleLookDegrees: 90
+  DirectionalCrouch:
+  - {fileID: 7400000, guid: 4688a1f39e5dec94d8fe81995359d891, type: 2}
+  - {fileID: 7400000, guid: 3731c3b8731518b4187bc9ee60eee285, type: 2}
+  - {fileID: 7400000, guid: f17dacb3ba9e150488b2104ef52a4ebd, type: 2}
+  - {fileID: 7400000, guid: 03571f318748e1347927424ddfa196e4, type: 2}
+  CrouchIdle: {fileID: 7400000, guid: f5da4f972d31f6247a71cdce7b768a6f, type: 2}
+  StartForward: {fileID: 7400000, guid: 5635b42725a733440b23f4a04d9f98b6, type: 2}
+  TurnLeft: {fileID: 7400000, guid: 1e156d6bd35e2494692b29ff0a419856, type: 2}
+  TurnRight: {fileID: 7400000, guid: 522a928d31d2147439346ce4d36d285d, type: 2}
+  DirectionalWalk:
+  - {fileID: 7400000, guid: e9288e13d6fbf6046b9ef2af83bb0e0a, type: 2}
+  - {fileID: 7400000, guid: 9b8143d9d4e2a1e4789d3db57b9b3769, type: 2}
+  - {fileID: 7400000, guid: b6c600b1719dafe4887aa089aabad4b6, type: 2}
+  - {fileID: 7400000, guid: 0d0e466ef3dba20428bf17faf67d3785, type: 2}
+  DirectionalRun:
+  - {fileID: 7400000, guid: 50f7fb307e0ac3440b43ca5c16021fcb, type: 2}
+  - {fileID: 7400000, guid: 9abb73eddc2befb428ee9719fc3fc4c0, type: 2}
+  - {fileID: 7400000, guid: 6fe9db46684d9fe46b880e8e4c11b917, type: 2}
+  - {fileID: 7400000, guid: a844d7a8ec561404daf088683a8d288d, type: 2}
+  DirectionalDodge:
+  - {fileID: 7400000, guid: b2467643643a7de41a9bb2f88ec32c0e, type: 2}
+  - {fileID: 7400000, guid: b29f2ab7d8f7f97479a637c4216b02d8, type: 2}
+  - {fileID: 7400000, guid: d35eb07b807d6fc4696c0e5a5ad4ae1e, type: 2}
+  - {fileID: 7400000, guid: 1eb491c71fe7e0746a4e07523761cd99, type: 2}
+  SitDown: {fileID: 7400000, guid: 418426020f1d28f488c7e37b6a755379, type: 2}
+  SitIdle: {fileID: 7400000, guid: 95921bcd2c94f014090152b6573d308d, type: 2}
+  StandUp: {fileID: 7400000, guid: 474343ae6525b304884b88a41a086378, type: 2}
+  JumpRise: {fileID: 7400000, guid: bb16448e9f3888e46ad1b5354a787c71, type: 2}
+  JumpFall: {fileID: 7400000, guid: 1a7ad9aa72d68ff4abd64b947117ba40, type: 2}
+  Land: {fileID: 7400000, guid: 4ce7d9d257f111f4e951952c8950a569, type: 2}
+  ModelHeight: 1.75
+  WalkSpeed: 2.2
+  RunSpeed: 5.5
+  NativeRunSpeed: 5.362285
+  VelocityDamping: 12
+  FacingYaw: 0
+  UniformScale: 1.0046296
+  LocalOffset: {x: 0, y: 0.00000017964177, z: 0}
+  DrawingArmWeight: 0
+  DrawingReach: 0.58
+  BlinkDuration: 0.16
+  BlinkInterval: 4.2

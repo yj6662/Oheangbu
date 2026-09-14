@@ -1,0 +1,15 @@
+{
+  "stage": "Cabin additional interior-opening edit",
+  "status": "BLOCKED_BEFORE_IMPORT",
+  "observedCommitRatio": 0.8517,
+  "limit": 0.85,
+  "priorPassingFilesPreserved": true,
+  "note": "Blender guard raised before the additional Cabin build imported or rewrote the model. Resume only after root confirms memory headroom. Existing assembly uses the prior geometry.",
+  "firstEventResumedAtRootCommitRatio": 0.7716,
+  "lastEvent": {
+    "stage": "Final seated capture, after successful final Cabin export and assembly",
+    "observedCommitRatio": 0.8559,
+    "status": "CAPTURE_BLOCKED_BEFORE_RENDER"
+  },
+  "finalModelsReady": true
+}

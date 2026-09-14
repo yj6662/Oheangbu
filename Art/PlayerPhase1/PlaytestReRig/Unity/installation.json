@@ -1,0 +1,21 @@
+{
+    "status": "INSTALLED_HAND_RIG_DERIVATIVE",
+    "model": "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx",
+    "prefab": "Assets/_Project/Art/Characters/PlaytestReRig/PF_Player_C02_ReRig.prefab",
+    "profile": "Assets/_Project/Art/Characters/PlaytestReRig/PlayerAppearance_C02_ReRig.asset",
+    "gestureProfile": "Assets/_Project/Art/Characters/PlaytestReRig/PlayerGesture_C02_ReRig.asset",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "sourceFbxSha256": "db1599d97b36051b19458a4704673ce602aecf345a26158d404cf5f6650bed1b",
+    "gateScope": "hands_and_upper_body",
+    "fingerPoses": 30,
+    "nearTriangles": 6900,
+    "bodyTriangles": 59246,
+    "brushTriangles": 4680,
+    "rootMotionOff": true,
+    "nearHasNoAnimator": true,
+    "existingSourcePreserved": true,
+    "limitations": [
+        "Hand/upper-body acceptance is separate from whole-clothing penetration and lower-body art approval.",
+        "Near-arm cap and transitions require current-runtime screenshots. This command does not perform user walking or build a player."
+    ]
+}

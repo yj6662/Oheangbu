@@ -1,0 +1,275 @@
+{
+    "status": "PASS_SYNTHETIC_PRESENTATION_AND_REAL_GAIN_EVENTS",
+    "utc": "2026-09-14T02:21:40.0034991Z",
+    "sourceKind": "Explicit diagnostic viewport source; no enemy or hit event generated",
+    "saveSuffix": "_polish_20260914",
+    "scope": "Synthetic extraction presentation with real GestureRig.EffectTip, production HarvestInkFlowRenderer/profile, actual InkPool.Gain and existing HUD event subscription. Real 1920x1080 Game View stills. Not native input, enemy extraction, damage, economy balance, or player harvest-animation validation.",
+    "positiveGainEvents": 16,
+    "restoreGainEvents": 0,
+    "positiveGainTotal": 0.15999984741210938,
+    "expectedGain": 0.1599999964237213,
+    "maximumTipErrorMeters": 0.0,
+    "actualSinkBinding": true,
+    "receivedSegmentCorrect": true,
+    "releaseCleared": true,
+    "restored": true,
+    "maximumGainWallGapSeconds": 0.01025390625,
+    "maximumGainFrameGap": 1,
+    "screenshots": [
+        {
+            "id": "01_before_income",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\AudioInk\\InkFeedback/Screenshots/20260914-022140-004-5e0cfb/01_before_income_1920x1080.png",
+            "issuedFrame": 1644,
+            "width": 1920,
+            "height": 1080,
+            "gainEvents": 0,
+            "strands": 3,
+            "droplets": 0,
+            "simulatedSeconds": 0.12809640169143678,
+            "poolInk": 0.3400000035762787,
+            "hudInk": 0.3400000035762787,
+            "receivedAlpha": 0.0,
+            "endpointErrorMeters": 0.0,
+            "commitRatio": 0.5838037729263306,
+            "receivedSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.3400000035762787
+            },
+            "source": {
+                "x": 2067.464111328125,
+                "y": 154.4315643310547,
+                "z": 1475.2347412109375
+            },
+            "actualTip": {
+                "x": 2067.39306640625,
+                "y": 152.67726135253907,
+                "z": 1474.6328125
+            },
+            "tipViewport": {
+                "x": 0.5743245482444763,
+                "y": 0.11433148384094238,
+                "z": 3.5241410732269289
+            },
+            "flowVisible": false
+        },
+        {
+            "id": "02_receiving_ink_at_actual_tip",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\AudioInk\\InkFeedback/Screenshots/20260914-022140-004-5e0cfb/02_receiving_ink_at_actual_tip_1920x1080.png",
+            "issuedFrame": 1686,
+            "width": 1920,
+            "height": 1080,
+            "gainEvents": 16,
+            "strands": 3,
+            "droplets": 12,
+            "simulatedSeconds": 0.3884046673774719,
+            "poolInk": 0.49999985098838808,
+            "hudInk": 0.49999985098838808,
+            "receivedAlpha": 0.8500000238418579,
+            "endpointErrorMeters": 0.0,
+            "commitRatio": 0.5877760648727417,
+            "receivedSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.49999985098838808
+            },
+            "source": {
+                "x": 2067.464111328125,
+                "y": 154.4315643310547,
+                "z": 1475.2347412109375
+            },
+            "actualTip": {
+                "x": 2067.39306640625,
+                "y": 152.67726135253907,
+                "z": 1474.6328125
+            },
+            "tipViewport": {
+                "x": 0.5743245482444763,
+                "y": 0.11433148384094238,
+                "z": 3.5241410732269289
+            },
+            "flowVisible": true
+        },
+        {
+            "id": "03_after_release",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\AudioInk\\InkFeedback/Screenshots/20260914-022140-004-5e0cfb/03_after_release_1920x1080.png",
+            "issuedFrame": 1751,
+            "width": 1920,
+            "height": 1080,
+            "gainEvents": 16,
+            "strands": 3,
+            "droplets": 0,
+            "simulatedSeconds": 0.566952109336853,
+            "poolInk": 0.49999985098838808,
+            "hudInk": 0.49999985098838808,
+            "receivedAlpha": 0.0,
+            "endpointErrorMeters": 0.0,
+            "commitRatio": 0.5879506468772888,
+            "receivedSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.49999985098838808
+            },
+            "source": {
+                "x": 2067.464111328125,
+                "y": 154.4315643310547,
+                "z": 1475.2347412109375
+            },
+            "actualTip": {
+                "x": 2067.39306640625,
+                "y": 152.67726135253907,
+                "z": 1474.6328125
+            },
+            "tipViewport": {
+                "x": 0.5743245482444763,
+                "y": 0.11433148384094238,
+                "z": 3.5241410732269289
+            },
+            "flowVisible": false
+        }
+    ],
+    "gains": [
+        {
+            "frame": 1671,
+            "unscaledTime": 74.4669189453125,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.3499999940395355
+            }
+        },
+        {
+            "frame": 1672,
+            "unscaledTime": 74.47628784179688,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.35999998450279238
+            }
+        },
+        {
+            "frame": 1673,
+            "unscaledTime": 74.48529815673828,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.3699999749660492
+            }
+        },
+        {
+            "frame": 1674,
+            "unscaledTime": 74.49419403076172,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.37999996542930605
+            }
+        },
+        {
+            "frame": 1675,
+            "unscaledTime": 74.5042724609375,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.38999995589256289
+            }
+        },
+        {
+            "frame": 1676,
+            "unscaledTime": 74.51405334472656,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.3999999463558197
+            }
+        },
+        {
+            "frame": 1677,
+            "unscaledTime": 74.52336883544922,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.40999993681907656
+            }
+        },
+        {
+            "frame": 1678,
+            "unscaledTime": 74.53362274169922,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.4199999272823334
+            }
+        },
+        {
+            "frame": 1679,
+            "unscaledTime": 74.54332733154297,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.4299999177455902
+            }
+        },
+        {
+            "frame": 1680,
+            "unscaledTime": 74.55286407470703,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.43999990820884707
+            }
+        },
+        {
+            "frame": 1681,
+            "unscaledTime": 74.56265258789063,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.4499998986721039
+            }
+        },
+        {
+            "frame": 1682,
+            "unscaledTime": 74.57209777832031,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.4599998891353607
+            }
+        },
+        {
+            "frame": 1683,
+            "unscaledTime": 74.58116149902344,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.46999987959861758
+            }
+        },
+        {
+            "frame": 1684,
+            "unscaledTime": 74.59005737304688,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.4799998700618744
+            }
+        },
+        {
+            "frame": 1685,
+            "unscaledTime": 74.59825897216797,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.4899998605251312
+            }
+        },
+        {
+            "frame": 1686,
+            "unscaledTime": 74.60784149169922,
+            "amount": 0.009999990463256836,
+            "hudSegment": {
+                "x": 0.3400000035762787,
+                "y": 0.49999985098838808
+            }
+        }
+    ],
+    "failures": []
+}

@@ -1,0 +1,50 @@
+{
+    "id": "Temple_aerial",
+    "file": "Temple_aerial.png",
+    "caption": "사찰 — 배치 조감",
+    "utc": "2026-09-11T19:04:35.1662069Z",
+    "scenePath": "Assets/_Project/Scenes/World/W_WorldMacro_Blockout.unity",
+    "landmark": "Temple",
+    "view": "aerial",
+    "sourceCamera": "Macro_Review_Camera",
+    "scope": "Current macro scene and copied main-camera rendering settings. A still-image composition, not a player walk, entrance-clearance test, gameplay or content-completion claim.",
+    "position": {
+        "x": -1240.0,
+        "y": 242.4325408935547,
+        "z": 4620.1455078125
+    },
+    "target": {
+        "x": -1180.0,
+        "y": 191.4325408935547,
+        "z": 4560.1455078125
+    },
+    "entryFootPosition": {
+        "x": -1180.0,
+        "y": 183.93496704101563,
+        "z": 4634.08056640625
+    },
+    "boundsCenter": {
+        "x": -1180.0,
+        "y": 191.4325408935547,
+        "z": 4560.1455078125
+    },
+    "boundsSize": {
+        "x": 44.41650390625,
+        "y": 20.243133544921876,
+        "z": 75.8984375
+    },
+    "eyeHeightM": 1.6200000047683716,
+    "fieldOfView": 60.0,
+    "nearClipM": 0.07999999821186066,
+    "farClipM": 22000.0,
+    "commitBefore": 0.817506730556488,
+    "commitAfter": 0.8187263011932373,
+    "aerialStandOffM": 60.0,
+    "aerialBoundsFit": true,
+    "aerialWashOverride": true,
+    "regionalSkyPreviewRequested": true,
+    "width": 1920,
+    "height": 1080,
+    "rendererCount": 86,
+    "framingNote": "Mesh bounds fit the aerial frame with a 10% framing margin."
+}

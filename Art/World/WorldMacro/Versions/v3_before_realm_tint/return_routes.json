@@ -1,0 +1,120 @@
+{
+  "scope": "V2 to V3. Shortest by distance on authored undirected route graph. Times are constant-speed estimates, not unlocked gameplay or vehicle validation. All four comparisons use the same named regional origin; route geometry may change with terrain.",
+  "baselineVersion": "v2_before_route_relief",
+  "rows": [
+    {
+      "from": "Cheongrim",
+      "to": "Hwanggyeong",
+      "status": "PASS",
+      "siteIds": [
+        "Cheongrim",
+        "Inn",
+        "EastFoothillPass",
+        "Hwanggyeong"
+      ],
+      "routeIds": [
+        "Return_Cheongrim_Inn",
+        "Return_Inn_EastFoothillPass",
+        "Return_EastFoothillPass_Capital"
+      ],
+      "lengthM": 3738.7640075683594,
+      "walkSeconds": 830.8364461263021,
+      "mixedSeconds": 830.8364461263021,
+      "trailLengthM": 3738.7640075683594,
+      "carriageLengthM": 0,
+      "beforeLengthM": 3607.4943237304688,
+      "beforeAnchor": "Cheongrim",
+      "shorterByM": -131.26968383789062
+    },
+    {
+      "from": "Jeokro",
+      "to": "Hwanggyeong",
+      "status": "PASS",
+      "siteIds": [
+        "Jeokro",
+        "SouthSaddle",
+        "CapitalSouthBridge",
+        "SouthGate",
+        "Hwanggyeong"
+      ],
+      "routeIds": [
+        "Return_Jeokro_SouthSaddle",
+        "Return_SouthSaddle_CapitalSouthBridge",
+        "Return_CapitalSouthBridge_SouthGate",
+        "Road_Gate_CapitalReservation"
+      ],
+      "lengthM": 5229.118347167969,
+      "walkSeconds": 1162.0262993706597,
+      "mixedSeconds": 1055.7631346687438,
+      "trailLengthM": 4524.42578125,
+      "carriageLengthM": 704.6925659179688,
+      "beforeLengthM": 4392.1463623046875,
+      "beforeAnchor": "Jeokro",
+      "shorterByM": -836.9719848632812
+    },
+    {
+      "from": "Cheolong",
+      "to": "Hwanggyeong",
+      "status": "PASS",
+      "siteIds": [
+        "Cheolong",
+        "WestPass",
+        "CapitalBridge",
+        "Hwanggyeong"
+      ],
+      "routeIds": [
+        "Road_WestPass_Cheolong",
+        "Road_WestBridge_WestPass",
+        "Road_Capital_WestBridge"
+      ],
+      "lengthM": 4369.844482421875,
+      "walkSeconds": 971.0765516493055,
+      "mixedSeconds": 312.13174874441967,
+      "trailLengthM": 0,
+      "carriageLengthM": 4369.844482421875,
+      "beforeLengthM": 3186.7811126708984,
+      "beforeAnchor": "Cheolong",
+      "shorterByM": -1183.0633697509766
+    },
+    {
+      "from": "Hyeongang",
+      "to": "Hwanggyeong",
+      "status": "PASS",
+      "siteIds": [
+        "Hyeongang",
+        "OldCapitalCreekBridge",
+        "NorthBridge",
+        "NorthPass",
+        "NorthCapitalPass",
+        "Hwanggyeong"
+      ],
+      "routeIds": [
+        "Road_OldCreek_OldCapital",
+        "Road_NorthBridge_OldCreek",
+        "Road_NorthPass_Bridge",
+        "Return_NorthPass_NorthCapitalPass",
+        "Return_NorthCapitalPass_Capital"
+      ],
+      "lengthM": 7827.825653076172,
+      "walkSeconds": 1739.5168117947048,
+      "mixedSeconds": 1222.6854206872365,
+      "trailLengthM": 4400.41748046875,
+      "carriageLengthM": 3427.408172607422,
+      "beforeLengthM": 5960.013885498047,
+      "beforeAnchor": "Hyeongang",
+      "shorterByM": -1867.811767578125
+    }
+  ],
+  "revision": {
+    "ridgeCountBefore": 26,
+    "ridgeCountAfter": 36,
+    "raisedArea25mKm2": 44.3712,
+    "raisedArea75mKm2": 17.977600000000002,
+    "maxRiseM": 311.9021453857422,
+    "meanRiseM": 49.09224313788917,
+    "outlineUnchanged": true,
+    "basinsUnchanged": false,
+    "riversUnchanged": true,
+    "sampling": "80m grid-cell estimate of height change, not surveyed mountain area."
+  }
+}

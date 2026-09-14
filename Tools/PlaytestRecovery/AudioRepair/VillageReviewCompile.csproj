@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>netstandard2.1</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems><NoWarn>CS0436</NoWarn></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroVillageOpeningIntegrationReview.cs" Link="WorldMacroVillageOpeningIntegrationReview.cs" />
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroPalanquinSummonReview.cs" Link="WorldMacroPalanquinSummonReview.cs" />
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/PlaytestAudioRepairReview.cs" Link="PlaytestAudioRepairReview.cs" />
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/PlaytestAudioInkOutputReview.cs" Link="PlaytestAudioInkOutputReview.cs" />
+    <Reference Include="UnityEngine.CoreModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.PhysicsModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.AudioModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.AudioModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.JSONSerializeModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath></Reference>
+    <Reference Include="UnityEditor"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEditor.dll</HintPath></Reference>
+    <Reference Include="UnityEditor.CoreModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEditor.CoreModule.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.App"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.App.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.Core"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.Core.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.Combat"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.Combat.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.Drawing"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.Drawing.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.Data"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.Data.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.EditorTools"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.EditorTools.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

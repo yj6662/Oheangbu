@@ -1,0 +1,23 @@
+{
+    "drawEntries": 0,
+    "drawExits": 0,
+    "commits": 0,
+    "successfulCommits": 0,
+    "dodgeStarts": 0,
+    "fKeys": 0,
+    "eKeys": 0,
+    "vKeys": 0,
+    "drawingBlocksF": false,
+    "from": {
+        "x": 1988.440673828125,
+        "y": 133.25228881835938,
+        "z": 708.6339721679688
+    },
+    "to": {
+        "x": 1988.440673828125,
+        "y": 133.2152862548828,
+        "z": 708.6339721679688
+    },
+    "shoulderRestored": true,
+    "scope": "Passive gameplay observer; native UI input sent separately. This does not certify user completion."
+}

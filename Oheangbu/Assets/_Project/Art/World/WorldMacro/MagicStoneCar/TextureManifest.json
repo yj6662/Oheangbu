@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "part": "Cabin",
+      "material": "Cabin_Surface",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Cabin_BaseColor.png",
+      "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Cabin_Normal.png",
+      "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Cabin_MetallicSmoothness.png",
+      "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Cabin_Occlusion.png",
+      "engineEmissionMask": "",
+      "emissionMaskVerified": false,
+      "useConstantMaterial": false,
+      "baseColorFactor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "normalScale": 1,
+      "sourceUvSet": 0,
+      "baseColorSpace": "sRGB",
+      "dataMapSpace": "Linear",
+      "metallicChannel": "R",
+      "smoothnessChannel": "A"
+    },
+    {
+      "part": "Roof",
+      "material": "Roof_Surface",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_BaseColor.png",
+      "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_Normal.png",
+      "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_MetallicSmoothness.png",
+      "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_Occlusion.png",
+      "engineEmissionMask": "",
+      "emissionMaskVerified": false,
+      "useConstantMaterial": false,
+      "baseColorFactor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "normalScale": 1,
+      "sourceUvSet": 0,
+      "baseColorSpace": "sRGB",
+      "dataMapSpace": "Linear",
+      "metallicChannel": "R",
+      "smoothnessChannel": "A"
+    },
+    {
+      "part": "Engine",
+      "material": "Engine_Surface",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_BaseColor.png",
+      "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_Normal.png",
+      "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_MetallicSmoothness.png",
+      "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_Occlusion.png",
+      "engineEmissionMask": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Engine_EmissionCandidateMask.png",
+      "emissionMaskVerified": false,
+      "useConstantMaterial": false,
+      "baseColorFactor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "normalScale": 1,
+      "sourceUvSet": 0,
+      "baseColorSpace": "sRGB",
+      "dataMapSpace": "Linear",
+      "metallicChannel": "R",
+      "smoothnessChannel": "A"
+    },
+    {
+      "part": "Wheel",
+      "material": "Wheel_Surface",
+      "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_BaseColor.png",
+      "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_Normal.png",
+      "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_MetallicSmoothness.png",
+      "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Wheel_Occlusion.png",
+      "engineEmissionMask": "",
+      "emissionMaskVerified": false,
+      "useConstantMaterial": false,
+      "baseColorFactor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "normalScale": 1,
+      "sourceUvSet": 0,
+      "baseColorSpace": "sRGB",
+      "dataMapSpace": "Linear",
+      "metallicChannel": "R",
+      "smoothnessChannel": "A"
+    },
+    {
+      "part": "Support",
+      "material": "Support_DarkBrass",
+      "useConstantMaterial": true,
+      "constantBaseColor": {
+        "r": 0.18,
+        "g": 0.12,
+        "b": 0.058,
+        "a": 1
+      },
+      "metallic": 0.65,
+      "smoothness": 0.45
+    },
+    {
+      "part": "Support",
+      "material": "MagicStoneLanternGlass",
+      "useConstantMaterial": true,
+      "constantBaseColor": {
+        "r": 0.09,
+        "g": 0.28,
+        "b": 0.29,
+        "a": 1
+      },
+      "metallic": 0.1,
+      "smoothness": 0.45
+    }
+  ]
+}

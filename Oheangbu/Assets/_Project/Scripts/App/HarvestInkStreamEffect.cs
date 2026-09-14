@@ -13,11 +13,23 @@ namespace Oheangbu.App
     // 내 쪽 끝은 아래로 들어왔다가 위로 감아 올라가 붓 끝(_sinkAnchor)에 닿는다(J-곡선).
     // HarvestAction의 읽기 전용 신호만 소비 — 판정·수급 수치 무접촉.
     // 먹은 빛나지 않는다 — 어두운 먹색·무광(발광 상한 합치).
+    [DefaultExecutionOrder(2000)] // 최종 PlayerVisualDriver(1000)의 TipSocket을 같은 프레임에 읽는다.
     public sealed class HarvestInkStreamEffect : MonoBehaviour
     {
         [Header("배선")]
         [SerializeField] private HarvestAction _harvest;
+        [SerializeField] private HarvestInkFlowProfileSO _flowProfile;
+        private HarvestInkFlowRenderer _flow;
+        public HarvestInkFlowProfileSO FlowProfile => _flowProfile;
+        public bool FlowVisible => _flow != null && _flow.Visible;
+        public Vector3 FlowSink => _flow != null ? _flow.LastSink : Vector3.zero;
+        public void ConfigureFlowProfile(HarvestInkFlowProfileSO profile)
+        {
+            _flow?.Dispose(); _flow=null; ClearLegacy(); _flowProfile=profile;
+        }
         [SerializeField] private Transform _sinkAnchor;   // 붓 끝 — 없으면 카메라 오프셋 폴백
+        public Transform SinkAnchor => _sinkAnchor;
+        public void ConfigureSinkAnchor(Transform sinkAnchor) { _sinkAnchor = sinkAnchor; }
         [SerializeField] private Mesh _dropletMesh;       // 방울 실체(구면 충분 — 비균등 스케일로 불규칙화)
         [SerializeField] private Material _material;      // 틴트 호환(_Color/_BaseColor) — 인스턴스화해 원본 불변
         [SerializeField] private Color _inkColor = new Color(0.16f, 0.15f, 0.13f); // 먹색(팔레트 _fallback 미러) [TEST]
@@ -159,8 +171,18 @@ namespace Oheangbu.App
             return _ownedMaterial != null;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
+            if (_flowProfile != null)
+            {
+                if (_flowProfile.Material == null) return;
+                if (_flow == null) { ClearLegacy(); _flow=new HarvestInkFlowRenderer(transform,_flowProfile); }
+                Vector3 sink=SinkPoint(out Vector3 approach);
+                bool active=_harvest!=null && _harvest.IsExtracting;
+                Vector3 source=_harvest!=null?_harvest.ExtractSourcePosition:transform.position;
+                _flow.Tick(active,source,sink,approach,Time.deltaTime);
+                return;
+            }
             if (!EnsureRuntime()) return;
             bool holding = _harvest != null && _harvest.IsExtracting;
             Vector3 sourcePos = _harvest != null ? _harvest.ExtractSourcePosition : transform.position;
@@ -627,7 +649,19 @@ namespace Oheangbu.App
 
         private void OnDestroy()
         {
+            _flow?.Dispose(); _flow=null;
             if (_ownedMaterial != null) Destroy(_ownedMaterial);
         }
+
+        private void ClearLegacy()
+        {
+            _active=false;_reveal=0;_width=0;_headBeadLife=0;
+            if(_lines!=null)foreach(var line in _lines)if(line!=null)line.enabled=false;
+            foreach(var drop in _droplets)if(drop.Tr!=null)drop.Tr.gameObject.SetActive(false);
+            if(_headBead!=null)_headBead.gameObject.SetActive(false);
+            if(_tipBead!=null)_tipBead.gameObject.SetActive(false);
+        }
+        private void OnDisable() { _flow?.Clear(); ClearLegacy(); }
+        private void OnApplicationPause(bool paused) { if(paused) { _flow?.Clear();ClearLegacy(); } }
     }
 }

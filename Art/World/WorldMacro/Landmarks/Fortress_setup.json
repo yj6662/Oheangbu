@@ -1,0 +1,25 @@
+{
+    "id": "Fortress",
+    "scope": "Static appearance and authored access. User walking, full interior and boss content unverified.",
+    "position": {
+        "x": -2157.48876953125,
+        "y": 126.35997772216797,
+        "z": 207.0863494873047
+    },
+    "courtyard": {
+        "x": 140.0,
+        "y": 110.0
+    },
+    "roadClearance": 122.87255096435547,
+    "riverClearance": 235.49105834960938,
+    "terrainRelief": 2.7035064697265627,
+    "caveMinimumFloorClearance": 0.0,
+    "caveRampMaxGrade": 0.0,
+    "lod0Triangles": 184126,
+    "allStoredTriangles": 212854,
+    "renderers": 89,
+    "colliders": 73,
+    "missingMaterials": 0,
+    "entryPresent": true,
+    "dryFootprint": true
+}

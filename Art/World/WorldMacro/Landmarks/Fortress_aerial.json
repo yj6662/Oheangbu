@@ -1,0 +1,50 @@
+{
+    "id": "Fortress_aerial",
+    "file": "Fortress_aerial.png",
+    "caption": "성곽 — 배치 조감",
+    "utc": "2026-09-11T18:50:26.0878516Z",
+    "scenePath": "Assets/_Project/Scenes/World/W_WorldMacro_Blockout.unity",
+    "landmark": "Fortress",
+    "view": "aerial",
+    "sourceCamera": "Macro_Review_Camera",
+    "scope": "Current macro scene and copied main-camera rendering settings. A still-image composition, not a player walk, entrance-clearance test, gameplay or content-completion claim.",
+    "position": {
+        "x": -2294.09130859375,
+        "y": 221.02162170410157,
+        "z": 243.717529296875
+    },
+    "target": {
+        "x": -2157.48876953125,
+        "y": 136.02162170410157,
+        "z": 207.11500549316407
+    },
+    "entryFootPosition": {
+        "x": -2204.668701171875,
+        "y": 125.05023193359375,
+        "z": 288.80450439453127
+    },
+    "boundsCenter": {
+        "x": -2157.48876953125,
+        "y": 136.02162170410157,
+        "z": 207.11500549316407
+    },
+    "boundsSize": {
+        "x": 180.21875,
+        "y": 23.945892333984376,
+        "z": 169.42739868164063
+    },
+    "eyeHeightM": 1.6200000047683716,
+    "fieldOfView": 86.97457885742188,
+    "nearClipM": 0.07999999821186066,
+    "farClipM": 22000.0,
+    "commitBefore": 0.8257467150688171,
+    "commitAfter": 0.8258452415466309,
+    "aerialStandOffM": 100.0,
+    "aerialBoundsFit": true,
+    "aerialWashOverride": true,
+    "regionalSkyPreviewRequested": true,
+    "width": 1920,
+    "height": 1080,
+    "rendererCount": 89,
+    "framingNote": "Mesh bounds fit the aerial frame with a 10% framing margin."
+}

@@ -1,0 +1,39 @@
+{
+    "label": "content_jeongdam_j1",
+    "utc": "2026-09-11T23:32:01.8776682Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 468,
+    "residentInstances": 87812,
+    "drawCalls": 40,
+    "drawnInstances": 8427,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 1908.0460205078125,
+        "y": 136.71182250976563,
+        "z": 568.6887817382813
+    },
+    "euler": {
+        "x": 8.192195892333985,
+        "y": 329.7435607910156,
+        "z": -2.1564389385275718e-7
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.6355239152908325,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

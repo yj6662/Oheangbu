@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d20acc3e0187484689e2977c2fe6551, type: 3}
+  m_Name: SecondaryMotion_DosaV2_Playable
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.PlayerSecondaryMotionProfileSO
+  UseCapsuleOrnamentCollision: 1
+  CapsuleCollisionIterations: 3
+  ClothColliderSelectionHz: 20
+  SimulationHz: 60
+  MaximumSubsteps: 4
+  MaximumCatchUpSeconds: 0.06666667
+  TeleportDistance: 1
+  TeleportAngleDegrees: 100
+  MaximumAnchorAcceleration: 35
+  MaximumAngularAcceleration: 100
+  MinimumLeverLength: 0.03
+  MaximumDrivenTransforms: 72
+  NearGravityInCameraSpace: {x: 0, y: -9.81, z: 0}
+  Ornament:
+    FrequencyHz: 2.5
+    DampingRatio: 0.75
+    MaximumSwingDegrees: 35
+    GravityScale: 1
+    TranslationInertia: 0.65
+    RotationInertia: 0.4
+    WindScale: 0.5
+  BoneChain:
+    FrequencyHz: 3
+    DampingRatio: 0.85
+    MaximumSwingDegrees: 24
+    GravityScale: 1
+    TranslationInertia: 0.4
+    RotationInertia: 0.4
+    WindScale: 0.5
+  Cloth:
+    SolverFrequency: 120
+    BendingStiffness: 0.45
+    StretchingStiffness: 1
+    Damping: 0.25
+    Friction: 0.5
+    WorldVelocityScale: 0.5
+    WorldAccelerationScale: 0.35
+    WindScale: 0.5
+    UseGravity: 1
+    UseTethers: 1
+    ContinuousCollision: 1

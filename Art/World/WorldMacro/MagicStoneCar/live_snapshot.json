@@ -1,0 +1,45 @@
+{
+    "utc": "2026-09-11T22:41:36.6679665Z",
+    "action": "snapshot",
+    "scope": "Explicit public API call, not keyboard input or full route traversal.",
+    "phase": "OFF",
+    "result": true,
+    "occupied": false,
+    "seatedView": false,
+    "playerShoulder": true,
+    "reviewEnabled": true,
+    "walkEnabled": true,
+    "finite": true,
+    "mode": 1,
+    "activations": 0,
+    "particles": 0,
+    "speed": 0.0,
+    "torque": 0.0,
+    "glow": 0.0,
+    "camera": {
+        "x": 1985.6912841796875,
+        "y": 134.72518920898438,
+        "z": 708.789306640625
+    },
+    "feetBefore": {
+        "x": 1988.4298095703125,
+        "y": 133.22518920898438,
+        "z": 708.484375
+    },
+    "feetAfter": {
+        "x": 1988.4298095703125,
+        "y": 133.22518920898438,
+        "z": 708.484375
+    },
+    "seat": {
+        "x": 1990.470703125,
+        "y": 135.40769958496095,
+        "z": 708.2858276367188
+    },
+    "cameraRotation": {
+        "x": 0.0,
+        "y": 0.7954073548316956,
+        "z": 0.0,
+        "w": 0.6060752272605896
+    }
+}

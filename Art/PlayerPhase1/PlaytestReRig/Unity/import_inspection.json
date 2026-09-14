@@ -1,0 +1,4032 @@
+{
+    "status": "PASS_REST_IMPORT_ONLY",
+    "unityVersion": "6000.3.9f1",
+    "sourceFbxSha256": "db1599d97b36051b19458a4704673ce602aecf345a26158d404cf5f6650bed1b",
+    "model": "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "editorPlaying": false,
+    "editorCompiling": false,
+    "avatarValid": true,
+    "avatarHuman": true,
+    "fingerBonesMapped": 30,
+    "triangles": 59246,
+    "neutralBounds": {
+        "m_Center": {
+            "x": 3.5762786865234377e-7,
+            "y": 0.8709675669670105,
+            "z": -2.9802322387695315e-8
+        },
+        "m_Extent": {
+            "x": 0.8750007152557373,
+            "y": 0.8709677457809448,
+            "z": 0.248385950922966
+        }
+    },
+    "targetScale": 1.0046296119689942,
+    "transforms": [
+        {
+            "name": "Player_C02_ReRig(Clone)",
+            "parent": "",
+            "path": "",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            }
+        },
+        {
+            "name": "Armature",
+            "parent": "Player_C02_ReRig(Clone)",
+            "path": "Armature",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            },
+            "modelRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            }
+        },
+        {
+            "name": "Hips",
+            "parent": "Armature",
+            "path": "Armature/Hips",
+            "human": "Hips",
+            "localPosition": {
+                "x": -0.0002611157251521945,
+                "y": -0.04825899004936218,
+                "z": 0.9960063099861145
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999996423721314,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.0002611157251521945,
+                "y": 0.9960062503814697,
+                "z": 0.048258841037750247
+            },
+            "localRotation": {
+                "x": 0.7911474704742432,
+                "y": 0.5818499326705933,
+                "z": -0.1872130185365677,
+                "w": -0.02208205685019493
+            },
+            "modelRotation": {
+                "x": 0.5750401020050049,
+                "y": 0.27905040979385378,
+                "z": -0.5438096523284912,
+                "w": 0.5438113808631897
+            }
+        },
+        {
+            "name": "LeftUpLeg",
+            "parent": "Hips",
+            "path": "Armature/Hips/LeftUpLeg",
+            "human": "LeftUpperLeg",
+            "localPosition": {
+                "x": -0.014194211922585965,
+                "y": -0.080182284116745,
+                "z": 0.12986613810062409
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998211860657,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.11881386488676071,
+                "y": 0.8994800448417664,
+                "z": 0.05938655138015747
+            },
+            "localRotation": {
+                "x": 0.5220792293548584,
+                "y": 0.5256141424179077,
+                "z": 0.3801414370536804,
+                "w": 0.5537648797035217
+            },
+            "modelRotation": {
+                "x": 0.9942623376846314,
+                "y": -0.06214499473571777,
+                "z": 0.06214534118771553,
+                "w": 0.06097891926765442
+            }
+        },
+        {
+            "name": "LeftLeg",
+            "parent": "LeftUpLeg",
+            "path": "Armature/Hips/LeftUpLeg/LeftLeg",
+            "human": "LeftLowerLeg",
+            "localPosition": {
+                "x": -1.5497207073167375e-8,
+                "y": 0.3920476734638214,
+                "z": 3.457069297496673e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.1702333390712738,
+                "y": 0.5133762955665588,
+                "z": 0.10389721393585205
+            },
+            "localRotation": {
+                "x": 0.18309147655963899,
+                "y": -0.04993320256471634,
+                "z": -0.03207520395517349,
+                "w": 0.9813029170036316
+            },
+            "modelRotation": {
+                "x": 0.9919335842132568,
+                "y": -0.020758500322699548,
+                "z": 0.020759010687470437,
+                "w": -0.12331196665763855
+            }
+        },
+        {
+            "name": "LeftFoot",
+            "parent": "LeftLeg",
+            "path": "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot",
+            "human": "LeftFoot",
+            "localPosition": {
+                "x": -5.0831584275101707e-8,
+                "y": 0.4086647033691406,
+                "z": 1.1950730538501376e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998807907105,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.18497081100940705,
+                "y": 0.11749201267957688,
+                "z": 0.0035713762044906618
+            },
+            "localRotation": {
+                "x": -0.5641491413116455,
+                "y": 0.10485365241765976,
+                "z": 0.060665909200906757,
+                "w": 0.8167380690574646
+            },
+            "modelRotation": {
+                "x": 0.8762803077697754,
+                "y": -0.10177168995141983,
+                "z": 0.10177082568407059,
+                "w": 0.4598022699356079
+            }
+        },
+        {
+            "name": "LeftToeBase",
+            "parent": "LeftFoot",
+            "path": "Armature/Hips/LeftUpLeg/LeftLeg/LeftFoot/LeftToeBase",
+            "human": "LeftToes",
+            "localPosition": {
+                "x": 7.241963828619191e-8,
+                "y": 0.1436256319284439,
+                "z": -1.0728835597717535e-8
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.22402973473072053,
+                "y": 0.0375717431306839,
+                "z": 0.1163342148065567
+            },
+            "localRotation": {
+                "x": -0.29041072726249697,
+                "y": 0.048873405903577808,
+                "z": 0.014852502383291722,
+                "w": 0.9555377960205078
+            },
+            "modelRotation": {
+                "x": 0.6973020434379578,
+                "y": -0.11734487116336823,
+                "z": 0.11734630912542343,
+                "w": 0.6973019242286682
+            }
+        },
+        {
+            "name": "RightUpLeg",
+            "parent": "Hips",
+            "path": "Armature/Hips/RightUpLeg",
+            "human": "RightUpperLeg",
+            "localPosition": {
+                "x": 0.0400121808052063,
+                "y": 0.11304400861263275,
+                "z": 0.06451337039470673
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.09222598373889923,
+                "y": 0.8966760039329529,
+                "z": 0.05928307771682739
+            },
+            "localRotation": {
+                "x": 0.49561211466789248,
+                "y": 0.5240405797958374,
+                "z": 0.25449004769325259,
+                "w": 0.6441932320594788
+            },
+            "modelRotation": {
+                "x": 0.9959503412246704,
+                "y": 0.04888100549578667,
+                "z": -0.048880334943532947,
+                "w": 0.05748322606086731
+            }
+        },
+        {
+            "name": "RightLeg",
+            "parent": "RightUpLeg",
+            "path": "Armature/Hips/RightUpLeg/RightLeg",
+            "human": "RightLowerLeg",
+            "localPosition": {
+                "x": 1.7881392366803085e-8,
+                "y": 0.4018971621990204,
+                "z": 1.1444091541079615e-7
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.1336156278848648,
+                "y": 0.49935537576675417,
+                "z": 0.10337996482849121
+            },
+            "localRotation": {
+                "x": 0.18366272747516633,
+                "y": -0.00500299921259284,
+                "z": -0.024748116731643678,
+                "w": 0.9826650023460388
+            },
+            "modelRotation": {
+                "x": 0.987788736820221,
+                "y": 0.0634164810180664,
+                "z": -0.06341589987277985,
+                "w": -0.12739738821983338
+            }
+        },
+        {
+            "name": "RightFoot",
+            "parent": "RightLeg",
+            "path": "Armature/Hips/RightUpLeg/RightLeg/RightFoot",
+            "human": "RightFoot",
+            "localPosition": {
+                "x": -5.437060934809779e-8,
+                "y": 0.39091917872428896,
+                "z": 1.5348195603337446e-8
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999998807907105,
+                "z": 0.9999998807907105
+            },
+            "modelPosition": {
+                "x": 0.17627502977848054,
+                "y": 0.12426990270614624,
+                "z": 0.0018478184938430787
+            },
+            "localRotation": {
+                "x": -0.5479208827018738,
+                "y": -0.08349793404340744,
+                "z": -0.0021039829589426519,
+                "w": 0.832349956035614
+            },
+            "modelRotation": {
+                "x": 0.8865610361099243,
+                "y": 0.100247323513031,
+                "z": -0.1002473384141922,
+                "w": 0.4403526186943054
+            }
+        },
+        {
+            "name": "RightToeBase",
+            "parent": "RightFoot",
+            "path": "Armature/Hips/RightUpLeg/RightLeg/RightFoot/RightToeBase",
+            "human": "RightToes",
+            "localPosition": {
+                "x": 2.354383354941092e-8,
+                "y": 0.1469728946685791,
+                "z": -2.384185648907078e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0000001192092896,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.21537549793720246,
+                "y": 0.03725023567676544,
+                "z": 0.11365015804767609
+            },
+            "localRotation": {
+                "x": -0.311063289642334,
+                "y": -0.05282515287399292,
+                "z": -0.017319293692708017,
+                "w": 0.9487619400024414
+            },
+            "modelRotation": {
+                "x": 0.697126030921936,
+                "y": 0.11838697642087937,
+                "z": -0.1183868944644928,
+                "w": 0.6971257925033569
+            }
+        },
+        {
+            "name": "Spine02",
+            "parent": "Hips",
+            "path": "Armature/Hips/Spine02",
+            "human": "Spine",
+            "localPosition": {
+                "x": -0.02581791579723358,
+                "y": -0.032862212508916858,
+                "z": -0.11354708671569824
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.00021770491730421782,
+                "y": 1.1167752742767335,
+                "z": 0.040892601013183597
+            },
+            "localRotation": {
+                "x": -0.5913839936256409,
+                "y": -0.29548847675323489,
+                "z": 0.534851610660553,
+                "w": 0.5261989831924439
+            },
+            "modelRotation": {
+                "x": -0.030454814434051515,
+                "y": 0.00018525644554756582,
+                "z": -0.00018546721548773348,
+                "w": 0.9995361566543579
+            }
+        },
+        {
+            "name": "Spine01",
+            "parent": "Spine02",
+            "path": "Armature/Hips/Spine02/Spine01",
+            "human": "Chest",
+            "localPosition": {
+                "x": 8.776667215215639e-8,
+                "y": 0.12099385261535645,
+                "z": -9.274651802115841e-8
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.00017411902081221342,
+                "y": 1.2375446557998658,
+                "z": 0.03352630138397217
+            },
+            "localRotation": {
+                "x": 1.1737585481341739e-7,
+                "y": 1.7379124983563089e-7,
+                "z": -1.0507937275860968e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": -0.030454665422439576,
+                "y": 0.0001854144938988611,
+                "z": -0.00018556205031927675,
+                "w": 0.9995361566543579
+            }
+        },
+        {
+            "name": "Spine",
+            "parent": "Spine01",
+            "path": "Armature/Hips/Spine02/Spine01/Spine",
+            "human": "UpperChest",
+            "localPosition": {
+                "x": -1.4598481312688705e-9,
+                "y": 0.12099357694387436,
+                "z": 2.5060944430777e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0000001192092896
+            },
+            "modelPosition": {
+                "x": -0.0001306150807067752,
+                "y": 1.3583139181137086,
+                "z": 0.026160120964050294
+            },
+            "localRotation": {
+                "x": -0.022089185193181039,
+                "y": 0.008252442814409733,
+                "z": -0.007772380951792002,
+                "w": 0.9996917247772217
+            },
+            "modelRotation": {
+                "x": -0.052524179220199588,
+                "y": 0.008201343938708306,
+                "z": -0.008201492950320244,
+                "w": 0.9985522031784058
+            }
+        },
+        {
+            "name": "LeftShoulder",
+            "parent": "Spine",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder",
+            "human": "LeftShoulder",
+            "localPosition": {
+                "x": -0.03808267414569855,
+                "y": 0.03873247653245926,
+                "z": -0.0021731627639383079
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0000001192092896,
+                "z": 1.000000238418579
+            },
+            "modelPosition": {
+                "x": -0.03763946518301964,
+                "y": 1.3972563743591309,
+                "z": 0.020521998405456544
+            },
+            "localRotation": {
+                "x": -0.5155764818191528,
+                "y": 0.5353147983551025,
+                "z": -0.48985913395881655,
+                "w": -0.4556941092014313
+            },
+            "modelRotation": {
+                "x": -0.4905223250389099,
+                "y": 0.5093016028404236,
+                "z": -0.5093010663986206,
+                "w": -0.4905225336551666
+            }
+        },
+        {
+            "name": "LeftArm",
+            "parent": "LeftShoulder",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm",
+            "human": "LeftUpperArm",
+            "localPosition": {
+                "x": 3.8637224974991116e-8,
+                "y": 0.1501413881778717,
+                "z": -3.1361463470602759e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.18767498433589936,
+                "y": 1.3972567319869996,
+                "z": 0.014884114265441895
+            },
+            "localRotation": {
+                "x": 0.02269449271261692,
+                "y": -0.02356664463877678,
+                "z": -0.011065714992582798,
+                "w": 0.9994034171104431
+            },
+            "modelRotation": {
+                "x": -0.5190001726150513,
+                "y": 0.5035714507102966,
+                "z": -0.5035676956176758,
+                "w": -0.4727310240268707
+            }
+        },
+        {
+            "name": "LeftForeArm",
+            "parent": "LeftArm",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm",
+            "human": "LeftLowerArm",
+            "localPosition": {
+                "x": 7.927417300379602e-8,
+                "y": 0.25572824478149416,
+                "z": 0.0000021592900338873734
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.44309908151626589,
+                "y": 1.3855209350585938,
+                "z": 0.010672330856323243
+            },
+            "localRotation": {
+                "x": -0.005060381256043911,
+                "y": 0.003511201124638319,
+                "z": -0.0348970964550972,
+                "w": 0.9993719458580017
+            },
+            "modelRotation": {
+                "x": -0.5320869088172913,
+                "y": 0.4860319197177887,
+                "z": -0.4860284924507141,
+                "w": -0.4944015443325043
+            }
+        },
+        {
+            "name": "LeftHand",
+            "parent": "LeftForeArm",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand",
+            "human": "LeftHand",
+            "localPosition": {
+                "x": 8.106231774718253e-8,
+                "y": 0.2590216398239136,
+                "z": 0.000001938417426572414
+            },
+            "localScale": {
+                "x": 0.9999998807907105,
+                "y": 0.9999998807907105,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7015531659126282,
+                "y": 1.3754998445510865,
+                "z": 0.024576187133789064
+            },
+            "localRotation": {
+                "x": -0.0636327862739563,
+                "y": 0.057857759296894076,
+                "z": -0.06547272950410843,
+                "w": 0.994141161441803
+            },
+            "modelRotation": {
+                "x": -0.501210629940033,
+                "y": 0.4506695866584778,
+                "z": -0.45066890120506289,
+                "w": -0.5853054523468018
+            }
+        },
+        {
+            "name": "LeftHandIndex1",
+            "parent": "LeftHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1",
+            "human": "Left Index Proximal",
+            "localPosition": {
+                "x": 0.01640598103404045,
+                "y": 0.08553348481655121,
+                "z": 0.01002918928861618
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999997615814209,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7830002307891846,
+                "y": 1.3746004104614258,
+                "z": 0.0569995641708374
+            },
+            "localRotation": {
+                "x": -0.09833407402038574,
+                "y": 0.9937705397605896,
+                "z": 0.029207972809672357,
+                "w": 0.0435599684715271
+            },
+            "modelRotation": {
+                "x": 0.49674734473228457,
+                "y": -0.5030727386474609,
+                "z": -0.4904990494251251,
+                "w": -0.5094809532165527
+            }
+        },
+        {
+            "name": "LeftHandIndex2",
+            "parent": "LeftHandIndex1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2",
+            "human": "Left Index Intermediate",
+            "localPosition": {
+                "x": -3.601326181712494e-10,
+                "y": 0.03635447844862938,
+                "z": 1.3916287855408883e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0000001192092896
+            },
+            "modelPosition": {
+                "x": -0.8193401098251343,
+                "y": 1.3755204677581788,
+                "z": 0.05653953552246094
+            },
+            "localRotation": {
+                "x": 1.5273133158189013e-7,
+                "y": -4.884714499553411e-8,
+                "z": -1.0262796479310055e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.4967474043369293,
+                "y": -0.5030727982521057,
+                "z": -0.49049893021583559,
+                "w": -0.5094810724258423
+            }
+        },
+        {
+            "name": "LeftHandIndex3",
+            "parent": "LeftHandIndex2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2/LeftHandIndex3",
+            "human": "Left Index Distal",
+            "localPosition": {
+                "x": 4.61767651893652e-10,
+                "y": 0.023709526285529138,
+                "z": 8.935806761201093e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8430403470993042,
+                "y": 1.376120686531067,
+                "z": 0.05623936653137207
+            },
+            "localRotation": {
+                "x": 0.0000015579170167256962,
+                "y": 3.8660887824448768e-9,
+                "z": 1.5150347110193253e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.4967465102672577,
+                "y": -0.5030736327171326,
+                "z": -0.49049827456474306,
+                "w": -0.5094818472862244
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandIndex3",
+            "parent": "LeftHandIndex3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2/LeftHandIndex3/POSE_Grip_LeftHandIndex3",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": -2.8610228852699039e-8,
+                "z": -9.536742595628312e-8
+            },
+            "localScale": {
+                "x": 0.9999998807907105,
+                "y": 0.9999995827674866,
+                "z": 1.0000001192092896
+            },
+            "modelPosition": {
+                "x": -0.8430403470993042,
+                "y": 1.3761205673217774,
+                "z": 0.05623948574066162
+            },
+            "localRotation": {
+                "x": -0.008725840598344803,
+                "y": -0.00011041657126042992,
+                "z": 0.0000027941857752011857,
+                "w": 0.9999619722366333
+            },
+            "modelRotation": {
+                "x": 0.5011176466941834,
+                "y": -0.4987195134162903,
+                "z": -0.49492552876472475,
+                "w": -0.505182147026062
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandIndex3",
+            "parent": "LeftHandIndex3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2/LeftHandIndex3/POSE_Relax_LeftHandIndex3",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": -2.8610228852699039e-8,
+                "z": -9.536742595628312e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999996423721314,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.8430403470993042,
+                "y": 1.3761205673217774,
+                "z": 0.05623948574066162
+            },
+            "localRotation": {
+                "x": -0.06975087523460388,
+                "y": -0.0008826509001664817,
+                "z": 0.000022341375370160677,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.5306290984153748,
+                "y": -0.46719685196876528,
+                "z": -0.5248430371284485,
+                "w": -0.47402524948120119
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandIndex2",
+            "parent": "LeftHandIndex2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2/POSE_Grip_LeftHandIndex2",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 1.1444091541079615e-7,
+                "z": 4.768371297814156e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999997615814209,
+                "z": 1.000000238418579
+            },
+            "modelPosition": {
+                "x": -0.8193402290344238,
+                "y": 1.3755205869674683,
+                "z": 0.05653953552246094
+            },
+            "localRotation": {
+                "x": -0.6159024834632874,
+                "y": -0.007793797180056572,
+                "z": 0.0001974316401174292,
+                "w": 0.7877838015556336
+            },
+            "modelRotation": {
+                "x": 0.701198160648346,
+                "y": -0.09034037590026856,
+                "z": -0.7002230882644653,
+                "w": -0.09923708438873291
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandIndex2",
+            "parent": "LeftHandIndex2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/LeftHandIndex2/POSE_Relax_LeftHandIndex2",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 1.1444091541079615e-7,
+                "z": 4.768371297814156e-8
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 0.9999998211860657,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8193402290344238,
+                "y": 1.3755205869674683,
+                "z": 0.05653953552246094
+            },
+            "localRotation": {
+                "x": -0.12185962498188019,
+                "y": -0.0015420892741531134,
+                "z": 0.000039028600440360606,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.5543537735939026,
+                "y": -0.43878471851348879,
+                "z": -0.5489330291748047,
+                "w": -0.44590675830841067
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandIndex1",
+            "parent": "LeftHandIndex1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/POSE_Grip_LeftHandIndex1",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": 1.4305113893442468e-7,
+                "z": -7.1525572131747598e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 1.0000003576278687
+            },
+            "modelPosition": {
+                "x": -0.7830003499984741,
+                "y": 1.3746005296707154,
+                "z": 0.05699944496154785
+            },
+            "localRotation": {
+                "x": -0.3422534465789795,
+                "y": -0.004330899566411972,
+                "z": 0.0001096259948099032,
+                "w": 0.9395976662635803
+            },
+            "modelRotation": {
+                "x": 0.638934850692749,
+                "y": -0.30265897512435915,
+                "z": -0.635257363319397,
+                "w": -0.310818612575531
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandIndex1",
+            "parent": "LeftHandIndex1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandIndex1/POSE_Relax_LeftHandIndex1",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": 1.4305113893442468e-7,
+                "z": -7.1525572131747598e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998807907105,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.7830003499984741,
+                "y": 1.3746005296707154,
+                "z": 0.05699944496154785
+            },
+            "localRotation": {
+                "x": -0.07845286279916763,
+                "y": -0.0009927765931934119,
+                "z": 0.000025118282792391255,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.534686803817749,
+                "y": -0.4625476598739624,
+                "z": -0.5289605259895325,
+                "w": -0.4694262742996216
+            }
+        },
+        {
+            "name": "LeftHandMiddle1",
+            "parent": "LeftHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1",
+            "human": "Left Middle Proximal",
+            "localPosition": {
+                "x": -0.0022784373722970487,
+                "y": 0.07818848639726639,
+                "z": 0.005912817548960447
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.7790000438690186,
+                "y": 1.3766002655029297,
+                "z": 0.03699958324432373
+            },
+            "localRotation": {
+                "x": -0.0978187546133995,
+                "y": 0.9934262037277222,
+                "z": 0.04182542487978935,
+                "w": 0.04226765036582947
+            },
+            "modelRotation": {
+                "x": 0.5026246309280396,
+                "y": -0.49736180901527407,
+                "z": -0.49736130237579348,
+                "w": -0.5026248693466187
+            }
+        },
+        {
+            "name": "LeftHandMiddle2",
+            "parent": "LeftHandMiddle1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2",
+            "human": "Left Middle Intermediate",
+            "localPosition": {
+                "x": 3.3732339144165737e-9,
+                "y": 0.04370243847370148,
+                "z": -1.361642887331982e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8227000832557678,
+                "y": 1.3766001462936402,
+                "z": 0.036539554595947269
+            },
+            "localRotation": {
+                "x": 1.4901159417490817e-8,
+                "y": -5.24648662292293e-8,
+                "z": 3.958120053937364e-9,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5026245713233948,
+                "y": -0.49736180901527407,
+                "z": -0.49736130237579348,
+                "w": -0.5026249289512634
+            }
+        },
+        {
+            "name": "LeftHandMiddle3",
+            "parent": "LeftHandMiddle2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2/LeftHandMiddle3",
+            "human": "Left Middle Distal",
+            "localPosition": {
+                "x": 2.3841568719262797e-9,
+                "y": 0.02850155532360077,
+                "z": -1.5592726754221077e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8512002825737,
+                "y": 1.3766000270843506,
+                "z": 0.03623950481414795
+            },
+            "localRotation": {
+                "x": -3.799464964247519e-15,
+                "y": -4.873490035871763e-15,
+                "z": 5.168840289115906e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.50262451171875,
+                "y": -0.49736183881759646,
+                "z": -0.49736133217811587,
+                "w": -0.5026249289512634
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandMiddle3",
+            "parent": "LeftHandMiddle3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2/LeftHandMiddle3/POSE_Grip_LeftHandMiddle3",
+            "human": "",
+            "localPosition": {
+                "x": 4.76837147544984e-9,
+                "y": 1.23977656585339e-7,
+                "z": -3.3393743326115556e-9
+            },
+            "localScale": {
+                "x": 0.9999997019767761,
+                "y": 0.9999998211860657,
+                "z": 0.9999997615814209
+            },
+            "modelPosition": {
+                "x": -0.8512004017829895,
+                "y": 1.3766000270843506,
+                "z": 0.0362393856048584
+            },
+            "localRotation": {
+                "x": -0.2698899209499359,
+                "y": -0.002840945031493902,
+                "z": 1.3481498584155816e-8,
+                "w": 0.9628869891166687
+            },
+            "modelRotation": {
+                "x": 0.6182110905647278,
+                "y": -0.34324246644973757,
+                "z": -0.6145637035369873,
+                "w": -0.34973055124282839
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandMiddle3",
+            "parent": "LeftHandMiddle3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2/LeftHandMiddle3/POSE_Relax_LeftHandMiddle3",
+            "human": "",
+            "localPosition": {
+                "x": 4.76837147544984e-9,
+                "y": 1.23977656585339e-7,
+                "z": -3.3393743326115556e-9
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 0.9999997615814209
+            },
+            "modelPosition": {
+                "x": -0.8512004017829895,
+                "y": 1.3766000270843506,
+                "z": 0.0362393856048584
+            },
+            "localRotation": {
+                "x": -0.06975258886814118,
+                "y": -0.0007342649041675031,
+                "z": -5.338764985651778e-9,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.536094605922699,
+                "y": -0.4610891044139862,
+                "z": -0.5312111973762512,
+                "w": -0.4667063355445862
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandMiddle2",
+            "parent": "LeftHandMiddle2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2/POSE_Grip_LeftHandMiddle2",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": 2.884864613861282e-7,
+                "z": -3.3393823262173329e-9
+            },
+            "localScale": {
+                "x": 0.9999997019767761,
+                "y": 0.9999999403953552,
+                "z": 0.9999997019767761
+            },
+            "modelPosition": {
+                "x": -0.822700560092926,
+                "y": 1.3766001462936402,
+                "z": 0.036539554595947269
+            },
+            "localRotation": {
+                "x": -0.671881914138794,
+                "y": -0.007072513923048973,
+                "z": 2.0593439842286899e-7,
+                "w": 0.7406245470046997
+            },
+            "modelRotation": {
+                "x": 0.7064431309700012,
+                "y": -0.030635535717010499,
+                "z": -0.7060814499855042,
+                "w": -0.03806942701339722
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandMiddle2",
+            "parent": "LeftHandMiddle2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/LeftHandMiddle2/POSE_Relax_LeftHandMiddle2",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": 2.884864613861282e-7,
+                "z": -3.3393823262173329e-9
+            },
+            "localScale": {
+                "x": 0.9999998807907105,
+                "y": 1.0,
+                "z": 0.9999998211860657
+            },
+            "modelPosition": {
+                "x": -0.822700560092926,
+                "y": 1.3766001462936402,
+                "z": 0.036539554595947269
+            },
+            "localRotation": {
+                "x": -0.12186262011528015,
+                "y": -0.0012828250182792545,
+                "z": -9.546228696422077e-9,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.5594913363456726,
+                "y": -0.4323999881744385,
+                "z": -0.5549086332321167,
+                "w": -0.438265323638916
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandMiddle1",
+            "parent": "LeftHandMiddle1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/POSE_Grip_LeftHandMiddle1",
+            "human": "",
+            "localPosition": {
+                "x": 9.53674295089968e-9,
+                "y": -2.8610228852699039e-8,
+                "z": 1.5121168317477897e-8
+            },
+            "localScale": {
+                "x": 0.9999997019767761,
+                "y": 0.9999999403953552,
+                "z": 0.9999998211860657
+            },
+            "modelPosition": {
+                "x": -0.7790001034736633,
+                "y": 1.3766003847122193,
+                "z": 0.03699958324432373
+            },
+            "localRotation": {
+                "x": -0.25436750054359438,
+                "y": -0.002677580574527383,
+                "z": -1.459862719599414e-8,
+                "w": 0.9671039581298828
+            },
+            "modelRotation": {
+                "x": 0.6126100420951843,
+                "y": -0.35314226150512698,
+                "z": -0.608858585357666,
+                "w": -0.35957080125808718
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandMiddle1",
+            "parent": "LeftHandMiddle1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandMiddle1/POSE_Relax_LeftHandMiddle1",
+            "human": "",
+            "localPosition": {
+                "x": 9.53674295089968e-9,
+                "y": -2.8610228852699039e-8,
+                "z": 1.5121168317477897e-8
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 0.9999998211860657,
+                "z": 0.9999996423721314
+            },
+            "modelPosition": {
+                "x": -0.7790001034736633,
+                "y": 1.3766003847122193,
+                "z": 0.03699958324432373
+            },
+            "localRotation": {
+                "x": -0.07845482230186463,
+                "y": -0.0008258797461166978,
+                "z": -1.4146453786167968e-8,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5400976538658142,
+                "y": -0.4563930332660675,
+                "z": -0.5352636575698853,
+                "w": -0.46205270290374758
+            }
+        },
+        {
+            "name": "LeftHandPinky1",
+            "parent": "LeftHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1",
+            "human": "Left Little Proximal",
+            "localPosition": {
+                "x": -0.038936734199523929,
+                "y": 0.05832806974649429,
+                "z": 0.0002797823981381953
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998211860657,
+                "z": 1.0000001192092896
+            },
+            "modelPosition": {
+                "x": -0.7660002112388611,
+                "y": 1.3776003122329713,
+                "z": -0.003000497817993164
+            },
+            "localRotation": {
+                "x": -0.10764433443546295,
+                "y": 0.9900975823402405,
+                "z": 0.08156819641590119,
+                "w": 0.038290850818157199
+            },
+            "modelRotation": {
+                "x": 0.5267795920372009,
+                "y": -0.4728582501411438,
+                "z": -0.5127343535423279,
+                "w": -0.4858109951019287
+            }
+        },
+        {
+            "name": "LeftHandPinky2",
+            "parent": "LeftHandPinky1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2",
+            "human": "Left Little Intermediate",
+            "localPosition": {
+                "x": 9.609562034995634e-10,
+                "y": 0.03416408598423004,
+                "z": 2.0895967622891477e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8000401854515076,
+                "y": 1.374840259552002,
+                "z": -0.003920555114746094
+            },
+            "localRotation": {
+                "x": 0.0000017928532543010079,
+                "y": 1.8871291196376207e-9,
+                "z": 6.535444185828965e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5267787575721741,
+                "y": -0.47285932302474978,
+                "z": -0.5127335786819458,
+                "w": -0.48581188917160036
+            }
+        },
+        {
+            "name": "LeftHandPinky3",
+            "parent": "LeftHandPinky2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2/LeftHandPinky3",
+            "human": "Left Little Distal",
+            "localPosition": {
+                "x": -1.306227626063361e-10,
+                "y": 0.02228093333542347,
+                "z": -2.888729788708133e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8222402930259705,
+                "y": 1.3730403184890748,
+                "z": -0.004520535469055176
+            },
+            "localRotation": {
+                "x": -8.549277481506579e-7,
+                "y": 7.243681210411523e-9,
+                "z": -6.376192018819893e-9,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.526779055595398,
+                "y": -0.4728587567806244,
+                "z": -0.5127338767051697,
+                "w": -0.485811322927475
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandPinky3",
+            "parent": "LeftHandPinky3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2/LeftHandPinky3/POSE_Grip_LeftHandPinky3",
+            "human": "",
+            "localPosition": {
+                "x": 1.19209286886246e-9,
+                "y": -9.894370833762878e-8,
+                "z": 4.76837147544984e-9
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8222401738166809,
+                "y": 1.3730403184890748,
+                "z": -0.004520416259765625
+            },
+            "localRotation": {
+                "x": -0.5427258610725403,
+                "y": -0.014620328322052956,
+                "z": -0.0011848810827359558,
+                "w": 0.8397818207740784
+            },
+            "modelRotation": {
+                "x": 0.6991059184074402,
+                "y": -0.11109742522239685,
+                "z": -0.6943432092666626,
+                "w": -0.12959986925125123
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandPinky3",
+            "parent": "LeftHandPinky3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2/LeftHandPinky3/POSE_Relax_LeftHandPinky3",
+            "human": "",
+            "localPosition": {
+                "x": 1.19209286886246e-9,
+                "y": -9.894370833762878e-8,
+                "z": 4.76837147544984e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999997615814209,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8222401738166809,
+                "y": 1.3730403184890748,
+                "z": -0.004520416259765625
+            },
+            "localRotation": {
+                "x": -0.06973098963499069,
+                "y": -0.0018784854328259826,
+                "z": -0.00015225585957523435,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.5584807991981506,
+                "y": -0.4349606931209564,
+                "z": -0.5453734993934631,
+                "w": -0.44886159896850588
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandPinky2",
+            "parent": "LeftHandPinky2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2/POSE_Grip_LeftHandPinky2",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": -1.668930025289228e-7,
+                "z": -1.0013580009626821e-7
+            },
+            "localScale": {
+                "x": 0.9999997019767761,
+                "y": 0.9999997615814209,
+                "z": 0.9999998807907105
+            },
+            "modelPosition": {
+                "x": -0.8000399470329285,
+                "y": 1.3748401403427125,
+                "z": -0.003920435905456543
+            },
+            "localRotation": {
+                "x": -0.49879971146583559,
+                "y": -0.01343701221048832,
+                "z": -0.00108896114397794,
+                "w": 0.866612434387207
+            },
+            "modelRotation": {
+                "x": 0.6924611330032349,
+                "y": -0.14693281054496766,
+                "z": -0.6867526769638062,
+                "w": -0.1651657521724701
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandPinky2",
+            "parent": "LeftHandPinky2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/LeftHandPinky2/POSE_Relax_LeftHandPinky2",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": -1.668930025289228e-7,
+                "z": -1.0013580009626821e-7
+            },
+            "localScale": {
+                "x": 0.9999997615814209,
+                "y": 1.0,
+                "z": 0.9999996423721314
+            },
+            "modelPosition": {
+                "x": -0.8000399470329285,
+                "y": 1.3748401403427125,
+                "z": -0.003920435905456543
+            },
+            "localRotation": {
+                "x": -0.12182488292455673,
+                "y": -0.0032818445470184089,
+                "z": -0.00026599239208735526,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.5804792046546936,
+                "y": -0.4051363468170166,
+                "z": -0.5681173205375671,
+                "w": -0.4197041690349579
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandPinky1",
+            "parent": "LeftHandPinky1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/POSE_Grip_LeftHandPinky1",
+            "human": "",
+            "localPosition": {
+                "x": 3.5762786065873799e-9,
+                "y": -1.0251998361354708e-7,
+                "z": 3.33786012163273e-8
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 0.9999997615814209,
+                "z": 0.9999995827674866
+            },
+            "modelPosition": {
+                "x": -0.7660002112388611,
+                "y": 1.3776003122329713,
+                "z": -0.003000497817993164
+            },
+            "localRotation": {
+                "x": 3.725291630729544e-9,
+                "y": 1.1619377682237087e-10,
+                "z": -1.1847023362321352e-10,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5267795920372009,
+                "y": -0.4728582501411438,
+                "z": -0.5127343535423279,
+                "w": -0.4858109951019287
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandPinky1",
+            "parent": "LeftHandPinky1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandPinky1/POSE_Relax_LeftHandPinky1",
+            "human": "",
+            "localPosition": {
+                "x": 3.5762786065873799e-9,
+                "y": -1.0251998361354708e-7,
+                "z": 3.33786012163273e-8
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 0.9999998211860657,
+                "z": 0.9999996423721314
+            },
+            "modelPosition": {
+                "x": -0.7660002112388611,
+                "y": 1.3776003122329713,
+                "z": -0.003000497817993164
+            },
+            "localRotation": {
+                "x": -0.07843052595853806,
+                "y": -0.0021128510124981405,
+                "z": -0.00017125233716797084,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5622556805610657,
+                "y": -0.43006986379623415,
+                "z": -0.54926997423172,
+                "w": -0.4440845549106598
+            }
+        },
+        {
+            "name": "LeftHandRing1",
+            "parent": "LeftHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1",
+            "human": "Left Ring Proximal",
+            "localPosition": {
+                "x": -0.021114468574523927,
+                "y": 0.07066098600625992,
+                "z": 0.0037822441663593055
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999997615814209,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7750003337860107,
+                "y": 1.3766002655029297,
+                "z": 0.016999483108520509
+            },
+            "localRotation": {
+                "x": -0.09817109256982804,
+                "y": 0.9933914542198181,
+                "z": 0.041810426861047748,
+                "w": 0.04228254780173302
+            },
+            "modelRotation": {
+                "x": 0.5028008818626404,
+                "y": -0.49718350172042849,
+                "z": -0.4971829354763031,
+                "w": -0.5028012990951538
+            }
+        },
+        {
+            "name": "LeftHandRing2",
+            "parent": "LeftHandRing1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2",
+            "human": "Left Ring Intermediate",
+            "localPosition": {
+                "x": 2.858337178057724e-10,
+                "y": 0.04094265401363373,
+                "z": 1.689170403551543e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8159404397010803,
+                "y": 1.3766003847122193,
+                "z": 0.016539573669433595
+            },
+            "localRotation": {
+                "x": 1.117587622445626e-8,
+                "y": 7.031561999326641e-9,
+                "z": -7.497146725654602e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5028008818626404,
+                "y": -0.49718350172042849,
+                "z": -0.4971828758716583,
+                "w": -0.5028012990951538
+            }
+        },
+        {
+            "name": "LeftHandRing3",
+            "parent": "LeftHandRing2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2/LeftHandRing3",
+            "human": "Left Ring Distal",
+            "localPosition": {
+                "x": 1.7881457425872327e-9,
+                "y": 0.02670166827738285,
+                "z": -1.7021986042919935e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8426402807235718,
+                "y": 1.3766003847122193,
+                "z": 0.016239643096923829
+            },
+            "localRotation": {
+                "x": -4.646077359643508e-15,
+                "y": 7.742505401186432e-15,
+                "z": 4.1443854570388797e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5028009414672852,
+                "y": -0.49718350172042849,
+                "z": -0.4971828758716583,
+                "w": -0.502801239490509
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandRing3",
+            "parent": "LeftHandRing3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2/LeftHandRing3/POSE_Grip_LeftHandRing3",
+            "human": "",
+            "localPosition": {
+                "x": -2.38418573772492e-9,
+                "y": -1.4305114426349519e-8,
+                "z": -1.7021914988646359e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.8426402807235718,
+                "y": 1.3766003847122193,
+                "z": 0.016239643096923829
+            },
+            "localRotation": {
+                "x": -0.5088034272193909,
+                "y": -0.005716891027987003,
+                "z": 8.565571363305935e-8,
+                "w": 0.8608638048171997
+            },
+            "modelRotation": {
+                "x": 0.6858278512954712,
+                "y": -0.1721644401550293,
+                "z": -0.6838500499725342,
+                "w": -0.17985883355140687
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandRing3",
+            "parent": "LeftHandRing3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2/LeftHandRing3/POSE_Relax_LeftHandRing3",
+            "human": "",
+            "localPosition": {
+                "x": -2.38418573772492e-9,
+                "y": -1.4305114426349519e-8,
+                "z": -1.7021914988646359e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8426402807235718,
+                "y": 1.3766003847122193,
+                "z": 0.016239643096923829
+            },
+            "localRotation": {
+                "x": -0.069752037525177,
+                "y": -0.0007837563753128052,
+                "z": -4.3982169017908749e-9,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.5362579822540283,
+                "y": -0.4608989357948303,
+                "z": -0.5310456156730652,
+                "w": -0.46689480543136599
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandRing2",
+            "parent": "LeftHandRing2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2/POSE_Grip_LeftHandRing2",
+            "human": "",
+            "localPosition": {
+                "x": -2.38418573772492e-9,
+                "y": 1.7404555308075943e-7,
+                "z": -1.7021986042919935e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.000000238418579,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8159405589103699,
+                "y": 1.3766003847122193,
+                "z": 0.016539573669433595
+            },
+            "localRotation": {
+                "x": -0.5603539943695068,
+                "y": -0.006296156439930201,
+                "z": 1.119960302276013e-7,
+                "w": 0.8282293081283569
+            },
+            "modelRotation": {
+                "x": 0.695050835609436,
+                "y": -0.1300177276134491,
+                "z": -0.693545937538147,
+                "w": -0.13781842589378358
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandRing2",
+            "parent": "LeftHandRing2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/LeftHandRing2/POSE_Relax_LeftHandRing2",
+            "human": "",
+            "localPosition": {
+                "x": -2.38418573772492e-9,
+                "y": 1.7404555308075943e-7,
+                "z": -1.7021986042919935e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.8159405589103699,
+                "y": 1.3766003847122193,
+                "z": 0.016539573669433595
+            },
+            "localRotation": {
+                "x": -0.12186169624328613,
+                "y": -0.0013692874927073718,
+                "z": -7.916555411213722e-9,
+                "w": 0.9925462007522583
+            },
+            "modelRotation": {
+                "x": 0.5596446990966797,
+                "y": -0.4322015941143036,
+                "z": -0.5547533631324768,
+                "w": -0.4384620785713196
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandRing1",
+            "parent": "LeftHandRing1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/POSE_Grip_LeftHandRing1",
+            "human": "",
+            "localPosition": {
+                "x": -4.76837147544984e-9,
+                "y": -3.147125084979052e-7,
+                "z": 1.597656407170689e-8
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7750000357627869,
+                "y": 1.3766002655029297,
+                "z": 0.01699960231781006
+            },
+            "localRotation": {
+                "x": -0.2175828367471695,
+                "y": -0.002444734564051032,
+                "z": 8.827740316519339e-9,
+                "w": 0.9760388135910034
+            },
+            "modelRotation": {
+                "x": 0.5989388227462769,
+                "y": -0.3758627772331238,
+                "z": -0.5946779251098633,
+                "w": -0.3825681805610657
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandRing1",
+            "parent": "LeftHandRing1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandRing1/POSE_Relax_LeftHandRing1",
+            "human": "",
+            "localPosition": {
+                "x": -4.76837147544984e-9,
+                "y": -3.147125084979052e-7,
+                "z": 1.597656407170689e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7750000357627869,
+                "y": 1.3766002655029297,
+                "z": 0.01699960231781006
+            },
+            "localRotation": {
+                "x": -0.07845421135425568,
+                "y": -0.0008815310429781675,
+                "z": -4.0931098510554879e-9,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5402595400810242,
+                "y": -0.45620161294937136,
+                "z": -0.5350999236106873,
+                "w": -0.46224281191825869
+            }
+        },
+        {
+            "name": "LeftHandThumb1",
+            "parent": "LeftHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1",
+            "human": "Left Thumb Proximal",
+            "localPosition": {
+                "x": 0.02400457113981247,
+                "y": 0.031804390251636508,
+                "z": 0.023793306201696397
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.000000238418579,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.7300001978874207,
+                "y": 1.356600284576416,
+                "z": 0.0559995174407959
+            },
+            "localRotation": {
+                "x": 0.20741379261016847,
+                "y": 0.9708728790283203,
+                "z": 0.1129269152879715,
+                "w": 0.04040895774960518
+            },
+            "modelRotation": {
+                "x": 0.3467811346054077,
+                "y": -0.5869207978248596,
+                "z": -0.6643946766853333,
+                "w": -0.30634379386901858
+            }
+        },
+        {
+            "name": "LeftHandThumb2",
+            "parent": "LeftHandThumb1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2",
+            "human": "Left Thumb Intermediate",
+            "localPosition": {
+                "x": 1.2398883697528618e-8,
+                "y": 0.02837374061346054,
+                "z": 8.463859302310084e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7531003355979919,
+                "y": 1.353100299835205,
+                "z": 0.07209968566894531
+            },
+            "localRotation": {
+                "x": 0.0000018570573274701019,
+                "y": 4.724805080513761e-8,
+                "z": -5.260122861727723e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.3467808961868286,
+                "y": -0.5869219899177551,
+                "z": -0.6643934845924377,
+                "w": -0.3063446879386902
+            }
+        },
+        {
+            "name": "LeftHandThumb3",
+            "parent": "LeftHandThumb2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2/LeftHandThumb3",
+            "human": "Left Thumb Distal",
+            "localPosition": {
+                "x": 1.056831280266124e-7,
+                "y": 0.027563108131289483,
+                "z": 1.1205673189351728e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7755404710769653,
+                "y": 1.3497004508972169,
+                "z": 0.08773958683013916
+            },
+            "localRotation": {
+                "x": -2.915039658546448e-7,
+                "y": -6.795463036723959e-8,
+                "z": 4.953310508426512e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.34678056836128237,
+                "y": -0.5869218707084656,
+                "z": -0.6643937230110169,
+                "w": -0.30634424090385439
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandThumb3",
+            "parent": "LeftHandThumb3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2/LeftHandThumb3/POSE_Grip_LeftHandThumb3",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 1.192092824453539e-8,
+                "z": -2.9563904035967428e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7755405306816101,
+                "y": 1.3497002124786378,
+                "z": 0.08773958683013916
+            },
+            "localRotation": {
+                "x": -1.862645149230957e-9,
+                "y": -6.6072840532171998e-9,
+                "z": -3.988570362878363e-9,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.34678056836128237,
+                "y": -0.5869218707084656,
+                "z": -0.6643937230110169,
+                "w": -0.30634424090385439
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandThumb3",
+            "parent": "LeftHandThumb3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2/LeftHandThumb3/POSE_Relax_LeftHandThumb3",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 1.192092824453539e-8,
+                "z": -2.9563904035967428e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": -0.7755405306816101,
+                "y": 1.3497002124786378,
+                "z": 0.08773958683013916
+            },
+            "localRotation": {
+                "x": -0.05722804740071297,
+                "y": 0.039581604301929477,
+                "z": 0.004920063074678183,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.3868773579597473,
+                "y": -0.5613020062446594,
+                "z": -0.684144914150238,
+                "w": -0.2592521607875824
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandThumb2",
+            "parent": "LeftHandThumb2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2/POSE_Grip_LeftHandThumb2",
+            "human": "",
+            "localPosition": {
+                "x": -7.629394360719744e-8,
+                "y": -7.86781271244763e-8,
+                "z": -3.337860050578456e-7
+            },
+            "localScale": {
+                "x": 0.9999995827674866,
+                "y": 0.9999996423721314,
+                "z": 0.9999997019767761
+            },
+            "modelPosition": {
+                "x": -0.7531000971794128,
+                "y": 1.353100061416626,
+                "z": 0.07209956645965576
+            },
+            "localRotation": {
+                "x": 7.450583261459088e-9,
+                "y": 6.6509677765225209e-9,
+                "z": -1.0601507227647744e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.3467809557914734,
+                "y": -0.5869219899177551,
+                "z": -0.6643933653831482,
+                "w": -0.3063447177410126
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandThumb2",
+            "parent": "LeftHandThumb2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/LeftHandThumb2/POSE_Relax_LeftHandThumb2",
+            "human": "",
+            "localPosition": {
+                "x": -7.629394360719744e-8,
+                "y": -7.86781271244763e-8,
+                "z": -3.337860050578456e-7
+            },
+            "localScale": {
+                "x": 0.9999997019767761,
+                "y": 0.9999996423721314,
+                "z": 0.9999998211860657
+            },
+            "modelPosition": {
+                "x": -0.7531000971794128,
+                "y": 1.353100061416626,
+                "z": 0.07209956645965576
+            },
+            "localRotation": {
+                "x": -0.09998149424791336,
+                "y": 0.06915172189474106,
+                "z": 0.008595623075962067,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.4157238006591797,
+                "y": -0.540285050868988,
+                "z": -0.6967751383781433,
+                "w": -0.22309204936027528
+            }
+        },
+        {
+            "name": "POSE_Grip_LeftHandThumb1",
+            "parent": "LeftHandThumb1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/POSE_Grip_LeftHandThumb1",
+            "human": "",
+            "localPosition": {
+                "x": -3.814697180359872e-8,
+                "y": -9.775161657898934e-8,
+                "z": 2.5749204723979349e-7
+            },
+            "localScale": {
+                "x": 0.9999995231628418,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7300000786781311,
+                "y": 1.3566005229949952,
+                "z": 0.0559995174407959
+            },
+            "localRotation": {
+                "x": -0.04600594565272331,
+                "y": 0.47127193212509158,
+                "z": 0.20023365318775178,
+                "w": 0.8577253222465515
+            },
+            "modelRotation": {
+                "x": 0.507125735282898,
+                "y": -0.6866592764854431,
+                "z": -0.4947821795940399,
+                "w": 0.1628287434577942
+            }
+        },
+        {
+            "name": "POSE_Relax_LeftHandThumb1",
+            "parent": "LeftHandThumb1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/LeftShoulder/LeftArm/LeftForeArm/LeftHand/LeftHandThumb1/POSE_Relax_LeftHandThumb1",
+            "human": "",
+            "localPosition": {
+                "x": -3.814697180359872e-8,
+                "y": -9.775161657898934e-8,
+                "z": 2.5749204723979349e-7
+            },
+            "localScale": {
+                "x": 0.9999995827674866,
+                "y": 0.9999998211860657,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.7300000786781311,
+                "y": 1.3566005229949952,
+                "z": 0.0559995174407959
+            },
+            "localRotation": {
+                "x": -0.06436774134635925,
+                "y": 0.04451974108815193,
+                "z": 0.005534018389880657,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.3917614221572876,
+                "y": -0.5579034686088562,
+                "z": -0.6863821148872376,
+                "w": -0.2532714903354645
+            }
+        },
+        {
+            "name": "neck",
+            "parent": "Spine",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/neck",
+            "human": "Neck",
+            "localPosition": {
+                "x": -0.001317818881943822,
+                "y": 0.08534063398838043,
+                "z": 0.0037628549616783859
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -0.00005892186891287565,
+                "y": 1.4435889720916749,
+                "z": 0.020958781242370607
+            },
+            "localRotation": {
+                "x": 0.022089095786213876,
+                "y": -0.00799236074090004,
+                "z": 0.007538290228694677,
+                "w": 0.9996956586837769
+            },
+            "modelRotation": {
+                "x": -0.030454784631729127,
+                "y": 0.00043283755076117814,
+                "z": -0.00043298513628542423,
+                "w": 0.9995360374450684
+            }
+        },
+        {
+            "name": "Head",
+            "parent": "neck",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/neck/Head",
+            "human": "Head",
+            "localPosition": {
+                "x": 1.656626391621785e-9,
+                "y": 0.07013015449047089,
+                "z": 2.2880402639202658e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -3.247987478971481e-8,
+                "y": 1.5135891437530518,
+                "z": 0.016689181327819825
+            },
+            "localRotation": {
+                "x": 0.32996273040771487,
+                "y": 8.953173846748541e-7,
+                "z": 0.0002766171528492123,
+                "w": 0.9439939260482788
+            },
+            "modelRotation": {
+                "x": 0.30106067657470705,
+                "y": 0.0002750450512394309,
+                "z": -0.0002751399006228894,
+                "w": 0.9536049962043762
+            }
+        },
+        {
+            "name": "head_end",
+            "parent": "Head",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/neck/Head/head_end",
+            "human": "",
+            "localPosition": {
+                "x": 0.00007006002851994708,
+                "y": 0.21841473877429963,
+                "z": -0.08306016772985459
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.00019097060430794954,
+                "y": 1.7401026487350464,
+                "z": 0.0740964412689209
+            },
+            "localRotation": {
+                "x": -0.1806989163160324,
+                "y": -6.702611798914404e-9,
+                "z": -0.000152419219375588,
+                "w": 0.9835385084152222
+            },
+            "modelRotation": {
+                "x": 0.12378928065299988,
+                "y": 0.000366150721674785,
+                "z": -0.00036627720692195,
+                "w": 0.9923085570335388
+            }
+        },
+        {
+            "name": "headfront",
+            "parent": "Head",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/neck/Head/headfront",
+            "human": "",
+            "localPosition": {
+                "x": -0.00007005972292972729,
+                "y": 0.058251336216926578,
+                "z": 0.08306007832288742
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": -9.208451956510544e-8,
+                "y": 1.5135890245437623,
+                "z": 0.11813974380493164
+            },
+            "localRotation": {
+                "x": 0.46141836047172549,
+                "y": 2.098750506718261e-8,
+                "z": 0.0003892093664035201,
+                "w": 0.8871825933456421
+            },
+            "modelRotation": {
+                "x": 0.7071066498756409,
+                "y": -9.483039775659563e-8,
+                "z": 2.001975474286155e-7,
+                "w": 0.70710688829422
+            }
+        },
+        {
+            "name": "RightShoulder",
+            "parent": "Spine",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder",
+            "human": "RightShoulder",
+            "localPosition": {
+                "x": 0.039400506764650348,
+                "y": 0.03524267300963402,
+                "z": -0.001589867752045393
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 0.9999999403953552,
+                "z": 1.000000238418579
+            },
+            "modelPosition": {
+                "x": 0.03977876156568527,
+                "y": 1.3925114870071412,
+                "z": 0.020266294479370118
+            },
+            "localRotation": {
+                "x": 0.5157519578933716,
+                "y": 0.5351455211639404,
+                "z": -0.47361159324645998,
+                "w": 0.4725581705570221
+            },
+            "modelRotation": {
+                "x": 0.49068933725357058,
+                "y": 0.5091403126716614,
+                "z": -0.5091395974159241,
+                "w": 0.4906902313232422
+            }
+        },
+        {
+            "name": "RightArm",
+            "parent": "RightShoulder",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm",
+            "human": "RightUpperArm",
+            "localPosition": {
+                "x": -2.951432165332335e-8,
+                "y": 0.15974628925323487,
+                "z": -3.0700110187353859e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.19941624999046327,
+                "y": 1.3925120830535889,
+                "z": 0.014372587203979493
+            },
+            "localRotation": {
+                "x": 0.02575620822608471,
+                "y": 0.026724588125944139,
+                "z": 0.008721997030079365,
+                "w": 0.9992729425430298
+            },
+            "modelRotation": {
+                "x": 0.5210181474685669,
+                "y": 0.504490315914154,
+                "z": -0.5044897198677063,
+                "w": 0.46852925419807436
+            }
+        },
+        {
+            "name": "RightForeArm",
+            "parent": "RightArm",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm",
+            "human": "RightLowerArm",
+            "localPosition": {
+                "x": -1.3709067658851382e-8,
+                "y": 0.2599283456802368,
+                "z": 4.0356067643188e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.458937406539917,
+                "y": 1.3790111541748047,
+                "z": 0.008967161178588868
+            },
+            "localRotation": {
+                "x": -0.0139531334862113,
+                "y": -0.01196800172328949,
+                "z": 0.04258236289024353,
+                "w": 0.9989238977432251
+            },
+            "modelRotation": {
+                "x": 0.5293647050857544,
+                "y": 0.48319312930107119,
+                "z": -0.48319193720817568,
+                "w": 0.5028151273727417
+            }
+        },
+        {
+            "name": "RightHand",
+            "parent": "RightForeArm",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand",
+            "human": "RightHand",
+            "localPosition": {
+                "x": 2.6226043559063329e-8,
+                "y": 0.24565890431404115,
+                "z": 1.8842517590655917e-7
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7039777636528015,
+                "y": 1.3722792863845826,
+                "z": 0.02503204345703125
+            },
+            "localRotation": {
+                "x": 0.031957875937223437,
+                "y": 0.031423069536685947,
+                "z": 0.0583396777510643,
+                "w": 0.9972902536392212
+            },
+            "modelRotation": {
+                "x": 0.587371826171875,
+                "y": 0.4513590633869171,
+                "z": -0.45135611295700076,
+                "w": 0.4975408613681793
+            }
+        },
+        {
+            "name": "GripReference_R",
+            "parent": "RightHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/GripReference_R",
+            "human": "",
+            "localPosition": {
+                "x": 0.01063425000756979,
+                "y": 0.07499536126852036,
+                "z": 0.029693735763430597
+            },
+            "localScale": {
+                "x": 100.00003051757813,
+                "y": 100.00003814697266,
+                "z": 99.99999237060547
+            },
+            "modelPosition": {
+                "x": 0.7769864201545715,
+                "y": 1.3363789319992066,
+                "z": 0.02499997615814209
+            },
+            "localRotation": {
+                "x": -0.0635206550359726,
+                "y": -0.000001481941808378906,
+                "z": 0.6383159756660461,
+                "w": 0.7671491503715515
+            },
+            "modelRotation": {
+                "x": 0.7071066498756409,
+                "y": 6.111293373578519e-7,
+                "z": 6.532761176458735e-7,
+                "w": 0.70710688829422
+            }
+        },
+        {
+            "name": "RightHandIndex1",
+            "parent": "RightHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1",
+            "human": "Right Index Proximal",
+            "localPosition": {
+                "x": -0.016703510656952859,
+                "y": 0.08307841420173645,
+                "z": -0.009247750043869019
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0000001192092896,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.7830001711845398,
+                "y": 1.3720011711120606,
+                "z": 0.057000041007995608
+            },
+            "localRotation": {
+                "x": 0.09795057028532028,
+                "y": 0.9925733208656311,
+                "z": -0.05719380080699921,
+                "w": 0.04396434873342514
+            },
+            "modelRotation": {
+                "x": 0.4967470169067383,
+                "y": 0.5030731558799744,
+                "z": 0.49049896001815798,
+                "w": -0.5094811320304871
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandIndex1",
+            "parent": "RightHandIndex1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/POSE_Grip_RightHandIndex1",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 6.19888282926695e-8,
+                "z": 3.886222827986785e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999998807907105
+            },
+            "modelPosition": {
+                "x": 0.7830002903938294,
+                "y": 1.3720015287399293,
+                "z": 0.056999921798706058
+            },
+            "localRotation": {
+                "x": -0.3422534465789795,
+                "y": 0.004330783616751432,
+                "z": -0.00010959815699607134,
+                "w": 0.9395977258682251
+            },
+            "modelRotation": {
+                "x": 0.6389346718788147,
+                "y": 0.30265939235687258,
+                "z": 0.6352574229240418,
+                "w": -0.3108189105987549
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandIndex1",
+            "parent": "RightHandIndex1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/POSE_Relax_RightHandIndex1",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 6.19888282926695e-8,
+                "z": 3.886222827986785e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999998211860657
+            },
+            "modelPosition": {
+                "x": 0.7830002903938294,
+                "y": 1.3720015287399293,
+                "z": 0.056999921798706058
+            },
+            "localRotation": {
+                "x": -0.07845285534858704,
+                "y": 0.0009927214123308659,
+                "z": -0.000025122231818386354,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5346863269805908,
+                "y": 0.46254804730415347,
+                "z": 0.5289604067802429,
+                "w": -0.46942639350891116
+            }
+        },
+        {
+            "name": "RightHandIndex2",
+            "parent": "RightHandIndex1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2",
+            "human": "Right Index Intermediate",
+            "localPosition": {
+                "x": -2.3322626052646457e-9,
+                "y": 0.036354437470436099,
+                "z": -8.252216332493845e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0000001192092896,
+                "z": 1.0000001192092896
+            },
+            "modelPosition": {
+                "x": 0.819340169429779,
+                "y": 1.372921347618103,
+                "z": 0.05654001235961914
+            },
+            "localRotation": {
+                "x": 1.0782626702621201e-7,
+                "y": 1.8192267248196005e-8,
+                "z": 9.231008135657248e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.4967470169067383,
+                "y": 0.5030731558799744,
+                "z": 0.490498811006546,
+                "w": -0.5094812512397766
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandIndex2",
+            "parent": "RightHandIndex2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2/POSE_Grip_RightHandIndex2",
+            "human": "",
+            "localPosition": {
+                "x": 9.53674295089968e-9,
+                "y": 1.1205673189351728e-7,
+                "z": 3.52859501617786e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999998211860657
+            },
+            "modelPosition": {
+                "x": 0.8193399906158447,
+                "y": 1.3729218244552613,
+                "z": 0.05654001235961914
+            },
+            "localRotation": {
+                "x": -0.6159024834632874,
+                "y": 0.007793576456606388,
+                "z": -0.00019725099264178425,
+                "w": 0.7877838015556336
+            },
+            "modelRotation": {
+                "x": 0.7011980414390564,
+                "y": 0.09034064412117005,
+                "z": 0.7002229690551758,
+                "w": -0.09923732280731201
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandIndex2",
+            "parent": "RightHandIndex2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2/POSE_Relax_RightHandIndex2",
+            "human": "",
+            "localPosition": {
+                "x": 9.53674295089968e-9,
+                "y": 1.1205673189351728e-7,
+                "z": 3.52859501617786e-7
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999998211860657,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8193399906158447,
+                "y": 1.3729218244552613,
+                "z": 0.05654001235961914
+            },
+            "localRotation": {
+                "x": -0.1218596026301384,
+                "y": 0.0015420011477544904,
+                "z": -0.0000390273162338417,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.5543534755706787,
+                "y": 0.4387851059436798,
+                "z": 0.5489328503608704,
+                "w": -0.4459068775177002
+            }
+        },
+        {
+            "name": "RightHandIndex3",
+            "parent": "RightHandIndex2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2/RightHandIndex3",
+            "human": "Right Index Distal",
+            "localPosition": {
+                "x": 8.951418273284162e-9,
+                "y": 0.023709435015916826,
+                "z": 9.064213202236715e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8430400490760803,
+                "y": 1.3735214471817017,
+                "z": 0.056240081787109378
+            },
+            "localRotation": {
+                "x": 0.0000015593079751852202,
+                "y": -3.907522305723887e-9,
+                "z": -1.507961826519022e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.49674612283706667,
+                "y": 0.5030739903450012,
+                "z": 0.49049824476242068,
+                "w": -0.5094820261001587
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandIndex3",
+            "parent": "RightHandIndex3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2/RightHandIndex3/POSE_Grip_RightHandIndex3",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": 4.410743770222325e-8,
+                "z": 5.7220457705398078e-8
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 0.9999998211860657,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8430400490760803,
+                "y": 1.3735214471817017,
+                "z": 0.056240081787109378
+            },
+            "localRotation": {
+                "x": -0.008725838735699654,
+                "y": 0.00011041339894291013,
+                "z": -0.000002794356760205119,
+                "w": 0.9999619722366333
+            },
+            "modelRotation": {
+                "x": 0.5011172890663147,
+                "y": 0.4987199902534485,
+                "z": 0.49492549896240237,
+                "w": -0.5051822662353516
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandIndex3",
+            "parent": "RightHandIndex3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandIndex1/RightHandIndex2/RightHandIndex3/POSE_Relax_RightHandIndex3",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": 4.410743770222325e-8,
+                "z": 5.7220457705398078e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8430400490760803,
+                "y": 1.3735214471817017,
+                "z": 0.056240081787109378
+            },
+            "localRotation": {
+                "x": -0.06975087523460388,
+                "y": 0.0008826002012938261,
+                "z": -0.000022340860596159473,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.5306287407875061,
+                "y": 0.4671972095966339,
+                "z": 0.5248429179191589,
+                "w": -0.4740254282951355
+            }
+        },
+        {
+            "name": "RightHandMiddle1",
+            "parent": "RightHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1",
+            "human": "Right Middle Proximal",
+            "localPosition": {
+                "x": 0.002305595902726054,
+                "y": 0.07542524486780167,
+                "z": -0.008958105929195881
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7790001034736633,
+                "y": 1.374001383781433,
+                "z": 0.037000060081481937
+            },
+            "localRotation": {
+                "x": 0.09632785618305206,
+                "y": 0.9933207631111145,
+                "z": -0.044677793979644778,
+                "w": 0.045152697712183
+            },
+            "modelRotation": {
+                "x": 0.5026242733001709,
+                "y": 0.49736228585243227,
+                "z": 0.4973612427711487,
+                "w": -0.5026249885559082
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandMiddle1",
+            "parent": "RightHandMiddle1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/POSE_Grip_RightHandMiddle1",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": -1.0013580009626821e-7,
+                "z": 3.028185346920509e-7
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 1.0000001192092896,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7790001034736633,
+                "y": 1.3740017414093018,
+                "z": 0.03699994087219238
+            },
+            "localRotation": {
+                "x": -0.2543674409389496,
+                "y": 0.0026774678844958545,
+                "z": 1.1878619865512974e-8,
+                "w": 0.9671039581298828
+            },
+            "modelRotation": {
+                "x": 0.6126096844673157,
+                "y": 0.3531428277492523,
+                "z": 0.608858585357666,
+                "w": -0.35957100987434389
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandMiddle1",
+            "parent": "RightHandMiddle1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/POSE_Relax_RightHandMiddle1",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": -1.0013580009626821e-7,
+                "z": 3.028185346920509e-7
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 0.9999998807907105
+            },
+            "modelPosition": {
+                "x": 0.7790001034736633,
+                "y": 1.3740017414093018,
+                "z": 0.03699994087219238
+            },
+            "localRotation": {
+                "x": -0.07845480740070343,
+                "y": 0.0008258139714598656,
+                "z": 3.1062390437597289e-9,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5400972962379456,
+                "y": 0.45639362931251528,
+                "z": 0.5352635383605957,
+                "w": -0.46205297112464907
+            }
+        },
+        {
+            "name": "RightHandMiddle2",
+            "parent": "RightHandMiddle1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2",
+            "human": "Right Middle Intermediate",
+            "localPosition": {
+                "x": 5.988357587582982e-10,
+                "y": 0.043702419847249988,
+                "z": -2.3572339635791197e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8227002620697022,
+                "y": 1.3740016222000123,
+                "z": 0.03654003143310547
+            },
+            "localRotation": {
+                "x": -8.008142305278999e-18,
+                "y": 3.254542413344552e-9,
+                "z": 1.2107192581822801e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5026242136955261,
+                "y": 0.49736225605010989,
+                "z": 0.49736127257347109,
+                "w": -0.5026249885559082
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandMiddle2",
+            "parent": "RightHandMiddle2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2/POSE_Grip_RightHandMiddle2",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": -2.455711296533991e-7,
+                "z": 3.03112727806365e-7
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8226997256278992,
+                "y": 1.3740019798278809,
+                "z": 0.03653991222381592
+            },
+            "localRotation": {
+                "x": -0.6718820333480835,
+                "y": 0.007072232197970152,
+                "z": 3.050034180773764e-8,
+                "w": 0.7406244874000549
+            },
+            "modelRotation": {
+                "x": 0.706443190574646,
+                "y": 0.030635744333267213,
+                "z": 0.7060813903808594,
+                "w": -0.03806954622268677
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandMiddle2",
+            "parent": "RightHandMiddle2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2/POSE_Relax_RightHandMiddle2",
+            "human": "",
+            "localPosition": {
+                "x": -9.53674295089968e-9,
+                "y": -2.455711296533991e-7,
+                "z": 3.03112727806365e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8226997256278992,
+                "y": 1.3740019798278809,
+                "z": 0.03653991222381592
+            },
+            "localRotation": {
+                "x": -0.12186262011528015,
+                "y": 0.0012827268801629544,
+                "z": 5.2268922523524e-9,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.559490978717804,
+                "y": 0.43240052461624148,
+                "z": 0.5549086332321167,
+                "w": -0.4382653534412384
+            }
+        },
+        {
+            "name": "RightHandMiddle3",
+            "parent": "RightHandMiddle2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2/RightHandMiddle3",
+            "human": "Right Middle Distal",
+            "localPosition": {
+                "x": -2.980230506821613e-9,
+                "y": 0.028501566499471666,
+                "z": -2.0630404051757979e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8512000441551209,
+                "y": 1.3740016222000123,
+                "z": 0.03623998165130615
+            },
+            "localRotation": {
+                "x": -3.2748775547386708e-15,
+                "y": 5.674063649485639e-15,
+                "z": -5.21540641784668e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5026242136955261,
+                "y": 0.4973622262477875,
+                "z": 0.49736130237579348,
+                "w": -0.5026249885559082
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandMiddle3",
+            "parent": "RightHandMiddle3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2/RightHandMiddle3/POSE_Grip_RightHandMiddle3",
+            "human": "",
+            "localPosition": {
+                "x": -4.76837147544984e-9,
+                "y": -2.6226043559063329e-8,
+                "z": 3.03112727806365e-7
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8512002229690552,
+                "y": 1.3740018606185914,
+                "z": 0.03623998165130615
+            },
+            "localRotation": {
+                "x": -0.26989006996154787,
+                "y": 0.002840836299583316,
+                "z": 1.1931074794802044e-8,
+                "w": 0.9628869891166687
+            },
+            "modelRotation": {
+                "x": 0.6182109117507935,
+                "y": 0.34324294328689577,
+                "z": 0.6145637631416321,
+                "w": -0.34973064064979555
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandMiddle3",
+            "parent": "RightHandMiddle3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandMiddle1/RightHandMiddle2/RightHandMiddle3/POSE_Relax_RightHandMiddle3",
+            "human": "",
+            "localPosition": {
+                "x": -4.76837147544984e-9,
+                "y": -2.6226043559063329e-8,
+                "z": 3.03112727806365e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998807907105,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8512002229690552,
+                "y": 1.3740018606185914,
+                "z": 0.03623998165130615
+            },
+            "localRotation": {
+                "x": -0.06975260376930237,
+                "y": 0.0007342088501900435,
+                "z": 3.3124156750830027e-9,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.536094069480896,
+                "y": 0.46108946204185488,
+                "z": 0.5312110185623169,
+                "w": -0.4667065441608429
+            }
+        },
+        {
+            "name": "RightHandPinky1",
+            "parent": "RightHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1",
+            "human": "Right Little Proximal",
+            "localPosition": {
+                "x": 0.039155010133981708,
+                "y": 0.05551464110612869,
+                "z": -0.004997453652322292
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7660000920295715,
+                "y": 1.3750014305114747,
+                "z": -0.003000020980834961
+            },
+            "localRotation": {
+                "x": 0.10259098559617996,
+                "y": 0.9934722185134888,
+                "z": -0.004144713748246431,
+                "w": 0.04970759153366089
+            },
+            "modelRotation": {
+                "x": 0.5267791748046875,
+                "y": 0.4728586673736572,
+                "z": 0.5127342939376831,
+                "w": -0.4858109951019287
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandPinky1",
+            "parent": "RightHandPinky1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/POSE_Grip_RightHandPinky1",
+            "human": "",
+            "localPosition": {
+                "x": 3.5762786065873799e-9,
+                "y": -1.907348590179936e-8,
+                "z": -2.384185791015625e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7660000920295715,
+                "y": 1.3750011920928956,
+                "z": -0.003000020980834961
+            },
+            "localRotation": {
+                "x": 7.450580596923828e-9,
+                "y": 2.6470492464625296e-11,
+                "z": -4.1442746456787918e-10,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5267791748046875,
+                "y": 0.4728586673736572,
+                "z": 0.5127342939376831,
+                "w": -0.4858109951019287
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandPinky1",
+            "parent": "RightHandPinky1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/POSE_Relax_RightHandPinky1",
+            "human": "",
+            "localPosition": {
+                "x": 3.5762786065873799e-9,
+                "y": -1.907348590179936e-8,
+                "z": -2.384185791015625e-7
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 0.9999998211860657
+            },
+            "modelPosition": {
+                "x": 0.7660000920295715,
+                "y": 1.3750011920928956,
+                "z": -0.003000020980834961
+            },
+            "localRotation": {
+                "x": -0.07843051105737686,
+                "y": 0.00211278535425663,
+                "z": 0.0001712445227894932,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5622553825378418,
+                "y": 0.43007034063339236,
+                "z": 0.5492700338363648,
+                "w": -0.44408470392227175
+            }
+        },
+        {
+            "name": "RightHandPinky2",
+            "parent": "RightHandPinky1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2",
+            "human": "Right Little Intermediate",
+            "localPosition": {
+                "x": -2.3297616613682239e-10,
+                "y": 0.03416406363248825,
+                "z": -1.0354968082992855e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.800040066242218,
+                "y": 1.3722413778305054,
+                "z": -0.003920078277587891
+            },
+            "localRotation": {
+                "x": -0.0000016100766515592114,
+                "y": -3.1823763180227618e-8,
+                "z": -6.37406749603997e-9,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5267798900604248,
+                "y": 0.47285783290863039,
+                "z": 0.51273512840271,
+                "w": -0.4858101010322571
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandPinky2",
+            "parent": "RightHandPinky2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2/POSE_Grip_RightHandPinky2",
+            "human": "",
+            "localPosition": {
+                "x": -2.38418573772492e-9,
+                "y": 7.86781271244763e-8,
+                "z": 1.907348590179936e-8
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.000000238418579,
+                "z": 1.000000238418579
+            },
+            "modelPosition": {
+                "x": 0.800040066242218,
+                "y": 1.3722413778305054,
+                "z": -0.003920078277587891
+            },
+            "localRotation": {
+                "x": -0.4987996220588684,
+                "y": 0.013436810113489628,
+                "z": 0.0010891491547226906,
+                "w": 0.8666124939918518
+            },
+            "modelRotation": {
+                "x": 0.692461371421814,
+                "y": 0.146930992603302,
+                "z": 0.6867529153823853,
+                "w": -0.1651635468006134
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandPinky2",
+            "parent": "RightHandPinky2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2/POSE_Relax_RightHandPinky2",
+            "human": "",
+            "localPosition": {
+                "x": -2.38418573772492e-9,
+                "y": 7.86781271244763e-8,
+                "z": 1.907348590179936e-8
+            },
+            "localScale": {
+                "x": 1.0000001192092896,
+                "y": 1.0000003576278687,
+                "z": 1.000000238418579
+            },
+            "modelPosition": {
+                "x": 0.800040066242218,
+                "y": 1.3722413778305054,
+                "z": -0.003920078277587891
+            },
+            "localRotation": {
+                "x": -0.12182486802339554,
+                "y": 0.0032817546743899585,
+                "z": 0.0002660091849975288,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.5804800987243652,
+                "y": 0.4051348567008972,
+                "z": 0.5681185126304627,
+                "w": -0.41970229148864748
+            }
+        },
+        {
+            "name": "RightHandPinky3",
+            "parent": "RightHandPinky2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2/RightHandPinky3",
+            "human": "Right Little Distal",
+            "localPosition": {
+                "x": -1.4398312542240888e-9,
+                "y": 0.02228083647787571,
+                "z": -2.1905870539740136e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8222399950027466,
+                "y": 1.370441198348999,
+                "z": -0.004520058631896973
+            },
+            "localRotation": {
+                "x": 0.0000025642830223659986,
+                "y": 5.270067937601652e-9,
+                "z": 6.811454067445766e-9,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5267786383628845,
+                "y": 0.47285908460617068,
+                "z": 0.5127338171005249,
+                "w": -0.4858115017414093
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandPinky3",
+            "parent": "RightHandPinky3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2/RightHandPinky3/POSE_Grip_RightHandPinky3",
+            "human": "",
+            "localPosition": {
+                "x": 1.19209286886246e-9,
+                "y": 5.4836270635405529e-8,
+                "z": -2.9563904035967428e-7
+            },
+            "localScale": {
+                "x": 1.000000238418579,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.8222400546073914,
+                "y": 1.3704408407211304,
+                "z": -0.004520058631896973
+            },
+            "localRotation": {
+                "x": -0.5427258014678955,
+                "y": 0.014620116911828518,
+                "z": 0.0011849815491586924,
+                "w": 0.8397818803787231
+            },
+            "modelRotation": {
+                "x": 0.6991057991981506,
+                "y": 0.11109772324562073,
+                "z": 0.6943432092666626,
+                "w": -0.12959995865821839
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandPinky3",
+            "parent": "RightHandPinky3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandPinky1/RightHandPinky2/RightHandPinky3/POSE_Relax_RightHandPinky3",
+            "human": "",
+            "localPosition": {
+                "x": 1.19209286886246e-9,
+                "y": 5.4836270635405529e-8,
+                "z": -2.9563904035967428e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8222400546073914,
+                "y": 1.3704408407211304,
+                "z": -0.004520058631896973
+            },
+            "localRotation": {
+                "x": -0.0697309821844101,
+                "y": 0.0018784351414069534,
+                "z": 0.00015225005336105824,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.558480441570282,
+                "y": 0.4349610507488251,
+                "z": 0.5453733801841736,
+                "w": -0.44886159896850588
+            }
+        },
+        {
+            "name": "RightHandRing1",
+            "parent": "RightHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1",
+            "human": "Right Ring Proximal",
+            "localPosition": {
+                "x": 0.02115253359079361,
+                "y": 0.06796713918447495,
+                "z": -0.006684522610157728
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999998807907105,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7750000953674316,
+                "y": 1.374001383781433,
+                "z": 0.01699995994567871
+            },
+            "localRotation": {
+                "x": 0.0966801717877388,
+                "y": 0.9932865500450134,
+                "z": -0.0446617417037487,
+                "w": 0.04516851156949997
+            },
+            "modelRotation": {
+                "x": 0.5028006434440613,
+                "y": 0.4971839189529419,
+                "z": 0.49718305468559267,
+                "w": -0.5028012990951538
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandRing1",
+            "parent": "RightHandRing1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/POSE_Grip_RightHandRing1",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 7.152556946721234e-8,
+                "z": 2.5223082289471678e-8
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.775000274181366,
+                "y": 1.374001383781433,
+                "z": 0.01699995994567871
+            },
+            "localRotation": {
+                "x": -0.2175828516483307,
+                "y": 0.0024446523748338224,
+                "z": 3.144620919215413e-8,
+                "w": 0.9760388135910034
+            },
+            "modelRotation": {
+                "x": 0.5989384055137634,
+                "y": 0.37586313486099245,
+                "z": 0.5946776270866394,
+                "w": -0.38256824016571047
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandRing1",
+            "parent": "RightHandRing1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/POSE_Relax_RightHandRing1",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 7.152556946721234e-8,
+                "z": 2.5223082289471678e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999998807907105
+            },
+            "modelPosition": {
+                "x": 0.775000274181366,
+                "y": 1.374001383781433,
+                "z": 0.01699995994567871
+            },
+            "localRotation": {
+                "x": -0.07845420390367508,
+                "y": 0.0008814719039946795,
+                "z": 1.1281363399007205e-8,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.5402591824531555,
+                "y": 0.4562019407749176,
+                "z": 0.5350995659828186,
+                "w": -0.46224284172058108
+            }
+        },
+        {
+            "name": "RightHandRing2",
+            "parent": "RightHandRing1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2",
+            "human": "Right Ring Intermediate",
+            "localPosition": {
+                "x": -6.076879555116932e-10,
+                "y": 0.040942538529634479,
+                "z": -1.2583957698097948e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8159400820732117,
+                "y": 1.374001383781433,
+                "z": 0.016539931297302247
+            },
+            "localRotation": {
+                "x": 1.862645149230957e-8,
+                "y": 4.771417394522359e-8,
+                "z": 7.427297532558441e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5028006434440613,
+                "y": 0.4971838593482971,
+                "z": 0.4971829950809479,
+                "w": -0.5028014183044434
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandRing2",
+            "parent": "RightHandRing2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2/POSE_Grip_RightHandRing2",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": -1.335144048653092e-7,
+                "z": -1.1858978243850516e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.8159399032592773,
+                "y": 1.374001383781433,
+                "z": 0.016540050506591798
+            },
+            "localRotation": {
+                "x": -0.5603539943695068,
+                "y": 0.00629594037309289,
+                "z": 2.5235918243993184e-8,
+                "w": 0.8282293081283569
+            },
+            "modelRotation": {
+                "x": 0.695050835609436,
+                "y": 0.13001814484596253,
+                "z": 0.6935461759567261,
+                "w": -0.13781875371932984
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandRing2",
+            "parent": "RightHandRing2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2/POSE_Relax_RightHandRing2",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": -1.335144048653092e-7,
+                "z": -1.1858978243850516e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8159399032592773,
+                "y": 1.374001383781433,
+                "z": 0.016540050506591798
+            },
+            "localRotation": {
+                "x": -0.12186169624328613,
+                "y": 0.0013691949425265194,
+                "z": 5.462367891340136e-9,
+                "w": 0.9925462007522583
+            },
+            "modelRotation": {
+                "x": 0.559644341468811,
+                "y": 0.43220198154449465,
+                "z": 0.5547531247138977,
+                "w": -0.43846219778060915
+            }
+        },
+        {
+            "name": "RightHandRing3",
+            "parent": "RightHandRing2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2/RightHandRing3",
+            "human": "Right Ring Distal",
+            "localPosition": {
+                "x": 5.960887339284682e-10,
+                "y": 0.026701651513576509,
+                "z": -1.5377378304037848e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8426400423049927,
+                "y": 1.374001383781433,
+                "z": 0.01624000072479248
+            },
+            "localRotation": {
+                "x": -3.629239717453138e-15,
+                "y": 1.852674169134684e-14,
+                "z": -4.1676685214042666e-8,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.5028006434440613,
+                "y": 0.4971838593482971,
+                "z": 0.4971829950809479,
+                "w": -0.5028014183044434
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandRing3",
+            "parent": "RightHandRing3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2/RightHandRing3/POSE_Grip_RightHandRing3",
+            "human": "",
+            "localPosition": {
+                "x": 2.38418573772492e-9,
+                "y": -1.4305114426349519e-8,
+                "z": -1.1858934945152556e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.8426400423049927,
+                "y": 1.374001383781433,
+                "z": 0.01624000072479248
+            },
+            "localRotation": {
+                "x": -0.5088033676147461,
+                "y": 0.005716694053262472,
+                "z": 2.3589924680322839e-8,
+                "w": 0.8608638048171997
+            },
+            "modelRotation": {
+                "x": 0.6858275532722473,
+                "y": 0.17216485738754273,
+                "z": 0.6838499307632446,
+                "w": -0.17985913157463075
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandRing3",
+            "parent": "RightHandRing3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandRing1/RightHandRing2/RightHandRing3/POSE_Relax_RightHandRing3",
+            "human": "",
+            "localPosition": {
+                "x": 2.38418573772492e-9,
+                "y": -1.4305114426349519e-8,
+                "z": -1.1858934945152556e-9
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.8426400423049927,
+                "y": 1.374001383781433,
+                "z": 0.01624000072479248
+            },
+            "localRotation": {
+                "x": -0.0697520300745964,
+                "y": 0.0007837035227566958,
+                "z": 3.0724149890914988e-9,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.5362575650215149,
+                "y": 0.46089914441108706,
+                "z": 0.5310454964637756,
+                "w": -0.4668949544429779
+            }
+        },
+        {
+            "name": "RightHandThumb1",
+            "parent": "RightHand",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1",
+            "human": "Right Thumb Proximal",
+            "localPosition": {
+                "x": -0.026994433254003526,
+                "y": 0.03274911642074585,
+                "z": 0.013002263382077217
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.7300001978874207,
+                "y": 1.3540012836456299,
+                "z": 0.0559999942779541
+            },
+            "localRotation": {
+                "x": -0.21231545507907868,
+                "y": 0.9770566821098328,
+                "z": 0.00407499959692359,
+                "w": 0.016304057091474534
+            },
+            "modelRotation": {
+                "x": 0.34678077697753909,
+                "y": 0.5869211554527283,
+                "z": 0.6643946766853333,
+                "w": -0.3063441514968872
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandThumb1",
+            "parent": "RightHandThumb1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/POSE_Grip_RightHandThumb1",
+            "human": "",
+            "localPosition": {
+                "x": 7.629394360719744e-8,
+                "y": 1.573562542489526e-7,
+                "z": -6.67572024326546e-8
+            },
+            "localScale": {
+                "x": 0.9999998807907105,
+                "y": 1.0000001192092896,
+                "z": 0.9999999403953552
+            },
+            "modelPosition": {
+                "x": 0.730000376701355,
+                "y": 1.3540011644363404,
+                "z": 0.05600011348724365
+            },
+            "localRotation": {
+                "x": -0.04600609093904495,
+                "y": -0.47127196192741396,
+                "z": -0.2002335488796234,
+                "w": 0.8577253222465515
+            },
+            "modelRotation": {
+                "x": 0.5071256756782532,
+                "y": 0.6866594552993774,
+                "z": 0.49478232860565188,
+                "w": 0.16282854974269868
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandThumb1",
+            "parent": "RightHandThumb1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/POSE_Relax_RightHandThumb1",
+            "human": "",
+            "localPosition": {
+                "x": 7.629394360719744e-8,
+                "y": 1.573562542489526e-7,
+                "z": -6.67572024326546e-8
+            },
+            "localScale": {
+                "x": 0.9999998211860657,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.730000376701355,
+                "y": 1.3540011644363404,
+                "z": 0.05600011348724365
+            },
+            "localRotation": {
+                "x": -0.06436771154403687,
+                "y": -0.04451975226402283,
+                "z": -0.005534027703106403,
+                "w": 0.9969173669815064
+            },
+            "modelRotation": {
+                "x": 0.39176106452941897,
+                "y": 0.5579039454460144,
+                "z": 0.6863821744918823,
+                "w": -0.25327199697494509
+            }
+        },
+        {
+            "name": "RightHandThumb2",
+            "parent": "RightHandThumb1",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2",
+            "human": "Right Thumb Intermediate",
+            "localPosition": {
+                "x": 7.739281215890515e-9,
+                "y": 0.028373798355460168,
+                "z": -9.95397542169485e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7530999779701233,
+                "y": 1.3505011796951295,
+                "z": 0.07210004329681397
+            },
+            "localRotation": {
+                "x": 0.0000017955899238586426,
+                "y": -9.664516653629107e-8,
+                "z": 4.371796080704371e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.34678056836128237,
+                "y": 0.5869221687316895,
+                "z": 0.664393424987793,
+                "w": -0.30634498596191409
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandThumb2",
+            "parent": "RightHandThumb2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2/POSE_Grip_RightHandThumb2",
+            "human": "",
+            "localPosition": {
+                "x": -3.814697180359872e-8,
+                "y": 1.6927718604620169e-7,
+                "z": -7.629394360719744e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7531003355979919,
+                "y": 1.3505009412765504,
+                "z": 0.07210004329681397
+            },
+            "localRotation": {
+                "x": -1.862645149230957e-9,
+                "y": -1.1293259660760669e-9,
+                "z": -1.4037604412209249e-10,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.34678056836128237,
+                "y": 0.5869221687316895,
+                "z": 0.664393424987793,
+                "w": -0.30634498596191409
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandThumb2",
+            "parent": "RightHandThumb2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2/POSE_Relax_RightHandThumb2",
+            "human": "",
+            "localPosition": {
+                "x": -3.814697180359872e-8,
+                "y": 1.6927718604620169e-7,
+                "z": -7.629394360719744e-8
+            },
+            "localScale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7531003355979919,
+                "y": 1.3505009412765504,
+                "z": 0.07210004329681397
+            },
+            "localRotation": {
+                "x": -0.09998141974210739,
+                "y": -0.06915177404880524,
+                "z": -0.00859567429870367,
+                "w": 0.9925461411476135
+            },
+            "modelRotation": {
+                "x": 0.4157235026359558,
+                "y": 0.5402854084968567,
+                "z": 0.6967752575874329,
+                "w": -0.22309231758117677
+            }
+        },
+        {
+            "name": "RightHandThumb3",
+            "parent": "RightHandThumb2",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2/RightHandThumb3",
+            "human": "Right Thumb Distal",
+            "localPosition": {
+                "x": -1.0536614247769194e-8,
+                "y": 0.027563095092773439,
+                "z": -1.1384486953147644e-7
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7755401134490967,
+                "y": 1.347101092338562,
+                "z": 0.08774006366729737
+            },
+            "localRotation": {
+                "x": -2.868473529815674e-7,
+                "y": 6.757381498800896e-8,
+                "z": -5.064592869530316e-7,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.3467802107334137,
+                "y": 0.5869222283363342,
+                "z": 0.6643937826156616,
+                "w": -0.306344598531723
+            }
+        },
+        {
+            "name": "POSE_Grip_RightHandThumb3",
+            "parent": "RightHandThumb3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2/RightHandThumb3/POSE_Grip_RightHandThumb3",
+            "human": "",
+            "localPosition": {
+                "x": -3.814697180359872e-8,
+                "y": -1.2159347306806013e-7,
+                "z": 7.629394360719744e-8
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7755401730537415,
+                "y": 1.3471013307571412,
+                "z": 0.08773994445800781
+            },
+            "localRotation": {
+                "x": 9.313225746154785e-9,
+                "y": -1.6725940632511538e-9,
+                "z": -9.214040641580823e-11,
+                "w": 1.0
+            },
+            "modelRotation": {
+                "x": 0.3467802107334137,
+                "y": 0.5869222283363342,
+                "z": 0.6643937826156616,
+                "w": -0.306344598531723
+            }
+        },
+        {
+            "name": "POSE_Relax_RightHandThumb3",
+            "parent": "RightHandThumb3",
+            "path": "Armature/Hips/Spine02/Spine01/Spine/RightShoulder/RightArm/RightForeArm/RightHand/RightHandThumb1/RightHandThumb2/RightHandThumb3/POSE_Relax_RightHandThumb3",
+            "human": "",
+            "localPosition": {
+                "x": -3.814697180359872e-8,
+                "y": -1.2159347306806013e-7,
+                "z": 7.629394360719744e-8
+            },
+            "localScale": {
+                "x": 1.000000238418579,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.7755401730537415,
+                "y": 1.3471013307571412,
+                "z": 0.08773994445800781
+            },
+            "localRotation": {
+                "x": -0.057228025048971179,
+                "y": -0.039581649005413058,
+                "z": -0.004920021630823612,
+                "w": 0.9975640773773193
+            },
+            "modelRotation": {
+                "x": 0.38687723875045779,
+                "y": 0.5613024234771729,
+                "z": 0.6841448545455933,
+                "w": -0.25925272703170779
+            }
+        },
+        {
+            "name": "C02_Mesh_0",
+            "parent": "Player_C02_ReRig(Clone)",
+            "path": "C02_Mesh_0",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            },
+            "modelRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            }
+        },
+        {
+            "name": "FaceLid_Left",
+            "parent": "Player_C02_ReRig(Clone)",
+            "path": "FaceLid_Left",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            },
+            "modelRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            }
+        },
+        {
+            "name": "FaceLid_Right",
+            "parent": "Player_C02_ReRig(Clone)",
+            "path": "FaceLid_Right",
+            "human": "",
+            "localPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localScale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "modelPosition": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "localRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            },
+            "modelRotation": {
+                "x": -0.7071068286895752,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.7071067094802856
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "C02_Mesh_0",
+            "vertices": 91232,
+            "triangles": 58222,
+            "maxWeights": 5,
+            "unweighted": 0,
+            "nonFiniteWeights": 0,
+            "negativeWeights": 0,
+            "maxWeightSumError": 1.1920928955078126e-7,
+            "materials": [
+                "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx"
+            ]
+        },
+        {
+            "name": "FaceLid_Left",
+            "vertices": 321,
+            "triangles": 512,
+            "maxWeights": 1,
+            "unweighted": 0,
+            "nonFiniteWeights": 0,
+            "negativeWeights": 0,
+            "maxWeightSumError": 0.0,
+            "materials": [
+                "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx"
+            ]
+        },
+        {
+            "name": "FaceLid_Right",
+            "vertices": 372,
+            "triangles": 512,
+            "maxWeights": 1,
+            "unweighted": 0,
+            "nonFiniteWeights": 0,
+            "negativeWeights": 0,
+            "maxWeightSumError": 0.0,
+            "materials": [
+                "Assets/_Project/Art/Characters/PlaytestReRig/Models/Player_C02_ReRig.fbx"
+            ]
+        }
+    ],
+    "limitations": [
+        "Rest/import inspection is not a grip or visual acceptance. No production motion or player installation is performed."
+    ]
+}

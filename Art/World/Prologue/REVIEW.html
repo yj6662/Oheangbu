@@ -1,0 +1,68 @@
+<!doctype html><meta charset="utf-8"><title>폐광 → 금표 주막 · 제작 검토</title>
+<style>body{margin:0;background:#eeebe3;color:#302e29;font:16px/1.7 system-ui,sans-serif}main{max-width:1300px;margin:auto;padding:48px 32px}h1{font-size:34px}h2{margin-top:42px}.note{background:#ded5bd;padding:18px}.flow{display:flex;gap:12px;flex-wrap:wrap}.flow span{border:1px solid #bbb5a8;padding:16px;flex:1;min-width:150px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}figure{margin:0}img,video{width:100%}pre{white-space:pre-wrap;font:13px/1.6 monospace;background:#deddd5;padding:20px}.map{max-width:670px}a{color:#395e62}@media(max-width:700px){.pair{grid-template-columns:1fr}}</style>
+<main><p>오행부 · EA 첫 플레이 구간 / TEST</p><h1>폐광에서 금표 주막까지</h1>
+<p class="note">C2 기준 씬 보존. 적·NPC는 임시 캡슐입니다. 미술적 합격 여부는 사용자 검토 대상입니다. 전체 계획 완료를 의미하지 않으며, 검사 결과와 미완료 사항은 아래 보고서를 따릅니다.</p>
+<h2>황경까지의 연결 예약</h2><div class="flow"><span>① 폐광 → 금표 주막<br>이번 제작</span><span>② 금표길<br>역참 J1 · 객주 W1<br>벌목장 · 심부</span><span>③ 청룡 → 국<br>높은 장소 재탐험</span><span>④ 상경 가도<br>화물 동행 · 검문<br>성저 인도</span><span>⑤ 남문 관문전<br>승리 후 문 개방<br>도성 내부는 후속</span></div>
+<h2>주경로와 탐험 고리</h2><img class="map" src="first_segment.svg"><p>주경로 약 587m. 4.5m/s 기준 순수 보행 약 130초. 계산값과 입력 실측은 구분합니다. 미래 구간은 연결 예약이며 아직 플레이 구간이 아닙니다.</p>
+<h2>실제 입력 검사</h2><h3>입력 검사 부분 영상 · 완주 영상 아님</h3><video controls preload="metadata" src="input_walk.mp4"></video><p>메모리 제한으로 중단된 약 12.58초의 기록입니다.</p><pre>{
+  &quot;status&quot;: &quot;COMPLETE&quot;,
+  &quot;scope&quot;: &quot;Virtual WASD/mouse/F -&gt; unchanged PlayerMotor/CharacterController, live enemy AI; no transform movement or synthetic damage&quot;,
+  &quot;issue&quot;: &quot;&quot;,
+  &quot;saveSlot&quot;: &quot;cheongrim-prologue-v1-audit-20260911080129&quot;,
+  &quot;video&quot;: &quot;STOPPED at commit &gt;=85%; partial clip&quot;,
+  &quot;waypoint&quot;: 84,
+  &quot;total&quot;: 84,
+  &quot;damageEvents&quot;: 3,
+  &quot;deaths&quot;: 0,
+  &quot;frames&quot;: 151,
+  &quot;seconds&quot;: 161.4842529296875,
+  &quot;meanFrameMs&quot;: 3.0136091709136963,
+  &quot;p95FrameMs&quot;: 4.204705238342285,
+  &quot;position&quot;: {
+    &quot;x&quot;: -66.14302825927734,
+    &quot;y&quot;: 1.0799999237060547,
+    &quot;z&quot;: 46.10993194580078
+  },
+  &quot;interactions&quot;: [
+    &quot;잠시 숨을 고른다.\n체력과 먹을 회복했다.  조선통보 0&quot;,
+    &quot;돌이 안쪽으로 흩어졌다. 지지목에는 불탄 줄의 흔적이 남아 있다.&quot;,
+    &quot;해진 주머니에 조선통보가 남아 있다.\n조선통보 +24&quot;,
+    &quot;잠시 숨을 고른다.\n체력과 먹을 회복했다.  조선통보 24&quot;,
+    &quot;벌목꾼: 산 너머 벌목 마을이 비었소. 금표 비석을 지나면 길목 역참이 나올 게요.&quot;,
+    &quot;약초꾼: 광산 쪽에서 왔소? 오늘은 더 깊이 들어가지 마시오. 숲의 뿌리가 길을 삼키고 있소.&quot;
+  ]
+}</pre>
+<p>촬영 중 시스템 커밋 한도 85%에 도달하면 촬영을 중단합니다. 영상이 없는 구간을 완료 영상으로 대체하지 않습니다. 가상 장치 입력은 실제 조작·물리·AI 경로를 사용하지만 물리 키보드를 직접 누른 검사는 아닙니다.</p>
+<h2>하늘·후처리 비교</h2><article><h3>폐광 바깥</h3><div class="pair"><figure><img src="view_0_before.png"><figcaption>새 지형 / Skybox·후처리 OFF</figcaption></figure><figure><img src="view_0_after.png"><figcaption>동일 카메라 / ON</figcaption></figure></div></article><article><h3>산길 진입</h3><div class="pair"><figure><img src="view_1_before.png"><figcaption>새 지형 / Skybox·후처리 OFF</figcaption></figure><figure><img src="view_1_after.png"><figcaption>동일 카메라 / ON</figcaption></figure></div></article><article><h3>능선 우회</h3><div class="pair"><figure><img src="view_2_before.png"><figcaption>새 지형 / Skybox·후처리 OFF</figcaption></figure><figure><img src="view_2_after.png"><figcaption>동일 카메라 / ON</figcaption></figure></div></article><article><h3>금표 주막</h3><div class="pair"><figure><img src="view_3_before.png"><figcaption>새 지형 / Skybox·후처리 OFF</figcaption></figure><figure><img src="view_3_after.png"><figcaption>동일 카메라 / ON</figcaption></figure></div></article><article><h3>물길과 통보 지선</h3><div class="pair"><figure><img src="view_4_before.png"><figcaption>OFF</figcaption></figure><figure><img src="view_4_after.png"><figcaption>ON</figcaption></figure></div></article><details open><summary>씬·접지·저장 구조</summary><pre>PASS production scene
+PASS content/runtime wiring
+PASS one main camera
+PASS one audio listener
+PASS missing materials=0
+PASS shader errors=0
+PASS sky shader
+PASS no duplicate fog
+PASS path ground misses=0
+PASS path maximum sampled slope=30.95
+PASS mine to inn NavMesh
+PASS one-off reward idempotency
+PASS death currency drop
+PASS retrieve exactly once
+PASS second death destroys previous drop
+PASS disk reload latest progression
+PASS corrupt primary backup recovery
+INFO all visible mesh instances (all LOD levels counted) tris=4920814
+INFO system commit=82.5 %</pre></details><details open><summary>직접 호출 상태 검사</summary><pre>PASS runtime reward once
+PASS runtime death drop
+PASS respawn position and HP
+PASS runtime retrieve
+PASS runtime second death invalidates old drop
+PASS dead enemy collision removed
+PASS rest checkpoint retains one-offs
+PASS rest ordinary enemies reset
+PASS runtime disk reload
+DIAGNOSTIC: direct damage/interaction/teleport. Not an input combat or application restart test.</pre></details><h2>원본 보존</h2><pre>{
+  &quot;Oheangbu/Assets/_Project/Scenes/Dev/C2_CodexWorld.unity&quot;: true,
+  &quot;Oheangbu/Assets/_Project/Data/World/CodexWorld_Settings.asset&quot;: true,
+  &quot;Oheangbu/Assets/_Project/Art/CodexWorld/Codex_NoBloom.asset&quot;: true,
+  &quot;Oheangbu/Assets/_Project/Data/Configs/VP_InkLook.asset&quot;: true
+}</pre><p><a href="REPORT.md">전체 검증 보고서</a></p></main>

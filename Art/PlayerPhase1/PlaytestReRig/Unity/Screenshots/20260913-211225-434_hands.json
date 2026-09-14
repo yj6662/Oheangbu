@@ -1,0 +1,24 @@
+{
+    "status": "STILL_WRITTEN_VISUAL_REVIEW_PENDING",
+    "utc": "2026-09-13T21:12:25.4342295Z",
+    "view": "hands",
+    "image": "C:\\Users\\yj666\\Oheangbu\\Art\\PlayerPhase1\\PlaytestReRig\\Unity\\Screenshots\\20260913-211225-434_hands.png",
+    "width": 1920,
+    "height": 1080,
+    "playMode": true,
+    "cameraTransformPreserved": true,
+    "temporaryResourcesReleased": true,
+    "cameraPosition": {
+        "x": 3405.9033203125,
+        "y": 196.6331329345703,
+        "z": 1129.08642578125
+    },
+    "target": {
+        "x": 3406.286376953125,
+        "y": 196.5331268310547,
+        "z": 1129.3502197265625
+    },
+    "fieldOfView": 42.0,
+    "systemCommit": 0.628398060798645,
+    "scope": "One current-pose offscreen world still. External views temporarily show the world body and hide the near arm only for this render, then restore visibility. No gameplay input, automatic walking, video, build or source-camera movement."
+}

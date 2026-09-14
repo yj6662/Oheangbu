@@ -1,0 +1,99 @@
+{
+  "service": "Adobe Mixamo",
+  "url": "https://www.mixamo.com/",
+  "retrieved": "2026-09-14",
+  "character": "X Bot",
+  "format": "FBX Binary",
+  "skin": "Without Skin / pack No Character",
+  "fps": 60,
+  "keyframeReduction": "none",
+  "pack": "Locomotion Pack (12 animations)",
+  "additional": [
+    "Walking Backwards (Male Walk Backwards, rejected: short stride)",
+    "Running Backward (Backwards Running)",
+    "Walking Backwards (Walking Backwards, selected alternative)"
+  ],
+  "userSourceRigUploaded": false,
+  "files": [
+    {
+      "file": "idle.fbx",
+      "bytes": 1138209,
+      "sha256": "2cb21c3958119aadd4863fc228bcf5a9ebe028de0acc83cb97a0f9c87e3275a5"
+    },
+    {
+      "file": "jump.fbx",
+      "bytes": 648289,
+      "sha256": "0deddb82a530ea050bbd18bf9698164f7e88cb133ed2dd9f6371548e151187da"
+    },
+    {
+      "file": "left strafe walking.fbx",
+      "bytes": 492305,
+      "sha256": "907117347eb02d8bc02c4fccefa78a59efd9eb59233b0390d8868eaa6acaf59d"
+    },
+    {
+      "file": "left strafe.fbx",
+      "bytes": 413617,
+      "sha256": "1615a6822758b837c314a07d863cdccc52ff8e04fc9aff96eef15e6110e00c40"
+    },
+    {
+      "file": "left turn 90.fbx",
+      "bytes": 470065,
+      "sha256": "0371405832c5211e66a853928c14bec0c58e800ef7b54692f663c0d4fcc689ed"
+    },
+    {
+      "file": "left turn.fbx",
+      "bytes": 622097,
+      "sha256": "08becb1f2781b81880abdd7b8323ae6e7133b0ce487eb2194688370b39bb93a1"
+    },
+    {
+      "file": "Locomotion Pack.zip",
+      "bytes": 1610349,
+      "sha256": "1c129ac266c3d05cb4fa25d21b67b7360e7ebdf10f94fe7b9a3a6020506fcf82"
+    },
+    {
+      "file": "right strafe walking.fbx",
+      "bytes": 492305,
+      "sha256": "ed200e7dd79b8c1d505e550c288ff118e9c597e1de5b31d72ea13ac7d05cb24a"
+    },
+    {
+      "file": "right strafe.fbx",
+      "bytes": 413617,
+      "sha256": "980b2ccca1e8293efed4364c81b68e3a38c90dde073c0693295905e9d58277b8"
+    },
+    {
+      "file": "right turn 90.fbx",
+      "bytes": 470065,
+      "sha256": "2e78e8a5521ff93b853516394d4edd3f83cb9a0c0afa101c9b37038a0700764d"
+    },
+    {
+      "file": "right turn.fbx",
+      "bytes": 622097,
+      "sha256": "ba7126387d1ab0475fa4f512cdae4638c151d1609d9fef9d842853b813b881d5"
+    },
+    {
+      "file": "Running Backward.fbx",
+      "bytes": 403312,
+      "sha256": "144551af56d4c871e941cc4e5a5ba2e9629b2638759e67ab47fb183581bfc07a"
+    },
+    {
+      "file": "running.fbx",
+      "bytes": 418145,
+      "sha256": "51d6db4aec3c3269058bb27e89d70f68ef27bf00709c8dfdd00b7a6333c641ac"
+    },
+    {
+      "file": "Walking Backwards Standard.fbx",
+      "bytes": 534576,
+      "sha256": "68e1bf6ba50a19b4ef8f5b6791e41dccc8ff5a44023fdf9ef4334cf27d485946"
+    },
+    {
+      "file": "Walking Backwards.fbx",
+      "bytes": 502720,
+      "sha256": "e4d0b075c1d7a4ed6683794b0e632c7437e5b94f142d151a1cfd18c1231206eb"
+    },
+    {
+      "file": "walking.fbx",
+      "bytes": 492305,
+      "sha256": "699b54fdceab4d03707b0c7e0b103c2bba4b696ae2265d40b873f64649cc7146"
+    }
+  ]
+}

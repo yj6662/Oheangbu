@@ -1,0 +1,123 @@
+{
+  "scope": "W_WorldMacro_Playtest event-driven SFX only",
+  "validationMode": "Edit-mode clip metadata and serialized wiring inspection; no direct cue playback and no gameplay event is claimed.",
+  "runtimeEvidence": "Read WorldMacroPlaytestAudio.RuntimeCounters before/after live events. Rejected casts must not increment acceptedCast; direct clip audition is not event-path evidence.",
+  "voiceLimit": 12,
+  "componentCount": 1,
+  "totalSeconds": 16.0002498626709,
+  "clips": [
+    {
+      "name": "brush_stroke",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/brush_stroke.wav",
+      "seconds": 0.800000011920929,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "cast_wood",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/cast_wood.wav",
+      "seconds": 1.0800000429153442,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "cast_fire",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/cast_fire.wav",
+      "seconds": 1.0800000429153442,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "cast_earth",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/cast_earth.wav",
+      "seconds": 1.2000000476837158,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "cast_metal",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/cast_metal.wav",
+      "seconds": 1.0800000429153442,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "cast_water",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/cast_water.wav",
+      "seconds": 1.2000000476837158,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "impact",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/impact.wav",
+      "seconds": 0.7200000286102295,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "player_hit",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/player_hit.wav",
+      "seconds": 0.6802494525909424,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "parry",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/parry.wav",
+      "seconds": 1.4800000190734863,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "harvest",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/harvest.wav",
+      "seconds": 1.3600000143051147,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "interact",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/interact.wav",
+      "seconds": 0.5199999809265137,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "rest",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/rest.wav",
+      "seconds": 1.7599999904632568,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "summon_appear",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/summon_appear.wav",
+      "seconds": 1.7599999904632568,
+      "channels": 1,
+      "frequency": 44100
+    },
+    {
+      "name": "summon_release",
+      "path": "Assets/_Project/Audio/PlaytestFeedback/summon_release.wav",
+      "seconds": 1.2799999713897705,
+      "channels": 1,
+      "frequency": 44100
+    }
+  ],
+  "validation": "VALID: 14 mono 44.1 kHz clips <=30s, one profile/component, 12 pooled voices, spatial split, bounded harvest, one active listener on Walker.ViewCamera.",
+  "eventMapping": [
+    "DrawingInputController.StrokeStarted -> brush_stroke",
+    "CombatLoopWiring.CastAccepted -> cast_<element>; mapped Summon uses 0.35 gain",
+    "CombatLoopWiring.EnemyHitResolved -> impact",
+    "PlayerVitals.Damaged(amount>0) -> player_hit",
+    "CombatLoopWiring.ParryResolved(Success/Half/Block) -> parry",
+    "HarvestAction.Extracted -> harvest with 1.2s cooldown",
+    "WorldMacroPlaytestSession.InteractionResolved -> interact or rest",
+    "BrushStrokeFeedAdapter.SummonPresentationStarted/Released -> summon_appear/summon_release"
+  ],
+  "limitations": [
+    "Generated clip character and final mix loudness require user listening review.",
+    "This diagnostic does not simulate handwriting, combat, interaction, pause, or summon lifetime events."
+  ]
+}

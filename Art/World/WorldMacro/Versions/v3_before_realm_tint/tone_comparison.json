@@ -1,0 +1,38 @@
+{
+  "scope": "Same V3 geometry, camera and lighting. Earlier pigment values temporarily restored then returned. RGB screenshot averages over pixels with max channel change greater than2/255; not physical luminance or isolated terrain mask.",
+  "material": "MacroGround",
+  "before": {
+    "InkDensity": 1.06,
+    "ToneCeiling": 0.72,
+    "PathTones": [
+      0.26,
+      0.64
+    ]
+  },
+  "after": {
+    "InkDensity": 1.16,
+    "ToneCeiling": 0.62,
+    "PathTones": [
+      0.23,
+      0.57
+    ]
+  },
+  "pairs": [
+    {
+      "view": "eye_capital",
+      "changedPixels": 1802757,
+      "changedPixelFraction": 0.8693851273148148,
+      "meanBeforeSRGB": 154.38132907910867,
+      "meanAfterSRGB": 143.1741260746734,
+      "changedPixelsMeanRatio": 0.9274057098012648
+    },
+    {
+      "view": "eye_jeokro",
+      "changedPixels": 1552200,
+      "changedPixelFraction": 0.7485532407407407,
+      "meanBeforeSRGB": 161.7968790533866,
+      "meanAfterSRGB": 151.93941824507152,
+      "changedPixelsMeanRatio": 0.9390750868249906
+    }
+  ]
+}

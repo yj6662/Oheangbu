@@ -1,0 +1,39 @@
+{
+  "part": "Wheel",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Meshy\\Wheel\\image\\model_urls_glb.glb",
+  "source_sha256": "c2fc191ac3c3b2d0e71561b05017e29d31d66dd7a79973124267483a1a7a90d1",
+  "raw": {
+    "vertices": 7596,
+    "triangles": 5155,
+    "size_unity_m": {
+      "x": 1.9024391174316406,
+      "y": 1.9024510979652405,
+      "z": 0.5221660435199738
+    },
+    "bounds_blender": {
+      "minimum": [
+        -0.9516890645027161,
+        -0.25985002517700195,
+        -0.9516880512237549
+      ],
+      "maximum": [
+        0.9507500529289246,
+        0.2623160183429718,
+        0.9507630467414856
+      ]
+    },
+    "uv_layers": [
+      "UVMap"
+    ],
+    "materials": [
+      "Material_0"
+    ],
+    "nonfinite_vertices": 0
+  },
+  "runtime_verification": "UNVERIFIED",
+  "stage": "inspect",
+  "views": [
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Blender\\Images\\Wheel_raw_negative_y.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Blender\\Images\\Wheel_raw_positive_x.png"
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "file": "Crouch Walk Back.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Crouch Walk Forward.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Crouch Walk Left.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Crouch Walk Right.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Left Turn.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Right Turn.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Run With Sword.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Start Walking.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  },
+  {
+    "file": "Walk With Briefcase.fbx",
+    "originalExists": true,
+    "sameSha256": true
+  }
+]

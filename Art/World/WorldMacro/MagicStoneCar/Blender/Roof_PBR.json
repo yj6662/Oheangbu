@@ -1,0 +1,84 @@
+{
+  "part": "Roof",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Meshy\\Roof\\image\\model_urls_glb.glb",
+  "sourceSha256": "79aa3b0eae4505668387d7e1e5b0de996e60dff0632e772c20b92e1811bcecce",
+  "sourcePreserved": true,
+  "conversion": "glTF B=metallic,G=roughness -> Unity R=metallic,A=1-roughness; source factors applied; AO in G",
+  "maps": [
+    {
+      "role": "BaseColor",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_BaseColor.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "da89e9f583fc805f4c41792deb57e3071ccbf9ad27075d2399358731f2190649"
+    },
+    {
+      "role": "Normal",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_Normal.png",
+      "size": [
+        4096,
+        4096
+      ],
+      "sha256": "31952ebf54df0f785bfa16015e942607d474479d9d05e1b73a954a5fad47919a"
+    },
+    {
+      "role": "MetallicSmoothness",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_MetallicSmoothness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "42367ed39fa6c5d296ca3b6c025d6f9e57ef9863563ad10ce1ce50353c787256"
+    },
+    {
+      "role": "Occlusion",
+      "path": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_Occlusion.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "7c0594743467c32547fee7837ff75515331c4bd6d8e96b153f0c7adffab4cac2"
+    }
+  ],
+  "sourceRequested4K": true,
+  "actualSourceSizes": {
+    "baseColor": [
+      4096,
+      4096
+    ],
+    "normal": [
+      4096,
+      4096
+    ],
+    "metallicRoughness": [
+      2048,
+      2048
+    ]
+  },
+  "emissionMaskStatus": "NOT_APPLICABLE",
+  "entry": {
+    "part": "Roof",
+    "material": "Roof_Surface",
+    "baseColor": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_BaseColor.png",
+    "normal": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_Normal.png",
+    "metallicSmoothness": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_MetallicSmoothness.png",
+    "occlusion": "Assets/_Project/Art/World/WorldMacro/MagicStoneCar/Textures/MagicStoneCar_Roof_Occlusion.png",
+    "engineEmissionMask": "",
+    "emissionMaskVerified": false,
+    "useConstantMaterial": false,
+    "baseColorFactor": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "normalScale": 1,
+    "sourceUvSet": 0,
+    "baseColorSpace": "sRGB",
+    "dataMapSpace": "Linear",
+    "metallicChannel": "R",
+    "smoothnessChannel": "A"
+  }
+}

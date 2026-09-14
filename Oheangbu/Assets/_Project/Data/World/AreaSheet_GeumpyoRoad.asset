@@ -1,0 +1,572 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 665a6ae735b445188d12842a3c3de728, type: 3}
+  m_Name: AreaSheet_GeumpyoRoad
+  m_EditorClassIdentifier:
+  areaId: GeumpyoRoad
+  scenePath: Assets/_Project/Scenes/World/W_Cheongrim_GeumpyoRoad.unity
+  tiles:
+  - originXZ: {x: 0, y: 0}
+    sizeM: 1024
+    heightM: 300
+    heightmapRes: 1025
+  synth: {fileID: 11400000, guid: fcfa69fd7bc542a0be09efb631a83ce0, type: 2}
+  cliffKitSet: Cliff_Cheongrim
+  paths:
+  - id: Trail_Main
+    pathClass: 0
+    knots:
+    - {x: 200, y: 160, z: 150}
+    - {x: 230, y: 156, z: 215}
+    - {x: 255, y: 153, z: 280}
+    - {x: 215, y: 152, z: 320}
+    - {x: 185, y: 151, z: 365}
+    - {x: 180, y: 150, z: 410}
+    - {x: 230, y: 135, z: 450}
+    - {x: 250, y: 122, z: 500}
+    - {x: 200, y: 108, z: 530}
+    - {x: 165, y: 97, z: 560}
+    - {x: 140, y: 108, z: 600}
+    - {x: 135, y: 125, z: 670}
+    - {x: 190, y: 122, z: 700}
+    - {x: 260, y: 118, z: 760}
+    - {x: 330, y: 115, z: 800}
+    - {x: 390, y: 112, z: 850}
+    - {x: 460, y: 106, z: 860}
+    - {x: 510, y: 99, z: 810}
+    - {x: 500, y: 100, z: 770}
+    - {x: 545, y: 112, z: 800}
+    - {x: 600, y: 128, z: 835}
+    - {x: 650, y: 140, z: 860}
+    - {x: 690, y: 143, z: 890}
+    - {x: 740, y: 145, z: 900}
+    - {x: 785, y: 150, z: 865}
+    - {x: 845, y: 156, z: 845}
+    - {x: 900, y: 162, z: 860}
+    - {x: 935, y: 167, z: 885}
+    - {x: 910, y: 170, z: 910}
+    rewardSlot: 
+  - id: Trail_Stele
+    pathClass: 0
+    knots:
+    - {x: 135, y: 125, z: 670}
+    - {x: 185, y: 112, z: 655}
+    - {x: 245, y: 98.5, z: 675}
+    - {x: 315, y: 116, z: 668}
+    - {x: 285, y: 130, z: 615}
+    rewardSlot: Reward_Stele
+  - id: Trail_Logging
+    pathClass: 0
+    knots:
+    - {x: 740, y: 145, z: 900}
+    - {x: 760, y: 146, z: 940}
+    - {x: 770, y: 147, z: 975}
+    rewardSlot: 
+  - id: Trail_A_CliffPreview
+    pathClass: 0
+    knots:
+    - {x: 180, y: 150, z: 410}
+    - {x: 225, y: 142, z: 470}
+    - {x: 280, y: 135, z: 540}
+    rewardSlot: Reward_A_Evidence
+  - id: Trail_B_CliffDescent
+    pathClass: 0
+    knots:
+    - {x: 500, y: 100, z: 770}
+    - {x: 470, y: 101, z: 745}
+    - {x: 440, y: 102, z: 725}
+    - {x: 400, y: 104, z: 715}
+    - {x: 365, y: 105, z: 695}
+    rewardSlot: Reward_B_Herbalist
+  - id: Trail_C_Stump
+    pathClass: 0
+    knots:
+    - {x: 500, y: 100, z: 770}
+    - {x: 560, y: 103, z: 720}
+    - {x: 600, y: 105, z: 690}
+    rewardSlot: Reward_C_Stump
+  - id: Trail_D_Outcrop
+    pathClass: 0
+    knots:
+    - {x: 910, y: 170, z: 910}
+    - {x: 935, y: 176, z: 880}
+    - {x: 955, y: 181, z: 845}
+    - {x: 965, y: 185, z: 800}
+    rewardSlot: Reward_D_Vein
+  streams:
+  - id: Stream_Geumpyo
+    knots:
+    - {x: 900, y: 130, z: 975}
+    - {x: 800, y: 126, z: 950}
+    - {x: 680, y: 120, z: 915}
+    - {x: 580, y: 112, z: 860}
+    - {x: 510, y: 104, z: 810}
+    - {x: 470, y: 102, z: 790}
+    - {x: 400, y: 101, z: 760}
+    - {x: 330, y: 100, z: 730}
+    - {x: 245, y: 99, z: 675}
+    - {x: 220, y: 98.5, z: 640}
+    - {x: 195, y: 97.5, z: 600}
+    - {x: 165, y: 97, z: 560}
+    - {x: 120, y: 96.5, z: 500}
+    - {x: 95, y: 96, z: 400}
+    - {x: 100, y: 95.7, z: 280}
+    - {x: 130, y: 95.4, z: 180}
+    - {x: 170, y: 95.2, z: 110}
+    - {x: 320, y: 95.1, z: 70}
+    - {x: 650, y: 95, z: 50}
+    - {x: 990, y: 95, z: 40}
+    width: 6
+    segments:
+    - id: F2
+      t0: 0.195
+      t1: 0.1986
+      kind: 0
+    - id: F3
+      t0: 0.3321
+      t1: 0.3357
+      kind: 0
+    - id: D1
+      t0: 0.3468
+      t1: 0.3606
+      kind: 1
+    - id: F1
+      t0: 0.3965
+      t1: 0.4002
+      kind: 0
+  landmarks: []
+  pois:
+  - id: MineExit
+    kind: 0
+    position: {x: 200, y: 160, z: 150}
+    yaw: 0
+    padRadius: 12
+    targetWalkMin: 0
+    narrativeSlot: 
+  - id: Shrine_Entry
+    kind: 1
+    position: {x: 180, y: 150, z: 410}
+    yaw: 51.3
+    padRadius: 8
+    targetWalkMin: 1.25
+    narrativeSlot: 
+  - id: Inn_Geumpyo
+    kind: 2
+    position: {x: 135, y: 125, z: 670}
+    yaw: 61.4
+    padRadius: 20
+    targetWalkMin: 2.42
+    narrativeSlot: 
+  - id: Stele_Geumpyo
+    kind: 3
+    position: {x: 285, y: 130, z: 615}
+    yaw: 0
+    padRadius: 8
+    targetWalkMin: 2.92
+    narrativeSlot: 
+  - id: Yeokcham_Geumpyo
+    kind: 4
+    position: {x: 330, y: 115, z: 800}
+    yaw: 50.2
+    padRadius: 15
+    targetWalkMin: 3.33
+    narrativeSlot: 
+  - id: Village_Logging
+    kind: 5
+    position: {x: 500, y: 100, z: 770}
+    yaw: 56.3
+    padRadius: 40
+    targetWalkMin: 4.67
+    narrativeSlot: 
+  - id: Gaekju_Village
+    kind: 6
+    position: {x: 525, y: 100, z: 745}
+    yaw: 0
+    padRadius: 8
+    targetWalkMin: 4.72
+    narrativeSlot: 
+  - id: Shrine_Logging
+    kind: 1
+    position: {x: 650, y: 140, z: 860}
+    yaw: 53.1
+    padRadius: 8
+    targetWalkMin: 5.42
+    narrativeSlot: 
+  - id: Entry_LoggingCamp
+    kind: 7
+    position: {x: 740, y: 145, z: 900}
+    yaw: 127.9
+    padRadius: 25
+    targetWalkMin: 5.83
+    narrativeSlot: 
+  - id: Shrine_Junction
+    kind: 1
+    position: {x: 910, y: 170, z: 910}
+    yaw: 47.8
+    padRadius: 12
+    targetWalkMin: 7.17
+    narrativeSlot: 
+  - id: BranchA_End
+    kind: 9
+    position: {x: 280, y: 135, z: 540}
+    yaw: 0
+    padRadius: 6
+    targetWalkMin: 1.85
+    narrativeSlot: 
+  - id: CliffFoot_B
+    kind: 9
+    position: {x: 365, y: 105, z: 695}
+    yaw: 0
+    padRadius: 6
+    targetWalkMin: 5.27
+    narrativeSlot: 
+  - id: Stump_Vista
+    kind: 9
+    position: {x: 600, y: 105, z: 690}
+    yaw: 0
+    padRadius: 6
+    targetWalkMin: 5.17
+    narrativeSlot: 
+  - id: Outcrop_Vein
+    kind: 10
+    position: {x: 965, y: 185, z: 800}
+    yaw: 0
+    padRadius: 6
+    targetWalkMin: 7.77
+    narrativeSlot: 
+  - id: Beacon_Mid
+    kind: 9
+    position: {x: 960, y: 230, z: 720}
+    yaw: 0
+    padRadius: 4
+    targetWalkMin: 0
+    narrativeSlot: 
+  checkpoints:
+  - id: Shrine_Entry
+    kind: 1
+    poiId: Shrine_Entry
+  - id: Inn_Geumpyo
+    kind: 0
+    poiId: Inn_Geumpyo
+  - id: Shrine_Logging
+    kind: 1
+    poiId: Shrine_Logging
+  - id: Shrine_Junction
+    kind: 1
+    poiId: Shrine_Junction
+  gates:
+  - id: Guk_CliffTop
+    kind: 0
+    mode: 0
+    position: {x: 390, y: 175, z: 670}
+    stepHeight: 5
+    rewardSlot: Reward_CliffTop
+  - id: Guk_LoggingTower
+    kind: 0
+    mode: 0
+    position: {x: 770, y: 145, z: 935}
+    stepHeight: 5
+    rewardSlot: Reward_LoggingTower
+  - id: MinePreview
+    kind: 0
+    mode: 0
+    position: {x: 200, y: 160, z: 135}
+    stepHeight: 5
+    rewardSlot: Reward_MinePreview
+  attraction:
+  - fromPoi: MineExit
+    toPoi: Inn_Geumpyo
+    layer: 0
+    source: 0
+    yaw: 352.9
+    maxStraightM: 600
+  - fromPoi: MineExit
+    toPoi: Shrine_Entry
+    layer: 1
+    source: 1
+    yaw: 355.6
+    maxStraightM: 270
+  - fromPoi: MineExit
+    toPoi: Sinmok_Silhouette
+    layer: 0
+    source: 5
+    yaw: 45
+    maxStraightM: 1800
+  - fromPoi: MineExit
+    toPoi: Slot_Beacon_Far
+    layer: 0
+    source: 3
+    yaw: 0
+    maxStraightM: 1800
+  - fromPoi: Shrine_Entry
+    toPoi: Inn_Geumpyo
+    layer: 1
+    source: 0
+    yaw: 350.2
+    maxStraightM: 270
+  - fromPoi: Shrine_Entry
+    toPoi: F1
+    layer: 1
+    source: 4
+    yaw: 354.3
+    maxStraightM: 270
+  - fromPoi: Inn_Geumpyo
+    toPoi: D1
+    layer: 2
+    source: 4
+    yaw: 109.4
+    maxStraightM: 135
+  - fromPoi: Inn_Geumpyo
+    toPoi: Stele_Geumpyo
+    layer: 2
+    source: 5
+    yaw: 110.1
+    maxStraightM: 170
+  - fromPoi: Inn_Geumpyo
+    toPoi: Yeokcham_Geumpyo
+    layer: 1
+    source: 5
+    yaw: 56.3
+    maxStraightM: 270
+  - fromPoi: Inn_Geumpyo
+    toPoi: Village_Logging
+    layer: 0
+    source: 5
+    yaw: 74.7
+    maxStraightM: 450
+  - fromPoi: Village_Logging
+    toPoi: Guk_CliffTop
+    layer: 1
+    source: 5
+    yaw: 227.7
+    maxStraightM: 180
+  - fromPoi: Village_Logging
+    toPoi: D1
+    layer: 0
+    source: 4
+    yaw: 245.1
+    maxStraightM: 320
+  - fromPoi: Village_Logging
+    toPoi: Guk_LoggingTower
+    layer: 0
+    source: 5
+    yaw: 58.6
+    maxStraightM: 320
+  - fromPoi: Shrine_Logging
+    toPoi: Guk_LoggingTower
+    layer: 2
+    source: 5
+    yaw: 58
+    maxStraightM: 150
+  - fromPoi: Shrine_Logging
+    toPoi: Sinmok_Silhouette
+    layer: 0
+    source: 5
+    yaw: 56
+    maxStraightM: 1500
+  - fromPoi: Shrine_Junction
+    toPoi: Beacon_Mid
+    layer: 1
+    source: 3
+    yaw: 165.3
+    maxStraightM: 270
+  - fromPoi: Shrine_Junction
+    toPoi: Sinmok_Silhouette
+    layer: 0
+    source: 5
+    yaw: 47.8
+    maxStraightM: 1500
+  - fromPoi: Shrine_Junction
+    toPoi: Outcrop_Vein
+    layer: 2
+    source: 2
+    yaw: 153.4
+    maxStraightM: 135
+  - fromPoi: BranchA_End
+    toPoi: Guk_CliffTop
+    layer: 1
+    source: 5
+    yaw: 40.2
+    maxStraightM: 180
+  sightlines:
+  - fromPoi: MineExit
+    target: Inn_Geumpyo
+    yaw: 352.9
+    minAngularDeg: 0
+  - fromPoi: MineExit
+    target: Sinmok_Silhouette
+    yaw: 45
+    minAngularDeg: 0
+  - fromPoi: Shrine_Entry
+    target: Inn_Geumpyo
+    yaw: 350.2
+    minAngularDeg: 0
+  - fromPoi: Inn_Geumpyo
+    target: Stele_Geumpyo
+    yaw: 110.1
+    minAngularDeg: 0
+  - fromPoi: Village_Logging
+    target: Guk_CliffTop
+    yaw: 227.7
+    minAngularDeg: 0
+  - fromPoi: Shrine_Logging
+    target: Guk_LoggingTower
+    yaw: 58
+    minAngularDeg: 0
+  - fromPoi: Shrine_Junction
+    target: Beacon_Mid
+    yaw: 165.3
+    minAngularDeg: 0
+  - fromPoi: Shrine_Junction
+    target: Sinmok_Silhouette
+    yaw: 47.8
+    minAngularDeg: 0
+  - fromPoi: BranchA_End
+    target: Guk_CliffTop
+    yaw: 40.2
+    minAngularDeg: 0
+  walkTargets:
+  - from: MineExit
+    to: Inn_Geumpyo
+    minutes: 2.5
+    tolerance: 0.5
+  - from: MineExit
+    to: Shrine_Entry
+    minutes: 1.25
+    tolerance: 0.25
+  - from: Shrine_Entry
+    to: Inn_Geumpyo
+    minutes: 1.17
+    tolerance: 0.25
+  - from: Inn_Geumpyo
+    to: Shrine_Logging
+    minutes: 3
+    tolerance: 0.5
+  - from: Shrine_Logging
+    to: Entry_LoggingCamp
+    minutes: 0.42
+    tolerance: 0.08
+  - from: Shrine_Logging
+    to: Shrine_Junction
+    minutes: 1.75
+    tolerance: 0.35
+  - from: MineExit
+    to: Shrine_Junction
+    minutes: 7.17
+    tolerance: 1.4
+  - from: Inn_Geumpyo
+    to: Stele_Geumpyo
+    minutes: 0.5
+    tolerance: 0.1
+  - from: Shrine_Entry
+    to: BranchA_End
+    minutes: 0.6
+    tolerance: 0.12
+  - from: Village_Logging
+    to: CliffFoot_B
+    minutes: 0.9
+    tolerance: 0.18
+  - from: Village_Logging
+    to: Stump_Vista
+    minutes: 0.5
+    tolerance: 0.1
+  - from: Shrine_Junction
+    to: Outcrop_Vein
+    minutes: 0.6
+    tolerance: 0.12
+  cuts:
+  - id: V1
+    rule: 'poi=MineExit; eye=eyeHeight; yaw=0; pitch=0'
+  - id: V2
+    rule: 'path=Shrine_Entry>Inn_Geumpyo; t=0.5; yaw=tangent; pitch=0'
+  - id: V3
+    rule: 'poi=Shrine_Junction; eye=eyeHeight; yaw=bearing(sinmokPosition); pitch=0'
+  vegetation:
+    zones:
+    - poly:
+      - {x: 40, y: 40}
+      - {x: 420, y: 40}
+      - {x: 420, y: 600}
+      - {x: 40, y: 600}
+      density: 0.2
+    - poly:
+      - {x: 40, y: 600}
+      - {x: 470, y: 600}
+      - {x: 470, y: 984}
+      - {x: 40, y: 984}
+      density: 0.4
+    - poly:
+      - {x: 420, y: 40}
+      - {x: 720, y: 40}
+      - {x: 720, y: 984}
+      - {x: 470, y: 984}
+      - {x: 470, y: 600}
+      - {x: 420, y: 600}
+      density: 0.6
+    - poly:
+      - {x: 720, y: 40}
+      - {x: 984, y: 40}
+      - {x: 984, y: 984}
+      - {x: 720, y: 984}
+      density: 0.8
+    exclusionPolys:
+    - points:
+      - {x: 111, y: 646}
+      - {x: 159, y: 646}
+      - {x: 159, y: 694}
+      - {x: 111, y: 694}
+    - points:
+      - {x: 314, y: 784}
+      - {x: 346, y: 784}
+      - {x: 346, y: 816}
+      - {x: 314, y: 816}
+    - points:
+      - {x: 455, y: 725}
+      - {x: 545, y: 725}
+      - {x: 545, y: 815}
+      - {x: 455, y: 815}
+    - points:
+      - {x: 273, y: 603}
+      - {x: 297, y: 603}
+      - {x: 297, y: 627}
+      - {x: 273, y: 627}
+    - points:
+      - {x: 182, y: 132}
+      - {x: 218, y: 132}
+      - {x: 218, y: 168}
+      - {x: 182, y: 168}
+    - points:
+      - {x: 170, y: 400}
+      - {x: 190, y: 400}
+      - {x: 190, y: 420}
+      - {x: 170, y: 420}
+    - points:
+      - {x: 640, y: 850}
+      - {x: 660, y: 850}
+      - {x: 660, y: 870}
+      - {x: 640, y: 870}
+    - points:
+      - {x: 898, y: 898}
+      - {x: 922, y: 898}
+      - {x: 922, y: 922}
+      - {x: 898, y: 922}
+    noVinePolys:
+    - points:
+      - {x: 740, y: 960}
+      - {x: 782.4, y: 942.4}
+      - {x: 800, y: 900}
+      - {x: 782.4, y: 857.6}
+      - {x: 740, y: 840}
+      - {x: 697.6, y: 857.6}
+      - {x: 680, y: 900}
+      - {x: 697.6, y: 942.4}
+    seed: 20260906

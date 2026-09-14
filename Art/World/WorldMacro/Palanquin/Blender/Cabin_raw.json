@@ -1,0 +1,41 @@
+{
+  "part": "Cabin",
+  "source": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Meshy\\Cabin\\image\\model_urls_glb.glb",
+  "source_sha256": "8c13edd9916275f1d4bad171e67cae6389d1f5ea0b9261dc0e7cceb8686d928f",
+  "raw": {
+    "vertices": 26772,
+    "triangles": 15462,
+    "size_unity_m": {
+      "x": 1.9031090140342712,
+      "y": 0.9835169315338135,
+      "z": 1.049888014793396
+    },
+    "bounds_blender": {
+      "minimum": [
+        -0.9523820281028748,
+        -0.5413530468940735,
+        -0.492512971162796
+      ],
+      "maximum": [
+        0.9507269859313965,
+        0.5085349678993225,
+        0.49100396037101746
+      ]
+    },
+    "uv_layers": [
+      "UVMap"
+    ],
+    "materials": [
+      "Material_0"
+    ],
+    "nonfinite_vertices": 0
+  },
+  "runtime_verification": "UNVERIFIED",
+  "stage": "inspect",
+  "views": [
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Blender\\Images\\Cabin_raw_negative_y.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Blender\\Images\\Cabin_raw_positive_y.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Blender\\Images\\Cabin_raw_positive_x.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\Palanquin\\Blender\\Images\\Cabin_raw_top.png"
+  ]
+}

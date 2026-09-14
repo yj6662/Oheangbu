@@ -1,0 +1,6 @@
+{
+  "name": "Oheangbu.C02RigFaceLab",
+  "rootNamespace": "Oheangbu.C02RigFaceLab",
+  "references": ["Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime"],
+  "autoReferenced": false
+}

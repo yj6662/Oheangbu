@@ -1,0 +1,17 @@
+{
+    "scope": "Editor static geometry and capsule stations; not a user walking completion or visual art approval.",
+    "placements": 438,
+    "renderers": 3127,
+    "lodGroups": 438,
+    "allLodTriangles": 7800741,
+    "missingMeshes": 0,
+    "missingMaterials": 0,
+    "missingPlacements": 0,
+    "capsuleStations": 3404,
+    "capsuleBlockers": 0,
+    "routeSupportFailures": 0,
+    "maximumTerrainSlope": 31.689851760864259,
+    "failures": [],
+    "stations": [],
+    "passed": true
+}

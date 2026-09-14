@@ -1,0 +1,39 @@
+{
+    "label": "Polish_after_branch",
+    "utc": "2026-09-13T09:13:10.5932845Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 351,
+    "residentInstances": 58487,
+    "drawCalls": 34,
+    "drawnInstances": 5020,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 3405.07958984375,
+        "y": 201.5106964111328,
+        "z": 1245.1951904296875
+    },
+    "euler": {
+        "x": 25.017770767211915,
+        "y": 314.99945068359377,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.4339297115802765,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

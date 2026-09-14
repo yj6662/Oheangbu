@@ -1,0 +1,178 @@
+{
+  "lod": 2,
+  "targetTriangles": 2000,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Engine_LOD2.fbx",
+  "fbxSha256": "7b320858d950611de8262a1785cced2b883049c01eb4e43281bd2ce40a75cde7",
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Engine_LOD2.blend",
+  "normalization": {
+    "yawBlenderDegrees": -90.0,
+    "fitMode": "uniform",
+    "axisFactors": [
+      1.0548701464463086,
+      1.0548701464463086,
+      1.0548701464463086
+    ],
+    "targetEnvelopeUnity": [
+      1.6,
+      1.15,
+      2.0
+    ],
+    "actual": {
+      "vertices": 4033,
+      "triangles": 8269,
+      "size_unity_m": {
+        "x": 1.0429743528366089,
+        "y": 0.8172321319580078,
+        "z": 2.0
+      },
+      "bounds_blender": {
+        "minimum": [
+          -0.5214871764183044,
+          -1.0,
+          0.0
+        ],
+        "maximum": [
+          0.5214871764183044,
+          1.0,
+          0.8172321319580078
+        ]
+      },
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Engine_Surface"
+      ],
+      "nonfinite_vertices": 0
+    }
+  },
+  "simplification": {
+    "before": 8269,
+    "target": 2000,
+    "actual": 1967,
+    "maxBoundsDriftM": 0.014964103698730469
+  },
+  "beforeExport": {
+    "triangles": 1967,
+    "vertices": 890,
+    "meshCount": 2,
+    "materials": [
+      "Engine_Surface"
+    ],
+    "uvLayers": {
+      "MagicStoneCar_Engine": 1,
+      "MagicStoneCore": 1
+    },
+    "nonfinite": 0,
+    "boundsBlender": {
+      "minimum": [
+        -0.506523072719574,
+        -0.9950297474861145,
+        0.005910825449973345
+      ],
+      "maximum": [
+        0.5211116671562195,
+        0.9921327829360962,
+        0.8197142481803894
+      ]
+    },
+    "actualBounds": {
+      "center": {
+        "x": 0.007294297218322754,
+        "y": 0.4128125309944153,
+        "z": 0.0014484822750091553
+      },
+      "size": {
+        "x": 1.0276347398757935,
+        "y": 0.8138034227304161,
+        "z": 1.9871625304222107
+      }
+    }
+  },
+  "images": [
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_front.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_back.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_side.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD2_top.png"
+  ],
+  "roundtrip": {
+    "status": "PASS_GEOMETRY",
+    "boundsErrorM": 1.7881393432617188e-07,
+    "uvPresent": true,
+    "actual": {
+      "triangles": 1967,
+      "vertices": 890,
+      "meshCount": 2,
+      "materials": [
+        "Engine_Surface"
+      ],
+      "uvLayers": {
+        "MagicStoneCar_Engine": 1,
+        "MagicStoneCore": 1
+      },
+      "nonfinite": 0,
+      "boundsBlender": {
+        "minimum": [
+          -0.506523072719574,
+          -0.9950296878814697,
+          0.005910663865506649
+        ],
+        "maximum": [
+          0.5211116671562195,
+          0.9921329021453857,
+          0.8197144269943237
+        ]
+      },
+      "actualBounds": {
+        "center": {
+          "x": 0.007294297218322754,
+          "y": 0.4128125309944153,
+          "z": 0.0014483928680419922
+        },
+        "size": {
+          "x": 1.0276347398757935,
+          "y": 0.8138037631288171,
+          "z": 1.9871625900268555
+        }
+      }
+    },
+    "importedObjects": [
+      {
+        "name": "MagicStoneCar_Engine",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "MagicStoneCore",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

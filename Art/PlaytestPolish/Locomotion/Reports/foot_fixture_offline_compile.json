@@ -1,0 +1,19 @@
+{
+  "utc": "2026-09-14T01:53:41.4597178Z",
+  "status": "OFFLINE_CSHARP_COMPILE_PASS",
+  "source": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroLocomotionFootQa.cs",
+  "sha256": "20dc00ea276fe3f51770d44f06228cedd0d64022ca2e8dc0c111a5666bcfaee2",
+  "scope": "Scoped Roslyn compiler with current Unity ScriptAssemblies references. Compiler output in a unique system temporary directory. No Unity invocation, loaded DLL write, scene change, build, or runtime verification.",
+  "temporaryOutput": "C:/Users/yj666/AppData/Local/Temp/OheangbuFootQa_dc8f164674854a8bbba52db43429ca97/FootQaScopedCheck.dll",
+  "runtimeVerification": "PENDING_ROOT",
+  "limits": {
+    "soleAndFootSkinPenetrationMeters": 0.015,
+    "stanceDisplacementMeters": 0.1,
+    "bindWorldLengthDeltaMeters": 0.0001,
+    "boneLocalScaleDelta": 1E-05,
+    "ankleLiftMeters": 0.076,
+    "pelvisDropMeters": 0.0351,
+    "pelvisRiseMeters": 0.0401,
+    "completeCyclesMinimum": 2
+  }
+}

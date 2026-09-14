@@ -39,3 +39,6 @@ MonoBehaviour:
   _corruptMix: 0.55
   _purityPaper: {r: 0.969, g: 0.945, b: 0.894, a: 1}
   _purityMix: 0.35
+  _woodBrown: {r: 0.541, g: 0.353, b: 0.2, a: 1}
+  _ink: {r: 0.165, g: 0.149, b: 0.133, a: 1}
+  _rawTurbidity: 0.25

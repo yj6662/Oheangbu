@@ -1,0 +1,411 @@
+{
+    "utc": "2026-09-14T00:41:32.5166321Z",
+    "status": "PASS",
+    "runId": "20260914-004132-511-b345f0",
+    "saveIsolationSuffix": "_polish_20260914",
+    "scene": "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity",
+    "failure": "",
+    "scope": "Actual 1920x1080 uGUI Game View PNGs from sequential ScreenCapture calls. Each still uses a fresh real unscaled-time transition. Separate interaction checks directly dispatch synthetic uGUI PointerEventData; no OS/InputSystem events, arbitrary geometry pose, video, camera render, walking, or teleport. The QA harness holds world timeScale at zero between menus and restores it afterward.",
+    "phaseGuide": "Opening .10: entering folded packet; .30: vertical center fold; .65: horizontal center fold; 1: fully open. Closing .50. Reduced motion uses the presenter API; closing via that API does not test the settings-menu close flow.",
+    "limitations": "Diagnostic setup and technical checks are not native input evidence, human visual approval, or GPU/device performance. PNG issuance follows a rendered game frame; actual issue/next-frame progress is recorded instead of claiming an exact requested pose. Focus-owned input blocking may persist when the application is unfocused.",
+    "startFrame": 4732,
+    "finishFrame": 5519,
+    "materialCountBefore": 2086,
+    "materialCountAfter": 2086,
+    "renderTextureCountBefore": 40,
+    "renderTextureCountAfter": 40,
+    "allocatedBefore": 4916536523,
+    "allocatedAfter": 4917269958,
+    "paperTickSamples": 5519,
+    "paperMeanTickMilliseconds": 0.11617142598296806,
+    "paperLastTickMilliseconds": 0.0568,
+    "stills": [
+        {
+            "id": "01_open_packet_010",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\01_open_packet_010_1920x1080.png",
+            "utc": "2026-09-14T00:41:32.6897175Z",
+            "page": "지도",
+            "evidence": "Real Game View during a naturally progressing unscaled animation; fresh transition for this target.",
+            "requestedProgress": 0.10000000149011612,
+            "progressAtIssue": 0.10140136629343033,
+            "progressAfterIssue": 0.11883744597434998,
+            "commitRatioAtIssue": 0.584555983543396,
+            "timeScale": 0.0,
+            "frameAtIssue": 4740,
+            "frameAfterIssue": 4741,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.1461020999995526,
+            "closing": false,
+            "reducedMotion": false,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 2931671
+        },
+        {
+            "id": "02_open_vertical_030",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\02_open_vertical_030_1920x1080.png",
+            "utc": "2026-09-14T00:41:34.8236673Z",
+            "page": "지도",
+            "evidence": "Real Game View during a naturally progressing unscaled animation; fresh transition for this target.",
+            "requestedProgress": 0.30000001192092898,
+            "progressAtIssue": 0.3003694415092468,
+            "progressAfterIssue": 0.318144828081131,
+            "commitRatioAtIssue": 0.5847779512405396,
+            "timeScale": 0.0,
+            "frameAtIssue": 4883,
+            "frameAfterIssue": 4884,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.34910669999953827,
+            "closing": false,
+            "reducedMotion": false,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 2805505
+        },
+        {
+            "id": "03_open_horizontal_065",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\03_open_horizontal_065_1920x1080.png",
+            "utc": "2026-09-14T00:41:37.0177547Z",
+            "page": "지도",
+            "evidence": "Real Game View during a naturally progressing unscaled animation; fresh transition for this target.",
+            "requestedProgress": 0.6499999761581421,
+            "progressAtIssue": 0.6516745090484619,
+            "progressAfterIssue": 0.6696285009384155,
+            "commitRatioAtIssue": 0.584909975528717,
+            "timeScale": 0.0,
+            "frameAtIssue": 5040,
+            "frameAfterIssue": 5041,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.7356637000011688,
+            "closing": false,
+            "reducedMotion": false,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 2922377
+        },
+        {
+            "id": "03b_open_printed_085",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\03b_open_printed_085_1920x1080.png",
+            "utc": "2026-09-14T00:41:39.0595391Z",
+            "page": "지도",
+            "evidence": "Real Game View during a naturally progressing unscaled animation; fresh transition for this target.",
+            "requestedProgress": 0.8500000238418579,
+            "progressAtIssue": 0.8616533279418945,
+            "progressAfterIssue": 0.8803004622459412,
+            "commitRatioAtIssue": 0.5887711048126221,
+            "timeScale": 0.0,
+            "frameAtIssue": 5180,
+            "frameAfterIssue": 5181,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.9678249999997206,
+            "closing": false,
+            "reducedMotion": false,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 3183355
+        },
+        {
+            "id": "04_open_flat_100",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\04_open_flat_100_1920x1080.png",
+            "utc": "2026-09-14T00:41:41.0473967Z",
+            "page": "지도",
+            "evidence": "Real Game View during a naturally progressing unscaled animation; fresh transition for this target.",
+            "requestedProgress": 1.0,
+            "progressAtIssue": 1.0,
+            "progressAfterIssue": 1.0,
+            "commitRatioAtIssue": 0.5862160921096802,
+            "timeScale": 0.0,
+            "frameAtIssue": 5320,
+            "frameAfterIssue": 5321,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 1.121227200001158,
+            "closing": false,
+            "reducedMotion": false,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 3183394
+        },
+        {
+            "id": "05_close_half_050",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\05_close_half_050_1920x1080.png",
+            "utc": "2026-09-14T00:41:43.3776951Z",
+            "page": "지도",
+            "evidence": "Real Game View during a naturally progressing unscaled animation; fresh transition for this target.",
+            "requestedProgress": 0.5,
+            "progressAtIssue": 0.4840107560157776,
+            "progressAfterIssue": 0.4544098377227783,
+            "commitRatioAtIssue": 0.5862114429473877,
+            "timeScale": 0.0,
+            "frameAtIssue": 5489,
+            "frameAfterIssue": 5490,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.3538276999970549,
+            "closing": true,
+            "reducedMotion": false,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 2879911
+        },
+        {
+            "id": "06_reduced_open",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\06_reduced_open_1920x1080.png",
+            "utc": "2026-09-14T00:41:43.7609336Z",
+            "page": "지도",
+            "evidence": "Real Game View after unsaved reduced-motion diagnostic presenter operation.",
+            "requestedProgress": 1.0,
+            "progressAtIssue": 1.0,
+            "progressAfterIssue": 1.0,
+            "commitRatioAtIssue": 0.5860899686813355,
+            "timeScale": 0.0,
+            "frameAtIssue": 5505,
+            "frameAfterIssue": 5506,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.045857299999624959,
+            "closing": false,
+            "reducedMotion": true,
+            "pauseHeld": true,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 3181438
+        },
+        {
+            "id": "07_reduced_closed",
+            "path": "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Screenshots\\20260914-004132-511-b345f0\\07_reduced_closed_1920x1080.png",
+            "utc": "2026-09-14T00:41:44.0117471Z",
+            "page": "",
+            "evidence": "Real Game View after unsaved reduced-motion diagnostic presenter operation.",
+            "requestedProgress": 0.0,
+            "progressAtIssue": 0.0,
+            "progressAfterIssue": 0.0,
+            "commitRatioAtIssue": 0.5837637782096863,
+            "timeScale": 0.0,
+            "frameAtIssue": 5513,
+            "frameAfterIssue": 5514,
+            "width": 1920,
+            "height": 1080,
+            "transitionElapsedSeconds": 0.01677650000056019,
+            "closing": true,
+            "reducedMotion": true,
+            "pauseHeld": false,
+            "inputBlocked": true,
+            "written": true,
+            "bytes": 2891666
+        }
+    ],
+    "checks": [
+        {
+            "id": "mesh-topology-bounded",
+            "status": "PASS",
+            "detail": "vertices=1353; triangles=2560; all indices valid"
+        },
+        {
+            "id": "geometry-finite-projected-surface",
+            "status": "PASS",
+            "detail": "All sampled vertices project finitely; normals remain unit length."
+        },
+        {
+            "id": "both-centerlines-continuous",
+            "status": "PASS",
+            "detail": "largest near-seam physical gap=0.000020 normalized widths"
+        },
+        {
+            "id": "paper-local-stretch-bounded",
+            "status": "PASS",
+            "detail": "largest physical/source triangle edge ratio=1.0639"
+        },
+        {
+            "id": "expanded-sheet-proportions",
+            "status": "PASS",
+            "detail": "expanded width=0.996; height=0.722; center=(0.00, 0.00, 0.00)"
+        },
+        {
+            "id": "01_open_packet_010-open-timing",
+            "status": "PASS",
+            "detail": "observed natural opening=1.134s; configured=1.100s; world timeScale=0"
+        },
+        {
+            "id": "whole-map-aspect-and-world-bounds",
+            "status": "PASS",
+            "detail": "world ratio=0.666667; printed ratio=0.666667; world UV=(0.00, 0.00, 1.00, 1.00)"
+        },
+        {
+            "id": "current-focus-centers-player",
+            "status": "PASS",
+            "detail": "Current opens a local window containing the player; outdoor initial view is now the whole illustrated world."
+        },
+        {
+            "id": "synthetic-ugui-pan-scale-1.0",
+            "status": "PASS",
+            "detail": "Synthetic PointerEventData OnDrag; canvas scale=1.000; requested screen pixels=(48.00, 24.00); world landmark screen displacement=(48.00, 24.00); UV bounded=True. Not native mouse evidence."
+        },
+        {
+            "id": "synthetic-ugui-pan-scale-1.2",
+            "status": "PASS",
+            "detail": "Synthetic PointerEventData OnDrag; canvas scale=1.200; requested screen pixels=(48.00, 24.00); world landmark screen displacement=(48.00, 24.00); UV bounded=True. Not native mouse evidence."
+        },
+        {
+            "id": "ink-width-independent-of-orientation",
+            "status": "PASS",
+            "detail": "Isolated actual ink raster at2:3 print aspect; half-alpha stroke thickness horizontal=8.00px, vertical=8.00px; requested8px."
+        },
+        {
+            "id": "interaction-fixture-restored",
+            "status": "PASS",
+            "detail": "Restored the original whole/local view, print layout and canvas scale; progress unchanged. No click, pin, settings persistence or save operation issued."
+        },
+        {
+            "id": "01_open_packet_010-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "01_open_packet_010-close-timing",
+            "status": "PASS",
+            "detail": "observed close lifecycle=0.684s; configured=0.650s; PNG wait can extend this observation"
+        },
+        {
+            "id": "02_open_vertical_030-open-timing",
+            "status": "PASS",
+            "detail": "observed natural opening=1.116s; configured=1.100s; world timeScale=0"
+        },
+        {
+            "id": "02_open_vertical_030-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "02_open_vertical_030-close-timing",
+            "status": "PASS",
+            "detail": "observed close lifecycle=0.680s; configured=0.650s; PNG wait can extend this observation"
+        },
+        {
+            "id": "03_open_horizontal_065-open-timing",
+            "status": "PASS",
+            "detail": "observed natural opening=1.119s; configured=1.100s; world timeScale=0"
+        },
+        {
+            "id": "03_open_horizontal_065-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "03_open_horizontal_065-close-timing",
+            "status": "PASS",
+            "detail": "observed close lifecycle=0.677s; configured=0.650s; PNG wait can extend this observation"
+        },
+        {
+            "id": "03b_open_printed_085-open-timing",
+            "status": "PASS",
+            "detail": "observed natural opening=1.116s; configured=1.100s; world timeScale=0"
+        },
+        {
+            "id": "03b_open_printed_085-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "03b_open_printed_085-close-timing",
+            "status": "PASS",
+            "detail": "observed close lifecycle=0.681s; configured=0.650s; PNG wait can extend this observation"
+        },
+        {
+            "id": "04_open_flat_100-open-timing",
+            "status": "PASS",
+            "detail": "observed natural opening=1.115s; configured=1.100s; world timeScale=0"
+        },
+        {
+            "id": "04_open_flat_100-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "04_open_flat_100-close-timing",
+            "status": "PASS",
+            "detail": "observed close lifecycle=0.678s; configured=0.650s; PNG wait can extend this observation"
+        },
+        {
+            "id": "05_close_half_050-open-timing",
+            "status": "PASS",
+            "detail": "observed natural opening=1.115s; configured=1.100s; world timeScale=0"
+        },
+        {
+            "id": "05_close_half_050-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "05_close_half_050-close-timing",
+            "status": "PASS",
+            "detail": "observed close lifecycle=0.679s; configured=0.650s; PNG wait can extend this observation"
+        },
+        {
+            "id": "06_reduced_open-instant",
+            "status": "PASS",
+            "detail": "Reduced motion OpenPage resolves the presenter in the initiating call."
+        },
+        {
+            "id": "06_reduced_open-instant-close",
+            "status": "PASS",
+            "detail": "Diagnostic presenter SetExpanded(false) completes in its initiating call; unsaved reduced-motion preview."
+        },
+        {
+            "id": "06_reduced_open-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=True"
+        },
+        {
+            "id": "07_reduced_closed-instant-close",
+            "status": "PASS",
+            "detail": "Diagnostic presenter SetExpanded(false) completes in its initiating call; unsaved reduced-motion preview."
+        },
+        {
+            "id": "07_reduced_closed-closed-cleanup",
+            "status": "PASS",
+            "detail": "page empty; pause depth=0; expanded root inactive; focus=True; gate release pending=False"
+        },
+        {
+            "id": "sequential-stills-complete",
+            "status": "PASS",
+            "detail": "written=8/8"
+        },
+        {
+            "id": "paper-cycle-resource-growth-bounded",
+            "status": "PASS",
+            "detail": "material delta=0; RenderTexture delta=0; allocated byte delta=733435; allocation is diagnostic, not a GPU timing claim"
+        },
+        {
+            "id": "isolated-runtime-progress-restored",
+            "status": "PASS",
+            "detail": "Restored original in-memory progress; synchronized save snapshot cache before restoring original file bytes."
+        },
+        {
+            "id": "player-not-moved",
+            "status": "PASS",
+            "detail": "No walk, teleport, or camera motion was requested."
+        },
+        {
+            "id": "qa-save-files-restored",
+            "status": "PASS",
+            "detail": "Primary/backup/temporary suffixed-save file bytes and timestamps restored. Production slot never opened for writing."
+        },
+        {
+            "id": "settings-restored",
+            "status": "PASS",
+            "detail": "Only unsaved reduced-motion preview was used."
+        }
+    ],
+    "failures": []
+}

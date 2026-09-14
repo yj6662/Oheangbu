@@ -22,7 +22,7 @@ namespace Oheangbu.EditorTools
         private const string HubBoardText =
             "[테스트 허브]\n" +
             "WASD 이동 · 마우스 시점 · Q(홀드) 작도 · LMB 획 / 갈무리(홀드)\n" +
-            "Tab 락온 · LShift 회피 · V 카메라 실험 · F 상호작용 · R 씬 재시작\n" +
+            "Tab 락온 · LShift 회피 · F 상호작용 · R 씬 재시작\n" +
             "포탈 2m 안에서 설명이 뜬다 — F로 진입 · 방마다 귀환 포탈(시작점 뒤 오른쪽)";
 
         [MenuItem("Oheangbu/Dev/허브 3. 허브 씬 구성 (C1_TestHub)")]
@@ -216,7 +216,7 @@ namespace Oheangbu.EditorTools
         public static string RegisterScenes()
         {
             DevSceneKit.RegisterBuildScenes(DevSceneKit.HubScenePath, DevSceneKit.EffectLabScenePath, DevSceneKit.ParryRangeScenePath,
-                DevSceneKit.SpellRangeScenePath, DevSceneKit.CombatLoopScenePath);
+                DevSceneKit.SpellRangeScenePath, DevSceneKit.CombatLoopScenePath, DevSceneKit.WorldLookdevScenePath);
             return $"Build Settings 등록 — {EditorBuildSettings.scenes.Length}개(허브 첫 번째)";
         }
 

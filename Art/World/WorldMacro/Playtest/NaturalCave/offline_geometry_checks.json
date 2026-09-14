@@ -1,0 +1,72 @@
+{
+  "pass": [
+    "One connected floor footprint",
+    "Inside-facing wall winding by signed-field orientation",
+    "Open mouth at z=-26",
+    "Separate planar floor y=.03",
+    "Main route head position stays inside cave with minimum field clearance 2.006m",
+    "Runtime interior plus floor under 100000 triangles"
+  ],
+  "unverified": [
+    "Unity world terrain penetration and cover",
+    "Runtime collision and actual movement",
+    "Final Unity material appearance"
+  ],
+  "measurements": [
+    {
+      "x": 0.0,
+      "z": -26.0,
+      "floorCrossWidth": 16.2,
+      "roofHeight": 8.28
+    },
+    {
+      "x": -9.0,
+      "z": -15.0,
+      "floorCrossWidth": 18.35,
+      "roofHeight": 8.88
+    },
+    {
+      "x": -26.0,
+      "z": -1.0,
+      "floorCrossWidth": 20.9,
+      "roofHeight": 11.13
+    },
+    {
+      "x": -43.0,
+      "z": 5.0,
+      "floorCrossWidth": 21.65,
+      "roofHeight": 13.98
+    },
+    {
+      "x": -74.0,
+      "z": 5.0,
+      "floorCrossWidth": 34.65,
+      "roofHeight": 16.18
+    },
+    {
+      "x": -103.0,
+      "z": -3.0,
+      "floorCrossWidth": 18.5,
+      "roofHeight": 9.88
+    },
+    {
+      "x": -134.0,
+      "z": 2.0,
+      "floorCrossWidth": 36.65,
+      "roofHeight": 16.68
+    },
+    {
+      "x": -152.0,
+      "z": 3.0,
+      "floorCrossWidth": 22.05,
+      "roofHeight": 12.38
+    }
+  ],
+  "triangles": {
+    "sourceInterior": 128446,
+    "sourceFloor": 15506,
+    "runtimeInterior": 71552,
+    "runtimeFloor": 1213,
+    "runtimeTotal": 72765
+  }
+}

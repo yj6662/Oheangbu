@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: f9a609104996c504e93ab4d07bb6cf19
+  m_Shader: {fileID: 4800000, guid: 96e8692f57e075448b77beb096fd11bf, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: a0bc3c257b44e524c8d06289524e96c9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: -1}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: c58e6fc4620b4004a9fe20194d215c86, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClip: 0
+    - _AmbientFloor: 0.4
+    - _BumpScale: 1
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _LightResponse: 0.75
+    - _Saturation: 0.5
+    - _WashEnd: 9500
+    - _WashStart: 800
+    - _WashStrength: 0.58
+    m_Colors:
+    - _BaseColor: {r: 0.7, g: 0.68, b: 0.62, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

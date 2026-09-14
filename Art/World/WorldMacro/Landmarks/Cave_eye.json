@@ -1,0 +1,50 @@
+{
+    "id": "Cave_eye",
+    "file": "Cave_eye.png",
+    "caption": "동굴 — 입구 발 위치 기준 눈높이 1.62m",
+    "utc": "2026-09-11T19:32:13.9718563Z",
+    "scenePath": "Assets/_Project/Scenes/World/W_WorldMacro_Blockout.unity",
+    "landmark": "Cave",
+    "view": "eye",
+    "sourceCamera": "Macro_Review_Camera",
+    "scope": "Current macro scene and copied main-camera rendering settings. A still-image composition, not a player walk, entrance-clearance test, gameplay or content-completion claim.",
+    "position": {
+        "x": 3378.619384765625,
+        "y": 196.5082244873047,
+        "z": 1080.7547607421875
+    },
+    "target": {
+        "x": 3396.619384765625,
+        "y": 199.273681640625,
+        "z": 1111.931640625
+    },
+    "entryFootPosition": {
+        "x": 3378.619384765625,
+        "y": 194.8882293701172,
+        "z": 1080.7547607421875
+    },
+    "boundsCenter": {
+        "x": 3400.0185546875,
+        "y": 201.56527709960938,
+        "z": 1113.024658203125
+    },
+    "boundsSize": {
+        "x": 43.994140625,
+        "y": 18.765960693359376,
+        "z": 60.611328125
+    },
+    "eyeHeightM": 1.6200000047683716,
+    "fieldOfView": 60.0,
+    "nearClipM": 0.07999999821186066,
+    "farClipM": 22000.0,
+    "commitBefore": 0.6461801528930664,
+    "commitAfter": 0.6497877240180969,
+    "aerialStandOffM": 0.0,
+    "aerialBoundsFit": false,
+    "aerialWashOverride": false,
+    "regionalSkyPreviewRequested": true,
+    "width": 1920,
+    "height": 1080,
+    "rendererCount": 31,
+    "framingNote": "Entry+1.62m aimed at ViewTarget. This does not establish collision-free player access."
+}

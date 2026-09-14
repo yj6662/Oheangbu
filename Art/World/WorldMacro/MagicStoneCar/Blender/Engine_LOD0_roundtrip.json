@@ -1,0 +1,178 @@
+{
+  "lod": 0,
+  "targetTriangles": 8000,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Engine_LOD0.fbx",
+  "fbxSha256": "249735788244b0480f49874a77067efae3f5e8afc3373aec6f9e677a3eb01439",
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Engine_LOD0.blend",
+  "normalization": {
+    "yawBlenderDegrees": -90.0,
+    "fitMode": "uniform",
+    "axisFactors": [
+      1.0548701464463086,
+      1.0548701464463086,
+      1.0548701464463086
+    ],
+    "targetEnvelopeUnity": [
+      1.6,
+      1.15,
+      2.0
+    ],
+    "actual": {
+      "vertices": 4033,
+      "triangles": 8269,
+      "size_unity_m": {
+        "x": 1.0429743528366089,
+        "y": 0.8172321319580078,
+        "z": 2.0
+      },
+      "bounds_blender": {
+        "minimum": [
+          -0.5214871764183044,
+          -1.0,
+          0.0
+        ],
+        "maximum": [
+          0.5214871764183044,
+          1.0,
+          0.8172321319580078
+        ]
+      },
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Engine_Surface"
+      ],
+      "nonfinite_vertices": 0
+    }
+  },
+  "simplification": {
+    "before": 8269,
+    "target": 8000,
+    "actual": 7879,
+    "maxBoundsDriftM": 0.0
+  },
+  "beforeExport": {
+    "triangles": 7879,
+    "vertices": 3850,
+    "meshCount": 2,
+    "materials": [
+      "Engine_Surface"
+    ],
+    "uvLayers": {
+      "MagicStoneCar_Engine": 1,
+      "MagicStoneCore": 1
+    },
+    "nonfinite": 0,
+    "boundsBlender": {
+      "minimum": [
+        -0.5214871764183044,
+        -1.0,
+        0.0
+      ],
+      "maximum": [
+        0.5214871764183044,
+        1.0,
+        0.8172321319580078
+      ]
+    },
+    "actualBounds": {
+      "center": {
+        "x": 0.0,
+        "y": 0.4086160659790039,
+        "z": -0.0
+      },
+      "size": {
+        "x": 1.0429743528366089,
+        "y": 0.8172321319580078,
+        "z": 2.0
+      }
+    }
+  },
+  "images": [
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_front.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_back.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_side.png",
+    "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\Images\\Engine_LOD0_top.png"
+  ],
+  "roundtrip": {
+    "status": "PASS_GEOMETRY",
+    "boundsErrorM": 1.7881393432617188e-07,
+    "uvPresent": true,
+    "actual": {
+      "triangles": 7879,
+      "vertices": 3850,
+      "meshCount": 2,
+      "materials": [
+        "Engine_Surface"
+      ],
+      "uvLayers": {
+        "MagicStoneCar_Engine": 1,
+        "MagicStoneCore": 1
+      },
+      "nonfinite": 0,
+      "boundsBlender": {
+        "minimum": [
+          -0.5214871764183044,
+          -1.0,
+          -1.6292068494294654e-07
+        ],
+        "maximum": [
+          0.5214871764183044,
+          1.0000001192092896,
+          0.8172323107719421
+        ]
+      },
+      "actualBounds": {
+        "center": {
+          "x": 0.0,
+          "y": 0.4086160659790039,
+          "z": -5.960464477539063e-08
+        },
+        "size": {
+          "x": 1.0429743528366089,
+          "y": 0.8172324736926271,
+          "z": 2.0000001192092896
+        }
+      }
+    },
+    "importedObjects": [
+      {
+        "name": "MagicStoneCar_Engine",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "MagicStoneCore",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Oheangbu.Core;
 using Oheangbu.Core.Domain;
 using Oheangbu.Core.Events;
 using UnityEngine;
@@ -21,6 +22,10 @@ namespace Oheangbu.Drawing
 
         [Header("입력 (바인딩=InputSystem_Actions 데이터)")]
         [SerializeField] private InputActionAsset _actions;
+        public GameplayRuntimeStateSO RuntimeState;
+        // Optional movement gate. It owns permission to enter, never raw stroke sampling.
+        public Func<bool> EntryAllowed { get; set; }
+        private bool _entryRequiresRelease;
 
         [Header("인식")]
         [SerializeField] private JamoTemplateLibrarySO _templates;
@@ -96,6 +101,10 @@ namespace Oheangbu.Drawing
         public bool InDrawMode { get; private set; }
         public bool IsStroking => _currentStroke != null;
         public int StrokeCount => _strokes.Count;
+        // 표현은 이 스냅샷만 읽는다. Point 액션은 작도 프레임당 여기서 한 번만 수집하며,
+        // 획 사이 이동·2px 미만 이동도 노출하지만 인식용 샘플을 추가하지 않는다.
+        public bool HasPointer { get; private set; }
+        public Vector2 PointerScreenPosition { get; private set; }
 
         public int TotalPointCount
         {
@@ -135,16 +144,32 @@ namespace Oheangbu.Drawing
         private void OnDisable()
         {
             if (InDrawMode) ExitMode(committed: false);
+            _entryRequiresRelease = _drawMode != null && _drawMode.IsPressed();
+            HasPointer = false;
             _actions?.FindActionMap(ActionMapName)?.Disable();
         }
 
         private void Update()
         {
+            if (RuntimeState != null && RuntimeState.InputBlocked)
+            {
+                if (InDrawMode) CancelForUi();
+                return;
+            }
             if (_drawMode == null) return;
-
-            if (_drawMode.WasPressedThisFrame() && !InDrawMode) EnterMode();
+            bool held = _drawMode.IsPressed();
+            if (!held) _entryRequiresRelease = false;
+            if (EntryAllowed != null && !EntryAllowed())
+            {
+                if (held) _entryRequiresRelease = true;
+                if (InDrawMode) CancelForUi();
+                return;
+            }
+            if (_drawMode.WasPressedThisFrame() && !_entryRequiresRelease && !InDrawMode) EnterMode();
             if (!InDrawMode) return;
 
+            HasPointer = _point != null;
+            if (HasPointer) PointerScreenPosition = _point.ReadValue<Vector2>();
             HandleStroke();
 
             if (_drawMode.WasReleasedThisFrame()) Commit();
@@ -158,6 +183,14 @@ namespace Oheangbu.Drawing
             EndCurrentStroke();
             _strokes.Clear();
             LetterInterrupted?.Invoke();
+        }
+
+        /// <summary>Closes an unfinished UI-interrupted drawing without recognition, ink cost, or misfire.</summary>
+        public bool CancelForUi()
+        {
+            if (!InDrawMode) return false;
+            ExitMode(committed: false, silent: true);
+            return true;
         }
 
         private void EnterMode()
@@ -187,7 +220,7 @@ namespace Oheangbu.Drawing
 
             if (_currentStroke != null && pressed)
             {
-                Vector2 screen = _point.ReadValue<Vector2>();
+                Vector2 screen = PointerScreenPosition;
                 if (Vector2.Distance(screen, _lastSample) >= _minSamplePixelDistance)
                 {
                     _lastSample = screen;
@@ -261,6 +294,7 @@ namespace Oheangbu.Drawing
             EndCurrentStroke();
             _strokes.Clear();
             InDrawMode = false;
+            HasPointer = false;
             if (_drawTimeScale < 1f) Time.timeScale = _cachedTimeScale;
             _modeChanged?.Raise(false);
             if (!silent) Committed?.Invoke(committed);

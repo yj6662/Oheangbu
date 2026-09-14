@@ -1,0 +1,439 @@
+{
+  "scope": "Offline PCM/source analysis; Unity output/device audition remains unverified",
+  "sample_rate": 44100,
+  "channels": 1,
+  "clips": {
+    "brush_stroke": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\brush_stroke.mp3",
+      "sha256": "a2376034a2e62eebeaa7ba8db530505f0776dc56106bf33d654284796385428f",
+      "rate_multiplier": 0.84,
+      "lowpass_hz": 3200,
+      "before": {
+        "seconds": 0.8,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -19.307863235473633,
+        "above_6khz_percent": 62.393009185791016,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.9523809523809523,
+        "peak_dbfs": -15.144843101501465,
+        "rms_dbfs": -30.491222381591797,
+        "above_6khz_percent": 0.1724342256784439,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 2.1744076069348133e-37
+      }
+    },
+    "cast_wood": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\cast_wood.mp3",
+      "sha256": "cfc1a278a8070e46a5d9329228a50fb3aac4a02f603c1037a280e139b362b754",
+      "rate_multiplier": 1,
+      "lowpass_hz": 6000,
+      "before": {
+        "seconds": 1.08,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -21.878843307495117,
+        "above_6khz_percent": 0.9849710464477539,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.48097505668934243,
+        "peak_dbfs": -9.478928565979004,
+        "rms_dbfs": -32.9478874206543,
+        "above_6khz_percent": 0.26452165842056274,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 6.930815029902408e-37
+      }
+    },
+    "cast_fire": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\cast_fire.mp3",
+      "sha256": "b2e17dee72750b39f1c324bafe37936037611edd9b93c2e6782bd3b64e204d6b",
+      "rate_multiplier": 1,
+      "lowpass_hz": 5800,
+      "before": {
+        "seconds": 1.08,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -16.38420867919922,
+        "above_6khz_percent": 0.02073867991566658,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.7421768707482993,
+        "peak_dbfs": -12.653107643127441,
+        "rms_dbfs": -32.74993133544922,
+        "above_6khz_percent": 0.021153541281819344,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": -3.1425817557261556e-37
+      }
+    },
+    "cast_earth": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\cast_earth.mp3",
+      "sha256": "4711a7080b7c3de2390cfbe332008d5a86b64fd1a39c0b714f6cee981d7e5076",
+      "rate_multiplier": 1,
+      "lowpass_hz": 4200,
+      "before": {
+        "seconds": 1.2,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -25.163494110107422,
+        "above_6khz_percent": 0.000891358416993171,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 1.2,
+        "peak_dbfs": -12.920526504516602,
+        "rms_dbfs": -36.32968521118164,
+        "above_6khz_percent": 2.5619689040468074e-05,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 6.314220567359245e-36
+      }
+    },
+    "cast_metal": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\cast_metal.mp3",
+      "sha256": "0b198df24485e047b4f0167916299972fa460896e1612033bb76e86c518e9c88",
+      "rate_multiplier": 0.5,
+      "lowpass_hz": 4200,
+      "before": {
+        "seconds": 1.08,
+        "peak_dbfs": -3.7532403469085693,
+        "rms_dbfs": -24.729171752929688,
+        "above_6khz_percent": 95.83877563476562,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 2.16,
+        "peak_dbfs": -13.573801040649414,
+        "rms_dbfs": -33.0201416015625,
+        "above_6khz_percent": 0.18231280148029327,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 2.809762106251436e-35
+      }
+    },
+    "cast_water": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\cast_water.mp3",
+      "sha256": "8616a525c57cff3e521e4b58967b8a8de528a62e7856a08151205b2038702b2f",
+      "rate_multiplier": 1,
+      "lowpass_hz": 6200,
+      "before": {
+        "seconds": 1.2,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -31.110876083374023,
+        "above_6khz_percent": 7.226198196411133,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.891655328798186,
+        "peak_dbfs": -8.0,
+        "rms_dbfs": -34.30836868286133,
+        "above_6khz_percent": 0.5370588302612305,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": -9.992675043643071e-37
+      }
+    },
+    "impact": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\impact.mp3",
+      "sha256": "b3b462546ea2a555c62bd8f3ab6eeb610df403f7be14bb3d2054b062deac874d",
+      "rate_multiplier": 1,
+      "lowpass_hz": 6200,
+      "before": {
+        "seconds": 0.72,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -14.325366020202637,
+        "above_6khz_percent": 0.4160965383052826,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.3655328798185941,
+        "peak_dbfs": -8.0,
+        "rms_dbfs": -30.43022918701172,
+        "above_6khz_percent": 0.6617996096611023,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 1.5677571170269066e-36
+      }
+    },
+    "player_hit": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\player_hit.mp3",
+      "sha256": "51aed88c7ce6d400990281260b3f9b28e424679aeb326cff5fde96e2e391d6eb",
+      "rate_multiplier": 1,
+      "lowpass_hz": 5200,
+      "before": {
+        "seconds": 0.6802494331065759,
+        "peak_dbfs": -3.547043561935425,
+        "rms_dbfs": -18.032928466796875,
+        "above_6khz_percent": 0.019080093130469322,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.6802494331065759,
+        "peak_dbfs": -18.780025482177734,
+        "rms_dbfs": -37.68216323852539,
+        "above_6khz_percent": 0.006309215445071459,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": -2.6557887044914694e-35
+      }
+    },
+    "parry": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\parry_v2.mp3",
+      "sha256": "95644a95bb12420de2f92c63098a72cfc1dae792415782bb9d5742c5291bb857",
+      "rate_multiplier": 0.91,
+      "lowpass_hz": 5900,
+      "before": {
+        "seconds": 1.48,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -23.696863174438477,
+        "above_6khz_percent": 7.426105976104736,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 1.6263945578231294,
+        "peak_dbfs": -8.808021545410156,
+        "rms_dbfs": -28.92254638671875,
+        "above_6khz_percent": 0.10922309011220932,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 5.335353547191761e-36
+      }
+    },
+    "harvest": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\harvest.mp3",
+      "sha256": "a44e2eba00292f08f6137d41a8156b8f2ff902384f8b42aa71c038c69511a706",
+      "rate_multiplier": 0.9,
+      "lowpass_hz": 3800,
+      "before": {
+        "seconds": 1.36,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -24.87698745727539,
+        "above_6khz_percent": 17.721803665161133,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 1.3920861678004535,
+        "peak_dbfs": -13.020628929138184,
+        "rms_dbfs": -35.00648498535156,
+        "above_6khz_percent": 0.019996892660856247,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 2.095109808396829e-37
+      }
+    },
+    "interact": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\interact.mp3",
+      "sha256": "4ae07f4d7a08a0da2f1b30c0df436fc2ce986a62f28802335c573d059119ac60",
+      "rate_multiplier": 0.8,
+      "lowpass_hz": 3200,
+      "before": {
+        "seconds": 0.52,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -22.660594940185547,
+        "above_6khz_percent": 60.18269729614258,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 0.65,
+        "peak_dbfs": -12.520184516906738,
+        "rms_dbfs": -32.29228973388672,
+        "above_6khz_percent": 0.16134272515773773,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 6.043018867767678e-36
+      }
+    },
+    "rest": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\rest.mp3",
+      "sha256": "f8468356d52d9dc947bcab8e641219c7287948e1d5f1842c1c2a843b5ae92016",
+      "rate_multiplier": 1,
+      "lowpass_hz": 5800,
+      "before": {
+        "seconds": 1.76,
+        "peak_dbfs": -13.535794258117676,
+        "rms_dbfs": -33.02325439453125,
+        "above_6khz_percent": 0.000419267249526456,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 1.76,
+        "peak_dbfs": -13.794486999511719,
+        "rms_dbfs": -34.1568603515625,
+        "above_6khz_percent": 1.3067545296507888e-05,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 1.547583943619695e-35
+      }
+    },
+    "summon_appear": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\summon_appear.mp3",
+      "sha256": "c349c4296283dedacf16069bc4836940d808d7c2e4235974b348182919fa34e2",
+      "rate_multiplier": 0.72,
+      "lowpass_hz": 4800,
+      "before": {
+        "seconds": 1.76,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -21.563209533691406,
+        "above_6khz_percent": 85.09053039550781,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 2.4444444444444446,
+        "peak_dbfs": -10.589773178100586,
+        "rms_dbfs": -28.461044311523438,
+        "above_6khz_percent": 8.167656898498535,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 9.739882594340908e-37
+      }
+    },
+    "summon_release": {
+      "source": "Art\\UIAudio\\PlaytestFeedback\\Originals\\sfx\\summon_release.mp3",
+      "sha256": "2e8efd254867a20711b0ede7460ca6148b01f384cd86b73385e580745c6be0a7",
+      "rate_multiplier": 0.9,
+      "lowpass_hz": 5000,
+      "before": {
+        "seconds": 1.28,
+        "peak_dbfs": -3.0003621578216553,
+        "rms_dbfs": -35.75562286376953,
+        "above_6khz_percent": 32.91676712036133,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": 0.0
+      },
+      "after": {
+        "seconds": 1.2091836734693877,
+        "peak_dbfs": -10.0,
+        "rms_dbfs": -40.12907028198242,
+        "above_6khz_percent": 1.7031269073486328,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": -9.514830025230765e-37
+      }
+    },
+    "harvest_loop": {
+      "after": {
+        "seconds": 0.7174149659863945,
+        "peak_dbfs": -13.00000003889069,
+        "rms_dbfs": -32.70374743091226,
+        "above_6khz_percent": 0.021997822914550172,
+        "clipped_samples": 0,
+        "first": -0.0003423132260046188,
+        "last": -0.0003501175647485861
+      },
+      "derived_from": "owned processed brush/interact/harvest; no synthesis provider"
+    },
+    "harvest_start": {
+      "after": {
+        "seconds": 0.26,
+        "peak_dbfs": -12.0,
+        "rms_dbfs": -32.17918014526367,
+        "above_6khz_percent": 0.0018195182783529162,
+        "clipped_samples": 0,
+        "first": 0.0,
+        "last": -6.089715782634389e-36
+      },
+      "derived_from": "owned processed brush/interact/harvest; no synthesis provider"
+    },
+    "harvest_end": {
+      "after": {
+        "seconds": 0.3,
+        "peak_dbfs": -13.000000953674316,
+        "rms_dbfs": -38.715721130371094,
+        "above_6khz_percent": 0.001659916597418487,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 3.803824681409716e-40
+      },
+      "derived_from": "owned processed brush/interact/harvest; no synthesis provider"
+    },
+    "ui_paper": {
+      "after": {
+        "seconds": 0.4,
+        "peak_dbfs": -18.959562301635742,
+        "rms_dbfs": -32.46963119506836,
+        "above_6khz_percent": 0.23664678633213043,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": -2.410407874779978e-34
+      },
+      "derived_from": "owned processed brush/interact/harvest; no synthesis provider"
+    },
+    "ui_confirm": {
+      "after": {
+        "seconds": 0.27,
+        "peak_dbfs": -13.717164993286133,
+        "rms_dbfs": -31.289012908935547,
+        "above_6khz_percent": 0.20101463794708252,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 7.597358316580532e-35
+      },
+      "derived_from": "owned processed brush/interact/harvest; no synthesis provider"
+    },
+    "ui_back": {
+      "after": {
+        "seconds": 0.28,
+        "peak_dbfs": -17.22457504272461,
+        "rms_dbfs": -31.73961639404297,
+        "above_6khz_percent": 0.16826561093330383,
+        "clipped_samples": 0,
+        "first": -0.0,
+        "last": 6.639673301579007e-38
+      },
+      "derived_from": "owned processed brush/interact/harvest; no synthesis provider"
+    }
+  },
+  "impact_stress": {
+    "before": {
+      "accepted_voices": 33,
+      "seconds": 4.0,
+      "peak_dbfs": 1.807149150901369,
+      "rms_dbfs": -5.570838824818418,
+      "above_6khz_percent": 0.17104535494560136,
+      "clipped_samples": 18310,
+      "first": 0.0,
+      "last": 0.0
+    },
+    "after": {
+      "accepted_voices": 16,
+      "seconds": 4.0,
+      "peak_dbfs": -17.73507298939367,
+      "rms_dbfs": -38.62422373492087,
+      "above_6khz_percent": 0.6797383620411543,
+      "clipped_samples": 0,
+      "first": 0.0,
+      "last": 0.0
+    },
+    "caveat": "Offline worst-position additive approximation, not an actual Unity output measurement."
+  },
+  "loop_seam_delta": 7.80433874396732e-06
+}

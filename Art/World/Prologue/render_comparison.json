@@ -1,0 +1,29 @@
+{
+    "meaning": "Editor synchronous Camera.Render CPU duration, representative view, 1080p; excludes gameplay. Not GPU frame time or standalone FPS. Unity allocated memory includes Editor caches; system commit is all processes.",
+    "rows": [
+        {
+            "scene": "Assets/_Project/Scenes/Dev/C2_CodexWorld.unity",
+            "status": "SAMPLED",
+            "width": 1920,
+            "height": 1080,
+            "samples": 24,
+            "cameraRenderCpuMs": 2.444516666666667,
+            "unityAllocatedBytes": 2926542486,
+            "systemCommit": 0.8493388295173645,
+            "sampledBatches": 233,
+            "sampledTriangles": 3908536
+        },
+        {
+            "scene": "Assets/_Project/Scenes/World/W_Cheongrim_Prologue.unity",
+            "status": "PARTIAL",
+            "width": 1920,
+            "height": 1080,
+            "samples": 0,
+            "cameraRenderCpuMs": 0.0,
+            "unityAllocatedBytes": 2928662074,
+            "systemCommit": 0.851948618888855,
+            "sampledBatches": 233,
+            "sampledTriangles": 3908536
+        }
+    ]
+}

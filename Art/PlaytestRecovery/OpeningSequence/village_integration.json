@@ -1,0 +1,125 @@
+{
+    "status": "PASS_API_INTEGRATION",
+    "slot": "world-macro-playtest-v2_village-commission-20260915-r1",
+    "phase": "finished",
+    "scope": "Diagnostic API calls and bounded test-only teleports, not native player input or an automatic walkthrough. Only an explicit isolated test save is written.",
+    "checks": [
+        {
+            "name": "commission gate in actual UI",
+            "status": "PASS",
+            "detail": "button locked before commission"
+        },
+        {
+            "name": "locked callback does not move car",
+            "status": "PASS",
+            "detail": "actual UI delegate invoked; input interactability alone not relied on"
+        },
+        {
+            "name": "pre-commission vehicle marker denied",
+            "status": "PASS",
+            "detail": "actual Session API"
+        },
+        {
+            "name": "actual commission access",
+            "status": "PASS",
+            "detail": "test-only safe teleport; no walking/input synthesis"
+        },
+        {
+            "name": "commission interaction changes stage",
+            "status": "PASS",
+            "detail": "actual Session.Interact(village_commission)"
+        },
+        {
+            "name": "commission does not mint currency",
+            "status": "PASS",
+            "detail": "reward remains zero"
+        },
+        {
+            "name": "commission unlocks actual call button",
+            "status": "PASS",
+            "detail": "same UI page"
+        },
+        {
+            "name": "moving car denied without relocation",
+            "status": "PASS",
+            "detail": "가마가 완전히 멈춘 뒤 호출할 수 있습니다."
+        },
+        {
+            "name": "driver ownership denied without relocation",
+            "status": "PASS",
+            "detail": "가마에서 내린 뒤 호출할 수 있습니다."
+        },
+        {
+            "name": "actual call button relocates existing car",
+            "status": "PASS",
+            "detail": "가까운 큰길에 마석 가마를 불렀습니다. 가마 옆에서 E로 탑승하세요."
+        },
+        {
+            "name": "single original instance",
+            "status": "PASS",
+            "detail": "no duplicate vehicle"
+        },
+        {
+            "name": "drive profile preserved",
+            "status": "PASS",
+            "detail": "same object reference"
+        },
+        {
+            "name": "road-aligned forward facing",
+            "status": "PASS",
+            "detail": "does not face backwards relative to caller"
+        },
+        {
+            "name": "vehicle stage saved",
+            "status": "PASS",
+            "detail": "actual marker and SaveNow succeeded"
+        },
+        {
+            "name": "diagnostic save readback",
+            "status": "PASS",
+            "detail": "commission and vehicle markers persisted to isolated slot; no app relaunch claimed"
+        },
+        {
+            "name": "immediate duplicate call denied",
+            "status": "PASS",
+            "detail": "가마가 자리를 잡는 중입니다."
+        },
+        {
+            "name": "safe actual boarding approach",
+            "status": "PASS",
+            "detail": "diagnostic teleport near existing door sockets"
+        },
+        {
+            "name": "actual seat boarding",
+            "status": "PASS",
+            "detail": "가마에 탑승했습니다."
+        },
+        {
+            "name": "occupied car cannot be recalled",
+            "status": "PASS",
+            "detail": "가마에서 내린 뒤 호출할 수 있습니다."
+        },
+        {
+            "name": "actual seat exit restores walking",
+            "status": "PASS",
+            "detail": "가마에서 내렸습니다."
+        }
+    ],
+    "failures": [],
+    "cleanup": true,
+    "originalPlayer": {
+        "x": 1911.0999755859375,
+        "y": 133.3000030517578,
+        "z": 645.9000244140625
+    },
+    "originalCar": {
+        "x": 1990.4852294921875,
+        "y": 133.2277069091797,
+        "z": 708.4852905273438
+    },
+    "summonedCar": {
+        "x": 1935.6710205078125,
+        "y": 133.14886474609376,
+        "z": 628.62841796875
+    }
+}

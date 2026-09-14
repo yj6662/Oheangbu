@@ -1,0 +1,29 @@
+{
+  "thumbContact": {
+    "digit": "Thumb",
+    "distalVertices": 209,
+    "shaftRayHits": 209,
+    "closestSkinGapMeters": 0.00011961907148361206,
+    "maximumPenetrationMeters": 0.0,
+    "manualLbsClosestSkinGapMeters": 9.483285248279572e-05,
+    "manualLbsMaximumPenetrationMeters": 0.0,
+    "closestVertex": 29860,
+    "closestSkinInGrip": {
+      "x": 0.006525703240185976,
+      "y": 0.005363553296774626,
+      "z": -0.0174445528537035
+    },
+    "initialContactThresholdPass": true
+  },
+  "runtimeChecks": 96,
+  "runtimeFailures": [],
+  "pose": "Original GripA offsets, thumb base flex -15, middle +25, tip +30 degrees; base opposition 80 degrees about hand dorsal axis.",
+  "scope": "Only three right-thumb pose rotations; carry/drawing/harvest share the grasp. Grip front/back, other fingers, wrist settings and mesh unchanged.",
+  "limitations": [
+    "Synthetic static pose and current-pose sampled vertex contact only.",
+    "No native continuous drawing, movement or all-pose triangle collision validation.",
+    "Previously reported upper-right hand leaving the frame remains unresolved.",
+    "Existing angular hand mesh/surface quality is unchanged."
+  ],
+  "newBuild": false
+}

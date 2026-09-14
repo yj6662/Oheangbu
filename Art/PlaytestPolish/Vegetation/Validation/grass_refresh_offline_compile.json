@@ -1,0 +1,44 @@
+{
+  "utc": "2026-09-14T00:55:32.7262904Z",
+  "status": "PASS",
+  "scope": "Eight scoped vegetation C# files compiled with Unity 6000.3.9 Roslyn into an isolated diagnostic DLL outside Assets. No Unity domain invocation, shader validation or build.",
+  "sources": [
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Data/World/WorldMacroDressingSheetSO.cs",
+      "sha256": "d8dab953eed806e9156cd976a7a0e27aa0b97938206b86a52438dd09ee438aa7"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/App/World/Dressing/WorldMacroDressingRenderer.cs",
+      "sha256": "b1fe7cac365729b008a6421b44280544ca052f1e34f619b56c17e6c74dd00b8b"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/App/World/Dressing/WorldMacroDressingDense.cs",
+      "sha256": "c6f7706aea29fe6acdd619b345bef2e2a9a68c4b3ae0c546f6c6fc7b4678e6c8"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroDressingAuthoring.cs",
+      "sha256": "f2e8d4e7bcb2b2c4e05f18479e6019ff0fbf3c27690558828c85733501644344"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroDressingAssets.cs",
+      "sha256": "c0e7dd260075327c732c48831087c366d8f896623933403a67f898658eacc71d"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroVegetationPolishAssets.cs",
+      "sha256": "519e9f3ebe551af15e4099555bdcc3517ae519a7abc95e9c136a8547c71ae5a3"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroVegetationPolish.cs",
+      "sha256": "c4cd846ec063dfaf01c5c438fd4f7cc59d374643b02b98821d54f52c892709b5"
+    },
+    {
+      "path": "Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroVegetationGrassRefresh.cs",
+      "sha256": "82e421eca3dda4c1ba1d456782d4856500bb19c892e7eb6b798a678c6b712a9d"
+    }
+  ],
+  "unverified": [
+    "Unity domain compilation and refreshgrass execution",
+    "Visible density/LOD/color at the active walking camera",
+    "1080p CPU/GPU and memory costs"
+  ]
+}

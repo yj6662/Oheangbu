@@ -1,0 +1,99 @@
+{
+    "status": "PASS_REAL_UNITY_OUTPUT",
+    "scope": "Real Unity listener OnAudioFilterRead PCM after actual mixer; synthetic isolated/maximum-overlap/harvest presentation signals. Not native input, OS/device loopback or subjective listening approval. Voice-pool housekeeping is deliberately ticked at 10 Hz; audio envelopes must still be continuous. This does not simulate a blocked OS audio driver.",
+    "sampleRate": 48000,
+    "channels": 2,
+    "callbacks": 445,
+    "samples": 911360,
+    "peakGameVoices": 12,
+    "peakUiVoices": 4,
+    "concurrencyDrops": 40,
+    "fadedSteals": 1,
+    "dspSeconds": 9.493333333333795,
+    "recordedSeconds": 9.493333333333334,
+    "maximumCallbackIntervalSeconds": 0.0406054,
+    "maximumPeakDbfs": -11.662891220076653,
+    "poolTickIntervalSeconds": 0.1,
+    "mixerMuteCalibration": true,
+    "cleanup": true,
+    "regions": [
+        {
+            "name": "mixer_muted_calibration",
+            "fromSample": 0,
+            "toSample": 53248,
+            "peakDbfs": -240.0,
+            "rmsDbfs": -240.0,
+            "maximumSampleStep": 0.0,
+            "clippedSamples": 0,
+            "zeroFrames": 26624,
+            "wav": "mixer_muted_calibration.wav"
+        },
+        {
+            "name": "isolated_metal",
+            "fromSample": 53248,
+            "toSample": 294912,
+            "peakDbfs": -25.11189007032694,
+            "rmsDbfs": -45.56254958491895,
+            "maximumSampleStep": 0.024302586913108827,
+            "clippedSamples": 0,
+            "zeroFrames": 19418,
+            "wav": "isolated_metal.wav"
+        },
+        {
+            "name": "maximum_role_limited_overlap",
+            "fromSample": 294912,
+            "toSample": 536576,
+            "peakDbfs": -11.662891220076653,
+            "rmsDbfs": -33.753819330081537,
+            "maximumSampleStep": 0.061420004814863208,
+            "clippedSamples": 0,
+            "zeroFrames": 141,
+            "wav": "maximum_role_limited_overlap.wav"
+        },
+        {
+            "name": "overlap_release",
+            "fromSample": 536576,
+            "toSample": 567296,
+            "peakDbfs": -29.4148471951747,
+            "rmsDbfs": -50.379585822374057,
+            "maximumSampleStep": 0.017115803435444833,
+            "clippedSamples": 0,
+            "zeroFrames": 13498,
+            "wav": "overlap_release.wav"
+        },
+        {
+            "name": "harvest_start_and_hold",
+            "fromSample": 567296,
+            "toSample": 798720,
+            "peakDbfs": -24.188791211756688,
+            "rmsDbfs": -44.433311175839069,
+            "maximumSampleStep": 0.020567331463098527,
+            "clippedSamples": 0,
+            "zeroFrames": 6955,
+            "wav": "harvest_start_and_hold.wav"
+        },
+        {
+            "name": "harvest_release",
+            "fromSample": 798720,
+            "toSample": 876544,
+            "peakDbfs": -25.802499401433836,
+            "rmsDbfs": -54.74719310999886,
+            "maximumSampleStep": 0.007004345767199993,
+            "clippedSamples": 0,
+            "zeroFrames": 26378,
+            "wav": "harvest_release.wav"
+        },
+        {
+            "name": "quiet_tail",
+            "fromSample": 876544,
+            "toSample": 911360,
+            "peakDbfs": -240.0,
+            "rmsDbfs": -240.0,
+            "maximumSampleStep": 0.0,
+            "clippedSamples": 0,
+            "zeroFrames": 17408,
+            "wav": "quiet_tail.wav"
+        }
+    ],
+    "failures": []
+}

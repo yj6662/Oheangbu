@@ -1,0 +1,23 @@
+{
+  "scope": "Real Unity post-mixer recording, synthetic presentation signals. No OS/device loopback or subjective listening approval.",
+  "status": "PASS_REAL_UNITY_OUTPUT",
+  "raw_peak_dbfs": -11.663174629211426,
+  "oversampled_4x_peak_dbfs": -11.663174629211426,
+  "clipped_samples": 0,
+  "recorded_seconds": 9.493333333333334,
+  "dsp_seconds": 9.493333333333794,
+  "duration_difference_seconds": 4.600764214046649e-13,
+  "callbacks": 445,
+  "max_callback_interval_seconds": 0.040047,
+  "nominal_dsp_block_seconds": 0.021333333333333333,
+  "callback_interpretation": "Wall-clock callback spacing is scheduling telemetry, not a direct device underrun count. 445 complete 1024-frame callbacks and recorded duration agree with the DSP clock. A 40ms spacing alone is not crackle/underrun evidence.",
+  "steady_harvest_window_seconds": [
+    0.4,
+    2.15
+  ],
+  "steady_harvest_longest_below_1e_5_ms": 0.9583333333333333,
+  "steady_harvest_zero_runs_over_10ms": 0,
+  "harvest_release_last_audible_sample_seconds": 0.27875,
+  "quiet_tail_exactly_zero": true,
+  "original_listener_wav_unchanged": true
+}

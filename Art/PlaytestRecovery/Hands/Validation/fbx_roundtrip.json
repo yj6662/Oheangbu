@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "scope": "Empty Blender scene FBX reimport; geometry/skin/bone names and unchanged outside-hand source vertices. Does not certify Unity runtime visuals.",
+  "fbxSha256": "4c261d8481c160ae94deb9090b4c3c0105572179afe4c2c766aa166db7fea29f",
+  "outsideHandCoordinatesUnchanged": true,
+  "sourceBindUnchanged": true,
+  "bones": 54,
+  "sourceBodyTriangles": 58462,
+  "reimportBodyTriangles": 58462,
+  "maxGeometryDistanceMeters": 2.905726432800293e-07,
+  "maxWeightCount": 4,
+  "maxWeightSumError": 1.3585668057203293e-07,
+  "unassignedOrInvalid": 0
+}

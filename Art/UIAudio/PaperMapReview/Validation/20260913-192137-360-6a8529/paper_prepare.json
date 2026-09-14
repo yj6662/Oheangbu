@@ -1,0 +1,20 @@
+{
+    "utc": "2026-09-13T19:21:37.3624216Z",
+    "status": "PASS",
+    "texture": "Assets/_Project/Resources/WorldMap/Paper/HanjiWorn.png",
+    "failure": "",
+    "scope": "Edit Mode asset import and actual continuous paper geometry export. OBJ snapshots are geometry deliverables, not runtime animation or Game View evidence.",
+    "width": 1473,
+    "height": 1068,
+    "transparentPixels": 266938,
+    "opaquePixels": 1299178,
+    "vertexCount": 1353,
+    "triangleCount": 2560,
+    "heightOverWidth": 0.7246376872062683,
+    "models": [
+        "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Models\\20260913-192137-360-6a8529\\HanjiPaper_p000.obj",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Models\\20260913-192137-360-6a8529\\HanjiPaper_p030.obj",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Models\\20260913-192137-360-6a8529\\HanjiPaper_p065.obj",
+        "C:\\Users\\yj666\\Oheangbu\\Art\\UIAudio\\PaperMapReview\\Models\\20260913-192137-360-6a8529\\HanjiPaper_p100.obj"
+    ]
+}

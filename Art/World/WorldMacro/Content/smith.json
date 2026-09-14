@@ -1,0 +1,39 @@
+{
+    "label": "content_smith",
+    "utc": "2026-09-11T23:32:16.3761133Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 475,
+    "residentInstances": 47557,
+    "drawCalls": 31,
+    "drawnInstances": 3878,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -2101.864990234375,
+        "y": 128.52655029296876,
+        "z": 306.8838195800781
+    },
+    "euler": {
+        "x": 8.192124366760254,
+        "y": 119.743408203125,
+        "z": 6.469316531365621e-7
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.6395798325538635,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

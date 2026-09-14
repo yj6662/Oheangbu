@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 863d2e8b547548e4686b3c2fd1775ef7, type: 3}
+  m_Name: PlayerVisual_Dosa
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.PlayerVisualProfileSO
+  Controller: {fileID: 9100000, guid: cc2cbbe8703fbc44ea8da489f85fe215, type: 2}
+  ModelHeight: 1.75
+  WalkClipSpeed: 1.6
+  RunClipSpeed: 4.5
+  WalkSourceSpeeds: {x: 1.3236568, y: 1.0345914, z: 1.1931835, w: 1.3375752}
+  RunSourceSpeeds: {x: 4.0614147, y: 1.9534202, z: 1.984207, w: 2.303079}
+  MotionDamping: 12
+  FeetWeight: 0.8
+  MaxPelvisLowering: 0.25
+  FootRayUp: 0.28
+  FootRayDown: 0.5
+  FootSoleOffset: 0.005
+  MaxFootCorrection: 0.14
+  FootContactHeight: 0.075
+  GroundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  NearRootCameraOffset: {x: 0, y: -1.45, z: -0.05}
+  RestTipViewport: {x: 0.72, y: 0.32}
+  RestTipDepth: 0.5
+  NearClipPlane: 0.01

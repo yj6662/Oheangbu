@@ -1,0 +1,84 @@
+{
+  "task_id": "01a091d6-93c9-74db-aa38-3f362782b1b3",
+  "config": {
+    "ai_model": "meshy-7",
+    "model_type": "standard",
+    "ultra_mode": false,
+    "should_texture": true,
+    "enable_pbr": true,
+    "texture_resolution": "2k",
+    "should_remesh": true,
+    "topology": "triangle",
+    "target_polycount": 18000,
+    "image_enhancement": false,
+    "target_formats": [
+      "glb",
+      "fbx"
+    ]
+  },
+  "consumed_credits": 30,
+  "files": [
+    {
+      "path": "Cabin\\image\\model_url.glb",
+      "bytes": 11636572,
+      "sha256": "8c13edd9916275f1d4bad171e67cae6389d1f5ea0b9261dc0e7cceb8686d928f",
+      "geometry": {
+        "status": "GLB_ACCESSOR_COUNTS",
+        "unique_mesh_triangles": 15462,
+        "primitive_vertices": 26772,
+        "meshes": 1,
+        "materials": 1,
+        "primitive_modes": [
+          4
+        ],
+        "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+      }
+    },
+    {
+      "path": "Cabin\\image\\model_urls_glb.glb",
+      "bytes": 11636572,
+      "sha256": "8c13edd9916275f1d4bad171e67cae6389d1f5ea0b9261dc0e7cceb8686d928f",
+      "geometry": {
+        "status": "GLB_ACCESSOR_COUNTS",
+        "unique_mesh_triangles": 15462,
+        "primitive_vertices": 26772,
+        "meshes": 1,
+        "materials": 1,
+        "primitive_modes": [
+          4
+        ],
+        "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+      }
+    },
+    {
+      "path": "Cabin\\image\\model_urls_fbx.fbx",
+      "bytes": 14984172,
+      "sha256": "e120a3b650df2317fdea17d304116f188688770854b7699d09ba3886504f6e2c"
+    },
+    {
+      "path": "Cabin\\image\\thumbnail_url.png",
+      "bytes": 192715,
+      "sha256": "c4796f59f1e28d15dcd5721c59bc763fcc5fd94632b42a390bf0dd8c02922b6a"
+    },
+    {
+      "path": "Cabin\\image\\texture_urls_0_base_color.png",
+      "bytes": 5824270,
+      "sha256": "20743471aff82edab19b0319e6f613935292fdbf441bff784ca576bd6844e357"
+    },
+    {
+      "path": "Cabin\\image\\texture_urls_0_metallic.png",
+      "bytes": 876923,
+      "sha256": "1cc7078581d727c5d9ac4f96ce004358aede52a174ceb702a57ab36f255c5c79"
+    },
+    {
+      "path": "Cabin\\image\\texture_urls_0_roughness.png",
+      "bytes": 1611525,
+      "sha256": "e28cc1dfbdc1660cd92804a91a490bf9aacc026380f80415dd789aa6707050d1"
+    },
+    {
+      "path": "Cabin\\image\\texture_urls_0_normal.png",
+      "bytes": 5890796,
+      "sha256": "a9ec45bfcc5f6435b24e54b74c9c40cac50a1dd631cb310e964ed8f935401b0b"
+    }
+  ]
+}

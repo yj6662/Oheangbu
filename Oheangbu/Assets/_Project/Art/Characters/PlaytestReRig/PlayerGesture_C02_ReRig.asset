@@ -1,0 +1,270 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87491c4a7bbe4aa3b15258c015765e09, type: 3}
+  m_Name: PlayerGesture_C02_ReRig
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.World.WorldMacroPlayerGestureProfile
+  Fingers:
+  - BoneName: LeftHandThumb1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.2074138, y: 0.9708729, z: 0.112926915, w: 0.040408958}
+    CarryOffset: {x: -0.06436774, y: 0.04451974, z: 0.0055340184, w: 0.99691737}
+    DrawingOffset: {x: -0.06436774, y: 0.04451974, z: 0.0055340184, w: 0.99691737}
+    HarvestOffset: {x: -0.06436774, y: 0.04451974, z: 0.0055340184, w: 0.99691737}
+    ReleasedOffset: {x: -0.06436774, y: 0.04451974, z: 0.0055340184, w: 0.99691737}
+  - BoneName: LeftHandThumb2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.0000018570573, y: 0.00000004724805, z: -0.0000005260123, w: 1}
+    CarryOffset: {x: -0.099981494, y: 0.06915172, z: 0.008595623, w: 0.99254614}
+    DrawingOffset: {x: -0.099981494, y: 0.06915172, z: 0.008595623, w: 0.99254614}
+    HarvestOffset: {x: -0.099981494, y: 0.06915172, z: 0.008595623, w: 0.99254614}
+    ReleasedOffset: {x: -0.099981494, y: 0.06915172, z: 0.008595623, w: 0.99254614}
+  - BoneName: LeftHandThumb3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.00000029150397, y: -0.00000006795463, z: 0.00000049533105, w: 1}
+    CarryOffset: {x: -0.057228047, y: 0.039581604, z: 0.004920063, w: 0.9975641}
+    DrawingOffset: {x: -0.057228047, y: 0.039581604, z: 0.004920063, w: 0.9975641}
+    HarvestOffset: {x: -0.057228047, y: 0.039581604, z: 0.004920063, w: 0.9975641}
+    ReleasedOffset: {x: -0.057228047, y: 0.039581604, z: 0.004920063, w: 0.9975641}
+  - BoneName: LeftHandIndex1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.098334074, y: 0.99377054, z: 0.029207973, w: 0.04355997}
+    CarryOffset: {x: -0.07845286, y: -0.0009927766, z: 0.000025118283, w: 0.99691737}
+    DrawingOffset: {x: -0.07845286, y: -0.0009927766, z: 0.000025118283, w: 0.99691737}
+    HarvestOffset: {x: -0.07845286, y: -0.0009927766, z: 0.000025118283, w: 0.99691737}
+    ReleasedOffset: {x: -0.07845286, y: -0.0009927766, z: 0.000025118283, w: 0.99691737}
+  - BoneName: LeftHandIndex2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.00000015273133, y: -0.000000048847145, z: -0.000000102627965, w: 1}
+    CarryOffset: {x: -0.121859625, y: -0.0015420893, z: 0.0000390286, w: 0.99254614}
+    DrawingOffset: {x: -0.121859625, y: -0.0015420893, z: 0.0000390286, w: 0.99254614}
+    HarvestOffset: {x: -0.121859625, y: -0.0015420893, z: 0.0000390286, w: 0.99254614}
+    ReleasedOffset: {x: -0.121859625, y: -0.0015420893, z: 0.0000390286, w: 0.99254614}
+  - BoneName: LeftHandIndex3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.000001557917, y: 0.000000003866089, z: 0.00000015150347, w: 1}
+    CarryOffset: {x: -0.069750875, y: -0.0008826509, z: 0.000022341375, w: 0.9975641}
+    DrawingOffset: {x: -0.069750875, y: -0.0008826509, z: 0.000022341375, w: 0.9975641}
+    HarvestOffset: {x: -0.069750875, y: -0.0008826509, z: 0.000022341375, w: 0.9975641}
+    ReleasedOffset: {x: -0.069750875, y: -0.0008826509, z: 0.000022341375, w: 0.9975641}
+  - BoneName: LeftHandMiddle1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.097818755, y: 0.9934262, z: 0.041825425, w: 0.04226765}
+    CarryOffset: {x: -0.07845482, y: -0.00082587975, z: -0.000000014146454, w: 0.99691737}
+    DrawingOffset: {x: -0.07845482, y: -0.00082587975, z: -0.000000014146454, w: 0.99691737}
+    HarvestOffset: {x: -0.07845482, y: -0.00082587975, z: -0.000000014146454, w: 0.99691737}
+    ReleasedOffset: {x: -0.07845482, y: -0.00082587975, z: -0.000000014146454, w: 0.99691737}
+  - BoneName: LeftHandMiddle2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.000000014901159, y: -0.000000052464866, z: 0.00000000395812, w: 1}
+    CarryOffset: {x: -0.12186262, y: -0.001282825, z: -0.000000009546229, w: 0.99254614}
+    DrawingOffset: {x: -0.12186262, y: -0.001282825, z: -0.000000009546229, w: 0.99254614}
+    HarvestOffset: {x: -0.12186262, y: -0.001282825, z: -0.000000009546229, w: 0.99254614}
+    ReleasedOffset: {x: -0.12186262, y: -0.001282825, z: -0.000000009546229, w: 0.99254614}
+  - BoneName: LeftHandMiddle3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -3.799465e-15, y: -4.87349e-15, z: 0.000000051688403, w: 1}
+    CarryOffset: {x: -0.06975259, y: -0.0007342649, z: -0.000000005338765, w: 0.9975641}
+    DrawingOffset: {x: -0.06975259, y: -0.0007342649, z: -0.000000005338765, w: 0.9975641}
+    HarvestOffset: {x: -0.06975259, y: -0.0007342649, z: -0.000000005338765, w: 0.9975641}
+    ReleasedOffset: {x: -0.06975259, y: -0.0007342649, z: -0.000000005338765, w: 0.9975641}
+  - BoneName: LeftHandRing1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.09817109, y: 0.99339145, z: 0.041810427, w: 0.042282548}
+    CarryOffset: {x: -0.07845421, y: -0.00088153104, z: -0.00000000409311, w: 0.99691737}
+    DrawingOffset: {x: -0.07845421, y: -0.00088153104, z: -0.00000000409311, w: 0.99691737}
+    HarvestOffset: {x: -0.07845421, y: -0.00088153104, z: -0.00000000409311, w: 0.99691737}
+    ReleasedOffset: {x: -0.07845421, y: -0.00088153104, z: -0.00000000409311, w: 0.99691737}
+  - BoneName: LeftHandRing2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.000000011175876, y: 0.000000007031562, z: -0.00000007497147, w: 1}
+    CarryOffset: {x: -0.121861696, y: -0.0013692875, z: -0.000000007916555, w: 0.9925462}
+    DrawingOffset: {x: -0.121861696, y: -0.0013692875, z: -0.000000007916555, w: 0.9925462}
+    HarvestOffset: {x: -0.121861696, y: -0.0013692875, z: -0.000000007916555, w: 0.9925462}
+    ReleasedOffset: {x: -0.121861696, y: -0.0013692875, z: -0.000000007916555, w: 0.9925462}
+  - BoneName: LeftHandRing3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -4.6460774e-15, y: 7.742505e-15, z: 0.000000041443855, w: 1}
+    CarryOffset: {x: -0.06975204, y: -0.0007837564, z: -0.000000004398217, w: 0.9975641}
+    DrawingOffset: {x: -0.06975204, y: -0.0007837564, z: -0.000000004398217, w: 0.9975641}
+    HarvestOffset: {x: -0.06975204, y: -0.0007837564, z: -0.000000004398217, w: 0.9975641}
+    ReleasedOffset: {x: -0.06975204, y: -0.0007837564, z: -0.000000004398217, w: 0.9975641}
+  - BoneName: LeftHandPinky1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.107644334, y: 0.9900976, z: 0.0815682, w: 0.03829085}
+    CarryOffset: {x: -0.078430526, y: -0.002112851, z: -0.00017125234, w: 0.99691737}
+    DrawingOffset: {x: -0.078430526, y: -0.002112851, z: -0.00017125234, w: 0.99691737}
+    HarvestOffset: {x: -0.078430526, y: -0.002112851, z: -0.00017125234, w: 0.99691737}
+    ReleasedOffset: {x: -0.078430526, y: -0.002112851, z: -0.00017125234, w: 0.99691737}
+  - BoneName: LeftHandPinky2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.0000017928533, y: 0.0000000018871291, z: 0.00000006535444, w: 1}
+    CarryOffset: {x: -0.12182488, y: -0.0032818445, z: -0.0002659924, w: 0.99254614}
+    DrawingOffset: {x: -0.12182488, y: -0.0032818445, z: -0.0002659924, w: 0.99254614}
+    HarvestOffset: {x: -0.12182488, y: -0.0032818445, z: -0.0002659924, w: 0.99254614}
+    ReleasedOffset: {x: -0.12182488, y: -0.0032818445, z: -0.0002659924, w: 0.99254614}
+  - BoneName: LeftHandPinky3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.00000085492775, y: 0.000000007243681, z: -0.000000006376192, w: 1}
+    CarryOffset: {x: -0.06973099, y: -0.0018784854, z: -0.00015225586, w: 0.9975641}
+    DrawingOffset: {x: -0.06973099, y: -0.0018784854, z: -0.00015225586, w: 0.9975641}
+    HarvestOffset: {x: -0.06973099, y: -0.0018784854, z: -0.00015225586, w: 0.9975641}
+    ReleasedOffset: {x: -0.06973099, y: -0.0018784854, z: -0.00015225586, w: 0.9975641}
+  - BoneName: RightHandThumb1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.21231546, y: 0.9770567, z: 0.0040749996, w: 0.016304057}
+    CarryOffset: {x: -0.04600609, y: -0.47127196, z: -0.20023355, w: 0.8577253}
+    DrawingOffset: {x: -0.04600609, y: -0.47127196, z: -0.20023355, w: 0.8577253}
+    HarvestOffset: {x: -0.04600609, y: -0.47127196, z: -0.20023355, w: 0.8577253}
+    ReleasedOffset: {x: -0.06436771, y: -0.044519752, z: -0.0055340277, w: 0.99691737}
+  - BoneName: RightHandThumb2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.0000017955899, y: -0.00000009664517, z: 0.0000004371796, w: 1}
+    CarryOffset: {x: -0.0000000018626451, y: -0.000000001129326, z: -1.4037604e-10, w: 1}
+    DrawingOffset: {x: -0.0000000018626451, y: -0.000000001129326, z: -1.4037604e-10, w: 1}
+    HarvestOffset: {x: -0.0000000018626451, y: -0.000000001129326, z: -1.4037604e-10, w: 1}
+    ReleasedOffset: {x: -0.09998142, y: -0.069151774, z: -0.008595674, w: 0.99254614}
+  - BoneName: RightHandThumb3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.00000028684735, y: 0.000000067573815, z: -0.0000005064593, w: 1}
+    CarryOffset: {x: 0.000000009313226, y: -0.0000000016725941, z: -9.2140406e-11, w: 1}
+    DrawingOffset: {x: 0.000000009313226, y: -0.0000000016725941, z: -9.2140406e-11, w: 1}
+    HarvestOffset: {x: 0.000000009313226, y: -0.0000000016725941, z: -9.2140406e-11, w: 1}
+    ReleasedOffset: {x: -0.057228025, y: -0.03958165, z: -0.0049200216, w: 0.9975641}
+  - BoneName: RightHandIndex1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.09795057, y: 0.9925733, z: -0.0571938, w: 0.04396435}
+    CarryOffset: {x: -0.34225345, y: 0.0043307836, z: -0.00010959816, w: 0.9395977}
+    DrawingOffset: {x: -0.34225345, y: 0.0043307836, z: -0.00010959816, w: 0.9395977}
+    HarvestOffset: {x: -0.34225345, y: 0.0043307836, z: -0.00010959816, w: 0.9395977}
+    ReleasedOffset: {x: -0.078452855, y: 0.0009927214, z: -0.000025122232, w: 0.99691737}
+  - BoneName: RightHandIndex2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.00000010782627, y: 0.000000018192267, z: 0.00000009231008, w: 1}
+    CarryOffset: {x: -0.6159025, y: 0.0077935765, z: -0.00019725099, w: 0.7877838}
+    DrawingOffset: {x: -0.6159025, y: 0.0077935765, z: -0.00019725099, w: 0.7877838}
+    HarvestOffset: {x: -0.6159025, y: 0.0077935765, z: -0.00019725099, w: 0.7877838}
+    ReleasedOffset: {x: -0.1218596, y: 0.0015420011, z: -0.000039027316, w: 0.99254614}
+  - BoneName: RightHandIndex3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.000001559308, y: -0.0000000039075223, z: -0.00000015079618, w: 1}
+    CarryOffset: {x: -0.008725839, y: 0.0001104134, z: -0.0000027943568, w: 0.999962}
+    DrawingOffset: {x: -0.008725839, y: 0.0001104134, z: -0.0000027943568, w: 0.999962}
+    HarvestOffset: {x: -0.008725839, y: 0.0001104134, z: -0.0000027943568, w: 0.999962}
+    ReleasedOffset: {x: -0.069750875, y: 0.0008826002, z: -0.00002234086, w: 0.9975641}
+  - BoneName: RightHandMiddle1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.096327856, y: 0.99332076, z: -0.044677794, w: 0.045152698}
+    CarryOffset: {x: -0.25436744, y: 0.002677468, z: 0.00000001187862, w: 0.96710396}
+    DrawingOffset: {x: -0.25436744, y: 0.002677468, z: 0.00000001187862, w: 0.96710396}
+    HarvestOffset: {x: -0.25436744, y: 0.002677468, z: 0.00000001187862, w: 0.96710396}
+    ReleasedOffset: {x: -0.07845481, y: 0.000825814, z: 0.000000003106239, w: 0.99691737}
+  - BoneName: RightHandMiddle2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -8.008142e-18, y: 0.0000000032545424, z: 0.000000012107193, w: 1}
+    CarryOffset: {x: -0.67188203, y: 0.007072232, z: 0.000000030500342, w: 0.7406245}
+    DrawingOffset: {x: -0.67188203, y: 0.007072232, z: 0.000000030500342, w: 0.7406245}
+    HarvestOffset: {x: -0.67188203, y: 0.007072232, z: 0.000000030500342, w: 0.7406245}
+    ReleasedOffset: {x: -0.12186262, y: 0.0012827269, z: 0.0000000052268923, w: 0.99254614}
+  - BoneName: RightHandMiddle3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -3.2748776e-15, y: 5.6740636e-15, z: -0.000000052154064, w: 1}
+    CarryOffset: {x: -0.26989007, y: 0.0028408363, z: 0.000000011931075, w: 0.962887}
+    DrawingOffset: {x: -0.26989007, y: 0.0028408363, z: 0.000000011931075, w: 0.962887}
+    HarvestOffset: {x: -0.26989007, y: 0.0028408363, z: 0.000000011931075, w: 0.962887}
+    ReleasedOffset: {x: -0.069752604, y: 0.00073420885, z: 0.0000000033124157, w: 0.9975641}
+  - BoneName: RightHandRing1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.09668017, y: 0.99328655, z: -0.04466174, w: 0.04516851}
+    CarryOffset: {x: -0.21758285, y: 0.0024446524, z: 0.00000003144621, w: 0.9760388}
+    DrawingOffset: {x: -0.21758285, y: 0.0024446524, z: 0.00000003144621, w: 0.9760388}
+    HarvestOffset: {x: -0.21758285, y: 0.0024446524, z: 0.00000003144621, w: 0.9760388}
+    ReleasedOffset: {x: -0.078454204, y: 0.0008814719, z: 0.000000011281363, w: 0.99691737}
+  - BoneName: RightHandRing2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.000000018626451, y: 0.000000047714174, z: 0.000000074272975, w: 1}
+    CarryOffset: {x: -0.560354, y: 0.0062959404, z: 0.000000025235918, w: 0.8282293}
+    DrawingOffset: {x: -0.560354, y: 0.0062959404, z: 0.000000025235918, w: 0.8282293}
+    HarvestOffset: {x: -0.560354, y: 0.0062959404, z: 0.000000025235918, w: 0.8282293}
+    ReleasedOffset: {x: -0.121861696, y: 0.001369195, z: 0.000000005462368, w: 0.9925462}
+  - BoneName: RightHandRing3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -3.6292397e-15, y: 1.8526742e-14, z: -0.000000041676685, w: 1}
+    CarryOffset: {x: -0.50880337, y: 0.005716694, z: 0.000000023589925, w: 0.8608638}
+    DrawingOffset: {x: -0.50880337, y: 0.005716694, z: 0.000000023589925, w: 0.8608638}
+    HarvestOffset: {x: -0.50880337, y: 0.005716694, z: 0.000000023589925, w: 0.8608638}
+    ReleasedOffset: {x: -0.06975203, y: 0.0007837035, z: 0.000000003072415, w: 0.9975641}
+  - BoneName: RightHandPinky1
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.102590986, y: 0.9934722, z: -0.0041447137, w: 0.04970759}
+    CarryOffset: {x: 0.000000007450581, y: 2.6470492e-11, z: -4.1442746e-10, w: 1}
+    DrawingOffset: {x: 0.000000007450581, y: 2.6470492e-11, z: -4.1442746e-10, w: 1}
+    HarvestOffset: {x: 0.000000007450581, y: 2.6470492e-11, z: -4.1442746e-10, w: 1}
+    ReleasedOffset: {x: -0.07843051, y: 0.0021127854, z: 0.00017124452, w: 0.99691737}
+  - BoneName: RightHandPinky2
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: -0.0000016100767, y: -0.000000031823763, z: -0.0000000063740675, w: 1}
+    CarryOffset: {x: -0.49879962, y: 0.01343681, z: 0.0010891492, w: 0.8666125}
+    DrawingOffset: {x: -0.49879962, y: 0.01343681, z: 0.0010891492, w: 0.8666125}
+    HarvestOffset: {x: -0.49879962, y: 0.01343681, z: 0.0010891492, w: 0.8666125}
+    ReleasedOffset: {x: -0.12182487, y: 0.0032817547, z: 0.00026600918, w: 0.99254614}
+  - BoneName: RightHandPinky3
+    UseExplicitRestPose: 1
+    RestLocalRotation: {x: 0.000002564283, y: 0.000000005270068, z: 0.000000006811454, w: 1}
+    CarryOffset: {x: -0.5427258, y: 0.014620117, z: 0.0011849815, w: 0.8397819}
+    DrawingOffset: {x: -0.5427258, y: 0.014620117, z: 0.0011849815, w: 0.8397819}
+    HarvestOffset: {x: -0.5427258, y: 0.014620117, z: 0.0011849815, w: 0.8397819}
+    ReleasedOffset: {x: -0.06973098, y: 0.0018784351, z: 0.00015225005, w: 0.9975641}
+  RightHandName: RightHand
+  RightForearmName: RightForeArm
+  RightUpperArmName: RightArm
+  RightShoulderName: RightShoulder
+  LeftHandName: LeftHand
+  LeftForearmName: LeftForeArm
+  LeftUpperArmName: LeftArm
+  ChestName: Spine
+  RightHandGripPosition: {x: 0.01063418, y: 0.07499528, z: 0.029693792}
+  RightHandGripRotation: {x: -0.06352078, y: -0.0000015061032, z: 0.638316, w: 0.7671491}
+  FingerPoseWeight: 1
+  CarryWristOffset: {x: 0.16, y: -0.44, z: 0.1}
+  CarryBrushDirection: {x: 0.3, y: -0.34, z: 0.9}
+  CarryElbowPole: {x: 0.3, y: -0.22, z: -0.1}
+  CarryArmWeight: 1
+  CarryGaitInfluence: 0.22
+  CarryMaximumSwing: 0.07
+  CarryBrushRoll: -90
+  EnterResponse: 14
+  ExitResponse: 9
+  BodyResponse: 8
+  MaximumArmExtension: 0.97
+  ElbowOut: 0.27
+  ElbowDown: 0.2
+  DrawingBrushRoll: -90
+  WorldDrawingDistance: 0.7
+  WorldDrawingHeight: 1.32
+  WorldDrawingHalfSize: {x: 0.32, y: 0.27}
+  PenLiftDistance: 0.035
+  ChestYaw: 8
+  ChestLean: 5
+  ShoulderLift: 6
+  OffHandCounter: 0.045
+  SmallStrokeBodyWeight: 0.18
+  LargeStrokeViewportSpan: 0.5
+  CommitRecoverySeconds: 0.16
+  InterruptRecoverySeconds: 0.12
+  HarvestResponse: 11
+  HarvestWristOffset: {x: 0.08, y: -0.17, z: 0.4}
+  HarvestBrushRoll: -90
+  NearShoulderOffset: {x: 0.23, y: -0.29, z: 0.15}
+  NearTipDepth: 1.2
+  NearMinimumDepth: 0.8
+  NearMaximumDepth: 1.65
+  MaximumNearShoulderCorrection: 1.25

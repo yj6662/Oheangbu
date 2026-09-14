@@ -1,0 +1,37 @@
+{
+  "sourceHead": "8fe9f8326913e101b3b50ff0f6eb89ad04b4669c",
+  "baseHead": "a37536248ef1af50b2136e817fe5c8fea11538e4",
+  "copied": 9135,
+  "sourceDeletions": [
+    "Oheangbu/Assets/Spike.meta",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_CombatLoop.unity",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_CombatLoop.unity.meta",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_EffectLab.unity",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_EffectLab.unity.meta",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_FxAudit.unity",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_FxAudit.unity.meta",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_ParryRange.unity",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_ParryRange.unity.meta",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_SpellRange.unity",
+    "Oheangbu/Assets/_Project/Scenes/Dev/C1_SpellRange.unity.meta"
+  ],
+  "credentialRedactedFiles": [],
+  "newLocalAssetCount": 1337,
+  "demoImplementationIncluded": false,
+  "excludedRawToolResponses": 1803,
+  "existingScreenshotsIncluded": [
+    "Art/PlaytestRecovery/DrawingElbow/before-center.png",
+    "Art/PlaytestRecovery/DrawingElbow/after-center.png",
+    "Art/PlaytestRecovery/DrawingElbow/after-top-right.png",
+    "Art/PlaytestRecovery/DrawingElbow/before-world-drawing.png",
+    "Art/PlaytestRecovery/DrawingElbow/after-world-drawing.png",
+    "Art/World/WorldMacro/Playtest/VillageOpening/office-arrival.png",
+    "Art/World/WorldMacro/Playtest/VillageOpening/office-overview.png",
+    "Art/World/WorldMacro/Playtest/VillageOpening/office-play.png",
+    "Art/World/WorldMacro/Playtest/VillageOpening/opening-intro.png",
+    "Art/World/WorldMacro/Playtest/VillageOpening/vehicle-menu.png",
+    "Art/World/WorldMacro/Playtest/VillageOpening/vehicle-menu-before-commission.png"
+  ],
+  "archiveRenamesPreserved": 77,
+  "serializedTexturesKeptLocal": 5
+}

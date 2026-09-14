@@ -1,0 +1,10 @@
+{
+    "status": "PASS",
+    "scope": "Current state snapshot; listener clipping, transition sweeps and subjective sound remain unverified",
+    "checks": [
+        "brush=0; acceptedCast=0; enemyHit=0; playerHit=0; parry=0; harvest=0; interaction=0; summonAppear=0; summonRelease=0; cuePlays=0; cooldownDrops=0; concurrencyDrops=0; fadedVoiceSteals=0; activeVoices=0; harvestLoop=False; lastEvent=none; lastCue=none",
+        "flowVisible=False; sink=(3405.80, 196.24, 1128.87)",
+        "DSP buffer=1024 x 4; sampleRate=48000"
+    ],
+    "failures": []
+}

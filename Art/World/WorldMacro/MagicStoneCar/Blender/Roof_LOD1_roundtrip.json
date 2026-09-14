@@ -1,0 +1,153 @@
+{
+  "lod": 1,
+  "targetTriangles": 4000,
+  "fbx": "C:\\Users\\yj666\\Oheangbu\\Oheangbu\\Assets\\_Project\\Art\\World\\WorldMacro\\MagicStoneCar\\Models\\MagicStoneCar_Roof_LOD1.fbx",
+  "fbxSha256": "1c1df782c77012ca1b5a2f1fb1ee27b6b27882b32244be79b054cd60fa2b6d4e",
+  "blend": "C:\\Users\\yj666\\Oheangbu\\Art\\World\\WorldMacro\\MagicStoneCar\\Blender\\MagicStoneCar_Roof_LOD1.blend",
+  "normalization": {
+    "yawBlenderDegrees": 90.0,
+    "fitMode": "axis",
+    "axisFactors": [
+      2.093121215426085,
+      1.7864179889560179,
+      1.4115787737812244
+    ],
+    "targetEnvelopeUnity": [
+      2.4,
+      0.75,
+      3.4
+    ],
+    "actual": {
+      "vertices": 3713,
+      "triangles": 7650,
+      "size_unity_m": {
+        "x": 2.4000000953674316,
+        "y": 0.75,
+        "z": 3.4000000953674316
+      },
+      "bounds_blender": {
+        "minimum": [
+          -1.2000000476837158,
+          -1.7000000476837158,
+          0.0
+        ],
+        "maximum": [
+          1.2000000476837158,
+          1.7000000476837158,
+          0.75
+        ]
+      },
+      "uv_layers": [
+        "UVMap"
+      ],
+      "materials": [
+        "Roof_Surface"
+      ],
+      "nonfinite_vertices": 0
+    }
+  },
+  "simplification": {
+    "before": 7650,
+    "target": 4000,
+    "actual": 3939,
+    "maxBoundsDriftM": 0.002738475799560547
+  },
+  "beforeExport": {
+    "triangles": 3939,
+    "vertices": 1858,
+    "meshCount": 1,
+    "materials": [
+      "Roof_Surface"
+    ],
+    "uvLayers": {
+      "MagicStoneCar_Roof": 1
+    },
+    "nonfinite": 0,
+    "boundsBlender": {
+      "minimum": [
+        -1.198986291885376,
+        -1.7000287771224976,
+        4.8421814426546916e-05
+      ],
+      "maximum": [
+        1.2027385234832764,
+        1.6978614330291748,
+        0.7515469789505005
+      ]
+    },
+    "actualBounds": {
+      "center": {
+        "x": 0.0018761157989501953,
+        "y": 0.37579768896102905,
+        "z": 0.001083672046661377
+      },
+      "size": {
+        "x": 2.4017248153686523,
+        "y": 0.7514985571360739,
+        "z": 3.3978902101516724
+      }
+    }
+  },
+  "images": [],
+  "roundtrip": {
+    "status": "PASS_GEOMETRY",
+    "boundsErrorM": 2.980232238769531e-07,
+    "uvPresent": true,
+    "actual": {
+      "triangles": 3939,
+      "vertices": 1858,
+      "meshCount": 1,
+      "materials": [
+        "Roof_Surface"
+      ],
+      "uvLayers": {
+        "MagicStoneCar_Roof": 1
+      },
+      "nonfinite": 0,
+      "boundsBlender": {
+        "minimum": [
+          -1.198986291885376,
+          -1.7000287771224976,
+          4.814519706997089e-05
+        ],
+        "maximum": [
+          1.2027385234832764,
+          1.6978615522384644,
+          0.7515472769737244
+        ]
+      },
+      "actualBounds": {
+        "center": {
+          "x": 0.0018761157989501953,
+          "y": 0.37579771876335144,
+          "z": 0.0010836124420166016
+        },
+        "size": {
+          "x": 2.4017248153686523,
+          "y": 0.7514991317766544,
+          "z": 3.397890329360962
+        }
+      }
+    },
+    "importedObjects": [
+      {
+        "name": "MagicStoneCar_Roof",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotationEulerDegrees": [
+          -9.334667642611415e-06,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    ]
+  }
+}

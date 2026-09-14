@@ -1,0 +1,7 @@
+{
+  "name": "Oheangbu.C02RigFaceLab.Editor",
+  "rootNamespace": "Oheangbu.C02RigFaceLab.Editor",
+  "references": ["Oheangbu.C02RigFaceLab"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false
+}

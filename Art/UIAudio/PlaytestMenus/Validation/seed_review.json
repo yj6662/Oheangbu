@@ -1,0 +1,28 @@
+{
+    "utc": "2026-09-13T18:35:29.9117219Z",
+    "status": "PASS",
+    "scope": "Curated review fixture created only in the active suffixed review save. Collections use WorldMacroPlaytestSession.TryCollectFragmentBundle; records use WorldMacroPlaytestSession.Interact after explicit diagnostic teleport.",
+    "saveIsolationSuffix": "_menu20260914",
+    "bundleCount": 5,
+    "fragmentItemCount": 20,
+    "knownSpellCount": 20,
+    "recordCount": 4,
+    "collectionEvents": 5,
+    "interactionEvents": 3,
+    "dataSources": [
+        "fixture setup: temporarily released background focus gate for synchronous diagnostic collection; native input acceptance is unverified",
+        "bundle capital: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport",
+        "bundle exit: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport",
+        "bundle inn: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport",
+        "bundle pass: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport",
+        "bundle start: WorldMacroPlaytestSession.TryCollectFragmentBundle after diagnostic teleport",
+        "record record.mine_inquiry: WorldMacroPlaytestSession.Interact(mine_inquiry) after diagnostic teleport",
+        "fixture navigation: closed interaction detail and released gate immediately between records; this bypass is setup-only, not input-path evidence",
+        "record record.logger: WorldMacroPlaytestSession.Interact(logger) after diagnostic teleport",
+        "fixture navigation: closed interaction detail and released gate immediately between records; this bypass is setup-only, not input-path evidence",
+        "record record.herbalist: already present in review save",
+        "record record.worker_satchel: WorldMacroPlaytestSession.Interact(worker_satchel) after diagnostic teleport",
+        "fixture navigation: closed interaction detail and released gate immediately between records; this bypass is setup-only, not input-path evidence"
+    ],
+    "failures": []
+}

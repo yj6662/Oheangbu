@@ -1,0 +1,393 @@
+{
+  "user_authorized_cap": 120,
+  "budget_basis": "User approved maximum 120 credits. Four Meshy 7 Standard textured PBR 4k image requests, 30 credits each. No paid retries. Public API docs checked 2026-09-12: 7.1 not listed.",
+  "price_source": "https://docs.meshy.ai/en/api/pricing",
+  "endpoint": "/openapi/v1/image-to-3d",
+  "automatic_post_retries": false,
+  "requests": [
+    {
+      "name": "Cabin",
+      "id": "Cabin",
+      "mode": "image",
+      "config": {
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": false,
+        "should_texture": true,
+        "enable_pbr": true,
+        "texture_resolution": "4k",
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 16000,
+        "image_enhancement": false,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "input_file": "Art\\World\\WorldMacro\\MagicStoneCar\\Concepts\\Cabin.png",
+      "input_sha256": "27edddcff916ff9a7b9e909eb74b8050332b13fb593a1292f782526a02b8a801",
+      "expected_credits": 30,
+      "reserved_credits": 30,
+      "consumed_credits": 30,
+      "balance_before": 133,
+      "status": "SUCCEEDED",
+      "created_at": "2026-09-11T20:23:03.670397+00:00",
+      "task_id": "01a09223-5d1a-7008-b8f3-af8ef5e743b4",
+      "progress": 100,
+      "files": [
+        {
+          "path": "Cabin\\image\\model_url.glb",
+          "bytes": 29323292,
+          "sha256": "48ea111aaa1944799e6c69e1c91e3cd0f950ec08b2f3dde202a5d352e983c17a",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 13690,
+            "primitive_vertices": 24306,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Cabin\\image\\model_urls_glb.glb",
+          "bytes": 29323292,
+          "sha256": "48ea111aaa1944799e6c69e1c91e3cd0f950ec08b2f3dde202a5d352e983c17a",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 13690,
+            "primitive_vertices": 24306,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Cabin\\image\\model_urls_fbx.fbx",
+          "bytes": 44283756,
+          "sha256": "fa77b6abb66da4d32c2207a8d2f34a9484d735fa167ea2f0d96aadba334cc55d"
+        },
+        {
+          "path": "Cabin\\image\\thumbnail_url.png",
+          "bytes": 358966,
+          "sha256": "6593bc17c7db1daf43c9dfd7e56f9aa087ecd157db7e0c0bcd2bcbdf8a7c65ed"
+        },
+        {
+          "path": "Cabin\\image\\texture_urls_0_base_color.png",
+          "bytes": 21492381,
+          "sha256": "774f873222756852f90b0cd3624727d90863ed26c06ba338951b931b26ac2ffd"
+        },
+        {
+          "path": "Cabin\\image\\texture_urls_0_metallic.png",
+          "bytes": 322615,
+          "sha256": "d4c5a2bdc4b52f8a0d0bc9f50cd267b21c03ea1e45580d1d56ad79c322f01077"
+        },
+        {
+          "path": "Cabin\\image\\texture_urls_0_roughness.png",
+          "bytes": 1642645,
+          "sha256": "bb9dcab12fb2d0d786066e315d3f35e424304f1422063f3b00537d194d964e73"
+        },
+        {
+          "path": "Cabin\\image\\texture_urls_0_normal.png",
+          "bytes": 20130736,
+          "sha256": "59a33ef54fd3b6d4ef011ebe7da10ac2e64cdeec60c7b3795ae4136df28125a6"
+        }
+      ],
+      "balance_after": 103
+    },
+    {
+      "name": "Roof",
+      "id": "Roof",
+      "mode": "image",
+      "config": {
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": false,
+        "should_texture": true,
+        "enable_pbr": true,
+        "texture_resolution": "4k",
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 8000,
+        "image_enhancement": false,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "input_file": "Art\\World\\WorldMacro\\MagicStoneCar\\Concepts\\Roof.png",
+      "input_sha256": "e540a4a602ba4e187909319ba2f49436df855ee7853c2523edae2dc8b9274ab9",
+      "expected_credits": 30,
+      "reserved_credits": 30,
+      "consumed_credits": 30,
+      "balance_before": 103,
+      "status": "SUCCEEDED",
+      "created_at": "2026-09-11T20:30:03.279096+00:00",
+      "task_id": "01a09229-c3b0-7076-b94a-51fc08481f6b",
+      "progress": 100,
+      "balance_after": 73,
+      "files": [
+        {
+          "path": "Roof\\image\\model_url.glb",
+          "bytes": 25520124,
+          "sha256": "79aa3b0eae4505668387d7e1e5b0de996e60dff0632e772c20b92e1811bcecce",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 7650,
+            "primitive_vertices": 12693,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Roof\\image\\model_urls_glb.glb",
+          "bytes": 25520124,
+          "sha256": "79aa3b0eae4505668387d7e1e5b0de996e60dff0632e772c20b92e1811bcecce",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 7650,
+            "primitive_vertices": 12693,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Roof\\image\\model_urls_fbx.fbx",
+          "bytes": 42865516,
+          "sha256": "68200ff20152f9eade270a6ec9e61806af7a3b7e10f76cb0bf2945ba6d6f8033"
+        },
+        {
+          "path": "Roof\\image\\thumbnail_url.png",
+          "bytes": 100350,
+          "sha256": "f24f72f9837fd54fba661a6e220e79ff91468bb9d20d47efc84a83da9decd786"
+        },
+        {
+          "path": "Roof\\image\\texture_urls_0_base_color.png",
+          "bytes": 21280507,
+          "sha256": "d9c68574545be7e02ab0938f3e0e08b4e6993575de2972ad4a1a785d1d423d98"
+        },
+        {
+          "path": "Roof\\image\\texture_urls_0_metallic.png",
+          "bytes": 1382014,
+          "sha256": "ef94863a2c20e67e2e52befecbdf7d5ff8d9d444f9bf774c4b5430ac6ed10383"
+        },
+        {
+          "path": "Roof\\image\\texture_urls_0_roughness.png",
+          "bytes": 1396294,
+          "sha256": "75fb2d8c93450d53194b32883f2ff8b8f3c1bb872a074bdf82281dd47674aee5"
+        },
+        {
+          "path": "Roof\\image\\texture_urls_0_normal.png",
+          "bytes": 18425475,
+          "sha256": "d0a419c5885a0396f55645450af58abc5f430bef22e21b30cb4212c71833745d"
+        }
+      ]
+    },
+    {
+      "name": "Engine",
+      "id": "Engine",
+      "mode": "image",
+      "config": {
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": false,
+        "should_texture": true,
+        "enable_pbr": true,
+        "texture_resolution": "4k",
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 8000,
+        "image_enhancement": false,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "input_file": "Art\\World\\WorldMacro\\MagicStoneCar\\Concepts\\Engine.png",
+      "input_sha256": "58fdffb038337369c532ecf3abc431b85f22622a30ef5bf5ecde5b03b3a65e4f",
+      "expected_credits": 30,
+      "reserved_credits": 30,
+      "consumed_credits": 30,
+      "balance_before": 73,
+      "status": "SUCCEEDED",
+      "created_at": "2026-09-11T20:34:14.314732+00:00",
+      "task_id": "01a0922d-98d9-73a9-8484-b7d0dfd4f15c",
+      "progress": 100,
+      "balance_after": 43,
+      "files": [
+        {
+          "path": "Engine\\image\\model_url.glb",
+          "bytes": 30975176,
+          "sha256": "1f608fc43eb7c7d7b387a72c16c89829e986ac563242b30ef6d86d960706acb2",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 8269,
+            "primitive_vertices": 15590,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Engine\\image\\model_urls_glb.glb",
+          "bytes": 30975176,
+          "sha256": "1f608fc43eb7c7d7b387a72c16c89829e986ac563242b30ef6d86d960706acb2",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 8269,
+            "primitive_vertices": 15590,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Engine\\image\\model_urls_fbx.fbx",
+          "bytes": 51487212,
+          "sha256": "fa06f034216ca9e8d4e8efa49f1fb283e78363df1306fe2b82854fdf1fd9fce2"
+        },
+        {
+          "path": "Engine\\image\\thumbnail_url.png",
+          "bytes": 129462,
+          "sha256": "2f812822b2ff63632c3cd1df5d2b626a84789c2a744c3ed78a7faf9c0489205d"
+        },
+        {
+          "path": "Engine\\image\\texture_urls_0_base_color.png",
+          "bytes": 24638186,
+          "sha256": "9998f0b1c676c299bd6ce11d1b8f8a0d66d02280a9358c210e51b0d1836808b2"
+        },
+        {
+          "path": "Engine\\image\\texture_urls_0_metallic.png",
+          "bytes": 2008145,
+          "sha256": "5420b32db841fb694f6078df1247df76533bb24b66035ae614163bc1846f2ed5"
+        },
+        {
+          "path": "Engine\\image\\texture_urls_0_roughness.png",
+          "bytes": 1667273,
+          "sha256": "08114af3ebb139c32ea4c56a3b6f4a6f9db73b5e06c9ef6b6f50e4e1aecaa052"
+        },
+        {
+          "path": "Engine\\image\\texture_urls_0_normal.png",
+          "bytes": 22732038,
+          "sha256": "0e430e6e9111febec21a1f6e24955f5b3a912501e99a214d0bccf624282091f9"
+        }
+      ]
+    },
+    {
+      "name": "Wheel",
+      "id": "Wheel",
+      "mode": "image",
+      "config": {
+        "ai_model": "meshy-7",
+        "model_type": "standard",
+        "ultra_mode": false,
+        "should_texture": true,
+        "enable_pbr": true,
+        "texture_resolution": "4k",
+        "should_remesh": true,
+        "topology": "triangle",
+        "target_polycount": 3000,
+        "image_enhancement": false,
+        "target_formats": [
+          "glb",
+          "fbx"
+        ]
+      },
+      "input_file": "Art\\World\\WorldMacro\\MagicStoneCar\\Concepts\\Wheel.png",
+      "input_sha256": "094c49100b395b9d6280efcaa1cb859b76bb2d38af0ea5c0a9297cf0b1d47677",
+      "expected_credits": 30,
+      "reserved_credits": 30,
+      "consumed_credits": 30,
+      "balance_before": 43,
+      "status": "SUCCEEDED",
+      "created_at": "2026-09-11T20:39:20.640254+00:00",
+      "task_id": "01a09232-44ef-7330-b4ef-d685dfdc636e",
+      "progress": 100,
+      "balance_after": 13,
+      "files": [
+        {
+          "path": "Wheel\\image\\model_url.glb",
+          "bytes": 27550856,
+          "sha256": "14d9e8f4a64c7c69251cea7daaa24187d066e49bcbe9ced84270bc5ae3cf735f",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 3057,
+            "primitive_vertices": 4968,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Wheel\\image\\model_urls_glb.glb",
+          "bytes": 27550856,
+          "sha256": "14d9e8f4a64c7c69251cea7daaa24187d066e49bcbe9ced84270bc5ae3cf735f",
+          "geometry": {
+            "status": "GLB_ACCESSOR_COUNTS",
+            "unique_mesh_triangles": 3057,
+            "primitive_vertices": 4968,
+            "meshes": 1,
+            "materials": 1,
+            "primitive_modes": [
+              4
+            ],
+            "note": "Actual GLB primitive counts, not requested target. Scene instancing/runtime deformation not included."
+          }
+        },
+        {
+          "path": "Wheel\\image\\model_urls_fbx.fbx",
+          "bytes": 46962908,
+          "sha256": "4f8c8eb2e20d5925664409d0bef1b21a915271c7cd65cf14948cda776b843ec3"
+        },
+        {
+          "path": "Wheel\\image\\thumbnail_url.png",
+          "bytes": 307666,
+          "sha256": "ee749c23062c4ac2452cc9f081028db63e09cb2c691c1e524951fa029c391f08"
+        },
+        {
+          "path": "Wheel\\image\\texture_urls_0_base_color.png",
+          "bytes": 22781526,
+          "sha256": "4a662d0b84b6d98b36cb140c3139b2a4dfd8271b1e4e277a2de4d75304f10914"
+        },
+        {
+          "path": "Wheel\\image\\texture_urls_0_metallic.png",
+          "bytes": 1852035,
+          "sha256": "5b24ca63c4adb05b3e3e7fc95ac9ef8bc4d696aff539cfd53ce859d0eca7a4e8"
+        },
+        {
+          "path": "Wheel\\image\\texture_urls_0_roughness.png",
+          "bytes": 1704018,
+          "sha256": "e97c45f7bfa552a798137225862123102d32c2118e4fa3e8826216fb152586a9"
+        },
+        {
+          "path": "Wheel\\image\\texture_urls_0_normal.png",
+          "bytes": 20459323,
+          "sha256": "592c00632aa03d42dda3ac62aa4de5683ee12348e1b53e7ef2f5b77649b979e0"
+        }
+      ]
+    }
+  ]
+}

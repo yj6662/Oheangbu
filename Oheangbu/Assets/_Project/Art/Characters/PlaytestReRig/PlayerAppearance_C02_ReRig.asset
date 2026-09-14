@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3068affb06cf4511b91e85c15e1d7f7b, type: 3}
+  m_Name: PlayerAppearance_C02_ReRig
+  m_EditorClassIdentifier: Oheangbu.App:Oheangbu.App.World:WorldMacroPlayerAppearanceProfile
+  Controller: {fileID: 9100000, guid: 2eb5066d7aa725449990913a1bc78450, type: 2}
+  Idle: {fileID: 7400000, guid: 0ad6b0e9c270ddc4a86eb38621e6a232, type: 2}
+  Walk: {fileID: 7400000, guid: 28134d12331fee445a554961212c6bda, type: 2}
+  Run: {fileID: 7400000, guid: 0ea2d1d9996c28f4bbadbef0b7a5cfa1, type: 2}
+  ModelHeight: 1.75
+  WalkSpeed: 1.5537528
+  RunSpeed: 4.5
+  NativeRunSpeed: 5.362285
+  VelocityDamping: 12
+  FacingYaw: 0
+  UniformScale: 1.0046296
+  LocalOffset: {x: 0, y: 0.00000017964177, z: 0}
+  DrawingArmWeight: 0
+  DrawingReach: 0.58
+  BlinkDuration: 0.16
+  BlinkInterval: 4.2

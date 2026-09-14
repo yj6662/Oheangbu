@@ -1,0 +1,39 @@
+{
+    "label": "content_logging_dungeon",
+    "utc": "2026-09-11T23:32:06.7494943Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": true,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "rebuildEachFrame": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 486,
+    "residentInstances": 87852,
+    "drawCalls": 39,
+    "drawnInstances": 6200,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": 2037.0,
+        "y": 171.0828857421875,
+        "z": 1285.0
+    },
+    "euler": {
+        "x": 26.66307258605957,
+        "y": 323.8806457519531,
+        "z": -9.553664312988986e-7
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.6394902467727661,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}

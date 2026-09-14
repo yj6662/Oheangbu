@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f27e5b9614d6a814797f615bb6d06145, type: 3}
+  m_Name: ResourceBars
+  m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.World.WorldMacroHudSkinProfileSO
+  HpStroke: {fileID: 21300000, guid: 508f0927a3594ef4ea0460a75556ee5a, type: 3}
+  InkBottle: {fileID: 21300000, guid: cf5f0f01c0f387947815875f1969a2e9, type: 3}
+  LockRing: {fileID: 21300000, guid: 630786bd87368ed418972093202caca1, type: 3}
+  PromptPaper: {fileID: 21300000, guid: 66a1bb729b1178744b3e24e11acccecf, type: 3}
+  KoreanFont: {fileID: 12800000, guid: d977ef75a80d6f642b6b904f302b2def, type: 3}
+  UseInkBar: 1
+  InkBarPosition: {x: 86, y: 65}
+  InkBarSize: {x: 236, y: 16}
+  Ink: {r: 0.165, g: 0.149, b: 0.133, a: 0.96}
+  Paper: {r: 0.969, g: 0.945, b: 0.894, a: 0.9}
+  MaximumDangerAlpha: 0.24
+  DangerBeginsAtHp: 0.35
+  HpPosition: {x: 86, y: 96}
+  HpSize: {x: 280, y: 22}
+  BottlePosition: {x: 58, y: 136}
+  BottleSize: {x: 60, y: 108}
+  ReticleSize: {x: 44, y: 44}
+  PromptSize: {x: 780, y: 112}

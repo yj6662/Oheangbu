@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Oheangbu.Combat
@@ -18,6 +19,7 @@ namespace Oheangbu.Combat
         // 프레임 기반 창 — 홀드는 매 프레임 틱이므로 벽시계 무관(저프레임에도 신호가 끊기지 않는다)
         public bool IsExtracting => Time.frameCount - _lastExtractFrame <= 2;
         public Vector3 ExtractSourcePosition { get; private set; }
+        public event Action<Vector3> Extracted;
 
         public void Init(InkPool ink)
         {
@@ -37,6 +39,7 @@ namespace Oheangbu.Combat
 
             _lastExtractFrame = Time.frameCount;
             ExtractSourcePosition = target.transform.position + Vector3.up * 1.1f; // 가슴 높이 — 먹이 뽑히는 자리
+            Extracted?.Invoke(ExtractSourcePosition);
         }
     }
 }

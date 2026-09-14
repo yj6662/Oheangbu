@@ -1,0 +1,38 @@
+{
+    "label": "Cheolong_ground_before",
+    "utc": "2026-09-11T22:24:41.5641218Z",
+    "status": "CAPTURED",
+    "scope": "1920x1080 still; no video. Does not certify runtime performance or visual approval.",
+    "gpuStatus": "",
+    "dressing": false,
+    "poseStable": false,
+    "aerialWashOverride": false,
+    "samples": 0,
+    "cpuSamples": 0,
+    "gpuSamples": 0,
+    "residentCells": 0,
+    "residentInstances": 0,
+    "drawCalls": 0,
+    "drawnInstances": 0,
+    "colliders": 0,
+    "colliderOverflow": 0,
+    "position": {
+        "x": -2337.91796875,
+        "y": 122.40118408203125,
+        "z": 200.6104278564453
+    },
+    "euler": {
+        "x": 357.0826110839844,
+        "y": 33.24299240112305,
+        "z": 0.0
+    },
+    "fieldOfView": 60.0,
+    "commitRatio": 0.6954914927482605,
+    "frameMedianMs": 0.0,
+    "frameP95Ms": 0.0,
+    "cpuMedianMs": 0.0,
+    "cpuP95Ms": 0.0,
+    "gpuMedianMs": 0.0,
+    "gpuP95Ms": 0.0,
+    "allocatedMiB": 0.0
+}
