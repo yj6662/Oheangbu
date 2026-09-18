@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f64fc01f5824fd47a7d8adf56b8aebd, type: 3}
+  m_Name: Profile
+  m_EditorClassIdentifier: Oheangbu.Data::Oheangbu.Data.World.CompactBackdropRingProfile
+  Rings:
+  - Name: Inner
+    Count: 16
+    RadiusX: 3400
+    RadiusZ: 4500
+    AngleOffsetDegrees: 0
+    BaseWidth: 1600
+    HeightEmphasis: 0.95
+    WobblePhase: 0.2
+  - Name: Outer
+    Count: 20
+    RadiusX: 5200
+    RadiusZ: 6400
+    AngleOffsetDegrees: 9
+    BaseWidth: 2400
+    HeightEmphasis: 1.05
+    WobblePhase: 1.7
+  RingCentre: {x: 0, y: 0}
+  BaseY: -120
+  Wobble: {x: 0.07, y: 2.31}
+  WidthVariation: {x: 0.86, y: 0.22, z: 1.73}
+  HeightVariation: {x: 0.84, y: 0.28, z: 1.37}
+  DepthVariation: {x: 0.88, y: 0.18, z: 0.91}
+  PeakSelect: {x: 5, y: 1}
+  ForbiddenRect:
+    serializedVersion: 2
+    x: -2109
+    y: -3221
+    width: 4218
+    height: 6442
+  SummitClearance: 120
+  FarAirRange: {x: 3000, y: 9000}
+  AirStrengths: {x: 0.18, y: 0.64}
+  MidAirRange: {x: 1500, y: 4000}
+  MountainSlopeDegrees: {x: 79.6, y: 85.3}
