@@ -23,3 +23,71 @@ desktop.ini
 
 # 로컬 원본 백업(생성 에셋 데시메이트 전 원본) — 리포 밖 보관, 절차는 런 로그에 기입
 Tools/MeshyRuns/_local/
+/Tools/Blender/_smoke/
+/Tools/Blender/blender_path.local
+/Tools/Blender/_out/
+
+# 검증 산출물·빌드 — 로컬 보관, 커밋 금지.
+# 과거 Art/SpellVFX120의 PNG·MP4 2,756개가 커밋됐다가 추적 해제되어 git 이력에 695MB가
+# 영구히 남았다(저장소 846MB의 약 82%). 규칙이 없으면 같은 일이 반복된다.
+# REPORT/REVIEW 문서는 이 경로를 상대경로로 참조하므로 파일 자체는 지우지 않는다.
+/Art/
+/Builds/
+
+# 유료·서드파티 에셋 스토어 팩 — 커밋 금지(재배포 불가·리포 비대).
+# CLAUDE.md: "Odin은 유료 에셋 — 퍼블릭 리포 포함 금지". 같은 원칙을 스토어 팩 전체에 적용한다.
+# 전부 미추적 상태였으므로 이력 재작성 없이 이 규칙만으로 제외된다.
+# 새 클론은 이 팩들을 에셋 스토어에서 재임포트해야 한다 — 목록: Docs/ASSET-REIMPORT-MANIFEST.md
+# _Project 는 이 중 12개 팩을 GUID로 참조하므로, 재임포트 전에는 참조가 깨진다(핑크 머티리얼·누락 메시).
+Oheangbu/Assets/Plugins/Sirenix/
+Oheangbu/Assets/Plugins/Sirenix.meta
+Oheangbu/Assets/Aura 2/
+Oheangbu/Assets/Aura 2.meta
+Oheangbu/Assets/BillemotdonggulLavaTubePack/
+Oheangbu/Assets/BillemotdonggulLavaTubePack.meta
+Oheangbu/Assets/BuildReport/
+Oheangbu/Assets/BuildReport.meta
+Oheangbu/Assets/GabrielAguiarProductions/
+Oheangbu/Assets/GabrielAguiarProductions.meta
+Oheangbu/Assets/Hierarchy Designer/
+Oheangbu/Assets/Hierarchy Designer.meta
+Oheangbu/Assets/House_1/
+Oheangbu/Assets/House_1.meta
+Oheangbu/Assets/House_2/
+Oheangbu/Assets/House_2.meta
+Oheangbu/Assets/HwaseongForteressGate/
+Oheangbu/Assets/HwaseongForteressGate.meta
+Oheangbu/Assets/HwaseongHaenggung/
+Oheangbu/Assets/HwaseongHaenggung.meta
+Oheangbu/Assets/JejumokGwana/
+Oheangbu/Assets/JejumokGwana.meta
+Oheangbu/Assets/KTP_Decal/
+Oheangbu/Assets/KTP_Decal.meta
+Oheangbu/Assets/KTP_Normal/
+Oheangbu/Assets/KTP_Normal.meta
+Oheangbu/Assets/KTP_Normal_Vol.2/
+Oheangbu/Assets/KTP_Normal_Vol.2.meta
+Oheangbu/Assets/KT_SmartMat_Vol_6/
+Oheangbu/Assets/KT_SmartMat_Vol_6.meta
+Oheangbu/Assets/KTinteractiveProp/
+Oheangbu/Assets/KTinteractiveProp.meta
+Oheangbu/Assets/Korea_TreasureProps/
+Oheangbu/Assets/Korea_TreasureProps.meta
+Oheangbu/Assets/KoreanTraditionalFestival/
+Oheangbu/Assets/KoreanTraditionalFestival.meta
+Oheangbu/Assets/KoreanTraditionalPattern_Effect/
+Oheangbu/Assets/KoreanTraditionalPattern_Effect.meta
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.1/
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.1.meta
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.2/
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.2.meta
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.3/
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.3.meta
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.5/
+Oheangbu/Assets/KoreanTraditional_SmartMaterials Vol.5.meta
+Oheangbu/Assets/PolyOne/
+Oheangbu/Assets/PolyOne.meta
+Oheangbu/Assets/SeyeonjeongPavilion/
+Oheangbu/Assets/SeyeonjeongPavilion.meta
+Oheangbu/Assets/YongmeoriCoast/
+Oheangbu/Assets/YongmeoriCoast.meta

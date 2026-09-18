@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_BackdropMountain
+  m_Shader: {fileID: 4800000, guid: 80465e0f65e67f94a915a4b2d1aaaca2, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _GroundPathMask:
+        m_Texture: {fileID: 2800000, guid: 5f66c401260d2274baac99bbc421dbb6, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaintedFormMap:
+        m_Texture: {fileID: 2800000, guid: 2e0f2afb168814f41af8763891156811, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaintedGeoField:
+        m_Texture: {fileID: 2800000, guid: 2fc29c4a43f849c44af357d600b7b0be, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaintedInkAtlas:
+        m_Texture: {fileID: 2800000, guid: 3e2d194c4b093154ba8ace127d9aead1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaintedRoadBankField:
+        m_Texture: {fileID: 2800000, guid: 1578713239ae7864e9a7d67e9b13f3f4, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PaintedRockWash:
+        m_Texture: {fileID: 2800000, guid: b8b88b118b37fcb4098839f0bb7c7eb5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RealmPigment:
+        m_Texture: {fileID: 2800000, guid: 89c3bf08908b216488faf2e10ff345de, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AddLightGain: 1
+    - _AmbientLevel: 0.25
+    - _AoStrength: 0.7
+    - _BrushStrength: 0.075
+    - _CIAtmosphereOverride: 1
+    - _CIBroadBrush: 1
+    - _CIDarkNear: 1
+    - _CIDetailContrast: 0.22
+    - _CIEnabled: 1
+    - _CINormalStrength: 0.5
+    - _CIPainterly: 1
+    - _Cull: 2
+    - _GrainStrength: 0.018
+    - _GroundPath: 0
+    - _GroundPathVariation: 0.09
+    - _InkDensity: 1.75
+    - _InkPoint: 0.035
+    - _LightResponse: 0.44
+    - _NoiseScale: 0.07
+    - _NoiseStrength: 0.065
+    - _PaintedEdgeWash: 1
+    - _PaintedFarPath: 0
+    - _PaintedFarPathAir: 0
+    - _PaintedFormAspectContrast: 1
+    - _PaintedFormAuthored: 0
+    - _PaintedFormEnabled: 0
+    - _PaintedFormStrokeBody: 0.65
+    - _PaintedGeoEnabled: 0
+    - _PaintedInkAirWash: 0.18
+    - _PaintedInkEnabled: 1
+    - _PaintedRoadBank: 0
+    - _PaintedRoadBankSteep: 1
+    - _PaintedValleyReserve: 0
+    - _PaintedWashEnabled: 1
+    - _PaperPoint: 0.8
+    - _PathEdge: 0
+    - _RealmTintStrength: 0
+    - _RimStrength: 0.025
+    - _RimWidth: 0.16
+    - _StrokeScale: 0.065
+    - _StrokeStrength: 0.1
+    - _TintRetain: 0
+    - _ToneCeiling: 0.25
+    - _ToneFloor: 0.015
+    - _UndersideInk: 0.38
+    - _UseWoodColor: 0
+    - _WashEnd: 4750
+    - _WashStart: 400
+    - _WashStrength: 0.58
+    m_Colors:
+    - _CIAir: {r: 0.9, g: 0.88, b: 0.83, a: 1}
+    - _CIAirRange: {r: 900, g: 2200, b: 0, a: 0}
+    - _CIAirStrengths: {r: 0.18, g: 0.64, b: 0, a: 0}
+    - _CIBroadBrushBands: {r: 0.33, g: 0.66, b: 0.12, a: 0.8}
+    - _CIBroadBrushCoverage: {r: 0.9, g: 0.18, b: 0.76, a: 0.2}
+    - _CIBroadBrushScale: {r: 80, g: 240, b: 420, a: 1000}
+    - _CIBroadBrushTones: {r: 0.015, g: 0.07, b: 0, a: 0}
+    - _CIDetailRange: {r: 30, g: 150, b: 0, a: 0}
+    - _CIFarAirRange: {r: 3000, g: 9000, b: 0, a: 0}
+    - _CIFoliagePainterly: {r: 30, g: 180, b: 1.5, a: 0.3}
+    - _CIInk: {r: 0.165, g: 0.149, b: 0.133, a: 1}
+    - _CIMidAirRange: {r: 1500, g: 4000, b: 0, a: 0}
+    - _CIMountainRange: {r: 350, g: 900, b: 0, a: 0}
+    - _CIMountainSlope: {r: 79.6, g: 85.3, b: 0, a: 0}
+    - _CIMountainTones: {r: 0.06, g: 0.18, b: 0, a: 0}
+    - _CIPaper: {r: 0.969, g: 0.945, b: 0.894, a: 1}
+    - _CIPigmentContrast: {r: 0.03, g: 0.65, b: 0, a: 0}
+    - _CIRockRange: {r: 150, g: 350, b: 0, a: 0}
+    - _CIStrokeFadeStrength: {r: 200, g: 1400, b: 0.02, a: 0}
+    - _CIStrokeSpacingWidth: {r: 20, g: 40, b: 2, a: 7}
+    - _CITones: {r: 0.14, g: 0.3, b: 0.17, a: 0.29}
+    - _GroundPathRect: {r: -2000, g: -3000, b: 0.00025, a: 0.00016666666}
+    - _GroundPathTones: {r: 0.07, g: 0.18, b: 0, a: 0}
+    - _PaintedEdgeWashResponse: {r: 0.5, g: 1, b: 0, a: 0}
+    - _PaintedEdgeWashStrengths: {r: 0.3, g: 0.25, b: 0, a: 0}
+    - _PaintedFarPathAppearance: {r: 0.035, g: 1, b: 0, a: 0}
+    - _PaintedFarPathDistance: {r: 250, g: 900, b: 0, a: 0}
+    - _PaintedFormBrush: {r: 520, g: 600, b: 0.2, a: 0.65}
+    - _PaintedFormDirection: {r: 0.8, g: 0.6, b: 0, a: 0}
+    - _PaintedFormMapRect: {r: -2000, g: -3000, b: 4000, a: 6000}
+    - _PaintedFormPaper: {r: 0, g: 0.72, b: 0, a: 0}
+    - _PaintedFormPaperDistance: {r: 250, g: 900, b: 0, a: 0}
+    - _PaintedFormRelief: {r: 45, g: 145, b: 55, a: 135}
+    - _PaintedFormTones: {r: 0.006, g: 0.045, b: 0.16, a: 0.008}
+    - _PaintedGeoRect: {r: -2000, g: -3000, b: 4000, a: 6000}
+    - _PaintedInkBlack: {r: 0.008, g: 0.007, b: 0.006, a: 0}
+    - _PaintedInkLayout: {r: 0.75, g: 0.64, b: 0.35, a: 0.12}
+    - _PaintedInkLoad: {r: 1, g: 1.9, b: 1, a: 0}
+    - _PaintedInkMassTones: {r: 0.012, g: 0.04, b: 0.1, a: 0.035}
+    - _PaintedInkPaperTint: {r: 1, g: 0.95, b: 0.86, a: 0}
+    - _PaintedInkPaperTones: {r: 0.2, g: 0.4, b: 0, a: 0}
+    - _PaintedInkResponse: {r: 0.03, g: 0.92, b: 0, a: 0}
+    - _PaintedInkScale: {r: 150, g: 310, b: 440, a: 780}
+    - _PaintedInkSlope: {r: 18, g: 42, b: 0, a: 0}
+    - _PaintedInkTileCrop: {r: 0.18, g: 0, b: 0.82, a: 1}
+    - _PaintedRoadBankParams: {r: 2, g: 6, b: 80, a: 250}
+    - _PaintedRoadBankRect: {r: -2000, g: -3000, b: 4000, a: 6000}
+    - _PaintedRoadBankSteepParams: {r: 0.70710677, g: 0.5, b: 80, a: 140}
+    - _PaintedValleyAppearance: {r: 0.45, g: 0.72, b: 0, a: 0}
+    - _PaintedValleyDistance: {r: 250, g: 900, b: 0, a: 0}
+    - _PaintedValleyRelief: {r: 10, g: 30, b: 55, a: 125}
+    - _PaintedWashTiling: {r: 520, g: 600, b: 0.65, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
