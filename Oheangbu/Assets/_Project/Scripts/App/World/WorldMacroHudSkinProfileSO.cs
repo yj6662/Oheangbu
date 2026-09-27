@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Oheangbu.App.World
 {
@@ -21,6 +21,13 @@ namespace Oheangbu.App.World
         public Color Paper = new Color(0.969f, 0.945f, 0.894f, 0.90f);
         [Range(0f, 0.45f)] public float MaximumDangerAlpha = 0.24f;
         [Range(0.1f, 0.7f)] public float DangerBeginsAtHp = 0.35f;
+
+        [Header("World-space interaction letter")]
+        [Min(.05f)] public float InteractionLetterHeight = .22f;
+        public float InteractionLetterOffset = .16f;
+        [Range(1,5)] public float InteractionOutlinePixels = 2.2f;
+        public Color InteractionOutlineColor = new Color(.83f,.75f,.53f,1);
+        public Color InteractionLetterColor = new Color(.97f, .95f, .89f, 1f);
 
         [Header("Reference-resolution layout")]
         public Vector2 HpPosition = new Vector2(48f, 62f);

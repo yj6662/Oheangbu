@@ -1,4 +1,5 @@
 using Oheangbu.Core.Domain;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Oheangbu.Combat
@@ -27,6 +28,11 @@ namespace Oheangbu.Combat
         private Element _guardElement;
         private float _guardStart = float.NegativeInfinity;
         private bool _hasGuard;
+        private float _durationScale = 1f;
+        public float GuardWindow => (_config != null ? _config.ParryWindow : .9f) * _durationScale;
+        public float GuardLifetime => (_config != null ? _config.GuardDuration : 4f) * _durationScale;
+        private readonly Dictionary<long, ParryOutcome> _resolvedAttacks = new Dictionary<long, ParryOutcome>();
+        private readonly Queue<long> _resolvedOrder = new Queue<long>();
         // Identifies replacement guards for presentation without changing combat rules.
         public uint GuardRevision { get; private set; }
         public void ClearGuard(){_hasGuard=false;_guardStart=float.NegativeInfinity;GuardRevision++;}
@@ -34,6 +40,7 @@ namespace Oheangbu.Combat
         // 임팩트가 방어막에 닿았을 때(None 제외) — 배선부가 성공 보상(그로기·먹·이펙트)을 이행한다.
         // 방어막 속성·접점은 표현(접점 버스트)에 필요한 문맥 — 판정 규칙에는 불개입
         public event System.Action<ParryOutcome, Element, Vector3> ImpactResolved;
+        public event System.Action<ParryImpactResult> OwnedImpactResolved;
 
         public ParryJudge(CombatConfigSO config)
         {
@@ -41,8 +48,10 @@ namespace Oheangbu.Combat
         }
 
         // 글자 완성 = 방어막 생성. 새 방어막은 이전 것을 대체한다(동시 1장) [TEST]
-        public void RaiseGuard(Element element, float now)
+        public void RaiseGuard(Element element, float now) => RaiseGuard(element, now, 1f);
+        public void RaiseGuard(Element element, float now, float durationScale)
         {
+            _durationScale = float.IsFinite(durationScale) && durationScale > 0 ? Mathf.Clamp(durationScale,.1f,1f) : 1f;
             GuardRevision++;
             _guardElement = element;
             _guardStart = now;
@@ -52,9 +61,13 @@ namespace Oheangbu.Combat
         // 판정점 = 임팩트 시각. 무속성 공격은 호출하지 않는다 — 무속성=회피만이 답(COMBAT-DEFENSE 이원법).
         // impactPoint = 투사체가 방어막과 만나는 지점(호출자가 계산) — 이벤트로 표현 계층에 전달만 한다
         public ParryOutcome ResolveImpact(Element attackElement, float now, Vector3 impactPoint)
+            => ResolveImpact(attackElement, now, impactPoint, default);
+
+        public ParryOutcome ResolveImpact(Element attackElement, float now, Vector3 impactPoint, AttackProvenance attack)
         {
-            float parryWindow = _config != null ? _config.ParryWindow : 0.9f;
-            float duration = _config != null ? _config.GuardDuration : 4f;
+            if (attack.AttackId > 0 && _resolvedAttacks.TryGetValue(attack.AttackId, out var resolved)) return resolved;
+            float parryWindow = GuardWindow;
+            float duration = GuardLifetime;
 
             ParryOutcome outcome = ParryOutcome.None;
             if (_hasGuard && now <= _guardStart + duration)
@@ -77,7 +90,16 @@ namespace Oheangbu.Combat
                 _hasGuard = false; // 만료 정리
             }
 
-            if (outcome != ParryOutcome.None) ImpactResolved?.Invoke(outcome, _guardElement, impactPoint);
+            if (attack.AttackId > 0)
+            {
+                _resolvedAttacks.Add(attack.AttackId, outcome); _resolvedOrder.Enqueue(attack.AttackId);
+                if (_resolvedOrder.Count > 256) _resolvedAttacks.Remove(_resolvedOrder.Dequeue());
+            }
+            if (outcome != ParryOutcome.None)
+            {
+                OwnedImpactResolved?.Invoke(new ParryImpactResult(outcome, _guardElement, impactPoint, attack));
+                ImpactResolved?.Invoke(outcome, _guardElement, impactPoint);
+            }
             return outcome;
         }
     }

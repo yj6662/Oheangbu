@@ -14,6 +14,9 @@ namespace Oheangbu.App.World.Vehicle
         [Range(.35f,.7f)] public float CallMoment = .52f;
         [Min(10)] public float RecallDistance = 30f;
         [Min(0)] public float ExitGraceSeconds = 2f;
+        public bool NaturalPresentation;
+        public WorldMacroPlaytestAudio Soundscape;
+        bool declined;
         public bool Calling { get; private set; }
         public bool IsRecalled { get; private set; }
         public bool RecallArmed { get; private set; }
@@ -48,7 +51,7 @@ namespace Oheangbu.App.World.Vehicle
             }
             else if(Keyboard.current!=null&&Keyboard.current.gKey.wasPressedThisFrame)
             {
-                if(!TryBeginShortcut(out var message)) Notify(message);
+                if(!TryBeginShortcut(out var message)){if(NaturalPresentation)TryPresentDeclinedCall();else Notify(message);}
             }
             TickRecall(Time.deltaTime);
         }
@@ -60,32 +63,41 @@ namespace Oheangbu.App.World.Vehicle
             var ui=PlaytestUiRoot.Instance;
             if(ui==null||ui.IsTitle||ui.Pause==null||ui.Pause.Gate==null||ui.Pause.IsPaused||
                 ui.Pause.Gate.InputBlocked||Time.timeScale<=0f)
-                return Fail("메뉴를 닫고 보행 중 G를 눌러 주세요.",out message);
-            if(Session==null||!Session.OpeningCommissionReceived)return Fail("먼저 관청 아전에게 조사 의뢰를 확인하세요.",out message);
+                return Fail("메뉴를 닫고 보행 중 G를 누른다.",out message);
+            if(Session==null||!Session.OpeningCommissionReceived)return Fail("먼저 관청 아전에게 조사 의뢰를 확인한다.",out message);
             if(!Ready(out message)){LastResult=message;return false;}
-            if(Seat.Occupied||Vehicle.DriverPresent||Walker.Seated)return Fail("차에서 내린 뒤 호출할 수 있습니다.",out message);
+            if(Seat.Occupied||Vehicle.DriverPresent||Walker.Seated)return Fail("차에서 내린 뒤 부를 수 있다.",out message);
             if(Vehicle.Speed>.15f||Vehicle.Body.angularVelocity.magnitude>.1f||Mathf.Abs(Vehicle.AppliedMotorTorque)>.1f)
-                return Fail("자동차가 완전히 멈춘 뒤 호출할 수 있습니다.",out message);
+                return Fail("자동차가 완전히 멈춘 뒤 부를 수 있다.",out message);
             if((callVitals!=null&&callVitals.Hp01<=0)||!Walker.Body.enabled||!Walker.Motor.enabled||
                 !Walker.Motor.IsLocomotionGrounded||Walker.Motor.IsDrawing||Walker.Drawing.InDrawMode||
                 Walker.Motor.IsDodging||Walker.Motor.IsHarvesting||Walker.Motor.IsSitting||Walker.Motor.IsCrouching)
-                return Fail("땅에 서서 작도와 갈무리를 마친 뒤 G를 눌러 주세요.",out message);
-            if(Time.unscaledTimeAsDouble<nextCall)return Fail("자동차가 자리를 잡는 중입니다.",out message);
+                return Fail("땅에 서서 작도와 갈무리를 마친 뒤 G를 누른다.",out message);
+            if(Time.unscaledTimeAsDouble<nextCall)return Fail("자동차가 자리를 잡는 중이다.",out message);
             if(Gesture==null||TemporaryPendant==null||!Gesture.CanPresentPendant)
-                return Fail("오행부 손동작 연결을 확인해야 합니다.",out message);
+                return Fail("오행부 손동작 연결을 확인해야 한다.",out message);
             Physics.SyncTransforms();
-            if(!TryFindPlacement(Walker.Body.transform.position,Walker.Body.transform.forward,out _,out message))
+            if(!NaturalPresentation&&!TryFindPlacement(Walker.Body.transform.position,Walker.Body.transform.forward,out _,out message))
             {LastResult=message;return false;}
             // The real pose is queried again at the tap; no destination is reserved through an interruption.
-            if(!Gesture.BeginPendant(TemporaryPendant))return Fail("손동작을 준비하지 못했습니다.",out message);
+            if(!Gesture.BeginPendant(TemporaryPendant))return Fail("손동작을 준비하지 못했다.",out message);
             pause=ui.Pause;actionGate=pause.Gate;
             pause.PausedChanged+=OnPause;
             ownsGate=true;actionGate.Block();
-            elapsed=0;attempted=false;Calling=true;
-            message=LastResult="오행부로 자동차를 부릅니다.";
+            elapsed=0;attempted=false;declined=false;Calling=true;
+            message=LastResult="오행부로 자동차를 부른다.";
             return true;
         }
 
+        public bool TryPresentDeclinedCall(){
+            var ui=PlaytestUiRoot.Instance;
+            if(!NaturalPresentation||Calling||ui==null||ui.IsMenuOpen||ui.Pause==null||ui.Gate.InputBlocked||Time.timeScale<=0||
+                Walker==null||Walker.Seated||Walker.Motor==null||!Walker.Motor.enabled||!Walker.Motor.IsLocomotionGrounded||
+                Walker.Motor.IsDodging||Walker.Motor.IsDrawing||Walker.Motor.IsHarvesting||Walker.Motor.IsSitting||
+                (callVitals!=null&&callVitals.Hp01<=0)||Gesture==null||TemporaryPendant==null||!Gesture.BeginPendant(TemporaryPendant))return false;
+            pause=ui.Pause;actionGate=ui.Gate;pause.PausedChanged+=OnPause;ownsGate=true;actionGate.Block();
+            elapsed=0;attempted=false;declined=true;Calling=true;return true;
+        }
         void AdvanceCall(float dt)
         {
             if(!Calling)return;
@@ -95,15 +107,15 @@ namespace Oheangbu.App.World.Vehicle
             {
                 attempted=true;
                 Physics.SyncTransforms();
-                if(!Seat.Occupied&&!Vehicle.DriverPresent&&Vehicle.Speed<=.15f&&
+                if(!declined&&!Seat.Occupied&&!Vehicle.DriverPresent&&Vehicle.Speed<=.15f&&
                     Vehicle.Body.angularVelocity.magnitude<=.1f&&
-                    TryFindPlacement(Walker.Body.transform.position,Walker.Body.transform.forward,out var placement,out var reason))
+                    TryFindPlacement(Walker.Body.transform.position,Walker.Body.transform.forward,out var placement,out var reason)&&CommitPlacement(placement))
                 {
-                    CommitPlacement(placement);
-                    LastResult="큰길에 자동차를 불렀습니다. E로 탑승하세요.";
+                    if(NaturalPresentation)Soundscape?.PresentVehicleCall(placement.Position,true);
+                    LastResult="앞에 자동차를 불렀다. E로 탑승.";
                     if(!Session.TryRecordOpeningVehicleSummoned(out var saveError))LastResult+="\n"+saveError;
                 }
-                else LastResult="호출할 자리가 바뀌었습니다. 넓은 큰길에서 다시 시도하세요.";
+                else {LastResult="앞에 자동차를 놓을 공간이 부족하다.";if(NaturalPresentation)Soundscape?.PresentVehicleCall(Walker.Body.transform.position,false);}
                 Notify(LastResult);
             }
             if(GestureProgress>=1)EndCall();
@@ -112,7 +124,7 @@ namespace Oheangbu.App.World.Vehicle
         public void CancelCall()
         {
             if(!Calling)return;
-            LastResult=attempted?"오행부를 집어넣었습니다.":"자동차 호출을 취소했습니다.";
+            LastResult=attempted?"오행부를 집어넣었다.":"자동차 호출을 취소했다.";
             EndCall();
         }
         void EndCall()
@@ -148,10 +160,18 @@ namespace Oheangbu.App.World.Vehicle
             IsRecalled=true;RecallArmed=false;Recalls++;
             // Keep the one configured instance, but stop all renderers, physics, seats and drive VFX together.
             Vehicle.gameObject.SetActive(false);
-            LastResult="멀어진 자동차를 오행부로 회수했습니다. 큰길에서 G로 다시 부를 수 있습니다.";
+            LastResult="멀어진 자동차를 오행부로 회수했다. G로 앞에 다시 부른다.";
             Notify(LastResult);
         }
-        void Notify(string message){if(!string.IsNullOrEmpty(message))PlaytestUiRoot.Instance?.ShowNotice(message,5);}
+        public bool RecallAfterRecovery()
+        {
+            if(Vehicle==null||Seat==null||Seat.Occupied)return false;
+            CancelCall();Vehicle.StopDriverInputForUi();
+            if(Vehicle.Body!=null){Vehicle.Body.linearVelocity=Vector3.zero;Vehicle.Body.angularVelocity=Vector3.zero;}
+            if(!IsRecalled)Recalls++;
+            IsRecalled=true;RecallArmed=false;Vehicle.gameObject.SetActive(false);return true;
+        }
+        void Notify(string message){if(NaturalPresentation)return;if(!string.IsNullOrEmpty(message))PlaytestUiRoot.Instance?.ShowNotice(message,5);}
         void OnDisable(){CancelCall();}
         void OnDestroy()
         {

@@ -35,6 +35,8 @@ namespace Oheangbu.App.World
             public float NearBrushThumbSideDot;
             public float NearElbowHeight, WorldElbowHeight, NearElbowFlexion, WorldElbowFlexion;
             public float NearWristBendDegrees, NearWristTwistDegrees, NearDorsalUp, NearForearmTwistDegrees;
+            public float StrokeArmShare;
+            public Vector2 StrokeSweep;
         }
 
         [SerializeField] private WorldMacroPlayerGestureProfile _profile;
@@ -106,6 +108,9 @@ namespace Oheangbu.App.World
         private Vector3 _nearLastAim, _nearLastElbow;
         private float _nearLastDepth;
         private Vector2 _nearLastScreen;
+        private BrushStrokeMotion _strokeMotion;
+        private Vector3 _nearStrokeWrist, _nearStrokeGrip, _worldStrokeGrip;
+        private bool _strokeAnchorReady;
 
         public WorldMacroPlayerGestureProfile Profile => _profile;
         public GestureDiagnostics Diagnostics => _diagnostics;
@@ -324,7 +329,7 @@ namespace Oheangbu.App.World
         }
 
         private void OnModeExited() { _hasPointerHistory = false; _wasStroking = false; }
-        private void OnStrokeStarted() { _recoveryRemaining = 0f; _hasPointerHistory = false; }
+        private void OnStrokeStarted() { _recoveryRemaining = 0f; _hasPointerHistory = false; _strokeMotion.BeginStroke(); }
 
         private void Update()
         {
@@ -371,7 +376,11 @@ namespace Oheangbu.App.World
                 return;
             }
 
-            float dt = Mathf.Min(.1f, Mathf.Max(0f, Time.unscaledDeltaTime));
+            EvaluateGesturePose(Mathf.Min(.1f, Mathf.Max(0f, Time.unscaledDeltaTime)));
+        }
+
+        private void EvaluateGesturePose(float dt)
+        {
             bool drawing = _drawing != null && _drawing.InDrawMode;
             bool stroking = drawing && _drawing.IsStroking;
             bool harvesting = !drawing && _harvest != null && _harvest.IsExtracting;
@@ -388,6 +397,22 @@ namespace Oheangbu.App.World
                 (screen.x - camera.pixelRect.x) / Mathf.Max(1f, camera.pixelRect.width),
                 (screen.y - camera.pixelRect.y) / Mathf.Max(1f, camera.pixelRect.height)) : new Vector2(.5f, .5f);
             Vector2 centered = (viewport - Vector2.one * .5f) * 2f;
+            if (_profile.ArticulatedStrokes)
+            {
+                _strokeMotion.Step(viewport, drawing && hasPointer, stroking, dt, _profile.WristStrokeSpan, _profile.ArmStrokeSpan);
+                if (_strokeMotion.StartedStroke)
+                {
+                    _strokeAnchorReady = _nearHasSolution;
+                    if (_nearHasSolution)
+                    {
+                        _nearStrokeWrist = camera.transform.InverseTransformPoint(_near.Hand.position);
+                        _nearStrokeGrip = camera.transform.InverseTransformPoint(_nearBrush.Grip.position);
+                    }
+                    _worldStrokeGrip = _world.Root.InverseTransformPoint(_worldBrush.Grip.position);
+                }
+                _diagnostics.StrokeArmShare = _strokeMotion.ArmShare;
+                _diagnostics.StrokeSweep = _strokeMotion.Sweep;
+            }
             _bodyPoint = Vector2.Lerp(_bodyPoint, centered, 1f - Mathf.Exp(-_profile.BodyResponse * dt));
             if (stroking && !_wasStroking) _strokeMin = _strokeMax = viewport;
             if (stroking) { _strokeMin = Vector2.Min(_strokeMin, viewport); _strokeMax = Vector2.Max(_strokeMax, viewport); }
@@ -567,7 +592,10 @@ namespace Oheangbu.App.World
 
         private Vector3 PoseTowardTip(Body body, Brush brush, Vector3 tip, Transform basis, float weight, float roll)
         {
-            Quaternion grip = _profile.OverhandGrip ? DrawingGripRotation(brush.TipOffset,tip-body.Upper.position,basis.up) : GripRotation(brush.TipOffset, tip - body.Upper.position, basis.up, roll);
+            Vector3 aim = tip-body.Upper.position;
+            if (_profile.ArticulatedStrokes && _strokeMotion.Contact && _strokeAnchorReady)
+                aim = Vector3.Slerp(aim.normalized, (tip-basis.TransformPoint(_worldStrokeGrip)).normalized, 1-_strokeMotion.ArmShare);
+            Quaternion grip = _profile.OverhandGrip ? DrawingGripRotation(brush.TipOffset,aim,basis.up) : GripRotation(brush.TipOffset, aim, basis.up, roll);
             Quaternion hand = grip * Quaternion.Inverse(WorldMacroPlayerGestureProfile.SafeRotation(_profile.RightHandGripRotation));
             Vector3 wrist = tip - grip * brush.TipOffset - hand * Vector3.Scale(_profile.RightHandGripPosition, body.Hand.lossyScale);
             Vector3 pole = ArmPole(body,wrist,hand,basis);
@@ -622,8 +650,11 @@ namespace Oheangbu.App.World
                     float elbowCost=_profile.StableDrawingElbow ? Mathf.Max(0,elbowRise+.025f)*180f+Mathf.Max(0,flexion-135f)*.12f : 0f;
                     float anatomical=_profile.OverhandGrip ? Mathf.Max(0,bend-40)*5f+bend*.002f : 0;
                     float composition=_profile.OverhandGrip ? Vector2.Distance(new Vector2(view.x,view.y),new Vector2(.62f,.24f))*6f : 0;
-                    float continuity=continuous ? Vector3.Distance(camera.transform.InverseTransformDirection(elbow-shoulder),_nearLastElbow)*60f+Vector3.Angle(direction,previousAim)*.12f+Mathf.Abs(Vector3.Distance(ray.origin,candidate)-_nearLastDepth)*12f : 0f;
-                    float score=error*1000+clipped*20+anatomical+elbowCost+composition+continuity+Mathf.Abs(Vector3.Distance(ray.origin,candidate)-preferred)*.15f+Vector3.Angle(direction,(candidate-shoulder).normalized)*.001f;
+                    float armShare=_profile.ArticulatedStrokes?_strokeMotion.ArmShare:0;
+                    float continuity=continuous ? Vector3.Distance(camera.transform.InverseTransformDirection(elbow-shoulder),_nearLastElbow)*Mathf.Lerp(60f,18f,armShare)+Vector3.Angle(direction,previousAim)*.12f+Mathf.Abs(Vector3.Distance(ray.origin,candidate)-_nearLastDepth)*12f : 0f;
+                    float pivot=_profile.ArticulatedStrokes&&stroking&&_strokeAnchorReady
+                        ? Vector3.Distance(w,camera.transform.TransformPoint(_nearStrokeWrist))*_profile.WristAnchorWeight*(1-armShare) : 0;
+                    float score=error*1000+clipped*20+anatomical+elbowCost+composition+continuity+pivot+Mathf.Abs(Vector3.Distance(ray.origin,candidate)-preferred)*.15f+Vector3.Angle(direction,(candidate-shoulder).normalized)*.001f;
                     if(score<best){best=score;bestTip=candidate;bestAim=direction;}
                 }
                 for(int d=0;d<=16;d++)
@@ -645,6 +676,22 @@ namespace Oheangbu.App.World
                         for(int yaw=-1;yaw<=1;yaw++)for(int pitch=-1;pitch<=1;pitch++)
                             Consider(candidate,Quaternion.AngleAxis(yaw*5f,camera.transform.up)*Quaternion.AngleAxis(pitch*5f,camera.transform.right)*previousAim);
                     }
+                if (_profile.ArticulatedStrokes && stroking && _strokeAnchorReady)
+                {
+                    // Exact ray/sphere candidates allow a small stroke to pivot about the grasp.
+                    // Depth remains free, while the rendered endpoint remains on the input ray.
+                    Vector3 pivot=camera.transform.TransformPoint(_nearStrokeGrip);
+                    Vector3 offset=ray.origin-pivot;
+                    float b=Vector3.Dot(offset,ray.direction);
+                    float discriminant=b*b-offset.sqrMagnitude+_nearBrush.TipOffset.sqrMagnitude;
+                    if(discriminant>=0)
+                        foreach(float depth in new[]{-b-Mathf.Sqrt(discriminant),-b+Mathf.Sqrt(discriminant)})
+                            if(depth>=minimum&&depth<=maximum)
+                            {
+                                Vector3 candidate=ray.GetPoint(depth);
+                                Consider(candidate,(candidate-pivot).normalized);
+                            }
+                }
                 _nearLastAim=camera.transform.InverseTransformDirection(bestAim);
                 _nearLastDepth=Vector3.Distance(ray.origin,bestTip);_nearLastScreen=normalizedScreen;
                 tip=bestTip;aim=bestAim;edgeAdjustment=0;
@@ -679,6 +726,13 @@ namespace Oheangbu.App.World
                 + camera.transform.right * _profile.ElbowOut + camera.transform.up * elbowHeight;
             PlayerVisualIK.Solve(_near.Upper, _near.Forearm, _near.Hand, wrist, pole, hand, 1f, _profile.MaximumArmExtension);
             _nearHasSolution=true;
+            if (_profile.ArticulatedStrokes && stroking && !_strokeAnchorReady)
+            {
+                _nearStrokeWrist=camera.transform.InverseTransformPoint(wrist);
+                _nearStrokeGrip=camera.transform.InverseTransformPoint(tip-grip*_nearBrush.TipOffset);
+                _worldStrokeGrip=_world.Root.InverseTransformPoint(_worldBrush.Grip.position);
+                _strokeAnchorReady=true;
+            }
             _nearLastElbow=camera.transform.InverseTransformDirection(_near.Forearm.position-_near.Upper.position);
             _diagnostics.NearElbowHeight=Vector3.Dot(_near.Forearm.position-_near.Upper.position,camera.transform.up);
             _diagnostics.NearElbowFlexion=Vector3.Angle(_near.Forearm.position-_near.Upper.position,_near.Hand.position-_near.Forearm.position);
@@ -838,7 +892,15 @@ namespace Oheangbu.App.World
                 // A hand-relative pole rolls the whole bend plane when the brush rotates.
                 // Prefer gravity/down and a small outward bias, independent of wrist pronation.
                 Vector3 axis=(wrist-body.Upper.position).normalized;
-                Vector3 bend=Vector3.ProjectOnPlane(-basis.up+ basis.right*.32f,axis);
+                Vector3 direction=-basis.up+ basis.right*.32f;
+                if (_profile.ArticulatedStrokes && _drawWeight > .01f)
+                {
+                    float share=_strokeMotion.ArmShare*_profile.DirectionalElbowWeight;
+                    direction += basis.right * (_strokeMotion.Sweep.x*.55f*share)
+                        + basis.forward * (-_strokeMotion.Sweep.y*.65f*share)
+                        + basis.up * (Mathf.Abs(_strokeMotion.Sweep.y)*.3f*share);
+                }
+                Vector3 bend=Vector3.ProjectOnPlane(direction,axis);
                 if(bend.sqrMagnitude<.015f)
                     bend=Vector3.ProjectOnPlane(basis.right-basis.forward*.2f,axis);
                 return body.Upper.position+bend.normalized*Mathf.Max(.2f,body.UpperLength);
@@ -919,6 +981,7 @@ namespace Oheangbu.App.World
         {
             _drawWeight = 0f; _harvestWeight = 0f; _recoveryRemaining = 0f;
             _bodyPoint = Vector2.zero; _hasPointerHistory = false; _wasStroking = false;
+            _strokeMotion.Reset(); _strokeAnchorReady=false;
             _worldBrush?.Bristles?.ResetDeformation(); _nearBrush?.Bristles?.ResetDeformation();
         }
 

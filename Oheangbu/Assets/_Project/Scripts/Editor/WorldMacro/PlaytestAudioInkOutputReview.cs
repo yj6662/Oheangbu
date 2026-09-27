@@ -53,7 +53,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             if(audio==null||audio.ActiveVoiceCount!=0||audio.Profile?.Mix==null||!audio.Profile.Mix.IsReady)throw new InvalidOperationException("Prepared audio, real mixer and idle voices required");
             var listeners=Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Where(x=>x.isActiveAndEnabled).ToArray();
             if(listeners.Length!=1)throw new InvalidOperationException("Exactly one active listener required");
-            if(Oheangbu.EditorTools.SpellVFX120.FixedWardReview.Memory()>=.85f)throw new InvalidOperationException("System commit at least 85%; output capture not started");
+            // Same commit-ratio measurement as FixedWardReview.Memory(); sourced from the shared
+            // guard so WorldMacro does not depend on the SpellVFX120 assembly.
+            if(Oheangbu.EditorTools.Prologue.PrologueAudit.CommitRatio()>=.85f)throw new InvalidOperationException("System commit at least 85%; output capture not started");
             profile=audio.Profile;mix=profile.Mix;mix.FlushPending();
             for(int i=0;i<3;i++)if(!mix.Mixer.GetFloat(keys[i],out oldMix[i]))throw new InvalidOperationException("Mixer parameter missing "+keys[i]);
             repairPass=action=="begin-lowfps";lastPoolTick=double.NegativeInfinity;

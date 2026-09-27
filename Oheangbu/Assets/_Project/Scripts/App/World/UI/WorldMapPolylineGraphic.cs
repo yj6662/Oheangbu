@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,6 +37,9 @@ namespace Oheangbu.App.World.UI
         int panelCount = 1;
         float widthScale = 1f;
         bool single;
+        public bool BrushStyle;
+        public bool PaintedRelief;
+        public float ViewWorldHeight=128;
 
         public void SetPaths(WorldMapLineSpec[] source, WorldMapProjection mapProjection, Rect mapView,
             int sliceIndex = 0, int sliceCount = 1, float scale = 1f)
@@ -73,7 +76,11 @@ namespace Oheangbu.App.World.UI
             {
                 WorldMapLineSpec line = lines[i];
                 if (line == null) continue;
-                AddPath(vh, line.Points, LineColor(line.Kind), line.PixelWidth * widthScale);
+                if(PaintedRelief&&(line.Kind==WorldMapLineKind.Road||line.Kind==WorldMapLineKind.Trail||line.Kind==WorldMapLineKind.DetailFill)){
+                    float width=line.Kind==WorldMapLineKind.DetailFill?Mathf.Clamp(8/ViewWorldHeight*rectTransform.rect.height,3,40):3.5f;
+                    AddPath(vh,line.Points,new Color32(113,105,80,175),width+1.7f);
+                    AddPath(vh,line.Points,new Color32(220,210,175,250),width);
+                }else AddPath(vh, line.Points, LineColor(line.Kind), line.PixelWidth * widthScale);
             }
         }
 
@@ -90,6 +97,32 @@ namespace Oheangbu.App.World.UI
                 Vector2 a = InPanel(na, r), b = InPanel(nb, r);
                 if (!ClipToRect(ref a, ref b, r)) continue;
                 Vector2 d = b - a; if (d.sqrMagnitude < .001f) continue;
+                if(PaintedRelief){
+                    Vector2 n=new Vector2(-d.y,d.x).normalized;
+                    int steps=Mathf.Max(1,Mathf.CeilToInt(d.magnitude/3));
+                    for(int j=0;j<=steps;j++){
+                        float t=(float)j/steps;Vector2 p=Vector2.Lerp(a,b,t);
+                        float pressure=.92f+.12f*Mathf.PerlinNoise((points[i-1].x+(points[i].x-points[i-1].x)*t)*.19f,(points[i-1].y+(points[i].y-points[i-1].y)*t)*.19f);
+                        float radius=thickness*.5f*pressure;int k=vh.currentVertCount;
+                        vh.AddVert(p,tint,WorldUv(p,r));
+                        for(int v=0;v<=10;v++){float angle=v*Mathf.PI*.2f;var q=p+new Vector2(Mathf.Cos(angle),Mathf.Sin(angle))*radius;vh.AddVert(q,tint,WorldUv(q,r));if(v>0)vh.AddTriangle(k,k+v,k+v+1);}
+                    }continue;
+                }
+                if(BrushStyle&&!PaintedRelief){
+                    Vector2 n=new Vector2(-d.y,d.x).normalized;
+                    // World-anchored pressure; clipping or camera motion cannot reseed the brush.
+                    float pressure=.8f+.35f*Mathf.PerlinNoise(points[i-1].x*.05f,points[i-1].y*.05f);
+                    for(int strand=0;strand<3;strand++){
+                        float offset=(strand-1)*thickness*.56f;
+                        Vector2 aa=a+n*offset,bb=b+n*offset;
+                        float wa=thickness*pressure*(strand==1?.56f:.22f),wb=wa*(.65f+.3f*Mathf.Sin(points[i].x*.07f));
+                        Color c=tint;c.a*=strand==1?.70f:.27f;
+                        int k=vh.currentVertCount;
+                        vh.AddVert(aa-n*wa,c,WorldUv(aa-n*wa,r));vh.AddVert(aa+n*wa,c,WorldUv(aa+n*wa,r));
+                        vh.AddVert(bb+n*wb,c,WorldUv(bb+n*wb,r));vh.AddVert(bb-n*wb,c,WorldUv(bb-n*wb,r));
+                        vh.AddTriangle(k,k+1,k+2);vh.AddTriangle(k,k+2,k+3);
+                    }continue;
+                }
                 Vector2 normal = new Vector2(-d.y, d.x).normalized * thickness * .5f;
                 int start = vh.currentVertCount;
                 vh.AddVert(a - normal, tint, WorldUv(a-normal,r)); vh.AddVert(a + normal, tint, WorldUv(a+normal,r));

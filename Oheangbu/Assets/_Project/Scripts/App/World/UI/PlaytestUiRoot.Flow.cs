@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,36 +14,52 @@ namespace Oheangbu.App.World.UI
         bool displayConfirmation;
         Text loadingText;
 
-        void BuildTitle()
+        void BuildTitle(bool updateCursor=true)
         {
             V.Clear(baseLayer);V.Clear(modalLayer);Page="";
-            V.Raw(V.Stretch("황경",baseLayer),Theme.TitleBackdrop,Color.white);
-            V.Image(V.Stretch("BackdropShade",baseLayer),new Color(.12f,.10f,.075f,.20f));
+            var background=V.Raw(V.Stretch("LobbyIllustration",baseLayer),LobbyIllustration!=null?LobbyIllustration:Theme.TitleBackdrop,Color.white);
+            if(LobbyIllustration!=null)
+            {
+                var fit=background.gameObject.AddComponent<AspectRatioFitter>();fit.aspectMode=AspectRatioFitter.AspectMode.EnvelopeParent;
+                fit.aspectRatio=LobbyIllustration.width/(float)LobbyIllustration.height;
+            }
+            V.Image(V.Stretch("BackdropShade",baseLayer),new Color(.12f,.10f,.075f,LobbyIllustration!=null?.035f:.20f));
+            if(LobbyIllustration!=null)
+            {
+                var mist=V.Stretch("MenuMist",baseLayer).gameObject.AddComponent<LobbyAtmosphere274>();
+                mist.color=new Color(Theme.Paper.r,Theme.Paper.g,Theme.Paper.b,.65f);mist.raycastTarget=false;
+            }
             var title=V.Rect("TitleCard",baseLayer,102,74,488,904);titleCard=title;
-            V.Image(V.Stretch("Paper",title),new Color(Theme.Paper.r,Theme.Paper.g,Theme.Paper.b,.94f));
-            V.Raw(V.Stretch("Fiber",title),Theme.PaperTexture,new Color(1,1,1,.18f));
-            V.Text(title,"Seal","五\n行\n符",Theme.Font,25,Theme.Seal,364,56,60,155,TextAnchor.UpperCenter);
-            V.Text(title,"Subtitle","먹으로 여는 길",Theme.Font,22,Theme.Muted,42,65,290,44);
+            if(LobbyIllustration==null)
+            {
+                V.Image(V.Stretch("Paper",title),new Color(Theme.Paper.r,Theme.Paper.g,Theme.Paper.b,.94f));
+                V.Raw(V.Stretch("Fiber",title),Theme.PaperTexture,new Color(1,1,1,.18f));
+            }
             V.Text(title,"Title","오행부",Theme.Font,84,Theme.Ink,34,126,390,122);
-            V.Rule(title,Theme,42,286,386);
+            if(LobbyIllustration==null)V.Rule(title,Theme,42,286,386);
             var info=WorldMacroSaveSlot.Inspect(Application.persistentDataPath,ActiveSlotName);
             bool canContinue=info.Status==WorldMacroSaveSlotStatus.Primary||info.Status==WorldMacroSaveSlotStatus.Backup||info.Status==WorldMacroSaveSlotStatus.Temporary;
-            string firstJourney=Content!=null&&Content.Opening!=null&&Content.Opening.Enabled?"마을 관청에서 첫 의뢰를 확인합니다.":"폐광에서 황경까지, 첫 여정을 시작합니다.";
-            string saved=canContinue?"남겨진 여정을 이어갑니다.":info.Status==WorldMacroSaveSlotStatus.Invalid?"저장 파일을 읽을 수 없습니다.\n새 게임을 시작하면 원본은 보관됩니다.":firstJourney;
-            if(info.Status==WorldMacroSaveSlotStatus.Temporary)saved="중단된 저장을 발견했습니다.\n이어하기로 복구할 수 있습니다.";
-            if(info.Status==WorldMacroSaveSlotStatus.Backup)saved="이전 백업으로 여정을 복구할 수 있습니다.";
+            // 건조한 사물·상태 (사용자 확정 2026-09-19): 저장 슬롯의 상태를 명사로. 문장형 여정 서술 제거.
+            string firstJourney=Content!=null&&Content.Opening!=null&&Content.Opening.Enabled?"새 여정 · 마을 관청":"새 여정 · 폐광";
+            string saved=canContinue?"저장된 게임":info.Status==WorldMacroSaveSlotStatus.Invalid?"저장 손상 · 원본은 보관됨":"저장 없음";
+            if(info.Status==WorldMacroSaveSlotStatus.Temporary)saved="중단된 저장 · 이어하기로 복구";
+            if(info.Status==WorldMacroSaveSlotStatus.Backup)saved="백업 저장 · 이어하기로 복구";
             V.Text(title,"SaveStatus",saved,Theme.Font,20,info.Status==WorldMacroSaveSlotStatus.Invalid?Theme.Seal:Theme.Muted,44,318,384,104);
-            var resume=V.Button(title,"Continue","이어하기",Theme,42,454,386,60,()=>StartCoroutine(LoadPlay()),true);resume.interactable=canContinue;
-            V.Button(title,"NewGame","새 게임",Theme,42,530,386,54,()=>
+            Button Menu(string name,string label,float y,UnityEngine.Events.UnityAction action,bool primary=false)
+            {
+                if(LobbyIllustration==null)return V.Button(title,name,label,Theme,42,y,386,primary?60:54,action,primary,true);
+                return LobbyMenuButton274.Create(title,name,label,Theme,42,y,300,54,action);
+            }
+            var resume=Menu("Continue","이어하기",454,()=>StartCoroutine(LoadPlay()),true);resume.interactable=canContinue;
+            Menu("NewGame","새 게임",530,()=>
             {
                 if(info.Status==WorldMacroSaveSlotStatus.New)StartNew();
-                else Confirm("새 여정을 시작할까요?","기존 진행은 별도 백업으로 보관하고 새 게임을 시작합니다.",StartNew);
+                else Confirm("새 게임을 시작할까요?","기존 진행은 백업으로 보관된다.",StartNew);
             });
-            V.Button(title,"Options","옵션",Theme,42,598,386,54,()=>OpenPage("옵션"));
-            V.Button(title,"Controls","조작 안내",Theme,42,666,386,54,()=>OpenPage("조작 안내"));
-            V.Button(title,"Quit","종료",Theme,42,734,386,54,()=>Confirm("게임을 종료할까요?","남겨진 여정은 다음에 이어갈 수 있습니다.",QuitApplication));
-            V.Text(title,"Edition","플레이테스트  ·  2026.09.15",Theme.Font,17,Theme.Muted,44,834,382,34);
-            Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
+            Menu("Options","설정",598,()=>OpenPage("옵션"));
+            Menu("Controls","조작",666,()=>OpenPage("조작 안내"));
+            Menu("Quit","종료",734,()=>Confirm("게임을 종료할까요?","현재 진행을 저장합니다.",QuitApplication));
+            if(updateCursor){Cursor.lockState=CursorLockMode.None;Cursor.visible=true;}
             ApplyTextScale();
         }
         void StartNew()
@@ -56,12 +72,13 @@ namespace Oheangbu.App.World.UI
         IEnumerator LoadPlay()
         {
             if(Busy)yield break;
+            if(LoadingProfile!=null){yield return LoadWithRegionScreen();yield break;}
             Busy=true;Gate.Block();DismissConfirmation();Settings.Revert();
-            ShowLoading("여정을 준비합니다.");
+            ShowLoading("여정 준비");
             Time.timeScale=1;
-            var load=SceneManager.LoadSceneAsync(PlayScene,LoadSceneMode.Single);
-            if(load==null){Busy=false;LastError="플레이 장면을 불러올 수 없습니다.";BuildTitle();ShowNotice(LastError,8);yield break;}
-            while(!load.isDone){if(loadingText!=null)loadingText.text="여정을 준비합니다.  "+Mathf.RoundToInt(Mathf.Clamp01(load.progress/.9f)*100)+"%";yield return null;}
+            var load=SceneManager.LoadSceneAsync(PlaySceneName,LoadSceneMode.Single);
+            if(load==null){Busy=false;LastError="플레이 장면을 불러올 수 없다.";BuildTitle();ShowNotice(LastError,8);yield break;}
+            while(!load.isDone){if(loadingText!=null)loadingText.text="여정 준비  "+Mathf.RoundToInt(Mathf.Clamp01(load.progress/.9f)*100)+"%";yield return null;}
             Busy=false;bound=false;currentSceneHandle=-1;
         }
         IEnumerator ReturnTitle(bool leaveBlockedSession=false)
@@ -69,16 +86,25 @@ namespace Oheangbu.App.World.UI
             if(Busy)yield break;
             if(Session!=null&&Session.SaveBlocked&&!leaveBlockedSession)
             {
-                Confirm("저장하지 않고 로비로 돌아갈까요?","손상된 저장 원본은 그대로 보관됩니다. 이번 임시 플레이의 변경 내용은 저장되지 않습니다.",()=>StartCoroutine(ReturnTitle(true)));
+                Confirm("저장하지 않고 로비로 돌아갈까요?","손상된 저장 원본은 그대로 보관된다. 이번 임시 플레이의 변경 내용은 저장되지 않는다.",()=>StartCoroutine(ReturnTitle(true)));
                 yield break;
             }
             if(Session!=null&&!Session.SaveBlocked&&!Session.SaveNow(out var error))
-            {LastError=error;ShowNotice("저장하지 못했습니다.\n"+error,8);yield break;}
-            Busy=true;Settings.Revert();UnhookSession();SetHud(true);ShowLoading(leaveBlockedSession?"저장 원본을 보존하고 돌아갑니다.":"여정을 기록했습니다.");
+            {LastError=error;ShowNotice("저장하지 못했다.\n"+error,8);yield break;}
+            // Do not release the existing pause/menu until Unity has accepted the load.
+            // A missing title scene must leave a usable ending/menu with an error and retry.
+            Busy=true;Settings.Revert();
+            AsyncOperation load=null;string loadError=null;
+            try{load=SceneManager.LoadSceneAsync(TitleSceneName,LoadSceneMode.Single);}
+            catch(Exception exception){loadError=exception.Message;}
+            if(load==null)
+            {
+                Busy=false;LastError="로비를 불러올 수 없다."+(string.IsNullOrEmpty(loadError)?"":"\n"+loadError);
+                ShowNotice(LastError,8);yield break;
+            }
+            UnhookSession();SetHud(true);ShowLoading(leaveBlockedSession?"원본 보존 · 로비로":"여정 기록됨");
             if(Map!=null){Destroy(Map.gameObject);Map=null;}
             Pause.End();Gate.Block();Time.timeScale=1;
-            var load=SceneManager.LoadSceneAsync(TitleScene,LoadSceneMode.Single);
-            if(load==null){Busy=false;ShowNotice("로비를 불러올 수 없습니다.",8);yield break;}
             while(!load.isDone)yield return null;
             Busy=false;bound=false;currentSceneHandle=-1;
         }
@@ -101,8 +127,12 @@ namespace Oheangbu.App.World.UI
             V.Raw(V.Stretch("Fiber",dialog),Theme.PaperTexture,new Color(1,1,1,.17f));
             V.Text(dialog,"Title",title,Theme.Font,32,Theme.Ink,44,34,710,58);
             confirmationBody=V.Text(dialog,"Body",message,Theme.Font,24,Theme.Muted,44,111,710,122);
-            V.Button(dialog,"Cancel","돌아가기",Theme,44,282,330,56,DismissConfirmation);
-            V.Button(dialog,"Accept","확인",Theme,412,282,352,56,()=>{DismissConfirmation();accept?.Invoke();},true);
+            if(Theme.Icons!=null&&!IsTitle&&Page!="일시정지"){
+                dialog.Find("Title").GetComponent<Text>().enabled=false;confirmationBody.enabled=false;
+                var symbol=V.Rect("ConfirmationSymbol",dialog,320,82,150,130);CompactUiSymbols.Draw(symbol,title,Theme.Icons,Theme.Ink);
+            }
+            V.Button(dialog,"Cancel","돌아가기",Theme,44,282,330,56,DismissConfirmation,false,IsTitle||Page=="일시정지");
+            V.Button(dialog,"Accept","확인",Theme,412,282,352,56,()=>{DismissConfirmation();accept?.Invoke();},true,IsTitle||Page=="일시정지");
             ApplyTextScale();
         }
         void DismissConfirmation()
@@ -123,16 +153,17 @@ namespace Oheangbu.App.World.UI
         {
             if(!displayConfirmation)return;
             if(!Settings.IsPreviewing){displayConfirmation=false;DismissConfirmation();if(Page=="옵션")OpenPage("옵션");return;}
-            if(confirmationBody!=null)confirmationBody.text=Mathf.CeilToInt(Settings.PreviewSecondsRemaining)+"초 뒤 이전 화면 설정으로 돌아갑니다.";
+            if(Theme.Icons!=null&&confirmationBody!=null)confirmationBody.enabled=true;
+            if(confirmationBody!=null)confirmationBody.text=Theme.Icons!=null?Mathf.CeilToInt(Settings.PreviewSecondsRemaining).ToString():Mathf.CeilToInt(Settings.PreviewSecondsRemaining)+"초 뒤 이전 화면 설정으로 돌아갑니다.";
         }
         void QuitApplication()
         {
             if(Session!=null&&Session.SaveBlocked)
             {
-                Confirm("저장하지 않고 종료할까요?","손상된 저장 원본은 그대로 보관됩니다. 이번 임시 플레이의 변경 내용은 저장되지 않습니다.",ExitProcess);
+                Confirm("저장하지 않고 종료할까요?","손상된 저장 원본은 그대로 보관된다. 이번 임시 플레이의 변경 내용은 저장되지 않는다.",ExitProcess);
                 return;
             }
-            if(Session!=null&&!Session.SaveNow(out var error)){ShowNotice("저장하지 못했습니다.\n"+error,8);return;}
+            if(Session!=null&&!Session.SaveNow(out var error)){ShowNotice("저장하지 못했다.\n"+error,8);return;}
             ExitProcess();
         }
         void ExitProcess()

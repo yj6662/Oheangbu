@@ -114,7 +114,7 @@ namespace Oheangbu.App.World.Dressing
             foreach(var cell in Sheet.Cells)
             {
                 var origin=Origin(cell);
-                var bounds=new Bounds(new Vector3(origin.x+128,(cell.MinHeight+cell.MaxHeight)*.5f+20,origin.y+128),new Vector3(256,cell.MaxHeight-cell.MinHeight+80,256));
+                var bounds=SurfaceBounds(new Bounds(new Vector3(origin.x+128,(cell.MinHeight+cell.MaxHeight)*.5f+20,origin.y+128),new Vector3(256,cell.MaxHeight-cell.MinHeight+80,256)));
                 float distance=HorizontalBoundsDistance(bounds,eye);
                 if(distance>Sheet.ForestDistance+64)continue;
                 AddChunk(cell,0,0,origin,256,bounds,eye);

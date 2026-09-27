@@ -40,15 +40,19 @@ namespace Oheangbu.App.World.UI
             text.supportRichText=true;text.lineSpacing=1.13f;text.raycastTarget=false;return text;
         }
         public static Button Button(Transform parent,string name,string value,PlaytestUiThemeSO theme,
-            float x,float y,float width,float height,UnityAction clicked,bool primary=false)
+            float x,float y,float width,float height,UnityAction clicked,bool primary=false,bool textOnly=false)
         {
             var rect=Rect(name,parent,x,y,width,height);
             var image=Image(rect,primary?new Color(theme.Seal.r,theme.Seal.g,theme.Seal.b,.94f):new Color(.2f,.18f,.14f,.045f),null,true);
             var button=rect.gameObject.AddComponent<Button>();button.targetGraphic=image;
+            if(theme.SoundPalette!=null)rect.gameObject.AddComponent<CompactUiSound255>().Theme=theme;
             ColorBlock colors=button.colors;colors.normalColor=Color.white;colors.highlightedColor=new Color(.89f,.85f,.75f,1);
             colors.selectedColor=colors.highlightedColor;colors.pressedColor=new Color(.70f,.65f,.53f,1);
             colors.disabledColor=new Color(1,1,1,.30f);colors.fadeDuration=.08f;button.colors=colors;
             var text=Text(rect,"Label",value,theme.Font,22,primary?theme.Paper:theme.Ink,18,0,width-36,height,TextAnchor.MiddleLeft);
+            if(!textOnly&&theme.Icons!=null&&(!string.IsNullOrEmpty(value)||name=="Resume"||name=="ReturnTitle")&&!name.StartsWith("Codex_")&&!name.StartsWith("Fragment_")&&!name.StartsWith("Item_")&&!name.StartsWith("Spell_")&&!name.StartsWith("Value_")){
+                text.enabled=false;CompactUiSymbols.Draw(rect,name+" "+value,theme.Icons,primary?theme.Paper:theme.Ink);
+            }
             button.onClick.AddListener(clicked);
             if(!primary)Image(Rect("FootRule",rect,0,height-1,width,1),new Color(theme.Ink.r,theme.Ink.g,theme.Ink.b,.18f));
             return button;
@@ -76,7 +80,9 @@ namespace Oheangbu.App.World.UI
             var handleArea=Rect("HandleArea",root,0,0,width,36);var handle=Rect("Handle",handleArea,0,6,15,24);
             var handleImage=Image(handle,theme.Seal,null,true);
             slider.fillRect=fill;slider.handleRect=handle;slider.targetGraphic=handleImage;
-            slider.SetValueWithoutNotify(value);slider.onValueChanged.AddListener(changed);return slider;
+            slider.SetValueWithoutNotify(value);slider.onValueChanged.AddListener(changed);
+            if(theme.SoundPalette!=null)slider.onValueChanged.AddListener(_=>PlaytestUiRoot.Instance?.PlayNamedSound("settings_tick",.2f));
+            return slider;
         }
         public static void Clear(Transform parent)
         {

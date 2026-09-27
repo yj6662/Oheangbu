@@ -13,8 +13,28 @@ namespace Oheangbu.Data.World
             return Mathf.PerlinNoise(x / scale + seed, z / scale - seed * .73f) * 2f - 1f;
         }
 
+        /// <summary>Query only explicitly authored final terrain; holes are reported rather than replaced by zero.</summary>
+        public static bool TryFinalSurfaceHeight(WorldMacroSheetSO sheet, float x, float z, out float height)
+        {
+            height = 0;
+            return sheet != null && sheet.FinalSurface != null && sheet.FinalSurface.TrySample(x, z, out height);
+        }
+
+        /// <summary>Map relief opt-in. Missing final samples retain the existing procedural Height exactly.</summary>
+        public static float FinalSurfaceHeight(WorldMacroSheetSO sheet, float x, float z)
+        {
+            return TryFinalSurfaceHeight(sheet, x, z, out float height) ? height : Height(sheet, x, z);
+        }
+
+        // Original authored geometry/filter source. Do not add FinalSurface or dressing deltas here.
         public static float Height(WorldMacroSheetSO sheet, float x, float z)
         {
+            if(sheet.CompressionSource!=null&&sheet.Compression!=null)
+            {
+                var source=sheet.Compression.Inverse(new Vector3(x,0,z));
+                float height=Height(sheet.CompressionSource,source.x,source.z);
+                return sheet.CompactRoadGrade!=null?sheet.CompactRoadGrade.Height(x,z,height):height;
+            }
             float seed = (sheet.Seed % 997) * .19f;
             float broad = 70f + (z + 6000f) * .0105f;
             broad += Noise(x, z, 1450f, seed) * 43f + Noise(x, z, 430f, seed + 17f) * 19f;
@@ -131,6 +151,12 @@ namespace Oheangbu.Data.World
         // Matches the a-c-b / b-c-d diagonal of the fixed global lattice mesh.
         public static float SurfaceHeight(WorldMacroSheetSO sheet, float x, float z)
         {
+            if(sheet.CompressionSource!=null&&sheet.Compression!=null)
+            {
+                var source=sheet.Compression.Inverse(new Vector3(x,0,z));
+                float height=SurfaceHeight(sheet.CompressionSource,source.x,source.z);
+                return sheet.CompactRoadGrade!=null?sheet.CompactRoadGrade.Height(x,z,height):height;
+            }
             float s = sheet.GridSpacing;
             float ix = Mathf.Floor((x - sheet.BoundsMin.x) / s), iz = Mathf.Floor((z - sheet.BoundsMin.y) / s);
             float x0 = sheet.BoundsMin.x + ix * s, z0 = sheet.BoundsMin.y + iz * s;

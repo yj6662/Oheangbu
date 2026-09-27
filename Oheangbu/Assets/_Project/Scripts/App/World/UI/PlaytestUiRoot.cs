@@ -16,10 +16,13 @@ namespace Oheangbu.App.World.UI
     /// <summary>Only installed in the playtest/title scenes. Owns the one menu stack across scene loads.</summary>
     public sealed partial class PlaytestUiRoot : MonoBehaviour
     {
-        public const string TitleScene="W_Playtest_Title";
-        public const string PlayScene="W_WorldMacro_Playtest";
+        public const string TitleScene="W_Demo_Compact_Title";
+        public const string PlayScene="W_Demo_Compact";
+        public string TitleSceneName=TitleScene;
+        public string PlaySceneName=PlayScene;
         public static PlaytestUiRoot Instance {get;private set;}
         public PlaytestUiThemeSO Theme;
+        public Texture2D LobbyIllustration;
         public WorldMacroSheetSO WorldSheet;
         public WorldMapBakedDataSO MapData;
         public WorldMacroPlaytestSO Content;
@@ -32,7 +35,7 @@ namespace Oheangbu.App.World.UI
         public WorldMacroPlaytestSession Session {get;private set;}
         public string Page {get;private set;}="";
         public bool Busy {get;private set;}
-        public bool IsTitle => SceneManager.GetActiveScene().name==TitleScene;
+        public bool IsTitle => SceneManager.GetActiveScene().name==TitleSceneName;
         public string ActiveSlotName => Content.SaveSlot + DiagnosticSuffix;
         public static string DiagnosticSuffix
         {
@@ -130,27 +133,35 @@ namespace Oheangbu.App.World.UI
                 Pause.PalanquinSeat=FindFirstObjectByType<WorldMacroPalanquinSeat>();
                 Pause.PalanquinController=FindFirstObjectByType<WorldMacroPalanquinController>();
                 Pause.Initialize();
-                Session.DetailRequested+=ShowDetail;Session.CollectionChanged+=OnCollected;
+                Content=Session.Content;
+                Session.EquipmentServiceRequested+=OpenEquipmentService;Session.DetailRequested+=ShowDetail;Session.CollectionChanged+=OnCollected;Session.InteractionResolved+=OnDemoShopInteraction;
                 hud=FindFirstObjectByType<HudController>();hudCanvases=hud!=null?hud.GetComponentsInChildren<Canvas>(true):null;
                 var mapGo=new GameObject("PaperWorldMap");mapGo.transform.SetParent(mapLayer,false);Map=mapGo.AddComponent<WorldMapPresenter>();
-                Map.Initialize(mapLayer,Session,WorldSheet,new WorldMapUiDependencies{BakedData=MapData,Font=Theme.Font,PaperTexture=Theme.PaperTexture,Ink=Theme.Ink,Paper=Theme.Paper,Muted=Theme.Muted,Seal=Theme.Seal,ReducedMotion=Settings.Current.ReducedMotion});
+                Map.Initialize(mapLayer,Session,WorldSheet,new WorldMapUiDependencies{Icons=Theme.Icons,BakedData=MapData,Font=Theme.Font,PaperTexture=Theme.PaperTexture,Ink=Theme.Ink,Paper=Theme.Paper,Muted=Theme.Muted,Seal=Theme.Seal,ReducedMotion=Settings.Current.ReducedMotion});
                 Map.CloseRequested+=CloseMenu;
                 Map.FoldRustle+=volume=>PlayUi(Theme.PaperSound,volume);
-                Gate.ReleaseWhenNeutral();Cursor.lockState=CursorLockMode.Locked;Cursor.visible=false;
-                if(!TryShowOpeningIntroduction())ShowNotice("[M] 지도    [I] 소지품    [Esc] 메뉴",4);
+                if(LoadingInProgress)Gate.Block();
+                else {Gate.ReleaseWhenNeutral();Cursor.lockState=CursorLockMode.Locked;Cursor.visible=false;}
+                if(!LoadingInProgress&&!TryShowOpeningIntroduction())ShowNotice("[M] 지도    [I] 소지품    [Esc] 메뉴",4);
             }
             SettingsChanged();
         }
         void UnhookSession()
         {
-            if(Session==null)return;Session.DetailRequested-=ShowDetail;Session.CollectionChanged-=OnCollected;
+            ResetDemoEnding();
+            if(Session==null)return;Session.EquipmentServiceRequested-=OpenEquipmentService;Session.DetailRequested-=ShowDetail;Session.CollectionChanged-=OnCollected;Session.InteractionResolved-=OnDemoShopInteraction;
         }
         void Update()
         {
             if(!bound||currentSceneHandle!=SceneManager.GetActiveScene().handle)BindScene();
             if(noticeRoot!=null&&noticeRoot.gameObject.activeSelf&&Time.unscaledTime>=noticeUntil)noticeRoot.gameObject.SetActive(false);
-            if(!bound||Busy)return;
+            if(!bound||Busy||(Session!=null&&Session.RestPresentationActive))return;
             if(closingMap&&Map!=null&&!Map.Folding){closingMap=false;FinishClose();}
+            if(TryPresentDemoEnding())
+            {
+                if(pauseKey!=null&&pauseKey.WasPressedThisFrame()&&confirmationRoot!=null)DismissConfirmation();
+                return;
+            }
             if(Map!=null)
             {
                 Map.SetVisible(Page=="지도"||closingMap||(settingsSnapshot.ShowMinimap&&Page.Length==0));
@@ -166,8 +177,11 @@ namespace Oheangbu.App.World.UI
         }
         public void OpenPage(string page)
         {
+            if(ShowingDemoEnding||(Session!=null&&Session.RestPresentationActive))return;
             // Reject removed/unknown routes before changing pause, save, or the current page.
             if(!IsSupportedPage(page,IsTitle))return;
+            if((page=="장비 상점"||page=="장비 강화")&&(Session==null||!Session.NearEquipmentService(page=="장비 상점"?"village_shop":"village_artisan")))return;
+            if(page=="정비"&&(Session==null||!Session.AtDemoShop))return;
             if(Busy||closingMap||confirmationRoot!=null||(!IsTitle&&Session==null))return;
             if(!IsTitle&&Page.Length==0)
             {
@@ -181,6 +195,12 @@ namespace Oheangbu.App.World.UI
                 if(Map==null)return;
                 Map.SetVisible(true);Map.ShowWholeWorld();Map.SetExpanded(true);PlayUi(Theme.PaperSound,.45f);return;
             }
+            if(Theme.Icons!=null&&page=="상세"){BuildIconDetail();return;}
+            if(page=="장비 상점"||page=="장비 강화")
+            {
+                BuildTradeFrame(page=="장비 강화");BuildEquipmentService(page=="장비 강화");
+                ApplyTextScale();if(!suppressNextPageSound255)PlayUi(Theme.ConfirmSound,.40f);suppressNextPageSound255=false;return;
+            }
             BuildFrame(page);
             switch(page)
             {
@@ -191,16 +211,17 @@ namespace Oheangbu.App.World.UI
                 case "옵션": BuildOptions();break;
                 case "조작 안내": BuildControls();break;
                 case "상세": BuildDetail();break;
+                case "정비": BuildDemoShop();break;
             }
-            ApplyTextScale();PlayUi(Theme.ConfirmSound,.40f);
+            ApplyTextScale();ApplyIconChrome();if(!suppressNextPageSound255)PlayUi(Theme.ConfirmSound,.40f);suppressNextPageSound255=false;
         }
         public static bool IsSupportedPage(string page,bool titleScene)
         {
-            return Array.IndexOf(titleScene?TitlePages:GameplayPages,page)>=0||(!titleScene&&page=="상세");
+            return Array.IndexOf(titleScene?TitlePages:GameplayPages,page)>=0||(!titleScene&&(page=="상세"||page=="정비"||page=="장비 상점"||page=="장비 강화"));
         }
         public void CloseMenu()
         {
-            if(Busy)return;
+            if(Busy||ShowingDemoEnding)return;
             if(Settings.IsPreviewing){Settings.Revert();}
             if(Page=="지도"&&Map!=null)
             {Map.SetExpanded(false);closingMap=true;PlayUi(Theme.PaperSound,.30f);return;}
@@ -223,11 +244,11 @@ namespace Oheangbu.App.World.UI
         void ShowDetail(string title,string body){detailTitle=title;detailBody=body;OpenPage("상세");}
         void OnCollected(WorldMacroCollectionNotice notice)
         {
-            ShowNotice(notice.Title+"\n"+notice.Message,5);PlayUi(Theme.ConfirmSound,.65f);
+            ShowNotice(notice.Title+"\n"+notice.Message,5);if(!PlayNamedSound("clue",.55f))PlayUi(Theme.ConfirmSound,.65f);
             if(Page=="소지품"||Page=="술식 도감")OpenPage(Page);
         }
         public void ShowNotice(string text,float seconds=4)
-        {noticeText.text=text;noticeRoot.gameObject.SetActive(true);noticeUntil=Time.unscaledTime+seconds;noticeRoot.SetAsLastSibling();}
+        {if(Theme.Icons!=null)return;noticeText.text=text;noticeRoot.gameObject.SetActive(true);noticeUntil=Time.unscaledTime+seconds;noticeRoot.SetAsLastSibling();}
         void PlayUi(AudioClip clip,float gain)
         {
             if(clip==null||uiAudio==null)return;
@@ -245,7 +266,7 @@ namespace Oheangbu.App.World.UI
         {
             if(canvasRect==null)return;
             Vector2 size=canvasRect.rect.size;
-            if(frame!=null)frame.localScale=Vector3.one*Mathf.Min(1f,(size.x-64)/1560f,(size.y-64)/900f);
+            if(frame!=null)frame.localScale=Vector3.one*Mathf.Min(1f,(size.x-64)/frame.rect.width,(size.y-64)/frame.rect.height);
             if(titleCard!=null)
             {
                 titleCard.localScale=Vector3.one*Mathf.Min(1f,(size.y-70)/904f);
@@ -265,8 +286,10 @@ namespace Oheangbu.App.World.UI
         }
         void RefreshStatus()
         {
+            RefreshSaveFailureIcon();
             if(settingsErrorText!=null)settingsErrorText.text=Settings.SaveError??"";
             if(statusText==null||Session==null)return;
+            if(Theme.Icons!=null){statusText.text=Session.Progress.ledger.currency.ToString("N0");return;}
             statusText.text=!string.IsNullOrEmpty(Session.SaveError)?Session.SaveError:
                 "조선통보 "+Session.Progress.ledger.currency.ToString("N0")+"  ·  "+Session.CheckpointDisplayName+"에서 재시작";
         }
@@ -276,37 +299,40 @@ namespace Oheangbu.App.World.UI
             frame=V.Rect("Folio",modalLayer,0,0,1560,900);frame.anchorMin=frame.anchorMax=frame.pivot=new Vector2(.5f,.5f);frame.anchoredPosition=Vector2.zero;
             V.Image(V.Stretch("Backing",frame),Theme.Paper,null,true);
             if(Theme.PaperTexture!=null)V.Raw(V.Stretch("Hanji",frame),Theme.PaperTexture,new Color(1,1,1,.23f));
-            V.Text(frame,"Brand","五 行 符",Theme.Font,24,Theme.Seal,44,42,230,46);
+            V.Text(frame,"Brand","메뉴",Theme.Font,26,Theme.Ink,44,42,230,46);
             V.Rule(frame,Theme,44,98,214);
             string[] pages=IsTitle?TitlePages:GameplayPages;
+            if(!IsTitle&&Session!=null&&Session.AtDemoShop){pages=(string[])pages.Clone();Array.Resize(ref pages,pages.Length+1);pages[pages.Length-1]="정비";}
             for(int i=0;i<pages.Length;i++)
-            {string label=pages[i];V.Button(frame,"Tab_"+label,label=="차패"?"오행부":label,Theme,44,135+i*66,214,54,()=>OpenPage(label),label==title);}
-            V.Button(frame,"Close",IsTitle?"로비로":"여정으로",Theme,44,802,214,54,CloseMenu);
+            {string label=pages[i];V.Button(frame,"Tab_"+label,MenuLabel(label),Theme,44,135+i*66,214,54,()=>OpenPage(label),label==title,true);}
+            if(title!="일시정지")V.Button(frame,"Close",IsTitle?"뒤로":"계속하기",Theme,44,802,214,54,CloseMenu,false,true);
             V.Image(V.Rect("Divider",frame,292,42,1,814),new Color(.2f,.18f,.14f,.20f));
-            heading=V.Text(frame,"PageHeading",title=="상세"?detailTitle:title=="차패"?"오행부":title,Theme.Font,46,Theme.Ink,338,42,1100,70);
+            heading=V.Text(frame,"PageHeading",title=="상세"?detailTitle:MenuLabel(title),Theme.Font,32,Theme.Ink,338,42,1100,70);
             subheading=V.Text(frame,"Subheading","",Theme.Font,20,Theme.Muted,340,117,1060,40);
             V.Rule(frame,Theme,338,170,1168);
             contentRoot=V.Rect("PageContent",frame,338,198,1168,600);
             statusText=V.Text(frame,"Status","",Theme.Font,18,Theme.Muted,338,826,1050,34);RefreshStatus();
         }
+        static string MenuLabel(string page) => page=="일시정지"?"일시정지":page=="옵션"?"설정":page=="술식 도감"?"술식":page=="차패"?"오행부":page=="조작 안내"?"조작":page;
+
         void BuildPause()
         {
-            subheading.text="잠시 여정을 멈춥니다.";
-            V.Text(contentRoot,"RestTitle","먹을 고르고, 길을 살피다",Theme.Font,36,Theme.Ink,0,32,1050,64);
-            V.Text(contentRoot,"PauseCopy","소지품과 술식 도감을 살피거나\n지도를 펼쳐 지나온 길을 확인할 수 있습니다.",Theme.Font,25,Theme.Muted,0,116,970,112);
-            V.Button(contentRoot,"Resume","여정 계속하기",Theme,0,290,450,64,CloseMenu,true);
-            V.Button(contentRoot,"ReturnTitle","저장하고 로비로",Theme,0,378,450,60,()=>Confirm("로비로 돌아갈까요?","현재 진행을 저장한 뒤 로비로 돌아갑니다.",()=>StartCoroutine(ReturnTitle())));
+            // 기본은 침묵 (#107) · 최소 존재감 (ArtAudio:53): the left-rail tabs are the interface;
+            // the menu does not narrate itself with a title poem or a "you can look at X here" sentence.
+            subheading.text="";statusText.enabled=false;
+            V.Button(contentRoot,"Resume","계속하기",Theme,0,32,450,64,CloseMenu,true,true);
+            V.Button(contentRoot,"ReturnTitle","타이틀로",Theme,0,120,450,60,()=>Confirm("타이틀로 돌아갈까요?","현재 진행을 저장합니다.",()=>StartCoroutine(ReturnTitle())),false,true);
         }
         void BuildControls()
         {
-            subheading.text="키보드와 마우스";
+            subheading.text="";
             string[,] rows={{"W · A · S · D","걷기 / 탑승 중 가속·조향"},{"Ctrl + 이동","달리기"},{"Space","지상 점프 / 탑승 중 제동"},{"C / X","웅크리기 전환 / 바닥 착석·일어나기"},{"마우스","시점 이동"},{"Q + 마우스 좌클릭","글씨 그리기 · Q를 놓으면 시전"},{"왼쪽 Shift / Tab","회피 (웅크림 중 구르기) / 대상 락온"},{"마우스 좌클릭 유지","비작도 상태에서 먹 갈무리"},{"F","조사 · 대화 · 석경 파편 획득"},{"E / V","마법가마 탑승·하차 / 탑승 시점 전환"},{"G","오행부로 자동차 호출 · 하차 후 30m 자동 회수"},{"M / I / Esc","지도 / 소지품 / 일시정지·뒤로"}};
             var content=V.Scroll(contentRoot,"ControlScroll",0,0,1130,600,rows.GetLength(0)*69);
             for(int i=0;i<rows.GetLength(0);i++){V.Text(content,"Key",rows[i,0],Theme.Font,22,Theme.Seal,0,i*69,455,54);V.Text(content,"Action",rows[i,1],Theme.Font,23,Theme.Ink,475,i*69,620,54);V.Rule(content,Theme,0,i*69+59,1080);}
         }
         void BuildDetail()
         {
-            subheading.text=Session!=null&&!string.IsNullOrEmpty(Session.SaveError)?"내용을 읽고 있습니다. 저장 상태를 확인해 주세요.":"내용을 확인한 뒤 여정을 계속하세요.";
+            subheading.text=Session!=null&&!string.IsNullOrEmpty(Session.SaveError)?"저장 상태를 확인한다.":"";
             var content=V.Scroll(contentRoot,"DetailScroll",0,0,1100,470,550);
             V.Text(content,"Body",detailBody,Theme.Font,30,Theme.Ink,12,30,1030,500);
             V.Button(contentRoot,"Done","확인",Theme,0,510,330,56,CloseMenu,true);

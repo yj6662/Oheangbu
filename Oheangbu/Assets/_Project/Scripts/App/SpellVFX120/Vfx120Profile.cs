@@ -60,6 +60,7 @@ namespace Oheangbu.App.SpellVFX120
         public bool ProceduralEarthRift;
         public Vfx120WardKind WardKind;
         public float WardRadius=3, WardHeight=2.2f, WardFormation=.45f, WardFade=.5f;
+        public float WardGroundProbeHeight=16f, WardGroundProbeDepth=48f;
         public Material WardMaterial, WardWaterMaterial;
         public GameObject WardPatternPrefab, WardContactPrefab, WardDebrisPrefab;
         public bool NativeReplaceBody;

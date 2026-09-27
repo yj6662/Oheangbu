@@ -16,7 +16,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string Source = "../../Art/PlaytestPolish/Map/GeneratedTerrain.png";
         static string Output => Path.GetFullPath(Path.Combine(Application.dataPath,"../../Art/PlaytestPolish/Map"));
 
-        [MenuItem("Tools/Oheangbu/Playtest Polish/Apply Illustrated Map")]
+        [MenuItem("Oheangbu/Legacy/복구 전용/Apply Illustrated Map")]
         public static void ApplyMenu() => Debug.Log(Run("apply"));
         public static string Run(string action)
         {

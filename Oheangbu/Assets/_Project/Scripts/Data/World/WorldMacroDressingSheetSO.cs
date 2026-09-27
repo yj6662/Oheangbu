@@ -25,9 +25,14 @@ namespace Oheangbu.Data.World
             public int X,Z,Owner; public Vector3 Centre; public float MinHeight,MaxHeight;
             // 17x17 heights match the existing sixteen-metre triangle lattice.
             public float[] Heights; // no per-instance transforms are serialized
+            // Optional compact-only 2 m lattice. Legacy source cells retain null and
+            // continue using their original 16 m interpolation without modification.
+            public float[] FineHeights;
             // 64x64 four-metre habitats: low bits 1 dry/2 damp/3 settlement;
             // bits8/16/32/64 independently allow tree/shrub/grass/rock.
             public byte[] Habitat;
+            // Optional 4 m open-ground weights. Empty on baseline sheets.
+            public byte[] OpenGround;
             // 17x17 x five normalized region weights. Boundary blend +/-150m.
             public byte[] RealmWeights;
         }
@@ -59,10 +64,18 @@ namespace Oheangbu.Data.World
             public bool Preserve=true;
         }
         public WorldMacroSheetSO Geography;
+        // Optional final world-Y translation. Candidate heights/slopes and habitat stay authored.
+        public WorldMacroSurfaceDeformationSO SurfaceDeformation;
         public int Seed=20260912,CellSize=256;
         public int PaletteVersion;
         // Opt-in derivative. Serialized baseline sheets retain their previous appearance.
         public bool DenseVegetation;
+        public bool UseOpenGround;
+        [Range(0,1)] public float OpenGrassDensity=.25f,OpenShrubDensity=.35f;
+        // Optional thinning of the existing accepted population, including deep forest/wet banks.
+        // X tree / Y shrub / Z grass (tall, low infill and distant cover); rocks and fixed placements remain.
+        public bool UseSpeciesRetention;
+        public Vector3 SpeciesRetention=Vector3.one;
         public int DenseRealmMask=31;
         public float DenseTreeSpacing=7.5f,DenseShrubSpacing=4.5f,DenseGrassSpacing=1.6f;
         public float GrassMeshDistance=50,GroundCoverDistance=420,GroundCoverSpacing=8;
@@ -84,6 +97,19 @@ namespace Oheangbu.Data.World
         public FixedPlacement[] FixedPlacements=Array.Empty<FixedPlacement>();
         public string SourceFingerprint;
 
+        public float OpenGroundDensity(Cell cell,int x,int z,int category)
+        {
+            if(!UseOpenGround||(category!=1&&category!=2)||cell.OpenGround==null||cell.OpenGround.Length!=4096)return 1;
+            float weight=cell.OpenGround[Mathf.Clamp(z,0,63)*64+Mathf.Clamp(x,0,63)]/255f;
+            return Mathf.Lerp(1,category==1?OpenShrubDensity:OpenGrassDensity,weight);
+        }
+
+        public float RetentionForCategory(int category)
+        {
+            if(!UseSpeciesRetention||category<0||category>2)return 1;
+            return Mathf.Clamp01(category==0?SpeciesRetention.x:category==1?SpeciesRetention.y:SpeciesRetention.z);
+        }
+
         public static bool Excludes(PreserveArea area,Vector3 position,Kind kind)
         {
             if(!area.ExcludeProcedural||(area.AffectedKinds&(1<<(int)kind))==0)return false;
@@ -98,8 +124,18 @@ namespace Oheangbu.Data.World
             float t=d.sqrMagnitude<.0001f?0:Mathf.Clamp01(Vector2.Dot(p-a,d)/d.sqrMagnitude);
             return Vector2.Distance(p,a+d*t)-route.Width*.5f;
         }
+        public const int FineHeightResolution = 129;
+        public const float FineHeightSpacing = 2f;
+        public static bool HasFineHeights(Cell cell) => cell != null && cell.FineHeights != null && cell.FineHeights.Length == FineHeightResolution * FineHeightResolution;
         public static float Height(Cell cell,float x,float z,Vector2 origin)
         {
+            if (HasFineHeights(cell))
+            {
+                float uFine=Mathf.Clamp((x-origin.x)/FineHeightSpacing,0,127.99999f),vFine=Mathf.Clamp((z-origin.y)/FineHeightSpacing,0,127.99999f);
+                int ixFine=Mathf.FloorToInt(uFine),izFine=Mathf.FloorToInt(vFine);uFine-=ixFine;vFine-=izFine;int at=izFine*FineHeightResolution+ixFine;
+                float aFine=cell.FineHeights[at],bFine=cell.FineHeights[at+1],cFine=cell.FineHeights[at+FineHeightResolution];
+                return uFine+vFine<=1?aFine+(bFine-aFine)*uFine+(cFine-aFine)*vFine:cell.FineHeights[at+FineHeightResolution+1]+(cFine-cell.FineHeights[at+FineHeightResolution+1])*(1-uFine)+(bFine-cell.FineHeights[at+FineHeightResolution+1])*(1-vFine);
+            }
             float u=Mathf.Clamp((x-origin.x)/16,0,15.99999f),v=Mathf.Clamp((z-origin.y)/16,0,15.99999f);
             int ix=Mathf.FloorToInt(u),iz=Mathf.FloorToInt(v);u-=ix;v-=iz;int a=iz*17+ix;
             float h=cell.Heights[a],b=cell.Heights[a+1],c=cell.Heights[a+17];
@@ -109,6 +145,14 @@ namespace Oheangbu.Data.World
         {return Mathf.Acos(Mathf.Clamp01(Normal(c,x,z,origin).y))*Mathf.Rad2Deg;}
         public static Vector3 Normal(Cell c,float x,float z,Vector2 origin)
         {
+            if (HasFineHeights(c))
+            {
+                float uFine=Mathf.Clamp((x-origin.x)/FineHeightSpacing,0,127.99999f),vFine=Mathf.Clamp((z-origin.y)/FineHeightSpacing,0,127.99999f);
+                int ixFine=(int)uFine,izFine=(int)vFine,at=izFine*FineHeightResolution+ixFine;float dxFine,dzFine;
+                if(uFine-ixFine+vFine-izFine<=1){dxFine=(c.FineHeights[at+1]-c.FineHeights[at])/FineHeightSpacing;dzFine=(c.FineHeights[at+FineHeightResolution]-c.FineHeights[at])/FineHeightSpacing;}
+                else{dxFine=(c.FineHeights[at+FineHeightResolution+1]-c.FineHeights[at+FineHeightResolution])/FineHeightSpacing;dzFine=(c.FineHeights[at+FineHeightResolution+1]-c.FineHeights[at+1])/FineHeightSpacing;}
+                return new Vector3(-dxFine,1,-dzFine).normalized;
+            }
             float u=Mathf.Clamp((x-origin.x)/16,0,15.99999f),v=Mathf.Clamp((z-origin.y)/16,0,15.99999f);
             int ix=(int)u,iz=(int)v,a=iz*17+ix;float dx,dz;
             if(u-ix+v-iz<=1){dx=(c.Heights[a+1]-c.Heights[a])/16;dz=(c.Heights[a+17]-c.Heights[a])/16;}

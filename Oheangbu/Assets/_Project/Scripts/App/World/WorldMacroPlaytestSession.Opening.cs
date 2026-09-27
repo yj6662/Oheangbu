@@ -27,14 +27,14 @@ namespace Oheangbu.App.World
         {
             get
             {
+                if(DemoCampaignActive)return DemoObjective;
                 if(!OpeningJourneyActive)return null;
                 if(!OpeningCommissionReceived)return Opening.BeforeCommissionObjective;
                 if(Progress.ledger.completed.Contains(Opening.EvidenceInteractionId))return null;
                 return OpeningVehicleSummoned?Opening.BeforeEvidenceObjective:Opening.BeforeVehicleObjective;
             }
         }
-        public string CheckpointDisplayName=>Progress?.ledger?.checkpoint==WorldMacroOpeningProfileSO.CheckpointId?"마을 관청":
-            Progress?.ledger?.checkpoint=="geumpyo_inn"?"금표 주막":"폐광";
+        public string CheckpointDisplayName=>WorldMacroCheckpointRules.Label(Content,Progress,Progress?.ledger?.checkpoint);
 
         void BindOpeningPoints()
         {
@@ -54,7 +54,7 @@ namespace Oheangbu.App.World
                 return interactionPoints;
             }
         }
-        PrologueContentSO.Point FindInteractionPoint(string id)=>Array.Find(InteractionPoints,p=>p.Id==id);
+        PrologueContentSO.Point FindInteractionPoint(string id)=>LiveEscortInteractionPoint(DemoInteractionPoint(Array.Find(InteractionPoints,p=>p.Id==id)));
 
         WorldMacroProgress CreateFreshProgress()
         {
@@ -62,11 +62,24 @@ namespace Oheangbu.App.World
             bool office=LoadStatus=="new"&&Opening!=null&&Opening.Enabled;
             if(office&&!Opening.IsConfigured)throw new InvalidOperationException("Village opening profile needs finite spawn/commission data, conversation ID village_commission, and zero reward.");
             if(office&&!TrySafeFeet(Opening.StartFeet,out _))throw new InvalidOperationException("Village opening has no safe authored spawn; original mine start was not substituted.");
-            return WorldMacroOpeningProgress.CreateNew(Content,LoadStatus=="new");
+            var progress=WorldMacroOpeningProgress.CreateNew(Content,LoadStatus=="new");
+            if(Content.Campaign!=null)
+            {
+                if(!Content.Campaign.IsValid)throw new InvalidOperationException("Invalid demo campaign profile.");
+                progress.campaign.CampaignId=Content.Campaign.CampaignId;
+                if(Content.Campaign.UseExplicitPrerequisites)
+                    foreach(var id in Content.Campaign.InitialCompletedIds??Array.Empty<string>())
+                    {
+                        if(!progress.campaign.Completed.Contains(id))progress.campaign.Completed.Add(id);
+                        var stage=Array.Find(Content.Campaign.Stages,s=>s.Id==id);
+                        foreach(var fact in stage.GrantedFacts??Array.Empty<string>())if(!progress.campaign.Facts.Contains(fact))progress.campaign.Facts.Add(fact);
+                    }
+            }
+            return progress;
         }
 
-        Vector3 AuthoredCheckpointFeet()=>WorldMacroOpeningProgress.CheckpointFeet(Content,Progress);
-        float CheckpointYaw()=>WorldMacroOpeningProgress.CheckpointYaw(Content,Progress);
+        Vector3 AuthoredCheckpointFeet()=>WorldMacroCheckpointRules.TryResolve(Content,Progress,Progress?.ledger?.checkpoint,out var checkpoint)?checkpoint.Feet:Content.StartFeet;
+        float CheckpointYaw()=>WorldMacroCheckpointRules.TryResolve(Content,Progress,Progress?.ledger?.checkpoint,out var checkpoint)?checkpoint.Yaw:Content.StartYaw;
 
         public bool TryMarkOpeningIntroductionSeen(out string error)
         {
@@ -76,13 +89,13 @@ namespace Oheangbu.App.World
         public bool TryRecordOpeningVehicleSummoned(out string error)
         {
             if(!OpeningJourneyActive){error=null;return true;}
-            if(!OpeningCommissionReceived){error="먼저 관청 아전에게 폐광 조사 의뢰를 확인하세요.";return false;}
+            if(!OpeningCommissionReceived){error="먼저 관청 아전에게 폐광 조사 의뢰를 확인한다.";return false;}
             return TrySaveOpeningMarker(OpeningVehicleSummonedId,out error);
         }
         bool TrySaveOpeningMarker(string id,out string error)
         {
-            if(!ready||Progress?.ledger?.completed==null){error="진행을 준비하고 있습니다.";return false;}
-            if(SaveBlocked){error=SaveError??"저장 원본을 복구한 뒤 진행해 주세요.";return false;}
+            if(!ready||Progress?.ledger?.completed==null){error="진행을 준비하는 중이다.";return false;}
+            if(SaveBlocked){error=SaveError??"저장 원본을 복구한 뒤 진행한다.";return false;}
             if(Progress.ledger.completed.Contains(id)){error=null;return true;}
             Progress.ledger.completed.Add(id);
             if(SaveNow(out error))return true;

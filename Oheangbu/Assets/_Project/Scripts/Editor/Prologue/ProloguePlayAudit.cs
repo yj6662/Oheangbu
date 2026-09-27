@@ -54,23 +54,32 @@ namespace Oheangbu.EditorTools.Prologue
   Camera capture;RenderTexture rt;Texture2D texture;byte[] frameBuffer;System.Diagnostics.Process encoder;float nextCapture;int videoFrames;
   static T Read<T>(object o,string name)=>(T)o.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(o);
   bool combatMode;
+  bool journeyMode;
+  string WalkOutput=>journeyMode?Path.GetFullPath("../Art/World/PineRest/journey_walk.json"):PrologueBuilder.Output+(combatMode?"/combat_approach.json":"/walk_status.json");
   public void Begin(PrologueSession s,bool combat=false)
   {
-   combatMode=combat;
+   combatMode=combat;journeyMode=s.gameObject.scene.path==PineRestGameBuilder.Scene;
    session=s;motor=s.Player.GetComponent<PlayerMotor>();actions=Read<InputActionAsset>(motor,"_actions");report=new Report{saveSlot=s.Content.SaveSlot+s.TestSaveSuffix};
    oldKeyboard=Keyboard.current;oldMouse=Mouse.current;assetDevices=actions.devices?.ToArray();
    foreach(var m in actions.actionMaps){var raw=typeof(InputActionMap).GetField("m_Devices",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(m);var value=raw.GetType().GetMethod("Get").Invoke(raw,null);filters[m]=value==null?null:((ReadOnlyArray<InputDevice>)value).ToArray();}
    background=InputSystem.settings.backgroundBehavior;editorInput=InputSystem.settings.editorInputBehaviorInPlayMode;oldBackground=Application.runInBackground;
    InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;Application.runInBackground=true;
    keyboard=InputSystem.AddDevice<Keyboard>("PrologueAuditKeyboard");mouse=InputSystem.AddDevice<Mouse>("PrologueAuditMouse");var devices=new InputDevice[]{keyboard,mouse};actions.devices=devices;foreach(var m in actions.actionMaps)m.devices=devices;
+   if(journeyMode){
+    route.Add(new Waypoint(s.Content.Points.First(p=>p.Id=="MineStart").Position,"MineStart"));
+    route.Add(new Waypoint(s.Content.Points.First(p=>p.Id=="BurntCord").Position,"BurntCord"));
+    foreach(var p in s.Content.MainPath.Skip(2))route.Add(new Waypoint(p));
+    route.Add(new Waypoint(s.Content.Points.First(p=>p.Id=="InnRest").Position,"InnRest"));
+   }else{
    route.Add(new Waypoint(new Vector3(-1,0,-27),"MineStart"));route.Add(new Waypoint(new Vector3(1,0,-14),"BlastEvidence"));route.Add(new Waypoint(new Vector3(1.4f,0,-8)));route.Add(new Waypoint(new Vector3(0,0,-1)));
    // Main trail plus the reward loop, then rejoin. Target points only steer input.
    var main=s.Content.MainPath;int branchStart=Array.FindIndex(main,p=>p.z>84&&p.x>90),branchEnd=Array.FindIndex(main,p=>p.z>154&&p.x>75);
    for(int i=0;i<main.Length;i+=3){if(i>=branchStart&&i<branchEnd){route.AddRange(s.Content.BranchPath.Where((p,k)=>k%3==0).Select(p=>new Waypoint(p)));route.Add(new Waypoint(s.Content.Points.First(p=>p.Id=="WorkerSatchel").Position,"WorkerSatchel"));i=branchEnd;}if(i<main.Length)route.Add(new Waypoint(main[i]));}
    route.Add(new Waypoint(new Vector3(-71,0,47),"InnRest"));route.Add(new Waypoint(new Vector3(-77,0,47),"Logger"));route.Add(new Waypoint(new Vector3(-65,0,46),"Herbalist"));
+   }
    if(combatMode){route.Clear();route.Add(new Waypoint(new Vector3(0,0,-18)));}
    report.total=route.Count;started=advanced=Time.unscaledTime;ready=true;s.Feedback+=Feedback;s.Player.GetComponent<PlayerVitals>().Damaged+=Damaged;s.Player.GetComponent<PlayerVitals>().Died+=Died;
-   StartCapture();Write();
+   if(!journeyMode)StartCapture();Write();
   }
   void Feedback(string text){report.interactions.Add(text);}
   void Damaged(float n){report.damageEvents++;}void Died(){report.deaths++;}
@@ -106,7 +115,7 @@ namespace Oheangbu.EditorTools.Prologue
   }
   void StopCapture(){if(encoder!=null){encoder.StandardInput.Close();if(!encoder.WaitForExit(5000))encoder.Kill();encoder.Dispose();encoder=null;}if(rt!=null){rt.Release();Object.Destroy(rt);}if(texture!=null)Object.Destroy(texture);frameBuffer=null;}
   void Finish(string status,string issue){report.status=status;report.issue=issue;report.frames=videoFrames;if(times.Count>0){report.meanFrameMs=times.Average();times.Sort();report.p95FrameMs=times[(int)((times.Count-1)*.95f)];}Write();Cleanup();if(combatMode&&status=="COMPLETE")File.WriteAllText(PrologueBuilder.Output+"/combat_input_start.txt",Vfx120PlayerInputAudit.StartPrologue());}
-  void Write()=>File.WriteAllText(PrologueBuilder.Output+(combatMode?"/combat_approach.json":"/walk_status.json"),JsonUtility.ToJson(report,true));
+  void Write()=>File.WriteAllText(WalkOutput,JsonUtility.ToJson(report,true));
   void OnDestroy(){if(ready)Finish("INTERRUPTED","Play stopped");}
   void Cleanup(){ready=false;StopCapture();session.Feedback-=Feedback;session.Player.GetComponent<PlayerVitals>().Damaged-=Damaged;session.Player.GetComponent<PlayerVitals>().Died-=Died;actions.devices=assetDevices==null?(ReadOnlyArray<InputDevice>?)null:new ReadOnlyArray<InputDevice>(assetDevices);foreach(var pair in filters)pair.Key.devices=pair.Value==null?(ReadOnlyArray<InputDevice>?)null:new ReadOnlyArray<InputDevice>(pair.Value);if(keyboard!=null)InputSystem.RemoveDevice(keyboard);if(mouse!=null)InputSystem.RemoveDevice(mouse);oldKeyboard?.MakeCurrent();oldMouse?.MakeCurrent();InputSystem.settings.backgroundBehavior=background;InputSystem.settings.editorInputBehaviorInPlayMode=editorInput;Application.runInBackground=oldBackground;}
  }

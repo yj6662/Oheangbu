@@ -39,12 +39,13 @@ namespace Oheangbu.EditorTools
         {
             public string glyph, recognized, kind, status = "RUNNING", templates, issue, clockMode;
             public int rawPoints, rawStrokes, diagnostics, channelEvents, plans, spawned, remainingEffects;
-            public float inkBefore, inkAfter, impactClock, guardClock, life, commitTime;
+            public float inkBefore, inkAfter, inkMinimum, impactClock, guardClock, life, commitTime;
             public float plannedAt, expectedImpactClock, expectedFlight, observedFlight;
             public float expectedInkCost;
             public int issuedHits, issuedShots, expectedHits = -1;
             public string areaShape, hitScope, issuedPlanSignature;
-            public bool recognitionSuccess, newVfxProfile, clockMatches, issuedPlanUnchanged;
+            public bool recognitionSuccess, newVfxProfile, clockMatches, issuedPlanUnchanged, fieldPassengerHeld;
+            public float fieldHeight;
         }
         [Serializable] private sealed class Report
         {
@@ -62,6 +63,7 @@ namespace Oheangbu.EditorTools
             public bool drawingBindingsRestored;
             public string drawingBindingsBefore, drawingBindingsAfter;
             public bool cameraPoseReturned, cursorRestored, timeScaleReturned;
+            public bool fieldGroundedCameraRecovery;public float fieldPlayerDisplacement,fieldCameraRelativeDelta;
             public int remainingInputStages, remainingObserveStages;
             public string recoveryMeaning = "Cleanup requires exact raw/effective nullable device filters (null is not an empty list), Drawing control bindings, virtual device removal, original current devices/settings/map states, and both audit PlayerLoop stages absent from the installed loop. Drawing exit and effect destruction must be observed. Camera pose/FOV and timeScale return are checked separately; no character/camera pose, ink, or game clock is forcibly rewound.";
             public int configuredTargets, errors, failed, completed, residualEffects;
@@ -119,6 +121,8 @@ namespace Oheangbu.EditorTools
         private static double _started, _phaseAt, _nextStep;
         private static Step _held;
         private static string _glyphs = LegacyGlyphs;
+        private static bool _fieldHeld;
+        private static Vector3 _fieldStartPlayer;
 
         public static string Run() => Start();
         public static string Start() { ScenePath=DefaultScenePath;return StartSelection(LegacyGlyphs, 0); }
@@ -127,6 +131,28 @@ namespace Oheangbu.EditorTools
             if(_running)return Poll();
             ScenePath="Assets/_Project/Scenes/World/W_Cheongrim_Prologue.unity";
             return StartSelection("아아어",5);
+        }
+        public static string StartJourney()
+        {
+            if (_running) return Poll();
+            ScenePath = PineRestGameBuilder.Scene;
+            return StartSelection("아어", 6);
+        }
+        public static string StartJourneyGuk()
+        {
+            if(_running)return Poll();ScenePath=PineRestGameBuilder.Scene;return StartSelection("국",8);
+        }
+        public static string StartJourneyWoodGuard()
+        {
+            if(_running)return Poll();ScenePath=PineRestGameBuilder.Scene;return StartSelection("거",10);
+        }
+        public static string StartJourneyWoodAttack()
+        {
+            if(_running)return Poll();ScenePath=PineRestGameBuilder.Scene;return StartSelection("가",9);
+        }
+        public static string StartJourneyAttack()
+        {
+            if(_running)return Poll();ScenePath=PineRestGameBuilder.Scene;return StartSelection("아",7);
         }
         public static string StartSingle(string glyph)
         {
@@ -179,11 +205,12 @@ namespace Oheangbu.EditorTools
                 var library = Get<JamoTemplateLibrarySO>(_input, "_templates");
                 foreach (var glyph in _glyphs)
                 {
-                    Require(_book.TryGet(glyph, out var entry), "Existing book misses " + glyph);
-                    Require(_visuals.TryGet(glyph, out var visual) && visual.FxPrefab != null && visual.FxPrefab.GetComponent<Vfx120Effect>()?.Profile?.Glyph == glyph.ToString(), "New VFX mapping missing: " + glyph);
+                    bool fieldGlyph=glyph=='국';
+                    Require(_book.TryGet(glyph, out var entry)||fieldGlyph&&_wiring.FieldSpells!=null&&_wiring.FieldSpells.IsUnlocked, "Existing book/unlock misses " + glyph);
+                    Require(fieldGlyph||_visuals.TryGet(glyph, out var visual) && visual.FxPrefab != null && visual.FxPrefab.GetComponent<Vfx120Effect>()?.Profile?.Glyph == glyph.ToString(), "New VFX mapping missing: " + glyph);
                     Decompose(glyph, out var initial, out var medial);
                     FindTemplate(library, "_initials", initial, out _); FindTemplate(library, "_medials", medial, out _);
-                    _report.requiredInk += CastCost(entry.Kind);
+                    _report.requiredInk += CastCost(fieldGlyph?SpellKind.Field:entry.Kind);
                 }
                 Require(_ink.Value >= _report.requiredInk, "Insufficient existing ink for selected casts (required " + Number(_report.requiredInk) + "); enter normal C2 Play again. No refill is injected.");
                 Require(!Object.FindObjectsByType<Vfx120Effect>(FindObjectsSortMode.None).Any(), "Wait for existing VFX to expire first.");
@@ -191,6 +218,7 @@ namespace Oheangbu.EditorTools
                 _report.configuredTargets = (Get<EnemyVitals[]>(_wiring, "_enemies") ?? Array.Empty<EnemyVitals>()).Count(x => x != null)
                     + (Get<EnemyVitals>(_wiring, "_enemyVitals") != null ? 1 : 0);
                 _report.fileHashBefore = HashScene(); _report.inkBefore = _ink.Value;
+                _fieldStartPlayer=Object.FindFirstObjectByType<Oheangbu.App.Prologue.PrologueSession>()?.Player.position??Vector3.zero;
                 _cameraPosition = _camera.transform.position; _cameraRotation = _camera.transform.rotation;
                 _cameraFov = _camera.fieldOfView; _cameraMask = _camera.cullingMask; _cameraTarget = _camera.targetTexture;
                 _timeScale = Time.timeScale; _cursorLock = Cursor.lockState; _cursorVisible = Cursor.visible;
@@ -277,6 +305,7 @@ namespace Oheangbu.EditorTools
             try
             {
                 double now = EditorApplication.timeSinceStartup;
+                if(_row!=null&&_ink!=null)_row.inkMinimum=Mathf.Min(_row.inkMinimum,_ink.Value);
                 if (_report.phase == "SETTLE" && now - _phaseAt > .8) BeginCase();
                 foreach (var effect in Object.FindObjectsByType<Vfx120Effect>(FindObjectsSortMode.None))
                 {
@@ -285,21 +314,23 @@ namespace Oheangbu.EditorTools
                     if (_row == null) { _report.messages.Add("Unattributed concurrent VFX; run may be confounded."); continue; }
                     _row.spawned++; _row.life = effect.Life; _row.impactClock = effect.ReceivedImpactClock; _row.guardClock = effect.ReceivedGuardClock;
                     _row.newVfxProfile = effect.Profile == _expected && effect.Profile.Glyph == _row.glyph
-                        && effect.Begun && !effect.PreviewControlled && !effect.DemonstrationCues;
+                        && effect.Begun && (effect.PreviewControlled==(_row.glyph=="국")) && !effect.DemonstrationCues;
                     _row.clockMatches = ClockMatches(effect);
                 }
                 int alive = Seen.Count(x => x != null); _report.residualEffects = alive;
                 if (_report.phase == "WAIT")
                 {
+                    if(_row.glyph=="국"&&_wiring.FieldSpells!=null&&_wiring.FieldSpells.State==Oheangbu.App.Demo.FieldLiftState.Holding){_fieldHeld=_wiring.FieldSpells.PassengerSupported&&_wiring.FieldSpells.CurrentHeight>=2.1f;_row.fieldPassengerHeld=_fieldHeld;_row.fieldHeight=_wiring.FieldSpells.CurrentHeight;_wiring.FieldSpells.RequestRelease();}
                     _row.remainingEffects = alive; _quietFrames = alive == 0 ? _quietFrames + 1 : 0;
                     if (now - _phaseAt > 1.5 && _quietFrames >= 3)
                     {
                         _row.inkAfter = _ink.Value;
-                        _row.issuedPlanUnchanged = _plan == null ? _row.kind == SpellKind.Parry.ToString()
+                        _row.issuedPlanUnchanged = _plan == null ? (_row.kind == SpellKind.Parry.ToString()||_row.glyph=="국")
                             : _row.issuedPlanSignature == PlanSignature(_plan);
                         bool pass = _row.diagnostics == 1 && _row.recognitionSuccess && _row.recognized == _row.glyph && _row.channelEvents == 1
-                            && _row.plans == (_row.kind == SpellKind.Parry.ToString() ? 0 : 1)
-                            && _row.spawned == 1 && _row.newVfxProfile && _row.clockMatches && _row.issuedPlanUnchanged && _row.inkAfter < _row.inkBefore;
+                            && _row.plans == (_row.kind == SpellKind.Parry.ToString()||_row.glyph=="국" ? 0 : 1)
+                            && (_row.glyph!="국"||_fieldHeld&&Mathf.Abs(_row.inkBefore-_row.inkAfter-_row.expectedInkCost)<.001f)
+                            && _row.spawned == 1 && _row.newVfxProfile && _row.clockMatches && _row.issuedPlanUnchanged && (_report.batchId==10 ? Mathf.Abs(_row.inkBefore-_row.inkMinimum-_row.expectedInkCost)<.001f : _row.inkAfter < _row.inkBefore);
                         _row.status = pass ? "PASS_OBSERVED_INPUT_CAST_VFX" : "FAIL";
                         _report.completed++; if (!pass) _report.failed++;
                         _index++; _row = null; _report.phase = _index < _glyphs.Length ? "SETTLE" : "RESTORE_SETTLE"; _phaseAt = now;
@@ -316,25 +347,33 @@ namespace Oheangbu.EditorTools
         private static void BeginCase()
         {
             char glyph = _glyphs[_index]; _book.TryGet(glyph, out var spell); _visuals.TryGet(glyph, out var visual);
-            Require(_ink.Value >= CastCost(spell.Kind), "Existing ink depleted before " + glyph + "; no refill or synthetic cast is permitted.");
-            _expected = visual.FxPrefab.GetComponent<Vfx120Effect>().Profile; _plan = null;
-            _row = new CaseRow { glyph = glyph.ToString(), kind = spell.Kind.ToString(), inkBefore = _ink.Value,
-                expectedInkCost = CastCost(spell.Kind), expectedHits = _report.configuredTargets == 0 ? 0 : -1,
+            var kind=glyph=='국'?SpellKind.Field:spell.Kind;_fieldHeld=false;
+            Require(_ink.Value >= CastCost(kind), "Existing ink depleted before " + glyph + "; no refill or synthetic cast is permitted.");
+            _expected = glyph=='국'?Object.FindFirstObjectByType<Oheangbu.App.Prologue.PrologueSession>().WoodLiftProfile:visual.FxPrefab.GetComponent<Vfx120Effect>().Profile; _plan = null;
+            _row = new CaseRow { glyph = glyph.ToString(), kind = kind.ToString(), inkBefore = _ink.Value, inkMinimum = _ink.Value,
+                expectedInkCost = CastCost(kind), expectedHits = _report.configuredTargets == 0 ? 0 : -1,
                 hitScope = _report.configuredTargets == 0 ? "NO_CONFIGURED_TARGETS_EXPECT_ZERO_SCHEDULED_HITS; damage/parry outcome UNVERIFIED"
                     : "EXISTING_TARGETS; issued plan forwarding only, hit selection/damage/parry outcome UNVERIFIED" };
             _report.cases.Add(_row); _steps = new List<Step>();
             _steps.Add(new Step { q = true, point = _held.point });
             var library = Get<JamoTemplateLibrarySO>(_input, "_templates");
             Decompose(glyph, out var initial, out var medial);
+            if(glyph=='국'){
+                AddJamo(library,"_initials","ㄱ",new Rect(.37f,.65f,.26f,.17f));
+                AddJamo(library,"_medials","ㅜ",new Rect(.34f,.43f,.32f,.16f));
+                AddJamo(library,"_initials","ㄱ",new Rect(.37f,.19f,.26f,.17f));
+            }else{
             bool horizontal = medial == "ㅗ";
             AddJamo(library, "_initials", initial, horizontal ? new Rect(.39f, .55f, .22f, .23f) : new Rect(.29f, .34f, .21f, .34f));
             AddJamo(library, "_medials", medial, horizontal ? new Rect(.34f, .29f, .33f, .19f) : new Rect(.55f, .31f, .18f, .40f));
+            }
             _steps.Add(new Step { point = _steps[_steps.Count - 1].point });
             _stepIndex = 0; _nextStep = 0; _report.phase = "DRAW";
         }
         private static float CastCost(SpellKind kind) => kind == SpellKind.Parry ? _config.ParryInkCost : _config.SpellInkCost;
         private static void Decompose(char glyph, out string initial, out string medial)
         {
+            if(glyph=='국'){initial="ㄱ";medial="ㅜ";return;}
             const string initials = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
             int syllable = glyph - 0xAC00;
             Require(syllable >= 0 && syllable < 11172 && syllable % 28 == 0, "Expected an existing final-less Hangul spell: " + glyph);
@@ -409,6 +448,7 @@ namespace Oheangbu.EditorTools
             // override flight while ReceivedImpactClock correctly stays at zero.
             _row.observedFlight = Get<float>(effect, "_flight");
             if (!effect.Begun || _expected == null) return false;
+            if(_row.glyph=="국")return effect.PreviewControlled&&effect.WoodLiftHasPlan&&effect.Profile==_expected;
             if (_row.kind == SpellKind.Parry.ToString())
             {
                 _row.clockMode = "EXISTING_GUARD_DURATION_AND_BRIGHT_WINDOW";
@@ -551,6 +591,12 @@ namespace Oheangbu.EditorTools
                     _report.cameraFovDelta = Mathf.Abs(_cameraFov - _camera.fieldOfView);
                     _report.cameraPropertiesRestored = _camera.targetTexture == _cameraTarget && _camera.cullingMask == _cameraMask && _report.cameraFovDelta < .1f;
                     _report.cameraPoseReturned = _report.cameraPositionDelta < .03f && _report.cameraAngleDelta < .2f;
+                    if(_glyphs=="국"){
+                        var body=Object.FindFirstObjectByType<Oheangbu.App.Prologue.PrologueSession>().Player.GetComponent<CharacterController>();
+                        var delta=body.transform.position-_fieldStartPlayer;_report.fieldPlayerDisplacement=delta.magnitude;
+                        _report.fieldCameraRelativeDelta=Vector3.Distance(_camera.transform.position-_cameraPosition,delta);
+                        _report.fieldGroundedCameraRecovery=body.isGrounded&&_wiring.FieldSpells!=null&&!_wiring.FieldSpells.HasPlatform&&delta.magnitude<=body.skinWidth+.03f&&_report.fieldCameraRelativeDelta<.03f&&_report.cameraAngleDelta<.2f;
+                    }
                 }
                 _report.residualEffects = Seen.Count(x => x != null); _report.inkAfter = _ink != null ? _ink.Value : 0;
                 _report.fileHashAfter = HashScene(); _report.sceneFileUnchanged = _report.fileHashBefore == _report.fileHashAfter;
@@ -560,7 +606,7 @@ namespace Oheangbu.EditorTools
                     && _report.cursorRestored && _report.drawingExited && _report.residualEffects == 0
                     ? "OBSERVED_INPUT_AND_EFFECT_CLEANUP" : "UNVERIFIED_OR_RESIDUAL_STATE";
                 if (_report.status.StartsWith("PASS") && (_report.cleanupStatus != "OBSERVED_INPUT_AND_EFFECT_CLEANUP"
-                    || !_report.sceneFileUnchanged || !_report.cameraPropertiesRestored || !_report.cameraPoseReturned || !_report.timeScaleReturned))
+                    || !_report.sceneFileUnchanged || !_report.cameraPropertiesRestored || !(_report.cameraPoseReturned||_glyphs=="국"&&_report.fieldGroundedCameraRecovery) || !_report.timeScaleReturned))
                     _report.status = "COMPLETED_WITH_FINDINGS";
             }
             catch (Exception e) { _report.cleanupStatus = "CLEANUP_ERROR"; _report.messages.Add(e.ToString()); _report.status = "COMPLETED_WITH_FINDINGS"; }

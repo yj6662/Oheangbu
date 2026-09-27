@@ -33,6 +33,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string Execute(string method,string argument)
         {
             switch(method){
+                case "Demo":return DemoFoundationAuthoring.Execute(argument);
                 case "UI":return PlaytestMenuAuthoring.Execute(argument);
                 case "HUD":return WorldMacroPlaytestHudAuthoring.Execute(argument);
                 case "Audio":return WorldMacroPlaytestAudioAuthoring.Execute(argument);

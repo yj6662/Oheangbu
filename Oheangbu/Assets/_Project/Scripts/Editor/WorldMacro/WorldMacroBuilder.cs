@@ -22,7 +22,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         public static string Output=>Path.GetFullPath(Path.Combine(Application.dataPath,"../../Art/World/WorldMacro"));
         public const string SheetPath=Folder+"/WorldMacroSheet.asset";
         public static WorldMacroSheetSO Sheet=>AssetDatabase.LoadAssetAtPath<WorldMacroSheetSO>(SheetPath);
-        [MenuItem("Oheangbu/World/Macro/Build isolated blockout")]
+        [MenuItem("Oheangbu/Legacy/복구 전용/Build isolated blockout")]
         static void MenuBuild()=>Debug.Log(Build());
         public static string Build()
         {

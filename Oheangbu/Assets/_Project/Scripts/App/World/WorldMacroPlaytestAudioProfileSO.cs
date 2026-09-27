@@ -20,7 +20,9 @@ namespace Oheangbu.App.World
         }
 
         public WorldMacroAudioMixProfileSO Mix;
+        public CompactSoundPalette255 ExtendedPalette;
         public Cue HarvestStart, HarvestLoop, HarvestEnd;
+        public Cue Waiting, SaveFailed;
         public Cue BrushStroke = new Cue { Volume = .42f };
         public Cue CastWood = new Cue { Volume = .64f };
         public Cue CastFire = new Cue { Volume = .64f };

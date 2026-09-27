@@ -48,6 +48,9 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
         sealed class Snapshot
         {
+            public delegate bool HeightSampler(float x, float z, out float y);
+            // Optional compact sampler only. Existing authoring paths leave this null.
+            public HeightSampler HeightOverride;
             public readonly Dictionary<long,float> Heights=new Dictionary<long,float>();
             public readonly Dictionary<long,List<Triangle>> Waters=new Dictionary<long,List<Triangle>>();
             public readonly Dictionary<long,List<Segment>> Roads=new Dictionary<long,List<Segment>>();
@@ -56,6 +59,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             public WorldMacroSheetSO Geo;public Sheet Settings;public float RockRadius=3,TreeRadius=.75f;
             public bool Height(float x,float z,out float y)
             {
+                if (HeightOverride != null) return HeightOverride(x, z, out y);
                 float u=(x-Geo.BoundsMin.x)/16,v=(z-Geo.BoundsMin.y)/16;int ix=Mathf.FloorToInt(u),iz=Mathf.FloorToInt(v);u-=ix;v-=iz;y=0;
                 if(!Heights.TryGetValue(Key(ix,iz),out float a)||!Heights.TryGetValue(Key(ix+1,iz),out float b)||!Heights.TryGetValue(Key(ix,iz+1),out float c))return false;
                 if(u+v<=1){y=a+(b-a)*u+(c-a)*v;return true;}if(!Heights.TryGetValue(Key(ix+1,iz+1),out float d))return false;y=d+(c-d)*(1-u)+(b-d)*(1-v);return true;

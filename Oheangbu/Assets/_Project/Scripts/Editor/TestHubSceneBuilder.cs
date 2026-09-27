@@ -216,7 +216,7 @@ namespace Oheangbu.EditorTools
         public static string RegisterScenes()
         {
             DevSceneKit.RegisterBuildScenes(DevSceneKit.HubScenePath, DevSceneKit.EffectLabScenePath, DevSceneKit.ParryRangeScenePath,
-                DevSceneKit.SpellRangeScenePath, DevSceneKit.CombatLoopScenePath, DevSceneKit.WorldLookdevScenePath);
+                DevSceneKit.SpellRangeScenePath, DevSceneKit.CombatLoopScenePath);
             return $"Build Settings 등록 — {EditorBuildSettings.scenes.Length}개(허브 첫 번째)";
         }
 

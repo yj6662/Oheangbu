@@ -1,0 +1,40 @@
+{
+    "name": "Oheangbu.EditorTools.WorldMacro",
+    "rootNamespace": "Oheangbu.EditorTools.WorldMacro",
+    "references": [
+        "Oheangbu.EditorTools",
+        "Oheangbu.Core",
+        "Oheangbu.Data",
+        "Oheangbu.Drawing",
+        "Oheangbu.BrushRender",
+        "Oheangbu.Spellcraft",
+        "Oheangbu.Combat",
+        "Oheangbu.Presentation",
+        "Oheangbu.App",
+        "PDollar",
+        "VContainer",
+        "UniTask",
+        "Unity.InputSystem",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.GPUDriven.Runtime",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.AI.Navigation",
+        "Unity.AI.Navigation.Editor",
+        "Unity.Splines",
+        "Unity.Mathematics",
+        "Unity.Splines.Editor",
+        "Unity.ProBuilder",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

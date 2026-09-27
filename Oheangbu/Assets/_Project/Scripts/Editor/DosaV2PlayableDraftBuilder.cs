@@ -173,6 +173,13 @@ namespace Oheangbu.EditorTools
             return candidate;
         }
 
+        public static string InstallJourneyVisual(GameObject rig)
+        {
+            if(EditorApplication.isPlayingOrWillChangePlaymode || rig==null || rig.scene.path!=PineRestGameBuilder.Scene)throw new InvalidOperationException("Journey edit rig required");
+            InstallInRig(rig,rig.scene.path);
+            return "Existing Dosa V2 playable visual installed in Journey instance";
+        }
+
         private static InstallRecord InstallInRig(GameObject playerRoot, string owner)
         {
             var motor = playerRoot.GetComponentInChildren<PlayerMotor>(true);

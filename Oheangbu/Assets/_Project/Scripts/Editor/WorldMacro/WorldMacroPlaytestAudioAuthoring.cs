@@ -355,7 +355,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         private static AudioClip Clip(string name)
         {
-            return Need<AudioClip>(AudioFolder + "/" + name + ".wav");
+            return Need<AudioClip>("Assets/_Project/Audio/JourneyRenewal/" + name + ".wav");
         }
 
         private static void NeedCue(WorldMacroPlaytestAudioProfileSO.Cue cue, AudioClip clip,

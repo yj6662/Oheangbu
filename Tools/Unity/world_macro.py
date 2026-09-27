@@ -46,12 +46,17 @@ def call(method, argument=''):
     print(str(response), flush=True)
     # A player build may spend several minutes compiling shaders. Keep its single request alive;
     # the caller can yield/poll this process without submitting a duplicate Unity build.
-    deadline = time.monotonic()+(3600 if method == 'Release' and argument == 'build' else 300)
-    while not response.exists():
-        if time.monotonic()>deadline:
-            raise TimeoutError(response)
-        time.sleep(.5)
-    result = json.loads(response.read_text(encoding='utf-8-sig'))
+    deadline = time.monotonic()+(3600 if (method == 'Release' and argument == 'build') or (method == 'Game' and argument == 'BuildJourney') else 300)
+    # Unity can create a response before its JSON has finished writing. Keep
+    # reading this exact request's response; never resubmit a consumed command.
+    while True:
+        try:
+            result = json.loads(response.read_text(encoding='utf-8-sig'))
+            break
+        except (FileNotFoundError, json.JSONDecodeError, PermissionError):
+            if time.monotonic()>deadline:
+                raise TimeoutError(response)
+            time.sleep(.5)
     print(json.dumps(result, ensure_ascii=False), flush=True)
     if result['status']!='COMPLETE':
         raise RuntimeError(result)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Oheangbu.App.World.UI
@@ -13,6 +13,8 @@ namespace Oheangbu.App.World.UI
         WorldMapProjection projection;
         Rect view;
         Vector2 pixelScale;
+        public bool BrushStyle;
+        public bool PaintedRelief;
 
         public WorldMapPaperInk()
         {
@@ -21,6 +23,7 @@ namespace Oheangbu.App.World.UI
             Texture.SetPixels32(pixels); Texture.Apply(false,false);
         }
 
+        public float projectionWorldHeight=128;
         public void Draw(WorldMapLineSpec[] lines, Vector2[] cavePath, WorldMapProjection mapProjection, Rect mapView, Vector2 displaySize)
         {
             projection=mapProjection; view=mapView;
@@ -31,9 +34,13 @@ namespace Oheangbu.App.World.UI
                 if(line==null||line.Points==null)continue;
                 Color32 tint=LineColor(line.Kind);
                 float width=Mathf.Max(.8f,line.PixelWidth);
-                for(int i=1;i<line.Points.Length;i++)Line(line.Points[i-1],line.Points[i],width,tint);
+                if(PaintedRelief && (line.Kind==WorldMapLineKind.Road||line.Kind==WorldMapLineKind.Trail||line.Kind==WorldMapLineKind.DetailFill)){
+                    width=Mathf.Clamp((line.Kind==WorldMapLineKind.DetailFill?8f:4.5f)/projectionWorldHeight*Height/pixelScale.y,2.5f,40);
+                    for(int i=1;i<line.Points.Length;i++)Line(line.Points[i-1],line.Points[i],width+1.7f,new Color32(113,105,80,175));
+                    for(int i=1;i<line.Points.Length;i++)Line(line.Points[i-1],line.Points[i],width,new Color32(220,210,175,250));
+                }else for(int i=1;i<line.Points.Length;i++)Line(line.Points[i-1],line.Points[i],width,tint);
             }
-            if(cavePath!=null)for(int i=1;i<cavePath.Length;i++)Line(cavePath[i-1],cavePath[i],2.3f,new Color32(114,51,34,240));
+            if(!PaintedRelief&&cavePath!=null)for(int i=1;i<cavePath.Length;i++)Line(cavePath[i-1],cavePath[i],2.3f,new Color32(114,51,34,240));
             Texture.SetPixels32(pixels);Texture.Apply(false,false);
         }
 
@@ -49,7 +56,7 @@ namespace Oheangbu.App.World.UI
                !Clip(-delta.y,a.y+padding,ref t0,ref t1)||!Clip(delta.y,Height+padding-a.y,ref t0,ref t1))return;
             b=a+delta*t1;a+=delta*t0;delta=b-a;
             int steps=Mathf.Clamp(Mathf.CeilToInt(delta.magnitude*1.2f),1,3000);
-            float radius=Mathf.Max(.5f,width*.5f);
+            float radius=Mathf.Max(.5f,width*(BrushStyle&&!PaintedRelief?1.05f:.5f));
             Vector2 rasterRadius=pixelScale*(radius+.55f);
             for(int i=0;i<=steps;i++)
             {
@@ -59,9 +66,12 @@ namespace Oheangbu.App.World.UI
                 for(int y=minY;y<=maxY;y++)for(int x=minX;x<=maxX;x++)
                 {
                     Vector2 distance=new Vector2((x+.5f-p.x)/pixelScale.x,(y+.5f-p.y)/pixelScale.y);
-                    float coverage=Mathf.Clamp01(radius+.55f-distance.magnitude);
+                    float pressure=BrushStyle&&!PaintedRelief?.65f+.35f*Mathf.PerlinNoise(Mathf.Lerp(wa.x,wb.x,(float)i/steps)*.06f,Mathf.Lerp(wa.y,wb.y,(float)i/steps)*.06f):1;
+                    if(PaintedRelief)pressure=.92f+.12f*Mathf.PerlinNoise(Mathf.Lerp(wa.x,wb.x,(float)i/steps)*.19f,Mathf.Lerp(wa.y,wb.y,(float)i/steps)*.19f);
+                    float coverage=Mathf.Clamp01(radius*pressure+.55f-distance.magnitude);
+                    if(BrushStyle&&!PaintedRelief)coverage*=.6f+.3f*Mathf.Abs(Mathf.Sin(distance.x*3+distance.y*2));
                     byte alpha=(byte)(tint.a*coverage);int index=y*Width+x;
-                    if(alpha>pixels[index].a)pixels[index]=new Color32(tint.r,tint.g,tint.b,alpha);
+                    if(alpha>=pixels[index].a)pixels[index]=new Color32(tint.r,tint.g,tint.b,alpha);
                 }
             }
         }

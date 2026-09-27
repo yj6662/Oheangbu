@@ -53,6 +53,40 @@ namespace Oheangbu.App.World.Dressing
             public RenderCostRow[] batches;
         }
         public string RenderCostJson()=>JsonUtility.ToJson(GetRenderCostSnapshot(),true);
+        // Diagnostic-only: generation completion does not imply that the time-budgeted
+        // visible draw packets have caught up with this observer. Does not build packets.
+        public int PendingObserverPackets
+        {
+            get
+            {
+                if(!UseStreaming||Observer==null)return 0;
+                int pending=0;var eye=Observer.transform.position;
+                foreach(var chunk in streamVisible)
+                    if(!chunk.PacketsReady||chunk.PacketViewKey!=PacketViewKey(chunk,eye)||chunk.BuiltRevision!=chunk.Revision)pending++;
+                return pending;
+            }
+        }
+#if UNITY_EDITOR
+        // Still capture preparation only. Build packets without issuing hundreds of
+        // RenderRequests in one Editor frame (DrawMeshInstanced retains commands until
+        // the frame ends). Runtime budgets and streaming behaviour are untouched.
+        public void PrepareStillCapturePackets(Camera camera,Action guard)
+        {
+            if(Application.isPlaying)throw new InvalidOperationException("Still preparation is Edit-only");
+            if(!UseStreaming)return;
+            var eye=camera.transform.position;GeometryUtility.CalculateFrustumPlanes(camera,planes);
+            int visited=0;
+            foreach(var chunk in streamGroups.Values)
+            {
+                if(!chunk.Complete||(chunk.Members==null&&chunk.Items.Count==0)||HorizontalBoundsDistance(chunk.Bounds,eye)>StreamRange(chunk.Layer)+24)continue;
+                var bounds=chunk.Bounds;bounds.Expand(48);if(!GeometryUtility.TestPlanesAABB(planes,bounds))continue;
+                int key=PacketViewKey(chunk,eye);
+                if(chunk.PacketsReady&&chunk.PacketViewKey==key&&chunk.BuiltRevision==chunk.Revision)continue;
+                if((visited++&31)==0)guard?.Invoke();
+                BuildStreamPackets(chunk,eye);chunk.PacketViewKey=key;chunk.PacketsReady=true;chunk.BuiltRevision=chunk.Revision;
+            }
+        }
+#endif
         public RenderCostReport GetRenderCostSnapshot()
         {
             var report=new RenderCostReport{status="NO_ACTUAL_OBSERVER_DRAW_CACHE",frame=Time.frameCount,

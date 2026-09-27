@@ -31,6 +31,45 @@ namespace Oheangbu.EditorTools
             return Capture(Cuts[i, 0], EyeHeight, Cuts[i, 1], Cuts[i, 2], Cuts[i, 3], $"cut{cut}_{(postProcessing ? "post" : "raw")}", postProcessing);
         }
 
+        // [§6 A6] 셰이더 컴파일 상태 감사 — 이름들을 Shader.Find로 로드해 에러/경고 수를 집계(1호출=문자열).
+        // reflection-method-call로 UnityEngine.Object 파라미터를 넘기기 어려워, 이름은 메서드 안에서 든다.
+        public static string ShaderErrors()
+        {
+            string[] names =
+            {
+                "Oheangbu/InkWorld", "Oheangbu/InkLightSource", "Oheangbu/InkWorldPost",
+            };
+            var sb = new System.Text.StringBuilder();
+            int totalErr = 0, totalWarn = 0;
+            foreach (var n in names)
+            {
+                var shader = Shader.Find(n);
+                if (shader == null) { sb.Append($"{n}=MISSING; "); totalErr++; continue; }
+                int count = ShaderUtil.GetShaderMessageCount(shader);
+                int err = 0, warn = 0;
+                if (count > 0)
+                {
+                    var msgs = ShaderUtil.GetShaderMessages(shader);
+                    foreach (var m in msgs)
+                    {
+                        if (m.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error) err++;
+                        else warn++;
+                    }
+                }
+                totalErr += err; totalWarn += warn;
+                sb.Append($"{n}=E{err}/W{warn}{(err > 0 ? " «" + FirstError(shader) + "»" : "")}; ");
+            }
+            return $"{(totalErr == 0 ? "OK" : "FAIL")}: err={totalErr} warn={totalWarn} · {sb}";
+        }
+
+        private static string FirstError(Shader shader)
+        {
+            foreach (var m in ShaderUtil.GetShaderMessages(shader))
+                if (m.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error)
+                    return $"{m.message} @{m.file}:{m.line}";
+            return "";
+        }
+
         // 임의 포즈 캡처 — 반환 = 절대 경로. 1920x1080 · FOV 60(리그 카메라 동일) · SolidColor 소지(드라이버 팔레트)
         public static string Capture(float x, float y, float z, float yaw, float pitch, string name, bool postProcessing)
         {

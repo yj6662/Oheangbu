@@ -66,12 +66,14 @@ namespace Oheangbu.App.World.Dressing
         Vector3 previousCollisionFocus;
         Vector3 collisionFocus,collisionEnd;
         WorldMacroDressingSheetSO loadedSheet;
+        Vector2 surfaceDeltaRange;
         int residentRevision;bool prepareComplete;Vector3 preparedEye;float preparedForestDistance;
         static int TimeId;
         void OnEnable(){TimeId=Shader.PropertyToID("_DressingTime");block=new MaterialPropertyBlock();RenderPipelineManager.beginCameraRendering+=Draw;ResetCache();}
         void OnDisable(){RenderPipelineManager.beginCameraRendering-=Draw;ResetCache();}
         public void ResetCache()
         {
+            surfaceDeltaRange=Sheet!=null&&Sheet.SurfaceDeformation!=null?Sheet.SurfaceDeformation.GetDeltaRange():Vector2.zero;
             var exclusions=new List<Bounds>();
             if(Sheet!=null)foreach(var a in Sheet.PreservedAreas)
             {
@@ -132,7 +134,7 @@ namespace Oheangbu.App.World.Dressing
                 if(chosen==null){prepareComplete=true;break;}int key=Key(chosen.X,chosen.Z);changed=true;
                 if(mode==1)
                 {
-                    var cell=new LiveCell{Source=chosen,Bounds=new Bounds(new Vector3(chosen.Centre.x,(chosen.MinHeight+chosen.MaxHeight)*.5f+20,chosen.Centre.z),new Vector3(300,chosen.MaxHeight-chosen.MinHeight+100,300))};
+                    var cell=new LiveCell{Source=chosen,Bounds=SurfaceBounds(new Bounds(new Vector3(chosen.Centre.x,(chosen.MinHeight+chosen.MaxHeight)*.5f+20,chosen.Centre.z),new Vector3(300,chosen.MaxHeight-chosen.MinHeight+100,300)))};
                     cell.Far=Generate(chosen,0,true);cell.Fixed=Fixed(chosen);live.Add(key,cell);
                     if(best<Sheet.TreeDistance+150){cell.Near=GenerateNear(chosen);cell.NearReady=true;}
                     if(best<GroundResidentDistance+100){PrepareGround(cell);}
@@ -152,28 +154,29 @@ namespace Oheangbu.App.World.Dressing
             var a=Sheet.DenseVegetation?Array.Empty<Item>():Generate(cell,0,false);var b=Generate(cell,1,false);var c=Generate(cell,3,false);
             var result=new Item[a.Length+b.Length+c.Length];Array.Copy(a,0,result,0,a.Length);Array.Copy(b,0,result,a.Length,b.Length);Array.Copy(c,0,result,a.Length+b.Length,c.Length);return result;
         }
-        Item[] Fixed(WorldMacroDressingSheetSO.Cell cell)
+        Item[] Fixed(WorldMacroDressingSheetSO.Cell cell,bool applyDeformation=true)
         {
             var list=new List<Item>();var origin=Origin(cell);
             foreach(var placed in Sheet.FixedPlacements)
             {
                 var p=placed.Position;if(p.x<origin.x||p.x>=origin.x+256||p.z<origin.y||p.z>=origin.y+256)continue;
                 int prototype=Array.FindIndex(Sheet.Prototypes,v=>v.Id==placed.PrototypeId);if(prototype<0)continue;
-                list.Add(new Item{Id=FixedId(placed.Id),Position=p,Prototype=prototype,Scale=placed.Scale,Matrix=Matrix4x4.TRS(p,Quaternion.Euler(placed.Euler),Vector3.one*placed.Scale)});
+                list.Add(DeformItem(new Item{Id=FixedId(placed.Id),Position=p,Prototype=prototype,Scale=placed.Scale,Matrix=Matrix4x4.TRS(p,Quaternion.Euler(placed.Euler),Vector3.one*placed.Scale)},applyDeformation));
             }
             return list.ToArray();
         }
-        Item[] Generate(WorldMacroDressingSheetSO.Cell cell,int category,bool far,bool cover=false,bool low=false)
+        Item[] Generate(WorldMacroDressingSheetSO.Cell cell,int category,bool far,bool cover=false,bool low=false,bool applyRetention=true,bool applyDeformation=true)
         {
             var output=new List<Item>();var origin=Origin(cell);
-            foreach(var item in GenerateSteps(cell,category,far,cover,low,origin,origin+Vector2.one*256))
+            foreach(var item in GenerateSteps(cell,category,far,cover,low,origin,origin+Vector2.one*256,applyRetention,applyDeformation))
                 if(item.HasValue)output.Add(item.Value);
             return output.ToArray();
         }
-        IEnumerable<Item?> GenerateSteps(WorldMacroDressingSheetSO.Cell cell,int category,bool far,bool cover,bool low,Vector2 min,Vector2 max)
+        IEnumerable<Item?> GenerateSteps(WorldMacroDressingSheetSO.Cell cell,int category,bool far,bool cover,bool low,Vector2 min,Vector2 max,bool applyRetention=true,bool applyDeformation=true)
         {
             Vector2 origin=Origin(cell);
             bool dense=Sheet.DenseVegetation;
+            float retention=applyRetention?Sheet.RetentionForCategory(category):1;
             float spacing=cover?Sheet.GroundCoverSpacing:dense?(category==0?Sheet.DenseTreeSpacing:category==1?Sheet.DenseShrubSpacing:category==2?Sheet.DenseGrassSpacing:Sheet.RockSpacing):far?34:category==0?Sheet.TreeSpacing:category==1?Sheet.ShrubSpacing:category==2?Sheet.GrassSpacing:Sheet.RockSpacing;
             spacing=Mathf.Max(.5f,spacing);
             if(low)spacing=Mathf.Max(.9f,Sheet.LowGrassSpacing);
@@ -210,7 +213,13 @@ namespace Oheangbu.App.World.Dressing
                     density*=Mathf.Lerp(factor,1,Mathf.SmoothStep(0,1,distance/story.Radius));
                 }
                 if(low)density*=Sheet.LowGrassDensity*Mathf.Lerp(.65f,1.05f,Mathf.PerlinNoise((x+1703)*.043f,(z-721)*.043f));
-                if(WorldMacroDressingSheetSO.Unit(hash*1597334677u+3812015801u)>Mathf.Clamp01(density))continue;
+                // Clamp the original acceptance probability first: lowering an oversaturated
+                // density must still retain only the requested fraction of the same candidates.
+                density=Mathf.Clamp01(density)*Sheet.OpenGroundDensity(cell,hx,hz,category);
+                // Reuse the existing placement hash and lower its accepted probability only after
+                // the open-ground mask. Every result is a stable subset with its original transform.
+                // All LODs and collider candidates consume these same Items; the yield budget above stays intact.
+                if(retention<=0||WorldMacroDressingSheetSO.Unit(hash*1597334677u+3812015801u)>Mathf.Clamp01(density)*retention)continue;
                 int proto=low?ChooseLowGrass(realm,habitat,y,slope):ChoosePrototype(realm,category,habitat==2,hash*3266489917u,y,slope);if(proto<0)continue;
                 var p=Sheet.Prototypes[proto];float scale=Mathf.Lerp(p.Scale.x,p.Scale.y,WorldMacroDressingSheetSO.Unit(hash*2246822519u));
                 if(far&&!dense)scale*=1.35f;
@@ -238,13 +247,158 @@ namespace Oheangbu.App.World.Dressing
                 }
                 long id=((long)category<<60)|(((long)ix+134217728)&0xfffffff)<<28|(((long)iz+134217728)&0xfffffff);
                 if(low)id=(6L<<60)|(id&0x0fffffffffffffff);
-                yield return new Item{Id=id,Matrix=Matrix4x4.TRS(pos,rotation,Vector3.one*scale),Position=pos,Scale=scale,Prototype=proto};
+                // Height deformation is deliberately last: slope/height/clearance/contact
+                // decisions, IDs, prototype, retained counts and original rotations stay fixed.
+                yield return DeformItem(new Item{Id=id,Matrix=Matrix4x4.TRS(pos,rotation,Vector3.one*scale),Position=pos,Scale=scale,Prototype=proto},applyDeformation);
             }
         }
+        float SurfaceDelta(float x,float z)=>Sheet.SurfaceDeformation!=null?Sheet.SurfaceDeformation.SampleDelta(x,z):0;
+        Item DeformItem(Item item,bool applyDeformation)
+        {
+            if(!applyDeformation||Sheet.SurfaceDeformation==null)return item;
+            WorldMacroSurfaceDeformationSO.TranslateHeight(ref item.Position,ref item.Matrix,SurfaceDelta(item.Position.x,item.Position.z));
+            return item;
+        }
+        Bounds SurfaceBounds(Bounds bounds)
+        {
+            if(surfaceDeltaRange==Vector2.zero)return bounds;
+            var minimum=bounds.min;var maximum=bounds.max;
+            minimum.y+=surfaceDeltaRange.x;maximum.y+=surfaceDeltaRange.y;bounds.SetMinMax(minimum,maximum);return bounds;
+        }
+        // Physical/deformed surface query for diagnostics and consumers. Generation keeps
+        // using private Ground below, so changing a landform cannot add/remove candidates.
+        public bool TrySurfaceGroundHeight(float x,float z,out float height)
+        {
+            height=0;if(Sheet==null||Sheet.Geography==null)return false;
+            if(loadedSheet!=Sheet||prototypes==null)ResetCache();
+            if(!Ground(x,z,out height))return false;
+            height+=SurfaceDelta(x,z);return true;
+        }
+#if UNITY_EDITOR
+        [Serializable] sealed class RetentionAuditRow
+        {
+            public int cellIndex,cellX,cellZ;
+            public string layer;
+            public float target,actual;
+            public int before,after,duplicates,changedOrNew,partitionMismatches,treeLodMismatches;
+            public bool pass;
+        }
+        [Serializable] sealed class RetentionAuditReport
+        {
+            public string status;
+            public string scope="Actual generated populations in the selected authored cells, after existing habitat/open-ground/clearance rules. Compare baseline and retained IDs/transforms, then regenerate sixteen streaming partitions. Counts are sampled retained fractions, not exact quotas or a full-world/FPS certification. Fixed placements are exempt. Collider audit is separate and must run after Play warmup.";
+            public bool enabled;
+            public Vector3 requested;
+            public int selectedCells,preservedFixedPlacements,fixedMismatches;
+            public RetentionAuditRow[] layers;
+        }
+        static bool SameRetentionItem(Item a,Item b)=>a.Id==b.Id&&a.Prototype==b.Prototype&&a.Position==b.Position&&a.Scale==b.Scale&&a.Matrix==b.Matrix;
+
+        /// <summary>Read-only generation audit. Pass selected Sheet.Cells indices; default is the observer cell.</summary>
+        public string ValidateSpeciesRetention(int[] cellIndices=null)
+        {
+            if(Application.isPlaying)throw new InvalidOperationException("Run the population audit in Edit mode, separately from performance sampling.");
+            if(Sheet==null||Sheet.Geography==null||Sheet.Cells.Length==0)throw new InvalidOperationException("A populated dressing sheet is required.");
+            if(loadedSheet!=Sheet||prototypes==null)ResetCache();
+            if(cellIndices==null||cellIndices.Length==0)
+            {
+                int nearest=0;float closest=float.PositiveInfinity;var eye=Observer!=null?Observer.transform.position:Sheet.Cells[0].Centre;
+                for(int i=0;i<Sheet.Cells.Length;i++){float d=FlatDistanceSquared(Sheet.Cells[i].Centre,eye);if(d<closest){closest=d;nearest=i;}}
+                cellIndices=new[]{nearest};
+            }
+            var report=new RetentionAuditReport{enabled=Sheet.UseSpeciesRetention,requested=Sheet.SpeciesRetention};
+            var rows=new List<RetentionAuditRow>();var visited=new HashSet<int>();bool pass=true;
+            foreach(int cellIndex in cellIndices)
+            {
+                if(cellIndex<0||cellIndex>=Sheet.Cells.Length)throw new ArgumentOutOfRangeException(nameof(cellIndices));
+                if(!visited.Add(cellIndex))continue;
+                var cell=Sheet.Cells[cellIndex];var origin=Origin(cell);report.selectedCells++;
+                for(int layer=0;layer<6;layer++)
+                {
+                    if(layer==4&&(!Sheet.DenseVegetation||!Sheet.LowGrassInfill)||layer==5&&!Sheet.DenseVegetation)continue;
+                    int category=layer==0?0:layer==1?1:layer==2?3:2;bool far=layer==0,low=layer==4,cover=layer==5;
+                    var original=Generate(cell,category,far,cover,low,false);
+                    var retained=Generate(cell,category,far,cover,low);
+                    var row=new RetentionAuditRow{cellIndex=cellIndex,cellX=cell.X,cellZ=cell.Z,layer=layer==0?"tree":layer==1?"shrub":layer==2?"rock":layer==3?"grass":layer==4?"low grass":"ground cover",target=Sheet.RetentionForCategory(category),before=original.Length,after=retained.Length};
+                    row.actual=original.Length==0?0:retained.Length/(float)original.Length;
+                    var baseline=new Dictionary<long,Item>();foreach(var item in original)if(!baseline.TryAdd(item.Id,item))row.duplicates++;
+                    var kept=new Dictionary<long,Item>();foreach(var item in retained)
+                    {
+                        if(!kept.TryAdd(item.Id,item))row.duplicates++;
+                        if(!baseline.TryGetValue(item.Id,out var before)||!SameRetentionItem(item,before))row.changedOrNew++;
+                    }
+                    var partitioned=new Dictionary<long,Item>();
+                    for(int z=0;z<4;z++)for(int x=0;x<4;x++)
+                        foreach(var value in GenerateSteps(cell,category,far,cover,low,origin+new Vector2(x*64,z*64),origin+new Vector2((x+1)*64,(z+1)*64)))
+                            if(value.HasValue&&!partitioned.TryAdd(value.Value.Id,value.Value))row.duplicates++;
+                    foreach(var pair in kept)if(!partitioned.TryGetValue(pair.Key,out var item)||!SameRetentionItem(pair.Value,item))row.partitionMismatches++;
+                    foreach(var pair in partitioned)if(!kept.ContainsKey(pair.Key))row.partitionMismatches++;
+                    if(layer==0&&Sheet.DenseVegetation)
+                    {
+                        var near=Generate(cell,0,false);var nearIds=new HashSet<long>();
+                        foreach(var item in near){nearIds.Add(item.Id);if(!kept.TryGetValue(item.Id,out var other)||!SameRetentionItem(item,other))row.treeLodMismatches++;}
+                        foreach(var pair in kept)if(!nearIds.Contains(pair.Key))row.treeLodMismatches++;
+                    }
+                    row.pass=row.duplicates==0&&row.changedOrNew==0&&row.partitionMismatches==0&&row.treeLodMismatches==0&&row.after<=row.before&&(row.target!=1||row.after==row.before)&&(row.target!=0||row.after==0);
+                    pass&=row.pass;rows.Add(row);
+                }
+                var fixedItems=new Dictionary<long,Item>();foreach(var item in Fixed(cell))fixedItems[item.Id]=item;
+                foreach(var placed in Sheet.FixedPlacements)
+                {
+                    var p=placed.Position;if(p.x<origin.x||p.x>=origin.x+256||p.z<origin.y||p.z>=origin.y+256)continue;
+                    if(placed.Preserve)report.preservedFixedPlacements++;
+                    int prototype=Array.FindIndex(Sheet.Prototypes,v=>v.Id==placed.PrototypeId);
+                    p.y+=SurfaceDelta(p.x,p.z);
+                    if(!fixedItems.TryGetValue(FixedId(placed.Id),out var item)||item.Prototype!=prototype||item.Position!=p||item.Scale!=placed.Scale||item.Matrix!=Matrix4x4.TRS(p,Quaternion.Euler(placed.Euler),Vector3.one*placed.Scale))report.fixedMismatches++;
+                }
+            }
+            report.layers=rows.ToArray();report.status=pass&&report.fixedMismatches==0?"PASS_RETENTION_IDENTITY":"FAIL";
+            return JsonUtility.ToJson(report,true);
+        }
+        [Serializable] sealed class RetentionColliderReport
+        {
+            public string status,scope="Active collider pool after Play warmup: compare IDs with current resident render Items and regenerated retained candidates in occupied cells. No collider pool or cache is modified. A zero-collider sample is explicitly unverified.";
+            public int active,checkedColliders,missingResidentItem,missingRetainedItem,transformMismatches,checkedCells;
+        }
+        public string ValidateActiveRetentionColliders()
+        {
+            if(!Application.isPlaying)throw new InvalidOperationException("Run active collider validation after Play warmup.");
+            var report=new RetentionColliderReport{active=collisionSlots.Count};
+            var resident=new Dictionary<long,Item>();
+            void Collect(Item[] items){if(items!=null)foreach(var item in items)resident[item.Id]=item;}
+            foreach(var cell in live.Values){Collect(cell.Near);Collect(cell.Fixed);if(Sheet.DenseVegetation)Collect(cell.Far);}
+            if(UseStreaming)foreach(var chunk in streamChunks.Values)if(chunk.Complete&&(chunk.Layer==0||chunk.Layer==2||chunk.Layer==6))foreach(var item in chunk.Items)resident[item.Id]=item;
+            var checkedCells=new Dictionary<int,Dictionary<long,Item>>();
+            foreach(var pair in collisionSlots)
+            {
+                report.checkedColliders++;
+                if(!resident.TryGetValue(pair.Key,out var item)){report.missingResidentItem++;continue;}
+                int x=Mathf.FloorToInt((item.Position.x-Sheet.Geography.BoundsMin.x)/256),z=Mathf.FloorToInt((item.Position.z-Sheet.Geography.BoundsMin.y)/256),key=Key(x,z);
+                if(!checkedCells.TryGetValue(key,out var expected))
+                {
+                    expected=new Dictionary<long,Item>();checkedCells.Add(key,expected);
+                    if(geographyCells.TryGetValue(key,out var cell))
+                    {
+                        foreach(var value in Generate(cell,0,Sheet.DenseVegetation))expected[value.Id]=value;
+                        foreach(var value in Generate(cell,3,false))expected[value.Id]=value;
+                        foreach(var value in Fixed(cell))expected[value.Id]=value;
+                    }
+                }
+                if(!expected.TryGetValue(item.Id,out var retained)||!SameRetentionItem(item,retained))report.missingRetainedItem++;
+                var go=pair.Value.Object;
+                if(go==null||!go.activeSelf||Vector3.SqrMagnitude(go.transform.position-item.Position)>.000001f||Vector3.SqrMagnitude(go.transform.localScale-Vector3.one*item.Scale)>.000001f||Quaternion.Angle(go.transform.rotation,item.Matrix.rotation)>.01f)report.transformMismatches++;
+            }
+            report.checkedCells=checkedCells.Count;
+            report.status=report.active==0?"UNVERIFIED_NO_ACTIVE_COLLIDERS":report.missingResidentItem+report.missingRetainedItem+report.transformMismatches==0?"PASS_ACTIVE_COLLIDER_IDENTITY":"FAIL";
+            return JsonUtility.ToJson(report,true);
+        }
+#endif
         static long FixedId(string text)
         {unchecked{ulong hash=1469598103934665603;foreach(char c in text){hash^=c;hash*=1099511628211;}return (4L<<60)|(long)(hash&0x0fffffffffffffff);}}
         bool Ground(float x,float z,out float y)
         {
+            // Original authored terrain only: contact rejection must be invariant under a
+            // final surface deformation. Physical callers use TrySurfaceGroundHeight.
             var origin=Sheet.Geography.BoundsMin;int ix=Mathf.FloorToInt((x-origin.x)/256),iz=Mathf.FloorToInt((z-origin.y)/256);y=0;
             if(!geographyCells.TryGetValue(Key(ix,iz),out var cell))return false;y=WorldMacroDressingSheetSO.Height(cell,x,z,origin+new Vector2(ix*256,iz*256));return true;
         }

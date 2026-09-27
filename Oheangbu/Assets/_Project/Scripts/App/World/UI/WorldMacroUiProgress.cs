@@ -29,6 +29,13 @@ namespace Oheangbu.App.World.UI
         }
     }
 
+    [Serializable]
+    public sealed class InteriorMapProgress
+    {
+        public string key;
+        public string cells;
+    }
+
     // Durable UI-facing discoveries. Casting rules and combat economy remain owned by their existing systems.
     [Serializable]
     public sealed class UiProgress
@@ -37,6 +44,7 @@ namespace Oheangbu.App.World.UI
         public List<string> knownSpellLetters = new List<string>();
         public List<string> records = new List<string>();
         public string discoveredCells = "";
+        public List<InteriorMapProgress> interiorMaps = new List<InteriorMapProgress>();
         public List<string> discoveredMarkers = new List<string>();
         public UiMapPin pin = new UiMapPin();
         public List<string> knownVirtues = new List<string>();
@@ -50,6 +58,12 @@ namespace Oheangbu.App.World.UI
                 if (item == null || string.IsNullOrWhiteSpace(item.id) || item.count < 0 || !itemIds.Add(item.id)) return false;
             if (!UniqueNonBlank(knownSpellLetters) || !UniqueNonBlank(records) || !UniqueNonBlank(discoveredMarkers) || !UniqueNonBlank(knownVirtues)) return false;
             if (!Finite(pin.worldXZ)) return false;
+            var interiors = new HashSet<string>(StringComparer.Ordinal);
+            if (interiorMaps != null) foreach (var map in interiorMaps)
+            {
+                if (map == null || string.IsNullOrWhiteSpace(map.key) || !interiors.Add(map.key)) return false;
+                try { Convert.FromBase64String(map.cells ?? ""); } catch (FormatException) { return false; }
+            }
             if (!string.IsNullOrEmpty(discoveredCells))
                 try { Convert.FromBase64String(discoveredCells); }
                 catch (FormatException) { return false; }
@@ -65,6 +79,7 @@ namespace Oheangbu.App.World.UI
             if (pin == null) pin = new UiMapPin();
             if (knownVirtues == null) knownVirtues = new List<string>();
             if (discoveredCells == null) discoveredCells = "";
+            if (interiorMaps == null) interiorMaps = new List<InteriorMapProgress>();
             pin.label = pin.label ?? "";
 
             var totals = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -124,6 +139,8 @@ namespace Oheangbu.App.World.UI
         public UiProgress Copy()
         {
             var copy = new UiProgress { discoveredCells = discoveredCells ?? "", pin = pin != null ? pin.Copy() : new UiMapPin() };
+            if (interiorMaps != null) foreach (var map in interiorMaps)
+                if (map != null) copy.interiorMaps.Add(new InteriorMapProgress { key = map.key, cells = map.cells });
             if (items != null) foreach (var item in items) if (item != null) copy.items.Add(new InventoryEntry(item.id, item.count));
             CopyStrings(knownSpellLetters, copy.knownSpellLetters);
             CopyStrings(records, copy.records);
@@ -137,6 +154,7 @@ namespace Oheangbu.App.World.UI
             var copy = source != null ? source.Copy() : new UiProgress();
             items = copy.items; knownSpellLetters = copy.knownSpellLetters; records = copy.records;
             discoveredCells = copy.discoveredCells; discoveredMarkers = copy.discoveredMarkers;
+            interiorMaps = copy.interiorMaps;
             pin = copy.pin; knownVirtues = copy.knownVirtues;
         }
 

@@ -6,6 +6,12 @@ namespace Oheangbu.App.World.Dressing
 {
  public sealed partial class WorldMacroDressingRenderer
  {
+  public bool TryDiagnosticGroundHeight(float x,float z,out float height)
+  {
+   // Absolute terrain height wins; never add SurfaceDeformation a second time.
+   if(Oheangbu.Data.World.WorldMacroTerrain.TryFinalSurfaceHeight(Sheet!=null?Sheet.Geography:null,x,z,out height))return true;
+   return TrySurfaceGroundHeight(x,z,out height);
+  }
   [Serializable] class PartitionRow {public int layer,whole,partitioned,duplicates,mismatches;public bool pass;}
   [Serializable] class PartitionReport {public string status,scope="One current observer cell, each procedural layer: whole 256m generation versus union of sixteen 64m jobs; compare IDs, position, scale, prototype and matrix. This does not certify every world cell or terrain collision.";public int cellX,cellZ;public PartitionRow[] layers;}
   public string ValidateStreamingPartition()

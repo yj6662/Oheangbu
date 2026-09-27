@@ -138,9 +138,21 @@ namespace Oheangbu.App.World.Vehicle
         public bool GetWheelContact(int index, out WheelHit hit)
         { hit = default; if (index < 0 || index >= 4) return false; hit = contacts[index]; return grounded[index]; }
 
+        public void ResetMountainTraversalPose(){hasMountainPose=false;}
+        Vector3 lastAllowedMountainPose; Quaternion lastAllowedMountainRotation; bool hasMountainPose;
         void FixedUpdate()
         {
             if (!IsConfigured) return;
+            float footprint=Hull.bounds.extents.magnitude;
+            if(!CompactMountainAccess.VehicleAllowed(gameObject.scene,Body.position,footprint)||hasMountainPose&&!CompactMountainAccess.VehicleSegmentAllowed(gameObject.scene,lastAllowedMountainPose,Body.position,footprint))
+            {
+                StopDriverInputForUi();Body.linearVelocity=Vector3.zero;Body.angularVelocity=Vector3.zero;
+                if(hasMountainPose){Body.position=lastAllowedMountainPose;Body.rotation=lastAllowedMountainRotation;}
+                return;
+            }
+            lastAllowedMountainPose=Body.position;lastAllowedMountainRotation=Body.rotation;hasMountainPose=true;
+            var approaching=Body.position+Body.linearVelocity*Mathf.Max(.4f,Speed/8f);
+            if(!CompactMountainAccess.VehicleSegmentAllowed(gameObject.scene,Body.position,approaching,footprint))StopDriverInputForUi();
             float dt = Time.fixedDeltaTime, forwardSpeed = ForwardSpeed;
             throttle = Mathf.MoveTowards(throttle, throttleInput, Mathf.Max(.1f, Profile.ThrottleResponse) * dt);
             bool changingDirection = Mathf.Abs(forwardSpeed) > Profile.DirectionChangeSpeed && throttleInput * forwardSpeed < -.05f;

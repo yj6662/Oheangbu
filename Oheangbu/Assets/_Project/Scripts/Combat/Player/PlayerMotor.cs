@@ -23,6 +23,8 @@ namespace Oheangbu.Combat
         [SerializeField] private LockOn _lockOn;
         [SerializeField] private CameraRigController _cameraRig; // [실험 2026-08-27] 숄더뷰 피치 클램프 조회(없으면 기본 ±80)
         public GameplayRuntimeStateSO RuntimeState;
+        public float TerrainMovementScale {get;set;}=1f;
+        public bool EnvironmentalInputBlocked {get;set;}
 
         private CharacterController _controller;
         private InputAction _move;
@@ -72,7 +74,7 @@ namespace Oheangbu.Combat
         private void Update()
         {
             if (_config == null) return;
-            if (RuntimeState != null && RuntimeState.InputBlocked) { SuspendLocomotionInput(); return; }
+            if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) { SuspendLocomotionInput(); return; }
             if (HasLocomotion && Time.deltaTime <= 0f) return;
 
             float yawBeforeInput = transform.eulerAngles.y;
@@ -145,7 +147,7 @@ namespace Oheangbu.Combat
 
         private void OnDodge(InputAction.CallbackContext _)
         {
-            if (RuntimeState != null && RuntimeState.InputBlocked) return;
+            if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) return;
             if (_drawing) return; // 작도 중 회피 없음 — 작도는 무방비의 시간이다(감속이 그 대가)
             if (HasLocomotion && (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsDodging
                 || (IsCrouching && !_locomotion.CrouchRollEnabled)
@@ -161,7 +163,7 @@ namespace Oheangbu.Combat
 
         private void OnLockOn(InputAction.CallbackContext _)
         {
-            if (RuntimeState != null && RuntimeState.InputBlocked) return;
+            if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) return;
             _lockOn?.Toggle();
         }
 

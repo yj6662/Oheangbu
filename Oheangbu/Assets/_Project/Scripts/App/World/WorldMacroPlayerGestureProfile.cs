@@ -55,6 +55,11 @@ namespace Oheangbu.App.World
         public Vector3 SeatedElbowPole = new Vector3(.32f, -.14f, .02f);
 
         [Header("Drawing and recovery")]
+        public bool ArticulatedStrokes;
+        [Range(.01f, .2f)] public float WristStrokeSpan = .055f;
+        [Range(.1f, .6f)] public float ArmStrokeSpan = .24f;
+        [Range(0f, 100f)] public float WristAnchorWeight = 45f;
+        [Range(0f, 1f)] public float DirectionalElbowWeight = .55f;
         [Min(.01f)] public float EnterResponse = 14f;
         [Min(.01f)] public float ExitResponse = 9f;
         [Min(.01f)] public float BodyResponse = 8f;

@@ -38,7 +38,7 @@ namespace Oheangbu.App.World.UI
                 try
                 {
                     var raw=JsonUtility.FromJson<WorldMacroProgress>(File.ReadAllText(candidate));
-                    if(!WorldMacroProgress.Valid(raw)){lastError="저장 데이터 형식이 올바르지 않습니다.";continue;}
+                    if(!WorldMacroProgress.Valid(raw)){lastError="저장 데이터 형식이 올바르지 않다.";continue;}
                     var migrated=WorldMacroProgress.MigrateToCurrent(raw);
                     var status=candidate==primary?WorldMacroSaveSlotStatus.Primary:
                         candidate==primary+".bak"?WorldMacroSaveSlotStatus.Backup:WorldMacroSaveSlotStatus.Temporary;
@@ -46,7 +46,7 @@ namespace Oheangbu.App.World.UI
                 }
                 catch(Exception e)when(e is IOException||e is UnauthorizedAccessException||e is ArgumentException){lastError=e.Message;}
             }
-            return found?new WorldMacroSaveSlotInfo(WorldMacroSaveSlotStatus.Invalid,primary,null,null,lastError??"저장 파일을 읽을 수 없습니다."):
+            return found?new WorldMacroSaveSlotInfo(WorldMacroSaveSlotStatus.Invalid,primary,null,null,lastError??"저장 파일을 읽을 수 없다."):
                 new WorldMacroSaveSlotInfo(WorldMacroSaveSlotStatus.New,primary,null,null,null);
         }
 

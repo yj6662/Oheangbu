@@ -14,6 +14,7 @@ namespace Oheangbu.App.World
             public float Gain;
             public bool Loop;
             public AudioMixerGroup Group;
+            public object Owner;
         }
         private sealed class Voice
         {
@@ -22,6 +23,7 @@ namespace Oheangbu.App.World
             public Request Current, Pending;
             public double Started, ReleaseStarted;
             public float ReleaseSeconds;
+            public float Modulation = 1f;
             public bool Releasing;
         }
         private readonly Voice[] _voices;
@@ -52,7 +54,7 @@ namespace Oheangbu.App.World
             }
         }
 
-        public bool Play(WorldMacroPlaytestAudioProfileSO.Cue cue, Vector3 point, float gain, AudioMixerGroup group, int slot = -1, bool loop = false)
+        public bool Play(WorldMacroPlaytestAudioProfileSO.Cue cue, Vector3 point, float gain, AudioMixerGroup group, int slot = -1, bool loop = false, object owner = null)
         {
             if (cue == null || cue.Clip == null || gain <= 0) return false;
             double now = AudioSettings.dspTime;
@@ -75,7 +77,7 @@ namespace Oheangbu.App.World
             }
             if (slot < 0 || slot >= _voices.Length) return false;
             Voice voice = _voices[slot];
-            var request = new Request { Cue = cue, Point = point, Gain = Mathf.Clamp01(gain), Loop = loop, Group = group };
+            var request = new Request { Cue = cue, Point = point, Gain = Mathf.Clamp01(gain), Loop = loop, Group = group, Owner = owner };
             if (voice.Source.isPlaying)
             {
                 voice.Pending = request;
@@ -85,6 +87,19 @@ namespace Oheangbu.App.World
             return true;
         }
 
+        public void SetSlotGain(int index, float gain) { if(index>=0&&index<_voices.Length) _voices[index].Modulation=Mathf.Clamp01(gain); }
+        // Actor cancellation cannot silence other actors sharing the same profile or ambient slots.
+        public void ReleaseOwner(object owner, WorldMacroPlaytestAudioProfileSO.Cue cue = null)
+        {
+            if (owner == null) return;
+            for (int i = _reserved; i < _voices.Length; i++)
+            {
+                var voice = _voices[i];
+                if (ReferenceEquals(voice.Pending.Owner, owner) && (cue == null || ReferenceEquals(voice.Pending.Cue, cue))) voice.Pending = default;
+                if (ReferenceEquals(voice.Current.Owner, owner) && (cue == null || ReferenceEquals(voice.Current.Cue, cue)))
+                    BeginRelease(voice, AudioSettings.dspTime, .04f);
+            }
+        }
         public void MoveSlot(int index, Vector3 point) { if (index >= 0 && index < _voices.Length) _voices[index].Source.transform.position = point; }
         public void ReleaseSlot(int index, float seconds)
         {
@@ -98,7 +113,7 @@ namespace Oheangbu.App.World
             foreach (Voice voice in _voices)
             {
                 if (voice.Current.Cue == null) continue;
-                voice.Envelope.State.ExternalGain = Mathf.Clamp01(ExternalGain);
+                voice.Envelope.State.ExternalGain = Mathf.Clamp01(ExternalGain * voice.Modulation);
                 // A virtualized source receives no filter callbacks and is inaudible; it can
                 // retire after the requested release. Audible sources finish on the DSP thread.
                 bool virtualRelease = voice.Releasing && voice.Source.isVirtual
@@ -125,7 +140,7 @@ namespace Oheangbu.App.World
             var source = voice.Source; source.Stop(); source.transform.position = request.Point;
             source.outputAudioMixerGroup = request.Group; source.ignoreListenerPause = _ignorePause;
             source.clip = request.Cue.Clip; source.loop = request.Loop; source.spatialBlend = request.Cue.SpatialBlend;
-            voice.Envelope.State.ExternalGain = Mathf.Clamp01(ExternalGain);
+            voice.Envelope.State.ExternalGain = Mathf.Clamp01(ExternalGain * voice.Modulation);
             voice.Envelope.State.Start(AudioSettings.outputSampleRate, request.Cue.Clip.length,
                 request.Cue.AttackSeconds, request.Cue.ReleaseSeconds,
                 request.Cue.Volume * request.Gain, request.Loop);

@@ -10,6 +10,13 @@ namespace Oheangbu.Combat
     {
         private readonly FloatEventChannelSO _changed;
         private float _value;
+        public float CapacityMultiplier {get;private set;}=1f;
+        public void SetCapacityMultiplier(float scale)
+        {
+            if(!float.IsFinite(scale)||scale<1f)throw new System.ArgumentOutOfRangeException(nameof(scale));
+            // Capacity upgrades preserve the saved fill fraction and never raise Gained.
+            CapacityMultiplier=scale;Broadcast();
+        }
 
         public float Value => _value;
         // Positive income only. Restore, spending and an already-full pool never produce feedback.
@@ -25,6 +32,7 @@ namespace Oheangbu.Combat
         // 부족하면 소비하지 않고 false — 먹 부족 술식=불발 취급(SPEC §10.1 [제안])
         public bool TrySpend(float amount)
         {
+            amount=Mathf.Max(0f,amount)/CapacityMultiplier;
             if (_value + 1e-4f < amount) return false;
             _value = Mathf.Clamp01(_value - amount);
             _changed?.Raise(_value);
@@ -34,12 +42,14 @@ namespace Oheangbu.Combat
         // 불발 등 「있는 만큼만 깎이는」 지출 — 잔량이 모자라도 바닥까지는 소모된다
         public void SpendClamped(float amount)
         {
+            amount=Mathf.Max(0f,amount)/CapacityMultiplier;
             _value = Mathf.Clamp01(_value - amount);
             _changed?.Raise(_value);
         }
 
         public void Gain(float amount)
         {
+            amount=Mathf.Max(0f,amount)/CapacityMultiplier;
             float previous = _value;
             _value = Mathf.Clamp01(_value + amount);
             _changed?.Raise(_value);

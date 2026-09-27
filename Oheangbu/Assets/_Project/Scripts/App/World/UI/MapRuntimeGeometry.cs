@@ -219,7 +219,7 @@ namespace Oheangbu.App.World.UI
             {
                 float wx = Mathf.Lerp(sheet.BoundsMin.x, sheet.BoundsMax.x, x / (float)(width - 1));
                 float wz = Mathf.Lerp(sheet.BoundsMin.y, sheet.BoundsMax.y, y / (float)(height - 1));
-                float h = WorldMacroTerrain.Height(sheet, wx, wz); heights[y, x] = h;
+                float h = WorldMacroTerrain.FinalSurfaceHeight(sheet, wx, wz); heights[y, x] = h;
                 if (WorldMapDiscoveryGrid.Contains(sheet.Outline, new Vector2(wx, wz))) { low = Mathf.Min(low, h); high = Mathf.Max(high, h); }
             }
             var result = new float[height, width];

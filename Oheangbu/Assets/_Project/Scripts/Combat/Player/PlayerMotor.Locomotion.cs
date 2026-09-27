@@ -118,7 +118,7 @@ namespace Oheangbu.Combat
         private void OnLocomotionDamage(float _) { if (HasLocomotion) { _sitTarget = 0f; _needsHarvestRelease = true; } }
         private void OnLocomotionDeath() { if (HasLocomotion) ResetLocomotion(); }
         private bool ActionAllowed => HasLocomotion && _config != null && isActiveAndEnabled && _controller != null && _controller.enabled
-            && Time.timeScale > 0f && (RuntimeState == null || !RuntimeState.InputBlocked)
+            && !EnvironmentalInputBlocked && Time.timeScale > 0f && (RuntimeState == null || !RuntimeState.InputBlocked)
             && (_locomotionVitals == null || _locomotionVitals.Hp01 > 0f);
         private void OnJump(InputAction.CallbackContext _)
         {
@@ -135,6 +135,12 @@ namespace Oheangbu.Combat
                 || (_harvest != null && _harvest.IsExtracting) || (_harvestAction != null && _harvestAction.IsPressed())) return;
             if (_crouchTarget > .5f) { if (CanStand()) _crouchTarget = 0; }
             else _crouchTarget = 1;
+        }
+        // Presentation only, called after the checkpoint transaction has committed.
+        // Movement and damage retain their ordinary immediate stand-up behavior.
+        public bool TryBeginRestPose(){
+            if(!HasLocomotion||!ActionAllowed||!IsLocomotionGrounded||IsDodging||_drawing||IsCrouching||IsHarvesting)return false;
+            _sitTarget=1f;_planarVelocity=Vector3.zero;_needsHarvestRelease=true;return true;
         }
         private void OnSit(InputAction.CallbackContext _)
         {
@@ -174,7 +180,7 @@ namespace Oheangbu.Combat
             Vector3 direction = transform.right * input.x + transform.forward * input.y;
             direction = Vector3.ClampMagnitude(direction, 1f);
             float speed = IsCrouching ? _locomotion.CrouchSpeed : IsSprinting ? _locomotion.RunSpeed : _locomotion.WalkSpeed;
-            Vector3 desired = IsSitting ? Vector3.zero : direction * speed;
+            Vector3 desired = IsSitting ? Vector3.zero : direction * speed * Mathf.Clamp01(TerrainMovementScale);
             if (supported && IsLocomotionGrounded)
             {
                 _groundNormal = support.normal;
@@ -184,7 +190,7 @@ namespace Oheangbu.Combat
                 : desired.sqrMagnitude < _planarVelocity.sqrMagnitude ? _locomotion.Deceleration : _locomotion.Acceleration;
             _planarVelocity = Vector3.MoveTowards(_planarVelocity, desired, rate * dt);
             Vector3 planar = _planarVelocity;
-            if (IsLocomotionGrounded && !IsSitting && _dodge != null && _dodge.TryGetDashVelocity(out Vector3 dash)) planar = dash;
+            if (IsLocomotionGrounded && !IsSitting && _dodge != null && _dodge.TryGetDashVelocity(out Vector3 dash)) planar = dash * Mathf.Clamp01(TerrainMovementScale);
 
             float verticalMove;
             if (IsLocomotionGrounded && _verticalVelocity <= 0f)

@@ -9,7 +9,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 {
     public sealed class WorldMacroPlaytestWindow:EditorWindow
     {
-        [MenuItem("Tools/오행부/첫 플레이 구간")]
+        [MenuItem("Oheangbu/Legacy/복구 전용/첫 플레이 구간")]
         static void Open()=>GetWindow<WorldMacroPlaytestWindow>("첫 플레이 구간");
         Vector2 scroll;
         void OnGUI()

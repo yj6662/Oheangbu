@@ -10,6 +10,10 @@ namespace Oheangbu.App
     {
         [Tooltip("Optional playtest-owned visual skin. Leave null to retain the prototype HUD.")]
         public WorldMacroHudSkinProfileSO Skin;
+        public bool HideText;
+        public World.UI.CompactUiProfileSO Icons;
+        private Image _interactionIcon;
+        public bool UsesIcons => Icons != null;
 
         private RectTransform _hpFill, _inkFill, _reticle, _groggyFill;
         private Image _hpImage, _inkLiquid, _inkBarImage, _groggyImage;
@@ -83,11 +87,11 @@ namespace Oheangbu.App
                 var backing=CreateImage("Resources_Hanji",_canvas.transform,Skin.PromptPaper,paper);
                 Anchor(backing.rectTransform,Vector2.zero,new Vector2(0,.5f),new Vector2(24,80),new Vector2(374,90));
             }
-            var hpBackColor=Skin.Ink;hpBackColor.a=.20f;
+            var hpBackColor=Icons!=null?Icons.Health:Skin.Ink;hpBackColor.a=.20f;
             var hpBack=CreateImage("HP_FullStroke",_canvas.transform,Skin.HpStroke,hpBackColor);
             Anchor(hpBack.rectTransform,Vector2.zero,new Vector2(0f,.5f),Skin.HpPosition,Skin.HpSize);
             if(!Skin.UseInkBar)AddPaperContour(hpBack,.72f);
-            var hp = CreateImage("HP_BrushStroke", _canvas.transform, Skin.HpStroke, Skin.Ink);
+            var hp = CreateImage("HP_BrushStroke", _canvas.transform, Skin.HpStroke, Icons!=null?Icons.Health:Skin.Ink);
             _hpImage = hp;
             _hpImage.type = Image.Type.Filled;
             _hpImage.fillMethod = Image.FillMethod.Horizontal;
@@ -127,6 +131,11 @@ namespace Oheangbu.App
 
         private void ResourceLabel(string label, Vector2 position)
         {
+            if(Icons!=null){
+                var icon=CreateImage(label=="체력"?"HealthIcon":"InkIcon",_canvas.transform,label=="체력"?Icons.Heart:Icons.InkBottle,label=="체력"?Icons.Health:Icons.Ink);
+                icon.preserveAspect=true;Anchor(icon.rectTransform,Vector2.zero,new Vector2(1,.5f),position+new Vector2(-8,0),new Vector2(32,32));return;
+            }
+            if(HideText)return;
             var go = new GameObject(label + "_Label", typeof(RectTransform), typeof(Text));
             go.transform.SetParent(_canvas.transform, false);
             var text = go.GetComponent<Text>(); text.text = label; text.font = _font; text.fontSize = 18;
@@ -197,7 +206,18 @@ namespace Oheangbu.App
             _interactionText.color = Skin.Ink;
             _interactionText.raycastTarget = false;
             Stretch(_interactionText.rectTransform, new Vector2(42f, 18f));
+            if(Icons!=null){
+                _interactionText.enabled=false;
+                _interactionIcon=CreateImage("InteractionIcon",interactionRect,Icons.Hand,Skin.Ink);
+                _interactionIcon.preserveAspect=true;Stretch(_interactionIcon.rectTransform,new Vector2(14,14));
+                interactionRect.sizeDelta=new Vector2(72,72);
+            }
             _interactionRoot.SetActive(false);
+        }
+        public void SetInteractionIcon(Sprite sprite,bool problem=false){
+            if(Icons==null||_interactionIcon==null)return;
+            _interactionIcon.sprite=sprite;_interactionIcon.color=problem?Icons.Health:Skin.Ink;
+            _interactionRoot.SetActive(sprite!=null);
         }
 
         private void BuildDangerEdges()
@@ -238,7 +258,7 @@ namespace Oheangbu.App
         {
             value = Mathf.Clamp01(value);
             _hp01 = value;
-            if (_hpImage != null) _hpImage.fillAmount = value;
+            if (_hpImage != null) { if(Icons==null||value<_hpImage.fillAmount)_hpImage.fillAmount = value; }
             else if (_hpFill != null) _hpFill.localScale = new Vector3(value, 1f, 1f);
             if (_dangerEdges == null || Skin == null) return;
             float alpha = Mathf.InverseLerp(Skin.DangerBeginsAtHp, 0f, value) * Skin.MaximumDangerAlpha;
@@ -262,7 +282,7 @@ namespace Oheangbu.App
             _ink01 = value;
             _receivedTo = Mathf.Min(_receivedTo, value);
             _receivedFrom = Mathf.Min(_receivedFrom, _receivedTo);
-            if (_inkBarImage != null) _inkBarImage.fillAmount = value;
+            if (_inkBarImage != null) { if(Icons==null||value<_inkBarImage.fillAmount)_inkBarImage.fillAmount = value; }
             else if (_inkLiquid != null)
             {
                 Vector2 size = _inkFill.sizeDelta;
@@ -322,6 +342,8 @@ namespace Oheangbu.App
         private void ApplyInteractionText(string value)
         {
             if (_interactionRoot == null || _interactionText == null) return;
+            if(Icons!=null)return;
+            if(HideText){_interactionRoot.SetActive(false);return;}
             string text = value ?? string.Empty;
             if (_interactionText.text != text) _interactionText.text = text;
             if (Skin != null && _interactionRect != null && text.Length > 0)
@@ -396,6 +418,10 @@ namespace Oheangbu.App
 
         private void LateUpdate()
         {
+            if(Icons!=null){
+                if(_hpImage!=null)_hpImage.fillAmount=Mathf.MoveTowards(_hpImage.fillAmount,_hp01,Time.deltaTime*.48f);
+                if(_inkBarImage!=null)_inkBarImage.fillAmount=Mathf.MoveTowards(_inkBarImage.fillAmount,_ink01,Time.deltaTime*.48f);
+            }
             UpdateInkReceived();
             if (_inkLiquid == null) return;
             _inkHitImpulse = Mathf.MoveTowards(_inkHitImpulse, 0f, Time.unscaledDeltaTime * 2.8f);

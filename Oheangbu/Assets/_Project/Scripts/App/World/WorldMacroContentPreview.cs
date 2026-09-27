@@ -23,7 +23,7 @@ namespace Oheangbu.App.World
         {
             if(!lookup.TryGetValue(id,out var e))return false;
             if(!string.IsNullOrEmpty(e.Requires)&&!visited.Contains(e.Requires))
-                LastFeedback="아직 살펴보지 않은 단서가 있습니다. 이 지점은 배치 검토용입니다.";
+                LastFeedback="아직 살펴보지 않은 단서가 있다. 이 지점은 배치 검토용이다.";
             else {visited.Add(id);LastFeedback=e.Label+"\n"+e.Text;}
             until=Time.unscaledTime+8;return true;
         }

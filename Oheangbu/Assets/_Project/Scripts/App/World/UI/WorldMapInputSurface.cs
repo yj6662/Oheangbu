@@ -3,14 +3,22 @@ using UnityEngine.EventSystems;
 
 namespace Oheangbu.App.World.UI
 {
-    internal sealed class WorldMapInputSurface : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IScrollHandler, IPointerClickHandler
+    internal sealed class WorldMapInputSurface : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler, IPointerClickHandler
     {
         public WorldMapPresenter Owner;
         bool dragged;
+        bool held;
 
-        public void OnPointerDown(PointerEventData eventData) { dragged = false; }
+        public void OnPointerEnter(PointerEventData data) => OnPointerMove(data);
+        public void OnPointerMove(PointerEventData data) { if (!held) Owner?.MapPointer(data.position, data.enterEventCamera); }
+        public void OnPointerExit(PointerEventData data) => Owner?.HideMapHover();
+        public void OnPointerUp(PointerEventData data) { held = false; OnPointerMove(data); }
+        public void OnEndDrag(PointerEventData data) { held = false; OnPointerMove(data); }
+        void OnDisable() { held = false; Owner?.HideMapHover(); }
 
-        public void OnBeginDrag(PointerEventData eventData) { dragged = false; }
+        public void OnPointerDown(PointerEventData eventData) { dragged = false; held = true; Owner?.HideMapHover(); }
+
+        public void OnBeginDrag(PointerEventData eventData) { dragged = false; held = true; Owner?.HideMapHover(); }
 
         public void OnDrag(PointerEventData eventData)
         {

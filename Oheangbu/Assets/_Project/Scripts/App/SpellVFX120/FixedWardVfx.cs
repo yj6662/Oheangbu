@@ -28,7 +28,7 @@ namespace Oheangbu.App.SpellVFX120
   public bool TryGround(Vector3 input,out Vector3 point)
   {
    GroundQueries++;point=input;float best=float.PositiveInfinity;bool found=false;
-   int count=Physics.RaycastNonAlloc(input+Vector3.up*16,Vector3.down,hits,48,LayerMask.GetMask("Default","WorldGround","WorldRidge","WorldRibbon"),QueryTriggerInteraction.Ignore);
+   int count=Physics.RaycastNonAlloc(input+Vector3.up*profile.WardGroundProbeHeight,Vector3.down,hits,profile.WardGroundProbeDepth,LayerMask.GetMask("Default","WorldGround","WorldRidge","WorldRibbon"),QueryTriggerInteraction.Ignore);
    for(int i=0;i<count;i++){var h=hits[i];if(h.distance>=best||h.normal.y<.3f||h.collider is CharacterController||h.collider.GetComponentInParent<Oheangbu.Combat.EnemyVitals>()!=null||h.collider.transform.IsChildOf(transform))continue;best=h.distance;point=h.point;found=true;}
    if(!found)MissingGround++;return found;
   }

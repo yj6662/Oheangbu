@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Oheangbu.App.World.UI
 {
     [DisallowMultipleComponent]
-    public sealed class WorldMapPresenter : MonoBehaviour
+    public sealed partial class WorldMapPresenter : MonoBehaviour
     {
         public const float OpenDuration = 1.1f;
         public const float CloseDuration = .65f;
@@ -52,10 +52,12 @@ namespace Oheangbu.App.World.UI
         Material miniDiscoveryMaterial;
         Material miniPaperMaterial;
         WorldMapPaperInk macroInk;
-        WorldMapLineSpec[] majorLines, exploredLines;
+        WorldMapLineSpec[] majorLines, exploredLines,baseExploredLines;
+        WorldActShortcut[] displayedShortcuts;int shortcutCount=-1;
         WorldMapPolylineGraphic miniMajorLines;
         readonly List<Text> regionLabels = new List<Text>();
         WorldMapRegionTile selectedTile;
+        RawImage caveIllustration;
         Vehicle.WorldMacroPalanquinSeat vehicleSeat;
         RectTransform paperSheet, fullMarkers;
         CanvasGroup mapControls, markerVisibility;
@@ -104,8 +106,10 @@ namespace Oheangbu.App.World.UI
             projection = new WorldMapProjection(data.BoundsMin, data.BoundsMax);
             majorLines = data.Lines.Where(l => l != null && l.Kind == WorldMapLineKind.River).ToArray();
             exploredLines = data.Lines.Where(l => l != null && l.Kind != WorldMapLineKind.River).ToArray();
+            baseExploredLines=exploredLines;
+            displayedShortcuts=UnityEngine.Object.FindObjectsByType<WorldActShortcut>(FindObjectsSortMode.None).Where(x=>x.gameObject.scene==session.gameObject.scene).ToArray();
             discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline);
-            EnsureFont(); BuildFog(); BuildMini(parent); BuildFull(parent); BuildMarkers();
+            EnsureFont(); BuildFog(); BuildMini(parent); BuildFull(parent); BuildMarkers(); ApplyIconStyle(); BuildMapHover();
             ApplyFold(); ApplyUvAndMarkers(CurrentWorld());
             initialized = true;
         }
@@ -114,17 +118,19 @@ namespace Oheangbu.App.World.UI
         {
             if (!initialized || targetExpanded == expanded) return;
             targetExpanded = expanded;
+            HideMapHover();
             transitionFromFold = fold;
             transitionDuration = (expanded ? OpenDuration : CloseDuration) * Mathf.Abs((expanded ? 1f : 0f) - fold);
             transitionStartedAt = Time.realtimeSinceStartupAsDouble;
             if (!expanded) followCurrent = false;
-            if (expanded) FullRoot.gameObject.SetActive(Visible);
+            if (expanded) {FullRoot.gameObject.SetActive(Visible);if(data.PaintedRelief)FocusCurrent();}
             if (ReducedMotion) { fold = expanded ? 1f : 0f; transitionFromFold = fold; transitionDuration = 0f; ApplyFold(); }
         }
 
         public void SetVisible(bool visible)
         {
             Visible = visible;
+            if (!visible) HideMapHover();
             if (!initialized) return;
             MiniRoot.gameObject.SetActive(visible && !targetExpanded && fold <= 0f);
             FullRoot.gameObject.SetActive(visible && (targetExpanded || fold > 0f));
@@ -149,16 +155,17 @@ namespace Oheangbu.App.World.UI
                 ApplyFold();
                 Vector3 current = CurrentWorld();
                 LoadProgressIfReady();
+                RevealInterior(current);
                 if (progressLoaded && Time.unscaledTime >= nextDiscoveryProbe && WorldMapDiscoveryGrid.Contains(data.Outline, new Vector2(current.x, current.z)))
                 {
                     nextDiscoveryProbe = Time.unscaledTime + .2f;
-                    if (discovery.Reveal(new Vector2(current.x, current.z)))
+                    if ((data.ZoneAt(current) == null || !data.ZoneAt(current).ExploreWalkedPassages) && discovery.Reveal(new Vector2(current.x, current.z)))
                     {
                         session.Progress.ui.discoveredCells = Convert.ToBase64String(discovery.Export());
                         RefreshFog();
                     }
                     foreach (WorldMapMarkerSpec marker in data.Markers)
-                        if (marker != null && discovery.IsDiscovered(marker.WorldXZ) && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
+                        if (marker != null && !marker.RequiresArrival && discovery.IsDiscovered(marker.WorldXZ) && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
                             session.Progress.ui.discoveredMarkers.Add(marker.Id);
                 }
                 if (followCurrent) CenterFullOn(new Vector2(current.x, current.z));
@@ -190,7 +197,7 @@ namespace Oheangbu.App.World.UI
             float worldWidth = data.BoundsMax.x - data.BoundsMin.x;
             float worldHeight = data.BoundsMax.y - data.BoundsMin.y;
             WorldMapZoneSpec zone = data.ZoneAt(CurrentWorld());
-            float width = (zone != null ? 150f : 640f) / worldWidth;
+            float width = (zone != null ? 150f : data.PaintedRelief ? 1100f : 640f) / worldWidth;
             float viewAspect = foldMap.rect.width / Mathf.Max(1f, foldMap.rect.height);
             fullUv.width = width;
             fullUv.height = Mathf.Clamp(width * worldWidth / (viewAspect * worldHeight), zone != null ? .005f : .03f, 1f);
@@ -203,14 +210,14 @@ namespace Oheangbu.App.World.UI
             if (!initialized || data.ZoneAt(CurrentWorld()) != null || !WorldMapDiscoveryGrid.Contains(data.Outline, worldXZ) || !discovery.IsDiscovered(worldXZ) || session.Progress == null) return;
             session.Progress.ui.pin.active = true; session.Progress.ui.pin.worldXZ = worldXZ;
             session.Progress.ui.pin.label = string.IsNullOrWhiteSpace(label) ? "표식" : label.Trim();
-            session.SaveNow(out _); ApplyUvAndMarkers(CurrentWorld());
+            bool saved=session.SaveNow(out _);PlaytestUiRoot.Instance?.PlayNamedSound(saved?"ui_select":"ui_error",.3f); ApplyUvAndMarkers(CurrentWorld());
         }
 
         public void ClearPin()
         {
             if (!initialized || session.Progress == null) return;
             session.Progress.ui.pin.active = false; session.Progress.ui.pin.label = "";
-            session.SaveNow(out _); ApplyUvAndMarkers(CurrentWorld());
+            bool saved=session.SaveNow(out _);PlaytestUiRoot.Instance?.PlayNamedSound(saved?"ui_select":"ui_error",.3f); ApplyUvAndMarkers(CurrentWorld());
         }
 
         internal void Pan(Vector2 screenDelta)
@@ -284,6 +291,7 @@ namespace Oheangbu.App.World.UI
                 miniLines.material = miniDiscoveryMaterial;
             }
             miniFog = PlaytestUiView.Raw(PlaytestUiView.Stretch("DiscoveryFog", miniViewport), fogTexture, Color.white);
+            caveIllustration = PlaytestUiView.Raw(PlaytestUiView.Stretch("CaveIllustration", miniViewport), null, Color.white);
             caveFootprint = PlaytestUiView.Stretch("CaveFootprint", miniViewport).gameObject.AddComponent<WorldMapPolylineGraphic>();
             caveFootprint.raycastTarget = false;
             RectTransform detailRect = PlaytestUiView.Stretch("CaveDetail", miniViewport);
@@ -396,9 +404,20 @@ namespace Oheangbu.App.World.UI
             }
         }
 
+        RectTransform knownArea;Text knownAreaLabel;
         void BuildMarkers()
         {
-            if (data.HasIllustration)
+            knownArea=PlaytestUiView.Rect("KnownDestinationArea",fullMarkers,0,0,40,40);
+            knownArea.pivot=new Vector2(.5f,.5f);
+            var areaGraphic=knownArea.gameObject.AddComponent<WorldMapKnownAreaGraphic>();areaGraphic.color=new Color(.32f,.16f,.08f,.7f);areaGraphic.raycastTarget=false;
+            knownAreaLabel=CreateFullLabel("KnownDestination","들은 목적 권역");
+            if(data.HasIllustration && data.Locations!=null)
+                foreach(var region in data.Locations.Entries.Where(e=>e.Priority==0))
+                {
+                    Text title=CreateFullLabel("Region_"+region.Id,region.Name);title.fontSize=24;
+                    title.color=new Color(.10f,.12f,.11f,1);title.rectTransform.sizeDelta=new Vector2(160,42);regionLabels.Add(title);
+                }
+            if (data.HasIllustration && data.Locations==null)
                 foreach (var region in sheet.Regions)
                 {
                     Text title = CreateFullLabel("Region_" + region.Id, region.Label);
@@ -448,12 +467,26 @@ namespace Oheangbu.App.World.UI
         void ApplyUvAndMarkers(Vector3 current)
         {
             if (!initialized && MiniRoot == null) return;
+            int discoveredShortcuts=session.Progress?.campaign?.DiscoveredShortcuts?.Count??0;
+            if(shortcutCount!=discoveredShortcuts)
+            {
+                shortcutCount=discoveredShortcuts;
+                var extra=(displayedShortcuts??Array.Empty<WorldActShortcut>()).Where(s=>s!=null&&s.Path!=null&&session.Progress?.campaign?.DiscoveredShortcuts?.Contains(s.Id)==true)
+                    .Select(s=>new WorldMapLineSpec{Id=s.Id,Kind=WorldMapLineKind.Trail,PixelWidth=2,Points=s.Path.Select(p=>new Vector2(p.x,p.z)).ToArray()});
+                exploredLines=(baseExploredLines??Array.Empty<WorldMapLineSpec>()).Concat(extra).ToArray();inkReady=false;
+            }
             WorldMapZoneSpec zone = data.ZoneAt(current);
             bool interior = zone != null;
+            ApplyInteriorMask(zone);
             float range = interior ? 64f : session.Walker != null && session.Walker.Seated ? VehicleHalfExtent : WalkHalfExtent;
             miniUv = projection.WorldWindow(new Vector2(current.x, current.z), range);
             miniFog.uvRect = miniUv;
             UpdateMiniTile(miniUv);
+            caveIllustration.gameObject.SetActive(interior && zone.Illustration != null);
+            if (interior && zone.Illustration != null) {
+                caveIllustration.texture=zone.Illustration;var c=zone.IllustrationWorldUv;
+                caveIllustration.uvRect=new Rect((miniUv.x-c.x)/c.width,(miniUv.y-c.y)/c.height,miniUv.width/c.width,miniUv.height/c.height);
+            }
             miniMap.gameObject.SetActive(!interior); miniFog.gameObject.SetActive(!interior && !data.HasIllustration); miniLines.gameObject.SetActive(!interior);
             miniMajorLines.gameObject.SetActive(!interior && data.HasIllustration);
             miniMajorLines.SetPaths(majorLines, projection, miniUv, 0, 1, 1.4f);
@@ -461,10 +494,21 @@ namespace Oheangbu.App.World.UI
             if(paperMaterial != null && (targetExpanded || fold > 0))
             {
                 paperMaterial.SetVector("_WorldUv",new Vector4(fullUv.x,fullUv.y,fullUv.width,fullUv.height));
+                WorldMapRegionTile detail=data.PaintedRelief?data.RegionTiles.FirstOrDefault(t=>t!=null&&t.Texture!=null&&t.WorldUv.Contains(fullUv.min)&&t.WorldUv.Contains(fullUv.max)):null;
+                var tile=detail!=null?detail.WorldUv:new Rect(0,0,1,1);
+                paperMaterial.SetTexture("_MapTex",data.DisplayMap);
+                paperMaterial.SetTexture("_DetailTex",detail!=null?detail.Texture:data.ExploredMap);
+                paperMaterial.SetFloat("_HasDetail",data.PaintedRelief&&(detail!=null||data.ExploredMap!=null)?1:0);
+                paperMaterial.SetTexture("_CaveTex",zone?.Illustration);
+                var caveUv=zone?.IllustrationWorldUv??new Rect(0,0,1,1);
+                paperMaterial.SetVector("_CaveUv",new Vector4(caveUv.x,caveUv.y,caveUv.width,caveUv.height));
+                paperMaterial.SetFloat("_HasCave",interior&&zone.Illustration!=null?1:0);
+                paperMaterial.SetVector("_MapTileUv",new Vector4(tile.x,tile.y,tile.width,tile.height));
                 paperMaterial.SetFloat("_Interior",interior ? 1f : 0f);
                 if(!inkReady || fullUv != lastInkUv || zone != lastInkZone)
                 {
-                    paperInk.Draw(interior ? zone.DetailLines : data.HasIllustration ? exploredLines : data.Lines, interior ? zone.DetailPath : null, projection, fullUv, foldMap.rect.size);
+                    paperInk.projectionWorldHeight=fullUv.height*(data.BoundsMax.y-data.BoundsMin.y);
+                    paperInk.Draw(interior ? (zone.Illustration!=null?null:zone.DetailLines) : data.HasIllustration ? exploredLines : data.Lines, interior && zone.Illustration==null ? zone.DetailPath : null, projection, fullUv, foldMap.rect.size);
                     macroInk.Draw(!interior && data.HasIllustration ? majorLines : null, null, projection, fullUv, foldMap.rect.size);
                     lastInkUv = fullUv; lastInkZone = zone; inkReady = true;
                 }
@@ -475,9 +519,10 @@ namespace Oheangbu.App.World.UI
                 displayedZoneLabel = zoneLabel;
                 miniTitle.text = zoneLabel; fullTitle.text = string.IsNullOrEmpty(zoneLabel) ? "강토 지도" : "강토 지도 · " + zoneLabel;
             }
-            caveDetail.gameObject.SetActive(interior && zone.DetailPath != null && zone.DetailPath.Length > 1);
-            if (caveDetail.gameObject.activeSelf) caveDetail.SetPath(zone.DetailPath, projection, miniUv, 2.5f);
-            caveFootprint.gameObject.SetActive(interior && zone.DetailLines != null && zone.DetailLines.Length > 0);
+            caveFootprint.ViewWorldHeight=miniUv.height*(data.BoundsMax.y-data.BoundsMin.y);
+            caveDetail.gameObject.SetActive(!data.PaintedRelief && interior && zone.DetailPath != null && zone.DetailPath.Length > 1);
+            if (caveDetail.gameObject.activeSelf) caveDetail.SetPath(zone.DetailPath, projection, miniUv, dependencies.Icons!=null?5f:2.5f);
+            caveFootprint.gameObject.SetActive(interior && zone.Illustration==null && zone.DetailLines != null && zone.DetailLines.Length > 0);
             if (caveFootprint.gameObject.activeSelf) caveFootprint.SetPaths(zone.DetailLines, projection, miniUv);
 
             Vector2 currentXZ = new Vector2(current.x, current.z);
@@ -503,21 +548,35 @@ namespace Oheangbu.App.World.UI
             Vector2 pin = hasPin ? session.Progress.ui.pin.worldXZ : default;
             PlaceMini(miniPin, pin, hasPin && !interior); PlaceFull(fullPin, pin, hasPin && !interior);
             PlaceFullLabel(fullPinLabel, pin, hasPin && !interior, new Vector2(12, 16));
+            var destination=session.KnownDestination;
+            bool showDestination=destination!=null&&!interior;
+            var destinationXZ=showDestination?new Vector2(destination.Destination.x,destination.Destination.z):Vector2.zero;
+            PlaceFull(knownArea,destinationXZ,showDestination);
+            if(showDestination)
+            {
+                knownArea.sizeDelta=new Vector2(Mathf.Max(20,2*destination.DestinationRadius/(data.BoundsMax.x-data.BoundsMin.x)/fullUv.width*fullMarkers.rect.width),
+                    Mathf.Max(20,2*destination.DestinationRadius/(data.BoundsMax.y-data.BoundsMin.y)/fullUv.height*fullMarkers.rect.height));
+                knownAreaLabel.text=destination.DestinationLabel+" 일대";
+            }
+            PlaceFullLabel(knownAreaLabel,destinationXZ,showDestination,new Vector2(16,26));
             foreach (MarkerView marker in markers)
             {
                 bool known = !interior && ready && (marker.Spec.InitiallyDiscovered || session.Progress.ui.discoveredMarkers.Contains(marker.Spec.Id));
-                known &= (marker.Spec.WorldXZ - currentXZ).sqrMagnitude > 400f;
+                known &= (marker.Spec.WorldXZ - currentXZ).sqrMagnitude > (dependencies.Icons!=null?0f:400f);
                 PlaceMini(marker.Mini, marker.Spec.WorldXZ, known); PlaceFull(marker.Full, marker.Spec.WorldXZ, known);
                 PlaceFullLabel(marker.FullLabel, marker.Spec.WorldXZ, known && fullUv.width < .35f, new Vector2(11, 0));
             }
             for (int i = 0; i < regionLabels.Count; i++)
             {
                 Vector2 center = Vector2.zero;
-                var polygon = sheet.Regions[i].Polygon;
+                var polygon = data.Locations!=null ? data.Locations.Entries.Where(e=>e.Priority==0).ElementAt(i).Polygon : sheet.Regions[i].Polygon;
                 foreach (var point in polygon) center += point;
                 center /= Mathf.Max(1, polygon.Length);
-                PlaceFullLabel(regionLabels[i], center, !interior && fullUv.height > .22f, Vector2.zero);
+                PlaceFullLabel(regionLabels[i], center, !interior, Vector2.zero);
+                regionLabels[i].rectTransform.pivot = new Vector2(.5f, .5f);
+                regionLabels[i].alignment = TextAnchor.MiddleCenter;
             }
+            RefreshMapHover();
         }
 
         void UpdateMiniTile(Rect worldWindow)
@@ -540,7 +599,7 @@ namespace Oheangbu.App.World.UI
             {
                 Rect tileUv=next!=null?next.WorldUv:new Rect(0,0,1,1);
                 miniPaperMaterial.SetVector("_WorldUv",new Vector4(tileUv.x,tileUv.y,tileUv.width,tileUv.height));
-                miniPaperMaterial.SetFloat("_HasDetail",next!=null&&next.Texture.name.StartsWith("MiniTerrain_",StringComparison.Ordinal)?1:0);
+                miniPaperMaterial.SetFloat("_HasDetail",next!=null&&(data.PaintedRelief||next.Texture.name.StartsWith("MiniTerrain_",StringComparison.Ordinal))?1:0);
             }
         }
 
@@ -613,6 +672,7 @@ namespace Oheangbu.App.World.UI
 
         string RegionLabel(Vector2 world)
         {
+            if(data.Locations!=null)return data.Locations.RealmAt(new Vector3(world.x,0,world.y))?.Name??"강토";
             foreach (var region in sheet.Regions) if (WorldMapDiscoveryGrid.Contains(region.Polygon, world)) return region.Label;
             return "강토";
         }
@@ -651,6 +711,7 @@ namespace Oheangbu.App.World.UI
             rect.anchorMin = rect.anchorMax = new Vector2(.5f, 0); rect.pivot = new Vector2(.5f, 0); rect.anchoredPosition = position;
             Image image = PlaytestUiView.Image(rect, new Color(dependencies.Paper.r, dependencies.Paper.g, dependencies.Paper.b, .94f), null, true);
             var button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = image; button.onClick.AddListener(() => action());
+            if(PlaytestUiRoot.Instance!=null&&PlaytestUiRoot.Instance.Theme.SoundPalette!=null){var sound=rect.gameObject.AddComponent<CompactUiSound255>();sound.Theme=PlaytestUiRoot.Instance.Theme;}
             PlaytestUiView.Text(rect, "Label", label, Font, 16, dependencies.Ink, 0, 0, width, 38, TextAnchor.MiddleCenter);
         }
 
@@ -666,6 +727,7 @@ namespace Oheangbu.App.World.UI
             CloseRequested = null;
             FoldRustle = null;
             if(paperMaterial != null) Destroy(paperMaterial);
+            DisposeInteriorDiscovery();
             if(miniDiscoveryMaterial != null) Destroy(miniDiscoveryMaterial);
             if(miniPaperMaterial != null) Destroy(miniPaperMaterial);
             macroInk?.Dispose();
