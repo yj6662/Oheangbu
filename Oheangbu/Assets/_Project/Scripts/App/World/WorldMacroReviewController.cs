@@ -132,7 +132,11 @@ namespace Oheangbu.App.World
             float ground=float.NegativeInfinity;
             foreach(var hit in Physics.RaycastAll(new Vector3(p.x,2000,p.z),Vector3.down,4000,1,QueryTriggerInteraction.Ignore))
                 if(hit.collider.name.StartsWith("Terrain_")||hit.collider.name=="Bridge_Deck_TEST"||hit.collider.name.StartsWith("Bridge_Apron_TEST"))ground=Mathf.Max(ground,hit.point.y);
-            return float.IsNegativeInfinity(ground)?WorldMacroTerrain.SurfaceHeight(Sheet,p.x,p.z):ground;
+            if(!float.IsNegativeInfinity(ground))return ground;
+            // Collider/bridge hits still take precedence. Exact final terrain is a fallback
+            // only; return its absolute Y directly, without adding any vegetation delta.
+            return WorldMacroTerrain.TryFinalSurfaceHeight(Sheet,p.x,p.z,out float finalHeight)
+                ?finalHeight:WorldMacroTerrain.SurfaceHeight(Sheet,p.x,p.z);
         }
         public static Vector3 Along(Vector3[] points,float distance,out Vector3 next)
         {

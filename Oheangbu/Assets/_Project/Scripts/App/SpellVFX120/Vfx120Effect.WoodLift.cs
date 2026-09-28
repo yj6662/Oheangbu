@@ -12,9 +12,9 @@ namespace Oheangbu.App.SpellVFX120
         public float WoodLiftReleaseAt=>_woodLiftRelease;
         public float WoodLiftGroundY=>ReceivedOrigin.y+_originGround;
         public static bool IsWoodLift(Vfx120Profile p)=>p!=null&&p.Glyph=="국"&&p.BodyMesh!=null&&p.BodyMesh.name=="VFX120_WoodLiftTrunk_020";
-        public bool ConfigureWoodLift(Vector3 basePoint,float maximumHeight)
+        public bool ConfigureWoodLift(Vector3 basePoint,float maximumHeight,bool authoredAmplification=false)
         {
-            if(!WoodLiftConfigured||WoodLiftHasPlan||!Vfx120InterceptionMotion.Finite(basePoint)||!WashFinite(maximumHeight)||maximumHeight<=0||maximumHeight>2.4f)return false;
+            if(!WoodLiftConfigured||WoodLiftHasPlan||!Vfx120InterceptionMotion.Finite(basePoint)||!WashFinite(maximumHeight)||maximumHeight<=0||maximumHeight>(authoredAmplification?24f:2.4f))return false;
             _woodLiftBase=basePoint;_woodLiftMax=maximumHeight;WoodLiftHasPlan=true;return true;
         }
         public bool SetWoodLiftHeight(float currentHeight)
@@ -40,7 +40,9 @@ namespace Oheangbu.App.SpellVFX120
             float release=_woodLiftRelease>=0?Mathf.Clamp01((Age-_woodLiftRelease)/.65f):0;
             float fade=(1-release)*(1-Mathf.Clamp01((Age-Life+.2f)/.2f));bool visible=Age<Life&&fade>.001f;
             Vector3 top=_woodLiftBase+Vector3.up*_woodLiftHeight;
-            _woodLiftTrunk.transform.SetPositionAndRotation(top-Vector3.up*2.4f,Quaternion.identity);_woodLiftDeck.transform.SetPositionAndRotation(top,Quaternion.identity);
+            float trunkHeight=Mathf.Max(2.4f,_woodLiftMax);
+            _woodLiftTrunk.transform.localScale=new Vector3(1,trunkHeight/2.4f,1);
+            _woodLiftTrunk.transform.SetPositionAndRotation(top-Vector3.up*trunkHeight,Quaternion.identity);_woodLiftDeck.transform.SetPositionAndRotation(top,Quaternion.identity);
             _woodLiftBlock.SetFloat("_GroundY",_woodLiftBase.y-.006f);_woodLiftBlock.SetFloat("_Visibility",fade);_woodLiftTrunk.SetPropertyBlock(_woodLiftBlock);_woodLiftDeck.SetPropertyBlock(_woodLiftBlock);_woodLiftTrunk.enabled=_woodLiftDeck.enabled=visible;
             for(int i=0;i<3;i++)
             {

@@ -115,6 +115,20 @@ namespace Oheangbu.App
             _regionalSkyInstance.SetColor("_Cloud", state.Cloud);
             _regionalSkyInstance.SetFloat("_CloudDensity", state.CloudDensity);
             RenderSettings.skybox = _regionalSkyInstance;
+            // Gradient ambient follows the same blended realm sky; a flat-ink profile keeps its constant ambient.
+            if (_inkSkyProfile.GradientAmbient && !SameSky(state, _ambientState))
+            {
+                _inkSkyProfile.ApplyEnvironment(state.Zenith, state.Horizon);
+                _ambientState = state;
+            }
+        }
+
+        private Oheangbu.Data.World.RegionalInkSkyProfile.SkyState _ambientState;
+        private static bool SameSky(Oheangbu.Data.World.RegionalInkSkyProfile.SkyState a, Oheangbu.Data.World.RegionalInkSkyProfile.SkyState b)
+        {
+            // 1/512 per channel is below an 8-bit step of the ambient colours.
+            return Mathf.Abs(a.Zenith.r - b.Zenith.r) + Mathf.Abs(a.Zenith.g - b.Zenith.g) + Mathf.Abs(a.Zenith.b - b.Zenith.b)
+                 + Mathf.Abs(a.Horizon.r - b.Horizon.r) + Mathf.Abs(a.Horizon.g - b.Horizon.g) + Mathf.Abs(a.Horizon.b - b.Horizon.b) < 1f / 512f;
         }
 
         /// <summary>Explicit editor/capture viewpoint. Does not change the live transition state.</summary>
@@ -147,7 +161,9 @@ namespace Oheangbu.App
                 {
                     if(HasRegionalSky)
                     {
-                        _inkSkyProfile.ApplyEnvironment();
+                        // A gradient profile takes its ambient from the regional sky written below.
+                        if(!_inkSkyProfile.GradientAmbient)_inkSkyProfile.ApplyEnvironment();
+                        else _ambientState=default;
                         ApplyRegionalSky(camera.transform.position, 0, !Application.isPlaying);
                     }
                     else

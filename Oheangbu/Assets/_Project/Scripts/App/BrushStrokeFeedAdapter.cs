@@ -96,6 +96,7 @@ namespace Oheangbu.App
         private float _pendingFlashPower;
         private Texture2D _pendingMotif;
         private bool _pendingAttack; // 공격 작도인가 — 문양이 투사체로 날아갈지(5차 검수) 제자리 개화할지
+        private float _pendingGuardDuration, _pendingGuardWindow;
         private bool _pendingParry;  // 패링 작도인가 — 방어막 가독 타임라인(SPELL-FIDELITY §4.6) 적용 여부
         private bool _pendingSummon; // 소환 작도인가 — 승인된 플레이어 발 위치·전방에서 정적 표현만 시작
         private Transform _pendingAttackTarget; // 배선이 밀어준 명중 대상(유도 추적) — 없으면 허공 착탄
@@ -109,6 +110,8 @@ namespace Oheangbu.App
         private Vector3 _pendingSummonOrigin;
         private Vector3 _pendingSummonForward;
         private bool _hasPendingSummonPose;
+        private bool _pendingSummonExternal;
+        private bool _pendingFieldExternal;
 
         // 실험용 정적 표현은 글자별 하나만 유지한다. 다섯 글자를 모두 띄워도 최대 다섯이며 재시전은 같은 글자를 교체한다.
         private const int MaxActiveSummons = 5;
@@ -121,6 +124,7 @@ namespace Oheangbu.App
         // 실제 정적 소환 표현의 생성·소멸 경계. 시전 승인 이벤트와 달리 프리팹 인스턴스 수명을 따른다.
         public event System.Action<char, Vector3> SummonPresentationStarted;
         public event System.Action<char, Vector3> SummonPresentationReleased;
+        public event System.Action CastRejected;
 
         // 표현용 상태 — 획 하나가 그려지는 동안의 붓 상태다. 인식 데이터와 공유하지 않는다.
         private Vector2 _lastInputScreen;  // 직전 입력 좌표 — 속도 측정용
@@ -134,7 +138,7 @@ namespace Oheangbu.App
         private float _strokeScale = 1f; // 획 화면 등가 계수 — 깊이·FOV가 1인칭과 달라도 폭·수필·갈필 결이 화면상 동일
         private float _baseFov;          // 작도 진입 전 기준 FOV(클로즈업 FOV 스냅과 무관한 등가 계산용)
 
-        private enum VisualEventKind { Start, Point, End, Letter, Commit, Evaporate, AttackTarget, AreaPlan, SummonPose, CastFailed }
+        private enum VisualEventKind { Start, Point, End, Letter, Commit, Evaporate, AttackTarget, AreaPlan, SummonPose, CastFailed, FieldOwned, GuardClock }
 
         private struct VisualEvent
         {
@@ -146,9 +150,10 @@ namespace Oheangbu.App
             public bool Success;
             public DrawnLetter Letter;
             public Transform Target;
-            public float Duration;
+            public float Duration, GuardWindow;
             public AreaImpactPlan Plan;
             public char SummonLetter;
+            public bool ExternalSummon;
             public Vector3 Origin;
             public Vector3 Forward;
         }
@@ -258,12 +263,15 @@ namespace Oheangbu.App
                     case VisualEventKind.AttackTarget: _pendingAttackTarget = e.Target; _pendingAttackDuration = e.Duration; break;
                     case VisualEventKind.AreaPlan: _pendingAreaPlan = e.Plan; break;
                     case VisualEventKind.SummonPose:
+                        _pendingSummonExternal = e.ExternalSummon;
                         _pendingSummonLetter = e.SummonLetter;
                         _pendingSummonOrigin = e.Origin;
                         _pendingSummonForward = e.Forward;
                         _hasPendingSummonPose = true;
                         break;
                     case VisualEventKind.CastFailed: _pendingCastFailed = true; break;
+                    case VisualEventKind.FieldOwned: _pendingFieldExternal = true; break;
+                    case VisualEventKind.GuardClock: _pendingGuardDuration=e.Duration; _pendingGuardWindow=e.GuardWindow; break;
                 }
             }
             _visualEvents.Clear();
@@ -530,12 +538,14 @@ namespace Oheangbu.App
             _pendingFxPrefab = null;
             _pendingFxScaleMul = 1f;
             _pendingFxArcHeight = 0f;
-            _pendingParry = false;
+            _pendingParry = false; _pendingGuardDuration = _pendingGuardWindow = 0;
             _pendingSummon = false;
             _pendingSummonLetter = default;
             _pendingSummonOrigin = default;
             _pendingSummonForward = default;
             _hasPendingSummonPose = false;
+            _pendingSummonExternal = false;
+            _pendingFieldExternal = false;
         }
 
         // 피격(글자만 소멸)·조용한 취소 등 커밋 경로 밖의 소거 — 남아 있는 획을 증발시킨다.
@@ -580,6 +590,8 @@ namespace Oheangbu.App
         // 피해 판정은 Combat의 즉발 그대로다(§11 절단면) — 여기는 연출만 후행한다 [TEST].
         private void SpawnPattern(FadingGroup group)
         {
+            // The combat actor owns its full lifetime; retain the stroke fade without a second static animal.
+            if ((_pendingSummon && _pendingSummonExternal) || _pendingFieldExternal) return;
             if (_style == null || !TryComputeLetterBounds(group, out Bounds bounds)) return;
 
             // 어휘별 프리팹 우선(FX-ASSETS §4.4), 미등재=기본 슬롯 — 기존 동작 비파괴
@@ -637,7 +649,7 @@ namespace Oheangbu.App
                 else
                 {
                     if (_pendingParry && _combatConfig != null)
-                        authored.SetGuardClock(_combatConfig.GuardDuration, _combatConfig.ParryWindow);
+                        authored.SetGuardClock(_pendingGuardDuration>0?_pendingGuardDuration:_combatConfig.GuardDuration, _pendingGuardDuration>0?_pendingGuardWindow:_combatConfig.ParryWindow);
                     Vector3 guardDirectionPoint = bounds.center;
                     if (SpellVFX120.Vfx120Effect.IsBambooGuard(authored.Profile)||authored.Profile.KtpPatternShield)
                     {
@@ -697,8 +709,8 @@ namespace Oheangbu.App
             {
                 // 방어막 가독(SPELL-FIDELITY §4.6): 문양 수명=GuardDuration — 방어막이 사는 동안
                 // 문양도 산다. 창(ParryWindow) 동안 진하게 → 은은 → 꼬리 1s 스러짐(수치 읽기만)
-                PatternEffectLifetime.AttachBloom(go, _combatConfig.GuardDuration, group.FlashColor,
-                    _combatConfig.ParryWindow, 1f);
+                PatternEffectLifetime.AttachBloom(go, _pendingGuardDuration>0?_pendingGuardDuration:_combatConfig.GuardDuration, group.FlashColor,
+                    _pendingGuardDuration>0?_pendingGuardWindow:_combatConfig.ParryWindow, 1f);
             }
             else
             {
@@ -708,6 +720,11 @@ namespace Oheangbu.App
 
         // 배선(CombatLoopWiring)이 커밋 프레임에 밀어주는 명중 문맥 — 시각이 하나뿐이라 피해와 연출이 어긋나지 않는다.
         // _letterDrawn(배선의 판정)이 Committed(여기 소비)보다 먼저 발화하는 순서에 기댄다(같은 프레임 보장).
+        public void SetPatternGuardClock(float duration, float window)
+        {
+            if(!isActiveAndEnabled)return;
+            var e=CaptureEvent(VisualEventKind.GuardClock);e.Duration=duration;e.GuardWindow=window;_visualEvents.Add(e);
+        }
         public void SetPatternAttackTarget(Transform target, float flightDuration)
         {
             if (!isActiveAndEnabled) return;
@@ -727,21 +744,33 @@ namespace Oheangbu.App
         }
 
         // 승인된 시전의 실제 플레이어 포즈. 작도 좌표는 소환 지면 좌표로 사용하지 않는다.
-        public void SetPatternSummonPose(char letter, Vector3 origin, Vector3 forward)
+        public void SetPatternSummonPose(char letter, Vector3 origin, Vector3 forward, bool externallyOwned = false)
         {
             if (!isActiveAndEnabled) return;
             var e = CaptureEvent(VisualEventKind.SummonPose);
             e.SummonLetter = letter;
+            e.ExternalSummon = externallyOwned;
             e.Origin = origin;
             e.Forward = forward;
             _visualEvents.Add(e);
         }
 
+        public void NotifyExternalSummonStarted(char letter, Vector3 point)
+        { if (isActiveAndEnabled) SummonPresentationStarted?.Invoke(letter, point); }
+        public void NotifyExternalSummonReleased(char letter, Vector3 point)
+        { if (isActiveAndEnabled) SummonPresentationReleased?.Invoke(letter, point); }
+
         // 시전 불성립(먹 부족·미러 밖 글자) — 배선이 커밋 프레임에 알린다. 표현은 불발(증발)로 따른다
         public void NotifyCastFailed()
         {
+            CastRejected?.Invoke();
             if (!isActiveAndEnabled) return;
             _visualEvents.Add(CaptureEvent(VisualEventKind.CastFailed));
+        }
+
+        public void NotifyFieldPresentationOwned()
+        {
+            if (isActiveAndEnabled) _visualEvents.Add(CaptureEvent(VisualEventKind.FieldOwned));
         }
 
         // 허공 착탄점 — 조준(카메라) 전방. 규칙이 아니라 연출의 목적지다
@@ -988,7 +1017,7 @@ namespace Oheangbu.App
             }
         }
 
-        private void ClearActiveSummons()
+        public void ClearActiveSummons()
         {
             foreach (var pair in _activeSummons)
             {

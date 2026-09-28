@@ -64,6 +64,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             original=walker.ViewCamera;observer=dressing.Observer;oldCameraEnabled=original.enabled;oldEnabled=dressing.enabled;
             oldStreaming=dressing.BudgetedDenseStreaming;oldDiagnostic=dressing.AllowDiagnosticCameras;oldRun=Application.runInBackground;
             position=original.transform.position;rotation=original.transform.rotation;int h=action.EndsWith(":1440")?1440:1080,w=h*16/9;
+            // Fixed material-comparison viewpoint; never teleports or drives the player.
+            if(action.Contains(":ink")){position=new Vector3(907,135.2f,208);rotation=Quaternion.LookRotation(new Vector3(888,135,245)-position);}
             report=new Report{status="RUNNING",utc=DateTime.UtcNow.ToString("O"),mode=mode,width=w,height=h,start=position};
             report.unityVersion=Application.unityVersion;report.gpuDevice=SystemInfo.graphicsDeviceName;report.cpuDevice=SystemInfo.processorType;
             report.nativeCameraWidth=original.pixelWidth;report.nativeCameraHeight=original.pixelHeight;report.quality=QualitySettings.GetQualityLevel();report.vSync=QualitySettings.vSyncCount;
@@ -89,7 +91,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             string phase=t<3?"cold":t<8?"stationary":t<14?"rotation":t<30?"first_visit":t<46?"return_visit":"returned_stationary";
             float travel=t<14?0:t<30?(float)(t-14)*14:t<46?224-(float)(t-30)*14:0;
             Vector3 forward=Vector3.ProjectOnPlane(rotation*Vector3.forward,Vector3.up).normalized;Vector3 p=position+forward*travel;
-            if(t>=14)p.y=Oheangbu.Data.World.WorldMacroTerrain.SurfaceHeight(dressing.Sheet.Geography,p.x,p.z)+1.6f;
+            if(t>=14&&dressing.TryDiagnosticGroundHeight(p.x,p.z,out float groundHeight))p.y=groundHeight+1.6f;
             probe.transform.SetPositionAndRotation(p,t>=8&&t<14?Quaternion.AngleAxis((float)(t-8)*60,Vector3.up)*rotation:rotation);
             FrameTimingManager.CaptureFrameTimings();double cpu=-1,gpu=-1;if(FrameTimingManager.GetLatestTimings(1,timing)>0){cpu=timing[0].cpuFrameTime>0?timing[0].cpuFrameTime:-1;gpu=timing[0].gpuFrameTime>0?timing[0].gpuFrameTime:-1;}
             data.Add(new Sample{phase=phase,frame=frame,delta=Time.unscaledDeltaTime*1000,cpu=cpu,gpu=gpu,resident=dressing.ResidentInstances,pending=dressing.PendingChunks,

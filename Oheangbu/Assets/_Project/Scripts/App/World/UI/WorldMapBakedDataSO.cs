@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Oheangbu.App.World.UI
@@ -10,12 +10,15 @@ namespace Oheangbu.App.World.UI
 
         public int Version = CurrentVersion;
         public string Revision;
+        public WorldLocationCatalog Locations;
         public Vector2 BoundsMin;
         public Vector2 BoundsMax;
         public Vector2[] Outline = Array.Empty<Vector2>();
         public Texture2D BaseMap;
         [Tooltip("Illustrated macro terrain, visible before exploration; paths and places remain discovery gated.")]
         public Texture2D IllustratedMap;
+        public bool PaintedRelief;
+        public Texture2D ExploredMap;
         public WorldMapRegionTile[] RegionTiles = Array.Empty<WorldMapRegionTile>();
         public bool HasIllustration => IllustratedMap != null;
         public Texture2D DisplayMap => IllustratedMap != null ? IllustratedMap : BaseMap;

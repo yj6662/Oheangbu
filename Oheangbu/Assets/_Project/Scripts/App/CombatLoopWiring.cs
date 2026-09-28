@@ -62,6 +62,8 @@ namespace Oheangbu.App
             public char Letter;
             public float Power;
             public Vector3 Origin;
+            public AttackProvenance Attack;
+            public uint TargetLifeRevision;
         }
         private char _guardVisualLetter;
         private uint _guardVisualRevision;
@@ -89,6 +91,45 @@ namespace Oheangbu.App
 
         // 예약만 된 계획이 아니라 실제 생존 대상에게 적용된 술식 착탄.
         public event Action<Vector3, Element> EnemyHitResolved;
+        public event Action<EnemyDamageResult> EnemyDamageResolved;
+        public EnemyVitals GroggyHudTarget => _lockOn != null ? _lockOn.Target : null;
+        // Campaign-owned runtime upgrades; no shared CombatConfig asset mutation.
+        public Func<Element, float> PlayerDamageScale { get; set; }
+        // Optional demo owner. Scenes without it retain the approved static summon preview.
+        public Demo.DemoSummonCombatManager SummonCombat { get; set; }
+        public Demo.FieldSpellService FieldSpells { get; set; }
+        public Demo.MumBridgeService MumBridges { get; set; }
+        public bool FieldPlacementPreviewRequested => _drawingInput != null && _drawingInput.InDrawMode;
+        public EABuffRuntime EABuffs { get; private set; }
+        public EAWardRuntime EAWards { get; private set; }
+        public EAGiyeokRuntime EAGiyeok { get; private set; }
+        public void ConfigureEAGiyeok(EAGiyeokProfileSO profile, Func<bool> unlocked)
+        {
+            EAGiyeok?.Dispose();EAGiyeok = profile != null ? new EAGiyeokRuntime(profile,this,_playerVitals,unlocked) : null;
+        }
+        public void ConfigureEAWards(EAWardProfileSO profile)
+        {
+            EAWards?.Dispose();
+            EAWards = profile != null ? new EAWardRuntime(profile, _playerVitals, this) : null;
+        }
+        public void ConfigureEABuffs(EABuffProfileSO profile, Func<bool> unlocked)
+        {
+            EABuffs?.Dispose();
+            EABuffs = profile != null ? new EABuffRuntime(profile, _playerVitals, this, unlocked, Time.time) : null;
+        }
+        private void OnDestroy() { EABuffs?.Dispose(); EABuffs = null; EAWards?.Dispose(); EAWards = null; EAGiyeok?.Dispose(); EAGiyeok = null; }
+        public IReadOnlyList<EnemyVitals> SummonTargets => _targets;
+        public EnemyVitals SummonLockTarget => _lockOn != null ? _lockOn.Target : null;
+        public Transform SummonPlayer => _playerTransform != null ? _playerTransform : transform;
+        public float SummonDamageScale(Element element)
+        {
+            float scale = PlayerDamageScale != null ? PlayerDamageScale(element) : 1f;
+            return float.IsFinite(scale) ? Mathf.Max(0, scale) : 1f;
+        }
+        public void NotifyCombatSummonStarted(char letter, Vector3 point)
+        { _brushAdapter?.NotifyExternalSummonStarted(letter, point); }
+        public void NotifyCombatSummonReleased(char letter, Vector3 point)
+        { _brushAdapter?.NotifyExternalSummonReleased(letter, point); }
 
         [Inject]
         public void Construct(SpellResolver resolver, ParryJudge judge, GroggyMeter groggy, InkPool ink)
@@ -150,19 +191,25 @@ namespace Oheangbu.App
             if (_inkChanged != null) _inkChanged.Subscribe(OnInkChanged);
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
             if (_playerVitals != null) _playerVitals.HpChanged += RefreshHud;
-            if (_enemyVitals != null) _enemyVitals.Died += OnEnemyDied;
+            if (_playerVitals != null) _playerVitals.Died += OnPlayerDied;
+            if (_lockOn != null) _lockOn.Changed += RefreshHud;
             TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
         }
 
         private void OnDisable()
         {
+            EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear();
+            SummonCombat?.Clear();
+            _summonResolved.Clear();
             if (_letterDrawn != null) _letterDrawn.Unsubscribe(OnLetterDrawn);
             if (_misfired != null) _misfired.Unsubscribe(OnMisfired);
             if (_inkChanged != null) _inkChanged.Unsubscribe(OnInkChanged);
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
             if (_playerVitals != null) _playerVitals.HpChanged -= RefreshHud;
-            if (_enemyVitals != null) _enemyVitals.Died -= OnEnemyDied;
+            if (_playerVitals != null) _playerVitals.Died -= OnPlayerDied;
+            if (_lockOn != null) _lockOn.Changed -= RefreshHud;
             UnhookServices();
+            ResetEncounterGroggy();
             _pendingCasts.Clear(); // 비활성 동안의 기한 지난 착탄이 재활성 시 유령 피해가 되지 않게
             _guardVisualLetter = default;
             foreach (var effect in _contacts) if (effect != null) Destroy(effect.gameObject);
@@ -174,6 +221,7 @@ namespace Oheangbu.App
         private void Update()
         {
             TryHookServices();
+            EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
             TickPendingCasts();
             _contacts.RemoveAll(effect => effect == null);
         }
@@ -186,13 +234,10 @@ namespace Oheangbu.App
                 if (Time.time < _pendingCasts[i].ImpactTime) continue;
                 PendingCast pending = _pendingCasts[i];
                 _pendingCasts.RemoveAt(i);
-                if (pending.Target != null && pending.Target.IsAlive && TargetVisible(pending.Target,pending.Origin))
+                if (pending.Target != null && pending.Target.IsAlive && pending.Target.isActiveAndEnabled &&
+                    pending.Target.LifeRevision == pending.TargetLifeRevision && TargetVisible(pending.Target,pending.Origin))
                 {
-                    var point=pending.Target.transform.position+Vector3.up*.8f;
-                    bool positive=pending.Power*pending.Target.DamageMultiplier>0;
-                    pending.Target.TakeDamage(pending.Power);
-                    if(positive)EnemyHitResolved?.Invoke(point,pending.Element);
-                    if(positive&&_contactVfx!=null)SpawnContact(_contactVfx.ParrySource(pending.Element),point,_contactVfx.ParryScale,pending.Element,pending.Letter);
+                    ApplyConfirmedEnemyHit(pending.Target, pending.Power, pending.Attack, pending.Letter);
                 }
             }
         }
@@ -200,26 +245,23 @@ namespace Oheangbu.App
         // [Inject]는 씬 로드 직후 실행되므로 서비스 이벤트는 OnEnable(재활성) 또는 첫 프레임에 건다
         private void TryHookServices()
         {
-            if (_hooked || _groggy == null) return;
-            _groggy.Blossomed += OnBlossomed;
-            _groggy.Changed += RefreshHud;
+            if (_hooked || _judge == null) return;
+            if (_groggy != null) _groggy.ResetRequested += ResetEncounterGroggy;
             if (_ink != null) _ink.Gained += OnInkReceived;
-            if (_judge != null) _judge.ImpactResolved += OnParryImpactResolved;
-            foreach (var controller in _controllers) controller.StunEnded += OnStunEnded;
+            _judge.OwnedImpactResolved += OnOwnedParryImpactResolved;
+            foreach (var target in _targets)
+                if (target != null) target.CombatStateChanged += RefreshHud;
             _hooked = true;
         }
 
         private void UnhookServices()
         {
             if (!_hooked) return;
-            _groggy.Blossomed -= OnBlossomed;
-            _groggy.Changed -= RefreshHud;
+            if (_groggy != null) _groggy.ResetRequested -= ResetEncounterGroggy;
             if (_ink != null) _ink.Gained -= OnInkReceived;
-            if (_judge != null) _judge.ImpactResolved -= OnParryImpactResolved;
-            foreach (var controller in _controllers)
-            {
-                if (controller != null) controller.StunEnded -= OnStunEnded;
-            }
+            if (_judge != null) _judge.OwnedImpactResolved -= OnOwnedParryImpactResolved;
+            foreach (var target in _targets)
+                if (target != null) target.CombatStateChanged -= RefreshHud;
             _hooked = false;
         }
 
@@ -235,7 +277,7 @@ namespace Oheangbu.App
         {
             if (_resolver == null || _config == null) return;
 
-            if (!_resolver.TryResolve(letter, out SpellCast cast))
+            if (!_resolver.TryResolve(letter, out SpellCast cast, FieldSpells != null && FieldSpells.IsUnlocked, EABuffs != null && EABuffs.Unlocked, EAWards != null && EAWards.Available, EAGiyeok != null && EAGiyeok.Unlocked, MumBridges != null && MumBridges.IsUnlocked))
             {
                 // 프로토 미러 밖의 글자 — 효과 없음, 먹만 소모(불발 취급). CSV 완주는 임포터 이후.
                 // 표현도 불발을 따른다(7차 검수) — 플래시·문양 대신 증발
@@ -244,6 +286,9 @@ namespace Oheangbu.App
                 return;
             }
 
+            if (EABuffs != null)
+                cast = new SpellCast(cast.Letter, cast.Kind, cast.Element,
+                    cast.Power * EABuffs.HoldPower(letter.HoldDuration, Time.time), cast.Area, cast.SpeedMul, EABuffs.HoldPower(letter.HoldDuration, Time.time));
             switch (cast.Kind)
             {
                 case SpellKind.Parry:
@@ -256,23 +301,158 @@ namespace Oheangbu.App
                 case SpellKind.Summon:
                     ResolveSummon(cast);
                     break;
+                case SpellKind.Field:
+                    ResolveField(cast);
+                    break;
+                case SpellKind.Ward:
+                    ResolveWard(cast);
+                    break;
+                case SpellKind.Buff:
+                    ResolveBuff(cast);
+                    break;
             }
+        }
+
+        private bool TrySpendSpell(float cost) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f));
+        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ResetEncounterGroggy(); }
+        private void ResolveWard(SpellCast cast)
+        {
+            if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost))
+            { _brushAdapter?.NotifyCastFailed(); return; }
+            if (!EAWards.Activate(cast.Letter, centre, Time.time)) { _brushAdapter?.NotifyCastFailed(); return; }
+            if (EAWards.HasVisual) _brushAdapter?.NotifyFieldPresentationOwned();
+            CastAccepted?.Invoke(cast, centre, PlayerForward());
+        }
+        private void ResolveBuff(SpellCast cast)
+        {
+            if (EABuffs == null || !EABuffs.CanActivate(cast.Letter) || !TrySpendSpell(_config.SpellInkCost))
+            { _brushAdapter?.NotifyCastFailed(); return; }
+            if (!EABuffs.Activate(cast.Letter, Time.time)) { _brushAdapter?.NotifyCastFailed(); return; }
+            if (EABuffs.HasVisual(cast.Letter)) _brushAdapter?.NotifyFieldPresentationOwned();
+            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
+        }
+
+        public EnemyDamageResult ApplyGiyeokDirectHit(EnemyVitals target,uint life,float power,Vector3 origin,AttackProvenance attack,char letter)
+        {
+            if(!isActiveAndEnabled||target==null||!target.IsAlive||!target.isActiveAndEnabled||target.LifeRevision!=life
+                ||!_targets.Contains(target)||!float.IsFinite(power)||power<=0||attack.Source!=DamageSource.PlayerDirect
+                ||attack.AttackId<=0||attack.Instigator==null||!EAGiyeokRuntime.Owns(letter)||!GiyeokTargetVisible(target,origin,letter=='삭'))return default;
+            return ApplyConfirmedEnemyHit(target,power,attack,letter);
+        }
+        private bool GiyeokTargetVisible(EnemyVitals target,Vector3 origin,bool piercesActors)
+        {
+            if(!_environmentOcclusion)return true;
+            var delta=target.transform.position+Vector3.up*.4f-origin;
+            int count=ScenePhysicsQuery.RaycastAll(gameObject.scene,origin,delta,delta.magnitude,~0,ref _summonOcclusionHits);
+            for(int i=0;i<count;i++)
+            {
+                var hit=_summonOcclusionHits[i];
+                if(hit.collider.isTrigger||hit.transform.IsChildOf(target.transform)||hit.transform.IsChildOf(SummonPlayer))continue;
+                if(piercesActors&&hit.transform.GetComponentInParent<EnemyVitals>()!=null)continue;
+                return false;
+            }
+            return true;
+        }
+        public EnemyDamageResult ApplyPersistentSpellHit(EnemyVitals target, float power, Vector3 origin, AttackProvenance attack, char letter)
+        {
+            if (!isActiveAndEnabled || target == null || !target.IsAlive || !target.isActiveAndEnabled ||
+                !_targets.Contains(target) || !float.IsFinite(power) || power <= 0 || attack.Source != DamageSource.PersistentSpell) return default;
+            Vector3 delta = target.transform.position + Vector3.up * .4f - origin;
+            int count = ScenePhysicsQuery.RaycastAll(gameObject.scene, origin, delta, delta.magnitude, ~0, ref _summonOcclusionHits);
+            for (int i = 0; i < count; i++)
+            {
+                var hit = _summonOcclusionHits[i].transform;
+                if (hit.IsChildOf(target.transform) || hit.IsChildOf(SummonPlayer) || hit.GetComponentInParent<EnemyVitals>() != null) continue;
+                return default;
+            }
+            return ApplyConfirmedEnemyHit(target, power, attack, letter);
+        }
+
+        private void ResolveField(SpellCast cast)
+        {
+            if(cast.Letter=='뭄')
+            {
+                if(MumBridges==null||!MumBridges.TryPrepare(cast,out _)){_brushAdapter?.NotifyCastFailed();return;}
+                float before=_ink!=null?_ink.Value:0;
+                if(_ink==null||_config==null||!TrySpendSpell(_config.SpellInkCost))
+                {MumBridges.CancelPrepared();_brushAdapter?.NotifyCastFailed();return;}
+                if(!MumBridges.CommitPrepared()){_ink.Restore(before);_brushAdapter?.NotifyCastFailed();return;}
+                _brushAdapter?.NotifyFieldPresentationOwned();CastAccepted?.Invoke(cast,PlayerPosition(),PlayerForward());return;
+            }
+            if (FieldSpells == null || !FieldSpells.TryPrepare(cast, out _))
+            { _brushAdapter?.NotifyCastFailed(); return; }
+            float fieldInkBefore=_ink!=null?_ink.Value:0;
+            if (_ink == null || _config == null || !TrySpendSpell(_config.SpellInkCost))
+            { FieldSpells.CancelPrepared(); _brushAdapter?.NotifyCastFailed(); return; }
+            if (!FieldSpells.CommitPrepared()) { _ink.Restore(fieldInkBefore); _brushAdapter?.NotifyCastFailed(); return; }
+            _brushAdapter?.NotifyFieldPresentationOwned();
+            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
         }
 
         private void ResolveSummon(SpellCast cast)
         {
-            // 소환도 기존 일반 술식 비용을 한 번만 쓴다. 4.6초는 표현 프리뷰 수명이며 경제 수치가 아니다.
-            if (_ink == null || !_ink.TrySpend(_config.SpellInkCost))
+            Vector3 origin = PlayerPosition();
+            Vector3 forward = PlayerForward();
+            bool combat = SummonCombat != null && SummonCombat.isActiveAndEnabled && SummonCombat.Supports(cast.Letter);
+            if (combat && !SummonCombat.TryPrepare(cast, origin, forward, out _))
             {
                 _brushAdapter?.NotifyCastFailed();
                 return;
             }
-
-            Vector3 origin = PlayerPosition();
-            Vector3 forward = PlayerForward();
-            _brushAdapter?.SetPatternSummonPose(cast.Letter, origin, forward);
+            // Validate/create the inactive candidate before spending. A failed replacement keeps the old actor.
+            if (_ink == null || _config == null || !TrySpendSpell(_config.SpellInkCost * (combat ? 2f : 1f)))
+            {
+                if (combat) SummonCombat.CancelPrepared();
+                _brushAdapter?.NotifyCastFailed();
+                return;
+            }
+            if (combat) _brushAdapter?.ClearActiveSummons();
+            else SummonCombat?.Clear();
+            _brushAdapter?.SetPatternSummonPose(cast.Letter, origin, forward, combat);
             CastAccepted?.Invoke(cast, origin, forward);
             SummonAccepted?.Invoke(cast, origin, forward);
+        }
+
+        private EnemyDamageResult ApplyConfirmedEnemyHit(EnemyVitals target, float power, AttackProvenance attack, char letter)
+        {
+            var result = target.TakeDamage(power, attack);
+            if (result.AppliedDamage <= 0) return result;
+            var point = target.transform.position + Vector3.up * .8f;
+            EnemyDamageResolved?.Invoke(result);
+            if (attack.Element.HasValue)
+            {
+                var element = attack.Element.Value;
+                EnemyHitResolved?.Invoke(point, element);
+                if (_contactVfx != null) SpawnContact(_contactVfx.ParrySource(element), point, _contactVfx.ParryScale, element, letter);
+            }
+            return result;
+        }
+
+        private RaycastHit[] _summonOcclusionHits = new RaycastHit[16];
+        private readonly HashSet<(long attack, int target, uint life)> _summonResolved = new HashSet<(long, int, uint)>();
+        public EnemyDamageResult ApplySummonHit(EnemyVitals target, uint lifeRevision, float power,
+            Vector3 origin, AttackProvenance attack, char letter)
+        {
+            if (!isActiveAndEnabled || target == null || !target.isActiveAndEnabled || !target.IsAlive ||
+                target.LifeRevision != lifeRevision || attack.Source != DamageSource.Summon ||
+                attack.AttackId <= 0 || attack.Instigator == null || !attack.Element.HasValue ||
+                !float.IsFinite(origin.x) || !float.IsFinite(origin.y) || !float.IsFinite(origin.z) ||
+                !float.IsFinite(power) || power <= 0 || !_targets.Contains(target)) return default;
+            var key = (attack.AttackId, target.GetInstanceID(), lifeRevision);
+            if (_summonResolved.Contains(key)) return default;
+            Vector3 delta = target.transform.position + Vector3.up * .4f - origin;
+            int count = ScenePhysicsQuery.RaycastAll(gameObject.scene, origin, delta, delta.magnitude,
+                ~0, ref _summonOcclusionHits);
+            for (int i = 0; i < count; i++)
+            {
+                var hit = _summonOcclusionHits[i].transform;
+                if (hit.IsChildOf(target.transform) || hit.IsChildOf(SummonPlayer) ||
+                    hit.GetComponentInParent<EnemyVitals>() != null) continue;
+                return default;
+            }
+            if (_summonResolved.Count >= 4096) _summonResolved.Clear();
+            _summonResolved.Add(key);
+            return ApplyConfirmedEnemyHit(target, power, attack, letter);
         }
 
         private void ResolveParry(SpellCast cast)
@@ -280,7 +460,7 @@ namespace Oheangbu.App
             _guardVisualLetter = default;
             // 먹 부족 = 불발 취급(§10.1) — 방어막 자체가 서지 않고, 표현도 증발한다(7차 검수:
             // 없는 방어를 개화로 보여주지 않는다)
-            if (_ink == null || !_ink.TrySpend(_config.ParryInkCost))
+            if (_ink == null || !TrySpendSpell(_config.ParryInkCost))
             {
                 _brushAdapter?.NotifyCastFailed();
                 return;
@@ -289,12 +469,26 @@ namespace Oheangbu.App
             // [TEST §10.1 2차 플레이 검수] 작도 잔존 방어막: 완성이 방어막을 세우고, 판정은 임팩트가 한다.
             // 성공 보상(그로기·환급·이펙트)은 OnParryImpactResolved에서 — 판정점이 임팩트로 옮겨갔으므로.
             // ⚠ 어휘 CSV 「허공 시전 잔존 없음」의 전이 실험 — 채택 시 DECISIONS+CSV 정본 반영 필요
-            _judge?.RaiseGuard(cast.Element, Time.time);
+            _judge?.RaiseGuard(cast.Element, Time.time, cast.HoldScale);
+            if (_judge != null) _brushAdapter?.SetPatternGuardClock(_judge.GuardLifetime, _judge.GuardWindow);
             if (_judge != null) { _guardVisualLetter = cast.Letter; _guardVisualRevision = _judge.GuardRevision; }
             CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
         }
 
         // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
+        private void OnOwnedParryImpactResolved(ParryImpactResult result)
+        {
+            // Legacy diagnostic calls have no owner: retain their feedback/refund but never guess a target.
+            OnParryImpactResolved(result.Outcome, result.GuardElement, result.Point);
+            ApplyParryProgress(result);
+        }
+
+        private void ApplyParryProgress(ParryImpactResult result)
+        {
+            if (result.Outcome == ParryOutcome.Success && result.Attack.Instigator is EnemyVitals attacker &&
+                _targets.Contains(attacker)) attacker.AddParry(result.Attack);
+        }
+
         private void OnParryImpactResolved(ParryOutcome outcome, Element guardElement, Vector3 impactPoint)
         {
             ParryResolved?.Invoke(outcome, guardElement, impactPoint);
@@ -319,7 +513,6 @@ namespace Oheangbu.App
             }
             if (outcome != ParryOutcome.Success) return;
             _ink?.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY)
-            _groggy?.AddFromParry();
             _hud?.PulseReticle();                // 살짝의 효과 — 결투 계약의 고리가 응답한다
 
             // 접점 버스트(임시 — 3차 검수): 투사체가 방어막에 부딪혀 꺼지는 자리에서
@@ -368,13 +561,21 @@ namespace Oheangbu.App
         private void ResolveAttack(SpellCast cast)
         {
             // 먹 부족 = 불발 취급 — 투사체(문양)도 나가지 않는다(7차 검수): 표현은 증발
-            if (_ink == null || !_ink.TrySpend(_config.SpellInkCost))
+            if (_ink == null || !TrySpendSpell(_config.SpellInkCost))
             {
                 _brushAdapter?.NotifyCastFailed();
                 return;
             }
 
             CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
+            if(EAGiyeok!=null&&EAGiyeokRuntime.Owns(cast.Letter))
+            {
+                var destination=AimedTarget();var origin=PlayerPosition()+Vector3.up*.4f;
+                var point=destination!=null?destination.transform.position+Vector3.up*.4f:AimPoint(_freeAimRange);
+                float flight=Mathf.Max(.08f,Vector3.Distance(origin,point)/Mathf.Max(1,_config.SpellProjectileSpeed*cast.SpeedMul));
+                EAGiyeok.CastSpell(cast,destination,origin,point,flight,Time.time);
+                _brushAdapter?.NotifyFieldPresentationOwned();return;
+            }
 
             // 광역 실판정 [#137 §9-1 해제 · #141 기하 3종]: 형상이 있는 광역은 형상별 판정 — 계획을 만들어
             // 피해(PendingCast)·연출(어댑터→SetAreaPlan)·계측(CastPlanned)에 같은 시계로 준다
@@ -570,7 +771,11 @@ namespace Oheangbu.App
         // 착탄 예약 = 피해 시계(PendingCast) + 계획 기록 — 같은 값 한 번만
         private PlannedHit Schedule(CastPlan plan, EnemyVitals target, float impactTime, float power)
         {
-            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter, Origin=_playerTransform!=null?_playerTransform.position+Vector3.up*.4f:Vector3.zero });
+            float scale = PlayerDamageScale != null ? PlayerDamageScale(plan.Cast.Element) : 1f;
+            if (float.IsNaN(scale) || float.IsInfinity(scale)) scale = 1f;
+            power *= Mathf.Max(0f, scale);
+            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter, Origin=_playerTransform!=null?_playerTransform.position+Vector3.up*.4f:Vector3.zero,
+                Attack=AttackProvenance.Create(_playerVitals != null ? (UnityEngine.Object)_playerVitals : this, DamageSource.PlayerDirect, plan.Cast.Element), TargetLifeRevision=target.LifeRevision });
             var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power };
             plan.Hits.Add(hit);
             return hit;
@@ -659,23 +864,9 @@ namespace Oheangbu.App
             }
         }
 
-        private void OnBlossomed()
+        public void ResetEncounterGroggy()
         {
-            // 만개 = 급소창(스턴 + 피해 증폭) — 결투에 참여 중(활성)인 적 전수. 잠든 적(하네스 비활성)은 결투 밖이다
-            foreach (var controller in _controllers)
-            {
-                if (controller != null && controller.isActiveAndEnabled) controller.EnterStun();
-            }
-        }
-
-        private void OnStunEnded()
-        {
-            _groggy?.Reset(); // 급소창 소진 후 재시작 [TEST — §10.1]
-        }
-
-        private void OnEnemyDied()
-        {
-            _groggy?.Reset(); // 판 단위 소멸(COMBAT-GROGGY 무감쇠의 반대급부)
+            foreach (var target in _targets) if (target != null) target.ResetCombatState();
             RefreshHud();
         }
 
@@ -689,7 +880,8 @@ namespace Oheangbu.App
         {
             if (_hud == null) return;
             if (_playerVitals != null) _hud.SetHp01(_playerVitals.Hp01);
-            if (_groggy != null) _hud.SetGroggy01(_groggy.Value01);
+            var target = GroggyHudTarget;
+            _hud.SetGroggy01(target != null ? target.Groggy.Value01 : 0f);
         }
     }
 }

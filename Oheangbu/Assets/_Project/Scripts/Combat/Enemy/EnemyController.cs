@@ -9,7 +9,7 @@ namespace Oheangbu.Combat
     // 텔레그래프 색 = 대응 프롬프트(COMBAT-DEFENSE): 속성색/무색. 색 값은 배선부가 팔레트에서 주입한다
     // (색=의미의 단일 출처 유지 — Combat은 표현 모듈을 모른다).
     // 상태머신 패턴(아키텍처 절대 규칙) — Idle → Telegraph → Impact/Flight → Recover, 별도로 Stunned.
-    public sealed class EnemyController : MonoBehaviour
+    public sealed partial class EnemyController : MonoBehaviour
     {
         public enum AttackMode { LegacyDistance, MeleeOnly, RangedOnly }
         [SerializeField] private AttackMode _attackMode;
@@ -17,21 +17,29 @@ namespace Oheangbu.Combat
         public bool AttackEnabled {get;set;} = true;
         public bool AttackInProgress => _state != State.Idle && _state != State.Dead;
         public bool IsStunned => _state == State.Stunned;
+        // Read-only presentation clock: visual motion never advances combat or moves its root.
+        public bool IsTelegraphing => _state == State.Telegraph;
+        public bool IsRecovering => _state == State.Recover;
+        public bool IsProjectileFlying => _state == State.Flight;
+        public float TelegraphProgress => IsTelegraphing ? Mathf.Clamp01(1f - (_stateUntil - Time.time) / Mathf.Max(.01f, TelegraphDuration)) : 0f;
+        public float RecoveryProgress => IsRecovering ? Mathf.Clamp01(1f - (_stateUntil - Time.time) / Mathf.Max(.01f, RecoveryDuration)) : 0f;
+
         public void ResetEncounter() { CancelAttack(); _vitals?.Restore(); _parriedFlashUntil=0; EnterIdle(); }
         public void StopAttack() { if(_state!=State.Dead && _state!=State.Stunned){CancelAttack();EnterIdle();} }
         public bool HasLineOfSight()
         {
-            if(!_environmentOcclusion)return true;
+            if(!_environmentOcclusion && !ProfileActive)return true;
             if(_player==null)return false;
             Vector3 a=transform.position+Vector3.up*.4f,b=_player.position+Vector3.up*.4f;
             return !Obstructed(a,b);
         }
         bool Obstructed(Vector3 a,Vector3 b)
         {
-            var hits=Physics.RaycastAll(a,(b-a).normalized,(b-a).magnitude,~0,QueryTriggerInteraction.Ignore);
-            foreach(var hit in hits) if(!hit.transform.IsChildOf(transform) && !hit.transform.IsChildOf(_player))return true;
+            int count=ScenePhysicsQuery.RaycastAll(gameObject.scene,a,b-a,(b-a).magnitude,~0,ref _occlusionHits);
+            for(int i=0;i<count;i++) if(!_occlusionHits[i].transform.IsChildOf(transform) && !(_player!=null && _occlusionHits[i].transform.IsChildOf(_player)))return true;
             return false;
         }
+        private RaycastHit[] _occlusionHits;
         private enum State { Idle, Telegraph, Flight, Recover, Stunned, Dead }
         private enum Pattern { Melee, Ranged }
 
@@ -45,6 +53,8 @@ namespace Oheangbu.Combat
         private const float ParriedFlashDuration = 0.25f; // 패링 성공 플래시 — 연출 미세 시간(기술 상수)
 
         private ParryJudge _judge;
+        private AttackProvenance _attack;
+        private EnemyVitals _subscribedVitals;
         private State _state = State.Idle;
         private Pattern _pattern;
         private float _stateUntil;
@@ -53,6 +63,7 @@ namespace Oheangbu.Combat
         private Transform _projectile;
         private Vector3 _projectileStart;
         private Color _baseColor;
+        private string _tintProperty;
         private Color _elementColor = new Color(0.72f, 0.36f, 0.22f);
         private Color _neutralColor = new Color(0.45f, 0.43f, 0.41f);
         private float _parriedFlashUntil;
@@ -60,11 +71,13 @@ namespace Oheangbu.Combat
         private Color _stateTint; // 상태가 정한 기본 틴트 — 플래시 종료 시 복원 대상
 
         public event System.Action StunEnded; // 만개 소진 — 배선부가 그로기 리셋[TEST]에 쓴다
-        public Element RangedElement => _rangedElement;
+        public Element RangedElement => ProfileActive ? _attackProfile.Element : _rangedElement;
 
         private void Awake()
         {
-            if (_renderer != null) _baseColor = _renderer.material.color;
+            ValidateAuthoredProfile();
+            if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
+            if (_renderer != null){var material=_renderer.material;_tintProperty=material.HasProperty("_BaseColor")?"_BaseColor":material.HasProperty("_Color")?"_Color":null;if(_tintProperty!=null)_baseColor=material.GetColor(_tintProperty);}
 
             var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.name = "EnemyProjectile";
@@ -73,13 +86,38 @@ namespace Oheangbu.Combat
             sphere.SetActive(false);
             _projectile = sphere.transform;
 
-            if (_vitals != null) _vitals.Died += OnDied;
+            BindVitals();
             _cooldown = 1f;
+        }
+
+        private void BindVitals()
+        {
+            if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
+            if (_subscribedVitals == _vitals) return;
+            UnbindVitals();
+            _subscribedVitals = _vitals;
+            if (_subscribedVitals != null)
+            {
+                _subscribedVitals.Died += OnDied;
+                _subscribedVitals.WeakPointOpened += EnterStun;
+                _subscribedVitals.WeakPointClosed += OnWeakPointClosed;
+            }
+        }
+
+        private void UnbindVitals()
+        {
+            if (_subscribedVitals != null)
+            {
+                _subscribedVitals.Died -= OnDied;
+                _subscribedVitals.WeakPointOpened -= EnterStun;
+                _subscribedVitals.WeakPointClosed -= OnWeakPointClosed;
+            }
+            _subscribedVitals = null;
         }
 
         private void OnDestroy()
         {
-            if (_vitals != null) _vitals.Died -= OnDied;
+            UnbindVitals();
             if (_projectile != null) Destroy(_projectile.gameObject);
         }
 
@@ -87,12 +125,12 @@ namespace Oheangbu.Combat
         // 유령 피해가 되지 않게. 죽은 적은 그대로 둔다. 스턴 중이었으면 급소창을 정상 종료로 닫는다
         private void OnDisable()
         {
+            EndAuthoredCue(true);
             if (_state == State.Dead) return;
             if (_projectile != null) _projectile.gameObject.SetActive(false);
             if (_state == State.Stunned)
             {
-                if (_vitals != null) _vitals.DamageMultiplier = 1f;
-                StunEnded?.Invoke();
+                _vitals?.ResetCombatState();
             }
             _state = State.Idle;
             _cooldown = 1f;
@@ -103,17 +141,25 @@ namespace Oheangbu.Combat
         public void Init(ParryJudge judge)
         {
             _judge = judge;
+            BindVitals();
         }
 
         // 만개 = 급소창(COMBAT-GROGGY): 스턴(무행동) + 전 공격 피해 증폭. 진행 중 공격은 취소된다
         public void EnterStun()
         {
-            if (_state == State.Dead || _config == null) return;
+            if (_state == State.Dead || _state == State.Stunned || _config == null || _vitals == null || !_vitals.IsAlive) return;
             CancelAttack();
             _state = State.Stunned;
             _stateUntil = Time.time + _config.BlossomStunDuration;
-            if (_vitals != null) _vitals.DamageMultiplier = _config.BlossomDamageMultiplier;
+            if (!_vitals.WeakPointActive) _vitals.OpenWeakPoint();
             Tint(Color.black); // 그레이박스 임시 — 자세가 무너진 먹빛 [TEST]
+        }
+
+        private void OnWeakPointClosed()
+        {
+            if (_state != State.Stunned) return;
+            StunEnded?.Invoke();
+            if (_vitals != null && _vitals.IsAlive) EnterIdle();
         }
 
         public void SetTelegraphColors(Color elemental, Color neutral)
@@ -122,13 +168,18 @@ namespace Oheangbu.Combat
             _neutralColor = neutral;
         }
 
+        private bool _controlBlocked;
         private void Update()
         {
+            bool bound=_vitals!=null&&_vitals.Control.BlocksActions(Time.time);
+            if(bound){if(!_controlBlocked)StopAttack();_controlBlocked=true;return;}
+            _controlBlocked=false;
             if (_state == State.Dead || _config == null || _player == null) return;
 
-            if (_state != State.Stunned) FacePlayer();
+            if (_state != State.Stunned && (!ProfileActive || (_state != State.Telegraph && _state != State.Flight))) FacePlayer();
 
-            switch (_state)
+            if (ProfileActive) TickAuthoredAttack();
+            else switch (_state)
             {
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
@@ -149,12 +200,7 @@ namespace Oheangbu.Combat
                     break;
 
                 case State.Stunned:
-                    if (Time.time >= _stateUntil)
-                    {
-                        if (_vitals != null) _vitals.DamageMultiplier = 1f;
-                        StunEnded?.Invoke();
-                        EnterIdle();
-                    }
+                    _vitals?.ExpireWeakPoint(Time.time);
                     break;
             }
 
@@ -174,6 +220,7 @@ namespace Oheangbu.Combat
         private void BeginTelegraph()
         {
             _pattern = _attackMode==AttackMode.MeleeOnly ? Pattern.Melee : _attackMode==AttackMode.RangedOnly ? Pattern.Ranged : Distance() <= _config.EnemyMeleePreferRange ? Pattern.Melee : Pattern.Ranged;
+            _attack = AttackProvenance.Create(_vitals, DamageSource.Enemy, _pattern == Pattern.Ranged ? _rangedElement : (Element?)null);
             float duration = _pattern == Pattern.Melee ? _config.MeleeTelegraph : _config.RangedTelegraph;
             _state = State.Telegraph;
             _stateUntil = Time.time + duration;
@@ -195,7 +242,7 @@ namespace Oheangbu.Combat
             if (_pattern == Pattern.Melee)
             {
                 // 근접 임팩트 즉발 — 무적(회피) 판정은 PlayerVitals가 안다
-                if (AttackEnabled && Distance() <= _config.MeleeRange && HasLineOfSight()) _playerVitals?.TakeDamage(_config.MeleeDamage);
+                if (AttackEnabled && Distance() <= _config.MeleeRange && HasLineOfSight()) _playerVitals?.TakeAttackDamage(_config.MeleeDamage, IncomingDamageKind.Melee);
                 EnterRecover();
             }
             else
@@ -225,7 +272,7 @@ namespace Oheangbu.Combat
                 // 판정점 = 임팩트 시각 — 방어막(작도 잔존) 상태 조회(2차 플레이 검수 확정).
                 // 무속성 근접은 애초에 조회하지 않는다(이원법 — 회피만이 답)
                 ParryOutcome outcome = _judge != null
-                    ? _judge.ResolveImpact(_rangedElement, Time.time, contact)
+                    ? _judge.ResolveImpact(_rangedElement, Time.time, contact, _attack)
                     : ParryOutcome.None;
 
                 float damage = _config.RangedDamage;
@@ -242,7 +289,7 @@ namespace Oheangbu.Combat
                         damage *= _config.GuardBlockFactor; // 일반 방어 구간 — 경감만
                         break;
                 }
-                if (damage > 0f) _playerVitals?.TakeDamage(damage);
+                if (damage > 0f) _playerVitals?.TakeAttackDamage(damage, IncomingDamageKind.ElementalRanged);
 
                 // ResolveImpact는 동기로 만개 연쇄(성공→그로기→Blossomed→EnterStun)를 부를 수 있다 —
                 // 상태가 이미 Stunned로 바뀌었으면 Recover로 덮지 않는다(프로젝타일은 CancelAttack이 정리)
@@ -266,20 +313,21 @@ namespace Oheangbu.Combat
         private void CancelAttack()
         {
             if(_projectile!=null)_projectile.gameObject.SetActive(false);
+            EndAuthoredCue(true);
         }
 
         private void EnterRecover()
         {
             Tint(_baseColor);
             _state = State.Recover;
-            _stateUntil = Time.time + 0.4f;
+            _stateUntil = Time.time + (ProfileActive ? _attackProfile.Recovery : 0.4f);
         }
 
         private void EnterIdle()
         {
             Tint(_baseColor);
             _state = State.Idle;
-            var range = _config.AttackCooldownRange;
+            var range = ProfileActive ? _attackProfile.CooldownRange : _config != null ? _config.AttackCooldownRange : new Vector2(1.2f, 2.2f);
             _cooldown = Random.Range(range.x, range.y);
         }
 
@@ -310,7 +358,7 @@ namespace Oheangbu.Combat
 
         private void SetColor(Color color)
         {
-            if (_renderer != null) _renderer.material.color = color;
+            if (_renderer != null && _tintProperty != null) _renderer.material.SetColor(_tintProperty,color);
         }
     }
 }

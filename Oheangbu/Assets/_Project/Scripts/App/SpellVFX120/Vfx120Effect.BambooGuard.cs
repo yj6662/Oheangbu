@@ -13,6 +13,9 @@ namespace Oheangbu.App.SpellVFX120
         }
         private GuardSurface[] _guardSurfaces;
         private static Vfx120Effect _activeBambooGuard;
+        // With domain reload disabled the previous session's destroyed guard would stay selected.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetBambooGuardSession() => _activeBambooGuard = null;
         private Vector3 _guardContact = new Vector3(0, .2f, .83f);
         public GameObject BambooGuardInstance { get; private set; }
         public bool BambooGuardConfigured => BambooGuardInstance != null;

@@ -15,6 +15,7 @@ namespace Oheangbu.App.World
         public const int VoiceLimit = 12;
         [SerializeField] private WorldMacroPlaytestAudioProfileSO _profile;
         [SerializeField] private WorldMacroPlaytestSession _session;
+        [SerializeField] private Oheangbu.App.Prologue.PrologueSession _prologue;
         [SerializeField] private CombatLoopWiring _wiring;
         [SerializeField] private DrawingInputController _drawing;
         [SerializeField] private BrushStrokeFeedAdapter _brushAdapter;
@@ -128,6 +129,7 @@ namespace Oheangbu.App.World
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
             if (_harvest != null) _harvest.Extracted += OnHarvested;
             if (_session != null) _session.InteractionResolved += OnInteractionResolved;
+            if (_prologue != null) _prologue.InteractionPresented += OnJourneyInteraction;
             _hooked = true;
         }
 
@@ -155,6 +157,7 @@ namespace Oheangbu.App.World
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
             if (_harvest != null) _harvest.Extracted -= OnHarvested;
             if (_session != null) _session.InteractionResolved -= OnInteractionResolved;
+            if (_prologue != null) _prologue.InteractionPresented -= OnJourneyInteraction;
             _hooked = false;
         }
 
@@ -204,7 +207,7 @@ namespace Oheangbu.App.World
             _lastEvent = "parry-impact";
             if (!CanPlay) return;
             if (outcome == ParryOutcome.Success || outcome == ParryOutcome.Half || outcome == ParryOutcome.Block)
-                Play(_profile.Parry, point);
+                Play(outcome==ParryOutcome.Block&&_profile.ExtendedPalette!=null?_profile.ExtendedPalette.Find("block"):_profile.Parry, point);
         }
 
         private void OnHarvested(Vector3 point)
@@ -216,14 +219,26 @@ namespace Oheangbu.App.World
             if (_profile.HarvestLoop == null || _profile.HarvestLoop.Clip == null) Play(_profile.Harvest, point);
         }
 
+        private void OnJourneyInteraction(PrologueInteractionKind kind,Vector3 point,Oheangbu.App.Prologue.PrologueSession.InteractionResult result)
+        {
+            if(result==Oheangbu.App.Prologue.PrologueSession.InteractionResult.Success){OnInteractionResolved(kind,point);return;}
+            _interactionEvents++;_lastEvent=result==Oheangbu.App.Prologue.PrologueSession.InteractionResult.SaveFailed?"save-failed":"interaction-waiting";
+            if(CanPlay)Play(result==Oheangbu.App.Prologue.PrologueSession.InteractionResult.SaveFailed?_profile.SaveFailed:_profile.Waiting,point);
+        }
         private void OnInteractionResolved(PrologueInteractionKind kind, Vector3 point)
         {
             _interactionEvents++;
             _lastEvent = kind == PrologueInteractionKind.Rest ? "rest" : "interaction";
             if (!CanPlay) return;
-            Play(kind == PrologueInteractionKind.Rest ? _profile.Rest : _profile.Interact, point);
+            var special=_profile.ExtendedPalette==null?null:_profile.ExtendedPalette.Find(kind==PrologueInteractionKind.Evidence?"clue":"");
+            Play(special??(kind == PrologueInteractionKind.Rest ? _profile.Rest : _profile.Interact), point);
         }
 
+        public void PresentVehicleCall(Vector3 point,bool answered){
+            if(!CanPlay)return;
+            var cue=_profile.ExtendedPalette!=null?_profile.ExtendedPalette.Find(answered?"vehicle_call":"vehicle_call_fail"):null;
+            Play(cue??(answered?_profile.SummonAppear:_profile.Interact),point,answered?.5f:.35f);
+        }
         private void OnSummonStarted(char letter, Vector3 point)
         {
             _summonAppearEvents++;

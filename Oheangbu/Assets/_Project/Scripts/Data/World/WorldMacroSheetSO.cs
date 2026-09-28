@@ -57,6 +57,12 @@ namespace Oheangbu.Data.World
         }
 
         public int Seed = 20260911;
+        [Header("Optional compact derivative; absent in original scenes")]
+        public WorldMacroSheetSO CompressionSource;
+        public WorldMacroCompressionMapSO Compression;
+        public WorldMacroRoadGradeSO CompactRoadGrade;
+        [Tooltip("Optional final absolute terrain height for map/review queries. Original procedural and dressing heights stay authored.")]
+        public WorldMacroFinalSurfaceSO FinalSurface;
         public Vector2 BoundsMin = new Vector2(-4000, -6000);
         public Vector2 BoundsMax = new Vector2(4000, 6000);
         [Tooltip("Irregular geographic footprint. Bounds only allocate the authoring lattice.")]

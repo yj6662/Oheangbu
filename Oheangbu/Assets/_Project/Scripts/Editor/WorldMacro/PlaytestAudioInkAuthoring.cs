@@ -49,7 +49,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         public static string Prepare()
         {
             NeedEdit();Directory.CreateDirectory(Folder);Directory.CreateDirectory(Output);AssetDatabase.Refresh();
-            foreach(string file in Directory.GetFiles(Folder,"*.wav"))
+            foreach(string file in Directory.GetFiles("Assets/_Project/Audio/JourneyRenewal","*.wav"))
             {
                 string path=file.Replace('\\','/');var importer=AssetImporter.GetAtPath(path) as AudioImporter;
                 if(importer==null)throw new InvalidOperationException("Audio importer missing "+path);
@@ -81,7 +81,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             foreach(var asset in new Object[]{mix,audio,theme,flow,material})EditorUtility.SetDirty(asset);
             AssetDatabase.SaveAssets();return Validate();
         }
-        static AudioClip Clip(string name)=>Load<AudioClip>(Folder+"/"+name+".wav");
+        static AudioClip Clip(string name)=>Load<AudioClip>("Assets/_Project/Audio/JourneyRenewal/"+name+".wav");
         static void Set(WorldMacroPlaytestAudioProfileSO.Cue cue,string clip,float volume,float spatial,float cooldown,int max)
         {cue.Clip=Clip(clip);cue.Volume=volume;cue.SpatialBlend=spatial;cue.Cooldown=cooldown;cue.MaxConcurrent=max;cue.AttackSeconds=.018f;cue.ReleaseSeconds=.06f;}
         static AudioMixerGroup Group(AudioMixer mixer,string name)=>mixer.FindMatchingGroups(name).FirstOrDefault(x=>x.name==name)??throw new InvalidOperationException("Mixer group missing "+name);
@@ -154,7 +154,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         public static string Validate()
         {
             var checks=new List<string>();var fail=new List<string>();
-            foreach(string file in Directory.GetFiles(Folder,"*.wav"))
+            foreach(string file in Directory.GetFiles("Assets/_Project/Audio/JourneyRenewal","*.wav"))
             {
                 var importer=AssetImporter.GetAtPath(file.Replace('\\','/')) as AudioImporter;
                 if(importer==null||importer.defaultSampleSettings.compressionFormat!=AudioCompressionFormat.PCM||!importer.defaultSampleSettings.preloadAudioData)fail.Add("PCM preload: "+file);

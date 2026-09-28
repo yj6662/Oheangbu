@@ -11,7 +11,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     {
         string search="";
         Vector2 scroll;
-        [MenuItem("Tools/오행부/전체맵 콘텐츠 위치")]
+        [MenuItem("Oheangbu/Legacy/복구 전용/전체맵 콘텐츠 위치")]
         static void Open()=>GetWindow<WorldMacroContentWindow>("콘텐츠 위치");
         void OnGUI()
         {

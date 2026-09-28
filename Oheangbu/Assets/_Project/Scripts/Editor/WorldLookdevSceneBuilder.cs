@@ -48,7 +48,7 @@ namespace Oheangbu.EditorTools
         private const float RockAmbient = 0.35f;
         private const float WoodTintRetain = 0.12f;
 
-        [MenuItem("Oheangbu/Dev/월드 룩 씬 조립 (C1_WorldLookdev)")]
+        [MenuItem("Oheangbu/Legacy/복구 전용/월드 룩 씬 조립 (C1_WorldLookdev)")]
         public static void Build()
         {
             Debug.Log(BuildScene());

@@ -5,6 +5,8 @@ namespace Oheangbu.App.SpellVFX120
  {
   GameObject _fireGuard; ParticleSystem[] _guardFire,_guardBurst; MeshRenderer _guardMark; MaterialPropertyBlock _guardMarkBlock; float _guardSim;
   static Vfx120Effect _activeFireGuard;
+  // Domain reload disabled: drop the previous session's destroyed guard.
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]static void ResetFireGuardSession()=>_activeFireGuard=null;
   public static bool IsFireGuard(Vfx120Profile p)=>p!=null&&p.Glyph=="너"&&p.NativeBodyPrefab!=null&&p.NativeBodyPrefab.name=="PF_FireGuard_031";
   public bool FireGuardConfigured=>_fireGuard!=null;
   public float FireGuardPulse{get;private set;}

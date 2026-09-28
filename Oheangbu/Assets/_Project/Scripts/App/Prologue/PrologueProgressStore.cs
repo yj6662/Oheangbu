@@ -12,7 +12,16 @@ namespace Oheangbu.App.Prologue
         public float yaw,hp=1,ink=1;
         public int currency,dropCurrency;
         public bool hasPosition;
+        public bool renUsed;
+        public bool hasVehicle;
+        public bool hasEscortCheckpoint;
+        public Vector3 escortCheckpointCargo, escortCheckpointVehicle;
+        public Quaternion escortCheckpointVehicleRotation=Quaternion.identity;
+        public Vector3 vehiclePosition, escortCargoPosition;
+        public Quaternion vehicleRotation = Quaternion.identity;
+        public Oheangbu.App.Demo.DemoEscortState escort = new Oheangbu.App.Demo.DemoEscortState();
         public List<string> completed=new List<string>();
+        public List<string> defeated=new List<string>();
     }
     // A scoped repository, no static gameplay state. Atomic save + recoverable previous version.
     public sealed class PrologueProgressStore
@@ -27,12 +36,16 @@ namespace Oheangbu.App.Prologue
                 try {var s=JsonUtility.FromJson<PrologueProgress>(File.ReadAllText(p));
                     if(s!=null && s.version==1 && s.currency>=0 && s.dropCurrency>=0 && s.completed!=null
                         && float.IsFinite(s.hp)&&s.hp>=0&&s.hp<=1&&float.IsFinite(s.ink)&&s.ink>=0&&s.ink<=1
-                        && float.IsFinite(s.yaw)&&Finite(s.checkpointPosition)&&Finite(s.dropPosition))return s;
+                        && float.IsFinite(s.yaw)&&Finite(s.checkpointPosition)&&Finite(s.dropPosition)
+                        && (!s.hasVehicle || Finite(s.vehiclePosition) && Finite(s.escortCargoPosition) && ValidRotation(s.vehicleRotation))
+                        && (!s.hasEscortCheckpoint || s.escort!=null && s.escort.HasCheckpoint && s.checkpoint==s.escort.CheckpointId && Finite(s.escortCheckpointCargo) && Finite(s.escortCheckpointVehicle) && ValidRotation(s.escortCheckpointVehicleRotation))
+                        && (s.escort==null || s.escort.IsValid())){s.escort??=new Oheangbu.App.Demo.DemoEscortState();return s;}
                 } catch(Exception e){Debug.LogWarning("[Prologue] Save recovery: "+e.Message);}
             }
             return null;
         }
         static bool Finite(Vector3 v)=>float.IsFinite(v.x)&&float.IsFinite(v.y)&&float.IsFinite(v.z);
+        static bool ValidRotation(Quaternion q)=>float.IsFinite(q.x)&&float.IsFinite(q.y)&&float.IsFinite(q.z)&&float.IsFinite(q.w)&&Mathf.Abs(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w-1)<.02f;
         public void Save(PrologueProgress state)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));

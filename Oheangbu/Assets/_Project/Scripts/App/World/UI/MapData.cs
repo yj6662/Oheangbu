@@ -11,7 +11,8 @@ namespace Oheangbu.App.World.UI
         Rest,
         Checkpoint,
         Drop,
-        Pin
+        Pin,
+        Mountain
     }
 
     public enum WorldMapLineKind
@@ -42,11 +43,16 @@ namespace Oheangbu.App.World.UI
         public string CompletionId;
         public string ZoneId;
         public bool InitiallyDiscovered;
+        public bool RequiresArrival;
     }
 
     [Serializable]
     public sealed class WorldMapZoneSpec
     {
+        public bool ExploreWalkedPassages;
+        public string DiscoveryRevision = "";
+        public Texture2D Illustration;
+        public Rect IllustrationWorldUv;
         public string Id;
         public string Label;
         public Vector2[] Polygon = Array.Empty<Vector2>();
@@ -54,16 +60,20 @@ namespace Oheangbu.App.World.UI
         public WorldMapLineSpec[] DetailLines = Array.Empty<WorldMapLineSpec>();
         public float MinimumY = float.NegativeInfinity;
         public float MaximumY = float.PositiveInfinity;
+        public Vector3[] FloorPath = Array.Empty<Vector3>();
+        public float FloorClearance = 3f;
 
         public bool Contains(Vector3 world)
         {
             return world.y >= MinimumY && world.y <= MaximumY &&
+                   WorldLocationCatalog.FloorContains(FloorPath,world,FloorClearance) &&
                    WorldMapDiscoveryGrid.Contains(Polygon, new Vector2(world.x, world.z));
         }
     }
 
     public sealed class WorldMapUiDependencies
     {
+        public CompactUiProfileSO Icons;
         public WorldMapBakedDataSO BakedData;
         public Font Font;
         public Texture2D PaperTexture;

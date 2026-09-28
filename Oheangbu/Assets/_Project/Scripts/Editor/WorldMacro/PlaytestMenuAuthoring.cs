@@ -68,9 +68,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             theme.StrokeTemplates=Asset<JamoTemplateLibrarySO>("Assets/_Project/Data/Configs/JamoTemplateLibrary.asset");
             theme.PaperTexture=Asset<Texture2D>(Folder+"/HanjiSurface.png");theme.TitleBackdrop=Asset<Texture2D>(Folder+"/TitlePalace.png");
             theme.BrushStroke=Asset<Sprite>(WorldMacroPlaytestHudAuthoring.HpPath);theme.PromptPaper=Asset<Sprite>(WorldMacroPlaytestHudAuthoring.PromptPath);theme.LockRing=Asset<Sprite>(WorldMacroPlaytestHudAuthoring.RingPath);
-            theme.PaperSound=Asset<AudioClip>("Assets/_Project/Audio/PlaytestFeedback/brush_stroke.wav");
-            theme.ConfirmSound=Asset<AudioClip>("Assets/_Project/Audio/PlaytestFeedback/interact.wav");
-            theme.BackSound=Asset<AudioClip>("Assets/_Project/Audio/PlaytestFeedback/harvest.wav");
+            theme.PaperSound=Asset<AudioClip>("Assets/_Project/Audio/JourneyRenewal/ui_paper.wav");
+            theme.ConfirmSound=Asset<AudioClip>("Assets/_Project/Audio/JourneyRenewal/ui_confirm.wav");
+            theme.BackSound=Asset<AudioClip>("Assets/_Project/Audio/JourneyRenewal/ui_back.wav");
             var state=AssetDatabase.LoadAssetAtPath<GameplayRuntimeStateSO>(RuntimePath);
             if(state==null){state=ScriptableObject.CreateInstance<GameplayRuntimeStateSO>();AssetDatabase.CreateAsset(state,RuntimePath);}
             session.RuntimeState=state;session.Walker.Drawing.RuntimeState=state;session.Walker.Motor.RuntimeState=state;

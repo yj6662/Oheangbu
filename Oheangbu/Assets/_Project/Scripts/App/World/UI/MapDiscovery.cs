@@ -13,30 +13,33 @@ namespace Oheangbu.App.World.UI
         readonly Vector2 max;
         readonly Vector2[] outline;
         readonly byte[] bits;
+        readonly float cellSize;
 
         public int Width { get; }
         public int Height { get; }
         public int ByteCount => bits.Length;
 
-        public WorldMapDiscoveryGrid(Vector2 boundsMin, Vector2 boundsMax, Vector2[] playableOutline, byte[] saved = null)
+        public WorldMapDiscoveryGrid(Vector2 boundsMin, Vector2 boundsMax, Vector2[] playableOutline, byte[] saved = null, float cellMetres = CellSize)
         {
+            if (cellMetres <= 0 || float.IsNaN(cellMetres) || float.IsInfinity(cellMetres)) throw new ArgumentOutOfRangeException(nameof(cellMetres));
+            cellSize = cellMetres;
             if (boundsMax.x <= boundsMin.x || boundsMax.y <= boundsMin.y)
                 throw new ArgumentException("World map discovery bounds are invalid.");
             min = boundsMin;
             max = boundsMax;
             outline = playableOutline ?? Array.Empty<Vector2>();
-            Width = Mathf.CeilToInt((max.x - min.x) / CellSize);
-            Height = Mathf.CeilToInt((max.y - min.y) / CellSize);
+            Width = Mathf.CeilToInt((max.x - min.x) / cellSize);
+            Height = Mathf.CeilToInt((max.y - min.y) / cellSize);
             bits = new byte[(Width * Height + 7) / 8];
             if (saved != null && saved.Length == bits.Length) Buffer.BlockCopy(saved, 0, bits, 0, bits.Length);
         }
 
-        public bool Reveal(Vector2 worldXZ, float radius = RevealRadius)
+        public bool Reveal(Vector2 worldXZ, float radius = RevealRadius, Func<Vector2, bool> visible = null)
         {
-            int minX = Mathf.Max(0, Mathf.FloorToInt((worldXZ.x - radius - min.x) / CellSize));
-            int maxX = Mathf.Min(Width - 1, Mathf.FloorToInt((worldXZ.x + radius - min.x) / CellSize));
-            int minY = Mathf.Max(0, Mathf.FloorToInt((worldXZ.y - radius - min.y) / CellSize));
-            int maxY = Mathf.Min(Height - 1, Mathf.FloorToInt((worldXZ.y + radius - min.y) / CellSize));
+            int minX = Mathf.Max(0, Mathf.FloorToInt((worldXZ.x - radius - min.x) / cellSize));
+            int maxX = Mathf.Min(Width - 1, Mathf.FloorToInt((worldXZ.x + radius - min.x) / cellSize));
+            int minY = Mathf.Max(0, Mathf.FloorToInt((worldXZ.y - radius - min.y) / cellSize));
+            int maxY = Mathf.Min(Height - 1, Mathf.FloorToInt((worldXZ.y + radius - min.y) / cellSize));
             float radiusSquared = radius * radius;
             bool changed = false;
             for (int y = minY; y <= maxY; y++)
@@ -48,6 +51,7 @@ namespace Oheangbu.App.World.UI
                     int mask = 1 << (index & 7);
                     int slot = index >> 3;
                     if ((bits[slot] & mask) != 0) continue;
+                    if (visible != null && !visible(center)) continue;
                     bits[slot] |= (byte)mask;
                     changed = true;
                 }
@@ -56,8 +60,8 @@ namespace Oheangbu.App.World.UI
 
         public bool IsDiscovered(Vector2 worldXZ)
         {
-            int x = Mathf.FloorToInt((worldXZ.x - min.x) / CellSize);
-            int y = Mathf.FloorToInt((worldXZ.y - min.y) / CellSize);
+            int x = Mathf.FloorToInt((worldXZ.x - min.x) / cellSize);
+            int y = Mathf.FloorToInt((worldXZ.y - min.y) / cellSize);
             return IsDiscovered(x, y);
         }
 
@@ -72,8 +76,8 @@ namespace Oheangbu.App.World.UI
             => x >= 0 && x < Width && y >= 0 && y < Height && Contains(outline, CellCenter(x, y));
 
         public Vector2 CellCenter(int x, int y)
-            => new Vector2(Mathf.Min(max.x, min.x + (x + .5f) * CellSize),
-                           Mathf.Min(max.y, min.y + (y + .5f) * CellSize));
+            => new Vector2(Mathf.Min(max.x, min.x + (x + .5f) * cellSize),
+                           Mathf.Min(max.y, min.y + (y + .5f) * cellSize));
 
         public byte[] Export()
         {

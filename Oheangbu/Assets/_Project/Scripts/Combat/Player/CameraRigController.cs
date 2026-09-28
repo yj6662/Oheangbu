@@ -105,7 +105,7 @@ namespace Oheangbu.Combat
             Vector3 world = _cameraPivot.TransformPoint(_localPose);
             Vector3 dir = world - _cameraPivot.position;
             float len = dir.magnitude;
-            if (len > 0.001f && Physics.SphereCast(_cameraPivot.position, BoomRadius, dir / len, out RaycastHit hit, len))
+            if (len > 0.001f && Physics.SphereCast(_cameraPivot.position, BoomRadius, dir / len, out RaycastHit hit, len, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
             {
                 boomTarget = Mathf.Clamp01(hit.distance / len);
             }

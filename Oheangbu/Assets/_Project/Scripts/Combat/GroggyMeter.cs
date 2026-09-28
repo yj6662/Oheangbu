@@ -10,20 +10,24 @@ namespace Oheangbu.Combat
     {
         private readonly int _parriesToBlossom;
         private int _count;
+        public bool IsBlossomed => _count >= _parriesToBlossom;
 
         public event Action Changed;
         public event Action Blossomed; // 만개 = 급소창 개방(스턴+피해 증폭)
+        // Legacy DI consumers reset this service at encounter boundaries.
+        public event Action ResetRequested;
 
         public float Value01 => _parriesToBlossom > 0 ? Mathf.Clamp01(_count / (float)_parriesToBlossom) : 0f;
 
         public GroggyMeter(CombatConfigSO config)
         {
-            _parriesToBlossom = config != null ? config.ParriesToBlossom : 3;
+            _parriesToBlossom = Mathf.Max(1, config != null ? config.ParriesToBlossom : 3);
         }
 
         // 유일한 증가 경로 — 정답 패링(호출자는 배선부 한 곳뿐이어야 한다)
         public void AddFromParry()
         {
+            if (IsBlossomed) return;
             _count++;
             Changed?.Invoke();
             if (_count >= _parriesToBlossom)
@@ -36,6 +40,7 @@ namespace Oheangbu.Combat
         {
             _count = 0;
             Changed?.Invoke();
+            ResetRequested?.Invoke();
         }
     }
 }

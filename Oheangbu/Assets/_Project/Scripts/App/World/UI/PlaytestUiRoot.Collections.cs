@@ -11,13 +11,15 @@ namespace Oheangbu.App.World.UI
     {
         void BuildInventory()
         {
+            if(Session?.EquipmentEnabled==true){BuildEquipmentInventory();return;}
             if(Session?.Progress?.ui==null)return;
             var ui=Session.Progress.ui;
-            subheading.text="조선통보 "+Session.Progress.ledger.currency.ToString("N0")+"  ·  석경 파편 "+ui.items.Sum(x=>x.count)+"개";
+            // 재화는 하단 상태줄에 상시 표시되므로 여기서 되풀이하지 않는다(§한 정보 한 곳). 페이지 고유 수치만.
+            subheading.text="석경 파편 "+ui.items.Sum(x=>x.count)+"개";
             var held=WorldMacroCollectionCatalog.AllFragments.Where(x=>ui.GetItemCount(x.ItemId)>0).ToArray();
             if(held.Length==0)
             {
-                EmptyPage("아직 담긴 물품이 없습니다.","폐광의 시작 지점에 남겨진 석경 파편을 살펴보세요.\n발견한 파편은 이곳에 보관되고 술식 도감을 채웁니다.");return;
+                EmptyPage("빈 봇짐","");return;
             }
             if(string.IsNullOrEmpty(selectedItem)||!held.Any(x=>x.ItemId==selectedItem))selectedItem=held[0].ItemId;
             var grid=V.Scroll(contentRoot,"InventoryGrid",0,0,610,592,Mathf.Ceil(held.Length/4f)*140);
@@ -36,11 +38,12 @@ namespace Oheangbu.App.World.UI
             if(Theme.FragmentIcon!=null){var preview=V.Image(V.Rect("ItemImage",contentRoot,686,150,166,166),Color.white,Theme.FragmentIcon);preview.preserveAspect=true;}
             V.Text(contentRoot,"ItemGlyph",current.Letter,Theme.Font,104,Theme.Ink,858,140,230,166,TextAnchor.MiddleCenter);
             var itemBody=V.Scroll(contentRoot,"ItemBody",700,315,416,200,320);
-            V.Text(itemBody,"ItemDescription","부서진 석경에 남아 있던 글자.\n표면의 획을 살피면 술식의 짜임과 쓰임을 읽을 수 있다.\n\n읽은 내용은 술식 도감에 남는다.",Theme.Font,24,Theme.Muted,0,0,396,310);
+            V.Text(itemBody,"ItemDescription","석경 파편에 남은 "+current.Letter+".",Theme.Font,24,Theme.Muted,0,0,396,310);
             V.Button(contentRoot,"ReadCodex","술식 도감에서 읽기",Theme,700,529,416,56,()=>{selectedSpell=current.Letter;OpenPage("술식 도감");},true);
         }
         void EmptyPage(string title,string description)
         {
+            if(Theme.Icons!=null){var empty=V.Rect("EmptyBag",contentRoot,450,180,120,120);CompactUiSymbols.Draw(empty,"소지품",Theme.Icons,Theme.Muted);return;}
             V.Text(contentRoot,"EmptyTitle",title,Theme.Font,32,Theme.Ink,40,94,1050,80);
             V.Rule(contentRoot,Theme,40,206,610);
             V.Text(contentRoot,"EmptyBody",description,Theme.Font,24,Theme.Muted,40,248,1000,198);
@@ -62,8 +65,7 @@ namespace Oheangbu.App.World.UI
             V.Image(V.Rect("ColumnRule",contentRoot,618,0,1,582),new Color(.2f,.18f,.14f,.18f));
             if(!WorldMacroCollectionCatalog.TryGetSpell(selectedSpell,out var current))
             {
-                V.Text(contentRoot,"CodexEmptyTitle","흩어진 석경",Theme.Font,35,Theme.Ink,670,70,438,85);
-                V.Text(contentRoot,"CodexEmptyBody","파편을 발견하면 그 글자의\n짜임과 쓰임을 읽을 수 있습니다.\n\n먼저 폐광의 안전한 시작 지점에서\n아·어의 파편을 살펴보세요.",Theme.Font,24,Theme.Muted,670,196,438,260);return;
+                V.Text(contentRoot,"CodexEmptyTitle","흩어진 석경",Theme.Font,35,Theme.Ink,670,70,438,85);return;
             }
             V.Text(contentRoot,"Element",ElementLabel(current.Element)+" · "+current.Label,Theme.Font,20,Theme.Seal,668,0,445,45);
             V.Text(contentRoot,"SpellGlyph",current.Letter,Theme.Font,96,Theme.Ink,668,50,170,145,TextAnchor.MiddleCenter);
@@ -81,24 +83,24 @@ namespace Oheangbu.App.World.UI
         }
         void BuildChapae()
         {
-            subheading.text="오행부의 차패 · 소유자의 이력";
+            // 건조한 사물 명사형 · 기본은 침묵: 차패 자체와 상태만. "오행부"·"차패"를 부제·설명으로 되풀이하지 않는다.
+            subheading.text="";
             var card=V.Rect("Identity",contentRoot,22,18,420,552);
             V.Image(V.Stretch("Backing",card),new Color(.25f,.20f,.13f,.06f));
-            V.Text(card,"Title","差 牌",Theme.Font,66,Theme.Ink,35,46,350,98,TextAnchor.MiddleCenter);
-            V.Rule(card,Theme,54,174,312);
-            V.Text(card,"IdentityLabel","오행부 소속\n전직 집행관",Theme.Font,30,Theme.Ink,50,222,320,110,TextAnchor.MiddleCenter);
-            V.Text(card,"IdentityDescription","오행부 소속을 증명하는 차패.\n얻은 덕은 이곳에 새겨진다.",Theme.Font,22,Theme.Muted,45,354,330,100,TextAnchor.MiddleCenter);
+            V.Text(card,"Title","差 牌",Theme.Font,66,Theme.Ink,35,60,350,98,TextAnchor.MiddleCenter);
+            V.Rule(card,Theme,54,188,312);
+            V.Text(card,"IdentityLabel","오행부 소속\n전직 집행관",Theme.Font,30,Theme.Ink,50,240,320,110,TextAnchor.MiddleCenter);
             V.Text(card,"SummonPalanquinHint",Session.OpeningCommissionReceived
-                ? "G · 오행부로 자동차 부르기\n하차 후 30m 떨어지면 자동 회수"
-                : "아전에게 의뢰를 확인한 뒤\nG로 자동차를 부를 수 있습니다.",
-                Theme.Font,20,Theme.Seal,34,474,352,72,TextAnchor.MiddleCenter);
+                ? "G · 자동차 부르기\n하차 30m · 자동 회수"
+                : "의뢰 확인 후 G · 자동차",
+                Theme.Font,20,Theme.Seal,34,460,352,72,TextAnchor.MiddleCenter);
             string[] virtueIds={"仁","禮","義","智","信"};string[] names={"인 · 목","예 · 화","의 · 금","지 · 수","신 · 토"};
             for(int i=0;i<5;i++)
             {
                 bool owned=Session.Progress.ui.knownVirtues.Contains(virtueIds[i]);float y=16+i*106;
                 V.Text(contentRoot,"Virtue_"+i,virtueIds[i],Theme.Font,42,owned?Theme.Seal:Theme.Muted,510,y,80,76,TextAnchor.MiddleCenter);
-                V.Text(contentRoot,"VirtueName_"+i,names[i],Theme.Font,27,Theme.Ink,618,y+2,400,52);
-                V.Text(contentRoot,"VirtueState_"+i,owned?"차패에 새겨짐":"아직 새겨지지 않음",Theme.Font,20,Theme.Muted,618,y+55,420,39);
+                V.Text(contentRoot,"VirtueName_"+i,names[i],Theme.Font,27,owned?Theme.Ink:Theme.Muted,618,y+2,400,52);
+                V.Text(contentRoot,"VirtueState_"+i,owned?"새겨짐":"—",Theme.Font,20,Theme.Muted,618,y+55,420,39);
                 V.Rule(contentRoot,Theme,510,y+94,590);
             }
         }

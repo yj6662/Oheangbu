@@ -57,8 +57,9 @@ namespace Oheangbu.EditorTools
         private const string BossShrineFrom = "Shrine_Logging";
         private const string BossShrineTo = "Entry_LoggingCamp";
 
-        // P2 게이트 — SPEC-SPIKE-WORLD-LOOKDEV PASS 후 코드 편집으로만 연다(설정값 아님 · 런타임 토글 0).
-        private static readonly bool TerrainGateOpen = false;
+        // P2 게이트 — SPEC-SPIKE-WORLD-LOOKDEV G2 PASS 후 코드 편집으로만 연다(설정값 아님 · 런타임 토글 0).
+        // 2026-09-20 개방: 예준 G2 육안 판정 PASS(DECISIONS #221). BuildTerrainP2·강토 터레인/능선 빌드 허용.
+        private static readonly bool TerrainGateOpen = true;
 
         [MenuItem("Oheangbu/World/금표의 길 조립")]
         public static void Build()

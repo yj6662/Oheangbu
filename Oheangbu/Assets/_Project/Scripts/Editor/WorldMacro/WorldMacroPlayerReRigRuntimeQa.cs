@@ -91,7 +91,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 "Wait for neutral walking/carry state without an unfinished stroke, harvesting, seating or pause.");
             Need(rig.Diagnostics.DrawingWeight < .01f && rig.Diagnostics.HarvestWeight < .01f,
                 "Wait for the previous gesture recovery to finish before the diagnostic.");
-            string[] captureNames = { "center", "top-left", "top-right", "bottom-left", "bottom-right", "harvest", "carry", "world-drawing", "world-harvest", "sit-carry", "grip-close", "grip-palm" };
+            string[] captureNames = { "center", "top-left", "top-right", "bottom-left", "bottom-right", "mid-left", "mid-right", "mid-top", "mid-bottom", "harvest", "carry", "world-drawing", "world-harvest", "sit-carry", "grip-close", "grip-palm" };
             Need(captureState == null || captureNames.Contains(captureState), "Unknown synthetic capture state.");
 
             var report = new GestureQaReport { utc = DateTime.UtcNow.ToString("o"), unityFrame = Time.frameCount,
@@ -314,6 +314,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             QaSetInput(input, feed, drawing, viewport, camera);
             if (!drawing) QaInvoke(rig, "OnModeExited");
             QaSet(rig, "_drawWeight", drawing ? 1f : 0f); QaSet(rig, "_harvestWeight", extracting ? 1f : 0f);
+            QaSet(rig, "_nearRaise", drawing ? 1f : 0f); // settled pose: the close-up arm has finished rising
             QaSet(rig, "_recoveryRemaining", 0f); QaSet(rig, "_bodyPoint", (viewport - Vector2.one * .5f) * 2f);
             if (harvest != null)
             {
@@ -346,6 +347,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 QaAdd(checks,name+"_wrist_bend",pose.NearWristBendDegrees<=45,pose.NearWristBendDegrees,45,"Forearm axis versus wrist-to-knuckles, not socket proximity.",pose);
                 QaAdd(checks,name+"_wrist_twist",Mathf.Abs(pose.NearWristTwistDegrees)<=10,Mathf.Abs(pose.NearWristTwistDegrees),10,"Axial roll belongs to forearm; wrist seam residual.",pose);
                 QaAdd(checks,name+"_dorsal_up",pose.NearDorsalUp>=.3f,pose.NearDorsalUp,.3f,"Calibrated dorsal normal dotted with camera up.",pose);
+            }
+            if(near && pose.VerticalActive) {
+                // Vertical double-hook grip (쌍구법, profile ShuanggouGrip): bristles leave the little-finger side by design.
+                QaAdd(checks,name+"_vertical_bristles_ulnar",pose.NearBrushThumbSideDot<=-.5f,pose.NearBrushThumbSideDot,-.5f,"Vertical grip: thumb/index above, bristles below the little finger (dot <= limit).",pose);
+                QaAdd(checks,name+"_vertical_dorsal_out",pose.NearDorsalRight>=.3f,pose.NearDorsalRight,.3f,"Vertical grip: calibrated dorsal normal dotted with camera right.",pose);
+                QaAdd(checks,name+"_vertical_axis_cone",pose.NearVerticalAxisErrorDegrees<=pose.NearVerticalConeDegrees+2f,pose.NearVerticalAxisErrorDegrees,pose.NearVerticalConeDegrees+2f,"Vertical grip: brush axis versus the tilted drawing-plane normal, within the stroke pivot cone.",pose);
             }
             QaAdd(checks, name + "_grip_socket", pose.GripErrorMeters <= .0001f, pose.GripErrorMeters, .0001f,
                 "Hand grip socket to brush socket; visible skin contact is checked separately.");
@@ -381,6 +388,11 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             switch (name)
             {
+                // mid-screen points: the hand stays in frame, so the arm/elbow response to stroke position is visible
+                case "mid-left": return new Vector2(.30f, .50f);
+                case "mid-right": return new Vector2(.70f, .50f);
+                case "mid-top": return new Vector2(.50f, .72f);
+                case "mid-bottom": return new Vector2(.50f, .28f);
                 case "top-left": return new Vector2(.015f, .985f);
                 case "top-right": return new Vector2(.985f, .985f);
                 case "bottom-left": return new Vector2(.015f, .015f);

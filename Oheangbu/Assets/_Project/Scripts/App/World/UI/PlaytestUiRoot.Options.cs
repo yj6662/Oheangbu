@@ -14,7 +14,7 @@ namespace Oheangbu.App.World.UI
         UserSettingsData displayDraft;
         void BuildOptions()
         {
-            subheading.text="설정은 모든 여정에 공통으로 적용됩니다.";
+            subheading.text="";
             displayDraft=Settings.Current;
             string[] tabs={"화면","소리","조작","접근성"};
             for(int i=0;i<tabs.Length;i++)
@@ -23,7 +23,7 @@ namespace Oheangbu.App.World.UI
             else if(optionsTab=="소리")BuildAudioOptions();
             else if(optionsTab=="조작")BuildInputOptions();
             else BuildAccessibilityOptions();
-            V.Button(contentRoot,"ResetSettings","기본값 복원",Theme,0,532,270,52,()=>Confirm("설정을 기본값으로 바꿀까요?","화면 설정은 적용 후 다시 확인합니다.",()=>{Settings.Reset();ShowDisplayConfirmation();}));
+            V.Button(contentRoot,"ResetSettings","기본값 복원",Theme,0,532,270,52,()=>Confirm("설정을 기본값으로 바꿀까요?","화면 설정은 적용 후 다시 확인.",()=>{Settings.Reset();ShowDisplayConfirmation();}));
             settingsErrorText=V.Text(contentRoot,"SettingsError",Settings.SaveError??"",Theme.Font,18,Theme.Seal,304,540,808,48);
             settingsBuilt=true;
         }
@@ -44,12 +44,20 @@ namespace Oheangbu.App.World.UI
             var rates=new[]{30,60,90,120,144,165,240,-1};
             OptionCycle("프레임 제한",382,()=>displayDraft.TargetFrameRate<0?"제한 없음":displayDraft.TargetFrameRate+" fps",()=>displayDraft.TargetFrameRate=rates[(Array.IndexOf(rates,displayDraft.TargetFrameRate)+1)%rates.Length]);
             V.Button(contentRoot,"ApplyDisplay","화면 설정 적용",Theme,720,464,392,52,()=>{Settings.Preview(displayDraft);ShowDisplayConfirmation();},true);
-            V.Text(contentRoot,"VSyncHint","수직동기화가 켜져 있으면 화면 주사율을 우선합니다.",Theme.Font,18,Theme.Muted,0,470,680,43);
+            V.Text(contentRoot,"VSyncHint","수직동기화가 켜지면 화면 주사율을 우선한다.",Theme.Font,18,Theme.Muted,0,470,680,43);
         }
         void OptionCycle(string label,float y,Func<string> value,Action next)
         {
             V.Text(contentRoot,"Name_"+label,label,Theme.Font,24,Theme.Ink,0,y+11,350,45);
-            Button b=null;b=V.Button(contentRoot,"Value_"+label,value()+"   ›",Theme,425,y,687,56,()=>{next();b.GetComponentInChildren<Text>().text=value()+"   ›";});
+            Button b=null;
+            void Display(){
+                var text=b.GetComponentInChildren<Text>(true);string current=value();
+                if(Theme.Icons==null){text.text=current+"   ›";return;}
+                if(label=="해상도"||label=="프레임 제한"){text.text=current.Replace(" fps","").Replace("제한 없음","∞");return;}
+                text.enabled=false;var old=b.transform.Find("ControlSymbol");if(old!=null){old.gameObject.SetActive(false);Destroy(old.gameObject);}
+                CompactUiSymbols.Draw(b.transform,label=="품질"?"quality:"+displayDraft.QualityLevel:current,Theme.Icons,Theme.Ink);
+            }
+            b=V.Button(contentRoot,"Value_"+label,value(),Theme,425,y,687,56,()=>{next();Display();});Display();
         }
         void LiveSetting(Action<UserSettingsData> change)
         {var data=Settings.Current;change(data);Settings.Apply(data);}
@@ -74,7 +82,7 @@ namespace Oheangbu.App.World.UI
         {
             VolumeRow("마우스 감도",106,Settings.Current.LookSensitivity,(s,v)=>s.LookSensitivity=v,.25f,3f,"×");
             OptionCycle("시점 Y축 반전",238,()=>Settings.Current.InvertLookY?"켜기":"끄기",()=>LiveSetting(s=>s.InvertLookY=!s.InvertLookY));
-            V.Text(contentRoot,"InputHint","보행과 차량 시점에 같은 감도를 적용합니다.\n작도 좌표와 필세 계산은 감도 설정의 영향을 받지 않습니다.",Theme.Font,22,Theme.Muted,0,340,1060,104);
+            V.Text(contentRoot,"InputHint","작도 좌표·필세는 감도의 영향을 받지 않는다.",Theme.Font,22,Theme.Muted,0,340,1060,104);
             V.Button(contentRoot,"ControlsLink","전체 조작 안내",Theme,722,447,390,54,()=>OpenPage("조작 안내"));
         }
         void BuildAccessibilityOptions()
