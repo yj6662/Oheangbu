@@ -55,10 +55,16 @@ namespace Oheangbu.EditorTools.WorldMacro
    return n;
   }
 
-  static string MainCreate297()
+  static string MainCreate297(bool replace=false)
   {
    RequireClean292();string merged=CompactFolklore298.ScenePath;
-   if(File.Exists(Abs297(Main297)))throw new Exception(Main297+" exists — delete it deliberately before re-creating");
+   if(File.Exists(Abs297(Main297)))
+   {
+    if(!replace)throw new Exception(Main297+" exists — use main-recreate to replace it deliberately");
+    if(SceneManager.GetActiveScene().path==Main297)EditorSceneManager.OpenScene(merged);
+    // re-promotion: the previous main scene and its private data are replaced (the lobby is re-pointed by lobby-connect)
+    foreach(var a in new[]{Main297,MainData297+"/WorldContent_Main.asset",MainData297+"/WorldLayout_Main.asset"})if(File.Exists(Abs297(a))&&!AssetDatabase.DeleteAsset(a))throw new Exception("cannot delete "+a);
+   }
    DevSceneKit.EnsureFolder(MainData297);
    if(!AssetDatabase.CopyAsset(merged,Main297))throw new Exception("cannot copy "+merged);
    EditorSceneManager.OpenScene(Main297);

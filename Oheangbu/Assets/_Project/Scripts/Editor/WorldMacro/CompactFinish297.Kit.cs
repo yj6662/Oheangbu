@@ -82,8 +82,15 @@ namespace Oheangbu.EditorTools.WorldMacro
    return "kit textures="+n;
   }
 
+  static Material cliffRock297;
   static Material KitMaterial297(string slot)
   {
+   // cliff faces reuse the candidate's own Cheongrim granite (same as the cave portal's cliff_rock slot)
+   if(slot=="cliff_rock")
+   {
+    if(cliffRock297==null)cliffRock297=AssetDatabase.FindAssets("Cheongrim_Granite t:Material").Select(AssetDatabase.GUIDToAssetPath).Where(q=>q.Contains("Architecture296/Materials")).Select(AssetDatabase.LoadAssetAtPath<Material>).FirstOrDefault(m=>m!=null);
+    if(cliffRock297!=null)return cliffRock297;
+   }
    string path=A297+"/Materials/"+slot+".mat";var m=AssetDatabase.LoadAssetAtPath<Material>(path);
    if(!Slots297.TryGetValue(slot,out var s))s=(null,null,new Color(.5f,.5f,.5f),.1f);
    if(m==null){DevSceneKit.EnsureFolder(A297+"/Materials");m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=slot};AssetDatabase.CreateAsset(m,path);}

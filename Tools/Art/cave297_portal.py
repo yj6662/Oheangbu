@@ -6,11 +6,14 @@ cannot hold a vertical cut, so the portal is made the way heightmap games make c
   * the notch (surface297.py, portal.json) cuts the approach to the floor in front of the face and ends sharply behind it;
   * terrain cells whose surface would cross the gallery or the opening are listed as hole cells (removed from the private
     LOD0 tile mesh + collider in Unity);
-  * Portal_Face is a rock hood grown outward and backward from the opening edge until every path is buried in intact
-    terrain outside the hole, so it covers the hole and reads as a quarried rock face over the adit;
+  * Portal_Face is the granite outcrop the adit is driven into — a broad, low, bedded rock band (joint blocks, a brow bed
+    overhanging the portal, a stepped-back cap, ledges dipping under the slope, partially buried boulders) built as a
+    signed-distance field and polygonised with surface nets; it seals the hole cells behind the face and its edges dip
+    under intact terrain (see outcrop());
   * Portal_Gallery — rock gallery (갱도) walls + roof from just inside the V4 tube (clip plane) to the face, its section
     morphing from the measured V4 section to a timbered adit arch; Portal_Floor under it and out over the hole cells;
-  * Portal_Timbers — 갱목 sets (posts + cap + lagging) and a sill; Portal_Debris — blast rubble and a collapsed old set.
+  * Portal_Timbers — 갱목 sets in round wood (log posts, split caps, wedges, lagging between the sets) and a log sill;
+    Portal_Debris — blast rubble, a talus fan at the foot of the face and a collapsed old set.
 Unity side: CompactFinish297.CavePortal.cs (clip V4 interior/floor, hole cells, placement, colliders, vegetation clear).
 
 Inputs: staged height field (Finish297/Stage/Surface/height.bytes — install with `finish297 surface` first), the scene slice
@@ -241,65 +244,305 @@ def ridged(P, scale, octaves=3, seed=1):
     return tot / n * 2 - 1
 
 
-def _exit_hole(start, direction, margin=.45, limit=16.0):
-    """March a plan ray from `start` until it has left every hole cell by `margin`; returns the plan point (x, z)."""
-    q = np.array(start, float); d = nz(np.array(direction, float)); t = 0.0
-    while t < limit:
-        t += .1; q2 = np.array(start) + d * t
-        if not in_hole(np.array([q2[0], 0, q2[1]]), margin): return q2
-    return np.array(start) + d * limit
+# -- Portal_Face: the granite outcrop the adit is driven into ---------------------------------------------------------
+# A signed-distance rock mass in the portal frame (s along the axis, l to the right, h above FLOOR), polygonised with
+# surface nets (numpy only). Bedded granite: strata beds cut into joint blocks (rounded boxes — bedding planes and vertical
+# joints read as grooves), a brow bed overhanging the portal (1.6-2.6 m above the crown), a stepped-back cap bed, ledges
+# outcropping up the slope and dipping under it, a filler body over the hole cells (the seal), and partially buried boulders.
+# The face wraps forward into the notch walls; the outline is asymmetric (higher, wider to the uphill left).
+# The gallery tunnel (the actual Portal_Gallery rings) is cut out: .15 m inside the gallery wall at the face, so the gallery
+# rim is always behind rock (no crack), splayed in front, and .35 m outside the wall deeper in. Faces nobody can see —
+# under intact terrain / the apron / the floor, or behind the gallery wall — are dropped.
+VOX = .33
+BOX = (-12.4, s_face + 8.8, -13.4, 12.8, -1.9, 14.8)          # s, l, h extent of the SDF grid
+RLH = np.array([np.column_stack(frame(r)[1:]) for r in rings])  # gallery rings in (l, h)
+SPLAY = .12                                                   # opening widens 12 %/m in front of the face
 
 
-def hood():
-    """Rock hood spanning the opening edge to the hole outline. For every opening-edge point a plan ray (back over the roof
-    for the upper arc, sideways for the walls/feet) finds where the hole ends (+.45 m under intact terrain); the hood runs
-    from the edge (continuing the cut face briefly) to that point .35 m under the terrain edge, so the hole is sealed and the
-    rock reads as the hillside broken open above the adit. It keeps .6 m over the gallery roof. Angular relief + bedding."""
-    mb = MB('Portal_Face'); lh_in = ring_lh(s_face); c = np.array([0., 1.9]); K = 10
-    crown = float(lh_in[:, 1].max())
-    P = np.zeros((K + 1, N, 3)); reach = []
-    for j, (l, h) in enumerate(lh_in):
-        E = end_ring[j]; u = nz(np.array([l, h]) - c); up = max(0.0, u[1])
-        plan_dir = R * u[0] + (-D) * (1.25 * up + .12)
-        if h < .2: plan_dir = R * (np.sign(l) if l else 1) + (-D) * .15
-        Bp = _exit_hole(E[[0, 2]], plan_dir); B = np.array([Bp[0], float(terrain(Bp[0], Bp[1])) - .35, Bp[1]])
-        face_out = R3 * u[0] + UPV * u[1]
-        C1 = E + face_out * (1.0 + .6 * up) + UPV * (.4 * up)
-        C2 = B + UPV * (.9 + .8 * up) + np.array([E[0] - B[0], 0, E[2] - B[2]]) * .25
-        for k in range(K + 1):
-            s_ = (k / K) ** 1.1; m = 1 - s_
-            q = m ** 3 * E + 3 * m * m * s_ * C1 + 3 * m * s_ * s_ * C2 + s_ ** 3 * B
-            if 0 < k < K:
-                ss, ll, hh = frame(q)
-                if ss < s_face - .2 and abs(ll) < 3.4: q[1] = max(q[1], FLOOR + crown + .6)       # over the gallery roof
-            P[k, j] = q
-        reach.append(float(np.linalg.norm(B - E)))
-    du = np.gradient(P, axis=0); dv = np.gradient(P, axis=1); gn = nz(np.cross(du, dv))
-    ref = P - (axis(s_face - 2) + UPV * 1.5); gn = np.where((np.sum(gn * ref, -1) < 0)[..., None], -gn, gn)
-    for k in range(1, K):
-        w = min(1.0, k / 2.5) * min(1.0, (K - k) / 2.0)
-        amp = .36 * ridged(P[k], 2.4, 3, 21) + .09 * np.sin(P[k][:, 1] * 2.1 + 1.7 * vnoise(P[k], 3.0, 9)) + .11 * fbm(P[k], .8, 2, 5)
-        P[k] += gn[k] * (amp * w)[:, None]
-    uv = np.stack([P[..., 0] * .25 + P[..., 2] * .25, P[..., 1] * .25], -1)
-    mb.grid(P, 'cliff_rock', uv, lambda Q: Q - (axis(s_face - 2) + UPV * 1.5))
-    return mb, reach
+def lw_world(s, l):
+    s = np.asarray(s, float); l = np.asarray(l, float)
+    return A[0] + D[0] * s + R[0] * l, A[1] + D[1] * s + R[1] * l
+
+
+def rel_ground(s, l):
+    x, z = lw_world(s, l); return terrain(x, z) - FLOOR
+
+
+def terrain_mesh(x, z):
+    """Height of the LOD0 terrain tile mesh (CompactReworld292.Terrain: 4 m quads split along the (x+1,z)-(x,z+1) diagonal)."""
+    fx = np.clip(np.asarray(x, float) / CELL, 0, W - 1); fz = np.clip(np.asarray(z, float) / CELL, 0, HH - 1)
+    ix = np.minimum(fx.astype(int), W - 2); iz = np.minimum(fz.astype(int), HH - 2); u = fx - ix; v = fz - iz
+    h00, h10, h01, h11 = H[iz, ix], H[iz, ix + 1], H[iz + 1, ix], H[iz + 1, ix + 1]
+    return np.where(u + v <= 1, h00 + (h10 - h00) * u + (h01 - h00) * v, h11 + (h01 - h11) * (1 - u) + (h10 - h11) * (1 - v))
+
+
+def hole_sd(x, z):
+    """Signed plan distance to the union of hole cells (negative inside)."""
+    x = np.asarray(x, float); z = np.asarray(z, float); d = np.full(x.shape, 1e9)
+    for ix, iz in HOLES:
+        x0, z0 = ix * CELL, iz * CELL
+        dx = np.maximum(np.maximum(x0 - x, x - x0 - CELL), 0); dz = np.maximum(np.maximum(z0 - z, z - z0 - CELL), 0)
+        ins = -np.minimum(np.minimum(x - x0, x0 + CELL - x), np.minimum(z - z0, z0 + CELL - z))
+        d = np.minimum(d, np.where((dx == 0) & (dz == 0), ins, np.hypot(dx, dz)))
+    return d
+
+
+def apron_y(x, z):
+    """Height of Portal_Apron (same rule as apron()) — the ground over the hole cells in front of the face."""
+    q = np.stack([np.asarray(x, float) - A[0], np.asarray(z, float) - A[1]], -1); s = q @ D; l = q @ R
+    w = smooth(4.4, 3.4, np.abs(l)) * smooth(s_face - .6, s_face + .2, s) * smooth(s_face + 7, s_face + 5.5, s)
+    y = terrain(x, z) - .03; return np.minimum(y, y * (1 - w) + (FLOOR - .02) * w)
+
+
+def ground_y(x, z):
+    """Visible ground: the apron over hole cells in front of the face, else the terrain."""
+    q = np.array([x - A[0], z - A[1]]); return float(apron_y(x, z)) if in_hole(np.array([x, 0, z])) and q @ D >= s_face - .45 else float(terrain(x, z))
+
+
+def face_line(l):
+    l = np.asarray(l, float)
+    return s_face + .12 + .12 * np.maximum(np.abs(l) - 3.4, 0) ** 1.3 + .2 * vnoise(np.stack([l, l * 0 + 3.3, l * 0 + 1.7], -1), 2.6, 41)
+
+
+def _tunnel_poly(s):
+    """Per-point gallery section polygon (l, h), closed 3 m below the floor; splayed in front of the face."""
+    i = np.clip(np.searchsorted(S, s) - 1, 0, len(S) - 2); t = np.clip((s - S[i]) / (S[i + 1] - S[i]), 0, 1)[:, None, None]
+    P = RLH[i] * (1 - t) + RLH[i + 1] * t
+    front = s > s_face
+    if front.any():
+        last = RLH[-1]; base = np.array([last[:, 0].mean(), -.5]); sc = 1 + SPLAY * (s[front] - s_face)
+        P[front] = base + (last[None] - base) * sc[:, None, None]
+    bot = np.full((len(s), 2, 2), -3.2); bot[:, 0, 0] = P[:, -1, 0]; bot[:, 1, 0] = P[:, 0, 0]
+    return np.concatenate([P, bot], 1)
+
+
+def _poly_sd(q, poly):
+    a = poly; b = np.roll(poly, -1, axis=1); ab = b - a; aq = q[:, None, :] - a
+    t = np.clip(np.sum(aq * ab, -1) / np.maximum(np.sum(ab * ab, -1), 1e-12), 0, 1)
+    d = np.sqrt(np.sum((aq - ab * t[..., None]) ** 2, -1).min(1))
+    ay, by = a[..., 1], b[..., 1]; qy = q[:, 1:2]; cross = (ay > qy) != (by > qy)
+    xi = a[..., 0] + (qy - ay) * (b[..., 0] - a[..., 0]) / np.where(by == ay, 1e-12, by - ay)
+    return np.where(np.sum(cross & (q[:, 0:1] < xi), 1) % 2 == 1, -d, d)
+
+
+def tunnel_sd(s, l, h):
+    """Signed distance to the gallery section at s (negative inside the gallery)."""
+    out = np.full(s.shape, 9.0); idx = np.nonzero((np.abs(l) < 6.5) & (h < 8.5))[0]
+    for c in range(0, len(idx), 6000):
+        j = idx[c:c + 6000]; out[j] = _poly_sd(np.stack([l[j], h[j]], -1), _tunnel_poly(s[j]))
+    return out
+
+
+def tunnel_margin(s):
+    """Rock stays this far outside the gallery wall: -.15 (inside, sealing the rim) near the face, +.35 behind."""
+    return np.interp(s, [s_face - 1.7, s_face - .5], [.35, -.15])
+
+
+def _rot(yaw, pitch=0., roll=0.):
+    cy, sy, cp, sp, cr, sr = math.cos(yaw), math.sin(yaw), math.cos(pitch), math.sin(pitch), math.cos(roll), math.sin(roll)
+    return np.array([[cy, -sy, 0], [sy, cy, 0], [0, 0, 1.]]) @ np.array([[cp, 0, -sp], [0, 1, 0], [sp, 0, cp]]) @ np.array([[1, 0, 0], [0, cr, -sr], [0, sr, cr]])
+
+
+def _block(c, half, yaw=0., pitch=0., roll=0., r=.2):
+    M = _rot(yaw, pitch, roll); ext = np.abs(M) @ np.asarray(half, float)
+    return dict(c=np.asarray(c, float), half=np.asarray(half, float), M=M, r=r, lo=np.asarray(c) - ext - .1, hi=np.asarray(c) + ext + .1)
+
+
+# face beds over the portal: (bottom, top, setback range (+ = forward of the face line), l extent, joint spacing range, skip)
+# Thick, unequal beds with widely spaced vertical joints (granite sheeting), domain-warped in rock_sdf so no face is planar.
+FACE_BEDS = [(-1.3, .9, (.2, .55), (-10.6, 10.2), (2.4, 4.8), 0), (.9, 2.6, (.05, .45), (-10.6, 10.0), (2.2, 4.6), 0),
+             (2.6, 4.1, (.0, .4), (-10.2, 9.4), (2.0, 4.4), 0), (4.1, 5.2, (.1, .35), (-9.6, 8.4), (2.4, 5.0), 0),
+             (5.2, 6.6, (.85, 1.25), (-8.4, 6.6), (3.0, 5.6), 0),     # brow: overhangs the portal
+             (6.6, 7.3, (-.6, -.15), (-6.8, 4.4), (1.8, 3.6), .3)]    # cap bed, stepped back, patchy
+BROW = 4
+# ledges up the slope above the cap: (bottom, top, l extent, skip) — sparse, narrowing uphill, dipping under the terrain
+LEDGES = [(7.0, 8.4, (-7.8, 5.2), .25), (8.4, 9.7, (-6.6, 3.8), .3), (9.7, 10.9, (-5.2, 2.2), .4)]
+DIP = -.035                                                   # beds rise ~2° toward the uphill left (-l)
+
+
+def bed_shift(l, k):
+    return DIP * l + .2 * math.sin(.29 * l + 1.3 * k) + .1 * math.sin(.83 * l + 2.1 * k)
+
+
+def rock_blocks():
+    rng = np.random.default_rng(2974); blocks = []
+    for k, (b0, b1, (sb0, sb1), (l0, l1), (w0, w1), skip) in enumerate(FACE_BEDS):
+        l = l0 - rng.uniform(0, 2.0)
+        while l < l1:
+            w = rng.uniform(w0, w1); lc = l + w / 2; sh = bed_shift(lc, k); l += w + .04
+            if rng.random() < skip: continue
+            back = rng.uniform(sb0, sb1); side = smooth(4.4, 8.0, abs(lc + .6))
+            if k == BROW: back = back * (1 - side) + rng.uniform(.3, .55) * side
+            front = float(face_line(lc)) + back; depth = rng.uniform(3.0, 3.8) if k < 5 else rng.uniform(3.6, 4.4)
+            hb, ht = b0 + sh + rng.normal(0, .14), b1 + sh + rng.normal(0, .14)
+            r = min(rng.uniform(.28, .5), .42 * (ht - hb))
+            blocks.append(_block([front - depth / 2, lc, (hb + ht) / 2], [depth / 2, w / 2 - .02, (ht - hb) / 2 + .04],
+                                 rng.normal(0, .07), rng.normal(0, .04), rng.normal(0, .05) + DIP * .6, r))
+    for k, (b0, b1, (l0, l1), skip) in enumerate(LEDGES):
+        l = l0 + rng.uniform(-.8, .8)
+        while l < l1:
+            w = rng.uniform(2.2, 4.2); lc = l + w / 2; l += w + .08
+            if rng.random() < skip and abs(lc + .6) > 3.8: continue       # never skip over the hole cells
+            sh = bed_shift(lc, k + 7) + rng.normal(0, .22); top = b1 + sh; expo = rng.uniform(.25, .65)
+            ss = np.arange(float(face_line(lc)) - .9, -13.0, -.1); g = rel_ground(ss, np.full_like(ss, lc))
+            hit = np.nonzero(g >= top - expo)[0]
+            if not len(hit): continue
+            sf = ss[hit[0]]; e = .3
+            gs = (rel_ground(sf + e, lc) - rel_ground(sf - e, lc)) / (2 * e); gl = (rel_ground(sf, lc + e) - rel_ground(sf, lc - e)) / (2 * e)
+            dn = nz(np.array([-gs, -gl])); yaw = float(np.clip(math.atan2(dn[1], dn[0]), -.6, .6)) + rng.normal(0, .2)
+            dv = np.array([math.cos(yaw), math.sin(yaw)]); depth = rng.uniform(2.2, 3.2); c = np.array([sf, lc]) - dv * depth / 2
+            hb = b0 + sh + rng.normal(0, .08); r = min(rng.uniform(.3, .5), .42 * (top - hb))
+            blocks.append(_block([c[0], c[1], (hb + top) / 2], [depth / 2, w / 2, (top - hb) / 2 + .03], yaw, rng.normal(0, .05), rng.normal(0, .05), r))
+    # joint slabs pitched with the steep slope over the hole cells above the plateau (the seal's visible skin)
+    for sc in np.arange(-6.4, -.4, 2.0):
+        for lc in np.arange(-6.6, 5.6, 2.2):
+            c = np.array([sc, lc]) + rng.uniform(-.5, .5, 2); x, z = lw_world(*c)
+            g = float(rel_ground(*c))
+            if hole_sd(np.array([x]), np.array([z]))[0] > .7 or g < 6.9: continue
+            e = .3
+            gs = (rel_ground(c[0] + e, c[1]) - rel_ground(c[0] - e, c[1])) / (2 * e); gl = (rel_ground(c[0], c[1] + e) - rel_ground(c[0], c[1] - e)) / (2 * e)
+            dn = nz(np.array([-gs, -gl])); yaw = math.atan2(dn[1], dn[0]) + rng.normal(0, .15); slope = math.atan(math.hypot(gs, gl))
+            th = rng.uniform(.8, 1.1); top = rng.uniform(.25, .5); nrm = np.array([-math.sin(slope) * dn[0], -math.sin(slope) * dn[1], math.cos(slope)])
+            ctr = np.array([c[0], c[1], g + top]) - nrm * th / 2
+            blocks.append(_block(ctr, [rng.uniform(1.2, 1.6), rng.uniform(1.2, 1.7), th / 2], yaw, -slope * rng.uniform(.85, 1.0), rng.normal(0, .06), rng.uniform(.3, .42)))
+    return blocks
+
+
+# partially buried boulders around the mouth (s, l, half-extents s/l/h, buried fraction); all clear of the |l| < 4.1 approach
+BOULDERS = [(s_face + 1.0, -5.35, (.9, 1.1, .75), .42), (s_face + 3.1, -6.3, (.7, .8, .55), .38), (s_face + 5.9, -5.7, (.55, .65, .45), .35),
+            (s_face + .9, 5.15, (.8, .95, .65), .4), (s_face + 2.8, 6.1, (1.0, 1.2, .8), .45), (s_face + 6.6, 5.4, (.5, .6, .42), .35),
+            (s_face + .3, -8.5, (1.3, 1.5, 1.0), .45), (s_face + .8, 8.3, (1.1, 1.3, .85), .42),
+            (-2.6, -10.9, (1.2, 1.4, .9), .5), (-4.2, 8.3, (1.0, 1.1, .8), .5), (-8.6, -3.8, (.9, 1.1, .7), .5)]
+
+
+def boulder_blocks():
+    rng = np.random.default_rng(2975); out = []
+    for s, l, half, bury in BOULDERS:
+        x, z = lw_world(s, l); g = ground_y(float(x), float(z)) - FLOOR
+        out.append(_block([s, l, g + half[2] * (1 - 2 * bury)], half, rng.uniform(-math.pi, math.pi), rng.normal(0, .12), rng.normal(0, .12), min(half) * rng.uniform(.5, .7)))
+    return out
+
+
+BLOCKS = rock_blocks() + boulder_blocks()
+
+
+def rock_sdf(s, l, h, G=None, hsd=None):
+    """Rock mass SDF (negative inside) at flat arrays of frame points."""
+    s = np.asarray(s, float); l = np.asarray(l, float); h = np.asarray(h, float)
+    if G is None: G = rel_ground(s, l)
+    if hsd is None: hsd = hole_sd(*lw_world(s, l))
+    F = np.full(s.shape, 6.0); X = np.stack([s, l, h], -1)
+    Xw = X + np.stack([.3 * fbm(X, 3.5, 2, 91), .3 * fbm(X, 3.5, 2, 92), .2 * fbm(X, 3.5, 2, 93)], -1)   # bent beds
+    for b in BLOCKS:
+        m = np.all((Xw >= b['lo']) & (Xw <= b['hi']), -1)
+        if not m.any(): continue
+        q = (Xw[m] - b['c']) @ b['M']; d = np.abs(q) - (b['half'] - b['r'])
+        F[m] = np.minimum(F[m], np.linalg.norm(np.maximum(d, 0), axis=-1) + np.minimum(d.max(-1), 0) - b['r'])
+    f = face_line(l)
+    # filler body: a plateau behind the face beds (under the cap), and a rough swell at the would-be ground inside the hole
+    # (the seal, mostly under the joint slabs) that dips under the intact terrain ~.5 m outside it
+    P = 6.55 + DIP * l + .2 * fbm(np.stack([s, l, l * 0], -1), 4.0, 2, 61) - 3.1 * smooth(4.2, 10.4, np.abs(l + .7))
+    F = np.minimum(F, np.maximum(h - P, s - (f - .45)))
+    e = .05 - .45 * smooth(-.4, .9, hsd + .35 * fbm(X, 2.0, 2, 83)) + .15 * ridged(X, 1.8, 2, 81) * (1 - smooth(-.2, .8, hsd))
+    F = np.minimum(F, np.maximum(np.maximum(h - (G + e), s - (f - .3)), hsd - 1.2))
+    F = F + .11 * fbm(X, 2.2, 3, 71) + .06 * ridged(X, .9, 2, 77)                          # weathering
+    F = np.maximum(F, -(tunnel_sd(s, l, h) - tunnel_margin(s)))                           # the adit
+    bot = np.where(hsd < 1.0, np.minimum(G, 0) - 1.3, G - 1.0)
+    return np.maximum(F, bot - h)
+
+
+def surface_nets(F):
+    """Naive surface nets on a sampled field (negative inside) -> vertices in grid-index space, triangles wound outward."""
+    nx, ny, nzz = F.shape; ins = F < 0
+    cnt = sum(ins[i:nx - 1 + i, j:ny - 1 + j, k:nzz - 1 + k].astype(np.int8) for i in (0, 1) for j in (0, 1) for k in (0, 1))
+    active = (cnt > 0) & (cnt < 8); acc = np.zeros(active.shape + (3,)); num = np.zeros(active.shape)
+    for a in ((0, 0, 0), (0, 1, 0), (0, 0, 1), (0, 1, 1), (1, 0, 0), (1, 1, 0), (1, 0, 1), (1, 1, 1)):
+        for ax in range(3):
+            if a[ax]: continue
+            b = list(a); b[ax] = 1
+            Fa = F[a[0]:nx - 1 + a[0], a[1]:ny - 1 + a[1], a[2]:nzz - 1 + a[2]]; Fb = F[b[0]:nx - 1 + b[0], b[1]:ny - 1 + b[1], b[2]:nzz - 1 + b[2]]
+            cr = (Fa < 0) != (Fb < 0); t = np.where(cr, Fa / np.where(cr, Fa - Fb, 1), 0)
+            p = np.broadcast_to(np.array(a, float), Fa.shape + (3,)).copy(); p[..., ax] += t
+            acc += np.where(cr[..., None], p, 0); num += cr
+    vid = -np.ones(active.shape, np.int64); vid[active] = np.arange(int(active.sum()))
+    V = np.argwhere(active) + acc[active] / num[active][:, None]
+    quads = []
+    for ax in range(3):
+        u, v = (ax + 1) % 3, (ax + 2) % 3
+        sl_a = [slice(1, -1)] * 3; sl_b = [slice(1, -1)] * 3; sl_a[ax] = slice(0, -1); sl_b[ax] = slice(1, None)
+        Ia = ins[tuple(sl_a)]; Ib = ins[tuple(sl_b)]; e = np.argwhere(Ia != Ib); out_pos = Ia[tuple(e.T)]
+        g = e.copy(); g[:, u] += 1; g[:, v] += 1                          # edge origin in grid coordinates
+        def cell(du, dv):
+            c = g.copy(); c[:, u] += du; c[:, v] += dv; return vid[c[:, 0], c[:, 1], c[:, 2]]
+        q = np.stack([cell(-1, -1), cell(0, -1), cell(0, 0), cell(-1, 0)], 1)
+        quads.append(np.where(out_pos[:, None], q, q[:, ::-1]))
+    Q = np.concatenate(quads); T = np.concatenate([Q[:, [0, 1, 2]], Q[:, [0, 2, 3]]])
+    return V, T[np.all(T >= 0, 1)]
+
+
+def outcrop():
+    s0_, s1_, l0_, l1_, h0_, h1_ = BOX
+    gs = np.arange(s0_, s1_ + 1e-6, VOX); gl = np.arange(l0_, l1_ + 1e-6, VOX); gh = np.arange(h0_, h1_ + 1e-6, VOX)
+    Sg, Lg = np.meshgrid(gs, gl, indexing='ij'); G2 = rel_ground(Sg, Lg); HSD2 = hole_sd(*lw_world(Sg, Lg))
+    shape = (len(gs), len(gl), len(gh))
+    SS = np.broadcast_to(Sg[..., None], shape).ravel(); LL = np.broadcast_to(Lg[..., None], shape).ravel()
+    HHg = np.broadcast_to(gh[None, None, :], shape).ravel()
+    F = rock_sdf(SS, LL, HHg, np.broadcast_to(G2[..., None], shape).ravel(), np.broadcast_to(HSD2[..., None], shape).ravel()).reshape(shape)
+    F[[0, -1]] = np.maximum(F[[0, -1]], .2); F[:, [0, -1]] = np.maximum(F[:, [0, -1]], .2); F[:, :, [0, -1]] = np.maximum(F[:, :, [0, -1]], .2)
+    Vg, T = surface_nets(F); n_all = len(T)
+    s = s0_ + Vg[:, 0] * VOX; l = l0_ + Vg[:, 1] * VOX; h = h0_ + Vg[:, 2] * VOX
+    x, z = lw_world(s, l); lo = terrain_mesh(x, z); hsd = hole_sd(x, z); tsd = tunnel_sd(s, l, h)
+    hidden = ((hsd > .05) & (h + FLOOR < lo - .1))                                          # under intact terrain
+    hidden |= (hsd <= .05) & (s >= s_face - .3) & (h + FLOOR < apron_y(x, z) - .12)          # under the apron
+    hidden |= (hsd <= 1.0) & (h < -.72)                                                      # under the gallery floor
+    hidden |= (s < s_face - 1.6) & (np.abs(tsd - tunnel_margin(s)) < .12)                  # behind the gallery wall
+    T = T[~np.all(hidden[T], 1)]
+    used = np.unique(T); remap = -np.ones(len(Vg), np.int64); remap[used] = np.arange(len(used)); T = remap[T]
+    s, l, h, x, z, lo = s[used], l[used], h[used], x[used], z[used], lo[used]
+    Vw = np.stack([x, FLOOR + h, z], -1)
+    fn = np.cross(Vw[T[:, 1]] - Vw[T[:, 0]], Vw[T[:, 2]] - Vw[T[:, 0]]); Nn = np.zeros_like(Vw)
+    for k in range(3): np.add.at(Nn, T[:, k], fn)
+    Nn = nz(Nn)
+    # orientation check against the field gradient (surface nets winds from the sign pattern; this only reports)
+    e = .08; grad = np.stack([rock_sdf(s + e, l, h) - rock_sdf(s - e, l, h), rock_sdf(s, l + e, h) - rock_sdf(s, l - e, h), rock_sdf(s, l, h + e) - rock_sdf(s, l, h - e)], -1)
+    gw = nz(grad[:, 0:1] * D3 + grad[:, 1:2] * R3 + grad[:, 2:3] * UPV); agree = float(np.mean(np.sum(gw * Nn, -1) > 0))
+    mb = MB('Portal_Face'); b = mb._add(Vw, Nn, np.stack([Vw[:, 0] * .25 + Vw[:, 2] * .25, Vw[:, 1] * .25], -1))
+    mb.T['cliff_rock'] = (T + b).ravel().tolist()
+    top = FLOOR + h; exposed = top > lo + .05
+    stats = dict(grid=list(shape), trisAll=int(n_all), tris=int(len(T)), normalAgree=round(agree, 4), blocks=len(BLOCKS) - len(BOULDERS),
+                 boulders=len(BOULDERS), extentL=[round(float(l[exposed].min()), 1), round(float(l[exposed].max()), 1)],
+                 extentS=[round(float(s[exposed].min()), 1), round(float(s[exposed].max()), 1)], maxH=round(float(h.max()), 2))
+    return mb, stats
 
 
 def timbers():
-    mb = MB('Portal_Timbers'); sets = []
-    for s in (s_face - .55, s_face - 3.6, s_face - 6.8):
+    """Portal 갱목: three sets of round wood (tapered, battered log posts; split caps seated on them; wedges under the rock),
+    lagging boards between the sets on the roof and the upper sides, the middle set's right post settled and propped, and a
+    log sill. Set positions/spans are fitted to the gallery section as before."""
+    from cave297_dressing import log, split_log, wedge
+    mb = MB('Portal_Timbers'); sets = []; geo = []
+    for idx, s in enumerate((s_face - .55, s_face - 3.6, s_face - 6.8)):
         lh = ring_lh(s); band = (lh[:, 1] > 1.0) & (lh[:, 1] < 2.6)
         lw = -lh[band & (lh[:, 0] < 0), 0].max() if (band & (lh[:, 0] < 0)).any() else 2.8
         rw = lh[band & (lh[:, 0] > 0), 0].min() if (band & (lh[:, 0] > 0)).any() else 2.8
         half = min(lw, rw) - .42; cap = 3.35 if s > s_face - 1 else min(3.55, 3.35 + .06 * (s_face - s))
-        for q in (axis(s, -half), axis(s, half)):
-            beam(mb, q + UPV * -.05, q + UPV * cap, .30, .30, 'wood_dark')
-        beam(mb, axis(s, -half - .32) + UPV * (cap + .17), axis(s, half + .32) + UPV * (cap + .17), .36, .34, 'wood_dark')
-        for k in range(-2, 3):
-            off = D3 * k * .23
-            beam(mb, axis(s, -half - .1) + UPV * (cap + .40) + off, axis(s, half + .1) + UPV * (cap + .40) + off, .2, .07, 'wood_board')
-        sets.append(dict(s=round(s, 2), half=round(float(half), 2), cap=round(float(cap), 2)))
-    beam(mb, axis(s_face + .15, -2.5) + UPV * .06, axis(s_face + .15, 2.5) + UPV * .06, .26, .18, 'wood_dark')
+        for sg in (-1, 1):
+            q = axis(s, sg * half); head = q + UPV * (cap + .05) - R3 * sg * .06
+            if idx == 1 and sg > 0:                                     # settled post, leaning toward the mouth, propped
+                head = head + D3 * .2 - R3 * .03
+                log(mb, axis(s - 1.05, half - .15) + UPV * -.03, q + UPV * 2.0 + D3 * .12 - R3 * .1, .1, .09, 6, 'wood_dark', rot=.4)
+            log(mb, q + UPV * -.06, head, .17, .148, 8, 'wood_dark', rot=.3 * idx + .7 * (sg > 0))
+        split_log(mb, axis(s, -half - .32) + UPV * cap, axis(s, half + .32) + UPV * cap, .19, .27, 5, 'wood_dark')
+        for u, sg in ((-half + .3, 1), (half - .3, -1)):                # wedges over the cap ends, tight under the rock
+            wedge(mb, axis(s, u) + UPV * (cap + .34), D3 * sg, .34, .13, .14, 'wood_board')
+        sets.append(dict(s=round(s, 2), half=round(float(half), 2), cap=round(float(cap), 2))); geo.append((s, half, cap))
+    for (sa, ha, ca), (sb, hb, cb) in zip(geo[:-1], geo[1:]):
+        for u in np.linspace(-1.62, 1.62, 9):                           # roof lagging laid tight on the two caps
+            beam(mb, axis(sa + .1, u) + UPV * (ca + .3), axis(sb - .1, u) + UPV * (cb + .3), .33, .045, 'wood_board')
+        for sg in (-1, 1):                                              # side lagging behind the post tops
+            for dh in (.35, .75, 1.15):
+                beam(mb, axis(sa + .1, sg * (ha + .24)) + UPV * (ca - dh), axis(sb - .1, sg * (hb + .24)) + UPV * (cb - dh), .05, .22, 'wood_board')
+    log(mb, axis(s_face + .15, -2.55) + UPV * .03, axis(s_face + .15, 2.55) + UPV * .03, .14, .13, 7, 'wood_dark', caps=(True, True), rot=.2)
     return mb, sets
 
 
@@ -323,34 +566,50 @@ def debris():
         V = np.stack([V[:, 0] * cy + V[:, 2] * sy, V[:, 1], -V[:, 0] * sy + V[:, 2] * cy], -1) + np.array([p[0], y - .28 * size, p[2]])
         b = mb._add(V, nz(V - V.mean(0)), V[:, [0, 2]] * .5)
         for f in _ICO_F: mb.T['rock_loose'] += [b + f[0], b + f[1], b + f[2]]
+    # talus fan: spalled granite at the foot of the face, fanning out on both sides of the approach (never on it)
+    rng2 = np.random.default_rng(2976); talus = 0; tries = 0
+    while talus < 38 and tries < 600:
+        tries += 1; sg = 1 if rng2.random() < .5 else -1
+        l = sg * (3.6 + rng2.gamma(1.5, 1.4)); s = float(face_line(l)) + .3 + rng2.exponential(1.25) + .6 * rng2.random() ** 3
+        if abs(l) > 10.5: continue
+        size = float(np.clip(rng2.lognormal(-1.3, .5), .1, .55)); x, z = lw_world(s, l); g = ground_y(float(x), float(z))
+        if rock_sdf(np.array([s]), np.array([l]), np.array([g - FLOOR + .12 * size]))[0] < .05: continue   # inside the outcrop
+        V = ico * size * np.array([1, .58, 1]) * (1 + .2 * rng2.standard_normal((len(ico), 1)))
+        yaw = rng2.uniform(0, 2 * math.pi); cy, sy = math.cos(yaw), math.sin(yaw)
+        V = np.stack([V[:, 0] * cy + V[:, 2] * sy, V[:, 1], -V[:, 0] * sy + V[:, 2] * cy], -1) + np.array([float(x), g - .3 * size, float(z)])
+        b = mb._add(V, nz(V - V.mean(0)), V[:, [0, 2]] * .5)
+        for f in _ICO_F: mb.T['rock_loose'] += [b + f[0], b + f[1], b + f[2]]
+        talus += 1
     Vv = np.asarray(mb.V); t = mb.T['rock_loose']
     for k in range(0, len(t), 3):
         i, j, l = t[k:k + 3]
         if np.dot(np.cross(Vv[j] - Vv[i], Vv[l] - Vv[i]), np.asarray(mb.N[i])) < 0: t[k + 1], t[k + 2] = l, j
-    beam(mb, axis(s_face + 2.2, -1.9) + UPV * .16, axis(s_face + 3.9, -.4) + UPV * .28, .28, .28, 'wood_dark')
-    beam(mb, axis(s_face + 1.6, 1.2) + UPV * .14, axis(s_face + 2.9, 2.6) + UPV * .12, .30, .30, 'wood_dark')
-    beam(mb, axis(s_face + 3.0, .4) + UPV * .12, axis(s_face + 3.3, 2.1) + UPV * .30, .34, .32, 'wood_dark')
-    return mb
+    # the collapsed old set: a broken post, a cap and a post end, as logs
+    from cave297_dressing import log, split_log
+    log(mb, axis(s_face + 2.2, -1.9) + UPV * .16, axis(s_face + 3.9, -.4) + UPV * .28, .16, .14, 8, 'wood_dark', caps=(True, True), rot=.3)
+    split_log(mb, axis(s_face + 1.6, 1.2) + UPV * .0, axis(s_face + 2.9, 2.6) + UPV * -.02, .19, .26, 5, 'wood_dark')
+    log(mb, axis(s_face + 3.0, .4) + UPV * .14, axis(s_face + 3.3, 2.1) + UPV * .3, .17, .15, 8, 'wood_dark', caps=(True, True), rot=1.1)
+    return mb, talus
 
 
-def plan(hood_mb, path):
+def plan(face_mb, path):
     from PIL import Image, ImageDraw
     sc = 14; o = axis(s_face); size = 44
     im = Image.new('RGB', (size * sc, size * sc), 'white'); d = ImageDraw.Draw(im)
     P = lambda x, z: ((x - o[0] + size / 2) * sc, (size / 2 - (z - o[2])) * sc)
     for (ix, iz) in HOLES:
         x0, z0 = ix * CELL, iz * CELL; d.polygon([P(x0, z0), P(x0 + CELL, z0), P(x0 + CELL, z0 + CELL), P(x0, z0 + CELL)], fill=(255, 210, 210), outline=(220, 120, 120))
-    V = np.asarray(hood_mb.V)
+    V = np.asarray(face_mb.V)
     for q in V[::3]: d.point(P(q[0], q[2]), fill=(60, 60, 60))
     for r in rings[::4]: d.line([P(q[0], q[2]) for q in r], fill=(90, 120, 200))
     d.line([P(*axis(s0)[[0, 2]]), P(*axis(s_face + 6)[[0, 2]])], fill=(0, 160, 0), width=2)
-    d.text((6, 6), f'hole cells {len(HOLES)}  face s={s_face}  red=hole  grey=hood  blue=gallery', fill='black')
+    d.text((6, 6), f'hole cells {len(HOLES)}  face s={s_face}  red=hole  grey=outcrop  blue=gallery', fill='black')
     im.save(path)
 
 
 if __name__ == '__main__':
     origin = axis(s_face)
-    g = gallery(); f, reach = hood(); fl = floor_strip(); ap = apron(); tb, sets = timbers(); db = debris()
+    g = gallery(); f, ostats = outcrop(); fl = floor_strip(); ap = apron(); tb, sets = timbers(); db, talus = debris()
     OUT.mkdir(parents=True, exist_ok=True); plan(f, OUT / 'plan.png')
     meshes = []
     for mb in (g, f, fl, ap, tb, db):
@@ -365,5 +624,5 @@ if __name__ == '__main__':
     (OUT / 'unity.json').write_text(json.dumps(unity, ensure_ascii=False, indent=1), encoding='utf-8')
     print(f's_clip {s_clip:.2f} (l_shift {l_shift:.2f})  face s {s_face}  gallery {s_face - s0:.1f} m  hole cells {len(HOLES)} {HOLES}')
     print('terrain above axis:', ' '.join(f'{s:.0f}:{rel_terrain(s):.1f}' for s in np.arange(-10, 6, 1)))
-    print('hood reach min/max %.1f / %.1f' % (min(reach), max(reach)))
+    print('outcrop', json.dumps(ostats), 'talus', talus)
     print('meshes', meshes)

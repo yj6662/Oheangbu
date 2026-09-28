@@ -128,12 +128,13 @@ namespace Oheangbu.EditorTools.WorldMacro
    // 3. post grade (candidate profile; the original file is backed up)
    T Comp<T>() where T:VolumeComponent{if(!profile.TryGet<T>(out var c)){c=profile.Add<T>(false);c.name=typeof(T).Name;AssetDatabase.AddObjectToAsset(c,profile);}return c;}
    var tone=Comp<Tonemapping>();tone.mode.Override(TonemappingMode.Neutral);
-   var grade=Comp<ColorAdjustments>();grade.postExposure.Override(.15f);grade.contrast.Override(10f);grade.saturation.Override(-6f);
+   var grade=Comp<ColorAdjustments>();grade.postExposure.Override(.15f);grade.contrast.Override(10f);grade.saturation.Override(PostSaturation297);
    var wb=Comp<WhiteBalance>();wb.temperature.Override(6f);wb.tint.Override(0f);
    var smh=Comp<ShadowsMidtonesHighlights>();smh.shadows.Override(new Vector4(1.02f,.99f,.95f,-.03f));smh.midtones.Override(new Vector4(1f,1f,.99f,0f));smh.highlights.Override(new Vector4(1.02f,1f,.96f,0f));
    var vig=Comp<Vignette>();vig.intensity.Override(.16f);vig.smoothness.Override(.5f);vig.color.Override(new Color(.10f,.09f,.08f));
-   var bloom=Comp<Bloom>();bloom.threshold.Override(1.15f);bloom.intensity.Override(.10f);bloom.scatter.Override(.62f);
-   EditorUtility.SetDirty(profile);report.Add("post: Neutral tonemapping, exposure .15, contrast 10, saturation -6 (tone owned by InkWash297), WB +6, SMH warm ink shadows/hanji highlights, vignette .16, bloom .10@1.15");
+   // saturation/bloom shared with the attraction pass (CompactFinish297.Attraction.cs, TEST): colour = guidance, Bloom = light sources
+   var bloom=Comp<Bloom>();bloom.threshold.Override(BloomThreshold297);bloom.intensity.Override(BloomIntensity297);bloom.scatter.Override(BloomScatter297);
+   EditorUtility.SetDirty(profile);report.Add("post: Neutral tonemapping, exposure .15, contrast 10, saturation "+PostSaturation297+" (tone owned by InkWash297), WB +6, SMH warm ink shadows/hanji highlights, vignette .16, bloom "+BloomIntensity297+"@"+BloomThreshold297+" scatter "+BloomScatter297);
    // 4. sun: lower and warmer so forms read (long shadows), balanced against the new ambient
    sun.transform.eulerAngles=new Vector3(33,322,0);sun.intensity=1.42f;sun.color=new Color(1f,.94f,.86f);sun.shadowStrength=.88f;sun.shadows=LightShadows.Soft;EditorUtility.SetDirty(sun);
    // 5. global (user-approved): longer shadows with redistributed cascades on the PC pipeline

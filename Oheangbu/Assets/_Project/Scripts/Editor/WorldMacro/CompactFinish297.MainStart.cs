@@ -79,7 +79,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      var roots=scene.GetRootGameObjects().Select(g=>g.name).ToArray();
      foreach(var r in new[]{"Finish297_Cheolong","Folklore298_Encounters"})Check(roots.Contains(r),"scene root "+r);
      Check(s.Actors.Count(a=>a!=null&&a.Id.StartsWith("folklore298/"))==6&&s.Actors.Length==15,"enemies: "+s.Actors.Length+" (folklore298 "+s.Actors.Count(a=>a!=null&&a.Id.StartsWith("folklore298/"))+")");
-     Check(Object.FindObjectsByType<WorldShortcutDoor>(FindObjectsSortMode.None).Length==2&&s.Content.Checkpoints.Any(c=>c.Id=="cheolong_fortress_rest297"),"fortress doors 2 + 성황당 checkpoint present");
+     Check(Object.FindObjectsByType<WorldShortcutDoor>(FindObjectsSortMode.None).Length==3&&s.Content.Checkpoints.Any(c=>c.Id=="cheolong_fortress_rest297"),"shortcut doors 3 (산성 2 + 궁성 1) + 성황당 checkpoint present");
      state.Phase=2;state.At=now;Persist();return;
     }
     if(state.Phase==2){state.Frames.Add(Time.unscaledDeltaTime*1000f);if(now-state.At>6){state.Phase=3;state.Status="Stopping";Persist();EditorApplication.isPlaying=false;}}

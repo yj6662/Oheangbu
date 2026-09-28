@@ -216,8 +216,9 @@ def storey_route(b):
     x, z0, run = stair_frame(top, up_y, xs, zs, 0)
     n_front = max(2, int(math.ceil((b.ph + .08) / .18)))
     xa = x - math.copysign(1.6, x)                                  # aisle beside the flight (never under it)
-    return [[0, 0.0, PZ + n_front * .32 + .8], [0, top, PZ - .4], [xa, top, zs[-1] - .8], [xa, top, z0 - .5], [x, top, z0 - .5],
-            [x, top, z0 + .15], [x, up_y, z0 + run - .05], [x, up_y, z0 + run + .3], [xa, up_y, z0 + run + .2], [0, up_y, 0],
+    # step onto the first tread from the aisle side (a walled ground floor leaves no room behind the flight)
+    return [[0, 0.0, PZ + n_front * .32 + .8], [0, top, PZ - .4], [xa, top, zs[-1] - .8], [xa, top, z0 + .35], [x, top, z0 + .35],
+            [x, up_y, z0 + run - .05], [x, up_y, z0 + run + .3], [xa, up_y, z0 + run + .2], [0, up_y, 0],
             [0, up_y, zs[-1] - .9]], up_y
 
 

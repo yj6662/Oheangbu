@@ -7,6 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Oheangbu.App.World;
 using Oheangbu.App.World.UI;
+using Oheangbu.Data.World;
 using Object=UnityEngine.Object;
 
 namespace Oheangbu.EditorTools.WorldMacro
@@ -18,7 +19,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  public static class Finish297ReviewPlay
  {
   [Serializable] sealed class State{public bool Active,Placed;public string Spot="",Suffix="",PriorSuffix="",PriorUi="",PriorStartup="";public bool PriorDirect,PriorDirectPresent;}
-  const string Key="Finish297.ReviewPlay",ScenePath="Assets/_Project/Art/World/Architecture296/W_Demo_Compact_Architecture296.unity";
+  const string Key="Finish297.ReviewPlay",ScenePath="Assets/_Project/Art/World/Architecture296/W_Demo_Compact_Architecture296.unity",MainPath="Assets/_Project/Scenes/World/W_Demo_Main.unity";
   static State state;
   static Finish297ReviewPlay()
   {
@@ -30,6 +31,24 @@ namespace Oheangbu.EditorTools.WorldMacro
   [MenuItem("Oheangbu/#297 검토/철옹 산성 — 내성 북문 안쪽(빗장 앞)에서 Play")] static void NorthGate()=>Start("northgate");
   [MenuItem("Oheangbu/#297 검토/철옹 산성 — 동장대 앞에서 Play")] static void Jangdae()=>Start("jangdae");
   [MenuItem("Oheangbu/#297 검토/철옹 산성 — 군기전 입구에서 Play")] static void Hall()=>Start("hall");
+  // demo route (layout places; spot = place:<id>[:<yaw>])
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 폐광 입구 밖 전망터에서 Play")] static void Overlook()=>Start("place:mine_overlook");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 금표 주막에서 Play")] static void Inn()=>Start("place:geumpyo_inn");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 청림 마을에서 Play")] static void Village()=>Start("place:village");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 청림 고산 산길 입구에서 Play")] static void TrailFoot()=>Start("place:mountain_cheongrim_foot");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 청림 고산 정상에서 Play")] static void TrailSummit()=>Start("place:mountain_cheongrim_summit");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 황경 남문 앞에서 Play")] static void SouthGate()=>Start("place:south_gate");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 황경 도성 중심에서 Play")] static void Capital()=>Start("place:capital_center");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 황경 궁성 앞에서 Play")] static void Palace()=>Start("place:palace");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 현강에서 Play")] static void Hyeongang()=>Start("place:hyeongang");
+  [MenuItem("Oheangbu/#297 검토/발표 경로 — 적로에서 Play")] static void Jeokro()=>Start("place:jeokro");
+  // queue entry: start:<spot> | status
+  public static string Run(string command)
+  {
+   if(command=="status")return Status();
+   if(command.StartsWith("start:"))return Start(command.Substring(6),false);
+   throw new ArgumentException(command);
+  }
 
   static void Persist()=>SessionState.SetString(Key,JsonUtility.ToJson(state));
   internal static string Status()
@@ -38,18 +57,24 @@ namespace Oheangbu.EditorTools.WorldMacro
    return "active="+(state?.Active==true)+" placed="+(state?.Placed==true)+" spot="+state?.Spot+" playing="+EditorApplication.isPlaying+
     (EditorApplication.isPlaying&&s!=null&&s.Walker!=null?" player="+s.Walker.Body.transform.position.ToString("F1"):"");
   }
-  internal static void Start(string spot)
+  internal static string Start(string spot,bool interactive=true)
   {
-   if(EditorApplication.isPlayingOrWillChangePlaymode){EditorUtility.DisplayDialog("#297 검토","Play 중에는 시작할 수 없습니다. Play를 끝낸 뒤 다시 고르세요.","확인");return;}
+   // queue calls (interactive=false) never open a modal dialog: it would block the editor command queue
+   if(EditorApplication.isPlayingOrWillChangePlaymode){const string busy="Play 중에는 시작할 수 없습니다. Play를 끝낸 뒤 다시 고르세요.";if(interactive)EditorUtility.DisplayDialog("#297 검토",busy,"확인");return "refused: "+busy;}
    var scene=SceneManager.GetActiveScene();
-   if(scene.path!=ScenePath){EditorUtility.DisplayDialog("#297 검토","후보 씬을 먼저 여세요:\n"+ScenePath,"확인");return;}
-   if(scene.isDirty&&!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())return;
-   var s=Object.FindFirstObjectByType<WorldMacroPlaytestSession>();if(s==null)return;
+   if(scene.path!=ScenePath&&scene.path!=MainPath)
+   {
+    if(scene.isDirty&&!EditorSceneManager.SaveScene(scene))return "refused: could not save "+scene.path;   // queue-driven: never block on a modal save dialog
+    scene=EditorSceneManager.OpenScene(MainPath,OpenSceneMode.Single);
+   }
+   if(scene.isDirty&&!EditorSceneManager.SaveScene(scene))return "refused: could not save "+scene.path;   // queue-driven: never block on a modal save dialog
+   var s=Object.FindFirstObjectByType<WorldMacroPlaytestSession>();if(s==null)return "refused: no playtest session in "+scene.path;
    state=new State{Active=true,Spot=spot,Suffix="_review297_"+DateTime.UtcNow.ToString("yyyyMMddTHHmmss"),PriorSuffix=s.TestSaveSuffix,
     PriorUi=SessionState.GetString("PlaytestUiReviewSuffix","__missing__"),PriorStartup=AssetDatabase.GetAssetPath(EditorSceneManager.playModeStartScene),
     PriorDirect=SessionState.GetBool("Compact270.DirectPlay",false),PriorDirectPresent=SessionState.GetBool("Compact270.DirectPlay",false)==SessionState.GetBool("Compact270.DirectPlay",true)};
    s.TestSaveSuffix=state.Suffix;SessionState.SetString("PlaytestUiReviewSuffix",state.Suffix);CompactLoadingStartup270.UseCurrent();
    Persist();EditorApplication.isPlaying=true;
+   return "starting review Play at "+spot+" in "+scene.path;
   }
   static void Tick()
   {
@@ -58,7 +83,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(s==null||!s.InitializationComplete||PlaytestUiRoot.Instance?.LoadingInProgress==true)return;
    try
    {
-    var (feet,yaw,label)=CompactRebuildAuthoring.CheolongReviewSpot297(state.Spot);
+    var (feet,yaw,label)=state.Spot.StartsWith("place:")?CompactRebuildAuthoring.PlaceReviewSpot297(s,state.Spot.Substring(6)):CompactRebuildAuthoring.CheolongReviewSpot297(state.Spot);
     s.Teleport(feet,yaw);Debug.Log("[#297 검토] "+label+" "+feet.ToString("F1")+" (격리 저장 "+state.Suffix+", Play 종료 시 삭제)");
    }
    catch(Exception e){Debug.LogException(e);}
@@ -77,6 +102,16 @@ namespace Oheangbu.EditorTools.WorldMacro
  }
  public static partial class CompactRebuildAuthoring
  {
+  // place:<id>[:<yaw>] — a layout place on physical support; default yaw faces the nearest other place at least 60 m away
+  internal static (Vector3 feet,float yaw,string label) PlaceReviewSpot297(WorldMacroPlaytestSession s,string arg)
+  {
+   var a=arg.Split(':');var places=s.MountainLayout.Places;var place=places.FirstOrDefault(p=>p.Id==a[0])??throw new Exception("unknown place "+a[0]);
+   var field=new CompactWorldSurface(s.MountainLayout);var xz=place.XZ;var feet=Support297(new Vector3(xz.x,field.Sample(xz.x,xz.y)+1f,xz.y),6f);
+   float yaw;
+   if(a.Length>1)yaw=float.Parse(a[1],System.Globalization.CultureInfo.InvariantCulture);
+   else{var other=places.Where(p=>p!=place&&Vector2.Distance(p.XZ,xz)>=60f).OrderBy(p=>Vector2.Distance(p.XZ,xz)).FirstOrDefault();var d=other!=null?other.XZ-xz:Vector2.up;yaw=Mathf.Atan2(d.x,d.y)*Mathf.Rad2Deg;}
+   return (feet,yaw,place.Id);
+  }
   // review spots from the built compound (Finish297/Cheolong/unity.json + the scene's door objects), on physical support
   internal static (Vector3 feet,float yaw,string label) CheolongReviewSpot297(string spot)
   {

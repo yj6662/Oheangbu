@@ -49,6 +49,9 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(command=="lighting-revert")return Lighting297(true);
    if(command=="shading")return Shading297(false);
    if(command=="shading-revert")return Shading297(true);
+   if(command=="attraction")return Attraction297(false);
+   if(command=="attraction-revert")return Attraction297(true);
+   if(command.StartsWith("mat-tune:"))return MatTune297(command.Substring(9));
    if(command=="cave-dry")return CaveDry297();
    if(command=="cave-actors")return CaveActors297();
    if(command=="cave")return Cave297(false);
@@ -66,10 +69,12 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(command=="main-status")return Finish297MainStart.Run("status");
    if(command=="merge298-prepare")return Merge298Prepare297();
    if(command=="main-create")return MainCreate297();
+   if(command=="main-recreate")return MainCreate297(true);
    if(command=="lobby-connect")return LobbyConnect297(false);
    if(command=="lobby-revert")return LobbyConnect297(true);
-   if(command.StartsWith("review-play:")){Finish297ReviewPlay.Start(command.Substring(12));return "starting review Play at "+command.Substring(12);}
-   if(command=="review-play-status")return Finish297ReviewPlay.Status();
+   if(command=="review-play-status"||command=="review-play:status")return Finish297ReviewPlay.Status();
+   if(command.StartsWith("review-play:start:"))return Finish297ReviewPlay.Start(command.Substring(18),false);
+   if(command.StartsWith("review-play:"))return Finish297ReviewPlay.Start(command.Substring(12),false);
    if(command=="play-stop"){EditorApplication.isPlaying=false;return "stopping Play";}
    if(command.StartsWith("doors-pose:"))return DoorsPose297(float.Parse(command.Substring(11),System.Globalization.CultureInfo.InvariantCulture));
    if(command=="walk-cave")return WalkCave297();
