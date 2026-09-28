@@ -75,6 +75,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "make-profile": return MakeProfile(args);
                     case "fit": return Fit(null);
                     case "pen": return PenFit(args);
+                    case "fist": return FistFromCarry(args);
+                    case "fist-fit": return FistFit(args);
                     case "scale": return SetScale(args);
                     case "assign": return Assign(!args.Contains("nosave"));
                     case "revert": return Revert(!args.Contains("nosave"));
@@ -693,6 +695,229 @@ namespace Oheangbu.EditorTools.WorldMacro
                 string json = JsonUtility.ToJson(report, true);
                 File.WriteAllText(Path.Combine(directory, "pen_fit_report.json"), json);
                 return json;
+            }
+
+            // Fist (power) grasp for the big brush: the shaft crosses the palm obliquely and leaves the fist on the little-finger
+            // side (tilted distally by `tilt` degrees); the four fingers wrap around it, the thumb closes over the index/middle.
+            // fist[:tilt[:holdFromFerrule[:size]]] — degrees, runtime metres, uniform brush size. Lengths measured in Edit
+            // mode are scaled by `size` (the rig scales the brush at bind). Writes DrawingOffset, the grip frame and the
+            // fist-mode switches (ShuanggouFist, BrushSize, handle stretch off).
+            static string FistFit(string[] args)
+            {
+                NeedEdit();
+                float Arg(int i, float d) => args.Length > i && float.TryParse(args[i], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float v) ? v : d;
+                float tilt = Arg(0, 30f), holdFromFerrule = Arg(1, .22f), size = Mathf.Clamp(Arg(2, 1.3f), .5f, 3f);
+                var profile = LoadProfile(ProfileAsset);
+                Need(profile != null, "Run make-profile first (" + ProfileAsset + ").");
+                var rig = SceneRig();
+                var report = new FitReport { utc = DateTime.UtcNow.ToString("o"), scene = ScenePath(rig), rig = HierarchyPath(rig.transform),
+                    profile = ProfileAsset, source = "fist tilt=" + tilt + " size=" + size, brushScale = size };
+                var animator = QaGet<Animator>(rig, "_animator");
+                Need(animator != null, "Gesture rig has no Animator.");
+                Transform hand = animator.isHuman && animator.avatar != null ? animator.GetBoneTransform(HumanBodyBones.RightHand) : null;
+                if (hand == null) hand = Find(animator.transform, profile.RightHandName);
+                Need(hand != null, "Right hand bone not found.");
+                report.handBone = HierarchyPath(hand);
+                float unit = Mathf.Max(1e-6f, Mathf.Abs(hand.lossyScale.x));
+                report.handScale = unit;
+
+                Transform brushRoot = QaGet<Transform>(rig, "_worldBrushRoot");
+                Need(brushRoot != null, "World brush root is not bound on the rig.");
+                Transform grip = QaGet<Transform>(rig, "_worldGripSocket"); if (grip == null) grip = Find(brushRoot, "GripSocket");
+                Transform tip = QaGet<Transform>(rig, "_worldTipSocket"); if (tip == null) tip = Find(brushRoot, "TipSocket");
+                Need(grip != null && tip != null && grip != tip, "World brush GripSocket/TipSocket missing.");
+                Transform shaftEnd = Find(brushRoot, "ShaftEndSocket"); if (shaftEnd == null) shaftEnd = Find(brushRoot, "Bristle_01");
+                Quaternion toGrip = Quaternion.Inverse(grip.rotation);
+                Vector3 tipLocal = toGrip * (tip.position - grip.position);
+                float gripToTip = tipLocal.magnitude;
+                Need(gripToTip > .02f, "GripSocket and TipSocket coincide.");
+                Vector3 tipDirection = tipLocal / gripToTip;
+                float ferruleAlong = shaftEnd != null ? Vector3.Dot(toGrip * (shaftEnd.position - grip.position), tipDirection) : gripToTip * .6f;
+                var samples = new List<Vector2>(4096);
+                report.handleMeasurement = MeasureHandle(brushRoot, grip, shaftEnd, toGrip, tipDirection, samples, report.notes);
+                float butt = samples.Count > 0 ? samples.Min(s => s.x) : 0f;
+                // runtime (scaled) brush
+                report.gripToTipMeters = gripToTip * size;
+                report.ferruleAlongMeters = ferruleAlong * size;
+                report.handleButtAlongMeters = butt * size;
+                report.holdFromFerruleMeters = holdFromFerrule;
+                report.holdAlongMeters = Mathf.Clamp(report.ferruleAlongMeters - holdFromFerrule,
+                    report.handleButtAlongMeters + .05f, Mathf.Max(report.handleButtAlongMeters + .05f, report.ferruleAlongMeters - .04f));
+                report.graspToTipMeters = report.gripToTipMeters - report.holdAlongMeters;
+                report.shaftRadiusMeters = ShaftRadius(samples, report.holdAlongMeters / size, report.notes) * size;
+
+                Vector3 forward = profile.HandForwardLocal.normalized;
+                Vector3 dorsal = Vector3.ProjectOnPlane(profile.HandDorsalLocal, forward).normalized;
+                Vector3 radial = Vector3.Cross(forward, dorsal).normalized;
+                if (Vector3.Dot(radial, profile.HandThumbSideLocal) < 0f) radial = -radial;
+                Vector3 palmar = -dorsal, ulnar = -radial;
+                Vector3 axis = (ulnar * Mathf.Cos(tilt * Mathf.Deg2Rad) + forward * Mathf.Sin(tilt * Mathf.Deg2Rad)).normalized;
+                var chains = new Dictionary<string, Chain>();
+                foreach (string digit in Digits)
+                {
+                    var chain = BindChain(hand, profile, digit, palmar, dorsal, ulnar, report.notes);
+                    if (chain == null) continue;
+                    chain.Thickness = Mathf.Clamp(.32f * chain.LocalPosition[2].magnitude * unit, .005f, .012f) / unit;
+                    chains[digit] = chain;
+                }
+                Need(chains.ContainsKey("Index") && chains.ContainsKey("Middle") && chains.ContainsKey("Thumb"), "Thumb, index and middle chains are required.");
+                float radius = report.shaftRadiusMeters / unit;
+                var f = new Frame { Forward = forward, Palmar = palmar, Axis = axis, Radius = radius, Tolerance = .0004f / unit, Chains = chains };
+                Vector3 front = Vector3.ProjectOnPlane(forward, axis).normalized;
+                Vector3 palmSide = Vector3.ProjectOnPlane(Vector3.ProjectOnPlane(palmar, axis), front).normalized;
+                Vector3 wrap = (palmSide * .75f - front * .65f).normalized;          // fingertips curl back on the far side
+                Vector3 over = (palmSide * 1f + front * .15f).normalized;           // thumb closes over the fingers
+                var index = chains["Index"]; var middle = chains["Middle"]; var thumb = chains["Thumb"];
+                float length = index.Length;
+                Vector3 knuckles = Vector3.zero; int count = 0;
+                foreach (string d in new[] { "Index", "Middle", "Ring", "Pinky" }) if (chains.TryGetValue(d, out Chain k)) { knuckles += k.Knuckle; count++; }
+                knuckles /= Mathf.Max(1, count);
+                // Parametric fist curl: every joint of a finger curls together (MCP:PIP:DIP ≈ 70:90:55, thumb 30:45:40);
+                // per finger the curl amount that best lays its middle/distal segments on the shaft surface wins, with
+                // penetration penalised (the thumb lies over the index/middle, one finger-thickness further out).
+                float[] fingerCurl = { 70f, 90f, 55f }, thumbCurl = { 30f, 45f, 40f };
+                float WrapCost(Chain c, Vector3 origin, float need)
+                {
+                    Vector3[] pts = { c.Joint[0], c.Joint[1], c.Joint[2], c.Tip };
+                    float cost = 0f;
+                    for (int sgm = 0; sgm < 3; sgm++)
+                        for (int k = 0; k <= 4; k++)
+                        {
+                            float d = Vector3.ProjectOnPlane(Vector3.Lerp(pts[sgm], pts[sgm + 1], k / 4f) - origin, axis).magnitude - need;
+                            if (d < 0f) cost += 4f * -d; else if (sgm > 0) cost += d;
+                        }
+                    // a fist wraps: the fingertip must come round to the far side (the thumb over the fingers)
+                    Vector3 around = Vector3.ProjectOnPlane(c.Tip - origin, axis);
+                    float wrapped = around.sqrMagnitude > 1e-10f ? Vector3.Dot(around.normalized, c.Thumb ? over : wrap) : -1f;
+                    return cost / Mathf.Max(1e-5f, c.Length) + 3f * (1f - wrapped);
+                }
+                void Curl(Chain c, float k)
+                {
+                    float[] basis = c.Thumb ? thumbCurl : fingerCurl;
+                    c.Pose(Mathf.Min(basis[0] * k, c.FlexMax[0]), Mathf.Min(basis[1] * k, c.FlexMax[1]), Mathf.Min(basis[2] * k, c.FlexMax[2]));
+                    if (c.Thumb) { c.Abd = Mathf.Clamp(12f, -c.AbdLimit, c.AbdLimit); c.Forward(); }
+                }
+                float Score(Vector3 origin)
+                {
+                    float cost = 0f;
+                    foreach (string digit in Digits)
+                    {
+                        if (!chains.TryGetValue(digit, out Chain c)) continue;
+                        float need = radius + c.Thickness + (c.Thumb ? 2f * index.Thickness : 0f);
+                        float bestK = 1f, bestCost = float.PositiveInfinity;
+                        for (float k = .2f; k <= 1.45f; k += .03f)
+                        {
+                            Curl(c, k);
+                            float w = WrapCost(c, origin, need);
+                            if (w < bestCost) { bestCost = w; bestK = k; }
+                        }
+                        Curl(c, bestK);
+                        c.Target = c.Effector;
+                        cost += c.Weight * bestCost;
+                    }
+                    return cost;
+                }
+                Vector3 bestOrigin = knuckles;
+                float best = float.PositiveInfinity;
+                // the shaft lies across the base of the fingers (forward of the knuckle heads), palmar of the knuckles
+                foreach (float a in new[] { -.3f, -.2f, -.1f, 0f, .1f, .2f, .3f, .4f })
+                    foreach (float b in new[] { 0f, .05f, .1f, .15f, .2f })
+                    {
+                        Vector3 o = knuckles + forward * (a * length) + palmar * (radius + b * length);
+                        float cost = Score(o);
+                        if (cost < best) { best = cost; bestOrigin = o; }
+                    }
+                Vector3 centre = bestOrigin;
+                for (int i = -1; i <= 1; i++)
+                    for (int j = -1; j <= 1; j++)
+                    {
+                        if (i == 0 && j == 0) continue;
+                        Vector3 o = centre + (forward * i + palmar * j) * (.05f * length);
+                        float cost = Score(o);
+                        if (cost < best) { best = cost; bestOrigin = o; }
+                    }
+                report.cost = Score(bestOrigin);
+                report.shaftForwardMeters = Vector3.Dot(bestOrigin - knuckles, forward) * unit;
+                report.shaftPalmarMeters = Vector3.Dot(bestOrigin - knuckles, palmar) * unit;
+                var digits = new List<FitDigit>();
+                bool findings = false;
+                foreach (string digit in Digits)
+                {
+                    if (!chains.TryGetValue(digit, out Chain c)) continue;
+                    for (int j = 0; j < 3; j++) c.Poses[j].DrawingOffset = (Quaternion.Inverse(c.Rest[j]) * c.Local(j)).normalized;
+                    float clearance = Clearance(c, bestOrigin, axis, radius, out _);
+                    var row = new FitDigit { digit = digit, residualMm = (Vector3.ProjectOnPlane(c.Tip - bestOrigin, axis).magnitude - radius - c.Thickness) * unit * 1000f,
+                        clearanceMm = clearance * unit * 1000f, abductionDegrees = c.Abd, flexDegrees = c.Flex.ToArray() };
+                    findings |= row.residualMm > 6f || row.clearanceMm < -4f;
+                    digits.Add(row);
+                }
+                report.digits = digits.ToArray();
+                // hold point = shaft at the middle finger's level; the GripSocket sits holdAlong behind it toward the butt
+                Vector3 hold = bestOrigin + axis * Level(f, bestOrigin, middle.Knuckle);
+                profile.ShuanggouGripRotation = Quaternion.FromToRotation(tipDirection, axis).normalized;
+                profile.ShuanggouGripPosition = hold - axis * (report.holdAlongMeters / unit);
+                profile.ShuanggouGrip = true;
+                profile.ShuanggouFist = true;
+                profile.BrushSize = size;
+                profile.BrushScale = 1f;
+                profile.NearMinimumDepth = Mathf.Min(profile.NearMinimumDepth, .5f);   // left strokes lay the brush across: the tip comes closer
+                report.shuanggouGripPosition = profile.ShuanggouGripPosition;
+                report.shuanggouGripRotation = profile.ShuanggouGripRotation;
+                report.status = findings ? "FIST_FIT_FINDINGS_IMPLEMENTED" : "FIST_FIT_IMPLEMENTED";
+                EditorUtility.SetDirty(profile);
+                AssetDatabase.SaveAssets();
+                string directory = Path.Combine(OutputRoot, "fit");
+                Directory.CreateDirectory(directory);
+                string json = JsonUtility.ToJson(report, true);
+                File.WriteAllText(Path.Combine(directory, "fist_fit_report.json"), json);
+                return json;
+            }
+
+            // Fist from the carry grasp: the carry pose (grip A) is already a fist fitted around this brush. Drawing uses the
+            // same fingers and handle frame; the rig turns the fist with the wrist (FistHand) and scales the brush uniformly.
+            // fist[:size[:holdFromFerrule]] — the drawing hold slides up the handle to holdFromFerrule (runtime metres below
+            // the ferrule) so the fist sits near the bristles; reports where the tip leaves the fist in the hand frame.
+            static string FistFromCarry(string[] args)
+            {
+                NeedEdit();
+                float size = args.Length > 0 && float.TryParse(args[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float v) ? Mathf.Clamp(v, .5f, 3f) : 1.3f;
+                var profile = LoadProfile(ProfileAsset);
+                Need(profile != null, "Run make-profile first (" + ProfileAsset + ").");
+                var rig = SceneRig();
+                Transform brushRoot = QaGet<Transform>(rig, "_worldBrushRoot");
+                Transform grip = QaGet<Transform>(rig, "_worldGripSocket"); if (grip == null && brushRoot != null) grip = Find(brushRoot, "GripSocket");
+                Transform tip = QaGet<Transform>(rig, "_worldTipSocket"); if (tip == null && brushRoot != null) tip = Find(brushRoot, "TipSocket");
+                Need(grip != null && tip != null, "World brush GripSocket/TipSocket missing.");
+                Vector3 rest = (Quaternion.Inverse(grip.rotation) * (tip.position - grip.position)).normalized;
+                float holdFromFerrule = args.Length > 1 && float.TryParse(args[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float hf) ? hf : .2f;
+                Transform shaftEnd = brushRoot != null ? (Find(brushRoot, "ShaftEndSocket") ?? Find(brushRoot, "Bristle_01")) : null;
+                float ferrule = shaftEnd != null ? Vector3.Dot(Quaternion.Inverse(grip.rotation) * (shaftEnd.position - grip.position), rest) * size : 0f;
+                float slide = Mathf.Max(0f, ferrule - holdFromFerrule);   // runtime metres from the carry hold toward the tip
+                float unit = 1f;
+                { var animator = QaGet<Animator>(rig, "_animator"); Transform hand = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.RightHand) : null; if (hand != null) unit = Mathf.Max(1e-6f, Mathf.Abs(hand.lossyScale.x)); }
+                int fingers = 0;
+                foreach (var pose in profile.Fingers ?? Array.Empty<WorldMacroPlayerGestureProfile.FingerPose>())
+                    if (pose != null && pose.BoneName != null && pose.BoneName.StartsWith("RightHand", StringComparison.Ordinal)) { pose.DrawingOffset = pose.CarryOffset; fingers++; }
+                profile.ShuanggouGripRotation = profile.RightHandGripRotation;
+                Vector3 shaftLocal = (WorldMacroPlayerGestureProfile.SafeRotation(profile.RightHandGripRotation) * rest).normalized;
+                profile.ShuanggouGripPosition = profile.RightHandGripPosition - shaftLocal * (slide / unit);
+                profile.ShuanggouGrip = true;
+                profile.ShuanggouFist = true;
+                profile.BrushSize = size;
+                profile.BrushScale = 1f;
+                profile.NearMinimumDepth = Mathf.Min(profile.NearMinimumDepth, .5f);
+                EditorUtility.SetDirty(profile);
+                AssetDatabase.SaveAssets();
+                Vector3 shaft = (WorldMacroPlayerGestureProfile.SafeRotation(profile.RightHandGripRotation) * rest).normalized;
+                Vector3 forward = profile.HandForwardLocal.normalized, dorsal = Vector3.ProjectOnPlane(profile.HandDorsalLocal, forward).normalized;
+                Vector3 radial = Vector3.Cross(forward, dorsal).normalized;
+                if (Vector3.Dot(radial, profile.HandThumbSideLocal) < 0f) radial = -radial;
+                return "FIST_FROM_CARRY_IMPLEMENTED fingers=" + fingers + " size=" + size.ToString("0.##", CultureInfo.InvariantCulture)
+                    + " tip-in-hand: forward=" + Vector3.Dot(shaft, forward).ToString("F2", CultureInfo.InvariantCulture)
+                    + " dorsal=" + Vector3.Dot(shaft, dorsal).ToString("F2", CultureInfo.InvariantCulture)
+                    + " radial=" + Vector3.Dot(shaft, radial).ToString("F2", CultureInfo.InvariantCulture)
+                    + " slide=" + slide.ToString("F3", CultureInfo.InvariantCulture) + " ferrule=" + ferrule.ToString("F3", CultureInfo.InvariantCulture)
+                    + " gripPosition=" + profile.ShuanggouGripPosition.ToString("F3");
             }
 
             static string MeasureHandle(Transform brushRoot, Transform grip, Transform shaftEnd, Quaternion toGrip, Vector3 axis,

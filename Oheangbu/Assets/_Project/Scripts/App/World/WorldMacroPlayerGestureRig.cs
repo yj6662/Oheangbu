@@ -200,6 +200,7 @@ namespace Oheangbu.App.World
                 return false;
             }
             _world = BindBody(_animator.transform, true);
+            ApplyBrushSize(_worldBrushRoot); ApplyBrushSize(_nearBrushRoot);
             _worldBrush = BindBrush(_worldBrushRoot, _worldGripSocket, _worldTipSocket);
             _near = _nearRoot != null ? BindBody(_nearRoot, false) : null;
             _nearBrush = BindBrush(_nearBrushRoot, _nearGripSocket, _nearTipSocket);
@@ -1073,6 +1074,7 @@ namespace Oheangbu.App.World
         // hand is rolled about the shaft so the knuckles point up-left, blended toward the solved forearm.
         private Quaternion VerticalHand(Brush brush, Vector3 axis, Vector3 up, Vector3 forearm)
         {
+            if (_profile.ShuanggouFist) return FistHand(brush, axis, up, forearm);
             Vector3 shaft = VerticalShaftLocal(brush);
             // ShuanggouDorsalFacing: the back of the hand (not the finger direction) is aligned to the view-up reference,
             // so the palm and finger pads face the look direction instead of the screen
@@ -1170,7 +1172,8 @@ namespace Oheangbu.App.World
         private void EvaluateVerticalWorldBristles(Vector3 tip, Vector3 velocity, bool stroking, float dt)
         {
             Transform basis = _world.Root;
-            Vector3 axis = VerticalAxis(basis.forward, basis, _bodyPoint);
+            Vector3 axis = _profile.ShuanggouFist ? FistAxis(basis, _bodyPoint.x, FistElbowDirection(basis))
+                : VerticalAxis(basis.forward, basis, _bodyPoint);
             BlendedHand(_worldBrush, axis, basis.up, tip - axis * _worldBrush.TipOffset.magnitude - _world.Upper.position,
                 VerticalBlend, out Quaternion grip);
             EvaluateBristlesGrip(_worldBrush, velocity, basis, grip, stroking, dt);
@@ -1184,6 +1187,7 @@ namespace Oheangbu.App.World
 
         private Vector3 PoseTowardTipVertical(Body body, Brush brush, Vector3 tip, Transform basis, float weight)
         {
+            if (_profile.ShuanggouFist) return PoseTowardTipFist(body, brush, tip, basis, weight);
             float blend = VerticalBlend, dt = _frameDt;
             Vector3 shoulder = body.Upper.position;
             float length = brush.TipOffset.magnitude;
@@ -1212,6 +1216,7 @@ namespace Oheangbu.App.World
 
         private void ApplyNearArmVertical(Camera camera, Vector2 screen, Vector3 visualVelocity, bool stroking, float dt)
         {
+            if (_profile.ShuanggouFist) { ApplyNearArmFist(camera, screen, visualVelocity, stroking, dt); return; }
             Transform view = camera.transform;
             float blend = NearBlend;
             foreach (var pair in _nearCopies)
@@ -1349,6 +1354,204 @@ namespace Oheangbu.App.World
             _diagnostics.NearVerticalConeDegrees = cone;
             FinishNearArm(camera, screen, wrist, follow, reachCorrection);
         }
+
+        // ---------------------------------------------------------------- fist grip (#297)
+        // A big brush held in the fist: the elbow stays near an anchor out to the right (it moves only when the tip
+        // would be out of reach), strokes up/down are made by bending the elbow (the wrist moves on the forearm sphere
+        // around the elbow), and strokes left/right by the wrist: the brush turns from parallel with the upper arm
+        // (right) to perpendicular to it (left).
+
+        private Vector3 FistElbowDirection(Transform frame)
+        {
+            Vector3 d = frame.TransformDirection(_profile.FistElbowDirection);
+            return d.sqrMagnitude > .00000001f ? d.normalized : frame.right;
+        }
+
+        private Vector3 FistAxis(Transform frame, float x, Vector3 upper)
+        {
+            Vector3 u = upper.sqrMagnitude > .00000001f ? upper.normalized : frame.right;
+            Vector3 right = u;
+            float into = Vector3.Dot(right, frame.forward);
+            if (into < .25f) right = (right + frame.forward * (.25f - into)).normalized;
+            Vector3 left = Vector3.Cross(frame.up, u);
+            if (left.sqrMagnitude < .000001f) left = -frame.right;
+            if (Vector3.Dot(left, frame.forward) < 0f) left = -left;
+            left = (left.normalized + frame.forward * _profile.FistLeftForward).normalized;
+            float t = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(_profile.FistSweepRange.x, _profile.FistSweepRange.y, x));
+            return (Vector3.Slerp(left, right, t).normalized + frame.up * _profile.FistRise).normalized;
+        }
+
+        // Fist hand: the wrist-neutral hand (fingers along the forearm, back of the hand up) turned by the smallest
+        // rotation that points the brush along the drawing axis — the wrist, not the elbow, aims the brush.
+        private Quaternion FistHand(Brush brush, Vector3 axis, Vector3 up, Vector3 forearm)
+        {
+            Vector3 shaft = VerticalShaftLocal(brush);
+            Vector3 a = axis.sqrMagnitude > .000001f ? axis.normalized : Vector3.forward;
+            Vector3 f = forearm.sqrMagnitude > .00000001f ? forearm.normalized : a;
+            Vector3 d = Vector3.ProjectOnPlane(up, f);
+            if (d.sqrMagnitude < .000001f) d = Vector3.ProjectOnPlane(Vector3.up, f);
+            if (d.sqrMagnitude < .000001f) d = Vector3.ProjectOnPlane(Vector3.forward, f);
+            Vector3 fl = _profile.HandForwardLocal.normalized;
+            Vector3 dl = Vector3.ProjectOnPlane(_profile.HandDorsalLocal, fl);
+            if (dl.sqrMagnitude < .000001f) dl = Vector3.ProjectOnPlane(Vector3.forward, fl);
+            Quaternion upright = Quaternion.LookRotation(f, d.normalized) * Quaternion.Inverse(Quaternion.LookRotation(fl, dl.normalized));
+            // forearm roll first (pronation/supination, limited around back-of-hand-up), then the wrist bends the rest
+            Vector3 s0 = Vector3.ProjectOnPlane(upright * shaft, f), across = Vector3.ProjectOnPlane(a, f);
+            float roll = 0f;
+            if (s0.sqrMagnitude > .000001f && across.sqrMagnitude > .000001f)
+                roll = Mathf.Clamp(Vector3.SignedAngle(s0, across, f), -_profile.FistRollLimit, _profile.FistRollLimit)
+                    * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.1f, .45f, across.magnitude));
+            Quaternion neutral = Quaternion.AngleAxis(roll + _profile.FistKnuckleRoll, f) * upright;
+            return Quaternion.FromToRotation(neutral * shaft, a) * neutral;
+        }
+
+        private Vector3 PoseTowardTipFist(Body body, Brush brush, Vector3 tip, Transform basis, float weight)
+        {
+            float blend = VerticalBlend;
+            Vector3 shoulder = body.Upper.position;
+            Vector3 upper = FistElbowDirection(basis);
+            Vector3 elbow = shoulder + upper * body.UpperLength;
+            Vector3 axis = FistAxis(basis, _bodyPoint.x, upper);
+            Vector3 gripPosition = Vector3.Scale(GripPositionLocal(blend), body.Hand.lossyScale);
+            Quaternion hand = BlendedHand(brush, axis, basis.up, tip - axis * brush.TipOffset.magnitude - elbow, blend, out Quaternion grip);
+            Vector3 wrist = tip - grip * brush.TipOffset - hand * gripPosition;
+            hand = BlendedHand(brush, axis, basis.up, wrist - elbow, blend, out grip);
+            wrist = tip - grip * brush.TipOffset - hand * gripPosition;
+            PlayerVisualIK.Solve(body.Upper, body.Forearm, body.Hand, wrist, elbow + (elbow - (shoulder + wrist) * .5f) * .5f, hand, weight, _profile.MaximumArmExtension);
+            AlignForearmToHand(body, weight);
+            return wrist;
+        }
+
+        private void ApplyNearArmFist(Camera camera, Vector2 screen, Vector3 visualVelocity, bool stroking, float dt)
+        {
+            Transform view = camera.transform;
+            float blend = NearBlend;
+            foreach (var pair in _nearCopies)
+            {
+                pair.Target.localPosition = pair.Source.localPosition;
+                pair.Target.localRotation = pair.Source.localRotation;
+            }
+            foreach (var finger in _fingers)
+                if (finger.Near != null)
+                    finger.Near.localRotation = FingerLocalRotation(finger.Rest, finger.Pose, 1f, _harvestWeight);
+            Rect rect = camera.pixelRect;
+            Vector2 centered = new Vector2((screen.x - rect.x) / Mathf.Max(1f, rect.width) - .5f,
+                (screen.y - rect.y) / Mathf.Max(1f, rect.height) - .5f) * 2f;
+            if (_vNear.Valid && Vector2.Distance(centered, _vNear.Screen) > .40f) _vNear.Valid = _vNear.PoleValid = false;
+            bool continuous = _vNear.Valid;
+            float followLimit = Mathf.Min(_profile.NearShoulderFollowMaximum, _profile.MaximumNearShoulderCorrection);
+            Vector3 followTarget = Vector3.ClampMagnitude(new Vector3(centered.x * .035f, centered.y * .025f, .015f)
+                * _profile.ShoulderFollow, followLimit);
+            _vNear.Shoulder = continuous ? Vector3.Lerp(_vNear.Shoulder, followTarget, Lag(_profile.ShoulderLag, dt)) : followTarget;
+            _nearRoot.rotation = view.rotation;
+            _nearRoot.position += view.TransformPoint(_profile.NearShoulderOffset + _vNear.Shoulder) - _near.Upper.position;
+            Vector3 follow = view.TransformVector(_vNear.Shoulder);
+            MeasureLengths(_near);
+            Ray ray = camera.ScreenPointToRay(screen);
+            float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
+            float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
+            float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
+            Vector3 shoulder = _near.Upper.position;
+            float upperLength = _near.UpperLength, forearmLength = _near.ForearmLength * .995f;
+            Vector3 upper = FistElbowDirection(view);
+            Vector3 anchor = shoulder + upper * upperLength;
+            // the elbow drifts back to its anchor; it only leaves it by what reach demands
+            Vector3 elbow = continuous && _vNear.PoleValid
+                ? Vector3.Lerp(view.TransformPoint(_vNear.Pole), anchor, Lag(_profile.FistElbowReturn, dt)) : anchor;
+            elbow = shoulder + (elbow - shoulder).normalized * upperLength;
+            Vector3 axis = FistAxis(view, centered.x, upper);
+            Vector3 gripPosition = Vector3.Scale(GripPositionLocal(blend), _near.Hand.lossyScale);
+            float reference = continuous ? _vNear.Depth : preferred, depth = reference;
+            Vector3 forearmGuess = ray.GetPoint(depth) - axis * _nearBrush.TipOffset.magnitude - elbow;
+            Quaternion hand = Quaternion.identity, grip = Quaternion.identity;
+            Vector3 reachVector = Vector3.zero;
+            for (int pass = 0; pass < 4; pass++)
+            {
+                hand = BlendedHand(_nearBrush, axis, view.up, forearmGuess, blend, out grip);
+                reachVector = grip * _nearBrush.TipOffset + hand * gripPosition;   // wrist -> tip
+                // depth where the wrist lies on the forearm sphere around the elbow (up/down = elbow bend)
+                Vector3 oc = ray.origin - (elbow + reachVector);
+                float b = Vector3.Dot(oc, ray.direction), disc = b * b - oc.sqrMagnitude + forearmLength * forearmLength;
+                if (disc >= 0f)
+                {
+                    float root = Mathf.Sqrt(disc), near = -b - root, far = -b + root;
+                    bool nearOk = near >= minimum && near <= maximum, farOk = far >= minimum && far <= maximum;
+                    depth = nearOk && farOk ? (Mathf.Abs(near - reference) <= Mathf.Abs(far - reference) ? near : far)
+                        : nearOk ? near : farOk ? far : Mathf.Clamp(-b, minimum, maximum);
+                }
+                else depth = Mathf.Clamp(-b, minimum, maximum);
+                Vector3 w = ray.GetPoint(depth) - reachVector;
+                // out of reach at every depth: the elbow moves (back onto the shoulder sphere) by the remaining gap
+                float gap = Vector3.Distance(w, elbow) - forearmLength;
+                if (Mathf.Abs(gap) > .001f)
+                {
+                    elbow += (w - elbow).normalized * gap;
+                    elbow = shoulder + (elbow - shoulder).normalized * upperLength;
+                }
+                forearmGuess = w - elbow;
+            }
+            float depthNow = continuous ? Mathf.Lerp(_vNear.Depth, depth, Lag(.06f, dt)) : depth;
+            float liftTarget = stroking ? 0f : _profile.PenLiftDistance;
+            _vNear.Lift = continuous ? Mathf.Lerp(_vNear.Lift, liftTarget, Lag(.05f, dt)) : liftTarget;
+            Vector3 tip = ray.GetPoint(depthNow - Mathf.Min(_vNear.Lift, Mathf.Max(0f, depthNow - minimum)));
+            hand = BlendedHand(_nearBrush, axis, view.up, forearmGuess, blend, out grip);
+            EvaluateBristlesGrip(_nearBrush, visualVelocity, view, grip, stroking, dt);
+            Vector3 wrist = tip - grip * _nearBrush.TipOffset - hand * gripPosition;
+            Vector3 pole = elbow + (elbow - (shoulder + wrist) * .5f) * .5f;
+            Vector3 clamped = PlayerVisualIK.ClampReach(shoulder, wrist, upperLength, _near.ForearmLength, _profile.MaximumArmExtension);
+            Vector3 reachCorrection = Vector3.ClampMagnitude(wrist - clamped,
+                Mathf.Max(0f, _profile.MaximumNearShoulderCorrection - follow.magnitude));
+            _nearRoot.position += reachCorrection;
+            PlayerVisualIK.Solve(_near.Upper, _near.Forearm, _near.Hand, wrist, pole + reachCorrection, hand, 1f, _profile.MaximumArmExtension);
+            _nearHasSolution = true;
+            if (_profile.ArticulatedStrokes && stroking && !_strokeAnchorReady)
+            {
+                _nearStrokeWrist = view.InverseTransformPoint(wrist);
+                _nearStrokeGrip = view.InverseTransformPoint(tip - grip * _nearBrush.TipOffset);
+                _worldStrokeGrip = _world.Root.InverseTransformPoint(_worldBrush.Grip.position);
+                _strokeAnchorReady = true;
+            }
+            _vNear.Valid = true; _vNear.Depth = depthNow; _vNear.Screen = centered;
+            _vNear.Pole = view.InverseTransformPoint(elbow); _vNear.PoleValid = true;
+            _nearLastAim = view.InverseTransformDirection(axis);
+            _nearLastDepth = Vector3.Distance(ray.origin, tip);
+            _nearLastScreen = new Vector2(screen.x / Mathf.Max(1, camera.pixelWidth), screen.y / Mathf.Max(1, camera.pixelHeight));
+            _nearLastElbow = view.InverseTransformDirection(_near.Forearm.position - _near.Upper.position);
+            _diagnostics.NearElbowHeight = Vector3.Dot(_near.Forearm.position - _near.Upper.position, view.up);
+            _diagnostics.NearElbowFlexion = Vector3.Angle(_near.Forearm.position - _near.Upper.position, _near.Hand.position - _near.Forearm.position);
+            _diagnostics.OverhandActive = false;
+            _diagnostics.VerticalActive = blend > .99f;
+            _diagnostics.NearForearmTwistDegrees = AlignForearmToHand(_near, 1f);
+            Vector3 forearmAxis = (_near.Hand.position - _near.Forearm.position).normalized;
+            Vector3 dorsal = _near.Hand.rotation * _profile.HandDorsalLocal;
+            _diagnostics.NearWristBendDegrees = Vector3.Angle(forearmAxis, _near.Hand.rotation * _profile.HandForwardLocal);
+            _diagnostics.NearDorsalUp = Vector3.Dot(dorsal.normalized, view.up);
+            _diagnostics.NearDorsalRight = Vector3.Dot(dorsal.normalized, view.right);
+            _diagnostics.NearVerticalAxisErrorDegrees = Vector3.Angle(grip * _nearBrush.RestTipOffset, axis);
+            _diagnostics.NearVerticalConeDegrees = 0f;
+            FinishNearArm(camera, screen, wrist, follow, reachCorrection);
+        }
+
+        // Uniform brush size: the brush's children are moved under one scaled child so the root keeps unit scale
+        // (BindBrush contract) and every bone keeps its local pose; lengths/offsets are measured after scaling.
+        private void ApplyBrushSize(Transform root)
+        {
+            if (!Application.isPlaying || root == null || _profile == null) return;
+            float size = Mathf.Clamp(_profile.BrushSize, .5f, 3f);
+            Transform sizer = root.Find(BrushSizeNode);
+            if (sizer == null)
+            {
+                if (Mathf.Abs(size - 1f) < .001f) return;
+                sizer = new GameObject(BrushSizeNode).transform;
+                sizer.SetParent(root, false);
+                var children = new List<Transform>();
+                foreach (Transform child in root) if (child != sizer) children.Add(child);
+                foreach (var child in children) child.SetParent(sizer, true);
+            }
+            sizer.localScale = Vector3.one * size;
+        }
+
+        private const string BrushSizeNode = "BrushSize297";
 
         // Handle-only length stretch pinned at the ferrule (Bristle_01). The brush root, GripSocket, TipSocket and
         // six bristle bones keep unit scale, so BindBrush/BrushBristleRig contracts and the tip offset are unchanged.

@@ -116,6 +116,24 @@ namespace Oheangbu.App.World
         [Min(0f)] public float ShuanggouElbowDown = .25f, ShuanggouElbowDownPerLeft = .8f;
         [Tooltip("Bend-plane cost weights under the elbow rule: forearm-across-shaft preference and authored-direction preference.")]
         [Min(0f)] public float ShuanggouBendPerpendicularWeight = .25f, ShuanggouBendDesiredWeight = 2f;
+        [Tooltip("Fist grip for the big brush: elbow anchored out to the right, up/down strokes bend the elbow, left/right strokes turn the wrist (brush parallel to the upper arm on the right, perpendicular on the left).")]
+        public bool ShuanggouFist;
+        [Tooltip("View/body-local upper-arm direction from the shoulder to the anchored elbow.")]
+        public Vector3 FistElbowDirection = new Vector3(.72f, -.34f, .62f);
+        [Tooltip("Seconds for the elbow to drift back to its anchor after reach moved it.")]
+        [Min(0f)] public float FistElbowReturn = .35f;
+        [Tooltip("Centered screen x (-1..1) where the wrist sweep is fully perpendicular (x) and fully parallel (y).")]
+        public Vector2 FistSweepRange = new Vector2(0f, 1f);
+        [Tooltip("Forward added to the perpendicular (left) brush direction; 0 = exactly perpendicular to the upper arm.")]
+        [Min(0f)] public float FistLeftForward;
+        [Tooltip("Upward lean of the brush (butt below the tip) so the fist sits under the stroke instead of covering it.")]
+        [Min(0f)] public float FistRise = .3f;
+        [Tooltip("Roll of the back of the hand about the forearm (degrees).")]
+        public float FistKnuckleRoll;
+        [Tooltip("Largest forearm roll (degrees) away from back-of-hand-up used to face the fist's brush side toward the stroke.")]
+        [Range(0f, 180f)] public float FistRollLimit = 100f;
+        [Tooltip("Uniform brush size multiplier (first and third person).")]
+        [Range(.5f, 3f)] public float BrushSize = 1f;
         [Tooltip("Brush tilt from the drawing-plane normal; the butt leans toward ShuanggouLeanDirection so the grasp never hides the tip.")]
         [Range(0f, 45f)] public float ShuanggouViewTilt = 26f;
         [Tooltip("View/body plane direction (right, up) toward which the butt leans. Down keeps the long brush's grasp reachable below the tip.")]
