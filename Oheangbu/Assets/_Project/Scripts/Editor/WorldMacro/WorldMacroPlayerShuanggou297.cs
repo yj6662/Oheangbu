@@ -647,11 +647,13 @@ namespace Oheangbu.EditorTools.WorldMacro
                 // the index arches over the shaft (rounded, pad on top) independently of the open middle/thumb curl
                 float indexCurl = args.Length > 1 && Arg(1, 0f) > 0f ? Arg(1, 1f) : 1f;
                 index.Pose(32f * indexCurl, 50f * indexCurl, 26f * indexCurl);
-                float clearanceScale = args.Length > 4 ? Arg(4, 1.6f) : 1.6f;
+                float clearanceScale = args.Length > 4 ? Arg(4, 1.0f) : 1.0f;
+                // pad-on-surface factor for thumb and middle (1 = the capsule pad touches the shaft surface)
+                float contact = args.Length > 5 ? Arg(5, 1.0f) : 1.0f;
                 Vector3 bestOrigin = index.Effector + Side(palmar * .85f + ulnar * .45f) * (radius + index.Thickness) * clearanceScale;
                 var f = new Frame { Forward = forward, Palmar = palmar, Axis = pen, Radius = radius, Tolerance = .0004f / unit, Chains = chains };
-                Solve(thumb, Contact(f, bestOrigin, -.012f / unit, Side(radial * 1f + palmar * .35f), (radius + thumb.Thickness) * 1.15f), f.Tolerance);
-                Solve(middle, Contact(f, bestOrigin, .010f / unit, Side(palmar * .35f + ulnar * 1f), (radius + middle.Thickness) * 1.15f), f.Tolerance);
+                Solve(thumb, Contact(f, bestOrigin, -.012f / unit, Side(radial * 1f + palmar * .35f), (radius + thumb.Thickness) * contact), f.Tolerance);
+                Solve(middle, Contact(f, bestOrigin, .010f / unit, Side(palmar * .35f + ulnar * 1f), (radius + middle.Thickness) * contact), f.Tolerance);
                 float best = Vector3.Distance(thumb.Effector, thumb.Target) + Vector3.Distance(middle.Effector, middle.Target);
                 float pitchOut = Mathf.Atan2(Vector3.Dot(pen, palmar), Vector3.Dot(pen, forward)) * Mathf.Rad2Deg;
                 float yawOut = Mathf.Atan2(Vector3.Dot(pen, ulnar), Vector3.Dot(pen, forward)) * Mathf.Rad2Deg;
