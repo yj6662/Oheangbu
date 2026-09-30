@@ -35,14 +35,16 @@ namespace Oheangbu.App.World
                 var text=Content.Campaign.DialogueFor(original.Id,Progress.campaign,step?.Dialogue??original.Text);
                 return demoPointView=new PrologueContentSO.Point{Id=original.Id,Kind=original.Kind,Position=original.Position,Radius=original.Radius,
                     Currency=original.Currency,Prompt=string.IsNullOrEmpty(step?.Prompt)?original.Prompt:step.Prompt,Text=text,
-                    RequiredCompleted=original.RequiredCompleted,RequiredDefeated=original.RequiredDefeated,LockedText=original.LockedText};
+                    RequiredCompleted=original.RequiredCompleted,RequiredDefeated=original.RequiredDefeated,LockedText=original.LockedText,
+                    Speaker=original.Speaker,Lines=text==original.Text?original.Lines:Array.Empty<string>(),Services=original.Services};   // #306: authored pages only for the authored text
             }
             if(step==null||!step.Implemented||step.Event!=DemoEventKind.Interaction||step.TriggerId!=original.Id)return original;
             if(ReferenceEquals(demoPointSource,original)&&ReferenceEquals(demoPointStage,step))return demoPointView;
             demoPointSource=original;demoPointStage=step;
             return demoPointView=new PrologueContentSO.Point{Id=original.Id,Kind=original.Kind,Position=original.Position,Radius=original.Radius,
                 Currency=original.Currency,Prompt=string.IsNullOrEmpty(step.Prompt)?original.Prompt:step.Prompt,
-                Text=string.IsNullOrEmpty(step.Dialogue)?original.Text:step.Dialogue};
+                Text=string.IsNullOrEmpty(step.Dialogue)?original.Text:step.Dialogue,
+                Speaker=original.Speaker,Lines=string.IsNullOrEmpty(step.Dialogue)?original.Lines:Array.Empty<string>(),Services=original.Services};
         }
 
         // Return true when this is a campaign interaction (including blocked out-of-order attempts).
@@ -57,7 +59,11 @@ namespace Oheangbu.App.World
             if(!owned)return false;
             if(!DemoCampaignProgression.TryAdvance(Content.Campaign,Progress.campaign,DemoEventKind.Interaction,point.Id,out var next,out var reward,Progress.defeated))
             {
-                if(Content.Campaign.UseExplicitPrerequisites)Present(point.Prompt,point.Text);else Present("다음 여정",DemoTravelAdvice);return true;
+                // #306: an NPC says it on the dialogue surface (Speak306 falls back to the same Present); a place keeps Present
+                bool npc=point.Kind==PrologueInteractionKind.Conversation;
+                if(Content.Campaign.UseExplicitPrerequisites){if(npc)Speak306(point,point.Prompt,point.Text);else Present(point.Prompt,point.Text);}
+                else if(npc)Speak306(point,"다음 여정",DemoTravelAdvice);else Present("다음 여정",DemoTravelAdvice);
+                return true;
             }
             var proposal=WorldMacroProgress.MigrateToCurrent(UnityEngine.JsonUtility.FromJson<WorldMacroProgress>(UnityEngine.JsonUtility.ToJson(Progress)));
             bool first=!proposal.ledger.completed.Contains(point.Id);
@@ -66,8 +72,9 @@ namespace Oheangbu.App.World
             if(first)proposal.ledger.completed.Add(point.Id);
             proposal.campaign=next;
             if(!TryCommitInteraction(proposal,out var error)){Show(error);return true;}
-            string text=point.Text+(reward>0?"\n조선통보 +"+reward:"");
-            Present(point.Prompt,text);InteractionResolved?.Invoke(point.Kind,point.Position);
+            if(point.Kind==PrologueInteractionKind.Conversation)Speak306(point,point.Prompt,point.Text,reward>0?"조선통보 +"+reward:null);   // #306
+            else Present(point.Prompt,point.Text+(reward>0?"\n조선통보 +"+reward:""));
+            InteractionResolved?.Invoke(point.Kind,point.Position);
             success=true;return true;
         }
     }

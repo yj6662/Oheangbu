@@ -156,8 +156,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 reset();
                 Add(report, "initial ground acquired", motor.IsLocomotionGrounded && motor.CanBeginDrawing, body.bounds.min.y + 1000f, .05f);
                 SendDiagnosticButtons(device,false,true,true);step(Vector2.zero,1f/60f);
-                Add(report,"same-frame held draw intent blocks harvest before drawing state",draw.IsPressed()&&harvest.IsPressed()&&!motor.IsDrawing&&!CanHarvest(motor),CanHarvest(motor)?1f:0f,0f,
-                    "Real CanHarvestNow is evaluated with a held draw action while _drawing remains false; native Q/LMB ordering remains unverified.");
+                Add(report,"same-frame Q+LMB press cannot start a chunk pull before drawing state",draw.IsPressed()&&harvest.IsPressed()&&!motor.IsDrawing&&!CanHarvest(motor),CanHarvest(motor)?1f:0f,0f,
+                    "D306 click harvest: the motor starts a pull only on the LMB press frame when CanHarvestNow holds; evaluated with a held draw action while _drawing remains false. Native Q/LMB ordering remains unverified.");
                 reset();
                 foreach (int fps in new[] { 30, 60, 120 }) foreach (float scale in new[] { 1f, .2f })
                 {
@@ -172,18 +172,19 @@ namespace Oheangbu.EditorTools.WorldMacro
                     { step(Vector2.zero, dt); peak = Mathf.Max(peak, fixture.transform.position.y - start); }
                     Add(report, "real CharacterController apex " + fps + "/" + scale, Mathf.Abs(peak - .75f) < .02f, peak, .75f);
                     Add(report, "landing acquired " + fps + "/" + scale, motor.IsLocomotionGrounded, fixture.transform.position.y - start, .03f);
-                    Add(report, "held harvest not resumed on landing " + fps + "/" + scale, !CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 0f);
+                    Add(report, "LMB held across landing cannot start a pull " + fps + "/" + scale, !CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 0f);
                     SendDiagnosticButtons(device, false, false); step(Vector2.zero, dt);
-                    Add(report, "fresh harvest release accepted " + fps + "/" + scale, CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 1f);
+                    Add(report, "released LMB re-arms the next press " + fps + "/" + scale, CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 1f);
                 }
 
                 reset(); Set(motor, "_drawing", true); int priorSerial = motor.JumpSerial;
                 Call(motor, "OnJump", default(InputAction.CallbackContext));
                 Add(report, "jump rejected during drawing", motor.JumpSerial == priorSerial, motor.JumpSerial - priorSerial, 0f);
                 Set(motor, "_drawing", false);
+                // D306: a held LMB is no longer a harvest; only an active pull (HarvestAction.IsExtracting) blocks the jump
                 SendDiagnosticButtons(device, false, true); Call(motor, "OnJump", default(InputAction.CallbackContext));
-                Add(report, "jump rejected while harvest held", motor.JumpSerial == priorSerial, motor.JumpSerial - priorSerial, 0f);
-                SendDiagnosticButtons(device, false, false);
+                Add(report, "held LMB without a pull does not block jump", motor.JumpSerial == priorSerial + 1, motor.JumpSerial - priorSerial, 1f);
+                SendDiagnosticButtons(device, false, false); reset();
                 for (int i = 0; i < 120; i++) step(Vector2.up, 1f / 60f);
                 Add(report, "actual walk speed", Mathf.Abs(motor.ActualLocalVelocity.z - 2.2f) < .04f, motor.ActualLocalVelocity.z, 2.2f);
                 SendDiagnosticButtons(device, true, false);
@@ -196,6 +197,30 @@ namespace Oheangbu.EditorTools.WorldMacro
                 state.SetInputBlocked(true); Call(motor, "Update");
                 Vector3 stopped = fixture.transform.position; state.SetInputBlocked(false); SendDiagnosticButtons(device, false, false); step(Vector2.zero, 1f / 60f);
                 Add(report, "menu release has no stale planar drift", Vector2.Distance(new Vector2(stopped.x, stopped.z), new Vector2(fixture.transform.position.x, fixture.transform.position.z)) < .001f, motor.ActualLocalVelocity.magnitude, 0f);
+                // #300 run toggle: a press latches running without holding; a second press, stopping or crouching ends it
+                reset(); profile.SprintToggle = true;
+                Call(motor, "OnSprint", default(InputAction.CallbackContext));
+                for (int i = 0; i < 120; i++) step(Vector2.up, 1f / 60f);
+                Add(report, "toggle run latched without holding", motor.SprintLatched && motor.IsSprinting && Mathf.Abs(motor.ActualLocalVelocity.z - 5.5f) < .04f, motor.ActualLocalVelocity.z, 5.5f);
+                SendDiagnosticButtons(device, true, false);
+                for (int i = 0; i < 30; i++) step(Vector2.up, 1f / 60f);
+                SendDiagnosticButtons(device, false, false);
+                Add(report, "toggle mode ignores the held key", motor.SprintLatched && Mathf.Abs(motor.ActualLocalVelocity.z - 5.5f) < .04f, motor.ActualLocalVelocity.z, 5.5f);
+                Call(motor, "OnSprint", default(InputAction.CallbackContext));
+                for (int i = 0; i < 120; i++) step(Vector2.up, 1f / 60f);
+                Add(report, "second press returns to walk", !motor.SprintLatched && !motor.IsSprinting && Mathf.Abs(motor.ActualLocalVelocity.z - 2.2f) < .04f, motor.ActualLocalVelocity.z, 2.2f);
+                Call(motor, "OnSprint", default(InputAction.CallbackContext));
+                for (int i = 0; i < 60; i++) step(Vector2.up, 1f / 60f);
+                for (int i = 0; i < 10; i++) step(Vector2.zero, 1f / 60f);
+                for (int i = 0; i < 120; i++) step(Vector2.up, 1f / 60f);
+                Add(report, "brief stop (.17 s) keeps the latched run", motor.SprintLatched && Mathf.Abs(motor.ActualLocalVelocity.z - 5.5f) < .04f, motor.ActualLocalVelocity.z, 5.5f);
+                for (int i = 0; i < 30; i++) step(Vector2.zero, 1f / 60f);
+                for (int i = 0; i < 120; i++) step(Vector2.up, 1f / 60f);
+                Add(report, "stopping (.5 s) ends the latched run", !motor.SprintLatched && Mathf.Abs(motor.ActualLocalVelocity.z - 2.2f) < .04f, motor.ActualLocalVelocity.z, 2.2f, "SprintToggleStopSeconds=" + profile.SprintToggleStopSeconds);
+                Call(motor, "OnSprint", default(InputAction.CallbackContext)); step(Vector2.up, 1f / 60f);
+                Call(motor, "OnCrouch", default(InputAction.CallbackContext)); settle(30, 1f / 60f);
+                Add(report, "crouch ends the latched run", motor.IsCrouching && !motor.SprintLatched, motor.SprintLatched ? 1f : 0f, 0f);
+                profile.SprintToggle = false;
                 reset(); Call(motor, "OnSit", default(InputAction.CallbackContext)); settle(45, 1f / 60f);
                 Add(report, "stationary sit complete", motor.IsSitting && motor.Posture01 > .999f && !motor.CanBeginDrawing && Mathf.Abs(body.height - profile.SittingHeight) < .001f, motor.Posture01, 1f);
                 float feetBefore = fixture.transform.position.y; float postureBefore = motor.Posture01;
@@ -207,9 +232,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                 SendDiagnosticButtons(device, false, true); step(Vector2.zero, 1f / 60f);
                 for (int i = 0; i < 40; i++) step(Vector2.up, 1f / 60f);
                 Add(report, "movement gets up preserving foot height", !motor.IsSitting && Mathf.Abs(body.height - 1.75f) < .001f && Mathf.Abs(fixture.transform.position.y - feetBefore) < .03f, fixture.transform.position.y - feetBefore, .03f);
-                Add(report, "harvest held during seated getup stays cancelled", !CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 0f);
+                Add(report, "LMB held through seated getup cannot start a pull", !CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 0f);
                 SendDiagnosticButtons(device, false, false); step(Vector2.zero, 1f / 60f);
-                Add(report, "fresh release after getup restores harvest eligibility", CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 1f);
+                Add(report, "release after getup re-arms the next press", CanHarvest(motor), CanHarvest(motor) ? 1f : 0f, 1f);
                 settle(30, 1f / 60f); Call(motor, "OnSit", default(InputAction.CallbackContext)); settle(45, 1f / 60f);
                 Call(motor, "OnLocomotionDamage", 1f); settle(40, 1f / 60f);
                 Add(report, "synthetic damage notification cancels sit", !motor.IsSitting, motor.Posture01, 0f, "Only the presentation/motor notification is invoked; no HP, reward or save is changed.");
@@ -225,7 +250,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     SendDiagnosticButtons(device,false,false);step(Vector2.zero,dt);
                     Add(report,"crouch permits draw/harvest "+crouchFps,motor.CanBeginDrawing&&CanHarvest(motor),motor.CanBeginDrawing?1:0,1);
                     Set(motor,"_drawing",true);Call(motor,"OnCrouch",default(InputAction.CallbackContext));Add(report,"C ignored during draw "+crouchFps,motor.IsCrouching,motor.Crouch01,1);Set(motor,"_drawing",false);
-                    SendDiagnosticButtons(device,false,true);Call(motor,"OnCrouch",default(InputAction.CallbackContext));Add(report,"C ignored during harvest hold "+crouchFps,motor.IsCrouching,motor.Crouch01,1);SendDiagnosticButtons(device,false,false);
+                    // D306: held LMB without a pull no longer blocks C (stand request accepted), then crouch again for the ceiling case
+                    SendDiagnosticButtons(device,false,true);Call(motor,"OnCrouch",default(InputAction.CallbackContext));Add(report,"C with held LMB and no pull toggles stand "+crouchFps,CrouchTarget(motor)<.5f,CrouchTarget(motor),0);
+                    Call(motor,"OnCrouch",default(InputAction.CallbackContext));SendDiagnosticButtons(device,false,false);
                     var ceiling=GameObject.CreatePrimitive(PrimitiveType.Cube);
                     try
                     {
@@ -269,7 +296,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             // This method is therefore called only by the queued actual-player-update fixture.
             InputState.Change(device, value, InputUpdateType.Dynamic);
         }
+        // D306 click harvest: CanHarvestNow = an LMB press on this frame may start one chunk pull (holding never repeats it)
         private static bool CanHarvest(PlayerMotor motor) => (bool)typeof(PlayerMotor).GetProperty("CanHarvestNow", MotorFlags).GetValue(motor);
+        private static float CrouchTarget(PlayerMotor motor) => (float)typeof(PlayerMotor).GetField("_crouchTarget", MotorFlags).GetValue(motor);
         private static void Set(PlayerMotor motor, string field, object value) => typeof(PlayerMotor).GetField(field, MotorFlags).SetValue(motor, value);
         private static void Call(PlayerMotor motor, string method, params object[] arguments) => typeof(PlayerMotor).GetMethod(method, MotorFlags).Invoke(motor, arguments);
         private static void Add(MotorReport report, string name, bool pass, float measured, float limit, string detail = null)

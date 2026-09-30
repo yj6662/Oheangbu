@@ -8,8 +8,10 @@ using Oheangbu.App.World.UI;
 using Oheangbu.App.World.Vehicle;
 using Oheangbu.Combat;
 using Oheangbu.Data.World;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Profiling;
@@ -106,6 +108,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             public long screenshotBytes;
             public string screenshotUtc;
             public string failure;
+            // #304 QA2: the still is taken once the #304 tweens are at rest (unscaled-time motion budget + 3 still frames), not after
+            // a fixed .10 s (a first-open page bleeds in over 2 x RevealGapMs + RevealMs = .36 s)
+            public bool settled;
+            public string settle;
         }
 
         [Serializable]
@@ -130,8 +136,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             public string resolution;
             public float logicalWidth;
             public float logicalHeight;
-            public float runtimeFrameScale;
+            public float runtimeFrameScale;     // #304 page fit k = min(1, W/1920, H/1080)
             public float runtimeTitleScale;
+            public float screenPxPerPagePx;     // k x canvas scale factor (20 px meta renders at 20 x this)
             public bool fixedPanelsFit;
         }
 
@@ -140,15 +147,35 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             public string utc;
             public string status;
-            public string scope = "Analytical CanvasScaler and runtime adaptive-panel fit at four target resolutions plus actual active uGUI Text preferred-size checks for each diagnostic page. No Game View resolution was changed.";
+            public string scope = "Analytical CanvasScaler + #304 page-fit rule at four target resolutions; the actual Page304 / TitleCard scale at the current Game View; every active TMP_Text and legacy Text of each diagnostic page (overflow, 16 px floor, canvas and title-safe bounds); icon-only Selectables and instruction-style copy. Pages: 일시정지, 소지품 (장비/석경), 술식 도감, 차패, 옵션 (4 tabs), 조작 안내 (3 tabs), 지도 (sheet unfolded at once; paper labels inside the printed window and clear of the title slip); title: title card, 옵션, 조작 안내. Tab / selection state is restored afterwards. No Game View resolution was changed.";
+            public string rule = "page 1920x1080, frameScale = min(1, W/1920, H/1080) (UiPageFit304); title card scale = min(1, (H-70)/904); title safe x64-1856 y40-1016 (page px)";
             public string mode;
             public float uiScale;
             public float textScale;
             public string actualCanvasRect;
+            public int tmpLabelsInspected;
+            public int legacyLabelsInspected;
             public LayoutSample[] samples = Array.Empty<LayoutSample>();
             public string[] inspectedPages = Array.Empty<string>();
+            public string[] pageFits = Array.Empty<string>();
             public string[] textOverflows = Array.Empty<string>();
+            public string[] outsideCanvas = Array.Empty<string>();
+            public string[] outsideTitleSafe = Array.Empty<string>();
+            public string[] belowMinimumText = Array.Empty<string>();
+            public string[] smallTextInfo = Array.Empty<string>();
+            public string[] iconOnlySelectables = Array.Empty<string>();
+            public string[] instructionTexts = Array.Empty<string>();
+            public string[] mapLabels = Array.Empty<string>();          // #304 QA: 지도 labels outside the printed window / under the title slip
             public string[] failures = Array.Empty<string>();
+        }
+
+        private sealed class LayoutFindings
+        {
+            public readonly List<string> Inspected = new List<string>(), PageFits = new List<string>(), Overflows = new List<string>(),
+                OutsideCanvas = new List<string>(), OutsideSafe = new List<string>(), BelowMinimum = new List<string>(),
+                SmallInfo = new List<string>(), IconOnly = new List<string>(), Instruction = new List<string>(), MapLabels = new List<string>(),
+                Failures = new List<string>();
+            public int Tmp, Legacy;
         }
 
         private enum CheckPhase
@@ -203,6 +230,14 @@ namespace Oheangbu.EditorTools.WorldMacro
         private static int _captureIssuedFrame;
         private static int _lastCaptureFrame;
         private static CaptureReport _captureReport;
+        // #304 QA2 capture settle (reset by BeginCapture)
+        private static readonly Dictionary<long, float> _captureMotionLast = new Dictionary<long, float>(), _captureMotionNow = new Dictionary<long, float>();
+        private static readonly Dictionary<long, string> _captureMotionNames = new Dictionary<long, string>();
+        private static readonly List<long> _captureMotionChanged = new List<long>();
+        private static bool _captureMotionSampled;
+        private static int _captureStillFrames;
+        private static double _captureOpenedAt, _captureStillSince;
+        private const double CaptureSettleMaxSeconds = 3d;
 
         static PlaytestMenuReview()
         {
@@ -248,9 +283,12 @@ namespace Oheangbu.EditorTools.WorldMacro
             Need(requested.Length > 0, "Button name or visible label is required.");
             PlaytestUiRoot root = FindRoot();
             Button[] active = root.GetComponentsInChildren<Button>(false).Where(button => button != null && button.gameObject.activeInHierarchy).ToArray();
-            Button[] matches = active.Where(button => string.Equals(button.name, requested, StringComparison.OrdinalIgnoreCase)
-                || button.GetComponentsInChildren<Text>(true).Any(text => string.Equals((text.text ?? string.Empty).Trim(), requested, StringComparison.OrdinalIgnoreCase))).ToArray();
-            Need(matches.Length == 1, "Expected one active button matching '" + requested + "'; found " + matches.Length + ". Active buttons=" + string.Join(",", active.Select(button => button.name)));
+            // #304: labels are TMP (V.Label / FocusRow) or legacy Text; the GameObject name stays the harness name.
+            Button[] byName = active.Where(button => string.Equals(button.name, requested, StringComparison.OrdinalIgnoreCase)).ToArray();
+            Button[] matches = byName.Length == 1 ? byName
+                : active.Where(button => byName.Contains(button) || HarnessUiRules304.MatchesLabel(button, requested)).ToArray();
+            Need(matches.Length == 1, "Expected one active button matching '" + requested + "'; found " + matches.Length + ". Active buttons="
+                + string.Join(",", active.Select(button => button.name + "(" + string.Join("/", HarnessUiRules304.Labels(button)) + ")")));
             Need(matches[0].interactable, "Matched button is not interactable: " + matches[0].name);
             matches[0].onClick.Invoke();
             return "BUTTON_INVOKED name=" + matches[0].name + " evidence=diagnostic_uGUI_Button.onClick actualPage=" + root.Page;
@@ -370,9 +408,20 @@ namespace Oheangbu.EditorTools.WorldMacro
             {
                 UserSettingsData preview = original.Clone(); preview.UiScale = 1.2f; preview.TextScale = 1.25f;
                 root.Settings.Preview(preview);
+                // pages are rebuilt below inside this same editor callback: do not let V.Label read last frame's text scale
+                HarnessUiRules304.InvalidateTextScaleCache();
             }
-            try { return RunLayoutCheckCore(root, large); }
-            finally { if (large && root.Settings.IsPreviewing) root.Settings.Revert(); }
+            try
+            {
+                if (large) Need(Mathf.Approximately(UiText304.TextScale, Mathf.Clamp(root.Settings.Current.TextScale, .75f, 2f)),
+                    "layout-large could not apply the previewed text scale (UiText304.TextScale=" + UiText304.TextScale + ").");
+                return RunLayoutCheckCore(root, large);
+            }
+            finally
+            {
+                if (large && root.Settings.IsPreviewing) root.Settings.Revert();
+                if (large) HarnessUiRules304.InvalidateTextScaleCache();
+            }
         }
 
         private static string RunLayoutCheckCore(PlaytestUiRoot root, bool large)
@@ -387,7 +436,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             UserSettingsData settings = root.Settings.Current;
             Vector2 reference = canvasScaler.referenceResolution;
             var samples = new List<LayoutSample>();
-            var failures = new List<string>();
+            var findings = new LayoutFindings();
             foreach ((int width, int height, string label) in new[]
             {
                 (1280, 720, "1280x720"), (1920, 1080, "1920x1080"),
@@ -397,56 +446,102 @@ namespace Oheangbu.EditorTools.WorldMacro
                 float sx = width / reference.x, sy = height / reference.y;
                 float scale = Mathf.Exp(Mathf.Lerp(Mathf.Log(sx), Mathf.Log(sy), canvasScaler.matchWidthOrHeight));
                 float logicalWidth = width / scale, logicalHeight = height / scale;
-                float frameScale = Mathf.Min(1f, (logicalWidth - 64f) / 1560f, (logicalHeight - 64f) / 900f);
+                // #304 page fit (UiPageFit304, IMPLEMENTATION §8): the whole 1920x1080 page, never cropped, never enlarged
+                float frameScale = PageFitScale(new Vector2(logicalWidth, logicalHeight));
                 float titleScale = Mathf.Min(1f, (logicalHeight - 70f) / 904f);
                 bool fits = frameScale > 0f && titleScale > 0f
-                    && 1560f * frameScale <= logicalWidth - 64f + .1f && 900f * frameScale <= logicalHeight - 64f + .1f
+                    && UiPageFit304.Width * frameScale <= logicalWidth + .1f && UiPageFit304.Height * frameScale <= logicalHeight + .1f
                     && 904f * titleScale <= logicalHeight - 70f + .1f;
                 samples.Add(new LayoutSample { resolution = label, logicalWidth = logicalWidth, logicalHeight = logicalHeight,
-                    runtimeFrameScale = frameScale, runtimeTitleScale = titleScale, fixedPanelsFit = fits });
-                if (!fits) failures.Add(label + " adaptive runtime panel formula does not fit logical canvas "
+                    runtimeFrameScale = frameScale, runtimeTitleScale = titleScale, screenPxPerPagePx = frameScale * scale, fixedPanelsFit = fits });
+                if (!fits) findings.Failures.Add(label + " page-fit rule does not fit logical canvas "
                     + logicalWidth.ToString("0.0") + "x" + logicalHeight.ToString("0.0") + ".");
             }
 
+            var canvasRect = (RectTransform)menuCanvas.transform;
             string originalPage = root.Page;
-            var inspected = new List<string>();
-            var overflows = new List<string>();
-            string[] pageNames = root.IsTitle ? new[] { "title", "옵션" } : new[] { "일시정지", "소지품", "술식 도감", "차패", "옵션" };
+            // #304 QA: every page of the rail (조작 안내 and 지도 are #304 pages), each with its category / sub tabs. 지도 last: its
+            // sheet is unfolded at once (ReducedMotion for this synchronous check) and closes through the normal fold afterwards.
+            string[] pageNames = root.IsTitle ? new[] { "title", "옵션", "조작 안내" } : new[] { "일시정지", "소지품", "술식 도감", "차패", "옵션", "조작 안내", "지도" };
+            var savedState = SnapshotMenuState(root);
             try
             {
                 foreach (string page in pageNames)
                 {
+                    if (page == "지도") { InspectMap(root, canvasRect, findings); continue; }
                     if (page != "title") root.OpenPage(page);
-                    Canvas.ForceUpdateCanvases();
-                    if (page == "옵션")
+                    HarnessUiRules304.SettleLayout(root);
+                    if (page != "title" && root.Page != page)
                     {
-                        foreach (string tab in new[] { "화면", "소리", "조작", "접근성" })
+                        findings.Inspected.Add(page);
+                        findings.Failures.Add(page + ": OpenPage did not open the page (actual=" + root.Page + ").");
+                        continue;
+                    }
+                    string[] tabs = page == "옵션" ? StaticTabs("Menu304OptionTabs", "화면", "소리", "조작", "접근성")
+                        : page == "조작 안내" ? StaticTabs("Menu304ControlTabs", "이동", "작도", "메뉴") : null;
+                    string prefix = page == "옵션" ? "OptionTab_" : "ControlsTab_";
+                    if (tabs != null)
+                    {
+                        foreach (string tab in tabs)
                         {
-                            InvokeButton("OptionTab_" + tab); Canvas.ForceUpdateCanvases();
-                            InspectActiveText(root, page + "/" + tab, inspected, overflows);
+                            if (!TryInvokeTab(prefix + tab, page, findings)) continue;
+                            HarnessUiRules304.SettleLayout(root);
+                            InspectPage(root, canvasRect, page, page + "/" + tab, findings);
                         }
                     }
-                    else InspectActiveText(root, page, inspected, overflows);
+                    else if (page == "소지품")
+                    {
+                        // 장비 / 석경 sub tabs (EquipmentTab exists only while equipment is enabled; without it the page is 석경 only):
+                        // the current one, then the other
+                        bool hasEquipment = ActiveButton(root, "EquipmentTab") != null;
+                        bool fragments = !hasEquipment || FragmentTabActive(root);
+                        InspectPage(root, canvasRect, page, page + "/" + (fragments ? "석경" : "장비"), findings);
+                        string other = fragments ? "EquipmentTab" : "FragmentsTab";
+                        if (hasEquipment && ActiveButton(root, other) != null && TryInvokeTab(other, page, findings))
+                        {
+                            HarnessUiRules304.SettleLayout(root);
+                            InspectPage(root, canvasRect, page, page + "/" + (fragments ? "장비" : "석경"), findings);
+                        }
+                    }
+                    else InspectPage(root, canvasRect, page, page, findings);
                 }
             }
             finally
             {
+                RestoreMenuState(root, savedState);   // tabs / remembered selections as the player left them
                 if (string.IsNullOrEmpty(originalPage) && root.Page.Length > 0) root.CloseMenu();
                 else if (root.Page != originalPage) root.OpenPage(originalPage);
+                else if (originalPage.Length > 0 && originalPage != "지도") root.OpenPage(originalPage);   // rebuild with the restored tab
             }
-            if (overflows.Count > 0) failures.Add(overflows.Count + " active Text element(s) overflow at the current Game View and text scale.");
+            var failures = findings.Failures;
+            if (findings.Overflows.Count > 0) failures.Add(findings.Overflows.Count + " active text element(s) overflow at the current Game View and text scale.");
+            if (findings.OutsideCanvas.Count > 0) failures.Add(findings.OutsideCanvas.Count + " text element(s) are drawn outside the canvas.");
+            if (findings.OutsideSafe.Count > 0) failures.Add(findings.OutsideSafe.Count + " text element(s) leave the title-safe area (DESIGN §4).");
+            if (findings.BelowMinimum.Count > 0) failures.Add(findings.BelowMinimum.Count + " text element(s) are below " + HarnessUiRules304.MinimumTextPx + " px (DESIGN §8).");
+            if (findings.IconOnly.Count > 0) failures.Add(findings.IconOnly.Count + " icon-only Selectable(s) without a text label (IMPLEMENTATION §9.6).");
+            if (findings.Instruction.Count > 0) failures.Add(findings.Instruction.Count + " instruction-style text(s) (DESIGN §3.3 지시문 금지).");
+            if (findings.MapLabels.Count > 0) failures.Add(findings.MapLabels.Count + " map label(s) leave the printed window or sit under the title slip (DESIGN §7.6, map.png).");
             var report = new LayoutReport
             {
                 utc = DateTime.UtcNow.ToString("O"), status = failures.Count == 0 ? "PASS" : "FAIL",
                 mode = large ? "UNPERSISTED_PREVIEW UiScale=1.20 TextScale=1.25; reverted in finally" : "CURRENT_CONFIRMED_SETTINGS",
                 uiScale = settings.UiScale, textScale = settings.TextScale,
-                actualCanvasRect = ((RectTransform)menuCanvas.transform).rect.ToString(), samples = samples.ToArray(),
-                inspectedPages = inspected.ToArray(), textOverflows = overflows.ToArray(), failures = failures.ToArray()
+                actualCanvasRect = canvasRect.rect.ToString(), tmpLabelsInspected = findings.Tmp, legacyLabelsInspected = findings.Legacy,
+                samples = samples.ToArray(), inspectedPages = findings.Inspected.ToArray(), pageFits = findings.PageFits.ToArray(),
+                textOverflows = findings.Overflows.ToArray(), outsideCanvas = findings.OutsideCanvas.ToArray(),
+                outsideTitleSafe = findings.OutsideSafe.ToArray(), belowMinimumText = findings.BelowMinimum.ToArray(),
+                smallTextInfo = findings.SmallInfo.ToArray(), iconOnlySelectables = findings.IconOnly.ToArray(),
+                instructionTexts = findings.Instruction.ToArray(), mapLabels = findings.MapLabels.ToArray(), failures = failures.ToArray()
             };
             string path = Path.Combine(ValidationFolder, large ? "layout_large_review.json" : "layout_review.json");
             File.WriteAllText(path, JsonUtility.ToJson(report, true));
-            return report.status + " layout-check samples=" + samples.Count + " overflows=" + overflows.Count + " report=" + path;
+            return report.status + " layout-check pages=" + findings.Inspected.Count + " samples=" + samples.Count + " overflows=" + findings.Overflows.Count
+                + " outside=" + (findings.OutsideCanvas.Count + findings.OutsideSafe.Count) + " iconOnly=" + findings.IconOnly.Count
+                + " mapLabels=" + findings.MapLabels.Count + " tmp=" + findings.Tmp + " legacy=" + findings.Legacy + " report=" + path;
         }
+
+        /// <summary>UiPageFit304 rule: k = min(1, W/1920, H/1080) of the page's parent (the full canvas).</summary>
+        private static float PageFitScale(Vector2 logical) => Mathf.Min(1f, logical.x / UiPageFit304.Width, logical.y / UiPageFit304.Height);
 
         private static string SetTestSlot(string raw)
         {
@@ -570,7 +665,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                         QueueKeys(); Next(CheckPhase.CloseObserved); break;
 
                     case CheckPhase.CloseObserved:
-                        if (FramesInPhase < 2) return;
+                        // #304 §9.2: the pause page shows exactly one 방점 once its content has bled in (BleedIn 280 ms).
+                        if (FramesInPhase < 2 || EditorApplication.timeSinceStartup - _phaseStarted < .45d) return;
+                        GameObject selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+                        Add("pause-single-focus-dab", FocusMark304.VisibleCount == 1,
+                            "visibleDabs=" + FocusMark304.VisibleCount + ", marks=" + FocusMark304.ActiveCount + ", selected=" + (selected != null ? selected.name : "<none>"));
                         QueueKeys(Key.Escape); Next(CheckPhase.NeutralAfterClose); break;
 
                     case CheckPhase.NeutralAfterClose:
@@ -809,7 +908,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             RequirePlaying();
             Need(!_checksRunning && !_captureRunning, "Another menu review operation is running.");
             string id = NormalizePageId(rawId);
-            Need(new[] { "title", "hud", "empty", "pause", "inventory", "codex", "chapae", "options", "map", "map_fold" }.Contains(id), "Unsupported capture id: " + id);
+            Need(new[] { "title", "hud", "empty", "pause", "inventory", "codex", "chapae", "options", "controls", "map", "map_fold" }.Contains(id), "Unsupported capture id: " + id);
             _root = FindRoot();
             Need(Screen.width == 1920 && Screen.height == 1080, "Game View must be exactly 1920x1080; current=" + Screen.width + "x" + Screen.height + ".");
             long total = Profiler.GetTotalAllocatedMemoryLong();
@@ -832,6 +931,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             _captureRunning = true; _capturePhase = CapturePhase.Prepare;
             _deadline = EditorApplication.timeSinceStartup + OperationTimeoutSeconds;
             _captureReadyAt = EditorApplication.timeSinceStartup; _lastCaptureFrame = -1;
+            _captureMotionLast.Clear(); _captureMotionNow.Clear(); _captureMotionNames.Clear(); _captureMotionChanged.Clear();
+            _captureMotionSampled = false; _captureStillFrames = 0; _captureOpenedAt = _captureStillSince = EditorApplication.timeSinceStartup;
             EditorApplication.update -= TickCapture; EditorApplication.update += TickCapture;
             return "CAPTURE_STARTED id=" + id + " path=" + _capturePath + " poll=capture-poll";
         }
@@ -860,6 +961,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                             else _root.OpenPage(PageName(_captureId == "map_fold" ? "map" : _captureId));
                         }
                         _captureReadyAt = EditorApplication.timeSinceStartup + (_captureId == "map" || _captureId == "map_fold" ? .45d : .10d);
+                        _captureOpenedAt = _captureStillSince = EditorApplication.timeSinceStartup; _captureMotionSampled = false; _captureStillFrames = 0;
                         _capturePhase = CapturePhase.WaitPage; break;
 
                     case CapturePhase.WaitPage:
@@ -870,6 +972,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         if (_captureId != "title" && _captureId != "hud" && _captureId != "empty"
                             && _root.Page != PageName(_captureId == "map_fold" ? "map" : _captureId))
                             throw new InvalidOperationException("Requested page was not active; actual=" + _root.Page + ".");
+                        if (!CaptureSettled()) return;
                         if (_captureId == "map_fold") { _root.CloseMenu(); _captureReadyAt = EditorApplication.timeSinceStartup + .12d; _capturePhase = CapturePhase.WaitFoldSample; return; }
                         _capturePhase = CapturePhase.Issue; break;
 
@@ -897,6 +1000,29 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
             }
             catch (Exception exception) { FailCapture(exception.GetType().Name + ": " + exception.Message); }
+        }
+
+        /// <summary>#304 QA2: true once the #304 tweens under the menu root are at rest (HarnessUiRules304.SampleMotion: CanvasGroup
+        /// alphas, InkRevealEffect reveals, 방점) for 3 frames over .06 s after the motion budget; soft after 3 s (the report says what
+        /// still moved). A first-open page bleeds in over .36 s, so the old fixed .10 s caught it half transparent.</summary>
+        private static bool CaptureSettled()
+        {
+            double now = EditorApplication.timeSinceStartup, elapsed = now - _captureOpenedAt;
+            HarnessUiRules304.SampleMotion(_root, _captureMotionNow, _captureMotionNames);
+            int moved = _captureMotionSampled ? HarnessUiRules304.MotionChanged(_captureMotionLast, _captureMotionNow, _captureMotionChanged) : 1;
+            if (moved > 0) { _captureStillFrames = 0; _captureStillSince = now; } else _captureStillFrames++;
+            _captureMotionLast.Clear(); foreach (var kv in _captureMotionNow) _captureMotionLast[kv.Key] = kv.Value;
+            _captureMotionSampled = true;
+            if (elapsed >= HarnessUiRules304.MotionBudgetSeconds(_root) && _captureStillFrames >= 3 && now - _captureStillSince >= .06d)
+            {
+                _captureReport.settled = true; _captureReport.settle = "settled " + elapsed.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + " s after the page setup";
+                return true;
+            }
+            if (elapsed < CaptureSettleMaxSeconds) return false;
+            _captureReport.settled = false;
+            _captureReport.settle = "NOT settled after " + CaptureSettleMaxSeconds.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + " s; moving: "
+                + string.Join(", ", _captureMotionChanged.Take(4).Select(k => _captureMotionNames.TryGetValue(k, out string n) ? n : "<gone>"));
+            return true;
         }
 
         private static void FailCapture(string failure)
@@ -1034,28 +1160,227 @@ namespace Oheangbu.EditorTools.WorldMacro
                 : _session.Progress.ui.knownSpellLetters.Count;
         }
 
-        private static void InspectActiveText(PlaytestUiRoot root, string page, List<string> inspected, List<string> overflows)
+        /// <summary>One diagnostic page: the page-fit / title-card scale actually applied, then every active label of the page's
+        /// own layer (menu layer, or the title background layer): TMP overflow (isTextOverflowing / preferred size), legacy Text
+        /// overflow, 16 px floor, drawn bounds inside the canvas and (for Page304 pages) inside the title-safe area, icon-only
+        /// Selectables and instruction-style copy. The minimap / HUD are not part of a page and are not inspected here.</summary>
+        private static void InspectPage(PlaytestUiRoot root, RectTransform canvasRect, string pageId, string label, LayoutFindings f, IList<Transform> scopes = null)
         {
-            inspected.Add(page);
-            foreach (Text label in root.GetComponentsInChildren<Text>(false))
+            if (scopes == null || scopes.Count == 0) scopes = new[] { PageScope(root, pageId == "title") };
+            f.Inspected.Add(label);
+            // several layers can make one page (지도: MapLayer + MenuRailLayer304): the Page304 requirement holds for their union
+            bool single = scopes.Count == 1;
+            if (!single && !scopes.Any(s => s != null && s.GetComponentsInChildren<UiPageFit304>(false).Length > 0))
             {
-                Rect rect = label.rectTransform.rect;
-                if (!label.gameObject.activeInHierarchy || rect.width <= 1f || rect.height <= 1f || label.resizeTextForBestFit) continue;
-                bool vertical = label.verticalOverflow == VerticalWrapMode.Truncate && label.preferredHeight > rect.height + .1f;
-                bool horizontal = label.horizontalOverflow == HorizontalWrapMode.Overflow && label.preferredWidth > rect.width + .1f;
-                if (vertical || horizontal)
-                    overflows.Add(page + "/" + TransformPath(label.transform, root.transform) + " preferred="
-                        + label.preferredWidth.ToString("0.0") + "x" + label.preferredHeight.ToString("0.0")
-                        + " rect=" + rect.width.ToString("0.0") + "x" + rect.height.ToString("0.0"));
+                f.PageFits.Add(label + " no Page304");
+                f.Failures.Add(label + ": page is not built on V.Page304 / UiPageFit304.");
             }
+            foreach (Transform scope in scopes) if (scope != null) InspectScope(root, canvasRect, pageId, label, f, scope, single);
         }
 
-        private static string TransformPath(Transform leaf, Transform root)
+        private static void InspectScope(PlaytestUiRoot root, RectTransform canvasRect, string pageId, string label, LayoutFindings f, Transform scope, bool requirePage)
         {
-            var names = new Stack<string>();
-            Transform current = leaf;
-            while (current != null && current != root) { names.Push(current.name); current = current.parent; }
-            return string.Join("/", names);
+            Vector2 canvasSize = canvasRect.rect.size;
+
+            // ---- scale actually applied at the current Game View (the analytic samples above cover the other resolutions)
+            if (pageId == "title")
+            {
+                Transform card = scope.GetComponentsInChildren<Transform>(false).FirstOrDefault(t => t.name == "TitleCard");
+                if (card == null) f.Failures.Add(label + ": TitleCard is missing.");
+                else
+                {
+                    float expected = Mathf.Min(1f, (canvasSize.y - 70f) / 904f);
+                    bool ok = Mathf.Abs(card.localScale.x - expected) < .002f && InsideCanvas(canvasRect, (RectTransform)card, 1f);
+                    f.PageFits.Add(label + " TitleCard scale=" + card.localScale.x.ToString("0.000") + " expected=" + expected.ToString("0.000") + (ok ? " OK" : " MISMATCH"));
+                    if (!ok) f.Failures.Add(label + ": TitleCard scale/bounds do not follow min(1,(H-70)/904) inside the canvas.");
+                }
+            }
+            else
+            {
+                UiPageFit304[] fits = scope.GetComponentsInChildren<UiPageFit304>(false);
+                if (fits.Length == 0 && requirePage)
+                {
+                    bool legacy = scope.GetComponentsInChildren<Transform>(false).Any(t => t.name == "Folio");
+                    f.PageFits.Add(label + (legacy ? " LEGACY Folio (no Page304)" : " no Page304"));
+                    f.Failures.Add(label + ": page is not built on V.Page304 / UiPageFit304" + (legacy ? " (legacy 1560x900 Folio still present)." : "."));
+                }
+                foreach (UiPageFit304 fit in fits)
+                {
+                    var page = (RectTransform)fit.transform; var parent = page.parent as RectTransform;
+                    Vector2 parentSize = parent != null ? parent.rect.size : Vector2.zero;
+                    float expected = PageFitScale(canvasSize);
+                    bool fullLayer = (parentSize - canvasSize).sqrMagnitude < 1f;
+                    bool scaled = Mathf.Abs(fit.Scale - expected) < .002f && Mathf.Abs(page.localScale.x - expected) < .002f;
+                    bool centred = Vector2.Distance(canvasRect.InverseTransformPoint(page.TransformPoint(page.rect.center)), canvasRect.rect.center) < 1f;
+                    bool inside = InsideCanvas(canvasRect, page, 1f);
+                    bool ok = fullLayer && scaled && centred && inside;
+                    f.PageFits.Add(label + " " + HarnessUiRules304.Path(page, root.transform) + " k=" + fit.Scale.ToString("0.000")
+                        + " expected=" + expected.ToString("0.000") + " parent=" + parentSize.x.ToString("0") + "x" + parentSize.y.ToString("0")
+                        + (ok ? " OK" : " MISMATCH(fullLayer=" + fullLayer + ",scaled=" + scaled + ",centred=" + centred + ",inside=" + inside + ")"));
+                    if (!ok) f.Failures.Add(label + ": Page304 does not follow the page-fit rule at canvas " + canvasSize.x.ToString("0") + "x" + canvasSize.y.ToString("0") + ".");
+                }
+            }
+
+            // ---- labels
+            var corners = new Vector3[4];
+            foreach (Text legacy in scope.GetComponentsInChildren<Text>(false))
+            {
+                if (!HarnessUiRules304.IsLive(legacy)) continue;
+                f.Legacy++;
+                string where = label + "/" + HarnessUiRules304.Path(legacy.transform, root.transform);
+                string overflow = HarnessUiRules304.Overflow(legacy);
+                if (overflow != null) f.Overflows.Add(where + " " + overflow);
+                if (legacy.fontSize < HarnessUiRules304.MinimumTextPx) f.BelowMinimum.Add(where + " size=" + legacy.fontSize);
+            }
+            foreach (TMP_Text tmp in scope.GetComponentsInChildren<TMP_Text>(false))
+            {
+                if (!HarnessUiRules304.IsLive(tmp)) continue;
+                f.Tmp++;
+                string where = label + "/" + HarnessUiRules304.Path(tmp.transform, root.transform);
+                string overflow = HarnessUiRules304.Overflow(tmp);
+                if (overflow != null) f.Overflows.Add(where + " " + overflow);
+                if (tmp.fontSize < HarnessUiRules304.MinimumTextPx - .01f) f.BelowMinimum.Add(where + " size=" + tmp.fontSize.ToString("0.#"));
+                else if (tmp.fontSize < HarnessUiRules304.MetaFloorPx - .01f && !HarnessUiRules304.IsKeycapText(tmp))
+                    f.SmallInfo.Add(where + " size=" + tmp.fontSize.ToString("0.#"));
+                if (HarnessUiRules304.IsClipped(tmp) || !HarnessUiRules304.TextWorldCorners(tmp, corners)) continue;
+                if (!CornersInside(canvasRect, canvasRect.rect, corners, 2f)) f.OutsideCanvas.Add(where + " bounds=" + DescribeCorners(canvasRect, corners));
+                var pageFit = tmp.GetComponentInParent<UiPageFit304>();
+                if (pageFit != null)
+                {
+                    var page = (RectTransform)pageFit.transform; Rect r = page.rect;
+                    var safe = Rect.MinMaxRect(r.xMin + HarnessUiRules304.TitleSafeLeft, r.yMax - HarnessUiRules304.TitleSafeBottom,
+                        r.xMin + HarnessUiRules304.TitleSafeRight, r.yMax - HarnessUiRules304.TitleSafeTop);
+                    if (!CornersInside(page, safe, corners, 2f)) f.OutsideSafe.Add(where + " pageBounds=" + DescribeCorners(page, corners, r));
+                }
+            }
+            foreach (string icon in HarnessUiRules304.IconOnlySelectables(scope)) f.IconOnly.Add(label + "/" + icon);
+            foreach (string text in HarnessUiRules304.InstructionTexts(scope, false)) f.Instruction.Add(label + "/" + text);
+        }
+
+        /// <summary>The page's own layer: MenuLayer (modalLayer) for menu pages, TitleBackground (baseLayer) for the title.</summary>
+        private static Transform PageScope(PlaytestUiRoot root, bool title)
+        {
+            var layer = HarnessUiRules304.Member(root, title ? "baseLayer" : "modalLayer") as Transform;
+            return layer != null ? layer : root.transform;
+        }
+
+        // ------------------------------------------------------------------ #304 QA: layout-check over the new pages
+        /// <summary>Private page state the layout walk changes by pressing tabs (read by name; missing members are skipped):
+        /// the 설정 / 조작 안내 category tab, the 소지품 sub tab and the remembered content / item / spell selection.</summary>
+        private static readonly string[] MenuStateMembers = { "optionsTab", "menu304ControlsTab", "fragmentTab", "content304Focus", "selectedItem", "selectedSpell" };
+
+        private static Dictionary<string, object> SnapshotMenuState(PlaytestUiRoot root)
+        {
+            var saved = new Dictionary<string, object>();
+            foreach (string name in MenuStateMembers)
+                if (HarnessUiRules304.HasMember(root, name)) saved[name] = HarnessUiRules304.Member(root, name);
+            return saved;
+        }
+
+        private static void RestoreMenuState(PlaytestUiRoot root, Dictionary<string, object> saved)
+        {
+            if (root == null || saved == null) return;
+            foreach (var pair in saved) HarnessUiRules304.SetMember(root, pair.Key, pair.Value);
+        }
+
+        /// <summary>A static string[] tab list of PlaytestUiRoot by name (the page's own order), else the given fallback.</summary>
+        private static string[] StaticTabs(string member, params string[] fallback)
+            => HarnessUiRules304.Member(typeof(PlaytestUiRoot), member) is string[] tabs && tabs.Length > 0 ? tabs : fallback;
+
+        private static bool FragmentTabActive(PlaytestUiRoot root) => HarnessUiRules304.Member(root, "fragmentTab") is bool b && b;
+
+        private static Button ActiveButton(PlaytestUiRoot root, string name)
+            => root.GetComponentsInChildren<Button>(false).FirstOrDefault(b => b != null && b.name == name && b.gameObject.activeInHierarchy);
+
+        private static bool TryInvokeTab(string button, string page, LayoutFindings f)
+        {
+            try { InvokeButton(button); return true; }
+            catch (InvalidOperationException e) { f.Failures.Add(page + ": tab " + button + " could not be pressed (" + e.Message.Split('.')[0] + ")."); return false; }
+        }
+
+        /// <summary>지도 (DESIGN §7.6): MapLayer (veil, paper, MapPage304 chrome) + MenuRailLayer304 (MapRail304). The sheet is unfolded
+        /// at once (WorldMapPresenter.ReducedMotion for the open, one Tick) so the paper's labels are placed inside this check, then the
+        /// usual label rules run and every live label on the paper must stay inside the printed window and clear of the title slip.</summary>
+        private static void InspectMap(PlaytestUiRoot root, RectTransform canvasRect, LayoutFindings f)
+        {
+            const string label = "지도";
+            WorldMapPresenter map = root.Map;
+            if (map == null) { f.Inspected.Add(label); f.Failures.Add(label + ": WorldMapPresenter is missing."); return; }
+            bool reduced = map.ReducedMotion;
+            try
+            {
+                map.ReducedMotion = true;
+                root.OpenPage(label);
+                if (root.Page != label) { f.Inspected.Add(label); f.Failures.Add(label + ": OpenPage did not open the map (actual=" + root.Page + ")."); return; }
+                HarnessUiRules304.SetMember(map, "lastTickFrame", -1);   // this frame may have ticked already
+                map.Tick();
+                HarnessUiRules304.SettleLayout(root);
+                var scopes = new List<Transform>();
+                foreach (string layer in new[] { "mapLayer", "menu304RailLayer" })
+                    if (HarnessUiRules304.Member(root, layer) is Transform t && t != null) scopes.Add(t);
+                InspectPage(root, canvasRect, label, label, f, scopes);
+                InspectMapLabels(root, map, f);
+            }
+            finally { map.ReducedMotion = reduced; }
+        }
+
+        private static void InspectMapLabels(PlaytestUiRoot root, WorldMapPresenter map, LayoutFindings f)
+        {
+            var window = HarnessUiRules304.Member(map, "foldMap") as RectTransform;
+            var labels = HarnessUiRules304.Member(map, "fullLabels") as RectTransform;
+            var slip = HarnessUiRules304.Member(map, "titleSlip304") as RectTransform;
+            if (window == null || labels == null) { f.PageFits.Add("지도 paper labels SKIPPED (foldMap / fullLabels not found by name)"); return; }
+            Rect paper = window.rect;
+            Rect title = slip != null && slip.gameObject.activeInHierarchy ? HarnessUiRules304.RectIn(window, slip) : Rect.zero;
+            var corners = new Vector3[4];
+            int inspected = 0;
+            foreach (TMP_Text t in labels.GetComponentsInChildren<TMP_Text>(false))
+            {
+                if (!HarnessUiRules304.IsLive(t) || !HarnessUiRules304.TextWorldCorners(t, corners)) continue;
+                inspected++;
+                float xMin = float.MaxValue, yMin = float.MaxValue, xMax = float.MinValue, yMax = float.MinValue;
+                foreach (Vector3 c in corners)
+                {
+                    Vector3 p = window.InverseTransformPoint(c);
+                    xMin = Mathf.Min(xMin, p.x); yMin = Mathf.Min(yMin, p.y); xMax = Mathf.Max(xMax, p.x); yMax = Mathf.Max(yMax, p.y);
+                }
+                var r = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+                string where = "지도/" + HarnessUiRules304.Describe(t, root.transform) + " windowBounds=" + DescribeCorners(window, corners);
+                if (r.xMin < paper.xMin - 2f || r.xMax > paper.xMax + 2f || r.yMin < paper.yMin - 2f || r.yMax > paper.yMax + 2f) f.MapLabels.Add(where + " leaves the printed window");
+                if (title.width > 0f && r.Overlaps(title)) f.MapLabels.Add(where + " lies under the title slip");
+            }
+            f.PageFits.Add("지도 paper labels inspected=" + inspected + " window=" + paper.width.ToString("0") + "x" + paper.height.ToString("0")
+                + (slip == null ? " (title slip not found by name: overlap not checked)" : ""));
+        }
+
+        private static bool InsideCanvas(RectTransform canvasRect, RectTransform rect, float tolerance)
+        {
+            var corners = new Vector3[4]; rect.GetWorldCorners(corners);
+            return CornersInside(canvasRect, canvasRect.rect, corners, tolerance);
+        }
+
+        private static bool CornersInside(RectTransform space, Rect area, Vector3[] worldCorners, float tolerance)
+        {
+            foreach (Vector3 corner in worldCorners)
+            {
+                Vector3 p = space.InverseTransformPoint(corner);
+                if (p.x < area.xMin - tolerance || p.x > area.xMax + tolerance || p.y < area.yMin - tolerance || p.y > area.yMax + tolerance) return false;
+            }
+            return true;
+        }
+
+        /// <summary>Top-left-origin bounds (mockup convention) of world corners in `space`.</summary>
+        private static string DescribeCorners(RectTransform space, Vector3[] worldCorners, Rect? frame = null)
+        {
+            Rect r = frame ?? space.rect;
+            float xMin = float.MaxValue, xMax = float.MinValue, yMin = float.MaxValue, yMax = float.MinValue;
+            foreach (Vector3 corner in worldCorners)
+            {
+                Vector3 p = space.InverseTransformPoint(corner);
+                float x = p.x - r.xMin, y = r.yMax - p.y;
+                xMin = Mathf.Min(xMin, x); xMax = Mathf.Max(xMax, x); yMin = Mathf.Min(yMin, y); yMax = Mathf.Max(yMax, y);
+            }
+            return "(" + xMin.ToString("0") + "," + yMin.ToString("0") + ")-(" + xMax.ToString("0") + "," + yMax.ToString("0") + ")";
         }
 
         private static string GateDiagnostics()
@@ -1106,6 +1431,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "codex": return "술식 도감";
                 case "chapae": return "차패";
                 case "options": return "옵션";
+                case "controls": return "조작 안내";   // #304 page (rail 조작)
                 case "map": return "지도";
                 default: throw new ArgumentException("Unknown gameplay page: " + id);
             }

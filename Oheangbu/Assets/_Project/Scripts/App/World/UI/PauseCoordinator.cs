@@ -14,6 +14,9 @@ namespace Oheangbu.App.World.UI
         public DrawingInputController Drawing;
         public WorldMacroPalanquinSeat PalanquinSeat;
         public WorldMacroPalanquinController PalanquinController;
+        // #306: the live UI root survives scene loads (DontDestroyOnLoad) with its own state SO; a scene's session may reference a
+        // different one (W_Demo_Main), which let the F that closed a dialogue reopen it the same frame. Bound here with the rest.
+        public WorldMacroPlaytestSession Session;
 
         private int _depth;
         private float _priorTimeScale = 1f;
@@ -26,6 +29,13 @@ namespace Oheangbu.App.World.UI
         public bool IsPaused => _depth > 0;
         public int Depth => _depth;
         public event Action<bool> PausedChanged;
+        /// <summary>Time.frameCount of the last full resume (End to depth 0 / ForceResume). Interaction polling ignores the key
+        /// that closed a modal on this frame and the next (read via PlaytestUiRoot.LastModalCloseFrame).</summary>
+        public static int LastResumeFrame { get; private set; } = -10;
+        public static bool ResumedRecently => Time.frameCount - LastResumeFrame <= 1;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() { LastResumeFrame = -10; }   // domain reload is off
 
         private void Awake() { Initialize(); }
 
@@ -54,6 +64,25 @@ namespace Oheangbu.App.World.UI
                 if (motor != null) motor.RuntimeState = Gate.State;
             }
             if (PalanquinSeat != null) PalanquinSeat.RuntimeState = Gate.State;
+            if (Session != null) Session.RuntimeState = Gate.State;
+        }
+
+        /// <summary>Smoke check (#306 §2-2): gate, drawing, motor, seat and session all read the same runtime state SO.</summary>
+        public bool StatesAligned(out string mismatch)
+        {
+            mismatch = "";
+            var state = Gate != null ? Gate.State : null;
+            if (state == null) { mismatch = "gate state missing"; return false; }
+            if (Drawing != null && Drawing.RuntimeState != state) mismatch += " drawing";
+            // no ?? on UnityEngine.Object: the editor's fake-null GetComponent result would skip the parent lookup
+            PlayerMotor motor = Drawing != null ? Drawing.GetComponent<PlayerMotor>() : null;
+            if (motor == null && Drawing != null) motor = Drawing.GetComponentInParent<PlayerMotor>();
+            if (Drawing != null && motor == null) mismatch += " motor-missing";
+            else if (motor != null && motor.RuntimeState != state) mismatch += " motor";
+            if (PalanquinSeat != null && PalanquinSeat.RuntimeState != state) mismatch += " seat";
+            if (Session != null && Session.RuntimeState != state) mismatch += " session";
+            mismatch = mismatch.Trim();
+            return mismatch.Length == 0;
         }
 
         public bool Begin()
@@ -86,6 +115,7 @@ namespace Oheangbu.App.World.UI
             if (_depth > 0) return false;
 
             Time.timeScale = _priorTimeScale;
+            LastResumeFrame = Time.frameCount;
             StopVehicleInput();
             if (Gate != null && Gate.InputBlocked)
             {
@@ -101,6 +131,7 @@ namespace Oheangbu.App.World.UI
         {
             if (_depth > 0) Time.timeScale = _priorTimeScale;
             _depth = 0;
+            LastResumeFrame = Time.frameCount;
             StopVehicleInput();
             Gate?.ReleaseImmediately();
             RestoreCursor();

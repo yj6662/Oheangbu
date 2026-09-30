@@ -7,6 +7,10 @@ namespace Oheangbu.Combat
     {
         [Min(.1f)] public float WalkSpeed = 2.2f;
         [Min(.1f)] public float RunSpeed = 5.5f;
+        // #300 (user, 2026-09-28): the run key toggles running instead of running while held. Off keeps the held behaviour.
+        // A latched run ends after this long without movement input, and on crouch, sit or drawing; jumps and dodges keep it.
+        public bool SprintToggle;
+        [Min(0f)] public float SprintToggleStopSeconds = .35f;
         [Min(.1f)] public float CrouchSpeed = 1.2f;
         public bool CrouchRollEnabled;
         public bool PreserveAuthoredFootRoll;

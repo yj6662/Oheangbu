@@ -24,6 +24,35 @@ namespace Oheangbu.Combat
         public float TelegraphProgress => IsTelegraphing ? Mathf.Clamp01(1f - (_stateUntil - Time.time) / Mathf.Max(.01f, TelegraphDuration)) : 0f;
         public float RecoveryProgress => IsRecovering ? Mathf.Clamp01(1f - (_stateUntil - Time.time) / Mathf.Max(.01f, RecoveryDuration)) : 0f;
 
+        // #306 읽기 전용 예고 시계(SPEC-PLAYTEST-306 #12) — ParryJudge와 같은 scaled 시계. 매 호출 현재 기하로 다시 계산하고
+        // 공격 계획에 되먹이지 않는다. 공격이 없으면 NegativeInfinity.
+        //   저작 투사체: 준비 끝 + 발사점→플레이어 거리/속도 · 옛 원거리: 준비 끝 + ProjectileFlight(고정) · 근접·지면: 준비 끝
+        public float PredictedImpactTime
+        {
+            get
+            {
+                if (_state == State.Flight) return _impactTime;
+                if (_state != State.Telegraph) return float.NegativeInfinity;
+                if (!ProfileActive) return _pattern == Pattern.Ranged ? _impactTime : _stateUntil;
+                if (!CurrentAttackIsProjectile || _player == null) return _stateUntil;
+                Vector3 start = transform.position + Vector3.up * 1.2f; // FinishAuthoredTelegraph와 같은 발사점
+                return _stateUntil + Mathf.Max(.05f, Vector3.Distance(start, _player.position + Vector3.up * .5f) / _attackProfile.ProjectileSpeed);
+            }
+        }
+        // 공격이 나오는 점(표현용) — 투사체 = 발사점, 지면 = 분출점, 근접 = 몸 앞
+        public Vector3 AttackOriginPoint => CurrentAttackIsProjectile ? (_state == State.Flight ? _projectileStart : transform.position + Vector3.up * 1.2f)
+            : ProfileActive && _attackProfile.Delivery == EnemyAttackDelivery.GroundEruption ? _authoredPoint : transform.position + Vector3.up + transform.forward * .6f;
+        public bool CurrentAttackIsProjectile => AttackInProgress && (ProfileActive
+            ? _attackProfile.Delivery == EnemyAttackDelivery.HomingProjectile || _attackProfile.Delivery == EnemyAttackDelivery.AimedProjectile
+            : _pattern == Pattern.Ranged);
+        // 기관 지도 키(EnemyOrganSet) — 표현 계층이 어느 기관을 켤지 고른다
+        public string AttackOrganKey => !AttackInProgress ? null : CurrentAttackIsProjectile ? EnemyOrganSet.KeyProjectile
+            : ProfileActive && _attackProfile.Delivery == EnemyAttackDelivery.GroundEruption ? EnemyOrganSet.KeyGround : EnemyOrganSet.KeyMelee;
+        public float AttackStartTime { get; private set; } = float.NegativeInfinity;
+        public Transform ProjectileTransform => _projectile != null && _projectile.gameObject.activeSelf ? _projectile : null;
+        public Transform PlayerTarget => _player;
+        public bool TintBodyOnTelegraph => _tintBodyOnTelegraph;
+
         public void ResetEncounter() { CancelAttack(); _vitals?.Restore(); _parriedFlashUntil=0; EnterIdle(); }
         public void StopAttack() { if(_state!=State.Dead && _state!=State.Stunned){CancelAttack();EnterIdle();} }
         public bool HasLineOfSight()
@@ -49,6 +78,10 @@ namespace Oheangbu.Combat
         [SerializeField] private PlayerVitals _playerVitals;
         [SerializeField] private Renderer _renderer;
         [SerializeField] private Element _rangedElement = Element.Fire; // 결정 2 — 화
+        [Tooltip("속성 예고를 몸 색조로 — 속성 기관(EnemyOrganSet)이 있으면 Awake에서 끈다(기관 먹 테가 대신한다, #306)")]
+        [SerializeField] private bool _tintBodyOnTelegraph = true;
+        [Tooltip("투사체 모습(표현 전용 — Travel/Contact 계약 프리팹, 비우면 원시 구). 판정은 여전히 임팩트 시각")]
+        [SerializeField] private GameObject _projectilePrefab;
 
         private const float ParriedFlashDuration = 0.25f; // 패링 성공 플래시 — 연출 미세 시간(기술 상수)
 
@@ -61,6 +94,8 @@ namespace Oheangbu.Combat
         private float _cooldown;
         private float _impactTime;
         private Transform _projectile;
+        private ParticleSystem[] _projectileSystems = System.Array.Empty<ParticleSystem>();
+        private TrailRenderer[] _projectileTrails = System.Array.Empty<TrailRenderer>();
         private Vector3 _projectileStart;
         private Color _baseColor;
         private string _tintProperty;
@@ -79,10 +114,18 @@ namespace Oheangbu.Combat
             if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
             if (_renderer != null){var material=_renderer.material;_tintProperty=material.HasProperty("_BaseColor")?"_BaseColor":material.HasProperty("_Color")?"_Color":null;if(_tintProperty!=null)_baseColor=material.GetColor(_tintProperty);}
 
-            var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            RefreshOrganTint();
+            var sphere = _projectilePrefab != null ? Instantiate(_projectilePrefab) : GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.name = "EnemyProjectile";
-            Destroy(sphere.GetComponent<Collider>()); // 명중 판정은 임팩트 시각으로 — 물리 충돌 불사용
-            sphere.transform.localScale = Vector3.one * 0.35f;
+            foreach (var collider in sphere.GetComponentsInChildren<Collider>(true)) Destroy(collider); // 명중 판정은 임팩트 시각으로 — 물리 충돌 불사용
+            if (_projectilePrefab == null) sphere.transform.localScale = Vector3.one * 0.35f;
+            else
+            {
+                var travel = sphere.transform.Find("Travel"); var contact = sphere.transform.Find("Contact");
+                if (contact != null) contact.gameObject.SetActive(false); // 접점 버스트는 배선부의 패링 접점 경로가 맡는다
+                _projectileSystems = (travel != null ? travel : sphere.transform).GetComponentsInChildren<ParticleSystem>(true);
+                _projectileTrails = sphere.GetComponentsInChildren<TrailRenderer>(true);
+            }
             sphere.SetActive(false);
             _projectile = sphere.transform;
 
@@ -217,8 +260,12 @@ namespace Oheangbu.Combat
             }
         }
 
+        // 기관 세트가 있으면 속성 몸 색조를 끈다 — 공격마다 다시 본다(모습이 Awake 뒤에 붙어도). GetComponentInChildren = 할당 없음
+        private void RefreshOrganTint() { if (_tintBodyOnTelegraph && GetComponentInChildren<EnemyOrganSet>(true) != null) _tintBodyOnTelegraph = false; }
+
         private void BeginTelegraph()
         {
+            AttackStartTime = Time.time; RefreshOrganTint();
             _pattern = _attackMode==AttackMode.MeleeOnly ? Pattern.Melee : _attackMode==AttackMode.RangedOnly ? Pattern.Ranged : Distance() <= _config.EnemyMeleePreferRange ? Pattern.Melee : Pattern.Ranged;
             _attack = AttackProvenance.Create(_vitals, DamageSource.Enemy, _pattern == Pattern.Ranged ? _rangedElement : (Element?)null);
             float duration = _pattern == Pattern.Melee ? _config.MeleeTelegraph : _config.RangedTelegraph;
@@ -229,7 +276,7 @@ namespace Oheangbu.Combat
             {
                 // scaled time — 감속 중엔 비행도 함께 느려진다(작도할 시간을 주는 감속의 목적)
                 _impactTime = _stateUntil + _config.ProjectileFlight;
-                Tint(_elementColor);
+                if (_tintBodyOnTelegraph) Tint(_elementColor);
             }
             else
             {
@@ -249,7 +296,7 @@ namespace Oheangbu.Combat
             {
                 _projectileStart = transform.position + Vector3.up * 1.2f;
                 _projectile.position = _projectileStart;
-                _projectile.gameObject.SetActive(true);
+                ShowProjectile();
                 _state = State.Flight;
             }
         }
@@ -300,8 +347,19 @@ namespace Oheangbu.Combat
 
         private void FlashParried()
         {
+            if (!_tintBodyOnTelegraph) return; // 기관이 있으면 되받은 먹 획이 기관을 끈다 — 몸 번쩍임 없음(#306)
             _parriedFlashUntil = Time.time + ParriedFlashDuration;
             _parriedFlashColor = Color.Lerp(_elementColor, Color.white, 0.35f);
+        }
+
+        // 표현 전용 — 원시 구는 켜기만, 프리팹은 Travel 입자·꼬리를 새 자리에서 다시 튼다
+        private void ShowProjectile()
+        {
+            if (_projectilePrefab != null && _player != null)
+            { Vector3 to = _player.position + Vector3.up * .5f - _projectile.position; if (to.sqrMagnitude > .0001f) _projectile.rotation = Quaternion.LookRotation(to); }
+            _projectile.gameObject.SetActive(true);
+            foreach (var trail in _projectileTrails) if (trail != null) trail.Clear();
+            foreach (var ps in _projectileSystems) if (ps != null) { ps.Clear(true); ps.Play(true); }
         }
 
         private void FinishProjectile()

@@ -115,6 +115,13 @@ namespace Oheangbu.App.World
         private BrushStrokeMotion _strokeMotion;
         private Vector3 _nearStrokeWrist, _nearStrokeGrip, _worldStrokeGrip;
         private bool _strokeAnchorReady;
+        // #300 cast follow-through (presentation only): after a successful commit the close-up arm flicks past the
+        // launch point, then arm and brush lower out of frame together; the world arm keeps a short forward reach.
+        private bool _castActive;
+        private float _castTime, _castReach;
+        private Vector2 _castFrom, _castTo, _lastNearViewport = new Vector2(.5f, .5f);
+        private Camera _castCamera;
+        public bool IsCasting => _castActive;
 
         // Optional vertical double-hook grip state. Follow targets live in the camera (close-up) or actor root
         // (world) frame, so walking or turning never reads as lag.
@@ -346,6 +353,27 @@ namespace Oheangbu.App.World
             _recoveryRemaining = _profile != null
                 ? success ? _profile.CommitRecoverySeconds : _profile.InterruptRecoverySeconds : .15f;
             _hasPointerHistory = false;
+            if (success && _profile != null && _profile.CastFollowThrough && _profile.CastHoldSeconds > 0f
+                && _nearVisible && _castCamera != null && NearIsBound) BeginCast();
+            else EndCast();
+        }
+
+        private void BeginCast()
+        {
+            _castActive = true; _castTime = 0f;
+            _castFrom = _lastNearViewport;
+            Vector2 via = _profile.CastFlickViewport, direction = via - _castFrom;
+            // a stroke that ended on the launch point still throws: down and to the right, away from the glyph
+            if (direction.sqrMagnitude < .0025f) direction = new Vector2(.4f, -.6f);
+            _castTo = via + direction.normalized * _profile.CastFlickOvershoot;
+            _cameraRig?.HoldDrawCloseup(_profile.CastHoldSeconds + .1f);
+        }
+
+        private void EndCast()
+        {
+            if (!_castActive) return;
+            _castActive = false;
+            _cameraRig?.HoldDrawCloseup(0f);
         }
 
         private void OnInterrupted()
@@ -374,6 +402,7 @@ namespace Oheangbu.App.World
             if (seated || (_motor != null && !_motor.enabled) || (_controller != null && !_controller.enabled))
             {
                 RestoreAnimatedPose();
+                EndCast();
                 SetNearVisible(false);
                 _cameraRig?.SetDrawingPresentationActive(false);
                 if (!_wasSuspended)
@@ -396,6 +425,7 @@ namespace Oheangbu.App.World
                 // skeletal pose, but do not leave a cancelled close-up arm over the menu.
                 if (_drawing == null || !_drawing.InDrawMode)
                 {
+                    EndCast();
                     SetNearVisible(false);
                     _cameraRig?.SetDrawingPresentationActive(false);
                     _hasPointerHistory = false;
@@ -403,16 +433,20 @@ namespace Oheangbu.App.World
                 return;
             }
 
-            EvaluateGesturePose(Mathf.Min(.1f, Mathf.Max(0f, Time.unscaledDeltaTime)));
+            // real time (the draw slow-down does not slow the hand), frame-exact during fixed-rate captures
+            float step = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime;
+            EvaluateGesturePose(Mathf.Min(.1f, Mathf.Max(0f, step)));
         }
 
         private void EvaluateGesturePose(float dt)
         {
             bool drawing = _drawing != null && _drawing.InDrawMode;
+            if (drawing) EndCast();   // a new draw mode supersedes the follow-through
+            bool casting = _castActive;
             bool stroking = drawing && _drawing.IsStroking;
             bool harvesting = !drawing && _harvest != null && _harvest.IsExtracting;
-            _drawWeight = Follow(_drawWeight, drawing ? 1f : 0f,
-                drawing ? _profile.EnterResponse : _profile.ExitResponse, dt);
+            _drawWeight = Follow(_drawWeight, drawing || casting ? 1f : 0f,
+                drawing || casting ? _profile.EnterResponse : _profile.ExitResponse, dt);
             _harvestWeight = Follow(_harvestWeight, harvesting ? 1f : 0f, _profile.HarvestResponse, dt);
             _recoveryRemaining = Mathf.Max(0f, _recoveryRemaining - dt);
 
@@ -420,10 +454,32 @@ namespace Oheangbu.App.World
             Vector2 screen = default;
             Vector3 ink = default;
             bool hasPointer = drawing && _brushFeed != null && _brushFeed.TryGetVisualPointer(out camera, out screen, out ink);
+            float castDrop = 0f;
+            if (casting)
+            {
+                _castTime += dt;
+                float u = _castTime / Mathf.Max(.01f, _profile.CastHoldSeconds);
+                if (u >= 1f || _castCamera == null) { EndCast(); casting = false; }
+                else
+                {
+                    float share = _profile.CastFlickShare;
+                    float flick = Mathf.Clamp01(u / share);
+                    flick = 1f - (1f - flick) * (1f - flick) * (1f - flick);   // fast out: the throw
+                    Vector2 point = Vector2.Lerp(_castFrom, _castTo, flick);
+                    castDrop = u <= share ? 0f : Mathf.SmoothStep(0f, 1f, (u - share) / (1f - share));
+                    camera = _castCamera;
+                    Rect rect = camera.pixelRect;
+                    screen = new Vector2(rect.x + point.x * rect.width, rect.y + point.y * rect.height);
+                    hasPointer = true;
+                    _castReach = Mathf.Max(_castReach, flick);
+                }
+            }
+            if (!casting) _castReach = Follow(_castReach, 0f, _profile.ExitResponse, dt);
             Vector2 viewport = hasPointer ? new Vector2(
                 (screen.x - camera.pixelRect.x) / Mathf.Max(1f, camera.pixelRect.width),
                 (screen.y - camera.pixelRect.y) / Mathf.Max(1f, camera.pixelRect.height)) : new Vector2(.5f, .5f);
             Vector2 centered = (viewport - Vector2.one * .5f) * 2f;
+            if (drawing && hasPointer) { _lastNearViewport = viewport; _castCamera = camera; }
             if (_profile.ArticulatedStrokes)
             {
                 _strokeMotion.Step(viewport, drawing && hasPointer, stroking, dt, _profile.WristStrokeSpan, _profile.ArmStrokeSpan);
@@ -446,7 +502,7 @@ namespace Oheangbu.App.World
             float span = (_strokeMax - _strokeMin).magnitude;
             float bodyParticipation = Mathf.Lerp(_profile.SmallStrokeBodyWeight, 1f,
                 Mathf.Clamp01(span / Mathf.Max(.01f, _profile.LargeStrokeViewportSpan))) * _drawWeight;
-            Vector3 visualVelocity = hasPointer && stroking && _hasPointerHistory && dt > .00001f
+            Vector3 visualVelocity = hasPointer && (stroking || casting) && _hasPointerHistory && dt > .00001f
                 ? new Vector3((viewport.x - _lastPointer.x) * 2f / dt, (viewport.y - _lastPointer.y) * 2f / dt, 0f)
                 : Vector3.zero;
             _lastPointer = viewport; _hasPointerHistory = hasPointer; _wasStroking = stroking;
@@ -462,6 +518,8 @@ namespace Oheangbu.App.World
             PoseCarry();
             bool tipContact = stroking && _recoveryRemaining <= 0f;
             Vector3 worldTipTarget = DrawingWorldTarget(_bodyPoint, !tipContact);
+            if (_castReach > .001f)
+                worldTipTarget += (_controller != null ? _controller.transform : _world.Root).forward * (_profile.CastWorldReach * _castReach);
             // Each optional bristle chain is evaluated once, including pen-up recovery.
             if (_profile.ShuanggouGrip) EvaluateVerticalWorldBristles(worldTipTarget, visualVelocity, tipContact, dt);
             else EvaluateBristles(_worldBrush, visualVelocity, _world.Root,
@@ -476,7 +534,7 @@ namespace Oheangbu.App.World
             PlaceBrush(_world, _worldBrush);
             if (_worldBrush.Bristles != null) _worldBrush.Bristles.ApplyPose();
 
-            bool nearVisible = drawing && hasPointer && NearIsBound;
+            bool nearVisible = (drawing || casting) && hasPointer && NearIsBound;
             SetNearVisible(nearVisible);
             _cameraRig?.SetDrawingPresentationActive(nearVisible);
             _diagnostics.NearTipErrorPixels = -1f;
@@ -487,7 +545,8 @@ namespace Oheangbu.App.World
                 ApplyNearArm(camera, screen, visualVelocity, tipContact, dt);
                 // entering draw mode: the close-up arm and the brush in its hand rise together from below the frame
                 _nearRaise = Mathf.MoveTowards(_nearRaise, 1f, dt / Mathf.Max(.05f, _profile.NearRaiseSeconds));
-                float lower = 1f - Mathf.SmoothStep(0f, 1f, _nearRaise);
+                // leaving after a cast: the same path back down, arm and brush together
+                float lower = Mathf.Max(1f - Mathf.SmoothStep(0f, 1f, _nearRaise), castDrop);
                 if (lower > .0001f)
                 {
                     Vector3 offset = camera.transform.TransformDirection(_profile.NearRaiseOffset) * lower;
@@ -1627,6 +1686,7 @@ namespace Oheangbu.App.World
 
         private void ResetTransitions()
         {
+            EndCast(); _castReach = 0f;
             _drawWeight = 0f; _harvestWeight = 0f; _recoveryRemaining = 0f;
             _bodyPoint = Vector2.zero; _hasPointerHistory = false; _wasStroking = false;
             _strokeMotion.Reset(); _strokeAnchorReady=false;

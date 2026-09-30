@@ -2,31 +2,19 @@ using UnityEngine;
 using UnityEngine.UI;
 namespace Oheangbu.App.World.UI {
  public sealed partial class PlaytestUiRoot {
- Image saveFailureIcon;
+ // #304 save-failure mark (IMPLEMENTATION §7.2): the 40px UnsavedProgress icon is gone. The first failure of a journey save or
+ // a settings save raises ONE error toast (저장하지 못했다); the pause page's save line shows the failed state (D10). Name kept
+ // because RefreshStatus calls it every .25 s. The icon-only detail (BuildIconDetail) and the icon-mode label hiding
+ // (ApplyIconChrome) are removed: the StoryBand304 page and the text labels serve both themes (Theme.Icons = support only).
+ const string Menu304SaveHint="저장 위치를 확인하고 다시 시도해 주세요";
+ bool menu304SaveFailed,menu304SettingsSaveFailed;
  void RefreshSaveFailureIcon(){
- if(Theme.Icons==null||canvasRect==null)return;
- bool failed=!string.IsNullOrEmpty(Session?.SaveError)||!string.IsNullOrEmpty(Settings?.SaveError);
- if(saveFailureIcon==null&&failed){
- var rect=PlaytestUiView.Rect("UnsavedProgress",canvasRect,0,0,40,40);rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(1,0);rect.anchoredPosition=new Vector2(-36,36);
- saveFailureIcon=PlaytestUiView.Image(rect,Theme.Icons.Health,Theme.Icons.Save);saveFailureIcon.preserveAspect=true;
- }
- if(saveFailureIcon!=null){saveFailureIcon.gameObject.SetActive(failed);if(failed)saveFailureIcon.transform.SetAsLastSibling();}
- }
- void BuildIconDetail(){
- var paper=PlaytestUiView.Rect("StoryPaper",modalLayer,0,0,820,330);paper.anchorMin=paper.anchorMax=paper.pivot=new Vector2(.5f,0);paper.anchoredPosition=new Vector2(0,64);
- PlaytestUiView.Image(PlaytestUiView.Stretch("Paper",paper),Theme.Paper,Theme.PromptPaper);
- var scroll=PlaytestUiView.Scroll(paper,"Narrative",66,80,658,170,Mathf.Max(216,detailBody.Length*1.7f));
- PlaytestUiView.Text(scroll,"Body",detailBody,Theme.Font,24,Theme.Ink,0,0,632,Mathf.Max(210,detailBody.Length*1.7f));
- PlaytestUiView.Button(paper,"Done","확인",Theme,732,222,48,52,CloseMenu);
- }
- void ApplyIconChrome(){
- if(Theme.Icons==null||Page=="일시정지")return;
- foreach(var t in modalLayer.GetComponentsInChildren<Text>(true)){
- if(t.name=="Brand"||t==subheading||(t==heading&&Page!="상세")||t.name.EndsWith("Hint")||t.name=="ItemEyebrow"||t.name=="Kind"||t.name=="ExampleLabel"||t.name.StartsWith("VirtueName_")||t.name.StartsWith("VirtueState_"))t.enabled=false;
- if(t==statusText){var coin=PlaytestUiView.Rect("Currency",t.transform,-42,0,30,30);CompactUiSymbols.Draw(coin,"통보",Theme.Icons,Theme.Seal);t.rectTransform.sizeDelta=new Vector2(70,34);t.alignment=TextAnchor.MiddleRight;}
- if(t.name=="Action"){t.enabled=false;CompactUiSymbols.Draw(t.transform,t.text,Theme.Icons,Theme.Ink);}
- if(t.name.StartsWith("Name_")){t.enabled=false;CompactUiSymbols.Draw(t.transform,t.text,Theme.Icons,Theme.Ink);}
- }
+  bool failed=!string.IsNullOrEmpty(Session!=null?Session.SaveError:null);
+  if(failed&&!menu304SaveFailed)Menu304Notify(new UiNotice304(UiNoticeKind304.Error,"저장하지 못했다",Menu304SaveHint));
+  menu304SaveFailed=failed;
+  bool settingsFailed=!string.IsNullOrEmpty(Settings!=null?Settings.SaveError:null);
+  if(settingsFailed&&!menu304SettingsSaveFailed)Menu304Notify(new UiNotice304(UiNoticeKind304.Error,"설정을 저장하지 못했다",Menu304SaveHint));
+  menu304SettingsSaveFailed=settingsFailed;
  }
  }
  // Small brush-based control symbols extend the imported pictograms without introducing a font icon dependency.

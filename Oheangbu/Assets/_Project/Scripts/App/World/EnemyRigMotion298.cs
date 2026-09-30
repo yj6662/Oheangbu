@@ -36,12 +36,16 @@ namespace Oheangbu.App.World
         readonly List<GameObject> effects = new List<GameObject>();
         GameObject warning;
         Vector3 previous;
-        float distance, lastHp, hitAt = -100, deathAt = -100, stunAt = -100;
+        float distance, hitAt = -100, deathAt = -100, stunAt = -100;
         uint revision;
         float[] blendFrom;
         int priorInput = -1;
         float blendStarted;
         [Range(0, .2f)] public float TransitionSeconds = .1f;
+        // #302 retarget fix: the Meshy basic walking clip (walking_man) lands on the humanoid avatar with the arms held
+        // out and the elbows locked bent. In idle/walk only, pull the upper arms toward the body and open the elbows.
+        // -1 = automatic (on for walking_man, off otherwise). Values are TEST.
+        [Range(-1, 1)] public float ArmRelax = -1f, ElbowRelax = -1f;
         bool wasStunned, resetSerpentHistory;
         Animator serpentPoseAnimator;
         Transform[] serpentPoseBones;
@@ -59,19 +63,19 @@ namespace Oheangbu.App.World
         void Bind()
         {
             Unbind(); subscribedVitals = Vitals; subscribedGeneral = General;
-            if (subscribedVitals != null) { subscribedVitals.HpChanged += Changed; subscribedVitals.Died += Died; }
+            if (subscribedVitals != null) { subscribedVitals.DamageResolved += Damaged; subscribedVitals.Died += Died; }
             if (subscribedGeneral != null) { subscribedGeneral.AttackStarted += Started; subscribedGeneral.AttackEnded += Ended; subscribedGeneral.AttackImpactResolved += Impact; }
         }
         void Unbind()
         {
-            if (subscribedVitals != null) { subscribedVitals.HpChanged -= Changed; subscribedVitals.Died -= Died; }
+            if (subscribedVitals != null) { subscribedVitals.DamageResolved -= Damaged; subscribedVitals.Died -= Died; }
             if (subscribedGeneral != null) { subscribedGeneral.AttackStarted -= Started; subscribedGeneral.AttackEnded -= Ended; subscribedGeneral.AttackImpactResolved -= Impact; }
             subscribedVitals = null; subscribedGeneral = null;
         }
         void ResetPose()
         {
             previous = transform.position; distance = 0; hitAt = deathAt = stunAt = -100; wasStunned = false; plan = null; priorInput = -1;
-            if (Vitals != null) { revision = Vitals.LifeRevision; lastHp = Vitals.Hp; }
+            if (Vitals != null) revision = Vitals.LifeRevision;
             if (SerpentFollow != null) { RestoreSerpentPose(); resetSerpentHistory = true; }
             RemoveWarning();
         }
@@ -92,7 +96,10 @@ namespace Oheangbu.App.World
             for (int i = 0; i < serpentPoseBones.Length; i++) if (serpentPoseBones[i] != null)
             { serpentPoseBones[i].localPosition = serpentPosePositions[i]; serpentPoseBones[i].localRotation = serpentPoseRotations[i]; serpentPoseBones[i].localScale = serpentPoseScales[i]; }
         }
-        void Changed() { if (Vitals != null && Vitals.Hp < lastHp) hitAt = Time.time; if (Vitals != null) lastHp = Vitals.Hp; }
+        // #306: one hit pose per resolved damage event with provenance. A harvest chunk reacts only when
+        // CombatConfigSO.HarvestChunkReaction allows it (EnemyVitals.ReactsTo); HP changes alone never restart the pose.
+        void Damaged(EnemyDamageResult result)
+        { if (Vitals != null && result.Target == Vitals && result.AppliedDamage > 0 && Vitals.ReactsTo(result.Attack)) hitAt = Time.time; }
         void Died() { deathAt = Time.time; plan = null; RemoveWarning(); }
         void Started(SouthGateGeneralAttackPlan value) { plan = value; }
         void Ended(SouthGateGeneralAttackPlan value, bool cancelled) { if (plan == value) plan = null; RemoveWarning(); }
@@ -167,10 +174,35 @@ namespace Oheangbu.App.World
                 SerpentFollow.enabled = follow;
             }
             nodes[index].SetTime(t); PoseTime = t;
-            FootPlacement?.RestoreAuthoredPose(); RestoreSerpentPose(); graph.Evaluate(0); FootPlacement?.ApplyPose(dt);
+            FootPlacement?.RestoreAuthoredPose(); RestoreSerpentPose(); graph.Evaluate(0);
+            RelaxArms(mixer.GetInputWeight(0) + mixer.GetInputWeight(1));
+            FootPlacement?.ApplyPose(dt);
             if (resetSerpentHistory && SerpentFollow != null && SerpentFollow.enabled) { SerpentFollow.ResetPoseHistory(); resetSerpentHistory = false; }
             effects.RemoveAll(e => e == null);
         }
+        bool MeshyWalk => Walk != null && Walk.name.Contains("walking_man");
+        public float ArmRelaxAmount => ArmRelax >= 0 ? ArmRelax : MeshyWalk ? .55f : 0f;
+        public float ElbowRelaxAmount => ElbowRelax >= 0 ? ElbowRelax : MeshyWalk ? .5f : 0f;
+
+        void RelaxArms(float weight)
+        {
+            float arm = ArmRelaxAmount * weight, elbow = ElbowRelaxAmount * weight;
+            if (arm <= 0 && elbow <= 0 || Animator == null || !Animator.isHuman) return;
+            Relax(HumanBodyBones.LeftUpperArm, HumanBodyBones.LeftLowerArm, HumanBodyBones.LeftHand, arm, elbow);
+            Relax(HumanBodyBones.RightUpperArm, HumanBodyBones.RightLowerArm, HumanBodyBones.RightHand, arm, elbow);
+        }
+
+        void Relax(HumanBodyBones upperBone, HumanBodyBones lowerBone, HumanBodyBones handBone, float arm, float elbow)
+        {
+            Transform upper = Animator.GetBoneTransform(upperBone), lower = Animator.GetBoneTransform(lowerBone), hand = Animator.GetBoneTransform(handBone);
+            if (upper == null || lower == null || hand == null) return;
+            Vector3 hang = (-transform.up * .95f + transform.forward * .12f).normalized;          // arms hang, slightly forward
+            Vector3 dir = (lower.position - upper.position).normalized;
+            upper.rotation = Quaternion.FromToRotation(dir, Vector3.Slerp(dir, hang, arm)) * upper.rotation;
+            Vector3 along = (lower.position - upper.position).normalized, fore = (hand.position - lower.position).normalized;
+            lower.rotation = Quaternion.FromToRotation(fore, Vector3.Slerp(fore, along, elbow)) * lower.rotation;
+        }
+
         void LateUpdate() { if (Time.deltaTime > 0) Evaluate(Time.time, Time.deltaTime); }
         void RemoveWarning() { if (warning != null) Destroy(warning); warning = null; }
         void OnDisable()

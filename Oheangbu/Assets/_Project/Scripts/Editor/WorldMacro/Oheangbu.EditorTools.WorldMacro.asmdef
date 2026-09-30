@@ -24,7 +24,9 @@
         "Unity.Mathematics",
         "Unity.Splines.Editor",
         "Unity.ProBuilder",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.TextMeshPro",
+        "Unity.TextMeshPro.Editor"
     ],
     "includePlatforms": [
         "Editor"

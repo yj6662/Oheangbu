@@ -12,10 +12,11 @@ namespace Oheangbu.App.World
   public AnimationClip Idle,Walk,Attack,Hit,Stun,Death;
   public float WalkMetresPerSecond=1.5f;
   PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] nodes;
-  Vector3 previousPosition;float distance,lastHp,hitAt=-100,deathAt=-100;uint revision;
+  Vector3 previousPosition;float distance,hitAt=-100,deathAt=-100;uint revision;
   public string CurrentPose{get;private set;} public float PoseTime{get;private set;}
-  void OnEnable(){previousPosition=transform.position;if(Vitals!=null){lastHp=Vitals.Hp;revision=Vitals.LifeRevision;Vitals.HpChanged+=Changed;Vitals.Died+=Died;}}
-  void Changed(){if(Vitals.Hp<lastHp)hitAt=Time.time;lastHp=Vitals.Hp;}
+  void OnEnable(){previousPosition=transform.position;if(Vitals!=null){revision=Vitals.LifeRevision;Vitals.DamageResolved+=Damaged;Vitals.Died+=Died;}}
+  // #306: hit pose only for damage the presentation may react to (EnemyVitals.ReactsTo: ReactToHarvest), as EnemyRigMotion298
+  void Damaged(EnemyDamageResult r){if(r.Target==Vitals&&r.AppliedDamage>0&&Vitals.ReactsTo(r.Attack))hitAt=Time.time;}
   void Died(){deathAt=Time.time;}
   void Create()
   {
@@ -30,7 +31,7 @@ namespace Oheangbu.App.World
   public void Evaluate(float now,float dt)
   {
    Create();if(!graph.IsValid()||Vitals==null||Enemy==null)return;
-   if(revision!=Vitals.LifeRevision){revision=Vitals.LifeRevision;hitAt=deathAt=-100;distance=0;previousPosition=transform.position;lastHp=Vitals.Hp;}
+   if(revision!=Vitals.LifeRevision){revision=Vitals.LifeRevision;hitAt=deathAt=-100;distance=0;previousPosition=transform.position;}
    float travel=Vector3.ProjectOnPlane(transform.position-previousPosition,Vector3.up).magnitude;previousPosition=transform.position;
    float speed=dt>0?travel/dt:0;if(speed>12)speed=travel=0;distance+=travel;
    for(int i=0;i<6;i++)mixer.SetInputWeight(i,0);
@@ -43,6 +44,6 @@ namespace Oheangbu.App.World
    nodes[index].SetTime(t);mixer.SetInputWeight(index,1);PoseTime=t;graph.Evaluate(0);
   }
   void LateUpdate(){if(Time.deltaTime>0)Evaluate(Time.time,Time.deltaTime);}
-  void OnDisable(){if(Vitals!=null){Vitals.HpChanged-=Changed;Vitals.Died-=Died;}if(graph.IsValid())graph.Destroy();}
+  void OnDisable(){if(Vitals!=null){Vitals.DamageResolved-=Damaged;Vitals.Died-=Died;}if(graph.IsValid())graph.Destroy();}
  }
 }

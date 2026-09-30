@@ -1,6 +1,9 @@
 """Read-only comparison of 296 clearance ledger and serialized placement arrays.
 
 This independently checks source transforms, preserved order and the sanctuary.
+Ledger Version 3 adds walking routes: corridors re-read from routes.json and the
+session content paths, and each route removal's collider centre recomputed from
+the source prototype inside the recorded segment.
 It does not substitute for Unity's collider queries or actual Play traversal.
 """
 from __future__ import annotations
@@ -120,6 +123,103 @@ def corridor_overlap(removal, corridor):
         if abs(dot(centres, axis)) >= ra + rb + 1e-4:
             return False
     return True
+
+
+def f32(value) -> bytes:
+    return struct.pack("<f", value)
+
+
+def flat_distance(p, a, b):
+    """Flat distance from p to segment a-b, as LandscapeFlatDistance296."""
+    dx, dz = b[0] - a[0], b[2] - a[2]
+    length = dx * dx + dz * dz
+    t = 0 if length < 1e-8 else max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[2] - a[2]) * dz) / length))
+    return math.hypot(a[0] + dx * t - p[0], a[2] + dz * t - p[2])
+
+
+def euler_rotate(euler, v):
+    """Unity Quaternion.Euler(x, y, z) * v: Z, then X, then Y."""
+    x, y, z = (math.radians(euler[k]) for k in "xyz")
+    v = (math.cos(z) * v[0] - math.sin(z) * v[1], math.sin(z) * v[0] + math.cos(z) * v[1], v[2])
+    v = (v[0], math.cos(x) * v[1] - math.sin(x) * v[2], math.sin(x) * v[1] + math.cos(x) * v[2])
+    return (math.cos(y) * v[0] + math.sin(y) * v[2], v[1], -math.sin(y) * v[0] + math.cos(y) * v[2])
+
+
+def prototype_rows(path: Path) -> dict:
+    """Prototype Id -> (Category, LOD0 first-part translation) read from the sheet YAML."""
+    text = path.read_text(encoding="utf-8-sig")
+    block = "\n" + text.split("\n  Prototypes:\n", 1)[1]
+    block = block[:re.search(r"\n  [A-Za-z]\w*:", block).start()]  # up to the next sheet field (Cells, PreservedAreas, ...)
+    rows = {}
+    for part in block.split("\n  - Id: ")[1:]:
+        local = [re.search(r"\n +e%d3: ([-\d.eE+]+)" % i, part) for i in range(3)]
+        rows[part.split("\n", 1)[0].strip()] = (int(re.search(r"\n    Category: (\d+)", part)[1]),
+                                               tuple(float(m[1]) for m in local) if all(local) else (0.0, 0.0, 0.0))
+    return rows
+
+
+def content_paths(path: Path):
+    """MainPath and BranchPath of a WorldMacroPlaytestSO asset as float tuples."""
+    text = path.read_text(encoding="utf-8-sig")
+    def read(name):
+        match = re.search(r"\n  %s:( \[\])?\n((?:  - \{[^\n]*\}\n)*)" % name, text)
+        if not match or match[1]:
+            return []
+        return [tuple(float(v) for v in re.findall(r"[xyz]: ([-\d.eE+]+)", line)) for line in match[2].splitlines()]
+    return read("MainPath"), read("BranchPath")
+
+
+def content_path_sha(main, branch) -> str:
+    """LandscapeContentPathSha296: int32 count then float32 x,y,z per point, MainPath then BranchPath."""
+    data = b"".join(struct.pack("<i", len(points)) + b"".join(f32(v) for p in points for v in p) for points in (main, branch))
+    return hashlib.sha256(data).hexdigest()
+
+
+def content_runs(points, cut):
+    """Runs between flat jumps longer than the teleport cut, as LandscapeRouteCorridors296 and NaturalSolids306."""
+    runs, start = [], 0
+    for i in range(1, len(points) + 1):
+        if i == len(points) or math.hypot(points[i][0] - points[i-1][0], points[i][2] - points[i-1][2]) > cut:
+            if i - start >= 2:
+                runs.append(points[start:i])
+            start = i
+    return runs
+
+
+def route_sources(ledger, check):
+    """Walking-route corridors (ledger Version 3): every routes.json route and every session content path run."""
+    if ledger.get("Version", 1) < 3:
+        return {}
+    rows = ledger.get("RouteCorridors") or []
+    content = ledger.get("RouteContent") or {}
+    expected = {}
+    for route in json.loads((OUT / "Generated/routes.json").read_text(encoding="utf-8-sig"))["routes"]:
+        if route.get("points") and len(route["points"]) >= 2:
+            expected["route:" + route["id"]] = ("routes.json", route["width"], [vec(p) for p in route["points"]], "")
+    content_path = content.get("Path") or ""
+    main, branch = content_paths(UNITY / content_path) if content_path else ([], [])
+    runs = {name: content_runs(points, content.get("Break", 40)) for name, points in (("content_main_path", main), ("content_branch_path", branch))}
+    for name, found in runs.items():
+        for i, run in enumerate(found):
+            expected["route:%s#%d" % (name, i)] = ("content", content.get("Width"), run, content_path)
+    bad = []
+    for row in rows:
+        source = expected.get(row["Id"])
+        ok = bool(source) and row["Kind"] == "route" and row["RouteId"] == row["Id"][len("route:"):] and abs(row["Height"] - 2.4) < 1e-5
+        if source:
+            owner, width, points, scene_path = source
+            ok &= row["OwnerId"] == owner and row["ScenePath"] == scene_path and abs(row["Width"] - width) < 1e-5
+            ok &= len(row["Points"]) == len(points) and all(f32(p[k]) == f32(q[j]) for p, q in zip(row["Points"], points) for j, k in enumerate("xyz"))
+        if not ok:
+            bad.append(row["Id"])
+    check("walking route corridors are every routes.json route and content path run with exact points", not bad and {r["Id"] for r in rows} == set(expected),
+          {"routesJson": sum(r["OwnerId"] == "routes.json" for r in rows), "contentRuns": sum(r["OwnerId"] == "content" for r in rows), "expected": len(expected), "bad": bad[:10]})
+    check("route content: private 296 session content, path-only hash, NaturalSolids306 width and cut",
+          content_path.startswith(PRIVATE) and content.get("PathSha256") == content_path_sha(main, branch) and
+          content.get("Width") == 2.0 and content.get("Break") == 40.0 and
+          content.get("MainRuns") == len(runs["content_main_path"]) and content.get("BranchRuns") == len(runs["content_branch_path"]),
+          {"path": content_path, "mainPoints": len(main), "branchPoints": len(branch)})
+    return {r["Id"]: r for r in rows}
 
 
 def corridor_sources(ledger, check):
@@ -289,6 +389,13 @@ def run() -> dict:
         checks.append({"name": name, "passed": bool(ok), "details": detail})
 
     corridors = corridor_sources(ledger, check)
+    routes = route_sources(ledger, check)
+    corridors = {**corridors, **routes}
+    if ledger.get("Version", 1) >= 3:
+        skipped = ledger.get("SkippedSheets") or []
+        check("sheets outside the 296 private copies are only reported, never edited",
+              all(not s["Path"].startswith(PRIVATE) and s["Path"] not in mapping for s in skipped) and
+              not {s["Path"] for s in skipped} & {r["CandidatePath"] for r in ledger["Sheets"]}, [s["Path"] for s in skipped])
     visual_rows = ledger.get("VisualControls") or []
     visuals = {r["Id"]: r for r in visual_rows}
     compound_rows = ledger.get("Compounds") or []
@@ -369,6 +476,40 @@ def run() -> dict:
               {"sourceProtected": sum(protected(p) for p in old), "candidateProtected": sum(protected(p) for p in new)})
         bad_reason = []
         bad_overlap = []
+        bad_route = []
+        route_rows = [r for r in removals.values() if (r.get("CorridorId") or "").startswith("route:")]
+        prototypes = prototype_rows(source_path) if route_rows else {}
+        for r in route_rows:
+            # Walking route: Tree/Rock whose natural-solid collider centre is recomputed from the source prototype and lies
+            # inside the flat corridor of the recorded segment (an edge overlap alone is never a removal).
+            corridor = routes.get(r["CorridorId"])
+            placement = r["Placement"]
+            category, part = prototypes.get(placement["PrototypeId"], (None, None))
+            ok = bool(corridor) and r["Category"] in ("Tree", "Rock") and category == {"Tree": 0, "Rock": 3}.get(r["Category"])
+            ok &= not protected(placement) and not placement["Id"].startswith("detail261_")  # owns a fixed CheongrimDetail261 collider
+            if ok:
+                solid = vec(r["SolidCentre"])
+                upright = placement["Euler"]["x"] == 0 and placement["Euler"]["z"] == 0
+                if r["Category"] == "Tree":
+                    # trunk at the LOD0 first-part translation (the source mesh pivot), as CompactNaturalSolids places it
+                    offset = euler_rotate(placement["Euler"], (part[0] * placement["Scale"], 0.0, part[2] * placement["Scale"]))
+                    ok &= all(abs(solid[j] - placement["Position"][k] - offset[j]) < .001 for j, k in ((0, "x"), (2, "z")))
+                if r["Category"] == "Rock" or upright:
+                    # the 3D probe sits on that collider centre (a tilted tree's trunk box leans off it)
+                    ok &= abs(r["ProbeCentre"]["x"] - solid[0]) < .001 and abs(r["ProbeCentre"]["z"] - solid[2]) < .001
+                i = r.get("SegmentIndex", -1)
+                points = corridor["Points"]
+                if 0 <= i < len(points) - 1:
+                    distance = flat_distance(solid, vec(points[i]), vec(points[i + 1]))
+                    ok &= distance <= corridor["Width"] * .5 + 1e-4 and abs(distance - r["CentreDistance"]) < 1e-3
+                else:
+                    ok = False
+                ok &= not upright or r["ProbeCentre"]["y"] + r["ProbeSize"]["y"] * .5 - placement["Position"]["y"] >= .3 - 1e-3
+            if not ok:
+                bad_route.append(placement["Id"])
+        if ledger.get("Version", 1) >= 3:
+            check("route passage: Tree/Rock collider centre inside the corridor, derived from the source prototype", not bad_route,
+                  {"routeRemovals": len(route_rows), "bad": bad_route[:10]})
         for r in removals.values():
             arena = arenas.get(r["ArenaId"])
             reason = r["Reason"]
@@ -418,6 +559,8 @@ def run() -> dict:
                   "GateRemovals": sum((r.get("CorridorId") or "").startswith(("gate:", "gate-route:")) for r in removed),
                   "ReviewedTreeRemovals": sum(bool(r.get("VisualControlId")) for r in removed),
                   "CompoundTreeRemovals": sum(bool(r.get("CompoundId")) for r in removed)}
+        if "RouteRemovals" in ledger:
+            counts["RouteRemovals"] = sum((r.get("CorridorId") or "").startswith("route:") for r in removed)
         check("removal classifications partition the complete ledger", all(ledger[k] == v for k, v in counts.items()) and sum(counts.values()) == ledger["Removed"], counts)
     retained_review = retained_reviewed_tree(ledger)
     check("reviewed foreground tree retained with no 3D passage overlap", retained_review["passed"],

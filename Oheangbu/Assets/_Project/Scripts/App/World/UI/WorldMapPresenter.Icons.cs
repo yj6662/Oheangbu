@@ -1,39 +1,46 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-namespace Oheangbu.App.World.UI {
- public sealed partial class WorldMapPresenter {
- void ApplyIconStyle(){
- if(dependencies.Icons==null)return;
- foreach(var t in MiniRoot.GetComponentsInChildren<Text>(true))t.enabled=false;
- foreach(var t in FullRoot.GetComponentsInChildren<Text>(true))t.enabled=false;
- foreach(var t in regionLabels){t.enabled=true;t.raycastTarget=false;}
- var border=MiniRoot.Find("InkBorder");if(border!=null)border.gameObject.SetActive(false);
- MiniRoot.GetComponent<Image>().sprite=PlaytestUiRoot.Instance?.Theme?.PromptPaper;
- var maskImage=miniViewport.gameObject.AddComponent<Image>();maskImage.sprite=PlaytestUiRoot.Instance.Theme.PromptPaper;maskImage.raycastTarget=false;
- miniViewport.gameObject.AddComponent<Mask>().showMaskGraphic=false;
- MiniRoot.sizeDelta=new Vector2(268,272);miniViewport.anchoredPosition=new Vector2(10,-12);
- foreach(var line in new[]{miniLines,miniMajorLines,caveFootprint,caveDetail})line.BrushStyle=true;
- paperInk.BrushStyle=true;macroInk.BrushStyle=true;
- if(data.PaintedRelief){
- paperMaterial.SetFloat("_PaintedRelief",1);
- foreach(var line in new[]{miniLines,miniMajorLines,caveFootprint,caveDetail})line.PaintedRelief=true;
- paperInk.PaintedRelief=true;macroInk.PaintedRelief=true;
- if(miniPaperMaterial!=null)miniPaperMaterial.SetFloat("_PaintedRelief",1);
- // A restrained paper margin leaves the illustrated terrain readable.
- MiniRoot.GetComponent<Image>().sprite=null;
- MiniRoot.GetComponent<Image>().color=new Color(.65f,.61f,.48f,.9f);
- maskImage.sprite=null;
- MiniRoot.sizeDelta=new Vector2(268,268);miniViewport.anchoredPosition=new Vector2(5,-5);miniViewport.sizeDelta=new Vector2(258,258);
- }
- foreach(var marker in markers){SetSymbol(marker.Mini,dependencies.Icons.Marker(marker.Spec),marker.Spec.Kind==WorldMapMarkerKind.Mountain?42:30);SetSymbol(marker.Full,dependencies.Icons.Marker(marker.Spec),34);}
- miniPlayer.SetAsLastSibling();fullPlayer.SetAsLastSibling();
- SetSymbol(miniCheckpoint,dependencies.Icons.Inn,28);SetSymbol(fullCheckpoint,dependencies.Icons.Inn,32);
- foreach(var button in FullRoot.GetComponentsInChildren<Button>(true)){
- var label=button.GetComponentInChildren<Text>(true);if(label!=null){label.enabled=false;CompactUiSymbols.Draw(button.transform,button.name+" "+label.text,dependencies.Icons,dependencies.Ink);}}
- if(legend!=null){var rect=(RectTransform)legend.transform;rect.sizeDelta=new Vector2(100,270);
- Sprite[] sprites={dependencies.Icons.Mountain,dependencies.Icons.Inn,dependencies.Icons.Cave};
- for(int i=0;i<sprites.Length;i++){var icon=PlaytestUiView.Image(PlaytestUiView.Rect("Symbol",rect,22,20+i*78,56,56),dependencies.Ink,sprites[i]);icon.preserveAspect=true;}}
- }
- static void SetSymbol(RectTransform rect,Sprite sprite,float size){var image=rect.GetComponent<Image>();if(image!=null){image.sprite=sprite;image.preserveAspect=true;}rect.sizeDelta=Vector2.one*size;rect.localRotation=Quaternion.identity;}
- }
+using UnityEngine;
+
+namespace Oheangbu.App.World.UI
+{
+    // #304: the icon mode no longer hides text. Theme.Icons (CompactUiProfileSO) is only a source of support pictures:
+    // the inn / cave / mountain drawings for marks of 34 px and more (legend 44, map marks). Smaller marks (the places
+    // list 30 px, the HUD bearing line 32 px) use the flat D13 pictograms of MapStyle304SO.
+    public sealed partial class WorldMapPresenter
+    {
+        static Sprite Pick(Sprite a, Sprite b) => a != null ? a : b;
+        static Sprite Pick(Sprite a, Sprite b, Sprite c) => a != null ? a : b != null ? b : c;
+
+        /// <summary>Drawing for a mark of 34 px or more (DESIGN §5.13 그림: 그림이 곳의 생김이다).</summary>
+        Sprite PictureFor(WorldMapMarkerKind kind)
+        {
+            var icons = dependencies != null ? dependencies.Icons : null;
+            Sprite inn = icons != null ? icons.Inn : null, cave = icons != null ? icons.Cave : null, mountain = icons != null ? icons.Mountain : null;
+            switch (kind)
+            {
+                case WorldMapMarkerKind.Rest: case WorldMapMarkerKind.Checkpoint: return Pick(inn, mapStyle.PictRest, style.Sprites.Disc);
+                case WorldMapMarkerKind.Mountain: return Pick(mountain, mapStyle.PictMountain, style.Sprites.Disc);
+                case WorldMapMarkerKind.Gate: return Pick(mapStyle.PictGate, cave, style.Sprites.Disc);
+                case WorldMapMarkerKind.Settlement: return Pick(mapStyle.PictVillage, inn, style.Sprites.Disc);
+                case WorldMapMarkerKind.Drop: return Pick(mapStyle.Coin, style.Sprites.Disc);
+                default: return Pick(cave, mapStyle.PictCave, style.Sprites.Disc);
+            }
+        }
+
+        /// <summary>D13 flat pictogram for 30~32 px; falls back to the drawing when the map asset is missing.</summary>
+        Sprite PictogramFor(WorldMapMarkerKind kind) => Pick(mapStyle.Pictogram(kind), PictureFor(kind));
+
+        static MapMarkerKind304 KindOf(WorldMapMarkerKind kind)
+        {
+            switch (kind)
+            {
+                case WorldMapMarkerKind.Rest: case WorldMapMarkerKind.Checkpoint: return MapMarkerKind304.Rest;
+                case WorldMapMarkerKind.Drop: return MapMarkerKind304.Coin;
+                case WorldMapMarkerKind.Pin: return MapMarkerKind304.Pin;
+                default: return MapMarkerKind304.Place;
+            }
+        }
+
+        /// <summary>Mark size (page px) of a data marker on the map.</summary>
+        float MarkSize(WorldMapMarkerKind kind) => kind == WorldMapMarkerKind.Rest || kind == WorldMapMarkerKind.Checkpoint ? mapStyle.RestSize : mapStyle.PlaceSize;
+    }
 }

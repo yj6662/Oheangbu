@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Oheangbu.App.World.UI
 {
     /// <summary>Small uGUI vocabulary shared by the playtest folio and title. All text is real Korean text.</summary>
-    public static class PlaytestUiView
+    public static partial class PlaytestUiView
     {
         public static RectTransform Rect(string name, Transform parent, float x, float y, float width, float height)
         {

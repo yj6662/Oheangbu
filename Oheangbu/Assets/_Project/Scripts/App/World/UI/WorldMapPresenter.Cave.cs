@@ -14,7 +14,6 @@ namespace Oheangbu.App.World.UI
             public Texture2D Mask;
         }
         readonly Dictionary<string, InteriorDiscovery> interiors = new Dictionary<string, InteriorDiscovery>();
-        Material caveMapMaterial;
         float nextCaveProbe;
 
         InteriorDiscovery GetInteriorDiscovery(WorldMapZoneSpec zone)
@@ -71,10 +70,8 @@ namespace Oheangbu.App.World.UI
             var entry = GetInteriorDiscovery(zone);
             bool enabled = zone != null && zone.ExploreWalkedPassages;
             Texture texture = entry != null ? entry.Mask : Texture2D.blackTexture;
-            if (enabled && caveMapMaterial == null)
-                caveMapMaterial = new Material(Resources.Load<Shader>("WorldMap/CaveDiscovery")) { hideFlags = HideFlags.DontSave };
-            caveIllustration.material = enabled ? caveMapMaterial : null;
-            if (caveMapMaterial != null) caveMapMaterial.SetTexture("_DiscoveryTex", texture);
+            // #304: the minimap cave plan (and its CaveDiscovery material) is gone; the unfolded sheet reveals walked
+            // passages itself through _CaveDiscovery.
             if (paperMaterial != null)
             {
                 paperMaterial.SetFloat("_ExploreCave", enabled ? 1 : 0);
@@ -85,7 +82,7 @@ namespace Oheangbu.App.World.UI
         void DisposeInteriorDiscovery()
         {
             foreach (var entry in interiors.Values) if (entry.Mask != null) Destroy(entry.Mask);
-            interiors.Clear(); if (caveMapMaterial != null) Destroy(caveMapMaterial);
+            interiors.Clear();
         }
     }
 }

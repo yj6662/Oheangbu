@@ -6,9 +6,12 @@ namespace Oheangbu.Combat
 {
     // 적 생명 — 이층 구조의 「체력」 쪽(COMBAT-CHARTER: 딜은 체력을 무너뜨린다).
     // 체력과 별도인 GroggyMeter를 적마다 소유한다. 다른 적의 패링·사망은 이 게이지를 바꾸지 않는다.
-    public sealed class EnemyVitals : MonoBehaviour
+    // #306: 적별 체력 프로필(EnemyVitalsProfileSO) — 없으면 설정값. HUD 체력 획·보스 바의 원천(IHealthBarSource306).
+    public sealed class EnemyVitals : MonoBehaviour, IHealthBarSource306
     {
         [SerializeField] private CombatConfigSO _config;
+        [Tooltip("적별 체력·이름·보스 여부 [TEST D306]. 비우면 CombatConfigSO.EnemyMaxHp")]
+        [SerializeField] private EnemyVitalsProfileSO _profile;
 
         private float _hp;
         private GroggyMeter _groggy;
@@ -20,7 +23,24 @@ namespace Oheangbu.Combat
         public uint LifeRevision { get; private set; }
         public EnemyControlState Control { get; } = new EnemyControlState();
         public float Hp => _hp;
-        public float MaxHp => _config != null ? _config.EnemyMaxHp : 60f;
+        // 최대 체력의 유일 경로 — Awake·Restore·Hp01·Heal이 모두 여기를 읽는다(부활 때 60으로 돌아가지 않게)
+        public float MaxHp => _profile != null && _profile.MaxHp > 0f ? _profile.MaxHp : _config != null ? _config.EnemyMaxHp : 60f;
+        public EnemyVitalsProfileSO Profile => _profile;
+        public string DisplayName => _profile != null ? _profile.DisplayName : "";
+        public bool IsBoss => _profile != null && _profile.IsBoss;
+        public bool ShowLockOnBar => _profile == null || _profile.ShowLockOnBar;
+        bool IHealthBarSource306.Alive => IsAlive;
+        // 표현 계층(피격 자세·소리)이 이 출처의 피해에 반응해도 되는가 — 갈무리 덩어리는 CombatConfigSO.HarvestChunkReaction(D306)
+        // 뽑은 HarvestAction(Instigator)의 설정이 우선 — 적 설정 사본이 플레이어 쪽과 달라도 플래그 하나로 모인다
+        public bool ReactsTo(AttackProvenance attack) => attack.Source != DamageSource.Harvest
+            || (attack.Instigator is HarvestAction harvest && harvest != null ? harvest.ChunkReaction : ReactsTo(attack.Source));
+        public bool ReactsTo(DamageSource source) => source != DamageSource.Harvest || _config == null || _config.HarvestChunkReaction;
+        // 실행 중 프로필 교체(생성 도구·조우 등록) — 살아 있으면 채움 비율을 지킨다
+        public void ConfigureProfile(EnemyVitalsProfileSO profile)
+        {
+            float fill = Hp01; _profile = profile;
+            if (IsAlive) { _hp = Mathf.Max(Mathf.Min(1f, MaxHp), MaxHp * Mathf.Clamp01(fill)); HpChanged?.Invoke(); }
+        }
         public GroggyMeter Groggy { get { EnsureGroggy(); return _groggy; } }
         public bool WeakPointActive => IsAlive && Time.time < _weakPointUntil;
         public int WeakPointElementMask => _elementMask;
@@ -48,12 +68,12 @@ namespace Oheangbu.Combat
             return restored;
         }
         public void Restore()
-        { LifeRevision++; Control.Clear(); ResetCombatState(); _hp=_config!=null?_config.EnemyMaxHp:60f; HpChanged?.Invoke(); }
-        public float Hp01 => _config != null && _config.EnemyMaxHp > 0f ? _hp / _config.EnemyMaxHp : 0f;
+        { LifeRevision++; Control.Clear(); ResetCombatState(); _hp=MaxHp; HpChanged?.Invoke(); }
+        public float Hp01 { get { float max = MaxHp; return max > 0f ? _hp / max : 0f; } }
 
         private void Awake()
         {
-            _hp = _config != null ? _config.EnemyMaxHp : 60f;
+            _hp = MaxHp;
         }
 
         private void EnsureGroggy()

@@ -76,9 +76,9 @@ namespace Oheangbu.Combat
             _authoredForward = Vector3.ProjectOnPlane(_player.position - transform.position, Vector3.up).normalized;
             if (_authoredForward.sqrMagnitude < .01f) _authoredForward = transform.forward;
             _attack = AttackProvenance.Create(_vitals, DamageSource.Enemy, _attackProfile.Elemental ? _attackProfile.Element : (Element?)null);
-            _state = State.Telegraph; _stateUntil = Time.time + _attackProfile.Telegraph;
+            _state = State.Telegraph; _stateUntil = Time.time + _attackProfile.Telegraph; AttackStartTime = Time.time; RefreshOrganTint();
             _authoredCueActive = true;
-            Tint(_attackProfile.Elemental ? _elementColor : _neutralColor);
+            if (!_attackProfile.Elemental) Tint(_neutralColor); else if (_tintBodyOnTelegraph) Tint(_elementColor); // neutral keeps the darkening-ink cue
             AttackTelegraphed?.Invoke(new EnemyAttackCue(_attack, _attackProfile.Delivery, _authoredPoint, _attackProfile.Telegraph, _attackProfile.ImpactRadius));
         }
 
@@ -100,7 +100,7 @@ namespace Oheangbu.Combat
             _authoredPoint = _player.position + Vector3.up * .5f; // Aimed water shots stop following here.
             _authoredFlightDuration = Mathf.Max(.05f, Vector3.Distance(_projectileStart, _authoredPoint) / _attackProfile.ProjectileSpeed);
             _impactTime = Time.time + _authoredFlightDuration;
-            if (_projectile != null) { _projectile.position = _projectileStart; _projectile.gameObject.SetActive(true); }
+            if (_projectile != null) { _projectile.position = _projectileStart; ShowProjectile(); }
             _state = State.Flight;
         }
 

@@ -73,6 +73,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(command=="lobby-connect")return LobbyConnect297(false);
    if(command=="lobby-revert")return LobbyConnect297(true);
    if(command=="review-play-status"||command=="review-play:status")return Finish297ReviewPlay.Status();
+   if(command.StartsWith("review-play:start-mum:"))return Finish297ReviewPlay.Run(command.Substring(12));
    if(command.StartsWith("review-play:start:"))return Finish297ReviewPlay.Start(command.Substring(18),false);
    if(command.StartsWith("review-play:"))return Finish297ReviewPlay.Start(command.Substring(12),false);
    if(command=="play-stop"){EditorApplication.isPlaying=false;return "stopping Play";}
@@ -81,6 +82,12 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(command=="runtime-start")return Runtime297("start");
    if(command=="runtime-status")return Runtime297("status");
    if(command=="legacy"||command=="legacy:dry"||command=="legacy-revert")return Legacy297(command=="legacy"?"apply":command=="legacy:dry"?"dry":"revert");
+   // gate route fix (CompactFinish297.GateRoute.cs, Finish297/Capital/EXIT2_FIX_IMPL.md)
+   if(command.StartsWith("gate-route-scene:"))return GateRouteScene297(command.Substring(17));
+   if(command=="gate-route-revert"||command.StartsWith("gate-route-revert:")||command.StartsWith("gate-route-revert|"))return GateRouteRevert297(command.Substring(17).TrimStart(':'));
+   if(command=="gate-route-check"||command.StartsWith("gate-route-check:")||command.StartsWith("gate-route-check|"))return GateRouteCheck297(command.Substring(16).TrimStart(':'));
+   if(command=="gate-route-status")return GateRouteStatus297();
+   if(command.StartsWith("gate-route:"))return GateRoute297(command.Substring(11));
    throw new ArgumentException(command);
   }
   static Vector3 Vec297(string text){var v=text.Split(',').Select(t=>float.Parse(t,CultureInfo.InvariantCulture)).ToArray();return new Vector3(v[0],v[1],v[2]);}

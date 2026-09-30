@@ -50,6 +50,16 @@ namespace Oheangbu.App.Demo
         public float ProjectileDistance => Mathf.Min(ClearDistance, Mathf.Max(0f, SampleTime - ReleaseAt) * Speed);
         public Vector3 ProjectilePosition => Origin + Direction * ProjectileDistance;
 
+        // #306 read-only telegraph clock (SPEC-PLAYTEST-306 #12): when this attack would meet a body at `bodyPoint` (the
+        // player centre + .8 m the owner samples). Same scaled clock as the plan; recomputed per call, never fed back.
+        // Bolt: release + (along - radius) / speed, bounded by the clipped travel. Every other kind: release.
+        public float PredictImpactTime(Vector3 bodyPoint)
+        {
+            if (Kind != CheongryongAttackKind.WoodProjectile || !Finite(bodyPoint)) return ReleaseAt;
+            float along = Mathf.Clamp(Vector3.Dot(bodyPoint - Origin, Direction) - Radius, 0f, ClearDistance);
+            return Mathf.Min(ActiveEndAt, ReleaseAt + along / Speed);
+        }
+
         public CheongryongAttackPlan(CheongryongCombatProfile profile, CheongryongAttackKind kind, AttackProvenance attack,
             Vector3 origin, Vector3 direction, Vector3 targetPoint, float startedAt)
         {

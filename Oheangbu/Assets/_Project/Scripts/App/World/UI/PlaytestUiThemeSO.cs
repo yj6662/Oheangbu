@@ -19,5 +19,7 @@ namespace Oheangbu.App.World.UI
         public Color Paper = new Color(.969f,.945f,.894f,1);
         public Color Muted = new Color(.43f,.41f,.36f,1);
         public Color Seal = new Color(.49f,.19f,.13f,1);
+        [Tooltip("#304 UI tokens, sprites, materials and TMP roles. The legacy fields above stay for old scenes.")]
+        public UiStyle304SO Style304;
     }
 }

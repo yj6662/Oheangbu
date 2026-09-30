@@ -13,7 +13,7 @@ namespace Oheangbu.App
 
         [SerializeField] private EnemyVitals _vitals;
         [SerializeField] private Renderer _renderer;
-        [Tooltip("누적 피해 환산용(Hp01 × MaxHp) — 과녁 전용 설정(사실상 불사)")]
+        [Tooltip("[LEGACY #306] 과녁 설정 참조(씬 호환). 누적 피해 환산은 EnemyVitals.MaxHp(적별 프로필 포함)를 쓴다")]
         [SerializeField] private CombatConfigSO _config;
         [Tooltip("라벨 캡션 — 디렉터가 있으면 각·거리·IN/OUT으로 덮어쓴다")]
         [SerializeField] private string _caption = "";
@@ -60,7 +60,7 @@ namespace Oheangbu.App
         private void OnHpChanged()
         {
             float hp01 = _vitals.Hp01;
-            float maxHp = _config != null ? _config.EnemyMaxHp : 0f;
+            float maxHp = _vitals.MaxHp; // #306: 적별 프로필 체력(EnemyVitals.MaxHp 단일 경로)
             float damage = Mathf.Max(0f, (_lastHp01 - hp01) * maxHp);
             _lastHp01 = hp01;
             _hits++;

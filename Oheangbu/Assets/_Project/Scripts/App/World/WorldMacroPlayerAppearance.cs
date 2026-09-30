@@ -34,6 +34,34 @@ namespace Oheangbu.App.World
         private int _jumpSerial, _landSerial;
         private bool _wasDodging;
         private bool _wasMoving;
+        private float _dodgeTail = -1f;   // #300 seconds into the dodge recovery tail; < 0 = none
+
+        // #300 presentation only: the 0.25 s dash plays the moving span of the dodge clip (not the whole clip squeezed),
+        // then the landing/recovery plays out near its authored speed. Moving input hands over early; the controller's
+        // Dodge -> Locomotion cross-fade finishes the blend. Dash distance, time and immunity are untouched.
+        private void DodgePresentation(Vector3 local, ref float time, ref bool state)
+        {
+            Vector2 span = _profile.DodgeDashSpan;
+            if (_motor.IsRolling) { _dodgeTail = -1f; return; }
+            if (_motor.IsDodging)
+            {
+                _dodgeTail = 0f;
+                time = Mathf.Lerp(span.x, span.y, _motor.DodgeProgress);
+                state = true;
+                return;
+            }
+            if (_dodgeTail < 0f) return;
+            _dodgeTail += Time.deltaTime;
+            bool moving = local.x * local.x + local.z * local.z > _profile.DodgeTailCutSpeed * _profile.DodgeTailCutSpeed;
+            float limit = moving ? Mathf.Min(_profile.DodgeTailMovingSeconds, _profile.DodgeTailSeconds) : _profile.DodgeTailSeconds;
+            if (_dodgeTail >= limit || !_motor.IsLocomotionGrounded || _motor.IsDrawing || _motor.IsSitting || _motor.IsCrouching)
+            {
+                _dodgeTail = -1f;
+                return;
+            }
+            time = Mathf.Lerp(span.y, 1f, _dodgeTail / _profile.DodgeTailSeconds);
+            state = true;
+        }
 
         private sealed class BlinkBinding
         {
@@ -121,10 +149,12 @@ namespace Oheangbu.App.World
                     }
                     _animator.SetFloat("SitAmount", _motor.Posture01);
                     _animator.SetFloat("StandAmount", 1f - _motor.Posture01);
-                    _animator.SetFloat("DodgeProgress", _motor.DodgeProgress);
+                    float dodgeTime = _motor.DodgeProgress; bool dodgeState = _motor.IsDodging;
+                    if (_profile.DodgeRecoveryTail) DodgePresentation(local, ref dodgeTime, ref dodgeState);
+                    _animator.SetFloat("DodgeProgress", dodgeTime);
                     _animator.SetBool("Sitting", _motor.IsSitting);
                     _animator.SetBool("SitRequested", _motor.SitRequested);
-                    _animator.SetBool("Dodging", _motor.IsDodging);
+                    _animator.SetBool("Dodging", dodgeState);
                     if (_profile.IdleLookTurn) _animator.SetBool("Rolling", _motor.IsRolling);
                     Vector3 dodge = _motor.DodgeLocalDirection;
                     _animator.SetFloat("DodgeX", dodge.x); _animator.SetFloat("DodgeZ", dodge.z);

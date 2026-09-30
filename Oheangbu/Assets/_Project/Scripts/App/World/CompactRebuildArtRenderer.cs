@@ -82,6 +82,22 @@ namespace Oheangbu.App.World
             instances=accepted.ToArray();properties=new MaterialPropertyBlock();
             BuildCells();
         }
+        // #302 presentation: drop instances whose base hangs above the ground (left at an old height after a pad levelled the
+        // terrain) for this session only; the sheet data is untouched. Returns how many moved.
+        public int DropFloaters(Vector3 centre,float radius,float minGap)
+        {
+            Prepare();int moved=0;
+            for(int i=0;i<instances.Length;i++)
+            {
+                ref var it=ref instances[i];
+                if(new Vector2(it.Position.x-centre.x,it.Position.z-centre.z).sqrMagnitude>radius*radius)continue;
+                if(!Physics.Raycast(it.Position+Vector3.up*.3f,Vector3.down,out var hit,120f,~0,QueryTriggerInteraction.Ignore))continue;
+                float gap=it.Position.y-hit.point.y;if(gap<minGap)continue;
+                var d=Vector3.down*(gap+.05f);it.Position+=d;it.Bounds.center+=d;it.Matrix=Matrix4x4.Translate(d)*it.Matrix;moved++;
+            }
+            if(moved>0)BuildCells();
+            return moved;
+        }
         // Same float sums as the batch test in Collect; NaN stays NaN so such an instance is never skipped early.
         static float ReachOf(Batch[][] levels,float radius)
         {

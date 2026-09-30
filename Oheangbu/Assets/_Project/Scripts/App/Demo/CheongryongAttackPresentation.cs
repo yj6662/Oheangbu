@@ -22,6 +22,8 @@ namespace Oheangbu.App.Demo
         readonly List<Remnant> remnants = new List<Remnant>();
         sealed class Remnant { public GameObject Instance; public float Until; }
         public bool HasAllSources => warningPrefab != null && spikePrefab != null && impactPrefab != null && projectileMesh != null && projectileMaterial != null;
+        // #306 read-only: the live bolt body (null while not flying) so the organ thread can reach it
+        public Transform ProjectileTransform => projectile != null && projectile.activeSelf ? projectile.transform : null;
         public int LiveVisualCount => (warning!=null?1:0)+(spike!=null?1:0)+(projectile!=null?1:0)+(growthWarning!=null?1:0)+remnants.Count;
 
         public void Configure(CheongryongCombatController source, GameObject warningSource, GameObject spikeSource,

@@ -246,7 +246,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     p.y=Mathf.Max(field.Sample(p.x,p.z)+.025f,Mathf.Lerp(a.y,b.y,Mathf.SmoothStep(0,1,t)));output.Add(p);
    }
   }
-  static void BuildGateApproaches296(Transform parent,GateAperture296 gate,Routes292 routes,CompactWorldSurface field,float approachMetres=60,bool allRoutes=false)
+  // meshFolder: null keeps the #296 private meshes (A296/Meshes/Crossings); the #297 gate-route fix passes its own folder
+  // so the guarded A296/Meshes tree is never rewritten.
+  static void BuildGateApproaches296(Transform parent,GateAperture296 gate,Routes292 routes,CompactWorldSurface field,float approachMetres=60,bool allRoutes=false,string meshFolder=null)
   {
    var batch=new CrossingBatch296();var floor=CrossingSource(StoneFloor296);
    var approaches=new List<GatePaving296>();
@@ -327,7 +329,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    if(batch.Instances==0)return;
    var holder=new GameObject(gate.Id+"_RouteApproaches").transform;holder.SetParent(parent,false);
-   var renderers=batch.Finish(holder,"gate296_"+gate.Id+"_approaches",true);CrossingLods296(holder,"gate296_"+gate.Id+"_approaches",renderers);
+   var renderers=batch.Finish(holder,"gate296_"+gate.Id+"_approaches",true,meshFolder);CrossingLods296(holder,"gate296_"+gate.Id+"_approaches",renderers);
   }
   sealed class GatePaving296 {public Vector3[] Points;public float[] Along;public float Width;}
   static void GatePavingProfile296(GatePaving296 path,Vector3 p,out float height,out float lateral,out float along)

@@ -35,43 +35,72 @@ namespace Oheangbu.App.World
             _presenting = true;
         }
 
+        // #304 (IMPLEMENTATION §7.1): the HUD prompt shows the session text in every theme (the icon-mode branch that nulled it is
+        // gone). One text surface still holds: Present() already routes long text to the detail page, so CurrentHudText is the
+        // prompt. The focused object keeps its outline; the world-space F letter only appears while the HUD prompt is hidden.
+        // The death wake line is routed to the notice channel by WorldMacroPlayerDeath303 and so is kept off the prompt.
+        // QA1 (after/prompt.png, item 3): read-only state of the last LateUpdate for `hud304-prompt` (editor) and captures.
+        public enum LetterState304 { NotRun, NoCamera, NoFocus, HiddenByPrompt, LineOfSight, Offscreen, Shown }
+        public LetterState304 LastLetterState304 { get; private set; }
+        public string LastPromptText304 { get; private set; }
+        public int LastPresentFrame304 { get; private set; } = -1;
+
         private void LateUpdate()
         {
             if (!_presenting) { Activate(); if (!_presenting) return; }
-            if (Hud.UsesIcons)
-            {
-                Hud.SetInteractionIcon(null);
-                Hud.SetInteractionText(null);
-                UpdateWorldInteraction();
-            }
-            else
-            {
-                _outline.Hide();
-                if (_interactionCanvas != null) _interactionCanvas.gameObject.SetActive(false);
-                Hud.SetInteractionText(Session.CurrentHudText);
-            }
+            string text = PromptText(Session);
+            Hud.SetInteractionText(text);
+            LastPromptText304 = text; LastPresentFrame304 = Time.frameCount;
+            // the world F stays hidden only while the HUD prompt can really draw (a HUD canvas turned off by a menu or a capture
+            // tool must not leave a focused object with no surface at all)
+            UpdateWorldInteraction(!Hud.PromptOnScreen304);
             Vector3 local = Body.transform.InverseTransformDirection(Body.velocity);
             Hud.SetInkMotion(new Vector2(local.x, local.z) / Mathf.Max(.1f, MovementReferenceSpeed));
         }
 
-        private void UpdateWorldInteraction()
+        /// <summary>#304: the text the HUD prompt shows for the session. The death wake line (WorldMacroPlayerDeath303 routes it
+        /// to the notice channel) and the session lines PlaytestUiRoot forwards to the toast stack (Menu304RoutesToToast) are left
+        /// out while they are the session's LastFeedback, so one line never shows as a toast and on the prompt at once. A save
+        /// error keeps the prompt (session priority, unchanged). Harnesses compare the prompt's visibility with this.</summary>
+        public static string PromptText(WorldMacroPlaytestSession session)
+        {
+            if (session == null) return null;
+            string text = session.CurrentHudText;
+            if (string.IsNullOrEmpty(text)) return text;
+            var death = session.DeathPresentation;
+            if (death != null && death.IsRoutedWakeLine(text)) return null;
+            if (text == session.LastFeedback && text != session.SaveError && UI.PlaytestUiRoot.Menu304RoutesToToast(text)) return null;
+            return text;
+        }
+
+        private void UpdateWorldInteraction(bool showLetter)
         {
             var camera = Session.Walker.ViewCamera;
             if (camera == null || !Session.TryGetFocusedInteractionBounds(out var bounds))
             {
+                LastLetterState304 = camera == null ? LetterState304.NoCamera : LetterState304.NoFocus;
                 _outline.Hide();
                 if (_interactionCanvas != null) _interactionCanvas.gameObject.SetActive(false);
                 return;
             }
             var point = new Vector3(bounds.center.x,bounds.max.y+Hud.Skin.InteractionLetterOffset+Hud.Skin.InteractionLetterHeight*.5f,bounds.center.z);
             _outline.Show(Session.FocusedRenderers,Hud.Skin);
-            var viewport = camera.WorldToViewportPoint(point);
-            bool visible = FocusLineOfSight(camera,bounds) && viewport.z > camera.nearClipPlane && viewport.x >= 0 && viewport.x <= 1 && viewport.y >= 0 && viewport.y <= 1;
-            if (!visible)
+            if (!showLetter)
             {
+                LastLetterState304 = LetterState304.HiddenByPrompt;
                 if (_interactionCanvas != null) _interactionCanvas.gameObject.SetActive(false);
                 return;
             }
+            var viewport = camera.WorldToViewportPoint(point);
+            bool sight = FocusLineOfSight(camera,bounds);
+            bool visible = sight && viewport.z > camera.nearClipPlane && viewport.x >= 0 && viewport.x <= 1 && viewport.y >= 0 && viewport.y <= 1;
+            if (!visible)
+            {
+                LastLetterState304 = sight ? LetterState304.Offscreen : LetterState304.LineOfSight;
+                if (_interactionCanvas != null) _interactionCanvas.gameObject.SetActive(false);
+                return;
+            }
+            LastLetterState304 = LetterState304.Shown;
             if (_interactionCanvas == null)
             {
                 var root = new GameObject("WorldInteractionPrompt", typeof(RectTransform), typeof(Canvas));
@@ -140,7 +169,7 @@ namespace Oheangbu.App.World
         private void Deactivate()
         {
             _outline.Hide();
-                if (_interactionCanvas != null) _interactionCanvas.gameObject.SetActive(false);
+            if (_interactionCanvas != null) _interactionCanvas.gameObject.SetActive(false);
             if (!_presenting) return;
             if (_vitals != null) _vitals.Damaged -= OnDamaged;
             if (Hud != null)

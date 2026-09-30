@@ -19,6 +19,7 @@ namespace Oheangbu.App.World {
   bool TryVillageService(string id){
    if(!EquipmentEnabled||(id!="village_shop"&&id!="village_artisan"))return false;
    if(!EquipmentReady){InitializeEquipment();if(!EquipmentReady)return true;}
+   if(TrySpeakVillageService306(id))return true;   // #306: greeting + 거래 / 손질 row on the dialogue surface; the view opens the window by this id
    equipmentService=id;EquipmentServiceRequested?.Invoke(id);return true;
   }
   public bool DeliverVillageToolbox(out string error){

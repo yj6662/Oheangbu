@@ -24,7 +24,7 @@ namespace Oheangbu.EditorTools.WorldMacro {
   public static string VillageRuntime(string command){
    var s=VillageSession();if(!EditorApplication.isPlaying||!s.TestSaveSuffix.StartsWith("_compact_slice_"))throw new Exception("Private slice-start required");
    var ui=PlaytestUiRoot.Instance;string file=System.IO.Path.Combine(Application.persistentDataPath,s.Content.SaveSlot+s.TestSaveSuffix+".json");
-   if(command=="ui-debug")return "page="+ui.Page+" focus="+Application.isFocused+" screen="+Screen.width+"x"+Screen.height+" cameraRT="+s.Walker.ViewCamera.targetTexture+"\n"+string.Join("\n",Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,FindObjectsSortMode.None).Select(c=>c.name+" enabled="+c.enabled+" active="+c.gameObject.activeInHierarchy+" mode="+c.renderMode+" display="+c.targetDisplay+" rect="+((RectTransform)c.transform).rect+" scale="+c.transform.lossyScale))+"\n"+string.Join("\n",ui.GetComponentsInChildren<UnityEngine.UI.Text>(true).Where(t=>t.name=="SelectedGearTitle"||t.name=="ServiceSpeaker").Select(t=>t.text+" active="+t.gameObject.activeInHierarchy));
+   if(command=="ui-debug")return "page="+ui.Page+" focus="+Application.isFocused+" screen="+Screen.width+"x"+Screen.height+" cameraRT="+s.Walker.ViewCamera.targetTexture+"\n"+string.Join("\n",Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include,FindObjectsSortMode.None).Select(c=>c.name+" enabled="+c.enabled+" active="+c.gameObject.activeInHierarchy+" mode="+c.renderMode+" display="+c.targetDisplay+" rect="+((RectTransform)c.transform).rect+" scale="+c.transform.lossyScale))+"\n"+string.Join("\n",ui.GetComponentsInChildren<TMPro.TMP_Text>(true).Where(t=>t.name=="SelectedGearTitle"||t.name=="ServiceSpeaker").Select(t=>t.text+" active="+t.gameObject.activeInHierarchy));
    if(command.StartsWith("capture:")){string label=command.Substring(8);ScreenCapture.CaptureScreenshot(System.IO.Path.GetFullPath(VillageOutput+"/"+label+".png"));return "Capture queued "+label;}
    if(command=="inventory"){ui.OpenPage("소지품");Canvas.ForceUpdateCanvases();return "Inventory open";}
    if(command=="select-service"){
@@ -37,7 +37,7 @@ namespace Oheangbu.EditorTools.WorldMacro {
     ui.OpenPage("소지품");Canvas.ForceUpdateCanvases();
     VCheck(ui.GetComponentsInChildren<EquipmentInkGraphic>().All(g=>g.canvasRenderer!=null),"all gear graphics own CanvasRenderer");
     var button=ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="Gear_pine_brush");button.onClick.Invoke();Canvas.ForceUpdateCanvases();
-    VCheck(ui.GetComponentsInChildren<UnityEngine.UI.Text>().Any(t=>t.name=="SelectedGearTitle"&&t.text.Contains("송연필")),"click selects item and displays its actual saved upgrade");
+    VCheck(ui.GetComponentsInChildren<TMPro.TMP_Text>().Any(t=>t.name=="SelectedGearTitle"&&t.text.Contains("송연필")),"click selects item and displays its actual saved upgrade");
     var drag=ui.GetComponentsInChildren<EquipmentDragItem>().Single(d=>d.ItemId=="pine_brush");var drop=ui.GetComponentsInChildren<EquipmentDropSlot>().Single(d=>d.Slot==EquipmentSlot.Head);
     string equipmentBefore=JsonUtility.ToJson(s.Progress.equipment);var ev=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){pointerDrag=drag.gameObject,position=new Vector2(500,500)};
     drag.OnBeginDrag(ev);drop.OnDrop(ev);drag.OnEndDrag(ev);VCheck(equipmentBefore==JsonUtility.ToJson(s.Progress.equipment),"wrong-slot drag through UI returns without mutation");

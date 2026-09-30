@@ -33,6 +33,11 @@ namespace Oheangbu.App.World
         public event Action<PrologueInteractionKind,Vector3> InteractionResolved;
         public event Action<string> NoticeRaised;
         public event Action<string,string> DetailRequested;
+        // #306 contract (DialogueRequest306.cs): every NPC utterance goes to the one dialogue surface through this event (track S raises it, track U shows it)
+        public event Action<Oheangbu.App.World.UI.DialogueRequest306> DialogueRequested;
+        // raised once when a conversation opened through DialogueRequested ends (NPC job actors return to work on it)
+        public event Action<string> DialogueEnded;
+        bool RaiseDialogue306(Oheangbu.App.World.UI.DialogueRequest306 r){var h=DialogueRequested;if(h==null||r==null)return false;var id=r.SourceId;var closed=r.Closed;r.Closed=()=>{closed?.Invoke();DialogueEnded?.Invoke(id);};h(r);return true;}
         public bool IconPresentation;
         public EABuffProfileSO EABuffProfile;
         public EAWardProfileSO EAWardProfile;
@@ -161,6 +166,8 @@ namespace Oheangbu.App.World
             feet=default;
             if(!float.IsFinite(candidate.x)||!float.IsFinite(candidate.y)||!float.IsFinite(candidate.z))return false;
             if(candidate.x<PreviewSheetBoundsMin.x||candidate.x>PreviewSheetBoundsMax.x||candidate.z<PreviewSheetBoundsMin.y||candidate.z>PreviewSheetBoundsMax.y)return false;
+            bool away=ProbeNaturalSolids(candidate);   // #306: trunks at the candidate must exist before the overlap test
+            try{
             foreach(var h in Physics.RaycastAll(candidate+Vector3.up*1.5f,Vector3.down,4,1,QueryTriggerInteraction.Ignore).OrderBy(h=>h.distance)){
                 if(Traversal!=null&&!Traversal.IsPermanentDrySupport(h.point,h.collider))continue;
                 if(h.transform.IsChildOf(Walker.Body.transform)||h.normal.y<Mathf.Cos(Walker.Body.slopeLimit*Mathf.Deg2Rad))continue;
@@ -173,19 +180,22 @@ namespace Oheangbu.App.World
                 if(supported){feet=p;return true;}
             }
             return false;
+            }finally{if(away)RestoreNaturalFocus();}
         }
         public Vector2 PreviewSheetBoundsMin=new Vector2(-4500,-4200),PreviewSheetBoundsMax=new Vector2(4500,8200);
         void Update()
         {
-            if(Oheangbu.App.World.UI.PlaytestUiRoot.Instance?.LoadingInProgress==true)return;
-            if(!ready||respawning)return;
+            if(Oheangbu.App.World.UI.PlaytestUiRoot.Instance?.LoadingInProgress==true){DisarmInteract();return;}
+            if(!ready||respawning){DisarmInteract();return;}
             FlushPendingDefeats();
-            if(encounterDeathPending){if(!HasPendingDefeats){encounterDeathPending=false;OnDeath();}return;}
+            if(encounterDeathPending){DisarmInteract();if(!HasPendingDefeats){encounterDeathPending=false;OnDeath();}return;}
             TickActShortcuts();
             TickActEntrance();
             TickDemoEscort();
             if(Time.unscaledTime>=nextSave){Save();nextSave=Time.unscaledTime+Content.TestRules.AutosaveSeconds;}
-            if(GameplayInputBlocked){FocusedId=null;FocusedCollectionBundleId=null;return;}
+            if(GameplayInputBlocked){FocusedId=null;FocusedCollectionBundleId=null;DisarmInteract();return;}
+            TrackInteractArm();
+            if(TickDialogueRest306())return;   // #306: a Rest row picked in the talk menu rests once the view has closed
             if(TickTraversal())return;
             if(Traversal==null&&!Walker.Seated){
                 if(lastSafe.y-Walker.Body.transform.position.y>=Content.TestRules.FallDeathHeight){vitals.ApplyFatalFall();return;}
@@ -201,10 +211,11 @@ namespace Oheangbu.App.World
                 if(!CanInteract(pickup))continue;float distance=Vector3.Distance(pickup.InteractionPosition,Walker.Body.transform.position);
                 if(distance<closest){FocusedId=null;FocusedCollectionBundleId=pickup.BundleId;closest=distance;}
             }
-            if(Keyboard.current!=null&&Keyboard.current.fKey.wasPressedThisFrame)
+            string target=!string.IsNullOrEmpty(FocusedCollectionBundleId)?FocusedCollectionBundleId:FocusedId;
+            if(target!=null&&TakeFreshInteractPress(target))   // #306 §2-2: fresh press only, never the [F] that closed the last modal
             {
                 if(!string.IsNullOrEmpty(FocusedCollectionBundleId))TryCollectFragmentBundle(FocusedCollectionBundleId,out _);
-                else if(FocusedId!=null)Interact(FocusedId);
+                else Interact(FocusedId);
             }
         }
         // Resolve from the same focused interaction that consumes F, including live NPC positions.
@@ -255,15 +266,17 @@ namespace Oheangbu.App.World
             if(TryHandleShortcutDoor(p,out bool doorHandled))return doorHandled;
             if(TryHandleMountainInteraction(p,out bool mountainHandled))return mountainHandled;
             if(TryVillageService(id))return EquipmentReady;
+            if(TryHandleCommission(p,out bool commissionHandled))return commissionHandled;
             if(p.Kind!=PrologueInteractionKind.Rest&&TryHandleDemoInteraction(p,out bool handled))return handled;
             if(p.Kind==PrologueInteractionKind.Rest)return Rest(p);
             if(!TryPreparePointInteraction(Progress,p,out var proposal,out bool first,out bool newRecord,out string error)||!TryCommitInteraction(proposal,out error))
             {Show(error);return false;}
-            // One text surface per interaction (SPEC-PLAYTEST-TEXT-DIET): readable dialogue/evidence
-            // routes to the detail folio via Present; short receipts stay in the HUD prompt.
+            // One text surface per interaction (SPEC-PLAYTEST-TEXT-DIET): evidence routes to the detail folio via Present, NPC speech
+            // to the dialogue surface via Speak306 (#306, Present when no surface is bound); short receipts stay in the HUD prompt.
             if(id==WorldMacroOpeningProfileSO.CommissionId)Show("폐광 폭파 조사 의뢰를 확인했다.");
             else if(p.Kind==PrologueInteractionKind.Currency&&!first)Show("이미 챙긴 물품이다.");
-            else if(p.Kind==PrologueInteractionKind.Evidence||p.Kind==PrologueInteractionKind.Conversation)Present(p.Prompt,p.Text+(first&&p.Currency>0&&!IconPresentation?"\n조선통보 +"+p.Currency:""));
+            else if(p.Kind==PrologueInteractionKind.Conversation)Speak306(p,p.Prompt,p.Text,first&&p.Currency>0&&!IconPresentation?"조선통보 +"+p.Currency:null);
+            else if(p.Kind==PrologueInteractionKind.Evidence)Present(p.Prompt,p.Text+(first&&p.Currency>0&&!IconPresentation?"\n조선통보 +"+p.Currency:""));
             else Show(p.Text+(first&&p.Currency>0&&!IconPresentation?"\n조선통보 +"+p.Currency:""));
             InteractionResolved?.Invoke(p.Kind,p.Position);
             if(newRecord)Debug.Log("[WorldMacroPlaytest] Record discovered for interaction: "+id);
@@ -340,13 +353,19 @@ namespace Oheangbu.App.World
             FlushPendingDefeats(true);
             if(HasPendingDefeats){encounterDeathPending=true;return;}
             if(TryHandleDemoEscortDeath())return;
-            if(Traversal!=null){BeginEnvironmentRecovery();return;}
-            if(Walker.Seated)return;respawning=true;
-            PrologueProgressStore.Drop(Progress.ledger,lastSafe);ResetCombat();Teleport(Checkpoint(),CheckpointYaw());
-            vitals.Restore();ink.Restore();RefreshDrop();respawning=false;Show("마지막 쉼터에서 눈을 떴다. 남긴 통보를 되찾을 수 있다.");Save();
+            if(Traversal!=null)
+            {
+                // #303: a combat death falls and the veil closes first; drowning and fatal falls recover at once as before
+                if(vitals.LastEnvironmentDeath==Oheangbu.Combat.EnvironmentDeathCause.None&&TryBeginDeathPresentation(BeginEnvironmentRecovery))return;
+                BeginEnvironmentRecovery();return;
+            }
+            if(Walker.Seated)return;
+            if(TryBeginDeathPresentation(CompleteDeathRespawn))return;   // #303: the same respawn, under the veil
+            CompleteDeathRespawn();
         }
         public void Teleport(Vector3 feet,float yaw)
         {
+            EnsureNaturalSolidsForTeleport(feet);   // #306: death, escort, terrain recovery and inn all arrive here
             var body=Walker.Body;bool prior=body.enabled;body.enabled=false;body.transform.SetPositionAndRotation(feet,Quaternion.Euler(0,yaw,0));body.enabled=prior;Walker.Motor.ResetMotion();lastSafe=feet;ResetTraversal(feet);
             MumBridges?.ResetForWorldBoundary();
         }
@@ -357,6 +376,7 @@ namespace Oheangbu.App.World
         public bool SaveNow(out string error)
         {
             if(!ready){error="저장 세션이 아직 준비되지 않았다.";return false;}
+            if(deathRespawnPending&&DeathPresentation!=null&&DeathPresentation.IsActive)DeathPresentation.CompleteNow();   // never save a body mid-fall
             FlushPendingDefeats(true);
             if(HasPendingDefeats){error=SaveError??"처치 결과 저장을 다시 시도하는 중이다.";return false;}
             if(pendingEnvironmentRecovery!=null||escortDeathPending){error=SaveError??"사망 복구 저장을 다시 시도하는 중이다.";return false;}
@@ -469,7 +489,7 @@ namespace Oheangbu.App.World
             GUI.Box(new Rect(Screen.width*.2f,Screen.height-140,Screen.width*.6f,95),text,style);
         }
         void OnApplicationQuit(){Save();}
-        void OnDisable(){UnbindDemoSouthGate();UnbindDemoEscort();SuspendDemoField();SuspendMumBridges();Save();}
+        void OnDisable(){DisarmInteract();UnbindDemoSouthGate();UnbindDemoEscort();SuspendDemoField();SuspendMumBridges();Save();}
         void OnDestroy(){UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);if(font!=null)Destroy(font);}
     }
 }

@@ -22,7 +22,9 @@ namespace Oheangbu.App.World.UI
         public bool InvertLookY;
         [Range(.75f, 2f)] public float UiScale = 1f;
         [Range(.75f, 2f)] public float TextScale = 1f;
-        public bool ShowMinimap = true;
+        public bool ShowMinimap = true;      // #306: the ink-circle minimap (HudMinimap304); no longer drives the bearing line
+        public bool MinimapFollowView;       // #306: false = north up (the arrow turns), true = the map turns with the view
+        public bool ShowBearingLine = true;  // #306: the bearing ink line; missing in older files -> JsonUtility keeps these defaults
         public bool ReducedMotion;
 
         public UserSettingsData Clone()

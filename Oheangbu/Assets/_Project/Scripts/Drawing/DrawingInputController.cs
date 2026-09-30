@@ -43,6 +43,8 @@ namespace Oheangbu.Drawing
         [SerializeField, Range(0.05f, 1f)] private float _drawTimeScale = 1f; // 1=감속 없음
 
         // 표현(어댑터)용 저수준 이벤트 — 같은 프레임의 Raw 사실만 흘린다
+        // read-only: presentation/combat layers may watch the Q press (D301 앞잡) without touching recognition
+        public InputAction DrawModeAction => _drawMode;
         public event Action ModeEntered;
         public event Action ModeExited;
         public event Action StrokeStarted;

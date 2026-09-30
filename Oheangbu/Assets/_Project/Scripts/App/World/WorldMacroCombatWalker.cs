@@ -21,9 +21,18 @@ namespace Oheangbu.App.World
         System.Func<bool> drawingGate;
         bool[] visualStates;
         PlayerVisualDriver visualDriver;bool visualDriverWasEnabled;
+        Riposte301 riposte;
         void OnEnable()
         {
-            drawingGate = () => Motor == null || Motor.CanBeginDrawing;
+            // D301 앞잡: a Q press claimed by the volley never opens the draw mode
+            if (riposte == null) riposte = GetComponent<Riposte301>();
+            if (riposte == null)
+            {
+                var profile = Resources.Load<Riposte301Profile>("Riposte301Profile");
+                if (profile != null) { riposte = gameObject.AddComponent<Riposte301>(); riposte.Profile = profile; }
+            }
+            if (riposte != null) riposte.Walker = this;
+            drawingGate = () => (Motor == null || Motor.CanBeginDrawing) && (riposte == null || !riposte.SuppressDraw);
             if (Drawing != null) Drawing.EntryAllowed = drawingGate;
         }
         // Authoring may assign references immediately after AddComponent/OnEnable.

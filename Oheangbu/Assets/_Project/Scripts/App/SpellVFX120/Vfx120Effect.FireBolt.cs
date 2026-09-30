@@ -28,7 +28,7 @@ namespace Oheangbu.App.SpellVFX120
             if(!IsEmberCharge||!FireBoltConfigured||_chargeDetonatedAt>=0||attached<0||when<attached||when>=Life||float.IsNaN(when)||float.IsInfinity(when))return false;
             _chargeDetonatedAt=when;return true;
         }
-        public static bool IsFireBolt(Vfx120Profile p) => p != null && p.NativeBodyPrefab != null &&
+        public static bool IsFireBolt(Vfx120Profile p) => p != null && p.Bolt300Prefab == null && p.NativeBodyPrefab != null &&
             (p.Glyph == "나" && p.NativeBodyPrefab.name == "PF_FireBolt_025" || p.Glyph == "낙" && p.NativeBodyPrefab.name == "PF_AttachedFlame_026" || p.Glyph == "난" && p.NativeBodyPrefab.name == "PF_HeavyFlame_027" || p.Glyph=="남"&&p.NativeBodyPrefab.name=="PF_EmberCharge_028" || p.Glyph=="낫"&&p.NativeBodyPrefab.name=="PF_FlameCrescent_029" || p.Glyph=="낭"&&p.NativeBodyPrefab.name=="PF_PiercingFlame_030");
         bool IsAttachedFlame => Profile.Glyph=="낙";
         bool IsPiercingFlame => Profile.Glyph=="낭";

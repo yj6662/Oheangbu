@@ -55,6 +55,18 @@ namespace Oheangbu.App.Demo
         public bool IsCancelled { get; private set; }
         public bool EmpowerInterrupted { get; private set; }
         public IReadOnlyList<SouthGateAttackPulse> Pulses { get; }
+        // #306 read-only telegraph exposure (SPEC-PLAYTEST-306 #12). The Earth pulse and its wave-front ETA are recomputed
+        // per call from the current feet; the plan and its pulses are never written.
+        // indexed (not foreach): IReadOnlyList enumeration boxes an enumerator — this is read every LateUpdate
+        public SouthGateAttackPulse ElementalPulse { get { for (int i = 0; i < Pulses.Count; i++) if (Pulses[i].Attack.Element.HasValue) return Pulses[i]; return null; } }
+        public float PredictImpactTime(SouthGateAttackPulse pulse, Vector3 feet)
+        {
+            if (pulse == null || pulse.Shape != SouthGatePulseShape.Wave || !Finite(feet)) return pulse != null ? pulse.ReleaseAt : float.NegativeInfinity;
+            float distance = Vector3.ProjectOnPlane(feet - Origin, Vector3.up).magnitude;
+            return Mathf.Min(pulse.ActiveEndAt, pulse.ReleaseAt + Mathf.Max(0f, distance - pulse.Width) / pulse.Speed);
+        }
+        public Vector3 WaveFront(SouthGateAttackPulse pulse, float now) =>
+            pulse == null ? Origin : Origin + Direction * Mathf.Clamp((now - pulse.ReleaseAt) * pulse.Speed, 0f, pulse.Range);
         public bool InEarthPreparation(float now) => !IsCancelled && !EmpowerInterrupted && Kind == SouthGateAttackKind.NeutralEarthCombo && now >= EmpowerStartAt && now < EmpowerEndAt;
         public SouthGateGeneralAttackPlan(SouthGateGeneralProfile p, SouthGateAttackKind kind, EnemyVitals owner, Vector3 origin, Vector3 direction, float now)
         {

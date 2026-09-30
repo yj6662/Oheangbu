@@ -21,7 +21,11 @@ namespace Oheangbu.EditorTools.WorldMacro
    public Vector3 ProbeCentre,ProbeSize;public Quaternion ProbeRotation;public string VisualControlId,CompoundId;
    public Bounds SourceVisualBounds;
    public Dress296.FixedPlacement Placement;
+   // Route passage only: natural-solid collider centre (height dropped) and its flat distance to the segment centreline.
+   public Vector3 SolidCentre;public float CentreDistance;
   }
+  [Serializable] sealed class LandscapeSkippedSheet296 { public string Path,Reason;public int Renderers; }
+  [Serializable] sealed class LandscapeRouteContent296 { public string Path,PathSha256;public int MainRuns,BranchRuns;public float Width,Break; }
   [Serializable] sealed class LandscapeSheet296
   {
    public string CandidatePath,SourcePath,SourceSha256,RetainedSha256;
@@ -30,11 +34,12 @@ namespace Oheangbu.EditorTools.WorldMacro
   }
   [Serializable] sealed class LandscapeLedger296
   {
-   public string Revision="architecture-296",Method="Private active fixed-placement sheets only. Explicit arena volumes/colliders, generated bridge decks and 6m aprons, active gate apertures and their actual route paving. Tree body uses authored trunk radius; source LOD0 bounds for other natural objects. Sanctuary and named sacred placements preserved. Original placement order retained.";
-   public int Version=2,ActiveRenderers,ActiveSheets,ArenaCount,BridgeCount,GateCount,Removed,RemainingConflicts;
-   public int ArenaRemovals,BridgeRemovals,GateRemovals,ReviewedTreeRemovals,CompoundTreeRemovals;
+   public string Revision="architecture-296",Method="Private active fixed-placement sheets only. Explicit arena volumes/colliders, generated bridge decks and 6m aprons, active gate apertures and their actual route paving. Tree body uses authored trunk radius; source LOD0 bounds for other natural objects. Sanctuary and named sacred placements preserved. Original placement order retained. Last class: generated walking routes (routes.json + session content main/branch path runs) remove a Tree/Rock only when its natural-solid collider centre lies inside the flat corridor and its body enters the 2.4m walking volume.";
+   public int Version=3,ActiveRenderers,ActiveSheets,ArenaCount,BridgeCount,GateCount,Removed,RemainingConflicts;
+   public int ArenaRemovals,BridgeRemovals,GateRemovals,ReviewedTreeRemovals,CompoundTreeRemovals,RouteRemovals;
    public bool OriginalSourcesUnchanged;public LandscapeSheet296[] Sheets;public LandscapeCollider296[] ColliderBindings;
    public LandscapeCorridor296[] Corridors;public LandscapeInput296[] Inputs;public LandscapeVisualControl296[] VisualControls;public LandscapeCompound296[] Compounds;
+   public LandscapeCorridor296[] RouteCorridors;public LandscapeRouteContent296 RouteContent;public LandscapeSkippedSheet296[] SkippedSheets;
   }
   [Serializable] sealed class LandscapeCompound296
   {
@@ -286,12 +291,128 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    return result.ToArray();
   }
+  // #306 walking routes ("generated route passage"): every Generated/routes.json route at its own width and the session content
+  // main/branch path runs, with NaturalSolids306's content path width and teleport cut (TEST). A solid lower than the natural-solid
+  // step height gets no collider and is never removed here.
+  const float LandscapeContentPathWidth296=2f,LandscapeContentPathBreak296=40f,LandscapeRouteCell296=16f,LandscapeSolidMinHeight296=.3f;
+  // Placements that own a fixed scene collider (CheongrimDetail261; the pool's SkipPlacementPrefixes): removing only the visual
+  // would orphan that collider, so the route class leaves them.
+  static readonly string[] LandscapeFixedColliderPrefixes296={"detail261_"};
+  static LandscapeCorridor296[] LandscapeRouteCorridors296(WorldMacroPlaytestSO content,out LandscapeRouteContent296 record)
+  {
+   var result=new List<LandscapeCorridor296>();
+   void Add(string id,string owner,string path,float width,Vector3[] points)
+   {
+    if(points==null||points.Length<2||!float.IsFinite(width)||width<=0)throw new InvalidOperationException("Invalid walking route corridor "+id);
+    foreach(var p in points)if(!float.IsFinite(p.x)||!float.IsFinite(p.y)||!float.IsFinite(p.z))throw new InvalidOperationException("Non-finite walking route corridor "+id);
+    result.Add(new LandscapeCorridor296{Id="route:"+id,Kind="route",OwnerId=owner,RouteId=id,ScenePath=path,Width=width,Points=points});
+   }
+   foreach(var route in JsonUtility.FromJson<Routes292>(File.ReadAllText(O296+"/Generated/routes.json")).routes)
+    if(route?.points!=null&&route.points.Length>=2)Add(route.id,"routes.json","",route.width,route.points);
+   string contentPath=content!=null?AssetDatabase.GetAssetPath(content):"";
+   // Each run between flat jumps longer than the teleport cut is its own path, as NaturalSolids306 reads them.
+   int Runs(string id,Vector3[] p)
+   {
+    if(p==null)return 0;int start=0,part=0;
+    for(int i=1;i<=p.Length;i++)
+     if(i==p.Length||new Vector2(p[i].x-p[i-1].x,p[i].z-p[i-1].z).magnitude>LandscapeContentPathBreak296)
+     {if(i-start>=2)Add(id+"#"+part++,"content",contentPath,LandscapeContentPathWidth296,p.Skip(start).Take(i-start).ToArray());start=i;}
+    return part;
+   }
+   int main=content!=null?Runs("content_main_path",content.MainPath):0,branch=content!=null?Runs("content_branch_path",content.BranchPath):0;
+   record=new LandscapeRouteContent296{Path=contentPath,PathSha256=LandscapeContentPathSha296(content),MainRuns=main,BranchRuns=branch,Width=LandscapeContentPathWidth296,Break=LandscapeContentPathBreak296};
+   return result.ToArray();
+  }
+  // SHA-256 of the two path arrays only (int32 count, then little-endian float32 x,y,z per point; MainPath then BranchPath),
+  // so unrelated content edits do not invalidate the ledger.
+  static string LandscapeContentPathSha296(WorldMacroPlaytestSO content)
+  {
+   using(var stream=new MemoryStream())
+   using(var writer=new BinaryWriter(stream))
+   {
+    foreach(var path in new[]{content?.MainPath,content?.BranchPath})
+    {
+     var points=path??Array.Empty<Vector3>();writer.Write(points.Length);
+     foreach(var p in points){writer.Write(p.x);writer.Write(p.y);writer.Write(p.z);}
+    }
+    writer.Flush();
+    using(var sha=System.Security.Cryptography.SHA256.Create())return BitConverter.ToString(sha.ComputeHash(stream.ToArray())).Replace("-","").ToLowerInvariant();
+   }
+  }
+  sealed class LandscapeRouteIndex296
+  {
+   readonly Dictionary<long,List<Vector2Int>> cells=new Dictionary<long,List<Vector2Int>>();
+   public readonly LandscapeCorridor296[] Corridors;
+   static long Key(int x,int z)=>((long)x<<32)^(uint)z;
+   static int Cell(float v)=>Mathf.FloorToInt(v/LandscapeRouteCell296);
+   // Each segment sits in every cell its corridor-padded flat bounds touch: one cell lookup finds every segment a centre can lie in.
+   public LandscapeRouteIndex296(LandscapeCorridor296[] corridors)
+   {
+    Corridors=corridors;
+    for(int c=0;c<corridors.Length;c++)
+    {
+     float pad=corridors[c].Width*.5f+.05f;var points=corridors[c].Points;
+     for(int s=1;s<points.Length;s++)
+     {
+      var a=points[s-1];var b=points[s];
+      for(int x=Cell(Mathf.Min(a.x,b.x)-pad);x<=Cell(Mathf.Max(a.x,b.x)+pad);x++)
+       for(int z=Cell(Mathf.Min(a.z,b.z)-pad);z<=Cell(Mathf.Max(a.z,b.z)+pad);z++)
+       {long key=Key(x,z);if(!cells.TryGetValue(key,out var list))cells.Add(key,list=new List<Vector2Int>());list.Add(new Vector2Int(c,s));}
+     }
+    }
+   }
+   // (corridor, segment end index) in corridor then segment order
+   public List<Vector2Int> At(Vector3 p)=>cells.TryGetValue(Key(Cell(p.x),Cell(p.z)),out var list)?list:null;
+  }
+  // The natural-solid pool's collider centre in prototype space (CompactNaturalSolids.MakeKind with TrunkAtMeshOrigin): a tree
+  // trunk at its LOD0 first-part translation (the source mesh pivot, up to ~1.8m off the placement pivot), any other solid at its
+  // LOD0 bounds centre.
+  static Vector3 LandscapeSolidLocal296(Dress296.Prototype prototype,Bounds visual)
+  {
+   if(prototype.Category!=Dress296.Kind.Tree)return visual.center;
+   var parts=prototype.Lods!=null&&prototype.Lods.Length>0?prototype.Lods[0]?.Parts:null;
+   if(parts!=null&&parts.Length>0&&parts[0]!=null){var o=parts[0].Local.GetColumn(3);if(float.IsFinite(o.x)&&float.IsFinite(o.z))return new Vector3(o.x,0,o.z);}
+   return Vector3.zero;
+  }
+  static float LandscapeFlatDistance296(Vector3 p,Vector3 a,Vector3 b)
+  {
+   float dx=b.x-a.x,dz=b.z-a.z,l=dx*dx+dz*dz,t=l<1e-8f?0:Mathf.Clamp01(((p.x-a.x)*dx+(p.z-a.z)*dz)/l);
+   float x=a.x+dx*t-p.x,z=a.z+dz*t-p.z;return Mathf.Sqrt(x*x+z*z);
+  }
+  // A tree or rock whose collider centre lies inside the flat corridor of a segment and whose body enters that segment's 2.4m
+  // walking volume. The body is the usual passage probe (trunk radius box for a tree, LOD0 bounds otherwise), placed where the
+  // collider is: a tree's trunk box moves onto its first-part translation. An edge overlap with the centre outside is not a removal.
+  static LandscapeRemoval296 LandscapeRouteConflict296(Dress296.FixedPlacement placement,Dress296.Prototype prototype,Bounds local,Bounds visual,LandscapeRouteIndex296 routes,BoxCollider body,BoxCollider volume)
+  {
+   if(prototype.Category!=Dress296.Kind.Tree&&prototype.Category!=Dress296.Kind.Rock||LandscapeSacred296(placement))return null;
+   if(visual.max.y*placement.Scale<LandscapeSolidMinHeight296||LandscapeFixedColliderPrefixes296.Any(x=>placement.Id?.StartsWith(x,StringComparison.Ordinal)==true))return null;
+   var solid=LandscapeSolidLocal296(prototype,visual);var offset=Quaternion.Euler(placement.Euler)*(solid*placement.Scale);offset.y=0;
+   var centre=placement.Position+offset;var candidates=routes.At(centre);if(candidates==null)return null;
+   LandscapeBody296? probe=null;
+   foreach(var k in candidates)
+   {
+    var corridor=routes.Corridors[k.x];var from=corridor.Points[k.y-1];var to=corridor.Points[k.y];var delta=to-from;float length=delta.magnitude;if(length<.001f)continue;
+    float distance=LandscapeFlatDistance296(centre,from,to);if(distance>corridor.Width*.5f)continue;
+    if(probe==null)probe=LandscapePlacementBody296(placement,prototype.Category==Dress296.Kind.Tree?new Bounds(new Vector3(solid.x,local.center.y,solid.z),local.size):local);
+    var shape=probe.Value;
+    if(LandscapeVolume296(body,shape,volume,(from+to)*.5f+Vector3.up*(corridor.Height*.5f),Quaternion.LookRotation(delta,Vector3.up),new Vector3(corridor.Width,corridor.Height,length+.03f),out float depth))
+     return new LandscapeRemoval296{CorridorId=corridor.Id,SegmentIndex=k.y-1,Reason="generated route passage",Penetration=depth,
+      ProbeCentre=shape.Centre,ProbeSize=shape.Size,ProbeRotation=shape.Rotation,SolidCentre=centre,CentreDistance=distance};
+   }
+   return null;
+  }
   static void Landscape296(List<string> report)
   {
    var session=Session292();if(session.gameObject.scene.path!=Scene296||EditorApplication.isPlayingOrWillChangePlaymode)throw new InvalidOperationException("Landscape296 requires the private candidate Edit scene.");
    var architecture=Sheet296();if(architecture.Arenas.Length!=5)throw new InvalidOperationException("Build all five authored venues before clearing their precise footprints.");
    var renderers=session.gameObject.scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<CompactRebuildArtRenderer>(true))
     .Where(r=>r.enabled&&r.gameObject.activeInHierarchy&&r.Sheet!=null).ToArray();
+   // A sheet another feature owns outside the 296 private copies (e.g. Enclosure305/Forest305) has no protected source:
+   // it is reported and never edited. An unmapped sheet inside A296/Data still stops the run below.
+   bool Private(CompactRebuildArtRenderer r)=>AssetDatabase.GetAssetPath(r.Sheet).StartsWith(A296+"/Data/",StringComparison.Ordinal);
+   var skippedSheets=renderers.Where(r=>!Private(r)).GroupBy(r=>AssetDatabase.GetAssetPath(r.Sheet)).OrderBy(g=>g.Key,StringComparer.Ordinal)
+    .Select(g=>new LandscapeSkippedSheet296{Path=g.Key,Reason="not a #296 private copy of a protected source: reported, never edited",Renderers=g.Count()}).ToArray();
+   renderers=renderers.Where(Private).ToArray();
    var sheets=renderers.Select(r=>r.Sheet).Distinct().OrderBy(AssetDatabase.GetAssetPath,StringComparer.Ordinal).ToArray();
    var mapping=JsonUtility.FromJson<LandscapeClones296>("{\"rows\":"+File.ReadAllText(O296+"/cloned-data.json")+"}").rows.ToDictionary(r=>r.target,r=>r.source,StringComparer.Ordinal);
    var sourceBySheet=new Dictionary<Dress296,Dress296>();var sourceHashes=new Dictionary<string,string>();
@@ -319,6 +440,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    var targetArray=targets.ToArray();var sanctuary=architecture.Arenas.Single(a=>a.Id=="sanctuary296");
    var corridors=LandscapeCorridors296(new CompactWorldSurface(session.MountainLayout),out var corridorInputs,out int bridgeCount,out int gateCount);
+   var routeCorridors=LandscapeRouteCorridors296(session.Content,out var routeContent);var routeIndex=new LandscapeRouteIndex296(routeCorridors);
    var visualControls=ReadLandscapeVisualControls296();var visualByPlacement=visualControls.ToDictionary(c=>c.Placement.Id,StringComparer.Ordinal);
    var compounds=LandscapeCompounds296(architecture,out var compoundInput);
    if(compoundInput!=null)corridorInputs=corridorInputs.Concat(new[]{compoundInput}).ToArray();
@@ -349,6 +471,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     {
      string path=AssetDatabase.GetAssetPath(sheet),original=mapping[path];var source=sourceBySheet[sheet];
      var prototypes=sheet.Prototypes.ToDictionary(p=>p.Id,StringComparer.Ordinal);var bounds=prototypes.ToDictionary(p=>p.Key,p=>LandscapePrototypeBounds296(p.Value),StringComparer.Ordinal);
+     var visuals=prototypes.ToDictionary(p=>p.Key,p=>LandscapePrototypeBounds296(p.Value,false),StringComparer.Ordinal);
      var removed=new List<LandscapeRemoval296>();var retained=new List<Dress296.FixedPlacement>();int sacred=0,sanctuaryKept=0,unknown=0;
      for(int i=0;i<source.FixedPlacements.Length;i++)
      {
@@ -373,6 +496,8 @@ namespace Oheangbu.EditorTools.WorldMacro
        // in the outer sanctuary buffer. The original central70x70/dome ground,
        // named sacred trees and unrelated natural objects remain untouched.
        if(conflict==null&&!InSanctuaryCore(p))conflict=LandscapeCompoundConflict296(p,prototype,compounds,body);
+       // Walking routes come last, so every earlier class keeps its own evidence. The sanctuary and its 20m buffer stay untouched.
+       if(conflict==null&&!protectedSanctuary)conflict=LandscapeRouteConflict296(p,prototype,bounds[p.PrototypeId],visuals[p.PrototypeId],routeIndex,body,volume);
       }
       else unknown++;
       if(conflict==null){retained.Add(LandscapeCopyPlacement296(p));if(protectedSanctuary)sanctuaryKept++;}
@@ -383,6 +508,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      {
       if(!InSanctuary(p)&&LandscapeConflict296(p,prototype,bounds[p.PrototypeId],targetArray,corridors,body,volume)!=null)remaining++;
       else if(!InSanctuaryCore(p)&&LandscapeCompoundConflict296(p,prototype,compounds,body)!=null)remaining++;
+      else if(!InSanctuary(p)&&LandscapeRouteConflict296(p,prototype,bounds[p.PrototypeId],visuals[p.PrototypeId],routeIndex,body,volume)!=null)remaining++;
      }
      if(remaining!=0)throw new InvalidOperationException("Landscape296 retained a conflicting placement: "+path);
      var kept=retained.ToArray();plans.Add(sheet,kept);
@@ -437,10 +563,12 @@ namespace Oheangbu.EditorTools.WorldMacro
    var ledger=new LandscapeLedger296{ActiveRenderers=renderers.Length,ActiveSheets=sheets.Length,ArenaCount=targets.Count,BridgeCount=bridgeCount,GateCount=gateCount,Corridors=corridors,Inputs=corridorInputs,VisualControls=visualControls,Compounds=compounds,
     ArenaRemovals=allRemoved.Count(r=>!string.IsNullOrEmpty(r.ArenaId)),BridgeRemovals=allRemoved.Count(r=>string.IsNullOrEmpty(r.VisualControlId)&&(r.CorridorId?.StartsWith("bridge:")==true||r.CorridorId?.StartsWith("apron:")==true)),
     GateRemovals=allRemoved.Count(r=>r.CorridorId?.StartsWith("gate:")==true||r.CorridorId?.StartsWith("gate-route:")==true),ReviewedTreeRemovals=allRemoved.Count(r=>!string.IsNullOrEmpty(r.VisualControlId)),CompoundTreeRemovals=allRemoved.Count(r=>!string.IsNullOrEmpty(r.CompoundId)),
+    RouteRemovals=allRemoved.Count(r=>r.CorridorId?.StartsWith("route:")==true),RouteCorridors=routeCorridors,RouteContent=routeContent,SkippedSheets=skippedSheets,
     Removed=allRemoved.Length,RemainingConflicts=records.Sum(r=>r.RemainingConflicts),OriginalSourcesUnchanged=true,Sheets=records.ToArray(),ColliderBindings=bindings.OrderBy(ColliderKey,StringComparer.Ordinal).ToArray()};
    Directory.CreateDirectory(O296+"/Landscape");File.WriteAllText(ledgerPath,JsonUtility.ToJson(ledger,true));
    report.Add("Landscape296 active private sheets="+sheets.Length+", explicit arenas="+targets.Count+", active bridges="+bridgeCount+", active gates="+gateCount+", generated passage corridors="+corridors.Length+", removed natural placements="+ledger.Removed+", matched child colliders disabled="+disable.Count+", remaining geometric conflicts="+ledger.RemainingConflicts+". Sanctuary/sacred objects and all source assets preserved; full source order and removed transforms recorded. Actual Play traversal remains a separate check.");
-   report.Add("Removal reasons: arena="+ledger.ArenaRemovals+", bridge="+ledger.BridgeRemovals+", gate="+ledger.GateRemovals+", reviewed canopy trees="+ledger.ReviewedTreeRemovals+", new compound actual collider trees="+ledger.CompoundTreeRemovals+". Existing central sanctuary/dome/sacred trees retained; outer sanctuary removal requires a specific new-building collider.");
+   report.Add("Removal reasons: arena="+ledger.ArenaRemovals+", bridge="+ledger.BridgeRemovals+", gate="+ledger.GateRemovals+", reviewed canopy trees="+ledger.ReviewedTreeRemovals+", new compound actual collider trees="+ledger.CompoundTreeRemovals+", walking route centre-inside trees/rocks="+ledger.RouteRemovals+". Existing central sanctuary/dome/sacred trees retained; outer sanctuary removal requires a specific new-building collider.");
+   report.Add("Walking routes: "+routeCorridors.Count(c=>c.OwnerId=="routes.json")+" routes.json corridors + "+(routeContent.MainRuns+routeContent.BranchRuns)+" content path runs ("+(routeContent.Path.Length>0?routeContent.Path:"no session content")+", "+LandscapeContentPathWidth296+"m wide). Sheets outside the 296 private copies, never edited: "+(skippedSheets.Length==0?"none":string.Join(", ",skippedSheets.Select(s=>s.Path+" ("+s.Renderers+" renderer)")))+".");
   }
   sealed class LandscapePlacementComparer296:IEqualityComparer<Dress296.FixedPlacement>
   {

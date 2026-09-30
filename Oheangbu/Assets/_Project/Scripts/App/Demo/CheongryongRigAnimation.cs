@@ -62,7 +62,7 @@ namespace Oheangbu.App.Demo
         [SerializeField] private CheongryongTailSweepPresentation _stateTail;
         private AnimationClipPlayable _hit, _stun, _death;
         private EnemyVitals _stateVitals;
-        private float _lastHp, _hitAt = -100, _deathAt = -100, _stunAt = -100;
+        private float _hitAt = -100, _deathAt = -100, _stunAt = -100;
         private uint _lifeRevision;
         private Animator _neutralAnimator;
         private Transform[] _neutralBones;
@@ -123,18 +123,19 @@ namespace Oheangbu.App.Demo
         {
             var current = HasStateClips ? GetComponent<EnemyVitals>() : null;
             if (_stateVitals == current) return; UnbindStateVitals(); _stateVitals = current;
-            if (_stateVitals != null) { _lastHp = _stateVitals.Hp; _lifeRevision = _stateVitals.LifeRevision; _stateVitals.HpChanged += StateHpChanged; _stateVitals.Died += StateDied; }
+            if (_stateVitals != null) { _lifeRevision = _stateVitals.LifeRevision; _stateVitals.DamageResolved += StateDamaged; _stateVitals.Died += StateDied; }
         }
         private void UnbindStateVitals()
         {
-            if (_stateVitals != null) { _stateVitals.HpChanged -= StateHpChanged; _stateVitals.Died -= StateDied; } _stateVitals = null;
+            if (_stateVitals != null) { _stateVitals.DamageResolved -= StateDamaged; _stateVitals.Died -= StateDied; } _stateVitals = null;
         }
-        private void StateHpChanged() { if (_stateVitals != null) { if (_stateVitals.Hp < _lastHp) _hitAt = Time.time; _lastHp = _stateVitals.Hp; } }
+        // #306: the hit pose only for damage the presentation may react to (EnemyVitals.ReactsTo: the ReactToHarvest chunk flag), as EnemyRigMotion298
+        private void StateDamaged(EnemyDamageResult result) { if (_stateVitals != null && result.Target == _stateVitals && result.AppliedDamage > 0f && _stateVitals.ReactsTo(result.Attack)) _hitAt = Time.time; }
         private void StateDied() { _deathAt = Time.time; ClearAttack(); }
         private void ResetStateClock()
         {
             _hitAt = _deathAt = _stunAt = -100; _wasStunned = false;
-            if (_stateVitals != null) { _lastHp = _stateVitals.Hp; _lifeRevision = _stateVitals.LifeRevision; }
+            if (_stateVitals != null) _lifeRevision = _stateVitals.LifeRevision;
             SetWholeBodyState(false); RestoreNeutralStatePose();
         }
         private void SetWholeBodyState(bool active)

@@ -34,7 +34,12 @@ namespace Oheangbu.Combat
         public Vector3 GroundNormal => _groundNormal;
         public float VerticalVelocity => _verticalVelocity;
         public float JumpLaunchSpeed => HasLocomotion && _config != null ? JumpSpeed(_locomotion.JumpHeight, _config.Gravity) : 0f;
-        public bool IsSprinting => HasLocomotion && IsLocomotionGrounded && !IsSitting && !IsCrouching && !_drawing && _sprintAction != null && _sprintAction.IsPressed();
+        public bool IsSprinting => HasLocomotion && IsLocomotionGrounded && !IsSitting && !IsCrouching && !_drawing && _sprintAction != null
+            && (_locomotion.SprintToggle ? _sprintLatched : _sprintAction.IsPressed());
+        public bool SprintToggles => HasLocomotion && _locomotion.SprintToggle;
+        public bool SprintLatched => HasLocomotion && _locomotion.SprintToggle && _sprintLatched;
+        private bool _sprintLatched;
+        private float _sprintIdle;
         public bool IsDodging => _dodge != null && _dodge.IsDashing;
         public bool IsRolling => IsDodging && _rolling;
         public bool IsHarvesting => _harvest != null && _harvest.IsExtracting;
@@ -77,6 +82,7 @@ namespace Oheangbu.Combat
             if (_locomotionSubscribed) return;
             InitializeLocomotion(); _locomotionSubscribed = true;
             if (_jumpAction != null) _jumpAction.performed += OnJump;
+            if (_sprintAction != null) _sprintAction.performed += OnSprint;
             if (_sitAction != null) _sitAction.performed += OnSit;
             if (_crouchAction != null) _crouchAction.performed += OnCrouch;
             if (_locomotionVitals != null) { _locomotionVitals.Damaged += OnLocomotionDamage; _locomotionVitals.Died += OnLocomotionDeath; }
@@ -90,6 +96,7 @@ namespace Oheangbu.Combat
             if (!_locomotionSubscribed) return;
             _locomotionSubscribed = false;
             if (_jumpAction != null) _jumpAction.performed -= OnJump;
+            if (_sprintAction != null) _sprintAction.performed -= OnSprint;
             if (_sitAction != null) _sitAction.performed -= OnSit;
             if (_crouchAction != null) _crouchAction.performed -= OnCrouch;
             if (_locomotionVitals != null) { _locomotionVitals.Damaged -= OnLocomotionDamage; _locomotionVitals.Died -= OnLocomotionDeath; }
@@ -99,6 +106,7 @@ namespace Oheangbu.Combat
             _dodge?.Cancel();
             _planarVelocity = _actualLocalVelocity = Vector3.zero; _sitTarget = _posture = _crouch = _crouchTarget = _actualYawSpeed = 0f;
             _jumping = false; _rolling = false; _standBlocked = false; _grounded = _controller != null && _controller.enabled && _controller.isGrounded;
+            _sprintLatched = false; _sprintIdle = 0f;
             _needsHarvestRelease = true; _groundNormal = Vector3.up;
             RestoreStandingShape();
         }
@@ -118,21 +126,29 @@ namespace Oheangbu.Combat
         private void OnLocomotionDamage(float _) { if (HasLocomotion) { _sitTarget = 0f; _needsHarvestRelease = true; } }
         private void OnLocomotionDeath() { if (HasLocomotion) ResetLocomotion(); }
         private bool ActionAllowed => HasLocomotion && _config != null && isActiveAndEnabled && _controller != null && _controller.enabled
-            && !EnvironmentalInputBlocked && Time.timeScale > 0f && (RuntimeState == null || !RuntimeState.InputBlocked)
+            && !InputBlocked && Time.timeScale > 0f
             && (_locomotionVitals == null || _locomotionVitals.Hp01 > 0f);
         private void OnJump(InputAction.CallbackContext _)
         {
             if (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsCrouching || IsDodging || _drawing
-                || (_harvest != null && _harvest.IsExtracting) || (_harvestAction != null && _harvestAction.IsPressed())) return;
+                || (_harvest != null && _harvest.IsExtracting)) return; // D306: a held LMB is no longer a harvest; only the pull itself blocks
             _verticalVelocity = JumpSpeed(_locomotion.JumpHeight, _config.Gravity);
             _planarVelocity.y = 0f;
             _grounded = false; _jumping = true; _needsHarvestRelease = true; _jumpSerial++;
+        }
+        // #300 run toggle: each press flips the latch; it only starts where held running could start (standing, grounded)
+        private void OnSprint(InputAction.CallbackContext _)
+        {
+            if (!HasLocomotion || !_locomotion.SprintToggle) return;
+            if (_sprintLatched) { _sprintLatched = false; return; }
+            if (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsCrouching || _drawing) return;
+            _sprintLatched = true; _sprintIdle = 0f;
         }
         private void OnCrouch(InputAction.CallbackContext _)
         {
             if (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsDodging || _drawing
                 || (_locomotionDrawAction != null && _locomotionDrawAction.IsPressed())
-                || (_harvest != null && _harvest.IsExtracting) || (_harvestAction != null && _harvestAction.IsPressed())) return;
+                || (_harvest != null && _harvest.IsExtracting)) return; // D306: a held LMB is no longer a harvest; only the pull itself blocks
             if (_crouchTarget > .5f) { if (CanStand()) _crouchTarget = 0; }
             else _crouchTarget = 1;
         }
@@ -177,6 +193,12 @@ namespace Oheangbu.Combat
             _crouch = Mathf.MoveTowards(_crouch, crouchTarget, dt / Mathf.Max(.05f, _locomotion.CrouchTransitionSeconds));
             ApplyPostureShape();
 
+            if (_locomotion.SprintToggle && _sprintLatched)
+            {
+                // a latched run ends when the player stops, crouches, sits or starts drawing
+                _sprintIdle = input.sqrMagnitude < .01f ? _sprintIdle + dt : 0f;
+                if (_sprintIdle >= _locomotion.SprintToggleStopSeconds || IsCrouching || IsSitting || _drawing) { _sprintLatched = false; _sprintIdle = 0f; }
+            }
             Vector3 direction = transform.right * input.x + transform.forward * input.y;
             direction = Vector3.ClampMagnitude(direction, 1f);
             float speed = IsCrouching ? _locomotion.CrouchSpeed : IsSprinting ? _locomotion.RunSpeed : _locomotion.WalkSpeed;
