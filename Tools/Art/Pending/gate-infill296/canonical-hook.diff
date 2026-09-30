@@ -1,0 +1,10 @@
+--- Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/CompactArchitecture296.Gates.cs
++++ Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/CompactArchitecture296.Gates.cs
+@@ -111,6 +111,7 @@
+    sheet.Structures=sheet.Structures.Where(s=>!s.Id.StartsWith("gate296-",StringComparison.Ordinal)).Concat(loops.SelectMany(loop=>loop.Gates.Select(g=>
+     new CompactArchitectureSheetSO.Structure{Id="gate296-"+g.Id,Realm=loop.Realm,Label=string.IsNullOrEmpty(g.OpenFact)?"Open precinct entrance":"Capital gate synchronized to saved south-gate victory",
+      SourceId="crossing296-rampart",SceneRoot=g.Path,Position=g.Centre,Yaw=Quaternion.LookRotation(g.Inward).eulerAngles.y,Size=new Vector3(g.Width,loop.MinimumWallHeight,4),RouteIds=g.Routes}))).ToArray();
++   GateInfill296(report);
+    EditorUtility.SetDirty(sheet);RegisterCrossingSources296();Physics.SyncTransforms();Directory.CreateDirectory(O296);
+    File.WriteAllText(O296+"/gates.json",JsonUtility.ToJson(new GateReceipt296{Loops=loops.ToArray()},true));
+    report.Add("Perimeters="+loops.Count+"; source rampart modules="+loops.Sum(l=>l.WallModules)+"; capital openings="+apertures.Count+" all read hwanggyeong_south_gate. Inactive mountain gate roots retained inactive. Existing SouthGate transaction and animation timing retained.");

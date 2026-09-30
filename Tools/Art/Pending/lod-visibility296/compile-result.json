@@ -1,0 +1,9 @@
+{
+  "entrypoint": "CompactRebuildAuthoring.DiagnoseLodVisibility296()",
+  "compiledUtc": "2026-09-27T09:31:39.624316+00:00",
+  "sha256": "592ef17d8242d0c4fd8d4bfa2b853b476ba35c7a1d9c1873f1505891e1369bba",
+  "exitCode": 0,
+  "errors": 0,
+  "warnings": 22,
+  "scope": "All current Editor sources plus this pending file, references to existing Unity ScriptAssemblies. No Unity calls or Assets changes."
+}

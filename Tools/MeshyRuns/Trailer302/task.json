@@ -1,0 +1,31 @@
+{
+ "id": "01a0e95c-3fdf-7353-8ad9-c0ecf9d0f06e",
+ "submitted": "2026-09-29 03:52:13",
+ "balance_before": 57,
+ "settings": {
+  "ai_model": "meshy-7.1",
+  "geometry_resolution": "2k",
+  "should_texture": true,
+  "enable_pbr": true,
+  "texture_resolution": "4k",
+  "should_remesh": true,
+  "topology": "quad",
+  "target_polycount": 200000,
+  "pose_mode": "a-pose",
+  "remove_lighting": true,
+  "image_enhancement": true
+ },
+ "images": [
+  "view_front.png",
+  "view_side.png",
+  "view_back.png"
+ ],
+ "final": {
+  "status": "SUCCEEDED",
+  "progress": 100,
+  "consumed_credits": 35,
+  "finished_at": 1790621992998,
+  "task_error": null
+ },
+ "balance_after": 22
+}

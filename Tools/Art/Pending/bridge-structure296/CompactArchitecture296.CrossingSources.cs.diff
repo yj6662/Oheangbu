@@ -1,0 +1,36 @@
+--- CompactArchitecture296.CrossingSources.cs
++++ CompactArchitecture296.CrossingSources.cs
+@@ -165,7 +165,7 @@
+    }
+    var group=holder.GetComponent<LODGroup>();if(group==null)group=holder.gameObject.AddComponent<LODGroup>();group.SetLODs(levels.ToArray());group.RecalculateBounds();
+   }
+-  sealed class CrossingBatch296
++  sealed partial class CrossingBatch296
+   {
+    readonly Dictionary<Material,List<CombineInstance>>[] parts=Enumerable.Range(0,3).Select(_=>new Dictionary<Material,List<CombineInstance>>()).ToArray();
+    readonly List<Mesh> temporary=new List<Mesh>();
+@@ -252,7 +252,7 @@
+      }
+      var mesh=levels[0];combinedCrossingLods296[mesh]=levels;
+      var go=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(parent,false);go.isStatic=true;
+-     go.GetComponent<MeshFilter>().sharedMesh=mesh;var r=go.GetComponent<MeshRenderer>();r.sharedMaterial=id.Contains("_apron")?CrossingApronMasonryMaterial296(entry.Key):CrossingMaterial296(entry.Key);renderers.Add(r);
++     go.GetComponent<MeshFilter>().sharedMesh=mesh;var r=go.GetComponent<MeshRenderer>();r.sharedMaterial=id.Contains("_loadbearing")?CrossingBridgeStructureMaterial296(entry.Key):id.Contains("_apron")?CrossingApronMasonryMaterial296(entry.Key):CrossingMaterial296(entry.Key);renderers.Add(r);
+      if(collision)go.AddComponent<MeshCollider>().sharedMesh=mesh;
+     }
+     foreach(var mesh in temporary)Object.DestroyImmediate(mesh);temporary.Clear();return renderers.ToArray();
+@@ -286,12 +286,12 @@
+    var sheet=Sheet296();var rows=new[]{
+     new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-stone-floor",AssetPath=StoneFloor296,Publisher="KCISA / Jejumok Gwana",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Repeated source stone paving; private merged meshes and materials"},
+     new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-timber",AssetPath=TimberFloor296,Publisher="Rico Cilliers / Poly Haven",Url="https://polyhaven.com/a/modular_wooden_pier",License="CC0-1.0; previously imported original source, UV, diffuse/normal/ARM retained",Use="Weathered timber bridge boards, restored source dimensions then uniform scale; candidate QEM LODs"},
+-    new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-rampart",AssetPath=Rampart296,Publisher="KCISA / Hwaseong Fortress Gate",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Source lower masonry courses stacked at fixed uniform scale; separate 1.25m parapet modules, preserving stone size across terrain changes"},
++    new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-rampart",AssetPath=Rampart296,Publisher="KCISA / Hwaseong Fortress Gate",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Source lower masonry courses at fixed uniform .65 scale for walls, solid bridge piers and arched bridge faces; original UV and metric stone size preserved"},
+     new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-parapet",AssetPath=Parapet296,Publisher="KCISA / Hwaseong Fortress Gate",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Stone balustrades"},
+-    new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-column",AssetPath=StoneColumn296,Publisher="KCISA / Jejumok Gwana",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Stone bridge pier courses"},
++    new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-column",AssetPath=StoneColumn296,Publisher="KCISA / Jejumok Gwana",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Retained original pier collision reference; visible masonry bridge piers now use fortress stone courses"},
+     new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-pier-stone-surface",AssetPath="Assets/_Project/Art/World/MountainTrail285/Textures/rock_face_03_diff_4k.jpg",Publisher="Poly Haven",Url="https://polyhaven.com/a/rock_face_03",License="CC0-1.0; existing owned diffuse/normal maps; SOURCE_LICENSES.md retained",Use="Private weathered pier appearance replacing pale concrete maps; original KCISA mesh UVs, dimensions and physics retained"},
+     new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-gate",AssetPath="Assets/HwaseongForteressGate/Prefabs/SM_G_Arch.prefab",Publisher="KCISA / Hwaseong Fortress Gate",License="Previously owned Unity Asset Store distribution; original EULA retained, not CC0",Use="Existing canonical gate asset assembly cloned with unchanged source proportions and original saved opening state"},
+-    new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-timber-column",AssetPath=TimberColumn296,Publisher="Rico Cilliers / Poly Haven",Url="https://polyhaven.com/a/modular_wooden_pier",License="CC0-1.0; source UV/normal/material retained",Use="Weathered timber trestle piers and railing posts"},
++    new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-timber-column",AssetPath=TimberColumn296,Publisher="Rico Cilliers / Poly Haven",Url="https://polyhaven.com/a/modular_wooden_pier",License="CC0-1.0; source UV/normal/material retained",Use="Weathered timber trestle posts, transverse bents, longitudinal stringers and diagonal bracing; native section with repeated cut lengths"},
+     new Oheangbu.Data.World.CompactArchitectureSheetSO.Source{Id="crossing296-timber-beam",AssetPath=TimberBeam296,Publisher="Rico Cilliers / Poly Haven",Url="https://polyhaven.com/a/modular_wooden_pier",License="CC0-1.0; source UV/normal/material retained",Use="Timber bridge handrails"}
+    };
+    sheet.Sources=sheet.Sources.Where(s=>!s.Id.StartsWith("crossing296-",StringComparison.Ordinal)).Concat(rows).ToArray();EditorUtility.SetDirty(sheet);

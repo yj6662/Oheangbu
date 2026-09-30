@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>netstandard2.1</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems><LangVersion>latest</LangVersion><NoWarn>CS0436</NoWarn></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/App/Demo/DemoWoodDeerFootPlacement.cs" />
+    <Reference Include="UnityEngine.CoreModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.PhysicsModule.dll</HintPath></Reference>
+    <Reference Include="UnityEngine.AnimationModule"><HintPath>C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/UnityEngine.AnimationModule.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.App"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.App.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.Combat"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.Combat.dll</HintPath></Reference>
+    <Reference Include="Oheangbu.Core"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.Core.dll</HintPath></Reference>
+    <Reference Include="Unity.Collections"><HintPath>../../../Oheangbu/Library/ScriptAssemblies/Unity.Collections.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,16 @@
+{
+  "status": "Applied to Assets; awaiting parent Unity refresh/live helper",
+  "sourceBefore": "Oheangbu\\Assets\\_Project\\Scripts\\Editor\\WorldMacro\\CompactArchitecture296.Gates.cs",
+  "sha256Before": "7c838ae24ecd4bead6c583957b9a36a87e322c536cdfdfe62620c852540eddcc",
+  "newFile": "CompactArchitecture296.GateInfill.cs.pending",
+  "canonicalHook": "GateInfill296(report); immediately before EditorUtility.SetDirty(sheet) in Gates296",
+  "helper": "CompactRebuildAuthoring.RefreshGateInfill296()",
+  "capture": "CompactRebuildAuthoring.CaptureGateInfill296(false/true)",
+  "allCollidersUnchangedRequired": true,
+  "hingesDoorBlockerNavTimingUnchangedRequired": true,
+  "newSha256": "42e1eef3569773764a8c9cd19657e45c87103dbb7286be197530a1d128d734ff",
+  "gatesAfter": "b8aceb4e116be7a50727b0cfc291e51ef873ec236f02203826b49dbcbe99915b",
+  "captureClosed": "CompactRebuildAuthoring.CaptureGateInfillClosed296()",
+  "captureOpened": "CompactRebuildAuthoring.CaptureGateInfillOpened296()",
+  "boundsRepair": "Measured maximum error must be <=.001m; padding measured error+.00002m; strict Contains on all vertices; values in receipt"
+}

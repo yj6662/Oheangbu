@@ -1,0 +1,662 @@
+// Isolated single-view ink painting study. Parent source/materials are preserved.
+// Isolated macro terrain: copied lighting/ink response plus non-emissive realm pigment.
+// Palette comes exclusively from WorldLookDriver. There are no material colors,
+// emission, time-dependent marks, fog, or screen-space paper overlays. Realm pigment uses its own mask.
+// This experiment owns ONE distance wash here; do not stack InkWorldPost wash.
+Shader "Oheangbu/Study/InkPaintingTerrain"
+{
+    Properties
+    {
+        [Header(Independent Mountain Ink Study)]
+        _PaintedInkAirWash("Air wash retained inside loaded ink",Range(0,1))=.18
+        [ToggleUI] _PaintedWashEnabled("Connected ink face wash",Float)=0
+        [ToggleUI] _PaintedEdgeWash("Adjacent ink-tone edge wash",Float)=0
+        [ToggleUI] _PaintedFarPath("Distant mountain path ink ceiling",Float)=0
+        [ToggleUI] _PaintedFarPathAir("Distant path uses mountain atmosphere mass",Float)=0
+        _PaintedFarPathDistance("Far path start/end metres",Vector)=(250,900,0,0)
+        _PaintedFarPathAppearance("Far path luminance ceiling/strength",Vector)=(.10,1,0,0)
+        _PaintedEdgeWashStrengths("Loaded-middle / middle-lit mixing",Vector)=(.30,.25,0,0)
+        _PaintedEdgeWashResponse("Edge texture neutral / contrast",Vector)=(.5,1,0,0)
+        [NoScaleOffset] _PaintedRockWash("Connected ink bristles R",2D)="white"{}
+        _PaintedWashTiling("Horizontal vertical metres and strength",Vector)=(640,760,.85,0)
+        [ToggleUI] _PaintedInkEnabled("Painted mountain atlas",Float)=1
+        [NoScaleOffset] _PaintedInkAtlas("Ink atlas R linear white paper black ink",2D)="white"{}
+        _PaintedInkScale("Full stroke width and height metres",Vector)=(150,310,440,780)
+        _PaintedInkBlack("Loaded ink linear RGB",Vector)=(.008,.007,.006,0)
+        _PaintedInkMassTones("Loaded middle lit ink and bristle reserve",Vector)=(.012,.040,.100,.035)
+        _PaintedInkPaperTones("Paper reserve linear low high",Vector)=(.20,.40,0,0)
+        _PaintedInkPaperTint("Warm paper linear RGB multiplier",Vector)=(1,.95,.86,0)
+        _PaintedInkLoad("Ink variation min max opacity",Vector)=(1,1.9,1,0)
+        _PaintedInkResponse("Ink mask low high",Vector)=(.03,.92,0,0)
+        _PaintedInkLayout("Grid width height jitter warp",Vector)=(.75,.64,.35,.12)
+        _PaintedInkTileCrop("Stroke cell UV left bottom right top",Vector)=(.18,0,.82,1)
+        _PaintedInkSlope("Paper mountain slope start full degrees",Vector)=(18,42,0,0)
+        [NoScaleOffset] _PaintedGeoField("Actual terrain ink regions and flow",2D)="black"{}
+        _PaintedGeoRect("Terrain field origin size XZ",Vector)=(0,0,1,1)
+        [ToggleUI] _PaintedGeoEnabled("Use terrain field",Float)=0
+        _PaintedRoadBank("Local road bank ground blend",Range(0,1))=0
+        [NoScaleOffset] _PaintedRoadBankField("Fitted road weight/weighted height",2D)="black"{}
+        _PaintedRoadBankRect("Road bank world rect",Vector)=(-2000,-3000,4000,6000)
+        _PaintedRoadBankParams("Height and near distance fade",Vector)=(2,6,80,250)
+        [ToggleUI] _PaintedRoadBankSteep("Release distant steep road bank",Float)=0
+        _PaintedRoadBankSteepParams("Steep cosine thresholds and distance",Vector)=(.7071067811865476,.5,80,140)
+        [ToggleUI] _PaintedFormEnabled("Form-led mountain ink",Float)=0
+        [ToggleUI] _PaintedFormAuthored("Use authored form RGBA map",Float)=0
+        [NoScaleOffset] _PaintedFormMap("Form R ink G paper B dry A override",2D)="black"{}
+        _PaintedFormMapRect("Form map world origin XZ/size",Vector)=(-2000,-3000,4000,6000)
+        _PaintedFormRelief("Upper load/foot reserve relief ramps",Vector)=(45,145,55,135)
+        _PaintedFormDirection("Broad ink-load direction XZ",Vector)=(.8,.6,0,0)
+        _PaintedFormTones("Loaded/middle/lower/dry ink tones",Vector)=(.006,.045,.16,.018)
+        _PaintedFormBrush("Cross/relief metres/dry thresholds",Vector)=(180,480,.86,.99)
+        _PaintedFormStrokeBody("Broad form brush body strength",Range(0,1))=0
+        _PaintedFormAspectContrast("Upper form aspect contrast",Range(0,1))=0
+        _PaintedFormPaper("Foot strength/paper fraction",Vector)=(.65,.82,0,0)
+        _PaintedFormPaperDistance("Form reserve near/far metres",Vector)=(250,900,0,0)
+        [ToggleUI] _PaintedValleyReserve("Distant low-relief paper reserve",Float)=0
+        _PaintedValleyDistance("Reserve horizontal distance metres",Vector)=(250,900,0,0)
+        _PaintedValleyRelief("Reserve relief ramps metres",Vector)=(10,30,55,125)
+        _PaintedValleyAppearance("Reserve strength/paper fraction",Vector)=(.45,.72,0,0)
+        [ToggleUI] _CIEnabled("Compact ink landscape",Float)=0
+        [ToggleUI] _CIDarkNear("Dark foreground ink revision",Float)=0
+        _CIMountainTones("Mountain ink tone interval",Vector)=(.06,.18,0,0)
+        _CIMountainSlope("Mountain slope degrees",Vector)=(12,37,0,0)
+        [ToggleUI] _CIBroadBrush("Broad mountain ink coats",Float)=0
+        _CIBroadBrushScale("Broad stroke width/length metres",Vector)=(80,240,420,1000)
+        _CIBroadBrushCoverage("Coat opacity/edge/second/warp",Vector)=(.90,.18,.76,.20)
+        _CIBroadBrushTones("Broad dark/soft coat tones",Vector)=(.015,.07,0,0)
+        _CIBroadBrushBands("Mountain band thresholds/softness/amount",Vector)=(.33,.66,.12,.8)
+        [ToggleUI] _CIAtmosphereOverride("Independent compact atmosphere",Float)=0
+        [ToggleUI] _CIPainterly("Painterly compact revision",Float)=0
+        _CIMidAirRange("Middle atmosphere range",Vector)=(500,1500,0,0)
+        _CIFarAirRange("Far atmosphere range",Vector)=(1500,3400,0,0)
+        _CIAirStrengths("Middle/far atmosphere strengths",Vector)=(.18,.64,0,0)
+        _CIStrokeSpacingWidth("Stroke spacing/width metres",Vector)=(20,40,2,7)
+        _CIStrokeFadeStrength("Stroke fade range/ink strength",Vector)=(200,1400,.02,0)
+        _CIPigmentContrast("Mountain/ground pigment contrast",Vector)=(.03,.65,0,0)
+        _CIFoliagePainterly("Foliage transition/mip/contrast",Vector)=(30,180,1.5,.3)
+        _CIInk("Compact ink",Color)=(.165,.149,.133,1)
+        _CIPaper("Compact paper",Color)=(.969,.945,.894,1)
+        _CIAir("Compact horizon atmosphere",Color)=(.9,.88,.83,1)
+        _CIDetailRange("Near detail range",Vector)=(30,150,0,0)
+        _CIRockRange("Rock detail range",Vector)=(150,350,0,0)
+        _CIMountainRange("Mountain form range",Vector)=(350,900,0,0)
+        _CIAirRange("Far atmosphere range",Vector)=(900,2200,0,0)
+        _CITones("Ground/path tone intervals",Vector)=(.27,.56,.24,.48)
+        _CIDetailContrast("Near texture contrast",Float)=.22
+        _CINormalStrength("Near normal strength",Float)=.5
+
+        [Header(Ink And Paper)]
+        _InkDensity("Ink Density", Range(0.25, 3)) = 1.25
+        _InkPoint("Ink Point", Range(0, 0.5)) = 0.035
+        _PaperPoint("Paper Point", Range(0.3, 1.5)) = 0.8
+        _AmbientLevel("Ambient Level", Range(0, 1)) = 0.15
+        _LightResponse("Main Light Response", Range(0, 2)) = 0.9
+        _AddLightGain("Additional Light Gain", Range(0, 4)) = 1
+        _AoStrength("AO Strength", Range(0, 1)) = 0.7
+        _ToneFloor("Tone Floor", Range(0, 1)) = 0.015
+        _ToneCeiling("Tone Ceiling", Range(0, 1)) = 0.9
+
+        [Header(Surface Brushwork)]
+        _NoiseScale("Noise Scale (world units)", Float) = 0.65
+        _NoiseStrength("Pigment Variation", Range(0, 0.5)) = 0.11
+        _BrushStrength("Broken Vertical Brush Strength", Range(0, 0.5)) = 0.13
+        _StrokeScale("Drawn Stroke Scale (per metre)", Float) = 0.72
+        _StrokeStrength("Drawn Ink Stroke Strength", Range(0, 1)) = 0.6
+        _GrainStrength("Pigment Grain Strength", Range(0, 0.15)) = 0.018
+        _RimWidth("Silhouette Ink Width", Range(0.01, 0.6)) = 0.16
+        _RimStrength("Silhouette Ink Strength", Range(0, 1)) = 0.22
+        _UndersideInk("Underside Ink", Range(0, 1)) = 0.38
+
+        [Header(Single Distance Wash)]
+        _WashStart("Wash Start (metres)", Float) = 55
+        _WashEnd("Wash End (metres)", Float) = 520
+        _WashStrength("Wash Strength", Range(0, 1)) = 0.78
+
+        [Header(Realm Ground Pigment)]
+        [NoScaleOffset] _RealmPigment("Region pigment from palette", 2D) = "white" {}
+        _RealmTintStrength("Subtle material tint", Range(0, 1)) = 0
+
+        [Header(Palette Slot)]
+        [ToggleUI] _UseWoodColor("Use Wood Palette Slot", Float) = 0
+        _TintRetain("Retain Wood Pigment", Range(0, 1)) = 0
+        [ToggleUI] _PathEdge("Broken Path Ribbon Edges", Float) = 0
+        [Header(Ground Surface Path)]
+        [ToggleUI] _GroundPath("Blend path pigment on this surface", Float) = 0
+        [NoScaleOffset] _GroundPathMask("World XZ path mask (linear)", 2D) = "black" {}
+        _GroundPathRect("Mask origin XZ and inverse size", Vector) = (0,0,1,1)
+        _GroundPathTones("Path tone floor / ceiling", Vector) = (.26,.64,0,0)
+        _GroundPathVariation("Path pigment variation", Range(0,.3)) = .09
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
+    }
+
+    SubShader
+    {
+        Tags
+        {
+            "RenderPipeline" = "UniversalPipeline"
+            "RenderType" = "Opaque"
+            "Queue" = "Geometry"
+            "IgnoreProjector" = "True"
+        }
+
+        HLSLINCLUDE
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+        #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
+        #include "../InkNoise3D.hlsl"
+
+        struct Attributes
+        {
+            float4 positionOS : POSITION;
+            float3 normalOS : NORMAL;
+            float2 uv : TEXCOORD0;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
+        };
+
+        CBUFFER_START(UnityPerMaterial)
+            half _InkDensity;
+            half _InkPoint;
+            half _PaperPoint;
+            half _AmbientLevel;
+            half _LightResponse;
+            half _AddLightGain;
+            half _AoStrength;
+            half _ToneFloor;
+            half _ToneCeiling;
+            float _NoiseScale;
+            half _NoiseStrength;
+            half _BrushStrength;
+            float _StrokeScale;
+            half _StrokeStrength;
+            half _GrainStrength;
+            half _RimWidth;
+            half _RimStrength;
+            half _UndersideInk;
+            float _WashStart;
+            float _WashEnd;
+            half _WashStrength;
+            half _UseWoodColor;
+            half _TintRetain;
+            half _PathEdge;
+            half _GroundPath;
+            float4 _GroundPathRect;
+            float4 _GroundPathTones;
+            half _GroundPathVariation;
+            half _Cull;
+            half _RealmTintStrength;
+        
+            float4 _PaintedGeoRect;float _PaintedGeoEnabled;
+            float _PaintedRoadBank;float4 _PaintedRoadBankRect,_PaintedRoadBankParams;
+            float _PaintedRoadBankSteep;float4 _PaintedRoadBankSteepParams;
+            float _PaintedEdgeWash;
+            float _PaintedFarPath;
+            float _PaintedFarPathAir;
+            float4 _PaintedFarPathDistance,_PaintedFarPathAppearance;
+            float4 _PaintedEdgeWashStrengths,_PaintedEdgeWashResponse;
+            float _PaintedFormEnabled,_PaintedFormAuthored;
+            float _PaintedFormStrokeBody;
+            float _PaintedFormAspectContrast;
+            float4 _PaintedFormMapRect,_PaintedFormRelief,_PaintedFormDirection;
+            float4 _PaintedFormTones,_PaintedFormBrush,_PaintedFormPaper,_PaintedFormPaperDistance;
+            float _PaintedValleyReserve;
+            float4 _PaintedValleyDistance,_PaintedValleyRelief,_PaintedValleyAppearance;
+            float _CIEnabled,_CIDarkNear,_CIDetailContrast,_CINormalStrength;
+            float4 _CIInk,_CIPaper,_CIAir,_CIDetailRange,_CIRockRange,_CIMountainRange,_CIAirRange,_CITones;
+            float4 _CIMountainTones,_CIMountainSlope;
+            float _CIBroadBrush;
+            float4 _CIBroadBrushScale,_CIBroadBrushCoverage,_CIBroadBrushTones,_CIBroadBrushBands;
+            float _CIAtmosphereOverride,_CIPainterly;
+            float4 _CIMidAirRange,_CIFarAirRange,_CIAirStrengths,_CIStrokeSpacingWidth,_CIStrokeFadeStrength,_CIPigmentContrast,_CIFoliagePainterly;
+            float _PaintedInkEnabled,_PaintedInkAirWash,_PaintedWashEnabled;float4 _PaintedWashTiling;
+            float4 _PaintedInkMassTones;
+            float4 _PaintedInkAtlas_TexelSize,_PaintedInkScale,_PaintedInkBlack,_PaintedInkPaperTones,_PaintedInkPaperTint;
+            float4 _PaintedInkLoad,_PaintedInkResponse,_PaintedInkLayout,_PaintedInkTileCrop,_PaintedInkSlope;
+        CBUFFER_END
+        #include "InkPaintingStudy.hlsl"
+        TEXTURE2D(_RealmPigment);
+        SAMPLER(sampler_RealmPigment);
+        TEXTURE2D(_GroundPathMask);
+        SAMPLER(sampler_GroundPathMask);
+
+        // Global linear palette, deliberately absent from Properties/CBUFFER.
+        float4 _OhInkColor;
+        float4 _OhPaperColor;
+        float4 _OhWoodColor;
+
+        // The ribbon's UV.x is its width coordinate. Every pass clips the exact
+        // same un-biased world surface, including the shadow and SSAO prepasses.
+        // Other materials bypass this uniformly; the default remains fully opaque.
+        void ClipPathEdge(float3 positionWS, float2 uv)
+        {
+            [branch] if (_PathEdge > 0.5)
+            {
+                float broadEdge = OhFbm3(positionWS * 0.75 + 6.17);
+                float chips = OhValueNoise3(positionWS * 4.9 + 19.3);
+                float edgeWidth = 0.065 + broadEdge * 0.055 + chips * 0.032;
+                clip(min(uv.x, 1.0 - uv.x) - edgeWidth);
+            }
+        }
+        ENDHLSL
+
+        Pass
+        {
+            Name "CodexInkLandscapeForward"
+            Tags { "LightMode" = "UniversalForwardOnly" }
+            ZWrite On
+            ZTest LEqual
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex LandscapeVertex
+            #pragma fragment LandscapeFragment
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
+            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD0;
+                float3 normalWS : TEXCOORD1;
+                float2 uv : TEXCOORD2;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            Varyings LandscapeVertex(Attributes input)
+            {
+                Varyings output = (Varyings)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                output.positionCS = TransformWorldToHClip(output.positionWS);
+                output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.uv = input.uv;
+                return output;
+            }
+
+            float ScalarLight(Light light, float3 normalWS)
+            {
+                // Only energy is admitted. Light hue cannot color the environment.
+                return max(0.0, Luminance(light.color))
+                     * light.distanceAttenuation * light.shadowAttenuation
+                     * saturate(dot(normalWS, light.direction));
+            }
+
+            // A tapered, interrupted brush stroke rather than continuous procedural
+            // stripes. Each column offsets its position, start, width and ink load.
+            // Derivative filtering removes subpixel marks before they can shimmer.
+            float DrawnStroke(float across, float along)
+            {
+                float column = floor(across);
+                float columnSeed = OhHash3(float3(column, 5.71, 9.23));
+                along += columnSeed * 1.73;
+                float segment = floor(along);
+                float segmentSeed = OhHash3(float3(column, segment, 4.19));
+                float strokePosition = 0.5 + (columnSeed - 0.5) * 0.35;
+                float width = lerp(0.026, 0.115, segmentSeed);
+                float widthAA = max(fwidth(across) * 0.65, 0.009);
+                float stroke = 1.0 - smoothstep(max(0.0, width - widthAA), width + widthAA,
+                                               abs(frac(across) - strokePosition));
+                float t = frac(along);
+                float taper = smoothstep(0.025, 0.16, t) * (1.0 - smoothstep(0.63, 0.97, t));
+                float interrupted = smoothstep(0.2, 0.36, segmentSeed);
+                float visibility = 1.0 - smoothstep(0.13, 0.55, fwidth(across));
+                return stroke * taper * interrupted * visibility;
+            }
+
+            half4 LandscapeFragment(Varyings input, FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+                float3 positionWS = input.positionWS;
+                IPStudyDerivatives derivatives=IPPrepareStudyDerivatives(positionWS,_CIEnabled>.5&&_CIDarkNear>.5);
+                ClipPathEdge(input.positionWS, input.uv);
+                float3 normalWS = normalize(input.normalWS) * IS_FRONT_VFACE(facing, 1.0, -1.0);
+                float2 compactUV=float2(0,0);
+                float studySoil=0,mountainMass=0;
+                float4 geography=derivatives.geography;
+                [branch] if(_CIEnabled>.5&&_CIDarkNear>.5)
+                {
+                    compactUV=(positionWS.xz-_GroundPathRect.xy)*_GroundPathRect.zw;
+                    float inMask=step(0,compactUV.x)*step(compactUV.x,1)*step(0,compactUV.y)*step(compactUV.y,1);
+                    float path=_GroundPath>.5?SAMPLE_TEXTURE2D(_GroundPathMask,sampler_GroundPathMask,compactUV).r*inMask:0;
+                    studySoil=smoothstep(.08,.8,path);
+                    mountainMass=IPStudyMountainMass(geography,normalWS,studySoil,positionWS,distance(_WorldSpaceCameraPos,positionWS));
+                }
+                float3 viewWS = GetWorldSpaceNormalizeViewDir(positionWS);
+                float2 screenUV = GetNormalizedScreenSpaceUV(input.positionCS);
+
+                Light mainLight = GetMainLight(TransformWorldToShadowCoord(positionWS));
+                float mainEnergy = ScalarLight(mainLight, normalWS);
+                float addedEnergy = 0.0;
+                #if defined(_ADDITIONAL_LIGHTS)
+                // URP 17 Forward+ macros require this InputData name and these fields.
+                InputData inputData = (InputData)0;
+                inputData.positionWS = positionWS;
+                inputData.normalizedScreenSpaceUV = screenUV;
+                uint pixelLightCount = GetAdditionalLightsCount();
+                #if USE_CLUSTER_LIGHT_LOOP
+                for (uint dirIndex = 0; dirIndex < min(URP_FP_DIRECTIONAL_LIGHTS_COUNT, MAX_VISIBLE_LIGHTS); ++dirIndex)
+                {
+                    Light directional = GetAdditionalLight(dirIndex, positionWS, half4(1, 1, 1, 1));
+                    addedEnergy += ScalarLight(directional, normalWS);
+                }
+                #endif
+                LIGHT_LOOP_BEGIN(pixelLightCount)
+                    Light additional = GetAdditionalLight(lightIndex, positionWS, half4(1, 1, 1, 1));
+                    addedEnergy += ScalarLight(additional, normalWS);
+                LIGHT_LOOP_END
+                #endif
+
+                // Compress direct daylight before the ink ramp: a sun-facing rock
+                // keeps visible pigment rather than becoming a flat paper cutout.
+                // Local attraction lights can still push neighboring ink aside.
+                float daylight = mainEnergy / (1.0 + mainEnergy) * _LightResponse;
+                float localLight = 1.0 - exp2(-addedEnergy * _AddLightGain * 1.442695);
+                float luminance = saturate(daylight + localLight + _AmbientLevel);
+                #if defined(_SCREEN_SPACE_OCCLUSION)
+                float ao = GetScreenSpaceAmbientOcclusion(screenUV).indirectAmbientOcclusion;
+                luminance *= lerp(1.0, ao, _AoStrength);
+                #endif
+
+                [branch] if(_CIEnabled>.5&&_CIDarkNear>.5)
+                {
+                    // The background uses the same foreground ink from zero metres onward.
+                    // Legacy rim/brush/light ramps below remain exclusive to the old revision.
+                    float d=distance(GetCameraPositionWS(),positionWS);
+                    float3 compactColour=IPStudyGroundDark(float3(.5,.5,.5),positionWS,normalWS,studySoil,luminance,luminance,d,mountainMass,geography.r,derivatives);
+                    if(_RealmTintStrength>.001)
+                    {
+                        float3 realm=SAMPLE_TEXTURE2D(_RealmPigment,sampler_RealmPigment,compactUV).rgb;
+                        float3 chroma=clamp(realm/max(CILuma(realm),.015),.35,1.9);
+                        float3 tinted=compactColour*chroma;
+                        tinted*=CILuma(compactColour)/max(CILuma(tinted),.001);
+                        float groundWeight=lerp(.28,1.0,smoothstep(.32,.86,normalWS.y));
+                        float mottling=lerp(.5,1.0,smoothstep(.22,.78,OhFbm3(positionWS*.009+74.2)));
+                        compactColour=lerp(compactColour,tinted,_RealmTintStrength*groundWeight*mottling);
+                    }
+                    return half4(IPStudyAtmosphere(compactColour,d,IPStudyAtmosphereMass(mountainMass,studySoil,geography.r,d),geography,positionWS,derivatives.form),1);
+                }
+
+                // All marks live in world space; nothing crawls with camera motion.
+                float3 p = positionWS * max(abs(_NoiseScale), 0.001);
+                float pigment = OhFbm3(p * float3(0.83, 0.47, 0.83));
+                float broadMark = (pigment - 0.5) * _NoiseStrength * 2.0;
+                float tone = smoothstep(_InkPoint, max(_PaperPoint, _InkPoint + 0.001), luminance + broadMark);
+                tone = pow(saturate(tone), max(_InkDensity, 0.05));
+
+                // Sparse, stretched marks suggest vertical rock brushwork. Their
+                // response vanishes below pixel size rather than aliasing on ridges.
+                float footprint = max(length(ddx(p)), length(ddy(p)));
+                float brushVisibility = 1.0 - smoothstep(0.06, 0.35, footprint);
+                float fibre = OhValueNoise3(p * float3(5.2, 0.3, 5.2)
+                            + pigment * float3(1.7, 0.0, 1.1));
+                float brokenBrush = smoothstep(0.36, 0.68, fibre)
+                                  * smoothstep(0.16, 0.52, pigment);
+                float verticalFace = 1.0 - abs(normalWS.y);
+                tone *= 1.0 - brokenBrush * _BrushStrength * verticalFace * brushVisibility;
+
+                // Fine pigment granulation is confined to surfaces, never the sky.
+                float grainVisibility = 1.0 - smoothstep(0.018, 0.09, footprint);
+                float grain = OhValueNoise3(p * 22.0 + 31.7) - 0.5;
+                tone += grain * _GrainStrength * grainVisibility * (4.0 * tone * (1.0 - tone));
+
+                // Tonal limits make each mountain layer independently art-directable.
+                tone = lerp(min(_ToneFloor, _ToneCeiling), max(_ToneFloor, _ToneCeiling), saturate(tone));
+
+                // Layered rock ink: generous untouched areas, broader wet pigment,
+                // then a few narrow vertical and slanting strokes. Position-only
+                // domains cross mesh facets coherently instead of tracing triangles.
+                float3 strokeP = positionWS * max(abs(_StrokeScale), 0.001);
+                float wetPigment = OhFbm3(strokeP * float3(0.37, 0.21, 0.37) + 8.13);
+                float drifting = (wetPigment - 0.5) * 1.6 + (pigment - 0.5) * 0.35;
+                float across = dot(strokeP.xz, float2(0.83, 0.56));
+                float verticalStroke = DrawnStroke(across + drifting, strokeP.y * 0.23);
+                float diagonalStroke = DrawnStroke(across * 0.63 + strokeP.y * 0.24 + drifting * 0.7 + 12.4,
+                                                   strokeP.y * 0.17 - across * 0.035);
+                float wetWash = smoothstep(0.37, 0.70, wetPigment);
+                float inkMarks = max(verticalStroke, diagonalStroke * 0.64);
+                float faceWeight = lerp(0.16, 1.0, saturate(verticalFace * 1.35));
+                float strokeLoad = saturate(_StrokeStrength) * faceWeight;
+                tone *= 1.0 - saturate(inkMarks * 0.88 + wetWash * 0.29) * strokeLoad;
+
+                // Dry bristles reveal small patches of paper even in a dark mine
+                // wall. They use the same pigment field; no separate noise overlay.
+                float dryBrush = smoothstep(0.46, 0.71, fibre) * (1.0 - smoothstep(0.39, 0.66, wetPigment));
+                tone += dryBrush * strokeLoad * brushVisibility * 0.095 * (1.0 - inkMarks);
+
+                float normalView = saturate(dot(normalWS, viewWS));
+                float rimWidth = max(_RimWidth, max(fwidth(normalView), 0.001));
+                float rim = 1.0 - smoothstep(0.0, rimWidth, normalView);
+                tone *= 1.0 - rim * _RimStrength;
+                tone *= 1.0 - saturate(-normalWS.y) * _UndersideInk;
+
+                // Pigment only: the path uses the ground's position, normal, AO and light.
+                // No displaced ribbon, alpha clipping, extra shadow caster or second depth surface.
+                [branch] if (_GroundPath > .5)
+                {
+                    float2 pathUV = (positionWS.xz - _GroundPathRect.xy) * _GroundPathRect.zw;
+                    float inMask = step(0, pathUV.x) * step(pathUV.x, 1) * step(0, pathUV.y) * step(pathUV.y, 1);
+                    float mask = SAMPLE_TEXTURE2D(_GroundPathMask, sampler_GroundPathMask, pathUV).r * inMask;
+                    float pathLight = smoothstep(_InkPoint, max(_PaperPoint, _InkPoint + .001),
+                        luminance + (pigment - .5) * _GroundPathVariation);
+                    float pathTone = lerp(_GroundPathTones.x, _GroundPathTones.y, pathLight);
+                    tone = lerp(tone, pathTone, mask);
+                }
+                // Keep the road's local contrast while steep rock carries additional ink.
+                // This is a material response, not an extra atmosphere pass.
+                tone *= lerp(1.0, 0.44, smoothstep(0.12, 0.55, verticalFace));
+                float woodSlot = saturate(_UseWoodColor);
+                float3 paperEnd = lerp(_OhPaperColor.rgb, _OhWoodColor.rgb, woodSlot);
+                tone *= lerp(1.0, 0.7 + luminance * 0.3, _TintRetain * woodSlot);
+                float3 color = lerp(_OhInkColor.rgb, paperEnd, saturate(tone));
+
+                // Weathered ground pigment, not emitted light. Preserve luminance and lighting;
+                // broad patchiness and slope response keep it from reading as a territory overlay.
+                [branch] if (_RealmTintStrength > .001)
+                {
+                    float2 realmUV = (positionWS.xz - _GroundPathRect.xy) * _GroundPathRect.zw;
+                    float3 realm = SAMPLE_TEXTURE2D(_RealmPigment, sampler_RealmPigment, realmUV).rgb;
+                    float3 chroma = clamp(realm / max(dot(realm, float3(.2126,.7152,.0722)), .015), .35, 1.9);
+                    float3 tinted = color * chroma;
+                    tinted *= dot(color,float3(.2126,.7152,.0722)) / max(dot(tinted,float3(.2126,.7152,.0722)),.001);
+                    float soil = lerp(.28,1.0,smoothstep(.32,.86,normalWS.y));
+                    float mottling = lerp(.5,1.0,smoothstep(.22,.78,OhFbm3(positionWS*.009 + 74.2)));
+                    color = lerp(color,tinted,_RealmTintStrength*soil*mottling);
+                }
+
+                // One continuous wash, with no height fog or hard depth bands.
+                // Material controls retain local tonal design while the shared
+                // paper palette gives the distant valley its empty breathing room.
+                float distanceWS = distance(GetCameraPositionWS(), positionWS);
+                if(_CIEnabled>.5)
+                {
+                    float3 distant=CIMountain(positionWS,normalWS);
+                    color=lerp(color,distant,CIProgress(distanceWS,_CIMountainRange.xy));
+                    return half4(CIAtmosphere(color,distanceWS),1);
+                }
+                float wash = smoothstep(_WashStart, max(_WashEnd, _WashStart + 0.001), distanceWS);
+                wash *= saturate(_WashStrength);
+                color = lerp(color, _OhPaperColor.rgb, wash);
+                return half4(color, 1.0);
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex ShadowVertex
+            #pragma fragment ShadowFragment
+            #pragma multi_compile_instancing
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+
+            float3 _LightDirection;
+            float3 _LightPosition;
+
+            struct ShadowVaryings
+            {
+                float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD0;
+                float2 uv : TEXCOORD1;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            ShadowVaryings ShadowVertex(Attributes input)
+            {
+                ShadowVaryings output = (ShadowVaryings)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.positionWS = positionWS;
+                output.uv = input.uv;
+                #if _CASTING_PUNCTUAL_LIGHT_SHADOW
+                float3 lightDirectionWS = normalize(_LightPosition - positionWS);
+                #else
+                float3 lightDirectionWS = _LightDirection;
+                #endif
+                float4 positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDirectionWS));
+                output.positionCS = ApplyShadowClamping(positionCS);
+                return output;
+            }
+
+            half4 ShadowFragment(ShadowVaryings input) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                ClipPathEdge(input.positionWS, input.uv);
+                return 0;
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+            ZWrite On
+            ColorMask R
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex DepthVertex
+            #pragma fragment DepthFragment
+            #pragma multi_compile_instancing
+
+            struct DepthVaryings
+            {
+                float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD0;
+                float2 uv : TEXCOORD1;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            DepthVaryings DepthVertex(Attributes input)
+            {
+                DepthVaryings output = (DepthVaryings)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                output.uv = input.uv;
+                return output;
+            }
+
+            half DepthFragment(DepthVaryings input) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+                ClipPathEdge(input.positionWS, input.uv);
+                return input.positionCS.z;
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+            ZWrite On
+            Cull [_Cull]
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex NormalsVertex
+            #pragma fragment NormalsFragment
+            #pragma multi_compile_instancing
+            #pragma instancing_options renderinglayer
+            #pragma multi_compile_fragment _ _GBUFFER_NORMALS_OCT
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+
+            struct NormalsVaryings
+            {
+                float4 positionCS : SV_POSITION;
+                float3 normalWS : TEXCOORD0;
+                float3 positionWS : TEXCOORD1;
+                float2 uv : TEXCOORD2;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            NormalsVaryings NormalsVertex(Attributes input)
+            {
+                NormalsVaryings output = (NormalsVaryings)0;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_TRANSFER_INSTANCE_ID(input, output);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.normalWS = NormalizeNormalPerVertex(TransformObjectToWorldNormal(input.normalOS));
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                output.uv = input.uv;
+                return output;
+            }
+
+            void NormalsFragment(
+                NormalsVaryings input,
+                FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC,
+                out half4 outNormalWS : SV_Target0
+            #ifdef _WRITE_RENDERING_LAYERS
+                , out uint outRenderingLayers : SV_Target1
+            #endif
+            )
+            {
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+                ClipPathEdge(input.positionWS, input.uv);
+                float3 normalWS = NormalizeNormalPerPixel(input.normalWS) * IS_FRONT_VFACE(facing, 1.0, -1.0);
+                #if defined(_GBUFFER_NORMALS_OCT)
+                float2 octNormalWS = PackNormalOctQuadEncode(normalWS);
+                float2 remappedOctNormalWS = saturate(octNormalWS * 0.5 + 0.5);
+                half3 packedNormalWS = PackFloat2To888(remappedOctNormalWS);
+                outNormalWS = half4(packedNormalWS, 0.0);
+                #else
+                outNormalWS = half4(normalWS, 0.0);
+                #endif
+                #ifdef _WRITE_RENDERING_LAYERS
+                outRenderingLayers = EncodeMeshRenderingLayer();
+                #endif
+            }
+            ENDHLSL
+        }
+    }
+    FallBack Off
+}

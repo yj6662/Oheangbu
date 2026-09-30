@@ -1,0 +1,334 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+using Oheangbu.App.World.UI;
+using Oheangbu.Data.World;
+using Object=UnityEngine.Object;
+
+namespace Oheangbu.EditorTools.WorldMacro
+{
+ public static partial class CompactRebuildAuthoring
+ {
+  [Serializable] sealed class BridgeRoute296 { public string Id;public Vector3[] Points; }
+  [Serializable] sealed class BridgeRecord296
+  {
+   public string Id,Kind,SceneRoot;public string[] RouteIds;public float Width;public Vector3 Start,End;
+   public int SourceModules,Renderers;public BridgeRoute296[] Routes;
+   public int[] LodTriangles;public int CollisionTriangles,CollisionBoxes;
+   public string PhysicsScope="Continuous approved walking ribbon plus source-apron faces; box volumes only for visible rails/posts/piers. Decorative source board/pier triangles do not participate in physics.";
+  }
+  [Serializable] sealed class BridgeReceipt296 { public string Revision="architecture-296";public BridgeRecord296[] Bridges; }
+  static void Crossings296(List<string> report)
+  {
+   var session=Session292();var field=new CompactWorldSurface(session.MountainLayout);
+   var source=JsonUtility.FromJson<Crossings295>(File.ReadAllText(G295+"/crossings.json")).Crossings;
+   if(source.Length!=5)throw new InvalidOperationException("296 expects the five reviewed 295 crossing routes");
+   foreach(var old in session.gameObject.scene.GetRootGameObjects().Where(g=>g.name=="Architecture296_Crossings").ToArray())Object.DestroyImmediate(old);
+   var incumbent=session.gameObject.scene.GetRootGameObjects().SingleOrDefault(g=>g.name=="Watershed295_Crossings");
+   if(incumbent!=null)incumbent.SetActive(false);
+   var root=new GameObject("Architecture296_Crossings").transform;var receipt=new List<BridgeRecord296>();
+   var exportedRoutes=JsonUtility.FromJson<Routes292>(File.ReadAllText(G295+"/routes.json"));var exportedCrossings=new List<Crossing295>();
+   var canonical=source.Single(c=>c.RouteId=="capital_center__palace");
+   var duplicate=source.Single(c=>c.RouteId=="hyeongang__capital_center");
+   var shared=CanonicalDeck296(canonical);
+   foreach(var crossing in source.Where(c=>c!=duplicate))
+   {
+    bool trestle=crossing.RouteId=="mountain_hwanggyeong_main",timber=trestle||crossing.RouteId=="jeokro__cheolong";
+    var routes=new List<BridgeRoute296>{new BridgeRoute296{Id=crossing.RouteId,Points=crossing.Points}};
+    if(crossing==canonical)routes.Add(new BridgeRoute296{Id=duplicate.RouteId,Points=SharedBranch296(duplicate,canonical.Points,shared,field)});
+    string id=crossing==canonical?"capital_shared_stone_bridge":crossing.RouteId+"_bridge";
+    var holder=new GameObject(id).transform;holder.SetParent(root,false);
+    float width=trestle?3.4f:6f;var deck=new CrossingBatch296();var detail=new CrossingBatch296();var apronRenderers=new List<Renderer>();int branch=0;
+    foreach(var route in routes)
+    {
+     // The second route traverses the same support and has separate bank approaches.
+     // Never generate a second overlapping bridge deck above the shared river span.
+     apronRenderers.AddRange(BuildBridgeRoute296(holder,id+"_"+branch++,route.Points,width,timber,trestle,field,deck,detail,routes.Where(r=>r!=route).Select(r=>r.Points).ToArray(),
+      crossing==canonical&&route.Id==duplicate.RouteId?canonical.Points:null));
+     var full=ReplaceBridgeRoute296(route.Id,route.Points);exportedRoutes.routes.Single(r=>r.id==route.Id).points=full;
+     var original=source.Single(c=>c.RouteId==route.Id);
+     exportedCrossings.Add(new Crossing295{Id=original.Id,RouteId=route.Id,Kind="FixedCrossing",RouteWidth=width,
+      Start=route.Id==duplicate.RouteId?shared[shared.Length-1]:original.Start,End=route.Id==duplicate.RouteId?shared[0]:original.End,
+      DeckHeight=crossing.DeckHeight,Span=crossing.Span,WaterHeight=crossing.WaterHeight,Points=route.Points});
+    }
+    var renderers=deck.Finish(holder,id+"_deck").Concat(detail.Finish(holder,id+"_loadbearing")).Concat(apronRenderers).ToArray();
+    if(renderers.Length==0)throw new InvalidOperationException("Empty source bridge "+id);
+    CrossingLods296(holder,id,renderers);
+    receipt.Add(new BridgeRecord296{Id=id,Kind=trestle?"CC0 braced timber trestle":timber?"KCISA masonry piers and braced CC0 timber deck":"KCISA masonry arched bridge",SceneRoot=root.name+"/"+id,
+     RouteIds=routes.Select(r=>r.Id).ToArray(),Width=width,Start=crossing.Start,End=crossing.End,
+     SourceModules=deck.Instances+detail.Instances,Renderers=renderers.Length,Routes=routes.ToArray(),
+     LodTriangles=holder.GetComponent<LODGroup>().GetLODs().Select(l=>l.renderers.Sum(r=>r.GetComponent<MeshFilter>().sharedMesh.triangles.Length/3)).ToArray(),
+     CollisionTriangles=holder.GetComponentsInChildren<MeshCollider>().Sum(c=>c.sharedMesh.triangles.Length/3),CollisionBoxes=holder.GetComponentsInChildren<BoxCollider>().Length});
+   }
+   RegisterCrossingSources296();ConfigureMumSurface296(report);
+   var sheet=Sheet296();sheet.Structures=sheet.Structures.Where(s=>!s.Id.StartsWith("crossing296-",StringComparison.Ordinal)).Concat(receipt.Select(b=>
+    new CompactArchitectureSheetSO.Structure{Id="crossing296-"+b.Id,Realm=b.Id.StartsWith("jeokro")?"Cheolong":b.Id.StartsWith("hyeongang")?"Hyeongang":"Hwanggyeong",
+     Label=b.Kind,SourceId=b.Kind.Contains("timber")?"crossing296-timber":"crossing296-stone-floor",SceneRoot=b.SceneRoot,
+     Position=(b.Start+b.End)*.5f,Size=new Vector3(b.Width,.56f,Vector3.Distance(b.Start,b.End)),RouteIds=b.RouteIds})).ToArray();
+   EditorUtility.SetDirty(sheet);Directory.CreateDirectory(O296);File.WriteAllText(O296+"/crossings.json",JsonUtility.ToJson(new BridgeReceipt296{Bridges=receipt.ToArray()},true));
+   Directory.CreateDirectory(O296+"/Generated");File.WriteAllText(O296+"/Generated/crossings.json",JsonUtility.ToJson(new Crossings295{Crossings=exportedCrossings.ToArray()},true));
+   File.WriteAllText(O296+"/Generated/routes.json",JsonUtility.ToJson(exportedRoutes,true));
+   report.Add("Fixed crossings: 4 physical source-asset bridges / 5 preserved route IDs; capital two routes share one deck. All route controls, geography and map lines updated.");
+  }
+  static Vector3[] CanonicalDeck296(Crossing295 c)
+  {
+   int a=NearestBridgePoint296(c.Points,c.Start),b=NearestBridgePoint296(c.Points,c.End);
+   if(a>b)(a,b)=(b,a);return c.Points.Skip(a).Take(b-a+1).ToArray();
+  }
+  static int NearestBridgePoint296(Vector3[] points,Vector3 p)
+  {int index=0;float best=float.MaxValue;for(int i=0;i<points.Length;i++){float d=(points[i]-p).sqrMagnitude;if(d<best){best=d;index=i;}}return index;}
+  static Vector3[] SharedBranch296(Crossing295 original,Vector3[] canonical,Vector3[] shared,CompactWorldSurface field)
+  {
+   var deck=shared.Reverse().ToArray();var result=new List<Vector3>();
+   float length=BridgeLength296(deck);float inset=Mathf.Min(9f,length*.2f);
+   var join=BridgeSample296(deck,inset,out var joinForward);
+   var start=original.Points[0];
+   AppendBridgeCurve296(result,start,(original.Points[1]-start).normalized,join,joinForward,field);
+   // The two southern approaches occupied the same six-metre corridor with
+   // different grades. Reuse the whole canonical bank approach, not a second
+   // parallel ribbon which can expose a step at its outer edge.
+   for(int i=0;i<result.Count;i++)
+   {
+    var p=result[i];float nearest=float.MaxValue,y=p.y;
+    for(int j=1;j<canonical.Length;j++)
+    {
+     var d=Vector3.ProjectOnPlane(canonical[j]-canonical[j-1],Vector3.up);
+     float t=Mathf.Clamp01(Vector3.Dot(Vector3.ProjectOnPlane(p-canonical[j-1],Vector3.up),d)/Mathf.Max(.0001f,d.sqrMagnitude));
+     var q=Vector3.Lerp(canonical[j-1],canonical[j],t);float distance=Vector3.ProjectOnPlane(q-p,Vector3.up).magnitude;
+     if(distance<nearest){nearest=distance;y=q.y;}
+    }
+    float blend=1-Mathf.SmoothStep(0,1,Mathf.Clamp01((nearest-3)/3));
+    p.y=Mathf.Max(field.Sample(p.x,p.z)+.025f,Mathf.Lerp(p.y,y,blend));result[i]=p;
+   }
+   int at=NearestBridgePoint296(canonical,join);
+   while(at>0&&Vector3.Dot(canonical[at]-join,joinForward)<0)at--;
+   for(int i=at;i>=0;i--)if(Vector3.Distance(result[result.Count-1],canonical[i])>.01f)result.Add(canonical[i]);
+   return result.ToArray();
+  }
+  static void AppendBridgeCurve296(List<Vector3> result,Vector3 from,Vector3 fromDirection,Vector3 to,Vector3 toDirection,CompactWorldSurface field)
+  {
+   float distance=Vector3.Distance(from,to),handle=Mathf.Min(22,Mathf.Max(12,distance*.45f));fromDirection.y=toDirection.y=0;
+   var a=from+fromDirection.normalized*handle;var b=to-toDirection.normalized*handle;int count=Mathf.Max(4,Mathf.CeilToInt(distance*2));
+   for(int i=result.Count==0?0:1;i<=count;i++)
+   {
+    float t=i/(float)count,u=1-t;var p=u*u*u*from+3*u*u*t*a+3*u*t*t*b+t*t*t*to;
+    p.y=Mathf.Max(Mathf.Lerp(from.y,to.y,Mathf.SmoothStep(0,1,t)),field.Sample(p.x,p.z)+.025f);result.Add(p);
+   }
+  }
+  static void AppendBridgeApproach296(List<Vector3> result,Vector3 from,Vector3 to,CompactWorldSurface field)
+  {
+   int count=Mathf.CeilToInt(Vector3.Distance(from,to));
+   for(int i=result.Count==0?0:1;i<=count;i++)
+   {
+    float t=i/(float)Mathf.Max(1,count);var p=Vector3.Lerp(from,to,t);
+    // The joining ramp is on existing dry bank wherever possible; terrain is immutable.
+    p.y=Mathf.Max(p.y,field.Sample(p.x,p.z)+.025f);result.Add(p);
+   }
+  }
+  static Vector3[] ReplaceBridgeRoute296(string id,Vector3[] replacement)
+  {
+   var session=Session292();var layout=session.MountainLayout;var route=layout.Routes.FirstOrDefault(r=>r.Id==id);
+   var mountain=layout.Mountains.FirstOrDefault(m=>id==m.Id+"_main"||id==m.Id+"_hidden"||id==m.Id+"_return");
+   if(route==null&&mountain==null)throw new InvalidOperationException("No layout or consolidated mountain route binding for "+id);
+   var baseline=JsonUtility.FromJson<Routes292>(File.ReadAllText(G295+"/routes.json")).routes.Single(r=>r.id==id).points;
+   int start=NearestBridgePoint296(baseline,replacement[0]),end=NearestBridgePoint296(baseline,replacement[replacement.Length-1]);
+   if(start>end){Array.Reverse(replacement);(start,end)=(end,start);}
+   var points=baseline.Take(start).Concat(replacement).Concat(baseline.Skip(end+1)).ToArray();
+   if(route!=null)route.Bends=points.Skip(1).Take(Mathf.Max(0,points.Length-2)).Select(p=>new Vector2(p.x,p.z)).ToArray();
+   if(mountain!=null)
+   {
+    bool main=id==mountain.Id+"_main",hidden=id==mountain.Id+"_hidden";
+    if(main)mountain.MainPath=points;else if(hidden)mountain.TemplePath=points;else mountain.ReturnPath=points;
+    foreach(var segment in layout.Routes.Where(r=>main?(r.Id==mountain.Id+"_approach"||r.Id==mountain.Id+"_lower"||r.Id==mountain.Id+"_middle"||r.Id==mountain.Id+"_upper"):
+     r.Id==mountain.Id+(hidden?"_branch":"_loop")))
+    {
+     var from=layout.Places.First(p=>p.Id==segment.From).XZ;var to=layout.Places.First(p=>p.Id==segment.To).XZ;
+     int a=Enumerable.Range(0,points.Length).OrderBy(i=>(new Vector2(points[i].x,points[i].z)-from).sqrMagnitude).First();
+     int b=Enumerable.Range(0,points.Length).OrderBy(i=>(new Vector2(points[i].x,points[i].z)-to).sqrMagnitude).First();
+     var part=points.Skip(Math.Min(a,b)).Take(Math.Abs(a-b)+1).ToArray();if(a>b)Array.Reverse(part);
+     segment.Bends=part.Skip(1).Take(Mathf.Max(0,part.Length-2)).Select(p=>new Vector2(p.x,p.z)).ToArray();
+    }
+   }
+   EditorUtility.SetDirty(layout);
+   foreach(var ui in session.gameObject.scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<PlaytestUiRoot>(true)))
+   {
+    var map=ui.MapData;if(map==null)continue;
+    if(!AssetDatabase.GetAssetPath(map).StartsWith(A296+"/",StringComparison.Ordinal))throw new InvalidOperationException("296 needs its private map");
+    var line=map.Lines.FirstOrDefault(l=>l.Id==id);if(line!=null)line.Points=points.Select(p=>new Vector2(p.x,p.z)).ToArray();EditorUtility.SetDirty(map);
+   }
+   var geography=session.DemoEscortSummon!=null?session.DemoEscortSummon.WorldSheet:null;
+   if(geography!=null)
+   {
+    if(!AssetDatabase.GetAssetPath(geography).StartsWith(A296+"/",StringComparison.Ordinal))throw new InvalidOperationException("296 needs private route geography");
+    var record=geography.Routes.FirstOrDefault(r=>r.Id==id);
+    if(record==null){record=new WorldMacroSheetSO.RouteSpec{Id=id,From=route!=null?route.From:mountain.EntryPlaceId,To=route!=null?route.To:mountain.Id+"_summit",Carriage=route!=null&&route.GradeForVehicle,Width=route!=null?route.Width:2.6f};geography.Routes=geography.Routes.Concat(new[]{record}).ToArray();}
+    record.Points=points;EditorUtility.SetDirty(geography);
+   }
+   return points;
+  }
+  static Renderer[] BuildBridgeRoute296(Transform root,string id,Vector3[] points,float width,bool timber,bool trestle,CompactWorldSurface field,CrossingBatch296 deck,CrossingBatch296 detail,Vector3[][] otherRoutes,Vector3[] skipShared)
+  {
+   var support=new BridgeMesh295();float distance=0,nextPier=6;
+   var total=BridgeLength296(points);string floor=timber?TimberFloor296:StoneFloor296;
+   var source=CrossingSource(floor);int columns=Mathf.Max(1,Mathf.CeilToInt(width/3.6f));float scale=width/columns/source.Bounds.size.x;
+   float nativeStep=Mathf.Max(.04f,source.Bounds.size.z*scale),step=Mathf.Min(2.8f,nativeStep*.98f);
+   // Source modules retain their native proportions. Small overlaps are below the smooth support plane.
+   for(float d=0;d<total;d+=step)
+   {
+    float midpoint=Mathf.Min(total,d+step*.5f);var p=BridgeSample296(points,midpoint,out var forward);var right=Vector3.Cross(Vector3.up,forward).normalized;
+    if(skipShared!=null&&DistanceBridgePolyline296(p,skipShared)<.25f)continue;
+    var rotation=Quaternion.LookRotation(forward,Vector3.up);
+    for(int column=0;column<columns;column++)
+    {
+     var centre=p+right*((column+.5f)*width/columns-width*.5f);
+     var topOffset=new Vector3(source.Bounds.center.x,source.Bounds.max.y,source.Bounds.center.z);
+     deck.Add(floor,Matrix4x4.TRS(centre+Vector3.up*.033f,rotation,Vector3.one*scale)*Matrix4x4.Translate(-topOffset));
+    }
+   }
+   string rail=timber?TimberBeam296:Parapet296;var railSource=CrossingSource(rail);
+   float railScale=timber?Mathf.Min(.2f/Mathf.Max(.01f,railSource.Bounds.size.y),4f/railSource.Bounds.size.x):.88f/railSource.Bounds.size.y;
+   float railLength=Mathf.Max(.25f,railSource.Bounds.size.x*railScale);
+   for(float d=4+railLength*.5f;d<total-4;d+=railLength*.98f)
+   {
+    var p=BridgeSample296(points,d,out var forward);var right=Vector3.Cross(Vector3.up,forward).normalized;var rotation=Quaternion.LookRotation(forward,Vector3.up);
+    if(skipShared!=null&&DistanceBridgePolyline296(p,skipShared)<.25f)continue;
+    foreach(float sign in new[]{-1f,1f})
+    {
+     var edge=p+right*sign*(width*.5f+.12f);
+     bool junction=false;
+     foreach(float along in new[]{-.48f,0,.48f})if(otherRoutes.Any(route=>DistanceBridgePolyline296(edge+forward*(along*railLength),route)<width*.5f-.18f)){junction=true;break;}
+     if(junction)continue;
+     var railRotation=rotation*Quaternion.Euler(0,90,0);var railBottom=edge+Vector3.up*(timber?.76f:0);
+     SourceBox296(root,"RailCollision",rail,railBottom,railRotation,railScale);
+     if(timber)
+     {
+      var post=edge-forward*railLength*.49f;float postScale=.95f/CrossingSource(TimberColumn296).Bounds.size.y;
+      SourceBox296(root,"RailPostCollision",TimberColumn296,post,Quaternion.identity,postScale);
+     }
+    }
+   }
+   for(int i=1;i<points.Length;i++)
+   {
+    var a=points[i-1]+Vector3.up*.04f;var b=points[i]+Vector3.up*.04f;var f=(b-a).normalized;var r=Vector3.Cross(Vector3.up,f).normalized;
+    // Adjacent quads use the same mitered edge. Segment-local rectangles left
+    // tiny wedge gaps at turns and exposed the lower crossing ribbon beneath.
+    support.Ribbon(a,b,BridgeMiter296(points,i-1),BridgeMiter296(points,i),width,.45f);float length=Vector3.Distance(a,b);
+    // Low edge rails are represented by the source balustrade's actual mesh collision below.
+    while(nextPier<distance+length)
+    {
+     var p=Vector3.Lerp(a,b,(nextPier-distance)/Mathf.Max(.001f,length));float ground=field.Sample(p.x,p.z);
+     if(p.y-ground>1.2f&&(skipShared==null||DistanceBridgePolyline296(p,skipShared)>.5f))
+     {
+      string pole=trestle?TimberColumn296:StoneColumn296;var s=CrossingSource(pole);float poleWidth=trestle?.36f:1.1f;
+      float poleScale=poleWidth/Mathf.Max(s.Bounds.size.x,s.Bounds.size.z);float height=Mathf.Max(.15f,s.Bounds.size.y*poleScale);
+      foreach(float side in new[]{-.32f,.32f})
+      {
+       var body=new GameObject("PierCollision").AddComponent<BoxCollider>();body.transform.SetParent(root,false);body.gameObject.isStatic=true;
+       body.transform.position=new Vector3(p.x,(ground-.3f+p.y-.45f)*.5f,p.z)+r*width*side;
+       body.size=new Vector3(poleWidth*.82f,p.y-.45f-ground+.3f,poleWidth*.82f);
+      }
+     }
+     nextPier+=timber?6:9;
+    }
+    distance+=length;
+   }
+   BuildBridgeLoadBearing296(detail,points,width,timber,trestle,field,otherRoutes,skipShared);
+   var apron=new CrossingBatch296();var apronCaps=new CrossingBatch296();BridgeAprons296(apron,apronCaps,points,width,field);
+   var mesh=Asset296("Meshes/Crossings/"+id+"_support.asset",()=>new Mesh());support.Apply(mesh);EditorUtility.SetDirty(mesh);
+   var collider=new GameObject(id+"_continuous_support").AddComponent<MeshCollider>();collider.transform.SetParent(root,false);collider.sharedMesh=mesh;collider.gameObject.isStatic=true;
+   // Caps close source-masonry cuts only. The existing apron collision meshes
+   // remain byte-for-byte generated from the same uncapped source faces.
+   return apron.Finish(root,id+"_aprons",true).Concat(apronCaps.Finish(root,id+"_apron_cut_caps",false)).ToArray();
+  }
+  static void SourceBox296(Transform parent,string name,string source,Vector3 bottom,Quaternion rotation,float scale)
+  {
+   var bounds=CrossingSource(source).Bounds;var box=new GameObject(name).AddComponent<BoxCollider>();box.transform.SetParent(parent,false);
+   box.transform.SetPositionAndRotation(bottom+rotation*Vector3.up*(bounds.size.y*scale*.5f),rotation);
+   box.size=bounds.size*scale;box.gameObject.isStatic=true;
+  }
+  static void BridgeAprons296(CrossingBatch296 deck,CrossingBatch296 cutCaps,Vector3[] points,float width,CompactWorldSurface field)
+  {
+   // Metre-scale source tiles follow the existing bank triangles; large 3m
+   // tiles could connect a high bank corner into a visually upright slab.
+   var source=CrossingSource(StoneFloor296);int columns=Mathf.Max(1,Mathf.CeilToInt(width));float scale=width/columns/source.Bounds.size.x;
+   float tileLength=source.Bounds.size.z*scale;int rows=Mathf.Max(1,Mathf.CeilToInt(6/Mathf.Max(.1f,tileLength)));float step=6f/rows;
+   foreach(bool start in new[]{true,false})
+   {
+    var end=points[start?0:points.Length-1]+Vector3.up*.04f;var forward=points[start?1:points.Length-2]-end;forward.y=0;forward.Normalize();var right=Vector3.Cross(Vector3.up,forward);
+    float SurfaceHeight(Vector3 p)
+    {
+     float along=Vector3.Dot(p-end,forward),ground=field.Sample(p.x,p.z)+.03f;
+     return Mathf.Max(ground,Mathf.Lerp(ground,end.y,Mathf.SmoothStep(0,1,Mathf.Clamp01((along+6)/6))));
+    }
+    for(int row=0;row<rows;row++)for(int col=0;col<columns;col++)
+    {
+     var centre=end+forward*(-6+step*(row+.5f))+right*(width*(col+.5f)/columns-width*.5f);centre.y=0;
+     var matrix=Matrix4x4.TRS(centre,Quaternion.LookRotation(forward),Vector3.one*scale)*Matrix4x4.Translate(-new Vector3(source.Bounds.center.x,source.Bounds.max.y,source.Bounds.center.z));
+     deck.WarpSurface(StoneFloor296,matrix,p=>
+     {
+      p.y+=SurfaceHeight(p);return p;
+     });
+     // The unchanged paving can be above a falling bank at its outer edge.
+     // Fill only that existing gap with cropped source masonry; keep the road
+     // height, width, actual terrain and the approved walking route unchanged.
+     float thickness=source.Bounds.size.y*scale,minGround=float.MaxValue,maxCeiling=float.MinValue,maxGap=0;
+     foreach(float x in new[]{-.5f,0,.5f})foreach(float z in new[]{-.5f,0,.5f})
+     {
+      var p=centre+right*x*(width/columns)+forward*z*tileLength;float ground=field.Sample(p.x,p.z),ceiling=SurfaceHeight(p)-thickness-.012f;
+      minGround=Mathf.Min(minGround,ground);maxCeiling=Mathf.Max(maxCeiling,ceiling);maxGap=Mathf.Max(maxGap,ceiling-ground);
+     }
+     if(maxGap>.035f)
+     {
+      var stone=CrossingSource(Rampart296);float foundationScale=tileLength/stone.Bounds.size.z;
+      float course=stone.Bounds.size.y*foundationScale*.78f;
+      for(float y=minGround-.15f;y<maxCeiling;y+=course*.99f)
+       deck.Wall(Rampart296,new Vector3(centre.x,y,centre.z),Quaternion.LookRotation(forward),foundationScale,width/columns,Mathf.Min(course,maxCeiling-y),
+        p=>{p.y=Mathf.Min(p.y,SurfaceHeight(p)-thickness-.012f);return p;},cutCaps);
+     }
+    }
+    // Close the outside of the assembled foundation with continuous source
+    // masonry faces. Independent tapered wall blocks otherwise expose a row
+    // of wedge ends below the thin paving, even after their cuts are capped.
+    var corners=new[]{end-forward*6-right*width*.5f,end-forward*6+right*width*.5f,end+right*width*.5f,end-right*width*.5f};
+    var centreFootprint=end-forward*3;float slab=source.Bounds.size.y*scale;
+    const float faceScale=.65f;float courseHeight=CrossingSource(Rampart296).Bounds.size.y*faceScale*.8f;
+    for(int edge=0;edge<4;edge++)
+    {
+     var a=corners[edge];var b=corners[(edge+1)%4];var tangent=Vector3.ProjectOnPlane(b-a,Vector3.up).normalized;
+     float length=Vector3.ProjectOnPlane(b-a,Vector3.up).magnitude;var outward=Vector3.Cross(tangent,Vector3.up);
+     if(Vector3.Dot(outward,(a+b)*.5f-centreFootprint)<0)outward=-outward;
+     int pieces=Mathf.CeilToInt(length/.5f);float piece=length/pieces;var rotation=Quaternion.LookRotation(outward);
+     for(int i=0;i<pieces;i++)
+     {
+      var centre=Vector3.Lerp(a,b,(i+.5f)/pieces)+outward*.008f;float bottom=float.MaxValue,top=float.MinValue;
+      foreach(float s in new[]{-.53f,0,.53f}){var p=centre+tangent*piece*s;bottom=Mathf.Min(bottom,field.Sample(p.x,p.z)-.16f);top=Mathf.Max(top,SurfaceHeight(p)-slab-.012f);}
+      if(top<=bottom+.12f)continue;
+      for(float y=bottom;y<top;y+=courseHeight-.025f)
+       cutCaps.MasonryFacing(Rampart296,new Vector3(centre.x,y,centre.z),rotation,faceScale,piece+.035f,Mathf.Min(courseHeight,top-y),p=>
+       {p.y=Mathf.Min(p.y,SurfaceHeight(p)-slab-.012f);return p;});
+     }
+    }
+   }
+  }
+  static float BridgeLength296(Vector3[] points){float result=0;for(int i=1;i<points.Length;i++)result+=Vector3.Distance(points[i-1],points[i]);return result;}
+  static Vector3 BridgeMiter296(Vector3[] points,int index)
+  {
+   var before=Vector3.ProjectOnPlane(points[Mathf.Min(points.Length-1,index+1)]-points[Mathf.Max(0,index-1)],Vector3.up).normalized;
+   var tangent=Vector3.ProjectOnPlane(index==points.Length-1?points[index]-points[index-1]:points[index+1]-points[index],Vector3.up).normalized;
+   var right=Vector3.Cross(Vector3.up,before).normalized;var segmentRight=Vector3.Cross(Vector3.up,tangent).normalized;
+   return right/Mathf.Max(.8f,Vector3.Dot(right,segmentRight));
+  }
+  static Vector3 BridgeSample296(Vector3[] points,float distance,out Vector3 forward)
+  {
+   for(int i=1;i<points.Length;i++){var delta=points[i]-points[i-1];float length=delta.magnitude;if(distance<=length||i==points.Length-1){forward=delta.normalized;return Vector3.Lerp(points[i-1],points[i],Mathf.Clamp01(distance/Mathf.Max(.001f,length)));}distance-=length;}
+   forward=Vector3.forward;return points[0];
+  }
+  static float DistanceBridgePolyline296(Vector3 p,Vector3[] points)
+  {
+   float best=float.MaxValue;for(int i=1;i<points.Length;i++){var d=points[i]-points[i-1];float t=Mathf.Clamp01(Vector3.Dot(p-points[i-1],d)/Mathf.Max(.0001f,d.sqrMagnitude));best=Mathf.Min(best,Vector3.Distance(p,points[i-1]+d*t));}return best;
+  }
+ }
+}

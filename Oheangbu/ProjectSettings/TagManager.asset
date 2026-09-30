@@ -18,6 +18,7 @@ TagManager:
   - WorldLight
   - WorldVeg
   - WorldRibbon
+  - NatureSolid
   - 
   - 
   - 
@@ -25,8 +26,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - VfxAfterFog
   - 
   - 
   - 

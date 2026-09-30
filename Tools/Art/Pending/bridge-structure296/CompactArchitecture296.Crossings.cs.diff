@@ -1,0 +1,56 @@
+--- CompactArchitecture296.Crossings.cs
++++ CompactArchitecture296.Crossings.cs
+@@ -54,10 +54,10 @@
+       Start=route.Id==duplicate.RouteId?shared[shared.Length-1]:original.Start,End=route.Id==duplicate.RouteId?shared[0]:original.End,
+       DeckHeight=crossing.DeckHeight,Span=crossing.Span,WaterHeight=crossing.WaterHeight,Points=route.Points});
+     }
+-    var renderers=deck.Finish(holder,id+"_deck").Concat(detail.Finish(holder,id+"_structure")).Concat(apronRenderers).ToArray();
++    var renderers=deck.Finish(holder,id+"_deck").Concat(detail.Finish(holder,id+"_loadbearing")).Concat(apronRenderers).ToArray();
+     if(renderers.Length==0)throw new InvalidOperationException("Empty source bridge "+id);
+     CrossingLods296(holder,id,renderers);
+-    receipt.Add(new BridgeRecord296{Id=id,Kind=trestle?"CC0 weathered timber trestle":timber?"KCISA stone abutments and CC0 timber deck":"KCISA stone beam bridge",SceneRoot=root.name+"/"+id,
++    receipt.Add(new BridgeRecord296{Id=id,Kind=trestle?"CC0 braced timber trestle":timber?"KCISA masonry piers and braced CC0 timber deck":"KCISA masonry arched bridge",SceneRoot=root.name+"/"+id,
+      RouteIds=routes.Select(r=>r.Id).ToArray(),Width=width,Start=crossing.Start,End=crossing.End,
+      SourceModules=deck.Instances+detail.Instances,Renderers=renderers.Length,Routes=routes.ToArray(),
+      LodTriangles=holder.GetComponent<LODGroup>().GetLODs().Select(l=>l.renderers.Sum(r=>r.GetComponent<MeshFilter>().sharedMesh.triangles.Length/3)).ToArray(),
+@@ -202,12 +202,11 @@
+      foreach(float along in new[]{-.48f,0,.48f})if(otherRoutes.Any(route=>DistanceBridgePolyline296(edge+forward*(along*railLength),route)<width*.5f-.18f)){junction=true;break;}
+      if(junction)continue;
+      var railRotation=rotation*Quaternion.Euler(0,90,0);var railBottom=edge+Vector3.up*(timber?.76f:0);
+-     detail.Uniform(rail,railBottom,railRotation,railScale);
+      SourceBox296(root,"RailCollision",rail,railBottom,railRotation,railScale);
+      if(timber)
+      {
+       var post=edge-forward*railLength*.49f;float postScale=.95f/CrossingSource(TimberColumn296).Bounds.size.y;
+-      detail.Uniform(TimberColumn296,post,Quaternion.identity,postScale);SourceBox296(root,"RailPostCollision",TimberColumn296,post,Quaternion.identity,postScale);
++      SourceBox296(root,"RailPostCollision",TimberColumn296,post,Quaternion.identity,postScale);
+      }
+     }
+    }
+@@ -227,8 +226,6 @@
+       float poleScale=poleWidth/Mathf.Max(s.Bounds.size.x,s.Bounds.size.z);float height=Mathf.Max(.15f,s.Bounds.size.y*poleScale);
+       foreach(float side in new[]{-.32f,.32f})
+       {
+-       for(float y=ground-.3f;y<p.y-.45f;y+=height*.96f)
+-        detail.Wall(pole,new Vector3(p.x,y,p.z)+r*width*side,Quaternion.identity,poleScale,poleWidth+.02f,p.y-.45f-y);
+        var body=new GameObject("PierCollision").AddComponent<BoxCollider>();body.transform.SetParent(root,false);body.gameObject.isStatic=true;
+        body.transform.position=new Vector3(p.x,(ground-.3f+p.y-.45f)*.5f,p.z)+r*width*side;
+        body.size=new Vector3(poleWidth*.82f,p.y-.45f-ground+.3f,poleWidth*.82f);
+@@ -238,16 +235,7 @@
+     }
+     distance+=length;
+    }
+-   if(timber)
+-   {
+-    var beam=CrossingSource(TimberColumn296);float beamScale=.26f/Mathf.Max(beam.Bounds.size.x,beam.Bounds.size.z),length=beam.Bounds.size.y*beamScale;
+-    for(float d=0;d<total;d+=length*.96f)
+-    {
+-     var p=BridgeSample296(points,d,out var forward);var right=Vector3.Cross(Vector3.up,forward).normalized;
+-     var rotation=Quaternion.LookRotation(forward,Vector3.up)*Quaternion.Euler(90,0,0);
+-     foreach(float side in new[]{-.32f,.32f})detail.Wall(TimberColumn296,p+right*width*side-Vector3.up*.25f,rotation,beamScale,.28f,Mathf.Min(length,total-d));
+-    }
+-   }
++   BuildBridgeLoadBearing296(detail,points,width,timber,trestle,field,otherRoutes,skipShared);
+    var apron=new CrossingBatch296();var apronCaps=new CrossingBatch296();BridgeAprons296(apron,apronCaps,points,width,field);
+    var mesh=Asset296("Meshes/Crossings/"+id+"_support.asset",()=>new Mesh());support.Apply(mesh);EditorUtility.SetDirty(mesh);
+    var collider=new GameObject(id+"_continuous_support").AddComponent<MeshCollider>();collider.transform.SetParent(root,false);collider.sharedMesh=mesh;collider.gameObject.isStatic=true;
