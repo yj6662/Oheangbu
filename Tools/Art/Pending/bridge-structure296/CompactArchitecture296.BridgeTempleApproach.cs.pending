@@ -1,0 +1,193 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEditor;
+using Oheangbu.App.World;
+using Oheangbu.Data.World;
+
+namespace Oheangbu.EditorTools.WorldMacro
+{
+ public static partial class CompactRebuildAuthoring
+ {
+  const string TempleRoadId296="hyeongang__temple";
+  const int TempleJoinRow296=86;
+  static VehicleRoadPlan296 templeRoad296;
+  static Vector3[] templeOriginal296,templeFull296;
+  [Serializable] sealed class TempleRoadJoin296
+  {
+   public string RouteId=TempleRoadId296;
+   public string Scope="Only the final55.25m is replaced. Earlier86 complete source crossing segments retain their exact physical ribbon vertices and paving arrangement; their endpoint tile is cropped at the join.";
+   public int OriginalJoinRow=TempleJoinRow296,UnchangedPrefixSegments=TempleJoinRow296;
+   public float OriginalJoinArc,EndExtension,OriginalTopOffset=.04f;
+   public string PrefixMeshSha256;
+   public Vector3[] FullRoutePoints;
+  }
+  static TempleRoadJoin296 templeJoin296;
+  static Vector3[] BridgeTempleApproach296(string routeId,Vector3[] original,CompactWorldSurface field)
+  {
+   if(routeId!=TempleRoadId296)return original;
+   var session=Session292();var layout=session.MountainLayout;
+   string height=CrossingHash296(G295+"/height.bytes");
+   if(HashArchitecture296(layout.FinalSurface.bytes)!=height)throw new InvalidOperationException("Temple approach requires unchanged295 terrain");
+   var baseline=JsonUtility.FromJson<Routes292>(File.ReadAllText(G295+"/routes.json")).routes.Single(r=>r.id==routeId).points;
+   var arc=new double[baseline.Length];for(int i=1;i<arc.Length;i++)arc[i]=arc[i-1]+Vector2.Distance(XzVehicleRoad296(baseline[i-1]),XzVehicleRoad296(baseline[i]));
+   int join=NearestBridgePoint296(baseline,original[TempleJoinRow296]);
+   int oldEnd=NearestBridgePoint296(baseline,original[original.Length-1]);
+   double begin=arc[join];const int count=222;const float length=55.25f;
+   var source=new Vector3[count];for(int i=0;i<count;i++)source[i]=SampleVehicleBaseline296(baseline,arc,begin+i*.25f);
+   if(Vector3.Distance(source[0],original[TempleJoinRow296])>.002f)throw new InvalidOperationException("Temple join does not match its immutable source point");
+   var query=session.gameObject.scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<WorldTerrainQuery>(true)).First();
+   var plan=new VehicleRoadPlan296{RouteId=routeId,Field=field,Query=query,Rows=new VehicleRoadRow296[count],Points=new Vector3[count],Length=length,
+    StartExtension=0,EndExtension=(float)(begin+length-arc[oldEnd]),HeightSha256=height,WaterSha256=HashArchitecture296(layout.Hydrology.WaterLevels.bytes),
+    SourceRoutesSha256=CrossingHash296(G295+"/routes.json"),SourceCrossingsSha256=CrossingHash296(G295+"/crossings.json"),
+    Scope="Local final55.25m correction after an actual uphill vehicle stall. Initial join is the unchanged old bridge surface; final8m blends to natural dry road. The final natural road has about10.5degrees transverse slope; every actual mesh face must remain below15degrees. All295 terrain/water and vehicle parameters remain unchanged."};
+   var envelope=new float[count];var steps=new float[count-1];
+   for(int i=0;i<count;i++)
+   {
+    var tangent=Vector3.ProjectOnPlane(source[Mathf.Min(count-1,i+1)]-source[Mathf.Max(0,i-1)],Vector3.up).normalized;
+    var right=i==0?BridgeMiter296(original,TempleJoinRow296):Vector3.Cross(Vector3.up,tangent);
+    var row=new VehicleRoadRow296{Distance=i*.25f,OriginalY=source[i].y,Centre=source[i],Right=right,TerrainY=new float[25],SurfaceY=new float[25]};plan.Rows[i]=row;
+    float ceiling=source[i].y+.04f;
+    for(int j=0;j<65;j++){var p=source[i]+right*(-3.2f+j*.1f);ceiling=Mathf.Max(ceiling,TriangleVehicleRoad296(field,p.x,p.z)+.04f);}
+    envelope[i]=ceiling;
+    if(i>0)
+    {
+     float shortest=float.MaxValue;
+     for(int j=0;j<65;j++){float x=-3.2f+j*.1f;shortest=Mathf.Min(shortest,Vector2.Distance(XzVehicleRoad296(plan.Rows[i-1].Centre+plan.Rows[i-1].Right*x),XzVehicleRoad296(row.Centre+row.Right*x)));}
+     if(shortest<.04f)throw new InvalidOperationException("Temple road inside edge folds");steps[i-1]=shortest;
+    }
+   }
+   for(int i=1;i<count;i++)envelope[i]=Mathf.Max(envelope[i],envelope[i-1]-.25f*steps[i-1]);
+   for(int i=count-2;i>=0;i--)envelope[i]=Mathf.Max(envelope[i],envelope[i+1]-.25f*steps[i]);
+   if(Mathf.Abs(envelope[0]-(original[TempleJoinRow296].y+.04f))>.002f)throw new InvalidOperationException("Temple envelope would change the retained bridge join");
+   for(int i=0;i<count;i++)
+   {
+    var row=plan.Rows[i];row.EnvelopeY=envelope[i];
+    // The first end joins the existing elevated bridge, not the riverbed.
+    // Only the last end returns to the naturally dry bank over eight metres.
+    float blend=Mathf.SmoothStep(0,1,Mathf.Clamp01((length-row.Distance)/8));
+    for(int j=0;j<25;j++)
+    {
+     var p=row.Centre+row.Right*(-3+j*.25f);float ground=TriangleVehicleRoad296(field,p.x,p.z);row.TerrainY[j]=ground;
+     row.SurfaceY[j]=Mathf.Lerp(ground+.035f,envelope[i],blend);
+     if(!WetVehicleRoad296(plan,p,ground,.15f))plan.MaximumDrySupport=Mathf.Max(plan.MaximumDrySupport,row.SurfaceY[j]-ground);
+    }
+    row.Centre.y=row.SurfaceY[12];plan.Points[i]=row.Centre;
+    plan.MaximumRise=Mathf.Max(plan.MaximumRise,row.Centre.y-row.OriginalY-.04f);
+   }
+   ValidateTempleRoad296(plan);
+   templeRoad296=plan;templeOriginal296=original;
+   // The old prefix support was already original.y+.04; exporting that
+   // actual height changes no physical surface in the retained prefix.
+   templeFull296=original.Take(TempleJoinRow296).Select(p=>p+Vector3.up*.04f).Concat(plan.Points).ToArray();
+   templeJoin296=new TempleRoadJoin296{OriginalJoinArc=original.Take(TempleJoinRow296+1).Skip(1).Select((p,i)=>Vector2.Distance(XzVehicleRoad296(p),XzVehicleRoad296(original[i]))).Sum(),EndExtension=plan.EndExtension,FullRoutePoints=templeFull296};
+   return templeFull296;
+  }
+  static bool IsTempleApproach296(Vector3[] points)=>templeFull296!=null&&ReferenceEquals(points,templeFull296);
+  static void UpdateTempleMetadata296(Crossing295 crossing)
+  {
+   if(crossing.RouteId!=TempleRoadId296||templeRoad296==null)return;
+   Vector3 Top(Vector3 p)
+   {
+    int nearest=NearestBridgePoint296(templeOriginal296,p);
+    return nearest<TempleJoinRow296?p+Vector3.up*.04f:ProjectVehicleRoad296(templeRoad296,p);
+   }
+   crossing.Start=Top(crossing.Start);crossing.End=Top(crossing.End);crossing.DeckHeight=templeFull296.Min(p=>p.y);crossing.Span=Vector3.Distance(crossing.Start,crossing.End);
+  }
+  static void ValidateTempleRoad296(VehicleRoadPlan296 plan)
+  {
+   VehicleRoadGrid296(plan,out var v,out var t);plan.SurfaceTriangles=t.Length/3;plan.MinimumTerrainClearance=float.MaxValue;
+   for(int i=0;i<t.Length;i+=3)
+   {
+    var a=v[t[i]];var b=v[t[i+1]];var c=v[t[i+2]];var normal=Vector3.Cross(b-a,c-a).normalized;
+    if(normal.y<=0)throw new InvalidOperationException("Temple road reversed/degenerate triangle");
+    plan.MaximumSurfaceDegrees=Mathf.Max(plan.MaximumSurfaceDegrees,Vector3.Angle(normal,Vector3.up));
+    foreach(var p in new[]{a,(a+b+c)/3,(a+b)*.5f,(b+c)*.5f,(c+a)*.5f})plan.MinimumTerrainClearance=Mathf.Min(plan.MinimumTerrainClearance,p.y-TriangleVehicleRoad296(plan.Field,p.x,p.z));
+   }
+   foreach(var row in plan.Rows)for(int j=1;j<25;j++)plan.MaximumCrossGrade=Mathf.Max(plan.MaximumCrossGrade,Mathf.Abs(row.SurfaceY[j]-row.SurfaceY[j-1])/.25f);
+   // The final naturally dry road has a measured .185 transverse grade.
+   // Require the whole resulting 3D face to stay under15degrees, rather than
+   // turning that original safe road into a much longer artificial platform.
+   if(plan.MaximumSurfaceDegrees>15||plan.MaximumCrossGrade>.21f||plan.MinimumTerrainClearance<.005f)
+    throw new InvalidOperationException($"Temple road preflight slope={plan.MaximumSurfaceDegrees:F4}, cross={plan.MaximumCrossGrade:F4}, clearance={plan.MinimumTerrainClearance:F4}");
+   var bytes=new List<byte>();foreach(var p in v){bytes.AddRange(BitConverter.GetBytes(p.x));bytes.AddRange(BitConverter.GetBytes(p.y));bytes.AddRange(BitConverter.GetBytes(p.z));}foreach(int i in t)bytes.AddRange(BitConverter.GetBytes(i));
+   plan.SurfaceMeshSha256=HashArchitecture296(bytes.ToArray());
+  }
+  static Renderer[] BuildTempleApproach296(Transform root,string id,Vector3[] points,float width,CompactWorldSurface field,CrossingBatch296 deck,CrossingBatch296 detail)
+  {
+   if(!IsTempleApproach296(points)||Mathf.Abs(width-6)>.001f)throw new InvalidOperationException("Temple road plan mismatch");
+   var plan=templeRoad296;var prefix=new BridgeMesh295();
+   for(int i=1;i<=TempleJoinRow296;i++)prefix.Ribbon(templeOriginal296[i-1]+Vector3.up*.04f,templeOriginal296[i]+Vector3.up*.04f,BridgeMiter296(templeOriginal296,i-1),BridgeMiter296(templeOriginal296,i),width,.45f);
+   var prefixMesh=Asset296("Meshes/Crossings/"+id+"_retained_prefix_support.asset",()=>new Mesh());prefix.Apply(prefixMesh);EditorUtility.SetDirty(prefixMesh);
+   var prefixCollider=new GameObject(id+"_retained_prefix_support").AddComponent<MeshCollider>();prefixCollider.transform.SetParent(root,false);prefixCollider.sharedMesh=prefixMesh;prefixCollider.gameObject.isStatic=true;
+   var prefixBytes=new List<byte>();foreach(var p in prefixMesh.vertices){prefixBytes.AddRange(BitConverter.GetBytes(p.x));prefixBytes.AddRange(BitConverter.GetBytes(p.y));prefixBytes.AddRange(BitConverter.GetBytes(p.z));}foreach(int i in prefixMesh.triangles)prefixBytes.AddRange(BitConverter.GetBytes(i));templeJoin296.PrefixMeshSha256=HashArchitecture296(prefixBytes.ToArray());
+   var prefixPoints=templeOriginal296.Take(TempleJoinRow296+1).ToArray();float total=BridgeLength296(prefixPoints);
+   var source=CrossingSource(StoneFloor296);int columns=2;float scale=width/columns/source.Bounds.size.x;float nativeStep=source.Bounds.size.z*scale,step=Mathf.Min(2.8f,nativeStep*.98f);
+   var join=templeOriginal296[TempleJoinRow296];var joinForward=Vector3.ProjectOnPlane(join-templeOriginal296[TempleJoinRow296-1],Vector3.up).normalized;
+   for(float d=0;d<total;d+=step)
+   {
+    var p=BridgeSample296(templeOriginal296,Mathf.Min(total,d+step*.5f),out var forward);var right=Vector3.Cross(Vector3.up,forward).normalized;
+    for(int col=0;col<columns;col++)
+    {
+     var centre=p+right*((col+.5f)*width/columns-width*.5f);var matrix=Matrix4x4.TRS(centre+Vector3.up*.033f,Quaternion.LookRotation(forward,Vector3.up),Vector3.one*scale)*Matrix4x4.Translate(-new Vector3(source.Bounds.center.x,source.Bounds.max.y,source.Bounds.center.z));
+     if(d+nativeStep<total-.1f)deck.Add(StoneFloor296,matrix);
+     else deck.WarpSurface(StoneFloor296,matrix,q=>{float beyond=Vector3.Dot(q-join,joinForward);return beyond>0?q-joinForward*beyond:q;});
+    }
+   }
+   VehicleRoadGrid296(plan,out var vertices,out var triangles);
+   var mesh=Asset296("Meshes/Crossings/"+id+"_approach_support.asset",()=>new Mesh());mesh.Clear();mesh.indexFormat=IndexFormat.UInt32;mesh.vertices=vertices;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();EditorUtility.SetDirty(mesh);
+   var support=new GameObject(id+"_continuous_approach_support").AddComponent<MeshCollider>();support.transform.SetParent(root,false);support.sharedMesh=mesh;support.gameObject.isStatic=true;
+   for(float d=0;d<plan.Length;d+=.98f)
+   {
+    float to=Mathf.Min(plan.Length,d+.98f),mid=(d+to)*.5f;
+    for(int col=0;col<6;col++)
+    {
+     float across=-2.5f+col;var matrix=Matrix4x4.Scale(Vector3.one/source.Bounds.size.x)*Matrix4x4.Translate(-new Vector3(source.Bounds.center.x,source.Bounds.max.y,source.Bounds.center.z));
+     float factor=(to-d)/(source.Bounds.size.z/source.Bounds.size.x);
+     deck.WarpSurface(StoneFloor296,matrix,p=>{var q=PointVehicleRoad296(plan,mid+p.z*factor,across+p.x);q.y+=p.y;return q;});
+    }
+   }
+   var dry=new bool[plan.Rows.Length-1];
+   for(int i=0;i<dry.Length;i++)
+   {
+    dry[i]=true;
+    for(int j=0;j<25&&dry[i];j++)foreach(int row in new[]{i,i+1}){var p=PointVehicleRoad296(plan,row*.25f,-3+j*.25f);if(WetVehicleRoad296(plan,p,plan.Rows[row].TerrainY[j],.2f)){dry[i]=false;break;}}
+    plan.Rows[i].DryNext=dry[i];if(dry[i])plan.DryFoundationSegments++;else plan.WetOpenSegments++;
+   }
+   var masonry=new CrossingBatch296();BuildVehicleRoadFoundations296(root,id+"_temple",plan,dry,masonry);
+   BuildTempleRoadBoxes296(root,plan,points,width);
+   var aprons=new CrossingBatch296();var caps=new CrossingBatch296();
+   BridgeAprons296(aprons,caps,templeOriginal296,width,field,true,false);
+   Directory.CreateDirectory(O296+"/BridgeApproach");
+   File.WriteAllText(O296+"/BridgeApproach/hyeongang__temple.json",JsonUtility.ToJson(plan,true));
+   File.WriteAllText(O296+"/BridgeApproach/hyeongang__temple-mesh.json",JsonUtility.ToJson(new VehicleRoadMesh296{RouteId=TempleRoadId296,Vertices=vertices,Triangles=triangles},true));
+   File.WriteAllText(O296+"/BridgeApproach/hyeongang__temple-join.json",JsonUtility.ToJson(templeJoin296,true));
+   File.WriteAllText(O296+"/BridgeApproach/hyeongang__temple-prefix-mesh.json",JsonUtility.ToJson(new VehicleRoadMesh296{RouteId=TempleRoadId296,Scope="Unchanged first86 source ribbon segments, including original underside and side faces.",Vertices=prefixMesh.vertices,Triangles=prefixMesh.triangles},true));
+   return masonry.Finish(root,id+"_temple_aprons",false).Concat(aprons.Finish(root,id+"_retained_start_aprons",true)).Concat(caps.Finish(root,id+"_retained_start_apron_caps",false)).ToArray();
+  }
+  static void BuildTempleRoadBoxes296(Transform root,VehicleRoadPlan296 plan,Vector3[] points,float width)
+  {
+   float total=BridgeLength296(points);var rail=CrossingSource(Parapet296);float scale=.88f/rail.Bounds.size.y,length=Mathf.Max(.25f,rail.Bounds.size.x*scale);
+   for(float d=4+length*.5f;d<total-4;d+=length*.98f)
+   {
+    var p=BridgeSample296(points,d,out var forward);var right=Vector3.Cross(Vector3.up,forward).normalized;
+    foreach(float side in new[]{-1f,1f}){SourceBox296(root,"RailCollision",Parapet296,p+right*side*(width*.5f+.12f),Quaternion.LookRotation(forward,Vector3.up)*Quaternion.Euler(0,90,0),scale);plan.RailBoxes++;}
+   }
+   for(float d=6;d<total;d+=9)
+   {
+    var p=BridgeSample296(points,d,out var forward);var right=Vector3.Cross(Vector3.up,forward).normalized;
+    if(p.y-fieldHeight(p)<1.2f)continue;
+    foreach(float side in new[]{-.32f,.32f})
+    {
+     var at=p+right*side*width;float ground=fieldHeight(at);if(p.y-ground<1.2f)continue;
+     var pier=new GameObject("PierCollision").AddComponent<BoxCollider>();pier.transform.SetParent(root,false);pier.gameObject.isStatic=true;
+     pier.transform.position=new Vector3(at.x,(ground-.3f+p.y-.45f)*.5f,at.z);pier.size=new Vector3(.902f,p.y-.45f-ground+.3f,.902f);plan.PierBoxes++;
+    }
+   }
+   float fieldHeight(Vector3 p)=>TriangleVehicleRoad296(plan.Field,p.x,p.z);
+  }
+ }
+}

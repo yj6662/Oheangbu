@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net9.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Checks.cs" />
+    <Compile Include="Stubs.cs" />
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/App/World/EnemyAudioProfile298.cs" Link="EnemyAudioProfile298.cs" />
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/App/World/EnemyAudioEmitter298.cs" Link="EnemyAudioEmitter298.cs" />
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/App/World/WorldMacroAudioVoicePool.cs" Link="WorldMacroAudioVoicePool.cs" />
+  </ItemGroup>
+</Project>

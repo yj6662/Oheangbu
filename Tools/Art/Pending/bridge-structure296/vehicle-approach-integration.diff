@@ -1,0 +1,65 @@
+--- CompactArchitecture296.Crossings.cs
++++ CompactArchitecture296.Crossings.cs
+@@ -37,7 +37,9 @@
+    foreach(var crossing in source.Where(c=>c!=duplicate))
+    {
+     bool trestle=crossing.RouteId=="mountain_hwanggyeong_main",timber=trestle||crossing.RouteId=="jeokro__cheolong";
+-    var routes=new List<BridgeRoute296>{new BridgeRoute296{Id=crossing.RouteId,Points=crossing.Points}};
++    var crossingPoints=BridgeVehicleApproach296(crossing.RouteId,crossing.Points,field);
++    UpdateBridgeVehicleMetadata296(crossing);
++    var routes=new List<BridgeRoute296>{new BridgeRoute296{Id=crossing.RouteId,Points=crossingPoints}};
+     if(crossing==canonical)routes.Add(new BridgeRoute296{Id=duplicate.RouteId,Points=SharedBranch296(duplicate,canonical.Points,shared,field)});
+     string id=crossing==canonical?"capital_shared_stone_bridge":crossing.RouteId+"_bridge";
+     var holder=new GameObject(id).transform;holder.SetParent(root,false);
+@@ -134,9 +136,35 @@
+    var mountain=layout.Mountains.FirstOrDefault(m=>id==m.Id+"_main"||id==m.Id+"_hidden"||id==m.Id+"_return");
+    if(route==null&&mountain==null)throw new InvalidOperationException("No layout or consolidated mountain route binding for "+id);
+    var baseline=JsonUtility.FromJson<Routes292>(File.ReadAllText(G295+"/routes.json")).routes.Single(r=>r.id==id).points;
+-   int start=NearestBridgePoint296(baseline,replacement[0]),end=NearestBridgePoint296(baseline,replacement[replacement.Length-1]);
+-   if(start>end){Array.Reverse(replacement);(start,end)=(end,start);}
+-   var points=baseline.Take(start).Concat(replacement).Concat(baseline.Skip(end+1)).ToArray();
++   Vector3[] points;
++   if(id==VehicleRoadId296)
++   {
++    // This raised route must be spliced by its original XZ arc. A 3D nearest
++    // point search can choose a different section merely because Y changed.
++    int StartSegment(Vector3 p)
++    {
++     int best=0;float distance=float.MaxValue;
++     for(int i=0;i<baseline.Length-1;i++)
++     {
++      var a=new Vector2(baseline[i].x,baseline[i].z);var d=new Vector2(baseline[i+1].x,baseline[i+1].z)-a;
++      float t=Mathf.Clamp01(Vector2.Dot(new Vector2(p.x,p.z)-a,d)/Mathf.Max(.000001f,d.sqrMagnitude));
++      float sq=(a+d*t-new Vector2(p.x,p.z)).sqrMagnitude;if(sq<distance){distance=sq;best=i;}
++     }
++     if(distance>.0025f)throw new InvalidOperationException("Raised vehicle approach endpoint left its immutable source route");return best;
++    }
++    int first=StartSegment(replacement[0]),last=StartSegment(replacement[replacement.Length-1]);
++    if(first>=last)throw new InvalidOperationException("Raised vehicle approach reversed its source route");
++    var prefix=baseline.Take(first+1).Where(p=>new Vector2(p.x-replacement[0].x,p.z-replacement[0].z).sqrMagnitude>.000001f);
++    var endPoint=replacement[replacement.Length-1];
++    var suffix=baseline.Skip(last+1).Where(p=>new Vector2(p.x-endPoint.x,p.z-endPoint.z).sqrMagnitude>.000001f);
++    points=prefix.Concat(replacement).Concat(suffix).ToArray();
++   }
++   else
++   {
++    int start=NearestBridgePoint296(baseline,replacement[0]),end=NearestBridgePoint296(baseline,replacement[replacement.Length-1]);
++    if(start>end){Array.Reverse(replacement);(start,end)=(end,start);}
++    points=baseline.Take(start).Concat(replacement).Concat(baseline.Skip(end+1)).ToArray();
++   }
+    if(route!=null)route.Bends=points.Skip(1).Take(Mathf.Max(0,points.Length-2)).Select(p=>new Vector2(p.x,p.z)).ToArray();
+    if(mountain!=null)
+    {
+@@ -171,6 +199,12 @@
+   }
+   static Renderer[] BuildBridgeRoute296(Transform root,string id,Vector3[] points,float width,bool timber,bool trestle,CompactWorldSurface field,CrossingBatch296 deck,CrossingBatch296 detail,Vector3[][] otherRoutes,Vector3[] skipShared)
+   {
++   if(IsBridgeVehicleApproach296(points))
++   {
++    var foundedApproach=BuildVehicleApproach296(root,id,points,width,field,deck,detail);
++    BuildBridgeLoadBearing296(detail,points,width,true,false,field,otherRoutes,skipShared);
++    return foundedApproach;
++   }
+    var support=new BridgeMesh295();float distance=0,nextPier=6;
+    var total=BridgeLength296(points);string floor=timber?TimberFloor296:StoneFloor296;
+    var source=CrossingSource(floor);int columns=Mathf.Max(1,Mathf.CeilToInt(width/3.6f));float scale=width/columns/source.Bounds.size.x;

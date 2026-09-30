@@ -8,6 +8,7 @@ Shader "Oheangbu/UI/MiniPaper"
   _WorldUv("Regional tile world UV",Vector)=(0,0,1,1)
   _PaperColor("Paper",Color)=(.969,.945,.894,1)
   _HasDetail("Terrain tile available",Float)=0
+  _PaintedRelief("Painted relief",Float)=0
   _StencilComp("Stencil Comparison",Float)=8
   _Stencil("Stencil ID",Float)=0
   _StencilOp("Stencil Operation",Float)=0
@@ -34,7 +35,7 @@ Shader "Oheangbu/UI/MiniPaper"
    #include "UnityUI.cginc"
    struct appdata {float4 vertex:POSITION;fixed4 color:COLOR;float2 uv:TEXCOORD0;};
    struct v2f {float4 vertex:SV_POSITION;fixed4 color:COLOR;float2 uv:TEXCOORD0;float4 world:TEXCOORD1;};
-   sampler2D _MainTex,_ArtTex,_FogTex;float4 _ClipRect,_WorldUv,_FogTex_TexelSize;fixed4 _PaperColor;float _HasDetail;
+   sampler2D _MainTex,_ArtTex,_FogTex;float4 _ClipRect,_WorldUv,_FogTex_TexelSize;fixed4 _PaperColor;float _HasDetail,_PaintedRelief;
    v2f vert(appdata v){v2f o;o.world=v.vertex;o.vertex=UnityObjectToClipPos(v.vertex);o.color=v.color;o.uv=v.uv;return o;}
    float Known(float2 uv)
    {
@@ -54,6 +55,7 @@ Shader "Oheangbu/UI/MiniPaper"
     float lum=dot(art.rgb,fixed3(.299,.587,.114));
     fixed3 quiet=_PaperColor.rgb*(1-saturate(1-lum)*.045);
     fixed3 result=lerp(quiet,detail.rgb,Known(worldUv)*saturate(_HasDetail));
+    result=lerp(result,lerp(art.rgb,detail.rgb,Known(worldUv)*saturate(_HasDetail)),saturate(_PaintedRelief));
     float inside=step(0,worldUv.x)*step(worldUv.x,1)*step(0,worldUv.y)*step(worldUv.y,1);
     fixed4 c=fixed4(result*i.color.rgb,lerp(art.a,detail.a,saturate(_HasDetail))*inside*i.color.a);
     #ifdef UNITY_UI_CLIP_RECT

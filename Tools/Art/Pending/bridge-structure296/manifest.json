@@ -1,0 +1,13 @@
+{
+  "scope": "Pending only. Parent authorizes Assets installation. Do not overwrite later approach-profile integration; apply diffs against latest Crossings.cs.",
+  "baseSha256": {
+    "CompactArchitecture296.Crossings.cs": "0681a2290065763a577cf26c78ddb2e5162705b7513890d706f06930f5a87fca",
+    "CompactArchitecture296.CrossingSources.cs": "6d42271ed27ca2e08a50e372b43e7111ec6387a0bbf05e9ac6627ce6ebc4fd21"
+  },
+  "newFiles": [
+    "CompactArchitecture296.BridgeStructure.cs",
+    "CompactArchitecture296.BridgeVisualRefresh.cs"
+  ],
+  "entrypoint": "CompactRebuildAuthoring.RefreshBridgeStructureVisuals296()",
+  "fullBuild": "Crossings296 uses same BuildBridgeLoadBearing296 while preserving original route/physics generation."
+}

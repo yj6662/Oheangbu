@@ -1,0 +1,15 @@
+{
+  "checkedUtc": "2026-09-27T08:40:23.985876+00:00",
+  "scope": "674 Editor sources with two pending source replacements and two pending new files, references to current Unity ScriptAssemblies. No Unity or Assets writes.",
+  "result": "PASS",
+  "errors": 0,
+  "warnings": 22,
+  "elapsedSeconds": 6.94,
+  "afterCompileChange": "Only an arithmetic constant/comment changed: vault seat overlap .3m inside pier (1f trims changed to .7f). No declarations or APIs changed.",
+  "pendingSha256": {
+    "CompactArchitecture296.BridgeStructure.cs.pending": "7dbe64c6d25eaf22c6c76490a4474e494a67e4f4dff4c62a38b3897e3a33e9b7",
+    "CompactArchitecture296.BridgeVisualRefresh.cs.pending": "ce8166a2b6e74ac2f52573d1c49b8376d7302db24777b68b9db958047f39ce57",
+    "CompactArchitecture296.Crossings.cs.pending": "beae80e399da8df78e49aa7f0a75fa5b1402094ad5cc7eefeee9342b13daa77e",
+    "CompactArchitecture296.CrossingSources.cs.pending": "f6443dbe869d25e3fa9d2ecd431d102773140dc17b08c54ed839b780546c2a22"
+  }
+}

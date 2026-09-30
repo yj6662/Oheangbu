@@ -6,6 +6,35 @@ Shader "Oheangbu/WorldMacroTerrain"
 {
     Properties
     {
+        [ToggleUI] _CIEnabled("Compact ink landscape",Float)=0
+        [ToggleUI] _CIDarkNear("Dark foreground ink revision",Float)=0
+        _CIMountainTones("Mountain ink tone interval",Vector)=(.06,.18,0,0)
+        _CIMountainSlope("Mountain slope degrees",Vector)=(12,37,0,0)
+        [ToggleUI] _CIBroadBrush("Broad mountain ink coats",Float)=0
+        _CIBroadBrushScale("Broad stroke width/length metres",Vector)=(80,240,420,1000)
+        _CIBroadBrushCoverage("Coat opacity/edge/second/warp",Vector)=(.90,.18,.76,.20)
+        _CIBroadBrushTones("Broad dark/soft coat tones",Vector)=(.015,.07,0,0)
+        _CIBroadBrushBands("Mountain band thresholds/softness/amount",Vector)=(.33,.66,.12,.8)
+        [ToggleUI] _CIAtmosphereOverride("Independent compact atmosphere",Float)=0
+        [ToggleUI] _CIPainterly("Painterly compact revision",Float)=0
+        _CIMidAirRange("Middle atmosphere range",Vector)=(500,1500,0,0)
+        _CIFarAirRange("Far atmosphere range",Vector)=(1500,3400,0,0)
+        _CIAirStrengths("Middle/far atmosphere strengths",Vector)=(.18,.64,0,0)
+        _CIStrokeSpacingWidth("Stroke spacing/width metres",Vector)=(20,40,2,7)
+        _CIStrokeFadeStrength("Stroke fade range/ink strength",Vector)=(200,1400,.02,0)
+        _CIPigmentContrast("Mountain/ground pigment contrast",Vector)=(.03,.65,0,0)
+        _CIFoliagePainterly("Foliage transition/mip/contrast",Vector)=(30,180,1.5,.3)
+        _CIInk("Compact ink",Color)=(.165,.149,.133,1)
+        _CIPaper("Compact paper",Color)=(.969,.945,.894,1)
+        _CIAir("Compact horizon atmosphere",Color)=(.9,.88,.83,1)
+        _CIDetailRange("Near detail range",Vector)=(30,150,0,0)
+        _CIRockRange("Rock detail range",Vector)=(150,350,0,0)
+        _CIMountainRange("Mountain form range",Vector)=(350,900,0,0)
+        _CIAirRange("Far atmosphere range",Vector)=(900,2200,0,0)
+        _CITones("Ground/path tone intervals",Vector)=(.27,.56,.24,.48)
+        _CIDetailContrast("Near texture contrast",Float)=.22
+        _CINormalStrength("Near normal strength",Float)=.5
+
         [Header(Ink And Paper)]
         _InkDensity("Ink Density", Range(0.25, 3)) = 1.25
         _InkPoint("Ink Point", Range(0, 0.5)) = 0.035
@@ -104,7 +133,16 @@ Shader "Oheangbu/WorldMacroTerrain"
             half _GroundPathVariation;
             half _Cull;
             half _RealmTintStrength;
+        
+            float _CIEnabled,_CIDarkNear,_CIDetailContrast,_CINormalStrength;
+            float4 _CIInk,_CIPaper,_CIAir,_CIDetailRange,_CIRockRange,_CIMountainRange,_CIAirRange,_CITones;
+            float4 _CIMountainTones,_CIMountainSlope;
+            float _CIBroadBrush;
+            float4 _CIBroadBrushScale,_CIBroadBrushCoverage,_CIBroadBrushTones,_CIBroadBrushBands;
+            float _CIAtmosphereOverride,_CIPainterly;
+            float4 _CIMidAirRange,_CIFarAirRange,_CIAirStrengths,_CIStrokeSpacingWidth,_CIStrokeFadeStrength,_CIPigmentContrast,_CIFoliagePainterly;
         CBUFFER_END
+        #include "CompactInkLandscape.hlsl"
         TEXTURE2D(_RealmPigment);
         SAMPLER(sampler_RealmPigment);
         TEXTURE2D(_GroundPathMask);
@@ -247,6 +285,29 @@ Shader "Oheangbu/WorldMacroTerrain"
                 luminance *= lerp(1.0, ao, _AoStrength);
                 #endif
 
+                [branch] if(_CIEnabled>.5&&_CIDarkNear>.5)
+                {
+                    // The background uses the same foreground ink from zero metres onward.
+                    // Legacy rim/brush/light ramps below remain exclusive to the old revision.
+                    float2 compactUV=(positionWS.xz-_GroundPathRect.xy)*_GroundPathRect.zw;
+                    float inMask=step(0,compactUV.x)*step(compactUV.x,1)*step(0,compactUV.y)*step(compactUV.y,1);
+                    float path=_GroundPath>.5?SAMPLE_TEXTURE2D(_GroundPathMask,sampler_GroundPathMask,compactUV).r*inMask:0;
+                    float soil=smoothstep(.08,.8,path);
+                    float d=distance(GetCameraPositionWS(),positionWS);
+                    float3 compactColour=CIGroundDark(float3(.5,.5,.5),positionWS,normalWS,soil,luminance,luminance,d);
+                    if(_RealmTintStrength>.001)
+                    {
+                        float3 realm=SAMPLE_TEXTURE2D(_RealmPigment,sampler_RealmPigment,compactUV).rgb;
+                        float3 chroma=clamp(realm/max(CILuma(realm),.015),.35,1.9);
+                        float3 tinted=compactColour*chroma;
+                        tinted*=CILuma(compactColour)/max(CILuma(tinted),.001);
+                        float groundWeight=lerp(.28,1.0,smoothstep(.32,.86,normalWS.y));
+                        float mottling=lerp(.5,1.0,smoothstep(.22,.78,OhFbm3(positionWS*.009+74.2)));
+                        compactColour=lerp(compactColour,tinted,_RealmTintStrength*groundWeight*mottling);
+                    }
+                    return half4(CIAtmosphere(compactColour,d),1);
+                }
+
                 // All marks live in world space; nothing crawls with camera motion.
                 float3 p = positionWS * max(abs(_NoiseScale), 0.001);
                 float pigment = OhFbm3(p * float3(0.83, 0.47, 0.83));
@@ -338,6 +399,12 @@ Shader "Oheangbu/WorldMacroTerrain"
                 // Material controls retain local tonal design while the shared
                 // paper palette gives the distant valley its empty breathing room.
                 float distanceWS = distance(GetCameraPositionWS(), positionWS);
+                if(_CIEnabled>.5)
+                {
+                    float3 distant=CIMountain(positionWS,normalWS);
+                    color=lerp(color,distant,CIProgress(distanceWS,_CIMountainRange.xy));
+                    return half4(CIAtmosphere(color,distanceWS),1);
+                }
                 float wash = smoothstep(_WashStart, max(_WashEnd, _WashStart + 0.001), distanceWS);
                 wash *= saturate(_WashStrength);
                 color = lerp(color, _OhPaperColor.rgb, wash);

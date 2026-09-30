@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <NoWarn>0436</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../Oheangbu/Assets/_Project/Scripts/Editor/WorldMacro/WorldMacroDressingAuthoring.cs" />
+    <Compile Include="../Drafts/WorldMacroDressingAuthoring.Compact.cs.tmp" />
+    <Reference Include="C:/Program Files/Unity/Hub/Editor/6000.3.9f1/Editor/Data/Managed/UnityEngine/*.dll" />
+    <Reference Include="../../../Oheangbu/Library/ScriptAssemblies/Oheangbu.*.dll" />
+    <Reference Include="../../../Oheangbu/Library/ScriptAssemblies/Unity.InputSystem.dll" />
+    <Reference Include="../../../Oheangbu/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll" />
+  </ItemGroup>
+</Project>

@@ -135,24 +135,38 @@ InitTestScene*.unity*
 # 룩 검수 캡처 산출물(ScreenCapture) — 리포 대상 아님(승인 컷만 Docs/Refs에 별도)
 /Screenshots/
 
-# Locally licensed environment packs
-/Assets/BillemotdonggulLavaTubePack/
-/Assets/BillemotdonggulLavaTubePack.meta
-/Assets/House_1/
-/Assets/House_1.meta
-/Assets/House_2/
-/Assets/House_2.meta
-/Assets/HwaseongForteressGate/
-/Assets/HwaseongForteressGate.meta
-/Assets/HwaseongHaenggung/
-/Assets/HwaseongHaenggung.meta
-/Assets/Korea_TreasureProps/
-/Assets/Korea_TreasureProps.meta
-/Assets/KoreanTraditionalFestival/
-/Assets/KoreanTraditionalFestival.meta
-/Assets/KTinteractiveProp/
-/Assets/KTinteractiveProp.meta
-/Assets/SeyeonjeongPavilion/
-/Assets/SeyeonjeongPavilion.meta
-/Assets/YongmeoriCoast/
-/Assets/YongmeoriCoast.meta
+# ---- #307 (2026-09-30 사용자 결정): 에셋은 커밋하지 않는다 — 용량·유료 라이선스·공개 리포 ----
+# 추적하는 것: _Project 아래 코드(.cs/.asmdef/.asmref), 자작 셰이더(.shader/.hlsl/.cginc/.shadergraph/.shadersubgraph),
+# 실제로 쓰는 씬 3개(로비·로딩·W_Demo_Main)와 각 .meta, _Project 안 폴더 .meta. 그 밖의 에셋(메시·재질·텍스처·SO·
+# 프리팹·오디오·후보/시제 씬)과 _Project 밖 전부(외부 팩·Plugins)는 무시한다. 이미 추적 중인 옛 에셋은 그대로 남는다.
+/[Aa]ssets/**
+!/[Aa]ssets/_Project/
+!/[Aa]ssets/_Project.meta
+!/[Aa]ssets/_Project/**/
+!/[Aa]ssets/_Project/**/*.meta
+/[Aa]ssets/_Project/**/*.*.meta
+!/[Aa]ssets/_Project/**/*.cs
+!/[Aa]ssets/_Project/**/*.cs.meta
+!/[Aa]ssets/_Project/**/*.asmdef
+!/[Aa]ssets/_Project/**/*.asmdef.meta
+!/[Aa]ssets/_Project/**/*.asmref
+!/[Aa]ssets/_Project/**/*.asmref.meta
+!/[Aa]ssets/_Project/**/*.shader
+!/[Aa]ssets/_Project/**/*.shader.meta
+!/[Aa]ssets/_Project/**/*.hlsl
+!/[Aa]ssets/_Project/**/*.hlsl.meta
+!/[Aa]ssets/_Project/**/*.cginc
+!/[Aa]ssets/_Project/**/*.cginc.meta
+!/[Aa]ssets/_Project/**/*.shadergraph
+!/[Aa]ssets/_Project/**/*.shadergraph.meta
+!/[Aa]ssets/_Project/**/*.shadersubgraph
+!/[Aa]ssets/_Project/**/*.shadersubgraph.meta
+!/[Aa]ssets/_Project/Art/UI/Loading270/W_Compact_Lobby.unity
+!/[Aa]ssets/_Project/Art/UI/Loading270/W_Compact_Lobby.unity.meta
+!/[Aa]ssets/_Project/Art/UI/Loading270/W_Compact_Loading.unity
+!/[Aa]ssets/_Project/Art/UI/Loading270/W_Compact_Loading.unity.meta
+!/[Aa]ssets/_Project/Scenes/World/W_Demo_Main.unity
+!/[Aa]ssets/_Project/Scenes/World/W_Demo_Main.unity.meta
+# 생성(Meshy) 에셋 폴더 안은 예외에 걸리지 않게 다시 막는다
+/[Aa]ssets/_Project/Art/Generated*/**
+# ---- (#307 여기까지) ----
