@@ -22,7 +22,7 @@ namespace Oheangbu.App.World.UI
         IEnumerator LoadWithRegionScreen()
         {
             if (!Application.CanStreamedLevelBeLoaded(PlaySceneName) || !Application.CanStreamedLevelBeLoaded(LoadingProfile.LoadingScene))
-            { LastError = "로딩 또는 플레이 씬 연결을 확인해 주세요."; ShowNotice(LastError, 8); yield break; }
+            { LastError = "로딩 또는 플레이 씬 연결을 확인해 주세요."; Menu304ShowNotice(LastError,UiNoticeKind304.Error,8f); yield break; }
             Vector3 position = Content.StartFeet;
             var saved = WorldMacroSaveSlot.Inspect(Application.persistentDataPath, ActiveSlotName).Progress;
             if (saved != null && saved.ledger.hasPosition && saved.terrainRevision == Content.TerrainRevision) position = saved.ledger.position;
@@ -30,7 +30,7 @@ namespace Oheangbu.App.World.UI
             WorldLoadingScreen270.RequestedPosition = position;
             Time.timeScale = 0;
             var load = BeginLoadingScene(LoadingProfile.LoadingScene, LoadSceneMode.Single, out var error);
-            if (load == null) { LoadingInProgress = false; Busy = false; Time.timeScale = 1; ShowNotice(error, 8); yield break; }
+            if (load == null) { LoadingInProgress = false; Busy = false; Time.timeScale = 1; Menu304ShowNotice(error,UiNoticeKind304.Error,8f); yield break; }
             while (!load.isDone) yield return null;
             var screen = FindFirstObjectByType<WorldLoadingScreen270>();
             if (screen == null)
@@ -38,7 +38,8 @@ namespace Oheangbu.App.World.UI
                 // Keep a recoverable overlay even if someone removed the loading-scene component.
                 var host = new GameObject("RecoveredLoadingScreen"); screen = host.AddComponent<WorldLoadingScreen270>(); screen.Profile = LoadingProfile; screen.Build();
             }
-            screen.Select(position); screen.SetProgress(.04f, LoadingLine297);
+            // #304 loading band: region name (from the map data) + where the journey resumes
+            screen.SetJourney(Flow304JourneyMeta(saved)); screen.Select(position); screen.SetProgress(.04f, LoadingLine297);
             yield return null; // Present the illustration before requesting the large world scene.
             load = BeginLoadingScene(PlaySceneName, LoadSceneMode.Additive, out error);
             if (load == null) { LoadingFailed(screen, "지역을 불러오지 못했습니다."); yield break; }
@@ -101,6 +102,14 @@ namespace Oheangbu.App.World.UI
             LoadingInProgress = false; Busy = false; Time.timeScale = 1;
             Gate.ReleaseWhenNeutral(); Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
             TryShowOpeningIntroduction();
+        }
+
+        /// <summary>#304 loading.png meta after the region name: "&lt;checkpoint&gt;에서 이어서" for a saved journey, "새 여정" for a new one.</summary>
+        string Flow304JourneyMeta(WorldMacroProgress saved)
+        {
+            if (saved == null || saved.ledger == null) return "새 여정";
+            string place = WorldMacroCheckpointRules.Label(Content, saved, saved.ledger.checkpoint);
+            return string.IsNullOrWhiteSpace(place) ? "" : place + "에서 이어서";
         }
 
         void LoadingFailed(WorldLoadingScreen270 screen, string message)

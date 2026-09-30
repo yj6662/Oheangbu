@@ -26,6 +26,8 @@ namespace Oheangbu.Combat
         private float _boom01 = 1f;   // 충돌 붐 비율 — 축소는 즉시, 복원은 점진
         private float _baseFov;
         private bool _drawingPresentationActive;
+        private float _closeupHold;   // #300 cast follow-through: seconds the close-up is kept after the draw mode ends
+        private bool _fovReturning;
 
         public bool IsShoulder => _shoulder;
         public bool IsDrawingCloseup => _drawing;
@@ -41,6 +43,26 @@ namespace Oheangbu.Combat
             ApplyBodyVisibility(IsBodyVisible);
         }
         public void SetBodyRenderers(Renderer[] renderers) { _bodyRenderers = renderers; }
+
+        // #300 presentation only: keep the close-up pose and FOV for a moment after the draw mode ended (the cast
+        // follow-through arm is framed by it). 0 releases the hold; a new draw mode supersedes it.
+        public void HoldDrawCloseup(float seconds)
+        {
+            if (seconds > 0f)
+            {
+                _closeupHold = seconds;
+                if (!_drawing && _cam != null && _config != null && _config.DrawCloseupFov > 0f)
+                {
+                    _cam.fieldOfView = _config.DrawCloseupFov;
+                    _fovReturning = false;
+                }
+            }
+            else if (_closeupHold > 0f)
+            {
+                _closeupHold = 0f;
+                if (!_drawing) _fovReturning = true;
+            }
+        }
 
         // 숄더뷰는 피치 궤도가 지면·벽을 관통하므로 좁은 클램프를 쓴다 — PlayerMotor가 조회
         public void GetPitchLimits(out float min, out float max)
@@ -79,12 +101,22 @@ namespace Oheangbu.Combat
         {
             if (_config == null || _camera == null || _cameraPivot == null) return;
 
-            Vector3 target = _drawing ? _config.ShoulderDrawOffset : _config.ShoulderOffset;
+            // the camera is the eye outside the world: real time, but frame-exact during fixed-rate captures
+            float dt = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime;
+            if (_closeupHold > 0f && !_drawing && (_closeupHold -= dt) <= 0f) { _closeupHold = 0f; _fovReturning = true; }
+            bool closeup = _drawing || _closeupHold > 0f;
+            Vector3 target = closeup ? _config.ShoulderDrawOffset : _config.ShoulderOffset;
 
             // 클로즈업 진입은 빠른 블렌드(컷은 어색 — 3차 검수), 평시·복귀는 부드럽게.
             // 감속(작도 timeScale)과 무관하게 같은 속도 — 카메라는 세상 밖의 눈이다.
-            float speed = _drawing ? _config.DrawCloseupBlendSpeed : _config.CameraBlendSpeed;
-            float blend = 1f - Mathf.Exp(-speed * Time.unscaledDeltaTime);
+            float speed = closeup ? _config.DrawCloseupBlendSpeed : _config.CameraBlendSpeed;
+            float blend = 1f - Mathf.Exp(-speed * dt);
+            // after a held close-up the FOV returns with the pose instead of snapping
+            if (_fovReturning && _cam != null)
+            {
+                _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, _baseFov, blend);
+                if (Mathf.Abs(_cam.fieldOfView - _baseFov) < .01f) { _cam.fieldOfView = _baseFov; _fovReturning = false; }
+            }
             _localPose = Vector3.Lerp(_localPose, target, blend);
             if ((target - _localPose).sqrMagnitude < SnapSqrEpsilon) _localPose = target;
 
@@ -116,6 +148,7 @@ namespace Oheangbu.Combat
         private void OnDrawModeChanged(bool drawing)
         {
             _drawing = drawing;
+            if (drawing) { _closeupHold = 0f; _fovReturning = false; }
 
             // FOV는 스냅 — 작도 점이 찍히기 전에 확정돼야 마우스↔작도 1:1이 깨지지 않는다.
             // 포즈는 Update의 빠른 블렌드(진입 속도) — 컷은 어색하다는 3차 검수.

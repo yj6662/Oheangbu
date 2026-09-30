@@ -18,7 +18,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  [InitializeOnLoad]
  public static class Finish297ReviewPlay
  {
-  [Serializable] sealed class State{public bool Active,Placed;public string Spot="",Suffix="",PriorSuffix="",PriorUi="",PriorStartup="";public bool PriorDirect,PriorDirectPresent;}
+  [Serializable] sealed class State{public bool Active,Placed;public string Spot="",Suffix="",PriorSuffix="",PriorUi="",PriorStartup="",CleanupPrefix="";public bool PriorDirect,PriorDirectPresent;}
   const string Key="Finish297.ReviewPlay",ScenePath="Assets/_Project/Art/World/Architecture296/W_Demo_Compact_Architecture296.unity",MainPath="Assets/_Project/Scenes/World/W_Demo_Main.unity";
   static State state;
   static Finish297ReviewPlay()
@@ -47,6 +47,9 @@ namespace Oheangbu.EditorTools.WorldMacro
   {
    if(command=="status")return Status();
    if(command.StartsWith("start:"))return Start(command.Substring(6),false);
+   // start-mum:<spot> — isolated store named for the editor-only Mum test unlock (_mum295_test); on exit only
+   // <slot>_mum295_test* files are deleted, other stores sharing the suffix are left alone
+   if(command.StartsWith("start-mum:"))return Start(command.Substring(10),false,"_mum295_test");
    throw new ArgumentException(command);
   }
 
@@ -57,7 +60,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    return "active="+(state?.Active==true)+" placed="+(state?.Placed==true)+" spot="+state?.Spot+" playing="+EditorApplication.isPlaying+
     (EditorApplication.isPlaying&&s!=null&&s.Walker!=null?" player="+s.Walker.Body.transform.position.ToString("F1"):"");
   }
-  internal static string Start(string spot,bool interactive=true)
+  internal static string Start(string spot,bool interactive=true,string suffix=null)
   {
    // queue calls (interactive=false) never open a modal dialog: it would block the editor command queue
    if(EditorApplication.isPlayingOrWillChangePlaymode){const string busy="Play 중에는 시작할 수 없습니다. Play를 끝낸 뒤 다시 고르세요.";if(interactive)EditorUtility.DisplayDialog("#297 검토",busy,"확인");return "refused: "+busy;}
@@ -69,7 +72,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    if(scene.isDirty&&!EditorSceneManager.SaveScene(scene))return "refused: could not save "+scene.path;   // queue-driven: never block on a modal save dialog
    var s=Object.FindFirstObjectByType<WorldMacroPlaytestSession>();if(s==null)return "refused: no playtest session in "+scene.path;
-   state=new State{Active=true,Spot=spot,Suffix="_review297_"+DateTime.UtcNow.ToString("yyyyMMddTHHmmss"),PriorSuffix=s.TestSaveSuffix,
+   state=new State{Active=true,Spot=spot,Suffix=suffix??"_review297_"+DateTime.UtcNow.ToString("yyyyMMddTHHmmss"),PriorSuffix=s.TestSaveSuffix,
+    CleanupPrefix=suffix!=null&&s.Content!=null?s.Content.SaveSlot:"",
     PriorUi=SessionState.GetString("PlaytestUiReviewSuffix","__missing__"),PriorStartup=AssetDatabase.GetAssetPath(EditorSceneManager.playModeStartScene),
     PriorDirect=SessionState.GetBool("Compact270.DirectPlay",false),PriorDirectPresent=SessionState.GetBool("Compact270.DirectPlay",false)==SessionState.GetBool("Compact270.DirectPlay",true)};
    s.TestSaveSuffix=state.Suffix;SessionState.SetString("PlaytestUiReviewSuffix",state.Suffix);CompactLoadingStartup270.UseCurrent();
@@ -96,7 +100,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(state.PriorUi=="__missing__")SessionState.EraseString("PlaytestUiReviewSuffix");else SessionState.SetString("PlaytestUiReviewSuffix",state.PriorUi);
    if(state.PriorDirectPresent)SessionState.SetBool("Compact270.DirectPlay",state.PriorDirect);else SessionState.EraseBool("Compact270.DirectPlay");
    EditorSceneManager.playModeStartScene=string.IsNullOrEmpty(state.PriorStartup)?null:AssetDatabase.LoadAssetAtPath<SceneAsset>(state.PriorStartup);
-   foreach(var f in Directory.GetFiles(Application.persistentDataPath,"*"+state.Suffix+"*",SearchOption.TopDirectoryOnly))File.Delete(f);
+   foreach(var f in Directory.GetFiles(Application.persistentDataPath,(state.CleanupPrefix??"")+(string.IsNullOrEmpty(state.CleanupPrefix)?"*":"")+state.Suffix+"*",SearchOption.TopDirectoryOnly))File.Delete(f);
    state.Active=false;Persist();
   }
  }

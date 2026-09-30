@@ -15,7 +15,7 @@ namespace Oheangbu.App.SpellVFX120
         public bool BambooBoltContactSeen=>_boltLanded;
         public Vector3 BambooBoltTip { get; private set; }
         public float BambooBoltFlight=>_flight;
-        public static bool IsBambooBolt(Vfx120Profile p)=>p!=null&&p.Glyph=="가"&&p.BodyMesh!=null&&p.BodyMesh.name=="VFX120_BambooBolt_001";
+        public static bool IsBambooBolt(Vfx120Profile p)=>p!=null&&p.Bolt300Prefab==null&&p.Glyph=="가"&&p.BodyMesh!=null&&p.BodyMesh.name=="VFX120_BambooBolt_001";
         private void BuildBambooBolt()
         {
             if(!IsBambooBolt(Profile))return;

@@ -87,7 +87,7 @@ namespace Oheangbu.App.SpellVFX120
         public Vfx120MeshySummon MeshyModel => _meshySummon;
         public bool MeshyConfigured { get; private set; }
         public string MeshyDiagnostic { get; private set; } = "UNASSIGNED";
-        private bool ReplacesProcedural => _nativeReplaceProcedural || MeshyConfigured || NativeBodyConfigured || BotanicalConfigured || BambooGuardConfigured || WoodWardConfigured || RegrowthConfigured || BloomConfigured || WoodSwordConfigured || CompanionSeedsConfigured || IsBambooSpikes(Profile) || IsVineField(Profile) || IsBambooBolt(Profile) || IsSeedTransfer(Profile) || IsSeedPod(Profile) || IsLeafCut(Profile) || IsWetRoot(Profile) || IsRootLift(Profile) || IsStakeField(Profile) || IsWoodLift(Profile) || IsFireBolt(Profile) || IsFireGuard(Profile) || IsFireAura(Profile) || IsFireCompanions(Profile);
+        private bool ReplacesProcedural => _nativeReplaceProcedural || MeshyConfigured || NativeBodyConfigured || BotanicalConfigured || BambooGuardConfigured || WoodWardConfigured || RegrowthConfigured || BloomConfigured || WoodSwordConfigured || CompanionSeedsConfigured || IsBambooSpikes(Profile) || IsVineField(Profile) || IsBambooBolt(Profile) || IsSeedTransfer(Profile) || IsSeedPod(Profile) || IsLeafCut(Profile) || IsWetRoot(Profile) || IsRootLift(Profile) || IsStakeField(Profile) || IsWoodLift(Profile) || IsFireBolt(Profile) || IsFireGuard(Profile) || IsFireAura(Profile) || IsFireCompanions(Profile) || Bolt300Configured;
         private float _summonStrikeAt = -1;
         public void SetSummonStrikeClock(float seconds) { _summonStrikeAt = seconds; }
         private bool HasGuardianRig => Profile.Glyph == "몸" && Profile.GuardianMeshes != null
@@ -207,6 +207,7 @@ namespace Oheangbu.App.SpellVFX120
             ClearFireGuard();
             ClearFireAura();
             ClearFireCompanions();
+            ClearBolt300();
             ClearNative();
             NativeBodyConfigured = false;
             NativeBodyDiagnostic = "UNASSIGNED";
@@ -306,6 +307,7 @@ namespace Oheangbu.App.SpellVFX120
             BuildFireGuard();
             BuildFireAura();
             BuildFireCompanions();
+            BuildBolt300();
             BuildElementWash();
             BuildMeshy();
             BuildBotanical();
@@ -421,6 +423,7 @@ namespace Oheangbu.App.SpellVFX120
             SampleFireGuard();
             SampleFireAura();
             SampleFireCompanions();
+            SampleBolt300();
             SampleOriginalContacts();
             if(Profile.UseOriginalKtp&&IsBambooBolt(Profile)){if(_boltInk!=null)_boltInk.enabled=false;if(_boltLeaves!=null)foreach(var leaf in _boltLeaves)if(leaf!=null)leaf.enabled=false;}
             SampleMeshy();
@@ -764,6 +767,7 @@ namespace Oheangbu.App.SpellVFX120
             ClearFireGuard();
             ClearFireAura();
             ClearFireCompanions();
+            ClearBolt300();
             ClearMeshy();
             ClearNative();
             if (_environmentFixture != null) { _environmentFixture.Dispose(); _environmentFixture = null; }

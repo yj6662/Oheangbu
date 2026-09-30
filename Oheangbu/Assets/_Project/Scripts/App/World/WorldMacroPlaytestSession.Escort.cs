@@ -36,7 +36,7 @@ namespace Oheangbu.App.World
                 escortPointSource=point;
                 escortPointView=new PrologueContentSO.Point{Id=point.Id,Kind=point.Kind,Radius=point.Radius,
                     Currency=point.Currency,Prompt=point.Prompt,Text=point.Text,RequiredCompleted=point.RequiredCompleted,
-                    RequiredDefeated=point.RequiredDefeated,LockedText=point.LockedText};
+                    RequiredDefeated=point.RequiredDefeated,LockedText=point.LockedText,Speaker=point.Speaker,Lines=point.Lines,Services=point.Services};
             }
             escortPointView.Position=DemoEscortCompanion.position;
             return escortPointView;
@@ -103,13 +103,15 @@ namespace Oheangbu.App.World
             if (point == null || !EscortInteraction(point.Id, out var command)) return false;
             // This owner consumes blocked requests too. They must never reach generic campaign/visited progression.
             if (command == DemoEscortCommand.StartEscort)
-            { Show("왕소와 화물을 안전한 좌석에 싣고 정차한 가마에 탑승하면 출발한다."); return true; }
+            { if(!string.IsNullOrEmpty(EscortVoice306.StartBoardNotice))Show(EscortVoice306.StartBoardNotice); return true; }
+            // #306: the companion's lines are data (Content.EscortVoice) and go to the dialogue surface (Present when none is bound)
+            string voice=EscortVoice306.Speaker;
             if(EquipmentEnabled&&point.Id=="wangso_w1"&&!Progress.campaign.Facts.Contains("met:jeongdam")){
-                Present("왕소",point.Text);success=true;return true;
+                Speak306(point,voice,point.Text,null,voice);success=true;return true;
             }
             if(EquipmentEnabled&&point.Id=="wangso_w1"&&Progress.escort.Stage>=DemoEscortStage.Contracted)
             {
-                Present("왕소",Progress.escort.Stage==DemoEscortStage.Delivered?"봉인은 온전했소. 다음에 만나면 이 빚을 갚으리다.":Progress.escort.Stage>=DemoEscortStage.Escorting?"화물은 내가 지키겠소. 앞에서 기다리면 따라가리다.":"화물은 이곳에 두었소. 출발할 준비가 되면 다시 이야기합시다.");
+                Speak306(point,voice,EscortStageLine306(),null,voice);
                 success=true;return true;
             }
             escortInteractionId = point.Id;
@@ -119,10 +121,9 @@ namespace Oheangbu.App.World
                 int paid=rewardingStage!=null&&rewardingStage.TriggerId==point.Id?rewardingStage.TongboReward:0;
                 var status = ExecuteDemoEscort(command, out _, out string error);
                 success = status == DemoEscortStatus.Saved;
-                if (!success&&EquipmentEnabled&&point.Id=="wangso_w1"&&status==DemoEscortStatus.Duplicate){Present("왕소",Progress.escort.Stage==DemoEscortStage.Delivered?"봉인은 온전했소. 다음에 만나면 이 빚을 갚으리다.":Progress.escort.Stage>=DemoEscortStage.Escorting?"화물은 내가 지키겠소. 앞에서 기다리면 따라가리다.":"화물은 이곳에 두었소. 출발할 준비가 되면 다시 이야기합시다.");success=true;return true;}
+                if (!success&&EquipmentEnabled&&point.Id=="wangso_w1"&&status==DemoEscortStatus.Duplicate){Speak306(point,voice,EscortStageLine306(),null,voice);success=true;return true;}
                 if (!success) { Show(error ?? (status == DemoEscortStatus.Duplicate ? "이미 확인한 호송 절차다." : "왕소·화물과 현재 의뢰 위치를 확인하자.")); return true; }
-                string text=point.Text+(paid>0?"\n조선통보 +"+paid:"");
-                Present(point.Prompt, text); InteractionResolved?.Invoke(point.Kind, point.Position); return true;
+                Speak306(point, point.Prompt, point.Text, paid>0?"조선통보 +"+paid:null); InteractionResolved?.Invoke(point.Kind, point.Position); return true;
             }
             finally { escortInteractionId = null; }
         }

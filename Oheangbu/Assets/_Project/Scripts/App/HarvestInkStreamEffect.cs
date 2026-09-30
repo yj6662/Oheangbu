@@ -13,6 +13,8 @@ namespace Oheangbu.App
     // 내 쪽 끝은 아래로 들어왔다가 위로 감아 올라가 붓 끝(_sinkAnchor)에 닿는다(J-곡선).
     // HarvestAction의 읽기 전용 신호만 소비 — 판정·수급 수치 무접촉.
     // 먹은 빛나지 않는다 — 어두운 먹색·무광(발광 상한 합치).
+    // [D306 #10 덩어리 뽑기] 흐름 프로필(_flowProfile)이 있으면 위 홀드 다발 대신 HarvestInkFlowRenderer가
+    // PullStarted/ChunkExtracted/PullCanceled 사건으로 걸기→찢기→끊기→날아옴→흡수를 그린다. 위 홀드 경로는 프로필이 없는 씬용.
     [DefaultExecutionOrder(2000)] // 최종 PlayerVisualDriver(1000)의 TipSocket을 같은 프레임에 읽는다.
     public sealed class HarvestInkStreamEffect : MonoBehaviour
     {
@@ -25,7 +27,52 @@ namespace Oheangbu.App
         public Vector3 FlowSink => _flow != null ? _flow.LastSink : Vector3.zero;
         public void ConfigureFlowProfile(HarvestInkFlowProfileSO profile)
         {
-            _flow?.Dispose(); _flow=null; ClearLegacy(); _flowProfile=profile;
+            FlushFeedback(); _flow?.Dispose(); _flow=null; ClearLegacy(); _flowProfile=profile;
+        }
+        // D306 #10: the chunk renderer follows HarvestAction events, not the held IsExtracting signal
+        private HarvestAction _subscribedHarvest;
+        private float _pendingFeedback, _pendingTo01;
+        private bool _feedbackQueued;
+        // the torn chunk reached the brush tip: (ink received at the snap, pool fill right after that Gain, HUD slosh) --
+        // CombatLoopWiring flashes the HUD here; the fill pins the band to the chunk's own range, not the live meter at absorb
+        public event System.Action<float, float, float> ChunkAbsorbed;
+        public string ChunkPhase => _flow != null ? _flow.Phase : "Idle";
+        public float ChunkDiameter => _flow != null ? _flow.BlobDiameter : 0f;
+        // Called from the InkPool.Gained of a chunk (HarvestAction.PayingChunk). The value is already in the pool;
+        // true = only the HUD flash waits for the absorb. false (no chunk renderer / not pulling) = flash now.
+        // to01 = the pool fill at that Gain (InkPool.Value); several chunks in one flight keep the latest top.
+        public bool QueueChunkFeedback(float received, float to01)
+        {
+            if (!isActiveAndEnabled || _flow == null || !_flow.Pulling || received <= 0f) return false;
+            _pendingFeedback += received; _pendingTo01 = to01; _feedbackQueued = true; return true;
+        }
+        private void BindHarvest()
+        {
+            if (_subscribedHarvest == _harvest) return;
+            UnbindHarvest(); _subscribedHarvest = _harvest;
+            if (_harvest != null) { _harvest.PullStarted += OnPullStarted; _harvest.ChunkExtracted += OnChunkExtracted; _harvest.PullCanceled += OnPullCanceled; }
+        }
+        private void UnbindHarvest()
+        {
+            if (_subscribedHarvest != null) { _subscribedHarvest.PullStarted -= OnPullStarted; _subscribedHarvest.ChunkExtracted -= OnChunkExtracted; _subscribedHarvest.PullCanceled -= OnPullCanceled; }
+            _subscribedHarvest = null;
+        }
+        private bool EnsureFlow()
+        {
+            if (_flowProfile == null || _flowProfile.Material == null) return false;
+            if (_flow == null) { ClearLegacy(); _flow = new HarvestInkFlowRenderer(transform, _flowProfile); _flow.Absorbed += FlushFeedback; }
+            return true;
+        }
+        private void OnPullStarted(EnemyVitals target, Vector3 source)
+        { if (isActiveAndEnabled && EnsureFlow()) _flow.Begin(target != null ? target.transform : null, source); }
+        private void OnChunkExtracted(EnemyVitals target, Vector3 source, float received)
+        { if (isActiveAndEnabled && EnsureFlow()) _flow.Snap(source); else FlushFeedback(); }
+        private void OnPullCanceled(HarvestCancelReason reason) { _flow?.Cancel(); }
+        private void FlushFeedback()
+        {
+            if (!_feedbackQueued) return;
+            float received = _pendingFeedback, to01 = _pendingTo01; _pendingFeedback = 0f; _pendingTo01 = 0f; _feedbackQueued = false;
+            ChunkAbsorbed?.Invoke(received, to01, _flowProfile != null ? _flowProfile.AbsorbInkKick : 0f);
         }
         [SerializeField] private Transform _sinkAnchor;   // 붓 끝 — 없으면 카메라 오프셋 폴백
         public Transform SinkAnchor => _sinkAnchor;
@@ -175,12 +222,12 @@ namespace Oheangbu.App
         {
             if (_flowProfile != null)
             {
-                if (_flowProfile.Material == null) return;
-                if (_flow == null) { ClearLegacy(); _flow=new HarvestInkFlowRenderer(transform,_flowProfile); }
+                BindHarvest();
+                if (!EnsureFlow()) return;
                 Vector3 sink=SinkPoint(out Vector3 approach);
-                bool active=_harvest!=null && _harvest.IsExtracting;
                 Vector3 source=_harvest!=null?_harvest.ExtractSourcePosition:transform.position;
-                _flow.Tick(active,source,sink,approach,Time.deltaTime);
+                _flow.Tick(source,sink,approach,Camera.main,Time.deltaTime);
+                if (_feedbackQueued && !_flow.Flying && !_flow.Pulling) FlushFeedback(); // never lose the flash
                 return;
             }
             if (!EnsureRuntime()) return;
@@ -649,7 +696,7 @@ namespace Oheangbu.App
 
         private void OnDestroy()
         {
-            _flow?.Dispose(); _flow=null;
+            UnbindHarvest(); FlushFeedback(); _flow?.Dispose(); _flow=null;
             if (_ownedMaterial != null) Destroy(_ownedMaterial);
         }
 
@@ -661,7 +708,8 @@ namespace Oheangbu.App
             if(_headBead!=null)_headBead.gameObject.SetActive(false);
             if(_tipBead!=null)_tipBead.gameObject.SetActive(false);
         }
-        private void OnDisable() { _flow?.Clear(); ClearLegacy(); }
-        private void OnApplicationPause(bool paused) { if(paused) { _flow?.Clear();ClearLegacy(); } }
+        private void OnEnable() { BindHarvest(); }
+        private void OnDisable() { UnbindHarvest(); FlushFeedback(); _flow?.Clear(); ClearLegacy(); }
+        private void OnApplicationPause(bool paused) { if(paused) { FlushFeedback(); _flow?.Clear();ClearLegacy(); } }
     }
 }

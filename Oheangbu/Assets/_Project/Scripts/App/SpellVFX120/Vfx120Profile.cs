@@ -103,6 +103,18 @@ namespace Oheangbu.App.SpellVFX120
         public bool Grounded = true;
         public string SourcePattern;
         public string RecipeJson;
+        [Header("#300 basic attack flight body (presentation; flight clock/target/damage unchanged)")]
+        [Tooltip("Prefab with Travel (moves along the path; optional Spin mesh body) and Contact (bursts at the impact). Replaces the procedural body.")]
+        public GameObject Bolt300Prefab;
+        [Min(0f)] public float Bolt300Scale = 1f;
+        [Tooltip("Peak height of the flight arc (m).")]
+        public float Bolt300Arc;
+        [Tooltip("Sideways bend of the flight (m) — the slow homing curve.")]
+        public float Bolt300Curve;
+        [Tooltip("Spin of the Spin child (deg/s).")]
+        public float Bolt300Spin;
+        [Tooltip("Progress exponent along the line (1 = constant speed, >1 = starts slow).")]
+        [Min(0f)] public float Bolt300Ease = 1f;
     }
 
 }

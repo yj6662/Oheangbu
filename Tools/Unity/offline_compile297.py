@@ -45,7 +45,8 @@ def main():
             else: sources.append(PROJECT / s)
         folders = {Path(s.replace('\\', '/')).parent.as_posix().lower() for s in info['sources']}
         for key, f in staged.items():
-            if key not in used and Path(key).parent.as_posix() in folders and not (PROJECT / key).exists():
+            # a staged file the (possibly stale) csproj does not list joins its folder's assembly, also when it already sits in Assets
+            if key not in used and Path(key).parent.as_posix() in folders:
                 sources.append(f); used.add(key)
         refs = list(info['refs'])
         for p in info['projects']:

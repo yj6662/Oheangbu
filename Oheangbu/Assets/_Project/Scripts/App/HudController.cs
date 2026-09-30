@@ -1,52 +1,92 @@
 using Oheangbu.App.World;
+using Oheangbu.App.World.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using V = Oheangbu.App.World.UI.PlaytestUiView;
 
 namespace Oheangbu.App
 {
     // The common HUD keeps its graybox when Skin is unassigned. The World Macro
     // playtest assigns an owned skin and still receives the same service values.
+    // #304 (DESIGN §5.8 / §5.9 / §5.14 / §7.1, IMPLEMENTATION §7.1): the skinned HUD is built from the #304 style of the skin
+    // (V.Style(Skin)): InkMeter HP + 먹 with the 먹병 (BuildMeters304), the two-stage lock-on enso (HudLockOn304), the keycap +
+    // verb interaction prompt (HudPrompt304, text restored in icon mode), the bearing line (HudBearingLine304, a child of
+    // HUD_Canvas) and low-HP ink edges fitted to the canvas. Icons (CompactUiProfileSO) is kept only as a source of fallback
+    // pictograms; it no longer hides text or recolours the meters.
+    // #306 (SPEC-PLAYTEST-306 #1 / #8, D306): the 먹 원상 minimap is back beside the bearing line (HudMinimap304, BottomRight),
+    // enemy health = the lock-on stroke "TargetHpStroke" 6 px under the enso and the boss bar (HudBossBar304, BottomCentre),
+    // fed by SetTargetHealth / SetBossHealth (IHealthBarSource306). All stay children of HUD_Canvas (one screen Canvas).
     public sealed class HudController : MonoBehaviour
     {
         [Tooltip("Optional playtest-owned visual skin. Leave null to retain the prototype HUD.")]
         public WorldMacroHudSkinProfileSO Skin;
         public bool HideText;
+        [Tooltip("#304: support pictograms only (bearing-line fallback icons). Text is shown whether or not this is set.")]
         public World.UI.CompactUiProfileSO Icons;
-        private Image _interactionIcon;
         public bool UsesIcons => Icons != null;
+        [Tooltip("#306 먹 원상 미니맵: place, ranges (outside 120 m, cave 40 m), reprint distance (TEST, SPEC-PLAYTEST-306 #1)")]
+        public MinimapSpec304 Minimap = new MinimapSpec304();
+        [Tooltip("#306 enemy health: lock-on stroke 64x5 under the enso, boss bar 720x8 bottom centre (TEST, SPEC-PLAYTEST-306 #8)")]
+        public EnemyBarSpec304 EnemyBars = new EnemyBarSpec304();
 
         private RectTransform _hpFill, _inkFill, _reticle, _groggyFill;
-        private Image _hpImage, _inkLiquid, _inkBarImage, _groggyImage;
-        private RectTransform _inkReceivedMask;
-        private Image _inkReceivedImage;
         private float _receivedFrom, _receivedTo, _receivedLast = -10f, _receivedBegan;
         private int _receivedLastFrame = -100000;
         public Vector2 ReceivedInkSegment => new Vector2(_receivedFrom, _receivedTo);
         private Image[] _dangerEdges;
-        private GameObject _interactionRoot;
-        private RectTransform _interactionRect;
-        private Text _interactionText;
         private Canvas _canvas;
-        private Font _font;
-        private bool _ownsFont;
+        private Vector2 _edgeCanvasSize;
         private Texture2D _diskTexture;
         private Sprite _diskSprite;
-        private Texture2D _bottleMaskTexture;
-        private Sprite _bottleMaskSprite;
         private Vector2 _inkMotion;
-        private float _inkHitImpulse, _inkTilt, _pulse;
+        private float _inkHitImpulse, _pulse;
         private float _hp01 = 1f, _ink01 = 1f, _groggy01;
+        private UiStyle304SO _style;
+        private HudTokens304 _tokens;
+        // #304 pieces (null on the prototype HUD)
+        private InkMeter304 _hpMeter, _inkMeter;
+        private Image _inkLiquid;
+        private RectTransform _inkReceivedMask;
+        private InkMeterGraphic _inkReceivedGraphic;
+        private Image _inkCostBox;
+        private float _inkCost01;
+        private HudLockOn304 _lockOn;
+        private HudPrompt304 _prompt;
+        private HudBearingLine304 _bearing;
+        private HudMinimap304 _minimap;
+        private HudBossBar304 _bossBar;
+        private HudHealthStroke304 _targetHp;
+        private CanvasGroup _targetHpGroup;
+        private bool _targetHpWanted;
 #if UNITY_EDITOR
         private bool _editorDiagnosticState;
 #endif
+        private bool _lockPreview;
         private const float BarWidth = 260f;
 
         public bool IsSkinned => Skin != null;
-        public bool InteractionVisible => _interactionRoot != null && _interactionRoot.activeSelf;
+        public bool InteractionVisible => _prompt != null && _prompt.Visible;
+        /// <summary>QA1: the prompt is logically shown AND can actually draw (HUD_Canvas enabled and active, prompt frame active).
+        /// The presenter hides the world F only while this is true, so a HUD hidden by a menu or a capture tool never leaves the
+        /// focused object with neither surface. InteractionVisible keeps the logical meaning the harness compares.</summary>
+        public bool PromptOnScreen304 => _prompt != null && _prompt.Visible && _prompt.isActiveAndEnabled
+            && _canvas != null && _canvas.enabled && _canvas.gameObject.activeInHierarchy;
         public float Hp01 => _hp01;
         public float Ink01 => _ink01;
         public float Groggy01 => _groggy01;
         public bool ReticleVisible => _reticle != null && _reticle.gameObject.activeSelf;
+        // #304 read-only handles (harness / capture checks)
+        public InkMeter304 HpMeter304 => _hpMeter;
+        public InkMeter304 InkStroke304 => _inkMeter;
+        public Vector2 InkMotion => _inkMotion;
+        public HudLockOn304 LockOn304 => _lockOn;
+        public HudPrompt304 Prompt304 => _prompt;
+        public HudBearingLine304 Bearing304 => _bearing;
+        public HudMinimap304 Minimap304 => _minimap;
+        public HudBossBar304 BossBar304 => _bossBar;
+        public InkMeter304 TargetHpStroke304 => _targetHp != null ? _targetHp.Meter : null;
+        public bool TargetHpVisible => _targetHpGroup != null && _targetHpGroup.gameObject.activeSelf;
+        public Canvas Canvas => _canvas;
 
         private void Awake()
         {
@@ -79,164 +119,145 @@ namespace Oheangbu.App
 
         private void BuildSkinnedHud()
         {
-            _font = Skin.KoreanFont;
-            if (_font == null) { _font = Font.CreateDynamicFontFromOSFont(new[] { "Malgun Gothic", "Arial" }, 24); _ownsFont = true; }
-            if(Skin.UseInkBar)
-            {
-                var paper=Skin.Paper;paper.a=.87f;
-                var backing=CreateImage("Resources_Hanji",_canvas.transform,Skin.PromptPaper,paper);
-                Anchor(backing.rectTransform,Vector2.zero,new Vector2(0,.5f),new Vector2(24,80),new Vector2(374,90));
-            }
-            var hpBackColor=Icons!=null?Icons.Health:Skin.Ink;hpBackColor.a=.20f;
-            var hpBack=CreateImage("HP_FullStroke",_canvas.transform,Skin.HpStroke,hpBackColor);
-            Anchor(hpBack.rectTransform,Vector2.zero,new Vector2(0f,.5f),Skin.HpPosition,Skin.HpSize);
-            if(!Skin.UseInkBar)AddPaperContour(hpBack,.72f);
-            var hp = CreateImage("HP_BrushStroke", _canvas.transform, Skin.HpStroke, Icons!=null?Icons.Health:Skin.Ink);
-            _hpImage = hp;
-            _hpImage.type = Image.Type.Filled;
-            _hpImage.fillMethod = Image.FillMethod.Horizontal;
-            _hpImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-            _hpFill = hp.rectTransform;
-            Anchor(_hpFill, Vector2.zero, new Vector2(0f, .5f), Skin.HpPosition, Skin.HpSize);
+            _style = V.Style(Skin);
+            _tokens = HudTokens304.Load();
+            V.EnsureCanvasChannels(_canvas);
             BuildDangerEdges();
-
-            if (Skin.UseInkBar) BuildInkBar();
-            else BuildInkBottle();
-
-            _diskSprite = CreateInkDisk();
-            BuildReticleAndInteraction();
+            BuildMeters304();
+            _bearing = HudBearingLine304.Create(_style, _tokens, _canvas.transform, Icons);
+            _minimap = HudMinimap304.Create(_style, _tokens, _canvas.transform, Minimap, Icons);
+            if (_style.Sprites.Disc == null) _diskSprite = CreateInkDisk();
+            _lockOn = HudLockOn304.Create(_style, _tokens, _canvas.transform, Skin.LockRing, _diskSprite);
+            _reticle = (RectTransform)_lockOn.transform;
+            BuildTargetHp306();
+            _bossBar = HudBossBar304.Create(_style, _tokens, _canvas.transform, EnemyBars);
+            _prompt = HudPrompt304.Create(_style, _tokens, _canvas.transform);
         }
 
-        private void BuildInkBar()
+        /// <summary>#306 "TargetHpStroke": a sibling of the Reticle (not a child: the enso's idle α.45, size tween and pop must not
+        /// thin or scale it), centred under the enso every frame by PlaceTargetHp306. Hidden until SetTargetHealth gives it a
+        /// live, non-boss target.</summary>
+        private void BuildTargetHp306()
         {
-            var faded = Skin.Ink; faded.a = .20f;
-            var background = CreateImage("Ink_FullStroke", _canvas.transform, Skin.HpStroke, faded);
-            Anchor(background.rectTransform, Vector2.zero, new Vector2(0,.5f), Skin.InkBarPosition, Skin.InkBarSize);
-            _inkBarImage = CreateImage("Ink_BrushBar", _canvas.transform, Skin.HpStroke, Skin.Ink);
-            _inkBarImage.type = Image.Type.Filled;
-            _inkBarImage.fillMethod = Image.FillMethod.Horizontal;
-            _inkBarImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-            _inkFill = _inkBarImage.rectTransform;
-            Anchor(_inkFill, Vector2.zero, new Vector2(0,.5f), Skin.InkBarPosition, Skin.InkBarSize);
+            var e = EnemyBars;
+            var root = V.Rect("TargetHpStroke", _canvas.transform, 0f, 0f, e.TargetSize.x, e.TargetSize.y);
+            root.anchorMin = root.anchorMax = root.pivot = new Vector2(.5f, .5f);
+            _targetHpGroup = root.gameObject.AddComponent<CanvasGroup>();
+            _targetHpGroup.blocksRaycasts = false; _targetHpGroup.interactable = false; _targetHpGroup.alpha = e.TargetIdleAlpha;
+            _targetHp = new HudHealthStroke304(_style, _tokens, root, "TargetHp_Stroke", 0f, 0f, e.TargetSize.x, e.TargetSize.y, e.ChipAlpha);
+            root.gameObject.SetActive(false);
+        }
+
+        /// <summary>DESIGN §5.9 + D07: one tilted bundle (BottomLeft, origin (64,900), -1.2° about its left middle) holding the
+        /// cinnabar HP InkMeter with its lost-share lag (HP_BrushStroke, 500 x 30), the ink InkMeter (Ink_BrushBar, 420 x 21)
+        /// and the 먹병 44 x 72 (paper rim, ink liquid Filled Vertical = the ink value, ink glass). Replaces the old hanji backing,
+        /// full-stroke tracks and heart / ink icons.</summary>
+        private void BuildMeters304()
+        {
+            var s = _style; var m = s.Meter; var k = _tokens;
+            var group = V.RectAnchored("Meters304", _canvas.transform, m.Origin.x, m.Origin.y, m.GroupSize.x, m.GroupSize.y, m.Anchor, new Vector2(0f, .5f), m.TiltDeg);
+            float bottleMid = m.BottleOffset.y + m.BottleSize.y * .5f;
+            float inkY = bottleMid - k.InkHeight * .5f;
+            float hpY = inkY - k.MeterGap - k.HpHeight;
+            _hpMeter = V.Meter(s, group, "HP_BrushStroke", m.HpOffset.x, hpY, m.HpSize.x, k.HpHeight, s.Cinnabar, true);
+            _inkMeter = V.Meter(s, group, "Ink_BrushBar", m.InkOffset.x, inkY, m.InkSize.x, k.InkHeight, s.Ink);
+            _hpFill = _hpMeter.Rect; _inkFill = _inkMeter.Rect;
+            LinearLook(_hpMeter); LinearLook(_inkMeter);
+            _hpMeter.SetValue(_hp01, false); _inkMeter.SetValue(_ink01, false);
+
+            // received ink (NotifyInkGained): the fresh share of the ink stroke flashes mist and fades (.45 s)
             var received = new GameObject("Ink_ReceivedSegment", typeof(RectTransform), typeof(RectMask2D));
-            received.transform.SetParent(_canvas.transform, false);
-            _inkReceivedMask = received.GetComponent<RectTransform>();
-            Anchor(_inkReceivedMask, Vector2.zero, new Vector2(0,.5f), Skin.InkBarPosition, Skin.InkBarSize);
-            _inkReceivedImage = CreateImage("Received_BrushStroke", received.transform, Skin.HpStroke, new Color(.40f,.37f,.30f,0f));
-            Anchor(_inkReceivedImage.rectTransform, new Vector2(0,.5f), new Vector2(0,.5f), Vector2.zero, Skin.InkBarSize);
+            received.transform.SetParent(group, false);
+            _inkReceivedMask = (RectTransform)received.transform;
+            _inkReceivedMask.anchorMin = _inkReceivedMask.anchorMax = _inkReceivedMask.pivot = new Vector2(0f, 1f);
+            var flash = V.Rect("Received_BrushStroke", received.transform, 0f, 0f, m.InkSize.x, k.InkHeight);
+            _inkReceivedGraphic = flash.gameObject.AddComponent<InkMeterGraphic>();
+            _inkReceivedGraphic.raycastTarget = false;
+            if (s.Materials.InkMeterBody != null) _inkReceivedGraphic.material = s.Materials.InkMeterBody;
+            _inkReceivedGraphic.color = UiStyle304SO.A(s.Mist, 0f);
             received.SetActive(false);
-            ResourceLabel("체력", Skin.HpPosition);
-            ResourceLabel("먹", Skin.InkBarPosition);
+
+            // 작도 중 먹 비용 (DESIGN §5.9, states.png): a dashed box of the cost width starting at the ink value, paper; cinnabar
+            // (CinnabarLift, it sits on ink) when the cost is more than the ink left. Driven by SetInkCostPreview.
+            _inkCostBox = V.SpriteImage(group, "Ink_CostPreview", s.Sprites.DashBox, s.Paper, m.InkOffset.x, inkY, 1f, k.InkHeight, 0f, 2f);   // dash_box border 12 -> 6 px on the 21 px stroke
+            _inkCostBox.gameObject.SetActive(false);
+
+            var bottle = V.Rect("InkBottle", group, m.BottleOffset.x, m.BottleOffset.y, m.BottleSize.x, m.BottleSize.y);
+            var b = s.Sprites;
+            if (b.BottleRim != null) V.Image(V.Stretch("BottleRim", bottle), s.Paper, b.BottleRim).preserveAspect = true;
+            _inkLiquid = V.Image(V.Stretch("InkLiquid", bottle), s.Ink, b.BottleLiquid);
+            _inkLiquid.type = Image.Type.Filled; _inkLiquid.fillMethod = Image.FillMethod.Vertical;
+            _inkLiquid.fillOrigin = (int)Image.OriginVertical.Bottom; _inkLiquid.fillAmount = _ink01;
+            if (b.BottleLiquid == null) _inkLiquid.enabled = false;
+            var glass = V.Image(V.Stretch("BottleGlass", bottle), s.Ink, b.BottleGlass != null ? b.BottleGlass : Skin.InkBottle);
+            glass.preserveAspect = true;
         }
 
-        private void ResourceLabel(string label, Vector2 position)
+        /// <summary>QA1 (after/hud.png, after_states/hud_lowhp.png): in the Linear project the paper ValueRim (α.72) under the
+        /// whole value showed through the value body's own alpha (~.74-.96) and was blended in linear light, so the 먹 value read as
+        /// mid grey (~112 vs ~64 in hud.png) and the HP value as pink (192,120,110 vs 188,90,77); the ghost α.27 read as ~α.12.
+        /// The value rim is now a rim only (rim minus the value body, the GhostEdge mode) and the ghost ink alpha is the
+        /// linear-compensated HudTokens304.InkAlpha. Fallback materials (no UI/InkMeter) keep the plain layers.</summary>
+        // QA2 (after2/hud.png, hud_lowhp.png): with the foundation remap in UI/InkMeter (_LinearInkGamma) the paper rims were
+        // erased (light remap a^2.2: ghost edge .3 -> .07, value rim .72 -> .49 - no 한지 테, unlike hud.png / states.png "가득")
+        // and the values went flat (먹 ~25 vs ~64, HP (184,56,42) with no streaks). Now: the value sits on the mockup's paper plate
+        // again (MeterValueRimEdgeOnly false), the paper layers are pre-scaled to land at a^1.3 (HudTokens304.PaperAlpha), the value
+        // alpha is MeterValueAlpha .92 and the cinnabar lag undoes the dark remap. Offline twin: qa2/hud_metersim.png.
+        private void LinearLook(InkMeter304 meter)
         {
-            if(Icons!=null){
-                var icon=CreateImage(label=="체력"?"HealthIcon":"InkIcon",_canvas.transform,label=="체력"?Icons.Heart:Icons.InkBottle,label=="체력"?Icons.Health:Icons.Ink);
-                icon.preserveAspect=true;Anchor(icon.rectTransform,Vector2.zero,new Vector2(1,.5f),position+new Vector2(-8,0),new Vector2(32,32));return;
-            }
-            if(HideText)return;
-            var go = new GameObject(label + "_Label", typeof(RectTransform), typeof(Text));
-            go.transform.SetParent(_canvas.transform, false);
-            var text = go.GetComponent<Text>(); text.text = label; text.font = _font; text.fontSize = 18;
-            text.color = Skin.Ink; text.alignment = TextAnchor.MiddleRight; text.raycastTarget = false;
-            Anchor(text.rectTransform, Vector2.zero, new Vector2(1,.5f), position + new Vector2(-10,0), new Vector2(46,28));
+            if (meter == null || _tokens == null || _style == null) return;
+            var m = _style.Meter;
+            if (meter.ValueRim != null && meter.ValueRim.UsesMeterShader) meter.ValueRim.EdgeOnly = _tokens.MeterValueRimEdgeOnly;
+            if (meter.GhostEdge != null) meter.GhostEdge.color = UiStyle304SO.A(_style.Paper, _tokens.PaperAlpha(meter.GhostEdge.material, m.GhostEdge));
+            if (meter.ValueRim != null) meter.ValueRim.color = UiStyle304SO.A(_style.Paper, _tokens.PaperAlpha(meter.ValueRim.material, m.RimAlpha));
+            if (meter.Ghost != null) meter.Ghost.color = UiStyle304SO.A(_style.Ink, _tokens.InkAlphaFor(meter.Ghost.material, m.GhostInk));
+            if (meter.Lag != null && _tokens.LagUndoRemap) meter.Lag.color = UiStyle304SO.A(_style.Cinnabar, _tokens.UndoInkRemap(meter.Lag.material, m.LagAlpha));
+            if (meter.Value != null && HudTokens304.ShaderInkGamma(meter.Value.material) > 1.0001f)
+            { var c = meter.Value.color; c.a = _tokens.MeterValueAlpha; meter.Value.color = c; }
         }
 
-        private void BuildInkBottle()
-        {
-            var bottleRoot = NewRect("InkBottle", _canvas.transform);
-            Anchor(bottleRoot, Vector2.zero, new Vector2(.5f, .5f), Skin.BottlePosition, Skin.BottleSize);
-            var clipRoot = new GameObject("LiquidClip", typeof(RectTransform), typeof(Image), typeof(Mask));
-            clipRoot.transform.SetParent(bottleRoot, false);
-            var clipRect = (RectTransform)clipRoot.transform;
-            clipRect.anchorMin = clipRect.anchorMax = new Vector2(.5f, .5f);
-            clipRect.pivot = new Vector2(.5f, 0f);
-            clipRect.anchoredPosition = new Vector2(0f, -Skin.BottleSize.y * .44f);
-            clipRect.sizeDelta = new Vector2(Skin.BottleSize.x * .78f, Skin.BottleSize.y * .54f);
-            _bottleMaskSprite=CreateRoundedBottleMask();
-            var maskImage=clipRoot.GetComponent<Image>();maskImage.sprite=_bottleMaskSprite;maskImage.color=Color.white;maskImage.raycastTarget=false;
-            clipRoot.GetComponent<Mask>().showMaskGraphic=false;
-            var glassColor=Skin.Paper;glassColor.a=.12f;
-            var glass=CreateImage("GlassBody",clipRect,null,glassColor);Stretch(glass.rectTransform);
-            _inkLiquid = CreateImage("InkLiquid", clipRect, null, Skin.Ink);
-            _inkFill = _inkLiquid.rectTransform;
-            _inkFill.anchorMin = _inkFill.anchorMax = new Vector2(.5f, 0f);
-            _inkFill.pivot = new Vector2(.5f, 0f);
-            _inkFill.anchoredPosition = Vector2.zero;
-            _inkFill.sizeDelta = clipRect.sizeDelta;
-            var bottle = CreateImage("BottleFrame", bottleRoot, Skin.InkBottle, Skin.Ink);
-            bottle.preserveAspect = true;
-            Stretch(bottle.rectTransform);
-            AddPaperContour(bottle,.74f);
+        /// <summary>Kept for callers of the old icon mode. #304 shows the keycap + verb prompt instead; icons are not drawn.</summary>
+        public void SetInteractionIcon(Sprite sprite, bool problem = false) { }
 
-        }
-
-        private void BuildReticleAndInteraction()
-        {
-            var reticleRoot = NewRect("Reticle", _canvas.transform);
-            reticleRoot.sizeDelta = Skin.ReticleSize;
-            _reticle = reticleRoot;
-            _groggyImage = CreateImage("GroggyInkFill", reticleRoot, _diskSprite, Skin.Ink);
-            _groggyImage.type = Image.Type.Filled;
-            _groggyImage.fillMethod = Image.FillMethod.Vertical;
-            _groggyImage.fillOrigin = (int)Image.OriginVertical.Bottom;
-            _groggyFill = _groggyImage.rectTransform;
-            _groggyFill.sizeDelta = Skin.ReticleSize * .68f;
-            var ring = CreateImage("OneStrokeRing", reticleRoot, Skin.LockRing, Skin.Ink);
-            ring.preserveAspect = true;
-            Stretch(ring.rectTransform);
-            AddPaperContour(ring,.78f);
-
-            _interactionRoot = NewRect("InteractionPrompt", _canvas.transform).gameObject;
-            var interactionRect = (RectTransform)_interactionRoot.transform;
-            _interactionRect = interactionRect;
-            Anchor(interactionRect, new Vector2(.5f, 0f), new Vector2(.5f, 0f), new Vector2(0f, 62f), Skin.PromptSize);
-            var paperTint = Skin.Paper; paperTint.a *= .78f;
-            var paper = CreateImage("PromptPaper", interactionRect, Skin.PromptPaper, paperTint);
-            Stretch(paper.rectTransform);
-            var textGo = new GameObject("PromptText", typeof(RectTransform), typeof(Text));
-            textGo.transform.SetParent(interactionRect, false);
-            _interactionText = textGo.GetComponent<Text>();
-            _interactionText.font = _font;
-            _interactionText.fontSize = 24;
-            _interactionText.alignment = TextAnchor.MiddleCenter;
-            _interactionText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            _interactionText.verticalOverflow = VerticalWrapMode.Truncate;
-            _interactionText.color = Skin.Ink;
-            _interactionText.raycastTarget = false;
-            Stretch(_interactionText.rectTransform, new Vector2(42f, 18f));
-            if(Icons!=null){
-                _interactionText.enabled=false;
-                _interactionIcon=CreateImage("InteractionIcon",interactionRect,Icons.Hand,Skin.Ink);
-                _interactionIcon.preserveAspect=true;Stretch(_interactionIcon.rectTransform,new Vector2(14,14));
-                interactionRect.sizeDelta=new Vector2(72,72);
-            }
-            _interactionRoot.SetActive(false);
-        }
-        public void SetInteractionIcon(Sprite sprite,bool problem=false){
-            if(Icons==null||_interactionIcon==null)return;
-            _interactionIcon.sprite=sprite;_interactionIcon.color=problem?Icons.Health:Skin.Ink;
-            _interactionRoot.SetActive(sprite!=null);
-        }
-
+        /// <summary>Low-HP ink edges (DESIGN §5.9 "LowHp_InkEdge 먹 가장자리"): ramp_bottom veil washes on all four canvas edges,
+        /// resized to the live canvas (the old fixed 1440 / 900 strokes left the corners of a 1920 canvas bare).
+        /// QA2: on the shared UI/InkReveal material (fully drawn, reveal 1) so the foundation's linear-space ink remap gives the
+        /// veil its mockup weight; as plain UI/Default images they lost the QA1 compensation (after2/hud_lowhp.png: top edge -14
+        /// grey levels at HP .28, sides -6).</summary>
         private void BuildDangerEdges()
         {
+            var s = _style; var k = _tokens;
             _dangerEdges = new Image[4];
+            var sprite = s.Sprites.RampBottom != null ? s.Sprites.RampBottom : Skin.HpStroke;
             for (int i = 0; i < _dangerEdges.Length; i++)
             {
-                var edge = CreateImage("LowHp_InkEdge_" + i, _canvas.transform, Skin.HpStroke,
-                    new Color(Skin.Ink.r, Skin.Ink.g, Skin.Ink.b, 0f));
-                Vector2 anchor = i == 0 ? new Vector2(.5f, 1f) : i == 1 ? new Vector2(.5f, 0f)
-                    : i == 2 ? new Vector2(0f, .5f) : new Vector2(1f, .5f);
-                edge.rectTransform.anchorMin = edge.rectTransform.anchorMax = anchor;
-                edge.rectTransform.pivot = new Vector2(.5f, .5f);
-                edge.rectTransform.anchoredPosition = i == 0 ? new Vector2(0f, -18f)
-                    : i == 1 ? new Vector2(0f, 18f) : i == 2 ? new Vector2(18f, 0f) : new Vector2(-18f, 0f);
-                bool horizontal = i < 2;
-                edge.rectTransform.sizeDelta = horizontal ? new Vector2(1440f, 74f) : new Vector2(900f, 58f);
-                edge.rectTransform.localRotation = horizontal ? Quaternion.identity : Quaternion.Euler(0f, 0f, 90f);
+                var edge = CreateImage("LowHp_InkEdge_" + i, _canvas.transform, sprite, UiStyle304SO.A(s.Veil, 0f));
+                InkRevealEffect.On(edge, s, InkRevealMode.Edges, 1f);
+                var r = edge.rectTransform;
+                r.pivot = new Vector2(.5f, .5f);
+                if (i == 0) { r.anchorMin = new Vector2(0f, 1f); r.anchorMax = new Vector2(1f, 1f); r.localScale = new Vector3(1f, -1f, 1f); }
+                else if (i == 1) { r.anchorMin = new Vector2(0f, 0f); r.anchorMax = new Vector2(1f, 0f); }
+                else if (i == 2) { r.anchorMin = r.anchorMax = new Vector2(0f, .5f); r.localRotation = Quaternion.Euler(0f, 0f, -90f); }
+                else { r.anchorMin = r.anchorMax = new Vector2(1f, .5f); r.localRotation = Quaternion.Euler(0f, 0f, 90f); }
                 _dangerEdges[i] = edge;
+            }
+            FitDangerEdges(true);
+        }
+
+        private void FitDangerEdges(bool force)
+        {
+            if (_dangerEdges == null || _canvas == null || _tokens == null) return;
+            Vector2 size = ((RectTransform)_canvas.transform).rect.size;
+            if (!force && size == _edgeCanvasSize) return;
+            _edgeCanvasSize = size;
+            float tb = _tokens.EdgeTopBottom, side = _tokens.EdgeSide;
+            for (int i = 0; i < _dangerEdges.Length; i++)
+            {
+                var r = _dangerEdges[i].rectTransform;
+                if (i == 0) { r.sizeDelta = new Vector2(0f, tb); r.anchoredPosition = new Vector2(0f, -tb * .5f); }
+                else if (i == 1) { r.sizeDelta = new Vector2(0f, tb); r.anchoredPosition = new Vector2(0f, tb * .5f); }
+                else if (i == 2) { r.sizeDelta = new Vector2(size.y, side); r.anchoredPosition = new Vector2(side * .5f, 0f); }
+                else { r.sizeDelta = new Vector2(size.y, side); r.anchoredPosition = new Vector2(-side * .5f, 0f); }
             }
         }
 
@@ -258,14 +279,17 @@ namespace Oheangbu.App
         {
             value = Mathf.Clamp01(value);
             _hp01 = value;
-            if (_hpImage != null) { if(Icons==null||value<_hpImage.fillAmount)_hpImage.fillAmount = value; }
+            if (_hpMeter != null) _hpMeter.SetValue(value);
             else if (_hpFill != null) _hpFill.localScale = new Vector3(value, 1f, 1f);
-            if (_dangerEdges == null || Skin == null) return;
-            float alpha = Mathf.InverseLerp(Skin.DangerBeginsAtHp, 0f, value) * Skin.MaximumDangerAlpha;
+            if (_dangerEdges == null || Skin == null || _tokens == null) return;
+            // QA1 (hud_lowhp at HP .28): the old ramp gave α.048 there (edge ~4 grey levels, invisible). The onset share makes
+            // the ink edge read as soon as HP is below DangerBeginsAtHp. QA2: the edges are on UI/InkReveal, whose remap gives the
+            // veil its sRGB (mockup) weight; InkAlphaFor only compensates a plain material (fallback style without the material).
+            float alpha = _tokens.DangerAlpha(value, Skin.DangerBeginsAtHp, Skin.MaximumDangerAlpha);
             for (int i = 0; i < _dangerEdges.Length; i++)
             {
                 Color color = _dangerEdges[i].color;
-                color.a = alpha * (i < 2 ? 1f : .78f);
+                color.a = alpha > 0f ? _tokens.InkAlphaFor(_dangerEdges[i].material, alpha * (i < 2 ? 1f : _tokens.EdgeSideAlpha)) : 0f;
                 _dangerEdges[i].color = color;
             }
         }
@@ -282,54 +306,144 @@ namespace Oheangbu.App
             _ink01 = value;
             _receivedTo = Mathf.Min(_receivedTo, value);
             _receivedFrom = Mathf.Min(_receivedFrom, _receivedTo);
-            if (_inkBarImage != null) { if(Icons==null||value<_inkBarImage.fillAmount)_inkBarImage.fillAmount = value; }
-            else if (_inkLiquid != null)
+            if (_inkMeter != null)
             {
-                Vector2 size = _inkFill.sizeDelta;
-                size.y = ((RectTransform)_inkFill.parent).rect.height * value;
-                _inkFill.sizeDelta = size;
-                _inkLiquid.color = new Color(Skin.Ink.r, Skin.Ink.g, Skin.Ink.b, Mathf.Lerp(.58f, Skin.Ink.a, value));
+                _inkMeter.SetValue(value, false);
+                if (_inkLiquid != null) _inkLiquid.fillAmount = value;
+                if (_inkCost01 > 0f) SetInkCostPreview(_inkCost01);
             }
             else if (_inkFill != null) _inkFill.localScale = new Vector3(value, 1f, 1f);
         }
 
-        public void NotifyInkGained(float actualReceived)
+        /// <summary>#304 작도 중 먹 비용 (DESIGN §5.9): cost of the stroke being drawn as a share of the full ink stroke; 0 hides.
+        /// Paper dashed box after the ink value; cinnabar when the ink left cannot pay it (the cast will fizzle). No caller yet.</summary>
+        public void SetInkCostPreview(float cost01)
         {
-            if (actualReceived <= 0f || _inkReceivedImage == null) return;
+            _inkCost01 = Mathf.Clamp01(cost01);
+            if (_inkCostBox == null || _inkMeter == null) return;
+            bool on = _inkCost01 > .0001f && _inkCostBox.sprite != null;
+            if (_inkCostBox.gameObject.activeSelf != on) _inkCostBox.gameObject.SetActive(on);
+            if (!on) return;
+            var meter = _inkMeter.Rect;
+            float w = meter.sizeDelta.x, bw = Mathf.Max(8f, _inkCost01 * w);
+            float x = Mathf.Min(_ink01 * w, Mathf.Max(0f, w - bw));
+            var r = _inkCostBox.rectTransform;
+            r.anchoredPosition = meter.anchoredPosition + Vector2.right * x;
+            r.sizeDelta = new Vector2(bw, meter.sizeDelta.y);
+            _inkCostBox.color = _inkCost01 > _ink01 + .0001f ? _style.CinnabarLift : _style.Paper;
+        }
+
+        public float InkCostPreview01 => _inkCost01;
+
+        public void NotifyInkGained(float actualReceived) => NotifyInkGained(actualReceived, _ink01);
+
+        /// <summary>#306: a received range ending at to01 (the fill right after that Gain - a chunk's flash lands later, at the
+        /// absorb). Clamped to the live meter: ink spent meanwhile is never highlighted, and nothing shows if all of it is gone.</summary>
+        public void NotifyInkGained(float actualReceived, float to01)
+        {
+            if (actualReceived <= 0f || _inkReceivedGraphic == null) return;
+            float to = Mathf.Min(Mathf.Clamp01(to01), _ink01);
+            float from = Mathf.Max(0f, Mathf.Clamp01(to01) - actualReceived);
+            if (to <= from) return;
             float now = Time.unscaledTime;
-            float from = Mathf.Max(0f, _ink01 - actualReceived);
             // Harvest pays once per gameplay frame. A long render frame must not split one held
             // extraction into repeated flashes; a real gap in both clocks starts a fresh range.
             bool continuousFrames = Time.frameCount >= _receivedLastFrame && Time.frameCount - _receivedLastFrame <= 2;
-            if (now - _receivedLast > .14f && !continuousFrames) { _receivedFrom = from; _receivedBegan = now; }
-            else _receivedFrom = Mathf.Min(_receivedFrom, from);
-            _receivedTo = _ink01; _receivedLast = now; _receivedLastFrame = Time.frameCount;
+            if (now - _receivedLast > .14f && !continuousFrames) { _receivedFrom = from; _receivedTo = to; _receivedBegan = now; }
+            else { _receivedFrom = Mathf.Min(_receivedFrom, from); _receivedTo = Mathf.Max(_receivedTo, to); }
+            _receivedLast = now; _receivedLastFrame = Time.frameCount;
         }
 
         private void UpdateInkReceived()
         {
-            if (_inkReceivedImage == null) return;
+            if (_inkReceivedGraphic == null || _inkMeter == null) return;
             float age = Time.unscaledTime - _receivedLast;
-            bool visible = age < .45f && _receivedTo > _receivedFrom;
-            _inkReceivedMask.gameObject.SetActive(visible);
+            float life = Mathf.Max(.05f, _tokens.ReceivedSeconds);
+            bool visible = age < life && _receivedTo > _receivedFrom;
+            if (_inkReceivedMask.gameObject.activeSelf != visible) _inkReceivedMask.gameObject.SetActive(visible);
             if (!visible) return;
-            float width = Skin.InkBarSize.x;
-            _inkReceivedMask.anchoredPosition = Skin.InkBarPosition + Vector2.right * (_receivedFrom * width);
-            _inkReceivedMask.sizeDelta = new Vector2((_receivedTo - _receivedFrom) * width, Skin.InkBarSize.y);
-            _inkReceivedImage.rectTransform.anchoredPosition = Vector2.left * (_receivedFrom * width);
+            var meter = _inkMeter.Rect;
+            float width = meter.sizeDelta.x, height = meter.sizeDelta.y;
+            _inkReceivedMask.anchoredPosition = meter.anchoredPosition + Vector2.right * (_receivedFrom * width);
+            _inkReceivedMask.sizeDelta = new Vector2((_receivedTo - _receivedFrom) * width, height);
+            var flash = _inkReceivedGraphic.rectTransform;
+            flash.anchoredPosition = Vector2.left * (_receivedFrom * width);
+            flash.sizeDelta = new Vector2(width, height);
+            _inkReceivedGraphic.Fill = _receivedTo;
             float attack = Mathf.Clamp01((Time.unscaledTime - _receivedBegan) / .06f);
-            var color = _inkReceivedImage.color;
-            color.a = .85f * attack * (1f - Mathf.SmoothStep(0f,1f,Mathf.InverseLerp(.16f,.45f,age)));
-            _inkReceivedImage.color = color;
+            var color = _inkReceivedGraphic.color;
+            color.a = _tokens.ReceivedAlpha * attack * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(life * .35f, life, age)));
+            _inkReceivedGraphic.color = color;
+        }
+
+        // #306 contract (IHealthBarSource306): enemy health under the lock-on enso and the boss bar. Track C calls these from
+        // CombatLoopWiring (null hides); track U draws them. No element colour on either bar.
+        /// <summary>The lock-on target's stroke: hidden for null, dead or boss targets (a boss uses SetBossHealth) and while the
+        /// reticle is hidden; a new target snaps value and chip (no chip carried over). Safe to call every frame.</summary>
+        public void SetTargetHealth(Oheangbu.Combat.IHealthBarSource306 target)
+        {
+            if (_targetHp == null) return;
+            target = HudHealthStroke304.Live(target);
+            _targetHpWanted = target != null && target.Alive && !target.IsBoss;
+            _targetHp.Bind(_targetHpWanted ? target : null);
+            PlaceTargetHp306();
+        }
+
+        /// <summary>The engaged boss's bar at the bottom (null = fade out: disengaged, leash reset, player death). Safe to call every frame.</summary>
+        public void SetBossHealth(Oheangbu.Combat.IHealthBarSource306 boss) { if (_bossBar != null) _bossBar.Set(boss); }
+
+        /// <summary>The boss bar gone at once, any dead-boss hold dropped (player death, teardown). Safe to call every frame.</summary>
+        public void HideBossHealthNow() { if (_bossBar != null) _bossBar.HideNow(); }
+
+        private void PlaceTargetHp306()
+        {
+            if (_targetHpGroup == null) return;
+            var live = HudHealthStroke304.Live(_targetHp.Source);
+            bool on = _targetHpWanted && live != null && live.Alive && _reticle != null && _reticle.gameObject.activeSelf && !_lockPreview;
+            var go = _targetHpGroup.gameObject;
+            if (go.activeSelf != on) go.SetActive(on);
+            if (!on) return;
+            _targetHp.Tick();
+            var e = EnemyBars;
+            float half = _lockOn != null ? _lockOn.Size * .5f : _reticle.sizeDelta.y * .5f;
+            go.transform.localPosition = _reticle.localPosition + Vector3.down * (half + e.TargetGap + e.TargetSize.y * .5f);
+            // briefly darker after a hit (hold, then back to the resting weight)
+            float since = Time.unscaledTime - _targetHp.LastHitTime, hold = e.TargetHitHoldMs / 1000f, fade = Mathf.Max(.01f, e.TargetHitFadeMs / 1000f);
+            _targetHpGroup.alpha = Mathf.Lerp(e.TargetHitAlpha, e.TargetIdleAlpha, Mathf.Clamp01((since - hold) / fade));
         }
 
         public void SetGroggy01(float value)
         {
             value = Mathf.Clamp01(value);
             _groggy01 = value;
-            if (_groggyImage != null) _groggyImage.fillAmount = value;
+            if (_lockPreview) return;                             // capture preview holds its own groggy value
+            if (_lockOn != null) _lockOn.SetGroggy01(value);
             else if (_groggyFill != null) _groggyFill.localScale = Vector3.one * value;
         }
+
+        /// <summary>Capture / tour preview (Art/UI304/screens/harness.md `lock:`): shows the lock-on enso at the mockup point
+        /// (1157, 592 of 1920x1080) with `groggy01`, holding it against UpdateReticle until called with on = false.
+        /// Gameplay values (Groggy01) are not changed.</summary>
+        public void PreviewLockOn304(bool on, float groggy01)
+        {
+            if (_reticle == null) return;
+            _lockPreview = on;
+            if (on)
+            {
+                _reticle.gameObject.SetActive(true);
+                _reticle.position = new Vector3(Screen.width * (1157f / 1920f), Screen.height * (1f - 592f / 1080f), 0f);
+                if (_lockOn != null) { _lockOn.Snap(); _lockOn.SetGroggy01(groggy01); }
+                else if (_groggyFill != null) _groggyFill.localScale = Vector3.one * Mathf.Clamp01(groggy01);
+            }
+            else
+            {
+                _reticle.gameObject.SetActive(false);
+                if (_lockOn != null) _lockOn.SetGroggy01(_groggy01);
+                else if (_groggyFill != null) _groggyFill.localScale = Vector3.one * _groggy01;
+            }
+        }
+
+        public bool LockPreview304 => _lockPreview;
 
         public void SetInteractionText(string value)
         {
@@ -339,25 +453,17 @@ namespace Oheangbu.App
             ApplyInteractionText(value);
         }
 
+        // #304: the icon-mode early return is gone (IMPLEMENTATION §7.1) - the prompt is [keycap] + verb phrase again.
         private void ApplyInteractionText(string value)
         {
-            if (_interactionRoot == null || _interactionText == null) return;
-            if(Icons!=null)return;
-            if(HideText){_interactionRoot.SetActive(false);return;}
-            string text = value ?? string.Empty;
-            if (_interactionText.text != text) _interactionText.text = text;
-            if (Skin != null && _interactionRect != null && text.Length > 0)
-            {
-                // Let a short interaction fit its text; long feedback can still wrap within the profile limit.
-                float width = Mathf.Clamp(_interactionText.preferredWidth + 84f, 260f, Skin.PromptSize.x);
-                _interactionRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
-                float height = Mathf.Clamp(_interactionText.preferredHeight + 36f, 66f, Skin.PromptSize.y);
-                _interactionRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
-            }
-            bool visible = text.Length > 0;
-            if (_interactionRoot.activeSelf != visible) _interactionRoot.SetActive(visible);
+            if (_prompt == null) return;
+            if (HideText) { _prompt.Hide(true); return; }
+            if (string.IsNullOrEmpty(value)) _prompt.Hide();
+            else _prompt.Show(value);
         }
 
+        /// <summary>Kept for the presenter (normalized local velocity). The #304 먹병 shows the ink value only; it does not slosh
+        /// (DESIGN §6: no ambient motion on HUD surfaces).</summary>
         public void SetInkMotion(Vector2 normalizedLocalVelocity)
         {
             _inkMotion = Vector2.ClampMagnitude(normalizedLocalVelocity, 1f);
@@ -368,23 +474,28 @@ namespace Oheangbu.App
             _inkHitImpulse = Mathf.Max(_inkHitImpulse, Mathf.Clamp01(strength));
         }
 
-        public void PulseReticle() { _pulse = 1f; }
+        public void PulseReticle() { _pulse = 1f; if (_lockOn != null) _lockOn.Pulse(); }
 
         public void UpdateReticle(Transform target, Camera cam)
         {
 #if UNITY_EDITOR
             if (_editorDiagnosticState) return;
 #endif
+            if (_lockPreview) return;
             _pulse = Mathf.Max(0f, _pulse - Time.unscaledDeltaTime * 4f);
             bool visible = target != null && cam != null;
             if (_reticle == null) return;
+            bool wasVisible = _reticle.gameObject.activeSelf;
             _reticle.gameObject.SetActive(visible);
             if (!visible) return;
-            Vector3 screen = cam.WorldToScreenPoint(target.position + Vector3.up * 1.1f);
+            float chest = _style != null ? _style.LockOn.ChestHeight : 1.1f;
+            Vector3 screen = cam.WorldToScreenPoint(target.position + Vector3.up * chest);
             if (screen.z <= 0f || screen.x < 0f || screen.x > Screen.width || screen.y < 0f || screen.y > Screen.height)
             { _reticle.gameObject.SetActive(false); return; }
             _reticle.position = screen;
-            _reticle.localScale = Vector3.one * (1f + .5f * _pulse * _pulse);
+            if (_lockOn != null) { if (!wasVisible) _lockOn.Snap(); }
+            else _reticle.localScale = Vector3.one * (1f + .5f * _pulse * _pulse);
+            PlaceTargetHp306();
         }
 
 #if UNITY_EDITOR
@@ -418,17 +529,10 @@ namespace Oheangbu.App
 
         private void LateUpdate()
         {
-            if(Icons!=null){
-                if(_hpImage!=null)_hpImage.fillAmount=Mathf.MoveTowards(_hpImage.fillAmount,_hp01,Time.deltaTime*.48f);
-                if(_inkBarImage!=null)_inkBarImage.fillAmount=Mathf.MoveTowards(_inkBarImage.fillAmount,_ink01,Time.deltaTime*.48f);
-            }
+            FitDangerEdges(false);
             UpdateInkReceived();
-            if (_inkLiquid == null) return;
+            PlaceTargetHp306();
             _inkHitImpulse = Mathf.MoveTowards(_inkHitImpulse, 0f, Time.unscaledDeltaTime * 2.8f);
-            float target = -_inkMotion.x * 5f + Mathf.Sin(Time.unscaledTime * 16f) * _inkHitImpulse * 7f;
-            _inkTilt = Mathf.Lerp(_inkTilt, target, 1f - Mathf.Exp(-10f * Time.unscaledDeltaTime));
-            _inkFill.localRotation = Quaternion.Euler(0f, 0f, _inkTilt);
-            _inkFill.anchoredPosition = new Vector2(_inkMotion.x * 2f, Mathf.Abs(_inkMotion.y) * 1.5f + _inkHitImpulse * 3f);
         }
 
         private Sprite CreateInkDisk()
@@ -455,29 +559,6 @@ namespace Oheangbu.App
             return sprite;
         }
 
-        private Sprite CreateRoundedBottleMask()
-        {
-            const int width=64,height=64;const float radius=10f;
-            _bottleMaskTexture=new Texture2D(width,height,TextureFormat.RGBA32,false,true)
-            {name="HUD_ProceduralBottleInterior",wrapMode=TextureWrapMode.Clamp,filterMode=FilterMode.Bilinear,
-                hideFlags=HideFlags.HideAndDontSave};
-            var pixels=new Color32[width*height];var opaque=new Color32(255,255,255,255);var clear=new Color32(255,255,255,0);
-            for(int y=0;y<height;y++)for(int x=0;x<width;x++)
-            {
-                float cx=Mathf.Clamp(x,radius,width-1-radius),cy=Mathf.Clamp(y,radius,height-1-radius);
-                float dx=x-cx,dy=y-cy;pixels[y*width+x]=dx*dx+dy*dy<=radius*radius?opaque:clear;
-            }
-            _bottleMaskTexture.SetPixels32(pixels);_bottleMaskTexture.Apply(false,true);
-            var sprite=Sprite.Create(_bottleMaskTexture,new Rect(0f,0f,width,height),new Vector2(.5f,.5f),width);
-            sprite.name="HUD_ProceduralBottleInterior";sprite.hideFlags=HideFlags.HideAndDontSave;return sprite;
-        }
-
-        private void AddPaperContour(Image image,float alpha)
-        {
-            var outline=image.gameObject.AddComponent<Outline>();var color=Skin.Paper;color.a=alpha;
-            outline.effectColor=color;outline.effectDistance=new Vector2(1.25f,-1.25f);outline.useGraphicAlpha=true;
-        }
-
         private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color)
         {
             var go = new GameObject(name, typeof(RectTransform), typeof(Image));
@@ -489,13 +570,6 @@ namespace Oheangbu.App
             return image;
         }
 
-        private static RectTransform NewRect(string name, Transform parent)
-        {
-            var go = new GameObject(name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            return (RectTransform)go.transform;
-        }
-
         private static void Anchor(RectTransform rect, Vector2 anchor, Vector2 pivot, Vector2 position, Vector2 size)
         {
             rect.anchorMin = rect.anchorMax = anchor;
@@ -504,21 +578,10 @@ namespace Oheangbu.App
             rect.sizeDelta = size;
         }
 
-        private static void Stretch(RectTransform rect, Vector2 inset = default)
-        {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = inset;
-            rect.offsetMax = -inset;
-        }
-
         private void OnDestroy()
         {
             if (_diskSprite != null) Destroy(_diskSprite);
             if (_diskTexture != null) Destroy(_diskTexture);
-            if (_bottleMaskSprite != null) Destroy(_bottleMaskSprite);
-            if (_bottleMaskTexture != null) Destroy(_bottleMaskTexture);
-            if (_font != null && _ownsFont) Destroy(_font);
         }
     }
 }

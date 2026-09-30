@@ -73,9 +73,18 @@ namespace Oheangbu.App.World.UI
 
     public sealed class WorldMapUiDependencies
     {
+        /// <summary>#304: the page style. null = UiStyle304SO.Resolve(Theme), then PlaytestUiRoot.Instance's theme.</summary>
+        public UiStyle304SO Style;
+        /// <summary>#304: the playtest theme (sounds, Style304). null = PlaytestUiRoot.Instance.Theme.</summary>
+        public PlaytestUiThemeSO Theme;
+        /// <summary>#304: map screen data (sprites + tunables). null = MapStyle304SO.Resolve() (Resources/UI304/map).</summary>
+        public MapStyle304SO MapStyle;
+        /// <summary>Support pictures only (#304 brings the text labels back): inn / cave / mountain drawings for 34 px+ marks.</summary>
         public CompactUiProfileSO Icons;
         public WorldMapBakedDataSO BakedData;
+        /// <summary>Not read since #304 (map text is TextMeshPro through UiStyle304SO); kept for callers that still set it.</summary>
         public Font Font;
+        /// <summary>Fallback paper only; the #304 sheet is Style304.Sprites.SheetMap.</summary>
         public Texture2D PaperTexture;
         public Color Ink = new Color(.12f, .14f, .13f, 1f);
         public Color Paper = new Color(.969f, .945f, .894f, 1f);

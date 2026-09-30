@@ -115,6 +115,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             Directory.CreateDirectory(Output + "/Loading270");
             var checks = new List<string>();
             void Check(bool pass, string name) { checks.Add((pass ? "PASS " : "FAIL ") + name); if (!pass) throw new Exception(name); }
+            void Skip(string name, string why) { checks.Add("SKIPPED " + name + " (" + why + ")"); }
             var candidate = FrontageScene249();
             var ui = candidate.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<PlaytestUiRoot>(true)).Single();
             var profile = ui.LoadingProfile; Check(profile != null && profile.Map == ui.MapData, "candidate loading profile uses actual location/map data");
@@ -146,15 +147,17 @@ namespace Oheangbu.EditorTools.WorldMacro
             ready.Sample(1f / 60, true, false); Check(!ready.Ready, "late texture demand revokes readiness");
             var preview = EditorSceneManager.NewPreviewScene();
             var host = new GameObject("Loading screen fixture"); SceneManager.MoveGameObjectToScene(host, preview);
-            var screen = host.AddComponent<WorldLoadingScreen270>(); screen.Profile = profile; screen.Build();
+            var screen = host.AddComponent<WorldLoadingScreen270>(); screen.Profile = profile;
+            screen.Style304 = UiStyle304SO.Resolve(ui.Theme);   // #304: real TMP fonts in the fixture capture (no PlaytestUiRoot.Instance here)
+            screen.Build();
             var cameraHost = new GameObject("Loading review camera"); SceneManager.MoveGameObjectToScene(cameraHost, preview); var camera = cameraHost.AddComponent<Camera>(); camera.scene = preview; camera.enabled = false; camera.cullingMask = 1 << 31;
             var canvas = screen.GetComponentInChildren<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 1;
             var previous = RenderTexture.active;
             try
             {
                 foreach (var t in host.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = 31;
-                var rotation = screen.Spinner.localRotation; screen.AdvanceSpinner(.5f);
-                Check(Quaternion.Angle(rotation, screen.Spinner.localRotation) > 35 && screen.Spinner.GetComponent<CanvasRenderer>() != null, "yin-yang has a renderer and rotates 36 degrees per half unscaled second");
+                // #304 (IMPLEMENTATION §7.12): the rotating yin-yang is retired; the loading screen's liveness is its progress line.
+                CheckProgressSignal304(screen, host, Check, Skip);
                 screen.SetProgress(.7f, "배치 및 저장 복원 중"); screen.SetProgress(.4f, "텍스처 선명도 준비 중");
                 Check(Mathf.Approximately(screen.Value, .7f) && screen.Stage == "텍스처 선명도 준비 중", "progress is monotonic while operation text updates");
                 foreach (var sample in new[] { ("mine", 1920, 1080, ui.Content.StartFeet), ("cheongrim", 1920, 1080, new Vector3(3110, 100, 2250)), ("wide", 2560, 1080, new Vector3(3110, 100, 2250)), ("small", 1280, 720, ui.Content.StartFeet) })
@@ -177,6 +180,81 @@ namespace Oheangbu.EditorTools.WorldMacro
             finally { EditorSceneManager.ClosePreviewScene(preview); }
             File.WriteAllLines(Output + "/Loading270/checks.txt", checks);
             return string.Join("\n", checks) + "\nEdit-mode configuration/readiness fixtures + offscreen UI captures, not actual full-world load timing.";
+        }
+
+        /// <summary>#304 loading liveness (replaces "spinner rotates"): the public progress signal <c>Progress01</c> never falls,
+        /// never claims more than the readiness value, and moves; the <c>ProgressLine304</c> child draws it; the yin-yang spinner is
+        /// gone; a stalled load changes its stage line after 2 s when the screen exposes a public tick. Reached by name so this
+        /// compiles before the flow rewrite lands: a missing member is SKIPPED, not FAIL. Leaves Value at most .6 so the
+        /// legacy monotonic check that follows (.7 then .4 -> .7) still holds.</summary>
+        static void CheckProgressSignal304(WorldLoadingScreen270 screen, GameObject host, Action<bool, string> check, Action<string, string> skip)
+        {
+            const string signal = "Progress01";
+            string[] tickNames = { "Advance304", "AdvanceProgress304", "Tick304" };
+            var tick = HarnessUiRules304.FindMethod(screen.GetType(), tickNames, new[] { typeof(float) });
+            float Read() => HarnessUiRules304.TryFloat(screen, signal, out float p) ? p : float.NaN;
+            void Tick(float seconds, int steps) { if (tick == null) return; for (int i = 0; i < steps; i++) tick.Invoke(screen, new object[] { seconds / steps }); }
+
+            if (!HarnessUiRules304.HasMember(screen, signal))
+            {
+                skip("progress signal rises monotonically", "WorldLoadingScreen270." + signal + " is not exposed yet");
+                skip("rotating spinner retired", "flow #304 loading screen not landed (no " + signal + ")");
+            }
+            else
+            {
+                float last = Read(), claimed = 0f; bool monotonic = !float.IsNaN(last) && last >= -1e-4f; var trace = new List<string> { last.ToString("0.00") };
+                foreach (float v in new[] { .1f, .35f, .2f, .6f, .6f, .45f })
+                {
+                    screen.SetProgress(v, "단계 " + v.ToString("0.00")); Tick(.1f, 1);
+                    float p = Read(); trace.Add(p.ToString("0.00"));
+                    monotonic &= !float.IsNaN(p) && p >= last - 1e-4f && p <= screen.Value + 1e-4f && p <= 1f + 1e-4f;
+                    last = Mathf.Max(last, p); claimed = Mathf.Max(claimed, p);
+                }
+                check(monotonic, "progress signal " + signal + " never falls and never exceeds readiness (" + string.Join(" ", trace) + ")");
+                if (claimed <= 0f && tick != null) { Tick(1f, 10); claimed = Read(); }
+                if (claimed > 0f) check(true, "progress signal moves with readiness (" + claimed.ToString("0.00") + " of " + screen.Value.ToString("0.00") + ")");
+                else skip("progress signal moves with readiness", signal + " stays 0 without a frame and no public tick(float) exists");
+
+                var spinner = HarnessUiRules304.Member(screen, "Spinner") as Component;
+                bool yinYang = host.GetComponentsInChildren<Component>(true).Any(c => c != null && c.GetType().Name == "LoadingYinYang270");
+                check(spinner == null && !yinYang, "rotating yin-yang spinner retired (progress line replaces it)");
+            }
+
+            // #304 integration: the flow screen names its line "ProgressLine" (FlowProgressLine304); either name counts
+            Transform line = host.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "ProgressLine304")
+                ?? host.GetComponentsInChildren<FlowProgressLine304>(true).Select(l => l.transform).FirstOrDefault();
+            if (line == null) skip("ProgressLine304 draws the progress", "no child named ProgressLine304 yet");
+            else
+            {
+                check(line.GetComponentsInChildren<Graphic>(true).Any(g => g.GetComponent<CanvasRenderer>() != null), "ProgressLine304 has a renderer");
+                float shown = float.NaN; string how = null;
+                var meter = line.GetComponentInChildren<InkMeter304>(true);
+                if (meter != null) { shown = meter.Value01; how = "InkMeter304.Value01"; }
+                else
+                {
+                    var graphic = line.GetComponentInChildren<InkMeterGraphic>(true);
+                    if (graphic != null) { shown = graphic.Fill; how = "InkMeterGraphic.Fill"; }
+                    else
+                    {
+                        var filled = line.GetComponentsInChildren<Image>(true).FirstOrDefault(i => i.type == Image.Type.Filled);
+                        var flowLine = line.GetComponent<FlowProgressLine304>();
+                        if (filled != null) { shown = filled.fillAmount; how = "Image.fillAmount"; }
+                        else if (flowLine != null) { shown = flowLine.Value; how = "FlowProgressLine304.Value"; }
+                    }
+                }
+                float p = Read();
+                if (how == null || float.IsNaN(p)) skip("ProgressLine304 shows the signal", how == null ? "no InkMeter304 / InkMeterGraphic / filled Image to measure" : "no " + signal);
+                else check(Mathf.Abs(shown - p) <= .02f, "ProgressLine304 shows the signal (" + how + "=" + shown.ToString("0.00") + ", " + signal + "=" + p.ToString("0.00") + ")");
+            }
+
+            if (tick == null) skip("stalled load rotates the stage line after 2 s", "no public tick(float) among " + string.Join("/", tickNames));
+            else
+            {
+                // #304 integration: the flow screen rotates its D20 waiting line (WaitingLine) on a stall and keeps the stage text
+                string Line() => HarnessUiRules304.Member(screen, "WaitingLine") as string ?? "";
+                string before = screen.Stage, beforeLine = Line(); Tick(2.1f, 21);
+                check(screen.Stage != before || Line() != beforeLine, "stalled load rotates the stage / waiting line after 2 s (" + before + " | " + beforeLine + " -> " + screen.Stage + " | " + Line() + ")");
+            }
         }
     }
 }

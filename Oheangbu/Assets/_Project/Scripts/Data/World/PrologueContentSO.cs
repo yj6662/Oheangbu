@@ -13,6 +13,19 @@ namespace Oheangbu.Data.World
             public string[] RequiredCompleted=Array.Empty<string>();
             public string[] RequiredDefeated=Array.Empty<string>();
             [TextArea] public string LockedText="아직 확인할 일이 남아 있다.";
+            // #306 dialogue (SPEC-PLAYTEST-306 #3): Conversation points speak through the one dialogue surface. All optional: empty
+            // Speaker = a leading "X: " in Text, else the prompt's name; empty Lines = pages derived from Text; Services = talk menu rows.
+            public string Speaker="";
+            [TextArea] public string[] Lines=Array.Empty<string>();
+            public PointService306[] Services=Array.Empty<PointService306>();
+        }
+        // #306 talk menu row. Label empty = WorldMacroPlaytestSO.DialogueLabels; Target empty = the kind's default (Trade village_shop,
+        // Upgrade village_artisan, Maintain 정비, Rest the nearest rest point in reach); Lines = the Talk row's pages.
+        public enum PointServiceKind306 { Talk, Trade, Upgrade, Rest, Maintain }
+        [Serializable] public sealed class PointService306
+        {
+            public PointServiceKind306 Kind; public string Label="",Target="";
+            [TextArea] public string[] Lines=Array.Empty<string>();
         }
         [Serializable] public sealed class Commission
         {

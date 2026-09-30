@@ -62,7 +62,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             public bool skinned;
             public bool presenterActive;
             public bool interactionStateMatches;
-            public bool oneCanvas;
+            public bool oneCanvas;              // #304: exactly one screen Canvas (HUD_Canvas) besides the world-space interaction prompt
+            public int hudScreenCanvases;
+            public string[] hudCanvasNames = Array.Empty<string>();
+            public string[] hudTextFindings = Array.Empty<string>();
             public bool oneAudioListener;
             public bool screenshotWritten;
             public bool renderedSampleValid;
@@ -406,17 +409,31 @@ namespace Oheangbu.EditorTools.WorldMacro
             var vitals=presenters.Length==1&&presenters[0].Body!=null?presenters[0].Body.GetComponent<PlayerVitals>():null;
             runtimeReport.skinned=hud!=null&&hud.IsSkinned;
             runtimeReport.presenterActive=session!=null&&session.CanvasHudPresenterActive;
-            runtimeReport.oneCanvas=hud!=null&&hud.GetComponentsInChildren<Canvas>(true).Length==1;
+            // #304 adds HUD_Canvas children (meters, bearing line, toasts, prompt frame) but never a second screen Canvas;
+            // the lazily built world-space WorldInteractionPrompt is the one allowed extra.
+            var screenCanvases=HarnessUiRules304.HudScreenCanvases(hud);
+            runtimeReport.hudScreenCanvases=screenCanvases.Count;
+            runtimeReport.hudCanvasNames=screenCanvases.Select(canvas=>canvas.name+(canvas.renderMode==RenderMode.WorldSpace?"(world)":"")).ToArray();
+            runtimeReport.oneCanvas=hud!=null&&screenCanvases.Count==1&&screenCanvases[0].name=="HUD_Canvas"&&screenCanvases[0].transform.parent==hud.transform;
+            bool reticlePath=hud!=null&&hud.transform.Find("HUD_Canvas/Reticle")!=null;
+            HarnessUiRules304.AuditHudTexts(hud,out var outsideText,out var instructionText,out var hudNumbers);
+            runtimeReport.hudTextFindings=outsideText.Select(item=>"outside allow-list: "+item)
+                .Concat(instructionText.Select(item=>"instruction-style: "+item)).Concat(hudNumbers.Select(item=>"number: "+item)).ToArray();
             runtimeReport.oneAudioListener=Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude,FindObjectsSortMode.None).Count(listener=>listener.isActiveAndEnabled)==1;
             runtimeReport.hudHp01=hud!=null?hud.Hp01:-1f;runtimeReport.playerHp01=vitals!=null?vitals.Hp01:-1f;
             runtimeReport.hudInk01=hud!=null?hud.Ink01:-1f;runtimeReport.hudGroggy01=hud!=null?hud.Groggy01:-1f;
-            runtimeReport.interactionStateMatches=hud!=null&&session!=null&&hud.InteractionVisible==!string.IsNullOrEmpty(session.CurrentHudText);
+            // #304: the prompt leaves out the routed wake line and toast-forwarded feedback (WorldMacroPlaytestHudPresenter.PromptText)
+            runtimeReport.interactionStateMatches=hud!=null&&session!=null&&hud.InteractionVisible==!string.IsNullOrEmpty(WorldMacroPlaytestHudPresenter.PromptText(session));
             if(huds.Length!=1)failures.Add("Expected one active HudController; found "+huds.Length+".");
             if(presenters.Length!=1)failures.Add("Expected one active HUD presenter; found "+presenters.Length+".");
             if(sessions.Length!=1)failures.Add("Expected one active playtest session; found "+sessions.Length+".");
             if(!runtimeReport.skinned)failures.Add("Actual HUD is not using the playtest skin.");
             if(!runtimeReport.presenterActive)failures.Add("Canvas interaction presenter is not active.");
-            if(!runtimeReport.oneCanvas)failures.Add("HUD must own exactly one runtime Canvas.");
+            if(!runtimeReport.oneCanvas)failures.Add("HUD must own exactly one screen Canvas (HUD_Canvas) besides the world-space interaction prompt; found "
+                +runtimeReport.hudScreenCanvases+" ["+string.Join(",",runtimeReport.hudCanvasNames)+"].");
+            if(!reticlePath)failures.Add("HUD_Canvas/Reticle is missing (harness path, IMPLEMENTATION 7.1).");
+            if(runtimeReport.hudTextFindings.Length>0)failures.Add("HUD text breaks the #304 text rules (prompt / toasts / bearing only, no instruction copy, no numbers): "
+                +string.Join("; ",runtimeReport.hudTextFindings.Take(6)));
             if(!runtimeReport.oneAudioListener)failures.Add("Scene must have exactly one active AudioListener.");
             if(!runtimeReport.interactionStateMatches)failures.Add("Interaction Canvas visibility disagrees with session CurrentHudText.");
             if(vitals==null||hud==null||Mathf.Abs(vitals.Hp01-hud.Hp01)>.001f)failures.Add("HUD HP does not equal the live PlayerVitals value.");

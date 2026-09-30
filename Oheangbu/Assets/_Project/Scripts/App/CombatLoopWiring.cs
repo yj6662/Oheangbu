@@ -14,7 +14,7 @@ namespace Oheangbu.App
     // 전투 코어 루프의 배선부 — 채널·이벤트를 잇기만 하고 규칙을 만들지 않는다.
     // 규칙의 소유: 해석=SpellResolver / 판정=ParryJudge / 게이지=GroggyMeter·Vitals / 경제=InkPool.
     // 작도 계층(Drawing)은 여기서도 「읽기와 InterruptLetter 호출」만 — 인식 불가침 유지.
-    public sealed class CombatLoopWiring : MonoBehaviour
+    public sealed partial class CombatLoopWiring : MonoBehaviour
     {
         [Header("채널 (기존 재사용)")]
         [SerializeField] private DrawnLetterEventChannelSO _letterDrawn;
@@ -35,12 +35,16 @@ namespace Oheangbu.App
         [Tooltip("씬의 전체 적 — 광역 cone 실판정 대상 [#137]. 전역 탐색 대신 씬 배선(싱글턴 금지)")]
         [SerializeField] private EnemyVitals[] _enemies = System.Array.Empty<EnemyVitals>();
         [SerializeField] private Transform _playerTransform;
+        [Tooltip("먹 자연 회복의 막힘·작도 판정 — 비우면 _playerVitals·_playerTransform에서 찾는다(D306)")]
+        [SerializeField] private PlayerMotor _motor;
 
         [Header("표현")]
         [SerializeField] private ElementPaletteSO _palette;
         [SerializeField] private HudController _hud;
         [SerializeField] private SpellVFX120.KtpContactProfile _contactVfx;
         private readonly List<SpellVFX120.KtpContactEffect> _contacts = new List<SpellVFX120.KtpContactEffect>();
+        [Tooltip("덩어리 뽑기 이펙트 — 덩어리가 붓에 닿는 순간 HUD 먹 획이 번쩍인다(값은 끊는 순간 즉시). 비우면 플레이어 루트에서 찾는다(D306)")]
+        [SerializeField] private HarvestInkStreamEffect _harvestVfx;
 
         [Header("비락온 자유 조준의 프로토 근사(§10.1) — 전방 원뿔 명중")]
         [SerializeField, Range(1f, 45f)] private float _freeAimAngle = 15f;
@@ -51,6 +55,17 @@ namespace Oheangbu.App
         private ParryJudge _judge;
         private GroggyMeter _groggy;
         private InkPool _ink;
+        private float _lastPlayerHitTime = float.NegativeInfinity;
+        // 보스 교전(D306 #8 [TEST]) — _targets와 같은 순번. 서로 피해를 주고받은 시각과 그때의 LifeRevision(되살림·목줄 초기화면 무효)
+        private float[] _bossContactAt = Array.Empty<float>();
+        private uint[] _bossContactLife = Array.Empty<uint>();
+        private EnemyVitals _engagedBoss;
+        private uint _engagedBossLife;
+        private EnemyVitals _diedBoss306; // 이번 프레임에 죽은 교전 보스 — HUD에 한 번 넘겨 빈 바 유지(BossDeadHoldMs)를 시작한다
+        public EnemyVitals EngagedBoss => _engagedBoss;
+        // 먹 자연 회복(D306 [TEST]) — 오행 마석 등급은 캠페인이 InkRegen.SetGrade로 알린다
+        public InkRegenerator InkRegen { get; private set; }
+        public HarvestAction Harvest => _harvest;
 
         // 날아가는 술식 [TEST 5차 검수] — 커밋 시 대상·착탄 시각 확정(유도 보장), 착탄에 피해.
         // 적 화염구와 같은 문법: 시각이 규칙이고, 비행은 연출이 따라온다
@@ -138,10 +153,13 @@ namespace Oheangbu.App
             _judge = judge;
             _groggy = groggy;
             _ink = ink;
+            InkRegen = _ink != null && _config != null ? new InkRegenerator(_config, _ink) : null;
         }
 
         private void Awake()
         {
+            if (_motor == null) _motor = _playerVitals != null ? _playerVitals.GetComponent<PlayerMotor>() : _playerTransform != null ? _playerTransform.GetComponent<PlayerMotor>() : null;
+            if (_harvestVfx == null && _harvest != null) _harvestVfx = _harvest.transform.root.GetComponentInChildren<HarvestInkStreamEffect>(true);
             CollectControllers();
             if (_contactVfx == null)
                 _contactVfx = Resources.Load<SpellVFX120.KtpContactProfile>(SpellVFX120.KtpContactProfile.ResourcePath);
@@ -156,6 +174,8 @@ namespace Oheangbu.App
                 if (vitals != null && !_targets.Contains(vitals)) _targets.Add(vitals);
             }
 
+            _bossContactAt = new float[_targets.Count]; _bossContactLife = new uint[_targets.Count];
+            for (int i = 0; i < _bossContactAt.Length; i++) _bossContactAt[i] = float.NegativeInfinity;
             _controllers.Clear();
             if (_enemy != null) _controllers.Add(_enemy);
             foreach (var vitals in _targets)
@@ -193,6 +213,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.HpChanged += RefreshHud;
             if (_playerVitals != null) _playerVitals.Died += OnPlayerDied;
             if (_lockOn != null) _lockOn.Changed += RefreshHud;
+            if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed += OnHarvestChunkAbsorbed;
             TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
         }
 
@@ -208,7 +229,9 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.HpChanged -= RefreshHud;
             if (_playerVitals != null) _playerVitals.Died -= OnPlayerDied;
             if (_lockOn != null) _lockOn.Changed -= RefreshHud;
+            if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed -= OnHarvestChunkAbsorbed;
             UnhookServices();
+            ClearBossEngagement(); if (_hud != null) { _hud.SetTargetHealth(null); _hud.SetBossHealth(null); } // 씬 해제 중 파괴된 HUD 보호
             ResetEncounterGroggy();
             _pendingCasts.Clear(); // 비활성 동안의 기한 지난 착탄이 재활성 시 유령 피해가 되지 않게
             _guardVisualLetter = default;
@@ -223,7 +246,19 @@ namespace Oheangbu.App
             TryHookServices();
             EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
             TickPendingCasts();
+            TickInkRegen();
             _contacts.RemoveAll(effect => effect == null);
+        }
+
+        // 자연 회복 — 메뉴·입력 막힘·작도 중·사망 중에는 돌지 않는다. scaled dt(정지=멈춤, 작도 감속=느려짐)
+        private void TickInkRegen()
+        {
+            if (InkRegen == null && _ink != null && _config != null) InkRegen = new InkRegenerator(_config, _ink);
+            if (InkRegen == null) return;
+            bool drawing = _drawingInput != null && _drawingInput.InDrawMode || _motor != null && _motor.IsDrawing;
+            bool blocked = _motor != null && (_motor.InputBlocked || !_motor.isActiveAndEnabled) || _playerVitals != null && _playerVitals.Hp01 <= 0f;
+            bool inCombat = _lockOn != null && _lockOn.Target != null || Time.time - _lastPlayerHitTime < _config.InkRegenCombatLinger;
+            InkRegen.Tick(Time.time, Time.deltaTime, drawing, blocked, inCombat);
         }
 
         // 착탄 시각 도래 = 피해 적용(피해=착탄 동기화 — 5차 검수). 대상이 먼저 죽었으면 허공이 된다
@@ -250,7 +285,7 @@ namespace Oheangbu.App
             if (_ink != null) _ink.Gained += OnInkReceived;
             _judge.OwnedImpactResolved += OnOwnedParryImpactResolved;
             foreach (var target in _targets)
-                if (target != null) target.CombatStateChanged += RefreshHud;
+                if (target != null) { target.CombatStateChanged += RefreshHud; target.DamageResolved += OnTargetDamageResolved; }
             _hooked = true;
         }
 
@@ -261,15 +296,110 @@ namespace Oheangbu.App
             if (_ink != null) _ink.Gained -= OnInkReceived;
             if (_judge != null) _judge.OwnedImpactResolved -= OnOwnedParryImpactResolved;
             foreach (var target in _targets)
-                if (target != null) target.CombatStateChanged -= RefreshHud;
+                if (target != null) { target.CombatStateChanged -= RefreshHud; target.DamageResolved -= OnTargetDamageResolved; }
             _hooked = false;
         }
 
-        private void OnInkReceived(float received) { _hud?.NotifyInkGained(received); }
+        // 덩어리 수입은 값이 즉시 들어오고, 번쩍임만 덩어리가 붓에 닿을 때로 미룬다(이펙트가 없거나 못 받으면 즉시)
+        private void OnInkReceived(float received)
+        {
+            // 덩어리 번쩍임 띠는 Gain 직후의 먹 값을 함께 맡긴다(비행 중 패링 환급·지출로 띠가 밀리지 않게)
+            if (_harvest != null && _harvest.PayingChunk && _harvestVfx != null && _harvestVfx.QueueChunkFeedback(received, _ink != null ? _ink.Value : 1f)) return;
+            _hud?.NotifyInkGained(received);
+        }
+        private void OnHarvestChunkAbsorbed(float received, float to01, float kick)
+        { _hud?.NotifyInkGained(received, to01); if (kick > 0f) _hud?.KickInk(kick); }
 
         private void LateUpdate()
         {
             _hud?.UpdateReticle(_lockOn != null && _lockOn.Target != null ? _lockOn.Target.transform : null, Camera.main);
+            TickHealthBars();
+        }
+
+        // ---- 적 체력 표시(D306 #8 [TEST]) — 계약 스텁에 매 프레임 넘긴다(그리기는 HUD 몫). 할당 없음 ----
+        // 락온 체력 획 = 락온 대상(프로필 ShowLockOnBar), 교전 중 보스는 획 대신 하단 보스 바.
+        private void TickHealthBars()
+        {
+            if (_hud == null) return;
+            EnemyVitals locked = _lockOn != null ? _lockOn.Target : null;
+            EnemyVitals boss = SelectEngagedBoss(locked);
+            // 교전 중 보스가 방금 죽었으면 그 보스를 한 번 넘긴다(빈 바 유지 → 소멸). 이어지는 null은 유지를 끊지 않는다
+            if (boss == null && _diedBoss306 != null) _hud.SetBossHealth(_diedBoss306); else _hud.SetBossHealth(boss);
+            _diedBoss306 = null;
+            if (locked != null && locked.IsAlive && locked.ShowLockOnBar && locked != boss) _hud.SetTargetHealth(locked); else _hud.SetTargetHealth(null);
+        }
+
+        // 교전 = 살아 있는 IsBoss 적이 (락온 중이거나 BossEngageMemory초 안에 서로 피해를 주고받았고) BossEngageRange 안.
+        // 죽음·Restore/목줄 초기화(LifeRevision 변화)·플레이어 사망에 풀린다
+        private EnemyVitals SelectEngagedBoss(EnemyVitals locked)
+        {
+            if (_config == null || _playerVitals != null && _playerVitals.Hp01 <= 0f) { ClearBossEngagement(); return null; }
+            if (_engagedBoss != null && (_engagedBoss.LifeRevision != _engagedBossLife || !BossEngaged(_targets.IndexOf(_engagedBoss), locked)))
+            {
+                if (!_engagedBoss.IsAlive) _diedBoss306 = _engagedBoss; // 처치(초기화·목줄 복원은 살아 있다)
+                _engagedBoss = null;
+            }
+            if (_engagedBoss != null && (locked == null || locked == _engagedBoss || !locked.IsBoss)) return _engagedBoss; // 다른 보스를 락온하면 그쪽으로 바꾼다
+            int best = -1; float bestAt = float.NegativeInfinity;
+            for (int i = 0; i < _targets.Count; i++)
+            {
+                if (!BossEngaged(i, locked)) continue;
+                float at = _targets[i] == locked ? float.PositiveInfinity : _bossContactAt[i];
+                if (best < 0 || at > bestAt) { best = i; bestAt = at; }
+            }
+            if (best < 0) return null;
+            _engagedBoss = _targets[best]; _engagedBossLife = _engagedBoss.LifeRevision;
+            return _engagedBoss;
+        }
+
+        private bool BossEngaged(int index, EnemyVitals locked)
+        {
+            if (index < 0 || index >= _targets.Count || index >= _bossContactAt.Length) return false;
+            var boss = _targets[index];
+            if (boss == null || !boss.IsBoss || !boss.IsAlive || !boss.isActiveAndEnabled) return false;
+            if ((boss.transform.position - SummonPlayer.position).sqrMagnitude > _config.BossEngageRange * _config.BossEngageRange) return false;
+            return boss == locked || _bossContactLife[index] == boss.LifeRevision && Time.time - _bossContactAt[index] <= _config.BossEngageMemory;
+        }
+
+        private void MarkBossContact(int index)
+        {
+            if (index < 0 || index >= _bossContactAt.Length) return;
+            var boss = _targets[index];
+            if (boss == null || !boss.IsBoss || !boss.IsAlive) return;
+            _bossContactAt[index] = Time.time; _bossContactLife[index] = boss.LifeRevision;
+        }
+
+        // 플레이어 쪽 출처(직접·소환·지속 술식·갈무리·완주)의 실피해만 교전으로 친다
+        private void OnTargetDamageResolved(EnemyDamageResult result)
+        {
+            if (result.AppliedDamage <= 0f || result.Target == null || !result.Target.IsBoss) return;
+            var source = result.Attack.Source;
+            if (source == DamageSource.Enemy || source == DamageSource.Unknown) return;
+            MarkBossContact(_targets.IndexOf(result.Target));
+        }
+
+        // 적 → 플레이어 피해에는 가해자 출처가 없다(PlayerVitals.Damaged) — 사거리 안 가장 가까운 산 적이 보스일 때만 보스로 돌린다
+        // [TEST 근사]: 보스 근처 잡몹 싸움이 보스 바를 띄우지 않게. 속성 공격은 방어 판정의 Instigator로 정확히 잡는다
+        private void MarkPlayerHitBoss()
+        {
+            if (_config == null) return;
+            int best = -1; float bestSqr = _config.BossEngageRange * _config.BossEngageRange;
+            Vector3 player = SummonPlayer.position;
+            for (int i = 0; i < _targets.Count; i++)
+            {
+                var enemy = _targets[i];
+                if (enemy == null || !enemy.IsAlive || !enemy.isActiveAndEnabled) continue;
+                float sqr = (enemy.transform.position - player).sqrMagnitude;
+                if (sqr <= bestSqr) { best = i; bestSqr = sqr; }
+            }
+            MarkBossContact(best); // 보스가 아니면 MarkBossContact가 거른다
+        }
+
+        private void ClearBossEngagement()
+        {
+            _engagedBoss = null; _diedBoss306 = null;
+            if (_hud != null) _hud.HideBossHealthNow(); // 플레이어 사망·비활성: 빈 바 유지 중이어도 즉시 치운다(부활 위에 남지 않게)
+            for (int i = 0; i < _bossContactAt.Length; i++) _bossContactAt[i] = float.NegativeInfinity;
         }
 
         // ---- 작도 → 전투: 커밋된 글자 하나가 술식 한 발이 된다 ----
@@ -314,7 +444,7 @@ namespace Oheangbu.App
         }
 
         private bool TrySpendSpell(float cost) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f));
-        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ResetEncounterGroggy(); }
+        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ResetEncounterGroggy(); ClearBossEngagement(); }
         private void ResolveWard(SpellCast cast)
         {
             if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost))
@@ -480,13 +610,14 @@ namespace Oheangbu.App
         {
             // Legacy diagnostic calls have no owner: retain their feedback/refund but never guess a target.
             OnParryImpactResolved(result.Outcome, result.GuardElement, result.Point);
+            if (result.Attack.Instigator is EnemyVitals source && source != null && source.IsBoss) MarkBossContact(_targets.IndexOf(source)); // 막아낸 보스 공격도 교전
             ApplyParryProgress(result);
         }
 
         private void ApplyParryProgress(ParryImpactResult result)
         {
             if (result.Outcome == ParryOutcome.Success && result.Attack.Instigator is EnemyVitals attacker &&
-                _targets.Contains(attacker)) attacker.AddParry(result.Attack);
+                _targets.Contains(attacker)) { attacker.AddParry(result.Attack); OnParryCountered306(result, attacker); }
         }
 
         private void OnParryImpactResolved(ParryOutcome outcome, Element guardElement, Vector3 impactPoint)
@@ -513,12 +644,12 @@ namespace Oheangbu.App
             }
             if (outcome != ParryOutcome.Success) return;
             _ink?.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY)
-            _hud?.PulseReticle();                // 살짝의 효과 — 결투 계약의 고리가 응답한다
+            PulseReticle306();                   // 살짝의 효과 — 결투 계약의 고리가 응답한다 (#306: C2 hook may delay it to the counter stroke)
 
             // 접점 버스트(임시 — 3차 검수): 투사체가 방어막에 부딪혀 꺼지는 자리에서
             // 방어막 속성색 조각이 터진다. 색=팔레트 단일 출처(색=의미)
             Color burst = _palette != null ? _palette.GetBaseColor(InitialOf(guardElement)) : Color.white;
-            if (!originalContact && !authoredGuardContact) ParryBurstEffect.Spawn(impactPoint, burst, Camera.main);
+            if (!originalContact && !authoredGuardContact) ParryBurstEffect.Spawn(impactPoint, burst, Camera.main, PlayerParryBurstScale306());
         }
 
         private bool SpawnContact(GameObject source, Vector3 point, float scale, Element? element=null, char letter=default)
@@ -853,6 +984,8 @@ namespace Oheangbu.App
         // 피격 = 작도 중단(COMBAT-ATTACK 기본 규칙) — 글자만 소멸·모드 유지(SPEC-DRAWING-INPUT §3)
         private void OnPlayerDamaged(float damage)
         {
+            _lastPlayerHitTime = Time.time;
+            if (damage > 0) MarkPlayerHitBoss();
             _drawingInput?.InterruptLetter();
             var cam = Camera.main;
             if (damage > 0 && _contactVfx != null && cam != null)
@@ -881,7 +1014,7 @@ namespace Oheangbu.App
             if (_hud == null) return;
             if (_playerVitals != null) _hud.SetHp01(_playerVitals.Hp01);
             var target = GroggyHudTarget;
-            _hud.SetGroggy01(target != null ? target.Groggy.Value01 : 0f);
+            _hud.SetGroggy01(DisplayGroggy306(target));
         }
     }
 }

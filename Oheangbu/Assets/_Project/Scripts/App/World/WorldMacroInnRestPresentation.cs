@@ -4,7 +4,10 @@ using UnityEngine.UI;
 
 namespace Oheangbu.App.World
 {
-    /// <summary>Candidate-only, text-free doorway rest. Starts only after the durable rest transaction.</summary>
+    /// <summary>Candidate-only, text-free doorway rest. Starts only after the durable rest transaction.
+    /// #304 (DESIGN §5.15, IMPLEMENTATION §7.14): the Shade is the 먹장막 #0F0F0E revealed with UI/InkReveal in Edges mode (it
+    /// bleeds in from the screen edges, clears from the centre); the existing timing curve drives the reveal value unchanged.
+    /// Reduced motion (or a style without the InkReveal material) = the same curve as a plain alpha fade.</summary>
     [DisallowMultipleComponent]
     public sealed class WorldMacroInnRestPresentation : MonoBehaviour
     {
@@ -17,11 +20,15 @@ namespace Oheangbu.App.World
         public bool IsActive { get; private set; }
         public int CompletedCount { get; private set; }
         public float Elapsed { get; private set; }
-        public float FadeAlpha => veil != null ? veil.color.a : 0;
+        /// <summary>Veil coverage 0..1 (the timing curve; with InkReveal it is the reveal value, otherwise the alpha).</summary>
+        public float FadeAlpha => veil != null ? coverage : 0;
         public bool CanPresent(string id) => isActiveAndEnabled && id == PointId && Door != null
             && Session != null && PlaytestUiRoot.Instance != null && !PlaytestUiRoot.Instance.IsMenuOpen;
 
         Image veil;
+        InkRevealEffect fx;
+        UiStyle304SO style;
+        float coverage;
         GameplayUiGate gate;
         Vector3 doorPosition, returnFeet;
         Quaternion doorRotation, playerRotation, facingDoor;
@@ -56,7 +63,21 @@ namespace Oheangbu.App.World
             var rect = (RectTransform)image.transform;
             rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
             veil = image.GetComponent<Image>(); veil.raycastTarget = false;
-            veil.color = new Color(.035f, .029f, .023f, 0);
+            style = PlaytestUiRoot.Instance != null ? PlaytestUiView.Style(PlaytestUiRoot.Instance.Theme) : UiStyle304SO.Fallback;
+            PlaytestUiView.EnsureCanvasChannels(canvas);
+            fx = InkRevealEffect.On(veil, style, InkRevealMode.Edges, 0f);
+            Paint(0);
+        }
+
+        bool ShaderReveal => fx != null && style != null && style.Materials.InkReveal != null && veil.material == style.Materials.InkReveal && !UiTween304.ReducedMotion;
+
+        void Paint(float a)
+        {
+            coverage = Mathf.Clamp01(a);
+            Color c = style != null && !UiStyle304SO.IsFallback(style) ? style.Veil : new Color(.035f, .029f, .023f, 1);
+            if (ShaderReveal) { fx.Reveal = coverage; c.a = coverage > 0 ? 1 : 0; }
+            else { if (fx != null) fx.Reveal = 1; c.a = coverage; }
+            veil.color = c;
         }
 
         void Update()
@@ -73,7 +94,7 @@ namespace Oheangbu.App.World
             Door.SetPositionAndRotation(HingeWorld + rotation * (doorPosition - HingeWorld), rotation * doorRotation);
             float alpha = Elapsed < 1.1f ? Mathf.SmoothStep(0, 1, (Elapsed - .45f) / .65f)
                 : Elapsed < 1.95f ? 1 : 1 - Mathf.SmoothStep(0, 1, (Elapsed - 1.95f) / .85f);
-            veil.color = new Color(.035f, .029f, .023f, alpha);
+            Paint(alpha);
             if (!returned && Elapsed >= 1.35f)
             {
                 Session.Teleport(returnFeet, returnYaw);
@@ -85,7 +106,7 @@ namespace Oheangbu.App.World
         void Finish()
         {
             if (Door != null && IsActive) Door.SetPositionAndRotation(doorPosition, doorRotation);
-            if (veil != null) veil.color = new Color(.035f, .029f, .023f, 0);
+            if (veil != null) Paint(0);
             IsActive = false;
             // Menu input is held off during the transition; focus and held-key release remain gate-owned.
             if (ownsGate && gate != null) gate.ReleaseWhenNeutral();

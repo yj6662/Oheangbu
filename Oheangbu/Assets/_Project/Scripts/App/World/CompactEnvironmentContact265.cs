@@ -27,6 +27,8 @@ namespace Oheangbu.App.World
         readonly float[] pulseRadii=new float[PulseLimit];
         readonly Dictionary<Vector2Int,List<Vector3>> cells=new Dictionary<Vector2Int,List<Vector3>>();
         readonly Dictionary<Collider,bool> surfaces=new Dictionary<Collider,bool>();
+        // #306 pooled stand-ins (CompactNaturalSolids); kept apart so Prepare() does not forget them.
+        readonly Dictionary<Collider,bool> dynamicSurfaces=new Dictionary<Collider,bool>();
         readonly Dictionary<Collider,float> nextContact=new Dictionary<Collider,float>();
         readonly Rigidbody[] chips=new Rigidbody[ChipLimit];
         readonly float[] retireAt=new float[ChipLimit];
@@ -49,9 +51,13 @@ namespace Oheangbu.App.World
                 if(Mathf.Abs(p.y-point.y)<1.8f&&new Vector2(p.x-point.x,p.z-point.z).sqrMagnitude<sq)return true;
             return false;
         }
+        public int DynamicSurfaces=>dynamicSurfaces.Count;
+        // A reused pool collider re-registers with its new material; a released one may stay (it is disabled, so no contact).
+        public void RegisterDynamic(Collider collider,bool wood){if(collider!=null)dynamicSurfaces[collider]=wood;}
+        public void UnregisterDynamic(Collider collider){if(collider!=null){dynamicSurfaces.Remove(collider);nextContact.Remove(collider);}}
         public bool TryContact(Collider other,Vector3 point,float speed,float now,bool present=true)
         {
-            if(other==null||!surfaces.TryGetValue(other,out bool wood)||speed<.65f||!float.IsFinite(speed))return false;
+            if(other==null||!(surfaces.TryGetValue(other,out bool wood)||dynamicSurfaces.TryGetValue(other,out wood))||speed<.65f||!float.IsFinite(speed))return false;
             if(nextContact.TryGetValue(other,out float next)&&now<next)return false;
             nextContact[other]=now+.55f;ContactsAccepted++;
             if(present){Sound?.Emit(wood?"contact_wood265":"contact_stone265",point,Mathf.Clamp(speed*.12f,.12f,.5f));if(!wood&&speed>1.6f)KickChip(point,now);}

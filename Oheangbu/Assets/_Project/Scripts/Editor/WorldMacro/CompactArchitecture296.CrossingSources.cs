@@ -141,6 +141,13 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    Directory.CreateDirectory(O296);File.WriteAllLines(O296+"/crossing-materials-detail.txt",rows);return originals.Length+" private crossing materials updated; meshes/colliders unchanged. "+O296+"/crossing-materials-detail.txt";
   }
+  // Load-or-create a mesh asset at an explicit Assets/ path (CrossingBatch296.Finish meshFolder); same contract as Asset296.
+  static Mesh FolderMesh296(string path)
+  {
+   if(!path.StartsWith("Assets/",StringComparison.Ordinal))throw new ArgumentException("Mesh folder must be under Assets/: "+path);
+   string directory=Path.GetDirectoryName(path).Replace('\\','/');if(!Directory.Exists(directory))DevSceneKit.EnsureFolder(directory);
+   var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(path);if(mesh==null){mesh=new Mesh();AssetDatabase.CreateAsset(mesh,path);}return mesh;
+  }
   static void CrossingLods296(Transform holder,string id,Renderer[] near)
   {
    var levels=new List<LOD>{new LOD(.30f,near)};
@@ -237,7 +244,9 @@ namespace Oheangbu.EditorTools.WorldMacro
      list.Add(new CombineInstance{mesh=mesh,subMeshIndex=0,transform=Matrix4x4.identity});
     }
    }
-   public Renderer[] Finish(Transform parent,string id,bool collision=false)
+   // meshFolder: null = A296/Meshes/Crossings (unchanged #296 behaviour); otherwise an explicit Assets/ folder for the meshes.
+   // The combined LOD levels are still registered below, so CrossingLods296 writes no A296 LOD assets for them either.
+   public Renderer[] Finish(Transform parent,string id,bool collision=false,string meshFolder=null)
    {
     var renderers=new List<Renderer>();int part=0;
     foreach(var entry in parts[0])
@@ -245,7 +254,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      string name=id+"_"+part++;var levels=new Mesh[3];
      for(int level=0;level<3;level++)
      {
-      var levelMesh=Asset296("Meshes/Crossings/"+name+(level==0?"":"_sourceLOD"+level)+".asset",()=>new Mesh());
+      string file=name+(level==0?"":"_sourceLOD"+level)+".asset";
+      var levelMesh=meshFolder==null?Asset296("Meshes/Crossings/"+file,()=>new Mesh()):FolderMesh296(meshFolder+"/"+file);
       levelMesh.Clear();levelMesh.indexFormat=IndexFormat.UInt32;
       if(parts[level].TryGetValue(entry.Key,out var list))levelMesh.CombineMeshes(list.ToArray(),true,true);
       levelMesh.RecalculateBounds();EditorUtility.SetDirty(levelMesh);levels[level]=levelMesh;

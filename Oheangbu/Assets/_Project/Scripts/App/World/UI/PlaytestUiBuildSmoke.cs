@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Oheangbu.App;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,6 +17,8 @@ namespace Oheangbu.App.World.UI
         const float MaximumSeconds=120f;
         const string ReportArgument="--ui-smoke=";
         static bool started;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics(){started=false;}
 
         [Serializable] sealed class SmokeCheck
         {
@@ -103,12 +106,16 @@ namespace Oheangbu.App.World.UI
             if(!Critical("play-scene-ready",waitResult,"Play scene bound Session, map, and HUD."))yield break;
             var root=PlaytestUiRoot.Instance;var session=root.Session;
             var hud=FindFirstObjectByType<HudController>();
-            bool font=root.Theme!=null&&root.Theme.Font!=null&&root.GetComponentsInChildren<Text>(true).Any(t=>t.font==root.Theme.Font);
-            Add("korean-font",font,true,"Bundled theme font is assigned to runtime uGUI text.");
+            bool font=KoreanFont(root,hud,out string fontDetail);
+            Add("korean-font",font,true,fontDetail);
             Add("hud",hud!=null&&hud.IsSkinned&&hud.GetComponentsInChildren<Canvas>(true).Any(c=>c.enabled),true,"Skinned HUD and enabled Canvas found in the play scene.");
-            bool map=root.Map!=null&&root.Map.MiniRoot!=null&&root.Map.FullRoot!=null;
-            Add("map-presenter",map,true,"Runtime map has minimap and unfolded-map roots.");
+            bool map=root.Map!=null&&root.Map.FullRoot!=null;
+            Add("map-presenter",map,true,"Runtime map has its unfolded-map root.");
             if(!font||hud==null||!hud.IsSkinned||!map)yield break;
+            // #306: the minimap is back on the HUD; its root keeps the retired #304 names (PersistentMinimap / MiniRoot)
+            yield return WaitFor(()=>MinimapOnHud(root,hud),5f);
+            var mini=MiniRootOf(root.Map);
+            Add("minimap",waitResult,true,"MiniRoot="+(mini!=null?mini.name:"null")+" under HUD_Canvas (HudMinimap304 attached).");
 
             session.CombatActive=false;session.Cull();
             Add("collection-input-scope",false,false,"Collection uses diagnostic teleport and temporary gate release in the isolated smoke slot; native F input is not tested by this runner.");
@@ -170,6 +177,53 @@ namespace Oheangbu.App.World.UI
             string[] actualLetters=session.Progress.ui.knownSpellLetters.OrderBy(x=>x,StringComparer.Ordinal).ToArray();
             bool restored=session.Progress.ui.items.Count==expectedItems&&actualLetters.SequenceEqual(expectedLetters);
             Add("saved-state-restored",restored,true,"Item and known-letter state matched after the real Continue scene transition.");
+        }
+
+        /// <summary>Korean text renders (no tofu): the legacy bundled font on uGUI Text, OR the #304 TMP SDF assets
+        /// (UiStyle304SO font families and their fallbacks) on TMP labels. Every Hangul TMP label of the menu root and the HUD
+        /// must find its glyphs in its font or fallbacks (TMP_FontAsset.HasCharacters, dynamic atlas may add them).</summary>
+        static bool KoreanFont(PlaytestUiRoot root,HudController hud,out string detail)
+        {
+            bool legacy=root.Theme!=null&&root.Theme.Font!=null&&root.GetComponentsInChildren<Text>(true).Any(t=>t.font==root.Theme.Font);
+            var style=UiStyle304SO.Resolve(root.Theme);
+            var mapped=new HashSet<TMP_FontAsset>();
+            if(!UiStyle304SO.IsFallback(style)&&style.Fonts!=null)
+                foreach(var family in style.Fonts)
+                {
+                    if(family==null||family.Font==null)continue;mapped.Add(family.Font);
+                    if(family.Font.fallbackFontAssetTable!=null)foreach(var fb in family.Font.fallbackFontAssetTable)if(fb!=null)mapped.Add(fb);
+                }
+            var labels=new List<TMP_Text>(root.GetComponentsInChildren<TMP_Text>(true));
+            if(hud!=null)labels.AddRange(hud.GetComponentsInChildren<TMP_Text>(true));
+            int hangul=0,rendered=0,styleFont=0;var tofu=new List<string>();
+            foreach(var t in labels)
+            {
+                if(t==null||string.IsNullOrEmpty(t.text))continue;
+                string glyphs=new string(t.text.Where(c=>c>='가'&&c<='힣').Distinct().Take(24).ToArray());
+                if(glyphs.Length==0)continue;
+                hangul++;
+                if(t.font!=null&&mapped.Contains(t.font))styleFont++;
+                if(t.font!=null&&t.font.HasCharacters(glyphs,out uint[] _,true,true))rendered++;
+                else if(tofu.Count<6)tofu.Add(t.name+"("+(t.font!=null?t.font.name:"no font")+")");
+            }
+            bool tmp=hangul>0&&rendered==hangul&&styleFont>0;
+            detail="legacy uGUI theme font="+legacy+"; TMP Hangul labels="+hangul+", glyphs found="+rendered+", on UI304 style fonts="+styleFont
+                +", style="+(UiStyle304SO.IsFallback(style)?"FALLBACK(no fonts)":style.name)+(tofu.Count>0?", missing glyphs: "+string.Join(", ",tofu):"");
+            // a Hangul TMP label without its glyphs is tofu even when some legacy Text still uses the theme font
+            return (legacy||tmp)&&rendered==hangul;
+        }
+
+        static RectTransform MiniRootOf(WorldMapPresenter map)
+        {
+            // reached by name (kept from #304, when the member was a stub; #306 = the HUD minimap root)
+            var p=map!=null?map.GetType().GetProperty("MiniRoot"):null;
+            return p!=null?p.GetValue(map) as RectTransform:null;
+        }
+
+        static bool MinimapOnHud(PlaytestUiRoot root,HudController hud)
+        {
+            var mini=MiniRootOf(root!=null?root.Map:null);
+            return mini!=null&&hud!=null&&hud.Canvas!=null&&mini.name=="PersistentMinimap"&&mini.GetComponentInParent<Canvas>(true)==hud.Canvas;
         }
 
         bool PlayReady()

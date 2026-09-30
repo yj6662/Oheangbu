@@ -26,10 +26,9 @@ namespace Oheangbu.App.World
         private AudioSource[] _voices = new AudioSource[VoiceLimit];
         private WorldMacroAudioVoicePool _pool;
         private readonly Dictionary<WorldMacroPlaytestAudioProfileSO.Cue, double> _nextCueAt = new Dictionary<WorldMacroPlaytestAudioProfileSO.Cue, double>();
-        private bool _hooked, _applicationPaused, _timePaused, _harvesting;
+        private bool _hooked, _applicationPaused, _timePaused;
         private bool _focused = true;
         private float _runtimeMasterGain = 1f, _runtimeGameplayGain = 1f;
-        private Vector3 _harvestSource;
         private int _brushEvents, _acceptedCastEvents, _enemyHitEvents, _playerHitEvents, _parryEvents, _harvestEvents, _interactionEvents, _summonAppearEvents, _summonReleaseEvents, _cuePlays, _cooldownDrops;
         private string _lastEvent = "none", _lastCue = "none";
         public WorldMacroPlaytestAudioProfileSO Profile => _profile;
@@ -42,7 +41,7 @@ namespace Oheangbu.App.World
             + "; harvest=" + _harvestEvents + "; interaction=" + _interactionEvents + "; summonAppear=" + _summonAppearEvents
             + "; summonRelease=" + _summonReleaseEvents + "; cuePlays=" + _cuePlays + "; cooldownDrops=" + _cooldownDrops
             + "; concurrencyDrops=" + (_pool?.ConcurrencyDrops ?? 0) + "; fadedVoiceSteals=" + (_pool?.FadedSteals ?? 0)
-            + "; activeVoices=" + ActiveVoiceCount + "; harvestLoop=" + _harvesting + "; lastEvent=" + _lastEvent + "; lastCue=" + _lastCue;
+            + "; activeVoices=" + ActiveVoiceCount + "; harvestPulling=" + (_harvest != null && _harvest.State == HarvestState.Pulling) + "; lastEvent=" + _lastEvent + "; lastCue=" + _lastCue;
         public void ConfigureProfile(WorldMacroPlaytestAudioProfileSO profile) { StopAll(); _profile = profile; ApplyCurrentSettings(); }
         private bool UsesMixer => _profile != null && _profile.Mix != null && _profile.Mix.IsReady;
         public void ApplyVolumeSettings(float masterVolume, float gameplayVolume)
@@ -76,26 +75,12 @@ namespace Oheangbu.App.World
             bool pausedNow = Time.timeScale <= .0001f;
             if (pausedNow && !_timePaused) StopForSuspension();
             _timePaused = pausedNow;
-            bool extracting = CanPlay && _harvest != null && _harvest.IsExtracting && _profile.HarvestLoop != null && _profile.HarvestLoop.Clip != null;
-            if (extracting && !_harvesting)
-            {
-                _harvestSource = _harvest.ExtractSourcePosition;
-                Play(_profile.HarvestStart,_harvestSource);
-                if (_pool.Play(_profile.HarvestLoop,_harvestSource,1f,UsesMixer?_profile.Mix.Harvest:null,1,true)) _cuePlays++;
-            }
-            else if (!extracting && _harvesting)
-            {
-                _pool.ReleaseSlot(1,.14f);
-                if(CanPlay) Play(_profile.HarvestEnd,_harvestSource);
-            }
-            _harvesting = extracting;
-            if(extracting) _pool.MoveSlot(1,_harvest.ExtractSourcePosition);
             _pool?.Tick();
         }
         // A suspended device may stop its DSP clock, so it cannot finish an envelope.
         private void OnApplicationPause(bool paused) { _applicationPaused=paused; if(paused)StopAll(); }
         private void OnApplicationFocus(bool focused) { _focused=focused; if(!focused)StopForSuspension(); }
-        private void StopForSuspension() { _pool?.StopAll(false); _harvesting=false; _nextCueAt.Clear(); }
+        private void StopForSuspension() { _pool?.StopAll(false); _nextCueAt.Clear(); }
         private bool CanPlay => isActiveAndEnabled && !_applicationPaused && _focused && Time.timeScale > .0001f && _profile != null && _pool != null;
         private void OnStrokeStarted()
         {
@@ -127,7 +112,7 @@ namespace Oheangbu.App.World
                 _brushAdapter.SummonPresentationReleased += OnSummonReleased;
             }
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
-            if (_harvest != null) _harvest.Extracted += OnHarvested;
+            if (_harvest != null) { _harvest.PullStarted += OnHarvestPullStarted; _harvest.ChunkExtracted += OnHarvested; }
             if (_session != null) _session.InteractionResolved += OnInteractionResolved;
             if (_prologue != null) _prologue.InteractionPresented += OnJourneyInteraction;
             _hooked = true;
@@ -155,7 +140,7 @@ namespace Oheangbu.App.World
                 _brushAdapter.SummonPresentationReleased -= OnSummonReleased;
             }
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
-            if (_harvest != null) _harvest.Extracted -= OnHarvested;
+            if (_harvest != null) { _harvest.PullStarted -= OnHarvestPullStarted; _harvest.ChunkExtracted -= OnHarvested; }
             if (_session != null) _session.InteractionResolved -= OnInteractionResolved;
             if (_prologue != null) _prologue.InteractionPresented -= OnJourneyInteraction;
             _hooked = false;
@@ -210,13 +195,21 @@ namespace Oheangbu.App.World
                 Play(outcome==ParryOutcome.Block&&_profile.ExtendedPalette!=null?_profile.ExtendedPalette.Find("block"):_profile.Parry, point);
         }
 
-        private void OnHarvested(Vector3 point)
+        // D306 덩어리 뽑기: 시작에 HarvestStart, 끊을 때 HarvestEnd — 반복 소리 없음. 취소는 소리를 더하지 않는다.
+        // [LEGACY] WorldMacroPlaytestAudioProfileSO.HarvestLoop(#132 홀드 갈무리의 반복음)은 프로필에 남기되 읽지 않는다.
+        private void OnHarvestPullStarted(EnemyVitals target, Vector3 point)
+        {
+            _lastEvent = "harvest-pull";
+            if (!CanPlay) return;
+            Play(_profile.HarvestStart, point);
+        }
+
+        private void OnHarvested(EnemyVitals target, Vector3 point, float received)
         {
             _harvestEvents++;
             _lastEvent = "harvest-extracted";
             if (!CanPlay) return;
-            _harvestSource = point;
-            if (_profile.HarvestLoop == null || _profile.HarvestLoop.Clip == null) Play(_profile.Harvest, point);
+            Play(_profile.HarvestEnd != null && _profile.HarvestEnd.Clip != null ? _profile.HarvestEnd : _profile.Harvest, point);
         }
 
         private void OnJourneyInteraction(PrologueInteractionKind kind,Vector3 point,Oheangbu.App.Prologue.PrologueSession.InteractionResult result)
@@ -265,6 +258,6 @@ namespace Oheangbu.App.World
             if(_pool.Play(cue,point,gain,UsesMixer?(harvest?_profile.Mix.Harvest:_profile.Mix.Sfx):null))
             { _cuePlays++; _lastCue=cue.Clip.name; }
         }
-        private void StopAll() { _pool?.StopAll(true); _harvesting=false; _nextCueAt.Clear(); }
+        private void StopAll() { _pool?.StopAll(true); _nextCueAt.Clear(); }
     }
 }

@@ -1,4 +1,5 @@
 using Oheangbu.App.Demo;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using V = Oheangbu.App.World.UI.PlaytestUiView;
@@ -43,26 +44,39 @@ namespace Oheangbu.App.World.UI
             SetHud(false);
             if (Map != null) Map.SetVisible(false);
             V.Clear(modalLayer);
-            V.Image(V.Stretch("EndingShade", modalLayer), new Color(.025f, .03f, .025f, .52f), null, true);
-            var paper = V.Rect("EndingPaper", modalLayer, 0, 0, 1020, 620);
-            paper.anchorMin = paper.anchorMax = paper.pivot = new Vector2(.5f, .5f);
-            paper.anchoredPosition = Vector2.zero;
-            V.Image(V.Stretch("Paper", paper), Theme.Paper, null, true);
-            if (Theme.PaperTexture != null) V.Raw(V.Stretch("Fibers", paper), Theme.PaperTexture, new Color(1, 1, 1, .20f));
-            V.Text(paper, "Seal", "五 行 符", Theme.Font, 24, Theme.Seal, 70, 50, 880, 44, TextAnchor.MiddleCenter);
-            V.Text(paper, "Title", "황경 남문 개방", Theme.Font, 46, Theme.Ink, 60, 132, 900, 80, TextAnchor.MiddleCenter);
-            V.Rule(paper, Theme, 145, 242, 730);
-            V.Text(paper, "Body", "데모의 여정은 여기까지.\n\n함께해 주셔서 감사합니다.",
-                Theme.Font, 27, Theme.Ink, 90, 285, 840, 155, TextAnchor.UpperCenter);
-            var primary = V.Button(paper, "ReturnLobby", "저장하고 로비로", Theme, 115, 480, 380, 62,
-                () => StartCoroutine(ReturnTitle()), true);
-            V.Button(paper, "QuitDemo", "게임 종료", Theme, 525, 480, 380, 62,
-                () => Confirm("게임을 종료할까요?", "진행은 저장된다.", QuitApplication));
-            V.Text(paper, "Saved", "남문 개방 · 완료 저장됨", Theme.Font, 19, Theme.Muted, 80, 565, 860, 32, TextAnchor.MiddleCenter);
+            Content304BuildEnding();
             ApplyTextScale();
             PlayUi(Theme.ConfirmSound, .4f);
-            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(primary.gameObject);
             return true;
+        }
+
+        /// <summary>#304 여정의 끝 (DESIGN §7.9, IMPLEMENTATION §7.15): the confirm-strip grammar at 1100x520 over the uniform veil
+        /// α.66 - 부인 + 제목 Serif900 60 먹 + 산문 28 + 저장 meta, [저장하고 로비로] (initial selection, filled Enter, ink under-stroke)
+        /// and [게임 종료]. On paper the focus flips to an ink underlay with paper text. Names kept: EndingPaper, ReturnLobby, QuitDemo.</summary>
+        void Content304BuildEnding()
+        {
+            var s = Content304Style;
+            V.EnsureCanvasChannels(canvas);
+            FocusMark304.Attach(s, canvasRect);
+            V.Dim(s, modalLayer, -1f, "EndingShade");
+            var page = V.Page304(modalLayer, "EndingPage304");
+            var paper = V.SpriteImage(page, "EndingPaper", s.Sprites.SheetStrip, s.Sprites.SheetStrip != null ? Color.white : s.Sheet, 410, 280, 1100, 520, 0f, 1f, true);
+            var p = paper.transform;
+            V.Seal(s, p, 84, 70, 64);
+            V.Label(s, p, "Title", "황경 남문 개방", UiType304.Speaker60, s.Ink, 174, 60);
+            var body = V.Label(s, p, "Body", "데모의 여정은 여기까지.\n\n함께해 주셔서 감사합니다.", UiType304.Prose28, s.Ink, 176, 152, 840, 0, TextAlignmentOptions.TopLeft, true);
+            body.overflowMode = TextOverflowModes.Overflow;
+            V.Label(s, p, "Saved", "남문 개방 · 완료 저장됨", UiType304.Meta20, s.Ash, 176, 322);
+            var primary = V.FocusRow(s, p, "ReturnLobby", "저장하고 로비로", 88, 378, 560, 110, () => StartCoroutine(ReturnTitle()), new FocusRowSpec304
+            {
+                OnPaper = true, Role = UiType304.Title36, LabelX = 88, Underlay = StrokeClass304.WetM, UnderlayH = 122, UnderlayX = 0,
+                Key = "Enter", KeySmall = false, UnderStroke = true, UnderStrokeW = 300, SoundTheme = Theme,
+            });
+            V.FocusRow(s, p, "QuitDemo", "게임 종료", 700, 378, 340, 110, () => Confirm("게임을 종료할까요?", "진행은 저장된다.", QuitApplication), new FocusRowSpec304
+            {
+                OnPaper = true, Role = UiType304.Label28, LabelX = 60, SoundTheme = Theme,
+            });
+            if (EventSystem.current != null) FocusMark304.Select(primary.Button.gameObject);
         }
     }
 }

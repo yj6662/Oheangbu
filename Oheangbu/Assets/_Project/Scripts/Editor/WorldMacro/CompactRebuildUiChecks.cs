@@ -35,11 +35,25 @@ namespace Oheangbu.EditorTools.WorldMacro {
  }
  if(command=="ui-panel-audit"){
  Check(ui.Page=="일시정지","pause page open");
- Check(ui.GetComponentsInChildren<Transform>(false).Any(t=>t.name=="Folio"),"panel restored");
+ // #304 (D304): the page is a Page304 on an ink veil; the 1560x900 Folio is retired
+ Check(ui.GetComponentsInChildren<UiPageFit304>(false).Length>0&&ui.GetComponentsInChildren<Transform>(false).Any(t=>t.name=="Veil304"),"pause page built on Page304 + ink veil");
+ Check(!ui.GetComponentsInChildren<Transform>(false).Any(t=>t.name=="Folio"),"legacy folio retired");
  Check(!ui.GetComponentsInChildren<Transform>(false).Any(t=>t.name=="PauseSymbols"),"icon strip removed");
- var labels=ui.GetComponentsInChildren<Text>(false).Where(t=>t.enabled).Select(t=>t.text).ToArray();
- Check(labels.Contains("계속하기")&&labels.Contains("타이틀로")&&labels.Contains("설정"),"plain functional menu labels");
- Check(!labels.Any(t=>t.Contains("여정")||t.Contains("五 行 符")),"no ornamental menu copy");
+ var labels=HarnessUiRules304.LiveTexts(ui).Select(t=>HarnessUiRules304.TextOf(t).Trim()).ToArray();
+ Check(labels.Contains("계속하기")&&labels.Contains("타이틀로")&&labels.Contains("설정"),"plain functional menu labels (TMP or legacy)");
+ // "여정 기록됨" (save line) and the pause heading are #304 design copy; spaced ornamental hanja stays banned
+ Check(!labels.Any(t=>t.Contains("五 行 符")),"no spaced ornamental hanja copy");
+ var instruction=HarnessUiRules304.InstructionTexts(ui,false);Check(instruction.Count==0,"no instruction-style copy (DESIGN 3.3)"+Findings304(instruction));
+ var iconOnly=HarnessUiRules304.IconOnlySelectables(ui);Check(iconOnly.Count==0,"no icon-only Selectable (IMPLEMENTATION 9.6)"+Findings304(iconOnly));
+ }
+ if(command=="ui-label-audit"){
+ // current screen (any page, or the HUD): every action has a text label, no instruction copy, one 방점 on an open page
+ var iconOnly=HarnessUiRules304.IconOnlySelectables(ui);if(hud!=null)iconOnly.AddRange(HarnessUiRules304.IconOnlySelectables(hud));
+ Check(iconOnly.Count==0,"no icon-only Selectable on the current screen (page="+ui.Page+")"+Findings304(iconOnly));
+ var instruction=HarnessUiRules304.InstructionTexts(ui);if(hud!=null)instruction.AddRange(HarnessUiRules304.InstructionTexts(hud));
+ Check(instruction.Count==0,"no instruction-style text on the current screen"+Findings304(instruction));
+ CheckLastNotice304(ui,Check);
+ Check(ui.Page.Length==0||FocusMark304.VisibleCount==1,"one 방점 on an open page (visible="+FocusMark304.VisibleCount+", marks="+FocusMark304.ActiveCount+")");
  }
  if(command=="ui-cave-audit"){
  Check(s.Content.SaveSlot=="world-demo-compact-cave-v4","private v4 save slot");
@@ -57,7 +71,7 @@ namespace Oheangbu.EditorTools.WorldMacro {
  Check(s.InteractionVisuals.All(v=>v.Renderers.All(r=>!r.isPartOfStaticBatch)),"focused meshes remain separate from static scenery batches");
  Check(hud.Skin.InteractionLetterOffset<=.2f,"small object-relative F gap");
  Check(ui.MapData.PaintedRelief&&ui.MapData.RegionTiles.Length==1&&ui.MapData.RegionTiles[0].Texture.width>=2800,"dedicated high-resolution regional map");
- var detail=ui.Map.MiniRoot.GetComponentsInChildren<Transform>(true).First(t=>t.name=="CaveDetail");Check(!detail.gameObject.activeSelf,"red cave centerline disabled");
+ var details=ui.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="CaveDetail").ToArray();Check(details.All(t=>!t.gameObject.activeSelf),"red cave centerline disabled ("+(details.Length==0?"no CaveDetail object: persistent minimap retired":details.Length+" CaveDetail object(s) inactive")+")");
  foreach(var path in new[]{"Interaction/FocusOutline","Interaction/FocusMask","Interaction/WorldLetter","WorldMap/MiniPaper","WorldMap/PaperMapSurface"}){
  var shader=Resources.Load<Shader>(path);Check(shader!=null&&shader.isSupported&&!ShaderUtil.ShaderHasError(shader),"shader valid "+path);}
  }
@@ -116,17 +130,23 @@ namespace Oheangbu.EditorTools.WorldMacro {
  if(command=="ui-f-inspect"){
  var prompt=Resources.FindObjectsOfTypeAll<Canvas>().FirstOrDefault(c=>c.gameObject.scene.IsValid()&&c.name=="WorldInteractionPrompt");
  bool available=s.TryGetFocusedInteractionPosition(out var point);
- Check(!hud.InteractionVisible,"old screen-space interaction panel hidden");
- Check(prompt!=null&&prompt.renderMode==RenderMode.WorldSpace,"interaction canvas uses World Space");
+ // #304 (IMPLEMENTATION 7.1): the screen HUD prompt ([F] keycap + verb phrase) is back; the world F hides while it shows
+ Check(!available||hud.InteractionVisible,"screen HUD prompt shows the available interaction (icon-mode suppression removed)");
+ Check(prompt==null||prompt.renderMode==RenderMode.WorldSpace,"world interaction canvas (when built) uses World Space");
+ bool worldF=false;
  if(prompt!=null){
- var letters=prompt.GetComponentsInChildren<Text>(true);
+ var letters=HarnessUiRules304.Texts(prompt,true).ToArray();
  lines.Add("INFO focus="+s.FocusedId+" world="+prompt.transform.position+" scale="+prompt.transform.lossyScale+" parent="+prompt.transform.parent.name+" rootCanvas="+prompt.rootCanvas.name+" enabled="+prompt.enabled+" camera="+s.Walker.ViewCamera.name+" viewport="+s.Walker.ViewCamera.WorldToViewportPoint(prompt.transform.position));
- foreach(var t in letters)lines.Add("INFO text active="+t.isActiveAndEnabled+" color="+t.color+" font="+t.font+" verts="+t.cachedTextGenerator.vertexCount+" rect="+t.rectTransform.rect+" local="+t.transform.localPosition+" cull="+t.canvasRenderer.cull+" shader="+t.material.shader.name);
-
- Check(letters.Length==1&&letters[0].text=="F"&&!letters[0].raycastTarget,"only a non-intercepting F letter");
+ foreach(var t in letters)lines.Add("INFO text type="+t.GetType().Name+" active="+t.isActiveAndEnabled+" color="+t.color+" rect="+t.rectTransform.rect+" local="+t.transform.localPosition+" cull="+t.canvasRenderer.cull+" shader="+(t.material!=null?t.material.shader.name:"none")+(t is Text legacy?" font="+legacy.font+" verts="+legacy.cachedTextGenerator.vertexCount:""));
+ Check(letters.Length==1&&HarnessUiRules304.TextOf(letters[0])=="F"&&!letters[0].raycastTarget,"only a non-intercepting F letter");
  Check(prompt.GetComponentsInChildren<Image>(true).Length==0,"no paper, icon, or background");
- Check(prompt.gameObject.activeInHierarchy==available,"prompt visibility agrees with actual interaction availability at test pose");
- if(available){s.TryGetFocusedInteractionBounds(out var bounds);Check(Vector3.Distance(prompt.transform.position,new Vector3(bounds.center.x,bounds.max.y+hud.Skin.InteractionLetterOffset+hud.Skin.InteractionLetterHeight*.5f,bounds.center.z))<.01f,"F directly above actual bounds");Check(s.GetComponentInChildren<WorldMacroPlaytestHudPresenter>()?.OutlineCount>0||UnityEngine.Object.FindFirstObjectByType<WorldMacroPlaytestHudPresenter>().OutlineCount>0,"focused object outline active");Check(Quaternion.Angle(prompt.transform.rotation,s.Walker.ViewCamera.transform.rotation)<.1f,"F faces gameplay camera");}
+ worldF=prompt.gameObject.activeInHierarchy&&prompt.enabled&&letters.Any(l=>l.isActiveAndEnabled&&l.color.a>.01f);
+ }
+ Check(!(worldF&&hud.InteractionVisible),"one prompt surface: world F hidden while the HUD prompt shows");
+ Check(available||!worldF,"no world F without an available interaction at test pose");
+ if(available){
+ Check(s.GetComponentInChildren<WorldMacroPlaytestHudPresenter>()?.OutlineCount>0||UnityEngine.Object.FindFirstObjectByType<WorldMacroPlaytestHudPresenter>().OutlineCount>0,"focused object outline active");
+ if(worldF){s.TryGetFocusedInteractionBounds(out var bounds);Check(Vector3.Distance(prompt.transform.position,new Vector3(bounds.center.x,bounds.max.y+hud.Skin.InteractionLetterOffset+hud.Skin.InteractionLetterHeight*.5f,bounds.center.z))<.01f,"F directly above actual bounds");Check(Quaternion.Angle(prompt.transform.rotation,s.Walker.ViewCamera.transform.rotation)<.1f,"F faces gameplay camera");}
  }
  }
  if(command=="ui-f-near"){
@@ -151,7 +171,11 @@ namespace Oheangbu.EditorTools.WorldMacro {
  if(command=="ui-call-check"){
  Check(!call.Calling,"pendant gesture completed");Check(call.SuccessfulCalls==SessionState.GetInt("CompactUI.Calls",-1)+(SessionState.GetBool("CompactUI.CallExpected",false)?1:0),"front clearance, not road tagging, controls call outcome");
  Check(!ui.Gate.InputBlocked,"call releases input gate");Check(!call.TemporaryPendant.gameObject.activeSelf,"pendant stowed after call");
- Check(!ui.GetComponentsInChildren<Text>(false).Any(t=>t.enabled&&!string.IsNullOrWhiteSpace(t.text)),"no operational UI text after call");}
+ // #304: toasts (the call result is a Vehicle notice) may show; no other menu text and no instruction copy
+ var leftover=HarnessUiRules304.VisibleTexts(ui).Where(t=>!HarnessUiRules304.IsToastOrNotice(t)).Select(t=>HarnessUiRules304.Describe(t,ui.transform)).ToList();
+ Check(leftover.Count==0,"no operational UI text after call (toasts allowed)"+Findings304(leftover));
+ var instruction=HarnessUiRules304.InstructionTexts(ui);if(hud!=null)instruction.AddRange(HarnessUiRules304.InstructionTexts(hud));
+ Check(instruction.Count==0,"no instruction-style text after call"+Findings304(instruction));}
  if(command=="ui-rest-fail"){
  int events=0;Action<Oheangbu.Data.World.PrologueInteractionKind,Vector3> handler=(kind,point)=>{if(kind==Oheangbu.Data.World.PrologueInteractionKind.Rest)events++;};s.InteractionResolved+=handler;
  try{var before=s.Progress.ledger.checkpoint;var facts=s.Progress.campaign.Facts.ToArray();
@@ -166,10 +190,23 @@ namespace Oheangbu.EditorTools.WorldMacro {
  Check(s.Walker.Motor.SitRequested,"committed rest requests ordinary seated posture");Check(ui.Page=="","rest does not open a text menu");Check(s.Progress.ledger.checkpoint=="geumpyo_inn","rest checkpoint persisted");}
  if(command=="ui-audit"){
  Check(hud.Icons!=null&&ui.Theme.Icons==hud.Icons,"candidate UI profile shared");
- Check(hud.GetComponentsInChildren<Text>(false).All(t=>!t.enabled||string.IsNullOrWhiteSpace(t.text)||(t.canvas.renderMode==RenderMode.WorldSpace&&t.text=="F")),"HUD only permits the world-space interaction F");
- Check(ui.Map.MiniRoot.GetComponentsInChildren<Text>(true).All(t=>!t.enabled),"minimap labels replaced");
- var hp=hud.GetComponentsInChildren<Image>(true).Single(i=>i.name=="HP_BrushStroke");var ink=hud.GetComponentsInChildren<Image>(true).Single(i=>i.name=="Ink_BrushBar");
- Check(hp.color==hud.Icons.Health&&ink.color==hud.Icons.Ink&&hp.color!=ink.color,"health dark red and ink blue black");
+ // #304: text labels are back. The HUD may show the prompt (label + keycap), toasts, bearing labels, the world F;
+ // never instruction copy, never HUD numbers (C01)
+ HarnessUiRules304.AuditHudTexts(hud,out var outside,out var hudInstruction,out var numbers);
+ Check(outside.Count==0,"HUD text limited to the prompt, toasts, bearing labels and world F"+Findings304(outside));
+ Check(hudInstruction.Count==0,"HUD shows no instruction-style text (C09)"+Findings304(hudInstruction));
+ Check(numbers.Count==0,"HUD shows no numbers (C01)"+Findings304(numbers));
+ CheckLastNotice304(ui,Check);
+ // #306 (D306): the 먹 원상 minimap is back on the HUD - MiniRoot = HudMinimap304's root under HUD_Canvas, walked land only
+ var mini=MiniRoot304(ui.Map);var hudMini=hud.Minimap304;
+ Check(hudMini!=null&&mini==hudMini.Root&&hud.Canvas!=null&&mini.GetComponentInParent<Canvas>(true)==hud.Canvas,"minimap root under HUD_Canvas (#306; MiniRoot="+(mini!=null?mini.name:"null")+")");
+ var miniMat=hudMini!=null?hudMini.Material:null;
+ Check(miniMat!=null&&miniMat.GetFloat("_UnknownVeil")>=.999f&&miniMat.GetFloat("_UnknownShade")<=.001f&&miniMat.GetFloat("_UnknownRelief")<=.001f,
+ "minimap prints walked land only, no objective (CONST-RULES 3-4, AC-1e)"+(miniMat==null?" (material not bound yet)":""));
+ var style=PlaytestUiView.Style(hud.Skin);
+ var hp=MeterValueGraphic304(hud,"HP_BrushStroke","HP");var ink=MeterValueGraphic304(hud,"Ink_BrushBar","Ink");
+ Check(hp!=null&&ink!=null&&HarnessUiRules304.Near(hp.color,style.Cinnabar)&&HarnessUiRules304.Near(ink.color,style.Ink)&&!HarnessUiRules304.Near(hp.color,ink.color),
+ "health cinnabar and ink meter ink (UiStyle304) hp="+(hp!=null?hp.name+" "+HarnessUiRules304.Hex(hp.color):"missing")+" ink="+(ink!=null?ink.name+" "+HarnessUiRules304.Hex(ink.color):"missing"));
  Check(ui.MapData.ZoneAt(s.Content.StartFeet)!=null,"new start uses cave map");Check(s.Content.SaveSlot=="world-demo-compact-cave-v4","separate cave revision save");
  Check(ui.MapData.Markers.Any(m=>m.Kind==WorldMapMarkerKind.Mountain)&&!s.Progress.ui.discoveredMarkers.Contains("geumpyo_inn"),"mountain symbols exist; unseen inn not revealed");
  var eye=s.Walker.ViewCamera.transform.position;var rays=0;
@@ -180,5 +217,21 @@ namespace Oheangbu.EditorTools.WorldMacro {
  }
  string result=command+"\n"+string.Join("\n",lines);File.AppendAllText(Output+"/ui_runtime_checks.txt",result+"\n");return result;
  }
+ /// <summary>" : a; b; c …+N" for a check label (empty when nothing was found).</summary>
+ static string Findings304(List<string> items)=>items==null||items.Count==0?"":": "+string.Join("; ",items.Take(6))+(items.Count>6?" …+"+(items.Count-6):"");
+ /// <summary>The last notice raised through the #304 channel is not a key legend / imperative (the deleted "[M] 지도 [I] 소지품" hint).</summary>
+ static void CheckLastNotice304(PlaytestUiRoot ui,Action<bool,string> check){
+ var channel=UiStyle304SO.Resolve(ui.Theme).Notices;
+ if(channel==null||channel.RaisedCount==0){check(true,"no instruction-style notice raised (channel "+(channel==null?"unassigned":"idle")+")");return;}
+ var last=channel.Last;check(!HarnessUiRules304.IsInstructionStyle(last.Title)&&!HarnessUiRules304.IsInstructionStyle(last.Source),"last notice is not instruction-style ("+last.Kind+": "+last.Title+")");}
+ /// <summary>WorldMapPresenter.MiniRoot by name: #304 retires the persistent minimap and may remove the member.</summary>
+ static RectTransform MiniRoot304(WorldMapPresenter map)=>HarnessUiRules304.Member(map,"MiniRoot") as RectTransform;
+ /// <summary>The graphic carrying a HUD meter's value colour: the #304 InkMeter304 Value layer (named like the legacy image or
+ /// starting with the hint: HP304 / Ink304), else a Graphic that kept the legacy name.</summary>
+ static Graphic MeterValueGraphic304(Oheangbu.App.HudController hud,string legacyName,string hint){
+ var meters=hud.GetComponentsInChildren<InkMeter304>(true);
+ var meter=meters.FirstOrDefault(m=>m.name==legacyName)??meters.FirstOrDefault(m=>m.name==hint+"304")??meters.FirstOrDefault(m=>m.name.StartsWith(hint,StringComparison.OrdinalIgnoreCase));
+ if(meter!=null&&meter.Value!=null)return meter.Value;
+ return hud.GetComponentsInChildren<Graphic>(true).FirstOrDefault(g=>g.name==legacyName);}
  }
 }

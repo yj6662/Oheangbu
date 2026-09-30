@@ -44,11 +44,14 @@ namespace Oheangbu.EditorTools
             public int ribbonChecks, singlePointProjectionChecks, ribbonMeshChecks, harvestingFrames, harvestEndpointChecks, harvestGateChecks;
             public float minBoom = 1f, recoveryBoom, maxTipPixels, maxRibbonPixels, maxHarvestEndpointMeters;
             public float maxLockYawChange, harvestedInk, expectedHarvestInk, harvestedDamage, expectedHarvestDamage;
+            // D306 click harvest: one press = one pull = one chunk (one damage, one gain); holding never repeats it
+            public int harvestPulls, harvestChunks, harvestCancels, gatePulls, pullingFrames;
+            public float pullSeconds, expectedPullSeconds, minTargetHp = float.MaxValue, groggyDelta;
             public double elapsedWallSeconds;
             public List<string> failures = new List<string>();
             public List<Frame> samples = new List<Frame>();
             public List<PhaseTiming> phaseTimings = new List<PhaseTiming>();
-            public string clock = "captureDeltaTime=0; real unscaled phase duration; 30Hz input trajectory; InputSystem.Update and checks every Unity frame. Gameplay owns timeScale; harvest expectations sum actual deltaTime.";
+            public string clock = "captureDeltaTime=0; real unscaled phase duration; 30Hz input trajectory; InputSystem.Update and checks every Unity frame. Gameplay owns timeScale; harvest = one chunk per press (D306), timed by scaled Time.time; natural ink regen is allowed only at its configured rate.";
             public string ribbonContract = "The first point is projected and checked immediately. RibbonMeshBuilder requires at least two points to form a strip, so mesh existence is checked only for 2+ points. A one-point empty mesh is the existing polyline contract, not a delayed first-point projection.";
             public string scope = "Actual virtual Tab/Q/LMB; actual CameraRig sphere cast, LockOn pull, HarvestAction; 1920x1080 projection. No scene transition or art/FPS verdict.";
         }
@@ -124,7 +127,8 @@ namespace Oheangbu.EditorTools
         private Quaternion _oldRotation, _oldPivotRotation;
         private UnityEngine.Random.State _random;
         private int _phaseIndex, _phaseFrame, _trajectorySample, _inputFrame = -1, _lateFrame = -1;
-        private float _beforeInk, _beforeHp, _lockStartYaw, _lastRecoveryBoom, _phaseElapsed;
+        private float _beforeInk, _beforeHp, _lockStartYaw, _lastRecoveryBoom, _phaseElapsed, _pullStartedAt, _groggyBefore, _hpAtHarvest;
+        private CombatLoopWiring _wiring;
         private double _started;
         private Phase Current => (Phase)_phaseIndex;
 
@@ -173,6 +177,8 @@ namespace Oheangbu.EditorTools
             if (_input.InDrawMode || _lock.IsLocked || _harvest.IsExtracting || Get<bool>(_effect, "_active") || !_driver.enabled || !_feed.enabled || !_motor.enabled || !_input.enabled)
                 throw new InvalidOperationException("Begin from idle, unlocked player with visuals and input enabled");
             if (Get<bool>(_effect, "_debugHold")) throw new InvalidOperationException("Harvest debug hold must be off");
+            if (_effect.FlowVisible) throw new InvalidOperationException("Begin with no chunk pull effect visible");
+            _wiring = Object.FindFirstObjectByType<CombatLoopWiring>();
             _config = Get<CombatConfigSO>(_motor, "_config");
             _ink = Get<InkPool>(_harvest, "_ink");
             _controller = _motor.GetComponent<CharacterController>();
@@ -223,6 +229,7 @@ namespace Oheangbu.EditorTools
             serialized.FindProperty("_config").objectReferenceValue = _config; serialized.ApplyModifiedPropertiesWithoutUndo();
             _targetObject.SetActive(true);
             _lock.SetCandidates(new[] { _target });
+            _harvest.PullStarted += OnPullStarted; _harvest.ChunkExtracted += OnChunkExtracted; _harvest.PullCanceled += OnPullCanceled;
             _wallObject = new GameObject("DosaContext_BoomWall") { hideFlags = HideFlags.DontSave };
             _wall = _wallObject.AddComponent<BoxCollider>(); _wall.size = new Vector3(3f, 3f, .08f); _wall.enabled = false;
             Physics.IgnoreCollision(_controller, _wall, true);
@@ -285,6 +292,7 @@ namespace Oheangbu.EditorTools
             {
                 _target.transform.position = _targetOrigin;
                 SetInk(.35f); // 가득 찬 먹에서는 수급을 측정할 수 없어 fixture 초기 잔량만 조정한다.
+                _groggyBefore = _target.Groggy.Value01; _hpAtHarvest = _target.Hp;
             }
             if (Current == Phase.HarvestOutside)
                 _target.transform.position = _motor.transform.position + _basisForward * (_config.HarvestRange + 4f);
@@ -338,19 +346,20 @@ namespace Oheangbu.EditorTools
                 }
                 if (Current == Phase.Harvest)
                 {
-                    float gain = _ink.Value - _beforeInk, damage = _beforeHp - sample.targetHp;
-                    _report.harvestingFrames++; _report.harvestedInk += gain; _report.harvestedDamage += damage;
-                    _report.expectedHarvestInk += _config.HarvestInkPerSecond * Time.deltaTime;
-                    _report.expectedHarvestDamage += _config.HarvestDamagePerSecond * Time.deltaTime;
-                    Check(_harvest.IsExtracting, "actual harvest input produced no extraction");
-                    Check(Mathf.Abs(gain - _config.HarvestInkPerSecond * Time.deltaTime) < .0001f, "harvest ink differs from configured rate");
-                    Check(Mathf.Abs(damage - _config.HarvestDamagePerSecond * Time.deltaTime) < .0002f, "harvest damage differs from configured rate");
-                    if (Get<float>(_effect, "_reveal") >= 1f) CheckHarvestEndpoint(sample);
+                    float damage = _beforeHp - sample.targetHp;
+                    _report.harvestingFrames++; _report.harvestedDamage += damage; _report.minTargetHp = Mathf.Min(_report.minTargetHp, sample.targetHp);
+                    if (_harvest.IsExtracting) _report.pullingFrames++;
+                    // D306: HP changes only on the snap frame; the pull itself never damages
+                    Check(damage <= .0001f || _harvest.State == HarvestState.Cooldown, "harvest damaged the target outside the snap");
+                    Check(sample.targetHp >= 1f - .0001f, "harvest took the target below 1 HP");
+                    if (_effect.FlowProfile != null) { if (_effect.FlowVisible) CheckFlowEndpoint(sample); }
+                    else if (Get<float>(_effect, "_reveal") >= 1f) CheckHarvestEndpoint(sample);
                 }
                 if ((Current == Phase.HarvestRelease || Current == Phase.HarvestOutside || Current == Phase.HarvestDrawing) && _phaseFrame > 2)
                 {
                     _report.harvestGateChecks++;
-                    Check(Mathf.Abs(_ink.Value - _beforeInk) < .0001f && Mathf.Abs(_beforeHp - sample.targetHp) < .0001f, "harvest gate still changes ink/HP");
+                    // natural regen (InkRegenerator) may still fill at its configured rate; harvest must add nothing
+                    Check(_ink.Value - _beforeInk <= RegenAllowance() + .0001f && Mathf.Abs(_beforeHp - sample.targetHp) < .0001f, "harvest gate still changes ink/HP");
                     Check(!_harvest.IsExtracting, "harvest signal persists beyond two-frame grace");
                 }
                 _report.samples.Add(sample); _report.frames++; _report.phase = Current.ToString();
@@ -358,8 +367,9 @@ namespace Oheangbu.EditorTools
                 _phaseFrame++; _phaseElapsed += Time.unscaledDeltaTime;
                 if (_phaseElapsed >= Durations[_phaseIndex] / (float)Fps)
                 {
+                    if (Current == Phase.Harvest) CheckChunk();
                     if (Current == Phase.HarvestRelease)
-                    { _report.harvestReleased = !Get<bool>(_effect, "_active"); Check(_report.harvestReleased, "harvest stream did not fade after release"); }
+                    { _report.harvestReleased = _effect.FlowProfile != null ? !_effect.FlowVisible : !Get<bool>(_effect, "_active"); Check(_report.harvestReleased, "harvest stream did not fade after release"); }
                     _report.phaseTimings.Add(new PhaseTiming { phase = Current.ToString(), unityFrames = _phaseFrame,
                         plannedSeconds = Durations[_phaseIndex] / (float)Fps, actualUnscaledSeconds = _phaseElapsed });
                     _phaseFrame = 0; _phaseElapsed = 0f;
@@ -388,6 +398,41 @@ namespace Oheangbu.EditorTools
             { _report.ribbonMeshChecks++; Check(stroke.VertexCount > 0, "multi-point live ribbon mesh missing"); }
             else _report.singlePointProjectionChecks++;
         }
+        // D306 chunk pull: every visible flow frame aims at the final EffectTip (tendrils start there, the chunk lands there)
+        private void CheckFlowEndpoint(Frame sample)
+        {
+            sample.harvestEndpointMeters = Vector3.Distance(_effect.FlowSink, _rig.EffectTip.position);
+            _report.harvestEndpointChecks++; _report.maxHarvestEndpointMeters = Mathf.Max(_report.maxHarvestEndpointMeters, sample.harvestEndpointMeters);
+            Check(IsFinite(sample.harvestEndpointMeters) && sample.harvestEndpointMeters <= .001f, "chunk flow sink does not match final EffectTip");
+        }
+        private void OnPullStarted(EnemyVitals target, Vector3 point)
+        {
+            if (Current == Phase.Harvest) { _report.harvestPulls++; _pullStartedAt = Time.time; }
+            else _report.gatePulls++;
+        }
+        private void OnChunkExtracted(EnemyVitals target, Vector3 point, float received)
+        {
+            if (Current != Phase.Harvest) { _report.gatePulls++; return; }
+            _report.harvestChunks++; _report.harvestedInk += received; _report.pullSeconds = Time.time - _pullStartedAt;
+            _report.expectedHarvestInk = Mathf.Min(_config.HarvestChunkInk / _ink.CapacityMultiplier, 1f - (_ink.Value - received));
+        }
+        private void OnPullCanceled(HarvestCancelReason reason) { if (Current == Phase.Harvest) _report.harvestCancels++; }
+        // one held press over the whole phase: exactly one pull, one chunk, configured damage/ink once, no groggy, cooldown held
+        private void CheckChunk()
+        {
+            _report.expectedHarvestDamage = Mathf.Min(_config.HarvestChunkDamage * _target.DamageMultiplier, Mathf.Max(0f, _hpAtHarvest - 1f));
+            _report.expectedPullSeconds = _config.HarvestPullSeconds; _report.groggyDelta = _target.Groggy.Value01 - _groggyBefore;
+            Check(_report.harvestPulls == 1 && _report.harvestChunks == 1 && _report.harvestCancels == 0, "held press did not give exactly one pull and one chunk (pulls/chunks/cancels " + _report.harvestPulls + "/" + _report.harvestChunks + "/" + _report.harvestCancels + ")");
+            Check(Mathf.Abs(_report.harvestedDamage - _report.expectedHarvestDamage) < .001f, "chunk damage differs from configured single hit");
+            Check(Mathf.Abs(_report.harvestedInk - _report.expectedHarvestInk) < .001f, "chunk ink differs from configured single gain");
+            Check(Mathf.Abs(_report.pullSeconds - _report.expectedPullSeconds) < .1f, "pull length differs from configured pull seconds");
+            Check(Mathf.Abs(_report.groggyDelta) < .0001f, "harvest changed groggy");
+        }
+        private float RegenAllowance()
+        {
+            float grade = _wiring != null && _wiring.InkRegen != null ? _wiring.InkRegen.GradeMultiplier : 1f;
+            return _config.InkRegenPerSecond * grade * Mathf.Max(1f, _config.InkRegenOutOfCombatMultiplier) * Time.deltaTime / Mathf.Max(1f, _ink.CapacityMultiplier);
+        }
         private void CheckHarvestEndpoint(Frame sample)
         {
             var lines = Get<LineRenderer[]>(_effect, "_lines");
@@ -405,8 +450,10 @@ namespace Oheangbu.EditorTools
             Check(_report.actualWallCastHits > 5, "fixture wall was not the actual sphere-cast obstruction");
             Check(_report.wallRecovered && _report.wallRecoveryDrawingFrames > 5, "boom did not restore during drawing");
             Check(_report.lockDrawingFrames > 20 && _report.maxLockYawChange > 1f, "actual lock-on camera rotation not exercised");
-            Check(_report.harvestingFrames > 20 && _report.harvestedInk > 0f && _report.harvestedDamage > 0f, "actual harvest not exercised");
-            Check(_report.harvestEndpointChecks > 5 && _report.harvestReleased, "harvest endpoint/release coverage missing");
+            Check(_report.harvestingFrames > 20 && _report.harvestChunks == 1 && _report.harvestedInk > 0f && _report.harvestedDamage > 0f, "actual harvest not exercised");
+            Check(_report.gatePulls == 0, "out-of-range/drawing press started a pull");
+            // the #132 held stream reaches its reveal only after .55 s; the chunk pull ends at .45 s, so only the flow path has endpoint coverage
+            Check((_report.harvestEndpointChecks > 5 || _effect.FlowProfile == null) && _report.harvestReleased, "harvest endpoint/release coverage missing");
             Finish(_report.failedChecks == 0 ? "PASS" : "FAIL", null);
         }
         private void Check(bool condition, string detail)
@@ -476,6 +523,7 @@ namespace Oheangbu.EditorTools
             var errors = new List<Exception>();
             void Attempt(Action action) { try { action(); } catch (Exception e) { errors.Add(e); } }
             Attempt(() => { if (_input != null && _input.InDrawMode) { _input.enabled = false; _input.enabled = true; } });
+            Attempt(() => { if (_harvest != null) { _harvest.PullStarted -= OnPullStarted; _harvest.ChunkExtracted -= OnChunkExtracted; _harvest.PullCanceled -= OnPullCanceled; } });
             Attempt(() => { if (_lock != null) { if (_lock.IsLocked) _lock.Toggle(); _lock.SetCandidates(_oldCandidates); } });
             Attempt(() => { if (_wallObject != null) Object.Destroy(_wallObject); if (_targetObject != null) Object.Destroy(_targetObject); });
             foreach (var state in _assets) Attempt(() => { if (state.Asset != null) { state.Asset.devices = state.Devices; foreach (var map in state.Maps) map.map.devices = map.devices; } });

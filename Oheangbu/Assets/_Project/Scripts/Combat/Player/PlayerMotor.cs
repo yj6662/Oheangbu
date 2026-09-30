@@ -37,6 +37,8 @@ namespace Oheangbu.Combat
         private bool _drawing;
 
         public bool IsDrawing => _drawing;
+        // 메뉴·상호작용·환경 막힘 — 먹 자연 회복 등 배선부가 읽는다(D306)
+        public bool InputBlocked => EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked;
         public void ResetMotion(){_verticalVelocity=0;_pitch=0;ResetLocomotion();}
 
         private void Awake()
@@ -63,6 +65,7 @@ namespace Oheangbu.Combat
 
         private void OnDisable()
         {
+            _harvest?.Cancel(HarvestCancelReason.Disabled); // 모터가 꺼지면 막힘 검사도 멈춘다 — 뽑기가 홀로 끝나지 않게
             DisableLocomotion();
             if (_dodgeAction != null) _dodgeAction.performed -= OnDodge;
             if (_lockOnAction != null) _lockOnAction.performed -= OnLockOn;
@@ -74,7 +77,7 @@ namespace Oheangbu.Combat
         private void Update()
         {
             if (_config == null) return;
-            if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) { SuspendLocomotionInput(); return; }
+            if (InputBlocked) { _harvest?.Cancel(HarvestCancelReason.InputBlocked); SuspendLocomotionInput(); return; }
             if (HasLocomotion && Time.deltaTime <= 0f) return;
 
             float yawBeforeInput = transform.eulerAngles.y;
@@ -96,11 +99,11 @@ namespace Oheangbu.Combat
 
             if (_cameraPivot != null) _cameraPivot.localEulerAngles = new Vector3(_pitch, 0f, 0f);
 
-            // 갈무리 = 홀드(3차 플레이 검수 확정) — 누르는 동안 붓이 상대의 먹을 뽑아낸다.
-            // 작도 중엔 마우스가 붓이므로 무효. scaled dt — 감속 중엔 채집도 함께 느려진다
-            if (!_drawing && CanHarvestNow && _harvestAction != null && _harvestAction.IsPressed())
+            // 갈무리 = 좌클릭 한 번 덩어리 뽑기(D306 [TEST]) — 누름 프레임에 시작, 뽑기·끊기·냉각은 HarvestAction이 소유.
+            // 작도 중엔 마우스가 붓이므로 무효. 뽑는 시간은 scaled — 감속 중엔 뽑기도 함께 느려진다
+            if (!_drawing && CanHarvestNow && _harvestAction != null && _harvestAction.WasPressedThisFrame())
             {
-                _harvest?.TickHarvest(Time.deltaTime);
+                _harvest?.TryBeginPull();
             }
 
             // 이동 — 감속 중에도 scaled deltaTime을 그대로 쓴다(세상이 함께 느려진다)
@@ -149,16 +152,16 @@ namespace Oheangbu.Combat
         {
             if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) return;
             if (_drawing) return; // 작도 중 회피 없음 — 작도는 무방비의 시간이다(감속이 그 대가)
+            // 뽑는 중 회피 = 뽑기 취소(수입 0, D306) — 회피가 막히지 않는다
             if (HasLocomotion && (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsDodging
-                || (IsCrouching && !_locomotion.CrouchRollEnabled)
-                || (_harvest != null && _harvest.IsExtracting))) return;
+                || (IsCrouching && !_locomotion.CrouchRollEnabled))) return;
             Vector2 input = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
             Vector3 direction = input.sqrMagnitude > 0.01f
                 ? (transform.right * input.x + transform.forward * input.y).normalized
                 : transform.forward;
             bool roll = HasLocomotion && IsCrouching && _locomotion.CrouchRollEnabled;
             if (_dodge != null && _dodge.TryDodge(direction, roll ? _locomotion.CrouchRollSeconds : 0f))
-                _rolling = roll;
+            { _rolling = roll; _harvest?.Cancel(HarvestCancelReason.Dodge); }
         }
 
         private void OnLockOn(InputAction.CallbackContext _)
@@ -170,6 +173,7 @@ namespace Oheangbu.Combat
         private void OnDrawModeChanged(bool drawing)
         {
             _drawing = drawing;
+            if (drawing) _harvest?.Cancel(HarvestCancelReason.Drawing);
             SetCursorLocked(!drawing);
         }
 

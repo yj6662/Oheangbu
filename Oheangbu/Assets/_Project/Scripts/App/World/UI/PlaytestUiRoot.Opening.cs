@@ -9,7 +9,7 @@ namespace Oheangbu.App.World.UI
         bool TryShowOpeningIntroduction()
         {
             if(Session==null||!Session.OpeningIntroductionPending)return false;
-            if(!Session.TryMarkOpeningIntroductionSeen(out var error))ShowNotice(error,8);
+            if(!Session.TryMarkOpeningIntroductionSeen(out var error))Menu304ShowNotice(error,UiNoticeKind304.Error,8f);
             return false;
         }
     }

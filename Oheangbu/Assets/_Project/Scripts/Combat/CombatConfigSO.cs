@@ -50,7 +50,7 @@ namespace Oheangbu.Combat
         [Tooltip("몸 렌더러 표시 문턱 — 카메라 오프셋이 이 거리보다 멀 때만 몸을 그린다(니어클립 단면 방지)")]
         [SerializeField, Min(0.1f)] private float _bodyShowDistance = 0.8f;
 
-        [Header("먹 경제 — 몸을 써야 먹이 찬다(COMBAT-HARVEST 먹 3원 중 2원)")]
+        [Header("먹 경제 — 먹 3원: 갈무리 덩어리 뽑기 · 패링 순증 · 자연 회복(COMBAT-HARVEST, D306 [TEST])")]
         [SerializeField, Range(0f, 1f)] private float _inkStart = 1f;
         [SerializeField, Range(0f, 1f)] private float _spellInkCost = 0.15f;
         [SerializeField, Range(0f, 1f)] private float _misfireInkCost = 0.15f;
@@ -58,11 +58,37 @@ namespace Oheangbu.Combat
         [Tooltip("정답 패링 환급 — 소모 초과 환급이 곧 「순증」(COMBAT-PARRY)")]
         [SerializeField, Range(0f, 1f)] private float _parryInkRefund = 0.15f;
 
-        [Header("갈무리 — 홀드·락온 한정·단독 처치 불가(COMBAT-HARVEST). 원거리 12m. 누르는 동안 붓이 먹을 뽑아낸다(3차 검수 확정)")]
+        [Header("먹 자연 회복 [TEST — D306: 모두에게 기본 회복, 오행 마석 등급=회복 배율]")]
+        [Tooltip("초당 자연 회복(기본 용량 단위 — 0.05=빈 통에서 가득까지 20초). 0=끔")]
+        [SerializeField, Range(0f, 1f)] private float _inkRegenPerSecond = 0.05f;
+        [Tooltip("먹을 쓴 뒤 회복이 다시 시작되기까지(초, scaled)")]
+        [SerializeField, Min(0f)] private float _inkRegenDelay = 1f;
+        [Tooltip("자연 회복 상한(채움 비율) — 이 위는 갈무리·패링으로만")]
+        [SerializeField, Range(0f, 1f)] private float _inkRegenCap = 1f;
+        [Tooltip("비전투 배율(선택안 2) — 1=끔. 전투=락온 중이거나 최근 피격")]
+        [SerializeField, Min(0f)] private float _inkRegenOutOfCombatMultiplier = 1f;
+        [Tooltip("피격 뒤 전투로 보는 시간(초) — 비전투 배율 판정용")]
+        [SerializeField, Min(0f)] private float _inkRegenCombatLinger = 5f;
+        [Tooltip("오행 마석 등급 1당 회복 배율 가산(등급 3·0.25 → ×1.75)")]
+        [SerializeField, Min(0f)] private float _inkRegenGradeBonus = 0.25f;
+
+        [Header("갈무리 — 좌클릭 한 번 덩어리 뽑기 [TEST — D306]. 락온 한정·사거리·단독 처치 불가(HP 1 바닥)·그로기 없음")]
         [SerializeField, Min(0.5f)] private float _harvestRange = 12f;
-        [Tooltip("홀드 중 초당 먹 수급(0..1 비율)")]
+        [Tooltip("뽑는 시간(초, scaled) — 끝에 한 덩어리를 끊는다. 회피·피격·작도·대상 사망·사거리 이탈=취소, 수입 0")]
+        [SerializeField, Min(0.05f)] private float _harvestPullSeconds = 0.45f;
+        [Tooltip("덩어리를 끊은 뒤 다음 뽑기까지(초, scaled). 취소에는 냉각 없음")]
+        [SerializeField, Min(0f)] private float _harvestCooldown = 1.5f;
+        [Tooltip("덩어리 하나의 먹 수입(기본 용량 단위)")]
+        [SerializeField, Range(0f, 1f)] private float _harvestChunkInk = 0.30f;
+        [Tooltip("덩어리 하나의 약피해 — 끊는 순간 한 번, HP 1 바닥")]
+        [SerializeField, Min(0f)] private float _harvestChunkDamage = 2f;
+        [Tooltip("끊는 순간 적 피격 반응 허용(한 번). 끄면 표현 계층이 Harvest 출처 피해에 반응하지 않아야 한다")]
+        [SerializeField] private bool _harvestChunkReaction = true;
+        [Tooltip("적 한 목숨당 덩어리 상한(선택안 3). 0=무제한")]
+        [SerializeField, Min(0)] private int _harvestChunksPerLife = 0;
+        [Tooltip("[LEGACY — #132 홀드 갈무리] 초당 먹 수급. 덩어리 뽑기에서는 읽지 않는다(구 검사 호환)")]
         [SerializeField, Range(0f, 1f)] private float _harvestInkPerSecond = 0.1f;
-        [Tooltip("홀드 중 초당 약피해 — HP 1 바닥(단독 처치 불가)")]
+        [Tooltip("[LEGACY — #132 홀드 갈무리] 초당 약피해. 덩어리 뽑기에서는 읽지 않는다(구 검사 호환)")]
         [SerializeField, Min(0f)] private float _harvestDamagePerSecond = 4f;
 
         [Header("술식 투사체 [TEST 5차 검수 2026-08-28 — 피해=착탄 동기화]")]
@@ -108,6 +134,12 @@ namespace Oheangbu.Combat
         [SerializeField, Min(0f)] private float _rangedDamage = 12f;
         [SerializeField] private Vector2 _attackCooldownRange = new Vector2(1.2f, 2.2f);
 
+        [Header("적 체력 표시 [TEST — D306 #8]: 락온 체력 획 · 교전 보스 바(속성색 없음)")]
+        [Tooltip("보스 교전 기억(초, scaled) — 락온이 아니어도 이 시간 안에 서로 피해를 주고받았으면 보스 바를 보인다")]
+        [SerializeField, Min(0f)] private float _bossEngageMemory = 8f;
+        [Tooltip("보스 교전 거리(m) — 플레이어와 이보다 멀면 보스 바를 숨긴다(목줄 이탈 포함)")]
+        [SerializeField, Min(1f)] private float _bossEngageRange = 45f;
+
         public float MoveSpeed => _moveSpeed;
         public float LookSensitivity => _lookSensitivity;
         public float Gravity => _gravity;
@@ -135,6 +167,19 @@ namespace Oheangbu.Combat
         public float ParryInkCost => _parryInkCost;
         public float ParryInkRefund => _parryInkRefund;
         public float HarvestRange => _harvestRange;
+        public float InkRegenPerSecond => _inkRegenPerSecond;
+        public float InkRegenDelay => _inkRegenDelay;
+        public float InkRegenCap => _inkRegenCap;
+        public float InkRegenOutOfCombatMultiplier => _inkRegenOutOfCombatMultiplier;
+        public float InkRegenCombatLinger => _inkRegenCombatLinger;
+        public float InkRegenGradeBonus => _inkRegenGradeBonus;
+        public float HarvestPullSeconds => _harvestPullSeconds;
+        public float HarvestCooldown => _harvestCooldown;
+        public float HarvestChunkInk => _harvestChunkInk;
+        public float HarvestChunkDamage => _harvestChunkDamage;
+        public bool HarvestChunkReaction => _harvestChunkReaction;
+        public int HarvestChunksPerLife => _harvestChunksPerLife;
+        // [LEGACY — #132] 홀드 갈무리 수치. 런타임은 읽지 않는다
         public float HarvestInkPerSecond => _harvestInkPerSecond;
         public float HarvestDamagePerSecond => _harvestDamagePerSecond;
         public float SpellProjectileSpeed => _spellProjectileSpeed;
@@ -159,5 +204,7 @@ namespace Oheangbu.Combat
         public float ProjectileFlight => _projectileFlight;
         public float RangedDamage => _rangedDamage;
         public Vector2 AttackCooldownRange => _attackCooldownRange;
+        public float BossEngageMemory => _bossEngageMemory;
+        public float BossEngageRange => _bossEngageRange;
     }
 }

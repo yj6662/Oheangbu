@@ -278,7 +278,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    finally{Object.DestroyImmediate(go);}
    return output;
   }
-  static string WalkCompound297(string name)
+  // output: file name under <K297>/<name>/ (default walk.txt); gate-route-check writes walk-<scene>.txt / walk-open-<scene>.txt
+  static string WalkCompound297(string name,string output="walk.txt")
   {
    var data=CompoundData297(name);var source=Session292().Walker.Body;
    var go=new GameObject("Finish297_controller_fixture"){hideFlags=HideFlags.HideAndDontSave};go.SetActive(false);var cc=go.AddComponent<CharacterController>();
@@ -318,7 +319,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     result.AddRange(DoorClosedChecks297(data,cc,go));
    }
    finally{Object.DestroyImmediate(go);}
-   string text=string.Join("\n",result);File.WriteAllText(K297+"/"+name+"/walk.txt",text);return text;
+   string text=string.Join("\n",result);File.WriteAllText(K297+"/"+name+"/"+output,text);return text;
   }
  }
 }

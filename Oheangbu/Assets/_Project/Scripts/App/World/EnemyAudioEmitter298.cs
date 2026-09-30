@@ -140,7 +140,8 @@ namespace Oheangbu.App.World
         }
         void Damaged(EnemyDamageResult result)
         {
-            if (!bound || result.Target != vitals || result.AppliedDamage <= 0 || result.Killed) return;
+            // #306: a harvest chunk sounds a hit only when CombatConfigSO.HarvestChunkReaction allows it
+            if (!bound || result.Target != vitals || result.AppliedDamage <= 0 || result.Killed || !vitals.ReactsTo(result.Attack)) return;
             SyncLife(); Play(EnemyAudioRole298.Hit);
         }
         void Died()

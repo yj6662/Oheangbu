@@ -12,6 +12,8 @@ Measured galleries: main ~9-10 m wide / 6.6-7.3 m high, branches ~7 m / 5.5-6 m.
 Timber is round wood, not sawn boxes: tapered log posts battered slightly inward, split (half-round) caps seated on the post
 tops, lagging boards and wedges (쐐기) against the rock at LOD0, and two settled (leaning) posts held by a prop log. LOD1/2
 drop the lagging/wedges and the log facet count (8/6/4 sides). Collision (post boxes) is unchanged.
+#306 (PLAN §2-7): the main galleries and the portal gallery get spoil packwalls + dense full sets from cave297_mine306.py, so
+their wall-side props are off here (MAIN_WALL_PROPS); sleepers now lie across the rails (they were laid along them).
 Outputs Finish297/Cave/Dressing/Meshes/*.json and dressing.json (unity manifest: parent = mine, local coordinates).
 """
 import json, math, sys
@@ -28,6 +30,7 @@ MINE_T = (1483.0, 32.473, 5429.0)       # scene `mine` root after the #297 move 
 OUT = ROOT / 'Art/World/Compact/Rebuild/Finish297/Cave/Dressing'
 FLOOR = 135.8
 LEANING = {3: 1, 10: -1}                 # full-set index -> post that has settled (+1 right / -1 left) and is propped
+MAIN_WALL_PROPS = False                  # #306: main + portal-gallery timbering comes from cave297_mine306.py (packwall line)
 
 
 def to_local(w):
@@ -205,8 +208,8 @@ def track(mb, path, lod, gauge=.9):
         for a, b in zip(R[:-1:2], R[2::2]): beam(mb, a, b, .07, .09, 'iron')
     if lod < 2:
         for i in range(0, len(P), 1 if lod == 0 else 3):
-            c = P[i]; yaw = math.degrees(math.atan2(d[i, 0], d[i, 2]))
-            mb.box([c[0], c[1] + .04, c[2]], [gauge + .6, .1, .22], 'wood_board', yaw=yaw + 90, faces='xXzZY', uvscale=1.0)
+            c = P[i]; yaw = math.degrees(math.atan2(d[i, 0], d[i, 2]))   # box local z -> track direction, x (long side) across
+            mb.box([c[0], c[1] + .04, c[2]], [gauge + .6, .1, .22], 'wood_board', yaw=yaw, faces='xXzZY', uvscale=1.0)
 
 
 def ore_specs(main_p):
@@ -229,7 +232,8 @@ def main():
     lod_tris = []
     for lod in (0, 1, 2):
         tim = MB('CaveTimbers'); col = MB('CaveTimbers_collision'); rails = MB('CaveTrack'); side = 1; sets = 0; fulls = 0
-        for path, step, full in ((branch_p, 5.5, True), (recess_p, 5.0, True), (main_p, 7.0, False), (gallery_timbers, 6.0, False)):
+        runs = [(branch_p, 5.5, True), (recess_p, 5.0, True)] + ([(main_p, 7.0, False), (gallery_timbers, 6.0, False)] if MAIN_WALL_PROPS else [])
+        for path, step, full in runs:
             for p, t in samples(path, step):
                 hl, hr, ceil, n = section(V, p, t)
                 if hl is None or hr is None or ceil is None or ceil < 3.6: continue

@@ -155,6 +155,20 @@ namespace Oheangbu.App.World
         [Tooltip("Handle-only visual length stretch pinned at the ferrule. Brush root, bristle bones, sockets and tip offset stay unit scale.")]
         [Range(1f, 1.6f)] public float BrushScale = 1f;
 
+        [Header("#300 Cast follow-through (presentation only; recognition, cast timing and launch point unchanged)")]
+        [Tooltip("After a successful commit the close-up arm stays: the brush flicks past the launch point, then arm and brush lower out of frame together.")]
+        public bool CastFollowThrough;
+        [Tooltip("Seconds the close-up view and arm are held after the commit.")]
+        [Min(0f)] public float CastHoldSeconds = .30f;
+        [Tooltip("Share of the hold spent on the flick; the rest lowers the arm (reverse of NearRaiseOffset).")]
+        [Range(.05f, .9f)] public float CastFlickShare = .32f;
+        [Tooltip("Viewport point the flick passes (the basic-attack launch point, SPEC-SPELL-VFX120 v6).")]
+        public Vector2 CastFlickViewport = new Vector2(.6f, .4f);
+        [Tooltip("Viewport distance the flick overshoots past CastFlickViewport along its direction.")]
+        [Range(0f, .3f)] public float CastFlickOvershoot = .07f;
+        [Tooltip("Metres the world (third-person) arm reaches forward at the flick, easing out with ExitResponse.")]
+        [Min(0f)] public float CastWorldReach = .16f;
+
         [Header("Vertical grip follow chain (tip exact; arm follows)")]
         [Range(0f, 1f)] public float ShoulderFollow = .6f;
         [Tooltip("Close-up shoulder anchor follow in metres, counted inside MaximumNearShoulderCorrection.")]

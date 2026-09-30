@@ -36,5 +36,8 @@ namespace Oheangbu.App.World
         public Vector2 BottleSize = new Vector2(60f, 108f);
         public Vector2 ReticleSize = new Vector2(44f, 44f);
         public Vector2 PromptSize = new Vector2(780f, 112f);
+
+        [Header("#304 UI style (same asset as PlaytestUiThemeSO.Style304)")]
+        public UI.UiStyle304SO Style304;
     }
 }

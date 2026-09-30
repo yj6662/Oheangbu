@@ -113,7 +113,7 @@ def collect(folder):
     return {"revision": "architecture-296", "generatedUtc": datetime.now(timezone.utc).isoformat(),
             "sourceFolder": str(folder), "scope": "Read-only #296 receipts. Missing/stale evidence stays pending; no raw save payloads, PNG bytes or Unity scene reads.",
             "checkStates": dict(Counter(row["status"] for row in rows)), "checks": rows,
-            "counts": {"landscape": {key: landscape.get(key) for key in ("Removed", "RemainingConflicts", "ArenaRemovals", "BridgeRemovals", "GateRemovals", "ReviewedTreeRemovals", "CompoundTreeRemovals")},
+            "counts": {"landscape": {key: landscape.get(key) for key in ("Removed", "RemainingConflicts", "ArenaRemovals", "BridgeRemovals", "GateRemovals", "ReviewedTreeRemovals", "CompoundTreeRemovals", "RouteRemovals")},
                        "surface": {key: surface.get(key) for key in ("GroundMaterials", "NaturalHighlandMaterials", "PreservedHighlandConstructionMaterials")},
                        "legacy": {key: legacy.get(key) for key in ("FoundationStones", "HouseholdTimbers", "RetainedLanternCaps")}},
             "provenance": review.provenance_data({"architecture.json": sheet}),

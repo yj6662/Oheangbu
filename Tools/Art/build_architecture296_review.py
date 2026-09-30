@@ -187,7 +187,7 @@ def checks_data(folder: Path):
         ("후보 생성 반복성", "reproduction-check.txt", "text"),
         ("지면 셰이더 정적·수치 검사", "Surface/offline-checks.json", "json"),
         ("선택 재질의 전체 Unity 셰이더 pass", "Surface/shader-preflight.json", "json"),
-        ("실내·교량·성문 통로 식생 제거 독립 대조", "Landscape/independent-checks.json", "json"),
+        ("실내·교량·성문·보행 경로 통로 식생 제거 독립 대조", "Landscape/independent-checks.json", "json"),
         ("실제 Play 입력·전투 API·저장·남문", "Runtime/checks.json", "runtime"),
         ("현강 실양안 뭄 표면·왕복·저장·익사·낙사", "Mum/hyeongang-play-checks.json", "runtime"),
         ("실제 가마·교량 지지·발길 전용 제외", "Vehicle/checks.json", "runtime"),
