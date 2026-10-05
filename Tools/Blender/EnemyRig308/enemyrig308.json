@@ -1,0 +1,73 @@
+{
+  "schema": "308.enemyrig.blender.1",
+  "note": "SPEC-ENEMY-RIG-VERIFY-308 (TEST). Every number here is a TEST value; the walk-fix script reads them, nothing is hard-coded there.",
+  "assets": "Oheangbu/Assets/_Project/Art/Characters/Folklore298",
+  "out": "Art/Characters308/DokkaebiVerify/fix",
+  "stage": "Tools/Unity/Stage308_enemyrig/Art/Characters/Folklore298/Animations",
+  "monsters": {
+    "dokkaebi": {
+      "rig": "Models/dokkaebi/dokkaebi-rig_result_rigged_character_fbx_url.fbx",
+      "walk": "Animations/dokkaebi/dokkaebi-rig_result_basic_animations_walking_fbx_url.fbx",
+      "motion": "Animations/dokkaebi/dokkaebi-motion_result_animation_fbx_url.fbx",
+      "fixed": "dokkaebi/dokkaebi-walkfix308_walk_fix308.fbx",
+      "attack": "Left_Jab_from_Guard",
+      "speeds": [1.9]
+    },
+    "agwi": {
+      "rig": "Models/agwi/agwi-rig_result_rigged_character_fbx_url.fbx",
+      "walk": "Animations/agwi/agwi-rig_result_basic_animations_walking_fbx_url.fbx",
+      "motion": "Animations/agwi/agwi-motion_result_animation_fbx_url.fbx",
+      "fixed": "agwi/agwi-walkfix308_walk_fix308.fbx",
+      "attack": "Punch_Forward_with_Both_Fists",
+      "speeds": [1.45, 1.5, 2.6]
+    },
+    "changgui": {
+      "rig": "Models/changgui/changgui-rig_result_rigged_character_fbx_url.fbx",
+      "walk": "Animations/changgui/changgui-rig_result_basic_animations_walking_fbx_url.fbx",
+      "motion": "Animations/changgui/changgui-motion_result_animation_fbx_url.fbx",
+      "fixed": "changgui/changgui-walkfix308_walk_fix308.fbx",
+      "attack": "Left_Hook_from_Guard",
+      "speeds": [2.25, 2.6]
+    }
+  },
+  "game": {
+    "legacy_relax": [0.55, 0.5],
+    "hang": [0.95, 0.12],
+    "wmps_now": 1.5
+  },
+  "limits": {
+    "pop_deg": 25.0,
+    "pen_fore_hand_cm": 0.0,
+    "pen_upper_cm": 1.5,
+    "idle_hand_clear_cm": 1.0,
+    "walk_hand_clear_cm": 1.0
+  },
+  "fix": {
+    "take": "walk_fix308",
+    "abduction": {
+      "variation_scale": 0.5,
+      "target_start_deg": 14.0,
+      "target_step_deg": 2.0,
+      "target_max_deg": 40.0
+    },
+    "elbow": {
+      "rule": "calmer_side"
+    },
+    "feet": {
+      "lift": "stance_mean_to_ground_plus_bias",
+      "lift_bias_cm": -1.0,
+      "plant": true,
+      "max_plant_cm": 6.0,
+      "knee_min_bend_deg": 6.0
+    }
+  },
+  "idle_sweep": {
+    "arm": [0.0, 0.1, 0.2, 0.3, 0.4, 0.55],
+    "elbow": [0.0, 0.25, 0.5],
+    "every": 4
+  },
+  "sheet_frames": {
+    "walk": [1, 5, 9, 13, 17, 21, 25, 29],
+    "idle": [1, 31, 61, 91]
+  }
+}

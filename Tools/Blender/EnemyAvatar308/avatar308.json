@@ -1,0 +1,36 @@
+{
+  "schema": "308.enemyrig2.avatar.1",
+  "note": "SPEC-ENEMY-RIG-VERIFY-308 개정 2 (TEST). Offline model of the Unity humanoid retarget for the three Meshy humanoids. Every number is TEST data.",
+  "work": "Art/Characters308/EnemyRigVerify2/work",
+  "out": "Art/Characters308/EnemyRigVerify2",
+  "unityMeasure": "Art/Characters308/EnemyRigVerify",
+  "monsters": {
+    "dokkaebi": {
+      "rig": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Models/dokkaebi/dokkaebi-rig_result_rigged_character_fbx_url.fbx",
+      "walk": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/dokkaebi/dokkaebi-rig_result_basic_animations_walking_fbx_url.fbx",
+      "motion": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/dokkaebi/dokkaebi-motion_result_animation_fbx_url.fbx",
+      "fixed": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/dokkaebi/dokkaebi-walkfix308_walk_fix308.fbx",
+      "attack": "Left_Jab_from_Guard",
+      "targetHeight": 2.25
+    },
+    "agwi": {
+      "rig": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Models/agwi/agwi-rig_result_rigged_character_fbx_url.fbx",
+      "walk": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/agwi/agwi-rig_result_basic_animations_walking_fbx_url.fbx",
+      "motion": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/agwi/agwi-motion_result_animation_fbx_url.fbx",
+      "fixed": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/agwi/agwi-walkfix308_walk_fix308.fbx",
+      "run": "Tools/Unity/Stage308_enemyrun/Art/Characters/Folklore298/Animations/agwi/agwi-run308_run308.fbx",
+      "attack": "Punch_Forward_with_Both_Fists",
+      "targetHeight": 2.1
+    },
+    "changgui": {
+      "rig": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Models/changgui/changgui-rig_result_rigged_character_fbx_url.fbx",
+      "walk": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/changgui/changgui-rig_result_basic_animations_walking_fbx_url.fbx",
+      "motion": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/changgui/changgui-motion_result_animation_fbx_url.fbx",
+      "fixed": "Oheangbu/Assets/_Project/Art/Characters/Folklore298/Animations/changgui/changgui-walkfix308_walk_fix308.fbx",
+      "run": "Tools/Unity/Stage308_enemyrun/Art/Characters/Folklore298/Animations/changgui/changgui-run308_run308.fbx",
+      "attack": "Left_Hook_from_Guard",
+      "targetHeight": 1.85
+    }
+  },
+  "stage": "Tools/Unity/Stage308_enemyrig2"
+}

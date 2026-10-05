@@ -1,0 +1,242 @@
+{
+  "schema": "308.enemyrun.blender.2",
+  "note": "SPEC-ENEMY-RIG-VERIFY-308, section 'run (D308-23)' (TEST). Every number here is a TEST value; enemyrun308.py holds none of its own. Angles in degrees, lengths in metres unless a key says cm, phases in cycles (0 = right foot mid-stance, like the repaired walk). hips.shape 'ballistic': the bounce follows from cadence, stance share and hips.gravity (hips.bounce is then unused). arms.side.<Side> overrides the shared arm pairs for one arm; shoulder_drop.<Side> lowers one shoulder; arms.clear_search opens each arm on its own until both arm tests pass (rig308's and inside308.py's). recheck = thresholds of the stricter arm test and of recheck_run308.py; user_sheet = layout of user_sheet_run308.py; user_note = the one honest sentence under the user's sheet.",
+  "based_on": {
+    "rig308.py": "be47d8b56af8625264fa0cde2f4a3c6c130708e73733ba81076cae5e07eceb8a",
+    "sheets308.py": "6cde46d96cf38023dac04d730015ebe643df7ad58df948c76bceae0c3a379751"
+  },
+  "walk_stage": "Tools/Unity/Stage308_enemyrig/Art/Characters/Folklore298/Animations",
+  "walk_numbers": "Art/Characters308/DokkaebiVerify/fix",
+  "stage": "Tools/Unity/Stage308_enemyrun/Art/Characters/Folklore298/Animations",
+  "out": "Art/Characters308/DokkaebiVerify/run",
+  "take": "run308",
+  "fps": 30,
+  "limits": {
+    "slide_ratio": 0.05,
+    "slide_per_step_cm": 3.0,
+    "sole_min_cm": -0.5,
+    "stance_sole_mean_max_cm": 1.5,
+    "pen_fore_hand_cm": 0.0,
+    "pen_upper_cm": 1.5,
+    "loop_deg": 0.01,
+    "contact_eps_cm": 0.6
+  },
+  "sheet": {
+    "tile_every_frames": 2,
+    "tiles": 12
+  },
+  "monsters": {
+    "agwi": {
+      "walk": "agwi/agwi-walkfix308_walk_fix308.fbx",
+      "walk_sha256": "2deaf0af117f8658e0cfd9903235a7ecaeed3ecd02f77897dd492e5874ee4574",
+      "run": "agwi/agwi-run308_run308.fbx",
+      "speeds": [
+        1.45,
+        1.5,
+        2.6
+      ],
+      "cycle_frames": 24,
+      "clip_speed": 2.6,
+      "stance_frames": 10,
+      "walk_ref_frame": {
+        "Right": 1,
+        "Left": 16
+      },
+      "feet": {
+        "stance_centre_behind_hip": 0.03,
+        "track_scale": 0.85,
+        "heel_off_start": 0.6,
+        "heel_off_pitch": 45.0,
+        "heel_off_power": 2.0,
+        "swing_lift": 0.14,
+        "swing_lift_skew": 0.7,
+        "swing_foot_ease": 1.0,
+        "toe_release": 0.3,
+        "swing_drive": 0.0,
+        "swing_drive_from": 0.45,
+        "swing_toe_up": 14.0,
+        "touch_down_drop_speed": 0.8
+      },
+      "knee": {
+        "stance_min_bend": 18.0,
+        "min_bend": 10.0,
+        "extra_drop": 0.01
+      },
+      "hips": {
+        "bounce": 0.012,
+        "bounce_lag": 0.02,
+        "sway": 0.012,
+        "fore_aft": 0.0,
+        "shape": "ballistic",
+        "gravity": 9.81
+      },
+      "lean": {
+        "pelvis": 12.0,
+        "spine": 20.0
+      },
+      "torso_motion_scale": 1.0,
+      "head": {
+        "stabilise": 0.8,
+        "pitch": 6.0,
+        "neck_share": 0.5
+      },
+      "arms": {
+        "upper_swing": [
+          11.0,
+          17.0
+        ],
+        "upper_abd": [
+          22.0,
+          -4.0
+        ],
+        "fore_swing": [
+          60.0,
+          16.0
+        ],
+        "fore_abd": [
+          2.0,
+          0.0
+        ],
+        "phase_lead": 0.0,
+        "fore_lag": 0.08,
+        "clear_search": {
+          "step_deg": 2.0,
+          "max_extra_deg": 20.0,
+          "upper_gain": 0.4,
+          "clear_cm": 1.0,
+          "ring_clear_cm": 0.2
+        },
+        "twist_share": 0.5
+      },
+      "user_note": "허리를 굽히고 두 팔을 번갈아 내밀며 낮게 성큼성큼 뛰는 걸음입니다. 두 발이 다 뜨는 것은 걸음마다 한 프레임뿐이라 가볍게 달리는 느낌은 아니고, 무릎을 올릴 때 오른쪽 치마 자락이 판자처럼 앞으로 들립니다(모델 쪽 문제라 클립으로는 못 고칩니다)."
+    },
+    "changgui": {
+      "walk": "changgui/changgui-walkfix308_walk_fix308.fbx",
+      "walk_sha256": "9531b52ffc6991574e27356e92b3c99a781522f8c99e044a50fd0dbe697bde4d",
+      "run": "changgui/changgui-run308_run308.fbx",
+      "speeds": [
+        2.25,
+        2.6
+      ],
+      "cycle_frames": 22,
+      "clip_speed": 2.6,
+      "stance_frames": 8,
+      "walk_ref_frame": {
+        "Right": 1,
+        "Left": 16
+      },
+      "feet": {
+        "stance_centre_behind_hip": 0.01,
+        "track_scale": 0.8,
+        "heel_off_start": 0.4,
+        "heel_off_pitch": 50.0,
+        "heel_off_power": 2.0,
+        "swing_lift": 0.19,
+        "swing_lift_skew": 0.6,
+        "swing_foot_ease": 1.0,
+        "toe_release": 0.3,
+        "swing_drive": 0.05,
+        "swing_drive_from": 0.45,
+        "swing_toe_up": 10.0,
+        "touch_down_drop_speed": 1.2
+      },
+      "knee": {
+        "stance_min_bend": 15.0,
+        "min_bend": 10.0,
+        "extra_drop": 0.015
+      },
+      "hips": {
+        "bounce": 0.025,
+        "bounce_lag": 0.02,
+        "sway": 0.008,
+        "fore_aft": 0.0,
+        "shape": "ballistic",
+        "gravity": 9.81
+      },
+      "lean": {
+        "pelvis": 10.0,
+        "spine": 4.0
+      },
+      "torso_motion_scale": 0.4,
+      "head": {
+        "stabilise": 0.8,
+        "pitch": -8.0,
+        "neck_share": 0.5
+      },
+      "arms": {
+        "upper_swing": [
+          -6.0,
+          16.0
+        ],
+        "upper_abd": [
+          10.0,
+          2.0
+        ],
+        "fore_swing": [
+          64.0,
+          22.0
+        ],
+        "fore_abd": [
+          -4.0,
+          -12.0
+        ],
+        "phase_lead": 0.0,
+        "fore_lag": 0.04,
+        "clear_search": {
+          "step_deg": 2.0,
+          "max_extra_deg": 28.0,
+          "upper_gain": 0.4,
+          "clear_cm": 1.0,
+          "ring_clear_cm": 0.2
+        },
+        "twist_share": 1.0,
+        "side": {
+          "Left": {
+            "upper_swing": [
+              -4.0,
+              9.0
+            ],
+            "fore_swing": [
+              70.0,
+              12.0
+            ],
+            "fore_abd": [
+              -6.0,
+              -8.0
+            ],
+            "upper_abd": [
+              10.0,
+              2.0
+            ]
+          }
+        }
+      },
+      "shoulder_drop": {
+        "Left": 5.0
+      },
+      "user_note": "고개를 숙이고 윗몸을 굳힌 채 뛰는 조깅입니다. 통 넓은 소매와 바지를 뚫지 않으려고 팔이 몸에서 18 – 20°쯤 벌어져 있어 앞에서 보면 팔이 A자로 보이고, 범에게 내몰리는 넋이라기보다 팔을 굳힌 보통 사람의 달리기로 읽힙니다(왼팔은 작게, 오른팔은 크게 흔듭니다)."
+    }
+  },
+  "recheck": {
+    "arm_weight_min": 0.5,
+    "ring_fore_weight_min": 0.3,
+    "winding_inside": 0.5,
+    "rest_tolerance": 1e-05,
+    "loop_joint_cm": 0.01,
+    "surface_arm_weight_max": 0.05,
+    "winding_outside_max": 0.1
+  },
+  "user_sheet": {
+    "tile": [
+      250,
+      340
+    ],
+    "side_tiles": 6,
+    "front_tiles": 5,
+    "label_width": 300,
+    "title_px": 34,
+    "label_px": 26,
+    "view_gap": 28,
+    "note_wrap": 92
+  }
+}

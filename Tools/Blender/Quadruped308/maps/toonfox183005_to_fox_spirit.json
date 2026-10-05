@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "source": "toonfox183005",
+  "target": "fox_spirit",
+  "forward": [
+    0,
+    -1,
+    0
+  ],
+  "sideNote": "Target Fore_L/Hind_L sit at -X (rig_creatures naming). All packs face -Y with +Z up, so the source bones on -X are the source *_R / *.R / 'R' bones. Pairing is by body side; build refuses a map whose left/right order disagrees.",
+  "reference": {
+    "file": "toonfox183005/Fox/Animations/Fox_Idle.fbx",
+    "action": "Take 001",
+    "frame": "start",
+    "why": "Toon fox standing idle."
+  },
+  "pelvis": "Fox_Pelvis",
+  "axisChain": {
+    "source": [
+      "Fox_Pelvis",
+      "Fox_Spine1",
+      "Fox_Spine2",
+      "Fox_Ribcage",
+      "Fox_Spine",
+      "Fox_Head"
+    ],
+    "target": [
+      "Pelvis",
+      "Spine",
+      "Chest",
+      "Neck",
+      "Head"
+    ]
+  },
+  "tail": {
+    "source": [
+      "Fox_Tail1",
+      "Fox_Tail2",
+      "Fox_Tail3",
+      "Fox_Tail4",
+      "Fox_Tail5",
+      "Fox_Tail6"
+    ],
+    "target": [
+      "Tail_01",
+      "Tail_02",
+      "Tail_03",
+      "Tail_04",
+      "Tail_05"
+    ]
+  },
+  "legs": {
+    "Fore_L": {
+      "hip": "Fox_F_RLeg1",
+      "foot": "Fox_F_RLegDigit11",
+      "parent": "Fox_Ribcage"
+    },
+    "Fore_R": {
+      "hip": "Fox_F_LLeg1",
+      "foot": "Fox_F_LLegDigit11",
+      "parent": "Fox_Ribcage"
+    },
+    "Hind_L": {
+      "hip": "Fox_RLeg1",
+      "foot": "Fox_RLegDigit11",
+      "parent": "Fox_Pelvis"
+    },
+    "Hind_R": {
+      "hip": "Fox_LLeg1",
+      "foot": "Fox_LLegDigit11",
+      "parent": "Fox_Pelvis"
+    }
+  },
+  "footPointNote": "Digit11 heads are the toe pads (z .195 of a 15 m toon rig). Only the Attack_Tail extra comes from this pack."
+}

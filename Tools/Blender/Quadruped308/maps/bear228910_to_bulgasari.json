@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "source": "bear228910",
+  "target": "bulgasari",
+  "forward": [
+    0,
+    -1,
+    0
+  ],
+  "sideNote": "Target Fore_L/Hind_L sit at -X (rig_creatures naming). All packs face -Y with +Z up, so the source bones on -X are the source *_R / *.R / 'R' bones. Pairing is by body side; build refuses a map whose left/right order disagrees.",
+  "reference": {
+    "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Idle.fbx",
+    "action": "Bear_Idle",
+    "frame": "start",
+    "why": "Calm standing idle = the pose that corresponds to the Rig298 rest/bind pose; every delta is measured from it."
+  },
+  "pelvis": "Root_M",
+  "axisChain": {
+    "source": [
+      "Root_M",
+      "Spine1_M",
+      "Spine2_M",
+      "Chest_M",
+      "Neck_M",
+      "Head_M"
+    ],
+    "target": [
+      "Pelvis",
+      "Spine",
+      "Chest",
+      "Neck",
+      "Head"
+    ]
+  },
+  "tail": {
+    "source": [
+      "Tail0_M",
+      "Tail1_M"
+    ],
+    "target": [
+      "Tail_01",
+      "Tail_02",
+      "Tail_03"
+    ]
+  },
+  "legs": {
+    "Fore_L": {
+      "hip": "Shoulder_R",
+      "foot": "MiddleFinger1_R",
+      "parent": "Chest_M"
+    },
+    "Fore_R": {
+      "hip": "Shoulder_L",
+      "foot": "MiddleFinger1_L",
+      "parent": "Chest_M"
+    },
+    "Hind_L": {
+      "hip": "Hip_R",
+      "foot": "MiddleToe1_R",
+      "parent": "Root_M"
+    },
+    "Hind_R": {
+      "hip": "Hip_L",
+      "foot": "MiddleToe1_L",
+      "parent": "Root_M"
+    }
+  },
+  "footPointNote": "MiddleFinger1/MiddleToe1 heads are the paw balls that stay on the ground through stance (z .041/.043 m in every bear clip)."
+}

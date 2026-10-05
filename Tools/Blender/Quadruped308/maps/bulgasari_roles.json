@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "target": "bulgasari",
+  "spec": "SPEC-ANIM-QUADRUPED-308 design 2 (TEST)",
+  "notes": [
+    "loop: periodic = the source cycle closes on its own (+periodExtraFrames when the take stops one frame short); seam = residual end->start mismatch is spread over the cycle; false = one-shot.",
+    "feet: contact = planted ground path (Idle sole band, never below rest); body = leg angle relative to the shoulder/hip; blend = contact while the source paw is down, body once it lifts (bodyBlend = lift/leg-length thresholds).",
+    "Walk playback is distance driven in Unity (EnemyRigMotion298 WalkMetresPerSecond), so playing a walk 'slower' is not a clip edit: the cadence follows the measured stance-foot speed.",
+    "centerStride (locomotion): the planted paw path is centred under the hip, where the near-straight Rig298 legs have the most reach; autoBodyDrop: largest pelvis lowering (fraction of the shortest standing leg) allowed to keep planted paws reachable.",
+    "attempts ladder (default): [amplitude, stride] = [1,1] [1,.85] [.85,.85] [.85,.7] [.7,.7] [.7,.55] [.55,.55]; first PASS wins.",
+    "mirror: the source is reflected across the body midplane (left/right legs swapped). Bulgasari uses it on every bear clip because its left armpit (Chest/Neck/Fore_L_Upper weights) is the weak skin; all clips are mirrored together so stances stay consistent.",
+    "fullCollapse (Death): the pelvis drop is never scaled down by the ladder. tailGroundKeep (default .9): tail joints keep this fraction of their rest ground clearance; a tail that meets the ground bends up instead of floating the body."
+  ],
+  "roles": {
+    "Idle": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_IdleCombat.fbx",
+      "action": "Bear_IdleCombat",
+      "loop": "periodic",
+      "feet": "contact",
+      "mirror": true
+    },
+    "Walk": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_WalkForward.fbx",
+      "action": "Bear_WalkForward",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": 0,
+      "autoBodyDrop": 0.25,
+      "mirror": true
+    },
+    "Attack": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Attack1.fbx",
+      "action": "Bear_Attack1",
+      "loop": false,
+      "feet": "blend",
+      "mirror": true
+    },
+    "Hit": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_GetHitFromFront.fbx",
+      "action": "Bear_GetHitFromFront",
+      "loop": false,
+      "feet": "blend",
+      "mirror": true
+    },
+    "Stun": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_StunnedLoop.fbx",
+      "action": "Bear_StunnedLoop",
+      "loop": "periodic",
+      "feet": "contact",
+      "mirror": true
+    },
+    "Death": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Death.fbx",
+      "action": "Bear_Death",
+      "loop": false,
+      "feet": "body",
+      "footRotation": "parent",
+      "mirror": true,
+      "fullCollapse": true,
+      "minLegExtension": 0.35
+    }
+  },
+  "extras": {
+    "Attack3": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Attack3.fbx",
+      "action": "Bear_Attack3",
+      "loop": false,
+      "feet": "blend",
+      "mirror": true,
+      "measurePeak": true
+    }
+  }
+}

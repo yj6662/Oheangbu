@@ -7,12 +7,6 @@
 Contract: Docs/Specs/SPEC-WORLD-ENCLOSURE-305.md. Phase 1 builds only N6 (dense forest with a collision shell hidden in the
 thicket) on the EA outer edge (청림 · 상경 가도 · 황경 성저). W1 wall lines become N6 (사산금표 숲); R rock rows, realm seams,
 new gates and shortcuts are out of scope (D305). Every number is TEST.
-#308 (D308-3, Spec §1b′, segments305.json 305.2): OVERRIDES['_include'] / ['_extra_runs'] add the 11 seal runs that close the
-outer loop before the south gate (seams 034·036·037·038·041·051·055·056·084, 고산 130, joint J308) as N6 with an explicit
-blocked side and end treatment (seal308_segments). The phase-1 selection runs first and is never touched: its 49 entries stay
-byte-identical (check: python Tools/Art/enclosure305.py verify-phase1, against Seal308/backup/segments305.v305_1.json). The
-palisade between E305_084 and E305_056 is not a run: seal308.json + Tools/Art/seal308_palisade.py. Pre-#308 copy:
-Tools/Art/enclosure305.pre308.py.
 Conventions: points are world (x, z); block = +1 when the walled-off side is right of travel (n = (dz, -dx)), -1 when left.
 """
 import json, math, sys
@@ -26,54 +20,7 @@ A = ROOT / 'Oheangbu/Assets/_Project'
 H4, W4, C4 = 1501, 1001, 4.0
 
 # Hand-curated overrides (id -> dict). exclude=True drops a run; kit/params override. Reasons go in 'why'.
-#   '_return_components': option-B blocked components given back to walkable land (phase 1, unused)
-#   '_include': #308 seal runs (D308-3, Spec §1b′) taken from lines305.json although they are seams / late-realm frontier.
-#       block      +1 right / -1 left of the run's point order (lines305 'both' for seams): the late-realm side, from the
-#                  new-game flood of seal308_closure.py --draft (player side = EA, Spec "막는 쪽")
-#       trim       (start_m, end_m) cut off the line before the end treatment (start: the Seal308 palisade takes over)
-#       ends       (end0, end1): ('palisade', 'A'|'B') ties to a Seal308 end bastion (seal308.json anchors);
-#                  ('joint', run_id) moves the end onto that run's line and cuts the joined seal run there, so both ends coincide
-#                  (a build-scene joint + plug); ('t', run_id, overshoot_m) carries the end across a phase-1 run's line by
-#                  overshoot_m (T joint; phase-1 lines are never edited); ('wall', offset_m) carries it along its tangent to
-#                  the nearest existing wall line (walk centre) + offset_m (negative = stop on the outer face);
-#                  ('keep',) leaves a coincident end as it is (lines305 already meets the neighbour)
-#       palette    REALM_PALETTE key for the forest band (Jeokro = burned deadfall, never green 밀림)
-#   '_extra_runs': runs that are not in lines305.json (hand points, same keys + id/points/realm/zone/ea/kind)
-SEAL308 = ('E305_034', 'E305_036', 'E305_037', 'E305_038', 'E305_041', 'E305_051', 'E305_055', 'E305_056', 'E305_084', 'E305_130', 'E305_J308')
-_WHY_SEAM_HW = ('D308-3 seal: seam 상경 가도/성저 | 황경 외곽·적로 (lines kit {kit}/{kit1}) -> N6 황경 숲 + shell; final kit N1 waits for a '
-                'terrain-op tool (Spec Temporary Exception). World reason: 국상 계엄 - 성저 서쪽 산자락을 봉산 금표 숲으로 막아 남문 밖 길만 남겼다')
-_WHY_SEAM_JR = ('D308-3 seal: seam 상경 고개 | 적로 (lines kit {kit}/{kit1}, R rejected = reads as a 숫 gate) -> N6 적로 불탄 쓰러진 숲 + shell '
-                '(no green 밀림 in 적로, LORE_CHECK 116 tension follows the phase-1 precedent). World reason: 꺼지지 않는 불에 쓰러진 옛 전장 숲이 고개 옆 비탈을 덮었다')
-OVERRIDES = {
-    '_include': {
-        # block: player side = EA from the closed new-game flood (seal308_closure.py closed --draft, 2026-10-02): reach on the right
-        # side 63-75/75 probes vs left 0-5/75 for the seams (block left = west / south), the reverse for 055 / 056 / 130
-        'E305_084': dict(block=-1, trim=(12.0, 0.0), ends=(('palisade', 'A'), ('joint', 'E305_038')), palette='Jeokro', why=_WHY_SEAM_JR),
-        'E305_038': dict(block=-1, ends=(('keep',), ('keep',)), palette='Hwanggyeong', why=_WHY_SEAM_HW),
-        'E305_036': dict(block=-1, ends=(('keep',), ('keep',)), palette='Hwanggyeong', why=_WHY_SEAM_HW),
-        'E305_041': dict(block=-1, ends=(('keep',), ('keep',)), palette='Hwanggyeong', why=_WHY_SEAM_HW),
-        'E305_051': dict(block=-1, ends=(('keep',), ('keep',)), palette='Hwanggyeong', why=_WHY_SEAM_HW),
-        'E305_037': dict(block=-1, ends=(('keep',), ('keep',)), palette='Hwanggyeong', why=_WHY_SEAM_HW),
-        'E305_034': dict(block=-1, ends=(('keep',), ('keep',)), palette='Hwanggyeong', why=_WHY_SEAM_HW),
-        'E305_056': dict(block=1, ends=(('palisade', 'B'), ('keep',)), palette='Jeokro', why=_WHY_SEAM_JR),
-        'E305_055': dict(block=1, ends=(('keep',), ('t', 'E305_054', 3.0)), palette='Jeokro', why=_WHY_SEAM_JR),
-        'E305_130': dict(block=1, ends=(('keep',), ('keep',)), palette='Cheongrim',
-                         why='D308-3 seal: 고산 frontier gap between the open ends of E305_128c001 and E305_133c020 (check-scene LEAK x2) -> N6 청림 숲; '
-                             'permanent world edge (Spec 남은 일: 남문 뒤 현강 쪽 산길 도달은 열림 폐합으로 확인). World reason (PROPOSED, lore review): '
-                             '청림 동쪽 고산 능선의 틈을 묵은 금표 숲이 메워, 능선 너머로 넘는 산길이 없다'),
-    },
-    '_extra_runs': [
-        # Spec (1490,2570)->(1652,2556): the end is moved onto the straight west wall 6 m north of the 14 m corner fillet tangent
-        # (capital loop corner (1650,2555), Finish297 Capital layout fillet 14 m). The loop line is the wall-walk centre (walk
-        # +-1.6 m, parapet .55, batter .12 over >= 10 m: outer foot ~3.4 m out), so the end stops 2.6 m short of it, on the battered
-        # outer face: the shell end overlaps the wall foot up to ~6 m, and no shell station samples the wall walk (build-scene's
-        # Ground305 would otherwise lift that column 5.5 m above the walk - an invisible wall on the rampart)
-        dict(id='E305_J308', kind='joint308', realm='Hwanggyeong', zone='상경 가도', ea=True, points=[[1490.0, 2570.0], [1648.0, 2575.0]],
-             block=-1, ends=(('keep',), ('wall', -2.6)), palette='Hwanggyeong',
-             why='D308-3 seal: new joint (no lines305 run) from the north end of E305_034 to the capital west wall just north of its south-west '
-                 'corner fillet (Spec E305_J308, ~160 m) -> N6 황경 숲. World reason: 도성 남서 성벽 밑까지 금표 숲을 이어 성저 서쪽 산길을 끊었다'),
-    ],
-}
+OVERRIDES = {}
 
 REALM_PALETTE = {
     # prototype ids copied from the DryLandscape sheet (BUILD_PLAN §3); Meshy_Pinus / *_SM_Bush / Detail261_ excluded
@@ -351,167 +298,16 @@ def segments():
                 tie = bool(SOLID[max(0, i0 - 1): i0 + 2, max(0, j0 - 1): j0 + 2].any())
             ends_all.append(tie)
         s['ends'] = ['tie' if ends_all[-2] else 'open', 'tie' if ends_all[-1] else 'open']
-    summary1 = dict(segments=len(sel), km=round(sum(s['length_m'] for s in sel) / 1000, 2),
-                    ea_km=round(sum(s['length_m'] for s in sel if s['ea']) / 1000, 2),
-                    by_zone={z: round(sum(s['length_m'] for s in sel if s['zone'] == z) / 1000, 2) for z in sorted({s['zone'] for s in sel})},
-                    open_ends=sum(e == 'open' for s in sel for e in s['ends']))
-    seal = seal308_segments(L, sel, SOLID) if OVERRIDES.get('_include') or OVERRIDES.get('_extra_runs') else []
-    if not seal:
-        doc = dict(version='305.1', source='lines305.json', phase=1,
-                   rule='EA frontier only; kit N6 (dense forest + hidden shell); W1->N6; R, seams, gates, shortcuts out (D305)',
-                   components=dict(ea=sorted(int(c) for c in ea_comp), ha=comp_ha, returned=sorted(returned)), summary=summary1, segments=sel)
-    else:
-        doc = dict(version='305.2', source='lines305.json', phase=1,
-                   rule='EA frontier only; kit N6 (dense forest + hidden shell); W1->N6; R, seams, gates, shortcuts out (D305). '
-                        '305.2 adds the D308-3 seal (Spec §1b′): 9 seams + 고산 E305_130 + joint E305_J308 as N6, the late-realm side blocked; '
-                        'the Seal308 palisade (seal308.json) closes the 고개 gap between E305_084 and E305_056',
-                   components=dict(ea=sorted(int(c) for c in ea_comp), ha=comp_ha, returned=sorted(returned)),
-                   summary=summary1,
-                   summary_seal308=dict(segments=len(seal), km=round(sum(s['length_m'] for s in seal) / 1000, 2), ids=[s['id'] for s in seal],
-                                        open_ends=sum(e == 'open' for s in seal for e in s['ends']),
-                                        note='phase-1 entries are byte-identical to 305.1 (their ends too: E305_128c001 / E305_133c020 '
-                                             'are now closed by E305_130 joints - check-scene open-end probes there test it)'),
-                   summary_all=dict(segments=len(sel) + len(seal), km=round(sum(s['length_m'] for s in sel + seal) / 1000, 2)),
-                   segments=sel + seal)
+    doc = dict(version='305.1', source='lines305.json', phase=1,
+               rule='EA frontier only; kit N6 (dense forest + hidden shell); W1->N6; R, seams, gates, shortcuts out (D305)',
+               components=dict(ea=sorted(int(c) for c in ea_comp), ha=comp_ha, returned=sorted(returned)),
+               summary=dict(segments=len(sel), km=round(sum(s['length_m'] for s in sel) / 1000, 2),
+                            ea_km=round(sum(s['length_m'] for s in sel if s['ea']) / 1000, 2),
+                            by_zone={z: round(sum(s['length_m'] for s in sel if s['zone'] == z) / 1000, 2) for z in sorted({s['zone'] for s in sel})},
+                            open_ends=sum(e == 'open' for s in sel for e in s['ends'])),
+               segments=sel)
     (ENC / 'segments305.json').write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding='utf-8')
     print(json.dumps(doc['summary'], ensure_ascii=False))
-    if seal: print(json.dumps(doc['summary_seal308'], ensure_ascii=False))
-
-
-# ------------------------------------------------------------------ #308 seal runs (D308-3, Spec §1b′)
-def _arclen(P):
-    P = np.asarray(P, float); return np.concatenate([[0], np.cumsum(np.hypot(*np.diff(P, axis=0).T))])
-
-
-def _trim(P, a, b):
-    """Cut a metres off the start and b off the end (arc length)."""
-    P = np.asarray(P, float); s = _arclen(P); lo, hi = a, s[-1] - b
-    pt = lambda t: [float(np.interp(t, s, P[:, 0])), float(np.interp(t, s, P[:, 1]))]
-    return [pt(lo)] + [P[k].tolist() for k in range(len(P)) if lo + 1e-6 < s[k] < hi - 1e-6] + [pt(hi)]
-
-
-def _nearest(P, e):
-    P = np.asarray(P, float); best = (1e18, None, -1)
-    for k, (a, b) in enumerate(zip(P[:-1], P[1:])):
-        d = b - a; L2 = float(d @ d) or 1e-12; t = float(np.clip(((e - a) @ d) / L2, 0, 1)); q = a + d * t; dd = float(np.hypot(*(e - q)))
-        if dd < best[0]: best = (dd, q, k)
-    return best
-
-
-def _cross(a, b, c, d):
-    r = b - a; s = d - c; den = r[0] * s[1] - r[1] * s[0]
-    if abs(den) < 1e-12: return None
-    w = c - a; t = (w[0] * s[1] - w[1] * s[0]) / den; u = (w[0] * r[1] - w[1] * r[0]) / den
-    return a + r * t if 0 <= t <= 1 and 0 <= u <= 1 else None
-
-
-def _r2(P):
-    return [[round(float(x), 2), round(float(z), 2)] for x, z in P]
-
-
-def seal308_segments(L, sel, SOLID):
-    """OVERRIDES['_include'] + ['_extra_runs'] -> N6 seal runs with explicit end treatment. Phase-1 entries (sel) are read only."""
-    runs = {r['id']: r for r in L['runs']}
-    seal = []
-    for rid, o in OVERRIDES.get('_include', {}).items():
-        r = runs[rid]; P = r['points']
-        if o.get('trim'): P = _trim(P, *o['trim'])
-        notes = [o['why'].format(kit=r['kit'], kit1=r['kit1'])]
-        if o.get('trim'): notes.append(f"trimmed {o['trim'][0]:.1f} m at the start / {o['trim'][1]:.1f} m at the end of the lines305 run")
-        if o.get('block') not in (1, -1): raise SystemExit(f'{rid}: OVERRIDES._include block must be +1 / -1 (got {o.get("block")})')
-        seal.append(dict(id=rid, kit='N6', source_kit=r['kit1'], line_kit=r['kit'], kind=r['kind'], realm=o.get('palette') or r['realm'], line_realm=r['realm'],
-                         zone=r['zone'], ea=r['ea'], closed=r['closed'], block=int(o['block']), points=_r2(P), length_m=0.0, components=[], params={},
-                         notes=notes, seal308=True, group='seal308', _ends=o.get('ends', (('keep',), ('keep',)))))
-    for x in OVERRIDES.get('_extra_runs', []):
-        if x.get('block') not in (1, -1): raise SystemExit(f"{x['id']}: _extra_runs block must be +1 / -1")
-        seal.append(dict(id=x['id'], kit='N6', source_kit='-', line_kit='-', kind=x.get('kind', 'extra'), realm=x.get('palette') or x['realm'], line_realm=x['realm'],
-                         zone=x.get('zone', ''), ea=bool(x.get('ea', True)), closed=False, block=int(x['block']), points=_r2(x['points']), length_m=0.0,
-                         components=[], params={}, notes=[x['why']], seal308=True, group='seal308', _ends=x.get('ends', (('keep',), ('keep',)))))
-    by = {s['id']: s for s in seal}; ph1 = {s['id']: s for s in sel}
-    seal_doc = json.loads((ENC / 'seal308.json').read_text(encoding='utf-8')) if (ENC / 'seal308.json').exists() else None
-
-    def end_of(s, k): return np.asarray(s['points'][0 if k == 0 else -1], float)
-
-    def set_end(s, k, pts_new):
-        P = s['points']
-        s['points'] = _r2(pts_new[::-1] + P[1:]) if k == 0 else _r2(P[:-1] + pts_new)
-    # 1. joints between two seal runs: cut the target where this end meets it, so both ends coincide (build-scene joint + plug)
-    for s in seal:
-        for k, spec in enumerate(s['_ends']):
-            if spec[0] != 'joint': continue
-            t = by[spec[1]]; e = end_of(s, k); d, q, i = _nearest(t['points'], e); T = np.asarray(t['points'], float)
-            sq = _arclen(T)[i] + float(np.hypot(*(q - T[i]))); Lt = _arclen(T)[-1]
-            if sq < Lt / 2: t['points'] = _r2([q] + T[i + 1:].tolist()); t['notes'].append(f"start cut {sq:.1f} m: joint with {s['id']} end {k}")
-            else: t['points'] = _r2(T[:i + 1].tolist() + [q]); t['notes'].append(f"end cut {Lt - sq:.1f} m: joint with {s['id']} end {k}")
-            set_end(s, k, [q.tolist()]); s['notes'].append(f"end {k}: moved {d:.1f} m onto {t['id']} (joint, both ends coincide)")
-    # 2. T joints onto phase-1 runs (never edited): cut this run where it first crosses the target walking in from the end and carry it
-    #    `over` metres past the crossing; else go to the nearest target point and past it
-    for s in seal:
-        for k, spec in enumerate(s['_ends']):
-            if spec[0] != 't': continue
-            tgt = np.asarray((ph1.get(spec[1]) or by[spec[1]])['points'], float); over = float(spec[2])
-            P = np.asarray(s['points'], float); Q = P if k == 1 else P[::-1]; s_ = _arclen(Q); hit = None
-            for i in range(len(Q) - 2, -1, -1):
-                if s_[-1] - s_[i + 1] > 40: break
-                for c, dd in zip(tgt[:-1], tgt[1:]):
-                    X = _cross(Q[i], Q[i + 1], c, dd)
-                    if X is not None: hit = (i, X); break
-                if hit: break
-            if hit:
-                i, X = hit; dvec = (Q[i + 1] - Q[i]) / (np.hypot(*(Q[i + 1] - Q[i])) or 1); newQ = Q[:i + 1].tolist() + [X.tolist(), (X + dvec * over).tolist()]
-                cut = s_[-1] - (s_[i] + float(np.hypot(*(X - Q[i]))))
-                s['notes'].append(f"end {k}: T joint across {spec[1]} at ({X[0]:.1f}, {X[1]:.1f}), {cut:.1f} m beyond it cut, carried {over:.1f} m past its line")
-            else:
-                e = Q[-1]; d, q, _ = _nearest(tgt, e); dvec = (q - e) / (d or 1)
-                newQ = Q.tolist() + [q.tolist(), (q + dvec * over).tolist()]
-                s['notes'].append(f"end {k}: T joint {d:.1f} m to {spec[1]}, carried {over:.1f} m past its line")
-            s['points'] = _r2(newQ if k == 1 else newQ[::-1])
-    # 3. into an existing wall: extend along the end tangent to the first wall crossing (<= 40 m) and `over` metres into it
-    walls = existing_walls()
-    for s in seal:
-        for k, spec in enumerate(s['_ends']):
-            if spec[0] != 'wall': continue
-            P = np.asarray(s['points'], float); Q = P if k == 1 else P[::-1]; e = Q[-1]; dvec = (Q[-1] - Q[-2]) / (np.hypot(*(Q[-1] - Q[-2])) or 1)
-            best = None
-            for W in walls:
-                for c, dd in zip(W[:-1], W[1:]):
-                    X = _cross(e - dvec * 5, e + dvec * 40, c, dd)
-                    if X is not None and (best is None or np.hypot(*(X - e)) < np.hypot(*(best - e))): best = X
-            if best is None: s['notes'].append(f'end {k}: NO wall within 40 m (left as is)'); continue
-            newQ = Q[:-1].tolist() + [(best + dvec * float(spec[1])).tolist()]
-            s['points'] = _r2(newQ if k == 1 else newQ[::-1])
-            s['notes'].append(f"end {k}: carried to the existing wall line at ({best[0]:.1f}, {best[1]:.1f}) " +
-                              (f"and {float(spec[1]):.1f} m past it" if float(spec[1]) >= 0 else f"stopping {-float(spec[1]):.1f} m short of it (battered outer face)"))
-    # 4. palisade ends: must sit on the seal308.json anchor (the bastion hides the shell end)
-    for s in seal:
-        for k, spec in enumerate(s['_ends']):
-            if spec[0] != 'palisade': continue
-            if seal_doc is None: raise SystemExit('seal308.json missing (palisade anchors)')
-            a = np.asarray(seal_doc['anchors'][spec[1]], float); e = end_of(s, k); d = float(np.hypot(*(a - e)))
-            if d > 1.0: raise SystemExit(f"{s['id']} end {k} is {d:.2f} m from Seal308 anchor {spec[1]} {a.tolist()} (trim / anchors disagree)")
-            set_end(s, k, [a.tolist()]); s['notes'].append(f"end {k}: Seal308 palisade anchor {spec[1]} (post bastion overlaps the shell end; seal308.json)")
-    # ends: palisade = tie; coincident ends (<= 5 cm) = joint; else the phase-1 rule (12 m to another run, or solid ground)
-    allruns = sel + seal
-    for s in seal:
-        s['length_m'] = round(float(_arclen(s['points'])[-1]), 1); ends = []
-        for k in (0, 1):
-            e = end_of(s, k); spec = s['_ends'][k]
-            if spec[0] == 'palisade': ends.append('tie'); continue
-            mates = [t['id'] for t in allruns if t is not s for kk in (0, 1) if np.hypot(*(end_of(t, kk) - e)) <= .05]
-            if mates: s['notes'].append(f"end {k}: joint with {', '.join(mates)}"); ends.append('tie'); continue
-            tie = any(np.min(np.hypot(np.asarray(t['points'])[:, 0] - e[0], np.asarray(t['points'])[:, 1] - e[1])) <= 12 for t in allruns if t is not s)
-            if not tie:
-                i0, j0 = int(np.clip(e[1] / C4, 0, H4 - 1)), int(np.clip(e[0] / C4, 0, W4 - 1)); tie = bool(SOLID[max(0, i0 - 1): i0 + 2, max(0, j0 - 1): j0 + 2].any())
-            ends.append('tie' if tie else 'open')
-        s['ends'] = ends; s['ends_spec'] = [list(map(str, e)) for e in s.pop('_ends')]
-        # AC-S1 '막는 쪽' in words (block alone is a sign): side of the point order + mean compass of the blocked normal (x = E, z = N)
-        P = np.asarray(s['points'], float); d = np.diff(P, axis=0)
-        m = (np.stack([d[:, 1], -d[:, 0]], 1) * s['block']).sum(0); mm = .38 * float(np.hypot(*m))   # length-weighted blocked normal
-        comp = ('N' if m[1] > mm else 'S' if m[1] < -mm else '') + ('E' if m[0] > mm else 'W' if m[0] < -mm else '')
-        s['blocked_side'] = 'right' if s['block'] > 0 else 'left'
-        s['notes'].append(f"blocked side: {s['blocked_side']} of the point order, facing {comp or '-'} on average = the late side "
-                          f"(new-game closed flood); player side = EA")
-    return seal
 
 
 def stable(*keys):
@@ -537,26 +333,9 @@ def forest():
     band = float(S.get('band_m', 24.0))
     cands = []
     stats = dict(tree=0, shrub=0, dropped_route=0, dropped_water=0, dropped_prot=0, dropped_slope=0)
-    # #308: keep the seal runs' forest off the Seal308 palisade (rows, rails, spear racks and end bastions: 2.5 m around the A-B
-    # line, bastion ring + 2.5 m around A / B). Phase-1 candidates are never filtered here (305.1 output stays identical).
-    palis = None; cur = dict(seal=False)
-    if any(s.get('seal308') for s in S['segments']) and (ENC / 'seal308.json').exists():
-        sd = json.loads((ENC / 'seal308.json').read_text(encoding='utf-8'))
-        palis = (np.asarray(sd['anchors']['A'], float), np.asarray(sd['anchors']['B'], float), 2.5 + float(sd['bastion']['post_ring_radius_m']))
-        stats['dropped_palisade'] = 0; stats['dropped_wall'] = 0
-    walls = existing_walls() if palis is not None else []
-
-    def off_palisade(x, z):
-        if palis is None or not cur['seal']: return True
-        if walls and nearest_on(walls, np.array([x, z]))[0] < 4.0: stats['dropped_wall'] += 1; return False   # J308 ends in the capital wall
-        a, b, r = palis; d = b - a; t = float(np.clip(((np.array([x, z]) - a) @ d) / float(d @ d), 0, 1)); q = a + d * t
-        near_line = float(np.hypot(x - q[0], z - q[1])) < 2.5; near_end = min(np.hypot(x - a[0], z - a[1]), np.hypot(x - b[0], z - b[1])) < r
-        if near_line or near_end: stats['dropped_palisade'] += 1; return False
-        return True
 
     def ok(x, z):
         i4, j4 = int(np.clip(z / C4, 0, H4 - 1)), int(np.clip(x / C4, 0, W4 - 1))
-        if not off_palisade(x, z): return False
         if d_route[int(np.clip(z // 10, 0, 599)), int(np.clip(x // 10, 0, 399))] < 12: stats['dropped_route'] += 1; return False
         if wl[i4, j4] > -1000 and wl[i4, j4] - h[i4, j4] > 0.3: stats['dropped_water'] += 1; return False
         if prot[i4, j4]: stats['dropped_prot'] += 1; return False
@@ -564,7 +343,6 @@ def forest():
         return True
 
     for s in S['segments']:
-        cur['seal'] = bool(s.get('seal308'))
         pal = REALM_PALETTE.get(s['realm'], REALM_PALETTE['Cheongrim'])
         P, t = resample(s['points'], 1.0)
         d = np.gradient(P, axis=0); d /= np.maximum(np.hypot(d[:, 0], d[:, 1])[:, None], 1e-6)
@@ -604,42 +382,12 @@ def forest():
                                       Euler=[0, round(yaw, 1), 0], Scale=round(sc, 3), kind=kind, u=round(float(u + ju), 2)))
                     stats[kind] += 1; n += 1
     OUT.mkdir(parents=True, exist_ok=True)
-    doc = dict(version=S.get('version', '305.1'), band_m=band, stats=stats, prototypes=sorted({c['PrototypeId'] for c in cands}), candidates=cands)
+    doc = dict(version='305.1', band_m=band, stats=stats, prototypes=sorted({c['PrototypeId'] for c in cands}), candidates=cands)
     (OUT / 'forest305_candidates.json').write_text(json.dumps(doc, ensure_ascii=False), encoding='utf-8')
     print(json.dumps(dict(stats=stats, prototypes=doc['prototypes']), ensure_ascii=False))
 
 
-def verify_phase1():
-    """#308 guard (Spec AC-S12 '1단계 49구간의 입력 변경 0'): the phase-1 entries of segments305.json and their forest candidates
-    must equal the 305.1 backups in Enclosure305/Seal308/backup/."""
-    bk = ENC / 'Seal308/backup'
-    cur = json.loads((ENC / 'segments305.json').read_text(encoding='utf-8')); old = json.loads((bk / 'segments305.v305_1.json').read_text(encoding='utf-8'))
-    p1 = [s for s in cur['segments'] if not s.get('seal308')]
-    seg_ok = p1 == old['segments'] and cur.get('summary') == old.get('summary') and cur.get('components') == old.get('components')
-    fc = json.loads((OUT / 'forest305_candidates.json').read_text(encoding='utf-8')); fo = json.loads((bk / 'forest305_candidates.v305_1.json').read_text(encoding='utf-8'))
-    ids1 = {s['id'] for s in old['segments']}
-    c1 = [c for c in fc['candidates'] if c['ClusterId'] in ids1]
-    cand_ok = c1 == fo['candidates']
-    print(json.dumps(dict(phase1_segments_identical=seg_ok, phase1_segments=len(p1), seal308_segments=len(cur['segments']) - len(p1),
-                          phase1_candidates_identical=cand_ok, phase1_candidates=len(c1), all_candidates=len(fc['candidates'])), ensure_ascii=False))
-    return seg_ok and cand_ok
-
-
-def _guard_cliff308():
-    """#308 cliff stage 1a: from 305.3 on segments305.json / forest305_candidates.json are DERIVED files (Tools/Art/
-    enclosure305_cliff308.py: 305.2 frozen copies + cliff ops + stage height + cliff mask). This driver would write 305.2 over
-    them on the base height. Refuse instead; `python Tools/Art/enclosure305_cliff308.py revert` puts 305.2 back first."""
-    p = ENC / 'segments305.json'
-    if not p.exists(): return
-    d = json.loads(p.read_text(encoding='utf-8'))
-    if 'cliff308' in d or str(d.get('version', '')) not in ('305.1', '305.2'):
-        raise SystemExit(f"REFUSED: {p.name} is version {d.get('version')} (derived by Tools/Art/enclosure305_cliff308.py). This tool writes 305.2 on the base height "
-                         f"and would overwrite it. Run `python Tools/Art/enclosure305_cliff308.py revert` first if that is what you want; nothing changed")
-
-
 if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else 'all'
-    _guard_cliff308()
     if cmd in ('segments', 'all'): segments()
     if cmd in ('forest', 'all'): forest()
-    if cmd in ('verify-phase1', 'all'): sys.exit(0 if verify_phase1() else 1)
