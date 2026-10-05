@@ -243,7 +243,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         public bool Begin(WorldMacroPlaytestSession s, Vector3 goal, float arrive, float limit, string label)
         {
-            Goal = goal; Arrive = arrive; Limit = limit; Label = label; StartedReal = Time.unscaledTime; Status = "walking"; Detail = "";
+            Goal = goal; Arrive = arrive; Limit = limit; Label = label; StartedReal = Time.unscaledTime; Status = "walking"; Detail = ""; LastBlock = "";
             Walked = 0; Repaths = 0; Recoveries = 0; failures.Clear(); recoveryStage = -1;
             lastFeet = progressFrom = Feet(s); progressAt = Time.unscaledTime;
             if (!Repath(s)) return false;
@@ -277,7 +277,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (Status != "walking") return frame;
             float now = Time.unscaledTime; var feet = Feet(s);
             Walked += Harness303.Flat(lastFeet, feet); lastFeet = feet;
-            if (now - StartedReal > Limit) { Status = "failed"; Detail = "time limit " + Harness303.F(Limit, "F0") + " s"; return frame; }
+            if (now - StartedReal > Limit) { Status = "failed"; Detail = "time limit " + Harness303.F(Limit, "F0") + " s"; LastBlock = Blocker(s, Goal); return frame; }
             if (Harness303.Flat(feet, Goal) <= Arrive && Mathf.Abs(feet.y - Goal.y) < 2.5f) { Status = "arrived"; return frame; }
             if (path.Length < 2) { if (!Repath(s)) return frame; }
             while (next < path.Length - 1 && Harness303.Flat(feet, path[next]) < 1.2f) next++;
@@ -288,7 +288,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (Harness303.Flat(feet, progressFrom) < .5f)
                 {
                     failures.Add(now); failures.RemoveAll(t => now - t > 20f); Recoveries++;
-                    if (failures.Count >= 3) { Status = "failed"; Detail = "stalled 3x in 20 s at " + Harness303.V(feet); LastBlock = Blocker(s); return frame; }
+                    if (failures.Count >= 3) { Status = "failed"; Detail = "stalled 3x in 20 s at " + Harness303.V(feet); LastBlock = Blocker(s, Goal); return frame; }
                     recoveryStage = 0; recoveryAt = now;
                     return Recover(s, frame, now);
                 }
@@ -328,13 +328,30 @@ namespace Oheangbu.EditorTools.WorldMacro
             recoveryStage = -1; return frame;
         }
 
-        static string Blocker(WorldMacroPlaytestSession s)
+        // Text for a failed walk; nothing here moves the player. Harness repair 2026-10-06: LastBlock was filled only by "stalled 3x",
+        // so a time limit said nothing - and the 3 s nudge walks of Talk303 always end on their time limit (the first stall is only
+        // counted at 3 s). Now every failure that has a body position asks, and the walker's own capsule (raised by the step offset,
+        // so what the controller steps over is not named) is cast 1 - 3 m toward the goal: the first collider met, or "clear".
+        static string Blocker(WorldMacroPlaytestSession s, Vector3 goal)
         {
             var body = s.Walker.Body.transform; var p = body.position;
             var list = Physics.OverlapCapsule(p + Vector3.up * .31f, p + Vector3.up * 1.47f, .4f, ~0, QueryTriggerInteraction.Ignore)
                 .Where(c => !c.transform.IsChildOf(body)).Select(c => Harness303.PathOf(c.transform)).Distinct().Take(6).ToList();
             if (Physics.Raycast(p + Vector3.up * .8f, body.forward, out var hit, 1.5f, ~0, QueryTriggerInteraction.Ignore) && !hit.transform.IsChildOf(body))
                 list.Add("ahead " + Harness303.PathOf(hit.transform) + " @" + Harness303.F(hit.distance, "F2"));
+            var to = Vector3.ProjectOnPlane(goal - p, Vector3.up); float away = to.magnitude, reach = Mathf.Clamp(away, 1f, 3f);   // at least 1 m: a nudge goal is 0.3 m away
+            if (away > .01f)
+            {
+                var cc = s.Walker.Body; float r = Mathf.Max(.05f, cc.radius), low = Mathf.Max(0f, cc.stepOffset) + r, high = Mathf.Max(low + .01f, cc.height - r);
+                bool found = false; RaycastHit near = default;
+                foreach (var h in Physics.CapsuleCastAll(p + Vector3.up * low, p + Vector3.up * high, r * .95f, to / away, reach, ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (h.collider == null || h.collider.transform.IsChildOf(body)) continue;
+                    if (!found || h.distance < near.distance) { near = h; found = true; }
+                }
+                list.Add("toward the goal (" + Harness303.F(away, "F2") + " m away) " + (found ? Harness303.PathOf(near.collider.transform) + " @" + Harness303.F(near.distance, "F2") + " m (normal y " + Harness303.F(near.normal.y, "F2") + ")"
+                                                                                               : "capsule clear for " + Harness303.F(reach, "F2") + " m"));
+            }
             return string.Join(" | ", list);
         }
 

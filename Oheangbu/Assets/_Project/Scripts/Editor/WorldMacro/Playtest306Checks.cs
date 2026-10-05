@@ -54,7 +54,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Harness303.Apply(iso, session);
                 st = new State { status = "running", ids = command.Substring(7).Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).ToArray(), at = Now };
                 st.lines.Add("#306 f-test " + DateTime.Now.ToString("s") + " scene " + MainScene + " isolated suffix " + iso.suffix + " — automated Play through VirtualInput303 (real Input System path), not manual play");
-                inputStarted = tidied = false; pOrganIndex = 0; pGenericShot = false; pShotFrame = -1;
+                inputStarted = tidied = false; pOrganIndex = 0; pGenericShot = false; pShotFrame = -1; fBearing = -1; fFailed = 0; fTried.Clear();
                 if (!hooked) { EditorApplication.update += Tick; hooked = true; }
                 EditorApplication.isPlaying = true;
                 return "started f-test for " + string.Join(",", st.ids);
@@ -98,16 +98,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     // the new journey starts in the mine, far from the village NPCs: teleport 4 m in front (first NavMesh hit of 8 bearings)
                     var p = Harness303.InteractionPoint(s, id);
                     if (p == null) { Check(false, id + " interaction point missing"); st.index++; return; }
-                    bool placed = false;
-                    for (int k = 0; k < 8 && !placed; k++)
-                    {
-                        var dir = Quaternion.Euler(0, k * 45f, 0) * Vector3.back;
-                        if (!UnityEngine.AI.NavMesh.SamplePosition(p.Position + dir * 4f, out var hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas)) continue;
-                        var look = Vector3.ProjectOnPlane(p.Position - hit.position, Vector3.up);
-                        s.Teleport(hit.position, look.sqrMagnitude > .01f ? Quaternion.LookRotation(look).eulerAngles.y : 0f); placed = true;
-                        Line("INFO " + id + " teleported to " + hit.position.ToString("F1") + " (" + (k * 45) + " deg bearing), point " + p.Position.ToString("F1"));
-                    }
-                    if (!placed) Line("INFO " + id + " no NavMesh within 4 m bearings; walking from the current position");
+                    fTried.Clear(); fFailed = 0; fBearing = FPlace(id, p, 0);
+                    if (fBearing < 0) Line("INFO " + id + " no NavMesh within 4 m bearings; walking from the current position");
                     st.phase = 10; st.at = Now; return;
                 }
                 case 10:
@@ -116,7 +108,29 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case 1:
                     VirtualInput303.Hold = talk.Tick(Center);
                     if (talk.Status == "running") return;
-                    Check(talk.Status == "done", id + " talk with F: " + talk.Status + " details=" + talk.Row.details + " resolved=" + talk.Row.resolved + " close=" + talk.Row.closeMethod + " " + talk.Row.detail);
+                    // Harness repair 2026-10-06: a talk that ended before the player was inside the interaction radius, with no F pressed,
+                    // is a problem of the bearing the harness chose, not of the talk - the remaining bearings are tried before anything is
+                    // reported. The radius, every time limit and what counts as a successful talk are untouched; a place no bearing
+                    // reaches still FAILs, with every bearing listed.
+                    bool unreachable = false;
+                    if (talk.Status != "done" && fBearing >= 0 && talk.Row.presses == 0)
+                    {
+                        var p = Harness303.InteractionPoint(s, id);
+                        if (p != null && Vector3.Distance(s.Walker.Body.transform.position, p.Position) > p.Radius)
+                        {
+                            string failed = (fBearing * 45) + " deg: " + talk.Row.detail.Trim();
+                            fTried.Add(failed); fFailed++;
+                            Line("INFO " + id + " approach from " + failed + " - outside the interaction radius (" + p.Radius.ToString("F1") + " m), no F pressed: trying the remaining bearings");
+                            int next = FPlace(id, p, fBearing + 1);
+                            if (next >= 0) { fBearing = next; st.phase = 10; st.at = Now; return; }
+                            unreachable = true;
+                        }
+                    }
+                    // the approach is added to the line only when a bearing failed or the talk failed: a first-bearing success prints what it always did
+                    string approach = fFailed == 0 && (talk.Status == "done" || fTried.Count == 0) ? ""
+                        : " | approach: " + (talk.Status == "done" ? "reached from " + (fBearing * 45) + " deg" : unreachable ? "no bearing reached the point" : "last tried from " + (fBearing < 0 ? "the current position" : (fBearing * 45) + " deg")) +
+                          "; bearings: " + (fTried.Count > 0 ? string.Join("; ", fTried) : "no other tried");
+                    Check(talk.Status == "done", id + " talk with F: " + talk.Status + " details=" + talk.Row.details + " resolved=" + talk.Row.resolved + " close=" + talk.Row.closeMethod + " " + talk.Row.detail + approach);
                     Check(!talk.Row.closeMethod.Contains("Escape") && !talk.Row.closeMethod.Contains("adapter"), id + " closed with F alone (no Escape/adapter): " + talk.Row.closeMethod + " | capture " + talk.Row.capture);
                     if (talk.Status != "done") { st.index++; st.phase = 0; return; }
                     details = resolved = 0;
@@ -150,6 +164,24 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check(!PageOpen, id + " Escape closes the reopened page");
                     st.index++; st.phase = 0; return;
             }
+        }
+
+        // f-test approach (harness repair 2026-10-06). The ring the f-test always used: 4 m from the point, 8 bearings 45 deg apart,
+        // NavMesh within 1.5 m. FPlace teleports to the first such bearing at or after `from` and returns it (-1 = none left);
+        // bearings without NavMesh are noted in fTried. fBearing = the bearing in use, fFailed = bearings whose approach failed.
+        static int fBearing = -1, fFailed; static readonly List<string> fTried = new List<string>();
+        static int FPlace(string id, Oheangbu.Data.World.PrologueContentSO.Point p, int from)
+        {
+            for (int k = from; k < 8; k++)
+            {
+                var dir = Quaternion.Euler(0, k * 45f, 0) * Vector3.back;
+                if (!UnityEngine.AI.NavMesh.SamplePosition(p.Position + dir * 4f, out var hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas)) { fTried.Add((k * 45) + " deg: no NavMesh within 1.5 m of the 4 m spot"); continue; }
+                var look = Vector3.ProjectOnPlane(p.Position - hit.position, Vector3.up);
+                s.Teleport(hit.position, look.sqrMagnitude > .01f ? Quaternion.LookRotation(look).eulerAngles.y : 0f);
+                Line("INFO " + id + " teleported to " + hit.position.ToString("F1") + " (" + (k * 45) + " deg bearing), point " + p.Position.ToString("F1"));
+                return k;
+            }
+            return -1;
         }
 
         static float probeInk1; static int probeActive0;

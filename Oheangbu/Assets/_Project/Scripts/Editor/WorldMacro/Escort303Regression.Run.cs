@@ -335,6 +335,40 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
         }
 
+        /// <summary>A page a fixture left open is closed the way Talk303 closes a talk page: F (real key) up to 6 times 0.3 s apart,
+        /// then Escape, then the adapter (recorded as a fixture); three unblocked neutral frames end it. No page within 1 s = nothing
+        /// to close. Used after the 청룡 defeat, whose 석경 folio pauses the game.</summary>
+        sealed class ClosePageT : T303
+        {
+            int step, quiet; double at, last; string how = "";
+            public ClosePageT(string label) { Label = label; }
+            public override void Begin(WorldMacroPlaytestSession s) { at = last = Now; }
+            public override InputFrame303 Tick(WorldMacroPlaytestSession s)
+            {
+                bool idle = VirtualInput303.Pending == 0 && (VirtualInput303.LastFed.Keys == null || VirtualInput303.LastFed.Keys.Length == 0);
+                if (UiAdapter303.Page.Length == 0 && !s.GameplayInputBlocked)
+                {
+                    if (step == 0 && Now - at < 1) return N;   // a page that opens a frame late is still met
+                    quiet = idle ? quiet + 1 : 0;
+                    if (quiet >= 3) Done(step == 0 ? "no page was open" : "closed with " + how);
+                    return N;
+                }
+                quiet = 0;
+                if (!idle || Now - last < .3) return N;
+                last = Now;
+                if (step < 6) { VirtualInput303.Tap(Key.F, Center, 1); step++; how = "F x" + step; RecordReal("F closes the reading page"); return N; }
+                if (step == 6) { VirtualInput303.Tap(Key.Escape, Center, 1); step++; how += " + Escape"; return N; }
+                if (step == 7)
+                {
+                    string page = UiAdapter303.Page, a = UiAdapter303.CloseMenu(), b = UiAdapter303.ReleaseGate();
+                    state.fixtures.Add(state.phase + " " + Label + ": adapter CloseMenu / ReleaseGate (" + a + ", " + b + ") after F x6 and Escape left page '" + page + "' open");
+                    step++; how += " + adapter CloseMenu"; return N;
+                }
+                Failed("the page did not close (" + UiAdapter303.Describe() + ")");
+                return N;
+            }
+        }
+
         // ------------------------------------------------------------------ runtime
         static List<Func<T303>> script = new List<Func<T303>>(); static int scriptIndex; static T303 task;
         static readonly HashSet<string> blockSeen = new HashSet<string>();
@@ -525,8 +559,33 @@ namespace Oheangbu.EditorTools.WorldMacro
                     list.Add(() => new TalkT("jeongdam_j1", null));
                     list.Add(Near("wangso_w1"));
                     list.Add(() => new TalkT("wangso_w1", null, (x, r) => x.EscortSnapshot != null && x.EscortSnapshot.Stage == DemoEscortStage.Contracted ? null : "Wangso contract not recorded (" + x.EscortSnapshot?.Stage + ")"));
+                    {
+                        // Harness repair 2026-10-06: since D308-16c (2026-10-05) the campaign lists the metal lesson stage among 청룡's
+                        // prerequisites, so the boss death alone no longer advances the campaign (TryAdvance refuses, no 국 unlock).
+                        // The stage is read from the campaign asset; null = this campaign has no such gate and E2 is the script it was.
+                        string lesson = LessonStage(s);
+                        if (lesson != null)
+                        {
+                            bool Open(WorldMacroPlaytestSession x) => !x.Progress.campaign.Completed.Contains(lesson);
+                            list.Add(() => new DoT("approach the metal lesson (fixture teleport)", x =>
+                            {
+                                if (!Open(x)) return null;
+                                string r = TeleportNear(x, DemoGrowthLessonLink.LessonId);
+                                if (r != null) state.notes.Add("E2 lesson approach skipped (the two hits do not need it): " + r);
+                                return null;
+                            }));
+                            list.Add(() => new WaitT(.25f));
+                            list.Add(() => new DoT("metal lesson threshold hit (fixture)", x => Open(x) ? LessonHit(x, lesson, false) : null));
+                            list.Add(() => new WaitT(.25f));
+                            list.Add(() => new DoT("metal lesson Metal hit (fixture)", x => Open(x) ? LessonHit(x, lesson, true) : null));
+                            list.Add(() => new UntilT("campaign stage " + lesson, x => !Open(x), 8f, LessonWhy));
+                        }
+                    }
                     list.Add(() => new DoT("Cheongryong API defeat (fixture)", x => BossFixture(x)));
-                    list.Add(() => new UntilT("HasDemoGuk", x => x.HasDemoGuk, 8f));
+                    list.Add(() => new UntilT("HasDemoGuk", x => x.HasDemoGuk, 8f, BossWhy));   // judged line unchanged; BossWhy only words a timeout
+                    // the committed defeat shows its 석경 folio (DetailRequested -> PlaytestUiRoot.OpenPage("상세") -> Pause.Begin): the game is
+                    // paused under it and E3 (the companion's own walk) cannot run. Closed with F like any talk page, after the judged line.
+                    list.Add(() => new ClosePageT("close the reading page of the defeat"));
                     break;
                 case "E3":
                     list.Add(() => new DoT("departure spot (fixture teleport)", x =>
@@ -695,6 +754,81 @@ namespace Oheangbu.EditorTools.WorldMacro
             life.TakeDamage(float.MaxValue);
             state.fixtures.Add("E2 Cheongryong defeated through EnemyVitals API (prerequisite only, #252 prepare precedent)");
             return null;
+        }
+
+        /// <summary>The campaign stage the metal lesson completes (GrowthInterrupted / metal_growth_lesson) when the campaign lists it
+        /// among 청룡's prerequisites (D308-16c gate: relay + cargo_contract + deep_forest); null when it does not (the D308-2 form
+        /// relay + cargo_contract, the #252 form without prerequisites, or the gate reverted).</summary>
+        static string LessonStage(WorldMacroPlaytestSession s)
+        {
+            var campaign = s.Content != null ? s.Content.Campaign : null;
+            if (campaign == null || campaign.Stages == null || !campaign.UseExplicitPrerequisites) return null;
+            var boss = campaign.Stages.FirstOrDefault(x => x != null && x.Event == Oheangbu.Data.Demo.DemoEventKind.BossDefeated && x.TriggerId == BossId);
+            if (boss == null || boss.PrerequisiteIds == null) return null;
+            foreach (string id in boss.PrerequisiteIds)
+            {
+                var stage = campaign.FindStage(id);
+                if (stage != null && stage.Event == Oheangbu.Data.Demo.DemoEventKind.GrowthInterrupted && stage.TriggerId == DemoGrowthLessonLink.LessonId) return id;
+            }
+            return null;
+        }
+
+        static Oheangbu.App.Prologue.PrologueEncounter LessonActor(WorldMacroPlaytestSession s)
+        {
+            var spec = s.Content.Encounters.FirstOrDefault(e => e.ContentId == DemoGrowthLessonLink.LessonId);
+            return spec != null ? s.Actors.FirstOrDefault(a => a != null && a.Id == spec.Id) : null;
+        }
+
+        /// <summary>Fixture (precedents: CompactRebuildProgression251 "life", DemoChapterThreeRuntimeChecks stages 10 and 1): the metal
+        /// lesson stage is completed the way the game completes it. A threshold hit on the lesson tree starts its growth wind-up; a
+        /// Metal hit from the player inside the wind-up interrupts it; CheongryongGrowthController raises GrowthInterrupted,
+        /// DemoGrowthLessonLink hands the proof to the session, the session advances the campaign (TryAdvance GrowthInterrupted) and
+        /// saves. The API calls are the two hits (EnemyVitals.TakeDamage with the player's provenance) and, before the first, one
+        /// session.Cull() - the pass the session runs itself - so the lesson's vitals are in the state the session wants after the
+        /// teleport; all three are named in report.fixtures. Nothing is written into the progress by hand, and a lesson the session
+        /// does not hold available is reported, not forced on.</summary>
+        static string LessonHit(WorldMacroPlaytestSession s, string stage, bool metal)
+        {
+            var actor = LessonActor(s);
+            if (actor == null) return "no encounter with ContentId " + DemoGrowthLessonLink.LessonId + " in this session";
+            var life = actor.GetComponent<EnemyVitals>(); var growth = actor.GetComponent<CheongryongGrowthController>(); var link = actor.GetComponent<DemoGrowthLessonLink>();
+            if (life == null || growth == null || link == null) return actor.Id + " lacks EnemyVitals / CheongryongGrowthController / DemoGrowthLessonLink";
+            var player = s.Walker.Body.gameObject;
+            string was = actor.Id + " hp " + Harness303.F(life.Hp, "F1") + "/" + Harness303.F(life.MaxHp, "F1") + " growth " + growth.State;
+            if (!metal)
+            {
+                s.Cull();   // the session's own availability pass: it switches the vitals of an available lesson on
+                if (!life.isActiveAndEnabled || !growth.isActiveAndEnabled) return "the session does not hold the lesson available (vitals on " + life.isActiveAndEnabled + ", growth controller on " + growth.isActiveAndEnabled + "): " + was;
+                if (!life.IsAlive) return "the lesson tree is dead: " + was;
+                float amount = Mathf.Max(0f, life.Hp - life.MaxHp * .49f);
+                if (amount > 0f) life.TakeDamage(amount, AttackProvenance.Create(player, DamageSource.PlayerDirect, Oheangbu.Core.Domain.Element.Fire));
+                if (!growth.IsWindingUp) return "the threshold hit of " + Harness303.F(amount, "F1") + " hp did not start the growth wind-up: was " + was + ", now hp " + Harness303.F(life.Hp, "F1") + " growth " + growth.State;
+                state.fixtures.Add("E2 metal lesson (campaign stage " + stage + ", a 청룡 prerequisite since D308-16c): session.Cull() called once (the session's own availability pass, nothing forced on), then a threshold hit of " +
+                                   Harness303.F(amount, "F1") + " hp (Fire, PlayerDirect) through the EnemyVitals API on " + actor.Id + " -> growth wind-up (precedents: #251 'life', chapter-3 runtime check)");
+                return null;
+            }
+            if (!growth.IsWindingUp) return "the growth wind-up was over before the Metal hit: " + was;
+            life.TakeDamage(1f, AttackProvenance.Create(player, DamageSource.PlayerDirect, Oheangbu.Core.Domain.Element.Metal));
+            if (!growth.WasInterrupted || !link.HasProof) return "the Metal hit did not interrupt the growth: was " + was + ", now growth " + growth.State + " proof " + link.HasProof;
+            state.fixtures.Add("E2 metal lesson: Metal hit of 1 hp (PlayerDirect) through the EnemyVitals API -> GrowthInterrupted -> DemoGrowthLessonLink -> session.TryCompleteGrowthLesson (the game's own campaign advance and save; nothing written by hand)");
+            return null;
+        }
+
+        static string LessonWhy(WorldMacroPlaytestSession s)
+        {
+            var actor = LessonActor(s); var growth = actor != null ? actor.GetComponent<CheongryongGrowthController>() : null; var link = actor != null ? actor.GetComponent<DemoGrowthLessonLink>() : null;
+            return "growth " + (growth != null ? growth.State.ToString() : "?") + ", proof " + (link != null && link.HasProof) + ", campaign completed [" + string.Join(",", s.Progress.campaign.Completed) + "], last notice '" + (s.LastFeedback ?? "") + "'";
+        }
+
+        /// <summary>Words a timeout of the HasDemoGuk wait (the judged condition and its 8 s are untouched): the boss, the record, and
+        /// which of 청룡's campaign prerequisites are not completed - the reason DemoCampaignProgression.TryAdvance refuses the defeat.</summary>
+        static string BossWhy(WorldMacroPlaytestSession s)
+        {
+            var campaign = s.Content != null ? s.Content.Campaign : null; var done = s.Progress.campaign.Completed;
+            var stage = campaign != null && campaign.Stages != null ? campaign.Stages.FirstOrDefault(x => x != null && x.Event == Oheangbu.Data.Demo.DemoEventKind.BossDefeated && x.TriggerId == BossId) : null;
+            var boss = s.Actors.FirstOrDefault(a => a != null && a.Id == BossId); var life = boss != null ? boss.GetComponent<EnemyVitals>() : null;
+            string missing = stage == null ? "no BossDefeated stage" : string.Join(",", (stage.PrerequisiteIds ?? Array.Empty<string>()).Where(id => !done.Contains(id)));
+            return "boss alive " + (life != null && life.IsAlive) + ", defeat recorded " + s.Progress.defeated.Contains(BossId) + ", campaign completed [" + string.Join(",", done) + "], " + BossId + " prerequisites not completed [" + missing + "]";
         }
 
         /// <summary>A road point 30 m past `site` (eastward, +x) on the nearest escort leg, on the NavMesh.</summary>

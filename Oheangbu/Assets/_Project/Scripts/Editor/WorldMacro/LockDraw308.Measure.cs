@@ -21,16 +21,88 @@ using Object = UnityEngine.Object;
 
 namespace Oheangbu.EditorTools.WorldMacro
 {
-    /// <summary>LateUpdate hook of the lock-on drawing measurement (after every game script). Lives only as a HideAndDontSave object
-    /// in a measured Play.</summary>
-    [DefaultExecutionOrder(32000)]
-    public sealed class LockDrawProbe308 : MonoBehaviour
+    /// <summary>Hook of the lock-on drawing measurement: once a frame, after every game LateUpdate and before the cameras render.
+    /// Harness repair 2026-10-06 (Stage308_harnessfix): this was a MonoBehaviour (LateUpdate, order 32000) on a HideAndDontSave
+    /// object, but a MonoBehaviour declared first in a file under an Editor folder is an editor script and AddComponent refuses it
+    /// ("Can't add script behaviour 'LockDraw308.Measure' because it is an editor script", once per measurement) - the hook never
+    /// ran. It is a PlayerLoop system now, put right after PreLateUpdate.ScriptRunBehaviourLateUpdate for the length of one
+    /// measurement (the pattern of Validation/DosaContextValidation.cs) and taken out on every way out: MStopRecording (the end,
+    /// a timeout, a harness exception, Play ending mid-run), MRelease, the editor leaving Play, the next Play's
+    /// SubsystemRegistration. Domain reload is off: the PlayerLoop is touched only while Installed says a system of ours is in it.</summary>
+    public static class LockDrawProbe308
     {
+        struct Stage { }   // marker type of the PlayerLoopSystem
+        static readonly UnityEngine.LowLevel.PlayerLoopSystem.UpdateFunction RunEachFrame = Run;   // one delegate, held for the editor's life
         internal static Action Late;
-        void LateUpdate() { Late?.Invoke(); }
-        // domain reload is off: a Play session never inherits another session's hook
+        internal static int Calls;          // frames the hook ran since Install (the report prints it: proof that the probe was on)
+        internal static string Fault;       // the hook's first exception, if any (the hook is switched off after it)
+        internal static bool Installed { get; private set; }
+
+        internal static bool Install(Action late)
+        {
+            Remove();
+            var loop = UnityEngine.LowLevel.PlayerLoop.GetCurrentPlayerLoop();
+            var stage = new UnityEngine.LowLevel.PlayerLoopSystem { type = typeof(Stage), updateDelegate = RunEachFrame };
+            if (!Insert(ref loop, typeof(UnityEngine.PlayerLoop.PreLateUpdate.ScriptRunBehaviourLateUpdate), stage)) return false;
+            UnityEngine.LowLevel.PlayerLoop.SetPlayerLoop(loop);
+            Late = late; Calls = 0; Fault = null; Installed = true; return true;
+        }
+
+        internal static void Remove()
+        {
+            Late = null;
+            if (!Installed) return;
+            Installed = false;
+            var loop = UnityEngine.LowLevel.PlayerLoop.GetCurrentPlayerLoop();
+            if (Strip(ref loop)) UnityEngine.LowLevel.PlayerLoop.SetPlayerLoop(loop);
+        }
+
+        // Out of the loop and the counters of the last measurement dropped. Calls and Fault are static and Install is the only other
+        // place that clears them: without this a measurement that ends before its Install (no lock, a timeout while loading) would
+        // print the frames of the measurement before it as its own "PROBE ran in N frames".
+        internal static void Forget() { Remove(); Calls = 0; Fault = null; }
+
+        static void Run()
+        {
+            var late = Late; if (late == null || !Application.isPlaying) return;
+            Calls++;
+            try { late(); }
+            catch (Exception e) { Late = null; Fault = e.GetType().Name + ": " + e.Message; Debug.LogException(e); }
+        }
+
+        // the system goes right after `anchor`, wherever in the tree that is; other systems (UniTask, Input System) stay as they are
+        static bool Insert(ref UnityEngine.LowLevel.PlayerLoopSystem parent, Type anchor, UnityEngine.LowLevel.PlayerLoopSystem stage)
+        {
+            if (parent.subSystemList == null) return false;
+            var children = (UnityEngine.LowLevel.PlayerLoopSystem[])parent.subSystemList.Clone();
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i].type == anchor)
+                { var list = new List<UnityEngine.LowLevel.PlayerLoopSystem>(children); list.Insert(i + 1, stage); parent.subSystemList = list.ToArray(); return true; }
+                if (Insert(ref children[i], anchor, stage)) { parent.subSystemList = children; return true; }
+            }
+            return false;
+        }
+
+        static bool Strip(ref UnityEngine.LowLevel.PlayerLoopSystem parent)
+        {
+            if (parent.subSystemList == null) return false;
+            var list = new List<UnityEngine.LowLevel.PlayerLoopSystem>(); bool changed = false;
+            foreach (var item in parent.subSystemList)
+            {
+                if (item.type == typeof(Stage)) { changed = true; continue; }
+                var child = item; changed |= Strip(ref child); list.Add(child);
+            }
+            if (changed) parent.subSystemList = list.ToArray();
+            return changed;
+        }
+
+        // domain reload is off: a Play session never inherits another session's hook, and none stays behind in Edit Mode
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetPlaySession() { Late = null; }
+        static void ResetPlaySession() { Remove(); }
+        [InitializeOnLoadMethod]
+        static void OnEditorLoad() { EditorApplication.playModeStateChanged -= OnPlayMode; EditorApplication.playModeStateChanged += OnPlayMode; }
+        static void OnPlayMode(PlayModeStateChange change) { if (change == PlayModeStateChange.ExitingPlayMode || change == PlayModeStateChange.EnteredEditMode) Remove(); }
     }
 
     /// <summary>#308 lock-on drawing stability, the Play measurement (SPEC-LOCKON-DRAW-STABILITY-308 TE-2 .. TE-6).
@@ -75,6 +147,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             public string spec = "SPEC-LOCKON-DRAW-STABILITY-308", runId = "", verdict = "", mode = "", modeSource = "", options = "", scene = "", store = "", quality = "", unity = "";
             public string disclaimer = "automated input and transform sampling; not a human judgement of feel, and not a pixel readback of the GPU frame";
             public int screenW, screenH; public float fps; public bool appFocused, gameViewFocused;
+            // harness repair 2026-10-06: fpsSamples = pre-roll frames behind `fps` (0 = 60 assumed), probeFrames = frames the PlayerLoop probe ran,
+            // commitAt = Time.unscaledTime of the commit (the frames' own clock; -1 = no commit), settleTurnDeg = yaw from the draw key to the
+            // first frame of the writing window (the turn inside the settle, which writingTurnDeg leaves out by design)
+            public int fpsSamples, probeFrames; public float commitAt = -1f, settleTurnDeg;
             public string configAsset = ""; public float pull; public string assetMode = ""; public float settle, resumeDelay, resumeSeconds, edgeGain, edgeMaxSpeed, edgeAcceleration, aimKeep; public Vector2 edgeMargin;
             public string targetId = ""; public float targetDistance, startYawError;
             // recognition (the same glyph in every mode must give the same bytes)
@@ -109,7 +185,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static MState ms = new MState(); static readonly Isolation303 miso = new Isolation303(); static bool mHooked;
         // live references: all dropped in MRelease (domain reload is off on entering Play; nothing here may outlive a run)
         static WorldMacroPlaytestSession mS; static PlayerMotor mMotor; static DrawingInputController mDrawing; static BrushStrokeFeedAdapter mAdapter; static LockOn mLock;
-        static Camera mCamera; static CombatConfigSO mConfig; static EnemyVitals mTarget; static GameObject mProbe;
+        static Camera mCamera; static CombatConfigSO mConfig; static EnemyVitals mTarget;
         static readonly List<Behaviour> mHeld = new List<Behaviour>(); static readonly List<List<Vector2>> mInputs = new List<List<Vector2>>();
         static List<BrushStrokeRenderer> mLive; static IList mFading; static readonly List<BrushStrokeRenderer> mDetached = new List<BrushStrokeRenderer>();
         static readonly List<Vector2> mDetachedBase = new List<Vector2>(); static readonly List<long> mDetachedKey = new List<long>();
@@ -388,8 +464,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                 mLockTries++; ms.at = MNow; return;
             }
             ms.report.fixtures.Add("LockOn.Toggle (the public selector, no Tab key) x" + mLockTries + " with the candidate list narrowed to the target for the call and put back");
-            mProbe = new GameObject("LockDraw308 probe") { hideFlags = HideFlags.HideAndDontSave };
-            mProbe.AddComponent<LockDrawProbe308>(); LockDrawProbe308.Late = MLate;
+            // the probe: a PlayerLoop system after every LateUpdate (it was an editor MonoBehaviour that could not be attached)
+            if (LockDrawProbe308.Install(MLate)) ms.report.fixtures.Add("PlayerLoop system right after PreLateUpdate.ScriptRunBehaviourLateUpdate for the length of the measurement (the probe: frame-rate reading, sample order around the stroke adapter's anchor); taken out at the end");
+            else ms.report.notes.Add("the probe could not be installed (PreLateUpdate.ScriptRunBehaviourLateUpdate is not in the player loop): the frame rate is not read and H1 is not measured in this run");
             // order matters: MOnBeginPre is subscribed here, before any stroke exists, so it is called BEFORE the adapter's render-time
             // anchor (the adapter subscribes on the first stroke of a letter); MOnBegin is moved behind the adapter in MLate.
             RenderPipelineManager.beginCameraRendering += MOnBeginPre;
@@ -404,7 +481,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             ms.note = "pre-roll";
             if (MNow - ms.at < .5) return;
-            float fps = mFpsCount > 0 ? mFpsSum / mFpsCount : 60f; ms.report.fps = fps;
+            float fps = mFpsCount > 0 ? mFpsSum / mFpsCount : 60f; ms.report.fps = fps; ms.report.fpsSamples = mFpsCount;
+            if (mFpsCount == 0) ms.report.notes.Add("frame rate not read (the probe ran in " + LockDrawProbe308.Calls + " frames of the pre-roll): 60 fps assumed, so the writing time is seconds x 60 / the real frame rate");
             string why = MQueueGlyph(fps);
             if (why != null) { MLine("FAIL glyph: " + why); MFinish("no glyph", "FAIL"); return; }
             Vector3 to = mTarget.transform.position - mMotor.transform.position;
@@ -645,9 +723,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (mSubscribed) { RenderPipelineManager.beginCameraRendering -= MOnBeginPre; RenderPipelineManager.beginCameraRendering -= MOnBegin; RenderPipelineManager.endCameraRendering -= MOnEnd; mSubscribed = false; }
             if (mEventsOn && mDrawing != null) { mDrawing.StrokeStarted -= MOnStrokeStarted; mDrawing.StrokePointAdded -= MOnStrokePoint; mDrawing.Committed -= MOnCommitted; mDrawing.CommitDiagnosed -= MOnDiagnosed; }
             mEventsOn = false;
-            if (LockDrawProbe308.Late == (Action)MLate) LockDrawProbe308.Late = null;
-            if (mProbe != null) { if (EditorApplication.isPlaying) Object.Destroy(mProbe); else Object.DestroyImmediate(mProbe); }
-            mProbe = null;
+            ms.report.probeFrames = LockDrawProbe308.Calls;   // read on every way out (the end, and a Play that ended mid-run), before the probe goes
+            LockDrawProbe308.Remove();
         }
 
         // ------------------------------------------------------------------ end
@@ -675,10 +752,13 @@ namespace Oheangbu.EditorTools.WorldMacro
             // the writing window: draw key down, after the settle, up to the commit
             float drawStart = -1f; foreach (var f in frames) if (f.drawing) { drawStart = f.t; break; }
             float windowFrom = drawStart + Mathf.Max(r.settle, .25f), windowTo = mCommitAt > 0f ? mCommitAt : float.MaxValue;
-            MFrame prev = null, first = null; double sum = 0; int still = 0; float prevSpeedYaw = 0f; bool havePrevSpeed = false;
+            r.commitAt = mCommitAt;
+            // last = the last frame inside the window, keyDown = the first frame with the draw key down (harness repair 2026-10-06, below)
+            MFrame prev = null, first = null, last = null, keyDown = null; double sum = 0; int still = 0; float prevSpeedYaw = 0f; bool havePrevSpeed = false;
             float pitchMin = float.MaxValue, pitchMax = float.MinValue, fogMin = float.MaxValue, fogMax = float.MinValue;
             foreach (var f in frames)
             {
+                if (keyDown == null && f.drawing) keyDown = f;
                 if (f.drawing && f.dt > 0f)
                 {
                     if (!f.targetInFront || f.targetVx < 0f || f.targetVx > 1f || f.targetVy < 0f || f.targetVy > 1f) r.targetOffScreenFrames++;
@@ -695,9 +775,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 pitchMin = Mathf.Min(pitchMin, f.camPitch); pitchMax = Mathf.Max(pitchMax, f.camPitch);
                 if (f.liveSamples > 0) { fogMin = Mathf.Min(fogMin, f.fogMean); fogMax = Mathf.Max(fogMax, f.fogMean); }
-                prev = f;
+                prev = f; last = f;
             }
-            if (first != null && prev != null) r.writingTurnDeg = Mathf.Abs(Mathf.DeltaAngle(first.camYaw, prev.camYaw));
+            // the turn was read from `prev`, which the frames after the commit set back to null (it only pairs neighbours for the speeds):
+            // every report said 0.00 deg. It is the yaw from the first to the last frame of the window; the settle before it is its own value.
+            if (first != null && last != null) r.writingTurnDeg = Mathf.Abs(Mathf.DeltaAngle(first.camYaw, last.camYaw));
+            if (keyDown != null && first != null) r.settleTurnDeg = Mathf.Abs(Mathf.DeltaAngle(keyDown.camYaw, first.camYaw));
             r.writingRmsDps = r.writingFrames > 0 ? (float)Math.Sqrt(sum / r.writingFrames) : 0f; r.writingStillShare = r.writingFrames > 0 ? still / (float)r.writingFrames : 0f;
             r.writingPitchTravelDeg = pitchMax >= pitchMin ? pitchMax - pitchMin : 0f;
             if (fogMax >= fogMin) { r.fogMeanMin = fogMin; r.fogMeanMax = fogMax; }
@@ -751,6 +834,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             foreach (string n in r.notes) MLine("NOTE " + n);
             MLine("RECOGNITION committed " + r.committed + " recognised " + r.recognised + " letter '" + r.letter + "' strokes " + r.strokes + " points " + r.points + " input sha " + (r.recognitionInputSha.Length >= 12 ? r.recognitionInputSha.Substring(0, 12) : r.recognitionInputSha) + " (" + r.glyphSource + ")");
             MLine("LIVE drift max " + F(r.liveMaxPx, "F3") + " px rms " + F(r.liveRmsPx, "F3") + " px over " + r.liveSampleCount + " samples in " + r.drawFrames + " rendered frames (end-of-render cross-check max " + F(r.liveEndMaxPx, "F3") + " px; render-time anchor ran " + r.renderAnchorCalls + " times)");
+            MLine("PROBE " + (r.probeFrames > 0 ? "ran in " + r.probeFrames + " frames (PlayerLoop, after every LateUpdate); " +
+                        (r.fpsSamples > 0 ? "frame rate " + F(r.fps, "F1") + " fps read over " + r.fpsSamples + " pre-roll frames" : "frame rate not read (the run ended before its pre-roll was over)")
+                    : "DID NOT RUN: the frame rate is an assumed 60 fps and H1 below cannot be measured") + (LockDrawProbe308.Fault != null ? " | switched off by an exception: " + LockDrawProbe308.Fault : ""));
             // H1 by measurement: where the same points were BEFORE this stage's render-time anchor (the picture of the old code)
             if (r.preAnchorFrames > 0)
                 MLine("H1 before the render-time anchor " + F(r.preAnchorMaxPx, "F3") + " px -> after it " + F(r.liveMaxPx, "F3") + " px (max over " + r.preAnchorFrames + " frames in which the anchor ran between the two samples; " +
@@ -765,7 +851,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     " px) on these " + r.engineFrames + " frames, moving it up to " + F(r.engineJumpMaxPx, "F2") + " px from one frame to the next (rms " + F(r.engineJumpRmsPx, "F2") + ", " + r.engineJumpFrames +
                     " frame pairs): " + (r.engineJumpMaxPx > LiveDriftLimitPx ? "the glyph itself shook on screen before the fix - a real screen-space part of the report" : "under " + F(LiveDriftLimitPx, "F1") + " px here: no visible shake from the mapping in this run") +
                     " | drawn now: LIVE drift above");
-            MLine("CAMERA while writing (" + r.writingFrames + " frames): turn " + F(r.writingTurnDeg, "F2") + " deg, pitch travel " + F(r.writingPitchTravelDeg, "F2") + " deg, max " + F(r.writingMaxDps, "F2") + " deg/s, rms " + F(r.writingRmsDps, "F2") + " deg/s, still " +
+            MLine("CAMERA while writing (" + r.writingFrames + " frames): turn " + F(r.writingTurnDeg, "F2") + " deg (after the settle; " + F(r.settleTurnDeg, "F2") + " deg more inside the first " + F(Mathf.Max(r.settle, .25f), "F2") + " s), pitch travel " + F(r.writingPitchTravelDeg, "F2") + " deg, max " + F(r.writingMaxDps, "F2") + " deg/s, rms " + F(r.writingRmsDps, "F2") + " deg/s, still " +
                 F(r.writingStillShare * 100f, "F0") + " % of frames, max turn acceleration " + F(r.writingMaxAccelDps2, "F0") + " deg/s2; speed step on the draw-start frame " + F(r.drawStartStepDps, "F2") + " deg/s");
             MLine("TARGET start bearing error " + F(r.startYawError, "F1") + " deg, at the commit viewport " + r.targetViewportAtCommit.ToString("F2") + " (bearing against the body's facing " + F(r.yawErrorAtCommit, "F1") + " deg, largest while drawing " + F(r.maxAbsYawError, "F1") + "), off screen in " + r.targetOffScreenFrames + " draw frames");
             MLine("AFTER the commit (" + r.postFrames + " frames): detached glyph moved " + F(r.slideAt03, "F1") + " / " + F(r.slideAt06, "F1") + " / " + F(r.slideAt095, "F1") + " px by 0.3 / 0.6 / 0.95 s (camera pull-back and the player's own movement included); turn speed first frame " +
@@ -808,7 +894,8 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static void MRelease()
         {
-            mS = null; mMotor = null; mDrawing = null; mAdapter = null; mLock = null; mCamera = null; mConfig = null; mTarget = null; mProbe = null; mLive = null; mFading = null; mCurrent = null;
+            LockDrawProbe308.Forget();
+            mS = null; mMotor = null; mDrawing = null; mAdapter = null; mLock = null; mCamera = null; mConfig = null; mTarget = null; mLive = null; mFading = null; mCurrent = null;
             mHeld.Clear(); mInputs.Clear(); mDetached.Clear(); mDetachedBase.Clear(); mDetachedKey.Clear(); mFogLast.Clear();
             mHomeSet = mInputOn = mRecording = mResubscribed = mSubscribed = mCommitted = mBackgroundSet = mTidied = mEventsOn = false;
             mFpsSum = 0f; mFpsCount = 0; mCommitAt = -1f; mDrawStartAt = -1f; mStoppedAt = -1; mTeleportedAt = 0; mSumSq = 0; mLockTries = 0; mAnchorBefore = 0; mFogA = mFogB = 0f;
