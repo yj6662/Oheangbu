@@ -176,11 +176,14 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         /// <summary>DESIGN §8 "아이콘만 있는 버튼이나 행" / IMPLEMENTATION §9.6: an active Selectable with no live non-keycap label.
-        /// Scrollbars are exempt (they are part of a scroll view, not an action).</summary>
+        /// Scrollbars are exempt (they are part of a scroll view, not an action). D308-27 answer 1 (SPEC-PLAYTEST-TEXT-DIET
+        /// AC-TD27.4): so is a 술식 칸 not found yet - it shows its 묵등 block and no word in the grid; the word stands once in the
+        /// detail of the selected 칸 (MenuText308 checks that it does).</summary>
         public static bool IsIconOnly(Selectable s)
         {
             if (s == null || !s.isActiveAndEnabled || s is Scrollbar) return false;
             if (Labels(s).Count > 0) return false;
+            if (IsUnfoundCodexCell(s)) return false;
             // sub-controls of a labelled row (the options ‹ › steppers PrevHit / NextHit) take the row's label
             for (var p = s.transform.parent; p != null; p = p.parent)
             {
@@ -188,6 +191,15 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (row != null && row != s) return Labels(row).Count == 0;
             }
             return true;
+        }
+
+        /// <summary>A 술식 도감 matrix cell (Codex_&lt;letter&gt; with ContentCell304) that draws its 묵등 block (or the Blot fallback) and
+        /// no live text: the 칸 of a letter not found yet (D308-27 answer 1).</summary>
+        public static bool IsUnfoundCodexCell(Selectable s)
+        {
+            if (s == null || !s.name.StartsWith("Codex_", StringComparison.Ordinal) || s.GetComponent<ContentCell304>() == null) return false;
+            if (LiveTexts(s).Count > 0) return false;
+            return s.GetComponentsInChildren<Image>(false).Any(i => i != null && (i.name == "Mukdeung" || i.name == "Blot"));
         }
 
         public static List<string> IconOnlySelectables(Component root)

@@ -8,7 +8,7 @@ using V=Oheangbu.App.World.UI.PlaytestUiView;
 namespace Oheangbu.App.World.UI
 {
     /// <summary>#304 정비 (DESIGN §7.9, IMPLEMENTATION §7.15): reachable only beside a shelter (the rail shows it only then).
-    /// Rows = 오행 형상 도장 + 이름 + 단계 방점 + 지금 / 다음 + [Enter] (filled while focused). Results go to the notice channel
+    /// Rows = 오행 형상 도장 + 이름 + 단계 방점 + 값 → 다음 값 + 비용 + [Enter] (filled while focused). Results go to the notice channel
     /// (UiNoticeChannelSO: 정비 = Service, rejection = Error) instead of ShowNotice. Names kept: Buy_&lt;track&gt;.</summary>
     public sealed partial class PlaytestUiRoot
     {
@@ -30,7 +30,7 @@ namespace Oheangbu.App.World.UI
             V.Label(s,contentRoot,"ShopPlace",Session.DemoShopDisplayName,UiType304.Serif700_24,s.Mist,64,164);
             Content304Currency(contentRoot,"Currency",1856,160,Session.Progress.ledger.currency);
             V.Label(s,contentRoot,"GroupStones","마석 · 속성 위력",UiType304.Meta20,s.Mist,96,214);
-            V.Label(s,contentRoot,"GroupBody","보강 · 최대 체력과 먹",UiType304.Meta20,s.Mist,96,704);
+            V.Label(s,contentRoot,"GroupBody","보강",UiType304.Meta20,s.Mist,96,704);   // D308-27 (정비 ③): the rows under it name the two
             string[] labels={"목 마석","화 마석","토 마석","금 마석","수 마석","체력 보강","먹 용량 보강"};
             GameObject first=null;
             for(int i=0;i<labels.Length;i++)
@@ -65,7 +65,8 @@ namespace Oheangbu.App.World.UI
                     var pict=V.SpriteImage(row.Rect,"Pictogram",i==5?Theme.Icons.Heart:Theme.Icons.InkBottle,s.Paper,54,20,40,40);
                     pict.preserveAspect=true;row.Visual.AddTint(pict,s.Paper,s.Ink);
                 }
-                // 단계 방점 (achieved = paper, remaining = mist .35) + 지금 / 다음 + 가격
+                // 단계 방점 (achieved = paper, remaining = mist .35) + 값 → 다음 값 + 비용. D308-27 (정비 ①②): no word per row - the
+                // arrow says now / next and the page head carries 조선통보 with the balance. The next column closed up (690 -> 648)
                 for(int k=0;k<quote.MaximumLevel;k++)
                 {
                     bool on=k<quote.CurrentLevel;
@@ -74,13 +75,13 @@ namespace Oheangbu.App.World.UI
                     var dab=V.SpriteImage(row.Rect,"LevelDab",s.Sprites.Dab,on?s.Paper:Content304Precomposite(s.Veil,s.Mist,.35f),330+k*36,30,28,21,s.DabRotation);
                     row.Visual.AddTint(dab,dab.color,on?s.Ink:Content304Precomposite(s.Paper,s.Ash,.45f));
                 }
-                string now="지금 +"+Mathf.RoundToInt(quote.CurrentTotalBonus*100)+"%";
+                string now="+"+Mathf.RoundToInt(quote.CurrentTotalBonus*100)+"%";
                 var nowLabel=V.Label(s,row.Rect,"UpgradeLevel_"+track,now,UiType304.Meta20,s.Mist,560,27);
                 row.Visual.AddTint(nowLabel,s.Mist,s.Ash);
                 if(!quote.AtMaximum)
                 {
-                    var next=V.Label(s,row.Rect,"UpgradeNext_"+track,"다음 +"+Mathf.RoundToInt(quote.NextTotalBonus*100)+"%",UiType304.Body24,s.Paper,690,22);
-                    var price=V.Label(s,row.Rect,"UpgradePrice_"+track,"조선통보 "+quote.Cost.ToString("N0"),UiType304.Meta20,quote.CanAfford?s.Mist:s.Off,690+next.rectTransform.sizeDelta.x+18,27);
+                    var next=V.Label(s,row.Rect,"UpgradeNext_"+track,"→ +"+Mathf.RoundToInt(quote.NextTotalBonus*100)+"%",UiType304.Body24,s.Paper,648,22);
+                    var price=V.Label(s,row.Rect,"UpgradePrice_"+track,quote.Cost.ToString("N0"),UiType304.Meta20,quote.CanAfford?s.Mist:s.Off,648+next.rectTransform.sizeDelta.x+18,27);
                     row.Visual.AddTint(next,s.Paper,s.Ink);row.Visual.AddTint(price,price.color,s.Ash);
                 }
                 if(first==null&&quote.CanAfford)first=row.Button.gameObject;

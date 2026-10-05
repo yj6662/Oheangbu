@@ -127,7 +127,6 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (!state.Has(d.Id)) state.Owned.Add(new OwnedEquipment { Id = d.Id, Level = 1 });
                     list.Add(EquipmentText308.GearName(d, state)); list.Add(EquipmentText308.GearEffect(catalog, state, d)); list.Add(EquipmentText308.GearParts(catalog, state, d));
                     list.Add(EquipmentText308.GearState(state, d, true)); list.Add(EquipmentText308.Compare(catalog, state, d));
-                    list.Add(EquipmentText308.CompareAgainst(catalog, state, d, "붓"));
                     if (EquipmentText308.NextUpgrade(catalog, state, d, out string step, out int cost)) { list.Add(step); list.Add(EquipmentText308.UpgradeWhere("목공 장인", cost)); }
                 }
             }
@@ -137,7 +136,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 var e = (Element)i;
                 list.Add(EquipmentText308.StoneName(e)); list.Add(EquipmentText308.StoneEffect(e, .2f)); list.Add(EquipmentText308.StoneNext(3, .3f)); list.Add(EquipmentText308.Power(1.26f));
             }
-            list.Add(EquipmentText308.Coins(1240)); list.Add(EquipmentText308.InkRegen(.05f, 100f)); list.Add(EquipmentText308.Fraction(8, 20)); list.Add(EquipmentText308.StoneLevel(2));
+            list.Add(EquipmentText308.Coins(1240)); list.Add(EquipmentText308.StoneWhere(false, 240)); list.Add(EquipmentText308.InkRegen(.05f, 100f)); list.Add(EquipmentText308.Fraction(8, 20)); list.Add(EquipmentText308.StoneLevel(2));
             return list;
         }
 
@@ -203,7 +202,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                         bool ok = EquipmentText308.StoneEffect(e, rules.TotalBonus(track, level)) == effect && EquipmentText308.StoneLevel(level) == level + "단";
                         if (level < max)
                             ok &= EquipmentText308.StoneNext(level + 1, rules.TotalBonus(track, level + 1)) == (level + 1) + "단 +" + Pct(rules.TotalBonus(track, level + 1)) + "%"
-                               && EquipmentText308.Coins(rules.CostForNextLevel(track, level)) == "조선통보 " + rules.CostForNextLevel(track, level).ToString("N0");
+                               && EquipmentText308.Coins(rules.CostForNextLevel(track, level)) == "조선통보 " + rules.CostForNextLevel(track, level).ToString("N0")
+                               && EquipmentText308.StoneWhere(true, rules.CostForNextLevel(track, level)) == "조선통보 " + rules.CostForNextLevel(track, level).ToString("N0")
+                               && EquipmentText308.StoneWhere(false, rules.CostForNextLevel(track, level)) == "쉼터 · 조선통보 " + rules.CostForNextLevel(track, level).ToString("N0");
                         rows++; if (!ok) wrong++;
                     }
                 }
@@ -308,17 +309,23 @@ namespace Oheangbu.EditorTools.WorldMacro
                 sheet.Check(hits.Count == 0, "AC-E15 no 레벨 / 지구력 / 무게 / 방어 row" + (hits.Count > 0 ? ": " + string.Join(", ", hits) : ""));
             }
 
-            // AC-E16 links (no purchase path here)
+            // AC-E16 links (no purchase path here). D308-27 (SPEC-PLAYTEST-TEXT-DIET, 소지품 ⑦): the middle column has no link row
+            // any more - Enter / click on the 칸 is the link and the legend line at the bottom names it
+            var linkRows = ui.GetComponentsInChildren<Button>(true).Where(b => b.name == "LinkService" || b.name == "LinkChapae" || b.name == "ReadCodex").Select(b => b.name).ToList();
+            sheet.Check(linkRows.Count == 0, "AC-E16 no link row in the middle column (D308-27)" + (linkRows.Count > 0 ? ": " + string.Join(", ", linkRows) : ""));
             if (stones)
             {
                 Select(Named(ui, "Stone_Wood"));
-                var link = ui.GetComponentsInChildren<Button>().FirstOrDefault(b => b.name == "LinkService");
-                sheet.Check(link != null && link.interactable == s.AtDemoShop, "AC-E16 정비 link interactable == AtDemoShop (" + s.AtDemoShop + ")");
+                sheet.Check(Legend(ui).Contains("정비") == s.AtDemoShop, "AC-E16 legend names 정비 == AtDemoShop (" + s.AtDemoShop + "; legend: " + string.Join(" / ", Legend(ui)) + ")");
+                ((Button)Named(ui, "Stone_Wood")).onClick.Invoke(); Canvas.ForceUpdateCanvases();
+                sheet.Check(ui.Page == (s.AtDemoShop ? "정비" : "소지품"), "AC-E16 Enter on 오행 마석 → " + (s.AtDemoShop ? "정비" : "nothing away from a shelter") + " (page " + ui.Page + ")");
+                if (ui.Page != "소지품") { ui.OpenPage("소지품"); Canvas.ForceUpdateCanvases(); }
             }
             Select(Named(ui, "VirtueSlot_0"));
-            var chapae = ui.GetComponentsInChildren<Button>().FirstOrDefault(b => b.name == "LinkChapae");
-            sheet.Check(chapae != null && chapae.interactable, "AC-E16 차패 link live");
-            if (chapae != null) { chapae.onClick.Invoke(); Canvas.ForceUpdateCanvases(); sheet.Check(ui.Page == "차패", "AC-E16 오덕 → 차패 (" + ui.Page + ")"); ui.OpenPage("소지품"); Canvas.ForceUpdateCanvases(); }
+            sheet.Check(Legend(ui).Contains("차패"), "AC-E16 legend names 차패 (legend: " + string.Join(" / ", Legend(ui)) + ")");
+            ((Button)Named(ui, "VirtueSlot_0")).onClick.Invoke(); Canvas.ForceUpdateCanvases();
+            sheet.Check(ui.Page == "차패", "AC-E16 오덕 → 차패 (" + ui.Page + ")");
+            ui.OpenPage("소지품"); Canvas.ForceUpdateCanvases();
 
             // AC-E11 Esc: list row → slot (page and depth stay); slot → the menu closes
             string candidateSlot = null;
@@ -390,13 +397,20 @@ namespace Oheangbu.EditorTools.WorldMacro
             return null;
         }
 
-        /// <summary>What a row's last cell reaches to the right: the first 바꿔 낄 것 row, else the live link row, else nothing.</summary>
+        /// <summary>The verb phrases of the legend line (EquipLegend308), keycaps left out.</summary>
+        static List<string> Legend(PlaytestUiRoot ui)
+        {
+            var legend = ui.GetComponentsInChildren<RectTransform>().FirstOrDefault(x => x.name == "EquipLegend308");
+            return legend == null ? new List<string>() : legend.GetComponentsInChildren<TMP_Text>().Where(t => !HarnessUiRules304.IsKeycapText(t, legend)).Select(t => t.text).ToList();
+        }
+
+        /// <summary>What a row's last cell reaches to the right: the first 바꿔 낄 것 row, else nothing (D308-27: no link rows).</summary>
         static string MiddleFirst(PlaytestUiRoot ui)
         {
             var detail = ui.GetComponentsInChildren<RectTransform>().FirstOrDefault(x => x.name == "GearDetail304");
             if (detail == null) return null;
             var list = detail.GetComponentsInChildren<Selectable>().Where(x => x.interactable && x.navigation.mode != Navigation.Mode.None).ToList();
-            var row = list.FirstOrDefault(x => x.name.StartsWith("Gear_")) ?? list.FirstOrDefault(x => x.name == "LinkService" || x.name == "LinkChapae");
+            var row = list.FirstOrDefault(x => x.name.StartsWith("Gear_"));
             return row != null ? row.name : null;
         }
     }

@@ -263,7 +263,7 @@ namespace Oheangbu.App.World.UI
         void BuildPause()
         {
             var s=V.Style(Theme);var cr=contentRoot;
-            Menu304CssLabel(s,cr,"Heading","잠시 붓을 내려놓는다",UiType304.Display50,s.Paper,96,76);
+            // D308-27 (일시정지 ①): no heading. The band above 계속하기 (y40 - 150) is the tab rail's band on every other page.
             // primary: wet_m (56,170) h150 only while focused, 계속하기 44px at (152,214), filled Esc (372,222) -> hollow when focused
             var resume=V.FocusRow(s,cr,"Resume","계속하기",56,170,720,150,CloseMenu,new FocusRowSpec304
             {
@@ -291,7 +291,7 @@ namespace Oheangbu.App.World.UI
             V.FocusRow(s,cr,"ReturnTitle","타이틀로",72,737,720,58,
                 ()=>Confirm("타이틀로 돌아갈까요?","현재 진행을 저장합니다.",()=>StartCoroutine(ReturnTitle())),new FocusRowSpec304
             {
-                Role=UiType304.Label28,LabelX=40,Meta="진행을 저장하고 로비로 돌아간다",MetaX=218,SoundTheme=Theme,
+                Role=UiType304.Label28,LabelX=40,SoundTheme=Theme,   // D308-27 (일시정지 ⑤): no meta (the confirm dialog says what happens)
             });
             Menu304PauseCommission(s,cr);
             Menu304PauseSaveLine(s,cr);
@@ -310,14 +310,8 @@ namespace Oheangbu.App.World.UI
                 }
                 case "술식 도감":
                     return "석경에 남은 술식 "+(ui!=null&&ui.knownSpellLetters!=null?ui.knownSpellLetters.Count:0)+" / "+WorldMacroCollectionCatalog.AllSpells.Count;
-                case "지도":
-                {
-                    Menu304Location(out string realm,out string place);
-                    if(place.Length==0&&Session!=null)place=Session.CheckpointDisplayName??"";
-                    return realm.Length>0&&place.Length>0?realm+" · "+place:realm.Length>0?realm:place;
-                }
-                case "옵션":return "화면과 소리, 조작, 접근성";
-                case "조작 안내":return "키보드와 마우스";
+                // D308-27 (일시정지 ②③④): 지도 has no meta (the slip on the right names the realm and the place); 옵션 and 조작 안내
+                // have none either (the row names say it)
                 default:return null;
             }
         }
@@ -512,13 +506,13 @@ namespace Oheangbu.App.World.UI
             // #300: the run key toggles when the active locomotion profile says so
             var motor=Session!=null&&Session.Walker!=null?Session.Walker.Motor:null;
             bool runToggle=motor!=null&&motor.SprintToggles;
-            string runKey=runToggle?"Ctrl":"Ctrl + 이동",runAction=runToggle?"달리기 켜기·끄기 (멈추면 걷기)":"달리기";
+            string runKey=runToggle?"Ctrl":"Ctrl + 이동",runAction=runToggle?"달리기 켜기·끄기":"달리기";
             string[,] rows;
             if(menu304ControlsTab=="작도")rows=new[,]{{"Q + 마우스 좌클릭","글씨 그리기 · Q를 놓으면 시전"},{"마우스 좌클릭 유지","비작도 상태에서 먹 갈무리"}};
             else if(menu304ControlsTab=="메뉴")rows=new[,]{{"M / I / Esc","지도 / 소지품 / 일시정지·뒤로"},{"Q / E","메뉴 탭 넘기기"}};
             else rows=new[,]{{"W · A · S · D","걷기 / 탑승 중 가속·조향"},{runKey,runAction},{"Space","지상 점프 / 탑승 중 제동"},{"C / X","웅크리기 전환 / 바닥 착석·일어나기"},
-                {"마우스","시점 이동"},{"왼쪽 Shift / Tab","회피 (웅크림 중 구르기) / 대상 락온"},{"F","조사, 대화, 석경 파편 획득, 자동차 탑승·하차"},{"V","탑승 중 시점 전환"},
-                {"G","붓으로 자동차 부르기·거두기 · 하차 후 30m 자동 회수"}};   // #308 D308-8: F is the one car key, G toggles; D308-8e: the call is a brush stroke (D308-8c), the tablet is no longer shown
+                {"마우스","시점 이동"},{"왼쪽 Shift / Tab","회피 / 락온"},{"F","조사, 대화, 석경 파편 획득, 자동차 탑승·하차"},{"V","탑승 중 시점 전환"},
+                {"G","자동차 부르기·거두기"}};   // #308 D308-8: F is the one car key, G toggles. D308-27 answer 3: key + action name only (rows Ctrl, Shift / Tab and G were shortened)
             var tab=Menu304CategoryTabs(s,"ControlsTab_",Menu304ControlTabs,menu304ControlsTab,t=>{menu304ControlsTab=t;OpenPage("조작 안내");});
             menu304DefaultSelection=tab!=null?tab.gameObject:null;
             for(int i=0;i<rows.GetLength(0);i++)

@@ -34,6 +34,7 @@
 ## AI 에셋 파이프라인
 
 - Meshy(3D) · Recraft(UI/2D/SVG) · Suno(음악 — 릴리스 음원은 human-in-the-loop 필수). 전부 유료 플랜 상업권.
+- 정지 그림(시네마틱 컷 · 로딩 · 로비 · 장비 그림) = Codex CLI 내장 그림 생성(D308-28). 상업 이용 조건은 사용자 확인 전까지 TEST — 릴리스 전 필수 확인.
 - 리깅 규격 = Production Bible PROD-RIG: 인간형=표준 Humanoid+리타게팅 / 용=Spline Chain / 기계=강체 부품(무스키닝). 도사 V2의 옷은 사용자 선택에 따라 Unity 기본 Cloth+직접 작성 보조 본이며 유료 천 플러그인을 추가하지 않는다(DECISIONS #177). 제작 모션 전 수치·시각 리그 게이트는 해당 Spec을 따른다.
 - 반복 지형·배치=자동화 대상, 랜드마크·보스 아레나·손맛=사람 영역.
 

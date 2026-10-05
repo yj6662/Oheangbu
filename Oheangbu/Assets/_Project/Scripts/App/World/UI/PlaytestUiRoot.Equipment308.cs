@@ -21,9 +21,11 @@ namespace Oheangbu.App.World.UI
     /// from the catalog, the economy rules / quotes, RuntimePlayerStats, CombatConfigSO (Session.TryGetStatus308) or
     /// EquipmentScreen308SO; texts are composed by EquipmentText308. Instance state only (domain reload is off): the tables
     /// below are immutable. Harness names: Equipped_&lt;slot&gt; (+EquipmentDropSlot), Stone_&lt;track&gt;, VirtueSlot_&lt;n&gt;,
-    /// Gear_&lt;id&gt; (+EquipmentDragItem, now a 바꿔 낄 것 row), EquipmentCandidates, SlotKind, SlotItem, SelectedGearSlot / Title /
-    /// Level / Effect / Compare / Paper, GearTransactionError, LinkService, LinkChapae, ReadCodex, EquipStatus308 (Status_&lt;key&gt;),
-    /// EquipLegend308 (Legend_&lt;n&gt;).
+    /// Gear_&lt;id&gt; (+EquipmentDragItem, now a 바꿔 낄 것 row), EquipmentCandidates, SelectedGearSlot / Title /
+    /// Level / Effect / Compare / Paper, GearTransactionError, EquipStatus308 (Status_&lt;key&gt;), EquipLegend308 (Legend_&lt;n&gt;).
+    /// D308-27 (SPEC-PLAYTEST-TEXT-DIET "메뉴 쪽 글 줄이기"): gone - SlotKind / SlotItem (the two lines over the grid; the grid moved
+    /// up 70 px to the columns' top), LinkService / LinkChapae / ReadCodex (the middle link rows: Enter on the 칸 and the legend line
+    /// are the link), CompareAgainst, Status_virtues and the name line under a 석경 chip.
     /// #308 theme (SPEC-UI-THEME-308, D308-15; the region near the end of this file): with EquipmentScreen308SO.Theme bound the
     /// 칸 become lattice windows (one 교창 per row, panes seated in the bars), the rules become bars, the picture frame a
     /// porcelain plaque with a lotus band, the tier dabs nacre petals, the kept 칸 wears a nacre cut-shell frame and the focus
@@ -34,8 +36,8 @@ namespace Oheangbu.App.World.UI
     {
         // layout308-begin : page px (1920x1080, top-left origin), SPEC §10. Read by Tools/Unity/Stage308_equip/check_equip308.py (AC-E6).
         const float E308SafeL=64,E308SafeT=40,E308SafeR=1856,E308SafeB=1016;
-        const float E308LeftX=96,E308LeftR=696,E308KindY=232,E308ItemY=258;
-        const float E308GridX=96,E308GridY=316,E308Chip=104,E308PitchX=124,E308PitchY=156,E308NameDy=110,E308CellW=120,E308CellH=148;
+        const float E308LeftR=696;   // D308-27 (소지품 ①): E308LeftX went with the two lines over the grid (its only readers)
+        const float E308GridX=96,E308GridY=246,E308Chip=104,E308PitchX=124,E308PitchY=156,E308NameDy=110,E308CellW=120,E308CellH=148;
         const float E308Rule1X=740,E308Rule2X=1440,E308RuleY=232,E308RuleH=708;
         const float E308MidX=776,E308MidR=1404,E308HeadKindY=232,E308HeadNameY=258,E308NameW=420,E308HeadStateY=338,E308HeadDabY=382,E308HeadDabPitch=36;
         const float E308ArtX=1204,E308ArtY=232,E308ArtSize=200,E308ArtInner=168;
@@ -47,24 +49,24 @@ namespace Oheangbu.App.World.UI
         // layout308-end
         // layout308t-begin : the same page with the #308 theme (SPEC §10 "테마"). The panes sit IN the bars: pitch = chip + bar.
         // Read by check_equip308.py (AC-E6 on the themed table, and the 8 / 16 px clearances of SPEC-UI-THEME-308 §4.2).
-        const float E308TGridX=102,E308TGridY=308,E308TPitchX=108,E308TPitchY=160,E308TNameDy=118,E308TBar=4,E308TFrame=6,E308TCellW=104,E308TCellH=146;
+        const float E308TGridX=102,E308TGridY=238,E308TPitchX=108,E308TPitchY=160,E308TNameDy=118,E308TBar=4,E308TFrame=6,E308TCellW=104,E308TCellH=146;
         const float E308TBoardCells=2,E308TChrys=48,E308TRuleW=3;
         const float E308TBedX=14,E308TBedY=12,E308TBedIn=8,E308TRingDx=2,E308TRingDw=-6;                 // 한지 bed + ring rect, pane 104
         const float E308TRowBedX=17,E308TRowBedY=12,E308TRowBedIn=5,E308TRowRingDx=1,E308TRowRingDw=-2;    // the same, 바꿔 낄 것 chip 56
         const float E308TMoat=8,E308TSelectOut=5,E308TCandLabelX=110;
         const float E308TArt=140,E308TArtY=18,E308TStamp=116,E308TStampY=30,E308TSeal=124,E308TSealY=26;  // plaque: picture register
         const float E308TFootY=163,E308TFootInset=13,E308TLotusX=20,E308TLotusY=168,E308TLotusW=160,E308TLotusH=17;   // plaque: foot register
-        const float E308TPetalW=12,E308TPetalH=14,E308TStepPitch=13,E308TFragDabX=-27,E308TFragDabDy=5,E308TFragDabW=20,E308TFragDabH=15;
+        const float E308TPetalW=12,E308TPetalH=14,E308TStepPitch=13,E308TFragDabDy=5,E308TFragDabW=20,E308TFragDabH=15;
         // layout308t-end
         // small measures inside the blocks above (style, not balance)
-        const float E308DabX=-30,E308DabDy=3,E308DabW=24,E308DabH=18;                          // 방점 left of the name under a chip
+        const float E308DabX=-30,E308DabDy=3,E308DabW=24,E308DabH=18,E308FragDabDy=14;         // 방점 left of the name under a chip (석경 chip: centred under it)
         const float E308ArtPad=8,E308GhostPad=12,E308StampPad=20,E308SealPad=8;                // chip contents
         const float E308StepGap=8,E308StepDy=7,E308StepW=16,E308StepH=12,E308StepPitch=18;     // 단계 방점 after a 마석 name
         const float E308SectionGap=28,E308MarkSize=24,E308HeadTextDx=32,E308HeadGap=8,E308LineGap=4;
         // 바꿔 낄 것 row = a 칸 (mock sheet (f)): 방점 | 칩 56 | 이름 + 메타. The focus is the 칸 frame on the chip, no underlay stroke
         const float E308CandChipX=30,E308CandChip=56,E308CandArtPad=4,E308CandLabelX=102,E308CandDabX=-6,E308CandDabW=26,E308CandDabH=20;
-        // 연결 줄 (정비 / 차패 / 술식 도감에서 보기): the label sits on the column's left edge, a small 방점 between the rule and the label
-        const float E308LinkLabelX=36,E308LinkH=72,E308LinkWide=628,E308LinkDabGap=8,E308LinkMetaGap=16,E308LinkStrokeTail=60;
+        // 착용 / 해제 row of the three-step variant (EquipmentScreen308SO.DirectEquipFromCandidate off). D308-27: the link rows are gone
+        const float E308LinkLabelX=36,E308LinkH=72;
         const float E308LearnPitch=72,E308LearnSize=48,E308LearnBlank=40;
         const float E308StatusHeadDy=32,E308StatusPitchBody=40,E308StatusPitch=36,E308StatusGroupGap=60,E308StatusNameDx=32;
         const float E308GlyphFill=.82f,E308PendingAlpha=.35f,E308GhostAlpha=.2f,E308FrameAlpha=.5f,E308BlankAlpha=.16f,E308DividerAlpha=.38f;
@@ -92,7 +94,6 @@ namespace Oheangbu.App.World.UI
         // the 차패 page's names for 仁 禮 義 智 信 (PlaytestUiRoot.Collections.cs BuildChapae), language constants
         static readonly string[] Equip308VirtueNames={"인 · 목","예 · 화","의 · 금","지 · 수","신 · 토"};
         const string Equip308VirtueReadings="인예의지신";   // the label under an 오덕 칸 (the chip already carries the 한자)
-        const string Equip308StoneLink="오행 마석 · 속성 위력";   // what the 정비 link leads to (the artefacts, never 마석(원석))
 
         EquipmentScreen308SO equip308Data;bool equip308DataLoaded;
         int equip308Slot=-1;                    // the page's selected slot (kept across rebuilds and page changes)
@@ -101,7 +102,6 @@ namespace Oheangbu.App.World.UI
         string equip308SlotKey,equip308InfoKey,equip308LegendKey,equip308ArtKey;
         float equip308SectionsTop;
         RectTransform equip308Info,equip308LegendRoot;
-        TMP_Text equip308KindLabel,equip308ItemLabel;
         readonly ContentCell304[] equip308Cells=new ContentCell304[Equip308Slots.Length];
         readonly List<List<int>> equip308Rows=new List<List<int>>();           // present rows, top to bottom → slot indices
         readonly List<Selectable> equip308Middle=new List<Selectable>();       // 바꿔 낄 것 rows, then the live link row
@@ -115,7 +115,6 @@ namespace Oheangbu.App.World.UI
         bool Equip308Fragments=>fragmentTab||Session==null||!Session.EquipmentEnabled;
         static string Equip308Name(Equip308Def d)=>d.Kind==Equip308Kind.Gear?"Equipped_"+(EquipmentSlot)d.Index:d.Kind==Equip308Kind.Stone?"Stone_"+(DemoUpgradeTrack)d.Index:"VirtueSlot_"+d.Index;
         static int Equip308IndexOf(EquipmentSlot slot){for(int i=0;i<Equip308Slots.Length;i++)if(Equip308Slots[i].Kind==Equip308Kind.Gear&&Equip308Slots[i].Index==(int)slot)return i;return -1;}
-        static string Equip308GearKind(EquipmentSlot slot)=>slot==EquipmentSlot.Brush||slot==EquipmentSlot.Accessory?Content304SlotNames[(int)slot]:"의복 · "+Content304SlotNames[(int)slot];
         /// <summary>The live cell of slot i, or a real null (never a destroyed object, so ?. is safe on the result).</summary>
         ContentCell304 Equip308Cell(int i){var c=i>=0&&i<equip308Cells.Length?equip308Cells[i]:null;return c!=null?c:null;}
 
@@ -141,8 +140,6 @@ namespace Oheangbu.App.World.UI
                 Content304Rule(contentRoot,"DetailRule",E308Rule1X,E308RuleY,E308RuleH);
                 Content304Rule(contentRoot,"StatusRule",E308Rule2X,E308RuleY,E308RuleH);
             }
-            equip308KindLabel=V.Label(s,contentRoot,"SlotKind","",UiType304.Meta20,s.Mist,E308LeftX,E308KindY);
-            equip308ItemLabel=V.Label(s,contentRoot,"SlotItem","",UiType304.Label26,s.Paper,E308LeftX,E308ItemY);
             Equip308Status(s,data);
             content304Detail=V.Rect("GearDetail304",contentRoot,0,0,UiPageFit304.Width,UiPageFit304.Height);
             equip308LegendRoot=V.Rect("EquipLegend308",contentRoot,E308LegendX,E308LegendY,E308LeftR-E308LegendX,E308LegendH);
@@ -534,44 +531,10 @@ namespace Oheangbu.App.World.UI
             equip308InfoKey=infoKey;
             V.Clear(equip308Info);
             equip308SectionsTop=E308SubY;
-            float bottom=fragments?Equip308FragmentInfo(s):Equip308SlotInfo(s);
+            if(fragments)Equip308FragmentInfo(s);else Equip308SlotInfo(s);
             if(!slotBuild)return;
-            Equip308SlotParts(s,bottom);
+            Equip308SlotParts(s);
             Equip308WireMiddle();
-            Equip308Head();
-        }
-
-        /// <summary>The two lines over the grid: what kind of slot, and what it holds NOW (the comparison's base).</summary>
-        void Equip308Head()
-        {
-            string kind="",item="";
-            if(Equip308Fragments)
-            {
-                var f=Equip308SelectedFragment();
-                if(f!=null){kind="석경 조각";item=f.Letter+"의 석경";}
-            }
-            else if(equip308Slot>=0)
-            {
-                var d=Equip308Slots[equip308Slot];
-                if(d.Kind==Equip308Kind.Gear)
-                {
-                    kind=Equip308GearKind((EquipmentSlot)d.Index);item="비어 있음";
-                    if(Session.EquipmentReady)
-                    {
-                        var state=Session.Progress.equipment;var worn=Session.Content.EquipmentCatalog.Find(state.Equipped[d.Index]);
-                        if(worn!=null)item=EquipmentText308.GearName(worn,state);
-                    }
-                }
-                else if(d.Kind==Equip308Kind.Stone){var e=(Element)d.Index;kind="오행 마석 · "+EquipmentText308.ElementName(e);item=EquipmentText308.StoneName(e);}
-                else{kind="오덕 · "+Menu304Virtues[d.Index];item=Equip308VirtueNames[d.Index];}
-            }
-            Equip308SetText(equip308KindLabel,kind);Equip308SetText(equip308ItemLabel,item);
-        }
-        static void Equip308SetText(TMP_Text t,string value)
-        {
-            if(t==null)return;
-            t.text=value??"";var p=UiText304.Preferred(t,t.text);
-            t.rectTransform.sizeDelta=new Vector2(Mathf.Max(1f,Mathf.Ceil(p.x)),Mathf.Max(1f,Mathf.Ceil(p.y)));
         }
 
         Sprite Equip308Mark(int which)
@@ -716,8 +679,8 @@ namespace Oheangbu.App.World.UI
             if(!isWorn)
             {
                 y=Equip308Section(s,root,"CompareHead",Equip308Mark(1),"견줌",E308SubLX,y);
-                y=Equip308Line(s,root,"SelectedGearCompare",EquipmentText308.Compare(catalog,state,item),UiType304.ValueBold24,s.Paper,E308SubLX,y);
-                y=Equip308Line(s,root,"CompareAgainst",EquipmentText308.CompareAgainst(catalog,state,item,slotName),UiType304.Body22,s.Mist,E308SubLX,y)+E308SectionGap;
+                // D308-27 (소지품 ④): no "compared with" line - the 견줌 head and the list's worn row already show the base
+                y=Equip308Line(s,root,"SelectedGearCompare",EquipmentText308.Compare(catalog,state,item),UiType304.ValueBold24,s.Paper,E308SubLX,y)+E308SectionGap;
             }
             y=Equip308Section(s,root,"UpgradeHead",Equip308Mark(2),"다음 강화",E308SubLX,y);
             if(EquipmentText308.NextUpgrade(catalog,state,item,out string step,out int cost))
@@ -755,7 +718,7 @@ namespace Oheangbu.App.World.UI
             if(!q.AtMaximum)
             {
                 y=Equip308Line(s,root,"UpgradeNext",EquipmentText308.StoneNext(q.CurrentLevel+1,q.NextTotalBonus),UiType304.Body24,s.Paper,E308SubLX,y);
-                y=Equip308Line(s,root,"UpgradeWhere",EquipmentText308.Coins(q.Cost),UiType304.Meta20,q.CanAfford?s.Mist:s.Off,E308SubLX,y)+E308SectionGap;
+                y=Equip308Line(s,root,"UpgradeWhere",EquipmentText308.StoneWhere(Session.AtDemoShop,q.Cost),UiType304.Meta20,q.CanAfford?s.Mist:s.Off,E308SubLX,y)+E308SectionGap;   // D308-27 (소지품 ⑤): away from a shelter the cost line says where
             }
             else y=Equip308Line(s,root,"UpgradeNext","강화 완료",UiType304.Body24,s.Mist,E308SubLX,y)+E308SectionGap;
 
@@ -781,8 +744,8 @@ namespace Oheangbu.App.World.UI
         {
             string id=Menu304Virtues[index];var known=Session.Progress.ui.knownVirtues;bool owned=known!=null&&known.Contains(id);
             bool used=Equip308RenUsed(index,owned);
-            // the 차패 page's own state wording
-            string state=used?"쓰였다 · 쉼터에서 쉬면 돌아온다":owned?"새겨짐":"새기지 못함";
+            // the state word of the selected 칸 (D308-27 answer 1: here, once; the 차패 page's rows carry none). 소지품 ⑧: 쓰임
+            string state=used?"쓰임":owned?"새겨짐":"새기지 못함";
             Equip308Header(s,root,"오덕",Equip308VirtueNames[index],owned?s.Paper:s.Mist,state,0,0);
             var artRoot=Equip308ArtBox(s,root,owned,"virtue:"+index+owned);
             // an owned 오덕 sits on the plaque (seal + 한자 in the inlay colour); a locked one keeps the #304 frame, full size
@@ -813,28 +776,15 @@ namespace Oheangbu.App.World.UI
             return y;
         }
 
-        /// <summary>Slot-level rows of the middle column (built once per slot, they hold the focus): 바꿔 낄 것, or the link
-        /// row (정비 / 차패), or the fragment's 술식 도감에서 보기.</summary>
-        void Equip308SlotParts(UiStyle304SO s,float y)
+        /// <summary>Slot-level rows of the middle column (built once per slot, they hold the focus): 바꿔 낄 것 of a 장비 칸.
+        /// D308-27 (소지품 ⑦, answer 2): no link row for 오행 마석 / 오덕 / 석경 - Enter on the 칸 opens the page (Equip308SubmitSlot,
+        /// the chip's own click) and the legend line at the bottom names it.</summary>
+        void Equip308SlotParts(UiStyle304SO s)
         {
             var root=content304Detail;
-            if(Equip308Fragments)
-            {
-                if(Equip308SelectedFragment()==null)return;
-                Equip308Link(s,root,"ReadCodex","술식 도감에서 보기",y,E308LinkWide,Equip308ReadCodex,false,null);
-                return;
-            }
-            if(equip308Slot<0)return;
+            if(Equip308Fragments||equip308Slot<0)return;
             var d=Equip308Slots[equip308Slot];
-            if(d.Kind==Equip308Kind.Stone)
-            {
-                if(Session.DemoEconomy==null)return;
-                int track=d.Index;
-                Equip308Link(s,root,"LinkService","정비",y,E308SubW,()=>Equip308OpenService(track),!Session.AtDemoShop,"쉼터 곁에서만 열린다",Equip308StoneLink);
-                return;
-            }
-            if(d.Kind==Equip308Kind.Virtue){Equip308Link(s,root,"LinkChapae","차패",y,E308SubW,()=>OpenPage("차패"),false,null);return;}
-            if(!Session.EquipmentReady)return;
+            if(d.Kind!=Equip308Kind.Gear||!Session.EquipmentReady)return;
 
             var slot=(EquipmentSlot)d.Index;var catalog=Session.Content.EquipmentCatalog;var state=Session.Progress.equipment;var art=Session.Content.EquipmentUiArt;
             // worn first, then the order of ownership (OrderBy is stable)
@@ -877,25 +827,6 @@ namespace Oheangbu.App.World.UI
         {
             if(t==null||t.rectTransform.sizeDelta.x<=width)return;
             t.rectTransform.sizeDelta=new Vector2(width,t.rectTransform.sizeDelta.y);t.overflowMode=TextOverflowModes.Ellipsis;
-        }
-
-        /// <summary>연결 줄 (보조 버튼 문법, mock sheet (a) / (g)): the label on the column's left edge, an inline meta (where it
-        /// leads, or why it is closed) and a dry under-stroke while unfocused; focused = the stock #304 focus row with [Enter]
-        /// after the meta. The row starts E308LinkLabelX left of the column so the small 방점 sits between the rule and the label.</summary>
-        void Equip308Link(UiStyle304SO s,Transform root,string name,string label,float y,float width,UnityEngine.Events.UnityAction clicked,bool disabled,string reason,string meta=null)
-        {
-            string shown=disabled&&!string.IsNullOrEmpty(reason)?reason:meta;
-            float labelW=Equip308TextSize(s,UiType304.Label26,label).x,metaX=E308LinkLabelX+labelW+E308LinkMetaGap;
-            float keyX=string.IsNullOrEmpty(shown)?float.NaN:metaX+Equip308TextSize(s,UiType304.Meta20,shown).x+E308LinkMetaGap;
-            var row=V.FocusRow(s,root,name,label,E308SubLX-E308LinkLabelX,y,width+E308LinkLabelX,E308LinkH,clicked,new FocusRowSpec304
-            {
-                Role=UiType304.Label26,LabelX=E308LinkLabelX,DabGap=E308LinkDabGap,DabSize=new Vector2(E308DabW,E308DabH),
-                Key="Enter",KeyMode=FocusKeyMode304.FilledWhenFocused,KeyX=keyX,
-                Meta=meta,MetaX=metaX,UnderStroke=true,UnderStrokeW=labelW+E308LinkStrokeTail,
-                Disabled=disabled,DisabledReason=reason,SoundTheme=Theme,
-            });
-            Equip308NoteMiddle(row.Button);
-            if(!disabled)equip308Middle.Add(row.Button);
         }
 
         void Equip308NoteMiddle(Component row)
@@ -957,7 +888,7 @@ namespace Oheangbu.App.World.UI
                 y=Equip308StatusHead(s,root,"StatusTier",Equip308Mark(6),"보강",y);
                 foreach(var q in tiers)
                 {
-                    var row=Equip308StatusRow(s,root,"tier_"+q.Track,q.Track==DemoUpgradeTrack.Health?"체력 보강":"먹 용량 보강","+"+EquipmentText308.Pct(q.CurrentTotalBonus)+"%",y,w);
+                    var row=Equip308StatusRow(s,root,"tier_"+q.Track,q.Track==DemoUpgradeTrack.Health?"체력":"먹 용량","+"+EquipmentText308.Pct(q.CurrentTotalBonus)+"%",y,w);
                     var nameLabel=row.Find("Name") as RectTransform;float dx=(nameLabel!=null?nameLabel.sizeDelta.x:0f)+E308StepGap+4;
                     for(int k=0;k<q.MaximumLevel;k++)Equip308Pip(s,row,dx+k*E308StepPitch,E308StepDy+2,E308StepW,E308StepH,k<q.CurrentLevel,1.5f);
                     y+=E308StatusPitch;
@@ -966,11 +897,8 @@ namespace Oheangbu.App.World.UI
             }
             var ui=progress.ui;
             y=Equip308StatusHead(s,root,"StatusLearned",Equip308Mark(7),"익힌 것",y);
-            Equip308StatusRow(s,root,"spells","술식",EquipmentText308.Fraction(ui.knownSpellLetters!=null?ui.knownSpellLetters.Count:0,WorldMacroCollectionCatalog.AllSpells.Count),y,w);y+=E308StatusPitch;
-            Menu304VirtueText(s,out string virtues,out _,out int owned);
-            var vrow=Equip308StatusRow(s,root,"virtues","오덕",EquipmentText308.Fraction(owned,Menu304Virtues.Length),y,w);
-            var vname=vrow.Find("Name") as RectTransform;
-            V.Label(s,vrow,"Glyphs",virtues,UiType304.Serif800_20,Color.white,(vname!=null?vname.sizeDelta.x:0f)+E308StepGap+4,2);
+            Equip308StatusRow(s,root,"spells","술식",EquipmentText308.Fraction(ui.knownSpellLetters!=null?ui.knownSpellLetters.Count:0,WorldMacroCollectionCatalog.AllSpells.Count),y,w);
+            // D308-27 (소지품 ⑩): no 오덕 row here - the fourth row of the grid on the left shows the five
         }
 
         float Equip308StatusHead(UiStyle304SO s,Transform root,string name,Sprite mark,string head,float y)
@@ -1089,8 +1017,8 @@ namespace Oheangbu.App.World.UI
 
         // 석경 탭 (Content304FragmentGrid, compact): the same windows, five panes to a row
         Rect Equip308FragmentRing()=>Equip308RingRect(new Rect(0,0,E308Chip,E308Chip),false,Equip308Theme);
-        Rect Equip308FragmentDab()=>Equip308Theme!=null?new Rect(E308TFragDabX,E308TNameDy+E308TFragDabDy,E308TFragDabW,E308TFragDabH):new Rect(E308DabX,E308NameDy+E308DabDy,E308DabW,E308DabH);
-        float Equip308FragmentNameDy=>Equip308Theme!=null?E308TNameDy:E308NameDy;
+        // D308-27 (소지품 ⑪): the chip has no name line, so its 방점 sits centred under the chip (it stood left of the name)
+        Rect Equip308FragmentDab()=>Equip308Theme!=null?new Rect((E308Chip-E308TFragDabW)*.5f,E308TNameDy+E308TFragDabDy,E308TFragDabW,E308TFragDabH):new Rect((E308Chip-E308DabW)*.5f,E308NameDy+E308FragDabDy,E308DabW,E308DabH);
         /// <summary>Called by Content304FragmentGrid round its chip: states = false before the chip (the flat paper), true after
         /// it (focus bed + kept frame). Does nothing without the theme.</summary>
         void Equip308FragmentPane(ContentCell304 cell,bool states)
@@ -1156,7 +1084,7 @@ namespace Oheangbu.App.World.UI
                     bool removeKey=!string.IsNullOrEmpty(EquipmentScreen308SO.RemoveBinding(data))||!string.IsNullOrEmpty(EquipmentScreen308SO.RemovePadBinding(data));
                     if(n>0)entries.Add(("Enter","바꿔 끼기",()=>Equip308SubmitSlot(slot)));
                     if(has&&removeKey)entries.Add((EquipmentScreen308SO.RemoveLabel(data),"빼기",()=>Equip308Remove(true)));
-                    if(n>0)entries.Add(("끌기","칸에 놓아 착용",null));
+                    if(n>0)entries.Add(("끌기","착용",null));   // D308-27 (소지품 ③)
                 }
                 else if(d.Kind==Equip308Kind.Stone){int track=d.Index;if(Session.AtDemoShop)entries.Add(("Enter","정비",()=>Equip308OpenService(track)));}
                 else entries.Add(("Enter","차패",()=>OpenPage("차패")));

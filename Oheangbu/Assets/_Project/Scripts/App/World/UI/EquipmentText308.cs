@@ -42,13 +42,6 @@ namespace Oheangbu.App.World.UI
             return "교체 " + Signed(catalog.Bonus(state, candidate.Id) - before) + "%p";
         }
 
-        public static string CompareAgainst(EquipmentCatalogSO catalog, EquipmentState state, EquipmentDefinition candidate, string slotName)
-        {
-            string old = state.Equipped[(int)candidate.Slot];
-            var worn = string.IsNullOrEmpty(old) ? null : catalog.Find(old);
-            return worn != null ? "착용 중인 " + worn.Name + Josa(worn.Name, "과", "와") + " 비교" : "비어 있는 " + slotName + " 칸과 비교";
-        }
-
         /// <summary>True while the item can still be upgraded; `step` = "+2 강화", `cost` = the catalog's cost of that step.</summary>
         public static bool NextUpgrade(EquipmentCatalogSO catalog, EquipmentState state, EquipmentDefinition d, out string step, out int cost)
         {
@@ -69,17 +62,12 @@ namespace Oheangbu.App.World.UI
         public static string StoneEffect(Element e, float totalBonus) => ElementName(e) + " 속성 위력 +" + Pct(totalBonus) + "%";
         /// <summary>"3단 +30%": the next grade and ITS cumulative bonus (a bare "+30%" read as an increase on top of the current one).</summary>
         public static string StoneNext(int nextLevel, float nextTotalBonus) => StoneLevel(nextLevel) + " +" + Pct(nextTotalBonus) + "%";
+        /// <summary>오행 마석 "다음 강화" cost line: the cost, and away from a shelter the one word that says where it is spent
+        /// ("쉼터 · 조선통보 240"; D308-27 소지품 ⑤: the sentence went with the link row).</summary>
+        public static string StoneWhere(bool atShelter, int cost) => atShelter ? Coins(cost) : "쉼터 · " + Coins(cost);
         public static string Power(float multiplier) => Signed(multiplier - 1f) + "%";
         public static string Fraction(int current, int maximum) => current + " / " + maximum;
         public static string InkRegen(float perSecond, float scale) => "초당 " + (perSecond * scale).ToString("0.#");
-
-        /// <summary>받침 있는 말 뒤 withFinal (과, 은, 을), 없으면 withoutFinal (와, 는, 를).</summary>
-        public static string Josa(string word, string withFinal, string withoutFinal)
-        {
-            if (string.IsNullOrEmpty(word)) return withoutFinal;
-            int code = word[word.Length - 1] - 0xAC00;
-            return code >= 0 && code < 11172 && code % 28 != 0 ? withFinal : withoutFinal;
-        }
 
         static int Clamp(int i) => i < 0 ? 0 : i > 4 ? 4 : i;
     }

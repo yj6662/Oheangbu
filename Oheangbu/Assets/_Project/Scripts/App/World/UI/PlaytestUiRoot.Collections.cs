@@ -14,7 +14,7 @@ namespace Oheangbu.App.World.UI
     /// Codex data: the matrix is the game's learnable set (WorldMacroCollectionCatalog: 5 오행 columns x 중성/종성 rows), the
     /// row 분류 / 프레임, 효과, 사거리 and the 받침 table come from the 작도어휘 CSV import (ContentArt304.Vocab), cell names are the
     /// catalog's own noun phrases shortened (ContentVocab304.CellName) - nothing is written here. Locked cells stay focusable
-    /// (D16 묵등 + 미발견) and show only the row / column grammar; D17 광곽 (사주쌍변) frames the matrix; D21 flicks mark new
+    /// (D16 묵등; D308-27: the state word stands once, in the detail of the selected 칸) and show only the row / column grammar; D17 광곽 (사주쌍변) frames the matrix; D21 flicks mark new
     /// letters; 공백 받침 rows are sealed (D22). Focus returns to the same cell after rebuilds (OnCollected).</summary>
     public sealed partial class PlaytestUiRoot
     {
@@ -30,13 +30,13 @@ namespace Oheangbu.App.World.UI
 
         /// <summary>석경 칩 grid (DESIGN §7.3 / IMPLEMENTATION §7.5): chip 104 with the glyph (Serif900 56 ink), name + count under it.
         /// Selecting a chip shows the fragment in the detail column (no ShowDetail: the menu stays open).
-        /// #308: the 3-column 소지품 passes its own pitch and compact = true (name only, four rows before it scrolls; the count
+        /// #308: the 3-column 소지품 passes its own pitch and compact = true (the glyph only since D308-27, four rows before it scrolls; the count
         /// is in the detail).</summary>
         void Content304FragmentGrid(float ox,float oy,int cols,float pitchX=Content304PitchX,float pitchY=Content304PitchY,bool compact=false)
         {
             var s=Content304Style;var ui=Session.Progress.ui;
             var held=WorldMacroCollectionCatalog.AllFragments.Where(x=>ui.GetItemCount(x.ItemId)>0).ToArray();
-            if(held.Length==0){EmptyPage("빈 봇짐","석경 조각을 찾으면 여기 모인다",ox,oy);return;}
+            if(held.Length==0){EmptyPage("빈 봇짐",null,ox,oy);return;}   // D308-27 (소지품 ⑫): the title alone
             if(string.IsNullOrEmpty(selectedItem)||!held.Any(x=>x.ItemId==selectedItem))selectedItem=held[0].ItemId;
             int rows=Mathf.Max(1,Mathf.CeilToInt(held.Length/(float)cols)),shown=compact?4:3;
             float cellW=compact?pitchX-4:128,cellH=compact?pitchY-8:172;
@@ -46,7 +46,7 @@ namespace Oheangbu.App.World.UI
             {
                 var f=held[i];float gx=i%cols*pitchX,gy=i/cols*pitchY;
                 var cell=Content304Cell(grid,"Fragment_"+f.Id,gx,gy,cellW,cellH,compact?Equip308FragmentRing():new Rect(0,0,Content304ChipSize,Content304ChipSize),compact?Equip308FragmentDab():new Rect(-33,121,26,20),
-                    ()=>{Content304PickFragment(Content304GearCells("Fragment_"+f.Id),f);Content304FocusDetailPrimary();},c=>Content304PickFragment(c,f),false);
+                    ()=>{Content304PickFragment(Content304GearCells("Fragment_"+f.Id),f);Equip308ReadCodex();},c=>Content304PickFragment(c,f),false);   // D308-27 (소지품 ⑦): Enter / click opens the codex at once (the link row is gone)
                 cell.Id=f.ItemId;
                 // #308: the kept chip (focus on 술식 도감에서 보기) keeps a frame that shows on the veil (ink does not). Theme
                 // (D308-15): the chip is a pane of a lattice window (flat paper under it, focus bed + nacre kept frame over it)
@@ -54,9 +54,8 @@ namespace Oheangbu.App.World.UI
                 Content304Chip(cell.transform,"Chip",0,0,Content304ChipSize,false);
                 if(compact)Equip308FragmentPane(cell,true);
                 V.Label(s,cell.transform,"Glyph",f.Letter,UiType304.ChipGlyph56,s.Ink,0,0,Content304ChipSize,Content304ChipSize-4,TextAlignmentOptions.Center);
-                var name=V.Label(s,cell.transform,"Name",f.Letter+"의 석경",compact?UiType304.Meta20:UiType304.Label22,s.Paper,0,compact?Equip308FragmentNameDy:114);
+                // D308-27 (소지품 ⑪): no name line under the chip - the chip's glyph is the name, the detail head names the piece once
                 if(!compact)V.Label(s,cell.transform,"Count",ui.GetItemCount(f.ItemId)+"개",UiType304.Meta20,s.Mist,0,144);
-                cell.BindLabel(name,s.Paper,s.Paper);
                 Content304NewMark(cell,"item:"+f.ItemId,Content304ChipSize-22,-8,false);
                 content304GearCells.Add(cell);
             }
@@ -200,9 +199,9 @@ namespace Oheangbu.App.World.UI
                     // save's 20 blocks (#5A) weighed on the grid next to the known glyphs; .5 lands near #70 (D16: 무거워지면 가볍게 / 백광)
                     if(art!=null&&art.MukDeung!=null)Content304Ink(V.SpriteImage(cell.transform,"Mukdeung",art.MukDeung,UiStyle304SO.A(s.Ink,.5f),64,31,44,44),s);
                     else Content304Ink(V.SpriteImage(cell.transform,"Blot",s.Sprites.Blot,UiStyle304SO.A(s.Ink,.22f),50,28,72,56),s);
-                    label=V.Label(s,cell.transform,"Name","미발견",UiType304.Meta20,s.Ash,0,104,172,0,TextAlignmentOptions.Top);
+                    label=null;   // D308-27 answer 1: no state word in the grid; the detail of the selected 칸 carries it once
                 }
-                cell.BindLabel(label,label.color,label.color);
+                if(label!=null)cell.BindLabel(label,label.color,label.color);
                 cell.Kept=letter==selectedSpell;
                 content304CodexCells.Add(cell);
             }
@@ -252,7 +251,9 @@ namespace Oheangbu.App.World.UI
             for(int i=0;i<films.Length;i++)films[i].Replay(.08f+i*.6f);
         }
 
-        /// <summary>상세 (장막 위, x1234~1856): tag, 탁본 240 glyph, 조합, 받침 표, 쓰기 예시 필름, 획 규칙, 효과 / 사거리, 상생 · 상극.</summary>
+        /// <summary>상세 (장막 위, x1234~1856): tag, 탁본 240 glyph, 조합, 받침 표, 쓰기 예시 필름, 효과 / 사거리, 상생 · 상극.
+        /// D308-27: no 초성 / 중성 meta lines, no stroke-rule sentences, no draw hints; the 받침 block closed up 74 px and the block
+        /// under the film 110 px. A state word (미발견, 미습득, 미배정) stands at most once in this detail.</summary>
         void Content304CodexDetail()
         {
             if(content304Detail==null)return;
@@ -280,11 +281,9 @@ namespace Oheangbu.App.World.UI
             // #52 on the #11 veil (a grey tile), InkReveal at α.1 would leave it at #1A (gone); α.16 lands at #26, the empty chips' weight
             else if(art!=null&&art.MukDeung!=null)Content304Ink(V.SpriteImage(root,"SpellMukdeung",art.MukDeung,UiStyle304SO.A(s.Paper,.16f),1252,222,200,200),s);
 
-            // 조합 + 초성 / 중성 meta
+            // 조합 (D308-27 술식 ②: the tag line above and the matrix heads already say the 초성's element and the 중성's frame)
             string composition=ini+" + "+med+(string.IsNullOrEmpty(fin)?"":" + "+fin);
             Content304AtCss(V.Label(s,root,"Composition",composition,UiType304.Headline44,s.Paper,1512,204),1512,204,1f);
-            V.Label(s,root,"InitialMeta","초성 "+ini+"  "+Content304ElementName(e),UiType304.Meta20,s.Mist,1514,262);
-            V.Label(s,root,"MedialMeta","중성 "+med+(string.IsNullOrEmpty(frame)?"":"  "+frame),UiType304.Meta20,s.Mist,1514,288);
 
             if(known)
             {
@@ -292,17 +291,26 @@ namespace Oheangbu.App.World.UI
                 var finals=art!=null?art.FinalsOf(ini,med):new List<ContentVocabRow304>();
                 if(finals.Count>0)
                 {
-                    V.Label(s,root,"FinalHead","받침",UiType304.Meta20,s.Mist,1514,336);
+                    // D308-27: the block sits 74 px higher (the two meta lines over it are gone). Answer 1: a state word stands once
+                    // in this detail - on the first row of that state; the later rows of the same state keep their dim colour only
+                    V.Label(s,root,"FinalHead","받침",UiType304.Meta20,s.Mist,1514,262);
+                    bool saidUnlearned=false,saidBlank=false;
                     for(int i=0;i<finals.Count&&i<5;i++)
                     {
-                        var fr=finals[i];float y=362+i*28;bool learned=ui.knownSpellLetters.Contains(fr.Letter);
+                        var fr=finals[i];float y=288+i*28;bool learned=ui.knownSpellLetters.Contains(fr.Letter);
                         Color c=learned?s.Paper:s.Mist;
                         V.Label(s,root,"FinalGlyph",fr.Letter,UiType304.Serif900_22,c,1514,y);
-                        V.Label(s,root,"FinalJamo",fr.Final,UiType304.Meta20,c,1550,y+1);
-                        string text=learned?fr.ShortEffect():fr.Blank?"미배정":"미습득";
-                        var t=V.Label(s,root,"FinalText",text,UiType304.Meta20,c,1582,y+1);
-                        if(t.rectTransform.sizeDelta.x>274f){t.rectTransform.sizeDelta=new Vector2(274f,t.rectTransform.sizeDelta.y);t.overflowMode=TextOverflowModes.Ellipsis;}
-                        if(fr.Blank&&!learned)Content304Sealed(root,1508,y+3,t.rectTransform.anchoredPosition.x-1508+t.rectTransform.sizeDelta.x+8,20,s.Paper);
+                        var jamoLabel=V.Label(s,root,"FinalJamo",fr.Final,UiType304.Meta20,c,1550,y+1);
+                        string text=learned?fr.ShortEffect():fr.Blank?(saidBlank?"":"미배정"):(saidUnlearned?"":"미습득");
+                        if(!learned){if(fr.Blank)saidBlank=true;else saidUnlearned=true;}
+                        float right=1550+jamoLabel.rectTransform.sizeDelta.x;
+                        if(!string.IsNullOrEmpty(text))
+                        {
+                            var t=V.Label(s,root,"FinalText",text,UiType304.Meta20,c,1582,y+1);
+                            if(t.rectTransform.sizeDelta.x>274f){t.rectTransform.sizeDelta=new Vector2(274f,t.rectTransform.sizeDelta.y);t.overflowMode=TextOverflowModes.Ellipsis;}
+                            right=1582+t.rectTransform.sizeDelta.x;
+                        }
+                        if(fr.Blank&&!learned)Content304Sealed(root,1508,y+3,right-1508+8,20,s.Paper);
                     }
                 }
 
@@ -312,37 +320,28 @@ namespace Oheangbu.App.World.UI
                 V.Place(replay,1856-replay.sizeDelta.x,498);
                 Content304Film(root,letter);
 
-                // 획 규칙 (자모별 한 줄)
-                var jamo=new List<string>{ini,med};if(!string.IsNullOrEmpty(fin))jamo.Add(fin);
-                var rules=jamo.Select(j=>(j,s.StrokeRule(j))).Where(p=>!string.IsNullOrEmpty(p.Item2)).ToList();
-                float ry=rules.Count>2?716:730,rp=rules.Count>2?26:28;
-                for(int i=0;i<rules.Count;i++)
-                {
-                    var jl=V.Label(s,root,"RuleJamo",rules[i].j,UiType304.Serif800_20,s.Paper,1246,ry+i*rp);
-                    V.Label(s,root,"RuleText",rules[i].Item2,UiType304.Meta20,s.Mist,1246+jl.rectTransform.sizeDelta.x+14,ry+i*rp);
-                }
-                var draw=V.Hint(s,root,"DrawHint",new[]{"Q","좌클릭"},"긋기",s.Mist,1246,800);
-                V.Hint(s,root,"ReleaseHint",new[]{"Q"},"떼면 발동",s.Mist,1246+draw.sizeDelta.x+22,800);
+                // D308-27: no stroke-rule sentences (answer 3: the film shows the strokes) and no draw / release hints (술식 ⑤: the
+                // 조작 page's 작도 tab is the one place). The block below sits 110 px higher (852 -> 742).
             }
 
             // 효과 · 사거리 (CSV 효과 괄호 앞 / 괄호 속) or the not-found line
-            V.Brush(s,root,"EffectDivider",StrokeClass304.Dry,s.Paper,1240,852,616,26,.3f);
+            V.Brush(s,root,"EffectDivider",StrokeClass304.Dry,s.Paper,1240,742,616,26,.3f);
             if(known)
             {
                 string effect=def!=null?def.Description.TrimEnd('.'):"",range="";
                 if(row!=null){row.SplitEffect(out string head,out range);if(!string.IsNullOrEmpty(head))effect=head;}
-                V.Label(s,root,"SpellEffect",effect,UiType304.Body24,s.Paper,1246,886,600,0,TextAlignmentOptions.TopLeft);
-                if(!string.IsNullOrEmpty(range))V.Label(s,root,"SpellRange",range,UiType304.Meta20,s.Mist,1246,924);
+                V.Label(s,root,"SpellEffect",effect,UiType304.Body24,s.Paper,1246,776,600,0,TextAlignmentOptions.TopLeft);
+                if(!string.IsNullOrEmpty(range))V.Label(s,root,"SpellRange",range,UiType304.Meta20,s.Mist,1246,814);
             }
-            else V.Label(s,root,"SpellEffect","아직 석경에서 찾지 못한 술식",UiType304.Body24,s.Mist,1246,886);
+            else V.Label(s,root,"SpellEffect","미발견",UiType304.Body24,s.Mist,1246,776);   // D308-27 answer 1: the state word, once, here (술식 ③: the sentence is gone)
 
             // 상생 X → e → Y · 상극 X → e → Y (ElementRelations ring)
-            var sheng=V.Label(s,root,"ShengLabel","상생",UiType304.Meta20,s.Mist,1246,962);
+            var sheng=V.Label(s,root,"ShengLabel","상생",UiType304.Meta20,s.Mist,1246,852);
             float lx=1246+sheng.rectTransform.sizeDelta.x+8;
-            var sg=V.Label(s,root,"Sheng",Content304Hanja(Content304GeneratedBy(e))+" → "+Content304Hanja(e)+" → "+Content304Hanja(Content304Generates(e)),UiType304.Serif700_20,s.Paper,lx,962);
+            var sg=V.Label(s,root,"Sheng",Content304Hanja(Content304GeneratedBy(e))+" → "+Content304Hanja(e)+" → "+Content304Hanja(Content304Generates(e)),UiType304.Serif700_20,s.Paper,lx,852);
             lx+=sg.rectTransform.sizeDelta.x+28;
-            var ke=V.Label(s,root,"KeLabel","상극",UiType304.Meta20,s.Mist,lx,962);
-            V.Label(s,root,"Ke",Content304Hanja(Content304OvercomeBy(e))+" → "+Content304Hanja(e)+" → "+Content304Hanja(Content304Overcomes(e)),UiType304.Serif700_20,s.Paper,lx+ke.rectTransform.sizeDelta.x+8,962);
+            var ke=V.Label(s,root,"KeLabel","상극",UiType304.Meta20,s.Mist,lx,852);
+            V.Label(s,root,"Ke",Content304Hanja(Content304OvercomeBy(e))+" → "+Content304Hanja(e)+" → "+Content304Hanja(Content304Overcomes(e)),UiType304.Serif700_20,s.Paper,lx+ke.rectTransform.sizeDelta.x+8,852);
         }
 
         /// <summary>획 필름 (IMPLEMENTATION §5.3): up to three frames 196x180 at x 1244 / 1450 / 1656, y536. Frame k shows the strokes
@@ -402,7 +401,7 @@ namespace Oheangbu.App.World.UI
         /// <summary>차패 (DESIGN §7.9, D18, D43): 신분패 쪽지 420x630 (差 牌 세로 60 먹, 소속, 부인 백문 - without the seal the block is
         /// centred on the card), 오덕 5행 x640 pitch 120:
         /// 새긴 덕 = 주문 방인 (관변 주사 테 + 주사 한자 on paper), 못 새긴 덕 = 같은 두께 비활성 테만, 쓰인 仁 = sealed (D22).
-        /// [G] 자동차 부르기 is a keycap + verb next to the identity.</summary>
+        /// D308-27: no [G] hint and no recall rule under the card; no state word per row (the seal says it), a used 仁 says 쓰임.</summary>
         void BuildChapae()
         {
             var s=Content304Style;var art=Content304Art;
@@ -421,11 +420,6 @@ namespace Oheangbu.App.World.UI
                 V.Place(cardLabel.rectTransform,0,300f+shift);
             }
 
-            // #308 D308-2 §3: the card follows Session.VehicleAvailable; while locked the meta line stays empty (no condition text)
-            bool received=Session.VehicleAvailable;
-            V.Hint(s,contentRoot,"SummonPalanquinHint",new[]{"G"},"자동차 부르기",received?s.Paper:s.Off,96,862,true,received,false,UiType304.Label24);
-            V.Label(s,contentRoot,"SummonPalanquinMeta",received?"하차 30m · 자동 회수":"",UiType304.Meta20,s.Mist,96,906);
-
             string[] virtueIds={"仁","禮","義","智","信"};string[] names={"인 · 목","예 · 화","의 · 금","지 · 수","신 · 토"};
             var knownVirtues=Session.Progress.ui.knownVirtues;
             for(int i=0;i<5;i++)
@@ -440,10 +434,16 @@ namespace Oheangbu.App.World.UI
                     V.Label(s,seal,"Glyph",virtueIds[i],UiType304.Heading44,s.Cinnabar,0,0,64,62,TextAlignmentOptions.Center);
                 }
                 else Content304SealFrame(seal,s.Off,art);
-                V.Label(s,contentRoot,"VirtueName_"+i,names[i],UiType304.Label28,owned?s.Paper:s.Mist,728,y+2);
-                // state meta: DESIGN §3.2 / §8 ban the em-dash, so an unengraved virtue says it in words (새겨짐 / 새기지 못함)
-                V.Label(s,contentRoot,"VirtueState_"+i,sealedRen?"쓰였다 · 쉼터에서 쉬면 돌아온다":owned?"새겨짐":"새기지 못함",UiType304.Meta20,s.Mist,728,y+40);
-                if(sealedRen)Content304Sealed(contentRoot,630,y+14,190,24);   // D22 across the seal and the name
+                // D308-27 (차패 ①④, answer 1): no state word per row - the seal says it (주사 도장 / 빈 테) and the word stands once in
+                // the detail of the selected 오덕 칸 on the 소지품 page. The name sits on the seal's middle line; a used 仁 says 쓰임
+                var virtueName=V.Label(s,contentRoot,"VirtueName_"+i,names[i],UiType304.Label28,owned?s.Paper:s.Mist,728,y);
+                V.Place(virtueName.rectTransform,728,y+(64f-virtueName.rectTransform.sizeDelta.y)*.5f);
+                if(sealedRen)
+                {
+                    var used=V.Label(s,contentRoot,"VirtueState_"+i,"쓰임",UiType304.Meta20,s.Mist,0,0);
+                    V.Place(used.rectTransform,728+virtueName.rectTransform.sizeDelta.x+16,y+(64f-used.rectTransform.sizeDelta.y)*.5f);
+                    Content304Sealed(contentRoot,630,y+20,190,24);   // D22 across the seal and the name (both on the middle line now)
+                }
             }
         }
 
