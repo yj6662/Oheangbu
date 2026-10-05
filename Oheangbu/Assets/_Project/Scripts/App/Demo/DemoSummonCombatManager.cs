@@ -175,7 +175,8 @@ namespace Oheangbu.App.Demo
             if(profile==null||cast.Kind!=SpellKind.Summon||cast.Element!=profile.Element||!Finite(origin)||!Finite(forward)||!float.IsFinite(cast.Power)||cast.Power<0)
                 return Reject("소환 설정을 확인할 수 없다.",out reason);
             if(!profile.TryValidate(out reason,true))return Reject(reason,out reason);
-            float basePower=cast.Power*Wiring.SummonDamageScale(cast.Element);
+            // #308 WP-00: the book keeps summon base power 0, so a hand-drawn summon gets its power from the profile (x brush x hold).
+            float basePower=SummonPowerRule308.CastPower(cast.Power,profile.BasePower,cast.Brush,cast.HoldScale)*Wiring.SummonDamageScale(cast.Element);
             float power=basePower*profile.DamageMultiplier,rootPower=basePower*profile.RootDamageMultiplier,flamePower=basePower*profile.FlameDamageMultiplier;
             float tigerPower=basePower*profile.TigerClawDamageMultiplier;
             float clubPower=basePower*profile.ClubDamageMultiplier;
@@ -225,6 +226,7 @@ namespace Oheangbu.App.Demo
             var candidate=prepared;prepared=null;
             if(candidate.Root==null||!slot.TryReplace(candidate.Clock,true,true)){if(candidate.Root!=null)SafeDestroy(candidate.Root);return;}
             var previous=active;active=candidate;
+            candidate.Presentation.DeployOwnsEntrance308=Wiring!=null&&Wiring.DeployOwnsSummon308(cast.Letter);   // #308 forms2 S5 (read-only; it never throws)
             candidate.Root.SetActive(true);candidate.Presentation.Sample(candidate.Clock,0,0);
             Release(previous);AcceptedSummons++;
             Wiring.NotifyCombatSummonStarted(cast.Letter,candidate.Root.transform.position);

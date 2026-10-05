@@ -36,12 +36,16 @@ namespace Oheangbu.EditorTools.WorldMacro {
    if(command=="ui-check"){
     ui.OpenPage("소지품");Canvas.ForceUpdateCanvases();
     VCheck(ui.GetComponentsInChildren<EquipmentInkGraphic>().All(g=>g.canvasRenderer!=null),"all gear graphics own CanvasRenderer");
-    var button=ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="Gear_pine_brush");button.onClick.Invoke();Canvas.ForceUpdateCanvases();
+    // #308 (SPEC-UI-EQUIPMENT-308): Gear_<id> is a 바꿔 낄 것 row of the selected slot; focusing it shows the item, its click equips / unequips at once
+    ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="Equipped_Brush").onClick.Invoke();Canvas.ForceUpdateCanvases();
+    var button=ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="Gear_pine_brush");UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(button.gameObject);Canvas.ForceUpdateCanvases();
     VCheck(ui.GetComponentsInChildren<TMPro.TMP_Text>().Any(t=>t.name=="SelectedGearTitle"&&t.text.Contains("송연필")),"click selects item and displays its actual saved upgrade");
     var drag=ui.GetComponentsInChildren<EquipmentDragItem>().Single(d=>d.ItemId=="pine_brush");var drop=ui.GetComponentsInChildren<EquipmentDropSlot>().Single(d=>d.Slot==EquipmentSlot.Head);
     string equipmentBefore=JsonUtility.ToJson(s.Progress.equipment);var ev=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current){pointerDrag=drag.gameObject,position=new Vector2(500,500)};
     drag.OnBeginDrag(ev);drop.OnDrop(ev);drag.OnEndDrag(ev);VCheck(equipmentBefore==JsonUtility.ToJson(s.Progress.equipment),"wrong-slot drag through UI returns without mutation");
-    var equip=ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="GearEquip");equip.onClick.Invoke();VCheck(string.IsNullOrEmpty(s.Progress.equipment.Equipped[0]),"selected equipped item button unequips");
+    // #308: the wrong-slot drop above left the 머리 칸 selected; back to the 붓 칸, then the worn row's click takes it off (no GearEquip button any more)
+    ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="Equipped_Brush").onClick.Invoke();Canvas.ForceUpdateCanvases();
+    var equip=ui.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b=>b.name=="Gear_pine_brush");equip.onClick.Invoke();VCheck(string.IsNullOrEmpty(s.Progress.equipment.Equipped[0]),"worn row in the list unequips");
     drag=ui.GetComponentsInChildren<EquipmentDragItem>().Single(d=>d.ItemId=="pine_brush");drop=ui.GetComponentsInChildren<EquipmentDropSlot>().Single(d=>d.Slot==EquipmentSlot.Brush);ev.pointerDrag=drag.gameObject;drag.OnBeginDrag(ev);drop.OnDrop(ev);drag.OnEndDrag(ev);
     VCheck(s.Progress.equipment.Equipped[0]=="pine_brush"&&s.Progress.equipment.Owned.Count==8,"valid UI drag equips without duplicating item");Canvas.ForceUpdateCanvases();return string.Join("\n",villageRuntimeResults);
    }

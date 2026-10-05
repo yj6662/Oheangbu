@@ -78,7 +78,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      Check(Vector3.Distance(new Vector3(feet.x,0,feet.z),new Vector3(start.x,0,start.z))<2.5f,"new journey starts at the relocated mine "+feet.ToString("F1"));
      var roots=scene.GetRootGameObjects().Select(g=>g.name).ToArray();
      foreach(var r in new[]{"Finish297_Cheolong","Folklore298_Encounters"})Check(roots.Contains(r),"scene root "+r);
-     Check(s.Actors.Count(a=>a!=null&&a.Id.StartsWith("folklore298/"))==6&&s.Actors.Length==15,"enemies: "+s.Actors.Length+" (folklore298 "+s.Actors.Count(a=>a!=null&&a.Id.StartsWith("folklore298/"))+")");
+     Check(s.Actors.Count(a=>a!=null&&a.Id.StartsWith("folklore298/"))==6&&s.Actors.Length==16,"enemies (15 + #306 mine tutorial boss): "+s.Actors.Length+" (folklore298 "+s.Actors.Count(a=>a!=null&&a.Id.StartsWith("folklore298/"))+")");
      Check(Object.FindObjectsByType<WorldShortcutDoor>(FindObjectsSortMode.None).Length==3&&s.Content.Checkpoints.Any(c=>c.Id=="cheolong_fortress_rest297"),"shortcut doors 3 (산성 2 + 궁성 1) + 성황당 checkpoint present");
      state.Phase=2;state.At=now;Persist();return;
     }

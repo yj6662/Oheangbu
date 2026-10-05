@@ -64,6 +64,12 @@ namespace Oheangbu.EditorTools.WorldMacro
     var boss=targetGo.AddComponent<CheongryongCombatController>();target.Restore();Cast('각');now+=.5f;runtime.Tick(now);
     Check(!target.Control.BlocksActions(now)&&Mathf.Abs(target.Control.MovementScale(now)-profile.BossRootSpeed)<.001f,"boss root slows movement without blocking actions");
     runtime.Clear();Object.DestroyImmediate(boss);Check(target.Control.MovementScale(now)==1,"owner clear removes its root modifier");
+    // #308 WP-00: the boss rule reads EnemyVitals.IsBoss (data). A target with an IsBoss profile and neither boss controller is slowed, not bound.
+    var bossProfile308=ScriptableObject.CreateInstance<EnemyVitalsProfileSO>();objects.Add(bossProfile308);
+    typeof(EnemyVitalsProfileSO).GetField("_isBoss",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(bossProfile308,true);
+    target.ConfigureProfile(bossProfile308);target.Restore();Cast('각');now+=.5f;runtime.Tick(now);
+    Check(target.IsBoss&&!target.Control.BlocksActions(now)&&Mathf.Abs(target.Control.MovementScale(now)-profile.BossRootSpeed)<.001f,"IsBoss profile target: root slows movement without blocking actions (#308)");
+    runtime.Clear();target.ConfigureProfile(null);target.Restore();Check(!target.IsBoss&&target.Control.MovementScale(now)==1,"profile removed: ordinary target again (#308)");
     target.Restore();w.PlayerDamageScale=_=>1.5f;Cast('낙');w.PlayerDamageScale=_=>4f;before=target.Hp;now+=.5f;runtime.Tick(now);
     Check(Mathf.Abs(before-target.Hp-6)<.001f,"burn initial hit uses cast-time gear snapshot");before=target.Hp;now+=1;runtime.Tick(now);
     Check(Mathf.Abs(before-target.Hp-1.5f)<.001f,"burn ticks attached to target at snapshot power");

@@ -1,0 +1,9 @@
+﻿# SPEC-SPELL-120-308 WP-10: harmony install - the five a + mieum glyphs share the handler install.mark (COMBAT-INSTALL).
+# TEST starting values (Q6 default): the mark lives 15 s unfired / one mark at a time (the oldest makes room) / a detonation adds 2 groggy steps and 14 damage of the installed element.
+# BasePower stays empty: attaching deals no damage. detonate.power is multiplied by the brush and the hold decay of the installing cast.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+감,,install.mark,,,,,,,,,,,,,,,,,install.life=15;install.max=1;detonate.groggy=2;detonate.power=14
+남,,install.mark,,,,,,,,,,,,,,,,,install.life=15;install.max=1;detonate.groggy=2;detonate.power=14
+맘,,install.mark,,,,,,,,,,,,,,,,,install.life=15;install.max=1;detonate.groggy=2;detonate.power=14
+삼,,install.mark,,,,,,,,,,,,,,,,,install.life=15;install.max=1;detonate.groggy=2;detonate.power=14
+암,,install.mark,,,,,,,,,,,,,,,,,install.life=15;install.max=1;detonate.groggy=2;detonate.power=14

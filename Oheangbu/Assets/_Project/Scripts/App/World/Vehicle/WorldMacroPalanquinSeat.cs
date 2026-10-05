@@ -29,7 +29,11 @@ namespace Oheangbu.App.World.Vehicle
         public bool Occupied { get; private set; }
         public bool SeatedView { get; private set; }
         public string LastInteraction { get; private set; }
-        public string InteractionHint => Occupied ? "WASD 주행 · Space 제동 · V 시점 · E 하차" : CanBoard ? "E 가마 탑승" : string.Empty;
+        /// <summary>#308 D308-8 (SPEC-VEHICLE-UX-308 §4): runtime only, set by WorldMacroPlaytestSession.BindVehicle308. While true the
+        /// seat ignores its own E key; the session routes the one interaction key F (with the #306 fresh-press lock) to TryBoard/TryExit.
+        /// False (other scenes, PineRest) keeps the legacy E path unchanged. RuntimeState and every other contract are untouched.</summary>
+        [System.NonSerialized] public bool InteractKeyExternal;
+        public string InteractionHint => Occupied ? "WASD 주행 · Space 제동 · V 시점 · " + (InteractKeyExternal ? "F" : "E") + " 하차" : CanBoard ? (InteractKeyExternal ? "F 탑승" : "E 가마 탑승") : string.Empty;
         public bool CanBoard => ReferencesReady && !Occupied && CompactMountainAccess.VehicleAllowed(gameObject.scene,WalkBody.transform.position) && CompactMountainAccess.VehicleAllowed(gameObject.scene,Vehicle.transform.position,Vehicle.Hull.bounds.extents.magnitude) && (BoardingAllowed == null || BoardingAllowed()) && (CombatWalker != null ? CombatWalker.CanBoard : ReviewController.enabled && ReviewController.Mode == 1 && WalkBody.enabled) && Vehicle.Speed <= Profile.BoardingMaximumSpeed &&
             Vector3.Distance(WalkBody.bounds.center, SeatSocket.position) <= Profile.BoardingDistance;
 
@@ -58,7 +62,7 @@ namespace Oheangbu.App.World.Vehicle
             }
             var keyboard = Keyboard.current;
             if (keyboard == null || !applicationFocused) { if (Occupied) Vehicle.SetDriverInput(0, 0, true); return; }
-            if (keyboard.eKey.wasPressedThisFrame)
+            if (!InteractKeyExternal && keyboard.eKey.wasPressedThisFrame)
             {
                 if (Occupied) TryExit(); else TryBoard();
             }

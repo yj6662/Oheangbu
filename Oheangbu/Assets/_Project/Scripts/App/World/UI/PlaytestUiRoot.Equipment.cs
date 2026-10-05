@@ -9,12 +9,14 @@ using V=Oheangbu.App.World.UI.PlaytestUiView;
 
 namespace Oheangbu.App.World.UI
 {
-    /// <summary>#304 소지품 · 장비 (inventory.png, DESIGN §7.3, IMPLEMENTATION §7.5): 장착 칸 표 around the portrait, 보유 격자 4 x 3
-    /// with names and 착용 중, detail column x1410 (이름 60, 강화 단계, 효과 32, 교체 +N%p, 다음 강화, 착용 + Enter). Focus on a chip
-    /// updates the detail in place; Enter / click on a chip moves focus into the detail (the chip keeps an ink frame).
-    /// Harness names kept: InkPlayerSilhouette, Equipped_&lt;slot&gt; (+EquipmentDropSlot), Gear_&lt;id&gt; (+EquipmentDragItem),
-    /// EquipmentTab, FragmentsTab, EquipmentOwnedGrid, SelectedGearPaper, SelectedGearTitle, SelectedGearEffect, GearEquip,
-    /// GearTransactionError; GearAction(action, id, slot, revision, price) is invoked by reflection (CompactSoundChecks255).</summary>
+    /// <summary>장비 shared code. #308 (SPEC-UI-EQUIPMENT-308): the 소지품 page itself is the 3-column screen in
+    /// PlaytestUiRoot.Equipment308.cs (BuildEquipmentInventory only forwards to it). This file keeps what the trade windows
+    /// (장비 상점 / 장비 강화) and the 소지품 page share: GearAction, the 하위 탭, chip art, DrawGearDetails (trade detail column,
+    /// #304 DESIGN §7.9) and the kept-chip bookkeeping. Harness names kept: Equipped_&lt;slot&gt; (+EquipmentDropSlot), Gear_&lt;id&gt;
+    /// (+EquipmentDragItem), EquipmentTab, FragmentsTab, SelectedGearPaper, SelectedGearTitle, SelectedGearEffect,
+    /// GearTransactionError; GearAction(action, id, slot, revision, price) is invoked by reflection (CompactSoundChecks255).
+    /// Gone from 소지품 with #308: InkPlayerSilhouette, EquipmentOwnedGrid, DragHint, and GearEquip unless
+    /// EquipmentScreen308SO.DirectEquipFromCandidate is off.</summary>
     public sealed partial class PlaytestUiRoot
     {
         string gearSelection="",gearError="";bool fragmentTab;
@@ -25,8 +27,7 @@ namespace Oheangbu.App.World.UI
         readonly List<ContentCell304> content304GearCells=new List<ContentCell304>();
         readonly Dictionary<ContentCell304,Image> content304GearChips=new Dictionary<ContentCell304,Image>();
 
-        // EquipmentSlot order: Brush, Head, Body, Hands, Feet, Accessory (DESIGN §7.3 coordinates)
-        static readonly Vector2[] Content304SlotXY={new Vector2(96,580),new Vector2(620,264),new Vector2(620,494),new Vector2(96,380),new Vector2(620,750),new Vector2(96,780)};
+        // EquipmentSlot order: Brush, Head, Body, Hands, Feet, Accessory
         static readonly string[] Content304SlotNames={"붓","머리","몸","손","발","장신구"};
         const float Content304GridX=800,Content304GridY=264,Content304PitchX=136,Content304PitchY=186;
         const string Content304Artisan="목공 장인",Content304Merchant="장비 상인";
@@ -42,78 +43,7 @@ namespace Oheangbu.App.World.UI
         }
 
         // ------------------------------------------------------------------ page
-        void BuildEquipmentInventory(){
-            var s=Content304Style;var catalog=Session.Content.EquipmentCatalog;var state=Session.Progress.equipment;
-            content304GearCells.Clear();content304GearChips.Clear();
-            Content304SubTabs(true);
-            Content304Currency(contentRoot,"Currency",1856,160,Session.Progress.ledger.currency);
-            if(!Session.EquipmentReady){V.Label(s,contentRoot,"GearError","장비 저장을 확인해야 한다.",UiType304.Body24,s.CinnabarLift,800,264);return;}
-            var art=Session.Content.EquipmentUiArt;
-
-            // portrait (the paper doll): exactly one EquipmentInkGraphic with Symbol < 0
-            var portrait=V.Rect("InkPlayerSilhouette",contentRoot,196,250,440,660).gameObject.AddComponent<EquipmentInkGraphic>();
-            portrait.Artwork=art!=null?art.Portrait:null;portrait.raycastTarget=false;
-            portrait.color=portrait.Artwork!=null?Color.white:UiStyle304SO.A(s.Paper,.22f);
-
-            // default selection: keep the current one, else what the brush slot wears, else the first owned item
-            if(string.IsNullOrEmpty(gearSelection)||!state.Has(gearSelection))
-                gearSelection=(state.Equipped.FirstOrDefault(x=>!string.IsNullOrEmpty(x))??state.Owned.FirstOrDefault()?.Id)??"";
-            if(fragmentTab){Content304FragmentGrid(Content304GridX,Content304GridY,4);}
-            else{
-                // 장착 칸 표 (6 drop targets)
-                for(int i=0;i<6;i++){
-                    var slot=(EquipmentSlot)i;string worn=state.Equipped[i];var p=Content304SlotXY[i];
-                    bool has=!string.IsNullOrEmpty(worn);var d=has?catalog.Find(worn):null;
-                    var cell=Content304Cell(contentRoot,"Equipped_"+slot,p.x,p.y,128,166,new Rect(0,0,Content304ChipSize,Content304ChipSize),new Rect(-33,142,26,20),
-                        ()=>Content304FocusDetailPrimary(),c=>Content304PickGear(c,worn??"",has?(EquipmentSlot?)null:slot),false);
-                    cell.Id=worn??"";
-                    var chip=Content304Chip(cell.transform,"Chip",0,0,Content304ChipSize,!has);
-                    if(has)Content304GearArt(cell.transform,slot,art,8,8,88,Color.white);
-                    else Content304GearArt(cell.transform,slot,art,12,12,80,UiStyle304SO.A(s.Paper,.2f));
-                    V.Label(s,cell.transform,"SlotName",Content304SlotNames[i],UiType304.Meta20,s.Mist,0,112);
-                    var name=V.Label(s,cell.transform,"Name",has&&d!=null?Content304GearName(d,state):"비어 있음",UiType304.Label22,has?s.Paper:s.Mist,0,138);
-                    cell.BindLabel(name,has?s.Paper:s.Mist,has?s.Paper:s.Mist);
-                    var drop=cell.gameObject.AddComponent<EquipmentDropSlot>();drop.Slot=slot;
-                    content304GearCells.Add(cell);content304GearChips[cell]=chip;
-                }
-                Content304OwnedGrid();
-            }
-            Content304Rule(contentRoot,"DetailRule",1368,250,740);
-            content304Detail=V.Rect("GearDetail304",contentRoot,0,0,1920,1080);
-            if(content304GearCells.All(c=>c.name!=content304Kept))content304Kept=fragmentTab?"Fragment_"+selectedItem:"Gear_"+gearSelection;
-            Content304RefreshGear();
-
-            var fallback=fragmentTab?Content304FirstFragment():content304GearCells.FirstOrDefault(c=>c.name=="Gear_"+gearSelection)?.gameObject;
-            if(fallback==null)fallback=content304GearCells.FirstOrDefault(c=>c.name.StartsWith("Gear_",StringComparison.Ordinal))?.gameObject;
-            if(fallback==null)fallback=contentRoot.Find(fragmentTab?"FragmentsTab":"EquipmentTab")?.gameObject;
-            Content304Restore(contentRoot,fallback);
-        }
-
-        void Content304OwnedGrid(){
-            var s=Content304Style;var catalog=Session.Content.EquipmentCatalog;var state=Session.Progress.equipment;var art=Session.Content.EquipmentUiArt;
-            int n=state.Owned.Count,rows=Mathf.Max(3,Mathf.CeilToInt(n/4f));
-            RectTransform grid=rows>3?V.Scroll(contentRoot,"EquipmentOwnedGrid",Content304GridX,Content304GridY,4*Content304PitchX+18,3*Content304PitchY,rows*Content304PitchY)
-                :V.Rect("EquipmentOwnedGrid",contentRoot,Content304GridX,Content304GridY,4*Content304PitchX,rows*Content304PitchY);
-            for(int i=0;i<n;i++){
-                var item=state.Owned[i];var d=catalog.Find(item.Id);if(d==null)continue;
-                string id=item.Id;float gx=i%4*Content304PitchX,gy=i/4*Content304PitchY;
-                var cell=Content304Cell(grid,"Gear_"+id,gx,gy,128,172,new Rect(0,0,Content304ChipSize,Content304ChipSize),new Rect(-33,121,26,20),
-                    ()=>{Content304PickGear(Content304GearCells("Gear_"+id),id,null);Content304FocusDetailPrimary();},c=>Content304PickGear(c,id,null),false);
-                cell.Id=id;
-                var chip=Content304Chip(cell.transform,"Chip",0,0,Content304ChipSize,false);
-                Content304GearArt(cell.transform,d.Slot,art,8,8,88,Color.white);
-                var name=V.Label(s,cell.transform,"Name",Content304GearName(d,state),UiType304.Label22,s.Paper,0,114);
-                if(state.Equipped.Contains(id))V.Label(s,cell.transform,"Worn","착용 중",UiType304.Meta20,s.Mist,0,144);
-                cell.BindLabel(name,s.Paper,s.Paper);
-                Content304NewMark(cell,"gear:"+id,Content304ChipSize-22,-8,false);
-                var drag=cell.gameObject.AddComponent<EquipmentDragItem>();drag.ItemId=id;drag.Revision=state.Revision;drag.Dropped=(gid,slot,rev)=>GearAction(EquipmentAction.Equip,gid,slot,rev);
-                content304GearCells.Add(cell);content304GearChips[cell]=chip;
-            }
-            for(int i=n;i<rows*4;i++)Content304Chip(grid,"EmptyCapacity",i%4*Content304PitchX,i/4*Content304PitchY,Content304ChipSize,true);
-            bool lastRowUsed=n>(rows-1)*4;
-            float hintY=Content304GridY+(lastRowUsed?Mathf.Min(rows,3)*Content304PitchY+8:(Mathf.Min(rows,3)-1)*Content304PitchY+Content304ChipSize+24);
-            V.Hint(s,contentRoot,"DragHint",new[]{"끌기"},"칸에 놓아 착용",s.Mist,Content304GridX,hintY);
-        }
+        void BuildEquipmentInventory(){Equip308Build();}   // #308: the 3-column screen (PlaytestUiRoot.Equipment308.cs)
 
         ContentCell304 Content304GearCells(string name)=>content304GearCells.FirstOrDefault(c=>c!=null&&c.name==name);
 
@@ -131,12 +61,12 @@ namespace Oheangbu.App.World.UI
                 if(content304GearChips.TryGetValue(c,out var chip)&&chip!=null)chip.name=kept&&!string.IsNullOrEmpty(c.Id)?"SelectedGearPaper":"Chip";
             }
             if(content304Detail==null)return;
+            if(Page=="소지품"){Equip308Refresh();return;}   // #308: slot / fragment detail + 바꿔 낄 것 (PlaytestUiRoot.Equipment308.cs)
             // focus moves call this every time; rebuild only when what the column shows changed (a page rebuild = new root)
             string key=content304Detail.GetInstanceID()+"|"+Page+"|"+fragmentTab+"|"+gearSelection+"|"+content304EmptySlot+"|"+selectedItem+"|"+gearError;
             if(key==content304DetailKey)return;
             content304DetailKey=key;
             V.Clear(content304Detail);
-            if(Page=="소지품"&&(fragmentTab||!Session.EquipmentEnabled)){Content304FragmentDetail();return;}
             bool shop=Page=="장비 상점",forge=Page=="장비 강화";
             DrawGearDetails(shop,forge);
         }

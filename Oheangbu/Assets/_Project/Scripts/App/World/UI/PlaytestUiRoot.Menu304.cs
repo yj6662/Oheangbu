@@ -517,8 +517,8 @@ namespace Oheangbu.App.World.UI
             if(menu304ControlsTab=="작도")rows=new[,]{{"Q + 마우스 좌클릭","글씨 그리기 · Q를 놓으면 시전"},{"마우스 좌클릭 유지","비작도 상태에서 먹 갈무리"}};
             else if(menu304ControlsTab=="메뉴")rows=new[,]{{"M / I / Esc","지도 / 소지품 / 일시정지·뒤로"},{"Q / E","메뉴 탭 넘기기"}};
             else rows=new[,]{{"W · A · S · D","걷기 / 탑승 중 가속·조향"},{runKey,runAction},{"Space","지상 점프 / 탑승 중 제동"},{"C / X","웅크리기 전환 / 바닥 착석·일어나기"},
-                {"마우스","시점 이동"},{"왼쪽 Shift / Tab","회피 (웅크림 중 구르기) / 대상 락온"},{"F","조사, 대화, 석경 파편 획득"},{"E / V","마법가마 탑승·하차 / 탑승 시점 전환"},
-                {"G","오행부로 자동차 호출 · 하차 후 30m 자동 회수"}};
+                {"마우스","시점 이동"},{"왼쪽 Shift / Tab","회피 (웅크림 중 구르기) / 대상 락온"},{"F","조사, 대화, 석경 파편 획득, 자동차 탑승·하차"},{"V","탑승 중 시점 전환"},
+                {"G","붓으로 자동차 부르기·거두기 · 하차 후 30m 자동 회수"}};   // #308 D308-8: F is the one car key, G toggles; D308-8e: the call is a brush stroke (D308-8c), the tablet is no longer shown
             var tab=Menu304CategoryTabs(s,"ControlsTab_",Menu304ControlTabs,menu304ControlsTab,t=>{menu304ControlsTab=t;OpenPage("조작 안내");});
             menu304DefaultSelection=tab!=null?tab.gameObject:null;
             for(int i=0;i<rows.GetLength(0);i++)

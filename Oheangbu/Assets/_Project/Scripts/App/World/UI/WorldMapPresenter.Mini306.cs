@@ -15,6 +15,11 @@ namespace Oheangbu.App.World.UI
         RectTransform miniStub;
         int miniRevision, miniWorldFrame = -1;
         Vector3 miniWorld;
+        float miniRoadPx = -1f;   // #307: < 0 = MapStyle304SO.RoadWidthPx until the HUD sets MinimapSpec304.RoadPx
+        // #307: the minimap disc is ~220 px wide on a 1080 page: a 512 x 512 print (the sheet keeps its 1024 x 768)
+        const int MiniInkSize = 512;
+        // #307: "never" for the Daedong distance ticks on the minimap (their minimum spacing in display px)
+        const float MiniNoTicksPx = 1e4f;
         public double LastMiniPrintMilliseconds { get; private set; }
         public double MeanMiniPrintMilliseconds { get; private set; }
         public long MiniPrints { get; private set; }
@@ -26,10 +31,38 @@ namespace Oheangbu.App.World.UI
         public int MiniRevision => miniRevision;
         public bool MiniInterior => initialized && MiniZone306() != null;
 
+        /// <summary>#307 probe (AC-1a): walked 2 m cells of the current cave / interior plan (0 outside one or before load).</summary>
+        public int MiniWalkedCaveCells
+        {
+            get
+            {
+                if (!initialized) return 0;
+                var entry = GetInteriorDiscovery(data.ZoneAt(MiniWorld306()));
+                if (entry == null) return 0;
+                int count = 0;
+                for (int y = 0; y < entry.Grid.Height; y++) for (int x = 0; x < entry.Grid.Width; x++) if (entry.Grid.IsDiscovered(x, y)) count++;
+                return count;
+            }
+        }
+
         WorldMapPaperInk MiniInk306()
         {
-            if (miniInk == null) { miniInk = new WorldMapPaperInk(); ConfigureInk(miniInk); }
+            if (miniInk == null) { miniInk = new WorldMapPaperInk(MiniInkSize, MiniInkSize); ConfigureInk(miniInk); ConfigureMiniInk307(miniInk); }
             return miniInk;
+        }
+
+        /// <summary>#307 after ConfigureInk: the minimap's road width (MinimapSpec304.RoadPx through SetMiniRoadWidth) and no
+        /// distance ticks (TickMinPx "never").</summary>
+        void ConfigureMiniInk307(WorldMapPaperInk ink)
+        {
+            if (miniRoadPx > 0f) ink.RoadWidthPx = miniRoadPx;
+            ink.TickMinPx = MiniNoTicksPx;
+        }
+
+        public void SetMiniRoadWidth(float displayPx)
+        {
+            miniRoadPx = displayPx > 0f ? displayPx : -1f;
+            if (miniInk != null) { ConfigureInk(miniInk); ConfigureMiniInk307(miniInk); }
         }
 
         /// <summary>CurrentWorld once per frame for the HUD reads (pose, zone, print): seated, it may search for the vehicle.</summary>
@@ -59,9 +92,12 @@ namespace Oheangbu.App.World.UI
             // walked land only: the full sheet's fog-covered picture (_UnknownShade / _UnknownRelief) would show unwalked terrain
             m.SetFloat("_UnknownVeil", 1f); m.SetFloat("_UnknownShade", 0f); m.SetFloat("_UnknownRelief", 0f);
             m.SetTexture("_FogTex", fogTexture);
-            m.SetTexture("_InkTex", MiniInk306().Texture);
+            // #308: with a notation bundle the minimap prints no road ink outdoors (brush strips instead), so the 512 x 512 ink
+            // buffer is only made when a print is first asked for (an interior zone without a cave plan)
+            m.SetTexture("_InkTex", n308 != null ? (Texture)ClearInk308() : MiniInk306().Texture);
             m.SetTexture("_MacroInkTex", Texture2D.blackTexture);
-            m.SetVector("_MapWindow", new Vector4(0, 0, 1, 1));   // print = the whole RawImage; the window moves by uvRect
+            m.SetVector("_MapWindow", new Vector4(0, 0, 1, 1));   // #307: HudMinimap304 moves the window inside the print here
+            ApplyPaper308(m, true);   // #308: _MAP308 + the baked terrain picture (no-op without a bundle)
             return m;
         }
 
@@ -92,6 +128,9 @@ namespace Oheangbu.App.World.UI
             RefreshShortcutLines306();
             WorldMapZoneSpec zone = MiniZone306();
             bool interior = zone != null;
+            // #308: nothing to print with a notation bundle (strips outdoors, the cave plan indoors) except the detail lines of
+            // an interior zone that has no plan; MiniPrints stays put outdoors (SPEC-MAP-OVERHAUL-308 AC-P1)
+            if (n308 != null && !(interior && zone.Illustration == null)) return;
             var ink = MiniInk306();
             ink.projectionWorldHeight = inkWindow.height * (data.BoundsMax.y - data.BoundsMin.y);
             bool daedong = ink.Daedong && !interior;
@@ -125,7 +164,7 @@ namespace Oheangbu.App.World.UI
             mini.SetFloat("_ExploreCave", zone != null && zone.ExploreWalkedPassages ? 1 : 0);
             mini.SetTexture("_CaveDiscovery", entry != null ? entry.Mask : Texture2D.blackTexture);
             mini.SetTexture("_FogTex", fogTexture);
-            mini.SetTexture("_InkTex", MiniInk306().Texture);
+            mini.SetTexture("_InkTex", n308 != null && miniInk == null ? (Texture)ClearInk308() : MiniInk306().Texture);
         }
 
         public void MiniPose(out Vector3 world, out float headingDeg)

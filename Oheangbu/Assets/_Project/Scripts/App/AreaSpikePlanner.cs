@@ -5,20 +5,15 @@ namespace Oheangbu.App
     /// <summary>One cast owns one placement and timing plan; presentation never rerolls it.</summary>
     public static class AreaSpikePlanner
     {
-        public static void Fill(AreaImpactPlan plan,int seed)
+        // A cast without row data (old callers) keeps the pre-#308 numbers.
+        public static void Fill(AreaImpactPlan plan,int seed)=>Fill(plan,seed,AreaSpikeSpec.Legacy);
+        // #308 WP-00: count, fill, window and gaps come from the row (spike.*); the arithmetic lives in AreaSpikeRule308 (pure).
+        public static void Fill(AreaImpactPlan plan,int seed,AreaSpikeSpec spec)
         {
             plan.Spikes.Clear();plan.CreatedAt=Time.time;
-            var random=new System.Random(seed);int[] order=new int[17];float[] gaps=new float[16];float sum=0;
-            for(int i=0;i<17;i++)order[i]=i;
-            for(int i=16;i>0;i--){int j=random.Next(i+1);int t=order[i];order[i]=order[j];order[j]=t;}
-            for(int i=0;i<16;i++){gaps[i]=.35f+(float)random.NextDouble();sum+=gaps[i];}
-            for(int i=0;i<17;i++)
-            {
-                float a=i*2.39996323f;float radius=Mathf.Sqrt((i+.35f)/17f)*plan.Radius*.82f;
-                plan.Spikes.Add(new PlannedSpike{Point=plan.Point+new Vector3(Mathf.Cos(a),0,Mathf.Sin(a))*radius});
-            }
-            float time=plan.Delay;
-            for(int rank=0;rank<17;rank++){plan.Spikes[order[rank]].RiseAt=time;if(rank<16)time+=.6f*gaps[rank]/sum;}
+            var points=new Vector3[spec.Count];var rise=new float[spec.Count];
+            AreaSpikeRule308.Plan(seed,spec,plan.Point,plan.Radius,plan.Delay,points,rise);
+            for(int i=0;i<spec.Count;i++)plan.Spikes.Add(new PlannedSpike{Point=points[i],RiseAt=rise[i]});
         }
         public static float NearestRise(AreaImpactPlan plan,Vector3 target)
         {

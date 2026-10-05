@@ -63,6 +63,7 @@ namespace Oheangbu.App.World
             { error = "호송 재개 저장 후보를 확인할 수 없다."; return false; }
             string snapshot = JsonUtility.ToJson(candidate);
             if (snapshot == JsonUtility.ToJson(saved)) return true;
+            DrainAutosave();   // #307 item 3: an autosave in flight lands and reports first
             if (!TryPersistDemoEscortCandidate(candidate, store.Save, out var accepted, out error)) { SaveError = error; return false; }
             Progress = accepted; lastSuccessfulSnapshot = snapshot; SaveError = null; return true;
         }

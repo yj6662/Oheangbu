@@ -175,7 +175,7 @@ namespace Oheangbu.App.Demo
             else if (outcome == ParryOutcome.Half) damage *= _config != null ? _config.HalfParryDamageFactor : .4f;
             else if (outcome == ParryOutcome.Block) damage *= _config != null ? _config.GuardBlockFactor : .5f;
             float before = _playerVitals.Hp01 * _playerVitals.MaxHp;
-            if (damage > 0 && CurrentPlan == plan && Eligible()) _playerVitals.TakeAttackDamage(damage,
+            if (damage > 0 && CurrentPlan == plan && Eligible()) EnemyStrike308.Deliver(_playerVitals, _vitals, damage,
                 pulse.Shape == SouthGatePulseShape.Wave ? (pulse.Attack.Element.HasValue ? IncomingDamageKind.ElementalRanged : IncomingDamageKind.Ranged) : (pulse.Attack.Element.HasValue ? IncomingDamageKind.ElementalMelee : IncomingDamageKind.Melee));
             float applied = Mathf.Max(0, before - _playerVitals.Hp01 * _playerVitals.MaxHp);
             // Existing OwnedImpactResolved owns all guard rewards/groggy. This component never adds a second reward.

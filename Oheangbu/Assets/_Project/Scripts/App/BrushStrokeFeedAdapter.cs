@@ -21,6 +21,11 @@ namespace Oheangbu.App
     // 이 컴포넌트를 통째로 꺼도 인식 결과는 그대로다(인식 불가침의 어댑터 층 증명).
     // CameraRigController.Update → 이 LateUpdate → BrushStrokeRenderer.LateUpdate(0)
     // → PlayerVisualDriver(1000) → HarvestInkStreamEffect(2000). 판정은 원래 Update에서 끝난다.
+    // #308 (SPEC-LOCKON-DRAW-STABILITY-308 §4.1): 살아 있는 획은 그 카메라가 그려지기 직전(beginCameraRendering)에 한 번 더
+    // 같은 식으로 붙인다 — LateUpdate 뒤에 카메라가 바뀌어도(렌더 시점의 시야각 숨·흔들림) 획 점은 입력 픽셀에 그려진다.
+    // 점을 넣는 좌표계는 LateUpdate의 붙이기 그대로다. 표현 전용: 인식 입력·판정은 이 경로를 모른다.
+    // #308 check 수리 (§4.6): 화면 → 월드 사상은 Camera.ScreenToWorldPoint가 아니라 ScreenToWorldPrecise308이다. 엔진 함수는
+    // 단정밀도 역 뷰·투영 행렬을 거쳐, 메인 씬 좌표(3,000 m대) · near 0.08에서 획 틀을 프레임마다 몇 px씩 다르게 놓았다.
     [DefaultExecutionOrder(-1000)]
     public sealed class BrushStrokeFeedAdapter : MonoBehaviour
     {
@@ -30,6 +35,7 @@ namespace Oheangbu.App
         [SerializeField] private Material _motifMaterial;                 // InkMotif 머티리얼 — 비우면 모티프 생략(플래시만)
         [SerializeField] private GameObject _commitPatternPrefab;         // [4차 검수] 커밋 문양(유료 에셋 슬롯 — §9 예외 4). 배정 시 모티프 대체, 비우면 복귀
         [SerializeField] private SpellVisualSetSO _visualSet;             // [FX-ASSETS §4.4] 어휘별 시각 분화 — 미등재 글자=위 기본 슬롯 폴백
+        public SpellVisualSetSO VisualSet => _visualSet;                  // #308 read-only: the spell presenter looks glyph prefabs up in the same set
         [SerializeField] private SpellBookSO _spellBook;                  // 술식 종류 조회(공격=투사체/패링=제자리 개화) — 어휘 미러 읽기만
         [SerializeField] private CombatConfigSO _combatConfig;            // 허공 비행 속도 참조(읽기만) — 명중 비행시간은 배선이 밀어준다
         [SerializeField] private ElementPaletteSO _elementPalette;        // 술식 플래시 속성색(초성→오행, TEST)
@@ -68,6 +74,12 @@ namespace Oheangbu.App
         // 각 획의 로컬 단위/px를 고정하고 현재 카메라 평면의 transform만 갱신한다.
         // 카메라 블렌드·붐·FOV 변화 중 정지한 포인터도 획 전체와 같은 화면 위치를 유지한다.
         private readonly List<float> _strokeUnitsPerPixel = new List<float>();
+        // #308 렌더 직전 재앵커 — 대리자는 한 번만 만든다(프레임당 할당 없음). 구독은 살아 있는 획이 있는 동안만.
+        private System.Action<UnityEngine.Rendering.ScriptableRenderContext, Camera> _renderAnchor308;
+        private bool _renderAnchorOn308;
+        private Camera _anchorCamera308;   // LateUpdate가 붙인 카메라 — 렌더 직전에도 이 카메라가 그려질 때만 다시 붙인다
+        private int _anchorPixelHeight308; // LateUpdate가 본 화면 높이 — 같은 카메라를 다른 크기의 대상에 그릴 때는 다시 붙이지 않는다
+        public int RenderAnchorCount308 { get; private set; }   // 계측 전용: 렌더 직전 재앵커가 돈 횟수
         private BrushStrokeRenderer _current;
         private Material _fallbackMaterial;
         private int _stencilRef; // 1..255 순환 — 살아있는 획이 없을 때 리셋(§11.1)
@@ -125,6 +137,19 @@ namespace Oheangbu.App
         public event System.Action<char, Vector3> SummonPresentationStarted;
         public event System.Action<char, Vector3> SummonPresentationReleased;
         public event System.Action CastRejected;
+        // [SPEC-SPELL-DEPLOY-308 section 1] deploy layer host - set by SpellDeployDirector308 while it is enabled (null = the layer sleeps),
+        // and the place of a misfired letter (CastRejected carries no argument). Presentation only.
+        public SpellVFX120.ISpellDeployHost308 DeployHost308 { get; set; }
+        public event System.Action<Vector3> CastFailedAt308;
+        // #308 juice (SPEC-ANIM-JUICE-308 sections 4b / 6): read-only presentation taps for the player's throw and camera reaction.
+        // Neither is read by the recogniser or by a gameplay rule. LiveStrokeCount308 = strokes still attached to the camera (they
+        // leave it at the commit, in this LateUpdate). LastLetterPower308 = the flash's own power proxy of the latest recognised
+        // letter (the flash reads the same function a little later, in LateUpdate). The letter broadcast is a gameplay event: the
+        // tap only stores two numbers there (it cannot fail inside the broadcast); the curve is read when a presenter asks.
+        public int LiveStrokeCount308 => _strokes.Count;
+        private float _lastLetterDistance308, _lastLetterDuration308; private bool _lastLetterSeen308;
+        public float LastLetterPower308 => _lastLetterSeen308 && _style != null
+            ? Mathf.Clamp01(_style.EstimateFlashPower(_lastLetterDistance308, _lastLetterDuration308)) : 0f;
 
         // 표현용 상태 — 획 하나가 그려지는 동안의 붓 상태다. 인식 데이터와 공유하지 않는다.
         private Vector2 _lastInputScreen;  // 직전 입력 좌표 — 속도 측정용
@@ -198,6 +223,8 @@ namespace Oheangbu.App
                 _input.LetterInterrupted -= EvaporateRemaining;
             }
             if (_letterDrawn != null) _letterDrawn.Unsubscribe(OnLetterDrawn);
+            SetRenderAnchor308(false);
+            _anchorCamera308 = null;
             _visualEvents.Clear();
             _dirtyStrokes.Clear();
             DestroyAllImmediate(); // 비활성 시에는 연출 없이 정리
@@ -236,7 +263,8 @@ namespace Oheangbu.App
 
         private Vector3 ProjectScreenPoint(Camera camera, Vector2 screen)
         {
-            return camera.ScreenToWorldPoint(new Vector3(screen.x, screen.y, EffectiveSurfaceDistance(camera)));
+            // #308 (SPEC-LOCKON-DRAW-STABILITY-308 §4.6): 엔진의 Camera.ScreenToWorldPoint를 쓰지 않는다 — 아래 ScreenToWorldPrecise308의 주석.
+            return ScreenToWorldPrecise308(camera, screen.x, screen.y, EffectiveSurfaceDistance(camera));
         }
 
         private void LateUpdate()
@@ -280,6 +308,11 @@ namespace Oheangbu.App
             for (int i = 0; i < _dirtyStrokes.Count; i++)
                 if (_dirtyStrokes[i] != null) _dirtyStrokes[i].FlushMesh();
             _dirtyStrokes.Clear();
+            // #308: 글자의 첫 획이 생긴 프레임에 구독한다 — 그 전부터 있던 구독자(흔들림·시야각 숨) 뒤에 불린다.
+            // 획이 다 떠나면(커밋·증발) 구독을 푼다. 구독·해제는 글자당 한 번이라 프레임당 할당이 없다.
+            _anchorCamera308 = camera;
+            _anchorPixelHeight308 = camera != null ? camera.pixelHeight : 0;
+            SetRenderAnchor308(camera != null && _strokes.Count > 0);
         }
 
         private static VisualEvent CaptureEvent(VisualEventKind kind)
@@ -304,6 +337,7 @@ namespace Oheangbu.App
 
         private void OnLetterDrawn(DrawnLetter letter)
         {
+            _lastLetterDistance308 = letter.AverageDistance; _lastLetterDuration308 = letter.StrokeDuration; _lastLetterSeen308 = true;   // #308 juice tap (read only)
             var e = CaptureEvent(VisualEventKind.Letter);
             e.Letter = letter;
             _visualEvents.Add(e);
@@ -333,10 +367,131 @@ namespace Oheangbu.App
             stroke.localScale = new Vector3(_strokeScale / parentScale.x, _strokeScale / parentScale.y, _strokeScale / parentScale.z);
         }
 
+        // ---- #308 렌더 직전 재앵커 (SPEC-LOCKON-DRAW-STABILITY-308 §4.1) ----
+        // UpdateStrokeFrame과 같은 식(같은 깊이 · 같은 단위/px · 같은 회전)을 어댑터 상태 없이 쓴 것 — _strokeScale을 건드리지 않는다.
+        // 편집 모드 검사(LockDraw308 check)가 두 경로의 결과가 같음을 견준다. 식을 바꾸면 둘을 같이 바꾼다.
+        public static void AnchorStrokeFrame(Transform stroke, float unitsPerPixel, Camera camera, float surfaceDistance, Transform eyeAnchor)
+        {
+            if (stroke == null || camera == null) return;
+            Transform view = camera.transform;
+            float depth = surfaceDistance;
+            if (eyeAnchor != null) depth += Mathf.Max(0f, Vector3.Dot(eyeAnchor.position - view.position, view.forward));
+            float halfHeight = camera.orthographic ? camera.orthographicSize : depth * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            float scale = 2f * halfHeight / Mathf.Max(1, camera.pixelHeight) / Mathf.Max(0.0000001f, unitsPerPixel);
+            stroke.SetPositionAndRotation(ScreenToWorldPrecise308(camera, 0f, 0f, depth), view.rotation);
+            var parentScale = stroke.parent != null ? stroke.parent.lossyScale : Vector3.one;
+            stroke.localScale = new Vector3(scale / parentScale.x, scale / parentScale.y, scale / parentScale.z);
+        }
+
+        // ---- #308 화면 → 월드 사상 (SPEC-LOCKON-DRAW-STABILITY-308 §4.6, check 수리 2026-10-05) ----
+        // 화면 픽셀 (sx, sy) · 시야 깊이 depth(카메라 전방 거리, m)의 월드 점. 뜻은 Camera.ScreenToWorldPoint와 같다.
+        // 엔진 함수를 쓰지 않는 까닭: 그 함수는 단정밀도 4x4 역 뷰·투영 행렬로 푼다. 그 행렬의 원소 크기가 (카메라 월드 좌표) / (2 · near)라서
+        // 메인 씬(좌표 3,000 m대, near 0.08)에서는 한 칸이 약 2 mm = 1 m 앞에서 2 px이고, 카메라가 돌거나 걸을 때마다 오차가 달라진다 —
+        // 획 틀이 프레임마다 몇 px씩 튀었다(편집기 실측 LockDraw308 A3 10.4 px, 원점에서는 0.04 px).
+        // 여기서는 투영 행렬과 뷰포트만으로 시야(카메라-로컬) 좌표를 풀고(작은 수끼리의 계산) 카메라의 위치 · 회전으로 월드에 놓는다.
+        // 남는 오차는 월드 좌표 한 칸(메인 씬 0.24 mm = 약 0.25 px)뿐이다. 인라인 금지: LateUpdate 붙이기와 렌더 직전 붙이기가
+        // 같은 float 인수로 같은 코드를 지나야 두 결과가 비트까지 같다(LockDraw308 A2).
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        public static Vector3 ScreenToWorldPrecise308(Camera camera, float sx, float sy, float depth)
+        {
+            Transform view = camera.transform;
+            return view.position + view.rotation * ScreenToViewPoint308(camera, sx, sy, depth);
+        }
+
+        // 시야 좌표(오른쪽 x · 위 y · 전방 z = depth). clip = P · (x, y, -depth, 1)에서 clip.xy = ndc.xy · clip.w인 x, y의 2x2 연립을 푼다.
+        // 대칭 원근에서는 x = ndc.x · depth / P00, y = ndc.y · depth / P11로 줄어든다. 렌즈 시프트 · 직교 투영도 같은 식이다.
+        public static Vector3 ScreenToViewPoint308(Camera camera, float sx, float sy, float depth)
+        {
+            Rect rect = camera.pixelRect;
+            Matrix4x4 p = camera.projectionMatrix;
+            float nx = (sx - rect.x) * 2f / Mathf.Max(1f, rect.width) - 1f;
+            float ny = (sy - rect.y) * 2f / Mathf.Max(1f, rect.height) - 1f;
+            float z = -depth;
+            float w = p.m32 * z + p.m33;
+            float a = p.m00 - nx * p.m30, b = p.m01 - nx * p.m31, e = nx * w - (p.m02 * z + p.m03);
+            float c = p.m10 - ny * p.m30, d = p.m11 - ny * p.m31, f = ny * w - (p.m12 * z + p.m13);
+            float det = a * d - b * c;
+            if (Mathf.Abs(det) < 1e-12f) return new Vector3(0f, 0f, depth);   // 깨진 투영 행렬: 화면 가운데 축 위의 점
+            return new Vector3((e * d - b * f) / det, (a * f - e * c) / det, depth);
+        }
+
+        // ---- #308 화면 광선 · 월드 → 화면 (SPEC-LOCKON-DRAW-STABILITY-308 §4.7, 2026-10-05) ----
+        // 근접 팔 · 붓(WorldMacroPlayerGestureRig)이 쓰는 나머지 두 방향이다. 위와 같은 까닭으로 엔진 함수를 쓰지 않는다:
+        // Camera.ScreenPointToRay는 같은 단정밀도 역 뷰·투영 행렬로 광선을 만들어, 메인 씬 좌표에서 광선 방향이 카메라가 돌거나 걸을 때마다
+        // 0.x° 달라졌다(붓 자루와 그것을 쥔 손이 붓끝을 중심으로 흔들렸다). Camera.WorldToScreenPoint는 단정밀도 월드 → 클립 행렬로 읽어
+        // 1 m 앞의 점을 0.x px 틀리게 읽었다(붓끝 맞추기가 그 흔들리는 읽기에 맞췄다). 뜻은 엔진 함수와 같다(원점 근처에서 0.01 px 안).
+        // 순수 함수다: 상태 · 할당 · 새 수치 없음. 인식은 이 함수들을 볼 수도 없다(Drawing 어셈블리는 App을 참조하지 않는다).
+        // 광선: 시작점 = near 평면 위의 그 픽셀, 방향 = 같은 픽셀의 한 단위 더 깊은 점 쪽(엔진과 같은 정의 — 원근 · 직교 · 렌즈 시프트 공통).
+        public static Ray ScreenPointToRayPrecise308(Camera camera, Vector2 screen)
+        {
+            Transform view = camera.transform;
+            float near = camera.nearClipPlane;
+            Vector3 a = ScreenToViewPoint308(camera, screen.x, screen.y, near);
+            Vector3 b = ScreenToViewPoint308(camera, screen.x, screen.y, near + 1f);
+            Quaternion rotation = view.rotation;
+            return new Ray(view.position + rotation * a, rotation * (b - a));   // Ray가 방향을 정규화한다
+        }
+
+        // 월드 점 → (화면 x px, 화면 y px, 카메라 전방 거리 m). 뜻은 Camera.WorldToScreenPoint와 같다.
+        public static Vector3 WorldToScreenPrecise308(Camera camera, Vector3 world)
+        {
+            if (!WorldToNdc308(camera, world, out float nx, out float ny, out float depth)) return Vector3.zero;
+            Rect rect = camera.pixelRect;
+            return new Vector3(rect.x + (nx * .5f + .5f) * rect.width, rect.y + (ny * .5f + .5f) * rect.height, depth);
+        }
+
+        // 월드 점 → (뷰포트 x, 뷰포트 y, 카메라 전방 거리 m). 뜻은 Camera.WorldToViewportPoint와 같다.
+        public static Vector3 WorldToViewportPrecise308(Camera camera, Vector3 world)
+        {
+            if (!WorldToNdc308(camera, world, out float nx, out float ny, out float depth)) return Vector3.zero;
+            return new Vector3(nx * .5f + .5f, ny * .5f + .5f, depth);
+        }
+
+        // 카메라 위치를 먼저 뺀다(가까운 두 수의 뺄셈은 정확하다) — 그 뒤의 회전 · 투영은 1 m 안팎의 작은 수끼리의 계산이다.
+        // 카메라 평면 위의 점(w = 0)은 엔진 함수처럼 실패로 돌려준다(호출한 쪽이 (0, 0, 0)을 낸다).
+        private static bool WorldToNdc308(Camera camera, Vector3 world, out float nx, out float ny, out float depth)
+        {
+            Transform view = camera.transform;
+            Vector3 v = Quaternion.Inverse(view.rotation) * (world - view.position);
+            Matrix4x4 p = camera.projectionMatrix;
+            float z = -v.z;
+            float w = p.m30 * v.x + p.m31 * v.y + p.m32 * z + p.m33;
+            depth = v.z;
+            if (Mathf.Abs(w) <= 1e-7f) { nx = 0f; ny = 0f; return false; }
+            nx = (p.m00 * v.x + p.m01 * v.y + p.m02 * z + p.m03) / w;
+            ny = (p.m10 * v.x + p.m11 * v.y + p.m12 * z + p.m13) / w;
+            return true;
+        }
+
+        private void SetRenderAnchor308(bool on)
+        {
+            if (on == _renderAnchorOn308) return;
+            if (_renderAnchor308 == null) _renderAnchor308 = OnBeginCameraRendering308;
+            if (on) UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering += _renderAnchor308;
+            else UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering -= _renderAnchor308;
+            _renderAnchorOn308 = on;
+        }
+
+        // 그 카메라의 렌더가 시작될 때(컬링 전) — 먼저 구독한 쪽이 카메라를 바꾼 뒤의 최종 포즈·시야각으로 획을 붙인다.
+        // 떼어 놓인 글자(커밋 뒤 _fading)는 세상 물체라 건드리지 않는다. 다른 카메라(영상·미리보기)가 그릴 때는 아무것도 하지 않는다.
+        private void OnBeginCameraRendering308(UnityEngine.Rendering.ScriptableRenderContext context, Camera camera)
+        {
+            if (camera == null || camera != _anchorCamera308) return;
+            // 획의 단위/px는 LateUpdate의 화면 높이로 정해졌다. 같은 카메라를 다른 크기의 대상에 그리는 렌더(촬영)에서는
+            // 손대지 않는다 — 획은 LateUpdate가 붙인 자리 그대로이고 그림은 이 스테이지 이전과 같다.
+            if (camera.pixelHeight != _anchorPixelHeight308) return;
+            for (int i = 0; i < _strokes.Count; i++)
+                if (_strokes[i] != null) AnchorStrokeFrame(_strokes[i].transform, _strokeUnitsPerPixel[i], camera, _surfaceDistance, _eyeAnchor);
+            RenderAnchorCount308++;
+        }
+
         private void ApplyStrokeStarted(float unscaledTime)
         {
             var go = new GameObject($"BrushStroke_{_strokes.Count}");
             go.transform.SetParent(transform, false);
+            // #308 [TEST — SPEC-LOCKON-DRAW-STABILITY-308 §4.4]: 자료가 레이어를 정하면(기본 -1 = 그대로) 획을 그 레이어에 둔다.
+            // VfxAfterFog(20)는 월드 안개 뒤에 그려진다 — 안개가 획 뒤 먼 지형의 깊이로 획을 물들이지 않는다. 표현 전용.
+            if (_style != null && _style.StrokeRenderLayer >= 0) go.layer = _style.StrokeRenderLayer;
             var camera = ProjectionCamera;
             float unitsPerPixel = camera != null ? WorldUnitsPerPixel(camera) / ComputeStrokeScale() : 1f;
             _strokeUnitsPerPixel.Add(unitsPerPixel);
@@ -501,6 +656,13 @@ namespace Oheangbu.App
             SpellBookSO.Entry spell = default;
             bool known = _spellBook != null && _spellBook.TryGet(letter.Letter, out spell);
             _pendingAttack = known && (spell.Kind == SpellKind.AttackSingle || spell.Kind == SpellKind.AttackArea);
+            // #308: a new table row (no legacy feature, a registered handler) is not in _entries. Its kind is read from the row, so a
+            // new attack glyph that keeps this adapter's presentation (Plan*(cast, feedAdapter: true)) flies like the existing ones
+            // instead of blooming in place. Read only. The glyphs that resolved before #308 never enter this branch: _entries (or
+            // their absence from it) decides them exactly as before, because their rows carry a legacy feature.
+            if (!known && _spellBook != null && _spellBook.HasTable && _spellBook.TryGetRow(letter.Letter, out SpellRow row308) &&
+                row308.Feature == SpellLegacyFeature.None && row308.HasHandler)
+                _pendingAttack = row308.Kind == SpellKind.AttackSingle || row308.Kind == SpellKind.AttackArea;
             _pendingParry = known && spell.Kind == SpellKind.Parry;
             _pendingSummon = known && spell.Kind == SpellKind.Summon;
             // 어휘별 시각 분화(FX-ASSETS §4.4) — 표현 조회만. 미등재면 기본 슬롯이 받는다
@@ -581,6 +743,7 @@ namespace Oheangbu.App
                 if (_pendingFxPrefab != null || _commitPatternPrefab != null) SpawnPattern(group);
                 else SpawnMotifs(group);
             }
+            if (!isFlash && _pendingCastFailed && CastFailedAt308 != null && TryComputeLetterBounds(group, out Bounds failed308)) CastFailedAt308.Invoke(failed308.center);   // #308 misfire smear
             _fading.Add(group);
         }
 
@@ -608,6 +771,7 @@ namespace Oheangbu.App
             // 제자리 개화, 연출(일제·솟음·전진)이 자체 시계로 목표를 향한다. 피해는 배선의 착탄 시계
             // 그대로(연출≠실판정 §9-1)
             var sequence = go.GetComponentInChildren<SpellSequenceEffect>(true);
+            if (sequence != null && DeployHost308 != null) sequence.SetDeployHost(DeployHost308, group.FlashPower, group.FlashColor);   // #308
             if (sequence is SpellVFX120.Vfx120Effect authored)
             {
                 // 신규 연출은 루트 수명과 다색 팔레트를 소유한다. 기존 문양의

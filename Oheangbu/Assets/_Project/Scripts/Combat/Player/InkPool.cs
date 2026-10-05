@@ -17,6 +17,19 @@ namespace Oheangbu.Combat
             // Capacity upgrades preserve the saved fill fraction and never raise Gained.
             CapacityMultiplier=scale;Broadcast();
         }
+        // #308 (SPEC-SPELL-120-308 WP-08): a second, temporary capacity coefficient (a timed buff), multiplied with the
+        // equipment multiplier above. Unlike an upgrade it keeps the amount of ink, not the fill fraction: widening the
+        // vessel pours nothing in, and narrowing it spills only what no longer fits. Never raises Gained. Not saved:
+        // the buff that set it puts it back to 1.
+        public float TemporaryCapacity {get;private set;}=1f;
+        public float TotalCapacity => CapacityMultiplier*TemporaryCapacity;
+        public void SetTemporaryCapacity(float scale)
+        {
+            if(!float.IsFinite(scale)||scale<1f)throw new System.ArgumentOutOfRangeException(nameof(scale));
+            float previous=_value;
+            _value=Mathf.Clamp01(_value*TemporaryCapacity/scale);TemporaryCapacity=scale;
+            if(_value!=previous)Broadcast(); // a full vessel that only narrows keeps reading full: no per-frame traffic
+        }
 
         public float Value => _value;
         // 마지막 실지출 시각(Time.time, scaled) — 자연 회복 대기의 기준. 지출 전=음의 무한
@@ -34,7 +47,7 @@ namespace Oheangbu.Combat
         // 부족하면 소비하지 않고 false — 먹 부족 술식=불발 취급(SPEC §10.1 [제안])
         public bool TrySpend(float amount)
         {
-            amount=Mathf.Max(0f,amount)/CapacityMultiplier;
+            amount=Mathf.Max(0f,amount)/TotalCapacity;
             if (_value + 1e-4f < amount) return false;
             _value = Mathf.Clamp01(_value - amount);
             if (amount > 0f) LastSpendTime = Time.time;
@@ -45,7 +58,7 @@ namespace Oheangbu.Combat
         // 불발 등 「있는 만큼만 깎이는」 지출 — 잔량이 모자라도 바닥까지는 소모된다
         public void SpendClamped(float amount)
         {
-            amount=Mathf.Max(0f,amount)/CapacityMultiplier;
+            amount=Mathf.Max(0f,amount)/TotalCapacity;
             _value = Mathf.Clamp01(_value - amount);
             if (amount > 0f) LastSpendTime = Time.time;
             _changed?.Raise(_value);
@@ -53,7 +66,7 @@ namespace Oheangbu.Combat
 
         public void Gain(float amount)
         {
-            amount=Mathf.Max(0f,amount)/CapacityMultiplier;
+            amount=Mathf.Max(0f,amount)/TotalCapacity;
             float previous = _value;
             _value = Mathf.Clamp01(_value + amount);
             _changed?.Raise(_value);
@@ -66,7 +79,7 @@ namespace Oheangbu.Combat
         public float Regenerate(float amount, float cap01 = 1f)
         {
             cap01 = Mathf.Clamp01(cap01);
-            amount = Mathf.Max(0f, amount) / CapacityMultiplier;
+            amount = Mathf.Max(0f, amount) / TotalCapacity;
             if (amount <= 0f || _value >= cap01 || float.IsNaN(amount)) return 0f;
             float previous = _value;
             _value = Mathf.Min(cap01, _value + amount);

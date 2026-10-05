@@ -56,6 +56,13 @@ namespace Oheangbu.BrushRender
         [Tooltip("원석 탁화 — 「날것 마석 빛은 원석에만, 탁하게」(ArtAudio:32): 광맥 실체색 = lerp(오행색, 먹, k). 오염의 검보라 탁화와 다른 축(#152)")]
         [SerializeField, Range(0f, 1f)] private float _rawTurbidity = 0.25f;
 
+        // ---- #308 권역 담채 의미 색 [TEST] — SPEC-EVENT-WASH-308 §5 / D308-6 (ART-COLOR 의미 축, 실측 트랙 전 placeholder) ----
+        [Header("의미 색 [TEST] — #308 권역 담채(안식·보상). 기존 5색과 무관")]
+        [Tooltip("안식 = 등불 주황 — 빌더 InnLantern297 _Color(1, .58, .26)와 같은 값 [TEST]")]
+        [SerializeField, ColorUsage(false, false)] private Color _restLantern = new Color(1f, 0.58f, 0.26f);
+        [Tooltip("보상 = 비색(고려청자) [TEST — hex는 ART-COLOR 실측 트랙]")]
+        [SerializeField, ColorUsage(false, false)] private Color _rewardCeladon = new Color(0.56f, 0.71f, 0.64f);
+
         public Color GetBaseColor(char initial)
         {
             foreach (var entry in _entries)
@@ -107,11 +114,19 @@ namespace Oheangbu.BrushRender
         // 먹 — 월드 톤 램프의 어두운 끝(#153). 환경 재질·포스트의 먹선·씻김 종점이 전부 이 한 값을 읽는다
         public Color InkColor => _ink;
 
+        // 오염 먹 — ART-COLOR 오염색 [LOCKED] 「번진 먹 — 검보라·묵색」 그 자체(속성색과 섞기 전). #308 D308-4d 결정 둘레 마석 오염의
+        // 평소 톤(무채)이 이 값을 읽는다. sRGB 표기
+        public Color CorruptInkColor => _corruptInk;
+
         // 광맥 원석(날것 마석) — 오행색의 먹 탁화(#152). 오염(GetCorruptColor)과 축이 다르다: 탁하되 검보라로 가지 않는다
         public Color GetRawVeinColor(char initial)
         {
             return Color.Lerp(GetBaseColor(initial), _ink, _rawTurbidity);
         }
+
+        // #308 권역 담채 — 안식(등불 주황)·보상(비색) 의미 색. sRGB 표기(소비자가 .linear로 넘긴다)
+        public Color RestLanternColor => _restLantern;
+        public Color RewardCeladonColor => _rewardCeladon;
 
         // 정화 — 한지 소지 쪽으로 물러난 맑은 색
         public Color GetPurifiedColor(char initial)

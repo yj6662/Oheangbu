@@ -265,7 +265,7 @@ namespace Oheangbu.App.Demo
             else if (outcome == ParryOutcome.Half) damage *= _config != null ? _config.HalfParryDamageFactor : .4f;
             else if (outcome == ParryOutcome.Block) damage *= _config != null ? _config.GuardBlockFactor : .5f;
             float before = _playerVitals.Hp01 * _playerVitals.MaxHp;
-            if (damage > 0f && CurrentPlan == plan && Eligible()) _playerVitals.TakeAttackDamage(damage,
+            if (damage > 0f && CurrentPlan == plan && Eligible()) EnemyStrike308.Deliver(_playerVitals, _vitals, damage,
                 plan.Kind == CheongryongAttackKind.RootEruption || plan.Kind == CheongryongAttackKind.WoodProjectile ? IncomingDamageKind.ElementalRanged : IncomingDamageKind.Melee);
             float applied = Mathf.Max(0f, before - _playerVitals.Hp01 * _playerVitals.MaxHp);
             // Reward ownership stays exclusively with the existing OwnedImpactResolved listener.

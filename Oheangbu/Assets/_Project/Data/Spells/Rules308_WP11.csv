@@ -1,0 +1,9 @@
+﻿# SPEC-SPELL-120-308 WP-11: the three single shots that cast before #308 gain their missing clause (range, no guidance, turn limits).
+# Mode replace + Feature book = a declared handover (SpellTakeover308): the row keeps its legacy feature, power and projectile speed, so a wiring
+# without an effect registry and the old bool overloads cast it exactly as before; with a registry that holds the handler, the handler runs it.
+# Every number is a TEST starting value (not measured). range = metres / fall.radius = metres around the point the target stood on at cast time /
+# turn.rate = degrees per second / turn.limit = degrees a shot may turn in total / hit.radius = metres / flight.max = seconds a shot may fly.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+가,replace,single.ranged,,AttackSingle,,book,,12,1.3,,,,,,,,,,range=12
+마,replace,single.ballistic,,AttackSingle,,book,,16,,,,,,,,,,,fall.radius=1.2
+아,replace,single.homing,,AttackSingle,,book,,12,0.6,,,,,,,,,,turn.rate=90;turn.limit=120;hit.radius=0.8;flight.max=6

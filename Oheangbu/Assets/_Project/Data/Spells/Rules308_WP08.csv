@@ -1,0 +1,12 @@
+﻿# SPEC-SPELL-120-308 WP-08: the nine self buffs (eo medial with the nieun or mieum final). One handler per glyph, numbers in Params.
+# TEST starting values of the Spec (section 13, WP-08), not measured. duration = seconds the buff runs; a recast replaces the remaining time.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+건,,buff.burstheal,,,,,,,,,,,,,,,,,duration=4;heal.hp01=0.25
+넌,,buff.empower,,,,,,,,,,,,,,,,,duration=30;empower.mul=2
+넘,,buff.steadfast,,,,,,,,,,,,,,,,,duration=30
+선,,buff.swift,,,,,,,,,,,,,,,,,duration=30;speed.mul=1.4
+언,,buff.chain,,,,,,,,,,,,,,,,,duration=30;chain.discount=0.3
+엄,,buff.reserve,,,,,,,,,,,,,,,,,duration=30;reserve.capacity=1.3;reserve.decay=0.02
+먼,,buff.reflect,,,,,,,,,,,,,,,,,duration=30;reflect.power=6
+멈,,buff.slowback,,,,,,,,,,,,,,,,,duration=30;slow.speed=0.6;slow.duration=3
+섬,,buff.insight,,,,,,,,,,,,,,,,,duration=30

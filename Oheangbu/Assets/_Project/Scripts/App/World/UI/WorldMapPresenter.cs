@@ -18,6 +18,9 @@ namespace Oheangbu.App.World.UI
     /// (WorldMapPresenter.Marks304.cs). #306: the minimap is back on the HUD (HudMinimap304 under HUD_Canvas, reading
     /// IMapMiniSource304, WorldMapPresenter.Mini306.cs); MiniRoot is its root once attached, an empty inactive stub before. The
     /// HUD bearing line reads IMapMarkerSource304.
+    /// #308 (SPEC-MAP-OVERHAUL-308): with a notation bundle (MapStyle304SO.Notation308, WorldMapPresenter.Map308.cs) the sheet
+    /// draws the baked terrain picture (_MAP308), brush strips, atlas icons, plated place names, the two-part legend and the
+    /// lacquer board; without one every line below runs as before.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed partial class WorldMapPresenter : MonoBehaviour
@@ -74,6 +77,9 @@ namespace Oheangbu.App.World.UI
         RectTransform foldMap, fullLabels;
         GameObject legend;
         Texture2D fogTexture;
+        // #307 fog cache: the texels and the (outline) playability of every cell, so a reveal rewrites only the cells around it
+        Color32[] fogPixels;
+        bool[] fogPlayable;
         Rect fullUv = new Rect(0, 0, 1, 1);
         bool initialized, targetExpanded, progressLoaded, followCurrent, ownsRuntimeData, wholeWorldLayout;
         float fold;
@@ -115,6 +121,7 @@ namespace Oheangbu.App.World.UI
                 : (sheet.Regions ?? Array.Empty<WorldMacroSheetSO.RegionSpec>()).Where(r => r != null && r.Polygon != null && r.Polygon.Length >= 3).Select(r => r.Polygon).ToArray();
             displayedShortcuts = UnityEngine.Object.FindObjectsByType<WorldActShortcut>(FindObjectsSortMode.None).Where(x => x.gameObject.scene == session.gameObject.scene).ToArray();
             discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline);
+            InitNotation308();   // #308: the bundle for this map, or none (the pre-#308 path)
             BuildFog(); BuildMiniStub(parent); BuildFull(parent); BuildMarks304(); BuildMapHover(); BuildInput304();
             ApplyFold(); ApplyUvAndMarkers(CurrentWorld());
             initialized = true;
@@ -170,18 +177,22 @@ namespace Oheangbu.App.World.UI
                 if (progressLoaded && Time.unscaledTime >= nextDiscoveryProbe && WorldMapDiscoveryGrid.Contains(data.Outline, new Vector2(current.x, current.z)))
                 {
                     nextDiscoveryProbe = Time.unscaledTime + .2f;
-                    if ((data.ZoneAt(current) == null || !data.ZoneAt(current).ExploreWalkedPassages) && discovery.Reveal(new Vector2(current.x, current.z)))
+                    if ((data.ZoneAt(current) == null || !data.ZoneAt(current).ExploreWalkedPassages) && discovery.Reveal(new Vector2(current.x, current.z), WorldMapDiscoveryGrid.RevealRadius, RevealGate308(current)))
                     {
+                        // stays at the reveal: the session's save snapshots (autosave, rest, interactions, death) copy Progress
+                        // without a map hook, so a deferred export could save stale walked land (~2.6 KB string per reveal)
                         session.Progress.ui.discoveredCells = Convert.ToBase64String(discovery.Export());
-                        RefreshFog();
+                        RefreshFogAround(new Vector2(current.x, current.z), WorldMapDiscoveryGrid.RevealRadius);
                     }
                     foreach (WorldMapMarkerSpec marker in data.Markers)
-                        if (marker != null && !marker.RequiresArrival && discovery.IsDiscovered(marker.WorldXZ) && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
+                        // #308 map 3c: WalkReveals308 = the same cell test first; with a notation bundle a marker's reveal rule may ask more
+                        if (marker != null && !marker.RequiresArrival && WalkReveals308(marker) && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
                             session.Progress.ui.discoveredMarkers.Add(marker.Id);
                 }
                 // Closed map: the sheet draws nothing; discovery above keeps running for the bearing line and the HUD minimap
                 // (#306), which prints its own window through IMapMiniSource304.
                 if (RefreshShortcutLines306()) miniRevision++;
+                RefreshStates308();   // #308: stroke states (the HUD minimap reads their revision; no minimap print)
                 if (!open) return;
                 if (followCurrent) CenterFullOn(new Vector2(current.x, current.z));
                 ApplyUvAndMarkers(current);
@@ -324,6 +335,7 @@ namespace Oheangbu.App.World.UI
 
             // 1. the page veil (brush lifts at 1960 = full page), faded with the fold on close
             BuildVeil304();
+            BuildBoard308();   // #308: the lacquer board the sheet lies on (no-op without a bundle)
 
             // 2. the twice-folded sheet (sheet_map, 800x820; print window 740x760)
             paperSheet = V.Rect("TwiceFoldedHanji", FullRoot, 0, 0, PaperW, PaperH);
@@ -350,9 +362,11 @@ namespace Oheangbu.App.World.UI
             paperMaterial.SetTexture("_InkTex", paperInk.Texture);
             macroInk = new WorldMapPaperInk(); ConfigureInk(macroInk);
             paperMaterial.SetTexture("_MacroInkTex", macroInk.Texture);
+            ApplyPaper308(paperMaterial, false);   // #308: _MAP308 + the baked terrain picture (no-op without a bundle)
             foldMap = V.Rect("PrintedMapWindow", paperSheet, 0, 0, PaperW - 2f * PrintInset, PaperH - 2f * PrintInset);
             foldMap.anchorMin = foldMap.anchorMax = foldMap.pivot = new Vector2(.5f, .5f);
             foldMap.anchoredPosition = Vector2.zero;
+            BuildStrokes308(foldMap);   // #308: brush strips under the marks (own nested Canvas)
             fullMarkers = V.Stretch("MapMarkers", foldMap);
             markerVisibility = fullMarkers.gameObject.AddComponent<CanvasGroup>();
             markerVisibility.interactable = markerVisibility.blocksRaycasts = false;
@@ -465,7 +479,7 @@ namespace Oheangbu.App.World.UI
             session.Progress.ui.Normalize();
             int byteCount = discovery.ByteCount;
             if (WorldMapDiscoveryGrid.TryDecode(session.Progress.ui.discoveredCells, byteCount, out byte[] bytes))
-                discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline, bytes);
+            { discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline, bytes); fogPlayable = null; }
             if (session.Progress.ui.discoveredMarkers == null) session.Progress.ui.discoveredMarkers = new List<string>();
             foreach (WorldMapMarkerSpec marker in data.Markers)
                 if (marker != null && marker.InitiallyDiscovered && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
@@ -481,6 +495,7 @@ namespace Oheangbu.App.World.UI
             mapControls.alpha = readable;
             mapControls.interactable = mapControls.blocksRaycasts = targetExpanded && fold >= .999f;
             markerVisibility.alpha = fold >= .995f ? 1f : 0f;
+            ApplyFold308();
             ApplyVeilFold304();
             FullRoot.gameObject.SetActive(Visible && (targetExpanded || fold > 0));
         }
@@ -506,6 +521,9 @@ namespace Oheangbu.App.World.UI
                 paperMaterial.SetFloat("_HasCave", interior && zone.Illustration != null ? 1 : 0);
                 paperMaterial.SetVector("_MapTileUv", new Vector4(tile.x, tile.y, tile.width, tile.height));
                 paperMaterial.SetFloat("_Interior", interior ? 1f : 0f);
+                // #308: outdoors the brush strips carry every line (no CPU raster, no realm border dots)
+                if ((!inkReady || fullUv != lastInkUv || zone != lastInkZone) && SkipRaster308(interior, zone))
+                { lastInkUv = fullUv; lastInkZone = zone; inkReady = true; }
                 if (!inkReady || fullUv != lastInkUv || zone != lastInkZone)
                 {
                     // Display size in PAGE px, so stroke widths stay the same on 16:10 or at UI 배율 1.3 (sheet scaled by k).
@@ -519,6 +537,7 @@ namespace Oheangbu.App.World.UI
                     macroInk.Draw(!interior && data.HasIllustration ? majorLines : null, null, projection, fullUv, display);
                     lastInkUv = fullUv; lastInkZone = zone; inkReady = true;
                 }
+                SyncStrokes308(interior);
             }
             string zoneLabel = zone != null ? zone.Label : RegionLabel(new Vector2(current.x, current.z));
             if (displayedZoneLabel != zoneLabel)
@@ -590,17 +609,51 @@ namespace Oheangbu.App.World.UI
             RefreshFog();
         }
 
+        /// <summary>Every cell (build, saved progress load). #307: into the cached texel array; the outline test per cell is
+        /// cached too (fogPlayable, dropped when the discovery grid is rebuilt).</summary>
         void RefreshFog()
         {
             if (fogTexture == null) return;
-            // The shader reads alpha only (unknown = 1); RGB is the sheet so a bilinear sample never darkens.
-            Color32 unknown = new Color(style.Sheet.r, style.Sheet.g, style.Sheet.b, 1f);
-            var pixels = new Color32[discovery.Width * discovery.Height];
-            for (int y = 0; y < discovery.Height; y++) for (int x = 0; x < discovery.Width; x++)
-                pixels[y * discovery.Width + x] = discovery.IsPlayableCell(x, y) && !discovery.IsDiscovered(x, y) ? unknown : new Color32(0, 0, 0, 0);
-            fogTexture.SetPixels32(pixels); fogTexture.Apply(false, false);
-            miniRevision++;
+            int w = discovery.Width, h = discovery.Height;
+            if (fogPixels == null || fogPixels.Length != w * h) { fogPixels = new Color32[w * h]; fogPlayable = null; }
+            if (fogPlayable == null)
+            {
+                fogPlayable = new bool[w * h];
+                // #308 map fix (M3): with a notation bundle a cell nobody can ever reveal is fog too. Before, a cell outside
+                // the outline was written as "walked" (alpha 0); the compact map's top row (cell centres ON the outline's
+                // north edge) was such a row, and the crisp edge drew its upper half as walked land with an ink rim.
+                for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) fogPlayable[y * w + x] = n308 != null || discovery.IsPlayableCell(x, y);
+            }
+            Color32 unknown = FogUnknown307();
+            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++)
+                fogPixels[y * w + x] = fogPlayable[y * w + x] && !discovery.IsDiscovered(x, y) ? unknown : new Color32(0, 0, 0, 0);
+            fogTexture.SetPixels32(fogPixels); fogTexture.Apply(false, false);
+            fogRevision308++;   // #308 map 3c: the texels changed (WorldMapPresenter.Reveal308.cs reads them again)
+            miniRevision++;   // load only (once): the reveal path below leaves the minimap print alone
         }
+
+        /// <summary>#307: after WorldMapDiscoveryGrid.Reveal(worldXZ, radius) only cells inside the same bounding box can have
+        /// changed, so only they are rewritten (same texels as RefreshFog). No array is allocated and MiniRevision is not bumped:
+        /// the HUD minimap samples the same _FogTex and needs no new print.</summary>
+        void RefreshFogAround(Vector2 worldXZ, float radius)
+        {
+            if (fogTexture == null) return;
+            int w = discovery.Width, h = discovery.Height;
+            if (fogPixels == null || fogPlayable == null || fogPixels.Length != w * h) { RefreshFog(); return; }
+            float cell = WorldMapDiscoveryGrid.CellSize;
+            int minX = Mathf.Max(0, Mathf.FloorToInt((worldXZ.x - radius - data.BoundsMin.x) / cell));
+            int maxX = Mathf.Min(w - 1, Mathf.FloorToInt((worldXZ.x + radius - data.BoundsMin.x) / cell));
+            int minY = Mathf.Max(0, Mathf.FloorToInt((worldXZ.y - radius - data.BoundsMin.y) / cell));
+            int maxY = Mathf.Min(h - 1, Mathf.FloorToInt((worldXZ.y + radius - data.BoundsMin.y) / cell));
+            Color32 unknown = FogUnknown307();
+            for (int y = minY; y <= maxY; y++) for (int x = minX; x <= maxX; x++)
+                fogPixels[y * w + x] = fogPlayable[y * w + x] && !discovery.IsDiscovered(x, y) ? unknown : new Color32(0, 0, 0, 0);
+            fogTexture.SetPixels32(fogPixels); fogTexture.Apply(false, false);
+            fogRevision308++;   // #308 map 3c
+        }
+
+        // The shader reads alpha only (unknown = 1); RGB is the sheet so a bilinear sample never darkens.
+        Color32 FogUnknown307() => new Color(style.Sheet.r, style.Sheet.g, style.Sheet.b, 1f);
 
         void CenterFullOn(Vector2 world)
         {
@@ -609,13 +662,18 @@ namespace Oheangbu.App.World.UI
             fullUv = WorldMapProjection.ClampUvRect(fullUv);
         }
 
+        float nextSeatSearch;
         Vector3 CurrentWorld()
         {
             if (session.Walker != null && session.Walker.Seated)
             {
-                if (vehicleSeat == null || !vehicleSeat.Occupied)
+                // #307: the scene-wide search runs at most twice a second (it ran several times per frame while seated without a seat)
+                if ((vehicleSeat == null || !vehicleSeat.Occupied) && Time.unscaledTime >= nextSeatSearch)
+                {
+                    nextSeatSearch = Time.unscaledTime + .5f;
                     vehicleSeat = UnityEngine.Object.FindObjectsByType<Vehicle.WorldMacroPalanquinSeat>(FindObjectsSortMode.None)
                         .FirstOrDefault(s => s.Occupied && s.CombatWalker == session.Walker);
+                }
                 if (vehicleSeat != null && vehicleSeat.Vehicle != null) return vehicleSeat.Vehicle.transform.position;
             }
             return session.Walker != null && session.Walker.Body != null ? session.Walker.Body.transform.position : session.Content.StartFeet;
@@ -643,6 +701,7 @@ namespace Oheangbu.App.World.UI
             if (paperMaterial != null) Destroy(paperMaterial);
             DisposeLegendSwatch304();
             DisposeInteriorDiscovery();
+            Dispose308();
             macroInk?.Dispose();
             paperInk?.Dispose();
             miniInk?.Dispose();

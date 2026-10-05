@@ -25,40 +25,37 @@ namespace Oheangbu.App.World.UI
         void BuildInventory()
         {
             if(Session?.Progress?.ui==null)return;
-            if(Session.EquipmentEnabled){BuildEquipmentInventory();return;}
-            var s=Content304Style;
-            content304GearCells.Clear();content304GearChips.Clear();
-            Content304SubTabs(false);
-            Content304Currency(contentRoot,"Currency",1856,160,Session.Progress.ledger.currency);
-            Content304FragmentGrid(96,264,8);
-            Content304Rule(contentRoot,"DetailRule",1368,250,740);
-            content304Detail=V.Rect("FragmentDetail304",contentRoot,0,0,1920,1080);
-            if(content304GearCells.All(c=>c.name!=content304Kept))content304Kept="Fragment_"+selectedItem;
-            Content304RefreshGear();
-            Content304Restore(contentRoot,Content304FirstFragment()??contentRoot.Find("FragmentsTab")?.gameObject);
+            Equip308Build();   // #308: one 3-column screen for 장비 and 석경, with or without an equipment catalog
         }
 
         /// <summary>석경 칩 grid (DESIGN §7.3 / IMPLEMENTATION §7.5): chip 104 with the glyph (Serif900 56 ink), name + count under it.
-        /// Selecting a chip shows the fragment in the detail column (no ShowDetail: the menu stays open).</summary>
-        void Content304FragmentGrid(float ox,float oy,int cols)
+        /// Selecting a chip shows the fragment in the detail column (no ShowDetail: the menu stays open).
+        /// #308: the 3-column 소지품 passes its own pitch and compact = true (name only, four rows before it scrolls; the count
+        /// is in the detail).</summary>
+        void Content304FragmentGrid(float ox,float oy,int cols,float pitchX=Content304PitchX,float pitchY=Content304PitchY,bool compact=false)
         {
             var s=Content304Style;var ui=Session.Progress.ui;
             var held=WorldMacroCollectionCatalog.AllFragments.Where(x=>ui.GetItemCount(x.ItemId)>0).ToArray();
             if(held.Length==0){EmptyPage("빈 봇짐","석경 조각을 찾으면 여기 모인다",ox,oy);return;}
             if(string.IsNullOrEmpty(selectedItem)||!held.Any(x=>x.ItemId==selectedItem))selectedItem=held[0].ItemId;
-            int rows=Mathf.Max(1,Mathf.CeilToInt(held.Length/(float)cols));
-            RectTransform grid=rows>3?V.Scroll(contentRoot,"FragmentGrid",ox,oy,cols*Content304PitchX+18,3*Content304PitchY,rows*Content304PitchY)
-                :V.Rect("FragmentGrid",contentRoot,ox,oy,cols*Content304PitchX,rows*Content304PitchY);
+            int rows=Mathf.Max(1,Mathf.CeilToInt(held.Length/(float)cols)),shown=compact?4:3;
+            float cellW=compact?pitchX-4:128,cellH=compact?pitchY-8:172;
+            RectTransform grid=rows>shown?V.Scroll(contentRoot,"FragmentGrid",ox,oy,cols*pitchX+18,shown*pitchY,rows*pitchY)
+                :V.Rect("FragmentGrid",contentRoot,ox,oy,cols*pitchX,rows*pitchY);
             for(int i=0;i<held.Length;i++)
             {
-                var f=held[i];float gx=i%cols*Content304PitchX,gy=i/cols*Content304PitchY;
-                var cell=Content304Cell(grid,"Fragment_"+f.Id,gx,gy,128,172,new Rect(0,0,Content304ChipSize,Content304ChipSize),new Rect(-33,121,26,20),
+                var f=held[i];float gx=i%cols*pitchX,gy=i/cols*pitchY;
+                var cell=Content304Cell(grid,"Fragment_"+f.Id,gx,gy,cellW,cellH,compact?Equip308FragmentRing():new Rect(0,0,Content304ChipSize,Content304ChipSize),compact?Equip308FragmentDab():new Rect(-33,121,26,20),
                     ()=>{Content304PickFragment(Content304GearCells("Fragment_"+f.Id),f);Content304FocusDetailPrimary();},c=>Content304PickFragment(c,f),false);
                 cell.Id=f.ItemId;
+                // #308: the kept chip (focus on 술식 도감에서 보기) keeps a frame that shows on the veil (ink does not). Theme
+                // (D308-15): the chip is a pane of a lattice window (flat paper under it, focus bed + nacre kept frame over it)
+                if(compact){var kept=Equip308KeptFrame(s);if(kept!=s.Ink)cell.Init(s,cell.Visual,Equip308FragmentRing(),kept,c=>Content304PickFragment(c,f));Equip308FragmentPane(cell,false);}
                 Content304Chip(cell.transform,"Chip",0,0,Content304ChipSize,false);
+                if(compact)Equip308FragmentPane(cell,true);
                 V.Label(s,cell.transform,"Glyph",f.Letter,UiType304.ChipGlyph56,s.Ink,0,0,Content304ChipSize,Content304ChipSize-4,TextAlignmentOptions.Center);
-                var name=V.Label(s,cell.transform,"Name",f.Letter+"의 석경",UiType304.Label22,s.Paper,0,114);
-                V.Label(s,cell.transform,"Count",ui.GetItemCount(f.ItemId)+"개",UiType304.Meta20,s.Mist,0,144);
+                var name=V.Label(s,cell.transform,"Name",f.Letter+"의 석경",compact?UiType304.Meta20:UiType304.Label22,s.Paper,0,compact?Equip308FragmentNameDy:114);
+                if(!compact)V.Label(s,cell.transform,"Count",ui.GetItemCount(f.ItemId)+"개",UiType304.Meta20,s.Mist,0,144);
                 cell.BindLabel(name,s.Paper,s.Paper);
                 Content304NewMark(cell,"item:"+f.ItemId,Content304ChipSize-22,-8,false);
                 content304GearCells.Add(cell);
@@ -76,30 +73,9 @@ namespace Oheangbu.App.World.UI
         {
             if(cell!=null){content304Kept=cell.name;content304Focus=cell.name;}
             selectedItem=f.ItemId;
+            equip308InMiddle=false;Equip308Raise(cell);   // #308: the focus is back on the grid (theme: its bed lies over the neighbours)
             Content304RefreshGear();
-        }
-
-        /// <summary>석경 조각 detail (x1410): the glyph (탁본 240), where it came from, and [Enter] 도감에서 보기.</summary>
-        void Content304FragmentDetail()
-        {
-            var s=Content304Style;var ui=Session.Progress.ui;
-            Transform root=content304Detail!=null?(Transform)content304Detail:contentRoot;
-            var f=WorldMacroCollectionCatalog.AllFragments.FirstOrDefault(x=>x.ItemId==selectedItem&&ui.GetItemCount(x.ItemId)>0);
-            if(f==null)return;
-            // CSS-top placement: a Glyph240 rect at y286 put the glyph's baseline on y562, the 탁본 glyph over the title at 548
-            V.Label(s,root,"ItemEyebrow","석경 조각",UiType304.Meta20,s.Mist,1410,262);
-            Content304AtCss(V.Label(s,root,"ItemGlyph",f.Letter,UiType304.Glyph240,s.Paper,1400,300),1400,300,1f);
-            Content304AtCss(V.Label(s,root,"ItemTitle",f.Letter+"의 석경 조각",UiType304.Title32,s.Paper,1410,560),1410,560,1.2f);
-            V.Label(s,root,"ItemCount","지닌 수 "+ui.GetItemCount(f.ItemId),UiType304.Body22,s.Mist,1410,606);
-            var sources=WorldMacroCollectionCatalog.AllBundles.Where(b=>b.Fragments.Any(x=>x.Id==f.Id)).Select(b=>b.Title).ToArray();
-            if(sources.Length>0)
-            {
-                V.Label(s,root,"SourceHead","나온 곳",UiType304.Meta20,s.Mist,1410,662);
-                for(int i=0;i<sources.Length&&i<3;i++)V.Label(s,root,"Source",sources[i],UiType304.Body24,s.Paper,1410,690+i*36);
-            }
-            var read=V.FocusRow(s,root,"ReadCodex","술식 도감에서 보기",1370,846,480,92,()=>{selectedSpell=f.Letter;content304Focus="Codex_"+f.Letter;OpenPage("술식 도감");},
-                new FocusRowSpec304{Role=UiType304.Title36,LabelX=40,Underlay=StrokeClass304.WetM,UnderlayH=122,UnderlayX=0,Key="Enter",KeySmall=false,UnderStroke=true,UnderStrokeW=300,SoundTheme=Theme});
-            Content304Note(read.Button);
+            if(Page=="소지품")Equip308Legend();
         }
 
         /// <summary>빈 상태 (DESIGN §7.3 IMPLEMENTATION §7.5): "빈 봇짐" Serif600 26 + meta, where the grid would be.</summary>
@@ -445,9 +421,10 @@ namespace Oheangbu.App.World.UI
                 V.Place(cardLabel.rectTransform,0,300f+shift);
             }
 
-            bool received=Session.OpeningCommissionReceived;
+            // #308 D308-2 §3: the card follows Session.VehicleAvailable; while locked the meta line stays empty (no condition text)
+            bool received=Session.VehicleAvailable;
             V.Hint(s,contentRoot,"SummonPalanquinHint",new[]{"G"},"자동차 부르기",received?s.Paper:s.Off,96,862,true,received,false,UiType304.Label24);
-            V.Label(s,contentRoot,"SummonPalanquinMeta",received?"하차 30m · 자동 회수":"관청 의뢰를 확인한 뒤",UiType304.Meta20,s.Mist,96,906);
+            V.Label(s,contentRoot,"SummonPalanquinMeta",received?"하차 30m · 자동 회수":"",UiType304.Meta20,s.Mist,96,906);
 
             string[] virtueIds={"仁","禮","義","智","信"};string[] names={"인 · 목","예 · 화","의 · 금","지 · 수","신 · 토"};
             var knownVirtues=Session.Progress.ui.knownVirtues;

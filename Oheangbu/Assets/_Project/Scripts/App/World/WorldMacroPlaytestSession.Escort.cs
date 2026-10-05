@@ -67,6 +67,7 @@ namespace Oheangbu.App.World
             // Saved passenger ownership cannot keep the player seated across application reload.
             if (Progress?.escort?.CompanionMode == DemoEscortCompanionMode.Riding && DemoEscortSeat != null && !DemoEscortSeat.Occupied)
                 escortExitEvent = Guid.NewGuid().ToString("N");
+            BindVehicle308();   // #308 D308-2 §3: boarding waits for VehicleAvailable (hook on the seat this binding knows)
         }
         void UnbindDemoEscort()
         {
@@ -102,8 +103,9 @@ namespace Oheangbu.App.World
             success = false;
             if (point == null || !EscortInteraction(point.Id, out var command)) return false;
             // This owner consumes blocked requests too. They must never reach generic campaign/visited progression.
+            // #308 D308-2 §5: the station says in one short prompt line whether the sealed cargo can leave (no instruction text).
             if (command == DemoEscortCommand.StartEscort)
-            { if(!string.IsNullOrEmpty(EscortVoice306.StartBoardNotice))Show(EscortVoice306.StartBoardNotice); return true; }
+            { string line = StationLine308(); if(!string.IsNullOrEmpty(line))Show(line); return true; }
             // #306: the companion's lines are data (Content.EscortVoice) and go to the dialogue surface (Present when none is bound)
             string voice=EscortVoice306.Speaker;
             if(EquipmentEnabled&&point.Id=="wangso_w1"&&!Progress.campaign.Facts.Contains("met:jeongdam")){
@@ -127,6 +129,28 @@ namespace Oheangbu.App.World
             }
             finally { escortInteractionId = null; }
         }
+        // #308 D308-2 §5 (SPEC-CONTENT-PACING-308): departure possible = the escort stage's prerequisites are met (cargo_contract +
+        // cheongryong in the #308 campaign). The stage is "escort", else the Interaction stage triggered by escort_start.
+        bool EscortDepartureReady308
+        {
+            get
+            {
+                if (!DemoCampaignActive || Content.Campaign.Stages == null) return false;
+                var stage = Content.Campaign.FindStage("escort");
+                if (stage == null) foreach (var s in Content.Campaign.Stages) if (s != null && s.Event == DemoEventKind.Interaction && s.TriggerId == "escort_start") { stage = s; break; }
+                return stage != null && DemoCampaignProgression.PrerequisitesMet(stage, Progress.campaign);
+            }
+        }
+        // escort_start line: StationReadyText / StationWaitingText; an unmigrated content (both empty) keeps its StartBoardNotice, and
+        // after departure (the cargo has left the station) only the legacy notice remains (empty in #308 content).
+        string StationLine308()
+        {
+            var v = EscortVoice306; var stage = Progress?.escort?.Stage ?? DemoEscortStage.None;
+            if (stage >= DemoEscortStage.Escorting) return v.StartBoardNotice;
+            string line = EscortDepartureReady308 ? v.StationReadyText : v.StationWaitingText;
+            return string.IsNullOrEmpty(line) ? v.StartBoardNotice : line;
+        }
+
         DemoEscortStatus ExecuteDemoEscort(DemoEscortCommand command, out DemoEscortReceipt receipt, out string error)
         {
             if (demoEscortService == null) demoEscortService = new DemoEscortService(this);
@@ -257,6 +281,7 @@ namespace Oheangbu.App.World
             if (!TryPrepareDemoEscortProgress(Progress, Content, candidate, receipt, lastSafe, out var proposal, out error)) return DemoEscortStatus.InvalidState;
             if (receipt.RestoreAtCheckpoint)
             {
+                DrainAutosave();   // #307 item 3: an autosave in flight lands and reports first
                 if (!TryPersistDemoEscortCandidate(proposal, store.Save, out var accepted, out error)) { SaveError = error; return DemoEscortStatus.SaveFailed; }
                 Progress = accepted; lastSuccessfulSnapshot = JsonUtility.ToJson(accepted); SaveError = null;
             }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Oheangbu.Data.World;
 using UnityEngine;
@@ -44,6 +45,39 @@ namespace Oheangbu.App.World
             interactionPoints=HasOpening?
                 authored.Where(p=>p!=null&&p.Id!=WorldMacroOpeningProfileSO.CommissionId).Concat(new[]{Opening.Commission}).ToArray():
                 authored.Where(p=>p!=null).ToArray();
+            IndexInteractionPoints();
+        }
+        // #307 phase 1 item 2: Id -> first point with that Id in interactionPoints, the answer Array.Find gave (same rebind rule:
+        // rebuilt with interactionPoints; re-indexed if the array was swapped). A null entry keeps the original scan (and its throw).
+        readonly Dictionary<string,PrologueContentSO.Point> pointById=new Dictionary<string,PrologueContentSO.Point>(StringComparer.Ordinal);
+        PrologueContentSO.Point[] pointByIdSource;PrologueContentSO.Point firstNullIdPoint;bool pointsHaveNull;
+        void IndexInteractionPoints()
+        {
+            pointById.Clear();firstNullIdPoint=null;pointsHaveNull=false;var points=interactionPoints??Array.Empty<PrologueContentSO.Point>();
+            foreach(var p in points)
+            {
+                if(p==null){pointsHaveNull=true;continue;}
+                if(p.Id==null){if(firstNullIdPoint==null)firstNullIdPoint=p;continue;}
+                if(!pointById.ContainsKey(p.Id))pointById.Add(p.Id,p);
+            }
+            pointByIdSource=interactionPoints;
+        }
+        PrologueContentSO.Point RawInteractionPoint(string id)
+        {
+            var points=InteractionPoints;
+            if(!ReferenceEquals(pointByIdSource,points))IndexInteractionPoints();
+            if(pointsHaveNull)return Array.Find(points,p=>p.Id==id);
+            if(id==null)return firstNullIdPoint;
+            return pointById.TryGetValue(id,out var point)?point:null;
+        }
+        // CanInteract geometry without building a view: DemoInteractionPoint copies Position/Radius unchanged and
+        // LiveEscortInteractionPoint only moves wangso_w1 to the companion's feet (same condition as there).
+        bool TryInteractionGeometry(string id,out Vector3 position,out float radius)
+        {
+            var p=RawInteractionPoint(id);
+            if(p==null){position=default;radius=0;return false;}
+            position=p.Id=="wangso_w1"&&DemoEscortCompanion!=null&&DemoCampaignActive?DemoEscortCompanion.position:p.Position;
+            radius=p.Radius;return true;
         }
         PrologueContentSO.Point[] InteractionPoints
         {
@@ -54,7 +88,7 @@ namespace Oheangbu.App.World
                 return interactionPoints;
             }
         }
-        PrologueContentSO.Point FindInteractionPoint(string id)=>LiveEscortInteractionPoint(DemoInteractionPoint(Array.Find(InteractionPoints,p=>p.Id==id)));
+        PrologueContentSO.Point FindInteractionPoint(string id)=>LiveEscortInteractionPoint(DemoInteractionPoint(RawInteractionPoint(id)));
 
         WorldMacroProgress CreateFreshProgress()
         {
@@ -75,6 +109,7 @@ namespace Oheangbu.App.World
                         foreach(var fact in stage.GrantedFacts??Array.Empty<string>())if(!progress.campaign.Facts.Contains(fact))progress.campaign.Facts.Add(fact);
                     }
             }
+            EnrollMineTutorial306(progress);   // #306 #11: only a brand-new save sees the mine tutorial cards
             return progress;
         }
 

@@ -110,10 +110,21 @@ namespace Oheangbu.App.World.UI
             SceneManager.sceneLoaded+=OnSceneLoaded;Settings.Changed+=SettingsChanged;
         }
         void Start(){BindScene();}
-        void OnSceneLoaded(Scene scene,LoadSceneMode mode){ApplyDiagnosticSuffix();bound=false;currentSceneHandle=-1;}
-        static void ApplyDiagnosticSuffix()
+        // #307 (user 2026-10-01 "새 게임 시작해도 이어하기로 들어가고"): while this root loads the play scene from the title (Busy), the
+        // session must use exactly the slot the title inspected and archived (ActiveSlotName), even when that suffix is empty: a stale
+        // TestSaveSuffix on the scene's session (an editor harness value restored by Play-exit) made 새 게임 archive one file and the
+        // session resume another.
+        void OnSceneLoaded(Scene scene,LoadSceneMode mode){ApplyDiagnosticSuffix(Busy);bound=false;currentSceneHandle=-1;}
+#if UNITY_EDITOR
+        /// <summary>#307 validation switch (editor only, never saved): true = the old rule (an empty suffix never reaches the session).</summary>
+        public static bool SlotInvariantOff307;
+#endif
+        static void ApplyDiagnosticSuffix(bool fromTitle=false)
         {
-            string suffix=DiagnosticSuffix;if(string.IsNullOrEmpty(suffix))return;
+#if UNITY_EDITOR
+            if(SlotInvariantOff307)fromTitle=false;   // Restart307 userpath:legacy only — reproduces the pre-#307 early return
+#endif
+            string suffix=DiagnosticSuffix;if(string.IsNullOrEmpty(suffix)&&!fromTitle)return;
             var session=FindFirstObjectByType<WorldMacroPlaytestSession>();if(session!=null)session.TestSaveSuffix=suffix;
         }
         void EnsureEventSystem()
@@ -159,6 +170,7 @@ namespace Oheangbu.App.World.UI
                 Session.EquipmentServiceRequested+=OpenEquipmentService;Session.DetailRequested+=ShowDetail;Session.CollectionChanged+=OnCollected;Session.InteractionResolved+=OnDemoShopInteraction;
                 Session.NoticeRaised+=Menu304OnSessionNotice;   // #304: filtered into the toast channel (wake, realm, vehicle, recovery, errors)
                 Session.DialogueRequested+=OnDialogueRequested306;Session.DialogueViewBound=true;   // #306 §2-3: every NPC utterance -> DialogueView304 (unhooked on rebind)
+                Tutorial306Hook();   // #306 #11: mine tutorial cards
                 Content304SessionBound();   // #304 integration: D21 new-content marks count from the start of this session
                 hud=FindFirstObjectByType<HudController>();hudCanvases=hud!=null?hud.GetComponentsInChildren<Canvas>(true):null;
                 var mapGo=new GameObject("PaperWorldMap");mapGo.transform.SetParent(mapLayer,false);Map=mapGo.AddComponent<WorldMapPresenter>();
@@ -177,6 +189,7 @@ namespace Oheangbu.App.World.UI
             ResetDemoEnding();
             // #306: a conversation never outlives its session (the page resets); Closed runs once, never into an unloaded session
             {var ended=Dialogue304Detach(false);if(Session!=null)Dialogue304Ended(ended);}
+            Tutorial306Unhook();
             if(Session==null)return;Session.EquipmentServiceRequested-=OpenEquipmentService;Session.DetailRequested-=ShowDetail;Session.CollectionChanged-=OnCollected;Session.InteractionResolved-=OnDemoShopInteraction;
             Session.NoticeRaised-=Menu304OnSessionNotice;Session.DialogueRequested-=OnDialogueRequested306;Session.DialogueViewBound=false;
         }
@@ -197,6 +210,7 @@ namespace Oheangbu.App.World.UI
                 Map.SetVisible(Page=="지도"||closingMap);
                 Map.ReducedMotion=settingsSnapshot.ReducedMotion;
             }
+            Tutorial306Tick();
             if(pauseKey!=null&&pauseKey.WasPressedThisFrame())Back();
             else if(confirmationRoot==null&&!IsTitle&&!Dialogue304Open&&inventoryKey!=null&&inventoryKey.WasPressedThisFrame())
             {if(Page=="소지품")CloseMenu();else OpenPage("소지품");}
@@ -223,6 +237,7 @@ namespace Oheangbu.App.World.UI
             string previous=Page;
             var reselect=Menu304CaptureSelection();
             Page=page;SetHud(false);V.Clear(modalLayer);Menu304ClearRailLayer();settingsBuilt=false;
+            if(page==TutorialPage306){BuildTutorialCard306();PlayUi(Theme.PaperSound,.40f);return;}   // #306 #11 TutorialCard304
             if(page=="지도")
             {
                 if(Map==null)return;
@@ -262,7 +277,7 @@ namespace Oheangbu.App.World.UI
         }
         public static bool IsSupportedPage(string page,bool titleScene)
         {
-            return Array.IndexOf(titleScene?TitlePages:GameplayPages,page)>=0||(!titleScene&&(page=="상세"||page=="정비"||page=="장비 상점"||page=="장비 강화"));
+            return Array.IndexOf(titleScene?TitlePages:GameplayPages,page)>=0||(!titleScene&&(page=="상세"||page=="정비"||page=="장비 상점"||page=="장비 강화"||page==TutorialPage306));
         }
         public void CloseMenu()
         {
@@ -280,14 +295,17 @@ namespace Oheangbu.App.World.UI
             V.Clear(modalLayer);Menu304ClearRailLayer();Page="";settingsBuilt=false;Menu304ResetPageState();
             if(IsTitle){BuildTitle();Dialogue304Ended(ended);return;}
             Pause.End();SetHud(true);PlayUi(Theme.BackSound,.35f);Dialogue304Ended(ended);
+            Tutorial306Ended(true);   // #306 #11: the director learns the card closed (and whether Esc was held)
         }
         public void Back()
         {
             if(Busy||closingMap)return;
+            if(Tutorial306Back())return;   // #306 #11: Esc on the card = tap to close / hold to skip (Tutorial306Tick)
             if(confirmationRoot!=null){DismissConfirmation();return;}
             if(IsTitle){if(Page.Length>0)CloseMenu();return;}
             if(Page=="상세"&&Dialogue304Open){dialogue304.Close();return;}   // #306: Esc = 떠나기
             if(Page=="상세"&&Menu304StoryBack())return;
+            if(Page=="소지품"&&Equipment308Back())return;   // #308: Esc in the middle column = back to the slot (the menu stays)
             if(Page.Length>0)CloseMenu();else OpenPage("일시정지");
         }
         void SetHud(bool show)
@@ -336,6 +354,7 @@ namespace Oheangbu.App.World.UI
             uiAudio?.ApplySettings(Theme.AudioMix,settingsSnapshot.MasterVolume,settingsSnapshot.GameplayVolume,settingsSnapshot.UiVolume);
             if(scaler!=null)scaler.referenceResolution=new Vector2(1920,1080)/Mathf.Clamp(settingsSnapshot.UiScale,.8f,1.3f);
             ApplyTextScale();
+            Tutorial306SettingsChanged();
         }
         void LateUpdate()
         {
@@ -367,12 +386,18 @@ namespace Oheangbu.App.World.UI
             RefreshSaveFailureIcon();
             if(settingsErrorText!=null)settingsErrorText.text=Settings.SaveError??"";
             if(statusText==null||Session==null)return;
-            string coins=Session.Progress.ledger.currency.ToString("N0");
+            // #307 phase 1 item 12: the status strings are rebuilt only when an input changes (same text, same assignment 4 Hz)
+            int currency=Session.Progress.ledger.currency;var culture=System.Globalization.CultureInfo.CurrentCulture;
+            if(statusCoins==null||currency!=statusCurrency||!ReferenceEquals(culture,statusCulture)){statusCoins=currency.ToString("N0");statusCurrency=currency;statusCulture=culture;statusLine=null;}
+            string coins=statusCoins;
             // the trade window (legacy until its rewrite) shows only the balance in its small box
             if(Page=="장비 상점"||Page=="장비 강화"){statusText.text=coins;return;}
-            statusText.text=!string.IsNullOrEmpty(Session.SaveError)?Session.SaveError:
-                "조선통보 "+coins+"  ·  "+Session.CheckpointDisplayName+"에서 재시작";
+            if(!string.IsNullOrEmpty(Session.SaveError)){statusText.text=Session.SaveError;return;}
+            string checkpoint=Session.CheckpointDisplayName;
+            if(statusLine==null||!string.Equals(checkpoint,statusCheckpoint,System.StringComparison.Ordinal)){statusLine="조선통보 "+coins+"  ·  "+checkpoint+"에서 재시작";statusCheckpoint=checkpoint;}
+            statusText.text=statusLine;
         }
+        string statusCoins,statusLine,statusCheckpoint;int statusCurrency;System.Globalization.CultureInfo statusCulture;
         static string MenuLabel(string page) => page=="일시정지"?"일시정지":page=="옵션"?"설정":page=="술식 도감"?"술식":page=="조작 안내"?"조작":page;
 
         void OnDestroy()

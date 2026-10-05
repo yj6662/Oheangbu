@@ -96,6 +96,52 @@ namespace Oheangbu.Data.World
         public StoryCluster[] StoryClusters=Array.Empty<StoryCluster>();
         public FixedPlacement[] FixedPlacements=Array.Empty<FixedPlacement>();
         public string SourceFingerprint;
+        // #307 SPEC-ART-RENDERER-CULLING S8 (v2, user-approved 2026-09-30). TEST defaults: sheets saved before #307 read these
+        // code values, protected sheets are never rewritten. Read by CompactRebuildArtRenderer (grass reads the bounds slack).
+        // ScreenIdenticalCulling307: true = S8 screen-identical path, false = S3 output-identical path (A/B, pixel check).
+        public bool ScreenIdenticalCulling307=true;
+        // CasterMargin(instance) = clamp((caster top above its base + relief) / tan(sun elevation), clamp.x, clamp.y), at least
+        // the punctual reach. Elevation = this assumed value, or the live RenderSettings.sun when that is lower. Shadow On/ShadowsOnly only when
+        // the caster's horizontal distance <= min(pipeline shadowDistance, camera far) + CasterMargin.
+        public float ShadowSunMinElevation307=25;      // degrees
+        public float ShadowReliefAllowance307=12;      // m a shadow receiver may lie below the caster's base (slopes)
+        public float ShadowPunctualReach307=24;        // m: point/spot (lantern) shadow casters sit within the light range of the receiver
+        public Vector2 ShadowCasterMarginClamp307=new Vector2(8,240);
+        public const float DefaultCullBoundsSlack307=.5f;
+        public float CullBoundsSlack307=DefaultCullBoundsSlack307;  // m added to every render/chunk bound (view test, worldBounds)
+        // S8 chunk merge (#307 A/B: one chunk per 64 m cell and batch = thousands of draws, 3-5 ms submit). The next cell joins the
+        // current chunk while it holds fewer than ChunkMinInstances307 or the union stays within ChunkMaxSpan307 m (XZ); 1 / 0 = per cell.
+        public int ChunkMinInstances307=64;
+        public float ChunkMaxSpan307=192;
+        // fine shadow cells (#307 GPU: coarse chunks were drawn whole into every cascade and lantern cube face): cells within this
+        // XZ distance of the eye, and (when on) cells within a shadowed lantern's range + ShadowPunctualReach307, are never merged
+        public float FineShadowRadius307=96;
+        public bool FineShadowLanterns307=true;
+        // #307 2c: the S8 lists are collected with this safety band (every box padded, frustum widened) and reused while the camera stays
+        // within it; extra instances are offscreen or clipped by the shader's distance fade, so frames stay identical. 0 = collect every frame.
+        // bandpixel 2026-10-01: NOT screen-identical yet (a banded list keeps LOD parts the exact centre-distance rule drops, and 80 m / limit
+        // casters), so it stays off until the vertex shader applies the same per-instance rule; A/B and approval only.
+        public float CollectBandMetres307=0f,CollectBandDegrees307=6f;
+        // #307 per-prototype tree LOD distances (CompactRebuildArtRenderer): the first entry whose IdContains is part of the prototype
+        // Id replaces TreeNear / TreeMiddle (<= 0 keeps the sheet value). Empty = every tree uses the sheet distances (unchanged look).
+        [Serializable] public sealed class LodOverride307 { public string IdContains=""; public float TreeNear=-1, TreeMiddle=-1; }
+        public LodOverride307[] LodOverrides307=Array.Empty<LodOverride307>();
+        // #307 shadow proxy (look change, approval): for prototypes whose Id contains IdContains, LOD0 draws for the camera only and the
+        // ProxyLod parts cast LOD0's shadows over LOD0's fade range (e.g. the 88 K-triangle Meshy pine shadows from its 9.7 K LOD1).
+        [Serializable] public sealed class ShadowProxy307 { public string IdContains=""; public int ProxyLod=1; }
+        public ShadowProxy307[] ShadowProxies307=Array.Empty<ShadowProxy307>();
+        public ShadowProxy307 ShadowProxy307For(string id)
+        {
+            if(ShadowProxies307==null||string.IsNullOrEmpty(id))return null;
+            foreach(var o in ShadowProxies307)if(o!=null&&!string.IsNullOrEmpty(o.IdContains)&&id.Contains(o.IdContains))return o;
+            return null;
+        }
+        public LodOverride307 LodOverride307For(string id)
+        {
+            if(LodOverrides307==null||string.IsNullOrEmpty(id))return null;
+            foreach(var o in LodOverrides307)if(o!=null&&!string.IsNullOrEmpty(o.IdContains)&&id.Contains(o.IdContains))return o;
+            return null;
+        }
 
         public float OpenGroundDensity(Cell cell,int x,int z,int category)
         {

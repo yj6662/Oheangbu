@@ -95,6 +95,6 @@ namespace Oheangbu.App.World
             if(vitals!=null)vitals.Died-=ClearGukProof;
             if(Walker!=null&&Walker.Wiring!=null&&Walker.Wiring.FieldSpells==demoField)Walker.Wiring.FieldSpells=null;
         }
-        void OnEnable() { if (demoField != null) demoField.enabled = true; if(MumBridges!=null)MumBridges.enabled=true; if(ready){BindDemoEscort();BindDemoSouthGate();} }
+        void OnEnable() { if (demoField != null) demoField.enabled = true; if(MumBridges!=null)MumBridges.enabled=true; if(ready){BindDemoEscort();BindDemoSouthGate();} SyncHudFallback(); }   // #307: HUD fallback follows the session
     }
 }

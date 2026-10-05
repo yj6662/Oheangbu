@@ -175,7 +175,8 @@ namespace Oheangbu.App.World
                         t.Services.Add(Service306(DialogueServiceKind306.Maintain,label.Length>0?label:labels.Maintain,custom?target:"정비",AtDemoShop));break;
                     case PrologueContentSO.PointServiceKind306.Rest:
                         var rest=custom?RestPoint306(target):NearestRestPoint306(t.Request.SourcePosition);
-                        t.Services.Add(Service306(DialogueServiceKind306.Rest,label.Length>0?label:labels.Rest,rest?.Id??target,rest!=null&&!SaveBlocked));break;
+                        t.Services.Add(Service306(DialogueServiceKind306.Rest,label.Length>0?label:labels.Rest,rest?.Id??target,rest!=null&&!SaveBlocked));
+                        KeepRestGreeting308(rest?.Id??target,Pages306(t,spec.Lines,""));break;   // #308 road inn: a Rest row's Lines (RestGreeting308.cs); empty = as before
                 }
             }
         }
@@ -198,7 +199,7 @@ namespace Oheangbu.App.World
                 // the view opens these windows itself by Id and returns to the menu; the session only arms the service it trades under
                 case DialogueServiceKind306.Trade:case DialogueServiceKind306.Upgrade:if(!EquipmentReady)InitializeEquipment();equipmentService=s.Id;return;
                 case DialogueServiceKind306.Maintain:return;
-                case DialogueServiceKind306.Rest:dialogueRestPending306=s.Id;return;   // no follow-up: the view closes, then TickDialogueRest306 rests
+                case DialogueServiceKind306.Rest:dialogueRestPending306=s.Id;SayRestGreeting308(t,s.Id);return;   // no follow-up unless the row has a greeting (#308): the view closes, then TickDialogueRest306 rests
                 case DialogueServiceKind306.Talk:if(t.TalkPages.TryGetValue(s.Id,out var pages))FollowUp306(t,pages,true);return;
                 case DialogueServiceKind306.CommissionAccept:AcceptCommission306(t);return;
                 case DialogueServiceKind306.CommissionDecline:DeclineCommission306(t);return;
@@ -281,7 +282,10 @@ namespace Oheangbu.App.World
         string EscortStageLine306()
         {
             var v=EscortVoice306;var stage=Progress.escort.Stage;
-            return stage==DemoEscortStage.Delivered?v.DeliveredText:stage>=DemoEscortStage.Escorting?v.EscortingText:v.ContractedText;
+            if(stage==DemoEscortStage.Delivered)return v.DeliveredText;
+            if(stage>=DemoEscortStage.Escorting)return v.EscortingText;
+            // #308 D308-2 §5: after the contract the companion says whether the forest has gone quiet (departure possible); empty = ContractedText
+            return EscortDepartureReady308&&!string.IsNullOrEmpty(v.ContractedReadyText)?v.ContractedReadyText:v.ContractedText;
         }
     }
 }

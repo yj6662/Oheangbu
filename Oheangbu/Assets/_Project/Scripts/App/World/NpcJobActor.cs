@@ -31,6 +31,8 @@ namespace Oheangbu.App.World
         public int Seed;
         [Tooltip("Also start talking on a session.DialogueRequested whose SourcePosition is within MatchDistance (SourceId == PointId always matches).")]
         public bool ListenToDialogueRequests;
+        [Tooltip("#307 [TEST] while this job actor runs, an AlwaysAnimate Animator without root motion uses CullUpdateTransforms (poses differ only while no renderer of it is drawn; the state machine, timers and job keep running).")]
+        public bool CullWhenOffscreen=true;
         public Phase State {get;private set;}
         public int Current {get;private set;}=-1;
         public float LookWeight {get;private set;}
@@ -46,18 +48,28 @@ namespace Oheangbu.App.World
         Vector3 homePos,spot,look,pointPos,parentWas;Quaternion homeRot,workRot;Transform pointRoot;System.Random rng;AnimatorUpdateMode baseMode;
         bool subscribed,started,motionWas,dialogueTalk,sawBlocked,seated,gestureDone,standing,hasPoint,wasBlocked,wasFocused,replay;
         float until,returnAt,talkStart,glanceUntil,standSince;int pendingNext=-1;string playing;
+        float appliedLook=-1;bool culledByJob;AnimatorCullingMode cullingWas;
+        // #307 phase 1 item 11: off-screen animator culling while the job runs (restored on disable)
+        void ApplyOffscreenCulling()
+        {
+            if(!CullWhenOffscreen||culledByJob||Animator==null||Animator.applyRootMotion||Animator.cullingMode!=AnimatorCullingMode.AlwaysAnimate)return;
+            cullingWas=Animator.cullingMode;Animator.cullingMode=AnimatorCullingMode.CullUpdateTransforms;culledByJob=true;
+        }
+        void RestoreOffscreenCulling(){if(culledByJob&&Animator!=null&&Animator.cullingMode==AnimatorCullingMode.CullUpdateTransforms)Animator.cullingMode=cullingWas;culledByJob=false;}
 
         void OnEnable()
         {
             if(Motion!=null){motionWas=Motion.enabled;Motion.JobDriven=true;Motion.enabled=false;}
             Subscribe();
             // the Animator restarts in its default state on enable: play the current behaviour again
-            if(started){playing=null;replay=true;wasBlocked=false;wasFocused=false;if(Body!=null&&Body.parent!=null)parentWas=Body.parent.position;}
+            if(started){playing=null;replay=true;wasBlocked=false;wasFocused=false;if(Body!=null&&Body.parent!=null)parentWas=Body.parent.position;ApplyOffscreenCulling();}
+            appliedLook=-1;
         }
         void OnDisable()
         {
             Unsubscribe();
             if(Animator!=null&&started)Animator.updateMode=baseMode;
+            RestoreOffscreenCulling();
             if(Motion!=null){Motion.JobDriven=false;Motion.enabled=motionWas;}
             if(State==Phase.Talk||State==Phase.Return){State=Phase.Work;TalkingTo=null;}
             LookWeight=0;
@@ -69,6 +81,7 @@ namespace Oheangbu.App.World
             if(Animator==null)Animator=GetComponent<Animator>();
             if(Body==null)Body=transform.parent!=null?transform.parent:transform;
             if(Animator!=null)baseMode=Animator.updateMode;
+            ApplyOffscreenCulling();
             Humanoid=Animator!=null&&Animator.isHuman&&Animator.runtimeAnimatorController!=null&&Animator.HasState(0,hIdle);
             homePos=Body.localPosition;homeRot=Body.localRotation;workRot=homeRot;spot=Body.position;parentWas=Body.parent!=null?Body.parent.position:Vector3.zero;
             PrologueContentSO.Point point=null;var list=Session!=null&&Session.Content!=null?Session.Content.Points:null;
@@ -129,7 +142,7 @@ namespace Oheangbu.App.World
         bool Blocked=>Session!=null&&Session.GameplayInputBlocked;
         void Update()
         {
-            if(!started||Profile==null||Body==null)return;
+            using(Perf307Markers.NpcJob.Auto()){if(!started||Profile==null||Body==null)return;
             var walker=Session!=null?Session.Walker:null;
             var player=walker!=null&&walker.Body!=null?walker.Body.transform:null;
             float d=player!=null?Flat(player.position,Body.position):float.MaxValue;
@@ -182,12 +195,13 @@ namespace Oheangbu.App.World
             }
             float target=(Glancing||State==Phase.Talk||State==Phase.Return)&&player!=null&&Humanoid?Profile.HeadWeight:0;
             if(target>0&&Vector3.Angle(Body.forward,Vector3.ProjectOnPlane(look-Body.position,Vector3.up))>110)target=0;
-            LookWeight=Mathf.MoveTowards(LookWeight,target,udt/Mathf.Max(.05f,Profile.HeadBlendSeconds));
+            LookWeight=Mathf.MoveTowards(LookWeight,target,udt/Mathf.Max(.05f,Profile.HeadBlendSeconds));}
         }
         void OnAnimatorIK(int layer)
         {
             if(!Humanoid||Animator==null)return;
-            Animator.SetLookAtWeight(LookWeight,0,1,0,Profile!=null?Profile.HeadClamp:.5f);
+            if(LookWeight<=0&&appliedLook==0)return;   // #307 item 11: weight 0 is already set; nothing to aim
+            Animator.SetLookAtWeight(LookWeight,0,1,0,Profile!=null?Profile.HeadClamp:.5f);appliedLook=LookWeight;
             if(LookWeight>0)Animator.SetLookAtPosition(look);
         }
         void BeginGlance()
@@ -263,6 +277,7 @@ namespace Oheangbu.App.World
         {
             if(dt<=0)return;
             var e=Body.localEulerAngles;float y=Mathf.MoveTowardsAngle(e.y,localTarget.eulerAngles.y,Profile.TurnDegreesPerSecond*dt);
+            if(y==e.y)return;   // #307 item 11: settled - re-writing Euler(localEulerAngles) only re-rounded it and dirtied the whole rig
             Body.localRotation=Quaternion.Euler(e.x,y,e.z);
         }
         void ShowTool(int i){for(int k=0;k<Tools.Length;k++)if(Tools[k]!=null)Tools[k].SetActive(k==i);}

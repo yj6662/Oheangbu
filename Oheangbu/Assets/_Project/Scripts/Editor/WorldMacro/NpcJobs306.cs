@@ -48,7 +48,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   // PLAN §2-5 role table (TEST). Tools: key -> prefab (ToolPrefab); poses are first guesses to tune in the editor.
   static readonly R[] Roles=
   {
-   new R{Id="innkeeper",Points=new[]{"geumpyo_innkeeper"},Attitude=NpcAttitude306.Neutral,Workplace=new[]{"SorghumBroom","SM_Tray","Table","Bowl"},
+   new R{Id="innkeeper",Points=new[]{"geumpyo_innkeeper","hunter_innkeeper308"},Attitude=NpcAttitude306.Neutral,Workplace=new[]{"SorghumBroom","SM_Tray","Table","Bowl"},
     Work=new[]{W("상 차림",W0,"N306_Bartending",10,18,3,new Vector3(0,0,.6f),0,"bowl",.14f,HumanBodyBones.LeftHand),W("문간 서성임",W1,"N306_BoredIdle",6,10,1,new Vector3(.8f,0,0),-30)}},
    new R{Id="logger",Points=new[]{"logger"},Attitude=NpcAttitude306.Wary,Talk="N306_AnnoyedHeadShake",Workplace=new[]{"SplitFirewood","Firewood","Chopping","Stump"},
     Work=new[]{W("장작 패기",W0,"N306_AxeDownward",12,20,3,new Vector3(0,0,.5f),0,"axe",.75f),W("땀 닦기",W1,"N306_WipingSweat",4,7,1,new Vector3(.6f,0,.3f),35)}},

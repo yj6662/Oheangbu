@@ -12,10 +12,13 @@ namespace Oheangbu.App.World.UI
     // (ink rims, sheet inside), realm borders as ink dots. Its strokes are thinner than the painted / brush strokes they
     // replace, so the raster work stays under the pre-#304 cost. Default flags (false) keep the original behaviour, which
     // WorldMapPaperReview's ink-width check exercises.
+    // #307: the raster size is per instance (the HUD minimap prints 512 x 512 for its ~220 px disc); the default constructor
+    // keeps 1024 x 768 for the unfolded sheet and WorldMapPaperReview.
     internal sealed class WorldMapPaperInk : IDisposable
     {
-        const int Width = 1024, Height = 768;
-        readonly Color32[] pixels = new Color32[Width * Height];
+        public const int DefaultWidth = 1024, DefaultHeight = 768;
+        readonly int Width, Height;
+        readonly Color32[] pixels;
         public Texture2D Texture { get; }
         WorldMapProjection projection;
         Rect view;
@@ -33,8 +36,12 @@ namespace Oheangbu.App.World.UI
         /// <summary>Closed realm outlines (world XZ) drawn dotted when Daedong; consumed by the next Draw.</summary>
         public Vector2[][] BorderPolygons;
 
-        public WorldMapPaperInk()
+        public WorldMapPaperInk() : this(DefaultWidth, DefaultHeight) { }
+
+        public WorldMapPaperInk(int width, int height)
         {
+            Width = Mathf.Max(1, width); Height = Mathf.Max(1, height);
+            pixels = new Color32[Width * Height];
             Texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false, true)
             { name = "PaperMapInk_Runtime", filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.DontSave };
             Texture.SetPixels32(pixels); Texture.Apply(false, false);

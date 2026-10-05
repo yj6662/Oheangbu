@@ -8,12 +8,13 @@ namespace Oheangbu.Spellcraft
     public enum SpellKind
     {
         AttackSingle, // 단일 유도 (가 — "단일 대상에 곧게 뻗는 생목 가시")
-        AttackArea,   // 영역 즉발 (고 — "지정 영역에서 가시 일제 솟음")
+        AttackArea,   // 영역 즉발 (고 — CSV #190 "지정 영역에서 가시 산발적 솟음(가까운 가시 돌출 완료 시 적별 1회 타격)")
         Parry,        // 상극+ㅓ 받아침 — 판정·보상은 Combat 소유(COMBAT-PARRY). 허공 시전 잔존 없음(CSV)
         Summon,       // 소환 표현 전용 시전 — 이동·공격·피해·어그로 규칙을 부여하지 않는다
         Field,        // Opt-in demo utility; appended to preserve existing serialized kind values.
         Buff,         // Candidate-only temporary combat state; existing serialized values remain stable.
-        Ward          // Fixed survival area; no parry ownership.
+        Ward,         // Fixed survival area; no parry ownership.
+        Install       // #308: harmony mark attached to one enemy (no damage of its own); appended, serialized values stay stable.
     }
 
     // 광역 실판정 형상 [TEST — #137 §9-1 해제 · #141 기하 3종]: None=단일 판정(연출만 광역).
@@ -100,6 +101,56 @@ namespace Oheangbu.Spellcraft
 
         [SerializeField] private Entry[] _entries;
 
+        // #308 (SPEC-SPELL-120-308 section 2): the 120-row dispatch table. Written only by the importer
+        // (Oheangbu.EditorTools.WorldMacro.SpellTable308 "spell308-import") from the canonical CSV and Data/Spells/Rules308_*.csv,
+        // never by hand. Empty = this book resolves from _entries exactly as before #308.
+        [Header("#308 술식 표 — 임포터 산출물(손으로 고치지 않는다)")]
+        [SerializeField] private SpellRow[] _rows = Array.Empty<SpellRow>();
+        [SerializeField] private SpellUnlockRule[] _unlocks = Array.Empty<SpellUnlockRule>();
+        [Tooltip("정본 CSV + 규칙 시트 전체의 sha256")]
+        [SerializeField] private string _rowsHash = "";
+        [Tooltip("임포트된 120행 + 해금 5행의 정규 텍스트 sha256 (오프라인 도구와 대조)")]
+        [SerializeField] private string _tableHash = "";
+
+        public bool HasTable => _rows != null && _rows.Length == SpellGrammar308.Count;
+        public string RowsHash => _rowsHash ?? "";
+        public string TableHash => _tableHash ?? "";
+        public System.Collections.Generic.IReadOnlyList<SpellRow> Rows => _rows ?? Array.Empty<SpellRow>();
+        public System.Collections.Generic.IReadOnlyList<SpellUnlockRule> Unlocks => _unlocks ?? Array.Empty<SpellUnlockRule>();
+
+        // The row that decides what a glyph does: the imported table when present, otherwise what _entries implied before #308.
+        public bool TryGetRow(char letter, out SpellRow row)
+        {
+            if (!HasTable) return SpellTableBuilder308.TryLegacyRow(letter, _entries, out row);
+            int index = SpellGrammar308.IndexOf(letter);
+            row = index > 0 ? _rows[index - 1] : null;
+            if (row != null && row.Is(letter)) return true;
+            row = null;
+            return false;
+        }
+
+        public bool TryGetUnlock(SpellFinal final, out SpellUnlockRule rule)
+        {
+            if (_unlocks != null)
+                foreach (var candidate in _unlocks)
+                    if (candidate.Final == final) { rule = candidate; return true; }
+            rule = default;
+            return false;
+        }
+
+#if UNITY_EDITOR
+        // Importer only. rows = 120 rows in grid order, or an empty array to return the book to its pre-#308 state.
+        public void SetTable308(SpellRow[] rows, SpellUnlockRule[] unlocks, string rowsHash, string tableHash)
+        {
+            if (rows != null && rows.Length != 0 && rows.Length != SpellGrammar308.Count)
+                throw new ArgumentException("A spell table has 120 rows (or none).");
+            _rows = rows ?? Array.Empty<SpellRow>();
+            _unlocks = unlocks ?? Array.Empty<SpellUnlockRule>();
+            _rowsHash = rowsHash ?? "";
+            _tableHash = tableHash ?? "";
+        }
+#endif
+
         [Header("필세 근사 [TEST] — 정식 수식은 플레이테스트 후 데이터 층(§9-2)")]
         [Tooltip("형(形): 최악 자모 거리 → 0..1 (x=0점 거리, y=1점 거리)")]
         [SerializeField] private Vector2 _formRange = new Vector2(1.6f, 0.6f);
@@ -123,6 +174,14 @@ namespace Oheangbu.Spellcraft
             }
             entry = default;
             return false;
+        }
+
+        // #308: form x speed before the curve (0..1). Read only: presentation grade, never a second power source.
+        public float EvaluateBrush01(float worstJamoDistance, float strokeDuration)
+        {
+            float form = Mathf.InverseLerp(_formRange.x, _formRange.y, worstJamoDistance);
+            float speed = Mathf.InverseLerp(_speedRange.x, _speedRange.y, strokeDuration);
+            return Mathf.Clamp01(form * speed);
         }
 
         // 필세(형×세) 근사 — COMBAT-ATTACK "잘 쓴 글씨가 세고, 빨리 쓴 글씨가 세다"

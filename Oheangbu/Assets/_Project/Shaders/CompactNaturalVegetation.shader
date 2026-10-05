@@ -62,6 +62,14 @@ Shader "Oheangbu/CompactNaturalVegetation"
         _FadeInEnd("Fade In End", Float) = 0
         _FadeOutStart("Fade Out Start", Float) = 700
         _FadeOutEnd("Fade Out End", Float) = 800
+        // #307 (black grass specks): 1 = the distance fade drops or keeps whole instances (hash of the instance origin) instead of
+        // dithering per pixel; near/far packets built from the same seeds hand over exactly per cluster. 0 = original per-pixel fade.
+        [ToggleUI] _ClusterFade307("Per-cluster distance fade", Float) = 0
+        // #307 black specks, root cause (engine A/B 2026-10-01): procedural blades are narrower than a pixel from ~20 m and pointed, so
+        // without MSAA they break into 1-2 px dark dots on the ground. 0 = off (original geometry and colour).
+        _BladePixelFloor307("Blade minimum screen width (px)", Float) = 0
+        _BladeFarTone307("Far blade tone: start m, end m, amount", Vector) = (12,36,0,0)
+        _BladeFarColour307("Far blade tone target (ground albedo)", Color) = (.55,.51,.43,1)
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
     }
     SubShader
@@ -98,6 +106,7 @@ Shader "Oheangbu/CompactNaturalVegetation"
             float _LeafFlutter,_WindExternalClock;float4 _WindAnchor;
             float _BillboardViews,_SimpleLighting;
             float _FadeInStart,_FadeInEnd,_FadeOutStart,_FadeOutEnd;
+            float _ClusterFade307;float _BladePixelFloor307;float4 _BladeFarTone307;half4 _BladeFarColour307;
         
             float _CIEnabled,_CIDarkNear,_CIDetailContrast,_CINormalStrength;
             float4 _CIInk,_CIPaper,_CIAir,_CIDetailRange,_CIRockRange,_CIMountainRange,_CIAirRange,_CITones;
@@ -154,6 +163,14 @@ Shader "Oheangbu/CompactNaturalVegetation"
             // can skip lighting/wind and rasterization while the packet stays reusable.
             if(_DressingCullRadius>0 && (lodDistance>lodFade.w+_DressingCullRadius || lodDistance<lodFade.x-_DressingCullRadius))
             { output.positionCS=float4(2,2,2,1);return output; }
+            if(_ClusterFade307>.5)
+            {
+                // one threshold per instance (its origin), the same complementary rule DistanceClip applies per pixel
+                float n=frac(52.9829189*frac(dot(floor(objectCentre.xz*8),float2(.06711056,.00583715))));
+                float entering=saturate((lodDistance-lodFade.x)/max(.01,lodFade.y-lodFade.x));
+                float leaving=1-saturate((lodDistance-lodFade.z)/max(.01,lodFade.w-lodFade.z));
+                if(entering<=1-n+.0001||leaving<=n+.0001){ output.positionCS=float4(2,2,2,1);return output; }
+            }
             VertexPositionInputs position = GetVertexPositionInputs(input.positionOS.xyz);
             VertexNormalInputs normal = GetVertexNormalInputs(input.normalOS, input.tangentOS);
             float3 centre = TransformObjectToWorld(float3(0,0,0));
@@ -199,6 +216,18 @@ Shader "Oheangbu/CompactNaturalVegetation"
                 world.y-=amount*.12*rooted;
             }
 
+            // #307: each blade edge vertex moves out along the blade's width (mesh tangent, uv.x 0/1) by half the pixel floor, measured in
+            // metres per pixel at its view depth, so a far blade stays a continuous stroke instead of broken sub-pixel dots
+            if(_BladePixelFloor307>0)
+            {
+                float side=(input.uv.x-.5)*2;
+                float3 across=normalize(normal.tangentWS+float3(0,0,.00001));
+                float3 view=normalize(world-_WorldSpaceCameraPos);
+                float onScreen=max(.35,length(across-view*dot(across,view)));
+                float depth=max(.05,-TransformWorldToView(world).z);
+                float metresPerPixel=depth*2/(max(.01,abs(UNITY_MATRIX_P._m11))*max(1,_ScreenParams.y));
+                world+=across*side*.5*_BladePixelFloor307*metresPerPixel/onScreen;
+            }
             output.positionCS = TransformWorldToHClip(world);
             output.positionWS = world;
             output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
@@ -226,8 +255,11 @@ Shader "Oheangbu/CompactNaturalVegetation"
             // Only leaf cards fade immediately around the eye; solid trunks retain collision readability.
             float noise=frac(52.9829189*frac(dot(floor(input.positionCS.xy),float2(.06711056,.00583715))));
             // Complementary masks keep the two distance LODs from thinning out simultaneously.
-            clip(entering-(1-noise)-.0001);
-            clip(leaving-noise-.0001);
+            if(_ClusterFade307<.5)
+            {
+                clip(entering-(1-noise)-.0001);
+                clip(leaving-noise-.0001);
+            }
             if(_AlphaClip>.5)clip(saturate((distance(_WorldSpaceCameraPos,input.positionWS)-.35)/.45)-noise-.0001);
         }
         half4 ReadAlbedo(float2 uv)
@@ -287,6 +319,8 @@ Shader "Oheangbu/CompactNaturalVegetation"
                 albedo=CIPainterlyFoliageAlbedo(input.uv,albedo,distanceWS,_Billboard>.5?_BillboardViews:1);
                 half luminance = dot(albedo, half3(0.2126h, 0.7152h, 0.0722h));
                 albedo = lerp(luminance.xxx, albedo, saturate(_Saturation));
+                // #307: far blades take the ground's albedo, so the strokes that remain read as a soft field texture, not black dots
+                if(_BladeFarTone307.z>0)albedo=lerp(albedo,_BladeFarColour307.rgb,smoothstep(_BladeFarTone307.x,max(_BladeFarTone307.x+.01,_BladeFarTone307.y),distanceWS)*saturate(_BladeFarTone307.z));
                 if(_SimpleLighting>.5)
                 {
                     half3 simple=albedo*max(_AmbientFloor, .25h);

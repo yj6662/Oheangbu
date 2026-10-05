@@ -26,6 +26,9 @@ namespace Oheangbu.App.World
         DemoEscortPresentation escort;
         WorldMacroInnRestPresentation[] rests;
         readonly Dictionary<int,int> restPhase = new Dictionary<int,int>();
+        // #307 phase 1 item 12: collider instance id -> the name-keyword step (or "" for none), so a footstep no longer
+        // allocates collider.name + ToLowerInvariant (a collider's name is fixed once it exists; ids are never reused).
+        readonly Dictionary<int,string> surfaceByCollider = new Dictionary<int,string>();
         readonly Dictionary<string,float> cooldowns = new Dictionary<string,float>();
         readonly List<Action> detach = new List<Action>();
         readonly List<EnemyEdge> enemies = new List<EnemyEdge>();
@@ -185,14 +188,21 @@ namespace Oheangbu.App.World
             var zone=Map!=null?Map.ZoneAt(feet):null;if(zone!=null&&zone.ExploreWalkedPassages)return "step_stone";
             if(Physics.Raycast(feet+Vector3.up*.3f,Vector3.down,out var hit,1.8f,Physics.DefaultRaycastLayers,QueryTriggerInteraction.Ignore))
             {
-                string n=hit.collider.name.ToLowerInvariant();
-                if(n.Contains("water")||n.Contains("stream"))return "step_water";
-                if(n.Contains("wood")||n.Contains("deck")||n.Contains("bridge"))return "step_wood";
-                if(n.Contains("rock")||n.Contains("stone")||n.Contains("stair"))return "step_stone";
-                if(n.Contains("grass"))return "step_grass";
+                var collider=hit.collider;int id=collider.GetInstanceID();
+                if(!surfaceByCollider.TryGetValue(id,out var named)){named=NamedSurface(collider.name);surfaceByCollider[id]=named;}
+                if(named.Length>0)return named;
             }
             if(Map!=null)foreach(var line in Map.Lines){if(line.Kind!=WorldMapLineKind.Road&&line.Kind!=WorldMapLineKind.Trail)continue;for(int i=1;i<line.Points.Length;i++){var a=line.Points[i-1];var d=line.Points[i]-a;var p=new Vector2(feet.x,feet.z);var q=a+d*Mathf.Clamp01(Vector2.Dot(p-a,d)/Mathf.Max(.001f,d.sqrMagnitude));if(Vector2.Distance(p,q)<4f)return "step_dirt";}}
             return Map!=null?"step_grass":"step_dirt";
+        }
+        static string NamedSurface(string name)
+        {
+            string n=name.ToLowerInvariant();
+            if(n.Contains("water")||n.Contains("stream"))return "step_water";
+            if(n.Contains("wood")||n.Contains("deck")||n.Contains("bridge"))return "step_wood";
+            if(n.Contains("rock")||n.Contains("stone")||n.Contains("stair"))return "step_stone";
+            if(n.Contains("grass"))return "step_grass";
+            return "";
         }
         void Ambience(Vector3 feet,float speed)
         {

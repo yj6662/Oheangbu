@@ -70,6 +70,10 @@ namespace Oheangbu.BrushRender
         [SerializeField, Min(0.05f)] private float _dissolveDuration = 0.4f;
         [Tooltip("투시 농도 — 작도 중 몸·벽에 가려진 획이 비쳐 보이는 불투명도(3차 카메라 검수). 커밋 후엔 투시 없음")]
         [SerializeField, Range(0f, 1f)] private float _xrayOpacity = 0.35f;
+        [Tooltip("획이 그려지는 레이어 [TEST — SPEC-LOCKON-DRAW-STABILITY-308 §4.4]. -1=바꾸지 않음(이전과 같다, 기본). " +
+            "20(VfxAfterFog)=월드 안개 뒤에 그린다 — 안개 패스가 획 뒤에 있는 먼 지형의 깊이로 획까지 물들여, 카메라가 돌 때 획의 일부가 " +
+            "옅어졌다 진해졌다 하는 것을 없앤다. 켜기 전에 스틸 비교(먼 능선 앞 글자)가 필요하다")]
+        [SerializeField, Range(-1, 31)] private int _strokeRenderLayer = -1;
 
         [Header("커밋 문양 — 글자가 그 자리에서 전통 문양으로 변형된다(4차 검수) [TEST]")]
         [Tooltip("글자 크기 대비 문양 배율 — 개화부 원 크기(≈2.3m/유닛 스케일)를 감안한 시작값")]
@@ -146,6 +150,7 @@ namespace Oheangbu.BrushRender
         public float DissolveDuration => _dissolveDuration;
         public float EdgeJitter => _edgeJitter;
         public float XrayOpacity => _xrayOpacity;
+        public int StrokeRenderLayer => _strokeRenderLayer;
         public float PatternScale => _patternScale;
         public float PatternLifetime => _patternLifetime;
         public float PatternMissRange => _patternMissRange;

@@ -137,6 +137,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     case "GameplayCapture": response.result = Vfx120GameplayAudit.Start(0, true); break;
                     case "GameplayDiagnosticCapture": response.result = Vfx120GameplayAudit.Start(0, true, true); break;
                     case "ContrastAudit": response.result = Vfx120ContrastAudit.Run(); break;
+                    // #308 sweep: private preview scene and camera, never opens or saves a scene (Spell120Sweep308.cs)
+                    case "Sweep308Describe": response.result = Spell120Sweep308.Describe(command.request); break;
+                    case "Sweep308Trial": response.result = Spell120Sweep308.Trial(command.request); break;
+                    case "Sweep308": response.result = Spell120Sweep308.Start(command.request); break;
+                    case "Sweep308Poll": response.result = Spell120Sweep308.Poll(); break;
+                    case "Sweep308Cancel": response.result = Spell120Sweep308.Cancel(); break;
                     case "GameplayPoll": response.result = Vfx120GameplayAudit.Poll(); break;
                     case "GameplayCancel": response.result = Vfx120GameplayAudit.Cancel(); break;
                     case "OpenWorld": response.result = OpenSavedScene("Assets/_Project/Scenes/Dev/C2_CodexWorld.unity"); break;

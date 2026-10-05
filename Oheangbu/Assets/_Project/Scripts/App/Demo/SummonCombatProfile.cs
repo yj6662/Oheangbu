@@ -23,6 +23,8 @@ namespace Oheangbu.App.Demo
         [Min(0)] public float WindupSeconds = .7f;
         [Min(.01f)] public float CooldownSeconds = 1.2f;
         [Min(0)] public float DamageMultiplier = .8f;
+        [Tooltip("#308 [TEST, 기본안 — 사용자 확인 대기] 소환수의 기본 위력. 책의 소환 항목은 위력 0이라, 손으로 그린 소환은 이 값 x 필세 x 체류 배율로 위력을 얻는다. 10 = 기존 검사가 직접 넣던 값. 데이터 쓰기는 spell308-summon-power 명령(원본 + 사본).")]
+        [Min(0)] public float BasePower = 10f;
         [Min(0)] public float SpawnDistance = 4f;
         [Min(.01f)] public float FootprintWidth = .8f, FootprintLength = 1.8f, BodyHeight = 1.7f;
         public Vector3 FootprintOffset = Vector3.zero;
@@ -97,7 +99,7 @@ namespace Oheangbu.App.Demo
                 (Letter == "옴" && Element == Element.Water);
             if (!mapped) { error = "Summon letter and element must match one of the five demo summons."; return false; }
             if (requirePresentation && PresentationPrefab == null) { error = "Presentation prefab is required for runtime spawning."; return false; }
-            float[] nonNegative = { FormationSeconds, DissolveSeconds, WindupSeconds, DamageMultiplier,
+            float[] nonNegative = { FormationSeconds, DissolveSeconds, WindupSeconds, DamageMultiplier, BasePower,
                 SpawnDistance, MaxSlope, FootHeightTolerance, FollowDistance };
             foreach (float value in nonNegative)
                 if (!float.IsFinite(value) || value < 0) { error = "Timings and damage must be finite and non-negative."; return false; }

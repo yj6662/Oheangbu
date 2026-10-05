@@ -17,5 +17,9 @@ namespace Oheangbu.App
         // [SPELL-AREA-SHAPES §3] 광역 판정 계획 수신 훅 — Begin 직전에 호출된다. 경로(시작점·방향·속도·차오름)와
         // 다연발(발 단위 대상·시각)이 판정과 같은 시계로 달리는 통로. 계획이 없는 연출은 무시(기본 no-op)
         public virtual void SetAreaPlan(AreaImpactPlan plan) { }
+
+        // [SPEC-SPELL-DEPLOY-308 section 1] deploy layer host, stroke grade (presentation estimate 0..1) and element wash colour,
+        // given once right after the adapter finds the effect and before Begin. Effects without a deploy layer ignore it.
+        public virtual void SetDeployHost(SpellVFX120.ISpellDeployHost308 host, float grade01, Color tint = default) { }
     }
 }

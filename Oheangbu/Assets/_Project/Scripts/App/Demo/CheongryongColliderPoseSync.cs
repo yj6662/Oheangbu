@@ -72,7 +72,7 @@ namespace Oheangbu.App.Demo
                 // It remains dirty for next frame rather than silently staying stale forever.
                 return false;
             }
-            Physics.SyncTransforms();
+            using (Perf307Markers.ColliderSync.Auto()) { Physics.SyncTransforms(); }
             _lastGlobalSyncFrame = frame; LastSynchronizedFrame = frame; SynchronizationCount++;
             for (int i = 0; i < _damageColliders.Length; i++)
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Oheangbu.App.Prologue;
 using Oheangbu.Data.Demo;
 using Oheangbu.Data.World;
@@ -21,30 +22,39 @@ namespace Oheangbu.App.World
                 return step.Objective+(remaining>0?" · 주변 위협 "+remaining+"체":"");
             }
         }
-        PrologueContentSO.Point demoPointSource,demoPointView;
-        DemoCampaignProfile.Stage demoPointStage;
-        DemoCampaignState demoPointFacts;
+        // #307 phase 1 item 2: one cached view per point Id (was one slot, overwritten by every other point each frame). A view is
+        // reused only for the same source point, campaign stage and campaign state object (explicit mode also the same Facts count,
+        // so an in-place fact still refreshes the testimony text); otherwise it is rebuilt exactly as before.
+        sealed class DemoPointView{public PrologueContentSO.Point Source,View;public DemoCampaignProfile.Stage Stage;public DemoCampaignState Facts;public int FactCount;public bool Explicit;}
+        readonly Dictionary<string,DemoPointView> demoPointViews=new Dictionary<string,DemoPointView>(StringComparer.Ordinal);
         PrologueContentSO.Point DemoInteractionPoint(PrologueContentSO.Point original)
         {
             if(original==null||!DemoCampaignActive)return original;
             var step=DemoCampaignProgression.ForEvent(Content.Campaign,Progress.campaign,DemoEventKind.Interaction,original.Id,Progress.defeated);
+            DemoPointView cached=null;if(original.Id!=null)demoPointViews.TryGetValue(original.Id,out cached);
             if(Content.Campaign.UseExplicitPrerequisites)
             {
-                if(ReferenceEquals(demoPointSource,original)&&ReferenceEquals(demoPointStage,step)&&ReferenceEquals(demoPointFacts,Progress.campaign))return demoPointView;
-                demoPointSource=original;demoPointStage=step;demoPointFacts=Progress.campaign;
+                int facts=Progress.campaign.Facts?.Count??-1;
+                if(cached!=null&&cached.Explicit&&ReferenceEquals(cached.Source,original)&&ReferenceEquals(cached.Stage,step)&&ReferenceEquals(cached.Facts,Progress.campaign)&&cached.FactCount==facts)return cached.View;
                 var text=Content.Campaign.DialogueFor(original.Id,Progress.campaign,step?.Dialogue??original.Text);
-                return demoPointView=new PrologueContentSO.Point{Id=original.Id,Kind=original.Kind,Position=original.Position,Radius=original.Radius,
+                return RememberDemoPointView(original,step,true,facts,new PrologueContentSO.Point{Id=original.Id,Kind=original.Kind,Position=original.Position,Radius=original.Radius,
                     Currency=original.Currency,Prompt=string.IsNullOrEmpty(step?.Prompt)?original.Prompt:step.Prompt,Text=text,
                     RequiredCompleted=original.RequiredCompleted,RequiredDefeated=original.RequiredDefeated,LockedText=original.LockedText,
-                    Speaker=original.Speaker,Lines=text==original.Text?original.Lines:Array.Empty<string>(),Services=original.Services};   // #306: authored pages only for the authored text
+                    Speaker=original.Speaker,Lines=text==original.Text?original.Lines:Array.Empty<string>(),Services=original.Services});   // #306: authored pages only for the authored text
             }
             if(step==null||!step.Implemented||step.Event!=DemoEventKind.Interaction||step.TriggerId!=original.Id)return original;
-            if(ReferenceEquals(demoPointSource,original)&&ReferenceEquals(demoPointStage,step))return demoPointView;
-            demoPointSource=original;demoPointStage=step;
-            return demoPointView=new PrologueContentSO.Point{Id=original.Id,Kind=original.Kind,Position=original.Position,Radius=original.Radius,
+            if(cached!=null&&!cached.Explicit&&ReferenceEquals(cached.Source,original)&&ReferenceEquals(cached.Stage,step))return cached.View;
+            return RememberDemoPointView(original,step,false,0,new PrologueContentSO.Point{Id=original.Id,Kind=original.Kind,Position=original.Position,Radius=original.Radius,
                 Currency=original.Currency,Prompt=string.IsNullOrEmpty(step.Prompt)?original.Prompt:step.Prompt,
                 Text=string.IsNullOrEmpty(step.Dialogue)?original.Text:step.Dialogue,
-                Speaker=original.Speaker,Lines=string.IsNullOrEmpty(step.Dialogue)?original.Lines:Array.Empty<string>(),Services=original.Services};
+                Speaker=original.Speaker,Lines=string.IsNullOrEmpty(step.Dialogue)?original.Lines:Array.Empty<string>(),Services=original.Services});
+        }
+        PrologueContentSO.Point RememberDemoPointView(PrologueContentSO.Point original,DemoCampaignProfile.Stage step,bool explicitMode,int facts,PrologueContentSO.Point view)
+        {
+            if(original.Id==null)return view;
+            if(!demoPointViews.TryGetValue(original.Id,out var entry)){entry=new DemoPointView();demoPointViews.Add(original.Id,entry);}
+            entry.Source=original;entry.Stage=step;entry.Facts=Progress.campaign;entry.FactCount=facts;entry.Explicit=explicitMode;entry.View=view;
+            return view;
         }
 
         // Return true when this is a campaign interaction (including blocked out-of-order attempts).

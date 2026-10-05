@@ -20,6 +20,10 @@ namespace Oheangbu.Combat
         [Min(.1f)] public float Deceleration = 22f;
         [Min(0f)] public float AirAcceleration = 4f;
         [Min(.05f)] public float JumpHeight = .75f;
+        [Tooltip("D308-9d: a jump starts only from walkable ground (a support whose slope is within the controller's slope limit). Off = the old rule: any contact below the capsule, which let repeated jumps climb cliff faces.")]
+        public bool JumpNeedsWalkableGround = true;
+        [Tooltip("How far above the walkable support the feet may be for a jump to start (m).")]
+        [Range(.02f, .2f)] public float JumpSupportGap = .06f;
         [Range(.02f, .4f)] public float GroundSnap = .24f;
         [Min(.1f)] public float GroundStickSpeed = 2f;
         [Min(.1f)] public float SitDownSeconds = .55f;

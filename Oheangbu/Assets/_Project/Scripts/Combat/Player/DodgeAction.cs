@@ -11,6 +11,7 @@ namespace Oheangbu.Combat
         private float _dashUntil;
         private float _invulnerableUntil;
         private float _cooldownUntil;
+        private float _cooldownLength;   // #308 HUD: length of the running cooldown (display only)
         private Vector3 _dashVelocity;
         private float _dashStarted;
 
@@ -18,6 +19,9 @@ namespace Oheangbu.Combat
         public bool IsDashing => Time.time < _dashUntil;
         public Vector3 Direction => _dashVelocity.sqrMagnitude > 0f ? _dashVelocity.normalized : Vector3.zero;
         public float Progress => IsDashing ? Mathf.Clamp01((Time.time - _dashStarted) / Mathf.Max(_dashUntil - _dashStarted, 0.0001f)) : 1f;
+        // #308 HUD (SPEC-HUD-LIQUID-308 §3.2): read-only cooldown for the dodge mark. Still nothing here touches groggy or ink.
+        public float CooldownRemaining => Mathf.Max(0f, _cooldownUntil - Time.time);
+        public float Cooldown01 => _cooldownLength > 0f ? 1f - Mathf.Clamp01(CooldownRemaining / _cooldownLength) : 1f;
 
         public bool TryDodge(Vector3 direction) => TryDodge(direction, 0f);
         public void Cancel() { _dashUntil = _invulnerableUntil = 0f; _dashVelocity = Vector3.zero; }
@@ -32,7 +36,8 @@ namespace Oheangbu.Combat
             _dashStarted = Time.time;
             _dashUntil = Time.time + duration;
             _invulnerableUntil = Time.time + _config.DodgeInvulnerable; // 즉발 — 입력 프레임부터 무적
-            _cooldownUntil = Time.time + _config.DodgeCooldown;
+            _cooldownLength = _config.DodgeCooldown;
+            _cooldownUntil = Time.time + _cooldownLength;
             return true;
         }
 

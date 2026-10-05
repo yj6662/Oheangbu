@@ -16,6 +16,10 @@ namespace Oheangbu.App
     // #306 (SPEC-PLAYTEST-306 #1 / #8, D306): the 먹 원상 minimap is back beside the bearing line (HudMinimap304, BottomRight),
     // enemy health = the lock-on stroke "TargetHpStroke" 6 px under the enso and the boss bar (HudBossBar304, BottomCentre),
     // fed by SetTargetHealth / SetBossHealth (IHealthBarSource306). All stay children of HUD_Canvas (one screen Canvas).
+    // #308 (SPEC-HUD-LIQUID-308, D308-11): while the liquid profile (Resources UI308/HudLiquid308) exists and is enabled, the
+    // HP / ink meters and the 먹병 are replaced by "Vessels308" (HudVessels308: two liquid vessels + dodge / jump / vehicle
+    // marks, its own Canvas). Values stay immediate here (Hp01 / Ink01); the vessels only decide how the surface reaches them.
+    // Without the asset, or with Enabled off, BuildMeters304 builds exactly the #304 HUD.
     public sealed class HudController : MonoBehaviour
     {
         [Tooltip("Optional playtest-owned visual skin. Leave null to retain the prototype HUD.")]
@@ -28,6 +32,8 @@ namespace Oheangbu.App
         public MinimapSpec304 Minimap = new MinimapSpec304();
         [Tooltip("#306 enemy health: lock-on stroke 64x5 under the enso, boss bar 720x8 bottom centre (TEST, SPEC-PLAYTEST-306 #8)")]
         public EnemyBarSpec304 EnemyBars = new EnemyBarSpec304();
+        [Tooltip("#308 liquid HUD data. Empty = Resources UI308/HudLiquid308 (read once per HUD build). Missing or disabled = the #304 meters.")]
+        public HudLiquid308ProfileSO Liquid308;
 
         private RectTransform _hpFill, _inkFill, _reticle, _groggyFill;
         private float _receivedFrom, _receivedTo, _receivedLast = -10f, _receivedBegan;
@@ -58,6 +64,7 @@ namespace Oheangbu.App
         private HudHealthStroke304 _targetHp;
         private CanvasGroup _targetHpGroup;
         private bool _targetHpWanted;
+        private HudVessels308 _vessels;   // #308 (null while the #304 meters are in use)
 #if UNITY_EDITOR
         private bool _editorDiagnosticState;
 #endif
@@ -87,6 +94,8 @@ namespace Oheangbu.App
         public InkMeter304 TargetHpStroke304 => _targetHp != null ? _targetHp.Meter : null;
         public bool TargetHpVisible => _targetHpGroup != null && _targetHpGroup.gameObject.activeSelf;
         public Canvas Canvas => _canvas;
+        /// <summary>#308: the liquid cluster (null while the #304 meters are in use).</summary>
+        public HudVessels308 Vessels308 => _vessels;
 
         private void Awake()
         {
@@ -123,7 +132,9 @@ namespace Oheangbu.App
             _tokens = HudTokens304.Load();
             V.EnsureCanvasChannels(_canvas);
             BuildDangerEdges();
-            BuildMeters304();
+            // #308: vessels while the liquid profile exists and is enabled, else the #304 meters (rollback = profile.Enabled off)
+            var liquid = Liquid308 != null ? Liquid308 : Resources.Load<HudLiquid308ProfileSO>(HudLiquid308ProfileSO.ResourcePath);
+            if (liquid != null && liquid.Enabled) BuildVessels308(liquid); else BuildMeters304();
             _bearing = HudBearingLine304.Create(_style, _tokens, _canvas.transform, Icons);
             _minimap = HudMinimap304.Create(_style, _tokens, _canvas.transform, Minimap, Icons);
             if (_style.Sprites.Disc == null) _diskSprite = CreateInkDisk();
@@ -146,6 +157,15 @@ namespace Oheangbu.App
             _targetHpGroup.blocksRaycasts = false; _targetHpGroup.interactable = false; _targetHpGroup.alpha = e.TargetIdleAlpha;
             _targetHp = new HudHealthStroke304(_style, _tokens, root, "TargetHp_Stroke", 0f, 0f, e.TargetSize.x, e.TargetSize.y, e.ChipAlpha);
             root.gameObject.SetActive(false);
+        }
+
+        /// <summary>#308 (SPEC-HUD-LIQUID-308 §5.1): "Vessels308" with the HP vessel "HP_BrushStroke" (cinnabar), the ink vessel
+        /// "Ink_BrushBar" (ink) and the dodge / jump / vehicle marks. Meters304, Ink_ReceivedSegment, Ink_CostPreview and InkBottle
+        /// are not built. Not tilted: a liquid surface reads only when it is level.</summary>
+        private void BuildVessels308(HudLiquid308ProfileSO liquid)
+        {
+            _vessels = HudVessels308.Create(liquid, _style, _tokens, _canvas.transform, Skin, _hp01, _ink01);
+            if (_vessels == null) BuildMeters304();
         }
 
         /// <summary>DESIGN §5.9 + D07: one tilted bundle (BottomLeft, origin (64,900), -1.2° about its left middle) holding the
@@ -279,7 +299,8 @@ namespace Oheangbu.App
         {
             value = Mathf.Clamp01(value);
             _hp01 = value;
-            if (_hpMeter != null) _hpMeter.SetValue(value);
+            if (_vessels != null) _vessels.SetHp01(value);
+            else if (_hpMeter != null) _hpMeter.SetValue(value);
             else if (_hpFill != null) _hpFill.localScale = new Vector3(value, 1f, 1f);
             if (_dangerEdges == null || Skin == null || _tokens == null) return;
             // QA1 (hud_lowhp at HP .28): the old ramp gave α.048 there (edge ~4 grey levels, invisible). The onset share makes
@@ -306,7 +327,8 @@ namespace Oheangbu.App
             _ink01 = value;
             _receivedTo = Mathf.Min(_receivedTo, value);
             _receivedFrom = Mathf.Min(_receivedFrom, _receivedTo);
-            if (_inkMeter != null)
+            if (_vessels != null) _vessels.SetInk01(value);
+            else if (_inkMeter != null)
             {
                 _inkMeter.SetValue(value, false);
                 if (_inkLiquid != null) _inkLiquid.fillAmount = value;
@@ -320,6 +342,7 @@ namespace Oheangbu.App
         public void SetInkCostPreview(float cost01)
         {
             _inkCost01 = Mathf.Clamp01(cost01);
+            if (_vessels != null) { _vessels.SetInkCostPreview(_inkCost01); return; }   // #308: a dashed line under the surface
             if (_inkCostBox == null || _inkMeter == null) return;
             bool on = _inkCost01 > .0001f && _inkCostBox.sprite != null;
             if (_inkCostBox.gameObject.activeSelf != on) _inkCostBox.gameObject.SetActive(on);
@@ -341,6 +364,7 @@ namespace Oheangbu.App
         /// absorb). Clamped to the live meter: ink spent meanwhile is never highlighted, and nothing shows if all of it is gone.</summary>
         public void NotifyInkGained(float actualReceived, float to01)
         {
+            if (_vessels != null) { _vessels.NotifyInkGained(actualReceived, to01); return; }   // #308: the fresh share reads lighter
             if (actualReceived <= 0f || _inkReceivedGraphic == null) return;
             float to = Mathf.Min(Mathf.Clamp01(to01), _ink01);
             float from = Mathf.Max(0f, Mathf.Clamp01(to01) - actualReceived);
@@ -472,7 +496,21 @@ namespace Oheangbu.App
         public void KickInk(float strength = 1f)
         {
             _inkHitImpulse = Mathf.Max(_inkHitImpulse, Mathf.Clamp01(strength));
+            if (_vessels != null) _vessels.KickInk(strength);
         }
+
+        // #308 liquid HUD inputs (SPEC-HUD-LIQUID-308 §5.1). All are no-ops while the #304 meters are in use.
+        /// <summary>D308-11b: what the player did this frame, as measured by the presenter (ActionMeter308: speed changes of the
+        /// body, fast view turning, take-off, landing). The liquids answer it in proportion; a zero sample is nothing.</summary>
+        public void AddLiquidAction308(in ActionSample308 sample) { if (_vessels != null) _vessels.AddAction(in sample); }
+        /// <summary>D308-11b: the key glyph cells of the dodge / jump / vehicle marks, picked from the real bindings.</summary>
+        public void SetKeys308(in HudKeys308 keys) { if (_vessels != null) _vessels.SetKeys(in keys); }
+        /// <summary>Inputs of the dodge / jump / vehicle marks (HudActionRules308 decides how they are drawn).</summary>
+        public void SetActionState308(in HudActionState308 state) { if (_vessels != null) _vessels.SetActionState(in state); }
+        /// <summary>Ink below this (one spell cost) splits into dry-brush streaks.</summary>
+        public void SetLowInkThreshold308(float ink01) { if (_vessels != null) _vessels.SetLowInkThreshold(ink01); }
+        /// <summary>"UI 크기" (only the liquid cluster follows it) and "움직임 줄이기".</summary>
+        public void SetUserSettings308(float uiScale, bool reducedMotion) { if (_vessels != null) _vessels.SetUserSettings(uiScale, reducedMotion); }
 
         public void PulseReticle() { _pulse = 1f; if (_lockOn != null) _lockOn.Pulse(); }
 
@@ -532,6 +570,7 @@ namespace Oheangbu.App
             FitDangerEdges(false);
             UpdateInkReceived();
             PlaceTargetHp306();
+            if (_vessels != null) _vessels.Tick();   // #308: slosh, level, marks, impact-frame reaction
             _inkHitImpulse = Mathf.MoveTowards(_inkHitImpulse, 0f, Time.unscaledDeltaTime * 2.8f);
         }
 

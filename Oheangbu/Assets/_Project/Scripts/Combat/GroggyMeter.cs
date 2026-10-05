@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Oheangbu.Combat
 {
+    // #308: groggy has exactly three sources (COMBAT-GROGGY): a correct parry, a harmony detonation, a counter-element sword strike.
+    public enum GroggySource { Parry, Harmony, SwordCounter }
+
     // 그로기 — COMBAT-GROGGY: 「그로기는 상극 응수의 보상이다」.
     // 증가 경로는 정답 패링 하나뿐(프로토 절단면 — 상합·상극 검격은 후속). 시간 감쇠 코드는 없다:
     // 「무감쇠 — 소멸은 판 단위」. Reset은 판이 끝날 때(적 처치·플레이어 사망)와 만개 소진 시[TEST]만.
@@ -29,6 +32,18 @@ namespace Oheangbu.Combat
         {
             if (IsBlossomed) return;
             _count++;
+            Changed?.Invoke();
+            if (_count >= _parriesToBlossom)
+            {
+                Blossomed?.Invoke();
+            }
+        }
+
+        // #308: the same meter for the other two sources. steps = how many parry-sized steps the source is worth (data).
+        public void Add(GroggySource source, int steps = 1)
+        {
+            if (steps <= 0 || IsBlossomed) return;
+            _count = Mathf.Min(_parriesToBlossom, _count + steps);
             Changed?.Invoke();
             if (_count >= _parriesToBlossom)
             {

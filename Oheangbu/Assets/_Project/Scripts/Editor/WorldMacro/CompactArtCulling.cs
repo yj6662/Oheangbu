@@ -32,6 +32,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    {
     var camera=root.AddComponent<Camera>();camera.enabled=false;
     var art=root.AddComponent<CompactRebuildArtRenderer>();  // inactive: nothing subscribes while lists are compared
+    art.CullPath307=0;  // #307: this oracle and its render accounting are the S3 (output-identical) contract; S8 has artcull2.
+    // #307 2a: a match also needs every packet matrix's mesh bounds inside the packet worldBounds (BoundsViolations, counted as mismatches).
     for(int s=0;s<CullSheets.Length;s++)
     {
      var sheet=AssetDatabase.LoadAssetAtPath<WorldMacroDressingSheetSO>(CullSheets[s]);if(sheet==null)throw new FileNotFoundException(CullSheets[s]);
@@ -44,7 +46,7 @@ namespace Oheangbu.EditorTools.WorldMacro
       Apply(camera,poses[p]);
       var a=art.CompareWithFullScan(camera);var b=art.CompareWithFullScan(camera);  // b: warm timings
       if(p==0){prepare=a.PrepareMs;info=a;}
-      int bad=a.Mismatches+b.Mismatches;bool visible=a.CulledVisible!=a.FullVisible||b.CulledVisible!=b.FullVisible;
+      int bad=a.Mismatches+b.Mismatches+a.BoundsViolations;bool visible=a.CulledVisible!=a.FullVisible||b.CulledVisible!=b.FullVisible;
       if((bad>0||visible)&&first==null)first=Describe(poses[p])+" mismatches="+bad+" visible culled/full="+a.CulledVisible+"/"+a.FullVisible;
       sheetMismatches+=bad;if(visible)sheetVisible++;sheetCompared+=a.Matrices+b.Matrices;
       culled.Add(b.CulledMs);full.Add(b.FullMs);share.Add(100.0*b.Candidates/Math.Max(1,b.Instances));

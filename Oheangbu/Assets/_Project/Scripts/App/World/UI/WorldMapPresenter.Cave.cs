@@ -12,6 +12,7 @@ namespace Oheangbu.App.World.UI
             public string Key;
             public WorldMapDiscoveryGrid Grid;
             public Texture2D Mask;
+            public Color32[] Pixels;   // #307: kept between reveals (no new array per refresh)
         }
         readonly Dictionary<string, InteriorDiscovery> interiors = new Dictionary<string, InteriorDiscovery>();
         float nextCaveProbe;
@@ -37,7 +38,9 @@ namespace Oheangbu.App.World.UI
 
         static void RefreshInteriorMask(InteriorDiscovery entry)
         {
-            var grid = entry.Grid; var pixels = new Color32[grid.Width * grid.Height];
+            var grid = entry.Grid;
+            if (entry.Pixels == null || entry.Pixels.Length != grid.Width * grid.Height) entry.Pixels = new Color32[grid.Width * grid.Height];
+            var pixels = entry.Pixels;
             for (int y = 0; y < grid.Height; y++) for (int x = 0; x < grid.Width; x++)
                 pixels[y * grid.Width + x] = grid.IsDiscovered(x, y) ? new Color32(255,255,255,255) : new Color32(0,0,0,255);
             entry.Mask.SetPixels32(pixels); entry.Mask.Apply(false);

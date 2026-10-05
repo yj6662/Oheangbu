@@ -76,6 +76,7 @@ Shader "UI/InkMeter"
 
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
+            #include "ImpactHud308.hlsl"   // #308 D308-10b: HUD reaction to an impact frame (globals 0 = unchanged)
 
             #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
             #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
@@ -176,6 +177,7 @@ Shader "UI/InkMeter"
 
                 half4 color = IN.color;
                 color.a *= a;
+                color = OhImpactHud308(color, color.a, IN.vertex);   // #308: rgb only, before the #304 alpha remap
                 #ifndef UNITY_COLORSPACE_GAMMA
                 // #304: uGUI composites in linear light, the design alphas are sRGB composites (mockups). Remap alpha so an
                 // ink layer over paper/world (1-(1-a)^g) and a paper layer over ink (a^g) land where the mockup puts them.

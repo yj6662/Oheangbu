@@ -99,9 +99,13 @@ namespace Oheangbu.App.Demo
             configured = true;
         }
 
+        /// <summary>#308 forms2 S5: the deploy layer draws this summon's entrance and exit; the formation seal and the dissolve
+        /// debris are not started. The model, its motion, its attack presentations and the clock are untouched.</summary>
+        public bool DeployOwnsEntrance308;
+
         void StartSeal()
         {
-            if (profile.FormationSeal == null) return;
+            if (DeployOwnsEntrance308 || profile.FormationSeal == null) return;
             sealObject = new GameObject("Summon_KTP_Bottom");
             sealObject.transform.SetParent(transform, false);
             sealPosition = transform.position + Vector3.up * .025f;
@@ -215,7 +219,7 @@ namespace Oheangbu.App.Demo
                 if(phaseParticles==null&&gameObject.activeInHierarchy)phaseParticles=gameObject.AddComponent<DemoSummonPhaseParticles>();
                 if(phaseParticles!=null)phaseParticles.Sample(profile,clock);
             }
-            if (profile.Letter != "놈" && profile.Letter != "솜" && profile.Letter != "몸" && profile.Letter != "옴" && clock.Phase == SummonPhase.Dissolving && !debrisStarted)
+            if (profile.Letter != "놈" && profile.Letter != "솜" && profile.Letter != "몸" && profile.Letter != "옴" && clock.Phase == SummonPhase.Dissolving && !debrisStarted && !DeployOwnsEntrance308)
             {
                 debrisStarted = true;
                 if (profile.DissolveDebris != null)

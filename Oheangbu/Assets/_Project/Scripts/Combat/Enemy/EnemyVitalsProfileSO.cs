@@ -16,7 +16,11 @@ namespace Oheangbu.Combat
         [SerializeField] private bool _isBoss;
         [Tooltip("락온 원상 아래 체력 획(TargetHpStroke)")]
         [SerializeField] private bool _showLockOnBar = true;
+        // #308 WP-07 (D308-13 Q4) [TEST]: a new stat. 0 = no armour, which is every enemy that exists today.
+        [Tooltip("방어력 [TEST D308-13]. 받는 피해에서 덜어내는 비율 0~1 (0.3 = 30% 덜 받는다). 0 = 방어 없음(기존 적 전부). 방어 감소·방어 무시 술식이 이 값에 작용한다")]
+        [SerializeField, Range(0f, 1f)] private float _defence;
 
+        public float Defence => _defence;
         public float MaxHp => _maxHp;
         public string DisplayName => _displayName ?? "";
         public bool IsBoss => _isBoss;

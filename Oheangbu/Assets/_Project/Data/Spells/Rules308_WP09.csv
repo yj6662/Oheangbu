@@ -1,0 +1,9 @@
+﻿# SPEC-SPELL-120-308 WP-09 (companion shots): five buffs, one handler. TEST starting values, not measured.
+# duration: seconds of the buff / companion.power: damage of one shot / companion.shots: shots per accepted cast /
+# companion.speed: shot speed (m/s) / companion.interval: seconds between the shots of one cast (used when shots > 1).
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+겅,,buff.companion,,,,,,,,,,,,,,,,,duration=30;companion.power=2;companion.shots=1;companion.speed=20;companion.interval=0.1
+넝,,buff.companion,,,,,,,,,,,,,,,,,duration=30;companion.power=2;companion.shots=1;companion.speed=20;companion.interval=0.1
+멍,,buff.companion,,,,,,,,,,,,,,,,,duration=30;companion.power=2;companion.shots=1;companion.speed=20;companion.interval=0.1
+성,,buff.companion,,,,,,,,,,,,,,,,,duration=30;companion.power=2;companion.shots=1;companion.speed=20;companion.interval=0.1
+엉,,buff.companion,,,,,,,,,,,,,,,,,duration=30;companion.power=2;companion.shots=1;companion.speed=20;companion.interval=0.1

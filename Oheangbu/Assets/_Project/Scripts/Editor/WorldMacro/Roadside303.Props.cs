@@ -285,6 +285,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                 g.GetComponent<MeshRenderer>().sharedMaterials = home ? r.sharedMaterials : r.sharedMaterials.Select(x => Aged(x, isRoof ? .62f : .78f)).ToArray();
                 if (n == "house_Re_Stone" || n == "house_Re_Ground_03" || (isRoof && n == "house_Re_Roof_01" && ruin))
                 { var bc = g.AddComponent<BoxCollider>(); bc.center = f.sharedMesh.bounds.center; bc.size = f.sharedMesh.bounds.size; }
+                // D308-1 (SPEC-WORLD-BUILDING-AUDIT-308 F4, revises Spec 303 "large parts only"): thatched walls and the door get the
+                // mesh's own collider (the original ThatchedInn prefab has the same MeshColliders), so the walls cannot be walked
+                // through; a house without a door keeps its open door frame because the collider follows the mesh
+                if (n == "house_Re_Wood_01" || n == "house_Re_Wood_02" || n == "house_Re_Door")
+                { var mc = g.AddComponent<MeshCollider>(); mc.sharedMesh = f.sharedMesh; mc.convex = false; }
             }
             if (ruin || empty)
             {

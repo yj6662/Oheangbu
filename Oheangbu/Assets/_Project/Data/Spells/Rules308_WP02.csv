@@ -1,0 +1,10 @@
+﻿# SPEC-SPELL-120-308 WP-02: numeric / conditional attacks (four glyphs). TEST starting values, not measured.
+# single.execute: execute.hp01 = HP ratio at or below which the hit executes, execute.bonus = extra hit as a multiple of the cast power.
+# core.single row: the plain single-target judgement with the largest base power of the single-shot rows (no parameter, no extra effect).
+# volley.heat: heat.step = power added per stack, heat.max = stack cap, heat.window = seconds a stack survives without a recast.
+# volley.ramp: ramp.first / ramp.last = share weight of the first / last shot (linear in between; the shares add up to the cast power).
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+갓,,single.execute,,,,,base,,,,,,,,,,,,execute.hp01=0.3;execute.bonus=1.5
+난,,core.single,,AttackSingle,,,,22,,,,,,,,,,,
+손,,volley.heat,,,,,base,,,,,,,,,,,,heat.step=0.15;heat.max=4;heat.window=6
+솟,,volley.ramp,,,,,base,,,,,,,,,,,,ramp.first=0.4;ramp.last=1.6

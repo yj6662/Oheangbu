@@ -106,6 +106,11 @@ namespace Oheangbu.App.World.UI
         public List<MapKindText304> Kinds = DefaultKinds();
         [Tooltip("places list rows visible before it scrolls")] public int ListVisibleRows = 5;
 
+        [Header("#308 notation (SPEC-MAP-OVERHAUL-308)")]
+        [Tooltip("the baked map bundle both maps draw from (terrain picture, brush strips, icon atlas, frames). Set by the editor command " +
+                 "MapOverhaul308 import, cleared by its revert. None, or a bundle baked for another map = the pre-#308 map")]
+        public MapNotation308SO Notation308;
+
         public MapKindText304 Kind(MapMarkerKind304 kind)
         {
             if (Kinds != null) foreach (var k in Kinds) if (k != null && k.Kind == kind) return k;

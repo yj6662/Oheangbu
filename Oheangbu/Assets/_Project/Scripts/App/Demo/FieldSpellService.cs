@@ -15,8 +15,13 @@ namespace Oheangbu.App.Demo
     [DisallowMultipleComponent, DefaultExecutionOrder(100)]
     public sealed class FieldSpellService : MonoBehaviour
     {
+        // #308 WP-00: the lift numbers are row data (lift.height / lift.rise / lift.descent / lift.hold in Rules308_WP00.csv).
+        // These constants are what a cast without row data uses (a book with no imported table, the existing checks).
         public const float MaximumHeight = 2.4f;
         public const float RiseSpeed = 1.2f, DescentSpeed = .9f, HoldSeconds = 20f;
+        public static FieldLiftSpec LegacyLift => new FieldLiftSpec(MaximumHeight, RiseSpeed, DescentSpeed, HoldSeconds);
+        FieldLiftSpec lift = LegacyLift;
+        public FieldLiftSpec Lift => lift;
         static readonly Vector2 DefaultDeckHalfSize = new Vector2(.42f, .35f);
         Vector2 DeckHalfSize = DefaultDeckHalfSize;
         float deckScale=1;
@@ -77,7 +82,10 @@ namespace Oheangbu.App.Demo
             !(paused?.Invoke() ?? false) && (motor == null || (!motor.IsSitting && !motor.IsDodging));
 
         // Builds an inactive validated candidate before the caller spends ink. Never replaces an occupied lift.
-        public bool TryPrepare(SpellCast cast, out string failure)
+        public bool TryPrepare(SpellCast cast, out string failure) => TryPrepare(cast, null, out failure);
+
+        // row = the table row of the cast (null = no row data: the constants above).
+        public bool TryPrepare(SpellCast cast, SpellRow row, out string failure)
         {
             LastFailure = null;
             if (cast.Letter != '국' || cast.Kind != SpellKind.Field || cast.Element != Element.Wood)
@@ -85,6 +93,7 @@ namespace Oheangbu.App.Demo
             if (!CanCast) return Fail("국을 얻은 뒤 보행 중 쓸 수 있다.", out failure);
             if (HasPlatform) return Fail("현재 발판을 내려오거나 해제한 뒤 다시 쓸 수 있다.", out failure);
             if (!ValidVisual()) return Fail("국 외형 연결이 준비되지 않았다.", out failure);
+            lift = FieldLiftSpec.From(row, LegacyLift); // no platform exists at this point, so the numbers of a running lift never change
             if (!float.IsFinite(body.radius) || body.radius <= 0 || Mathf.Abs(body.transform.lossyScale.x - 1f) > .001f ||
                 Mathf.Abs(body.transform.lossyScale.y - 1f) > .001f || Mathf.Abs(body.transform.lossyScale.z - 1f) > .001f ||
                 Vector3.Dot(body.transform.up, Vector3.up) < .999f)
@@ -95,9 +104,9 @@ namespace Oheangbu.App.Demo
             Vector3 feet = Feet(body);
             if(!GukLiftSite.Resolve(gameObject.scene,feet,out selectedSite))return Fail("지맥 발판의 연결이 맞지 않습니다.",out failure);
             amplified=selectedSite!=null;
-            maximumHeight=amplified?selectedSite.Height:MaximumHeight;
-            riseSpeed=selectedSite!=null?maximumHeight/selectedSite.RiseSeconds:RiseSpeed;
-            descentSpeed=selectedSite!=null?riseSpeed:DescentSpeed;
+            maximumHeight=amplified?selectedSite.Height:lift.Height;
+            riseSpeed=selectedSite!=null?maximumHeight/selectedSite.RiseSeconds:lift.RiseSpeed;
+            descentSpeed=selectedSite!=null?riseSpeed:lift.DescentSpeed;
             if(selectedSite!=null&&(!Ground(selectedSite.Upper.position,out var landing)||Mathf.Abs(landing.y-selectedSite.Upper.position.y)>.16f||!ClearCapsule(selectedSite.Upper.position)))
                 return Fail("상단의 착지 공간이 막혀 있습니다.",out failure);
             if (!Ground(feet, out basePoint) || Mathf.Abs(feet.y - basePoint.y) > .16f || DryPlacementAllowed!=null&&!DryPlacementAllowed(basePoint))
@@ -194,7 +203,7 @@ namespace Oheangbu.App.Demo
             elapsed += dt;
             if (State == FieldLiftState.Holding)
             {
-                held += dt; if (held >= HoldSeconds) SetState(FieldLiftState.Descending);
+                held += dt; if (held >= lift.HoldSeconds) SetState(FieldLiftState.Descending);
             }
             if (State == FieldLiftState.Rising)
             {

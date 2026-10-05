@@ -76,10 +76,20 @@ namespace Oheangbu.Data.World
         [Serializable] public sealed class EscortVoice306
         {
             public string Speaker="왕소";
+            // #308 D308-2 §5 (SPEC-CONTENT-PACING-308) [TEST, NARR-VOICE 통독 대상]: the departure condition is said in the world's words,
+            // never as an instruction (D304/D306). The #308 texts live in the content assets (Content308 content-apply writes them);
+            // the code defaults keep the pre-#308 behaviour for a content that has not been migrated (WorldContent298 serializes no
+            // EscortVoice block, so its defaults ARE its values): the new fields default to empty and fall back to the old ones.
             [TextArea] public string ContractedText="화물은 이곳에 두었소. 출발할 준비가 되면 다시 이야기합시다.";
+            [Tooltip("#308: after the contract once departure is possible (escort stage prerequisites met). Empty = ContractedText.")]
+            [TextArea] public string ContractedReadyText="";
             [TextArea] public string EscortingText="화물은 내가 지키겠소. 앞에서 기다리면 따라가리다.";
             [TextArea] public string DeliveredText="봉인은 온전했소. 다음에 만나면 이 빚을 갚으리다.";
-            [Tooltip("Notice when the start point is talked to before boarding (a receipt line, not speech). Empty = none.")]
+            [Tooltip("#308: escort_start talked to while departure is not yet possible (one short prompt line). Empty = StartBoardNotice.")]
+            [TextArea] public string StationWaitingText="";
+            [Tooltip("#308: escort_start talked to once departure is possible (one short prompt line). Empty = StartBoardNotice.")]
+            [TextArea] public string StationReadyText="";
+            [Tooltip("LEGACY (#308 D308-2 §5): #308 content sets it empty. Shown only when the two Station texts are empty (unmigrated content) or after departure. Empty = none.")]
             [TextArea] public string StartBoardNotice="왕소와 화물을 안전한 좌석에 싣고 정차한 가마에 탑승하면 출발한다.";
         }
         [Header("#306 대화 화면 [TEST]")]
@@ -89,5 +99,8 @@ namespace Oheangbu.Data.World
         [Tooltip("A Rest talk row with no Target rests at the nearest rest point within this distance of the speaker (m).")]
         [Min(0)] public float DialogueRestReachMeters=30f;
         public EscortVoice306 EscortVoice=new EscortVoice306();
+        [Header("#308 자동차 시점 [TEST]")]
+        [Tooltip("SPEC-CONTENT-PACING-308 §3 (D308-2): the 마석 자동차 call (G), boarding and the menu card need this campaign fact as well as the opening commission (e.g. defeated:cheongryong). Empty = the previous behaviour (other scenes unchanged).")]
+        public string VehicleRequiredFact="";
     }
 }

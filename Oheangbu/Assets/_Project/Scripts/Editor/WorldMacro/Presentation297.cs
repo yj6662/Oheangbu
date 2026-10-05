@@ -384,6 +384,16 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     var main = MainCamera();
                     eye = main.transform.position; target = eye + main.transform.forward; fov = main.fieldOfView;
+                    // #308 juice (SPEC-ANIM-JUICE-308 section 4b): the camera reaction is on the game camera only while that camera is
+                    // drawn, and this film camera is drawn from here - so the nod and the field-of-view kick are added to the copy
+                    // (read only). A roll is not carried (the film camera is aimed with a look-at; D-3 is off in the main profile).
+                    var juiceRig308 = main.GetComponentInParent<Oheangbu.Combat.CameraRigController>();
+                    if (juiceRig308 != null)
+                    {
+                        Vector3 offset308 = juiceRig308.RenderOffset308;
+                        if (offset308.x != 0f) target = eye + main.transform.rotation * Quaternion.Euler(offset308.x, 0f, 0f) * Vector3.forward;
+                        fov += offset308.z;
+                    }
                 }
                 else
                 {

@@ -95,6 +95,7 @@ namespace Oheangbu.App.World
             if(doorway){proposal.ledger.position=feet;proposal.ledger.yaw=restPresentation.ReturnYaw;}
             IncludeDemoEscortCheckpointInRest(proposal,point.Id,feet);
             // Save the fully recovered proposal before any observable checkpoint, campaign, reward, or actor mutation.
+            DrainAutosave();   // #307 item 3: an autosave in flight lands and reports first
             if(!WorldMacroCheckpointRules.TryCommitRest(proposal,store.Save,out var accepted,out error))
             {SaveError=error;Show(error);return false;}
             Progress=accepted;lastSuccessfulSnapshot=JsonUtility.ToJson(accepted);SaveError=null;

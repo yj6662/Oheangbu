@@ -128,10 +128,19 @@ namespace Oheangbu.Combat
         private bool ActionAllowed => HasLocomotion && _config != null && isActiveAndEnabled && _controller != null && _controller.enabled
             && !InputBlocked && Time.timeScale > 0f
             && (_locomotionVitals == null || _locomotionVitals.Hp01 > 0f);
+        // D308-9d: a jump needs walkable ground. CollisionFlags.Below (which makes the motor grounded) is also set on faces steeper than
+        // the slope limit, so repeated jumps climbed any cliff face (CliffScan308: 305 of 326 stations topped, median 29 s).
+        // ProbeGround only accepts a support within the controller's slope limit.
+        private bool JumpSupported => !_locomotion.JumpNeedsWalkableGround
+            || (ProbeGround(out RaycastHit support) && GroundGap(support) <= _locomotion.JumpSupportGap);
+        // #308 HUD (SPEC-HUD-LIQUID-308 §3.6): the gate of OnJump as ONE predicate, shared with the jump mark. Conditions and their
+        // order are unchanged; JumpSupported (D308-9d, one non-allocating ground probe) is only asked once the cheap ones hold.
+        public bool JumpGateOpen() => !(!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsCrouching || IsDodging || _drawing
+                || (_harvest != null && _harvest.IsExtracting)) // D306: a held LMB is no longer a harvest; only the pull itself blocks
+            && JumpSupported;
         private void OnJump(InputAction.CallbackContext _)
         {
-            if (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsCrouching || IsDodging || _drawing
-                || (_harvest != null && _harvest.IsExtracting)) return; // D306: a held LMB is no longer a harvest; only the pull itself blocks
+            if (!JumpGateOpen()) return;
             _verticalVelocity = JumpSpeed(_locomotion.JumpHeight, _config.Gravity);
             _planarVelocity.y = 0f;
             _grounded = false; _jumping = true; _needsHarvestRelease = true; _jumpSerial++;

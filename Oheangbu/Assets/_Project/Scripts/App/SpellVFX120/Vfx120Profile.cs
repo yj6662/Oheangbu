@@ -18,6 +18,8 @@ namespace Oheangbu.App.SpellVFX120
         public string Intent;
         public string Family;
         public bool Assigned;
+        // #308 spell deploy layer (SPEC-SPELL-DEPLOY-308): null = the current presentation, unchanged. Set per row by deploy308-enable.
+        public Oheangbu.Data.Spell.SpellDeploy308ProfileSO Deploy308;
         public Vfx120Behavior Behavior;
         public Vfx120Layout Layout;
         public Mesh BodyMesh;

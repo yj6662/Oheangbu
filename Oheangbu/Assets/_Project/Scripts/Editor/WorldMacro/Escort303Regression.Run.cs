@@ -253,7 +253,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         sealed class BoardT : T303
         {
             int stage, tries; double at; readonly Walker303 w = new Walker303();
-            public BoardT() { Label = "board (E)"; }
+            public BoardT() { Label = "board (F)"; }
             public override void Begin(WorldMacroPlaytestSession s)
             {
                 if (!s.DemoEscortSeat.TryGetSafeExit(out var feet)) { Failed("no safe entry ground: " + s.DemoEscortSeat.LastInteraction); return; }
@@ -268,7 +268,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     float err = Mathf.DeltaAngle(Steer303.CameraYaw(s), Harness303.YawTo(s.Walker.Body.transform.position, seat.SeatSocket.position));
                     f.Delta = Steer303.Level(s, err, 10f);
-                    if ((Mathf.Abs(err) < 5f && seat.CanBoard) || Now - at > 3) { VirtualInput303.Tap(Key.E, Center, 2); tries++; stage = 2; at = Now; RecordReal("E board"); }
+                    if ((Mathf.Abs(err) < 5f && seat.CanBoard) || Now - at > 3) { VirtualInput303.Tap(Key.F, Center, 2); tries++; stage = 2; at = Now; RecordReal("F board"); }   // #308 D308-8: F is the one car key (board / exit)
                     return f;
                 }
                 var snap = s.EscortSnapshot;
@@ -277,7 +277,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (boarded) { var disk = Harness303.ReadDisk(state.iso.savedPath); if (disk != null && disk.escort.Stage == snap.Stage) Done("stage " + snap.Stage + " on disk"); else Failed("disk stage " + (disk != null ? disk.escort.Stage.ToString() : "unreadable") + " vs " + snap.Stage); return f; }
                 if (Now - at > 6)
                 {
-                    if (tries < 2) { if (seat.Occupied) { VirtualInput303.Tap(Key.E, Center, 2); } stage = 1; at = Now; return f; }
+                    if (tries < 2) { if (seat.Occupied) { VirtualInput303.Tap(Key.F, Center, 2); } stage = 1; at = Now; return f; }
                     var p = Presenter(s); Failed("not boarded: seat " + seat.Occupied + " '" + seat.LastInteraction + "' presenter " + (p != null ? p.State + " '" + p.LastIssue + "'" : "none") + " stage " + (snap != null ? snap.Stage + "/" + snap.CompanionMode : "?"));
                 }
                 return f;
@@ -287,12 +287,12 @@ namespace Oheangbu.EditorTools.WorldMacro
         sealed class ExitT : T303
         {
             int stage, tries; double at;
-            public ExitT() { Label = "exit (E)"; }
+            public ExitT() { Label = "exit (F)"; }
             public override void Begin(WorldMacroPlaytestSession s) { at = Now; }
             public override InputFrame303 Tick(WorldMacroPlaytestSession s)
             {
                 var seat = s.DemoEscortSeat; var f = N;
-                if (stage == 0) { if (seat.Vehicle.Speed < .15f || Now - at > 5) { VirtualInput303.Tap(Key.E, Center, 2); tries++; stage = 1; at = Now; RecordReal("E exit"); } else f.Keys = new[] { Key.Space }; return f; }
+                if (stage == 0) { if (seat.Vehicle.Speed < .15f || Now - at > 5) { VirtualInput303.Tap(Key.F, Center, 2); tries++; stage = 1; at = Now; RecordReal("F exit"); } else f.Keys = new[] { Key.Space }; return f; }
                 var snap = s.EscortSnapshot;
                 bool exited = !seat.Occupied && !s.Walker.Seated && snap != null && snap.CompanionMode != DemoEscortCompanionMode.Riding && !s.DemoEscortCompanion.IsChildOf(seat.Vehicle.transform);
                 if (exited)

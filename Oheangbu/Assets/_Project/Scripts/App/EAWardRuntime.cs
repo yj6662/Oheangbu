@@ -59,6 +59,7 @@ namespace Oheangbu.App
             // Stay on the player's floor in caves; do not pick a roof or the terrain above the tunnel.
             visualProfile.WardGroundProbeHeight=.6f;visualProfile.WardGroundProbeDepth=3f;
             fx.Profile=visualProfile;fx.PreviewControlled=false;fx.DemonstrationCues=false;
+            wiring.DeployDirector308?.HostEffect(fx);   // #308 forms2 S1 (a field assignment; never throws)
             fx.Begin(centre,null,centre+wiring.SummonPlayer.forward,fx.Profile.Pigment);
             return true;
         }

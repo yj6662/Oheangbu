@@ -92,8 +92,10 @@ namespace Oheangbu.Combat
             }
 
             // 락온 소프트 당김(엘든링식): 카메라가 대상 쪽으로 은은히 끌리되 고정하지 않는다.
-            // 작도 중에도 락온이면 계속 돈다(2차 카메라 검수) — 결투 계약은 붓을 들어도 유지된다.
-            // 회전해도 작도는 안 깨진다: 작도면·획이 카메라-로컬이라 화면상 글자는 불변이다.
+            // 결투 계약(대상·레티클·유도 조준·그로기 표시)은 붓을 들어도 유지된다(2차 카메라 검수).
+            // 작도 중의 당김은 규칙이 정한다 [TEST — D308-21 · SPEC-LOCKON-DRAW-STABILITY-308]: 기본은 글자를 쓰는 동안 카메라 고정,
+            // 대상이 여유 구역을 벗어날 때만 느리게 따라간다(CombatConfigSO.LockOnDrawMode — FullPull이 이전 동작).
+            // 획은 카메라-로컬이라 어느 모드에서도 화면상 글자 위치는 같다. 바뀌는 것은 글자 뒤의 세상이 도는가이다.
             ApplyLockOnPull();
             if (HasLocomotion && Time.deltaTime > 0) _actualYawSpeed = Mathf.DeltaAngle(yawBeforeInput, transform.eulerAngles.y) / Time.deltaTime;
 
@@ -120,24 +122,17 @@ namespace Oheangbu.Combat
         private void ApplyLockOnPull()
         {
             float pull = _config.LockOnCameraPull;
-            if (pull <= 0f || _lockOn == null || _lockOn.Target == null || _cameraPivot == null) return;
+            if (pull <= 0f || _lockOn == null || _lockOn.Target == null || _cameraPivot == null) { ResetLockDraw308(); return; }
 
-            Vector3 to = _lockOn.Target.transform.position + Vector3.up * 1.1f - _cameraPivot.position;
+            Vector3 aim = _lockOn.Target.transform.position + Vector3.up * 1.1f;
+            Vector3 to = aim - _cameraPivot.position;
             if (to.sqrMagnitude < 0.01f) return;
 
-            // 프레임률 무관한 지수 수렴 — 목표를 향해 끌리는 「자기력」의 세기가 pull
-            float blend = 1f - Mathf.Exp(-pull * Time.unscaledDeltaTime);
-
+            // 프레임률 무관한 지수 수렴 — 목표를 향해 끌리는 「자기력」의 세기가 pull.
+            // 식은 LockOnDrawPull.Step으로 옮겼다: 평시와 FullPull은 이전과 같은 식 · 같은 값이고, 작도 중의 고정 · 가장자리 추적 ·
+            // 작도 뒤의 부드러운 복귀를 거기서 정한다(SPEC-LOCKON-DRAW-STABILITY-308 §4.2). 여기는 변환을 읽고 쓰기만 한다.
             Vector3 flat = new Vector3(to.x, 0f, to.z);
-            if (flat.sqrMagnitude > 0.001f)
-            {
-                float targetYaw = Quaternion.LookRotation(flat).eulerAngles.y;
-                float yaw = Mathf.LerpAngle(transform.eulerAngles.y, targetYaw, blend);
-                transform.rotation = Quaternion.Euler(0f, yaw, 0f);
-            }
-
-            float targetPitch = -Mathf.Asin(Mathf.Clamp(to.normalized.y, -1f, 1f)) * Mathf.Rad2Deg;
-            _pitch = ClampPitch(Mathf.LerpAngle(_pitch, targetPitch, blend));
+            StepLockDraw308(aim, to, flat.sqrMagnitude > 0.001f, pull);
         }
 
         // 숄더뷰는 카메라 오프셋 궤도가 지면을 관통하므로 클램프가 좁아진다 — 한계는 리그가 소유
@@ -148,13 +143,21 @@ namespace Oheangbu.Combat
             return Mathf.Clamp(pitch, min, max);
         }
 
-        private void OnDodge(InputAction.CallbackContext _)
+        // #308 HUD (SPEC-HUD-LIQUID-308 §3.6): the gate OnDodge checks before it asks DodgeAction, as ONE predicate, so the input
+        // and the dodge mark can never disagree. Conditions and their order are unchanged (the cooldown stays in DodgeAction).
+        public bool DodgeGateOpen()
         {
-            if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) return;
-            if (_drawing) return; // 작도 중 회피 없음 — 작도는 무방비의 시간이다(감속이 그 대가)
+            if (EnvironmentalInputBlocked || RuntimeState != null && RuntimeState.InputBlocked) return false;
+            if (_drawing) return false; // 작도 중 회피 없음 — 작도는 무방비의 시간이다(감속이 그 대가)
             // 뽑는 중 회피 = 뽑기 취소(수입 0, D306) — 회피가 막히지 않는다
             if (HasLocomotion && (!ActionAllowed || !IsLocomotionGrounded || IsSitting || IsDodging
-                || (IsCrouching && !_locomotion.CrouchRollEnabled))) return;
+                || (IsCrouching && !_locomotion.CrouchRollEnabled))) return false;
+            return true;
+        }
+
+        private void OnDodge(InputAction.CallbackContext _)
+        {
+            if (!DodgeGateOpen()) return;
             Vector2 input = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
             Vector3 direction = input.sqrMagnitude > 0.01f
                 ? (transform.right * input.x + transform.forward * input.y).normalized

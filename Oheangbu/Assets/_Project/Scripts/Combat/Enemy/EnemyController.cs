@@ -52,6 +52,8 @@ namespace Oheangbu.Combat
         public Transform ProjectileTransform => _projectile != null && _projectile.gameObject.activeSelf ? _projectile : null;
         public Transform PlayerTarget => _player;
         public bool TintBodyOnTelegraph => _tintBodyOnTelegraph;
+        // #308 읽기 전용(AC-T4): 몸 칠이 가는 슬롯 0 사본 — Awake에서 한 번 만들고 이 참조로만 칠한다
+        public Material TintMaterial => _tintMaterial;
 
         public void ResetEncounter() { CancelAttack(); _vitals?.Restore(); _parriedFlashUntil=0; EnterIdle(); }
         public void StopAttack() { if(_state!=State.Dead && _state!=State.Stunned){CancelAttack();EnterIdle();} }
@@ -64,11 +66,23 @@ namespace Oheangbu.Combat
         }
         bool Obstructed(Vector3 a,Vector3 b)
         {
-            int count=ScenePhysicsQuery.RaycastAll(gameObject.scene,a,b-a,(b-a).magnitude,~0,ref _occlusionHits);
+            int count=ScenePhysicsQuery.RaycastAll(gameObject.scene,a,b-a,(b-a).magnitude,SightMask308,ref _occlusionHits);
             for(int i=0;i<count;i++) if(!_occlusionHits[i].transform.IsChildOf(transform) && !(_player!=null && _occlusionHits[i].transform.IsChildOf(_player)))return true;
             return false;
         }
         private RaycastHit[] _occlusionHits;
+        // #308: the #306 walker solids (rocks, trunks, props that turn solid near the player) stop bodies, not eyes. Before #306 they
+        // had no colliders; a knee-high rock on this +.4 m ray made enemies lose the player and walk home. Layer names come from the config.
+        private int _sightMask308; private bool _sightMaskReady308;
+        int SightMask308
+        {
+            get
+            {
+                if(_sightMaskReady308)return _sightMask308;
+                var names=_config!=null?_config.EnemySightIgnoreLayerNames:null;
+                _sightMask308=names!=null&&names.Length>0?~LayerMask.GetMask(names):~0;_sightMaskReady308=true;return _sightMask308;
+            }
+        }
         private enum State { Idle, Telegraph, Flight, Recover, Stunned, Dead }
         private enum Pattern { Melee, Ranged }
 
@@ -78,7 +92,7 @@ namespace Oheangbu.Combat
         [SerializeField] private PlayerVitals _playerVitals;
         [SerializeField] private Renderer _renderer;
         [SerializeField] private Element _rangedElement = Element.Fire; // 결정 2 — 화
-        [Tooltip("속성 예고를 몸 색조로 — 속성 기관(EnemyOrganSet)이 있으면 Awake에서 끈다(기관 먹 테가 대신한다, #306)")]
+        [Tooltip("속성 예고를 몸 색조로 — 속성 기관(EnemyOrganSet)이 있으면 Awake에서 끈다(기관 표면 덧칠이 대신한다, #306/#308)")]
         [SerializeField] private bool _tintBodyOnTelegraph = true;
         [Tooltip("투사체 모습(표현 전용 — Travel/Contact 계약 프리팹, 비우면 원시 구). 판정은 여전히 임팩트 시각")]
         [SerializeField] private GameObject _projectilePrefab;
@@ -99,6 +113,8 @@ namespace Oheangbu.Combat
         private Vector3 _projectileStart;
         private Color _baseColor;
         private string _tintProperty;
+        // #308: 재질 배열에 기관 덧칠이 붙었다 떨어져도(EnemyElementTelegraph) _renderer.material을 다시 부르지 않는다 — 사본이 또 생기지 않게
+        private Material _tintMaterial;
         private Color _elementColor = new Color(0.72f, 0.36f, 0.22f);
         private Color _neutralColor = new Color(0.45f, 0.43f, 0.41f);
         private float _parriedFlashUntil;
@@ -112,7 +128,7 @@ namespace Oheangbu.Combat
         {
             ValidateAuthoredProfile();
             if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
-            if (_renderer != null){var material=_renderer.material;_tintProperty=material.HasProperty("_BaseColor")?"_BaseColor":material.HasProperty("_Color")?"_Color":null;if(_tintProperty!=null)_baseColor=material.GetColor(_tintProperty);}
+            if (_renderer != null){var material=_tintMaterial=_renderer.material;_tintProperty=material.HasProperty("_BaseColor")?"_BaseColor":material.HasProperty("_Color")?"_Color":null;if(_tintProperty!=null)_baseColor=material.GetColor(_tintProperty);}
 
             RefreshOrganTint();
             var sphere = _projectilePrefab != null ? Instantiate(_projectilePrefab) : GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -289,7 +305,7 @@ namespace Oheangbu.Combat
             if (_pattern == Pattern.Melee)
             {
                 // 근접 임팩트 즉발 — 무적(회피) 판정은 PlayerVitals가 안다
-                if (AttackEnabled && Distance() <= _config.MeleeRange && HasLineOfSight()) _playerVitals?.TakeAttackDamage(_config.MeleeDamage, IncomingDamageKind.Melee);
+                if (AttackEnabled && Distance() <= _config.MeleeRange && HasLineOfSight()) EnemyStrike308.Deliver(_playerVitals, _vitals, _config.MeleeDamage, IncomingDamageKind.Melee);
                 EnterRecover();
             }
             else
@@ -336,7 +352,7 @@ namespace Oheangbu.Combat
                         damage *= _config.GuardBlockFactor; // 일반 방어 구간 — 경감만
                         break;
                 }
-                if (damage > 0f) _playerVitals?.TakeAttackDamage(damage, IncomingDamageKind.ElementalRanged);
+                if (damage > 0f) EnemyStrike308.Deliver(_playerVitals, _vitals, damage, IncomingDamageKind.ElementalRanged);
 
                 // ResolveImpact는 동기로 만개 연쇄(성공→그로기→Blossomed→EnterStun)를 부를 수 있다 —
                 // 상태가 이미 Stunned로 바뀌었으면 Recover로 덮지 않는다(프로젝타일은 CancelAttack이 정리)
@@ -416,7 +432,7 @@ namespace Oheangbu.Combat
 
         private void SetColor(Color color)
         {
-            if (_renderer != null && _tintProperty != null) _renderer.material.SetColor(_tintProperty,color);
+            if (_tintMaterial != null && _tintProperty != null) _tintMaterial.SetColor(_tintProperty,color);
         }
     }
 }

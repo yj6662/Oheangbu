@@ -35,7 +35,7 @@ namespace Oheangbu.App.World
         [SerializeField, Range(.1f, .6f)] private float _rayHeight = .3f;
         [SerializeField, Range(0f, 65f)] private float _maximumGroundSlope = 55f;
 
-        private struct Influence { public Transform Bone; public Vector3 Point; public float Weight; }
+        private struct Influence { public Transform Bone; public Vector3 Point; public float Weight; public int Slot; }
         private struct Support { public Vector3 Point, Normal; }
         private sealed class SoleSample
         {
@@ -54,10 +54,17 @@ namespace Oheangbu.App.World
             public Vector3 PlantAnkle, PreviousAnkle, PreviousRoot, SoleUpLocal, FilteredNormal = Vector3.up;
             public Quaternion PlantRotation;
             public float SmoothedLift;
+            // #308 read-only footstep output (SPEC-SPELL-DEPLOY-308 section 10); the solve never reads these
+            public bool Support308; public int SupportSerial308, SupportFrame308; public Vector3 SupportPoint308, SupportNormal308 = Vector3.up;
+            // #307 phase 1 item 11: the distinct bones of Sole + Clearance and their matrices, read once per skinning pass.
+            public Transform[] Bones = Array.Empty<Transform>();
+            public Matrix4x4[] Matrices = Array.Empty<Matrix4x4>();
             public bool Valid => Upper != null && Lower != null && Foot != null && Sole != null && Sole.Length > 1;
         }
 
         private readonly RaycastHit[] _hits = new RaycastHit[32];
+        /// <summary>#307: identical Clearance samples dropped at bind (both legs).</summary>
+        public int ClearanceDuplicates307 { get; private set; }
         private Leg _left, _right;
         private PlayerMotor _motor;
         private Transform _hips;
@@ -169,13 +176,28 @@ namespace Oheangbu.App.World
             for (int i = 0; i < candidates.Count; i++) candidates[i].Half = i < candidates.Count / 2 ? 0 : 1;
             leg.Sole = candidates.ToArray();
             foreach (var sample in clearance) sample.Half = (useX ? sample.RestWorld.x < soleBounds.center.x : sample.RestWorld.z < soleBounds.center.z) ? 0 : 1;
-            leg.Clearance = clearance.ToArray();
+            // #307: vertices split at UV/normal seams repeat the same bones, bind points and weights, so they skin to the same point;
+            // Clearance feeds only a maximum, so one copy each gives the identical lift (Sole keeps its copies: it feeds centroids)
+            var seen = new HashSet<string>(); var unique = new List<SoleSample>(clearance.Count);
+            foreach (var sample in clearance)
+            {
+                var key = new System.Text.StringBuilder();
+                foreach (var influence in sample.Influences)
+                    key.Append(influence.Bone.GetInstanceID()).Append(':').Append(BitConverter.SingleToInt32Bits(influence.Point.x)).Append(',')
+                       .Append(BitConverter.SingleToInt32Bits(influence.Point.y)).Append(',').Append(BitConverter.SingleToInt32Bits(influence.Point.z)).Append(',')
+                       .Append(BitConverter.SingleToInt32Bits(influence.Weight)).Append(';');
+                key.Append('h').Append(sample.Half);
+                if (seen.Add(key.ToString())) unique.Add(sample);
+            }
+            ClearanceDuplicates307 += clearance.Count - unique.Count;
+            leg.Clearance = unique.ToArray();
             Vector3 limb = leg.Foot.position - leg.Upper.position;
             Vector3 bend = Vector3.ProjectOnPlane(leg.Lower.position - leg.Upper.position, limb);
             // The selected C02 native clip/mesh faces -localZ; only used for a completely straight rest knee.
             if (bend.sqrMagnitude < .000001f) bend = Vector3.ProjectOnPlane(-_animator.transform.forward, limb);
             leg.FallbackBend = _animator.transform.InverseTransformDirection(bend.normalized);
             leg.SoleUpLocal = Quaternion.Inverse(leg.Foot.rotation) * Vector3.up;
+            BindSkinSlots(leg);
             return leg;
         }
 
@@ -183,15 +205,15 @@ namespace Oheangbu.App.World
         {
             // Animator must start from its own prior pose, never the accumulated previous correction.
             // A paused pose remains exactly where it was; seating still releases the visual override.
-            if (Time.timeScale > 0f || (_walker != null && _walker.Seated)) RestoreAnimatedPose();
+            using (Perf307Markers.FootPlacement.Auto()) { if (Time.timeScale > 0f || (_walker != null && _walker.Seated)) RestoreAnimatedPose(); }
         }
 
         private void LateUpdate()
         {
-            bool seated = _walker != null && _walker.Seated;
+            using (Perf307Markers.FootPlacement.Auto()) { bool seated = _walker != null && _walker.Seated;
             bool grounded = _controller != null && _controller.enabled && _controller.isGrounded;
             if (_motor != null && _motor.HasLocomotion) grounded = _motor.IsLocomotionGrounded && !_motor.IsSitting && !_motor.IsDodging;
-            EvaluatePose(grounded, seated, Time.timeScale <= 0f);
+            EvaluatePoseCore(grounded, seated, Time.timeScale <= 0f, Time.deltaTime, true); }
         }
 
         /// <summary>
@@ -204,6 +226,11 @@ namespace Oheangbu.App.World
 
         /// <summary>Same solver with an explicit scaled step for isolated animation diagnostics.</summary>
         public void EvaluatePoseAtStep(bool grounded, bool seated, bool paused, float scaledDelta)
+            => EvaluatePoseCore(grounded, seated, paused, scaledDelta, false);
+
+        // #307 phase 1 item 11: only the live LateUpdate pass treats a body with no drawn world skin as airborne; the explicit
+        // entry points (EvaluatePose / EvaluatePoseAtStep / EvaluatePoseAgainstPlane*) keep solving hidden QA models (ReRigGait).
+        private void EvaluatePoseCore(bool grounded, bool seated, bool paused, float scaledDelta, bool skipUndrawn)
         {
             if (!Finite(scaledDelta) || scaledDelta < 0f) throw new ArgumentOutOfRangeException(nameof(scaledDelta));
             _evaluationDelta = scaledDelta;
@@ -216,7 +243,9 @@ namespace Oheangbu.App.World
             _diagnostics.LeftRequestedLift = _diagnostics.RightRequestedLift = 0f;
             _diagnostics.LeftAppliedLift = _diagnostics.RightAppliedLift = 0f;
             _diagnostics.MaximumLocalLengthError = 0f;
-            if (!grounded || !IsBound) { ReleasePlant(_left); ReleasePlant(_right); _pelvisOffset = 0f;
+            // #307 phase 1 item 11 (live pass only): a body none of whose world skins is drawn this frame (all disabled or inactive)
+            // is treated like an airborne one; a skin merely outside the view still evaluates (isVisible lags a frame, so it is not used).
+            if (!grounded || !IsBound || skipUndrawn && !AnySkinDrawn()) { ReleasePlant(_left); ReleasePlant(_right); _pelvisOffset = 0f;
                 _diagnostics.LeftPlanted = _diagnostics.RightPlanted = false; _diagnostics.PelvisOffset = 0f; return; }
             if (_motor != null && _motor.HasLocomotion) ApplyPelvisReach();
             Apply(_left, true); Apply(_right, false);
@@ -248,10 +277,10 @@ namespace Oheangbu.App.World
         private void Apply(Leg leg, bool left)
         {
             Vector3 first = Vector3.zero, second = Vector3.zero; int firstCount = 0, secondCount = 0;
+            ReadBones(leg);
             foreach (var sample in leg.Sole)
             {
-                Vector3 point = Vector3.zero;
-                foreach (var influence in sample.Influences) point += influence.Bone.TransformPoint(influence.Point) * influence.Weight;
+                Vector3 point = Skin(leg, sample);
                 if (!Finite(point)) return;
                 sample.World = point;
                 if (sample.Half == 0) { first += point; firstCount++; } else { second += point; secondCount++; }
@@ -345,10 +374,22 @@ namespace Oheangbu.App.World
             _pelvisApplied = false;
         }
 
+        /// <summary>#308 read-only footstep output: `serial` rises once each time this leg's support phase begins (not Planted, which
+        /// never latches on authored-roll walks). False when the legs were not evaluated this frame (body not drawn, airborne, seated).</summary>
+        public bool TryGetSupport(bool left, out int serial, out Vector3 point, out Vector3 normal)
+        {
+            var leg = left ? _left : _right;
+            serial = 0; point = default; normal = Vector3.up;
+            if (leg == null || Time.frameCount - leg.SupportFrame308 > 1) return false;
+            serial = leg.SupportSerial308; point = leg.SupportPoint308; normal = leg.SupportNormal308;
+            return true;
+        }
+
         private static void ReleasePlant(Leg leg)
         {
             if (leg == null) return;
             leg.Planted = leg.HasPrevious = false; leg.SmoothedLift = 0f;
+            leg.Support308 = false;   // #308: the next support phase after a release is a new step
         }
 
         private static float PelvisReachRequest(Leg leg)
@@ -376,10 +417,10 @@ namespace Oheangbu.App.World
         private float PredictLift(Leg leg)
         {
             Vector3 first = Vector3.zero, second = Vector3.zero; int firstCount = 0, secondCount = 0;
+            ReadBones(leg);
             foreach (var sample in leg.Sole)
             {
-                Vector3 point = Vector3.zero;
-                foreach (var influence in sample.Influences) point += influence.Bone.TransformPoint(influence.Point) * influence.Weight;
+                Vector3 point = Skin(leg, sample);
                 sample.World = point;
                 if (sample.Half == 0) { first += point; firstCount++; } else { second += point; secondCount++; }
             }
@@ -390,14 +431,11 @@ namespace Oheangbu.App.World
         private float SoleLift(Leg leg, Support first, Support second, bool resample)
         {
             float lift = 0f;
+            if (resample) ReadBones(leg);
             foreach (var sample in leg.Clearance)
             {
                 Vector3 point = sample.World;
-                if (resample)
-                {
-                    point = Vector3.zero;
-                    foreach (var influence in sample.Influences) point += influence.Bone.TransformPoint(influence.Point) * influence.Weight;
-                }
+                if (resample) point = Skin(leg, sample);
                 Support hit = sample.Half == 0 ? first : second;
                 float groundY = hit.Point.y - ((point.x - hit.Point.x) * hit.Normal.x + (point.z - hit.Point.z) * hit.Normal.z) / hit.Normal.y;
                 lift = Mathf.Max(lift, groundY + _soleClearance - point.y);
@@ -426,6 +464,8 @@ namespace Oheangbu.App.World
             // before toe-off. Opposing horizontal travel is the reliable release signal;
             // a returning swing moves with travel and cannot plant merely because it is low.
             bool supportPhase = nearGround && opposingTravel;
+            if (supportPhase && !leg.Support308) { leg.SupportSerial308++; leg.SupportPoint308 = new Vector3(ankle.x, lowest, ankle.z); leg.SupportNormal308 = normal; }
+            leg.Support308 = supportPhase; leg.SupportFrame308 = Time.frameCount;   // #308: the rising edge of the support phase is a footstep
             // Calibrated natural clips already carry heel-to-toe support travel.
             // Locking their ankle flattens toe-off and fights the shorter C02 shins.
             bool authoredRoll = _motor.LocomotionProfile.PreserveAuthoredFootRoll && !_motor.IsCrouching;
@@ -475,6 +515,65 @@ namespace Oheangbu.App.World
             float radius = Mathf.Sqrt(Mathf.Max(0f, reach * reach - dy * dy));
             Vector2 offset = Vector2.ClampMagnitude(new Vector2(target.x - hip.x, target.z - hip.z), radius);
             return new Vector3(hip.x + offset.x, target.y, hip.z + offset.y);
+        }
+
+        // #307 phase 1 item 11: each weighted sole vertex from one matrix read per bone per pass instead of a TransformPoint per
+        // influence. Same weights and bind points; the result differs from TransformPoint only by float round-off (a few ulps of
+        // the world coordinate; MeasureSkinningDelta307 reports it).
+        private static void BindSkinSlots(Leg leg)
+        {
+            var bones = new List<Transform>();
+            void Slot(SoleSample[] samples)
+            {
+                foreach (var sample in samples)
+                    for (int k = 0; k < sample.Influences.Length; k++)
+                    {
+                        Transform bone = sample.Influences[k].Bone; int at = bones.IndexOf(bone);
+                        if (at < 0) { at = bones.Count; bones.Add(bone); }
+                        sample.Influences[k].Slot = at;
+                    }
+            }
+            Slot(leg.Sole); Slot(leg.Clearance);
+            leg.Bones = bones.ToArray(); leg.Matrices = new Matrix4x4[leg.Bones.Length];
+        }
+        private static void ReadBones(Leg leg)
+        {
+            for (int i = 0; i < leg.Bones.Length; i++) leg.Matrices[i] = leg.Bones[i].localToWorldMatrix;
+        }
+        private static Vector3 Skin(Leg leg, SoleSample sample)
+        {
+            Vector3 point = Vector3.zero;
+            foreach (var influence in sample.Influences) point += leg.Matrices[influence.Slot].MultiplyPoint3x4(influence.Point) * influence.Weight;
+            return point;
+        }
+        private bool AnySkinDrawn()
+        {
+            if (_worldSkins == null) return false;
+            foreach (var skin in _worldSkins) if (skin != null && skin.enabled && skin.gameObject.activeInHierarchy) return true;
+            return false;
+        }
+        /// <summary>#307 diagnostic (Perf307Checks feet-identity): the largest distance between the former per-influence
+        /// TransformPoint sole points and the matrix path, over every Sole and Clearance sample of both legs in the current pose;
+        /// magnitude = the largest world coordinate involved (float spacing there bounds the round-off). NaN when unbound.</summary>
+        public float MeasureSkinningDelta307(out float magnitude)
+        {
+            magnitude = 0f;
+            if (!IsBound) return float.NaN;
+            float delta = 0f;
+            foreach (var leg in new[] { _left, _right })
+            {
+                ReadBones(leg);
+                foreach (var samples in new[] { leg.Sole, leg.Clearance })
+                    foreach (var sample in samples)
+                    {
+                        Vector3 before = Vector3.zero;
+                        foreach (var influence in sample.Influences) before += influence.Bone.TransformPoint(influence.Point) * influence.Weight;
+                        Vector3 after = Skin(leg, sample);
+                        delta = Mathf.Max(delta, (after - before).magnitude);
+                        magnitude = Mathf.Max(magnitude, Mathf.Abs(before.x), Mathf.Abs(before.y), Mathf.Abs(before.z));
+                    }
+            }
+            return delta;
         }
 
         private static void Restore(Leg leg)

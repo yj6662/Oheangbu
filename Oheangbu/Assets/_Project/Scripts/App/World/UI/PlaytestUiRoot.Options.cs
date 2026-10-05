@@ -99,6 +99,8 @@ namespace Oheangbu.App.World.UI
         {
             OptionStepper(s,"마우스 감도",0,()=>Settings.Current.LookSensitivity,(d,v)=>d.LookSensitivity=v,.25f,3f,.05f,"×");
             OptionCycle(s,"시점 Y축 반전",1,()=>Settings.Current.InvertLookY?"켜기":"끄기",dir=>LiveSetting(d=>d.InvertLookY=!d.InvertLookY));
+            // #306 #11: 익힘 멈춤 = the mine tutorial's time-stop cards (off = no card; the fight is the same)
+            OptionCycle(s,"익힘 멈춤",2,()=>Settings.Current.TutorialPause?"켜기":"끄기",dir=>LiveSetting(d=>d.TutorialPause=!d.TutorialPause));
             var link=Menu304SecondaryRow(s,"ControlsLink","전체 조작 안내",352,630-86*2,()=>OpenPage("조작 안내"));
             menu304Options.Below=link;
         }
@@ -111,8 +113,12 @@ namespace Oheangbu.App.World.UI
             OptionCycle(s,"미니맵",2,()=>MinimapModes[MinimapMode(Settings.Current)],dir=>LiveSetting(d=>SetMinimapMode(d,Menu304Wrap(MinimapMode(d)+dir,MinimapModes.Length))));
             OptionCycle(s,"방위선",3,()=>Settings.Current.ShowBearingLine?"표시":"숨기기",dir=>LiveSetting(d=>d.ShowBearingLine=!d.ShowBearingLine));
             OptionCycle(s,"지도 펼침 동작 줄이기",4,()=>Settings.Current.ReducedMotion?"켜기":"끄기",dir=>LiveSetting(d=>d.ReducedMotion=!d.ReducedMotion));
+            // #308 D308-10 / D308-10b (SPEC-SPELL-DEPLOY-308 sections 8-9): impact frames full / reduced / off, HUD reaction on / off
+            OptionCycle(s,"임팩트 프레임",5,()=>ImpactFlashModes[Mathf.Clamp(Settings.Current.ImpactFlash,0,2)],dir=>LiveSetting(d=>d.ImpactFlash=Menu304Wrap(Mathf.Clamp(d.ImpactFlash,0,2)+dir,ImpactFlashModes.Length)));
+            OptionCycle(s,"HUD 반응",6,()=>Settings.Current.HudImpactReact?"켜기":"끄기",dir=>LiveSetting(d=>d.HudImpactReact=!d.HudImpactReact));
         }
         static readonly string[] MinimapModes={"북쪽 고정","시점 따라","숨기기"};
+        static readonly string[] ImpactFlashModes={"전체","줄임","끔"};   // #308 UserSettingsData.ImpactFlash 0 / 1 / 2
         static int MinimapMode(UserSettingsData d)=>!d.ShowMinimap?2:d.MinimapFollowView?1:0;
         static void SetMinimapMode(UserSettingsData d,int mode){d.ShowMinimap=mode!=2;if(mode!=2)d.MinimapFollowView=mode==1;}
 

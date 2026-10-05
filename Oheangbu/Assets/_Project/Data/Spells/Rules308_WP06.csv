@@ -1,0 +1,10 @@
+﻿# SPEC-SPELL-120-308 WP-06 lingering zones (TEST starting values, not measured).
+# wood o + giyeok final = zone.slow: no hit of its own (BasePower 0), the circle and its formation delay come from the wood circle row.
+# wood o + siot final   = zone.spikes: first hit = the wood circle (same circle, delay and power; one moment, not the staggered rise), then damage steps while the spikes stay.
+# fire o + giyeok final = cone.healzone: first hit = the fire cone, a healing zone where a hit really lands.
+# wood eo + mieum final = zone.tree: a healing tree at the caster's feet; tree.body / tree.reach / tree.hits = the struck-and-gone clause.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+곡,,zone.slow,,,,,base,0,,,,,,,,,,,zone.radius=3.5;zone.life=8;slow.speed=0.5;zone.max=1
+곳,,zone.spikes,,,,,base,,,,,,,,,,,,zone.life=5;zone.dps=0.25;zone.tick=0.5;zone.max=1
+녹,,cone.healzone,,,,,base,,,,,,,,,,,,heal.radius=2;heal.life=6;heal.hp01ps=0.02;heal.max=3
+검,,zone.tree,,,,,,,,,,,,,,,,,tree.radius=3;tree.life=20;heal.hp01ps=0.012;tree.max=1;tree.body=0.6;tree.reach=2.5;tree.hits=1

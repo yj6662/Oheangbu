@@ -314,6 +314,8 @@ namespace Oheangbu.App.World.UI
             var s = style;
             var root = V.Rect("LegendPanel", page304, 0, 0, UiPageFit304.Width, UiPageFit304.Height);
             legend = root.gameObject;
+            // #308: marker rows on lacquer plates + the terrain-and-roads cells (WorldMapPresenter.Map308.cs); false without a bundle
+            if (BuildLegend308(root)) { legend.SetActive(!legendFolded304); return; }
             V.Label(s, root, "LegendCaption", "범례", UiType304.Meta20, s.Mist, 64, 292);
             var rows = mapStyle.Legend != null && mapStyle.Legend.Count > 0 ? mapStyle.Legend : MapStyle304SO.DefaultLegend();
             for (int i = 0; i < rows.Count && i < 7; i++)
@@ -404,8 +406,11 @@ namespace Oheangbu.App.World.UI
             m.SetVector("_MapWindow", new Vector4(LegendPaperUv304.x, LegendPaperUv304.y, LegendPaperUv304.width, LegendPaperUv304.height));
             m.SetVector("_MapTileUv", new Vector4(0f, 0f, 1f, 1f));
             m.SetFloat("_HasDetail", 0f); m.SetFloat("_HasCave", 0f); m.SetFloat("_Interior", 0f);
-            // the shader reads the fog in world uv: 1024 columns put the split within a pixel of x18 on the 44 px swatch
-            const int columns = 1024;
+            // the shader reads the fog in world uv: 1024 columns put the split within a pixel of x18 on the 44 px swatch.
+            // #308 mapfix2: the crisp edge (MapFog308_Edge) keeps the walked land 1.5 screen px inside an unwalked cell, so
+            // one-pixel cells leave no walked side at all. With a bundle the swatch's cells are 8 px (128 columns; the
+            // split (470 + 18) / 1024 is exactly column 61 of 128), the pre-#308 soft edge keeps its 1 px cells.
+            int columns = n308 != null ? 128 : 1024;
             legendFog304 = new Texture2D(columns, 1, TextureFormat.RGBA32, false, true)
             { name = "MapLegendFog304", filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.DontSave };
             int split = Mathf.RoundToInt((crop.x + crop.width * 18f / 44f) * columns);
@@ -417,6 +422,9 @@ namespace Oheangbu.App.World.UI
             legendClear304 = new Texture2D(1, 1, TextureFormat.RGBA32, false, true) { name = "MapLegendClear304", hideFlags = HideFlags.DontSave };
             legendClear304.SetPixels32(new[] { new Color32(0, 0, 0, 0) }); legendClear304.Apply(false, true);
             m.SetTexture("_InkTex", legendClear304); m.SetTexture("_MacroInkTex", legendClear304);
+            // #308: the swatch shows the new walked / unwalked values at its own scale (44 px across the crop)
+            ApplyPaper308(m, false);
+            PaperBand308(m, crop.width * Mathf.Max(1f, data.BoundsMax.x - data.BoundsMin.x) / 44f, ScreenPerReferencePx308());
             legendSwatch304 = m;
             return m;
         }
@@ -493,26 +501,33 @@ namespace Oheangbu.App.World.UI
                     var mr = row.Meta.rectTransform;
                     V.Place(mr, 438f - mr.sizeDelta.x, -mr.anchoredPosition.y);
                 }
-                Image icon;
+                Image icon; Graphic glyph308;
                 if (entry.Kind == MapMarkerKind304.Objective)
                 {
                     bool open = mapStyle.Objective == MapObjectiveMark304.OpenBrush && s.Sprites.Enso != null;
                     icon = V.SpriteImage(row.Rect, "Icon", open ? s.Sprites.Enso : Pick(s.Sprites.RingDashed, s.Sprites.Disc), s.CinnabarLift, 54, 18, 30, 30);
                     row.Visual.AddTint(icon, s.CinnabarLift, s.Cinnabar);
                 }
+                else if ((glyph308 = ListGlyph308(row.Rect, entry)) != null)
+                {
+                    // #308: the same atlas glyph as on the paper (no rim: it stands on the row's underlay)
+                    icon = null; row.Visual.AddTint(glyph308, s.Paper, s.Ink);
+                }
                 else
                 {
                     icon = V.SpriteImage(row.Rect, "Icon", PictogramFor(entry.SpecKind), s.Paper, 54, 18, 30, 30);
                     row.Visual.AddTint(icon, s.Paper, s.Ink);
                 }
-                icon.preserveAspect = true;
+                if (icon != null) icon.preserveAspect = true;
                 var hook = row.Rect.gameObject.AddComponent<MapPlaceRow304>(); hook.Owner = this; hook.Index = index;
                 entry.Row = row;
             }
 
             // detail card under the list (map.png: rule 470, name 512, meta 560, body 598 with four rows)
             float sepY = 184 + pitch * shown + 2 * pad + 6f;   // 470 with four rows
-            cardRule304 = V.Brush(s, page304, "CardRule", StrokeClass304.Dry, s.Paper, 1398, sepY, 458, 26, .3f);
+            // #308: the list / card divider is a nacre inlay line (kit slot Inlay.Line) when the map has a notation bundle
+            cardRule304 = n308 != null ? InlayLine308(page304, "CardRule", 1404, sepY + 12, 446)
+                : V.Brush(s, page304, "CardRule", StrokeClass304.Dry, s.Paper, 1398, sepY, 458, 26, .3f);
             cardName304 = V.Label(s, page304, "CardName", "", UiType304.Title34, s.Paper, 1404, sepY + 42);
             cardMeta304 = V.Label(s, page304, "CardMeta", "", UiType304.Meta20, s.Mist, 1406, sepY + 90);
             cardBody304 = V.Label(s, page304, "CardBody", "", UiType304.Body22, s.Paper, 1406, sepY + 128, 440, 0, TextAlignmentOptions.TopLeft, true);

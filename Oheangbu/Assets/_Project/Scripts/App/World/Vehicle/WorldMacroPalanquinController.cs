@@ -216,8 +216,49 @@ namespace Oheangbu.App.World.Vehicle
             float roll = GroundedWheelCount > 0 ? Mathf.Clamp(localAcceleration.x * Profile.RollDegreesPerAcceleration, -Profile.MaximumRoll, Profile.MaximumRoll) : 0;
             float heave = GroundedWheelCount > 0 ? Mathf.Clamp(((travel[0] + travel[1] + travel[2] + travel[3]) * .25f - .5f) * 2, -1, 1) * Profile.MaximumVisualHeave : 0;
             visualEuler = Vector3.SmoothDamp(visualEuler, new Vector3(pitch, 0, roll), ref visualEulerVelocity, Mathf.Max(.01f, Profile.BodyResponse), Mathf.Infinity, Time.deltaTime);
-            BodyVisualRoot.localPosition = Vector3.SmoothDamp(BodyVisualRoot.localPosition, visualRestPosition + Vector3.up * heave, ref visualOffsetVelocity, Mathf.Max(.01f, Profile.BodyResponse), Mathf.Infinity, Time.deltaTime);
+            // #308 juice C-4: while a settle runs the damper keeps its own state and the closed form is added after it (ApplyVisualSettle308)
+            if (settleActive308) ApplyVisualSettle308(heave);
+            else BodyVisualRoot.localPosition = Vector3.SmoothDamp(BodyVisualRoot.localPosition, visualRestPosition + Vector3.up * heave, ref visualOffsetVelocity, Mathf.Max(.01f, Profile.BodyResponse), Mathf.Infinity, Time.deltaTime);
             BodyVisualRoot.localRotation = visualRestRotation * Quaternion.Euler(visualEuler);
+        }
+        // #308 player juice C-4 (SPEC-ANIM-JUICE-308) [TEST]: a presentation-only vertical settle of the visual body when the summoned car
+        // is revealed (and a small lift when a recall starts). The visual root has no collider and is outside the wheels; the Rigidbody,
+        // the hull and the suspension are not touched. LateUpdate normally damps the visual root with the transform itself as the
+        // damper's state, so an offset written from outside would become damper state. While a settle runs the damper state is
+        // kept in settleDamper308 instead and the closed form (PlayerJuice308Curves) is added after it: the motion follows the form
+        // and, once its length has passed, the transform is exactly the damper's state again. The numbers come from the caller
+        // (PlayerJuice308ProfileSO.Arrival). No static field.
+        bool settleActive308, settleLift308;
+        float settleTime308, settleAmount308, settleFall308, settleHz308, settleDamping308, settleLength308;
+        Vector3 settleDamper308;
+        public bool VisualSettleActive308 => settleActive308;
+        /// <summary>#308 juice: the vertical offset added to the visual body this frame (m; 0 when no settle runs).</summary>
+        public float VisualSettleOffset308 { get; private set; }
+        public int VisualSettles308 { get; private set; }
+        /// <summary>#308 juice C-4: the visual body sinks by dropMeters over fallSeconds, then settles back (hz, damping) and is exactly
+        /// at rest fallSeconds + settleSeconds later.</summary>
+        public void BeginVisualSettle308(float dropMeters, float fallSeconds, float hz, float damping, float settleSeconds)
+        { StartVisualSettle308(false, dropMeters, fallSeconds, hz, damping, settleSeconds); }
+        /// <summary>#308 juice C-4 recall: the visual body lifts by liftMeters and is back at rest `seconds` later.</summary>
+        public void BeginVisualLift308(float liftMeters, float seconds)
+        { StartVisualSettle308(true, liftMeters, 0f, 0f, 0f, seconds); }
+        void StartVisualSettle308(bool lift, float amount, float fall, float hz, float damping, float length)
+        {
+            if (!IsConfigured || BodyVisualRoot == null || !(amount > 0f) || !(length > 0f)) return;
+            if (!settleActive308) settleDamper308 = BodyVisualRoot.localPosition;   // until now the transform was the damper's state
+            settleActive308 = true; settleLift308 = lift; settleTime308 = 0f; VisualSettles308++;
+            settleAmount308 = amount; settleFall308 = Mathf.Max(0f, fall); settleHz308 = hz; settleDamping308 = damping; settleLength308 = length;
+        }
+        void ApplyVisualSettle308(float heave)
+        {
+            settleDamper308 = Vector3.SmoothDamp(settleDamper308, visualRestPosition + Vector3.up * heave, ref visualOffsetVelocity, Mathf.Max(.01f, Profile.BodyResponse), Mathf.Infinity, Time.deltaTime);
+            settleTime308 += Time.deltaTime;
+            float offset = settleLift308
+                ? Oheangbu.Presentation.PlayerJuice308Curves.CarLift(settleTime308, settleAmount308, settleLength308)
+                : Oheangbu.Presentation.PlayerJuice308Curves.CarSettle(settleTime308, settleAmount308, settleFall308, settleHz308, settleDamping308, settleLength308);
+            if (settleTime308 >= (settleLift308 ? settleLength308 : settleFall308 + settleLength308)) { offset = 0f; settleActive308 = false; }
+            VisualSettleOffset308 = offset;
+            BodyVisualRoot.localPosition = offset != 0f ? settleDamper308 + Vector3.up * offset : settleDamper308;
         }
         void PoseAxle(Transform shaft, int left, int right)
         {
@@ -234,6 +275,6 @@ namespace Oheangbu.App.World.Vehicle
             foreach (var binding in Wheels) if (binding?.Collider != null) { binding.Collider.motorTorque = 0; binding.Collider.brakeTorque = Profile != null ? Profile.ParkingBrakeTorquePerWheel : 4000; }
         }
         void RestoreVisual()
-        { if (IsConfigured && BodyVisualRoot != null) { BodyVisualRoot.localPosition = visualRestPosition; BodyVisualRoot.localRotation = visualRestRotation; } }
+        { settleActive308 = false; VisualSettleOffset308 = 0f; if (IsConfigured && BodyVisualRoot != null) { BodyVisualRoot.localPosition = visualRestPosition; BodyVisualRoot.localRotation = visualRestRotation; } }
     }
 }

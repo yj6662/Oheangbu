@@ -1,0 +1,9 @@
+﻿# SPEC-SPELL-120-308 WP-00 (Q3 default, waiting for the user): base power of the five summons, written into every
+# SummonCombatProfile asset of that glyph (originals and scene copies) by "spell308-summon-power". 10 = the value the
+# existing summon checks inject by hand. TEST.
+글자,BasePower
+곰,10
+놈,10
+몸,10
+솜,10
+옴,10

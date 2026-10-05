@@ -20,8 +20,14 @@ namespace Oheangbu.Combat
         private bool _completionAwarded;
         private readonly HashSet<long> _parriedAttacks = new HashSet<long>();
         private readonly HashSet<long> _directAttacks = new HashSet<long>();
+        private readonly HashSet<long> _groggyAttacks = new HashSet<long>(); // #308: one groggy gain per attack identity
         public uint LifeRevision { get; private set; }
         public EnemyControlState Control { get; } = new EnemyControlState();
+        // #308 WP-07: timed modifiers a spell hung on this enemy (damage taken, defence, its own attacks). Empty unless a
+        // WP-07 spell hit it; cleared wherever Control is cleared (new life, disable, death).
+        public EnemyModifierState308 Modifiers { get; } = new EnemyModifierState308();
+        // #308 WP-07 (D308-13 Q4): share of incoming damage this enemy's armour removes, 0..1. Enemy data, default 0.
+        public float Defence => _profile != null ? _profile.Defence : 0f;
         public float Hp => _hp;
         // 최대 체력의 유일 경로 — Awake·Restore·Hp01·Heal이 모두 여기를 읽는다(부활 때 60으로 돌아가지 않게)
         public float MaxHp => _profile != null && _profile.MaxHp > 0f ? _profile.MaxHp : _config != null ? _config.EnemyMaxHp : 60f;
@@ -68,7 +74,7 @@ namespace Oheangbu.Combat
             return restored;
         }
         public void Restore()
-        { LifeRevision++; Control.Clear(); ResetCombatState(); _hp=MaxHp; HpChanged?.Invoke(); }
+        { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); _hp=MaxHp; HpChanged?.Invoke(); }
         public float Hp01 { get { float max = MaxHp; return max > 0f ? _hp / max : 0f; } }
 
         private void Awake()
@@ -94,6 +100,20 @@ namespace Oheangbu.Combat
             Groggy.AddFromParry();
         }
 
+        // #308: the two non-parry groggy sources (the parry path stays AddParry). Harmony = the detonation of an installed
+        // mark (DamageSource.Harmony), SwordCounter = a counter-element sword strike (DamageSource.PlayerDirect).
+        // One gain per attack identity; steps comes from data. No other source may raise groggy.
+        public bool AddGroggy(GroggySource source, AttackProvenance attack, int steps = 1)
+        {
+            ExpireWeakPoint(Time.time);
+            if (source == GroggySource.Parry || steps <= 0 || !IsAlive || !isActiveAndEnabled || attack.AttackId <= 0 || attack.Instigator == null) return false;
+            DamageSource required = source == GroggySource.Harmony ? DamageSource.Harmony : DamageSource.PlayerDirect;
+            if (attack.Source != required || !_groggyAttacks.Add(attack.AttackId)) return false;
+            if (_groggyAttacks.Count > 256) { _groggyAttacks.Clear(); _groggyAttacks.Add(attack.AttackId); }
+            Groggy.Add(source, steps);
+            return true;
+        }
+
         public void OpenWeakPoint()
         {
             if (!IsAlive || WeakPointActive) return;
@@ -109,14 +129,14 @@ namespace Oheangbu.Combat
             bool wasOpen = !float.IsNegativeInfinity(_weakPointUntil);
             _weakPointUntil = float.NegativeInfinity;
             DamageMultiplier = 1f; _elementMask = 0; _completionAwarded = false;
-            _directAttacks.Clear(); _parriedAttacks.Clear();
+            _directAttacks.Clear(); _parriedAttacks.Clear(); _groggyAttacks.Clear();
             _groggy?.Reset();
             if (wasOpen) WeakPointClosed?.Invoke();
             CombatStateChanged?.Invoke();
         }
 
         private void Update() { ExpireWeakPoint(Time.time); }
-        private void OnDisable() { LifeRevision++; Control.Clear(); ResetCombatState(); }
+        private void OnDisable() { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); }
         public void ExpireWeakPoint(float now)
         {
             if (!float.IsNegativeInfinity(_weakPointUntil) && now >= _weakPointUntil) ResetCombatState();
@@ -135,6 +155,11 @@ namespace Oheangbu.Combat
             if (!IsAlive || amount <= 0f || float.IsNaN(amount)) return default;
             float damage = amount * DamageMultiplier;
             if (damage <= 0f || float.IsNaN(damage)) return default;
+            // #308 WP-07 intake: this enemy's defence (data, default 0), the defence shred and damage-taken brand a spell left
+            // on it, and whether this very hit ignores defence. An enemy with defence 0 and no modifier gets the value back
+            // untouched, so every enemy and every spell that existed before behaves exactly as it did.
+            damage = Modifiers.Intake(damage, Defence, attack.AttackId, Time.time);
+            if (damage <= 0f || float.IsNaN(damage)) return default; // only a full defence (1) the hit does not ignore
             float bonus = 0f;
             if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect &&
                 attack.Instigator != null && attack.AttackId > 0 && attack.Element.HasValue &&
@@ -156,7 +181,7 @@ namespace Oheangbu.Combat
             var result = new EnemyDamageResult(this, attack, before - _hp, appliedBonus, _hp <= 0f);
             HpChanged?.Invoke();
             DamageResolved?.Invoke(result);
-            if (_hp <= 0f) { LifeRevision++; Control.Clear(); ResetCombatState(); Died?.Invoke(); }
+            if (_hp <= 0f) { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); Died?.Invoke(); }
             return result;
         }
     }

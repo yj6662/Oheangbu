@@ -11,7 +11,7 @@ namespace Oheangbu.App.World {
  get {
  if(FocusedId=="CurrencyDrop"&&drop!=null)return DynamicRenderers(drop);
  if(!string.IsNullOrEmpty(FocusedCollectionBundleId)){
- var pickup=fragmentPickups.Find(p=>p!=null&&p.BundleId==FocusedCollectionBundleId);
+ var pickup=FindFragmentPickup(FocusedCollectionBundleId);   // #307 item 12: no capture per HUD frame
  return pickup!=null?DynamicRenderers(pickup.gameObject):Array.Empty<Renderer>();
  }
  foreach(var binding in InteractionVisuals)if(binding.Id==FocusedId)return binding.Renderers;
