@@ -664,6 +664,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                     list.Add(Capture("E14_death_recovery"));
                     break;
                 case "E9":
+                    // 2026-10-06 (first run that reached E9): the summon was refused twice where the walk-by returns to ("앞에 자동차를 놓을 공간이
+                    // 부족하다", wheel support spread 0.76 - uneven ground ahead). The party walks to the road in front of the parking first
+                    // (the E3 spot: parking - forward x 6 m), as a player would, and calls the car there.
+                    list.Add(() => new IfT("to the summon spot", CarNeeded, () => new WalkT("to the summon spot of checkpoint_1", x => StopOf(x, "checkpoint_1").Parking.position - StopOf(x, "checkpoint_1").Parking.forward * 6f, .8f, 45f)));
                     list.Add(() => new IfT("car near the party", CarNeeded, () => new SummonT(x => StopOf(x, "checkpoint_1").Parking.position + StopOf(x, "checkpoint_1").Parking.forward * 10f)));
                     list.Add(() => new BoardT());
                     list.Add(() => currentDrive = new DriveT(1));
@@ -681,6 +685,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     list.Add(() => new TalkT("checkpoint_2", "E10_ck2_page", (x, r) => x.EscortSnapshot.Stage >= DemoEscortStage.SecondInspectionCleared ? null : "inspection 2 not cleared (" + x.EscortSnapshot.Stage + ")"));
                     break;
                 case "E10":
+                    list.Add(() => new IfT("to the summon spot", CarNeeded, () => new WalkT("to the summon spot of checkpoint_2", x => StopOf(x, "checkpoint_2").Parking.position - StopOf(x, "checkpoint_2").Parking.forward * 6f, .8f, 45f)));
                     list.Add(() => new IfT("car near the party", CarNeeded, () => new SummonT(x => StopOf(x, "checkpoint_2").Parking.position + StopOf(x, "checkpoint_2").Parking.forward * 10f)));
                     list.Add(() => new BoardT());
                     list.Add(() => currentDrive = new DriveT(2));
