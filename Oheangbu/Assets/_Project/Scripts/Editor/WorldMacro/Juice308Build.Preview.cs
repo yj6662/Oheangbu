@@ -519,7 +519,9 @@ namespace Oheangbu.EditorTools.WorldMacro
         //   A  no profile at all (SetJuiceForcedOff308: the state of a project that has the code and no asset), twice - the second
         //      run says how well the driver repeats itself, and that is the tolerance of the rows below (0 = bit for bit)
         //   B  a profile with Intensity 0                      -> must equal A on every frame
-        //   C  the main profile (A-1 / A-2 off)                -> its draw frames must equal A (after the commit B-2 re-times the throw)
+        //   C  the main profile with the brush feel (A-1 / A-2) switched off -> its draw frames must equal A (after the commit B-2
+        //      re-times the throw). 3rd revision (D308-24 answer 15): the main profile itself has A-1 / A-2 ON, so its own draw
+        //      frames differ by design; the profile as it is becomes a control row (I2b: the feel must be visible).
         //   D  the preview profile (A-1 / A-2 on), a control   -> its draw frames must differ, or the comparison saw nothing
         // What this cannot say: that A equals the code before the stage (that code is not in the assembly any more). The patches
         // that could change the pose without a profile are the ones listed in SPEC-ANIM-JUICE-308 "off contract"; the offline
@@ -593,7 +595,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (stage == null) return refusal;
             using (stage)
             {
-                var c = new Checks(); PlayerJuice308ProfileSO main = null;
+                var c = new Checks(); PlayerJuice308ProfileSO main = null, mainQuiet = null;
                 try
                 {
                     var all = stage.Root.GetComponentsInChildren<Transform>(true);
@@ -602,12 +604,16 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var a1 = IdentityTake(stage, all, null, true, out int draw, out string castNote);
                     var a2 = IdentityTake(stage, all, null, true, out _, out _);
                     var b = IdentityTake(stage, all, stage.Off, false, out _, out _);
-                    var m = IdentityTake(stage, all, main, false, out _, out _);
+                    bool feelOn = main.StrokeStart.Enabled || main.StrokeEnd.Enabled;
+                    mainQuiet = Object.Instantiate(main); mainQuiet.name = FixturePrefix + "_MainQuietProfile"; mainQuiet.hideFlags = HideFlags.HideAndDontSave;
+                    mainQuiet.StrokeStart.Enabled = false; mainQuiet.StrokeEnd.Enabled = false;
+                    var m = IdentityTake(stage, all, mainQuiet, false, out _, out _);
+                    var asIs = feelOn ? IdentityTake(stage, all, main, false, out _, out _) : null;
                     var on = IdentityTake(stage, all, stage.On, false, out _, out _);
                     int total = a1.Count; bool castDriven = castNote.Length == 0 && total > draw;
                     c.Note("take: " + all.Length + " transforms under the clone, " + draw + " draw frames + " + (total - draw) + " frames after the commit, step " + F(StepSeconds * 1000f, "F0") + " ms. " + stage.Notes);
                     if (!castDriven) c.Note("the commit / throw could not be driven in Edit Mode (" + (castNote.Length > 0 ? castNote : "no frame recorded") + "): the rows below cover the draw frames only; the throw stays a Play item");
-                    bool sameShape = a2.Count == total && b.Count == total && m.Count == total && on.Count == total;
+                    bool sameShape = a2.Count == total && b.Count == total && m.Count == total && on.Count == total && (asIs == null || asIs.Count == total);
                     float repeat = IdentityDifference(a1, a2, 0, total, all, out int repeatCount, out string repeatWhere);
                     float tolerance = repeat * 2f;
                     c.Add("I0.driver_repeats", sameShape && repeat <= 1e-4f, "the same take twice without a profile: " + repeatCount + " value(s) differ, largest " + F(repeat, "G3") + (repeatCount > 0 ? " (" + repeatWhere + ")" : "") +
@@ -616,9 +622,14 @@ namespace Oheangbu.EditorTools.WorldMacro
                     c.Add("I1.no_profile_equals_intensity_0", sameShape && off <= tolerance, "no profile at all against a profile with Intensity 0, all " + total + " frames: " + offCount + " value(s) differ, largest " + F(off, "G3") +
                         (offCount > 0 ? " (" + offWhere + ")" : "") + " (limit " + F(tolerance, "G3") + ")");
                     float mainDraw = IdentityDifference(a1, m, 0, draw, all, out int mainCount, out string mainWhere);
-                    c.Add("I2.main_profile_draw_frames_equal", sameShape && mainDraw <= tolerance, "no profile against the main profile (" + mainSource + "; A-1 " + main.StrokeStart.Enabled + ", A-2 " + main.StrokeEnd.Enabled + "), the " + draw +
-                        " draw frames: " + mainCount + " value(s) differ, largest " + F(mainDraw, "G3") + (mainCount > 0 ? " (" + mainWhere + ")" : "") + " (limit " + F(tolerance, "G3") + ")" +
-                        (main.StrokeStart.Enabled || main.StrokeEnd.Enabled ? " - A-1 / A-2 are ON in the asset: a difference is then the effect itself, not a fault" : ""));
+                    c.Add("I2.main_profile_draw_frames_equal", sameShape && mainDraw <= tolerance, "no profile against the main profile with the brush feel switched off (" + mainSource + "; in the profile itself A-1 " + main.StrokeStart.Enabled + ", A-2 " + main.StrokeEnd.Enabled + "), the " + draw +
+                        " draw frames: " + mainCount + " value(s) differ, largest " + F(mainDraw, "G3") + (mainCount > 0 ? " (" + mainWhere + ")" : "") + " (limit " + F(tolerance, "G3") + ")");
+                    if (asIs != null)
+                    {
+                        float feel = IdentityDifference(a1, asIs, 0, draw, all, out int feelCount, out string feelWhere);
+                        c.Add("I2b.main_profile_feel_is_live", feel > Mathf.Max(tolerance * 10f, 1e-5f), "control - the main profile as it is (A-1 " + main.StrokeStart.Enabled + ", A-2 " + main.StrokeEnd.Enabled + ": on by D308-24 answer 15), draw frames: " + feelCount +
+                            " value(s) differ, largest " + F(feel, "G3") + (feelCount > 0 ? " (" + feelWhere + ")" : " - nothing differs: the brush feel does not reach the arm"));
+                    }
                     float control = IdentityDifference(a1, on, 0, draw, all, out int controlCount, out string controlWhere);
                     c.Add("I3.control_sees_the_lean", control > Mathf.Max(tolerance * 10f, 1e-5f), "control - the preview profile (A-1 / A-2 on), draw frames: " + controlCount + " value(s) differ, largest " + F(control, "G3") +
                         (controlCount > 0 ? " (" + controlWhere + ")" : " - nothing differs: the close-up arm was not solved in this clone, so rows I1 / I2 prove nothing here"));
@@ -633,6 +644,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     try { stage.Rig.SetJuiceForcedOff308(false); } catch (Exception) { }
                     if (main != null) Object.DestroyImmediate(main);
+                    if (mainQuiet != null) Object.DestroyImmediate(mainQuiet);
                 }
                 return Finish(c, "identity");
             }
@@ -645,7 +657,9 @@ namespace Oheangbu.EditorTools.WorldMacro
         // builds its own place instead - preview objects only; the open scene is read, never touched:
         //   · the player's clone in a preview scene (OpenStage), paper-coloured background;
         //   · a reference wall ahead: a line every degree (every fifth one heavy), the view centre in red. The camera turns about
-        //     its own position, so the wall slides by exactly the nod: 0.9 degrees = nine tenths of a cell;
+        //     its own position, so the wall slides by exactly the nod: 0.9 degrees = nine tenths of a cell. 3rd revision (AC-J18):
+        //     the line widths are pixels of the capture, from data (Art/Characters308/Juice/Data/JudgeWall308.json; never below
+        //     2.5 px) - the first version's 1.3 px lines broke up on the reaction frames and read as part of the effect;
         //   · cast: the draw close-up, the close-up arm driven through the last stroke, the commit and the throw (B-2), and a
         //     stand-in letter (the fixture's strokes as world-fixed ink lines on the drawing plane - not the game's stroke renderer);
         //     call / setdown: the shoulder view and a stand-in car (a box of a car's size) on a metre grid;
@@ -753,17 +767,25 @@ namespace Oheangbu.EditorTools.WorldMacro
                     float wallDistance = closeUp ? 4f : 14f; Vector3 wall = eye + forward * wallDistance;
                     const int degreesAcross = 50, degreesUp = 30;
                     float Offset(float degrees) => wallDistance * Mathf.Tan(degrees * Mathf.Deg2Rad);
-                    float thin = Offset(.07f), heavy = Offset(.15f), spanX = Offset(degreesAcross), spanY = Offset(degreesUp);
+                    if (!JudgeWall(out JudgeWallData wallData, out string wallIssue)) return wallIssue;
+                    // the wall faces the camera squarely, so one metre of it is the same number of pixels everywhere on it
+                    float metresPerPixel = wallDistance * Mathf.Tan(framingFov * .5f * Mathf.Deg2Rad) / (JudgeHeight * .5f);
+                    float thin = wallData.minorLinePx * .5f * metresPerPixel, heavy = wallData.majorLinePx * .5f * metresPerPixel, centreHalf = wallData.centreLinePx * .5f * metresPerPixel;
+                    float spanX = Offset(degreesAcross), spanY = Offset(degreesUp);
                     var minor = new JudgeLines(); var major = new JudgeLines(); var centre = new JudgeLines();
                     for (int k = -degreesUp; k <= degreesUp; k++)
                     {
+                        bool heavyLine = k % wallData.majorEveryDegrees == 0;
+                        if (!heavyLine && k % wallData.minorEveryDegrees != 0) continue;
                         Vector3 p = wall + up * Offset(k);
-                        (k == 0 ? centre : k % 5 == 0 ? major : minor).Add(p - right * spanX, p + right * spanX, forward, k == 0 || k % 5 == 0 ? heavy : thin);
+                        (k == 0 ? centre : heavyLine ? major : minor).Add(p - right * spanX, p + right * spanX, forward, k == 0 ? centreHalf : heavyLine ? heavy : thin);
                     }
                     for (int k = -degreesAcross; k <= degreesAcross; k++)
                     {
+                        bool heavyLine = k % wallData.majorEveryDegrees == 0;
+                        if (!heavyLine && k % wallData.minorEveryDegrees != 0) continue;
                         Vector3 p = wall + right * Offset(k);
-                        (k == 0 ? centre : k % 5 == 0 ? major : minor).Add(p - up * spanY, p + up * spanY, forward, k == 0 || k % 5 == 0 ? heavy : thin);
+                        (k == 0 ? centre : heavyLine ? major : minor).Add(p - up * spanY, p + up * spanY, forward, k == 0 ? centreHalf : heavyLine ? heavy : thin);
                     }
                     minor.Build("WallMinor", stage.Preview, inkMinor); major.Build("WallMajor", stage.Preview, inkMajor); centre.Build("WallCentre", stage.Preview, red);
 
@@ -892,7 +914,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     float peakPx = 540f * Mathf.Tan(peakOn.x * Mathf.Deg2Rad) / Mathf.Tan(framingFov * .5f * Mathf.Deg2Rad);
                     File.WriteAllText(Path.Combine(dir, "judge.json"), "{\"round\":\"P8b camera reaction, judge capture\",\"event\":\"" + name + "\",\"narrow\":" + (narrow ? "true" : "false") + ",\"amp\":" + F(amp, "F2")
                         + ",\"framing\":\"" + (closeUp ? "draw close-up" : "shoulder view") + "\",\"framingFov\":" + F(framingFov) + ",\"hz\":" + JudgeHz + ",\"tile\":[" + JudgeWidth + "," + JudgeHeight + "]"
-                        + ",\"wall\":{\"distanceM\":" + F(wallDistance, "F1") + ",\"cellDegrees\":1,\"heavyEveryDegrees\":5,\"pxPerDegreeAtCentre\":" + F(JudgeHeight * .5f * Mathf.Tan(Mathf.Deg2Rad) / Mathf.Tan(framingFov * .5f * Mathf.Deg2Rad), "F2") + "}"
+                        + ",\"wall\":{\"distanceM\":" + F(wallDistance, "F1") + ",\"cellDegrees\":" + wallData.minorEveryDegrees + ",\"heavyEveryDegrees\":" + wallData.majorEveryDegrees
+                        + ",\"minorLinePx\":" + F(wallData.minorLinePx, "F2") + ",\"majorLinePx\":" + F(wallData.majorLinePx, "F2") + ",\"centreLinePx\":" + F(wallData.centreLinePx, "F2") + ",\"pxPerDegreeAtCentre\":" + F(JudgeHeight * .5f * Mathf.Tan(Mathf.Deg2Rad) / Mathf.Tan(framingFov * .5f * Mathf.Deg2Rad), "F2") + "}"
                         + ",\"profile\":\"" + profileSource.Replace("\"", "'") + ", full power\",\"standIn\":\"" + standIn.Replace("\"", "'") + "\",\"arm\":\"" + armNote.Replace("\"", "'") + "\""
                         + ",\"rows\":{\"off\":\"off_NN.png\",\"on\":\"on_NN.png (the profile's own size)\",\"amp\":\"amp_NN.png (x " + F(amp, "F1") + ", exaggerated - not a size the game shows)\"}"
                         + ",\"peak\":{\"nod\":" + F(peakOn.x) + ",\"roll\":" + F(peakOn.y) + ",\"fov\":" + F(peakOn.z) + ",\"shiftPx1080\":" + F(peakPx, "F1") + "}"
@@ -901,6 +924,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     return "cam:judge " + tag + " (" + profileSource + "; x" + F(amp, "F1") + " row is exaggerated): " + frameIndex + " frames x off / on / amp -> " + dir + " ; " + standIn + " ; " + armNote
                         + " ; peak nod " + F(peakOn.x, "F3") + " deg = " + F(peakPx, "F1") + " px at 1080p (field of view " + F(framingFov, "F1") + "), fov " + F(peakOn.z, "F3")
                         + " ; camera restored bit-exact " + restored + ", conflicts " + cameraRig.RenderOffsetConflicts308 + ", scene dirty " + scene.isDirty + " (before " + dirtyBefore + "), roots " + scene.rootCount + " (before " + rootsBefore + ")"
+                        + " ; wall lines " + F(wallData.minorLinePx, "F1") + " / " + F(wallData.majorLinePx, "F1") + " px (minor / heavy) at " + JudgeWidth + " x " + JudgeHeight
                         + (seen ? "" : " ; WARNING: the per-camera probe never fired (the tiles are unconfirmed)") + " ; sheet and clip: python Tools/Unity/Stage308_juice/judge_sheet308.py";
                 }
                 finally

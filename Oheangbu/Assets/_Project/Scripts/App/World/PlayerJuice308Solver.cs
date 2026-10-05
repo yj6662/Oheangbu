@@ -68,6 +68,8 @@ namespace Oheangbu.App.World
         public int FlickStarts { get; private set; }
         public int CameraEvents { get; private set; }
         public int CameraCancels { get; private set; }
+        /// <summary>Diagnostics: cast kicks that did not start because the cast was a parry (CastKick.OnParryCasts off).</summary>
+        public int ParryKicksSkipped { get; private set; }
         public bool CameraRunning => _kick.On || _callSettle.On || _thump.On;
 
         public void Configure(PlayerJuice308ProfileSO profile) { _profile = profile; Reset(); }
@@ -164,9 +166,15 @@ namespace Oheangbu.App.World
         }
 
         /// <summary>D-1 (+ D-3): the camera kick of a successful cast. throwX: sign of the throw across the screen (roll).</summary>
-        public void CastKick(float power01, float throwX)
+        public void CastKick(float power01, float throwX) { CastKick(power01, throwX, false); }
+
+        /// <summary>The same, told what was cast (#308 3rd revision, D308-24 answer 24). parryCast: the accepted cast is a parry
+        /// glyph - no camera reaction starts for it unless the profile says so (CastKick.OnParryCasts). Only the camera part is
+        /// decided here: the throw (BeginCast / EvaluateCast) never sees the kind of the cast.</summary>
+        public void CastKick(float power01, float throwX, bool parryCast)
         {
             if (!Active || !_profile.Camera.Enabled || !_profile.CastKick.Enabled || CameraScale <= 0f) return;
+            if (parryCast && !_profile.CastKick.OnParryCasts) { ParryKicksSkipped++; return; }
             _kickScale = Mathf.Lerp(_profile.CastKick.PowerFloor, 1f, Mathf.Clamp01(power01));
             _rollSign = throwX > 0f ? -1f : throwX < 0f ? 1f : 0f;   // throwing right tips the view clockwise (negative z)
             _kick.Start(); CameraEvents++;

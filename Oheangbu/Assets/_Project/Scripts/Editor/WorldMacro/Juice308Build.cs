@@ -46,7 +46,12 @@ namespace Oheangbu.EditorTools.WorldMacro
     ///                                                    same result out
     ///   ... Run "identity"                             the off contract, measured on the cloned rig: no profile at all = Intensity 0 =
     ///                                                    (draw frames) the main profile, every transform, every frame - Juice308Build.Preview.cs
-    ///   ... Run "profile:status" | "profile:create"     the main profile asset (create = one new asset, nothing else is saved)
+    ///   ... Run "profile:status" | "profile:plan" | "profile:create" | "profile:apply" | "profile:check" | "profile:revert:&lt;record&gt;" | "profile:remove"
+    ///                                                    3rd revision (D308-24): the main profile asset is made FROM DATA -
+    ///                                                    Art/Characters308/Juice/Data/PlayerJuice308Main.json lists every field. plan = dry,
+    ///                                                    create / apply = that one asset only, check = asset against data - Juice308Build.Juice2.cs
+    ///   ... Run "parry-identity"                       D308-24 answer 24 on the cloned rig: the same take as a parry cast and as another cast -
+    ///                                                    every transform equal, camera offset 0 against the kick - Juice308Build.Juice2.cs
     ///   ... Run "preview-profile:on" | "preview-profile:off"   Play only, memory only: A-1 / A-2 / D-3 on for the live rig
     ///   ... Run "fixtures:cleanup"
     /// Queue paths never open a dialog: a refusal comes back as "refused: ...". No scene is saved. Output: Art/Characters308/Juice/Preview/.
@@ -95,7 +100,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "hand-jump": return HandJump();
                     case "recog-identity": return RecogIdentity(Arg(1));
                     case "identity": return Identity();
-                    case "profile": return Arg(1).ToLowerInvariant() == "create" ? ProfileCreate() : ProfileStatus();
+                    case "profile": return Profile308(Arg(1).ToLowerInvariant(), Arg(2));   // #308 3차: from data (Juice308Build.Juice2.cs)
+                    case "parry-identity": return ParryIdentity();
                     case "preview-profile": return PreviewProfile(Arg(1).ToLowerInvariant());
                     case "fixtures": return Arg(1).ToLowerInvariant() == "cleanup" ? CleanupFixtures() : "refused: expected fixtures:cleanup";
                 }
@@ -105,7 +111,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         static string Help() => "Juice308Build: check | check-curves | timeline:<cast|call|setdown|stack|draw>[:hz] | cam:nesting | cam:strip:<cast|call|setdown>[:narrow] | cam:judge:<cast|call|setdown>[:narrow][:amp=N] | "
-            + "p1[:label] | p2[:a1|a2][:label] | p7 | hand-jump | identity | recog-identity[:fixture] | profile:status | profile:create | preview-profile:on|off (Play) | fixtures:cleanup";
+            + "p1[:label] | p2[:a1|a2][:label] | p7 | hand-jump | identity | parry-identity | recog-identity[:fixture] | "
+            + "profile:status | profile:plan | profile:create | profile:apply | profile:check | profile:revert:<record> | profile:remove | preview-profile:on|off (Play) | fixtures:cleanup";
 
         static string Finish(Checks c, string name)
         {
@@ -148,6 +155,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             CheckCameraOwner(c);
             CheckBorders(c);
             CheckScene(c, scene);
+            CheckJuice2(c, scene);   // #308 3차 (D308-24): profile data, parry exclusion, marks that follow - Juice308Build.Juice2.cs
             c.Add("Z1.open_scene_untouched", scene.isDirty == dirtyBefore && scene.rootCount == rootsBefore, "open scene dirty " + scene.isDirty + " (before " + dirtyBefore + "), roots " + scene.rootCount + " (before " + rootsBefore + ")");
             c.Add("Z2.no_fixture_left", CountFixtures() == 0, CountFixtures() + " object(s) named " + FixturePrefix + "* alive after the checks");
             return Finish(c, "check");
@@ -257,7 +265,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 var m = new PlayerJuice308Solver(); m.Configure(main); m.ModeEntered(); m.StrokeStarted(); bool shaft = false;
                 for (int i = 0; i < 20; i++) { m.NoteStrokeVelocity(new Vector2(2f, 0f), dt60); m.Advance(dt60); m.Evaluate(false, out JuiceFrame308 f); shaft |= f.AnyShaft || f.SplayAdd != 0f; }
                 m.StrokeEnded(); for (int i = 0; i < 20; i++) { m.Advance(dt60); m.Evaluate(false, out JuiceFrame308 f); shaft |= f.AnyShaft || f.SplayAdd != 0f; }
-                c.Add("V6.main_profile_shaft_zero", !shaft, "main profile (A-1 / A-2 off): shaft tilt, lean and splay are exactly 0");
+                c.Add("V6.main_profile_shaft_zero", !shaft, "class defaults (A-1 / A-2 off - the main profile's own values are data, rows D1 - D3): shaft tilt, lean and splay are exactly 0");
                 var p = new PlayerJuice308Solver(); p.Configure(preview); p.ModeEntered(); p.StrokeStarted(); float tilt = 0f, lean = 0f, splay = 0f, sum = 0f; bool both = false;
                 for (int i = 0; i < 12; i++) { p.NoteStrokeVelocity(new Vector2(3.5f, 0f), dt60); p.Advance(dt60); p.Evaluate(false, out JuiceFrame308 f); tilt = Mathf.Max(tilt, f.ShaftRaiseDegrees); splay = Mathf.Max(splay, f.SplayAdd); both |= f.ShaftRaiseDegrees != 0f && f.ShaftLeanDegrees != Vector2.zero; sum = Mathf.Max(sum, f.ShaftRaiseDegrees + f.ShaftLeanDegrees.magnitude); }
                 p.StrokeEnded();
@@ -787,21 +795,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                     .Append(" | ceilings ").Append(F(p.Camera.MaxPitchDegrees, "F1")).Append(" / ").Append(F(p.Camera.MaxRollDegrees, "F1")).Append(" / ").Append(F(p.Camera.MaxFovDegrees, "F1"));
             var rig = SceneRig(SceneManager.GetActiveScene(), out string issue);
             sb.Append("\nopen scene rig: ").Append(rig != null ? rig.name + (Application.isPlaying ? " -> profile in use: " + (rig.JuiceProfile308 != null ? rig.JuiceProfile308.name : "none") : " (Edit Mode: the rig resolves its profile when it runs)") : issue);
+            ProfileStatus2(sb, asset, rig);   // #308 3차: the two new switches, the data file, asset against data, the live rig's parry tell
             return sb.ToString();
         }
 
-        static string ProfileCreate()
-        {
-            if (EditorApplication.isPlayingOrWillChangePlaymode) return "refused: profile:create runs in Edit Mode";
-            if (AssetDatabase.LoadAssetAtPath<Object>(ProfileAssetPath) != null || File.Exists(Path.Combine(Repo, "Oheangbu", ProfileAssetPath))) return "refused: " + ProfileAssetPath + " already exists (edit it in the inspector, or delete it first)";
-            string folder = Path.GetDirectoryName(ProfileAssetPath).Replace('\\', '/'), parent = Path.GetDirectoryName(folder).Replace('\\', '/');
-            if (!AssetDatabase.IsValidFolder(parent)) return "refused: " + parent + " does not exist";
-            if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(parent, Path.GetFileName(folder));
-            var profile = ScriptableObject.CreateInstance<PlayerJuice308ProfileSO>();
-            AssetDatabase.CreateAsset(profile, ProfileAssetPath);
-            AssetDatabase.SaveAssetIfDirty(profile);   // this one asset only (never SaveAssets: other sessions' dirty assets stay theirs)
-            return "created " + ProfileAssetPath + " with the class defaults (A-1 / A-2 / D-3 off). The juice runs from the next Play. Nothing else was saved.";
-        }
+        // #308 3차 (D308-24): the old ProfileCreate (an asset made of the class defaults) is gone - the main profile's values are
+        // data now. profile:plan / create / apply / check / revert / remove live in Juice308Build.Juice2.cs.
 
         static string PreviewProfile(string mode)
         {

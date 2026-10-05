@@ -20,7 +20,9 @@ namespace Oheangbu.App
     // HP / ink meters and the 먹병 are replaced by "Vessels308" (HudVessels308: two liquid vessels + dodge / jump / vehicle
     // marks, its own Canvas). Values stay immediate here (Hp01 / Ink01); the vessels only decide how the surface reaches them.
     // Without the asset, or with Enabled off, BuildMeters304 builds exactly the #304 HUD.
-    public sealed class HudController : MonoBehaviour
+    // #308 juice 3차 (SPEC-ANIM-JUICE-308 §4d, D308-24 answer 23): the lock-on reticle (and with it the groggy disc and the target
+    // health stroke) follows the camera reaction - HudController.Follow308.cs. No reaction = the placement below, unchanged.
+    public sealed partial class HudController : MonoBehaviour
     {
         [Tooltip("Optional playtest-owned visual skin. Leave null to retain the prototype HUD.")]
         public WorldMacroHudSkinProfileSO Skin;
@@ -527,10 +529,12 @@ namespace Oheangbu.App
             _reticle.gameObject.SetActive(visible);
             if (!visible) return;
             float chest = _style != null ? _style.LockOn.ChestHeight : 1.1f;
-            Vector3 screen = cam.WorldToScreenPoint(target.position + Vector3.up * chest);
+            Vector3 world308 = target.position + Vector3.up * chest;   // #308: the same point as before, kept for FollowReticle308
+            Vector3 screen = cam.WorldToScreenPoint(world308);
             if (screen.z <= 0f || screen.x < 0f || screen.x > Screen.width || screen.y < 0f || screen.y > Screen.height)
             { _reticle.gameObject.SetActive(false); return; }
             _reticle.position = screen;
+            FollowReticle308(cam, world308, screen);   // #308 3차: adds the camera reaction's shift; writes nothing when there is none
             if (_lockOn != null) { if (!wasVisible) _lockOn.Snap(); }
             else _reticle.localScale = Vector3.one * (1f + .5f * _pulse * _pulse);
             PlaceTargetHp306();
@@ -619,6 +623,7 @@ namespace Oheangbu.App
 
         private void OnDestroy()
         {
+            ReleaseFollow308();   // #308 3차: let go of the camera owner's announcement
             if (_diskSprite != null) Destroy(_diskSprite);
             if (_diskTexture != null) Destroy(_diskTexture);
         }

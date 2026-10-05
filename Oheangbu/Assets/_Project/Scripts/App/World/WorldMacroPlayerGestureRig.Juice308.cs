@@ -1,5 +1,6 @@
 using Oheangbu.Data.World;
 using Oheangbu.Drawing;
+using Oheangbu.Spellcraft;
 using UnityEngine;
 
 namespace Oheangbu.App.World
@@ -24,6 +25,11 @@ namespace Oheangbu.App.World
     //     that frame's first sample is stored. A fault in the juice must never cut that Update short (recognition is
     //     untouchable), so every handler that runs inside those events is fenced: a fault is logged once and switches the
     //     juice off for this rig (JuiceFault308).
+    //   · 3rd revision (D308-24): (answer 24) a parry cast gets no camera kick. The kind comes from the wiring's read-only
+    //     re-broadcast CastAccepted (SpellCast.Kind), reached through the walker the rig already holds; it fires inside the
+    //     letter broadcast, before Committed - the order the refusal uses. The handler stores one bool. The throw, the twist
+    //     and the brush do not read it. (answer 23) the profile's Camera.MarksFollow is told to the camera owner with every
+    //     offset, so the HUD's lock-on marks can follow the reaction (CameraRigController.MarkFollow308.cs).
     // No static field. No coroutine. No Time.timeScale.
     public sealed partial class WorldMacroPlayerGestureRig
     {
@@ -56,6 +62,8 @@ namespace Oheangbu.App.World
         private Vector2 _juiceCastVia308, _juiceCastDirection308;
         private bool _juiceInputOn308;
         private GestureInput308 _juiceInput308;
+        private CombatLoopWiring _juiceWiring308;            // #308 3차: the wiring whose CastAccepted tells a parry cast apart (walker.Wiring)
+        private bool _juiceParry308;                         // the cast accepted for the letter being committed is a parry
 
         /// <summary>The profile in use (serialized slot, else Resources, else none).</summary>
         public PlayerJuice308ProfileSO JuiceProfile308
@@ -80,6 +88,9 @@ namespace Oheangbu.App.World
         public float JuiceShaftLeanDegrees308 { get; private set; }
         public float JuiceHeadroom308 { get; private set; }
         public PlayerJuice308Solver JuiceSolverForChecks308 => JuiceSolver308();
+        /// <summary>Diagnostics (3rd revision): the parry tell is wired (walker -> wiring), and commits that were seen as a parry cast.</summary>
+        public bool JuiceParryTapWired308 => _juiceWiring308 != null;
+        public int JuiceParryCommits308 { get; private set; }
 
         private bool JuiceSuppressOnReject308 { get { var p = JuiceProfile308; return p == null || p.Reject.SuppressOnReject; } }
 
@@ -153,6 +164,7 @@ namespace Oheangbu.App.World
             }
             _juiceFeed308 = _brushFeed;
             if (_juiceFeed308 != null) _juiceFeed308.CastRejected += OnJuiceCastRejected308;
+            JuiceEnsureCastTap308();
         }
 
         private void UnsubscribeJuice308()
@@ -167,14 +179,30 @@ namespace Oheangbu.App.World
                 _juiceDrawing308 = null;
             }
             if (_juiceFeed308 != null) { _juiceFeed308.CastRejected -= OnJuiceCastRejected308; _juiceFeed308 = null; }
+            if (!ReferenceEquals(_juiceWiring308, null)) { _juiceWiring308.CastAccepted -= OnJuiceCastAccepted308; _juiceWiring308 = null; }
         }
+
+        // #308 3차 (D308-24 answer 24): the wiring is reached through the walker. The walker may be wired after the rig subscribed to
+        // the drawing input, so this is looked at again whenever a draw mode begins (before any letter of that mode is cast).
+        private void JuiceEnsureCastTap308()
+        {
+            CombatLoopWiring wiring = _walker != null ? _walker.Wiring : null;
+            if (ReferenceEquals(wiring, _juiceWiring308)) return;
+            if (!ReferenceEquals(_juiceWiring308, null)) _juiceWiring308.CastAccepted -= OnJuiceCastAccepted308;
+            _juiceWiring308 = wiring;
+            if (wiring != null) wiring.CastAccepted += OnJuiceCastAccepted308;
+        }
+        // Runs inside the wiring's dispatch of the letter (a gameplay event): one comparison and one store - it cannot fail there.
+        private void OnJuiceCastAccepted308(SpellCast cast, Vector3 origin, Vector3 forward) { _juiceParry308 = cast.Kind == SpellKind.Parry; }
 
         // The four handlers below run inside DrawingInputController's own events (its Update). Each is fenced: see the header.
         private void OnJuiceModeEntered308()
         {
             _juiceRejected308 = false;   // a refusal never reaches past its own commit
+            _juiceParry308 = false;      // nor does the kind of the cast before
             try
             {
+                JuiceEnsureCastTap308();
                 JuiceSolver308()?.ModeEntered();
                 JuicePushCamera308(Vector3.zero);   // D rule 1: the reaction ends on the frame the draw mode begins
             }
@@ -192,14 +220,17 @@ namespace Oheangbu.App.World
         // OnCommitted, after the rig decided about its own throw. cast = recognised and not refused.
         private void JuiceCommitted308(bool cast)
         {
+            bool parry = _juiceParry308; _juiceParry308 = false;   // read once: the kind belongs to this commit only
             try
             {
                 var solver = JuiceSolver308();
                 if (solver == null) return;
                 solver.DrawingEnded();
                 if (!cast) return;
+                if (parry) JuiceParryCommits308++;
                 float power = _brushFeed != null ? _brushFeed.LastLetterPower308 : 0f;   // the flash's own power proxy, read only
-                solver.CastKick(power, _profile != null ? _profile.CastFlickViewport.x - _lastNearViewport.x : 0f);
+                // #308 3차 (D308-24 answer 24): a parry cast gets no camera kick unless the profile says so (the solver decides, from data)
+                solver.CastKick(power, _profile != null ? _profile.CastFlickViewport.x - _lastNearViewport.x : 0f, parry);
             }
             catch (System.Exception e) { JuiceFault308(e); }   // runs inside the input owner's Committed event: never cut it short
         }
@@ -276,7 +307,11 @@ namespace Oheangbu.App.World
         {
             if (nodRollFov.x == _juiceCameraPushed308.x && nodRollFov.y == _juiceCameraPushed308.y && nodRollFov.z == _juiceCameraPushed308.z) return;
             _juiceCameraPushed308 = nodRollFov;
-            if (_cameraRig != null) _cameraRig.SetRenderOffset308(nodRollFov.x, nodRollFov.y, nodRollFov.z);
+            if (_cameraRig == null) return;
+            // #308 3차 (D308-24 answer 23): the lock-on marks follow the reaction when the profile says so. Told to the owner BEFORE
+            // the offset: the owner announces the change inside SetRenderOffset308 and the HUD asks it for the shift right there.
+            _cameraRig.RenderOffsetMarksFollow308 = _juice308 != null && _juice308.Profile != null && _juice308.Profile.Camera.MarksFollow;
+            _cameraRig.SetRenderOffset308(nodRollFov.x, nodRollFov.y, nodRollFov.z);
         }
 
         // ---------------------------------------------------------------- close-up arm (A-1 / A-2)
@@ -383,9 +418,12 @@ namespace Oheangbu.App.World
         public void PreviewModeEntered308() { OnJuiceModeEntered308(); }
         public void PreviewStrokeStarted308() { OnStrokeStarted(); OnJuiceStrokeStarted308(); }
         public void PreviewStrokeEnded308() { OnJuiceStrokeEnded308(); }
-        public void PreviewCommitted308(bool success, bool rejected)
+        public void PreviewCommitted308(bool success, bool rejected) { PreviewCommitted308(success, rejected, false); }
+        /// <summary>Preview driver only: the same, with the kind the wiring would have accepted (parry = a parry glyph).</summary>
+        public void PreviewCommitted308(bool success, bool rejected, bool parry)
         {
             if (rejected) OnJuiceCastRejected308();
+            _juiceParry308 = parry && !rejected;
             OnCommitted(success);
             OnModeExited(); OnJuiceDrawingEnded308();
         }

@@ -21,6 +21,9 @@ namespace Oheangbu.Combat
     //   · Never while the draw mode is on (D308-21): the caller checks the draw mode and the live strokes, and this rig refuses
     //     on its own flag as a second lock.
     //   · Subscribed only while an offset is set. No static field.
+    //   · 3rd revision (D308-24 answer 23): a changed offset is announced (AnnounceRenderOffset308) so that HUD marks which
+    //     follow the reaction can be placed again - CameraRigController.MarkFollow308.cs. Putting the offset on the camera
+    //     and taking it off (the three methods at the end of this file) is unchanged.
     public sealed partial class CameraRigController
     {
         private Vector3 _renderOffset308;   // x nod (+ = the view dips), y roll, z field of view
@@ -48,8 +51,10 @@ namespace Oheangbu.Combat
         {
             bool any = nodDegrees != 0f || rollDegrees != 0f || fovDegrees != 0f;
             if (any && _drawing) { RenderOffsetRefusedDrawing308++; nodDegrees = rollDegrees = fovDegrees = 0f; any = false; }
+            Vector3 was308 = _renderOffset308;
             _renderOffset308 = new Vector3(nodDegrees, rollDegrees, fovDegrees);
             if (_cam == null && _camera != null) _cam = _camera.GetComponent<Camera>();   // an instance whose Awake has not run (edit-mode preview)
+            if (was308.x != nodDegrees || was308.y != rollDegrees || was308.z != fovDegrees) AnnounceRenderOffset308();   // #308 3차: marks that follow are placed again
             if (any == _renderHooked308) return;
             if (any)
             {
@@ -74,9 +79,11 @@ namespace Oheangbu.Combat
         // OnDisable: nothing of the reaction may outlive the rig
         private void ReleaseRenderOffset308()
         {
+            bool had308 = _renderOffset308.x != 0f || _renderOffset308.y != 0f || _renderOffset308.z != 0f;
             _renderOffset308 = Vector3.zero;
             if (_renderHooked308) UnhookRender308();
             _renderHooked308 = false;
+            if (had308) AnnounceRenderOffset308();   // #308 3차: a mark that was following goes back to its own place
         }
 
         private bool DrawsMyCamera308(List<Camera> cameras)

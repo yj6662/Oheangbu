@@ -6,8 +6,10 @@ namespace Oheangbu.Data.World
     // #308 player juice (SPEC-ANIM-JUICE-308) [TEST 전부]: 작도 중 · 작도 후 · 자동차 호출의 손맛 수치와 카메라 반응(D308-20 답 4).
     // 표현 전용이다 — 인식 · 필세 · 판정 · 먹 비용 어디에도 들어가지 않는다. 런타임은 리그의 직렬화 칸 → Resources
     // "Juice308/PlayerJuice308Profile" 순서로 찾는다. 에셋이 없으면 주스 코드 경로를 타지 않는다(거절 억제 B-1만 예외).
-    // 필드 초기값 = 메인 프로필 값: "캡처를 본 뒤 켠다"는 효과(A-1 · A-2 · D-3)는 꺼진 채 나간다. 미리보기 구동기(Juice308Build)가
-    // 메모리 사본에서만 켠다. 아직 짓지 않은 효과의 묶음은 두지 않는다.
+    // 필드 초기값 = 설계값(Spec §5). 메인 프로필 에셋의 값은 자료 파일 Art/Characters308/Juice/Data/PlayerJuice308Main.json이 정한다
+    // (#308 3차 개정, D308-24): Juice308Build "profile:create"가 그 파일의 모든 줄로 에셋을 만든다 — 판정이 설계값과 다른 칸
+    // (A-1 · A-2 켬)은 자료에서 바꾸고 이 클래스의 상수는 그대로 둔다. 미리보기 구동기(Juice308Build)는 메모리 사본에서
+    // A-1 · A-2 · D-3을 켠다. 아직 짓지 않은 효과의 묶음은 두지 않는다.
     [CreateAssetMenu(menuName = "Oheangbu/World/Player Juice 308 TEST", fileName = "PlayerJuice308Profile")]
     public sealed class PlayerJuice308ProfileSO : ScriptableObject
     {
@@ -37,7 +39,7 @@ namespace Oheangbu.Data.World
         [Serializable]
         public sealed class StrokeStartSet   // A-1 기필 누름
         {
-            [Tooltip("OFF until the grip comparison captures (P1) were seen by the user.")]
+            [Tooltip("Designed default: off (grip comparison P1 first). The main profile's value is data (PlayerJuice308Main.json; D308-24 answer 15: on).")]
             public bool Enabled = false;
             [Tooltip("The shaft stands up toward the drawing-plane normal by this much (degrees); the tip stays on the pointer.")]
             [Range(0f, 6f)] public float PressTiltDegrees = 3f;
@@ -56,7 +58,7 @@ namespace Oheangbu.Data.World
         [Serializable]
         public sealed class StrokeEndSet   // A-2 수필 삐침
         {
-            [Tooltip("OFF until the grip comparison captures (P1) were seen by the user.")]
+            [Tooltip("Designed default: off (grip comparison P1 first). The main profile's value is data (PlayerJuice308Main.json; D308-24 answer 15: on).")]
             public bool Enabled = false;
             [Tooltip("Shaft lean along the stroke direction at SpeedLow / SpeedHigh (degrees).")]
             [Range(0f, 6f)] public float FlickLeanMin = 1.2f;
@@ -161,6 +163,10 @@ namespace Oheangbu.Data.World
             [Range(0f, 3f)] public float MaxFovDegrees = 1.5f;
             [Tooltip("Comfort floor: no camera reaction reaches its peak sooner than this (s). An attack below it is raised to it.")]
             [Min(0f)] public float MinAttackSeconds = .03f;
+            [Tooltip("World-anchored HUD marks (the lock-on reticle with its groggy disc, the target health stroke under it) are placed " +
+                     "with the frame's reaction, so they stay on the target while the view nods (D308-24 answer 23). " +
+                     "Off = they are placed from the un-offset camera, as before the 3rd revision.")]
+            public bool MarksFollow = true;
         }
 
         [Serializable]
@@ -179,6 +185,9 @@ namespace Oheangbu.Data.World
             [Min(0f)] public float DelaySeconds = .03f;
             [Tooltip("Scale at power proxy 0 (1 at power 1).")]
             [Range(0f, 1f)] public float PowerFloor = .5f;
+            [Tooltip("A parry cast (SpellKind.Parry) gets this kick too. Off (D308-24 answer 24): a parry cast has no camera " +
+                     "reaction at all - its judgement window follows at once. Hand, brush and torso are not affected by this switch.")]
+            public bool OnParryCasts = false;
         }
 
         [Serializable]
