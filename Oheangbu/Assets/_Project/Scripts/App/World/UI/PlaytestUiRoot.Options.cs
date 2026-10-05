@@ -34,13 +34,15 @@ namespace Oheangbu.App.World.UI
             else if(optionsTab=="소리")BuildAudioOptions(s);
             else if(optionsTab=="조작")BuildInputOptions(s);
             else BuildAccessibilityOptions(s);
-            var reset=Menu304SecondaryRow(s,"ResetSettings","기본값 복원",optionsTab=="화면"?780:352,630,
+            // 접근성 has 7 rows (168 - 770): at 630 the row sat on rows 6 and 7 (seen in the 2026-10-06 capture) - it goes under the list there
+            float resetY=optionsTab=="접근성"?180+86*7+20:630;
+            var reset=Menu304SecondaryRow(s,"ResetSettings","기본값 복원",optionsTab=="화면"?780:352,resetY,
                 ()=>Confirm("설정을 기본값으로 바꿀까요?","화면 설정은 적용 후 다시 확인.",()=>{Settings.Reset();ShowDisplayConfirmation();}));
             if(menu304Options.Below==null)menu304Options.Below=reset;
             menu304Options.Refresh();
             // initial selection = the first live row (IMPLEMENTATION §4.2 설정 = 첫 행)
             foreach(var r in menu304Options.Rows)if(r.Focus!=null&&r.Focus.Button!=null&&r.Focus.Button.interactable){menu304DefaultSelection=r.Focus.Button.gameObject;break;}
-            settingsErrorText=V.Label(s,contentRoot,"SettingsError",Settings.SaveError??"",UiType304.MetaBold20,s.CinnabarLift,392,730,900,0,TextAlignmentOptions.TopLeft,true);
+            settingsErrorText=V.Label(s,contentRoot,"SettingsError",Settings.SaveError??"",UiType304.MetaBold20,s.CinnabarLift,392,resetY+100,900,0,TextAlignmentOptions.TopLeft,true);
             settingsBuilt=true;
         }
 
