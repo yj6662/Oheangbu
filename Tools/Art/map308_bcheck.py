@@ -226,12 +226,14 @@ def main():
         pair_src = text(pair); mark308 = '// ---------------------------------------------------------------- #308 notation'
         pair308 = re.sub(r'//[^\n]*', '', pair_src[pair_src.index(mark308):]) if mark308 in pair_src else ''
         pair_name = str(pair).replace('\\', '/').split('Oheangbu/', 1)[-1]
-        check(taps and (all(t in edge_fn for t in E3.TEXT3) and E3.PAPER3 in pair308 and 'float MapFog308_Rim(float y,float edgePx,float rimPx)' in fog if map3 else
+        map4 = map3 and E3.is_map4(pair308)       # #308 map 4: the sheet's thin whole rim (the paper reads _M308Rim.z / .w)
+        map4_ok = (not map4 and not any(t in edge_fn for t in E3.TEXT4)) or (map4 and E3.map4_block(pair308) and all(t in edge_fn for t in E3.TEXT4))
+        check(taps and map4_ok and (all(t in edge_fn for t in E3.TEXT3) and E3.PAPER3 in pair308 and 'float MapFog308_Rim(float y,float edgePx,float rimPx)' in fog if map3 else
                         'float land=min(depth,MAPFOG308_E_KCOVER*cover);' in edge_fn and 'return float2(land-theta,gate);' in edge_fn
                         and 'theta=max(theta,MAPFOG308_E_FLOOR/pxPerCell);' in edge_fn and E3.PAPER3 not in pair308),
               ('#214 MapFog308_Edge (formula map3): 25 point taps in the text (16 of them under #if MAPFOG308_E_DEEP), a lattice corner = min of its four cells '
                '(0 on every unwalked cell), field = land - theta with theta never under FLOOR screen px, and the paper shader deployed with it (%s) '
-               'draws the rim with MapFog308_Rim x crisp' % pair_name) if map3 else
+               'draws the rim with MapFog308_Rim x crisp%s' % (pair_name, '; map 4: its sheet rim is the three lines under #ifndef _MINI_HUD, and the cginc turns the edge waves off on a one-row fog' if map4 else '')) if map3 else
               ('#214 MapFog308_Edge (formula F): 9 point taps, a lattice corner = min of its four cells (0 on every unwalked cell), '
                'field = min(depth, KCOVER x cover) - theta, theta never under FLOOR screen px; the paper shader deployed with it (%s) keeps the rim line of formula F' % pair_name))
         D = edge_defines(fog); missing = [k for k in EDGE_F_NAMES if k not in D] + (E3.missing3(D) if map3 else [])
@@ -262,11 +264,26 @@ def main():
         want = [ce.get('thresholdFrom'), ce.get('thresholdSpan')] + list(ce.get('noiseCellsPerFogCell', []))
         # formula F has no octave weights and reads none of these four numbers: there this row only keeps property, asset and bundle in step
         weights = formula_f or (wts is not None and [float(wts.group(1)), float(wts.group(2))] == ce.get('noiseWeights'))
-        same.append(want == vec(paper, '_M308Edge') == vec(stroke, '_S308Edge') == so_edge and weights
-                    and vec(paper, '_M308Rim')[:2] == [n['values']['fogEdge']['inkAlpha'], n['values']['fogEdge']['px']])
-    check(bool(same) and all(same), 'crisp edge numbers: paper _M308Edge / _M308Rim = strips _S308Edge = MapNotation308SO defaults = every staged bundle (%s): %s%s'
+        # #308 map 4: the rim numbers are a NAMED variant since map 3 (fogEdge.variant / variants). A bundle that names one must carry that
+        # variant's (inkAlpha, px), and the paper's property default must be one row of its table (R2: what a material shows before the
+        # notation is applied). A bundle of the older tool (no table) keeps the old rule: its numbers = the property default.
+        # The active variant is PINNED outside the bundles (review of map 4, F7): the data file beside this tool says which variant the
+        # minimap draws and its numbers (minimap.variant / inkAlpha / px - DECISIONS D308-24 answer 9: R3). A bundle that names another
+        # variant, or other numbers under that name, fails here - three bundles agreeing with each other is not enough.
+        RIM_PIN = ROOT / 'Tools/Art/map308_rim_views.json'
+        try: _pin = json.loads(RIM_PIN.read_text(encoding='utf-8'))['minimap']; pin = [str(_pin['variant']), float(_pin['inkAlpha']), float(_pin['px'])]
+        except (OSError, KeyError, ValueError, TypeError): pin = None
+        fe = n['values']['fogEdge']; table = fe.get('variants')
+        if table is None: rim_ok = vec(paper, '_M308Rim')[:2] == [fe['inkAlpha'], fe['px']]
+        else: rim_ok = (fe.get('variant') in table and [fe['inkAlpha'], fe['px']] == [table[fe['variant']]['inkAlpha'], table[fe['variant']]['px']]
+                        and vec(paper, '_M308Rim')[:2] in [[v['inkAlpha'], v['px']] for v in table.values()]
+                        and pin is not None and [str(fe.get('variant')), float(fe['inkAlpha']), float(fe['px'])] == pin)
+        same.append(want == vec(paper, '_M308Edge') == vec(stroke, '_S308Edge') == so_edge and weights and rim_ok)
+    rim_names = sorted({str(n['values']['fogEdge'].get('variant', 'unnamed')) for n in notes.values()})
+    check(bool(same) and all(same) and len(rim_names) <= 1, 'crisp edge numbers: paper _M308Edge / _M308Rim = strips _S308Edge = MapNotation308SO defaults = every staged bundle (%s): %s%s; rim variant of the bundles: %s; pinned by map308_rim_views.json: %s'
           % (', '.join("%s '%s'" % (k, v['stage']) for k, v in notes.items()) or 'none staged', vec(paper, '_M308Edge'),
-             ' - kept in step only: formula F does not read _M308Edge / _S308Edge' if formula_f else ''))
+             ' - kept in step only: formula F does not read _M308Edge / _S308Edge' if formula_f else '', ' / '.join(rim_names) or 'none',
+             ('%s a%g %g px' % tuple(pin) if pin else 'NO PIN (file or its minimap block missing)') if notes and any(n['values']['fogEdge'].get('variants') for n in notes.values()) else 'not asked (no bundle names a variant)'))
     keep = lambda n: json.dumps([n['version'], n['strokeClasses'], n['strokeAtlas'], n['values'], n['terrain'], n['glyphs'], n['icons']['secondInk'], n['frames'], n['sizes'], n['zoomBands']], sort_keys=True)
     check(len({keep(n) for n in notes.values()}) <= 1, 'the staged bundles differ only in what the height stage changes (same contract, classes, values, glyphs, frames): %d bundle(s)' % len(notes))
     # ---- icons: the second ink layer

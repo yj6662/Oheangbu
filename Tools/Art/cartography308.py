@@ -78,6 +78,16 @@ RIMS = dict(R2=(.45, 2.0), R3=(.55, 3.0))
 RIM_VARIANT = __import__('os').environ.get('MAP308_RIM', 'R3')
 if RIM_VARIANT not in RIMS: raise SystemExit('REFUSED: MAP308_RIM must be R2 or R3')
 RIM = RIMS[RIM_VARIANT]
+# #308 map 4 (D308-24 answer 9): the rim is view dependent BY DATA. The minimap draws the broken dry-brush rim above; the unfolded
+# sheet and the whole-world view draw a thin whole rim whose numbers are the data file beside this tool (an input of the bake: its
+# sha goes into inputs[] as 'rimViews'). -> values.fogEdge.sheet -> MapNotation308SO.SheetRimWhole / SheetRimPx / SheetRimAlpha ->
+# the paper's _M308Rim.z / .w (read only without _MINI_HUD). whole 0 = the sheet draws the minimap's rim (the picture of map 3).
+RIM_VIEWS = M.TOOLS / 'map308_rim_views.json'
+if not RIM_VIEWS.exists(): raise SystemExit('REFUSED: input missing: ' + M.rel(RIM_VIEWS))
+_SHEET = json.loads(RIM_VIEWS.read_text(encoding='utf-8'))['sheet']
+SHEET_RIM = dict(whole=float(_SHEET['whole']), px=float(_SHEET['px']), inkAlpha=float(_SHEET['inkAlpha']))
+if not (SHEET_RIM['whole'] in (0.0, 1.0) and .5 <= SHEET_RIM['px'] <= 4.0 and 0 < SHEET_RIM['inkAlpha'] <= 1):
+    raise SystemExit('REFUSED: map308_rim_views.json sheet: whole must be 0 or 1, px .5 .. 4, inkAlpha 0 .. 1')
 VALUES = dict(paper=M.PAPER, wash=M.WASH, ink=M.INK, cinnabar=M.CINNABAR, slopeWashRange=[.10, .18], inkAlpha=[.84, .92],
               # what the #308 shaders draw (MapFog308.cginc MapFog308_Edge + the paper shader's _MAP308 branch): the walked land
               # ends on a CRISP edge (1 px anti-aliased) that wobbles 4.5 .. 18 m INSIDE the walked cells - never on the 32 m grid,
@@ -88,6 +98,10 @@ VALUES = dict(paper=M.PAPER, wash=M.WASH, ink=M.INK, cinnabar=M.CINNABAR, slopeW
                            # width = px x .25 .. 1.25 by the brush pressure). Two notation variants, the SAME shader: R3 (stage default) and R2.
                            variant=RIM_VARIANT, variants=dict(R2=dict(inkAlpha=RIMS['R2'][0], px=RIMS['R2'][1]), R3=dict(inkAlpha=RIMS['R3'][0], px=RIMS['R3'][1])),
                            where='the outermost px of the walked land: a band up to 1.25 x px wide just inside the crisp edge (thinner toward the end of a run), ink at inkAlpha over the unwalked wash',
+                           # #308 map 4: the unfolded sheet and the whole-world view (never the minimap)
+                           sheet=dict(whole=SHEET_RIM['whole'], px=SHEET_RIM['px'], inkAlpha=SHEET_RIM['inkAlpha'],
+                                      colour='#%02X%02X%02X' % tuple(int(round(v * 255)) for v in M.over(M.hexc(M.INK), M.hexc(M.WASH), SHEET_RIM['inkAlpha'])),
+                                      where='the unfolded sheet and the whole-world view: a WHOLE rim px wide (screen px at every zoom) just inside the crisp edge, ink at inkAlpha over the unwalked wash; whole 0 = the minimap rim above'),
                            crispEdge=dict(function='MapFog308_Edge', aaPx=1.0, insetM=[round(EDGE['thresholdFrom'] * M.FOG_CELL, 1),
                                                                                     round((EDGE['thresholdFrom'] + EDGE['thresholdSpan']) * M.FOG_CELL, 1)],
                                           field='bilinear of the four lattice corners of the discovery cell; a corner = min of its four cells (0 on every unwalked cell and its border)',
@@ -541,7 +555,7 @@ def notation(stage, inputs, outputs, counts, stats, markers, icon_rep):
 # ---------------------------------------------------------------------------------------------------------------------
 def gather_inputs(stage):
     paths = [('height', M.STAGES[stage]['height']), ('map', M.MAP_ASSET), ('layoutMain', M.LAYOUT_MAIN), ('layoutCandidate', M.LAYOUT_CAND),
-             ('wet', M.WET), ('crossings', M.CROSSINGS)]
+             ('wet', M.WET), ('crossings', M.CROSSINGS), ('rimViews', RIM_VIEWS)]
     paths += [('sheet.' + k, M.A / p) for k, p in M.SHEETS.items()]
     paths += [('walls.' + p.parent.name, p) for p in M.WALL_LAYOUTS]
     g = re.search(r'Locations: \{fileID: \d+, guid: ([0-9a-f]{32})', M.MAP_ASSET.read_text(encoding='utf-8'))

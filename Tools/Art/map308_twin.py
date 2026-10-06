@@ -325,6 +325,14 @@ def fog_edge(walked, X, Z, edge=None):
     return e - (E['thresholdFrom'] + E['thresholdSpan'] * (n1 * w1 + n2 * w2)), e
 
 
+def fog_crisp4(walked, X, Z, edge=None):
+    """fog_crisp + the field itself (cells): -> (walked value, signed distance px, .y, field). #308 map 4: the sheet's whole rim reads the field."""
+    g, cover = fog_edge(walked, X, Z, edge)
+    gy, gx = np.gradient(g)
+    d = g / np.maximum(np.hypot(gx, gy), 1e-5)
+    return np.clip(d + .5, 0, 1), d, cover, g
+
+
 def fog_crisp(walked, X, Z, edge=None):
     """-> (walked value 0..1 with a 1 px anti-aliased edge, signed distance to the edge in OUTPUT px, cover), as the paper
     shader computes them: d = field / |screen gradient of the field| (np.gradient stands in for ddx / ddy), walked = saturate(d + .5).
@@ -371,7 +379,7 @@ def render(B, V, walked, road_style='B', layers=None, show=LAYERS, extra=()):
     terrain_ink = ink.copy()
     # --- fog: the #308 crisp walked edge (the stage shaders' function); an unwalked pixel is the flat wash x grain, nothing else
     E = n['values']['fogEdge']
-    w, dpx, cover = fog_crisp(walked, V.X, V.Z, E.get('crispEdge'))
+    w, dpx, cover, field = fog_crisp4(walked, V.X, V.Z, E.get('crispEdge'))
     w = w * ((V.X >= 0) & (V.X < M.WORLD_X) & (V.Z >= 0) & (V.Z < M.WORLD_Z))
     g_amp = n['values']['washGrainAmp']
     unk = WASH[None, None] * (1 + (pat[..., 3:4] - .5) * 2 * g_amp)
@@ -379,7 +387,16 @@ def render(B, V, walked, road_style='B', layers=None, show=LAYERS, extra=()):
     # the ink rim: the outermost E.px px of the walked land, ink at E.inkAlpha over the unwalked wash (never outside the edge)
     if E3.is_map3(edge_constants()): rim = w * E3.rim3(edge_constants(), cover, dpx, E['px'] * V.scale)   # #308 map 3: crisp x MapFog308_Rim(walk.y, edgePx, _M308Rim.y)
     else: rim = w * np.clip(E['px'] * V.scale - dpx + .5, 0, 1) * (1 - smoothstep(.92, 1.0, cover))      # never deep inside (cover = 1)
-    rim_col = unk * (1 - E['inkAlpha']) + INK * E['inkAlpha']
+    rim_alpha = E['inkAlpha']
+    # #308 map 4 (D308-24 answer 9): a View marked `sheet` (the unfolded map, the whole-world view) draws the notation's thin whole rim:
+    # rim = lerp(rim, crisp x MapFog308_Rim(gateW, edgePx, _M308Rim.w / WMAX), _M308Rim.z); the ink alpha goes with it. A View without the
+    # mark is the minimap (and every measurement window of this tool): the broken rim above, unchanged.
+    S = E.get('sheet')
+    if getattr(V, 'sheet', False) and S and E3.is_map3(edge_constants()):
+        z = min(max(float(S.get('whole', 0)), 0.0), 1.0)
+        rim = rim + (w * E3.rim3_whole(edge_constants(), field, dpx, S['px'] * V.scale) - rim) * z
+        rim_alpha = E['inkAlpha'] + (S['inkAlpha'] - E['inkAlpha']) * z
+    rim_col = unk * (1 - rim_alpha) + INK * rim_alpha
     col = col * (1 - rim[..., None]) + rim_col * rim[..., None]
     # --- brush bands (strips): alpha x walked, drawn in the file's order; roads: all paper bands, then all inks
     st, pt = B.strokes['strokes'], B.strokes['points']
@@ -1178,7 +1195,7 @@ def sheet_full(B, mp, log):
     sx0, sy0 = F['board'].get('sheetAt', [560, 140]); page[sy0:sy0 + 820, sx0:sx0 + 800] = M.hexc('#E6E2D7')
     px0, py0 = sx0 + 30, sy0 + 30
     at = WINDOWS[0]['at']
-    V = View(at[0], at[1], 740, 760, 4.0 / 1.5, 1.0); L = {}
+    V = View(at[0], at[1], 740, 760, 4.0 / 1.5, 1.0); L = {}; V.sheet = True     # #308 map 4: the unfolded sheet draws the sheet's rim
     img = render(B, V, walked, layers=L)
     marks = markers_in(B, mp, walked)
     draw_marks(B, img, V, marks, 30, player=dict(x=at[0], z=at[1], heading=30.0), player_px=48, wake='geumpyo_inn', margin=10,
@@ -1220,7 +1237,7 @@ def sheet_full(B, mp, log):
         page[y:y + 24, x:x + 44] = sw
         draw_text(page, (x + 52, y - 1), row['name'], small, pale)
     # the whole-world view (Z3) as an inset on the right: the same bundle at 7.9 m/px
-    Vw = View(2000, 3000, 507, 760, 6000.0 / 760.0, 1.0); wimg = render(B, Vw, walked)
+    Vw = View(2000, 3000, 507, 760, 6000.0 / 760.0, 1.0); Vw.sheet = True; wimg = render(B, Vw, walked)
     draw_marks(B, wimg, Vw, marks, 22, player=dict(x=at[0], z=at[1], heading=30.0), player_px=28, margin=4)
     wx, wy = 1395, 176; page[wy:wy + 760, wx:wx + 507] = wimg
     draw_text(page, (wx, wy - 30), '전체 보기 (7.9 m/px) — 같은 묶음', small, pale)

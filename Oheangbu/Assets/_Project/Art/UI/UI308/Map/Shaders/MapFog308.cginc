@@ -134,6 +134,16 @@ float2 MapFog308_Edge(float2 uv,float4 p)
     float n2=MapFog308_Noise(c*MAPFOG308_E_PK+31.7);
     float wave1=sin(dot(c,MAPFOG308_E_D1)+MAPFOG308_E_PHASE*n1)*saturate(pxPerCell*MAPFOG308_E_HALF1*.5-.5);
     float wave2=sin(dot(c,MAPFOG308_E_D2)+MAPFOG308_E_PHASE*n2)*saturate(pxPerCell*MAPFOG308_E_HALF2*.5-.5);
+    #if defined(_MAP308) && !defined(_MINI_HUD)
+    // #308 map 4 (the legend swatch's DOUBLED line). The swatch is a fog of ONE row drawn by the paper's sheet variant (_MAP308 without
+    // _MINI_HUD) - the only code that ever sees such a fog, so only that variant compiles this block: the minimap variant and the strips
+    // (UI/MapStroke308 has neither keyword) keep the bytes they had. The two edge waves push a 2-D contour sideways; on a strip they
+    // change only ACROSS the border, flatten the field there, and the caller's first-order distance (field / |gradient|) put a second
+    // ink line 5 - 6 px inside the edge. On a one-row fog they are off: the swatch's edge is straight, FROM + SPAN / 2 cells in. On the
+    // world's fog (188 rows) oneRow is exactly 1.0 and wave x 1.0 is the same float: the sheet's field is the strips' field, bit for bit.
+    float oneRow=saturate(_FogTex_TexelSize.w-1);
+    wave1*=oneRow;wave2*=oneRow;
+    #endif
     float theta=MAPFOG308_E_FROM+MAPFOG308_E_SPAN*(.5+.25*(wave1+wave2));
     theta=max(theta,MAPFOG308_E_FLOOR/pxPerCell);
     float field=land-theta;

@@ -50,7 +50,7 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
         _M308Water("#308 water: field range m, shore half width m, one px in m, ripple ink",Vector)=(32,1,1.2,.5)
         _M308Tile("#308 pattern repeats across the world (u, v)",Vector)=(25,37.5,0,0)
         _M308Grain("#308 grain share: paper fibre (minimap), unwalked wash",Vector)=(0,.05,0,0)
-        _M308Rim("#308 walked-edge ink rim: ink alpha over the unwalked wash, width px (inside the edge)",Vector)=(.45,2,0,0)
+        _M308Rim("#308 walked-edge ink rim: ink alpha over the unwalked wash, width px (inside the edge); sheet only (no _MINI_HUD): whole thin rim 0 / 1, its width px",Vector)=(.45,2,0,0)
         _M308Edge("#308 crisp walked edge: threshold from, threshold span, noise cells 1, noise cells 2",Vector)=(.14,.42,1.6,3.7)
         _M308Cave("#308 cave plan: wall from, wall to = floor from, floor to, wall ink",Vector)=(.44,.56,.64,.85)
         _M308Border("#308 sheet: the picture feathers out before the world border: width px, grain wobble px",Vector)=(18,10,0,0)
@@ -294,6 +294,20 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
                 // of the walked land (inside the edge), and never deep inside it (cover = 1 there).
                 // #308 map 3: the rim's ink AND width follow the gate (MapFog308_Rim: thick where the brush is pressed, thin to the end of a run)
                 float rim=crisp*MapFog308_Rim(walk.y,edgePx,_M308Rim.y)*(1-interiorOn);
+                #ifndef _MINI_HUD
+                // #308 map 4 (D308-24 answer 9): the unfolded sheet and the whole-world view draw a thin WHOLE rim; the minimap keeps the
+                // broken dry-brush rim above (this block is not compiled into the _MINI_HUD variant). The same function with the gate of a
+                // whole rim (MapFog308_Edge's .y at weight 1: no rim where field + GATE0 >= 1) and the notation's sheet width
+                // (_M308Rim.w screen px; / WMAX because MapFog308_Rim widens a full-pressure rim by WMAX). _M308Rim.z = 0 / 1 (notation
+                // values.fogEdge.sheet.whole): 0 = the sheet draws the minimap's rim. Still x crisp: no ink on an unwalked pixel (#214).
+                // The literal .92 below IS MapFog308_Edge's `1-.08*weight` at weight 1 (MapFog308.cginc, its `float gate=max(...)` line):
+                // change one and the other must follow. Where a fog cell is under (rim px + .5) / .32 screen px (the whole-world view:
+                // 4 px per cell) this gate cuts the rim at .32 - .40 cells: 1.5 px stands about 1.2 - 1.3 px wide there, and no
+                // _M308Rim.w makes it wider than about 1.5 px.
+                float gateW=max(saturate(walk.x+MAPFOG308_E_GATE0),.92);
+                float rimW=crisp*MapFog308_Rim(gateW,edgePx,_M308Rim.w/MAPFOG308_E_WMAX)*(1-interiorOn);
+                rim=lerp(rim,rimW,saturate(_M308Rim.z));
+                #endif
                 col=lerp(col,lerp(unk,_M308Ink.rgb,_M308Rim.x),rim);
                 #ifdef _MINI_HUD
                 // the rectangle of #307 (rho = 1 at the edge); the #308 frame sits on the edge, so the fade is a thin feather

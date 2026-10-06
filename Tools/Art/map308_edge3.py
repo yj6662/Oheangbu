@@ -19,6 +19,31 @@ FLOOR_PER_KCOVER = .809
 TEXT3 = ('float land=min(depth,MAPFOG308_E_KCOVER*cover);', 'theta=max(theta,MAPFOG308_E_FLOOR/pxPerCell);', 'float field=land-theta;',
          'field=min(field,dmix-theta-sw);', '*saturate(MAPFOG308_E_CK*cover);', 'return float2(field,gate);')
 PAPER3 = 'float rim=crisp*MapFog308_Rim(walk.y,edgePx,_M308Rim.y)*(1-interiorOn);'
+# #308 map 4 (D308-24 answer 9): the sheet's thin whole rim. A paper shader carries it when it reads `_M308Rim.z` (is_map4(paper)); then
+# these three lines must stand, in this order, inside ONE `#ifndef _MINI_HUD` block right after PAPER3 (map4_block(paper)).
+PAPER4 = ('float gateW=max(saturate(walk.x+MAPFOG308_E_GATE0),.92);', 'float rimW=crisp*MapFog308_Rim(gateW,edgePx,_M308Rim.w/MAPFOG308_E_WMAX)*(1-interiorOn);',
+          'rim=lerp(rim,rimW,saturate(_M308Rim.z));')
+# ... and the cginc deployed with it turns the two edge waves off on a one-row fog (the legend swatch) - in a block only the sheet variant compiles
+TEXT4 = ('#if defined(_MAP308) && !defined(_MINI_HUD)', 'float oneRow=saturate(_FogTex_TexelSize.w-1);', 'wave1*=oneRow;wave2*=oneRow;')
+
+
+def is_map4(paper_code): return '_M308Rim.z' in paper_code or '_M308Rim.w' in paper_code
+
+
+def map4_block(paper_code):
+    """paper_code = the _MAP308 branch without comments. True when the sheet rim is exactly PAPER3, `#ifndef _MINI_HUD`, PAPER4 (three
+    lines), `#endif`, then the one line that lays the rim down - nothing between, so no map4 term can reach the _MINI_HUD variant."""
+    want = [PAPER3, '#ifndef _MINI_HUD'] + list(PAPER4) + ['#endif', 'col=lerp(col,lerp(unk,_M308Ink.rgb,_M308Rim.x),rim);']
+    lines = [l.strip() for l in paper_code.split('\n') if l.strip()]
+    if PAPER3 not in lines: return False
+    i = lines.index(PAPER3)
+    return lines[i:i + len(want)] == want and sum(l.count('_M308Rim.z') + l.count('_M308Rim.w') for l in lines) == 2
+
+
+def rim3_whole(q, field, edge_px, px):
+    """the paper's map 4 lines: MapFog308_Rim(gateW, edgePx, _M308Rim.w / WMAX), gateW = max(saturate(field + GATE0), .92) - multiply by
+    crisp (and 1 - interiorOn) as the paper does; the caller blends it: rim = lerp(rim, rimW, saturate(_M308Rim.z))"""
+    return rim3(q, np.maximum(sat(field + q['GATE0']), .92), edge_px, px / q['WMAX'])
 
 
 def is_map3(q): return q is not None and 'GATE0' in q

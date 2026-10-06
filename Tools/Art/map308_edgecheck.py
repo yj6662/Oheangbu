@@ -45,6 +45,7 @@ f32 = np.float32
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import map308_edge3 as E3       # #308 map 3: the formula of a cginc that has `#define MAPFOG308_E_GATE0`
 LIVE_CGINC = ROOT / 'Oheangbu/Assets/_Project/Art/UI/UI308/Map/Shaders/MapFog308.cginc'
+SHEET = None                    # #308 map 4: the bundle's values.fogEdge.sheet (+ basePx = fogEdge.px), set by main(); None = a bundle without it
 F_NAMES = ('FROM', 'SPAN', 'KCOVER', 'FLOOR', 'D1', 'D2', 'HALF1', 'HALF2', 'PHASE', 'PK', 'RK', 'RIM0', 'RIM1', 'RIMBREAK')
 F_FLOOR_PER_KCOVER = .809       # #214: half of the steepest climb of KCOVER x cover across a lattice corner (1.618 x KCOVER per cell)
 
@@ -146,6 +147,7 @@ def edge(walked, X, Z, mode='fine', p=P_EDGE, q=None):
     gx, gy = deriv(field, mode)
     epx = field / np.maximum(np.hypot(gx, gy), 1e-5)
     crisp = np.clip(epx + .5, 0, 1)
+    edge.field = field                                                                      # #308 map 4: the sheet's whole rim reads the field (run() below)
     return crisp, epx, gate, at(ci, cj) > .5
 
 
@@ -186,7 +188,10 @@ def run(walked_sets, zooms, n_views, rng, turn=False, p=None, q=None):
                     crisp, epx, gate, cw = edge(walked, X, Z, mode, p or P_EDGE, q)
                     inside = (X >= 0) & (X < 4000) & (Z >= 0) & (Z < 6000)
                     unw = (~cw) & inside
-                    if E3.is_map3(q): rim = crisp * E3.rim3(q, gate, epx, rim_px)                 # the paper's map3 line: crisp x MapFog308_Rim(walk.y, edgePx, _M308Rim.y)
+                    if E3.is_map3(q):
+                        rim = crisp * E3.rim3(q, gate, epx, rim_px)                               # the paper's map3 line: crisp x MapFog308_Rim(walk.y, edgePx, _M308Rim.y)
+                        if SHEET is not None and zname.startswith('full'):                        # #308 map 4: the sheet's whole rim - BOTH rims are counted (max = any blend of the two)
+                            rim = np.maximum(rim, crisp * E3.rim3_whole(q, edge.field, epx, SHEET['px'] * rim_px / SHEET['basePx']))
                     else: rim = crisp * np.clip(rim_px - epx + .5, 0, 1) * (1 - np.clip((gate - .92) / .08, 0, 1) ** 2 * (3 - 2 * np.clip((gate - .92) / .08, 0, 1)))
                     leak += int((crisp[unw] > 0).sum()); leak_vis += int((crisp[unw] > 1 / 255).sum()); rim_leak += int((rim[unw] > 1 / 255).sum())
                     mx = max(mx, float(crisp[unw].max()) if unw.any() else 0.0)
@@ -209,6 +214,8 @@ def main():
     note = json.loads((bundle / 'map308_notation.json').read_text(encoding='utf-8')); ce = note['values']['fogEdge']['crispEdge']
     P_EDGE = (f32(ce['thresholdFrom']), f32(ce['thresholdSpan']), f32(ce['noiseCellsPerFogCell'][0]), f32(ce['noiseCellsPerFogCell'][1]))      # formula F does not read it
     rim = float(note['values']['fogEdge']['px'])
+    global SHEET
+    SHEET = dict(note['values']['fogEdge']['sheet'], basePx=rim) if note['values']['fogEdge'].get('sheet') else None    # #308 map 4
     rng = np.random.default_rng(308)
     sets = walk_patterns(rng)
     sets[f"mock walk ({note['stage']})"] = TW.mock_walk(TW.Bundle(bundle))

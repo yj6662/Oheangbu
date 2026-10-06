@@ -137,6 +137,10 @@ namespace Oheangbu.App.World.UI
         public Color Cinnabar = new Color32(0xB8, 0x39, 0x2B, 0xFF);
         [Tooltip("ink rim of the walked land: ink alpha over the unwalked wash, and width (px) just inside the crisp edge")] public float EdgeRimAlpha = .45f;
         public float EdgeRimPx = 2f;
+        [Tooltip("#308 map 4 (values.fogEdge.sheet): the unfolded sheet and the whole-world view, never the minimap. Whole 1 = a thin whole rim of SheetRimPx (reference px) at SheetRimAlpha; 0 = the sheet draws the minimap's rim (EdgeRim*)")]
+        [Range(0f, 1f)] public float SheetRimWhole = 0f;
+        public float SheetRimPx = 1.5f;
+        public float SheetRimAlpha = .55f;
         [Tooltip("crisp walked edge (MapFog308_Edge): the contour of the lattice-corner field at x + y x noise. x > 0 keeps the edge inside the walked cells; x + y < 1")]
         public Vector2 EdgeThreshold = new Vector2(.14f, .42f);
         [Tooltip("crisp walked edge: lattice cells of the two noise octaves per 32 m discovery cell")] public Vector2 EdgeNoiseCells = new Vector2(1.6f, 3.7f);

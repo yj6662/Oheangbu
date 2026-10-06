@@ -45,11 +45,20 @@ namespace Oheangbu.EditorTools.WorldMacro
     //                          minimap's glyph, "every GroundDrawn marker can show", and the recorded fog states of
     //                          Tools/Unity/Stage308_map3c/Data/reveal308_cases.json run through MapGround308 (visible == ground drawn)
     //                          -> Art/UI308/Map/checks-reveal.txt
-    //   preview[:at=x,z][:reveal=all|none|<metres>][:follow=<deg>][:size=1080|1440][:bundle=on|off][:groundrule=on|off][:tag=<name>]
+    //   preview[:at=x,z][:reveal=all|none|<metres>][:follow=<deg>][:size=1080|1440][:bundle=on|off][:groundrule=on|off][:sheetrim=on|off][:tag=<name>]
+    //                          #308 map 4: sheetrim=off = the unfolded sheet with the minimap's rim (the picture before map 4; a copy of
+    //                          the notation in memory, the asset is not touched). The answer carries three RIM lines: the notation's
+    //                          numbers, then the vector each material holds (`RIM material sheet` / `RIM material minimap`, read back
+    //                          from the material; Tools/Unity/Stage308_map4/Offline/map4_caps.py rimline compares the three).
+    //                          `check` has one more line since map 4 (AC-M4.10: the asset's rim numbers = the bundle's) -> 36 lines.
     //                          Edit-mode stills WITHOUT Play: the real WorldMapPresenter and HudMinimap304 in a preview scene (isolated
     //                          session, nothing saved, the open scene is only read) -> Art/UI308/Map/preview/<tag>_*.png
     //                          #308 map 3c: a marker without an arrival event is known when the GAME's walk test says so (its cell
     //                          and its reveal rule); groundrule=off = every such marker by its cell alone (the picture before map 3c)
+    // #308 recovery (Temporary Exception "lost bake inputs", Tools/Unity/Stage308_recover_mapin): the bundle's recorded inputs are
+    // compared by MapBundleInputs308. A recorded input that is NOT ON DISK is taken on the bundle's own record only when
+    // Tools/Art/map308_lost_inputs.json names that path with that sha - `TRUSTED absent input (...)`, one line each, in status / dry /
+    // apply / check (INFO lines there: the count stays 36). An input that is on disk with other bytes is refused as before.
     // No static field: the import rules are built on each call, the reader's state lives on the stack.
     public static class MapOverhaul308
     {
@@ -68,7 +77,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string KitAtlasPath = KitFolder + "/theme308_atlas.png", KitJsonPath = KitFolder + "/theme308_atlas.json";
         const string KitStageJson = "Tools/Unity/Stage308_theme/_ProjectAssets/Art/UI/UI308/Theme/theme308_atlas.json";
         const string NotationFile = "map308_notation.json";
-        const string Usage = "status | dry | apply | check | reveal | revert[:files] | report | preview[:at=x,z][:reveal=all|none|<metres>][:follow=<deg>][:size=1080|1440][:bundle=on|off][:groundrule=on|off][:tag=<name>]";
+        const string Usage = "status | dry | apply | check | reveal | revert[:files] | report | preview[:at=x,z][:reveal=all|none|<metres>][:follow=<deg>][:size=1080|1440][:bundle=on|off][:groundrule=on|off][:sheetrim=on|off][:tag=<name>]";
         // #308 map 3c: when a marker without an arrival event first shows. Read only; apply fills the notation asset from the first,
         // `reveal` replays the second. No data file = apply KEEPS the asset's table (the folder is not under git: its absence is
         // not a switch - the switch is "enabled": false in the input, which leaves a file without rows).
@@ -111,6 +120,31 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
         sealed class Refuse : Exception { public Refuse(string m) : base(m) { } }
         static string F(float v, string f = "0.###") => v.ToString(f, CultureInfo.InvariantCulture);
+
+        /// <summary>#308 map 4: the two rims a bundle's notation carries, as one line (dry and apply print it).</summary>
+        static string RimNote(object root)
+        {
+            string mini = "minimap " + Json.Text(root, "?", "values", "fogEdge", "variant") + " a" + F((float)Json.Num(root, 0, "values", "fogEdge", "inkAlpha")) + " "
+                + F((float)Json.Num(root, 0, "values", "fogEdge", "px")) + " px broken";
+            if (Json.At(root, "values", "fogEdge", "sheet") == null) return mini + " | sheet: no block in this bundle (the sheet draws the minimap's rim)";
+            return mini + " | sheet whole " + F((float)Json.Num(root, 0, "values", "fogEdge", "sheet", "whole")) + ", " + F((float)Json.Num(root, 0, "values", "fogEdge", "sheet", "px")) + " px a"
+                + F((float)Json.Num(root, 0, "values", "fogEdge", "sheet", "inkAlpha"));
+        }
+
+        /// <summary>#308 map 4 (AC-M4.10): the rim numbers apply writes from a bundle's notation, as one string. `check` compares it with
+        /// RimAsset: the minimap's pair, the sheet's switch and - when the bundle carries the sheet block - its width and ink alpha.</summary>
+        static string RimBundle(object root)
+        {
+            bool sheet = Json.At(root, "values", "fogEdge", "sheet") != null;
+            return "minimap a" + F((float)Json.Num(root, -1, "values", "fogEdge", "inkAlpha")) + " " + F((float)Json.Num(root, -1, "values", "fogEdge", "px")) + " px | sheet whole "
+                + F(sheet ? Mathf.Clamp01((float)Json.Num(root, 0, "values", "fogEdge", "sheet", "whole")) : 0f)
+                + (sheet ? ", " + F(Mathf.Clamp((float)Json.Num(root, -1, "values", "fogEdge", "sheet", "px"), .5f, 4f)) + " px a" + F(Mathf.Clamp01((float)Json.Num(root, -1, "values", "fogEdge", "sheet", "inkAlpha"))) : "");
+        }
+
+        static string RimAsset(MapNotation308SO n, bool sheet) => "minimap a" + F(n.EdgeRimAlpha) + " " + F(n.EdgeRimPx) + " px | sheet whole " + F(n.SheetRimWhole)
+            + (sheet ? ", " + F(n.SheetRimPx) + " px a" + F(n.SheetRimAlpha) : "");
+
+        static string V4(Vector4 v) => "(" + F(v.x) + ", " + F(v.y) + ", " + F(v.z) + ", " + F(v.w) + ")";
 
         /// <summary>Spec name of the entry point; same as Run.</summary>
         public static string Execute(string argument) => Run(argument);
@@ -210,6 +244,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             public Dictionary<string, object> Root;
             public List<(string file, string sha, long bytes)> Outputs = new List<(string, string, long)>();
             public List<(string role, string path, string sha)> Inputs = new List<(string, string, string)>();
+            public List<string> Trusted = new List<string>(), InputNotes = new List<string>();   // #308 recovery: BundleProblems fills them
         }
 
         static Bundle ReadBundle()
@@ -249,17 +284,12 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             // a stale notation: an input changed after the bake. Every input the bake recorded is compared (the map data and the
             // layout copies, and also the height field, the wet mask, the crossings, the tree sheets and the wall layouts: a
-            // changed forest or terrain would otherwise be imported as an old picture)
-            foreach (var i in b.Inputs)
-            {
-                if (string.IsNullOrEmpty(i.path) || string.IsNullOrEmpty(i.sha)) { problems.Add("inputs[] entry without a path or sha (" + i.role + ")"); continue; }
-                string abs = Path.Combine(Harness303.RepoRoot, i.path.Replace('/', Path.DirectorySeparatorChar));
-                if (!File.Exists(abs)) { problems.Add("input missing (" + i.role + "): " + i.path); continue; }
-                string now = Harness303.Sha(abs);
-                // name WHAT changed: which input (its role in the bake), the recorded and the present sha, when the file was written
-                if (!SameSha(now, i.sha)) problems.Add("input changed since the bake (" + i.role + "): " + i.path + " - sha " + Short(i.sha) + " -> " + Short(now) + ", written "
-                    + File.GetLastWriteTime(abs).ToString("MM-dd HH:mm", CultureInfo.InvariantCulture) + " - bake again (map308_bake.py --stage " + (string.IsNullOrEmpty(b.Stage) ? "base" : b.Stage) + ")");
-            }
+            // changed forest or terrain would otherwise be imported as an old picture).
+            // #308 recovery: the comparison is MapBundleInputs308's - the same answers and the same words, plus `TRUSTED absent input`
+            // for a file that is not on disk and is a row of the lost-input list with the sha this bundle recorded (never for a file
+            // that is on disk: other bytes are refused whatever the list says)
+            var inputs = MapBundleInputs308.Classify(Harness303.RepoRoot, b.Inputs, b.Stage);
+            problems.AddRange(inputs.Problems); b.Trusted = inputs.Trusted; b.InputNotes = inputs.Notes;
             if (!b.Inputs.Any(i => i.role == "map")) problems.Add("inputs[] has no 'map' entry (Map.asset sha)");
             RevealProblems(problems);   // #308 map 3c: a malformed marker reveal data file is refused before anything is copied
             if (string.IsNullOrEmpty(b.Stage)) problems.Add("the notation names no stage");
@@ -380,6 +410,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             var log = new List<string>();
             log.Add((dry ? "DRY" : "APPLY") + " map308 bundle " + bundle.Folder + ": stage '" + bundle.Stage + "' (scenes '" + sceneStage + "'), contract " + bundle.Version + ", notation sha " + bundle.JsonSha.Substring(0, 12)
                 + ", baked for " + Path.GetFileName(bakedPath));
+            foreach (string line in bundle.Trusted.Concat(bundle.InputNotes)) log.Add((dry ? "DRY " : "") + line);   // #308 recovery
             // 1. files
             var copies = new List<string>();
             var files = bundle.Outputs.Select(o => o.file).Concat(new[] { NotationFile }).Distinct().ToList();
@@ -403,6 +434,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 log.Add(existing == null ? "DRY would create " + NotationPath : "DRY would refresh " + NotationPath + " from " + NotationFile);
                 log.Add(style.Notation308 == existing && existing != null ? "DRY MapStyle304.Notation308 already points at it" : "DRY would set MapStyle304.Notation308 (" + StylePath + ")");
                 log.Add("DRY REVEAL " + (RevealData(out string revealDry).Count > 0 ? revealDry : "KEPT " + RevealKept(existing) + " - " + revealDry));   // #308 map 3c
+                log.Add("DRY RIM " + RimNote(bundle.Root));   // #308 map 4
                 log.Add(KitNote());
                 log.Add("DRY nothing written");
                 return string.Join("\n", log);
@@ -525,6 +557,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             n.Ink = Hex(Json.Text(root, null, "values", "ink"), n.Ink); n.Cinnabar = Hex(Json.Text(root, null, "values", "cinnabar"), n.Cinnabar);
             n.EdgeRimAlpha = Num(root, n.EdgeRimAlpha, kept, "values", "fogEdge", "inkAlpha");
             n.EdgeRimPx = Num(root, n.EdgeRimPx, kept, "values", "fogEdge", "px");
+            // #308 map 4: the sheet's thin whole rim (values.fogEdge.sheet). A bundle of an older tool has no such block: the sheet then
+            // draws the minimap's rim (whole 0) - a missing block never turns the new rim on by a default
+            if (Json.At(root, "values", "fogEdge", "sheet") == null) n.SheetRimWhole = 0f;
+            else
+            {
+                n.SheetRimWhole = Mathf.Clamp01(Num(root, 0f, kept, "values", "fogEdge", "sheet", "whole"));
+                n.SheetRimPx = Mathf.Clamp(Num(root, n.SheetRimPx, kept, "values", "fogEdge", "sheet", "px"), .5f, 4f);
+                n.SheetRimAlpha = Mathf.Clamp01(Num(root, n.SheetRimAlpha, kept, "values", "fogEdge", "sheet", "inkAlpha"));
+            }
+            log.Add("RIM " + RimNote(root));
             n.EdgeThreshold = new Vector2(Num(root, n.EdgeThreshold.x, kept, "values", "fogEdge", "crispEdge", "thresholdFrom"),
                 Num(root, n.EdgeThreshold.y, kept, "values", "fogEdge", "crispEdge", "thresholdSpan"));
             var edgeCells = Json.List(root, "values", "fogEdge", "crispEdge", "noiseCellsPerFogCell");
@@ -826,7 +868,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var b = ReadBundle();
                     var problems = BundleProblems(b, out string sceneStage);
                     log.Add("STAGE bundle " + b.Folder + ": stage '" + b.Stage + "', contract " + b.Version + ", " + b.Outputs.Count + " files, scenes '" + sceneStage + "' - "
-                        + (problems.Count == 0 ? "importable" : problems.Count + " problem(s): " + string.Join(" | ", problems)));
+                        + (problems.Count == 0 ? "importable" : problems.Count + " problem(s): " + string.Join(" | ", problems))
+                        + (b.Trusted.Count > 0 ? " - " + b.Trusted.Count + " recorded input(s) not on disk, taken on the bundle's record" : ""));
+                    foreach (string line in b.Trusted.Concat(b.InputNotes)) log.Add("STAGE bundle " + line);   // #308 recovery
                 }
                 catch (Refuse r) { log.Add("STAGE bundle " + r.Message); }
             }
@@ -861,7 +905,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             sb.AppendLine("zoom bands (m/px) <= " + F(n.ZoomBands.x) + " | " + F(n.ZoomBands.y) + " | " + F(n.ZoomBands.z) + " | above");
             sb.AppendLine("values paper #" + ColorUtility.ToHtmlStringRGB(n.Paper) + " unwalked #" + ColorUtility.ToHtmlStringRGB(n.Unknown) + " ink #" + ColorUtility.ToHtmlStringRGB(n.Ink)
                 + " cinnabar #" + ColorUtility.ToHtmlStringRGB(n.Cinnabar) + " | crisp edge at " + F(n.EdgeThreshold.x) + " + " + F(n.EdgeThreshold.y) + " x noise (cells " + F(n.EdgeNoiseCells.x) + ", "
-                + F(n.EdgeNoiseCells.y) + "), rim a" + F(n.EdgeRimAlpha) + " over the wash, " + F(n.EdgeRimPx) + " px inside");
+                + F(n.EdgeNoiseCells.y) + "), rim a" + F(n.EdgeRimAlpha) + " over the wash, " + F(n.EdgeRimPx) + " px inside"
+                + " | sheet rim " + (n.SheetRimWhole > 0f ? "whole " + F(n.SheetRimWhole) + ", " + F(n.SheetRimPx) + " px a" + F(n.SheetRimAlpha) : "= the minimap's"));
             sb.AppendLine("terrain slope wash " + F(n.SlopeWash) + ", elevation wash " + F(n.ElevationWash) + ", forest from " + F(n.ForestShowFrom) + " ink " + F(n.ForestInk) + ", rock from " + F(n.RockFrom)
                 + ", water range " + F(n.WaterRangeMetres) + " m shore " + F(n.ShorePx) + " px, pattern m " + n.PatternMetres);
             foreach (var s in n.StrokeStyles)
@@ -901,11 +946,17 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (bundle != null)
             {
                 var problems = BundleProblems(bundle, out string sceneStage);
-                c.Add(problems.Count == 0, "AC-E1 stage bundle is importable (version, files, input sha, stage '" + bundle.Stage + "' = scenes '" + sceneStage + "')" + (problems.Count > 0 ? ": " + string.Join(" | ", problems) : ""));
+                c.Add(problems.Count == 0, "AC-E1 stage bundle is importable (version, files, input sha, stage '" + bundle.Stage + "' = scenes '" + sceneStage + "')" + (problems.Count > 0 ? ": " + string.Join(" | ", problems) : "")
+                    + (bundle.Trusted.Count > 0 ? " - " + bundle.Trusted.Count + " recorded input(s) not on disk, taken on the bundle's record (Temporary Exception: lost bake inputs)" : ""));
+                foreach (string line in bundle.Trusted.Concat(bundle.InputNotes)) c.Lines.Add("INFO    " + line);   // #308 recovery: not counted
                 int same = 0;
                 foreach (var o in bundle.Outputs) { string abs = Harness303.Abs(ArtFolder + "/" + o.file); if (File.Exists(abs) && SameSha(Harness303.Sha(abs), o.sha)) same++; }
                 c.Add(same == bundle.Outputs.Count, "AC-E1 imported files = the notation's sha256: " + same + "/" + bundle.Outputs.Count);
                 c.Add(n.Stage == bundle.Stage && n.Version == bundle.Version, "AC-E1 notation asset stage / contract = the bundle's: '" + n.Stage + "' / " + n.Version);
+                // #308 map 4 (AC-M4.10): what apply wrote is what the bundle says - a swapped or defaulted rim number shows here, not in a picture
+                bool sheetBlock = Json.At(bundle.Root, "values", "fogEdge", "sheet") != null;
+                c.Add(RimAsset(n, sheetBlock) == RimBundle(bundle.Root), "AC-M4.10 the notation asset's rim numbers = the bundle's values.fogEdge: asset [" + RimAsset(n, sheetBlock) + "] bundle [" + RimBundle(bundle.Root) + "]"
+                    + (sheetBlock ? "" : " (no sheet block in this bundle: the sheet draws the minimap's rim)"));
                 string bakedPath = bundle.BakedFor.StartsWith("Oheangbu/", StringComparison.Ordinal) ? bundle.BakedFor.Substring("Oheangbu/".Length) : bundle.BakedFor;
                 c.Add(n.BakedFor != null && AssetDatabase.GetAssetPath(n.BakedFor) == bakedPath, "AC-E1 BakedFor = " + bakedPath);
             }
@@ -1225,7 +1276,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string Preview(string command)
         {
             // options
-            Vector2? at = null; bool? revealAll = true; float revealMetres = 0f, heading = float.NaN; int height = 1080; bool bundleOn = true, groundRule = true; string tag = "preview";
+            Vector2? at = null; bool? revealAll = true; float revealMetres = 0f, heading = float.NaN; int height = 1080; bool bundleOn = true, groundRule = true, sheetRim = true; string tag = "preview";
             foreach (string part in command.Split(':').Skip(1))
             {
                 int eq = part.IndexOf('='); if (eq <= 0) return "REFUSED preview option '" + part + "' (" + Usage + ")";
@@ -1248,6 +1299,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "size": if (value == "1440") height = 1440; else if (value == "1080") height = 1080; else return "REFUSED size=1080|1440"; break;
                     case "bundle": bundleOn = value != "off"; break;
                     case "groundrule": if (value == "on") groundRule = true; else if (value == "off") groundRule = false; else return "REFUSED groundrule=on|off"; break;
+                    case "sheetrim": if (value == "on") sheetRim = true; else if (value == "off") sheetRim = false; else return "REFUSED sheetrim=on|off"; break;
                     case "tag": tag = new string(value.Where(ch => char.IsLetterOrDigit(ch) || ch == '_' || ch == '-').ToArray()); if (tag.Length == 0) tag = "preview"; break;
                     default: return "REFUSED preview option '" + key + "' (" + Usage + ")";
                 }
@@ -1269,6 +1321,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             var instance = typeof(PlaytestUiRoot).GetProperty("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             var oldInstance = PlaytestUiRoot.Instance;
             RenderTexture rt = null; WorldMapPresenter presenter = null; HudMinimap304 mini = null; MapStyle304SO style = null; WorldMacroPlaytestSO content = null; GameObject panel = null;
+            MapNotation308SO notationCopy = null;
             try
             {
                 var cam = New("Map308 preview camera", typeof(Camera)).GetComponent<Camera>();
@@ -1285,6 +1338,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                 typeof(WorldMacroPlaytestSession).GetProperty("Progress").SetValue(session, progress);
                 // the style the real maps resolve, with the bundle switched as asked (a copy in memory: the asset is not touched)
                 style = Object.Instantiate(styleAsset); style.hideFlags = HideFlags.HideAndDontSave; style.Notation308 = bundleOn ? notation : null;
+                // #308 map 4: sheetrim=off = the sheet with the minimap's rim. A copy of the notation in memory carries the switch; the asset is not touched
+                if (bundleOn && notation != null && !sheetRim)
+                { notationCopy = Object.Instantiate(notation); notationCopy.hideFlags = HideFlags.HideAndDontSave; notationCopy.SheetRimWhole = 0f; style.Notation308 = notationCopy; }
                 if (instance != null && instance.CanWrite) instance.SetValue(null, ui);
                 var theme = ui.Theme;
                 presenter = panel.AddComponent<WorldMapPresenter>(); presenter.enabled = false;
@@ -1297,6 +1353,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                 progress.ui.discoveredMarkers = ui.MapData.Markers.Where(m => m != null && presenter.PreviewWalkReveals308(m)).Select(m => m.Id).ToList();
                 lines.Add("PREVIEW bundle " + (presenter.Notation308 != null ? "ON (stage '" + presenter.Notation308.Stage + "')" : bundleOn ? "OFF: the bundle is not usable for " + ui.MapData.name + " (pre-#308 path)" : "off (pre-#308 path)")
                     + " at " + here + " reveal " + (revealAll == true ? "all" : revealMetres > 0f ? F(revealMetres) + " m" : "none") + " known markers " + progress.ui.discoveredMarkers.Count + "/" + ui.MapData.Markers.Length + " " + width + "x" + height);
+                if (presenter.Notation308 != null)
+                    lines.Add("RIM minimap a" + F(presenter.Notation308.EdgeRimAlpha) + " " + F(presenter.Notation308.EdgeRimPx) + " px broken | sheet "
+                        + (presenter.Notation308.SheetRimWhole > 0f ? "whole " + F(presenter.Notation308.SheetRimWhole) + ", " + F(presenter.Notation308.SheetRimPx) + " px a" + F(presenter.Notation308.SheetRimAlpha) : "= the minimap's rim")
+                        + (sheetRim ? "" : " (sheetrim=off)"));
                 if (presenter.Notation308 != null)
                     foreach (var m in ui.MapData.Markers)
                     {
@@ -1327,6 +1387,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 presenter.SetExpanded(true);
                 presenter.PreviewRefresh308();
                 lines.Add("FULL current view: " + Capture("full_current", null) + " | strip vertices " + presenter.FullStripVertices308 + " uploads " + presenter.FullStripUploads308);
+                // #308 map 4: what the sheet's material really holds (ink alpha, broken rim px, whole 0 / 1, whole rim px; px = notation px x canvas x page)
+                if (presenter.Notation308 != null) lines.Add("RIM material sheet _M308Rim " + V4(presenter.PreviewSheetRim308) + " canvas x" + F(scale));
                 presenter.ShowWholeWorld(); presenter.PreviewRefresh308();
                 lines.Add("FULL whole world: " + Capture("full_whole", null) + " | strip vertices " + presenter.FullStripVertices308 + " uploads " + presenter.FullStripUploads308);
                 var names = new[] { "ExpandedWorldMap/TwiceFoldedHanji", "ExpandedWorldMap/TwiceFoldedHanji/PrintedMapWindow", "ExpandedWorldMap/TwiceFoldedHanji/PrintedMapWindow/MapInput" };
@@ -1351,6 +1413,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 lines.Add("AC-E2 minimap: ready " + ready + ", root '" + root.name + "', MiniRoot " + (map != null && map.name == "MiniRoot" ? "ok" : "MISSING") + ", uvRect " + (map != null ? map.uvRect.ToString() : "-")
                     + ", _MINI_HUD " + (mini.Material != null && mini.Material.IsKeywordEnabled("_MINI_HUD")) + ", _MAP308 " + (mini.Material != null && mini.Material.IsKeywordEnabled("_MAP308"))
                     + ", Mask / RectMask2D none " + masks + ", notation " + mini.Notation308Active + ", interior " + mini.Interior + ", range " + F(mini.RangeMetres) + " m");
+                // #308 map 4: the minimap's material keeps z = w = 0 (and its shader variant does not read them)
+                if (presenter.Notation308 != null) lines.Add("RIM material minimap _M308Rim " + (mini.Material != null && mini.Material.HasProperty("_M308Rim") ? V4(mini.Material.GetVector("_M308Rim")) : "no material") + " canvas x" + F(scale));
                 lines.Add("MINI strips: uploads " + mini.StripUploads308 + ", vertices " + mini.StripVertices308 + ", mean build " + mini.StripMeanBuildMilliseconds308.ToString("0.000", CultureInfo.InvariantCulture)
                     + " ms (editor), minimap prints (raster) " + presenter.MiniPrints + ", markers shown " + mini.VisibleMarkers + ", objectives left off " + mini.ObjectivesLeftOff);
                 File.WriteAllText(Path.Combine(output, tag + ".txt"), string.Join("\n", lines) + "\n", new UTF8Encoding(false));
@@ -1364,6 +1428,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (panel != null) Object.DestroyImmediate(panel);
                 if (content != null) Object.DestroyImmediate(content);
                 if (style != null) Object.DestroyImmediate(style);
+                if (notationCopy != null) Object.DestroyImmediate(notationCopy);
                 if (rt != null) { if (RenderTexture.active == rt) RenderTexture.active = null; rt.Release(); Object.DestroyImmediate(rt); }
                 EditorSceneManager.ClosePreviewScene(preview);
             }

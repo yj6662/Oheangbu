@@ -127,12 +127,14 @@ namespace Oheangbu.App.World.UI
             bands.y = Mathf.Max(bands.x + .001f, bands.y); bands.z = Mathf.Max(bands.y + .001f, bands.z); bands.w = Mathf.Clamp01(bands.w);
             material.SetVector("_M308Cave", bands);
             if (clearInk308 != null) material.SetTexture("_MacroInkTex", clearInk308);
-            PaperBand308(material, mini ? 1.2f : 2.7f, 1f);
+            PaperBand308(material, mini ? 1.2f : 2.7f, 1f, mini);
         }
 
         /// <summary>The values that follow the scale: pattern period of the zoom band, shore line width in metres, slope wash or
-        /// elevation wash, and the walked-edge ink rim (its width in screen px, inside the crisp edge).</summary>
-        void PaperBand308(Material material, float metresPerPx, float screenPerReferencePx)
+        /// elevation wash, and the walked-edge ink rim (its width in screen px, inside the crisp edge).
+        /// #308 map 4: mini = the HUD minimap's material (the broken dry-brush rim, as before); otherwise the unfolded sheet or the
+        /// legend swatch on it (the notation's thin whole rim).</summary>
+        void PaperBand308(Material material, float metresPerPx, float screenPerReferencePx, bool mini = false)
         {
             if (n308 == null || material == null) return;
             metresPerPx = Mathf.Max(.01f, metresPerPx);
@@ -151,10 +153,23 @@ namespace Oheangbu.App.World.UI
             // shore line: half width in metres, and one screen px in metres for its edge
             material.SetVector("_M308Water", new Vector4(Mathf.Max(1f, n308.WaterRangeMetres), Mathf.Max(0f, n308.ShorePx) * .5f * metresPerPx,
                 Mathf.Max(.01f, metresPerPx / screen), Mathf.Clamp01(world ? n308.RippleInkWorld : n308.RippleInk)));
-            material.SetVector("_M308Rim", new Vector4(Mathf.Clamp01(n308.EdgeRimAlpha), Mathf.Max(.5f, n308.EdgeRimPx * screen), 0f, 0f));
+            // #308 map 4 (D308-24 answer 9): the minimap's vector is the one it always got (z = w = 0: the shader's sheet block is not even
+            // compiled into its variant). The sheet gets the notation's thin whole rim: z = 0 / 1, w = its width in screen px, and the
+            // rim's ink alpha goes from the minimap's to the sheet's with z.
+            if (mini) material.SetVector("_M308Rim", new Vector4(Mathf.Clamp01(n308.EdgeRimAlpha), Mathf.Max(.5f, n308.EdgeRimPx * screen), 0f, 0f));
+            else
+            {
+                float whole = Mathf.Clamp01(n308.SheetRimWhole);
+                material.SetVector("_M308Rim", new Vector4(Mathf.Clamp01(Mathf.Lerp(n308.EdgeRimAlpha, n308.SheetRimAlpha, whole)), Mathf.Max(.5f, n308.EdgeRimPx * screen),
+                    whole, Mathf.Max(.5f, n308.SheetRimPx * screen)));
+            }
         }
 
-        public void ApplyMiniBand308(Material paper, float metresPerPx, float screenPerReferencePx) => PaperBand308(paper, metresPerPx, screenPerReferencePx);
+        public void ApplyMiniBand308(Material paper, float metresPerPx, float screenPerReferencePx) => PaperBand308(paper, metresPerPx, screenPerReferencePx, true);
+
+        /// <summary>Edit-mode preview (MapOverhaul308, #308 map 4): the rim vector the unfolded sheet's material holds right now -
+        /// (ink alpha, broken rim px, whole rim 0 / 1, whole rim px), read back from the material, not from the notation.</summary>
+        public Vector4 PreviewSheetRim308 => paperMaterial != null && paperMaterial.HasProperty("_M308Rim") ? paperMaterial.GetVector("_M308Rim") : Vector4.zero;
 
         /// <summary>A 1 x 1 clear texture for the ink layers the #308 path does not print.</summary>
         Texture2D ClearInk308()
