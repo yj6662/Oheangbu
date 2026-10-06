@@ -595,6 +595,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     walkSpeed[r.id] = StanceSpeed(cfg, m, walk, out float scale, out float seconds); fixtureScale[r.id] = scale; walkSeconds[r.id] = seconds;
                 }
                 var scene = SceneManager.GetActiveScene().path == path ? SceneManager.GetActiveScene() : EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+                // 2026-10-06: opening a scene (and the stance fixture) unloads unused assets - a profile or clip loaded above can be a
+                // destroyed object here ("EnemyRunProfile308 has been destroyed"). Load again what was lost.
+                foreach (var r in picked) { if (!profiles[r.id]) profiles[r.id] = RunProfileOf(r); if (!clips[r.id]) clips[r.id] = RunClipOf(r); }
                 var targets = Targets(scene, cfg).Where(t => picked.Any(r => r.id == t.monster.id)).ToList();
                 var foreign = ForeignRunCarriers(scene, cfg, run);
                 if (targets.Count == 0 && foreign.Count == 0) return "NO TARGETS " + path + ": no " + string.Join("/", picked.Select(r => r.id)) + " actor outside protected trees (scene unchanged, nothing saved)";

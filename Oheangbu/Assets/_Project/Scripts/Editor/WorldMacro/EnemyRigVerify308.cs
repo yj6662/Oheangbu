@@ -37,9 +37,20 @@ namespace Oheangbu.EditorTools.WorldMacro
     //                                amounts (verify308.json 'sweep'), the Pareto rows and the rows inside every limit
     //   sweep:<id>|set=idle          the idle relax on the avatar that is imported now (grid 'sweep.idleArm / idleElbow'): hand penetration,
     //                                clearance, and how far the wrists leave the source idle pose; the row nearest to that pose inside the limits
-    //   level-dry | level-apply | level-revert     idle <-> walk foot-height step: the idle take's root height offset (an importer value)
+    //   level-dry | level-apply | level-revert[:<id>]   rev 3: EVERY take the data lists (idle, attack, hit, stun), each by its own
+    //                                measured amount onto the measured height of the monster's reference takes (level.targetRoles):
+    //                                the take's root height offset (an importer value), pass by pass until it lands
     //   plan / apply ... |ops=arms,profile=B        the arms row with the candidate B profile (walk relax as data) instead of the walk-0 profile
     //   avatar-sync:<id>             re-copies the rig's avatar rows into every clip that copies it (after a stage brought new clip files)
+    //   rev 3 (SPEC 개정 3, EnemyRigVerify308.Rev3.cs; D308-24: candidate A stays on, the round that applies it):
+    //   bounds-dry | bounds-apply | bounds-revert[:<id>]  the culling sphere of the three prefabs = the farthest vertex of every clip by
+    //                                the M7 measure + a data margin; two lines of each prefab file, backup + sha in the record
+    //   apply ... |ops=speed+arms+bounds           bounds: culling bounds a scene holds itself (not a prefab instance's) follow the prefab
+    //   stills ... |skin=2           the two largest bone weights (the "2 bones" quality level); the default is the four-weight CPU bake
+    //   revert order of a whole round: revert-all (and the run-clip tool's) -> bounds-revert -> level-revert -> avatar-revert:<id>
+    //   (one monster alone: bounds-revert:<id> -> level-revert:<id> -> avatar-revert:<id>; the other monsters' rows stay in the records)
+    //   apply of the candidate A pairing (ops=arms, walk-0 profile) needs that monster's GO in gate_enemyrig3.json, computed on the
+    //   A measure that is on disk (gate.applyNeedsGo; the gate is Stage308_enemyrig3/_Tools/gate_enemyrig3.py)
     //   parity                       AC-4: without a profile the new relax entry poses the arms exactly as the pre-#308 formula
     //   cleanup                      destroys leftover fixture objects of this tool (never saves, never reopens a scene)
     //   clip-check[:<id>]            repaired walk FBX: file = the gated one, humanoid, avatar copied from the rig, clip flags, length
@@ -75,7 +86,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             public string id = "", displayName = "", walkSource = "", motionSource = "", walkFixed = "", walkFixedTake = "", walkFixedSha256 = "";
             public string relaxProfile = "", relaxProfileOrigClip = "", deathTake = "Dead", blenderMeasure = "", blenderFix = "", manifestWalkPath = "", manifestWalkName = "";
-            public string relaxProfileB = "", idleTake = "Idle";   // rev 2: candidate B profile (walk relax as data for the repaired clip), the idle take for level-*
+            public string relaxProfileB = "";   // rev 2: candidate B profile (walk relax as data for the repaired clip)
             public string runClip = "", runTake = "";              // rev 2 (review F4): the run-clip stage's file; measured / photographed only when it is imported
         }
         [Serializable] public sealed class Limits
@@ -102,7 +113,25 @@ namespace Oheangbu.EditorTools.WorldMacro
             public float[] arm = Array.Empty<float>(), elbow = Array.Empty<float>(), idleArm = Array.Empty<float>(), idleElbow = Array.Empty<float>(); public int idleEvery = 4; public float minClearanceCm = 1f;
         }
         [Serializable] public sealed class AvatarSettings { public string rowsFile = ""; public float floorMaxDeg = 1f, rowTolerance = .0005f, stateToleranceDeg = .05f, floorSweepMuscle = 2f; public int floorSweepSteps = 400; }
-        [Serializable] public sealed class LevelSettings { public float targetLowestCm = 0f, toleranceCm = 1f; }
+        // rev 3 (SPEC 개정 3). Every number below comes from verify308.json; the classes carry no defaults of their own.
+        //   level   role = manifest clip role (or walkfix / run); stat = how the planted height is read from the per-frame lowest
+        //           vertex (min | entry | exit | ends | mean | median); level = false lists a take that is never moved, with its reason.
+        //           pairs = "from>to" transitions whose step is reported and limited.
+        //           targetRoles = the takes whose own measured planted height is the ground of that monster (the target is the middle
+        //           of those imported, + targetLowestCm); needCm = moved when further off; aimCm = the passes go on while a moved take
+        //           is further off; landCm = what a moved take must reach to be accepted.
+        [Serializable] public sealed class LevelTake { public string role = "", stat = "", reason = ""; public bool level; }
+        [Serializable] public sealed class LevelSettings
+        {
+            public float targetLowestCm, needCm, aimCm, landCm, maxStepCm, dipWarnCm; public int maxPasses; public string direction = "", requireAvatar = "";
+            public LevelTake[] takes = Array.Empty<LevelTake>(); public string[] pairs = Array.Empty<string>(), targetRoles = Array.Empty<string>();
+        }
+        [Serializable] public sealed class BoundsSettings
+        {
+            public float marginMetres, roundUpMetres, maxRadiusMetres, equalToleranceMetres; public bool allowShrink, requireLevel, twoBoneSkin; public string requireAvatar = "";
+            public string[] roles = Array.Empty<string>();
+        }
+        [Serializable] public sealed class GateSettings { public string armsNeedAvatar = ""; public bool applyNeedsGo; }
         [Serializable] public sealed class Config
         {
             public string schema = "";
@@ -115,6 +144,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             public SweepSettings sweep = new SweepSettings();
             public AvatarSettings avatar = new AvatarSettings();
             public LevelSettings level = new LevelSettings();
+            public BoundsSettings bounds = new BoundsSettings();
+            public GateSettings gate = new GateSettings();
         }
 
         static Config ReadConfig(out string why)
@@ -171,11 +202,15 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "sweep": return Guarded(() => SweepRelax(cfg, arg, options));
                     case "level-dry": return Guarded(() => Level(cfg, "dry"));
                     case "level-apply": return Guarded(() => Level(cfg, "apply"));
-                    case "level-revert": return Guarded(() => Level(cfg, "revert"));
+                    case "level-revert": return Guarded(() => Level(cfg, "revert", arg));   // rev 3: [:<id>] = that monster's rows alone
+                    // rev 3: culling bounds of the prefabs (the scene copies go through apply ... ops=bounds)
+                    case "bounds-dry": return Guarded(() => BoundsOp(cfg, "dry"));
+                    case "bounds-apply": return Guarded(() => BoundsOp(cfg, "apply"));
+                    case "bounds-revert": return Guarded(() => BoundsOp(cfg, "revert", arg));
                 }
                 return "REFUSED unknown command '" + command + "' (status | measure[:<id>] | stills:<id> | parity | cleanup | clip-check[:<id>] | clip-fix:<id> | plan:<296|298|main> | " +
-                    "apply:<scene>|ops=speed+arms | apply-all | revert:<scene> | revert-all | death-dry|apply|revert | manifest-dry|apply|revert | " +
-                    "avatar-floor[:<id>] | avatar-dry[:<id>] | avatar-apply:<id> | avatar-revert:<id> | avatar-sync:<id> | sweep:<id>[|set=idle] | level-dry|apply|revert)";
+                    "apply:<scene>|ops=speed+arms+bounds | apply-all | revert:<scene> | revert-all | death-dry|apply|revert | manifest-dry|apply|revert | " +
+                    "avatar-floor[:<id>] | avatar-dry[:<id>] | avatar-apply:<id> | avatar-revert:<id> | avatar-sync:<id> | sweep:<id>[|set=idle] | level-dry|apply|revert[:<id>] | bounds-dry|apply|revert[:<id>])";
             }
             catch (Exception e) { return "FAILED " + e; }
         }
@@ -211,8 +246,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (eq < 0 && last != null && float.TryParse(part.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out _)) { map[last] += "," + part.Trim(); continue; }
                 if (eq <= 0) throw new ArgumentException("option needs key=value: " + part);
                 string key = part.Substring(0, eq).Trim();
-                if (key != "ops" && key != "clip" && key != "ids" && key != "relax" && key != "set" && key != "avatar" && key != "profile")
-                    throw new ArgumentException("unknown option " + key + " (ops | clip | ids | relax | set | avatar | profile)");
+                if (key != "ops" && key != "clip" && key != "ids" && key != "relax" && key != "set" && key != "avatar" && key != "profile" && key != "skin")
+                    throw new ArgumentException("unknown option " + key + " (ops | clip | ids | relax | set | avatar | profile | skin)");
                 map[key] = part.Substring(eq + 1).Trim(); last = key;
             }
             return map;
@@ -361,7 +396,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             sb.AppendLine("  death first frame: " + (File.Exists(DeathRecord) ? "APPLIED (record " + DeathRecord + ")" : "not applied"));
             sb.AppendLine("  manifest rows: " + (File.Exists(ManifestRecord) ? "APPLIED (record " + ManifestRecord + ")" : "not applied"));
             foreach (var m in cfg.monsters) sb.AppendLine("  avatar candidate A " + m.id + ": " + (File.Exists(AvatarRecord(m.id)) ? "APPLIED (record " + AvatarRecord(m.id) + ")" : "not applied"));
-            sb.Append("  idle root height: " + (File.Exists(LevelRecord) ? "APPLIED (record " + LevelRecord + ")" : "not applied"));
+            sb.Append(Rev3Status(cfg));
             return sb.ToString();
         }
 

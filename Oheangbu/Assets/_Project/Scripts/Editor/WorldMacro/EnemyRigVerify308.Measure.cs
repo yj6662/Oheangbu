@@ -344,6 +344,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             public readonly int[] triStretch = new int[2], triCollapse = new int[2];
             public readonly Vector3[] wrist = new Vector3[2]; public Vector3 chest;
             public Vector3[] verts; public readonly int[][] low = new int[2][]; public Quaternion[] local; public int outsideCull; public float lowestVertex;
+            public float cullReach;   // rev 3: the farthest vertex of this sample by the M7 measure (metres), so that a radius can be read against it
         }
 
         static float Twist(Quaternion delta, Vector3 axis)
@@ -393,7 +394,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (entry == null || entry.Skin != f.skin) continue;
                     float radius = entry.LocalBounds.extents.x; var anchor = f.skin.rootBone != null ? f.skin.rootBone : f.skin.transform;
                     for (int i = 0; i < V.Length; i++)
-                        if (Mathf.Max(anchor.InverseTransformPoint(V[i]).magnitude, f.skin.transform.InverseTransformPoint(V[i]).magnitude) > radius) p.outsideCull++;
+                    {
+                        float reach = Mathf.Max(anchor.InverseTransformPoint(V[i]).magnitude, f.skin.transform.InverseTransformPoint(V[i]).magnitude);
+                        if (reach > p.cullReach) p.cullReach = reach;
+                        if (reach > radius) p.outsideCull++;
+                    }
                 }
             return p;
         }
@@ -589,6 +594,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     ["triStretchMax"] = new JArray(s.poses.Max(p => p.triStretch[0]), s.poses.Max(p => p.triStretch[1])), ["triCollapseMax"] = new JArray(s.poses.Max(p => p.triCollapse[0]), s.poses.Max(p => p.triCollapse[1])),
                     ["sectionElbowMin"] = Pair(i => s.Min(p => p.sectionElbow[i])), ["sectionShoulderMin"] = Pair(i => s.Min(p => p.sectionShoulder[i])),
                     ["outsideCullingVertices"] = s.poses.Sum(p => p.outsideCull), ["lowestVertexCm"] = new JArray(Math.Round(s.Min(p => p.lowestVertex) * 100, 2), Math.Round(s.poses[0].lowestVertex * 100, 2)) };
+                // rev 3 (SPEC 개정 3): the farthest vertex by the M7 measure, and the per-frame lowest vertex as the statistics level-* works with
+                o["cullingReachM"] = Math.Round(s.Max(p => p.cullReach), 4); o["lowestVertexStatsCm"] = StatsJson(LowestOf(s));
                 // first-frame pop (M9): rotation between sample 0 and 1 against the median of the next ten steps of that bone
                 if (s.poses.Count > 3)
                 {
@@ -755,7 +762,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             float StepTo(SetResult walk) => walk?.gait != null && walk.gait.valid && !float.IsNaN(idleLow) ? idleLow - Mathf.Min(walk.gait.soleMean[0], walk.gait.soleMean[1]) * 100 : float.NaN;
             float stepNow = StepTo(Get("walk/off")), stepFixed = StepTo(Get("walkfix/off"));
             json["idleWalkStep"] = new JObject { ["idleLowestVertexMeanCm"] = float.IsNaN(idleLow) ? null : (JToken)Math.Round(idleLow, 2), ["stepToSourceWalkCm"] = float.IsNaN(stepNow) ? null : (JToken)Math.Round(stepNow, 2),
-                ["stepToRepairedWalkCm"] = float.IsNaN(stepFixed) ? null : (JToken)Math.Round(stepFixed, 2), ["closedBy"] = "level-apply: the idle take's root height offset (importer value); attack takes that float the same way are listed by level-dry" };
+                ["stepToRepairedWalkCm"] = float.IsNaN(stepFixed) ? null : (JToken)Math.Round(stepFixed, 2), ["closedBy"] = "level-apply (rev 3): the root height offset of every listed take (importer value); see 'level' below" };
+            // rev 3: what the gate reads - the prefab's culling radius this measure counted against, and every listed take's planted height
+            var cullingJson = CullingJson(cfg, m, sets); var levelJson = LevelJson(cfg, Get); json["culling"] = cullingJson; json["level"] = levelJson;
             File.WriteAllText(Path.Combine(Out, "measure_" + m.id + suffix + ".json"), json.ToString(), new UTF8Encoding(false));
             // ---- Korean table
             string P2(SetResult s, Func<Pose, int, float> pick, Func<SetResult, Func<Pose, float>, float> fold, float scale = 1) => s == null ? "-" : F1(fold(s, p => pick(p, 0)) * scale) + " / " + F1(fold(s, p => pick(p, 1)) * scale);
@@ -797,6 +806,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Pen2(s, (p, i) => p.penFore[i], (p, i) => p.unsureFore[i]) + " | " + Pen2(s, (p, i) => p.penUpper[i], (p, i) => p.unsureUpper[i]) + " | " + bvhCell + " | " + s.poses.Sum(p => p.outsideCull) + " | " + F1(s.Min(p => p.lowestVertex) * 100) + " cm |");
             }
             md.AppendLine("\n\"1차 Blender BVH 값\"은 1차 Spec이 Blender에서 다른 방법으로 잰 값이다(게임 자세가 아니라 FBX의 자세). 그 값이 몇 cm인데 여기 관통이 0인 칸은 그림으로 확인하기 전에는 \"없음\"이 아니다.\n");
+            md.AppendLine(CullingLine(cullingJson)); md.AppendLine(LevelLine(levelJson));   // rev 3
             if (runClip == null && !string.IsNullOrEmpty(m.runClip)) md.AppendLine("달리기 클립이 임포트되어 있지 않다(달리기 스테이지 미배포) — 이 종의 후보 A는 달리기를 그 상태에서 재고 찍기 전에는 **잠정**이다.\n");
             if (actors.Count > 0)
             {
@@ -812,7 +822,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 md.AppendLine("\n\"대기 원본 클립\" 칸 = 대기 클립을 보정 없이 이 아바타에 올렸을 때의 손 관통. 대기 관통이 이 값에서 온 것이면 후보의 탓이 아니라 클립의 것이다(충족 수에는 그대로 센다).\n");
             }
             if (!float.IsNaN(idleLow)) md.AppendLine("대기 ↔ 걷기 발 높이 차: 대기 가장 낮은 정점 평균 " + F1(idleLow) + " cm → 지금 걷기 디딤 발바닥과 " + (float.IsNaN(stepNow) ? "-" : F1(stepNow)) + " cm · 수리 걷기와 " +
-                (float.IsNaN(stepFixed) ? "-" : F1(stepFixed)) + " cm (닫는 값 = 대기 테이크의 루트 높이 오프셋, `level-dry`)\n");
+                (float.IsNaN(stepFixed) ? "-" : F1(stepFixed)) + " cm (닫는 값 = 테이크별 루트 높이 오프셋, `level-dry` — 개정 3)\n");
             md.AppendLine(fails.Count == 0 ? "한계 밖 0건.\n" : "한계 밖 " + fails.Count + "건:\n" + string.Join("\n", fails.Select(x => "- " + x)) + "\n");
             return m.id + ": " + sets.Count + " sets, " + sets.Sum(s => s.poses.Count) + " samples | walk stance speed " + G(walkOff, x => F(x.speed)) + (fixOff != null ? " -> repaired " + G(fixOff, x => F(x.speed)) : " (repaired clip not imported)") +
                 " | pen self-test: " + selfTest + (staleRows.Count > 0 ? " | CLIP ROWS STALE: " + string.Join("; ", staleRows) : "") + (runClip == null && !string.IsNullOrEmpty(m.runClip) ? " | run clip not imported" : "") + " | actors " + actors.Count + " | limit misses " + fails.Count + (fails.Count > 0 ? " (" + string.Join("; ", fails.Take(4)) + (fails.Count > 4 ? "; ..." : "") + ")" : "");

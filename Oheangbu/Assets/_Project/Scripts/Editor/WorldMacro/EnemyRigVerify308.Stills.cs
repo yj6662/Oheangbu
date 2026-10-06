@@ -19,7 +19,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         [Serializable] sealed class StillRow { public string file = "", role = "", clip = "", relax = ""; public float phase, yaw, coverage; }
         [Serializable] sealed class StillLog
         {
-            public string id = "", utc = "", clipMode = "", relax = "", quality = "", avatar = "", ground = "", thinRoles = ""; public int warmupRenders, rerendered; public float coverageMin, coverageMedian;
+            public string id = "", utc = "", clipMode = "", relax = "", quality = "", avatar = "", ground = "", thinRoles = "", skin = ""; public int warmupRenders, rerendered; public float coverageMin, coverageMedian;
             public List<StillRow> rows = new List<StillRow>();
         }
 
@@ -79,6 +79,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (staleRows.Count > 0) return "REFUSED clip rows STALE (" + string.Join("; ", staleRows) + "): avatar-sync:" + m.id + " first";
             string which = options.TryGetValue("set", out string s) ? s : "all"; if (which != "walk" && which != "idle" && which != "all" && which != "others") return "REFUSED set takes walk, idle, all or others";
             if (which == "others" && cfg.stills.otherPhases.Length == 0) return "REFUSED config stills.otherPhases is empty";
+            // rev 3: these pictures are CPU-baked with all four bone weights, whatever the editor's quality level is (the `quality` field
+            // of the log is only that level's name). skin=2 keeps the two largest weights, renormalised: the "2 bones" quality level
+            // as far as it can be told from outside (an assumed rule, SPEC 개정 3 8절). Its pictures go to a folder of their own.
+            string skinText = options.TryGetValue("skin", out string sk) ? sk : "4"; if (skinText != "4" && skinText != "2") return "REFUSED skin takes 4 or 2"; bool twoBones = skinText == "2";
             if (cfg.stills.yaws.Length == 0 || cfg.stills.walkPhases.Length == 0 || cfg.stills.idlePhases.Length == 0) return "REFUSED config stills block is empty";
             var row = CompactFolklore298.ReadManifest().rows.FirstOrDefault(x => x.id == m.id); if (row == null) return "REFUSED no manifest row " + m.id;
             var source = OnlyClip(m.walkSource); if (source == null) return "REFUSED walk source clip not found in " + m.walkSource;
@@ -88,8 +92,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             var idle = CompactFolklore298.Clip(row, "idle");
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CompactFolklore298.PrefabPath(m.id)); if (prefab == null) return "REFUSED no prefab " + CompactFolklore298.PrefabPath(m.id);
             string relaxTag = explicitRelax ? "r" + Mathf.RoundToInt(relaxArm * 100).ToString("000", CultureInfo.InvariantCulture) + "-" + Mathf.RoundToInt(relaxElbow * 100).ToString("000", CultureInfo.InvariantCulture) : relax;
-            string folder = Path.Combine(Out, "Stills", m.id, clipMode + "_" + relaxTag + (avatarNow == "A" ? "_avA" : "")); Directory.CreateDirectory(folder);
-            var log = new StillLog { id = m.id, utc = DateTime.UtcNow.ToString("O"), clipMode = clipMode, relax = relax, quality = QualitySettings.names[QualitySettings.GetQualityLevel()], avatar = avatarNow,
+            string folder = Path.Combine(Out, "Stills", m.id, clipMode + "_" + relaxTag + (avatarNow == "A" ? "_avA" : "") + (twoBones ? "_sw2" : "")); Directory.CreateDirectory(folder);
+            var log = new StillLog { id = m.id, utc = DateTime.UtcNow.ToString("O"), clipMode = clipMode, relax = relax, quality = QualitySettings.names[QualitySettings.GetQualityLevel()], avatar = avatarNow, skin = twoBones ? "2 bone weights (largest two, renormalised)" : "4 bone weights (CPU bake)",
                 ground = "slab " + F(cfg.stills.groundSize) + " m at y = 0 (prefab ground) + line at the body's centre depth" };
             var preview = new PreviewRenderUtility(false, true); var owned = new List<Object>(); bool asyncShaders = ShaderUtil.allowAsyncCompilation;
             var thinRoles = new List<string>(); var runForOthers = which == "others" ? RunClip(m) : null;
@@ -103,6 +107,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 visual.transform.localPosition = Vector3.zero; visual.transform.localRotation = Quaternion.identity; visual.transform.localScale = Vector3.one;
                 foreach (var t in host.GetComponentsInChildren<Transform>(true)) { t.gameObject.layer = 0; t.gameObject.hideFlags = HideFlags.HideAndDontSave; }
                 foreach (var skin in host.GetComponentsInChildren<SkinnedMeshRenderer>(true)) skin.updateWhenOffscreen = false;
+                if (twoBones) foreach (var skin in host.GetComponentsInChildren<SkinnedMeshRenderer>(true)) if (skin.sharedMesh != null) { var two = TwoBoneMesh(skin.sharedMesh); owned.Add(two); skin.sharedMesh = two; }
                 var animator = visual.GetComponentInChildren<Animator>(true); if (animator == null || !animator.isHuman) return "FAILED prefab has no humanoid Animator";
                 animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; animator.applyRootMotion = false; animator.runtimeAnimatorController = null; animator.fireEvents = false;
                 var rig = host.AddComponent<EnemyRigMotion298>(); rig.enabled = false; rig.Animator = animator;
@@ -167,10 +172,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                 preview.Cleanup();
             }
             File.WriteAllText(Path.Combine(folder, "stills.json"), JsonUtility.ToJson(log, true), new UTF8Encoding(false));
-            return "stills " + m.id + " clip=" + clipMode + " relax=" + relax + " avatar=" + avatarNow + ": " + log.rows.Count + " PNG -> " + folder + " | coverage min " + F1(log.coverageMin * 100) + " % median " + F1(log.coverageMedian * 100) +
+            return "stills " + m.id + " clip=" + clipMode + " relax=" + relax + " avatar=" + avatarNow + " skin=" + skinText + ": " + log.rows.Count + " PNG -> " + folder + " | coverage min " + F1(log.coverageMin * 100) + " % median " + F1(log.coverageMedian * 100) +
                 " % | warm-up " + log.warmupRenders + ", re-rendered " + log.rerendered + (thinRoles.Count > 0 ? " | WARN a picture has far less figure than the others of its role (" + string.Join(", ", thinRoles) + "): look at it before making sheets" : "") +
                 (which != "others" ? "" : runForOthers != null ? " | run clip included" : string.IsNullOrEmpty(m.runClip) ? "" : " | run clip NOT imported: not photographed") +
-                " (sheets: python Tools/Unity/Stage308_enemyrig2/_Tools/sheets_enemyrig2.py)";
+                " (sheets: Stage308_enemyrig2/_Tools/sheets_enemyrig2.py; after the apply round Stage308_enemyrig3/_Tools/sheets_enemyrig3.py)";
         }
     }
 }

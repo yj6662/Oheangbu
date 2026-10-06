@@ -34,7 +34,6 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string AvatarRecord(string id) => Path.Combine(Out, "Records", "avatarA_" + id + ".json");
         // the profile the arms row (R3 + R4) binds: candidate B's, the source-clip one (clip=keep) or the walk-0 one
         static string ArmsProfilePath(Monster m, bool keepClip, bool useB) => useB ? m.relaxProfileB : keepClip ? m.relaxProfileOrigClip : m.relaxProfile;
-        static string LevelRecord => Path.Combine(Out, "Records", "idle_level.json");
         // review F4: the run clip of the run-clip stage, when that stage's FBX is imported. Candidate A re-converts it like every other
         // clip of the monster, so it is measured and photographed here on whichever avatar is imported (relax off).
         static AnimationClip RunClip(Monster m) => string.IsNullOrEmpty(m.runClip) || !File.Exists(ProjectFile(m.runClip)) ? null : ClipIn(m.runClip, m.runTake);
@@ -241,6 +240,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (mode != "dry" && string.IsNullOrEmpty(only)) return "REFUSED avatar-" + mode + " takes one id (one monster at a time)";
             var monsters = Pick(cfg, only, out string why); if (monsters == null) return "REFUSED " + why;
             if (mode != "dry" && monsters.Length != 1) return "REFUSED avatar-" + mode + " takes one id";
+            // rev 3: level-* and bounds-* were measured on this avatar and the walk-0 profile of the scene rows needs it: they go back first
+            if (mode == "revert") { string order = RevertOrderGuard(cfg, "avatar", monsters[0].id); if (order != null) return "REFUSED " + order; }
             if (EditorApplication.isCompiling) return "REFUSED the editor is compiling";
             if (mode != "dry") { string dirty = DirtyScene(); if (dirty != null) return "REFUSED dirty scene " + dirty + " (a re-import must not run over unsaved scene edits)"; }
             var sb = new StringBuilder("avatar-" + mode + " (candidate A: four arm rows of the avatar reference pose; no bone, position, weight, scene or prefab is written)\n");
@@ -495,94 +496,6 @@ namespace Oheangbu.EditorTools.WorldMacro
                 (pick != null ? "pick " + F(pick.arm) + " / " + F(pick.elbow) + " (wrists move " + F1(pick.moveCm) + " cm from the source pose)" : "no pair inside the limits") + " | pen self-test: " + selfTest + " -> " + Path.Combine(Out, "sweep_" + m.id + tag + ".md");
         }
 
-        // ------------------------------------------------------------------ idle <-> walk foot-height step (importer value of the idle take)
-        [Serializable] sealed class LevelRow { public string id = "", asset = "", take = "", metaBackup = ""; public float offsetBefore, offsetAfter, lowestBeforeCm, lowestAfterCm; }
-        [Serializable] sealed class LevelLog { public string utc = ""; public List<LevelRow> rows = new List<LevelRow>(); }
-
-        static float LowestMeanCm(Fixture f, AnimationClip clip)
-        {
-            int frames = Mathf.Max(1, Mathf.RoundToInt(clip.length * clip.frameRate)); double sum = 0;
-            for (int i = 0; i <= frames; i++)
-            {
-                Sample(f, clip, Mathf.Min(i / clip.frameRate, clip.length)); float low = float.PositiveInfinity;
-                foreach (var v in CompactFolklore298.PhysicalSkinVertices298(f.skin)) low = Mathf.Min(low, v.y);
-                sum += low;
-            }
-            return (float)(sum / (frames + 1)) * 100f;
-        }
-
-        static float SetOffset(Monster m, float offset)
-        {
-            var importer = (ModelImporter)AssetImporter.GetAtPath(m.motionSource); var takes = importer.clipAnimations; var take = takes.First(t => t.name == m.idleTake);
-            take.heightOffset = offset; importer.clipAnimations = takes; importer.SaveAndReimport();
-            var clip = ClipIn(m.motionSource, m.idleTake) ?? throw new InvalidOperationException(m.id + " idle clip missing after the re-import");
-            using (var f = new Fixture(m)) return LowestMeanCm(f, clip);
-        }
-
-        static string Level(Config cfg, string mode)
-        {
-            if (mode == "revert")
-            {
-                if (!File.Exists(LevelRecord)) return "REFUSED no record " + LevelRecord;
-                var log = JsonUtility.FromJson<LevelLog>(File.ReadAllText(LevelRecord)); var sbr = new StringBuilder("level-revert\n");
-                try
-                {
-                    foreach (var row in log.rows)
-                    {
-                        var m = cfg.monsters.FirstOrDefault(x => x.id == row.id); if (m == null) { sbr.AppendLine("  WARN " + row.id + " is not in the config (skipped)"); continue; }
-                        sbr.AppendLine("  " + row.id + ": " + row.take + " root height offset " + F(row.offsetAfter) + " -> " + F(row.offsetBefore) + " | idle lowest vertex " + F1(SetOffset(m, row.offsetBefore)) + " cm | " + ClipRowsLine(cfg, m));
-                    }
-                }
-                finally { Sweep(); }
-                File.Move(LevelRecord, LevelRecord.Replace(".json", "-reverted-" + Stamp + ".json"));
-                string dirtyAfterRevert = DirtyScene(); if (dirtyAfterRevert != null) sbr.AppendLine("  WARN the re-import left " + dirtyAfterRevert + " dirty: do not save it (reload the scene without saving)");
-                return sbr.ToString().TrimEnd();
-            }
-            if (mode == "apply" && File.Exists(LevelRecord)) return "ALREADY APPLIED (record " + LevelRecord + "); level-revert first";
-            if (mode == "apply") { string dirty = DirtyScene(); if (dirty != null) return "REFUSED dirty scene " + dirty; }
-            var sb = new StringBuilder("level-" + mode + " (idle lowest vertex -> " + F1(cfg.level.targetLowestCm) + " cm, tolerance " + F1(cfg.level.toleranceCm) + " cm; the value is the idle take's root height offset)\n");
-            var done = new LevelLog { utc = DateTime.UtcNow.ToString("O") }; var manifest = CompactFolklore298.ReadManifest();
-            try
-            {
-                foreach (var m in cfg.monsters)
-                {
-                    var importer = AssetImporter.GetAtPath(m.motionSource) as ModelImporter; var clip = ClipIn(m.motionSource, m.idleTake);
-                    var take = importer?.clipAnimations.FirstOrDefault(t => t.name == m.idleTake);
-                    if (importer == null || clip == null || take == null) { sb.AppendLine("  " + m.id + ": REFUSED idle take " + m.idleTake + " not found in " + m.motionSource); continue; }
-                    float lowest, others; string floating = "";
-                    using (var f = new Fixture(m))
-                    {
-                        lowest = LowestMeanCm(f, clip); var row = manifest.rows.FirstOrDefault(r => r.id == m.id);
-                        if (row != null) foreach (string role in new[] { "attack", "hit", "stun" }) { var other = CompactFolklore298.Clip(row, role, false); if (other != null) { others = LowestMeanCm(f, other); floating += " " + role + " " + F1(others); } }
-                    }
-                    float error = lowest - cfg.level.targetLowestCm; bool needed = Mathf.Abs(error) > cfg.level.toleranceCm; float first = take.heightOffset - error / 100f;
-                    string line = "  " + m.id + ": idle lowest vertex mean " + F1(lowest) + " cm (other takes:" + floating + " cm) | root height offset " + F(take.heightOffset) + " -> " + (needed ? F(first) + " (first step)" : "no change");
-                    if (!needed || mode == "dry") { sb.AppendLine(line); continue; }
-                    string records = Path.GetDirectoryName(LevelRecord); Directory.CreateDirectory(records);
-                    var entry = new LevelRow { id = m.id, asset = m.motionSource, take = m.idleTake, offsetBefore = take.heightOffset, lowestBeforeCm = lowest, metaBackup = Path.Combine(records, m.id + "-motion.fbx.meta.before-level-" + Stamp) };
-                    File.Copy(ProjectFile(m.motionSource) + ".meta", entry.metaBackup, true); done.rows.Add(entry); File.WriteAllText(LevelRecord, JsonUtility.ToJson(done, true));   // record before the re-import
-                    float after = SetOffset(m, first), offset = first;
-                    // one correction when the first step did not land (the offset's unit is the importer's: measure, do not assume)
-                    if (Mathf.Abs(after - cfg.level.targetLowestCm) > cfg.level.toleranceCm && Mathf.Abs(lowest - after) > .1f)
-                    { offset = entry.offsetBefore + (first - entry.offsetBefore) * (lowest - cfg.level.targetLowestCm) / (lowest - after); after = SetOffset(m, offset); }
-                    if (Mathf.Abs(after - cfg.level.targetLowestCm) > cfg.level.toleranceCm)
-                    {
-                        float back = SetOffset(m, entry.offsetBefore); done.rows.Remove(entry);
-                        if (done.rows.Count > 0) File.WriteAllText(LevelRecord, JsonUtility.ToJson(done, true)); else File.Delete(LevelRecord);
-                        sb.AppendLine(line + " | NOT APPLIED: the offset did not bring the idle to the ground (reached " + F1(after) + " cm); restored, idle lowest " + F1(back) + " cm"); continue;
-                    }
-                    entry.offsetAfter = offset; entry.lowestAfterCm = after; File.WriteAllText(LevelRecord, JsonUtility.ToJson(done, true));
-                    sb.AppendLine(line + " | applied " + F(offset) + ": idle lowest vertex " + F1(after) + " cm | meta backup " + entry.metaBackup + " | " + ClipRowsLine(cfg, m));
-                }
-            }
-            finally { Sweep(); }
-            if (mode == "dry") sb.Append("  dry: nothing changed");
-            else
-            {
-                sb.Append(done.rows.Count == 0 ? "  nothing changed (no record written)" : "  record " + LevelRecord);
-                string dirtyAfter = DirtyScene(); if (dirtyAfter != null) sb.Append("\n  WARN the re-import left " + dirtyAfter + " dirty: do not save it (reload the scene without saving)");
-            }
-            return sb.ToString();
-        }
+        // (rev 3) level-dry | level-apply | level-revert live in EnemyRigVerify308.Rev3.cs now: every take the data lists, not the idle alone.
     }
 }

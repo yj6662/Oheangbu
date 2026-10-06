@@ -106,7 +106,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
         }
 
-        // ------------------------------------------------------------------ scenes (R1 speed, R3 + R4 arms)
+        // ------------------------------------------------------------------ scenes (R1 speed, R3 + R4 arms; rev 3: R7 bounds of the scene's own copies)
         [Serializable] sealed class ClipRef { public string path = "", name = ""; }
         [Serializable] sealed class ActorRecord
         {
@@ -114,6 +114,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             public string[] changed = Array.Empty<string>();
             public ClipRef walk = new ClipRef(), newWalk = new ClipRef();
             public float walkMetresPerSecond, newWalkMetresPerSecond, armRelax, elbowRelax, speed, deathVisualSeconds, scale;
+            public BoundsEdit[] bounds = Array.Empty<BoundsEdit>();   // rev 3: culling bounds this scene holds itself, set to the prefab's radius
         }
         [Serializable] sealed class SceneRecord { public string scene = "", utc = "", backup = "", options = ""; public List<ActorRecord> actors = new List<ActorRecord>(); }
         static ClipRef Ref(AnimationClip clip) => clip == null ? new ClipRef() : new ClipRef { path = AssetDatabase.GetAssetPath(clip), name = clip.name };
@@ -122,15 +123,18 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string SceneOp(Config cfg, string key, Dictionary<string, string> options, bool apply)
         {
             string path = ScenePath(key); if (path == null) return "REFUSED scene not in the #308 ledger: " + key + " (296 | 298 | main)";
-            if (!options.TryGetValue("ops", out string opText)) return "REFUSED ops= is required (speed | arms | speed+arms)";
-            var ops = opText.Split('+'); if (ops.Length == 0 || ops.Any(o => o != "speed" && o != "arms")) return "REFUSED ops takes speed, arms or speed+arms";
-            bool speed = ops.Contains("speed"), arms = ops.Contains("arms"), keepClip = false;
+            if (!options.TryGetValue("ops", out string opText)) return "REFUSED ops= is required (speed | arms | bounds, joined by +)";
+            var ops = opText.Split('+'); if (ops.Length == 0 || ops.Any(o => o != "speed" && o != "arms" && o != "bounds")) return "REFUSED ops takes speed, arms, bounds or a + join of them";
+            bool speed = ops.Contains("speed"), arms = ops.Contains("arms"), bounds = ops.Contains("bounds"), keepClip = false;
             if (options.TryGetValue("clip", out string clipText)) { if (clipText != "keep" && clipText != "fixed") return "REFUSED clip takes keep or fixed"; keepClip = clipText == "keep"; }
             // rev 2: profile=B = the candidate B profile (walk relax of the repaired clip as data); default = the walk-0 profile as before
             bool useB = false;
             if (options.TryGetValue("profile", out string profileText)) { if (profileText != "B" && profileText != "default") return "REFUSED profile takes B or default"; useB = profileText == "B"; }
             if (useB && (keepClip || !arms)) return "REFUSED profile=B goes with ops=arms and the repaired clip (not clip=keep)";
             options.TryGetValue("ids", out string only); var monsters = Pick(cfg, only ?? "", out string why); if (monsters == null) return "REFUSED " + why;
+            // rev 3 (SPEC 개정 3): the walk-0 profile is the candidate A pairing; the scene's own bounds copies follow a prefab radius that must exist
+            if (arms && !useB && !keepClip) { string refuse = ArmsAvatarGuard(cfg, monsters) ?? (apply ? GateGuard(cfg, monsters) : null); if (refuse != null) return "REFUSED " + refuse; }
+            if (bounds) { string refuse = BoundsSceneGuard(cfg, monsters); if (refuse != null) return "REFUSED " + refuse; }
             string record = RecordFile(path);
             if (apply && File.Exists(record)) return "ALREADY APPLIED " + path + " (record " + record + "); revert:" + key + " first to re-apply";
             string dirty = DirtyScene(); if (dirty != null) return "REFUSED dirty scene " + dirty + " (save or discard it first)";
@@ -177,16 +181,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                             if (vAfter < .1f) throw new InvalidOperationException(a.namePath + " walk stance speed not measurable");
                             if (Mathf.Abs(rig.WalkMetresPerSecond - vAfter) > 1e-4f) { metresAfter = vAfter; changed.Add("WalkMetresPerSecond"); }
                         }
+                        string boundsNote = ""; var boundsEdits = bounds ? BoundsEdits(cfg, rig, m, out boundsNote) : null; if (boundsEdits != null && boundsEdits.Count > 0) changed.Add("Bounds");   // rev 3
                         float slideBefore = Mathf.Abs(1 - vBefore / Mathf.Max(.1f, rig.WalkMetresPerSecond)), slideAfter = Mathf.Abs(1 - vAfter / Mathf.Max(.1f, metresAfter));
                         float stepsBefore = cycle[m.id] > 0 ? 120f * (a.speed / Mathf.Max(.1f, rig.WalkMetresPerSecond)) / cycle[m.id] : 0, stepsAfter = cycle[m.id] > 0 ? 120f * (a.speed / Mathf.Max(.1f, metresAfter)) / cycle[m.id] : 0;
                         string deathNote = enc != null && rig.Death != null && enc.DeathVisualSeconds < rig.Death.length + cfg.deathVisualMargin ? " WARN DeathVisualSeconds " + F(enc.DeathVisualSeconds) + " < death " + F(rig.Death.length) + " + " + F(cfg.deathVisualMargin) : "";
                         sb.AppendLine("  " + (a.actorId != "" ? a.actorId : a.namePath) + " [" + m.id + "] Speed " + F(a.speed) + " (unchanged) | WMPS " + F(rig.WalkMetresPerSecond) + " -> " + F(metresAfter) + " | slide " + F1(slideBefore * 100) + " % -> " + F1(slideAfter * 100) +
                             " % | steps/min " + F1(stepsBefore) + " -> " + F1(stepsAfter) + " | walk " + (repairedBefore ? "repaired" : "source") + " -> " + (repairedAfter ? "repaired" : "source") +
-                            " | relax " + RelaxLabel(rig) + " -> " + (profileAfter != null ? "profile " + profileAfter.name : "(as before)") + " | " + (changed.Count == 0 ? "unchanged" : string.Join(",", changed)) + deathNote);
+                            " | relax " + RelaxLabel(rig) + " -> " + (profileAfter != null ? "profile " + profileAfter.name : "(as before)") + boundsNote + " | " + (changed.Count == 0 ? "unchanged" : string.Join(",", changed)) + deathNote);
                         if (changed.Count == 0 || !apply) continue;
                         rig.Walk = walkAfter; rig.RelaxProfile = profileAfter; rig.WalkMetresPerSecond = metresAfter;
                         if (!rig.IsConfigured) throw new InvalidOperationException(a.namePath + " EnemyRigMotion298 not configured after apply");
                         a.changed = changed.ToArray(); a.newWalk = Ref(walkAfter); a.newRelaxProfile = profileAfter != null ? AssetDatabase.GetAssetPath(profileAfter) : ""; a.newWalkMetresPerSecond = metresAfter;
+                        if (boundsEdits != null && boundsEdits.Count > 0) a.bounds = ApplyBoundsEdits(boundsEdits);   // rev 3
                         EditorUtility.SetDirty(rig); rec.actors.Add(a);
                     }
                     if (!apply) return sb.Append("  plan only: " + targets.Count + " actor(s) read, nothing changed, nothing saved").ToString();
@@ -236,6 +242,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (!rig.IsConfigured) throw new InvalidOperationException(a.namePath + " recorded walk clip no longer loads");
                     EditorUtility.SetDirty(rig); restored++;
                     sb.AppendLine("  " + (a.actorId != "" ? a.actorId : a.namePath) + ": restored " + string.Join(",", a.changed) + " (WMPS " + F(a.walkMetresPerSecond) + ", walk " + a.walk.name + ", profile " + (a.relaxProfile == "" ? "none" : Path.GetFileNameWithoutExtension(a.relaxProfile)) + ")");
+                    RevertBoundsEdits(scene, a.bounds, sb);   // rev 3
                 }
                 if (restored == 0) return sb.Append("  nothing restored (record kept, scene not saved)").ToString();
                 EditorSceneManager.MarkSceneDirty(scene);
