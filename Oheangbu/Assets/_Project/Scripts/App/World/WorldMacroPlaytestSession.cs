@@ -114,6 +114,7 @@ namespace Oheangbu.App.World
             BindDemoBosses();
             BindDemoSouthGate();
             BindMineTutorial306();   // #306 #11
+            BindCinematic308();   // #308 SPEC-CINEMATIC-STILLS-308: catalogue + plane triggers (none without the asset)
 #if UNITY_EDITOR
             // #307 (user 2026-10-01 "새 게임 시작해도 이어하기로 들어가고"): Play-exit restores the open scene from its pre-Play backup, which
             // brings back an editor harness suffix (_c303 / _r307_ / _main297_) the harness had already cleaned up. A player's lobby run then
@@ -250,6 +251,7 @@ namespace Oheangbu.App.World
             TickActEntrance();
             TickDemoEscort();
             TickMineTutorial306();   // #306 #11: cards wait for CanShowCard (no drawing, hitstop, menu)
+            TickCinematic308();   // #308: plane-crossing stills (mine exit); returns at once when there is no trigger
             if(Time.unscaledTime>=nextSave){SaveCore(out _,true);nextSave=Time.unscaledTime+Content.TestRules.AutosaveSeconds;}
             if(GameplayInputBlocked){FocusedId=null;FocusedCollectionBundleId=null;vehicleFocus308=0;DisarmInteract();return;}
             TrackInteractArm();
@@ -681,6 +683,6 @@ namespace Oheangbu.App.World
         void SyncHudFallback(){if(hudFallback!=null){bool on=isActiveAndEnabled&&!CanvasHudPresenterActive;if(hudFallback.enabled!=on)hudFallback.enabled=on;}}
         void OnApplicationQuit(){Save();DrainAutosave();}
         void OnDisable(){DisarmInteract();UnbindDemoSouthGate();UnbindDemoEscort();SuspendDemoField();SuspendMumBridges();Save();DrainAutosave();if(hudFallback!=null)hudFallback.enabled=false;}
-        void OnDestroy(){UnbindMineTutorial306();UnbindVehicle308();DrainAutosave();UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);}
+        void OnDestroy(){UnbindCinematic308();UnbindMineTutorial306();UnbindVehicle308();DrainAutosave();UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);}
     }
 }
