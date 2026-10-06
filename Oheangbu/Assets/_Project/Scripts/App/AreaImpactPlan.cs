@@ -14,6 +14,7 @@ namespace Oheangbu.App
         public Vector3 ImpactPoint;
         public bool HasImpactPoint;
         public float Power;
+        public long AttackId; // #308: AttackProvenance id of this scheduled hit (0 = a visual-only shot). Derived effects match EnemyDamageResult.Attack.AttackId against it
     }
 
     // 광역 판정 계획 [SPELL-AREA-SHAPES §3] — 배선이 만들고 연출(SpellSequenceEffect.SetAreaPlan)이 받는다.

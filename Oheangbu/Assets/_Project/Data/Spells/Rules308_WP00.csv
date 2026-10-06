@@ -1,0 +1,5 @@
+﻿# SPEC-SPELL-120-308 WP-00: the lift numbers of the wood field glyph and the spike numbers of the wood circle glyph, moved from code to data.
+# Values equal the constants they replace (FieldSpellService 2.4 / 1.2 / 0.9 / 20, AreaSpikePlanner 17 / 0.82 / 0.6 / 0.35 / 0.35). TEST.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+고,replace,core.circle,,AttackArea,,book,,9,,Circle,,2.5,10,,0.3,,,,area.spikes=1;spike.count=17;spike.fill=0.82;spike.window=0.6;spike.gap=0.35;spike.inner=0.35
+국,replace,field.lift,,,,guk,,,,,,,,,,,,,lift.height=2.4;lift.rise=1.2;lift.descent=0.9;lift.hold=20

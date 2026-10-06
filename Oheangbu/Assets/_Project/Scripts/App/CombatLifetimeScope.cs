@@ -30,6 +30,13 @@ namespace Oheangbu.App
             builder.RegisterComponentInHierarchy<CombatLoopWiring>();
             if(_prologue!=null) builder.RegisterComponent(_prologue);
             if(_macroPlaytest!=null) builder.RegisterComponent(_macroPlaytest);
+            // #308 spell table dispatch (SPEC-SPELL-120-308): effect handlers + registry, the presenter (one line, owned by
+            // SpellPresentationInstaller308), and who knows the unlocked final consonants (the campaign session, else nothing opens)
+            SpellEffectInstaller308.Install(builder);
+            SpellPresentationInstaller308.Install(builder);
+            builder.RegisterInstance<ISpellUnlocks>(_macroPlaytest!=null ? (ISpellUnlocks)_macroPlaytest : new LockedSpellUnlocks308());
+            // #308 spell deploy layer (SPEC-SPELL-DEPLOY-308): boots only when its profile exists and its master switch is on
+            builder.RegisterBuildCallback(resolver => resolver.Resolve<CombatLoopWiring>().BootDeploy308());
         }
     }
 }

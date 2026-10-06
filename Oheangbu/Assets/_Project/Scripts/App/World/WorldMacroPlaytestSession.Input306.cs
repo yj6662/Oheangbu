@@ -58,8 +58,13 @@ namespace Oheangbu.App.World
             if(!Finite(candidate))return false;var pool=ResolveNaturalSolids(false);if(!Live(pool))return false;
             float reuse=NaturalProbeReuse;bool near=Walker==null||Walker.Body==null||Vector3.Distance(candidate,NaturalFocus)<=reuse;
             if(near&&(Walker!=null&&Walker.Seated||naturalCoveredKnown&&Vector3.Distance(candidate,naturalCovered)<=reuse))return false;   // seated: the pool follows the vehicle corridor itself
+            // #307 phase 1 item 5: at the walker's own feet the pool's last full query already enabled every solid an EnsureAround
+            // here could add near the test (CompactNaturalSolids.Covers), so the extra additive query + forced requery are skipped.
+            if(near&&pool is CompactNaturalSolids solids&&solids.Covers(candidate,Mathf.Max(0,NaturalCoverMargin)))return false;
             return EnsureNaturalAt(pool,candidate)&&!near;
         }
+        [Tooltip("#307 [TEST] flat and vertical metres kept between a walker-feet probe and the edge of the pool's last full query (the TrySafeFeet capsule is 0.27 m; the margin covers it with room).")]
+        public float NaturalCoverMargin=1f;
         void RestoreNaturalFocus(){var pool=ResolveNaturalSolids(false);if(Live(pool)&&Walker!=null&&Walker.Body!=null)EnsureNaturalAt(pool,NaturalFocus);}
         // Teleport: always ensure the arrival point (death, escort, terrain recovery, inn). A pool added after Start is picked up here.
         void EnsureNaturalSolidsForTeleport(Vector3 feet){if(!Finite(feet))return;var pool=ResolveNaturalSolids(true);if(Live(pool))EnsureNaturalAt(pool,feet);}

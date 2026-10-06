@@ -9,6 +9,14 @@ namespace Oheangbu.Combat
     // InterruptLetter로 연결해 이행한다(COMBAT-ATTACK — 표현·입력 계층에 직접 닿지 않는다).
     public enum EnvironmentDeathCause { None, Fall, DeepWater }
     public enum IncomingDamageKind { Unspecified, Melee, Ranged, ElementalMelee, ElementalRanged }
+    // #308: one damaging hit as the player took it. Attacker = null for the environment and for old callers.
+    public readonly struct PlayerHitInfo
+    {
+        public readonly EnemyVitals Attacker;
+        public readonly float Amount;
+        public readonly IncomingDamageKind Kind;
+        public PlayerHitInfo(EnemyVitals attacker, float amount, IncomingDamageKind kind) { Attacker = attacker; Amount = amount; Kind = kind; }
+    }
     public sealed class PlayerVitals : MonoBehaviour
     {
         [SerializeField] private CombatConfigSO _config;
@@ -39,6 +47,8 @@ namespace Oheangbu.Combat
         }
 
         public event Action<float> Damaged; // 실피해량 — 무적으로 막힌 피격은 발화하지 않는다
+        public event Action<PlayerHitInfo> AttackDamaged; // #308: the same hit with its attacker (after Damaged). No reward hangs here: retaliation only
+        public PlayerHitInfo LastHit { get; private set; } // #308: set before Damaged fires, so a Damaged listener can read who struck
         public event Action Died;
         public event Action HpChanged;
 
@@ -71,6 +81,10 @@ namespace Oheangbu.Combat
             => TakeAttackDamage(amount, IncomingDamageKind.Unspecified);
 
         public bool TakeAttackDamage(float amount, IncomingDamageKind kind)
+            => TakeAttackDamage(amount, kind, null);
+
+        // #308: enemy attacks arrive through EnemyStrike308.Deliver with their attacker. Amount, order and events are unchanged.
+        public bool TakeAttackDamage(float amount, IncomingDamageKind kind, EnemyVitals attacker)
         {
             if(!float.IsFinite(amount)||amount<=0)return false;
             if (_dodge != null && _dodge.IsInvulnerable) return false;
@@ -86,7 +100,9 @@ namespace Oheangbu.Combat
                 remaining=survivingHp;
             _hp=remaining;
             HpChanged?.Invoke();
+            LastHit = new PlayerHitInfo(attacker, amount, kind);
             Damaged?.Invoke(amount);
+            AttackDamaged?.Invoke(LastHit);
             if (_hp <= 0f) Died?.Invoke();
             return true;
         }

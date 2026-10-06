@@ -3,22 +3,16 @@ using UnityEngine.EventSystems;
 
 namespace Oheangbu.App.World.UI
 {
-    /// <summary>#304 places list row (지도, right column): tells the map which place got the selection. Keyboard / pad
-    /// selection centres the map on the place (the list alone is enough to use the map with a pad); a mouse-over selection
-    /// (FocusVisual304.HoverSelectFrame) only updates the detail card so the sheet does not jump under the pointer.</summary>
+    /// <summary>DEAD since D308-25 (map 5): the 지도 page has no places list, nothing adds this component and the presenter
+    /// method it called (PlaceSelected304) is gone. The file stays only because a stage copies files and never deletes one
+    /// (SPEC-MAP-OVERHAUL-308 Temporary Exceptions): remove it with its .meta once the page layout is confirmed.
+    /// Was: #304 places list row - told the map which place got the selection.</summary>
     [DisallowMultipleComponent]
     public sealed class MapPlaceRow304 : MonoBehaviour, ISelectHandler
     {
         public WorldMapPresenter Owner;
         public int Index;
-        FocusVisual304 visual;
 
-        public void OnSelect(BaseEventData eventData)
-        {
-            if (Owner == null) return;
-            if (visual == null) visual = GetComponent<FocusVisual304>();
-            bool byHover = visual != null && visual.HoverSelectFrame == Time.frameCount;
-            Owner.PlaceSelected304(Index, byHover);
-        }
+        public void OnSelect(BaseEventData eventData) { }
     }
 }

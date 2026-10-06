@@ -17,6 +17,12 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
         _BankGravel294("CC0 bank gravel",2D)="gray"{}
         _BankMud294("CC0 bank mud",2D)="gray"{}
         _StrataStrength276("Terrain material rules (candidate only)",Range(0,1))=0
+        // #307 GPU cost split only (0 = the shipped shader, bit-identical): 1 prepass normal = mesh normal, 2 forward rule normal = mesh
+        // normal, 4 rule colour without rock/cavity triplanar, 8 rule colour without the near realm floor
+        _Perf307Ground("#307 ground cost split flags (0 = off)",Float)=0
+        // #307: triplanar rock projections whose blend weight is at most this are not sampled (their share of the result is at most
+        // this fraction). 0 = every projection sampled (the original arithmetic).
+        _TriplanarSkip307("#307 triplanar projection skip weight",Range(0,.02))=0
         _StrataRange276("Rule to distant ink transition metres",Vector)=(160,650,0,0)
         _StrataField276("Curvature and local exposure data",2D)="gray"{}
         _Realm293("Authored realm pigments",2D)="gray"{}
@@ -192,7 +198,7 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
         TEXTURE2D(_BankMask294);TEXTURE2D(_BankGravel294);TEXTURE2D(_BankMud294);
         CBUFFER_START(UnityPerMaterial)
         float _BankStrength294;
-        float _RealmStrength293; float _StrataStrength276;float4 _StrataRange276;
+        float _RealmStrength293; float _StrataStrength276;float4 _StrataRange276;float _Perf307Ground;float _TriplanarSkip307;
         float _FloorStrength293,_FloorScale293,_FloorChroma293,_FloorWash293;float4 _FloorRange293,_FloorTint293,_FloorFar293;
         float _CanopyStrength293;float4 _CanopyTint293,_CanopyRange293,_CanopyForest293;
         float _FloorRealms293;float4 _FloorTintJ293,_FloorTintC293,_FloorTintH293,_FloorTintW293,_Scorch293;
@@ -407,7 +413,7 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
                 [branch] if(ruleWeight>0)
                 {
                     float3 masks=RuleMasks276(p,n,soil);
-                    float3 rn=RuleNormal276(p,n,masks,cameraDistance);
+                    float3 rn=((uint)_Perf307Ground&2u)!=0u?n:RuleNormal276(p,n,masks,cameraDistance);
                     Light light=GetMainLight(TransformWorldToShadowCoord(p));
                     float shade=saturate(dot(rn,light.direction));
                     float shadow=lerp(.38,1,light.shadowAttenuation);
@@ -500,7 +506,7 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
                 ClipEdge(i);float3 n=normalize(i.normal);
                 float distanceWS=distance(_WorldSpaceCameraPos,i.world);
                 float weight=RuleWeight276(distanceWS);
-                if(weight>0)
+                if(weight>0&&((uint)_Perf307Ground&1u)==0u)
                 {
                     float2 uv=(i.world.xz-_GroundPathRect.xy)*_GroundPathRect.zw;
                     float inside=step(0,uv.x)*step(uv.x,1)*step(0,uv.y)*step(uv.y,1);

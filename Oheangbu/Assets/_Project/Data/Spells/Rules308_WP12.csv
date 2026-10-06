@@ -1,0 +1,7 @@
+﻿# SPEC-SPELL-120-308 WP-12 path-opening field glyphs (opened by D308-13 Q5; TEST starting values, not measured).
+# Each row replaces its reserved row of Rules308_Base. gate.reach / gate.angle = which gate the cast picks, gate.delay = seconds until it opens,
+# combat.radius = a living enemy this close makes the cast a combat cast (refused); 0 = only a hunting enemy does.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+눈,replace,field.burn,,,,,,,,,,,,,,,,,gate.reach=6;gate.angle=60;gate.delay=1.2;combat.radius=8
+숫,replace,field.cut,,,,,,,,,,,,,,,,,gate.reach=6;gate.angle=60;gate.delay=0.5;combat.radius=8
+웅,replace,field.purify,,,,,,,,,,,,,,,,,gate.reach=6;gate.angle=60;gate.delay=2;combat.radius=8

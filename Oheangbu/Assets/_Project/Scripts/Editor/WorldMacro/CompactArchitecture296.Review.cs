@@ -207,16 +207,40 @@ namespace Oheangbu.EditorTools.WorldMacro
   {
    readonly SouthGateDoorPresentation[] gates;
    readonly bool[] prior;
+   // #308 D308-3b (SPEC-WORLD-ENCLOSURE-305 §1b′ NavMesh): the Seal308 pass gate is probed open as well. Its Update is paused, its
+   // leaves are posed open (open-leaf colliders on, blocker and carve off) and every pose / flag is restored on Dispose, so a Play-time
+   // probe is not overwritten and the saved (authored-open) Edit state comes back unchanged.
+   readonly WorldSealGate308[] seals;
+   readonly bool[] sealEnabled;
+   readonly Quaternion[] sealLeft,sealRight;
+   readonly bool[][] sealBlockers,sealNavigation,sealOpen;
    bool restored;
    public GateProbeScope296()
    {
     gates=Components295<SouthGateDoorPresentation>().Where(g=>g.isActiveAndEnabled).ToArray();
-    prior=gates.Select(g=>g.IsOpenRequested).ToArray();foreach(var gate in gates)gate.SetOpened(true,true);Physics.SyncTransforms();
+    prior=gates.Select(g=>g.IsOpenRequested).ToArray();foreach(var gate in gates)gate.SetOpened(true,true);
+    seals=Components295<WorldSealGate308>().Where(g=>g.gameObject.activeInHierarchy&&g.IsConfigured).ToArray();
+    sealEnabled=seals.Select(g=>g.enabled).ToArray();sealLeft=seals.Select(g=>g.LeftLeaf.localRotation).ToArray();sealRight=seals.Select(g=>g.RightLeaf.localRotation).ToArray();
+    sealBlockers=seals.Select(g=>Flags308(g.ClosedBlockers)).ToArray();sealOpen=seals.Select(g=>Flags308(g.OpenColliders)).ToArray();
+    sealNavigation=seals.Select(g=>(g.ClosedNavigation??new NavMeshObstacle[0]).Select(o=>o!=null&&o.enabled).ToArray()).ToArray();
+    foreach(var seal in seals){seal.enabled=false;seal.SetProbePose(true);}
+    Physics.SyncTransforms();
    }
+   static bool[] Flags308(Collider[] colliders)=>(colliders??new Collider[0]).Select(c=>c!=null&&c.enabled).ToArray();
+   static void Restore308(Collider[] colliders,bool[] flags){if(colliders==null)return;for(int i=0;i<colliders.Length&&i<flags.Length;i++)if(colliders[i]!=null)colliders[i].enabled=flags[i];}
    public void Dispose()
    {
     if(restored)return;restored=true;
-    for(int i=0;i<gates.Length;i++)if(gates[i]!=null)gates[i].SetOpened(prior[i],true);Physics.SyncTransforms();
+    for(int i=0;i<gates.Length;i++)if(gates[i]!=null)gates[i].SetOpened(prior[i],true);
+    for(int i=0;i<seals.Length;i++)
+    {
+     var seal=seals[i];if(seal==null)continue;
+     if(seal.LeftLeaf!=null)seal.LeftLeaf.localRotation=sealLeft[i];if(seal.RightLeaf!=null)seal.RightLeaf.localRotation=sealRight[i];
+     Restore308(seal.ClosedBlockers,sealBlockers[i]);Restore308(seal.OpenColliders,sealOpen[i]);
+     var nav=seal.ClosedNavigation??new NavMeshObstacle[0];for(int k=0;k<nav.Length&&k<sealNavigation[i].Length;k++)if(nav[k]!=null)nav[k].enabled=sealNavigation[i][k];
+     seal.ResyncAfterProbe();seal.enabled=sealEnabled[i];
+    }
+    Physics.SyncTransforms();
    }
   }
  }

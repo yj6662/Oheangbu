@@ -16,6 +16,11 @@ namespace Oheangbu.App.Demo
   PlayableGraph graph;AnimationMixerPlayable mixer;AnimationClipPlayable[] clips;
   CheongryongAttackPlan previous;EnemyVitals vitals;
   public float PoseWeight{get;private set;}
+  // #307 phase 1 item 4: frames whose graph evaluation + trunk turn were skipped while the tree was inactive (Combat disabled by
+  // the session's Cull) and none of its renderers was drawn; clip times, weights, facing and aim keep updating every frame.
+  public int SkippedEvaluations{get;private set;}
+  Renderer[] poseRenderers;bool liveEvaluate;   // only LateUpdate may skip; an explicit Evaluate call (checks) always samples
+  bool CanSkipPose(){if(!liveEvaluate||poseRenderers==null||Combat!=null&&Combat.isActiveAndEnabled)return false;foreach(var r in poseRenderers)if(r!=null&&r.enabled&&r.gameObject.activeInHierarchy)return false;return true;}
   void OnEnable(){vitals=GetComponent<EnemyVitals>();if(Combat!=null)Combat.AttackEnded+=Ended;}
   void Ended(CheongryongAttackPlan plan,bool cancelled){previous=cancelled?null:plan;}
   void Create()
@@ -34,6 +39,7 @@ namespace Oheangbu.App.Demo
     layers.SetLayerMaskFromAvatarMask(1,supportMask);output.SetSourcePlayable(layers);
    }else output.SetSourcePlayable(mixer);
    graph.Play();
+   poseRenderers=Animator.GetComponentsInChildren<Renderer>(true);
   }
   public void Evaluate(float now)
   {
@@ -57,13 +63,15 @@ namespace Oheangbu.App.Demo
     if(replant.IsValid()){replant.SetTime(u*SupportRelease.length);layers.SetInputWeight(1,u<1&&Mathf.Abs(Mathf.DeltaAngle(turnFrom,turnTo))>10?1:0);}
    }
    else if(layers.IsValid())layers.SetInputWeight(1,0);
-   graph.Evaluate(0);
+   bool skip=CanSkipPose();
+   if(!skip)graph.Evaluate(0);else SkippedEvaluations++;
    // The planted roots stay fixed; the upper trunk turns the striking limb toward the locked telegraph.
    float dt=sampled?Mathf.Clamp(now-lastTime,0,.1f):0;lastTime=now;sampled=true;
    if(plan!=null&&!plan.IsCancelled){var local=transform.InverseTransformDirection(plan.Direction);aimYaw=Mathf.MoveTowardsAngle(aimYaw,Mathf.Atan2(local.x,local.z)*Mathf.Rad2Deg,210*dt);}
-   if(TurningTrunk!=null&&FacingVisual==null)TurningTrunk.localRotation=Quaternion.Euler(0,aimYaw,0)*TurningTrunk.localRotation;
+   // the turn multiplies the freshly evaluated trunk pose, so it is skipped together with the evaluation
+   if(!skip&&TurningTrunk!=null&&FacingVisual==null)TurningTrunk.localRotation=Quaternion.Euler(0,aimYaw,0)*TurningTrunk.localRotation;
   }
-  void LateUpdate(){Evaluate(Time.time);}
+  void LateUpdate(){liveEvaluate=true;try{Evaluate(Time.time);}finally{liveEvaluate=false;}}
   void OnDisable(){if(Combat!=null)Combat.AttackEnded-=Ended;previous=null;facingPlan=null;sampled=false;if(graph.IsValid())graph.Destroy();if(supportMask!=null){if(Application.isPlaying)Destroy(supportMask);else DestroyImmediate(supportMask);}}
  }
 }

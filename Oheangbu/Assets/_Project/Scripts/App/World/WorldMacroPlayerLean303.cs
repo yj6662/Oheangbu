@@ -18,6 +18,7 @@ namespace Oheangbu.App.World
         public WorldMacroPlayerReaction303 Reaction;
 
         Transform _spine, _chest; float _roll, _pitch, _prevSpeed, _castAt = -10f; bool _bound;
+        WorldMacroPlayerGestureRig _gesture; bool _castPending; float _castScale = 1f;   // #308 juice B-1 / B-2
         Vector2 _recoil, _recoilVel;   // (pitch, roll) spring knocked by hits
 
         // a blow from `from` (body-local direction, y ignored): the upper body is knocked away from it, then springs back
@@ -43,11 +44,25 @@ namespace Oheangbu.App.World
             _bound = true;
         }
 
-        void OnCommitted(bool success) { if (success) _castAt = Time.time + (Profile != null ? Profile.CastDelay : 0f); }
+        // #308 juice (SPEC-ANIM-JUICE-308 B-1 / B-2): the twist is decided in LateUpdate of the same frame (Time.time is the same),
+        // after every Committed listener ran. The gesture rig on this object then knows whether the cast was refused (no twist),
+        // how long its throw keeps the close-up (the twist starts after it) and the throw's tier (twist scale). Without the rig
+        // or its juice profile the values are the old ones: CastDelay and scale 1.
+        void OnCommitted(bool success) { _castPending = success; }
+        void ResolveCast308()
+        {
+            _castPending = false;
+            if (_gesture == null) _gesture = GetComponent<WorldMacroPlayerGestureRig>();
+            if (_gesture != null && _gesture.CommitRejected308) return;
+            float delay = Profile != null ? Profile.CastDelay : 0f;
+            _castScale = _gesture != null ? _gesture.CastTwistScale308 : 1f;
+            _castAt = Time.time + (_gesture != null ? _gesture.CastTwistDelay308(delay) : delay);
+        }
 
         void LateUpdate()
         {
             if (!_bound) Bind();
+            if (_castPending) ResolveCast308();
             if (!_bound || Motor == null || Profile == null) return;
             float dt = Mathf.Max(1e-4f, Time.deltaTime);
             bool off = Motor.IsDrawing || Motor.IsSitting || (Reaction != null && (Reaction.Lying || Reaction.GettingUp));
@@ -75,7 +90,7 @@ namespace Oheangbu.App.World
             if (_spine != null && (Mathf.Abs(rollAll) > .01f || Mathf.Abs(pitchAll) > .01f))
                 _spine.rotation = Quaternion.AngleAxis(pitchAll * .6f, body.right) * Quaternion.AngleAxis(rollAll * .6f, body.forward) * _spine.rotation;
             if (_chest != null && (Mathf.Abs(rollAll) > .01f || Mathf.Abs(pitchAll) > .01f || cast > 0f))
-                _chest.rotation = Quaternion.AngleAxis(-Profile.CastTwist * cast, body.up) * Quaternion.AngleAxis(pitchAll * .4f + Profile.CastLean * cast, body.right) *
+                _chest.rotation = Quaternion.AngleAxis(-Profile.CastTwist * cast * _castScale, body.up) * Quaternion.AngleAxis(pitchAll * .4f + Profile.CastLean * cast, body.right) *
                                   Quaternion.AngleAxis(rollAll * .4f, body.forward) * _chest.rotation;
         }
     }

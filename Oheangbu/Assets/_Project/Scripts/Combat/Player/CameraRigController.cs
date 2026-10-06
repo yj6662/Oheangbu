@@ -8,7 +8,7 @@ namespace Oheangbu.Combat
     // V로 기반 시점을 바꾸지 않으며 작도 종료 시 항상 숄더 오프셋으로 복귀한다.
     // 작도면은 카메라 자식(화면 고정)이므로 마우스↔작도 1:1 매핑은 어느 포즈에서든 유지된다 —
     // 포즈 이동만으로는 글자 화면 크기가 변하지 않으므로, 클로즈업 체감은 FOV 스냅이 담당한다.
-    public sealed class CameraRigController : MonoBehaviour
+    public sealed partial class CameraRigController : MonoBehaviour   // #308: + CameraRigController.RenderOffset308.cs (render-time camera reaction)
     {
         private const float BoomRadius = 0.25f;      // 충돌 붐 구 반경 — 기술 상수(밸런스 아님)
         private const float SnapSqrEpsilon = 1e-6f;  // 지수 수렴 도착 스냅
@@ -95,6 +95,7 @@ namespace Oheangbu.Combat
         private void OnDisable()
         {
             if (_drawModeChanged != null) _drawModeChanged.Unsubscribe(OnDrawModeChanged);
+            ReleaseRenderOffset308();
         }
 
         private void Update()

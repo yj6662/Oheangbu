@@ -37,6 +37,9 @@ namespace Oheangbu.Data.Demo
             public string TriggerId;
             public string[] RequiredFacts=Array.Empty<string>();
             [TextArea] public string Text;
+            // #308 D308-19: eligible only while the named stage is neither completed nor open (its prerequisites met). Empty = no such
+            // condition (every row saved before this field). An unknown stage id never matches, so the point's own text shows.
+            public string UntilStageOpen="";
         }
         public string CampaignId="hwanggyeong-demo-v1";
         public Stage[] Stages=Array.Empty<Stage>();
@@ -45,17 +48,56 @@ namespace Oheangbu.Data.Demo
         public bool UseExplicitPrerequisites;
         public string[] InitialCompletedIds=Array.Empty<string>();
         public Testimony[] Testimonies=Array.Empty<Testimony>();
+        // #307 phase 1 item 2 (Tools/Unity/Plan307/PERF_DESIGN.md C.1): lazy Id -> first stage with that Id, the same answer as
+        // Array.Find(Stages,s=>s.Id==id) without a capture or a scan. Rebuilt when Stages is replaced/resized or the asset changes
+        // (OnEnable/OnValidate); a hit is re-checked against Stages[index].Id, a miss or a null entry falls back to the ordered scan.
+        [NonSerialized] Dictionary<string,int> stageIndex;
+        [NonSerialized] Stage[] stageIndexSource;
+        [NonSerialized] int stageIndexLength=-1;
+        [NonSerialized] bool stageIndexHasNull;
+        void OnEnable(){stageIndex=null;stageIndexSource=null;}
+        void OnValidate(){stageIndex=null;stageIndexSource=null;}
+        public Stage FindStage(string id)
+        {
+            var stages=Stages;
+            if(stages==null)throw new ArgumentNullException("array");   // Array.Find(null, ...) threw the same
+            if(id!=null)
+            {
+                if(stageIndex==null||!ReferenceEquals(stageIndexSource,stages)||stageIndexLength!=stages.Length)BuildStageIndex(stages);
+                if(!stageIndexHasNull&&stageIndex.TryGetValue(id,out int at)&&at<stages.Length&&stages[at]!=null&&stages[at].Id==id)return stages[at];
+            }
+            for(int i=0;i<stages.Length;i++)if(stages[i].Id==id)return stages[i];   // null entry: NullReferenceException, as the lambda threw
+            return null;
+        }
+        void BuildStageIndex(Stage[] stages)
+        {
+            stageIndex??=new Dictionary<string,int>(StringComparer.Ordinal);stageIndex.Clear();stageIndexHasNull=false;
+            for(int i=0;i<stages.Length;i++)
+            {
+                var s=stages[i];if(s==null){stageIndexHasNull=true;continue;}
+                if(s.Id!=null&&!stageIndex.ContainsKey(s.Id))stageIndex.Add(s.Id,i);
+            }
+            stageIndexSource=stages;stageIndexLength=stages.Length;
+        }
         public string DialogueFor(string triggerId,DemoCampaignState state,string fallback)
         {
             foreach(var testimony in Testimonies??Array.Empty<Testimony>())
             {
                 if(testimony.TriggerId!=triggerId)continue;
+                if(!string.IsNullOrEmpty(testimony.UntilStageOpen)&&!StageStillClosed(testimony.UntilStageOpen,state))continue;
                 bool eligible=true;
                 foreach(var fact in testimony.RequiredFacts??Array.Empty<string>())
                     if(state?.Facts==null||!state.Facts.Contains(fact)){eligible=false;break;}
                 if(eligible)return testimony.Text;
             }
             return fallback;
+        }
+        // #308 D308-19: true while stage `id` exists, is not completed and its prerequisites / required facts are not all met
+        bool StageStillClosed(string id,DemoCampaignState state)
+        {
+            if(Stages==null||state?.Completed==null)return false;
+            Stage gate=null;for(int i=0;i<Stages.Length;i++)if(Stages[i]!=null&&Stages[i].Id==id){gate=Stages[i];break;}
+            return gate!=null&&!state.Completed.Contains(id)&&!DemoCampaignProgression.PrerequisitesMet(gate,state);
         }
         public string WorkInProgressText="금표 주막에 도착했다. 다음 여정은 제작 중이다.";
         public bool IsValid
@@ -136,7 +178,11 @@ namespace Oheangbu.Data.Demo
         public static bool CanComplete(DemoCampaignProfile profile,DemoCampaignState state,string stageId,ICollection<string> defeated=null)
         {
             if(profile?.Stages==null||state?.Completed==null||profile.CampaignId!=state.CampaignId)return false;
-            var stage=Array.Find(profile.Stages,s=>s.Id==stageId);
+            return CanCompleteStage(profile.FindStage(stageId),state,stageId,defeated);
+        }
+        // CanComplete after its profile/state guards, for the stage FindStage(stageId) returned (no capture, no scan).
+        static bool CanCompleteStage(DemoCampaignProfile.Stage stage,DemoCampaignState state,string stageId,ICollection<string> defeated)
+        {
             if(stage==null||!stage.Implemented||state.Completed.Contains(stageId)||!PrerequisitesMet(stage,state))return false;
             foreach(var id in stage.RequiredDefeatedIds??Array.Empty<string>())
                 if((defeated==null||!defeated.Contains(id))&&(state.EncounterEvidence==null||!state.EncounterEvidence.Contains(id)))return false;
@@ -156,9 +202,16 @@ namespace Oheangbu.Data.Demo
                 var current=CurrentRequired(profile,state);
                 return current!=null&&current.Event==kind&&current.TriggerId==triggerId?current:null;
             }
+            // Same walk as AvailableStages (in order, CanComplete per stage Id) without the iterator or per-stage Array.Find.
             DemoCampaignProfile.Stage result=null;
-            foreach(var stage in AvailableStages(profile,state,defeated))
+            var stages=profile.Stages;if(stages==null)return null;
+            bool closed=state?.Completed==null||profile.CampaignId!=state.CampaignId;   // CanComplete's guard, identical for every stage
+            for(int i=0;i<stages.Length;i++)
+            {
+                var stage=stages[i];string id=stage.Id;   // a null entry still throws here, as the iterator did
+                if(closed||!CanCompleteStage(profile.FindStage(id),state,id,defeated))continue;
                 if(stage.Event==kind&&stage.TriggerId==triggerId){if(result!=null)return null;result=stage;}
+            }
             return result;
         }
         static DemoCampaignState Complete(DemoCampaignState state,DemoCampaignProfile.Stage stage)

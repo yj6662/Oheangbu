@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "source": "wolf311465",
+  "target": "fox_spirit",
+  "forward": [
+    0,
+    -1,
+    0
+  ],
+  "sideNote": "Target Fore_L/Hind_L sit at -X (rig_creatures naming). All packs face -Y with +Z up, so the source bones on -X are the source *_R / *.R / 'R' bones. Pairing is by body side; build refuses a map whose left/right order disagrees.",
+  "reference": {
+    "file": "wolf311465/Wolf/Models/Wolf.fbx",
+    "action": "Idle_New",
+    "frame": "start",
+    "why": "Calm standing breath, all four paws planted."
+  },
+  "pelvis": "Spine1",
+  "axisChain": {
+    "source": [
+      "Spine1",
+      "Spine2",
+      "Spine4",
+      "Spine5",
+      "Neck",
+      "head"
+    ],
+    "target": [
+      "Pelvis",
+      "Spine",
+      "Chest",
+      "Neck",
+      "Head"
+    ]
+  },
+  "tail": {
+    "source": [
+      "tail_1",
+      "tail_2",
+      "tail_3",
+      "tail_5"
+    ],
+    "target": [
+      "Tail_01",
+      "Tail_02",
+      "Tail_03",
+      "Tail_04",
+      "Tail_05"
+    ]
+  },
+  "legs": {
+    "Fore_L": {
+      "hip": "LegFront1.R",
+      "foot": "FrontFoot2.R",
+      "parent": "Spine4"
+    },
+    "Fore_R": {
+      "hip": "LegFront1.L",
+      "foot": "FrontFoot2.L",
+      "parent": "Spine4"
+    },
+    "Hind_L": {
+      "hip": "LegBack1.R",
+      "foot": "BackFoot2.R",
+      "parent": "Spine1"
+    },
+    "Hind_R": {
+      "hip": "LegBack1.L",
+      "foot": "BackFoot2.L",
+      "parent": "Spine1"
+    }
+  },
+  "footPointNote": "FrontFoot2/BackFoot2 heads = paw pads (z .018/.037 m at reference). Spine1 is the hip bone (points to the tail); chain order is by body position, rotation deltas do not depend on bone direction."
+}

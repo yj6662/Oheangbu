@@ -50,6 +50,7 @@ namespace Oheangbu.App
                 {
                     cast.VisualProfile=UnityEngine.Object.Instantiate(cast.Fx.Profile);cast.VisualProfile.Duration=flight+duration;
                     cast.Fx.Profile=cast.VisualProfile;cast.Fx.PreviewControlled=false;cast.Fx.DemonstrationCues=false;
+                    wiring.DeployDirector308?.HostEffect(cast.Fx,spell.Brush01);   // #308 forms2 S1 (a field assignment; never throws)
                     cast.Fx.SetImpactClock(flight);cast.Fx.Begin(origin,target!=null?target.transform:null,missPoint,cast.Fx.Profile.Pigment);
                 }
             }
@@ -81,9 +82,12 @@ namespace Oheangbu.App
                     if(!casts.Contains(cast)||!cast.Target.IsAlive||cast.Target.LifeRevision!=cast.Life){Remove(cast);continue;}
                     if(cast.Spell.Letter=='각')
                     {
-                        bool boss=cast.Target.GetComponent<Demo.CheongryongCombatController>()!=null||cast.Target.GetComponent<Demo.SouthGateGeneralController>()!=null;
-                        cast.Target.Control.Apply(cast.Attack.AttackId,cast.Until,boss?profile.BossRootSpeed:0,!boss);
-                        if(!boss)cast.Target.GetComponent<EnemyController>()?.StopAttack();
+                        // #308 WP-00: boss = the enemy's data (EnemyVitals.IsBoss; this also covers the mine boss). The two controller
+                        // types remain only for pre-#306 scenes whose bosses carry no vitals profile.
+                        bool boss=cast.Target.IsBoss||cast.Target.GetComponent<Demo.CheongryongCombatController>()!=null||cast.Target.GetComponent<Demo.SouthGateGeneralController>()!=null;
+                        RootBindRule308.Resolve(boss,profile.BossRootSpeed,out float rootSpeed,out bool blocks);
+                        cast.Target.Control.Apply(cast.Attack.AttackId,cast.Until,rootSpeed,blocks);
+                        if(blocks)cast.Target.GetComponent<EnemyController>()?.StopAttack();
                     }
                 }
                 if(cast.Spell.Letter=='낙'&&(now>=cast.SampleAt+.5f||now>=cast.Until))

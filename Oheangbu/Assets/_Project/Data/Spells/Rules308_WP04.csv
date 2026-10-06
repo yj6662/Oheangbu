@@ -1,0 +1,13 @@
+﻿# SPEC-SPELL-120-308 WP-04: effects derived from a confirmed hit. Every number is a TEST starting value (not measured).
+# Each row inherits base power, projectile speed and area geometry from the row of the same initial and medial without a final.
+# split.*  = two crescents from the point of impact (degrees, degrees, metres, share of the shot's power, seconds)
+# drop.*   = droplets to different nearby enemies (count, metres, share of the shot's power, metres per second)
+# bounce.* = a volley shot that hit bounces to another enemy (bounces per shot, metres, power kept per bounce, metres per second)
+# spread.* = ember that moves on when its carrier falls or its time is up (seconds, metres, moves)
+# return.time / refund.ink / heal.hp01 = the shot comes back (seconds) and returns ink (must stay below the cast cost) and health (share of maximum)
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+간,,hit.spread,,,,,base,,,,,,,,,,,,spread.timer=4;spread.radius=7;spread.max=2
+낫,,hit.crescent,,,,,base,,,,,,,,,,,,split.angle=35;split.half=12;split.range=6;split.power=0.5;split.delay=0.15
+속,,volley.ricochet,,,,,base,,,,,,,,,,,,bounce.count=1;bounce.range=7;bounce.power=0.6;bounce.speed=28
+안,,hit.droplets,,,,,base,,,,,,,,,,,,drop.count=3;drop.radius=6;drop.power=0.35;drop.speed=8
+앙,,hit.cycle,,,,,base,,,,,,,,,,,,return.time=0.6;refund.ink=0.04;heal.hp01=0.03

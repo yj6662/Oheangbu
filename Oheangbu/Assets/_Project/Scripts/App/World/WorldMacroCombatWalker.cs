@@ -54,12 +54,21 @@ namespace Oheangbu.App.World
             foreach(var r in Visuals)if(r!=null)r.enabled=false;
             ViewCamera.transform.SetParent(null,true);
         }
+        // #308 D308-8 (SPEC-VEHICLE-UX-308 §6): the rider keeps the body visible while seated. Only renderers that were enabled before
+        // Suspend come back (Suspend's own record); Resume restores the same record as before. Presentation only, no gameplay state.
+        public bool SeatedBodyVisible308 {get;private set;}
+        public void SetSeatedBodyVisible308(bool visible)
+        {
+            if(!Seated||Visuals==null){SeatedBodyVisible308=false;return;}
+            for(int i=0;i<Visuals.Length;i++)if(Visuals[i]!=null)Visuals[i].enabled=visible&&visualStates!=null&&i<visualStates.Length&&visualStates[i];
+            SeatedBodyVisible308=visible;
+        }
         public void Resume(Vector3 feet,float yaw)
         {
             Body.enabled=false;Body.transform.SetPositionAndRotation(feet,Quaternion.Euler(0,yaw,0));
             ViewCamera.transform.SetParent(cameraParent,false);ViewCamera.transform.localPosition=cameraPosition;ViewCamera.transform.localRotation=cameraRotation;
             for(int i=0;i<Visuals.Length;i++)if(Visuals[i]!=null)Visuals[i].enabled=visualStates!=null&&i<visualStates.Length&&visualStates[i];
-            Seated=false;Body.enabled=true;Motor.ResetMotion();CameraRig.enabled=true;Motor.enabled=true;Drawing.enabled=true;Wiring.enabled=true;if(visualDriver!=null)visualDriver.enabled=visualDriverWasEnabled;
+            Seated=false;SeatedBodyVisible308=false;Body.enabled=true;Motor.ResetMotion();CameraRig.enabled=true;Motor.enabled=true;Drawing.enabled=true;Wiring.enabled=true;if(visualDriver!=null)visualDriver.enabled=visualDriverWasEnabled;
         }
     }
 }

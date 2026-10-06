@@ -163,6 +163,18 @@ namespace Oheangbu.Presentation
             return Pose;
         }
 
+        /// <summary>
+        /// #308 juice (SPEC-ANIM-JUICE-308 A-1): 이번 프레임 자세의 벌어짐에만 더한다. 상태(_splay)는 건드리지 않으므로 다음 Evaluate가
+        /// 원래 값에서 다시 만든다(쌓이지 않는다). 벌어짐은 중심선 끝점을 보존한다(ApplyPose 주석) — 붓끝은 움직이지 않는다.
+        /// Evaluate와 ApplyPose 사이에 부른다.
+        /// </summary>
+        public void AddPresentationSplay(float add)
+        {
+            if (!IsBound || !Pose.Valid || !Finite(add) || add <= 0f) return;
+            Pose = new BrushBristlePose(Pose.TipPositionLocal, Pose.TipRotationLocal, Pose.TipOffsetInGripLocal,
+                Pose.BristleArcLength, Pose.BendDegrees, Mathf.Clamp01(_splay + add));
+        }
+
         /// <summary>IK가 붓 루트를 배치한 뒤 호출한다. root/GripSocket/본 scale은 쓰지 않는다.</summary>
         public bool ApplyPose()
         {

@@ -1,0 +1,14 @@
+﻿# SPEC-SPELL-120-308 WP-07 (user answer Q4 - DECISIONS D308-13): enemy modifiers. TEST starting values - not measured.
+# Each row replaces its reserved row of Rules308_Base and inherits power / speed / shape from the glyph without a final.
+# Enemy defence is enemy data (EnemyVitalsProfileSO - 0..1 share of incoming damage removed - default 0).
+# brand.scale = damage taken multiplier / break.defence = defence points removed / pierce.defence = share of the defence the hit ignores
+# dull.scale = multiplier of the enemy's next strike (once) / weaken.scale = multiplier of every strike / durations in seconds
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+강,replace,mod.pierce,,,,,base,,,,,,,,,,,,pierce.defence=1
+낭,replace,mod.pierce,,,,,base,,,,,,,,,,,,pierce.defence=1
+놋,replace,mod.armorbreak,,,,,base,,,,,,,,,,,,break.defence=0.2;break.duration=8
+맛,replace,mod.armorbreak,,,,,base,,,,,,,,,,,,break.defence=0.3;break.duration=10
+몬,replace,mod.brand,,,,,base,,,,,,,,,,,,brand.scale=1.2;brand.duration=8
+못,replace,mod.dull,,,,,base,,,,,,,,,,,,dull.scale=0.5;dull.duration=10
+산,replace,mod.brand,,,,,base,,,,,,,,,,,,brand.scale=1.3;brand.duration=4
+옷,replace,mod.weaken,,,,,base,,,,,,,,,,,,weaken.scale=0.7;weaken.duration=6

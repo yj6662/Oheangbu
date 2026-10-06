@@ -1,0 +1,18 @@
+{
+ "id": "map308_rim_views",
+ "spec": "SPEC-MAP-OVERHAUL-308 map 4 - DECISIONS D308-24 answer 9: 'R3 + 큰 보기는 가는 온 테'",
+ "status": "TEST",
+ "readBy": "Tools/Art/cartography308.py (an input of the bake, role 'rimViews': it reads sheet) -> map308_notation.json values.fogEdge.sheet -> MapNotation308SO.SheetRimWhole / SheetRimPx / SheetRimAlpha -> the paper shader's _M308Rim.z / .w (read only without _MINI_HUD). Tools/Art/map308_bcheck.py reads minimap (the pin).",
+ "minimap": {
+  "variant": "R3",
+  "px": 3,
+  "inkAlpha": 0.55,
+  "note": "the PIN of the minimap's rim: the broken dry-brush rim R3 (3 px, ink alpha .55 - D308-24 answer 9 keeps it). The bake does not read these three (its variant is MAP308_RIM, default R3); map308_bcheck.py compares every staged bundle's values.fogEdge (variant, inkAlpha, px) with them, so a bundle baked as another variant fails its 'crisp edge numbers' row until this pin is changed - a data decision, not a tool edit."
+ },
+ "sheet": {
+  "whole": 1,
+  "px": 1.5,
+  "inkAlpha": 0.55,
+  "note": "the unfolded map and the whole-world view. whole 1 = a thin whole rim px wide (reference px at 1080p, x the screen scale; a SCREEN distance, so the same width at every zoom whose fog cell is at least (px + .5) / .32 screen px: 6.3 px for px 1.5 - every zoom of the unfolded map down to 5.0 m/px) at inkAlpha over the unwalked wash. On the whole-world view (4 px per cell) the gate that keeps ink off the interior cuts the rim at .32 - .40 cells: px 1.5 stands about 1.2 - 1.3 px wide there, and no px makes it wider than about 1.5 px. whole 0 = the sheet draws the minimap's rim (the picture of map 3). px .5 .. 4."
+ }
+}

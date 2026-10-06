@@ -20,6 +20,7 @@ namespace Oheangbu.App.World
         bool DemoEncounterAvailable(string actorId, string contentId)
         {
             if(!MountainEncounterAvailable(actorId))return false;
+            if(actorId==MineTutorialReplacedId&&MineTutorialBossPresent)return false;   // #306 #11: the tutorial boss takes its place
             if(actorId==SouthGateGeneralId)return DemoSouthGateEncounterAvailable;
             string required = actorId == CheongryongId ? "cheongryong" :
                 contentId == DemoGrowthLessonLink.LessonId ? "deep_forest" : null;

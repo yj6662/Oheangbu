@@ -81,6 +81,21 @@ namespace Oheangbu.App.Demo
         public float CurrentClipTime { get; private set; }
         public float CurrentAttackWeight { get; private set; }
         public int GraphEvaluationCount { get; private set; }
+        // #307 phase 1 item 4: frames whose pose sample was skipped while the dragon was inactive (controller disabled by the
+        // session's Cull) and none of its renderers was drawn. Only without an enabled CheongryongBodyFollow: the follow keeps an
+        // arc-length history of the sampled head, so a skipped sample would change the body shape seen later - with the shipped
+        // follow the dragon therefore always samples. Clip times, weights and plan bookkeeping run every frame either way.
+        public int SkippedEvaluations { get; private set; }
+        private Renderer[] _poseRenderers;
+        private CheongryongBodyFollow[] _poseFollows;
+        private bool _liveEvaluate;   // only LateUpdate may skip; an explicit EvaluateAt call (checks) always samples
+        private bool CanSkipPose()
+        {
+            if (!_liveEvaluate || _poseRenderers == null || _controller == null || _controller.isActiveAndEnabled) return false;
+            foreach (var follow in _poseFollows) if (follow != null && follow.enabled) return false;
+            foreach (var r in _poseRenderers) if (r != null && r.enabled && r.gameObject.activeInHierarchy) return false;
+            return true;
+        }
         public bool TailSweepRequested { get; private set; }
         public float TailSweepWindup01 { get; private set; }
         public bool TailSweepVisualImplemented => false;
@@ -165,7 +180,7 @@ namespace Oheangbu.App.Demo
         }
         private void OnDisable() { Unsubscribe(); UnbindStateVitals(); ReleaseGraph(); }
         private void OnDestroy() { Unsubscribe(); UnbindStateVitals(); ReleaseGraph(); }
-        private void LateUpdate() { EvaluateAt(Time.time); }
+        private void LateUpdate() { _liveEvaluate = true; try { EvaluateAt(Time.time); } finally { _liveEvaluate = false; } }
 
         private void Subscribe()
         {
@@ -231,6 +246,12 @@ namespace Oheangbu.App.Demo
                 _graph.Connect(_hit, 0, _mixer, 3); _graph.Connect(_stun, 0, _mixer, 4); _graph.Connect(_death, 0, _mixer, 5);
             }
             var output = AnimationPlayableOutput.Create(_graph, "Cheongryong Generic rig", _animator); output.SetSourcePlayable(_mixer);
+            _poseRenderers = _animator.GetComponentsInChildren<Renderer>(true);
+            var follows = new System.Collections.Generic.List<CheongryongBodyFollow>(GetComponentsInChildren<CheongryongBodyFollow>(true));
+            foreach (var follow in GetComponentsInParent<CheongryongBodyFollow>(true)) if (!follows.Contains(follow)) follows.Add(follow);
+            foreach (var follow in _animator.GetComponentsInChildren<CheongryongBodyFollow>(true)) if (!follows.Contains(follow)) follows.Add(follow);
+            if (_stateFollow != null && !follows.Contains(_stateFollow)) follows.Add(_stateFollow);
+            _poseFollows = follows.ToArray();
             _mixer.SetInputWeight(0, 1); _mixer.SetInputWeight(1, 0); _mixer.SetInputWeight(2, 0); _graph.Play();
         }
 
@@ -248,8 +269,12 @@ namespace Oheangbu.App.Demo
             // Full-body clips key fins/limbs that head-only clips do not. Reset
             // their authored local pose before every sample, then let the active
             // graph and (when appropriate) BodyFollow own this frame explicitly.
-            RestoreNeutralStatePose();
-            if (HasStateClips && EvaluateStatePose(scaledTime)) return;
+            bool skip = CanSkipPose();
+            if (!skip) RestoreNeutralStatePose();
+            if (HasStateClips && EvaluateStatePose(scaledTime, skip)) return;
+            // Leaving hit/stun/death re-enables BodyFollow inside EvaluateStatePose (after the skip test): sample this frame so its
+            // history never records a stale head. SetWholeBodyState moves no bone, so restoring here keeps the original order's pose.
+            if (skip && !CanSkipPose()) { skip = false; RestoreNeutralStatePose(); }
             CurrentPose = "Idle";
             if (!_hasClock || scaledTime < _idleStartedAt) { _idleStartedAt = scaledTime; _hasClock = true; }
             float idleTime = CheongryongRigPhase.IdleTime(scaledTime - _idleStartedAt, _idleClip.length);
@@ -282,12 +307,13 @@ namespace Oheangbu.App.Demo
             _mixer.SetInputWeight(2, attackInput == 2 ? CurrentAttackWeight : 0);
             // Even a paused frame needs the same explicit pose before BodyFollow overwrites descendants.
             Transform root = _animator.transform; Vector3 position = root.localPosition, scale = root.localScale; Quaternion rotation = root.localRotation;
-            _graph.Evaluate(0); GraphEvaluationCount++;
+            if (skip) SkippedEvaluations++;
+            else { _graph.Evaluate(0); GraphEvaluationCount++; }
             root.localPosition = position; root.localRotation = rotation; root.localScale = scale;
             if (_resetStateFollowAfterSample && _stateFollow != null) { _stateFollow.ResetPoseHistory(); _resetStateFollowAfterSample = false; }
         }
 
-        private bool EvaluateStatePose(float now)
+        private bool EvaluateStatePose(float now, bool skip = false)
         {
             bool stunned = _controller != null && _controller.State == CheongryongCombatState.Stunned || _stateVitals != null && _stateVitals.WeakPointActive;
             if (stunned && !_wasStunned) _stunAt = now; _wasStunned = stunned;
@@ -301,7 +327,9 @@ namespace Oheangbu.App.Demo
             for (int i = 0; i < 6; i++) _mixer.SetInputWeight(i, i == input ? 1 : 0);
             if (input == 3) _hit.SetTime(time); else if (input == 4) _stun.SetTime(time); else _death.SetTime(time);
             var root = _animator.transform; var p = root.localPosition; var r = root.localRotation; var scale = root.localScale;
-            _graph.Evaluate(0); GraphEvaluationCount++; root.localPosition = p; root.localRotation = r; root.localScale = scale;
+            if (skip) SkippedEvaluations++;
+            else { _graph.Evaluate(0); GraphEvaluationCount++; }
+            root.localPosition = p; root.localRotation = r; root.localScale = scale;
             return true;
         }
 

@@ -22,7 +22,7 @@ namespace Oheangbu.App.World
         bool MountainEncounterAvailable(string actorId)
         {
             if(MountainLayout==null)return true;
-            var mountain=Array.Find(MountainLayout.Mountains,m=>m.BossId==actorId);
+            CompactWorldLayoutSO.Mountain mountain=null;foreach(var m in MountainLayout.Mountains)if(m!=null&&m.BossId==actorId){mountain=m;break;}   // #307: no closure per call
             return mountain==null||string.IsNullOrEmpty(mountain.RequiredStageId)||Progress.campaign.Completed.Contains(mountain.RequiredStageId);
         }
         bool TryPrepareMountainDefeat(string id,out WorldMacroProgress proposal,out string error,out bool owned)

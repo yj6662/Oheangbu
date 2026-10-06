@@ -132,6 +132,7 @@ namespace Oheangbu.App.World.UI
   float OutSeconds=>style.Motion.ArrivalOutMs/1000f;
   float TotalSeconds=>style!=null?InSeconds+HoldSeconds+OutSeconds:0;
 
+  object factFor;string fact;
   void Update()
   {
    if(tracker==null||Session.Progress==null||Session.Walker==null)return;
@@ -139,7 +140,8 @@ namespace Oheangbu.App.World.UI
    var ui=PlaytestUiRoot.Instance;bool allowed=Session.LocationArrivalAllowed&&(ui==null||!ui.IsMenuOpen);
    var current=tracker.Current;
    if(!previewing&&current?.Id!=displayed){displayed=null;age=10;}
-   if(Session.LocationDiscoveryAllowed&&current!=null&&!Session.Progress.campaign.Facts.Contains("location:"+current.Id)&&queued.Add(current.Id))visits.Enqueue(current);
+   if(current!=factFor){factFor=current;fact=current!=null?"location:"+current.Id:null;}   // #307: no per-frame string while inside a place
+   if(Session.LocationDiscoveryAllowed&&current!=null&&!Session.Progress.campaign.Facts.Contains(fact)&&queued.Add(current.Id))visits.Enqueue(current);
    // Visits survive leaving during combat or a failed save. Only the visual notice
    // drops stale places; a physically reached place must not lose its discovery.
    if(Session.LocationDiscoveryAllowed&&visits.Count>0&&now>=nextSave)

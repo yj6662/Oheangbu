@@ -8,7 +8,10 @@ namespace Oheangbu.App.World.UI
     /// dashed ring of map.png.</summary>
     public enum MapObjectiveMark304 { OpenBrush = 0, DashedRing = 1 }
 
-    /// <summary>Legend symbols (DESIGN §5.13, 7 rows).</summary>
+    /// <summary>D308-25: when the title slip carries the realm line (the name of the realm / cave you stand in).</summary>
+    public enum MapSlipRealm304 { WhenNotOnSheet = 0, Always = 1, InteriorOnly = 2 }
+
+    /// <summary>Legend symbols (DESIGN §5.13, 7 rows). D308-25: the map page has no legend; the type stays for the asset's rows.</summary>
     public enum MapLegendSymbol304 { Player = 0, Rest = 1, Place = 2, Coin = 3, Pin = 4, Objective = 5, Unwalked = 6 }
 
     [Serializable]
@@ -21,7 +24,8 @@ namespace Oheangbu.App.World.UI
         public MapLegendRow304(MapLegendSymbol304 symbol, string name, string meaning) { Symbol = symbol; Name = name; Meaning = meaning; }
     }
 
-    /// <summary>What the places list and the detail card say about one kind of place.</summary>
+    /// <summary>The name of one kind of place (D308-25: the places list and the detail card are gone; Name is still read by the
+    /// name tag of the dropped coins / the objective fallback and by the HUD bearing line, Description has no reader).</summary>
     [Serializable]
     public sealed class MapKindText304
     {
@@ -57,7 +61,35 @@ namespace Oheangbu.App.World.UI
         public float PaintedCurrentMetres = 1100f;
         [Tooltip("현재 위치 view width (world metres) without an illustration")] public float PlainCurrentMetres = 640f;
         [Tooltip("현재 위치 view width (world metres) inside a cave / interior zone")] public float InteriorCurrentMetres = 150f;
-        [Tooltip("place labels show while the view is narrower than this fraction of the world width")] public float LabelMaxViewWidth = .62f;
+        [Tooltip("NO READER since D308-25 (the sheet shows the name tag of the pointed place only, at any zoom). Was: place labels show while the view is narrower than this fraction of the world width")]
+        public float LabelMaxViewWidth = .62f;
+
+        [Header("page (D308-25, 1920x1080 page px, top-left origin; all TEST)")]
+        [Tooltip("the twice-folded sheet on the page (x, y, width, height). The print window is this rect less PrintInset on every side")]
+        public Rect SheetRect = new Rect(182f, 140f, 1556f, 820f);
+        [Tooltip("unprinted margin of the sheet (px)")] public float PrintInset = 30f;
+        [Tooltip("the lacquer board = the sheet grown by (left, top, right, bottom) px. Kit rule: board (80 + 9 n) x (82 + 9 m)")]
+        public Vector4 BoardGrow = new Vector4(18f, 14f, 18f, 76f);
+        [Tooltip("title slip: its top-left from the sheet's top-left (px)")] public Vector2 TitleSlipOffset = new Vector2(42f, 16f);
+        [Tooltip("north mark: its left edge from the sheet's RIGHT edge (x, towards the left) and its top from the sheet's top (y)")]
+        public Vector2 NorthOffset = new Vector2(90f, 42f);
+        [Tooltip("the wide sheet picture (sheet_map_wide.png, the SheetRect's size; set by map304-setup). None = the foundation's sheet_map, stretched")]
+        public Sprite SheetWide;
+        [Tooltip("sheet size the fold crease shade was tuned on (px): the crease keeps that width in px on any sheet")]
+        public Vector2 CreaseReferenceSize = new Vector2(800f, 820f);
+        [Tooltip("print window width (px) the metre constants of the view were tuned on (interior view, zoom limits, the views without an illustration): they scale with window width / this")]
+        public float ViewReferenceWidthPx = 740f;
+        [Tooltip("the default view takes the whole world width when its own width reaches this fraction of it (no few-pixel sideways pan)"), Range(.5f, 1f)]
+        public float FitWidthSnap = .99f;
+        [Tooltip("closest zoom outdoors: view width as a fraction of the world width, at ViewReferenceWidthPx")] public float MinViewWidth = .03f;
+        [Tooltip("closest zoom inside a cave / interior zone: view width in metres, at ViewReferenceWidthPx")] public float InteriorMinMetres = 80f;
+        [Tooltip("wheel step: view width factor per notch in (x) and out (y)")] public Vector2 ZoomStep = new Vector2(.82f, 1.22f);
+        [Tooltip("name tag: a mark is picked when the pointer is within this many px of its centre (page px)")] public float HoverRadiusPx = 24f;
+        [Tooltip("name tag: two marks whose distances differ by no more than this (px) are a tie, the higher name priority wins")] public float HoverTiePx = 2f;
+        [Tooltip("name tag: when no side of the mark has room (print edge, title slip, north mark) the tag moves the least distance to fit, at most this far (px); farther = no tag")]
+        public float HoverTagMaxShiftPx = 240f;
+        [Tooltip("the realm line of the title slip: 0 = only while the sheet does not show that realm's name, 1 = always (the pre-D308-25 slip), 2 = cave / interior names only")]
+        public MapSlipRealm304 SlipRealm = MapSlipRealm304.WhenNotOnSheet;
 
         [Header("paper")]
         [Tooltip("걷지 않은 땅: sheet veil over undiscovered cells of the illustration (map_fog of the mockup is .84)"), Range(0f, 1f)]
@@ -72,6 +104,8 @@ namespace Oheangbu.App.World.UI
         [Tooltip("walked-land edge wobble")] public float FogEdgeNoise = .22f;
         [Tooltip("realm names keep this margin (page px) from the print edge and from the title slip and 북 on the paper")]
         public float RegionLabelMarginPx = 10f;
+        [Tooltip("D308-30 answer 3: the five realm names printed on the sheet. Off (the default) = no name on the sheet - the realms read by wash colour and border line (Realm308) - and the title slip's realm line then stands at every view (SlipRealm 0)")]
+        public bool RegionNamesOnSheet = false;
         [Tooltip("painted relief (the compact world's olive hillshade, cyan water, pink zone patches) printed as a monochrome ink wash on the sheet (#304 QA2; DESIGN §2.5 bans the old minimap green and a second accent). 0 = the coloured relief"), Range(0f, 1f)]
         public float PaintedInkWash = 1f;
         [Tooltip("ink wash: relief luminance (sRGB) at and above which the sheet stays bare")] public float PaintedInkLight = .55f;
@@ -102,9 +136,19 @@ namespace Oheangbu.App.World.UI
         public float BorderDotPx = 2.2f, BorderDotGapPx = 9f;
 
         [Header("text (content, editable here)")]
+        [Tooltip("NO READER since D308-25 (the map page has no legend); kept so the asset keeps its rows")]
         public List<MapLegendRow304> Legend = DefaultLegend();
         public List<MapKindText304> Kinds = DefaultKinds();
-        [Tooltip("places list rows visible before it scrolls")] public int ListVisibleRows = 5;
+        [Tooltip("NO READER since D308-25 (the map page has no places list). Was: places list rows visible before it scrolls")] public int ListVisibleRows = 5;
+
+        [Header("#308 notation (SPEC-MAP-OVERHAUL-308)")]
+        [Tooltip("the baked map bundle both maps draw from (terrain picture, brush strips, icon atlas, frames). Set by the editor command " +
+                 "MapOverhaul308 import, cleared by its revert. None, or a bundle baked for another map = the pre-#308 map")]
+        public MapNotation308SO Notation308;
+        [Tooltip("#308 map 6 (D308-30): the realm sheets of the unfolded sheet - realm borders, realm wash colours, the faint relief of the whole world " +
+                 "(baked offline: Tools/Unity/Stage308_map6 map6_realm.py). None, one baked for another map, or its On = 0 = the sheet of map 5 " +
+                 "(unwalked land = the flat wash). The HUD minimap never reads it")]
+        public MapRealm308SO Realm308;
 
         public MapKindText304 Kind(MapMarkerKind304 kind)
         {

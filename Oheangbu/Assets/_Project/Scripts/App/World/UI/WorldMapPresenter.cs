@@ -12,12 +12,17 @@ namespace Oheangbu.App.World.UI
 {
     /// <summary>
     /// 강토 지도 (#304 map.png). The twice-folded hanji (ExpandedWorldMap/TwiceFoldedHanji/PrintedMapWindow/MapInput,
-    /// WorldMapPaperReview) now carries the sheet_map paper at 800x820 (print window 740x760) on a full veil, a legend
-    /// column on the left, the discovered-places list + detail card on the right and the [R][T][L][X] row under the paper
-    /// (WorldMapPresenter.Page304.cs). The rail ([M] 닫기, Q / E) is PlaytestUiRoot's MapRail304 above the map layer. Marks and labels are TMP / sprite based
+    /// WorldMapPaperReview) carries the sheet paper on a full veil and the [R][T][X] row under the paper
+    /// (WorldMapPresenter.Page304.cs). D308-25 (map 5, text diet): the page is the map only - no legend, no places list, no detail
+    /// card, no pointer hints; the sheet is wide (MapStyle304SO.SheetRect, 1556x820; print window 1496x760) and shows the whole
+    /// east-west span of the world at the old scale; a name tag stands only at the mark under the pointer
+    /// (WorldMapPresenter.Hover.cs). The rail ([M] 닫기, Q / E) is PlaytestUiRoot's MapRail304 above the map layer. Marks and labels are TMP / sprite based
     /// (WorldMapPresenter.Marks304.cs). #306: the minimap is back on the HUD (HudMinimap304 under HUD_Canvas, reading
     /// IMapMiniSource304, WorldMapPresenter.Mini306.cs); MiniRoot is its root once attached, an empty inactive stub before. The
     /// HUD bearing line reads IMapMarkerSource304.
+    /// #308 (SPEC-MAP-OVERHAUL-308): with a notation bundle (MapStyle304SO.Notation308, WorldMapPresenter.Map308.cs) the sheet
+    /// draws the baked terrain picture (_MAP308), brush strips, atlas icons, the plated name tag and the
+    /// lacquer board; without one every line below runs as before.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed partial class WorldMapPresenter : MonoBehaviour
@@ -25,8 +30,15 @@ namespace Oheangbu.App.World.UI
         public const float OpenDuration = 1.1f;
         public const float CloseDuration = .65f;
 
-        // map.png, 1920x1080 page px (DESIGN §7.6)
-        const float PaperX = 560f, PaperY = 140f, PaperW = 800f, PaperH = 820f, PrintInset = 30f;
+        // D308-25: the sheet's place on the 1920x1080 page is data (MapStyle304SO.SheetRect / PrintInset), not constants here
+        Rect Sheet304 => mapStyle.SheetRect;
+        /// <summary>The print window at page scale 1 (the sheet less its unprinted margin), page px.</summary>
+        Vector2 Print304 => new Vector2(Mathf.Max(1f, mapStyle.SheetRect.width - 2f * mapStyle.PrintInset), Mathf.Max(1f, mapStyle.SheetRect.height - 2f * mapStyle.PrintInset));
+        /// <summary>The sheet's centre from the page centre (anchored position at page scale k).</summary>
+        Vector2 SheetAt304(float k) => new Vector2((Sheet304.center.x - UiPageFit304.Width * .5f) * k, -(Sheet304.center.y - UiPageFit304.Height * .5f) * k);
+        /// <summary>Window width over the width the view's metre constants were tuned on (740 px): a wider window shows more land
+        /// at the same metres per px instead of a bigger picture.</summary>
+        float ViewWidthScale304 => foldMap == null ? 1f : foldMap.rect.width / Mathf.Max(.01f, pageScale) / Mathf.Max(1f, mapStyle.ViewReferenceWidthPx);
 
         /// <summary>#306: the HUD minimap's root ("PersistentMinimap" under HUD_Canvas) once HudMinimap304 attaches; until then
         /// the empty, inactive #304 stub of the same name. Stays an auto-property (editor tools reach its backing field by name).</summary>
@@ -35,7 +47,6 @@ namespace Oheangbu.App.World.UI
         public bool Visible { get; private set; } = true;
         public bool Expanded => targetExpanded;
         public bool Folding => Visible && !Mathf.Approximately(fold, targetExpanded ? 1f : 0f);
-        public bool LegendVisible => legend != null && legend.activeSelf;
         public bool ReducedMotion { get; set; }
         public float FoldProgress => fold;
         public int PaperVertexCount => paperGraphic != null ? paperGraphic.GeometryVertexCount : 0;
@@ -71,9 +82,11 @@ namespace Oheangbu.App.World.UI
         Rect lastInkUv;
         WorldMapZoneSpec lastInkZone;
         bool inkReady;
-        RectTransform foldMap, fullLabels;
-        GameObject legend;
+        RectTransform foldMap, fullLabels, mapInput;
         Texture2D fogTexture;
+        // #307 fog cache: the texels and the (outline) playability of every cell, so a reveal rewrites only the cells around it
+        Color32[] fogPixels;
+        bool[] fogPlayable;
         Rect fullUv = new Rect(0, 0, 1, 1);
         bool initialized, targetExpanded, progressLoaded, followCurrent, ownsRuntimeData, wholeWorldLayout;
         float fold;
@@ -115,7 +128,8 @@ namespace Oheangbu.App.World.UI
                 : (sheet.Regions ?? Array.Empty<WorldMacroSheetSO.RegionSpec>()).Where(r => r != null && r.Polygon != null && r.Polygon.Length >= 3).Select(r => r.Polygon).ToArray();
             displayedShortcuts = UnityEngine.Object.FindObjectsByType<WorldActShortcut>(FindObjectsSortMode.None).Where(x => x.gameObject.scene == session.gameObject.scene).ToArray();
             discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline);
-            BuildFog(); BuildMiniStub(parent); BuildFull(parent); BuildMarks304(); BuildMapHover(); BuildInput304();
+            InitNotation308();   // #308: the bundle for this map, or none (the pre-#308 path)
+            BuildFog(); BuildMiniStub(parent); BuildFull(parent); BuildMarks304(); BuildInput304();
             ApplyFold(); ApplyUvAndMarkers(CurrentWorld());
             initialized = true;
         }
@@ -170,18 +184,22 @@ namespace Oheangbu.App.World.UI
                 if (progressLoaded && Time.unscaledTime >= nextDiscoveryProbe && WorldMapDiscoveryGrid.Contains(data.Outline, new Vector2(current.x, current.z)))
                 {
                     nextDiscoveryProbe = Time.unscaledTime + .2f;
-                    if ((data.ZoneAt(current) == null || !data.ZoneAt(current).ExploreWalkedPassages) && discovery.Reveal(new Vector2(current.x, current.z)))
+                    if ((data.ZoneAt(current) == null || !data.ZoneAt(current).ExploreWalkedPassages) && discovery.Reveal(new Vector2(current.x, current.z), WorldMapDiscoveryGrid.RevealRadius, RevealGate308(current)))
                     {
+                        // stays at the reveal: the session's save snapshots (autosave, rest, interactions, death) copy Progress
+                        // without a map hook, so a deferred export could save stale walked land (~2.6 KB string per reveal)
                         session.Progress.ui.discoveredCells = Convert.ToBase64String(discovery.Export());
-                        RefreshFog();
+                        RefreshFogAround(new Vector2(current.x, current.z), WorldMapDiscoveryGrid.RevealRadius);
                     }
                     foreach (WorldMapMarkerSpec marker in data.Markers)
-                        if (marker != null && !marker.RequiresArrival && discovery.IsDiscovered(marker.WorldXZ) && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
+                        // #308 map 3c: WalkReveals308 = the same cell test first; with a notation bundle a marker's reveal rule may ask more
+                        if (marker != null && !marker.RequiresArrival && WalkReveals308(marker) && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
                             session.Progress.ui.discoveredMarkers.Add(marker.Id);
                 }
                 // Closed map: the sheet draws nothing; discovery above keeps running for the bearing line and the HUD minimap
                 // (#306), which prints its own window through IMapMiniSource304.
                 if (RefreshShortcutLines306()) miniRevision++;
+                RefreshStates308();   // #308: stroke states (the HUD minimap reads their revision; no minimap print)
                 if (!open) return;
                 if (followCurrent) CenterFullOn(new Vector2(current.x, current.z));
                 ApplyUvAndMarkers(current);
@@ -216,8 +234,8 @@ namespace Oheangbu.App.World.UI
             ApplyUvAndMarkers(here);
         }
 
-        /// <summary>#304: centres the unfolded map on a place (places list, gamepad), at the 현재 위치 zoom when the map shows
-        /// the whole world, otherwise at the current zoom. Interiors keep their local plan (the card still updates).</summary>
+        /// <summary>#304: centres the unfolded map on a place, at the 현재 위치 zoom when the map shows the whole world, otherwise
+        /// at the current zoom. Interiors keep their local plan. D308-25: no caller on the map page (the places list is gone).</summary>
         public void FocusOn(WorldMapMarkerSpec marker)
         {
             if (marker == null) return;
@@ -232,7 +250,8 @@ namespace Oheangbu.App.World.UI
             if (!initialized) return;
             Vector3 here = CurrentWorld();
             if (data.ZoneAt(here) != null) return;
-            if (wholeWorldLayout || fullUv.width >= .999f) { wholeWorldLayout = false; RefreshFullLayout(true); SetFocusWindow(false); }
+            // D308-25: the flag, not the width - the default view of the wide sheet spans the whole world width too
+            if (wholeWorldLayout) { wholeWorldLayout = false; RefreshFullLayout(true); SetFocusWindow(false); }
             followCurrent = false; CenterFullOn(worldXZ);
             ApplyUvAndMarkers(here);
         }
@@ -244,12 +263,15 @@ namespace Oheangbu.App.World.UI
             float metres;
             // DESIGN §7.6 기본 보기: the illustration at 1.5 screen px per texel (map.png: 493 of 1024 Terrain px in 740 px).
             // The live compact map (painted relief, 1001 px over 4000 m) opens at ~1970 m instead of the pre-#304 1100 m.
-            if (interior) metres = mapStyle.InteriorCurrentMetres;
+            // D308-25: the metre constants are "at a 740 px window" (ViewWidthScale304); the illustrated view already follows the window
+            if (interior) metres = mapStyle.InteriorCurrentMetres * ViewWidthScale304;
             else if (data.HasIllustration && data.DisplayMap != null && data.DisplayMap.width > 0)
                 metres = worldWidth * (foldMap.rect.width / Mathf.Max(.01f, pageScale) / Mathf.Max(.1f, mapStyle.CurrentViewTexelScale)) / data.DisplayMap.width;
-            else if (data.PaintedRelief) metres = mapStyle.PaintedCurrentMetres;
-            else metres = mapStyle.PlainCurrentMetres;
+            else if (data.PaintedRelief) metres = mapStyle.PaintedCurrentMetres * ViewWidthScale304;
+            else metres = mapStyle.PlainCurrentMetres * ViewWidthScale304;
             float width = Mathf.Clamp(metres / worldWidth, .002f, 1f);
+            // D308-25: a view within FitWidthSnap of the world's width is the whole width (3,985 of 4,000 m would pan 5 px sideways)
+            if (!interior && width >= Mathf.Clamp(mapStyle.FitWidthSnap, .5f, 1f)) width = 1f;
             float viewAspect = foldMap.rect.width / Mathf.Max(1f, foldMap.rect.height);
             fullUv.width = width;
             fullUv.height = Mathf.Clamp(width * worldWidth / (viewAspect * worldHeight), interior ? .005f : .03f, 1f);
@@ -283,15 +305,34 @@ namespace Oheangbu.App.World.UI
         {
             if (!targetExpanded || fold < .999f || Mathf.Abs(scroll) < .01f) return;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(foldMap, screenPoint, eventCamera, out Vector2 local)) return;
+            ZoomAt(scroll, local);
+        }
+
+        /// <summary>local = a point in the print window's own px (it may lie beside the window: the input surface covers the whole
+        /// printed area of the sheet, the whole-world view is a narrower strip in its middle).</summary>
+        void ZoomAt(float scroll, Vector2 local)
+        {
             Rect rect = foldMap.rect;
             Vector2 focus = new Vector2(Mathf.InverseLerp(rect.xMin, rect.xMax, local.x), Mathf.InverseLerp(rect.yMin, rect.yMax, local.y));
-            float factor = scroll > 0 ? .82f : 1.22f;
+            if (wholeWorldLayout)
+            {
+                // D308-25: no zoom inside the narrow whole-world strip. One notch in = back to the wide window at the default scale,
+                // on the latitude the pointer was at; a notch out does nothing (the whole world is already there).
+                if (scroll < 0) return;
+                Vector2 pointed = projection.NormalizedToWorld(fullUv.min + Vector2.Scale(focus, fullUv.size));
+                wholeWorldLayout = false; RefreshFullLayout(true); SetFocusWindow(false);
+                followCurrent = false; CenterFullOn(pointed);
+                ApplyUvAndMarkers(CurrentWorld());
+                return;
+            }
+            float factor = scroll > 0 ? Mathf.Clamp(mapStyle.ZoomStep.x, .1f, .99f) : Mathf.Clamp(mapStyle.ZoomStep.y, 1.01f, 10f);
             float worldWidth = data.BoundsMax.x - data.BoundsMin.x;
             float worldHeight = data.BoundsMax.y - data.BoundsMin.y;
             float viewAspect = foldMap.rect.width / Mathf.Max(1f, foldMap.rect.height);
             float heightPerWidth = worldWidth / (viewAspect * worldHeight);
             bool interior = data.ZoneAt(CurrentWorld()) != null;
-            float minimumWidth = interior ? 80f / worldWidth : .03f;
+            // D308-25: the closest zoom is a scale (metres per px), so its width follows the window (.162 m/px outdoors at any width)
+            float minimumWidth = Mathf.Min(1f, (interior ? mapStyle.InteriorMinMetres / worldWidth : mapStyle.MinViewWidth) * ViewWidthScale304);
             float newWidth = Mathf.Clamp(fullUv.width * factor, minimumWidth, Mathf.Min(1f, 1f / heightPerWidth));
             float newHeight = newWidth * heightPerWidth;
             Vector2 anchored = fullUv.min + Vector2.Scale(focus, fullUv.size);
@@ -304,6 +345,9 @@ namespace Oheangbu.App.World.UI
         {
             if (!targetExpanded || fold < .999f || !RectTransformUtility.ScreenPointToLocalPointInRectangle(foldMap, screenPoint, eventCamera, out Vector2 local)) return;
             Rect r = foldMap.rect;
+            // D308-25: the input surface is wider than the whole-world strip; a click on the bare paper beside it is no place
+            // (InverseLerp would clamp it onto the world's west / east edge)
+            if (local.x < r.xMin || local.x > r.xMax || local.y < r.yMin || local.y > r.yMax) return;
             Vector2 inView = new Vector2(Mathf.InverseLerp(r.xMin, r.xMax, local.x), Mathf.InverseLerp(r.yMin, r.yMax, local.y));
             Vector2 normalized = fullUv.min + Vector2.Scale(inView, fullUv.size);
             SetPin(projection.NormalizedToWorld(normalized), "표식");
@@ -324,13 +368,18 @@ namespace Oheangbu.App.World.UI
 
             // 1. the page veil (brush lifts at 1960 = full page), faded with the fold on close
             BuildVeil304();
+            BuildBoard308();   // #308: the lacquer board the sheet lies on (no-op without a bundle)
 
-            // 2. the twice-folded sheet (sheet_map, 800x820; print window 740x760)
-            paperSheet = V.Rect("TwiceFoldedHanji", FullRoot, 0, 0, PaperW, PaperH);
+            // 2. the twice-folded sheet (D308-25: MapStyle304SO.SheetRect 1556x820, print window 1496x760; sheet_map_wide)
+            Rect sheetRect = Sheet304; Vector2 print = Print304;
+            paperSheet = V.Rect("TwiceFoldedHanji", FullRoot, 0, 0, sheetRect.width, sheetRect.height);
             paperSheet.anchorMin = paperSheet.anchorMax = paperSheet.pivot = new Vector2(.5f, .5f);
-            paperSheet.anchoredPosition = new Vector2(PaperX + PaperW * .5f - UiPageFit304.Width * .5f, -(PaperY + PaperH * .5f - UiPageFit304.Height * .5f));
+            paperSheet.anchoredPosition = SheetAt304(1f);
             paperGraphic = paperSheet.gameObject.AddComponent<WorldMapPaperGraphic>();
-            Texture paper = style.Sprites.SheetMap != null ? style.Sprites.SheetMap.texture : null;
+            // the crease shade keeps the px width it had on the sheet it was tuned on (it was a share of the sheet: twice as wide on this one)
+            paperGraphic.CreaseScale = new Vector2(sheetRect.width / Mathf.Max(1f, mapStyle.CreaseReferenceSize.x), sheetRect.height / Mathf.Max(1f, mapStyle.CreaseReferenceSize.y));
+            // the sheet picture drawn for this sheet's shape; without it the foundation's 800x820 sheet (stretched: torn edge and fibre widen)
+            Texture paper = mapStyle.SheetWide != null ? mapStyle.SheetWide.texture : style.Sprites.SheetMap != null ? style.Sprites.SheetMap.texture : null;
             if (paper == null) paper = Resources.Load<Texture2D>("WorldMap/Paper/HanjiWorn");
             if (paper == null) paper = dependencies.PaperTexture;
             paperGraphic.Configure(paper, Color.white);
@@ -346,22 +395,32 @@ namespace Oheangbu.App.World.UI
             paperMaterial.SetTexture("_FogTex", fogTexture);
             paperGraphic.material = paperMaterial;
             paperGraphic.raycastTarget = false;
-            paperInk = new WorldMapPaperInk(); ConfigureInk(paperInk);
+            // D308-25: the CPU ink raster takes the print window's shape (it was 1024 x 768 for a 740 x 760 window: on a
+            // 1496 px window one texel would be 1.46 px wide and .99 px high)
+            int inkW = Mathf.Clamp(Mathf.CeilToInt(print.x), 64, 2048), inkH = Mathf.Clamp(Mathf.CeilToInt(print.y), 64, 2048);
+            paperInk = new WorldMapPaperInk(inkW, inkH); ConfigureInk(paperInk);
             paperMaterial.SetTexture("_InkTex", paperInk.Texture);
-            macroInk = new WorldMapPaperInk(); ConfigureInk(macroInk);
+            macroInk = new WorldMapPaperInk(inkW, inkH); ConfigureInk(macroInk);
             paperMaterial.SetTexture("_MacroInkTex", macroInk.Texture);
-            foldMap = V.Rect("PrintedMapWindow", paperSheet, 0, 0, PaperW - 2f * PrintInset, PaperH - 2f * PrintInset);
+            ApplyPaper308(paperMaterial, false);   // #308: _MAP308 + the baked terrain picture (no-op without a bundle)
+            foldMap = V.Rect("PrintedMapWindow", paperSheet, 0, 0, print.x, print.y);
             foldMap.anchorMin = foldMap.anchorMax = foldMap.pivot = new Vector2(.5f, .5f);
             foldMap.anchoredPosition = Vector2.zero;
+            BuildStrokes308(foldMap);   // #308: brush strips under the marks (own nested Canvas)
             fullMarkers = V.Stretch("MapMarkers", foldMap);
             markerVisibility = fullMarkers.gameObject.AddComponent<CanvasGroup>();
             markerVisibility.interactable = markerVisibility.blocksRaycasts = false;
-            RectTransform inputRect = V.Stretch("MapInput", foldMap);
-            V.Image(inputRect, new Color(0, 0, 0, .001f), null, true);
-            var input = inputRect.gameObject.AddComponent<WorldMapInputSurface>(); input.Owner = this;
+            // D308-25: the input surface keeps its place in the hierarchy (PrintedMapWindow/MapInput) but covers the whole printed
+            // area of the sheet: in the whole-world view the window is a 507 px strip and the wheel / drag must work beside it too
+            // (sized in RefreshFullLayout; in every other view it is exactly the window)
+            mapInput = V.Rect("MapInput", foldMap, 0, 0, print.x, print.y);
+            mapInput.anchorMin = mapInput.anchorMax = mapInput.pivot = new Vector2(.5f, .5f);
+            mapInput.anchoredPosition = Vector2.zero;
+            V.Image(mapInput, new Color(0, 0, 0, .001f), null, true);
+            var input = mapInput.gameObject.AddComponent<WorldMapInputSurface>(); input.Owner = this;
             fullLabels = V.Stretch("MapLabels", foldMap);
 
-            // 3. the page: legend, places, controls, title slip (rebuilt on every open, WorldMapPresenter.Page304.cs)
+            // 3. the page: title slip, 북, controls row (rebuilt on every open, WorldMapPresenter.Page304.cs)
             BuildPageRoot304();
 
             FullRoot.gameObject.SetActive(false);
@@ -435,10 +494,11 @@ namespace Oheangbu.App.World.UI
             pageScale = k;
             float worldWidth = Mathf.Max(1f, data.BoundsMax.x - data.BoundsMin.x);
             float worldHeight = Mathf.Max(1f, data.BoundsMax.y - data.BoundsMin.y);
-            float width = PaperW * k, height = PaperH * k;
+            float width = Sheet304.width * k, height = Sheet304.height * k;
             paperSheet.sizeDelta = new Vector2(width, height);
-            paperSheet.anchoredPosition = new Vector2((PaperX + PaperW * .5f - UiPageFit304.Width * .5f) * k, -(PaperY + PaperH * .5f - UiPageFit304.Height * .5f) * k);
-            Vector2 window = new Vector2((PaperW - 2f * PrintInset) * k, (PaperH - 2f * PrintInset) * k);
+            paperSheet.anchoredPosition = SheetAt304(k);
+            Vector2 window = Print304 * k;
+            if (mapInput != null) mapInput.sizeDelta = window;   // the whole printed area, also while the window below shrinks to the world's shape
             if (wholeWorldLayout)
             {
                 float aspect = worldWidth / worldHeight;
@@ -450,7 +510,7 @@ namespace Oheangbu.App.World.UI
             inkReady = false;
             if (scaleChanged) ScaleMarks304(k);
 
-            if (followCurrent && fullUv.width < .999f)
+            if (followCurrent && !wholeWorldLayout)   // D308-25: was fullUv.width < .999 (the wide default view is 1.0 wide)
             {
                 float viewAspect = window.x / Mathf.Max(1f, window.y);
                 bool interior = data.ZoneAt(CurrentWorld()) != null;
@@ -465,7 +525,7 @@ namespace Oheangbu.App.World.UI
             session.Progress.ui.Normalize();
             int byteCount = discovery.ByteCount;
             if (WorldMapDiscoveryGrid.TryDecode(session.Progress.ui.discoveredCells, byteCount, out byte[] bytes))
-                discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline, bytes);
+            { discovery = new WorldMapDiscoveryGrid(data.BoundsMin, data.BoundsMax, data.Outline, bytes); fogPlayable = null; }
             if (session.Progress.ui.discoveredMarkers == null) session.Progress.ui.discoveredMarkers = new List<string>();
             foreach (WorldMapMarkerSpec marker in data.Markers)
                 if (marker != null && marker.InitiallyDiscovered && !session.Progress.ui.discoveredMarkers.Contains(marker.Id))
@@ -481,6 +541,7 @@ namespace Oheangbu.App.World.UI
             mapControls.alpha = readable;
             mapControls.interactable = mapControls.blocksRaycasts = targetExpanded && fold >= .999f;
             markerVisibility.alpha = fold >= .995f ? 1f : 0f;
+            ApplyFold308();
             ApplyVeilFold304();
             FullRoot.gameObject.SetActive(Visible && (targetExpanded || fold > 0));
         }
@@ -506,6 +567,9 @@ namespace Oheangbu.App.World.UI
                 paperMaterial.SetFloat("_HasCave", interior && zone.Illustration != null ? 1 : 0);
                 paperMaterial.SetVector("_MapTileUv", new Vector4(tile.x, tile.y, tile.width, tile.height));
                 paperMaterial.SetFloat("_Interior", interior ? 1f : 0f);
+                // #308: outdoors the brush strips carry every line (no CPU raster, no realm border dots)
+                if ((!inkReady || fullUv != lastInkUv || zone != lastInkZone) && SkipRaster308(interior, zone))
+                { lastInkUv = fullUv; lastInkZone = zone; inkReady = true; }
                 if (!inkReady || fullUv != lastInkUv || zone != lastInkZone)
                 {
                     // Display size in PAGE px, so stroke widths stay the same on 16:10 or at UI 배율 1.3 (sheet scaled by k).
@@ -519,6 +583,7 @@ namespace Oheangbu.App.World.UI
                     macroInk.Draw(!interior && data.HasIllustration ? majorLines : null, null, projection, fullUv, display);
                     lastInkUv = fullUv; lastInkZone = zone; inkReady = true;
                 }
+                SyncStrokes308(interior);
             }
             string zoneLabel = zone != null ? zone.Label : RegionLabel(new Vector2(current.x, current.z));
             if (displayedZoneLabel != zoneLabel)
@@ -590,17 +655,51 @@ namespace Oheangbu.App.World.UI
             RefreshFog();
         }
 
+        /// <summary>Every cell (build, saved progress load). #307: into the cached texel array; the outline test per cell is
+        /// cached too (fogPlayable, dropped when the discovery grid is rebuilt).</summary>
         void RefreshFog()
         {
             if (fogTexture == null) return;
-            // The shader reads alpha only (unknown = 1); RGB is the sheet so a bilinear sample never darkens.
-            Color32 unknown = new Color(style.Sheet.r, style.Sheet.g, style.Sheet.b, 1f);
-            var pixels = new Color32[discovery.Width * discovery.Height];
-            for (int y = 0; y < discovery.Height; y++) for (int x = 0; x < discovery.Width; x++)
-                pixels[y * discovery.Width + x] = discovery.IsPlayableCell(x, y) && !discovery.IsDiscovered(x, y) ? unknown : new Color32(0, 0, 0, 0);
-            fogTexture.SetPixels32(pixels); fogTexture.Apply(false, false);
-            miniRevision++;
+            int w = discovery.Width, h = discovery.Height;
+            if (fogPixels == null || fogPixels.Length != w * h) { fogPixels = new Color32[w * h]; fogPlayable = null; }
+            if (fogPlayable == null)
+            {
+                fogPlayable = new bool[w * h];
+                // #308 map fix (M3): with a notation bundle a cell nobody can ever reveal is fog too. Before, a cell outside
+                // the outline was written as "walked" (alpha 0); the compact map's top row (cell centres ON the outline's
+                // north edge) was such a row, and the crisp edge drew its upper half as walked land with an ink rim.
+                for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) fogPlayable[y * w + x] = n308 != null || discovery.IsPlayableCell(x, y);
+            }
+            Color32 unknown = FogUnknown307();
+            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++)
+                fogPixels[y * w + x] = fogPlayable[y * w + x] && !discovery.IsDiscovered(x, y) ? unknown : new Color32(0, 0, 0, 0);
+            fogTexture.SetPixels32(fogPixels); fogTexture.Apply(false, false);
+            fogRevision308++;   // #308 map 3c: the texels changed (WorldMapPresenter.Reveal308.cs reads them again)
+            miniRevision++;   // load only (once): the reveal path below leaves the minimap print alone
         }
+
+        /// <summary>#307: after WorldMapDiscoveryGrid.Reveal(worldXZ, radius) only cells inside the same bounding box can have
+        /// changed, so only they are rewritten (same texels as RefreshFog). No array is allocated and MiniRevision is not bumped:
+        /// the HUD minimap samples the same _FogTex and needs no new print.</summary>
+        void RefreshFogAround(Vector2 worldXZ, float radius)
+        {
+            if (fogTexture == null) return;
+            int w = discovery.Width, h = discovery.Height;
+            if (fogPixels == null || fogPlayable == null || fogPixels.Length != w * h) { RefreshFog(); return; }
+            float cell = WorldMapDiscoveryGrid.CellSize;
+            int minX = Mathf.Max(0, Mathf.FloorToInt((worldXZ.x - radius - data.BoundsMin.x) / cell));
+            int maxX = Mathf.Min(w - 1, Mathf.FloorToInt((worldXZ.x + radius - data.BoundsMin.x) / cell));
+            int minY = Mathf.Max(0, Mathf.FloorToInt((worldXZ.y - radius - data.BoundsMin.y) / cell));
+            int maxY = Mathf.Min(h - 1, Mathf.FloorToInt((worldXZ.y + radius - data.BoundsMin.y) / cell));
+            Color32 unknown = FogUnknown307();
+            for (int y = minY; y <= maxY; y++) for (int x = minX; x <= maxX; x++)
+                fogPixels[y * w + x] = fogPlayable[y * w + x] && !discovery.IsDiscovered(x, y) ? unknown : new Color32(0, 0, 0, 0);
+            fogTexture.SetPixels32(fogPixels); fogTexture.Apply(false, false);
+            fogRevision308++;   // #308 map 3c
+        }
+
+        // The shader reads alpha only (unknown = 1); RGB is the sheet so a bilinear sample never darkens.
+        Color32 FogUnknown307() => new Color(style.Sheet.r, style.Sheet.g, style.Sheet.b, 1f);
 
         void CenterFullOn(Vector2 world)
         {
@@ -609,13 +708,18 @@ namespace Oheangbu.App.World.UI
             fullUv = WorldMapProjection.ClampUvRect(fullUv);
         }
 
+        float nextSeatSearch;
         Vector3 CurrentWorld()
         {
             if (session.Walker != null && session.Walker.Seated)
             {
-                if (vehicleSeat == null || !vehicleSeat.Occupied)
+                // #307: the scene-wide search runs at most twice a second (it ran several times per frame while seated without a seat)
+                if ((vehicleSeat == null || !vehicleSeat.Occupied) && Time.unscaledTime >= nextSeatSearch)
+                {
+                    nextSeatSearch = Time.unscaledTime + .5f;
                     vehicleSeat = UnityEngine.Object.FindObjectsByType<Vehicle.WorldMacroPalanquinSeat>(FindObjectsSortMode.None)
                         .FirstOrDefault(s => s.Occupied && s.CombatWalker == session.Walker);
+                }
                 if (vehicleSeat != null && vehicleSeat.Vehicle != null) return vehicleSeat.Vehicle.transform.position;
             }
             return session.Walker != null && session.Walker.Body != null ? session.Walker.Body.transform.position : session.Content.StartFeet;
@@ -628,21 +732,14 @@ namespace Oheangbu.App.World.UI
             return "강토";
         }
 
-        void ToggleLegend()
-        {
-            legendFolded304 = !legendFolded304;
-            if (legend != null) legend.SetActive(!legendFolded304);
-            RefreshLegendButton304();
-        }
-
         void OnDestroy()
         {
             CloseRequested = null;
             FoldRustle = null;
             DisposeInput304();
             if (paperMaterial != null) Destroy(paperMaterial);
-            DisposeLegendSwatch304();
             DisposeInteriorDiscovery();
+            Dispose308();
             macroInk?.Dispose();
             paperInk?.Dispose();
             miniInk?.Dispose();

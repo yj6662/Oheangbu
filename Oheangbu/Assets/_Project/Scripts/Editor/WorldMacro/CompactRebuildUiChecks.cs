@@ -203,6 +203,12 @@ namespace Oheangbu.EditorTools.WorldMacro {
  var miniMat=hudMini!=null?hudMini.Material:null;
  Check(miniMat!=null&&miniMat.GetFloat("_UnknownVeil")>=.999f&&miniMat.GetFloat("_UnknownShade")<=.001f&&miniMat.GetFloat("_UnknownRelief")<=.001f,
  "minimap prints walked land only, no objective (CONST-RULES 3-4, AC-1e)"+(miniMat==null?" (material not bound yet)":""));
+ // #307 style A (SPEC-MINIMAP-307): the _MINI_HUD look on the runtime material, no stencil mask under PersistentMinimap, the window in the shader
+ Check(miniMat!=null&&miniMat.IsKeywordEnabled("_MINI_HUD"),"minimap material runs the #307 _MINI_HUD look"+(miniMat==null?" (material not bound yet)":""));
+ int miniMasks=hudMini!=null&&hudMini.Root!=null?hudMini.Root.GetComponentsInChildren<Mask>(true).Length+hudMini.Root.GetComponentsInChildren<RectMask2D>(true).Length:-1;
+ Check(miniMasks==0,"no Mask / RectMask2D under PersistentMinimap (#307 shader disc; found "+miniMasks+")");
+ var miniUv=hudMini!=null&&hudMini.Map!=null?hudMini.Map.uvRect:new Rect(-1,-1,-1,-1);
+ Check(miniUv==new Rect(0,0,1,1),"minimap RawImage uvRect stays (0,0,1,1) (#307 window moves by _MapWindow): "+miniUv);
  var style=PlaytestUiView.Style(hud.Skin);
  var hp=MeterValueGraphic304(hud,"HP_BrushStroke","HP");var ink=MeterValueGraphic304(hud,"Ink_BrushBar","Ink");
  Check(hp!=null&&ink!=null&&HarnessUiRules304.Near(hp.color,style.Cinnabar)&&HarnessUiRules304.Near(ink.color,style.Ink)&&!HarnessUiRules304.Near(hp.color,ink.color),

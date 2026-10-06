@@ -26,6 +26,9 @@ namespace Oheangbu.App.World.UI
         public bool MinimapFollowView;       // #306: false = north up (the arrow turns), true = the map turns with the view
         public bool ShowBearingLine = true;  // #306: the bearing ink line; missing in older files -> JsonUtility keeps these defaults
         public bool ReducedMotion;
+        public int ImpactFlash;               // #308 D308-10 impact frames: 0 full, 1 reduced, 2 off (missing in older files -> 0 = full)
+        public bool HudImpactReact = true;    // #308 D308-10b HUD reaction to an impact frame (missing in older files -> stays true)
+        public bool TutorialPause = true;    // #306 #11 "익힘 멈춤": mine tutorial cards stop time (missing in older files -> stays true)
 
         public UserSettingsData Clone()
         {
@@ -66,6 +69,7 @@ namespace Oheangbu.App.World.UI
             result.LookSensitivity = Mathf.Clamp(FiniteOr(result.LookSensitivity, 1f), .1f, 4f);
             result.UiScale = Mathf.Clamp(FiniteOr(result.UiScale, 1f), .75f, 2f);
             result.TextScale = Mathf.Clamp(FiniteOr(result.TextScale, 1f), .75f, 2f);
+            result.ImpactFlash = Mathf.Clamp(result.ImpactFlash, 0, 2);
             return result;
         }
 

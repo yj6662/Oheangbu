@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace Oheangbu.App.World.Vehicle
 {
-    /// <summary>Relocates the one existing parked car. Does not instantiate, drive or change profiles.</summary>
+    /// <summary>Relocates the one existing parked car. Does not instantiate, drive or change profiles.
+    /// #308 D308-8: boss fields refuse it (TryFindPlacement), and a commit starts the ink materialize presentation.</summary>
     [DefaultExecutionOrder(-200), DisallowMultipleComponent]
     public sealed partial class WorldMacroPalanquinSummon : MonoBehaviour
     {
@@ -48,17 +49,22 @@ namespace Oheangbu.App.World.Vehicle
             if(!Walker.Motor.IsLocomotionGrounded || Walker.Motor.IsDodging || Walker.Motor.IsHarvesting)
                 return Fail("땅에 발을 붙이고 행동을 마친 뒤 부른다.",out message);
             if(Time.unscaledTimeAsDouble<nextCall) return Fail("가마가 자리를 잡는 중이다.",out message);
+            // #308 D308-8: an ink summon / recall still running, or a boss field, refuses without text (LastResult keeps a diagnostic)
+            if(InkBusy308){message=null;LastResult="vehicle refused: ink presentation running";return false;}
+            if(BossFieldAt308(Walker.Body.transform.position,0f,out var field)){message=null;LastResult="vehicle refused: boss field "+field;return false;}
             Physics.SyncTransforms();
             if(!TryFindPlacement(Walker.Body.transform.position,Walker.Body.transform.forward,out var placement,out message))
-            {LastResult=message;return false;}
+            {LastResult=message??LastResult;return false;}
             // Everything above is read-only. No failed probe can move or reconfigure the vehicle.
             if(!CommitPlacement(placement))return Fail("산길에서는 가마가 오지 않는다.",out message);
-            message=LastResult="앞에 자동차를 불렀다. E로 탑승.";return true;
+            message=LastResult=SummonedText308;return true;
         }
         bool CommitPlacement(Placement placement)
         {
             if(!CompactMountainAccess.VehicleAllowed(gameObject.scene,Walker.Body.transform.position)||!CompactMountainAccess.VehicleAllowed(gameObject.scene,placement.Position,Vehicle.Hull.bounds.extents.magnitude))return false;
             var body=Vehicle.Body;
+            // #308 review: a car that is still out (20–30 m, beyond the G recall distance) leaves its old spot as ink dust, not a pop
+            bool wasOut=!IsRecalled&&Vehicle.gameObject.activeInHierarchy&&Vehicle.Hull!=null;Bounds oldSpot=wasOut?Vehicle.Hull.bounds:default;
             Vehicle.StopDriverInputForUi();
             body.linearVelocity=Vector3.zero;body.angularVelocity=Vector3.zero;
             body.position=placement.Position;body.rotation=placement.Rotation;
@@ -66,7 +72,10 @@ namespace Oheangbu.App.World.Vehicle
             if(IsRecalled) { IsRecalled=false; Vehicle.gameObject.SetActive(true); }
             RecallArmed=false; awaySeconds=0;
             Vehicle.ResetMountainTraversalPose();Physics.SyncTransforms();body.WakeUp();
-            nextCall=Time.unscaledTimeAsDouble+1.5;SuccessfulCalls++;LastRoute=placement.Route;return true;
+            nextCall=Time.unscaledTimeAsDouble+1.5;SuccessfulCalls++;LastRoute=placement.Route;
+            BeginMaterialize308();   // #308 D308-8: the placed car forms out of ink (presentation only; physics is already live)
+            if(wasOut&&ink308!=null)ink308.EmitScatterAt(oldSpot);
+            return true;
         }
         bool Fail(string text,out string message) {message=LastResult=text;return false;}
         bool Ready(out string reason)
@@ -86,18 +95,35 @@ namespace Oheangbu.App.World.Vehicle
             LastPlacementDiagnostic=null;
             placement=default;if(!Ready(out reason))return false;
             if(!CompactMountainAccess.VehicleAllowed(gameObject.scene,playerFeet))return Fail("산길에서는 가마가 오지 않는다.",out reason);
+            // #308 D308-8 (SPEC-VEHICLE-UX-308 §2): no car in a boss field. Wordless: reason null, the diagnostic names the field.
+            if(BossFieldAt308(playerFeet,0f,out var playerField)){reason=null;LastPlacementDiagnostic="boss field "+playerField+" (player)";LastResult="vehicle refused: boss field "+playerField;return false;}
             // Both G and the menu use the same nearby, player-relative position.
             // Never fall back to a distant road or the other side of an obstacle.
-            var forward=Vector3.ProjectOnPlane(preferredForward,Vector3.up);
+            FrontCandidate308(playerFeet,preferredForward,out var point,out var forward);
+            var candidate=new Candidate{Point=point,Forward=forward,Route="player_front"};
+            if(TryPose(candidate,playerFeet,out placement))
+            {
+                // the front spot itself (hull footprint included) must lie outside every boss field too
+                if(BossFieldAt308(placement.Position,FrontFootprint308,out var carField))
+                {placement=default;reason=null;LastPlacementDiagnostic="boss field "+carField+" (front placement)";LastResult="vehicle refused: boss field "+carField;return false;}
+                reason=null;return true;
+            }
+            reason="앞에 자동차를 놓을 공간이 부족하다.";return false;
+        }
+        // The one front candidate (#308 D308-8b: shared with the pre-gesture boss check FrontSpotInBossField308). TryPose keeps its
+        // XZ and only settles the height, so a field test on this point equals the test on the placed pose. Needs Ready() refs.
+        void FrontCandidate308(Vector3 playerFeet,Vector3 preferredForward,out Vector3 point,out Vector3 forward)
+        {
+            forward=Vector3.ProjectOnPlane(preferredForward,Vector3.up);
             if(forward.sqrMagnitude<.0001f)forward=Vector3.ProjectOnPlane(Walker.Body.transform.forward,Vector3.up);
             if(forward.sqrMagnitude<.0001f)forward=Vector3.forward;
             forward.Normalize();
             float rearExtent=Mathf.Max(0,Vehicle.Hull.size.z*.5f-Vehicle.Hull.center.z);
             float distance=Mathf.Max(MinimumPlayerDistance,rearExtent+Walker.Body.radius+Clearance+1f);
-            var candidate=new Candidate{Point=playerFeet+forward*distance,Forward=forward,Route="player_front"};
-            if(TryPose(candidate,playerFeet,out placement)){reason=null;return true;}
-            reason="앞에 자동차를 놓을 공간이 부족하다.";return false;
+            point=playerFeet+forward*distance;
         }
+        // hull footprint radius for the boss-field test; box size: valid while the car is recalled (inactive)
+        float FrontFootprint308=>(Vehicle.Hull.size*.5f).magnitude;
         bool TryPose(Candidate candidate,Vector3 playerFeet,out Placement result)
         {
             result=default;Vector3 point=candidate.Point;Quaternion rotation=Quaternion.LookRotation(candidate.Forward,Vector3.up);

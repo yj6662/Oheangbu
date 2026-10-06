@@ -52,6 +52,10 @@ namespace Oheangbu.App
             RefreshVisual(index, ends[index]-now);
             return true;
         }
+        /// <summary>#308 forms2, read only: which of the five buffs run (bit = the element's index), and the fire aura's reach.</summary>
+        public int ActiveMask(float now)
+        { int mask=0;if(!disposed)for(int i=0;i<ends.Length;i++)if(ends[i]>now)mask|=1<<i;return mask; }
+        public float AuraRadius => profile.AuraRadius;
         public bool HasVisual(char letter)
         { int index=Array.IndexOf(Letters,letter);return index>=0&&visuals[index]!=null; }
         void RefreshVisual(int index,float duration)
@@ -65,6 +69,7 @@ namespace Oheangbu.App
             visualProfiles[index]=UnityEngine.Object.Instantiate(fx.Profile);
             visualProfiles[index].Duration=duration;fx.Profile=visualProfiles[index];
             var owner=wiring.SummonPlayer;
+            wiring.DeployDirector308?.HostEffect(fx);   // #308 forms2 S1 (a field assignment; never throws)
             fx.Begin(owner.position,null,owner.position+owner.forward,fx.Profile.Pigment);
             go.transform.SetParent(owner,true);
         }

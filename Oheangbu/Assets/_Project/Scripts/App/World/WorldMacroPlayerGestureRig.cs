@@ -335,6 +335,7 @@ namespace Oheangbu.App.World
             _drawing.LetterInterrupted += OnInterrupted;
             _drawing.ModeExited += OnModeExited;
             _drawing.StrokeStarted += OnStrokeStarted;
+            SubscribeJuice308();   // #308 juice (WorldMacroPlayerGestureRig.Juice308.cs)
         }
 
         private void Unsubscribe()
@@ -344,11 +345,15 @@ namespace Oheangbu.App.World
             _subscribedDrawing.LetterInterrupted -= OnInterrupted;
             _subscribedDrawing.ModeExited -= OnModeExited;
             _subscribedDrawing.StrokeStarted -= OnStrokeStarted;
+            UnsubscribeJuice308();
             _subscribedDrawing = null;
         }
 
         private void OnCommitted(bool success)
         {
+            // #308 B-1 (SPEC-ANIM-JUICE-308): a recognised letter whose cast the wiring refused (ink, empty slot, lock) is not a throw.
+            // It gets the misfire recovery and no follow-through (the adapter already shows it as a misfire).
+            if (success && JuiceCommitRejected308()) success = false;
             _recoveryState = success ? GestureState.Commit : GestureState.Interrupted;
             _recoveryRemaining = _profile != null
                 ? success ? _profile.CommitRecoverySeconds : _profile.InterruptRecoverySeconds : .15f;
@@ -356,6 +361,7 @@ namespace Oheangbu.App.World
             if (success && _profile != null && _profile.CastFollowThrough && _profile.CastHoldSeconds > 0f
                 && _nearVisible && _castCamera != null && NearIsBound) BeginCast();
             else EndCast();
+            JuiceCommitted308(success);   // #308 D-1: the camera kick of a cast that went out (nothing without a profile)
         }
 
         private void BeginCast()
@@ -366,13 +372,15 @@ namespace Oheangbu.App.World
             // a stroke that ended on the launch point still throws: down and to the right, away from the glyph
             if (direction.sqrMagnitude < .0025f) direction = new Vector2(.4f, -.6f);
             _castTo = via + direction.normalized * _profile.CastFlickOvershoot;
-            _cameraRig?.HoldDrawCloseup(_profile.CastHoldSeconds + .1f);
+            // #308 B-2: a re-timed throw keeps the close-up for its own length (off: the value below, unchanged)
+            _cameraRig?.HoldDrawCloseup(JuiceBeginCast308(via, direction.normalized, _profile.CastHoldSeconds + .1f));
         }
 
         private void EndCast()
         {
             if (!_castActive) return;
             _castActive = false;
+            JuiceEndCast308();
             _cameraRig?.HoldDrawCloseup(0f);
         }
 
@@ -390,12 +398,12 @@ namespace Oheangbu.App.World
         {
             // Restore our last presentation edits before the Animator samples the next gait.
             // While paused, keep the evaluated pose; restoring without an Animator evaluation would snap it open.
-            if (Time.timeScale > 0f || (_walker != null && _walker.Seated)) RestoreAnimatedPose();
+            using (Perf307Markers.Gesture.Auto()) { if (Time.timeScale > 0f || (_walker != null && _walker.Seated)) RestoreAnimatedPose(); }
         }
 
         private void LateUpdate()
         {
-            if (!_bound) return;
+            using (Perf307Markers.Gesture.Auto()) { if (!_bound) { JuiceSuspend308(); return; }
             bool seated = _walker != null && _walker.Seated;
             bool paused = Time.timeScale <= 0f;
             _diagnostics.Seated = seated; _diagnostics.Paused = paused;
@@ -403,6 +411,7 @@ namespace Oheangbu.App.World
             {
                 RestoreAnimatedPose();
                 EndCast();
+                JuiceSuspend308();   // #308: no camera reaction in the seat or on a stopped rig
                 SetNearVisible(false);
                 _cameraRig?.SetDrawingPresentationActive(false);
                 if (!_wasSuspended)
@@ -421,6 +430,7 @@ namespace Oheangbu.App.World
             }
             if (paused)
             {
+                JuiceSuspend308();   // #308: no camera reaction is left running under a pause
                 // UI cancellation has already happened in the input owner. Retain the sampled
                 // skeletal pose, but do not leave a cancelled close-up arm over the menu.
                 if (_drawing == null || !_drawing.InDrawMode)
@@ -435,15 +445,15 @@ namespace Oheangbu.App.World
 
             // real time (the draw slow-down does not slow the hand), frame-exact during fixed-rate captures
             float step = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime;
-            EvaluateGesturePose(Mathf.Min(.1f, Mathf.Max(0f, step)));
+            EvaluateGesturePose(Mathf.Min(.1f, Mathf.Max(0f, step))); }
         }
 
         private void EvaluateGesturePose(float dt)
         {
-            bool drawing = _drawing != null && _drawing.InDrawMode;
+            bool drawing = JuiceInput308Drawing(_drawing != null && _drawing.InDrawMode);   // #308 preview seam: the live input unless Juice308Build feeds it
             if (drawing) EndCast();   // a new draw mode supersedes the follow-through
             bool casting = _castActive;
-            bool stroking = drawing && _drawing.IsStroking;
+            bool stroking = drawing && JuiceInput308Stroking();
             bool harvesting = !drawing && _harvest != null && _harvest.IsExtracting;
             _drawWeight = Follow(_drawWeight, drawing || casting ? 1f : 0f,
                 drawing || casting ? _profile.EnterResponse : _profile.ExitResponse, dt);
@@ -453,12 +463,12 @@ namespace Oheangbu.App.World
             Camera camera = null;
             Vector2 screen = default;
             Vector3 ink = default;
-            bool hasPointer = drawing && _brushFeed != null && _brushFeed.TryGetVisualPointer(out camera, out screen, out ink);
+            bool hasPointer = drawing && JuiceInput308Pointer(out camera, out screen, out ink);
             float castDrop = 0f;
             if (casting)
             {
                 _castTime += dt;
-                float u = _castTime / Mathf.Max(.01f, _profile.CastHoldSeconds);
+                float u = _castTime / Mathf.Max(.01f, JuiceCastSeconds308(_profile.CastHoldSeconds));
                 if (u >= 1f || _castCamera == null) { EndCast(); casting = false; }
                 else
                 {
@@ -467,6 +477,7 @@ namespace Oheangbu.App.World
                     flick = 1f - (1f - flick) * (1f - flick) * (1f - flick);   // fast out: the throw
                     Vector2 point = Vector2.Lerp(_castFrom, _castTo, flick);
                     castDrop = u <= share ? 0f : Mathf.SmoothStep(0f, 1f, (u - share) / (1f - share));
+                    JuiceCastPath308(ref point, ref castDrop, ref flick);   // #308 B-2: pull back - throw - hold - lower (off: the three values stay)
                     camera = _castCamera;
                     Rect rect = camera.pixelRect;
                     screen = new Vector2(rect.x + point.x * rect.width, rect.y + point.y * rect.height);
@@ -490,6 +501,7 @@ namespace Oheangbu.App.World
                     {
                         _nearStrokeWrist = camera.transform.InverseTransformPoint(_near.Hand.position);
                         _nearStrokeGrip = camera.transform.InverseTransformPoint(_nearBrush.Grip.position);
+                        JuiceCleanAnchors308(ref _nearStrokeWrist, ref _nearStrokeGrip);   // #308: last frame's shaft lean is not part of the anchor
                     }
                     _worldStrokeGrip = _world.Root.InverseTransformPoint(_worldBrush.Grip.position);
                 }
@@ -507,6 +519,7 @@ namespace Oheangbu.App.World
                 : Vector3.zero;
             _lastPointer = viewport; _hasPointerHistory = hasPointer; _wasStroking = stroking;
             _frameDt = dt;
+            JuiceStep308(dt, drawing, stroking, new Vector2(visualVelocity.x, visualVelocity.y));   // #308 juice: this frame's additions (nothing without a profile)
             _frameSweep = _profile.ArticulatedStrokes ? _strokeMotion.Sweep
                 : Vector2.ClampMagnitude(new Vector2(visualVelocity.x, visualVelocity.y) * .5f, 1f);
             if (_drawWeight <= .001f) _vWorld.Valid = _vWorld.PoleValid = false;
@@ -514,7 +527,12 @@ namespace Oheangbu.App.World
             SaveAnimatedPose();
             MeasureLengths(_world);
             if (_pendantActive) { ApplyPendantPose(); return; }
-            ApplyTorso(bodyParticipation);
+            if (_airActive308) { ApplyAirStrokePose308(dt); return; }   // #308 D308-8c call stroke in the air (WorldMacroPlayerGestureRig.CallStroke308.cs)
+            // #307 phase 1 item 8: with zero participation every torso term is an identity rotation and the off-hand IK has
+            // weight 0 (PlayerVisualIK.Solve returns at once), so the pass only re-wrote the same rotations (float round-off,
+            // < 1e-6; MeasureZeroParticipationTorsoDelta307 reports it). Carry, fingers, brush and bristles stay live at zero
+            // draw/harvest weight - they are the carried-brush pose - so the rest of the pass is not skippable.
+            if (bodyParticipation != 0f) ApplyTorso(bodyParticipation);
             PoseCarry();
             bool tipContact = stroking && _recoveryRemaining <= 0f;
             Vector3 worldTipTarget = DrawingWorldTarget(_bodyPoint, !tipContact);
@@ -578,6 +596,34 @@ namespace Oheangbu.App.World
             _diagnostics.State = _recoveryRemaining > 0f ? _recoveryState
                 : drawing ? stroking ? GestureState.Drawing : GestureState.PenLift
                 : harvesting || _harvestWeight > .05f ? GestureState.Harvest : GestureState.Carry;
+        }
+
+        /// <summary>#307 diagnostic (Perf307Checks gesture-identity): the largest change ApplyTorso(0) makes to the torso and
+        /// off-hand bones in the current pose (local rotation components and local position), with the pose restored afterwards.
+        /// NaN when unbound. Play mode; presentation only.</summary>
+        public float MeasureZeroParticipationTorsoDelta307()
+        {
+            if (!_bound || _world == null || _profile == null) return float.NaN;
+            var bones = new[] { _world.Chest, _world.Shoulder, _world.LeftUpper, _world.LeftForearm, _world.LeftHand };
+            var rotations = new Quaternion[bones.Length]; var positions = new Vector3[bones.Length];
+            for (int i = 0; i < bones.Length; i++) if (bones[i] != null) { rotations[i] = bones[i].localRotation; positions[i] = bones[i].localPosition; }
+            float delta = 0f;
+            try
+            {
+                ApplyTorso(0f);
+                for (int i = 0; i < bones.Length; i++)
+                {
+                    if (bones[i] == null) continue;
+                    Quaternion q = bones[i].localRotation, r = rotations[i];
+                    delta = Mathf.Max(delta, Mathf.Abs(q.x - r.x), Mathf.Abs(q.y - r.y), Mathf.Abs(q.z - r.z), Mathf.Abs(q.w - r.w));
+                    delta = Mathf.Max(delta, (bones[i].localPosition - positions[i]).magnitude);
+                }
+            }
+            finally
+            {
+                for (int i = 0; i < bones.Length; i++) if (bones[i] != null) { bones[i].localRotation = rotations[i]; bones[i].localPosition = positions[i]; }
+            }
+            return delta;
         }
 
         private void SaveAnimatedPose()
@@ -734,7 +780,7 @@ namespace Oheangbu.App.World
             _nearRoot.rotation = camera.transform.rotation;
             _nearRoot.position += camera.transform.TransformPoint(_profile.NearShoulderOffset) - _near.Upper.position;
             MeasureLengths(_near);
-            Ray ray = camera.ScreenPointToRay(screen);
+            Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);   // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): not Camera.ScreenPointToRay
             float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
             float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
             float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
@@ -760,7 +806,7 @@ namespace Oheangbu.App.World
                     Vector3 w=candidate-g*_nearBrush.TipOffset-h*Vector3.Scale(_profile.RightHandGripPosition,_near.Hand.lossyScale);
                     Vector3 reachable=PlayerVisualIK.ClampReach(shoulder,w,_near.UpperLength,_near.ForearmLength,_profile.MaximumArmExtension);
                     float error=Vector3.Distance(w,reachable);
-                    Vector3 view=camera.WorldToViewportPoint(w);
+                    Vector3 view=BrushStrokeFeedAdapter.WorldToViewportPrecise308(camera,w);
                     float clipped=Mathf.Max(0,(_profile.OverhandGrip?.40f:.26f)-view.z)*30+Mathf.Max(0,.14f-view.y)+Mathf.Max(0,view.y-.88f)+Mathf.Max(0,.08f-view.x)+Mathf.Max(0,view.x-.94f);
                     Vector3 testPole=ArmPole(_near,w,h,camera.transform);
                     Vector3 elbow=PlayerVisualIK.ElbowPosition(shoulder,w,testPole,_near.UpperLength,_near.ForearmLength,_profile.MaximumArmExtension);
@@ -873,7 +919,10 @@ namespace Oheangbu.App.World
             // give the near hand a different grasp when FingerPoseWeight is below one.
             PlaceBrush(_near, _nearBrush);
             if (_nearBrush.Bristles != null) _nearBrush.Bristles.ApplyPose();
-            Vector3 actualScreen = camera.WorldToScreenPoint(_nearBrush.Tip.position);
+            // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): the tip is read with the exact projection. Camera.WorldToScreenPoint reads through the
+            // single-precision world-to-clip matrix and is itself a fraction of a pixel off at these coordinates, so the loop below
+            // used to settle the tip on a reading that moved from frame to frame.
+            Vector3 actualScreen = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, _nearBrush.Tip.position);
             _diagnostics.NearTipErrorBeforeCorrectionPixels = actualScreen.z > camera.nearClipPlane
                 ? Vector2.Distance(screen, new Vector2(actualScreen.x, actualScreen.y)) : float.PositiveInfinity;
             // The close-up arm is a presentation-only chain. Reconcile the ACTUAL deformed tip
@@ -895,7 +944,7 @@ namespace Oheangbu.App.World
                     _nearBrush.Root.position += residual;
                 endpointCorrection += residual;
                 budget -= residual.magnitude;
-                actualScreen = camera.WorldToScreenPoint(_nearBrush.Tip.position);
+                actualScreen = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, _nearBrush.Tip.position);
             }
             _diagnostics.NearTipErrorPixels = actualScreen.z > camera.nearClipPlane
                 ? Vector2.Distance(screen, new Vector2(actualScreen.x, actualScreen.y)) : float.PositiveInfinity;
@@ -920,8 +969,8 @@ namespace Oheangbu.App.World
             // Preserve the original reach whenever the grip or a substantial part of the
             // shaft already projects into the image. In particular the original upper-left
             // reach is good; turning every viewport edge exposes the trimmed shoulder skin.
-            Vector3 originalGrip = camera.WorldToScreenPoint(tip - originalAxis * gripToTip);
-            Vector3 originalShaft = camera.WorldToScreenPoint(tip - originalAxis * Mathf.Min(.25f, gripToTip * .45f));
+            Vector3 originalGrip = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, tip - originalAxis * gripToTip);
+            Vector3 originalShaft = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, tip - originalAxis * Mathf.Min(.25f, gripToTip * .45f));
             float visibleMargin = Mathf.Max(ViewportMargin(camera, rect, originalGrip), ViewportMargin(camera, rect, originalShaft));
             blend *= 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0f, .035f, visibleMargin));
             if (blend <= 0f) return shoulderAim;
@@ -932,7 +981,7 @@ namespace Oheangbu.App.World
             // The central gesture is unchanged; this is orientation only, never a shorter brush.
             Vector2 inner = new Vector2(Mathf.Clamp(viewport.x, .22f, .78f), Mathf.Clamp(viewport.y, .22f, .78f));
             Vector2 innerScreen = new Vector2(rect.x + inner.x * rect.width, rect.y + inner.y * rect.height);
-            Vector3 projected = camera.WorldToScreenPoint(tip);
+            Vector3 projected = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, tip);
             Vector3 inward = ProjectionResidual(camera, tip, projected, innerScreen);
             Vector3 relativeTip = tip - camera.transform.position;
             float tipDepth = Vector3.Dot(relativeTip, camera.transform.forward);
@@ -960,8 +1009,9 @@ namespace Oheangbu.App.World
             // are only 2 cm apart and the solved correction uses camera-plane directions only.
             // This also respects off-centre projection/pixel rectangles without assuming a FOV.
             const float probe = .02f;
-            Vector3 horizontal = camera.WorldToScreenPoint(tip + camera.transform.right * probe);
-            Vector3 vertical = camera.WorldToScreenPoint(tip + camera.transform.up * probe);
+            // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): the two samples are read with the exact projection too (same reason as `projected`).
+            Vector3 horizontal = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, tip + camera.transform.right * probe);
+            Vector3 vertical = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, tip + camera.transform.up * probe);
             Vector2 dx = new Vector2(horizontal.x - projected.x, horizontal.y - projected.y) / probe;
             Vector2 dy = new Vector2(vertical.x - projected.x, vertical.y - projected.y) / probe;
             Vector2 error = target - new Vector2(projected.x, projected.y);
@@ -1300,7 +1350,11 @@ namespace Oheangbu.App.World
             _nearRoot.position += view.TransformPoint(_profile.NearShoulderOffset + _vNear.Shoulder) - _near.Upper.position;
             Vector3 follow = view.TransformVector(_vNear.Shoulder);
             MeasureLengths(_near);
-            Ray ray = camera.ScreenPointToRay(screen);
+            // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): the pointer's ray is built from the projection matrix and the camera's own position
+            // and rotation, not with Camera.ScreenPointToRay. The engine function unprojects through a single-precision inverse
+            // view-projection; at kilometre-scale coordinates its direction changes by tenths of a degree from frame to frame while the
+            // camera turns or moves, and the shaft (VerticalAxis below) and the hand on it swung about the tip.
+            Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);
             float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
             float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
             float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
@@ -1372,11 +1426,16 @@ namespace Oheangbu.App.World
 
             Quaternion hand = BlendedHand(_nearBrush, axis, view.up, tip - axis * length - shoulder, blend, out Quaternion grip);
             EvaluateBristlesGrip(_nearBrush, visualVelocity, view, grip, stroking, dt);
+            JuiceSplayNear308();   // #308 A-1: this frame's splay addition (the centreline end, and so the tip, does not move)
             Vector3 wrist = tip - grip * _nearBrush.TipOffset - hand * gripPosition;
             Vector3 pole = VerticalPole(_near, wrist, axis, view, centered, ref _vNear, dt);
             Vector3 elbow = PlayerVisualIK.ElbowPosition(shoulder, wrist, pole, _near.UpperLength, _near.ForearmLength, _profile.MaximumArmExtension);
             hand = BlendedHand(_nearBrush, axis, view.up, wrist - elbow, blend, out grip);
             wrist = tip - grip * _nearBrush.TipOffset - hand * gripPosition;
+            // #308 A-1 / A-2 (SPEC-ANIM-JUICE-308): the shaft leans with the tip fixed on the pointer. Pole, follow state and depth above
+            // were solved from the clean values; the stroke anchor below keeps the clean values too.
+            Vector3 cleanWrist308 = wrist; Quaternion cleanGrip308 = grip;
+            JuiceLeanNear308(view, ray.direction, tip, shoulder, elbow, blend, gripPosition, axis, ref hand, ref grip, ref wrist);
             Vector3 clamped = PlayerVisualIK.ClampReach(_near.Upper.position, wrist, _near.UpperLength, _near.ForearmLength, _profile.MaximumArmExtension);
             Vector3 reachCorrection = Vector3.ClampMagnitude(wrist - clamped,
                 Mathf.Max(0f, _profile.MaximumNearShoulderCorrection - follow.magnitude));
@@ -1385,8 +1444,8 @@ namespace Oheangbu.App.World
             _nearHasSolution = true;
             if (_profile.ArticulatedStrokes && stroking && !_strokeAnchorReady)
             {
-                _nearStrokeWrist = view.InverseTransformPoint(wrist);
-                _nearStrokeGrip = view.InverseTransformPoint(tip - grip * _nearBrush.TipOffset);
+                _nearStrokeWrist = view.InverseTransformPoint(cleanWrist308);
+                _nearStrokeGrip = view.InverseTransformPoint(tip - cleanGrip308 * _nearBrush.TipOffset);
                 _worldStrokeGrip = _world.Root.InverseTransformPoint(_worldBrush.Grip.position);
                 _strokeAnchorReady = true;
             }
@@ -1506,7 +1565,7 @@ namespace Oheangbu.App.World
             _nearRoot.position += view.TransformPoint(_profile.NearShoulderOffset + _vNear.Shoulder) - _near.Upper.position;
             Vector3 follow = view.TransformVector(_vNear.Shoulder);
             MeasureLengths(_near);
-            Ray ray = camera.ScreenPointToRay(screen);
+            Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);   // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): not Camera.ScreenPointToRay
             float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
             float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
             float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
@@ -1698,6 +1757,7 @@ namespace Oheangbu.App.World
         {
             RestoreHandleStretch();
             EndPendant();
+            EndAirStroke308();
             SetSkinningBound(false);
             Unsubscribe();
             RestoreAnimatedPose();
@@ -1705,6 +1765,8 @@ namespace Oheangbu.App.World
             _cameraRig?.SetDrawingPresentationActive(false);
             ReleaseHarvestSink();
             ResetTransitions();
+            UnsubscribeJuice308();
+            JuiceSuspend308();
         }
 
         private void SetSkinningBound(bool bound)

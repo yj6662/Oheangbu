@@ -9,7 +9,9 @@ namespace Oheangbu.App
     // #306 방어 성공 먹 획(SPEC-PLAYTEST-306 #12, D306) — 표현 전용. 판정·그로기·먹 값은 이미 확정된 뒤다(배선부 훅이 부른다).
     // 방어 글자 접촉점 → 빛났던 기관(매 프레임 위치)까지 방어 글자 속성색으로 물든 먹 획이 날아간다: 머리 0.2초, 폭 1.0 → 0.35,
     // 꼬리가 녹는다. 도착 = 기관 빛이 먹 얼룩으로 꺼지고 터짐(EnemyElementTelegraph.Extinguish) + 원상 펄스·채움 표시(콜백).
-    // 개화 = 1.5배 굵고 기관 테가 깨진다. 반만 성공 = 가는 획이 반쯤에서 녹고 채움 없음. 실패 = 획 없음(호출되지 않는다).
+    // #308(SPEC-TELEGRAPH-ORGAN-308): 획 끝 = 켜진 기관의 저작된 표면점(lift 0) — 띄운 쿼드 자리가 아니라 모델 표면에 닿는다.
+    //   표면이 저작되지 않은 기관만 구 중심에서 카메라 쪽으로 Radius, 기관이 없으면 가슴 대체(FallbackChestLift)는 그대로다.
+    // 개화 = 1.5배 굵고 기관 고리가 깨진다. 반만 성공 = 가는 획이 반쯤에서 녹고 채움 없음. 실패 = 획 없음(호출되지 않는다).
     // 풀: 획 MaxLiveStrokes개(기본 3)를 처음 한 번 만들고 재사용한다 — 패링마다 할당 없음. 넘치면 가장 오래된 획을 즉시 도착시킨다.
     // 시계: scaled로 흐르되 실시간의 RealtimeFloor 배 아래로 느려지지 않고(히트스톱), RealtimeCap 실초 안에 반드시 도착한다.
     // 정지 메뉴(timeScale 0)에서는 멈춘다. 적 피격 반응은 만들지 않는다.
@@ -39,8 +41,10 @@ namespace Oheangbu.App
 
         public int LiveCount { get { int n = 0; foreach (var s in _strokes) if (s.Live) n++; return n; } }
         public int Capacity => _strokes.Length;
-        // 편집기 검사(AC-12c): 마지막으로 도착한 획의 끝과 기관 사이 거리
+        // 편집기 검사(AC-12c): 마지막으로 도착한 획의 끝과 그 순간 텔레그래프가 내놓는 켜진 기관 표면점 사이 거리(m) —
+        // 획 자신의 끝점과 재면 늘 0이라 따로 묻는다(기관이 없으면 NaN). LastArrivalOrgan = 그 기관 Id
         public float LastArrivalError { get; private set; } = float.NaN;
+        public string LastArrivalOrgan { get; private set; } = "";
         public int Launched { get; private set; }
 
         // arrived(pulse): 도착한 성공 획 — 배선부가 원상 펄스·그로기 표시를 푼다. lateTick: 매 LateUpdate(배선부 대기 펄스 정리)
@@ -129,7 +133,9 @@ namespace Oheangbu.App
             s.Arrived = true; s.Progress = 1f; s.TailAtArrival = Mathf.Max(0f, Reach(s) - _timing.TailLength);
             if (s.Half) { if (s.Organ != null) s.Organ.ReleaseCounter(s.AttackId); return; }
             if (s.Anchor != null) s.End = EndPoint(s, Camera.main);
-            LastArrivalError = Vector3.Distance(Head(s, 1f), s.End);
+            LastArrivalError = float.NaN; LastArrivalOrgan = "";
+            if (s.Organ != null && s.Organ.TryGetCounterSurfacePoint(s.AttackId, out var surface, out var organId))
+            { LastArrivalError = Vector3.Distance(Head(s, 1f), surface); LastArrivalOrgan = organId; }
             if (s.Organ != null) s.Organ.Extinguish(s.AttackId, s.Blossom);
             bool held = s.HoldsGroggy; s.HoldsGroggy = false;
             if (held || s.Pulse) _arrived?.Invoke(s.Pulse);
@@ -137,7 +143,7 @@ namespace Oheangbu.App
 
         private void Retire(Stroke s) { s.Live = false; s.HoldsGroggy = false; s.Target = null; s.Anchor = null; s.Organ = null; s.Ribbon?.Hide(); }
 
-        // 보이는 기관 먹 테 자리 = 뼈에서 카메라 쪽으로 Lift(EnemyElementTelegraph.Place와 같은 규칙) — 몸 속에서 끝나지 않게
+        // 획 끝 = 앵커 · 오프셋(#308 표면점, lift 0). lift > 0(표면 미저작 기관·가슴 대체)만 카메라 쪽으로 띄운다 — 몸 속에서 끝나지 않게
         private static Vector3 EndPoint(Stroke s, Camera cam)
         {
             Vector3 p = s.Anchor.TransformPoint(s.Offset);
@@ -179,7 +185,7 @@ namespace Oheangbu.App
         }
     }
 
-    // #306 카메라를 보는 먹 리본 한 가닥(방어 성공 획·기관 끈 공용) — RibbonMeshBuilder + InkStroke 재질 사본(획마다 하나, 처음 한 번).
+    // #306 카메라를 보는 먹 리본 한 가닥(방어 성공 획 — #308에서 기관 끈은 없어졌다) — RibbonMeshBuilder + InkStroke 재질 사본(획마다 하나, 처음 한 번).
     // 발광 상한: _FlashAdd = 0(HDR 가산 없음) — 속성색은 먹이 물드는 틴트로만(LDR). 차폐 투시 패스는 끈다(세상 물체).
     // 경로: from→to 직선 위 [uTail, uHead] 구간, 카메라 평면으로 arc만큼 휜다. 폭은 기필 1 → 끝 endScale, 꼬리 쪽은 가늘고 마른다.
     public sealed class InkRibbon306

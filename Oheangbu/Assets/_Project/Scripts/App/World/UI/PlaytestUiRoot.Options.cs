@@ -12,7 +12,7 @@ namespace Oheangbu.App.World.UI
     // #304 설정 (options.png, DESIGN §5.5 / §7.8). Page coordinates = the 1920x1080 mockup (contentRoot, top-left origin).
     // Category tabs OptionTab_<화면|소리|조작|접근성> (harness options-tab:*) at x64 pitch 70, divider x292, value rows named
     // Value_<label> at y = 180 + 86i (name x392, ‹ value › box x640~1010), focus = wet_m h118 from x322 (MenuOptionsPanel304
-    // keeps values / 적용 전 / disabled reasons / the 설명 칸 at x1346). Display settings still go through displayDraft ->
+    // keeps values / 적용 전 / disabled reasons; D308-27 answer 3: there is no 설명 칸). Display settings still go through displayDraft ->
     // ApplyDisplay (Settings.Preview + the 15 s confirmation in Flow); the other tabs apply live exactly as before.
     public sealed partial class PlaytestUiRoot
     {
@@ -27,21 +27,22 @@ namespace Oheangbu.App.World.UI
             var s=V.Style(Theme);
             displayDraft=Settings.Current;
             var tab=Menu304CategoryTabs(s,"OptionTab_",Menu304OptionTabs,optionsTab,t=>{optionsTab=t;OpenPage("옵션");});
-            var help=V.Rect("OptionHelp",contentRoot,1346,180,440,760);
             menu304Options=contentRoot.gameObject.AddComponent<MenuOptionsPanel304>();
-            menu304Options.Init(s,help);
+            menu304Options.Init(s);   // D308-27 answer 3: no 설명 칸 (x1346); the option names and their values are the page
             menu304Options.Above=tab;
             if(optionsTab=="화면")BuildDisplayOptions(s);
             else if(optionsTab=="소리")BuildAudioOptions(s);
             else if(optionsTab=="조작")BuildInputOptions(s);
             else BuildAccessibilityOptions(s);
-            var reset=Menu304SecondaryRow(s,"ResetSettings","기본값 복원",optionsTab=="화면"?780:352,630,
+            // 접근성 has 7 rows (168 - 770): at 630 the row sat on rows 6 and 7 (seen in the 2026-10-06 capture) - it goes under the list there
+            float resetY=optionsTab=="접근성"?180+86*7+20:630;
+            var reset=Menu304SecondaryRow(s,"ResetSettings","기본값 복원",optionsTab=="화면"?780:352,resetY,
                 ()=>Confirm("설정을 기본값으로 바꿀까요?","화면 설정은 적용 후 다시 확인.",()=>{Settings.Reset();ShowDisplayConfirmation();}));
             if(menu304Options.Below==null)menu304Options.Below=reset;
             menu304Options.Refresh();
             // initial selection = the first live row (IMPLEMENTATION §4.2 설정 = 첫 행)
             foreach(var r in menu304Options.Rows)if(r.Focus!=null&&r.Focus.Button!=null&&r.Focus.Button.interactable){menu304DefaultSelection=r.Focus.Button.gameObject;break;}
-            settingsErrorText=V.Label(s,contentRoot,"SettingsError",Settings.SaveError??"",UiType304.MetaBold20,s.CinnabarLift,392,730,900,0,TextAlignmentOptions.TopLeft,true);
+            settingsErrorText=V.Label(s,contentRoot,"SettingsError",Settings.SaveError??"",UiType304.MetaBold20,s.CinnabarLift,392,resetY+100,900,0,TextAlignmentOptions.TopLeft,true);
             settingsBuilt=true;
         }
 
@@ -78,13 +79,16 @@ namespace Oheangbu.App.World.UI
                 Key="Enter",KeySmall=false,KeyX=288,KeyY=14,UnderStroke=true,UnderStrokeW=330,SoundTheme=Theme,
             });
             menu304Options.Below=apply.Button;
-            // 지금 쓰는 화면 (392,776): what the screen really runs now, not the draft
-            V.Label(s,contentRoot,"CurrentDisplay","지금 쓰는 화면",UiType304.Meta20,s.Mist,392,776);
+            // 지금 쓰는 화면 (392,776): what the screen really runs now, not the draft. D308-27 (설정 ③): shown only while a row of this
+            // tab is 적용 전 - with nothing pending the rows above say the same (MenuOptionsPanel304.Refresh switches the block)
+            var runsNow=V.Rect("CurrentDisplayBlock",contentRoot,0,0,UiPageFit304.Width,UiPageFit304.Height);
+            menu304Options.ShownWhilePending=runsNow.gameObject;
+            V.Label(s,runsNow,"CurrentDisplay","지금 쓰는 화면",UiType304.Meta20,s.Mist,392,776);
             string[,] now={{"해상도",Screen.width+" × "+Screen.height},{"화면 모드",Menu304WindowModeName(Screen.fullScreenMode)},{"수직동기화",QualitySettings.vSyncCount==0?"끄기":"켜기"}};
             for(int i=0;i<now.GetLength(0);i++)
             {
-                V.Label(s,contentRoot,"CurrentName_"+i,now[i,0],UiType304.Meta20,s.Mist,392,806+32*i);
-                V.Label(s,contentRoot,"CurrentValue_"+i,now[i,1],UiType304.Meta20,s.Paper,540,806+32*i);
+                V.Label(s,runsNow,"CurrentName_"+i,now[i,0],UiType304.Meta20,s.Mist,392,806+32*i);
+                V.Label(s,runsNow,"CurrentValue_"+i,now[i,1],UiType304.Meta20,s.Paper,540,806+32*i);
             }
         }
         void BuildAudioOptions(UiStyle304SO s)
@@ -99,8 +103,9 @@ namespace Oheangbu.App.World.UI
         {
             OptionStepper(s,"마우스 감도",0,()=>Settings.Current.LookSensitivity,(d,v)=>d.LookSensitivity=v,.25f,3f,.05f,"×");
             OptionCycle(s,"시점 Y축 반전",1,()=>Settings.Current.InvertLookY?"켜기":"끄기",dir=>LiveSetting(d=>d.InvertLookY=!d.InvertLookY));
-            var link=Menu304SecondaryRow(s,"ControlsLink","전체 조작 안내",352,630-86*2,()=>OpenPage("조작 안내"));
-            menu304Options.Below=link;
+            // #306 #11: 익힘 멈춤 = the mine tutorial's time-stop cards (off = no card; the fight is the same)
+            OptionCycle(s,"익힘 멈춤",2,()=>Settings.Current.TutorialPause?"켜기":"끄기",dir=>LiveSetting(d=>d.TutorialPause=!d.TutorialPause));
+            // D308-27 (설정 ④): no link row to the 조작 page (the tab rail has it); 기본값 복원 is the row under the list
         }
         void BuildAccessibilityOptions(UiStyle304SO s)
         {
@@ -111,8 +116,12 @@ namespace Oheangbu.App.World.UI
             OptionCycle(s,"미니맵",2,()=>MinimapModes[MinimapMode(Settings.Current)],dir=>LiveSetting(d=>SetMinimapMode(d,Menu304Wrap(MinimapMode(d)+dir,MinimapModes.Length))));
             OptionCycle(s,"방위선",3,()=>Settings.Current.ShowBearingLine?"표시":"숨기기",dir=>LiveSetting(d=>d.ShowBearingLine=!d.ShowBearingLine));
             OptionCycle(s,"지도 펼침 동작 줄이기",4,()=>Settings.Current.ReducedMotion?"켜기":"끄기",dir=>LiveSetting(d=>d.ReducedMotion=!d.ReducedMotion));
+            // #308 D308-10 / D308-10b (SPEC-SPELL-DEPLOY-308 sections 8-9): impact frames full / reduced / off, HUD reaction on / off
+            OptionCycle(s,"임팩트 프레임",5,()=>ImpactFlashModes[Mathf.Clamp(Settings.Current.ImpactFlash,0,2)],dir=>LiveSetting(d=>d.ImpactFlash=Menu304Wrap(Mathf.Clamp(d.ImpactFlash,0,2)+dir,ImpactFlashModes.Length)));
+            OptionCycle(s,"HUD 반응",6,()=>Settings.Current.HudImpactReact?"켜기":"끄기",dir=>LiveSetting(d=>d.HudImpactReact=!d.HudImpactReact));
         }
         static readonly string[] MinimapModes={"북쪽 고정","시점 따라","숨기기"};
+        static readonly string[] ImpactFlashModes={"전체","줄임","끔"};   // #308 UserSettingsData.ImpactFlash 0 / 1 / 2
         static int MinimapMode(UserSettingsData d)=>!d.ShowMinimap?2:d.MinimapFollowView?1:0;
         static void SetMinimapMode(UserSettingsData d,int mode){d.ShowMinimap=mode!=2;if(mode!=2)d.MinimapFollowView=mode==1;}
 
@@ -164,7 +173,7 @@ namespace Oheangbu.App.World.UI
             b.navigation=new Navigation{mode=Navigation.Mode.None};   // clicking an arrow must not steal the row's focus
             b.onClick.AddListener(click);
         }
-        /// <summary>Secondary action (기본값 복원, 효과음 들어보기, 전체 조작 안내): Label26 paper, focus = wet_s + dab.</summary>
+        /// <summary>Secondary action (기본값 복원, 효과음 들어보기): Label26 paper, focus = wet_s + dab.</summary>
         Button Menu304SecondaryRow(UiStyle304SO s,string name,string label,float x,float y,UnityAction click)
         {
             var row=V.FocusRow(s,contentRoot,name,label,x,y,300,64,click,new FocusRowSpec304{Role=UiType304.Label26,LabelX=40,LabelY=20,SoundTheme=Theme});

@@ -20,7 +20,17 @@ namespace Oheangbu.App.World
             if (!_lookInitialized) { _bodyYaw = yaw; _lookInitialized = true; _turning = false; }
             if (Time.deltaTime <= 0f) return;
             bool idle = !moving && _motor.IsLocomotionGrounded && !_motor.IsDrawing && !_motor.IsHarvesting && !_motor.IsSitting && !_motor.IsDodging;
-            if (!idle)
+            // #308 D308-8c (SPEC-VEHICLE-UX-308 §3b): the car call stroke is drawn in front of the controller (the call direction), so
+            // while it runs the body turns to face it at the stroke's data speed instead of keeping a standing look-around yaw. The
+            // head keeps looking along the controller while the body turns under it (no head snap). Presentation only.
+            float strokeTurn = _gestureRig != null ? _gestureRig.AirStrokeBodyTurnSpeed308 : 0f;
+            if (strokeTurn > 0f && !_motor.IsDodging && !_motor.IsDrawing)
+            {
+                _turning = false;
+                _bodyYaw = Mathf.MoveTowardsAngle(_bodyYaw, yaw, strokeTurn * Time.deltaTime);
+                _headYaw = Mathf.Clamp(Mathf.DeltaAngle(_bodyYaw, yaw), -90f, 90f);
+            }
+            else if (!idle)
             {
                 _turning = false;
                 float destination = yaw;

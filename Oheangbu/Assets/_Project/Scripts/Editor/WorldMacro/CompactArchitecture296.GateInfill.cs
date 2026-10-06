@@ -34,6 +34,14 @@ namespace Oheangbu.EditorTools.WorldMacro
     foreach(var t in gate.GetComponentsInChildren<Transform>(true).Where(t=>t.name=="LeftHinge"||t.name=="RightHinge"))lines.Add(ScenePathVenue296(t)+"|"+t.localPosition.ToString("R")+"|"+t.localRotation.ToString("R")+"|"+t.localScale.ToString("R"));
     foreach(var n in gate.GetComponents<UnityEngine.AI.NavMeshObstacle>())lines.Add(EditorJsonUtility.ToJson(n));
    }
+   // #308 D308-3b: the Seal308 pass gate (WorldSealGate308) - component, leaf poses and every blocker / carve / open-leaf flag
+   foreach(var seal in Components295<Oheangbu.App.World.WorldSealGate308>().Where(g=>g.gameObject.activeInHierarchy).OrderBy(g=>ScenePathVenue296(g.transform),StringComparer.Ordinal))
+   {
+    lines.Add(ScenePathVenue296(seal.transform)+"|seal308|"+seal.enabled+"|"+EditorJsonUtility.ToJson(seal));
+    foreach(var t in new[]{seal.LeftLeaf,seal.RightLeaf})if(t!=null)lines.Add(ScenePathVenue296(t)+"|"+t.localPosition.ToString("R")+"|"+t.localRotation.ToString("R"));
+    foreach(var c in (seal.ClosedBlockers??new Collider[0]).Concat(seal.OpenColliders??new Collider[0]))if(c!=null)lines.Add(ScenePathVenue296(c.transform)+"|"+c.enabled);
+    foreach(var n in seal.ClosedNavigation??new UnityEngine.AI.NavMeshObstacle[0])if(n!=null)lines.Add(EditorJsonUtility.ToJson(n)+"|"+n.enabled);
+   }
    return RetainingTextHash296(string.Join("\n",lines));
   }
   static List<InfillPart296> InfillLeafParts296(SouthGateDoorPresentation gate,Transform hinge)
@@ -169,7 +177,10 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(outside>.001f)throw new Exception("Gate bounds discrepancy exceeds rounding allowance: "+outside.ToString("R")+"m "+key);
     float padding=outside+.00002f;tight.Expand(padding*2);mesh.bounds=tight;
     boundsError=Mathf.Max(boundsError,outside);boundsPadding=Mathf.Max(boundsPadding,padding);EditorUtility.SetDirty(mesh);
-    var go=new GameObject(lintel?"OriginalWood_HorizontalLintel":"OriginalWood_ArchTransom");go.transform.SetParent(root,false);go.isStatic=true;
+    // #308 D308-1 gate track: one renderer per door material - the second and later ones of a kind get "_Mat<k>" so the
+    // siblings no longer share a name (BuildingAudit308 C4 read them as copies). Same names as BuildingFix308.Gate G1.
+    string kind=lintel?"OriginalWood_HorizontalLintel":"OriginalWood_ArchTransom";int nth=renderers.Count(x=>x.name.StartsWith(kind,StringComparison.Ordinal));
+    var go=new GameObject(nth==0?kind:kind+"_Mat"+nth);go.transform.SetParent(root,false);go.isStatic=true;
     go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=material;r.shadowCastingMode=ShadowCastingMode.On;r.receiveShadows=true;renderers.Add(r);meshes.Add(mesh);
    }
    if(renderers.Count==0)throw new Exception("Empty arch infill");

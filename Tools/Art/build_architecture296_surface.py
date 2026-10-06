@@ -249,7 +249,12 @@ half3 TriPerturb296(Tri293 t,TriFrames296 f,TEXTURE2D_PARAM(bump,bs))
 
 
 def expected():
-    return {"KoreanInkGround296.shader": ground_shader(), "KoreanSurface296.hlsl": ground_surface(),
+    # #307: the ground cost switches (Tools/Art/ground307_patch.py) are applied on top of the #296 transform
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("ground307_patch", Path(__file__).with_name("ground307_patch.py"))
+    patch = importlib.util.module_from_spec(spec); spec.loader.exec_module(patch)
+    return {"KoreanInkGround296.shader": patch.apply("KoreanInkGround296.shader", ground_shader()),
+            "KoreanSurface296.hlsl": patch.apply("KoreanSurface296.hlsl", ground_surface()),
             "HighlandGranite296.shader": highland_shader(), "HighlandSurface296.hlsl": highland_surface()}
 
 

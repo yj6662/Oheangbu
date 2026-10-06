@@ -52,7 +52,8 @@ namespace Oheangbu.App.World
                 if(vehicleHeightKnown){recentGroundHeight=feet.y;groundHeightKnown=true;}
                 vehicleHeightKnown=false;
                 if(groundHeightKnown&&recentGroundHeight-feet.y>=Traversal.Rules.FatalFallHeight){vitals.ApplyFatalFall();return true;}
-                if(Walker.Motor.IsLocomotionGrounded){recentGroundHeight=feet.y;groundHeightKnown=true;}
+                // #308 D308-18 (3): the reference follows the feet only on walkable support (WorldMacroPlaytestSession.Fall308.cs)
+                if(FallReferenceRefreshes308()){recentGroundHeight=feet.y;groundHeightKnown=true;}
             }
             CurrentImmersion=Traversal.Immersion(feet);
             Walker.Motor.TerrainMovementScale=Traversal.MovementScale(feet);

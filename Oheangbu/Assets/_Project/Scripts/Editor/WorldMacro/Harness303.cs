@@ -347,6 +347,9 @@ namespace Oheangbu.EditorTools.WorldMacro
         Vector3 point, front; float radius; bool fixedPoint;
         readonly Walker303 walker = new Walker303();
         string feedbackBefore; bool subscribed;
+        string approachNote = "";   // why the first walk did not start (text for a failure line only)
+        // " | <distance to the point against its radius> | <why the first walk did not start>" for the two failures that can happen before F
+        string ApproachNote(Vector3 feet) => " | " + Harness303.F(Vector3.Distance(feet, point), "F2") + " m from the point (radius " + Harness303.F(radius, "F1") + " m)" + (approachNote.Length > 0 ? " | " + approachNote : "");
 
         public void Begin(WorldMacroPlaytestSession session, string phase, string pointId, Transform npcTransform, string expectedBody, string folder, string capture, Vector3? livePoint = null)
         {
@@ -354,7 +357,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             s = session; id = pointId; npc = npcTransform; captureFolder = folder; captureName = capture;
             Row = new InteractionRow303 { phase = phase, expectedId = pointId, expectedBody = expectedBody ?? "" };
             Fixtures.Clear(); Status = "running"; stage = 0; focusFrames = 0; neutralFrames = 0; textFrame = -1; closeStep = 0;
-            menuMoves = 0; menuPicked = menuAdapter = conversationEnded = false; source = closeExtra = "";
+            menuMoves = 0; menuPicked = menuAdapter = conversationEnded = false; source = closeExtra = ""; approachNote = "";
             begun = at = EditorApplication.timeSinceStartup;
             var p = Harness303.InteractionPoint(s, pointId);
             if (p == null) { Status = "failed"; Row.detail = "no interaction point " + pointId; return; }
@@ -458,14 +461,17 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Vector3 dir = Vector3.ProjectOnPlane(feet - point, Vector3.up); if (dir.sqrMagnitude < .01f) dir = Vector3.back; dir.Normalize();
                     front = npc != null ? npc.position + npc.forward * 1.5f : point + dir * Mathf.Min(1.5f, Mathf.Max(.6f, radius - .6f));
                     if (NavMesh.SamplePosition(front, out var hit, 1.2f, NavMesh.AllAreas)) front = hit.position;
-                    if (Harness303.Flat(feet, front) < .5f || !walker.Begin(s, front, .35f, 40f, id)) { stage = 2; at = now; return hold; }
+                    if (Harness303.Flat(feet, front) < .5f) { stage = 2; at = now; return hold; }
+                    // harness repair 2026-10-06: a first walk that cannot start (no NavMesh path) went on to the focus stage without a word;
+                    // the reason is kept and added to a later approach failure (the flow itself is unchanged)
+                    if (!walker.Begin(s, front, .35f, 40f, id)) { approachNote = "walk to the front spot " + Harness303.V(front) + " did not start: " + walker.Detail; stage = 2; at = now; return hold; }
                     stage = 1; return walker.Tick(s, pointer);
                 }
                 case 1:
                 {
                     var f = walker.Tick(s, pointer);
                     if (walker.Status == "walking") return f;
-                    if (walker.Status == "failed" && Vector3.Distance(feet, point) > radius) { Status = "failed"; Row.detail = "approach failed: " + walker.Detail + " " + walker.LastBlock; return hold; }
+                    if (walker.Status == "failed" && Vector3.Distance(feet, point) > radius) { Status = "failed"; Row.detail = "approach failed: " + walker.Detail + " " + walker.LastBlock + ApproachNote(feet); return hold; }
                     stage = 2; at = now; focusFrames = 0; return hold;
                 }
                 case 2:
@@ -477,7 +483,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (focusFrames >= 3) { stage = 3; return hold; }
                     if (now - at > 1.2)
                     {
-                        if (Row.approachTries >= 4) { Status = "failed"; Row.detail = "focus stayed on '" + lastFocus + "' after 4 approaches"; return hold; }
+                        if (Row.approachTries >= 4) { Status = "failed"; Row.detail = "focus stayed on '" + lastFocus + "' after 4 approaches" + ApproachNote(feet); return hold; }
                         Row.approachTries++;
                         var step = Vector3.ProjectOnPlane(point - feet, Vector3.up).normalized * .3f;
                         if (!walker.Begin(s, feet + step, .12f, 3f, id + "+0.3m")) { stage = 2; at = now; return hold; }

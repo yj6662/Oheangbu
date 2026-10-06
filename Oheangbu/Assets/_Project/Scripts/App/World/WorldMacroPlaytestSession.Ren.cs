@@ -24,6 +24,7 @@ namespace Oheangbu.App.World
             // Vitals still contain pre-hit HP. SaveNow would overwrite this committed surviving HP.
             candidate.ledger.hp=survivingHpFraction;
             string snapshot=JsonUtility.ToJson(candidate);
+            DrainAutosave();   // #307 item 3: an autosave in flight lands and reports first
             try
             {
                 store.Save(candidate);

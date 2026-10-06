@@ -10,9 +10,13 @@ namespace Oheangbu.App.World
         WorldShortcutDoor ShortcutDoor(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            shortcutDoors ??= Array.FindAll(FindObjectsByType<WorldShortcutDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None), d => d.gameObject.scene == gameObject.scene);
-            return Array.Find(shortcutDoors, d => d != null && d.Id == id);
+            EnsureShortcutDoors();
+            // #307 item 2: Array.Find's first match without a capturing lambda (called for every focus candidate in range)
+            for (int i = 0; i < shortcutDoors.Length; i++) { var d = shortcutDoors[i]; if (d != null && d.Id == id) return d; }
+            return null;
         }
+        void EnsureShortcutDoors() =>
+            shortcutDoors ??= Array.FindAll(FindObjectsByType<WorldShortcutDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None), d => d.gameObject.scene == gameObject.scene);
         // An unbarred door stays open and is no longer an interaction.
         bool ShortcutDoorOpened(string id) => ShortcutDoor(id) != null && Progress != null && Progress.ledger.completed.Contains(id);
         bool TryHandleShortcutDoor(PrologueContentSO.Point point, out bool success)

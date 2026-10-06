@@ -28,6 +28,20 @@ def parse(name):
                 nowarn=text('NoWarn'))
 
 
+def snap(ref, out):
+    """Private copy of a Library/ScriptAssemblies reference (retries while Unity is writing it); other paths pass through."""
+    if not ref or 'scriptassemblies' not in ref.replace(chr(92), '/').lower(): return ref
+    src = Path(ref); dst = out / 'refs' / src.name
+    if dst.exists(): return str(dst)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    import shutil, time
+    for attempt in range(40):
+        try: shutil.copyfile(src, dst); return str(dst)
+        except (PermissionError, OSError):
+            time.sleep(.5)
+    return ref
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(); ap.add_argument('assemblies', nargs='+'); ap.add_argument('--stage', default='Tools/Unity/Finish297Stage')
@@ -48,9 +62,11 @@ def main():
             # a staged file the (possibly stale) csproj does not list joins its folder's assembly, also when it already sits in Assets
             if key not in used and Path(key).parent.as_posix() in folders:
                 sources.append(f); used.add(key)
-        refs = list(info['refs'])
+        # #308: never hand csc a path inside Library/ScriptAssemblies - csc maps its references, and while it does Unity cannot
+        # overwrite that DLL (the editor then reports a script compilation error at CopyFiles). Reference a private copy instead.
+        refs = [snap(r, out) for r in info['refs']]
         for p in info['projects']:
-            refs.append(str(fresh.get(p, PROJECT / 'Library/ScriptAssemblies' / (p + '.dll'))))
+            refs.append(str(fresh[p]) if p in fresh else snap(str(PROJECT / 'Library/ScriptAssemblies' / (p + '.dll')), out))
         target = out / (name + '.dll')
         rsp = ['-nologo', '-noconfig', '-nostdlib+', '-target:library', '-out:' + str(target), '-langversion:' + info['lang'],
                '-define:' + info['defines'], '-nowarn:' + (info['nowarn'] or '0169') + ';1701;1702', '-deterministic']
@@ -67,5 +83,43 @@ def main():
     sys.exit(1 if failed else 0)
 
 
+def _guarded_main():
+    """One offline compile at a time on this PC, and only while memory is not short (2026-10-04: several agents compile in
+    parallel while Unity holds ~17 GB; the user is remote and the PC has blue-screened under load). Lock file Tools/.compile_lock,
+    stale after 20 min. Set OFFLINE297_NO_LOCK=1 to skip (never needed in normal use)."""
+    import os, time, ctypes
+    if os.environ.get('OFFLINE297_NO_LOCK') == '1': return main()
+    lock = ROOT / 'Tools' / '.compile_lock'
+
+    class _Mem(ctypes.Structure):
+        _fields_ = [('dwLength', ctypes.c_ulong), ('dwMemoryLoad', ctypes.c_ulong), ('ullTotalPhys', ctypes.c_ulonglong),
+                    ('ullAvailPhys', ctypes.c_ulonglong), ('ullTotalPageFile', ctypes.c_ulonglong), ('ullAvailPageFile', ctypes.c_ulonglong),
+                    ('ullTotalVirtual', ctypes.c_ulonglong), ('ullAvailVirtual', ctypes.c_ulonglong), ('ullAvailExtendedVirtual', ctypes.c_ulonglong)]
+
+    def free_gb():
+        try:
+            m = _Mem(); m.dwLength = ctypes.sizeof(_Mem); ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)); return m.ullAvailPhys / 2**30
+        except Exception:
+            return 99.0
+    deadline = time.time() + 3600; said = False; fd = None
+    while True:
+        if free_gb() >= 4.5:
+            try:
+                fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, ('pid %d %s' % (os.getpid(), time.strftime('%H:%M:%S'))).encode()); os.close(fd); break
+            except FileExistsError:
+                try:
+                    if time.time() - lock.stat().st_mtime > 1200: lock.unlink(); continue
+                except OSError:
+                    pass
+        if not said: print('offline297: waiting (another compile is running or free RAM < 4.5 GB)', flush=True); said = True
+        if time.time() > deadline: print('offline297: gave up waiting for the compile lock', flush=True); sys.exit(4)
+        time.sleep(5)
+    try:
+        main()
+    finally:
+        try: lock.unlink()
+        except OSError: pass
+
+
 if __name__ == '__main__':
-    main()
+    _guarded_main()

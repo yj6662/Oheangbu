@@ -87,7 +87,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             Check(art != null && art.Portrait != null && art.Slots.Length == 6 && art.Slots.All(x => x != null), "seven candidate art bindings");
             var graphics = ui.GetComponentsInChildren<EquipmentInkGraphic>();
             Check(graphics.All(g => g.Artwork != null && g.mainTexture == g.Artwork.texture && g.canvasRenderer != null), "inventory uses generated texture with CanvasRenderer");
-            Check(graphics.Single(g => g.Symbol < 0).Artwork == art.Portrait, "paper doll portrait bound");
+            // #308 (SPEC-UI-EQUIPMENT-308, question 2): the 3-column 소지품 has no paper doll; the portrait asset stays bound in the art SO
+            Check(graphics.All(g => g.Symbol >= 0), "3-column inventory draws no paper doll (#308)");
             Check(ui.GetComponentsInChildren<EquipmentDropSlot>().Length == 6, "all six equipment drop targets remain");
             var drag = ui.GetComponentsInChildren<EquipmentDragItem>().First();
             var source = drag.GetComponentInChildren<EquipmentInkGraphic>();
@@ -96,7 +97,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             var ghost = GameObject.Find("DraggedEquipment").GetComponent<EquipmentInkGraphic>();
             Check(ghost.Artwork == source.Artwork && ghost.color.r == 1 && !ghost.raycastTarget, "drag ghost keeps the generated sprite and never captures pointer");
             drag.OnEndDrag(ev);
-            ui.GetComponentsInChildren<Button>().First(b => b.name.StartsWith("Gear_")).onClick.Invoke();
+            // #308: a Gear_ row now equips at once; selecting is the slot's click (the focus moves into 바꿔 낄 것, nothing is saved)
+            ui.GetComponentsInChildren<Button>().First(b => b.name.StartsWith("Equipped_")).onClick.Invoke();
             Canvas.ForceUpdateCanvases();
             Check(ui.GetComponentsInChildren<Image>().Any(x => x.name == "SelectedGearPaper"), "selected icon keeps readable paper backing");
             Check(before == JsonUtility.ToJson(session.Progress), "opening, selecting and dragging art never changes progress");

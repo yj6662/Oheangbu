@@ -49,7 +49,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     presenter.Initialize((RectTransform)panel.transform,session,source.WorldSheet,new WorldMapUiDependencies{BakedData=source.MapData,Icons=theme.Icons,Font=theme.Font,PaperTexture=theme.PaperTexture,Ink=theme.Ink,Paper=theme.Paper,Muted=theme.Muted,Seal=theme.Seal,ReducedMotion=true});
     foreach(var t in panel.GetComponentsInChildren<Transform>(true))t.gameObject.layer=31;
     Canvas.ForceUpdateCanvases();Call("RefreshFullLayout",true);presenter.SetExpanded(true);presenter.ShowWholeWorld();Canvas.ForceUpdateCanvases();
-    // #304: realm labels are TMP MapRegion44 (centre alignment, pivot .5); the hover name is a TMP label inside PlaceHoverName
+    // #304: realm labels are TMP MapRegion44 (centre alignment, pivot .5). D308-25 (map 5): the name of the pointed mark is that
+    // mark's own label on the sheet (MapLabels/Label_<id>, with a plate when the map has a notation bundle), not a tooltip
     var labels=(List<TMP_Text>)Get("regionLabels");
     Check(labels.Count==5&&labels.All(t=>t.enabled&&t.gameObject.activeInHierarchy&&t.alignment==TextAlignmentOptions.Center&&t.rectTransform.pivot==new Vector2(.5f,.5f)),"five centered realm labels enabled in icon map");
     Capture("whole");
@@ -61,7 +62,10 @@ namespace Oheangbu.EditorTools.WorldMacro
     var mapSize=source.MapData.BoundsMax-source.MapData.BoundsMin;var uv=(centre-source.MapData.BoundsMin);uv=new Vector2(uv.x/mapSize.x,uv.y/mapSize.y);
     var rect=(RectTransform)Get("foldMap");var screen=RectTransformUtility.WorldToScreenPoint(cam,rect.TransformPoint(new Vector3((uv.x-.5f)*rect.rect.width,(uv.y-.5f)*rect.rect.height,0)));
     float initialSize=labels.Single(t=>t.text=="청림").rectTransform.rect.height,initialFont=labels.Single(t=>t.text=="청림").fontSize;
-    for(int i=0;i<10;i++)Call("Zoom",1f,screen,cam);
+    // D308-25: the first notch in from the whole-world view goes back to the wide window (another view under the same screen point),
+    // so the realm centre's screen point is taken again before every notch
+    Vector2 CentreScreen(){var view=(Rect)Get("fullUv");return RectTransformUtility.WorldToScreenPoint(cam,rect.TransformPoint(new Vector3(((uv.x-view.x)/view.width-.5f)*rect.rect.width,((uv.y-view.y)/view.height-.5f)*rect.rect.height,0)));}
+    for(int i=0;i<10;i++)Call("Zoom",1f,CentreScreen(),cam);
     Check(Mathf.Approximately(labels.Single(t=>t.text=="청림").fontSize,initialFont)&&labels.Single(t=>t.text=="청림").rectTransform.rect.height==initialSize,"zoom preserves realm type size");
     Check(labels.Single(t=>t.text=="청림").gameObject.activeSelf,"realm name stays visible at close zoom when its centre is in view");Capture("zoom");
     presenter.FocusCurrent();Call("ApplyUvAndMarkers",content.StartFeet);Canvas.ForceUpdateCanvases();
@@ -71,22 +75,24 @@ namespace Oheangbu.EditorTools.WorldMacro
     screen=RectTransformUtility.WorldToScreenPoint(cam,icon.position);
     var input=rect.Find("MapInput").gameObject;var evt=new PointerEventData(null){position=screen,pointerCurrentRaycast=new RaycastResult{module=panel.GetComponent<GraphicRaycaster>()}};
     ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerMoveHandler);
-    var hover=(TMP_Text)Get("mapHover");var hoverRoot=(RectTransform)Get("mapHoverRoot");
+    var paperLabels=(RectTransform)Get("fullLabels");var hover=paperLabels.Find("Label_"+spec.Id).GetComponent<TMP_Text>();var plate=paperLabels.Find("Plate_"+spec.Id) as RectTransform;
+    int Tags()=>paperLabels.GetComponentsInChildren<TMP_Text>(false).Count(t=>t.name.StartsWith("Label_",StringComparison.Ordinal)&&!t.name.StartsWith("Label_Region_",StringComparison.Ordinal)&&t.alpha>0f);
+    bool Shown()=>hover.gameObject.activeSelf&&hover.alpha>0f;
     int cut=spec.Label.LastIndexOf(" · ",StringComparison.Ordinal);string shortName=cut>=0&&cut+3<spec.Label.Length?spec.Label.Substring(cut+3):spec.Label;   // #304 ShortLabel: the place part only
-    Check(hoverRoot.gameObject.activeSelf&&hover.text==shortName&&!hover.raycastTarget,"pointer hover names actual visible location without raycast interception");
-    RectTransformUtility.ScreenPointToLocalPointInRectangle(presenter.FullRoot,screen,cam,out var local);
-    Check(hoverRoot.anchoredPosition.x>local.x&&hoverRoot.anchoredPosition.y>local.y,"name sits upper right of pointer");Capture("hover");
-    File.WriteAllText(output+"/hover-layout.txt","enabled="+hover.enabled+" active="+hover.gameObject.activeInHierarchy+" color="+hover.color+" rect="+hoverRoot.rect+" position="+hoverRoot.anchoredPosition+" screen="+RectTransformUtility.WorldToScreenPoint(cam,hoverRoot.position)+" characters="+hover.textInfo.characterCount+" cull="+hover.canvasRenderer.cull+" alpha="+hover.canvasRenderer.GetAlpha());
-    var hoverScreen=RectTransformUtility.WorldToScreenPoint(cam,hoverRoot.position);
-    Check(Vector2.Distance(hoverScreen,screen+new Vector2(18,20))<2,"rendered tooltip origin is actually upper right in screen coordinates");
-    var bounds=presenter.FullRoot.rect;
-    Check(hoverRoot.anchoredPosition.x+hoverRoot.rect.width*hoverRoot.localScale.x<=bounds.xMax-12+.5f&&hoverRoot.anchoredPosition.y+hoverRoot.rect.height*hoverRoot.localScale.y<=bounds.yMax-12+.5f,"tooltip fits viewport margins");
-    ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerDownHandler);Check(!hoverRoot.gameObject.activeSelf,"pointer down hides name for dragging");
-    ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerUpHandler);Check(hoverRoot.gameObject.activeSelf,"pointer up restores hover");
-    ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerExitHandler);Check(!hoverRoot.gameObject.activeSelf,"pointer exit hides name");
+    Check(Shown()&&hover.text==shortName&&Tags()==1&&!hover.raycastTarget,"pointer on a mark shows that mark's own name tag on the sheet: one tag, the short name, no raycast interception (tags="+Tags()+" text="+hover.text+")");
+    Canvas.ForceUpdateCanvases();
+    var tagBox=HarnessUiRules304.RectIn(rect,plate!=null&&plate.gameObject.activeSelf?plate:hover.rectTransform);Vector2 iconAt=rect.InverseTransformPoint(icon.position);
+    float tagGap=Mathf.Max(0f,Mathf.Max(Mathf.Max(tagBox.xMin-iconAt.x,iconAt.x-tagBox.xMax),Mathf.Max(tagBox.yMin-iconAt.y,iconAt.y-tagBox.yMax)));
+    Check(!tagBox.Contains(iconAt)&&tagGap<=icon.rect.width*.5f*icon.localScale.x+40f,"name tag stands beside its icon (one of the four sides), not on it and not away from it: gap from the icon centre="+tagGap.ToString("0.0")+"px box="+tagBox);Capture("hover");
+    File.WriteAllText(output+"/hover-layout.txt","enabled="+hover.enabled+" active="+hover.gameObject.activeInHierarchy+" color="+hover.color+" box="+tagBox+" icon="+iconAt+" plate="+(plate!=null&&plate.gameObject.activeSelf)+" characters="+hover.textInfo.characterCount+" cull="+hover.canvasRenderer.cull+" alpha="+hover.canvasRenderer.GetAlpha());
+    var printed=rect.rect;var slip=HarnessUiRules304.Member(presenter,"titleSlip304") as RectTransform;
+    Check(tagBox.xMin>=printed.xMin-.5f&&tagBox.xMax<=printed.xMax+.5f&&tagBox.yMin>=printed.yMin-.5f&&tagBox.yMax<=printed.yMax+.5f&&(slip==null||!slip.gameObject.activeInHierarchy||!tagBox.Overlaps(HarnessUiRules304.RectIn(rect,slip))),"name tag whole inside the printed window and clear of the title slip");
+    ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerDownHandler);Check(Tags()==0,"pointer down hides the name tag for dragging");
+    ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerUpHandler);Check(Shown()&&Tags()==1,"pointer up restores the name tag");
+    ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerExitHandler);Check(Tags()==0,"pointer exit hides the name tag");
     progress.ui.discoveredMarkers.Remove(spec.Id);Call("ApplyUvAndMarkers",content.StartFeet);ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerMoveHandler);
-    Check(!icon.gameObject.activeSelf,"undiscovered icon remains hidden");Check(!hoverRoot.gameObject.activeSelf||hover.text!=shortName,"hover does not leak undiscovered name");
-    progress.ui.discoveredMarkers.Add(spec.Id);Call("ApplyUvAndMarkers",content.StartFeet);ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerMoveHandler);presenter.SetExpanded(false);Check(!hoverRoot.gameObject.activeSelf,"closing map clears hover immediately");
+    Check(!icon.gameObject.activeSelf,"undiscovered icon remains hidden");Check(!Shown()&&paperLabels.GetComponentsInChildren<TMP_Text>(false).All(t=>t.name.StartsWith("Label_Region_",StringComparison.Ordinal)||t.alpha<=0f||t.text!=shortName),"the place of an undiscovered mark shows no name tag (no leak)");
+    progress.ui.discoveredMarkers.Add(spec.Id);Call("ApplyUvAndMarkers",content.StartFeet);ExecuteEvents.Execute(input,evt,ExecuteEvents.pointerMoveHandler);Check(Shown(),"the name tag is back once the mark is known again");presenter.SetExpanded(false);Check(Tags()==0,"closing map clears the name tag immediately");
     File.WriteAllLines(output+"/checks.txt",checks);return string.Join("\n",checks)+"\nIsolated edit-mode fixture and offscreen renders only; no gameplay input or save writes.";
    }
    finally

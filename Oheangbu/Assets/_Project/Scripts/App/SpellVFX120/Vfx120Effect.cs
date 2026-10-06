@@ -160,6 +160,7 @@ namespace Oheangbu.App.SpellVFX120
                 case Cue.Break: if (BreakAt < 0) BreakAt = at; break;
             }
             SignalCount++;
+            if (cue == Cue.Hit && Deploy308Retires) return;   // #308 forms2 N2: a retired body never brings its old impact motif back
             // This only consumes the already-issued visual hit cue. It cannot issue
             // a hit, retime damage, or extend Life. Repeated hits do not multiply motifs.
             if (cue == Cue.Hit && !PreviewControlled && Profile != null && !IsEmberCharge && !Vfx120InterceptionMotion.IsPrepared(Profile) && !IsBambooGuard(Profile) && !IsBloom(Profile) && !IsWoodSword(Profile) && !IsBambooSpikes(Profile) && !IsSeedPod(Profile) && !IsLeafCut(Profile) && !IsWetRoot(Profile) && !IsRootLift(Profile) && !IsStakeField(Profile))
@@ -278,6 +279,7 @@ namespace Oheangbu.App.SpellVFX120
 
         private void Build()
         {
+            if (BuildDeploy308()) return;   // #308 deploy layer: Retire rows end here, Keep / Wrap rows go on (Vfx120Effect.Deploy308.cs)
             if(Profile.WoodDeerPresentation){Life=WoodDeerVfx.ReviewLife;WoodDeer=gameObject.AddComponent<WoodDeerVfx>();WoodDeer.Configure(Profile,ReceivedOrigin,transform.forward);return;}
             if(Profile.FireHaetaePresentation){Life=FireHaetaeVfx.ReviewLife;FireHaetae=gameObject.AddComponent<FireHaetaeVfx>();FireHaetae.Configure(Profile,ReceivedOrigin,transform.forward);return;}
             if(Profile.MetalTigerPresentation){Life=MetalTigerVfx.ReviewLife;MetalTiger=gameObject.AddComponent<MetalTigerVfx>();MetalTiger.Configure(Profile,ReceivedOrigin,transform.forward);return;}
@@ -392,6 +394,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (!Begun || Profile == null) return;
             Age = Mathf.Max(0, seconds);
+            if (SampleDeploy308()) return;   // #308 deploy layer
             if(FixedWard!=null){FixedWard.Sample(Age);return;}
             if(WoodDeer!=null){WoodDeer.Sample(Age);return;}
             if(FireHaetae!=null){FireHaetae.Sample(Age);return;}

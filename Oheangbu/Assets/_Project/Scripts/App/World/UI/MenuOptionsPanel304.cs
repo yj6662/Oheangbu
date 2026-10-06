@@ -4,16 +4,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using V = Oheangbu.App.World.UI.PlaytestUiView;
 
 namespace Oheangbu.App.World.UI
 {
     /// <summary>#304 설정 page controller (DESIGN §5.5 / §7.8, options.png). Owns the value rows built by PlaytestUiRoot.BuildOptions:
     /// keeps each row's ‹ value › text, the "적용 전" marker (MetaBold20 cinnabar under the name) and the disabled state with its
     /// reason written in the value box ("수직동기화 사용 중") in sync after every step, wires explicit up / down navigation that
-    /// skips disabled rows (left / right step the value through MenuOptionStepper304), makes the focused row's value bold
-    /// (ValueBold24) and draws the 설명 칸 at x1346 for the focused row from UiStyle304SO.OptionHelp: every value with its meaning
-    /// (current value in Serif800 한지), else the summary, then the warning with the cinnabar vertical dry stroke.</summary>
+    /// skips disabled rows (left / right step the value through MenuOptionStepper304) and makes the focused row's value bold
+    /// (ValueBold24). D308-27 answer 3 (SPEC-PLAYTEST-TEXT-DIET): the 설명 칸 at x1346 is gone - UiStyle304SO.OptionHelp is no
+    /// longer read here. ShownWhilePending = the 화면 tab's "what runs now" block, shown only while a row is 적용 전 (설정 ③).</summary>
     [DisallowMultipleComponent]
     public sealed class MenuOptionsPanel304 : MonoBehaviour
     {
@@ -30,18 +29,16 @@ namespace Oheangbu.App.World.UI
         }
 
         UiStyle304SO style;
-        RectTransform help;
         readonly List<Row> rows = new List<Row>();
-        string shownKey;
-        Row shownRow;
 
         [Tooltip("selectable above the first row (the current category tab)")] public Selectable Above;
         [Tooltip("selectable below the last row (the first action)")] public Selectable Below;
+        [Tooltip("shown only while a row is pending (the display tab: what runs now); null = none")] public GameObject ShownWhilePending;
 
         public IReadOnlyList<Row> Rows => rows;
         UiStyle304SO S => style != null ? style : UiStyle304SO.Fallback;
 
-        public void Init(UiStyle304SO s, RectTransform helpRoot) { style = s; help = helpRoot; }
+        public void Init(UiStyle304SO s) { style = s; }
 
         public Row Add(Row row)
         {
@@ -63,6 +60,7 @@ namespace Oheangbu.App.World.UI
         /// <summary>Values, 적용 전 markers, disabled states and navigation.</summary>
         public void Refresh()
         {
+            bool anyPending = false;
             foreach (var r in rows)
             {
                 if (r.Focus == null || r.Focus.Button == null) continue;
@@ -74,10 +72,12 @@ namespace Oheangbu.App.World.UI
                 if (r.Prev != null) r.Prev.gameObject.SetActive(!blocked);
                 if (r.Next != null) r.Next.gameObject.SetActive(!blocked);
                 if (r.Reason != null) { r.Reason.gameObject.SetActive(blocked); if (blocked) r.Reason.text = reason; }
-                if (r.Focus.Meta != null) r.Focus.Meta.gameObject.SetActive(!blocked && r.Pending != null && r.Pending());
+                bool pending = !blocked && r.Pending != null && r.Pending();
+                if (r.Focus.Meta != null) r.Focus.Meta.gameObject.SetActive(pending);
+                anyPending |= pending;
             }
+            if (ShownWhilePending != null && ShownWhilePending.activeSelf != anyPending) ShownWhilePending.SetActive(anyPending);
             Wire();
-            shownKey = null;   // the focused row's value may have changed: redraw the 설명 칸
         }
 
         void Wire()
@@ -107,60 +107,14 @@ namespace Oheangbu.App.World.UI
         {
             var es = EventSystem.current;
             var sel = es != null ? es.currentSelectedGameObject : null;
-            Row focused = null;
             foreach (var r in rows)
             {
                 bool f = sel != null && r.Focus != null && r.Focus.Button != null && sel == r.Focus.Button.gameObject && r.Focus.Button.interactable;
-                if (f) focused = r;
                 if (f != r.Focused && r.Value != null)
                 {
                     r.Focused = f;
                     UiText304.ApplyRole(r.Value, S.Role(f ? UiType304.ValueBold24 : UiType304.Body24), S);
                 }
-            }
-            var target = focused ?? shownRow ?? (rows.Count > 0 ? rows[0] : null);
-            string key = target != null ? target.Label + "|" + (target.Read != null ? target.Read() : "") : "";
-            if (key == shownKey) return;
-            shownKey = key; shownRow = target;
-            DrawHelp(target);
-        }
-
-        void DrawHelp(Row row)
-        {
-            if (help == null) return;
-            V.Clear(help);
-            if (row == null) return;
-            var s = S;
-            var info = s.Help(row.Label);
-            string current = row.Read != null ? row.Read() : "";
-            V.Label(s, help, "HelpTitle", row.Label, UiType304.Meta20, s.Mist, 0, 0);
-            float y = 34f;
-            const float width = 380f;
-            if (info != null && !string.IsNullOrEmpty(info.Summary))
-            {
-                var summary = V.Label(s, help, "HelpSummary", info.Summary, UiType304.Body22, s.Mist, 0, y, width, 0, TextAlignmentOptions.TopLeft, true);
-                y += summary.rectTransform.sizeDelta.y + 22f;
-            }
-            if (info != null && info.Values != null)
-                for (int i = 0; i < info.Values.Count; i++)
-                {
-                    var v = info.Values[i]; if (v == null) continue;
-                    bool now = v.Value == current;
-                    var name = V.Label(s, help, "HelpValue_" + i, v.Value, now ? UiType304.Title24 : UiType304.Label24, now ? s.Paper : s.Mist, 0, y);
-                    y += name.rectTransform.sizeDelta.y + 4f;
-                    if (!string.IsNullOrEmpty(v.Meaning))
-                    {
-                        var meaning = V.Label(s, help, "HelpMeaning_" + i, v.Meaning, UiType304.Meta20, s.Mist, 0, y, width - 20f, 0, TextAlignmentOptions.TopLeft, true);
-                        y += meaning.rectTransform.sizeDelta.y;
-                    }
-                    y += 20f;
-                }
-            if (info != null && !string.IsNullOrEmpty(info.Warning))
-            {
-                float wy = Mathf.Max(314f, y + 24f);
-                var warn = V.Label(s, help, "HelpWarning", info.Warning, UiType304.Body22, s.Paper, 20, wy, 300f, 0, TextAlignmentOptions.TopLeft, true);
-                float th = warn.rectTransform.sizeDelta.y, len = Mathf.Max(70f, th + 12f);
-                MenuEdgeStroke304.Draw(s, help, "HelpWarningEdge", 1f, wy + th * .5f, len, 12f, .9f);   // stretched like options.html (110x12)
             }
         }
     }

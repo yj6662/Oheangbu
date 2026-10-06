@@ -35,6 +35,10 @@ namespace Oheangbu.Combat
         private readonly Queue<long> _resolvedOrder = new Queue<long>();
         // Identifies replacement guards for presentation without changing combat rules.
         public uint GuardRevision { get; private set; }
+        /// <summary>#306 #11 read-only: a guard stands and an impact now would still be judged in its parry window.</summary>
+        public bool GuardInWindow(float now) => _hasGuard && now >= _guardStart && now <= _guardStart + GuardWindow;
+        /// <summary>#308 forms2 read-only: a guard stands (inside its whole lifetime, window or plain block).</summary>
+        public bool GuardStands(float now) => _hasGuard && now >= _guardStart && now <= _guardStart + GuardLifetime;
         public void ClearGuard(){_hasGuard=false;_guardStart=float.NegativeInfinity;GuardRevision++;}
 
         // 임팩트가 방어막에 닿았을 때(None 제외) — 배선부가 성공 보상(그로기·먹·이펙트)을 이행한다.

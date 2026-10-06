@@ -21,6 +21,10 @@ namespace Oheangbu.EditorTools.WorldMacro
  // Renderer297's CompactMist238 only, Normal requirement added), the 수묵담채 land-readability values on M_InkWash297 and the
  // post grade. Candidate assets only. Originals are recorded once to <K297>/Attraction/original.json; attraction-revert
  // restores them, removes the beacon root and the halo feature, then deletes the record (the next apply records afresh).
+ // #308 (D308-6, SPEC-EVENT-WASH-308 §1): the beacons are extinguished. The beacon step now ends with the same extinguish as the
+ // wash308-beacons ledger command (Halo/Light/Core0–2 off, stone beacon_core slots -> M_BeaconAsh308), so re-running `attraction`
+ // keeps them dark; the BeaconHalo297 feature is only re-configured when it is still on Renderer297 (never re-added).
+ // Do not use attraction-revert for the beacons: it also reverts the fog, M_InkWash297, the post grade and the lanterns.
  public static partial class CompactRebuildAuthoring
  {
   // post grade shared with Lighting297 (TEST): lower world saturation; Bloom catches only the HDR light sources
@@ -156,6 +160,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     var near=points.Where(p=>p!=null&&Vector3.Distance(p.Position,beacon.position)<10f).Select(p=>p.Id).ToArray();
     report.Add("beacon "+realm+" ("+mountain.Id+") at "+beacon.position.ToString("F1")+" yaw "+yaw.ToString("F0")+" support="+how+" corners "+low.ToString("F1")+".."+high.ToString("F1")+(near.Length>0?" | content points within 10 m: "+string.Join(",",near):""));
    }
+   // #308 D308-6: the rebuilt beacons stay dark (stone kept; no glow, no halo, no light)
+   report.Add(EventWash308.ExtinguishFresh(root.transform));
 
    // 2. 주막 등불: CodexInkLantern InnLantern materials -> InnLantern297 (InkBeacon297: CodexInkLantern has no colour and clamps
    //    to 1.2 LDR); original material per renderer slot recorded (sibling-indexed path + name path)
@@ -200,13 +206,17 @@ namespace Oheangbu.EditorTools.WorldMacro
 
    // 5. halo pass after the fog: same event as CompactMist238 (550), later in the feature list (URP sorts passes stably by
    //    event); it draws only the "BeaconHalo297" LightMode, so the regular transparent pass never draws a halo
+   //    #308 D308-6: no halo is drawn any more; an existing feature is kept configured, a removed one is not re-added
    var feature=data.rendererFeatures.OfType<RenderObjects>().FirstOrDefault(f=>f.name==HaloFeature297);
-   if(feature==null){feature=ScriptableObject.CreateInstance<RenderObjects>();feature.name=HaloFeature297;AssetDatabase.AddObjectToAsset(feature,data);data.rendererFeatures.Add(feature);}
-   var fs=feature.settings;fs.passTag=HaloFeature297;fs.Event=RenderPassEvent.BeforeRenderingPostProcessing;fs.overrideMode=RenderObjects.RenderObjectsSettings.OverrideMaterialMode.None;
-   fs.filterSettings.RenderQueueType=RenderQueueType.Transparent;fs.filterSettings.LayerMask=~0;fs.filterSettings.PassNames=new[]{HaloFeature297};feature.SetActive(true);
-   int mistAt=data.rendererFeatures.IndexOf(mist),haloAt=data.rendererFeatures.IndexOf(feature);
-   if(haloAt<mistAt){data.rendererFeatures.RemoveAt(haloAt);data.rendererFeatures.Insert(data.rendererFeatures.IndexOf(mist)+1,feature);}
-   EditorUtility.SetDirty(feature);RendererFeatureMap297(data);
+   if(feature==null)report.Add("halo feature absent: not re-added (D308-6, beacons extinguished)");
+   else
+   {
+    var fs=feature.settings;fs.passTag=HaloFeature297;fs.Event=RenderPassEvent.BeforeRenderingPostProcessing;fs.overrideMode=RenderObjects.RenderObjectsSettings.OverrideMaterialMode.None;
+    fs.filterSettings.RenderQueueType=RenderQueueType.Transparent;fs.filterSettings.LayerMask=~0;fs.filterSettings.PassNames=new[]{HaloFeature297};feature.SetActive(true);
+    int mistAt=data.rendererFeatures.IndexOf(mist),haloAt=data.rendererFeatures.IndexOf(feature);
+    if(haloAt<mistAt){data.rendererFeatures.RemoveAt(haloAt);data.rendererFeatures.Insert(data.rendererFeatures.IndexOf(mist)+1,feature);}
+    EditorUtility.SetDirty(feature);RendererFeatureMap297(data);
+   }
    report.Add("fog: CompactMist238 -> Fog297 (RealmFog297, _LightMarkerFog "+fog.GetFloat("_LightMarkerFog").ToString("0.##",CultureInfo.InvariantCulture)+") requirements="+mist.requirements+"; halo feature after it: "+string.Join(",",data.rendererFeatures.Select(f=>f.name)));
 
    // 6. 수묵담채 land readability + light exemption (TEST values; the originals are in the record)
@@ -247,6 +257,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    m.bounds=new Bounds(Vector3.zero,Vector3.one*12f);return ArtMesh(m,asset);
   }
 
+  // #308 EventWash308 wash308-halo-feature: the same removal (feature + sub-asset + feature map)
+  internal static void RemoveBeaconHaloFeature308(UniversalRendererData data)=>RemoveHaloFeature297(data);
   static void RemoveHaloFeature297(UniversalRendererData data)
   {
    var f=data.rendererFeatures.FirstOrDefault(x=>x!=null&&x.name==HaloFeature297);if(f==null)return;

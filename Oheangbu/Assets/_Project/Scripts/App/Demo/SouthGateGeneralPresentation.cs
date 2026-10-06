@@ -24,6 +24,16 @@ namespace Oheangbu.App.Demo
         Vector3 _lastPosition;
         float _clock;
         public bool HasGraph => _graph.IsValid();
+        // #307 phase 1 item 4: graph evaluations skipped while the general was inactive (controller disabled by the session's Cull)
+        // and none of its renderers was drawn; clip times, weights, warnings and the weapon accent still update every frame.
+        public int SkippedEvaluations { get; private set; }
+        Renderer[] _poseRenderers;
+        bool CanSkipPose()
+        {
+            if (_poseRenderers == null || _controller.isActiveAndEnabled) return false;
+            foreach (var r in _poseRenderers) if (r != null && r.enabled && r.gameObject.activeInHierarchy) return false;
+            return true;
+        }
         public bool IsConfigured => _controller != null && _animator != null && _animator.avatar != null && _animator.avatar.isHuman &&
             _idle != null && _walk != null && _action != null && _weaponPivot != null;
         public string TemporaryArtNotice => "Existing C02 humanoid, reused clip with bounded weapon-pivot accent, asset-derived spear. Dedicated two-hand polearm animations/hand contact and general costume remain unverified.";
@@ -63,6 +73,7 @@ namespace Oheangbu.App.Demo
             _actionPlayable = AnimationClipPlayable.Create(_graph, _action);
             _graph.Connect(_idlePlayable, 0, _mixer, 0); _graph.Connect(_walkPlayable, 0, _mixer, 1); _graph.Connect(_actionPlayable, 0, _mixer, 2);
             AnimationPlayableOutput.Create(_graph, "General body", _animator).SetSourcePlayable(_mixer); _graph.Play();
+            _poseRenderers = _animator.GetComponentsInChildren<Renderer>(true);
         }
         void Started(SouthGateGeneralAttackPlan plan) { _plan = plan; }
         void Ended(SouthGateGeneralAttackPlan plan, bool cancelled) { if (_plan == plan) _plan = null; RemoveWarning(); }
@@ -101,7 +112,7 @@ namespace Oheangbu.App.Demo
                 }
                 if (time >= pulse.ReleaseAt) RemoveWarning();
             }
-            _graph.Evaluate(0);
+            if (CanSkipPose()) SkippedEvaluations++; else _graph.Evaluate(0);
             if (_weaponPivot != null) _weaponPivot.localRotation = _weaponRest * Quaternion.Euler(weaponPitch, weaponYaw, 0);
             _transients.RemoveAll(item => item == null);
         }

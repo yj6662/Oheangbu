@@ -66,9 +66,27 @@ namespace Oheangbu.App.World
         GameObject root;NaturalSolidProfileSO fallback;
         NaturalSolidProfileSO P{get{if(Profile!=null)return Profile;if(fallback==null){fallback=ScriptableObject.CreateInstance<NaturalSolidProfileSO>();fallback.hideFlags=HideFlags.DontSave;}return fallback;}}
         public void Invalidate(){dirty=true;}
+        // #307 phase 1 item 5: true when an EnsureAround(p) now could not enable anything within `margin` of p that is not enabled
+        // already: prepared and clean, no deferred backlog, no sheet visibility change pending, and p lies within ActivateRadius - margin
+        // (flat) and margin (height) of the last full Update query (which enabled every live candidate within ActivateRadius of it).
+        // Read-only: no query, no activation, no force.
+        public bool Covers(Vector3 p,float margin)
+        {
+            if(!Application.isPlaying||!isActiveAndEnabled||!prepared||dirty||Backlog||!hasLast||!Finite(p)||!(margin>=0))return false;
+            var q=P;float flat=Flat(p,lastFrom,lastTo,out float y);
+            if(flat>q.ActivateRadius-margin||Mathf.Abs(p.y-y)>margin)return false;
+            for(int i=0;i<watched.Count;i++){var r=watched[i];if(r!=null&&r.Sheet!=watchedSheet[i])return false;}
+            foreach(var u in units)
+            {
+                if(u.Sheet==null||(u.Sheet.FixedPlacements?.Length??0)!=u.Placements)return false;
+                bool live=false;foreach(var r in u.Renderers)if(r!=null&&r.isActiveAndEnabled&&r.Sheet==u.Sheet){live=true;break;}
+                if(live!=u.Live)return false;
+            }
+            return true;
+        }
         public bool Owns(Collider c)=>c!=null&&owned.Contains(c);
         void OnEnable(){force=true;}
-        void OnDisable(){ReleaseAll();Backlog=false;}
+        void OnDisable(){ReleaseAll();Backlog=false;hasLast=false;}   // #307: Covers must not trust a query whose solids were released (Update behaves the same: OnEnable forces a full query)
         void OnDestroy(){ReleaseAll();if(root!=null)Destroy(root);if(fallback!=null)Destroy(fallback);pool.Clear();owned.Clear();for(int s=0;s<free.Length;s++)free[s].Clear();PoolSize=0;}
         // Session track: call before a respawn/teleport ground test so the arrival point already has its trunks.
         public bool EnsureAround(Vector3 feet)
@@ -254,7 +272,7 @@ namespace Oheangbu.App.World
         }
         void Query(Vector3 from,Vector3 to,bool budgeted,bool release=true)
         {
-            long start=Stopwatch.GetTimestamp();var p=P;Queries++;generation++;if(generation==int.MaxValue){generation=1;Array.Clear(stamp,0,stamp.Length);}
+            using(Perf307Markers.NaturalSolidsQuery.Auto()){long start=Stopwatch.GetTimestamp();var p=P;Queries++;generation++;if(generation==int.MaxValue){generation=1;Array.Clear(stamp,0,stamp.Length);}
             float act=p.ActivateRadius,rel=Mathf.Max(act,p.ReleaseRadius),vr=p.VerticalReach,vrel=vr+p.VerticalHysteresis,urgent=p.UrgentRadius;
             int budget=p.ActivationsPerTick,used=0;bool changed=false,backlog=false;
             float pad=act+maxReach;
@@ -281,7 +299,7 @@ namespace Oheangbu.App.World
             }
             if(changed)Physics.SyncTransforms();
             if(release)Backlog=backlog;Active=active.Count;if(Active>PeakActive)PeakActive=Active;
-            LastMs=Milliseconds(start);if(LastMs>PeakMs)PeakMs=LastMs;
+            LastMs=Milliseconds(start);if(LastMs>PeakMs)PeakMs=LastMs;}
         }
         void Activate(int i)
         {

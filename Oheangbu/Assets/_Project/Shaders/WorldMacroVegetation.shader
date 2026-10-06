@@ -28,6 +28,8 @@ Shader "Oheangbu/WorldMacroVegetation"
         _FadeOutStart("Fade Out Start", Float) = 700
         _FadeOutEnd("Fade Out End", Float) = 800
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
+        // #307 black specks: 1 = the LOD cross-fade picks whole instances (hash of the instance origin) instead of screen pixels
+        [ToggleUI] _ClusterFade307("Per-cluster distance fade", Float) = 0
     }
     SubShader
     {
@@ -60,6 +62,7 @@ Shader "Oheangbu/WorldMacroVegetation"
             float _WindAmplitude,_WindSpeed,_Height,_Billboard;
             float _BillboardViews,_SimpleLighting;
             float _FadeInStart,_FadeInEnd,_FadeOutStart,_FadeOutEnd;
+            float _ClusterFade307;
         CBUFFER_END
         float4 _OhPaperColor;
         float _DressingTime;
@@ -101,6 +104,15 @@ Shader "Oheangbu/WorldMacroVegetation"
             // can skip lighting/wind and rasterization while the packet stays reusable.
             if(_DressingCullRadius>0 && (lodDistance>lodFade.w+_DressingCullRadius || lodDistance<lodFade.x-_DressingCullRadius))
             { output.positionCS=float4(2,2,2,1);return output; }
+            // #307: per-instance cross-fade. The same origin hash in both LODs keeps the masks complementary (each instance is drawn by
+            // exactly one LOD inside the band); the per-pixel screen dither left 1 px fragments that InkWash297 rings with depth edges.
+            if(_ClusterFade307>.5)
+            {
+                float n=frac(52.9829189*frac(dot(floor(objectCentre.xz*8),float2(.06711056,.00583715))));
+                float entering=saturate((lodDistance-lodFade.x)/max(.01,lodFade.y-lodFade.x));
+                float leaving=1-saturate((lodDistance-lodFade.z)/max(.01,lodFade.w-lodFade.z));
+                if(entering<=1-n+.0001||leaving<=n+.0001){ output.positionCS=float4(2,2,2,1);return output; }
+            }
             VertexPositionInputs position = GetVertexPositionInputs(input.positionOS.xyz);
             VertexNormalInputs normal = GetVertexNormalInputs(input.normalOS, input.tangentOS);
             float3 centre = TransformObjectToWorld(float3(0,0,0));
@@ -145,8 +157,11 @@ Shader "Oheangbu/WorldMacroVegetation"
             // Only leaf cards fade immediately around the eye; solid trunks retain collision readability.
             float noise=frac(52.9829189*frac(dot(floor(input.positionCS.xy),float2(.06711056,.00583715))));
             // Complementary masks keep the two distance LODs from thinning out simultaneously.
-            clip(entering-(1-noise)-.0001);
-            clip(leaving-noise-.0001);
+            if(_ClusterFade307<.5)
+            {
+                clip(entering-(1-noise)-.0001);
+                clip(leaving-noise-.0001);
+            }
             if(_AlphaClip>.5)clip(saturate((distance(_WorldSpaceCameraPos,input.positionWS)-.35)/.45)-noise-.0001);
         }
         half4 ReadAlbedo(float2 uv)

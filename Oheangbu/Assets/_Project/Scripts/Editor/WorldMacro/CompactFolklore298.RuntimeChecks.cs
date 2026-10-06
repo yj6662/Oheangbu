@@ -55,7 +55,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         [Serializable] public sealed class FrameSample
         {
             public int frame; public string pose, behaviour; public float poseTime, hp, playerHp, range, distance, navRemaining, gameTime, deltaTime, navStoppingDistance;
-            public Vector3 root, player, hand, head, navVelocity, navDesiredVelocity; public bool telegraph, recovery, navStopped;
+            public Vector3 root, player, hand, head, navVelocity, navDesiredVelocity; public bool telegraph, recovery, navStopped; public bool sight=true; public string blocker="";
         }
         [Serializable] public sealed class ContactSample
         {
@@ -225,7 +225,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (state.phase == 0)
                 {
                     if(runtimeProbe==null){runtimeProbe=new GameObject("Folklore298 runtime observation");runtimeProbe.hideFlags=HideFlags.HideAndDontSave;runtimeProbe.AddComponent<FolkloreRuntimeProbe298>();}
-                    Check(s.Actors.Count(a => a.Id.StartsWith("folklore298/")) == 6 && s.Actors.Length == 15, "Six new actors plus original nine");
+                    Check(s.Actors.Count(a => a.Id.StartsWith("folklore298/")) == 6 && s.Actors.Length == 16, "Six new actors plus original nine (+ #306 mine tutorial boss = 16)");
                     Check(!s.HasMumBridge && !s.DemoSouthGateOpen, "Fresh progression locks preserved");
                     var store=typeof(WorldMacroPlaytestSession).GetField("store",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(s);
                     Check((string)store.GetType().GetField("path",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(store)==state.savedPath&&s.LoadStatus=="new","Actual store opens fresh isolated namespace");
@@ -246,19 +246,22 @@ namespace Oheangbu.EditorTools.WorldMacro
                         if(loaded)audioClips.AddRange(cues.Select(c=>c.Clip));
                     }
                     Check(audioClips.Count==40&&audioClips.Distinct().Count()==40,"Eight profiles bind forty distinct loaded SFX clips");
-                    var readability=Object.FindObjectsByType<FolkloreReadability298>(FindObjectsSortMode.None).Where(r=>r.gameObject.scene==s.gameObject.scene).ToArray();
-                    Check(readability.Length==8&&readability.Sum(r=>r.AppliedRenderers)==8&&readability.All(r=>r.Targets.Length==r.AppliedRenderers&&r.Targets.All(t=>t.lightProbeUsage==UnityEngine.Rendering.LightProbeUsage.CustomProvided&&t.sharedMaterials.All(m=>m!=null&&m.shader.name=="Universal Render Pipeline/Lit"))),"Eight actual body renderers use opt-in SH while preserving URP Lit PBR");
+                    var readability=Object.FindObjectsByType<FolkloreReadability298>(FindObjectsSortMode.None).Where(r=>r.gameObject.scene==s.gameObject.scene&&r.GetComponentInParent<Oheangbu.App.Prologue.PrologueEncounter>(true)?.Id!=MineTutorialProfileSO.BossId).ToArray();   // #306 mine boss is a cloned humanoid, not one of the eight #298 bodies
+                    bool shOk308=readability.Length>=8&&readability.Sum(r=>r.AppliedRenderers)==readability.Length&&readability.All(r=>r.Targets.Length==r.AppliedRenderers&&r.Targets.All(t=>t.lightProbeUsage==UnityEngine.Rendering.LightProbeUsage.CustomProvided&&t.sharedMaterials.All(m=>m!=null&&m.shader.name=="Universal Render Pipeline/Lit")));
+                    Check(shOk308,"Every actual body renderer (the eight #298 bodies and the #306 additions, "+readability.Length+") uses opt-in SH while preserving URP Lit PBR"+(shOk308?"":" | #308 detail: components "+readability.Length+", applied "+readability.Sum(r=>r.AppliedRenderers)+", "+string.Join("; ",readability.Select(r=>r.GetComponentInParent<Oheangbu.App.Prologue.PrologueEncounter>(true)?.Id+" targets "+r.Targets.Length+"/"+r.AppliedRenderers+" "+string.Join(",",r.Targets.Select(t=>t.lightProbeUsage+":"+string.Join("+",t.sharedMaterials.Select(m=>m==null?"null":m.shader.name))))))));
                     Check(RenderSettings.ambientIntensity==state.ambientIntensity&&RenderSettings.reflectionIntensity==state.reflectionIntensity&&(int)RenderSettings.ambientMode==state.ambientMode&&RenderSettings.ambientSkyColor==state.ambientSky&&RenderSettings.ambientEquatorColor==state.ambientEquator&&RenderSettings.ambientGroundColor==state.ambientGround,"Actual Play global ambient/reflection settings match saved candidate baseline");
                     BeginActor(s); return;
                 }
                 if (state.phase == 8)
                 {
                     if(Time.frameCount<5)return;
-                    Check(Ids.All(id => s.Actors.Single(a => a.Id == "folklore298/" + id).GetComponent<EnemyVitals>().IsAlive), "Second actual Play restores living rested enemies");
+                    // #308 D308-2: a field boss (RespawnOnRest 0, agwi) stays defeated across rest and reload; the others come back
+                    var respawning8 = Ids.Where(id => s.Content.Encounters.FirstOrDefault(e => e != null && e.Id == "folklore298/" + id)?.RespawnOnRest ?? true).ToArray();
+                    Check(respawning8.All(id => s.Actors.Single(a => a.Id == "folklore298/" + id).GetComponent<EnemyVitals>().IsAlive), "Second actual Play restores living rested enemies (" + respawning8.Length + "/" + Ids.Length + " respawn on rest)");
                     var imugi=s.Actors.Single(a=>a.Id=="folklore298/imugi").GetComponent<EnemyRigMotion298>();
                     Check(imugi.SerpentFollow!=null&&imugi.SerpentFollow.enabled&&imugi.HasGraph&&imugi.CurrentPose!="Death","Rested imugi resumes actual head-only graph and body follow after second boot");
                     Check(!s.DemoSouthGateOpen && !s.HasMumBridge, "Reload creates no late unlock or gate completion");
-                    Check(s.LoadStatus=="primary"&&s.Progress.ledger.checkpoint==state.expectedCheckpoint&&Ids.All(id=>!s.Progress.defeated.Contains("folklore298/"+id)),"Second Play loads actual rested durable snapshot rather than fresh fallback");
+                    Check(s.LoadStatus=="primary"&&s.Progress.ledger.checkpoint==state.expectedCheckpoint&&Ids.All(id=>s.Progress.defeated.Contains("folklore298/"+id)!=respawning8.Contains(id)),"Second Play loads actual rested durable snapshot rather than fresh fallback (field bosses stay defeated)");
                     state.finished=true;Stop(false); return;
                 }
                 if (state.phase == 7)
@@ -270,7 +273,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                         s.Teleport(feet, 0); Physics.SyncTransforms(); if (s.CanInteract(point.Id)) { rested = s.Interact(point.Id); break; }
                     }
                     Check(rested, "Actual sanctuary rest interaction accepted");
-                    Check(Ids.All(id => s.Actors.Single(a => a.Id == "folklore298/" + id).GetComponent<EnemyVitals>().IsAlive), "Rest respawns all six defeated new enemies");
+                    var respawning = Ids.Where(id => s.Content.Encounters.FirstOrDefault(e => e != null && e.Id == "folklore298/" + id)?.RespawnOnRest ?? true).ToArray();   // #308 D308-2: agwi is a field boss (RespawnOnRest 0)
+                    Check(respawning.All(id => s.Actors.Single(a => a.Id == "folklore298/" + id).GetComponent<EnemyVitals>().IsAlive), "Rest respawns every defeated new enemy whose encounter respawns on rest (" + respawning.Length + "/" + Ids.Length + ")");
                     Check(s.SaveNow(out _), "Rested snapshot saved in isolated namespace"); state.expectedCheckpoint=s.Progress.ledger.checkpoint; state.phase = 8; Stop(true); return;
                 }
                 var life = current.GetComponent<EnemyVitals>(); var result = Result;
@@ -355,7 +359,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             result.samples.Add(new FrameSample{frame=Time.frameCount,pose=rig.CurrentPose,poseTime=rig.PoseTime,behaviour=actor.Current.ToString(),hp=rig.Vitals.Hp,playerHp=s.Walker.Body.GetComponent<PlayerVitals>().Hp01*s.Walker.Body.GetComponent<PlayerVitals>().MaxHp,
                 root=actor.transform.position,player=actor.Player.position,gameTime=Time.time,deltaTime=Time.deltaTime,navStopped=nav.isStopped,navStoppingDistance=nav.stoppingDistance,navVelocity=nav.velocity,navDesiredVelocity=nav.desiredVelocity,
                 hand=hand!=null?actor.transform.InverseTransformPoint(hand.position):Vector3.zero,head=head!=null?actor.transform.InverseTransformPoint(head.position):Vector3.zero,
-                range=attack.AttackRange,distance=Vector3.Distance(actor.transform.position,actor.Player.position),telegraph=attack.IsTelegraphing,recovery=attack.IsRecovering,navRemaining=nav.isOnNavMesh&&float.IsFinite(nav.remainingDistance)?nav.remainingDistance:-1});
+                sight=attack.HasLineOfSight(),blocker=SightBlocker308(actor),range=attack.AttackRange,distance=Vector3.Distance(actor.transform.position,actor.Player.position),telegraph=attack.IsTelegraphing,recovery=attack.IsRecovering,navRemaining=nav.isOnNavMesh&&float.IsFinite(nav.remainingDistance)?nav.remainingDistance:-1});
+        }
+        // #308 diagnostic: what stands on EnemyController's sight ray (root + .4 m to player + .4 m)? Same query, names only.
+        static string SightBlocker308(PrologueEncounter actor)
+        {
+            Vector3 a=actor.transform.position+Vector3.up*.4f,b=actor.Player.position+Vector3.up*.4f;
+            var hits=actor.gameObject.scene.GetPhysicsScene().Raycast(a,(b-a).normalized,out var first,(b-a).magnitude)?Physics.RaycastAll(a,(b-a).normalized,(b-a).magnitude):Array.Empty<RaycastHit>();
+            var names=hits.Where(h=>!h.transform.IsChildOf(actor.transform)&&!h.transform.IsChildOf(actor.Player)).OrderBy(h=>h.distance)
+                .Select(h=>{var t=h.transform;string path=t.name;for(int i=0;i<4&&t.parent!=null;i++){t=t.parent;path=t.name+"/"+path;}return path+(h.collider.isTrigger?" [trigger]":"")+" "+h.collider.GetType().Name+" L"+h.collider.gameObject.layer+" @"+h.distance.ToString("F2");}).Take(3).ToArray();
+            return string.Join(" ; ",names);
         }
         static void Capture(WorldMacroPlaytestSession s, PrologueEncounter actor, string phase)
         {

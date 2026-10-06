@@ -15,15 +15,18 @@ namespace Oheangbu.App.Prologue
         public Vector3[] PatrolPoints; public bool Ranged;
         public float DetectionRange=16,Leash=28,Speed=2.6f;
         public float PreferredDistance;
+        // #306 #11 (SPEC-PLAYTEST-306): a tutorial sequencer may hold the actor in place; perception and attack gating keep running
+        [System.NonSerialized] public bool HoldPosition;
         [Min(0)] public float DeathVisualSeconds;
         bool[] authoredVisibility;float hideDeadAt=float.NegativeInfinity;
         public Behaviour Current {get;private set;}
         NavMeshAgent agent;EnemyController attacks;EnemyVitals vitals;Renderer[] renderers;Collider[] bodyColliders;
         CheongryongCombatController boss;
         SouthGateGeneralController general;
+        MineBossController tutorialBoss;
         CheongryongGrowthController growth;
         Vector3 home;int patrol;float next,lastSeen;
-        void Awake(){agent=GetComponent<NavMeshAgent>();attacks=GetComponent<EnemyController>();boss=GetComponent<CheongryongCombatController>();general=GetComponent<SouthGateGeneralController>();vitals=GetComponent<EnemyVitals>();renderers=GetComponentsInChildren<Renderer>();authoredVisibility=new bool[renderers.Length];for(int i=0;i<renderers.Length;i++)authoredVisibility[i]=renderers[i].enabled;bodyColliders=GetComponentsInChildren<Collider>();home=transform.position;}
+        void Awake(){agent=GetComponent<NavMeshAgent>();attacks=GetComponent<EnemyController>();boss=GetComponent<CheongryongCombatController>();general=GetComponent<SouthGateGeneralController>();tutorialBoss=GetComponent<MineBossController>();vitals=GetComponent<EnemyVitals>();renderers=GetComponentsInChildren<Renderer>();authoredVisibility=new bool[renderers.Length];for(int i=0;i<renderers.Length;i++)authoredVisibility[i]=renderers[i].enabled;bodyColliders=GetComponentsInChildren<Collider>();home=transform.position;}
         void OnEnable(){if(vitals!=null)vitals.Died+=Died;growth=GetComponent<CheongryongGrowthController>();if(growth!=null)growth.StateChanged+=GrowthChanged;}
         void OnDisable(){if(vitals!=null)vitals.Died-=Died;if(growth!=null)growth.StateChanged-=GrowthChanged;}
         void GrowthChanged(CheongryongGrowthState state)
@@ -47,6 +50,7 @@ namespace Oheangbu.App.Prologue
             attacks.ResetEncounter();attacks.AttackEnabled=false;patrol=0;next=0;
             if(boss!=null)boss.ResetEncounter();
             if(general!=null)general.ResetEncounter();
+            if(tutorialBoss!=null)tutorialBoss.ResetEncounter();
         }
         void Update()
         {
@@ -64,6 +68,7 @@ namespace Oheangbu.App.Prologue
             attacks.AttackEnabled=boss==null && general==null && Current==Behaviour.Chase && seen;
             if(boss!=null){boss.AttackEnabled=Current==Behaviour.Chase&&seen;if(Current==Behaviour.Return)boss.StopAttack();}
             if(general!=null){general.AttackEnabled=Current==Behaviour.Chase&&seen;if(Current==Behaviour.Return)general.StopAttack();}
+            if(HoldPosition){if(agent.isOnNavMesh)agent.isStopped=true;return;}   // #306 #11: a tutorial wait stands still, still watching
             agent.speed=Speed*vitals.Control.MovementScale(Time.time);agent.isStopped=boss!=null?Current==Behaviour.Chase&&!boss.CanNavigate:general!=null?Current==Behaviour.Chase&&!general.CanNavigate:attacks.AttackInProgress;
             if(agent.isStopped)return;
             if(Current==Behaviour.Return){agent.SetDestination(home);if(Vector3.Distance(transform.position,home)<1.2f)Current=Behaviour.Patrol;}

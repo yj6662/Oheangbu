@@ -1,0 +1,12 @@
+﻿# SPEC-SPELL-120-308 WP-03: the five two-stage attack glyphs (a primary judgement that is the base glyph's shape, then a second judgement).
+# Inherit base = base power, projectile speed and area geometry of the row without a final consonant. Every number is a TEST starting value.
+# blast.* (fire cone): radius and delay of the burst at the cone's end, power as a multiple of the cast power (above 1 = stronger than the primary).
+# blast.* (earth single): radius of the burst at the impact point, power as a multiple of the cast power.
+# second.*: seconds the second front trails the storm front, power as a multiple. return.*: pause at the far end, speed and power as multiples.
+# skip.*: metres forward of the impact point, seconds after the impact, radius of the second point, power as a multiple.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+논,,cone.backblast,,,,,base,,,,,,,,,,,,blast.radius=3;blast.delay=0.35;blast.power=1.6
+만,,single.blast,,,,,base,,,,,,,,,,,,blast.radius=2;blast.power=0.6
+망,,single.skip,,,,,base,,,,,,,,,,,,skip.distance=4;skip.delay=0.35;skip.radius=1.5;skip.power=0.7
+목,,path.stalagmite,,,,,base,,,,,,,,,,,,second.delay=0.9;second.power=0.8
+옥,,path.tide,,,,,base,,,,,,,,,,,,return.pause=0.3;return.speed=1;return.power=1

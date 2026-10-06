@@ -15,13 +15,18 @@ namespace Oheangbu.EditorTools.WorldMacro
     /// not manual play). f-test:&lt;pointId&gt;[,&lt;pointId&gt;…] — for each NPC: talk with F and page to the end with F (Talk303), then
     /// hold F for 45 frames and tap F inside the 0.3 s cooldown: no new DetailRequested / InteractionResolved may appear and
     /// the page stays closed; then a fresh F after 0.6 s must open it again (closed with Escape). f-status | f-abort.
-    /// Output: Art/Playtest306/Checks/f-test.txt.</summary>
+    /// Output: Art/Playtest306/Checks/f-test.txt.
+    /// #307 probe-mini (SPEC-MINIMAP-307, MINIMAP_DESIGN §2): the style A minimap through the same isolated Play: (a) the mine start
+    /// after 3 s, (b) 6 s of W in the cave (walked cave cells must grow, AC-1a), (c) a walked outdoor spot after its reprint,
+    /// (d) the same spot with MinimapFollowView previewed on (never saved), (e) the map page and the pause page hide the HUD
+    /// canvas (AC-1c). Captures b23_mini_&lt;step&gt;_&lt;W&gt;x&lt;H&gt;.png (Screen size) and checks their pixels on the disc: cave mean
+    /// lightness (rho &lt; .75) &lt; .70 (whole-disc hanji), no green, cinnabar only within 18 reference px of the centre (the arrow).</summary>
     public static class Playtest306Checks
     {
         const string MainScene = "Assets/_Project/Scenes/World/W_Demo_Main.unity", MainSlot = "world-main";
         static string Folder => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/Playtest306/Checks"));
         sealed class State { public string status = "idle", note = ""; public string[] ids = Array.Empty<string>(); public int index, phase; public double at; public readonly List<string> lines = new List<string>(); public int fails; }
-        const string ProbeB1 = "__probe_b1__", ProbeB23 = "__probe_b23__", ProbeOrgan = "__probe_organ__";
+        const string ProbeB1 = "__probe_b1__", ProbeB23 = "__probe_b23__", ProbeOrgan = "__probe_organ__", ProbeMini = "__probe_mini__";
         static State st = new State(); static readonly Isolation303 iso = new Isolation303(); static readonly Talk303 talk = new Talk303();
         static WorldMacroPlaytestSession s; static bool inputStarted, tidied, hooked; static int details, resolved; static bool subscribed;
         static Vector2 Center => new Vector2(Screen.width * .5f, Screen.height * .5f);
@@ -34,7 +39,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (command == "f-abort") { Finish("aborted"); return "aborted"; }
             if (command == "probe-b1") command = "f-test:" + ProbeB1;   // batch-1 probe: ink regen + natural solids (no NPC talk)
             if (command == "probe-b23") command = "f-test:" + ProbeB23; // batch-2/3 probe: HUD minimap + enemy HP stroke + one chunk pull per click
-            if (command == "probe-organ") command = "f-test:" + ProbeOrgan; // #12 probe: mine_fire/0 organ halo lights for its fire attack
+            if (command == "probe-organ") command = "f-test:" + ProbeOrgan; // #308 probe: on-model organ overlay (boss, growth lesson, neutral mine_fire/0)
+            if (command == "probe-mini") command = "f-test:" + ProbeMini;   // #307 probe: style A minimap (cave, cave walk, outside, follow, hidden)
             if (command.StartsWith("f-test:", StringComparison.Ordinal))
             {
                 if (st.status == "running") return "refused: already running";
@@ -48,7 +54,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Harness303.Apply(iso, session);
                 st = new State { status = "running", ids = command.Substring(7).Split(',').Select(x => x.Trim()).Where(x => x.Length > 0).ToArray(), at = Now };
                 st.lines.Add("#306 f-test " + DateTime.Now.ToString("s") + " scene " + MainScene + " isolated suffix " + iso.suffix + " — automated Play through VirtualInput303 (real Input System path), not manual play");
-                inputStarted = tidied = false;
+                inputStarted = tidied = false; pOrganIndex = 0; pGenericShot = false; pShotFrame = -1; fBearing = -1; fFailed = 0; fTried.Clear();
                 if (!hooked) { EditorApplication.update += Tick; hooked = true; }
                 EditorApplication.isPlaying = true;
                 return "started f-test for " + string.Join(",", st.ids);
@@ -84,6 +90,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (id == ProbeB1) { ProbeTick(); return; }
             if (id == ProbeB23) { ProbeB23Tick(); return; }
             if (id == ProbeOrgan) { ProbeOrganTick(); return; }
+            if (id == ProbeMini) { ProbeMiniTick(); return; }
             switch (st.phase)
             {
                 case 0:
@@ -91,16 +98,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     // the new journey starts in the mine, far from the village NPCs: teleport 4 m in front (first NavMesh hit of 8 bearings)
                     var p = Harness303.InteractionPoint(s, id);
                     if (p == null) { Check(false, id + " interaction point missing"); st.index++; return; }
-                    bool placed = false;
-                    for (int k = 0; k < 8 && !placed; k++)
-                    {
-                        var dir = Quaternion.Euler(0, k * 45f, 0) * Vector3.back;
-                        if (!UnityEngine.AI.NavMesh.SamplePosition(p.Position + dir * 4f, out var hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas)) continue;
-                        var look = Vector3.ProjectOnPlane(p.Position - hit.position, Vector3.up);
-                        s.Teleport(hit.position, look.sqrMagnitude > .01f ? Quaternion.LookRotation(look).eulerAngles.y : 0f); placed = true;
-                        Line("INFO " + id + " teleported to " + hit.position.ToString("F1") + " (" + (k * 45) + " deg bearing), point " + p.Position.ToString("F1"));
-                    }
-                    if (!placed) Line("INFO " + id + " no NavMesh within 4 m bearings; walking from the current position");
+                    fTried.Clear(); fFailed = 0; fBearing = FPlace(id, p, 0);
+                    if (fBearing < 0) Line("INFO " + id + " no NavMesh within 4 m bearings; walking from the current position");
                     st.phase = 10; st.at = Now; return;
                 }
                 case 10:
@@ -109,7 +108,29 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case 1:
                     VirtualInput303.Hold = talk.Tick(Center);
                     if (talk.Status == "running") return;
-                    Check(talk.Status == "done", id + " talk with F: " + talk.Status + " details=" + talk.Row.details + " resolved=" + talk.Row.resolved + " close=" + talk.Row.closeMethod + " " + talk.Row.detail);
+                    // Harness repair 2026-10-06: a talk that ended before the player was inside the interaction radius, with no F pressed,
+                    // is a problem of the bearing the harness chose, not of the talk - the remaining bearings are tried before anything is
+                    // reported. The radius, every time limit and what counts as a successful talk are untouched; a place no bearing
+                    // reaches still FAILs, with every bearing listed.
+                    bool unreachable = false;
+                    if (talk.Status != "done" && fBearing >= 0 && talk.Row.presses == 0)
+                    {
+                        var p = Harness303.InteractionPoint(s, id);
+                        if (p != null && Vector3.Distance(s.Walker.Body.transform.position, p.Position) > p.Radius)
+                        {
+                            string failed = (fBearing * 45) + " deg: " + talk.Row.detail.Trim();
+                            fTried.Add(failed); fFailed++;
+                            Line("INFO " + id + " approach from " + failed + " - outside the interaction radius (" + p.Radius.ToString("F1") + " m), no F pressed: trying the remaining bearings");
+                            int next = FPlace(id, p, fBearing + 1);
+                            if (next >= 0) { fBearing = next; st.phase = 10; st.at = Now; return; }
+                            unreachable = true;
+                        }
+                    }
+                    // the approach is added to the line only when a bearing failed or the talk failed: a first-bearing success prints what it always did
+                    string approach = fFailed == 0 && (talk.Status == "done" || fTried.Count == 0) ? ""
+                        : " | approach: " + (talk.Status == "done" ? "reached from " + (fBearing * 45) + " deg" : unreachable ? "no bearing reached the point" : "last tried from " + (fBearing < 0 ? "the current position" : (fBearing * 45) + " deg")) +
+                          "; bearings: " + (fTried.Count > 0 ? string.Join("; ", fTried) : "no other tried");
+                    Check(talk.Status == "done", id + " talk with F: " + talk.Status + " details=" + talk.Row.details + " resolved=" + talk.Row.resolved + " close=" + talk.Row.closeMethod + " " + talk.Row.detail + approach);
                     Check(!talk.Row.closeMethod.Contains("Escape") && !talk.Row.closeMethod.Contains("adapter"), id + " closed with F alone (no Escape/adapter): " + talk.Row.closeMethod + " | capture " + talk.Row.capture);
                     if (talk.Status != "done") { st.index++; st.phase = 0; return; }
                     details = resolved = 0;
@@ -143,6 +164,24 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check(!PageOpen, id + " Escape closes the reopened page");
                     st.index++; st.phase = 0; return;
             }
+        }
+
+        // f-test approach (harness repair 2026-10-06). The ring the f-test always used: 4 m from the point, 8 bearings 45 deg apart,
+        // NavMesh within 1.5 m. FPlace teleports to the first such bearing at or after `from` and returns it (-1 = none left);
+        // bearings without NavMesh are noted in fTried. fBearing = the bearing in use, fFailed = bearings whose approach failed.
+        static int fBearing = -1, fFailed; static readonly List<string> fTried = new List<string>();
+        static int FPlace(string id, Oheangbu.Data.World.PrologueContentSO.Point p, int from)
+        {
+            for (int k = from; k < 8; k++)
+            {
+                var dir = Quaternion.Euler(0, k * 45f, 0) * Vector3.back;
+                if (!UnityEngine.AI.NavMesh.SamplePosition(p.Position + dir * 4f, out var hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas)) { fTried.Add((k * 45) + " deg: no NavMesh within 1.5 m of the 4 m spot"); continue; }
+                var look = Vector3.ProjectOnPlane(p.Position - hit.position, Vector3.up);
+                s.Teleport(hit.position, look.sqrMagnitude > .01f ? Quaternion.LookRotation(look).eulerAngles.y : 0f);
+                Line("INFO " + id + " teleported to " + hit.position.ToString("F1") + " (" + (k * 45) + " deg bearing), point " + p.Position.ToString("F1"));
+                return k;
+            }
+            return -1;
         }
 
         static float probeInk1; static int probeActive0;
@@ -201,32 +240,53 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (r != null && r.isVisible && !(r is ParticleSystemRenderer) && r.sharedMaterial != null && Vector3.Distance(r.bounds.center, at) < 6f && r.bounds.size.magnitude < 6f)
                 { string m = r.sharedMaterial.name + "/" + r.sharedMaterial.shader.name; if (m.IndexOf("Ink", StringComparison.OrdinalIgnoreCase) >= 0 && m.IndexOf("Wash", StringComparison.OrdinalIgnoreCase) < 0) continue; if (r is SkinnedMeshRenderer) continue; Line("INFO " + tag + " renderer " + Path(r.transform) + " mat " + m); }
         }
-        // ---- organ telegraph probe (SPEC-PLAYTEST-306 #12): mine_fire/0 ranged fire attack lights its organ halo, LDR-capped ----
-        static Oheangbu.App.Demo.EnemyElementTelegraph pTel; static float pLitMax; static double pLitFirst, pLitLast; static int pLitShots, pHalos;
-        static Oheangbu.Combat.EnemyVitals pOrganTarget;
+        // ---- organ telegraph probe (SPEC-TELEGRAPH-ORGAN-308 검증 3, replaces the #306 halo probe) ----
+        // For each target (MineTutorialBoss306 M3/M4, demo_growth_lesson eruption, mine_fire/0 = neutral now → never lit): teleport 8 m in
+        // front, Tab-lock, watch up to 20 s of its own rhythm. Records LitLevel (level × (1 − blot) handed to the shader), LitOrganCount,
+        // OverlayRendererCount, selection changes; checks AC-T1 (no new Transform/Renderer under the actor while lit), AC-T2 (material
+        // arrays back to the pre-telegraph references, ≤ 1 overlay copy per target renderer), AC-12d (overlay _Brightness /
+        // _PaperBrightness ≤ MaxBrightness — the old "LitLevel ≤ 1" check was an alpha and always true), AC-T4 (readability MPB carries no
+        // overlay values; EnemyController tints the same slot-0 copy), AC-T7 (both boss shoulders lit together). The first lit peak is
+        // still captured as b23_organ_lit.png (SPEC-EVENT-WASH-308 AC-W6 reads it), plus b23_organ_lit_<target>.png per target.
+        static readonly string[] OrganTargets = { "mine_tutorial_boss", "mine_fire/0", "demo_growth_lesson" };
+        static Oheangbu.App.Demo.EnemyElementTelegraph pTel; static float pLitMax; static double pLitFirst, pLitLast; static int pLitShots, pOrgansMax, pOverlayMax, pSelMax;
+        static Oheangbu.Combat.EnemyVitals pOrganTarget; static Oheangbu.App.Prologue.PrologueEncounter pOrganActor; static int pOrganIndex, pTransforms0, pRenderers0, pMaterials0, pNewObjects, pActorObjects0, pActorDelta;
+        static bool pShoulders, pGroundSeen, pBrightOk, pMpbChecked, pGenericShot; static float pBrightMax; static string pOrganId = ""; static int pShotFrame = -1;
+        static readonly List<KeyValuePair<Renderer, Material[]>> pArrays = new List<KeyValuePair<Renderer, Material[]>>();
+        static string OrganTargetId(int i) => i < OrganTargets.Length ? (OrganTargets[i] == "mine_tutorial_boss" ? Oheangbu.App.World.MineTutorialProfileSO.BossId : OrganTargets[i]) : null;
         static void ProbeOrganTick()
         {
             var wiring = s.Walker.Wiring; var lockOn = Harness303.Field<Oheangbu.Combat.LockOn>(wiring, "_lockOn");
+            if (pOrganIndex >= OrganTargets.Length) { pOrganIndex = 0; st.index++; st.phase = 0; return; }
             switch (st.phase)
             {
                 case 0:
                 {
                     if (Now - st.at < 3) return;
-                    var actor = s.Actors.FirstOrDefault(a => a != null && a.Id == "mine_fire/0");
-                    pOrganTarget = actor != null ? actor.GetComponent<Oheangbu.Combat.EnemyVitals>() : null;
-                    pTel = actor != null ? actor.GetComponentsInChildren<Oheangbu.App.Demo.EnemyElementTelegraph>(true).FirstOrDefault(t => t.isActiveAndEnabled) : null;
-                    Check(pTel != null && pTel.Organs != null, "mine_fire/0 carries an element telegraph + organ set: " + (pTel != null ? pTel.name + " organs " + (pTel.Organs != null) : "missing"));
-                    if (pTel == null || pOrganTarget == null) { st.index++; return; }
-                    var e = actor.transform.position; bool placed = false;
+                    pOrganId = OrganTargetId(pOrganIndex);
+                    pOrganActor = s.Actors.FirstOrDefault(a => a != null && a.Id == pOrganId);
+                    pOrganTarget = pOrganActor != null ? pOrganActor.GetComponent<Oheangbu.Combat.EnemyVitals>() : null;
+                    pTel = pOrganActor != null ? pOrganActor.GetComponentsInChildren<Oheangbu.App.Demo.EnemyElementTelegraph>(true).FirstOrDefault(t => t.isActiveAndEnabled && !t.Deferred) : null;
+                    if (pOrganActor == null) { Line("INFO organ probe: " + pOrganId + " not in the session (skipped)"); pOrganIndex++; st.at = Now - 3; return; }
+                    Check(pTel != null && pTel.Organs != null, pOrganId + " carries an element telegraph + organ set: " + (pTel != null ? pTel.name + " organs " + (pTel.Organs != null ? pTel.Organs.Count : 0) + ", bound " + pTel.Overlay.BoundOrganCount + ", unbound " + pTel.Overlay.UnboundOrganCount + (pTel.Overlay.Refusals.Length > 0 ? " (" + pTel.Overlay.Refusals + ")" : "") : "missing"));
+                    if (pTel == null || pOrganTarget == null) { pOrganIndex++; st.at = Now - 3; return; }
+                    // baselines: objects under the actor, Material objects, the organ target renderers' arrays (AC-T1, AC-T2)
+                    pTransforms0 = pTel.GetComponentsInChildren<Transform>(true).Length; pRenderers0 = pTel.GetComponentsInChildren<Renderer>(true).Length;
+                    pActorObjects0 = pOrganActor.GetComponentsInChildren<Transform>(true).Length;
+                    pMaterials0 = Resources.FindObjectsOfTypeAll<Material>().Length; pArrays.Clear();
+                    for (int i = 0; i < pTel.Organs.Count; i++) { var r = pTel.Overlay.RendererOf(i); if (r != null && !pArrays.Any(p => p.Key == r)) pArrays.Add(new KeyValuePair<Renderer, Material[]>(r, r.sharedMaterials)); }
+                    var e = pOrganActor.transform.position; bool placed = false;
                     for (int k = 0; k < 8 && !placed; k++)
                     {
-                        var dir = Quaternion.Euler(0, k * 45f, 0) * Vector3.back;
+                        // first the actor's front (the authored facing), then the other bearings
+                        var dir = Quaternion.Euler(0, k * 45f, 0) * pOrganActor.transform.forward;
                         if (!UnityEngine.AI.NavMesh.SamplePosition(e + dir * 8f, out var hit, 2f, UnityEngine.AI.NavMesh.AllAreas)) continue;
                         var look = Vector3.ProjectOnPlane(e - hit.position, Vector3.up);
                         s.Teleport(hit.position, look.sqrMagnitude > .01f ? Quaternion.LookRotation(look).eulerAngles.y : 0f); placed = true;
-                        Line("INFO probe teleport 8 m from mine_fire/0 at " + hit.position.ToString("F1"));
+                        Line("INFO probe teleport 8 m from " + pOrganId + " at " + hit.position.ToString("F1") + " (" + (k * 45) + " deg from its front)");
                     }
-                    pLitMax = 0f; pLitFirst = pLitLast = -1; pLitShots = 0; pHalos = 0;
+                    pLitMax = 0f; pLitFirst = pLitLast = -1; pLitShots = 0; pOrgansMax = pOverlayMax = pSelMax = pNewObjects = pActorDelta = 0;
+                    pShoulders = pGroundSeen = pMpbChecked = false; pBrightOk = true; pBrightMax = 0f;
                     st.phase = 1; st.at = Now; return;
                 }
                 case 1:
@@ -235,19 +295,71 @@ namespace Oheangbu.EditorTools.WorldMacro
                     st.phase = 2; st.at = Now; return;
                 case 2:
                 {
-                    // watch up to 14 s of its own attack rhythm (telegraph 1.2 + rest); capture the first lit peak
-                    float lit = pTel.LitLevel;
-                    if (lit > 0f) { if (pLitFirst < 0) pLitFirst = Now; pLitLast = Now; pHalos = Mathf.Max(pHalos, pTel.VisibleHaloCount); }
-                    if (lit > pLitMax) pLitMax = lit;
-                    if (lit > .6f && pLitShots == 0) { Shot("organ_lit"); pLitShots++; }
-                    if (pLitFirst > 0 && lit <= 0f && Now - pLitLast > .6 || Now - st.at > 14)
+                    float lit = pTel.LitLevel; var overlay = pTel.Overlay;
+                    if (lit > 0f)
                     {
-                        Check(pLitMax > 0f, "organ halo lit during the fire attack: max LitLevel " + pLitMax.ToString("F2") + ", visible halos " + pHalos + (pLitFirst > 0 ? ", lit for " + (pLitLast - pLitFirst).ToString("F2") + " s" : ""));
-                        Check(pLitMax <= 1.0001f, "organ halo LDR cap (LitLevel <= 1): " + pLitMax.ToString("F2"));
-                        if (pLitFirst > 0) Check(pLitLast - pLitFirst < 3.0, "transient glow (lit span " + (pLitLast - pLitFirst).ToString("F2") + " s < 3 s; TEST plan 0.6-1.3 s + flight)");
-                        Check(pTel.LitLevel <= 0f, "no glow after the attack: LitLevel " + pTel.LitLevel.ToString("F2"));
+                        if (pLitFirst < 0) pLitFirst = Now; pLitLast = Now;
+                        pOrgansMax = Mathf.Max(pOrgansMax, pTel.LitOrganCount); pOverlayMax = Mathf.Max(pOverlayMax, pTel.OverlayRendererCount); pSelMax = Mathf.Max(pSelMax, pTel.SelectionChanges);
+                        // AC-T1: nothing new under the telegraph's own model (the ground "where" markers of the attack owner are allowed and
+                        // only reported), and none of the #306 halo / thread names anywhere under the actor
+                        int extra = pTel.GetComponentsInChildren<Transform>(true).Length - pTransforms0 + pTel.GetComponentsInChildren<Renderer>(true).Length - pRenderers0;
+                        foreach (var t in pOrganActor.GetComponentsInChildren<Transform>(true))
+                            if (t.name.StartsWith("OrganHalo306", StringComparison.Ordinal) || t.name == "BoltHalo306" || t.name == "OrganThread306" || t.name == "Telegraph306") extra++;
+                        pNewObjects = Mathf.Max(pNewObjects, extra);
+                        pActorDelta = Mathf.Max(pActorDelta, pOrganActor.GetComponentsInChildren<Transform>(true).Length - pActorObjects0);
+                        var timing = Resources.Load<Oheangbu.App.EnemyTelegraphTimingSO>(Oheangbu.App.EnemyTelegraphTimingSO.ResourcePath);
+                        float cap = timing != null ? timing.MaxBrightness : .85f; pBrightMax = Mathf.Max(pBrightMax, Mathf.Max(overlay.LastBrightness, overlay.LastPaperBrightness));
+                        if (overlay.LastBrightness > cap + 1e-4f || overlay.LastPaperBrightness > cap + 1e-4f) pBrightOk = false;
+                        // AC-T7: both shoulders together (boss ground ring)
+                        int sl = -1, sr = -1;
+                        for (int i = 0; i < pTel.Organs.Count; i++) { var o = pTel.Organs.Get(i); if (o == null) continue; if (o.Id == "shoulder_l") sl = i; else if (o.Id == "shoulder_r") sr = i; }
+                        if (sl >= 0 && sr >= 0 && (pTel.OrganLevel(sl) > 0f || pTel.OrganLevel(sr) > 0f)) { pGroundSeen = true; if (pTel.OrganLevel(sl) > 0f && pTel.OrganLevel(sr) > 0f) pShoulders = true; }
+                        // AC-T4 after 1 s lit (≥ 4 readability re-applies): its MPB holds no overlay value; the enemy tints its slot-0 copy
+                        if (!pMpbChecked && Now - pLitFirst > 1.0)
+                        {
+                            pMpbChecked = true;
+                            var rd = pOrganActor.GetComponentInChildren<FolkloreReadability298>(true); var block = new MaterialPropertyBlock();
+                            if (rd != null && rd.Targets != null && rd.Targets.Length > 0 && rd.Targets[0] != null)
+                            { rd.Targets[0].GetPropertyBlock(block); Check(!block.HasColor("_Tint") && !block.HasFloat("_OrganCount"), pOrganId + " readability MPB carries no overlay values after 1 s lit (applied renderers " + rd.AppliedRenderers + ")"); }
+                            var enemy = pOrganActor.GetComponent<Oheangbu.Combat.EnemyController>(); var bodyR = enemy != null ? Harness303.Field<Renderer>(enemy, "_renderer") : null;
+                            if (enemy != null && bodyR != null && enemy.TintMaterial != null) Check(bodyR.sharedMaterials.Length > 0 && bodyR.sharedMaterials[0] == enemy.TintMaterial, pOrganId + " EnemyController tints the slot-0 copy it made in Awake (" + enemy.TintMaterial.name + ")");
+                        }
+                    }
+                    if (lit > pLitMax) pLitMax = lit;
+                    // one ScreenCapture request per frame (a second request in the same frame can replace the first); the shared
+                    // b23_organ_lit.png (SPEC-EVENT-WASH-308 AC-W6) is taken once per run, from the first target that lights
+                    if (lit > .6f && pLitShots == 0) { Shot("organ_lit_" + pOrganId.Replace('/', '_')); pLitShots = 1; pShotFrame = Time.frameCount; }
+                    else if (lit > .6f && pLitShots == 1 && Time.frameCount != pShotFrame) { if (!pGenericShot) { Shot("organ_lit"); pGenericShot = true; } pLitShots = 2; }
+                    if (pLitFirst > 0 && lit <= 0f && Now - pLitLast > .6 || Now - st.at > 20)
+                    {
+                        bool neutral = pOrganId == "mine_fire/0";
+                        if (neutral) Check(pLitMax <= 0f && pOverlayMax == 0, pOrganId + " (neutral attacker, D308-2) never lit: max LitLevel " + pLitMax.ToString("F2") + ", overlays " + pOverlayMax
+                            + (pLitMax > 0f ? " — lit means its attack is still elemental: D308 item 2 (content pacing) not deployed yet, or a regression" : ""));
+                        else if (pLitFirst < 0) Line("INFO " + pOrganId + ": no elemental attack lit within 20 s (tutorial beat / range?) — lit checks not run");
+                        else
+                        {
+                            Check(pLitMax > 0f && pOverlayMax > 0, pOrganId + " lit on its model: max LitLevel " + pLitMax.ToString("F2") + ", organs " + pOrgansMax + ", overlay renderers " + pOverlayMax + ", lit for " + (pLitLast - pLitFirst).ToString("F2") + " s, selection changes " + pSelMax);
+                            Check(pLitLast - pLitFirst < 3.0, pOrganId + " transient glow (lit span " + (pLitLast - pLitFirst).ToString("F2") + " s < 3 s)");
+                            Check(pNewObjects <= 0, pOrganId + " AC-T1 no new Transform / Renderer under the telegraph model and no #306 halo / thread objects while lit: +" + pNewObjects + " (whole actor +" + pActorDelta + ", includes the owner's ground markers)");
+                            Check(pBrightOk, pOrganId + " AC-12d overlay _Brightness / _PaperBrightness <= MaxBrightness: max " + pBrightMax.ToString("F2"));
+                            if (pGroundSeen) Check(pShoulders, pOrganId + " AC-T7 both shoulders lit together during the ground ring");
+                        }
+                        // AC-T2: after the window the arrays are the pre-telegraph references; overlay copies ≤ 1 per target renderer.
+                        // A 20 s timeout that lands inside a lit window is not a restore failure: report it and do not judge
+                        bool stillOpen = lit > 0f || pTel.OverlayRendererCount > 0;
+                        int grown = Resources.FindObjectsOfTypeAll<Material>().Length - pMaterials0;
+                        // D308-4d: a contamination-only body surface keeps one persistent overlay copy of its own (not an organ target renderer)
+                        int pContamOnly = pTel.Overlay.ContaminationOnlySurfaceCount;
+                        Check(pTel.Overlay.MaterialCount <= pArrays.Count + pContamOnly, pOrganId + " AC-T2 overlay copies " + pTel.Overlay.MaterialCount + " <= target renderers " + pArrays.Count + " + contamination-only surfaces " + pContamOnly + " (Material objects +" + grown + " in the window, scene-wide)");
+                        if (stillOpen) Line("INFO " + pOrganId + ": 20 s timeout inside a lit window (LitLevel " + lit.ToString("F2") + ", overlays " + pTel.OverlayRendererCount + ") — AC-T2 restore / no-glow-after not judged; rerun probe-organ");
+                        else
+                        {
+                            bool same = true; foreach (var p in pArrays) { var now = p.Key != null ? p.Key.sharedMaterials : null; if (now == null || !now.SequenceEqual(p.Value)) same = false; }
+                            Check(same, pOrganId + " AC-T2 material arrays restored (" + pArrays.Count + " renderers), overlays now " + pTel.OverlayRendererCount + ", restore mismatches " + pTel.Overlay.RestoreMismatches);
+                            Check(pTel.LitLevel <= 0f, pOrganId + " no glow after the attack: LitLevel " + pTel.LitLevel.ToString("F2"));
+                        }
                         Line("INFO lock target " + (lockOn != null && lockOn.Target != null ? lockOn.Target.name : "none"));
-                        st.index++; st.phase = 0; return;
+                        pOrganIndex++; st.phase = 0; st.at = Now - 3; return;
                     }
                     return;
                 }
@@ -339,6 +451,158 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (Now - st.at < 1.0) return;
                     Check(pStarted == 1 && pChunks == 1 && pDamage == 1 && pv.Hp >= 1f, "second pull after the cooldown: started " + pStarted + ", chunks " + pChunks + ", damage events " + pDamage + ", HP " + pHp0 + " -> " + pv.Hp + (pCancel.Length > 0 ? " (cancels: " + pCancel + ")" : ""));
                     PUnhook(); st.index++; st.phase = 0; return;
+            }
+        }
+
+        // ---- #307 minimap probe (SPEC-MINIMAP-307): style A in the cave and outside, follow view, hidden with the HUD ----
+        static int mCells0, mPrints0; static string mShot = "", mStep = ""; static bool mCave; static double mShotAt;
+        static Oheangbu.App.World.UI.PlaytestUiRoot MiniUi => Oheangbu.App.World.UI.PlaytestUiRoot.Instance;
+        static void MiniShot(string step, bool cave)
+        {
+            Directory.CreateDirectory(Folder);
+            string name = "b23_mini_" + step + "_" + Screen.width + "x" + Screen.height + ".png";
+            mShot = Path.Combine(Folder, name); mStep = step; mCave = cave; mShotAt = Now;
+            try { if (File.Exists(mShot)) File.Delete(mShot); } catch (IOException) { }
+            ScreenCapture.CaptureScreenshot(mShot); Line("INFO capture " + name);
+        }
+        /// <summary>True once the last MiniShot was read (or given up after 4 s): pixel checks on the disc, then the next step.</summary>
+        static bool MiniShotRead(Oheangbu.App.World.UI.HudMinimap304 mini)
+        {
+            if (mShot.Length == 0) return true;
+            Texture2D tex = null;
+            try
+            {
+                if (File.Exists(mShot)) { tex = new Texture2D(2, 2, TextureFormat.RGBA32, false); if (!tex.LoadImage(File.ReadAllBytes(mShot))) { Object.DestroyImmediate(tex); tex = null; } }
+            }
+            catch (IOException) { if (tex != null) Object.DestroyImmediate(tex); tex = null; }   // still being written
+            if (tex == null)
+            {
+                if (Now - mShotAt < 4) return false;
+                Check(false, "mini " + mStep + ": capture " + Path.GetFileName(mShot) + " not readable after 4 s"); mShot = ""; return true;
+            }
+            try { MiniPixels(tex, mini); } finally { Object.DestroyImmediate(tex); mShot = ""; }
+            return true;
+        }
+        static void MiniPixels(Texture2D tex, Oheangbu.App.World.UI.HudMinimap304 mini)
+        {
+            if (mini == null || mini.Map == null || mini.Root == null) { Check(false, "mini " + mStep + ": minimap missing for the pixel checks"); return; }
+            var canvas = mini.Root.GetComponentInParent<Canvas>(true); var top = canvas != null ? canvas.rootCanvas.transform as RectTransform : null;
+            if (top == null) { Check(false, "mini " + mStep + ": no HUD canvas"); return; }
+            Rect cr = top.rect;
+            // canvas space -> capture pixels (bottom-left origin, as Texture2D.LoadImage and the canvas), whatever Screen.width says
+            Vector2 ToTex(Vector3 world) { Vector3 l = top.InverseTransformPoint(world); return new Vector2((l.x - cr.xMin) / cr.width * tex.width, (l.y - cr.yMin) / cr.height * tex.height); }
+            var c = new Vector3[4]; mini.Map.rectTransform.GetWorldCorners(c);
+            Vector2 a = ToTex(c[0]), b = ToTex(c[2]), centre = (a + b) * .5f;
+            float radius = Vector2.Distance(a, b) / (2f * Mathf.Sqrt(2f));                 // half the side (the disc turns in follow view)
+            float refPx = tex.height / 1080f;                                                  // reference (1080) px -> capture px
+            var px = tex.GetPixels32(); int w = tex.width, h = tex.height;
+            double lum = 0; int lumN = 0, green = 0, greenDark = 0, discN = 0, cinnabar = 0, cinnabarOut = 0; float farthest = 0f;
+            float box = radius * 1.3f;                                                         // the enso ring around the disc too
+            int x0 = Mathf.Max(0, Mathf.FloorToInt(centre.x - box)), x1 = Mathf.Min(w - 1, Mathf.CeilToInt(centre.x + box));
+            int y0 = Mathf.Max(0, Mathf.FloorToInt(centre.y - box)), y1 = Mathf.Min(h - 1, Mathf.CeilToInt(centre.y + box));
+            float arrowLimit = 18f * refPx;
+            for (int y = y0; y <= y1; y++) for (int x = x0; x <= x1; x++)
+            {
+                var p = px[y * w + x]; float r = p.r / 255f, g = p.g / 255f, bl = p.b / 255f;
+                float d = Vector2.Distance(new Vector2(x + .5f, y + .5f), centre), rho = d / Mathf.Max(1f, radius);
+                if (rho < .75f) { lum += .299 * r + .587 * g + .114 * bl; lumN++; }
+                if (rho < .97f) { discN++; if (g > Mathf.Max(r, bl) + .04f) { green++; if (.299f * r + .587f * g + .114f * bl < .35f) greenDark++; } }
+                if (r - Mathf.Max(g, bl) > .2f && r > .3f) { cinnabar++; if (d > arrowLimit) { cinnabarOut++; farthest = Mathf.Max(farthest, d / refPx); } }
+            }
+            double mean = lumN > 0 ? lum / lumN : -1;
+            Line("INFO mini " + mStep + " capture " + w + "x" + h + " disc centre " + centre.ToString("F0") + " radius " + radius.ToString("F1") + " px (" + (radius / refPx).ToString("F1") + " ref px), mean lightness rho<.75 " + mean.ToString("F3") + " over " + lumN + " px");
+            if (mCave) Check(lumN > 0 && mean < .70, "mini " + mStep + ": cave disc mean lightness (rho < .75) " + mean.ToString("F3") + " < .70 (whole-disc hanji, user 2026-09-30; old white disc ~.83)");
+            Check(discN > 0 && green == 0, "mini " + mStep + ": no green on the disc (g > max(r, b) + .04): " + green + " of " + discN + " px" + (green > 0 ? " (" + greenDark + " of them dark, lightness < .35: likely the world through the translucent unwalked wash, not map ink - judge from the capture)" : ""));
+            Check(cinnabarOut == 0, "mini " + mStep + ": cinnabar only on the arrow (within 18 ref px of the centre): " + cinnabar + " px, " + cinnabarOut + " outside" + (cinnabarOut > 0 ? " (farthest " + farthest.ToString("F1") + " ref px)" : ""));
+            Line("INFO mini " + mStep + " marks visible " + mini.VisibleMarkers + ", objectives offered and left off " + mini.ObjectivesLeftOff + " (never drawn, AC-1e)");
+        }
+        static void ProbeMiniTick()
+        {
+            var hud = Object.FindFirstObjectByType<Oheangbu.App.HudController>();
+            var mini = hud != null ? hud.Minimap304 : null; var ui = MiniUi; var map = ui != null ? ui.Map : null;
+            if (mini == null || map == null) { Check(false, "probe-mini: HUD minimap " + (mini != null) + ", world map " + (map != null)); st.index++; st.phase = 0; return; }
+            switch (st.phase)
+            {
+                case 0:
+                {
+                    if (Now - st.at < 3) return;
+                    if (ShaderUtil.anythingCompiling && Now - st.at < 60) return;   // the editor draws a cyan placeholder until the new variant is compiled
+                    var spec = hud.Minimap;
+                    Line("INFO mini scene spec: Window " + spec.Window + ", CaveMetres " + spec.CaveMetres + ", OutsideMetres " + spec.OutsideMetres + ", MarkerRimInset " + spec.MarkerRimInset + " (#307 targets .8 / 28 / 120 / 28; minimap-look-apply sets the saved scenes)");
+                    Check(mini.isActiveAndEnabled && mini.TargetAlpha > 0f && mini.Interior, "mini a: shown at the mine start inside the cave: alpha " + mini.TargetAlpha.ToString("F2") + " interior " + mini.Interior + " range " + mini.RangeMetres + " m prints " + mini.Prints);
+                    Check(mini.Material != null && mini.Material.IsKeywordEnabled("_MINI_HUD"), "mini a: runtime material runs _MINI_HUD");
+                    mCells0 = map.MiniWalkedCaveCells; Line("INFO mini a walked cave cells " + mCells0);
+                    MiniShot("a_cave", true); st.phase = 1; st.at = Now; return;
+                }
+                case 1:
+                    if (!MiniShotRead(mini)) return;
+                    VirtualInput303.Hold = InputFrame303.Neutral(Center).WithKeys(Key.W); st.phase = 2; st.at = Now; st.note = "mini cave walk"; return;
+                case 2:
+                {
+                    VirtualInput303.Hold = InputFrame303.Neutral(Center).WithKeys(Key.W);
+                    if (Now - st.at < 6) return;
+                    VirtualInput303.Hold = InputFrame303.Neutral(Center);
+                    int cells = map.MiniWalkedCaveCells;
+                    Check(cells > mCells0, "mini b: 6 s of W in the cave grows the walked cave plan (AC-1a): " + mCells0 + " -> " + cells + " cells, interior " + mini.Interior + ", prints " + mini.Prints);
+                    MiniShot("b_cavewalk", mini.Interior); st.phase = 3; st.at = Now; return;
+                }
+                case 3:
+                {
+                    if (!MiniShotRead(mini)) return;
+                    var p = Harness303.InteractionPoint(s, "geumpyo_inn");
+                    Vector3 spot = p != null ? p.Position : s.Content.StartFeet; bool placed = false;
+                    for (int k = 0; k < 8 && !placed && p != null; k++)
+                    {
+                        var dir = Quaternion.Euler(0, k * 45f, 0) * Vector3.back;
+                        if (!UnityEngine.AI.NavMesh.SamplePosition(p.Position + dir * 4f, out var hit, 1.5f, UnityEngine.AI.NavMesh.AllAreas)) continue;
+                        spot = hit.position; placed = true;
+                    }
+                    s.Teleport(spot, 0f); Line("INFO mini c teleport outside to " + spot.ToString("F1") + (placed ? " (NavMesh by geumpyo_inn)" : " (no NavMesh hit; point / start)"));
+                    mPrints0 = mini.Prints; st.phase = 4; st.at = Now; return;
+                }
+                case 4:
+                    if ((mini.Interior || mini.Prints <= mPrints0 || Now - st.at < 2.0) && Now - st.at < 8) return;
+                    Check(!mini.Interior && mini.Prints > mPrints0, "mini c: outside after the teleport, reprinted: interior " + mini.Interior + ", range " + mini.RangeMetres + " m (spec " + hud.Minimap.OutsideMetres + "), prints " + mPrints0 + " -> " + mini.Prints + ", walked cells revealed by the arrival (map discovery)");
+                    MiniShot("c_outside", false); st.phase = 5; st.at = Now; return;
+                case 5:
+                {
+                    if (!MiniShotRead(mini)) return;
+                    var settings = ui.Settings;
+                    if (settings == null) { Check(false, "mini d: no settings service"); st.phase = 7; st.at = Now; return; }
+                    var d = settings.Current; d.MinimapFollowView = true; settings.Preview(d);   // preview only: rolled back below, never saved
+                    Line("INFO mini d MinimapFollowView previewed on"); st.phase = 6; st.at = Now; return;
+                }
+                case 6:
+                {
+                    if (Now - st.at < 1.0) return;
+                    float z = mini.Map.rectTransform.localEulerAngles.z;
+                    var arrowT = mini.transform.Find("PlayerArrow"); float arrowZ = arrowT != null ? arrowT.localEulerAngles.z : 0f;
+                    ((Oheangbu.App.World.UI.IMapMiniSource304)map).MiniPose(out _, out float heading);
+                    Check(mini.FollowView && Mathf.Abs(Mathf.DeltaAngle(z, heading)) < 1f && Mathf.Abs(Mathf.DeltaAngle(arrowZ, 0f)) < .5f,
+                        "mini d: follow view turns the map with the view, the arrow stays up: follow " + mini.FollowView + ", map turn " + z.ToString("F1") + " deg, heading " + heading.ToString("F1") + ", arrow " + arrowZ.ToString("F1"));
+                    MiniShot("d_follow", false); st.phase = 7; st.at = Now; return;
+                }
+                case 7:
+                    if (!MiniShotRead(mini)) return;
+                    if (ui.Settings != null && ui.Settings.IsPreviewing) ui.Settings.Revert();
+                    Line("INFO mini d follow preview reverted: follow setting " + (ui.Settings != null && ui.Settings.Current.MinimapFollowView));
+                    ui.OpenPage("지도"); st.phase = 8; st.at = Now; return;
+                case 8:
+                    if (Now - st.at < .8) return;
+                    Check(ui.Page == "지도" && hud.Canvas != null && !hud.Canvas.enabled, "mini e: the map page hides the HUD canvas with the minimap (AC-1c): page '" + ui.Page + "', HUD canvas " + (hud.Canvas != null && hud.Canvas.enabled));
+                    MiniShot("e_map", false); mShot = ""; ui.CloseMenu(); st.phase = 9; st.at = Now; return;
+                case 9:
+                    if (ui.Page.Length > 0 && Now - st.at < 4) return;
+                    if (Now - st.at < .5) return;
+                    ui.OpenPage("일시정지"); st.phase = 10; st.at = Now; return;
+                case 10:
+                    if (Now - st.at < .6) return;
+                    Check(ui.Page == "일시정지" && hud.Canvas != null && !hud.Canvas.enabled, "mini e: the pause page hides the HUD canvas with the minimap (AC-1c): page '" + ui.Page + "', HUD canvas " + (hud.Canvas != null && hud.Canvas.enabled));
+                    MiniShot("e_pause", false); mShot = ""; ui.CloseMenu(); st.phase = 11; st.at = Now; return;
+                case 11:
+                    if ((ui.Page.Length > 0 || hud.Canvas == null || !hud.Canvas.enabled) && Now - st.at < 3) return;
+                    Check(ui.Page.Length == 0 && hud.Canvas != null && hud.Canvas.enabled, "mini e: HUD canvas back after closing the pause page: page '" + ui.Page + "'");
+                    st.index++; st.phase = 0; return;
             }
         }
 

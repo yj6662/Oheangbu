@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace Oheangbu.Combat
 {
-    public enum DamageSource { Unknown, PlayerDirect, Enemy, Summon, Harvest, FiveElementBonus, PersistentSpell }
+    // #308 (appended, TEST): Companion = extra shot of a companion buff, Retaliation = damage returned to a melee attacker,
+    // Harmony = detonation of an installed mark. None of the three feeds the five-element completion (PlayerDirect only).
+    public enum DamageSource { Unknown, PlayerDirect, Enemy, Summon, Harvest, FiveElementBonus, PersistentSpell, Companion, Retaliation, Harmony }
 
     // IDs identify actual scheduled attacks, not render frames or VFX instances.
     public readonly struct AttackProvenance

@@ -31,6 +31,29 @@ namespace Oheangbu.Combat
         [Tooltip("동률 가름 — 거리 가중(도/m): 화면 중앙 각에 더해 가까운 적을 우선")]
         [SerializeField, Min(0f)] private float _lockOnDistanceWeight = 0.5f;
 
+        [Header("락온 중 작도 — 카메라 당김 규칙 [TEST — D308-21 · SPEC-LOCKON-DRAW-STABILITY-308]. 값이 없는 에셋은 아래 기본값으로 읽힌다")]
+        [Tooltip("작도 중(작도 키를 누른 동안) 락온 당김. EdgeOnly=글자를 쓰는 동안 카메라 고정, 대상이 여유 구역을 벗어날 때만 느리게 따라감(권장 기본) / " +
+            "FullPull=이전 동작(작도 중에도 계속 당김) / Hold=작도 중 당김 없음. 대상·레티클·유도 조준·그로기 표시는 어느 모드에서도 그대로다")]
+        [SerializeField] private LockOnDrawMode _lockOnDrawMode = LockOnDrawMode.EdgeOnly;
+        [Tooltip("작도 진입 때 당김이 0으로 가라앉는 시간(초, 실시간) — 클로즈업 블렌드와 겹친다. 0=즉시 멈춤. FullPull에서는 쓰지 않는다")]
+        [SerializeField, Range(0f, 1f)] private float _lockOnDrawSettleSeconds = 0.25f;
+        [Tooltip("작도가 끝난 뒤 당김이 돌아오기 전의 멈춤(초, 실시간) — 세상에 떼어 놓인 글자가 빛나는 동안 카메라가 밀지 않게")]
+        [SerializeField, Range(0f, 2f)] private float _lockOnDrawResumeDelay = 0.5f;
+        [Tooltip("멈춤 뒤 당김이 0에서 온전히 돌아오는 시간(초, 실시간) — 스냅 없이 서서히. 0=즉시")]
+        [SerializeField, Range(0f, 3f)] private float _lockOnDrawResumeSeconds = 0.8f;
+        [Tooltip("EdgeOnly 여유 구역 = 뷰포트 가장자리에서 이만큼 안쪽(x=좌우, y=상하, 0~0.49). 대상(뿌리+1.1 m)이 이 안에 있으면 카메라는 움직이지 않는다")]
+        [SerializeField] private Vector2 _lockOnDrawEdgeMargin = new Vector2(0.25f, 0.2f);
+        [Tooltip("EdgeOnly 추적 세기(초당) — 구역 밖으로 나간 각도 x 이 값 = 따라가는 각속도(상한까지). 대상이 움직이는 만큼만 따라 돈다")]
+        [SerializeField, Range(0f, 10f)] private float _lockOnDrawEdgeGain = 4f;
+        [Tooltip("EdgeOnly 추적 각속도 상한(도/초). 낮추면 더 느긋하지만 가까이서 옆걸음 칠 때 대상이 화면 밖으로 나간다" +
+            "(오프라인 모의: 16이면 2 m 옆걸음에서 이탈, 45면 이탈 없음). 0=따라가지 않음(Hold와 같다)")]
+        [SerializeField, Range(0f, 90f)] private float _lockOnDrawEdgeMaxSpeed = 45f;
+        [Tooltip("EdgeOnly 추적 각가속도 상한(도/초²) — 시작·멈춤이 보이지 않게 속도를 서서히 바꾼다. 0=따라가지 않음")]
+        [SerializeField, Range(0f, 360f)] private float _lockOnDrawEdgeAcceleration = 120f;
+        [Tooltip("EdgeOnly 조준 유지(도) — 몸의 정면과 대상의 수평 각이 이보다 벌어지면 화면 안이어도 따라간다. " +
+            "전방 부채꼴 술식(cone·다연발)이 몸의 정면을 쓰기 때문이다(부채꼴 반각보다 작게). 0=끔")]
+        [SerializeField, Range(0f, 60f)] private float _lockOnDrawAimKeepDegrees = 20f;
+
         [Header("카메라 [실험 2026-08-27] — 숄더뷰(V 토글)·작도 클로즈업. 채택=DECISIONS 문답 필요(결정 3)")]
         [Tooltip("시작 포즈를 숄더뷰로(실험 A/B 기본값). V키로 언제든 토글")]
         [SerializeField] private bool _shoulderStart = true;
@@ -133,6 +156,8 @@ namespace Oheangbu.Combat
         [SerializeField, Min(0.05f)] private float _projectileFlight = 0.45f;
         [SerializeField, Min(0f)] private float _rangedDamage = 12f;
         [SerializeField] private Vector2 _attackCooldownRange = new Vector2(1.2f, 2.2f);
+        [Tooltip("적 시야 광선이 무시하는 레이어 이름 — #306 근접 자연물 충돌(NatureSolid)은 몸만 막고 시야는 막지 않는다 [TEST #308]")]
+        [SerializeField] private string[] _enemySightIgnoreLayerNames = { "NatureSolid" };
 
         [Header("적 체력 표시 [TEST — D306 #8]: 락온 체력 획 · 교전 보스 바(속성색 없음)")]
         [Tooltip("보스 교전 기억(초, scaled) — 락온이 아니어도 이 시간 안에 서로 피해를 주고받았으면 보스 바를 보인다")]
@@ -140,6 +165,7 @@ namespace Oheangbu.Combat
         [Tooltip("보스 교전 거리(m) — 플레이어와 이보다 멀면 보스 바를 숨긴다(목줄 이탈 포함)")]
         [SerializeField, Min(1f)] private float _bossEngageRange = 45f;
 
+        public string[] EnemySightIgnoreLayerNames => _enemySightIgnoreLayerNames;
         public float MoveSpeed => _moveSpeed;
         public float LookSensitivity => _lookSensitivity;
         public float Gravity => _gravity;
@@ -152,6 +178,24 @@ namespace Oheangbu.Combat
         public float LockOnRange => _lockOnRange;
         public float LockOnViewportMargin => _lockOnViewportMargin;
         public float LockOnDistanceWeight => _lockOnDistanceWeight;
+        public LockOnDrawMode LockOnDrawMode => _lockOnDrawMode;
+        public float LockOnDrawSettleSeconds => _lockOnDrawSettleSeconds;
+        public float LockOnDrawResumeDelay => _lockOnDrawResumeDelay;
+        public float LockOnDrawResumeSeconds => _lockOnDrawResumeSeconds;
+        public Vector2 LockOnDrawEdgeMargin => _lockOnDrawEdgeMargin;
+        public float LockOnDrawEdgeGain => _lockOnDrawEdgeGain;
+        public float LockOnDrawEdgeMaxSpeed => _lockOnDrawEdgeMaxSpeed;
+        public float LockOnDrawEdgeAcceleration => _lockOnDrawEdgeAcceleration;
+        public float LockOnDrawAimKeepDegrees => _lockOnDrawAimKeepDegrees;
+        // 규칙(LockOnDrawPull.Step)에 넘길 수치 한 묶음 — 값 형식이라 할당이 없다. pull·mode는 호출부가 정한다(검사 도구의 모드 재정의).
+        public LockOnDrawPull.Settings GetLockOnDrawSettings(float pull, LockOnDrawMode mode) => new LockOnDrawPull.Settings
+        {
+            Mode = mode, Pull = pull,
+            SettleSeconds = _lockOnDrawSettleSeconds, ResumeDelay = _lockOnDrawResumeDelay, ResumeSeconds = _lockOnDrawResumeSeconds,
+            EdgeMarginX = _lockOnDrawEdgeMargin.x, EdgeMarginY = _lockOnDrawEdgeMargin.y,
+            EdgeGain = _lockOnDrawEdgeGain, EdgeMaxSpeed = _lockOnDrawEdgeMaxSpeed, EdgeAcceleration = _lockOnDrawEdgeAcceleration,
+            AimKeepDegrees = _lockOnDrawAimKeepDegrees,
+        };
         public bool ShoulderStart => _shoulderStart;
         public Vector3 ShoulderOffset => _shoulderOffset;
         public Vector3 ShoulderDrawOffset => _shoulderDrawOffset;

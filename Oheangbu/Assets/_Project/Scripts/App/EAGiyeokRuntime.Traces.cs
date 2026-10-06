@@ -37,6 +37,7 @@ namespace Oheangbu.App
     {
      t.VisualProfile=UnityEngine.Object.Instantiate(t.Fx.Profile);t.VisualProfile.Duration=t.End-now;
      t.Fx.Profile=t.VisualProfile;t.Fx.PreviewControlled=false;t.Fx.DemonstrationCues=false;
+     wiring.DeployDirector308?.HostEffect(t.Fx,spell.Brush01);   // #308 forms2 S1 (a field assignment; never throws)
      t.Fx.SetImpactClock(duration);t.Fx.Begin(origin,pierce?null:target!=null?target.transform:null,pierce?origin+t.Direction*profile.PierceRange:point,t.VisualProfile.Pigment);
     }
    }

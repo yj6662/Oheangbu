@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "target": "fox_spirit",
+  "spec": "SPEC-ANIM-QUADRUPED-308 design 2 (TEST)",
+  "notes": [
+    "loop: periodic = the source cycle closes on its own (+periodExtraFrames when the take stops one frame short); seam = residual end->start mismatch is spread over the cycle; false = one-shot.",
+    "feet: contact = planted ground path (Idle sole band, never below rest); body = leg angle relative to the shoulder/hip; blend = contact while the source paw is down, body once it lifts (bodyBlend = lift/leg-length thresholds).",
+    "Walk playback is distance driven in Unity (EnemyRigMotion298 WalkMetresPerSecond), so playing a walk 'slower' is not a clip edit: the cadence follows the measured stance-foot speed.",
+    "centerStride (locomotion): the planted paw path is centred under the hip, where the near-straight Rig298 legs have the most reach; autoBodyDrop: largest pelvis lowering (fraction of the shortest standing leg) allowed to keep planted paws reachable.",
+    "attempts ladder (default): [amplitude, stride] = [1,1] [1,.85] [.85,.85] [.85,.7] [.7,.7] [.7,.55] [.55,.55]; first PASS wins.",
+    "mirror: the source is reflected across the body midplane (left/right legs swapped). Bulgasari uses it on every bear clip because its left armpit (Chest/Neck/Fore_L_Upper weights) is the weak skin; all clips are mirrored together so stances stay consistent.",
+    "fullCollapse (Death): the pelvis drop is never scaled down by the ladder. tailGroundKeep (default .9): tail joints keep this fraction of their rest ground clearance; a tail that meets the ground bends up instead of floating the body.",
+    "Walk = wolf Running_New (trot substitute for the 3.1 m/s chase); the take ends one frame before the cycle closes (periodExtraFrames 1).",
+    "Idle = calm breathing window [1,97] of the 21.5 s Idle_New (the rest sniffs the ground and scratches with a hind leg).",
+    "Stun = Wolf Boss sturn. TailAttack (extra, toon fox Attack_Tail) is baked for MoveClips but needs a second attack profile to play.",
+    "Pace (extra) = wolf Walking: a gentler gait candidate for Walk when Running fails the skin gates (apply override Walk=Pace)."
+  ],
+  "roles": {
+    "Idle": {
+      "map": "wolf311465_to_fox_spirit",
+      "file": "wolf311465/Wolf/Models/Wolf.fbx",
+      "action": "Idle_New",
+      "range": [
+        1,
+        97
+      ],
+      "loop": "seam",
+      "feet": "contact"
+    },
+    "Walk": {
+      "map": "wolf311465_to_fox_spirit",
+      "file": "wolf311465/Wolf/Models/Wolf.fbx",
+      "action": "Running_New",
+      "loop": "periodic",
+      "periodExtraFrames": 1,
+      "feet": "contact",
+      "centerStride": true,
+      "autoBodyDrop": 0.25
+    },
+    "Attack": {
+      "map": "wolf311465_to_fox_spirit",
+      "file": "wolf311465/Wolf/Models/Wolf.fbx",
+      "action": "AttackL",
+      "loop": false,
+      "feet": "blend",
+      "peakBones": [
+        "MouthOrigin"
+      ]
+    },
+    "Hit": {
+      "map": "wolf311465_to_fox_spirit",
+      "file": "wolf311465/Wolf/Models/Wolf.fbx",
+      "action": "GetHit_1",
+      "loop": false,
+      "feet": "blend"
+    },
+    "Stun": {
+      "map": "wolfboss189463_to_fox_spirit",
+      "file": "wolfboss189463/Hatogame_new/BossMonsterPack1/Wolfboss/Animation/Wolfboss@sturn.FBX",
+      "action": "Take 001",
+      "loop": "seam",
+      "feet": "contact"
+    },
+    "Death": {
+      "map": "wolf311465_to_fox_spirit",
+      "file": "wolf311465/Wolf/Models/Wolf.fbx",
+      "action": "dead",
+      "loop": false,
+      "feet": "body",
+      "footRotation": "parent",
+      "fullCollapse": true,
+      "minLegExtension": 0.35
+    }
+  },
+  "extras": {
+    "TailAttack": {
+      "map": "toonfox183005_to_fox_spirit",
+      "file": "toonfox183005/Fox/Animations/Fox_Attack_Tail.fbx",
+      "action": "Take 001",
+      "loop": false,
+      "feet": "body",
+      "footRotation": "yaw",
+      "measurePeak": true,
+      "peakBones": [
+        "Tail_05"
+      ]
+    },
+    "Pace": {
+      "map": "wolf311465_to_fox_spirit",
+      "file": "wolf311465/Wolf/Models/Wolf.fbx",
+      "action": "Walking",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": true,
+      "autoBodyDrop": 0.25,
+      "measureWalk": true
+    }
+  }
+}

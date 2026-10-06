@@ -27,21 +27,15 @@ float3 RuleRockNormal276(float3 p,float3 n,float detail,float3 dx,float3 dy)
     float3 q=RuleJointCoords276(p);
     // The joint warp is continuous; its gradient belongs to the original coordinates.
     float3 qdx=RuleJointCoords276(p+dx)-q,qdy=RuleJointCoords276(p+dy)-q;
-    SurfaceFrame296 fx=SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,19u,0);
-    SurfaceFrame296 fy=SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,19u,0);
-    SurfaceFrame296 fz=SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,19u,0);
-    float3 x=SurfaceNormal296(TEXTURE2D_ARGS(_StrataFractureNormal276,sampler_Surface296_linear_repeat_aniso8),fx,1.25*detail);
-    float3 y=SurfaceNormal296(TEXTURE2D_ARGS(_StrataFractureNormal276,sampler_Surface296_linear_repeat_aniso8),fy,1.25*detail);
-    float3 z=SurfaceNormal296(TEXTURE2D_ARGS(_StrataFractureNormal276,sampler_Surface296_linear_repeat_aniso8),fz,1.25*detail);
-    float3 perturb=float3(0,x.y,x.x)*w.x+float3(y.x,0,y.y)*w.y+float3(z.x,z.y,0)*w.z;
+    float3 perturb=0;
+    // #307: a projection at or below _TriplanarSkip307 is not sampled (0 keeps every projection)
+    [branch] if(w.x>_TriplanarSkip307){float3 x=SurfaceNormal296(TEXTURE2D_ARGS(_StrataFractureNormal276,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,19u,0),1.25*detail);perturb+=float3(0,x.y,x.x)*w.x;}
+    [branch] if(w.y>_TriplanarSkip307){float3 y=SurfaceNormal296(TEXTURE2D_ARGS(_StrataFractureNormal276,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,19u,0),1.25*detail);perturb+=float3(y.x,0,y.y)*w.y;}
+    [branch] if(w.z>_TriplanarSkip307){float3 z=SurfaceNormal296(TEXTURE2D_ARGS(_StrataFractureNormal276,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,19u,0),1.25*detail);perturb+=float3(z.x,z.y,0)*w.z;}
     // The fine rock normal and the rock colour share the same projection and seed.
-    fx=SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,17u,0);
-    fy=SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,17u,0);
-    fz=SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,17u,0);
-    x=SurfaceNormal296(TEXTURE2D_ARGS(_RockNormal,sampler_Surface296_linear_repeat_aniso8),fx,.55*detail);
-    y=SurfaceNormal296(TEXTURE2D_ARGS(_RockNormal,sampler_Surface296_linear_repeat_aniso8),fy,.55*detail);
-    z=SurfaceNormal296(TEXTURE2D_ARGS(_RockNormal,sampler_Surface296_linear_repeat_aniso8),fz,.55*detail);
-    perturb+=float3(0,x.y,x.x)*w.x+float3(y.x,0,y.y)*w.y+float3(z.x,z.y,0)*w.z;
+    [branch] if(w.x>_TriplanarSkip307){float3 x=SurfaceNormal296(TEXTURE2D_ARGS(_RockNormal,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,17u,0),.55*detail);perturb+=float3(0,x.y,x.x)*w.x;}
+    [branch] if(w.y>_TriplanarSkip307){float3 y=SurfaceNormal296(TEXTURE2D_ARGS(_RockNormal,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,17u,0),.55*detail);perturb+=float3(y.x,0,y.y)*w.y;}
+    [branch] if(w.z>_TriplanarSkip307){float3 z=SurfaceNormal296(TEXTURE2D_ARGS(_RockNormal,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,17u,0),.55*detail);perturb+=float3(z.x,z.y,0)*w.z;}
     return normalize(n+perturb-n*dot(n,perturb));
 }
 float3 RuleNormal276(float3 p,float3 n,float3 masks,float distanceWS)
@@ -103,23 +97,23 @@ float3 RuleColour276(float3 p,float3 n,float3 masks,float distanceWS)
     float3 rock=0,soil=0,gravel=1;float cavity=1;
     // Past the existing resolve range, these samples are mathematically unused.
     // Keep the original macro masses, realm hue and all distance fades below.
-    if(distanceWS<750)
+    if(distanceWS<750&&((uint)_Perf307Ground&4u)==0u)
     {
-        SurfaceFrame296 fx=SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,17u,0);
-        SurfaceFrame296 fy=SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,17u,0);
-        SurfaceFrame296 fz=SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,17u,0);
         float3 rockMean=SAMPLE_TEXTURE2D_LOD(_RockMap,sampler_Surface296_linear_repeat_aniso8,float2(.5,.5),12).rgb;
-        rock=SurfaceColourMean296(TEXTURE2D_ARGS(_RockMap,sampler_Surface296_linear_repeat_aniso8),fx,rockMean)*w.x+
-            SurfaceColourMean296(TEXTURE2D_ARGS(_RockMap,sampler_Surface296_linear_repeat_aniso8),fy,rockMean)*w.y+
-            SurfaceColourMean296(TEXTURE2D_ARGS(_RockMap,sampler_Surface296_linear_repeat_aniso8),fz,rockMean)*w.z;
+        // #307: a projection at or below _TriplanarSkip307 is not sampled (0 keeps every projection)
+        [branch] if(w.x>_TriplanarSkip307)rock+=SurfaceColourMean296(TEXTURE2D_ARGS(_RockMap,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,17u,0),rockMean)*w.x;
+        [branch] if(w.y>_TriplanarSkip307)rock+=SurfaceColourMean296(TEXTURE2D_ARGS(_RockMap,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,17u,0),rockMean)*w.y;
+        [branch] if(w.z>_TriplanarSkip307)rock+=SurfaceColourMean296(TEXTURE2D_ARGS(_RockMap,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,17u,0),rockMean)*w.z;
+        // skipped weight is re-normalised onto the sampled projections (the result stays a weighted mean)
+        float keptWeight=(w.x>_TriplanarSkip307?w.x:0)+(w.y>_TriplanarSkip307?w.y:0)+(w.z>_TriplanarSkip307?w.z:0);
+        if(_TriplanarSkip307>0)rock/=max(keptWeight,1e-4);
         if(distanceWS<240)
         {
-            fx=SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,19u,0);
-            fy=SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,19u,0);
-            fz=SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,19u,0);
-            cavity=SurfaceData296(TEXTURE2D_ARGS(_StrataFracture276,sampler_Surface296_linear_repeat_aniso8),fx).g*w.x+
-                SurfaceData296(TEXTURE2D_ARGS(_StrataFracture276,sampler_Surface296_linear_repeat_aniso8),fy).g*w.y+
-                SurfaceData296(TEXTURE2D_ARGS(_StrataFracture276,sampler_Surface296_linear_repeat_aniso8),fz).g*w.z;
+            cavity=0;
+            [branch] if(w.x>_TriplanarSkip307)cavity+=SurfaceData296(TEXTURE2D_ARGS(_StrataFracture276,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.zy,qdx.zy,qdy.zy,19u,0)).g*w.x;
+            [branch] if(w.y>_TriplanarSkip307)cavity+=SurfaceData296(TEXTURE2D_ARGS(_StrataFracture276,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xz,qdx.xz,qdy.xz,19u,0)).g*w.y;
+            [branch] if(w.z>_TriplanarSkip307)cavity+=SurfaceData296(TEXTURE2D_ARGS(_StrataFracture276,sampler_Surface296_linear_repeat_aniso8),SurfaceFrameGrad296(q.xy,qdx.xy,qdy.xy,19u,0)).g*w.z;
+            if(_TriplanarSkip307>0)cavity/=max(keptWeight,1e-4);
         }
         SurfaceFrame296 dirtFrame=SurfaceFrameGrad296(p.xz*.8,worldDx296.xz*.8,worldDy296.xz*.8,11u,1);
         soil=SurfaceColour296(TEXTURE2D_ARGS(_DirtMap,sampler_Surface296_linear_repeat_aniso8),dirtFrame);
@@ -176,7 +170,7 @@ float3 RuleColour276(float3 p,float3 n,float3 masks,float distanceWS)
         }
         float nearFloor=(1-smoothstep(_FloorRange293.x,_FloorRange293.y,distanceWS))*total*_FloorStrength293*masks.z;
         SurfaceFrame296 floorFrame=SurfaceFrameGrad296(uv,worldDx296.xz*_FloorScale293,worldDy296.xz*_FloorScale293,31u,1);
-        if(nearFloor>.001)
+        if(nearFloor>.001&&((uint)_Perf307Ground&8u)==0u)
         {
             float3 f=0;float used=0;
             [branch] if(wC>.004){f+=wC*FloorNear296(SurfaceColour296(TEXTURE2D_ARGS(_FloorMap293,sampler_Surface296_linear_repeat_aniso8),floorFrame),_FloorTint293.rgb,_FloorChroma293);used+=wC;}

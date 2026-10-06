@@ -125,9 +125,12 @@ namespace Oheangbu.EditorTools.WorldMacro
 
             // points + commissions (ours replace any earlier copies by id; everything else is untouched)
             var ours = new HashSet<string>(data.npcs.Select(n => n.id).Concat(data.points.Select(p => p.id)));
+            // #308 road inn (KI4): a giver's talk menu rows (Services, written by RoadInn308 / Content308) survive the rebuild of its point
+            var keptServices = (content.Points ?? Array.Empty<PrologueContentSO.Point>()).Where(p => p != null && p.Services != null && p.Services.Length > 0).GroupBy(p => p.Id).ToDictionary(g => g.Key, g => g.First().Services);
             var points = (content.Points ?? Array.Empty<PrologueContentSO.Point>()).Where(p => p != null && !ours.Contains(p.Id)).ToList();
             foreach (var n in data.npcs)
-                points.Add(new PrologueContentSO.Point { Id = n.id, Kind = PrologueInteractionKind.Conversation, Position = npcFeet[n.id], Prompt = n.prompt, Text = "", Radius = 2.5f, LockedText = "" });
+                points.Add(new PrologueContentSO.Point { Id = n.id, Kind = PrologueInteractionKind.Conversation, Position = npcFeet[n.id], Prompt = n.prompt, Text = "", Radius = 2.5f, LockedText = "",
+                    Services = keptServices.TryGetValue(n.id, out var kept) ? kept : Array.Empty<PrologueContentSO.PointService306>() });
             foreach (var p in data.points)
             {
                 if (!sites.TryGetValue(p.site, out var st)) throw new Exception("point " + p.id + " needs site " + p.site);

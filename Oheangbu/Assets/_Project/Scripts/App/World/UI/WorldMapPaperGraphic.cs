@@ -38,6 +38,16 @@ namespace Oheangbu.App.World.UI
             }
         }
 
+        /// <summary>D308-25: falloff multipliers of the fold crease shade along x / y. The shade was tuned as a share of an
+        /// 800 x 820 sheet (7.3 px); a sheet of another size passes (its width / 800, its height / 820) so the crease keeps that
+        /// width in px. (1, 1) = the shade as it always was.</summary>
+        public Vector2 CreaseScale
+        {
+            get => creaseScale;
+            set { if (creaseScale == value) return; creaseScale = value; SetVerticesDirty(); }
+        }
+        Vector2 creaseScale = Vector2.one;
+
         public float Progress => progress;
         public int GeometryVertexCount => WorldMapPaperGeometry.VertexCount;
         public int GeometryTriangleCount => WorldMapPaperGeometry.TriangleCount;
@@ -116,7 +126,7 @@ namespace Oheangbu.App.World.UI
                 {
                     Vector3 normal = side == 0 ? normals[i] : -normals[i];
                     float lighting = .72f + .28f * Mathf.Clamp01(Vector3.Dot(normal, light));
-                    float crease = CreaseShade(paperUv[i], foldAmount);
+                    float crease = CreaseShade(paperUv[i], foldAmount, creaseScale);
                     float shade = lighting * crease * (side == 0 ? 1f : .89f);
                     var vertex = UIVertex.simpleVert;
                     Vector2 screen = rect.center + projected[i] * rect.width;
@@ -201,10 +211,10 @@ namespace Oheangbu.App.World.UI
             SortTriangles(0, triangleOrder.Length - 1);
         }
 
-        static float CreaseShade(Vector2 uv, float fold)
+        static float CreaseShade(Vector2 uv, float fold, Vector2 scale)
         {
-            float vertical = Mathf.Exp(-Mathf.Abs(uv.x - .5f) * 110f);
-            float horizontal = Mathf.Exp(-Mathf.Abs(uv.y - .5f) * 110f);
+            float vertical = Mathf.Exp(-Mathf.Abs(uv.x - .5f) * 110f * Mathf.Max(.01f, scale.x));
+            float horizontal = Mathf.Exp(-Mathf.Abs(uv.y - .5f) * 110f * Mathf.Max(.01f, scale.y));
             float grain = Mathf.Sin(uv.x * 139f + uv.y * 51f) * Mathf.Sin(uv.y * 113f) * .012f;
             return Mathf.Clamp01(1f - (vertical + horizontal) * (.07f + fold * .13f) + grain);
         }

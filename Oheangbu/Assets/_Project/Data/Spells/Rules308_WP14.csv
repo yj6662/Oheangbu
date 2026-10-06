@@ -1,0 +1,9 @@
+﻿# SPEC-SPELL-120-308 WP-14: sword form - the five eo + siot glyphs share the handler sword.form (SPELL-BUFF sword column). Replaces the reserved rows of Rules308_Base.
+# TEST starting values (Q7: build now with defaults). BasePower = power of one strike (x brush). reach 2.6 m / arc = half angle 50 deg / one strike per 0.6 s / upkeep 0.04 ink per second.
+# groggy: every 3rd counter strike on the same enemy adds 1 groggy step. release.manual=1: the player may put the sword away. draw.lock = the cost multiplier that refuses every spell while the form lasts (0 = off).
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+것,replace,sword.form,,,,,,6,,,,,,,,,,,draw.lock=100000;groggy.hits=3;groggy.steps=1;release.manual=1;sword.arc=50;sword.drain=0.04;sword.interval=0.6;sword.reach=2.6
+넛,replace,sword.form,,,,,,6,,,,,,,,,,,draw.lock=100000;groggy.hits=3;groggy.steps=1;release.manual=1;sword.arc=50;sword.drain=0.04;sword.interval=0.6;sword.reach=2.6
+멋,replace,sword.form,,,,,,6,,,,,,,,,,,draw.lock=100000;groggy.hits=3;groggy.steps=1;release.manual=1;sword.arc=50;sword.drain=0.04;sword.interval=0.6;sword.reach=2.6
+섯,replace,sword.form,,,,,,6,,,,,,,,,,,draw.lock=100000;groggy.hits=3;groggy.steps=1;release.manual=1;sword.arc=50;sword.drain=0.04;sword.interval=0.6;sword.reach=2.6
+엇,replace,sword.form,,,,,,6,,,,,,,,,,,draw.lock=100000;groggy.hits=3;groggy.steps=1;release.manual=1;sword.arc=50;sword.drain=0.04;sword.interval=0.6;sword.reach=2.6

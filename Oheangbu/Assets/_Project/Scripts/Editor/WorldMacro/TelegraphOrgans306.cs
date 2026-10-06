@@ -31,6 +31,12 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   fire-assign:<scene>[|<projectile prefab>]  mine_fire/0 → FireRanged306 + real bolt (default PF_Bolt300_na) + Ranged + PreferredDistance
  //   fire-revert:<scene>        restores the recorded mine_fire/0 fields
  //   status
+ // #308 (SPEC-TELEGRAPH-ORGAN-308, D308-4 + D308-4b): organ tables follow the on-model surface design — every species and the growth
+ //   lesson light THE common magic-stone shard "Organ308_maseok_shard" (one mesh for every enemy; OrganSurface308 prefabs/apply adds it
+ //   where shard308_placements.json says; missing part = organ unbound, never a sphere on the body), the south gate general keeps only
+ //   the spear tip ReusedMetalTip (Part), mine_fire/0 uses the ember mask, the dragon its mouth/eyes (Sphere on the body) and the ridge
+ //   mask chain, MineTutorialBoss306 its crystal mask (MineBoss306). Build also precomputes each organ's surface (renderer, mode, mask,
+ //   surface point, outward normal) through OrganSurface308.ComputeSurface. OrganSurface308 is the 308 ledger.
  public static class TelegraphOrgans306
  {
   static readonly string[] Scenes={"Assets/_Project/Scenes/World/W_Demo_Main.unity","Assets/_Project/Art/World/Architecture296/W_Demo_Compact_Architecture296.unity","Assets/_Project/Art/Characters/Folklore298/W_Demo_Compact_Folklore298.unity"};
@@ -49,46 +55,75 @@ namespace Oheangbu.EditorTools.WorldMacro
   [Serializable] class FireEntry{public string scene,profile,projectile;public int mode;public bool ranged;public float preferred;}
   [Serializable] class FireRecord{public List<FireEntry> entries=new List<FireEntry>();}
 
-  // organ recipe: bone by Humanoid slot, then names; Special = derived offsets (eyes from Head→MouthOrigin, blade tip, helmet)
-  sealed class Spec{public string Id;public EnemyOrganRole Role;public string[] Keys;public HumanBodyBones Human=HumanBodyBones.LastBone;public string[] Names=new string[0];public string Special;public float Radius;public Vector3 Fallback;}
+  // organ recipe: bone by Humanoid slot (then a second slot), then names; Special = derived offsets (eyes from Head→MouthOrigin) or
+  // "tip" (surface point = the part's bounds centre: the spear tip). #308: Part = a child renderer named so (the organ anchors to it and
+  // lights the whole part), Mode/MaskPath = how a body organ lights (Sphere / Mask)
+  internal sealed class Spec{public string Id;public EnemyOrganRole Role;public string[] Keys;public HumanBodyBones Human=HumanBodyBones.LastBone,Human2=HumanBodyBones.LastBone;public string[] Names=new string[0];public string Special;public float Radius;public Vector3 Fallback;
+   public EnemyOrganSurfaceMode Mode=EnemyOrganSurfaceMode.Sphere;public string Part,MaskPath;
+   public Spec OnPart(string part){Mode=EnemyOrganSurfaceMode.Part;Part=part;return this;}
+   public Spec Masked(string path){Mode=EnemyOrganSurfaceMode.Mask;MaskPath=path;return this;}
+   public Spec Then(HumanBodyBones second){Human2=second;return this;}}
   static Spec S(string id,EnemyOrganRole role,float radius,string[] keys,HumanBodyBones human,Vector3 fallback,string special,params string[] names)=>new Spec{Id=id,Role=role,Radius=radius,Keys=keys,Human=human,Names=names,Special=special,Fallback=fallback};
   static readonly string[] Any={EnemyOrganSet.KeyAny};
   const HumanBodyBones None=HumanBodyBones.LastBone;
+  internal static string PartName(string organId)=>"Organ308_"+organId;
 
-  static List<Spec> SpeciesSpecs(string id)
+  // D308-4b 기관 부위 = 공통 마석 파편: one organ per owner, always the same shard part; per owner only the role / keys here and the
+  // placement (bone, pose, size) in shard308_placements.json (organ-art track). Radius .01 × body scale is only a seed — ComputeSurface
+  // grows a Part organ to 1.05 × the shard's reach, so the ring sits on the shard itself. Bones / fallback offsets matter only while the
+  // part is missing (organ unbound, never lit). Fox = Spine: the tail tip faces away from the actor front, so it is not subject to the
+  // facing selection nor to the AC-T5 authoring front check (FrontReport), and a single Spine organ stays lit through the window. All TEST.
+  internal const string ShardOrgan="maseok_shard";
+  internal static Spec ShardSpec(string owner)
   {
-   var up=new Vector3(0,1.2f,.15f);
-   switch(id)
+   string part=PartName(ShardOrgan);
+   switch(owner)
    {
-    case "bulgasari": return new List<Spec>{S("back_crystal",EnemyOrganRole.Core,.16f,Any,None,up,null,"Spine","Chest"),S("jaw_crystal",EnemyOrganRole.Mouth,.12f,Any,None,up,null,"MouthOrigin","Head")};
-    case "fox_spirit": return new List<Spec>{S("mouth",EnemyOrganRole.Mouth,.1f,Any,None,up,null,"MouthOrigin","Head"),S("chest",EnemyOrganRole.Chest,.12f,Any,None,up,null,"Chest","Spine")};
-    case "imugi": return new List<Spec>{S("mouth",EnemyOrganRole.Mouth,.14f,Any,None,up,null,"MouthOrigin","Head"),S("core",EnemyOrganRole.Core,.16f,Any,None,up,null,"Body_12")};
-    default: return new List<Spec>{S("chest",EnemyOrganRole.Chest,.14f,Any,HumanBodyBones.Chest,up,null,"Spine02","Spine01"),S("head",EnemyOrganRole.Mouth,.1f,new[]{EnemyOrganSet.KeyProjectile},HumanBodyBones.Head,up,null,"Head","headfront")};
+    case "dokkaebi": return S(ShardOrgan,EnemyOrganRole.Core,.01f,Any,HumanBodyBones.Chest,new Vector3(0,1.7f,.16f),null,"Spine01").OnPart(part);                 // 가슴 한복판
+    case "agwi": return S(ShardOrgan,EnemyOrganRole.Core,.01f,Any,HumanBodyBones.Hips,new Vector3(-.035f,1.25f,.29f),null,"Hips").OnPart(part);                    // 부푼 배
+    case "changgui": return S(ShardOrgan,EnemyOrganRole.Core,.01f,Any,HumanBodyBones.RightShoulder,new Vector3(.075f,1.45f,.08f),null,"RightShoulder").Then(HumanBodyBones.UpperChest).OnPart(part);   // 오른 쇄골 아래
+    case "bulgasari": return S(ShardOrgan,EnemyOrganRole.Core,.01f,Any,None,new Vector3(0,.25f,1.4f),null,"Head").OnPart(part);                                     // 이마
+    case "fox_spirit": return S(ShardOrgan,EnemyOrganRole.Spine,.01f,Any,None,new Vector3(-.32f,-.23f,-1.05f),null,"Tail_05","Tail_04").OnPart(part);            // 꼬리 끝(사용자)
+    case "imugi": return S(ShardOrgan,EnemyOrganRole.Core,.01f,Any,None,new Vector3(0,.16f,2.55f),null,"Body_01","Head").OnPart(part);                             // 턱밑 역린(사용자)
+    case "demo_growth_lesson": return S(ShardOrgan,EnemyOrganRole.Core,.01f,new[]{EnemyOrganSet.KeyGround,EnemyOrganSet.KeyAny},None,new Vector3(0,.66f,.3f),null,"Tree_00").OnPart(part);   // 줄기 앞면
+    default: return null;
    }
   }
+
+  // #308 species table: the common shard (D308-4b) — folklore identity stays in silhouette / motion / sound / death (ART-SILHOUETTE)
+  internal static List<Spec> SpeciesSpecs(string id)
+  {
+   var s=ShardSpec(id);
+   return s!=null&&id!="demo_growth_lesson"?new List<Spec>{s}:new List<Spec>();
+  }
   // scene actors that own elemental attacks (Guardian302 has no combat owner: excluded — no false telegraph)
-  static readonly string[] SceneActors={"cheongryong","sinmok263","south_gate_general","demo_growth_lesson","mine_fire/0"};
-  static List<Spec> ActorSpecs(string id)
+  internal static readonly string[] SceneActors={"cheongryong","sinmok263","south_gate_general","demo_growth_lesson","mine_fire/0"};
+  internal static List<Spec> ActorSpecs(string id)
   {
    var up=new Vector3(0,1.2f,.2f);
    switch(id)
    {
     case "cheongryong": case "sinmok263":
     {
+     // mouth / eyes = the body surface inside the organ sphere (Sphere: not a modelled part — user question in the Spec's 남은 일);
+     // back spikes Body_06→18 = ridge mask × chain spheres (Sphere until the baked ridge mask exists — Temporary Exception)
      var bolt=new[]{EnemyOrganSet.KeyBolt};var root=new[]{EnemyOrganSet.KeyRoot};
      var l=new List<Spec>{S("mouth",EnemyOrganRole.Mouth,.2f,bolt,None,new Vector3(0,1.1f,1.7f),null,"MouthOrigin","Head"),
       S("eye_l",EnemyOrganRole.Eye,.08f,bolt,None,new Vector3(-.2f,1.3f,1.4f),"eyeL","Head"),S("eye_r",EnemyOrganRole.Eye,.08f,bolt,None,new Vector3(.2f,1.3f,1.4f),"eyeR","Head")};
-     for(int i=6;i<=18;i++)l.Add(S("spine_"+i.ToString("00"),EnemyOrganRole.Spine,.16f,root,None,new Vector3(0,.8f,1.2f-(i-6)*.25f),null,"Body_"+i.ToString("00")));
+     for(int i=6;i<=18;i++)l.Add(S("spine_"+i.ToString("00"),EnemyOrganRole.Spine,.16f,root,None,new Vector3(0,.8f,1.2f-(i-6)*.25f),null,"Body_"+i.ToString("00")).Masked(OrganSurface308.RidgeMask));
      return l;
     }
     case "south_gate_general":
     {
+     // spear tip only (chest / helmet removed): the whole reused metal tip lights; the counter stroke lands on its bounds centre
      var wave=new[]{EnemyOrganSet.KeyWave};
-     return new List<Spec>{S("spear_blade",EnemyOrganRole.Weapon,.12f,wave,None,new Vector3(0,1.05f,.65f),"blade","Temporary_ReusedMesh_Polearm"),
-      S("chest",EnemyOrganRole.Chest,.14f,wave,HumanBodyBones.Chest,new Vector3(0,1.3f,.15f),null,"Spine02"),S("helmet",EnemyOrganRole.Core,.1f,wave,HumanBodyBones.Head,new Vector3(0,1.8f,.05f),"helmet","Head")};
+     return new List<Spec>{S("spear_blade",EnemyOrganRole.Weapon,.12f,wave,None,new Vector3(0,1.05f,.65f),"tip","Temporary_ReusedMesh_Polearm").OnPart("ReusedMetalTip")};
     }
-    default: return new List<Spec>{S("core",EnemyOrganRole.Core,.14f,Any,HumanBodyBones.Chest,up,null,"Spine02","Spine2","Chest","mixamorig:Spine2","Spine1","Spine"),
-     S("mouth",EnemyOrganRole.Mouth,.1f,new[]{EnemyOrganSet.KeyProjectile},HumanBodyBones.Head,up,null,"MouthOrigin","Head","head","mixamorig:Head")};
+    case "demo_growth_lesson":
+     // one real anchor: the common shard on the trunk (the tree itself has 3 submeshes and can never carry the overlay)
+     return new List<Spec>{ShardSpec("demo_growth_lesson")};
+    default: return new List<Spec>{S("core",EnemyOrganRole.Core,.14f,Any,HumanBodyBones.Chest,up,null,"Spine02","Spine2","Chest","mixamorig:Spine2","Spine1","Spine").Masked(OrganSurface308.EmberMask),
+     S("mouth",EnemyOrganRole.Mouth,.1f,new[]{EnemyOrganSet.KeyProjectile},HumanBodyBones.Head,up,null,"MouthOrigin","Head","head","mixamorig:Head").Masked(OrganSurface308.EmberMask)};
    }
   }
 
@@ -133,7 +168,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    var t=AssetDatabase.LoadAssetAtPath<EnemyTelegraphTimingSO>(TimingPath);
    if(t==null){t=ScriptableObject.CreateInstance<EnemyTelegraphTimingSO>();t.name="EnemyTelegraphTiming306";AssetDatabase.CreateAsset(t,TimingPath);lines.Add("created "+TimingPath+" (TEST defaults)");}
    if(t.HaloMaterial!=hm||t.StrokeMaterial!=sm){t.HaloMaterial=hm;t.StrokeMaterial=sm;EditorUtility.SetDirty(t);lines.Add("timing materials bound");}
-   AssetDatabase.SaveAssets();
+   AssetDatabase.SaveAssetIfDirty(hm);AssetDatabase.SaveAssetIfDirty(sm);AssetDatabase.SaveAssetIfDirty(t);   // #308: targeted saves (no SaveAssets flush)
    return report||lines.Count>0?"assets: "+(lines.Count>0?string.Join("; ",lines):"present")+" | PeakLead="+F(t.PeakLead)+" RiseLead="+F(t.RiseLead)+" MaxBrightness="+F(t.MaxBrightness)+" strokes="+t.MaxLiveStrokes:"assets: present";
   }
 
@@ -210,46 +245,61 @@ namespace Oheangbu.EditorTools.WorldMacro
   }
 
   // ---------------------------------------------------------------- organ building
-  static EnemyOrganSet.Organ[] Build(Transform owner,Transform visual,List<Spec> specs,out string how)
+  static EnemyOrganSet.Organ[] Build(Transform owner,Transform visual,List<Spec> specs,out string how)=>Build(owner,visual,specs,null,out how);
+  // #308: every organ also gets its surface (renderer, mode, mask, surface point, outward normal) — OrganSurface308.ComputeSurface.
+  // Body scale / centre ignore the 308 parts themselves ("Organ308_*"), so a rerun after the parts exist gives the same organs (idempotent)
+  internal static EnemyOrganSet.Organ[] Build(Transform owner,Transform visual,List<Spec> specs,OrganSurface308.SurfaceCache cache,out string how)
   {
-   var bones=visual.GetComponentsInChildren<Transform>(true);
-   var animator=visual.GetComponentsInChildren<Animator>(true).Where(a=>a.avatar!=null&&a.avatar.isHuman).OrderByDescending(a=>a.enabled&&a.gameObject.activeInHierarchy).FirstOrDefault();
-   var renderers=visual.GetComponentsInChildren<Renderer>(true).Where(r=>r.enabled&&!(r is ParticleSystemRenderer)).ToArray();
-   float height=1.8f;if(renderers.Length>0){var b=renderers[0].bounds;foreach(var r in renderers)b.Encapsulate(r.bounds);height=b.size.y;}
-   float scale=Mathf.Clamp(height/1.8f,.5f,4f);
-   var list=new List<EnemyOrganSet.Organ>();var notes=new List<string>();
-   Transform Bone(string name)=>bones.Where(t=>t.name==name).OrderByDescending(t=>t.gameObject.activeInHierarchy).FirstOrDefault();
-   foreach(var s in specs)
+   bool ownCache=cache==null;if(ownCache)cache=new OrganSurface308.SurfaceCache();
+   try
    {
-    Transform anchor=null;string src=null;
-    if(s.Human!=HumanBodyBones.LastBone&&animator!=null){anchor=animator.GetBoneTransform(s.Human);if(anchor!=null)src="human:"+s.Human;}
-    if(anchor==null)foreach(var n in s.Names){anchor=Bone(n);if(anchor!=null){src=n;break;}}
-    var organ=new EnemyOrganSet.Organ{Id=s.Id,Role=s.Role,AttackKeys=s.Keys,Radius=s.Radius*scale,HumanBone=s.Human,BoneName=s.Names.FirstOrDefault()};
-    if(anchor==null){organ.Anchor=owner;organ.LocalOffset=Vector3.Scale(s.Fallback,new Vector3(1,scale,1));notes.Add(s.Id+"=FALLBACK root"+organ.LocalOffset.ToString("F2"));list.Add(organ);continue;}
-    organ.Anchor=anchor;
-    if(s.Special=="eyeL"||s.Special=="eyeR")
+    var bones=visual.GetComponentsInChildren<Transform>(true);
+    var animator=visual.GetComponentsInChildren<Animator>(true).Where(a=>a.avatar!=null&&a.avatar.isHuman).OrderByDescending(a=>a.enabled&&a.gameObject.activeInHierarchy).FirstOrDefault();
+    var renderers=visual.GetComponentsInChildren<Renderer>(true).Where(r=>r.enabled&&!(r is ParticleSystemRenderer)&&!r.name.StartsWith("Organ308_",StringComparison.Ordinal)).ToArray();
+    float height=1.8f;Vector3 centre=owner.position+Vector3.up;
+    if(renderers.Length>0){var b=renderers[0].bounds;foreach(var r in renderers)b.Encapsulate(r.bounds);height=b.size.y;centre=b.center;}
+    float scale=Mathf.Clamp(height/1.8f,.5f,4f);float threshold=OrganSurface308.MaskThreshold();
+    var list=new List<EnemyOrganSet.Organ>();var notes=new List<string>();
+    Transform Bone(string name)=>bones.Where(t=>t.name==name).OrderByDescending(t=>t.gameObject.activeInHierarchy).FirstOrDefault();
+    foreach(var s in specs)
     {
-     var mouth=Bone("MouthOrigin");Vector3 f=mouth!=null?mouth.position-anchor.position:owner.forward*.3f*scale;float L=Mathf.Max(.05f,f.magnitude);
-     if(f.sqrMagnitude<.0025f)f=owner.forward*L;var right=Vector3.Cross(Vector3.up,f).normalized;if(right.sqrMagnitude<.5f)right=owner.right;var up=Vector3.Cross(f,right).normalized;
-     var eye=anchor.position+f*.55f+up*(.35f*L)+right*((s.Special=="eyeL"?-.35f:.35f)*L);
-     organ.LocalOffset=anchor.InverseTransformPoint(eye);organ.Radius=Mathf.Clamp(.22f*L,.04f,.3f);src+="+eye";
-    }
-    else if(s.Special=="blade")
-    {
-     // polearm authored along local +Y: blade = near the far end of the meshes' extent on that axis
-     float min=float.PositiveInfinity,max=float.NegativeInfinity;Vector3 c=Vector3.zero;int k=0;
-     foreach(var mf in anchor.GetComponentsInChildren<MeshFilter>(true))
+     Transform anchor=null;string src=null;
+     if(s.Human!=HumanBodyBones.LastBone&&animator!=null){anchor=animator.GetBoneTransform(s.Human);if(anchor!=null)src="human:"+s.Human;}
+     if(anchor==null&&s.Human2!=HumanBodyBones.LastBone&&animator!=null){anchor=animator.GetBoneTransform(s.Human2);if(anchor!=null)src="human:"+s.Human2;}
+     if(anchor==null)foreach(var n in s.Names){anchor=Bone(n);if(anchor!=null){src=n;break;}}
+     var organ=new EnemyOrganSet.Organ{Id=s.Id,Role=s.Role,AttackKeys=s.Keys,Radius=s.Radius*scale,HumanBone=s.Human,BoneName=s.Names.FirstOrDefault(),Mode=s.Mode};
+     if(anchor==null){organ.Anchor=owner;organ.LocalOffset=Vector3.Scale(s.Fallback,new Vector3(1,scale,1));src="FALLBACK root"+organ.LocalOffset.ToString("F2");}
+     else organ.Anchor=anchor;
+     if(anchor!=null&&(s.Special=="eyeL"||s.Special=="eyeR"))
      {
-      if(mf.sharedMesh==null)continue;var mb=mf.sharedMesh.bounds;
-      for(int i=0;i<8;i++){var p=anchor.InverseTransformPoint(mf.transform.TransformPoint(mb.center+Vector3.Scale(mb.extents,new Vector3((i&1)*2-1,((i>>1)&1)*2-1,((i>>2)&1)*2-1))));min=Mathf.Min(min,p.y);max=Mathf.Max(max,p.y);c+=p;k++;}
+      var mouth=Bone("MouthOrigin");Vector3 f=mouth!=null?mouth.position-anchor.position:owner.forward*.3f*scale;float L=Mathf.Max(.05f,f.magnitude);
+      if(f.sqrMagnitude<.0025f)f=owner.forward*L;var right=Vector3.Cross(Vector3.up,f).normalized;if(right.sqrMagnitude<.5f)right=owner.right;var up=Vector3.Cross(f,right).normalized;
+      var eye=anchor.position+f*.55f+up*(.35f*L)+right*((s.Special=="eyeL"?-.35f:.35f)*L);
+      organ.LocalOffset=anchor.InverseTransformPoint(eye);organ.Radius=Mathf.Clamp(.22f*L,.04f,.3f);src+="+eye";
      }
-     if(k>0){c/=k;organ.LocalOffset=new Vector3(c.x,max-(max-min)*.07f,c.z);src+="+tip";}
+     // #308 surface target
+     if(s.Mode==EnemyOrganSurfaceMode.Part)
+     {
+      // the part may sit outside the visual (south gate spear tip under the actor's hand): search the whole owner
+      var part=string.IsNullOrEmpty(s.Part)?null:Bone(s.Part)??owner.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name==s.Part);
+      var pr=part!=null?part.GetComponent<Renderer>():null;
+      if(pr!=null){organ.Anchor=part;organ.TargetRenderer=pr;organ.HumanBone=HumanBodyBones.LastBone;organ.BoneName=part.name;organ.LocalOffset=part.InverseTransformPoint(pr.bounds.center);src="part:"+part.name;}
+      else{organ.TargetRenderer=null;src+=" UNBOUND(part "+s.Part+" missing - OrganSurface308 prefabs/apply adds it)";}
+     }
+     else
+     {
+      organ.TargetRenderer=OrganSurface308.BodyRendererFor(visual,anchor);
+      if(s.Mode==EnemyOrganSurfaceMode.Mask){organ.Mask=string.IsNullOrEmpty(s.MaskPath)?null:AssetDatabase.LoadAssetAtPath<Texture2D>(s.MaskPath);
+       if(organ.Mask==null){organ.Mode=EnemyOrganSurfaceMode.Sphere;src+=" mask "+s.MaskPath+" missing -> SPHERE (Temporary Exception)";}}
+     }
+     string surface=OrganSurface308.ComputeSurface(organ,owner,centre,threshold,cache,s.Special=="tip",out float coverage);
+     notes.Add(s.Id+"="+src+" ["+organ.Mode+(organ.TargetRenderer!=null?" on "+organ.TargetRenderer.name:"")+(coverage>=0?" cover "+F(coverage):"")+(surface.Length>0?" "+surface:"")+"]");
+     list.Add(organ);
     }
-    else if(s.Special=="helmet"){organ.LocalOffset=anchor.InverseTransformPoint(anchor.position+Vector3.up*.12f*scale);src+="+crest";}
-    notes.Add(s.Id+"="+src);list.Add(organ);
+    how=list.Count+" organs (scale "+F(scale)+", humanoid "+(animator!=null)+"): "+string.Join(", ",notes)+" | "+OrganSurface308.FrontReport(owner,list,out _);
+    return list.ToArray();
    }
-   how=list.Count+" organs (scale "+F(scale)+", humanoid "+(animator!=null)+"): "+string.Join(", ",notes);
-   return list.ToArray();
+   finally{if(ownCache)cache.Dispose();}
   }
 
   static void Attach(GameObject go,EnemyOrganSet.Organ[] organs,EnemyTelegraphTimingSO timing,ElementPaletteSO palette,Entry entry)
@@ -344,7 +394,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(EditorApplication.isPlayingOrWillChangePlaymode)return "REFUSED Play mode";
    var src=AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(FireSource);if(src==null)return "REFUSED missing "+FireSource;
    var copy=AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(FireCopy);
-   if(copy==null){Folder(ArtRoot);if(!AssetDatabase.CopyAsset(FireSource,FireCopy))return "REFUSED copy failed";AssetDatabase.SaveAssets();copy=AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(FireCopy);}
+   if(copy==null){Folder(ArtRoot);if(!AssetDatabase.CopyAsset(FireSource,FireCopy))return "REFUSED copy failed";AssetDatabase.ImportAsset(FireCopy);copy=   /* #308: CopyAsset already wrote the file — no SaveAssets flush */AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(FireCopy);}
    bool valid=copy.TryValidate(out string error);
    return FireCopy+(valid?" valid":" INVALID "+error)+": "+copy.Archetype+"/"+copy.Delivery+"/"+copy.Element+" telegraph "+F(copy.Telegraph)+" speed "+F(copy.ProjectileSpeed)+" range "+F(copy.Range)+" (source "+FireSource+" untouched)";
   }
@@ -405,7 +455,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var e in LoadFire().entries)sb.AppendLine("  fire-assign "+e.scene);
    if(EditorApplication.isPlaying)
     foreach(var tel in Object.FindObjectsByType<EnemyElementTelegraph>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
-     sb.AppendLine("  live "+HierarchyPath(tel.transform)+" lit="+F(tel.LitLevel)+" halos="+tel.VisibleHaloCount+" attack="+tel.LitAttackId);
+     sb.AppendLine("  live "+HierarchyPath(tel.transform)+" lit="+F(tel.LitLevel)+" organs="+tel.LitOrganCount+" overlays="+tel.OverlayRendererCount+" attack="+tel.LitAttackId);
    return sb.ToString().TrimEnd();
   }
 

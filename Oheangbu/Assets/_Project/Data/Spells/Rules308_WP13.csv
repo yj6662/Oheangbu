@@ -1,0 +1,18 @@
+﻿# SPEC-SPELL-120-308 WP-13 (opened by D308-13 Q5: the spell rule plus a TEST target; real enemy AI and world placement are separate work).
+# Each row replaces its reserved row of Rules308_Base. TEST starting values, not measured. Inherit base = power, projectile speed and area of the glyph without a final.
+# path.cover (wood o + ieung): its own corridor (half width 3, length 12, front speed 5, delay 0.4) and a small base power; the wave front is a moving wall of cover.
+# zone.haze: haze.radius / haze.life = the circle left at the middle of the spray and how long it stays, haze.miss = share of strikes an enemy inside misses, haze.max = hazes at once.
+# single.cover: cover.radius / cover.life = the rooted rock, cover.max = rocks at once, cover.range = where the rock of a cast without a target falls (metres ahead).
+# intercept.single: intercept.range / intercept.angle = the fan the needle looks for an incoming projectile in. intercept.barrage: intercept.max = projectiles one barrage can shoot down.
+# single.unblockable and path.purge carry no number of their own.
+# Gate test (single.cover): the row stays behind its final's TEST unlock. The main-game grant of that final does not open it until its world side exists
+# (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target). Remove the word to let the final's own unlock open it.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+공,replace,path.cover,,AttackArea,,,,4,,Path,,3,12,5,0.4,,,,
+농,replace,zone.haze,,,,,base,,,,,,,,,,,,haze.radius=3;haze.life=8;haze.miss=0.5;haze.max=1
+막,replace,single.cover,,,test,,base,,,,,,,,,,,,cover.radius=1.2;cover.life=12;cover.max=2;cover.range=8
+몽,replace,zone.haze,,,,,base,,,,,,,,,,,,haze.radius=6;haze.life=8;haze.miss=0.5;haze.max=1
+삿,replace,single.unblockable,,,,,base,,,,,,,,,,,,
+상,replace,intercept.single,,,,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20
+송,replace,intercept.barrage,,,,,base,,,,,,,,,,,,intercept.max=6
+온,replace,path.purge,,,,,base,,,,,,,,,,,,

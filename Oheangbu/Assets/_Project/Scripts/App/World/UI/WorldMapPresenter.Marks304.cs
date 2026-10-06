@@ -9,6 +9,10 @@ namespace Oheangbu.App.World.UI
 {
     // #304 marks on the printed window (DESIGN §5.13, map.png): cinnabar only for the current position and the heard
     // objective; everything else ink with a sheet rim (한지 테). Labels are TMP MapLabel21 / MapRegion44 (Ink_UnderPaper).
+    // D308-25 (map 5): a mark's name label shows only while that mark is the pointed one (WorldMapPresenter.Hover.cs); the
+    // realm names stay. The label objects and their texts are as before (the HUD reads the checkpoint label's text).
+    // D308-30 (map 6): the realm names are built as before but never shown unless MapStyle304SO.RegionNamesOnSheet - the realms
+    // read by wash colour and border line; the slip's realm line then stands at every view (RefreshRealmLine304).
     // D14: a variant is the same symbol + an outer ink ring (the rest where you wake); 남긴 통보 uses the D04 coin symbol.
     // Also the IMapMarkerSource304 read-only view for the HUD bearing line.
     public sealed partial class WorldMapPresenter : IMapMarkerSource304
@@ -22,6 +26,8 @@ namespace Oheangbu.App.World.UI
             public float Size;
             /// <summary>The place part of the label ("청림 · 금표 주막" -> "금표 주막"); the realm goes to the card meta.</summary>
             public string Name;
+            /// <summary>#308: cell of the icon atlas this place draws (the marker id -> glyph table), -1 = the pre-#308 picture.</summary>
+            public int Cell308 = -1;
         }
 
         readonly List<MarkerView> markers = new List<MarkerView>();
@@ -48,7 +54,7 @@ namespace Oheangbu.App.World.UI
             var ring = V.Image(V.Stretch("Ring", knownArea), s.Cinnabar, open ? s.Sprites.Enso : s.Sprites.RingDashed);
             if (ring.sprite == null) { ring.sprite = s.Sprites.Disc; ring.color = UiStyle304SO.A(s.Cinnabar, .22f); }
             knownArea.gameObject.SetActive(false);
-            knownAreaLabel = CreateFullLabel("KnownDestination", "들은 목적 권역");
+            knownAreaLabel = CreateFullLabel("KnownDestination", "");   // its text is the destination's name (KnownLabel), set when one is heard
 
             // realm names (MapRegion44, .12em)
             if (data.HasIllustration && data.Locations != null)
@@ -65,47 +71,64 @@ namespace Oheangbu.App.World.UI
             {
                 if (spec == null) continue;
                 float size = MarkSize(spec.Kind);
-                var root = CreateMark(spec.Id, PictureFor(spec.Kind), s.Ink, size, true);
+                int cell308 = MarkerCell308(spec);   // #308: the glyph by marker id (-1 without a bundle)
+                var root = GlyphMark308(spec.Id, cell308, s.Ink, size) ?? CreateMark(spec.Id, PictureFor(spec.Kind), s.Ink, size, true);
                 GameObject variant = null;
                 if (KindOf(spec.Kind) == MapMarkerKind304.Rest) { variant = CreateVariantRing(root, size); variant.SetActive(false); }
                 string name = ShortLabel(spec.Label);
-                markers.Add(new MarkerView { Spec = spec, Full = root, Variant = variant, FullLabel = CreateFullLabel(spec.Id, name), Size = size, Name = name });
+                markers.Add(new MarkerView { Spec = spec, Full = root, Variant = variant, FullLabel = CreateFullLabel(spec.Id, name), Size = size, Name = name, Cell308 = cell308 });
             }
 
             // the rest you wake at when it is not one of the baked rests (variant ring always on)
-            fullCheckpoint = CreateMark("Checkpoint", PictureFor(WorldMapMarkerKind.Rest), s.Ink, m.RestSize, true);
+            fullCheckpoint = GlyphMark308("Checkpoint", KeyCell308(MapNotation308SO.KeyCheckpoint, WorldMapMarkerKind.Rest.ToString()), s.Ink, m.RestSize)
+                ?? CreateMark("Checkpoint", PictureFor(WorldMapMarkerKind.Rest), s.Ink, m.RestSize, true);
             CreateVariantRing(fullCheckpoint, m.RestSize);
             fullCheckpointLabel = CreateFullLabel("Checkpoint", "깨어날 곳");
 
             // 남긴 통보: D04 coin (ink) on a sheet disc (2 px rim)
-            fullDrop = V.Rect("Marker_Drop", fullMarkers, 0, 0, m.CoinSize, m.CoinSize);
-            fullDrop.anchorMin = fullDrop.anchorMax = fullDrop.pivot = new Vector2(.5f, .5f);
-            var dropRim = V.Image(V.Stretch("Rim", fullDrop, -2f), s.Sheet, s.Sprites.Disc); dropRim.preserveAspect = true;
-            var coin = V.Image(V.Stretch("Icon", fullDrop), s.Ink, Pick(mapStyle.Coin, s.Sprites.Disc)); coin.preserveAspect = true;
-            fullDrop.gameObject.SetActive(false); scaledMarks.Add(fullDrop);
+            fullDrop = GlyphMark308("Drop", KeyCell308(MapNotation308SO.KeyCoin), s.Ink, m.CoinSize);   // #308: the atlas coin
+            if (fullDrop == null)
+            {
+                fullDrop = V.Rect("Marker_Drop", fullMarkers, 0, 0, m.CoinSize, m.CoinSize);
+                fullDrop.anchorMin = fullDrop.anchorMax = fullDrop.pivot = new Vector2(.5f, .5f);
+                var dropRim = V.Image(V.Stretch("Rim", fullDrop, -2f), s.Sheet, s.Sprites.Disc); dropRim.preserveAspect = true;
+                var coin = V.Image(V.Stretch("Icon", fullDrop), s.Ink, Pick(mapStyle.Coin, s.Sprites.Disc)); coin.preserveAspect = true;
+                fullDrop.gameObject.SetActive(false); scaledMarks.Add(fullDrop);
+            }
             fullDropLabel = CreateFullLabel("Drop", MapKindName(MapMarkerKind304.Coin));
 
             // 내 표식: two ink strokes crossing (stroke_short, DESIGN: ✦ is gone)
-            fullPin = V.Rect("Marker_Pin", fullMarkers, 0, 0, m.PinSize, m.PinSize);
-            fullPin.anchorMin = fullPin.anchorMax = fullPin.pivot = new Vector2(.5f, .5f);
-            float len = m.PinSize * 4f / 3f, x0 = (m.PinSize - len) * .5f, y0 = m.PinSize * .5f - 5f;
-            V.Brush(s, fullPin, "StrokeA", StrokeClass304.Short, s.Ink, x0, y0, len, 10f, 1f, 45f);
-            V.Brush(s, fullPin, "StrokeB", StrokeClass304.Short, s.Ink, x0, y0, len, 10f, 1f, -45f);
-            fullPin.gameObject.SetActive(false); scaledMarks.Add(fullPin);
+            fullPin = GlyphMark308("Pin", KeyCell308(MapNotation308SO.KeyPin), s.Ink, m.PinSize);   // #308: the atlas X with its rim
+            if (fullPin == null)
+            {
+                fullPin = V.Rect("Marker_Pin", fullMarkers, 0, 0, m.PinSize, m.PinSize);
+                fullPin.anchorMin = fullPin.anchorMax = fullPin.pivot = new Vector2(.5f, .5f);
+                float len = m.PinSize * 4f / 3f, x0 = (m.PinSize - len) * .5f, y0 = m.PinSize * .5f - 5f;
+                V.Brush(s, fullPin, "StrokeA", StrokeClass304.Short, s.Ink, x0, y0, len, 10f, 1f, 45f);
+                V.Brush(s, fullPin, "StrokeB", StrokeClass304.Short, s.Ink, x0, y0, len, 10f, 1f, -45f);
+                fullPin.gameObject.SetActive(false); scaledMarks.Add(fullPin);
+            }
             fullPinLabel = CreateFullLabel("Pin", "표식");
 
             // 현재 위치 last: cinnabar arrow on a 1.1x sheet copy (DESIGN §5.13 주사 촉(한지 테))
-            fullPlayer = V.Rect("Marker_Player", fullMarkers, 0, 0, m.PlayerSize, m.PlayerSize);
-            fullPlayer.anchorMin = fullPlayer.anchorMax = fullPlayer.pivot = new Vector2(.5f, .5f);
-            if (s.Sprites.Arrow != null)
+            // #308: the cinnabar brush tip with its hanji rim from the atlas (the drawing fills the cell); else the #304 arrow
+            fullPlayer = GlyphMark308("Player", KeyCell308(MapNotation308SO.KeyPlayer), s.Cinnabar, m.PlayerSize);
+            if (fullPlayer != null) fullPlayer.gameObject.SetActive(true);
+            else
             {
-                var rim = V.Rect("Rim", fullPlayer, 0, 0, 0, 0); rim.anchorMin = Vector2.one * -.05f; rim.anchorMax = Vector2.one * 1.05f; rim.offsetMin = rim.offsetMax = Vector2.zero;
-                V.Image(rim, s.Sheet, s.Sprites.Arrow).preserveAspect = true;
-                V.Image(V.Stretch("Icon", fullPlayer), s.Cinnabar, s.Sprites.Arrow).preserveAspect = true;
+                fullPlayer = V.Rect("Marker_Player", fullMarkers, 0, 0, m.PlayerSize, m.PlayerSize);
+                fullPlayer.anchorMin = fullPlayer.anchorMax = fullPlayer.pivot = new Vector2(.5f, .5f);
+                if (s.Sprites.Arrow != null)
+                {
+                    var rim = V.Rect("Rim", fullPlayer, 0, 0, 0, 0); rim.anchorMin = Vector2.one * -.05f; rim.anchorMax = Vector2.one * 1.05f; rim.offsetMin = rim.offsetMax = Vector2.zero;
+                    V.Image(rim, s.Sheet, s.Sprites.Arrow).preserveAspect = true;
+                    V.Image(V.Stretch("Icon", fullPlayer), s.Cinnabar, s.Sprites.Arrow).preserveAspect = true;
+                }
+                else { var arrow = V.Stretch("Icon", fullPlayer).gameObject.AddComponent<WorldMapHeadingGraphic>(); arrow.color = s.Cinnabar; arrow.raycastTarget = false; }
+                scaledMarks.Add(fullPlayer);
             }
-            else { var arrow = V.Stretch("Icon", fullPlayer).gameObject.AddComponent<WorldMapHeadingGraphic>(); arrow.color = s.Cinnabar; arrow.raycastTarget = false; }
-            scaledMarks.Add(fullPlayer);
             fullPlayer.SetAsLastSibling();
+            RankLabels308();   // #308: name priorities for the plate placement (no-op without a bundle)
             ScaleMarks304(pageScale);   // the first layout ran before the marks existed
         }
 
@@ -160,7 +183,7 @@ namespace Oheangbu.App.World.UI
                 var label = regionLabels[i];
                 Vector2 n = projection.WorldToNormalized(regionCentres[i]);
                 Vector2 v = new Vector2((n.x - fullUv.x) / fullUv.width, (n.y - fullUv.y) / fullUv.height);
-                bool visible = !interior && targetExpanded && fold >= .995f && v.x >= 0 && v.x <= 1 && v.y >= 0 && v.y <= 1;
+                bool visible = mapStyle.RegionNamesOnSheet && !interior && targetExpanded && fold >= .995f && v.x >= 0 && v.x <= 1 && v.y >= 0 && v.y <= 1;
                 if (visible)
                 {
                     MeasureAwake304(label);
@@ -256,6 +279,8 @@ namespace Oheangbu.App.World.UI
 
         GameObject CreateVariantRing(RectTransform root, float size)
         {
+            var ring308 = WakeRing308(root);   // #308: the ring from the atlas, in the same brush as the symbol (null without a bundle)
+            if (ring308 != null) return ring308;
             float k = Mathf.Max(1f, mapStyle.VariantRingScale);
             var ring = V.Rect("VariantRing", root, 0, 0, 0, 0);
             ring.anchorMin = Vector2.one * (.5f - k * .5f); ring.anchorMax = Vector2.one * (.5f + k * .5f); ring.offsetMin = ring.offsetMax = Vector2.zero;
@@ -267,10 +292,12 @@ namespace Oheangbu.App.World.UI
 
         TMP_Text CreateFullLabel(string name, string value)
         {
+            var plate308 = CreatePlate308(name);   // #308: the hanji plate first, so it lies under the text (null without a bundle)
             var label = V.Label(style, fullLabels, "Label_" + name, value, UiType304.MapLabel21, style.Ink, 0, 0);
             MapLabelFace304(label);
             var r = label.rectTransform; r.anchorMin = r.anchorMax = r.pivot = new Vector2(.5f, .5f);
             label.gameObject.SetActive(false);
+            RegisterLabel308(label, plate308);
             return label;
         }
 
@@ -296,8 +323,7 @@ namespace Oheangbu.App.World.UI
             }
         }
 
-        /// <summary>Baked labels carry their realm ("청림 · 금표 주막"); the map, the list and the HUD show the place only
-        /// (map.png), the realm is on the detail card's meta line.</summary>
+        /// <summary>Baked labels carry their realm ("청림 · 금표 주막"); the map's name tag and the HUD show the place only.</summary>
         static string ShortLabel(string label)
         {
             if (string.IsNullOrEmpty(label)) return label ?? "";
@@ -351,7 +377,7 @@ namespace Oheangbu.App.World.UI
         void PlaceMarks304(Vector3 current, bool interior)
         {
             if (fullPlayer == null) return;
-            bool labels = fullUv.width < mapStyle.LabelMaxViewWidth;
+            marksCurrent308 = current; marksInterior308 = interior;   // D308-25: a new pick places the labels again with these
             Vector2 currentXZ = new Vector2(current.x, current.z);
             PlaceFull(fullPlayer, currentXZ, true);
             float yaw = 0f;
@@ -368,19 +394,19 @@ namespace Oheangbu.App.World.UI
             if (checkpointRest != null && !MarkerKnown(checkpointRest)) checkpointRest = null;
             bool checkpointAlone = ready && !interior && checkpointRest == null && (checkpoint - currentXZ).sqrMagnitude > 144f;
             PlaceFull(fullCheckpoint, checkpoint, checkpointAlone);
-            PlaceFullLabel(fullCheckpointLabel, checkpoint, checkpointAlone && labels, new Vector2(mapStyle.RestSize * .5f + 6f, 0f));
+            PlaceFullLabel(fullCheckpointLabel, checkpoint, checkpointAlone && Picked308(fullCheckpointLabel), new Vector2(mapStyle.RestSize * .5f + 6f, 0f));
 
             bool hasDrop = ready && session.Progress.ledger.dropCurrency > 0;
             Vector2 drop = hasDrop ? WorldMapGeometry.XZ(session.Progress.ledger.dropPosition) : default;
             PlaceFull(fullDrop, drop, hasDrop && !interior);
-            PlaceFullLabel(fullDropLabel, drop, hasDrop && !interior && labels, new Vector2(mapStyle.CoinSize * .5f + 6f, 0f));
+            PlaceFullLabel(fullDropLabel, drop, hasDrop && !interior && Picked308(fullDropLabel), new Vector2(mapStyle.CoinSize * .5f + 6f, 0f));
 
             bool hasPin = ready && session.Progress.ui.pin.active;
             Vector2 pin = hasPin ? session.Progress.ui.pin.worldXZ : default;
             if (hasPin && !ReferenceEquals(pinLabelShown, session.Progress.ui.pin.label))
             { pinLabelShown = session.Progress.ui.pin.label; SetLabelText(fullPinLabel, string.IsNullOrWhiteSpace(pinLabelShown) ? "표식" : pinLabelShown); }
             PlaceFull(fullPin, pin, hasPin && !interior);
-            PlaceFullLabel(fullPinLabel, pin, hasPin && !interior && labels, new Vector2(mapStyle.PinSize * .5f + 6f, 0f));
+            PlaceFullLabel(fullPinLabel, pin, hasPin && !interior && Picked308(fullPinLabel), new Vector2(mapStyle.PinSize * .5f + 6f, 0f));
 
             var destination = session.KnownDestination;
             bool showDestination = destination != null && !interior;
@@ -396,16 +422,18 @@ namespace Oheangbu.App.World.UI
                 knownArea.sizeDelta = new Vector2(ringSize, ringSize);
                 SetLabelText(knownAreaLabel, KnownLabel(destination));
             }
-            PlaceCentredLabel(knownAreaLabel, destinationXZ, showDestination, -(ringSize * .5f + 14f * pageScale));
+            PlaceCentredLabel(knownAreaLabel, destinationXZ, showDestination && Picked308(knownAreaLabel), -(ringSize * .5f + 14f * pageScale));
 
             foreach (MarkerView marker in markers)
             {
                 bool known = !interior && MarkerKnown(marker);
                 if (marker.Variant != null && marker.Variant.activeSelf != (marker == checkpointRest)) marker.Variant.SetActive(marker == checkpointRest);
                 PlaceFull(marker.Full, marker.Spec.WorldXZ, known);
-                PlaceFullLabel(marker.FullLabel, marker.Spec.WorldXZ, known && labels, new Vector2(marker.Size * .5f + 5f, 0f));
+                PlaceFullLabel(marker.FullLabel, marker.Spec.WorldXZ, known && Picked308(marker.FullLabel), new Vector2(marker.Size * .5f + 5f, 0f));
             }
             PlaceRegionLabels304(interior);
+            RefreshRealmLine304(interior);   // D308-25: the slip's realm line steps aside while the sheet shows that realm's name
+            ArrangeLabels308();   // #308: the plate and the place of the one name tag (no-op without a bundle)
         }
 
         /// <summary>#304 detail for a CollectMarkers entry (MapMarker304 has no sub-kind): the baked kind of the place at that

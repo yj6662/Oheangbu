@@ -167,6 +167,9 @@ InitTestScene*.unity*
 !/[Aa]ssets/_Project/Art/UI/Loading270/W_Compact_Loading.unity.meta
 !/[Aa]ssets/_Project/Scenes/World/W_Demo_Main.unity
 !/[Aa]ssets/_Project/Scenes/World/W_Demo_Main.unity.meta
+# #308: 술식 규칙 표(코드가 임포트하는 자료 — 120자 해석 · 해금)는 코드와 함께 추적한다
+!/[Aa]ssets/_Project/Data/Spells/*.csv
+!/[Aa]ssets/_Project/Data/Spells/*.csv.meta
 # 생성(Meshy) 에셋 폴더 안은 예외에 걸리지 않게 다시 막는다
 /[Aa]ssets/_Project/Art/Generated*/**
 # ---- (#307 여기까지) ----

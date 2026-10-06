@@ -220,6 +220,7 @@ namespace Oheangbu.App
         private void OnDisable()
         {
             EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear();
+            ClearSpells308(SpellClearReason.Disabled);
             SummonCombat?.Clear();
             _summonResolved.Clear();
             if (_letterDrawn != null) _letterDrawn.Unsubscribe(OnLetterDrawn);
@@ -245,6 +246,7 @@ namespace Oheangbu.App
         {
             TryHookServices();
             EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
+            TickSpells308();
             TickPendingCasts();
             TickInkRegen();
             _contacts.RemoveAll(effect => effect == null);
@@ -407,66 +409,79 @@ namespace Oheangbu.App
         {
             if (_resolver == null || _config == null) return;
 
-            if (!_resolver.TryResolve(letter, out SpellCast cast, FieldSpells != null && FieldSpells.IsUnlocked, EABuffs != null && EABuffs.Unlocked, EAWards != null && EAWards.Available, EAGiyeok != null && EAGiyeok.Unlocked, MumBridges != null && MumBridges.IsUnlocked))
+            // #308: the route is the book's table; this wiring is the gate (CombatLoopWiring.Spell308.cs). Every refusal
+            // (blank, not built, locked, switched off, outside the vocabulary) is the one misfire it always was.
+            SpellResolveStatus status = _resolver.Resolve(letter, this, out SpellCast cast, out SpellRow row);
+            if (status != SpellResolveStatus.Ok)
             {
-                // 프로토 미러 밖의 글자 — 효과 없음, 먹만 소모(불발 취급). CSV 완주는 임포터 이후.
+                // 어휘 밖·공백·미구현·미해금 글자 — 효과 없음, 먹만 소모(불발 취급).
                 // 표현도 불발을 따른다(7차 검수) — 플래시·문양 대신 증발
                 _ink?.SpendClamped(_config.MisfireInkCost);
                 _brushAdapter?.NotifyCastFailed();
+                CastMisfired?.Invoke(letter.Letter, status);
                 return;
             }
 
             if (EABuffs != null)
                 cast = new SpellCast(cast.Letter, cast.Kind, cast.Element,
-                    cast.Power * EABuffs.HoldPower(letter.HoldDuration, Time.time), cast.Area, cast.SpeedMul, EABuffs.HoldPower(letter.HoldDuration, Time.time));
-            switch (cast.Kind)
+                    cast.Power * EABuffs.HoldPower(letter.HoldDuration, Time.time), cast.Area, cast.SpeedMul, EABuffs.HoldPower(letter.HoldDuration, Time.time), cast.Brush, cast.Brush01);
+            cast = ModifyCast308(cast, row); // #308 cast hooks (power, projectile speed only)
+            _row308 = row;
+            try
             {
-                case SpellKind.Parry:
-                    ResolveParry(cast);
-                    break;
-                case SpellKind.AttackSingle:
-                case SpellKind.AttackArea:
-                    ResolveAttack(cast);
-                    break;
-                case SpellKind.Summon:
-                    ResolveSummon(cast);
-                    break;
-                case SpellKind.Field:
-                    ResolveField(cast);
-                    break;
-                case SpellKind.Ward:
-                    ResolveWard(cast);
-                    break;
-                case SpellKind.Buff:
-                    ResolveBuff(cast);
-                    break;
+                // #308: a row without a legacy feature runs its registered effect handler; the 36 glyphs below are unchanged.
+                // WP-11: a book row that declares a handover goes there too, but only when the registry holds its handler.
+                if (SpellTakeover308.UsesHandler(row, _spells308 != null && _spells308.Has(row.Handler))) { CastRegistered308(cast, row); return; }
+                switch (cast.Kind)
+                {
+                    case SpellKind.Parry:
+                        ResolveParry(cast);
+                        break;
+                    case SpellKind.AttackSingle:
+                    case SpellKind.AttackArea:
+                        ResolveAttack(cast);
+                        break;
+                    case SpellKind.Summon:
+                        ResolveSummon(cast);
+                        break;
+                    case SpellKind.Field:
+                        ResolveField(cast);
+                        break;
+                    case SpellKind.Ward:
+                        ResolveWard(cast);
+                        break;
+                    case SpellKind.Buff:
+                        ResolveBuff(cast);
+                        break;
+                }
             }
+            finally { _row308 = null; }
         }
 
-        private bool TrySpendSpell(float cost) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f));
-        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ResetEncounterGroggy(); ClearBossEngagement(); }
+        private bool TrySpendSpell(float cost, in SpellCast cast) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f) * CostScale308(cast));
+        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ResetEncounterGroggy(); ClearBossEngagement(); }
         private void ResolveWard(SpellCast cast)
         {
-            if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost))
+            if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost, cast))
             { _brushAdapter?.NotifyCastFailed(); return; }
             if (!EAWards.Activate(cast.Letter, centre, Time.time)) { _brushAdapter?.NotifyCastFailed(); return; }
             if (EAWards.HasVisual) _brushAdapter?.NotifyFieldPresentationOwned();
-            CastAccepted?.Invoke(cast, centre, PlayerForward());
+            AcceptCast308(cast, centre, PlayerForward());
         }
         private void ResolveBuff(SpellCast cast)
         {
-            if (EABuffs == null || !EABuffs.CanActivate(cast.Letter) || !TrySpendSpell(_config.SpellInkCost))
+            if (EABuffs == null || !EABuffs.CanActivate(cast.Letter) || !TrySpendSpell(_config.SpellInkCost, cast))
             { _brushAdapter?.NotifyCastFailed(); return; }
             if (!EABuffs.Activate(cast.Letter, Time.time)) { _brushAdapter?.NotifyCastFailed(); return; }
             if (EABuffs.HasVisual(cast.Letter)) _brushAdapter?.NotifyFieldPresentationOwned();
-            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
+            AcceptCast308(cast, PlayerPosition(), PlayerForward());
         }
 
         public EnemyDamageResult ApplyGiyeokDirectHit(EnemyVitals target,uint life,float power,Vector3 origin,AttackProvenance attack,char letter)
         {
             if(!isActiveAndEnabled||target==null||!target.IsAlive||!target.isActiveAndEnabled||target.LifeRevision!=life
                 ||!_targets.Contains(target)||!float.IsFinite(power)||power<=0||attack.Source!=DamageSource.PlayerDirect
-                ||attack.AttackId<=0||attack.Instigator==null||!EAGiyeokRuntime.Owns(letter)||!GiyeokTargetVisible(target,origin,letter=='삭'))return default;
+                ||attack.AttackId<=0||attack.Instigator==null||!EAGiyeokRuntime.Owns(letter)||!GiyeokTargetVisible(target,origin,Trait308(letter,SpellGrammar308.PierceKey)>0f))return default;
             return ApplyConfirmedEnemyHit(target,power,attack,letter);
         }
         private bool GiyeokTargetVisible(EnemyVitals target,Vector3 origin,bool piercesActors)
@@ -500,23 +515,23 @@ namespace Oheangbu.App
 
         private void ResolveField(SpellCast cast)
         {
-            if(cast.Letter=='뭄')
+            if(Feature308(cast.Letter)==SpellLegacyFeature.Mum)
             {
                 if(MumBridges==null||!MumBridges.TryPrepare(cast,out _)){_brushAdapter?.NotifyCastFailed();return;}
                 float before=_ink!=null?_ink.Value:0;
-                if(_ink==null||_config==null||!TrySpendSpell(_config.SpellInkCost))
+                if(_ink==null||_config==null||!TrySpendSpell(_config.SpellInkCost,cast))
                 {MumBridges.CancelPrepared();_brushAdapter?.NotifyCastFailed();return;}
                 if(!MumBridges.CommitPrepared()){_ink.Restore(before);_brushAdapter?.NotifyCastFailed();return;}
-                _brushAdapter?.NotifyFieldPresentationOwned();CastAccepted?.Invoke(cast,PlayerPosition(),PlayerForward());return;
+                _brushAdapter?.NotifyFieldPresentationOwned();AcceptCast308(cast,PlayerPosition(),PlayerForward());return;
             }
-            if (FieldSpells == null || !FieldSpells.TryPrepare(cast, out _))
+            if (FieldSpells == null || !FieldSpells.TryPrepare(cast, RowFor(cast.Letter), out _))
             { _brushAdapter?.NotifyCastFailed(); return; }
             float fieldInkBefore=_ink!=null?_ink.Value:0;
-            if (_ink == null || _config == null || !TrySpendSpell(_config.SpellInkCost))
+            if (_ink == null || _config == null || !TrySpendSpell(_config.SpellInkCost, cast))
             { FieldSpells.CancelPrepared(); _brushAdapter?.NotifyCastFailed(); return; }
             if (!FieldSpells.CommitPrepared()) { _ink.Restore(fieldInkBefore); _brushAdapter?.NotifyCastFailed(); return; }
             _brushAdapter?.NotifyFieldPresentationOwned();
-            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
+            AcceptCast308(cast, PlayerPosition(), PlayerForward());
         }
 
         private void ResolveSummon(SpellCast cast)
@@ -530,7 +545,7 @@ namespace Oheangbu.App
                 return;
             }
             // Validate/create the inactive candidate before spending. A failed replacement keeps the old actor.
-            if (_ink == null || _config == null || !TrySpendSpell(_config.SpellInkCost * (combat ? 2f : 1f)))
+            if (_ink == null || _config == null || !TrySpendSpell(_config.SpellInkCost * (combat ? 2f : 1f), cast))
             {
                 if (combat) SummonCombat.CancelPrepared();
                 _brushAdapter?.NotifyCastFailed();
@@ -539,7 +554,7 @@ namespace Oheangbu.App
             if (combat) _brushAdapter?.ClearActiveSummons();
             else SummonCombat?.Clear();
             _brushAdapter?.SetPatternSummonPose(cast.Letter, origin, forward, combat);
-            CastAccepted?.Invoke(cast, origin, forward);
+            AcceptCast308(cast, origin, forward);
             SummonAccepted?.Invoke(cast, origin, forward);
         }
 
@@ -548,11 +563,15 @@ namespace Oheangbu.App
             var result = target.TakeDamage(power, attack);
             if (result.AppliedDamage <= 0) return result;
             var point = target.transform.position + Vector3.up * .8f;
-            EnemyDamageResolved?.Invoke(result);
+            // #308: the hit hooks are rules (a second stage, a detonation, a derived shot). A listener of the re-broadcast
+            // that throws still throws, as it always did, but it cannot skip them.
+            try { EnemyDamageResolved?.Invoke(result); }
+            finally { NotifyEnemyHit308(result); }
             if (attack.Element.HasValue)
             {
                 var element = attack.Element.Value;
                 EnemyHitResolved?.Invoke(point, element);
+                if (!DeployOwnsHit308(letter))   // #308 D308-13b: an enabled Retire attack row shows its hit with the deploy layer's ink splash, not the KTP contact
                 if (_contactVfx != null) SpawnContact(_contactVfx.ParrySource(element), point, _contactVfx.ParryScale, element, letter);
             }
             return result;
@@ -590,7 +609,7 @@ namespace Oheangbu.App
             _guardVisualLetter = default;
             // 먹 부족 = 불발 취급(§10.1) — 방어막 자체가 서지 않고, 표현도 증발한다(7차 검수:
             // 없는 방어를 개화로 보여주지 않는다)
-            if (_ink == null || !TrySpendSpell(_config.ParryInkCost))
+            if (_ink == null || !TrySpendSpell(_config.ParryInkCost, cast))
             {
                 _brushAdapter?.NotifyCastFailed();
                 return;
@@ -602,7 +621,7 @@ namespace Oheangbu.App
             _judge?.RaiseGuard(cast.Element, Time.time, cast.HoldScale);
             if (_judge != null) _brushAdapter?.SetPatternGuardClock(_judge.GuardLifetime, _judge.GuardWindow);
             if (_judge != null) { _guardVisualLetter = cast.Letter; _guardVisualRevision = _judge.GuardRevision; }
-            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
+            AcceptCast308(cast, PlayerPosition(), PlayerForward());
         }
 
         // 방어막에 임팩트가 닿은 순간(판정점) — 성공만 보상이 있다(그로기의 유일한 증가 경로 유지)
@@ -624,7 +643,8 @@ namespace Oheangbu.App
         {
             ParryResolved?.Invoke(outcome, guardElement, impactPoint);
             bool originalContact = false;
-            if (_contactVfx != null && (outcome == ParryOutcome.Success || outcome == ParryOutcome.Half))
+            bool layerParry = DeployOwnsParry308(guardElement);   // #308 forms2 S4: read-only; it only chooses who draws the contact
+            if (!layerParry && _contactVfx != null && (outcome == ParryOutcome.Success || outcome == ParryOutcome.Half))
             {
                 float scale = _contactVfx.ParryScale * (outcome == ParryOutcome.Half ? _contactVfx.HalfScale : 1f);
                 char letter = _judge != null && _guardVisualRevision == _judge.GuardRevision ? _guardVisualLetter : default;
@@ -638,7 +658,7 @@ namespace Oheangbu.App
             // 반성공 소피드백 [SPELL-FIDELITY §4.6] — 보상 없이 축소 버스트만: 「반쪽으로 받아냈다」
             if (outcome == ParryOutcome.Half && !originalContact && _palette != null)
             {
-                ParryBurstEffect.Spawn(impactPoint,
+                if (!layerParry) ParryBurstEffect.Spawn(impactPoint,
                     _palette.GetBaseColor(InitialOf(guardElement)), Camera.main, 0.5f);
                 return;
             }
@@ -649,7 +669,7 @@ namespace Oheangbu.App
             // 접점 버스트(임시 — 3차 검수): 투사체가 방어막에 부딪혀 꺼지는 자리에서
             // 방어막 속성색 조각이 터진다. 색=팔레트 단일 출처(색=의미)
             Color burst = _palette != null ? _palette.GetBaseColor(InitialOf(guardElement)) : Color.white;
-            if (!originalContact && !authoredGuardContact) ParryBurstEffect.Spawn(impactPoint, burst, Camera.main, PlayerParryBurstScale306());
+            if (!layerParry && !originalContact && !authoredGuardContact) ParryBurstEffect.Spawn(impactPoint, burst, Camera.main, PlayerParryBurstScale306());
         }
 
         private bool SpawnContact(GameObject source, Vector3 point, float scale, Element? element=null, char letter=default)
@@ -692,13 +712,13 @@ namespace Oheangbu.App
         private void ResolveAttack(SpellCast cast)
         {
             // 먹 부족 = 불발 취급 — 투사체(문양)도 나가지 않는다(7차 검수): 표현은 증발
-            if (_ink == null || !TrySpendSpell(_config.SpellInkCost))
+            if (_ink == null || !TrySpendSpell(_config.SpellInkCost, cast))
             {
                 _brushAdapter?.NotifyCastFailed();
                 return;
             }
 
-            CastAccepted?.Invoke(cast, PlayerPosition(), PlayerForward());
+            AcceptCast308(cast, PlayerPosition(), PlayerForward());
             if(EAGiyeok!=null&&EAGiyeokRuntime.Owns(cast.Letter))
             {
                 var destination=AimedTarget();var origin=PlayerPosition()+Vector3.up*.4f;
@@ -717,14 +737,21 @@ namespace Oheangbu.App
                 case AreaShape.Path: ResolvePathAttack(cast); return;
                 case AreaShape.Volley: ResolveVolleyAttack(cast); return;
             }
+            PlanSingle(cast, true);
+        }
 
+        // #308: the judgement bodies below are the pre-#308 code, word for word. Each Resolve*Attack(cast) is now
+        // Plan*(cast, feedAdapter: true); effect handlers reach the same bodies through ISpellCastHost and pass
+        // feedAdapter: false when they present through ISpellPresenter instead of the stroke adapter.
+        private CastPlan PlanSingle(SpellCast cast, bool feedAdapter)
+        {
             var plan = new CastPlan { Cast = cast };
             EnemyVitals target = AimedTarget();
             if (target == null)
             {
-                _brushAdapter?.SetPatternAttackTarget(null, 0f); // 허공 — 먹만 소모, 연출은 전방 허공 착탄
+                if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(null, 0f); // 허공 — 먹만 소모, 연출은 전방 허공 착탄
                 CastPlanned?.Invoke(plan);
-                return;
+                return plan;
             }
 
             // 피해=착탄 동기화(5차 검수 — 즉발 절단면 폐기): 커밋 시 대상·비행시간 확정 = 유도 보장
@@ -733,8 +760,9 @@ namespace Oheangbu.App
             float speed = Mathf.Max(1f, _config.SpellProjectileSpeed * cast.SpeedMul);
             float duration = Vector3.Distance(PlayerPosition(), target.transform.position) / speed;
             Schedule(plan, target, Time.time + duration, cast.Power);
-            _brushAdapter?.SetPatternAttackTarget(target.transform, duration);
+            if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(target.transform, duration);
             CastPlanned?.Invoke(plan);
+            return plan;
         }
 
         // ---- 광역 형상별 판정 [SPELL-AREA-SHAPES §2] — 기하는 AreaGeometry(하네스와 공유), 수치는 SpellBook(0=기본값) ----
@@ -742,7 +770,8 @@ namespace Oheangbu.App
         // 전방 cone 다중 히트 [#137 — 노 「화염 방사」]: 락온·조준과 무관하게 시전자 전방 부채꼴의
         // 모든 생존 적에게 착탄을 예약한다. 판정 시각=형성 딜레이(연출의 분사 개시와 동기).
         // 대상 0체=허공 방사(먹만 소모). 반각·사거리는 CombatConfig가 정본(FIDELITY §8-1 승계)
-        private void ResolveConeAttack(SpellCast cast)
+        private void ResolveConeAttack(SpellCast cast) => PlanCone(cast, true);
+        private CastPlan PlanCone(SpellCast cast, bool feedAdapter)
         {
             Vector3 origin = PlayerPosition();
             Vector3 forward = PlayerForward();
@@ -759,16 +788,18 @@ namespace Oheangbu.App
                 if (!AreaGeometry.InCone(origin, forward, enemy.transform.position, _config.AreaConeAngle, _config.AreaConeRange, out _, out _)) continue;
                 Schedule(plan, enemy, impactTime, cast.Power);
             }
-            _brushAdapter?.SetPatternAttackTarget(null, 0f); // 연출 목표=전방(자체 시계) — 유도 없음
-            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(null, 0f); // 연출 목표=전방(자체 시계) — 유도 없음
+            if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
             CastPlanned?.Invoke(plan);
+            return plan;
         }
 
         // 원형 일제 [고 「지정 영역에서 가시 일제 솟음」]: 중심=조준 대상 위치(없으면 조준 전방 고정 거리),
         // 반경 안 생존 적 전수가 같은 시각(형성 딜레이)에 맞는다. 연출(ThornRise)의 중심=계획의 점
         private int _areaSpikeSeed;
         private int _scatterVolleySeed;
-        private void ResolveCircleAttack(SpellCast cast)
+        private void ResolveCircleAttack(SpellCast cast) => PlanCircle(cast, true);
+        private CastPlan PlanCircle(SpellCast cast, bool feedAdapter)
         {
             float radius = cast.Area.Radius > 0f ? cast.Area.Radius : 2.5f;
             float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
@@ -780,24 +811,27 @@ namespace Oheangbu.App
                 Cast = cast,
                 Area = new AreaImpactPlan { Shape = AreaShape.Circle, Point = center, Radius = radius, Delay = delay },
             };
-            if(cast.Letter=='고') AreaSpikePlanner.Fill(plan.Area, ++_areaSpikeSeed);
+            bool spikes=Trait308(cast.Letter,SpellGrammar308.SpikesKey)>0f; // #308: was a glyph literal; now the row's area.spikes
+            if(spikes) AreaSpikePlanner.Fill(plan.Area, ++_areaSpikeSeed, AreaSpikeSpec.From(RowFor(cast.Letter)));
             float impactTime = Time.time + delay;
             foreach (var enemy in _targets)
             {
                 if (enemy == null || !enemy.IsAlive) continue;
                 if (!AreaGeometry.InCircle(center, enemy.transform.position, radius, out _)) continue;
-                float at=cast.Letter=='고'?Time.time+AreaSpikePlanner.NearestRise(plan.Area,enemy.transform.position):impactTime;
+                float at=spikes?Time.time+AreaSpikePlanner.NearestRise(plan.Area,enemy.transform.position):impactTime;
                 Schedule(plan, enemy, at, cast.Power);
             }
-            _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
-            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
+            if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
             CastPlanned?.Invoke(plan);
+            return plan;
         }
 
         // 경로 타격 [오 「전진하는 느린 파도」·모 「직선 경로 모래폭풍」]: 시전자 발치에서 대상(없으면 전방)으로
         // 복도가 뻗고, 전선이 닿는 시각(차오름 + 경로 위 거리/속도)에 적별로 맞는다. 연출(GroundWave)이 같은 계획으로 전진
         private int _earthRiftSeed;
-        private void ResolvePathAttack(SpellCast cast)
+        private void ResolvePathAttack(SpellCast cast) => PlanPath(cast, true);
+        private CastPlan PlanPath(SpellCast cast, bool feedAdapter)
         {
             float halfWidth = cast.Area.Radius > 0f ? cast.Area.Radius : 1.5f;
             float length = cast.Area.Length > 0f ? cast.Area.Length : 14f;
@@ -810,7 +844,7 @@ namespace Oheangbu.App
             var plan = new CastPlan
             {
                 Cast = cast,
-                Area = new AreaImpactPlan { Shape = AreaShape.Path, Point = start, Direction = direction, Radius = halfWidth, Length = length, Speed = speed, Delay = delay, VisualSeed = cast.Letter == '모' ? ++_earthRiftSeed : 0 },
+                Area = new AreaImpactPlan { Shape = AreaShape.Path, Point = start, Direction = direction, Radius = halfWidth, Length = length, Speed = speed, Delay = delay, VisualSeed = Trait308(cast.Letter, SpellGrammar308.SeedKey) > 0f ? ++_earthRiftSeed : 0 },
             };
             foreach (var enemy in _targets)
             {
@@ -818,14 +852,17 @@ namespace Oheangbu.App
                 if (!AreaGeometry.InCorridor(start, direction, enemy.transform.position, halfWidth, length, out float along, out _)) continue;
                 Schedule(plan, enemy, Time.time + delay + along / speed, cast.Power);
             }
-            _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
-            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
+            if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
             CastPlanned?.Invoke(plan);
+            return plan;
         }
 
         // 다연발 [소 「다연발 송곳 속사」]: 전방 부채꼴 후보(각 오름차순)에 발수만큼 순환 배분 — 발당 위력=위력÷발수,
         // 발 i 착탄 = 기준 딜레이 + i×간격 + 거리/탄속. 연출(SpikeVolley)이 발마다 그 대상·시각으로 발사. 후보 0=허공 속사
-        private void ResolveVolleyAttack(SpellCast cast)
+        private void ResolveVolleyAttack(SpellCast cast) => PlanVolley(cast, true, null);
+        // shotWeights (#308): each shot's share of the cast power, normalised by their sum; null = the equal shares of before
+        private CastPlan PlanVolley(SpellCast cast, bool feedAdapter, IReadOnlyList<float> shotWeights)
         {
             float halfAngle = cast.Area.Angle > 0f ? cast.Area.Angle : 25f;
             float range = cast.Area.Length > 0f ? cast.Area.Length : 16f;
@@ -833,6 +870,7 @@ namespace Oheangbu.App
             float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
             int shots = cast.Area.Shots > 0 ? cast.Area.Shots : 9;
             float interval = cast.Area.Interval > 0f ? cast.Area.Interval : 0.1f;
+            bool weighted = ValidWeights308(shotWeights, shots, out float weightSum);
 
             Vector3 origin = PlayerPosition();
             Vector3 forward = PlayerForward();
@@ -868,20 +906,20 @@ namespace Oheangbu.App
                         hitTarget=candidate.vitals;distance=along;
                     }
                     float launch=Time.time+delay+i*interval,impact=launch+distance/speed;
-                    var hit=hitTarget!=null?Schedule(plan,hitTarget,impact,cast.Power/shots):new PlannedHit{ImpactTime=impact};
+                    var hit=hitTarget!=null?Schedule(plan,hitTarget,impact,weighted?cast.Power*shotWeights[i]/weightSum:cast.Power/shots):new PlannedHit{ImpactTime=impact};
                     hit.LaunchTime=launch;hit.HasImpactPoint=true;hit.ImpactPoint=origin+ray*distance+Vector3.up*(.65f+(float)random.NextDouble()*.8f);
                     plan.Area.Shots.Add(hit);
                 }
                 plan.Area.Point=origin+forward*range;
-                _brushAdapter?.SetPatternAttackTarget(null,0f);_brushAdapter?.SetPatternAreaPlan(plan.Area);CastPlanned?.Invoke(plan);return;
+                if(feedAdapter){_brushAdapter?.SetPatternAttackTarget(null,0f);_brushAdapter?.SetPatternAreaPlan(plan.Area);}CastPlanned?.Invoke(plan);return plan;
             }
             if (candidates.Count == 0)
             {
                 plan.Area.Point = AimPoint(range);
-                _brushAdapter?.SetPatternAttackTarget(null, 0f);
-                _brushAdapter?.SetPatternAreaPlan(plan.Area);
+                if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(null, 0f);
+                if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
                 CastPlanned?.Invoke(plan);
-                return;
+                return plan;
             }
 
             float perShot = cast.Power / shots;
@@ -889,14 +927,15 @@ namespace Oheangbu.App
             {
                 var target = candidates[i % candidates.Count].vitals;
                 float flight = Vector3.Distance(origin, target.transform.position) / speed;
-                var hit = Schedule(plan, target, Time.time + delay + i * interval + flight, perShot);
+                var hit = Schedule(plan, target, Time.time + delay + i * interval + flight, weighted ? cast.Power * shotWeights[i] / weightSum : perShot);
                 hit.LaunchTime=Time.time+delay+i*interval;
                 plan.Area.Shots.Add(hit);
             }
             plan.Area.Point = candidates[0].vitals.transform.position;
-            _brushAdapter?.SetPatternAttackTarget(candidates[0].vitals.transform, 0f);
-            _brushAdapter?.SetPatternAreaPlan(plan.Area);
+            if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(candidates[0].vitals.transform, 0f);
+            if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
             CastPlanned?.Invoke(plan);
+            return plan;
         }
 
         // 착탄 예약 = 피해 시계(PendingCast) + 계획 기록 — 같은 값 한 번만
@@ -905,9 +944,10 @@ namespace Oheangbu.App
             float scale = PlayerDamageScale != null ? PlayerDamageScale(plan.Cast.Element) : 1f;
             if (float.IsNaN(scale) || float.IsInfinity(scale)) scale = 1f;
             power *= Mathf.Max(0f, scale);
+            var attack = AttackProvenance.Create(_playerVitals != null ? (UnityEngine.Object)_playerVitals : this, DamageSource.PlayerDirect, plan.Cast.Element);
             _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter, Origin=_playerTransform!=null?_playerTransform.position+Vector3.up*.4f:Vector3.zero,
-                Attack=AttackProvenance.Create(_playerVitals != null ? (UnityEngine.Object)_playerVitals : this, DamageSource.PlayerDirect, plan.Cast.Element), TargetLifeRevision=target.LifeRevision });
-            var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power };
+                Attack=attack, TargetLifeRevision=target.LifeRevision });
+            var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power, AttackId = attack.AttackId }; // #308: derived effects recognise their own impact
             plan.Hits.Add(hit);
             return hit;
         }
@@ -986,7 +1026,9 @@ namespace Oheangbu.App
         {
             _lastPlayerHitTime = Time.time;
             if (damage > 0) MarkPlayerHitBoss();
-            _drawingInput?.InterruptLetter();
+            bool interrupts = true;
+            NotifyPlayerHit308(ref interrupts); // #308 player-hit hooks (a steadfast buff may keep the letter; nothing is rewarded)
+            if (interrupts) _drawingInput?.InterruptLetter();
             var cam = Camera.main;
             if (damage > 0 && _contactVfx != null && cam != null)
             {

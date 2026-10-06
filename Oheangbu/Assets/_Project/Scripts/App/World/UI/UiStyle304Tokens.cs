@@ -256,24 +256,41 @@ namespace Oheangbu.App.World.UI
     /// <summary>#306 먹 원상 미니맵 (SPEC-PLAYTEST-306 #1, D306; TEST). Mockup px, anchored BottomRight: the enso's centre and
     /// diameter; the map disc inside it is Window of the diameter. Ranges are the window's half extent in metres. The window
     /// ink is re-printed only after ReprintMetres of travel (or a map change), so InkPadMetres must stay above it.
-    /// Serialized on HudController.Minimap (no UiStyle304 asset field yet).</summary>
+    /// Serialized on HudController.Minimap (no UiStyle304 asset field yet).
+    /// #307 style A "먹 씻김 위 한지" (SPEC-MINIMAP-307; TEST): the disc is drawn and faded by the shader (PaperMapSurface _MINI_HUD,
+    /// no stencil Mask): unwalked land is a flat ink wash, walked land hanji with a faint relief shade and ink roads, caves the walked
+    /// passages only (floor = paper, wall = ink line). Window / CaveMetres / MarkerRimInset changed with #307: scenes saved before it
+    /// keep the old values until the editor command Minimap307 "minimap-look-apply" rewrites them.</summary>
     [Serializable]
     public sealed class MinimapSpec304
     {
         public UiAnchor304 Anchor = UiAnchor304.BottomRight;
         public Vector2 Centre = new Vector2(1740, 900);
-        public float Diameter = 232;
-        [Tooltip("map disc diameter as a share of the enso (inside the brush ring)")] public float Window = .88f;
+        [Tooltip("minimap width (px); user 2026-09-30: a rectangle without the enso ring")] public float Diameter = 300;
+        [Tooltip("width / height of the rectangular minimap")] public float Aspect = 1.4f;
+        [Tooltip("map disc diameter as a share of the enso (inside the brush ring's outer edge; #307 .88 -> .80)")] public float Window = .98f;
         [Tooltip("half extent outside (m)")] public float OutsideMetres = 120;
-        [Tooltip("half extent in caves and interiors (m): the walked cave plan")] public float CaveMetres = 40;
+        [Tooltip("half extent in caves and interiors (m): the walked cave plan (#307 40 -> 28: passages ~27-30 px)")] public float CaveMetres = 28;
         [Tooltip("travel (m) before the window ink is printed again")] public float ReprintMetres = 15;
         [Tooltip("ink printed beyond the window (m); > ReprintMetres so the window never leaves the print")] public float InkPadMetres = 22;
         public float ArrowSize = 26, MarkerSize = 20, PinSize = 16, PinStroke = 5;
-        [Tooltip("marks closer than this to the window edge are left off (px)")] public float MarkerRimInset = 10;
+        [Tooltip("marks closer than this to the window edge are left off (px; #307 10 -> 28: marks stay inside the faded disc, off the ring)")] public float MarkerRimInset = 12;
         [Tooltip("north tick at the window edge (ink stroke_short, w x h px)")] public Vector2 NorthTick = new Vector2(4, 14);
         public float RimAlpha = .95f, MarkRimAlpha = .95f;
         public int FadeMs = 200;
         [Tooltip("marker refresh (IMapMarkerSource304.CollectMarkers) and settings poll interval (s)")] public float RefreshSeconds = .25f;
+        // #307 style A (TEST). No new colours: ink = UiStyle304 Ink, hanji = Sheet; the arrow stays the one cinnabar accent.
+        [Tooltip("#307 disc fade: alpha 1 at rho x, 0 at rho y (rho = distance from the disc centre / disc radius)")] public Vector2 Fade = new Vector2(.90f, .995f);
+        [Tooltip("#307 fade edge wobble (rho units, by the wash grain)")] public float EdgeWobble = .05f;
+        [Tooltip("#307 unwalked land: flat ink wash alpha (sRGB composite; linear projects remap it like UI/InkReveal)")] public float WashAlpha = .62f;
+        [Tooltip("#307 wash grain: share of the wash alpha modulated by the wash_tile grain (0 = flat)")] public float WashGrain = 1f;
+        [Tooltip("#307 wash grain tile (canvas px per wash_tile repeat, as UI/InkReveal _NoiseTile)")] public float GrainTilePx = 640f;
+        [Tooltip("#307 walked land: hanji alpha")] public float PaperAlpha = .94f;
+        [Tooltip("#307 ink darkening towards the rim (rho Fade.x - .18 .. Fade.x), not a shadow")] public float EdgeInk = .14f;
+        [Tooltip("#307 walked land relief: high-pass gain of the local shading and its maximum ink")] public float ReliefGain = 2.5f, ReliefInk = .20f;
+        [Tooltip("#307 cave plan by lightness: wall from x to y, floor from y to z (smoothsteps), wall line ink w")] public Vector4 CaveBands = new Vector4(.44f, .56f, .64f, .85f);
+        [Tooltip("#307 road ink width (display px); the Daedong distance ticks are off on the minimap")] public float RoadPx = 2.6f;
+        [Tooltip("#307 paper rim around the north tick (px wider than the ink tick)")] public float NorthTickRim = 3f;
     }
 
     /// <summary>#306 enemy health (SPEC-PLAYTEST-306 #8, D306 부칙 of D304; TEST): the lock-on stroke under the enso and the boss

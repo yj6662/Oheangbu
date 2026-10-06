@@ -1,0 +1,8 @@
+﻿# SPEC-SPELL-120-308 WP-05 (enemy control): interrupt, freeze, undertow. TEST starting values, not measured.
+# Inherit base = power, projectile speed and area geometry of the same glyph without a final (the wood circle, the water single, the water path).
+# power.scale: strike power factor / interrupt.duration, freeze.duration, slow.duration: seconds / boss.speed, slow.speed: movement scale 0..1 /
+# shatter.power: extra damage of the break as a factor of the cast power.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+곤,,circle.interrupt,,,,,base,,,,,,,,,,,,power.scale=0.6;interrupt.duration=0.8;boss.speed=0.7
+앗,,single.freeze,,,,,base,,,,,,,,,,,,freeze.duration=4;shatter.power=1;boss.speed=0.55
+옹,,path.undertow,,,,,base,,,,,,,,,,,,slow.speed=0.5;slow.duration=3

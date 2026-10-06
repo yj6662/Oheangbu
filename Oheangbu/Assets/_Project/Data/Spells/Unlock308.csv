@@ -1,0 +1,9 @@
+﻿# SPEC-SPELL-120-308 section 7: final-consonant unlocks. Only the giyeok final is granted in the main game (cheongryong).
+# The others are implemented and reachable through the editor-only TEST unlock in the isolated save <slot>_spell308_test.json.
+# A rule-sheet row marked Gate test is not opened by GrantedInMain either: only the TEST unlock of its final reaches it.
+종성,LedgerId,EvidenceId,GrantedInMain
+ㄱ,demo_unlock_coda_giyeok,,1
+ㄴ,world_unlock_coda_nieun,,0
+ㅅ,world_unlock_coda_siot,,0
+ㅇ,world_unlock_coda_ieung,,0
+ㅁ,world_unlock_coda_mieum,fallen_hwangryong,0

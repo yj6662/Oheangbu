@@ -29,6 +29,25 @@ namespace Oheangbu.Combat
         public event Action<EnemyAttackImpact> AttackImpactResolved;
         public event Action<AttackProvenance, bool> AttackPresentationEnded;
 
+        // #306 #11 tutorial boss sequencing (SPEC-PLAYTEST-306): the combat rules stay here; a sequencer only chooses the next
+        // authored profile while idle, holds new attacks, or holds a projectile short of the player until a predicate releases it.
+        /// <summary>No new attack starts while true (an attack already under way is never cancelled by this flag).</summary>
+        public bool AttackHeld { get; set; }
+        /// <summary>While this returns true, an authored projectile within FlightHoldDistance of its target stops (its impact
+        /// time slides with scaled time, so PredictedImpactTime and the organ telegraph keep pace). null = never held.</summary>
+        public Func<bool> FlightHold { get; set; }
+        [NonSerialized] public float FlightHoldDistance;
+        public bool FlightHeld { get; private set; }
+
+        /// <summary>Swaps the authored profile only between attacks (idle) and sets the next cooldown. Unlike Configure this
+        /// never stops or restarts anything, so a combo follow-up can start right after a recovery.</summary>
+        public bool TrySetIdleProfile(EnemyAttackProfileSO profile, float cooldown)
+        {
+            if (profile == null || _state != State.Idle || !float.IsFinite(cooldown) || !profile.TryValidate(out _)) return false;
+            _attackProfile = profile; _authoredProfileValid = true; _cooldown = Mathf.Max(0f, cooldown);
+            return true;
+        }
+
         public void Configure(EnemyAttackProfileSO profile)
         {
             if (profile != null && !profile.TryValidate(out var error)) throw new ArgumentException(error, nameof(profile));
@@ -50,7 +69,7 @@ namespace Oheangbu.Combat
             {
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
-                    if (AttackEnabled && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()) BeginAuthoredTelegraph();
+                    if (AttackEnabled && !AttackHeld && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()) BeginAuthoredTelegraph();
                     break;
                 case State.Telegraph:
                     if (!AttackEnabled || !HasLineOfSight()) { CancelAttack(); EnterRecover(); break; }
@@ -109,6 +128,11 @@ namespace Oheangbu.Combat
             float remaining = _impactTime - Time.time;
             bool homing = _attackProfile.Delivery == EnemyAttackDelivery.HomingProjectile;
             Vector3 target = homing ? _player.position + Vector3.up * .5f : _authoredPoint;
+            // #306 #11: a held shard waits short of the player; the impact time slides so nothing resolves while it waits
+            bool hold = FlightHold != null && FlightHoldDistance > 0f && remaining > 0f &&
+                remaining * _attackProfile.ProjectileSpeed <= FlightHoldDistance && FlightHold();
+            if (hold) { _impactTime += Time.deltaTime; remaining = _impactTime - Time.time; }
+            FlightHeld = hold;
             Vector3 nextPoint = Vector3.Lerp(_projectileStart, target, Mathf.Clamp01(1f - remaining / _authoredFlightDuration));
             if ((nextPoint - _authoredProjectilePrevious).sqrMagnitude > .0001f && Obstructed(_authoredProjectilePrevious, nextPoint))
             { CancelAttack(); EnterRecover(); return; }
@@ -132,7 +156,7 @@ namespace Oheangbu.Combat
             else if (outcome == ParryOutcome.Half) damage *= _config.HalfParryDamageFactor;
             else if (outcome == ParryOutcome.Block) damage *= _config.GuardBlockFactor;
             float before = _playerVitals.Hp01 * _playerVitals.MaxHp;
-            if (damage > 0) _playerVitals.TakeAttackDamage(damage, _attackProfile.Delivery == EnemyAttackDelivery.MeleeArc ? (_attack.Element.HasValue ? IncomingDamageKind.ElementalMelee : IncomingDamageKind.Melee) : (_attack.Element.HasValue ? IncomingDamageKind.ElementalRanged : IncomingDamageKind.Ranged));
+            if (damage > 0) EnemyStrike308.Deliver(_playerVitals, _vitals, damage, _attackProfile.Delivery == EnemyAttackDelivery.MeleeArc ? (_attack.Element.HasValue ? IncomingDamageKind.ElementalMelee : IncomingDamageKind.Melee) : (_attack.Element.HasValue ? IncomingDamageKind.ElementalRanged : IncomingDamageKind.Ranged));
             float applied = Mathf.Max(0, before - _playerVitals.Hp01 * _playerVitals.MaxHp);
             AttackImpactResolved?.Invoke(new EnemyAttackImpact(_attack, point, outcome, applied, true));
         }
@@ -169,6 +193,7 @@ namespace Oheangbu.Combat
         }
         private void EndAuthoredCue(bool cancelled)
         {
+            FlightHeld = false;
             if (!_authoredCueActive) return;
             _authoredCueActive = false; AttackPresentationEnded?.Invoke(_attack, cancelled);
         }
