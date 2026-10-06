@@ -11,6 +11,8 @@ namespace Oheangbu.App.World.UI
     // objective; everything else ink with a sheet rim (한지 테). Labels are TMP MapLabel21 / MapRegion44 (Ink_UnderPaper).
     // D308-25 (map 5): a mark's name label shows only while that mark is the pointed one (WorldMapPresenter.Hover.cs); the
     // realm names stay. The label objects and their texts are as before (the HUD reads the checkpoint label's text).
+    // D308-30 (map 6): the realm names are built as before but never shown unless MapStyle304SO.RegionNamesOnSheet - the realms
+    // read by wash colour and border line; the slip's realm line then stands at every view (RefreshRealmLine304).
     // D14: a variant is the same symbol + an outer ink ring (the rest where you wake); 남긴 통보 uses the D04 coin symbol.
     // Also the IMapMarkerSource304 read-only view for the HUD bearing line.
     public sealed partial class WorldMapPresenter : IMapMarkerSource304
@@ -181,7 +183,7 @@ namespace Oheangbu.App.World.UI
                 var label = regionLabels[i];
                 Vector2 n = projection.WorldToNormalized(regionCentres[i]);
                 Vector2 v = new Vector2((n.x - fullUv.x) / fullUv.width, (n.y - fullUv.y) / fullUv.height);
-                bool visible = !interior && targetExpanded && fold >= .995f && v.x >= 0 && v.x <= 1 && v.y >= 0 && v.y <= 1;
+                bool visible = mapStyle.RegionNamesOnSheet && !interior && targetExpanded && fold >= .995f && v.x >= 0 && v.x <= 1 && v.y >= 0 && v.y <= 1;
                 if (visible)
                 {
                     MeasureAwake304(label);

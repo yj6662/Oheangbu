@@ -104,6 +104,8 @@ namespace Oheangbu.App.World.UI
         [Tooltip("walked-land edge wobble")] public float FogEdgeNoise = .22f;
         [Tooltip("realm names keep this margin (page px) from the print edge and from the title slip and 북 on the paper")]
         public float RegionLabelMarginPx = 10f;
+        [Tooltip("D308-30 answer 3: the five realm names printed on the sheet. Off (the default) = no name on the sheet - the realms read by wash colour and border line (Realm308) - and the title slip's realm line then stands at every view (SlipRealm 0)")]
+        public bool RegionNamesOnSheet = false;
         [Tooltip("painted relief (the compact world's olive hillshade, cyan water, pink zone patches) printed as a monochrome ink wash on the sheet (#304 QA2; DESIGN §2.5 bans the old minimap green and a second accent). 0 = the coloured relief"), Range(0f, 1f)]
         public float PaintedInkWash = 1f;
         [Tooltip("ink wash: relief luminance (sRGB) at and above which the sheet stays bare")] public float PaintedInkLight = .55f;
@@ -143,6 +145,10 @@ namespace Oheangbu.App.World.UI
         [Tooltip("the baked map bundle both maps draw from (terrain picture, brush strips, icon atlas, frames). Set by the editor command " +
                  "MapOverhaul308 import, cleared by its revert. None, or a bundle baked for another map = the pre-#308 map")]
         public MapNotation308SO Notation308;
+        [Tooltip("#308 map 6 (D308-30): the realm sheets of the unfolded sheet - realm borders, realm wash colours, the faint relief of the whole world " +
+                 "(baked offline: Tools/Unity/Stage308_map6 map6_realm.py). None, one baked for another map, or its On = 0 = the sheet of map 5 " +
+                 "(unwalked land = the flat wash). The HUD minimap never reads it")]
+        public MapRealm308SO Realm308;
 
         public MapKindText304 Kind(MapMarkerKind304 kind)
         {

@@ -38,6 +38,7 @@ namespace Oheangbu.App.World.UI
     public sealed partial class WorldMapPresenter : IMapNotationSource308
     {
         MapNotation308SO n308;
+        MapRealm308SO realm308;                  // #308 map 6 (D308-30): the realm sheets of the unfolded sheet; null = the sheet of map 5
         MapStrokes308Data strokes308;
         byte[] regions308;                       // 125 x 188 region numbers, south row first; null = no gate
         Func<Vector2, bool> revealGate308;
@@ -67,7 +68,7 @@ namespace Oheangbu.App.World.UI
         // ------------------------------------------------------------------ bundle (Initialize, before the fog is built)
         void InitNotation308()
         {
-            n308 = null; strokes308 = null; regions308 = null; revealGate308 = null;
+            n308 = null; realm308 = null; strokes308 = null; regions308 = null; revealGate308 = null;
             var candidate = mapStyle != null ? mapStyle.Notation308 : null;
             if (candidate == null || ownsRuntimeData || !candidate.IsUsableFor(data)) return;
             var parsed = MapStrokes308Data.Parse(candidate.Strokes.bytes, out string error);
@@ -75,6 +76,7 @@ namespace Oheangbu.App.World.UI
             if ((parsed.Min - data.BoundsMin).sqrMagnitude > .01f || (parsed.Max - data.BoundsMax).sqrMagnitude > .01f)
             { Debug.LogWarning("[Map308] the strips' bounds differ from the map's: the map draws the pre-#308 way."); return; }
             n308 = candidate; strokes308 = parsed;
+            realm308 = mapStyle.Realm308 != null && mapStyle.Realm308.IsUsableFor(data) ? mapStyle.Realm308 : null;   // only with the bundle: the block lives in its shader branch
             regionsWidth308 = Mathf.CeilToInt((data.BoundsMax.x - data.BoundsMin.x) / WorldMapDiscoveryGrid.CellSize);
             regionsHeight308 = Mathf.CeilToInt((data.BoundsMax.y - data.BoundsMin.y) / WorldMapDiscoveryGrid.CellSize);
             if (n308.RegionGatedReveal && n308.RevealRegions != null)
@@ -128,7 +130,46 @@ namespace Oheangbu.App.World.UI
             bands.y = Mathf.Max(bands.x + .001f, bands.y); bands.z = Mathf.Max(bands.y + .001f, bands.z); bands.w = Mathf.Clamp01(bands.w);
             material.SetVector("_M308Cave", bands);
             if (clearInk308 != null) material.SetTexture("_MacroInkTex", clearInk308);
+            if (!mini) ApplyRealm308(material);
             PaperBand308(material, mini ? 1.2f : 2.7f, 1f, mini);
+        }
+
+        // ------------------------------------------------------------------ #308 map 6 (D308-30): realm sheets, the unfolded sheet only
+        /// <summary>The realm values that do not follow the scale. Without a usable MapRealm308SO (none, baked for another map) or with
+        /// its On = 0 the switch _R308A.x is 0 and the sheet draws the map of map 5. Never called for a minimap material: that shader
+        /// variant (_MINI_HUD) does not declare these properties' uniforms.</summary>
+        void ApplyRealm308(Material material)
+        {
+            var r = realm308;
+            material.SetVector("_R308A", r != null ? new Vector4(Mathf.Clamp01(r.On), Mathf.Clamp01(r.Veil), Mathf.Clamp01(r.FaintTerrain), Mathf.Clamp01(r.ReliefInk)) : new Vector4(0f, 1f, 0f, 0f));
+            if (r == null) return;
+            material.SetTexture("_RealmBorder308", r.Border);
+            material.SetTexture("_RealmGround308", r.Ground);
+            material.SetVector("_R308B", new Vector4(Mathf.Clamp01(r.WashUnwalked), Mathf.Clamp01(r.WashWalked), Mathf.Clamp01(r.LineInkUnwalked), Mathf.Clamp01(r.LineInkWalked)));
+        }
+
+        /// <summary>The realm border's widths, in screen px at this scale: the line's half width, the soft wash round it (never wider than
+        /// .95 x the border sheet's range on screen, so it has faded out where the sheet's distance stops), and the gap noise's lattice
+        /// in cells across the world (world anchored: the gaps do not move with the zoom).</summary>
+        void RealmBand308(Material material, float metresPerPx, float screen)
+        {
+            var r = realm308;
+            if (r == null) return;
+            Vector2 size = data.BoundsMax - data.BoundsMin;
+            float range = Mathf.Max(1f, r.RangeMetres), metresPerScreenPx = Mathf.Max(.01f, metresPerPx / screen);
+            float bleed = Mathf.Max(.01f, Mathf.Min(Mathf.Max(0f, r.BleedPx) * screen, .95f * range / metresPerScreenPx));
+            material.SetVector("_R308C", new Vector4(Mathf.Max(0f, r.LinePx) * screen * .5f, range, 1f / bleed, Mathf.Clamp01(r.BleedInk)));
+            float cell = Mathf.Max(1f, r.LineBreakMetres);
+            material.SetVector("_R308D", new Vector4(size.x / cell, size.y / cell, Mathf.Clamp01(r.LineBreak), r.WashUnwalked > 1e-4f ? Mathf.Clamp01(r.WashWalked / r.WashUnwalked) : 0f));
+        }
+
+        /// <summary>Edit-mode preview (MapPage308, #308 map 6): the realm asset in use and the four realm vectors the unfolded sheet's
+        /// material holds right now (0 = _R308A .. 3 = _R308D), read back from the material.</summary>
+        public MapRealm308SO PreviewRealmAsset308 => realm308;
+        public Vector4 PreviewRealm308(int which)
+        {
+            string name = which == 0 ? "_R308A" : which == 1 ? "_R308B" : which == 2 ? "_R308C" : "_R308D";
+            return paperMaterial != null && paperMaterial.HasProperty(name) ? paperMaterial.GetVector(name) : Vector4.zero;
         }
 
         /// <summary>The values that follow the scale: pattern period of the zoom band, shore line width in metres, slope wash or
@@ -163,6 +204,7 @@ namespace Oheangbu.App.World.UI
                 float whole = Mathf.Clamp01(n308.SheetRimWhole);
                 material.SetVector("_M308Rim", new Vector4(Mathf.Clamp01(Mathf.Lerp(n308.EdgeRimAlpha, n308.SheetRimAlpha, whole)), Mathf.Max(.5f, n308.EdgeRimPx * screen),
                     whole, Mathf.Max(.5f, n308.SheetRimPx * screen)));
+                RealmBand308(material, metresPerPx, screen);   // #308 map 6: the realm border's screen widths at this scale
             }
         }
 

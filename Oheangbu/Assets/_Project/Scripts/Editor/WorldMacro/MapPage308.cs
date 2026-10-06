@@ -32,6 +32,16 @@ namespace Oheangbu.EditorTools.WorldMacro
     //                  mutant=... plants a fault (a legend object with a text / two name tags): the answer must be `page FAILED`.
     // The lists are data: Tools/Unity/Stage308_map5/Data/map5_page_texts.json. A missing or unreadable file is a FAILED line,
     // never a pass. No dialog, no static state, no asset write.
+    // #308 map 6 (D308-30): no realm NAME stands on the sheet (MapStyle304SO.RegionNamesOnSheet off) - Inspect fails on one; `page`
+    // adds: the slip's realm line stands and is the realm of the catalogue at the fixture's place, and the sheet's material carries
+    // the realm asset's numbers (MapRealm308SO; the sheets themselves: MapRealm308 `check`). Two faults of the first editor run of
+    // `page` (19 - 21 of 39 failed) are fixed here:
+    //   (1) PagePx assumed the page root's local origin is its CENTRE. PlaytestUiView.Stretch gives the root pivot (0, 1): every
+    //       rect read (+960, +540) off. PagePx now measures from the root rect's own centre, whatever the pivot.
+    //   (2) the fixture stood at Content.StartFeet = inside the 폐광 zone (the game starts in the mine), and the check asked
+    //       ZoneAt with y = 0 - outside the zone's height range - so it believed it was outdoors while the presenter drew the
+    //       cave view: "default view not the whole span", "0 of 0 marks". Now: the fixture's own feet height is asked, and
+    //       without at=x,z a start inside a zone moves the fixture to the nearest baked marker outside every zone.
     public static class MapPage308
     {
         public const string DataFile = "Tools/Unity/Stage308_map5/Data/map5_page_texts.json";
@@ -180,6 +190,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (c.TagCount > t.max.tag) c.Tags.Add(c.TagCount + " name tags visible (at most " + t.max.tag + ")");
             if (c.PlateCount > t.max.tag) c.Tags.Add(c.PlateCount + " name plates visible (at most " + t.max.tag + ")");
             if (c.RegionCount > t.max.regionNames) c.Texts.Add(c.RegionCount + " realm names visible (at most " + t.max.regionNames + ")");
+            if (style != null && !style.RegionNamesOnSheet && c.RegionCount > 0)
+                c.Texts.Add(c.RegionCount + " realm name(s) on the sheet (" + string.Join(", ", shownRegions) + ") while MapStyle304SO.RegionNamesOnSheet is off (D308-30: realms read by colour and line)");
             if (c.RealmLines > t.max.realmLine) c.Texts.Add(c.RealmLines + " slip realm lines visible (at most " + t.max.realmLine + ")");
             return c;
         }
@@ -254,7 +266,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                 var session = sessionHost.AddComponent<WorldMacroPlaytestSession>();
                 content = Object.Instantiate(ui.Content);
                 Vector2 here = at ?? new Vector2(content.StartFeet.x, content.StartFeet.z);
+                // map 6 fix (2): the game starts inside a zone (the mine). Without at=x,z the fixture stands at the nearest baked marker
+                // outside every zone, so the outdoor rules are really tried; the feet height stays the content's (ZoneAt reads it).
+                string movedFrom = "";
+                if (at == null && ui.MapData.ZoneAt(new Vector3(here.x, content.StartFeet.y, here.y)) != null)
+                {
+                    float feet = content.StartFeet.y; Vector2 start = here;
+                    var outdoor = (ui.MapData.Markers ?? Array.Empty<WorldMapMarkerSpec>()).Where(m => m != null && ui.MapData.ZoneAt(new Vector3(m.WorldXZ.x, feet, m.WorldXZ.y)) == null)
+                        .OrderBy(m => (m.WorldXZ - start).sqrMagnitude).FirstOrDefault();
+                    if (outdoor != null) { movedFrom = "start " + start + " is inside a zone -> fixture at marker '" + outdoor.Id + "' " + outdoor.WorldXZ; here = outdoor.WorldXZ; }
+                }
                 content.StartFeet = new Vector3(here.x, content.StartFeet.y, here.y); session.Content = content;
+                Vector3 here3 = content.StartFeet;   // the presenter asks ZoneAt with the feet's height: so does this check
                 var progress = WorldMacroProgress.CreateNew("map5-page", content.StartFeet, 0);
                 typeof(WorldMacroPlaytestSession).GetProperty("Progress").SetValue(session, progress);
                 style = Object.Instantiate(styleAsset); style.hideFlags = HideFlags.HideAndDontSave; style.Notation308 = bundleOn ? notation : null;
@@ -289,11 +312,13 @@ namespace Oheangbu.EditorTools.WorldMacro
 
                 float k = presenter.PreviewPageScale308;
                 Vector2 worldMin = data.BoundsMin, worldSize = data.BoundsMax - data.BoundsMin;
-                // page px (1920 x 1080, top-left origin) of a rect: the page root's local space is centred and scaled by k
+                // page px (1920 x 1080, top-left origin) of a rect: the page is centred in the root's RECT and scaled by k. map 6 fix (1):
+                // measured from the root rect's centre - the root's pivot is (0, 1) (PlaytestUiView.Stretch), its local origin is NOT the centre
+                Vector2 rootCentre = root.rect.center;
                 Rect PagePx(RectTransform r)
                 {
                     Rect a = HarnessUiRules304.RectIn(root, r);
-                    return new Rect(a.xMin / k + 960f, 540f - a.yMax / k, a.width / k, a.height / k);
+                    return new Rect((a.xMin - rootCentre.x) / k + 960f, 540f - (a.yMax - rootCentre.y) / k, a.width / k, a.height / k);
                 }
                 Vector2 ToWindow(Vector2 worldXZ)
                 {
@@ -340,7 +365,34 @@ namespace Oheangbu.EditorTools.WorldMacro
                 sheet.Add(rest.Texts.Count == 0 && rest.TextCount > 0, "AC-M5.2 every visible text is on the allow-list by value (" + rest.TextCount + " texts; the rail is not in this fixture - Play's layout-check reads it)"
                     + (rest.Texts.Count > 0 ? ": " + string.Join("; ", rest.Texts.Take(6)) : ""));
                 sheet.Add(rest.TagCount == 0 && rest.PlateCount == 0 && rest.Tags.Count == 0, "AC-M5.5 no pointer: name tags " + rest.TagCount + ", plates " + rest.PlateCount + (rest.Tags.Count > 0 ? ": " + string.Join("; ", rest.Tags.Take(4)) : ""));
-                sheet.Add(rest.RegionCount <= texts.max.regionNames, "AC-M5.5 realm names in the default view: " + rest.RegionCount + " (a realm's name stands when its centre is in view; at most " + texts.max.regionNames + ")");
+                if (style.RegionNamesOnSheet)
+                    sheet.Add(rest.RegionCount <= texts.max.regionNames, "AC-M5.5 realm names in the default view: " + rest.RegionCount + " (a realm's name stands when its centre is in view; at most " + texts.max.regionNames + ")");
+                else
+                {
+                    // AC-M6.1 (D308-30 answer 3): no realm name on the sheet; the slip's realm line stands and names the catalogue's realm (or the zone) here
+                    var zoneHere = data.ZoneAt(here3);
+                    var realmHere = data.Locations != null ? data.Locations.RealmAt(new Vector3(here.x, 0f, here.y)) : null;
+                    string wantLine = Clean(zoneHere != null ? zoneHere.Label : realmHere != null ? realmHere.Name : "");
+                    string gotLine = rest.Seen.Where(s => s.Contains("MapTitle/Realm = ")).Select(s => s.Substring(s.IndexOf(" = ", StringComparison.Ordinal) + 3)).FirstOrDefault() ?? "";
+                    sheet.Add(rest.RegionCount == 0, "AC-M6.1 no realm name stands on the sheet in the default view (RegionNamesOnSheet off): " + rest.RegionCount);
+                    sheet.Add(rest.RealmLines == 1 && wantLine.Length > 0 && gotLine == wantLine, "AC-M6.1 the slip's realm line stands and says where the fixture is: \"" + gotLine + "\" = \"" + wantLine + "\" (lines " + rest.RealmLines + ")");
+                }
+                // AC-M6.2 (D308-30): the sheet's material carries the realm asset's numbers; without the asset the switch is 0 (the sheet of map 5)
+                {
+                    var realm = presenter.PreviewRealmAsset308; Vector4 ra = presenter.PreviewRealm308(0), rb = presenter.PreviewRealm308(1), rc = presenter.PreviewRealm308(2), rd = presenter.PreviewRealm308(3);
+                    if (!bundle) sheet.Add(realm == null && ra.x == 0f, "AC-M6.2 no bundle: no realm sheets on the sheet (switch " + F(ra.x) + ")");
+                    else if (style.Realm308 == null) sheet.Add(realm == null && ra.x == 0f, "AC-M6.2 MapStyle304SO.Realm308 is empty: the sheet of map 5 (switch " + F(ra.x) + ")");
+                    else
+                    {
+                        float screenPx = canvas.scaleFactor * k;
+                        bool same = realm == style.Realm308 && Mathf.Approximately(ra.x, Mathf.Clamp01(realm.On)) && Mathf.Approximately(ra.y, realm.Veil) && Mathf.Approximately(ra.z, realm.FaintTerrain) && Mathf.Approximately(ra.w, realm.ReliefInk)
+                            && Mathf.Approximately(rb.x, realm.WashUnwalked) && Mathf.Approximately(rb.y, realm.WashWalked) && Mathf.Approximately(rb.z, realm.LineInkUnwalked) && Mathf.Approximately(rb.w, realm.LineInkWalked)
+                            && Mathf.Abs(rc.x - realm.LinePx * screenPx * .5f) <= .01f && Mathf.Approximately(rc.y, realm.RangeMetres) && Mathf.Approximately(rc.w, realm.BleedInk) && Mathf.Approximately(rd.z, realm.LineBreak)
+                            && rc.z > 0f && 1f / rc.z <= realm.BleedPx * screenPx + .01f;
+                        sheet.Add(same, "AC-M6.2 the sheet's material carries the realm asset: switch " + F(ra.x) + " veil " + F(ra.y) + " faint " + F(ra.z) + " relief " + F(ra.w) + " | wash " + F(rb.x) + " / " + F(rb.y) + " border ink " + F(rb.z) + " / " + F(rb.w)
+                            + " | half width " + F(rc.x) + " screen px (asset " + F(realm.LinePx) + " page px x " + F(screenPx) + " / 2), range " + F(rc.y) + " m, bleed " + F(rc.z > 0f ? 1f / rc.z : 0f, "0.##") + " px ink " + F(rc.w) + " | gaps " + F(rd.z));
+                    }
+                }
                 sheet.Info("default view texts: " + string.Join(" | ", rest.Seen));
 
                 // ---- AC-M5.3 rects (page px)
@@ -383,7 +435,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Rect uv0 = presenter.PreviewView308; Vector2 s0 = Scale();
                 bool illustrated = data.HasIllustration && data.DisplayMap != null && data.DisplayMap.width > 0;
                 float fitScale = worldSize.x / wantWindow.width;
-                if (illustrated && data.ZoneAt(new Vector3(here.x, 0f, here.y)) == null)
+                if (illustrated && data.ZoneAt(here3) == null)
                     sheet.Add(Mathf.Abs(uv0.width - 1f) < 1e-5f && Mathf.Abs(s0.x - fitScale) <= .005f, "AC-M5.4 default view: uv width " + F(uv0.width, "0.#####") + " (whole east-west span), " + F(s0.x, "0.####") + " m per page px (world width / window width = " + F(fitScale, "0.####") + ")");
                 else sheet.Info("default view not the outdoor illustrated one here (interior, or a map without an illustration): uv " + uv0 + ", " + F(s0.x, "0.####") + " m per page px");
                 sheet.Add(Isotropic(out float worst0), "AC-M5.4 default view isotropic: east-west " + F(s0.x, "0.#####") + " / north-south " + F(s0.y, "0.#####") + " m per px (difference " + F(worst0, "0.#######") + ")");
@@ -401,7 +453,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 float closest = Scale().x, wantClosest = style.MinViewWidth * worldSize.x / Mathf.Max(1f, style.ViewReferenceWidthPx);
                 sheet.Add(worstStep <= 1e-4f, "AC-M5.4 every wheel step isotropic (" + steps + " steps in, worst difference " + F(worstStep, "0.#######") + ")");
-                if (data.ZoneAt(new Vector3(here.x, 0f, here.y)) == null)
+                if (data.ZoneAt(here3) == null)
                     sheet.Add(Mathf.Abs(closest - wantClosest) <= .002f, "AC-M5.12 closest zoom " + F(closest, "0.####") + " m per page px = MinViewWidth x world width / ViewReferenceWidthPx " + F(wantClosest, "0.####") + " (the scale of the 740 px window)");
                 else sheet.Info("interior: closest zoom " + F(closest, "0.####") + " m per page px");
                 var closeCensus = Tagged();
@@ -409,7 +461,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     + (closeCensus.FailureCount > 0 ? ": " + string.Join("; ", closeCensus.Failures.Take(4)) : ""));
 
                 // ---- AC-M5.7: the pin as a probe mark at nine places of the window, at the closest zoom and four steps in from the default
-                bool outdoors = data.ZoneAt(new Vector3(here.x, 0f, here.y)) == null;
+                bool outdoors = data.ZoneAt(here3) == null;
                 Rect titleIn = HarnessUiRules304.RectIn(window, title), northIn = HarnessUiRules304.RectIn(window, north);
                 if (outdoors)
                 {
@@ -566,6 +618,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 sheet.Add(keys.Count == 3 && !keys.Any(p => p.EndsWith("/l", StringComparison.OrdinalIgnoreCase)), "AC-M5.12 the page's own keys: [" + string.Join(", ", keys) + "] (three, no L)");
                 sheet.Add(typeof(WorldMapPresenter).GetProperty("LegendVisible") == null && typeof(WorldMapPresenter).GetMethod("ToggleLegend", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public) == null,
                     "AC-M5.1 WorldMapPresenter has no LegendVisible / ToggleLegend member");
+                if (movedFrom.Length > 0) sheet.Info(movedFrom);
                 sheet.Info("fixture: " + (bundle ? "bundle ON (stage '" + presenter.Notation308.Stage + "')" : "no bundle") + ", at " + here + ", every marker known (" + progress.ui.discoveredMarkers.Count + "), every cell walked, " + width + " x " + height
                     + ", strip vertices " + presenter.FullStripVertices308 + (mutant.Length > 0 ? ", MUTANT " + mutant : ""));
                 sheet.Info("not in this check (Play / captures): the rail's texts, the fold, a real pointer, the click that puts the pin (it saves), the minimap's pixels (AC-M5.8), text scale 1.25 (layout-large)");

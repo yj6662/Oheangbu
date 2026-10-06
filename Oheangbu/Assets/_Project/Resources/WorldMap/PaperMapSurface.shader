@@ -54,6 +54,12 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
         _M308Edge("#308 crisp walked edge: threshold from, threshold span, noise cells 1, noise cells 2",Vector)=(.14,.42,1.6,3.7)
         _M308Cave("#308 cave plan: wall from, wall to = floor from, floor to, wall ink",Vector)=(.44,.56,.64,.85)
         _M308Border("#308 sheet: the picture feathers out before the world border: width px, grain wobble px",Vector)=(18,10,0,0)
+        _RealmBorder308("#308 map 6 realm borders: per colour class the signed distance to its borders, code 128 = on it (sheet only)",2D)="white"{}
+        _RealmGround308("#308 map 6 realm ground: RGB wash colour, A relief ink (sheet only)",2D)="black"{}
+        _R308A("#308 map 6: on 0 / 1, veil of the old unwalked wash, faint terrain share, relief ink",Vector)=(0,1,0,0)
+        _R308B("#308 map 6: wash unwalked, wash walked, border ink unwalked, border ink walked",Vector)=(0,0,0,0)
+        _R308C("#308 map 6 border: half width screen px, range m, 1 / bleed screen px, bleed ink",Vector)=(.9,64,.15,0)
+        _R308D("#308 map 6 border gaps: noise cells across the world (u, v), gap share; bleed share on walked land",Vector)=(57,86,0,.5)
         _StencilComp("Stencil Comparison",Float)=8
         _Stencil("Stencil ID",Float)=0
         _StencilOp("Stencil Operation",Float)=0
@@ -98,6 +104,10 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
             #ifdef _MAP308
             sampler2D _Terrain308,_Pattern308;
             float4 _M308Paper,_M308Unknown,_M308Ink,_M308Wash,_M308Elev,_M308Forest,_M308Rock,_M308Water,_M308Tile,_M308Grain,_M308Rim,_M308Edge,_M308Cave,_M308Border;
+            #ifndef _MINI_HUD
+            // #308 map 6 (D308-30): the realm sheets - the unfolded sheet only; the minimap variant does not even declare them
+            sampler2D _RealmBorder308,_RealmGround308;float4 _R308A,_R308B,_R308C,_R308D;
+            #endif
             #endif
             float MapLum304(float2 uv)
             {
@@ -237,9 +247,10 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
                 #else
                 // ---------------------------------------------------------------- #308 notation (SPEC-MAP-OVERHAUL-308 1, 4, 6.3)
                 // One baked terrain picture and one pattern tile, the same for the sheet and the minimap; roads, ridges, cliffs
-                // and walls are brush strips (UI/MapStroke308) over this. Unwalked land is the flat wash and its grain, nothing
-                // else (#214): every terrain term below is under `shown`. The colour math is in sRGB values, as the offline
-                // twin composes; one conversion at the end.
+                // and walls are brush strips (UI/MapStroke308) over this. On the MINIMAP unwalked land is the flat wash and its
+                // grain, nothing else (#214): every terrain term below is under `shown`. On the unfolded SHEET map 6 (D308-30)
+                // shows the whole world faintly under the walked land - see the `map 6` block. The colour math is in sRGB values,
+                // as the offline twin composes; one conversion at the end.
                 float interiorOn=saturate(_Interior);
                 float inside=printInside*worldInside;
                 fixed4 ter=tex2D(_Terrain308,worldUv);
@@ -265,7 +276,8 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
                 float rock=pat.b*smoothstep(_M308Rock.x,1,ter.r)*_M308Rock.y;
                 float shore=saturate((_M308Water.y-abs(dm))/_M308Water.z+.5)*_M308Rock.z;
                 float ripple=pat.g*smoothstep(_M308Rock.w,_M308Rock.w+_M308Elev.z,dm)*_M308Water.w;
-                land=lerp(land,_M308Ink.rgb,saturate(max(max(forest,rock),max(ripple,shore))));
+                float tink=saturate(max(max(forest,rock),max(ripple,shore)));
+                land=lerp(land,_M308Ink.rgb,tink);
                 // caves: the cave plan re-inked by lightness on BOTH maps (floor = paper, wall = ink, rock = the wash)
                 float2 cuv=(worldUv-_CaveUv.xy)/max(_CaveUv.zw,.0001);
                 float caveInside=step(0,cuv.x)*step(cuv.x,1)*step(0,cuv.y)*step(cuv.y,1);
@@ -289,7 +301,37 @@ Shader "Oheangbu/UI/TwiceFoldedHanji"
                 float edgePx=walk.x/max(length(float2(ddx(walk.x),ddy(walk.x))),1e-5);
                 float crisp=saturate(edgePx+.5);
                 float shown=lerp(crisp,lerp(1,caveWalked,saturate(_ExploreCave)),interiorOn);
-                fixed3 col=lerp(unk,lerp(land,inLand,interiorOn),shown);
+                fixed3 unk6=unk;fixed3 land6=land;
+                #ifndef _MINI_HUD
+                // #308 map 6 (D308-30 "실제 지형과 각 강토를 나눈 선이 보이는 형태, 색으로 강토 구분"): the unfolded sheet shows the WHOLE
+                // world from the start - unwalked land = the paper under a veil of the old wash, the SAME terrain picture at a share
+                // of its ink, the relief of the height field, the realm's wash colour and the realm border; walked land keeps its
+                // full notation (strips, marks: still walked land only) and takes a lighter wash and the border. Two small sheets
+                // (MapRealm308SO, baked offline from the location catalogue's realm polygons, the approved five wash colours and
+                // the scenes' height field): _RealmGround308 RGB wash colour, A relief ink; _RealmBorder308 per colour class of
+                // the realm graph the signed distance to its borders (code 128 = on a border) - the least |distance| of the four,
+                // in screen px, is the line, at one width at every zoom (as the shore line). The gaps are a world-anchored value
+                // noise (the dry-brush break of the walked edge). Ink and wash only: nothing here adds light. _R308A.x = 0 (no
+                // realm asset, or its On = 0) = the sheet of map 5: unk6 = unk, land6 = land. A cave view is untouched.
+                // Mirror: Tools/Unity/Stage308_map6/_Tools/map6_twin.py render6 (the preview pictures are drawn by it).
+                {
+                    fixed4 gr=tex2D(_RealmGround308,worldUv);
+                    float4 d4=abs(tex2D(_RealmBorder308,worldUv)*255-128)/127;
+                    float dpx=min(min(d4.x,d4.y),min(d4.z,d4.w))*_R308C.y/max(_M308Water.z,1e-5);
+                    float gap=lerp(1,smoothstep(.30,.50,MapFog308_Noise(worldUv*_R308D.xy+11.3)),saturate(_R308D.z));
+                    float line6=saturate(_R308C.x-dpx+.5)*gap;
+                    float bleed6=saturate(1-dpx*_R308C.z);bleed6=bleed6*bleed6*_R308C.w;
+                    fixed3 far6=lerp(sheet,unk,saturate(_R308A.y))*(1-wash*_R308A.z)*(1-gr.a*step(dm,0)*_R308A.w);
+                    far6=lerp(far6,_M308Ink.rgb,tink*saturate(_R308A.z));
+                    far6=lerp(far6,gr.rgb,saturate(_R308B.x));
+                    far6=lerp(far6,_M308Ink.rgb,saturate(max(line6*_R308B.z,bleed6)));
+                    fixed3 near6=lerp(land,gr.rgb,saturate(_R308B.y));
+                    near6=lerp(near6,_M308Ink.rgb,saturate(max(line6*_R308B.w,bleed6*_R308D.w)));
+                    float on6=saturate(_R308A.x)*(1-interiorOn);
+                    unk6=lerp(unk,far6,on6);land6=lerp(land,near6,on6);
+                }
+                #endif
+                fixed3 col=lerp(unk6,lerp(land6,inLand,interiorOn),shown);
                 // ink rim: the outermost _M308Rim.y px of the walked land, ink at _M308Rim.x over the unwalked wash. It is part
                 // of the walked land (inside the edge), and never deep inside it (cover = 1 there).
                 // #308 map 3: the rim's ink AND width follow the gate (MapFog308_Rim: thick where the brush is pressed, thin to the end of a run)
