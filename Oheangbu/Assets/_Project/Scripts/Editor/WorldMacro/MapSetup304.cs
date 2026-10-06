@@ -12,6 +12,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   refreshes Resources/UI304/map/MapStyle304.asset (MapStyle304SO.ResourcePath) and wires its sprites. Tunables and
     //   text already edited in the asset are kept (":reset" restores the code defaults). Idempotent, Edit Mode only, no dialog.
     //   Run after "ui304-setup" (the foundation sprites the map also uses: sheet_map, arrow, enso, ring_dashed, disc).
+    //   D308-25 (map 5): also wires MapStyle304SO.SheetWide = Textures/map/sheet_map_wide.png (the 1556 x 820 sheet picture,
+    //   Tools/Art/map5_sheet_wide.py). Only the style asset is saved (SaveAssetIfDirty: other sessions' dirty assets stay).
     public static class MapSetup304
     {
         const string TextureFolder = "Assets/_Project/Art/UI/UI304/Textures/map";
@@ -57,7 +59,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             style.PictRest = S("pict_rest"); style.PictCave = S("pict_cave"); style.PictMountain = S("pict_mountain");
             style.PictGate = S("pict_gate"); style.PictVillage = S("pict_village"); style.Coin = S("coin_tongbo");
             style.VariantRing = S("ring_variant"); style.SlipFrame = S("slip_frame");
-            EditorUtility.SetDirty(style); AssetDatabase.SaveAssets();
+            style.SheetWide = AssetDatabase.LoadAssetAtPath<Sprite>(TextureFolder + "/sheet_map_wide.png");
+            if (style.SheetWide == null) { missing++; log.Add("SPRITE missing sheet_map_wide (Tools/Art/map5_sheet_wide.py builds it from sheet_map.png; until then the map draws the 800x820 sheet stretched)"); }
+            EditorUtility.SetDirty(style); AssetDatabase.SaveAssetIfDirty(style);
             log.Add("SPRITES missing=" + missing);
             log.Add(Report());
             return string.Join("\n", log);
@@ -72,7 +76,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                    " rest=" + Name(style.PictRest) + " cave=" + Name(style.PictCave) + " mountain=" + Name(style.PictMountain) +
                    " gate=" + Name(style.PictGate) + " village=" + Name(style.PictVillage) + " coin=" + Name(style.Coin) +
                    " ring=" + Name(style.VariantRing) + " frame=" + Name(style.SlipFrame) + (style.SlipFrame != null ? " border=" + style.SlipFrame.border : "") +
-                   " objective=" + style.Objective + " daedong=" + style.Daedong + " legend=" + (style.Legend != null ? style.Legend.Count : 0);
+                   " objective=" + style.Objective + " daedong=" + style.Daedong + " sheet=" + Name(style.SheetWide) + " " + style.SheetRect + " slipRealm=" + style.SlipRealm;
         }
 
         static string Name(UnityEngine.Object o) => o != null ? o.name : "MISSING";

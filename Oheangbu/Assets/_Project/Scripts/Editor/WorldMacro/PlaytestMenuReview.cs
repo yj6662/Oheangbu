@@ -166,6 +166,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             public string[] iconOnlySelectables = Array.Empty<string>();
             public string[] instructionTexts = Array.Empty<string>();
             public string[] mapLabels = Array.Empty<string>();          // #304 QA: 지도 labels outside the printed window / under the title slip
+            public string[] mapDiet = Array.Empty<string>();            // D308-25: 지도 = the map only (objects, components, key line, texts by value, one name tag)
             public string[] failures = Array.Empty<string>();
         }
 
@@ -174,7 +175,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             public readonly List<string> Inspected = new List<string>(), PageFits = new List<string>(), Overflows = new List<string>(),
                 OutsideCanvas = new List<string>(), OutsideSafe = new List<string>(), BelowMinimum = new List<string>(),
                 SmallInfo = new List<string>(), IconOnly = new List<string>(), Instruction = new List<string>(), MapLabels = new List<string>(),
-                Failures = new List<string>();
+                MapDiet = new List<string>(), Failures = new List<string>();
             public int Tmp, Legacy;
         }
 
@@ -521,6 +522,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (findings.IconOnly.Count > 0) failures.Add(findings.IconOnly.Count + " icon-only Selectable(s) without a text label (IMPLEMENTATION §9.6).");
             if (findings.Instruction.Count > 0) failures.Add(findings.Instruction.Count + " instruction-style text(s) (DESIGN §3.3 지시문 금지).");
             if (findings.MapLabels.Count > 0) failures.Add(findings.MapLabels.Count + " map label(s) leave the printed window or sit under the title slip (DESIGN §7.6, map.png).");
+            if (findings.MapDiet.Count > 0) failures.Add(findings.MapDiet.Count + " thing(s) on the 지도 page beyond the map, its title slip, 북, the key line and one name tag (D308-25, SPEC-MAP-OVERHAUL-308 5b).");
             var report = new LayoutReport
             {
                 utc = DateTime.UtcNow.ToString("O"), status = failures.Count == 0 ? "PASS" : "FAIL",
@@ -531,13 +533,13 @@ namespace Oheangbu.EditorTools.WorldMacro
                 textOverflows = findings.Overflows.ToArray(), outsideCanvas = findings.OutsideCanvas.ToArray(),
                 outsideTitleSafe = findings.OutsideSafe.ToArray(), belowMinimumText = findings.BelowMinimum.ToArray(),
                 smallTextInfo = findings.SmallInfo.ToArray(), iconOnlySelectables = findings.IconOnly.ToArray(),
-                instructionTexts = findings.Instruction.ToArray(), mapLabels = findings.MapLabels.ToArray(), failures = failures.ToArray()
+                instructionTexts = findings.Instruction.ToArray(), mapLabels = findings.MapLabels.ToArray(), mapDiet = findings.MapDiet.ToArray(), failures = failures.ToArray()
             };
             string path = Path.Combine(ValidationFolder, large ? "layout_large_review.json" : "layout_review.json");
             File.WriteAllText(path, JsonUtility.ToJson(report, true));
             return report.status + " layout-check pages=" + findings.Inspected.Count + " samples=" + samples.Count + " overflows=" + findings.Overflows.Count
                 + " outside=" + (findings.OutsideCanvas.Count + findings.OutsideSafe.Count) + " iconOnly=" + findings.IconOnly.Count
-                + " mapLabels=" + findings.MapLabels.Count + " tmp=" + findings.Tmp + " legacy=" + findings.Legacy + " report=" + path;
+                + " mapLabels=" + findings.MapLabels.Count + " mapDiet=" + findings.MapDiet.Count + " tmp=" + findings.Tmp + " legacy=" + findings.Legacy + " report=" + path;
         }
 
         /// <summary>UiPageFit304 rule: k = min(1, W/1920, H/1080) of the page's parent (the full canvas).</summary>
@@ -1300,7 +1302,10 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         /// <summary>지도 (DESIGN §7.6): MapLayer (veil, paper, MapPage304 chrome) + MenuRailLayer304 (MapRail304). The sheet is unfolded
         /// at once (WorldMapPresenter.ReducedMotion for the open, one Tick) so the paper's labels are placed inside this check, then the
-        /// usual label rules run and every live label on the paper must stay inside the printed window and clear of the title slip.</summary>
+        /// usual label rules run and every live label on the paper must stay inside the printed window and clear of the title slip.
+        /// D308-25 (map 5): then the page's own rule set (MapPage308.Inspect, the same one `MapOverhaul308 page` runs in Edit mode):
+        /// no legend / list / card / hint object or component, the key line's three rows, every visible text of the map layer and
+        /// the rail on the allow-list by value, at most one name tag and only on a mark the sheet draws.</summary>
         private static void InspectMap(PlaytestUiRoot root, RectTransform canvasRect, LayoutFindings f)
         {
             const string label = "지도";
@@ -1320,6 +1325,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (HarnessUiRules304.Member(root, layer) is Transform t && t != null) scopes.Add(t);
                 InspectPage(root, canvasRect, label, label, f, scopes);
                 InspectMapLabels(root, map, f);
+                InspectMapDiet(root, f);
             }
             finally { map.ReducedMotion = reduced; }
         }
@@ -1329,7 +1335,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             var window = HarnessUiRules304.Member(map, "foldMap") as RectTransform;
             var labels = HarnessUiRules304.Member(map, "fullLabels") as RectTransform;
             var slip = HarnessUiRules304.Member(map, "titleSlip304") as RectTransform;
-            if (window == null || labels == null) { f.PageFits.Add("지도 paper labels SKIPPED (foldMap / fullLabels not found by name)"); return; }
+            // D308-25: not a note any more - a renamed field would have let this check pass without looking
+            if (window == null || labels == null) { f.Failures.Add("지도: paper labels NOT INSPECTED (WorldMapPresenter.foldMap / fullLabels not found by name)."); return; }
             Rect paper = window.rect;
             Rect title = slip != null && slip.gameObject.activeInHierarchy ? HarnessUiRules304.RectIn(window, slip) : Rect.zero;
             var corners = new Vector3[4];
@@ -1351,6 +1358,21 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             f.PageFits.Add("지도 paper labels inspected=" + inspected + " window=" + paper.width.ToString("0") + "x" + paper.height.ToString("0")
                 + (slip == null ? " (title slip not found by name: overlap not checked)" : ""));
+        }
+
+        /// <summary>D308-25: what may stand on the 지도 page (MapPage308.Inspect). The rule data is a file; without it the page is
+        /// NOT inspected and that is a failure, not a pass.</summary>
+        private static void InspectMapDiet(PlaytestUiRoot root, LayoutFindings f)
+        {
+            var texts = MapPage308.Load(out string why);
+            if (texts == null) { f.Failures.Add("지도: text diet NOT INSPECTED (" + why + ")."); return; }
+            var mapScope = HarnessUiRules304.Member(root, "mapLayer") as Transform;
+            var railScope = HarnessUiRules304.Member(root, "menu304RailLayer") as Transform;
+            if (mapScope == null || railScope == null) { f.Failures.Add("지도: text diet NOT INSPECTED (PlaytestUiRoot.mapLayer / menu304RailLayer not found by name)."); return; }
+            var census = MapPage308.Inspect(mapScope, railScope, root.MapData, MapStyle304SO.Resolve(), texts);
+            foreach (string failure in census.Failures) f.MapDiet.Add("지도/" + failure);
+            f.PageFits.Add("지도 text diet (D308-25): texts=" + census.TextCount + " nameTags=" + census.TagCount + " plates=" + census.PlateCount + " realmNames=" + census.RegionCount
+                + " slipRealmLines=" + census.RealmLines + " findings=" + census.FailureCount);
         }
 
         private static bool InsideCanvas(RectTransform canvasRect, RectTransform rect, float tolerance)

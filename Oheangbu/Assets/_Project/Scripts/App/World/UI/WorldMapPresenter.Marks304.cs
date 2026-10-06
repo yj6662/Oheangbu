@@ -9,6 +9,8 @@ namespace Oheangbu.App.World.UI
 {
     // #304 marks on the printed window (DESIGN §5.13, map.png): cinnabar only for the current position and the heard
     // objective; everything else ink with a sheet rim (한지 테). Labels are TMP MapLabel21 / MapRegion44 (Ink_UnderPaper).
+    // D308-25 (map 5): a mark's name label shows only while that mark is the pointed one (WorldMapPresenter.Hover.cs); the
+    // realm names stay. The label objects and their texts are as before (the HUD reads the checkpoint label's text).
     // D14: a variant is the same symbol + an outer ink ring (the rest where you wake); 남긴 통보 uses the D04 coin symbol.
     // Also the IMapMarkerSource304 read-only view for the HUD bearing line.
     public sealed partial class WorldMapPresenter : IMapMarkerSource304
@@ -50,7 +52,7 @@ namespace Oheangbu.App.World.UI
             var ring = V.Image(V.Stretch("Ring", knownArea), s.Cinnabar, open ? s.Sprites.Enso : s.Sprites.RingDashed);
             if (ring.sprite == null) { ring.sprite = s.Sprites.Disc; ring.color = UiStyle304SO.A(s.Cinnabar, .22f); }
             knownArea.gameObject.SetActive(false);
-            knownAreaLabel = CreateFullLabel("KnownDestination", "들은 목적 권역");
+            knownAreaLabel = CreateFullLabel("KnownDestination", "");   // its text is the destination's name (KnownLabel), set when one is heard
 
             // realm names (MapRegion44, .12em)
             if (data.HasIllustration && data.Locations != null)
@@ -319,8 +321,7 @@ namespace Oheangbu.App.World.UI
             }
         }
 
-        /// <summary>Baked labels carry their realm ("청림 · 금표 주막"); the map, the list and the HUD show the place only
-        /// (map.png), the realm is on the detail card's meta line.</summary>
+        /// <summary>Baked labels carry their realm ("청림 · 금표 주막"); the map's name tag and the HUD show the place only.</summary>
         static string ShortLabel(string label)
         {
             if (string.IsNullOrEmpty(label)) return label ?? "";
@@ -374,7 +375,7 @@ namespace Oheangbu.App.World.UI
         void PlaceMarks304(Vector3 current, bool interior)
         {
             if (fullPlayer == null) return;
-            bool labels = fullUv.width < mapStyle.LabelMaxViewWidth;
+            marksCurrent308 = current; marksInterior308 = interior;   // D308-25: a new pick places the labels again with these
             Vector2 currentXZ = new Vector2(current.x, current.z);
             PlaceFull(fullPlayer, currentXZ, true);
             float yaw = 0f;
@@ -391,19 +392,19 @@ namespace Oheangbu.App.World.UI
             if (checkpointRest != null && !MarkerKnown(checkpointRest)) checkpointRest = null;
             bool checkpointAlone = ready && !interior && checkpointRest == null && (checkpoint - currentXZ).sqrMagnitude > 144f;
             PlaceFull(fullCheckpoint, checkpoint, checkpointAlone);
-            PlaceFullLabel(fullCheckpointLabel, checkpoint, checkpointAlone && labels, new Vector2(mapStyle.RestSize * .5f + 6f, 0f));
+            PlaceFullLabel(fullCheckpointLabel, checkpoint, checkpointAlone && Picked308(fullCheckpointLabel), new Vector2(mapStyle.RestSize * .5f + 6f, 0f));
 
             bool hasDrop = ready && session.Progress.ledger.dropCurrency > 0;
             Vector2 drop = hasDrop ? WorldMapGeometry.XZ(session.Progress.ledger.dropPosition) : default;
             PlaceFull(fullDrop, drop, hasDrop && !interior);
-            PlaceFullLabel(fullDropLabel, drop, hasDrop && !interior && labels, new Vector2(mapStyle.CoinSize * .5f + 6f, 0f));
+            PlaceFullLabel(fullDropLabel, drop, hasDrop && !interior && Picked308(fullDropLabel), new Vector2(mapStyle.CoinSize * .5f + 6f, 0f));
 
             bool hasPin = ready && session.Progress.ui.pin.active;
             Vector2 pin = hasPin ? session.Progress.ui.pin.worldXZ : default;
             if (hasPin && !ReferenceEquals(pinLabelShown, session.Progress.ui.pin.label))
             { pinLabelShown = session.Progress.ui.pin.label; SetLabelText(fullPinLabel, string.IsNullOrWhiteSpace(pinLabelShown) ? "표식" : pinLabelShown); }
             PlaceFull(fullPin, pin, hasPin && !interior);
-            PlaceFullLabel(fullPinLabel, pin, hasPin && !interior && labels, new Vector2(mapStyle.PinSize * .5f + 6f, 0f));
+            PlaceFullLabel(fullPinLabel, pin, hasPin && !interior && Picked308(fullPinLabel), new Vector2(mapStyle.PinSize * .5f + 6f, 0f));
 
             var destination = session.KnownDestination;
             bool showDestination = destination != null && !interior;
@@ -419,17 +420,18 @@ namespace Oheangbu.App.World.UI
                 knownArea.sizeDelta = new Vector2(ringSize, ringSize);
                 SetLabelText(knownAreaLabel, KnownLabel(destination));
             }
-            PlaceCentredLabel(knownAreaLabel, destinationXZ, showDestination, -(ringSize * .5f + 14f * pageScale));
+            PlaceCentredLabel(knownAreaLabel, destinationXZ, showDestination && Picked308(knownAreaLabel), -(ringSize * .5f + 14f * pageScale));
 
             foreach (MarkerView marker in markers)
             {
                 bool known = !interior && MarkerKnown(marker);
                 if (marker.Variant != null && marker.Variant.activeSelf != (marker == checkpointRest)) marker.Variant.SetActive(marker == checkpointRest);
                 PlaceFull(marker.Full, marker.Spec.WorldXZ, known);
-                PlaceFullLabel(marker.FullLabel, marker.Spec.WorldXZ, known && labels, new Vector2(marker.Size * .5f + 5f, 0f));
+                PlaceFullLabel(marker.FullLabel, marker.Spec.WorldXZ, known && Picked308(marker.FullLabel), new Vector2(marker.Size * .5f + 5f, 0f));
             }
             PlaceRegionLabels304(interior);
-            ArrangeLabels308();   // #308: plates, priority and road clearance of the place names (no-op without a bundle)
+            RefreshRealmLine304(interior);   // D308-25: the slip's realm line steps aside while the sheet shows that realm's name
+            ArrangeLabels308();   // #308: the plate and the place of the one name tag (no-op without a bundle)
         }
 
         /// <summary>#304 detail for a CollectMarkers entry (MapMarker304 has no sub-kind): the baked kind of the place at that

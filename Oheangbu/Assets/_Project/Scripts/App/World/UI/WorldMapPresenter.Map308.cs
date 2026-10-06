@@ -30,9 +30,10 @@ namespace Oheangbu.App.World.UI
     }
 
     // #308 notation on the unfolded sheet (SPEC-MAP-OVERHAUL-308, D308-14 / 14b / 15): the bundle (MapStyle304SO.Notation308),
-    // the paper material's _MAP308 values, the brush strips of the print window, icons from the atlas, hanji plates and
-    // placement of the place names, the two-part legend, the lacquer board under the sheet, the region-gated reveal and the
-    // stroke states. Everything is off (n308 == null) when the map has no bundle or the bundle was baked for another map:
+    // the paper material's _MAP308 values, the brush strips of the print window, icons from the atlas, the hanji plate and
+    // placement of the one name tag (D308-25: the pointed mark's), the lacquer board under the sheet, the region-gated reveal
+    // and the stroke states. D308-25 took the two-part legend and the places list's glyphs out with their run-time materials.
+    // Everything is off (n308 == null) when the map has no bundle or the bundle was baked for another map:
     // then the pre-#308 code runs untouched. No static state; run-time objects are destroyed in Dispose308.
     public sealed partial class WorldMapPresenter : IMapNotationSource308
     {
@@ -47,7 +48,7 @@ namespace Oheangbu.App.World.UI
         MapStrokes308Graphic fullStrokes308;
         RectTransform fullStrokesHost308;
         CanvasGroup fullStrokesGroup308;
-        Material strokeMaterial308, iconMaterial308, legendStrokeMaterial308, forestMaterial308, waterMaterial308;
+        Material strokeMaterial308, iconMaterial308;
         Texture2D clearInk308;
         Rect strokeUv308 = new Rect(-1f, -1f, 0f, 0f);
         Vector2 strokeWindow308 = new Vector2(-1f, -1f);
@@ -110,7 +111,7 @@ namespace Oheangbu.App.World.UI
             return region == 0 || region == 255 || region == revealRegion308;
         }
 
-        // ------------------------------------------------------------------ paper material (sheet, minimap, legend swatch)
+        // ------------------------------------------------------------------ paper material (sheet, minimap)
         /// <summary>_MAP308 and the values that do not depend on the scale. No-op without a bundle.</summary>
         void ApplyPaper308(Material material, bool mini)
         {
@@ -132,8 +133,8 @@ namespace Oheangbu.App.World.UI
 
         /// <summary>The values that follow the scale: pattern period of the zoom band, shore line width in metres, slope wash or
         /// elevation wash, and the walked-edge ink rim (its width in screen px, inside the crisp edge).
-        /// #308 map 4: mini = the HUD minimap's material (the broken dry-brush rim, as before); otherwise the unfolded sheet or the
-        /// legend swatch on it (the notation's thin whole rim).</summary>
+        /// #308 map 4: mini = the HUD minimap's material (the broken dry-brush rim, as before); otherwise the unfolded sheet
+        /// (the notation's thin whole rim).</summary>
         void PaperBand308(Material material, float metresPerPx, float screenPerReferencePx, bool mini = false)
         {
             if (n308 == null || material == null) return;
@@ -383,7 +384,11 @@ namespace Oheangbu.App.World.UI
         }
 
         // ------------------------------------------------------------------ place names: hanji plates, priority, clear of roads (§4)
-        sealed class LabelSlot308 { public TMP_Text Label; public RectTransform Plate; public float Icon; public int Priority, Slot = -2; public bool Wanted; }
+        sealed class LabelSlot308 { public TMP_Text Label; public RectTransform Plate; public float Icon; public int Priority, Slot = -2; public bool Wanted; public Vector2 Free; }
+        // name priorities outside the baked markers' own (LabelPriority308); the pick's tie-break reads the same numbers
+        const int RankCheckpoint308 = 0, RankDrop308 = 20, RankPin308 = 21;
+        const int SlotFree308 = 4;               // not one of the four sides: the tag's centre is the icon + LabelSlot308.Free
+        const float TagEdgePx308 = 2f;           // a tag keeps this far inside the print window
         readonly List<LabelSlot308> labelSlots308 = new List<LabelSlot308>();
         readonly Dictionary<TMP_Text, LabelSlot308> labelSlotOf308 = new Dictionary<TMP_Text, LabelSlot308>();
         readonly List<Rect> placedLabels308 = new List<Rect>();
@@ -438,17 +443,20 @@ namespace Oheangbu.App.World.UI
         {
             if (n308 == null) return;
             foreach (var marker in markers) RankLabel308(marker.FullLabel, LabelPriority308(marker), marker.Size);
-            RankLabel308(fullCheckpointLabel, 0, mapStyle.RestSize);
-            RankLabel308(fullDropLabel, 20, mapStyle.CoinSize);
-            RankLabel308(fullPinLabel, 21, mapStyle.PinSize);
+            RankLabel308(fullCheckpointLabel, RankCheckpoint308, mapStyle.RestSize);
+            RankLabel308(fullDropLabel, RankDrop308, mapStyle.CoinSize);
+            RankLabel308(fullPinLabel, RankPin308, mapStyle.PinSize);
             RankLabel308(knownAreaLabel, -1, 0f);          // centred under its ring: only the plate follows it
             labelSlots308.Sort((a, b) => a.Priority.CompareTo(b.Priority));
         }
 
-        /// <summary>After PlaceMarks304 placed every name the old way (right of its icon): each visible name takes the first of
-        /// right / left / above / below that is inside the window, clear of the names already placed, of the paper's title slip
-        /// and of the roads; a name with no such place is hidden (its icon stays). The choice is redone only when the view, the
-        /// page scale or the set of visible names changes; the placing itself is cheap and runs every call.</summary>
+        /// <summary>After PlaceMarks304 placed the name the old way (right of its icon): the visible name takes the first of
+        /// right / left / above / below that is inside the window, clear of the paper's title slip and north mark and of the
+        /// roads. D308-25: there is one name at most (the pointed mark's) and it must show - when every side crosses a road the
+        /// roads are let go, and when no side has room at all (a corner of the window, beside the slip) the right-hand place
+        /// moves the least distance that fits (FitLabel304), at most MapStyle304SO.HoverTagMaxShiftPx. The heard objective's
+        /// name keeps its place under the ring and is moved whole into the window the same way. The choice is redone only when
+        /// the view, the page scale or the shown name changes; the placing itself is cheap and runs every call.</summary>
         void ArrangeLabels308()
         {
             if (n308 == null || labelSlots308.Count == 0 || foldMap == null) return;
@@ -463,11 +471,11 @@ namespace Oheangbu.App.World.UI
             Rect window = foldMap.rect;
             float k = Mathf.Max(.01f, pageScale);
             Vector2 pad = n308.PlatePad * k;
+            int obstacles = 0;
             if (decide)
             {
                 labelUv308 = fullUv; labelScale308 = pageScale; labelWanted308 = wanted;
                 placedLabels308.Clear();
-                int obstacles = 0;
                 AddObstacle304(titleSlip304, ref obstacles);
                 AddObstacle304(northLabel304, ref obstacles);
                 AddObstacle304(northLine304, ref obstacles);
@@ -485,8 +493,16 @@ namespace Oheangbu.App.World.UI
                 float reach = (slot.Icon * .5f + n308.LabelGap) * k;
                 if (slot.Priority < 0)
                 {
-                    // the objective name keeps its own place (centred under the ring); the plate goes under it
+                    // the objective name keeps its own place (centred under the ring); the plate goes under it.
+                    // D308-25: moved whole into the window, clear of the slip and the north mark (PlaceCentredLabel resets the
+                    // base position on every call, so the stored shift is added once per placement)
                     Shown308(slot, true);
+                    if (decide)
+                    {
+                        Vector2 centre = at + rect.anchoredPosition, fitted = centre;
+                        slot.Free = FitLabel304(ref fitted, box * .5f, window, TagEdgePx308, obstacles) ? fitted - centre : Vector2.zero;
+                    }
+                    if (slot.Free != Vector2.zero) rect.anchoredPosition += slot.Free;
                     FitPlate308(slot, v, rect.pivot, rect.anchoredPosition, rect.sizeDelta);
                     if (decide) placedLabels308.Add(new Rect(at.x + rect.anchoredPosition.x - box.x * .5f, at.y + rect.anchoredPosition.y - box.y * .5f, box.x, box.y));
                     continue;
@@ -494,10 +510,12 @@ namespace Oheangbu.App.World.UI
                 if (decide)
                 {
                     slot.Slot = -1;
+                    // pass 0: clear of the shown roads; pass 1 (D308-25): the roads let go - the pointed mark's name must show
+                    for (int pass = 0; pass < 2 && slot.Slot < 0; pass++)
                     for (int c = 0; c < 4 && slot.Slot < 0; c++)
                     {
                         Rect candidate = Candidate308(c, at, box, reach);
-                        if (candidate.xMin < window.xMin + 2f || candidate.xMax > window.xMax - 2f || candidate.yMin < window.yMin + 2f || candidate.yMax > window.yMax - 2f) continue;
+                        if (candidate.xMin < window.xMin + TagEdgePx308 || candidate.xMax > window.xMax - TagEdgePx308 || candidate.yMin < window.yMin + TagEdgePx308 || candidate.yMax > window.yMax - TagEdgePx308) continue;
                         bool clear = true;
                         for (int p = 0; p < placedLabels308.Count && clear; p++) clear = !candidate.Overlaps(placedLabels308[p]);
                         if (!clear) continue;
@@ -507,8 +525,16 @@ namespace Oheangbu.App.World.UI
                         float z0 = data.BoundsMin.y + (fullUv.y + Mathf.InverseLerp(window.yMin, window.yMax, candidate.yMin) * fullUv.height) * world.y;
                         float z1 = data.BoundsMin.y + (fullUv.y + Mathf.InverseLerp(window.yMin, window.yMax, candidate.yMax) * fullUv.height) * world.y;
                         // only roads the sheet shows count (walked land, open states): an unseen road must not push a name aside (#214)
-                        if (strokes308.AnySegmentInRect(x0, z0, x1, z1, (int)MapStrokeClass308.Trail, (int)MapStrokeClass308.Highway, walked308 ?? (walked308 = Walked308), stateOpen308)) continue;
+                        if (pass == 0 && strokes308.AnySegmentInRect(x0, z0, x1, z1, (int)MapStrokeClass308.Trail, (int)MapStrokeClass308.Highway, walked308 ?? (walked308 = Walked308), stateOpen308)) continue;
                         slot.Slot = c; placedLabels308.Add(candidate);
+                    }
+                    if (slot.Slot < 0)
+                    {
+                        // no side has room (a window corner, beside the slip or the north mark): the right-hand place, moved the
+                        // least distance that puts the whole plate inside the window and clear of both
+                        Vector2 wanted0 = Candidate308(0, at, box, reach).center, fitted = wanted0;
+                        if (FitLabel304(ref fitted, box * .5f, window, TagEdgePx308, obstacles) && (fitted - wanted0).magnitude <= Mathf.Max(0f, mapStyle.HoverTagMaxShiftPx) * k)
+                        { slot.Slot = SlotFree308; slot.Free = fitted - at; placedLabels308.Add(new Rect(fitted.x - box.x * .5f, fitted.y - box.y * .5f, box.x, box.y)); }
                     }
                 }
                 if (slot.Slot < 0) { Shown308(slot, false); continue; }
@@ -519,6 +545,7 @@ namespace Oheangbu.App.World.UI
                     case 0: pivot = new Vector2(0f, .5f); position = new Vector2(reach + pad.x, 0f); align = TextAlignmentOptions.Left; break;
                     case 1: pivot = new Vector2(1f, .5f); position = new Vector2(-reach - pad.x, 0f); align = TextAlignmentOptions.Right; break;
                     case 2: pivot = new Vector2(.5f, 0f); position = new Vector2(0f, reach + pad.y); align = TextAlignmentOptions.Center; break;
+                    case SlotFree308: pivot = new Vector2(.5f, .5f); position = slot.Free; align = TextAlignmentOptions.Center; break;
                     default: pivot = new Vector2(.5f, 1f); position = new Vector2(0f, -reach - pad.y); align = TextAlignmentOptions.Center; break;
                 }
                 if (rect.pivot != pivot) rect.pivot = pivot;
@@ -561,171 +588,17 @@ namespace Oheangbu.App.World.UI
             plate.anchoredPosition = position + new Vector2((pivot.x - .5f) * 2f * pad.x * k, (pivot.y - .5f) * 2f * pad.y * k);
         }
 
-        // ------------------------------------------------------------------ legend: marker rows on plates + terrain and roads (§4)
-        Material LegendStrokeMaterial308()
-        {
-            if (legendStrokeMaterial308 != null || n308 == null) return legendStrokeMaterial308;
-            legendStrokeMaterial308 = CreateStrokeMaterial308();
-            if (legendStrokeMaterial308 == null) return null;
-            legendStrokeMaterial308.name = "MapStroke308_Legend";
-            var opt = legendStrokeMaterial308.GetVector("_S308Opt");
-            legendStrokeMaterial308.SetVector("_S308Opt", new Vector4(0f, 0f, opt.z, opt.w));   // a sample: no fog, no window
-            return legendStrokeMaterial308;
-        }
-
-        Material PatternMaterial308(bool water)
-        {
-            ref Material slot = ref (water ? ref waterMaterial308 : ref forestMaterial308);
-            if (slot != null || n308 == null || n308.IconShader == null) return slot;
-            slot = new Material(n308.IconShader) { name = water ? "MapPattern308_Water" : "MapPattern308_Forest", hideFlags = HideFlags.DontSave };
-            slot.SetVector("_InkChan", water ? new Vector4(0f, 1f, 0f, 0f) : new Vector4(1f, 0f, 0f, 0f));
-            slot.SetVector("_RimChan", Vector4.zero); slot.SetVector("_Ink2Chan", Vector4.zero);   // the pattern's B is another picture
-            slot.SetFloat("_I308Gamma", Mathf.Max(1f, n308.InkGamma));
-            return slot;
-        }
-
-        /// <summary>A thin nacre inlay line (kit cell line_najeon_thin, tiled along x, baked colours; a plain nacre rule without the kit).</summary>
-        Image InlayLine308(Transform parent, string name, float x, float y, float width)
-        {
-            bool kit = n308.InlayLine != null;
-            float height = kit ? n308.InlayLine.rect.height * 100f / Mathf.Max(1f, n308.InlayLine.pixelsPerUnit) : 2f;
-            var image = V.Image(V.Rect(name, parent, x, y, width, height), kit ? Color.white : n308.Nacre, n308.InlayLine);
-            if (kit) image.type = Image.Type.Tiled;
-            return image;
-        }
-
-        /// <summary>The #308 legend: the seven marker rows (same words, atlas glyphs on small lacquer plates, pitch LegendRowPitch)
-        /// and under them the terrain-and-roads cells, each a sample drawn from the stroke atlas / pattern itself. False = no
-        /// bundle (the caller builds the #304 legend).</summary>
-        bool BuildLegend308(RectTransform root)
-        {
-            if (n308 == null) return false;
-            var s = style;
-            V.Label(s, root, "LegendCaption", "범례", UiType304.Meta20, s.Mist, 64, 292);
-            InlayLine308(root, "LegendInlay", 64, 320, 456);
-            var rows = mapStyle.Legend != null && mapStyle.Legend.Count > 0 ? mapStyle.Legend : MapStyle304SO.DefaultLegend();
-            float pitch = Mathf.Max(48f, n308.LegendRowPitch);
-            int shown = Mathf.Min(rows.Count, 7);
-            for (int i = 0; i < shown; i++)
-            {
-                var row = rows[i]; if (row == null) continue;
-                float y = 332 + pitch * i;
-                var item = V.Rect("Legend_" + i, root, 0, 0, 1, 1);
-                if (!LegendGlyph308(item, row.Symbol, 64, y)) LegendSymbol304(item, row.Symbol, 64, y);
-                V.Label(s, item, "Name", row.Name, UiType304.Label24, s.Paper, 126, y + 2);
-                V.Label(s, item, "Meaning", row.Meaning, UiType304.Meta20, s.Mist, 126, y + 36, 410, 0, TextAlignmentOptions.TopLeft, true);
-            }
-            var cells = n308.Legend;
-            if (cells == null || cells.Count == 0) return true;
-            float top = 332 + pitch * shown + 6f;
-            V.Label(s, root, "TerrainCaption", n308.LegendTerrainCaption, UiType304.Meta20, s.Mist, 64, top);
-            InlayLine308(root, "TerrainInlay", 64, top + 28, 456);
-            for (int i = 0; i < cells.Count && i < 9; i++)
-            {
-                var cell = cells[i]; if (cell == null) continue;
-                float x = 64 + 154 * (i % 3), y = top + 40 + 42 * (i / 3);
-                var item = V.Rect("Terrain_" + i, root, x, y, 150, 28);
-                var chip = V.Rect("Sample", item, 0, 2, 44, 24);
-                V.Image(chip, n308.Paper);
-                LegendSample308(chip, cell);
-                V.Label(s, item, "Name", cell.Name, UiType304.Meta20, s.Paper, 54, 0);
-            }
-            return true;
-        }
-
-        // the sample on its paper chip: a piece of the class row at the sheet's default scale, or a patch of the pattern
-        void LegendSample308(RectTransform chip, MapLegendCell308 cell)
-        {
-            const float metresPerPx = 2.66f;   // the sheet's default view (band Z2): what the legend is read against
-            int band = n308.Band(metresPerPx);
-            switch (cell.Kind)
-            {
-                case MapLegendKind308.Stroke:
-                {
-                    var material = LegendStrokeMaterial308();
-                    if (material == null) return;
-                    var go = V.Stretch("Stroke", chip).gameObject;
-                    go.AddComponent<MapStrokeSwatch308Graphic>().Configure(n308, cell.StrokeClass, cell.Rank, cell.UnderClass, band, metresPerPx, material);
-                    return;
-                }
-                case MapLegendKind308.Forest:
-                case MapLegendKind308.Water:
-                {
-                    bool water = cell.Kind == MapLegendKind308.Water;
-                    var material = PatternMaterial308(water);
-                    if (material == null || n308.Pattern == null) return;
-                    float periodPx = n308.PatternPeriod(band) / metresPerPx;
-                    var glyph = MapGlyph308Graphic.Create("Pattern", chip, n308.Pattern, material, -1,
-                        UiStyle304SO.A(n308.Ink, water ? n308.RippleInk : n308.ForestInk), 0f, 44f);
-                    var r = glyph.rectTransform; r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one; r.offsetMin = r.offsetMax = Vector2.zero;
-                    glyph.SetTile(new Vector2(44f / periodPx, 24f / periodPx));
-                    return;
-                }
-                default:
-                    if (n308.TryCell(cell.Glyph, out int atlasCell) && IconMaterial308() != null)
-                    {
-                        var glyph = MapGlyph308Graphic.Create("Glyph", chip, n308.IconAtlas(24f), IconMaterial308(), atlasCell, n308.Ink, 0f, 24f);
-                        glyph.rectTransform.sizeDelta = new Vector2(24f, 24f);
-                    }
-                    return;
-            }
-        }
-
-        /// <summary>A marker row's symbol from the atlas on a small lacquer plate (kit slot Plate.Icon). False = no glyph for it.</summary>
-        bool LegendGlyph308(RectTransform parent, MapLegendSymbol304 symbol, float x, float y)
-        {
-            int cell; Color ink = n308.Nacre;
-            switch (symbol)
-            {
-                case MapLegendSymbol304.Player: cell = KeyCell308(MapNotation308SO.KeyPlayer); ink = style.Cinnabar; break;
-                case MapLegendSymbol304.Rest: cell = KeyCell308(WorldMapMarkerKind.Rest.ToString()); break;
-                case MapLegendSymbol304.Place: cell = KeyCell308(WorldMapMarkerKind.Place.ToString()); break;
-                case MapLegendSymbol304.Coin: cell = KeyCell308(MapNotation308SO.KeyCoin); break;
-                case MapLegendSymbol304.Pin: cell = KeyCell308(MapNotation308SO.KeyPin); break;
-                case MapLegendSymbol304.Objective: cell = KeyCell308(MapNotation308SO.KeyObjective); ink = style.Cinnabar; break;
-                default: return false;    // the unwalked swatch keeps its own drawing (the print shader)
-            }
-            if (cell < 0) return false;
-            var plate = V.Rect("Plate", parent, x, y, 44, 44);
-            var image = V.Image(plate, n308.PlateIcon != null ? Color.white : n308.Lacquer, n308.PlateIcon != null ? n308.PlateIcon : style.Sprites.Disc);
-            if (n308.PlateIcon != null && n308.PlateIcon.border.sqrMagnitude > 0f) image.type = Image.Type.Sliced;
-            else image.preserveAspect = true;
-            // the rest row shows the wake ring around its symbol (the legend says "고리 두른 곳에서 깬다")
-            int ring = symbol == MapLegendSymbol304.Rest ? KeyCell308(MapNotation308SO.KeyWakeRing) : -1;
-            if (ring >= 0) MapGlyph308Graphic.Create("Ring", plate, n308.IconAtlas(40f), IconMaterial308(), ring, ink, 0f, 40f);
-            var glyph = MapGlyph308Graphic.Create("Symbol", plate, n308.IconAtlas(32f), IconMaterial308(), cell, ink, 0f, ring >= 0 ? 26f : 32f);
-            // on the lacquer plate there is no hanji rim under the glyph: the brush's ferrule and handle are drawn in the paper tone
-            if (symbol == MapLegendSymbol304.Player) { glyph.rectTransform.localEulerAngles = new Vector3(0f, 0f, -38f); glyph.SetSecondInk(1f, true); }
-            return true;
-        }
-
-        /// <summary>The places list's 30 px icon from the atlas (the glyph the place has on the paper). Null = the #304 pictogram.</summary>
-        Graphic ListGlyph308(RectTransform row, PlaceEntry304 entry)
-        {
-            if (n308 == null || IconMaterial308() == null) return null;
-            int cell = -1;
-            if (entry.Spec != null)
-            {
-                for (int i = 0; i < markers.Count && cell < 0; i++) if (markers[i].Spec == entry.Spec) cell = markers[i].Cell308;
-            }
-            else if (entry.Kind == MapMarkerKind304.Rest) cell = KeyCell308(MapNotation308SO.KeyCheckpoint, WorldMapMarkerKind.Rest.ToString());
-            else if (entry.Kind == MapMarkerKind304.Coin) cell = KeyCell308(MapNotation308SO.KeyCoin);
-            if (cell < 0) return null;
-            var glyph = MapGlyph308Graphic.Create("Icon", row, n308.IconAtlas(30f), IconMaterial308(), cell, style.Paper, 0f, 30f);
-            var r = glyph.rectTransform;
-            r.anchorMin = r.anchorMax = r.pivot = new Vector2(0f, 1f);
-            r.anchoredPosition = new Vector2(54f, -18f);
-            return glyph;
-        }
-
         // ------------------------------------------------------------------ the lacquer board under the sheet (§5, D308-15)
-        /// <summary>Under the veil page (same page px and scale as the legend, fades with the veil): the board (BoardRect, 836 x 910)
-        /// with the sheet lying on it: a lacquer body and over it the kit's Frame.MapBoard (tiled 9-slice, 80 + 9 n by 82 + 9 m px,
-        /// open centre). Without the kit sprite the body alone is drawn.</summary>
+        /// <summary>Under the veil page (same page px and scale as the page chrome, fades with the veil): the board with the sheet
+        /// lying on it: a lacquer body and over it the kit's Frame.MapBoard (tiled 9-slice, 80 + 9 n by 82 + 9 m px, open centre).
+        /// Without the kit sprite the body alone is drawn. D308-25: the board is the sheet's rect grown by MapStyle304SO.BoardGrow
+        /// (1592 x 910 at (164, 126) for the 1556 x 820 sheet: n = 168, m = 92); the bundle's BoardRect (836 x 910, the old
+        /// sheet) is not read until the bundle is baked again (SPEC-MAP-OVERHAUL-308 Temporary Exceptions).</summary>
         void BuildBoard308()
         {
             if (n308 == null || veilPage304 == null) return;
-            Rect b = n308.BoardRect;
+            Rect sheet = mapStyle.SheetRect; Vector4 grow = mapStyle.BoardGrow;
+            Rect b = new Rect(sheet.x - grow.x, sheet.y - grow.y, sheet.width + grow.x + grow.z, sheet.height + grow.y + grow.w);
             var board = V.Image(V.Rect("MapBoard308", veilPage304, b.x, b.y, b.width, b.height), n308.Lacquer);
             board.raycastTarget = false;
             if (n308.FrameBoard != null)
@@ -759,9 +632,8 @@ namespace Oheangbu.App.World.UI
 
         void Dispose308()
         {
-            Kill308(strokeMaterial308); Kill308(iconMaterial308); Kill308(legendStrokeMaterial308);
-            Kill308(forestMaterial308); Kill308(waterMaterial308); Kill308(clearInk308);
-            strokeMaterial308 = iconMaterial308 = legendStrokeMaterial308 = forestMaterial308 = waterMaterial308 = null;
+            Kill308(strokeMaterial308); Kill308(iconMaterial308); Kill308(clearInk308);
+            strokeMaterial308 = iconMaterial308 = null;
             clearInk308 = null; fullStrokes308 = null; n308 = null; strokes308 = null; regions308 = null; revealGate308 = null;
             labelSlots308.Clear(); labelSlotOf308.Clear(); extraStrokes308.Clear();
         }
@@ -773,8 +645,6 @@ namespace Oheangbu.App.World.UI
             if (Application.isPlaying) return;
             Dispose308();
             Kill308(paperMaterial); paperMaterial = null;
-            Kill308(legendSwatch304); Kill308(legendFog304); Kill308(legendClear304);
-            legendSwatch304 = null; legendFog304 = legendClear304 = null;
             foreach (var entry in interiors.Values) Kill308(entry.Mask);
             interiors.Clear();
             if (macroInk != null) Kill308(macroInk.Texture);

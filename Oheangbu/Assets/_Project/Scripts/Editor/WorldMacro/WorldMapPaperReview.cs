@@ -371,9 +371,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Vector4 focused = material.GetVector("_WorldUv");
                 var feet = session.Walker.Body.transform.position;
                 Vector2 here = new WorldMapProjection(data.BoundsMin, data.BoundsMax).WorldToNormalized(new Vector2(feet.x,feet.z));
-                Add("current-focus-centers-player", focused.z < 1 && focused.w < 1 &&
+                // D308-25 (map 5): the wide sheet's default view spans the whole east-west width of the world (uv width 1) and a
+                // part of its north-south length, so "local" is the height; the window must have its own shape again (not the world-shaped strip of T)
+                Add("current-focus-centers-player", focused.z <= 1.00001f && focused.w < 1 &&
+                    Mathf.Abs(window.rect.width / window.rect.height - (data.BoundsMax.x - data.BoundsMin.x) / (data.BoundsMax.y - data.BoundsMin.y)) > .01f &&
                     here.x >= focused.x && here.x <= focused.x + focused.z && here.y >= focused.y && here.y <= focused.y + focused.w,
-                    "Current opens a local window containing the player; outdoor initial view is now the whole illustrated world.");
+                    "Current opens a local window containing the player: world UV=" + focused + " (the wide sheet shows the whole east-west span, a part of north-south); printed window=" + window.rect.size + ".");
 
                 if (scaler != null) scaler.enabled = false;
                 foreach (float scale in new[] { 1f, 1.2f })
@@ -391,8 +394,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Vector4 after = material.GetVector("_WorldUv");
                     Vector2 moved = WorldUvScreen(window, after, witness) - start;
                     bool bounded = after.x >= 0 && after.y >= 0 && after.z > 0 && after.w > 0 && after.x + after.z <= 1.00001f && after.y + after.w <= 1.00001f;
-                    Add("synthetic-ugui-pan-scale-" + scale.ToString("0.0", CultureInfo.InvariantCulture), handled && bounded && Vector2.Distance(moved, delta) < .75f,
-                        "Synthetic PointerEventData OnDrag; canvas scale=" + canvas.scaleFactor.ToString("0.000") + "; requested screen pixels=" + delta + "; world landmark screen displacement=" + moved + "; UV bounded=" + bounded + ". Not native mouse evidence.");
+                    // D308-25 (map 5): a view that already spans the whole east-west width cannot move sideways - the drag then moves north-south only
+                    bool spansWidth = before.z >= .99999f;
+                    Vector2 expected = new Vector2(spansWidth ? 0f : delta.x, delta.y);
+                    Add("synthetic-ugui-pan-scale-" + scale.ToString("0.0", CultureInfo.InvariantCulture), handled && bounded && Vector2.Distance(moved, expected) < .75f,
+                        "Synthetic PointerEventData OnDrag; canvas scale=" + canvas.scaleFactor.ToString("0.000") + "; requested screen pixels=" + delta + "; expected landmark displacement=" + expected + (spansWidth ? " (the view spans the world's width: no sideways move)" : "")
+                        + "; world landmark screen displacement=" + moved + "; UV bounded=" + bounded + ". Not native mouse evidence.");
                 }
                 CheckInkStrokeShape();
             }

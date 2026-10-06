@@ -55,6 +55,13 @@ namespace Oheangbu.EditorTools.WorldMacro
     //                          session, nothing saved, the open scene is only read) -> Art/UI308/Map/preview/<tag>_*.png
     //                          #308 map 3c: a marker without an arrival event is known when the GAME's walk test says so (its cell
     //                          and its reveal rule); groundrule=off = every such marker by its cell alone (the picture before map 3c)
+    //                          #308 map 5 (D308-25): [:hover=<marker id>|Checkpoint|Drop|Pin|Objective] puts the pointer on that mark and
+    //                          adds <tag>_full_hover.png (the one name tag); [:zoom=<notches>] wheel notches in before the stills;
+    //                          [:pin=x,z] a pin in the isolated progress. The answer carries a PAGE line (view, page scale).
+    //   page[:size=1080|1440][:aspect=16x9|16x10|21x9][:bundle=on|off][:at=x,z][:mutant=legend|tags]
+    //                          #308 map 5: the map page's own rules in Edit mode (MapPage308.cs): no legend / list / card / hint object,
+    //                          the allow-list of texts by value, sheet / window / board rects, same scale both ways at every wheel step,
+    //                          at most one name tag and where it stands, the whole-world strip -> Art/UI308/Map/checks-page.txt
     // #308 recovery (Temporary Exception "lost bake inputs", Tools/Unity/Stage308_recover_mapin): the bundle's recorded inputs are
     // compared by MapBundleInputs308. A recorded input that is NOT ON DISK is taken on the bundle's own record only when
     // Tools/Art/map308_lost_inputs.json names that path with that sha - `TRUSTED absent input (...)`, one line each, in status / dry /
@@ -77,7 +84,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string KitAtlasPath = KitFolder + "/theme308_atlas.png", KitJsonPath = KitFolder + "/theme308_atlas.json";
         const string KitStageJson = "Tools/Unity/Stage308_theme/_ProjectAssets/Art/UI/UI308/Theme/theme308_atlas.json";
         const string NotationFile = "map308_notation.json";
-        const string Usage = "status | dry | apply | check | reveal | revert[:files] | report | preview[:at=x,z][:reveal=all|none|<metres>][:follow=<deg>][:size=1080|1440][:bundle=on|off][:groundrule=on|off][:sheetrim=on|off][:tag=<name>]";
+        const string Usage = "status | dry | apply | check | reveal | revert[:files] | report | preview[:at=x,z][:reveal=all|none|<metres>][:follow=<deg>][:size=1080|1440][:bundle=on|off][:groundrule=on|off][:sheetrim=on|off][:hover=<mark>][:zoom=<notches>][:pin=x,z][:tag=<name>] | page[:size=1080|1440][:aspect=16x9|16x10|21x9][:bundle=on|off][:at=x,z][:mutant=legend|tags]";
         // #308 map 3c: when a marker without an arrival event first shows. Read only; apply fills the notation asset from the first,
         // `reveal` replays the second. No data file = apply KEEPS the asset's table (the folder is not under git: its absence is
         // not a switch - the switch is "enabled": false in the input, which leaves a file without rows).
@@ -158,6 +165,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c == "report") return Report();
                 if (c == "check") return Check();
                 if (c == "reveal") return Reveal();
+                if (c == "page" || c.StartsWith("page:", StringComparison.Ordinal)) return MapPage308.Run(c);   // #308 map 5 (refuses in Play itself)
                 bool import = c == "dry" || c == "apply" || c == "import" || c == "import:dry";
                 bool revert = c == "revert" || c == "revert:files";
                 bool preview = c == "preview" || c.StartsWith("preview:", StringComparison.Ordinal);
@@ -1277,6 +1285,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             // options
             Vector2? at = null; bool? revealAll = true; float revealMetres = 0f, heading = float.NaN; int height = 1080; bool bundleOn = true, groundRule = true, sheetRim = true; string tag = "preview";
+            string hover = ""; int zoom = 0; Vector2? pin = null;   // #308 map 5
             foreach (string part in command.Split(':').Skip(1))
             {
                 int eq = part.IndexOf('='); if (eq <= 0) return "REFUSED preview option '" + part + "' (" + Usage + ")";
@@ -1300,6 +1309,14 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "bundle": bundleOn = value != "off"; break;
                     case "groundrule": if (value == "on") groundRule = true; else if (value == "off") groundRule = false; else return "REFUSED groundrule=on|off"; break;
                     case "sheetrim": if (value == "on") sheetRim = true; else if (value == "off") sheetRim = false; else return "REFUSED sheetrim=on|off"; break;
+                    case "hover": hover = value == "none" ? "" : value; break;
+                    case "zoom": if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out zoom) || zoom < 0 || zoom > 40) return "REFUSED zoom=<0..40 wheel notches in>"; break;
+                    case "pin":
+                    {
+                        var xy = value.Split(',');
+                        if (xy.Length != 2 || !float.TryParse(xy[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float x) || !float.TryParse(xy[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float z)) return "REFUSED pin=x,z";
+                        pin = new Vector2(x, z); break;
+                    }
                     case "tag": tag = new string(value.Where(ch => char.IsLetterOrDigit(ch) || ch == '_' || ch == '-').ToArray()); if (tag.Length == 0) tag = "preview"; break;
                     default: return "REFUSED preview option '" + key + "' (" + Usage + ")";
                 }
@@ -1386,7 +1403,20 @@ namespace Oheangbu.EditorTools.WorldMacro
                 presenter.OpenedFromPage304 = true;   // no veil wipe animation in a still
                 presenter.SetExpanded(true);
                 presenter.PreviewRefresh308();
+                // #308 map 5: a pin in the isolated progress, wheel notches in at the window's centre (the game's own zoom path)
+                if (pin.HasValue) { progress.ui.pin.active = true; progress.ui.pin.worldXZ = pin.Value; progress.ui.pin.label = ""; presenter.PreviewRefresh308(); }
+                for (int i = 0; i < zoom; i++) presenter.PreviewZoom308(1f, Vector2.zero);
+                if (zoom > 0) presenter.PreviewRefresh308();
                 lines.Add("FULL current view: " + Capture("full_current", null) + " | strip vertices " + presenter.FullStripVertices308 + " uploads " + presenter.FullStripUploads308);
+                lines.Add("PAGE view " + presenter.PreviewView308 + " page scale " + F(presenter.PreviewPageScale308) + " zoom notches " + zoom + (pin.HasValue ? " pin " + pin.Value : ""));
+                if (hover.Length > 0)
+                {
+                    // the pointer on that mark through the game's own pointer path: the one name tag
+                    bool drawn = presenter.PreviewMarkPoint308(hover, out Vector2 hoverAt);
+                    if (drawn) { presenter.PreviewPointer308(hoverAt); presenter.PreviewRefresh308(); }
+                    lines.Add("FULL hover '" + hover + "': " + (drawn ? Capture("full_hover", null) + " | tag \"" + presenter.PreviewTag308 + "\"" : "that mark is not drawn in this view (not known, or outside the view)"));
+                    presenter.PreviewPointerOff308(); presenter.PreviewRefresh308();
+                }
                 // #308 map 4: what the sheet's material really holds (ink alpha, broken rim px, whole 0 / 1, whole rim px; px = notation px x canvas x page)
                 if (presenter.Notation308 != null) lines.Add("RIM material sheet _M308Rim " + V4(presenter.PreviewSheetRim308) + " canvas x" + F(scale));
                 presenter.ShowWholeWorld(); presenter.PreviewRefresh308();
