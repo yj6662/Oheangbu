@@ -229,11 +229,14 @@ namespace Oheangbu.EditorTools.WorldMacro
 
   // ---------- AC-I9: the four lines (check: on the lantern as it stands; probe: shifted to the data's target, before a write) ----------
 
-  static void PlaceLines(Cfg cfg,Scene scene,Transform lantern,Vector3 shift,Action<bool,string> check,Action<string> info)
+  // sizeK (#308 world bundle 4): probe carries the drawn shape to the data's place AND size - the factor from the size the lantern has
+  // now to source lossy x lantern.scale, about the lantern origin (check passes 1: the lantern as it stands)
+  static void PlaceLines(Cfg cfg,Scene scene,Transform lantern,Vector3 shift,Action<bool,string> check,Action<string> info,float sizeK=1f)
   {
    var pl=cfg.Lantern["place"];
    if(pl==null||pl.Type!=JTokenType.Object){info("AC-I9 not checked: the data has no lantern.place block (older than 308.roadinn.2)");return;}
    if(!LanternShape(cfg,lantern,out var body,out float rodTop,out string why)){check(false,"AC-I9 "+why);return;}
+   if(Mathf.Abs(sizeK-1f)>1e-5f){var o=lantern.position;body=new Bounds(o+(body.center-o)*sizeK,body.size*sizeK);rodTop=o.y+(rodTop-o.y)*sizeK;}
    body.center+=shift;rodTop+=shift.y;
    var sight=Req(pl,"sight");var veg=Req(sight,"veg");var world=SightWorld(scene,sight);   // what is drawn under the building roots: (ga)'s info line and (ra)
    // (ga) clear of every collider
@@ -256,6 +259,31 @@ namespace Oheangbu.EditorTools.WorldMacro
     float gap=under-rodTop,cover=top-rodTop;
     check(gap<=Num(hang,"gap_max_m")+1e-4f&&cover>=Num(hang,"cover_min_m")-1e-4f,"AC-I9 (나) hang: roof over the axis "+F(under,"F3")+" (underside) .. "+F(top,"F3")+" (top) [M mesh]; rod top "+F(rodTop,"F3")+" = "
      +(gap<0f?F(-gap,"F3")+" m above":F(gap,"F3")+" m under")+" the underside (<= "+F(Num(hang,"gap_max_m"))+" under it), "+F(cover,"F3")+" m under the top surface (>= "+F(Num(hang,"cover_min_m"))+"); top cap "+F(under-body.max.y,"F3")+" m under the roof");
+   }
+   // (ma) the size (#308 world bundle 4, AC-I10 / AC-I11; D308-24 answer 6): to its source, to its house, hung close, hung higher.
+   // The house is measured where the lantern hangs: roof skin over the axis - TERRAIN under the axis (a collider box under the
+   // eave is not what the eye stands on). Only with lantern.place.size.
+   var size=pl["size"];
+   if(size==null||size.Type!=JTokenType.Object)info("AC-I10 / AC-I11 not checked: the data has no lantern.place.size block (older than 308.roadinn.3)");
+   else
+   {
+    try
+    {
+     var srcT=Source(cfg,scene);float ratio=lantern.lossyScale.x*sizeK/Mathf.Max(1e-6f,srcT.lossyScale.x);
+     check(ratio>=At(size["source_ratio"],0)-1e-4f&&ratio<=At(size["source_ratio"],1)+1e-4f&&Mathf.Abs(ratio-Num(cfg.Lantern,"scale"))<=.005f,
+      "AC-I10 size to its source: lossy "+F(lantern.lossyScale.x*sizeK,"F3")+" / source "+F(srcT.lossyScale.x,"F3")+" = x"+F(ratio,"F3")+" (in "+F(At(size["source_ratio"],0))+" .. "+F(At(size["source_ratio"],1))+" and = lantern.scale "+F(Num(cfg.Lantern,"scale"),"F3")+") [M]");
+    }
+    catch(Refuse r){check(false,"AC-I10 size to its source: "+r.Message);}
+    float yardY=BuildingAudit308.TerrainTop(body.center);
+    if(float.IsInfinity(under)||float.IsNaN(yardY))check(false,"AC-I10 size to its house: no roof mesh over the axis or no terrain under it");
+    else
+    {
+     float roofRoom=under-yardY,rr=body.size.y/Mathf.Max(.01f,roofRoom);
+     check(rr>=At(size["roof_ratio"],0)-1e-4f&&rr<=At(size["roof_ratio"],1)+1e-4f,"AC-I10 size to its house: body "+F(body.size.y,"F3")+" m / (roof skin "+F(under,"F3")+" - terrain "+F(yardY,"F3")+" = "+F(roofRoom,"F3")+" m) = "+F(rr,"F3")
+      +" (in "+F(At(size["roof_ratio"],0))+" .. "+F(At(size["roof_ratio"],1))+" = what the two existing inns show) [M]");
+     check(under-body.max.y<=Num(size,"cap_under_roof_max_m")+1e-4f,"AC-I11 hung close: top cap "+F(under-body.max.y,"F3")+" m under the roof skin over the axis (<= "+F(Num(size,"cap_under_roof_max_m"))+") [M]");
+     check(body.min.y-yardY>=Num(size,"bottom_over_ground_min_m")-1e-4f,"AC-I11 hung higher: body underside "+F(body.min.y-yardY,"F3")+" m over the terrain under the axis (>= "+F(Num(size,"bottom_over_ground_min_m"))+") [M]");
+    }
    }
    // (da) the door
    var door=Req(pl,"door");float doorGap=float.PositiveInfinity;missing.Clear();

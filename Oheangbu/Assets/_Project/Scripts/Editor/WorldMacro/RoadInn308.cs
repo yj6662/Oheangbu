@@ -38,12 +38,15 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   seal-apply            | seal-revert
  //   check:<scene>                                  AC-I1..I5, I8 (data + scene); read-only
  //   probe:<scene>                                  QI1 ground / capsule, QI2 hang gap, QI3 sight, QI5 resume ring; read-only
+ //   scene-adopt:<scene>                            #308 ledger recovery (RoadInn308.Adopt.cs): the scene ledger scene-apply WOULD have
+ //                                                  written (create, visual-add), from the opened scene, only when scene-dry has
+ //                                                  nothing to write; one ledger file, nothing else. Content / seal ledgers: not adopted
  // <scene> = an alias of the data's targets[] (arch296 | folk298 | main) or the scene's asset path. Order: content-apply of the
  // three scenes, scene-apply #296 -> #298 -> Main, seal-apply. A scene or content without the keeper point / a scene_requires
  // key is skipped with a note. No NavMesh bake here (the shared bake follows every scene ledger).
  public static partial class RoadInn308
  {
-  const string Usage="status | dry:<scene> | content-apply:<scene> | content-revert:<scene> [--op XI1|XI2] [--force] | scene-apply:<scene> | scene-revert:<scene> | seal-apply | seal-revert | check:<scene> | probe:<scene>";
+  const string Usage="status | dry:<scene> | content-apply:<scene> | content-revert:<scene> [--op XI1|XI2] [--force] | scene-apply:<scene> | scene-revert:<scene> | scene-adopt:<scene> | seal-apply | seal-revert | check:<scene> | probe:<scene>";
   static string DataFile=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","CliffBoundary308","roadinn308.json");
   static string OutDir=>Path.Combine(Harness303.RepoRoot,"Art","Playtest308","Pacing");
   sealed class Refuse:Exception{public Refuse(string m):base(m){}}
@@ -64,7 +67,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     if((a=Arg(c,"content-apply:"))!=null)return ContentRun(a,false);
     if((a=Arg(c,"content-revert:"))!=null)return ContentRevert(a,op,force);
     if((a=Arg(c,"scene-apply:"))!=null)return SceneRun(a,false);
-    if((a=Arg(c,"scene-revert:"))!=null)return SceneRevert(a);
+    if((a=Arg(c,"scene-revert:"))!=null)return AdoptNote(a)+SceneRevert(a);
+    if((a=Arg(c,"scene-adopt:"))!=null)return SceneAdopt(a);
     if(c=="seal-apply")return SealRun(false);
     if(c=="seal-revert")return SealRun(true);
     if((a=Arg(c,"check:"))!=null)return Check(a);
@@ -165,7 +169,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   // create | reseat | visual-add | note (scene rows: key = BuildingAudit308.KeyOf of the object, pos / euler / scale = local TRS before)
   [Serializable] sealed class Row{public string op="",kind="",id="",key="",before="",after="",detail="";public Vector3 pos,euler,scale;public bool reverted;}
   [Serializable] sealed class Write{public string utc="",target="",backup="",shaBefore="",shaAfter="",dataSha="",guard="";public List<Row> rows=new List<Row>();}
-  [Serializable] sealed class Ledger{public string kind="roadinn308",group="",target="",created="";public List<Write> writes=new List<Write>();}
+  [Serializable] sealed class Ledger{public string kind="roadinn308",group="",target="",created="",adopted="";public List<Write> writes=new List<Write>();}   // adopted: RoadInn308.Adopt.cs
   static string LedgerFile(string key)=>Path.Combine(OutDir,"ledger_roadinn308_"+key+".json");
   static Ledger ReadLedger(string key){var f=LedgerFile(key);return File.Exists(f)?JsonUtility.FromJson<Ledger>(File.ReadAllText(f)):null;}
   static void WriteLedger(string key,Ledger l){Directory.CreateDirectory(OutDir);File.WriteAllText(LedgerFile(key),JsonUtility.ToJson(l,true));}
@@ -278,7 +282,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    {
     var c=AssetDatabase.LoadAssetAtPath<WorldMacroPlaytestSO>(t.Content);
     string content=c==null?"content MISSING":"rest point "+(Point(c,cfg.RestId)!=null?"yes":"no")+", checkpoint "+(Checkpoint(c,cfg.RestId)!=null?"yes":"no")+", keeper rows "+(Point(c,cfg.KeeperId)?.Services?.Length.ToString()??"(no keeper)");
-    sb.AppendLine("  "+t.Alias+": "+content+"; live ledger rows content "+Live(ReadLedger("content_"+Key(t))).Count()+", scene "+Live(ReadLedger("scene_"+Key(t))).Count());
+    sb.AppendLine("  "+t.Alias+": "+content+"; live ledger rows content "+Live(ReadLedger("content_"+Key(t))).Count()+", scene "+Live(ReadLedger("scene_"+Key(t))).Count()+Adopt308.Mark(AdoptedLive(ReadLedger("scene_"+Key(t)))));
    }
    var seal=AssetDatabase.LoadAssetAtPath<WorldSealProfileSO>(Str(cfg.J["seal"],"profile"));
    sb.AppendLine("  seal profile: "+(seal==null?"MISSING":"EaRestIds has "+cfg.RestId+": "+(seal.EaRestIds??Array.Empty<string>()).Contains(cfg.RestId))+"; live ledger rows "+Live(ReadLedger("seal")).Count());

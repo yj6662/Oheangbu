@@ -36,6 +36,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //                               3) per enabled poles[] row: the 장대 등 under the FarLight308 root. Scene backup first, the scene is
     //                               saved, ledger Art/Playtest308/Relayout/farlight/ledger_farlight308_<scene>.json. A second apply = 변경 없음.
     //   revert:<scene>              destroys exactly what the ledger lists (newest first), saves the scene, archives the ledger
+    //   adopt:<scene>               #308 ledger recovery (FarLight308.Adopt.cs): the ledger apply WOULD have written, from the opened scene,
+    //                               only when plan:<scene> has nothing to write and nothing is missing; one ledger file, nothing else
     //   check:<scene>               read only: AC-L1..L8 (counts by type, caps vs Bloom, layer / LOD / shader, source binding, nothing on
     //                               enemies / contamination / protected trees, physics ray per sightline [M], feature order) ->
     //                               Art/Playtest308/Relayout/farlight/check_farlight308_<scene>.txt
@@ -148,7 +150,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         // ------------------------------------------------------------------ ledgers
 
         [Serializable] internal sealed class Made { public string what = "", row = "", path = "", utc = ""; public Vector3 at; }
-        [Serializable] internal sealed class Ledger { public string scene = ""; public List<Made> made = new List<Made>(); public List<string> backups = new List<string>(); }
+        [Serializable] internal sealed class Ledger { public string scene = "", adopted = ""; public List<Made> made = new List<Made>(); public List<string> backups = new List<string>(); }   // adopted: FarLight308.Adopt.cs
         [Serializable] internal sealed class AssetLedger { public List<string> created = new List<string>(); }
 
         static Ledger ReadLedger(string scene)
@@ -162,7 +164,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         // ------------------------------------------------------------------ entry
 
-        const string Usage = "status | mesh[:<built-in mesh name>] | sync | plan:<scene>[:variant=P0|P1|P2] | apply:<scene>[:variant=P0|P1|P2] | revert:<scene> | check:<scene> | rows:plan | rows:apply | rows:revert | shots:list | shot:<sightline>:<n60|z09>:<PC|Mobile>[:eye=after][:label=..] | assets:revert  (scene = arch296 | folk298 | main)";
+        const string Usage = "status | mesh[:<built-in mesh name>] | sync | plan:<scene>[:variant=P0|P1|P2] | apply:<scene>[:variant=P0|P1|P2] | revert:<scene> | adopt:<scene> | check:<scene> | rows:plan | rows:apply | rows:revert | shots:list | shot:<sightline>:<n60|z09>:<PC|Mobile>[:eye=after][:label=..] | assets:revert  (scene = arch296 | folk298 | main)";
 
         public static string Run(string command)
         {
@@ -177,7 +179,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "sync": PostLedger308.RequireEditable(); return Sync(Load(), false, out _);
                     case "plan": return Pass(SceneArg(parts), true, VariantArg(parts));
                     case "apply": return Pass(SceneArg(parts), false, VariantArg(parts));
-                    case "revert": return Revert(SceneArg(parts));
+                    case "revert": return Adopt308.RevertNote(File.Exists(LedgerFile(SceneArg(parts))) ? AdoptedLive(ReadLedger(SceneArg(parts))) : null) + Revert(SceneArg(parts));
+                    case "adopt": return Adopt(SceneArg(parts));
                     case "check": return Check(SceneArg(parts));
                     case "rows": return Rows(parts.Length > 1 ? parts[1].Trim() : "");
                     case "shots": return ShotList();
@@ -214,7 +217,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             foreach (var s in PostLedger308.Scenes)
             {
                 var l = File.Exists(LedgerFile(s)) ? ReadLedger(s) : null;
-                sb.AppendLine("  " + PostLedger308.Short(s) + ": ledger " + (l == null ? "none" : l.made.Count + " object(s) (" + string.Join(", ", l.made.GroupBy(m => m.what).Select(g => g.Key + " " + g.Count())) + ")"));
+                sb.AppendLine("  " + PostLedger308.Short(s) + ": ledger " + (l == null ? "none" : l.made.Count + " object(s) (" + string.Join(", ", l.made.GroupBy(m => m.what).Select(g => g.Key + " " + g.Count())) + ")" + Adopt308.Mark(AdoptedLive(l))));
             }
             var active = SceneManager.GetActiveScene();
             return sb.Append("  active scene " + active.path + (active.isDirty ? " (dirty)" : "")).ToString();

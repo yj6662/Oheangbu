@@ -22,23 +22,32 @@ namespace Oheangbu.EditorTools.WorldMacro
    public readonly StringBuilder Text=new StringBuilder();public int Pass,Fail,Info;
    public void C(bool ok,string what){Text.AppendLine((ok?"PASS ":"FAIL ")+what);if(ok)Pass++;else Fail++;}
    public void I(string what){Text.AppendLine("INFO "+what);Info++;}
+   // an identity line: the objects under the root are the ones the data builds (adopt:<scene> refuses on a FAIL of these; the lines
+   // that measure the ground, the NavMesh, the trees or the place count of the realm are not identity)
+   public int IdFail;public void Id(bool ok,string what){if(!ok)IdFail++;C(ok,what);}
   }
 
   static string Verify(string scenePath)
   {
    PostLedger308.RequireEditable();var d=Load();var scene=PostLedger308.Open(scenePath);string alias=PostLedger308.Short(scenePath);
+   return Done(Judge(scenePath,alias,d,scene,LookActive(alias)),alias,scenePath);
+  }
+  // the lines of verify. lookOn = V2 / V3 / V10 are judged on the look rocks: verify asks the rocks ledger (LookActive), adopt:<scene>
+  // decides by what stands in the holder (it has no ledger yet). Nothing is written here.
+  static Tally Judge(string scenePath,string alias,DataD d,Scene scene,bool lookOn)
+  {
    var k=new Tally();var ck=d.checks;var l=ReadLedger(alias);
    k.I("data sha "+Short(d.Sha)+" version "+d.version+"; ledger "+(l==null?"none":l.state+" "+l.utc+" data "+Short(l.dataSha)+(l.dataSha==d.Sha?"":" (NOT this data)")));
    int rootCount;var root=RootOf(scene,d.root,out rootCount);
-   k.C(rootCount==1,"V1 one root "+d.root+" in the scene (found "+rootCount+")");
-   if(root==null)return Done(k,alias,scenePath);
+   k.Id(rootCount==1,"V1 one root "+d.root+" in the scene (found "+rootCount+")");
+   if(root==null)return k;
    Physics.SyncTransforms();
    var rocksT=root.transform.Find("Rocks");var coresT=root.transform.Find("Core");var stoneT=root.transform.Find("Stone");
    // ---- V2 rocks: transforms, LODs, no collider; V3 bottoms buried
    var lod0=AssetDatabase.LoadAssetAtPath<Mesh>(d.assets.rock_lod0);var lod1=AssetDatabase.LoadAssetAtPath<Mesh>(d.assets.rock_lod1);var mat=AssetDatabase.LoadAssetAtPath<Material>(d.assets.rock_material);
    int rockBad=0;float worstBury=float.MaxValue;string worstRock="";var built=new List<(RockD data,Transform t)>();
    // #308 fix 2 L1: while the rocks ledger is applied the holder carries the look rocks (Amneung308.Look.cs) - V2 / V3 / V10 are judged on them
-   bool lookOn=LookActive(alias);var lookBuilt=lookOn?LookVerifyRocks(k,d,alias,root.transform,rocksT):null;
+   var lookBuilt=lookOn?LookVerifyRocks(k,d,alias,root.transform,rocksT):null;
    if(!lookOn)foreach(var r in d.rocks)
    {
     var t=rocksT!=null?rocksT.Find(r.id):null;
@@ -54,9 +63,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(lo-t.position.y<worstBury){worstBury=lo-t.position.y;worstRock=r.id;}
    }
    if(!lookOn){
-   k.C(rockBad==0&&built.Count==d.rocks.Length,"V2 rocks "+built.Count+" of "+d.rocks.Length+" at their data transform (tol "+F(ck.trs_tol_m)+" m / "+F(ck.yaw_tol_deg)+" deg), LODGroup with the two #275 meshes and the granite material ("+rockBad+" off)");
+   k.Id(rockBad==0&&built.Count==d.rocks.Length,"V2 rocks "+built.Count+" of "+d.rocks.Length+" at their data transform (tol "+F(ck.trs_tol_m)+" m / "+F(ck.yaw_tol_deg)+" deg), LODGroup with the two #275 meshes and the granite material ("+rockBad+" off)");
    int rockColliders=rocksT!=null?rocksT.GetComponentsInChildren<Collider>(true).Length:0;
-   k.C(rockColliders==0,"V2 visible rocks carry no collider (found "+rockColliders+"): the jointed ledges would be climbed");
+   k.Id(rockColliders==0,"V2 visible rocks carry no collider (found "+rockColliders+"): the jointed ledges would be climbed");
    k.C(worstBury>=ck.rock_bury_min_m,"V3 rock bottoms under the lowest physical ground of their footprint (9 points each): min "+F(worstBury)+" m at "+worstRock+" (need "+F(ck.rock_bury_min_m)+")");
    }
    // ---- V4 cores: data transform, no renderer, top over / bottom under the ground
@@ -81,7 +90,7 @@ namespace Oheangbu.EditorTools.WorldMacro
       if(du==0f&&dv==0f&&gy-bottom<worstUnder){worstUnder=gy-bottom;underAt=c.id;}
      }
    }
-   k.C(coreBad==0,"V4 cores "+(d.cores.Length-coreBad)+" of "+d.cores.Length+": BoxCollider at the data centre / yaw / size, solid, no renderer, no Rigidbody");
+   k.Id(coreBad==0,"V4 cores "+(d.cores.Length-coreBad)+" of "+d.cores.Length+": BoxCollider at the data centre / yaw / size, solid, no renderer, no Rigidbody");
    k.C(worstOver>=ck.core_over_ground_min_m,"V4 core tops over the highest physical ground within "+F(ck.core_ground_ring_m,"F1")+" m of their footprint: min "+F(worstOver)+" m at "+overAt+" (need "+F(ck.core_over_ground_min_m)+" = 국 2.4 + jump 0.75 + step 0.30 + slack)");
    k.C(worstUnder>=ck.core_bury_min_m,"V4 core bottoms under the lowest physical ground of their footprint: min "+F(worstUnder)+" m at "+underAt+" (need "+F(ck.core_bury_min_m)+")");
    // ---- V5 no gap: every joint of the chain core .. core, stone, core .. core overlaps
@@ -102,7 +111,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     var w=ToWorld(off.x*d.stone.half_m*.6f,off.y*d.stone.half_m*.6f,d.stone.x,d.stone.z,d.stone.yaw_box);n++;
     if(OwnTop(root.transform,stoneT,w.x,w.y,out float y)&&Mathf.Abs(y-d.stone.top_y)<=ck.stone_top_tol_m)stoneTop=float.IsNaN(stoneTop)?y:Mathf.Max(stoneTop,y);else stoneMiss++;
    }
-   k.C(stoneMiss==0,"V6 stone top: a collider of the Stone group answers within "+F(ck.stone_top_tol_m)+" m of y "+F(d.stone.top_y)+" at "+(n-stoneMiss)+" of "+n+" probe points"+(float.IsNaN(stoneTop)?"":" (measured "+F(stoneTop)+")"));
+   k.Id(stoneMiss==0,"V6 stone top: a collider of the Stone group answers within "+F(ck.stone_top_tol_m)+" m of y "+F(d.stone.top_y)+" at "+(n-stoneMiss)+" of "+n+" probe points"+(float.IsNaN(stoneTop)?"":" (measured "+F(stoneTop)+")"));
    foreach(var pad in d.stone.pads)
    {
     // the part of the pad the stone does not cover: its outer third, toward the open side
@@ -112,7 +121,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     for(int i=-1;i<=1;i++)for(int j=-1;j<=1;j++){var w=ToWorld(i*pad.size[0]*.5f,j*pad.size[2]*.5f,pad.x,pad.z,pad.yaw);if(Ground(w.x,w.y,root.transform,out float gy)){lo=Mathf.Min(lo,gy);hi=Mathf.Max(hi,gy);}}
     k.C(hi-pad.top_y<=ck.pad_ground_over_top_max_m&&pad.top_y-pad.size[1]<lo,"V6 pad "+pad.id+": top "+F(pad.top_y)+", physical ground under it "+F(lo)+".."+F(hi)+" (ground over the top at most "+F(ck.pad_ground_over_top_max_m)+" m, bottom "+F(pad.top_y-pad.size[1])+" under the lowest ground)");
    }
-   k.C(padMiss==0&&d.stone.pads.Length>0,"V6 pad tops: "+(d.stone.pads.Length-padMiss)+" of "+d.stone.pads.Length+" answer within "+F(ck.pad_top_tol_m)+" m of their data top");
+   k.Id(padMiss==0&&d.stone.pads.Length>0,"V6 pad tops: "+(d.stone.pads.Length-padMiss)+" of "+d.stone.pads.Length+" answer within "+F(ck.pad_top_tol_m)+" m of their data top");
    if(!float.IsNaN(stoneTop)&&!float.IsNaN(padTopY))k.C(stoneTop-padTopY>=ck.rise_m[0]&&stoneTop-padTopY<=ck.rise_m[1],"V6 lift rise (measured stone top - pad top) "+F(stoneTop-padTopY)+" m in ["+F(ck.rise_m[0],"F1")+", "+F(ck.rise_m[1],"F1")+"] (맨땅 국 = 2.4 m)");
    else k.C(false,"V6 lift rise not measured (stone or pad top missing)");
    var parts=stoneT!=null?d.stone.parts.Select(x=>stoneT.Find(x.name)).Where(t=>t!=null).ToArray():new Transform[0];
@@ -122,17 +131,17 @@ namespace Oheangbu.EditorTools.WorldMacro
     var b=rs[0].bounds;foreach(var r in rs.Skip(1))b.Encapsulate(r.bounds);float side=Mathf.Min(b.size.x,b.size.z);
     k.C(side>=ck.stone_size_m[0]&&side<=ck.stone_size_m[1],"V6 "+t.name+": look bounds "+F(b.size.x)+" x "+F(b.size.y)+" x "+F(b.size.z)+" m, top "+F(b.max.y)+" (plan side in ["+F(ck.stone_size_m[0],"F1")+", "+F(ck.stone_size_m[1],"F1")+"] m: the reach proof assumed a 4 x 4 m top)");
    }
-   k.C(parts.Length==d.stone.parts.Length,"V6 stone parts "+parts.Length+" of "+d.stone.parts.Length+" (cloned from "+d.stone.source_root+")");
+   k.Id(parts.Length==d.stone.parts.Length,"V6 stone parts "+parts.Length+" of "+d.stone.parts.Length+" (cloned from "+d.stone.source_root+")");
    // ---- V7 site nodes; V8 국 places
    var sd=d.stone.site;
    if(sd.enabled)
    {
     var sites=root.GetComponentsInChildren<DemoGukRevisitSite>(true).Where(s=>s.RewardId==sd.reward_id).ToArray();
-    if(sites.Length!=1)k.C(false,"V7 one DemoGukRevisitSite "+sd.reward_id+" under the root (found "+sites.Length+")");
+    if(sites.Length!=1)k.Id(false,"V7 one DemoGukRevisitSite "+sd.reward_id+" under the root (found "+sites.Length+")");
     else
     {
      var s=sites[0];bool nodes=s.LiftPad!=null&&s.UpperSurface!=null&&s.DescentExit!=null;float up=nodes?s.UpperSurface.position.y-s.LiftPad.position.y:float.NaN;
-     k.C(nodes&&s.isActiveAndEnabled&&up>=ck.rise_m[0]&&up<=ck.rise_m[1],"V7 site "+sd.reward_id+": active, three nodes, UpperSurface - LiftPad "+(nodes?F(up):"-")+" m in ["+F(ck.rise_m[0],"F1")+", "+F(ck.rise_m[1],"F1")+"]");
+     k.Id(nodes&&s.isActiveAndEnabled&&up>=ck.rise_m[0]&&up<=ck.rise_m[1],"V7 site "+sd.reward_id+": active, three nodes, UpperSurface - LiftPad "+(nodes?F(up):"-")+" m in ["+F(ck.rise_m[0],"F1")+", "+F(ck.rise_m[1],"F1")+"]");
      if(nodes)k.C(Harness303.Flat(s.UpperSurface.position,new Vector3(d.stone.x,0,d.stone.z))<=d.stone.half_m&&Harness303.Flat(s.LiftPad.position,s.DescentExit.position)>d.stone.half_m*2f,"V7 UpperSurface on the stone, LiftPad and DescentExit on opposite sides ("+F(Harness303.Flat(s.LiftPad.position,s.DescentExit.position))+" m apart): both directions");
     }
    }
@@ -152,10 +161,10 @@ namespace Oheangbu.EditorTools.WorldMacro
    var glow=root.GetComponentsInChildren<Renderer>(true).SelectMany(r=>r.sharedMaterials).Where(m=>m!=null&&Emissive(m)).Select(m=>m.name).Distinct().ToArray();
    var texts=root.GetComponentsInChildren<Component>(true).Where(c=>c!=null&&TextType(c.GetType())).Select(c=>c.GetType().Name).Distinct().ToArray();
    var scripts=root.GetComponentsInChildren<MonoBehaviour>(true).Where(m=>m!=null&&!(m is DemoGukRevisitSite)).Select(m=>m.GetType().Name).Distinct().ToArray();
-   k.C(lights==0,"V9 Light components under the root: "+lights+" (must be 0; the only new sustained light of the extension is the inn lantern)");
-   k.C(glow.Length==0,"V9 emissive materials under the root: "+glow.Length+(glow.Length>0?" ["+string.Join(", ",glow)+"]":"")+" (must be 0)");
-   k.C(texts.Length==0,"V9 text components under the root: "+texts.Length+(texts.Length>0?" ["+string.Join(", ",texts)+"]":"")+" (must be 0: no instruction text)");
-   k.C(scripts.Length==0,"V9 scripts under the root besides the site marker: "+scripts.Length+(scripts.Length>0?" ["+string.Join(", ",scripts)+"]":""));
+   k.Id(lights==0,"V9 Light components under the root: "+lights+" (must be 0; the only new sustained light of the extension is the inn lantern)");
+   k.Id(glow.Length==0,"V9 emissive materials under the root: "+glow.Length+(glow.Length>0?" ["+string.Join(", ",glow)+"]":"")+" (must be 0)");
+   k.Id(texts.Length==0,"V9 text components under the root: "+texts.Length+(texts.Length>0?" ["+string.Join(", ",texts)+"]":"")+" (must be 0: no instruction text)");
+   k.Id(scripts.Length==0,"V9 scripts under the root besides the site marker: "+scripts.Length+(scripts.Length>0?" ["+string.Join(", ",scripts)+"]":""));
    // ---- V10 core-fit on the real LOD1 mesh
    if(lookOn)LookVerifyFit(k,d,root.transform,boxes,lookBuilt);
    else if(lod1!=null&&built.Count>0&&boxes.Count==d.cores.Length)
@@ -218,7 +227,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var c in d.cores)if(NavMesh.SamplePosition(new Vector3(c.x,c.top_y,c.z),out _,ck.nav_probe_m,NavMesh.AllAreas))navTop++;
    bool navStone=NavMesh.SamplePosition(new Vector3(d.stone.x,d.stone.top_y,d.stone.z),out _,ck.nav_probe_m,NavMesh.AllAreas);
    k.I("V12 NavMesh: under "+navUnder+" of "+boxes.Count+" core centres there is still NavMesh on the ground ("+(navUnder>0?"the bake is OLDER than the band: enemies would path through it - run the shared bake after the three applies":"the bake already excludes the band")+"); on core tops "+navTop+", on the stone top "+(navStone?"yes (an island: no link is authored, enemies do not cross)":"no"));
-   return Done(k,alias,scenePath);
+   return k;
   }
 
   static string Done(Tally k,string alias,string scenePath)

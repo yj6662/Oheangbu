@@ -41,12 +41,15 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   check:<scene>                  AC-T1..T9 (data, campaign, content, scene); read-only
  //   probe:<scene>                  read-only: renderer roots within rules.probe_radius_m of the T0 stage Destination (variant
  //                                  A / B evidence). campaign-apply writes the two stage fields only after probe:<rules.probe_required>.
+ //   scene-adopt:<scene>            #308 ledger recovery (Texts308.Adopt.cs): the scene ledger scene-apply WOULD have written (create,
+ //                                  visual-add), from the opened scene, only when scene-dry has nothing to write; one ledger file,
+ //                                  nothing else. The campaign / content ledgers are not adopted (their before-forms are not known).
  // <scene> = an alias of the data's targets[] (arch296 | folk298 | main) or the scene's asset path. Order: campaign-apply,
  // content-apply of the three scenes, scene-apply #296 -> #298 -> Main, check x3. Group revert = scene-revert x3 (Main first),
  // content-revert x3, campaign-revert. No NavMesh bake: nothing here is an agent or carves the mesh (see DEPLOY_PLAN_texts.md).
  public static partial class Texts308
  {
-  const string Usage="status | dry:<scene> | campaign-apply | campaign-revert [--op XT0|XT1|XT3] [--force] | content-apply:<scene> | content-revert:<scene> [--op XTn] [--force] | scene-apply:<scene> | scene-revert:<scene> [--op XTn] | check:<scene> | probe:<scene>";
+  const string Usage="status | dry:<scene> | campaign-apply | campaign-revert [--op XT0|XT1|XT3] [--force] | content-apply:<scene> | content-revert:<scene> [--op XTn] [--force] | scene-apply:<scene> | scene-revert:<scene> [--op XTn] | scene-adopt:<scene> | check:<scene> | probe:<scene>";
   static string DataFile=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","CliffBoundary308","texts308.json");
   static string OutDir=>Path.Combine(Harness303.RepoRoot,"Art","Playtest308","Pacing");
   sealed class Refuse:Exception{public Refuse(string m):base(m){}}
@@ -71,7 +74,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     if((a=Arg(c,"content-apply:"))!=null)return ContentRun(a,false);
     if((a=Arg(c,"content-revert:"))!=null)return ContentRevert(a,op,force);
     if((a=Arg(c,"scene-apply:"))!=null)return SceneRun(a,false);
-    if((a=Arg(c,"scene-revert:"))!=null)return SceneRevert(a,op);
+    if((a=Arg(c,"scene-revert:"))!=null)return AdoptNote(a)+SceneRevert(a,op);
+    if((a=Arg(c,"scene-adopt:"))!=null)return SceneAdopt(a);
     if((a=Arg(c,"check:"))!=null)return Check(a);
     if((a=Arg(c,"probe:"))!=null)return Probe(a);
    }
@@ -235,7 +239,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   // BuildingAudit308.KeyOf of the object, pos / euler / scale = local TRS before). before / after = the element's form, "" = absent.
   [Serializable] sealed class Row{public string op="",kind="",id="",key="",before="",after="",detail="";public Vector3 pos,euler,scale;public bool reverted;}
   [Serializable] sealed class Write{public string utc="",target="",backup="",shaBefore="",shaAfter="",dataSha="",guard="";public List<Row> rows=new List<Row>();}
-  [Serializable] sealed class Ledger{public string kind="texts308",group="",target="",created="";public List<Write> writes=new List<Write>();}
+  [Serializable] sealed class Ledger{public string kind="texts308",group="",target="",created="",adopted="";public List<Write> writes=new List<Write>();}   // adopted: Texts308.Adopt.cs
   static string LedgerFile(string key)=>Path.Combine(OutDir,"ledger_texts308_"+key+".json");
   static Ledger ReadLedger(string key){var f=LedgerFile(key);return File.Exists(f)?JsonUtility.FromJson<Ledger>(File.ReadAllText(f)):null;}
   static void WriteLedger(string key,Ledger l){Directory.CreateDirectory(OutDir);File.WriteAllText(LedgerFile(key),JsonUtility.ToJson(l,true));}
@@ -415,7 +419,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     var c=AssetDatabase.LoadAssetAtPath<WorldMacroPlaytestSO>(t.Content);
     string content=c==null?"content MISSING":"points "+string.Join(", ",Arr(cfg.J,"points").Select(p=>Str(p,"id")+"="+(Point(c,Str(p,"id"))!=null?"yes":"no")))+"; "+
      string.Join(", ",Arr(cfg.J,"keepers").Select(k=>Str(k,"point")+" rows "+(Point(c,Str(k,"point"))?.Services?.Length.ToString()??"(no point)")));
-    sb.AppendLine("  "+t.Alias+": "+content+"; live ledger rows content "+Live(ReadLedger("content_"+t.Alias)).Count()+", scene "+Live(ReadLedger("scene_"+t.Alias)).Count());
+    sb.AppendLine("  "+t.Alias+": "+content+"; live ledger rows content "+Live(ReadLedger("content_"+t.Alias)).Count()+", scene "+Live(ReadLedger("scene_"+t.Alias)).Count()+Adopt308.Mark(AdoptedLive(ReadLedger("scene_"+t.Alias))));
     int lost=c==null?0:Live(ReadLedger("content_"+t.Alias)).Count(r=>(r.kind=="point"||r.kind=="services")&&Current(c,r)!=r.after);
     if(lost>0)sb.AppendLine("  WARN "+t.Alias+": "+lost+" live content ledger row(s) are NOT in the asset any more (Content308 content-apply rewrote the keeper's rows, or a content-revert --force put the file back): content-apply:"+t.Alias+" again (a rewritten keeper), or content-revert:"+t.Alias+" --force then content-apply");
    }

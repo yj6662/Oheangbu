@@ -28,6 +28,9 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   revert:<scene>[ --force] removes the root (only objects this ledger wrote; an object added by hand under it refuses without --force)
  //   veg-plan | veg-apply | veg-revert   the trees under the band, ONCE for the three scenes (shared sheet), through the
  //                           BuildingFix308.Veg ledger (BuildingFix308.VegRows.cs); protected sheets are never written
+ //   adopt:<scene>           #308 ledger recovery (Amneung308.Adopt.cs): the base ledger (and, when the look rocks stand in the holder,
+ //                           the rocks ledger) apply WOULD have written, from the opened scene - only when the identity lines of verify
+ //                           pass and nothing else stands under the root; ledger file(s) only, the scene is not changed
  // Ledger rows carry group (data "group", G10_amneung) so this item is reverted alone: Art/Playtest308/Pacing/ledger_amneung308_<scene>.json.
  // <scene> = arch296 | folk298 | main | the asset path.
  public static partial class Amneung308
@@ -69,7 +72,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   [Serializable] sealed class Row{public string group="",kind="",key="",before="",after="";}
   [Serializable] sealed class Ledger
   {
-   public string kind="amneung308",scene="",state="",utc="",dataSha="",dataVersion="",root="",sceneBackup="",sceneShaBefore="",sceneShaAfter="",revertedUtc="";
+   public string kind="amneung308",scene="",state="",utc="",dataSha="",dataVersion="",root="",sceneBackup="",sceneShaBefore="",sceneShaAfter="",revertedUtc="",adopted="";   // adopted: Amneung308.Adopt.cs
    public List<Row> rows=new List<Row>();public List<string> notes=new List<string>();
   }
   static Ledger ReadLedger(string alias){string f=LedgerFile(alias);return File.Exists(f)?JsonUtility.FromJson<Ledger>(File.ReadAllText(f)):null;}
@@ -89,12 +92,13 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(c.StartsWith("plan:",StringComparison.Ordinal))return Plan(ScenePath(c.Substring(5)));
     if(c.StartsWith("apply:",StringComparison.Ordinal))return Apply(ScenePath(c.Substring(6)));
     if(c.StartsWith("verify:",StringComparison.Ordinal))return Verify(ScenePath(c.Substring(7)));
-    if(c.StartsWith("revert:",StringComparison.Ordinal))return Revert(ScenePath(c.Substring(7)),force);
+    if(c.StartsWith("revert:",StringComparison.Ordinal))return Adopt308.RevertNote(AdoptedLive(ReadLedger(PostLedger308.Short(ScenePath(c.Substring(7))))))+Revert(ScenePath(c.Substring(7)),force);
+    if(c.StartsWith("adopt:",StringComparison.Ordinal))return Adopt(ScenePath(c.Substring(6)));
    }
    catch(Refuse r){return "REFUSED "+r.Message;}
    catch(PostLedger308.Refused r){return "REFUSED "+r.Message;}
    catch(Exception e){return "FAILED "+e;}
-   return "REFUSED unknown Amneung308 command '"+c+"' (status | plan:<scene> | apply:<scene> | verify:<scene> | revert:<scene> [--force] | veg-plan | veg-apply | veg-revert | rocks-status | rocks-plan:<scene> | rocks-apply:<scene> | rocks-revert:<scene> [--force]; <scene> = arch296 | folk298 | main)";
+   return "REFUSED unknown Amneung308 command '"+c+"' (status | plan:<scene> | apply:<scene> | verify:<scene> | revert:<scene> [--force] | adopt:<scene> | veg-plan | veg-apply | veg-revert | rocks-status | rocks-plan:<scene> | rocks-apply:<scene> | rocks-revert:<scene> [--force]; <scene> = arch296 | folk298 | main)";
   }
 
   static string ScenePath(string token)
@@ -169,7 +173,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var s in PostLedger308.Scenes)
    {
     string alias=PostLedger308.Short(s);var l=ReadLedger(alias);
-    sb.AppendLine("  "+alias+": ledger "+(l==null?"none":l.state+" "+l.utc+" data "+Short(l.dataSha)+" rows "+l.rows.Count+(l.notes.Count>0?" notes "+l.notes.Count:"")));
+    sb.AppendLine("  "+alias+": ledger "+(l==null?"none":l.state+" "+l.utc+" data "+Short(l.dataSha)+" rows "+l.rows.Count+(l.notes.Count>0?" notes "+l.notes.Count:"")+Adopt308.Mark(AdoptedLive(l))));
    }
    var active=SceneManager.GetActiveScene();sb.Append("  active scene "+active.path+(active.isDirty?" (dirty)":""));
    return sb.ToString();

@@ -74,7 +74,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(c=="rocks-status")return LookStatus();
    if(c.StartsWith("rocks-plan:",StringComparison.Ordinal))return LookPlan(ScenePath(c.Substring(11)));
    if(c.StartsWith("rocks-apply:",StringComparison.Ordinal))return LookApply(ScenePath(c.Substring(12)));
-   if(c.StartsWith("rocks-revert:",StringComparison.Ordinal))return LookRevert(ScenePath(c.Substring(13)),force);
+   if(c.StartsWith("rocks-revert:",StringComparison.Ordinal))return Adopt308.RevertNote(AdoptedLive(ReadLookLedger(PostLedger308.Short(ScenePath(c.Substring(13))))))+LookRevert(ScenePath(c.Substring(13)),force);
    return null;
   }
 
@@ -86,7 +86,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var s in PostLedger308.Scenes)
    {
     string alias=PostLedger308.Short(s);var l=ReadLookLedger(alias);var b=ReadLedger(alias);
-    sb.AppendLine("  "+alias+": base ledger "+(b==null?"none":b.state+" data "+Short(b.dataSha))+"; rocks ledger "+(l==null?"none":l.state+" "+l.utc+" data "+Short(l.dataSha)+" rows "+l.rows.Count));
+    sb.AppendLine("  "+alias+": base ledger "+(b==null?"none":b.state+" data "+Short(b.dataSha))+"; rocks ledger "+(l==null?"none":l.state+" "+l.utc+" data "+Short(l.dataSha)+" rows "+l.rows.Count+Adopt308.Mark(AdoptedLive(l))));
    }
    return sb.ToString().TrimEnd();
   }
@@ -298,7 +298,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   static List<LookBuilt> LookVerifyRocks(Tally k,DataD d,string alias,Transform root,Transform rocksT)
   {
    var built=new List<LookBuilt>();LookD l;
-   try{l=LoadLook();}catch(Refuse r){k.C(false,"V2 look data: "+r.Message);return built;}
+   try{l=LoadLook();}catch(Refuse r){k.Id(false,"V2 look data: "+r.Message);return built;}
    var led=ReadLookLedger(alias);
    k.I("look rocks: data sha "+Short(l.Sha)+" version "+l.version+"; rocks ledger "+(led==null?"none":led.state+" "+led.utc+" data "+Short(led.dataSha)+(led.dataSha==l.Sha?"":" (NOT this data)"))+"; base data "+(string.Equals(d.Sha,l.@base.sha256,StringComparison.OrdinalIgnoreCase)?"= the one the look was derived from":"NOT the one the look was derived from"));
    var mat=AssetDatabase.LoadAssetAtPath<Material>(l.material);var ck=l.checks;int bad=0;float worst=float.MaxValue;string worstId="";int noGround=0;
@@ -320,9 +320,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(gy-low.y<worst){worst=gy-low.y;worstId=r.id;}
    }
    int extra=rocksT!=null?rocksT.childCount-built.Count:0;
-   k.C(bad==0&&built.Count==l.rocks.Length&&extra==0,"V2 look rocks "+built.Count+" of "+l.rocks.Length+" at their data transform (tol "+F(ck.trs_tol_m)+" m / "+F(ck.rot_tol_deg)+" deg), LODGroup with the mesh pair of their key ("+string.Join(", ",l.meshes.Select(m=>m.key+" x "+l.rocks.Count(r=>r.mesh==m.key)))+") and the granite material ("+bad+" off, "+extra+" other object(s) in the holder)");
+   k.Id(bad==0&&built.Count==l.rocks.Length&&extra==0,"V2 look rocks "+built.Count+" of "+l.rocks.Length+" at their data transform (tol "+F(ck.trs_tol_m)+" m / "+F(ck.rot_tol_deg)+" deg), LODGroup with the mesh pair of their key ("+string.Join(", ",l.meshes.Select(m=>m.key+" x "+l.rocks.Count(r=>r.mesh==m.key)))+") and the granite material ("+bad+" off, "+extra+" other object(s) in the holder)");
    int cols=rocksT!=null?rocksT.GetComponentsInChildren<Collider>(true).Length:0;
-   k.C(cols==0,"V2 visible rocks carry no collider (found "+cols+"): nothing of the look pass is in the NavMesh bake");
+   k.Id(cols==0,"V2 visible rocks carry no collider (found "+cols+"): nothing of the look pass is in the NavMesh bake");
    k.C(noGround==0&&worst>=ck.sunk_under_m,"V3 every look rock's lowest point is under the physical ground below it: min "+F(worst)+" m at "+worstId+" (need "+F(ck.sunk_under_m)+"; "+noGround+" without ground)");
    return built;
   }

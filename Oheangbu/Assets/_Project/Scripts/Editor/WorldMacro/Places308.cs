@@ -38,11 +38,14 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   check:<scene>                                  AC-P1..P8 on the saved scene; read-only
  //   eyes:<scene>[:<label>]                         the Presentation297 shot lines of stills[] on the PHYSICAL ground (names
  //                                                  fix4_<label>_<id>: label = before | after); read-only
+ //   assets-adopt | scene-adopt:<scene>             #308 ledger recovery (Places308.Adopt.cs): the ledger apply WOULD have written, from
+ //                                                  the assets / the opened scene, only when they equal what the data builds; one
+ //                                                  ledger file is written and nothing else
  // <scene> = arch296 | folk298 | main. Order: assets-apply, then scene-apply arch296 -> folk298 -> main, check x3.
  // Rows with solid true carry BoxColliders: they must be in all three scenes BEFORE the NavMesh bake (RUN_ORDER_fix4.md).
- public static class Places308
+ public static partial class Places308
  {
-  const string Usage="status | assets-plan | assets-apply | assets-revert | plan:<scene> | scene-apply:<scene> | scene-revert:<scene> [--place <id>] | check:<scene> | eyes:<scene>[:<label>]";
+  const string Usage="status | assets-plan | assets-apply | assets-revert | assets-adopt | scene-adopt:<scene> | plan:<scene> | scene-apply:<scene> | scene-revert:<scene> [--place <id>] | check:<scene> | eyes:<scene>[:<label>]";
   static string DataFile=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","CliffBoundary308","places308.json");
   static string OutDir=>Path.Combine(Harness303.RepoRoot,"Art","Playtest308","Pacing");
   sealed class Refuse:Exception{public Refuse(string m):base(m){}}
@@ -60,11 +63,13 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(place!=null&&!c.StartsWith("scene-revert:",StringComparison.Ordinal))throw new Refuse("--place is read by scene-revert only");
     if(c=="assets-plan")return Assets("plan");
     if(c=="assets-apply")return Assets("apply");
-    if(c=="assets-revert")return Assets("revert");
+    if(c=="assets-revert")return Adopt308.RevertNote(AdoptedLive(ReadLedger("assets")))+Assets("revert");
+    if(c=="assets-adopt")return AssetsAdopt();
     string a;
     if((a=Arg(c,"plan:"))!=null)return Apply(a,true);
     if((a=Arg(c,"scene-apply:"))!=null)return Apply(a,false);
-    if((a=Arg(c,"scene-revert:"))!=null)return Revert(a,place);
+    if((a=Arg(c,"scene-revert:"))!=null)return AdoptNote(a)+Revert(a,place);
+    if((a=Arg(c,"scene-adopt:"))!=null)return SceneAdopt(a);
     if((a=Arg(c,"check:"))!=null)return Check(a);
     if((a=Arg(c,"eyes:"))!=null)return Eyes(a);
    }
@@ -164,7 +169,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
   [Serializable] sealed class Row{public string kind="",key="",detail="";public bool reverted;}
   [Serializable] sealed class Write{public string utc="",target="",backup="",shaBefore="",shaAfter="",dataSha="";public List<Row> rows=new List<Row>();}
-  [Serializable] sealed class Ledger{public string kind="places308",group="",target="",created="";public List<Write> writes=new List<Write>();}
+  [Serializable] sealed class Ledger{public string kind="places308",group="",target="",created="",adopted="";public List<Write> writes=new List<Write>();}   // adopted: Places308.Adopt.cs
   static string LedgerFile(string key)=>Path.Combine(OutDir,"ledger_places308_"+key+".json");
   static Ledger ReadLedger(string key){var f=LedgerFile(key);return File.Exists(f)?JsonUtility.FromJson<Ledger>(File.ReadAllText(f)):null;}
   static void WriteLedger(string key,Ledger l){Directory.CreateDirectory(OutDir);File.WriteAllText(LedgerFile(key),JsonUtility.ToJson(l,true));}
@@ -504,8 +509,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    int rows=EnabledPlaces(cfg).Sum(p=>Arr(p,"rows").Count()),solid=EnabledPlaces(cfg).Sum(p=>Arr(p,"rows").Count(r=>Flag(r,"solid")));
    sb.AppendLine("  data "+DataFile+" sha "+Short(cfg.Sha)+" version "+(Opt(cfg.J,"version")??"?")+", group "+(Opt(cfg.J,"group")??"")+": "+EnabledPlaces(cfg).Count()+" place(s), "+rows+" row(s), "+solid+" with colliders (bake)");
    int ok=Arr(cfg.J,"meshes").Count(m=>MeshMatches(cfg,AssetDatabase.LoadAssetAtPath<Mesh>(MeshAsset(cfg,Str(m,"name"))),m));
-   sb.AppendLine("  mesh assets in place "+ok+"/"+Arr(cfg.J,"meshes").Count()+" under "+cfg.AssetDir+"; mesh json "+Arr(cfg.J,"meshes").Count(m=>JsonState(cfg,m)==null)+"/"+Arr(cfg.J,"meshes").Count()+" as the data says; live asset ledger rows "+Live(ReadLedger("assets")).Count());
-   foreach(var t in cfg.Targets)sb.AppendLine("  "+t.Alias+": live scene ledger rows "+Live(ReadLedger("scene_"+t.Alias)).Count());
+   sb.AppendLine("  mesh assets in place "+ok+"/"+Arr(cfg.J,"meshes").Count()+" under "+cfg.AssetDir+"; mesh json "+Arr(cfg.J,"meshes").Count(m=>JsonState(cfg,m)==null)+"/"+Arr(cfg.J,"meshes").Count()+" as the data says; live asset ledger rows "+Live(ReadLedger("assets")).Count()+Adopt308.Mark(AdoptedLive(ReadLedger("assets"))));
+   foreach(var t in cfg.Targets)sb.AppendLine("  "+t.Alias+": live scene ledger rows "+Live(ReadLedger("scene_"+t.Alias)).Count()+Adopt308.Mark(AdoptedLive(ReadLedger("scene_"+t.Alias))));
    var active=SceneManager.GetActiveScene();var root=Root(cfg,active);
    return sb.Append("  active scene "+active.path+(active.isDirty?" (dirty)":"")+": "+cfg.Root+" "+(root==null?"absent":"present, "+root.Cast<Transform>().Sum(h=>h.childCount)+" object(s)")).ToString();
   }

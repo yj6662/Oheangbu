@@ -31,12 +31,14 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   scene-apply:<scene>  |  scene-revert:<scene>
  //   check:<scene>           AC-O1..O8 on the saved scene; read-only
  //   shot:<scene>:<eye>:<PC|Mobile>[:label=<text>]   one still (stills.eyes[] of the data, or "close"); before and after the apply
+ //   scene-adopt:<scene> | bake-adopt   #308 ledger recovery (OreOutcrop308.Adopt.cs): the ledger scene-apply / bake WOULD have written,
+ //                           from the opened scene / the mesh assets, only when they equal what the data builds; one ledger file, nothing else
  // <scene> = arch296 | folk298 | main (data targets[]). Order: arch296 -> folk298 -> main.
  // 2회차(D308-22): rows with kind "split_vein" are handled by OreOutcrop308.Vein2.cs (bake | bake-plan | bake-revert + the same plan / scene-apply / check / shot;
  // scene-revert below serves both tries - it removes exactly what the scene ledger created).
  public static partial class OreOutcrop308
  {
-  const string Usage="status | bake-plan | bake | bake-revert | plan:<scene> | scene-apply:<scene> | scene-revert:<scene> | check:<scene> | shot:<scene>:<eye>:<PC|Mobile>[:label=<text>]";
+  const string Usage="status | bake-plan | bake | bake-revert | bake-adopt | plan:<scene> | scene-apply:<scene> | scene-revert:<scene> | scene-adopt:<scene> | check:<scene> | shot:<scene>:<eye>:<PC|Mobile>[:label=<text>]";
   static string DataFile=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","CliffBoundary308","ore308.json");
   static string OutDir=>Path.Combine(Harness303.RepoRoot,"Art","Playtest308","Pacing");
   sealed class Refuse:Exception{public Refuse(string m):base(m){}}
@@ -51,10 +53,12 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(c=="bake-plan")return Bake(true);
     if(c=="bake")return Bake(false);
     if(c=="bake-revert")return BakeRevert();
+    if(c=="bake-adopt")return BakeAdopt();
     string a;
     if((a=Arg(c,"plan:"))!=null)return V2(Load())?ApplyV2(a,true):Apply(a,true);
     if((a=Arg(c,"scene-apply:"))!=null)return V2(Load())?ApplyV2(a,false):Apply(a,false);
-    if((a=Arg(c,"scene-revert:"))!=null)return Revert(a);
+    if((a=Arg(c,"scene-revert:"))!=null)return AdoptNote(a)+Revert(a);
+    if((a=Arg(c,"scene-adopt:"))!=null)return SceneAdopt(a);
     if((a=Arg(c,"check:"))!=null)return V2(Load())?CheckV2(a):Check(a);
     if((a=Arg(c,"shot:"))!=null)return V2(Load())?ShotV2(a):Shot(a);
    }
@@ -117,7 +121,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
   [Serializable] sealed class Row{public string kind="",key="",detail="";public bool reverted;}
   [Serializable] sealed class Write{public string utc="",target="",backup="",shaBefore="",shaAfter="",dataSha="";public List<Row> rows=new List<Row>();}
-  [Serializable] sealed class Ledger{public string kind="ore308",group="",target="",created="";public List<Write> writes=new List<Write>();}
+  [Serializable] sealed class Ledger{public string kind="ore308",group="",target="",created="",adopted="";public List<Write> writes=new List<Write>();}   // adopted: OreOutcrop308.Adopt.cs
   static string LedgerFile(Target t)=>Path.Combine(OutDir,"ledger_ore308_scene_"+t.Alias+".json");
   static Ledger ReadLedger(Target t){var f=LedgerFile(t);return File.Exists(f)?JsonUtility.FromJson<Ledger>(File.ReadAllText(f)):null;}
   static void WriteLedger(Target t,Ledger l){Directory.CreateDirectory(OutDir);File.WriteAllText(LedgerFile(t),JsonUtility.ToJson(l,true));}
@@ -391,7 +395,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    var sb=new StringBuilder("OreOutcrop308 status (play="+EditorApplication.isPlaying+")\n");
    Cfg cfg;try{cfg=Load();}catch(Refuse r){return sb.Append("  "+r.Message).ToString();}
    sb.AppendLine("  data "+DataFile+" sha "+Short(cfg.Sha)+" version "+(Opt(cfg.J,"version")??"?")+", group "+(Opt(cfg.J,"group")??"")+", enabled outcrops "+string.Join(", ",Enabled(cfg).Select(o=>Str(o,"id"))));
-   foreach(var t in cfg.Targets)sb.AppendLine("  "+t.Alias+": live ledger rows "+Live(ReadLedger(t)).Count());
+   foreach(var t in cfg.Targets)sb.AppendLine("  "+t.Alias+": live ledger rows "+Live(ReadLedger(t)).Count()+Adopt308.Mark(AdoptedLive(ReadLedger(t))));
    StatusV2(cfg,sb);
    var active=SceneManager.GetActiveScene();var root=Root(cfg,active);
    return sb.Append("  active scene "+active.path+(active.isDirty?" (dirty)":"")+": "+cfg.Root+" "+(root==null?"absent":"present, "+root.childCount+" outcrop(s)")).ToString();

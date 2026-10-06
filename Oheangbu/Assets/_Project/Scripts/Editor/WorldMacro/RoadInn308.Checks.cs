@@ -179,7 +179,10 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(lantern==null)sb.AppendLine("  AC-I9: no lantern in the scene yet (scene-apply creates it; check:<scene> then measures its place)");
    else
    {
-    var place=new Checks();PlaceLines(cfg,scene,lantern,at-lantern.position,place.C,place.I);
+    // #308 world bundle 4: the data's SIZE too (source lossy x lantern.scale against the size the lantern has now)
+    float sizeK=1f;try{var srcP=Source(cfg,scene);sizeK=srcP.lossyScale.x*Num(cfg.Lantern,"scale")/Mathf.Max(1e-6f,lantern.lossyScale.x);}catch(Refuse){}
+    var place=new Checks();PlaceLines(cfg,scene,lantern,at-lantern.position,place.C,place.I,sizeK);
+    if(Mathf.Abs(sizeK-1f)>.002f)sb.AppendLine("  the data's lantern size = x"+F(sizeK,"F3")+" of the size it has now (scene-apply re-sizes it)");
     sb.AppendLine("  AC-I9 for the data's lantern place "+V(at)+(Vector3.Distance(at,lantern.position)>cfg.R("pose_tol_m")?" - the lantern now stands at "+V(lantern.position)+" ("+F(Vector3.Distance(at,lantern.position))+" m away: scene-apply re-seats it)":" (= where the lantern stands)")+": "+place.Oks+" ok, "+place.Fails+" FAIL");
     sb.Append(place.Sb);
    }

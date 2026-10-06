@@ -263,12 +263,28 @@ namespace Oheangbu.EditorTools.WorldMacro
      lantern=go.transform;k.Key(lrow,lantern);
     }
    }
-   else if(Vector3.Distance(lantern.position,at)>tol||Quaternion.Angle(lantern.rotation,rot)>yawTol)
+   else
    {
-    k.Do(new Row{kind="reseat",key=BuildingAudit308.KeyOf(lantern),pos=lantern.localPosition,euler=lantern.localEulerAngles,scale=lantern.localScale,detail="re-seat "+lanternKey+" "+V(lantern.position)+" -> "+V(at)});
-    if(!k.Dry)lantern.SetPositionAndRotation(at,rot);
+    // #308 world bundle 4 (D308-24 answer 6 "작게 · 높게"): the clone's SIZE is data too (source lossy scale x lantern.scale). It was set
+    // at the create only, so a changed lantern.scale never reached a lantern that already hangs. The re-seat row records the old local
+    // pose and scale for the ledger. It is NOT a way back: scene-revert undoes EVERY live row of this ledger newest first (the lantern's
+    // own create row too - the lantern would be destroyed), and Undo("reseat") pins the children to their world poses. To put an old
+    // size back, stage the old lantern.scale / offset and scene-apply again (this code re-sizes both ways). The far-light sleeve is a
+    // child of the body mesh and is scaled with it.
+    var wantScale=src.lossyScale*Num(L,"scale");var scaleTolT=L["scale_tol"];float scaleTol=scaleTolT!=null&&scaleTolT.Type!=JTokenType.Null?scaleTolT.Value<float>():.002f;
+    bool moved=Vector3.Distance(lantern.position,at)>tol||Quaternion.Angle(lantern.rotation,rot)>yawTol,sized=(lantern.lossyScale-wantScale).magnitude>scaleTol;
+    if(moved||sized)
+    {
+     k.Do(new Row{kind="reseat",key=BuildingAudit308.KeyOf(lantern),pos=lantern.localPosition,euler=lantern.localEulerAngles,scale=lantern.localScale,detail="re-seat "+lanternKey+" "+V(lantern.position)+" -> "+V(at)
+      +(sized?" scale x"+F(lantern.lossyScale.x/Mathf.Max(1e-6f,src.lossyScale.x),"F3")+" -> x"+F(Num(L,"scale"),"F3")+" of the source":"")});
+     if(!k.Dry)
+     {
+      if(sized){var ps=lantern.parent!=null?lantern.parent.lossyScale:Vector3.one;lantern.localScale=new Vector3(wantScale.x/ps.x,wantScale.y/ps.y,wantScale.z/ps.z);}
+      lantern.SetPositionAndRotation(at,rot);
+     }
+    }
+    else k.Say("ok "+lanternKey+" at "+V(lantern.position)+" scale x"+F(lantern.lossyScale.x/Mathf.Max(1e-6f,src.lossyScale.x),"F3")+" of the source");
    }
-   else k.Say("ok "+lanternKey+" at "+V(lantern.position));
    if(lantern==null){k.Say("lantern rules (colliders off, one light, marker, InteractionVisuals) are set with the create: source has "+src.GetComponentsInChildren<Light>(true).Length+" Light, "+src.GetComponentsInChildren<Collider>(true).Length+" collider(s)");LightSource(cfg,src);return;}
    // rules on the clone: no collider (nothing to stand on or bump into), exactly light.max Point light with the data values, no shadows
    var fixes=new List<string>();

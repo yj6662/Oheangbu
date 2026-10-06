@@ -19,6 +19,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   Fix2 "apply:<alias>[:<group>,..]"   enabled groups (or the named ones). Ledger first, one scene save, no SaveAssets
     //   Fix2 "verify:<alias>"               post-conditions of every enabled group on the scene as it stands
     //   Fix2 "revert:<alias>[:force]"       the newest live op of this tool's ledger, changes undone in reverse order
+    //   Fix2 "adopt:<alias>"                #308 ledger recovery (ContentSeat308.Fix2Adopt.cs): after the ledger was lost, ONE op row for
+    //                                       the objects that stand on their data target (verify GREEN first). Every before value is
+    //                                       "original unknown": revert REFUSES an adopted op - it has nothing to put back
     //   Fix2 "veg-plan" | "veg-apply"       L6: the rows of propfix308.json veg that are switched on (none by default) through
     //                                       BuildingFix308.VegRows (the Veg ledger)
     // An op (propfix308.json ops[]) = one object by its exact key:
@@ -68,9 +71,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "apply": return a.Length > 1 ? Fix2Pass(a[1], a.Length > 2 ? a[2].Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray() : null, true, command) : "refused: apply:<alias>[:<group>,..]";
                     case "verify": return a.Length > 1 ? Fix2Verify(a[1]) : "refused: verify:<alias>";
                     case "revert": return a.Length > 1 ? Fix2Revert(a[1], a.Length > 2 && a[2].Trim() == "force") : "refused: revert:<alias>[:force]";
+                    case "adopt": return a.Length > 1 ? Fix2Adopt(a[1]) : "refused: adopt:<alias>";
                     case "veg-plan": return Fix2Veg(false);
                     case "veg-apply": return Fix2Veg(true);
-                    default: return "refused: ContentSeat308 Fix2 status | plan:<alias> | apply:<alias>[:<group>,..] | verify:<alias> | revert:<alias>[:force] | veg-plan | veg-apply";
+                    default: return "refused: ContentSeat308 Fix2 status | plan:<alias> | apply:<alias>[:<group>,..] | verify:<alias> | revert:<alias>[:force] | adopt:<alias> | veg-plan | veg-apply";
                 }
             }
             catch (Refuse r) { return "refused: " + r.Message; }
@@ -505,6 +509,13 @@ namespace Oheangbu.EditorTools.WorldMacro
                     // the editor stopped after the ledger write and before the scene save: the scene never changed
                     op.reverted = true; op.revertedUtc = BuildingAudit308.Utc(); op.detail += "; settled: the scene file still has the sha before the apply (never saved)"; Fix2Save(d, ledger);
                     GoBack(previous, k.Scene, opened); return "reverted: " + k.Alias + " op " + op.utc + " was left 'applying' and the scene was never saved (sha " + Short(op.shaBefore) + ") - ledger row closed, nothing to undo";
+                }
+                // #308 ledger recovery: an adopted op holds no before value (Fix2Adopt) - nothing can be put back, with or without :force
+                if (Adopt308.Is(op.detail))
+                {
+                    GoBack(previous, k.Scene, opened);
+                    return "refused: " + k.Alias + " - the newest live Fix2 op " + op.utc + " is an adopted one (" + op.changes.Count(c => c.state == "apply") + " row(s)): the pose / scale / material each object had before Fix2 is " + Adopt308.Unknown
+                        + ", so nothing is restored and the op stays live (':force' does not change this). Fix2 created no object in this op: there is nothing to remove";
                 }
                 var todo = new List<Action>(); var notes = new List<string>();
                 for (int i = op.changes.Count - 1; i >= 0; i--)
