@@ -56,5 +56,51 @@ namespace Oheangbu.Data.World
         }
         [Tooltip("Placements on or beside a walking route that stay visual only (resolved once in Prepare; no per-frame cost).")]
         public SkipPlacement[] SkipPlacements=Array.Empty<SkipPlacement>();
+        // #308 collide (D308-29 answer 2 / D308-31, SPEC-NATURE-COLLISION-306 §308): stand-ins measured from the drawn LOD0 mesh instead
+        // of the prototype's Radius / 85 % bounds box. Prototype space (pivot = origin, +Y up, Scale 1); the placement's Euler and Scale
+        // apply. Written by Tools/Unity/Stage308_collide (collide_measure.py -> collide_build.py); never typed by hand.
+        [Serializable] public struct Capsule308
+        {
+            [Tooltip("Sphere centres of the two ends (a leaning stem leans with them).")] public Vector3 Base,Top;
+            public float Radius;
+        }
+        [Serializable] public struct Box308
+        {
+            public Vector3 Centre,Size;
+            [Tooltip("Degrees about +Y, applied before the placement's rotation.")] public float Yaw;
+        }
+        [Serializable] public sealed class Fit308
+        {
+            [Tooltip("Sheet prototype Ids that draw this mesh (exact, ordinal).")]
+            public string[] PrototypeIds=Array.Empty<string>();
+            [Tooltip("Prototype.Size the fit was measured on: a prototype whose Size differs (rebaked mesh) falls back to the code rule.")]
+            public Vector3 Size;
+            [Tooltip("Tree stems: one capsule per straight stretch of a stem. The canopy has none.")]
+            public Capsule308[] Capsules=Array.Empty<Capsule308>();
+            [Tooltip("Rock: boxes inside the drawn rock. Empty (with no capsule) = this prototype gets no stand-in.")]
+            public Box308[] Boxes=Array.Empty<Box308>();
+        }
+        [Header("#308 measured fits")]
+        [Tooltip("Off = every prototype uses the code rule (Radius capsule, BoxShrink box) as before #308.")]
+        public bool UseFits308=true;
+        [Tooltip("Largest Size difference (metres, any axis) at which a fit still belongs to its prototype.")]
+        [Min(0)] public float FitSizeTolerance308=.005f;
+        public Fit308[] Fits308=Array.Empty<Fit308>();
+        // The fit for a prototype, or null (not listed, switched off, or measured on another mesh size).
+        public Fit308 FitFor308(string prototypeId,Vector3 size)
+        {
+            if(!UseFits308||Fits308==null||string.IsNullOrEmpty(prototypeId))return null;
+            foreach(var f in Fits308)
+            {
+                if(f?.PrototypeIds==null)continue;
+                foreach(var id in f.PrototypeIds)
+                {
+                    if(!string.Equals(id,prototypeId,StringComparison.Ordinal))continue;
+                    var d=f.Size-size;
+                    return Mathf.Abs(d.x)<=FitSizeTolerance308&&Mathf.Abs(d.y)<=FitSizeTolerance308&&Mathf.Abs(d.z)<=FitSizeTolerance308?f:null;
+                }
+            }
+            return null;
+        }
     }
 }

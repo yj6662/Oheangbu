@@ -13,6 +13,10 @@ namespace Oheangbu.App.World
     // Referenced, not global: the scene wires it; Sources empty -> every CompactRebuildArtRenderer in this scene.
     // Visible solids only (SPEC-WORLD-MAP A2): a candidate lives only while a renderer that draws its sheet is enabled.
     // No NavMesh, no Rigidbody, nothing saved; edit mode never creates a collider.
+    // #308 collide (D308-29 answer 2 / D308-31): a prototype listed in Profile.Fits308 uses stand-ins measured from its drawn LOD0 mesh:
+    // trees one capsule per straight stretch of each stem (leaning with it, never the canopy), rocks boxes that stay inside the drawn
+    // rock. A prototype may therefore own several parts; each part is its own candidate (same placement index). Unlisted prototypes,
+    // UseFits308 off, or a fit measured on another mesh Size keep the old rule (Radius capsule on the pivot, BoxShrink bounds box).
     [DefaultExecutionOrder(-60)]
     public sealed class CompactNaturalSolids : MonoBehaviour, INaturalSolidPool306
     {
@@ -34,6 +38,9 @@ namespace Oheangbu.App.World
         // Profile.SkipPlacements resolved in the last Prepare (placements left visual only) / entries whose Id is not in its sheet.
         public int SkipListed {get;private set;}
         public int SkipStale {get;private set;}
+        // #308: prototypes that took a measured fit in the last Prepare / the parts those fits gave (several per twin-stem tree).
+        public int FitPrototypes308 {get;private set;}
+        public int FitParts308 {get;private set;}
         public long Activations {get;private set;}
         public long Releases {get;private set;}
         public long Deferred {get;private set;}
@@ -46,7 +53,8 @@ namespace Oheangbu.App.World
         public int Layer {get;private set;}
         public bool Ready=>prepared;
         enum Shape:byte{Capsule,Box,Sphere}
-        struct Kind{public Shape Shape;public Vector3 Centre,Size;public float Radius,Height;public bool Wood;public int Sheet;}
+        // Fit (#308): Capsule = sphere centres Centre..Top, Radius; Box = Centre, Size, Yaw. Otherwise the pre-#308 meaning.
+        struct Kind{public Shape Shape;public Vector3 Centre,Size,Top;public float Radius,Height,Yaw;public bool Wood,Fit;public int Sheet;}
         sealed class SheetUnit{public WorldMacroDressingSheetSO Sheet;public readonly List<CompactRebuildArtRenderer> Renderers=new List<CompactRebuildArtRenderer>();public bool Live;public int Placements;}
         sealed class Entry{public GameObject Go;public Collider Collider;public Shape Shape;public int Candidate=-1,ActiveAt=-1;}
         readonly List<SheetUnit> units=new List<SheetUnit>();
@@ -151,21 +159,31 @@ namespace Oheangbu.App.World
                 u.Renderers.Add(r);if(Contacts==null&&r.Contacts!=null)Contacts=r.Contacts;
             }
             var pos=new List<Vector3>(4096);var rad=new List<float>(4096);var kin=new List<int>(4096);var plc=new List<int>(4096);maxReach=0;
-            int skipped=0,stale=0;
+            int skipped=0,stale=0,fitted=0,fitParts=0;
             for(int s=0;s<units.Count;s++)
             {
-                var sheet=units[s].Sheet;var lookup=new Dictionary<string,int>();
-                if(sheet.Prototypes!=null)foreach(var proto in sheet.Prototypes){if(proto==null||string.IsNullOrEmpty(proto.Id)||lookup.ContainsKey(proto.Id))continue;lookup.Add(proto.Id,KindFor(proto,s,p));}
+                // prototype -> (first kind, parts); parts 0 = no solid
+                var sheet=units[s].Sheet;var lookup=new Dictionary<string,Vector2Int>();
+                if(sheet.Prototypes!=null)foreach(var proto in sheet.Prototypes)
+                {
+                    if(proto==null||string.IsNullOrEmpty(proto.Id)||lookup.ContainsKey(proto.Id))continue;
+                    int first=kinds.Count,parts=MakeKinds(proto,s,p,kinds,out bool fit);lookup.Add(proto.Id,new Vector2Int(first,parts));
+                    if(fit){fitted++;fitParts+=parts;}
+                }
                 var placements=sheet.FixedPlacements??Array.Empty<WorldMacroDressingSheetSO.FixedPlacement>();
                 var skip=SkipSet(sheet,placements,p,ref stale);if(skip!=null)skipped+=skip.Count;
                 for(int i=0;i<placements.Length;i++)
                 {
-                    var fp=placements[i];if(fp==null||fp.PrototypeId==null||!lookup.TryGetValue(fp.PrototypeId,out int k)||k<0||Skipped(fp.Id,p.SkipPlacementPrefixes)||skip!=null&&skip.Contains(i))continue;
-                    if(!Usable(fp)||!Reach(kinds[k],fp,p,out float r,out float top)||top<p.MinSolidHeight)continue;
-                    pos.Add(fp.Position);rad.Add(r);kin.Add(k);plc.Add(i);if(r>maxReach)maxReach=r;
+                    var fp=placements[i];if(fp==null||fp.PrototypeId==null||!lookup.TryGetValue(fp.PrototypeId,out var span)||span.y<=0||Skipped(fp.Id,p.SkipPlacementPrefixes)||skip!=null&&skip.Contains(i))continue;
+                    if(!Usable(fp))continue;
+                    for(int k=span.x;k<span.x+span.y;k++)
+                    {
+                        if(!Reach(kinds[k],fp,p,out float r,out float top)||top<p.MinSolidHeight)continue;
+                        pos.Add(fp.Position);rad.Add(r);kin.Add(k);plc.Add(i);if(r>maxReach)maxReach=r;
+                    }
                 }
             }
-            SkipListed=skipped;SkipStale=stale;
+            SkipListed=skipped;SkipStale=stale;FitPrototypes308=fitted;FitParts308=fitParts;
             position=pos.ToArray();reach=rad.ToArray();kindOf=kin.ToArray();placementOf=plc.ToArray();
             int count=position.Length;slot=new int[count];stamp=new int[count];for(int i=0;i<count;i++)slot[i]=-1;generation=0;
             // 8 m grid in CSR form: members sorted by cell, each cell a (start,count) span.
@@ -179,12 +197,45 @@ namespace Oheangbu.App.World
             foreach(var u in units){u.Live=false;foreach(var r in u.Renderers)if(r!=null&&r.isActiveAndEnabled&&r.Sheet==u.Sheet){u.Live=true;break;}}
             prepared=true;PrepareMs=Milliseconds(start);
         }
-        int KindFor(WorldMacroDressingSheetSO.Prototype proto,int sheet,NaturalSolidProfileSO p){if(!MakeKind(proto,sheet,p,out var kind))return -1;kinds.Add(kind);return kinds.Count-1;}
+        // Parts of a prototype appended to `into` (0 = no solid). fit = the parts came from Profile.Fits308.
+        // A listed fit that holds no usable part gives nothing: the fitter found no box that stays inside that rock.
+        static int MakeKinds(WorldMacroDressingSheetSO.Prototype proto,int sheet,NaturalSolidProfileSO p,List<Kind> into,out bool fit)
+        {
+            fit=false;var c=proto.Category;
+            if(c==WorldMacroDressingSheetSO.Kind.Tree||c==WorldMacroDressingSheetSO.Kind.Rock)
+            {
+                var f=Contains(proto.Id,p.SkipPrototypeTokens)?null:p.FitFor308(proto.Id,proto.Size);
+                if(f!=null)
+                {
+                    int n=0;fit=true;
+                    if(c==WorldMacroDressingSheetSO.Kind.Tree&&f.Capsules!=null)foreach(var cap in f.Capsules)
+                    {
+                        if(!(cap.Radius>0)||!Finite(cap.Base)||!Finite(cap.Top)||cap.Top.y<cap.Base.y)continue;
+                        into.Add(new Kind{Sheet=sheet,Shape=Shape.Capsule,Fit=true,Centre=cap.Base,Top=cap.Top,Radius=cap.Radius,Wood=true});n++;
+                    }
+                    if(c==WorldMacroDressingSheetSO.Kind.Rock&&f.Boxes!=null)foreach(var b in f.Boxes)
+                    {
+                        if(!(b.Size.x>0&&b.Size.y>0&&b.Size.z>0)||!Finite(b.Centre)||!float.IsFinite(b.Yaw))continue;
+                        into.Add(new Kind{Sheet=sheet,Shape=Shape.Box,Fit=true,Centre=b.Centre,Size=b.Size,Yaw=b.Yaw});n++;
+                    }
+                    return n;
+                }
+            }
+            if(!MakeKind(proto,sheet,p,out var kind))return 0;into.Add(kind);return 1;
+        }
         static bool Usable(WorldMacroDressingSheetSO.FixedPlacement fp)=>Finite(fp.Position)&&Finite(fp.Euler)&&fp.Scale>0&&!float.IsInfinity(fp.Scale);
         // Flat reach from the pivot and top above it (the query radius).
         static bool Reach(Kind kind,WorldMacroDressingSheetSO.FixedPlacement fp,NaturalSolidProfileSO p,out float r,out float top)
         {
             float scale=fp.Scale;
+            if(kind.Fit&&kind.Shape==Shape.Capsule)
+            {
+                // #308 stem stretch: reach = the farther end from the pivot + radius; nothing of it is solid above TreeHeightMax.
+                float rr=Mathf.Clamp(kind.Radius*scale,p.TreeRadiusMin,p.TreeRadiusMax);bool tilted=fp.Euler.x!=0||fp.Euler.z!=0;
+                float a=tilted?kind.Centre.magnitude:new Vector2(kind.Centre.x,kind.Centre.z).magnitude,b=tilted?kind.Top.magnitude:new Vector2(kind.Top.x,kind.Top.z).magnitude;
+                r=rr+Mathf.Max(a,b)*scale;top=Mathf.Min(kind.Top.y*scale+rr,p.TreeHeightMax);
+                return tilted||kind.Centre.y*scale<p.TreeHeightMax-rr;
+            }
             if(kind.Shape==Shape.Capsule){r=Mathf.Clamp(kind.Radius*scale,p.TreeRadiusMin,p.TreeRadiusMax)+new Vector2(kind.Centre.x,kind.Centre.z).magnitude*scale;top=Mathf.Min(kind.Height*scale,p.TreeHeightMax);return true;}
             var flat=new Vector2(kind.Centre.x,kind.Centre.z).magnitude;
             // Box/sphere top above the pivot; the pivot sits on the ground in every sheet bake.
@@ -213,12 +264,24 @@ namespace Oheangbu.App.World
         public struct Footprint306{public int Placement;public string Id,PrototypeId;public Vector3 Pivot,Centre;public float Radius,Yaw,Top;public Vector2 HalfSize;public bool Box,Tree,Listed;}
         public static int Footprints306(WorldMacroDressingSheetSO sheet,NaturalSolidProfileSO p,List<Footprint306> into)
         {
-            if(sheet==null||p==null||into==null)return 0;int n=0,stale=0;var lookup=new Dictionary<string,Kind?>();
-            if(sheet.Prototypes!=null)foreach(var proto in sheet.Prototypes){if(proto==null||string.IsNullOrEmpty(proto.Id)||lookup.ContainsKey(proto.Id))continue;lookup.Add(proto.Id,MakeKind(proto,0,p,out var k)?k:(Kind?)null);}
+            if(sheet==null||p==null||into==null)return 0;int n=0,stale=0;var lookup=new Dictionary<string,Kind?>();var fits=new Dictionary<string,List<Kind>>();
+            if(sheet.Prototypes!=null)foreach(var proto in sheet.Prototypes)
+            {
+                if(proto==null||string.IsNullOrEmpty(proto.Id)||lookup.ContainsKey(proto.Id))continue;
+                var made=new List<Kind>();MakeKinds(proto,0,p,made,out bool fit);
+                // #308: a fitted prototype reports ONE footprint per placement that encloses all its parts (FitFootprint308)
+                if(fit){lookup.Add(proto.Id,null);fits.Add(proto.Id,made);}
+                else lookup.Add(proto.Id,made.Count>0?made[0]:(Kind?)null);
+            }
             var placements=sheet.FixedPlacements??Array.Empty<WorldMacroDressingSheetSO.FixedPlacement>();var skip=SkipSet(sheet,placements,p,ref stale);
             for(int i=0;i<placements.Length;i++)
             {
-                var fp=placements[i];if(fp==null||fp.PrototypeId==null||!lookup.TryGetValue(fp.PrototypeId,out var kk)||kk==null||Skipped(fp.Id,p.SkipPlacementPrefixes))continue;
+                var fp=placements[i];if(fp==null||fp.PrototypeId==null||!lookup.TryGetValue(fp.PrototypeId,out var kk)||Skipped(fp.Id,p.SkipPlacementPrefixes))continue;
+                if(kk==null)
+                {
+                    if(fits.TryGetValue(fp.PrototypeId,out var parts)&&Usable(fp)&&FitFootprint308(parts,fp,p,out var ff)){ff.Placement=i;ff.Listed=skip!=null&&skip.Contains(i);into.Add(ff);n++;}
+                    continue;
+                }
                 var kind=kk.Value;if(!Usable(fp)||!Reach(kind,fp,p,out float reach,out float top)||top<p.MinSolidHeight)continue;
                 var f=new Footprint306{Placement=i,Id=fp.Id,PrototypeId=fp.PrototypeId,Pivot=fp.Position,Top=top,Tree=kind.Shape==Shape.Capsule,Listed=skip!=null&&skip.Contains(i),Yaw=fp.Euler.y};
                 float scale=fp.Scale;var off=Quaternion.Euler(fp.Euler)*(kind.Centre*scale);off.y=0;f.Centre=fp.Position+off;
@@ -230,6 +293,34 @@ namespace Oheangbu.App.World
                 into.Add(f);n++;
             }
             return n;
+        }
+        // One footprint for a fitted placement: a lone upright box keeps its exact rectangle; anything else is the circle about the
+        // parts' mean ground point that encloses every part that would get a collider (conservative for the route scan).
+        static bool FitFootprint308(List<Kind> parts,WorldMacroDressingSheetSO.FixedPlacement fp,NaturalSolidProfileSO p,out Footprint306 f)
+        {
+            f=new Footprint306{Id=fp.Id,PrototypeId=fp.PrototypeId,Pivot=fp.Position,Yaw=fp.Euler.y};
+            float scale=fp.Scale;var rot=Quaternion.Euler(fp.Euler);bool upright=fp.Euler.x==0&&fp.Euler.z==0;
+            var centres=new List<Vector3>();var radii=new List<float>();Kind lone=default;int live=0;float topMax=0;
+            foreach(var kind in parts)
+            {
+                if(!Reach(kind,fp,p,out _,out float top)||top<p.MinSolidHeight)continue;
+                live++;lone=kind;if(top>topMax)topMax=top;
+                if(kind.Shape==Shape.Capsule)
+                {
+                    float rr=Mathf.Clamp(kind.Radius*scale,p.TreeRadiusMin,p.TreeRadiusMax);
+                    var a=rot*(kind.Centre*scale);var b=rot*(kind.Top*scale);a.y=0;b.y=0;centres.Add(a);radii.Add(rr);centres.Add(b);radii.Add(rr);
+                }
+                else{var c=rot*(kind.Centre*scale);c.y=0;centres.Add(c);radii.Add((upright?new Vector2(kind.Size.x,kind.Size.z).magnitude:kind.Size.magnitude)*.5f*scale);}
+            }
+            if(live==0)return false;
+            f.Top=topMax;f.Tree=lone.Shape==Shape.Capsule;
+            if(live==1&&lone.Shape==Shape.Box&&upright)
+            {
+                var c=rot*(lone.Centre*scale);c.y=0;f.Centre=fp.Position+c;f.Box=true;f.Yaw=fp.Euler.y+lone.Yaw;f.HalfSize=new Vector2(lone.Size.x,lone.Size.z)*.5f*scale;f.Radius=f.HalfSize.magnitude;return true;
+            }
+            var mean=Vector3.zero;foreach(var c in centres)mean+=c;mean/=centres.Count;
+            float reach=0;for(int k=0;k<centres.Count;k++)reach=Mathf.Max(reach,(centres[k]-mean).magnitude+radii[k]);
+            f.Centre=fp.Position+mean;f.Radius=Mathf.Max(.01f,reach);return true;
         }
         static bool MakeKind(WorldMacroDressingSheetSO.Prototype proto,int sheet,NaturalSolidProfileSO p,out Kind kind)
         {
@@ -308,6 +399,22 @@ namespace Oheangbu.App.World
             var t=e.Go.transform;float scale=fp.Scale;
             switch(e.Collider)
             {
+                case CapsuleCollider cap when kind.Fit:
+                {
+                    // #308: the capsule lies along the measured stem (sphere centres a..b in the placement's frame), cut at TreeHeightMax.
+                    float r=Mathf.Clamp(kind.Radius*scale,p.TreeRadiusMin,p.TreeRadiusMax);var rot=Quaternion.Euler(fp.Euler);
+                    Vector3 a=rot*(kind.Centre*scale),b=rot*(kind.Top*scale);float limit=p.TreeHeightMax-r;
+                    if(b.y>limit&&b.y>a.y)b=Vector3.Lerp(a,b,Mathf.Clamp01((limit-a.y)/(b.y-a.y)));
+                    var axis=b-a;float len=axis.magnitude;
+                    t.SetPositionAndRotation(position[i]+(a+b)*.5f,len>1e-4f?Quaternion.FromToRotation(Vector3.up,axis/len):Quaternion.identity);t.localScale=Vector3.one;
+                    cap.direction=1;cap.radius=r;cap.height=len+2*r;cap.center=Vector3.zero;break;
+                }
+                case BoxCollider box when kind.Fit:
+                {
+                    // #308: a box inside the drawn rock, with its own yaw under the placement's rotation.
+                    var rot=Quaternion.Euler(fp.Euler);
+                    t.SetPositionAndRotation(position[i]+rot*(kind.Centre*scale),rot*Quaternion.Euler(0,kind.Yaw,0));t.localScale=Vector3.one*scale;box.center=Vector3.zero;box.size=kind.Size;break;
+                }
                 case CapsuleCollider cap:
                 {
                     float r=Mathf.Clamp(kind.Radius*scale,p.TreeRadiusMin,p.TreeRadiusMax),h=Mathf.Max(r,Mathf.Min(kind.Height*scale,p.TreeHeightMax));
