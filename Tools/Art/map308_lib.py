@@ -17,7 +17,16 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 TOOLS = Path(__file__).resolve().parent
-ROOT = TOOLS.parents[1]
+# #308 map bake (Stage308_mapbake): the repo root is FOUND, not counted - a stage copy of these tools (Tools/Unity/<stage>/ToolsArt)
+# runs before it is copied to Tools/Art, reads the same project and speaks of its own files by their LIVE path (rel / abs_of).
+ROOT = next((p for p in TOOLS.parents if (p / 'Oheangbu/Assets/_Project').is_dir()), TOOLS.parents[1])
+LIVE_TOOLS = 'Tools/Art'
+# bake inputs that are kept BESIDE the tools (tracked by git, outside the Art/ tree that was deleted on 2026-10-06):
+#   cheolong_layout_regen308.json   the Cheolong wall layout made again by its generator (NEW input: not the recorded sha of the lost file)
+#   carried_p1b.json + p1b_*        what the lost reach masks of the 1b closure gave the bake, carried from the bundle baked 2026-10-05
+INPUTS = TOOLS / 'map308_inputs'
+ROAD_FIT = INPUTS / 'map308_road_fit.json'         # which line a road stroke follows where the map line is not the ground road
+LOST_LIST = TOOLS / 'map308_lost_inputs.json'
 A = ROOT / 'Oheangbu/Assets/_Project'
 RB = ROOT / 'Art/World/Compact/Rebuild'
 STAGE_DIR = ROOT / 'Tools/Unity/Stage308_map'
@@ -47,7 +56,8 @@ CROSSINGS = RB / 'Watershed295/Generated/crossings.json'
 CLIFF_PLAN = RB / 'CliffBoundary308/plan'
 BOUNDARY = CLIFF_PLAN / 'boundary308.json'
 FOOTPRINT = RB / 'Enclosure305/Out/Seal308/footprint308.json'
-WALL_LAYOUTS = [RB / 'Finish297/Capital/layout.json', RB / 'Finish297/Cheolong/layout.json', RB / 'Finish297/Hwanggyeong/layout.json']
+WALL_LAYOUTS = [RB / 'Finish297/Capital/layout.json', INPUTS / 'cheolong_layout_regen308.json', RB / 'Finish297/Hwanggyeong/layout.json']
+WALL_ROLES = ['walls.Capital', 'walls.Cheolong', 'walls.Hwanggyeong']     # the role of each layout in inputs[] (was: the folder name)
 SHEETS = {  # vegetation sheets of the main scene (cliff308_base.SHEETS)
     'DryLandscape': 'Art/World/Architecture296/Data/757de110844e3b4479c04f9c49d8a6b6_DryLandscape.asset',
     'River294Dressing': 'Art/World/Architecture296/Data/9be35ffe935cc2a48a2c9e57deed2af6_fb0262ee6f18ce44db0b6468d94e5e6f_Dressing.asset',
@@ -62,9 +72,12 @@ STAGES = {  # stage name -> (height file, reach masks of the cliff ledger, bound
     # 1b (ops v6): the as-built state of the 1b ledger = gate closed, long wall standing, seam runs kept (Enclosure305 v305.4a;
     # closure_p1b.json states.S0_wall_seam_kept). The lift of the cliff-top field stays OFF, so UP1 is in no reach set.
     # 'boundary' = the 1b plan lines in the old shape (Tools/Art/boundary308_segments.py); 'long_wall' = the wall ledger's layout.
+    # #308 map bake: the three reach masks of the 1b closure (reach_p1b_v6_*.npy) were lost on 2026-10-06 and the closure chain
+    # cannot run. What they GAVE the bake - the reveal regions and the cells of the cliff-top grass - is carried from the bundle
+    # baked from them on 2026-10-05 (carried_p1b.json names that bundle, the height it is valid for and how each file was taken).
+    # The bake refuses when the stage height is not that height: then the closure must run again (or a rule be decided).
     '1b': dict(height=CLIFF_PLAN / 'Stage/height_p1b.bytes', built=('1a', '1b'),
-               reach=dict(S0=CLIFF_PLAN / '_work/reach_p1b_v6_S0_wall_seam_kept.npy', S2=CLIFF_PLAN / '_work/reach_p1b_v6_S2_wall_seam_kept.npy',
-                          UP1=CLIFF_PLAN / '_work/reach_p1b_v6_top_UP1.npy'),
+               carried=dict(manifest=INPUTS / 'carried_p1b.json', regions=INPUTS / 'p1b_reveal_regions.bytes', tops=INPUTS / 'p1b_cliff_top_cells.bits'),
                boundary=CLIFF_PLAN / 'boundary308_1b_segments.json', long_wall=RB / 'CliffBoundary308/wall_1b/jangseong308.json',
                # what must be BUILT in the scenes before this bundle may be imported: the wall ledger of every scene (Jangseong308
                # LedgerFile = Out/cb308-wall-<key>.json, state 'applied'). The scenes' height stage alone picks the bundle, and the
@@ -103,11 +116,30 @@ def require_entries(stage):
     Applied at bake time -> the ledger's sha (the import then accepts it while the ledger is unchanged). Not applied -> ABSENT_SHA:
     the editor import compares every inputs[] entry with the file on disk and refuses ('input missing' while there is no ledger,
     'input changed since the bake' once there is one), so a bundle baked ahead of the build can be checked offline but never imported."""
-    out = []
+    out = []; lost = lost_rows()
     for name, p in STAGES[stage].get('requires', ()):
-        st = ledger_state(p)
-        out.append(dict(role='requires.' + name, path=rel(p), sha256=sha256(p) if st == 'applied' else ABSENT_SHA, state=st))
+        st = ledger_state(p); sha = sha256(p) if st == 'applied' else ABSENT_SHA
+        # #308 map bake: a ledger that is NOT ON DISK and is a row of the lost-input list (deleted 2026-10-06; the wall it settled
+        # still stands in the scenes) is recorded with the sha the list holds = the applied ledger the previous bundle recorded.
+        # The editor import takes it on that record (MapBundleInputs308: TRUSTED absent input) until a ledger is settled again;
+        # a ledger that is on disk is always read, whatever the list says.
+        if st == 'absent' and rel(p) in lost: st, sha = 'lost-on-record', lost[rel(p)]
+        out.append(dict(role='requires.' + name, path=rel(p), sha256=sha, state=st))
     return out
+
+
+def lost_rows():
+    """repo path -> sha256 of the lost-input list beside the tools ({} when there is none)."""
+    if not LOST_LIST.exists(): return {}
+    return {r['path']: r['sha256'] for r in json.loads(LOST_LIST.read_text(encoding='utf-8-sig')).get('rows', [])}
+
+
+def requires_text(note):
+    """what the build-order row of map308_check says when no ledger is pending or changed."""
+    rec = [i for i in note['inputs'] if i.get('role', '').startswith('requires.') and i.get('state') == 'lost-on-record']
+    if not rec: return 'met: every required ledger is applied and unchanged'
+    return (f'ON RECORD: {len(rec)} required ledger(s) are not on disk (deleted 2026-10-06) and are recorded with the sha of the lost-input list - '
+            'the import takes them as TRUSTED absent input; bake again once Jangseong308 has settled a ledger: ' + ', '.join(i['role'] for i in rec))
 
 
 def requires_status(note):
@@ -116,7 +148,8 @@ def requires_status(note):
     pending, stale = [], []
     for i in note['inputs']:
         if not i.get('role', '').startswith('requires.'): continue
-        p = ROOT / i['path']; st = ledger_state(p)
+        p = abs_of(i['path']); st = ledger_state(p)
+        if st == 'absent' and i.get('state') == 'lost-on-record' and lost_rows().get(i['path']) == i['sha256']: continue   # taken on record
         if i['sha256'] == ABSENT_SHA:
             (stale if st == 'applied' else pending).append(f"{i['role']}: {i['path']} ({'applied since the bake' if st == 'applied' else st})")
         elif st != 'applied' or sha256(p) != i['sha256']:
@@ -132,7 +165,7 @@ def stale_inputs(note):
     out = []
     for i in note['inputs']:
         if i.get('role', '').startswith('requires.'): continue
-        p = ROOT / i['path']
+        p = abs_of(i['path'])
         if not p.exists(): out.append((i.get('role', ''), i['path'], 'file missing')); continue
         now = sha256(p)
         if now == i['sha256']: continue
@@ -161,9 +194,19 @@ def utf8():
 
 def rel(p):
     try:
-        return str(Path(p).resolve().relative_to(ROOT)).replace('\\', '/')
+        r = str(Path(p).resolve().relative_to(ROOT)).replace('\\', '/')
     except ValueError:
         return str(p).replace('\\', '/')
+    own = str(TOOLS.relative_to(ROOT)).replace('\\', '/')
+    if own != LIVE_TOOLS and (r + '/').startswith(own + '/'): r = LIVE_TOOLS + r[len(own):]      # a stage copy names its files by their live path
+    return r
+
+
+def abs_of(path):
+    """the file a recorded repo path means for THIS copy of the tools (a stage copy reads its own files for Tools/Art/...)."""
+    own = str(TOOLS.relative_to(ROOT)).replace('\\', '/')
+    if own != LIVE_TOOLS and (path + '/').startswith(LIVE_TOOLS + '/'): return TOOLS / path[len(LIVE_TOOLS) + 1:]
+    return ROOT / path
 
 
 def sha256_bytes(b):
@@ -350,6 +393,45 @@ def parse_layout(path=LAYOUT_MAIN, read_role=False):
         hw = re.search(r'HalfWidth: ([\d.]+)', blk)
         drains.append(dict(id=blk.split('\n')[0].strip(), pts=_pts(blk), half_width=float(hw.group(1)) if hw else 12.0))
     return dict(routes=routes, drainages=drains)
+
+
+_PLACE_XZ = re.compile(r'XZ: \{x: ([-\d.eE+]+), y: ([-\d.eE+]+)\}')
+_ROUTE_ENDS = re.compile(r'- Id: (.*)\n\s+From: (.*)\n\s+To: (.*)\n')
+PLACE_JOIN_M = 60.0
+
+
+def layout_route_lines(path=LAYOUT_MAIN):
+    """route id -> Nx2 line of the layout route AS THE GAME HOLDS IT: the From place, the Bends, the To place (the line the
+    #296 route export writes and the content tools measure along; the #292 grading cut the terrain bench along this line where
+    the route was not moved since). A place farther than PLACE_JOIN_M from its end of the bends is not joined on."""
+    t = Path(path).read_text(encoding='utf-8')
+    i, j = t.find('\n  Places:'), t.find('\n  Routes:')
+    places = {}
+    for blk in t[i:j].split('\n  - Id: ')[1:]:
+        m = _PLACE_XZ.search(blk)
+        if m: places[blk.split('\n')[0].strip()] = np.array([float(m.group(1)), float(m.group(2))])
+    routes = parse_layout(path)['routes']; out = {}
+    for m in _ROUTE_ENDS.finditer(layout_block(t, 'Routes', 'Ridges')):
+        rid, a, b = (s.strip() for s in m.groups()); P = routes[rid]['bends'] if rid in routes else np.zeros((0, 2))
+        head = [places[a]] if a in places and (len(P) == 0 or math.hypot(*(places[a] - P[0])) <= PLACE_JOIN_M) else []
+        tail = [places[b]] if b in places and (len(P) == 0 or math.hypot(*(places[b] - P[-1])) <= PLACE_JOIN_M) else []
+        out[rid] = dedupe(np.array(head + [tuple(p) for p in P] + tail, float).reshape(-1, 2))
+    return out
+
+
+FIT_SOURCES = ('map', 'layoutRoute', 'none')
+
+
+def road_fit():
+    """Tools/Art/map308_inputs/map308_road_fit.json -> dict(lines={map line id: {source, route?}}, add=[{route}]). The file is DATA of the bake
+    (inputs[] role 'roadFit'): which line a road stroke follows where the map's own line is not the road on the ground."""
+    j = json.loads(ROAD_FIT.read_text(encoding='utf-8'))
+    if j.get('id') != 'map308_road_fit' or j.get('version') != 1: raise SystemExit('REFUSED: ' + rel(ROAD_FIT) + ' is not map308_road_fit version 1')
+    for k, v in j.get('lines', {}).items():
+        if v.get('source') not in FIT_SOURCES: raise SystemExit(f"REFUSED: road fit '{k}': source must be one of {FIT_SOURCES}")
+    for v in j.get('add', []):
+        if not v.get('route'): raise SystemExit('REFUSED: road fit add[]: every entry names a layout route')
+    return dict(lines=j.get('lines', {}), add=j.get('add', []))
 
 
 def road_class(width, vehicle, foot_only):

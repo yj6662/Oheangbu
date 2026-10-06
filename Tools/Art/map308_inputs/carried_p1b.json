@@ -1,0 +1,46 @@
+{
+ "id": "map308_carried",
+ "version": 1,
+ "stage": "1b",
+ "what": "what the lost reach masks of the 1b closure (CliffBoundary308/plan/_work/reach_p1b_v6_{S0_wall_seam_kept,S2_wall_seam_kept,top_UP1}.npy) gave the map bake, carried from the bundle that was baked from them. NOT the masks: the masks cannot be made again (Docs/Handoff/Recovery308 M-3 / M-6).",
+ "lostMasks": {
+  "S0": "0063cb995a4790ebee344c0a36318257eec05c21382aa3e1986ddba9da4e7f66",
+  "S2": "3fc980d915b33eaa5d6eb961b970c04e1ae8af80196a9be292b77469e8ed786c",
+  "UP1": "e79c1c7d2843a82d9eb9873b0b19703207f8906c67c9a6676f028de84b3dc502"
+ },
+ "fromBundle": {
+  "folder": "Oheangbu/Assets/_Project/Art/UI/UI308/Map",
+  "notationSha256": "c429c70a25fa52245c92854baffaf527366face376f00998bbb5a907f93a7cc1",
+  "bakedOn": "2026-10-05",
+  "stage": "1b"
+ },
+ "forHeightSha256": "2b956bf1cf1c44810c4ffe18eb092ceb6b2acf2629dd2559b47c52f603520707",
+ "forBaseHeightSha256": "576175e43abb093381fae38c2c72450a189027eac32ee10b51c22ee25a3b42f1",
+ "files": {
+  "regions": {
+   "file": "p1b_reveal_regions.bytes",
+   "sha256": "f8c192803830beb04a590829c80f0165e4c3ee431e07f95cdf160d2e0505cb98",
+   "bytes": 23500,
+   "how": "byte copy of the imported map308_reveal_regions.bytes (sha recorded in the notation above)",
+   "cells": {
+    "0": 22237,
+    "1": 43,
+    "255": 1220
+   }
+  },
+  "tops": {
+   "file": "p1b_cliff_top_cells.bits",
+   "sha256": "534276173ef508234b496656e6b4243471f473330bbf60473ee1349de738e917",
+   "bytes": 187500,
+   "cells": 995,
+   "how": "numpy.packbits of a 1500 x 1000 mask of terrain cells, south row first: the cells whose G in the imported map308_terrain.png differs from a bake without cliff-top cells (all raised to the cliff-top density). Proof: the terrain baked with this mask is the imported PNG byte for byte",
+   "limit": "a cliff-top cell whose forest density was already at or above the cliff-top density left no trace and is not in the mask: it would show only if the trees on the cliff tops were taken away"
+  }
+ },
+ "regionNames": {
+  "1": "cliff-top field UP-1 (reach_p1b_v6_top_UP1)",
+  "2": "other cliff tops: raised > 3 m and reachable only after the gate"
+ },
+ "validWhile": "the stage height and the base height have the sha above (the bake refuses otherwise)",
+ "exit": "when cliff308_closure.py runs again for this height, map308_lib.STAGES goes back to reach= and these three files are taken out"
+}

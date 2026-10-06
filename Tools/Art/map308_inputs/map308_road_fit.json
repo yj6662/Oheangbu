@@ -1,0 +1,40 @@
+{
+ "id": "map308_road_fit",
+ "version": 1,
+ "spec": "SPEC-MAP-OVERHAUL-308 section 2b (road fit, #308 map bake, 2026-10-06)",
+ "rule": "The map draws a road where the player walks it; the world is the truth, never the map. A road stroke is a line of Map.asset unless a row of `lines` says otherwise: source 'layoutRoute' = the stroke follows the layout route (WorldLayout_Main Routes: From place + Bends + To place - the line the game holds, the #292 grading cut the terrain bench along it and the content tools measure along it), 'none' = the line is not drawn, 'map' = the map line (the default; such a row only records a decision). `add` = layout routes the map has no line for. The class of a road stays the physical attributes of the layout route (Width / GradeForVehicle / Traversal), never its story role (#214). Measured numbers: Tools/Unity/Stage308_mapbake/Measure/mismatch_before.json (tool Measure/mismatch.py).",
+ "lines": {
+  "mine__mine_overlook": {
+   "source": "none",
+   "why": "#297 moved the mine and re-drew only this MAP line: from the mine mark over the hill above the gallery to the road. Nothing of it is a road on the ground (terrain bench under 4 % of its hillside length, grade p95 0.63). The road on the ground is the layout route: the old cut road from the valley overlook 274 m south-east to the old mine site, a dead end (bench under 98 % of its hillside length). The road the player takes from the mine mouth is mine_overlook__geumpyo_inn, which passes 15 m in front of the mouth and was always drawn right.",
+   "measuredBefore": {
+    "mapLineOffRouteMeanM": 52.2,
+    "mapLineOffRouteMaxM": 114.4,
+    "routeOffMapLineMaxM": 227.7,
+    "benchUnderMapLinePct": 4.3,
+    "benchUnderRoutePct": 98.1
+   },
+   "why2": "2026-10-06 D308-29 / D308-32: the opening guide closed the mouth of the old cart road (OG_bay_1/2) and took it out of the content path, so the map no longer draws it (main agent, after the mapbake stage; the player's road from the mine mouth is mine_overlook__geumpyo_inn)."
+  }
+ },
+ "add": [],
+ "notFitted": {
+  "note": "Recorded so that the next bake does not have to find them again; none of them changes a stroke.",
+  "ambiguousFarRoads": {
+   "roads": [
+    "jeokro__cheolong",
+    "cheolong__hyeongang",
+    "hyeongang__temple",
+    "hyeongang__capital_center"
+   ],
+   "alsoMovedButNoBenchEitherWay": [
+    "capital_center__palace"
+   ],
+   "why": "The map line IS the layout route (0.0 - 0.9 m), and bridges and gates stand on it. But #295 moved these routes (flooded basins, moved end points) without a new terrain cut: the bench of the #292 grading still lies along the OLD line (bench under 66 - 84 % of its hillside length, under 12 - 28 % of the route's), 164 - 397 m away on average, up to 763 m; parts of the old line are under water now (hyeongang__temple: 77 %). capital_center__palace was moved too (78 m on average, 173 m at most) but shows a bench under neither line (39 % / 19 %). Which of the two is 'the road' is a world decision (the terrain is a protected tree) - Docs/Handoff/PENDING_QUESTIONS_308.md B11."
+  },
+  "routeWithoutALine": {
+   "route": "herb_amneung_cut308",
+   "why": "A foot route of the layout (303 m, width 2.6, #308 relayout) that the map has no line for. It has no bench (6.5 %): on the ground it is the gap in the rock band, not a cut path. To draw it, put {\"route\": \"herb_amneung_cut308\"} into add[] and bake again."
+  }
+ }
+}
