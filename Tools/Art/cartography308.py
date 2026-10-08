@@ -196,7 +196,8 @@ def bake_terrain(h, wet, trees, tops, outer_lines, log):
     wet_c = sdf_c > 0
     R = np.where(wet_c, 0, R); G = np.where(sdf_c > -F['noTreesWithinWaterM'], 0, G)   # water carries no wash; no trees in or at the water
     if tops is not None:                                                            # cliff-top fields: paper + sparse grass dots
-        tc = tops[:-1, :-1] | tops[:-1, 1:] | tops[1:, :-1] | tops[1:, 1:]
+        # node lattice -> cells; a mask that already is the cell lattice (the carried cells of a stage whose reach masks are lost) is taken as it is
+        tc = tops if tops.shape == (M.TH, M.TW) else (tops[:-1, :-1] | tops[:-1, 1:] | tops[1:, :-1] | tops[1:, 1:])
         G = np.where(tc & (G < TERRAIN['cliffTopGrassDensity']), TERRAIN['cliffTopGrassDensity'], G)
     beyond = np.zeros((M.TH, M.TW), bool)
     if outer_lines:                                                                 # beyond the outer range: bare paper
@@ -296,25 +297,57 @@ def insert_point(P, q, max_d=8.0):
     return P, float(s[idx])
 
 
-def bake_strokes(stage, h, wet, mp, layout, log):
-    S = Strokes(); warn = []; C = {c['cls']: c for c in CLASSES}
-    routes = layout['routes']
-    # ---- roads (classes 7-9): the map's own lines; the class comes from the layout's physical attributes
-    roads = []
+def road_sources(mp, layout, warn=None, fit_report=None):
+    """the roads the bake draws -> [dict(id, cls, src, pts, width, in_layout, source)]. A road is a line of Map.asset (kind 1 / 2),
+    its class the physical attributes of the layout route with the same id. #308 map bake: map308_road_fit.json (an input) names
+    the lines that do NOT follow the ground - such a road is drawn along the layout route (the line the terrain bench was cut
+    along) or not at all - and the layout routes the map has no line for. map308_check.py reads the same list (AC-O5)."""
+    warn = [] if warn is None else warn; routes = layout['routes']; fit = M.road_fit(); lines = None; roads = []; seen = set()
     for ln in mp['lines']:
         if FORBIDDEN_LINE.search(ln['id']):
             raise SystemExit(f"REFUSED: input line '{ln['id']}' is a campaign path (AC-O2)")
         if ln['kind'] not in (1, 2): continue
-        P = M.dedupe(ln['pts'])
+        seen.add(ln['id'])
+        f = fit['lines'].get(ln['id'], dict(source='map')); P = M.dedupe(ln['pts']); a = routes.get(ln['id'])
+        if f['source'] == 'none':
+            if fit_report is not None: fit_report.append(dict(id=ln['id'], source='none', drawn=False, mapLineM=round(M.poly_len(P), 1)))
+            continue
+        if f['source'] == 'layoutRoute':
+            lines = M.layout_route_lines() if lines is None else lines
+            rid = f.get('route', ln['id'])
+            if rid not in lines or len(lines[rid]) < 2: raise SystemExit(f"REFUSED: road fit '{ln['id']}': the layout has no route line '{rid}'")
+            G = lines[rid]; a = routes.get(rid)
+            if fit_report is not None:
+                fit_report.append(dict(id=ln['id'], source='layoutRoute', route=rid, drawn=True, mapLineM=round(M.poly_len(P), 1), groundLineM=round(M.poly_len(G), 1),
+                                       mapLineOffGroundMaxM=round(float(M.dist_to_polyline(M.resample(P, 4.0), G).max()), 1) if len(P) > 1 else None,
+                                       groundOffMapLineMaxM=round(float(M.dist_to_polyline(M.resample(G, 4.0), P).max()), 1) if len(P) > 1 else None))
+            P = G
         if len(P) < 2 or M.poly_len(P) < 2.0:
             warn.append(f"road '{ln['id']}' skipped: degenerate ({len(ln['pts'])} points, {M.poly_len(ln['pts']):.1f} m)"); continue
-        a = routes.get(ln['id'])
         cls = M.road_class(a['width'], a['vehicle'], a['foot_only']) if a else 7
         Q = M.dp_simplify(P, ROAD_TOL_M)
-        roads.append(dict(id=ln['id'], cls=cls, src=P, pts=Q, width=a['width'] if a else 2.4, in_layout=a is not None))
-        if a is not None and len(a['bends']) > 1:
+        roads.append(dict(id=ln['id'], cls=cls, src=P, pts=Q, width=a['width'] if a else 2.4, in_layout=a is not None, source=f['source']))
+        if f['source'] == 'map' and a is not None and len(a['bends']) > 1:
             dev = float(np.percentile(M.dist_to_polyline(M.resample(P, 8.0), a['bends']), 95))
             if dev > 25.0: warn.append(f"road '{ln['id']}': Map.asset line and the layout route differ (p95 {dev:.0f} m); the map line is drawn")
+    for f in fit['add']:                                                        # a layout route the map has no line for
+        rid = f['route']; lines = M.layout_route_lines() if lines is None else lines
+        if rid in seen: raise SystemExit(f"REFUSED: road fit add[]: '{rid}' is already a map line")
+        if FORBIDDEN_LINE.search(rid): raise SystemExit(f"REFUSED: road fit add[]: '{rid}' is a campaign path (AC-O2)")
+        if rid not in lines or rid not in routes or M.poly_len(lines[rid]) < 2.0: raise SystemExit(f"REFUSED: road fit add[]: the layout has no route line '{rid}'")
+        a = routes[rid]; P = lines[rid]; seen.add(rid)
+        roads.append(dict(id=rid, cls=M.road_class(a['width'], a['vehicle'], a['foot_only']), src=P, pts=M.dp_simplify(P, ROAD_TOL_M), width=a['width'],
+                          in_layout=True, source='layoutRoute(add)'))
+        if fit_report is not None: fit_report.append(dict(id=rid, source='layoutRoute(add)', route=rid, drawn=True, groundLineM=round(M.poly_len(P), 1)))
+    return roads
+
+
+def bake_strokes(stage, h, wet, mp, layout, log):
+    S = Strokes(); warn = []; C = {c['cls']: c for c in CLASSES}
+    routes = layout['routes']
+    # ---- roads (classes 7-9): the map's lines (and the road fit); the class comes from the layout's physical attributes
+    fit_report = []
+    roads = road_sources(mp, layout, warn, fit_report)
     crossings = json.loads(M.CROSSINGS.read_text(encoding='utf-8-sig'))['Crossings']
     spans = {}
     for c in crossings:
@@ -413,7 +446,7 @@ def bake_strokes(stage, h, wet, mp, layout, log):
                   for c in (9, 8, 7)}
     acc = max(float(M.dist_to_polyline(r['src'], r['pts']).max()) for r in roads)
     acc2 = max(float(M.dist_to_polyline(r['pts'], r['src']).max()) for r in roads)
-    stats = dict(roads=road_stats, road_source_to_stroke_max_m=round(acc, 3), road_stroke_point_to_source_max_m=round(acc2, 3),
+    stats = dict(roads=road_stats, roadFit=fit_report, road_source_to_stroke_max_m=round(acc, 3), road_stroke_point_to_source_max_m=round(acc2, 3),
                  roads_not_in_layout=sorted(r['id'] for r in roads if not r['in_layout']), ridges=ridge_stats, cliffs=cliff_stats,
                  bridges=len(decks), crossings=len(crossings), warnings=warn)
     return S.items, outer, stats
@@ -475,6 +508,21 @@ def bake_regions(stage, h, h_base, wet, log):
     node in it belongs to that region - a mixed cell stays 0, so standing at the foot never switches the player to the top."""
     reg = np.zeros((M.FOG_H, M.FOG_W), np.uint8); tops = None; names = {'0': 'common ground', '255': 'no standable ground'}
     slope = np.degrees(np.arctan(np.hypot(*np.gradient(h, M.CELL))))
+    if 'carried' in M.STAGES[stage]:
+        # #308 map bake: the reach masks of this stage are lost. The regions and the cliff-top cells are the carried files
+        # (compute() has checked that they were taken for exactly this height).
+        c = M.STAGES[stage]['carried']; man = json.loads(c['manifest'].read_text(encoding='utf-8'))
+        raw = c['regions'].read_bytes()
+        if len(raw) != M.FOG_W * M.FOG_H or not set(raw) <= {0, 1, 2, 255}: raise SystemExit('REFUSED: ' + M.rel(c['regions']) + ' is not a 125 x 188 region grid')
+        bits = np.frombuffer(c['tops'].read_bytes(), np.uint8)
+        if bits.size * 8 != M.TH * M.TW: raise SystemExit('REFUSED: ' + M.rel(c['tops']) + f' holds {bits.size} bytes, expected {M.TH * M.TW // 8}')
+        tops = np.unpackbits(bits).reshape(M.TH, M.TW).astype(bool)                 # terrain CELLS, south row first
+        reg = np.frombuffer(raw, np.uint8).reshape(M.FOG_H, M.FOG_W)
+        names.update(man['regionNames'])
+        stats = dict(cells={str(int(k)): int(v) for k, v in zip(*np.unique(reg, return_counts=True))}, names=names,
+                     carried=dict(fromBundle=man['fromBundle']['notationSha256'][:12], cliffTopCells=int(tops.sum())))
+        log(f'  reveal regions (carried): {stats["cells"]}, cliff-top cells {int(tops.sum())}')
+        return raw, tops, stats
     if 'reach' in M.STAGES[stage]:
         R = {k: np.load(p) for k, p in M.STAGES[stage]['reach'].items()}
         up = R['UP1']; raised = (h - h_base) > 3.0
@@ -557,13 +605,15 @@ def gather_inputs(stage):
     paths = [('height', M.STAGES[stage]['height']), ('map', M.MAP_ASSET), ('layoutMain', M.LAYOUT_MAIN), ('layoutCandidate', M.LAYOUT_CAND),
              ('wet', M.WET), ('crossings', M.CROSSINGS), ('rimViews', RIM_VIEWS)]
     paths += [('sheet.' + k, M.A / p) for k, p in M.SHEETS.items()]
-    paths += [('walls.' + p.parent.name, p) for p in M.WALL_LAYOUTS]
+    paths += list(zip(M.WALL_ROLES, M.WALL_LAYOUTS)) + [('roadFit', M.ROAD_FIT)]
     g = re.search(r'Locations: \{fileID: \d+, guid: ([0-9a-f]{32})', M.MAP_ASSET.read_text(encoding='utf-8'))
     loc = [p for p in sorted((M.A / 'Art/World/Architecture296/Data').glob('*_Locations.asset'))
            if g and ('guid: ' + g.group(1)) in Path(str(p) + '.meta').read_text(encoding='utf-8')]
     if loc: paths.append(('locations', loc[0]))                                  # the place catalogue Map.asset points at (recorded, not read)
     if M.STAGES[stage]['built']:
-        paths += [('baseHeight', M.BASE_HEIGHT), ('boundary', M.stage_boundary(stage))] + [('reach.' + k, p) for k, p in M.STAGES[stage]['reach'].items()]
+        paths += [('baseHeight', M.BASE_HEIGHT), ('boundary', M.stage_boundary(stage))]
+        paths += [('reach.' + k, p) for k, p in M.STAGES[stage].get('reach', {}).items()]
+        paths += [('carried.' + k, p) for k, p in M.STAGES[stage].get('carried', {}).items()]
     if 'long_wall' in M.STAGES[stage]: paths.append(('walls.' + M.STAGES[stage]['long_wall'].parent.name, M.STAGES[stage]['long_wall']))
     for _, p in paths:
         if not Path(p).exists(): raise SystemExit(f'REFUSED: input missing: {M.rel(p)}')
@@ -580,6 +630,14 @@ def compute(stage='base', layout_path=None, log=print):
     inputs = gather_inputs(stage)
     for i in inputs:
         if i.get('role') in ('layoutMain', 'layoutCandidate'): i['blocks'] = a
+    if 'carried' in M.STAGES[stage]:                                             # the carried files stand for ONE height and one set of files
+        c = M.STAGES[stage]['carried']; man = json.loads(c['manifest'].read_text(encoding='utf-8')); sha = {i['role']: i['sha256'] for i in inputs}
+        if man.get('id') != 'map308_carried' or man.get('stage') != stage: raise SystemExit('REFUSED: ' + M.rel(c['manifest']) + f' is not the carried record of stage {stage}')
+        for role, want in (('height', man['forHeightSha256']), ('baseHeight', man['forBaseHeightSha256']), ('carried.regions', man['files']['regions']['sha256']),
+                           ('carried.tops', man['files']['tops']['sha256'])):
+            if sha.get(role) != want:
+                raise SystemExit(f"REFUSED: the carried reach record of stage {stage} ({M.rel(c['manifest'])}) is for {role} {want[:12]}, on disk {str(sha.get(role))[:12]}: "
+                                 'the reach masks must be made again for this height (cliff308_closure.py) or the carried record taken again')
     h = M.load_height(M.STAGES[stage]['height']); h_base = M.load_height(M.BASE_HEIGHT) if M.STAGES[stage]['built'] else h
     wet = M.load_wet(); mp = M.parse_map(); layout = M.parse_layout(layout_path or M.LAYOUT_MAIN)
     log(f"  stage {stage}: height {inputs[0]['sha256'][:12]}, map lines {len(mp['lines'])}, markers {len(mp['markers'])}, routes {len(layout['routes'])}")

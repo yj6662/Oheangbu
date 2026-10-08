@@ -90,7 +90,10 @@ namespace Oheangbu.App.World
             if (SuppressDraw && (_q == null || !_q.IsPressed())) SuppressDraw = false;
             if (_q != null && _q.WasPressedThisFrame() && !Walker.Drawing.InDrawMode && !Active && TryBegin()) SuppressDraw = true;
             float real = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime;
-            if (_hitStopLeft > 0f && (_hitStopLeft -= real) <= 0f) Time.timeScale = _savedScale;
+            // Paused by a menu or a card (0, while the hit stop itself runs at Profile.HitStopScale > 0): the countdown waits. It used to
+            // run on real time and write the saved scale back over the pause.
+            bool pausedByOther = Time.timeScale <= 0f && Profile.HitStopScale > 0f;
+            if (!pausedByOther && _hitStopLeft > 0f && (_hitStopLeft -= real) <= 0f) Time.timeScale = Mathf.Max(1f, _savedScale);
             _shake = Mathf.Max(0f, _shake - _shake * Profile.ShakeDecay * real - real * .01f);
             if (Active) Step(Time.deltaTime);
             UpdateMotes(Time.deltaTime);
@@ -371,7 +374,7 @@ namespace Oheangbu.App.World
             _shake = Mathf.Min(Profile.ShakeAmplitude * 3f, _shake + Profile.ShakeAmplitude);
             if (_hits == _count && Profile.HitStopSeconds > 0f && _hitStopLeft <= 0f)
             {
-                _savedScale = Time.timeScale; Time.timeScale = Profile.HitStopScale; _hitStopLeft = Profile.HitStopSeconds; _shake += Profile.ShakeAmplitude * 2f;
+                _savedScale = Mathf.Max(1f, Time.timeScale); Time.timeScale = Profile.HitStopScale; _hitStopLeft = Profile.HitStopSeconds; _shake += Profile.ShakeAmplitude * 2f;
             }
             if (_target == null || !_target.IsAlive || _target.LifeRevision != _targetLife) return;
             _target.TakeDamage(_damagePerGlyph, AttackProvenance.Create(this, DamageSource.PlayerDirect, null));

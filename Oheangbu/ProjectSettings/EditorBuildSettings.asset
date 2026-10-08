@@ -50,6 +50,21 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Art/World/WorldCompact/Rebuild/slice-5e82ecd76d2a/W_Demo_Compact_MigrationCheck.unity
     guid: 68d751272d1b23d42a57dc6cdba03ed6
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/Stream/Realm_Cheongrim.unity
+    guid: ab6eccf35f20e954894bc17c3ecba1c7
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/Stream/Realm_Jeokro.unity
+    guid: aad1f2c2813a0134382294c6144116fa
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/Stream/Realm_Cheolong.unity
+    guid: 22755f56bcd1e0141a278be5e50dfcb1
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/Stream/Realm_Hyeongang.unity
+    guid: 0a8d0ef4be9d0e444954d95ac1fddf67
+  - enabled: 1
+    path: Assets/_Project/Scenes/World/Stream/Realm_Hwanggyeong.unity
+    guid: 6356e133cbac78f47b14a10d72860c7a
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

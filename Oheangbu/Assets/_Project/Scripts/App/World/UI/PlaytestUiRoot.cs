@@ -54,7 +54,7 @@ namespace Oheangbu.App.World.UI
 #endif
             }
         }
-        public bool IsMenuOpen => IsTitle || Page.Length>0 || closingMap || Busy;
+        public bool IsMenuOpen => IsTitle || Page.Length>0 || closingMap || Busy || CinematicPlaying308;   // #308 stills: notices and arrival names wait
         /// <summary>#306 §2-2: frame of the last modal close (PauseCoordinator resume). Interaction polling must ignore the F that
         /// closed a dialogue: ModalClosedRecently = this frame or the next.</summary>
         public static int LastModalCloseFrame => PauseCoordinator.LastResumeFrame;
@@ -177,6 +177,7 @@ namespace Oheangbu.App.World.UI
                 Map.Initialize(mapLayer,Session,WorldSheet,new WorldMapUiDependencies{Theme=Theme,Icons=Theme.Icons,BakedData=MapData,Font=Theme.Font,PaperTexture=Theme.PaperTexture,Ink=Theme.Ink,Paper=Theme.Paper,Muted=Theme.Muted,Seal=Theme.Seal,ReducedMotion=Settings.Current.ReducedMotion});
                 Map.CloseRequested+=CloseMenu;
                 Map.FoldRustle+=volume=>PlayUi(Theme.PaperSound,volume);
+                Cinematic308Bind();   // #308 SPEC-CINEMATIC-STILLS-308: the stills presenter (built here, no scene object; nothing without the catalogue asset)
                 if(LoadingInProgress)Gate.Block();
                 else {Gate.ReleaseWhenNeutral();Cursor.lockState=CursorLockMode.Locked;Cursor.visible=false;}
                 // #304: the "[M] 지도 [I] 소지품 [Esc] 메뉴" hint notice is gone (DESIGN §5.10: no instruction notices)
@@ -187,6 +188,7 @@ namespace Oheangbu.App.World.UI
         void UnhookSession()
         {
             ResetDemoEnding();
+            Cinematic308Unbind();   // #308: a playing sequence ends here (time, gate and cursor restored, then Finished)
             // #306: a conversation never outlives its session (the page resets); Closed runs once, never into an unloaded session
             {var ended=Dialogue304Detach(false);if(Session!=null)Dialogue304Ended(ended);}
             Tutorial306Unhook();
@@ -197,7 +199,7 @@ namespace Oheangbu.App.World.UI
         {
             if(!bound||currentSceneHandle!=SceneManager.GetActiveScene().handle)BindScene();
             Dialogue304Heal();
-            if(!bound||Busy||(Session!=null&&Session.RestPresentationActive))return;
+            if(!bound||Busy||CinematicPlaying308||(Session!=null&&Session.RestPresentationActive))return;   // #308: Esc / I / M belong to the stills while they play
             if(closingMap&&Map!=null&&!Map.Folding){closingMap=false;FinishClose();}
             if(TryPresentDemoEnding())
             {

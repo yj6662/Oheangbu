@@ -139,6 +139,7 @@ namespace Oheangbu.App.World.UI
    float now=Time.unscaledTime;tracker.Step(Session.Walker.Body.transform.position,now);
    var ui=PlaytestUiRoot.Instance;bool allowed=Session.LocationArrivalAllowed&&(ui==null||!ui.IsMenuOpen);
    var current=tracker.Current;
+   if(allowed&&current!=null&&Session.CinematicHoldsArrival308(current.Id))allowed=false;   // #308: a stills sequence holds this name until it has finished or been dropped
    if(!previewing&&current?.Id!=displayed){displayed=null;age=10;}
    if(current!=factFor){factFor=current;fact=current!=null?"location:"+current.Id:null;}   // #307: no per-frame string while inside a place
    if(Session.LocationDiscoveryAllowed&&current!=null&&!Session.Progress.campaign.Facts.Contains(fact)&&queued.Add(current.Id))visits.Enqueue(current);

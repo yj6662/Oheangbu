@@ -57,6 +57,12 @@ namespace Oheangbu.App.World
         readonly Matrix4x4[] legacyPacket=new Matrix4x4[1023];
         MaterialPropertyBlock legacyProperties;
 #endif
+        // #308 roots (TEST): -1 = the TreeRoots308 profile decides, 0 = draw as before the profile (before / after stills, checks); never saved.
+        [NonSerialized] public int Roots308Mode=-1;
+        TreeRoots308SO roots308;bool rootsLooked308;
+        public int RootedParts308 {get;private set;}     // batches drawing a rooted twin mesh
+        public int ShiftedTrees308 {get;private set;}    // tree instances whose height the profile moved
+        public float DeepestShift308 {get;private set;}  // most negative dy (m)
         public int DrawCalls {get;private set;}
         public int VisibleInstances {get;private set;}
         public long SubmittedTriangles {get;private set;}
@@ -105,6 +111,7 @@ namespace Oheangbu.App.World
         sealed class Batch
         {
             public WorldMacroDressingSheetSO.Part Part;
+            public WorldMacroDressingSheetSO.Part Origin;   // #308 roots: the sheet's part (Part is a copy with the rooted mesh when the profile swaps it)
             public Vector4 Fade;
             public ShadowCastingMode Shadows;  // S3 mode: Off for Grass and LOD >= 2, else On
             public readonly Stream On=new Stream(),ShadowOnly=new Stream(),Off=new Stream();
@@ -146,15 +153,30 @@ namespace Oheangbu.App.World
         // #307 2c safety band: lists collected with every box padded by collectPad metres and the frustum widened by the band angle stay
         // valid while the camera stays within collectedBand metres / 0.75 x collectedDegrees of the collect pose (same lens and limits)
         float collectPad;Vector3 collectedForward,collectedUp;float collectedBand,collectedDegrees,collectedFov,collectedAspect,collectedNear,collectedFar;
-        void OnEnable(){loaded=null;RenderPipelineManager.beginCameraRendering+=Draw;}
+        void OnEnable(){loaded=null;rootsLooked308=false;RenderPipelineManager.beginCameraRendering+=Draw;}
         void OnDisable(){RenderPipelineManager.beginCameraRendering-=Draw;Release();}
         void OnValidate(){loaded=null;}
-        public void Invalidate(){loaded=null;collectedFor=null;}
+        public void Invalidate(){loaded=null;collectedFor=null;rootsLooked308=false;}
+        // #308 roots: the profile for this sheet, or null (off, not listed, asset absent). Loaded per component, no static.
+        TreeRoots308SO Roots308()
+        {
+            if(Roots308Mode==0)return null;
+            if(!rootsLooked308){rootsLooked308=true;roots308=Resources.Load<TreeRoots308SO>(TreeRoots308SO.ResourcePath);}
+            return roots308!=null&&roots308.Applies(Sheet)?roots308:null;
+        }
+        WorldMacroDressingSheetSO.Part Rooted308(TreeRoots308SO roots,WorldMacroDressingSheetSO.Part part)
+        {
+            if(roots==null||part==null||part.Mesh==null)return part;
+            var mesh=roots.Rooted(part.Mesh);if(mesh==part.Mesh)return part;
+            RootedParts308++;return new WorldMacroDressingSheetSO.Part{Mesh=mesh,Submesh=part.Submesh,Material=part.Material,Local=part.Local};
+        }
+
         void Release(){instances=Array.Empty<Instance>();cells=Array.Empty<Cell>();members=cellOf=Array.Empty<int>();cellState=Array.Empty<byte>();candidates=Array.Empty<ulong>();batches=null;loaded=null;collectedFor=null;}
         void Prepare()
         {
             if(loaded==Sheet&&batches!=null)return;
             loaded=Sheet;collectedFor=null;var lookup=new Dictionary<string,int>();batches=new Batch[Sheet.Prototypes.Length][][];
+            var roots=Roots308();RootedParts308=ShiftedTrees308=0;DeepestShift308=0;
             int kinds=Sheet.Prototypes.Length;var local=new Bounds[kinds];var hasLocal=new bool[kinds];var turn=new float[kinds];var sway=new float[kinds];
             for(int p=0;p<Sheet.Prototypes.Length;p++)
             {
@@ -165,14 +187,15 @@ namespace Oheangbu.App.World
                     var fade=Range(prototype.Category,l,prototype.Lods.Length,prototype.Id);
                     for(int m=0;m<parts.Length;m++)
                     {
-                        var batch=batches[p][l][m]=new Batch{Part=parts[m],Fade=fade,
+                        bool tree308=roots!=null&&prototype.Category==WorldMacroDressingSheetSO.Kind.Tree;
+                        var batch=batches[p][l][m]=new Batch{Part=tree308?Rooted308(roots,parts[m]):parts[m],Origin=parts[m],Fade=fade,
                             Shadows=prototype.Category==WorldMacroDressingSheetSO.Kind.Grass||l>=2?ShadowCastingMode.Off:ShadowCastingMode.On};
                         batch.Legacy=batch.Shadows==ShadowCastingMode.Off?batch.Off:batch.On;batch.LocalIdentity=parts[m].Local.Equals(Matrix4x4.identity);
                         var material=parts[m].Material;
                         batch.SoftSource=material;batch.SoftMaterial=material!=null&&material.HasProperty(ContactSoftId)&&material.GetFloat(ContactSoftId)>.5f;
                         batch.Properties=new MaterialPropertyBlock();BaseProperties(batch);
-                        if(parts[m].Mesh==null)continue;
-                        var mesh=parts[m].Mesh.bounds;
+                        if(batch.Part.Mesh==null)continue;
+                        var mesh=batch.Part.Mesh.bounds;
                         if(material!=null&&material.HasProperty(BillboardId)&&material.GetFloat(BillboardId)>.5f)turn[p]=Mathf.Max(turn[p],TurnRadius(parts[m].Local,mesh));
                         else{var b=Transform(mesh,parts[m].Local);if(hasLocal[p])local[p].Encapsulate(b);else{local[p]=b;hasLocal[p]=true;}}
                         sway[p]=Mathf.Max(sway[p],Sway(material));
@@ -187,7 +210,7 @@ namespace Oheangbu.App.World
                     var proxyParts=prototype.Lods[proxy.ProxyLod].Parts;var merged=new Batch[lod0.Length+proxyParts.Length];Array.Copy(lod0,merged,lod0.Length);
                     for(int m=0;m<proxyParts.Length;m++)
                     {
-                        var bt=merged[lod0.Length+m]=new Batch{Part=proxyParts[m],Fade=fade0,Shadows=ShadowCastingMode.ShadowsOnly,ShadowProxy=true};
+                        var bt=merged[lod0.Length+m]=new Batch{Part=roots!=null&&prototype.Category==WorldMacroDressingSheetSO.Kind.Tree?Rooted308(roots,proxyParts[m]):proxyParts[m],Origin=proxyParts[m],Fade=fade0,Shadows=ShadowCastingMode.ShadowsOnly,ShadowProxy=true};
                         bt.Legacy=bt.ShadowOnly;bt.LocalIdentity=proxyParts[m].Local.Equals(Matrix4x4.identity);
                         var material=proxyParts[m].Material;bt.SoftSource=material;bt.SoftMaterial=material!=null&&material.HasProperty(ContactSoftId)&&material.GetFloat(ContactSoftId)>.5f;
                         bt.Properties=new MaterialPropertyBlock();BaseProperties(bt);
@@ -201,7 +224,13 @@ namespace Oheangbu.App.World
             {
                 if(!lookup.TryGetValue(p.PrototypeId,out int index))continue;
                 var size=Sheet.Prototypes[index].Size*p.Scale;float radius=Mathf.Max(size.x,size.z)*.75f;
-                var instance=new Instance{Prototype=index,Position=p.Position,Radius=radius,Reach=ReachOf(batches[index],radius),Bounds=new Bounds(p.Position+Vector3.up*size.y*.5f,new Vector3(radius*2,Mathf.Max(size.y,.2f),radius*2)),Matrix=Matrix4x4.TRS(p.Position,Quaternion.Euler(p.Euler),Vector3.one*p.Scale)};
+                var at=p.Position;
+                if(roots!=null&&Sheet.Prototypes[index].Category==WorldMacroDressingSheetSO.Kind.Tree)
+                {
+                    float dy=roots.Shift(p.PrototypeId,at,p.Euler,p.Scale);
+                    if(dy!=0){at.y+=dy;ShiftedTrees308++;if(dy<DeepestShift308)DeepestShift308=dy;}
+                }
+                var instance=new Instance{Prototype=index,Position=at,Radius=radius,Reach=ReachOf(batches[index],radius),Bounds=new Bounds(at+Vector3.up*size.y*.5f,new Vector3(radius*2,Mathf.Max(size.y,.2f),radius*2)),Matrix=Matrix4x4.TRS(at,Quaternion.Euler(p.Euler),Vector3.one*p.Scale)};
                 RenderBox(ref instance,p.Scale,local[index],hasLocal[index],turn[index],sway[index]+slack);
                 accepted.Add(instance);
             }
@@ -828,7 +857,7 @@ namespace Oheangbu.App.World
         string Describe(Batch batch,Stream s)
         {
             foreach(var prototype in Sheet.Prototypes)for(int l=0;l<prototype.Lods.Length;l++)for(int m=0;m<prototype.Lods[l].Parts.Length;m++)
-                if(prototype.Lods[l].Parts[m]==batch.Part)return prototype.Id+" lod "+l+" part "+m+" "+(s==batch.On?"On":s==batch.ShadowOnly?"ShadowsOnly":"Off");
+                if(prototype.Lods[l].Parts[m]==batch.Part||prototype.Lods[l].Parts[m]==batch.Origin)return prototype.Id+" lod "+l+" part "+m+" "+(s==batch.On?"On":s==batch.ShadowOnly?"ShadowsOnly":"Off");
             return "?";
         }
         static Matrix4x4[] Sorted(Stream s)

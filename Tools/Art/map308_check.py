@@ -170,20 +170,38 @@ def main():
         R.add('AC-O3', f'reveal regions ({stage}): closed region 1 is present, no after-the-gate top in the reach masks (region 2 absent), nothing else but 0 and 255',
               set(reg) == {0, 1, 255}, str(sorted(set(reg))))
         m = np.frombuffer(reg, np.uint8).reshape(M.FOG_H, M.FOG_W); n_ = int(M.FOG_CELL / M.CELL)
-        rs = {k: np.load(M.ROOT / i['path']) for k, i in ((i['role'][6:], i) for i in note['inputs'] if i.get('role', '').startswith('reach.'))}
-        ii, jj = np.nonzero((rs['S0'] | rs['S2']) & ~rs['UP1']); foot_in_top = int((m[np.clip(ii // n_, 0, M.FOG_H - 1), np.clip(jj // n_, 0, M.FOG_W - 1)] == 1).sum())
-        R.add('AC-O7', f'cliff-top field ({stage}): no node the player can stand on at the foot (S0 or S2 reach) lies in a region 1 cell, and no node is both '
-              'field and foot - standing at the foot never opens a region 1 cell (the rim of the field in mixed cells is the next row)',
-              foot_in_top == 0 and not bool((rs['UP1'] & (rs['S0'] | rs['S2'])).any()), f'{foot_in_top} foot nodes in the {int((m == 1).sum())} region 1 cells')
-        ui, uj = np.nonzero(rs['UP1']); ucell = m[np.clip(ui // n_, 0, M.FOG_H - 1), np.clip(uj // n_, 0, M.FOG_W - 1)]; rim = ucell != 1
-        rim_cells = len(set(zip((ui[rim] // n_).tolist(), (uj[rim] // n_).tolist())))
-        # NOT a pass / fail limit: how much of the field shares a 32 m cell with foot ground (rule 'a mixed cell stays 0') and is
-        # therefore revealed with it. A limit, or a finer region grid, is a design decision (D308-14c) - the row only fails when
-        # the field has no region 1 node at all
-        R.add('AC-O7', f'cliff-top field ({stage}): nodes of the field that lie OUTSIDE region 1 cells (mixed rim cells: revealed together with the foot ground of '
-              'the same cell) - reported, no limit set', int((~rim).sum()) > 0,
-              f'{int(rim.sum())} of {len(ui)} field nodes ({100.0 * rim.sum() / max(1, len(ui)):.1f} %), {rim_cells} cells, {rim.sum() * M.CELL * M.CELL / 1e4:.2f} ha; '
-              f'{int((~rim).sum())} nodes in region 1 cells')
+        carried = 'carried' in M.STAGES.get(stage, {})
+        if carried:
+            # #308 map bake: the reach masks are lost; the two rows below cannot be asked of the masks. What CAN be asked: the
+            # bundle's regions are the carried grid byte for byte, the carried record is for this bundle's height, and every
+            # carried cliff-top cells lie in and around the region 1 cells (reported - a cliff-top cell whose forest was already as
+            # dense as the cliff-top grass left no trace in the picture and is not in the mask).
+            c = M.STAGES[stage]['carried']; man = json.loads(c['manifest'].read_text(encoding='utf-8')); sha = {i['role']: i['sha256'] for i in note['inputs']}
+            R.add('AC-O7', f'cliff-top field ({stage}): the regions are the carried grid byte for byte and the carried record is for the height of this bundle',
+                  reg == c['regions'].read_bytes() and sha.get('height') == man['forHeightSha256'] and sha.get('carried.regions') == man['files']['regions']['sha256'],
+                  f"carried from bundle {man['fromBundle']['notationSha256'][:12]} (baked {man['fromBundle']['bakedOn']}), height {man['forHeightSha256'][:12]}")
+            tops = np.unpackbits(np.frombuffer(c['tops'].read_bytes(), np.uint8)).reshape(M.TH, M.TW).astype(bool)
+            ti, tj = np.nonzero(tops); per = np.zeros((M.FOG_H, M.FOG_W), int)
+            np.add.at(per, (np.clip(ti // n_, 0, M.FOG_H - 1), np.clip(tj // n_, 0, M.FOG_W - 1)), 1)
+            empty = int(((m == 1) & (per == 0)).sum())
+            R.add('AC-O7', f'cliff-top field ({stage}): region 1 is present and the carried cliff-top cells are not empty (reported, no limit: region 1 cells without a '
+                  'carried cell, carried cells outside region 1 cells)', int((m == 1).sum()) > 0 and int(tops.sum()) > 0,
+                  f'{int((m == 1).sum())} region 1 cells, {empty} without a cliff-top cell; {int(tops.sum())} cliff-top cells, {int(per[m != 1].sum())} of them outside region 1 cells')
+        rs = {} if carried else {k: np.load(M.abs_of(i['path'])) for k, i in ((i['role'][6:], i) for i in note['inputs'] if i.get('role', '').startswith('reach.'))}
+        if not carried:
+            ii, jj = np.nonzero((rs['S0'] | rs['S2']) & ~rs['UP1']); foot_in_top = int((m[np.clip(ii // n_, 0, M.FOG_H - 1), np.clip(jj // n_, 0, M.FOG_W - 1)] == 1).sum())
+            R.add('AC-O7', f'cliff-top field ({stage}): no node the player can stand on at the foot (S0 or S2 reach) lies in a region 1 cell, and no node is both '
+                  'field and foot - standing at the foot never opens a region 1 cell (the rim of the field in mixed cells is the next row)',
+                  foot_in_top == 0 and not bool((rs['UP1'] & (rs['S0'] | rs['S2'])).any()), f'{foot_in_top} foot nodes in the {int((m == 1).sum())} region 1 cells')
+            ui, uj = np.nonzero(rs['UP1']); ucell = m[np.clip(ui // n_, 0, M.FOG_H - 1), np.clip(uj // n_, 0, M.FOG_W - 1)]; rim = ucell != 1
+            rim_cells = len(set(zip((ui[rim] // n_).tolist(), (uj[rim] // n_).tolist())))
+            # NOT a pass / fail limit: how much of the field shares a 32 m cell with foot ground (rule 'a mixed cell stays 0') and is
+            # therefore revealed with it. A limit, or a finer region grid, is a design decision (D308-14c) - the row only fails when
+            # the field has no region 1 node at all
+            R.add('AC-O7', f'cliff-top field ({stage}): nodes of the field that lie OUTSIDE region 1 cells (mixed rim cells: revealed together with the foot ground of '
+                  'the same cell) - reported, no limit set', int((~rim).sum()) > 0,
+                  f'{int(rim.sum())} of {len(ui)} field nodes ({100.0 * rim.sum() / max(1, len(ui)):.1f} %), {rim_cells} cells, {rim.sum() * M.CELL * M.CELL / 1e4:.2f} ha; '
+                  f'{int((~rim).sum())} nodes in region 1 cells')
     if stage != 'base':
         R.add('AC-O3', f'cliffs ({stage}): the built cliff segments are baked as classes 3 / 4', sum(1 for s_ in read_strokes((d / 'map308_strokes.bytes').read_bytes())['strokes'] if int(s_['cls']) in (3, 4)) > 0)
     # ---- strokes
@@ -238,24 +256,34 @@ def main():
         pending, changed = M.requires_status(note)
         R.add('inputs', f'build order ({stage}): every requires.* ledger is as recorded at the bake (ok while PENDING = baked ahead of the build: the editor import refuses this '
               'bundle until the ledgers are applied and the bundle is baked again)', not changed,
-              ('BAKE AGAIN: ' + ' | '.join(changed)) if changed else ('PENDING, not importable yet: ' + ' | '.join(pending)) if pending else 'met: every required ledger is applied and unchanged')
+              ('BAKE AGAIN: ' + ' | '.join(changed)) if changed else ('PENDING, not importable yet: ' + ' | '.join(pending)) if pending else M.requires_text(note))
     # ---- AC-O5 road accuracy + AC-O2 names
     mp = M.parse_map(); lay = M.parse_layout()
-    by_hash = {M.fnv1a32(l['id']): l for l in mp['lines'] if l['kind'] in (1, 2)}
-    worst_pt = worst_src = 0.0; n_roads = 0; cls_bad = []
+    # #308 map bake: the source of a road is the line the bake drew it from (cartography308.road_sources: the map line, or the
+    # layout route where map308_road_fit.json says the map line is not the ground road)
+    srcs = CG.road_sources(mp, lay)
+    by_hash = {M.fnv1a32(r['id']): r for r in srcs}
+    worst_pt = worst_src = 0.0; n_roads = 0; cls_bad = []; got = set()
     for s in st:
         if int(s['cls']) not in (7, 8, 9): continue
         src = by_hash.get(int(s['hash'])); n_roads += 1
         if src is None: cls_bad.append(int(s['hash'])); continue
+        got.add(src['id'])
         P = np.stack([pt['x'][s['first']:s['first'] + s['count']], pt['z'][s['first']:s['first'] + s['count']]], 1).astype(float)
-        Q = M.dedupe(src['pts'])
+        Q = M.dedupe(src['src'])
         worst_pt = max(worst_pt, float(M.dist_to_polyline(P, Q).max())); worst_src = max(worst_src, float(M.dist_to_polyline(Q, P).max()))
-        a_ = lay['routes'].get(src['id'])
-        want = M.road_class(a_['width'], a_['vehicle'], a_['foot_only']) if a_ else 7
-        if want != int(s['cls']): cls_bad.append(src['id'])
+        if src['cls'] != int(s['cls']): cls_bad.append(src['id'])
     R.add('AC-O5', 'road accuracy: every stroke point within 1.0 m of the source line, every source vertex within 1.0 m of the stroke', worst_pt <= 1.0 and worst_src <= 1.0 and n_roads > 0,
           f'{n_roads} roads, stroke point off the source {worst_pt:.3f} m, source vertex off the stroke {worst_src:.3f} m')
     R.add('AC-O2', 'road class = physical attributes of the layout route with the same id (else foot path)', not cls_bad, str(cls_bad[:4]))
+    fitted = [r for r in srcs if r['source'] != 'map']; lines = M.layout_route_lines(); worst_fit = 0.0
+    for r in fitted:
+        G = lines[M.road_fit()['lines'].get(r['id'], {}).get('route', r['id'])]
+        worst_fit = max(worst_fit, float(M.dist_to_polyline(M.resample(r['src'], 4.0), G).max()), float(M.dist_to_polyline(M.resample(G, 4.0), r['src']).max()))
+    R.add('AC-O5', 'road fit: every road the fit names is a stroke, drawn on the layout route line (0 m), and inputs[] carries the fit data',
+          {r['id'] for r in srcs} == got and worst_fit <= 1e-6 and any(i.get('role') == 'roadFit' for i in note['inputs']),
+          f"{len(fitted)} fitted: {', '.join(r['id'] + ' <- ' + r['source'] for r in fitted) or 'none'}; off the route {worst_fit:.3f} m; "
+          f"not drawn: {', '.join(k for k, v in M.road_fit()['lines'].items() if v['source'] == 'none') or 'none'}")
     names = [l['id'] for l in mp['lines'] if CG.FORBIDDEN_LINE.search(l['id'])]
     R.add('AC-O2', 'no input line named MainPath / campaign', not names, ', '.join(names))
     cg_src = Path(CG.__file__).read_text(encoding='utf-8')

@@ -110,6 +110,7 @@ namespace Oheangbu.App.World
                     }
             }
             EnrollMineTutorial306(progress);   // #306 #11: only a brand-new save sees the mine tutorial cards
+            EnrollCinematic308(progress);   // #308: only a brand-new save sees the start / mine-exit stills
             return progress;
         }
 

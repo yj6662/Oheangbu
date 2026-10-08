@@ -130,6 +130,11 @@ def mock_walk(B, reach=WALK_REACH_M, all_walked=False):
     for k, r in enumerate(roads):
         d = np.hypot(*(r - start).T); i = int(np.argmin(d))
         if d[i] < 20: dist[k][i] = 0.0
+    if not any(np.isfinite(d).any() for d in dist):
+        # #308 map bake: no road ends at the start mark any more (the mine mark stands over the gallery; the road on the ground
+        # passes the mine mouth 130 m away) - the mock walk then starts on the road point nearest to the mark
+        k, i = min(((k, int(np.argmin(np.hypot(*(r - start).T)))) for k, r in enumerate(roads)), key=lambda t: float(np.hypot(*(roads[t[0]][t[1]] - start))))
+        dist[k][i] = 0.0
     for _ in range(60):
         changed = False
         for k, r in enumerate(roads):

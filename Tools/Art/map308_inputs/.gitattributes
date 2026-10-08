@@ -1,0 +1,2 @@
+# bake inputs: their sha256 is recorded in the map bundles - never let git rewrite a line ending here
+* -text

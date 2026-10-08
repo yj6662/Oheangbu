@@ -9,11 +9,14 @@ using UnityEngine.SceneManagement;
 
 namespace Oheangbu.EditorTools.WorldMacro
 {
- // #297 demo build: lobby -> loading -> W_Demo_Main as a Windows player (Builds/Demo297/<utc>/Oheangbu.exe).
- // The build list is narrowed to the three scenes only for the synchronous BuildPlayer call and restored byte-for-byte.
+ // #297 demo build: lobby -> loading -> W_Demo_Main (+ the realm scenes) as a Windows player (Builds/Demo297/<utc>/Oheangbu.exe).
+ // The build list is narrowed to those scenes only for the synchronous BuildPlayer call and restored byte-for-byte.
  public static class Finish297Build
  {
-  static readonly string[] Scenes={"Assets/_Project/Art/UI/Loading270/W_Compact_Lobby.unity","Assets/_Project/Art/UI/Loading270/W_Compact_Loading.unity","Assets/_Project/Scenes/World/W_Demo_Main.unity"};
+  // #308 realm skin streaming: the main scene's buildings live in Stream/Realm_<Id>.unity; a build without them has no buildings.
+  const string StreamFolder="Assets/_Project/Scenes/World/Stream";
+  static string[] Scenes=>new[]{"Assets/_Project/Art/UI/Loading270/W_Compact_Lobby.unity","Assets/_Project/Art/UI/Loading270/W_Compact_Loading.unity","Assets/_Project/Scenes/World/W_Demo_Main.unity"}
+   .Concat(Directory.Exists(StreamFolder)?Directory.GetFiles(StreamFolder,"Realm_*.unity").Select(x=>x.Replace('\\','/')).OrderBy(x=>x):Enumerable.Empty<string>()).ToArray();
   [Serializable] class SceneList297{public string[] paths;public bool[] enabled;}
   public static string Run(string command)
   {

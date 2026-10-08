@@ -24,6 +24,8 @@ namespace Oheangbu.App.World.UI
             [TextArea] public string Text;
         }
         public string LoadingScene = "W_Compact_Loading";
+        [Tooltip("#308 realm skin streaming (SPEC-WORLD-REALM-STREAM-308): the realm scenes around the start point are brought in before the play scene. Empty = the play scene is whole")]
+        public RealmStreamSheet308 RealmStream;
         public WorldMapBakedDataSO Map;
         [Tooltip("legacy uGUI font (270). The #304 screen draws TMP through Style304.")]
         public Font Font;

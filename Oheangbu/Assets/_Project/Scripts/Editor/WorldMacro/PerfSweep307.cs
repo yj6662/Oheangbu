@@ -24,13 +24,21 @@ namespace Oheangbu.EditorTools.WorldMacro
     public static class PerfSweep307
     {
         const string Renderer297 = "Assets/_Project/Art/World/Finish297/Renderer297.asset";
-        internal static readonly (string id, Vector3 feet, float[] yaws)[] Stations = {
+        internal static readonly (string id, Vector3 feet, float[] yaws)[] DefaultStations = {
             ("mine_start", new Vector3(3261.00f, 168.28f, 1878.00f), new[] { 0f, 180f }),
             ("mine_yard", new Vector3(3368.60f, 165.81f, 2033.90f), new[] { 315f, 210f }),
             ("village_rest", new Vector3(2758.44f, 216.88f, 2133.89f), new[] { 0f, 180f }),
             ("forest_band", new Vector3(3613.04f, 173.38f, 2050.25f), new[] { 86.2f, 266.2f }),
             ("cheolong_fortress", new Vector3(723.36f, 253.72f, 3587.95f), new[] { 211.7f, 31.7f }),
             ("capital_gate", new Vector3(2000.00f, 98.02f, 2495.00f), new[] { 0f, 180f }) };
+        // #308 the Cheongrim temple (SPEC-ARCH-TEMPLE-308 16): a sweep whose name starts with "temple" uses these instead
+        internal static readonly (string id, Vector3 feet, float[] yaws)[] TempleStations = {
+            ("temple_outer", new Vector3(3220.00f, 87.42f, 3462.00f), new[] { 0f, 180f }),
+            ("temple_court", new Vector3(3222.00f, 89.00f, 3530.00f), new[] { 0f, 180f }),
+            ("temple_main_inside", new Vector3(3221.50f, 90.75f, 3581.00f), new[] { 0f, 180f }),
+            ("temple_upper_inside", new Vector3(3229.50f, 92.75f, 3615.00f), new[] { 0f, 180f }),
+            ("temple_upper_terrace", new Vector3(3242.00f, 92.42f, 3606.00f), new[] { 270f, 200f }) };
+        internal static (string id, Vector3 feet, float[] yaws)[] Stations = DefaultStations;
         static string Folder => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/Performance/Perf307/Sweep"));
 
         sealed class Sample { public string Station, Variant; public float Yaw, Gpu, Cpu, Interval, Collect, Classify, Tests, Replay, Tris, Batches, Casters; public int N; }
@@ -187,7 +195,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (status == "running") return "refused: a sweep is running";
             if (Map307Capture.HeldSession == null) return "refused: no held Play (Map307Capture play-hold first)";
             var rest = arg.Substring(6); int c = rest.IndexOf(':'); if (c <= 0) return "refused: sweep:<name>:<variants>";
-            name = rest.Substring(0, c); variants = new List<string> { "A" };
+            name = rest.Substring(0, c); variants = new List<string> { "A" }; Stations = name.StartsWith("temple", StringComparison.Ordinal) ? TempleStations : DefaultStations;
             variants.AddRange(rest.Substring(c + 1).Split('|').Select(v => v.Trim()).Where(v => v.Length > 0)); variants.Add("A");
             foreach (var v in variants.Where(v => v != "A")) { string why = Check(v); if (why != null) return "refused: " + why; }
             samples.Clear(); census.Clear(); station = pose = variant = stage = 0; at = Now; status = "running"; note = "start";
@@ -456,6 +464,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                         break;
                     case "off":   // off=art|grass|terrain|addlights: that whole layer not drawn (GPU cost breakdown only)
                         if (val == "art") foreach (var r in Object.FindObjectsByType<CompactRebuildArtRenderer>(FindObjectsSortMode.None)) { var r0 = r; bool was = r0.enabled; r0.enabled = false; undo.Add(() => { if (r0 != null) r0.enabled = was; }); }
+                        // #308 temple cost breakdown: the part kit, the lamp lights, the whole temple root
+                        if (val == "kit" || val == "temple") foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Where(x => val == "kit" ? x.name == "Kit" && x.root.name == "Temple308World" : x.name == "Temple308World" && x.parent == null))
+                        { var g0 = t.gameObject; if (!g0.activeSelf) continue; g0.SetActive(false); undo.Add(() => { if (g0 != null) g0.SetActive(true); }); }
+                        if (val == "lamps") foreach (var l in Object.FindObjectsByType<Light>(FindObjectsSortMode.None).Where(x => x.name == "LampLight" && x.enabled))
+                        { var l0 = l; l0.enabled = false; undo.Add(() => { if (l0 != null) l0.enabled = true; }); }
                         if (val == "grass") foreach (var r in Object.FindObjectsByType<CompactGrassRenderer266>(FindObjectsSortMode.None)) { var r0 = r; bool was = r0.enabled; r0.enabled = false; undo.Add(() => { if (r0 != null) r0.enabled = was; }); }
                         if (val == "terrain") foreach (var t in Object.FindObjectsByType<Terrain>(FindObjectsSortMode.None)) { var t0 = t; bool was = t0.drawHeightmap; t0.drawHeightmap = false; undo.Add(() => { if (t0 != null) t0.drawHeightmap = was; }); }
                         if (val == "ground") foreach (var mr in Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(x => x.enabled && x.sharedMaterial != null && x.sharedMaterial.shader != null && x.sharedMaterial.shader.name.Contains("KoreanInkGround")))

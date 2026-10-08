@@ -41,6 +41,17 @@ namespace Oheangbu.App.World.UI
             // #304 loading band: region name (from the map data) + where the journey resumes
             screen.SetJourney(Flow304JourneyMeta(saved)); screen.Select(position); screen.SetProgress(.04f, LoadingLine297);
             yield return null; // Present the illustration before requesting the large world scene.
+            // #308 realm skin streaming: the session checks its spawn point against colliders in its Start, so the realm scenes around
+            // the start point come in before the play scene (they hold no scripts). The loader in the play scene adopts them.
+            if (LoadingProfile.RealmStream != null && LoadingProfile.RealmStream.PlayScene == PlaySceneName)
+            {
+                var skins = LoadingProfile.RealmStream.BeginAround(position);
+                for (bool pending = true; pending;)
+                {
+                    pending = false; foreach (var skin in skins) pending |= !skin.isDone;
+                    if (pending) yield return null;
+                }
+            }
             load = BeginLoadingScene(PlaySceneName, LoadSceneMode.Additive, out error);
             if (load == null) { LoadingFailed(screen, "지역을 불러오지 못했습니다."); yield break; }
             load.allowSceneActivation = false;

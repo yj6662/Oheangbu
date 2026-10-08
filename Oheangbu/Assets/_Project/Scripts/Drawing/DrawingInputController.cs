@@ -99,8 +99,13 @@ namespace Oheangbu.Drawing
         private Vector2 _lastSample;
         private float _modeEnterTime;
         private float _cachedTimeScale = 1f;
+        // true only between EnterMode and the ExitMode that gives the scale back: ExitMode can be reached twice in one commit (a UI
+        // surface opened from inside the letter event cancels the drawing, then Commit ends it again) and must restore once.
+        private bool _ownsTimeScale;
 
         public bool InDrawMode { get; private set; }
+        /// <summary>The scale the world runs at while drawing (1 = no slow-down).</summary>
+        public float DrawTimeScale => _drawTimeScale;
         public bool IsStroking => _currentStroke != null;
         public int StrokeCount => _strokes.Count;
         // 표현은 이 스냅샷만 읽는다. Point 액션은 작도 프레임당 여기서 한 번만 수집하며,
@@ -197,12 +202,18 @@ namespace Oheangbu.Drawing
 
         private void EnterMode()
         {
+            // A paused world (Time.timeScale 0: a menu, a tutorial card) is not drawn in. Entering here cached 0 and wrote the
+            // slow-down scale over the pause, so the game ran at 0.35 under the card (2026-10-08 report). The key must come up first.
+            if (Time.timeScale <= 0f) { _entryRequiresRelease = true; return; }
             InDrawMode = true;
             _modeEnterTime = Time.unscaledTime; // 감쇠 구간(§3-2)의 시작점
             if (_drawTimeScale < 1f)
             {
-                _cachedTimeScale = Time.timeScale;
+                // The scale to go back to is the resting one. A temporary scale that is live right now (a hit stop at 0.06) is
+                // not cached: restoring it later would leave the game slow for good.
+                _cachedTimeScale = Mathf.Max(1f, Time.timeScale);
                 Time.timeScale = _drawTimeScale;
+                _ownsTimeScale = true;
             }
             _modeChanged?.Raise(true);
             ModeEntered?.Invoke();
@@ -297,7 +308,12 @@ namespace Oheangbu.Drawing
             _strokes.Clear();
             InDrawMode = false;
             HasPointer = false;
-            if (_drawTimeScale < 1f) Time.timeScale = _cachedTimeScale;
+            if (_ownsTimeScale)
+            {
+                _ownsTimeScale = false;
+                // Give the scale back only if it is still ours. Paused meanwhile (0) or changed by another owner: leave it alone.
+                if (Mathf.Approximately(Time.timeScale, _drawTimeScale)) Time.timeScale = _cachedTimeScale;
+            }
             _modeChanged?.Raise(false);
             if (!silent) Committed?.Invoke(committed);
             ModeExited?.Invoke();

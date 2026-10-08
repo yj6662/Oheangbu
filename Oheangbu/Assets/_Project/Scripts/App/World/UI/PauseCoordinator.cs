@@ -94,10 +94,17 @@ namespace Oheangbu.App.World.UI
             // Drawing owns its temporary 0.35 scale. Let it restore that scale without
             // committing or misfiring before this coordinator captures and pauses the world.
             Drawing?.CancelForUi();
+            // The bound controller can be stale (a rebuilt player rig) or one of two: any drawing still open keeps its slow-down
+            // scale, which was then captured below and restored at End - the game stayed slow after the card (2026-10-08 report).
+            float drawScale = Drawing != null ? Drawing.DrawTimeScale : -1f;
+            foreach (var open in FindObjectsByType<DrawingInputController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                if (open != null && open.InDrawMode) { drawScale = open.DrawTimeScale; open.CancelForUi(); }
             Gate?.Block();
             StopVehicleInput();
 
             _priorTimeScale = Time.timeScale;
+            // What the world returns to is a resting scale: not zero (it would stay paused) and not the drawing slow-down.
+            if (_priorTimeScale <= 0f || (drawScale > 0f && drawScale < 1f && Mathf.Approximately(_priorTimeScale, drawScale))) _priorTimeScale = 1f;
             _priorCursorLock = Cursor.lockState;
             _priorCursorVisible = Cursor.visible;
             Time.timeScale = 0f;
