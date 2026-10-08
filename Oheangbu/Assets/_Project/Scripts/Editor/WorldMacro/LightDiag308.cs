@@ -22,6 +22,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c.StartsWith("mesh:", StringComparison.Ordinal)) return MeshOf(c.Substring(5));
                 if (c.StartsWith("hide:", StringComparison.Ordinal)) return Hide(c.Substring(5));
                 if (c == "show") return Show();
+                if (c.StartsWith("normalsforce:", StringComparison.Ordinal)) { Force = true; try { return NormalsDebug(c.Substring(13)); } finally { Force = false; } }
+                if (c.StartsWith("normalsdbg:", StringComparison.Ordinal)) return NormalsDebug(c.Substring(11));
                 if (c.StartsWith("normals:", StringComparison.Ordinal)) return Normals(c.Substring(8));
                 if (c.StartsWith("roots:", StringComparison.Ordinal)) return Roots(c.Substring(6));
                 if (c.StartsWith("hideroot:", StringComparison.Ordinal)) return HideRoot(c.Substring(9));
@@ -133,8 +135,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                 foreach (int i in idx)
                 {
                     var n = acc[i];
-                    if (n.sqrMagnitude < 1e-12f) { float best = float.MaxValue; for (int j = 0; j < ns.Length; j++) { if (ns[j].sqrMagnitude < .5f || float.IsNaN(ns[j].x)) continue; float dd = (vs[j] - vs[i]).sqrMagnitude; if (dd < best) { best = dd; n = ns[j]; } } }
-                    ns[i] = n.sqrMagnitude > 1e-12f ? n.normalized : Vector3.up;
+                    if (n.magnitude < 1e-7f) { float best = float.MaxValue; for (int j = 0; j < ns.Length; j++) { if (ns[j].sqrMagnitude < .5f || float.IsNaN(ns[j].x)) continue; float dd = (vs[j] - vs[i]).sqrMagnitude; if (dd < best) { best = dd; n = ns[j]; } } }
+                    // Vector3.normalized gives ZERO under a length of 1e-5 (sliver triangles land there): divide by hand, and never leave a zero
+                    float len = n.magnitude; ns[i] = len > 1e-18f && !float.IsNaN(len) ? n / len : Vector3.up; if (ns[i].sqrMagnitude < .5f || float.IsNaN(ns[i].x)) ns[i] = Vector3.up;
                 }
                 // the asset as it was goes to Tools/Unity/Stage308_backup_normals/<day>/ first (once: an existing copy is kept)
                 string keep = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, "../../Tools/Unity/Stage308_backup_normals/" + DateTime.Now.ToString("yyyyMMdd") + "/" + path.Replace('/', '_')));
@@ -143,6 +146,23 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             return sb.Append("  meshes ").Append(total).Append(", with bad normals ").Append(bad).Append(apply ? ", repaired " + fixedMeshes : "").ToString();
         }
+
+        // normalsdbg:<mesh asset>  the bad normals of one mesh: the raw value, the vertex, the layout - and what a write-then-read gives back (not saved)
+        static string NormalsDebug(string path)
+        {
+            var m = AssetDatabase.LoadAssetAtPath<Mesh>(path); if (m == null) return "REFUSED no mesh " + path;
+            var sb = new StringBuilder(path).Append((char)10).Append("  layout ").Append(string.Join(" ", m.GetVertexAttributes().Select(d => d.attribute + ":" + d.format + "x" + d.dimension))).Append(" | submeshes ").Append(m.subMeshCount).Append(" readable ").Append(m.isReadable).Append((char)10);
+            var ns = m.normals; var vs = m.vertices; var idx = Enumerable.Range(0, ns.Length).Where(i => ns[i].sqrMagnitude < 1e-6f || float.IsNaN(ns[i].x) || float.IsNaN(ns[i].y) || float.IsNaN(ns[i].z)).ToList();
+            foreach (int i in idx.Take(12)) sb.Append("  #").Append(i).Append(" normal ").Append(ns[i].ToString("G4")).Append(" vertex ").Append(vs[i].ToString("F3")).Append((char)10);
+            if (idx.Count > 0) { var copy = UnityEngine.Object.Instantiate(m); var n2 = copy.normals; foreach (int i in idx) n2[i] = Vector3.up; copy.normals = n2; var back = copy.normals; sb.Append("  write up then read: ").Append(string.Join(" ", idx.Take(6).Select(i => back[i].ToString("G3")))).Append(" | layout after ").Append(string.Join(" ", copy.GetVertexAttributes().Select(d => d.attribute + ":" + d.format))); UnityEngine.Object.DestroyImmediate(copy); }
+            if (path.Length > 0 && idx.Count > 0 && Force)
+            {
+                foreach (int i in idx) ns[i] = Vector3.up; m.normals = ns; var r1 = m.normals; sb.Append((char)10).Append("  on the asset, before save: ").Append(string.Join(" ", idx.Take(4).Select(i => r1[i].ToString("G3"))));
+                EditorUtility.SetDirty(m); AssetDatabase.SaveAssetIfDirty(m); var r2 = AssetDatabase.LoadAssetAtPath<Mesh>(path).normals; sb.Append(" | after save: ").Append(string.Join(" ", idx.Take(4).Select(i => r2[i].ToString("G3"))));
+            }
+            return sb.ToString();
+        }
+        static bool Force;
 
         static string Near(string arg)
         {

@@ -318,7 +318,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             // length before it is packed; one with no direction takes the nearest sound normal, else straight up (LightDiag308 normals: repairs old packs).
             for (int ni = 0; ni < nor.Length; ni++)
             {
-                if (nor[ni].sqrMagnitude > 1e-10f && !float.IsNaN(nor[ni].x)) { nor[ni] = nor[ni].normalized; continue; }
+                // divided by hand: Vector3.normalized returns zero under a length of 1e-5
+                float nlen = nor[ni].magnitude; if (nlen > 1e-7f && !float.IsNaN(nlen)) { nor[ni] /= nlen; continue; }
                 Vector3 pick = Vector3.up; float bestD = float.MaxValue;
                 for (int nj = Mathf.Max(0, ni - 64); nj < Mathf.Min(nor.Length, ni + 64); nj++) { if (nj == ni || nor[nj].sqrMagnitude < .25f) continue; float dd = (pos[nj] - pos[ni]).sqrMagnitude; if (dd < bestD) { bestD = dd; pick = nor[nj].normalized; } }
                 nor[ni] = pick;
