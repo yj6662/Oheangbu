@@ -167,6 +167,11 @@ InitTestScene*.unity*
 !/[Aa]ssets/_Project/Art/UI/Loading270/W_Compact_Loading.unity.meta
 !/[Aa]ssets/_Project/Scenes/World/W_Demo_Main.unity
 !/[Aa]ssets/_Project/Scenes/World/W_Demo_Main.unity.meta
+# #308 (2026-10-08 사용자 결정): 메인 씬의 건물은 강토 씬 다섯에 있다(RealmStream308) — 메인 씬과 함께 추적한다
+!/[Aa]ssets/_Project/Scenes/World/Stream/Realm_*.unity
+!/[Aa]ssets/_Project/Scenes/World/Stream/Realm_*.unity.meta
+!/[Aa]ssets/_Project/Scenes/World/Stream/RealmStreamSheet308.asset
+!/[Aa]ssets/_Project/Scenes/World/Stream/RealmStreamSheet308.asset.meta
 # #308: 술식 규칙 표(코드가 임포트하는 자료 — 120자 해석 · 해금)는 코드와 함께 추적한다
 !/[Aa]ssets/_Project/Data/Spells/*.csv
 !/[Aa]ssets/_Project/Data/Spells/*.csv.meta

@@ -1,6 +1,0 @@
-{
-  "method": "Animation-only FBX default transforms explicitly reset to source rest before baking actions; avoids exporting sitting pose as default skeleton without a mesh BindPose.",
-  "sourceBlend": "C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\Locomotion\\Blender\\Player_Locomotion_Derivative.blend",
-  "fbxSha256": "f9c9dfe0eff436580ef3e85c0b0edce06ac6b8995cf7860324f0888e947a194a",
-  "actions": 14
-}

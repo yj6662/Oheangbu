@@ -1,8 +1,0 @@
-{
-    "status": "APPLIED",
-    "scope": "Owned playtest audio, ink flow, UI theme only; backup C:\\Users\\yj666\\Oheangbu\\Art\\PlaytestPolish\\AudioInk/BeforeScenes/W_WorldMacro_Playtest.unity",
-    "checks": [
-        "Assets/_Project/Scenes/World/W_WorldMacro_Playtest.unity"
-    ],
-    "failures": []
-}
