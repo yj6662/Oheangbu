@@ -1,3 +1,0 @@
-# Generated evidence stays available without obscuring authored code reviews.
-**/*.json linguist-generated=true
-**/*.obj linguist-generated=true

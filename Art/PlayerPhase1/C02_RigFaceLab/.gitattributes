@@ -1,3 +1,0 @@
-# Preserve recorded artifact hashes; collapse machine-generated evidence in code review.
-*.json -text linguist-generated=true
-*.md -text
