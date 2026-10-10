@@ -17,7 +17,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  // [SPEC-WORLD-REALM-FLORA-308] Vegetation of one realm as its own dressing sheet and its own renderer (the #305 pattern): the shared
  // sheets (Architecture296/Data/*) are read, never written here. Rows that have to leave a shared sheet go through the
  // BuildingFix308.VegRows ledger (remove-plan / remove-apply), so "Veg replay" brings the removals back after a #296 re-bake.
- //   status | protos | plan:<Realm> | build:<Realm> | clear:<Realm> | check:<Realm> | remove-plan:<Realm> | remove-apply:<Realm> | remove-revert:<Realm>
+ //   status | protos | intake-plan | intake | plan:<Realm> | build:<Realm> | clear:<Realm> | check:<Realm> | remove-plan:<Realm> | remove-apply:<Realm> | remove-revert:<Realm>
  // Input (written by Tools/Unity/Stage308_flora/_Tools/flora_plan.py): Tools/Unity/Stage308_flora/Out/flora_<Realm>.json
  //   { "version", "realm", "prototypes": ["<id in a scene sheet>"], "made": [{ "id", "prefab", "category", "radius" }],
  //     "candidates": [{ "Id", "ClusterId", "PrototypeId", "kind", "Position":[x,y,z], "Euler":[..], "Scale" }],
@@ -28,7 +28,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  {
   const string Main308F="Assets/_Project/Scenes/World/W_Demo_Main.unity",A308F="Assets/_Project/Art/World/Flora308",Root308F="Flora308";
   // TEST numbers (Spec 3.1): trunk to trunk, shrub to trunk, content points, built ground above the terrain, rows per sheet
-  const float TreeClear308F=2.5f,ShrubClear308F=1f,ContentClear308F=6f,BuiltOver308F=.6f;const int Cap308F=60000;
+  const float TreeClear308F=2.5f,ShrubClear308F=1f,SolidClear308F=1.6f,ContentClear308F=6f,BuiltOver308F=.6f;const int Cap308F=60000;
   static readonly string[] Realms308F={"Cheongrim","Hwanggyeong","Cheolong","Jeokro","Hyeongang"};
   static string Stage308F=>Path.GetFullPath(Path.Combine(Application.dataPath,"..","..","Tools","Unity","Stage308_flora"));
 
@@ -44,6 +44,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     string[] a=(command??"").Split(new[]{':'},2);string realm=a.Length>1?a[1].Trim():"";
     if(a[0]=="status")return Status308F();
     if(a[0]=="protos")return Protos308F();
+    if(a[0]=="intake-plan")return Intake308F(true);
+    if(a[0]=="intake")return Intake308F(false);
     if(!Realms308F.Contains(realm))return "REFUSED realm '"+realm+"' (one of "+string.Join(", ",Realms308F)+")";
     try{Cliff305Now=LoadCliff305();}catch(Exception){Cliff305Now=new Cliff305();}
     switch(a[0])
@@ -192,6 +194,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     var xz=new Vector2(c.Position[0],c.Position[2]);bool woody=kind==Sheet308F.Kind.Tree||kind==Sheet308F.Kind.Shrub;
     if(kind==Sheet308F.Kind.Tree&&(trees.Any(xz,TreeClear308F)||mine.Any(xz,TreeClear308F))){Drop("tree within "+TreeClear308F+" m of a tree");continue;}
     if(kind==Sheet308F.Kind.Shrub&&trees.Any(xz,ShrubClear308F)){Drop("shrub within "+ShrubClear308F+" m of a trunk");continue;}
+    if((kind==Sheet308F.Kind.Rock||kind==Sheet308F.Kind.Prop)&&trees.Any(xz,SolidClear308F)){Drop("rock or prop within "+SolidClear308F+" m of a trunk");continue;}
     if(reserved.Any(xz,ContentClear308F)){Drop("content / encounter / checkpoint "+ContentClear308F+" m");continue;}
     if(!Ground305(xz.x,xz.y,null,skip,out float gy,out bool terrain,out float top,out Collider topBy)){Drop("no ground");continue;}
     if(!terrain){Drop("no terrain under it");continue;}
