@@ -17,6 +17,15 @@ namespace Oheangbu.EditorTools.WorldMacro
     {
         const string LoadingProfilePath = "Assets/_Project/Art/UI/Loading270/RegionLoading.asset";   // the lobby's profile (W_Compact_Lobby)
 
+        /// <summary>For a tool that rebuilds a root of the play scene: null while that root's content is in the play scene, else the
+        /// refusal to answer with (rebuilding it there would leave the moved copy in the realm scenes and break merge).</summary>
+        public static string RefusalFor(string rootName)
+        {
+            var manifest = ReadManifest();
+            int n = manifest == null ? 0 : manifest.units.Count(u => u.parentPath == rootName || u.parentPath.StartsWith(rootName + "/", StringComparison.Ordinal) || (u.parentPath == "" && u.name == rootName));
+            return n == 0 ? null : "REFUSED " + n + " units of " + rootName + " are in the realm scenes (RealmStream308): run RealmStream308 merge, do this, then split again";
+        }
+
         static Manifest ReadManifest() => File.Exists(ManifestFile) ? JsonUtility.FromJson<Manifest>(File.ReadAllText(ManifestFile)) : null;
 
         static string Backup(Rules r, string stamp, string what)
@@ -97,6 +106,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         var t = row.unit.Root;
                         t.SetParent(null, true); SceneManager.MoveGameObjectToScene(t.gameObject, scenes[i]); t.SetParent(root.transform, true);
                         drift = Mathf.Max(drift, Drift(row.before, t.localToWorldMatrix));
+                        ClearBatching(t);
                         manifest.units.Add(new ManifestUnit { realm = plan.Realms[i].Id, name = t.name, parentGid = row.gid, parentPath = row.parentPath, sibling = row.sibling, renderers = row.unit.Renderers, vertices = row.unit.Vertices });
                     }
                 }
@@ -342,6 +352,124 @@ namespace Oheangbu.EditorTools.WorldMacro
             Line(!main.isDirty && scenes.All(s => !s.IsValid() || !s.isDirty), "AC-S11", "no scene left with unsaved changes");
             foreach (var s in opened) EditorSceneManager.CloseScene(s, true);
             return sb + "checks, " + pass + " pass " + fail + " fail";
+        }
+
+        // ---------------------------------------------------------------- standers
+
+        /// <summary>Risk 3 of the Spec: what stands on a floor that is only there while its realm scene is in.</summary>
+        static string Standers()
+        {
+            var r = LoadRules(); var main = MainScene(r, false); int open = 0;
+            foreach (var realm in LoadRealms(r)) if (SceneManager.GetSceneByPath(ScenePath(r, realm.Id)).isLoaded) open++;
+            if (open == 0) throw new Refuse("run open-all first (no realm scene is open)");
+            Physics.SyncTransforms();
+            var bodies = new List<(Transform t, string kind)>();
+            foreach (var g in main.GetRootGameObjects())
+            {
+                foreach (var x in g.GetComponentsInChildren<Rigidbody>(true)) bodies.Add((x.transform, x.isKinematic ? "Rigidbody(kinematic)" : "Rigidbody"));
+                foreach (var x in g.GetComponentsInChildren<CharacterController>(true)) bodies.Add((x.transform, "CharacterController"));
+                foreach (var x in g.GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>(true)) bodies.Add((x.transform, "NavMeshAgent"));
+            }
+            var sb = new StringBuilder("RealmStream308 standers | realm scenes open " + open + " | bodies in the play scene " + bodies.Count + "\n"); int on = 0, falls = 0;
+            foreach (var (t, kind) in bodies)
+            {
+                // the nearest ground under the body, triggers left out; its own colliders are skipped
+                var hits = Physics.RaycastAll(t.position + Vector3.up * 1.5f, Vector3.down, 8f, ~0, QueryTriggerInteraction.Ignore);
+                RaycastHit? first = null;
+                foreach (var h in hits.OrderBy(h => h.distance)) { if (h.collider.transform.IsChildOf(t)) continue; first = h; break; }
+                if (first == null || first.Value.collider.gameObject.scene == main) continue;
+                on++; bool drops = kind == "Rigidbody" || kind == "CharacterController"; if (drops) falls++;
+                sb.AppendLine("  " + (drops ? "DROPS " : "stays ") + kind.PadRight(22) + (t.gameObject.activeInHierarchy ? "on  " : "off ") + first.Value.collider.gameObject.scene.name.PadRight(18)
+                    + F(t.position.x) + "," + F(t.position.y, "F1") + "," + F(t.position.z) + "  " + PathOf(t) + "  <- " + first.Value.collider.name);
+            }
+            return sb + "standers: " + on + " on a realm-scene floor, of them " + falls + " moved by physics (they drop when the realm is out); NavMeshAgents and kinematic bodies keep their height";
+        }
+
+        /// <summary>Where a teleport would land with and without the realm scene (for the re-seat Play step).</summary>
+        static string Floor(string points)
+        {
+            var r = LoadRules(); var main = MainScene(r, false); Physics.SyncTransforms();
+            var sb = new StringBuilder("RealmStream308 floor\n");
+            foreach (string point in points.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var v = point.Split(',').Select(x => float.Parse(x.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+                float realm = float.NaN, ground = float.NaN; string realmName = "-", groundName = "-";
+                foreach (var h in Physics.RaycastAll(new Vector3(v[0], 2000f, v[1]), Vector3.down, 4000f, ~0, QueryTriggerInteraction.Ignore).OrderBy(h => h.distance))
+                {
+                    bool inMain = h.collider.gameObject.scene == main;
+                    if (inMain && float.IsNaN(ground)) { ground = h.point.y; groundName = h.collider.name; }
+                    if (!inMain && float.IsNaN(realm)) { realm = h.point.y; realmName = h.collider.gameObject.scene.name + "/" + h.collider.name; }
+                }
+                sb.AppendLine("  " + F(v[0]) + "," + F(v[1]) + " realm floor " + F(realm, "F2") + " (" + realmName + ") | play-scene ground " + F(ground, "F2") + " (" + groundName + ") | gap " + F(realm - ground, "F2"));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>batch: per loaded scene, how many renderers are flagged for static batching (edit mode) or are part of a static batch
+        /// (Play), and how many have bounds that are not finite or far from their transform. batch:x,z,r lists the renderers near a point.</summary>
+        static string Batch(string arg)
+        {
+            var sb = new StringBuilder("RealmStream308 batch | playing " + EditorApplication.isPlaying + " | project static batching " + PlayerSettingsStatic() + (char)10);
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var s = SceneManager.GetSceneAt(i); if (!s.isLoaded) continue; int renderers = 0, flagged = 0, batched = 0, odd = 0; string sample = "";
+                foreach (var g in s.GetRootGameObjects()) foreach (var r in g.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    renderers++;
+                    if (GameObjectUtility.AreStaticEditorFlagsSet(r.gameObject, StaticEditorFlags.BatchingStatic)) flagged++;
+                    if (r.isPartOfStaticBatch) batched++;
+                    var b = r.bounds; bool bad = float.IsNaN(b.center.x) || float.IsInfinity(b.size.x) || (b.center - r.transform.position).magnitude > 2000f;
+                    if (bad) { odd++; if (sample == "") sample = PathOf(r.transform) + " bounds " + b.center.ToString("F0") + " at " + r.transform.position.ToString("F0"); }
+                }
+                sb.AppendLine("  " + s.name.PadRight(20) + " renderers " + N(renderers) + " | flagged BatchingStatic " + N(flagged) + " | part of a static batch " + N(batched) + " | odd bounds " + odd + (sample != "" ? " e.g. " + sample : ""));
+            }
+            if (arg != "")
+            {
+                var v = arg.Split(',').Select(x => float.Parse(x.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray(); var p = new Vector2(v[0], v[1]); int n = 0;
+                foreach (var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                {
+                    if (Vector2.Distance(new Vector2(r.transform.position.x, r.transform.position.z), p) > v[2] || n++ > 60) continue;
+                    var f = r.GetComponent<MeshFilter>(); var m = f != null ? f.sharedMesh : null;
+                    sb.AppendLine("    " + r.gameObject.scene.name + "/" + PathOf(r.transform) + " | batch " + r.isPartOfStaticBatch + " | visible " + r.isVisible + " enabled " + r.enabled + " | mesh " + (m == null ? "none" : m.name + " v" + m.vertexCount + " sub" + m.subMeshCount)
+                        + " | bounds " + r.bounds.center.ToString("F0") + " size " + r.bounds.size.ToString("F0") + " | " + (r.sharedMaterial != null ? r.sharedMaterial.shader.name : "no material"));
+                }
+            }
+            return sb.ToString();
+        }
+        static string PlayerSettingsStatic()
+        {
+            var method = typeof(PlayerSettings).GetMethod("GetBatchingForPlatform", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            if (method == null) return "?"; var args = new object[] { EditorUserBuildSettings.activeBuildTarget, 0, 0 }; method.Invoke(null, args); return (int)args[1] == 1 ? "on" : "off";
+        }
+
+        /// <summary>A realm scene that comes in during play is static-batched on the spot when its objects carry the flag: the combined
+        /// meshes double the vertex memory, and with the packed vertex formats (SPEC-EDITOR-MEMORY-308) some pieces came out undrawn with
+        /// NaN shading (the white bloom at the south gate, 2026-10-10). Realm content is drawn unbatched (the SRP batcher still applies).</summary>
+        static int ClearBatching(Transform root)
+        {
+            int n = 0;
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+            {
+                var flags = GameObjectUtility.GetStaticEditorFlags(t.gameObject);
+                if ((flags & StaticEditorFlags.BatchingStatic) == 0) continue;
+                GameObjectUtility.SetStaticEditorFlags(t.gameObject, flags & ~StaticEditorFlags.BatchingStatic); n++;
+            }
+            return n;
+        }
+
+        static string Unbatch()
+        {
+            var r = LoadRules(); MainScene(r, false); var sb = new StringBuilder("RealmStream308 unbatch" + (char)10); int total = 0;
+            foreach (var realm in LoadRealms(r))
+            {
+                var scene = SceneManager.GetSceneByPath(ScenePath(r, realm.Id));
+                if (!scene.IsValid() || !scene.isLoaded) throw new Refuse("run open-all first (" + ScenePath(r, realm.Id) + " is not open)");
+                if (scene.isDirty) throw new Refuse(scene.path + " has unsaved changes - nothing written");
+                int n = 0; foreach (var g in scene.GetRootGameObjects()) n += ClearBatching(g.transform);
+                if (n > 0) { EditorSceneManager.MarkSceneDirty(scene); if (!EditorSceneManager.SaveScene(scene)) throw new Refuse("SaveScene returned false for " + scene.path); }
+                sb.AppendLine("  " + realm.Id.PadRight(12) + " flag taken off " + N(n) + " objects" + (n > 0 ? ", saved" : "")); total += n;
+            }
+            return sb + "unbatch: " + N(total) + " objects";
         }
 
         // ---------------------------------------------------------------- status

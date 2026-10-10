@@ -123,6 +123,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (anchor == null && p.at.Length != 3) { sb.Append("  MISSING anchor ").Append(p.anchor).Append('\n'); continue; }
             }
             if (sb.ToString().Contains("MISSING")) return sb.Append("  REFUSED: fix the data").ToString();
+            if (!dry) { string moved = RealmStream308.RefusalFor(RootName); if (moved != null) return moved; }
             if (dry) { foreach (var t in hide) sb.Append("  hide ").Append(PathOf(t)).Append('\n'); foreach (var p in d.places) sb.Append("  place ").Append(p.id).Append(" = ").Append(p.prefab).Append(" at ").Append(p.anchor).Append('\n'); return sb.ToString().TrimEnd(); }
 
             string backup = Path.Combine(Stage, "Backup", DateTime.Now.ToString("yyyyMMddTHHmmss") + "_world"); Directory.CreateDirectory(backup);
@@ -207,6 +208,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static string Revert()
         {
+            { string moved = RealmStream308.RefusalFor(RootName); if (moved != null) return moved; }
             var d = Read(); var scene = Play(d); string file = Path.Combine(Stage, "world_ledger.json"); int back = 0; var touched = new HashSet<Scene> { scene };
             if (File.Exists(file))
             {

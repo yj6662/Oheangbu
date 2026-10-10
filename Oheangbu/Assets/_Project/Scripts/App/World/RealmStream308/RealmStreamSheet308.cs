@@ -36,6 +36,16 @@ namespace Oheangbu.App.World
         public float TickSeconds = .5f;
         [Tooltip("shortest time between two Resources.UnloadUnusedAssets after a realm was let go (s, unscaled)")]
         public float PurgeSeconds = 20;
+        [Tooltip("Application.backgroundLoadingPriority while the loader brings a realm in during play (put back afterwards). Low = about 2 ms of integration per frame")]
+        public ThreadPriority StreamPriority = ThreadPriority.Low;
+        [Tooltip("the player moving farther than this in one frame is an arrival by teleport (m)")]
+        public float TeleportJump = 30;
+        [Tooltip("after a teleport into a realm that was not in yet: once it is in, the player is put back on the arrival point when still this close to it on XZ (m) ...")]
+        public float ReseatRadius = 15;
+        [Tooltip("... and lower than it by more than this (m): the floor was not there and the body dropped to the ground below")]
+        public float ReseatDrop = .5f;
+        [Tooltip("an arrival is forgotten after this long (s, unscaled)")]
+        public float ReseatSeconds = 30;
 
         /// <summary>Distance from an XZ point to a realm's outline; 0 inside. An empty outline is never near.</summary>
         public static float Distance(Realm realm, Vector3 world)

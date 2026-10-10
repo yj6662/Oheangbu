@@ -23,7 +23,11 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   merge                   put everything back under its former parent and take the loader out (backup first)
     //   open-all | close-all    the realm scenes next to the play scene in the editor (stills, bakes, world tools)
     //   check                   counts against the manifest, nothing but static parts in the realm scenes, no broken reference
-    //   status                  Play: the loader's state; edit mode: which realm scenes are open
+    //   status                  Play: the loader's state (and the longest frame of each scene coming in or going out); edit mode: which realm scenes are open
+    //   floor:<x>,<z>[;<x>,<z>...]  after open-all: the highest realm-scene floor and the highest play-scene ground under each point
+    //   batch[:x,z,r]           static batching: flags per scene (edit mode), batch membership (Play)
+    //   unbatch                 after open-all: take the BatchingStatic flag off everything in the realm scenes and save them (split does it too)
+    //   standers                after open-all: bodies of the play scene (Rigidbody, CharacterController, NavMeshAgent) whose ground is a realm-scene collider
     // Rules (data, not code): Tools/Unity/Stage308_stream/realmstream308.json. Queue-safe: no dialog, refusals come back as text.
     // Saves only the play scene and the realm scenes (SaveScene) and its own sheet / the loading profile (SaveAssetIfDirty).
     public static partial class RealmStream308
@@ -35,7 +39,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 farMinHeight = 14, farMinSpan = 60, farCell = .75f, farBudgetMb = 200;
             public string farFolder = "Assets/_Project/Art/World/RealmStream308/Far";
             public string[] includeRoots = Array.Empty<string>(), keepPathParts = Array.Empty<string>(), protectedNameParts = Array.Empty<string>(),
-                protectedAssetParts = Array.Empty<string>(), runtimeNames = Array.Empty<string>(), runtimeNamePrefixes = Array.Empty<string>();
+                protectedAssetParts = Array.Empty<string>(), runtimeNames = Array.Empty<string>(), runtimeNamePrefixes = Array.Empty<string>(),
+                farSkipNameParts = Array.Empty<string>();
         }
         [Serializable] sealed class Layout { public LayoutRealm[] Realms; }
         [Serializable] sealed class LayoutRealm { public string Id; public Vector2[] Polygon; }
@@ -81,8 +86,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "close-all": return CloseAll();
                     case "check": return Check();
                     case "status": return Status();
+                    case "standers": return Standers();
+                    case "unbatch": return Unbatch();
+                    case "batch": return Batch(a.Length > 1 ? a[1] : "");
+                    case "floor": return Floor(a.Length > 1 ? a[1] : "");
                     case "far": return FarCommand(a.Length > 1 ? a[1] : "");
-                    default: return "commands: roots[:<path prefix>] | plan | split | merge | open-all | close-all | check | status | far:plan|build|clear|check";
+                    default: return "commands: roots[:<path prefix>] | plan | split | merge | open-all | close-all | check | status | standers | far:plan|build|clear|check";
                 }
             }
             catch (Refuse e) { return "REFUSED " + e.Message; }
