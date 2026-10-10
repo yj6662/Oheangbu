@@ -32,7 +32,9 @@ namespace Oheangbu.EditorTools.WorldMacro
   static readonly string[] Realms308F={"Cheongrim","Hwanggyeong","Cheolong","Jeokro","Hyeongang"};
   static string Stage308F=>Path.GetFullPath(Path.Combine(Application.dataPath,"..","..","Tools","Unity","Stage308_flora"));
 
-  [Serializable] sealed class Made308F{public string id="",prefab="",category="Tree";public float radius=.3f;}
+  // prefab: a prototype built from a prefab. of + tint: a copy of a prototype the scene already has, with tinted copies of its materials
+  // (every level, the far cards too) - e.g. a charred version of a bare winter tree.
+  [Serializable] sealed class Made308F{public string id="",prefab="",category="Tree",of="";public float radius=.3f;public float[] tint=Array.Empty<float>();}
   [Serializable] sealed class Remove308F{public string sheet="",id="",proto="";public float[] pos=Array.Empty<float>();}
   [Serializable] sealed class File308F{public string version="",realm="";public string[] prototypes=Array.Empty<string>();public Made308F[] made=Array.Empty<Made308F>();
    public Cand305[] candidates=Array.Empty<Cand305>();public Remove308F[] remove=Array.Empty<Remove308F>();}
@@ -46,6 +48,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(a[0]=="protos")return Protos308F();
     if(a[0]=="intake-plan")return Intake308F(true);
     if(a[0]=="intake")return Intake308F(false);
+    if(a[0]=="pack-plan")return Pack308F(true);
+    if(a[0]=="pack")return Pack308F(false);
     if(!Realms308F.Contains(realm))return "REFUSED realm '"+realm+"' (one of "+string.Join(", ",Realms308F)+")";
     try{Cliff305Now=LoadCliff305();}catch(Exception){Cliff305Now=new Cliff305();}
     switch(a[0])
@@ -162,7 +166,27 @@ namespace Oheangbu.EditorTools.WorldMacro
    var made=(input.made??Array.Empty<Made308F>()).Where(m=>m!=null&&m.id!="").ToDictionary(m=>m.id,m=>m);
    foreach(string id in wanted)
    {
-    if(made.TryGetValue(id,out var m)){var p=Made308FProto(m,realmId,problems);if(p!=null)protos.Add(p);continue;}
+    if(made.TryGetValue(id,out var m)&&!string.IsNullOrEmpty(m.of))
+    {
+     var basis=others.Select(x=>x.Sheet.Prototypes.FirstOrDefault(p=>p!=null&&p.Id==m.of)).FirstOrDefault(p=>p!=null);
+     if(basis==null){problems.Add("made "+id+": prototype "+m.of+" is in no sheet of the scene");continue;}
+     var copy=Proto305(basis);copy.Id=id;copy.Realm=realmId;
+     if(!dry)
+     {
+      var tint=m.tint!=null&&m.tint.Length>=3?new Color(m.tint[0],m.tint[1],m.tint[2],1):Color.white;DevSceneKit.EnsureFolder(A308F+"/Materials");
+      foreach(var level in copy.Lods)foreach(var part in level.Parts)
+      {
+       if(part.Material==null)continue;string path=A308F+"/Materials/Tint_"+id+"_"+AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(part.Material))+".mat";
+       var mat=AssetDatabase.LoadAssetAtPath<Material>(path);
+       if(mat==null){mat=new Material(part.Material);AssetDatabase.CreateAsset(mat,path);}else{mat.CopyPropertiesFromMaterial(part.Material);mat.shader=part.Material.shader;}
+       var c=part.Material.HasProperty("_BaseColor")?part.Material.GetColor("_BaseColor"):Color.white;mat.SetColor("_BaseColor",new Color(c.r*tint.r,c.g*tint.g,c.b*tint.b,c.a));
+       if(mat.HasProperty("_Saturation"))mat.SetFloat("_Saturation",Mathf.Min(mat.GetFloat("_Saturation"),.15f));
+       mat.enableInstancing=true;EditorUtility.SetDirty(mat);AssetDatabase.SaveAssetIfDirty(mat);part.Material=mat;
+      }
+     }
+     protos.Add(copy);continue;
+    }
+    if(made.TryGetValue(id,out m)){var p=Made308FProto(m,realmId,problems);if(p!=null)protos.Add(p);continue;}
     var src=others.Select(x=>x.Sheet.Prototypes.FirstOrDefault(p=>p!=null&&p.Id==id)).FirstOrDefault(p=>p!=null);
     if(src==null)problems.Add("prototype "+id+" is in no sheet of the scene and not in made[]");else protos.Add(Proto305(src));
    }
@@ -199,11 +223,12 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(!Ground305(xz.x,xz.y,null,skip,out float gy,out bool terrain,out float top,out Collider topBy)){Drop("no ground");continue;}
     if(!terrain){Drop("no terrain under it");continue;}
     if(top>gy+BuiltOver308F&&topBy!=null&&!Terrain305(topBy)){Drop("something built stands there ("+topBy.transform.root.name+")");continue;}
-    var pos=new Vector3(xz.x,gy-(woody?.05f:.02f),xz.y);bool preserved=false;
+    // u = 1 (water plants): the planned height is the water surface, the ground under it is the lake bed
+    bool floats=c.u>.5f;var pos=new Vector3(xz.x,floats?c.Position[1]:gy-(woody?.05f:.02f),xz.y);bool preserved=false;
     for(int i=0;i<areas.Length&&!preserved;i++)if((new Vector2(areas[i].Centre.x,areas[i].Centre.z)-xz).magnitude<=reach[i]&&Sheet308F.Excludes(areas[i],pos,kind))preserved=true;
     if(preserved){Drop("preserved area");continue;}
     if(kept.Count>=Cap308F){Drop("cap "+Cap308F);continue;}
-    dy.Add(pos.y-c.Position[1]);if(kind==Sheet308F.Kind.Tree)mine.Add(pos);
+    if(!floats)dy.Add(pos.y-c.Position[1]);if(kind==Sheet308F.Kind.Tree)mine.Add(pos);
     kept.Add(new Sheet308F.FixedPlacement{Id=c.Id,ClusterId=c.ClusterId,PrototypeId=c.PrototypeId,Position=pos,Euler=c.Euler!=null&&c.Euler.Length>=3?new Vector3(c.Euler[0],c.Euler[1],c.Euler[2]):Vector3.zero,Scale=c.Scale>0?c.Scale:1,Preserve=true});
     keptBy[kind.ToString()]=keptBy.TryGetValue(kind.ToString(),out int kn)?kn+1:1;
    }
@@ -259,7 +284,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    int glow=sheet.Prototypes.Where(p=>p?.Lods!=null).SelectMany(p=>p.Lods).Where(l=>l?.Parts!=null).SelectMany(l=>l.Parts).Count(x=>x.Material!=null&&x.Material.IsKeywordEnabled("_EMISSION"));
    int orphan=sheet.FixedPlacements.Count(f=>f==null||!protoIds.Contains(f.PrototypeId));
    int dup=sheet.FixedPlacements.Length-sheet.FixedPlacements.Where(f=>f!=null).Select(f=>f.Id).Distinct().Count();
-   var asked=new HashSet<string>(input.candidates.Where(c=>c!=null).Select(c=>c.Id));int foreign=sheet.FixedPlacements.Count(f=>f!=null&&!asked.Contains(f.Id));
+   var asked=new HashSet<string>(input.candidates.Where(c=>c!=null).Select(c=>c.Id));var floating=new HashSet<string>(input.candidates.Where(c=>c!=null&&c.u>.5f).Select(c=>c.Id));int foreign=sheet.FixedPlacements.Count(f=>f!=null&&!asked.Contains(f.Id));
    Line(sheet.FixedPlacements.Length>0&&orphan==0&&dup==0&&foreign==0,"AC-F1a","rows "+sheet.FixedPlacements.Length+" of "+input.candidates.Length+" candidates | without prototype "+orphan+" | duplicate ids "+dup+" | not in the input "+foreign);
    Line(noLod==0&&glow==0,"AC-F1b","prototypes "+sheet.Prototypes.Length+" | without a complete level "+noLod+" | parts with _EMISSION "+glow);
    Line(art!=null&&art.Observer!=null&&art.isActiveAndEnabled,"AC-F1c","renderer in the scene with an observer: "+(art==null?"none":art.Observer==null?"no observer":"yes"));
@@ -272,7 +297,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    for(int i=0;i<sheet.FixedPlacements.Length;i++)
    {
     var f=sheet.FixedPlacements[i];if(f==null)continue;if(reserved.Any(new Vector2(f.Position.x,f.Position.z),ContentClear308F-.01f))nearContent++;
-    if(i%23!=0)continue;
+    if(i%23!=0||floating.Contains(f.Id))continue;
     if(!Ground305(f.Position.x,f.Position.z,null,skip,out float gy,out bool terrain,out float top,out Collider topBy)||!terrain){off++;sampled++;continue;}
     sampled++;float d=Mathf.Abs(f.Position.y-gy);if(d>.25f)off++;if(d>worst){worst=d;worstId=f.Id;}
     if(top>gy+BuiltOver308F&&topBy!=null&&!Terrain305(topBy))built++;
