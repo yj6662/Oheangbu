@@ -472,6 +472,122 @@ namespace Oheangbu.EditorTools.WorldMacro
             return sb + "unbatch: " + N(total) + " objects";
         }
 
+        // ---------------------------------------------------------------- park
+        [Serializable] sealed class ParkRow { public string name; public int sibling; }
+        [Serializable] sealed class ParkFile { public string stamp; public List<ParkRow> rows = new List<ParkRow>(); }
+        static string ParkManifest => Path.Combine(Stage, "park_manifest.json");
+        static string ParkScene(Rules r) => r.streamFolder + "/Parked308.unity";
+
+        static string Park(bool dry)
+        {
+            var r = LoadRules(); var main = MainScene(r, !dry);
+            if (!dry && File.Exists(ParkManifest)) throw new Refuse("already parked (park_manifest.json exists) - unpark first");
+            var sb = new StringBuilder("RealmStream308 park" + (dry ? " plan" : "") + (char)10);
+            var all = main.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>(true)).Where(c => c != null).ToArray();
+            var inScene = new HashSet<int>(); foreach (var c in all) { inScene.Add(c.GetInstanceID()); inScene.Add(c.gameObject.GetInstanceID()); }
+            var chosen = new List<GameObject>(); long bytes = 0;
+            foreach (string name in r.parkRoots)
+            {
+                var root = main.GetRootGameObjects().FirstOrDefault(g => g.name == name);
+                if (root == null) { sb.AppendLine("  absent     " + name); continue; }
+                if (root.activeSelf) { sb.AppendLine("  REFUSED    " + name + ": it is switched on"); continue; }
+                var mine = new HashSet<int>(); foreach (var c in root.GetComponentsInChildren<Component>(true)) { if (c == null) continue; mine.Add(c.GetInstanceID()); mine.Add(c.gameObject.GetInstanceID()); }
+                string reason = null;
+                foreach (var c in all)
+                {
+                    if (c is Transform) continue; bool inside = mine.Contains(c.GetInstanceID());
+                    var it = new SerializedObject(c).GetIterator(); bool enter = true;
+                    while (reason == null && it.Next(enter))
+                    {
+                        enter = true;
+                        if (it.propertyType == SerializedPropertyType.ObjectReference)
+                        {
+                            enter = false; int id = it.objectReferenceInstanceIDValue; if (id == 0 || it.propertyPath == "m_GameObject" || !inScene.Contains(id)) continue;
+                            if (inside != mine.Contains(id)) reason = (inside ? "its " : "referenced by ") + c.GetType().Name + " on " + PathOf(c.transform) + " (" + it.propertyPath + ")";
+                        }
+                        else if (it.propertyType == SerializedPropertyType.String) enter = false;
+                        else if (it.isArray)
+                        {
+                            if (it.arraySize == 0) enter = false;
+                            else { var kind = it.GetArrayElementAtIndex(0).propertyType; if (kind != SerializedPropertyType.Generic && kind != SerializedPropertyType.ObjectReference && kind != SerializedPropertyType.ManagedReference) enter = false; }
+                        }
+                    }
+                    if (reason != null) break;
+                }
+                if (reason != null) { sb.AppendLine("  REFUSED    " + name + ": " + reason); continue; }
+                long b = 0; var seen = new HashSet<Mesh>(); foreach (var f in root.GetComponentsInChildren<MeshFilter>(true)) if (f.sharedMesh != null && seen.Add(f.sharedMesh)) b += UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(f.sharedMesh);
+                bytes += b; chosen.Add(root); sb.AppendLine("  park       " + name + " | meshes " + Mb(b));
+            }
+            sb.AppendLine("  roots " + chosen.Count + ", meshes " + Mb(bytes) + " (a mesh that something else still uses stays in memory)");
+            if (dry || chosen.Count == 0) return sb.ToString();
+            string stamp = DateTime.Now.ToString("yyyyMMddTHHmmss"); string backup = Backup(r, stamp, "park");
+            var file = new ParkFile { stamp = stamp };
+            foreach (var g in chosen) file.rows.Add(new ParkRow { name = g.name, sibling = g.transform.GetSiblingIndex() });
+            string path = ParkScene(r); Scene parked;
+            if (File.Exists(Path.Combine(Repo, "Oheangbu", path))) parked = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+            else { parked = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive); if (!EditorSceneManager.SaveScene(parked, path)) throw new Refuse("SaveScene returned false for the new " + path); }
+            SceneManager.SetActiveScene(main);
+            foreach (var g in chosen) SceneManager.MoveGameObjectToScene(g, parked);
+            EditorSceneManager.MarkSceneDirty(main);
+            if (!EditorSceneManager.SaveScene(parked) || !EditorSceneManager.SaveScene(main)) { EditorSceneManager.OpenScene(r.mainScene, OpenSceneMode.Single); return "FAILED park: SaveScene returned false - the play scene was reloaded from disk; backup " + backup; }
+            File.WriteAllText(ParkManifest, JsonUtility.ToJson(file, true));
+            EditorSceneManager.CloseScene(parked, true); EditorUtility.UnloadUnusedAssetsImmediate(true);
+            return sb + "parked in " + path + " (never loaded, not in the build settings); backup " + backup;
+        }
+
+        static string Unpark()
+        {
+            var r = LoadRules(); var main = MainScene(r, true);
+            if (!File.Exists(ParkManifest)) throw new Refuse("nothing parked (no park_manifest.json)");
+            var file = JsonUtility.FromJson<ParkFile>(File.ReadAllText(ParkManifest)); string stamp = DateTime.Now.ToString("yyyyMMddTHHmmss"); string backup = Backup(r, stamp, "unpark");
+            var parked = EditorSceneManager.OpenScene(ParkScene(r), OpenSceneMode.Additive); SceneManager.SetActiveScene(main); int n = 0;
+            foreach (var row in file.rows.OrderBy(x => x.sibling))
+            {
+                var g = parked.GetRootGameObjects().FirstOrDefault(x => x.name == row.name); if (g == null) continue;
+                SceneManager.MoveGameObjectToScene(g, main); g.transform.SetSiblingIndex(row.sibling); n++;
+            }
+            EditorSceneManager.MarkSceneDirty(main);
+            if (!EditorSceneManager.SaveScene(main) || !EditorSceneManager.SaveScene(parked)) { EditorSceneManager.OpenScene(r.mainScene, OpenSceneMode.Single); return "FAILED unpark: SaveScene returned false - the play scene was reloaded from disk; backup " + backup; }
+            EditorSceneManager.CloseScene(parked, true); File.Move(ParkManifest, Path.Combine(Stage, "park_manifest_unparked_" + stamp + ".json"));
+            return "RealmStream308 unpark: " + n + " roots back in " + r.mainScene + "; backup " + backup;
+        }
+
+        // ---------------------------------------------------------------- glide (Play check only)
+        static Vector3 glideTo; static readonly List<Vector3> glideCorners = new List<Vector3>(); static float glideSpeed, glideUntil, glideMoved; static bool glideOn; static Vector3 glideLast;
+
+        static string Glide(string arg)
+        {
+            if (!EditorApplication.isPlaying) throw new Refuse("Play only");
+            var loader = Object.FindFirstObjectByType<RealmStreamLoader308>(FindObjectsInactive.Exclude);
+            var session = loader != null ? loader.Session : null;
+            if (session == null || !session.InitializationComplete || session.Walker == null || session.Walker.Body == null) throw new Refuse("no started session");
+            var at = session.Walker.Body.transform.position;
+            if (arg == "") return "glide " + (glideOn ? "running" : "idle") + " | moved " + F(glideMoved, "F1") + " m | player " + at.ToString("F1");
+            var v = arg.Split(',').Select(x => float.Parse(x.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+            glideTo = new Vector3(v[0], 0, v[1]); glideSpeed = v[2];
+            // along the NavMesh when there is a path (a straight line over a mountain side ends in a fall)
+            glideCorners.Clear(); var path = new UnityEngine.AI.NavMeshPath();
+            if (UnityEngine.AI.NavMesh.SamplePosition(at, out var a0, 30f, UnityEngine.AI.NavMesh.AllAreas) && Physics.Raycast(new Vector3(v[0], 2000f, v[1]), Vector3.down, out var ground, 4000f, ~0, QueryTriggerInteraction.Ignore)
+                && UnityEngine.AI.NavMesh.SamplePosition(ground.point, out var a1, 30f, UnityEngine.AI.NavMesh.AllAreas) && UnityEngine.AI.NavMesh.CalculatePath(a0.position, a1.position, UnityEngine.AI.NavMesh.AllAreas, path))
+                glideCorners.AddRange(path.corners); glideUntil = Time.unscaledTime + v[3]; glideMoved = 0; glideLast = at; glideOn = true;
+            EditorApplication.update -= GlideTick; EditorApplication.update += GlideTick;
+            return "glide started (" + glideCorners.Count + " path corners) from " + at.ToString("F1") + " toward " + F(v[0]) + "," + F(v[1]) + " at " + F(v[2], "F1") + " m/s for " + F(v[3]) + " s";
+        }
+
+        static void GlideTick()
+        {
+            var loader = EditorApplication.isPlaying ? Object.FindFirstObjectByType<RealmStreamLoader308>(FindObjectsInactive.Exclude) : null;
+            var body = loader != null && loader.Session != null && loader.Session.Walker != null ? loader.Session.Walker.Body : null;
+            if (!glideOn || body == null || !body.enabled || Time.unscaledTime > glideUntil) { glideOn = false; EditorApplication.update -= GlideTick; return; }
+            var p = body.transform.position;
+            while (glideCorners.Count > 0 && new Vector2(glideCorners[0].x - p.x, glideCorners[0].z - p.z).magnitude < 1.5f) glideCorners.RemoveAt(0);
+            var aim = glideCorners.Count > 0 ? glideCorners[0] : glideTo; var flat = new Vector3(aim.x - p.x, 0, aim.z - p.z);
+            if (flat.magnitude < 1f) { glideOn = false; EditorApplication.update -= GlideTick; return; }
+            // a long frame (a scene coming in) must not turn into a jump: at most a tenth of a second of travel per tick
+            body.Move(flat.normalized * glideSpeed * Mathf.Min(Time.unscaledDeltaTime, .1f) + Vector3.down * .2f);
+            glideMoved += Vector3.Distance(glideLast, body.transform.position); glideLast = body.transform.position;
+        }
+
         // ---------------------------------------------------------------- status
 
         static string Status()
