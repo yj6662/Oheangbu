@@ -22,7 +22,11 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _GroundPathMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _AddLightGain: 1
@@ -31,6 +35,8 @@ Material:
     - _BrushStrength: 0.13
     - _Cull: 2
     - _GrainStrength: 0.018
+    - _GroundPath: 0
+    - _GroundPathVariation: 0.09
     - _InkDensity: 1.25
     - _InkPoint: 0.035
     - _LightResponse: 0.7
@@ -50,6 +56,8 @@ Material:
     - _WashEnd: 480
     - _WashStart: 25
     - _WashStrength: 0.65
-    m_Colors: []
+    m_Colors:
+    - _GroundPathRect: {r: 0, g: 0, b: 1, a: 1}
+    - _GroundPathTones: {r: 0.26, g: 0.64, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

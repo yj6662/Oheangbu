@@ -12,73 +12,156 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3dc76335ba26d4fa54d67fab909569, type: 3}
   m_Name: WorldMacroPlaytestAudioProfile
   m_EditorClassIdentifier: Oheangbu.App::Oheangbu.App.World.WorldMacroPlaytestAudioProfileSO
+  Mix: {fileID: 0}
+  HarvestStart:
+    Clip: {fileID: 0}
+    Volume: 0.7
+    SpatialBlend: 0
+    Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
+  HarvestLoop:
+    Clip: {fileID: 0}
+    Volume: 0.7
+    SpatialBlend: 0
+    Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
+  HarvestEnd:
+    Clip: {fileID: 0}
+    Volume: 0.7
+    SpatialBlend: 0
+    Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
+  Waiting:
+    Clip: {fileID: 0}
+    Volume: 0.7
+    SpatialBlend: 0
+    Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
+  SaveFailed:
+    Clip: {fileID: 0}
+    Volume: 0.7
+    SpatialBlend: 0
+    Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   BrushStroke:
-    Clip: {fileID: 8300000, guid: c501d2ff82080e144a5076f57f4a54ba, type: 3}
+    Clip: {fileID: 8300000, guid: d583bbea5e6fc974da42267e6244f475, type: 3}
     Volume: 0.42
     SpatialBlend: 0
     Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   CastWood:
-    Clip: {fileID: 8300000, guid: d7c941a7f665908439011bede3649737, type: 3}
+    Clip: {fileID: 8300000, guid: 482803e899ab525488962654afa9ae3d, type: 3}
     Volume: 0.64
     SpatialBlend: 0
     Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   CastFire:
-    Clip: {fileID: 8300000, guid: ff8f5d2a8737f1e43b079384c9ae4548, type: 3}
+    Clip: {fileID: 8300000, guid: af288ca38338231408b1c268c27a873b, type: 3}
     Volume: 0.64
     SpatialBlend: 0
     Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   CastEarth:
-    Clip: {fileID: 8300000, guid: 1f84235459f0ddf4aa5e21ac705cad99, type: 3}
+    Clip: {fileID: 8300000, guid: 956e11f0ae8cafb439caea84371361e9, type: 3}
     Volume: 0.64
     SpatialBlend: 0
     Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   CastMetal:
-    Clip: {fileID: 8300000, guid: d92669ecde9b614499c948a1ba2b3c60, type: 3}
+    Clip: {fileID: 8300000, guid: e56d9c48f9dc39d41bc719586f1bcff6, type: 3}
     Volume: 0.64
     SpatialBlend: 0
     Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   CastWater:
-    Clip: {fileID: 8300000, guid: f0cdb022ce76b784aa3bc4bfd93e7297, type: 3}
+    Clip: {fileID: 8300000, guid: 107fbd9c7f87b7741bf48313a14c53d5, type: 3}
     Volume: 0.64
     SpatialBlend: 0
     Cooldown: 0
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   Impact:
-    Clip: {fileID: 8300000, guid: 239d3cb408238a34d9252acf405ebf3d, type: 3}
+    Clip: {fileID: 8300000, guid: 3df27a375bdca464696c40db0ae5047c, type: 3}
     Volume: 0.72
     SpatialBlend: 1
     Cooldown: 0.055
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   PlayerHit:
-    Clip: {fileID: 8300000, guid: addde7ea018ba89428579b26be63ebd4, type: 3}
+    Clip: {fileID: 8300000, guid: e6a33c760b295bf4fafef155510e5dd9, type: 3}
     Volume: 0.78
     SpatialBlend: 0
     Cooldown: 0.08
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   Parry:
-    Clip: {fileID: 8300000, guid: c4e2c4d825c203041b5d888ab189b1f0, type: 3}
+    Clip: {fileID: 8300000, guid: da5a95669d256274a81c3652db069195, type: 3}
     Volume: 0.82
     SpatialBlend: 1
     Cooldown: 0.08
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   Harvest:
-    Clip: {fileID: 8300000, guid: 3d918afd64a699340b7f6962eca393b3, type: 3}
+    Clip: {fileID: 8300000, guid: 787bc291c5ae6244eb1b4445566a02d7, type: 3}
     Volume: 0.48
     SpatialBlend: 1
     Cooldown: 1.2
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   Interact:
-    Clip: {fileID: 8300000, guid: 26d42d33a5073214ba239809ae933460, type: 3}
+    Clip: {fileID: 8300000, guid: 5acc033e322a5c14baef5d6853b36329, type: 3}
     Volume: 0.5
     SpatialBlend: 1
     Cooldown: 0.1
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   Rest:
-    Clip: {fileID: 8300000, guid: c2f78c429384f1f4aa7d0b30f1bcdfce, type: 3}
+    Clip: {fileID: 8300000, guid: bc94b2c6966ee0549804d9a582bd2eea, type: 3}
     Volume: 0.58
     SpatialBlend: 1
     Cooldown: 0.25
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   SummonAppear:
-    Clip: {fileID: 8300000, guid: 5064c7aae2e5be64fb92359a8a3d02b2, type: 3}
+    Clip: {fileID: 8300000, guid: cd4fa7925a4a7f84a98788d24fbb69f8, type: 3}
     Volume: 0.78
     SpatialBlend: 1
     Cooldown: 0.05
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04
   SummonRelease:
-    Clip: {fileID: 8300000, guid: 2c8f96e0d8778b749adbaf912a80573e, type: 3}
+    Clip: {fileID: 8300000, guid: 7f6c490d3f64d7142bbefe49a445e575, type: 3}
     Volume: 0.62
     SpatialBlend: 1
     Cooldown: 0.05
+    MaxConcurrent: 3
+    AttackSeconds: 0.012
+    ReleaseSeconds: 0.04

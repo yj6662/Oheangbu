@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 665a6ae735b445188d12842a3c3de728, type: 3}
   m_Name: AreaSheet_GeumpyoRoad
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   areaId: GeumpyoRoad
   scenePath: Assets/_Project/Scenes/World/W_Cheongrim_GeumpyoRoad.unity
   tiles:
@@ -485,11 +485,11 @@ MonoBehaviour:
     tolerance: 0.12
   cuts:
   - id: V1
-    rule: 'poi=MineExit; eye=eyeHeight; yaw=0; pitch=0'
+    rule: poi=MineExit; eye=eyeHeight; yaw=0; pitch=0
   - id: V2
-    rule: 'path=Shrine_Entry>Inn_Geumpyo; t=0.5; yaw=tangent; pitch=0'
+    rule: path=Shrine_Entry>Inn_Geumpyo; t=0.5; yaw=tangent; pitch=0
   - id: V3
-    rule: 'poi=Shrine_Junction; eye=eyeHeight; yaw=bearing(sinmokPosition); pitch=0'
+    rule: poi=Shrine_Junction; eye=eyeHeight; yaw=bearing(sinmokPosition); pitch=0
   vegetation:
     zones:
     - poly:

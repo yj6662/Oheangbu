@@ -18,6 +18,10 @@ MonoBehaviour:
   m_RendererData: {fileID: 0}
   m_RendererDataList:
   - {fileID: 11400000, guid: 65bc7dbf4170f435aa868c779acfb082, type: 2}
+  - {fileID: 11400000, guid: 83f4ff3e8f8951143ba98b2c61cc355d, type: 2}
+  - {fileID: 11400000, guid: 8fd4162ad5b31c84aa301b7dd754ea05, type: 2}
+  - {fileID: 11400000, guid: 57969d08647987c499bd885c17ee77e6, type: 2}
+  - {fileID: 11400000, guid: 2e5ebf966c007504b8128d1dd31d3cda, type: 2}
   m_DefaultRendererIndex: 0
   m_RequireDepthTexture: 0
   m_RequireOpaqueTexture: 0
