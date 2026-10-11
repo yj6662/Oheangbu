@@ -324,8 +324,11 @@ namespace Oheangbu.EditorTools.WorldMacro
             public bool mumUnlock;             // editor-only isolated Mum test unlock (review Play with suffix _mum295_test)
             public bool showBody;              // #308: outside cameras show the player body and hide the first-person near arm and brush
             public float pauseAt = -1f;        // #300: pause the editor at this take time and end the film (stills are then shot on the frozen frame)
+            public string hud = "";            // #308 트레일러: 필름 동안 남길 HUD(쉼표 별칭, 예 "reticle,ink") — 직교 오버레이 카메라로 캡처에 얹는다, 비면 HUD를 건드리지 않는다
+            public float settle = 0f;          // #308: 캡처 전에 강토 로더가 조용해질 때까지 기다리는 상한(초), 0 = 바로 시작
+            public bool hitLog = true;         // #308: EnemyDamageResolved를 commits에 "HIT …" 줄로 남긴다
         }
-        [Serializable] sealed class FilmState { public string name, status, folder, error; public int frames, total, fps, width, height; public List<string> commits = new List<string>(); }
+        [Serializable] sealed class FilmState { public string name, status, folder, error, phase; public int frames, total, fps, width, height; public List<string> commits = new List<string>(); }   // #308 phase = "settling" | "capturing" — status는 running/done/failed/… 그대로(filmwait.py · presentation297.py가 running 밖이면 끊는다)
 
         static FilmSpec spec;
         static Rig filmRig;
@@ -339,6 +342,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (!EditorApplication.isPlaying) throw new Exception("film: Play mode only (captureFramerate)");
             if (filmRig != null) throw new Exception("A film is already running");
             spec = JsonUtility.FromJson<FilmSpec>(File.ReadAllText(specPath));
+            spec.inputs = ExpandGlyphs308(spec.inputs, spec.fps, Screen.width, Screen.height);   // #308: glyph 이벤트 → 템플릿 stroke + q(허용 밖 글자는 여기서 예외)
             if (!spec.followMain && (spec.keys == null || spec.keys.Length < 2)) throw new Exception("film needs at least two keys");
             float duration = spec.followMain ? spec.duration : spec.keys.Last().time;
             if (spec.playerFeet != null && spec.playerFeet.Length == 3)
@@ -350,6 +354,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (Directory.Exists(folder)) foreach (var f in Directory.GetFiles(folder, "f*.png")) File.Delete(f);
             Directory.CreateDirectory(folder);
             state = new FilmState { name = spec.name, status = "running", folder = folder, total = Mathf.CeilToInt(duration * spec.fps) + 1, fps = spec.fps, width = spec.width, height = spec.height };
+            FlushGlyphNotes308(state);   // #308: "glyph 뭄 strokes=N at t" 줄
             var sessionForFilm = Object.FindFirstObjectByType<WorldMacroPlaytestSession>();
             if (spec.board)
             {
@@ -365,7 +370,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             bodyUndo308.Clear(); if (spec.showBody && !spec.followMain) ShowBody(bodyUndo308);
             if (!spec.followMain) Oheangbu.App.World.Riposte301.BillboardView = filmRig.Camera.transform;
             if (spec.inputs != null && spec.inputs.Length > 0) OpenInput();
-            Time.captureFramerate = spec.fps;
+            if (!string.IsNullOrEmpty(spec.hud)) ApplyHudFilter308(spec.hud, filmRig.Camera);   // #308: HUD를 캡처 카메라에 싣고 keep 밖은 숨긴다
+            if (spec.hitLog) OpenHitLog308(sessionForFilm);                                     // #308: 적중 로그
+            if (spec.settle > 0f) { BeginSettle308(spec.settle); state.phase = "settling"; }    // #308: 정착 중엔 captureFramerate를 미루고 프레임을 저장하지 않는다 — status는 "running" 유지, 단계는 phase로만
+            else { Time.captureFramerate = spec.fps; state.phase = "capturing"; }
             lastFrame = Time.frameCount;
             index = -Mathf.Max(0, spec.warmup);
             trackValid = false; trackCached = null;
@@ -389,6 +397,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             lastFrame = Time.frameCount;
             try
             {
+                if (settling308) { if (!SettleTick308()) return; Time.captureFramerate = spec.fps; state.phase = "capturing"; Save(); }   // #308: 로더가 조용해지면 캡처 시작
                 float t = Mathf.Max(0f, index) / (float)spec.fps;
                 Vector3 eye, target; float fov;
                 if (spec.followMain)
@@ -429,6 +438,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 if (inputOpen) DriveInput(index < 0 ? -1f : t + 1f / spec.fps);
                 if (inputOpen && index >= 0 && index % 10 == 0) state.commits.Add("dbg f" + index + " " + InputDebug());
+                HudFilterTick308();   // #308: HUD가 다시 켠 요소를 캡처 직전에 다시 숨긴다
                 string file = Path.Combine(state.folder, "f" + Mathf.Max(0, index).ToString("00000") + ".png");
                 if (index < 0) { filmRig.Camera.fieldOfView = fov; filmRig.Camera.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(target - eye)); filmRig.Camera.Render(); }
                 else { Render(filmRig, eye, target, fov, file, 1); state.frames = index + 1; }
@@ -444,6 +454,9 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             EditorApplication.update -= FilmTick;
             CloseInput();
+            try { CloseHitLog308(); } catch (Exception e) { Debug.LogException(e); }   // #308
+            try { RestoreHud308(); } catch (Exception e) { Debug.LogException(e); }    // #308: 역순 복원 + 캔버스 원복
+            settling308 = false;
             boardSeat = null;
             if (mumUnlocked) { mumUnlocked = false; try { var ms = Object.FindFirstObjectByType<WorldMacroPlaytestSession>(); if (ms != null && ms.MumBridges != null) ms.MumBridges.PreviewSuppressed = false; ms?.SetMum295TestUnlock(false); } catch (Exception e) { Debug.LogException(e); } }
             Time.captureFramerate = 0;
