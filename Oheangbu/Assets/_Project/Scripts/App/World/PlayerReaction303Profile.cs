@@ -63,5 +63,16 @@ namespace Oheangbu.App.World
         [Tooltip("The body is hidden while drawing and returns after the near-view cast hold; the accent starts then.")]
         public float CastDelay = .3f;
         public float CastTwist = 16f, CastLean = 7f, CastSeconds = .5f;
+        // idle (SPEC-PLAYER-CLOTH-ANIM-308 M-1, D308-66) [TEST]: the standing clip is a still pose, so the breath and the shift of weight are added
+        // here. Chest pitches back on the in-breath and the shoulders rise; the neck turns back by NeckShare so the head stays level.
+        // BreathMovingScale = how much breath is left while walking. The sway only while standing still. Legs and feet are never touched.
+        [Header("Idle")]
+        public bool BreathEnabled = true;
+        public float BreathPeriodSeconds = 4.2f, BreathChestPitchDegrees = 1.3f, BreathShoulderRiseMeters = .006f, BreathNeckShare = .6f, BreathMovingScale = .35f;
+        public float IdleSwayDegrees = .7f, IdleSwayPeriodSeconds = 9.5f;
+        // combat idle (D308-67) [TEST]: while an enemy within CombatRangeMeters chases the player and the player stands, the legs and the
+        // arms are set apart and the trunk leans in a little. The feet stay flat (the hips sink by what the spread costs).
+        public bool CombatStanceEnabled = true;
+        public float CombatRangeMeters = 26f, CombatLegSpreadDegrees = 11f, CombatArmSpreadDegrees = 17f, CombatLeanDegrees = 5f, CombatBlendSeconds = .35f, CombatBreathScale = 1.5f;
     }
 }

@@ -26,9 +26,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     // Queue-safe: Run(string) never opens a dialog; refusals come back as "REFUSED ...". Only the play scene and this tool's own
     // assets are saved (never AssetDatabase.SaveAssets).
     //   status | plan | build | clear | check
-    public static class CliffWay308
+    public static partial class CliffWay308
     {
-        const string Usage = "status | plan | build | clear | check";
+        const string Usage = "status | plan | build | clear | check | dress | dress:plan | dress:clear";
         static readonly Color RockTint = new Color(1.12f, 1.12f, 1.05f), CapTint = new Color(1.32f, 1.30f, 1.20f);   // [TEST] against stills
         const string RootName = "CliffWay308", SceneName = "W_Demo_Main", AssetDir = "Assets/_Project/Art/World/CliffWay308";
         static string RepoRoot => Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".."));
@@ -57,6 +57,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c == "build") return Build();
                 if (c == "clear") return Clear();
                 if (c == "check") return Check();
+                if (c.StartsWith("dress", StringComparison.Ordinal)) return Dress(c);
                 return "REFUSED " + Usage;
             }
             catch (Exception e) { return "REFUSED " + e.GetType().Name + ": " + e.Message; }
@@ -67,6 +68,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             var scene = SceneManager.GetActiveScene();
             if (scene.name != SceneName) throw new Exception("open " + SceneName + " first (active scene is " + scene.name + ")");
             if (clean && scene.isDirty) throw new Exception("the play scene has unsaved changes");
+            // a write rebuilds the root: not while its content is in the realm scenes (RealmStream308)
+            if (clean) { string moved = RealmStream308.RefusalFor(RootName); if (moved != null) throw new Exception(moved); }
             return scene;
         }
 
@@ -219,7 +222,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (root == null) { Line(false, "AC-C5", "no " + RootName + " root in " + scene.name); return sb.Append("  checks, ").Append(pass).Append(" pass ").Append(fail).Append(" fail").ToString(); }
             var colliders = root.GetComponentsInChildren<Collider>(true);
             bool onlyMesh = colliders.All(c => c is MeshCollider mc && !mc.convex && !mc.isTrigger && mc.sharedMesh != null);
-            bool own = root.GetComponentsInChildren<MeshFilter>(true).All(f => f.sharedMesh != null && AssetDatabase.GetAssetPath(f.sharedMesh).StartsWith(AssetDir));
+            bool own = root.GetComponentsInChildren<MeshFilter>(true).All(f => f.sharedMesh != null && (AssetDatabase.GetAssetPath(f.sharedMesh).StartsWith(AssetDir) || AssetDatabase.GetAssetPath(f.sharedMesh).StartsWith(Ymc308.Dir)));
             Line(onlyMesh && own && colliders.Length == 3, "AC-C5", colliders.Length + " colliders, all MeshCollider of this tool's meshes: " + (onlyMesh && own));
             bool scripts = root.GetComponentsInChildren<MonoBehaviour>(true).Length == 0 && root.GetComponentsInChildren<Light>(true).Length == 0;
             Line(scripts, "AC-C5b", "no script and no light under the root");

@@ -39,6 +39,15 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "player": return Player(a);
                 case "find": return Find(a);
                 case "actors": return Actors();
+                case "resume":
+                {
+                    // a take needs running time: report what holds the game (pause depth, time scale, page) and let it run again
+                    var pauses = Object.FindObjectsByType<Oheangbu.App.World.UI.PauseCoordinator>(FindObjectsSortMode.None);
+                    string before = "timeScale " + Time.timeScale.ToString("0.00", CultureInfo.InvariantCulture) + " pause depth " + string.Join(",", pauses.Select(x => x.Depth));
+                    foreach (var x in pauses) x.ForceResume();
+                    if (Time.timeScale <= 0f) Time.timeScale = 1f;
+                    return "resume: was " + before + " -> timeScale " + Time.timeScale.ToString("0.00", CultureInfo.InvariantCulture);
+                }
                 case "mum-status": return MumStatus();
                 case "mum-search": return MumSearch(a);
                 case "teaser-stage": return TeaserStage(string.Join(":", a.Skip(1)));
@@ -313,6 +322,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             public float trackSmoothing = .35f;
             public bool board;                 // teleport beside the magic-stone car seat and board it after warm-up
             public bool mumUnlock;             // editor-only isolated Mum test unlock (review Play with suffix _mum295_test)
+            public string rigShot = "";        // #308: a Cinemachine shot of TrailerRig308 gives the camera (dolly on a spline, timeline-keyed)
+            public bool showBody;              // #308: outside cameras show the player body and hide the first-person near arm and brush
             public float pauseAt = -1f;        // #300: pause the editor at this take time and end the film (stills are then shot on the frozen frame)
         }
         [Serializable] sealed class FilmState { public string name, status, folder, error; public int frames, total, fps, width, height; public List<string> commits = new List<string>(); }
@@ -329,8 +340,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (!EditorApplication.isPlaying) throw new Exception("film: Play mode only (captureFramerate)");
             if (filmRig != null) throw new Exception("A film is already running");
             spec = JsonUtility.FromJson<FilmSpec>(File.ReadAllText(specPath));
-            if (!spec.followMain && (spec.keys == null || spec.keys.Length < 2)) throw new Exception("film needs at least two keys");
-            float duration = spec.followMain ? spec.duration : spec.keys.Last().time;
+            bool rigged = !string.IsNullOrEmpty(spec.rigShot);
+            if (!spec.followMain && !rigged && (spec.keys == null || spec.keys.Length < 2)) throw new Exception("film needs at least two keys");
+            float duration = spec.followMain ? spec.duration : rigged ? TrailerRig308.Begin(spec.rigShot, RideFor308) : spec.keys.Last().time;
             if (spec.playerFeet != null && spec.playerFeet.Length == 3)
             {
                 var session = Object.FindFirstObjectByType<WorldMacroPlaytestSession>();
@@ -350,8 +362,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (Physics.Raycast(feet + Vector3.up * 6f, Vector3.down, out RaycastHit hit, 20f, ~0, QueryTriggerInteraction.Ignore)) feet = hit.point + Vector3.up * .05f;
                 sessionForFilm?.Teleport(feet, Quaternion.LookRotation(Vector3.ProjectOnPlane(socket - feet, Vector3.up)).eulerAngles.y);
             }
-            if (spec.mumUnlock && sessionForFilm != null) { sessionForFilm.SetMum295TestUnlock(true); mumUnlocked = true; }
-            filmRig = Open(spec.width, spec.height, spec.fov, spec.hidePlayer && !spec.followMain);
+            if (spec.mumUnlock && sessionForFilm != null) { sessionForFilm.SetMum295TestUnlock(true); mumUnlocked = true; if (sessionForFilm.MumBridges != null) sessionForFilm.MumBridges.PreviewSuppressed = true; }   // a take shows the cast, not the placement outline
+            filmRig = Open(spec.width, spec.height, spec.fov, spec.hidePlayer && !spec.followMain && !spec.showBody);
+            bodyUndo308.Clear(); if (spec.showBody && !spec.followMain) ShowBody(bodyUndo308);
             if (!spec.followMain) Oheangbu.App.World.Riposte301.BillboardView = filmRig.Camera.transform;
             if (spec.inputs != null && spec.inputs.Length > 0) OpenInput();
             Time.captureFramerate = spec.fps;
@@ -395,6 +408,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                         fov += offset308.z;
                     }
                 }
+                else if (!string.IsNullOrEmpty(spec.rigShot))
+                {
+                    TrailerRig308.Sample(t, 1f / spec.fps, out eye, out var rigRotation, out fov);
+                    target = eye + rigRotation * Vector3.forward;
+                }
                 else
                 {
                     Sample(t, out eye, out target, out fov);
@@ -434,8 +452,11 @@ namespace Oheangbu.EditorTools.WorldMacro
             EditorApplication.update -= FilmTick;
             CloseInput();
             boardSeat = null;
-            if (mumUnlocked) { mumUnlocked = false; try { Object.FindFirstObjectByType<WorldMacroPlaytestSession>()?.SetMum295TestUnlock(false); } catch (Exception e) { Debug.LogException(e); } }
+            if (mumUnlocked) { mumUnlocked = false; try { var ms = Object.FindFirstObjectByType<WorldMacroPlaytestSession>(); if (ms != null && ms.MumBridges != null) ms.MumBridges.PreviewSuppressed = false; ms?.SetMum295TestUnlock(false); } catch (Exception e) { Debug.LogException(e); } }
             Time.captureFramerate = 0;
+            TrailerRig308.End();
+            foreach (var undo in bodyUndo308) { try { undo(); } catch (Exception e) { Debug.LogException(e); } }
+            bodyUndo308.Clear();
             Oheangbu.App.World.Riposte301.BillboardView = null;
             var rig = filmRig; filmRig = null;
             Close(rig);
@@ -469,6 +490,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             fov = Mathf.Lerp(f1, f2, u);
         }
 
+        static readonly List<Action> bodyUndo308 = new List<Action>();
+        // what a rig shot can ride on: the player, the magic-stone car, or a session actor by id
+        static Transform RideFor308(string id)
+        {
+            var s = Object.FindFirstObjectByType<WorldMacroPlaytestSession>();
+            if (id == "player") return s != null && s.Walker != null ? s.Walker.Body.transform : null;
+            if (id == "car") { var seat = Object.FindFirstObjectByType<Oheangbu.App.World.Vehicle.WorldMacroPalanquinSeat>(); return seat != null ? seat.transform : null; }
+            var a = s != null ? s.Actors.FirstOrDefault(x => x != null && x.Id == id) : null;
+            return a != null ? a.transform : null;
+        }
         static Oheangbu.App.World.Vehicle.WorldMacroPalanquinSeat boardSeat;
         static bool mumUnlocked;
         static Vector3 trackBase;

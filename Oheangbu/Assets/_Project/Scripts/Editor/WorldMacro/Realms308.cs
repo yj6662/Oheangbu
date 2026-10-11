@@ -50,6 +50,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     if((a=Arg(c,"probe:"))!=null)return Probe(a);
     if((a=Arg(c,"ground:"))!=null)return GroundAt(a);
     if((a=Arg(c,"plan:"))!=null)return Apply(a,true);
+    // the play scene keeps this tool's roots in the realm scenes while it is split (RealmStream308): rebuilding them there would leave the moved copy
+    if((Arg(c,"scene-apply:")??Arg(c,"scene-revert:")??"").EndsWith("W_Demo_Main.unity",StringComparison.Ordinal)){string moved=RealmStream308.RefusalFor("Realms308Dressing")??RealmStream308.RefusalFor("Taint308");if(moved!=null)return moved;}
     if((a=Arg(c,"scene-apply:"))!=null)return Apply(a,false);
     if((a=Arg(c,"scene-revert:"))!=null)return Revert(a);
     if((a=Arg(c,"check:"))!=null)return Check(a);

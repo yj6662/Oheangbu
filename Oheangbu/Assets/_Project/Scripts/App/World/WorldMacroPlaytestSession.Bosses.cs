@@ -15,7 +15,8 @@ namespace Oheangbu.App.World
         public const string GiyeokUnlockId = "demo_unlock_coda_giyeok";
         readonly HashSet<string> pendingBossDefeats = new HashSet<string>();
         float nextBossCommit;
-        public bool HasDemoGuk => DemoCampaignActive && Progress.ledger.completed.Contains(GiyeokUnlockId);
+        // #308b: the presentation switch (DemoAllFinals308, off by default) also opens the giyeok glyphs that keep this older gate.
+        public bool HasDemoGuk => DemoCampaignActive && (Progress.ledger.completed.Contains(GiyeokUnlockId) || DemoAllFinals308);
 
         bool DemoEncounterAvailable(string actorId, string contentId)
         {

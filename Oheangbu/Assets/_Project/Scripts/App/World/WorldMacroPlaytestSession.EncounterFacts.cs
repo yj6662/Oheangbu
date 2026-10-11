@@ -21,6 +21,7 @@ namespace Oheangbu.App.World
             TryCommitPendingEncounterDefeats(force);
             TryCommitPendingDemoBosses(force);
             TryCommitPendingDemoSouthGate(force);
+            TickFinalGrants308();   // #308b: a final consonant whose boss proof is on record but whose ledger id is not (catch-up)
         }
 
         void QueueEncounterDefeat(string id)
@@ -43,8 +44,9 @@ namespace Oheangbu.App.World
                 bool accepted=TryPrepareMountainDefeat(id,out var proposal,out var error,out bool mountainOwned);
                 if(!mountainOwned)accepted=TryPrepareEncounterDefeat(Progress,id,Content.TestRules.EnemyReward,out proposal,out error);
                 if(!accepted){Show(error);continue;}
+                var finals=ApplyFinalGrants308(proposal);   // #308b: a realm boss's final consonant is saved with the defeat that earns it
                 if(!TryCommitInteraction(proposal,out error)){Show(error);continue;}
-                pendingEncounterDefeats.Remove(id);
+                pendingEncounterDefeats.Remove(id);AnnounceFinalGrants308(finals);
             }
         }
 

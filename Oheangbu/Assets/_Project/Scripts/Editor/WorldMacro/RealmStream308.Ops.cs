@@ -17,6 +17,15 @@ namespace Oheangbu.EditorTools.WorldMacro
     {
         const string LoadingProfilePath = "Assets/_Project/Art/UI/Loading270/RegionLoading.asset";   // the lobby's profile (W_Compact_Lobby)
 
+        /// <summary>For a tool that rebuilds a root of the play scene: null while that root's content is in the play scene, else the
+        /// refusal to answer with (rebuilding it there would leave the moved copy in the realm scenes and break merge).</summary>
+        public static string RefusalFor(string rootName)
+        {
+            var manifest = ReadManifest();
+            int n = manifest == null ? 0 : manifest.units.Count(u => u.parentPath == rootName || u.parentPath.StartsWith(rootName + "/", StringComparison.Ordinal) || (u.parentPath == "" && u.name == rootName));
+            return n == 0 ? null : "REFUSED " + n + " units of " + rootName + " are in the realm scenes (RealmStream308): run RealmStream308 merge, do this, then split again";
+        }
+
         static Manifest ReadManifest() => File.Exists(ManifestFile) ? JsonUtility.FromJson<Manifest>(File.ReadAllText(ManifestFile)) : null;
 
         static string Backup(Rules r, string stamp, string what)
@@ -97,6 +106,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         var t = row.unit.Root;
                         t.SetParent(null, true); SceneManager.MoveGameObjectToScene(t.gameObject, scenes[i]); t.SetParent(root.transform, true);
                         drift = Mathf.Max(drift, Drift(row.before, t.localToWorldMatrix));
+                        ClearBatching(t);
                         manifest.units.Add(new ManifestUnit { realm = plan.Realms[i].Id, name = t.name, parentGid = row.gid, parentPath = row.parentPath, sibling = row.sibling, renderers = row.unit.Renderers, vertices = row.unit.Vertices });
                     }
                 }
@@ -342,6 +352,240 @@ namespace Oheangbu.EditorTools.WorldMacro
             Line(!main.isDirty && scenes.All(s => !s.IsValid() || !s.isDirty), "AC-S11", "no scene left with unsaved changes");
             foreach (var s in opened) EditorSceneManager.CloseScene(s, true);
             return sb + "checks, " + pass + " pass " + fail + " fail";
+        }
+
+        // ---------------------------------------------------------------- standers
+
+        /// <summary>Risk 3 of the Spec: what stands on a floor that is only there while its realm scene is in.</summary>
+        static string Standers()
+        {
+            var r = LoadRules(); var main = MainScene(r, false); int open = 0;
+            foreach (var realm in LoadRealms(r)) if (SceneManager.GetSceneByPath(ScenePath(r, realm.Id)).isLoaded) open++;
+            if (open == 0) throw new Refuse("run open-all first (no realm scene is open)");
+            Physics.SyncTransforms();
+            var bodies = new List<(Transform t, string kind)>();
+            foreach (var g in main.GetRootGameObjects())
+            {
+                foreach (var x in g.GetComponentsInChildren<Rigidbody>(true)) bodies.Add((x.transform, x.isKinematic ? "Rigidbody(kinematic)" : "Rigidbody"));
+                foreach (var x in g.GetComponentsInChildren<CharacterController>(true)) bodies.Add((x.transform, "CharacterController"));
+                foreach (var x in g.GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>(true)) bodies.Add((x.transform, "NavMeshAgent"));
+            }
+            var sb = new StringBuilder("RealmStream308 standers | realm scenes open " + open + " | bodies in the play scene " + bodies.Count + "\n"); int on = 0, falls = 0;
+            foreach (var (t, kind) in bodies)
+            {
+                // the nearest ground under the body, triggers left out; its own colliders are skipped
+                var hits = Physics.RaycastAll(t.position + Vector3.up * 1.5f, Vector3.down, 8f, ~0, QueryTriggerInteraction.Ignore);
+                RaycastHit? first = null;
+                foreach (var h in hits.OrderBy(h => h.distance)) { if (h.collider.transform.IsChildOf(t)) continue; first = h; break; }
+                if (first == null || first.Value.collider.gameObject.scene == main) continue;
+                on++; bool drops = kind == "Rigidbody" || kind == "CharacterController"; if (drops) falls++;
+                sb.AppendLine("  " + (drops ? "DROPS " : "stays ") + kind.PadRight(22) + (t.gameObject.activeInHierarchy ? "on  " : "off ") + first.Value.collider.gameObject.scene.name.PadRight(18)
+                    + F(t.position.x) + "," + F(t.position.y, "F1") + "," + F(t.position.z) + "  " + PathOf(t) + "  <- " + first.Value.collider.name);
+            }
+            return sb + "standers: " + on + " on a realm-scene floor, of them " + falls + " moved by physics (they drop when the realm is out); NavMeshAgents and kinematic bodies keep their height";
+        }
+
+        /// <summary>Where a teleport would land with and without the realm scene (for the re-seat Play step).</summary>
+        static string Floor(string points)
+        {
+            var r = LoadRules(); var main = MainScene(r, false); Physics.SyncTransforms();
+            var sb = new StringBuilder("RealmStream308 floor\n");
+            foreach (string point in points.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var v = point.Split(',').Select(x => float.Parse(x.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+                float realm = float.NaN, ground = float.NaN; string realmName = "-", groundName = "-";
+                foreach (var h in Physics.RaycastAll(new Vector3(v[0], 2000f, v[1]), Vector3.down, 4000f, ~0, QueryTriggerInteraction.Ignore).OrderBy(h => h.distance))
+                {
+                    bool inMain = h.collider.gameObject.scene == main;
+                    if (inMain && float.IsNaN(ground)) { ground = h.point.y; groundName = h.collider.name; }
+                    if (!inMain && float.IsNaN(realm)) { realm = h.point.y; realmName = h.collider.gameObject.scene.name + "/" + h.collider.name; }
+                }
+                sb.AppendLine("  " + F(v[0]) + "," + F(v[1]) + " realm floor " + F(realm, "F2") + " (" + realmName + ") | play-scene ground " + F(ground, "F2") + " (" + groundName + ") | gap " + F(realm - ground, "F2"));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>batch: per loaded scene, how many renderers are flagged for static batching (edit mode) or are part of a static batch
+        /// (Play), and how many have bounds that are not finite or far from their transform. batch:x,z,r lists the renderers near a point.</summary>
+        static string Batch(string arg)
+        {
+            var sb = new StringBuilder("RealmStream308 batch | playing " + EditorApplication.isPlaying + " | project static batching " + PlayerSettingsStatic() + (char)10);
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var s = SceneManager.GetSceneAt(i); if (!s.isLoaded) continue; int renderers = 0, flagged = 0, batched = 0, odd = 0; string sample = "";
+                foreach (var g in s.GetRootGameObjects()) foreach (var r in g.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    renderers++;
+                    if (GameObjectUtility.AreStaticEditorFlagsSet(r.gameObject, StaticEditorFlags.BatchingStatic)) flagged++;
+                    if (r.isPartOfStaticBatch) batched++;
+                    var b = r.bounds; bool bad = float.IsNaN(b.center.x) || float.IsInfinity(b.size.x) || (b.center - r.transform.position).magnitude > 2000f;
+                    if (bad) { odd++; if (sample == "") sample = PathOf(r.transform) + " bounds " + b.center.ToString("F0") + " at " + r.transform.position.ToString("F0"); }
+                }
+                sb.AppendLine("  " + s.name.PadRight(20) + " renderers " + N(renderers) + " | flagged BatchingStatic " + N(flagged) + " | part of a static batch " + N(batched) + " | odd bounds " + odd + (sample != "" ? " e.g. " + sample : ""));
+            }
+            if (arg != "")
+            {
+                var v = arg.Split(',').Select(x => float.Parse(x.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray(); var p = new Vector2(v[0], v[1]); int n = 0;
+                foreach (var r in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                {
+                    if (Vector2.Distance(new Vector2(r.transform.position.x, r.transform.position.z), p) > v[2] || n++ > 60) continue;
+                    var f = r.GetComponent<MeshFilter>(); var m = f != null ? f.sharedMesh : null;
+                    sb.AppendLine("    " + r.gameObject.scene.name + "/" + PathOf(r.transform) + " | batch " + r.isPartOfStaticBatch + " | visible " + r.isVisible + " enabled " + r.enabled + " | mesh " + (m == null ? "none" : m.name + " v" + m.vertexCount + " sub" + m.subMeshCount)
+                        + " | bounds " + r.bounds.center.ToString("F0") + " size " + r.bounds.size.ToString("F0") + " | " + (r.sharedMaterial != null ? r.sharedMaterial.shader.name : "no material"));
+                }
+            }
+            return sb.ToString();
+        }
+        static string PlayerSettingsStatic()
+        {
+            var method = typeof(PlayerSettings).GetMethod("GetBatchingForPlatform", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            if (method == null) return "?"; var args = new object[] { EditorUserBuildSettings.activeBuildTarget, 0, 0 }; method.Invoke(null, args); return (int)args[1] == 1 ? "on" : "off";
+        }
+
+        /// <summary>A realm scene that comes in during play is static-batched on the spot when its objects carry the flag: the combined
+        /// meshes double the vertex memory, and with the packed vertex formats (SPEC-EDITOR-MEMORY-308) some pieces came out undrawn with
+        /// NaN shading (the white bloom at the south gate, 2026-10-10). Realm content is drawn unbatched (the SRP batcher still applies).</summary>
+        static int ClearBatching(Transform root)
+        {
+            int n = 0;
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+            {
+                var flags = GameObjectUtility.GetStaticEditorFlags(t.gameObject);
+                if ((flags & StaticEditorFlags.BatchingStatic) == 0) continue;
+                GameObjectUtility.SetStaticEditorFlags(t.gameObject, flags & ~StaticEditorFlags.BatchingStatic); n++;
+            }
+            return n;
+        }
+
+        static string Unbatch()
+        {
+            var r = LoadRules(); MainScene(r, false); var sb = new StringBuilder("RealmStream308 unbatch" + (char)10); int total = 0;
+            foreach (var realm in LoadRealms(r))
+            {
+                var scene = SceneManager.GetSceneByPath(ScenePath(r, realm.Id));
+                if (!scene.IsValid() || !scene.isLoaded) throw new Refuse("run open-all first (" + ScenePath(r, realm.Id) + " is not open)");
+                if (scene.isDirty) throw new Refuse(scene.path + " has unsaved changes - nothing written");
+                int n = 0; foreach (var g in scene.GetRootGameObjects()) n += ClearBatching(g.transform);
+                if (n > 0) { EditorSceneManager.MarkSceneDirty(scene); if (!EditorSceneManager.SaveScene(scene)) throw new Refuse("SaveScene returned false for " + scene.path); }
+                sb.AppendLine("  " + realm.Id.PadRight(12) + " flag taken off " + N(n) + " objects" + (n > 0 ? ", saved" : "")); total += n;
+            }
+            return sb + "unbatch: " + N(total) + " objects";
+        }
+
+        // ---------------------------------------------------------------- park
+        [Serializable] sealed class ParkRow { public string name; public int sibling; }
+        [Serializable] sealed class ParkFile { public string stamp; public List<ParkRow> rows = new List<ParkRow>(); }
+        static string ParkManifest => Path.Combine(Stage, "park_manifest.json");
+        static string ParkScene(Rules r) => r.streamFolder + "/Parked308.unity";
+
+        static string Park(bool dry)
+        {
+            var r = LoadRules(); var main = MainScene(r, !dry);
+            if (!dry && File.Exists(ParkManifest)) throw new Refuse("already parked (park_manifest.json exists) - unpark first");
+            var sb = new StringBuilder("RealmStream308 park" + (dry ? " plan" : "") + (char)10);
+            var all = main.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>(true)).Where(c => c != null).ToArray();
+            var inScene = new HashSet<int>(); foreach (var c in all) { inScene.Add(c.GetInstanceID()); inScene.Add(c.gameObject.GetInstanceID()); }
+            var chosen = new List<GameObject>(); long bytes = 0;
+            foreach (string name in r.parkRoots)
+            {
+                var root = main.GetRootGameObjects().FirstOrDefault(g => g.name == name);
+                if (root == null) { sb.AppendLine("  absent     " + name); continue; }
+                if (root.activeSelf) { sb.AppendLine("  REFUSED    " + name + ": it is switched on"); continue; }
+                var mine = new HashSet<int>(); foreach (var c in root.GetComponentsInChildren<Component>(true)) { if (c == null) continue; mine.Add(c.GetInstanceID()); mine.Add(c.gameObject.GetInstanceID()); }
+                string reason = null;
+                foreach (var c in all)
+                {
+                    if (c is Transform) continue; bool inside = mine.Contains(c.GetInstanceID());
+                    var it = new SerializedObject(c).GetIterator(); bool enter = true;
+                    while (reason == null && it.Next(enter))
+                    {
+                        enter = true;
+                        if (it.propertyType == SerializedPropertyType.ObjectReference)
+                        {
+                            enter = false; int id = it.objectReferenceInstanceIDValue; if (id == 0 || it.propertyPath == "m_GameObject" || !inScene.Contains(id)) continue;
+                            if (inside != mine.Contains(id)) reason = (inside ? "its " : "referenced by ") + c.GetType().Name + " on " + PathOf(c.transform) + " (" + it.propertyPath + ")";
+                        }
+                        else if (it.propertyType == SerializedPropertyType.String) enter = false;
+                        else if (it.isArray)
+                        {
+                            if (it.arraySize == 0) enter = false;
+                            else { var kind = it.GetArrayElementAtIndex(0).propertyType; if (kind != SerializedPropertyType.Generic && kind != SerializedPropertyType.ObjectReference && kind != SerializedPropertyType.ManagedReference) enter = false; }
+                        }
+                    }
+                    if (reason != null) break;
+                }
+                if (reason != null) { sb.AppendLine("  REFUSED    " + name + ": " + reason); continue; }
+                long b = 0; var seen = new HashSet<Mesh>(); foreach (var f in root.GetComponentsInChildren<MeshFilter>(true)) if (f.sharedMesh != null && seen.Add(f.sharedMesh)) b += UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(f.sharedMesh);
+                bytes += b; chosen.Add(root); sb.AppendLine("  park       " + name + " | meshes " + Mb(b));
+            }
+            sb.AppendLine("  roots " + chosen.Count + ", meshes " + Mb(bytes) + " (a mesh that something else still uses stays in memory)");
+            if (dry || chosen.Count == 0) return sb.ToString();
+            string stamp = DateTime.Now.ToString("yyyyMMddTHHmmss"); string backup = Backup(r, stamp, "park");
+            var file = new ParkFile { stamp = stamp };
+            foreach (var g in chosen) file.rows.Add(new ParkRow { name = g.name, sibling = g.transform.GetSiblingIndex() });
+            string path = ParkScene(r); Scene parked;
+            if (File.Exists(Path.Combine(Repo, "Oheangbu", path))) parked = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+            else { parked = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive); if (!EditorSceneManager.SaveScene(parked, path)) throw new Refuse("SaveScene returned false for the new " + path); }
+            SceneManager.SetActiveScene(main);
+            foreach (var g in chosen) SceneManager.MoveGameObjectToScene(g, parked);
+            EditorSceneManager.MarkSceneDirty(main);
+            if (!EditorSceneManager.SaveScene(parked) || !EditorSceneManager.SaveScene(main)) { EditorSceneManager.OpenScene(r.mainScene, OpenSceneMode.Single); return "FAILED park: SaveScene returned false - the play scene was reloaded from disk; backup " + backup; }
+            File.WriteAllText(ParkManifest, JsonUtility.ToJson(file, true));
+            EditorSceneManager.CloseScene(parked, true); EditorUtility.UnloadUnusedAssetsImmediate(true);
+            return sb + "parked in " + path + " (never loaded, not in the build settings); backup " + backup;
+        }
+
+        static string Unpark()
+        {
+            var r = LoadRules(); var main = MainScene(r, true);
+            if (!File.Exists(ParkManifest)) throw new Refuse("nothing parked (no park_manifest.json)");
+            var file = JsonUtility.FromJson<ParkFile>(File.ReadAllText(ParkManifest)); string stamp = DateTime.Now.ToString("yyyyMMddTHHmmss"); string backup = Backup(r, stamp, "unpark");
+            var parked = EditorSceneManager.OpenScene(ParkScene(r), OpenSceneMode.Additive); SceneManager.SetActiveScene(main); int n = 0;
+            foreach (var row in file.rows.OrderBy(x => x.sibling))
+            {
+                var g = parked.GetRootGameObjects().FirstOrDefault(x => x.name == row.name); if (g == null) continue;
+                SceneManager.MoveGameObjectToScene(g, main); g.transform.SetSiblingIndex(row.sibling); n++;
+            }
+            EditorSceneManager.MarkSceneDirty(main);
+            if (!EditorSceneManager.SaveScene(main) || !EditorSceneManager.SaveScene(parked)) { EditorSceneManager.OpenScene(r.mainScene, OpenSceneMode.Single); return "FAILED unpark: SaveScene returned false - the play scene was reloaded from disk; backup " + backup; }
+            EditorSceneManager.CloseScene(parked, true); File.Move(ParkManifest, Path.Combine(Stage, "park_manifest_unparked_" + stamp + ".json"));
+            return "RealmStream308 unpark: " + n + " roots back in " + r.mainScene + "; backup " + backup;
+        }
+
+        // ---------------------------------------------------------------- glide (Play check only)
+        static Vector3 glideTo; static readonly List<Vector3> glideCorners = new List<Vector3>(); static float glideSpeed, glideUntil, glideMoved; static bool glideOn; static Vector3 glideLast;
+
+        static string Glide(string arg)
+        {
+            if (!EditorApplication.isPlaying) throw new Refuse("Play only");
+            var loader = Object.FindFirstObjectByType<RealmStreamLoader308>(FindObjectsInactive.Exclude);
+            var session = loader != null ? loader.Session : null;
+            if (session == null || !session.InitializationComplete || session.Walker == null || session.Walker.Body == null) throw new Refuse("no started session");
+            var at = session.Walker.Body.transform.position;
+            if (arg == "") return "glide " + (glideOn ? "running" : "idle") + " | moved " + F(glideMoved, "F1") + " m | player " + at.ToString("F1");
+            var v = arg.Split(',').Select(x => float.Parse(x.Trim(), System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+            glideTo = new Vector3(v[0], 0, v[1]); glideSpeed = v[2];
+            // along the NavMesh when there is a path (a straight line over a mountain side ends in a fall)
+            glideCorners.Clear(); var path = new UnityEngine.AI.NavMeshPath();
+            if (UnityEngine.AI.NavMesh.SamplePosition(at, out var a0, 30f, UnityEngine.AI.NavMesh.AllAreas) && Physics.Raycast(new Vector3(v[0], 2000f, v[1]), Vector3.down, out var ground, 4000f, ~0, QueryTriggerInteraction.Ignore)
+                && UnityEngine.AI.NavMesh.SamplePosition(ground.point, out var a1, 30f, UnityEngine.AI.NavMesh.AllAreas) && UnityEngine.AI.NavMesh.CalculatePath(a0.position, a1.position, UnityEngine.AI.NavMesh.AllAreas, path))
+                glideCorners.AddRange(path.corners); glideUntil = Time.unscaledTime + v[3]; glideMoved = 0; glideLast = at; glideOn = true;
+            EditorApplication.update -= GlideTick; EditorApplication.update += GlideTick;
+            return "glide started (" + glideCorners.Count + " path corners) from " + at.ToString("F1") + " toward " + F(v[0]) + "," + F(v[1]) + " at " + F(v[2], "F1") + " m/s for " + F(v[3]) + " s";
+        }
+
+        static void GlideTick()
+        {
+            var loader = EditorApplication.isPlaying ? Object.FindFirstObjectByType<RealmStreamLoader308>(FindObjectsInactive.Exclude) : null;
+            var body = loader != null && loader.Session != null && loader.Session.Walker != null ? loader.Session.Walker.Body : null;
+            if (!glideOn || body == null || !body.enabled || Time.unscaledTime > glideUntil) { glideOn = false; EditorApplication.update -= GlideTick; return; }
+            var p = body.transform.position;
+            while (glideCorners.Count > 0 && new Vector2(glideCorners[0].x - p.x, glideCorners[0].z - p.z).magnitude < 1.5f) glideCorners.RemoveAt(0);
+            var aim = glideCorners.Count > 0 ? glideCorners[0] : glideTo; var flat = new Vector3(aim.x - p.x, 0, aim.z - p.z);
+            if (flat.magnitude < 1f) { glideOn = false; EditorApplication.update -= GlideTick; return; }
+            // a long frame (a scene coming in) must not turn into a jump: at most a tenth of a second of travel per tick
+            body.Move(flat.normalized * glideSpeed * Mathf.Min(Time.unscaledDeltaTime, .1f) + Vector3.down * .2f);
+            glideMoved += Vector3.Distance(glideLast, body.transform.position); glideLast = body.transform.position;
         }
 
         // ---------------------------------------------------------------- status

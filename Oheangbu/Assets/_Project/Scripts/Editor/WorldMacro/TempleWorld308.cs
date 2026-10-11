@@ -57,6 +57,21 @@ namespace Oheangbu.EditorTools.WorldMacro
                     File.AppendAllText(Path.Combine(Stage, "content_moves.txt"), DateTime.Now.ToString("s") + " " + PathOf(t) + " " + was.ToString("F3") + " -> " + t.position.ToString("F3") + (char)10);
                     return "moved " + PathOf(t) + " " + was.ToString("F2") + " -> " + t.position.ToString("F2");
                 }
+                if (c == "groundmesh")      // D308-68: the temple ground re-made offline -> the SAME mesh assets (no scene object is re-created, no path changes)
+                {
+                    string data = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "Art", "World", "Compact", "Rebuild", "TempleGround308", "Meshes")); int n = 0, cooked = 0;
+                    foreach (string file in Directory.GetFiles(data, "*.json").OrderBy(x => x))
+                    {
+                        var d = JsonUtility.FromJson<MeshData>(File.ReadAllText(file)); int count = d.vertices.Length / 3; var existing = AssetDatabase.LoadAssetAtPath<Mesh>(GroundDir + "/" + d.name + ".asset"); if (existing == null) return "REFUSED no mesh asset for " + d.name + " (run apply once)";
+                        var v = new Vector3[count]; var nn = new Vector3[count]; var uv = new Vector2[count];
+                        for (int i = 0; i < count; i++) { v[i] = new Vector3(d.vertices[3 * i], d.vertices[3 * i + 1], d.vertices[3 * i + 2]); nn[i] = new Vector3(d.normals[3 * i], d.normals[3 * i + 1], d.normals[3 * i + 2]); uv[i] = new Vector2(d.uvs[2 * i], d.uvs[2 * i + 1]); }
+                        if (existing.subMeshCount != d.submeshes.Length) return "REFUSED " + d.name + ": the number of materials changed (" + existing.subMeshCount + " -> " + d.submeshes.Length + "), run apply";
+                        existing.Clear(); existing.indexFormat = count > 65000 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16; existing.SetVertices(v); existing.SetNormals(nn); existing.SetUVs(0, uv); existing.subMeshCount = d.submeshes.Length;
+                        for (int k = 0; k < d.submeshes.Length; k++) existing.SetTriangles(d.submeshes[k].triangles, k, false); existing.RecalculateBounds(); existing.RecalculateTangents(); EditorUtility.SetDirty(existing); AssetDatabase.SaveAssetIfDirty(existing); n++;
+                        foreach (var col in UnityEngine.Object.FindObjectsByType<MeshCollider>(FindObjectsInactive.Include, FindObjectsSortMode.None)) if (col.sharedMesh == existing) { col.sharedMesh = null; col.sharedMesh = existing; cooked++; }
+                    }
+                    return "TempleWorld308 groundmesh: " + n + " meshes written in place, colliders re-cooked " + cooked;
+                }
                 if (c == "plan") return Apply(true);
                 if (c == "apply") return Apply(false);
                 if (c == "revert") return Revert();
@@ -123,6 +138,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (anchor == null && p.at.Length != 3) { sb.Append("  MISSING anchor ").Append(p.anchor).Append('\n'); continue; }
             }
             if (sb.ToString().Contains("MISSING")) return sb.Append("  REFUSED: fix the data").ToString();
+            if (!dry) { string moved = RealmStream308.RefusalFor(RootName); if (moved != null) return moved; }
             if (dry) { foreach (var t in hide) sb.Append("  hide ").Append(PathOf(t)).Append('\n'); foreach (var p in d.places) sb.Append("  place ").Append(p.id).Append(" = ").Append(p.prefab).Append(" at ").Append(p.anchor).Append('\n'); return sb.ToString().TrimEnd(); }
 
             string backup = Path.Combine(Stage, "Backup", DateTime.Now.ToString("yyyyMMddTHHmmss") + "_world"); Directory.CreateDirectory(backup);
@@ -207,6 +223,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static string Revert()
         {
+            { string moved = RealmStream308.RefusalFor(RootName); if (moved != null) return moved; }
             var d = Read(); var scene = Play(d); string file = Path.Combine(Stage, "world_ledger.json"); int back = 0; var touched = new HashSet<Scene> { scene };
             if (File.Exists(file))
             {

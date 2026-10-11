@@ -70,7 +70,7 @@ namespace Oheangbu.App.Demo
 
         public bool TryPrepare(SpellCast cast,out string failure)
         {
-            if(!Aim(out var target))return Fail("반대편의 마른 지면을 바라보고 뭄을 쓰자.",out failure);
+            if(!Target(out var target))return Fail(Profile!=null&&Profile.AutoSpan?"이 방향으로는 건너편에 닿을 마른 땅이 없다.":"반대편의 마른 지면을 바라보고 뭄을 쓰자.",out failure);
             return TryPrepareTo(cast,target,out failure);
         }
         // Explicit target is also used by detached physics fixtures; every gameplay and support check still applies.
@@ -102,8 +102,43 @@ namespace Oheangbu.App.Demo
         public bool TryPreview(out MumBridgePlan plan,out string failure)
         {
             plan=default;if(!CanCast){failure="지금은 뭄을 쓸 수 없다.";return false;}
-            if(!Aim(out var target)){failure="반대편 지면이 보이지 않는다.";return false;}
+            if(!Target(out var target)){failure="반대편 지면이 보이지 않는다.";return false;}
             return TryPlan(target,out plan,out failure);
+        }
+        /// <summary>Capture only: the placement outline is not drawn (the plan and the cast are unchanged).</summary>
+        public bool PreviewSuppressed{get;set;}
+        bool Target(out Vector3 point)=>Profile!=null&&Profile.AutoSpan?AutoTarget(out point):Aim(out point);
+        // #308 auto span (D308-50): nobody aims at a far bank. From the caster's feet, along the level view heading, the ground is
+        // probed every half metre: first it must fall away (water, or a drop below the feet), then the first dry permanent ground
+        // that comes back up to the feet's level is the far end. A far bank that stays lower may be met up to AutoBankReach past its
+        // first dry ground, at its highest point within the height and slope limits. TryPlan still judges the result.
+        bool AutoTarget(out Vector3 point)
+        {
+            point=default;if(view==null||Profile==null||body==null)return false;
+            var feet=FieldSpellService.Feet(body);var heading=view.transform.forward;heading.y=0;
+            if(heading.sqrMagnitude<1e-4f){heading=body.transform.forward;heading.y=0;}
+            heading.Normalize();
+            const float step=.5f;bool gap=false;float firstDry=-1;Vector3 best=default;bool hasBest=false;
+            for(float t=Profile.LandingOverlap;t<=Profile.MaximumSpan;t+=step)
+            {
+                var at=feet+heading*t;
+                int count=ScenePhysicsQuery.RaycastAll(gameObject.scene,new Vector3(at.x,feet.y+Profile.MaximumEndHeightDifference+1f,at.z),Vector3.down,80f,~0,ref hits);
+                float nearest=float.PositiveInfinity;RaycastHit ground=default;
+                for(int i=0;i<count;i++)if(!Ignore(hits[i].collider)&&hits[i].distance<nearest){nearest=hits[i].distance;ground=hits[i];}
+                bool dry=float.IsFinite(nearest)&&PermanentDry(ground);
+                float below=feet.y-(float.IsFinite(nearest)?ground.point.y:float.NegativeInfinity);
+                if(!gap){if(!dry||below>.18f)gap=true;continue;}
+                if(!dry){if(firstDry>=0&&hasBest)break;continue;}
+                if(below<-Profile.MaximumEndHeightDifference)break;                       // a bank that stands higher than the bridge may climb
+                if(firstDry<0)firstDry=t;
+                bool within=below<=Profile.MaximumEndHeightDifference&&Mathf.Atan2(Mathf.Abs(below),t)*Mathf.Rad2Deg<=Profile.MaximumSlope&&t>=Profile.MinimumSpan;
+                var right=Vector3.Cross(Vector3.up,heading);
+                if(within&&!Landing(ground.point,-heading,right))within=false;            // somewhere the far end can really rest
+                if(within&&below<=.18f){point=ground.point;return true;}                  // level with the feet: the bridge lands here
+                if(within&&(!hasBest||ground.point.y>best.y)){best=ground.point;hasBest=true;}
+                if(t-firstDry>=Profile.AutoBankReach)break;
+            }
+            if(!hasBest)return false;point=best;return true;
         }
         bool Aim(out Vector3 point)
         {
@@ -121,7 +156,7 @@ namespace Oheangbu.App.Demo
                 Mathf.Abs(FieldSpellService.Feet(body).y-start.point.y)>.16f||!Ground(target,out var end))
             {failure="다리 양끝에는 안정된 마른 지면이 필요하다.";return false;}
             Vector3 direction=end.point-start.point;direction.y=0;float length=direction.magnitude;
-            if(length<Profile.MinimumSpan||length>Profile.MaximumSpan){failure="다리의 간격은 4~40미터여야 한다.";return false;}
+            if(length<Profile.MinimumSpan||length>Profile.MaximumSpan){failure="다리의 간격이 너무 짧거나 길다.";return false;}
             float rise=Mathf.Abs(end.point.y-start.point.y);
             if(rise>Profile.MaximumEndHeightDifference||Mathf.Atan2(rise,length)*Mathf.Rad2Deg>Profile.MaximumSlope)
             {failure="반대편 지면의 높이 차이가 너무 크다.";return false;}
@@ -161,6 +196,13 @@ namespace Oheangbu.App.Demo
             foreach(float across in new[]{-.5f,0,.5f})foreach(float along in new[]{-Profile.LandingOverlap,0f})
             {
                 var at=point+right*(Profile.Width*across)+towardsGap*along;
+                if(Profile.AutoSpan&&across!=0)
+                {
+                    // auto span: a natural bank is rarely level across the whole width. The corners may hang over lower ground or
+                    // water; they only must not stand higher than the deck. The centre line carries the walker and is judged in full.
+                    if(Ground(at,out var corner)){if(corner.point.y-point.y>Profile.BankHeightTolerance)return false;landingSupports.Add(corner.collider);}
+                    continue;
+                }
                 if(!Ground(at,out var hit)||Mathf.Abs(hit.point.y-point.y)>Profile.BankHeightTolerance)return false;
                 landingSupports.Add(hit.collider);
                 if(Blocked(hit.point+Vector3.up*(body.height*.5f+.06f),new Vector3(.12f,body.height*.5f,.12f),Quaternion.identity))return false;
@@ -213,6 +255,9 @@ namespace Oheangbu.App.Demo
                 var mesh=BuildMesh(Vector3.Distance(plan.Start,plan.End),plan.Width,Profile.Thickness);
                 var result=go.AddComponent<MumBridgeBody>();result.Mesh=mesh;result.Plan=plan;
                 go.AddComponent<WorldTemporarySupport>();
+                result.Support=go.AddComponent<MeshCollider>();result.Support.sharedMesh=mesh;result.Support.enabled=false;
+                result.FormationSeconds=Profile.FormationSeconds+Profile.FormationSecondsPerMetre*Vector3.Distance(plan.Start,plan.End);
+                if(Profile.BlockLength>0){BuildBlocks(result,plan);result.Sample(0);return result;}
                 var visible=new GameObject("Earth");visible.transform.SetParent(go.transform,false);
                 visible.AddComponent<MeshFilter>().sharedMesh=mesh;visible.AddComponent<MeshRenderer>().sharedMaterial=Profile.DeckMaterial;
                 if(Profile.SurfaceTile!=null&&Profile.SurfaceMaterials!=null&&Profile.SurfaceMaterials.Length==Profile.SurfaceTile.subMeshCount)
@@ -222,10 +267,75 @@ namespace Oheangbu.App.Demo
                     surface.AddComponent<MeshFilter>().sharedMesh=result.SurfaceMesh;
                     surface.AddComponent<MeshRenderer>().sharedMaterials=Profile.SurfaceMaterials;
                 }
-                result.Visual=visible.transform;result.Support=go.AddComponent<MeshCollider>();result.Support.sharedMesh=mesh;result.Support.enabled=false;
-                result.FormationSeconds=Profile.FormationSeconds;result.Sample(0);return result;
+                result.Visual=visible.transform;result.Sample(0);return result;
             }
             catch{FieldSpellService.Remove(go);throw;}
+        }
+        // #308 presentation only: the walkable slab and its timing are unchanged; what is seen is rows of rough stone blocks
+        // that come up from below one after another, nearest first (the legacy puzzle test's 뭄).
+        void BuildBlocks(MumBridgeBody result,MumBridgePlan plan)
+        {
+            float length=Vector3.Distance(plan.Start,plan.End);int rows=Mathf.Max(1,Profile.BlockRows);float rowWidth=plan.Width/rows;
+            var random=new System.Random(unchecked((int)(plan.Start.x*73.1f+plan.Start.z*191.7f+plan.End.x*31.3f)));
+            float Next(float a,float b)=>a+(b-a)*(float)random.NextDouble();
+            var blocks=new List<Transform>();var rest=new List<Vector3>();var tilt=new List<Quaternion>();var settle=new List<Quaternion>();var delay=new List<float>();
+            var material=Profile.BlockMaterial!=null?Profile.BlockMaterial:Profile.DeckMaterial;
+            for(int row=0;row<rows;row++)
+            {
+                float z=0;
+                while(z<length-.01f)
+                {
+                    float size=Mathf.Min(Profile.BlockLength*Next(.75f,1.4f),length-z);
+                    if(length-z-size<Profile.BlockLength*.5f)size=length-z;
+                    var mesh=RoughBlock(new Vector3(rowWidth-.03f,Profile.BlockDepth*Next(.85f,1.25f),size-.03f),Profile.BlockJitter,random);
+                    result.BlockMeshes.Add(mesh);
+                    var block=new GameObject("Stone");block.transform.SetParent(result.transform,false);
+                    block.AddComponent<MeshFilter>().sharedMesh=mesh;block.AddComponent<MeshRenderer>().sharedMaterial=material;
+                    blocks.Add(block.transform);rest.Add(new Vector3(-plan.Width*.5f+rowWidth*(row+.5f),-Next(0,.025f),z+size*.5f));
+                    settle.Add(Quaternion.Euler(Next(-1.2f,1.2f),Next(-2.5f,2.5f),Next(-1.2f,1.2f)));
+                    tilt.Add(Quaternion.Euler(Next(-16,16),Next(-22,22),Next(-16,16)));
+                    delay.Add(Mathf.Clamp01((z+size*.5f)/length+Next(-.03f,.03f)));
+                    z+=size;
+                }
+            }
+            result.Blocks=blocks.ToArray();result.BlockRest=rest.ToArray();result.BlockTilt=tilt.ToArray();result.BlockSettle=settle.ToArray();
+            result.BlockDelay=delay.ToArray();result.RiseDepth=Profile.BlockRiseDepth;result.RiseShare=Profile.BlockRiseShare;
+        }
+        // A box whose top is at y=0 (the walking plane), cut into a coarse lattice with worn edges and knocked-about sides; flat shaded.
+        static Mesh RoughBlock(Vector3 size,float jitter,System.Random random)
+        {
+            const int N=3;var lattice=new Vector3[N+1,N+1,N+1];
+            for(int i=0;i<=N;i++)for(int j=0;j<=N;j++)for(int k=0;k<=N;k++)
+            {
+                var p=new Vector3((i/(float)N-.5f)*size.x,(j/(float)N-1f)*size.y,(k/(float)N-.5f)*size.z);
+                int edges=(i==0||i==N?1:0)+(j==0||j==N?1:0)+(k==0||k==N?1:0);
+                if(edges>=2)
+                {
+                    float wear=jitter*(edges==3?1.3f:.75f)*(.6f+.8f*(float)random.NextDouble());
+                    if(i==0||i==N)p.x-=Mathf.Sign(p.x)*wear;
+                    if(k==0||k==N)p.z-=Mathf.Sign(p.z)*wear;
+                    if(j==0)p.y+=wear;else if(j==N)p.y-=wear*.5f;
+                }
+                float top=j==N?.12f:1f;      // the walked face stays close to flat
+                p+=new Vector3(((float)random.NextDouble()-.5f)*jitter,((float)random.NextDouble()-.5f)*jitter*top,((float)random.NextDouble()-.5f)*jitter);
+                if(j==N)p.y=Mathf.Min(p.y,0);
+                lattice[i,j,k]=p;
+            }
+            var vertices=new List<Vector3>();var uv=new List<Vector2>();var triangles=new List<int>();
+            void Quad(Vector3 a,Vector3 b,Vector3 c,Vector3 d,int axis)
+            {
+                foreach(var p in new[]{a,b,c,a,c,d}){triangles.Add(vertices.Count);vertices.Add(p);uv.Add(axis==0?new Vector2(p.z,p.y):axis==1?new Vector2(p.x,p.z):new Vector2(p.x,p.y));}
+            }
+            for(int u=0;u<N;u++)for(int w=0;w<N;w++)
+            {
+                Quad(lattice[0,u,w],lattice[0,u,w+1],lattice[0,u+1,w+1],lattice[0,u+1,w],0);
+                Quad(lattice[N,u,w],lattice[N,u+1,w],lattice[N,u+1,w+1],lattice[N,u,w+1],0);
+                Quad(lattice[u,0,w],lattice[u+1,0,w],lattice[u+1,0,w+1],lattice[u,0,w+1],1);
+                Quad(lattice[u,N,w],lattice[u,N,w+1],lattice[u+1,N,w+1],lattice[u+1,N,w],1);
+                Quad(lattice[u,w,0],lattice[u,w+1,0],lattice[u+1,w+1,0],lattice[u+1,w,0],2);
+                Quad(lattice[u,w,N],lattice[u+1,w,N],lattice[u+1,w+1,N],lattice[u,w+1,N],2);
+            }
+            var mesh=new Mesh{name="Mum308_Stone"};mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateTangents();mesh.RecalculateBounds();return mesh;
         }
         static Mesh BuildMesh(float length,float width,float thickness)
         {
@@ -270,7 +380,7 @@ namespace Oheangbu.App.Demo
         void Update(){Tick(Time.deltaTime);DrawPreview();}
         void DrawPreview()
         {
-            bool visible=Profile!=null&&(PreviewRequested?.Invoke()??false)&&bridges.Count<Profile.MaximumActive;
+            bool visible=Profile!=null&&Profile.PlacementPreview&&!PreviewSuppressed&&(PreviewRequested?.Invoke()??false)&&bridges.Count<Profile.MaximumActive;
             if(!visible){if(preview!=null)preview.enabled=false;return;}
             if(Time.unscaledTime<nextPreview)return;nextPreview=Time.unscaledTime+.08f;
             if(!TryPreview(out var plan,out _)){if(preview!=null)preview.enabled=false;return;}
@@ -344,11 +454,25 @@ namespace Oheangbu.App.Demo
         [NonSerialized] public string AreaId;
         [NonSerialized] public float FormationSeconds,Age;
         [NonSerialized] public bool PendingRemoval;
+        [NonSerialized] public Transform[] Blocks;
+        [NonSerialized] public Vector3[] BlockRest;
+        [NonSerialized] public Quaternion[] BlockTilt,BlockSettle;
+        [NonSerialized] public float[] BlockDelay;
+        [NonSerialized] public float RiseDepth,RiseShare;
+        public readonly List<Mesh> BlockMeshes=new List<Mesh>();
         public bool IsComplete=>Age>=FormationSeconds;
         public void Sample(float age)
         {
             Age=Mathf.Max(0,age);float t=Mathf.Clamp01(Age/Mathf.Max(.01f,FormationSeconds));
             if(Visual!=null)Visual.localScale=new Vector3(1,1,Mathf.Max(.001f,Mathf.SmoothStep(0,1,t)));
+            if(Blocks!=null)for(int i=0;i<Blocks.Length;i++)
+            {
+                // each stone starts in turn along the span and takes RiseShare of the formation to come up; all are home at t=1
+                float u=Mathf.Clamp01((t-BlockDelay[i]*(1-RiseShare))/Mathf.Max(.01f,RiseShare));float e=1-(1-u)*(1-u)*(1-u);
+                bool shown=u>0;if(Blocks[i].gameObject.activeSelf!=shown)Blocks[i].gameObject.SetActive(shown);if(!shown)continue;
+                Blocks[i].localPosition=BlockRest[i]+Vector3.down*(RiseDepth*(1-e));
+                Blocks[i].localRotation=Quaternion.Slerp(BlockTilt[i],BlockSettle[i],e);
+            }
             if(Support!=null)Support.enabled=t>=1;
         }
         public bool Supports(CharacterController player)
@@ -358,7 +482,7 @@ namespace Oheangbu.App.Demo
             return Mathf.Abs(feet.x)<=Plan.Width*.5f+player.radius&&feet.z>=-player.radius&&feet.z<=Vector3.Distance(Plan.Start,Plan.End)+player.radius&&feet.y>=-.15f&&feet.y<=3;
         }
         public void Dispose(){if(Support!=null)Support.enabled=false;gameObject.SetActive(false);FieldSpellService.Remove(gameObject);}
-        void OnDestroy(){if(Mesh!=null)FieldSpellService.Remove(Mesh);if(SurfaceMesh!=null)FieldSpellService.Remove(SurfaceMesh);}
+        void OnDestroy(){if(Mesh!=null)FieldSpellService.Remove(Mesh);if(SurfaceMesh!=null)FieldSpellService.Remove(SurfaceMesh);foreach(var mesh in BlockMeshes)if(mesh!=null)FieldSpellService.Remove(mesh);}
     }
     public sealed class MumBridgeSafetyHold : MonoBehaviour
     {

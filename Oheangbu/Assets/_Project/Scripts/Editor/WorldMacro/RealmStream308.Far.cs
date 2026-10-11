@@ -50,6 +50,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 foreach (Transform t in root.transform)
                 {
                     if (!t.gameObject.activeInHierarchy) continue;
+                    if (r.farSkipNameParts.Any(p => t.name.IndexOf(p, StringComparison.OrdinalIgnoreCase) >= 0)) continue;   // foliage cards do not survive clustering
                     var m = Measure(t, t.name);
                     if (!m.HasBounds || (m.Bounds.size.y < r.farMinHeight && Mathf.Max(m.Bounds.size.x, m.Bounds.size.z) < r.farMinSpan)) continue;
                     var u = new FarUnit { Root = t, Realm = realm.Id, Bounds = m.Bounds };
@@ -105,6 +106,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             string stamp = DateTime.Now.ToString("yyyyMMddTHHmmss"); string backup = Backup(r, stamp, "far");
             EnsureFolder(r.farFolder);
             SceneManager.SetActiveScene(main);
+            var readable = new Dictionary<Mesh, Mesh>();
             var root = FarRoot(main, true); long vertices = 0, bytes = 0, source = 0; int meshes = 0, skipped = 0; var roots = new List<GameObject>(); var ids = new List<string>();
             try
             {
@@ -121,8 +123,19 @@ namespace Oheangbu.EditorTools.WorldMacro
                         var byMaterial = new Dictionary<Material, FarSoup>();
                         foreach (var mr in u.Renderers)
                         {
-                            var mesh = mr.GetComponent<MeshFilter>().sharedMesh;
-                            if (!mesh.isReadable) { skipped++; continue; }
+                            var mesh = mr.GetComponent<MeshFilter>().sharedMesh; Mesh opened = null;
+                            if (!mesh.isReadable)
+                            {
+                                // a mesh asset packed as not readable: the editor still holds its data, a copy with the flag set can be read
+                                if (!readable.TryGetValue(mesh, out opened))
+                                {
+                                    opened = Object.Instantiate(mesh); var so = new SerializedObject(opened); var flag = so.FindProperty("m_IsReadable");
+                                    if (flag != null) { flag.boolValue = true; so.ApplyModifiedPropertiesWithoutUndo(); }
+                                    readable[mesh] = opened;
+                                }
+                                if (!opened.isReadable || opened.vertexCount == 0) { skipped++; continue; }
+                                mesh = opened;
+                            }
                             var v = mesh.vertices; var uv = mesh.uv; var mats = mr.sharedMaterials; var m = mr.transform.localToWorldMatrix;
                             bool flip = m.determinant < 0;
                             for (int s = 0; s < mesh.subMeshCount && s < mats.Length; s++)
@@ -152,7 +165,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                 }
             }
-            finally { AssetDatabase.StopAssetEditing(); }
+            finally { AssetDatabase.StopAssetEditing(); foreach (var copy in readable.Values) if (copy != null) Object.DestroyImmediate(copy); }
             foreach (var mf in root.GetComponentsInChildren<MeshFilter>(true)) bytes += Profiler.GetRuntimeMemorySizeLong(mf.sharedMesh);
             loader.FarRealms = ids.ToArray(); loader.FarRoots = roots.ToArray();
             EditorSceneManager.MarkSceneDirty(main);
@@ -196,7 +209,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 var points = new List<Vector3>(); var uv = new List<Vector2>(); var t = new int[tris.Count];
                 for (int i = 0; i < tris.Count; i++) { int n = tris[i]; if (remap[n] < 0) { remap[n] = points.Count; points.Add(sum[n] / count[n]); uv.Add(uvs[n]); } t[i] = remap[n]; }
                 var mesh = new Mesh { indexFormat = points.Count > 65000 ? IndexFormat.UInt32 : IndexFormat.UInt16 };
-                mesh.SetVertices(points); mesh.SetUVs(0, uv); mesh.triangles = t; mesh.RecalculateNormals(); mesh.RecalculateBounds();
+                mesh.SetVertices(points); mesh.SetUVs(0, uv); mesh.triangles = t; mesh.RecalculateNormals();
+                // sliver triangles leave zero-length normals, and those turn into NaN in the lighting (a huge white bloom in Play):
+                // divide by hand (Vector3.normalized gives 0 for short vectors) and stand what is left upright
+                var normals = mesh.normals;
+                for (int k = 0; k < normals.Length; k++) { float length = normals[k].magnitude; normals[k] = length > 1e-12f && !float.IsNaN(length) ? normals[k] / length : Vector3.up; if (normals[k].sqrMagnitude < .5f) normals[k] = Vector3.up; }
+                mesh.normals = normals; mesh.RecalculateBounds();
                 return mesh;
             }
         }

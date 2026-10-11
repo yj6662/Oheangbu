@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace Oheangbu.App.World
 {
-    // #308 final-consonant unlocks (SPEC-SPELL-120-308 section 7; Q2: the main game keeps its unlock order, the other finals
-    // are reachable only through a TEST unlock in an isolated editor save). The session answers "does the player own this
-    // final?" from the saved ledger; which ledger id and which encounter evidence a final needs, and whether the main game
-    // grants that final at all (GrantedInMain: giyeok only today), is data (SpellBookSO._unlocks, imported from
-    // Data/Spells/Unlock308.csv). The existing giyeok and mieum gates (HasDemoGuk, HasMumBridge) are untouched
-    // and keep gating the 36 glyphs they gated before; this answer is only asked for rows that run a registered handler.
+    // #308 final-consonant unlocks (SPEC-SPELL-120-308 section 7; Q2: the main game keeps its unlock order). The session
+    // answers "does the player own this final?" from the saved ledger; which ledger id and which encounter evidence a final
+    // needs, and whether the main game grants that final at all (GrantedInMain), is data (SpellBookSO._unlocks, imported
+    // from Data/Spells/Unlock308.csv). #308b (D308-51): the sheet grants all five; the ledger ids of the four later finals
+    // are written by the boss chain (WorldMacroPlaytestSession.FinalGrants308.cs). The editor-only TEST unlock of the
+    // isolated save stays. The existing giyeok and mieum gates (HasDemoGuk, HasMumBridge) keep gating the 36 glyphs they
+    // gated before; this answer is only asked for rows that run a registered handler.
     public sealed partial class WorldMacroPlaytestSession : ISpellUnlocks
     {
         // Fixed suffix: not one of the timestamped harness suffixes StaleHarnessSuffix307 clears.
@@ -42,6 +43,9 @@ namespace Oheangbu.App.World
         public bool FinalUnlocked(SpellUnlockRule rule)
         {
             if (!ready || !isActiveAndEnabled || Progress == null || rule.Final == SpellFinal.None) return false;
+            // #308b presentation switch (D308-51, D308-53: all of them): every final counts as owned, the rows the data keeps
+            // TEST-only included. Session-only: nothing is written to the save, and with the switch off nothing here changes.
+            if (DemoAllFinals308) return true;
             bool ledger = !string.IsNullOrEmpty(rule.LedgerId) && Progress.ledger?.completed != null &&
                 Progress.ledger.completed.Contains(rule.LedgerId);
             // the named encounter must be both recorded as evidence and defeated (the mieum precedent, MumBridgeUnlock295)

@@ -32,6 +32,9 @@ def stair_gaps(t, edge):
     return [(s['at'] - s['width'] / 2 - .3, s['at'] + s['width'] / 2 + .3) for s in CFG['stairs'] if s['terrace'] == t['id'] and s['edge'] == edge]
 
 
+FLANK = 1.1      # metres of rubble flank outside each cheek stone
+
+
 def build():
     c = CFG; rng = np.random.default_rng(c['seed'])
     wall = Mesh('TempleGround_Wall'); cap = Mesh('TempleGround_Cap'); earth = Mesh('TempleGround_Earth'); stairs = Mesh('TempleGround_Stairs'); col = Mesh('TempleGround_Collision')
@@ -107,13 +110,15 @@ def build():
         n = max(1, int(math.ceil(rise / c['riser']))); r = rise / n; tread = c['tread']
         for k in range(n):                                                       # k = 0 is the top step
             yk = top - r * k
-            stairs.box(E + N * (tread * (k + .5)) + UP * (yk - (r + .5) / 2), D, UP, N, (w, r + .5, tread + .02), 'stone_dressed', faces='xXYZ', uvscale=1.5)
+            hk = yk - (low - .6)                                                    # D308-68: every step is a block down to under the ground - nothing hollow behind or under the flight
+            stairs.box(E + N * (tread * (k + .5)) + UP * (yk - hk / 2), D, UP, N, (w, hk, tread + .02), 'stone_dressed', faces='xXYZ', uvscale=1.5)
         run = tread * n
         for sd in (-1, 1):                                                       # stepped cheek stones (소맷돌)
             for k in range(0, n, 2):
                 yk = top - r * k + .22
-                stairs.box(E + D * sd * (w / 2 + .2) + N * (tread * (k + 1)) + UP * (yk - .6), D, UP, N, (.4, 1.2, tread * 2 + .02), 'stone_dressed', faces='xXYZ', uvscale=1.5)
-        A0 = E - D * (w / 2); A1 = E + D * (w / 2)
+                hk = yk - (low - .6); stairs.box(E + D * sd * (w / 2 + .2) + N * (tread * (k + 1)) + UP * (yk - hk / 2), D, UP, N, (.4, hk, tread * 2 + .02), 'stone_dressed', faces='xXYZ', uvscale=1.5)
+                fk = yk - .3 - (low - .6); stairs.box(E + D * sd * (w / 2 + .4 + FLANK / 2) + N * (tread * (k + 1)) + UP * (yk - .3 - fk / 2), D, UP, N, (FLANK, fk, tread * 2 + .02), 'stone_dressed', faces='xXYZ', uvscale=1.1)      # a flank of rubble closes the slot beside the flight
+        A0 = E - D * (w / 2 + .4 + FLANK); A1 = E + D * (w / 2 + .4 + FLANK)      # the ramp one walks on covers the cheeks and the flanks too
         P = [A0 + UP * top, A1 + UP * top, A1 + N * run + UP * low, A0 + N * run + UP * low]
         nrm = N * rise + UP * run; nrm = nrm / np.linalg.norm(nrm)
         col.add(P, np.repeat(nrm[None], 4, 0), np.zeros((4, 2)), [[0, 1, 2], [0, 2, 3]], 'collision')

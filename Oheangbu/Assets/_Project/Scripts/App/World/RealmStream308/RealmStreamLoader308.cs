@@ -15,6 +15,8 @@ namespace Oheangbu.App.World
     //   - lobby flow: PlaytestUiRoot.LoadWithRegionScreen brings those scenes in before the play scene (WorldLoadingProfile270.RealmStream);
     //   - editor Play straight from the play scene: the editor hook RealmStream308 opens them before Play starts.
     // Scenes that are already loaded when this wakes are adopted.
+    // A teleport onto a floor of a realm that is not in yet (escort restore, inn return, dev routes) lands on the ground below it: the
+    // arrival is remembered and the player is put back on it once the realm is in (sheet ReseatRadius / ReseatDrop).
     public sealed class RealmStreamLoader308 : MonoBehaviour
     {
         public enum State { Out, Loading, In, Leaving }
@@ -34,6 +36,16 @@ namespace Oheangbu.App.World
         CancellationTokenSource life;
         bool purgeOwed; float lastPurge = float.NegativeInfinity;
         Camera fallbackCamera;
+        // the longest frame while a scene comes in or goes out (AC-P7), newest last
+        public readonly struct Passage
+        {
+            public readonly string Realm; public readonly bool In; public readonly float Seconds, WorstFrameMs;
+            public Passage(string realm, bool @in, float seconds, float worstFrameMs) { Realm = realm; In = @in; Seconds = seconds; WorstFrameMs = worstFrameMs; }
+        }
+        const int PassagesKept = 16;
+        readonly List<Passage> passages = new List<Passage>();
+        bool timing; float timingWorst;
+        bool hasLast, arrivalPending; Vector3 lastPosition, arrival; float arrivalAt;
 
         /// <summary>True once every realm the first look asked for is in.</summary>
         public bool InitialReady { get; private set; }
@@ -41,6 +53,8 @@ namespace Oheangbu.App.World
         public int Unloads { get; private set; }
         public int Purges { get; private set; }
         public string LastError { get; private set; }
+        public IReadOnlyList<Passage> Passages => passages;
+        public int Reseats { get; private set; }
 
         void OnEnable()
         {
@@ -55,6 +69,50 @@ namespace Oheangbu.App.World
         void OnDisable()
         {
             if (life != null) { life.Cancel(); life.Dispose(); life = null; }
+        }
+
+        void Update()
+        {
+            if (timing) timingWorst = Mathf.Max(timingWorst, Time.unscaledDeltaTime);
+            if (Sheet == null || Session == null || !TryPosition(out var position)) { hasLast = false; return; }
+            if (hasLast && (position - lastPosition).sqrMagnitude > Sheet.TeleportJump * Sheet.TeleportJump && !AllIn(position))
+            {
+                arrival = position; arrivalAt = Time.unscaledTime; arrivalPending = true;
+            }
+            lastPosition = position; hasLast = true;
+        }
+
+        /// <summary>True when every realm the point needs is in.</summary>
+        bool AllIn(Vector3 position)
+        {
+            for (int i = 0; i < states.Length; i++)
+                if (Usable(i) && states[i] != State.In && RealmStreamSheet308.Distance(Sheet.Realms[i], position) <= Sheet.LoadDistance) return false;
+            return true;
+        }
+
+        void Reseat()
+        {
+            if (!arrivalPending) return;
+            if (Time.unscaledTime - arrivalAt > Sheet.ReseatSeconds || !TryPosition(out var position)) { arrivalPending = false; return; }
+            if (!AllIn(arrival)) return;
+            arrivalPending = false;
+            var flat = new Vector2(position.x - arrival.x, position.z - arrival.z);
+            if (Session.Walker.Seated || flat.magnitude > Sheet.ReseatRadius || arrival.y - position.y <= Sheet.ReseatDrop) return;
+            Session.Teleport(arrival, Session.Walker.Body.transform.eulerAngles.y);
+            lastPosition = arrival; Reseats++;
+        }
+
+        void BeginPassage() { timing = true; timingWorst = 0; }
+
+        void EndPassage(string realm, bool @in, float started)
+        {
+            timing = false;
+            if (passages.Count >= PassagesKept) passages.RemoveAt(0);
+            var passage = new Passage(realm, @in, Time.unscaledTime - started, timingWorst * 1000);
+            passages.Add(passage);
+            // one line per scene coming in or going out: the only way to read AC-P7 from a player log
+            Debug.Log("[RealmStream308] passage " + realm + (@in ? " in " : " out ") + passage.Seconds.ToString("F2", CultureInfo.InvariantCulture) + " s | longest frame "
+                + passage.WorstFrameMs.ToString("F1", CultureInfo.InvariantCulture) + " ms");
         }
 
         bool Usable(int i) => Sheet.Realms[i] != null && !string.IsNullOrEmpty(Sheet.Realms[i].ScenePath) && Sheet.Realms[i].Units > 0;
@@ -119,11 +177,17 @@ namespace Oheangbu.App.World
                 var load = RealmStreamSheet308.BeginLoad(realm);
                 if (load == null) { LastError = "load did not start: " + realm.Id; continue; }
                 states[i] = State.Loading;
-                await load.ToUniTask(cancellationToken: token);
+                float started = Time.unscaledTime; BeginPassage();
+                var priority = Application.backgroundLoadingPriority; Application.backgroundLoadingPriority = Sheet.StreamPriority;
+                try { await load.ToUniTask(cancellationToken: token); }
+                finally { Application.backgroundLoadingPriority = priority; }
                 states[i] = RealmStreamSheet308.IsLoaded(realm) ? State.In : State.Out; Loads++;
                 SyncFar();   // the scene is in: its far band goes in the same frame
+                await UniTask.Yield(PlayerLoopTiming.Update, token);   // the frame that brought the scene in is counted too
+                EndPassage(realm.Id, true, started);
             }
             InitialReady = true;
+            Reseat();
             for (int i = 0; i < states.Length; i++)
             {
                 if (states[i] != State.In || wanted.Contains(i)) continue;
@@ -132,9 +196,12 @@ namespace Oheangbu.App.World
                 var unload = SceneManager.UnloadSceneAsync(scene);
                 if (unload == null) continue;
                 states[i] = State.Leaving;
+                float started = Time.unscaledTime; BeginPassage();
                 await unload.ToUniTask(cancellationToken: token);
                 states[i] = State.Out; Unloads++; purgeOwed = true;
                 SyncFar();
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
+                EndPassage(Sheet.Realms[i].Id, false, started);
             }
             if (purgeOwed && Time.unscaledTime - lastPurge >= Sheet.PurgeSeconds)
             {
@@ -162,7 +229,7 @@ namespace Oheangbu.App.World
             var sb = new StringBuilder();
             bool has = TryPosition(out var p);
             sb.Append("loader ").Append(isActiveAndEnabled ? "on" : "off").Append(" | initial ready ").Append(InitialReady)
-              .Append(" | loads ").Append(Loads).Append(" unloads ").Append(Unloads).Append(" purges ").Append(Purges)
+              .Append(" | loads ").Append(Loads).Append(" unloads ").Append(Unloads).Append(" purges ").Append(Purges).Append(" reseats ").Append(Reseats)
               .Append(" | player ").Append(has ? F(p.x) + "," + F(p.y) + "," + F(p.z) : "unknown");
             if (Sheet != null) sb.Append(" | load ").Append(F(Sheet.LoadDistance)).Append(" unload ").Append(F(Sheet.UnloadDistance)).Append(" anchor ").Append(F(Sheet.AnchorDistance));
             if (!string.IsNullOrEmpty(LastError)) sb.Append(" | error ").Append(LastError);
@@ -177,6 +244,9 @@ namespace Oheangbu.App.World
                   .Append(" far band ").Append(FarText(realm.Id))
                   .Append(" distance ").Append(float.IsNaN(d) ? "?" : F(d)).Append(" m | units ").Append(realm.Units).Append(" renderers ").Append(realm.Renderers).Append('\n');
             }
+            foreach (var passage in passages)
+                sb.Append("  passage ").Append((passage.Realm ?? "?").PadRight(12)).Append(passage.In ? "in  " : "out ").Append(passage.Seconds.ToString("F2", CultureInfo.InvariantCulture))
+                  .Append(" s | longest frame ").Append(passage.WorstFrameMs.ToString("F1", CultureInfo.InvariantCulture)).Append(" ms\n");
             return sb.ToString();
         }
 

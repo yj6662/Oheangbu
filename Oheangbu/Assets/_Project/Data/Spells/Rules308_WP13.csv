@@ -5,14 +5,15 @@
 # single.cover: cover.radius / cover.life = the rooted rock, cover.max = rocks at once, cover.range = where the rock of a cast without a target falls (metres ahead).
 # intercept.single: intercept.range / intercept.angle = the fan the needle looks for an incoming projectile in. intercept.barrage: intercept.max = projectiles one barrage can shoot down.
 # single.unblockable and path.purge carry no number of their own.
-# Gate test (single.cover): the row stays behind its final's TEST unlock. The main-game grant of that final does not open it until its world side exists
+# Gate test (every row of this sheet since #308b, D308-51: the main game now grants all five finals): the row stays behind its final's TEST unlock.
+# The main-game grant of that final does not open it until its world side exists
 # (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target). Remove the word to let the final's own unlock open it.
 글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
-공,replace,path.cover,,AttackArea,,,,4,,Path,,3,12,5,0.4,,,,
-농,replace,zone.haze,,,,,base,,,,,,,,,,,,haze.radius=3;haze.life=8;haze.miss=0.5;haze.max=1
+공,replace,path.cover,,AttackArea,test,,,4,,Path,,3,12,5,0.4,,,,
+농,replace,zone.haze,,,test,,base,,,,,,,,,,,,haze.radius=3;haze.life=8;haze.miss=0.5;haze.max=1
 막,replace,single.cover,,,test,,base,,,,,,,,,,,,cover.radius=1.2;cover.life=12;cover.max=2;cover.range=8
-몽,replace,zone.haze,,,,,base,,,,,,,,,,,,haze.radius=6;haze.life=8;haze.miss=0.5;haze.max=1
-삿,replace,single.unblockable,,,,,base,,,,,,,,,,,,
-상,replace,intercept.single,,,,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20
-송,replace,intercept.barrage,,,,,base,,,,,,,,,,,,intercept.max=6
-온,replace,path.purge,,,,,base,,,,,,,,,,,,
+몽,replace,zone.haze,,,test,,base,,,,,,,,,,,,haze.radius=6;haze.life=8;haze.miss=0.5;haze.max=1
+삿,replace,single.unblockable,,,test,,base,,,,,,,,,,,,
+상,replace,intercept.single,,,test,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20
+송,replace,intercept.barrage,,,test,,base,,,,,,,,,,,,intercept.max=6
+온,replace,path.purge,,,test,,base,,,,,,,,,,,,
