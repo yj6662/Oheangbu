@@ -29,7 +29,8 @@ LOBBY=Assets/_Project/Art/UI/Loading270/W_Compact_Lobby.unity
 CONTENT=Assets/_Project/Scenes/World/Main/WorldContent_Main.asset
 EDLOG="$LOCALAPPDATA/Unity/Editor/Editor.log"
 RETRY=${RETRY:-2}
-MEM_LINE=${MEM_LINE:-23.5}
+MEM_LINE=${MEM_LINE:-26}          # Unity 전용 메모리 선(GB). 23.5는 Play 한 번 뒤 바로 닿았다(00:46, 23.16 → 3테이크 23.95) → 26 + 아래 여유 RAM 바닥
+MEM_FREE_MIN=${MEM_FREE_MIN:-3.0}  # 여유 RAM 바닥(GB) — resource_guard 위험선 3 GB(옛 shoot309는 3.5)
 REFUSED='refused|no held Play|no ground under|no mum service|^no session|REFUSED to close|has unsaved changes'
 
 ts(){ date +%H:%M:%S; }
@@ -106,7 +107,10 @@ if [ "$1" = "--inner" ]; then
   for take in $takes; do
     [ -f $D/ABORT ] && { result=8; break; }
     python $PW mem $MEM_LINE > $D/mem_$take.txt 2>&1; mc=$?; tail -1 $D/mem_$take.txt
+    if [ $mc = 4 ]; then echo "no Unity.exe before $take - editor gone"; event "$label" editor-gone "before $take"; result=3; break; fi
     if [ $mc = 1 ]; then echo "memory line reached before $take"; event "$label" memory-stop "before $take"; result=2; break; fi
+    free=$(grep -o 'RAM free [0-9.]*' $D/mem_$take.txt | tail -1 | awk '{print $3}')
+    if [ -n "$free" ] && awk -v f="$free" -v m="$MEM_FREE_MIN" 'BEGIN{exit !(f+0 < m+0)}'; then echo "free RAM $free GB < $MEM_FREE_MIN GB before $take"; event "$label" memory-stop "free RAM $free GB before $take"; result=2; break; fi
     plan=$(python $T/takes.py --plan $take) || { echo "no plan for $take"; result=1; continue; }
     spec=$(echo "$plan" | sed -n 's/^SPEC //p'); limit=$(echo "$plan" | sed -n 's/^LIMIT //p')
     mum=$(echo "$plan" | grep -c "^MUM 1"); echo "$plan" | grep -q "^TBD " && echo "   note: $(echo "$plan" | grep '^TBD ')"
@@ -209,8 +213,10 @@ if [ -z "$NOLIFE" ]; then
   [ "$lrc" = 0 ] || { echo "editor restart failed (life.ps1 exit $lrc: 2 = not closed, a dialog may be open; 3 = not up after 600 s)"; event "$label" restart-failed "life.ps1 exit $lrc"; exit 7; }
   i=$(idle); if [ "${i:-0}" -lt 120 ]; then echo "USER CAME BACK during the restart (idle $i s) - Play not opened"; exit 10; fi
 fi
+# 방화벽 알림 대화상자(PickerHost FirewallNotificationDialogServer)가 재시작 직후 전경을 차지해 입력을 막는다(2026-10-12 00:43) → 닫고 Unity를 앞으로
+powershell -NoProfile -ExecutionPolicy Bypass -File $T/focus_unity.ps1 45 | tee -a $D/summary.txt; frc=${PIPESTATUS[0]}
 w=$(fgwin); echo "[$label] foreground: $w"
-if [ -z "$FG_ANY" ] && [[ "$w" != Oheangbu\ -* ]]; then echo "foreground window is not Unity ($w) - Play not opened"; exit 10; fi
+if [ -z "$FG_ANY" ] && [ "$frc" != 0 ]; then echo "foreground window is not Unity ($w) - Play not opened"; exit 10; fi
 bash $OPS/mem.sh | tee -a $D/summary.txt
 e=$(grep -c "error CS" "$EDLOG"); if [ "$e" != 0 ]; then echo "error CS $e after the restart - Play not opened"; exit 6; fi
 python $SLOT record | head -3
