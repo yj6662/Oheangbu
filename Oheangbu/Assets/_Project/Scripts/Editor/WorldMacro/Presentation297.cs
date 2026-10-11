@@ -322,7 +322,6 @@ namespace Oheangbu.EditorTools.WorldMacro
             public float trackSmoothing = .35f;
             public bool board;                 // teleport beside the magic-stone car seat and board it after warm-up
             public bool mumUnlock;             // editor-only isolated Mum test unlock (review Play with suffix _mum295_test)
-            public string rigShot = "";        // #308: a Cinemachine shot of TrailerRig308 gives the camera (dolly on a spline, timeline-keyed)
             public bool showBody;              // #308: outside cameras show the player body and hide the first-person near arm and brush
             public float pauseAt = -1f;        // #300: pause the editor at this take time and end the film (stills are then shot on the frozen frame)
         }
@@ -340,9 +339,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (!EditorApplication.isPlaying) throw new Exception("film: Play mode only (captureFramerate)");
             if (filmRig != null) throw new Exception("A film is already running");
             spec = JsonUtility.FromJson<FilmSpec>(File.ReadAllText(specPath));
-            bool rigged = !string.IsNullOrEmpty(spec.rigShot);
-            if (!spec.followMain && !rigged && (spec.keys == null || spec.keys.Length < 2)) throw new Exception("film needs at least two keys");
-            float duration = spec.followMain ? spec.duration : rigged ? TrailerRig308.Begin(spec.rigShot, RideFor308) : spec.keys.Last().time;
+            if (!spec.followMain && (spec.keys == null || spec.keys.Length < 2)) throw new Exception("film needs at least two keys");
+            float duration = spec.followMain ? spec.duration : spec.keys.Last().time;
             if (spec.playerFeet != null && spec.playerFeet.Length == 3)
             {
                 var session = Object.FindFirstObjectByType<WorldMacroPlaytestSession>();
@@ -408,11 +406,6 @@ namespace Oheangbu.EditorTools.WorldMacro
                         fov += offset308.z;
                     }
                 }
-                else if (!string.IsNullOrEmpty(spec.rigShot))
-                {
-                    TrailerRig308.Sample(t, 1f / spec.fps, out eye, out var rigRotation, out fov);
-                    target = eye + rigRotation * Vector3.forward;
-                }
                 else
                 {
                     Sample(t, out eye, out target, out fov);
@@ -454,7 +447,6 @@ namespace Oheangbu.EditorTools.WorldMacro
             boardSeat = null;
             if (mumUnlocked) { mumUnlocked = false; try { var ms = Object.FindFirstObjectByType<WorldMacroPlaytestSession>(); if (ms != null && ms.MumBridges != null) ms.MumBridges.PreviewSuppressed = false; ms?.SetMum295TestUnlock(false); } catch (Exception e) { Debug.LogException(e); } }
             Time.captureFramerate = 0;
-            TrailerRig308.End();
             foreach (var undo in bodyUndo308) { try { undo(); } catch (Exception e) { Debug.LogException(e); } }
             bodyUndo308.Clear();
             Oheangbu.App.World.Riposte301.BillboardView = null;
@@ -491,15 +483,6 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         static readonly List<Action> bodyUndo308 = new List<Action>();
-        // what a rig shot can ride on: the player, the magic-stone car, or a session actor by id
-        static Transform RideFor308(string id)
-        {
-            var s = Object.FindFirstObjectByType<WorldMacroPlaytestSession>();
-            if (id == "player") return s != null && s.Walker != null ? s.Walker.Body.transform : null;
-            if (id == "car") { var seat = Object.FindFirstObjectByType<Oheangbu.App.World.Vehicle.WorldMacroPalanquinSeat>(); return seat != null ? seat.transform : null; }
-            var a = s != null ? s.Actors.FirstOrDefault(x => x != null && x.Id == id) : null;
-            return a != null ? a.transform : null;
-        }
         static Oheangbu.App.World.Vehicle.WorldMacroPalanquinSeat boardSeat;
         static bool mumUnlocked;
         static Vector3 trackBase;
