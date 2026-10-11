@@ -2220,6 +2220,311 @@ MonoBehaviour:
     SourceHash: 3adb4079ea9992d4f37bb84c292dc6cd
     LodCount: 4
     TriangleCount: 7683
+  - Id: Demo_Relay_Hanok
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: Demo_SealedCargo
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: Demo_Relay_Supplies
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice.prefab
+    SourceHash: aeab7856724af55e1338a220f616336e
+    LodCount: 4
+    TriangleCount: 9420
+  - Id: Demo_Logging_Bundle
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_JolongtaegiBag.prefab
+    SourceHash: fdcf81da5406a093e368b9118638a5a5
+    LodCount: 4
+    TriangleCount: 9524
+  - Id: Demo_Logging_CutWood_0
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 1
+    TriangleCount: 12
+  - Id: Demo_Logging_CutWood_1
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 1
+    TriangleCount: 12
+  - Id: Demo_Logging_CutWood_2
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodLog.prefab
+    SourceHash: 2c0d06093e3eea0294eaf3958149986e
+    LodCount: 1
+    TriangleCount: 12
+  - Id: Demo_Logging_EvidenceBox
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: Demo_Logging_CacheBag
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_JolongtaegiBag.prefab
+    SourceHash: fdcf81da5406a093e368b9118638a5a5
+    LodCount: 4
+    TriangleCount: 9524
+  - Id: Demo_Logging_OwnedStorehouse
+    SourcePath: Assets/_Project/Art/World/WorldMacro/Playtest/VisualCorridor/HouseLOD/House2_LOD1.fbx
+    SourceHash: dcfb0804b57867795af68635a103a588
+    LodCount: 1
+    TriangleCount: 23443
+  - Id: ExistingInspectionDesk
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: ExistingGuesthouseHeadquarters
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: ExistingGuesthouseSupplies
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice.prefab
+    SourceHash: aeab7856724af55e1338a220f616336e
+    LodCount: 4
+    TriangleCount: 9420
+  - Id: Stonework_0
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: Stonework_1
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: Stonework_2
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: Stonework_3
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_CW.prefab
+    SourceHash: eb5d56660a9938bd0c5e53d48609305e
+    LodCount: 1
+    TriangleCount: 120
+  - Id: KCISA_WrittenEvidence_1
+    SourcePath: Assets/Korea_TreasureProps/Prefabs/SM_029_Wooden_Scroll.prefab
+    SourceHash: 4a15695c6d6d1fa1a2cc319c82222ce5
+    LodCount: 1
+    TriangleCount: 5388
+  - Id: KCISA_SanctuaryRock_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_4
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_5
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_6
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_7
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_8
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_9
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_10
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_11
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_12
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_13
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_14
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SanctuaryRock_15
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_K.prefab
+    SourceHash: eca5129df24e0d60458492134a8f5077
+    LodCount: 2
+    TriangleCount: 3018
+  - Id: KCISA_SacredElm
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_UlmusDavidiana_Summer_2.prefab
+    SourceHash: 16dc32b5875d90ba2a056508a0c28c8c
+    LodCount: 4
+    TriangleCount: 20458
+  - Id: Stone_0_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_0_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_0_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_0_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_0_4
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_0_5
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_1_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_1_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_1_2
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_1_3
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_2_0
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: Stone_2_1
+    SourcePath: Assets/SeyeonjeongPavilion/Prefabs/SM_Rock_L.prefab
+    SourceHash: 3a7148d87ec81a07187ce307f332ae93
+    LodCount: 2
+    TriangleCount: 900
+  - Id: KCISA_HangingLantern
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_R_Lantern_1.prefab
+    SourceHash: f48559c8b7acce463e63defdf7ad1e5c
+    LodCount: 1
+    TriangleCount: 460
+  - Id: Authored_GranitePagoda
+    SourcePath: Assets/_Project/Art/World/WorldCompact/KcisaReplacement/Models/StonePagoda.fbx
+    SourceHash: a3529c962d849a4033b746af78036c99
+    LodCount: 1
+    TriangleCount: 5580
+  - Id: Demo_Merchant_Branch
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
+  - Id: Demo_Merchant_Supplies
+    SourcePath: Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice.prefab
+    SourceHash: aeab7856724af55e1338a220f616336e
+    LodCount: 4
+    TriangleCount: 9420
+  - Id: checkpoint_1_Fence
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_Treefence.prefab
+    SourceHash: 48ec6964df2db89312c8a12b27cbd3c6
+    LodCount: 1
+    TriangleCount: 1500
+  - Id: checkpoint_1_Lantern
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_R_Lantern_1.prefab
+    SourceHash: f48559c8b7acce463e63defdf7ad1e5c
+    LodCount: 1
+    TriangleCount: 460
+  - Id: checkpoint_1_Flag
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_Flag_Wind_1.prefab
+    SourceHash: 464e3e02e690f990f0dd7381f2b53d9e
+    LodCount: 1
+    TriangleCount: 6214
+  - Id: checkpoint_1_Sign
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_R_Sign_1.prefab
+    SourceHash: d8158c1cd202331d6bf97673d601b2f4
+    LodCount: 1
+    TriangleCount: 20
+  - Id: checkpoint_2_Fence
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_Treefence.prefab
+    SourceHash: 48ec6964df2db89312c8a12b27cbd3c6
+    LodCount: 1
+    TriangleCount: 1500
+  - Id: checkpoint_2_Lantern
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_R_Lantern_1.prefab
+    SourceHash: f48559c8b7acce463e63defdf7ad1e5c
+    LodCount: 1
+    TriangleCount: 460
+  - Id: checkpoint_2_Flag
+    SourcePath: Assets/HwaseongForteressGate/Prefabs/SM_Flag_Wind_1.prefab
+    SourceHash: 464e3e02e690f990f0dd7381f2b53d9e
+    LodCount: 1
+    TriangleCount: 6214
+  - Id: checkpoint_2_Sign
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_R_Sign_1.prefab
+    SourceHash: d8158c1cd202331d6bf97673d601b2f4
+    LodCount: 1
+    TriangleCount: 20
+  - Id: InspectionDesk252
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_M_WoodenBox.prefab
+    SourceHash: 03dac6fbb5e2d78134c0a75bb63229f5
+    LodCount: 1
+    TriangleCount: 484
+  - Id: Guesthouse252
+    SourcePath: Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab
+    SourceHash: 560b53769ea9b11d0c9bfdb6e5741736
+    LodCount: 1
+    TriangleCount: 9113
   Placements:
   - Id: MineMountain_0
     SourceId: MineMountain_0
@@ -5300,6 +5605,433 @@ MonoBehaviour:
     Position: {x: 3396.0083, y: 193.72278, z: 1097.2733}
     Size: {x: 0.8, y: 0.6, z: 0.8}
     Yaw: 18
+    Solid: 0
+  - Id: Demo_Relay_Hanok
+    SourceId: Demo_Relay_Hanok
+    Group: OwnedStructures
+    Position: {x: 1908, y: 133.68079, z: 586}
+    Size: {x: 13, y: 0, z: 12}
+    Yaw: 0
+    Solid: 0
+  - Id: Demo_SealedCargo
+    SourceId: Demo_SealedCargo
+    Group: OwnedStructures
+    Position: {x: 1921, y: 133.44426, z: 582}
+    Size: {x: 1.1, y: 1.2, z: 1}
+    Yaw: 8
+    Solid: 1
+  - Id: Demo_Relay_Supplies
+    SourceId: Demo_Relay_Supplies
+    Group: OwnedStructures
+    Position: {x: 1921, y: 133.41382, z: 580}
+    Size: {x: 1.1, y: 1.2, z: 1}
+    Yaw: -15
+    Solid: 1
+  - Id: Demo_Logging_Bundle
+    SourceId: Demo_Logging_Bundle
+    Group: OwnedStructures
+    Position: {x: 1979, y: 146.819, z: 1329}
+    Size: {x: 0.7, y: 0.6, z: 0.6}
+    Yaw: 0
+    Solid: 0
+  - Id: Demo_Logging_CutWood_0
+    SourceId: Demo_Logging_CutWood_0
+    Group: OwnedStructures
+    Position: {x: 1985, y: 146.82997, z: 1363}
+    Size: {x: 1.2, y: 1, z: 3.5}
+    Yaw: 35
+    Solid: 1
+  - Id: Demo_Logging_CutWood_1
+    SourceId: Demo_Logging_CutWood_1
+    Group: OwnedStructures
+    Position: {x: 1985.6, y: 146.82162, z: 1363.4}
+    Size: {x: 1.2, y: 1, z: 3.5}
+    Yaw: 42
+    Solid: 1
+  - Id: Demo_Logging_CutWood_2
+    SourceId: Demo_Logging_CutWood_2
+    Group: OwnedStructures
+    Position: {x: 1986.2, y: 146.8133, z: 1363.8}
+    Size: {x: 1.2, y: 1, z: 3.5}
+    Yaw: 49
+    Solid: 1
+  - Id: Demo_Logging_EvidenceBox
+    SourceId: Demo_Logging_EvidenceBox
+    Group: OwnedStructures
+    Position: {x: 1974, y: 146.5835, z: 1365}
+    Size: {x: 0.7, y: 0.65, z: 0.7}
+    Yaw: 20
+    Solid: 1
+  - Id: Demo_Logging_CacheBag
+    SourceId: Demo_Logging_CacheBag
+    Group: OwnedStructures
+    Position: {x: 1946, y: 148.26541, z: 1390}
+    Size: {x: 0.7, y: 0.6, z: 0.6}
+    Yaw: 0
+    Solid: 0
+  - Id: Demo_Logging_OwnedStorehouse
+    SourceId: Demo_Logging_OwnedStorehouse
+    Group: OwnedStructures
+    Position: {x: 1992, y: 146.79298, z: 1374}
+    Size: {x: 10, y: 0, z: 8}
+    Yaw: 185
+    Solid: 1
+  - Id: ExistingInspectionDesk
+    SourceId: ExistingInspectionDesk
+    Group: cargo_delivery
+    Position: {x: 219.89459, y: 250.64398, z: -1312.4186}
+    Size: {x: 0.75, y: 0.8, z: 0.75}
+    Yaw: 75.24062
+    Solid: 1
+  - Id: ExistingGuesthouseHeadquarters
+    SourceId: ExistingGuesthouseHeadquarters
+    Group: cargo_delivery
+    Position: {x: 225.27696, y: 251.07216, z: -1302.6243}
+    Size: {x: 12, y: 0, z: 10}
+    Yaw: 75.24062
+    Solid: 0
+  - Id: ExistingGuesthouseSupplies
+    SourceId: ExistingGuesthouseSupplies
+    Group: cargo_delivery
+    Position: {x: 219.4615, y: 250.66666, z: -1310.7747}
+    Size: {x: 0.8, y: 1, z: 0.8}
+    Yaw: 75.24062
+    Solid: 0
+  - Id: Stonework_0
+    SourceId: Stonework_0
+    Group: KCISA_Rampart
+    Position: {x: -1814.595, y: 111.69327, z: -123.90848}
+    Size: {x: 6.238278, y: 0, z: 0}
+    Yaw: 412.52383
+    Solid: 0
+  - Id: Stonework_1
+    SourceId: Stonework_1
+    Group: KCISA_Rampart
+    Position: {x: -1818.2799, y: 111.69327, z: -119.10194}
+    Size: {x: 6.238278, y: 0, z: 0}
+    Yaw: 412.52383
+    Solid: 0
+  - Id: Stonework_2
+    SourceId: Stonework_2
+    Group: KCISA_Rampart
+    Position: {x: -1821.965, y: 111.69327, z: -114.2954}
+    Size: {x: 6.238278, y: 0, z: 0}
+    Yaw: 412.52383
+    Solid: 0
+  - Id: Stonework_3
+    SourceId: Stonework_3
+    Group: KCISA_Rampart
+    Position: {x: -1825.6499, y: 111.69327, z: -109.48886}
+    Size: {x: 6.238278, y: 0, z: 0}
+    Yaw: 412.52383
+    Solid: 0
+  - Id: KCISA_WrittenEvidence_1
+    SourceId: KCISA_WrittenEvidence_1
+    Group: Visual
+    Position: {x: -401.39783, y: 72.9589, z: -781.89734}
+    Size: {x: 0.65, y: 0.25, z: 0.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_0
+    SourceId: KCISA_SanctuaryRock_0
+    Group: Dragon
+    Position: {x: 1148.3832, y: 198.51996, z: 1269.1428}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_1
+    SourceId: KCISA_SanctuaryRock_1
+    Group: Dragon
+    Position: {x: 1145.9474, y: 199.36078, z: 1281.3887}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_2
+    SourceId: KCISA_SanctuaryRock_2
+    Group: Dragon
+    Position: {x: 1139.0106, y: 200.50824, z: 1291.7703}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_3
+    SourceId: KCISA_SanctuaryRock_3
+    Group: Dragon
+    Position: {x: 1128.629, y: 201.52887, z: 1298.707}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_4
+    SourceId: KCISA_SanctuaryRock_4
+    Group: Dragon
+    Position: {x: 1116.3832, y: 201.49342, z: 1301.1428}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_5
+    SourceId: KCISA_SanctuaryRock_5
+    Group: Dragon
+    Position: {x: 1104.1373, y: 200.85226, z: 1298.707}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_6
+    SourceId: KCISA_SanctuaryRock_6
+    Group: Dragon
+    Position: {x: 1093.7557, y: 199.93022, z: 1291.7703}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_7
+    SourceId: KCISA_SanctuaryRock_7
+    Group: Dragon
+    Position: {x: 1086.819, y: 199.3316, z: 1281.3887}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_8
+    SourceId: KCISA_SanctuaryRock_8
+    Group: Dragon
+    Position: {x: 1084.3832, y: 199.34773, z: 1269.1428}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_9
+    SourceId: KCISA_SanctuaryRock_9
+    Group: Dragon
+    Position: {x: 1086.819, y: 200.03265, z: 1256.897}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_10
+    SourceId: KCISA_SanctuaryRock_10
+    Group: Dragon
+    Position: {x: 1093.7557, y: 200.4011, z: 1246.5154}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_11
+    SourceId: KCISA_SanctuaryRock_11
+    Group: Dragon
+    Position: {x: 1104.1373, y: 200.1188, z: 1239.5786}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_12
+    SourceId: KCISA_SanctuaryRock_12
+    Group: Dragon
+    Position: {x: 1116.3832, y: 199.4044, z: 1237.1428}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_13
+    SourceId: KCISA_SanctuaryRock_13
+    Group: Dragon
+    Position: {x: 1128.629, y: 198.58331, z: 1239.5786}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_14
+    SourceId: KCISA_SanctuaryRock_14
+    Group: Dragon
+    Position: {x: 1139.0106, y: 198.3186, z: 1246.5154}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SanctuaryRock_15
+    SourceId: KCISA_SanctuaryRock_15
+    Group: Dragon
+    Position: {x: 1145.9474, y: 198.37234, z: 1256.897}
+    Size: {x: 3.5, y: 3.4, z: 3.5}
+    Yaw: 0
+    Solid: 0
+  - Id: KCISA_SacredElm
+    SourceId: KCISA_SacredElm
+    Group: Tree
+    Position: {x: 1606.7672, y: 174.25487, z: 1507.084}
+    Size: {x: 0, y: 27, z: 0}
+    Yaw: 0
+    Solid: 0
+  - Id: Stone_0_0
+    SourceId: Stone_0_0
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.01782, y: 140.64052, z: -1565.2671}
+    Size: {x: 0.58, y: 0.58, z: 0.58}
+    Yaw: 0
+    Solid: 0
+  - Id: Stone_0_1
+    SourceId: Stone_0_1
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.67798, y: 140.64052, z: -1565.0104}
+    Size: {x: 0.58, y: 0.58, z: 0.58}
+    Yaw: 73
+    Solid: 0
+  - Id: Stone_0_2
+    SourceId: Stone_0_2
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.36472, y: 140.64052, z: -1565.6456}
+    Size: {x: 0.58, y: 0.58, z: 0.58}
+    Yaw: 146
+    Solid: 0
+  - Id: Stone_0_3
+    SourceId: Stone_0_3
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.1665, y: 140.64052, z: -1564.9656}
+    Size: {x: 0.58, y: 0.58, z: 0.58}
+    Yaw: 219
+    Solid: 0
+  - Id: Stone_0_4
+    SourceId: Stone_0_4
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.77206, y: 140.64052, z: -1565.3331}
+    Size: {x: 0.58, y: 0.58, z: 0.58}
+    Yaw: 292
+    Solid: 0
+  - Id: Stone_0_5
+    SourceId: Stone_0_5
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.07733, y: 140.64052, z: -1565.4713}
+    Size: {x: 0.58, y: 0.58, z: 0.58}
+    Yaw: 365
+    Solid: 0
+  - Id: Stone_1_0
+    SourceId: Stone_1_0
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.14835, y: 140.88052, z: -1565.14}
+    Size: {x: 0.5, y: 0.5, z: 0.5}
+    Yaw: 0
+    Solid: 0
+  - Id: Stone_1_1
+    SourceId: Stone_1_1
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.66763, y: 140.88052, z: -1565.1923}
+    Size: {x: 0.5, y: 0.5, z: 0.5}
+    Yaw: 73
+    Solid: 0
+  - Id: Stone_1_2
+    SourceId: Stone_1_2
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.24945, y: 140.88052, z: -1565.5045}
+    Size: {x: 0.5, y: 0.5, z: 0.5}
+    Yaw: 146
+    Solid: 0
+  - Id: Stone_1_3
+    SourceId: Stone_1_3
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.3468, y: 140.88052, z: -1564.9918}
+    Size: {x: 0.5, y: 0.5, z: 0.5}
+    Yaw: 219
+    Solid: 0
+  - Id: Stone_2_0
+    SourceId: Stone_2_0
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.29202, y: 141.12051, z: -1565.1215}
+    Size: {x: 0.42, y: 0.42, z: 0.42}
+    Yaw: 0
+    Solid: 0
+  - Id: Stone_2_1
+    SourceId: Stone_2_1
+    Group: KCISA_SeonghwangCairn
+    Position: {x: -331.57422, y: 141.12051, z: -1565.303}
+    Size: {x: 0.42, y: 0.42, z: 0.42}
+    Yaw: 73
+    Solid: 0
+  - Id: KCISA_HangingLantern
+    SourceId: KCISA_HangingLantern
+    Group: Warm_Porch_Lantern
+    Position: {x: 906.7335, y: 135.62411, z: 236.23218}
+    Size: {x: 0.42, y: 1.1, z: 0.42}
+    Yaw: 180
+    Solid: 0
+  - Id: Authored_GranitePagoda
+    SourceId: Authored_GranitePagoda
+    Group: Courtyard_Three_Storey_Stone_Pagoda
+    Position: {x: -1007.89514, y: 189.474, z: 2600.8208}
+    Size: {x: 3.8, y: 6.6, z: 3.8}
+    Yaw: 180
+    Solid: 0
+  - Id: Demo_Merchant_Branch
+    SourceId: Demo_Merchant_Branch
+    Group: OwnedStructures
+    Position: {x: 755.5167, y: 238.0268, z: 6.153833}
+    Size: {x: 11, y: 0, z: 10}
+    Yaw: 20.954727
+    Solid: 0
+  - Id: Demo_Merchant_Supplies
+    SourceId: Demo_Merchant_Supplies
+    Group: OwnedStructures
+    Position: {x: 752.7448, y: 238.0268, z: 11.498622}
+    Size: {x: 1.1, y: 1.2, z: 1}
+    Yaw: 20
+    Solid: 1
+  - Id: checkpoint_1_Fence
+    SourceId: checkpoint_1_Fence
+    Group: Demo_CheckpointDressing
+    Position: {x: 598.4156, y: 259.1962, z: -21.134277}
+    Size: {x: 4.5, y: 0, z: 0.4}
+    Yaw: 284.85358
+    Solid: 0
+  - Id: checkpoint_1_Lantern
+    SourceId: checkpoint_1_Lantern
+    Group: Demo_CheckpointDressing
+    Position: {x: 600.5223, y: 257.18552, z: -21.38263}
+    Size: {x: 0.9, y: 2.2, z: 0.9}
+    Yaw: 194.85359
+    Solid: 0
+  - Id: checkpoint_1_Flag
+    SourceId: checkpoint_1_Flag
+    Group: Demo_CheckpointDressing
+    Position: {x: 601.5339, y: 261.1868, z: -16.788422}
+    Size: {x: 0, y: 4.5, z: 0}
+    Yaw: 194.85359
+    Solid: 0
+  - Id: checkpoint_1_Sign
+    SourceId: checkpoint_1_Sign
+    Group: Demo_CheckpointDressing
+    Position: {x: 596.8173, y: 255.39058, z: -15.847961}
+    Size: {x: 0.9, y: 1.6, z: 0.9}
+    Yaw: 374.85358
+    Solid: 0
+  - Id: checkpoint_2_Fence
+    SourceId: checkpoint_2_Fence
+    Group: Demo_CheckpointDressing
+    Position: {x: 395.99603, y: 173.182, z: -1026.9263}
+    Size: {x: 4.5, y: 0, z: 0.4}
+    Yaw: 291.64136
+    Solid: 0
+  - Id: checkpoint_2_Lantern
+    SourceId: checkpoint_2_Lantern
+    Group: Demo_CheckpointDressing
+    Position: {x: 398.05865, y: 173.14336, z: -1027.4219}
+    Size: {x: 0.9, y: 2.2, z: 0.9}
+    Yaw: 201.64137
+    Solid: 0
+  - Id: checkpoint_2_Flag
+    SourceId: checkpoint_2_Flag
+    Group: Demo_CheckpointDressing
+    Position: {x: 399.60608, y: 172.65833, z: -1022.9794}
+    Size: {x: 0, y: 4.5, z: 0}
+    Yaw: 201.64137
+    Solid: 0
+  - Id: checkpoint_2_Sign
+    SourceId: checkpoint_2_Sign
+    Group: Demo_CheckpointDressing
+    Position: {x: 395.0338, y: 172.82648, z: -1021.488}
+    Size: {x: 0.9, y: 1.6, z: 0.9}
+    Yaw: 381.64136
+    Solid: 0
+  - Id: InspectionDesk252
+    SourceId: InspectionDesk252
+    Group: cargo_delivery
+    Position: {x: 1822.4459, y: 44.34861, z: 2325.8325}
+    Size: {x: 1, y: 0.85, z: 0.75}
+    Yaw: 311.18668
+    Solid: 1
+  - Id: Guesthouse252
+    SourceId: Guesthouse252
+    Group: cargo_delivery
+    Position: {x: 1830.5363, y: 44.34861, z: 2332.041}
+    Size: {x: 12, y: 0, z: 10}
+    Yaw: 311.18668
     Solid: 0
   Views:
   - Id: mine_exit

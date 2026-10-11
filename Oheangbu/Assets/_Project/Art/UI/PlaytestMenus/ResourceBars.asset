@@ -24,9 +24,15 @@ MonoBehaviour:
   Paper: {r: 0.969, g: 0.945, b: 0.894, a: 0.9}
   MaximumDangerAlpha: 0.24
   DangerBeginsAtHp: 0.35
+  InteractionLetterHeight: 0.22
+  InteractionLetterOffset: 0.16
+  InteractionOutlinePixels: 2.2
+  InteractionOutlineColor: {r: 0.83, g: 0.75, b: 0.53, a: 1}
+  InteractionLetterColor: {r: 0.97, g: 0.95, b: 0.89, a: 1}
   HpPosition: {x: 86, y: 96}
   HpSize: {x: 280, y: 22}
   BottlePosition: {x: 58, y: 136}
   BottleSize: {x: 60, y: 108}
   ReticleSize: {x: 44, y: 44}
   PromptSize: {x: 780, y: 112}
+  Style304: {fileID: 11400000, guid: 029a5506ca9e72e4c86a5cf3bb88989d, type: 2}
