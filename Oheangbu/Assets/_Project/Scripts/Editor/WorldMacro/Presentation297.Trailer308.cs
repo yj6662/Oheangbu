@@ -488,6 +488,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             settling308 = false;
             state?.commits.Add("settle " + (quiet ? "quiet" : "cap") + " after " + (now - settleStart308).ToString("F1", CultureInfo.InvariantCulture) + " s, loaders " + settleLoaders308.Length
                 + (capped && !quiet ? " (WARNING loader still busy: scenes may pop in during the take)" : ""));
+            // 2026-10-12: 먼 자리로 순간 이동하면 강토 씬이 올라오기 전에 떨어져 폐광(시작점)에서 부활한 채 찍혔다(R2 p_walk · p_cliffway · p_cheolong) → 씬이 자리 잡은 뒤 같은 자리로 다시 놓는다
+            if (spec != null && spec.playerFeet != null && spec.playerFeet.Length == 3)
+            {
+                var s2 = UnityEngine.Object.FindFirstObjectByType<WorldMacroPlaytestSession>();
+                if (s2 != null)
+                {
+                    try { s2.Teleport(new Vector3(spec.playerFeet[0], spec.playerFeet[1], spec.playerFeet[2]), spec.playerYaw); state?.commits.Add("settle re-teleport to (" + spec.playerFeet[0].ToString("F1", CultureInfo.InvariantCulture) + ", " + spec.playerFeet[1].ToString("F1", CultureInfo.InvariantCulture) + ", " + spec.playerFeet[2].ToString("F1", CultureInfo.InvariantCulture) + ") yaw " + spec.playerYaw.ToString("F0", CultureInfo.InvariantCulture)); }
+                    catch (Exception ex) { state?.commits.Add("settle re-teleport failed: " + ex.Message); }
+                }
+            }
             return true;
         }
 

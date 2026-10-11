@@ -138,8 +138,25 @@ if [ "$1" = "--inner" ]; then
       if [ -n "$pre_fail" ]; then
         echo "   attempt $attempt of $((RETRY + 1)) FAIL: PRE refused ($pre_fail) $(ts)"; event "$label" pre-refused "$take attempt $attempt: $pre_fail"; continue
       fi
+      # PRE hold-teleport 의 스냅 결과("teleported to (x, y, z)")와 명령의 yaw 를 명세 사본의 playerFeet/playerYaw 로 — 정착 뒤 C# 이 같은 자리로 다시 놓는다
+      specrun=$spec
+      tp=$(cat $D/pre_${take}_${attempt}_1.txt 2>/dev/null | grep -ao "teleported to ([-0-9., ]*)" | head -1)
+      pre1=$(echo "$plan" | sed -n 's/^PRE //p' | head -1)
+      if [ -n "$tp" ] && [[ "$pre1" == *hold-teleport:* ]]; then
+        specrun=${spec%.json}.run.json
+        python - "$spec" "$specrun" "$tp" "$pre1" <<'PY' | sed 's/^/   /'
+import json, re, sys
+spec, out, tp, pre = sys.argv[1:5]
+d = json.load(open(spec, encoding='utf-8'))
+xyz = [float(v) for v in re.findall(r'[-0-9.]+', tp.split('(')[1])]
+yaw = float(pre.split('hold-teleport:')[1].split(',')[-1])
+d['playerFeet'] = [round(v, 3) for v in xyz]; d['playerYaw'] = round(yaw, 2)
+json.dump(d, open(out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+print('run spec: playerFeet %s yaw %.0f (re-applied after settle)' % (d['playerFeet'], yaw))
+PY
+      fi
       sleep 2
-      python $T/filmwait308.py "$spec" --limit $limit > $D/${take}_a$attempt.txt 2>&1; fc=$?
+      python $T/filmwait308.py "$specrun" --limit $limit > $D/${take}_a$attempt.txt 2>&1; fc=$?
       echo "   film: $(tail -1 $D/${take}_a$attempt.txt) (exit $fc)"
       if grep -aq "Unconsumed polish command" $D/${take}_a$attempt.txt; then echo "[$(ts)] QUEUE CONFLICT during the film - stopping"; touch $D/ABORT; break; fi
       extra=""

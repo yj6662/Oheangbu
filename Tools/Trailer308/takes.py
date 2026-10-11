@@ -55,7 +55,7 @@ TABLE = {
     'p_hook': (8.0, 'hook'), 'p_hook_b': (8.0, 'hook'), 'p_fight': (11.0, 'fight'),
     'p_burst_1': (6.0, 'burst'), 'p_burst_2': (6.0, 'burst'), 'p_burst_3': (6.0, 'burst'), 'p_burst_4': (6.0, 'burst'),
     'p_burst_giant': (6.0, 'giant'), 'p_mum': (6.0, 'mum'), 'p_mum_long': (14.0, 'mum'),
-    'p_walk': (4.0, 'walk'), 'p_village': (6.0, 'walk'), 'p_jeokro': (6.0, 'walk'), 'p_cheolong': (6.0, 'walk'), 'p_cliffway': (7.0, 'walk'),
+    'p_walk': (4.0, 'world'), 'p_village': (6.0, 'walk'), 'p_jeokro': (6.0, 'walk'), 'p_cheolong': (6.0, 'walk'), 'p_cliffway': (7.0, 'world'),   # 잔도 둘은 길을 따라가는 카메라(어깨 카메라가 암벽 안에 들어갔다)
     'p_fight2': (11.0, 'fight'), 'p_car_probe': (6.0, 'car'), 'p_car': (10.0, 'car'),
     'w_reveal': (6.0, 'world'), 'w_still': (7.0, 'world'), 'w_giant': (8.0, 'world'), 'w_capital': (6.0, 'world'),
 }
@@ -313,6 +313,20 @@ def cliff_path(site):
     return _cliff
 
 
+def cliff_point(site, station):
+    """[x, y, z] and heading at arc length `station` along the cliff path (clamped)."""
+    path = cliff_path(site)
+    s0 = [0.0]
+    for a, b in zip(path, path[1:]): s0.append(s0[-1] + math.dist(a, b))
+    station = max(0.0, min(station, s0[-1] - 0.01))
+    for i in range(len(path) - 1):
+        if s0[i] <= station <= s0[i + 1]:
+            u = 0.0 if s0[i + 1] == s0[i] else (station - s0[i]) / (s0[i + 1] - s0[i])
+            a, b = path[i], path[i + 1]
+            return [a[k] + (b[k] - a[k]) * u for k in range(3)], yaw_of(b[0] - a[0], b[2] - a[2])
+    return list(path[-1]), 0.0
+
+
 def cliff_window(site, which, walk_m=14.0, margin=10.0):
     """(feet, yaw, station) of the straightest walk_m stretch, away from the rail gaps; 'auto2' = the next best one at least 60 m away"""
     path = cliff_path(site)
@@ -513,11 +527,26 @@ class Build:
 
     # -- camera paths --------------------------------------------------------------------------------------------
     def world_keys(self, name, cfg, duration):
+        if name in ('p_walk', 'p_cliffway'):
+            # 잔도: 길을 따라 눈높이로 미끄러지는 카메라(1인칭 걷기와 같은 그림). R2의 어깨 카메라는 암벽 안에 들어가 어두운 굴만 찍혔다.
+            site = self.site(cfg['site'])
+            w = cliff_window(site, cfg.get('station', 'auto'))
+            if w is None: raise SystemExit(name + ': cliffway layout.json not readable')
+            feet, yaw0, st = w
+            travel = min(22.0, 3.2 * duration)
+            k = []
+            for i, (tt, d) in enumerate(((0.0, 0.0), (duration * 0.5, travel * 0.5), (duration, travel))):
+                pnt, head = cliff_point(site, st + d)
+                ahead, _ = cliff_point(site, st + d + 10.0)
+                k.append((tt, [pnt[0], pnt[1] + 1.65, pnt[2]], [ahead[0], ahead[1] + 1.3, ahead[2]], 58))
+            note(name, 'cliff camera: station %.0f m, %.0f m along the path at eye height' % (st, travel))
+            return k, feet, yaw0, True
         if name == 'w_reveal':
+            # 갱구에서 밖으로 날아오르며 산수를 여는 카메라(R2: 서쪽으로 가서 암벽 안에 들어갔다 → 갱구가 향한 북동으로, 올라가며)
             m = self.pos(name, cfg['from']); tx, tz = cfg['toward_xz']
             ux, uz = unit_xz((m[0], m[2]), (tx, tz))
             def at(d, h): return [m[0] + ux * d, m[1] + h, m[2] + uz * d]
-            keys = [(0.0, at(0, 1.8), at(60, -4), 50), (2.0, at(10, 2.2), at(90, -10), 46), (4.4, at(55, 1.0), at(190, -25), 40), (duration, at(85, 0.0), at(260, -35), 38)]
+            keys = [(0.0, at(0, 1.8), at(40, 0.5), 52), (2.0, at(8, 2.6), at(70, 0.0), 48), (4.4, at(28, 7.0), at(130, -2.0), 42), (duration, at(46, 12.0), at(180, -4.0), 40)]
             return keys, m, yaw_of(ux, uz), False
         if name == 'w_still':
             y = self.site(cfg['yard']); gate = self.pos(name, cfg['player'])
@@ -527,10 +556,11 @@ class Build:
         if name == 'w_giant':
             gfeet, gyaw, scale, head, _ = self.giant_cfg(); gate = self.pos(name, cfg['player'])
             gx, gy, gz = gfeet
-            keys = [(0.0, [gx + 3, gy + 1.2, gz - 52], [gx, gy + head * .45, gz], 44),
-                    (2.4, [gx + 2, gy + 1.0, gz - 36], [gx, gy + head * .6, gz], 40),
-                    (4.4, [gx - 1, gy + 1.4, gz - 20], [gx, gy + head * .85, gz], 36),
-                    (duration, [gx - 2, gy + 1.6, gz - 13], [gx, gy + head * 1.02, gz], 34)]
+            # R2: 안문(z 3490)을 뚫고 지나갔고 끝에 머리가 잘렸다 → 안문 안쪽(gz-34)에서 시작, 끝은 18 m 앞에서 머리 위를 올려다본다
+            keys = [(0.0, [gx + 3, gy + 1.1, gz - 34], [gx, gy + head * .40, gz], 46),
+                    (2.4, [gx + 2, gy + 1.0, gz - 28], [gx, gy + head * .60, gz], 42),
+                    (4.4, [gx - 1, gy + 1.3, gz - 22], [gx, gy + head * .90, gz], 40),
+                    (duration, [gx - 2, gy + 1.5, gz - 18], [gx, gy + head * 1.08, gz], 40)]
             note(name, 'low angle rush toward head height %.1f m; shoot.sh regenerates with --giant-head from the `guardian:` reply' % head)
             return keys, gate, 0.0, False
         if name == 'w_capital':
