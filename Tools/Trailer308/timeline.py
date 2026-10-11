@@ -74,7 +74,7 @@ M_MUM_CROSS = [('stream', 0.0, 20.0), ('step', 3.0, 20.0, 'water')]   # p_mum_lo
 def tl30():
     return [
         Cut('p_hook', 4.0, 1.3, 1.0, 'inkin', None, M_HOOK),   # 1.3–5.3: 적 접근 → 붓 → '나' → 적중 4.67
-        Cut('w_reveal', 3.0, 2.5),   # R7판: 날아오르는 뒤쪽 3초
+        Cut('w_reveal', 3.0, 2.9),   # R7판(높은 경로): 2.9–5.9 나무 관을 지나 산수가 열린다
         Cut('p_car', 2.5, .5, 1.0, None, None, M_CAR),
         Cut('p_walk', 1.5, 1.0, 1.0, None, None, [('step', 0.0, 20.0, 'stone'), ('wind', 0.0, 20.0)]),
         Cut('p_mum', 3.0, 1.6, 1.0, None, None, M_MUM),
@@ -105,7 +105,7 @@ def tl90():
     ]
     cuts = [
         Cut('p_hook', 5.0, .8, 1.0, 'inkin', None, M_HOOK),   # 0.8–5.8
-        Cut('w_reveal', 4.0, 1.8),
+        Cut('w_reveal', 4.0, 1.9),   # 1.9–5.9
         Cut('p_village', 3.0, 1.5, 1.0, None, None, [('step', 0.0, 20.0, 'dirt')]),   # 1.5–4.5: 초가의 불 켜진 창으로
         Cut('p_car', 6.0, .5, 1.0, None, None, M_CAR),
         Cut('w_capital', 3.0, 2.5),   # 2.5–5.5: 정문이 나무 사이로 열린다
@@ -113,7 +113,7 @@ def tl90():
         Cut('p_fight', 7.0, 1.8, 1.0, None, None, M_FIGHT),   # 1.8–8.8: '가' → '사' → 적이 덤빔(8.8 뒤 사망)
         Cut('p_mum', 4.0, .8, 1.0, None, None, M_MUM),                 # 형성: 붓 → '뭄' → 금빛 → 돌이 놓임
         Cut('p_mum_long', 4.0, 2.9, 1.0, None, None, M_MUM_CROSS),     # 건너기: 돌다리 위를 걸어 건너편으로
-        Cut('p_cheolong', 3.0, 0.0, 1.0, None, None, [('wind', 0.0, 20.0)], 'w_capital'),   # 임시: 철옹 테이크 둘 다 못 씀(건물 안) → 황경 원경(나무 사이 성문). R7 p_cheolong(문루 카메라)이 찍히면 take를 되돌린다
+        Cut('p_cheolong', 3.0, 0.0, 0.5, None, None, [('wind', 0.0, 20.0)]),   # R7 문루 카메라: 0–1.5 s 성벽 접근을 반속으로(1.6 s 뒤 카메라가 성벽을 뚫는다)
         Cut('p_cliffway', 4.0, 1.0, 1.0, None, None, [('step', 0.0, 20.0, 'wood'), ('wind', 0.0, 20.0)]),
         Cut('p_fight2', 7.0, 2.0, 1.0, None, None, M_FIGHT2),   # 2.0–9.0: '마' → 흙덩이 → '모'
         Cut('w_still', 4.0, 3.0, 1.0, None, None, [('wind', 0.0, 20.0)]),
