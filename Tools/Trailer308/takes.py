@@ -55,7 +55,7 @@ TABLE = {
     'p_hook': (8.0, 'hook'), 'p_hook_b': (8.0, 'hook'), 'p_fight': (11.0, 'fight'),
     'p_burst_1': (6.0, 'burst'), 'p_burst_2': (6.0, 'burst'), 'p_burst_3': (6.0, 'burst'), 'p_burst_4': (6.0, 'burst'),
     'p_burst_giant': (6.0, 'giant'), 'p_mum': (6.0, 'mum'), 'p_mum_long': (14.0, 'mum'),
-    'p_walk': (4.0, 'world'), 'p_village': (6.0, 'walk'), 'p_jeokro': (6.0, 'walk'), 'p_cheolong': (6.0, 'walk'), 'p_cliffway': (7.0, 'world'),   # 잔도 둘은 길을 따라가는 카메라(어깨 카메라가 암벽 안에 들어갔다)
+    'p_walk': (4.0, 'world'), 'p_village': (6.0, 'walk'), 'p_jeokro': (6.0, 'walk'), 'p_cheolong': (6.0, 'world'), 'p_cliffway': (7.0, 'world'),   # 잔도 둘은 길을 따라가는 카메라(어깨 카메라가 암벽 안에 들어갔다)
     'p_fight2': (11.0, 'fight'), 'p_car_probe': (6.0, 'car'), 'p_car': (10.0, 'car'),
     'w_reveal': (6.0, 'world'), 'w_still': (7.0, 'world'), 'w_giant': (8.0, 'world'), 'w_capital': (6.0, 'world'),
 }
@@ -546,7 +546,8 @@ class Build:
             m = self.pos(name, cfg['from']); tx, tz = cfg['toward_xz']
             ux, uz = unit_xz((m[0], m[2]), (tx, tz))
             def at(d, h): return [m[0] + ux * d, m[1] + h, m[2] + uz * d]
-            keys = [(0.0, at(0, 1.8), at(40, 0.5), 52), (2.0, at(8, 2.6), at(70, 0.0), 48), (4.4, at(28, 7.0), at(130, -2.0), 42), (duration, at(46, 12.0), at(180, -4.0), 40)]
+            # R5: d 20–30 m에서 바위·나무 관을 뚫었다 → 더 높이 날아오르며(2.6 → 9 → 16 → 22 m) 멀리 본다
+            keys = [(0.0, at(0, 2.0), at(40, 1.0), 52), (1.6, at(6, 4.5), at(80, 1.0), 48), (3.8, at(22, 12.0), at(150, -1.0), 42), (duration, at(40, 20.0), at(220, -4.0), 40)]
             return keys, m, yaw_of(ux, uz), False
         if name == 'w_still':
             y = self.site(cfg['yard']); gate = self.pos(name, cfg['player'])
@@ -563,7 +564,7 @@ class Build:
                     (duration, [gx - 2, gy + 1.5, gz - 18], [gx, gy + head * 1.08, gz], 40)]
             note(name, 'low angle rush toward head height %.1f m; shoot.sh regenerates with --giant-head from the `guardian:` reply' % head)
             return keys, gate, 0.0, False
-        if name == 'w_capital':
+        if name in ('w_capital', 'p_cheolong'):   # 성문·문루를 향해 들어가는 카메라(p_cheolong: 철옹 산성 정문, R6의 병기창 걷기는 건물 안이었다)
             gp = self.pos(name, cfg['gate']); px, pz = cfg['player_xz']
             x, y, z = gp
             keys = [(0.0, [x, y + 4.0, z - 100], [x, y + 8, z], 45), (3.0, [x, y + 3.6, z - 70], [x, y + 10, z + 10], 42), (duration, [x, y + 3.2, z - 42], [x, y + 12, z + 20], 40)]

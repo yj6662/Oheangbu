@@ -67,23 +67,24 @@ M_HOOK = [('windup', 1.5), ('brush', 2.7), ('cast', 4.27, '나'), ('hit', 4.67)]
 M_CAR = [('board', .3), ('roll', .9, 20.0)]   # p_car 10-12: 0.5–6.5 s 쓸 만함, 7 s부터 언덕으로 기움
 M_FIGHT = [('brush', 2.6), ('cast', 4.17, '가'), ('hit', 4.17), ('brush', 5.5), ('cast', 6.8, '사'), ('swing', 7.5), ('swing', 8.2)]   # p_fight 10-12: 8.8 s 뒤 사망·부활(폐광) — 8.8 넘기지 말 것
 M_FIGHT2 = [('brush', 2.4), ('cast', 3.73, '마'), ('hit', 4.37), ('brush', 5.5), ('cast', 6.67, '모'), ('hit', 7.3)]   # p_fight2 10-12: HIT f131
-M_MUM = [('stream', 0.0, 20.0), ('brush', .8), ('cast', 2.3, '뭄'), ('stones', 2.6), ('step', 3.6, 20.0, 'water')]
+M_MUM = [('stream', 0.0, 20.0), ('brush', .9), ('cast', 2.67, '뭄'), ('stones', 2.9), ('step', 3.2, 20.0, 'water')]   # p_mum 10-12: 획 1.07–2.4, 금빛 2.67, 돌 2.9, 5.5 s 뒤 카메라가 바위에 들어감
+M_MUM_CROSS = [('stream', 0.0, 20.0), ('step', 3.0, 20.0, 'water')]   # p_mum_long 10-12: 기존 돌다리를 3.0–6.9 s 건넘(7.2 s 뒤 사망·부활)
 
 
 def tl30():
     return [
         Cut('p_hook', 4.0, 1.3, 1.0, 'inkin', None, M_HOOK),   # 1.3–5.3: 적 접근 → 붓 → '나' → 적중 4.67
-        Cut('w_reveal', 3.0, .5),
+        Cut('w_reveal', 3.0, 2.5),   # R7판: 날아오르는 뒤쪽 3초
         Cut('p_car', 2.5, .5, 1.0, None, None, M_CAR),
         Cut('p_walk', 1.5, 1.0, 1.0, None, None, [('step', 0.0, 20.0, 'stone'), ('wind', 0.0, 20.0)]),
         Cut('p_mum', 3.0, 1.6, 1.0, None, None, M_MUM),
         Cut('p_fight', 3.0, 2.5, 1.0, None, None, M_FIGHT),   # 2.5–5.5: '가' 쓰고 초록 확정·적중
         Cut('w_still', 2.0, 3.6, 1.0, None, None, [('wind', 0.0, 20.0)]),   # 3.2 s 전은 처마 그늘
-        Cut('w_giant', 3.0, .3),
+        Cut('w_giant', 3.0, 2.0),   # 2.0–5.0: 마당에서 거인으로 급접근
         # 22–26: 획 클로즈업 → 발사 → 적중 · 회피 → 거인 앞 붓 드는 순간(p_burst_giant)에서 끊고 0.12 s 암전 → 로고(사용자 결정 표 · 거인 행)
         Cut('p_burst_1', 1.2, 1.3, 1.0, None, None, [('brush', 1.33)], 'p_burst_1'),                 # 붓 올리고 '가' 첫 획
-        Cut('p_burst_2', 1.0, 2.6, 1.0, None, None, [('cast', 2.93, '아')], 'p_burst_2'),           # 파란 '아' 확정 → 발사
-        Cut('p_burst_3', 0.9, 2.7, 1.0, None, None, [('hit', 2.83), ('cast', 2.93, '사')], 'p_burst_3'),   # '사' 칼날 적중
+        Cut('p_burst_2', 1.0, 2.1, 1.0, None, None, [('cast', 2.93, '아')], 'p_burst_2'),           # 2.1–3.1: 파란 '아' 확정 → 발사(3.1 뒤는 3인칭)
+        Cut('p_burst_3', 0.9, 2.2, 1.0, None, None, [('hit', 2.83), ('cast', 2.93, '사')], 'p_burst_3'),   # 2.2–3.1: 흰 '사' 확정 → 칼날
         Cut('burst_hold', 0.9, 2.6, 1.0, None, 'dip', [('brush', 2.67)], 'p_burst_giant'),            # 거인 앞 붓이 올라오는 순간
         Cut('black', 0.5, kind='black'),
         Cut('title', 3.5, kind='title'),
@@ -104,18 +105,19 @@ def tl90():
     ]
     cuts = [
         Cut('p_hook', 5.0, .8, 1.0, 'inkin', None, M_HOOK),   # 0.8–5.8
-        Cut('w_reveal', 4.0, .3),
-        Cut('p_village', 3.0, 1.0, 1.0, None, None, [('step', 0.0, 20.0, 'dirt')]),
+        Cut('w_reveal', 4.0, 1.8),
+        Cut('p_village', 3.0, 1.5, 1.0, None, None, [('step', 0.0, 20.0, 'dirt')]),   # 1.5–4.5: 초가의 불 켜진 창으로
         Cut('p_car', 6.0, .5, 1.0, None, None, M_CAR),
         Cut('w_capital', 3.0, 2.5),   # 2.5–5.5: 정문이 나무 사이로 열린다
         Cut('p_jeokro', 3.0, .5, 1.0, None, None, [('step', 0.0, 20.0, 'dirt'), ('wind', 0.0, 20.0)]),
         Cut('p_fight', 7.0, 1.8, 1.0, None, None, M_FIGHT),   # 1.8–8.8: '가' → '사' → 적이 덤빔(8.8 뒤 사망)
-        Cut('p_mum_long', 8.0, 1.0, 1.0, None, None, M_MUM),
-        Cut('p_cheolong', 3.0, 1.0, 1.0, None, None, [('step', 0.0, 20.0, 'stone')]),
+        Cut('p_mum', 4.0, .8, 1.0, None, None, M_MUM),                 # 형성: 붓 → '뭄' → 금빛 → 돌이 놓임
+        Cut('p_mum_long', 4.0, 2.9, 1.0, None, None, M_MUM_CROSS),     # 건너기: 돌다리 위를 걸어 건너편으로
+        Cut('p_cheolong', 3.0, 0.0, 1.0, None, None, [('wind', 0.0, 20.0)], 'w_capital'),   # 임시: 철옹 테이크 둘 다 못 씀(건물 안) → 황경 원경(나무 사이 성문). R7 p_cheolong(문루 카메라)이 찍히면 take를 되돌린다
         Cut('p_cliffway', 4.0, 1.0, 1.0, None, None, [('step', 0.0, 20.0, 'wood'), ('wind', 0.0, 20.0)]),
         Cut('p_fight2', 7.0, 2.0, 1.0, None, None, M_FIGHT2),   # 2.0–9.0: '마' → 흙덩이 → '모'
         Cut('w_still', 4.0, 3.0, 1.0, None, None, [('wind', 0.0, 20.0)]),
-        Cut('w_giant', 5.0, .3),
+        Cut('w_giant', 5.0, 1.5),   # 1.5–6.5
     ]
     for i, (dur, take, src, marks) in enumerate(bursts, 1):
         cuts.append(Cut(f'p_burst_{i}', dur, src, 1.0, None, None, marks, take))

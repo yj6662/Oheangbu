@@ -343,6 +343,16 @@
     157.1,
     4680.0
    ]
+  },
+  "cheolong_gate": {
+   "label": "철옹 산성 정문 문루",
+   "pos": [
+    607.0,
+    303.0,
+    3584.0
+   ],
+   "y_est": true,
+   "_note": "R6: 병기창 걷기는 건물 안 벽 앞이었다 → 문루를 향한 카메라 컷"
   }
  },
  "takes": {
@@ -421,7 +431,11 @@
    "site": "jeokro_camp"
   },
   "p_cheolong": {
-   "site": "cheolong_arsenal"
+   "gate": "cheolong_gate",
+   "player_xz": [
+    607,
+    3520
+   ]
   },
   "p_fight2": {
    "enemy": "deserters",
