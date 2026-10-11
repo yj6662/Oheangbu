@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -40,7 +41,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static InputEvent[] ExpandGlyphs308(InputEvent[] inputs, int fps, float width, float height)
         {
-            glyphNotes308.Clear();
+            glyphNotes308.Clear(); ResetGlyphDrives308();
             if (inputs == null || !inputs.Any(e => e != null && e.type == "glyph")) return inputs;
             if (fps <= 0) throw new ArgumentException("glyph: fps must be positive");
             var library = GlyphLibrary308();
@@ -89,20 +90,89 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (lengths[i] > lengths[longest]) longest = i;
             }
             frames[longest] = Mathf.Max(GlyphMinStrokeFrames308, frames[longest] + (draw - frames.Sum()));
-            // DriveInput의 프레임 k 입력 시각은 k/fps: 창을 1/4프레임 일찍 열고 반 프레임 짧게 닫아 경계의 부동소수 오차를 피한다
-            int first = Mathf.RoundToInt(e.time * fps), k = first;
-            var events = new List<InputEvent>();
-            for (int i = 0; i < n; i++)
-            {
-                events.Add(new InputEvent { type = "stroke", time = (k - .25f) / fps, duration = (frames[i] - .5f) / fps, points = strokes[i].SelectMany(p => new[] { p.x, p.y }).ToArray() });
-                k += frames[i] + GlyphPenUpFrames308;
-            }
-            int last = k - GlyphPenUpFrames308 - 1, qFrom = Mathf.Max(0, first - 1);   // 마지막 점의 프레임 · Q는 첫 점 한 프레임 전부터(StrokeLab §5.3 전례)
-            events.Add(new InputEvent { type = "q", time = (qFrom - .25f) / fps, duration = (last - qFrom + .5f) / fps });
+            // 2026-10-12: 사전 전개(stroke+q 이벤트) 대신 게이트 인식 상태기계. 작도 진입(Q → InDrawMode)이 접지 · 행동 허용 게이트로 늦거나
+            // 중간에 끊기면(CancelForUi) 획이 허공에 그어졌다(R1: 전부 "OK 0/1"). 이제 Q를 누른 뒤 InDrawMode를 확인하고 나서 획을 긋고, 끊기면 Q를 뗐다가 다시 쓴다.
+            int first = Mathf.RoundToInt(e.time * fps);
+            var drive = new GlyphDrive308 { src = e, start = first, budget = total + GlyphRetryBudgetFrames308, frames = frames, key = key,
+                                            strokes = strokes.Select(st => st.SelectMany(pt => new[] { pt.x, pt.y }).ToArray()).ToList() };
+            drive.pen = new Vector2(drive.strokes[0][0], drive.strokes[0][1]);
+            glyphDrives308.Add(drive);
             glyphNotes308.Add("glyph " + key + " strokes=" + n + " at " + F308(e.time) + " (" + ini + "+" + med + (fin != null ? "+" + fin : "") + " " + string.Join("+", names)
-                + ", frames " + first + "-" + last + " [" + string.Join(",", frames) + "], q " + qFrom + "-" + last + ", release " + (last + 1)
-                + ", centre " + F308(cx) + "," + F308(cy) + " size " + F308(size) + ", screen " + width + "x" + height + ")");
-            return events;
+                + ", frames [" + string.Join(",", frames) + "] from " + first + ", budget " + drive.budget + " f, centre " + F308(cx) + "," + F308(cy) + " size " + F308(size) + ", screen " + width + "x" + height + ")");
+            return new List<InputEvent> { e };   // the glyph event stays in spec.inputs; DriveInput hands it to ApplyGlyph308
+        }
+
+        // ---------------------------------------------------------------- gated glyph drive (DriveInput calls ApplyGlyph308 for type "glyph")
+        const int GlyphEnterWaitFrames308 = 15, GlyphReleaseFrames308 = 3, GlyphMaxAttempts308 = 6, GlyphRetryBudgetFrames308 = 90;
+        sealed class GlyphDrive308
+        {
+            public InputEvent src; public string key; public int start, budget; public List<float[]> strokes; public int[] frames;
+            public int state;            // 0 wait · 1 Q 누름(진입 대기) · 2 획 긋는 중 · 3 Q 뗌(재시도 전) · 4 끝(Q · LMB 동시 해제 = 발사) · 5 포기
+            public int qSince, strokeIdx, strokeFrame, gapLeft, attempts, releaseLeft, lastF = -1, enteredF = -1; public Vector2 pen;
+        }
+        static readonly List<GlyphDrive308> glyphDrives308 = new List<GlyphDrive308>();
+        static void ResetGlyphDrives308() { glyphDrives308.Clear(); }
+        static bool AnyDrawMode308() { foreach (var d in drawing) if (d != null && d.InDrawMode) return true; return false; }
+        static void GlyphNote308(string s) { if (state != null) state.commits.Add(s); }
+
+        /// <summary>One frame of a glyph: returns true while it owns q / press / view.</summary>
+        static bool ApplyGlyph308(InputEvent e, float t, int fps, ref bool q, ref bool press, ref Vector2 view)
+        {
+            GlyphDrive308 d = null; foreach (var x in glyphDrives308) if (x.src == e) { d = x; break; }
+            if (d == null) return false;
+            int f = Mathf.RoundToInt(t * fps);
+            if (d.state == 0) { if (f < d.start) return false; foreach (var o in glyphDrives308) if (o != d && o.state >= 1 && o.state <= 3) return false; d.state = 1; d.qSince = f; GlyphNote308("glyph " + d.key + " Q down f" + f); }
+            if (d.state == 5) return false;
+            if (d.state == 4) { q = false; press = false; view = d.pen; return true; }   // 발사된 뒤에도 붓 자리를 지킨다(DriveInput의 보간이 가운데로 튀지 않게)
+            bool inMode = AnyDrawMode308();
+            switch (d.state)
+            {
+                case 1:
+                    q = true; press = false; view = d.pen;
+                    if (inMode) { d.state = 2; d.strokeIdx = 0; d.strokeFrame = 0; d.gapLeft = 0; d.enteredF = f; GlyphNote308("glyph " + d.key + " entered f" + f + (d.attempts > 0 ? " (attempt " + (d.attempts + 1) + ")" : "")); }
+                    else if (f - d.qSince >= GlyphEnterWaitFrames308) GlyphRetry308(d, f, "no draw mode " + (f - d.qSince) + " f after Q", ref q);
+                    break;
+                case 2:
+                    if (!inMode) { GlyphRetry308(d, f, "draw mode dropped at stroke " + (d.strokeIdx + 1) + "/" + d.strokes.Count, ref q); press = false; view = d.pen; break; }
+                    q = true;
+                    if (d.gapLeft > 0) { d.gapLeft--; press = false; view = d.pen; break; }
+                    var sPts = d.strokes[d.strokeIdx]; int n = d.frames[d.strokeIdx];
+                    press = true; view = Along(sPts, n <= 1 ? 1f : d.strokeFrame / (float)(n - 1)); d.pen = view; d.strokeFrame++;
+                    if (d.strokeFrame >= n)
+                    {
+                        d.strokeIdx++; d.strokeFrame = 0;
+                        if (d.strokeIdx >= d.strokes.Count) { d.state = 4; GlyphNote308("glyph " + d.key + " last point f" + f + ", release f" + (f + 1)); }
+                        else d.gapLeft = GlyphPenUpFrames308;
+                    }
+                    break;
+                case 3:
+                    q = false; press = false; view = d.pen;
+                    if (--d.releaseLeft <= 0) { d.state = 1; d.qSince = f; }
+                    break;
+            }
+            d.lastF = f;
+            return true;
+        }
+
+        static void GlyphRetry308(GlyphDrive308 d, int f, string why, ref bool q)
+        {
+            d.attempts++;
+            if (d.attempts >= GlyphMaxAttempts308 || f > d.start + d.budget) { d.state = 5; q = false; GlyphNote308("glyph " + d.key + " GIVE UP f" + f + ": " + why + " (attempts " + d.attempts + ")"); return; }
+            d.state = 3; d.releaseLeft = GlyphReleaseFrames308; q = false; GlyphNote308("glyph " + d.key + " retry f" + f + ": " + why);
+        }
+
+        // ---------------------------------------------------------------- input extras (Input303 전례: 포커스를 잃어도 가상 장치 입력이 버려지지 않게)
+        static InputSettings.BackgroundBehavior priorBackground308; static bool priorRunInBackground308, inputExtras308;
+        static void OpenInputExtras308()
+        {
+            priorBackground308 = InputSystem.settings.backgroundBehavior; priorRunInBackground308 = Application.runInBackground;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus; Application.runInBackground = true; inputExtras308 = true;
+        }
+        static void CloseInputExtras308()
+        {
+            if (!inputExtras308) return; inputExtras308 = false;
+            InputSystem.settings.backgroundBehavior = priorBackground308; Application.runInBackground = priorRunInBackground308;
+            ResetGlyphDrives308();
         }
 
         // 전개 결과("glyph 뭄 strokes=N at t …")는 state가 만들어진 뒤 commits로 옮긴다

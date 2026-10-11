@@ -289,7 +289,8 @@ def spec_first_person(name, duration, inputs, feet=None, yaw=0.0, hud='reticle,i
          'followMain': True, 'duration': g(duration), 'inputs': inputs, 'hud': hud, 'settle': settle, 'hitLog': True}
     if feet is not None: s['playerFeet'] = [round(v, 3) for v in feet]; s['playerYaw'] = round(float(yaw), 2)
     if board: s['board'] = True
-    if mum: s['mumUnlock'] = True
+    # mumUnlock은 격리 저장(_mum295_test) 전용이라 시연 스위치(DemoAllFinals) 세션에서는 예외를 던진다(01:12 'Mum test unlock requires …') → 넣지 않는다
+    if mum: s['mumUnlock'] = False
     return s
 
 

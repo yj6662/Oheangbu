@@ -543,6 +543,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             muted = real.Skip(1).Where(dv => dv.enabled).Cast<InputDevice>().ToList();
             foreach (var dv in muted) InputSystem.DisableDevice(dv);
             vKeyboard = InputSystem.AddDevice<Keyboard>("Presentation297Keyboard");
+            OpenInputExtras308();   // 포커스 무시 · runInBackground (Input303 전례)
             drawing = Object.FindObjectsByType<DrawingInputController>(FindObjectsSortMode.None);
             foreach (var d in drawing) d.CommitDiagnosed += OnCommit;
             inputOpen = true;
@@ -564,6 +565,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             foreach (var dv in muted) if (dv != null && dv.added) InputSystem.EnableDevice(dv);
             muted.Clear();
             InputSystem.settings.editorInputBehaviorInPlayMode = priorBehavior;
+            CloseInputExtras308();
         }
 
         static void OnCommit(DrawingInputController.CommitDiagnostics d)
@@ -574,7 +576,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static void DriveInput(float t)
         {
-            bool q = false, press = false;
+            bool q = false, press = false, glyphActive = false;
             var held = new List<UnityEngine.InputSystem.Key>();
             Vector2 look = Vector2.zero;
             Vector2 view = new Vector2(.5f, .5f);
@@ -583,6 +585,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 InputEvent previous = null, next = null;
                 foreach (var e in spec.inputs)
                 {
+                    if (e.type == "glyph") { if (ApplyGlyph308(e, t, spec.fps, ref q, ref press, ref view)) glyphActive = true; continue; }   // #308 게이트 인식 글자
                     if (e.type == "q") { if (t >= e.time && t < e.time + e.duration) q = true; continue; }
                     if (e.type == "aim")
                     {
@@ -607,7 +610,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (e.time + e.duration <= t && (previous == null || e.time > previous.time)) previous = e;
                     if (e.time > t && (next == null || e.time < next.time)) next = e;
                 }
-                if (!press)
+                if (!press && !glyphActive)
                 {
                     if (previous != null && next != null)
                     {
