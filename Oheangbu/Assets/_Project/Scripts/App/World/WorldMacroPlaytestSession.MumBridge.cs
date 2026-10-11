@@ -33,6 +33,7 @@ namespace Oheangbu.App.World
         bool MumBridgeUnlocked()
         {
             if(HasMumBridge)return true;
+            if(DemoAllFinals308)return true;   // #308b presentation switch (D308-53): session-only, HasMumBridge and the save are untouched
 #if UNITY_EDITOR
             return mum295TestUnlock&&mum295IsolatedStore;
 #else

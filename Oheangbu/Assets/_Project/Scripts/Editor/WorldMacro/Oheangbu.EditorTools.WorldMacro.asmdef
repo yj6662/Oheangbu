@@ -21,6 +21,8 @@
         "Unity.AI.Navigation",
         "Unity.AI.Navigation.Editor",
         "Unity.Splines",
+        "Unity.Cinemachine",
+        "Unity.Timeline",
         "Unity.Mathematics",
         "Unity.Splines.Editor",
         "Unity.ProBuilder",

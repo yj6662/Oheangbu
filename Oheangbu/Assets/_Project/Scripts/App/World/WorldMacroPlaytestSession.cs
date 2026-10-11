@@ -113,6 +113,7 @@ namespace Oheangbu.App.World
             vitals=Walker.Body.GetComponent<PlayerVitals>();
             BindDemoBosses();
             BindDemoSouthGate();
+            BindFieldGates308();   // #308 SPEC-WORLD-DUNGEON-308: gates a cast opened stay open
             BindMineTutorial306();   // #306 #11
             BindCinematic308();   // #308 SPEC-CINEMATIC-STILLS-308: catalogue + plane triggers (none without the asset)
 #if UNITY_EDITOR
@@ -683,6 +684,6 @@ namespace Oheangbu.App.World
         void SyncHudFallback(){if(hudFallback!=null){bool on=isActiveAndEnabled&&!CanvasHudPresenterActive;if(hudFallback.enabled!=on)hudFallback.enabled=on;}}
         void OnApplicationQuit(){Save();DrainAutosave();}
         void OnDisable(){DisarmInteract();UnbindDemoSouthGate();UnbindDemoEscort();SuspendDemoField();SuspendMumBridges();Save();DrainAutosave();if(hudFallback!=null)hudFallback.enabled=false;}
-        void OnDestroy(){UnbindCinematic308();UnbindMineTutorial306();UnbindVehicle308();DrainAutosave();UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);}
+        void OnDestroy(){UnbindFieldGates308();UnbindCinematic308();UnbindMineTutorial306();UnbindVehicle308();DrainAutosave();UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);}
     }
 }

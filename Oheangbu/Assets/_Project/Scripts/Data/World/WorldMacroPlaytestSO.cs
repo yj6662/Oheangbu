@@ -102,5 +102,21 @@ namespace Oheangbu.Data.World
         [Header("#308 자동차 시점 [TEST]")]
         [Tooltip("SPEC-CONTENT-PACING-308 §3 (D308-2): the 마석 자동차 call (G), boarding and the menu card need this campaign fact as well as the opening commission (e.g. defeated:cheongryong). Empty = the previous behaviour (other scenes unchanged).")]
         public string VehicleRequiredFact="";
+        // #308b final-consonant grants (SPEC-SPELL-120-308 "받침 지급 #308b", D308-51) [TEST]. The chain in the order the finals are
+        // earned (Spellcraft Bible ch.2 LOCKED: giyeok, nieun, siot, ieung, mieum). An entry is owned once ledger.completed holds its
+        // LedgerId (the ids of Data/Spells/Unlock308.csv). BossId = the realm boss (encounter id) whose recorded defeat
+        // (campaign.EncounterEvidence) grants it (D308-53); empty = no grant from this table (giyeok: the cheongryong defeat writes
+        // it; the four later realms: their bosses do not exist yet), the chain waits. An entry is granted only when every entry
+        // before it is owned. Empty array = nothing (every other content asset).
+        [Serializable] public sealed class FinalGrant308
+        {
+            public string LedgerId="",BossId="";
+            [Tooltip("One short receipt shown when the defeat grants it. Empty = none.")]
+            public string Notice="";
+        }
+        [Header("#308b 받침 지급 [TEST]")]
+        public FinalGrant308[] FinalGrants=Array.Empty<FinalGrant308>();
+        [Tooltip("Presentation switch (D308-51): every final consonant counts as owned from the start (Gate test rows and the mum bridge included), in the session only - nothing is written to the save. Leave off in the main content; a build can also be started with -demoAllFinals.")]
+        public bool DemoAllFinals;
     }
 }

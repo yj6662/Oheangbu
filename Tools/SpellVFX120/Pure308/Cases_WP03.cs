@@ -167,8 +167,8 @@ namespace Pure308
             r.Check("W03", cone.Element == Element.Fire && blast.Element == Element.Earth && skip.Element == Element.Earth && spine.Element == Element.Earth && tide.Element == Element.Water,
                 "elements follow the initial consonant");
             r.Check("W03", spine.Final == SpellFinal.Giyeok && tide.Final == SpellFinal.Giyeok && c.Build.Unlocks.Any(u => u.Final == SpellFinal.Giyeok && u.GrantedInMain) &&
-                !c.Build.Unlocks.Any(u => (u.Final == cone.Final || u.Final == blast.Final || u.Final == skip.Final) && u.GrantedInMain),
-                "the two giyeok-final rows open in the main game; the nieun and ieung finals are TEST unlock only");
+                c.Build.Unlocks.Where(u => u.Final == cone.Final || u.Final == blast.Final || u.Final == skip.Final).All(u => u.GrantedInMain),
+                "the two giyeok-final rows open in the main game; #308b: so do the nieun and ieung finals of the other three");
         }
 
         // ---- shared pieces ----

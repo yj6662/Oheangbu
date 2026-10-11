@@ -357,7 +357,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     ", reserved " + build.Rows.Count(x => !string.IsNullOrEmpty(x.Pending)) + ", blank " + build.Rows.Count(x => x.Category == SpellCategory.Blank) +
                     ", waiting for a sheet " + build.MissingSheet.Count + (build.MissingSheet.Count > 0 ? " (" + string.Join("", build.MissingSheet) + ")" : ""));
                 foreach (var rule in build.Unlocks)
-                    r.notes.Add("unlock " + rule.Final + ": ledger " + rule.LedgerId + (string.IsNullOrEmpty(rule.EvidenceId) ? "" : " + evidence " + rule.EvidenceId) + (rule.GrantedInMain ? " (granted in the main game)" : " (TEST unlock only)"));
+                    r.notes.Add("unlock " + rule.Final + ": ledger " + rule.LedgerId + (string.IsNullOrEmpty(rule.EvidenceId) ? "" : " + evidence " + rule.EvidenceId) + (rule.GrantedInMain ? " (granted in the main game; #308b: the ledger id is written by the boss defeat / the boss chain of the content asset)" : " (TEST unlock only)"));
             }
             var mainGuids = SpellTable308.MainSceneGuids();
             foreach (string path in SpellTable308.Targets())

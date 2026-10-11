@@ -141,7 +141,7 @@ namespace Oheangbu.Spellcraft
     }
 
     // Final-consonant unlock policy (SPEC-SPELL-120-308 section 7): the main game grants a final only when the unlock sheet
-    // says that final is granted in the main game (today: giyeok alone) AND the saved ledger holds its id (plus the named
+    // says that final is granted in the main game (all five since #308b, D308-51) AND the saved ledger holds its id (plus the named
     // encounter evidence). A ledger id by itself never opens a final the sheet does not grant, so the unlock order of the
     // main game is a data decision (Unlock308.csv, GrantedInMain), not something a save file can jump. Every final can also
     // be opened by the editor-only TEST unlock, but only in a session whose save file is the isolated test store.

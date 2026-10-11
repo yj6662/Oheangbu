@@ -17,6 +17,10 @@ namespace Oheangbu.App.Prologue
         public float PreferredDistance;
         // #306 #11 (SPEC-PLAYTEST-306): a tutorial sequencer may hold the actor in place; perception and attack gating keep running
         [System.NonSerialized] public bool HoldPosition;
+        // D308-66: on patrol an actor walks (Speed x PatrolSpeedScale) and stands a moment at each point (PatrolPauseMin..Max seconds, the idle
+        // clip plays). 1 / 0 / 0 = the old patrol (chase speed, never stopping). Chase and return are not changed.
+        [Range(.1f,1f)] public float PatrolSpeedScale=1f; [Min(0)] public float PatrolPauseMin,PatrolPauseMax;
+        float patrolPauseUntil;
         [Min(0)] public float DeathVisualSeconds;
         bool[] authoredVisibility;float hideDeadAt=float.NegativeInfinity;
         public Behaviour Current {get;private set;}
@@ -47,7 +51,7 @@ namespace Oheangbu.App.Prologue
             Current=Behaviour.Patrol;agent.Warp(home);if(agent.isOnNavMesh){agent.ResetPath();agent.isStopped=false;}
             hideDeadAt=float.NegativeInfinity;for(int i=0;i<renderers.Length;i++)renderers[i].enabled=authoredVisibility[i];
             foreach(var c in bodyColliders)c.enabled=true;
-            attacks.ResetEncounter();attacks.AttackEnabled=false;patrol=0;next=0;
+            attacks.ResetEncounter();attacks.AttackEnabled=false;patrol=0;next=0;patrolPauseUntil=0;
             if(boss!=null)boss.ResetEncounter();
             if(general!=null)general.ResetEncounter();
             if(tutorialBoss!=null)tutorialBoss.ResetEncounter();
@@ -69,11 +73,16 @@ namespace Oheangbu.App.Prologue
             if(boss!=null){boss.AttackEnabled=Current==Behaviour.Chase&&seen;if(Current==Behaviour.Return)boss.StopAttack();}
             if(general!=null){general.AttackEnabled=Current==Behaviour.Chase&&seen;if(Current==Behaviour.Return)general.StopAttack();}
             if(HoldPosition){if(agent.isOnNavMesh)agent.isStopped=true;return;}   // #306 #11: a tutorial wait stands still, still watching
-            agent.speed=Speed*vitals.Control.MovementScale(Time.time);agent.isStopped=boss!=null?Current==Behaviour.Chase&&!boss.CanNavigate:general!=null?Current==Behaviour.Chase&&!general.CanNavigate:attacks.AttackInProgress;
+            agent.speed=Speed*vitals.Control.MovementScale(Time.time)*(Current==Behaviour.Patrol?PatrolSpeedScale:1f);agent.isStopped=boss!=null?Current==Behaviour.Chase&&!boss.CanNavigate:general!=null?Current==Behaviour.Chase&&!general.CanNavigate:attacks.AttackInProgress;
             if(agent.isStopped)return;
             if(Current==Behaviour.Return){agent.SetDestination(home);if(Vector3.Distance(transform.position,home)<1.2f)Current=Behaviour.Patrol;}
             else if(Current==Behaviour.Chase){agent.stoppingDistance=PreferredDistance>0?PreferredDistance:Ranged?9:1.7f;agent.SetDestination(Player.position);}
-            else if(PatrolPoints!=null && PatrolPoints.Length>0){agent.stoppingDistance=.3f;agent.SetDestination(PatrolPoints[patrol]);if(!agent.pathPending && agent.remainingDistance<.6f)patrol=(patrol+1)%PatrolPoints.Length;}
+            else if(PatrolPoints!=null && PatrolPoints.Length>0)
+            {
+                if(Time.time<patrolPauseUntil){agent.isStopped=true;return;}
+                agent.stoppingDistance=.3f;agent.SetDestination(PatrolPoints[patrol]);
+                if(!agent.pathPending && agent.remainingDistance<.6f){patrol=(patrol+1)%PatrolPoints.Length;if(PatrolPauseMax>0&&PatrolPoints.Length>1)patrolPauseUntil=Time.time+Random.Range(PatrolPauseMin,PatrolPauseMax);}
+            }
         }
     }
 }

@@ -122,6 +122,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(next.DialogueRestReachMeters==d.DialogueRestReachMeters&&prev.DialogueRestReachMeters!=d.DialogueRestReachMeters){next.DialogueRestReachMeters=prev.DialogueRestReachMeters;settings++;}
     if(next.InteractRepeatCooldownSeconds==d.InteractRepeatCooldownSeconds&&prev.InteractRepeatCooldownSeconds!=d.InteractRepeatCooldownSeconds){next.InteractRepeatCooldownSeconds=prev.InteractRepeatCooldownSeconds;settings++;}
     if(next.NaturalSolidProbeReuseMeters==d.NaturalSolidProbeReuseMeters&&prev.NaturalSolidProbeReuseMeters!=d.NaturalSolidProbeReuseMeters){next.NaturalSolidProbeReuseMeters=prev.NaturalSolidProbeReuseMeters;settings++;}
+    // #308b (D308-51): the final-consonant grant chain lives only on the Main clone; DemoAllFinals is never carried (off unless set by hand)
+    if((next.FinalGrants==null||next.FinalGrants.Length==0)&&prev.FinalGrants!=null&&prev.FinalGrants.Length>0)
+    {next.FinalGrants=Array.ConvertAll(prev.FinalGrants,g=>g==null?null:new WorldMacroPlaytestSO.FinalGrant308{LedgerId=g.LedgerId,BossId=g.BossId,Notice=g.Notice});settings++;}
    }
    finally{Object.DestroyImmediate(d);}
    return "#306 carried "+(points+commissions+settings)+" fields (points "+points+", commissions "+commissions+", settings "+settings+")"+

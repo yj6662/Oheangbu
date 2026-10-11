@@ -120,8 +120,9 @@ namespace Pure308
             // grid cell 50 = earth a + giyeok (the rock that stays as cover): the one enemy / world dependent row behind the final
             // the main game grants. No glyph is named: the cell is found by its number, the rule by the sheet's Gate column.
             var rock = c.RowAt(50);
-            r.Check("A5", testOnly.Length == 1 && testOnly[0] == rock && rock.Final == SpellFinal.Giyeok && rock.HasHandler && rock.Feature == SpellLegacyFeature.None,
-                "exactly one row is TEST-only: the rock-cover row, behind the giyeok final", string.Join(" ", testOnly.Select(x => x.Index)));
+            r.Check("A5", testOnly.Select(x => x.Index).SequenceEqual(new[] { 18, 42, 45, 50, 66, 77, 78, 90, 95, 111, 120 }) && testOnly.Contains(rock) && rock.Final == SpellFinal.Giyeok &&
+                testOnly.All(x => x.HasHandler && x.Feature == SpellLegacyFeature.None && x.Final != SpellFinal.None),
+                "#308b: eleven rows are TEST-only, the enemy / world dependent rows of the field and counter packages (the rock-cover row behind the giyeok final among them)", string.Join(" ", testOnly.Select(x => x.Index)));
             r.Check("A5", c.Build.Unlocks.Any(u => u.Final == rock.Final && u.GrantedInMain) && Status(rock, normal) == SpellResolveStatus.Locked,
                 "a normal save cannot resolve it: with the campaign running, its final granted in the main game, the ledger id recorded and every evidence complete it is Locked (the misfire)",
                 Status(rock, normal).ToString());
@@ -131,8 +132,11 @@ namespace Pure308
                 .Select(x => x.Index).ToArray();
             r.Fact("mainGameNewRows", string.Join(" ", opened));
             // 14 wood o, 38 fire o, 62 earth o, 86 metal o, 110 water o, each + giyeok: the five glyphs the main story opens after its first final
-            r.Check("A5", opened.SequenceEqual(new[] { 14, 38, 62, 86, 110 }),
-                "the main game opens exactly the five intended new rows behind the giyeok final (the o glyphs of the five elements); nothing else", string.Join(" ", opened));
+            var openedRows = rows.Where(x => opened.Contains(x.Index)).ToArray();
+            r.Check("A5", openedRows.Where(x => x.Final == SpellFinal.Giyeok).Select(x => x.Index).SequenceEqual(new[] { 14, 38, 62, 86, 110 }) && opened.Length == 53 &&
+                openedRows.Count(x => x.Final == SpellFinal.Nieun) == 14 && openedRows.Count(x => x.Final == SpellFinal.Siot) == 14 &&
+                openedRows.Count(x => x.Final == SpellFinal.Ieung) == 10 && openedRows.Count(x => x.Final == SpellFinal.Mieum) == 10 && !openedRows.Any(x => x.Gate == SpellGateMode.Test),
+                "#308b: a normal save that earned all five finals resolves 53 new rows (giyeok 5: the o glyphs of the five elements; nieun 14, siot 14, ieung 10, mieum 10) and no TEST-only row", string.Join(" ", opened));
             var newRows = rows.Where(x => x.HasHandler && x.Feature == SpellLegacyFeature.None).ToArray();
             r.Check("A5", newRows.Length == 64 && newRows.All(x => Status(x, testing) == SpellResolveStatus.Ok),
                 "with the TEST unlock in the isolated store all 64 new rows resolve, the TEST-only row among them", newRows.Count(x => Status(x, testing) == SpellResolveStatus.Ok).ToString());
@@ -141,6 +145,27 @@ namespace Pure308
             r.Check("A5", SpellUnlockPolicy308.RuleFor(rock, giyeokRule).GrantedInMain == false && SpellUnlockPolicy308.RuleFor(ordinary, giyeokRule).GrantedInMain &&
                 SpellUnlockPolicy308.RuleFor(rock, giyeokRule).LedgerId == giyeokRule.LedgerId && SpellUnlockPolicy308.RuleFor(null, giyeokRule).GrantedInMain,
                 "the per-row rule: a TEST-only row is judged without the main-game grant of its final; every other row keeps its final's rule as it is");
+            // ---- #308b (D308-51): the boss chain that writes the ledger ids of the later finals (FinalGrantRule308) ----
+            // the chain of the main content in earning order; the first entry is granted elsewhere (no boss in the table)
+            string[] chainIds = { "g", "n", "s", "ng", "m" }, chainPlaces = { "", "p_n", "p_s", "p_ng", "p_m" };
+            string Fact(string boss) => boss;
+            List<int> Due(string[] ledger, params string[] visited)
+            {
+                var due = new List<int>();
+                int count = FinalGrantRule308.Pending(chainIds, chainPlaces, new List<string>(ledger), visited.Select(Fact).ToList(), due);
+                return count == due.Count ? due : null;
+            }
+            r.Check("A5", Due(new string[0], "p_n", "p_s", "p_ng", "p_m").Count == 0 && Due(new[] { "n" }, "p_s").Count == 0,
+                "#308b chain: without the first final no boss defeat grants anything, and an owned later id never stands in for a missing earlier one");
+            r.Check("A5", Due(new[] { "g" }, "p_n").SequenceEqual(new[] { 1 }) && Due(new[] { "g" }).Count == 0 && Due(new[] { "g", "n" }, "p_n").Count == 0,
+                "#308b chain: the next final is granted by its own boss defeat, once; no defeat = nothing due; an owned final is not granted again");
+            r.Check("A5", Due(new[] { "g" }, "p_s", "p_ng", "p_m").Count == 0 && Due(new[] { "g" }, "p_s", "p_n").SequenceEqual(new[] { 1, 2 }) &&
+                Due(new[] { "g" }, "p_m", "p_ng", "p_s", "p_n").SequenceEqual(new[] { 1, 2, 3, 4 }) && Due(new[] { "g", "n" }, "p_n", "p_ng", "p_m").Count == 0,
+                "#308b chain: a boss defeated out of order grants nothing by itself; when the chain catches up the waiting finals arrive in order, and a gap still stops it");
+            r.Check("A5", FinalGrantRule308.Pending(null, chainPlaces, new List<string>(), new List<string>()) == 0 && FinalGrantRule308.Pending(chainIds, chainPlaces, null, null) == 0 &&
+                FinalGrantRule308.Pending(new[] { "g", "", "s" }, new[] { "", "p_n", "p_s" }, new List<string> { "g" }, new List<string> { Fact("p_n"), Fact("p_s") }) == 0 &&
+                FinalGrantRule308.Pending(new string[0], new string[0], new List<string>(), new List<string>()) == 0,
+                "#308b chain: no chain, no save or a broken entry grants nothing (a content asset without the table is unchanged)");
             // the sheet rule: Gate test only narrows a handler row behind a final
             string head = "글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params\n";
             SpellBuildResult308 Sheet(string text) => SpellTableBuilder308.Build(c.CanonicalCsv, new List<SpellSheet308> { new SpellSheet308("Rules308_T", head + text) }, c.UnlockCsv);

@@ -152,7 +152,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (rules != null)
                         foreach (var rule in rules)
                             if (rule.Final == final)
-                                owned = " | owned: " + (session.FinalUnlocked(rule) ? "yes" : "no") + " (ledger " + rule.LedgerId + (rule.GrantedInMain ? ", granted in the main game" : ", TEST unlock only") + ")";
+                                owned = " | owned: " + (session.FinalUnlocked(rule) ? "yes" : "no") + " (ledger " + rule.LedgerId + (rule.GrantedInMain ? ", granted in the main game" : ", TEST unlock only") + (session.DemoAllFinals308 ? ", presentation switch ON" : "") + ")";
                     lines.Add("  " + final + ": TEST " + (session.Spell308TestUnlocked(final) ? "ON" : "off") + owned);
                 }
             }
@@ -163,7 +163,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static IEnumerable<SpellFinal> Every() => new[] { SpellFinal.Giyeok, SpellFinal.Nieun, SpellFinal.Mieum, SpellFinal.Siot, SpellFinal.Ieung };
         static string Names(IEnumerable<SpellFinal> finals) => string.Join("+", finals.Select(f => f.ToString()));
 
-        // "" = the four finals the main game does not grant. Giyeok only when it is named.
+        // "" = the four later finals (#308b: the main game grants them through the boss chain, once those bosses exist; the TEST unlock still opens them at once). Giyeok only when it is named.
         static bool TryFinals(string list, out List<SpellFinal> finals, out string problem)
         {
             finals = new List<SpellFinal>(); problem = null;

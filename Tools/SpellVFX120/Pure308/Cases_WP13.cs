@@ -43,8 +43,8 @@ namespace Pure308
             // 2026-10-04 (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target): the rock-cover row is
             // the one WP-13 row behind the final the main game grants, so it is the one that must stay TEST-only (Cases_Core308 checks
             // what a normal save and the TEST unlock resolve).
-            r.Check("W13", rock.Gate == SpellGateMode.Test && new[] { wave, steam, mud, thrust, needle, barrage, purge }.All(x => x.Gate == SpellGateMode.Final),
-                "the rock-cover row is TEST-unlock only (Gate test in its rule sheet); the other seven follow their final's own unlock", rock.Gate.ToString());
+            r.Check("W13", new[] { wave, steam, rock, mud, thrust, needle, barrage, purge }.All(x => x.Gate == SpellGateMode.Test),
+                "#308b: all eight WP-13 rows are TEST-unlock only (Gate test in their rule sheet): the main game now grants every final and their world side does not exist yet", rock.Gate.ToString());
 
             // ---- the freezing needle and the barrage ----
             Vector3 caster = new Vector3(5f, 0f, 5f), forward = Vector3.forward;

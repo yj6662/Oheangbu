@@ -240,15 +240,15 @@ namespace Pure308
             // a ledger id alone never opens a final the sheet does not grant in the main game (the unlock order is data, not a save file)
             r.Check("A5", build.Unlocks.Where(u => !u.GrantedInMain).All(u => !SpellUnlockPolicy308.Unlocked(true, u.GrantedInMain, true, true, false, false)) &&
                 build.Unlocks.Where(u => u.GrantedInMain).All(u => SpellUnlockPolicy308.Unlocked(true, u.GrantedInMain, true, true, false, false)),
-                "main game: a complete proof opens only the finals the unlock sheet grants (giyeok); the other four stay locked without the TEST unlock");
+                "main game: a complete proof opens only the finals the unlock sheet grants; a final the sheet does not grant stays locked without the TEST unlock");
             r.Check("A5", !SpellUnlockPolicy308.TestUnlockAccepted(true, true, false) && !SpellUnlockPolicy308.TestUnlockAccepted(true, false, true) &&
                 SpellUnlockPolicy308.TestUnlockAccepted(true, true, true) && SpellUnlockPolicy308.TestUnlockAccepted(false, false, false),
                 "a TEST unlock request outside the isolated store (or outside Play) is refused; switching it off is always accepted");
-            r.Check("A5", build.Unlocks.Length == 5 && build.Unlocks.Count(u => u.GrantedInMain) == 1 && build.Unlocks.Single(u => u.GrantedInMain).Final == SpellFinal.Giyeok,
-                "only the giyeok final is granted in the main game");
+            r.Check("A5", build.Unlocks.Length == 5 && build.Unlocks.All(u => u.GrantedInMain) && build.Unlocks.Select(u => u.Final).Distinct().Count() == 5,
+                "#308b (D308-51): all five finals are granted in the main game (the ledger ids are written by the realm boss defeats)");
             var mieum = build.Unlocks.Single(u => u.Final == SpellFinal.Mieum);
             r.Check("A5", mieum.LedgerId == "world_unlock_coda_mieum" && mieum.EvidenceId == "fallen_hwangryong" &&
-                build.Unlocks.Single(u => u.Final == SpellFinal.Giyeok).LedgerId == "demo_unlock_coda_giyeok", "ledger ids equal the ids the session already uses");
+                build.Unlocks.Single(u => u.Final == SpellFinal.Giyeok).LedgerId == "demo_unlock_coda_giyeok", "ledger ids equal the ids the session already uses; #308b: the mieum final keeps its late-boss evidence");
             var probe = new SpellRow { Handler = "x.y", Final = SpellFinal.Nieun, Gate = SpellGateMode.Final };
             var openRow = new SpellRow { Handler = "x.y", Final = SpellFinal.Mieum, Gate = SpellGateMode.Open };
             var bare = new SpellRow { Handler = "x.y", Final = SpellFinal.None };

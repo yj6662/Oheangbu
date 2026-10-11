@@ -414,6 +414,11 @@ def main():
         inside = (g > Pm[..., 1] + .05) & vis; tot += int(vis.sum()); poke += int(inside.sum())
     layout['skinUnderGroundShare'] = poke / max(1, tot)
     (OUT / 'layout.json').write_text(json.dumps(layout, indent=1), encoding='utf-8')
+    # per-station frame for the rock dressing (CliffWay308 dress): angle around the centre, path radius, walk height, wall top
+    r5 = lambda a: [round(float(v), 4) for v in a]
+    (OUT / 'stations.json').write_text(json.dumps(dict(
+        cx=float(w.C[0]), cz=float(w.C[1]), water=c['water'], baseDepth=c['baseDepth'], hw=float(w.hw), batterUp=c['batterUp'], batterDown=c['batterDown'],
+        headroom=c['headroom'], s=r5(w.S), th=r5(w.thS), rp=r5(w.rp), y=r5(w.y), top=r5(w.T), fill=r5(w.fill))), encoding='utf-8')
     previews(w, parts)
     print(json.dumps({k: v for k, v in layout.items() if k not in ('path',)}, indent=1))
 

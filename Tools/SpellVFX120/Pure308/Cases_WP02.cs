@@ -28,7 +28,7 @@ namespace Pure308
             r.Check("W02", rows.All(x => x.Feature == SpellLegacyFeature.None && x.Gate == SpellGateMode.Final && string.IsNullOrEmpty(x.Pending)),
                 "new rows: no legacy feature, the final-consonant gate, not reserved");
             r.Check("W02", execute.Final == SpellFinal.Siot && big.Final == SpellFinal.Nieun && heat.Final == SpellFinal.Nieun && ramp.Final == SpellFinal.Siot,
-                "finals: siot / nieun / nieun / siot (none of them is granted in the main game today)");
+                "finals: siot / nieun / nieun / siot (#308b: both finals are granted in the main game)");
             var ids = new HashSet<string>(rows.Select(x => x.Handler));
             var lockedGate = new ModelGate { Registered = ids };
             var openGate = new ModelGate { Registered = ids, Unlocked = new HashSet<SpellFinal> { SpellFinal.Nieun, SpellFinal.Siot } };

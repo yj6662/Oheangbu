@@ -34924,6 +34924,7 @@ GameObject:
   - component: {fileID: 323120764}
   - component: {fileID: 323120766}
   - component: {fileID: 323120765}
+  - component: {fileID: 323120767}
   m_Layer: 0
   m_Name: A1_W_04_stall
   m_TagString: Untagged
@@ -35006,6 +35007,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 323120763}
   m_Mesh: {fileID: 4300000, guid: 9d4ec924a0507714e9a38f2365313f76, type: 2}
+--- !u!205 &323120767
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 323120763}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0.6999999, z: 0.050000012}
+  m_Size: 2.8
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.012
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 323120765}
+  m_Enabled: 1
 --- !u!1 &323210725
 GameObject:
   m_ObjectHideFlags: 0
@@ -121412,6 +121432,7 @@ GameObject:
   - component: {fileID: 1143900309}
   - component: {fileID: 1143900311}
   - component: {fileID: 1143900310}
+  - component: {fileID: 1143900312}
   m_Layer: 0
   m_Name: A1_W_01_stall
   m_TagString: Untagged
@@ -121494,6 +121515,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1143900308}
   m_Mesh: {fileID: 4300000, guid: 9d4ec924a0507714e9a38f2365313f76, type: 2}
+--- !u!205 &1143900312
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143900308}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0.6999999, z: 0.050000012}
+  m_Size: 2.8
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.012
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 1143900310}
+  m_Enabled: 1
 --- !u!1 &1144291218
 GameObject:
   m_ObjectHideFlags: 0
@@ -129582,6 +129622,7 @@ GameObject:
   - component: {fileID: 1213032460}
   - component: {fileID: 1213032462}
   - component: {fileID: 1213032461}
+  - component: {fileID: 1213032463}
   m_Layer: 0
   m_Name: A1_E_01_stall
   m_TagString: Untagged
@@ -129664,6 +129705,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1213032459}
   m_Mesh: {fileID: 4300000, guid: 9d4ec924a0507714e9a38f2365313f76, type: 2}
+--- !u!205 &1213032463
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213032459}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0.6999999, z: 0.050000012}
+  m_Size: 2.8
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.012
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 1213032461}
+  m_Enabled: 1
 --- !u!1 &1213856422
 GameObject:
   m_ObjectHideFlags: 0
@@ -177405,6 +177465,7 @@ GameObject:
   - component: {fileID: 1623279341}
   - component: {fileID: 1623279343}
   - component: {fileID: 1623279342}
+  - component: {fileID: 1623279344}
   m_Layer: 0
   m_Name: A1_W_02_stall
   m_TagString: Untagged
@@ -177487,6 +177548,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1623279340}
   m_Mesh: {fileID: 4300000, guid: 9d4ec924a0507714e9a38f2365313f76, type: 2}
+--- !u!205 &1623279344
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623279340}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0.6999999, z: 0.050000012}
+  m_Size: 2.8
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.012
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 1623279342}
+  m_Enabled: 1
 --- !u!1 &1624276132
 GameObject:
   m_ObjectHideFlags: 0
@@ -188743,6 +188823,7 @@ GameObject:
   - component: {fileID: 1732645445}
   - component: {fileID: 1732645447}
   - component: {fileID: 1732645446}
+  - component: {fileID: 1732645448}
   m_Layer: 0
   m_Name: A1_W_03_stall
   m_TagString: Untagged
@@ -188825,6 +188906,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1732645444}
   m_Mesh: {fileID: 4300000, guid: 9d4ec924a0507714e9a38f2365313f76, type: 2}
+--- !u!205 &1732645448
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732645444}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0.6999999, z: 0.050000012}
+  m_Size: 2.8
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.012
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 1732645446}
+  m_Enabled: 1
 --- !u!1 &1732742819
 GameObject:
   m_ObjectHideFlags: 0
