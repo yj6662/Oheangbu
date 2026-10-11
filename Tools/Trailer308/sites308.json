@@ -221,16 +221,17 @@
    "yaw": 0,
    "exact": true,
    "river_target": [
-    865.6,
-    232.0,
-    3668.0
+    863.9,
+    235.65,
+    3687.3
    ],
-   "river_target_y_est": true,
+   "river_target_y_est": false,
    "expected_end": [
     863.9,
     235.8,
     3687.3
-   ]
+   ],
+   "_note": "조준은 물이 아니라 건너편 지점(10-09 VALIDATED: 건너편 지점보다 0.15 m 낮게) — 물 가운데(232,3668)를 겨누면 \"이 방향으로는 건너편에 닿을 마른 땅이 없다\""
   },
   "temple_yard": {
    "label": "청림 사찰 마당(연등 두 줄)",
