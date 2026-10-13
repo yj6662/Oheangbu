@@ -1029,7 +1029,12 @@ namespace Oheangbu.EditorTools.WorldMacro
             else log.AppendLine("  scene: no player in the open scenes (only the assets are reverted)");
 
             // the two Resources profiles: without them the game is the one before this stage (the swing profile only if install made it)
-            if (AssetDatabase.LoadAssetAtPath<Object>(GreatProfilePath) != null) { AssetDatabase.DeleteAsset(GreatProfilePath); log.AppendLine("  deleted " + GreatProfilePath); }
+            if (AssetDatabase.LoadAssetAtPath<Object>(GreatProfilePath) != null)
+            {
+                // a profile that was there before install (tuned by hand) is kept: without the installed brush the rig runs the old pass anyway (PR #30 review)
+                if (record == null || record.greatProfileCreated) { AssetDatabase.DeleteAsset(GreatProfilePath); log.AppendLine("  deleted " + GreatProfilePath); }
+                else log.AppendLine("  kept " + GreatProfilePath + " (it existed before install)");
+            }
             if (AssetDatabase.LoadAssetAtPath<Object>(SwingProfilePath) != null)
             {
                 if (record == null || record.swingProfileCreated) { AssetDatabase.DeleteAsset(SwingProfilePath); log.AppendLine("  deleted " + SwingProfilePath + " (the swing rule is off again)"); }

@@ -113,6 +113,7 @@ namespace Oheangbu.App.World
             if (_worldBrush != null) _worldBrush.Great = BindBristles308(_worldBrush, profile);
             if (_nearBrush != null) _nearBrush.Great = BindBristles308(_nearBrush, profile);
             if (_worldBrush == null || _worldBrush.Great == null) return;
+            if (!_worldBrush.Great.IsBound) { _worldBrush.Great = null; if (_nearBrush != null) _nearBrush.Great = null; return; }   // a brush that did not bind (missing bone / socket, scale) is not a great brush: the old pass runs (PR #30 review)
             _greatLeftSocket308 = Find(_worldBrush.Root, GreatBrushBristles308.LeftGripName);
             _swing308 = GetComponent<SpellSwing308>();
             _greatBound308 = true;

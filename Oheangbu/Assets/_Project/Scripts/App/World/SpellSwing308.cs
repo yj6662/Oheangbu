@@ -337,7 +337,11 @@ namespace Oheangbu.App.World
                     break;
                 case StanceState.ToCarry:
                 {
-                    if (combat) { BeginShift(profile, StanceState.ToStance, now); break; }
+                    if (combat)
+                    {
+                        // back to the stance from where the brush is now, not from the carry (PR #30 review): keep the blend it has
+                        float keep = StanceBlend; BeginShift(profile, StanceState.ToStance, now); _shiftStarted = now - keep * profile.ToStanceSeconds; break;
+                    }
                     float u = Mathf.Clamp01((now - _shiftStarted) / profile.ToCarrySeconds);
                     StanceBlend = 1f - u; SetTime(_shiftHash, _hasShift, u);
                     if (u >= 1f) { _stance = StanceState.Carry; ShowIdle(profile, profile.IdleFade); }
