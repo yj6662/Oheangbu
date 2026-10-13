@@ -59,7 +59,7 @@ namespace Oheangbu.App.Prologue
         {
             ReleaseTurn308(Time.time, false);
             Phase = Phase308.None; alertPending = called = false; retakeAt = 0f; searchArrivedAt = -1f; slipHas = false;
-            MovedSeconds308 = SideSlipSeconds308 = 0f;
+            MovedSeconds308 = SideSlipSeconds308 = 0f; turning308 = false;
         }
 
         void Damaged308(EnemyDamageResult result)
@@ -92,8 +92,28 @@ namespace Oheangbu.App.Prologue
             slipPrevious = position; slipHas = true;
         }
 
+        bool turning308;
+        // Patrol and the way home: when the next stretch of path lies more than the profile's angle off the body's front (a patrol turn-around),
+        // stand, turn, then walk. The agent used to turn while already walking, which read as a second of side-stepping per lap (Play 2026-10-13:
+        // 3.8 - 9.7 % of moving time, limit 3 %).
+        void TurnFirst308()
+        {
+            float limit = Brain.PatrolTurnFirstDegrees;
+            Vector3 to = Vector3.zero;
+            bool path = limit > 0f && agent.hasPath && !agent.pathPending && !attacks.AttackInProgress;
+            if (path) { to = Vector3.ProjectOnPlane(agent.steeringTarget - transform.position, Vector3.up); path = to.sqrMagnitude > .04f; }
+            float angle = path ? Vector3.Angle(Vector3.ProjectOnPlane(transform.forward, Vector3.up), to) : 0f;
+            if (path && angle > (turning308 ? 6f : limit))
+            {
+                turning308 = true; agent.updateRotation = false; agent.isStopped = true; agent.velocity = Vector3.zero;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(to), Brain.PatrolTurnDegreesPerSecond * Time.deltaTime);
+            }
+            else if (turning308) { turning308 = false; agent.updateRotation = true; agent.isStopped = false; }
+        }
+
         void BrainFrame308()
         {
+            if (Current == Behaviour.Patrol || Current == Behaviour.Return) TurnFirst308(); else turning308 = false;
             // standing where the player was last seen: look left and right
             if (Current == Behaviour.Chase && Phase == Phase308.Search && searchArrivedAt >= 0f && Brain.SearchLookPeriodSeconds > 0f)
                 transform.rotation = Quaternion.Euler(0f, searchYaw + Mathf.Sin((Time.time - searchArrivedAt) / Brain.SearchLookPeriodSeconds * Mathf.PI * 2f) * Brain.SearchLookDegrees, 0f);
@@ -128,10 +148,10 @@ namespace Oheangbu.App.Prologue
             {
                 // patrol and the way home: nothing to attack, and the body follows its path
                 Phase = Phase308.None; ReleaseTurn308(now, false);
-                attacks.AttackEnabled = false; attacks.FaceTarget = false; agent.updateRotation = true;
+                attacks.AttackEnabled = false; attacks.FaceTarget = false; agent.updateRotation = !turning308;
                 agent.speed = Speed * vitals.Control.MovementScale(now) * (Current == Behaviour.Patrol ? PatrolSpeedScale : 1f);
-                agent.isStopped = attacks.AttackInProgress;
-                if (agent.isStopped) return;
+                agent.isStopped = attacks.AttackInProgress || turning308;
+                if (attacks.AttackInProgress) return;
                 if (Current == Behaviour.Return) StepReturn308(); else StepPatrol();
                 return;
             }

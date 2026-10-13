@@ -32,7 +32,7 @@ namespace Oheangbu.App.World
                 if (profile != null) { riposte = gameObject.AddComponent<Riposte301>(); riposte.Profile = profile; }
             }
             if (riposte != null) riposte.Walker = this;
-            drawingGate = () => (Motor == null || Motor.CanBeginDrawing) && (riposte == null || !riposte.SuppressDraw);
+            drawingGate = () => (Motor == null || Motor.CanBeginDrawing) && (riposte == null || !riposte.SuppressDraw) && (Wiring == null || !Wiring.SwingLocked308);   // SPEC-SPELL-SWING-308: no new glyph during a swing
             if (Drawing != null) Drawing.EntryAllowed = drawingGate;
         }
         // Authoring may assign references immediately after AddComponent/OnEnable.

@@ -219,6 +219,7 @@ namespace Oheangbu.App
 
         private void OnDisable()
         {
+            DropSwing308(false);
             EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear();
             ClearSpells308(SpellClearReason.Disabled);
             SummonCombat?.Clear();
@@ -247,6 +248,7 @@ namespace Oheangbu.App
             TryHookServices();
             EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
             TickSpells308();
+            TickSwing308();
             TickPendingCasts();
             TickInkRegen();
             _contacts.RemoveAll(effect => effect == null);
@@ -426,6 +428,13 @@ namespace Oheangbu.App
                 cast = new SpellCast(cast.Letter, cast.Kind, cast.Element,
                     cast.Power * EABuffs.HoldPower(letter.HoldDuration, Time.time), cast.Area, cast.SpeedMul, EABuffs.HoldPower(letter.HoldDuration, Time.time), cast.Brush, cast.Brush01);
             cast = ModifyCast308(cast, row); // #308 cast hooks (power, projectile speed only)
+            if (TryBeginSwing308(cast, row)) return;   // SPEC-SPELL-SWING-308: kept for the swing's apex (CombatLoopWiring.Swing308.cs)
+            Dispatch308(cast, row);
+        }
+
+        // The cast as judged goes to its route. Called at release, or at the swing's apex for a waiting category.
+        private void Dispatch308(SpellCast cast, SpellRow row)
+        {
             _row308 = row;
             try
             {
@@ -1024,6 +1033,7 @@ namespace Oheangbu.App
         // 피격 = 작도 중단(COMBAT-ATTACK 기본 규칙) — 글자만 소멸·모드 유지(SPEC-DRAWING-INPUT §3)
         private void OnPlayerDamaged(float damage)
         {
+            SwingHit308(damage);   // SPEC-SPELL-SWING-308: a heavy blow before the apex drops the waiting cast
             _lastPlayerHitTime = Time.time;
             if (damage > 0) MarkPlayerHitBoss();
             bool interrupts = true;

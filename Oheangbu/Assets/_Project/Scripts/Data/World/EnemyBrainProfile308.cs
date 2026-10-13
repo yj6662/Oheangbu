@@ -28,6 +28,10 @@ namespace Oheangbu.Data.World
         [Header("몸 방향 [TEST]")]
         [Tooltip("플레이어 쪽으로 도는 빠르기(도/초). 0 = 한 프레임에 돈다(예전과 같다).")]
         [Min(0)] public float TurnDegreesPerSecond;
+        [Tooltip("순찰 · 복귀 때 갈 방향과 몸 앞의 차가 이 각(도)을 넘으면 서서 먼저 돈 뒤 걷는다(반환점 옆걸음 없음). 0 = 걸으면서 돈다(예전과 같다).")]
+        [Range(0, 180)] public float PatrolTurnFirstDegrees = 30f;
+        [Tooltip("서서 도는 빠르기(도/초).")]
+        [Min(1)] public float PatrolTurnDegreesPerSecond = 200f;
         [Tooltip("공격 사거리 + 이 값(m) 안에서만 플레이어를 바라본다. 그 밖에서 움직일 때는 가는 방향을 본다(옆걸음 없음).")]
         [Min(0)] public float FaceMargin;
         [Tooltip("몸 앞과 플레이어 방향의 차가 이 각(도) 안일 때만 새 공격을 시작한다.")]

@@ -280,6 +280,12 @@ namespace Oheangbu.App
             for (int i = 0; i < _visualEvents.Count; i++)
             {
                 var e = _visualEvents[i];
+                if (_hold308)
+                {
+                    // SPEC-SPELL-SWING-308: the letter and its commit wait for the swing's apex; the glyph stays up meanwhile
+                    if (e.Kind == VisualEventKind.Letter || e.Kind == VisualEventKind.Commit) { _held308.Add(e); continue; }
+                    if (e.Kind == VisualEventKind.Evaporate) continue;
+                }
                 switch (e.Kind)
                 {
                     case VisualEventKind.Start: ApplyStrokeStarted(e.UnscaledTime); break;
@@ -923,6 +929,25 @@ namespace Oheangbu.App
         { if (isActiveAndEnabled) SummonPresentationStarted?.Invoke(letter, point); }
         public void NotifyExternalSummonReleased(char letter, Vector3 point)
         { if (isActiveAndEnabled) SummonPresentationReleased?.Invoke(letter, point); }
+
+        // SPEC-SPELL-SWING-308: the wiring keeps a cast for the swing's apex. From this call (the release frame, before Committed)
+        // the letter and commit events are set aside instead of consumed, so the strokes stay where they were drawn. At the apex
+        // the wiring pushes the hit context as it used to at release and then calls ReleaseCommit308: the events come back with
+        // the apex's clock and the pattern leaves then. Presentation only.
+        private bool _hold308;
+        private readonly List<VisualEvent> _held308 = new List<VisualEvent>(4);
+        public void HoldCommit308() { if (isActiveAndEnabled) _hold308 = true; }
+        public void ReleaseCommit308()
+        {
+            if (!_hold308) return;
+            _hold308 = false;
+            for (int i = 0; i < _held308.Count; i++)
+            {
+                var e = _held308[i]; e.UnscaledTime = Time.unscaledTime; e.ScaledTime = Time.time;
+                _visualEvents.Add(e);
+            }
+            _held308.Clear();
+        }
 
         // 시전 불성립(먹 부족·미러 밖 글자) — 배선이 커밋 프레임에 알린다. 표현은 불발(증발)로 따른다
         public void NotifyCastFailed()
