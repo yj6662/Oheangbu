@@ -21,7 +21,7 @@ def is_apex(n, f): a = clips_m2.CLIPS[n].get('apex'); return a is not None and f
 
 
 def clip_sheet(n):
-    fr = clips_m2.SHOTS[n]; S = json.load(open('%s/metrics/%s.json' % (OUT, n), encoding='utf-8'))['summary']; cw = 1280 // 6; hq = cw; hs = round(cw * (1 - TOPCROP)); TOP = 58
+    fr = clips_m2.SHOTS[n]; S = json.load(open('%s/metrics/%s.json' % (OUT, n), encoding='utf-8'))['summary']; cw = 1280 // len(fr); hq = cw; hs = round(cw * (1 - TOPCROP)); TOP = 58
     sh = Image.new('RGB', (1280, TOP + hq + hs + 2 * 26), (38, 38, 38)); dr = ImageDraw.Draw(sh)
     dr.text((8, 5), 'A_Brush308_%s — %s   %.2f s (%d 프레임, 30 fps)' % (n, clips_m2.CLIPS[n]['use'], S['seconds'], S['frames']), font=font, fill=(235, 235, 235))
     dr.text((8, 31), '원본 %s   속도 배율 %s   왼손 쥠 %.0f %%   자루 관통 %d 프레임' % (S['src'], S.get('speed_factors'), 100 * S['l_on_share'], S['shaft_in_frames']), font=small, fill=(200, 200, 200))
