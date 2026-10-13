@@ -179,14 +179,14 @@ namespace Oheangbu.Data.Spell
 
         [Header("가까운 화면 (그리기) — 옛 작은 붓 값과 따로 둔다")]
         [Tooltip("가까운 화면의 붓을 쥐는 곳: GripSocket 에서 붓끝 쪽으로(m). 1.55 m 붓을 0.95 m 뒤에서 쥐면 손이 화면 밖이다.")]
-        public float NearGripAlongShaft = .40f;
+        public float NearGripAlongShaft = -.10f;   // 2026-10-13 Play: .40 put the shaft across the camera; behind GripSocket the brush points away like a polearm
         [Tooltip("켜면 아래 두 값이 그리기 쥐기(쌍구 쥐기 값)를 대신한다. 끄면 제스처 프로필 값 그대로.")]
         public bool NearGripOverride;
         public Vector3 NearGripPosition;
         public Quaternion NearGripRotation = Quaternion.identity;
-        [Min(.05f)] public float NearTipDepth = 1.25f;
+        [Min(.05f)] public float NearTipDepth = 1.3f;
         [Min(.05f)] public float NearMinimumDepth = .7f;
-        [Min(.05f)] public float NearMaximumDepth = 1.55f;
+        [Min(.05f)] public float NearMaximumDepth = 1.6f;
         public Vector3 NearShoulderOffset = new Vector3(.23f, -.29f, .15f);
         [Min(0)] public float NearRaiseSeconds = .28f;
         public Vector3 NearRaiseOffset = new Vector3(.06f, -.42f, -.12f);

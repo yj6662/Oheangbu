@@ -613,6 +613,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             work.BrushPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BrushModel);
             work.TwoHandGrip = grip; work.CarryGrip = grip;   // grip.json: one transform for every clip, the shoulder carry included
+            { var stanceGrip = grip; var carryGrip = grip; if (TruthGrips(ref stanceGrip, ref carryGrip, log)) { work.TwoHandGrip = stanceGrip; work.CarryGrip = carryGrip; } }   // solved from the Blender truth when it is there
             work.LeftHandHoldLocal = leftHold;
             work.States = BuildStates(json, log);
             if (profile == null)
@@ -734,6 +735,78 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (clip != null) b.AppendLine("  " + name + " curves " + AnimationUtility.GetCurveBindings(clip).Length + " · muscle sample: " + string.Join(", ", AnimationUtility.GetCurveBindings(clip).Where(c => c.propertyName.StartsWith("Right Arm", StringComparison.Ordinal) || c.propertyName.StartsWith("Right Forearm", StringComparison.Ordinal)).Select(c => { var cv = AnimationUtility.GetEditorCurve(clip, c); float lo = cv.keys.Min(k => k.value), hi = cv.keys.Max(k => k.value); return c.propertyName + " " + lo.ToString("F2", Inv) + ".." + hi.ToString("F2", Inv); })));
             }
             return b.ToString();
+        }
+
+        // ---------------------------------------------------------------- grip from the Blender truth (2026-10-13)
+        // grip.json's hand-to-brush rotation was converted by formula and never checked in the editor: in Play the carry put the
+        // bristle head 0.7 m to the left of the head instead of behind it. brush_truth.json (export of the solved .blend) has the
+        // brush sockets and the joints per frame in Unity character space; the grip is solved here from what the retargeted hand
+        // really does in Unity: grip = inverse(hand) x (socket pose the truth asks for).
+        static string TruthJson => Path.Combine(SourceMotion, "metrics", "brush_truth.json");
+
+        static Vector3 TruthPoint(object truth, string clip, string point, int frame)
+        {
+            var list = At(truth, "clips", clip, "points", point, "unity") as List<object>;
+            if (list == null || list.Count == 0) return new Vector3(float.NaN, 0f, 0f);
+            var p = list[Mathf.Clamp(frame, 0, list.Count - 1)] as List<object>;
+            return new Vector3(Number(p[0]), Number(p[1]), Number(p[2]));
+        }
+
+        // the grip that puts the brush where the truth has it at this frame of this clip, on the given sampled copy
+        static bool TruthGrip(object truth, string name, int frame, GameObject copy, Animator animator, Quaternion socketInRoot, out GreatBrush308Profile.Grip grip, out float wristError)
+        {
+            grip = new GreatBrush308Profile.Grip { Rotation = Quaternion.identity }; wristError = -1f;
+            var clip = LoadClip(name); if (clip == null) return false;
+            float speed = ClipSpeed308(name, clip);
+            copy.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            clip.SampleAnimation(copy, Mathf.Min(frame / 30f * speed, clip.length));
+            Transform hand = animator.GetBoneTransform(HumanBodyBones.RightHand); Transform root = copy.transform;
+            Vector3 socket = TruthPoint(truth, name, "GripSocket", frame), end = TruthPoint(truth, name, "BrushRootZ10cm", frame), ring = TruthPoint(truth, name, "RingASide10cm", frame), wrist = TruthPoint(truth, name, "RightHand", frame);
+            if (float.IsNaN(socket.x) || float.IsNaN(end.x) || float.IsNaN(ring.x)) return false;
+            Vector3 y = (end - socket).normalized, r = Vector3.ProjectOnPlane(ring - socket, y).normalized;   // shaft toward the tip; ring A side = brush root -X
+            Vector3 x = -r, z = Vector3.Cross(x, y);
+            Quaternion brushRoot = Quaternion.LookRotation(z, y);
+            // the offset is taken from the wrist (Blender's wrist -> socket vector on Unity's wrist): humanoid retargeting shifts the whole
+            // body by some centimetres, and an absolute socket position would put that shift between the hand and the shaft
+            Quaternion socketWorld = root.rotation * brushRoot * socketInRoot; Vector3 socketPosition = hand.position + root.rotation * (socket - wrist);
+            grip = new GreatBrush308Profile.Grip { Position = hand.InverseTransformPoint(socketPosition), Rotation = Quaternion.Inverse(hand.rotation) * socketWorld };
+            wristError = Vector3.Distance(root.InverseTransformPoint(hand.position), wrist);
+            return true;
+        }
+
+        // fills the two grips from the truth; false (and nothing changed) when the truth file or the models are missing
+        static bool TruthGrips(ref GreatBrush308Profile.Grip stance, ref GreatBrush308Profile.Grip carry, StringBuilder log)
+        {
+            if (!File.Exists(TruthJson)) { log.AppendLine("  truth: no brush_truth.json - the grip stays the grip.json formula"); return false; }
+            object truth; try { truth = new Reader(File.ReadAllText(TruthJson, Encoding.UTF8)).Value(); } catch (Exception e) { log.AppendLine("  truth: unreadable " + e.Message); return false; }
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerModel); var brushModel = AssetDatabase.LoadAssetAtPath<GameObject>(BrushModel);
+            if (model == null || brushModel == null) return false;
+            GameObject copy = Object.Instantiate(model); copy.hideFlags = HideFlags.HideAndDontSave;
+            GameObject brush = Object.Instantiate(brushModel); brush.hideFlags = HideFlags.HideAndDontSave;
+            try
+            {
+                var animator = copy.GetComponent<Animator>(); if (animator == null) animator = copy.AddComponent<Animator>();
+                animator.avatar = PlayerAvatar();
+                brush.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                Transform socket = Child(brush.transform, "GripSocket"); if (socket == null || animator.GetBoneTransform(HumanBodyBones.RightHand) == null) return false;
+                Quaternion socketInRoot = socket.rotation;
+                GreatBrush308Profile.Grip s, c;
+                if (!TruthGrip(truth, "StanceIdle", 0, copy, animator, socketInRoot, out s, out float ws) || !TruthGrip(truth, "CarryIdle", 0, copy, animator, socketInRoot, out c, out float wc)) { log.AppendLine("  truth: stance / carry frame could not be solved"); return false; }
+                log.AppendLine("  truth: stance grip moved " + (Vector3.Distance(s.Position, stance.Position) * 1000f).ToString("F0", Inv) + " mm / " + Quaternion.Angle(s.Rotation, stance.Rotation).ToString("F1", Inv) + " deg from the formula · carry grip differs from the stance grip by "
+                    + (Vector3.Distance(s.Position, c.Position) * 1000f).ToString("F0", Inv) + " mm / " + Quaternion.Angle(s.Rotation, c.Rotation).ToString("F1", Inv) + " deg · wrist vs truth " + (ws * 100f).ToString("F1", Inv) + " / " + (wc * 100f).ToString("F1", Inv) + " cm");
+                // how well one stance grip serves the other clips (what the retargeted hand does differently from Blender's)
+                foreach (string name in ClipNames)
+                {
+                    if (name == "CarryIdle" || name == "ToCarry" || name == "ToStance") continue;
+                    var list = At(truth, "clips", name, "points", "GripSocket", "unity") as List<object>; int frames = list != null ? list.Count : 0; float worst = 0f, worstMm = 0f, wrist = 0f;
+                    for (int f = 0; f < frames; f += 2)
+                        if (TruthGrip(truth, name, f, copy, animator, socketInRoot, out var g, out float w)) { worst = Mathf.Max(worst, Quaternion.Angle(g.Rotation, s.Rotation)); worstMm = Mathf.Max(worstMm, Vector3.Distance(g.Position, s.Position) * 1000f); wrist = Mathf.Max(wrist, w); }
+                    log.AppendLine("  truth: " + name.PadRight(11) + " stance grip off by up to " + worst.ToString("F1", Inv) + " deg / " + worstMm.ToString("F0", Inv) + " mm · wrist up to " + (wrist * 100f).ToString("F1", Inv) + " cm from Blender's");
+                }
+                stance = s; carry = c;
+                return true;
+            }
+            finally { Object.DestroyImmediate(copy); Object.DestroyImmediate(brush); }
         }
 
         static string ProfileCommand()

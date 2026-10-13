@@ -180,7 +180,11 @@ if 'special' not in SPEC:
     info.update(src=SPEC['src'], knots=kn, speed_factors=speeds, src_window=[kn[0][1], kn[-1][1]], blend_in=SPEC['blend_in'], blend_out=SPEC['blend_out'], root=SPEC['root'], src_scale=round(src.S, 4), arm_ratio=round(tgt_arm / src.arm, 3))
     src.close()
 else:
-    CG = Vector(clips_m2.CARRY_G); CD = Vector(clips_m2.CARRY_D).normalized(); P0 = STANCE.P; d0, n0, G0 = hand_state(P0)
+    _cg, _cd = clips_m2.CARRY_G, clips_m2.CARRY_D
+    if opt('--carry'):      # 시험용: --carry sx,sy,sz,pitch,yaw,L
+        _v = [float(x) for x in opt('--carry').split(',')]; _cg, _cd = clips_m2.carry_gd(_v[:3], _v[3], _v[4], _v[5])
+    BUMP = Vector([float(x) for x in opt('--bump').split(',')]) if opt('--bump') else Vector(clips_m2.CARRY_BUMP)
+    CG = Vector(_cg); CD = Vector(_cd).normalized(); P0 = STANCE.P; d0, n0, G0 = hand_state(P0)
     def body(s, breath=0.0):
         P = C.Pose(); P.hips_t = P0.hips_t + Vector((0, 0, .015 * s))
         for n in ORDER:
@@ -196,7 +200,7 @@ else:
     def pose_at(s, breath=0.0):
         P = body(ease(s), breath); u = ease((s - .12) / .88)
         d = Quaternion().slerp(d0.rotation_difference(CD), u) @ d0; d.normalize()
-        G = G0.lerp(CG, u) + Vector((0, -.05, .10)) * math.sin(math.pi * u) + Vector((0, 0, .004 * breath))
+        G = G0.lerp(CG, u) + BUMP * math.sin(math.pi * u) + Vector((0, 0, .004 * breath))
         nn = Quaternion().slerp(n0.rotation_difference(n1), u) @ n0; nn = (nn - d * nn.dot(d)).normalized()
         if u > 0:           # u = 0 이면 오른팔은 모캡 그대로(전투 태세와 똑같이 시작 · 끝나게)
             c, r = attempt(P, 'Right', G, d, nn, torso_caps(P), hint0.normalized().lerp(hint1.normalized(), u)); set_arm(P, 'Right', r)
