@@ -61,7 +61,29 @@ namespace Oheangbu.BrushRender
         }
 
         // 획 마무리 — 마지막 진행 방향으로 taper 점을 덧붙여 붓을 떼는 흔적을 남긴다(수필 收筆)
-        public void EndStroke()
+        // #308 (D308-80g): 끝부분(그은 길이의 lengthShare)의 폭을 1 → endFactor 로 부드럽게 바꾼다. 수필 점을 붙이기 전에 부른다.
+        public void ReshapeTail(float lengthShare, float endFactor)
+        {
+            var points = _data.Points;
+            if (points.Count < 3 || lengthShare <= 0f || Mathf.Approximately(endFactor, 1f)) return;
+            float total = 0f;
+            for (int i = 1; i < points.Count; i++) total += Vector3.Distance(points[i].Position, points[i - 1].Position);
+            if (total <= 0f) return;
+            float start = total * (1f - Mathf.Clamp01(lengthShare)), run = 0f;
+            for (int i = 1; i < points.Count; i++)
+            {
+                run += Vector3.Distance(points[i].Position, points[i - 1].Position);
+                if (run <= start) continue;
+                float t = Mathf.SmoothStep(0f, 1f, (run - start) / Mathf.Max(.0001f, total - start));
+                _data.SetWidth(i, points[i].Width * Mathf.Lerp(1f, endFactor, t));
+            }
+            _dirty = true;
+        }
+
+        public void EndStroke() => EndStroke(1f, -1f, -1f);
+
+        // lengthMul = 수필 길이 배율, tipWidth / inkLoss < 0 이면 자료 값 그대로
+        public void EndStroke(float lengthMul, float tipWidth, float inkLoss)
         {
             var points = _data.Points;
             if (_style == null || points.Count < 2 || _style.TaperSteps <= 0) return;
@@ -86,9 +108,9 @@ namespace Oheangbu.BrushRender
                 // 잔여 폭(TipWidth)까지만 줄고, 그 위를 회봉 캡이 둥글게 감싼다(§14)
                 float eased = Mathf.SmoothStep(0f, 1f, t);
                 AddPoint(
-                    last.Position + dir * (_style.TaperLength * eased),
-                    last.Width * Mathf.Lerp(1f, _style.TaperTipWidth, eased),
-                    last.Ink * (1f - _style.TaperInkLoss * eased),
+                    last.Position + dir * (_style.TaperLength * Mathf.Max(0f, lengthMul) * eased),
+                    last.Width * Mathf.Lerp(1f, tipWidth >= 0f ? tipWidth : _style.TaperTipWidth, eased),
+                    last.Ink * (1f - (inkLoss >= 0f ? inkLoss : _style.TaperInkLoss) * eased),
                     last.Time); // 수필 점은 마지막 점의 탄생 시각 상속 — 번짐 나이 연속
             }
         }

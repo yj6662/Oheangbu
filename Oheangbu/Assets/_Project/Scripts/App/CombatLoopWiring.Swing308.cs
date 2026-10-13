@@ -69,12 +69,14 @@ namespace Oheangbu.App
             return true;
         }
 
-        // The ink one cast of this row asks for, as the dispatch will ask (the combat summon's double cost aside: that is only
-        // known after its Prepare). Used for the early "not enough ink" answer and for the price of a dropped cast.
+        // The ink one cast of this row asks for, as the dispatch will ask (a combat summon costs double, as in ResolveSummon).
+        // Used for the early "not enough ink" answer and for the price of a dropped cast.
         private float SwingCost308(in SpellCast cast, SpellRow row)
         {
             float cost = _config != null ? _config.SpellInkCost : 0f;
-            if (row != null && SpellTakeover308.UsesHandler(row, _spells308 != null && _spells308.Has(row.Handler))) cost *= Mathf.Max(0f, row.F("cost", 1f));
+            bool handler = row != null && SpellTakeover308.UsesHandler(row, _spells308 != null && _spells308.Has(row.Handler));
+            if (handler) cost *= Mathf.Max(0f, row.F("cost", 1f));
+            else if (cast.Kind == SpellKind.Summon && SummonCombat != null && SummonCombat.isActiveAndEnabled && SummonCombat.Supports(cast.Letter)) cost *= 2f;
             return cost * (EABuffs?.CostScale(Time.time) ?? 1f) * CostScale308(cast);
         }
 

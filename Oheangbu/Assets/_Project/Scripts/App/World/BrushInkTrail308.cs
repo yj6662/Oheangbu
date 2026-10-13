@@ -22,7 +22,7 @@ namespace Oheangbu.App.World
         Renderer[] brushRenderers;
         Camera view;
         Vector3 previous;
-        bool has;
+        bool has, near;
 
         /// <summary>Read by checks: the ribbon is being fed this frame.</summary>
         public bool Emitting => trail != null && trail.emitting;
@@ -48,7 +48,7 @@ namespace Oheangbu.App.World
         {
             if (Profile == null || !Profile.IsValid) return false;
             if (rig == null) rig = GetComponent<WorldMacroPlayerGestureRig>();
-            if (rig == null || rig.WorldTip == null) return false;
+            if (rig == null || rig.WorldTip == null || rig.EffectTip == null) return false;
             if (trail != null) return true;
             var holder = new GameObject("BrushInkTrail308");   // not parented: the ribbon lives in world space and takes no scale
             anchor = holder.transform;
@@ -112,11 +112,18 @@ namespace Oheangbu.App.World
         void LateUpdate()
         {
             if (!Build()) return;
-            Vector3 tip = rig.WorldTip.position;
+            // the tip the rig shows this frame: the close-up brush's in the draw mode (first person), the world brush's otherwise.
+            // 2026-10-13: following the world brush alone left the ribbon away from the tip the player sees in the close-up.
+            Vector3 tip = rig.EffectTip.position;
+            bool nearNow = (tip - rig.WorldTip.position).sqrMagnitude > .0004f;
             if (view == null) view = Camera.main;
-            bool shown = BrushShown() && (view == null || (view.transform.position - tip).sqrMagnitude > Profile.HideWithinCamera * Profile.HideWithinCamera);
+            // 2026-10-13 (user): in the draw mode the afterimage covered the picture - none there, and what was left is cleared
+            bool shown = nearNow ? false
+                : BrushShown() && (view == null || (view.transform.position - tip).sqrMagnitude > Profile.HideWithinCamera * Profile.HideWithinCamera);
             float dt = Time.deltaTime;
-            if (has && (tip - previous).sqrMagnitude > Profile.ClearJump * Profile.ClearJump) { trail.Clear(); has = false; }
+            if (has && (nearNow != near || (tip - previous).sqrMagnitude > Profile.ClearJump * Profile.ClearJump)) { trail.Clear(); has = false; }   // no streak between the two brushes
+            near = nearNow;
+            if (nearNow) { if (trail.positionCount > 0) trail.Clear(); has = false; }
             if (has && dt > 0f)
             {
                 // faster tip = thinner, drier line (the width is the whole ribbon's: a TrailRenderer has one multiplier)

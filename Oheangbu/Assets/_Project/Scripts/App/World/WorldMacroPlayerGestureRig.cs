@@ -74,7 +74,9 @@ namespace Oheangbu.App.World
             public float ShaftSpan;
             public Renderer[] Renderers;
             public BrushBristleRig Bristles;
-            public Vector3 TipOffset => Bristles != null && Bristles.IsBound && Bristles.Pose.Valid
+            public GreatBrushBristles308 Great;   // #308 great brush (WorldMacroPlayerGestureRig.Swing308.cs); null without its profile
+            public Vector3 TipOffset => Great != null ? Great.TipOffsetInGripLocal(RestTipOffset)
+                : Bristles != null && Bristles.IsBound && Bristles.Pose.Valid
                 ? Bristles.Pose.TipOffsetInGripLocal : RestTipOffset;
         }
 
@@ -197,6 +199,7 @@ namespace Oheangbu.App.World
             ReleaseHarvestSink();
             _worldBrush?.Bristles?.ResetDeformation();
             _nearBrush?.Bristles?.ResetDeformation();
+            ResetGreat308();   // #308 great brush: back to the rest shape before the brushes are measured again
             _bound = false;
             _diagnostics.Bound = false;
             _diagnostics.NearBound = false;
@@ -208,9 +211,11 @@ namespace Oheangbu.App.World
             }
             _world = BindBody(_animator.transform, true);
             ApplyBrushSize(_worldBrushRoot); ApplyBrushSize(_nearBrushRoot);
+            PlaceNearGrip308();   // #308 great brush: where the close-up hand holds it (nothing without the profile)
             _worldBrush = BindBrush(_worldBrushRoot, _worldGripSocket, _worldTipSocket);
             _near = _nearRoot != null ? BindBody(_nearRoot, false) : null;
             _nearBrush = BindBrush(_nearBrushRoot, _nearGripSocket, _nearTipSocket);
+            BindGreat308();       // #308 great brush: Brush.Great is assigned here only, and only with the profile
             if (!_world.Valid || _worldBrush == null)
             {
                 BindingError = !_world.Valid ? "Right upper arm, forearm and hand could not be bound."
@@ -360,7 +365,7 @@ namespace Oheangbu.App.World
                 ? success ? _profile.CommitRecoverySeconds : _profile.InterruptRecoverySeconds : .15f;
             _hasPointerHistory = false;
             if (success && _profile != null && _profile.CastFollowThrough && _profile.CastHoldSeconds > 0f
-                && _nearVisible && _castCamera != null && NearIsBound) BeginCast();
+                && _nearVisible && _castCamera != null && NearIsBound && !GreatNow308) BeginCast();   // #308: the swing replaces the throw
             else EndCast();
             JuiceCommitted308(success);   // #308 D-1: the camera kick of a cast that went out (nothing without a profile)
         }
@@ -413,6 +418,7 @@ namespace Oheangbu.App.World
                 RestoreAnimatedPose();
                 EndCast();
                 JuiceSuspend308();   // #308: no camera reaction in the seat or on a stopped rig
+                SuspendedBrush308(); // #308 great brush: slung on the back in a seat / a vehicle (nothing without it)
                 SetNearVisible(false);
                 _cameraRig?.SetDrawingPresentationActive(false);
                 if (!_wasSuspended)
@@ -529,6 +535,7 @@ namespace Oheangbu.App.World
             MeasureLengths(_world);
             if (_pendantActive) { ApplyPendantPose(); return; }
             if (_airActive308) { ApplyAirStrokePose308(dt); return; }   // #308 D308-8c call stroke in the air (WorldMacroPlayerGestureRig.CallStroke308.cs)
+            if (OwnedPose308(dt, drawing, casting, harvesting)) return;   // #308 great brush: the Animator owns the arms outside the draw mode (false without its profile)
             // #307 phase 1 item 8: with zero participation every torso term is an identity rotation and the off-hand IK has
             // weight 0 (PlayerVisualIK.Solve returns at once), so the pass only re-wrote the same rotations (float round-off,
             // < 1e-6; MeasureZeroParticipationTorsoDelta307 reports it). Carry, fingers, brush and bristles stay live at zero
@@ -552,6 +559,7 @@ namespace Oheangbu.App.World
             ApplyFingers();
             PlaceBrush(_world, _worldBrush);
             if (_worldBrush.Bristles != null) _worldBrush.Bristles.ApplyPose();
+            AfterWorldBrush308();   // #308 great brush: left hand on the shaft, bristles (nothing when Brush.Great is null)
 
             bool nearVisible = (drawing || casting) && hasPointer && NearIsBound;
             SetNearVisible(nearVisible);
@@ -563,12 +571,12 @@ namespace Oheangbu.App.World
             {
                 ApplyNearArm(camera, screen, visualVelocity, tipContact, dt);
                 // entering draw mode: the close-up arm and the brush in its hand rise together from below the frame
-                _nearRaise = Mathf.MoveTowards(_nearRaise, 1f, dt / Mathf.Max(.05f, _profile.NearRaiseSeconds));
+                _nearRaise = Mathf.MoveTowards(_nearRaise, 1f, dt / Mathf.Max(.05f, NearRaiseSeconds308));
                 // leaving after a cast: the same path back down, arm and brush together
                 float lower = Mathf.Max(1f - Mathf.SmoothStep(0f, 1f, _nearRaise), castDrop);
                 if (lower > .0001f)
                 {
-                    Vector3 offset = camera.transform.TransformDirection(_profile.NearRaiseOffset) * lower;
+                    Vector3 offset = camera.transform.TransformDirection(NearRaiseOffset308) * lower;
                     _nearRoot.position += offset;
                     if (_nearBrush.Root != _nearRoot && !_nearBrush.Root.IsChildOf(_nearRoot)) _nearBrush.Root.position += offset;
                 }
@@ -681,6 +689,7 @@ namespace Oheangbu.App.World
 
         private void PoseCarry()
         {
+            if (GreatNow308) return;   // #308 great brush: the carry is an Animator state (shoulder carry / combat stance)
             var basis = _world.Root;
             float sitting = _profile.UseSeatedCarry && _motor != null ? Mathf.Clamp01(_motor.Posture01) : 0f;
             if (_profile.PreserveAnimatedCarry && sitting < .001f)
@@ -772,6 +781,7 @@ namespace Oheangbu.App.World
 
         private void ApplyNearArm(Camera camera, Vector2 screen, Vector3 visualVelocity, bool stroking, float dt)
         {
+            if (NearGreat308(camera, screen, visualVelocity, stroking, dt)) return;   // #308 great brush: two hands on the shaft (false without it)
             if (_profile.ShuanggouGrip) { ApplyNearArmVertical(camera, screen, visualVelocity, stroking, dt); return; }
             foreach (var pair in _nearCopies)
             {
@@ -779,12 +789,12 @@ namespace Oheangbu.App.World
                 pair.Target.localRotation = pair.Source.localRotation;
             }
             _nearRoot.rotation = camera.transform.rotation;
-            _nearRoot.position += camera.transform.TransformPoint(_profile.NearShoulderOffset) - _near.Upper.position;
+            _nearRoot.position += camera.transform.TransformPoint(NearShoulderOffset308) - _near.Upper.position;
             MeasureLengths(_near);
             Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);   // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): not Camera.ScreenPointToRay
-            float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
-            float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
-            float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
+            float preferred = Mathf.Max(camera.nearClipPlane + .08f, NearTipDepth308);
+            float minimum = Mathf.Max(camera.nearClipPlane + .04f, NearMinimumDepth308);
+            float maximum = Mathf.Max(minimum, NearMaximumDepth308);
             PlayerVisualIK.FindTip(ray, _near.Upper.position, _near.UpperLength + _near.ForearmLength,
                 _nearBrush.TipOffset.magnitude, minimum, maximum, preferred, out Vector3 tip);
             if (!stroking) tip -= ray.direction * Mathf.Min(_profile.PenLiftDistance, Mathf.Max(0f, preferred - minimum));
@@ -920,6 +930,7 @@ namespace Oheangbu.App.World
             // give the near hand a different grasp when FingerPoseWeight is below one.
             PlaceBrush(_near, _nearBrush);
             if (_nearBrush.Bristles != null) _nearBrush.Bristles.ApplyPose();
+            if (_nearBrush.Great != null) _nearBrush.Great.ApplyPose();   // #308 great brush
             // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): the tip is read with the exact projection. Camera.WorldToScreenPoint reads through the
             // single-precision world-to-clip matrix and is itself a fraction of a pixel off at these coordinates, so the loop below
             // used to settle the tip on a reading that moved from frame to frame.
@@ -1026,6 +1037,7 @@ namespace Oheangbu.App.World
 
         private void ApplyFingers()
         {
+            if (GreatNow308) return;   // #308 great brush: the fingers are the clip's grip, in the draw mode too (the pen-grip poses belong to the 0.9 m brush)
             for (int i = 0; i < _fingers.Length; i++)
             {
                 var binding = _fingers[i];
@@ -1057,6 +1069,7 @@ namespace Oheangbu.App.World
 
         private void EvaluateBristles(Brush brush, Vector3 velocity, Transform basis, Vector3 axis, bool stroking, float dt)
         {
+            if (brush.Great != null) { brush.Great.EvaluateInFrame(velocity, basis.rotation, DrawingGripRotation(brush.TipOffset, axis, basis.up), stroking, dt); return; }   // #308 great brush
             if (brush.Bristles == null || !brush.Bristles.IsBound) return;
             Quaternion grip = DrawingGripRotation(brush.TipOffset, axis, basis.up);
             brush.Bristles.EvaluateInFrame(velocity, basis.rotation, grip, stroking, dt);
@@ -1137,20 +1150,20 @@ namespace Oheangbu.App.World
 
         private Quaternion GripRotationLocal(float blend)
         {
-            Quaternion a = WorldMacroPlayerGestureProfile.SafeRotation(_profile.RightHandGripRotation);
+            Quaternion a = CarryGripRotation308(WorldMacroPlayerGestureProfile.SafeRotation(_profile.RightHandGripRotation));   // #308: unchanged without the great brush
             return blend <= 0f ? a : Quaternion.Slerp(a,
-                WorldMacroPlayerGestureProfile.SafeRotation(_profile.ShuanggouGripRotation), Mathf.Clamp01(blend));
+                DrawGripRotation308(WorldMacroPlayerGestureProfile.SafeRotation(_profile.ShuanggouGripRotation)), Mathf.Clamp01(blend));
         }
 
-        private Vector3 GripPositionLocal(float blend) => blend <= 0f ? _profile.RightHandGripPosition
-            : Vector3.Lerp(_profile.RightHandGripPosition, _profile.ShuanggouGripPosition, Mathf.Clamp01(blend));
+        private Vector3 GripPositionLocal(float blend) => blend <= 0f ? CarryGripPosition308(_profile.RightHandGripPosition)   // #308: unchanged without the great brush
+            : Vector3.Lerp(CarryGripPosition308(_profile.RightHandGripPosition), DrawGripPosition308(_profile.ShuanggouGripPosition), Mathf.Clamp01(blend));
 
         private static float Lag(float seconds, float dt) => seconds <= .0001f ? 1f : 1f - Mathf.Exp(-Mathf.Max(0f, dt) / seconds);
 
         private Vector3 VerticalShaftLocal(Brush brush)
         {
             Vector3 rest = brush.RestTipOffset.sqrMagnitude > .000001f ? brush.RestTipOffset.normalized : Vector3.up;
-            return WorldMacroPlayerGestureProfile.SafeRotation(_profile.ShuanggouGripRotation) * rest;
+            return DrawGripRotation308(WorldMacroPlayerGestureProfile.SafeRotation(_profile.ShuanggouGripRotation)) * rest;
         }
 
         // Drawing-plane normal tilted so the butt leans toward the authored direction, plus a small lean with
@@ -1291,6 +1304,7 @@ namespace Oheangbu.App.World
 
         private static void EvaluateBristlesGrip(Brush brush, Vector3 velocity, Transform basis, Quaternion grip, bool stroking, float dt)
         {
+            if (brush.Great != null) { brush.Great.EvaluateInFrame(velocity, basis.rotation, grip, stroking, dt); return; }   // #308 great brush
             if (brush.Bristles == null || !brush.Bristles.IsBound) return;
             brush.Bristles.EvaluateInFrame(velocity, basis.rotation, grip, stroking, dt);
         }
@@ -1348,7 +1362,7 @@ namespace Oheangbu.App.World
                 * _profile.ShoulderFollow, followLimit);
             _vNear.Shoulder = continuous ? Vector3.Lerp(_vNear.Shoulder, followTarget, Lag(_profile.ShoulderLag, dt)) : followTarget;
             _nearRoot.rotation = view.rotation;
-            _nearRoot.position += view.TransformPoint(_profile.NearShoulderOffset + _vNear.Shoulder) - _near.Upper.position;
+            _nearRoot.position += view.TransformPoint(NearShoulderOffset308 + _vNear.Shoulder) - _near.Upper.position;
             Vector3 follow = view.TransformVector(_vNear.Shoulder);
             MeasureLengths(_near);
             // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): the pointer's ray is built from the projection matrix and the camera's own position
@@ -1356,9 +1370,9 @@ namespace Oheangbu.App.World
             // view-projection; at kilometre-scale coordinates its direction changes by tenths of a degree from frame to frame while the
             // camera turns or moves, and the shaft (VerticalAxis below) and the hand on it swung about the tip.
             Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);
-            float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
-            float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
-            float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
+            float preferred = Mathf.Max(camera.nearClipPlane + .08f, NearTipDepth308);
+            float minimum = Mathf.Max(camera.nearClipPlane + .04f, NearMinimumDepth308);
+            float maximum = Mathf.Max(minimum, NearMaximumDepth308);
             Vector3 shoulder = _near.Upper.position;
             float share = _profile.ArticulatedStrokes ? _strokeMotion.ArmShare : 1f;
             float length = _nearBrush.TipOffset.magnitude;
@@ -1563,13 +1577,13 @@ namespace Oheangbu.App.World
                 * _profile.ShoulderFollow, followLimit);
             _vNear.Shoulder = continuous ? Vector3.Lerp(_vNear.Shoulder, followTarget, Lag(_profile.ShoulderLag, dt)) : followTarget;
             _nearRoot.rotation = view.rotation;
-            _nearRoot.position += view.TransformPoint(_profile.NearShoulderOffset + _vNear.Shoulder) - _near.Upper.position;
+            _nearRoot.position += view.TransformPoint(NearShoulderOffset308 + _vNear.Shoulder) - _near.Upper.position;
             Vector3 follow = view.TransformVector(_vNear.Shoulder);
             MeasureLengths(_near);
             Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);   // #308 (SPEC-LOCKON-DRAW-STABILITY-308 4.7): not Camera.ScreenPointToRay
-            float preferred = Mathf.Max(camera.nearClipPlane + .08f, _profile.NearTipDepth);
-            float minimum = Mathf.Max(camera.nearClipPlane + .04f, _profile.NearMinimumDepth);
-            float maximum = Mathf.Max(minimum, _profile.NearMaximumDepth);
+            float preferred = Mathf.Max(camera.nearClipPlane + .08f, NearTipDepth308);
+            float minimum = Mathf.Max(camera.nearClipPlane + .04f, NearMinimumDepth308);
+            float maximum = Mathf.Max(minimum, NearMaximumDepth308);
             Vector3 shoulder = _near.Upper.position;
             float upperLength = _near.UpperLength, forearmLength = _near.ForearmLength * .995f;
             Vector3 upper = FistElbowDirection(view);
@@ -1656,6 +1670,7 @@ namespace Oheangbu.App.World
         private void ApplyBrushSize(Transform root)
         {
             if (!Application.isPlaying || root == null || _profile == null) return;
+            if (SkipBrushSizing308(root)) return;   // #308 great brush: size 1
             float size = Mathf.Clamp(_profile.BrushSize, .5f, 3f);
             Transform sizer = root.Find(BrushSizeNode);
             if (sizer == null)
@@ -1677,6 +1692,7 @@ namespace Oheangbu.App.World
         private void ApplyHandleStretch(Brush brush)
         {
             if (!Application.isPlaying || brush == null || brush.ShaftEnd == null || _profile == null || !_profile.ShuanggouGrip) return;
+            if (brush.Great != null) return;   // #308 great brush: no handle stretch
             float scale = Mathf.Clamp(_profile.BrushScale, 1f, 1.6f);
             if (scale - 1f < .001f) return;
             Vector3 axis = brush.Grip.rotation * brush.RestTipOffset;
@@ -1718,10 +1734,11 @@ namespace Oheangbu.App.World
         {
             // The hidden chain is not evaluated. Clear its previous stroke bend once at the
             // visibility boundary so re-entry starts from the authored brush rest shape.
-            if (_nearVisible && !visible) _nearBrush?.Bristles?.ResetDeformation();
+            if (_nearVisible && !visible) { _nearBrush?.Bristles?.ResetDeformation(); if (_nearBrush != null && _nearBrush.Great != null) _nearBrush.Great.ResetDeformation(); }
             if(!visible){_nearHasSolution=false;_vNear.Valid=_vNear.PoleValid=false;}
             _nearVisible = visible;
             _diagnostics.NearVisible = visible;
+            SetNearLeftVisible308(visible);   // #308 great brush: the close-up left arm (nothing without it)
             if (_nearRenderers != null)
                 foreach (var renderer in _nearRenderers)
                     if (renderer != null) { renderer.enabled = visible; renderer.shadowCastingMode = ShadowCastingMode.Off; }
@@ -1752,6 +1769,7 @@ namespace Oheangbu.App.World
             _strokeMotion.Reset(); _strokeAnchorReady=false;
             _vNear = default; _vWorld = default;
             _worldBrush?.Bristles?.ResetDeformation(); _nearBrush?.Bristles?.ResetDeformation();
+            ResetGreat308();
         }
 
         private void OnDisable()

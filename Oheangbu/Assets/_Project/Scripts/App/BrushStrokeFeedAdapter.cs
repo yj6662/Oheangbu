@@ -185,6 +185,13 @@ namespace Oheangbu.App
 
         // 입력 이벤트 시점의 순서와 시계를 보존한다. 여러 start/end/commit도 덮어쓰지 않는다.
         private readonly List<VisualEvent> _visualEvents = new List<VisualEvent>(64);
+        // #308 (user 2026-10-13, D308-80f): the ink appears a moment after the tip passed, and the points that arrive in that
+        // moment are used to round the stroke a little. Visual events only - recognition reads the input itself, undelayed.
+        private readonly List<VisualEvent> _delayed308 = new List<VisualEvent>(64);
+        private readonly List<Vector2> _raw308 = new List<Vector2>(4);
+        private float _widthDirection308 = 1f;
+        private Vector3 _previousLocal308; private bool _hasPreviousLocal308;
+        private static readonly int EndRoughId = Shader.PropertyToID("_EndRough");
         private readonly List<BrushStrokeRenderer> _dirtyStrokes = new List<BrushStrokeRenderer>();
         private bool _hasStrokeEndpoint;
         private Vector2 _strokeEndpointScreen;
@@ -276,6 +283,7 @@ namespace Oheangbu.App
                     if (_strokes[i] != null) UpdateStrokeFrame(_strokes[i].transform, _strokeUnitsPerPixel[i], camera);
             }
 
+            DelayStrokeEvents308();
             // 처리 중 추가된 이벤트도 순서대로 소비한다. 판정 채널을 다시 발행하지 않는다.
             for (int i = 0; i < _visualEvents.Count; i++)
             {
@@ -319,6 +327,67 @@ namespace Oheangbu.App
             _anchorCamera308 = camera;
             _anchorPixelHeight308 = camera != null ? camera.pixelHeight : 0;
             SetRenderAnchor308(camera != null && _strokes.Count > 0);
+        }
+
+        // Every visual event goes through one line in order; a stroke event leaves it when it is StrokeDelaySeconds old, anything
+        // else as soon as nothing older is waiting (so a commit never overtakes the end of its last stroke).
+        private void DelayStrokeEvents308()
+        {
+            var feel = InkTouchSplat308.Profile;
+            if (feel == null || feel.StrokeDelaySeconds <= 0f)
+            {
+                if (_delayed308.Count == 0) return;
+                _delayed308.AddRange(_visualEvents); _visualEvents.Clear(); _visualEvents.AddRange(_delayed308); _delayed308.Clear();
+                return;
+            }
+            _delayed308.AddRange(_visualEvents); _visualEvents.Clear();
+            float now = Time.unscaledTime;
+            int released = 0;
+            while (released < _delayed308.Count)
+            {
+                var e = _delayed308[released];
+                bool stroke = e.Kind == VisualEventKind.Start || e.Kind == VisualEventKind.Point || e.Kind == VisualEventKind.End;
+                if (stroke && now - e.UnscaledTime < feel.StrokeDelaySeconds) break;
+                if (e.Kind == VisualEventKind.Start) _raw308.Clear();
+                else if (e.Kind == VisualEventKind.Point)
+                {
+                    Vector2 raw = e.Screen;
+                    e.Screen = SmoothedPoint308(raw, released, feel.PathSmoothing);
+                    if (_raw308.Count >= 2) _raw308.RemoveAt(0);
+                    _raw308.Add(raw);
+                }
+                _visualEvents.Add(e);
+                released++;
+            }
+            if (released > 0) _delayed308.RemoveRange(0, released);
+        }
+
+        // A five-point average with the two points before (already drawn, raw) and the two after (waiting in the line). Only as
+        // many neighbours as both sides have: the first and the last point of a stroke stay exactly where the input put them.
+        private Vector2 SmoothedPoint308(Vector2 raw, int index, float amount)
+        {
+            if (amount <= 0f) return raw;
+            int next = 0; Vector2 n1 = raw, n2 = raw;
+            for (int i = index + 1; i < _delayed308.Count && next < 2; i++)
+            {
+                var k = _delayed308[i].Kind;
+                if (k == VisualEventKind.Point) { if (next == 0) n1 = _delayed308[i].Screen; else n2 = _delayed308[i].Screen; next++; }
+                else if (k == VisualEventKind.End || k == VisualEventKind.Start) break;
+            }
+            int side = Mathf.Min(next, _raw308.Count);
+            if (side == 0) return raw;
+            // a corner is a corner (user 2026-10-13: "ㅁ" is drawn with corners): where the line turns sharply the point stays put
+            Vector2 before = raw - _raw308[_raw308.Count - 1], after = n1 - raw;
+            if (before.sqrMagnitude > 1f && after.sqrMagnitude > 1f)
+            {
+                float turn = Vector2.Angle(before, after);
+                if (turn >= 40f) return raw;
+                amount *= 1f - Mathf.InverseLerp(15f, 40f, turn);
+            }
+            Vector2 sum = raw * 3f; float weight = 3f;
+            sum += (_raw308[_raw308.Count - 1] + n1) * 2f; weight += 4f;
+            if (side >= 2) { sum += _raw308[_raw308.Count - 2] + n2; weight += 2f; }
+            return Vector2.Lerp(raw, sum / weight, Mathf.Clamp01(amount));
         }
 
         private static VisualEvent CaptureEvent(VisualEventKind kind)
@@ -521,6 +590,7 @@ namespace Oheangbu.App
                 material.SetFloat(StencilRefId, _stencilRef);
                 material.SetFloat(NoiseSeedId, _noiseSeed);
                 ApplyLookValues(material);
+                if (InkTouchSplat308.Profile != null) material.SetFloat(EndRoughId, InkTouchSplat308.Profile.EndRough);   // #308 D308-80f
                 owns = true;
             }
             else
@@ -552,6 +622,19 @@ namespace Oheangbu.App
             // 첫 점은 이동거리 0 = 「속도 0」이 되는데 이건 느리게 그은 게 아니라 측정 불가의 부산물이다 —
             // 그대로 쓰면 시작이 최대 폭으로 부풀므로(1차 육안 지적), 첫 실측값이 나올 때까지 중립으로 둔다.
             float rawSpeed = Vector2.Distance(screen, _lastInputScreen) / dt;
+            // #308 (D308-80f): a brush-written line is thinner going across and fuller going down. Width only, eased.
+            var feel308 = InkTouchSplat308.Profile;
+            if (_sampleInStroke == 0) _widthDirection308 = 1f;
+            else if (feel308 != null)
+            {
+                Vector2 step = screen - _lastInputScreen;
+                if (step.sqrMagnitude > .25f)
+                {
+                    float vertical = Mathf.Abs(step.y) / step.magnitude;
+                    float target = 1f + feel308.VerticalWidthGain * vertical - feel308.HorizontalWidthLoss * (1f - vertical);
+                    _widthDirection308 = Mathf.Lerp(_widthDirection308, target, .35f);
+                }
+            }
             _lastInputScreen = screen;
             _lastSampleTime = now;
             if (_sampleInStroke > 0)
@@ -571,12 +654,15 @@ namespace Oheangbu.App
             Vector3 local = _current.transform.InverseTransformPoint(world);
 
             float traveled = _hasLastLocal ? Vector3.Distance(local, _lastLocal) : 0f;
+            _hasPreviousLocal308 = _hasLastLocal; if (_hasLastLocal) _previousLocal308 = _lastLocal;
             _lastLocal = local;
             _hasLastLocal = true;
             _sampleInStroke++;
 
             // 탄생 시각은 scaled — 번짐(연출)의 시계와 같아야 한다(§5.2)
-            _current.AddPoint(local, ComputeWidth(speed, traveled), ComputeInk(speed, ink), scaledTime);
+            _current.AddPoint(local, ComputeWidth(speed, traveled) * _widthDirection308, ComputeInk(speed, ink), scaledTime);
+            // #308 (user 2026-10-13): the brush touches down - ink spreads round the first point. Presentation only (no profile = nothing).
+            if (_sampleInStroke == 1) InkTouchSplat308.Spawn(_current.transform, local, _style.BaseWidth, _style.InkColor, _noiseSeed);
             if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
             _strokeEndpointScreen = screen;
             _hasStrokeEndpoint = true;
@@ -641,6 +727,45 @@ namespace Oheangbu.App
         private void ApplyStrokeEnded()
         {
             if (_current == null) return;
+            // #308 (D308-80f): ink flung on in the direction the stroke ended, more of it the faster the brush left. Presentation only.
+            // The direction is the stroke's own over its last stretch, not the last sample's: a slip of the hand at the lift must
+            // not send the ink sideways (user 2026-10-13).
+            if (_style != null && _hasLastLocal && _hasSpeed && InkTouchSplat308.Profile != null)
+            {
+                var path = _current.Data.Points; float share = InkTouchSplat308.Profile.FlingDirectionShare;
+                if (path.Count >= 4)
+                {
+                    float total = 0f; for (int i = 1; i < path.Count; i++) total += Vector3.Distance(path[i].Position, path[i - 1].Position);
+                    float want = total * share, run = 0f; int from = path.Count - 1;
+                    while (from > 0 && run < want) { run += Vector3.Distance(path[from].Position, path[from - 1].Position); from--; }
+                    Vector3 chord = path[path.Count - 1].Position - path[from].Position;
+                    // only a line that was going somewhere: the chord must be most of the path it spans
+                    if (run > 0f && chord.magnitude > run * .8f)
+                        InkTouchSplat308.SpawnFling(_current.transform, _lastLocal, chord, _style.BaseWidth,
+                            Mathf.Clamp01(_smoothedSpeed / Mathf.Max(1f, _style.FastSpeed)), _style.InkColor, _noiseSeed);
+                }
+            }
+            // #308 (D308-80g): how a brush-written line ends depends on which way it went - a downstroke runs out to a needle
+            // point, a line across is pressed and closed. Read from the last stretch of the stroke; width and tail only.
+            var feel = InkTouchSplat308.Profile;
+            var drawn = _current.Data.Points;
+            if (feel != null && drawn.Count >= 3)
+            {
+                int back = Mathf.Min(drawn.Count - 1, Mathf.Max(2, drawn.Count / 3));
+                Vector3 way = drawn[drawn.Count - 1].Position - drawn[drawn.Count - 1 - back].Position; way.z = 0f;
+                if (way.sqrMagnitude > 0f)
+                {
+                    float down = Mathf.Clamp01(Mathf.Abs(way.y) / way.magnitude * 1.4f - .2f);   // 0 = across, 1 = up / down
+                    float fast = Mathf.Clamp01(_smoothedSpeed / Mathf.Max(1f, _style.FastSpeed));
+                    _current.ReshapeTail(Mathf.Lerp(feel.AcrossSwellShare, feel.DownTailShare, down), Mathf.Lerp(feel.AcrossSwell, feel.DownTailWidth, down));
+                    _current.EndStroke(Mathf.Lerp(feel.AcrossTaperLength, feel.DownTaperLength, down) * Mathf.Lerp(.8f, 1.3f, fast),
+                        Mathf.Lerp(feel.AcrossTipWidth, feel.DownTipWidth, down), Mathf.Lerp(feel.AcrossInkLoss, feel.DownInkLoss, Mathf.Max(down, fast)));
+                    if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
+                    _current = null;
+                    _hasStrokeEndpoint = false;
+                    return;
+                }
+            }
             _current.EndStroke();
             if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
             _current = null;
