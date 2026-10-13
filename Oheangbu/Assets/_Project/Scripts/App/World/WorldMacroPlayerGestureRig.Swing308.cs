@@ -215,6 +215,7 @@ namespace Oheangbu.App.World
         public const string NearLeftPrefix308 = "NearL308_";
         private Renderer[] _nearLeft308 = System.Array.Empty<Renderer>();
         private float _nearLift308;
+        private Transform _nearShaftPoint308;   // a point on the shaft's centre line (GripSocket of the close-up brush)
         private bool _nearAxes308;
         private sealed class NearFingers308 { public Transform[] Joints = new Transform[12]; public Quaternion[] Rest = new Quaternion[12]; public Transform[] Thumb = new Transform[3]; public Quaternion[] ThumbRest = new Quaternion[3]; public Transform ThumbTip; }
         private NearFingers308 _nearFingersR308, _nearFingersL308;
@@ -229,6 +230,7 @@ namespace Oheangbu.App.World
             foreach (var renderer in _nearRoot.GetComponentsInChildren<Renderer>(true))
                 if (renderer.name.StartsWith(NearLeftPrefix308, System.StringComparison.Ordinal)) found.Add(renderer);
             _nearLeft308 = found.ToArray();
+            _nearShaftPoint308 = _nearBrushRoot != null ? Find(_nearBrushRoot, GreatBrushBristles308.GripName) : null;
             // the hands' own axes, measured from their finger roots (no assumption about the bones' local frames):
             // finger = wrist -> middle finger root, dorsal = the back of the hand
             // the back of the hand from the thumb: right hand = cross(toward the thumb, along the fingers), left hand the other way
@@ -286,21 +288,21 @@ namespace Oheangbu.App.World
                     joint.rotation = Quaternion.AngleAxis(j == 0 ? curl.x : j == 1 ? curl.y : curl.z, toPalm) * joint.rotation;
                 }
             if (fingers.ThumbTip == null) return;
-            Vector3 over = hold - dorsalWorld * .028f;                               // on the shaft's far side from the palm
+            // The thumb lies along the shaft, pointing the way the player looks (user 2026-10-13: "엄지가 플레이어가 바라보는 방향을
+            // 향하고 있어야"): the first bone climbs from the thumb root onto the shaft, the next two run along it toward the tip.
+            for (int j = 0; j < 3; j++) if (fingers.Thumb[j] != null) fingers.Thumb[j].localRotation = fingers.ThumbRest[j];
+            // (user's sketch 2026-10-13, seen from above) the thumb comes up the near side of the shaft and lies over its top,
+            // pointing forward and a little toward the fingertips that come over from the far side.
+            Vector3 up = -dorsalWorld;
             for (int j = 0; j < 3; j++)
             {
-                Transform joint = fingers.Thumb[j]; if (joint == null) continue;
-                joint.localRotation = fingers.ThumbRest[j];
-                float angle = j == 0 ? thumbCurl.x : j == 1 ? thumbCurl.y : thumbCurl.z; if (angle <= 0f) continue;
-                Quaternion start = joint.rotation, best = start; float bestDistance = ThumbDistance308(fingers.ThumbTip.position, over, axis);
-                for (int c = 0; c < 6; c++)
-                {
-                    Vector3 about = c < 2 ? axis : c < 4 ? fingerWorld : dorsalWorld; if ((c & 1) == 1) about = -about;
-                    joint.rotation = Quaternion.AngleAxis(angle, about) * start;
-                    float distance = ThumbDistance308(fingers.ThumbTip.position, over, axis);
-                    if (distance < bestDistance) { bestDistance = distance; best = joint.rotation; }
-                }
-                joint.rotation = best;
+                Transform joint = fingers.Thumb[j], next = j < 2 ? fingers.Thumb[j + 1] : fingers.ThumbTip;
+                if (joint == null || next == null || next == joint) continue;
+                Vector3 now = next.position - joint.position; if (now.sqrMagnitude < .0000001f) continue;
+                Vector3 want = j == 0 ? up * thumbCurl.x + axis * .5f + fingerWorld * .2f
+                             : j == 1 ? up * thumbCurl.y + axis * .8f + fingerWorld * .35f
+                                      : up * thumbCurl.z + axis * .9f + fingerWorld * .4f;
+                joint.rotation = Quaternion.FromToRotation(now.normalized, want.normalized) * joint.rotation;
             }
         }
         // distance from the thumb tip to the line along the shaft through the point over it
@@ -332,6 +334,12 @@ namespace Oheangbu.App.World
             radial = Vector3.ProjectOnPlane(radial, finger);
             // sign settled by looking (edit-mode preview 2026-10-13): with the other sign the back of the hand lay against the shaft
             cross = (left ? Vector3.Cross(radial, finger) : Vector3.Cross(finger, radial)).normalized;
+            // the direction itself from the finger roots (the thumb root sits off the palm's plane and tilted the normal); the thumb only gives the sign
+            Vector3 flat = Vector3.ProjectOnPlane(Vector3.Cross(hand.InverseTransformPoint(index.position), hand.InverseTransformPoint(pinky.position)), finger);
+            // Right hand: index-root x pinky-root IS the back of the hand (T-pose check: arm along +x, palm down, index forward:
+            // (8.6, 0, 2) x (6.9, 0, -2.5) has +y); the left hand is the mirror image, so the other sign. The thumb root is not used
+            // for this: it sits under the palm and swung the result by most of a right angle (the cause of three wrong tries).
+            if (flat.sqrMagnitude > .0000001f) cross = left ? -flat.normalized : flat.normalized;
             return finger.sqrMagnitude > .5f && cross.sqrMagnitude > .5f;
         }
 
@@ -410,18 +418,23 @@ namespace Oheangbu.App.World
             float upperLength = Vector3.Distance(_near.Upper.position, _near.Forearm.position), forearmLength = Vector3.Distance(_near.Forearm.position, _near.Hand.position);
             float reach = (upperLength + forearmLength) * .96f;
 
+            // The hands hold the SHAFT, not the line through the tip: the tip is on the bristles, and pressed bristles bend it
+            // several centimetres off the shaft's centre line. Measuring the holds from the tip put the hand round a line beside the
+            // shaft (2026-10-13: the fist next to the shaft in every screenshot). Everything below is measured on the centre line.
+            Vector3 centre = _nearShaftPoint308 != null ? _nearShaftPoint308.position : tip;
+            Vector3 tipOnAxis = centre + axis * Vector3.Dot(tip - centre, axis);
             Vector3 comfort = view.TransformPoint(p.NearRightComfort);
-            float along = Mathf.Clamp(Vector3.Dot(tip - comfort, axis), p.NearRightFromTipRange.x, p.NearRightFromTipRange.y);
-            Vector3 holdRight = tip - axis * along;
+            float along = Mathf.Clamp(Vector3.Dot(tipOnAxis - comfort, axis), p.NearRightFromTipRange.x, p.NearRightFromTipRange.y);
+            Vector3 holdRight = tipOnAxis - axis * along;
             GripOnShaft308(false, holdRight, axis, shoulder, view, _nearKnuckleR308, p, out Vector3 wrist, out Vector3 fingerR, out Vector3 dorsalR);
             if ((wrist - shoulder).magnitude > reach)
             {
                 // out of reach: slide the hold toward the shoulder along the shaft until the arm can close on it
-                float nearest = Mathf.Clamp(Vector3.Dot(tip - shoulder, axis), p.NearRightFromTipRange.x, p.NearRightFromTipRange.y + .25f);
-                holdRight = tip - axis * Mathf.Lerp(along, nearest, .85f);
+                float nearest = Mathf.Clamp(Vector3.Dot(tipOnAxis - shoulder, axis), p.NearRightFromTipRange.x, p.NearRightFromTipRange.y + .25f);
+                holdRight = tipOnAxis - axis * Mathf.Lerp(along, nearest, .85f);
                 GripOnShaft308(false, holdRight, axis, shoulder, view, _nearKnuckleR308, p, out wrist, out fingerR, out dorsalR);
             }
-            Quaternion hand = HandRotation308(fingerR, dorsalR, _nearFingerR308, _nearDorsalR308);
+            Quaternion hand = HandRotation308(fingerR, dorsalR, _nearFingerR308, p.NearFlipPalm ? -_nearDorsalR308 : _nearDorsalR308);
             Vector3 pole = (shoulder + wrist) * .5f + view.TransformDirection(p.NearRightElbowHint);
             PlayerVisualIK.Solve(_near.Upper, _near.Forearm, _near.Hand, wrist, pole, hand, 1f, 1f);
             WrapFingers308(_nearFingersR308, fingerR, dorsalR, holdRight, axis, p.NearFingerCurlDegrees, p.NearThumbCurlDegrees);
@@ -430,9 +443,9 @@ namespace Oheangbu.App.World
             // left hand, the rear hand at the tail (the axis): over the shaft, back of the hand up
             if (_near.LeftUpper != null && _near.LeftForearm != null && _near.LeftHand != null && _nearDorsalL308.sqrMagnitude > .5f)
             {
-                Vector3 holdLeft = tip - axis * Vector3.Distance(tip, pivot);   // = the pivot
+                Vector3 holdLeft = tipOnAxis - axis * Vector3.Dot(tipOnAxis - pivot, axis);   // the shaft's centre line beside the pivot
                 GripOnShaft308(true, holdLeft, axis, _near.LeftUpper.position, view, _nearKnuckleL308, p, out Vector3 wristL, out Vector3 fingerL, out Vector3 dorsalL);
-                Quaternion handL = HandRotation308(fingerL, dorsalL, _nearFingerL308, _nearDorsalL308);
+                Quaternion handL = HandRotation308(fingerL, dorsalL, _nearFingerL308, p.NearFlipPalm ? -_nearDorsalL308 : _nearDorsalL308);
                 Vector3 poleL = (_near.LeftUpper.position + wristL) * .5f + view.TransformDirection(new Vector3(-.25f, -.3f, -.1f));
                 PlayerVisualIK.Solve(_near.LeftUpper, _near.LeftForearm, _near.LeftHand, wristL, poleL, handL, 1f, 1f);
                 WrapFingers308(_nearFingersL308, fingerL, dorsalL, holdLeft, axis, p.NearFingerCurlDegrees, p.NearThumbCurlDegrees);

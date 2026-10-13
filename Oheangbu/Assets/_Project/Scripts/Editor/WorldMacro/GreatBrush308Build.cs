@@ -111,6 +111,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "save": return EditOnly() ?? SaveInstalled();
                     case "sample": return EditOnly() ?? Sample();
                     case "nearleft": return EditOnly() ?? NearLeft();
+                    case "handskin": return HandSkin();
                     case "nearpreview": return EditOnly() ?? NearPreview("stroke");
                     case "nearpreview:hover": return EditOnly() ?? NearPreview("hover");
                     case "warnings": return ImportWarnings();
@@ -946,6 +947,77 @@ namespace Oheangbu.EditorTools.WorldMacro
         // close-up solve in edit mode for a grid of pointer positions and writes a still per position, the hand cropped large,
         // plus the numbers that say whether the hand is on the shaft. Nothing is saved; the rig is put back.
         //   nearpreview[:stroke|hover]
+        // which way the thumb points: along the shaft toward the tip (+) or back toward the player (-), and in the camera's axes
+        static string ThumbLine(Transform nearRoot, Transform hand, Vector3 axis, Transform view)
+        {
+            Transform root = Child(nearRoot, "RightHandThumb1"), end = Child(nearRoot, "RightHandThumb3"), index = Child(nearRoot, "RightHandIndex1"), pinky = Child(nearRoot, "RightHandPinky1");
+            if (root == null || end == null || index == null || pinky == null) return "";
+            Vector3 thumb = (end.position - root.position).normalized, radial = (index.position - pinky.position).normalized;
+            return " · thumb along shaft " + Vector3.Dot(thumb, axis).ToString("F2", Inv) + " (camera " + view.InverseTransformDirection(thumb).ToString("F2") + ") · thumb side of the hand along shaft " + Vector3.Dot(radial, axis).ToString("F2", Inv);
+        }
+
+        // how far the middle finger goes round the shaft: the angle (about the shaft's axis) swept from the finger root to the
+        // fingertip, and the nearest / farthest joint from the axis. A hand that holds the shaft sweeps well over 120 degrees
+        // with every joint 2 - 4 cm from the axis; a fist beside the shaft sweeps little.
+        static string WrapLine(Transform nearRoot, Vector3 onAxis, Vector3 axis)
+        {
+            var joints = new List<Transform>();
+            for (int j = 1; j <= 4; j++) { var t = Child(nearRoot, "RightHandMiddle" + j); if (t != null) joints.Add(t); }
+            if (joints.Count < 3) return "";
+            float swept = 0f, nearest = float.MaxValue, farthest = 0f; Vector3 last = Vector3.zero;
+            for (int i = 0; i < joints.Count; i++)
+            {
+                Vector3 radial = Vector3.ProjectOnPlane(joints[i].position - onAxis, axis);
+                nearest = Mathf.Min(nearest, radial.magnitude); farthest = Mathf.Max(farthest, radial.magnitude);
+                if (i > 0) swept += Vector3.SignedAngle(last, radial, axis);
+                last = radial;
+            }
+            return " · wrap " + Mathf.Abs(swept).ToString("F0", Inv) + " deg (joints " + (nearest * 100f).ToString("F1", Inv) + " - " + (farthest * 100f).ToString("F1", Inv) + " cm from the axis)";
+        }
+
+        // Is the hand's mesh skinned finger by finger? (user 2026-10-13: "메시가 뭉개져서 손가락 개별 리깅이 안되는 상황인 거 아니야?")
+        // For the player's full body mesh: how many vertices each finger bone owns, how many are shared between two different
+        // fingers (a web or a fused mitten bends with both and tears / smears), and how many belong to the hand bone itself.
+        static string HandSkin()
+        {
+            var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
+            if (gesture == null) return "refused: no player in the open scenes";
+            Transform nearRoot = Field<Transform>(gesture, "_nearRoot");
+            var b = new StringBuilder("GreatBrush308 handskin\n");
+            foreach (var skin in gesture.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (skin.sharedMesh == null || (nearRoot != null && skin.transform.IsChildOf(nearRoot))) continue;
+                var bones = skin.bones; if (!bones.Any(t => t != null && t.name == "RightHandIndex1")) continue;
+                Mesh mesh = skin.sharedMesh; var counts = mesh.GetBonesPerVertex(); var weights = mesh.GetAllBoneWeights();
+                string[] fingers = { "Thumb", "Index", "Middle", "Ring", "Pinky" };
+                int[] owned = new int[5]; int[] jointOwned = new int[15]; int shared = 0, handOnly = 0, handVerts = 0; int offset = 0;
+                for (int v = 0; v < mesh.vertexCount; v++)
+                {
+                    float[] perFinger = new float[5]; float hand = 0f; int best = -1; float bestWeight = 0f; int bestJoint = -1;
+                    for (int j = 0; j < counts[v]; j++)
+                    {
+                        var w = weights[offset++]; string name = w.boneIndex < bones.Length && bones[w.boneIndex] != null ? bones[w.boneIndex].name : "";
+                        if (name == "RightHand") hand += w.weight;
+                        for (int f = 0; f < 5; f++)
+                            if (name.StartsWith("RightHand" + fingers[f], StringComparison.Ordinal))
+                            {
+                                perFinger[f] += w.weight;
+                                if (w.weight > bestWeight) { bestWeight = w.weight; best = f; int digit = name[name.Length - 1] - '1'; bestJoint = f * 3 + Mathf.Clamp(digit, 0, 2); }
+                            }
+                    }
+                    float total = hand + perFinger.Sum(); if (total < .5f) continue;
+                    handVerts++;
+                    int strong = perFinger.Count(x => x > .2f);
+                    if (strong >= 2) shared++;
+                    if (best >= 0 && perFinger[best] >= hand) { owned[best]++; if (bestJoint >= 0) jointOwned[bestJoint]++; } else handOnly++;
+                }
+                b.AppendLine("  skin " + skin.name + ": hand + finger vertices " + handVerts + " · owned by the palm bone " + handOnly + " · shared between two fingers " + shared + " (" + (handVerts > 0 ? (100f * shared / handVerts).ToString("F0", Inv) : "0") + " %)");
+                for (int f = 0; f < 5; f++)
+                    b.AppendLine("    " + fingers[f].PadRight(7) + owned[f] + " vertices · by joint " + jointOwned[f * 3] + " / " + jointOwned[f * 3 + 1] + " / " + jointOwned[f * 3 + 2]);
+            }
+            return b.ToString();
+        }
+
         static string NearPreview(string mode)
         {
             var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
@@ -972,6 +1044,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                 cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(.74f, .71f, .64f);
                 cam.transform.SetPositionAndRotation(gesture.transform.position + Vector3.up * 220f, Quaternion.Euler(4f, 20f, 0f));
                 b.AppendLine("  camera fov " + cam.fieldOfView.ToString("F0", Inv));
+                {
+                    // the hand's own measures (cm): wrist -> finger root -> joints -> tip, the thumb, and the brush mesh size
+                    string Chain(string finger)
+                    {
+                        Transform h = Child(nearRoot, "RightHand"); var parts = new List<string>(); Transform last = h;
+                        for (int j = 1; j <= 4; j++) { Transform t = Child(nearRoot, "RightHand" + finger + j); if (t == null) break; parts.Add((Vector3.Distance(last.position, t.position) * 100f).ToString("F1", Inv)); last = t; }
+                        return finger + " " + string.Join(" / ", parts);
+                    }
+                    string sizes = "";
+                    foreach (var r in brushRoot.GetComponentsInChildren<Renderer>(true)) sizes += " " + r.name + " " + r.bounds.size.ToString("F3");
+                    b.AppendLine("  hand (cm): " + Chain("Middle") + " · " + Chain("Index") + " · " + Chain("Pinky") + " · " + Chain("Thumb") + " · brush renderers" + sizes);
+                }
                 {
                     // which transforms are the hand: the rig's, the first one of that name, and the ones the skins are bound to
                     object nearBody = type.GetField("_near", Any)?.GetValue(gesture);
@@ -1028,9 +1112,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                             Vector3 handScreen = cam.WorldToScreenPoint(hand.position);
                             line += " · hold " + v.InverseTransformPoint(hold).ToString("F2") + " · wrist bend " + Vector3.Angle(f, forearm).ToString("F0", Inv) + " deg · elbow " + elbow.ToString("F0", Inv) + " deg"
                                 + " · fingers vs shaft " + Vector3.Angle(f, axis).ToString("F0", Inv) + " deg"
-                                + (middleTip != null ? " · middle tip to shaft " + (Vector3.Cross(middleTip.position - tip.position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
-                                + (thumbTip != null ? " · thumb tip to shaft " + (Vector3.Cross(thumbTip.position - tip.position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
-                                + " · knuckle to shaft " + (Vector3.Cross(middle.position - tip.position, axis).magnitude * 100f).ToString("F1", Inv) + " cm"
+                                + (middleTip != null ? " · middle tip to shaft " + (Vector3.Cross(middleTip.position - (Child(brushRoot, "GripSocket") ?? tip).position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
+                                + (thumbTip != null ? " · thumb tip to shaft " + (Vector3.Cross(thumbTip.position - (Child(brushRoot, "GripSocket") ?? tip).position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
+                                + " · knuckle to shaft " + (Vector3.Cross(middle.position - (Child(brushRoot, "GripSocket") ?? tip).position, axis).magnitude * 100f).ToString("F1", Inv) + " cm"
+                                + ThumbLine(nearRoot, hand, axis, v)
+                                + WrapLine(nearRoot, (Child(brushRoot, "GripSocket") ?? tip).position, axis)
                                 + " · hand on screen (" + (handScreen.x / W).ToString("F2", Inv) + ", " + (handScreen.y / H).ToString("F2", Inv) + ")";
                         }
                         b.AppendLine(line);

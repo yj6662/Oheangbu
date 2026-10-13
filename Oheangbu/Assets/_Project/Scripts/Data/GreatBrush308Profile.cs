@@ -210,6 +210,8 @@ namespace Oheangbu.Data.Spell
         public bool NearTwoHand = true;
         [Tooltip("가까운 화면에 왼팔도 그린다. 기본은 끔: 왼손은 몸 가까이의 뒷손이라 화면 밖이다.")]
         public bool NearShowLeftArm;
+        [Tooltip("손바닥 · 손등을 뒤집는다(모델의 손 뼈 축이 예상과 반대일 때). nearpreview 의 '감김' 수치가 큰 쪽이 맞는 쪽이다.")]
+        public bool NearFlipPalm;
         [Tooltip("왼손(꼬리, 축)이 있는 자리(카메라 기준 오른쪽, 위, 앞 m). 이 점은 움직이지 않고 호흡만 한다.")]
         public Vector3 NearLeftPivot = new Vector3(.10f, -.30f, 0f);
         [Tooltip("오른손(앞손)이 쥐는 자리: 붓끝에서 자루를 따라(m). (옛 값 — 이제 아래 편한 자리 · 범위로 정한다)")]
@@ -224,7 +226,7 @@ namespace Oheangbu.Data.Spell
         [Tooltip("팔꿈치가 향하는 쪽(카메라 기준): 어깨와 손목의 가운데에서 이 방향.")]
         public Vector3 NearRightElbowHint = new Vector3(.25f, -.20f, 0f);
         [Tooltip("손이 자루 위에서 아래팔 쪽으로 비스듬히 놓일 수 있는 각(도). 손목 꺾임을 줄인다.")]
-        [Range(0, 45)] public float NearWristFollowDegrees = 28f;
+        [Range(0, 45)] public float NearWristFollowDegrees = 15f;
         [Tooltip("몸을 돌린 각(도). 음수 = 왼쪽으로 돌아 오른 어깨가 앞.")]
         [Range(-90, 90)] public float NearBodyYawDegrees = -50f;
         [Tooltip("오른손 손가락이 붓머리 쪽으로 기운 각(도).")]
@@ -232,11 +234,11 @@ namespace Oheangbu.Data.Spell
         [Tooltip("왼손 손가락이 붓머리 쪽으로 기운 각(도).")]
         [Range(0, 60)] public float NearLeftTowardTipDegrees = 15f;
         [Tooltip("손목에서 자루까지: x = 손가락 방향 길이, y = 손바닥 두께(m).")]
-        public Vector2 NearPalm = new Vector2(-.05f, .03f);   // x = 자루가 손가락 뿌리(손허리 관절)보다 손목 쪽으로 들어온 거리, y = 손바닥에서 자루 중심까지
+        public Vector2 NearPalm = new Vector2(.005f, .026f);   // x = 자루가 손가락 뿌리(손허리 관절)보다 손목 쪽으로 들어온 거리, y = 손바닥에서 자루 중심까지
         [Tooltip("네 손가락이 자루를 감는 각(도): 첫 · 둘째 · 셋째 마디. 2026-10-13 Play: 손이 펴진 채 자루 밑에 놓여 있었다.")]
-        public Vector3 NearFingerCurlDegrees = new Vector3(62f, 62f, 38f);
-        [Tooltip("엄지가 자루 위로 넘어오는 각(도): 첫 · 둘째 · 셋째 마디(가장 가까워지는 방향을 고른다).")]
-        public Vector3 NearThumbCurlDegrees = new Vector3(50f, 35f, 25f);
+        public Vector3 NearFingerCurlDegrees = new Vector3(73f, 96f, 60f);   // 마디 길이 7.6 / 4.4 / 2.9 cm 로 반지름 2.5 cm 원을 감는 각
+        [Tooltip("엄지 세 마디가 위(자루 쪽)로 향하는 정도: 첫 마디는 자루 옆을 타고 오르고, 끝 마디는 자루 위에 누워 붓끝 쪽을 향한다.")]
+        public Vector3 NearThumbCurlDegrees = new Vector3(.5f, .18f, -.05f);   // 2026-10-13: 이제 각도가 아니라 엄지 세 마디가 위(자루 쪽)로 향하는 정도(나머지는 붓끝 방향)
         [Tooltip("오른 손목에서 오른 어깨까지(카메라 기준). 팔뚝이 화면 아래에서 올라오게 한다.")]
         public Vector3 NearShoulderFromHand = new Vector3(.05f, .14f, -.22f);   // 2026-10-13: 이제 팔꿈치에서 어깨까지의 방향(카메라 기준). 아래팔은 손과 한 줄이다.
         [Tooltip("팔꿈치가 손 방향의 연장선에서 처지는 정도(m, 아래).")]
