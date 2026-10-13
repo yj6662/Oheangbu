@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Oheangbu.App.World;
 using Oheangbu.Combat;
@@ -52,6 +53,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string MaskPath = Folder + "/Brush308_UpperBody.mask";
         const string TorsoMaskPath = Folder + "/Brush308_Torso.mask";
         const string TorsoLayerName = "Brush308Torso";
+        const string LeftMaskPath = Folder + "/Brush308_LeftArm.mask";
+        const string LeftLayerName = "Brush308Left";
         const string RecordPath = Folder + "/install-record.json";
         const string ResourcesFolder = "Assets/_Project/Resources/Swing308";
         const string GreatProfilePath = ResourcesFolder + "/GreatBrush308Profile.asset";
@@ -108,6 +111,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "save": return EditOnly() ?? SaveInstalled();
                     case "sample": return EditOnly() ?? Sample();
                     case "nearleft": return EditOnly() ?? NearLeft();
+                    case "nearpreview": return EditOnly() ?? NearPreview("stroke");
+                    case "nearpreview:hover": return EditOnly() ?? NearPreview("hover");
                     case "warnings": return ImportWarnings();
                     case "revert": return EditOnly() ?? Revert(false);
                     case "revert:save": return EditOnly() ?? Revert(true);
@@ -424,7 +429,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (controller == null) return "FAILED: the controller copy did not import";
                 controller.name = Path.GetFileNameWithoutExtension(Controller);
                 for (int i = controller.layers.Length - 1; i >= 0; i--)
-                    if (controller.layers[i].name == names.Layer || controller.layers[i].name == names.BodyLayer || controller.layers[i].name == TorsoLayerName) controller.RemoveLayer(i);
+                    if (controller.layers[i].name == names.Layer || controller.layers[i].name == names.BodyLayer || controller.layers[i].name == TorsoLayerName || controller.layers[i].name == LeftLayerName) controller.RemoveLayer(i);
                 foreach (string parameter in new[] { names.TimeParameter, names.ShiftParameter })
                     if (!string.IsNullOrEmpty(parameter) && controller.parameters.All(p => p.name != parameter)) controller.AddParameter(parameter, AnimatorControllerParameterType.Float);
 
@@ -437,8 +442,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var p = (AvatarMaskBodyPart)part;
                     // 2026-10-13: arms and hands only - the spine and the head went to their own layer (Brush308Torso), which the
                     // swing driver turns down while the player walks so the walk's own sway shows
-                    mask.SetHumanoidBodyPartActive(p, p == AvatarMaskBodyPart.LeftArm || p == AvatarMaskBodyPart.RightArm
-                        || p == AvatarMaskBodyPart.LeftFingers || p == AvatarMaskBodyPart.RightFingers);
+                    mask.SetHumanoidBodyPartActive(p, p == AvatarMaskBodyPart.RightArm || p == AvatarMaskBodyPart.RightFingers);   // the left arm has its own layer (Brush308Left)
                 }
                 if (maskMade) AssetDatabase.CreateAsset(mask, MaskPath); else EditorUtility.SetDirty(mask);
                 AssetDatabase.SaveAssetIfDirty(mask);
@@ -452,6 +456,16 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 if (torsoMade) AssetDatabase.CreateAsset(torsoMask, TorsoMaskPath); else EditorUtility.SetDirty(torsoMask);
                 AssetDatabase.SaveAssetIfDirty(torsoMask);
+                var leftMask = AssetDatabase.LoadAssetAtPath<AvatarMask>(LeftMaskPath);
+                bool leftMade = leftMask == null;
+                if (leftMade) leftMask = new AvatarMask { name = Path.GetFileNameWithoutExtension(LeftMaskPath) };
+                for (int part = 0; part < (int)AvatarMaskBodyPart.LastBodyPart; part++)
+                {
+                    var p = (AvatarMaskBodyPart)part;
+                    leftMask.SetHumanoidBodyPartActive(p, p == AvatarMaskBodyPart.LeftArm || p == AvatarMaskBodyPart.LeftFingers);
+                }
+                if (leftMade) AssetDatabase.CreateAsset(leftMask, LeftMaskPath); else EditorUtility.SetDirty(leftMask);
+                AssetDatabase.SaveAssetIfDirty(leftMask);
 
                 var missing = new List<string>();
                 AnimatorStateMachine Machine(string layer, string[] states)
@@ -474,11 +488,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 // upper body: both idle stances and every motion. Whole body: the motions only, weighted in while the player stands.
                 controller.AddLayer(new AnimatorControllerLayer { name = names.Layer, stateMachine = Machine(names.Layer, ClipNames), avatarMask = mask, defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
                 controller.AddLayer(new AnimatorControllerLayer { name = TorsoLayerName, stateMachine = Machine(TorsoLayerName, ClipNames), avatarMask = torsoMask, defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
+                controller.AddLayer(new AnimatorControllerLayer { name = LeftLayerName, stateMachine = Machine(LeftLayerName, ClipNames), avatarMask = leftMask, defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
                 bool body = !string.IsNullOrEmpty(names.BodyLayer);
                 if (body) controller.AddLayer(new AnimatorControllerLayer { name = names.BodyLayer, stateMachine = Machine(names.BodyLayer, BodyStates), defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
                 // right above locomotion, below the hit reactions and the ride: those keep overriding the brush layers
                 var layers = controller.layers.ToList();
-                var added = layers.Where(l => l.name == names.Layer || l.name == TorsoLayerName || l.name == names.BodyLayer).ToList();
+                var added = layers.Where(l => l.name == names.Layer || l.name == TorsoLayerName || l.name == LeftLayerName || l.name == names.BodyLayer).ToList();
                 layers.RemoveAll(l => added.Contains(l));
                 layers.InsertRange(Mathf.Min(1, layers.Count), added);
                 controller.layers = layers.ToArray();
@@ -924,6 +939,114 @@ namespace Oheangbu.EditorTools.WorldMacro
                 mesh.RecalculateBounds(); return mesh;
             }
             finally { sourceCounts.Dispose(); sourceWeights.Dispose(); }
+        }
+
+        // ---------------------------------------------------------------- close-up preview without Play (2026-10-13)
+        // The first-person hands were wrong three times in a row and each look cost a Play session. This runs the rig's own
+        // close-up solve in edit mode for a grid of pointer positions and writes a still per position, the hand cropped large,
+        // plus the numbers that say whether the hand is on the shaft. Nothing is saved; the rig is put back.
+        //   nearpreview[:stroke|hover]
+        static string NearPreview(string mode)
+        {
+            var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
+            if (gesture == null) return "refused: no player in the open scenes";
+            const BindingFlags Any = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+            var type = typeof(WorldMacroPlayerGestureRig);
+            gesture.RefreshGreatBrush308();
+            var solve = type.GetMethod("NearGreat308", Any); var show = type.GetMethod("SetNearVisible", Any); var flag = type.GetField("_nearPreview308", Any);
+            Transform nearRoot = Field<Transform>(gesture, "_nearRoot");
+            object nearBrush = type.GetField("_nearBrush", Any)?.GetValue(gesture);
+            Transform brushRoot = nearBrush?.GetType().GetField("Root", Any)?.GetValue(nearBrush) as Transform, tip = nearBrush?.GetType().GetField("Tip", Any)?.GetValue(nearBrush) as Transform;
+            if (solve == null || show == null || flag == null || nearRoot == null || brushRoot == null || tip == null) return "refused: the rig has no close-up solve / arm / brush (" + (gesture.GreatBrushWhy308 ?? "bound") + ")";
+            string folder = Path.Combine(Repo, "Art", "Characters308", "GreatBrush308", "near_preview"); Directory.CreateDirectory(folder);
+            var b = new StringBuilder("GreatBrush308 nearpreview (" + (mode == "hover" ? "hover" : "stroke") + ")\n");
+            Vector3 rootPosition = nearRoot.position, brushPosition = brushRoot.position; Quaternion rootRotation = nearRoot.rotation, brushRotation = brushRoot.rotation;
+            var camObject = new GameObject("GreatBrush308 near preview camera") { hideFlags = HideFlags.HideAndDontSave };
+            const int W = 1280, H = 720;
+            var rt = new RenderTexture(W, H, 24); var tex = new Texture2D(W, H, TextureFormat.RGB24, false);
+            try
+            {
+                var cam = camObject.AddComponent<Camera>();
+                var main = Camera.main;
+                cam.fieldOfView = main != null ? main.fieldOfView : 60f; cam.nearClipPlane = .05f; cam.farClipPlane = 80f; cam.targetTexture = rt; cam.aspect = W / (float)H;
+                cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(.74f, .71f, .64f);
+                cam.transform.SetPositionAndRotation(gesture.transform.position + Vector3.up * 220f, Quaternion.Euler(4f, 20f, 0f));
+                b.AppendLine("  camera fov " + cam.fieldOfView.ToString("F0", Inv));
+                {
+                    // which transforms are the hand: the rig's, the first one of that name, and the ones the skins are bound to
+                    object nearBody = type.GetField("_near", Any)?.GetValue(gesture);
+                    Transform rigHand = nearBody?.GetType().GetField("Hand", Any)?.GetValue(nearBody) as Transform, rigFore = nearBody?.GetType().GetField("Forearm", Any)?.GetValue(nearBody) as Transform, rigUpper = nearBody?.GetType().GetField("Upper", Any)?.GetValue(nearBody) as Transform;
+                    var named = nearRoot.GetComponentsInChildren<Transform>(true).Where(t => t.name == "RightHand").ToArray();
+                    b.AppendLine("  rig chain " + (rigUpper != null ? rigUpper.name : "?") + " > " + (rigFore != null ? rigFore.name : "?") + " > " + (rigHand != null ? rigHand.name : "?") + " · transforms named RightHand under the close-up arm: " + named.Length + " · rig hand is the first: " + (named.Length > 0 && named[0] == rigHand)
+                        + " · parents " + (rigHand != null && rigHand.parent == rigFore) + "/" + (rigFore != null && rigFore.parent == rigUpper));
+                    foreach (var skin in nearRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                    {
+                        var bound = skin.bones.Where(t => t != null && t.name == "RightHand").ToArray();
+                        b.AppendLine("  skin " + skin.name + " enabled " + skin.enabled + " · bones " + skin.bones.Length + " · bound RightHand " + bound.Length + " same as rig " + (bound.Length > 0 && bound[0] == rigHand) + " · root bone " + (skin.rootBone != null ? skin.rootBone.name : "none") + " · under near root " + (bound.Length > 0 && bound[0].IsChildOf(nearRoot)));
+                    }
+                }
+                flag.SetValue(gesture, true);
+                // edit mode: a skinned mesh keeps the pose it was last skinned in unless it is told to skin again for every render
+                foreach (var skin in nearRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true)) { skin.forceMatrixRecalculationPerRender = true; skin.updateWhenOffscreen = true; }
+                foreach (var skin in brushRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true)) { skin.forceMatrixRecalculationPerRender = true; skin.updateWhenOffscreen = true; }
+                show.Invoke(gesture, new object[] { true });
+                Transform hand = Child(nearRoot, "RightHand"), middle = Child(nearRoot, "RightHandMiddle1"), middleTip = Child(nearRoot, "RightHandMiddle3"), thumbTip = Child(nearRoot, "RightHandThumb3"), fore = Child(nearRoot, "RightForeArm"), upper = Child(nearRoot, "RightArm");
+                float[] xs = { .25f, .5f, .75f }, ys = { .7f, .5f, .3f }; int index = 0;
+                foreach (float y in ys)
+                    foreach (float x in xs)
+                    {
+                        Vector2 screen = new Vector2(x * W, y * H);
+                        bool ok = false;
+                        for (int i = 0; i < 12; i++) ok = (bool)solve.Invoke(gesture, new object[] { cam, screen, Vector3.zero, mode != "hover", 1f / 60f });
+                        if (!ok) { b.AppendLine("  " + index + " solve refused (" + (gesture.GreatBrushWhy308 ?? "?") + ")"); index++; continue; }
+                        cam.Render();
+                        var old = RenderTexture.active; RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, W, H), 0, 0); tex.Apply(); RenderTexture.active = old;
+                        File.WriteAllBytes(Path.Combine(folder, "near_" + index + ".png"), tex.EncodeToPNG());
+                        if (index == 1 || index == 4 || index == 3)
+                        {
+                            // the same hand from three close cameras: the eye zoomed in, from the right side, from above
+                            Vector3 eye = cam.transform.position; Quaternion look = cam.transform.rotation; float fov = cam.fieldOfView; Vector3 at = gesture.NearHoldRight308;
+                            Vector3[] from = { eye, at + look * new Vector3(-.30f, .10f, .05f), at + look * new Vector3(.03f, .30f, -.10f) }; string[] tag = { "eye", "side", "top" };
+                            var leftShown = nearRoot.GetComponentsInChildren<Renderer>(true).Where(r => r.name.StartsWith(WorldMacroPlayerGestureRig.NearLeftPrefix308, StringComparison.Ordinal) && r.enabled).ToArray();
+                            foreach (var r in leftShown) r.enabled = false;   // the right hand alone
+                            for (int k = 0; k < 3; k++)
+                            {
+                                cam.transform.position = from[k]; cam.transform.rotation = Quaternion.LookRotation(at - from[k], k == 2 ? look * Vector3.forward : look * Vector3.up); cam.fieldOfView = k == 0 ? 14f : 34f;
+                                cam.Render();
+                                var keep = RenderTexture.active; RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, W, H), 0, 0); tex.Apply(); RenderTexture.active = keep;
+                                File.WriteAllBytes(Path.Combine(folder, "hand_" + index + "_" + tag[k] + ".png"), tex.EncodeToPNG());
+                            }
+                            cam.transform.SetPositionAndRotation(eye, look); cam.fieldOfView = fov;
+                            foreach (var r in leftShown) r.enabled = true;
+                        }
+                        Transform v = cam.transform; Vector3 axis = brushRoot.up, hold = gesture.NearHoldRight308;
+                        string line = "  " + index + " pointer (" + x.ToString("F2", Inv) + ", " + y.ToString("F2", Inv) + ")";
+                        if (hand != null && middle != null && fore != null && upper != null)
+                        {
+                            Vector3 f = (middle.position - hand.position).normalized, forearm = (hand.position - fore.position).normalized;
+                            float elbow = Vector3.Angle(upper.position - fore.position, hand.position - fore.position);
+                            Vector3 handScreen = cam.WorldToScreenPoint(hand.position);
+                            line += " · hold " + v.InverseTransformPoint(hold).ToString("F2") + " · wrist bend " + Vector3.Angle(f, forearm).ToString("F0", Inv) + " deg · elbow " + elbow.ToString("F0", Inv) + " deg"
+                                + " · fingers vs shaft " + Vector3.Angle(f, axis).ToString("F0", Inv) + " deg"
+                                + (middleTip != null ? " · middle tip to shaft " + (Vector3.Cross(middleTip.position - tip.position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
+                                + (thumbTip != null ? " · thumb tip to shaft " + (Vector3.Cross(thumbTip.position - tip.position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
+                                + " · knuckle to shaft " + (Vector3.Cross(middle.position - tip.position, axis).magnitude * 100f).ToString("F1", Inv) + " cm"
+                                + " · hand on screen (" + (handScreen.x / W).ToString("F2", Inv) + ", " + (handScreen.y / H).ToString("F2", Inv) + ")";
+                        }
+                        b.AppendLine(line);
+                        index++;
+                    }
+                b.AppendLine("  stills: " + folder);
+            }
+            catch (Exception e) { b.AppendLine("  exception: " + (e.InnerException ?? e).GetType().Name + " " + (e.InnerException ?? e).Message + " @ " + ((e.InnerException ?? e).StackTrace ?? "").Split('\n')[0]); }
+            finally
+            {
+                try { show.Invoke(gesture, new object[] { false }); } catch { }
+                flag.SetValue(gesture, false);
+                nearRoot.SetPositionAndRotation(rootPosition, rootRotation); brushRoot.SetPositionAndRotation(brushPosition, brushRotation);
+                Object.DestroyImmediate(camObject); rt.Release(); Object.DestroyImmediate(rt); Object.DestroyImmediate(tex);
+            }
+            return b.ToString();
         }
 
         static string ProfileCommand()

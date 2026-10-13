@@ -376,6 +376,14 @@ namespace Oheangbu.App
             }
             int side = Mathf.Min(next, _raw308.Count);
             if (side == 0) return raw;
+            // a corner is a corner (user 2026-10-13: "ㅁ" is drawn with corners): where the line turns sharply the point stays put
+            Vector2 before = raw - _raw308[_raw308.Count - 1], after = n1 - raw;
+            if (before.sqrMagnitude > 1f && after.sqrMagnitude > 1f)
+            {
+                float turn = Vector2.Angle(before, after);
+                if (turn >= 40f) return raw;
+                amount *= 1f - Mathf.InverseLerp(15f, 40f, turn);
+            }
             Vector2 sum = raw * 3f; float weight = 3f;
             sum += (_raw308[_raw308.Count - 1] + n1) * 2f; weight += 4f;
             if (side >= 2) { sum += _raw308[_raw308.Count - 2] + n2; weight += 2f; }

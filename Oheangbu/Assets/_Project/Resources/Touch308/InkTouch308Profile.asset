@@ -21,8 +21,8 @@ MonoBehaviour:
   Opacity: 0.96
   WetSheen: 0
   WetSeconds: 3.5
-  StrokeDelaySeconds: 0.07
-  PathSmoothing: 0.5
+  StrokeDelaySeconds: 0.045
+  PathSmoothing: 0.4
   VerticalWidthGain: 0.2
   HorizontalWidthLoss: 0.2
   EndRough: 1.1
