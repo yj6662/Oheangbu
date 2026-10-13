@@ -1,0 +1,190 @@
+{
+ "Great_Sword_Power_Slash": {
+  "use": "단일 공격 후보",
+  "kind": "attack",
+  "apex": 22,
+  "frames": [
+   14,
+   17,
+   20,
+   22,
+   24,
+   27,
+   30,
+   34
+  ],
+  "spec": 0.25
+ },
+ "Standing_Melee_Attack_Horizontal": {
+  "use": "단일 공격 후보(한 손 원본)",
+  "kind": "attack",
+  "apex": 31,
+  "frames": [
+   17,
+   21,
+   25,
+   28,
+   31,
+   33,
+   36,
+   41
+  ],
+  "spec": 0.25
+ },
+ "Heavy_Weapon_Swing": {
+  "use": "광역 공격 후보",
+  "kind": "attack",
+  "apex": 77,
+  "frames": [
+   61,
+   67,
+   72,
+   76,
+   79,
+   83,
+   88,
+   97
+  ],
+  "spec": 0.5
+ },
+ "Standing_Melee_Attack_360_High": {
+  "use": "광역 공격 후보(한 손 원본)",
+  "kind": "attack",
+  "apex": 33,
+  "frames": [
+   21,
+   25,
+   28,
+   31,
+   33,
+   35,
+   39,
+   47
+  ],
+  "spec": 0.5
+ },
+ "Great_Sword_Downward_Slash": {
+  "use": "내리찍기 후보",
+  "kind": "slam",
+  "apex": 23,
+  "frames": [
+   13,
+   16,
+   18,
+   20,
+   22,
+   23,
+   26,
+   31
+  ],
+  "spec": 0.55
+ },
+ "Standing_2H_Magic_Area_Attack_01": {
+  "use": "내리찍기 후보(빈손 원본)",
+  "kind": "slam",
+  "apex": 41,
+  "frames": [
+   27,
+   31,
+   35,
+   38,
+   41,
+   45,
+   51,
+   59
+  ],
+  "spec": 0.55
+ },
+ "Great_Sword_Standing_To_Block": {
+  "use": "막기 전환",
+  "kind": "guard",
+  "apex": 16,
+  "frames": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11,
+   13,
+   16
+  ],
+  "spec": null
+ },
+ "Great_Sword_Blocking_Idle": {
+  "use": "막기 유지",
+  "kind": "hold",
+  "apex": 1,
+  "frames": [
+   1,
+   5,
+   9,
+   13,
+   17,
+   21,
+   25,
+   30
+  ],
+  "spec": null
+ },
+ "Great_Sword_Power_Up": {
+  "use": "버프 후보",
+  "kind": "buff",
+  "apex": 19,
+  "frames": [
+   1,
+   10,
+   19,
+   31,
+   52,
+   70,
+   88,
+   106
+  ],
+  "spec": null
+ },
+ "Great_Sword_Idle": {
+  "use": "전투 태세 후보",
+  "kind": "hold",
+  "apex": 1,
+  "frames": [
+   1,
+   9,
+   17,
+   25,
+   33,
+   41,
+   49,
+   61
+  ],
+  "spec": null
+ },
+ "Trans_ToCarry": {
+  "use": "전환: 전투 태세 → 어깨 걸치기 (손으로 만든 보간 · 모캡 아님)",
+  "kind": "trans",
+  "apex": 23,
+  "frames": [
+   1,
+   5,
+   10,
+   14,
+   18,
+   23
+  ],
+  "spec": null
+ },
+ "Trans_ToStance": {
+  "use": "전환: 어깨 → 전투 태세 (손으로 만든 보간 · 모캡 아님)",
+  "kind": "trans",
+  "apex": 11,
+  "frames": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   11
+  ],
+  "spec": null
+ }
+}

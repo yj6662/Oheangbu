@@ -248,6 +248,7 @@ namespace Oheangbu.App.World
             }
             _effectTip.SetPositionAndRotation(_worldBrush.Tip.position, _worldBrush.Tip.rotation);
             _bound = true;
+            BrushInkTrail308.Ensure(this);   // #308: the tip's ink afterimage (presentation only; no profile in Resources = nothing)
             _wasSuspended = false;
             _diagnostics = new GestureDiagnostics
             {
