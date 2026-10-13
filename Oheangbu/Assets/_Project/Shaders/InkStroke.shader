@@ -42,6 +42,7 @@ Shader "Oheangbu/InkStroke"
         _XrayOpacity("Xray Opacity (가려진 획 투시 농도)", Range(0, 1)) = 0.35
 
         // 2026-10-13 (사용자): 붓 글씨는 "액체" — 갓 그은 먹이 젖어 윤기 띠가 돌고, 마르면서 사라진다. 빛이 아니라 먹의 반사색(알파 블렌드)이다.
+        _EndRough("End Rough (먹이 빠진 획 끝의 거칠기 — 비백)", Range(0, 2)) = 0
         _WetSheen("Wet Sheen (젖은 윤기 세기)", Range(0, 1)) = 0.3
         _WetSeconds("Wet Seconds (마르는 시간 s)", Float) = 3.5
         _WetColor("Wet Color (윤기 색)", Color) = (0.42, 0.44, 0.47, 1)
@@ -95,6 +96,7 @@ Shader "Oheangbu/InkStroke"
             half  _FlashTint;
             half  _FlashAdd;
             half  _XrayOpacity;
+            half  _EndRough;
             half  _WetSheen;
             half  _WetSeconds;
             half4 _WetColor;
@@ -164,6 +166,9 @@ Shader "Oheangbu/InkStroke"
             float noise = Fbm(i.posOS.xy * _NoiseScale + _NoiseSeed);
             float dryness = 1.0 - density;
             float crack = _CrackStrength * dryness * saturate(s);
+            // 획 끝(수필)은 먹이 빠져 거칠다 — 농도가 떨어진 곳은 가장자리만이 아니라 속까지 갈라지고(비백), 가장자리 요철도 커진다.
+            // 몸통은 농도가 거의 1이라 이 항이 0에 가깝다. (사용자 2026-10-13: "한 획의 마지막은 거칠게")
+            crack = saturate(crack + _EndRough * dryness * dryness * (0.55 + 0.45 * saturate(s)));
             // 번짐이 틈을 메우는 건 「젖은 먹」뿐이다 — 마른 붓(먹 부족)의 갈필은 남아야
             // 먹 미터의 보조 언어(ART-UI: 먹 부족 시 갈필)가 시간이 지나도 읽힌다.
             crack *= 1.0 - 0.6 * bleed * density;

@@ -12,6 +12,7 @@ Shader "Oheangbu/InkTouch308"
         _SpreadSeconds("Spread Seconds (퍼지는 시간)", Float) = 0.22
         _Fingers("Fingers (가장자리 삐침 세기)", Range(0, 1)) = 0.55
         _Droplets("Droplets (튄 방울)", Range(0, 1)) = 0.6
+        _Fling("Fling (1 = 획 끝 흩뿌림: 쿼드 +X 가 그은 방향)", Float) = 0
         _FadeMul("Fade Multiplier (획과 함께 사라짐)", Range(0, 1)) = 1
         _DissolveT("Dissolve (획과 함께 증발)", Range(0, 1)) = 0
         _WetColor("Wet Color (윤기 색)", Color) = (0.42, 0.44, 0.47, 1)
@@ -44,6 +45,7 @@ Shader "Oheangbu/InkTouch308"
                 half _SpreadSeconds;
                 half _Fingers;
                 half _Droplets;
+                half _Fling;
                 half _FadeMul;
                 half _DissolveT;
                 half _WetSheen;
@@ -71,6 +73,34 @@ Shader "Oheangbu/InkTouch308"
 
             half4 Frag(Varyings input) : SV_Target
             {
+                if (_Fling > 0.5)
+                {
+                    // 획 끝에서 그은 방향(+X)으로 뿌려진 먹: 가까이는 길쭉한 줄기 몇 가닥, 멀리는 점점 작아지는 방울.
+                    float along = input.uv.x, across = (input.uv.y - 0.5) * 2.0;
+                    float flingAge = max(_Time.y - _Birth, 0.0);
+                    float landed = step(along * 0.16, flingAge);                       // 가까운 것부터 앉는다
+                    float cone = 0.10 + 0.75 * along;                                  // 멀수록 퍼진다
+                    float inCone = 1.0 - smoothstep(cone * 0.7, cone, abs(across));
+                    // 방울: 방향으로 길쭉한 칸마다 하나, 멀수록 작고 드물다
+                    float2 grid = float2(along * 7.0, across * 4.5) + _Seed;
+                    float2 gc = floor(grid), gl = frac(grid) - 0.5;
+                    float2 gj = (float2(Hash(gc + 1.1), Hash(gc + 7.7)) - 0.5) * 0.6;
+                    float size = lerp(0.30, 0.07, saturate(along * 1.15)) * lerp(0.6, 1.2, Hash(gc + 5.5));
+                    float2 d = gl - gj; d.x *= 0.55;                                    // 방향으로 늘어난 방울
+                    float bead = 1.0 - smoothstep(size - 0.05, size, length(d));
+                    float keep = step(lerp(0.25, 0.8, along) / max(_Droplets, 0.05) * 0.6, Hash(gc + 3.3));
+                    // 줄기: 획 끝에서 뻗다가 끊기는 가는 선 두세 가닥
+                    float lane = floor(across * 3.0 + _Seed);
+                    float laneCentre = (lane + 0.5 - _Seed + (Hash(float2(lane, _Seed)) - 0.5) * 0.5) / 3.0;
+                    float laneLength = 0.12 + 0.35 * Hash(float2(lane, _Seed + 4.0));
+                    float streak = (1.0 - smoothstep(0.012, 0.035, abs(across - laneCentre))) * step(along, laneLength) * step(Hash(float2(lane, _Seed + 9.0)), 0.6);
+                    float flung = saturate(bead * keep * inCone + streak * inCone) * landed;
+                    float grainF = Noise(input.uv * 9.0 + _Seed);
+                    float goneF = smoothstep(_DissolveT * 1.25, _DissolveT * 1.25 + 0.08, grainF);
+                    half alphaF = flung * _Opacity * _FadeMul * goneF;
+                    clip(alphaF - 0.004);
+                    return half4(_InkColor.rgb * alphaF, alphaF);
+                }
                 float2 p = (input.uv - 0.5) * 2.0;
                 float r = length(p);
                 float a = atan2(p.y, p.x);

@@ -21,3 +21,11 @@ MonoBehaviour:
   Opacity: 0.96
   WetSheen: 0.3
   WetSeconds: 3.5
+  StrokeDelaySeconds: 0.07
+  PathSmoothing: 0.5
+  VerticalWidthGain: 0.14
+  HorizontalWidthLoss: 0.08
+  EndRough: 1.1
+  FlingSizeInStrokeWidths: 9
+  FlingMinSpeedShare: 0.12
+  FlingOpacity: 0.9
