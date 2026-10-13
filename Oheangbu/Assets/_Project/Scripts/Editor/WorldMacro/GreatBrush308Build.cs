@@ -112,6 +112,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "sample": return EditOnly() ?? Sample();
                     case "nearleft": return EditOnly() ?? NearLeft();
                     case "handskin": return HandSkin();
+                    case "nearhand": return EditOnly() ?? NearHand(false);
+                    case "nearhand:revert": return EditOnly() ?? NearHand(true);
                     case "nearpreview": return EditOnly() ?? NearPreview("stroke");
                     case "nearpreview:hover": return EditOnly() ?? NearPreview("hover");
                     case "warnings": return ImportWarnings();
@@ -978,6 +980,149 @@ namespace Oheangbu.EditorTools.WorldMacro
         // Is the hand's mesh skinned finger by finger? (user 2026-10-13: "메시가 뭉개져서 손가락 개별 리깅이 안되는 상황인 거 아니야?")
         // For the player's full body mesh: how many vertices each finger bone owns, how many are shared between two different
         // fingers (a web or a fused mitten bends with both and tears / smears), and how many belong to the hand bone itself.
+        // ---------------------------------------------------------------- the baked first-person hand (D308-80h, user 2026-10-13
+        // "blender로 손 모델 따로 만들어서 진행해봐"). Tools/Blender/GreatBrush308/nearhand_build.py cuts the right arm from the player,
+        // closes the fingers round the shaft and bakes that into the vertices (fingers weighted to the hand bone). Here its mesh is
+        // moved into the close-up arm's own mesh space (fitted on joint positions, so no assumption about either file's axes or
+        // scale), given the close-up arm's bind poses and put on the same bones; the old close-up arm renderer is switched off.
+        //   nearhand | nearhand:revert
+        const string NearHandPrefix = "NearHand308_";
+        static string NearHandSource => Path.Combine(Repo, "Art", "Characters308", "GreatBrush308", "nearhand");
+        const string NearHandModel = Folder + "/Near/SM_NearHand308.fbx";
+        const string NearHandMesh = Folder + "/Near/SM_NearHand308_Fitted.asset";
+        const string NearHandBase = Folder + "/Near/T_NearHand308_Base.png";
+        const string NearHandNormal = Folder + "/Near/T_NearHand308_Normal.png";
+        const string NearHandMaterial = Folder + "/Near/M_NearHand308.mat";
+
+        static string NearHand(bool revert)
+        {
+            var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
+            if (gesture == null) return "refused: no player in the open scenes";
+            Transform nearRoot = Field<Transform>(gesture, "_nearRoot");
+            if (nearRoot == null) return "refused: no close-up arm";
+            var log = new StringBuilder("GreatBrush308 baked first-person hand" + (revert ? " (revert)" : "") + "\n");
+            var list = Renderers(gesture, "_nearRenderers").Where(r => r != null).ToList();
+            var profile = AssetDatabase.LoadAssetAtPath<GreatBrush308Profile>(GreatProfilePath);
+            // undo a previous install first (also the whole of revert)
+            foreach (var old in nearRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true).Where(s => s.name.StartsWith(NearHandPrefix, StringComparison.Ordinal)).ToArray())
+            {
+                string original = old.name.Substring(NearHandPrefix.Length);
+                var right = old.transform.parent.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault(s => s.name == original);
+                int at = list.IndexOf(old); if (at >= 0) { if (right != null) list[at] = right; else list.RemoveAt(at); }
+                Object.DestroyImmediate(old.gameObject); log.AppendLine("  removed " + NearHandPrefix + original + (right != null ? " (old arm back in the list)" : ""));
+            }
+            if (revert)
+            {
+                SetRenderers(gesture, "_nearRenderers", list.ToArray());
+                if (profile != null) { profile.NearBakedGrip = false; EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile); }
+                gesture.RefreshGreatBrush308(); EditorSceneManager.MarkSceneDirty(gesture.gameObject.scene);
+                return log.AppendLine("  NearBakedGrip off · scene dirty, NOT saved (save)").ToString();
+            }
+            if (profile == null) return "refused: no great brush profile (install)";
+            string json = Path.Combine(NearHandSource, "nearhand.json");
+            if (!File.Exists(json)) return "refused: " + json + " missing (run nearhand_build.py export)";
+            EnsureFolder(Folder + "/Near");
+            log.AppendLine("  model " + CopyIn(Path.Combine(NearHandSource, "SM_NearHand308.fbx"), NearHandModel));
+            var importer = AssetImporter.GetAtPath(NearHandModel) as ModelImporter;
+            if (importer != null && (importer.animationType != ModelImporterAnimationType.Generic || importer.avatarSetup != ModelImporterAvatarSetup.NoAvatar || importer.importBlendShapes || importer.materialImportMode != ModelImporterMaterialImportMode.None || importer.importNormals != ModelImporterNormals.Import))
+            {
+                importer.animationType = ModelImporterAnimationType.Generic; importer.avatarSetup = ModelImporterAvatarSetup.NoAvatar; importer.importAnimation = false;   // Rig None would drop the skin importer.importBlendShapes = false;
+                importer.materialImportMode = ModelImporterMaterialImportMode.None; importer.importNormals = ModelImporterNormals.Import; importer.importTangents = ModelImporterTangents.CalculateMikk;
+                importer.meshCompression = ModelImporterMeshCompression.Off; importer.optimizeMeshPolygons = false; importer.optimizeMeshVertices = false; importer.weldVertices = true;
+                importer.SaveAndReimport();
+            }
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(NearHandModel);
+            var baked = prefab != null ? prefab.GetComponentInChildren<SkinnedMeshRenderer>(true) : null;
+            if (baked == null || baked.sharedMesh == null) return log.Append("refused: the model has no skinned mesh").ToString();
+            var target = list.OfType<SkinnedMeshRenderer>().FirstOrDefault(s => s.sharedMesh != null && s.bones.Any(t => t != null && t.name == "RightHand"));
+            if (target == null) return log.Append("refused: the close-up arm has no skinned renderer with a RightHand bone").ToString();
+
+            // joint positions in each mesh's own space at bind
+            Mesh src = baked.sharedMesh, old0 = target.sharedMesh; var srcBones = baked.bones; var oldBones = target.bones; var srcPoses = src.bindposes; var oldPoses = old0.bindposes;
+            int srcHand = Array.FindIndex(srcBones, t => t != null && t.name == "RightHand"), oldHand = Array.FindIndex(oldBones, t => t != null && t.name == "RightHand");
+            if (srcHand < 0 || oldHand < 0) return log.Append("refused: RightHand is not a skin bone").ToString();
+            Matrix4x4 srcWorldToMesh = (srcBones[srcHand].localToWorldMatrix * srcPoses[srcHand]).inverse;
+            Vector3 SrcJoint(string name) { var t = Child(prefab.transform, name); return t != null ? srcWorldToMesh.MultiplyPoint3x4(t.position) : Vector3.positiveInfinity; }
+            Vector3 OldJoint(string name) { int i = Array.FindIndex(oldBones, t => t != null && t.name == name); return i >= 0 ? oldPoses[i].inverse.MultiplyPoint3x4(Vector3.zero) : Vector3.positiveInfinity; }
+            Matrix4x4 Frame(Vector3 h, Vector3 a, Vector3 b)
+            {
+                Vector3 x = (a - h).normalized, y = Vector3.ProjectOnPlane(b - h, x).normalized, z = Vector3.Cross(x, y);
+                var m = Matrix4x4.identity; m.SetColumn(0, x); m.SetColumn(1, y); m.SetColumn(2, z); m.SetColumn(3, new Vector4(h.x, h.y, h.z, 1f)); return m;
+            }
+            string[] fit = { "RightHand", "RightHandIndex1", "RightHandPinky1" };
+            if (fit.Any(n => float.IsInfinity(SrcJoint(n).x) || float.IsInfinity(OldJoint(n).x))) return log.Append("refused: a fitting joint is missing in one of the two skeletons").ToString();
+            float scale = Vector3.Distance(OldJoint("RightForeArm"), OldJoint("RightHand")) / Mathf.Max(1e-6f, Vector3.Distance(SrcJoint("RightForeArm"), SrcJoint("RightHand")));
+            Matrix4x4 toOld = Frame(OldJoint(fit[0]), OldJoint(fit[1]), OldJoint(fit[2])) * Matrix4x4.Scale(Vector3.one * scale) * Frame(SrcJoint(fit[0]), SrcJoint(fit[1]), SrcJoint(fit[2])).inverse;
+            var residual = new StringBuilder();
+            foreach (string n in new[] { "RightArm", "RightForeArm", "RightHandMiddle1", "RightHandThumb1", "RightHandIndex3" })
+                residual.Append(" " + n.Substring(5) + " " + (Vector3.Distance(toOld.MultiplyPoint3x4(SrcJoint(n)), OldJoint(n)) * 1000f).ToString("F1", Inv));
+            log.AppendLine("  fit: scale " + scale.ToString("F4", Inv) + " · joints off after fitting (mm):" + residual);
+
+            var mesh = new Mesh { name = "SM_NearHand308_Fitted", indexFormat = src.vertexCount > 65535 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16 };
+            mesh.vertices = src.vertices.Select(v => toOld.MultiplyPoint3x4(v)).ToArray();
+            if (src.normals.Length == src.vertexCount) mesh.normals = src.normals.Select(v => toOld.MultiplyVector(v).normalized).ToArray();
+            if (src.tangents.Length == src.vertexCount) mesh.tangents = src.tangents.Select(t => { Vector3 d = toOld.MultiplyVector(new Vector3(t.x, t.y, t.z)).normalized; return new Vector4(d.x, d.y, d.z, t.w); }).ToArray();
+            for (int channel = 0; channel < 4; channel++) { var uv = new List<Vector4>(); src.GetUVs(channel, uv); if (uv.Count == src.vertexCount) mesh.SetUVs(channel, uv); }
+            int[] map = srcBones.Select(t => t == null ? -1 : Array.FindIndex(oldBones, o => o != null && o.name == t.name)).ToArray();
+            var counts = src.GetBonesPerVertex(); var weights = src.GetAllBoneWeights(); var outWeights = new BoneWeight1[weights.Length]; int lost = 0;
+            for (int i = 0; i < weights.Length; i++) { int to = weights[i].boneIndex < map.Length ? map[weights[i].boneIndex] : -1; if (to < 0) { to = oldHand; lost++; } outWeights[i] = new BoneWeight1 { boneIndex = to, weight = weights[i].weight }; }
+            mesh.bindposes = oldPoses;
+            using (var all = new Unity.Collections.NativeArray<BoneWeight1>(outWeights, Unity.Collections.Allocator.Temp)) mesh.SetBoneWeights(counts, all);
+            mesh.subMeshCount = 1; var tris = new List<int>(); for (int sub = 0; sub < src.subMeshCount; sub++) tris.AddRange(src.GetTriangles(sub)); mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            Mesh existing = AssetDatabase.LoadAssetAtPath<Mesh>(NearHandMesh);
+            // a fresh asset every time: copying into the old one left a skinned renderer with "data does not match the expected vertex stride" when the layout changed
+            if (existing != null) AssetDatabase.DeleteAsset(NearHandMesh);
+            AssetDatabase.CreateAsset(mesh, NearHandMesh);
+            AssetDatabase.SaveAssetIfDirty(mesh);
+            log.AppendLine("  mesh " + mesh.vertexCount + " vertices, " + mesh.triangles.Length / 3 + " triangles (old close-up arm " + old0.vertexCount + " / " + old0.triangles.Length / 3 + ") · weights that had no bone here " + lost);
+
+            var go = new GameObject(NearHandPrefix + target.name);
+            go.transform.SetParent(target.transform.parent, false); go.layer = target.gameObject.layer;
+            go.transform.localPosition = target.transform.localPosition; go.transform.localRotation = target.transform.localRotation; go.transform.localScale = target.transform.localScale;
+            var skin = go.AddComponent<SkinnedMeshRenderer>();
+            skin.sharedMesh = mesh; skin.bones = target.bones; skin.rootBone = target.rootBone; skin.sharedMaterials = target.sharedMaterials.Take(1).ToArray();
+            skin.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; skin.receiveShadows = target.receiveShadows; skin.updateWhenOffscreen = true; skin.enabled = false;
+            target.enabled = false;
+            // its own picture (user 2026-10-13: a hand seen up close all the time): the arm unwrapped alone, skin repainted, plus a normal map
+            if (File.Exists(Path.Combine(NearHandSource, "T_NearHand308_Base.png")) && mesh.uv.Length == mesh.vertexCount)
+            {
+                log.AppendLine("  base map " + CopyIn(Path.Combine(NearHandSource, "T_NearHand308_Base.png"), NearHandBase) + " · normal map " + CopyIn(Path.Combine(NearHandSource, "T_NearHand308_Normal.png"), NearHandNormal));
+                foreach (string path in new[] { NearHandBase, NearHandNormal })
+                {
+                    var ti = AssetImporter.GetAtPath(path) as TextureImporter; if (ti == null) continue;
+                    bool normal = path == NearHandNormal; var type = normal ? TextureImporterType.NormalMap : TextureImporterType.Default;
+                    if (ti.textureType == type && ti.sRGBTexture == !normal && ti.mipmapEnabled && ti.maxTextureSize == 2048 && ti.anisoLevel == 4) continue;
+                    ti.textureType = type; ti.sRGBTexture = !normal; ti.mipmapEnabled = true; ti.maxTextureSize = 2048; ti.anisoLevel = 4; ti.wrapMode = TextureWrapMode.Clamp;
+                    ti.textureCompression = TextureImporterCompression.CompressedHQ; ti.SaveAndReimport();
+                }
+                var source = target.sharedMaterials.FirstOrDefault(m => m != null);
+                var material = AssetDatabase.LoadAssetAtPath<Material>(NearHandMaterial); bool made = material == null;
+                if (made) material = new Material(source); else if (source != null) { material.shader = source.shader; material.CopyPropertiesFromMaterial(source); }
+                material.name = "M_NearHand308";
+                var baseMap = AssetDatabase.LoadAssetAtPath<Texture2D>(NearHandBase); var normalMap = AssetDatabase.LoadAssetAtPath<Texture2D>(NearHandNormal);
+                if (material.HasProperty("_BaseMap")) { material.SetTexture("_BaseMap", baseMap); material.SetTextureScale("_BaseMap", Vector2.one); material.SetTextureOffset("_BaseMap", Vector2.zero); }
+                if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", baseMap);
+                if (material.HasProperty("_BumpMap") && normalMap != null) { material.SetTexture("_BumpMap", normalMap); material.SetFloat("_BumpScale", 1f); }
+                if (material.HasProperty("_Saturation")) material.SetFloat("_Saturation", Mathf.Max(material.GetFloat("_Saturation"), .95f));   // skin seen up close: the body's muted look reads as grey putty
+                if (made) AssetDatabase.CreateAsset(material, NearHandMaterial); else EditorUtility.SetDirty(material);
+                AssetDatabase.SaveAssetIfDirty(material); skin.sharedMaterials = new[] { material };
+                log.AppendLine("  material " + NearHandMaterial + " (shader " + material.shader.name + ")");
+            }
+            else log.AppendLine("  no baked picture next to the model: the old arm material stays (its UVs will not match a re-unwrapped mesh)");
+            list[list.IndexOf(target)] = skin; SetRenderers(gesture, "_nearRenderers", list.ToArray());
+
+            // the grip numbers
+            var r = new Reader(File.ReadAllText(json)); var root = r.Value() as Dictionary<string, object>;
+            Vector3 V(string key) { var a = (List<object>)root[key]; return new Vector3(Convert.ToSingle(a[0], Inv), Convert.ToSingle(a[1], Inv), Convert.ToSingle(a[2], Inv)); }
+            profile.NearBakedGrip = true; profile.NearBakedCentre = V("shaft_centre"); profile.NearBakedAxis = V("shaft_axis_to_tip"); profile.NearBakedNormal = V("palm_to_shaft"); profile.NearBakedForearm = V("forearm_dir");
+            if (root.TryGetValue("knuckle_m", out object k)) profile.NearBakedKnuckle = Convert.ToSingle(k, Inv);
+            EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
+            log.AppendLine("  profile: NearBakedGrip on · centre " + profile.NearBakedCentre.ToString("F4") + " axis " + profile.NearBakedAxis.ToString("F3") + " normal " + profile.NearBakedNormal.ToString("F3"));
+            gesture.RefreshGreatBrush308(); EditorSceneManager.MarkSceneDirty(gesture.gameObject.scene);
+            return log.AppendLine("  scene dirty, NOT saved (save)").ToString();
+        }
+
         static string HandSkin()
         {
             var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
@@ -1116,6 +1261,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                                 + (thumbTip != null ? " · thumb tip to shaft " + (Vector3.Cross(thumbTip.position - (Child(brushRoot, "GripSocket") ?? tip).position, axis).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
                                 + " · knuckle to shaft " + (Vector3.Cross(middle.position - (Child(brushRoot, "GripSocket") ?? tip).position, axis).magnitude * 100f).ToString("F1", Inv) + " cm"
                                 + ThumbLine(nearRoot, hand, axis, v)
+                                + " · baked roll " + gesture.NearBakedRoll308.ToString("F0", Inv) + " twist " + gesture.NearBakedTwist308.ToString("F0", Inv) + " deg"
                                 + WrapLine(nearRoot, (Child(brushRoot, "GripSocket") ?? tip).position, axis)
                                 + " · hand on screen (" + (handScreen.x / W).ToString("F2", Inv) + ", " + (handScreen.y / H).ToString("F2", Inv) + ")";
                         }

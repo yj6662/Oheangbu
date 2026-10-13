@@ -221,6 +221,53 @@ namespace Oheangbu.App.World
         private NearFingers308 _nearFingersR308, _nearFingersL308;
         private Vector3 _nearFingerR308, _nearDorsalR308, _nearFingerL308, _nearDorsalL308;
         private float _nearKnuckleR308, _nearKnuckleL308;   // wrist -> finger roots, in the hand's local units
+        // D308-80h: the baked hand (fingers closed round the shaft in the mesh itself). All four are in the hand bone's local
+        // rotation, in world metres: shaft centre from the wrist, shaft direction (to the tip), palm -> shaft, straight forearm.
+        private bool _nearBaked308;
+        private Vector3 _bakedCentre308, _bakedAxis308, _bakedNormal308, _bakedForearm308;
+        private Quaternion _bakedHandBind308 = Quaternion.identity;   // the hand in the forearm's space at bind (no twist)
+
+        private void BindBaked308(SkinnedMeshRenderer skin)
+        {
+            _nearBaked308 = false; var p = _great308;
+            if (p == null || !p.NearBakedGrip || _near == null || _near.Hand == null) return;
+            Transform hand = _near.Hand, middle = Find(hand, "RightHandMiddle1"), index = Find(hand, "RightHandIndex1"), pinky = Find(hand, "RightHandPinky1");
+            if (middle == null || index == null || pinky == null) return;
+            // the same frame the Blender script wrote the numbers in, built from joint positions. Blender is right-handed and Unity
+            // left-handed, so each cross product changes sign.
+            Vector3 e1 = middle.position - hand.position; float scale = e1.magnitude / Mathf.Max(.001f, p.NearBakedKnuckle); e1.Normalize();
+            Vector3 e3 = -Vector3.Cross(e1, index.position - pinky.position).normalized, e2 = -Vector3.Cross(e3, e1);
+            Vector3 World(Vector3 c) => e1 * c.x + e2 * c.y + e3 * c.z;
+            Quaternion inverse = Quaternion.Inverse(hand.rotation);
+            _bakedCentre308 = inverse * (World(p.NearBakedCentre) * scale);
+            _bakedAxis308 = inverse * World(p.NearBakedAxis).normalized; _bakedNormal308 = inverse * World(p.NearBakedNormal).normalized;
+            _bakedForearm308 = inverse * World(p.NearBakedForearm).normalized;
+            _bakedHandBind308 = BindLocal308(skin, hand, hand.localRotation);
+            _nearBaked308 = _bakedAxis308.sqrMagnitude > .5f && _bakedNormal308.sqrMagnitude > .5f;
+        }
+
+        // The baked hand on the shaft: its shaft direction on the shaft, its palm under the shaft (turned about the shaft, inside the
+        // allowed range, to where the forearm comes in straightest), the wrist where that puts it.
+        private void BakedGrip308(Vector3 hold, Vector3 axis, Vector3 shoulder, Transform view, GreatBrush308Profile p, out Vector3 wrist, out Quaternion hand, out float roll)
+        {
+            Vector3 up = Vector3.ProjectOnPlane(view.up, axis); if (up.sqrMagnitude < .0001f) up = Vector3.ProjectOnPlane(view.forward, axis); up.Normalize();
+            Quaternion local = Quaternion.Inverse(Quaternion.LookRotation(_bakedAxis308, _bakedNormal308));
+            float best = float.NegativeInfinity; wrist = hold; hand = Quaternion.identity; roll = 0f;
+            const int steps = 10;
+            for (int i = 0; i <= steps; i++)
+            {
+                float angle = Mathf.Lerp(p.NearBakedRollRange.x, p.NearBakedRollRange.y, i / (float)steps);
+                Quaternion q = Quaternion.LookRotation(axis, Quaternion.AngleAxis(angle, axis) * up) * local;
+                Vector3 w = hold - q * _bakedCentre308;
+                // the forearm really comes from the elbow; from the shoulder is close enough to choose the turn (the elbow follows)
+                float score = Vector3.Dot(q * _bakedForearm308, (w - shoulder).normalized) - Mathf.Abs(angle) * .0015f;
+                if (score > best) { best = score; wrist = w; hand = q; roll = angle; }
+            }
+        }
+        /// <summary>Diagnostics / preview: the baked hand's turn about the shaft this frame (degrees), NaN when not baked.</summary>
+        public float NearBakedRoll308 { get; private set; } = float.NaN;
+        /// <summary>Diagnostics / preview: the hand's turn about the forearm's length before it is shared (degrees).</summary>
+        public float NearBakedTwist308 { get; private set; }
 
         private void BindNearLeft308()
         {
@@ -242,6 +289,7 @@ namespace Oheangbu.App.World
             foreach (var renderer in _nearRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true)) if (renderer.sharedMesh != null && renderer.bones.Length == renderer.sharedMesh.bindposes.Length) { skin = renderer; break; }
             _nearFingersR308 = FindFingers308(_near.Hand, "Right", skin); _nearFingersL308 = _near.LeftHand != null ? FindFingers308(_near.LeftHand, "Left", skin) : null;
             _nearAxes308 = true;
+            BindBaked308(skin);
         }
 
         // The straight-finger pose is read from the mesh's bind pose, never from the joints as they are now: the joints carry
@@ -426,18 +474,37 @@ namespace Oheangbu.App.World
             Vector3 comfort = view.TransformPoint(p.NearRightComfort);
             float along = Mathf.Clamp(Vector3.Dot(tipOnAxis - comfort, axis), p.NearRightFromTipRange.x, p.NearRightFromTipRange.y);
             Vector3 holdRight = tipOnAxis - axis * along;
-            GripOnShaft308(false, holdRight, axis, shoulder, view, _nearKnuckleR308, p, out Vector3 wrist, out Vector3 fingerR, out Vector3 dorsalR);
+            Vector3 wrist, fingerR = Vector3.zero, dorsalR = Vector3.zero; Quaternion hand = Quaternion.identity; float bakedRoll = float.NaN;
+            if (_nearBaked308) BakedGrip308(holdRight, axis, shoulder, view, p, out wrist, out hand, out bakedRoll);
+            else GripOnShaft308(false, holdRight, axis, shoulder, view, _nearKnuckleR308, p, out wrist, out fingerR, out dorsalR);
             if ((wrist - shoulder).magnitude > reach)
             {
                 // out of reach: slide the hold toward the shoulder along the shaft until the arm can close on it
                 float nearest = Mathf.Clamp(Vector3.Dot(tipOnAxis - shoulder, axis), p.NearRightFromTipRange.x, p.NearRightFromTipRange.y + .25f);
                 holdRight = tipOnAxis - axis * Mathf.Lerp(along, nearest, .85f);
-                GripOnShaft308(false, holdRight, axis, shoulder, view, _nearKnuckleR308, p, out wrist, out fingerR, out dorsalR);
+                if (_nearBaked308) BakedGrip308(holdRight, axis, shoulder, view, p, out wrist, out hand, out bakedRoll);
+                else GripOnShaft308(false, holdRight, axis, shoulder, view, _nearKnuckleR308, p, out wrist, out fingerR, out dorsalR);
             }
-            Quaternion hand = HandRotation308(fingerR, dorsalR, _nearFingerR308, p.NearFlipPalm ? -_nearDorsalR308 : _nearDorsalR308);
+            NearBakedRoll308 = bakedRoll;
+            if (!_nearBaked308) hand = HandRotation308(fingerR, dorsalR, _nearFingerR308, p.NearFlipPalm ? -_nearDorsalR308 : _nearDorsalR308);
             Vector3 pole = (shoulder + wrist) * .5f + view.TransformDirection(p.NearRightElbowHint);
             PlayerVisualIK.Solve(_near.Upper, _near.Forearm, _near.Hand, wrist, pole, hand, 1f, 1f);
-            WrapFingers308(_nearFingersR308, fingerR, dorsalR, holdRight, axis, p.NearFingerCurlDegrees, p.NearThumbCurlDegrees);
+            if (_nearBaked308 && p.NearBakedForearmTwistShare > 0f)
+            {
+                // the turn of the hand about the forearm's own length is shared with the forearm (a real forearm turns along its
+                // length); left at the wrist alone it wrings the sleeve
+                Quaternion delta = Quaternion.Inverse(_near.Forearm.rotation) * hand * Quaternion.Inverse(_bakedHandBind308);
+                Vector3 length = _near.Hand.localPosition.normalized, part = Vector3.Project(new Vector3(delta.x, delta.y, delta.z), length);
+                Quaternion twist = new Quaternion(part.x, part.y, part.z, delta.w); float size = Mathf.Sqrt(part.sqrMagnitude + delta.w * delta.w);
+                if (size > .0001f)
+                {
+                    twist = new Quaternion(part.x / size, part.y / size, part.z / size, delta.w / size); if (twist.w < 0f) twist = new Quaternion(-twist.x, -twist.y, -twist.z, -twist.w);
+                    NearBakedTwist308 = 2f * Mathf.Acos(Mathf.Clamp01(twist.w)) * Mathf.Rad2Deg;
+                    _near.Forearm.rotation = _near.Forearm.rotation * Quaternion.Slerp(Quaternion.identity, twist, p.NearBakedForearmTwistShare);
+                    _near.Hand.rotation = hand;
+                }
+            }
+            if (!_nearBaked308) WrapFingers308(_nearFingersR308, fingerR, dorsalR, holdRight, axis, p.NearFingerCurlDegrees, p.NearThumbCurlDegrees);   // the baked hand's fingers are in its mesh
             NearHoldRight308 = holdRight;
 
             // left hand, the rear hand at the tail (the axis): over the shaft, back of the hand up

@@ -227,6 +227,24 @@ namespace Oheangbu.Data.Spell
         public Vector3 NearRightElbowHint = new Vector3(.25f, -.20f, 0f);
         [Tooltip("손이 자루 위에서 아래팔 쪽으로 비스듬히 놓일 수 있는 각(도). 손목 꺾임을 줄인다.")]
         [Range(0, 45)] public float NearWristFollowDegrees = 15f;
+
+        [Header("1인칭 손 전용 메시 (D308-80h, 2026-10-13)")]
+        [Tooltip("켜면 1인칭 오른손은 Blender 에서 자루를 감싼 모양으로 구운 전용 메시다: 손가락을 런타임에서 감지 않고, 손 뼈 하나를 자루에 맞춰 놓는다. 값은 GreatBrush308Build nearhand 가 nearhand.json 에서 적는다.")]
+        public bool NearBakedGrip;
+        [Tooltip("손 뼈 기준 틀(e1 = 손목→중지 뿌리, e2 = 새끼→검지 쪽, e3 = 그 둘에 수직)에서 자루 중심점(m).")]
+        public Vector3 NearBakedCentre;
+        [Tooltip("같은 틀에서 자루 방향(붓끝 쪽).")]
+        public Vector3 NearBakedAxis = Vector3.up;
+        [Tooltip("같은 틀에서 손바닥 → 자루 방향.")]
+        public Vector3 NearBakedNormal = Vector3.back;
+        [Tooltip("같은 틀에서 아래팔 방향(팔꿈치 → 손목): 손목이 펴진 자세.")]
+        public Vector3 NearBakedForearm = Vector3.right;
+        [Tooltip("구운 모델의 손목 → 중지 뿌리 길이(m). 게임 뼈대의 크기가 다르면 이 비율로 맞춘다.")]
+        public float NearBakedKnuckle = .0759f;
+        [Tooltip("자루 둘레로 손을 돌릴 수 있는 범위(도). 0 = 손바닥이 자루 바로 밑. 이 안에서 손목이 가장 펴지는 각을 고른다.")]
+        public Vector2 NearBakedRollRange = new Vector2(-50f, 50f);
+        [Tooltip("손이 아래팔 축으로 돌아간 만큼을 아래팔 뼈가 나눠 갖는 비율. 0 이면 손목에서만 돌아 소매가 사탕 껍질처럼 꼬인다(2026-10-13 미리보기).")]
+        [Range(0, 1)] public float NearBakedForearmTwistShare = .75f;
         [Tooltip("몸을 돌린 각(도). 음수 = 왼쪽으로 돌아 오른 어깨가 앞.")]
         [Range(-90, 90)] public float NearBodyYawDegrees = -50f;
         [Tooltip("오른손 손가락이 붓머리 쪽으로 기운 각(도).")]
