@@ -27,7 +27,7 @@ namespace Oheangbu.EditorTools.WorldMacro {
    var stats=new RuntimePlayerStats(economy,rules,gear,cat);Check(stats.DamageMultiplier(Element.Wood)==1&&stats.MaxHpMultiplier==1&&stats.MaxInkMultiplier==1,"starter preserves baseline");
    int coins=10000;
    bool Act(EquipmentAction a,string id,EquipmentSlot slot,long revision,string request){bool ok=EquipmentTransactions.Propose(cat,gear,coins,a,id,slot,revision,request,out var next,out var balance,out _);if(ok){gear=next;coins=balance;}return ok;}
-   foreach(var d in cat.Items.Where(x=>!x.Starter)){
+   foreach(var d in cat.Items.Where(x=>!x.Starter&&!x.DropOnly)){
     long revision=gear.Revision;string request="buy_"+d.Id;int money=coins;
     Check(Act(EquipmentAction.Buy,d.Id,d.Slot,revision,request)&&coins==money-d.Price,"buy "+d.Id);
     Check(!Act(EquipmentAction.Buy,d.Id,d.Slot,gear.Revision,request)&&!Act(EquipmentAction.Buy,d.Id,d.Slot,gear.Revision,"duplicate_"+d.Id),"reject double callback and duplicate ownership "+d.Id);

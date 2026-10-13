@@ -118,5 +118,21 @@ namespace Oheangbu.Data.World
         public FinalGrant308[] FinalGrants=Array.Empty<FinalGrant308>();
         [Tooltip("Presentation switch (D308-51): every final consonant counts as owned from the start (Gate test rows and the mum bridge included), in the session only - nothing is written to the save. Leave off in the main content; a build can also be started with -demoAllFinals.")]
         public bool DemoAllFinals;
+        // #308 D308-71 field-boss drops (SPEC-FIELD-BOSS-308) [TEST]. One fixed piece of equipment per boss, no chance roll: the piece is owned
+        // once the boss's defeat is on record (campaign.EncounterEvidence, which survives rests) and it is not owned yet. ItemId = an
+        // EquipmentCatalog id marked DropOnly. Empty array = nothing (every other content asset).
+        [Serializable] public sealed class BossDrop308
+        {
+            public string BossId="",ItemId="";
+            [Tooltip("One short receipt shown when the defeat leaves it. Empty = none.")]
+            public string Notice="";
+        }
+        [Header("#308 필드 보스 고유 장비 [TEST]")]
+        public BossDrop308[] BossDrops=Array.Empty<BossDrop308>();
+        [Header("#308 적 행동 · 타격 읽기 [TEST]")]
+        [Tooltip("D308-70 (SPEC-ENEMY-BRAIN-308): how the ordinary field enemies of this content notice, take turns and give up. The session hands it to every actor that has no profile of its own and no boss controller. None = the previous behaviour (other scenes unchanged).")]
+        public EnemyBrainProfile308 EnemyBrain;
+        [Tooltip("D308-70 (SPEC-ENEMY-BRAIN-308): how the attack clip is timed so the blow reads (draw back, hold, swing, contact hold). The session hands it to every actor rig that has none of its own. None = the even stretch as before.")]
+        public EnemyStrikeRead308 EnemyStrikeRead;
     }
 }

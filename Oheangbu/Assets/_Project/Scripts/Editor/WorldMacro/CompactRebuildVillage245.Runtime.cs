@@ -108,7 +108,7 @@ namespace Oheangbu.EditorTools.WorldMacro {
    }
    VCheck(s.TryEquipment(EquipmentAction.Buy,d.Id,d.Slot,revision,"locked-buy",out _),"same failed request retries once after storage recovers");
    before=s.Progress.ledger.currency;VCheck(!s.TryEquipment(EquipmentAction.Buy,d.Id,d.Slot,revision,"locked-buy",out _)&&s.Progress.ledger.currency==before,"duplicate request cannot charge twice");
-   foreach(var item in s.Content.EquipmentCatalog.Items.Where(x=>!x.Starter)){
+   foreach(var item in s.Content.EquipmentCatalog.Items.Where(x=>!x.Starter&&!x.DropOnly)){
     if(!s.Progress.equipment.Has(item.Id))VCheck(s.TryEquipment(EquipmentAction.Buy,item.Id,item.Slot,s.Progress.equipment.Revision,"runtime-buy-"+item.Id,out _),"runtime purchase "+item.Slot);
     VCheck(s.TryEquipment(EquipmentAction.Equip,item.Id,item.Slot,s.Progress.equipment.Revision,"runtime-equip-"+item.Id,out _),"runtime equip "+item.Slot);
    }

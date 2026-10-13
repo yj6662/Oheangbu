@@ -125,6 +125,11 @@ namespace Oheangbu.EditorTools.WorldMacro
     // #308b (D308-51): the final-consonant grant chain lives only on the Main clone; DemoAllFinals is never carried (off unless set by hand)
     if((next.FinalGrants==null||next.FinalGrants.Length==0)&&prev.FinalGrants!=null&&prev.FinalGrants.Length>0)
     {next.FinalGrants=Array.ConvertAll(prev.FinalGrants,g=>g==null?null:new WorldMacroPlaytestSO.FinalGrant308{LedgerId=g.LedgerId,BossId=g.BossId,Notice=g.Notice});settings++;}
+    // #308 D308-71 / D308-70: the field-boss drop table and the enemy behaviour profiles also live only on the Main clone
+    if((next.BossDrops==null||next.BossDrops.Length==0)&&prev.BossDrops!=null&&prev.BossDrops.Length>0)
+    {next.BossDrops=Array.ConvertAll(prev.BossDrops,g=>g==null?null:new WorldMacroPlaytestSO.BossDrop308{BossId=g.BossId,ItemId=g.ItemId,Notice=g.Notice});settings++;}
+    if(next.EnemyBrain==null&&prev.EnemyBrain!=null){next.EnemyBrain=prev.EnemyBrain;settings++;}
+    if(next.EnemyStrikeRead==null&&prev.EnemyStrikeRead!=null){next.EnemyStrikeRead=prev.EnemyStrikeRead;settings++;}
    }
    finally{Object.DestroyImmediate(d);}
    return "#306 carried "+(points+commissions+settings)+" fields (points "+points+", commissions "+commissions+", settings "+settings+")"+

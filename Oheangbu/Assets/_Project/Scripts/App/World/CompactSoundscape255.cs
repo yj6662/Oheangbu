@@ -35,7 +35,7 @@ namespace Oheangbu.App.World
         readonly HashSet<EnemyVitals> observedDeaths298 = new HashSet<EnemyVitals>();
         readonly HashSet<EnemyVitals> observedWindups298 = new HashSet<EnemyVitals>();
         readonly bool[] looping = new bool[4];
-        sealed class EnemyEdge { public EnemyController Actor; public bool Windup, Active; public Vector3 Previous;public float Walked; }
+        sealed class EnemyEdge { public EnemyController Actor; public bool Windup, Active; public Vector3 Previous;public float Walked; public EnemyRigMotion298 Rig; public bool RigLooked; }
         Vector3 previous,companionPrevious;float companionWalked;bool companionTracked;
         float walked, nextAmbient, nextSettings;
         int jump, land, markers, inspections;
@@ -176,7 +176,10 @@ namespace Oheangbu.App.World
                 var a=edge.Actor;if(a==null||!a.isActiveAndEnabled){edge.Windup=edge.Active=false;edge.Walked=0;if(a!=null)edge.Previous=a.transform.position;continue;}
                 float travel=Vector3.Distance(a.transform.position,edge.Previous);edge.Previous=a.transform.position;
                 if(!Menu&&!a.AttackInProgress&&travel<2f&&Vector3.Distance(feet,a.transform.position)<24f){edge.Walked+=travel;if(edge.Walked>1.8f){edge.Walked=0;Emit(Surface(a.transform.position),a.transform.position,.4f);}}else edge.Walked=0;
-                bool active=a.IsProjectileFlying||a.IsRecovering;
+                // #308 D308-70: with a strike-read profile the swing sounds when the swing starts (its lead before the contact), not at the contact
+                if(!edge.RigLooked){edge.RigLooked=true;edge.Rig=a.GetComponent<EnemyRigMotion298>();}
+                float lead=edge.Rig!=null?edge.Rig.StrikeLeadSeconds:0f;
+                bool active=a.IsProjectileFlying||a.IsRecovering||lead>0f&&a.IsTelegraphing&&!a.CurrentAttackIsProjectile&&a.PredictedImpactTime-Time.time<=lead;
                 if(a.IsTelegraphing&&!edge.Windup&&!EnemyAudioEmitter298.OwnsCue(a.GetComponent<EnemyVitals>(),EnemyAudioRole298.Windup,this))Emit("enemy_windup",a.transform.position,.65f);
                 if(active&&!edge.Active)Emit("enemy_swing",a.transform.position,.65f);
                 edge.Windup=a.IsTelegraphing;edge.Active=active;

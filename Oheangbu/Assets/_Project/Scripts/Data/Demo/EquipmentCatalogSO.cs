@@ -7,6 +7,8 @@ namespace Oheangbu.Data.Demo {
  [Serializable] public sealed class EquipmentDefinition {
   public string Id,Name; public EquipmentSlot Slot; public EquipmentEffect Effect;
   public float Bonus; public int Price; public bool Starter;
+  // #308 D308-71 (SPEC-FIELD-BOSS-308): a piece that is never sold - a field boss leaves it (WorldMacroPlaytestSO.BossDrops). Wearing and upgrading are as any other piece.
+  public bool DropOnly;
  }
  [CreateAssetMenu(menuName="Oheangbu/Compact/Equipment TEST Catalog")]
  public sealed class EquipmentCatalogSO:ScriptableObject {
@@ -58,7 +60,7 @@ namespace Oheangbu.Data.Demo {
    var d=catalog.Find(id);int price=0;
    if(action==EquipmentAction.Unequip){if(string.IsNullOrEmpty(source.Equipped[(int)slot])){error="빈 장착 칸이다.";return false;}}
    else if(d==null){error="없는 장비다.";return false;}
-   else if(action==EquipmentAction.Buy){if(d.Starter||source.Has(id)){error="이미 가진 장비다.";return false;}price=d.Price;}
+   else if(action==EquipmentAction.Buy){if(d.Starter||source.Has(id)){error="이미 가진 장비다.";return false;}if(d.DropOnly){error="파는 물건이 아니다.";return false;}price=d.Price;}
    else if(!source.Has(id)){error="소유하지 않은 장비다.";return false;}
    else if(action==EquipmentAction.Upgrade){int level=source.Level(id);if(level>=3){error="더 강화할 수 없다.";return false;}price=catalog.UpgradeCosts[level];}
    else if(d.Slot!=slot){error="이 부위에는 착용할 수 없다.";return false;}

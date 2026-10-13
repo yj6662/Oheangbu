@@ -107,7 +107,7 @@ MonoBehaviour:
     - {x: 1203.7614, y: 4176.5015}
     - {x: 1168.0824, y: 4176.5015}
     - {x: 1164.0006, y: 3770.753}
-    Units: 284
+    Units: 263
     Renderers: 1597
   LoadDistance: 800
   UnloadDistance: 1100

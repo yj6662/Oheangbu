@@ -6,6 +6,7 @@ using UnityEngine.Playables;
 using Oheangbu.Combat;
 using Oheangbu.App.Demo;
 using Oheangbu.App.Prologue;
+using Oheangbu.Data.World;
 
 namespace Oheangbu.App.World
 {
@@ -41,6 +42,10 @@ namespace Oheangbu.App.World
             "enter speed has to hold, walk on patrol, blend time, the run clip's metres per second, arm relax at run weight, the avatar the clip is for. " +
             "None, or an asset that is not filled in = the three fields above with the fixed 85 % exit and TransitionSeconds (pre-D308-23 behaviour, same arithmetic).")]
         public EnemyRunProfile308 RunProfile;
+        [Tooltip("#308 D308-70 (SPEC-ENEMY-BRAIN-308, TEST): the attack clip as three beats that end on the same contact time - draw back, hold, swing - " +
+            "a short stand on the contact pose, and the upper body of a humanoid leaning back then forward. None (and none handed out by the session), or an " +
+            "asset that is not filled in = the clip stretched evenly over the telegraph, as before. Not used with General.")]
+        public EnemyStrikeRead308 StrikeRead;
         public bool LoopStun;
         public GameObject EarthWarning, EarthImpact;
         PlayableGraph graph;
@@ -48,6 +53,9 @@ namespace Oheangbu.App.World
         AnimationClipPlayable[] nodes;
         EnemyVitals subscribedVitals;
         SouthGateGeneralController subscribedGeneral;
+        EnemyController subscribedEnemy;   // #308 D308-70: read only (was the blow taken?), for the longer stand on a blow that landed
+        long connectedAttack; float strikeLean;
+        Animator leanAnimator; Avatar leanAvatar; Transform leanBone;
         SouthGateGeneralAttackPlan plan;
         readonly List<GameObject> effects = new List<GameObject>();
         GameObject warning;
@@ -102,7 +110,8 @@ namespace Oheangbu.App.World
         void OnEnable() { CaptureSerpentPose(); Bind(); ResetPose(); }
         void Bind()
         {
-            Unbind(); subscribedVitals = Vitals; subscribedGeneral = General; encounter = GetComponent<PrologueEncounter>();
+            Unbind(); subscribedVitals = Vitals; subscribedGeneral = General; subscribedEnemy = Enemy; encounter = GetComponent<PrologueEncounter>();
+            if (subscribedEnemy != null) subscribedEnemy.AttackImpactResolved += Landed;
             if (subscribedVitals != null) { subscribedVitals.DamageResolved += Damaged; subscribedVitals.Died += Died; }
             if (subscribedGeneral != null) { subscribedGeneral.AttackStarted += Started; subscribedGeneral.AttackEnded += Ended; subscribedGeneral.AttackImpactResolved += Impact; }
         }
@@ -110,7 +119,8 @@ namespace Oheangbu.App.World
         {
             if (subscribedVitals != null) { subscribedVitals.DamageResolved -= Damaged; subscribedVitals.Died -= Died; }
             if (subscribedGeneral != null) { subscribedGeneral.AttackStarted -= Started; subscribedGeneral.AttackEnded -= Ended; subscribedGeneral.AttackImpactResolved -= Impact; }
-            subscribedVitals = null; subscribedGeneral = null;
+            if (subscribedEnemy != null) subscribedEnemy.AttackImpactResolved -= Landed;
+            subscribedVitals = null; subscribedGeneral = null; subscribedEnemy = null;
         }
         void ResetPose()
         {
@@ -141,6 +151,12 @@ namespace Oheangbu.App.World
         void Damaged(EnemyDamageResult result)
         { if (Vitals != null && result.Target == Vitals && result.AppliedDamage > 0 && Vitals.ReactsTo(result.Attack)) hitAt = Time.time; }
         void Died() { deathAt = Time.time; plan = null; RemoveWarning(); }
+        void Landed(EnemyAttackImpact impact) { if (impact.InShape && impact.AppliedDamage > 0f) connectedAttack = impact.Attack.AttackId; }
+        // #308 D308-70: a filled-in profile on an EnemyController actor (the general has its own plan clock)
+        public bool StrikeReadActive => StrikeRead != null && General == null && Enemy != null && StrikeRead.Usable;
+        /// <summary>Real seconds before the contact at which the swing of this actor starts (0 = no profile). The swing sound uses it.</summary>
+        public float StrikeLeadSeconds => StrikeReadActive ? StrikeRead.StrikeLead(Enemy.TelegraphDuration) : 0f;
+        public float StrikeLeanDegrees => strikeLean;
         void Started(SouthGateGeneralAttackPlan value) { plan = value; }
         void Ended(SouthGateGeneralAttackPlan value, bool cancelled) { if (plan == value) plan = null; RemoveWarning(); }
         void Impact(SouthGateGeneralImpact value)
@@ -198,7 +214,7 @@ namespace Oheangbu.App.World
         public void Evaluate(float now, float dt)
         {
             if (!IsConfigured) return;
-            if (subscribedVitals != Vitals || subscribedGeneral != General) { Bind(); ResetPose(); }
+            if (subscribedVitals != Vitals || subscribedGeneral != General || subscribedEnemy != Enemy) { Bind(); ResetPose(); }
             Create(); if (!graph.IsValid()) return;
             if (revision != Vitals.LifeRevision) ResetPose();
             float travel = Vector3.ProjectOnPlane(transform.position - previous, Vector3.up).magnitude; previous = transform.position;
@@ -219,7 +235,7 @@ namespace Oheangbu.App.World
             else if (runIndex >= 0) running = running ? speed > RunThresholdMetresPerSecond * .85f : speed > RunThresholdMetresPerSecond;
             bool stunned = General != null ? General.State == SouthGateCombatState.Stunned : Enemy != null && Enemy.IsStunned;
             if (stunned && !wasStunned) stunAt = now; wasStunned = stunned;
-            int index = 0; float t = Mathf.Repeat(now, Idle.length); CurrentPose = "Idle";
+            int index = 0; float t = Mathf.Repeat(now, Idle.length); CurrentPose = "Idle"; strikeLean = 0f;
             if (!Vitals.IsAlive) { if (deathAt < 0) deathAt = now; index = 5; t = Mathf.Min(Mathf.Max(0, now - deathAt), Death.length); CurrentPose = "Death"; }
             else if (stunned) { index = 4; t = LoopStun ? Mathf.Repeat(Mathf.Max(0, now - stunAt), Stun.length) : Mathf.Min(Mathf.Max(0, now - stunAt), Stun.length); CurrentPose = "Stun"; }
             else if (General != null && plan != null) { float phase = GeneralPhase(out index); t = phase * (index == 6 ? Sweep.length : index == 7 ? Wave.length : Attack.length); CurrentPose = index == 6 ? "Sweep" : index == 7 ? "Wave" : "Thrust"; }
@@ -227,7 +243,23 @@ namespace Oheangbu.App.World
             {
                 int move = MoveIndex(Enemy.AttackProfile);
                 var clip = move >= 0 ? MoveClips[move] : Attack; float peak = move >= 0 && move < (MovePeaks01?.Length ?? 0) ? MovePeaks01[move] : AttackPeak01;
-                index = move >= 0 ? 6 + move : 2; t = AttackPhase(peak, Enemy.IsTelegraphing, Enemy.TelegraphProgress, Enemy.IsRecovering, Enemy.RecoveryProgress) * clip.length;
+                index = move >= 0 ? 6 + move : 2;
+                if (StrikeReadActive && (Enemy.IsTelegraphing || Enemy.IsRecovering))
+                {
+                    // #308 D308-70: same clip, same contact pose at the same contact time; only how the time before and after it is spent
+                    bool landed = connectedAttack != 0 && connectedAttack == Enemy.CurrentAttack.AttackId;
+                    if (Enemy.IsTelegraphing)
+                    {
+                        float telegraph = Enemy.TelegraphDuration, elapsed = Enemy.TelegraphProgress * telegraph;
+                        t = StrikeRead.WindupPhase(peak, clip.length, telegraph, elapsed) * clip.length; strikeLean = StrikeRead.WindupLean(telegraph, elapsed);
+                    }
+                    else
+                    {
+                        float recovery = Enemy.RecoveryDuration, elapsed = Enemy.RecoveryProgress * recovery;
+                        t = StrikeRead.RecoveryPhase(peak, recovery, elapsed, landed) * clip.length; strikeLean = StrikeRead.RecoveryLean(recovery, elapsed, landed);
+                    }
+                }
+                else t = AttackPhase(peak, Enemy.IsTelegraphing, Enemy.TelegraphProgress, Enemy.IsRecovering, Enemy.RecoveryProgress) * clip.length;
                 CurrentPose = move >= 0 ? clip.name : "Attack";
             }
             else if (now >= hitAt && now - hitAt < Hit.length) { index = 3; t = now - hitAt; CurrentPose = "Hit"; }
@@ -257,6 +289,7 @@ namespace Oheangbu.App.World
             if (CanSkipPose()) { SkippedEvaluations++; effects.RemoveAll(e => e == null); return; }
             FootPlacement?.RestoreAuthoredPose(); RestoreSerpentPose(); graph.Evaluate(0);
             ApplyArmRelax(mixer.GetInputWeight(0), mixer.GetInputWeight(1), runIndex >= 0 ? mixer.GetInputWeight(runIndex) : 0f);
+            ApplyStrikeLean(strikeLean);
             FootPlacement?.ApplyPose(dt);
             if (resetSerpentHistory && SerpentFollow != null && SerpentFollow.enabled) { SerpentFollow.ResetPoseHistory(); resetSerpentHistory = false; }
             effects.RemoveAll(e => e == null);
@@ -336,6 +369,17 @@ namespace Oheangbu.App.World
             upper.rotation = Quaternion.FromToRotation(dir, Vector3.Slerp(dir, hang, arm)) * upper.rotation;
             Vector3 along = (lower.position - upper.position).normalized, fore = (hand.position - lower.position).normalized;
             lower.rotation = Quaternion.FromToRotation(fore, Vector3.Slerp(fore, along, elbow)) * lower.rotation;
+        }
+
+        // #308 D308-70: the upper body leans back while the blow is drawn and forward as it is thrown (humanoid only; negative = back).
+        // Applied on the pose the graph just wrote, so nothing accumulates. Legs, hips and the root are not touched.
+        void ApplyStrikeLean(float degrees)
+        {
+            if (Mathf.Abs(degrees) < .01f || Animator == null || !Animator.isHuman) return;
+            var avatar = Animator.avatar;
+            if (!ReferenceEquals(leanAnimator, Animator) || !ReferenceEquals(leanAvatar, avatar))
+            { leanAnimator = Animator; leanAvatar = avatar; leanBone = Animator.GetBoneTransform(HumanBodyBones.Spine); }
+            if (leanBone != null) leanBone.rotation = Quaternion.AngleAxis(degrees, transform.right) * leanBone.rotation;
         }
 
         void LateUpdate() { using (Perf307Markers.RigEvaluate.Auto()) { if (Time.deltaTime > 0) { liveEvaluate = true; try { Evaluate(Time.time, Time.deltaTime); } finally { liveEvaluate = false; } } } }

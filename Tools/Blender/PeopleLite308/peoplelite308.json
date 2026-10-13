@@ -1,0 +1,43 @@
+{
+ "id": "peoplelite308", "version": "308.people.1", "status": "TEST - offline only, not imported into Unity",
+ "pack": "KCISA - koreanPeddlerCharacters.unitypackage (cached, user-owned; files stay under Art/World/PackLite308/_src/Peddlers)",
+ "src": "Art/World/PackLite308/_src/Peddlers/Assets/CustomPackage",
+ "out": "Art/World/PackLite308/people", "sheets": "Art/World/PackLite308/_sheets/people",
+ "lods": [5900, 2400, 880], "lodInfluences": [4, 4, 2], "atlas": 1024,
+ "sources": {
+  "male":   {"fbx": "Characters/SM_Marchant_Male.fbx", "root": "b_Root", "idle": "Animations/Male_Idle.anim", "walk": "Animations/Male_Walk.anim", "run": "Animations/Male_Run.anim",
+             "dropBones": "Finger", "unskinBones": "", "bakeFromWalk": "Finger"},
+  "female": {"fbx": "Characters/SM_Peddler_Female_2 1.fbx", "root": "b_Bip_001", "idle": "Animations/Woman_Idle.anim", "walk": "Animations/woman_walking.anim", "run": "Animations/Woman_run.anim",
+             "dropBones": "Finger|FrontSkirt|Skirt.*004$", "unskinBones": "Skirt.*001$", "bakeFromWalk": "Finger"}
+ },
+ "bodies": [
+  {"name": "Male_Bobusang", "label": "보부상 사내(패랭이 · 목화솜 · 머리띠)", "src": "male", "drop": ["mouth"]},
+  {"name": "Male_Mingeon", "label": "맨머리 사내(패랭이 없음 · 머리띠)", "src": "male", "drop": ["mouth", "strawhat"]},
+  {"name": "Female_Anak", "label": "아낙(쪽 진 머리 · 주름치마 - 겉 두른치마 뺌)", "src": "female", "drop": ["frontskirt", "m_hair_female", "hairshort"]}
+ ],
+ "parts": [
+  {"match": "eyebrow", "part": "brow", "budget": 40, "importance": 1.0, "maxLod": 0},
+  {"match": "eye", "part": "eye", "budget": 120, "importance": 1.2, "maxLod": 1},
+  {"match": "hairornament", "part": "ornament", "budget": 90, "importance": 1.0},
+  {"match": "headband", "part": "headband", "budget": 170, "importance": 1.0},
+  {"match": "strawhat", "part": "hat", "budget": 560, "importance": 1.6},
+  {"match": "hair", "part": "hair", "budget": 620, "importance": 1.0},
+  {"match": "head", "part": "head", "budget": 1500, "importance": 3.0},
+  {"match": "body", "part": "skin", "budget": 760, "importance": 1.6},
+  {"match": "jeogori", "part": "top", "budget": 950, "importance": 1.0, "role": "top"},
+  {"match": "chestcover", "part": "band", "budget": 220, "importance": 0.8, "role": "band"},
+  {"match": "frontskirt", "part": "overskirt", "budget": 600, "importance": 1.0, "role": "skirt"},
+  {"match": "skirt", "part": "skirt", "budget": 800, "importance": 1.0, "role": "skirt"},
+  {"match": "pants", "part": "pants", "budget": 620, "importance": 0.9, "role": "bottom"},
+  {"match": "ankleb", "part": "wrap", "budget": 160, "importance": 0.7, "role": "wrap"},
+  {"match": "socks", "part": "sock", "budget": 170, "importance": 0.6, "role": "sock"},
+  {"match": "shoes", "part": "shoe", "budget": 300, "importance": 0.8}
+ ],
+ "variants_doc": "sRGB 0-255. 옷 영역만 다시 칠한다(살 · 머리 · 패랭이 · 머리띠 · 짚신은 그대로). 순백 없음: 종이 흰색보다 조금 낮게, 채도 낮게. weight = 군중 비율.",
+ "variants": [
+  {"key": "white", "label": "소색(무명 흰옷)", "weight": 0.60, "top": [222, 216, 200], "bottom": [214, 208, 192], "skirt": [218, 212, 196], "band": [226, 221, 207], "wrap": [205, 199, 184], "sock": [224, 219, 206]},
+  {"key": "blue", "label": "연한 쪽빛", "weight": 0.16, "top": [222, 216, 200], "bottom": [150, 166, 178], "skirt": [146, 163, 177], "band": [226, 221, 207], "wrap": [205, 199, 184], "sock": [224, 219, 206], "male_top": [158, 172, 183], "male_bottom": [212, 206, 190]},
+  {"key": "dark", "label": "먹색 · 짙은 쪽", "weight": 0.10, "top": [62, 67, 79], "bottom": [198, 192, 177], "skirt": [58, 63, 78], "band": [214, 208, 193], "wrap": [190, 184, 170], "sock": [220, 215, 202], "female_top": [220, 214, 198]},
+  {"key": "ochre", "label": "황토 갈색 일옷", "weight": 0.14, "top": [154, 126, 90], "bottom": [200, 191, 170], "skirt": [146, 118, 84], "band": [216, 209, 192], "wrap": [188, 178, 158], "sock": [220, 214, 200], "female_top": [216, 208, 188]}
+ ]
+}
