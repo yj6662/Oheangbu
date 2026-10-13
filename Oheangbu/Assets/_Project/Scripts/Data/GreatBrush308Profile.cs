@@ -45,6 +45,27 @@ namespace Oheangbu.Data.Spell
         public struct Alias { public string From, To; }
 
         [Serializable]
+        public struct TailSettings
+        {
+            [Tooltip("중력 배수. 1 = 물리 설정의 중력 그대로.")]
+            [Range(0, 3)] public float GravityScale;
+            [Tooltip("공기 저항(1/초). 클수록 빨리 멎는다.")]
+            [Range(0, 20)] public float Drag;
+            [Tooltip("자루 중심선에서 장식이 떨어져 있어야 하는 거리(m) = 자루 반지름 + 장식 두께.")]
+            [Range(0, .1f)] public float ShaftClearance;
+            [Range(1, 8)] public int Substeps;
+            [Tooltip("한 프레임에 푸는 가장 긴 시간(초). 프레임이 튀어도 장식이 날아가지 않는다.")]
+            [Range(.005f, .1f)] public float MaximumStep;
+            [Tooltip("붓이 한 프레임에 이보다 멀리 옮겨지면 순간 이동으로 보고 장식을 같이 옮긴다(m).")]
+            [Min(.05f)] public float TeleportMeters;
+
+            public static TailSettings Default => new TailSettings { GravityScale = 1f, Drag = 2.2f, ShaftClearance = .03f, Substeps = 3, MaximumStep = .034f, TeleportMeters = .8f };
+
+            public bool IsValid => Finite(GravityScale) && Finite(Drag) && Drag >= 0f && Finite(ShaftClearance) && ShaftClearance >= 0f && Substeps >= 1 &&
+                Finite(MaximumStep) && MaximumStep > 0f && Finite(TeleportMeters) && TeleportMeters > 0f;
+        }
+
+        [Serializable]
         public struct BristleSettings
         {
             [Header("가운데 사슬 (Bristle_01..08)")]
@@ -198,6 +219,9 @@ namespace Oheangbu.Data.Spell
 
         [Header("붓털")]
         public BristleSettings Bristles = BristleSettings.Default;
+
+        [Header("꼬리 장식 (고리 · 끈 · 술) — D308-80i")]
+        public TailSettings Tail = TailSettings.Default;
 
         [Header("가까운 화면 (그리기) — 옛 작은 붓 값과 따로 둔다")]
         [Tooltip("가까운 화면의 붓을 쥐는 곳: GripSocket 에서 붓끝 쪽으로(m). 1.55 m 붓을 0.95 m 뒤에서 쥐면 손이 화면 밖이다.")]

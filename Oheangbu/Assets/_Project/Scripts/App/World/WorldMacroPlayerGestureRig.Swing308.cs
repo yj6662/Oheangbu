@@ -125,6 +125,8 @@ namespace Oheangbu.App.World
             var bristles = brush.Root != null ? brush.Root.GetComponent<GreatBrushBristles308>() : null;
             if (bristles == null) return null;
             bristles.Configure(profile.Bristles);
+            var tail = brush.Root.GetComponent<GreatBrushTail308>();   // the hanging ring, cord and tassel (v6 brush); it runs itself
+            if (tail != null) tail.Configure(profile.Tail);
             if (!bristles.IsBound) bristles.TryBind();   // unbound it stays inert (rest shape, rest tip offset) and says why in BindingError
             bristles.UseGrip(brush.Grip);                // the tip offset is reported from the transform the rig holds the brush by
             return bristles;

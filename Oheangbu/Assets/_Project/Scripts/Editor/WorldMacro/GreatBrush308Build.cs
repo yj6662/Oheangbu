@@ -112,6 +112,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "sample": return EditOnly() ?? Sample();
                     case "nearleft": return EditOnly() ?? NearLeft();
                     case "handskin": return HandSkin();
+                    case "tail": return EditOnly() ?? Tail();
                     case "nearhand": return EditOnly() ?? NearHand(false);
                     case "nearhand:revert": return EditOnly() ?? NearHand(true);
                     case "nearpreview": return EditOnly() ?? NearPreview("stroke");
@@ -132,7 +133,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string ClipPath(string name) => Folder + "/Animations/" + ClipPrefix + name + ".fbx";
         static string Abs(string assetPath) => Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
         static string Repo => Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".."));
-        static string SourceBrush => Path.Combine(Repo, "Art", "Characters308", "GreatBrush308", "v5");
+        static string SourceBrush => Path.Combine(Repo, "Art", "Characters308", "GreatBrush308", "v6");
         static string SourceMotion => Path.Combine(Repo, "Art", "Characters308", "GreatBrush308", "motion2");
         static string GripJson => Path.Combine(SourceMotion, "grip.json");
 
@@ -1123,6 +1124,84 @@ namespace Oheangbu.EditorTools.WorldMacro
             return log.AppendLine("  scene dirty, NOT saved (save)").ToString();
         }
 
+        // The tail ornament hangs (D308-80i): brings the v6 brush model in and upgrades the brushes already in the scene in place
+        // (they are plain copies of the model, not prefab instances): the missing transforms (Tail_01..03, TailEndSocket) are
+        // added under their parents, each skin's bone list follows the model's by name, and GreatBrushTail308 is added.
+        // Then the chain is left to fall for two seconds where each brush is and the result is reported. Scene dirty, NOT saved.
+        static string Tail()
+        {
+            var b = new StringBuilder("GreatBrush308 tail ornament\n");
+            b.AppendLine("  brush model " + CopyIn(Path.Combine(SourceBrush, "SM_GreatBrush308.fbx"), BrushModel) + " (" + SourceBrush + ")");
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(BrushModel);
+            if (model == null) return b.Append("refused: no brush model").ToString();
+            if (Child(model.transform, GreatBrushTail308.Prefix + "01") == null) return b.Append("refused: the model has no Tail_01 (run tail_v6.py)").ToString();
+            var brushes = Object.FindObjectsByType<GreatBrushBristles308>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if (brushes.Length == 0) return b.Append("refused: no great brush in the open scenes (install)").ToString();
+            foreach (var bristles in brushes)
+            {
+                Transform root = bristles.transform; int added = 0;
+                foreach (var source in model.GetComponentsInChildren<Transform>(true))   // parents come first
+                {
+                    if (source == model.transform || Child(root, source.name) != null) continue;
+                    Transform parent = source.parent == model.transform ? root : Child(root, source.parent.name);
+                    if (parent == null) { b.AppendLine("  " + root.name + ": no parent for " + source.name); continue; }
+                    var made = new GameObject(source.name).transform; made.SetParent(parent, false); made.gameObject.layer = parent.gameObject.layer;
+                    made.localPosition = source.localPosition; made.localRotation = source.localRotation; made.localScale = source.localScale; added++;
+                }
+                int skins = 0, unmatched = 0;
+                foreach (var skin in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    var from = model.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault(s => s.name == skin.name);
+                    if (from == null) continue;
+                    var bones = from.bones.Select(t => t == null ? null : Child(root, t.name)).ToArray(); unmatched += bones.Count(t => t == null);
+                    skin.sharedMesh = from.sharedMesh; skin.bones = bones; skins++; EditorUtility.SetDirty(skin);
+                }
+                var tail = root.GetComponent<GreatBrushTail308>(); if (tail == null) tail = root.gameObject.AddComponent<GreatBrushTail308>();
+                var profile = AssetDatabase.LoadAssetAtPath<GreatBrush308Profile>(GreatProfilePath); if (profile != null) tail.Configure(profile.Tail);
+                bool bound = tail.TryBind(); tail.ResetChain();
+                Transform grip = Child(root, GreatBrushBristles308.GripName), end = Child(root, "ShaftEndSocket");
+                Vector3 tipward = grip != null && end != null ? (grip.position - end.position).normalized : Vector3.up;
+                string line = "  " + root.name + (root.gameObject.activeInHierarchy ? "" : " (inactive)") + ": transforms added " + added + " · skins " + skins + " · bones without a transform " + unmatched + " · bound " + bound + (bound ? "" : " (" + tail.BindingError + ")");
+                if (bound)
+                {
+                    Vector3 before = tail.HangDirection; tail.Settle(2f); Vector3 after = tail.HangDirection;
+                    line += " · shaft tip-ward vs up " + Vector3.Dot(tipward, Vector3.up).ToString("F2", Inv) + " · ornament vs down: modelled " + Vector3.Dot(before, Vector3.down).ToString("F2", Inv) + " → hanging " + Vector3.Dot(after, Vector3.down).ToString("F2", Inv)
+                        + " · nearest to the shaft line " + (tail.NearestToShaft < 0f ? "not alongside" : (tail.NearestToShaft * 100f).ToString("F1", Inv) + " cm");
+                }
+                b.AppendLine(line); EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
+                if (bound && root.gameObject.activeInHierarchy && end != null)
+                {
+                    // slung on the back the tip points down and the tail up (user's screenshot 2026-10-14): turn the brush that way for a
+                    // moment, let the ornament fall, measure and take a still, then put the brush back
+                    Vector3 keepPosition = root.position; Quaternion keepRotation = root.rotation;
+                    root.rotation = Quaternion.AngleAxis(155f, Vector3.forward) * keepRotation; root.position += keepPosition - end.position + Vector3.up * 600f;   // far above everything: the still shows the brush alone
+                    tail.ResetChain(); Vector3 stiff = tail.HangDirection; tail.Settle(3f); Vector3 hung = tail.HangDirection;
+                    tipward = (grip.position - end.position).normalized;
+                    b.AppendLine("    slung test (tip-ward vs up " + Vector3.Dot(tipward, Vector3.up).ToString("F2", Inv) + "): ornament vs down: stiff " + Vector3.Dot(stiff, Vector3.down).ToString("F2", Inv) + " → hanging " + Vector3.Dot(hung, Vector3.down).ToString("F2", Inv)
+                        + " · nearest to the shaft line " + (tail.NearestToShaft < 0f ? "not alongside" : (tail.NearestToShaft * 100f).ToString("F1", Inv) + " cm"));
+                    var shown = root.GetComponentsInChildren<Renderer>(true); var was = shown.Select(r => r.enabled).ToArray();
+                    var modes = shown.Select(r => r.shadowCastingMode).ToArray(); b.AppendLine("    renderers: " + string.Join(" · ", shown.Select(r => r.name + " enabled " + r.enabled + " shadows " + r.shadowCastingMode + " layer " + LayerMask.LayerToName(r.gameObject.layer))));
+                    foreach (var r in shown) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                    foreach (var r in shown) { r.enabled = true; if (r is SkinnedMeshRenderer sk) { sk.forceMatrixRecalculationPerRender = true; sk.updateWhenOffscreen = false; sk.localBounds = new Bounds(Vector3.zero, Vector3.one * 6f); } }   // bounds that follow the transform at once: in edit mode the skinned bounds stay where the brush was last drawn and the camera culls it
+                    var camObject = new GameObject("Tail308Camera") { hideFlags = HideFlags.HideAndDontSave }; var cam = camObject.AddComponent<Camera>();
+                    var rt = new RenderTexture(900, 900, 24); var tex = new Texture2D(900, 900, TextureFormat.RGB24, false);
+                    try
+                    {
+                        cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(.74f, .71f, .64f); cam.cullingMask = 1 << root.gameObject.layer; cam.farClipPlane = 6f; cam.fieldOfView = 30f; cam.nearClipPlane = .05f; cam.targetTexture = rt;
+                        Vector3 look = end.position + Vector3.down * .08f; cam.transform.position = look + new Vector3(.25f, .12f, -.95f); cam.transform.LookAt(look);
+                        cam.Render(); var old = RenderTexture.active; RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, 900, 900), 0, 0); tex.Apply(); RenderTexture.active = old;
+                        string folder = Path.Combine(Repo, "Art", "Characters308", "GreatBrush308", "tail_preview"); Directory.CreateDirectory(folder);
+                        File.WriteAllBytes(Path.Combine(folder, root.name + "_slung.png"), tex.EncodeToPNG()); b.AppendLine("    still " + Path.Combine(folder, root.name + "_slung.png"));
+                    }
+                    finally { cam.targetTexture = null; Object.DestroyImmediate(camObject); rt.Release(); Object.DestroyImmediate(rt); Object.DestroyImmediate(tex); }
+                    for (int i = 0; i < shown.Length; i++) { shown[i].enabled = was[i]; shown[i].shadowCastingMode = modes[i]; }
+                    foreach (var r in shown) if (r is SkinnedMeshRenderer sk) { sk.ResetLocalBounds(); sk.updateWhenOffscreen = true; }
+                    root.SetPositionAndRotation(keepPosition, keepRotation); tail.ResetChain();
+                }
+            }
+            return b.AppendLine("  scene dirty, NOT saved (save)").ToString();
+        }
+
         static string HandSkin()
         {
             var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
@@ -1327,6 +1406,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             foreach (var animator in brush.GetComponentsInChildren<Animator>(true)) Object.DestroyImmediate(animator);
             foreach (var t in brush.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = like.gameObject.layer;
             foreach (var renderer in brush.GetComponentsInChildren<Renderer>(true)) renderer.sharedMaterials = MaterialsFor(renderer);
+            brush.AddComponent<GreatBrushTail308>();       // the tail ornament hangs by its weight (v6 bones Tail_01..03)
             brush.AddComponent<GreatBrushBristles308>();   // binds its bones by name when it wakes; it is not a BrushBristleRig (six bones, one chain)
             Undo.RegisterCreatedObjectUndo(brush, "Install great brush 308");
             return brush.transform;
