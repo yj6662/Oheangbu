@@ -4,8 +4,10 @@ using UnityEngine;
 namespace Oheangbu.App.World
 {
     // SPEC-SPELL-SWING-308 section 4a (D308-80i, user 2026-10-14 "붓 자루 끝에 있는 이거, 장식이지? 중력에 영향받도록 해"):
-    // the ring, cord and tassel at the tail of the great brush (SM_GreatBrush308 v6: Tail_01..03, TailEndSocket) hang by their
-    // own weight. Three particles on a chain (one per joint end), gravity, a little air drag, kept off the shaft.
+    // the ring, cord and tassel at the tail of the great brush (SM_GreatBrush308 v6: Tail_01..NN, TailEndSocket) hang by their
+    // own weight. One particle per joint end on a chain, gravity, a little air drag, kept off the shaft. Tail_01 is the rigid
+    // ring; from the cord down the links are short and the skin is shared between neighbours, so it bends softly (user
+    // 2026-10-14 "끈부터 술까지는 부드럽게"); a small bend stiffness keeps the tassel from folding like a bead chain.
     //
     // Presentation only: it reads the brush's own transforms and writes three bone rotations. It never sees the pointer, the
     // samples, the power or the swing rule. Unbound (a v5 brush without the bones) it does nothing.
@@ -14,7 +16,8 @@ namespace Oheangbu.App.World
     public sealed class GreatBrushTail308 : MonoBehaviour
     {
         public const string Prefix = "Tail_", EndName = "TailEndSocket";
-        public const int Count = 3;
+        public const int MaximumCount = 16;
+        public int Count => _links.Length;
 
         private struct Link
         {
@@ -51,20 +54,21 @@ namespace Oheangbu.App.World
         public bool TryBind()
         {
             _tried = true; _bound = false; BindingError = null;
-            var links = new Link[Count]; Transform end = null, grip = null;
+            var found = new Transform[MaximumCount]; Transform end = null, grip = null;
             foreach (var t in GetComponentsInChildren<Transform>(true))
             {
                 if (t.name == EndName) end = t;
                 else if (t.name == GreatBrushBristles308.GripName) grip = t;
-                else if (t.name.StartsWith(Prefix, System.StringComparison.Ordinal) && int.TryParse(t.name.Substring(Prefix.Length), out int n) && n >= 1 && n <= Count) links[n - 1].Bone = t;
+                else if (t.name.StartsWith(Prefix, System.StringComparison.Ordinal) && int.TryParse(t.name.Substring(Prefix.Length), out int n) && n >= 1 && n <= MaximumCount) found[n - 1] = t;
             }
-            for (int i = 0; i < Count; i++)
-                if (links[i].Bone == null) { BindingError = Prefix + (i + 1).ToString("00") + " is missing (a brush before v6)"; return false; }
+            int count = 0; while (count < MaximumCount && found[count] != null) count++;
+            if (count == 0) { BindingError = Prefix + "01 is missing (a brush before v6)"; return false; }
+            var links = new Link[count]; for (int i = 0; i < count; i++) links[i].Bone = found[i];
             if (end == null) { BindingError = EndName + " is missing"; return false; }
             if (grip == null) { BindingError = GreatBrushBristles308.GripName + " is missing"; return false; }
-            for (int i = 0; i < Count; i++)
+            for (int i = 0; i < count; i++)
             {
-                Transform bone = links[i].Bone, next = i + 1 < Count ? links[i + 1].Bone : end;
+                Transform bone = links[i].Bone, next = i + 1 < count ? links[i + 1].Bone : end;
                 Vector3 to = next.position - bone.position; float length = to.magnitude;
                 if (length < 1e-4f) { BindingError = bone.name + " has no length"; return false; }
                 links[i].RestLocal = bone.localRotation; links[i].AxisLocal = Quaternion.Inverse(bone.rotation) * (to / length); links[i].Length = length;
@@ -111,6 +115,7 @@ namespace Oheangbu.App.World
 
             float dt = Mathf.Min(deltaTime, _settings.MaximumStep); int steps = Mathf.Max(1, _settings.Substeps); float h = dt / steps;
             Vector3 gravity = Physics.gravity * _settings.GravityScale; float keep = Mathf.Clamp01(1f - _settings.Drag * h);
+            float stiff = Mathf.Clamp01(_settings.BendStiffness), stiffTassel = Mathf.Clamp01(_settings.TasselBendStiffness); int tasselFrom = Mathf.Max(2, _settings.TasselFirstLink - 1); int passes = Mathf.Max(1, _settings.Iterations);
             Vector3 shaftFrom = _handle.position, shaft = _grip.position - shaftFrom;
             shaft = shaft.sqrMagnitude > 1e-8f ? shaft.normalized : _handle.up;
             NearestToShaft = -1f;
@@ -121,27 +126,38 @@ namespace Oheangbu.App.World
                     Vector3 point = _links[i].Point, velocity = (point - _links[i].Previous) * keep;
                     _links[i].Previous = point; _links[i].Point = point + velocity + gravity * (h * h);
                 }
-                for (int pass = 0; pass < 2; pass++)
+                for (int pass = 0; pass < passes; pass++)
                 {
-                    Vector3 joint = anchor;
+                    // lengths: both ends of a link give way (the eye on the tail cap does not). Dragging only the lower end froze folds in.
                     for (int i = 0; i < Count; i++)
                     {
-                        Vector3 point = _links[i].Point;
-                        // off the shaft: alongside it the ornament lies against the bamboo, not inside it
-                        float along = Vector3.Dot(point - shaftFrom, shaft);
-                        if (along > 0f)
+                        Vector3 from = i == 0 ? anchor : _links[i - 1].Point, to = _links[i].Point - from; float length = to.magnitude;
+                        if (length < 1e-6f) { to = gravity.sqrMagnitude > 0f ? gravity.normalized : Vector3.down; length = 1f; _links[i].Point = from + to * _links[i].Length; continue; }
+                        Vector3 fix = to / length * (length - _links[i].Length);
+                        if (i == 0) _links[i].Point -= fix; else { _links[i - 1].Point += fix * .5f; _links[i].Point -= fix * .5f; }
+                    }
+                    // bending: two links in a row resist folding (the distance across them is kept toward their summed length). The same
+                    // on both ends, so it adds no motion of its own - a one-sided "lean toward the link above" kept the chain squirming.
+                    for (int i = 2; i < Count; i++)
+                    {
+                        float k = i >= tasselFrom ? stiffTassel : stiff; if (k <= 0f) continue;
+                        Vector3 across = _links[i].Point - _links[i - 2].Point; float length = across.magnitude, rest = _links[i - 1].Length + _links[i].Length;
+                        if (length < 1e-6f || length >= rest) continue;
+                        Vector3 fix = across / length * ((length - rest) * k * .5f);
+                        _links[i - 2].Point += fix; _links[i].Point -= fix;
+                    }
+                    // off the shaft: alongside it the ornament lies against the bamboo, not inside it
+                    for (int i = 0; i < Count; i++)
+                    {
+                        Vector3 point = _links[i].Point; float along = Vector3.Dot(point - shaftFrom, shaft);
+                        if (along <= 0f) continue;
+                        Vector3 radial = point - shaftFrom - shaft * along; float distance = radial.magnitude, clear = _settings.ShaftClearance;
+                        if (distance < clear)
                         {
-                            Vector3 radial = point - shaftFrom - shaft * along; float distance = radial.magnitude, clear = _settings.ShaftClearance;
-                            if (distance < clear)
-                            {
-                                if (distance < 1e-5f) { radial = Vector3.ProjectOnPlane(gravity, shaft); if (radial.sqrMagnitude < 1e-8f) radial = Vector3.ProjectOnPlane(Vector3.right, shaft); distance = radial.magnitude; }
-                                point = shaftFrom + shaft * along + radial / distance * clear; distance = clear;
-                            }
-                            if (pass == 1 && s == steps - 1) NearestToShaft = NearestToShaft < 0f ? distance : Mathf.Min(NearestToShaft, distance);
+                            if (distance < 1e-5f) { radial = Vector3.ProjectOnPlane(gravity, shaft); if (radial.sqrMagnitude < 1e-8f) radial = Vector3.ProjectOnPlane(Vector3.right, shaft); distance = radial.magnitude; }
+                            _links[i].Point = shaftFrom + shaft * along + radial / distance * clear; distance = clear;
                         }
-                        Vector3 to = point - joint; float length = to.magnitude;
-                        point = length > 1e-6f ? joint + to / length * _links[i].Length : joint + gravity.normalized * _links[i].Length;
-                        _links[i].Point = point; joint = point;
+                        if (pass == passes - 1 && s == steps - 1) NearestToShaft = NearestToShaft < 0f ? distance : Mathf.Min(NearestToShaft, distance);
                     }
                 }
             }

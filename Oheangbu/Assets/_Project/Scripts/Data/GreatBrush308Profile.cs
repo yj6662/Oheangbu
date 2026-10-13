@@ -54,14 +54,22 @@ namespace Oheangbu.Data.Spell
             [Tooltip("자루 중심선에서 장식이 떨어져 있어야 하는 거리(m) = 자루 반지름 + 장식 두께.")]
             [Range(0, .1f)] public float ShaftClearance;
             [Range(1, 8)] public int Substeps;
+            [Tooltip("끈이 접히지 않으려는 정도(0–1). 0 = 구슬 줄, 1 = 거의 곧은 막대.")]
+            [Range(0, 1)] public float BendStiffness;
+            [Tooltip("술(다발)의 같은 힘. 끈보다 크게: 술은 휘어도 접히지는 않는다.")]
+            [Range(0, 1)] public float TasselBendStiffness;
+            [Tooltip("술이 시작되는 뼈 번호(Tail_NN 의 NN). v6 = 6.")]
+            [Range(2, 16)] public int TasselFirstLink;
+            [Tooltip("한 걸음에 길이 · 자루 비켜 가기를 맞추는 횟수. 마디가 많을수록 늘어나 보이지 않게 올린다.")]
+            [Range(1, 12)] public int Iterations;
             [Tooltip("한 프레임에 푸는 가장 긴 시간(초). 프레임이 튀어도 장식이 날아가지 않는다.")]
             [Range(.005f, .1f)] public float MaximumStep;
             [Tooltip("붓이 한 프레임에 이보다 멀리 옮겨지면 순간 이동으로 보고 장식을 같이 옮긴다(m).")]
             [Min(.05f)] public float TeleportMeters;
 
-            public static TailSettings Default => new TailSettings { GravityScale = 1f, Drag = 2.2f, ShaftClearance = .03f, Substeps = 3, MaximumStep = .034f, TeleportMeters = .8f };
+            public static TailSettings Default => new TailSettings { GravityScale = 1f, Drag = 2.2f, ShaftClearance = .03f, Substeps = 3, BendStiffness = .04f, TasselBendStiffness = .45f, TasselFirstLink = 6, Iterations = 8, MaximumStep = .034f, TeleportMeters = .8f };
 
-            public bool IsValid => Finite(GravityScale) && Finite(Drag) && Drag >= 0f && Finite(ShaftClearance) && ShaftClearance >= 0f && Substeps >= 1 &&
+            public bool IsValid => Finite(GravityScale) && Finite(Drag) && Drag >= 0f && Finite(ShaftClearance) && ShaftClearance >= 0f && Substeps >= 1 && Finite(BendStiffness) && Finite(TasselBendStiffness) && TasselFirstLink >= 2 && Iterations >= 1 &&
                 Finite(MaximumStep) && MaximumStep > 0f && Finite(TeleportMeters) && TeleportMeters > 0f;
         }
 

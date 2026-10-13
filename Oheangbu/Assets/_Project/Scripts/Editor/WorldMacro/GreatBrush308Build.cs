@@ -1142,8 +1142,14 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Transform root = bristles.transform; int added = 0;
                 foreach (var source in model.GetComponentsInChildren<Transform>(true))   // parents come first
                 {
-                    if (source == model.transform || Child(root, source.name) != null) continue;
-                    Transform parent = source.parent == model.transform ? root : Child(root, source.parent.name);
+                    if (source == model.transform) continue;
+                    Transform parent = source.parent == model.transform ? root : Child(root, source.parent.name), have = Child(root, source.name);
+                    if (have != null)
+                    {
+                        // a tail transform from an earlier chain (three rigid links): the model's place and parent now
+                        if (have.name.StartsWith("Tail", StringComparison.Ordinal) && parent != null) { have.SetParent(parent, false); have.localPosition = source.localPosition; have.localRotation = source.localRotation; have.localScale = source.localScale; }
+                        continue;
+                    }
                     if (parent == null) { b.AppendLine("  " + root.name + ": no parent for " + source.name); continue; }
                     var made = new GameObject(source.name).transform; made.SetParent(parent, false); made.gameObject.layer = parent.gameObject.layer;
                     made.localPosition = source.localPosition; made.localRotation = source.localRotation; made.localScale = source.localScale; added++;
@@ -1165,7 +1171,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (bound)
                 {
                     Vector3 before = tail.HangDirection; tail.Settle(2f); Vector3 after = tail.HangDirection;
-                    line += " · shaft tip-ward vs up " + Vector3.Dot(tipward, Vector3.up).ToString("F2", Inv) + " · ornament vs down: modelled " + Vector3.Dot(before, Vector3.down).ToString("F2", Inv) + " → hanging " + Vector3.Dot(after, Vector3.down).ToString("F2", Inv)
+                    line += " · links " + tail.Count + " · shaft tip-ward vs up " + Vector3.Dot(tipward, Vector3.up).ToString("F2", Inv) + " · ornament vs down: modelled " + Vector3.Dot(before, Vector3.down).ToString("F2", Inv) + " → hanging " + Vector3.Dot(after, Vector3.down).ToString("F2", Inv)
                         + " · nearest to the shaft line " + (tail.NearestToShaft < 0f ? "not alongside" : (tail.NearestToShaft * 100f).ToString("F1", Inv) + " cm");
                 }
                 b.AppendLine(line); EditorSceneManager.MarkSceneDirty(root.gameObject.scene);
@@ -1175,7 +1181,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     // moment, let the ornament fall, measure and take a still, then put the brush back
                     Vector3 keepPosition = root.position; Quaternion keepRotation = root.rotation;
                     root.rotation = Quaternion.AngleAxis(155f, Vector3.forward) * keepRotation; root.position += keepPosition - end.position + Vector3.up * 600f;   // far above everything: the still shows the brush alone
-                    tail.ResetChain(); Vector3 stiff = tail.HangDirection; tail.Settle(3f); Vector3 hung = tail.HangDirection;
+                    tail.ResetChain(); Vector3 stiff = tail.HangDirection; tail.Settle(10f); Vector3 hung = tail.HangDirection;
                     tipward = (grip.position - end.position).normalized;
                     b.AppendLine("    slung test (tip-ward vs up " + Vector3.Dot(tipward, Vector3.up).ToString("F2", Inv) + "): ornament vs down: stiff " + Vector3.Dot(stiff, Vector3.down).ToString("F2", Inv) + " → hanging " + Vector3.Dot(hung, Vector3.down).ToString("F2", Inv)
                         + " · nearest to the shaft line " + (tail.NearestToShaft < 0f ? "not alongside" : (tail.NearestToShaft * 100f).ToString("F1", Inv) + " cm"));
