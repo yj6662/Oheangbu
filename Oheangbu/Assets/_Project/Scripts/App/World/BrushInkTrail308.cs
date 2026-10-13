@@ -117,11 +117,13 @@ namespace Oheangbu.App.World
             Vector3 tip = rig.EffectTip.position;
             bool nearNow = (tip - rig.WorldTip.position).sqrMagnitude > .0004f;
             if (view == null) view = Camera.main;
-            bool shown = nearNow ? rig.isActiveAndEnabled
+            // 2026-10-13 (user): in the draw mode the afterimage covered the picture - none there, and what was left is cleared
+            bool shown = nearNow ? false
                 : BrushShown() && (view == null || (view.transform.position - tip).sqrMagnitude > Profile.HideWithinCamera * Profile.HideWithinCamera);
             float dt = Time.deltaTime;
             if (has && (nearNow != near || (tip - previous).sqrMagnitude > Profile.ClearJump * Profile.ClearJump)) { trail.Clear(); has = false; }   // no streak between the two brushes
             near = nearNow;
+            if (nearNow) { if (trail.positionCount > 0) trail.Clear(); has = false; }
             if (has && dt > 0f)
             {
                 // faster tip = thinner, drier line (the width is the whole ribbon's: a TrailRenderer has one multiplier)

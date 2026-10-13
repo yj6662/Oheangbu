@@ -155,15 +155,21 @@ namespace Oheangbu.Data.Spell
         [Tooltip("손 ↔ 등 옮기는 시간(초).")]
         [Min(.05f)] public float BackSeconds = .35f;
         [Tooltip("등에 멨을 때 GripSocket 자리: 두 어깨 가운데에서 몸통 기준(오른쪽, 위, 앞) m.")]
-        public Vector3 BackSocketOffset = new Vector3(0f, -.25f, -.17f);
-        [Tooltip("등에 멨을 때 자루 방향(꼬리 → 붓머리), 몸통 기준(오른쪽, 위, 앞). 오른 어깨 위로 붓머리가 올라온다.")]
-        public Vector3 BackShaftDirection = new Vector3(.45f, .85f, -.05f);
+        public Vector3 BackSocketOffset = new Vector3(.12f, .10f, -.17f);
+        [Tooltip("등에 멨을 때 자루 방향(꼬리 → 붓머리), 몸통 기준(오른쪽, 위, 앞). 2026-10-13 사용자: 붓끝이 아래로 — 꼬리가 오른 어깨 위로 올라오고 붓머리는 왼 허리 쪽으로 내려간다.")]
+        public Vector3 BackShaftDirection = new Vector3(-.45f, -.85f, -.05f);
 
         [Header("애니메이터 (AC_PlaytestLocomotion_Brush308)")]
         [Tooltip("윗몸 층(허리 위 마스크): 대기 자세 둘 + 모든 동작.")]
         public string Layer = "Brush308";
         [Tooltip("온몸 층: 서 있을 때만 휘두르기 동작의 하체까지 덮는다. 비우면 쓰지 않는다.")]
         public string BodyLayer = "Brush308Body";
+        [Tooltip("몸통(척추 · 머리)만 덮는 층. 2026-10-13 사용자: 걸을 때 상체가 굳어 있다 → 팔 층과 나눠, 걷는 동안에는 몸통을 이동 동작에 돌려준다. 비우면 몸통 층 없음.")]
+        public string TorsoLayer = "Brush308Torso";
+        [Tooltip("몸통 층의 세기: 서 있을 때 · 움직일 때(휘두르는 동안은 1).")]
+        [Range(0, 1)] public float TorsoWeightStanding = .55f;
+        [Range(0, 1)] public float TorsoWeightMoving = .12f;
+        [Min(.01f)] public float TorsoFade = .25f;
         [Tooltip("한 번 재생하는 동작(휘두르기 · 막기 들기 · 버프)의 정규화 시각 매개변수.")]
         public string TimeParameter = "Brush308Time";
         [Tooltip("자세 전환(ToStance · ToCarry)의 정규화 시각 매개변수.")]
@@ -207,17 +213,19 @@ namespace Oheangbu.Data.Spell
         [Tooltip("몸을 돌린 각(도). 음수 = 왼쪽으로 돌아 오른 어깨가 앞.")]
         [Range(-90, 90)] public float NearBodyYawDegrees = -50f;
         [Tooltip("오른손 손가락이 붓머리 쪽으로 기운 각(도).")]
-        [Range(0, 60)] public float NearRightTowardTipDegrees = 25f;
+        [Range(0, 60)] public float NearRightTowardTipDegrees = 40f;
         [Tooltip("왼손 손가락이 붓머리 쪽으로 기운 각(도).")]
         [Range(0, 60)] public float NearLeftTowardTipDegrees = 15f;
         [Tooltip("손목에서 자루까지: x = 손가락 방향 길이, y = 손바닥 두께(m).")]
-        public Vector2 NearPalm = new Vector2(.10f, .032f);
+        public Vector2 NearPalm = new Vector2(.018f, .030f);   // x = 자루가 손가락 뿌리(손허리 관절)보다 손목 쪽으로 들어온 거리, y = 손바닥에서 자루 중심까지
         [Tooltip("네 손가락이 자루를 감는 각(도): 첫 · 둘째 · 셋째 마디. 2026-10-13 Play: 손이 펴진 채 자루 밑에 놓여 있었다.")]
-        public Vector3 NearFingerCurlDegrees = new Vector3(68f, 86f, 42f);
+        public Vector3 NearFingerCurlDegrees = new Vector3(58f, 74f, 36f);
         [Tooltip("엄지가 자루 위로 넘어오는 각(도): 첫 · 둘째 · 셋째 마디(가장 가까워지는 방향을 고른다).")]
         public Vector3 NearThumbCurlDegrees = new Vector3(42f, 28f, 22f);
         [Tooltip("오른 손목에서 오른 어깨까지(카메라 기준). 팔뚝이 화면 아래에서 올라오게 한다.")]
-        public Vector3 NearShoulderFromHand = new Vector3(.16f, -.20f, -.40f);
+        public Vector3 NearShoulderFromHand = new Vector3(.05f, .14f, -.22f);   // 2026-10-13: 이제 팔꿈치에서 어깨까지의 방향(카메라 기준). 아래팔은 손과 한 줄이다.
+        [Tooltip("팔꿈치가 손 방향의 연장선에서 처지는 정도(m, 아래).")]
+        [Range(0f, .2f)] public float NearElbowDrop = .05f;
         [Tooltip("왼손의 쥐기(GripSocketL 을 왼손 뼈 기준으로). brush_truth.json 에서 계산한다(3인칭용).")]
         public Grip LeftTwoHandGrip = new Grip { Rotation = Quaternion.identity };
         [Min(.05f)] public float NearTipDepth = 1.3f;

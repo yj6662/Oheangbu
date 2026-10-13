@@ -50,6 +50,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string LiveController = "Assets/_Project/Art/Characters/PlaytestNaturalLocomotion/AC_PlaytestLocomotion.controller";
         const string Controller = Folder + "/AC_PlaytestLocomotion_Brush308.controller";
         const string MaskPath = Folder + "/Brush308_UpperBody.mask";
+        const string TorsoMaskPath = Folder + "/Brush308_Torso.mask";
+        const string TorsoLayerName = "Brush308Torso";
         const string RecordPath = Folder + "/install-record.json";
         const string ResourcesFolder = "Assets/_Project/Resources/Swing308";
         const string GreatProfilePath = ResourcesFolder + "/GreatBrush308Profile.asset";
@@ -422,7 +424,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (controller == null) return "FAILED: the controller copy did not import";
                 controller.name = Path.GetFileNameWithoutExtension(Controller);
                 for (int i = controller.layers.Length - 1; i >= 0; i--)
-                    if (controller.layers[i].name == names.Layer || controller.layers[i].name == names.BodyLayer) controller.RemoveLayer(i);
+                    if (controller.layers[i].name == names.Layer || controller.layers[i].name == names.BodyLayer || controller.layers[i].name == TorsoLayerName) controller.RemoveLayer(i);
                 foreach (string parameter in new[] { names.TimeParameter, names.ShiftParameter })
                     if (!string.IsNullOrEmpty(parameter) && controller.parameters.All(p => p.name != parameter)) controller.AddParameter(parameter, AnimatorControllerParameterType.Float);
 
@@ -433,11 +435,23 @@ namespace Oheangbu.EditorTools.WorldMacro
                 for (int part = 0; part < (int)AvatarMaskBodyPart.LastBodyPart; part++)
                 {
                     var p = (AvatarMaskBodyPart)part;
-                    mask.SetHumanoidBodyPartActive(p, p == AvatarMaskBodyPart.Body || p == AvatarMaskBodyPart.Head || p == AvatarMaskBodyPart.LeftArm || p == AvatarMaskBodyPart.RightArm
+                    // 2026-10-13: arms and hands only - the spine and the head went to their own layer (Brush308Torso), which the
+                    // swing driver turns down while the player walks so the walk's own sway shows
+                    mask.SetHumanoidBodyPartActive(p, p == AvatarMaskBodyPart.LeftArm || p == AvatarMaskBodyPart.RightArm
                         || p == AvatarMaskBodyPart.LeftFingers || p == AvatarMaskBodyPart.RightFingers);
                 }
                 if (maskMade) AssetDatabase.CreateAsset(mask, MaskPath); else EditorUtility.SetDirty(mask);
                 AssetDatabase.SaveAssetIfDirty(mask);
+                var torsoMask = AssetDatabase.LoadAssetAtPath<AvatarMask>(TorsoMaskPath);
+                bool torsoMade = torsoMask == null;
+                if (torsoMade) torsoMask = new AvatarMask { name = Path.GetFileNameWithoutExtension(TorsoMaskPath) };
+                for (int part = 0; part < (int)AvatarMaskBodyPart.LastBodyPart; part++)
+                {
+                    var p = (AvatarMaskBodyPart)part;
+                    torsoMask.SetHumanoidBodyPartActive(p, p == AvatarMaskBodyPart.Body || p == AvatarMaskBodyPart.Head);
+                }
+                if (torsoMade) AssetDatabase.CreateAsset(torsoMask, TorsoMaskPath); else EditorUtility.SetDirty(torsoMask);
+                AssetDatabase.SaveAssetIfDirty(torsoMask);
 
                 var missing = new List<string>();
                 AnimatorStateMachine Machine(string layer, string[] states)
@@ -459,11 +473,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 // upper body: both idle stances and every motion. Whole body: the motions only, weighted in while the player stands.
                 controller.AddLayer(new AnimatorControllerLayer { name = names.Layer, stateMachine = Machine(names.Layer, ClipNames), avatarMask = mask, defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
+                controller.AddLayer(new AnimatorControllerLayer { name = TorsoLayerName, stateMachine = Machine(TorsoLayerName, ClipNames), avatarMask = torsoMask, defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
                 bool body = !string.IsNullOrEmpty(names.BodyLayer);
                 if (body) controller.AddLayer(new AnimatorControllerLayer { name = names.BodyLayer, stateMachine = Machine(names.BodyLayer, BodyStates), defaultWeight = 0f, blendingMode = AnimatorLayerBlendingMode.Override, iKPass = false });
                 // right above locomotion, below the hit reactions and the ride: those keep overriding the brush layers
                 var layers = controller.layers.ToList();
-                var added = layers.Where(l => l.name == names.Layer || l.name == names.BodyLayer).ToList();
+                var added = layers.Where(l => l.name == names.Layer || l.name == TorsoLayerName || l.name == names.BodyLayer).ToList();
                 layers.RemoveAll(l => added.Contains(l));
                 layers.InsertRange(Mathf.Min(1, layers.Count), added);
                 controller.layers = layers.ToArray();

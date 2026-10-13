@@ -40,7 +40,8 @@ namespace Oheangbu.App.World
 
         private Animator _boundAnimator;
         private RuntimeAnimatorController _boundController;
-        private int _layer = -1, _bodyLayer = -1, _timeHash, _shiftHash;
+        private int _layer = -1, _bodyLayer = -1, _torsoLayer = -1, _timeHash, _shiftHash;
+        private float _torso;
         private bool _hasTime, _hasShift;
 
         private StanceState _stance = StanceState.Carry;
@@ -130,6 +131,7 @@ namespace Oheangbu.App.World
                 _boundAnimator = Animator; _boundController = Animator.runtimeAnimatorController;
                 _layer = Animator.GetLayerIndex(profile.Layer);
                 _bodyLayer = string.IsNullOrEmpty(profile.BodyLayer) ? -1 : Animator.GetLayerIndex(profile.BodyLayer);
+                _torsoLayer = string.IsNullOrEmpty(profile.TorsoLayer) ? -1 : Animator.GetLayerIndex(profile.TorsoLayer);
                 _timeHash = Animator.StringToHash(profile.TimeParameter ?? ""); _shiftHash = Animator.StringToHash(profile.ShiftParameter ?? "");
                 _hasTime = _hasShift = false;
                 foreach (var parameter in Animator.parameters)
@@ -191,6 +193,7 @@ namespace Oheangbu.App.World
             if (_boundAnimator == null) return;
             if (_layer >= 0 && _layer < _boundAnimator.layerCount) _boundAnimator.SetLayerWeight(_layer, 0f);
             if (_bodyLayer >= 0 && _bodyLayer < _boundAnimator.layerCount) _boundAnimator.SetLayerWeight(_bodyLayer, 0f);
+            if (_torsoLayer >= 0 && _torsoLayer < _boundAnimator.layerCount) _boundAnimator.SetLayerWeight(_torsoLayer, 0f);
         }
 
         // ---------------------------------------------------------------- events (all of them only note a time or start a state)
@@ -279,6 +282,14 @@ namespace Oheangbu.App.World
             BackBlend = Mathf.MoveTowards(BackBlend, _backWanted ? 1f : 0f, dt / Mathf.Max(.05f, profile.BackSeconds));
             float inHand = 1f - Mathf.SmoothStep(0f, 1f, BackBlend);
             Animator.SetLayerWeight(_layer, _upper * inHand);
+            // the torso: the clip's while standing or swinging, the walk's own sway while moving (user 2026-10-13: the upper body
+            // was rigid when walking with the brush on the shoulder or in the stance)
+            if (_torsoLayer >= 0)
+            {
+                float torsoTarget = Swinging ? 1f : standing ? profile.TorsoWeightStanding : profile.TorsoWeightMoving;
+                _torso = Mathf.MoveTowards(_torso, torsoTarget, dt / Mathf.Max(.01f, profile.TorsoFade));
+                Animator.SetLayerWeight(_torsoLayer, _upper * inHand * _torso);
+            }
             if (_bodyLayer >= 0) Animator.SetLayerWeight(_bodyLayer, _body);
 
             // the left hand: the shown state's curve at its clip time, eased
@@ -406,6 +417,10 @@ namespace Oheangbu.App.World
             if (Has(_layer, state))
             {
                 if (fade <= 0f) Animator.Play(state, _layer, 0f); else Animator.CrossFadeInFixedTime(state, fade, _layer, 0f);
+            }
+            if (_torsoLayer >= 0 && Has(_torsoLayer, state))
+            {
+                if (fade <= 0f) Animator.Play(state, _torsoLayer, 0f); else Animator.CrossFadeInFixedTime(state, fade, _torsoLayer, 0f);
             }
             if (withBody && _bodyLayer >= 0 && Has(_bodyLayer, state))
             {

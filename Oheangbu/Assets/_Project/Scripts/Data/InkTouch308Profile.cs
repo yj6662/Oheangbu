@@ -18,7 +18,7 @@ namespace Oheangbu.Data.Spell
         [Range(0f, 1f)] public float Fingers = .55f;
         [Range(0f, 1f)] public float Droplets = .6f;
         [Range(0f, 1f)] public float Opacity = .96f;
-        [Range(0f, 1f)] public float WetSheen = .3f;
+        [Range(0f, 1f)] public float WetSheen = 0f;   // 2026-10-13: 연한 부분 · 진한 부분이 갈려 어색했다
         [Min(.1f)] public float WetSeconds = 3.5f;
 
         [Header("획이 조금 늦게 나온다 · 예쁜 붓글씨 쪽으로 아주 조금 (표현 전용 — 인식은 원래 입력 그대로)")]
@@ -50,9 +50,11 @@ namespace Oheangbu.Data.Spell
         [Tooltip("획 끝(먹이 빠지는 꼬리)의 거칠기. 셰이더 _EndRough.")]
         [Range(0f, 2f)] public float EndRough = 1.1f;
         [Tooltip("흩뿌림 크기: 획 기본 폭의 몇 배(가장 빠르게 뗐을 때의 길이).")]
-        [Range(0f, 20f)] public float FlingSizeInStrokeWidths = 9f;
+        [Range(0f, 20f)] public float FlingSizeInStrokeWidths = 5.5f;
         [Tooltip("이 속도 비율(빠른 획 속도 대비) 아래로 뗀 획은 흩뿌리지 않는다.")]
-        [Range(0f, 1f)] public float FlingMinSpeedShare = .12f;
+        [Range(0f, 1f)] public float FlingMinSpeedShare = .3f;
+        [Tooltip("흩뿌림 방향을 재는 구간: 획 끝에서 이 비율만큼의 길이(끝의 작은 틀어짐에 끌려가지 않게).")]
+        [Range(.1f, 1f)] public float FlingDirectionShare = .45f;
         [Range(0f, 1f)] public float FlingOpacity = .9f;
 
         public bool IsValid => TouchShader != null && SizeInStrokeWidths > 0f && SpreadSeconds > 0f;

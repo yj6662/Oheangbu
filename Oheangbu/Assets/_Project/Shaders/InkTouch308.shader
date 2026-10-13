@@ -16,7 +16,7 @@ Shader "Oheangbu/InkTouch308"
         _FadeMul("Fade Multiplier (획과 함께 사라짐)", Range(0, 1)) = 1
         _DissolveT("Dissolve (획과 함께 증발)", Range(0, 1)) = 0
         _WetColor("Wet Color (윤기 색)", Color) = (0.42, 0.44, 0.47, 1)
-        _WetSheen("Wet Sheen", Range(0, 1)) = 0.3
+        _WetSheen("Wet Sheen", Range(0, 1)) = 0
         _WetSeconds("Wet Seconds", Float) = 3.5
     }
     SubShader
@@ -75,26 +75,29 @@ Shader "Oheangbu/InkTouch308"
             {
                 if (_Fling > 0.5)
                 {
-                    // 획 끝에서 그은 방향(+X)으로 뿌려진 먹: 가까이는 길쭉한 줄기 몇 가닥, 멀리는 점점 작아지는 방울.
+                    // 획 끝에서 그은 방향(+X)으로 튄 먹 (2026-10-13 다시): 격자가 보이지 않게 크기 · 각도가 다른 세 겹의 흩어진 점.
+                    // 가까이는 조금 굵고 몇 개, 멀수록 잘고 드물다. 방울은 둥글다(길쭉한 타원 없음).
                     float along = input.uv.x, across = (input.uv.y - 0.5) * 2.0;
                     float flingAge = max(_Time.y - _Birth, 0.0);
-                    float landed = step(along * 0.16, flingAge);                       // 가까운 것부터 앉는다
-                    float cone = 0.10 + 0.75 * along;                                  // 멀수록 퍼진다
-                    float inCone = 1.0 - smoothstep(cone * 0.7, cone, abs(across));
-                    // 방울: 방향으로 길쭉한 칸마다 하나, 멀수록 작고 드물다
-                    float2 grid = float2(along * 7.0, across * 4.5) + _Seed;
-                    float2 gc = floor(grid), gl = frac(grid) - 0.5;
-                    float2 gj = (float2(Hash(gc + 1.1), Hash(gc + 7.7)) - 0.5) * 0.6;
-                    float size = lerp(0.30, 0.07, saturate(along * 1.15)) * lerp(0.6, 1.2, Hash(gc + 5.5));
-                    float2 d = gl - gj; d.x *= 0.55;                                    // 방향으로 늘어난 방울
-                    float bead = 1.0 - smoothstep(size - 0.05, size, length(d));
-                    float keep = step(lerp(0.25, 0.8, along) / max(_Droplets, 0.05) * 0.6, Hash(gc + 3.3));
-                    // 줄기: 획 끝에서 뻗다가 끊기는 가는 선 두세 가닥
-                    float lane = floor(across * 3.0 + _Seed);
-                    float laneCentre = (lane + 0.5 - _Seed + (Hash(float2(lane, _Seed)) - 0.5) * 0.5) / 3.0;
-                    float laneLength = 0.12 + 0.35 * Hash(float2(lane, _Seed + 4.0));
-                    float streak = (1.0 - smoothstep(0.012, 0.035, abs(across - laneCentre))) * step(along, laneLength) * step(Hash(float2(lane, _Seed + 9.0)), 0.6);
-                    float flung = saturate(bead * keep * inCone + streak * inCone) * landed;
+                    float landed = step(along * 0.12, flingAge);
+                    float cone = 0.06 + 0.5 * along * along + 0.18 * along;
+                    float inCone = 1.0 - smoothstep(cone * 0.6, cone, abs(across));
+                    float2 q = float2(along, across * 0.5);                             // 쿼드는 가로 1 : 세로 0.8 — 방울이 둥글게
+                    float flung = 0.0;
+                    for (int layer = 0; layer < 3; layer++)
+                    {
+                        float scale = layer == 0 ? 5.0 : layer == 1 ? 9.0 : 15.0;
+                        float turn = 0.6 + 1.3 * layer + _Seed;
+                        float2x2 spin = float2x2(cos(turn), -sin(turn), sin(turn), cos(turn));
+                        float2 g = mul(spin, q) * scale + _Seed * (1.0 + layer);
+                        float2 c = floor(g), l = frac(g) - 0.5;
+                        float2 offset = (float2(Hash(c + 1.1 + layer), Hash(c + 7.7 + layer)) - 0.5) * 0.7;
+                        float radius = lerp(0.06, 0.2, Hash(c + 5.5 + layer)) * lerp(1.0, 0.45, along) * (layer == 0 ? 1.0 : 0.8);
+                        float drop = 1.0 - smoothstep(radius - 0.035, radius, length(l - offset));
+                        float chance = (layer == 0 ? 0.16 : layer == 1 ? 0.2 : 0.14) * _Droplets * lerp(1.2, 0.5, along);
+                        flung = max(flung, drop * step(1.0 - chance, Hash(c + 3.3 + layer)));
+                    }
+                    flung *= inCone * landed * step(0.03, along);
                     float grainF = Noise(input.uv * 9.0 + _Seed);
                     float goneF = smoothstep(_DissolveT * 1.25, _DissolveT * 1.25 + 0.08, grainF);
                     half alphaF = flung * _Opacity * _FadeMul * goneF;
@@ -117,7 +120,7 @@ Shader "Oheangbu/InkTouch308"
                 float2 cell = floor(p * 4.0 + _Seed), local = frac(p * 4.0 + _Seed) - 0.5;
                 float pick = Hash(cell + 3.3);
                 float2 jitter = (float2(Hash(cell + 1.1), Hash(cell + 7.7)) - 0.5) * 0.5;
-                float dotSize = lerp(0.05, 0.16, Hash(cell + 5.5));
+                float dotSize = lerp(0.04, 0.11, Hash(cell + 5.5));
                 float drop = (1.0 - smoothstep(dotSize - 0.04, dotSize, length(local - jitter)))
                     * step(1.0 - 0.3 * _Droplets, pick) * step(radius + 0.06, r) * step(r, 0.95) * smoothstep(0.35, 0.8, grow);
                 float shape = saturate(blot + drop);

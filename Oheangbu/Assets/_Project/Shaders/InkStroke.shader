@@ -43,7 +43,7 @@ Shader "Oheangbu/InkStroke"
 
         // 2026-10-13 (사용자): 붓 글씨는 "액체" — 갓 그은 먹이 젖어 윤기 띠가 돌고, 마르면서 사라진다. 빛이 아니라 먹의 반사색(알파 블렌드)이다.
         _EndRough("End Rough (먹이 빠진 획 끝의 거칠기 — 비백)", Range(0, 2)) = 0
-        _WetSheen("Wet Sheen (젖은 윤기 세기)", Range(0, 1)) = 0.3
+        _WetSheen("Wet Sheen (젖은 윤기 세기 — 2026-10-13 사용자: 연한 띠가 어색해 기본 0)", Range(0, 1)) = 0
         _WetSeconds("Wet Seconds (마르는 시간 s)", Float) = 3.5
         _WetColor("Wet Color (윤기 색)", Color) = (0.42, 0.44, 0.47, 1)
     }

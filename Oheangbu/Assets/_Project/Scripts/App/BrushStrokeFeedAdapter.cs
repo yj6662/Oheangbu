@@ -720,9 +720,23 @@ namespace Oheangbu.App
         {
             if (_current == null) return;
             // #308 (D308-80f): ink flung on in the direction the stroke ended, more of it the faster the brush left. Presentation only.
-            if (_style != null && _hasLastLocal && _hasPreviousLocal308 && _hasSpeed)
-                InkTouchSplat308.SpawnFling(_current.transform, _lastLocal, _lastLocal - _previousLocal308, _style.BaseWidth,
-                    Mathf.Clamp01(_smoothedSpeed / Mathf.Max(1f, _style.FastSpeed)), _style.InkColor, _noiseSeed);
+            // The direction is the stroke's own over its last stretch, not the last sample's: a slip of the hand at the lift must
+            // not send the ink sideways (user 2026-10-13).
+            if (_style != null && _hasLastLocal && _hasSpeed && InkTouchSplat308.Profile != null)
+            {
+                var path = _current.Data.Points; float share = InkTouchSplat308.Profile.FlingDirectionShare;
+                if (path.Count >= 4)
+                {
+                    float total = 0f; for (int i = 1; i < path.Count; i++) total += Vector3.Distance(path[i].Position, path[i - 1].Position);
+                    float want = total * share, run = 0f; int from = path.Count - 1;
+                    while (from > 0 && run < want) { run += Vector3.Distance(path[from].Position, path[from - 1].Position); from--; }
+                    Vector3 chord = path[path.Count - 1].Position - path[from].Position;
+                    // only a line that was going somewhere: the chord must be most of the path it spans
+                    if (run > 0f && chord.magnitude > run * .8f)
+                        InkTouchSplat308.SpawnFling(_current.transform, _lastLocal, chord, _style.BaseWidth,
+                            Mathf.Clamp01(_smoothedSpeed / Mathf.Max(1f, _style.FastSpeed)), _style.InkColor, _noiseSeed);
+                }
+            }
             // #308 (D308-80g): how a brush-written line ends depends on which way it went - a downstroke runs out to a needle
             // point, a line across is pressed and closed. Read from the last stretch of the stroke; width and tail only.
             var feel = InkTouchSplat308.Profile;
