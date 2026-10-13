@@ -186,7 +186,7 @@ namespace Oheangbu.Data.Spell
         [Tooltip("정점 뒤 클립 재생 속도.")]
         [Min(.1f)] public float PostApexSpeed = 1f;
         [Tooltip("그리는 동안 윗몸 층 가중치. 0 = 그리기 분기의 팔 풀이가 예전과 같은 자세(이동 층)에서 시작한다.")]
-        [Range(0, 1)] public float DrawLayerWeight = 0f;
+        [Range(0, 1)] public float DrawLayerWeight = 1f;   // 2026-10-13: the close-up copies the fingers from this pose (the clip grip), so the stance stays on in the draw mode
 
         [Header("붓털")]
         public BristleSettings Bristles = BristleSettings.Default;
@@ -198,6 +198,24 @@ namespace Oheangbu.Data.Spell
         public bool NearGripOverride;
         public Vector3 NearGripPosition;
         public Quaternion NearGripRotation = Quaternion.identity;
+        [Tooltip("가까운 화면을 양손 쥐기로(사용자 2026-10-13): 왼손이 앞에서 축(당구대 받침), 오른손이 꼬리를 쥐고 움직인다. 끄면 옛 한 팔 풀이.")]
+        public bool NearTwoHand = true;
+        [Tooltip("포인터가 화면 가운데일 때 오른손이 쥐는 자리(카메라 기준 오른쪽, 위, 앞 m).")]
+        public Vector3 NearRightRest = new Vector3(.24f, -.36f, .22f);
+        [Tooltip("왼손 받침 자리: 붓끝에서 자루를 따라(m, 가운데 자세 기준). 이 점은 화면에서 움직이지 않는다.")]
+        [Min(.2f)] public float NearPivotFromTip = .80f;
+        [Tooltip("몸을 돌린 각(도, +면 왼 어깨가 앞).")]
+        [Range(-90, 90)] public float NearBodyYawDegrees = 50f;
+        [Tooltip("오른손이 자루와 이루는 각(도). 손목이 자루 아래에서 올라와 엄지가 위에 놓인다.")]
+        [Range(0, 90)] public float NearRightTiltDegrees = 60f;
+        [Tooltip("받치는 왼손 손가락이 붓머리 쪽으로 기운 각(도).")]
+        [Range(0, 60)] public float NearLeftTowardTipDegrees = 20f;
+        [Tooltip("손목에서 자루까지: x = 손가락 방향 길이, y = 손바닥 두께(m).")]
+        public Vector2 NearPalm = new Vector2(.085f, .035f);
+        [Tooltip("오른 손목에서 오른 어깨까지(카메라 기준). 팔뚝이 화면 아래에서 올라오게 한다.")]
+        public Vector3 NearShoulderFromHand = new Vector3(.08f, -.12f, -.42f);
+        [Tooltip("왼손의 쥐기(GripSocketL 을 왼손 뼈 기준으로). brush_truth.json 에서 계산한다(3인칭용).")]
+        public Grip LeftTwoHandGrip = new Grip { Rotation = Quaternion.identity };
         [Min(.05f)] public float NearTipDepth = 1.3f;
         [Min(.05f)] public float NearMinimumDepth = .7f;
         [Min(.05f)] public float NearMaximumDepth = 1.6f;

@@ -115,6 +115,7 @@ namespace Oheangbu.App.World
             if (_worldBrush == null || _worldBrush.Great == null) return;
             if (!_worldBrush.Great.IsBound) { _worldBrush.Great = null; if (_nearBrush != null) _nearBrush.Great = null; return; }   // a brush that did not bind (missing bone / socket, scale) is not a great brush: the old pass runs (PR #30 review)
             _greatLeftSocket308 = Find(_worldBrush.Root, GreatBrushBristles308.LeftGripName);
+            BindNearLeft308();
             _swing308 = GetComponent<SpellSwing308>();
             _greatBound308 = true;
         }
@@ -200,6 +201,124 @@ namespace Oheangbu.App.World
             _diagnostics.BrushWorldScaleError = (_worldBrush.Root.lossyScale - Vector3.one).magnitude;
             _diagnostics.DrawingWeight = _drawWeight; _diagnostics.HarvestWeight = _harvestWeight;
             _diagnostics.State = _recoveryRemaining > 0f ? _recoveryState : harvesting ? GestureState.Harvest : GestureState.Carry;
+            return true;
+        }
+
+        // ---------------------------------------------------------------- the close-up with the great brush (user 2026-10-13)
+        // The user's hold: "왼손을 축으로 하고(당구대 잡듯이), 오른손을 움직여서 글씨를 쓰는 거지. 오른손은 엄지가 올라오는 방향으로."
+        // The left hand is a bridge ahead on the shaft and stays where it is; the right hand holds the tail end, thumb on top, and
+        // moves - the shaft pivots (and slides) through the left hand, the tip writes. The body is turned so the left shoulder
+        // leads. The tip sits exactly on the pointer's ray; the 0.9 m brush's one-arm pen solve is not used. Presentation only:
+        // the pointer, the ray and the stroke are what they were.
+        public const string NearLeftPrefix308 = "NearL308_";
+        private Renderer[] _nearLeft308 = System.Array.Empty<Renderer>();
+        private float _nearLift308;
+        private bool _nearAxes308;
+        private Vector3 _nearFingerR308, _nearDorsalR308, _nearFingerL308, _nearDorsalL308;
+
+        private void BindNearLeft308()
+        {
+            _nearLeft308 = System.Array.Empty<Renderer>(); _nearAxes308 = false;
+            if (_nearRoot == null || _near == null || !_near.Valid) return;
+            var found = new System.Collections.Generic.List<Renderer>();
+            foreach (var renderer in _nearRoot.GetComponentsInChildren<Renderer>(true))
+                if (renderer.name.StartsWith(NearLeftPrefix308, System.StringComparison.Ordinal)) found.Add(renderer);
+            _nearLeft308 = found.ToArray();
+            // the hands' own axes, measured from their finger roots (no assumption about the bones' local frames):
+            // finger = wrist -> middle finger root, dorsal = the back of the hand
+            if (!HandAxes308(_near.Hand, out _nearFingerR308, out Vector3 crossR)) return;
+            float sign = Vector3.Dot(crossR, _profile.HandDorsalLocal) >= 0f ? 1f : -1f;   // the right hand's back is known to the gesture profile
+            _nearDorsalR308 = crossR * sign;
+            if (_near.LeftHand != null && HandAxes308(_near.LeftHand, out _nearFingerL308, out Vector3 crossL)) _nearDorsalL308 = crossL * -sign;   // mirrored hand: the cross product flips
+            else _nearDorsalL308 = Vector3.zero;
+            _nearAxes308 = true;
+        }
+
+        private static bool HandAxes308(Transform hand, out Vector3 finger, out Vector3 cross)
+        {
+            finger = cross = Vector3.zero;
+            Transform middle = null, index = null, pinky = null;
+            foreach (Transform child in hand.GetComponentsInChildren<Transform>(true))
+            {
+                if (child.name.EndsWith("HandMiddle1", System.StringComparison.Ordinal)) middle = child;
+                else if (child.name.EndsWith("HandIndex1", System.StringComparison.Ordinal)) index = child;
+                else if (child.name.EndsWith("HandPinky1", System.StringComparison.Ordinal)) pinky = child;
+            }
+            if (middle == null || index == null || pinky == null) return false;
+            finger = hand.InverseTransformPoint(middle.position).normalized;
+            cross = Vector3.Cross(hand.InverseTransformPoint(index.position), hand.InverseTransformPoint(pinky.position)).normalized;
+            cross = Vector3.ProjectOnPlane(cross, finger).normalized;
+            return finger.sqrMagnitude > .5f && cross.sqrMagnitude > .5f;
+        }
+
+        private void SetNearLeftVisible308(bool visible)
+        {
+            bool show = visible && GreatNow308 && _great308.NearTwoHand && _nearAxes308;
+            for (int i = 0; i < _nearLeft308.Length; i++)
+                if (_nearLeft308[i] != null) { _nearLeft308[i].enabled = show; _nearLeft308[i].shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; }
+        }
+
+        // the hand's world rotation from where its fingers point and where its back faces
+        private static Quaternion HandRotation308(Vector3 fingerWorld, Vector3 dorsalWorld, Vector3 fingerLocal, Vector3 dorsalLocal)
+            => Quaternion.LookRotation(fingerWorld, dorsalWorld) * Quaternion.Inverse(Quaternion.LookRotation(fingerLocal, dorsalLocal));
+
+        private bool NearGreat308(Camera camera, Vector2 screen, Vector3 visualVelocity, bool stroking, float dt)
+        {
+            if (!GreatNow308 || !_great308.NearTwoHand || !_nearAxes308 || _nearBrush == null || _nearBrush.Great == null || _near == null || !_near.Valid) return false;
+            var p = _great308; Transform view = camera.transform;
+            foreach (var pair in _nearCopies) { pair.Target.localPosition = pair.Source.localPosition; pair.Target.localRotation = pair.Source.localRotation; }
+            _nearRoot.rotation = view.rotation * Quaternion.Euler(0f, p.NearBodyYawDegrees, 0f);   // the left shoulder leads
+
+            Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);
+            float depth = Mathf.Clamp(p.NearTipDepth, Mathf.Max(camera.nearClipPlane + .04f, p.NearMinimumDepth), Mathf.Max(p.NearMinimumDepth, p.NearMaximumDepth));
+            _nearLift308 = Mathf.MoveTowards(_nearLift308, stroking ? 0f : _profile.PenLiftDistance, dt / .06f * Mathf.Max(.001f, _profile.PenLiftDistance));
+            Vector3 tip = ray.GetPoint(depth - _nearLift308);
+
+            // the bridge: a fixed point in front of the body (it only breathes). It lies on the line from the right hand's rest
+            // place to the centre of the picture, so with the pointer in the middle the brush is in its rest pose.
+            Vector3 centre = new Vector3(0f, 0f, depth), rest = p.NearRightRest;
+            Vector3 restAxis = (centre - rest).normalized; float rightFromTip = Vector3.Distance(centre, rest);
+            Vector3 pivot = view.TransformPoint(centre - restAxis * p.NearPivotFromTip + NearBreath308());
+            Vector3 axis = tip - pivot; if (axis.sqrMagnitude < .0001f) return false; axis.Normalize();
+
+            // the brush: shaft along the axis, ring A side up; bristles evaluated for this frame; then the real (bent) tip on the ray
+            Vector3 x = -Vector3.ProjectOnPlane(view.up, axis).normalized;
+            Quaternion root = Quaternion.LookRotation(Vector3.Cross(x, axis), axis);
+            _nearBrush.Great.EvaluateInFrame(visualVelocity, view.rotation, root * _nearBrush.RootToGripRotation, stroking, dt);
+            _nearBrush.Root.rotation = root;
+            _nearBrush.Great.ApplyPose();
+            _nearBrush.Root.position += tip - _nearBrush.Tip.position;
+
+            // right hand at the tail: palm to the left, thumb side on top; the hand tilts up to the shaft from the wrist below it
+            Vector3 holdRight = tip - axis * rightFromTip;
+            Vector3 dorsalR = Vector3.ProjectOnPlane(view.right, axis).normalized;
+            Vector3 fingerA = Quaternion.AngleAxis(p.NearRightTiltDegrees, dorsalR) * axis, fingerB = Quaternion.AngleAxis(-p.NearRightTiltDegrees, dorsalR) * axis;
+            Vector3 fingerR = Vector3.Dot(fingerA, view.up) >= Vector3.Dot(fingerB, view.up) ? fingerA : fingerB;
+            Quaternion hand = HandRotation308(fingerR, dorsalR, _nearFingerR308, _nearDorsalR308);
+            Vector3 wrist = holdRight - fingerR * p.NearPalm.x + dorsalR * p.NearPalm.y;
+            // shoulders: below and behind the right hand, so the forearms come up into the picture from the bottom edge
+            _nearRoot.position += wrist + view.TransformDirection(p.NearShoulderFromHand) - _near.Upper.position;
+            MeasureLengths(_near);
+            Vector3 pole = _near.Forearm.position + view.TransformDirection(new Vector3(.35f, -.45f, -.1f));
+            PlayerVisualIK.Solve(_near.Upper, _near.Forearm, _near.Hand, wrist, pole, hand, 1f, p.LeftArmMaximumExtension);
+
+            // left hand: the bridge under the shaft, back of the hand down, fingers across the shaft
+            if (_near.LeftUpper != null && _near.LeftForearm != null && _near.LeftHand != null && _nearDorsalL308.sqrMagnitude > .5f)
+            {
+                Vector3 dorsalL = -Vector3.ProjectOnPlane(view.up, axis).normalized;
+                Vector3 fingerL = Vector3.Cross(axis, dorsalL).normalized; if (Vector3.Dot(fingerL, view.right) < 0f) fingerL = -fingerL;
+                fingerL = (Quaternion.AngleAxis(p.NearLeftTowardTipDegrees, dorsalL) * fingerL); if (Vector3.Dot(fingerL, axis) < 0f) fingerL = Quaternion.AngleAxis(-2f * p.NearLeftTowardTipDegrees, dorsalL) * fingerL;
+                Quaternion handL = HandRotation308(fingerL, dorsalL, _nearFingerL308, _nearDorsalL308);
+                Vector3 wristL = pivot - fingerL * p.NearPalm.x + dorsalL * p.NearPalm.y;
+                Vector3 poleL = _near.LeftForearm.position + view.TransformDirection(new Vector3(-.3f, -.5f, -.1f));
+                PlayerVisualIK.Solve(_near.LeftUpper, _near.LeftForearm, _near.LeftHand, wristL, poleL, handL, 1f, p.LeftArmMaximumExtension);
+            }
+
+            Vector3 actual = BrushStrokeFeedAdapter.WorldToScreenPrecise308(camera, _nearBrush.Tip.position);
+            _diagnostics.NearTipErrorPixels = actual.z > camera.nearClipPlane ? Vector2.Distance(screen, new Vector2(actual.x, actual.y)) : float.PositiveInfinity;
+            _diagnostics.NearTipErrorBeforeCorrectionPixels = _diagnostics.NearTipErrorPixels;
+            _diagnostics.TipReachable = _diagnostics.NearTipErrorPixels <= 2f;
+            _diagnostics.NearShoulderCorrectionMeters = 0f;
             return true;
         }
 

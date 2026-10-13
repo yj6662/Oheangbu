@@ -105,6 +105,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "install:save": return EditOnly() ?? Install(true);
                     case "save": return EditOnly() ?? SaveInstalled();
                     case "sample": return EditOnly() ?? Sample();
+                    case "nearleft": return EditOnly() ?? NearLeft();
                     case "warnings": return ImportWarnings();
                     case "revert": return EditOnly() ?? Revert(false);
                     case "revert:save": return EditOnly() ?? Revert(true);
@@ -613,7 +614,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             work.BrushPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(BrushModel);
             work.TwoHandGrip = grip; work.CarryGrip = grip;   // grip.json: one transform for every clip, the shoulder carry included
-            { var stanceGrip = grip; var carryGrip = grip; if (TruthGrips(ref stanceGrip, ref carryGrip, log)) { work.TwoHandGrip = stanceGrip; work.CarryGrip = carryGrip; } }   // solved from the Blender truth when it is there
+            { var stanceGrip = grip; var carryGrip = grip; var leftGrip = work.LeftTwoHandGrip; if (TruthGrips(ref stanceGrip, ref carryGrip, ref leftGrip, log)) { work.TwoHandGrip = stanceGrip; work.CarryGrip = carryGrip; work.LeftTwoHandGrip = leftGrip; } }   // solved from the Blender truth when it is there
             work.LeftHandHoldLocal = leftHold;
             work.States = BuildStates(json, log);
             if (profile == null)
@@ -753,29 +754,30 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         // the grip that puts the brush where the truth has it at this frame of this clip, on the given sampled copy
-        static bool TruthGrip(object truth, string name, int frame, GameObject copy, Animator animator, Quaternion socketInRoot, out GreatBrush308Profile.Grip grip, out float wristError)
+        static bool TruthGrip(object truth, string name, int frame, GameObject copy, Animator animator, Quaternion socketInRoot, out GreatBrush308Profile.Grip grip, out float wristError, bool left = false)
         {
             grip = new GreatBrush308Profile.Grip { Rotation = Quaternion.identity }; wristError = -1f;
             var clip = LoadClip(name); if (clip == null) return false;
             float speed = ClipSpeed308(name, clip);
             copy.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             clip.SampleAnimation(copy, Mathf.Min(frame / 30f * speed, clip.length));
-            Transform hand = animator.GetBoneTransform(HumanBodyBones.RightHand); Transform root = copy.transform;
-            Vector3 socket = TruthPoint(truth, name, "GripSocket", frame), end = TruthPoint(truth, name, "BrushRootZ10cm", frame), ring = TruthPoint(truth, name, "RingASide10cm", frame), wrist = TruthPoint(truth, name, "RightHand", frame);
+            Transform hand = animator.GetBoneTransform(left ? HumanBodyBones.LeftHand : HumanBodyBones.RightHand); Transform root = copy.transform;
+            Vector3 socket = TruthPoint(truth, name, "GripSocket", frame), end = TruthPoint(truth, name, "BrushRootZ10cm", frame), ring = TruthPoint(truth, name, "RingASide10cm", frame), wrist = TruthPoint(truth, name, left ? "LeftHand" : "RightHand", frame);
+            Vector3 place = left ? TruthPoint(truth, name, "GripSocketL", frame) : socket;   // the socket this hand holds (the brush frame is measured at GripSocket either way)
             if (float.IsNaN(socket.x) || float.IsNaN(end.x) || float.IsNaN(ring.x)) return false;
             Vector3 y = (end - socket).normalized, r = Vector3.ProjectOnPlane(ring - socket, y).normalized;   // shaft toward the tip; ring A side = brush root -X
             Vector3 x = -r, z = Vector3.Cross(x, y);
             Quaternion brushRoot = Quaternion.LookRotation(z, y);
             // the offset is taken from the wrist (Blender's wrist -> socket vector on Unity's wrist): humanoid retargeting shifts the whole
             // body by some centimetres, and an absolute socket position would put that shift between the hand and the shaft
-            Quaternion socketWorld = root.rotation * brushRoot * socketInRoot; Vector3 socketPosition = hand.position + root.rotation * (socket - wrist);
+            Quaternion socketWorld = root.rotation * brushRoot * socketInRoot; Vector3 socketPosition = hand.position + root.rotation * (place - wrist);
             grip = new GreatBrush308Profile.Grip { Position = hand.InverseTransformPoint(socketPosition), Rotation = Quaternion.Inverse(hand.rotation) * socketWorld };
             wristError = Vector3.Distance(root.InverseTransformPoint(hand.position), wrist);
             return true;
         }
 
         // fills the two grips from the truth; false (and nothing changed) when the truth file or the models are missing
-        static bool TruthGrips(ref GreatBrush308Profile.Grip stance, ref GreatBrush308Profile.Grip carry, StringBuilder log)
+        static bool TruthGrips(ref GreatBrush308Profile.Grip stance, ref GreatBrush308Profile.Grip carry, ref GreatBrush308Profile.Grip leftStance, StringBuilder log)
         {
             if (!File.Exists(TruthJson)) { log.AppendLine("  truth: no brush_truth.json - the grip stays the grip.json formula"); return false; }
             object truth; try { truth = new Reader(File.ReadAllText(TruthJson, Encoding.UTF8)).Value(); } catch (Exception e) { log.AppendLine("  truth: unreadable " + e.Message); return false; }
@@ -803,10 +805,110 @@ namespace Oheangbu.EditorTools.WorldMacro
                         if (TruthGrip(truth, name, f, copy, animator, socketInRoot, out var g, out float w)) { worst = Mathf.Max(worst, Quaternion.Angle(g.Rotation, s.Rotation)); worstMm = Mathf.Max(worstMm, Vector3.Distance(g.Position, s.Position) * 1000f); wrist = Mathf.Max(wrist, w); }
                     log.AppendLine("  truth: " + name.PadRight(11) + " stance grip off by up to " + worst.ToString("F1", Inv) + " deg / " + worstMm.ToString("F0", Inv) + " mm · wrist up to " + (wrist * 100f).ToString("F1", Inv) + " cm from Blender's");
                 }
+                Transform socketL = Child(brush.transform, "GripSocketL");
+                if (socketL != null && TruthGrip(truth, "StanceIdle", 0, copy, animator, socketL.rotation, out var l, out float wl, true)) { leftStance = l; log.AppendLine("  truth: left hand grip solved (wrist vs truth " + (wl * 100f).ToString("F1", Inv) + " cm)"); }
                 stance = s; carry = c;
                 return true;
             }
             finally { Object.DestroyImmediate(copy); Object.DestroyImmediate(brush); }
+        }
+
+        // ---------------------------------------------------------------- the close-up left arm (user 2026-10-13)
+        // The close-up arm object carries the whole skeleton but only the right arm's triangles. For the two-handed hold the left
+        // arm's triangles are added as extra renderers on the same bones (names start with NearL308_); revert removes them.
+        static string NearLeftMeshPath(string skin) => Folder + "/Near/SM_NearL308_" + skin + ".asset";
+
+        static string NearLeft()
+        {
+            var gesture = Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>();
+            if (gesture == null) return "refused: no player in the open scenes";
+            var log = new StringBuilder("GreatBrush308 close-up left arm\n");
+            bool ok = BuildNearLeft(gesture, log);
+            if (ok) { EditorSceneManager.MarkSceneDirty(gesture.gameObject.scene); gesture.RefreshGreatBrush308(); log.AppendLine("  scene dirty, NOT saved (save)"); }
+            return log.ToString();
+        }
+
+        static bool BuildNearLeft(WorldMacroPlayerGestureRig gesture, StringBuilder log)
+        {
+            Transform nearRoot = Field<Transform>(gesture, "_nearRoot");
+            if (nearRoot == null) { log.AppendLine("  near left: no close-up arm"); return false; }
+            RemoveNearLeft(nearRoot);
+            EnsureFolder(Folder + "/Near");
+            int made = 0, triangles = 0;
+            foreach (var right in nearRoot.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                // the same-named skin of the world body has the whole mesh
+                var world = gesture.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault(s => s.name == right.name && !s.transform.IsChildOf(nearRoot) && s.sharedMesh != null && s.bones.Length == right.bones.Length);
+                if (world == null) { log.AppendLine("  near left: no world skin for " + right.name); continue; }
+                Mesh subset = ExtractArm(world, "Left"); if (subset == null) continue;
+                string path = NearLeftMeshPath(right.name);
+                Mesh existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+                if (existing == null) AssetDatabase.CreateAsset(subset, path); else { EditorUtility.CopySerialized(subset, existing); Object.DestroyImmediate(subset); subset = existing; }
+                var go = new GameObject(WorldMacroPlayerGestureRig.NearLeftPrefix308 + right.name);
+                go.transform.SetParent(right.transform.parent, false); go.layer = right.gameObject.layer;
+                go.transform.localPosition = right.transform.localPosition; go.transform.localRotation = right.transform.localRotation; go.transform.localScale = right.transform.localScale;
+                var skin = go.AddComponent<SkinnedMeshRenderer>();
+                skin.sharedMesh = subset; skin.bones = right.bones; skin.rootBone = right.rootBone; skin.sharedMaterials = right.sharedMaterials;
+                skin.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; skin.receiveShadows = false; skin.updateWhenOffscreen = true; skin.enabled = false;
+                made++; triangles += subset.triangles.Length / 3;
+            }
+            log.AppendLine("  near left: " + made + " renderer(s), " + triangles + " triangles");
+            return made > 0;
+        }
+
+        static int RemoveNearLeft(Transform nearRoot)
+        {
+            int removed = 0;
+            foreach (var t in nearRoot.GetComponentsInChildren<Transform>(true).Where(t => t != null && t.name.StartsWith(WorldMacroPlayerGestureRig.NearLeftPrefix308, StringComparison.Ordinal)).ToArray())
+            { Object.DestroyImmediate(t.gameObject); removed++; }
+            return removed;
+        }
+
+        // as WorldMacroPlayerReRigInstallation.ExtractRightArm, for a named side
+        static Mesh ExtractArm(SkinnedMeshRenderer skin, string side)
+        {
+            Mesh source = skin.sharedMesh; var bones = skin.bones;
+            var sourceCounts = source.GetBonesPerVertex(); var sourceWeights = source.GetAllBoneWeights();
+            try
+            {
+                bool[] selected = new bool[source.vertexCount]; int[] weightStart = new int[source.vertexCount]; int offset = 0;
+                for (int i = 0; i < source.vertexCount; i++)
+                {
+                    weightStart[i] = offset; float arm = 0f;
+                    for (int j = 0; j < sourceCounts[i]; j++)
+                    {
+                        var w = sourceWeights[offset++]; string name = w.boneIndex < bones.Length && bones[w.boneIndex] != null ? bones[w.boneIndex].name : "";
+                        if (name == side + "Arm" || name == side + "ForeArm" || name.StartsWith(side + "Hand", StringComparison.Ordinal)) arm += w.weight;
+                    }
+                    selected[i] = arm >= .65f;
+                }
+                var remap = new Dictionary<int, int>(); var ids = new List<int>(); var submeshes = new List<int[]>();
+                for (int sub = 0; sub < source.subMeshCount; sub++)
+                {
+                    int[] tris = source.GetTriangles(sub); var kept = new List<int>();
+                    for (int i = 0; i < tris.Length; i += 3)
+                    {
+                        if (!selected[tris[i]] || !selected[tris[i + 1]] || !selected[tris[i + 2]]) continue;
+                        for (int j = 0; j < 3; j++) { int old = tris[i + j]; if (!remap.TryGetValue(old, out int next)) { next = ids.Count; remap.Add(old, next); ids.Add(old); } kept.Add(next); }
+                    }
+                    submeshes.Add(kept.ToArray());
+                }
+                if (ids.Count == 0) return null;
+                var mesh = new Mesh { name = "NearL308_" + skin.name, indexFormat = ids.Count > 65535 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16 };
+                Vector3[] vertices = source.vertices; mesh.vertices = ids.Select(i => vertices[i]).ToArray();
+                Vector3[] normals = source.normals; if (normals.Length == source.vertexCount) mesh.normals = ids.Select(i => normals[i]).ToArray();
+                Vector4[] tangents = source.tangents; if (tangents.Length == source.vertexCount) mesh.tangents = ids.Select(i => tangents[i]).ToArray();
+                Color[] colors = source.colors; if (colors.Length == source.vertexCount) mesh.colors = ids.Select(i => colors[i]).ToArray();
+                for (int channel = 0; channel < 8; channel++) { var uv = new List<Vector4>(); source.GetUVs(channel, uv); if (uv.Count == source.vertexCount) mesh.SetUVs(channel, ids.Select(i => uv[i]).ToList()); }
+                mesh.bindposes = source.bindposes;
+                var counts = new Unity.Collections.NativeArray<byte>(ids.Count, Unity.Collections.Allocator.Temp); var weights = new List<BoneWeight1>();
+                for (int i = 0; i < ids.Count; i++) { int old = ids[i]; counts[i] = sourceCounts[old]; for (int j = 0; j < sourceCounts[old]; j++) weights.Add(sourceWeights[weightStart[old] + j]); }
+                using (var all = new Unity.Collections.NativeArray<BoneWeight1>(weights.ToArray(), Unity.Collections.Allocator.Temp)) mesh.SetBoneWeights(counts, all);
+                counts.Dispose();
+                mesh.subMeshCount = submeshes.Count; for (int i = 0; i < submeshes.Count; i++) mesh.SetTriangles(submeshes[i], i);
+                mesh.RecalculateBounds(); return mesh;
+            }
+            finally { sourceCounts.Dispose(); sourceWeights.Dispose(); }
         }
 
         static string ProfileCommand()

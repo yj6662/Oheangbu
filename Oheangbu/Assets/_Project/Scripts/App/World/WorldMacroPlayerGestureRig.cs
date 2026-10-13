@@ -781,6 +781,7 @@ namespace Oheangbu.App.World
 
         private void ApplyNearArm(Camera camera, Vector2 screen, Vector3 visualVelocity, bool stroking, float dt)
         {
+            if (NearGreat308(camera, screen, visualVelocity, stroking, dt)) return;   // #308 great brush: two hands on the shaft (false without it)
             if (_profile.ShuanggouGrip) { ApplyNearArmVertical(camera, screen, visualVelocity, stroking, dt); return; }
             foreach (var pair in _nearCopies)
             {
@@ -1036,7 +1037,7 @@ namespace Oheangbu.App.World
 
         private void ApplyFingers()
         {
-            if (GreatNow308 && _drawWeight <= .001f) return;   // #308 great brush: the clip's fingers stay outside the draw mode
+            if (GreatNow308) return;   // #308 great brush: the fingers are the clip's grip, in the draw mode too (the pen-grip poses belong to the 0.9 m brush)
             for (int i = 0; i < _fingers.Length; i++)
             {
                 var binding = _fingers[i];
@@ -1737,6 +1738,7 @@ namespace Oheangbu.App.World
             if(!visible){_nearHasSolution=false;_vNear.Valid=_vNear.PoleValid=false;}
             _nearVisible = visible;
             _diagnostics.NearVisible = visible;
+            SetNearLeftVisible308(visible);   // #308 great brush: the close-up left arm (nothing without it)
             if (_nearRenderers != null)
                 foreach (var renderer in _nearRenderers)
                     if (renderer != null) { renderer.enabled = visible; renderer.shadowCastingMode = ShadowCastingMode.Off; }
