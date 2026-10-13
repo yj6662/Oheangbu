@@ -33,6 +33,14 @@ namespace Oheangbu.BrushRender
         public IReadOnlyList<BrushStrokePoint> Points => _points;
         public float TotalLength { get; private set; }
 
+        // #308 (D308-80g): 획을 뗀 뒤 끝부분의 폭을 다시 매긴다(붓글씨의 뾰족한 내리긋기 끝 · 눌러 맺는 가로 끝). 표현 전용.
+        public void SetWidth(int index, float width)
+        {
+            if (index < 0 || index >= _points.Count) return;
+            var p = _points[index];
+            _points[index] = new BrushStrokePoint(p.Position, width, p.Ink, p.Time);
+        }
+
         public void Add(BrushStrokePoint point)
         {
             if (_points.Count > 0)

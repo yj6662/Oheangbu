@@ -723,6 +723,27 @@ namespace Oheangbu.App
             if (_style != null && _hasLastLocal && _hasPreviousLocal308 && _hasSpeed)
                 InkTouchSplat308.SpawnFling(_current.transform, _lastLocal, _lastLocal - _previousLocal308, _style.BaseWidth,
                     Mathf.Clamp01(_smoothedSpeed / Mathf.Max(1f, _style.FastSpeed)), _style.InkColor, _noiseSeed);
+            // #308 (D308-80g): how a brush-written line ends depends on which way it went - a downstroke runs out to a needle
+            // point, a line across is pressed and closed. Read from the last stretch of the stroke; width and tail only.
+            var feel = InkTouchSplat308.Profile;
+            var drawn = _current.Data.Points;
+            if (feel != null && drawn.Count >= 3)
+            {
+                int back = Mathf.Min(drawn.Count - 1, Mathf.Max(2, drawn.Count / 3));
+                Vector3 way = drawn[drawn.Count - 1].Position - drawn[drawn.Count - 1 - back].Position; way.z = 0f;
+                if (way.sqrMagnitude > 0f)
+                {
+                    float down = Mathf.Clamp01(Mathf.Abs(way.y) / way.magnitude * 1.4f - .2f);   // 0 = across, 1 = up / down
+                    float fast = Mathf.Clamp01(_smoothedSpeed / Mathf.Max(1f, _style.FastSpeed));
+                    _current.ReshapeTail(Mathf.Lerp(feel.AcrossSwellShare, feel.DownTailShare, down), Mathf.Lerp(feel.AcrossSwell, feel.DownTailWidth, down));
+                    _current.EndStroke(Mathf.Lerp(feel.AcrossTaperLength, feel.DownTaperLength, down) * Mathf.Lerp(.8f, 1.3f, fast),
+                        Mathf.Lerp(feel.AcrossTipWidth, feel.DownTipWidth, down), Mathf.Lerp(feel.AcrossInkLoss, feel.DownInkLoss, Mathf.Max(down, fast)));
+                    if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
+                    _current = null;
+                    _hasStrokeEndpoint = false;
+                    return;
+                }
+            }
             _current.EndStroke();
             if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
             _current = null;

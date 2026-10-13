@@ -27,8 +27,24 @@ namespace Oheangbu.Data.Spell
         [Tooltip("획 경로 다듬기(0 = 입력 그대로, 1 = 이웃 다섯 점 평균). 획의 첫 점 · 끝 점은 그대로 둔다.")]
         [Range(0f, 1f)] public float PathSmoothing = .5f;
         [Tooltip("세로로 그을 때 굵어지는 비율 · 가로로 그을 때 가늘어지는 비율(붓글씨의 가로 가늘고 세로 굵은 결).")]
-        [Range(0f, .4f)] public float VerticalWidthGain = .14f;
-        [Range(0f, .4f)] public float HorizontalWidthLoss = .08f;
+        [Range(0f, .4f)] public float VerticalWidthGain = .2f;
+        [Range(0f, .4f)] public float HorizontalWidthLoss = .2f;
+
+        [Header("획 끝 모양 (D308-80g, 궁체 참고): 내리긋기는 길게 빠져 바늘끝, 가로긋기는 눌러 맺는다")]
+        [Tooltip("내리긋는 획: 끝에서 이 비율만큼의 길이가 점점 가늘어진다.")]
+        [Range(0f, .7f)] public float DownTailShare = .38f;
+        [Range(.1f, 1f)] public float DownTailWidth = .5f;
+        [Tooltip("내리긋는 획의 수필: 길이 배율 · 끝 폭 · 먹 빠짐.")]
+        [Range(.2f, 4f)] public float DownTaperLength = 1.7f;
+        [Range(.02f, 1f)] public float DownTipWidth = .12f;
+        [Range(0f, 1f)] public float DownInkLoss = .75f;
+        [Tooltip("가로긋는 획: 끝에서 이 비율만큼의 길이가 조금 부풀며 눌린다.")]
+        [Range(0f, .5f)] public float AcrossSwellShare = .16f;
+        [Range(1f, 1.5f)] public float AcrossSwell = 1.16f;
+        [Tooltip("가로긋는 획의 수필: 짧고 뭉툭하게.")]
+        [Range(.1f, 2f)] public float AcrossTaperLength = .45f;
+        [Range(.1f, 1f)] public float AcrossTipWidth = .78f;
+        [Range(0f, 1f)] public float AcrossInkLoss = .3f;
 
         [Header("획 끝: 거친 갈필 · 그은 방향으로 흩뿌려지는 먹")]
         [Tooltip("획 끝(먹이 빠지는 꼬리)의 거칠기. 셰이더 _EndRough.")]

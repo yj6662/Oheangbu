@@ -23,9 +23,19 @@ MonoBehaviour:
   WetSeconds: 3.5
   StrokeDelaySeconds: 0.07
   PathSmoothing: 0.5
-  VerticalWidthGain: 0.14
-  HorizontalWidthLoss: 0.08
+  VerticalWidthGain: 0.2
+  HorizontalWidthLoss: 0.2
   EndRough: 1.1
   FlingSizeInStrokeWidths: 9
   FlingMinSpeedShare: 0.12
   FlingOpacity: 0.9
+  DownTailShare: 0.38
+  DownTailWidth: 0.5
+  DownTaperLength: 1.7
+  DownTipWidth: 0.12
+  DownInkLoss: 0.75
+  AcrossSwellShare: 0.16
+  AcrossSwell: 1.16
+  AcrossTaperLength: 0.45
+  AcrossTipWidth: 0.78
+  AcrossInkLoss: 0.3

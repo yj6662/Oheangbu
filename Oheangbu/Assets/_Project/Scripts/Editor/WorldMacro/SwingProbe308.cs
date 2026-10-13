@@ -66,6 +66,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
                 case "nearset": return NearSet(rest);
+                case "nearhand": return NearHand();
                 case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; Tick(true); return "brush watch for " + rest + " s";
                 case "trail":
                 {
@@ -96,6 +97,29 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
         // Play only, memory only: a close-up number of the great brush profile for this Play (restore puts the first values back).
         //   nearset:<Field>=<float | x,y,z>[;<Field>=...]   |   nearset:restore
+        // where the close-up hands really are, in the camera's axes (x right, y up, z forward)
+        static string NearHand()
+        {
+            var rig = UnityEngine.Object.FindFirstObjectByType<WorldMacroPlayerGestureRig>(); var cam = Camera.main; if (rig == null || cam == null) return "nearhand: no rig / camera";
+            const BindingFlags Any = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+            var nearRoot = typeof(WorldMacroPlayerGestureRig).GetField("_nearRoot", Any)?.GetValue(rig) as Transform; object brush = typeof(WorldMacroPlayerGestureRig).GetField("_nearBrush", Any)?.GetValue(rig);
+            var tip = brush?.GetType().GetField("Tip", Any)?.GetValue(brush) as Transform; var root = brush?.GetType().GetField("Root", Any)?.GetValue(brush) as Transform;
+            if (nearRoot == null || tip == null || root == null) return "nearhand: no close-up arm / brush";
+            Transform v = cam.transform; Vector3 axis = v.InverseTransformDirection(root.up);
+            var text = new System.Text.StringBuilder("nearhand: shaft " + axis.ToString("F2") + " tip " + v.InverseTransformPoint(tip.position).ToString("F2"));
+            foreach (string side in new[] { "Right", "Left" })
+            {
+                Transform hand = Deep(nearRoot, side + "Hand"), middle = Deep(nearRoot, side + "HandMiddle1"), index = Deep(nearRoot, side + "HandIndex1"), pinky = Deep(nearRoot, side + "HandPinky1"), tipM = Deep(nearRoot, side + "HandMiddle3"), thumb = Deep(nearRoot, side + "HandThumb3");
+                if (hand == null || middle == null || index == null || pinky == null) { text.Append(" | " + side + ": bones missing"); continue; }
+                Vector3 w = hand.position, f = (middle.position - w).normalized, n = Vector3.Cross(index.position - w, pinky.position - w).normalized;
+                Vector3 toTip = tip.position - w; Vector3 nearest = tip.position - root.up * Vector3.Dot(toTip, root.up);   // the point of the shaft line nearest the wrist
+                text.Append(" | " + side + " wrist " + v.InverseTransformPoint(w).ToString("F2") + " finger " + v.InverseTransformDirection(f).ToString("F2") + " cross(index,pinky) " + v.InverseTransformDirection(n).ToString("F2")
+                    + " wrist to shaft " + ((nearest - w).magnitude * 100f).ToString("F1", Inv) + " cm toward " + v.InverseTransformDirection((nearest - w).normalized).ToString("F2")
+                    + (tipM != null ? " middle tip to shaft " + (Vector3.Cross(tipM.position - tip.position, root.up).magnitude * 100f).ToString("F1", Inv) + " cm" : "")
+                    + (thumb != null ? " thumb tip to shaft " + (Vector3.Cross(thumb.position - tip.position, root.up).magnitude * 100f).ToString("F1", Inv) + " cm" : ""));
+            }
+            return text.ToString();
+        }
         static readonly Dictionary<string, object> nearOriginal = new Dictionary<string, object>();
         static string NearSet(string text)
         {

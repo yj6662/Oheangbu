@@ -211,7 +211,11 @@ namespace Oheangbu.Data.Spell
         [Tooltip("왼손 손가락이 붓머리 쪽으로 기운 각(도).")]
         [Range(0, 60)] public float NearLeftTowardTipDegrees = 15f;
         [Tooltip("손목에서 자루까지: x = 손가락 방향 길이, y = 손바닥 두께(m).")]
-        public Vector2 NearPalm = new Vector2(.085f, .035f);
+        public Vector2 NearPalm = new Vector2(.10f, .032f);
+        [Tooltip("네 손가락이 자루를 감는 각(도): 첫 · 둘째 · 셋째 마디. 2026-10-13 Play: 손이 펴진 채 자루 밑에 놓여 있었다.")]
+        public Vector3 NearFingerCurlDegrees = new Vector3(68f, 86f, 42f);
+        [Tooltip("엄지가 자루 위로 넘어오는 각(도): 첫 · 둘째 · 셋째 마디(가장 가까워지는 방향을 고른다).")]
+        public Vector3 NearThumbCurlDegrees = new Vector3(42f, 28f, 22f);
         [Tooltip("오른 손목에서 오른 어깨까지(카메라 기준). 팔뚝이 화면 아래에서 올라오게 한다.")]
         public Vector3 NearShoulderFromHand = new Vector3(.16f, -.20f, -.40f);
         [Tooltip("왼손의 쥐기(GripSocketL 을 왼손 뼈 기준으로). brush_truth.json 에서 계산한다(3인칭용).")]
