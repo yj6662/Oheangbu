@@ -577,6 +577,8 @@ namespace Oheangbu.App
 
             // 탄생 시각은 scaled — 번짐(연출)의 시계와 같아야 한다(§5.2)
             _current.AddPoint(local, ComputeWidth(speed, traveled), ComputeInk(speed, ink), scaledTime);
+            // #308 (user 2026-10-13): the brush touches down - ink spreads round the first point. Presentation only (no profile = nothing).
+            if (_sampleInStroke == 1) InkTouchSplat308.Spawn(_current.transform, local, _style.BaseWidth, _style.InkColor, _noiseSeed);
             if (!_dirtyStrokes.Contains(_current)) _dirtyStrokes.Add(_current);
             _strokeEndpointScreen = screen;
             _hasStrokeEndpoint = true;

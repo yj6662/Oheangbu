@@ -205,11 +205,13 @@ namespace Oheangbu.App.World
         }
 
         // ---------------------------------------------------------------- the close-up with the great brush (user 2026-10-13)
-        // The user's hold: "왼손을 축으로 하고(당구대 잡듯이), 오른손을 움직여서 글씨를 쓰는 거지. 오른손은 엄지가 올라오는 방향으로."
-        // The left hand is a bridge ahead on the shaft and stays where it is; the right hand holds the tail end, thumb on top, and
-        // moves - the shaft pivots (and slides) through the left hand, the tip writes. The body is turned so the left shoulder
-        // leads. The tip sits exactly on the pointer's ray; the 0.9 m brush's one-arm pen solve is not used. Presentation only:
-        // the pointer, the ray and the stroke are what they were.
+        // The user's hold (2026-10-13, corrected): the body is turned to the left - RIGHT shoulder ahead, left shoulder back.
+        //   right hand = the front hand, it steers and is the hand in the picture: palm and four fingers wrap the shaft from
+        //                below, the thumb lies on top;
+        //   left hand  = the rear hand at the tail, the axis: back of the hand up (overhand), it stays where it is.
+        // The tail (left hand) is the fixed point, the right hand moves the shaft about it and the tip writes. The tip sits
+        // exactly on the pointer's ray; the 0.9 m brush's one-arm pen solve is not used. Presentation only: the pointer, the ray
+        // and the stroke are what they were.
         public const string NearLeftPrefix308 = "NearL308_";
         private Renderer[] _nearLeft308 = System.Array.Empty<Renderer>();
         private float _nearLift308;
@@ -267,50 +269,49 @@ namespace Oheangbu.App.World
             if (!GreatNow308 || !_great308.NearTwoHand || !_nearAxes308 || _nearBrush == null || _nearBrush.Great == null || _near == null || !_near.Valid) return false;
             var p = _great308; Transform view = camera.transform;
             foreach (var pair in _nearCopies) { pair.Target.localPosition = pair.Source.localPosition; pair.Target.localRotation = pair.Source.localRotation; }
-            _nearRoot.rotation = view.rotation * Quaternion.Euler(0f, p.NearBodyYawDegrees, 0f);   // the left shoulder leads
+            _nearRoot.rotation = view.rotation * Quaternion.Euler(0f, p.NearBodyYawDegrees, 0f);   // turned left: the right shoulder leads
 
             Ray ray = BrushStrokeFeedAdapter.ScreenPointToRayPrecise308(camera, screen);
             float depth = Mathf.Clamp(p.NearTipDepth, Mathf.Max(camera.nearClipPlane + .04f, p.NearMinimumDepth), Mathf.Max(p.NearMinimumDepth, p.NearMaximumDepth));
             _nearLift308 = Mathf.MoveTowards(_nearLift308, stroking ? 0f : _profile.PenLiftDistance, dt / .06f * Mathf.Max(.001f, _profile.PenLiftDistance));
             Vector3 tip = ray.GetPoint(depth - _nearLift308);
 
-            // the bridge: a fixed point in front of the body (it only breathes). It lies on the line from the right hand's rest
-            // place to the centre of the picture, so with the pointer in the middle the brush is in its rest pose.
-            Vector3 centre = new Vector3(0f, 0f, depth), rest = p.NearRightRest;
-            Vector3 restAxis = (centre - rest).normalized; float rightFromTip = Vector3.Distance(centre, rest);
-            Vector3 pivot = view.TransformPoint(centre - restAxis * p.NearPivotFromTip + NearBreath308());
+            // the axis: the left hand at the tail, a fixed point by the body (it only breathes)
+            Vector3 pivot = view.TransformPoint(p.NearLeftPivot + NearBreath308());
             Vector3 axis = tip - pivot; if (axis.sqrMagnitude < .0001f) return false; axis.Normalize();
 
             // the brush: shaft along the axis, ring A side up; bristles evaluated for this frame; then the real (bent) tip on the ray
-            Vector3 x = -Vector3.ProjectOnPlane(view.up, axis).normalized;
-            Quaternion root = Quaternion.LookRotation(Vector3.Cross(x, axis), axis);
+            Vector3 upAcross = Vector3.ProjectOnPlane(view.up, axis).normalized;
+            Quaternion root = Quaternion.LookRotation(Vector3.Cross(-upAcross, axis), axis);
             _nearBrush.Great.EvaluateInFrame(visualVelocity, view.rotation, root * _nearBrush.RootToGripRotation, stroking, dt);
             _nearBrush.Root.rotation = root;
             _nearBrush.Great.ApplyPose();
             _nearBrush.Root.position += tip - _nearBrush.Tip.position;
 
-            // right hand at the tail: palm to the left, thumb side on top; the hand tilts up to the shaft from the wrist below it
-            Vector3 holdRight = tip - axis * rightFromTip;
-            Vector3 dorsalR = Vector3.ProjectOnPlane(view.right, axis).normalized;
-            Vector3 fingerA = Quaternion.AngleAxis(p.NearRightTiltDegrees, dorsalR) * axis, fingerB = Quaternion.AngleAxis(-p.NearRightTiltDegrees, dorsalR) * axis;
-            Vector3 fingerR = Vector3.Dot(fingerA, view.up) >= Vector3.Dot(fingerB, view.up) ? fingerA : fingerB;
+            // right hand, the front hand in the picture: under the shaft (back of the hand down), fingers across it and up the far
+            // side, a little toward the tip; the thumb comes over the top from the near side
+            Vector3 holdRight = tip - axis * p.NearRightFromTip;
+            Vector3 dorsalR = -upAcross;
+            Vector3 fingerR = Vector3.Cross(axis, dorsalR).normalized; if (Vector3.Dot(fingerR, view.right) > 0f) fingerR = -fingerR;   // from the right side, pointing left
+            fingerR = Vector3.Slerp(fingerR, axis, p.NearRightTowardTipDegrees / 90f).normalized;
             Quaternion hand = HandRotation308(fingerR, dorsalR, _nearFingerR308, _nearDorsalR308);
             Vector3 wrist = holdRight - fingerR * p.NearPalm.x + dorsalR * p.NearPalm.y;
-            // shoulders: below and behind the right hand, so the forearms come up into the picture from the bottom edge
+            // shoulders: below and behind the right hand, so the forearm comes up into the picture from the bottom right
             _nearRoot.position += wrist + view.TransformDirection(p.NearShoulderFromHand) - _near.Upper.position;
             MeasureLengths(_near);
             Vector3 pole = _near.Forearm.position + view.TransformDirection(new Vector3(.35f, -.45f, -.1f));
             PlayerVisualIK.Solve(_near.Upper, _near.Forearm, _near.Hand, wrist, pole, hand, 1f, p.LeftArmMaximumExtension);
 
-            // left hand: the bridge under the shaft, back of the hand down, fingers across the shaft
+            // left hand, the rear hand at the tail: over the shaft (back of the hand up), fingers across it and down the far side
             if (_near.LeftUpper != null && _near.LeftForearm != null && _near.LeftHand != null && _nearDorsalL308.sqrMagnitude > .5f)
             {
-                Vector3 dorsalL = -Vector3.ProjectOnPlane(view.up, axis).normalized;
-                Vector3 fingerL = Vector3.Cross(axis, dorsalL).normalized; if (Vector3.Dot(fingerL, view.right) < 0f) fingerL = -fingerL;
-                fingerL = (Quaternion.AngleAxis(p.NearLeftTowardTipDegrees, dorsalL) * fingerL); if (Vector3.Dot(fingerL, axis) < 0f) fingerL = Quaternion.AngleAxis(-2f * p.NearLeftTowardTipDegrees, dorsalL) * fingerL;
+                Vector3 holdLeft = tip - axis * Vector3.Distance(tip, pivot);   // = the pivot
+                Vector3 dorsalL = upAcross;
+                Vector3 fingerL = Vector3.Cross(axis, dorsalL).normalized; if (Vector3.Dot(fingerL, view.right) < 0f) fingerL = -fingerL;   // from the left side, pointing right
+                fingerL = Vector3.Slerp(fingerL, axis, p.NearLeftTowardTipDegrees / 90f).normalized;
                 Quaternion handL = HandRotation308(fingerL, dorsalL, _nearFingerL308, _nearDorsalL308);
-                Vector3 wristL = pivot - fingerL * p.NearPalm.x + dorsalL * p.NearPalm.y;
-                Vector3 poleL = _near.LeftForearm.position + view.TransformDirection(new Vector3(-.3f, -.5f, -.1f));
+                Vector3 wristL = holdLeft - fingerL * p.NearPalm.x + dorsalL * p.NearPalm.y;
+                Vector3 poleL = _near.LeftForearm.position + view.TransformDirection(new Vector3(-.3f, -.5f, -.2f));
                 PlayerVisualIK.Solve(_near.LeftUpper, _near.LeftForearm, _near.LeftHand, wristL, poleL, handL, 1f, p.LeftArmMaximumExtension);
             }
 
