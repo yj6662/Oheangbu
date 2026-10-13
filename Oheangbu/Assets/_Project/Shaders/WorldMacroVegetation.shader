@@ -28,6 +28,9 @@ Shader "Oheangbu/WorldMacroVegetation"
         _FadeOutStart("Fade Out Start", Float) = 700
         _FadeOutEnd("Fade Out End", Float) = 800
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
+        // #308 realm look (SPEC-WORLD-REALM-LOOK-308): which wash this material takes when a scene driver switches the look on.
+        // 0 = auto (alpha-clipped cards are foliage, solid parts are left alone), 1 foliage, 2 grass, 3 never.
+        _RealmLookRole308("#308 realm look role (0 auto, 1 foliage, 2 grass, 3 none)", Float) = 0
         // #307 black specks: 1 = the LOD cross-fade picks whole instances (hash of the instance origin) instead of screen pixels
         [ToggleUI] _ClusterFade307("Per-cluster distance fade", Float) = 0
     }
@@ -62,8 +65,10 @@ Shader "Oheangbu/WorldMacroVegetation"
             float _WindAmplitude,_WindSpeed,_Height,_Billboard;
             float _BillboardViews,_SimpleLighting;
             float _FadeInStart,_FadeInEnd,_FadeOutStart,_FadeOutEnd;
+            float _RealmLookRole308;
             float _ClusterFade307;
         CBUFFER_END
+        #include "RealmLook308.hlsl"
         float4 _OhPaperColor;
         float _DressingTime;
         float _DressingAerial;
@@ -88,6 +93,7 @@ Shader "Oheangbu/WorldMacroVegetation"
             half3 normalWS : TEXCOORD2;
             half4 tangentWS : TEXCOORD3;
             half3 vertexLighting : TEXCOORD4;
+            half4 realmLook : TEXCOORD5;   // #308: realm wash of this instance (a = 0 when the look is off)
             UNITY_VERTEX_INPUT_INSTANCE_ID
             UNITY_VERTEX_OUTPUT_STEREO
         };
@@ -117,6 +123,7 @@ Shader "Oheangbu/WorldMacroVegetation"
             VertexNormalInputs normal = GetVertexNormalInputs(input.normalOS, input.tangentOS);
             float3 centre = TransformObjectToWorld(float3(0,0,0));
             float3 world = position.positionWS;
+            output.realmLook = RealmLookVegetation308(centre.xz, REALMLOOK_ROLE308);
             if(_Billboard>.5)
             {
                 float3 facing = _WorldSpaceCameraPos-centre; facing.y=0;
@@ -219,6 +226,7 @@ Shader "Oheangbu/WorldMacroVegetation"
             half3 albedo = ReadAlbedo(input.uv).rgb;
                 half luminance = dot(albedo, half3(0.2126h, 0.7152h, 0.0722h));
                 albedo = lerp(luminance.xxx, albedo, saturate(_Saturation));
+                albedo = RealmLookTint308(albedo, input.realmLook, REALMLOOK_ROLE308);
                 if(_SimpleLighting>.5)
                 {
                     half3 simple=albedo*max(_AmbientFloor, .25h);

@@ -146,6 +146,8 @@ namespace Oheangbu.App.World
             if(EAGiyeokProfile!=null)Walker.Wiring.ConfigureEAGiyeok(EAGiyeokProfile,()=>ready&&isActiveAndEnabled&&HasDemoGuk);
             vitals.Restore(Progress.ledger.hp>0?Progress.ledger.hp:1);ink.Restore(Progress.ledger.ink);
             foreach(var actor in Actors){actor.Defeated+=EnemyDefeated;if(Progress.defeated.Contains(actor.Id))actor.GetComponent<EnemyVitals>().TakeDamage(float.MaxValue);}
+            // #308 D308-70 (SPEC-ENEMY-BRAIN-308): the content's behaviour and strike-read profiles go to every actor that has none of its own (bosses ignore the brain)
+            foreach(var actor in Actors){if(actor==null)continue;if(actor.Brain==null)actor.Brain=Content.EnemyBrain;var rig=actor.GetComponent<EnemyRigMotion298>();if(rig!=null&&rig.StrikeRead==null)rig.StrikeRead=Content.EnemyStrikeRead;}
             vitals.Died+=OnDeath;ready=true;InitializeEquipment();nextSave=Time.unscaledTime+Content.TestRules.AutosaveSeconds;RefreshDrop();RefreshFragmentPickups();
             BindDemoEscort();
             if(LoadStatus=="invalid")SaveError="저장 파일이 손상되었다. 제목 화면에서 백업을 복구하거나 보관 후 새로 시작한다.";

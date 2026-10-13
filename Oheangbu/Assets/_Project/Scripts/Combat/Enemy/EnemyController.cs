@@ -21,6 +21,14 @@ namespace Oheangbu.Combat
         public bool IsTelegraphing => _state == State.Telegraph;
         public bool IsRecovering => _state == State.Recover;
         public bool IsProjectileFlying => _state == State.Flight;
+        // #308 D308-70 (SPEC-ENEMY-BRAIN-308): who turns the body. A navigating owner (PrologueEncounter) clears FaceTarget while the
+        // actor walks somewhere else (patrol, return, running in), so the body follows its path instead of sliding sideways with its
+        // face locked on the player. Defaults = the behaviour before: always face the player, in one frame.
+        public bool FaceTarget { get; set; } = true;
+        /// <summary>Degrees per second of the turn toward the player. 0 = at once.</summary>
+        public float TurnDegreesPerSecond { get; set; }
+        /// <summary>Read only: idle with the cooldown run out, so the next attack starts as soon as range, sight and AttackEnabled allow.</summary>
+        public bool AttackReady => _state == State.Idle && _cooldown <= 0f;
         public float TelegraphProgress => IsTelegraphing ? Mathf.Clamp01(1f - (_stateUntil - Time.time) / Mathf.Max(.01f, TelegraphDuration)) : 0f;
         public float RecoveryProgress => IsRecovering ? Mathf.Clamp01(1f - (_stateUntil - Time.time) / Mathf.Max(.01f, RecoveryDuration)) : 0f;
 
@@ -235,7 +243,7 @@ namespace Oheangbu.Combat
             _controlBlocked=false;
             if (_state == State.Dead || _config == null || _player == null) return;
 
-            if (_state != State.Stunned && (!ProfileActive || (_state != State.Telegraph && _state != State.Flight))) FacePlayer();
+            if (FaceTarget && _state != State.Stunned && (!ProfileActive || (_state != State.Telegraph && _state != State.Flight))) FacePlayer();
 
             if (ProfileActive) TickAuthoredAttack();
             else switch (_state)
@@ -421,7 +429,9 @@ namespace Oheangbu.Combat
         {
             Vector3 to = _player.position - transform.position;
             to.y = 0f;
-            if (to.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(to);
+            if (to.sqrMagnitude <= 0.001f) return;
+            var look = Quaternion.LookRotation(to);
+            transform.rotation = TurnDegreesPerSecond > 0f ? Quaternion.RotateTowards(transform.rotation, look, TurnDegreesPerSecond * Time.deltaTime) : look;
         }
 
         private void Tint(Color color)

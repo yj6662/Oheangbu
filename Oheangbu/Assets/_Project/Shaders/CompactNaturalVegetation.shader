@@ -71,6 +71,9 @@ Shader "Oheangbu/CompactNaturalVegetation"
         _BladeFarTone307("Far blade tone: start m, end m, amount", Vector) = (12,36,0,0)
         _BladeFarColour307("Far blade tone target (ground albedo)", Color) = (.55,.51,.43,1)
         [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
+        // #308 realm look (SPEC-WORLD-REALM-LOOK-308): which wash this material takes when a scene driver switches the look on.
+        // 0 = auto (alpha-clipped cards are foliage, solid parts are left alone), 1 foliage, 2 grass, 3 never.
+        _RealmLookRole308("#308 realm look role (0 auto, 1 foliage, 2 grass, 3 none)", Float) = 0
     }
     SubShader
     {
@@ -106,6 +109,7 @@ Shader "Oheangbu/CompactNaturalVegetation"
             float _LeafFlutter,_WindExternalClock;float4 _WindAnchor;
             float _BillboardViews,_SimpleLighting;
             float _FadeInStart,_FadeInEnd,_FadeOutStart,_FadeOutEnd;
+            float _RealmLookRole308;
             float _ClusterFade307;float _BladePixelFloor307;float4 _BladeFarTone307;half4 _BladeFarColour307;
         
             float _CIEnabled,_CIDarkNear,_CIDetailContrast,_CINormalStrength;
@@ -123,6 +127,7 @@ Shader "Oheangbu/CompactNaturalVegetation"
         float4 _GrassGust267;
         #include "CompactInkLandscape.hlsl"
         #include "CompactPainterlyFoliage.hlsl"
+        #include "RealmLook308.hlsl"
         float4 _OhPaperColor;
         float _DressingTime;
         float _DressingAerial;
@@ -147,6 +152,7 @@ Shader "Oheangbu/CompactNaturalVegetation"
             half3 normalWS : TEXCOORD2;
             half4 tangentWS : TEXCOORD3;
             half3 vertexLighting : TEXCOORD4;
+            half4 realmLook : TEXCOORD5;   // #308: realm wash of this instance (a = 0 when the look is off)
             UNITY_VERTEX_INPUT_INSTANCE_ID
             UNITY_VERTEX_OUTPUT_STEREO
         };
@@ -175,6 +181,7 @@ Shader "Oheangbu/CompactNaturalVegetation"
             VertexNormalInputs normal = GetVertexNormalInputs(input.normalOS, input.tangentOS);
             float3 centre = TransformObjectToWorld(float3(0,0,0));
             float3 world = position.positionWS;
+            output.realmLook = RealmLookVegetation308(centre.xz, REALMLOOK_ROLE308);
             if(_Billboard>.5)
             {
                 float3 facing = _WorldSpaceCameraPos-centre; facing.y=0;
@@ -321,6 +328,7 @@ Shader "Oheangbu/CompactNaturalVegetation"
                 albedo = lerp(luminance.xxx, albedo, saturate(_Saturation));
                 // #307: far blades take the ground's albedo, so the strokes that remain read as a soft field texture, not black dots
                 if(_BladeFarTone307.z>0)albedo=lerp(albedo,_BladeFarColour307.rgb,smoothstep(_BladeFarTone307.x,max(_BladeFarTone307.x+.01,_BladeFarTone307.y),distanceWS)*saturate(_BladeFarTone307.z));
+                albedo = RealmLookTint308(albedo, input.realmLook, REALMLOOK_ROLE308);
                 if(_SimpleLighting>.5)
                 {
                     half3 simple=albedo*max(_AmbientFloor, .25h);

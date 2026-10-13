@@ -63,7 +63,7 @@ namespace Oheangbu.App.World.UI
             var catalog = Session.Content.EquipmentCatalog;
             var state = Session.Progress.equipment;
             var art = Session.Content.EquipmentUiArt;
-            var choices = catalog.Items.Where(x => forge ? state.Has(x.Id) : !x.Starter).ToArray();
+            var choices = catalog.Items.Where(x => forge ? state.Has(x.Id) : !x.Starter && !x.DropOnly).ToArray();   // #308 D308-71: a boss's piece is not for sale
             if (!choices.Any(x => x.Id == gearSelection))
                 gearSelection = (choices.FirstOrDefault(x => forge ? state.Equipped.Contains(x.Id) : !state.Has(x.Id)) ?? choices.FirstOrDefault())?.Id ?? "";
 

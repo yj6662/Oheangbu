@@ -25,6 +25,8 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
         _TriplanarSkip307("#307 triplanar projection skip weight",Range(0,.02))=0
         _StrataRange276("Rule to distant ink transition metres",Vector)=(160,650,0,0)
         _StrataField276("Curvature and local exposure data",2D)="gray"{}
+        // #308 realm look (SPEC-WORLD-REALM-LOOK-308): 0 = the shipped picture. The colours are shader globals (RealmLookDriver308).
+        _RealmLook308("#308 realm look share (0 = off)",Range(0,1))=0
         _Realm293("Authored realm pigments",2D)="gray"{}
         _RealmStrength293("Realm pigment",Range(0,1))=0
         _Floor293("Realm floor weight map (r = forest floor)",2D)="black"{}
@@ -197,7 +199,7 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
         TEXTURE2D(_FloorNormal296);TEXTURE2D(_FloorNormalJ296);TEXTURE2D(_FloorNormalC296);TEXTURE2D(_FloorNormalH296);TEXTURE2D(_FloorNormalW296);TEXTURE2D(_BankGravelNormal296);TEXTURE2D(_BankMudNormal296); // Existing repeat normal sampler.
         TEXTURE2D(_BankMask294);TEXTURE2D(_BankGravel294);TEXTURE2D(_BankMud294);
         CBUFFER_START(UnityPerMaterial)
-        float _BankStrength294;
+        float _BankStrength294;float _RealmLook308;
         float _RealmStrength293; float _StrataStrength276;float4 _StrataRange276;float _Perf307Ground;float _TriplanarSkip307;
         float _FloorStrength293,_FloorScale293,_FloorChroma293,_FloorWash293;float4 _FloorRange293,_FloorTint293,_FloorFar293;
         float _CanopyStrength293;float4 _CanopyTint293,_CanopyRange293,_CanopyForest293;
@@ -263,6 +265,9 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
             float3 b=normalize(cross(t,geometric));
             return normalize(t*tangentNormal.x+b*tangentNormal.y+geometric*tangentNormal.z);
         }
+        // #308: the realm map is read with this shader's own clamp sampler (16 sampler slots)
+        #define REALMLOOK_SAMPLER sampler_SurfaceLinearClamp296
+        #include "Assets/_Project/Shaders/RealmLook308.hlsl"
         #include "Assets/_Project/Art/World/Architecture296/Shaders/KoreanSurface296.hlsl"
         ENDHLSL
         Pass
@@ -461,9 +466,18 @@ Shader "Oheangbu/Architecture296/KoreanInkGround"
                     float3 pigment=SAMPLE_TEXTURE2D(_Realm293,sampler_SurfaceLinearClamp296,canopyUV).rgb;
                     float reach=lerp(_CanopyRange293.z,1,smoothstep(_CanopyRange293.x,_CanopyRange293.y,cameraDistance));
                     // forested hillsides lose the bare-sand warmth (low-saturation grey-green, same value) ...
-                    color=lerp(color,CILuma(color)*_CanopyForest293.rgb,saturate(canopy.g*_CanopyForest293.a*reach));
+                    // #308: under a realm look the forested ground and the ground under the stands take that realm's canopy hue
+                    float3 forestHue308=_CanopyForest293.rgb,underTint308=_CanopyTint293.rgb;
+                    [branch] if(_OhRealmLook>0&&_RealmLook308>0)
+                    {
+                        float4 leaf308=RealmLookCanopy308(p.xz,_RealmLook308);
+                        forestHue308=lerp(forestHue308,leaf308.rgb,leaf308.a);underTint308=lerp(underTint308,CILuma(_CanopyTint293.rgb)*leaf308.rgb,leaf308.a);
+                        // no stand grows on a rock face: the forest-mass tone (the smooth dark sheet on far cliffs) lets go of steep ground
+                        canopy*=1-RealmLookSteep308(p,n).x*saturate(_OhRealmLook*_RealmLook308*_OhRealmLookAmounts.y);
+                    }
+                    color=lerp(color,CILuma(color)*forestHue308,saturate(canopy.g*_CanopyForest293.a*reach));
                     // ... and the ground under the stands themselves sinks into the canopy's ink tone
-                    float3 under=_CanopyTint293.rgb*lerp(float3(1,1,1),clamp(pigment/max(.05,CILuma(pigment)),.7,1.3),.35);
+                    float3 under=underTint308*lerp(float3(1,1,1),clamp(pigment/max(.05,CILuma(pigment)),.7,1.3),.35);
                     color=lerp(color,color*under,saturate(canopy.r*_CanopyStrength293*reach));
                 }
                 // Candidate changed banks and nearby dry lake shores; protection is encoded as exact zero.

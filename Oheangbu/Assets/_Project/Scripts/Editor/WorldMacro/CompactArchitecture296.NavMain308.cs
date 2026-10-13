@@ -86,11 +86,19 @@ namespace Oheangbu.EditorTools.WorldMacro
      foreach (var go in waterSources) if (go != null) Object.DestroyImmediate(go); foreach (var mesh in bakeMeshes) if (mesh != null) Object.DestroyImmediate(mesh);
      foreach (var x in dynamic) if (x != null) x.enabled = true; Physics.SyncTransforms();
      if (!installed) { Object.DestroyImmediate(temp); foreach (var n in active) if (n != null) n.AddData(); }
+     // #308 fix1 (SPEC-WORLD-HANYANG-308 section 19 F2): the gates go back to their saved (closed) pose BEFORE the scene is saved.
+     // The scope used to end with the method, after SaveScene - the play scene went to disk with the four doors posed open.
+     gateScope.Dispose();
     }
-    EditorSceneManager.MarkSceneDirty(scene); if (!EditorSceneManager.SaveScene(scene)) return "REFUSED the play scene was not saved after the bake";
+    // #308 fix1 F2: the far band roots are saved ON (RealmStream308 open-all holds them off in memory while the realm scenes are open)
+    var farRoot = scene.GetRootGameObjects().FirstOrDefault(g => g.name == "RealmFar308"); var farHeld = new List<GameObject>();
+    if (farRoot != null) foreach (Transform child in farRoot.transform) if (!child.gameObject.activeSelf) { farHeld.Add(child.gameObject); child.gameObject.SetActive(true); }
+    EditorSceneManager.MarkSceneDirty(scene); bool savedMain = EditorSceneManager.SaveScene(scene);
+    foreach (var held in farHeld) held.SetActive(false);
+    if (!savedMain) return "REFUSED the play scene was not saved after the bake";
     var tri = NavMesh.CalculateTriangulation();
     return "nav main bake: " + NavMainAsset308 + " | " + (new FileInfo(Path.GetFullPath(NavMainAsset308)).Length / 1048576f).ToString("F1", CultureInfo.InvariantCulture) + " MB | triangles " + (tri.indices.Length / 3).ToString("N0", CultureInfo.InvariantCulture)
-           + " | dynamic colliders off during the bake " + dynamic.Length + " | water sources " + evidence.Count + " notes | " + watch.Elapsed.TotalSeconds.ToString("F0", CultureInfo.InvariantCulture) + " s";
+           + " | dynamic colliders off during the bake " + dynamic.Length + " | water sources " + evidence.Count + " notes | saved with the gates closed and " + farHeld.Count + " far band root(s) switched on for the save | " + watch.Elapsed.TotalSeconds.ToString("F0", CultureInfo.InvariantCulture) + " s";
    }
    catch (Exception e) { return "REFUSED " + e.GetType().Name + ": " + e.Message; }
   }

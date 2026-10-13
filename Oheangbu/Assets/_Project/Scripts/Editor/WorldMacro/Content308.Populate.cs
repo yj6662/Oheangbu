@@ -31,8 +31,9 @@ namespace Oheangbu.EditorTools.WorldMacro
  // Only the main play scene and its content asset are written, both backed up first (Tools/Unity/Stage308_populate/Backup). No dialog.
  public static partial class Content308
  {
+  const string PopFieldVitals308="Assets/_Project/Data/Configs/EnemyTiers/EnemyVitals_Field.asset";
   const string PopRoot308="Populate308",PopPrefix308="field308/",PopContent308="Assets/_Project/Scenes/World/Main/WorldContent_Main.asset";
-  [Serializable] sealed class PopEnemy308{public string id="",name="",contentId="",template="",realm="",group="";public float[] feet=Array.Empty<float>(),patrol2=Array.Empty<float>();}
+  [Serializable] sealed class PopEnemy308{public string id="",name="",contentId="",template="",realm="",group="";public float[] feet=Array.Empty<float>(),patrol2=Array.Empty<float>();public bool boss;}
   [Serializable] sealed class PopNpc308{public string id="",name="",job="",realm="";public float[] pos=Array.Empty<float>();}
   [Serializable] sealed class PopPatrol308{public float walk_speed_mps=1.7f,pause_min_s=1.5f,pause_max_s=4f;}
   [Serializable] sealed class PopIdle308{public float breath_period_s=4.2f,breath_chest_deg=2.6f,breath_shoulder_m=.013f,sway_deg=.9f,combat_leg_deg=11f,combat_arm_deg=17f,combat_lean_deg=5f,combat_range_m=26f;}
@@ -118,7 +119,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    var data=PopData308();var root=new GameObject(PopRoot308);SceneManager.MoveGameObjectToScene(root,scene);
    var actorsHome=new GameObject("Actors").transform;actorsHome.SetParent(root.transform,false);var spots=new GameObject("SubNpcSpots").transform;spots.SetParent(root.transform,false);
    var all=Saved308<PrologueEncounter>(scene).ToArray();var rows=new List<WorldMacroPlaytestSO.Encounter>(content.Encounters??Array.Empty<WorldMacroPlaytestSO.Encounter>());
-   var added=new List<PrologueEncounter>();int placed=0;var left=new List<string>();var perRealm=new Dictionary<string,int>();
+   var added=new List<PrologueEncounter>();var demoted=new List<string>();int placed=0;var left=new List<string>();var perRealm=new Dictionary<string,int>();
    foreach(var e in data.enemies)
    {
     var template=all.FirstOrDefault(x=>x.Id==e.template);var trow=Encounter308(content,e.template);
@@ -130,6 +131,14 @@ namespace Oheangbu.EditorTools.WorldMacro
     var go=Object.Instantiate(template.gameObject);SceneManager.MoveGameObjectToScene(go,scene);go.transform.SetParent(actorsHome,true);go.name=e.id.Substring(PopPrefix308.Length)+" ["+e.name+"]";
     go.transform.localScale=template.transform.lossyScale;go.transform.SetPositionAndRotation(at,Quaternion.Euler(0f,Mathf.Atan2(p2.x-feet.x,p2.z-feet.z)*Mathf.Rad2Deg,0f));go.SetActive(template.gameObject.activeSelf);
     var actor=go.GetComponent<PrologueEncounter>();actor.Id=e.id;actor.Ranged=trow.Ranged;actor.DetectionRange=trow.Detection;actor.Leash=trow.Leash;actor.Speed=trow.Speed;actor.PatrolPoints=new[]{feet,p2};
+    // #308 fix1 (SPEC-WORLD-HANYANG-308 section 19 F5): a clone of a BOSS template is an ordinary field enemy unless its plan row says boss:true -
+    // the template's boss vitals profile (boss bar, boss HP, vehicle field) is replaced by the field tier profile.
+    var cloneVitals=go.GetComponent<EnemyVitals>();
+    if(cloneVitals!=null&&cloneVitals.IsBoss&&!e.boss)
+    {
+     var fieldProfile=AssetDatabase.LoadAssetAtPath<EnemyVitalsProfileSO>(PopFieldVitals308);if(fieldProfile==null||fieldProfile.IsBoss)throw new Refuse308("no field vitals profile at "+PopFieldVitals308);
+     var so=new SerializedObject(cloneVitals);so.FindProperty("_profile").objectReferenceValue=fieldProfile;so.ApplyModifiedPropertiesWithoutUndo();demoted.Add(e.id);
+    }
     added.Add(actor);SetWired308(session,go.GetComponent<EnemyVitals>(),true);placed++;perRealm[e.realm]=perRealm.TryGetValue(e.realm,out int n)?n+1:1;
    }
    content.Encounters=rows.ToArray();session.Actors=(session.Actors??Array.Empty<PrologueEncounter>()).Concat(added).ToArray();
@@ -141,6 +150,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    sb.Append("\n  enemies placed ").Append(placed).Append(" of ").Append(data.enemies.Length).Append(" (").Append(string.Join(", ",perRealm.OrderBy(k=>k.Key).Select(k=>k.Key+" "+k.Value))).Append("), sub NPC spots ").Append(npcs);
    foreach(string s in left)sb.Append("\n  LEFT OUT ").Append(s);
+   if(demoted.Count>0)sb.Append("\n  boss template -> field vitals (").Append(PopFieldVitals308).Append("): ").Append(string.Join(", ",demoted));
   }
 
   static string PopStatus308(Scene scene,WorldMacroPlaytestSession session,WorldMacroPlaytestSO content)
@@ -160,6 +170,9 @@ namespace Oheangbu.EditorTools.WorldMacro
    int off=actors.Count(a=>{var ag=a.GetComponent<NavMeshAgent>();return ag==null||a.GetComponent<EnemyVitals>()==null||!NavMesh.SamplePosition(a.transform.position-Vector3.up*ag.baseOffset,out _,2f,NavMesh.AllAreas);});
    C(off==0,"every field actor has an agent, vitals and loaded NavMesh within 2 m (the session's start rule) - off: "+off);
    var all=session.Actors??Array.Empty<PrologueEncounter>();C(all.All(a=>a!=null)&&all.Select(a=>a.Id).Distinct().Count()==all.Length,"session.Actors has no hole and no duplicate id ("+all.Length+")");
+   var askedBoss=new HashSet<string>();try{foreach(var e in PopData308().enemies)if(e.boss)askedBoss.Add(e.id);}catch(Refuse308){}
+   var bossy=actors.Where(a=>{var v=a.GetComponent<EnemyVitals>();return v!=null&&v.IsBoss&&!askedBoss.Contains(a.Id);}).Select(a=>a.Id).ToArray();
+   C(bossy.Length==0,"no field308/ actor carries a boss vitals profile unless its plan row says boss:true (asked "+askedBoss.Count+") - boss: "+(bossy.Length==0?"none":string.Join(", ",bossy)));
    var root=scene.GetRootGameObjects().FirstOrDefault(g=>g.name==PopRoot308);var spots=root!=null?root.transform.Find("SubNpcSpots"):null;
    C(spots==null||spots.GetComponentsInChildren<Component>(true).All(x=>x is Transform),"sub NPC spots are names only: no component, no body");
    return sb.Append(pass).Append(" checks, ").Append(fail).Append(" failed").ToString();

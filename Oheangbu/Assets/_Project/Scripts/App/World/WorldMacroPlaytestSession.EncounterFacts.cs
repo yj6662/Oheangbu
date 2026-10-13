@@ -22,6 +22,7 @@ namespace Oheangbu.App.World
             TryCommitPendingDemoBosses(force);
             TryCommitPendingDemoSouthGate(force);
             TickFinalGrants308();   // #308b: a final consonant whose boss proof is on record but whose ledger id is not (catch-up)
+            TickBossDrops308();     // #308 D308-71: a field boss's piece whose proof is on record but which is not owned yet (catch-up)
         }
 
         void QueueEncounterDefeat(string id)
@@ -45,8 +46,9 @@ namespace Oheangbu.App.World
                 if(!mountainOwned)accepted=TryPrepareEncounterDefeat(Progress,id,Content.TestRules.EnemyReward,out proposal,out error);
                 if(!accepted){Show(error);continue;}
                 var finals=ApplyFinalGrants308(proposal);   // #308b: a realm boss's final consonant is saved with the defeat that earns it
+                var drops=ApplyBossDrops308(proposal);      // #308 D308-71: a field boss's own piece is saved with the defeat that leaves it
                 if(!TryCommitInteraction(proposal,out error)){Show(error);continue;}
-                pendingEncounterDefeats.Remove(id);AnnounceFinalGrants308(finals);
+                pendingEncounterDefeats.Remove(id);AnnounceFinalGrants308(finals);AnnounceBossDrops308(drops);
             }
         }
 

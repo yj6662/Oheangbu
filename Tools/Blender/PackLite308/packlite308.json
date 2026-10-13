@@ -1,0 +1,620 @@
+{
+ "_note": "source = path under the Unity project (Assets/...) or under Art/World/PackLite308 (_src/<pack>/...). kind picks the triangle target / smallest feature / material cap (packlite308.py CLASS_DEFAULT). Order = priority.",
+ "items": [
+  {
+   "name": "Pav_Gyullimdang",
+   "class": "gwana",
+   "kind": "pavilion",
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Gyullimdang.prefab",
+   "ref": "제주목 관아 귤림당 (정자형 당)",
+   "use": "관아 후원 정자 · 궁 후원 정자"
+  },
+  {
+   "name": "Gate_Jungyangmun",
+   "class": "palace",
+   "kind": "gate",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Jungyangmun.prefab",
+   "ref": "화성행궁 중양문 (삼문, 좌익문과 같은 꼴)",
+   "use": "흥례문 · 근정문 격 중문, 관아 내삼문"
+  },
+  {
+   "name": "Fort_Munru2",
+   "class": "fortress",
+   "kind": "gate",
+   "target": 25000,
+   "ground": "min",
+   "source": "_src/HwaseongForteressGate_scenes/Assets/HwaseongForteressGate/Scenes/Demo.unity",
+   "box": [
+    -30,
+    -5,
+    -25,
+    20
+   ],
+   "include": "^SM_(BeamSupport|BracketSupport|Ceiling|Column|ColumnTopSupport|ComplexBracket|Crossbeam|FlatLintel|Floor|Heartwood|HipRafter|Hwaban|Lintel|Pedestal|Purlin|PurlinSupport|Rafter|RafterExtension|RammedEarth|Ridge|Roof|RoofBoard|RoofStatue|SideDoor|SideDoor_Frame|Window|Window_Frame|WoodStair|Signboard_Janganmun|Note_Janganmun)(_\\d+)?/",
+   "ref": "수원 화성 장안문 문루 (정면 5칸 · 측면 2칸 중층 우진각 다포)",
+   "use": "숭례문 · 흥인지문 · 돈의문 2층 문루 (같은 5×2칸 중층 우진각)",
+   "yaw": 90,
+   "front": "-Z = 성 바깥쪽 (원본 씬의 +X 를 돌려 놓음), 긴 변 = X"
+  },
+  {
+   "name": "Fort_GateBase",
+   "class": "fortress",
+   "kind": "fortress",
+   "ground": "min",
+   "roof": "none",
+   "source": "_src/HwaseongForteressGate_scenes/Assets/HwaseongForteressGate/Scenes/Demo.unity",
+   "box": [
+    -30,
+    -5,
+    -30,
+    25
+   ],
+   "include": "^SM_(G_Arch|Fortification|G_Stair|G_Stair_Newel|GH_Parapet|G_MetalDoor|G_RoofBoard|DoorStoper|Gargoyle)(_\\d+)?/",
+   "ref": "장안문 석축(육축) + 홍예 + 여장 + 등성 계단 + 철엽문",
+   "use": "대문 석축. 위에 Fort_Munru2 를 얹는다",
+   "lowpoly": true,
+   "proxy": "prism",
+   "lod1": 1.0,
+   "yaw": 90,
+   "front": "-Z = 성 바깥쪽 (원본 씬의 +X 를 돌려 놓음), 긴 변 = X"
+  },
+  {
+   "name": "Fort_Ongseong",
+   "class": "fortress",
+   "kind": "fortress",
+   "ground": "min",
+   "source": "_src/HwaseongForteressGate_scenes/Assets/HwaseongForteressGate/Scenes/Demo.unity",
+   "box": [
+    -20,
+    20,
+    -30,
+    25
+   ],
+   "include": "^SM_(B_|Barbican)",
+   "ref": "장안문 옹성 (반원형 전돌 옹성 + 옹성 문루)",
+   "use": "흥인지문 옹성",
+   "proxy": "prism",
+   "yaw": 90,
+   "front": "-Z = 성 바깥쪽 (원본 씬의 +X 를 돌려 놓음), 긴 변 = X",
+   "target": 12000
+  },
+  {
+   "name": "Fort_Jeokdae",
+   "class": "fortress",
+   "kind": "fortress",
+   "ground": "min",
+   "roof": "none",
+   "source": "_src/HwaseongForteressGate_scenes/Assets/HwaseongForteressGate/Scenes/Demo.unity",
+   "box": [
+    -15,
+    15,
+    -85,
+    -60
+   ],
+   "include": "^SM_GateGuardPost",
+   "ref": "장안문 적대",
+   "use": "성문 좌우 치성 · 적대",
+   "lowpoly": true,
+   "proxy": "prism",
+   "lod1": 1.0,
+   "yaw": 90,
+   "front": "-Z = 성 바깥쪽 (원본 씬의 +X 를 돌려 놓음), 긴 변 = X"
+  },
+  {
+   "name": "Fort_Wall_Run23",
+   "class": "fortress",
+   "kind": "wall",
+   "ground": "min",
+   "roof": "none",
+   "source": "_src/HwaseongForteressGate_scenes/Assets/HwaseongForteressGate/Scenes/Demo.unity",
+   "box": [
+    -17,
+    -6,
+    26,
+    48
+   ],
+   "include": "^SM_CW",
+   "ref": "화성 성벽 한 구간 (체성 + 여장 + 안쪽 내탁 + 걷는 길), 약 23 m",
+   "use": "성벽 직선 구간",
+   "lowpoly": true,
+   "proxy": "prism",
+   "lod1": 1.0,
+   "yaw": 90,
+   "front": "-Z = 성 바깥쪽 (원본 씬의 +X 를 돌려 놓음), 긴 변 = X"
+  },
+  {
+   "name": "Hall_Bongsudang",
+   "class": "palace",
+   "kind": "hero",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Bongsudang.prefab",
+   "roof_tex": 2048,
+   "ref": "화성행궁 봉수당 (정당)",
+   "use": "근정전 격 정전의 아래층 · 대형 정전",
+   "target": 50000
+  },
+  {
+   "name": "Hall_Yeonhuigak",
+   "class": "gwana",
+   "kind": "hall",
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Yeonhuigak.prefab",
+   "ref": "제주목 관아 연희각 (목사 집무처)",
+   "use": "의정부 · 6조 당상대청"
+  },
+  {
+   "name": "Giwa_Anchae",
+   "class": "minga",
+   "kind": "house",
+   "target": 6000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Anchae.prefab",
+   "ref": "창원의 집 안채 (기와 반가)",
+   "use": "북촌 기와집 안채"
+  },
+  {
+   "name": "Giwa_Sarangchae",
+   "class": "minga",
+   "kind": "house",
+   "target": 6000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Sarangchae.prefab",
+   "ref": "창원의 집 사랑채",
+   "use": "북촌 기와집 사랑채"
+  },
+  {
+   "name": "Gate_Soseul_Changwon",
+   "class": "minga",
+   "kind": "house",
+   "target": 4000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Main_Gate.prefab",
+   "ref": "창원의 집 대문채 (솟을대문)",
+   "use": "관아 · 반가 솟을대문"
+  },
+  {
+   "name": "Choga_Tavern",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/Tavern_House_01.prefab",
+   "ref": "낙안읍성 주막집 (초가)",
+   "use": "저자 주막 · 성저 초가"
+  },
+  {
+   "name": "Choga_LShaped",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/L_Shaped_House_01.prefab",
+   "ref": "낙안읍성 ㄱ자집",
+   "use": "성저 초가 (ㄱ자)"
+  },
+  {
+   "name": "Lu_MangGyeongru",
+   "class": "gwana",
+   "kind": "gate",
+   "target": 25000,
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/MangGyeongru.prefab",
+   "ref": "제주목 관아 망경루 (2층 누각)",
+   "use": "종루(종각) 2층 누 · 관아 누"
+  },
+  {
+   "name": "Lu_Gwandeokjeong",
+   "class": "gwana",
+   "kind": "hall",
+   "target": 25000,
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Gwandeokjong.prefab",
+   "ref": "제주 관덕정 (정면 5칸 · 측면 4칸 팔작, 사방 트인 대형 누정)",
+   "use": "경회루 격 누각의 윗몸 (돌기둥 층은 Gen_Stilts 로)"
+  },
+  {
+   "name": "Gate_Oedaemun",
+   "class": "gwana",
+   "kind": "gate",
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Oedaemun.prefab",
+   "ref": "제주목 관아 외대문 (2층 문루)",
+   "use": "관아 외삼문 · 광화문 문루 대역"
+  },
+  {
+   "name": "Gate_Sinpungru",
+   "class": "palace",
+   "kind": "gate",
+   "target": 25000,
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Sinpungru.prefab",
+   "ref": "화성행궁 신풍루 (2층 누문, 정문)",
+   "use": "궁 · 관아 정문 누문, 종각 대역"
+  },
+  {
+   "name": "Hall_Naknamhyeon",
+   "class": "palace",
+   "kind": "hall",
+   "target": 25000,
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Naknamhyeon.prefab",
+   "ref": "화성행궁 낙남헌",
+   "use": "사정전 격 편전"
+  },
+  {
+   "name": "Hall_Yuyeotaek",
+   "class": "palace",
+   "kind": "hall",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Yuyeotaek.prefab",
+   "ref": "화성행궁 유여택",
+   "use": "강녕전 격 침전"
+  },
+  {
+   "name": "Hall_Boknaedang",
+   "class": "palace",
+   "kind": "hall",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Boknaedang.prefab",
+   "ref": "화성행궁 복내당 (내당)",
+   "use": "교태전 격 내전"
+  },
+  {
+   "name": "Hall_Uhwagwan",
+   "class": "palace",
+   "kind": "hall",
+   "target": 25000,
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Uhwagan.prefab",
+   "ref": "화성행궁 우화관 (객사, 긴 맞배 몸채 + 익헌)",
+   "use": "종묘 영녕전 · 정전 대역 후보 (가운데가 솟은 객사 꼴)"
+  },
+  {
+   "name": "Corr_Jeonsacheong",
+   "class": "palace",
+   "kind": "corridor",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Jeonsacheong.prefab",
+   "ref": "화성행궁 전사청 (긴 부속채)",
+   "use": "행각 · 궐내각사 · 종묘 전사청"
+  },
+  {
+   "name": "Corr_Jibsacheong",
+   "class": "palace",
+   "kind": "corridor",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Jibsacheong_1.prefab",
+   "ref": "화성행궁 집사청",
+   "use": "행각 · 관아 행랑"
+  },
+  {
+   "name": "Corr_Seoricheong",
+   "class": "palace",
+   "kind": "corridor",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Seoricheong.prefab",
+   "ref": "화성행궁 서리청",
+   "use": "관아 부속채 (서리청)"
+  },
+  {
+   "name": "Hall_Unhangak",
+   "class": "palace",
+   "kind": "hall",
+   "target": 25000,
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Unhwagak_Iancheong.prefab",
+   "ref": "화성행궁 운한각 · 이안청 (화령전)",
+   "use": "종묘 재실 · 진전 격 (정자각 꼴)"
+  },
+  {
+   "name": "Gate_Oisamun",
+   "class": "palace",
+   "kind": "gate",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Oisamun.prefab",
+   "ref": "화성행궁 외삼문",
+   "use": "종묘 외대문 · 사직단 신문 · 관아 삼문"
+  },
+  {
+   "name": "Gate_Naesanmun",
+   "class": "palace",
+   "kind": "gate",
+   "target": 15000,
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Naesanmun.prefab",
+   "ref": "화성행궁 내삼문",
+   "use": "궁 · 관아 내삼문"
+  },
+  {
+   "name": "Pav_Mirohanjeong",
+   "class": "palace",
+   "kind": "pavilion",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Mirohanjeong.prefab",
+   "ref": "화성행궁 미로한정 (후원 정자)",
+   "use": "향원정 자리 정자 (실제 향원정은 육각 2층 — 꼴이 다르다)"
+  },
+  {
+   "name": "Hall_Naeposa",
+   "class": "palace",
+   "kind": "pavilion",
+   "target": 5000,
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Naeposa.prefab",
+   "ref": "화성행궁 내포사",
+   "use": "수문장청 · 문지기 채"
+  },
+  {
+   "name": "Wall_Sagoseok",
+   "class": "palace",
+   "kind": "wall",
+   "target": 700,
+   "roof": "none",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_StraightStronewall_1.prefab",
+   "ref": "화성행궁 사고석담 (기와 덮개) 4.2 m",
+   "use": "궁장 · 관아 담",
+   "lod1": 1.0,
+   "proxy": "prism"
+  },
+  {
+   "name": "Gate_Hongsalmun",
+   "class": "palace",
+   "kind": "wall",
+   "target": 1200,
+   "roof": "none",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Hongsalmun.prefab",
+   "ref": "화성행궁 홍살문",
+   "use": "종묘 · 사직단 홍살문",
+   "proxy": "prism"
+  },
+  {
+   "name": "Hall_Honhwagak",
+   "class": "gwana",
+   "kind": "hall",
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Honhwagak.prefab",
+   "ref": "제주목 관아 홍화각",
+   "use": "한성부 · 사헌부 대청"
+  },
+  {
+   "name": "Hall_Wooryeondang",
+   "class": "gwana",
+   "kind": "hall",
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Wooryeondang.prefab",
+   "ref": "제주목 관아 우련당",
+   "use": "6조 대청 · 연회 당"
+  },
+  {
+   "name": "Hall_Yeonjuhyeopdang",
+   "class": "gwana",
+   "kind": "hall",
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Yeonjuihyeopdang.prefab",
+   "ref": "제주목 관아 영주협당",
+   "use": "6조 부속 당"
+  },
+  {
+   "name": "Gate_Jungdaemun",
+   "class": "gwana",
+   "kind": "gate",
+   "target": 15000,
+   "source": "Assets/JejumokGwana/Prefabs/Buildings/Chungdaemun.prefab",
+   "ref": "제주목 관아 중대문",
+   "use": "관아 중문"
+  },
+  {
+   "name": "Giwa_Hall_Multipurpose",
+   "class": "minga",
+   "kind": "house",
+   "target": 8000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Multipurpose_Hall.prefab",
+   "ref": "창원의 집 다목적관 (큰 기와집)",
+   "use": "시전 도가 · 큰 기와집"
+  },
+  {
+   "name": "Giwa_Hall_Education",
+   "class": "minga",
+   "kind": "house",
+   "target": 8000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Folk_Education_Hall.prefab",
+   "ref": "창원의 집 민속교육관",
+   "use": "큰 기와집 · 객주"
+  },
+  {
+   "name": "Gate_Middle_Changwon",
+   "class": "minga",
+   "kind": "house",
+   "target": 4000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Middle_Gate.prefab",
+   "ref": "창원의 집 중문채",
+   "use": "반가 중문 · 행랑"
+  },
+  {
+   "name": "Gate_Small_Changwon",
+   "class": "minga",
+   "kind": "house",
+   "target": 2000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Small_Gate.prefab",
+   "ref": "창원의 집 협문",
+   "use": "협문 · 평대문"
+  },
+  {
+   "name": "Pav_Octagonal",
+   "class": "minga",
+   "kind": "pavilion",
+   "target": 6000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Octagonal_Pavilion.prefab",
+   "ref": "창원의 집 팔각정",
+   "use": "향원정 대역 (다각 정자)"
+  },
+  {
+   "name": "Pav_Changwon",
+   "class": "minga",
+   "kind": "pavilion",
+   "target": 6000,
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Buildings/Pavilion.prefab",
+   "ref": "창원의 집 정자",
+   "use": "후원 · 개천가 정자"
+  },
+  {
+   "name": "Wall_Fence_Changwon",
+   "class": "minga",
+   "kind": "wall",
+   "target": 600,
+   "roof": "none",
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Fences/Fence_1.prefab",
+   "ref": "창원의 집 담",
+   "use": "반가 담"
+  },
+  {
+   "name": "Choga_L",
+   "class": "minga",
+   "kind": "house",
+   "source": "Assets/House_1/house.fbx",
+   "ref": "받은 초가 1 (ㄱ자)",
+   "use": "성저 초가"
+  },
+  {
+   "name": "Choga_Long",
+   "class": "minga",
+   "kind": "house",
+   "source": "Assets/House_2/house2 .fbx",
+   "ref": "받은 초가 2 (一자)",
+   "use": "성저 초가"
+  },
+  {
+   "name": "Choga_Maru",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/House_With_Wooden_Floored_Room_01.prefab",
+   "ref": "낙안읍성 마루방집",
+   "use": "초가 살림집"
+  },
+  {
+   "name": "Choga_Clerk",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/Local_Clerks_House_01.prefab",
+   "ref": "낙안읍성 향리집",
+   "use": "중인 초가"
+  },
+  {
+   "name": "Choga_Smithy",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/Smithy.prefab",
+   "ref": "낙안읍성 대장간",
+   "use": "저자 대장간"
+  },
+  {
+   "name": "Choga_Bench",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/Wooden_Bench_House_01.prefab",
+   "ref": "낙안읍성 들마루집",
+   "use": "저자 가게 (들마루)"
+  },
+  {
+   "name": "Choga_WestGate",
+   "class": "minga",
+   "kind": "house",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Build/House_By_The_West_Gate_01.prefab",
+   "ref": "낙안읍성 서문 옆 집",
+   "use": "성문 옆 초가"
+  },
+  {
+   "name": "Prop_Well_Jeju",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "Assets/JejumokGwana/Prefabs/Decoration/Well.prefab",
+   "ref": "제주목 관아 우물",
+   "use": "우물",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Well_Changwon",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/HouseOfChangwon/Assets/House Of Changwon/Prefabs/Props/Well.prefab",
+   "ref": "창원의 집 우물",
+   "use": "우물",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Jars",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Prop/Jars.prefab",
+   "ref": "낙안읍성 장독대",
+   "use": "장독",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Cart",
+   "class": "props",
+   "kind": "prop",
+   "target": 1500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Prop/Cart.prefab",
+   "ref": "낙안읍성 달구지",
+   "use": "달구지",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Bench",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Prop/Low_Wooden_Bench.prefab",
+   "ref": "낙안읍성 평상",
+   "use": "좌판 · 평상",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Jige",
+   "class": "props",
+   "kind": "prop",
+   "target": 900,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Prop/A_frame_Carrier01a.prefab",
+   "ref": "낙안읍성 지게",
+   "use": "지게",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_WaterJar",
+   "class": "props",
+   "kind": "prop",
+   "target": 300,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/Naganeupseong/Assets/Naganeupseong/Prefabs/Prop/Water_Jar.prefab",
+   "ref": "낙안읍성 물독",
+   "use": "독",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Bell",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "height": 2.3,
+   "source": "Assets/Korea_TreasureProps/Prefabs/SM_028_Buddhist_Temple_Bell.prefab",
+   "ref": "범종 (유물 팩) — 2.3 m 로 키움",
+   "use": "종각의 종",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_StonePedestal",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "_src/Korean_Traditional_Prop/Assets/Korean_Traditional_Prop/Prefabs/Ancient_Statues/Stone_Pedestal.prefab",
+   "ref": "석조 대좌 (전통 소품 팩)",
+   "use": "해태상 받침 대역",
+   "interior": "keep"
+  },
+  {
+   "name": "Prop_Burner",
+   "class": "props",
+   "kind": "prop",
+   "target": 500,
+   "roof": "none",
+   "proxy": "decimate",
+   "source": "Assets/HwaseongHaenggung/Prefabs/SM_Bronze_burner.prefab",
+   "ref": "화성행궁 청동 향로",
+   "use": "정전 월대 향로 · 드므 대역",
+   "interior": "keep"
+  }
+ ]
+}

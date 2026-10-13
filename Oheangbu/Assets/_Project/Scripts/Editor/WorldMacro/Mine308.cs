@@ -16,6 +16,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     // #308 the first mine, look pass (SPEC-PLAYTEST-306 mine + D308-60). The data the mine was generated from is gone (2026-10-06), so
     // nothing here re-runs a mine generator: the tool reads what the scene holds and adds to it or swaps what is drawn.
     //   dump        every renderer, light and collider under the `mine` root -> Tools/Unity/Stage308_mine/dump.json (read only)
+    //   look:arcane:apply | revert | status | check     the abandoned ore-craft dressing (Mine308.Arcane.cs, plan Tools/Unity/Stage308_minearcane)
     // Queue-safe: Run(string) never opens a dialog; refusals come back as "REFUSED ...".
     public static partial class Mine308
     {
@@ -39,6 +40,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c == "dump") return DumpScene();
                 if (EditorApplication.isPlayingOrWillChangePlaymode) return "REFUSED Edit mode only (Play is running)";
                 if (EditorApplication.isCompiling || EditorUtility.scriptCompilationFailed) return "REFUSED scripts are compiling or failed to compile";
+                if (c.StartsWith("look:arcane:", StringComparison.Ordinal)) return Arcane(c.Substring(12));      // Mine308.Arcane.cs (its own ledger; status and check are read only)
                 return Extra(c) ?? "REFUSED unknown command '" + c + "'";
             }
             catch (Exception e) { return "REFUSED " + e.Message; }

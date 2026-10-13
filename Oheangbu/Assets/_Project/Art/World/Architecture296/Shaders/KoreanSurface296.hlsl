@@ -209,5 +209,8 @@ float3 RuleColour276(float3 p,float3 n,float3 masks,float distanceWS)
             inkPaper=lerp(inkPaper,sediment,weight*.9);
         }
     }
+    // #308 realm look: soil takes the realm ground wash, steep faces become bedded rock with a scree band at foot and rim.
+    // Both gates are 0 by default (no driver in the scene / material share 0), which leaves the value above untouched.
+    [branch] if(_OhRealmLook>0&&_RealmLook308>0)inkPaper=RealmLookGround308(inkPaper,p,n,masks.y,distanceWS,_RealmLook308);
     return inkPaper;
 }
