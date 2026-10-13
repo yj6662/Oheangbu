@@ -259,6 +259,12 @@ namespace Oheangbu.App.World
             float maximum = Mathf.Clamp(_settings.MaximumBendDegrees, 0f, 60f) * Mathf.Deg2Rad;
             Vector2 target = -(speed > 0f ? lateral / Mathf.Max(lateral.magnitude, .0001f) : Vector2.zero) * (speed * share * maximum)
                 - _lastDirection * (_press * _settings.PressBendDegrees * Mathf.Deg2Rad);
+            // wet hair hangs: the part of gravity across the shaft pulls the tip down (user request 2026-10-13). Upright = none.
+            if (_settings.GravitySagDegrees > 0f)
+            {
+                Vector3 down = Quaternion.Inverse(transform.rotation) * Vector3.down;
+                target += new Vector2(Vector3.Dot(down, _axisX), Vector3.Dot(down, _axisY)) * (_settings.GravitySagDegrees * Mathf.Deg2Rad);
+            }
             target = Vector2.ClampMagnitude(target, maximum);
 
             int steps = Mathf.Clamp(Mathf.CeilToInt(dt / (1f / 120f)), 1, 8);

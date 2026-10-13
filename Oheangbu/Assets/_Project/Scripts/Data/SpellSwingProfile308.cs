@@ -23,11 +23,12 @@ namespace Oheangbu.Data.Spell
         }
 
         [Header("기다리는 분류 — 정점에 발사 [TEST]")]
-        public Entry AttackSingle = new Entry { ApexSeconds = .25f, LockSeconds = .40f, State = "SwingSweep" };
-        public Entry AttackArea = new Entry { ApexSeconds = .50f, LockSeconds = .90f, State = "SwingArc" };
-        public Entry Summon = new Entry { ApexSeconds = .55f, LockSeconds = .90f, State = "SwingSlam" };
-        public Entry Field = new Entry { ApexSeconds = .45f, LockSeconds = .75f, State = "SwingSlam" };
-        public Entry Install = new Entry { ApexSeconds = .45f, LockSeconds = .75f, State = "SwingSlam" };
+        // 2026-10-13 (D308-80c, user): slower and heavier - the cast leaves later too (single .25 -> .40, area .50 -> .65, summon .55 -> .70)
+        public Entry AttackSingle = new Entry { ApexSeconds = 0.40f, LockSeconds = 0.65f, State = "SwingSweep" };
+        public Entry AttackArea = new Entry { ApexSeconds = 0.65f, LockSeconds = 1.10f, State = "SwingArc" };
+        public Entry Summon = new Entry { ApexSeconds = 0.70f, LockSeconds = 1.10f, State = "SwingSlam" };
+        public Entry Field = new Entry { ApexSeconds = 0.60f, LockSeconds = 0.95f, State = "SwingSlam" };
+        public Entry Install = new Entry { ApexSeconds = 0.60f, LockSeconds = 0.95f, State = "SwingSlam" };
 
         [Header("기다리지 않는 분류 — 떼는 순간 효과, 잠금만 [TEST]")]
         public Entry Parry = new Entry { ApexSeconds = 0f, LockSeconds = .20f, State = "SwingPlant" };

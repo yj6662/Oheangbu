@@ -40,6 +40,11 @@ Shader "Oheangbu/InkStroke"
         _FlashAdd("Flash Add (HDR 가산 — Bloom이 집는 성분)", Float) = 1.5
 
         _XrayOpacity("Xray Opacity (가려진 획 투시 농도)", Range(0, 1)) = 0.35
+
+        // 2026-10-13 (사용자): 붓 글씨는 "액체" — 갓 그은 먹이 젖어 윤기 띠가 돌고, 마르면서 사라진다. 빛이 아니라 먹의 반사색(알파 블렌드)이다.
+        _WetSheen("Wet Sheen (젖은 윤기 세기)", Range(0, 1)) = 0.3
+        _WetSeconds("Wet Seconds (마르는 시간 s)", Float) = 3.5
+        _WetColor("Wet Color (윤기 색)", Color) = (0.42, 0.44, 0.47, 1)
     }
 
     SubShader
@@ -90,6 +95,9 @@ Shader "Oheangbu/InkStroke"
             half  _FlashTint;
             half  _FlashAdd;
             half  _XrayOpacity;
+            half  _WetSheen;
+            half  _WetSeconds;
+            half4 _WetColor;
         CBUFFER_END
 
         // 전역 시계 — 어댑터가 프레임당 1회 Shader.SetGlobalFloat("_InkNow", Time.time).
@@ -171,6 +179,14 @@ Shader "Oheangbu/InkStroke"
             // 틴트: 먹이 속성색으로 「물든다」 — LDR 안전, 피크에서도 속성이 색으로 읽힌다(백색 포화 금지).
             // 가산: 담채 속성색 × _FlashAdd(HDR) — Bloom threshold를 넘겨 속성색 글로우가 번진다.
             half3 baseColor = lerp(inkColor, _FlashColor.rgb, saturate(_FlashTint * _FlashStrength));
+            // 젖은 먹의 윤기: 폭 한쪽에 치우친 가는 띠가 획을 따라 흐르듯 일렁이고, 가장자리에는 먹이 고인 테가 선다(액체의 표면장력)
+            half wet = exp(-age / max(_WetSeconds, 1e-3)) * density;
+            float side = (i.uv.y - 0.5) * 2.0 * (1.0 + _EdgeMargin);
+            float wobble = (Fbm(i.posOS.xy * _NoiseScale * 0.35 + _NoiseSeed + 7.3) - 0.5) * 0.3;
+            half band = 1.0 - smoothstep(0.05, 0.16, abs(side + 0.38 + wobble));
+            half glint = 1.0 - smoothstep(0.02, 0.07, abs(side - 0.55 + wobble * 0.6));
+            half sheen = saturate(band * 0.8 + glint * 0.5) * wet * _WetSheen * inkMask;
+            baseColor = lerp(baseColor, _WetColor.rgb, sheen);
             half3 rgb = baseColor * alpha;
             rgb += _FlashColor.rgb * (_FlashAdd * _FlashStrength * edgeMask * inkMask * _FadeMul);
             return half4(rgb, alpha);

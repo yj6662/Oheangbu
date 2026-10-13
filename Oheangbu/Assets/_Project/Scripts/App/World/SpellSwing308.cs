@@ -60,9 +60,12 @@ namespace Oheangbu.App.World
         /// <summary>The Animator's pose is the arms' pose: true whenever the great brush is active and the draw mode is off.</summary>
         public bool OwnsArms => Active && !(_drawing != null && _drawing.InDrawMode);
         /// <summary>0..1: how much the left hand holds the shaft now (the state's curve, eased, times the layer's weight).</summary>
-        public float LeftHandOnShaft => Active ? _left * _upper : 0f;
+        public float LeftHandOnShaft => Active ? _left * _upper * (1f - Mathf.SmoothStep(0f, 1f, BackBlend)) : 0f;
         /// <summary>0 = shoulder carry, 1 = combat stance (eased over the transition).</summary>
         public float StanceBlend { get; private set; }
+        /// <summary>0 = in the hand, 1 = slung on the back (sprinting out of combat; the rig also slings it in a seat). Arms are free at 1.</summary>
+        public float BackBlend { get; private set; }
+        private float _sprintSince = -1f, _sprintEndedAt = -100f; private bool _backWanted;
         public StanceState Stance => _stance;
         public bool Swinging => _swinging || _holding;
         /// <summary>A swing began in this frame (the rig asks inside the same commit: no close-up follow-through then).</summary>
@@ -266,7 +269,16 @@ namespace Oheangbu.App.World
             bool standing = local.x * local.x + local.z * local.z < profile.StandingSpeed * profile.StandingSpeed && _motor.IsLocomotionGrounded;
             float bodyTarget = Swinging && standing && !suppressed && !drawing ? 1f : 0f;
             _body = Mathf.MoveTowards(_body, bodyTarget, dt / Mathf.Max(.01f, profile.BodyFade));
-            Animator.SetLayerWeight(_layer, _upper);
+            // on the back while sprinting out of combat: both arms go back to the run (user request 2026-10-13)
+            bool sprinting = _motor.IsSprinting && !suppressed;
+            if (sprinting) { if (_sprintSince < 0f) _sprintSince = now; } else { if (_sprintSince >= 0f) _sprintEndedAt = now; _sprintSince = -1f; }
+            bool calm = _stance == StanceState.Carry && !Swinging && !drawing;
+            if (!calm) _backWanted = false;
+            else if (sprinting && now - _sprintSince >= profile.BackAfterSeconds) _backWanted = true;
+            else if (!sprinting && now - _sprintEndedAt >= profile.BackReleaseSeconds) _backWanted = false;
+            BackBlend = Mathf.MoveTowards(BackBlend, _backWanted ? 1f : 0f, dt / Mathf.Max(.05f, profile.BackSeconds));
+            float inHand = 1f - Mathf.SmoothStep(0f, 1f, BackBlend);
+            Animator.SetLayerWeight(_layer, _upper * inHand);
             if (_bodyLayer >= 0) Animator.SetLayerWeight(_bodyLayer, _body);
 
             // the left hand: the shown state's curve at its clip time, eased

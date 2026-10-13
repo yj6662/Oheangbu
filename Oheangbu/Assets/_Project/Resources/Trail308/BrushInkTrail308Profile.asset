@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: BrushInkTrail308Profile
   m_EditorClassIdentifier:
   TrailShader: {fileID: 4800000, guid: 5a1c308b7e4d4f0a9c3e21d0a8b7c603, type: 3}
-  Seconds: 1.1
-  HeadWidth: 0.055
-  TailWidthShare: 0.15
+  Seconds: 1.6
+  HeadWidth: 0.16
+  TailWidthShare: 1.9
   MinVertexDistance: 0.025
   ThinAtSpeed: 9
-  ThinShare: 0.55
-  InkColor: {r: 0.05, g: 0.047, b: 0.045, a: 1}
-  Opacity: 0.82
+  ThinShare: 0.8
+  InkColor: {r: 0.16, g: 0.16, b: 0.165, a: 1}
+  Opacity: 0.34
   StreakDensity: 18
-  DryStrength: 0.7
-  EdgeSoftness: 0.22
+  DryStrength: 0.75
+  EdgeSoftness: 0.5
   HideWithinCamera: 0.45
   ClearJump: 3

@@ -94,6 +94,8 @@ namespace Oheangbu.Data.Spell
             [Min(.1f)] public float SplayResponse;
             [Tooltip("프레임 간격이 이보다 길면 변형을 초기화한다(초).")]
             [Min(.05f)] public float ResetAfterGap;
+            [Tooltip("붓을 눕혔을 때 젖은 털이 제 무게로 처지는 각(도). 세우면 0, 수평이면 이 값. 0 = 끔.")]
+            [Range(0, 30)] public float GravitySagDegrees;
 
             public static BristleSettings Default => new BristleSettings
             {
@@ -101,7 +103,7 @@ namespace Oheangbu.Data.Spell
                 RingFrequency = 4.2f, RingDamping = .55f, RingStiffnessSpread = .35f, RingBendScale = 1.2f, RingFlareDegrees = 14f,
                 ViewSpeedForFullBend = 1.5f, WorldSpeedForFullBend = 9f, HoverBendShare = .2f, AirBendShare = .8f,
                 PressRiseSeconds = .08f, PressReleaseSeconds = .14f, PressDeep = 1f, PressLight = .35f, PressBendDegrees = 14f,
-                SplayBySpeed = .55f, SplayByPress = .35f, SplayResponse = 14f, ResetAfterGap = .5f
+                SplayBySpeed = .55f, SplayByPress = .35f, SplayResponse = 14f, ResetAfterGap = .5f, GravitySagDegrees = 9f
             };
 
             public bool IsValid =>
@@ -144,6 +146,18 @@ namespace Oheangbu.Data.Spell
         [Tooltip("이 거리 안에서 플레이어를 쫓는 적이 있으면 전투 태세를 유지한다(m).")]
         [Min(0)] public float ThreatRadius = 28f;
         [Min(.05f)] public float ThreatPollSeconds = .25f;
+
+        [Header("등에 메기 (달릴 때 · 탈것 · 앉을 때) — 사용자 요청 2026-10-13")]
+        [Tooltip("전력 질주를 이만큼 이어가면 붓을 등에 멘다(초). 전투 중(전투 태세)에는 메지 않는다.")]
+        [Min(0)] public float BackAfterSeconds = .25f;
+        [Tooltip("질주를 멈추고 이만큼 지나면 다시 어깨에 걸친다(초).")]
+        [Min(0)] public float BackReleaseSeconds = .6f;
+        [Tooltip("손 ↔ 등 옮기는 시간(초).")]
+        [Min(.05f)] public float BackSeconds = .35f;
+        [Tooltip("등에 멨을 때 GripSocket 자리: 두 어깨 가운데에서 몸통 기준(오른쪽, 위, 앞) m.")]
+        public Vector3 BackSocketOffset = new Vector3(0f, -.25f, -.17f);
+        [Tooltip("등에 멨을 때 자루 방향(꼬리 → 붓머리), 몸통 기준(오른쪽, 위, 앞). 오른 어깨 위로 붓머리가 올라온다.")]
+        public Vector3 BackShaftDirection = new Vector3(.45f, .85f, -.05f);
 
         [Header("애니메이터 (AC_PlaytestLocomotion_Brush308)")]
         [Tooltip("윗몸 층(허리 위 마스크): 대기 자세 둘 + 모든 동작.")]
@@ -188,6 +202,9 @@ namespace Oheangbu.Data.Spell
         [Min(.05f)] public float NearMinimumDepth = .7f;
         [Min(.05f)] public float NearMaximumDepth = 1.6f;
         public Vector3 NearShoulderOffset = new Vector3(.23f, -.29f, .15f);
+        [Tooltip("가까운 화면의 호흡 흔들림: 어깨가 움직이는 폭(m). 붓끝은 그대로 포인터 위에 있고 자루 쪽이 숨결처럼 흔들린다. 0 = 끔.")]
+        [Range(0, .05f)] public float NearBreathAmplitude = .014f;
+        [Min(.01f)] public float NearBreathHz = .27f;
         [Min(0)] public float NearRaiseSeconds = .28f;
         public Vector3 NearRaiseOffset = new Vector3(.06f, -.42f, -.12f);
 

@@ -150,7 +150,15 @@ namespace Oheangbu.App.World
         private float NearTipDepth308 => GreatNow308 ? _great308.NearTipDepth : _profile.NearTipDepth;
         private float NearMinimumDepth308 => GreatNow308 ? _great308.NearMinimumDepth : _profile.NearMinimumDepth;
         private float NearMaximumDepth308 => GreatNow308 ? _great308.NearMaximumDepth : _profile.NearMaximumDepth;
-        private Vector3 NearShoulderOffset308 => GreatNow308 ? _great308.NearShoulderOffset : _profile.NearShoulderOffset;
+        private Vector3 NearShoulderOffset308 => GreatNow308 ? _great308.NearShoulderOffset + NearBreath308() : _profile.NearShoulderOffset;
+        // breathing in the close-up (user request 2026-10-13): the shoulder rises and falls, a slower drift sideways. The tip is
+        // solved onto the pointer after this, so the stroke itself does not move - only the shaft end and the hands do.
+        private Vector3 NearBreath308()
+        {
+            float a = _great308.NearBreathAmplitude; if (a <= 0f) return Vector3.zero;
+            float t = Time.time * _great308.NearBreathHz * 2f * Mathf.PI;
+            return new Vector3(Mathf.Sin(t * .5f + 1.3f) * a * .6f, Mathf.Sin(t) * a, Mathf.Sin(t * .5f) * a * .35f);
+        }
         private float NearRaiseSeconds308 => GreatNow308 ? _great308.NearRaiseSeconds : _profile.NearRaiseSeconds;
         private Vector3 NearRaiseOffset308 => GreatNow308 ? _great308.NearRaiseOffset : _profile.NearRaiseOffset;
 
@@ -168,6 +176,7 @@ namespace Oheangbu.App.World
             Quaternion rotation = _world.Hand.rotation * WorldMacroPlayerGestureProfile.SafeRotation(grip.Rotation);
             _worldBrush.Root.rotation = rotation * Quaternion.Inverse(_worldBrush.RootToGripRotation);
             _worldBrush.Root.position += _world.Hand.TransformPoint(grip.Position) - _worldBrush.Grip.position;
+            SlingOnBack308(Mathf.SmoothStep(0f, 1f, _swing308.BackBlend));   // sprinting out of combat: hand -> back
             SolveLeftHand308(_swing308.LeftHandOnShaft);
 
             // bristles trail behind the tip's motion relative to the body (walking straight does not bend them; a swing does)
@@ -192,6 +201,38 @@ namespace Oheangbu.App.World
             _diagnostics.DrawingWeight = _drawWeight; _diagnostics.HarvestWeight = _harvestWeight;
             _diagnostics.State = _recoveryRemaining > 0f ? _recoveryState : harvesting ? GestureState.Harvest : GestureState.Carry;
             return true;
+        }
+
+        // The brush slung across the back: head over the right shoulder, tail by the left hip. The frame is built from the body's
+        // own joints (shoulder line, hips -> shoulders), so it leans and turns with the torso in a run or in a seat.
+        private void SlingOnBack308(float weight)
+        {
+            if (weight <= 0f || _great308 == null || _worldBrush == null || _world.Upper == null || _world.LeftUpper == null) return;
+            if (_greatHips308 == null) { var animator = GetComponent<Animator>(); _greatHips308 = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Hips) : null; }
+            Vector3 middle = (_world.Upper.position + _world.LeftUpper.position) * .5f;
+            Vector3 right = (_world.Upper.position - _world.LeftUpper.position).normalized;
+            Vector3 up = _greatHips308 != null ? (middle - _greatHips308.position).normalized : _world.Root.up;
+            Vector3 forward = Vector3.Cross(right, up).normalized; right = Vector3.Cross(up, forward);
+            if (forward.sqrMagnitude < .5f) return;
+            Vector3 d = _great308.BackShaftDirection.sqrMagnitude > .0001f ? _great308.BackShaftDirection.normalized : Vector3.up;
+            Vector3 shaft = (right * d.x + up * d.y + forward * d.z).normalized;
+            Vector3 x = Vector3.ProjectOnPlane(forward, shaft).normalized;                    // ring A side (root -X) looks away from the back
+            Quaternion rootRotation = Quaternion.LookRotation(Vector3.Cross(x, shaft), shaft);
+            Vector3 o = _great308.BackSocketOffset;
+            Vector3 socket = middle + right * o.x + up * o.y + forward * o.z;
+            _worldBrush.Root.rotation = Quaternion.Slerp(_worldBrush.Root.rotation, rootRotation, weight);
+            _worldBrush.Root.position += Vector3.Lerp(_worldBrush.Grip.position, socket, weight) - _worldBrush.Grip.position;
+        }
+        private Transform _greatHips308;
+
+        // In a seat / a vehicle / on a stopped rig the rig returns early: the great brush still has to be somewhere. On the back.
+        private void SuspendedBrush308()
+        {
+            if (!_greatBound308 || _worldBrush == null || _worldBrush.Great == null) return;
+            SlingOnBack308(1f);
+            _worldBrush.Great.ApplyPose();
+            if (_effectTip != null) _effectTip.SetPositionAndRotation(_worldBrush.Tip.position, _worldBrush.Tip.rotation);
+            _greatTipHas308 = false;
         }
 
         // The drawing branch (and the legacy pass), after the world brush was placed.

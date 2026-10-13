@@ -18,7 +18,7 @@ namespace Oheangbu.Data.Spell
         [Tooltip("붓끝 바로 뒤의 굵기(m).")]
         [Range(.005f, .4f)] public float HeadWidth = .055f;
         [Tooltip("꼬리 끝의 굵기(머리 굵기에 대한 비율).")]
-        [Range(0f, 1f)] public float TailWidthShare = .15f;
+        [Range(0f, 3f)] public float TailWidthShare = .15f;
         [Tooltip("붓끝이 이만큼(m) 움직일 때마다 점을 하나 놓는다.")]
         [Range(.005f, .3f)] public float MinVertexDistance = .025f;
         [Tooltip("붓끝 빠르기가 이 값(m/s)일 때 가장 가늘어진다(빠를수록 갈필).")]

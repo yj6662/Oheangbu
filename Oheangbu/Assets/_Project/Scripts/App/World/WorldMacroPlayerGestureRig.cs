@@ -418,6 +418,7 @@ namespace Oheangbu.App.World
                 RestoreAnimatedPose();
                 EndCast();
                 JuiceSuspend308();   // #308: no camera reaction in the seat or on a stopped rig
+                SuspendedBrush308(); // #308 great brush: slung on the back in a seat / a vehicle (nothing without it)
                 SetNearVisible(false);
                 _cameraRig?.SetDrawingPresentationActive(false);
                 if (!_wasSuspended)

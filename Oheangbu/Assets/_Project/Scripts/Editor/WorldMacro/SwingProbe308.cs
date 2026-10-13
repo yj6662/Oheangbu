@@ -126,7 +126,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (swing == null) swing = UnityEngine.Object.FindFirstObjectByType<SpellSwing308>();
             if (swing == null) return "brush: no SpellSwing308";
             string text = "brush: active " + swing.Active + " stance " + swing.Stance + " blend " + swing.StanceBlend.ToString("F2", Inv) + " state " + (swing.State ?? "-") + " t " + swing.ClipSeconds.ToString("F2", Inv) +
-                          " upper " + swing.UpperWeight.ToString("F2", Inv) + " body " + swing.BodyWeight.ToString("F2", Inv) + " left " + swing.LeftHandOnShaft.ToString("F2", Inv) + " swings " + swing.Swings + " cuts " + swing.Cuts;
+                          " upper " + swing.UpperWeight.ToString("F2", Inv) + " body " + swing.BodyWeight.ToString("F2", Inv) + " left " + swing.LeftHandOnShaft.ToString("F2", Inv) + " swings " + swing.Swings + " cuts " + swing.Cuts + " back " + swing.BackBlend.ToString("F2", Inv) + " sprint " + (walker.Motor != null && walker.Motor.IsSprinting);
             var animator = swing.GetComponent<Animator>(); var rig = swing.GetComponent<WorldMacroPlayerGestureRig>();
             if (animator != null && rig != null && rig.WorldTip != null && swing.Profile != null)
             {

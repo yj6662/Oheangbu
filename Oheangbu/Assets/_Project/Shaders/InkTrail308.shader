@@ -61,20 +61,26 @@ Shader "Oheangbu/InkTrail308"
 
             half4 Frag(Varyings input) : SV_Target
             {
+                // 2026-10-13 (사용자): 잔상은 "기체" — 붓 글씨(액체)와 섞여 보이지 않게, 먹 연기처럼 옅고 피어오르며 흩어진다.
                 float2 uv = input.uv;
-                // 가장자리: 폭 가운데가 진하고, 가장자리는 길이를 따라 조금 울퉁불퉁하다
-                half across = abs(uv.y - 0.5) * 2.0;
-                half ragged = (Noise(float2(uv.x * 14.0, uv.y * 3.0)) - 0.5) * 0.25;
-                half edge = 1.0 - smoothstep(1.0 - _EdgeSoftness + ragged, 1.0, across);
-                // 갈필: 폭 방향으로 촘촘하고 길이 방향으로 긴 결. 꼬리로 갈수록, 옅을수록 결이 갈라진다
-                half streak = Noise(float2(uv.y * _StreakDensity, uv.x * 2.5));
-                half fine = Noise(float2(uv.y * _StreakDensity * 2.7 + 11.0, uv.x * 9.0));
-                half dry = saturate(_DryStrength * (0.25 + 1.1 * uv.x));
-                half body = saturate((lerp(streak, fine, 0.35) - dry * 0.75) / max(0.05, 1.0 - dry * 0.75));
-                body = lerp(1.0, smoothstep(0.0, 0.5, body), saturate(dry * 1.4));
-                half alpha = input.color.a * _Opacity * edge * body;
-                clip(alpha - 0.004);
-                return half4(_InkColor.rgb * input.color.rgb, alpha);
+                float t = _Time.y;
+                // 연기 결: 꼬리로 갈수록 크게 일렁이며 위로(폭 방향) 흘러 풀린다
+                float2 flow = float2(uv.x * 3.0 - t * 0.35, uv.y * 2.2 + t * 0.22 + uv.x * 1.5);
+                half big = Noise(flow);
+                half small = Noise(flow * 2.7 + float2(4.1, -t * 0.5));
+                half puff = lerp(big, small, 0.4);
+                // 가장자리: 선이 아니라 뭉게 — 폭 전체가 부드럽게 꺼지고, 연기 결이 가장자리를 파먹는다
+                half across = abs(uv.y - 0.5 + (big - 0.5) * 0.35 * uv.x) * 2.0;
+                half body = 1.0 - smoothstep(0.15, 1.0, across);
+                body *= body;
+                // 흩어짐: 머리는 조금 진하고 꼬리로 갈수록 연기 결의 임계가 올라가 구멍이 나며 사라진다
+                half thin = saturate(_DryStrength * (0.15 + 1.25 * uv.x));
+                half wisp = smoothstep(thin * 0.85, thin * 0.85 + 0.45, puff + 0.25 * (1.0 - uv.x));
+                half alpha = input.color.a * _Opacity * body * wisp * (1.0 - 0.35 * _EdgeSoftness);
+                clip(alpha - 0.003);
+                // 연기는 먹보다 옅은 회색으로 풀린다
+                half3 smoke = lerp(_InkColor.rgb, _InkColor.rgb + 0.22, saturate(uv.x * 1.2 + (1.0 - body) * 0.5));
+                return half4(smoke * input.color.rgb, alpha);
             }
             ENDHLSL
         }
