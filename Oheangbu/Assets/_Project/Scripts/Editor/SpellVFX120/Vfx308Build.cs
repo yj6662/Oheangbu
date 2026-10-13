@@ -31,7 +31,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
     //   pose:<letter>:<when>[:ox,oy,oz:tx,ty,tz]  - Edit mode: one unsaved preview posed at a moment of its flight
     //                               when = seconds | launch | mid (6 m out) | hit | hit+<seconds>
     //   pose:clear
-    public static class Vfx308Build
+    public static partial class Vfx308Build
     {
         const string Root = "Assets/_Project/Art/SpellVFX308";
         const string VisualSet = "Assets/_Project/Art/World/Architecture296/Data/9f55ff4897c35bf408434d2fd4cd5dbc_278c3cdf45b3ab24fb93a8f33e2264e2_9ba170fd23c53dc418707872eb7b2056_SpellVisualSet_120.asset";
@@ -56,6 +56,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             V2 = !command.EndsWith(":v1", StringComparison.Ordinal);
             if (!V2) command = command.Substring(0, command.Length - 3);
             if (command.StartsWith("pose", StringComparison.Ordinal)) return Pose(command.Split(':'));
+            if (command.StartsWith("swingink", StringComparison.Ordinal)) return SwingInk(command.Split(':'));     // 11.10: the ink of the five swings
             switch (command)
             {
                 case "build": return Build() + (V2 ? BuildAttack() : "");

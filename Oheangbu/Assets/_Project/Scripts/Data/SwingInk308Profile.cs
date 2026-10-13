@@ -1,0 +1,62 @@
+using System;
+using UnityEngine;
+
+namespace Oheangbu.Data.Spell
+{
+    // SPEC-SPELL-VFX-OVERHAUL-308 11.10 (D308-83a) [every number TEST]: the ink of a cast's swing. One entry per swing state
+    // (SpellSwingProfile308.Entry.State): the stroke the brush tip leaves in the air and the prefab whose parts follow the tip
+    // ("Tip") and are placed once at the apex ("Apex" at the tip, "Ground" on the ground under it).
+    // Presentation only: nothing here is read by recognition, by power or by the swing rule. Ink, not light (ART-INK).
+    // Runtime lookup: Resources "SwingInk308/SwingInk308Profile". Missing = no swing ink.
+    [CreateAssetMenu(menuName = "Oheangbu/Spell/Swing Ink 308", fileName = "SwingInk308Profile")]
+    public sealed class SwingInk308Profile : ScriptableObject
+    {
+        [Serializable]
+        public struct Entry
+        {
+            [Tooltip("휘두르기 상태 이름(SpellSwingProfile308의 State와 같다).")]
+            public string State;
+            [Tooltip("자식 Tip / Apex / Ground를 가진 프리팹(비우면 획만).")]
+            public GameObject Prefab;
+            [Tooltip("붓끝 획의 재질(Oheangbu/SwingInk308/InkArc). 비우면 획 없음.")]
+            public Material Stroke;
+            [Tooltip("획의 굵기(m).")]
+            [Range(.02f, 1.2f)] public float StrokeWidth;
+            [Tooltip("획이 남아 있는 시간(초).")]
+            [Range(.1f, 2f)] public float StrokeSeconds;
+            [Tooltip("규칙의 정점이 0인 분류(패링 · 결계 · 강화)에서 그림의 정점(떼고 나서, 초).")]
+            [Min(0)] public float VisualApexSeconds;
+            [Tooltip("정점 뒤에도 붓끝을 따라가며 먹을 뿌리는 시간(초).")]
+            [Min(0)] public float FollowAfterApex;
+        }
+
+        public Entry[] States = Array.Empty<Entry>();
+
+        [Header("끄는 조건")]
+        [Tooltip("눈에서 이 거리(m) 안의 붓끝은 건너뛴다.")]
+        [Min(0)] public float HideWithinCamera = .45f;
+        [Tooltip("붓끝이 한 프레임에 이 거리(m)보다 멀리 옮겨지면(순간 이동) 획을 끊는다.")]
+        [Min(.5f)] public float ClearJump = 3f;
+        [Tooltip("붓끝이 이만큼(m) 움직일 때마다 획에 점을 하나 놓는다.")]
+        [Range(.005f, .2f)] public float MinVertexDistance = .03f;
+
+        public bool IsValid
+        {
+            get
+            {
+                if (States == null || States.Length == 0 || float.IsNaN(HideWithinCamera + ClearJump + MinVertexDistance)) return false;
+                foreach (var e in States)
+                    if (string.IsNullOrEmpty(e.State) || float.IsNaN(e.StrokeWidth + e.StrokeSeconds + e.VisualApexSeconds + e.FollowAfterApex) || e.StrokeSeconds <= 0f) return false;
+                return true;
+            }
+        }
+
+        /// <summary>Index into States, or -1.</summary>
+        public int IndexOf(string state)
+        {
+            if (string.IsNullOrEmpty(state) || States == null) return -1;
+            for (int i = 0; i < States.Length; i++) if (States[i].State == state) return i;
+            return -1;
+        }
+    }
+}
