@@ -75,7 +75,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         static readonly string[] Sheets = { "ink_splat", "ink_drops", "wood_splinter", "fire_tongue", "fire_burst", "earth_dust", "metal_streak", "water_ring", "water_orb" };
         static readonly string[] MeshNames = { "thorn", "splinter", "clod", "chunk", "blade", "stalk", "drop", "tongue" };
-        static readonly string[] Sheets2 = Sheets.Concat(new[] { "wood_stroke", "fire_lick", "speed_line", "earth_heave", "water_crest", "ink_pool" }).ToArray();     // v2 only (4th pass, range forms)
+        static readonly string[] Sheets2 = Sheets.Concat(new[] { "wood_stroke", "fire_lick", "speed_line", "earth_heave", "water_crest", "ink_pool", "ink_throw", "ink_wisp", "ink_gather" }).ToArray();     // v2 only (4th pass, range forms)
 
         static Texture2D Sheet(string name)
         {
@@ -502,6 +502,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             Layer(travel, new L { Name = "Birth", Mat = Bleed("M_V308b_" + key + "_birth", null, Color.clear, 0f, .5f, .3f), World = false, Burst = 1, Max = 2, Life = new Vector2(2f * Cel, 2f * Cel),
                 Size = new Vector2(size, size), NoShape = true, Flipbook = false, SpinRandom = false, Colour = G((0f, C(c, .9f)), (.5f, C(c, .6f)), (1f, C(c, 0f))) });
+            // 6th pass (D308-83): the body is made of thrown ink. Where it leaves, ink comes together (ink_gather sheet, the
+            // cels in which the drops are already on their way in) and is drawn in as the body goes: ink first, colour after.
+            // World space: it stays where the spell left the brush. Plain ink colour, no glow.
+            var gatherInk = new Color(.06f, .055f, .05f, 1f);
+            Layer(travel, new L { Name = "Gather", Mat = Bleed("M_V308b_ink_gather", "ink_gather", C(gatherInk, .95f), 0f, .95f), Burst = 1, Max = 2, Life = new Vector2(3f * Cel, 3f * Cel),
+                Size = new Vector2(size * 1.25f, size * 1.25f), NoShape = true, Blend = true, FrameFrom = 6f, FrameTo = 13f, Colour = G((0f, C(gatherInk, 1f)), (.7f, C(gatherInk, 1f)), (1f, C(gatherInk, 0f))), Grow = Curve(0f, 1.15f, 1f, .45f) });
         }
 
         // a whole sheet played once over the hit (the .9 s the effect outlives its impact), swelling as it pales

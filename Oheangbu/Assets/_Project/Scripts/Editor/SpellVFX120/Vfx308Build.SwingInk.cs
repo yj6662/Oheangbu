@@ -91,6 +91,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var (root, tip, apex, _) = SwingShell(s);
             Thrown(tip, 10f, new Vector2(.12f, .30f));
+            // the thrown ink itself: bristle lines that run the way of the throw (ink_throw sheet, drawn along its velocity)
+            Layer(apex, new L { Name = "Throw", Mat = SwingSheet("ink_throw", .95f), Mode = 3, Burst = 3, Max = 4, Life = new Vector2(.5f, .62f), Size = new Vector2(2.6f, 3.4f), Speed = new Vector2(6f, 9f), Drag = 2.6f, SpinRandom = false, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 7f, Radius = .08f, FrameFrom = 0f, FrameTo = 15.5f, Colour = InkFade(.55f), Grow = Curve(0f, .7f, .25f, 1f, 1f, 1.1f) });
             Layer(apex, new L { Name = "Fling", Mat = SwingSheet("ink_splat"), Burst = 2, Max = 3, Life = new Vector2(.42f, .42f), Size = new Vector2(2.0f, 2.6f), Speed = new Vector2(2.5f, 4f), Drag = 3f, NoShape = true, Blend = true,
                 FrameFrom = 0f, FrameTo = 12f, Colour = InkFade(.35f), Grow = Curve(0f, .55f, .3f, 1f, 1f, 1.3f) });
             Layer(apex, new L { Name = "Spray", Mat = SwingSheet("ink_drops", .9f), Burst = 12, Max = 12, Life = new Vector2(.3f, .55f), Size = new Vector2(.14f, .38f), Speed = new Vector2(5f, 11f), Drag = 1.6f, Gravity = 1.8f,
@@ -103,7 +106,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var (root, tip, apex, _) = SwingShell(s);
             Thrown(tip, 13f, new Vector2(.16f, .42f), .6f, 1.4f, 56);
-            Layer(apex, new L { Name = "Cast", Mat = SwingSheet("ink_splat"), Burst = 3, Max = 3, Life = new Vector2(.45f, .55f), Size = new Vector2(2.0f, 2.8f), Speed = new Vector2(2.5f, 5f), Drag = 2.4f, Blend = true,
+            Layer(apex, new L { Name = "Throw", Mat = SwingSheet("ink_throw", .95f), Mode = 3, Burst = 4, Max = 5, Life = new Vector2(.5f, .65f), Size = new Vector2(1.9f, 2.7f), Speed = new Vector2(6f, 10f), Drag = 2.2f, SpinRandom = false, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, Radius = .15f, FrameFrom = 0f, FrameTo = 15.5f, Colour = InkFade(.55f), Grow = Curve(0f, .7f, .25f, 1f, 1f, 1.1f) });
+            Layer(apex, new L { Name = "Cast", Mat = SwingSheet("ink_splat"), Burst = 2, Max = 3, Life = new Vector2(.45f, .55f), Size = new Vector2(1.6f, 2.2f), Speed = new Vector2(2.5f, 5f), Drag = 2.4f, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 28f, Radius = .2f, FrameFrom = 0f, FrameTo = 13f, Colour = InkFade(.35f), Grow = Curve(0f, .5f, .3f, 1f, 1f, 1.35f) });
             Layer(apex, new L { Name = "Spray", Mat = SwingSheet("ink_drops", .9f), Burst = 22, Max = 22, Life = new Vector2(.35f, .7f), Size = new Vector2(.16f, .46f), Speed = new Vector2(5f, 13f), Drag = 1.4f, Gravity = 2.2f,
                 Shape = ParticleSystemShapeType.Cone, Angle = 38f, Radius = .1f, RandomCell = true, Blend = true, Colour = InkFade(.45f), Grow = Curve(0f, .8f, 1f, 1.5f) });
@@ -160,7 +165,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             foreach (var d in new[] { "/Prefabs", "/Materials" }) Directory.CreateDirectory(Root2 + d);
             Directory.CreateDirectory(SwingResources);
             AssetDatabase.Refresh();
-            foreach (var sheet in new[] { "ink_splat", "ink_drops", "ink_pool" }) Sheet2(sheet);
+            foreach (var sheet in new[] { "ink_splat", "ink_drops", "ink_pool", "ink_throw" }) Sheet2(sheet);
             var sb = new StringBuilder();
             var entries = new List<SwingInk308Profile.Entry>();
             foreach (var s in Swings)
