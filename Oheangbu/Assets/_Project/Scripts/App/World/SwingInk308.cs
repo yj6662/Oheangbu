@@ -54,6 +54,23 @@ namespace Oheangbu.App.World
         public int Swings { get; private set; }
         public int Apexes { get; private set; }
 
+        // Where the swung brush tip was a moment ago: the spell that leaves at the apex starts there (Vfx120LaunchPoint), so it
+        // comes out of the thrown ink and not out of a point in front of the camera. The dispatch runs in Update and this
+        // component in LateUpdate, so the answer is the tip of the frame before - a few centimetres. Presentation origin
+        // only: the target, the flight clock and the damage never read it.
+        static Vector3 originTip;
+        static float originAt = float.NegativeInfinity;
+        const float OriginFresh = .12f;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics() { originTip = default; originAt = float.NegativeInfinity; }   // domain reload is off in this project
+
+        public static bool TryOrigin(out Vector3 tip)
+        {
+            tip = originTip;
+            return Application.isPlaying && Time.time - originAt <= OriginFresh && Time.time >= originAt;
+        }
+
         public static void Ensure(WorldMacroPlayerGestureRig owner)
         {
             if (owner == null || !Application.isPlaying || owner.GetComponent<SwingInk308>() != null) return;
@@ -176,6 +193,7 @@ namespace Oheangbu.App.World
                         samples.Add(new Sample { Point = tip, Time = now, Width = width });
                 }
                 previous = tip; has = true;
+                if (!hidden) { originTip = tip; originAt = now; }
                 if (!apexDone && now >= apexAt) { apexDone = true; AtApex(tip); }
                 if (now >= followUntil) StopFollowing();
             }
