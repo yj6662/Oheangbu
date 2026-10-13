@@ -55,11 +55,14 @@ namespace Oheangbu.App.World
         // how long its throw keeps the close-up (the twist starts after it) and the throw's tier (twist scale). Without the rig
         // or its juice profile the values are the old ones: CastDelay and scale 1.
         void OnCommitted(bool success) { _castPending = success; }
+        // #308 great brush (SPEC-SPELL-SWING-308 5): both hands are on the brush, so the combat stance does not spread the arms. False without the profile.
+        bool GreatBrush308() { if (_gesture == null) _gesture = GetComponent<WorldMacroPlayerGestureRig>(); return _gesture != null && _gesture.GreatBrushActive308; }
         void ResolveCast308()
         {
             _castPending = false;
             if (_gesture == null) _gesture = GetComponent<WorldMacroPlayerGestureRig>();
             if (_gesture != null && _gesture.CommitRejected308) return;
+            if (_gesture != null && _gesture.SwingOwnsCast308) return;   // #308 great brush: the swing is the cast's motion (false without its profile)
             float delay = Profile != null ? Profile.CastDelay : 0f;
             _castScale = _gesture != null ? _gesture.CastTwistScale308 : 1f;
             _castAt = Time.time + (_gesture != null ? _gesture.CastTwistDelay308(delay) : delay);
@@ -115,7 +118,7 @@ namespace Oheangbu.App.World
             {
                 float s = Mathf.SmoothStep(0f, 1f, _stance), leg = Profile.CombatLegSpreadDegrees * s, arm = Profile.CombatArmSpreadDegrees * s; float length = _footL != null ? Vector3.Distance(_legL.position, _footL.position) : .85f;
                 _hips.position -= body.up * (length * (1f - Mathf.Cos(leg * Mathf.Deg2Rad)));
-                Spread(_legL, _footL, body, leg, -1f, true); Spread(_legR, _footR, body, leg, 1f, true); Spread(_armL, null, body, arm, -1f, false); Spread(_armR, null, body, arm, 1f, false);
+                Spread(_legL, _footL, body, leg, -1f, true); Spread(_legR, _footR, body, leg, 1f, true); if (!GreatBrush308()) { Spread(_armL, null, body, arm, -1f, false); Spread(_armR, null, body, arm, 1f, false); }
                 pitchAll += Profile.CombatLeanDegrees * s;
             }
             bool idleOff = off || cast > 0f || !Profile.BreathEnabled;
