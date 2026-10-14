@@ -955,7 +955,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                         hits[a.Elem] = hit = PrefabUtility.SaveAsPrefabAsset(root, HitPath(a.Elem));
                         Object.DestroyImmediate(root);
                     }
-                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.Bolt300Prefab = null;
+                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f;   // D308-84 7th pass: not a fence profile.Bolt300Prefab = null;
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
                     profile.NativeCastPrefab = null;

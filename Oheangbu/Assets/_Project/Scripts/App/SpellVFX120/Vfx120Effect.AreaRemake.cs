@@ -38,8 +38,10 @@ namespace Oheangbu.App.SpellVFX120
    _areaBodies=new Transform[count];_areaRenderers=new Renderer[count];_areaFeet=new Vector3[count];
    for(int i=0;i<count;i++)
    {
+    // D308-84: each cane its own lean and height (AreaBambooLean / HeightSpread), stable per spike
     var body=Instantiate(Profile.NativeBodyPrefab,_areaHost.transform,false);body.name="AreaBody_"+i;_areaBodies[i]=body.transform;_areaRenderers[i]=body.GetComponentInChildren<MeshRenderer>();
-    if(k==Vfx120AreaRemake.BambooField){var point=plan.Spikes[i].Point;point.y=GroundHeight(point,point.y);_areaFeet[i]=point;body.transform.localScale=new Vector3(.8f+i%3*.11f,.85f+i%5*.1f,.8f+i%3*.11f);body.transform.rotation=Quaternion.Euler(i%3*3,i*71,i%2*4-2);}
+    if(k==Vfx120AreaRemake.BambooField){var point=plan.Spikes[i].Point;point.y=GroundHeight(point,point.y);_areaFeet[i]=point;body.transform.localScale=new Vector3(.8f+i%3*.11f,.85f+i%5*.1f,.8f+i%3*.11f);body.transform.rotation=Quaternion.Euler(i%3*3,i*71,i%2*4-2);
+     if(Profile.AreaBambooLean>0f){float lean=Profile.AreaBambooLean,spread=Profile.AreaBambooHeightSpread;body.transform.rotation=Quaternion.Euler((Hash308(i,1)*2-1)*lean,i*71,(Hash308(i,2)*2-1)*lean);body.transform.localScale=new Vector3(.85f,1f+(Hash308(i,3)*2-1)*spread,.85f);}}
    }
    _areaParticles=_areaHost.GetComponentsInChildren<ParticleSystem>();
    for(int i=0;i<_areaParticles.Length;i++){var ps=_areaParticles[i];ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);ps.useAutoRandomSeed=false;ps.randomSeed=(uint)(271+i);var main=ps.main;main.playOnAwake=false;main.cullingMode=ParticleSystemCullingMode.AlwaysSimulate;ps.Simulate(0,false,true,false);}
@@ -133,7 +135,7 @@ namespace Oheangbu.App.SpellVFX120
     {
      float rise=Mathf.SmoothStep(0,1,Mathf.InverseLerp(p.Spikes[i].RiseAt-.12f,p.Spikes[i].RiseAt,t));
      if(rise>=.999f)AreaRaised++;_areaBodies[i].position=_areaFeet[i]-Vector3.up*((1-rise)*2.1f);
-     _areaRenderers[i].enabled=rise>0&&fade>0;_areaBlock.Clear();_areaBlock.SetFloat("_Visibility",fade);_areaBlock.SetFloat("_DissolveHeight",Mathf.Lerp(0,2.2f,fade));_areaBlock.SetFloat("_GroundY",_areaFeet[i].y);_areaRenderers[i].SetPropertyBlock(_areaBlock);
+     if(_areaRenderers[i]!=null){_areaRenderers[i].enabled=rise>0&&fade>0;_areaBlock.Clear();_areaBlock.SetFloat("_Visibility",fade);_areaBlock.SetFloat("_DissolveHeight",Mathf.Lerp(0,2.2f,fade));_areaBlock.SetFloat("_GroundY",_areaFeet[i].y);_areaRenderers[i].SetPropertyBlock(_areaBlock);}   // D308-84: a #308 body may carry no mesh (particle canes)
     }
    }
    else if(kind==Vfx120AreaRemake.NeedleVolley)
@@ -246,5 +248,6 @@ namespace Oheangbu.App.SpellVFX120
    if(_areaWater!=null){if(Application.isPlaying)Destroy(_areaWater);else DestroyImmediate(_areaWater);}
    _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
   }
- }
+  static float Hash308(int i,int k){float v=Mathf.Sin(i*12.9898f+k*78.233f)*43758.5453f;return v-Mathf.Floor(v);}
+}
 }
