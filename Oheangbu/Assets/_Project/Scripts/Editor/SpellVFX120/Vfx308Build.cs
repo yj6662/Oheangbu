@@ -961,7 +961,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
                     profile.NativeCastPrefab = null;
                     // the per-hit contact seam: the game scales the contact by KtpContactProfile.ParryScale (.22) x this
-                    profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f;
+                    profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f; profile.KtpContactBrightness = 1f;   // ink, not light (census: 3.5 copied from the old seal)
                 }
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + a.Effect + ".prefab";
@@ -1207,7 +1207,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var profile = Load<Vfx120Profile>(spell != null ? ProfilePath(spell) : AttackProfilePath(a));
                 var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(a.Elem));
                 if (profile == null || hit == null) continue;
-                profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = SingleHitScale / .22f;
+                profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = SingleHitScale / .22f; profile.KtpContactBrightness = 1f;
                 EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
                 mine.Add(profile); singles++;
             }

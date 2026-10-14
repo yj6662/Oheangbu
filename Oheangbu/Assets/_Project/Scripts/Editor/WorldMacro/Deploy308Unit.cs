@@ -176,6 +176,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                         new KeyValuePair<string, string>("ImpactFrame308", Source(Deploy308.ImpactShader)), new KeyValuePair<string, string>("ImpactHud308.hlsl", FileOrNull(HudInclude)),
                         new KeyValuePair<string, string>("InkMeter", FileOrNull(MeterShader)), new KeyValuePair<string, string>("InkReveal", FileOrNull(RevealShader)),
                         new KeyValuePair<string, string>("InkBurst308 (blend / HDR only)", burst == null ? null : burst.Replace("_Glow", "")),
+                        // SPEC-SPELL-VFX-OVERHAUL-308 2nd-stage gate (D308-84): the #308 spell shaders. Solid / strand / arc carry no glow at
+                        // all; InkBleed / InkFlipbook carry only the capped birth glow (checked below for its ceiling), so here blend / HDR only.
+                        new KeyValuePair<string, string>("InkSolid308", FileOrNull(Vfx308Dir + "InkSolid308.shader")), new KeyValuePair<string, string>("InkBody308", FileOrNull(Vfx308Dir + "InkBody308.shader")),
+                        new KeyValuePair<string, string>("InkStrand308", FileOrNull(Vfx308Dir + "InkStrand308.shader")), new KeyValuePair<string, string>("InkArc308", FileOrNull("Assets/_Project/Shaders/SwingInk308/InkArc308.shader")),
+                        new KeyValuePair<string, string>("InkBleed308 (blend / HDR only)", Vfx308Glow("InkBleed308.shader")), new KeyValuePair<string, string>("InkFlipbook308 (blend / HDR only)", Vfx308Glow("InkFlipbook308.shader")),
                     })
                     {
                         if (pair.Value == null) { dirty.Append(" [" + pair.Key + " not found]"); continue; }
@@ -596,6 +601,17 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             var shader = Shader.Find(shaderName);
             return shader == null ? null : FileOrNull(AssetDatabase.GetAssetPath(shader));
+        }
+
+        const string Vfx308Dir = "Assets/_Project/Shaders/SpellVFX308/";
+        // a #308 shader that may glow: its glow must go through the ceiling (OH_GLOW_CEILING_OUT) and be capped at .35 in its
+        // properties; returns the source with _Glow taken out for the blend / HDR rule, or a marker that fails that rule
+        static string Vfx308Glow(string file)
+        {
+            string src = FileOrNull(Vfx308Dir + file);
+            if (src == null) return null;
+            bool capped = src.Contains("OH_GLOW_CEILING_OUT") && src.Contains("Range(0,.35)");
+            return capped ? src.Replace("_Glow", "") : "_Glow (uncapped)";
         }
 
         static string FileOrNull(string assetPath)
