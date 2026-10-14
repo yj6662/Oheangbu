@@ -26,7 +26,7 @@ KEY = argv[0] if argv else 'deer'
 
 # per summon: source FBX, which objects make the body, voxel size (m), how far the undersides hang (m), triangle budget
 BODIES = {
-    'deer': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbx', pick=('Body',), voxel=.011, hang=.15, tris=22000, drips=9),
+    'deer': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbx', pick=('Body',), voxel=.011, hang=.07, tris=22000, drips=0),     # 3rd pass (D308-83d): no hanging drops - the user found them awkward; the ink leaves the body as streaming strands (Unity side)
 }
 B = BODIES[KEY]
 

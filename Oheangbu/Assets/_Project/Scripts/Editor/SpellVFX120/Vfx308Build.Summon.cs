@@ -38,9 +38,46 @@ namespace Oheangbu.EditorTools.SpellVFX120
             m.SetFloat("_Life", life); m.SetFloat("_CoreGlow", 0f);
             // 2nd pass (user: liquid, not solid): no eaten outline (that reads dry), a running surface and a wet sheen instead
             m.SetFloat("_Edge", 0f); m.SetFloat("_GrainScale", 6.5f); m.SetFloat("_WashAmount", .12f); m.SetFloat("_Wobble", .01f);
-            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .04f); m.SetFloat("_Gloss", .65f);     // the mesh already hangs: the shader only keeps it moving
+            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .02f); m.SetFloat("_Gloss", .5f);     // the mesh already hangs: the shader only keeps it moving (3rd pass: less sag, the aura breaks the outline)
             EditorUtility.SetDirty(m); Touched.Add(m);
             return m;
+        }
+
+        static Material InkStrand(string name, float strands, float thin, float haze, float opacity = .9f)
+        {
+            string path = Root2 + "/Materials/" + name + ".mat";
+            var shader = Shader.Find("Oheangbu/SpellVFX308/InkStrand") ?? throw new Exception("InkStrand shader not found");
+            var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (m == null) { m = new Material(shader); AssetDatabase.CreateAsset(m, path); }
+            m.shader = shader;
+            m.SetColor("_InkColor", SwingInkColour); m.SetFloat("_Opacity", opacity); m.SetFloat("_Strands", strands); m.SetFloat("_Thin", thin); m.SetFloat("_Haze", haze);
+            m.SetFloat("_Flip", StrandFlip);
+            EditorUtility.SetDirty(m); Touched.Add(m);
+            return m;
+        }
+
+        // Unity's particle trails: UV.x = 0 at the particle (the free end), 1 at the oldest point (the root at the body)
+        const float StrandFlip = 1f;
+
+        // one emitter of ink strands. The particles themselves are not drawn - only their trails: a ribbon from where each
+        // left the body to where it is now. They drift backward (the summon's -Z) and up, and a noise field curls them.
+        static ParticleSystem Strands(Transform root, string name, Material mat, Vector3 worldPos, Vector3 worldSize, float rate, int max, Vector2 life, Vector2 width, Vector2 back, Vector2 up, float curl = 1f)
+        {
+            var ps = Layer(root, new L { Name = name, Mat = mat, Rate = rate, Max = max, Life = life, Size = width, Flipbook = false, SpinRandom = false,
+                Colour = G((0f, new Color(1f, 1f, 1f, 0f)), (.12f, Color.white), (.55f, new Color(1f, 1f, 1f, .85f)), (1f, new Color(1f, 1f, 1f, 0f))) });
+            var main = ps.main; main.startDelay = .9f;                              // once the body has risen
+            main.startColor = new ParticleSystem.MinMaxGradient(new Color(0f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f));     // r = the strand's own seed (the shader reads it; the ink colour is the material's)
+            var shape = ps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Box;
+            shape.position = root.InverseTransformPoint(worldPos); shape.scale = worldSize;
+            var vel = ps.velocityOverLifetime; vel.enabled = true; vel.space = ParticleSystemSimulationSpace.Local;
+            vel.x = new ParticleSystem.MinMaxCurve(-.18f, .18f); vel.y = new ParticleSystem.MinMaxCurve(up.x, up.y); vel.z = new ParticleSystem.MinMaxCurve(-back.y, -back.x);
+            var noise = ps.noise; noise.enabled = true; noise.strength = new ParticleSystem.MinMaxCurve(1f, Curve(0f, .15f, .4f, .8f, 1f, 1.5f)); noise.strengthMultiplier = curl; noise.frequency = .8f; noise.scrollSpeed = .4f; noise.octaveCount = 2; noise.damping = false;     // straight where it leaves the body, curling more the further it gets (first stills: stiff spikes) noise.quality = ParticleSystemNoiseQuality.High;
+            var trails = ps.trails; trails.enabled = true; trails.mode = ParticleSystemTrailMode.PerParticle; trails.ratio = 1f; trails.lifetime = 1f;
+            trails.minVertexDistance = .07f; trails.worldSpace = true; trails.dieWithParticles = true; trails.textureMode = ParticleSystemTrailTextureMode.Stretch;
+            trails.sizeAffectsWidth = true; trails.sizeAffectsLifetime = false; trails.inheritParticleColor = true; trails.generateLightingData = false;
+            trails.widthOverTrail = new ParticleSystem.MinMaxCurve(1f, Curve(0f, .25f, .35f, 1f, 1f, .6f));     // a fine free end, widest a third in, gathered at the body
+            var r = ps.GetComponent<ParticleSystemRenderer>(); r.renderMode = ParticleSystemRenderMode.None; r.trailMaterial = mat;
+            return ps;
         }
 
         static Bounds WorldBounds(GameObject root)
@@ -56,7 +93,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             V2 = true; Touched.Clear(); seed = 31000;
             foreach (var d in new[] { "/Prefabs", "/Materials" }) Directory.CreateDirectory(Root2 + d);
             AssetDatabase.Refresh();
-            foreach (var sheet in new[] { "ink_wisp", "ink_drops", "ink_pool" }) Sheet2(sheet);
+            foreach (var sheet in new[] { "ink_pool" }) Sheet2(sheet);
             var profile = Load<Vfx120Profile>(DeerProfile);
             var source = Load<GameObject>(DeerSource);
             var root = new GameObject("PF_V308c_summon_deer");
@@ -98,23 +135,27 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 sb.AppendLine("  " + r.name + " -> " + (r.enabled ? r.sharedMaterial.name : "off"));
             }
-            // ink smoke off the whole body: it leaves backward and up, the root of each strand at the body
-            var wisp = Bleed("M_V308c_summon_ink_wisp", "ink_wisp", C(SwingDark, .95f), 0f, .95f, 0f, .06f);
-            var wisps = Layer(root.transform, new L { Name = "Wisps", Mat = wisp, Mode = 3, Rate = 7f, Max = 16, Life = new Vector2(1.1f, 1.8f), Size = new Vector2(1.0f, 1.6f), Speed = new Vector2(.05f, .2f), SpinRandom = false, Blend = true,
-                RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = G((0f, C(SwingDark, 0f)), (.2f, C(SwingDark, .9f)), (.6f, C(SwingDark, .7f)), (1f, C(SwingDark, 0f))), Grow = Curve(0f, .6f, 1f, 1.5f) });
-            // a box over the trunk and neck (a mesh-renderer shape darkened the whole view in the first stills - particles far from the body)
-            var shape = wisps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Box;
-            // a stretched strand trails BEHIND its particle (toward the front here, the particle moves back): start a strand's length behind the body so its root reaches the body
-            shape.position = root.transform.InverseTransformPoint(new Vector3(bb.center.x, bb.min.y + bb.size.y * .6f, bb.center.z - 1.0f)); shape.scale = new Vector3(bb.size.x * .35f, bb.size.y * .45f, bb.size.z * .55f);
-            var vel = wisps.velocityOverLifetime; vel.enabled = true; vel.space = ParticleSystemSimulationSpace.Local;
-            vel.x = new ParticleSystem.MinMaxCurve(-.15f, .15f); vel.y = new ParticleSystem.MinMaxCurve(.3f, .8f); vel.z = new ParticleSystem.MinMaxCurve(-1.7f, -.8f);
-            var main = wisps.main; main.startDelay = .9f;                         // once the body has risen
-            wisps.GetComponent<ParticleSystemRenderer>().flip = new Vector3(1f, 0f, 0f);     // the sheet's root is on its right: put it at the body
-            // a drop now and then from the belly
-            var drips = Layer(root.transform, new L { Name = "Drips", Mat = Bleed("M_V308c_summon_ink_drops", "ink_drops", C(SwingDark, .9f), 0f, .9f), Rate = 9f, Max = 14, Life = new Vector2(.55f, .9f), Size = new Vector2(.2f, .46f), Gravity = 1.9f, SpinRandom = false, RandomCell = true, Blend = true,
-                Colour = InkFade(.5f) });
-            var ds = drips.shape; ds.enabled = true; ds.shapeType = ParticleSystemShapeType.Box; ds.position = root.transform.InverseTransformPoint(new Vector3(bb.center.x, bb.min.y + bb.size.y * .42f, bb.center.z)); ds.scale = new Vector3(bb.size.x * .4f, .05f, bb.size.z * .45f);
-            var dm = drips.main; dm.startDelay = 1.1f;
+            // 3rd pass (D308-83d, user 2026-10-14: the falling drops are awkward - let the ink's energy spread out of the body;
+            // reference: Pinterest pin 12525705207021860). No drops. The ink leaves the body as long hair-fine strands from
+            // the mane, the back ridge, the tail and the fetlocks: they stream backward, curl and thin out. Each strand is a
+            // particle trail, so its root stays where it left the body.
+            var strand = InkStrand("M_V308c_summon_ink_strand", 12f, .8f, .3f);
+            var breath = InkStrand("M_V308c_summon_ink_breath", 4f, .5f, .55f, .5f);
+            float len = bb.size.z, tall = bb.size.y, wide = bb.size.x;
+            Vector3 At(float side, float up, float along) => new Vector3(bb.center.x + side * wide, bb.min.y + up * tall, bb.center.z + along * len);
+            // the back ridge and the mane: the main read
+            Strands(root.transform, "Aura_Back", strand, At(0f, .6f, -.15f), new Vector3(wide * .3f, tall * .04f, len * .5f), 20f, 44, new Vector2(1.3f, 2.1f), new Vector2(.18f, .38f), new Vector2(.8f, 1.5f), new Vector2(.05f, .4f));     // heights are shares of the body bounds, which include the antlers: the back is at .6
+            Strands(root.transform, "Aura_Mane", strand, At(0f, .7f, .2f), new Vector3(wide * .25f, tall * .16f, len * .12f), 12f, 28, new Vector2(1.2f, 1.9f), new Vector2(.16f, .32f), new Vector2(.7f, 1.3f), new Vector2(.1f, .45f));
+            // the tail: the longest
+            Strands(root.transform, "Aura_Tail", strand, At(0f, .55f, -.45f), new Vector3(wide * .25f, tall * .1f, len * .05f), 10f, 28, new Vector2(1.7f, 2.5f), new Vector2(.2f, .4f), new Vector2(.9f, 1.6f), new Vector2(-.15f, .25f));
+            // the fetlocks: short, low, they lift off the ground ink
+            var feet = model.GetComponentsInChildren<Transform>(true).Where(t => t.name.StartsWith("Foot_", StringComparison.Ordinal)).Select(t => t.position).ToList();
+            if (feet.Count == 0) foreach (float sx in new[] { -.3f, .3f }) foreach (float sz in new[] { -.34f, .3f }) feet.Add(At(sx, 0f, sz));
+            for (int i = 0; i < feet.Count; i++)
+                Strands(root.transform, "Aura_Foot" + i, strand, new Vector3(feet[i].x, bb.min.y + tall * .07f, feet[i].z), new Vector3(wide * .14f, tall * .08f, len * .04f), 4f, 8, new Vector2(.6f, 1f), new Vector2(.09f, .18f), new Vector2(.5f, .9f), new Vector2(-.05f, .15f), 1.5f);
+            // and a slow wide breath of thin ink round the whole trunk, so the strands sit in a haze instead of on bare air
+            Strands(root.transform, "Aura_Breath", breath, At(0f, .5f, -.1f), new Vector3(wide * .45f, tall * .22f, len * .6f), 8f, 22, new Vector2(1.6f, 2.4f), new Vector2(.5f, .9f), new Vector2(.5f, 1f), new Vector2(.1f, .4f));
+            sb.AppendLine("  aura: back, mane, tail, " + feet.Count + " fetlocks, breath (trails, no drops)");
             // the ink it rises out of
             Layer(root.transform, new L { Name = "Pool", Mat = Bleed("M_V308c_swing_ink_pool", "ink_pool", C(SwingInkColour, .92f), 0f, .92f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2, Life = new Vector2(1.9f, 1.9f), Size = new Vector2(3.4f, 3.4f), NoShape = true, Blend = true,
                 ShapePos = new Vector3(0f, .04f, 0f), FrameFrom = 0f, FrameTo = 15.5f, Colour = InkFade(.6f), Grow = Curve(0f, .4f, .2f, 1f, 1f, 1.1f) });

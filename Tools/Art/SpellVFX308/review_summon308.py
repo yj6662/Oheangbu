@@ -5,7 +5,7 @@
 Row 1: the summon clock - rising out of the ink (0.5 s), complete with the core lifted for its two cels (1.15 s),
        standing (2.4 s, core as plain pigment), scattering (4.2 s).
 Row 2: standing at 2.4 s from the side, three-quarter front, behind, and with the core lifted (the attack moment).
-Output: Art/SpellVFX308/Review/summon_<key>_r1.png
+Output: Art/SpellVFX308/Review/summon_<key>_r3.png (r3 = ink aura strands, no drops)
 """
 import subprocess
 import sys
@@ -34,7 +34,7 @@ def shot(name, view):
 def main():
     key = sys.argv[1] if len(sys.argv) > 1 else 'deer'
     plan = [[('0.5', '', SIDE), ('1.15', '', SIDE), ('2.4', '', SIDE), ('4.2', '', SIDE)],
-            [('2.4', '', FRONT), ('2.4', '', BACK), ('2.4', ':glow', SIDE), ('2.4', ':glow', FRONT)]]
+            [('2.4', '', FRONT), ('2.4', '', BACK), ('2.7', '', SIDE), ('2.4', ':glow', FRONT)]]
     rows = []
     for y, line in enumerate(plan):
         row = []
@@ -49,7 +49,7 @@ def main():
     for y, row in enumerate(rows):
         for x, im in enumerate(row):
             sheet.paste(im, (x * 480, y * 360))
-    out = ROOT / f'Art/SpellVFX308/Review/summon_{key}_r2.png'
+    out = ROOT / f'Art/SpellVFX308/Review/summon_{key}_r3.png'
     sheet.save(out)
     print(out)
 
