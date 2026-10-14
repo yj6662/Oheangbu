@@ -64,10 +64,11 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string WorldName = "C02_WorldBrush308", NearName = "C02_NearBrush308";
         const string ClipPrefix = "A_Brush308_";
 
-        static readonly string[] ClipNames = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "GuardHold", "BuffDraw", "StanceIdle", "CarryIdle", "ToCarry", "ToStance" };
-        static readonly string[] BodyStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "GuardHold", "BuffDraw" };   // the full-body layer: motions only
-        static readonly string[] TimedStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "BuffDraw" };              // normalized time from Brush308Time
-        static readonly string[] ShiftStates = { "ToCarry", "ToStance" };                                                     // normalized time from Brush308Shift
+        static readonly string[] ClipNames = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "GuardHold", "BuffDraw", "StanceIdle", "CarryIdle", "ToCarry", "ToStance", "SwingThrow", "SwingStrikeFar" };   // D308-84a: the last two
+        static readonly string[] BodyStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "GuardHold", "BuffDraw", "SwingThrow", "SwingStrikeFar" };   // the full-body layer: motions only
+        static readonly string[] TimedStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "BuffDraw", "SwingThrow", "SwingStrikeFar" };              // normalized time from Brush308Time
+        static readonly string[] ShiftStates = { "ToCarry", "ToStance" };
+        static readonly string[] AvatarFromStance = { "SwingThrow", "SwingStrikeFar" };                                     // D308-84a: see Import()                                                     // normalized time from Brush308Shift
 
         // fixed guids: the same files get the same identity on every machine and after every re-import
         static readonly Dictionary<string, string> Guids = new Dictionary<string, string>
@@ -82,6 +83,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             { ClipPath("GuardHold"), "3f08a1d2c4b54e6f9a7b70d308800045" }, { ClipPath("BuffDraw"), "3f08a1d2c4b54e6f9a7b70d308800046" },
             { ClipPath("StanceIdle"), "3f08a1d2c4b54e6f9a7b70d308800047" }, { ClipPath("CarryIdle"), "3f08a1d2c4b54e6f9a7b70d308800048" },
             { ClipPath("ToCarry"), "3f08a1d2c4b54e6f9a7b70d308800049" }, { ClipPath("ToStance"), "3f08a1d2c4b54e6f9a7b70d30880004a" },
+            { ClipPath("SwingThrow"), "3f08a1d2c4b54e6f9a7b70d30880004b" }, { ClipPath("SwingStrikeFar"), "3f08a1d2c4b54e6f9a7b70d30880004c" },
         };
 
         static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
@@ -324,7 +326,14 @@ namespace Oheangbu.EditorTools.WorldMacro
                 var mi = (ModelImporter)AssetImporter.GetAtPath(path);
                 // its own avatar, not a copy of the player's: with the copied avatar the root came out a hundred times too large (2026-10-13 sample:
                 // hips 140 - 530 m up at the apex). Humanoid retargeting carries the motion to the player's avatar either way.
-                mi.animationType = ModelImporterAnimationType.Human; mi.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel; mi.sourceAvatar = null;
+                // D308-84a (2026-10-14 sample): the avatar made from a file takes that file's default pose as its skeleton. The ten clips of
+                // 10-13 were exported together and all got the stance; SwingThrow / SwingStrikeFar, exported alone, got another pose and
+                // retargeted wrong (frame 0 not the stance, left hand 70 cm off). Those two copy StanceIdle's avatar (same file, same scale).
+                Avatar stanceAvatar = name != "StanceIdle" && AvatarFromStance.Contains(name)
+                    ? AssetDatabase.LoadAllAssetsAtPath(ClipPath("StanceIdle")).OfType<Avatar>().FirstOrDefault(a => a.isValid && a.isHuman) : null;
+                mi.animationType = ModelImporterAnimationType.Human;
+                if (stanceAvatar != null) { mi.avatarSetup = ModelImporterAvatarSetup.CopyFromOther; mi.sourceAvatar = stanceAvatar; }
+                else { mi.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel; mi.sourceAvatar = null; }
                 mi.materialImportMode = ModelImporterMaterialImportMode.None; mi.importAnimation = true; mi.importBlendShapes = false;
                 mi.SaveAndReimport();
                 var take = mi.defaultClipAnimations.FirstOrDefault();

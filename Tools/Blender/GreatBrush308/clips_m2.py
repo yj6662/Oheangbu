@@ -30,6 +30,15 @@ CLIPS = {
     'SwingSlam': dict(kind='keyed', seconds=1.3, apex=.70, spec=.70, use='내리찍기(소환 · 설치)',
                       body=[(0,) + _Z, (.28, -2, -4, -6, 0, 0, .02, .03, 0, -8), (.46, -3, -6, -8, 0, 0, .02, .04, 0, -10), (.70, 8, 20, 30, 0, 0, -.06, -.22, 4, 8), (.80, 8, 21, 31, 0, 0, -.06, -.23, 4, 9), (1.05, 3, 6, 9, 0, 0, -.03, -.07, 1, 5), (1.3,) + _Z],
                       brush=[(0, 'S'), (.28, 0, .18, -.24, 1.00, 5, 84), (.46, 0, .18, -.24, 1.04, 0, 88), (.70, 0, .21, -.24, .92, 48, -30), (.80, 0, .21, -.24, .91, 48, -31), (1.05, 0, .23, -.10, .97, 18, -5), (1.3, 'S')]),
+    # D308-84a (2026-10-14): two position variants. SwingThrow = single attack at a far target, after Heavy_Weapon_Swing (raised
+    # overhead, whipped forward; the apex points the brush level at the far target). SwingStrikeFar = circle at a far point, after
+    # Standing_2H_Magic_Area_Attack_01 (overhead, then a deep crouch that strikes the ground straight ahead - the ink runs from there).
+    'SwingThrow': dict(kind='keyed', seconds=1.0, apex=.40, spec=.40, use='공격 단일 · 멀리(머리 위에서 앞으로 내려 던지기)',
+                       body=[(0,) + _Z, (.20, -4, -8, -10, 0, 0, .03, .02, 0, -10), (.40, 8, 22, 16, 0, 0, -.07, -.06, 3, 8), (.48, 9, 23, 17, 0, 0, -.075, -.065, 3, 9), (.72, 4, 10, 6, 0, 0, -.03, -.025, 1, 3), (1.0,) + _Z],
+                       brush=[(0, 'S'), (.20, 0, .27, -.22, 1.20, 4, 86), (.40, 0, .20, -.32, 1.18, 20, -6), (.48, 0, .18, -.31, 1.16, 21, -10), (.72, 0, .22, -.14, 1.04, 14, 4), (1.0, 'S')]),
+    'SwingStrikeFar': dict(kind='keyed', seconds=1.4, apex=.65, spec=.65, use='공격 원 · 멀리(주저앉으며 앞 땅 찍기)',
+                           body=[(0,) + _Z, (.36, -3, -6, -8, 0, 0, .02, .04, 0, -10), (.65, 14, 34, 34, 0, 0, -.08, -.26, 6, 6), (.78, 14, 35, 35, 0, 0, -.08, -.27, 6, 7), (1.05, 3, 8, 12, 0, 0, -.03, -.10, 1, 4), (1.4,) + _Z],
+                           brush=[(0, 'S'), (.36, 0, .25, -.24, 1.12, 26, 84), (.65, 0, .26, -.25, .80, 40, -30), (.78, 0, .26, -.26, .79, 40, -31), (1.05, 0, .23, -.12, .97, 22, -4), (1.4, 'S')]),
     'GuardIn': dict(kind='keyed', seconds=.30, apex=.15, spec=.15, end='guard', use='막기 전환',
                     body=[(0,) + _Z, (.18,) + tuple(.85 * v for v in _G), (.30,) + _G], brush=[(0, 'S'), (.18, 0, .22, -.12, 1.02, 46, 41), (.30,) + _GB]),
     'GuardHold': dict(kind='keyed', seconds=2.0, loop=True, start='guard', end='guard', life=LIFE4_GUARD, use='막기 유지(루프)', body=[(0,) + _G], brush=[(0,) + _GB]),
@@ -54,4 +63,5 @@ CARRY_G, CARRY_D = carry_gd()
 
 # 확인 스틸에 쓰는 프레임(클립 프레임 번호, 0 부터) — 6장
 SHOTS = {'SwingSweep': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingArc': [0, 6, 10, 15, 19, 22, 31, 42], 'SwingSlam': [0, 6, 10, 15, 18, 21, 24, 39], 'GuardIn': [0, 2, 4, 5, 7, 9], 'GuardHold': [0, 12, 24, 36, 48, 60],
-         'BuffDraw': [0, 4, 7, 9, 12, 18, 22, 26], 'StanceIdle': [0, 24, 48, 72, 96, 120], 'CarryIdle': [0, 24, 48, 72, 96, 120], 'ToCarry': [0, 4, 9, 13, 17, 21], 'ToStance': [0, 2, 4, 6, 8, 10]}
+         'BuffDraw': [0, 4, 7, 9, 12, 18, 22, 26], 'StanceIdle': [0, 24, 48, 72, 96, 120], 'CarryIdle': [0, 24, 48, 72, 96, 120], 'ToCarry': [0, 4, 9, 13, 17, 21], 'ToStance': [0, 2, 4, 6, 8, 10],
+         'SwingThrow': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingStrikeFar': [0, 6, 11, 16, 19, 23, 31, 42]}
