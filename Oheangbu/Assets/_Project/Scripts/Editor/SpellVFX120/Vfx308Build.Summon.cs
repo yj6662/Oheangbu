@@ -38,7 +38,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             m.SetFloat("_Life", life); m.SetFloat("_CoreGlow", 0f);
             // 2nd pass (user: liquid, not solid): no eaten outline (that reads dry), a running surface and a wet sheen instead
             m.SetFloat("_Edge", 0f); m.SetFloat("_GrainScale", 6.5f); m.SetFloat("_WashAmount", .12f); m.SetFloat("_Wobble", .01f);
-            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .02f); m.SetFloat("_Gloss", .3f);     // the mesh already hangs: the shader only keeps it moving (3rd pass: less sag, the aura breaks the outline)
+            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .02f); m.SetFloat("_Gloss", .06f);     // the mesh already hangs: the shader only keeps it moving (3rd pass: less sag, the aura breaks the outline)
             // 4th pass (user 2026-10-14: body and strands differ in colour, so the strands read as a mane - they must look joined):
             // the body is the SAME ink as its strands and is drawn in the same place in the frame - after the realm fog (layer 20,
             // transparent queue, still opaque and depth-writing). Before, the fog and the grade paled the body and not the strands.
