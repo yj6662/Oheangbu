@@ -56,6 +56,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             V2 = !command.EndsWith(":v1", StringComparison.Ordinal);
             if (!V2) command = command.Substring(0, command.Length - 3);
             if (command.StartsWith("pose", StringComparison.Ordinal)) return Pose(command.Split(':'));
+            if (command.StartsWith("summon", StringComparison.Ordinal)) return Summon(command.Split(':'));         // 11.13: the ink body of a summon
             if (command.StartsWith("swingink", StringComparison.Ordinal)) return SwingInk(command.Split(':'));     // 11.10: the ink of the five swings
             switch (command)
             {
