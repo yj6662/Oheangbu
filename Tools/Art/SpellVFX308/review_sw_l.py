@@ -1,0 +1,51 @@
+"""#308 D308-84: the motion-by-place and ink-bridge Play check (steps sw_l) on one sheet.
+
+  python Tools/Art/SpellVFX308/review_sw_l.py
+
+Rows = one cast each (free aim / near / far / high target), columns = the shots asked at later moments.
+Output: Art/SpellVFX308/Review/swingplay_sw_l.png
+"""
+from pathlib import Path
+
+from PIL import Image, ImageDraw, ImageFont
+
+ROOT = Path(__file__).resolve().parents[3]
+SHOTS = ROOT / 'Art/Playtest306/Checks'
+ROWS = [('free_ga', '가 · 대상 없음 → 내려 던지기'), ('free_go', '고 · 대상 없음 → 멀리 찍기 + 바닥 먹'), ('ward_gu', '구 · 방벽 짧은 내리찍기'),
+        ('path_mo', '모 · 경로 땅 찍기'), ('near_ga', '가 · 5 m → 쓸기 + 줄기'), ('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹'),
+        ('far_ga', '가 · 12 m → 내려 던지기'), ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹'), ('high_ga', '가 · 6 m 높이 4 m → 상체 조준')]
+ROWS_M = [('near_ga', '가 · 5 m 락온 → 쓸기 + 줄기'), ('far_ga', '가 · 12 m 락온 → 내려 던지기 + 줄기'), ('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹'),
+          ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹'), ('ward_gu', '구 · 방벽 짧은 내리찍기'), ('high_ga', '가 · 6 m 높이 4 m → 상체 조준')]
+W, H = 560, 350
+
+
+def main():
+    import sys
+    run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
+    rows = ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n') else 3
+    font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
+    sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
+    d = ImageDraw.Draw(sheet)
+    missing = []
+    for y, (key, label) in enumerate(rows):
+        for x in range(cols):
+            path = SHOTS / f'{run}_{key}_{x}_2560x1440.png'
+            if not path.exists():
+                if x == 0:
+                    missing.append(path.name)
+                continue
+            im = Image.open(path).convert('RGB')
+            w, h = im.size
+            sheet.paste(im.crop((int(w * .15), int(h * .15), int(w * .85), int(h * .95))).resize((W, H)), (x * W, y * H))
+        d.rectangle((0, y * H, d.textlength(label, font=font) + 14, y * H + 30), fill=(0, 0, 0))
+        d.text((7, y * H + 2), label, font=font, fill=(255, 225, 120))
+    out = ROOT / f'Art/SpellVFX308/Review/swingplay_{run}.png'
+    sheet.save(out)
+    print(out)
+    if missing:
+        print('missing:', ', '.join(missing))
+
+
+if __name__ == '__main__':
+    main()

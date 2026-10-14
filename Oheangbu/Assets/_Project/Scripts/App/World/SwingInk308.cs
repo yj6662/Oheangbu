@@ -288,7 +288,7 @@ namespace Oheangbu.App.World
                     float length = Mathf.Clamp(distance * .2f, .8f, 2f);
                     Vector3 stem = tip + to / distance * length;
                     for (int i = 0; i <= 8; i++) { bridgePath.Add(Vector3.Lerp(tip, stem, i / 8f)); bridgeAt.Add(now + .1f * i / 8f); }
-                    bridgeFlat = false; bridgeWidth = .1f; bridgeDry = .45f;
+                    bridgeFlat = false; bridgeWidth = .16f; bridgeDry = .55f;   // Play sw_m: .1 was lost in the apex ink
                     originTip = stem; originAt = now; originPinnedUntil = now + OriginFresh;   // the body forms at the stem's end (Vfx120LaunchPoint)
                 }
                 else if (plan.Area.Shape == AreaShape.Circle)
@@ -303,7 +303,7 @@ namespace Oheangbu.App.World
                         float u = i / (float)steps;
                         bridgePath.Add(GroundAt(Vector3.Lerp(from, centre, u), from.y)); bridgeAt.Add(now + travel * u);
                     }
-                    bridgeFlat = true; bridgeWidth = Mathf.Lerp(.42f, .22f, Mathf.Clamp01(distance / 20f)); bridgeDry = 1.1f;
+                    bridgeFlat = true; bridgeWidth = Mathf.Lerp(.85f, .45f, Mathf.Clamp01(distance / 20f)); bridgeDry = 1.5f;   // Play sw_m: .42 / .22 were not seen on the ground
                     poolAt = bridgePath[bridgePath.Count - 1]; poolAtTime = now + travel;
                 }
                 else return;

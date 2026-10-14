@@ -46,6 +46,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             new Swing { State = "SwingSlam", Width = .2f, Seconds = .60f, Follow = .05f, Apex = .65f, Body = SlamInk },
             new Swing { State = "SwingPlant", Width = .18f, Seconds = .42f, VisualApex = .12f, Follow = .06f, Dry = .7f, Body = PlantInk },
             new Swing { State = "SwingDraw", Width = .1f, Seconds = .90f, VisualApex = .22f, Follow = .30f, Streaks = 18f, Dry = 1f, Body = DrawInk },
+            // D308-84: the far single throw. Play sw_m: the sweep's thrown sheets, flung straight ahead from head height, stretched
+            // along the camera's own line and covered the middle of the view - its own smaller ink; the stem bridge carries the rest
+            new Swing { State = "SwingThrow", Width = .15f, Seconds = .55f, Follow = .08f, Apex = .40f, Body = ThrowInk },
         };
 
         static string SwingPrefabPath(Swing s) => Root2 + "/Prefabs/PF_V308c_swing_" + s.State.Substring(5).ToLowerInvariant() + ".prefab";
@@ -92,12 +95,24 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var (root, tip, apex, _) = SwingShell(s);
             Thrown(tip, 10f, new Vector2(.12f, .30f));
             // the thrown ink itself: bristle lines that run the way of the throw (ink_throw sheet, drawn along its velocity)
-            Layer(apex, new L { Name = "Throw", Mat = SwingSheet("ink_throw", .95f), Mode = 3, Burst = 3, Max = 4, Life = new Vector2(.5f, .62f), Size = new Vector2(2.6f, 3.4f), Speed = new Vector2(6f, 9f), Drag = 2.6f, SpinRandom = false, Blend = true,
+            Layer(apex, new L { Name = "Throw", Mat = SwingSheet("ink_throw", .95f), Mode = 3, Burst = 3, Max = 4, Life = new Vector2(.5f, .62f), Size = new Vector2(1.6f, 2.2f), Speed = new Vector2(6f, 9f), Drag = 2.6f, SpinRandom = false, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 7f, Radius = .08f, FrameFrom = 0f, FrameTo = 15.5f, Colour = InkFade(.55f), Grow = Curve(0f, .7f, .25f, 1f, 1f, 1.1f) });
-            Layer(apex, new L { Name = "Fling", Mat = SwingSheet("ink_splat"), Burst = 2, Max = 3, Life = new Vector2(.42f, .42f), Size = new Vector2(2.0f, 2.6f), Speed = new Vector2(2.5f, 4f), Drag = 3f, NoShape = true, Blend = true,
+            Layer(apex, new L { Name = "Fling", Mat = SwingSheet("ink_splat"), Burst = 2, Max = 3, Life = new Vector2(.42f, .42f), Size = new Vector2(1.4f, 1.8f), Speed = new Vector2(2.5f, 4f), Drag = 3f, NoShape = true, Blend = true,
                 FrameFrom = 0f, FrameTo = 12f, Colour = InkFade(.35f), Grow = Curve(0f, .55f, .3f, 1f, 1f, 1.3f) });
             Layer(apex, new L { Name = "Spray", Mat = SwingSheet("ink_drops", .9f), Burst = 12, Max = 12, Life = new Vector2(.3f, .55f), Size = new Vector2(.14f, .38f), Speed = new Vector2(5f, 11f), Drag = 1.6f, Gravity = 1.8f,
                 Shape = ParticleSystemShapeType.Cone, Angle = 16f, Radius = .06f, RandomCell = true, Blend = true, Colour = InkFade(.45f), Grow = Curve(0f, .8f, 1f, 1.5f) });
+            return root;
+        }
+
+        // throw (single attack, far target): the overhead stroke; at the apex a small burst of ink leaves the tip forward and down
+        static GameObject ThrowInk(Swing s)
+        {
+            var (root, tip, apex, _) = SwingShell(s);
+            Thrown(tip, 9f, new Vector2(.10f, .26f));
+            Layer(apex, new L { Name = "Fling", Mat = SwingSheet("ink_splat"), Burst = 1, Max = 2, Life = new Vector2(.35f, .35f), Size = new Vector2(.8f, 1.0f), Speed = new Vector2(1.5f, 2.5f), Drag = 3f, NoShape = true, Blend = true,
+                FrameFrom = 0f, FrameTo = 12f, Colour = InkFade(.35f), Grow = Curve(0f, .55f, .3f, 1f, 1f, 1.2f) });
+            Layer(apex, new L { Name = "Spray", Mat = SwingSheet("ink_drops", .9f), Burst = 10, Max = 10, Life = new Vector2(.3f, .5f), Size = new Vector2(.12f, .3f), Speed = new Vector2(4f, 9f), Drag = 1.6f, Gravity = 2.4f,
+                Shape = ParticleSystemShapeType.Cone, Angle = 14f, Radius = .05f, RandomCell = true, Blend = true, Colour = InkFade(.45f), Grow = Curve(0f, .8f, 1f, 1.4f) });
             return root;
         }
 

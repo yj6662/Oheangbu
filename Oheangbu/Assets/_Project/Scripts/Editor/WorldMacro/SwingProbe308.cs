@@ -63,6 +63,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 case "dodge": return Dodge(walker);
                 case "target": return Target(s, walker, wiring, rest);
+                // slow motion for the stills (Play memory only): the rule and the presentation share Time.time, so both slow together
+                case "slow": { float k = Mathf.Clamp(float.Parse(rest, Inv), .05f, 1f); Time.timeScale = k; return "timeScale " + k.ToString("F2", Inv); }
                 case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
@@ -244,7 +246,16 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (b is UnityEngine.AI.NavMeshAgent || b.GetType().Name.Contains("Brain")) b.enabled = false;
             foreach (var rb in root.GetComponentsInChildren<Rigidbody>(true)) rb.isKinematic = true;
             root.SetPositionAndRotation(body.position + flat * distance + Vector3.up * height, Quaternion.LookRotation(-flat, Vector3.up));
-            return "target " + pick.name + " at " + distance.ToString("F1", Inv) + " m, +" + height.ToString("F1", Inv) + " m (" + root.position.ToString("F1") + ")";
+            // lock on to it (a near target low in the view is not taken by the free aim): toggle until this one is the lock
+            string locked = "no LockOn";
+            var lockOn = walker.Motor != null ? walker.Motor.GetComponent<LockOn>() : null;
+            if (lockOn != null)
+            {
+                if (lockOn.IsLocked && lockOn.Target != pick) lockOn.Toggle();
+                if (!lockOn.IsLocked) lockOn.Toggle();
+                locked = lockOn.IsLocked ? (lockOn.Target == pick ? "locked" : "locked another: " + lockOn.Target.name) : "not locked";
+            }
+            return locked + " | target " + pick.name + " at " + distance.ToString("F1", Inv) + " m, +" + height.ToString("F1", Inv) + " m (" + root.position.ToString("F1") + ")";
         }
 
         static string Cast(WorldMacroCombatWalker walker, char letter)
