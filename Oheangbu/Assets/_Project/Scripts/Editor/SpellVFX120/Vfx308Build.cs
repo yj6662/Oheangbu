@@ -539,9 +539,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static Material B(string key, string sheet, Color ink, float heat = 0f, float opacity = 1f) => Bleed("M_V308b_" + key + "_" + sheet, sheet, ink, heat, opacity);
 
         // ---- D308-84 (SPEC-SPELL-VFX-OVERHAUL-308 11.21): the body forms from the ink, then the pigment soaks in; ink stays ----
-        const float BodySoakSeconds = .35f;   // solid body: ink -> pigment after leaving (TEST)
-        const float ParticleSoakTo = .45f;
-        const float NearContactMeters = 12f;  // hits nearer the camera than this shrink, to 45 % (TEST)
+        const float BodySoakSeconds = .6f;    // solid body: ink -> pigment after leaving (TEST; sw_t .35 was not readable)
+        const float ParticleSoakTo = .6f;     // bleeding particles: pigment full at this fraction of their life (TEST; .45)
+        const float TravelScale = 1.35f;      // the flying body only (sw_w: a small dark dot at 0.2x)
+        const float NearContactMeters = 18f;  // hits nearer the camera than this shrink, to 45 % (TEST; 12 left the earth hit wide)
         const float SingleHitScale = .4f;     // single hits: the bolt's own Contact splat is the hit - the contact seam only adds a small splat (sw_r: x1 covered a third of the view at 5 m)    // bleeding particles: pigment full at this fraction of their life (TEST)
 
         static Material SoakVariant(Material m)
@@ -576,8 +577,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Layer(deploy, new L { Name = "Drops", Mat = Bleed("M_V308c_deploy_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 10, Max = 12, Life = new Vector2(.12f, .16f),
                 Size = new Vector2(.08f, .18f), Speed = new Vector2(-5f, -3.5f), Radius = .6f, Thickness = 0f, RandomCell = true, Blend = true, Colour = InkFade(.6f), Grow = Curve(0f, 1f, 1f, .6f) });
             var residue = new GameObject("Residue").transform; residue.SetParent(root.transform, false);
-            Layer(residue, new L { Name = "Pool", Mat = Bleed("M_V308c_residue_pool", "ink_pool", C(SwingInkColour, .85f), 0f, .85f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2,
-                Life = new Vector2(3.5f, 3.5f), Size = new Vector2(1.4f, 1.4f), NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 15.5f,
+            Layer(residue, new L { Name = "Pool", Mat = Bleed("M_V308c_residue_pool", "ink_pool", C(SwingInkColour, .95f), 0f, .95f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2,
+                Life = new Vector2(3.5f, 3.5f), Size = new Vector2(2f, 2f),   /* sw_w: 1.4 / .85 hardly seen at 5 m */ NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 15.5f,
                 Colour = G((0f, C(SwingInkColour, .95f)), (.6f, C(SwingInkColour, .8f)), (1f, C(SwingInkColour, 0f))), Grow = Curve(0f, .5f, .15f, 1f, 1f, 1.1f) });
             foreach (var t in deploy.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
             foreach (var t in residue.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
@@ -769,7 +770,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             e.Flame = key == "na" ? B(key, "fire_tongue", C(ink, .35f), 1f) : e.Burst;
             e.Stroke = key == "ga" ? B(key, "wood_stroke", C(ink, .92f)) : e.Burst;
             e.Stalk = key == "ga" ? k.Stalk : e.Spike;
-            e.StrokeSolid = Solid("M_V308_" + key + "_stroke", Color.Lerp(pig, ink, .62f), ink, .45f, .3f);      // 6th pass: ink first - the canes read as green bamboo posts
+            e.StrokeSolid = Solid("M_V308_" + key + "_stroke", Color.Lerp(pig, ink, .78f), ink, .5f, .3f);   /* 7th pass (sw_w): still green posts - more ink */      // 6th pass: ink first - the canes read as green bamboo posts
             e.Lick = key == "na" ? B(key, "fire_lick", C(ink, .3f), 1f) : e.Burst;
             e.LickSoot = key == "na" ? Bleed("M_V308b_na_fire_lick_soot", "fire_lick", C(ink, .85f), .3f, .92f) : e.Burst;       // mostly soot, a little heat at the root
             e.Strand = Solid("M_V308_" + key + "_strand", Color.Lerp(pig, ink, key == "na" ? .62f : .55f), ink, .45f, .3f);      // 6th pass: soot-dark strands, not red flakes
@@ -810,7 +811,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // ink leaves its top the whole time it stands (a stroke that bleeds away, not a post).
             Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.25f * a.Big);
             Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(6.2f, 7.6f) * a.Big, Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
-                FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .6f), .65f, e.Ink), Grow = Curve(0f, .85f, 1f, 1.2f) });
+                FrameFrom = 3f, FrameTo = 12f, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .75f), .75f, e.Ink), Grow = Curve(0f, .85f, 1f, 1.2f) });
             Layer(root.transform, new L { Name = "Wisp", Mat = e.Drops, World = false, Rate = 5f, Max = 7, Life = new Vector2(.6f, .9f) * a.Slow, Size = new Vector2(.8f, 1.3f) * a.Big, Radius = .12f, ShapePos = new Vector3(0f, 1.2f * a.Big, 0f), RiseY = .9f,
                 RandomCell = true, Blend = true, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .5f), .3f, e.Ink), Grow = Curve(0f, .6f, 1f, 1.9f) });
             return root;
@@ -932,7 +933,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
                     profile.Bolt300Prefab = Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
-                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f;
+                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
                     // other ones so they are not built beside the new body (BodyMesh must stay non-null)
@@ -1105,7 +1106,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(s));
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;
-                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f;
+                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + s.Effect + ".prefab";
                 if (!File.Exists(EffectPath(s)) && !AssetDatabase.CopyAsset(srcEffect, EffectPath(s))) throw new Exception("copy failed " + srcEffect);

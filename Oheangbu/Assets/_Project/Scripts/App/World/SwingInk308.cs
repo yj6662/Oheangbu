@@ -282,12 +282,13 @@ namespace Oheangbu.App.World
                 var e = Profile.States[entry];
                 if (bridgeRenderer != null) bridgeRenderer.sharedMaterial = e.Stroke;
                 bridgePath.Clear(); bridgeAt.Clear(); bridge.Clear(); runNext = int.MaxValue;
-                if (plan.Area == null)
+                if (plan.Area == null || plan.Area.Shape == AreaShape.Volley)   // volley: the same stem, toward its first shot / fallback point
                 {
                     // single: a stem from the tip toward the target, the spell leaves from its end
                     var target = plan.Hits.Count > 0 && plan.Hits[0].Target != null ? plan.Hits[0].Target.transform : null;
                     Vector3 flat = transform.forward; flat.y = 0f; flat = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
-                    Vector3 end = target != null ? target.position + Vector3.up * 1.1f : tip + flat * 10f;
+                    if (target == null && plan.Area != null && plan.Area.Shots.Count > 0 && plan.Area.Shots[0].Target != null) target = plan.Area.Shots[0].Target.transform;
+                    Vector3 end = target != null ? target.position + Vector3.up * 1.1f : plan.Area != null ? plan.Area.Point + Vector3.up * 1.1f : tip + flat * 10f;
                     Vector3 to = end - tip; float distance = to.magnitude;
                     if (distance < .3f) return;
                     float length = Mathf.Clamp(distance * .2f, .8f, 2f);
@@ -296,10 +297,13 @@ namespace Oheangbu.App.World
                     bridgeFlat = false; bridgeWidth = .16f; bridgeDry = .55f;   // Play sw_m: .1 was lost in the apex ink
                     originTip = stem; originAt = now; originPinnedUntil = now + OriginFresh;   // the body forms at the stem's end (Vfx120LaunchPoint)
                 }
-                else if (plan.Area.Shape == AreaShape.Circle)
+                else if (plan.Area.Shape == AreaShape.Circle || plan.Area.Shape == AreaShape.Path || plan.Area.Shape == AreaShape.Cone)
                 {
                     // circle: the ink runs over the ground from the struck point to the centre, arriving before the judgement
+                    // path: to where the path starts; cone: a short run down the cone's direction (the fan rises out of it)
                     Vector3 from = GroundUnder(tip), centre = plan.Area.Point;
+                    bool cone = plan.Area.Shape == AreaShape.Cone;
+                    if (cone) { Vector3 d = plan.Area.Direction; d.y = 0f; d = d.sqrMagnitude > 1e-4f ? d.normalized : transform.forward; centre = from + d * Profile.ConeRunMeters; }
                     Vector3 run = centre - from; run.y = 0f; float distance = run.magnitude;
                     float travel = Mathf.Clamp(Mathf.Min(plan.Area.Delay - .1f, .3f), .08f, .3f);
                     int steps = Mathf.Clamp(Mathf.CeilToInt(distance / .5f), 2, 48);
@@ -309,7 +313,7 @@ namespace Oheangbu.App.World
                         bridgePath.Add(GroundAt(Vector3.Lerp(from, centre, u), from.y)); bridgeAt.Add(now + travel * u);
                     }
                     bridgeFlat = true; bridgeWidth = Mathf.Lerp(.85f, .45f, Mathf.Clamp01(distance / 20f)); bridgeDry = 1.5f;   // Play sw_m: .42 / .22 were not seen on the ground
-                    poolAt = bridgePath[bridgePath.Count - 1]; poolAtTime = now + travel;
+                    poolAt = bridgePath[bridgePath.Count - 1]; poolAtTime = cone ? float.PositiveInfinity : now + travel;   // a cone has no pool at its end
                     var runner = Pool();
                     if (runner != null && runner.Run != null) { runner.Run.Play(true); runNext = 0; runSize = bridgeWidth * Profile.RunBlotScale; }
                 }

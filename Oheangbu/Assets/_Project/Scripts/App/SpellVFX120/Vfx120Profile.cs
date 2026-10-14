@@ -113,6 +113,8 @@ namespace Oheangbu.App.SpellVFX120
         [Min(0f)] public float Bolt300SoakSeconds;
         [Tooltip("D308-84: the hit (Contact) shrinks when the camera is nearer than this (m), down to 45 % (0 = off). Play sw_s: a 5 m hit filled a third of the view.")]
         [Min(0f)] public float Bolt300NearContactMeters;
+        [Tooltip("D308-84: extra scale of the flying body only (Travel), times Bolt300Scale (0 or 1 = same as the hit).")]
+        [Min(0f)] public float Bolt300TravelScale;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

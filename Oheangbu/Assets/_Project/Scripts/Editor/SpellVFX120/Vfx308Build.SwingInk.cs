@@ -43,12 +43,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             new Swing { State = "SwingSweep", Width = .17f, Seconds = .60f, Follow = .10f, Apex = .40f, Body = SweepInk },
             new Swing { State = "SwingArc", Width = .24f, Seconds = .75f, Follow = .12f, Apex = .65f, Streaks = 11f, Body = ArcInk },
-            new Swing { State = "SwingSlam", Width = .2f, Seconds = .60f, Follow = .05f, Apex = .65f, Body = SlamInk },
+            new Swing { State = "SwingSlam", Width = .14f, Seconds = .40f,   /* sw_w: .2 / .6 - the far strike arc crossed the view */ Follow = .05f, Apex = .65f, Body = SlamInk },
             new Swing { State = "SwingPlant", Width = .18f, Seconds = .42f, VisualApex = .12f, Follow = .06f, Dry = .7f, Body = PlantInk },
             new Swing { State = "SwingDraw", Width = .1f, Seconds = .90f, VisualApex = .22f, Follow = .30f, Streaks = 18f, Dry = 1f, Body = DrawInk },
             // D308-84: the far single throw. Play sw_m: the sweep's thrown sheets, flung straight ahead from head height, stretched
             // along the camera's own line and covered the middle of the view - its own smaller ink; the stem bridge carries the rest
-            new Swing { State = "SwingThrow", Width = .15f, Seconds = .55f, Follow = .08f, Apex = .40f, Body = ThrowInk },
+            new Swing { State = "SwingThrow", Width = .09f, Seconds = .32f,   /* sw_w: .15 / .55 - the throw arc read before the spell */ Follow = .08f, Apex = .40f, Body = ThrowInk },
         };
 
         static string SwingPrefabPath(Swing s) => Root2 + "/Prefabs/PF_V308c_swing_" + s.State.Substring(5).ToLowerInvariant() + ".prefab";

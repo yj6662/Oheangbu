@@ -38,6 +38,7 @@ namespace Oheangbu.Data.Spell
         [Tooltip("D308-84 circle bridge: ground-run blot size = bridge width x this (TEST)")] [Min(0)] public float RunBlotScale = 1.6f;
         [Tooltip("D308-84 circle bridge: blots this high over the ground (no z-fight)")] [Min(0)] public float RunLift = .03f;
         [Tooltip("D308-84 circle bridge: blots laid per bridge point (sw_o: 1 read faint)")] [Range(1, 4)] public int RunBlotsPerPoint = 2;
+        [Tooltip("D308-84 cone bridge: the ground ink runs this far down the cone before the fan rises (m, TEST)")] [Min(0)] public float ConeRunMeters = 2.5f;
         [Tooltip("정점 먹이 날아가는 방향: 시전자 정면 + 붓끝 진행 방향 x 이 값 (0 = 정면만)")]
         [Range(0, 1)] public float ApexLean = .35f;
         [Tooltip("붓끝이 한 프레임에 이 거리(m)보다 멀리 옮겨지면(순간 이동) 획을 끊는다.")]

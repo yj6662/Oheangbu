@@ -62,6 +62,8 @@ namespace Oheangbu.App.SpellVFX120
             _b3Side = ((GetInstanceID() & 1) == 0 ? 1f : -1f) * side;
             if (Profile.Bolt300Scale > 0f && Mathf.Abs(Profile.Bolt300Scale - 1f) > .001f)
                 _b3Travel.localScale = _b3Contact.localScale = Vector3.one * Profile.Bolt300Scale;
+            if (Profile.Bolt300TravelScale > 0f && Mathf.Abs(Profile.Bolt300TravelScale - 1f) > .001f)
+                _b3Travel.localScale = Vector3.one * (Profile.Bolt300Scale > 0f ? Profile.Bolt300Scale : 1f) * Profile.Bolt300TravelScale;
             ResetBolt300();
         }
 
