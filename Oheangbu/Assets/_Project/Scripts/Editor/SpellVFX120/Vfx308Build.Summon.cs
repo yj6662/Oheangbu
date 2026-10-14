@@ -38,7 +38,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             m.SetFloat("_Life", life); m.SetFloat("_CoreGlow", 0f);
             // 2nd pass (user: liquid, not solid): no eaten outline (that reads dry), a running surface and a wet sheen instead
             m.SetFloat("_Edge", 0f); m.SetFloat("_GrainScale", 6.5f); m.SetFloat("_WashAmount", .12f); m.SetFloat("_Wobble", .01f);
-            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .02f); m.SetFloat("_Gloss", .5f);     // the mesh already hangs: the shader only keeps it moving (3rd pass: less sag, the aura breaks the outline)
+            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .02f); m.SetFloat("_Gloss", .3f);     // the mesh already hangs: the shader only keeps it moving (3rd pass: less sag, the aura breaks the outline)
+            // 4th pass (user 2026-10-14: body and strands differ in colour, so the strands read as a mane - they must look joined):
+            // the body is the SAME ink as its strands and is drawn in the same place in the frame - after the realm fog (layer 20,
+            // transparent queue, still opaque and depth-writing). Before, the fog and the grade paled the body and not the strands.
+            m.SetColor("_Ink", SwingInkColour); m.SetColor("_Wash", new Color(.11f, .105f, .1f, 1f)); m.renderQueue = 2999;
+            m.SetColor("_Accent", new Color(.6f, .58f, .53f, 1f));     // drawn after the fog and the grade now: the bone and the core are set lower to land where they were
             EditorUtility.SetDirty(m); Touched.Add(m);
             return m;
         }
@@ -107,7 +112,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Vector3 chest = body.transform.InverseTransformPoint(chestWorld);
             // the element's pigment, a little cleaner than the wash colour (LDR; the shader caps the momentary lift)
             Color.RGBToHSV(profile.Pigment, out float hue, out float sat, out float val);
-            Color core = Color.HSVToRGB(hue, Mathf.Min(1f, sat * 1.25f), Mathf.Min(.42f, val * 1.05f));
+            Color core = Color.HSVToRGB(hue, Mathf.Min(1f, sat * 1.25f), Mathf.Min(.26f, val * .7f));
             float accentFrom = (bb.min.y + bb.size.y * .8f - all.min.y) / Mathf.Max(.1f, all.size.y);
             var ink = InkBody("M_V308c_summon_deer_body", core, accentFrom, chest, bb.size.y * .11f, WoodDeerVfx.ReviewLife);
             var sb = new StringBuilder();
@@ -119,6 +124,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             liquid.AddComponent<MeshFilter>().sharedMesh = melted;
             var liquidRenderer = liquid.AddComponent<MeshRenderer>(); liquidRenderer.sharedMaterial = ink;
             liquid.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            liquid.layer = AfterFogLayer;
             var lb = liquidRenderer.bounds;
             if ((lb.size.x > lb.size.z) != (bb.size.x > bb.size.z)) { liquid.transform.rotation = Quaternion.Euler(0f, 90f, 0f); lb = liquidRenderer.bounds; }
             float fit = bb.size.y / Mathf.Max(.01f, lb.size.y);
