@@ -58,7 +58,13 @@ namespace Oheangbu.Data.Spell
         {
             if (string.IsNullOrEmpty(state) || States == null) return -1;
             for (int i = 0; i < States.Length; i++) if (States[i].State == state) return i;
+            // D308-84: a position variant inks like the motion it varies (thrown like the sweep, landed like the slam)
+            foreach (var pair in Variants) if (pair.From == state && pair.To != state) return IndexOf(pair.To);
             return -1;
         }
+
+        [Serializable] public struct Variant { public string From, To; }
+        [Tooltip("위치별 동작(D308-84)이 어느 먹을 쓰는지. 표에 없는 상태 이름이 오면 이것으로 찾는다.")]
+        public Variant[] Variants = { new Variant { From = "SwingThrow", To = "SwingSweep" }, new Variant { From = "SwingStrikeFar", To = "SwingSlam" } };
     }
 }

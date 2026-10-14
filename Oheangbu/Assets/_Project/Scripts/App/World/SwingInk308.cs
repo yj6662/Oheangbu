@@ -48,11 +48,28 @@ namespace Oheangbu.App.World
         readonly List<int> triangles = new List<int>(576);
         readonly RaycastHit[] hits = new RaycastHit[8];
 
+        // D308-84 (SPEC-SPELL-VFX-OVERHAUL-308 11.20): the bridge - the ink that goes from the tip to where the spell stands, laid
+        // when the apex plan is made. Single: a stem toward the target, and the spell leaves from its end. Circle: from where the
+        // tip struck, the ink runs over the ground to the centre and pools there before the judgement (apex + Delay). Ink only.
+        readonly List<Sample> bridge = new List<Sample>(64);
+        readonly List<Vector3> bridgePath = new List<Vector3>(64);
+        readonly List<float> bridgeAt = new List<float>(64);
+        GameObject bridgeHolder;
+        MeshRenderer bridgeRenderer;
+        Mesh bridgeMesh;
+        float bridgeWidth, bridgeDry, bridgeUntil;
+        bool bridgeFlat;
+        Instance pool;
+        Vector3 poolAt;
+        float poolAtTime = float.PositiveInfinity;
+
         /// <summary>Read by checks.</summary>
         public bool Following => following;
         public int StrokePoints => samples.Count;
         public int Swings { get; private set; }
         public int Apexes { get; private set; }
+        public int Bridges { get; private set; }
+        public bool BridgeShown => bridgeRenderer != null && bridgeRenderer.enabled;
 
         // Where the swung brush tip was a moment ago: the spell that leaves at the apex starts there (Vfx120LaunchPoint), so it
         // comes out of the thrown ink and not out of a point in front of the camera. The dispatch runs in Update and this
@@ -87,11 +104,14 @@ namespace Oheangbu.App.World
             if (instances != null) foreach (var i in instances) if (i != null && i.Root != null) Destroy(i.Root);
             if (strokeHolder != null) Destroy(strokeHolder);
             if (strokeMesh != null) Destroy(strokeMesh);
+            if (bridgeHolder != null) Destroy(bridgeHolder);
+            if (bridgeMesh != null) Destroy(bridgeMesh);
+            if (pool != null && pool.Root != null) Destroy(pool.Root);
         }
 
         void Unsubscribe()
         {
-            if (!ReferenceEquals(wiring, null)) { wiring.SwingBegan308 -= OnBegan; wiring.SwingFizzled308 -= OnFizzled; }
+            if (!ReferenceEquals(wiring, null)) { wiring.SwingBegan308 -= OnBegan; wiring.SwingFizzled308 -= OnFizzled; wiring.CastPlanned -= OnPlanned; }
             wiring = null;
         }
 
@@ -106,7 +126,7 @@ namespace Oheangbu.App.World
             {
                 Unsubscribe();
                 wiring = now;
-                if (wiring != null) { wiring.SwingBegan308 += OnBegan; wiring.SwingFizzled308 += OnFizzled; }
+                if (wiring != null) { wiring.SwingBegan308 += OnBegan; wiring.SwingFizzled308 += OnFizzled; wiring.CastPlanned += OnPlanned; }
             }
             if (instances == null) instances = new Instance[Profile.States.Length];
             if (strokeHolder == null)
@@ -119,6 +139,17 @@ namespace Oheangbu.App.World
                 strokeRenderer.lightProbeUsage = LightProbeUsage.Off; strokeRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
                 strokeRenderer.enabled = false;
                 strokeHolder.layer = 20;   // VfxAfterFog: drawn after the realm fog, like the spell prefabs
+            }
+            if (bridgeHolder == null)
+            {
+                bridgeHolder = new GameObject("SwingInk308 Bridge");
+                bridgeMesh = new Mesh { name = "SwingInk308 Bridge" }; bridgeMesh.MarkDynamic();
+                bridgeHolder.AddComponent<MeshFilter>().sharedMesh = bridgeMesh;
+                bridgeRenderer = bridgeHolder.AddComponent<MeshRenderer>();
+                bridgeRenderer.shadowCastingMode = ShadowCastingMode.Off; bridgeRenderer.receiveShadows = false;
+                bridgeRenderer.lightProbeUsage = LightProbeUsage.Off; bridgeRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+                bridgeRenderer.enabled = false;
+                bridgeHolder.layer = 20;
             }
             return true;
         }
@@ -149,7 +180,8 @@ namespace Oheangbu.App.World
             entry = index; active = Get(index);
             var e = Profile.States[index];
             releasedAt = Time.time;
-            apexAt = apexTime > releasedAt + .0001f ? apexTime : releasedAt + e.VisualApexSeconds;
+            float lead = wiring != null ? wiring.SwingClipLead308 : 0f;   // D308-84: the ward's short slam strikes this soon
+            apexAt = apexTime > releasedAt + .0001f ? apexTime : releasedAt + (lead > 0f ? lead : e.VisualApexSeconds);
             followUntil = apexAt + e.FollowAfterApex;
             following = true; apexDone = false; has = false; velocity = Vector3.zero;
             samples.Clear(); strokeSeconds = e.StrokeSeconds;
@@ -197,6 +229,7 @@ namespace Oheangbu.App.World
                 if (!apexDone && now >= apexAt) { apexDone = true; AtApex(tip); }
                 if (now >= followUntil) StopFollowing();
             }
+            StepBridge(now, eye);
             // the stroke ages whether the tip is still followed or not
             while (samples.Count > 0 && now - samples[0].Time > strokeSeconds) samples.RemoveAt(0);
             if (strokeRenderer != null && strokeRenderer.enabled)
@@ -230,6 +263,106 @@ namespace Oheangbu.App.World
             Apexes++;
         }
 
+        // The apex plan of this swing (CastPlanned is raised inside the apex dispatch, before the spell is spawned).
+        void OnPlanned(CastPlan plan)
+        {
+            try
+            {
+                if (plan == null || !following || entry < 0 || rig == null || rig.EffectTip == null) return;
+                float now = Time.time;
+                if (now < apexAt - .05f || now > apexAt + .25f) return;   // not this swing's apex
+                Vector3 tip = has ? previous : rig.EffectTip.position;
+                var e = Profile.States[entry];
+                if (bridgeRenderer != null) bridgeRenderer.sharedMaterial = e.Stroke;
+                bridgePath.Clear(); bridgeAt.Clear(); bridge.Clear();
+                if (plan.Area == null)
+                {
+                    // single: a stem from the tip toward the target, the spell leaves from its end
+                    var target = plan.Hits.Count > 0 && plan.Hits[0].Target != null ? plan.Hits[0].Target.transform : null;
+                    Vector3 flat = transform.forward; flat.y = 0f; flat = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
+                    Vector3 end = target != null ? target.position + Vector3.up * 1.1f : tip + flat * 10f;
+                    Vector3 to = end - tip; float distance = to.magnitude;
+                    if (distance < .3f) return;
+                    float length = Mathf.Clamp(distance * .2f, .8f, 2f);
+                    Vector3 stem = tip + to / distance * length;
+                    for (int i = 0; i <= 8; i++) { bridgePath.Add(Vector3.Lerp(tip, stem, i / 8f)); bridgeAt.Add(now + .1f * i / 8f); }
+                    bridgeFlat = false; bridgeWidth = .1f; bridgeDry = .45f;
+                    originTip = stem; originAt = now;   // the body forms at the stem's end (Vfx120LaunchPoint)
+                }
+                else if (plan.Area.Shape == AreaShape.Circle)
+                {
+                    // circle: the ink runs over the ground from the struck point to the centre, arriving before the judgement
+                    Vector3 from = GroundUnder(tip), centre = plan.Area.Point;
+                    Vector3 run = centre - from; run.y = 0f; float distance = run.magnitude;
+                    float travel = Mathf.Clamp(Mathf.Min(plan.Area.Delay - .1f, .3f), .08f, .3f);
+                    int steps = Mathf.Clamp(Mathf.CeilToInt(distance / .5f), 2, 48);
+                    for (int i = 0; i <= steps; i++)
+                    {
+                        float u = i / (float)steps;
+                        bridgePath.Add(GroundAt(Vector3.Lerp(from, centre, u), from.y)); bridgeAt.Add(now + travel * u);
+                    }
+                    bridgeFlat = true; bridgeWidth = Mathf.Lerp(.42f, .22f, Mathf.Clamp01(distance / 20f)); bridgeDry = 1.1f;
+                    poolAt = bridgePath[bridgePath.Count - 1]; poolAtTime = now + travel;
+                }
+                else return;
+                bridgeUntil = bridgeAt[bridgeAt.Count - 1] + bridgeDry;
+                if (bridgeRenderer != null) bridgeRenderer.enabled = e.Stroke != null;
+                Bridges++;
+            }
+            catch (System.Exception ex) { Debug.LogException(ex, this); }
+        }
+
+        void StepBridge(float now, Vector3 eye)
+        {
+            if (poolAtTime <= now)
+            {
+                poolAtTime = float.PositiveInfinity;
+                var made = Pool();
+                if (made != null && made.Ground != null)
+                {
+                    Vector3 flat = transform.forward; flat.y = 0f;
+                    made.Ground.SetPositionAndRotation(poolAt, Quaternion.LookRotation(flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward, Vector3.up));
+                    foreach (var ps in made.GroundSystems) { ps.Clear(true); ps.Play(true); }
+                }
+            }
+            if (bridgeRenderer == null || !bridgeRenderer.enabled) return;
+            if (now > bridgeUntil) { bridgeRenderer.enabled = false; bridgeMesh.Clear(); return; }
+            bridge.Clear();
+            for (int i = 0; i < bridgePath.Count; i++)
+            {
+                if (bridgeAt[i] > now) break;   // the ink has not got there yet
+                if ((eye - bridgePath[i]).sqrMagnitude < Profile.HideWithinCamera * Profile.HideWithinCamera) continue;
+                bridge.Add(new Sample { Point = bridgePath[i], Time = bridgeAt[i], Width = bridgeWidth });
+            }
+            if (bridge.Count < 2) { bridgeMesh.Clear(); return; }
+            BuildRibbon(bridgeMesh, bridge, now, bridgeDry, eye, vertices, uvs, colours, triangles, bridgeFlat);
+        }
+
+        // the arrival pool: its own copy of the slam's prefab, so the strike's own ground ink under the tip keeps playing
+        Instance Pool()
+        {
+            if (pool != null) return pool.Root != null ? pool : null;
+            pool = new Instance();
+            int slam = Profile.IndexOf("SwingSlam");
+            var prefab = slam >= 0 ? Profile.States[slam].Prefab : null;
+            if (prefab != null) { pool.Root = Instantiate(prefab); pool.Root.name = prefab.name + " (bridge pool)"; pool.Ground = pool.Root.transform.Find(GroundName); }
+            pool.TipSystems = new ParticleSystem[0]; pool.ApexSystems = new ParticleSystem[0]; pool.GroundSystems = Systems(pool.Ground);
+            return pool.Root != null ? pool : null;
+        }
+
+        Vector3 GroundAt(Vector3 at, float fallbackY)
+        {
+            Transform own = transform.root;
+            int count = Physics.RaycastNonAlloc(new Vector3(at.x, at.y + 3f, at.z), Vector3.down, hits, 8f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            float best = float.PositiveInfinity; Vector3 point = new Vector3(at.x, fallbackY, at.z);
+            for (int i = 0; i < count; i++)
+            {
+                if (hits[i].collider == null || hits[i].collider.transform.root == own || hits[i].distance >= best) continue;
+                best = hits[i].distance; point = hits[i].point;
+            }
+            return point + Vector3.up * .04f;
+        }
+
         Vector3 GroundUnder(Vector3 tip)
         {
             Transform own = transform.root;
@@ -247,7 +380,7 @@ namespace Oheangbu.App.World
         // oldest end of the stroke's life; colour alpha: the ink left (the shader breaks the stroke with it, it does not fade it).
         // Shared with the edit-mode pose (Vfx308Build swingink:pose), so a still shows what the game builds.
         public static void BuildRibbon(Mesh mesh, List<Sample> list, float now, float seconds, Vector3 eye,
-            List<Vector3> v, List<Vector2> uv, List<Color> c, List<int> tri)
+            List<Vector3> v, List<Vector2> uv, List<Color> c, List<int> tri, bool lieFlat = false)
         {
             v.Clear(); uv.Clear(); c.Clear(); tri.Clear();
             int n = list.Count;
@@ -256,7 +389,7 @@ namespace Oheangbu.App.World
             {
                 var s = list[i];
                 Vector3 along = list[Mathf.Min(i + 1, n - 1)].Point - list[Mathf.Max(i - 1, 0)].Point;
-                Vector3 side = Vector3.Cross(along, eye - s.Point);
+                Vector3 side = Vector3.Cross(along, lieFlat ? Vector3.up : eye - s.Point);   // lieFlat: the bridge's ink on the ground (D308-84)
                 side = side.sqrMagnitude > 1e-10f ? side.normalized : Vector3.up;
                 float age = Mathf.Clamp01((now - s.Time) / Mathf.Max(.01f, seconds));
                 // a rounded head at the tip, a body that narrows a little as it dries
