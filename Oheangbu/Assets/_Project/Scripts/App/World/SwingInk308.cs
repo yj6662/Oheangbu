@@ -62,6 +62,8 @@ namespace Oheangbu.App.World
         Instance pool;
         Vector3 poolAt;
         float poolAtTime = float.PositiveInfinity;
+        // the stem's end stays the launch origin until the stroke adapter spawns the spell (it queues the release and spawns later)
+        float originPinnedUntil = float.NegativeInfinity;
 
         /// <summary>Read by checks.</summary>
         public bool Following => following;
@@ -225,7 +227,7 @@ namespace Oheangbu.App.World
                         samples.Add(new Sample { Point = tip, Time = now, Width = width });
                 }
                 previous = tip; has = true;
-                if (!hidden) { originTip = tip; originAt = now; }
+                if (!hidden && now > originPinnedUntil) { originTip = tip; originAt = now; }
                 if (!apexDone && now >= apexAt) { apexDone = true; AtApex(tip); }
                 if (now >= followUntil) StopFollowing();
             }
@@ -287,7 +289,7 @@ namespace Oheangbu.App.World
                     Vector3 stem = tip + to / distance * length;
                     for (int i = 0; i <= 8; i++) { bridgePath.Add(Vector3.Lerp(tip, stem, i / 8f)); bridgeAt.Add(now + .1f * i / 8f); }
                     bridgeFlat = false; bridgeWidth = .1f; bridgeDry = .45f;
-                    originTip = stem; originAt = now;   // the body forms at the stem's end (Vfx120LaunchPoint)
+                    originTip = stem; originAt = now; originPinnedUntil = now + OriginFresh;   // the body forms at the stem's end (Vfx120LaunchPoint)
                 }
                 else if (plan.Area.Shape == AreaShape.Circle)
                 {
