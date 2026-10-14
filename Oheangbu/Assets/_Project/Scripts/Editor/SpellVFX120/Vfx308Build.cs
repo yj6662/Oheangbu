@@ -570,10 +570,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = 1.2f, Pivot = new Vector3(0f, .2f, 0f), Colour = Fade(ember, .15f, soot), Grow = Curve(0, .9f, 1, 1.4f) });
             Blots(travel, "Soot", drops, soot, soot, 12f, new Vector2(.4f, .65f), new Vector2(.35f, .55f), -.15f, .18f);
             Birth2(travel, "na", new Color(.6f, .28f, .1f), 1.2f);
-            Wash(contact, "Burst", B("na", "fire_burst", C(ink, .35f), 1f), ember, soot, 6.4f, .9f, .4f, 1.15f, depth: 3);
-            Layer(contact, new L { Name = "Tongues", World = false, Mat = flame, Burst = 7, Max = 8, Life = new Vector2(.55f, .85f), Size = new Vector2(1.8f, 2.6f), Radius = .6f, SpinRandom = false, Blend = true,
+            // 6th pass (sheets r5): from 12 m the hit was one red mass. Its own burst material with half the heat and more ink, one
+            // layer fewer, smaller; fewer tongues; the ink splat under it is the larger shape now.
+            Wash(contact, "Burst", Bleed("M_V308b_na_fire_burst_hit", "fire_burst", C(ink, .7f), .5f, 1f), Color.Lerp(ember, soot, .45f), soot, 5.2f, .9f, .3f, 1.15f, depth: 2);
+            Layer(contact, new L { Name = "Tongues", World = false, Mat = flame, Burst = 4, Max = 5, Life = new Vector2(.55f, .85f), Size = new Vector2(1.5f, 2.1f), Radius = .6f, SpinRandom = false, Blend = true,
                 RandomStart = true, FrameFrom = 0f, FrameTo = 8f, RiseY = 1.7f, Colour = Fade(ember, .3f, soot), Grow = Curve(0, .9f, 1, 1.3f) });
-            Wash(contact, "Splat", B("na", "ink_splat", C(ink, .9f), 0f, .8f), soot, soot, 4.2f, .9f, .35f, 1.25f, 15.5f, default, true);
+            Wash(contact, "Splat", B("na", "ink_splat", C(ink, .9f), 0f, .95f), soot, soot, 5.6f, .9f, .4f, 1.25f, 15.5f, default, true);
             return root;
         }
 
@@ -721,10 +723,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             e.Flame = key == "na" ? B(key, "fire_tongue", C(ink, .35f), 1f) : e.Burst;
             e.Stroke = key == "ga" ? B(key, "wood_stroke", C(ink, .92f)) : e.Burst;
             e.Stalk = key == "ga" ? k.Stalk : e.Spike;
-            e.StrokeSolid = Solid("M_V308_" + key + "_stroke", Color.Lerp(pig, ink, .35f), ink, .45f, .3f);
+            e.StrokeSolid = Solid("M_V308_" + key + "_stroke", Color.Lerp(pig, ink, .62f), ink, .45f, .3f);      // 6th pass: ink first - the canes read as green bamboo posts
             e.Lick = key == "na" ? B(key, "fire_lick", C(ink, .3f), 1f) : e.Burst;
-            e.LickSoot = key == "na" ? Bleed("M_V308b_na_fire_lick_soot", "fire_lick", C(ink, .7f), .55f, .7f) : e.Burst;       // mostly soot, a little heat at the root
-            e.Strand = Solid("M_V308_" + key + "_strand", Color.Lerp(pig, ink, key == "na" ? .3f : .45f), ink, .45f, .3f);
+            e.LickSoot = key == "na" ? Bleed("M_V308b_na_fire_lick_soot", "fire_lick", C(ink, .85f), .3f, .92f) : e.Burst;       // mostly soot, a little heat at the root
+            e.Strand = Solid("M_V308_" + key + "_strand", Color.Lerp(pig, ink, key == "na" ? .62f : .55f), ink, .45f, .3f);      // 6th pass: soot-dark strands, not red flakes
             e.Tongue = k.Tongue;
             e.Ring = Bleed("M_V308b_" + key + "_ring", "ink_pool", C(ink, .9f), 0f, .9f, 0f, 0f);
             e.Head = e.Burst;
@@ -757,11 +759,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static GameObject CircleBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_circle_" + e.Key);
-            Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.55f * a.Big);
-            Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(4.2f, 5.4f) * a.Big, Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
-                FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(e.Dark, .5f, e.Dark), Grow = Curve(0f, .85f, 1f, 1.2f) });
-            Layer(root.transform, new L { Name = "Wisp", Mat = e.Drops, World = false, Rate = 1.6f, Max = 3, Life = new Vector2(.6f, .8f) * a.Slow, Size = new Vector2(.9f, 1.4f) * a.Big, Radius = .15f, ShapePos = new Vector3(0f, 1.1f * a.Big, 0f),
-                RandomCell = true, Blend = true, Colour = Fade(e.Wash, .25f, e.Dark), Grow = Curve(0f, .7f, 1f, 1.7f) });
+            // 6th pass (edit-mode sheets r5, 2026-10-14): the pools were too small to run together and the canes read as a fence of posts.
+            // The ground ink is now the larger thing (ink colour, not the element's dark), the cane is lower and ink-dark, and
+            // ink leaves its top the whole time it stands (a stroke that bleeds away, not a post).
+            Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.25f * a.Big);
+            Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(6.2f, 7.6f) * a.Big, Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
+                FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .6f), .65f, e.Ink), Grow = Curve(0f, .85f, 1f, 1.2f) });
+            Layer(root.transform, new L { Name = "Wisp", Mat = e.Drops, World = false, Rate = 5f, Max = 7, Life = new Vector2(.6f, .9f) * a.Slow, Size = new Vector2(.8f, 1.3f) * a.Big, Radius = .12f, ShapePos = new Vector3(0f, 1.2f * a.Big, 0f), RiseY = .9f,
+                RandomCell = true, Blend = true, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .5f), .3f, e.Ink), Grow = Curve(0f, .6f, 1f, 1.9f) });
             return root;
         }
 
@@ -772,10 +777,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static GameObject ConeBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_cone_" + e.Key);
-            Layer(root.transform, new L { Name = "Strands", Mat = e.Strand, Mesh = e.Tongue, AlongVelocity = true, Rate = 80f * a.Dense, Max = Mathf.CeilToInt(28 * a.Dense), Life = new Vector2(.45f, .7f) * a.Slow, Size = new Vector2(.9f, 1.5f) * a.Big, Size3D = new Vector3(1.5f, 1.5f, 1.9f),
-                Speed = new Vector2(4f, 8f), Drag = 1.5f, Shape = ParticleSystemShapeType.Cone, Angle = 30f, Grow = Curve(0f, .4f, .5f, 1.1f, 1f, 0f) });
-            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 30f * a.Dense, Max = Mathf.CeilToInt(11 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(1.8f, 2.6f) * a.Big, Speed = new Vector2(5f, 9f), Drag = 2.2f, SpinRandom = false, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .6f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .3f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
+            Layer(root.transform, new L { Name = "Strands", Mat = e.Strand, Mesh = e.Tongue, AlongVelocity = true, Rate = 120f * a.Dense, Max = Mathf.CeilToInt(44 * a.Dense), Life = new Vector2(.45f, .7f) * a.Slow, Size = new Vector2(.65f, 1.1f) * a.Big, Size3D = new Vector3(1f, 1f, 2.6f),
+                Speed = new Vector2(5f, 9f), Drag = 1.5f, Shape = ParticleSystemShapeType.Cone, Angle = 30f, Grow = Curve(0f, .4f, .5f, 1.1f, 1f, 0f) });
+            // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
+            // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
+            Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 22f * a.Dense, Max = Mathf.CeilToInt(14 * a.Dense), Life = new Vector2(.6f, .85f) * a.Slow, Size = new Vector2(2.4f, 3.4f) * a.Big, Speed = new Vector2(5f, 9f), Drag = 2.6f, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = Fade(e.Ink, .45f, e.Ink), Grow = Curve(0f, .5f, 1f, 1.3f) });
+            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 60f * a.Dense, Max = Mathf.CeilToInt(24 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(2.2f, 3.2f) * a.Big, Speed = new Vector2(5f, 9f), Drag = 2.2f, SpinRandom = false, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .9f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .5f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
             Layer(root.transform, new L { Name = "Blots", Mat = e.Drops, Rate = 20f * a.Dense, Max = Mathf.CeilToInt(7 * a.Dense), Life = new Vector2(.4f, .7f) * a.Slow, Size = new Vector2(.6f, 1f) * a.Big, Speed = new Vector2(6f, 12f), Drag = 2f, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomCell = true, Colour = Fade(e.Dark, .3f, e.Dark), Grow = Curve(0f, .8f, 1f, 1.6f) });
             return root;
