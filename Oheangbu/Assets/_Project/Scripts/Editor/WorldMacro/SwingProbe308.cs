@@ -63,6 +63,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 case "dodge": return Dodge(walker);
                 case "target": return Target(s, walker, wiring, rest);
+                // live spell effects (D308-84 stage 2: which prefab really spawned - #308 bolt or the old body)
+                case "fx":
+                {
+                    var sb = new System.Text.StringBuilder("fx");
+                    foreach (var e in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx120Effect>(FindObjectsSortMode.None))
+                    {
+                        sb.Append(" | ").Append(e.name).Append(" profile ").Append(e.Profile != null ? e.Profile.name : "-").Append(" bolt ").Append(e.Profile != null && e.Profile.Bolt300Prefab != null ? e.Profile.Bolt300Prefab.name : "-").Append(" kids");
+                        foreach (Transform c in e.transform) sb.Append(' ').Append(c.name).Append(c.gameObject.activeInHierarchy ? "" : "(off)");
+                    }
+                    foreach (var r in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx308Residue>(FindObjectsSortMode.None)) sb.Append(" | residue at ").Append(r.transform.position.ToString("F1"));
+                    return sb.ToString();
+                }
                 // slow motion for the stills (Play memory only): the rule and the presentation share Time.time, so both slow together
                 case "slow": { float k = Mathf.Clamp(float.Parse(rest, Inv), .05f, 1f); Time.timeScale = k; return "timeScale " + k.ToString("F2", Inv); }
                 case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }

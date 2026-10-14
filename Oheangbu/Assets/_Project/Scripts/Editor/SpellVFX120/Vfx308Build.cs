@@ -1195,9 +1195,22 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var ktp = Load<KtpContactProfile>(KtpProfile);
             if (!File.Exists(KtpRecord)) File.WriteAllText(KtpRecord, JsonUtility.ToJson(new Paths { paths = ktp.SpellProfiles.Select(x => AssetDatabase.GetAssetPath(x)).ToList() }, true));
             var mine = Attack.Where(x => x.Shape != Form.Giyeok && x.Shape != Form.Single).Select(x => Load<Vfx120Profile>(AttackProfilePath(x))).ToList();
+            // D308-84 (11.21, plan stage 3 "hit = ink splat"): singles too - Play sw_p still showed the KTP pattern seal (Fly prefab,
+            // x3.5) on every single-target hit. Their #308 profile copies get the element's ink-splat hit as the contact.
+            int singles = 0;
+            foreach (var a in Attack.Where(x => x.Shape == Form.Single))
+            {
+                var spell = Spells.FirstOrDefault(x => x.Glyph == a.Glyph);
+                var profile = Load<Vfx120Profile>(spell != null ? ProfilePath(spell) : AttackProfilePath(a));
+                var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(a.Elem));
+                if (profile == null || hit == null) continue;
+                profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f;
+                EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
+                mine.Add(profile); singles++;
+            }
             ktp.SpellProfiles = mine.Concat(ktp.SpellProfiles.Where(x => x != null && !mine.Contains(x))).ToArray();
             EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
-            return "hit contacts: " + mine.Count + " range profiles put first in KTP_ContactProfile.SpellProfiles";
+            return "hit contacts: " + (mine.Count - singles) + " range + " + singles + " single profiles put first in KTP_ContactProfile.SpellProfiles";
         }
 
         static string UnregisterContacts()
