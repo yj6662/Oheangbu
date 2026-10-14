@@ -36,7 +36,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             m.shader = shader;
             m.SetColor("_Core", core); m.SetFloat("_AccentFrom", accentFrom); m.SetVector("_CorePos", corePos); m.SetFloat("_CoreRadius", coreRadius);
             m.SetFloat("_Life", life); m.SetFloat("_CoreGlow", 0f);
-            m.SetFloat("_Edge", .34f); m.SetFloat("_GrainScale", 6.5f); m.SetFloat("_WashAmount", .38f); m.SetFloat("_Wobble", .016f);
+            // 2nd pass (user: liquid, not solid): no eaten outline (that reads dry), a running surface and a wet sheen instead
+            m.SetFloat("_Edge", 0f); m.SetFloat("_GrainScale", 6.5f); m.SetFloat("_WashAmount", .12f); m.SetFloat("_Wobble", .01f);
+            m.SetFloat("_Flow", .035f); m.SetFloat("_Sag", .04f); m.SetFloat("_Gloss", .65f);     // the mesh already hangs: the shader only keeps it moving
             EditorUtility.SetDirty(m); Touched.Add(m);
             return m;
         }
@@ -72,9 +74,25 @@ namespace Oheangbu.EditorTools.SpellVFX120
             float accentFrom = (bb.min.y + bb.size.y * .8f - all.min.y) / Mathf.Max(.1f, all.size.y);
             var ink = InkBody("M_V308c_summon_deer_body", core, accentFrom, chest, bb.size.y * .11f, WoodDeerVfx.ReviewLife);
             var sb = new StringBuilder();
+            // 2nd pass (user: a mass of liquid, not a solid): the body mesh itself is the melted one (Tools/Blender/SpellVFX308/
+            // inkbody308.py - remeshed into one skin, undersides hanging, drops on threads). It is fitted to where the modelled
+            // body stood (same height, same feet), and the modelled body is switched off - its object stays for the seam.
+            var melted = Model("inkdeer");
+            var liquid = new GameObject("InkBody"); liquid.transform.SetParent(model.transform, false);
+            liquid.AddComponent<MeshFilter>().sharedMesh = melted;
+            var liquidRenderer = liquid.AddComponent<MeshRenderer>(); liquidRenderer.sharedMaterial = ink;
+            liquid.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            var lb = liquidRenderer.bounds;
+            if ((lb.size.x > lb.size.z) != (bb.size.x > bb.size.z)) { liquid.transform.rotation = Quaternion.Euler(0f, 90f, 0f); lb = liquidRenderer.bounds; }
+            float fit = bb.size.y / Mathf.Max(.01f, lb.size.y);
+            liquid.transform.localScale *= fit; lb = liquidRenderer.bounds;
+            liquid.transform.position += new Vector3(bb.center.x - lb.center.x, bb.max.y - lb.max.y, bb.center.z - lb.center.z);     // the antlers and the back stay where they were; the hang goes below
+            ink.SetVector("_CorePos", liquid.transform.InverseTransformPoint(chestWorld)); EditorUtility.SetDirty(ink);     // the core is given in the drawn mesh's own space
+            sb.AppendLine("  InkBody <- " + melted.name + " (" + melted.triangles.Length / 3 + " tris), fit x" + fit.ToString("0.000", CultureInfo.InvariantCulture) + ", yaw " + liquid.transform.eulerAngles.y.ToString("0", CultureInfo.InvariantCulture));
             foreach (var r in model.GetComponentsInChildren<MeshRenderer>(true))
             {
-                if (r.name.Contains("Body")) r.sharedMaterial = ink;
+                if (r == liquidRenderer) { }
+                else if (r.name.Contains("Body")) r.enabled = false;
                 else if (r.name.Contains("Leaves")) r.enabled = false;           // no leaves: one pale part only (the antlers)
                 else if (r.name.Contains("Roots")) r.enabled = false;            // no bark roots: the ink pool is the ground it stands on
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -82,7 +100,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             // ink smoke off the whole body: it leaves backward and up, the root of each strand at the body
             var wisp = Bleed("M_V308c_summon_ink_wisp", "ink_wisp", C(SwingDark, .95f), 0f, .95f, 0f, .06f);
-            var wisps = Layer(root.transform, new L { Name = "Wisps", Mat = wisp, Mode = 3, Rate = 24f, Max = 48, Life = new Vector2(1.1f, 1.8f), Size = new Vector2(1.0f, 1.8f), Speed = new Vector2(.05f, .2f), SpinRandom = false, Blend = true,
+            var wisps = Layer(root.transform, new L { Name = "Wisps", Mat = wisp, Mode = 3, Rate = 7f, Max = 16, Life = new Vector2(1.1f, 1.8f), Size = new Vector2(1.0f, 1.6f), Speed = new Vector2(.05f, .2f), SpinRandom = false, Blend = true,
                 RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = G((0f, C(SwingDark, 0f)), (.2f, C(SwingDark, .9f)), (.6f, C(SwingDark, .7f)), (1f, C(SwingDark, 0f))), Grow = Curve(0f, .6f, 1f, 1.5f) });
             // a box over the trunk and neck (a mesh-renderer shape darkened the whole view in the first stills - particles far from the body)
             var shape = wisps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Box;
@@ -93,7 +111,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var main = wisps.main; main.startDelay = .9f;                         // once the body has risen
             wisps.GetComponent<ParticleSystemRenderer>().flip = new Vector3(1f, 0f, 0f);     // the sheet's root is on its right: put it at the body
             // a drop now and then from the belly
-            var drips = Layer(root.transform, new L { Name = "Drips", Mat = Bleed("M_V308c_summon_ink_drops", "ink_drops", C(SwingDark, .9f), 0f, .9f), Rate = 2.2f, Max = 6, Life = new Vector2(.5f, .8f), Size = new Vector2(.12f, .26f), Gravity = 1.6f, RandomCell = true, Blend = true,
+            var drips = Layer(root.transform, new L { Name = "Drips", Mat = Bleed("M_V308c_summon_ink_drops", "ink_drops", C(SwingDark, .9f), 0f, .9f), Rate = 9f, Max = 14, Life = new Vector2(.55f, .9f), Size = new Vector2(.2f, .46f), Gravity = 1.9f, SpinRandom = false, RandomCell = true, Blend = true,
                 Colour = InkFade(.5f) });
             var ds = drips.shape; ds.enabled = true; ds.shapeType = ParticleSystemShapeType.Box; ds.position = root.transform.InverseTransformPoint(new Vector3(bb.center.x, bb.min.y + bb.size.y * .42f, bb.center.z)); ds.scale = new Vector3(bb.size.x * .4f, .05f, bb.size.z * .45f);
             var dm = drips.main; dm.startDelay = 1.1f;
@@ -101,6 +119,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Layer(root.transform, new L { Name = "Pool", Mat = Bleed("M_V308c_swing_ink_pool", "ink_pool", C(SwingInkColour, .92f), 0f, .92f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2, Life = new Vector2(1.9f, 1.9f), Size = new Vector2(3.4f, 3.4f), NoShape = true, Blend = true,
                 ShapePos = new Vector3(0f, .04f, 0f), FrameFrom = 0f, FrameTo = 15.5f, Colour = InkFade(.6f), Grow = Curve(0f, .4f, .2f, 1f, 1f, 1.1f) });
             foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true)) ps.gameObject.layer = AfterFogLayer;     // the ink is drawn after the realm fog; the body stays a world object
+            // it stands in its own ink for as long as it is there (the first pool spreads, this one stays)
+            var puddle = Layer(root.transform, new L { Name = "Puddle", Mat = Bleed("M_V308c_swing_ink_pool", "ink_pool", C(SwingInkColour, .92f), 0f, .92f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2, Life = new Vector2(3.3f, 3.3f), Size = new Vector2(3.0f, 3.0f), NoShape = true, Blend = true,
+                ShapePos = new Vector3(0f, .05f, 0f), FrameFrom = 7f, FrameTo = 10f, Colour = G((0f, C(SwingDark, 0f)), (.12f, C(SwingDark, 1f)), (.8f, C(SwingDark, 1f)), (1f, C(SwingDark, 0f))) });
+            var pm = puddle.main; pm.startDelay = 1.2f;
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true)) ps.gameObject.layer = AfterFogLayer;
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, SummonPrefabPath("deer"));
             Object.DestroyImmediate(root);
             foreach (var o in Touched) AssetDatabase.SaveAssetIfDirty(o);

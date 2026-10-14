@@ -49,7 +49,7 @@ def main():
     for y, row in enumerate(rows):
         for x, im in enumerate(row):
             sheet.paste(im, (x * 480, y * 360))
-    out = ROOT / f'Art/SpellVFX308/Review/summon_{key}_r1.png'
+    out = ROOT / f'Art/SpellVFX308/Review/summon_{key}_r2.png'
     sheet.save(out)
     print(out)
 
