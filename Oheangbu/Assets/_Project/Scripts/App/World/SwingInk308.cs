@@ -16,7 +16,7 @@ namespace Oheangbu.App.World
     public sealed class SwingInk308 : MonoBehaviour
     {
         public const string ResourcePath = "SwingInk308/SwingInk308Profile";
-        public const string TipName = "Tip", ApexName = "Apex", GroundName = "Ground";
+        public const string TipName = "Tip", ApexName = "Apex", GroundName = "Ground", RunName = "Run";
         public SwingInk308Profile Profile;
 
         public struct Sample { public Vector3 Point; public float Time, Width; }
@@ -25,6 +25,7 @@ namespace Oheangbu.App.World
         {
             public GameObject Root; public Transform Tip, Apex, Ground;
             public ParticleSystem[] TipSystems, ApexSystems, GroundSystems;
+            public ParticleSystem Run;   // the slam prefab's ground-run ink (world space, emitted by script along the bridge)
         }
 
         WorldMacroPlayerGestureRig rig;
@@ -62,6 +63,10 @@ namespace Oheangbu.App.World
         Instance pool;
         Vector3 poolAt;
         float poolAtTime = float.PositiveInfinity;
+        // circle: the ground-run ink is soaked blots laid where the running ink has reached (the flat stroke ribbon alone
+        // vanished on brown ground, Play sw_m / sw_n) - index of the next bridge point to blot
+        int runNext = int.MaxValue;
+        float runSize;
         // the stem's end stays the launch origin until the stroke adapter spawns the spell (it queues the release and spawns later)
         float originPinnedUntil = float.NegativeInfinity;
 
@@ -276,7 +281,7 @@ namespace Oheangbu.App.World
                 Vector3 tip = has ? previous : rig.EffectTip.position;
                 var e = Profile.States[entry];
                 if (bridgeRenderer != null) bridgeRenderer.sharedMaterial = e.Stroke;
-                bridgePath.Clear(); bridgeAt.Clear(); bridge.Clear();
+                bridgePath.Clear(); bridgeAt.Clear(); bridge.Clear(); runNext = int.MaxValue;
                 if (plan.Area == null)
                 {
                     // single: a stem from the tip toward the target, the spell leaves from its end
@@ -305,6 +310,8 @@ namespace Oheangbu.App.World
                     }
                     bridgeFlat = true; bridgeWidth = Mathf.Lerp(.85f, .45f, Mathf.Clamp01(distance / 20f)); bridgeDry = 1.5f;   // Play sw_m: .42 / .22 were not seen on the ground
                     poolAt = bridgePath[bridgePath.Count - 1]; poolAtTime = now + travel;
+                    var runner = Pool();
+                    if (runner != null && runner.Run != null) { runner.Run.Play(true); runNext = 0; runSize = bridgeWidth * Profile.RunBlotScale; }
                 }
                 else return;
                 bridgeUntil = bridgeAt[bridgeAt.Count - 1] + bridgeDry;
@@ -327,6 +334,7 @@ namespace Oheangbu.App.World
                     foreach (var ps in made.GroundSystems) { ps.Clear(true); ps.Play(true); }
                 }
             }
+            StepRun(now);
             if (bridgeRenderer == null || !bridgeRenderer.enabled) return;
             if (now > bridgeUntil) { bridgeRenderer.enabled = false; bridgeMesh.Clear(); return; }
             bridge.Clear();
@@ -340,6 +348,22 @@ namespace Oheangbu.App.World
             BuildRibbon(bridgeMesh, bridge, now, bridgeDry, eye, vertices, uvs, colours, triangles, bridgeFlat);
         }
 
+        // blot the ground where the running ink has got to (one blot per bridge point, a little jitter so the line is not a chain)
+        void StepRun(float now)
+        {
+            if (runNext >= bridgePath.Count || pool == null || pool.Run == null) return;
+            var ep = new ParticleSystem.EmitParams { applyShapeToPosition = false };
+            while (runNext < bridgePath.Count && bridgeAt[runNext] <= now)
+            {
+                Vector2 j = Random.insideUnitCircle * runSize * .12f;
+                ep.position = bridgePath[runNext] + new Vector3(j.x, Profile.RunLift, j.y);
+                ep.startSize = runSize * Random.Range(.85f, 1.15f);
+                ep.rotation = Random.Range(0f, 360f);
+                pool.Run.Emit(ep, 1);
+                runNext++;
+            }
+        }
+
         // the arrival pool: its own copy of the slam's prefab, so the strike's own ground ink under the tip keeps playing
         Instance Pool()
         {
@@ -349,6 +373,8 @@ namespace Oheangbu.App.World
             var prefab = slam >= 0 ? Profile.States[slam].Prefab : null;
             if (prefab != null) { pool.Root = Instantiate(prefab); pool.Root.name = prefab.name + " (bridge pool)"; pool.Ground = pool.Root.transform.Find(GroundName); }
             pool.TipSystems = new ParticleSystem[0]; pool.ApexSystems = new ParticleSystem[0]; pool.GroundSystems = Systems(pool.Ground);
+            var runPart = pool.Root != null ? pool.Root.transform.Find(RunName) : null;
+            pool.Run = runPart != null ? runPart.GetComponent<ParticleSystem>() : null;
             return pool.Root != null ? pool : null;
         }
 
