@@ -24,8 +24,8 @@ W, H = 560, 350
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_P if run in ('sw_p', 'sw_q') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q') else 3
+    rows = ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s') else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)

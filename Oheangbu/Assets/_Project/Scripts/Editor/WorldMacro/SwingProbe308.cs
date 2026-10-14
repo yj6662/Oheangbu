@@ -281,9 +281,40 @@ namespace Oheangbu.EditorTools.WorldMacro
             var drawn = new DrawnLetter(letter, glyph.Initial, glyph.Medial, final, .8f, .75f, 1.2f, 1.4f, 2);
             var channel = Harness303.Field<DrawnLetterEventChannelSO>(wiring, "_letterDrawn");
             Line("RELEASE " + letter + " ink " + before.ToString("F3", Inv));
+            // D308-84 stage 2: the brush adapter makes the spell body only from strokes + a commit (the drawing input normally
+            // sends them; the letter channel alone gives none - sw_q had no Vfx120Effect at all). Feed its own handlers a short
+            // two-stroke letter near the screen centre, the letter, then the commit: the wiring's swing holds the commit and
+            // releases it at the apex, as with real drawing. The input's events are not fired (gesture rig / lean / audio stay out).
+            var adapter = Harness303.Field<BrushStrokeFeedAdapter>(wiring, "_brushAdapter");
+            bool fed = adapter != null && adapter.isActiveAndEnabled;
+            if (fed) FeedStrokes(adapter);
             channel.Raise(drawn);
+            if (fed) Invoke(adapter, "OnCommitted", true);
             float after = ink != null ? ink.Value : -1f;
             return "released " + letter + " | ink " + before.ToString("F3", Inv) + " -> " + after.ToString("F3", Inv) + " | pending " + wiring.SwingPending308 + " locked " + wiring.SwingLocked308;
+        }
+
+        static void FeedStrokes(BrushStrokeFeedAdapter adapter)
+        {
+            Vector2 c = new Vector2(Screen.width * .5f, Screen.height * .5f); float u = Mathf.Min(Screen.width, Screen.height) * .035f;   // sw_r: .08 drew a slab of a letter
+            for (int stroke = 0; stroke < 2; stroke++)
+            {
+                Invoke(adapter, "OnStrokeStarted");
+                for (int i = 0; i < 8; i++)
+                {
+                    float t = i / 7f;
+                    Vector2 at = stroke == 0 ? c + new Vector2(Mathf.Lerp(-u, u, t), u) : c + new Vector2(u * .2f, Mathf.Lerp(u, -u, t));
+                    Invoke(adapter, "OnStrokePointAdded", at);
+                }
+                Invoke(adapter, "OnStrokeEnded");
+            }
+        }
+
+        static void Invoke(object target, string method, params object[] args)
+        {
+            var m = target.GetType().GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (m == null) throw new MissingMethodException(target.GetType().Name, method);
+            m.Invoke(target, args);
         }
 
         static string Dodge(WorldMacroCombatWalker walker)

@@ -540,7 +540,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         // ---- D308-84 (SPEC-SPELL-VFX-OVERHAUL-308 11.21): the body forms from the ink, then the pigment soaks in; ink stays ----
         const float BodySoakSeconds = .35f;   // solid body: ink -> pigment after leaving (TEST)
-        const float ParticleSoakTo = .45f;    // bleeding particles: pigment full at this fraction of their life (TEST)
+        const float ParticleSoakTo = .45f;
+        const float SingleHitScale = .4f;     // single hits: the bolt's own Contact splat is the hit - the contact seam only adds a small splat (sw_r: x1 covered a third of the view at 5 m)    // bleeding particles: pigment full at this fraction of their life (TEST)
 
         static Material SoakVariant(Material m)
         {
@@ -1204,7 +1205,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var profile = Load<Vfx120Profile>(spell != null ? ProfilePath(spell) : AttackProfilePath(a));
                 var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(a.Elem));
                 if (profile == null || hit == null) continue;
-                profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f;
+                profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = SingleHitScale / .22f;
                 EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
                 mine.Add(profile); singles++;
             }
