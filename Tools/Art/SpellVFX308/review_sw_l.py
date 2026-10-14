@@ -16,14 +16,15 @@ ROWS = [('free_ga', '가 · 대상 없음 → 내려 던지기'), ('free_go', '�
         ('far_ga', '가 · 12 m → 내려 던지기'), ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹'), ('high_ga', '가 · 6 m 높이 4 m → 상체 조준')]
 ROWS_M = [('near_ga', '가 · 5 m 락온 → 쓸기 + 줄기'), ('far_ga', '가 · 12 m 락온 → 내려 던지기 + 줄기'), ('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹'),
           ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹'), ('ward_gu', '구 · 방벽 짧은 내리찍기'), ('high_ga', '가 · 6 m 높이 4 m → 상체 조준')]
+ROWS_O = [('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹 얼룩'), ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹 얼룩'), ('near_ga', '가 · 5 m → 줄기(얼룩 없어야 함)')]
 W, H = 560, 350
 
 
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n') else 3
+    rows = ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o') else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)

@@ -25,6 +25,9 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
         _SoftDepth("Fade near geometry (m, 0 = off)", Float) = .5
         _NearClip("Nothing nearer than (m)", Float) = .45
         _NearFade("Whole from (m)", Float) = 1.2
+        _SoakInk("Soak: first colour (ink) - D308-84 the body forms black, then the pigment soaks in", Color) = (.05,.047,.045,1)
+        _SoakFrom("Soak starts (particle age 0-1)", Range(0,1)) = 0
+        _SoakTo("Soak full (particle age 0-1, 0 = off)", Range(0,1)) = 0
     }
     SubShader
     {
@@ -42,19 +45,19 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             #include "../InkCommon308.hlsl"
-            struct Attributes { float4 positionOS:POSITION; half4 color:COLOR; float4 uv:TEXCOORD0; float blend:TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; float4 uv:TEXCOORD0; float2 misc:TEXCOORD1; };
+            struct Attributes { float4 positionOS:POSITION; half4 color:COLOR; float4 uv:TEXCOORD0; float2 blend:TEXCOORD1; UNITY_VERTEX_INPUT_INSTANCE_ID };
+            struct Varyings { float4 positionCS:SV_POSITION; half4 color:COLOR; float4 uv:TEXCOORD0; float3 misc:TEXCOORD1; };
             TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
             CBUFFER_START(UnityPerMaterial)
-            float4 _MainTex_ST; half4 _Ink, _HeatColor, _Tint;
-            float _HeartLo, _HeartHi, _Rim, _Opacity, _Heat, _Glow, _Radial, _SoftDepth, _NearClip, _NearFade;
+            float4 _MainTex_ST; half4 _Ink, _HeatColor, _Tint, _SoakInk;
+            float _HeartLo, _HeartHi, _Rim, _Opacity, _Heat, _Glow, _Radial, _SoftDepth, _NearClip, _NearFade, _SoakFrom, _SoakTo;
             CBUFFER_END
             Varyings vert(Attributes v)
             {
                 Varyings o; UNITY_SETUP_INSTANCE_ID(v);
                 float3 ws = TransformObjectToWorld(v.positionOS.xyz);
                 o.positionCS = TransformWorldToHClip(ws);
-                o.color = v.color * _Tint; o.uv = v.uv; o.misc = float2(v.blend, -TransformWorldToView(ws).z);
+                o.color = v.color * _Tint; o.uv = v.uv; o.misc = float3(v.blend.x, -TransformWorldToView(ws).z, v.blend.y);   // y of TEXCOORD1 = AgePercent (0 where the stream is absent)
                 return o;
             }
             half4 frag(Varyings i):SV_Target
@@ -74,6 +77,7 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
                     a = saturate(t.a + rim * .5) * i.color.a;
                     rgb = lerp(i.color.rgb, _Ink.rgb, saturate(smoothstep(_HeartLo, _HeartHi, t.g) * _Ink.a + rim * .8));
                     rgb = lerp(rgb, _HeatColor.rgb, smoothstep(.3, .75, t.r * _Heat));
+                    if (_SoakTo > 0.0) rgb = lerp(_SoakInk.rgb, rgb, smoothstep(_SoakFrom, _SoakTo, i.misc.z));   // colour only, no light
                     rgb = min(rgb, OH_INK_CEILING_OUT);
                 }
                 float eye = i.misc.y;

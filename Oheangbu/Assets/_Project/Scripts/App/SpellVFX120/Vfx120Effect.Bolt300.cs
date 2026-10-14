@@ -11,6 +11,12 @@ namespace Oheangbu.App.SpellVFX120
     {
         GameObject _bolt300;
         Transform _b3Travel, _b3Contact, _b3Spin;
+        // D308-84 (11.21): optional Deploy (the ink gathering into the body at the origin) and Residue (ink left on the ground)
+        Transform _b3Deploy, _b3Residue;
+        ParticleSystem[] _b3DeploySystems = new ParticleSystem[0];
+        Renderer[] _b3Soak = new Renderer[0];
+        Color[] _b3SoakInk, _b3SoakPigment;
+        MaterialPropertyBlock _b3SoakBlock;
         ParticleSystem[] _b3TravelSystems, _b3ContactSystems;
         TrailRenderer[] _b3Trails;
         Renderer[] _b3BodyRenderers;
@@ -36,6 +42,10 @@ namespace Oheangbu.App.SpellVFX120
             _b3ContactSystems = _b3Contact.GetComponentsInChildren<ParticleSystem>(true);
             _b3Trails = _b3Travel.GetComponentsInChildren<TrailRenderer>(true);
             _b3BodyRenderers = _b3Spin != null ? _b3Spin.GetComponentsInChildren<Renderer>(true) : new Renderer[0];
+            _b3Deploy = _bolt300.transform.Find("Deploy");
+            _b3Residue = _bolt300.transform.Find("Residue");
+            _b3DeploySystems = _b3Deploy != null ? _b3Deploy.GetComponentsInChildren<ParticleSystem>(true) : new ParticleSystem[0];
+            BuildSoak308();
             // ink-pigment bodies take the element pigment (the shader's own default is a neutral teal)
             var body = new MaterialPropertyBlock();
             foreach (var r in _b3BodyRenderers)
@@ -64,6 +74,59 @@ namespace Oheangbu.App.SpellVFX120
             _b3Travel.rotation = Quaternion.LookRotation(Bolt300Tangent(0f), Vector3.up);
             foreach (var t in _b3Trails) { t.Clear(); t.emitting = true; }
             foreach (var r in _b3BodyRenderers) r.enabled = true;
+            if (_b3Deploy != null)
+            {
+                _b3Deploy.SetPositionAndRotation(ReceivedOrigin, _b3Travel.rotation);
+                foreach (var ps in _b3DeploySystems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ps.Simulate(0, false, true, false); }
+            }
+            if (_b3Residue != null && _b3Residue.parent == _bolt300.transform) foreach (var ps in _b3Residue.GetComponentsInChildren<ParticleSystem>(true)) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ApplySoak308(0f);
+        }
+
+        // solid (InkSolid) bodies under Travel: from their ink colour to their pigment over Bolt300SoakSeconds (property block only)
+        void BuildSoak308()
+        {
+            _b3Soak = new Renderer[0];
+            if (Profile.Bolt300SoakSeconds <= 0f) return;
+            var list = new System.Collections.Generic.List<Renderer>();
+            foreach (var r in _b3Travel.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                var m = r.sharedMaterial;
+                if (m != null && m.HasProperty("_Ink") && m.HasProperty("_BaseColor") && !m.HasProperty("_Body")) list.Add(r);
+            }
+            _b3Soak = list.ToArray();
+            _b3SoakInk = new Color[_b3Soak.Length]; _b3SoakPigment = new Color[_b3Soak.Length];
+            for (int i = 0; i < _b3Soak.Length; i++) { _b3SoakInk[i] = _b3Soak[i].sharedMaterial.GetColor("_Ink"); _b3SoakPigment[i] = _b3Soak[i].sharedMaterial.GetColor("_BaseColor"); }
+            _b3SoakBlock ??= new MaterialPropertyBlock();
+        }
+
+        void ApplySoak308(float age)
+        {
+            if (_b3Soak.Length == 0) return;
+            float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(age / Profile.Bolt300SoakSeconds));
+            for (int i = 0; i < _b3Soak.Length; i++)
+            {
+                if (_b3Soak[i] == null) continue;
+                _b3Soak[i].GetPropertyBlock(_b3SoakBlock);
+                _b3SoakBlock.SetColor("_BaseColor", Color.Lerp(_b3SoakInk[i], _b3SoakPigment[i], k));
+                _b3Soak[i].SetPropertyBlock(_b3SoakBlock);
+            }
+        }
+
+        // the residue: on the ground under the hit, detached so it outlives the spell (Play only; a preview leaves it as it is)
+        void DropResidue308()
+        {
+            if (_b3Residue == null || _b3Residue.parent != _bolt300.transform || !Application.isPlaying) return;
+            Vector3 at = TargetPoint();
+            if (!Physics.Raycast(at + Vector3.up * .3f, Vector3.down, out var ground, 5f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore)) return;
+            Vector3 flat = Bolt300Tangent(0f); flat.y = 0f;
+            _b3Residue.SetParent(null, true);
+            _b3Residue.SetPositionAndRotation(ground.point + Vector3.up * .03f, Quaternion.LookRotation(flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward, Vector3.up));
+            float life = 3f;
+            var systems = _b3Residue.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (var ps in systems) life = Mathf.Max(life, ps.main.startLifetime.constantMax);
+            var part = _b3Residue.gameObject.AddComponent<Vfx308Residue>(); part.Life = Mathf.Clamp(life, 3f, 5f);
+            foreach (var ps in systems) ps.Play(true);
         }
 
         // element paths: straight thrust (wood, metal), straight with a small lift (fire), a heavy arc (earth),
@@ -100,6 +163,7 @@ namespace Oheangbu.App.SpellVFX120
                 _b3Travel.rotation = Quaternion.LookRotation(Bolt300Tangent(Mathf.Min(at, arrive)), Vector3.up);
                 if (_b3Spin != null && Mathf.Abs(Profile.Bolt300Spin) > .01f) _b3Spin.localRotation = Quaternion.Euler(at * Profile.Bolt300Spin, at * Profile.Bolt300Spin * .37f, 0f);
                 foreach (var ps in _b3TravelSystems) { var em = ps.emission; em.enabled = flying; ps.Simulate(step, false, false, false); }
+                foreach (var ps in _b3DeploySystems) ps.Simulate(step, false, false, false);
                 if (hit >= 0f && at >= hit && hit < Life)
                 {
                     if (!_b3Impacted)
@@ -109,11 +173,13 @@ namespace Oheangbu.App.SpellVFX120
                         Vector3 axis = Bolt300Tangent(hit);
                         _b3Contact.rotation = Quaternion.LookRotation(-axis, Mathf.Abs(axis.y) > .98f ? Vector3.forward : Vector3.up);
                         foreach (var r in _b3BodyRenderers) r.enabled = false;
+                        DropResidue308();
                     }
                     foreach (var ps in _b3ContactSystems) ps.Simulate(Mathf.Min(step, at - hit), false, false, false);
                 }
                 _b3Simulated = at;
             }
+            ApplySoak308(end);
             bool stillFlying = end < arrive;
             foreach (var t in _b3Trails) t.emitting = stillFlying;
             if (!stillFlying && hit < 0f) foreach (var r in _b3BodyRenderers) r.enabled = false;   // a miss simply ends at the fallback point

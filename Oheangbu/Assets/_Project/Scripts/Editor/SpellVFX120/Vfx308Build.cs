@@ -459,6 +459,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static readonly List<ParticleSystemVertexStream> BlendStreams = new List<ParticleSystemVertexStream>
         {
             ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV, ParticleSystemVertexStream.UV2, ParticleSystemVertexStream.AnimBlend,
+            ParticleSystemVertexStream.AgePercent,   // D308-84: TEXCOORD1.y, the ink -> pigment soak (InkBleed308 _SoakTo)
         };
 
         static Texture2D Sheet2(string name)
@@ -536,6 +537,49 @@ namespace Oheangbu.EditorTools.SpellVFX120
         }
 
         static Material B(string key, string sheet, Color ink, float heat = 0f, float opacity = 1f) => Bleed("M_V308b_" + key + "_" + sheet, sheet, ink, heat, opacity);
+
+        // ---- D308-84 (SPEC-SPELL-VFX-OVERHAUL-308 11.21): the body forms from the ink, then the pigment soaks in; ink stays ----
+        const float BodySoakSeconds = .35f;   // solid body: ink -> pigment after leaving (TEST)
+        const float ParticleSoakTo = .45f;    // bleeding particles: pigment full at this fraction of their life (TEST)
+
+        static Material SoakVariant(Material m)
+        {
+            string path = AssetDatabase.GetAssetPath(m);
+            if (string.IsNullOrEmpty(path) || path.EndsWith("_soak.mat", StringComparison.Ordinal)) return m;
+            string soakPath = path.Substring(0, path.Length - 4) + "_soak.mat";
+            var v = AssetDatabase.LoadAssetAtPath<Material>(soakPath);
+            if (v == null) { v = new Material(m); AssetDatabase.CreateAsset(v, soakPath); } else { v.shader = m.shader; v.CopyPropertiesFromMaterial(m); }
+            v.SetColor("_SoakInk", SwingInkColour); v.SetFloat("_SoakFrom", 0f); v.SetFloat("_SoakTo", ParticleSoakTo);
+            EditorUtility.SetDirty(v); Touched.Add(v);
+            return v;
+        }
+
+        // Deploy: scattered ink drawn together at the origin (the splat sheet backwards + drops flying inward), 0.15 s.
+        // Residue: a pool sheet the runtime drops on the ground under the hit and leaves 3 - 5 s. Bleeding Travel particles
+        // swap to a soak copy of their material (black first, pigment by ParticleSoakTo of their life). Glow cels stay as they are.
+        static void Bolt308Extras(GameObject root)
+        {
+            var streams = new List<ParticleSystemVertexStream>();
+            foreach (var r in root.transform.Find("Travel").GetComponentsInChildren<ParticleSystemRenderer>(true))
+            {
+                var m = r.sharedMaterial;
+                if (m == null || m.shader == null || m.shader.name != "Oheangbu/SpellVFX308/InkBleed" || m.GetFloat("_Radial") > .5f) continue;
+                streams.Clear(); r.GetActiveVertexStreams(streams);
+                if (streams.Contains(ParticleSystemVertexStream.AgePercent)) r.sharedMaterial = SoakVariant(m);
+            }
+            var deploy = new GameObject("Deploy").transform; deploy.SetParent(root.transform, false);
+            Layer(deploy, new L { Name = "Gather", Mat = Bleed("M_V308c_deploy_splat", "ink_splat", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 1, Max = 2, Life = new Vector2(.15f, .15f),
+                Size = new Vector2(1.1f, 1.1f), NoShape = true, Blend = true, FrameFrom = 11f, FrameTo = 0f,
+                Colour = G((0f, C(SwingInkColour, 0f)), (.3f, C(SwingInkColour, 1f)), (1f, C(SwingInkColour, .7f))), Grow = Curve(0f, 1.25f, 1f, .5f) });
+            Layer(deploy, new L { Name = "Drops", Mat = Bleed("M_V308c_deploy_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 10, Max = 12, Life = new Vector2(.12f, .16f),
+                Size = new Vector2(.08f, .18f), Speed = new Vector2(-5f, -3.5f), Radius = .6f, Thickness = 0f, RandomCell = true, Blend = true, Colour = InkFade(.6f), Grow = Curve(0f, 1f, 1f, .6f) });
+            var residue = new GameObject("Residue").transform; residue.SetParent(root.transform, false);
+            Layer(residue, new L { Name = "Pool", Mat = Bleed("M_V308c_residue_pool", "ink_pool", C(SwingInkColour, .85f), 0f, .85f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2,
+                Life = new Vector2(3.5f, 3.5f), Size = new Vector2(1.4f, 1.4f), NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 15.5f,
+                Colour = G((0f, C(SwingInkColour, .95f)), (.6f, C(SwingInkColour, .8f)), (1f, C(SwingInkColour, 0f))), Grow = Curve(0f, .5f, .15f, 1f, 1f, 1.1f) });
+            foreach (var t in deploy.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
+            foreach (var t in residue.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
+        }
 
         static GameObject Ga2(Kit k, Vfx120Profile p)
         {
@@ -886,7 +930,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
                     profile.Bolt300Prefab = Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
-                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f;
+                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
                     // other ones so they are not built beside the new body (BodyMesh must stay non-null)
@@ -1055,10 +1099,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     ? s.Key switch { "ga" => Ga2(kit, original), "na" => Na2(kit, original), "ma" => Ma2(kit, original), "sa" => Sa2(kit, original), _ => A2(kit, original) }
                     : s.Key switch { "ga" => Ga(kit, original), "na" => Na(kit, original), "ma" => Ma(kit, original), "sa" => Sa(kit, original), _ => A(kit, original) };
                 foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
+                if (V2) Bolt308Extras(root);
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(s));
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;
-                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f;
+                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f;
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + s.Effect + ".prefab";
                 if (!File.Exists(EffectPath(s)) && !AssetDatabase.CopyAsset(srcEffect, EffectPath(s))) throw new Exception("copy failed " + srcEffect);

@@ -360,6 +360,7 @@ namespace Oheangbu.App.World
                 ep.startSize = runSize * Random.Range(.85f, 1.15f);
                 ep.rotation = Random.Range(0f, 360f);
                 pool.Run.Emit(ep, 1);
+                for (int k = 1; k < Profile.RunBlotsPerPoint; k++) { Vector2 o = Random.insideUnitCircle * runSize * .25f; ep.position += new Vector3(o.x, 0f, o.y); ep.rotation = Random.Range(0f, 360f); pool.Run.Emit(ep, 1); }
                 runNext++;
             }
         }

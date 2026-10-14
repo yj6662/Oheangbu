@@ -109,6 +109,8 @@ namespace Oheangbu.App.SpellVFX120
         [Tooltip("Prefab with Travel (moves along the path; optional Spin mesh body) and Contact (bursts at the impact). Replaces the procedural body.")]
         public GameObject Bolt300Prefab;
         [Min(0f)] public float Bolt300Scale = 1f;
+        [Tooltip("D308-84: seconds over which the solid body goes from ink to its pigment after leaving (0 = off; particles soak in their own material).")]
+        [Min(0f)] public float Bolt300SoakSeconds;
         [Tooltip("Peak height of the flight arc (m).")]
         public float Bolt300Arc;
         [Tooltip("Sideways bend of the flight (m) — the slow homing curve.")]

@@ -143,8 +143,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Shape = ParticleSystemShapeType.Cone, Angle = 38f, Radius = .5f, ShapeRot = new Vector3(-90f, 0f, 0f), RandomCell = true, Blend = true, Colour = InkFade(.5f), Grow = Curve(0f, .8f, 1f, 1.4f) });
             // D308-84 circle bridge: the ink running over the ground to the centre, as soaked blots (SwingInk308 emits them along
             // the path; no rate, no burst). The pool sheet spreads then dries over the life, flat on the ground.
-            Layer(root.transform, new L { Name = SwingInk308.RunName, Mat = Bleed("M_V308c_swing_ink_pool", "ink_pool", C(SwingInkColour, .92f), 0f, .92f, 0f, 0f), World = true, Mode = 1, Max = 64,
-                Life = new Vector2(1.5f, 1.9f), Size = new Vector2(.8f, 1f), NoShape = true, Blend = true, FrameFrom = 2f, FrameTo = 15.5f, Colour = InkFade(.55f), Grow = Curve(0f, .55f, .2f, 1f, 1f, 1.08f) });
+            Layer(root.transform, new L { Name = SwingInk308.RunName, Mat = Bleed("M_V308c_swing_ink_pool", "ink_pool", C(SwingInkColour, .92f), 0f, .92f, 0f, 0f), World = true, Mode = 1, Max = 128,
+                Life = new Vector2(1.5f, 1.9f), Size = new Vector2(.8f, 1f), NoShape = true, Blend = true, FrameFrom = 4f, FrameTo = 12f, Colour = InkFade(.7f),   // sw_o: 2 - 15.5 / .55 read faint
+                Grow = Curve(0f, .55f, .2f, 1f, 1f, 1.08f) });
             return root;
         }
 
