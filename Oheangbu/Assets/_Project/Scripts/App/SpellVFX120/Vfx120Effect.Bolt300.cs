@@ -172,6 +172,12 @@ namespace Oheangbu.App.SpellVFX120
                         _b3Contact.position = TargetPoint();
                         Vector3 axis = Bolt300Tangent(hit);
                         _b3Contact.rotation = Quaternion.LookRotation(-axis, Mathf.Abs(axis.y) > .98f ? Vector3.forward : Vector3.up);
+                        var eye = Camera.main;
+                        if (Profile.Bolt300NearContactMeters > 0f && eye != null)
+                        {
+                            float k = Mathf.Clamp(Vector3.Distance(eye.transform.position, _b3Contact.position) / Profile.Bolt300NearContactMeters, .45f, 1f);
+                            _b3Contact.localScale = Vector3.one * (Profile.Bolt300Scale > 0f ? Profile.Bolt300Scale : 1f) * k;
+                        }
                         foreach (var r in _b3BodyRenderers) r.enabled = false;
                         DropResidue308();
                     }

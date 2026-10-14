@@ -111,6 +111,8 @@ namespace Oheangbu.App.SpellVFX120
         [Min(0f)] public float Bolt300Scale = 1f;
         [Tooltip("D308-84: seconds over which the solid body goes from ink to its pigment after leaving (0 = off; particles soak in their own material).")]
         [Min(0f)] public float Bolt300SoakSeconds;
+        [Tooltip("D308-84: the hit (Contact) shrinks when the camera is nearer than this (m), down to 45 % (0 = off). Play sw_s: a 5 m hit filled a third of the view.")]
+        [Min(0f)] public float Bolt300NearContactMeters;
         [Tooltip("Peak height of the flight arc (m).")]
         public float Bolt300Arc;
         [Tooltip("Sideways bend of the flight (m) — the slow homing curve.")]

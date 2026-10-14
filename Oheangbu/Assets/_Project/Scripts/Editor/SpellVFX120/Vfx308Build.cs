@@ -541,6 +541,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // ---- D308-84 (SPEC-SPELL-VFX-OVERHAUL-308 11.21): the body forms from the ink, then the pigment soaks in; ink stays ----
         const float BodySoakSeconds = .35f;   // solid body: ink -> pigment after leaving (TEST)
         const float ParticleSoakTo = .45f;
+        const float NearContactMeters = 12f;  // hits nearer the camera than this shrink, to 45 % (TEST)
         const float SingleHitScale = .4f;     // single hits: the bolt's own Contact splat is the hit - the contact seam only adds a small splat (sw_r: x1 covered a third of the view at 5 m)    // bleeding particles: pigment full at this fraction of their life (TEST)
 
         static Material SoakVariant(Material m)
@@ -931,7 +932,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
                     profile.Bolt300Prefab = Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
-                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f;
+                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
                     // other ones so they are not built beside the new body (BodyMesh must stay non-null)
@@ -1104,7 +1105,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(s));
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;
-                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f;
+                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f;
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + s.Effect + ".prefab";
                 if (!File.Exists(EffectPath(s)) && !AssetDatabase.CopyAsset(srcEffect, EffectPath(s))) throw new Exception("copy failed " + srcEffect);
