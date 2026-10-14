@@ -62,6 +62,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Tick(true); return "burst started " + burstLetter + " x" + burstLeft + " every " + burstEvery.ToString("F2", Inv) + " s";
                 }
                 case "dodge": return Dodge(walker);
+                case "target": return Target(s, walker, wiring, rest);
                 case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
@@ -210,11 +211,41 @@ namespace Oheangbu.EditorTools.WorldMacro
             hooked.CastAccepted -= OnAccepted; hooked.EnemyDamageResolved -= OnDamage;
             hooked = null;
         }
-        static void OnBegan(SpellCast cast, string state, float apex, float until) => Line("BEGAN " + cast.Letter + " kind " + cast.Kind + " state " + state + " apex +" + (apex - Time.time).ToString("F3", Inv) + " lock +" + (until - Time.time).ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
-        static void OnLaunched(SpellCast cast, float after) => Line("LAUNCHED " + cast.Letter + " after " + after.ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
+        static void OnBegan(SpellCast cast, string state, float apex, float until) => Line("BEGAN " + cast.Letter + " kind " + cast.Kind + " state " + state
+            + (hooked != null ? " (base " + hooked.SwingBaseState308 + " lead " + hooked.SwingClipLead308.ToString("F2", Inv) + " aim " + hooked.SwingAim308.ToString("F1") + " target " + hooked.SwingAimHasTarget308 + ")" : "")
+            + " yaw " + (Harness303.Session?.Walker?.Body != null ? Harness303.Session.Walker.Body.transform.eulerAngles.y.ToString("F1", Inv) : "?") + " apex +" + (apex - Time.time).ToString("F3", Inv) + " lock +" + (until - Time.time).ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
+        static void OnLaunched(SpellCast cast, float after)
+        {
+            var ink = UnityEngine.Object.FindFirstObjectByType<SwingInk308>(); var swing = UnityEngine.Object.FindFirstObjectByType<SpellSwing308>();
+            var body = hooked != null ? Harness303.Session?.Walker?.Body : null;
+            Line("LAUNCHED " + cast.Letter + " after " + after.ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv)
+                + " | D308-84 bridges " + (ink != null ? ink.Bridges.ToString(Inv) : "?") + " shown " + (ink != null && ink.BridgeShown)
+                + " aim w " + (swing != null ? swing.AimWeight.ToString("F2", Inv) : "?") + " clip " + (swing != null ? swing.State : "?")
+                + " yaw " + (body != null ? body.transform.eulerAngles.y.ToString("F1", Inv) : "?"));
+        }
         static void OnFizzled(SpellCast cast) => Line("FIZZLED " + cast.Letter);
         static void OnAccepted(SpellCast cast, Vector3 origin, Vector3 forward) => Line("ACCEPTED " + cast.Letter + " power " + cast.Power.ToString("F4", Inv));
         static void OnDamage(EnemyDamageResult result) => Line("DAMAGE " + result);
+
+        // D308-84 check (Play memory only): put the first living enemy of this wiring <distance> m in front of the player, <height> m
+        // up, its navigation and brain off, so the release-time aim sees a target near / far / high. target:off releases nothing - the
+        // enemy just stays where it was put until the Play ends.
+        static string Target(WorldMacroPlaytestSession s, WorldMacroCombatWalker walker, CombatLoopWiring wiring, string rest)
+        {
+            var a = rest.Split(':'); if (a.Length < 1 || !float.TryParse(a[0], NumberStyles.Float, Inv, out float distance)) return "refused: target:<distance>[:<height>]";
+            float height = a.Length > 1 ? float.Parse(a[1], Inv) : 0f;
+            var targets = Harness303.Field<List<EnemyVitals>>(wiring, "_targets"); if (targets == null) return "target: no target list";
+            EnemyVitals pick = null; foreach (var t in targets) if (t != null && t.IsAlive && t.isActiveAndEnabled) { pick = t; break; }
+            if (pick == null) return "target: no living enemy in this wiring (" + targets.Count + " listed)";
+            var body = walker.Body != null ? walker.Body.transform : walker.transform;
+            Vector3 flat = body.forward; flat.y = 0f; flat = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
+            Transform root = pick.transform;
+            foreach (var b in root.GetComponentsInChildren<Behaviour>(true))
+                if (b is UnityEngine.AI.NavMeshAgent || b.GetType().Name.Contains("Brain")) b.enabled = false;
+            foreach (var rb in root.GetComponentsInChildren<Rigidbody>(true)) rb.isKinematic = true;
+            root.SetPositionAndRotation(body.position + flat * distance + Vector3.up * height, Quaternion.LookRotation(-flat, Vector3.up));
+            return "target " + pick.name + " at " + distance.ToString("F1", Inv) + " m, +" + height.ToString("F1", Inv) + " m (" + root.position.ToString("F1") + ")";
+        }
 
         static string Cast(WorldMacroCombatWalker walker, char letter)
         {
