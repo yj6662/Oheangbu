@@ -25,8 +25,13 @@ argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 KEY = argv[0] if argv else 'deer'
 
 # per summon: source FBX, which objects make the body, voxel size (m), how far the undersides hang (m), triangle budget
+# band = the share of the height that hangs (trunk and neck of a four-legged body); 5th pass adds a coarse skin (user: "조금 더 거칠게")
 BODIES = {
-    'deer': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbx', pick=('Body',), voxel=.011, hang=.07, tris=22000, drips=0),     # 3rd pass (D308-83d): no hanging drops - the user found them awkward; the ink leaves the body as streaming strands (Unity side)
+    'haetae': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/FireHaetae/SM_FireHaetae.fbx', pick=('Body',), voxel=0, hang=.05, tris=22000, drips=0, band=(.3, .8)),
+    'dokkaebi': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/StoneDokkaebi/SM_StoneDokkaebi.fbx', pick=('Body',), voxel=0, hang=.03, tris=22000, drips=0, band=(.4, .8)),
+    'tiger': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/MetalTiger/SM_MetalTiger.fbx', pick=('Body',), voxel=0, hang=.05, tris=22000, drips=0, band=(.3, .8)),
+    'turtle': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/WaterTurtle/SM_WaterTurtle.fbx', pick=('Body',), voxel=0, hang=.04, tris=22000, drips=0, band=(.25, .7)),
+    'deer': dict(src='Oheangbu/Assets/_Project/Art/SpellVFX120/WoodDeer/SM_WoodDeer.fbx', pick=('Body',), voxel=.011, band=(.36, .74), hang=.07, tris=22000, drips=0),     # 3rd pass (D308-83d): no hanging drops - the user found them awkward; the ink leaves the body as streaming strands (Unity side)
 }
 B = BODIES[KEY]
 
@@ -48,6 +53,10 @@ for o in list(bpy.context.scene.objects):
 zs = [(body.matrix_world @ v.co).z for v in body.data.vertices]
 height = max(zs) - min(zs)
 print('INKBODY source', body.name, len(body.data.polygons), 'faces, height %.2f' % height)
+if not B['voxel']:
+    B['voxel'] = max(.006, height * .0043)
+UNIT = height / 2.6                                      # the deer's numbers, scaled to this body
+LO, HI = B['band']
 
 # 1. one skin: voxel remesh, then smooth the carving away (twice: before and after the hang)
 rm = body.modifiers.new('melt', 'REMESH'); rm.mode = 'VOXEL'; rm.voxel_size = B['voxel']; rm.adaptivity = 0.0
@@ -66,14 +75,14 @@ for v in bm.verts:
         continue
     clump = noise.noise(Vector((v.co.x * 5.5, v.co.y * 5.5, 3.1))) * .5 + .5          # 0..1, patches a hand wide
     rel = (v.co.z - ground) / height
-    lift = max(0.0, min(1.0, (rel - .36) / .08)) * max(0.0, min(1.0, (.74 - rel) / .06))   # only the trunk and the neck hang: legs, head and antlers keep their line
-    pull = B['hang'] * down * down * (.25 + 1.3 * clump ** 2) * lift
+    lift = max(0.0, min(1.0, (rel - LO) / .08)) * max(0.0, min(1.0, (HI - rel) / .06))   # only the trunk and the neck hang: legs, head and antlers keep their line
+    pull = B['hang'] * UNIT * down * down * (.25 + 1.3 * clump ** 2) * lift
     v.co.z -= pull
     if clump > .58 and down > .6 and lift >= 1.0 and rel < .62:
         lows.append((v.co.copy(), clump))
 # a slow swell over the whole skin so no part is a clean primitive
 for v in bm.verts:
-    v.co += v.normal * (noise.noise(v.co * 3.2) * .018)
+    v.co += v.normal * (noise.noise(v.co * 3.2 / UNIT) * .018 * UNIT)
 
 # 3. drops on threads from the lowest lobes (kept apart from each other)
 lows.sort(key=lambda t: -t[1]); taken = []
@@ -100,6 +109,13 @@ rm = body.modifiers.new('fuse', 'REMESH'); rm.mode = 'VOXEL'; rm.voxel_size = B[
 bpy.ops.object.modifier_apply(modifier=rm.name)
 sm = body.modifiers.new('soft2', 'SMOOTH'); sm.factor = .5; sm.iterations = 3
 bpy.ops.object.modifier_apply(modifier=sm.name)
+# 5th pass: a coarse skin - ridges and pits a finger wide, as if the ink were laid on with a dry brush (after the smoothing, so it stays)
+bm = bmesh.new(); bm.from_mesh(body.data); bm.normal_update()
+for v in bm.verts:
+    p = v.co / UNIT
+    r = noise.noise(p * 11.0) * .6 + noise.noise(p * 27.0 + Vector((7.3, 1.1, 4.2))) * .4
+    v.co += v.normal * (r * .022 * UNIT)
+bm.to_mesh(body.data); bm.free()
 faces = len(body.data.polygons) * 2
 if faces > B['tris']:
     dc = body.modifiers.new('budget', 'DECIMATE'); dc.ratio = B['tris'] / faces
