@@ -214,8 +214,11 @@ namespace Oheangbu.App.World
             if (active.Apex != null)
             {
                 // the ink leaves the way the tip was going, never back at the caster
+                // Play 2026-10-14 (sw_j): a sideways swing threw its ink sideways - in third person straight at the camera. The
+                // ink goes where the caster faces; the tip's own direction only leans it (profile.ApexLean).
                 Vector3 way = velocity.sqrMagnitude > .25f ? velocity.normalized : flat;
                 if (Vector3.Dot(way, flat) < 0f) way = Vector3.Reflect(way, flat);
+                way = (flat + way * Mathf.Clamp01(Profile.ApexLean)).normalized;
                 active.Apex.SetPositionAndRotation(tip, Quaternion.LookRotation(way, Mathf.Abs(way.y) > .98f ? flat : Vector3.up));
                 foreach (var ps in active.ApexSystems) { ps.Clear(true); ps.Play(true); }
             }

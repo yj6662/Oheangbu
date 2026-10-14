@@ -35,6 +35,8 @@ namespace Oheangbu.Data.Spell
         [Header("끄는 조건")]
         [Tooltip("눈에서 이 거리(m) 안의 붓끝은 건너뛴다.")]
         [Min(0)] public float HideWithinCamera = .45f;
+        [Tooltip("정점 먹이 날아가는 방향: 시전자 정면 + 붓끝 진행 방향 x 이 값 (0 = 정면만)")]
+        [Range(0, 1)] public float ApexLean = .35f;
         [Tooltip("붓끝이 한 프레임에 이 거리(m)보다 멀리 옮겨지면(순간 이동) 획을 끊는다.")]
         [Min(.5f)] public float ClearJump = 3f;
         [Tooltip("붓끝이 이만큼(m) 움직일 때마다 획에 점을 하나 놓는다.")]
