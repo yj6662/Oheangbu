@@ -24,14 +24,16 @@ ROWS_Z = [('so', '소 · 10 m 연발'), ('mo', '모 · 8 m 경로 (머리 축소
 ROWS_Z2 = [('geo', '거 · 방어 먹 막'), ('meo', '머 · 방어 먹 막'), ('gak', '각 · ㄱ받침'), ('sak', '삭 · ㄱ받침'), ('gu', '구 · 결계'), ('geok', '걱 · 강화')]
 ROWS_Z3 = [('geo', '거 · 방어 먹 막 (키움)'), ('meo', '머 · 방어 먹 막 (키움)'), ('geok', '걱 · 강화 (보통 속도)')]
 ROWS_H = [('geok', '걱 · 강화 (배율 고침)')]
+ROWS_H3 = [('neo', '너 · 방어 (옛 불 방패 뺌)'), ('geok', '걱 · 강화 (띠 .9-1.3)'), ('neok', '넉 · 강화')]
+ROWS_H2 = [('geok', '걱 · 강화 (띠 반경 .62 · 진하게)'), ('gu', '구 · 결계')]
 W, H = 560, 350
 
 
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else 3
+    rows = ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3') else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)

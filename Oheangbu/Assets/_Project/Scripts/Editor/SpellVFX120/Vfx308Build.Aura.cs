@@ -54,6 +54,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.Aura308Prefab = prefab;
                     if (kind == "ward") profile.WardKind = Vfx120WardKind.None;   // the old stone / pattern ward stays out
                     profile.Aura308ByWardRadius = kind == "ward";
+                    profile.NativeBodyPrefab = null;   // the old bespoke bodies (fire aura ...) stay out, as for the guards
                     profile.KtpContactBrightness = 1f;
                     EditorUtility.SetDirty(profile); Touched.Add(profile);
 
@@ -78,13 +79,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static GameObject BuffInk(Elem e)
         {
             var root = new GameObject(Path.GetFileNameWithoutExtension(AuraPrefabPath("buff", e.Key)));
-            Color c = Color.Lerp(e.Pig, e.Ink, .45f);
+            Color c = Color.Lerp(e.Pig, e.Ink, .6f);   // sw_hitch: at .45 the strokes washed into the robe
             var band = SoakVariant(Bleed("M_V308f_buff_" + e.Key + "_band", "ink_throw", C(e.Ink, .9f), 0f, .9f));
-            Layer(root.transform, new L { Name = "Band", Mat = band, World = false, Rate = 16f, Max = 24, Life = new Vector2(.9f, 1.2f), Size = new Vector2(.32f, .5f), RiseY = 1.5f,
-                Shape = ParticleSystemShapeType.Circle, Radius = .45f, Thickness = 0f, ArcSpeed = 1.6f, ShapeRot = new Vector3(-90f, 0f, 0f), Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 10f,
+            Layer(root.transform, new L { Name = "Band", Mat = band, World = false, Rate = 16f, Max = 24, Life = new Vector2(.9f, 1.2f), Size = new Vector2(.9f, 1.3f), RiseY = 1.5f,   // sw_hitch / sw_hitch2: the throw sheet's stroke is thin in its quad - .32 - .7 hardly seen from behind
+                Shape = ParticleSystemShapeType.Circle, Radius = .7f, Thickness = 0f, ArcSpeed = 1.6f, ShapeRot = new Vector3(-90f, 0f, 0f), Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 10f,
                 Colour = G((0f, C(c, 0f)), (.15f, C(c, .95f)), (.7f, C(c, .7f)), (1f, C(c, 0f))), Grow = Curve(0f, .6f, .3f, 1f, 1f, .7f) });
             Layer(root.transform, new L { Name = "Pool", Mat = Bleed("M_V308f_pool", "ink_pool", C(SwingInkColour, .85f), 0f, .85f, 0f, 0f), World = false, Mode = 1, Rate = 1.2f, Max = 3, Life = new Vector2(1.8f, 2.2f),
-                Size = new Vector2(1.5f, 1.9f), NoShape = true, Blend = true, ShapePos = new Vector3(0f, .03f, 0f), FrameFrom = 3f, FrameTo = 12f, Colour = InkFade(.6f), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.1f) });
+                Size = new Vector2(1.5f, 1.9f), NoShape = true, Blend = true, ShapePos = new Vector3(0f, .03f, 0f), FrameFrom = 3f, FrameTo = 12f, Colour = InkFade(.8f), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.1f) });
             return root;
         }
 

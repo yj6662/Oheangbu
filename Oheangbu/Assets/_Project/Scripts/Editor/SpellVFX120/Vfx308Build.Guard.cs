@@ -50,6 +50,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var profile = Load<Vfx120Profile>(GuardProfilePath(g.Id));
                 profile.Guard308Prefab = prefab;
                 profile.NativeFieldPrefab = null;                       // no pattern shield (KtpPatternShield stays: no bamboo guard either)
+                profile.NativeBodyPrefab = null;                        // census 10-15: 너 kept the old fire guard body (PF_FireGuard_031, additive) beside the membrane
                 var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(g.Key));
                 if (hit != null) profile.GuardContactPrefab = hit;
                 profile.KtpContactMultiplier = GuardContactScale / .22f; profile.KtpContactBrightness = 1f;   // ink, not light
