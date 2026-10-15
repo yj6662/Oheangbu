@@ -102,7 +102,7 @@ SHOTS = {'SwingSweep': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingArc': [0, 6, 10, 15, 
 
 # D308-87 바꿔 넣기(2026-10-15): 판정된 온몸판을 게임 상태 이름으로 굽는다(Unity 클립 GUID · 컨트롤러 그대로). 옛 발 박힌 판은 <이름>Planted 로 남는다.
 # 사용자 판정: SwingSlamD "이대로 진행". 나머지는 판정 뒤 여기에 보탠다.
-SWAP = {'SwingSlam': 'SwingSlamD'}
+SWAP = {'SwingSlam': 'SwingSlamD', 'SwingSweep': 'SwingSweepD', 'SwingArc': 'SwingArcD', 'SwingThrow': 'SwingThrowD', 'SwingStrikeFar': 'SwingStrikeFarD', 'BuffDraw': 'BuffDrawD'}   # 2026-10-15 사용자 "다섯 개 다 좋아"
 for _k, _v in SWAP.items():
     CLIPS[_k + 'Planted'] = CLIPS[_k]; SHOTS[_k + 'Planted'] = SHOTS[_k]
     CLIPS[_k] = dict(CLIPS[_v]); SHOTS[_k] = SHOTS[_v]
