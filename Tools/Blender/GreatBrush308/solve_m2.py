@@ -201,8 +201,9 @@ def kcol(keys, t, col):
     if len(keys) == 1: return keys[0][col]
     return pchip([k[0] for k in keys], [k[col] for k in keys], 0.0, 0.0)(min(max(t, keys[0][0]), keys[-1][0]))
 def n_pref(d, v): v = Vector(v); v = v - d * v.dot(d); return v.normalized() if v.length > .05 else (Z - d * Z.dot(d)).normalized()
-def body_pose(b):
-    """b = (골반 요, 가슴 요, 숙임, 옆 기울임, dx, dy, dz, 머리 요, 머리 숙임) — 전투 태세(STANCE4) 대비 차이. 발은 태세 자리에 박혀 있다."""
+def body_pose(b, ft=None):
+    """b = (골반 요, 가슴 요, 숙임, 옆 기울임, dx, dy, dz, 머리 요, 머리 숙임) — 전투 태세(STANCE4) 대비 차이. 발은 태세 자리에 박혀 있다.
+    ft(D308-87, 온몸 동작) = (왼 dx, dy, dz, 발끝 숙임, 오른 dx, dy, dz, 발끝 숙임) — 발목을 태세 자리에서 옮긴 양(m) · 발끝을 아래로 숙인 각(도, + = 뒤꿈치 듦). 없으면 0."""
     hy = SC['hy'] + b[0]; cy = SC['cy'] + b[1]; lean = SC['lean'] + b[2]; side = b[3]; hd = SC['hd'] + b[7]; hp = SC['hp'] + b[8]
     P = C.Pose(); P.hips_t = Vector(SC['hips']) + Vector(b[4:7]); P.fk()
     R = lambda yw, ln, sd=0: C.rot('Z', -yw) @ C.rot('X', ln) @ C.rot('Y', sd)
@@ -210,7 +211,8 @@ def body_pose(b):
     P.set_world('neck', R((cy + hd) / 2, lean * .4 + hp * .5, side * .4)); P.set_world('Head', R(hd, hp))
     ank = {}; fq = {}; knee = {}
     for s, k in (('Left', 'lf'), ('Right', 'rf')):
-        ank[s] = Vector((SC[k][0], SC[k][1], tgt_ankle[s])); fq[s] = C.rot('Z', -SC[k][2]); knee[s] = fq[s] @ Vector((0, -1, .3))
+        o = ft[(0 if s == 'Left' else 4):][:4] if ft else (0, 0, 0, 0)
+        ank[s] = Vector((SC[k][0] + o[0], SC[k][1] + o[1], tgt_ankle[s] + o[2])); fq[s] = C.rot('Z', -SC[k][2]) @ C.rot('X', o[3]); knee[s] = C.rot('Z', -SC[k][2]) @ Vector((0, -1, .3))
     legs(P, ank, fq, knee); F = Frame(P, ank, fq, knee); F.src_hand = 0; F.srcf = 0; F.hint = P.Q['Spine'] @ HINT_R; return F
 def tail_pen4(P, G, d, n, hint):
     """오른손 뒤쪽 자루가 제 오른팔에 닿는 벌점."""
@@ -272,7 +274,7 @@ STANCE = make_stance()
 def build_keyed():
     N_ = int(round(SPEC['seconds'] * FPS)) + 1; out = []; LIFE = SPEC.get('life'); BK = SPEC['body']; RK = [(k[0],) + stance_brush()[1:] if k[1] == 'S' else k for k in SPEC['brush']]
     for i in range(N_):
-        t = i / FPS; F = body_pose([kcol(BK, t, c) for c in range(1, 10)]); kb = [kcol(RK, t, c) for c in range(1, 7)]
+        t = i / FPS; FK = SPEC.get('feet'); F = body_pose([kcol(BK, t, c) for c in range(1, 10)], [kcol(FK, t, c) for c in range(1, 9)] if FK else None); kb = [kcol(RK, t, c) for c in range(1, 7)]
         for n_b in ('LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand'): F.P.L[n_b] = STANCE.P.L[n_b].copy()
         F.P.fk(); dp_ = Vector((0, 0, 0))
         if LIFE:
@@ -527,6 +529,7 @@ for i in range(NF):
     if kr is not None: costs[i, :] += 1e5; costs[i, kr] -= 1e5
     minreach.append(mr)
 feas = [1.0 if r <= .985 else 0.0 for r in minreach]
+info['l_minreach'] = [round(r, 2) for r in minreach]
 er = [min(feas[max(0, i - 2):i + 3]) for i in range(NF)]; LW = [sum(er[max(0, i - 3):i + 4]) / len(er[max(0, i - 3):i + 4]) for i in range(NF)]; LW = [x * x * (3 - 2 * x) for x in LW]
 if LW_FORCE is not None: LW = [min(a, b_) if f < 1 else a for a, b_, f in zip(LW_FORCE, LW, feas)]
 else:
