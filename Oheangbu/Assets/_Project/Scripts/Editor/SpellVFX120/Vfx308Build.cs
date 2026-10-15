@@ -68,6 +68,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
+                case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();
@@ -1166,6 +1167,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (attack) sb.AppendLine(RegisterContacts());
             if (attack) sb.AppendLine(ConnectGiyeok());
             if (attack) sb.AppendLine(ConnectAura());
+            if (attack) sb.AppendLine(ConnectBeast());
             return sb.ToString();
         }
 
@@ -1191,6 +1193,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             sb.AppendLine(UnregisterContacts());
             sb.AppendLine(RevertGiyeok());
             sb.AppendLine(RevertAura());
+            sb.AppendLine(RevertBeast());
             return sb.ToString();
         }
 
