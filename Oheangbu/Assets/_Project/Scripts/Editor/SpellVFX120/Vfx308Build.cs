@@ -834,8 +834,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // pq_area (2026-10-15): the tongues flew up and round the caster like red feathers and the wash was faint - every
             // emitter's cone is pressed flat into a fan over the ground (FanFlat) and tipped down a little, the tongues are smaller,
             // the ground wash and the soot denser. pq_fan (11.29 on): the fan stopped ~2 m out against a 6 m reach - faster, less drag; pq_fan3 probe: the sheets stopped at ~1 m (drag times size), the tongues at 3.4 m - plain drag.
-            Layer(root.transform, new L { Name = "Strands", Mat = e.Strand, Mesh = e.Tongue, AlongVelocity = true, Rate = 120f * a.Dense, Max = Mathf.CeilToInt(44 * a.Dense), Life = new Vector2(.55f, .85f) * a.Slow, Size = new Vector2(.4f, .7f) * a.Big, Size3D = new Vector3(1f, 1f, 2.6f),
-                Speed = new Vector2(9f, 14f), Drag = 1f, DragLinear = true, Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, Grow = Curve(0f, .4f, .5f, 1.1f, 1f, 0f) });
+            // user 2026-10-15 "노의 불 혀를 굳이 만들어야할까? 그냥 광역으로 방사되는 화염형태로": the solid tongue meshes are gone -
+            // the fire_lick jet (a flame licking forward that thins into soot) streams out over the fan, stretched along its flight.
+            Layer(root.transform, new L { Name = "Flame", Mat = e.Lick, Mode = 3, Rate = 70f * a.Dense, Max = Mathf.CeilToInt(40 * a.Dense), Life = new Vector2(.45f, .7f) * a.Slow, Size = new Vector2(1.4f, 2.4f) * a.Big,
+                Speed = new Vector2(8f, 12f), Drag = 1.2f, DragLinear = true, SpinRandom = false, Blend = true, Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip,
+                FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(Color.Lerp(Color.white, e.Pig, .25f), .45f, e.Dark), Grow = Curve(0f, .35f, .35f, 1f, 1f, 1.3f) });
             // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
             // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
             Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 34f * a.Dense, Max = Mathf.CeilToInt(22 * a.Dense), Life = new Vector2(.6f, .85f) * a.Slow, Size = new Vector2(2.4f, 3.4f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.6f, DragLinear = true, Blend = true,
