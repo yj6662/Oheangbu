@@ -824,10 +824,18 @@ namespace Oheangbu.EditorTools.SpellVFX120
             //   the wash reads as one scorch from the caster to the target instead of a stack of overlapping flame cards.
             // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
             // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
-            Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 13f * a.Dense, Max = Mathf.CeilToInt(8 * a.Dense), Life = new Vector2(.75f, .95f) * a.Slow, Size = new Vector2(3.4f, 4.6f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.6f, DragLinear = true, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = Fade(Color.Lerp(e.Ink, e.Dark, .3f), .6f, e.Ink), Grow = Curve(0f, .5f, 1f, 1.3f) });
-            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 22f * a.Dense, Max = Mathf.CeilToInt(10 * a.Dense), Life = new Vector2(.65f, .85f) * a.Slow, Size = new Vector2(3.2f, 4.4f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.4f, DragLinear = true, SpinRandom = false, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .9f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .5f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
+            // user 2026-10-15 "판을 만들어서 퍼뜨리는 것보다 연기같은 VFX로 현실적인 느낌을 더 살릴 수는 없을까?" then, showing the
+            // early soot of pq_drop, "내가 의도한 건 이런 연기였는데": the torn soot wisps are the spell. The red ground wash (the
+            // stacked red cards) is gone; the soot lives longer, only its wispy cels play (0-6 of fire_lick), it slows hard (linear
+            // drag: reach ~ v^2 / 2 drag, 3.5 - 7 m) and as it stops the rise turns the stretched wisps upward - smoke settling.
+            // (The billow spike, smoke308.py, read as red cartoon puffs - not used.)
+            // pq_smoke: fire_lick's cels end in a straight root block at their left border = a card edge in game -> soot_wisp (smoke308.py wisp: that root faded out)
+            var soot = e.Key == "na" ? Bleed("M_V308b_na_soot_wisp", "soot_wisp", C(e.Ink, .85f), .3f, .92f) : e.LickSoot;
+            Layer(root.transform, new L { Name = "Soot", Mat = soot, Mode = 3, Rate = 42f * a.Dense, Max = Mathf.CeilToInt(18 * a.Dense), Life = new Vector2(1.0f, 1.4f) * a.Slow, Size = new Vector2(1.6f, 2.3f) * a.Big,
+                Speed = new Vector2(7f, 10f), Drag = 7f, DragLinear = true, SpinRandom = false, Blend = true, RiseY = .9f,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, FrameFrom = 0f, FrameTo = 6f,
+                Colour = G((0f, C(Color.Lerp(e.Wash, e.Dark, .6f), 0f)), (.05f, C(Color.Lerp(e.Wash, e.Dark, .6f), .9f)), (.4f, C(Color.Lerp(e.Wash, e.Dark, .7f), .7f)), (1f, C(e.Dark, 0f))),
+                Grow = Curve(0f, .6f, .4f, 1f, 1f, 1.3f) });   // pq_smoke: 2.6 - 3.6 m swelling to ~5 m read as broad see-through fans - the wisps the user pointed at were ~2 m
             return root;
         }
 
