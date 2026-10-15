@@ -608,8 +608,6 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Birth2(travel, "ga", pig, 1.1f);
             Wash(contact, "Burst", B("ga", "wood_splinter", C(ink, .9f)), leaf, dark, 6.2f, .9f, .4f, 1.12f, depth: 3);
             Wash(contact, "Splat", B("ga", "ink_splat", C(ink, .9f), 0f, .85f), dark, dark, 4.2f, .9f, .35f, 1.25f, 15.5f, default, true);
-            Layer(contact, new L { Name = "Shards", World = false, Mat = solid, Mesh = k.Splinter, Burst = 12, Max = 12, Life = new Vector2(.45f, .8f), Size = new Vector2(.6f, 1.1f), Speed = new Vector2(3f, 7f),
-                Shape = ParticleSystemShapeType.Hemisphere, Radius = .1f, Gravity = 1.4f, Tumble = true, Spin = 260f, Grow = Curve(0, 1f, .5f, .8f, 1, 0f) });
             return root;
         }
 
@@ -648,10 +646,6 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Blots(travel, "Dust", drops, soil, dark, 30f, new Vector2(.7f, 1.1f), new Vector2(.45f, .65f), .9f, .18f, 0f, 1.8f);
             Birth2(travel, "ma", soil, 1.0f);
             Wash(contact, "DustRoll", B("ma", "earth_dust", C(ink, .6f)), soil, dark, 6.8f, .9f, .5f, 1.12f, 15.5f, new Vector3(0f, .12f, 0f), depth: 3);
-            Layer(contact, new L { Name = "Chunks", World = false, Mat = solid, Mesh = k.Chunk, Burst = 12, Max = 12, Life = new Vector2(.6f, .9f), Size = new Vector2(.2f, .4f), Speed = new Vector2(3f, 6.5f), Radius = .2f,
-                Gravity = 2.4f, Tumble = true, Spin = 400f, Grow = Curve(0, 1f, .7f, 1f, 1, 0f) });
-            Layer(contact, new L { Name = "Clods", World = false, Mat = solid, Mesh = k.Clod, Burst = 3, Max = 4, Life = new Vector2(.7f, .9f), Size = new Vector2(.3f, .45f), Speed = new Vector2(2f, 4f), Radius = .15f,
-                Gravity = 2.6f, Tumble = true, Spin = 240f, Grow = Curve(0, 1f, .7f, 1f, 1, 0f) });
             Wash(contact, "Splat", B("ma", "ink_splat", C(ink, .8f), 0f, .85f), dark, dark, 4.6f, .9f, .35f, 1.25f, 15.5f, default, true);
             return root;
         }
@@ -670,8 +664,6 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Birth2(travel, "sa", steel, 1.1f);
             Wash(contact, "Streaks", streak, steel, dark, 7f, 7f * Cel, .5f, 1.05f, 8f, default, true, depth: 2);
             Wash(contact, "Splat", B("sa", "ink_splat", C(ink, .9f), 0f, .8f), dark, dark, 2.6f, .5f, .3f, 1.1f, 9f, default, true);
-            Layer(contact, new L { Name = "Filings", World = false, Mat = line, Mesh = k.Splinter, Burst = 14, Max = 14, Life = new Vector2(.12f, .25f), Size = new Vector2(.6f, 1.1f), Size3D = new Vector3(.4f, .4f, 1f), Speed = new Vector2(8f, 14f),
-                Radius = .05f, AlongVelocity = true, Grow = Curve(0, 1f, 1, .2f) });
             return root;
         }
 
@@ -834,19 +826,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // pq_area (2026-10-15): the tongues flew up and round the caster like red feathers and the wash was faint - every
             // emitter's cone is pressed flat into a fan over the ground (FanFlat) and tipped down a little, the tongues are smaller,
             // the ground wash and the soot denser. pq_fan (11.29 on): the fan stopped ~2 m out against a 6 m reach - faster, less drag; pq_fan3 probe: the sheets stopped at ~1 m (drag times size), the tongues at 3.4 m - plain drag.
-            // user 2026-10-15 "노의 불 혀를 굳이 만들어야할까? 그냥 광역으로 방사되는 화염형태로": the solid tongue meshes are gone -
-            // the fire_lick jet (a flame licking forward that thins into soot) streams out over the fan, stretched along its flight.
-            Layer(root.transform, new L { Name = "Flame", Mat = e.Lick, Mode = 3, Rate = 70f * a.Dense, Max = Mathf.CeilToInt(40 * a.Dense), Life = new Vector2(.45f, .7f) * a.Slow, Size = new Vector2(1.4f, 2.4f) * a.Big,
-                Speed = new Vector2(8f, 12f), Drag = 1.2f, DragLinear = true, SpinRandom = false, Blend = true, Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip,
-                FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(Color.Lerp(Color.white, e.Pig, .25f), .45f, e.Dark), Grow = Curve(0f, .35f, .35f, 1f, 1f, 1.3f) });
+            // user 2026-10-15 "'노'를 이 방식인데 입자만 없는 버전으로 ... 꼭 부채꼴 모양일 필요는 없어" (pq_fan4 picture): no flying bits -
+            // the flame jet and the blots are gone, the scorched ground ink and the soot wash carry the spell.
             // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
             // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
             Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 34f * a.Dense, Max = Mathf.CeilToInt(22 * a.Dense), Life = new Vector2(.6f, .85f) * a.Slow, Size = new Vector2(2.4f, 3.4f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.6f, DragLinear = true, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = Fade(Color.Lerp(e.Ink, e.Dark, .3f), .6f, e.Ink), Grow = Curve(0f, .5f, 1f, 1.3f) });
             Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 80f * a.Dense, Max = Mathf.CeilToInt(32 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(2.2f, 3.2f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.4f, DragLinear = true, SpinRandom = false, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .9f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .5f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
-            Layer(root.transform, new L { Name = "Blots", Mat = e.Drops, Rate = 20f * a.Dense, Max = Mathf.CeilToInt(7 * a.Dense), Life = new Vector2(.4f, .7f) * a.Slow, Size = new Vector2(.6f, 1f) * a.Big, Speed = new Vector2(9f, 15f), Drag = 1.2f, DragLinear = true, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomCell = true, Colour = Fade(e.Dark, .3f, e.Dark), Grow = Curve(0f, .8f, 1f, 1.6f) });
             return root;
         }
 
@@ -904,12 +891,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = Fade(e.Key == "ma" ? Color.Lerp(e.Wash, e.Dark, .55f) : e.Wash, .45f, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });   // pq_area: the earth head read as a muddy brown cloud - darker toward the ink
             Layer(root.transform, new L { Name = "Wet", Mat = e.Pool, Mode = 1, Rate = 9f * a.Dense, Max = Mathf.CeilToInt(9 * a.Dense * 1.1f * a.Slow) + 3, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(3.4f, 4.4f) * a.Big, Blend = true, ShapeScaling = true,
                 Shape = ParticleSystemShapeType.Box, ShapeScale = box, ShapePos = new Vector3(0f, -.27f, 0f), FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(e.Dark, .45f, e.Dark), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.2f) });
-            if (e.Key == "a")
-                Layer(root.transform, new L { Name = "Beads", Mat = e.Drops, Rate = 20f * a.Dense, Max = 24, Life = new Vector2(.5f, .8f), Size = new Vector2(.5f, .8f), RiseY = 3f, Gravity = 2.2f, Blend = true, ShapeScaling = true,
-                    Shape = ParticleSystemShapeType.Box, ShapeScale = box, RandomCell = true, Colour = Fade(e.Wash, .4f, e.Dark) });
-            else
-                Layer(root.transform, new L { Name = "Bits", Mat = e.Solid, Mesh = e.Bit, Rate = 24f * a.Dense, Max = Mathf.CeilToInt(24 * a.Dense * .85f) + 4, Life = new Vector2(.5f, .85f), Size = new Vector2(e.Key == "ma" ? .22f : .45f, e.Key == "ma" ? .46f : .9f) * a.Big, RiseY = 4.5f, Gravity = 2.4f, ShapeScaling = true,
-                    Shape = ParticleSystemShapeType.Box, ShapeScale = box, Tumble = true, Spin = 300f, Grow = Curve(0f, 1f, .7f, 1f, 1f, 0f) });
+            // user 2026-10-15 (no flying bits): the beads / clumps thrown up off the front are gone - the head and the wet wash carry it
             return root;
         }
 
