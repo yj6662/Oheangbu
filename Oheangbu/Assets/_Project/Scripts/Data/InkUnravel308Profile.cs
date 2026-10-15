@@ -13,9 +13,9 @@ namespace Oheangbu.Data.Spell
         [Tooltip("월드 공간 파티클 시스템 하나(방출 0 — 코드가 Emit). 먹 방울 판, 늘인 빌보드.")]
         public GameObject ParticlePrefab;
         [Tooltip("획이 다 풀리기까지(초): 입자가 이 동안 차례로 떨어져 나오고 획은 디졸브로 사라진다.")]
-        [Range(.05f, .6f)] public float Seconds = .2f;
+        [Range(.05f, .6f)] public float Seconds = .35f;   // 2026-10-15 user "더 느리게" (.2 -> .35)
         [Tooltip("입자 하나가 붓끝에 닿기까지(초) 범위.")]
-        public Vector2 FlySeconds = new Vector2(.16f, .26f);
+        public Vector2 FlySeconds = new Vector2(.2f, .3f);
         [Tooltip("글자 하나의 입자 수 상한.")]
         [Range(8, 400)] public int MaxParticles = 140;
         [Tooltip("입자 크기 범위(m).")]
