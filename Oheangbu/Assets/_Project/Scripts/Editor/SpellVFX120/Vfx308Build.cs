@@ -596,10 +596,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, ink = k.Ink, leaf = Color.Lerp(pig, ink, .45f), dark = Color.Lerp(pig, ink, .75f);
             var solid = Solid("M_V308_ga_solid", Color.Lerp(pig, ink, .2f), ink);
             var drops = B("ga", "ink_drops", C(ink, .85f));
-            Layer(SpinRoot(travel), new L { Name = "Thorn", Mat = solid, Mesh = k.Thorn, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.1f, 2.1f), NoShape = true, Roll = 540f, Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
+            // D308-86: ink that keeps forming instead of the thorn mesh; wood = fine ink sprigs reaching out of it
+            var gaSpin = InkMass(travel, "ga", ink, leaf, dark, 1.15f);
+            Layer(gaSpin, new L { Name = "Sprigs", Mat = drops, World = false, Rate = 22f, Max = 10, Life = new Vector2(.18f, .26f), Size = new Vector2(.25f, .45f), Speed = new Vector2(1.6f, 2.6f), Radius = .1f,
+                Mode = 3, RandomCell = true, Blend = true, Colour = Fade(leaf, .3f, dark), Grow = Curve(0f, .4f, .3f, 1f, 1f, .6f) });
             Blots(travel, "Wisps", drops, leaf, dark, 45f, new Vector2(.5f, .85f), new Vector2(.3f, .45f), 0f, .22f, 2.5f);
-            Layer(travel, new L { Name = "Splinters", Mat = solid, Mesh = k.Splinter, Rate = 18, Max = 16, Life = new Vector2(.3f, .45f), Size = new Vector2(.3f, .55f), Speed = new Vector2(1.5f, 3.5f),
-                Shape = ParticleSystemShapeType.Cone, Radius = .05f, Angle = 40f, ShapeRot = new Vector3(0f, 180f, 0f), Gravity = .6f, Tumble = true, Spin = 200f, Grow = Curve(0, 1f, 1, 0f) });
             Birth2(travel, "ga", pig, 1.1f);
             Wash(contact, "Burst", B("ga", "wood_splinter", C(ink, .9f)), leaf, dark, 6.2f, .9f, .4f, 1.12f, depth: 3);
             Wash(contact, "Splat", B("ga", "ink_splat", C(ink, .9f), 0f, .85f), dark, dark, 4.2f, .9f, .35f, 1.25f, 15.5f, default, true);
@@ -614,9 +615,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, ink = k.Ink, ember = Color.Lerp(pig, ink, .45f), soot = Color.Lerp(pig, ink, .85f);
             var flame = B("na", "fire_tongue", C(ink, .35f), 1f, .85f);
             var drops = B("na", "ink_drops", C(ink, .85f), 0f, .8f);
-            var naSpin = SpinRoot(travel);
-            Layer(naSpin, new L { Name = "Coal", Mat = Solid("M_V308_na_solid", Color.Lerp(pig, ink, .55f), ink, .45f, .3f), Mesh = k.Clod, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(.5f, .5f), NoShape = true,
-                Tumble = true, Spin = 110f, Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
+            var naSpin = InkMass(travel, "na", ink, ember, soot, .9f, rate: 22f, shed: 20f);   // D308-86: ink under the flame, not a coal
             Layer(naSpin, new L { Name = "Flame", Mat = flame, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.5f, 2.5f), NoShape = true, SpinRandom = false, Blend = true,
                 Cycles = 6f, Pivot = new Vector3(0f, .2f, 0f), Colour = G((0f, C(ember, 1f)), (1f, C(ember, 1f))), Grow = Curve(0f, .35f, .04f, 1f, 1f, 1f) });
             Layer(travel, new L { Name = "Licks", Mat = flame, Rate = 9, Max = 10, Life = new Vector2(.45f, .6f), Size = new Vector2(1.3f, 1.8f), NoShape = true, SpinRandom = false, Blend = true,
@@ -638,9 +637,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, ink = k.Ink, soil = Color.Lerp(pig, ink, .3f), dark = Color.Lerp(pig, ink, .7f);
             var solid = Solid("M_V308_ma_solid", Color.Lerp(pig, ink, .15f), ink, .6f, .3f);
             var drops = B("ma", "ink_drops", C(ink, .6f));
-            Body(SpinRoot(travel), k.Clod, solid, .5f);
-            Layer(travel, new L { Name = "Crumbs", Mat = solid, Mesh = k.Chunk, Rate = 20, Max = 20, Life = new Vector2(.45f, .7f), Size = new Vector2(.1f, .2f), Speed = new Vector2(.3f, 1f), Radius = .2f,
-                Gravity = 2.2f, Tumble = true, Spin = 300f });
+            // D308-86: a heavy mass of earth-grained ink instead of the clod; ink drops fall off it instead of crumbs
+            InkMass(travel, "ma", ink, soil, dark, 1.05f, "earth_dust", 24f, 40f, .34f);
+            Layer(travel, new L { Name = "Drips", Mat = drops, Rate = 16f, Max = 14, Life = new Vector2(.4f, .6f), Size = new Vector2(.18f, .32f), Speed = new Vector2(.3f, 1f), Radius = .2f,
+                Gravity = 2.2f, RandomCell = true, Blend = true, Colour = Fade(dark, .3f, dark), Grow = Curve(0f, 1f, 1f, 1.3f) });
             Blots(travel, "Dust", drops, soil, dark, 30f, new Vector2(.7f, 1.1f), new Vector2(.45f, .65f), .9f, .18f, 0f, 1.8f);
             Birth2(travel, "ma", soil, 1.0f);
             Wash(contact, "DustRoll", B("ma", "earth_dust", C(ink, .6f)), soil, dark, 6.8f, .9f, .5f, 1.12f, 15.5f, new Vector3(0f, .12f, 0f), depth: 3);
@@ -657,12 +657,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var (travel, contact, root) = Shell("PF_V308b_sa");
             Color pig = p.Pigment, ink = k.Ink, steel = Color.Lerp(pig, ink, .5f), dark = Color.Lerp(pig, ink, .8f);
-            var solid = Solid("M_V308_sa_solid", Color.Lerp(pig, ink, .1f), ink, .5f, .3f);
             var line = Solid("M_V308_sa_line", dark, ink, .5f, 0f);
             var streak = B("sa", "metal_streak", C(ink, .8f));
-            Layer(SpinRoot(travel), new L { Name = "Blade", Mat = solid, Mesh = k.Blade, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.1f, 2.1f), NoShape = true, Roll = 900f, Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
-            Layer(travel, new L { Name = "Lines", Mat = line, Mesh = k.Splinter, Rate = 70, Max = 20, Life = new Vector2(.12f, .2f), Size = new Vector2(.9f, 1.4f), Size3D = new Vector3(1.7f, 1.7f, 2.4f),
-                Shape = ParticleSystemShapeType.Circle, Radius = .55f, Thickness = .5f, Grow = Curve(0, 1f, 1, .3f) });
+            // D308-86: dry, quick ink instead of the blade (metal bleeds least: short-lived cels, little breath behind)
+            InkMass(travel, "sa", ink, steel, dark, .85f, rate: 26f, spin: 0f, life: .16f, shed: 14f);
             Layer(travel, new L { Name = "Glint", Mat = streak, World = false, Rate = 12, Max = 4, Life = new Vector2(Cel, Cel), Size = new Vector2(2.8f, 3.3f), NoShape = true, Blend = true,
                 RandomCell = true, FrameFrom = 0f, FrameTo = 1.99f, Colour = G((0f, C(steel, 1f)), (1f, C(steel, .8f))) });
             Birth2(travel, "sa", steel, 1.1f);
@@ -679,9 +677,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, acc = p.Accent, ink = k.Ink, water = Color.Lerp(pig, acc, .15f), dark = Color.Lerp(pig, ink, .6f);
             var deep = C(Color.Lerp(pig, ink, .7f), .9f);
             var drops = B("a", "ink_drops", deep);
-            var aSpin = SpinRoot(travel);
-            Layer(aSpin, new L { Name = "Bead", Mat = Solid("M_V308_a_solid", Color.Lerp(pig, acc, .1f), Color.Lerp(pig, ink, .9f), .45f, .34f), Mesh = k.Drop, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(.78f, .78f), NoShape = true,
-                Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
+            var aSpin = InkMass(travel, "a", ink, water, dark, .95f, rate: 24f, spin: 25f, shed: 22f);   // D308-86: round wet ink inside the veil, not a bead
             // the wobbling wash is now a veil round the solid bead, not a black disc over it
             Layer(aSpin, new L { Name = "Orb", Mat = Bleed("M_V308b_a_water_orb_veil", "water_orb", C(Color.Lerp(pig, ink, .7f), .3f), 0f, .6f), World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.2f, 2.2f), NoShape = true, SpinRandom = false, Blend = true,
                 Cycles = 6f, Colour = G((0f, C(water, 1f)), (1f, C(water, 1f))), Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
