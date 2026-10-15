@@ -602,12 +602,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var drops = B("ga", "ink_drops", C(ink, .85f));
             // D308-86: ink that keeps forming instead of the thorn mesh; wood = fine ink sprigs reaching out of it
             var gaSpin = InkMass(travel, "ga", ink, leaf, dark, 1.15f);
-            Layer(gaSpin, new L { Name = "Sprigs", Mat = drops, World = false, Rate = 22f, Max = 10, Life = new Vector2(.18f, .26f), Size = new Vector2(.25f, .45f), Speed = new Vector2(1.6f, 2.6f), Radius = .1f,
-                Mode = 3, RandomCell = true, Blend = true, Colour = Fade(leaf, .3f, dark), Grow = Curve(0f, .4f, .3f, 1f, 1f, .6f) });
-            Blots(travel, "Wisps", drops, leaf, dark, 45f, new Vector2(.5f, .85f), new Vector2(.3f, .45f), 0f, .22f, 2.5f);
             Birth2(travel, "ga", pig, 1.1f);
             Wash(contact, "Burst", B("ga", "wood_splinter", C(ink, .9f)), leaf, dark, 6.2f, .9f, .4f, 1.12f, depth: 3);
             Wash(contact, "Splat", B("ga", "ink_splat", C(ink, .9f), 0f, .85f), dark, dark, 4.2f, .9f, .35f, 1.25f, 15.5f, default, true);
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -622,7 +620,6 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Cycles = 6f, Pivot = new Vector3(0f, .2f, 0f), Colour = G((0f, C(ember, 1f)), (1f, C(ember, 1f))), Grow = Curve(0f, .35f, .04f, 1f, 1f, 1f) });
             Layer(travel, new L { Name = "Licks", Mat = flame, Rate = 9, Max = 10, Life = new Vector2(.45f, .6f), Size = new Vector2(1.3f, 1.8f), NoShape = true, SpinRandom = false, Blend = true,
                 RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = 1.2f, Pivot = new Vector3(0f, .2f, 0f), Colour = Fade(ember, .15f, soot), Grow = Curve(0, .9f, 1, 1.4f) });
-            Blots(travel, "Soot", drops, soot, soot, 12f, new Vector2(.4f, .65f), new Vector2(.35f, .55f), -.15f, .18f);
             Birth2(travel, "na", new Color(.6f, .28f, .1f), 1.2f);
             // 6th pass (sheets r5): from 12 m the hit was one red mass. Its own burst material with half the heat and more ink, one
             // layer fewer, smaller; fewer tongues; the ink splat under it is the larger shape now.
@@ -630,6 +627,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Layer(contact, new L { Name = "Tongues", World = false, Mat = flame, Burst = 4, Max = 5, Life = new Vector2(.55f, .85f), Size = new Vector2(1.5f, 2.1f), Radius = .6f, SpinRandom = false, Blend = true,
                 RandomStart = true, FrameFrom = 0f, FrameTo = 8f, RiseY = 1.7f, Colour = Fade(ember, .3f, soot), Grow = Curve(0, .9f, 1, 1.3f) });
             Wash(contact, "Splat", B("na", "ink_splat", C(ink, .9f), 0f, .95f), soot, soot, 5.6f, .9f, .4f, 1.25f, 15.5f, default, true);
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -641,12 +639,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var drops = B("ma", "ink_drops", C(ink, .6f));
             // D308-86: a heavy mass of earth-grained ink instead of the clod; ink drops fall off it instead of crumbs
             InkMass(travel, "ma", ink, soil, dark, 1.05f, "earth_dust", 24f, 40f, .34f);
-            Layer(travel, new L { Name = "Drips", Mat = drops, Rate = 16f, Max = 14, Life = new Vector2(.4f, .6f), Size = new Vector2(.18f, .32f), Speed = new Vector2(.3f, 1f), Radius = .2f,
-                Gravity = 2.2f, RandomCell = true, Blend = true, Colour = Fade(dark, .3f, dark), Grow = Curve(0f, 1f, 1f, 1.3f) });
-            Blots(travel, "Dust", drops, soil, dark, 30f, new Vector2(.7f, 1.1f), new Vector2(.45f, .65f), .9f, .18f, 0f, 1.8f);
             Birth2(travel, "ma", soil, 1.0f);
             Wash(contact, "DustRoll", B("ma", "earth_dust", C(ink, .6f)), soil, dark, 6.8f, .9f, .5f, 1.12f, 15.5f, new Vector3(0f, .12f, 0f), depth: 3);
             Wash(contact, "Splat", B("ma", "ink_splat", C(ink, .8f), 0f, .85f), dark, dark, 4.6f, .9f, .35f, 1.25f, 15.5f, default, true);
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -677,13 +673,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // the wobbling wash is now a veil round the solid bead, not a black disc over it
             Layer(aSpin, new L { Name = "Orb", Mat = Bleed("M_V308b_a_water_orb_veil", "water_orb", C(Color.Lerp(pig, ink, .7f), .3f), 0f, .6f), World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.2f, 2.2f), NoShape = true, SpinRandom = false, Blend = true,
                 Cycles = 6f, Colour = G((0f, C(water, 1f)), (1f, C(water, 1f))), Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
-            Blots(travel, "Wake", drops, water, dark, 12f, new Vector2(.6f, .95f), new Vector2(.5f, .8f), 1.1f, .2f, 0f, 1.7f);
-            Blots(travel, "Curl", drops, Color.Lerp(pig, acc, .3f), dark, 16f, new Vector2(.4f, .6f), new Vector2(.5f, .7f), .2f, .45f, 1.2f);
             Birth2(travel, "a", water, 1.0f);
             Wash(contact, "Crown", B("a", "water_ring", deep), water, dark, 6.6f, .9f, .5f, 1.12f, depth: 3);
             Wash(contact, "Splat", B("a", "ink_splat", C(ink, .85f), 0f, .8f), dark, dark, 4.0f, .9f, .35f, 1.25f, 15.5f, default, true);
-            Layer(contact, new L { Name = "Beads", World = false, Mat = drops, Burst = 8, Max = 8, Life = new Vector2(.6f, .9f), Size = new Vector2(.5f, .8f), Speed = new Vector2(2.5f, 5f), Gravity = 2.6f, Radius = .2f,
-                RandomCell = true, Blend = true, Colour = Fade(pig, .4f, dark) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -810,8 +803,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.25f * a.Big);
             Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(6.2f, 7.6f) * a.Big, Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
                 FrameFrom = 3f, FrameTo = 12f, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .75f), .75f, e.Ink), Grow = Curve(0f, .85f, 1f, 1.2f) });
-            Layer(root.transform, new L { Name = "Wisp", Mat = e.Drops, World = false, Rate = 5f, Max = 7, Life = new Vector2(.6f, .9f) * a.Slow, Size = new Vector2(.8f, 1.3f) * a.Big, Radius = .12f, ShapePos = new Vector3(0f, 1.2f * a.Big, 0f), RiseY = .9f,
-                RandomCell = true, Blend = true, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .5f), .3f, e.Ink), Grow = Curve(0f, .6f, 1f, 1.9f) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -828,11 +820,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // the ground wash and the soot denser. pq_fan (11.29 on): the fan stopped ~2 m out against a 6 m reach - faster, less drag; pq_fan3 probe: the sheets stopped at ~1 m (drag times size), the tongues at 3.4 m - plain drag.
             // user 2026-10-15 "'노'를 이 방식인데 입자만 없는 버전으로 ... 꼭 부채꼴 모양일 필요는 없어" (pq_fan4 picture): no flying bits -
             // the flame jet and the blots are gone, the scorched ground ink and the soot wash carry the spell.
+            // user 2026-10-15 "여러겹의 불 입자가 겹쳐있는게 너무 부자연스럽게": a third of the sheets, each larger and longer-lived -
+            //   the wash reads as one scorch from the caster to the target instead of a stack of overlapping flame cards.
             // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
             // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
-            Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 34f * a.Dense, Max = Mathf.CeilToInt(22 * a.Dense), Life = new Vector2(.6f, .85f) * a.Slow, Size = new Vector2(2.4f, 3.4f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.6f, DragLinear = true, Blend = true,
+            Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 13f * a.Dense, Max = Mathf.CeilToInt(8 * a.Dense), Life = new Vector2(.75f, .95f) * a.Slow, Size = new Vector2(3.4f, 4.6f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.6f, DragLinear = true, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = Fade(Color.Lerp(e.Ink, e.Dark, .3f), .6f, e.Ink), Grow = Curve(0f, .5f, 1f, 1.3f) });
-            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 80f * a.Dense, Max = Mathf.CeilToInt(32 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(2.2f, 3.2f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.4f, DragLinear = true, SpinRandom = false, Blend = true,
+            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 22f * a.Dense, Max = Mathf.CeilToInt(10 * a.Dense), Life = new Vector2(.65f, .85f) * a.Slow, Size = new Vector2(3.2f, 4.4f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.4f, DragLinear = true, SpinRandom = false, Blend = true,
                 Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .9f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .5f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
             return root;
         }
@@ -903,8 +897,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var ps = Layer(null, new L { Name = "PF_V308b_hit_" + e.Key, Mat = B(e.Key, "ink_splat", C(e.Ink, .9f), 0f, .9f), World = false, Burst = 1, Max = 2, Life = new Vector2(.5f, .5f), Size = new Vector2(2.6f, 2.6f), NoShape = true, Blend = true,
                 FrameFrom = 0f, FrameTo = 10f, Colour = Fade(e.Dark, .35f, e.Dark), Grow = Curve(0f, .9f, 1f, 1.25f) });
-            Layer(ps.transform, new L { Name = "Blots", Mat = e.Drops, World = false, Burst = 6, Max = 6, Life = new Vector2(.35f, .55f), Size = new Vector2(.5f, .85f), Speed = new Vector2(2f, 5f), Gravity = 2f, Radius = .15f,
-                RandomCell = true, Blend = true, Colour = Fade(e.Wash, .3f, e.Dark) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return ps.gameObject;
         }
 

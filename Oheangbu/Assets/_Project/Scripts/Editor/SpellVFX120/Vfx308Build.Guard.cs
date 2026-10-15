@@ -111,11 +111,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Colour = G((0f, C(e.Ink, 0f)), (.03f, C(e.Ink, .9f)), (.6f, C(e.Ink, .7f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .6f, .08f, 1f, 1f, 1.05f) });
 
             var drops = Bleed("M_V308d_guard_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f);
-            Layer(root.transform, new L { Name = "Drip", Mat = drops, World = false, Rate = 7f, Burst = 12, BurstTime = .1f, Max = 40, Life = new Vector2(.5f, .9f),
-                Size = new Vector2(.07f, .16f), Gravity = 1.6f, Shape = ParticleSystemShapeType.Box, ShapeScale = new Vector3(GuardHeight * 1.1f, .3f, .05f), ShapePos = new Vector3(0f, GuardHeight * .85f, -.06f),
-                RandomCell = true, Blend = true, Colour = InkFade(.5f), Grow = Curve(0f, .6f, 1f, 1.3f) });
-            Layer(body, new L { Name = "Splash", Mat = drops, World = false, Burst = 18, BurstTime = .03f, Max = 20, Life = new Vector2(.35f, .6f), Speed = new Vector2(1.5f, 3.5f),
-                Size = new Vector2(.08f, .2f), Gravity = 1.4f, Radius = .6f, RandomCell = true, Blend = true, Colour = InkFade(.4f), Grow = Curve(0f, .7f, 1f, 1.2f) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": no drops running down the membrane, no splash
             return root;
         }
     }
