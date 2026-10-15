@@ -3,6 +3,10 @@
 clean
 call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
 sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run aura
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
 call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
 wait hold
 sleep 3
@@ -44,6 +48,17 @@ sleep 1
 ?call SwingProbe308 Run cast:uBAA8
 sleep 6
 ?call PlayProbe308 Run frames
+?call SwingProbe308 Run cast:uAC71
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_hitch_geok_0
+?call SwingProbe308 Run fx
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_hitch_geok_1
+sleep 2
+?call Map307Capture Run hold-shot:sw_hitch_geok_2
+?call SwingProbe308 Run fx
+sleep 3
+?call Map307Capture Run hold-shot:sw_hitch_geok_3
 ?call SwingProbe308 Run report
 ?call PlayProbe308 Run log
 mem

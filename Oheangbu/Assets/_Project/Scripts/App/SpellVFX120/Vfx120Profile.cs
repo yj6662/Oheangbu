@@ -120,6 +120,7 @@ namespace Oheangbu.App.SpellVFX120
         [Tooltip("D308-84 stage 4: the #308 loop body of a buff / ward, played for the effect's life; it owns the effect (other children off). A ward's ring is built at 1 m and scaled by WardRadius.")]
         public GameObject Aura308Prefab;
         [Min(0f)] public float Aura308FadeSeconds = .5f;
+        [Tooltip("Scale the loop body by WardRadius (wards only).")] public bool Aura308ByWardRadius;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

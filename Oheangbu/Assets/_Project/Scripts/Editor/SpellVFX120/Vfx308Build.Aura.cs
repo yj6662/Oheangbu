@@ -53,6 +53,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     var profile = Load<Vfx120Profile>(AuraProfilePath(g.Id));
                     profile.Aura308Prefab = prefab;
                     if (kind == "ward") profile.WardKind = Vfx120WardKind.None;   // the old stone / pattern ward stays out
+                    profile.Aura308ByWardRadius = kind == "ward";
                     profile.KtpContactBrightness = 1f;
                     EditorUtility.SetDirty(profile); Touched.Add(profile);
 

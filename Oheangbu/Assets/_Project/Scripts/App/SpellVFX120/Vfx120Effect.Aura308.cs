@@ -22,7 +22,7 @@ namespace Oheangbu.App.SpellVFX120
             _aura308.name = Profile.Aura308Prefab.name;
             // world size, whatever the effect is scaled by (sw_z: a buff host scaled up threw its strokes over the whole sky);
             // the ward ring is built at 1 m and scaled by WardRadius
-            float world = Profile.WardRadius > 0f ? Profile.WardRadius : 1f;
+            float world = Profile.Aura308ByWardRadius && Profile.WardRadius > 0f ? Profile.WardRadius : 1f;   // sw_z3: a buff copy carried WardRadius 3 from its source
             _aura308.transform.localScale = Vector3.one * world / Mathf.Max(1e-4f, transform.lossyScale.x);
             _a3Systems = _aura308.GetComponentsInChildren<ParticleSystem>(true);
             _a3Stopping = false;
@@ -33,7 +33,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (_aura308 == null) return;
             // the buff host is parented to the player after Begin: keep the world size every frame
-            float world = Profile.WardRadius > 0f ? Profile.WardRadius : 1f;
+            float world = Profile.Aura308ByWardRadius && Profile.WardRadius > 0f ? Profile.WardRadius : 1f;   // sw_z3: a buff copy carried WardRadius 3 from its source
             _aura308.transform.localScale = Vector3.one * world / Mathf.Max(1e-4f, transform.lossyScale.x);
             // the old builders' children stay off (some are made after this one, or lazily)
             foreach (Transform child in transform)
