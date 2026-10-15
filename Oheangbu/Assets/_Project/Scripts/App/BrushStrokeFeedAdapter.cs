@@ -94,6 +94,7 @@ namespace Oheangbu.App
             public float FlashPower;  // 위력 근사 0..1 [TEST]
             public float PeakFlash01; // 도달한 최대 강도 — 어택 후 유지(속성색인 채로 사라진다)
             public bool Unraveled;    // #308 11.25: the strokes already came apart into the brush during the swing - no flash, no motifs
+            public float UnravelAt;   // #308 11.27: when they started coming apart (a commit that does not wait unravels on the spot)
             // 속성 모티프(§4.6) — 글자에 붙는 작은 스프라이트 몇 개(잎사귀·불꽃 낱개).
             // 붙은 자리에서 움직이지 않는다 — 크기만 0에서 은은히 자란다(상승 폐기 — 예준 4차 검수)
             public readonly List<Transform> Motifs = new List<Transform>();
@@ -817,6 +818,9 @@ namespace Oheangbu.App
             // 술식이 서지 않았는데 플래시·문양을 틀지 않는다(7차 검수)
             if (success && _hasPendingFlash && !_pendingCastFailed)
             {
+                // 11.27 (D308-87): a cast that does not wait for the apex (parry, ward, buff) unravels here instead of flashing in
+                // its element colour; a held cast already unravelled at the release. No profile = the flash as before.
+                BeginUnravel308(_pendingFlashColor);
                 BeginFading(isFlash: true, _pendingFlashColor, _pendingFlashPower, scaledTime);
             }
             else
@@ -854,6 +858,7 @@ namespace Oheangbu.App
                 StartTime = scaledTime,
                 IsFlash = isFlash,
                 Unraveled = isFlash && _unraveled308,
+                UnravelAt = _unravelAt308,
                 FlashColor = flashColor,
                 FlashPower = flashPower,
             };
@@ -1074,10 +1079,10 @@ namespace Oheangbu.App
         private readonly List<Vector3> _unravelPoints308 = new List<Vector3>(512);
         private readonly List<Vector3> _unravelVerts308 = new List<Vector3>(512);
 
-        private void BeginUnravel308()
+        private void BeginUnravel308(Color? known = null)
         {
             if (_unraveled308 || _pendingCastFailed || _strokes.Count == 0 || InkUnravel308.Profile == null) return;
-            Color pigment = Color.white;
+            Color pigment = known ?? Color.white;
             for (int i = _held308.Count - 1; i >= 0; i--)
                 if (_held308[i].Kind == VisualEventKind.Letter)
                 {
@@ -1242,9 +1247,12 @@ namespace Oheangbu.App
 
                 if (group.Unraveled)
                 {
-                    // #308 11.25: nothing left to show - the letter went into the brush before the apex
-                    foreach (var stroke in group.Strokes) { var m = stroke != null ? stroke.OwnedMaterial : null; if (m != null) m.SetFloat(DissolveId, 1f); }
-                    done = true;
+                    // #308 11.25: the letter goes into the brush - a held one is mostly gone by the apex, one unravelled at the
+                    // commit (11.27) finishes dissolving here over the profile's Seconds
+                    var unravel = InkUnravel308.Profile;
+                    float t = unravel == null ? 1f : Mathf.Clamp01((Time.time - group.UnravelAt) / unravel.Seconds);
+                    foreach (var stroke in group.Strokes) { var m = stroke != null ? stroke.OwnedMaterial : null; if (m != null) m.SetFloat(DissolveId, t); }
+                    done = t >= 1f;
                 }
                 else if (group.IsFlash)
                 {
