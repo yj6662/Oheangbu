@@ -126,11 +126,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // narrow fan (concept C, user 2026-10-16 after pq_vfxg7): a ground streak to the target, a little spread to tear at
             var fan = Block(init, "SetAttribute", ("attribute", "velocity"), ("Composition", "Add"), ("Random", "PerComponent"));
             Space(fan, "A", "Local"); Space(fan, "B", "Local");   // space first: changing it resets the slot value (pq_vfxg4: A = B = 0)
-            Put(fan, "A", new Vector3(-.7f, -.3f, -.8f)); Put(fan, "B", new Vector3(.7f, .2f, .8f));   // pq_vfxg7: +-2.2 = a wide wave
+            Put(fan, "A", new Vector3(-.7f, -.3f, -3.5f)); Put(fan, "B", new Vector3(.7f, .2f, 1.5f));   // pq_vfxg7: +-2.2 = a wide wave; pq_vfxg8: +-.8 along = every wisp stopped at one distance (a puck)
             // the roll and tear: an absolute curl-noise force (relative mode would drag the throw back toward the field)
             var turb = Block(update, "Turbulence", ("Mode", "Absolute"), ("NoiseType", "Perlin"));
             // pq_vfxg4: 4 / .45 stood the soot up into a column; pq_vfxg7: 1.6 drifted the cloud sideways
-            Put(turb, "Intensity", 1f); Put(turb, "frequency", .35f);
+            Put(turb, "Intensity", 1.8f); Put(turb, "frequency", .55f);   // pq_vfxg8: 1 / .35 under force 3 = no tearing; small eddies tear more than they drift
             Put(turb, "octaves", 2); Put(turb, "roughness", .5f);   // pq_vfxg4-7: these sat inside the comment above, octaves stayed 1
             PutFields(turb, "FieldTransform", ("scale", Vector3.one));
             // the ground: a plane at the host's own height (the seam puts the host on the ground point), no bounce, high
@@ -158,12 +158,29 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 foreach (var b in Kids(c))
                 {
                     sb.Append(' ').Append(b.GetType().Name).Append('(');
-                    foreach (var s in Slots(b)) { object v = s.GetType().GetProperty("value", All).GetValue(s); sb.Append(SlotName(s)).Append('=').Append(v is float f ? f.ToString("0.##") : v?.ToString() ?? "-").Append(';'); }
+                    foreach (var s in Slots(b)) sb.Append(SlotName(s)).Append('=').Append(SlotText(s, 0)).Append(';');
                     sb.Append(')');
                 }
                 sb.Append(']');
             }
             return sb.ToString();
+        }
+
+        // a slot's own value, or what feeds it: an exposed parameter by name, an operator with its inputs (pq_vfxg9: the
+        // soot stopped 3-4 m out whatever the exposed velocity said - the dump showed only the unlinked default values)
+        static string SlotText(object s, int depth)
+        {
+            foreach (var l in (IEnumerable)Prop(s, "LinkedSlots"))
+            {
+                var owner = Prop(l, "owner");
+                if (owner == null) return "<?";
+                var exposed = owner.GetType().GetProperty("exposedName", All);
+                if (exposed != null) return "<" + exposed.GetValue(owner);
+                if (depth >= 4) return "<" + owner.GetType().Name;
+                return "<" + owner.GetType().Name + "(" + string.Join(",", Slots(owner).Cast<object>().Select(x => SlotName(x) + "=" + SlotText(x, depth + 1))) + ")";
+            }
+            object v = s.GetType().GetProperty("value", All).GetValue(s);
+            return v is float f ? f.ToString("0.##") : v?.ToString() ?? "-";
         }
     }
 }

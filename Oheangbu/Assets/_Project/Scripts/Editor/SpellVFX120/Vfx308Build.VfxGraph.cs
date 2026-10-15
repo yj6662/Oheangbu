@@ -59,6 +59,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // pq_vfxg2: the wash-based soot read pink (straw-coloured hay cloud) - now soot-dark from the start, the pigment only a
             // hint in the first tenth, sinking to ink (the user's reference = dark torn soot)
             Color soot = Color.Lerp(e.Dark, e.Ink, own ? .6f : .35f), ink = Color.Lerp(e.Dark, e.Ink, own ? .9f : .75f);   // pq_vfxg7: .35 read red-brown haze
+            if (own) { var ash = new Color(.16f, .15f, .13f); soot = Color.Lerp(soot, ash, .5f); ink = Color.Lerp(ink, ash, .5f); }   // pq_vfxg8: still brown over the paving -> toward concept C's grey-black soot (TEST)
             var g = new Gradient();
             // 11.32 concept C: a dull, unlit red-brown heart at birth (pigment toward ink, never light) smothered into soot by 0.12
             Color heart = Color.Lerp(e.Pig, e.Ink, .72f);   // pq_vfxg4: .45 read pink across the whole wave
@@ -83,9 +84,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 SetV3(so, "Initial Velocity_vector", new Vector3(0f, -.4f, 13f));   // pq_vfxg5: 6.5 stopped 2 m out; pq_vfxg7: 8 + drag .4 hung by the caster
                 SetF(so, "Initial Velocity Divergence", .3f);
                 SetF(so, "Drag", .9f);
-                SetV3(so, "Global Force_vector", new Vector3(0f, -3f, 0f));        // down onto the paving fast (pq_vfxg7: a head-high cloud)
+                SetV3(so, "Global Force_vector", new Vector3(0f, -1.6f, 0f));      // pq_vfxg7: -1.2 a head-high cloud; pq_vfxg8: -3 pressed the turbulence flat
                 SetV3(so, "Initial Position_position", new Vector3(0f, 1.1f, 0f));
-                SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, .35f * a.Big), new Keyframe(.35f, .9f * a.Big), new Keyframe(1f, 1.5f * a.Big)));   // knee-high streak
+                SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, .35f * a.Big), new Keyframe(.35f, .9f * a.Big), new Keyframe(1f, 1.8f * a.Big)));   // knee-high streak, tatters widen at the end
             }
             else
             {
