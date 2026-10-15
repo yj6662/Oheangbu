@@ -65,6 +65,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "connect": case "connect:five": return Connect(false);
                 case "connect:attack": if (!V2) throw new ArgumentException("the attack set exists in the v2 look only"); return Connect(true);
                 case "attack": return AttackTable();
+                case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();
@@ -777,9 +778,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             e.Tongue = k.Tongue;
             e.Ring = Bleed("M_V308b_" + key + "_ring", "ink_pool", C(ink, .9f), 0f, .9f, 0f, 0f);
             e.Head = e.Burst;
-            if (key == "ga") { e.Head = e.Stroke; e.HeadSize = new Vector2(3.4f, 4.4f); e.HeadPivot = .36f; e.HeadRate = 14f; }
-            if (key == "ma") { e.Head = B(key, "earth_heave", C(ink, .7f)); e.HeadSize = new Vector2(4.6f, 5.8f); e.HeadLife = new Vector2(.8f, 1f); e.HeadPivot = .36f; e.HeadRate = 12f; }
-            if (key == "a") { e.Head = B(key, "water_crest", C(Color.Lerp(pig, ink, .7f), .95f)); e.HeadSize = new Vector2(4.8f, 6f); e.HeadLife = new Vector2(.6f, .8f); e.HeadPivot = .24f; e.HeadRate = 15f; }
+            if (key == "ga") { e.Head = e.Stroke; e.HeadSize = new Vector2(2.8f, 3.6f);   /* sw_y: the path heads walled the view - all smaller */ e.HeadPivot = .36f; e.HeadRate = 14f; }
+            if (key == "ma") { e.Head = B(key, "earth_heave", C(ink, .7f)); e.HeadSize = new Vector2(3f, 3.8f); e.HeadLife = new Vector2(.8f, 1f);   /* sw_y 4.6 - 5.8: an earth wall over 2/3 of the view */ e.HeadPivot = .36f; e.HeadRate = 12f; }
+            if (key == "a") { e.Head = B(key, "water_crest", C(Color.Lerp(pig, ink, .7f), .95f)); e.HeadSize = new Vector2(3.4f, 4.2f); e.HeadLife = new Vector2(.6f, .8f); e.HeadPivot = .24f; e.HeadRate = 15f; }
             e.Pool = Bleed("M_V308b_" + key + "_pool", "ink_splat", C(ink, .9f), 0f, .9f, 0f, 0f);                          // lies on the ground: no depth fade
             e.Ribbon = Bleed("M_V308b_" + key + "_ribbon", "speed_line", C(ink, .95f), 0f, 1f, 0f, .3f, e.Dark);
             return e;
@@ -1140,6 +1141,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var sb = new StringBuilder();
             var targets = Spells.Select(x => (glyph: x.Glyph, path: EffectPath(x))).ToList();
             if (attack) targets.AddRange(Attack.Where(x => x.Shape != Form.Giyeok && Spells.All(b => b.Glyph != x.Glyph)).Select(x => (glyph: x.Glyph, path: AttackEffectPath(x))));
+            if (attack) targets.AddRange(Guards.Where(g => File.Exists(GuardEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: GuardEffectPath(g.Id))));   // 11.22: once built
             foreach (var s in targets)
             {
                 var effect = Load<GameObject>(s.path);
@@ -1211,6 +1213,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
                 mine.Add(profile); singles++;
             }
+            foreach (var g in Guards) { var gp = File.Exists(GuardProfilePath(g.Id)) ? Load<Vfx120Profile>(GuardProfilePath(g.Id)) : null; if (gp != null) mine.Add(gp); }   // 11.22: the guard contact
             ktp.SpellProfiles = mine.Concat(ktp.SpellProfiles.Where(x => x != null && !mine.Contains(x))).ToArray();
             EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
             return "hit contacts: " + (mine.Count - singles) + " range + " + singles + " single profiles put first in KTP_ContactProfile.SpellProfiles";

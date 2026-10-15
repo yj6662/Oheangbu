@@ -1,0 +1,54 @@
+# sw_hitch (2026-10-15): first-cast hitch - free aim (no enemy dies), a 6 s frames window around the FIRST and the SECOND cast of 가, then of 고 and 모. Max ms first vs second = first-use cost.
+# (Deploy gather) -> pigment soaks in -> hit -> residue on the ground. timeScale 0.2, each target locked on.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+sleep 3
+?call PlayProbe308 Run frames:6
+sleep 1
+?call SwingProbe308 Run cast:uAC00
+sleep 6
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:6
+sleep 1
+?call SwingProbe308 Run cast:uAC00
+sleep 6
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:6
+sleep 1
+?call SwingProbe308 Run cast:uACE0
+sleep 6
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:6
+sleep 1
+?call SwingProbe308 Run cast:uACE0
+sleep 6
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:6
+sleep 1
+?call SwingProbe308 Run cast:uBAA8
+sleep 6
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:6
+sleep 1
+?call SwingProbe308 Run cast:uBAA8
+sleep 6
+?call PlayProbe308 Run frames
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

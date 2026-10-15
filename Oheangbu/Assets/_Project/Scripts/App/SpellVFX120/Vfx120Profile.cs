@@ -115,6 +115,8 @@ namespace Oheangbu.App.SpellVFX120
         [Min(0f)] public float Bolt300NearContactMeters;
         [Tooltip("D308-84: extra scale of the flying body only (Travel), times Bolt300Scale (0 or 1 = same as the hit).")]
         [Min(0f)] public float Bolt300TravelScale;
+        [Tooltip("D308-84 stage 4: the #308 guard membrane, stood for the guard clock in place of the pattern shield (set NativeFieldPrefab to none on the same copy).")]
+        public GameObject Guard308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

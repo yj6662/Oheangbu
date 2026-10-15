@@ -20,14 +20,15 @@ ROWS_O = [('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹 얼룩'), ('far_go
 ROWS_P = [('near_ga', '가 · 5 m → 줄기 → 먹으로 맺힘 → 색 스밈 → 잔먹'), ('far_ga', '가 · 12 m'), ('near_go', '고 · 4 m → 바닥 먹 → 새 원 몸'), ('mid_ma', '마 · 8 m')]
 ROWS_X = [('ga', '가 · 5 m 단발'), ('go', '고 · 5 m 원'), ('no', '노 · 6 m 부채'), ('so', '소 · 10 m 연발'), ('mo', '모 · 8 m 경로'), ('geo', '거 · 방어'), ('gu', '구 · 결계'), ('geok', '걱 · 강화'), ('gom', '곰 · 소환')]
 ROWS_Y = [('no', '노 · 6 m 부채 (정점 뒤)'), ('so', '소 · 10 m 연발 (정점 뒤)'), ('mo', '모 · 8 m 경로 (정점 뒤)')]
+ROWS_Z = [('so', '소 · 10 m 연발'), ('mo', '모 · 8 m 경로 (머리 축소)')]
 W, H = 560, 350
 
 
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y') else 3
+    rows = ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z') else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)

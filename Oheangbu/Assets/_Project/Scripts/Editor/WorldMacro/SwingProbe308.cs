@@ -69,7 +69,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var sb = new System.Text.StringBuilder("fx");
                     foreach (var e in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx120Effect>(FindObjectsSortMode.None))
                     {
-                        sb.Append(" | ").Append(e.name).Append(" profile ").Append(e.Profile != null ? e.Profile.name : "-").Append(" bolt ").Append(e.Profile != null && e.Profile.Bolt300Prefab != null ? e.Profile.Bolt300Prefab.name : "-").Append(" kids");
+                        sb.Append(" | ").Append(e.name).Append(" profile ").Append(e.Profile != null ? e.Profile.name : "-").Append(" bolt ").Append(e.Profile != null && e.Profile.Bolt300Prefab != null ? e.Profile.Bolt300Prefab.name : "-").Append(" age ").Append(e.Age.ToString("F2", Inv)).Append(" shots ").Append(e.AreaVisibleShots).Append(" raised ").Append(e.AreaRaised).Append(" kids");
                         foreach (Transform c in e.transform) sb.Append(' ').Append(c.name).Append(c.gameObject.activeInHierarchy ? "" : "(off)");
                     }
                     foreach (var r in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx308Residue>(FindObjectsSortMode.None)) sb.Append(" | residue at ").Append(r.transform.position.ToString("F1"));
