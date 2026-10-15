@@ -34,6 +34,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         static string T => Time.time.ToString("F3", Inv);
+        // the session's walker, or in the spell lab (no session) the scene's own
+        static WorldMacroCombatWalker CurrentWalker => Harness303.Session?.Walker ?? (SpellLab308.InLab ? UnityEngine.Object.FindFirstObjectByType<WorldMacroCombatWalker>() : null);
         static void Line(string text) { lines.Add(T + " " + text); }
 
         static string Dispatch(string command)
@@ -41,9 +43,19 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (command == "report") return lines.Count == 0 ? "no lines" : string.Join("\n", lines);
             if (command == "reset") { lines.Clear(); strokeAt = new Vector2(.5f, .5f); return "reset"; }
             if (!EditorApplication.isPlaying) return "refused: Play only";
-            var s = Harness303.Session; if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Wiring == null) return "refused: no ready session";
-            if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
-            var walker = s.Walker; var wiring = walker.Wiring;
+            var s = Harness303.Session; WorldMacroCombatWalker walker;
+            if (s == null && SpellLab308.InLab)
+            {
+                // SPEC-SPELL-LAB-308 §4: the spell test scene has no session and no save slot - use its walker directly
+                walker = CurrentWalker; if (walker == null || walker.Wiring == null) return "refused: lab walker not ready";
+            }
+            else
+            {
+                if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Wiring == null) return "refused: no ready session";
+                if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
+                walker = s.Walker;
+            }
+            var wiring = walker.Wiring;
             string head = command.Split(':')[0], rest = command.Contains(":") ? command.Substring(command.IndexOf(':') + 1) : "";
             switch (head)
             {
@@ -297,11 +309,11 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
         static void OnBegan(SpellCast cast, string state, float apex, float until) => Line("BEGAN " + cast.Letter + " kind " + cast.Kind + " state " + state
             + (hooked != null ? " (base " + hooked.SwingBaseState308 + " lead " + hooked.SwingClipLead308.ToString("F2", Inv) + " aim " + hooked.SwingAim308.ToString("F1") + " target " + hooked.SwingAimHasTarget308 + ")" : "")
-            + " yaw " + (Harness303.Session?.Walker?.Body != null ? Harness303.Session.Walker.Body.transform.eulerAngles.y.ToString("F1", Inv) : "?") + " apex +" + (apex - Time.time).ToString("F3", Inv) + " lock +" + (until - Time.time).ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
+            + " yaw " + (CurrentWalker?.Body != null ? CurrentWalker.Body.transform.eulerAngles.y.ToString("F1", Inv) : "?") + " apex +" + (apex - Time.time).ToString("F3", Inv) + " lock +" + (until - Time.time).ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
         static void OnLaunched(SpellCast cast, float after)
         {
             var ink = UnityEngine.Object.FindFirstObjectByType<SwingInk308>(); var swing = UnityEngine.Object.FindFirstObjectByType<SpellSwing308>();
-            var body = hooked != null ? Harness303.Session?.Walker?.Body : null;
+            var body = hooked != null ? CurrentWalker?.Body : null;
             Line("LAUNCHED " + cast.Letter + " after " + after.ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv)
                 + " | D308-84 bridges " + (ink != null ? ink.Bridges.ToString(Inv) : "?") + " shown " + (ink != null && ink.BridgeShown)
                 + " aim w " + (swing != null ? swing.AimWeight.ToString("F2", Inv) : "?") + " clip " + (swing != null ? swing.State : "?")
@@ -410,15 +422,15 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; Tick(false); return; }
             if (Time.time < watchUntil && Time.time >= watchNext)
             {
-                watchNext = Time.time + .1f; var w = Harness303.Session;
-                if (w != null && w.Walker != null) { string now = Brush(w.Walker); string key = now.Split('|')[0]; int cut = key.IndexOf(" t ", StringComparison.Ordinal); string head = cut > 0 ? key.Substring(0, cut) : key; if (head != watchLast) { watchLast = head; Line("BRUSH " + now); } }
+                watchNext = Time.time + .1f; var w = CurrentWalker;
+                if (w != null) { string now = Brush(w); string key = now.Split('|')[0]; int cut = key.IndexOf(" t ", StringComparison.Ordinal); string head = cut > 0 ? key.Substring(0, cut) : key; if (head != watchLast) { watchLast = head; Line("BRUSH " + now); } }
             }
-            if (Time.time >= dodgeAt) { dodgeAt = float.PositiveInfinity; var h = Harness303.Session; if (h != null && h.Walker != null) Dodge(h.Walker); }
+            if (Time.time >= dodgeAt) { dodgeAt = float.PositiveInfinity; var h = CurrentWalker; if (h != null) Dodge(h); }
             if (burstLeft <= 0) { if (burstTried > 0) Line("BURST END tried " + burstTried + " gate open " + burstOpen); burstTried = 0; if (float.IsPositiveInfinity(dodgeAt) && Time.time >= watchUntil) Tick(false); return; }
             if (Time.time < burstNext) return;
             burstNext = Time.time + burstEvery; burstLeft--; burstTried++;
-            var s = Harness303.Session; if (s == null || s.Walker == null) return;
-            string reply = Cast(s.Walker, burstLetter);
+            var bw = CurrentWalker; if (bw == null) return;
+            string reply = Cast(bw, burstLetter);
             if (reply.StartsWith("released", StringComparison.Ordinal)) burstOpen++;
         }
     }

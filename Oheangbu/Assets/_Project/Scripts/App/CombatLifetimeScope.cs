@@ -17,6 +17,7 @@ namespace Oheangbu.App
         [SerializeField] private FloatEventChannelSO _inkChanged;
         [SerializeField] private Prologue.PrologueSession _prologue;
         [SerializeField] private World.WorldMacroPlaytestSession _macroPlaytest;
+        [SerializeField] private SpellLabUnlocks308 _labUnlocks;   // SPEC-SPELL-LAB-308: the spell test scene only (no session there)
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -34,7 +35,7 @@ namespace Oheangbu.App
             // SpellPresentationInstaller308), and who knows the unlocked final consonants (the campaign session, else nothing opens)
             SpellEffectInstaller308.Install(builder);
             SpellPresentationInstaller308.Install(builder);
-            builder.RegisterInstance<ISpellUnlocks>(_macroPlaytest!=null ? (ISpellUnlocks)_macroPlaytest : new LockedSpellUnlocks308());
+            builder.RegisterInstance<ISpellUnlocks>(_macroPlaytest!=null ? (ISpellUnlocks)_macroPlaytest : _labUnlocks!=null ? _labUnlocks : new LockedSpellUnlocks308());
             // #308 spell deploy layer (SPEC-SPELL-DEPLOY-308): boots only when its profile exists and its master switch is on
             builder.RegisterBuildCallback(resolver => resolver.Resolve<CombatLoopWiring>().BootDeploy308());
         }
