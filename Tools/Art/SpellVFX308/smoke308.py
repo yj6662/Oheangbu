@@ -146,7 +146,27 @@ def vfx_tex(name='soot_wisp'):
     to 0.3 in the shadow, alpha kept. The particle's Color Over Life gives the ink / soot hue."""
     img = np.asarray(Image.open(GAME / f'T_V308b_{name}.png').convert('RGBA'), np.float32) / 255
     tone = 1.0 - .7 * np.clip(img[..., 1:2] / np.maximum(img[..., 3:4], 1e-3), 0, 1)
-    out = np.concatenate([np.repeat(tone, 3, -1), img[..., 3:4]], -1)
+    dense = 1.0 - (1.0 - img[..., 3:4]) ** 2.4                            # pq_vfxg6: thin next to concept D's dense dark masses
+    # pq_vfxg7: the droplets at the tongue tips read as round dots across the cloud. They are denser cores inside the cel's
+    # soft halo (a low threshold joins them to the tongues), so they are found as cores: above .65 alpha a dot is its own
+    # small piece about as tall as wide (tongue pieces are long or large) -> alpha fades to 0 over 12 px from the core, so
+    # the dot's own halo goes with it
+    from scipy import ndimage
+    # (two thresholds: a dot touching a tip parts from it only nearer its peak). A real dot sits in the cel's leading half
+    # with thin halo around it; a round core inside a tongue body has dense alpha all round and stays.
+    al, cel = img[..., 3], img.shape[1] // 4
+    dots = np.zeros(al.shape, bool)
+    for t in (.65, .72):
+        lab, n = ndimage.label(al > t)
+        for i, sl in enumerate(ndimage.find_objects(lab), 1):
+            h, w = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
+            if (lab[sl] == i).sum() > 260 or max(h, w) > 26 or max(h, w) > 1.8 * min(h, w): continue
+            if (sl[1].start % cel) < .5 * cel: continue
+            core = lab == i
+            ring = ndimage.binary_dilation(core, iterations=9) & ~ndimage.binary_dilation(core, iterations=5)
+            if al[ring].mean() < .55: dots |= core
+    if dots.any(): dense = dense * np.clip(ndimage.distance_transform_edt(~dots) / 12 - .2, 0, 1)[..., None]
+    out = np.concatenate([np.repeat(tone, 3, -1), dense], -1)
     Image.fromarray((np.clip(out, 0, 1) * 255 + .5).astype(np.uint8), 'RGBA').save(GAME / f'T_V308b_{name}_vfx.png')
     print('SHEET vfx', name, img.shape[0], 'alpha mean %.3f' % float(img[..., 3].mean()))
 

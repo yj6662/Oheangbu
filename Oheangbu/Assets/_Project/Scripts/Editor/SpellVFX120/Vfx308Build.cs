@@ -70,6 +70,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
+                case "graph:build": return GraphBuild();             // 11.32: the 노 smoke graph (concepts C + D)
+                case "graph:dump": return GraphDump(NaSmokeGraph);
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();

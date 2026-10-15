@@ -253,7 +253,18 @@ namespace Oheangbu.App.SpellVFX120
   {
    if(t<_areaGraphT){foreach(var g in _areaGraphs)if(g!=null){g.Stop();g.Reinit();}_areaGraphOn=false;}
    _areaGraphT=t;bool on=AreaEmitting(kind,p,t);if(on==_areaGraphOn)return;_areaGraphOn=on;
-   foreach(var g in _areaGraphs){if(g==null)continue;if(on){g.transform.SetPositionAndRotation(ReceivedOrigin,Quaternion.LookRotation(_areaForward));g.Play();}else g.Stop();}
+   if(!on){foreach(var g in _areaGraphs)if(g!=null)g.Stop();return;}
+   // 11.32: the host stands on the ground point under the origin (the graph's collision plane is its local y = 0) and the
+   // spawn is lifted back to the origin's height, so the soot leaves the brush and drops onto the paving
+   Vector3 ground=AreaGroundUnder(ReceivedOrigin);float lift=ReceivedOrigin.y-ground.y;
+   foreach(var g in _areaGraphs){if(g==null)continue;g.transform.SetPositionAndRotation(ground,Quaternion.LookRotation(Vector3.ProjectOnPlane(_areaForward,Vector3.up).sqrMagnitude>1e-4f?Vector3.ProjectOnPlane(_areaForward,Vector3.up):Vector3.forward));if(g.HasVector3("Initial Position_position"))g.SetVector3("Initial Position_position",new Vector3(0,lift,0));g.Play();}
+  }
+  // nearest solid, non-character surface straight below (triggers and character controllers skipped); 1 m below if none in 4 m
+  static Vector3 AreaGroundUnder(Vector3 from)
+  {
+   var hits=Physics.RaycastAll(from+Vector3.up*.1f,Vector3.down,4.1f,~0,QueryTriggerInteraction.Ignore);float best=float.MaxValue;Vector3 at=from+Vector3.down;
+   foreach(var h in hits){if(h.collider is CharacterController||h.collider.attachedRigidbody!=null&&!h.collider.attachedRigidbody.isKinematic)continue;if(h.distance<best){best=h.distance;at=h.point;}}
+   return at;
   }
   void ClearAreaRemake()
   {
