@@ -22,7 +22,7 @@ MonoBehaviour:
   _playerMaxHp: 100
   _lockOnCameraPull: 1
   _shoulderStart: 1
-  _shoulderOffset: {x: 0, y: 0.55, z: -2.8}
+  _shoulderOffset: {x: 0.7, y: 0.55, z: -2.8}
   _shoulderDrawOffset: {x: 0.35, y: 0.25, z: -0.2}
   _cameraBlendSpeed: 8
   _drawCloseupBlendSpeed: 20

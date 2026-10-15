@@ -39,7 +39,7 @@ MonoBehaviour:
   _edgeSoftness: 0.12
   _edgeJitter: 0.07
   _dissolveDuration: 0.4
-  _flashDuration: 0.6
+  _flashDuration: 0.15
   _flashCurve:
     serializedVersion: 2
     m_Curve:
@@ -75,7 +75,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _flashTint: 0.85
   _flashAdd: 1.5
-  _fadeOutDuration: 0.35
+  _fadeOutDuration: 0.2
   _motifCount: 4
   _motifSize: 0.22
   _motifScatter: 0.08

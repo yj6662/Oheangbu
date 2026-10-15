@@ -30,14 +30,15 @@ ROWS_CAM = [('c0_ga', '가 12 m · 카메라 x 0 (지금)'), ('c5_ga', '가 · x
             ('c0_so', '소 10 m · x 0'), ('c5_so', '소 · x 0.5'), ('c7_so', '소 · x 0.7'),
             ('f_ga', '가 · 받침 없음 (궤적)'), ('f_gan', '간 · ㄴ 두 번째 번짐'), ('f_gat', '갓 · ㅅ 가는 궤적 + X'), ('f_gang', '강 · ㅇ 먹 고리'),
             ('f_na', '나 · 받침 없음'), ('f_nan', '난 · ㄴ'), ('f_nat', '낫 · ㅅ'), ('f_nang', '낭 · ㅇ')]
+ROWS_MARK = [(k[2:], v) for k, v in ROWS_CAM if k.startswith('f_')]
 W, H = 560, 350
 
 
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam') else 3
+    rows = ROWS_MARK if run == 'sw_mark' else ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam', 'sw_mark') else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)
