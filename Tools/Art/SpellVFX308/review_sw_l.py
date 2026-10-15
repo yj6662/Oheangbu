@@ -32,6 +32,7 @@ ROWS_CAM = [('c0_ga', '가 12 m · 카메라 x 0 (지금)'), ('c5_ga', '가 · x
             ('f_na', '나 · 받침 없음'), ('f_nan', '난 · ㄴ'), ('f_nat', '낫 · ㅅ'), ('f_nang', '낭 · ㅇ')]
 ROWS_MARK = [(k[2:], v) for k, v in ROWS_CAM if k.startswith('f_')]
 ROWS_MARK2 = [('fly_ga', '가 · 먹 몸 비행 12 m'), ('fly_na', '나 · 먹 몸'), ('fly_ma', '마 · 먹 몸'), ('fly_sa', '사 · 먹 몸'), ('fly_a', '아 · 먹 몸')] + ROWS_MARK
+ROWS_CAT = [('meo', '머 6 m · 방어'), ('gak', '각 8 m · ㄱ받침'), ('sak', '삭 8 m · ㄱ받침'), ('neok', '넉 · 강화'), ('gom', '곰 6 m · 소환 (0.5배)')]
 ROWS_GLYPH = [('geo', '거 · 막기 (글자 풀림)'), ('neo', '너 6 m · 막기'), ('gu', '구 8 m · 결계'), ('geok', '걱 · 강화')]
 ROWS_GUARD = [('geo', '거 · 막기 온몸'), ('neo', '너 6 m · 막기 온몸'), ('ga', '가 12 m · 풀림 0.35 s')]
 ROWS_BODY = [('sweep', '가 5 m · 쓸기 온몸'), ('throw', '가 12 m · 던지기 온몸'), ('arc', '노 · 광역 쓸기 온몸'), ('far', '고 12 m · 멀리 찍기 온몸'), ('buff', '걱 · 버프 온몸')]
@@ -44,8 +45,8 @@ W, H = 560, 350
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_GLYPH if run == 'sw_glyph' else ROWS_GUARD if run == 'sw_guard' else ROWS_BODY if run == 'sw_body' else ROWS_SLAMD if run == 'sw_slamd' else ROWS_UNRAVEL2 if run == 'sw_unravel2' else ROWS_UNRAVEL if run == 'sw_unravel' else ROWS_MARK2 if run in ('sw_mark2', 'sw_mark3') else ROWS_MARK if run == 'sw_mark' else ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam', 'sw_mark', 'sw_mark2', 'sw_mark3') else 8 if run in ('sw_slamd', 'sw_body', 'sw_guard', 'sw_glyph') else 6 if run in ('sw_unravel', 'sw_unravel2') else 3
+    rows = ROWS_CAT if run == 'sw_cat' else ROWS_GLYPH if run == 'sw_glyph' else ROWS_GUARD if run == 'sw_guard' else ROWS_BODY if run == 'sw_body' else ROWS_SLAMD if run == 'sw_slamd' else ROWS_UNRAVEL2 if run == 'sw_unravel2' else ROWS_UNRAVEL if run == 'sw_unravel' else ROWS_MARK2 if run in ('sw_mark2', 'sw_mark3') else ROWS_MARK if run == 'sw_mark' else ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam', 'sw_mark', 'sw_mark2', 'sw_mark3') else 8 if run in ('sw_slamd', 'sw_body', 'sw_guard', 'sw_glyph', 'sw_cat') else 6 if run in ('sw_unravel', 'sw_unravel2') else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)

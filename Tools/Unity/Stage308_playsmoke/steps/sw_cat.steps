@@ -1,0 +1,147 @@
+# sw_cat (D308-87): the stage-4 categories in their present state (whole-body swings, unravel everywhere) for one review sheet per category - 머 (guard), 각 · 삭 (ㄱ final), 넉 (buff), 곰 (summon, 0.5x).
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call PlayProbe308 Run log:reset
+?call Map307Capture Run hold-shot:sw_cat_first_discard
+sleep 2
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uBA38
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_meo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_meo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_meo_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_meo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_cat_meo_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_cat_meo_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_cat_meo_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cat_meo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC01
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gak_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gak_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gak_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gak_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_cat_gak_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_cat_gak_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_cat_gak_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cat_gak_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC0AD
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_sak_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_sak_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_sak_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_sak_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_cat_sak_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_cat_sak_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_cat_sak_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cat_sak_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB109
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_neok_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_neok_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_neok_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_neok_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_cat_neok_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_cat_neok_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_cat_neok_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cat_neok_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.5
+?call SwingProbe308 Run cast:uACF0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gom_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gom_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gom_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_cat_gom_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_cat_gom_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_cat_gom_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_cat_gom_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cat_gom_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean
