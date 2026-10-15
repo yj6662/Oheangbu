@@ -36,11 +36,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             V2 = true; Touched.Clear();
             foreach (var d in new[] { "/Profiles", "/Effects" }) Directory.CreateDirectory(Root2 + d);
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
-            var sb = new StringBuilder();
+            var sb = new StringBuilder(); var finals = new Dictionary<string, GameObject>();
             foreach (var g in Giyeoks)
             {
                 var spell = Spells.First(x => x.Key == g.Key);
-                var bolt = Load<GameObject>(PrefabPath(spell));
+                var bolt = File.Exists(PrefabPath(spell)) ? FinalBolt(Element(kit, g.Key), spell, FinalK, finals) : null;   // 11.23: the ㄱ marker
                 if (bolt == null) { sb.AppendLine(g.Glyph + ": the element bolt is not built (run build first)"); continue; }
                 string srcProfile = "Assets/_Project/Art/SpellVFX120/Profiles/" + g.Id + ".asset";
                 if (!File.Exists(GiyeokProfilePath(g.Id)) && !AssetDatabase.CopyAsset(srcProfile, GiyeokProfilePath(g.Id))) throw new Exception("copy failed " + srcProfile);

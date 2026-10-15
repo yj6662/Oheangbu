@@ -17,7 +17,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     // SPEC-SPELL-SWING-308 Play probe (editor only, isolated store only). Turns the swing rule on for the running Play with an
     // in-memory profile (nothing is written: the game's default stays "no profile"), injects letters the way SpellSmoke308 does
     // (the letter channel) but only when the real drawing gate is open, and records release / launch / fizzle / damage clocks.
-    //   on | off | cast:<letter> | burst:<letter>:<count>:<intervalSeconds> | dodge | ink | trail | report | reset
+    //   on | off | cast:<letter> | burst:<letter>:<count>:<intervalSeconds> | dodge | ink | trail | report | reset | shoulder:x,y,z | shoulder:restore
     public static class SwingProbe308
     {
         static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
@@ -97,6 +97,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
                 case "nearset": return NearSet(rest);
+                case "shoulder": return Shoulder(rest);   // D308-85 camera A/B: shoulder:x,y,z | shoulder:restore
                 case "nearhand": return NearHand();
                 case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; Tick(true); return "brush watch for " + rest + " s";
                 case "trail":
@@ -151,6 +152,32 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             return text.ToString();
         }
+        // D308-85: the live CombatConfig's shoulder offset for this Play only. A ScriptableObject changed in Play keeps the change,
+        // so the first set records the asset's value and it is put back by shoulder:restore or when Play is left.
+        static CombatConfigSO shoulderConfig; static Vector3? shoulderOriginal;
+        static string Shoulder(string text)
+        {
+            var rig = UnityEngine.Object.FindFirstObjectByType<CameraRigController>();
+            var field = typeof(CameraRigController).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic);
+            var config = rig != null && field != null ? field.GetValue(rig) as CombatConfigSO : null;
+            var offset = typeof(CombatConfigSO).GetField("_shoulderOffset", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (config == null || offset == null) return "shoulder: no camera rig / config";
+            if (text == "restore") return ShoulderRestore();
+            var n = text.Split(','); if (n.Length != 3) return "refused: shoulder:x,y,z | shoulder:restore";
+            if (shoulderOriginal == null) { shoulderConfig = config; shoulderOriginal = (Vector3)offset.GetValue(config); EditorApplication.playModeStateChanged += ShoulderOnExit; }
+            offset.SetValue(config, new Vector3(float.Parse(n[0], Inv), float.Parse(n[1], Inv), float.Parse(n[2], Inv)));
+            return "shoulder " + config.name + " " + ((Vector3)offset.GetValue(config)).ToString("F2") + " (asset value " + shoulderOriginal.Value.ToString("F2") + ")";
+        }
+        static string ShoulderRestore()
+        {
+            if (shoulderOriginal == null || shoulderConfig == null) return "shoulder: nothing to restore";
+            typeof(CombatConfigSO).GetField("_shoulderOffset", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(shoulderConfig, shoulderOriginal.Value);
+            string reply = "shoulder restored " + shoulderConfig.name + " " + shoulderOriginal.Value.ToString("F2");
+            shoulderOriginal = null; shoulderConfig = null; EditorApplication.playModeStateChanged -= ShoulderOnExit;
+            return reply;
+        }
+        static void ShoulderOnExit(PlayModeStateChange change) { if (change == PlayModeStateChange.ExitingPlayMode) Debug.Log("[SwingProbe308] " + ShoulderRestore()); }
+
         static readonly Dictionary<string, object> nearOriginal = new Dictionary<string, object>();
         static string NearSet(string text)
         {

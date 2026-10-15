@@ -182,6 +182,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             public Vector3 ShapeRot, ShapeScale, ShapePos; public bool NoShape, ShapeScaling;      // ShapeScaling: the parent's scale widens the emitter only (path fronts)
             public float Gravity, Spin, Drag, RiseY, Roll;             // Roll: deg/s about the flight axis (mesh particles)
             public bool SpinRandom = true, Tumble, AlongVelocity;
+            public Vector2? RotDeg;                                    // billboards: a fixed start rotation range in degrees (11.23 markers)
             public Mesh Mesh; public Vector3 Pivot;
             // flipbook: frames FrameFrom..FrameTo of 16 played over the lifetime; RandomCell = one random cel held;
             // RandomStart = start anywhere and advance FrameTo - FrameFrom cels; Cycles = whole-sheet loops over the lifetime
@@ -234,6 +235,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             else if (s.Mesh != null && Backward(s.Mesh)) { main.startRotation3D = true; main.startRotationX = main.startRotationZ = new ParticleSystem.MinMaxCurve(0f); main.startRotationY = new ParticleSystem.MinMaxCurve(Mathf.PI); }
             else main.startRotation = s.SpinRandom && s.Mesh == null ? new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f) : new ParticleSystem.MinMaxCurve(0f);
+            if (s.RotDeg.HasValue && s.Mesh == null && !s.Tumble) main.startRotation = new ParticleSystem.MinMaxCurve(s.RotDeg.Value.x * Mathf.Deg2Rad, s.RotDeg.Value.y * Mathf.Deg2Rad);
             main.simulationSpace = s.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
             main.scalingMode = s.ShapeScaling ? ParticleSystemScalingMode.Shape : ParticleSystemScalingMode.Hierarchy;
             main.gravityModifier = s.Gravity;
@@ -923,7 +925,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
             Touched.Clear(); seed = 30900;
-            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); Mesh ribbon = null;
+            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); var finals = new Dictionary<string, GameObject>(); Mesh ribbon = null;
             var sb = new StringBuilder(); int built = 0, skipped = 0;
             foreach (var a in Attack)
             {
@@ -936,7 +938,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 if (a.Shape == Form.Single)
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
-                    profile.Bolt300Prefab = Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
+                    profile.Bolt300Prefab = V2 ? FinalBolt(e, spell, FinalOf(a.Glyph), finals) : Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc;   // 11.23: the final's marker profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
                     profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
@@ -953,13 +955,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                         bodies[key] = body = PrefabUtility.SaveAsPrefabAsset(root, key);
                         Object.DestroyImmediate(root);
                     }
-                    if (!hits.TryGetValue(a.Elem, out var hit))
-                    {
-                        var root = HitBody(e);
-                        foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
-                        hits[a.Elem] = hit = PrefabUtility.SaveAsPrefabAsset(root, HitPath(a.Elem));
-                        Object.DestroyImmediate(root);
-                    }
+                    var hit = FinalHit(e, FinalOf(a.Glyph), hits);   // 11.23: the final's marker where a range letter hits
                     profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f;   // D308-84 7th pass: not a fence profile.Bolt300Prefab = null;
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
@@ -1107,6 +1103,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     : s.Key switch { "ga" => Ga(kit, original), "na" => Na(kit, original), "ma" => Ma(kit, original), "sa" => Sa(kit, original), _ => A(kit, original) };
                 foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
                 if (V2) Bolt308Extras(root);
+                if (V2) InkTrail(root.transform.Find("Travel"), s.Key, original.Ink, Color.Lerp(original.Pigment, original.Ink, .75f));   // 11.23: the line of the flight
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(s));
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;

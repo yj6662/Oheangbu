@@ -57,7 +57,7 @@ Shader "Oheangbu/SpellVFX308/InkBleed"
                 Varyings o; UNITY_SETUP_INSTANCE_ID(v);
                 float3 ws = TransformObjectToWorld(v.positionOS.xyz);
                 o.positionCS = TransformWorldToHClip(ws);
-                o.color = v.color * _Tint; o.uv = v.uv; o.misc = float3(v.blend.x, -TransformWorldToView(ws).z, v.blend.y);   // y of TEXCOORD1 = AgePercent (0 where the stream is absent)
+                o.color = v.color * _Tint; o.uv = v.uv * _MainTex_ST.xyxy + _MainTex_ST.zwzw; o.misc = float3(v.blend.x, -TransformWorldToView(ws).z, v.blend.y);   // y of TEXCOORD1 = AgePercent (0 where the stream is absent)
                 return o;
             }
             half4 frag(Varyings i):SV_Target
