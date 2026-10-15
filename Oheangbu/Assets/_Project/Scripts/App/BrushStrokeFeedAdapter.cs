@@ -93,6 +93,7 @@ namespace Oheangbu.App
             public Color FlashColor;
             public float FlashPower;  // 위력 근사 0..1 [TEST]
             public float PeakFlash01; // 도달한 최대 강도 — 어택 후 유지(속성색인 채로 사라진다)
+            public bool Unraveled;    // #308 11.25: the strokes already came apart into the brush during the swing - no flash, no motifs
             // 속성 모티프(§4.6) — 글자에 붙는 작은 스프라이트 몇 개(잎사귀·불꽃 낱개).
             // 붙은 자리에서 움직이지 않는다 — 크기만 0에서 은은히 자란다(상승 폐기 — 예준 4차 검수)
             public readonly List<Transform> Motifs = new List<Transform>();
@@ -291,7 +292,7 @@ namespace Oheangbu.App
                 if (_hold308)
                 {
                     // SPEC-SPELL-SWING-308: the letter and its commit wait for the swing's apex; the glyph stays up meanwhile
-                    if (e.Kind == VisualEventKind.Letter || e.Kind == VisualEventKind.Commit) { _held308.Add(e); continue; }
+                    if (e.Kind == VisualEventKind.Letter || e.Kind == VisualEventKind.Commit) { _held308.Add(e); if (e.Kind == VisualEventKind.Commit && e.Success) BeginUnravel308(); continue; }
                     if (e.Kind == VisualEventKind.Evaporate) continue;
                 }
                 switch (e.Kind)
@@ -327,6 +328,7 @@ namespace Oheangbu.App
             _anchorCamera308 = camera;
             _anchorPixelHeight308 = camera != null ? camera.pixelHeight : 0;
             SetRenderAnchor308(camera != null && _strokes.Count > 0);
+            TickUnravel308();
         }
 
         // Every visual event goes through one line in order; a stroke event leaves it when it is StrokeDelaySeconds old, anything
@@ -851,6 +853,7 @@ namespace Oheangbu.App
             {
                 StartTime = scaledTime,
                 IsFlash = isFlash,
+                Unraveled = isFlash && _unraveled308,
                 FlashColor = flashColor,
                 FlashPower = flashPower,
             };
@@ -868,11 +871,12 @@ namespace Oheangbu.App
             _strokeUnitsPerPixel.Clear();
             _current = null;
             _hasStrokeEndpoint = false;
+            _unraveled308 = false;
             if (isFlash)
             {
                 // 문양이 배정돼 있으면 모티프 대신 — 글자가 그 자리에서 전통 문양으로 변형된다(4차 검수) [TEST]
                 if (_pendingFxPrefab != null || _commitPatternPrefab != null) SpawnPattern(group);
-                else SpawnMotifs(group);
+                else if (!group.Unraveled) SpawnMotifs(group);
             }
             if (!isFlash && _pendingCastFailed && CastFailedAt308 != null && TryComputeLetterBounds(group, out Bounds failed308)) CastFailedAt308.Invoke(failed308.center);   // #308 misfire smear
             _fading.Add(group);
@@ -1060,6 +1064,52 @@ namespace Oheangbu.App
         // the wiring pushes the hit context as it used to at release and then calls ReleaseCommit308: the events come back with
         // the apex's clock and the pattern leaves then. Presentation only.
         private bool _hold308;
+
+        // SPEC-SPELL-VFX-OVERHAUL-308 11.25 (풀림): the moment a successful commit is set aside for the swing, the letter comes
+        // apart into ink pulled into the swinging brush tip (InkUnravel308) and the strokes dissolve over the profile's Seconds.
+        // The stroke objects stay until the apex, so the pattern still leaves from the letter's bounds as before. Presentation
+        // only; without the profile nothing changes (the flash).
+        private bool _unraveled308;
+        private float _unravelAt308;
+        private readonly List<Vector3> _unravelPoints308 = new List<Vector3>(512);
+        private readonly List<Vector3> _unravelVerts308 = new List<Vector3>(512);
+
+        private void BeginUnravel308()
+        {
+            if (_unraveled308 || _pendingCastFailed || _strokes.Count == 0 || InkUnravel308.Profile == null) return;
+            Color pigment = Color.white;
+            for (int i = _held308.Count - 1; i >= 0; i--)
+                if (_held308[i].Kind == VisualEventKind.Letter)
+                {
+                    if (_elementPalette != null) pigment = _elementPalette.GetFlashColor(InitialToChar(_held308[i].Letter.Initial));
+                    break;
+                }
+            for (int i = 0; i < _dirtyStrokes.Count; i++) if (_dirtyStrokes[i] != null) _dirtyStrokes[i].FlushMesh();   // strokes of this very frame (a fed letter)
+            _unravelPoints308.Clear();
+            Vector3 sum = Vector3.zero;
+            foreach (var stroke in _strokes)
+            {
+                if (stroke == null) continue;
+                var filter = stroke.GetComponent<MeshFilter>();
+                var mesh = filter != null ? filter.sharedMesh : null;
+                if (mesh == null) continue;
+                mesh.GetVertices(_unravelVerts308);
+                var t = stroke.transform;
+                foreach (var v in _unravelVerts308) { var w = t.TransformPoint(v); _unravelPoints308.Add(w); sum += w; }
+            }
+            if (_unravelPoints308.Count == 0) return;
+            if (InkUnravel308.Begin(_unravelPoints308, sum / _unravelPoints308.Count, pigment) == null) return;
+            _unraveled308 = true;
+            _unravelAt308 = Time.time;
+        }
+
+        private void TickUnravel308()
+        {
+            if (!_unraveled308 || _strokes.Count == 0) return;
+            var prof = InkUnravel308.Profile;
+            float t = prof == null ? 1f : Mathf.Clamp01((Time.time - _unravelAt308) / prof.Seconds);
+            foreach (var stroke in _strokes) { var m = stroke != null ? stroke.OwnedMaterial : null; if (m != null) m.SetFloat(DissolveId, t); }
+        }
         private readonly List<VisualEvent> _held308 = new List<VisualEvent>(4);
         public void HoldCommit308() { if (isActiveAndEnabled) _hold308 = true; }
         public void ReleaseCommit308()
@@ -1190,7 +1240,13 @@ namespace Oheangbu.App
                 float elapsed = Time.time - group.StartTime;
                 bool done;
 
-                if (group.IsFlash)
+                if (group.Unraveled)
+                {
+                    // #308 11.25: nothing left to show - the letter went into the brush before the apex
+                    foreach (var stroke in group.Strokes) { var m = stroke != null ? stroke.OwnedMaterial : null; if (m != null) m.SetFloat(DissolveId, 1f); }
+                    done = true;
+                }
+                else if (group.IsFlash)
                 {
                     // 어택은 곡선을 따라 오르되, 오른 뒤에는 내려오지 않는다(피크 유지) —
                     // 글자는 먹으로 돌아오지 않고 「속성색인 채로」 페이드아웃한다(예준 지시 2026-08-27).

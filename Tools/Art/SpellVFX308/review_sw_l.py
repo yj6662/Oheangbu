@@ -32,14 +32,15 @@ ROWS_CAM = [('c0_ga', '가 12 m · 카메라 x 0 (지금)'), ('c5_ga', '가 · x
             ('f_na', '나 · 받침 없음'), ('f_nan', '난 · ㄴ'), ('f_nat', '낫 · ㅅ'), ('f_nang', '낭 · ㅇ')]
 ROWS_MARK = [(k[2:], v) for k, v in ROWS_CAM if k.startswith('f_')]
 ROWS_MARK2 = [('fly_ga', '가 · 먹 몸 비행 12 m'), ('fly_na', '나 · 먹 몸'), ('fly_ma', '마 · 먹 몸'), ('fly_sa', '사 · 먹 몸'), ('fly_a', '아 · 먹 몸')] + ROWS_MARK
+ROWS_UNRAVEL = [('ga', '가 12 m · 글자 → 붓끝 풀림'), ('no', '노 6 m'), ('geo', '거 6 m (방어)')]
 W, H = 560, 350
 
 
 def main():
     import sys
     run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
-    rows = ROWS_MARK2 if run in ('sw_mark2', 'sw_mark3') else ROWS_MARK if run == 'sw_mark' else ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
-    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam', 'sw_mark', 'sw_mark2', 'sw_mark3') else 3
+    rows = ROWS_UNRAVEL if run == 'sw_unravel' else ROWS_MARK2 if run in ('sw_mark2', 'sw_mark3') else ROWS_MARK if run == 'sw_mark' else ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam', 'sw_mark', 'sw_mark2', 'sw_mark3') else 6 if run == 'sw_unravel' else 3
     font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
     sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
     d = ImageDraw.Draw(sheet)

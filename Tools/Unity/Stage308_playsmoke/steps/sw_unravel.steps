@@ -1,0 +1,83 @@
+# sw_unravel (Spec 11.25): the letter comes apart into the swinging brush tip - letter fed at the aim point (worst case), 가 12 m · 노 6 m · 거 6 m, six shots from release to after the apex.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run unravel
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_unravel_first_discard
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_ga_0
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_ga_1
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_ga_2
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_ga_3
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_ga_4
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_unravel_ga_5
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_no_0
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_no_1
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_no_2
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_no_3
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_no_4
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_unravel_no_5
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC70
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_geo_0
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_geo_1
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_geo_2
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_geo_3
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_unravel_geo_4
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_unravel_geo_5
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

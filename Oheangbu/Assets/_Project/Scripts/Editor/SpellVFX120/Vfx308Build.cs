@@ -69,6 +69,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
+                case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();
@@ -934,7 +935,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 if (a.Shape == Form.Single)
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
-                    profile.Bolt300Prefab = V2 ? FinalBolt(e, spell, FinalOf(a.Glyph), finals) : Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc;   // 11.23: the final's marker profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
+                    profile.Bolt300Prefab = V2 ? FinalBolt(e, spell, FinalOf(a.Glyph), finals) : Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;   // 11.23: the final's marker
+                    profile.NativeCastPrefab = null;   // 11.26 (D308-87): the old KTP cast (glowing zigzag + sparks at the launch point) is retired
                     profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
@@ -952,7 +954,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                         Object.DestroyImmediate(root);
                     }
                     var hit = FinalHit(e, FinalOf(a.Glyph), hits);   // 11.23: the final's marker where a range letter hits
-                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f;   // D308-84 7th pass: not a fence profile.Bolt300Prefab = null;
+                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f; profile.Bolt300Prefab = null;   // D308-84 7th pass: not a fence
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
                     profile.NativeCastPrefab = null;
@@ -1103,6 +1105,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(s));
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;
+                profile.NativeCastPrefab = null;   // 11.26 (D308-87): no old KTP cast beside the ink body
                 profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + s.Effect + ".prefab";
