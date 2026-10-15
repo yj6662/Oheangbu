@@ -1,0 +1,56 @@
+# sw_view (D308-85): name the pigment blob that stands on the centre line at every cast (since sw_x at least) - SwingProbe308 view at the shot moments.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_view_first_discard
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run view
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call SwingProbe308 Run view
+?call Map307Capture Run hold-shot:sw_view_ga_0
+sleep 0.6
+?call SwingProbe308 Run view
+?call Map307Capture Run hold-shot:sw_view_ga_1
+sleep 0.8
+?call SwingProbe308 Run view
+?call Map307Capture Run hold-shot:sw_view_ga_2
+sleep 2.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run view
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 2.0
+?call SwingProbe308 Run view
+?call Map307Capture Run hold-shot:sw_view_no_0
+sleep 0.6
+?call SwingProbe308 Run view
+?call Map307Capture Run hold-shot:sw_view_no_1
+sleep 0.8
+?call SwingProbe308 Run view
+?call Map307Capture Run hold-shot:sw_view_no_2
+sleep 2.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call PlayProbe308 Run log
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

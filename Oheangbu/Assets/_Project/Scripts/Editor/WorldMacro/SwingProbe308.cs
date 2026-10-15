@@ -97,7 +97,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
                 case "nearset": return NearSet(rest);
-                case "shoulder": return Shoulder(rest);   // D308-85 camera A/B: shoulder:x,y,z | shoulder:restore
+                case "shoulder": return Shoulder(rest);
+                case "view": return View();   // what is drawn on the line from the camera through the screen centre (D308-85: the pigment blob)   // D308-85 camera A/B: shoulder:x,y,z | shoulder:restore
                 case "nearhand": return NearHand();
                 case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; Tick(true); return "brush watch for " + rest + " s";
                 case "trail":
@@ -152,6 +153,27 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             return text.ToString();
         }
+        // every enabled renderer whose bounds the ray from the main camera through the screen centre crosses within 40 m,
+        // with its hierarchy path, material and shader - to name what covers the middle of the view
+        static string View()
+        {
+            var cam = Camera.main; if (cam == null) return "view: no main camera";
+            var ray = new Ray(cam.transform.position, cam.transform.forward);
+            var hits = new List<(float d, string text)>();
+            foreach (var r in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                if (!r.enabled || !r.gameObject.activeInHierarchy || !r.isVisible) continue;
+                if (!r.bounds.IntersectRay(ray, out float d) || d > 40f) continue;
+                string path = r.name; for (var t = r.transform.parent; t != null; t = t.parent) path = t.name + "/" + path;
+                var m = r.sharedMaterial;
+                hits.Add((d, d.ToString("F1", Inv) + " m | " + r.GetType().Name + " | " + path + " | " + (m != null ? m.name + " (" + (m.shader != null ? m.shader.name : "-") + ")" : "-") + " | size " + r.bounds.size.ToString("F1")));
+            }
+            hits.Sort((x, y) => x.d.CompareTo(y.d));
+            var sb = new System.Text.StringBuilder("view " + hits.Count + " renderers on the centre ray");
+            foreach (var h in hits) sb.Append("\n  " + h.text);
+            return sb.ToString();
+        }
+
         // D308-85: the live CombatConfig's shoulder offset for this Play only. A ScriptableObject changed in Play keeps the change,
         // so the first set records the asset's value and it is put back by shoulder:restore or when Play is left.
         static CombatConfigSO shoulderConfig; static Vector3? shoulderOriginal;
