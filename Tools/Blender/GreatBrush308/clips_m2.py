@@ -100,9 +100,21 @@ SHOTS = {'SwingSweep': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingArc': [0, 6, 10, 15, 
          'BuffDraw': [0, 4, 7, 9, 12, 18, 22, 26], 'StanceIdle': [0, 24, 48, 72, 96, 120], 'CarryIdle': [0, 24, 48, 72, 96, 120], 'ToCarry': [0, 4, 9, 13, 17, 21], 'ToStance': [0, 2, 4, 6, 8, 10],
          'SwingThrow': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingStrikeFar': [0, 6, 11, 16, 19, 23, 31, 42], 'SwingSlamD': [0, 7, 10, 14, 18, 21, 25, 33, 42], 'SwingThrowD': [0, 6, 9, 12, 15, 20, 24, 29, 36], 'SwingSweepD': [0, 5, 8, 12, 14, 18, 22, 26, 30], 'SwingArcD': [0, 10, 15, 20, 23, 28, 32, 37, 42], 'SwingStrikeFarD': [0, 6, 9, 14, 17, 20, 23, 32, 42], 'BuffDrawD': [0, 5, 9, 12, 16, 19, 22, 26]}
 
+# D308-87 막기 온몸판(2026-10-15 사용자 "막기도 온몸판으로"): 앞발을 디디며 발을 넓히고 낮게 버틴다. GuardInD 끝 자세 = GuardHoldD 자세(_GD · _GDF).
+_GD = (8, 14, 8, 0, 0, .0, -.19, 0, 0)                 # 막기 몸(낮게)
+_GDF = (.07, .12, 0, 0, -.05, -.15, 0, 0)               # 막기 발(넓게: 왼발 뒤 · 바깥, 오른발 앞 · 바깥)
+_GBD = (0, .21, -.20, .96, 50, 44)                     # 막기 붓(몸이 낮아진 만큼 앞으로)
+CLIPS['GuardInD'] = dict(kind='keyed', seconds=.30, apex=.15, spec=.15, end='guard', use='막기 전환 · 온몸(앞발 디디며 낮게)',
+                         body=[(0,) + _Z, (.10,) + tuple(.5 * v for v in _G[:6]) + (-.04,) + tuple(.5 * v for v in _G[7:]), (.20,) + _GD[:6] + (-.24,) + _GD[7:], (.30,) + _GD],
+                         feet=[(0,) + (0,) * 8, (.10, .03, .06, .02, 14, -.025, -.08, .12, 0), (.20,) + _GDF, (.30,) + _GDF],
+                         brush=[(0, 'S'), (.18, 0, .22, -.14, .98, 46, 41), (.30,) + _GBD])
+CLIPS['GuardHoldD'] = dict(kind='keyed', seconds=2.0, loop=True, start='guard', end='guard', life=LIFE4_GUARD, use='막기 유지 · 온몸(루프)',
+                           body=[(0,) + _GD], feet=[(0,) + _GDF], brush=[(0,) + _GBD])
+SHOTS['GuardInD'] = SHOTS['GuardIn']; SHOTS['GuardHoldD'] = SHOTS['GuardHold']
+
 # D308-87 바꿔 넣기(2026-10-15): 판정된 온몸판을 게임 상태 이름으로 굽는다(Unity 클립 GUID · 컨트롤러 그대로). 옛 발 박힌 판은 <이름>Planted 로 남는다.
 # 사용자 판정: SwingSlamD "이대로 진행". 나머지는 판정 뒤 여기에 보탠다.
-SWAP = {'SwingSlam': 'SwingSlamD', 'SwingSweep': 'SwingSweepD', 'SwingArc': 'SwingArcD', 'SwingThrow': 'SwingThrowD', 'SwingStrikeFar': 'SwingStrikeFarD', 'BuffDraw': 'BuffDrawD'}   # 2026-10-15 사용자 "다섯 개 다 좋아"
+SWAP = {'SwingSlam': 'SwingSlamD', 'SwingSweep': 'SwingSweepD', 'SwingArc': 'SwingArcD', 'SwingThrow': 'SwingThrowD', 'SwingStrikeFar': 'SwingStrikeFarD', 'BuffDraw': 'BuffDrawD', 'GuardIn': 'GuardInD', 'GuardHold': 'GuardHoldD'}   # 2026-10-15 사용자 "다섯 개 다 좋아" · "막기도 온몸판으로"
 for _k, _v in SWAP.items():
     CLIPS[_k + 'Planted'] = CLIPS[_k]; SHOTS[_k + 'Planted'] = SHOTS[_k]
     CLIPS[_k] = dict(CLIPS[_v]); SHOTS[_k] = SHOTS[_v]

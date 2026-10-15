@@ -68,8 +68,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         static readonly string[] BodyStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "GuardHold", "BuffDraw", "SwingThrow", "SwingStrikeFar" };   // the full-body layer: motions only
         static readonly string[] TimedStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "BuffDraw", "SwingThrow", "SwingStrikeFar" };              // normalized time from Brush308Time
         static readonly string[] ShiftStates = { "ToCarry", "ToStance" };
-        static readonly string[] AvatarFromStance = { "SwingThrow", "SwingStrikeFar", "SwingSlam", "SwingSweep", "SwingArc", "BuffDraw" };   // D308-87: the whole-body clips were re-exported apart from the stance
-        static readonly string[] WholeBody = { "SwingSlam", "SwingSweep", "SwingArc", "SwingThrow", "SwingStrikeFar", "BuffDraw" };   // D308-87: steps · hop · lunge - the body's travel stays in the pose (see Import())
+        static readonly string[] AvatarFromStance = { "SwingThrow", "SwingStrikeFar", "SwingSlam", "SwingSweep", "SwingArc", "BuffDraw", "GuardIn", "GuardHold" };   // D308-87: the whole-body clips were re-exported apart from the stance
+        static readonly string[] WholeBody = { "SwingSlam", "SwingSweep", "SwingArc", "SwingThrow", "SwingStrikeFar", "BuffDraw", "GuardIn", "GuardHold" };   // D308-87: steps · hop · lunge - the body's travel stays in the pose (see Import())
 
         // fixed guids: the same files get the same identity on every machine and after every re-import
         static readonly Dictionary<string, string> Guids = new Dictionary<string, string>

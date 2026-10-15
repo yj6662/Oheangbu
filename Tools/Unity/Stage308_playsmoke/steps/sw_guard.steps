@@ -1,0 +1,105 @@
+# sw_guard (D308-87, Swing Spec 5d): the whole-body guard (step in, low and wide) in the game - import, sample, then 거 (parry: GuardIn -> GuardHold) and 너, plus 가 12 m with the letter at the lower left for the slower unravel (0.35 s). 0.2x time.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call GreatBrush308Build Run import
+sleep 3
+call GreatBrush308Build Run check
+call GreatBrush308Build Run sample
+sleep 2
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_guard_first_discard
+sleep 2
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC70
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_geo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_geo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_geo_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_geo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_guard_geo_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_guard_geo_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_guard_geo_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_guard_geo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB108
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_neo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_neo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_neo_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_neo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_guard_neo_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_guard_neo_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_guard_neo_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_guard_neo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run strokes:.2,.28
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_ga_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_ga_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_ga_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_ga_3
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_ga_4
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_guard_ga_5
+sleep 0.15
+?call Map307Capture Run hold-shot:sw_guard_ga_6
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_guard_ga_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean
