@@ -25,7 +25,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static string GuardProfilePath(string id) => Root2 + "/Profiles/" + id + "_308d.asset";
         static string GuardEffectPath(string id) => Root2 + "/Effects/" + id + "_308d.prefab";
 
-        const float GuardSheetLife = .8f;        // the membrane's own life; the guard clock ends it sooner when shorter (TEST)
+        const float GuardHeight = 2.3f;          // 11.28 the membrane's height (m), its width ~1.3x (TEST)
+        const float GuardClockPreview = 4f, GuardWindowPreview = .5f;   // CombatConfig defaults; Play sets the received clocks
+        const float GuardPigment = .22f;         // pq_guard v2: how much of the element's pigment tints the black membrane (TEST)
+        const float GuardDryAlpha = .45f;        // after the parry window: eroded, see-through (the old seal's *= .45)
         const float GuardContactScale = .6f;     // the struck splat, times the seam's .22 (TEST)
 
         static string BuildGuard()
@@ -34,7 +37,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             V2 = true; Touched.Clear(); seed = 31300;
             foreach (var d in new[] { "/Prefabs", "/Materials", "/Profiles", "/Effects" }) Directory.CreateDirectory(Root2 + d);
             AssetDatabase.Refresh();
-            Sheet2("ink_throw"); Sheet2("ink_drops");
+            Sheet2("ink_throw"); Sheet2("ink_drops"); Sheet2("ink_pool");
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
             var sb = new StringBuilder();
             foreach (var g in Guards)
@@ -72,23 +75,47 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return sb.ToString();
         }
 
-        // the membrane: a wide brush stroke drawn up in 0.1 s (the thrown-stroke sheet, black first, the pigment soaking in),
-        // ink running off its lower edge. Local to the effect, which faces the camera.
+        // 11.28 the standing membrane, its root = its foot on the ground (Vfx120Effect.Guard308 stands it there): a wet ink blot
+        // stood up, three upright brush strokes drawn left to right inside 0.1 s, a stain at its foot, drops running down its
+        // face and one splash as it lands. "Wet*" lives the parry window (full, dark), "Hold*" the guard clock (eroded to ~.45 by
+        // the bleed shader's alpha, so the attack behind it stays readable) - the runtime sets those lifetimes from the clocks
+        // it received; the values here are the preview's (4 s / 0.5 s, CombatConfig defaults). No glow.
         static GameObject GuardInk(Elem e)
         {
             var root = new GameObject(Path.GetFileNameWithoutExtension(GuardPrefabPath(e.Key)));
-            Color c = Color.Lerp(e.Pig, e.Ink, .5f);
-            var sheet = SoakVariant(Bleed("M_V308d_guard_" + e.Key + "_sheet", "ink_throw", C(e.Ink, .9f), 0f, .95f));
-            Layer(root.transform, new L { Name = "Sheet", Mat = sheet, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardSheetLife, GuardSheetLife), Size = new Vector2(2.4f, 2.4f), Size3D = new Vector3(1.5f, 1f, 1f),   /* sw_z2: 1.6 read as a faint smear */
-                NoShape = true, Blend = true, SpinRandom = false, FrameFrom = 3f, FrameTo = 15.5f,
-                Colour = G((0f, C(c, 0f)), (.06f, C(c, 1f)), (.75f, C(c, 1f)), (1f, C(c, 0f))), Grow = Curve(0f, .85f, .12f, 1f, 1f, 1.04f) });
-            var edgeHost = new GameObject("EdgeHost").transform; edgeHost.SetParent(root.transform, false); edgeHost.localPosition = new Vector3(0f, -.7f, 0f);
-            Layer(edgeHost, new L { Name = "Edge", Mat = sheet, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardSheetLife * .85f, GuardSheetLife * .85f), Size = new Vector2(1.8f, 1.8f), Size3D = new Vector3(1.9f, .45f, 1f),
-                NoShape = true, Blend = true, SpinRandom = false, FrameFrom = 2f, FrameTo = 15.5f, BurstTime = .04f,
-                Colour = G((0f, C(e.Ink, 0f)), (.1f, C(e.Ink, .95f)), (.7f, C(e.Ink, .8f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .9f, .15f, 1f, 1f, 1.05f) });
-            Layer(root.transform, new L { Name = "Drip", Mat = Bleed("M_V308d_guard_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 14, BurstTime = .1f, Max = 16, Life = new Vector2(.45f, .75f),
-                Size = new Vector2(.08f, .18f), Gravity = 1.6f, Shape = ParticleSystemShapeType.Box, ShapeScale = new Vector3(2.2f, .05f, .1f), ShapePos = new Vector3(0f, -.7f, 0f),
+            // pq_guard v1: the soaked pool read as a flat green / red sticker - black ink with only a hint of the element (v2)
+            Color c = Color.Lerp(e.Ink, e.Pig, GuardPigment);
+            var blot = Bleed("M_V308d_guard_" + e.Key + "_blot", "ink_pool", C(e.Ink, .9f), 0f, .92f);
+            var stroke = Bleed("M_V308d_guard_" + e.Key + "_sheet", "ink_throw", C(e.Ink, .9f), 0f, .95f);
+            Transform Host(string name, Vector3 at) { var h = new GameObject(name).transform; h.SetParent(root.transform, false); h.localPosition = at; return h; }
+
+            var body = Host("BodyHost", new Vector3(0f, GuardHeight * .5f, 0f));
+            Layer(body, new L { Name = "WetBody", Mat = blot, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardWindowPreview, GuardWindowPreview), Size = new Vector2(GuardHeight, GuardHeight), Size3D = new Vector3(1.3f, 1f, 1f),
+                NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, .45f, 4.5f / 16f, 1f, 5.5f / 16f),
+                Colour = G((0f, C(c, 0f)), (.05f, C(c, .85f)), (.7f, C(c, .8f)), (1f, C(c, 0f))), Grow = Curve(0f, .7f, .4f, 1f, 1f, 1.02f) });
+            Layer(body, new L { Name = "HoldBody", Mat = blot, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardClockPreview, GuardClockPreview), Size = new Vector2(GuardHeight, GuardHeight), Size3D = new Vector3(1.3f, 1f, 1f),
+                NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, .06f, 4.5f / 16f, 1f, 6f / 16f),
+                Colour = G((0f, C(c, 0f)), (.03f, C(c, GuardDryAlpha)), (.88f, C(c, GuardDryAlpha * .92f)), (1f, C(c, 0f))), Grow = Curve(0f, .7f, .06f, 1f, 1f, 1.03f) });
+
+            for (int i = 0; i < 3; i++)
+            {
+                var h = Host("StrokeHost" + i, new Vector3((i - 1) * GuardHeight * .42f, GuardHeight * .52f, -.25f));
+                Layer(h, new L { Name = "HoldStroke" + i, Mat = stroke, World = false, Burst = 1, Max = 2, BurstTime = .012f + i * .04f, Life = new Vector2(GuardClockPreview, GuardClockPreview),
+                    Size = new Vector2(GuardHeight * 1.1f, GuardHeight * 1.1f), NoShape = true, Blend = true, SpinRandom = false, RotDeg = new Vector2(84f + i * 4f, 88f + i * 4f),
+                    FrameCurve = Curve(0f, 2f / 16f, .03f, 6f / 16f, 1f, 7.5f / 16f),
+                    Colour = G((0f, C(e.Ink, 0f)), (.015f, C(e.Ink, 1f)), (.12f, C(e.Ink, 1f)), (.22f, C(e.Ink, .5f)), (.88f, C(e.Ink, .45f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .8f, .03f, 1f, 1f, 1.02f) });
+            }
+
+            Layer(Host("FootHost", new Vector3(0f, .03f, 0f)), new L { Name = "HoldFoot", Mat = blot, World = false, Burst = 1, Max = 2, BurstTime = .03f, Life = new Vector2(GuardClockPreview, GuardClockPreview),
+                Size = new Vector2(GuardHeight * 1.3f, GuardHeight * 1.3f), Size3D = new Vector3(1.15f, .45f, 1f), Mode = 1, NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, .08f, 10f / 16f, 1f, 11f / 16f),
+                Colour = G((0f, C(e.Ink, 0f)), (.03f, C(e.Ink, .9f)), (.6f, C(e.Ink, .7f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .6f, .08f, 1f, 1f, 1.05f) });
+
+            var drops = Bleed("M_V308d_guard_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f);
+            Layer(root.transform, new L { Name = "Drip", Mat = drops, World = false, Rate = 7f, Burst = 12, BurstTime = .1f, Max = 40, Life = new Vector2(.5f, .9f),
+                Size = new Vector2(.07f, .16f), Gravity = 1.6f, Shape = ParticleSystemShapeType.Box, ShapeScale = new Vector3(GuardHeight * 1.1f, .3f, .05f), ShapePos = new Vector3(0f, GuardHeight * .85f, -.06f),
                 RandomCell = true, Blend = true, Colour = InkFade(.5f), Grow = Curve(0f, .6f, 1f, 1.3f) });
+            Layer(body, new L { Name = "Splash", Mat = drops, World = false, Burst = 18, BurstTime = .03f, Max = 20, Life = new Vector2(.35f, .6f), Speed = new Vector2(1.5f, 3.5f),
+                Size = new Vector2(.08f, .2f), Gravity = 1.4f, Radius = .6f, RandomCell = true, Blend = true, Colour = InkFade(.4f), Grow = Curve(0f, .7f, 1f, 1.2f) });
             return root;
         }
     }

@@ -19,9 +19,20 @@ namespace Oheangbu.App.SpellVFX120
             if (Profile == null || Profile.Guard308Prefab == null) return;
             _guard308 = Instantiate(Profile.Guard308Prefab, transform, false);
             _guard308.name = Profile.Guard308Prefab.name;
-            _guard308.transform.localPosition = new Vector3(0f, 0f, .7f);   // where the pattern shield stood
+            // 11.28: the prefab's root is the membrane's foot - stood on the ground found under the effect's origin at Begin
+            _guard308.transform.localPosition = new Vector3(0f, _originGround, .7f);
             _guard308.transform.localScale = Vector3.one / Mathf.Max(1e-4f, transform.lossyScale.x);   // world size (sw_z: hardly seen)
             _g3Systems = _guard308.GetComponentsInChildren<ParticleSystem>(true);
+            // 11.28: "Hold*" systems live the guard clock, "Wet*" the bright (parry) window, so their lifetime-normalised
+            // colours end with those clocks. A preview without a clock keeps the prefab's values.
+            if (ReceivedGuardClock > 0f)
+                foreach (var ps in _g3Systems)
+                {
+                    string n = ps.gameObject.name;
+                    float life = n.StartsWith("Hold") ? Life : n.StartsWith("Wet") && ReceivedGuardBrightWindow > 0f ? ReceivedGuardBrightWindow : 0f;
+                    if (life <= 0f) continue;
+                    var main = ps.main; main.startLifetime = life;
+                }
             ResetGuard308();
         }
 

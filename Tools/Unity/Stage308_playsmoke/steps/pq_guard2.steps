@@ -1,0 +1,118 @@
+# pq_guard2 (v2: black ink, ragged cels, strokes in front; fx age after each shot) (D308-87 polish, Spec 11.28, user 2026-10-15 "광역 방어, 투사체 vfx들도 계속 폴리싱 및 퀄리티업"): the standing guard
+# membrane on the ground for the guard clock - 거 너 어. Early shots at 0.25x (parry window), then 1x across the 4 s clock and after it.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run guard
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uAC70
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_guard2_geo_0
+?call SwingProbe308 Run fx
+sleep 0.30
+?call Map307Capture Run hold-shot:pq_guard2_geo_1
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_guard2_geo_2
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run slow:1
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_guard2_geo_3
+?call SwingProbe308 Run fx
+sleep 0.90
+?call Map307Capture Run hold-shot:pq_guard2_geo_4
+?call SwingProbe308 Run fx
+sleep 1.40
+?call Map307Capture Run hold-shot:pq_guard2_geo_5
+?call SwingProbe308 Run fx
+sleep 0.70
+?call Map307Capture Run hold-shot:pq_guard2_geo_6
+?call SwingProbe308 Run fx
+sleep 0.80
+?call Map307Capture Run hold-shot:pq_guard2_geo_7
+?call SwingProbe308 Run fx
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB108
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_guard2_neo_0
+?call SwingProbe308 Run fx
+sleep 0.30
+?call Map307Capture Run hold-shot:pq_guard2_neo_1
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_guard2_neo_2
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run slow:1
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_guard2_neo_3
+?call SwingProbe308 Run fx
+sleep 0.90
+?call Map307Capture Run hold-shot:pq_guard2_neo_4
+?call SwingProbe308 Run fx
+sleep 1.40
+?call Map307Capture Run hold-shot:pq_guard2_neo_5
+?call SwingProbe308 Run fx
+sleep 0.70
+?call Map307Capture Run hold-shot:pq_guard2_neo_6
+?call SwingProbe308 Run fx
+sleep 0.80
+?call Map307Capture Run hold-shot:pq_guard2_neo_7
+?call SwingProbe308 Run fx
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC5B4
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_guard2_eo_0
+?call SwingProbe308 Run fx
+sleep 0.30
+?call Map307Capture Run hold-shot:pq_guard2_eo_1
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_guard2_eo_2
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run slow:1
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_guard2_eo_3
+?call SwingProbe308 Run fx
+sleep 0.90
+?call Map307Capture Run hold-shot:pq_guard2_eo_4
+?call SwingProbe308 Run fx
+sleep 1.40
+?call Map307Capture Run hold-shot:pq_guard2_eo_5
+?call SwingProbe308 Run fx
+sleep 0.70
+?call Map307Capture Run hold-shot:pq_guard2_eo_6
+?call SwingProbe308 Run fx
+sleep 0.80
+?call Map307Capture Run hold-shot:pq_guard2_eo_7
+?call SwingProbe308 Run fx
+sleep 3
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

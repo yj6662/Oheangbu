@@ -189,6 +189,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // RandomStart = start anywhere and advance FrameTo - FrameFrom cels; Cycles = whole-sheet loops over the lifetime
             public int Mode;                                         // billboard: 0 camera, 1 flat on the ground, 2 upright, 3 stretched along its velocity
             public bool Flipbook = true, RandomCell, RandomStart, Blend; public float FrameFrom, FrameTo = 16f, Cycles;
+            public AnimationCurve FrameCurve;                        // 11.28: overrides the linear run - the frame (0..1 of the sheet) over the lifetime, to reach a cel and hold it
         }
 
         static Gradient G(params (float t, Color c)[] keys)
@@ -270,7 +271,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             {
                 var tsa = ps.textureSheetAnimation; tsa.enabled = true; tsa.mode = ParticleSystemAnimationMode.Grid;
                 tsa.numTilesX = 4; tsa.numTilesY = 4; tsa.animation = ParticleSystemAnimationType.WholeSheet; tsa.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
-                if (s.RandomCell) { tsa.startFrame = new ParticleSystem.MinMaxCurve(s.FrameFrom, Mathf.Min(s.FrameTo, 15.99f)); tsa.frameOverTime = new ParticleSystem.MinMaxCurve(0f); tsa.cycleCount = 1; }
+                if (s.FrameCurve != null) { tsa.frameOverTime = new ParticleSystem.MinMaxCurve(1f, s.FrameCurve); tsa.cycleCount = 1; }
+                else if (s.RandomCell) { tsa.startFrame = new ParticleSystem.MinMaxCurve(s.FrameFrom, Mathf.Min(s.FrameTo, 15.99f)); tsa.frameOverTime = new ParticleSystem.MinMaxCurve(0f); tsa.cycleCount = 1; }
                 else if (s.Cycles > 0f) { tsa.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f)); tsa.cycleCount = Mathf.Max(1, Mathf.RoundToInt(s.Cycles)); }
                 else
                 {
