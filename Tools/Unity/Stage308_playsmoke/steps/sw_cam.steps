@@ -1,0 +1,315 @@
+# sw_cam (D308-85, Spec 11.23): shoulder camera A/B (x 0 / .5 / .7) on 가 · 노 · 소, then the finals of one initial side by side (가 간 갓 강 · 나 난 낫 낭) at x .6.
+# Builds first (build: trails on the five, attack: final bolts / hits, giyeok: the ㄱ marker). The config offset is put back in finally (and on Play exit).
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run attack
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run giyeok
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_cam_first_discard
+sleep 3
+?call SwingProbe308 Run shoulder:0,.55,-2.8
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_c0_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c0_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c0_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c0_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 2.0
+?call Map307Capture Run hold-shot:sw_cam_c0_no_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c0_no_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c0_no_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c0_no_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:10
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC18C
+sleep 2.6
+?call Map307Capture Run hold-shot:sw_cam_c0_so_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c0_so_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c0_so_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c0_so_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run shoulder:.5,.55,-2.8
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_c5_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c5_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c5_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c5_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 2.0
+?call Map307Capture Run hold-shot:sw_cam_c5_no_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c5_no_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c5_no_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c5_no_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:10
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC18C
+sleep 2.6
+?call Map307Capture Run hold-shot:sw_cam_c5_so_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c5_so_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c5_so_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c5_so_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run shoulder:.7,.55,-2.8
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_c7_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c7_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c7_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c7_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 2.0
+?call Map307Capture Run hold-shot:sw_cam_c7_no_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c7_no_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c7_no_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c7_no_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:10
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC18C
+sleep 2.6
+?call Map307Capture Run hold-shot:sw_cam_c7_so_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_c7_so_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_c7_so_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_c7_so_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run shoulder:.6,.55,-2.8
+sleep 2
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC04
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_gan_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_gan_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_gan_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_gan_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC13
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_gat_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_gat_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_gat_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_gat_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC15
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_gang_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_gang_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_gang_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_gang_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB098
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_na_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_na_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_na_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_na_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB09C
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_nan_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_nan_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_nan_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_nan_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AB
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_nat_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_nat_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_nat_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_nat_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AD
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_cam_f_nang_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_cam_f_nang_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_cam_f_nang_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_cam_f_nang_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run shoulder:restore
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+?call SwingProbe308 Run shoulder:restore
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean
