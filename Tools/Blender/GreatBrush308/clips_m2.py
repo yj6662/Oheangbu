@@ -99,3 +99,10 @@ CARRY_G, CARRY_D = carry_gd()
 SHOTS = {'SwingSweep': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingArc': [0, 6, 10, 15, 19, 22, 31, 42], 'SwingSlam': [0, 6, 10, 15, 18, 21, 24, 39], 'GuardIn': [0, 2, 4, 5, 7, 9], 'GuardHold': [0, 12, 24, 36, 48, 60],
          'BuffDraw': [0, 4, 7, 9, 12, 18, 22, 26], 'StanceIdle': [0, 24, 48, 72, 96, 120], 'CarryIdle': [0, 24, 48, 72, 96, 120], 'ToCarry': [0, 4, 9, 13, 17, 21], 'ToStance': [0, 2, 4, 6, 8, 10],
          'SwingThrow': [0, 4, 6, 9, 12, 14, 21, 30], 'SwingStrikeFar': [0, 6, 11, 16, 19, 23, 31, 42], 'SwingSlamD': [0, 7, 10, 14, 18, 21, 25, 33, 42], 'SwingThrowD': [0, 6, 9, 12, 15, 20, 24, 29, 36], 'SwingSweepD': [0, 5, 8, 12, 14, 18, 22, 26, 30], 'SwingArcD': [0, 10, 15, 20, 23, 28, 32, 37, 42], 'SwingStrikeFarD': [0, 6, 9, 14, 17, 20, 23, 32, 42], 'BuffDrawD': [0, 5, 9, 12, 16, 19, 22, 26]}
+
+# D308-87 바꿔 넣기(2026-10-15): 판정된 온몸판을 게임 상태 이름으로 굽는다(Unity 클립 GUID · 컨트롤러 그대로). 옛 발 박힌 판은 <이름>Planted 로 남는다.
+# 사용자 판정: SwingSlamD "이대로 진행". 나머지는 판정 뒤 여기에 보탠다.
+SWAP = {'SwingSlam': 'SwingSlamD'}
+for _k, _v in SWAP.items():
+    CLIPS[_k + 'Planted'] = CLIPS[_k]; SHOTS[_k + 'Planted'] = SHOTS[_k]
+    CLIPS[_k] = dict(CLIPS[_v]); SHOTS[_k] = SHOTS[_v]

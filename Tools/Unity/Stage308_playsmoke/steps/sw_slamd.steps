@@ -1,0 +1,98 @@
+# sw_slamd (D308-87, Swing Spec 5d): the whole-body ground strike (hop, land on one knee striking with the butt) in the game - import SwingSlam, editor sample, then 고 4 m (target) · 모 (path) · 구 (ward short slam), 0.2x time, behind camera.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call GreatBrush308Build Run import
+sleep 3
+call GreatBrush308Build Run check
+call GreatBrush308Build Run sample
+sleep 2
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_slamd_first_discard
+sleep 2
+?call SwingProbe308 Run target:4
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_slamd_go_0
+sleep 0.95
+?call Map307Capture Run hold-shot:sw_slamd_go_1
+sleep 0.60
+?call Map307Capture Run hold-shot:sw_slamd_go_2
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_slamd_go_3
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_slamd_go_4
+sleep 0.40
+?call Map307Capture Run hold-shot:sw_slamd_go_5
+sleep 0.60
+?call Map307Capture Run hold-shot:sw_slamd_go_6
+sleep 1.40
+?call Map307Capture Run hold-shot:sw_slamd_go_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uBAA8
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_slamd_mo_0
+sleep 0.95
+?call Map307Capture Run hold-shot:sw_slamd_mo_1
+sleep 0.60
+?call Map307Capture Run hold-shot:sw_slamd_mo_2
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_slamd_mo_3
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_slamd_mo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:sw_slamd_mo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:sw_slamd_mo_6
+sleep 1.40
+?call Map307Capture Run hold-shot:sw_slamd_mo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAD6C
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_slamd_gu_0
+sleep 0.95
+?call Map307Capture Run hold-shot:sw_slamd_gu_1
+sleep 0.60
+?call Map307Capture Run hold-shot:sw_slamd_gu_2
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_slamd_gu_3
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_slamd_gu_4
+sleep 0.40
+?call Map307Capture Run hold-shot:sw_slamd_gu_5
+sleep 0.60
+?call Map307Capture Run hold-shot:sw_slamd_gu_6
+sleep 1.40
+?call Map307Capture Run hold-shot:sw_slamd_gu_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

@@ -68,7 +68,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         static readonly string[] BodyStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "GuardHold", "BuffDraw", "SwingThrow", "SwingStrikeFar" };   // the full-body layer: motions only
         static readonly string[] TimedStates = { "SwingSweep", "SwingArc", "SwingSlam", "GuardIn", "BuffDraw", "SwingThrow", "SwingStrikeFar" };              // normalized time from Brush308Time
         static readonly string[] ShiftStates = { "ToCarry", "ToStance" };
-        static readonly string[] AvatarFromStance = { "SwingThrow", "SwingStrikeFar" };                                     // D308-84a: see Import()                                                     // normalized time from Brush308Shift
+        static readonly string[] AvatarFromStance = { "SwingThrow", "SwingStrikeFar", "SwingSlam" };   // D308-87: SwingSlam re-exported alone (whole-body)
+        static readonly string[] WholeBody = { "SwingSlam" };   // D308-87: steps · hop · lunge - the body's travel stays in the pose (see Import())
 
         // fixed guids: the same files get the same identity on every machine and after every re-import
         static readonly Dictionary<string, string> Guids = new Dictionary<string, string>
@@ -347,6 +348,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                 take.lockRootRotation = true; take.keepOriginalOrientation = true;
                 take.lockRootHeightY = true; take.keepOriginalPositionY = false; take.heightFromFeet = true;
                 take.lockRootPositionXZ = false; take.keepOriginalPositionXZ = false;
+                // D308-87 whole-body clips step, lunge and hop inside the clip while the character stays put: the body's horizontal travel
+                // is part of the motion, not travel - keep it in the pose (from the file's still root), or the feet slide back under a body
+                // that never left the capsule centre
+                if (WholeBody.Contains(name)) { take.lockRootPositionXZ = true; take.keepOriginalPositionXZ = true; take.keepOriginalPositionY = true; take.heightFromFeet = false; }
                 mi.clipAnimations = new[] { take }; mi.SaveAndReimport();
                 var clip = LoadClip(name);
                 float expected = ClipSecondsJson(At(grip, "clips", name));
