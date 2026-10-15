@@ -74,17 +74,17 @@ namespace Oheangbu.EditorTools.WorldMacro
                         // #308 guard / loop bodies: where their particles really are (sw_z2: the buff band spread over the sky)
                         foreach (Transform c in e.transform)
                         {
-                            if (!c.name.StartsWith("PF_V308d", StringComparison.Ordinal) && !c.name.StartsWith("PF_V308f", StringComparison.Ordinal)) continue;
+                            if (!c.name.StartsWith("PF_V308d", StringComparison.Ordinal) && !c.name.StartsWith("PF_V308f", StringComparison.Ordinal) && !c.name.StartsWith("AreaRemake_", StringComparison.Ordinal)) continue;   // pq_fan2: the fan body too
                             sb.Append(" | ").Append(c.name).Append(" lossy ").Append(c.lossyScale.x.ToString("F2", Inv)).Append(" host lossy ").Append(e.transform.lossyScale.x.ToString("F2", Inv));
                             foreach (var ps in c.GetComponentsInChildren<ParticleSystem>(true))
                             {
-                                var buf = new ParticleSystem.Particle[ps.main.maxParticles]; int n = ps.GetParticles(buf); float far = 0f, big = 0f;
+                                var buf = new ParticleSystem.Particle[ps.main.maxParticles]; int n = ps.GetParticles(buf); float far = 0f, big = 0f, fwd = -99f, up = -99f;
                                 for (int i = 0; i < n; i++)
                                 {
                                     Vector3 w = ps.main.simulationSpace == ParticleSystemSimulationSpace.Local ? ps.transform.TransformPoint(buf[i].position) : buf[i].position;
-                                    far = Mathf.Max(far, Vector3.Distance(w, c.position)); big = Mathf.Max(big, buf[i].GetCurrentSize(ps));
+                                    far = Mathf.Max(far, Vector3.Distance(w, c.position)); big = Mathf.Max(big, buf[i].GetCurrentSize(ps)); fwd = Mathf.Max(fwd, e.transform.InverseTransformPoint(w).z); up = Mathf.Max(up, w.y - e.transform.position.y);
                                 }
-                                sb.Append(" [").Append(ps.name).Append(" n ").Append(n).Append(" far ").Append(far.ToString("F1", Inv)).Append(" m size ").Append(big.ToString("F2", Inv)).Append(']');
+                                sb.Append(" [").Append(ps.name).Append(" n ").Append(n).Append(" far ").Append(far.ToString("F1", Inv)).Append(" m size ").Append(big.ToString("F2", Inv)).Append(" fwd ").Append(fwd.ToString("F1", Inv)).Append(" up ").Append(up.ToString("F1", Inv)).Append(']');
                             }
                         }
                     }

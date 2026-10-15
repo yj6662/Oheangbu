@@ -48,7 +48,7 @@ namespace Oheangbu.App.SpellVFX120
    if(k==Vfx120AreaRemake.FlameCone)
    {
     _areaBodies[0].SetPositionAndRotation(plan.Point,Quaternion.LookRotation(_areaForward));
-    foreach(var ps in _areaParticles){var shape=ps.shape;shape.shapeType=Profile.AreaFlowRevision?ParticleSystemShapeType.Cone:ParticleSystemShapeType.ConeVolume;shape.angle=plan.Angle;shape.radius=.08f;shape.length=Profile.AreaFlowRevision?0:Mathf.Max(1,plan.Length-1.6f);shape.position=_areaBodies[0].InverseTransformPoint(ReceivedOrigin);shape.scale=Vector3.one;var m=ps.main;m.startSize=Profile.AreaFlowRevision?.12f:ps.name=="FlameCore"?1.3f:.85f;}
+    foreach(var ps in _areaParticles){var shape=ps.shape;if(Profile.AreaKeepShape308){shape.angle=plan.Angle;shape.position=_areaBodies[0].InverseTransformPoint(ReceivedOrigin);continue;}   /* 11.29 */ shape.shapeType=Profile.AreaFlowRevision?ParticleSystemShapeType.Cone:ParticleSystemShapeType.ConeVolume;shape.angle=plan.Angle;shape.radius=.08f;shape.length=Profile.AreaFlowRevision?0:Mathf.Max(1,plan.Length-1.6f);shape.position=_areaBodies[0].InverseTransformPoint(ReceivedOrigin);shape.scale=Vector3.one;var m=ps.main;m.startSize=Profile.AreaFlowRevision?.12f:ps.name=="FlameCore"?1.3f:.85f;}
    }
    if(k==Vfx120AreaRemake.SandFront||k==Vfx120AreaRemake.WaterWave)
    {

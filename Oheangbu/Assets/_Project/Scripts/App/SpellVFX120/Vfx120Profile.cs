@@ -125,6 +125,8 @@ namespace Oheangbu.App.SpellVFX120
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]
         [Range(0f, .6f)] public float AreaBambooHeightSpread;
+        [Tooltip("11.29: the FlameCone seam sets only the half-angle and the emitting point on this body (a #308 fan keeps its own shape, scale and sizes). Off = the old full override.")]
+        public bool AreaKeepShape308;
         [Tooltip("Peak height of the flight arc (m).")]
         public float Bolt300Arc;
         [Tooltip("Sideways bend of the flight (m) — the slow homing curve.")]

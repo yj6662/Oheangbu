@@ -1,0 +1,87 @@
+# pq_fan4 (plain drag on the fan; fx probe; Spec 11.29: the fan seam keeps the #308 body shape and sizes) - 노 6 m twice (D308-87 polish, user 2026-10-15 "광역 방어, 투사체 vfx들도 계속 폴리싱 및 퀄리티업"): baseline of the area spells (고 원 · 노 부채 · 모 경로 · 소 연발 · 오 경로), 0.35x time
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_fan4_no_0
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_fan4_no_1
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_fan4_no_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_fan4_no_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_fan4_no_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_fan4_no_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_fan4_no_6
+?call SwingProbe308 Run fx
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_fan4_no_7
+?call SwingProbe308 Run fx
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_fan4_no2_0
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_fan4_no2_1
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_fan4_no2_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_fan4_no2_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_fan4_no2_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_fan4_no2_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_fan4_no2_6
+?call SwingProbe308 Run fx
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_fan4_no2_7
+?call SwingProbe308 Run fx
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

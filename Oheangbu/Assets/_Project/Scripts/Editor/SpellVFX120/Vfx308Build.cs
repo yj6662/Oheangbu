@@ -182,6 +182,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             public ParticleSystemShapeType Shape = ParticleSystemShapeType.Sphere; public float Radius = .04f, Angle = 20f, ArcSpeed, Thickness = 1f;
             public Vector3 ShapeRot, ShapeScale, ShapePos; public bool NoShape, ShapeScaling;      // ShapeScaling: the parent's scale widens the emitter only (path fronts)
             public float Gravity, Spin, Drag, RiseY, Roll;             // Roll: deg/s about the flight axis (mesh particles)
+            public bool DragLinear;                                    // pq_fan3: Unity's drag is times size and speed by default (a 3 m sheet hardly moved); true = plain drag
             public bool SpinRandom = true, Tumble, AlongVelocity;
             public Vector2? RotDeg;                                    // billboards: a fixed start rotation range in degrees (11.23 markers)
             public Mesh Mesh; public Vector3 Pivot;
@@ -261,7 +262,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 }
                 else rot.z = new ParticleSystem.MinMaxCurve(-s.Spin * Mathf.Deg2Rad, s.Spin * Mathf.Deg2Rad);
             }
-            if (s.Drag > 0f) { var lv = ps.limitVelocityOverLifetime; lv.enabled = true; lv.drag = s.Drag; lv.limit = 100f; }
+            if (s.Drag > 0f) { var lv = ps.limitVelocityOverLifetime; lv.enabled = true; lv.drag = s.Drag; lv.limit = 100f; if (s.DragLinear) { lv.multiplyDragByParticleSize = false; lv.multiplyDragByParticleVelocity = false; } }
             if (Mathf.Abs(s.RiseY) > .001f)
             {
                 var v = ps.velocityOverLifetime; v.enabled = true; v.space = ParticleSystemSimulationSpace.World;
@@ -826,19 +827,23 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // the tip) are thrown down the cone along their own velocity - each strand reads on its own and there is air between
         // them - with only a few soot washes and blots among them. A strand grows as it travels, so what is near the caster
         // is thin and low and the volume is out in front. Mostly soot and pale wash; red only near the roots.
+        static readonly Vector3 FanFlat = new Vector3(1f, .3f, 1f), FanTip = new Vector3(6f, 0f, 0f);   // pq_area: the fan's cone, pressed flat and tipped down (TEST)
         static GameObject ConeBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_cone_" + e.Key);
-            Layer(root.transform, new L { Name = "Strands", Mat = e.Strand, Mesh = e.Tongue, AlongVelocity = true, Rate = 120f * a.Dense, Max = Mathf.CeilToInt(44 * a.Dense), Life = new Vector2(.45f, .7f) * a.Slow, Size = new Vector2(.65f, 1.1f) * a.Big, Size3D = new Vector3(1f, 1f, 2.6f),
-                Speed = new Vector2(5f, 9f), Drag = 1.5f, Shape = ParticleSystemShapeType.Cone, Angle = 30f, Grow = Curve(0f, .4f, .5f, 1.1f, 1f, 0f) });
+            // pq_area (2026-10-15): the tongues flew up and round the caster like red feathers and the wash was faint - every
+            // emitter's cone is pressed flat into a fan over the ground (FanFlat) and tipped down a little, the tongues are smaller,
+            // the ground wash and the soot denser. pq_fan (11.29 on): the fan stopped ~2 m out against a 6 m reach - faster, less drag; pq_fan3 probe: the sheets stopped at ~1 m (drag times size), the tongues at 3.4 m - plain drag.
+            Layer(root.transform, new L { Name = "Strands", Mat = e.Strand, Mesh = e.Tongue, AlongVelocity = true, Rate = 120f * a.Dense, Max = Mathf.CeilToInt(44 * a.Dense), Life = new Vector2(.55f, .85f) * a.Slow, Size = new Vector2(.4f, .7f) * a.Big, Size3D = new Vector3(1f, 1f, 2.6f),
+                Speed = new Vector2(9f, 14f), Drag = 1f, DragLinear = true, Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, Grow = Curve(0f, .4f, .5f, 1.1f, 1f, 0f) });
             // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
             // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
-            Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 22f * a.Dense, Max = Mathf.CeilToInt(14 * a.Dense), Life = new Vector2(.6f, .85f) * a.Slow, Size = new Vector2(2.4f, 3.4f) * a.Big, Speed = new Vector2(5f, 9f), Drag = 2.6f, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = Fade(e.Ink, .45f, e.Ink), Grow = Curve(0f, .5f, 1f, 1.3f) });
-            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 60f * a.Dense, Max = Mathf.CeilToInt(24 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(2.2f, 3.2f) * a.Big, Speed = new Vector2(5f, 9f), Drag = 2.2f, SpinRandom = false, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .9f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .5f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
-            Layer(root.transform, new L { Name = "Blots", Mat = e.Drops, Rate = 20f * a.Dense, Max = Mathf.CeilToInt(7 * a.Dense), Life = new Vector2(.4f, .7f) * a.Slow, Size = new Vector2(.6f, 1f) * a.Big, Speed = new Vector2(6f, 12f), Drag = 2f, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomCell = true, Colour = Fade(e.Dark, .3f, e.Dark), Grow = Curve(0f, .8f, 1f, 1.6f) });
+            Layer(root.transform, new L { Name = "Ground", Mat = e.Pool, Mode = 1, Rate = 34f * a.Dense, Max = Mathf.CeilToInt(22 * a.Dense), Life = new Vector2(.6f, .85f) * a.Slow, Size = new Vector2(2.4f, 3.4f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.6f, DragLinear = true, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 8f, Colour = Fade(Color.Lerp(e.Ink, e.Dark, .3f), .6f, e.Ink), Grow = Curve(0f, .5f, 1f, 1.3f) });
+            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 80f * a.Dense, Max = Mathf.CeilToInt(32 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(2.2f, 3.2f) * a.Big, Speed = new Vector2(8f, 13f), Drag = 1.4f, DragLinear = true, SpinRandom = false, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .9f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .5f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
+            Layer(root.transform, new L { Name = "Blots", Mat = e.Drops, Rate = 20f * a.Dense, Max = Mathf.CeilToInt(7 * a.Dense), Life = new Vector2(.4f, .7f) * a.Slow, Size = new Vector2(.6f, 1f) * a.Big, Speed = new Vector2(9f, 15f), Drag = 1.2f, DragLinear = true, Blend = true,
+                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, RandomCell = true, Colour = Fade(e.Dark, .3f, e.Dark), Grow = Curve(0f, .8f, 1f, 1.6f) });
             return root;
         }
 
@@ -893,7 +898,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var root = new GameObject("PF_V308b_path_" + e.Key);
             var box = new Vector3(1f, .1f, 1.5f);      // 5th pass: the heads stand in a band 1.5 m deep, not on one line - they slide against each other as the camera moves
             Layer(root.transform, new L { Name = "Head", Mat = e.Head, Mode = 2, Rate = e.HeadRate * a.Dense, Max = Mathf.CeilToInt(e.HeadRate * a.Dense * e.HeadLife.y * a.Slow) + 3, Life = e.HeadLife * a.Slow, Size = e.HeadSize * a.Big, SpinRandom = false, Blend = true, ShapeScaling = true,
-                Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = Fade(e.Wash, .45f, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });
+                Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = Fade(e.Key == "ma" ? Color.Lerp(e.Wash, e.Dark, .55f) : e.Wash, .45f, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });   // pq_area: the earth head read as a muddy brown cloud - darker toward the ink
             Layer(root.transform, new L { Name = "Wet", Mat = e.Pool, Mode = 1, Rate = 9f * a.Dense, Max = Mathf.CeilToInt(9 * a.Dense * 1.1f * a.Slow) + 3, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(3.4f, 4.4f) * a.Big, Blend = true, ShapeScaling = true,
                 Shape = ParticleSystemShapeType.Box, ShapeScale = box, ShapePos = new Vector3(0f, -.27f, 0f), FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(e.Dark, .45f, e.Dark), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.2f) });
             if (e.Key == "a")
@@ -956,7 +961,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                         Object.DestroyImmediate(root);
                     }
                     var hit = FinalHit(e, FinalOf(a.Glyph), hits);   // 11.23: the final's marker where a range letter hits
-                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f; profile.Bolt300Prefab = null;   // D308-84 7th pass: not a fence
+                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaKeepShape308 = a.Shape == Form.Cone;   /* 11.29: the fan seam keeps this body's shape and sizes */ profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f; profile.Bolt300Prefab = null;   // D308-84 7th pass: not a fence
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
                     profile.NativeCastPrefab = null;
