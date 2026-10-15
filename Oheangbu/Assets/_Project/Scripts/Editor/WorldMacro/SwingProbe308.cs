@@ -71,6 +71,22 @@ namespace Oheangbu.EditorTools.WorldMacro
                     {
                         sb.Append(" | ").Append(e.name).Append(" profile ").Append(e.Profile != null ? e.Profile.name : "-").Append(" bolt ").Append(e.Profile != null && e.Profile.Bolt300Prefab != null ? e.Profile.Bolt300Prefab.name : "-").Append(" age ").Append(e.Age.ToString("F2", Inv)).Append(" shots ").Append(e.AreaVisibleShots).Append(" raised ").Append(e.AreaRaised).Append(" kids");
                         foreach (Transform c in e.transform) sb.Append(' ').Append(c.name).Append(c.gameObject.activeInHierarchy ? "" : "(off)");
+                        // #308 guard / loop bodies: where their particles really are (sw_z2: the buff band spread over the sky)
+                        foreach (Transform c in e.transform)
+                        {
+                            if (!c.name.StartsWith("PF_V308d", StringComparison.Ordinal) && !c.name.StartsWith("PF_V308f", StringComparison.Ordinal)) continue;
+                            sb.Append(" | ").Append(c.name).Append(" lossy ").Append(c.lossyScale.x.ToString("F2", Inv)).Append(" host lossy ").Append(e.transform.lossyScale.x.ToString("F2", Inv));
+                            foreach (var ps in c.GetComponentsInChildren<ParticleSystem>(true))
+                            {
+                                var buf = new ParticleSystem.Particle[ps.main.maxParticles]; int n = ps.GetParticles(buf); float far = 0f, big = 0f;
+                                for (int i = 0; i < n; i++)
+                                {
+                                    Vector3 w = ps.main.simulationSpace == ParticleSystemSimulationSpace.Local ? ps.transform.TransformPoint(buf[i].position) : buf[i].position;
+                                    far = Mathf.Max(far, Vector3.Distance(w, c.position)); big = Mathf.Max(big, buf[i].GetCurrentSize(ps));
+                                }
+                                sb.Append(" [").Append(ps.name).Append(" n ").Append(n).Append(" far ").Append(far.ToString("F1", Inv)).Append(" m size ").Append(big.ToString("F2", Inv)).Append(']');
+                            }
+                        }
                     }
                     foreach (var r in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx308Residue>(FindObjectsSortMode.None)) sb.Append(" | residue at ").Append(r.transform.position.ToString("F1"));
                     return sb.ToString();

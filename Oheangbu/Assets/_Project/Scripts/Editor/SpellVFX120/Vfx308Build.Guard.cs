@@ -78,11 +78,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var root = new GameObject(Path.GetFileNameWithoutExtension(GuardPrefabPath(e.Key)));
             Color c = Color.Lerp(e.Pig, e.Ink, .5f);
             var sheet = SoakVariant(Bleed("M_V308d_guard_" + e.Key + "_sheet", "ink_throw", C(e.Ink, .9f), 0f, .95f));
-            Layer(root.transform, new L { Name = "Sheet", Mat = sheet, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardSheetLife, GuardSheetLife), Size = new Vector2(1.6f, 1.6f), Size3D = new Vector3(1.6f, 1f, 1f),
-                NoShape = true, Blend = true, SpinRandom = false, FrameFrom = 0f, FrameTo = 15.5f,
-                Colour = G((0f, C(c, 0f)), (.08f, C(c, 1f)), (.7f, C(c, .9f)), (1f, C(c, 0f))), Grow = Curve(0f, .85f, .12f, 1f, 1f, 1.04f) });
-            var edgeHost = new GameObject("EdgeHost").transform; edgeHost.SetParent(root.transform, false); edgeHost.localPosition = new Vector3(0f, -.45f, 0f);
-            Layer(edgeHost, new L { Name = "Edge", Mat = sheet, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardSheetLife * .85f, GuardSheetLife * .85f), Size = new Vector2(1.2f, 1.2f), Size3D = new Vector3(1.9f, .45f, 1f),
+            Layer(root.transform, new L { Name = "Sheet", Mat = sheet, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardSheetLife, GuardSheetLife), Size = new Vector2(2.4f, 2.4f), Size3D = new Vector3(1.5f, 1f, 1f),   /* sw_z2: 1.6 read as a faint smear */
+                NoShape = true, Blend = true, SpinRandom = false, FrameFrom = 3f, FrameTo = 15.5f,
+                Colour = G((0f, C(c, 0f)), (.06f, C(c, 1f)), (.75f, C(c, 1f)), (1f, C(c, 0f))), Grow = Curve(0f, .85f, .12f, 1f, 1f, 1.04f) });
+            var edgeHost = new GameObject("EdgeHost").transform; edgeHost.SetParent(root.transform, false); edgeHost.localPosition = new Vector3(0f, -.7f, 0f);
+            Layer(edgeHost, new L { Name = "Edge", Mat = sheet, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardSheetLife * .85f, GuardSheetLife * .85f), Size = new Vector2(1.8f, 1.8f), Size3D = new Vector3(1.9f, .45f, 1f),
                 NoShape = true, Blend = true, SpinRandom = false, FrameFrom = 2f, FrameTo = 15.5f, BurstTime = .04f,
                 Colour = G((0f, C(e.Ink, 0f)), (.1f, C(e.Ink, .95f)), (.7f, C(e.Ink, .8f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .9f, .15f, 1f, 1f, 1.05f) });
             Layer(root.transform, new L { Name = "Drip", Mat = Bleed("M_V308d_guard_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 14, BurstTime = .1f, Max = 16, Life = new Vector2(.45f, .75f),
