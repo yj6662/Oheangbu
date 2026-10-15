@@ -66,6 +66,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "connect:attack": if (!V2) throw new ArgumentException("the attack set exists in the v2 look only"); return Connect(true);
                 case "attack": return AttackTable();
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
+                case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();
@@ -1162,6 +1163,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Directory.CreateDirectory(Path.GetDirectoryName(Record));
             File.WriteAllText(Record, JsonUtility.ToJson(rec, true));
             if (attack) sb.AppendLine(RegisterContacts());
+            if (attack) sb.AppendLine(ConnectGiyeok());
             return sb.ToString();
         }
 
@@ -1185,6 +1187,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             EditorUtility.SetDirty(set); AssetDatabase.SaveAssetIfDirty(set);
             File.Delete(Record);
             sb.AppendLine(UnregisterContacts());
+            sb.AppendLine(RevertGiyeok());
             return sb.ToString();
         }
 

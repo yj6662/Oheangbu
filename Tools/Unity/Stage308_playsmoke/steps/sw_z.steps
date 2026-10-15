@@ -1,8 +1,14 @@
-# sw_z (2026-10-15): volley 소 - fx every 0.4 s (visible needles) + shots; path 모 after the head shrink. 0.2x.
+# sw_z (2026-10-15): builds the guard membranes + connect first; then volley 소 - fx every 0.4 s (visible needles) + shots; path 모 after the head shrink. 0.2x.
 # (Deploy gather) -> pigment soaks in -> hit -> residue on the ground. timeScale 0.2, each target locked on.
 clean
 call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
 sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run guard
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run giyeok
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
 call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
 wait hold
 sleep 3
@@ -62,6 +68,70 @@ sleep 1.6
 sleep 3.0
 ?call SwingProbe308 Run slow:1
 sleep 2
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC70
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_z_geo_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z_geo_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z_geo_2
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_z_geo_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uBA38
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_z_meo_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z_meo_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z_meo_2
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_z_meo_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC01
+sleep 1.9
+?call Map307Capture Run hold-shot:sw_z_gak_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z_gak_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z_gak_2
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z_gak_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC0AD
+sleep 1.9
+?call Map307Capture Run hold-shot:sw_z_sak_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z_sak_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z_sak_2
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z_sak_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
 ?call SwingProbe308 Run report
 ?call PlayProbe308 Run log
 mem
