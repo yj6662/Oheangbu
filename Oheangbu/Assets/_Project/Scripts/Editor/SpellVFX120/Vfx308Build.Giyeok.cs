@@ -50,6 +50,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 profile.AreaRemake = Vfx120AreaRemake.None;
                 profile.BodyMesh = Element(kit, g.Key).Bit; profile.NativeBodyPrefab = null;   // the old bespoke bodies stay out (as for the attack singles)
                 profile.KtpContactBrightness = 1f;
+                profile.BotanicalPrefab = null; profile.NativeCastPrefab = null;   // sw_z: the old root ring (각) and the cast flakes (삭) stayed
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
 
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + g.Id + ".prefab";

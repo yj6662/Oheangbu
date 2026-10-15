@@ -20,7 +20,10 @@ namespace Oheangbu.App.SpellVFX120
             if (Profile == null || Profile.Aura308Prefab == null) return;
             _aura308 = Instantiate(Profile.Aura308Prefab, transform, false);
             _aura308.name = Profile.Aura308Prefab.name;
-            if (Profile.WardRadius > 0f) _aura308.transform.localScale = Vector3.one * Profile.WardRadius;   // the ward ring is built at 1 m
+            // world size, whatever the effect is scaled by (sw_z: a buff host scaled up threw its strokes over the whole sky);
+            // the ward ring is built at 1 m and scaled by WardRadius
+            float world = Profile.WardRadius > 0f ? Profile.WardRadius : 1f;
+            _aura308.transform.localScale = Vector3.one * world / Mathf.Max(1e-4f, transform.lossyScale.x);
             _a3Systems = _aura308.GetComponentsInChildren<ParticleSystem>(true);
             _a3Stopping = false;
             foreach (var ps in _a3Systems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ps.Play(false); }
@@ -29,6 +32,9 @@ namespace Oheangbu.App.SpellVFX120
         void SampleAura308()
         {
             if (_aura308 == null) return;
+            // the buff host is parented to the player after Begin: keep the world size every frame
+            float world = Profile.WardRadius > 0f ? Profile.WardRadius : 1f;
+            _aura308.transform.localScale = Vector3.one * world / Mathf.Max(1e-4f, transform.lossyScale.x);
             // the old builders' children stay off (some are made after this one, or lazily)
             foreach (Transform child in transform)
                 if (child.gameObject != _aura308 && child.gameObject.activeSelf) child.gameObject.SetActive(false);

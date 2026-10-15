@@ -1,0 +1,125 @@
+# sw_z2 (2026-10-15): after the world-scale fix (guard / aura) and the old root ring / cast flakes off the ㄱ-final copies: 거 머 각 삭 구 걱.
+# (Deploy gather) -> pigment soaks in -> hit -> residue on the ground. timeScale 0.2, each target locked on.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run giyeok
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_z2_first_discard
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC70
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_z2_geo_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z2_geo_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z2_geo_2
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_z2_geo_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uBA38
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_z2_meo_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z2_meo_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z2_meo_2
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_z2_meo_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC01
+sleep 1.9
+?call Map307Capture Run hold-shot:sw_z2_gak_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z2_gak_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z2_gak_2
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z2_gak_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC0AD
+sleep 1.9
+?call Map307Capture Run hold-shot:sw_z2_sak_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_z2_sak_1
+sleep 0.7
+?call Map307Capture Run hold-shot:sw_z2_sak_2
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z2_sak_3
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAD6C
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_z2_gu_0
+?call SwingProbe308 Run fx
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z2_gu_1
+sleep 2
+?call Map307Capture Run hold-shot:sw_z2_gu_2
+sleep 3
+?call Map307Capture Run hold-shot:sw_z2_gu_3
+sleep 1
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC71
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_z2_geok_0
+?call SwingProbe308 Run fx
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z2_geok_1
+sleep 2
+?call Map307Capture Run hold-shot:sw_z2_geok_2
+sleep 3
+?call Map307Capture Run hold-shot:sw_z2_geok_3
+sleep 1
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

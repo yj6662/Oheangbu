@@ -20,6 +20,7 @@ namespace Oheangbu.App.SpellVFX120
             _guard308 = Instantiate(Profile.Guard308Prefab, transform, false);
             _guard308.name = Profile.Guard308Prefab.name;
             _guard308.transform.localPosition = new Vector3(0f, 0f, .7f);   // where the pattern shield stood
+            _guard308.transform.localScale = Vector3.one / Mathf.Max(1e-4f, transform.lossyScale.x);   // world size (sw_z: hardly seen)
             _g3Systems = _guard308.GetComponentsInChildren<ParticleSystem>(true);
             ResetGuard308();
         }
