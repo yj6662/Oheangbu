@@ -39,7 +39,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string Dispatch(string command)
         {
             if (command == "report") return lines.Count == 0 ? "no lines" : string.Join("\n", lines);
-            if (command == "reset") { lines.Clear(); return "reset"; }
+            if (command == "reset") { lines.Clear(); strokeAt = new Vector2(.5f, .5f); return "reset"; }
             if (!EditorApplication.isPlaying) return "refused: Play only";
             var s = Harness303.Session; if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Wiring == null) return "refused: no ready session";
             if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
@@ -98,6 +98,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "near": return Near(walker);
                 case "nearset": return NearSet(rest);
                 case "shoulder": return Shoulder(rest);
+                case "strokes":   // 11.24: where the fed letter is drawn, as screen fractions (default .5,.5); off the aim point, the commit flash does not hide the flight
+                    { var v = rest.Split(','); if (v.Length == 2 && float.TryParse(v[0], NumberStyles.Float, Inv, out float sx) && float.TryParse(v[1], NumberStyles.Float, Inv, out float sy)) { strokeAt = new Vector2(sx, sy); return "strokes at " + sx.ToString(Inv) + "," + sy.ToString(Inv); } return "refused: strokes:x,y"; }
                 case "view": return View();   // what is drawn on the line from the camera through the screen centre (D308-85: the pigment blob)   // D308-85 camera A/B: shoulder:x,y,z | shoulder:restore
                 case "nearhand": return NearHand();
                 case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; Tick(true); return "brush watch for " + rest + " s";
@@ -359,9 +361,11 @@ namespace Oheangbu.EditorTools.WorldMacro
             return "released " + letter + " | ink " + before.ToString("F3", Inv) + " -> " + after.ToString("F3", Inv) + " | pending " + wiring.SwingPending308 + " locked " + wiring.SwingLocked308;
         }
 
+        static Vector2 strokeAt = new Vector2(.5f, .5f);
+
         static void FeedStrokes(BrushStrokeFeedAdapter adapter)
         {
-            Vector2 c = new Vector2(Screen.width * .5f, Screen.height * .5f); float u = Mathf.Min(Screen.width, Screen.height) * .035f;   // sw_r: .08 drew a slab of a letter
+            Vector2 c = new Vector2(Screen.width * strokeAt.x, Screen.height * strokeAt.y); float u = Mathf.Min(Screen.width, Screen.height) * .035f;   // sw_r: .08 drew a slab of a letter
             for (int stroke = 0; stroke < 2; stroke++)
             {
                 Invoke(adapter, "OnStrokeStarted");

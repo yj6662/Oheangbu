@@ -93,6 +93,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // travel: the flying part (null for a hit) / contact: plays from the hit / residue: outlives the spell (Play only)
         // 11.24 (sw_mark: the markers drowned in the element's own hit): bigger than the hit, nearly black ink, and later -
         // they read once the element's burst has spread
+        // 11.24 (sw_mark2): a marker draws over the element's own hit at the same place (lower fudge = sorted nearer)
+        static ParticleSystem Top(ParticleSystem ps) { ps.GetComponent<ParticleSystemRenderer>().sortingFudge = -60f; return ps; }
+
         static void Marker(Elem e, int final, Transform travel, Transform contact, Transform residue, float k)
         {
             string key = e.Key;
@@ -100,33 +103,33 @@ namespace Oheangbu.EditorTools.SpellVFX120
             switch (final)
             {
                 case FinalN:   // the ink spreads twice: a second and a third, wider bleed after the hit
-                    Layer(contact, new L { Name = "Bleed2", Mat = Mk(key, "bleed2", "ink_splat", C(e.Ink, .95f), .95f), World = false, Burst = 1, BurstTime = .25f, Max = 2, Life = new Vector2(.6f, .6f),
-                        Size = Vector2.one * 6f * k, NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 11f, Colour = Melt(mark, .5f), Grow = Curve(0f, .5f, 1f, 1.2f) });
-                    Layer(contact, new L { Name = "Bleed3", Mat = Mk(key, "bleed2", "ink_splat", C(e.Ink, .95f), .95f), World = false, Burst = 1, BurstTime = .45f, Max = 2, Life = new Vector2(.45f, .45f),
-                        Size = Vector2.one * 8.5f * k, NoShape = true, Blend = true, FrameFrom = 2f, FrameTo = 13f, Colour = Melt(mark, .4f), Grow = Curve(0f, .55f, 1f, 1.15f) });
+                    Top(Layer(contact, new L { Name = "Bleed2", Mat = Mk(key, "bleed2", "ink_splat", C(e.Ink, .95f), .95f), World = false, Burst = 1, BurstTime = .25f, Max = 2, Life = new Vector2(.6f, .6f),
+                        Size = Vector2.one * 6f * k, NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 11f, Colour = Melt(mark, .5f), Grow = Curve(0f, .5f, 1f, 1.2f) }));
+                    Top(Layer(contact, new L { Name = "Bleed3", Mat = Mk(key, "bleed2", "ink_splat", C(e.Ink, .95f), .95f), World = false, Burst = 1, BurstTime = .45f, Max = 2, Life = new Vector2(.45f, .45f),
+                        Size = Vector2.one * 8.5f * k, NoShape = true, Blend = true, FrameFrom = 2f, FrameTo = 13f, Colour = Melt(mark, .4f), Grow = Curve(0f, .55f, 1f, 1.15f) }));
                     break;
                 case FinalS:   // thin sharp trail, an X of two dry strokes at the hit
                     if (travel != null) { var trail = travel.GetComponentInChildren<TrailRenderer>(true); if (trail != null) { trail.widthMultiplier = .15f; trail.time = .45f; } }
                     foreach (float deg in new[] { 38f, -38f })
-                        Layer(contact, new L { Name = deg > 0 ? "SlashA" : "SlashB", Mat = Mk(key, "stroke", "speed_line", C(e.Ink, 1f)), World = false, Burst = 1, BurstTime = deg > 0 ? .1f : .18f, Max = 1,
+                        Top(Layer(contact, new L { Name = deg > 0 ? "SlashA" : "SlashB", Mat = Mk(key, "stroke", "speed_line", C(e.Ink, 1f)), World = false, Burst = 1, BurstTime = deg > 0 ? .1f : .18f, Max = 1,
                             Life = new Vector2(.7f, .7f), Size = Vector2.one * 6f * k, NoShape = true, RotDeg = new Vector2(deg, deg), FrameFrom = 0f, FrameTo = .99f, RandomCell = true,
-                            Colour = Melt(mark, .6f), Grow = Curve(0f, .45f, .1f, 1f, 1f, 1.05f) });
+                            Colour = Melt(mark, .6f), Grow = Curve(0f, .45f, .1f, 1f, 1f, 1.05f) }));
                     break;
                 case FinalNg:  // rings left along the flight, one spreading at the hit
                     if (travel != null)
-                        Layer(travel, new L { Name = "Rings", Mat = Mk(key, "ring", "water_ring", C(e.Ink, 1f)), World = true, Rate = 10f, Max = 12, Life = new Vector2(.5f, .6f), Size = new Vector2(1.2f, 1.6f),
-                            NoShape = true, SpinRandom = true, FrameFrom = 2f, FrameTo = 10f, Colour = Fade(mark, .35f), Grow = Curve(0f, .6f, 1f, 1.6f) });
-                    Layer(contact, new L { Name = "RingOut", Mat = Mk(key, "ring", "water_ring", C(e.Ink, 1f)), World = false, Burst = 1, BurstTime = .15f, Max = 2, Life = new Vector2(.7f, .7f), Size = Vector2.one * 7f * k,
-                        NoShape = true, FrameFrom = 0f, FrameTo = 15f, Colour = Fade(mark, .35f), Grow = Curve(0f, .4f, 1f, 1.3f) });
+                        Top(Layer(travel, new L { Name = "Rings", Mat = Mk(key, "ring", "water_ring", C(e.Ink, 1f)), World = true, Rate = 10f, Max = 12, Life = new Vector2(.5f, .6f), Size = new Vector2(1.2f, 1.6f),
+                            NoShape = true, SpinRandom = true, FrameFrom = 2f, FrameTo = 10f, Colour = Fade(mark, .35f), Grow = Curve(0f, .6f, 1f, 1.6f) }));
+                    Top(Layer(contact, new L { Name = "RingOut", Mat = Mk(key, "ring", "water_ring", C(e.Ink, 1f)), World = false, Burst = 1, BurstTime = .15f, Max = 2, Life = new Vector2(.7f, .7f), Size = Vector2.one * 7f * k,
+                        NoShape = true, FrameFrom = 0f, FrameTo = 15f, Colour = Fade(mark, .35f), Grow = Curve(0f, .4f, 1f, 1.3f) }));
                     break;
                 case FinalK:   // short strokes stuck in the ground at the hit, a big pool that stays
-                    Layer(contact, new L { Name = "Stakes", Mat = Mk(key, "stroke", "speed_line", C(e.Ink, 1f)), World = false, Mode = 2, Burst = 3, BurstTime = .1f, Max = 3, Life = new Vector2(.8f, .8f),
+                    Top(Layer(contact, new L { Name = "Stakes", Mat = Mk(key, "stroke", "speed_line", C(e.Ink, 1f)), World = false, Mode = 2, Burst = 3, BurstTime = .1f, Max = 3, Life = new Vector2(.8f, .8f),
                         Size = new Vector2(2f, 2.6f) * k, Shape = ParticleSystemShapeType.Circle, Radius = 1.1f * k, ShapeRot = new Vector3(90f, 0f, 0f), RotDeg = new Vector2(84f, 96f),
-                        FrameFrom = 0f, FrameTo = .99f, RandomCell = true, Colour = Melt(mark, .65f), Grow = Curve(0f, .3f, .1f, 1f, 1f, 1f) });
+                        FrameFrom = 0f, FrameTo = .99f, RandomCell = true, Colour = Melt(mark, .65f), Grow = Curve(0f, .3f, .1f, 1f, 1f, 1f) }));
                     if (residue != null)
-                        Layer(residue, new L { Name = "Linger", Mat = Mk(key, "linger", "ink_pool", C(e.Ink, 1f), 1f, 0f), World = false, Mode = 1, Burst = 1, Max = 2, Life = Vector2.one * (travel != null ? 5f : 2.5f),
+                        Top(Layer(residue, new L { Name = "Linger", Mat = Mk(key, "linger", "ink_pool", C(e.Ink, 1f), 1f, 0f), World = false, Mode = 1, Burst = 1, Max = 2, Life = Vector2.one * (travel != null ? 5f : 2.5f),
                             Size = Vector2.one * 5f * k, NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 15.5f,
-                            Colour = G((0f, C(mark, 1f)), (.7f, C(mark, .9f)), (1f, C(mark, 0f))), Grow = Curve(0f, .4f, .1f, 1f, 1f, 1.1f) });
+                            Colour = G((0f, C(mark, 1f)), (.7f, C(mark, .9f)), (1f, C(mark, 0f))), Grow = Curve(0f, .4f, .1f, 1f, 1f, 1.1f) }));
                     break;
             }
         }
