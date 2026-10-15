@@ -7,6 +7,8 @@ call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run guard
 sleep 3
 call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run giyeok
 sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run aura
+sleep 3
 call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
 sleep 3
 call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
@@ -130,6 +132,38 @@ sleep 0.7
 sleep 1.5
 ?call Map307Capture Run hold-shot:sw_z_sak_3
 sleep 2
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAD6C
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_z_gu_0
+?call SwingProbe308 Run fx
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z_gu_1
+sleep 2
+?call Map307Capture Run hold-shot:sw_z_gu_2
+sleep 3
+?call Map307Capture Run hold-shot:sw_z_gu_3
+sleep 1
+?call SwingProbe308 Run slow:1
+sleep 3
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC71
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_z_geok_0
+?call SwingProbe308 Run fx
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_z_geok_1
+sleep 2
+?call Map307Capture Run hold-shot:sw_z_geok_2
+sleep 3
+?call Map307Capture Run hold-shot:sw_z_geok_3
+sleep 1
 ?call SwingProbe308 Run slow:1
 sleep 3
 ?call SwingProbe308 Run report

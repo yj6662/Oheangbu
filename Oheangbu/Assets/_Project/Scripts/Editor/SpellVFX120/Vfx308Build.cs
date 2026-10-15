@@ -67,6 +67,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "attack": return AttackTable();
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
+                case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();
@@ -1164,6 +1165,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             File.WriteAllText(Record, JsonUtility.ToJson(rec, true));
             if (attack) sb.AppendLine(RegisterContacts());
             if (attack) sb.AppendLine(ConnectGiyeok());
+            if (attack) sb.AppendLine(ConnectAura());
             return sb.ToString();
         }
 
@@ -1188,6 +1190,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             File.Delete(Record);
             sb.AppendLine(UnregisterContacts());
             sb.AppendLine(RevertGiyeok());
+            sb.AppendLine(RevertAura());
             return sb.ToString();
         }
 
