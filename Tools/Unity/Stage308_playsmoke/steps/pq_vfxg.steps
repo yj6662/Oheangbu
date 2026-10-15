@@ -1,0 +1,87 @@
+# pq_vfxg (D308-88 VFX Graph smoke spike, same shots as pq_smoke; user 2026-10-15 "연기같은 VFX로" + "내가 의도한 건 이런 연기였는데" (pq_drop early soot): 노 = torn soot wisps only, long-lived, hard linear drag, rising) - 노 6 m twice, fx probe, 0.35x (D308-87 polish, Spec 11.31)
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_vfxg_no_0
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_vfxg_no_1
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_vfxg_no_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_vfxg_no_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_vfxg_no_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_vfxg_no_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_vfxg_no_6
+?call SwingProbe308 Run fx
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_vfxg_no_7
+?call SwingProbe308 Run fx
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_vfxg_no2_0
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_vfxg_no2_1
+?call SwingProbe308 Run fx
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_vfxg_no2_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_vfxg_no2_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_vfxg_no2_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_vfxg_no2_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_vfxg_no2_6
+?call SwingProbe308 Run fx
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_vfxg_no2_7
+?call SwingProbe308 Run fx
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

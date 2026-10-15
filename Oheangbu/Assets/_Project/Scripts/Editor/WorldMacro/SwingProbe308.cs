@@ -86,6 +86,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                                 }
                                 sb.Append(" [").Append(ps.name).Append(" n ").Append(n).Append(" far ").Append(far.ToString("F1", Inv)).Append(" m size ").Append(big.ToString("F2", Inv)).Append(" fwd ").Append(fwd.ToString("F1", Inv)).Append(" up ").Append(up.ToString("F1", Inv)).Append(']');
                             }
+                            // D308-88: VFX Graph bodies (the 노 smoke) - alive count, playing, culled, where the host stands
+                            foreach (var vg in c.GetComponentsInChildren<UnityEngine.VFX.VisualEffect>(true))
+                                sb.Append(" [vfx ").Append(vg.name).Append(" alive ").Append(vg.aliveParticleCount).Append(" culled ").Append(vg.culled).Append(" asset ").Append(vg.visualEffectAsset != null ? vg.visualEffectAsset.name : "-").Append(" fwd ").Append(e.transform.InverseTransformPoint(vg.transform.position).z.ToString("F1", Inv)).Append(" dir ").Append(vg.transform.forward.ToString("F2")).Append(" rate ").Append(vg.HasFloat("Spawn Rate") ? vg.GetFloat("Spawn Rate").ToString("F0", Inv) : "?").Append(" life ").Append(vg.HasFloat("LifeTime") ? vg.GetFloat("LifeTime").ToString("F2", Inv) : "?").Append(" vel ").Append(vg.HasVector3("Initial Velocity_vector") ? vg.GetVector3("Initial Velocity_vector").ToString("F1") : "?").Append(" tex ").Append(vg.HasTexture("Main Texture") && vg.GetTexture("Main Texture") != null ? vg.GetTexture("Main Texture").name : "?").Append(']');
                         }
                     }
                     foreach (var r in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx308Residue>(FindObjectsSortMode.None)) sb.Append(" | residue at ").Append(r.transform.position.ToString("F1"));

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 using Oheangbu.Spellcraft;
 namespace Oheangbu.App.SpellVFX120
 {
@@ -10,6 +11,7 @@ namespace Oheangbu.App.SpellVFX120
   GameObject _areaHost;Transform[] _areaBodies;Renderer[] _areaRenderers;
   Vector3[] _areaFeet;ParticleSystem[] _areaParticles;Vfx120TraditionalMotif _areaSeal;
   Mesh _areaWater;Vector3[] _areaWaterVertices;float[] _areaGround;float _areaSim;
+  VisualEffect[] _areaGraphs;bool _areaGraphOn;float _areaGraphT;   // D308-88 / Spec 11.31: VFX Graph bodies, played over the emit window
   MaterialPropertyBlock _areaBlock;Vector3 _areaForward,_areaRight,_areaStart;
   ParticleSystem.Particle[] _wideParticles=new ParticleSystem.Particle[256];
   public int AreaRaised {get;private set;}
@@ -44,6 +46,7 @@ namespace Oheangbu.App.SpellVFX120
      if(Profile.AreaBambooLean>0f){float lean=Profile.AreaBambooLean,spread=Profile.AreaBambooHeightSpread;body.transform.rotation=Quaternion.Euler((Hash308(i,1)*2-1)*lean,i*71,(Hash308(i,2)*2-1)*lean);body.transform.localScale=new Vector3(.85f,1f+(Hash308(i,3)*2-1)*spread,.85f);}}
    }
    _areaParticles=_areaHost.GetComponentsInChildren<ParticleSystem>();
+   _areaGraphs=_areaHost.GetComponentsInChildren<VisualEffect>();_areaGraphOn=false;_areaGraphT=0;foreach(var g in _areaGraphs){g.Stop();g.Reinit();if(g.HasFloat("LifeTime"))Life=Mathf.Max(Life,plan.Delay+.7f+g.GetFloat("LifeTime"));}   /* 11.31: the effect outlives its last smoke */
    for(int i=0;i<_areaParticles.Length;i++){var ps=_areaParticles[i];ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);ps.useAutoRandomSeed=false;ps.randomSeed=(uint)(271+i);var main=ps.main;main.playOnAwake=false;main.cullingMode=ParticleSystemCullingMode.AlwaysSimulate;ps.Simulate(0,false,true,false);}
    if(k==Vfx120AreaRemake.FlameCone)
    {
@@ -172,13 +175,14 @@ namespace Oheangbu.App.SpellVFX120
     }
    }
    if(Profile.EarthRift)SampleEarthRift(t,fade);
+   if(_areaGraphs!=null&&_areaGraphs.Length>0)SampleAreaGraphs(kind,p,t);   /* 11.31 */
    if(_areaParticles!=null&&_areaParticles.Length>0)
    {
     if(t<_areaSim){foreach(var ps in _areaParticles){ps.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);ps.Simulate(0,false,true,false);}_areaSim=0;}
     const float dt=1f/120;
     while(_areaSim+dt<=t+.00001f)
     {
-     _areaSim+=dt;bool emit=kind==Vfx120AreaRemake.FlameCone?_areaSim>=Mathf.Max(0,p.Delay-.12f)&&_areaSim<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):_areaSim>=p.Delay&&_areaSim<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
+     _areaSim+=dt;bool emit=AreaEmitting(kind,p,_areaSim);
      foreach(var ps in _areaParticles){var em=ps.emission;em.enabled=emit;ps.Simulate(dt,false,false,false);}
     }
     if((Profile.AreaFlowRevision&&kind==Vfx120AreaRemake.FlameCone)||Profile.WideAreaRevision&&(kind==Vfx120AreaRemake.SandFront||kind==Vfx120AreaRemake.WaterWave))
@@ -241,12 +245,22 @@ namespace Oheangbu.App.SpellVFX120
     }
    }
   }
+  // the emit window of the area bodies (particle systems and VFX Graph bodies share it)
+  bool AreaEmitting(Vfx120AreaRemake kind,AreaImpactPlan p,float time)=>kind==Vfx120AreaRemake.FlameCone?time>=Mathf.Max(0,p.Delay-.12f)&&time<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):time>=p.Delay&&time<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
+  // 11.31: Play when the window opens (the host placed at the caster, facing the fan), Stop when it closes - the graph lets its
+  // particles die out on their own; a scrub backwards starts it over. Display only: no rule, clock or hit reads it.
+  void SampleAreaGraphs(Vfx120AreaRemake kind,AreaImpactPlan p,float t)
+  {
+   if(t<_areaGraphT){foreach(var g in _areaGraphs)if(g!=null){g.Stop();g.Reinit();}_areaGraphOn=false;}
+   _areaGraphT=t;bool on=AreaEmitting(kind,p,t);if(on==_areaGraphOn)return;_areaGraphOn=on;
+   foreach(var g in _areaGraphs){if(g==null)continue;if(on){g.transform.SetPositionAndRotation(ReceivedOrigin,Quaternion.LookRotation(_areaForward));g.Play();}else g.Stop();}
+  }
   void ClearAreaRemake()
   {
    ClearProceduralRift();
    if(_areaHost!=null){_areaHost.SetActive(false);if(Application.isPlaying)Destroy(_areaHost);else DestroyImmediate(_areaHost);}
    if(_areaWater!=null){if(Application.isPlaying)Destroy(_areaWater);else DestroyImmediate(_areaWater);}
-   _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
+   _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaGraphs=null;_areaGraphOn=false;_areaGraphT=0;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
   }
   static float Hash308(int i,int k){float v=Mathf.Sin(i*12.9898f+k*78.233f)*43758.5453f;return v-Mathf.Floor(v);}
 }

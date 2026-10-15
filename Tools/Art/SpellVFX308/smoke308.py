@@ -140,6 +140,17 @@ def wisp(name='soot_wisp', src='fire_lick', tile=4):
     print('SHEET wisp', name, 'from', src, img.shape[0])
 
 
+def vfx_tex(name='soot_wisp'):
+    """the same wisp cels for the VFX Graph quad output (D308-88, 11.31): that output is unlit and multiplies the texture by
+    the particle colour, so the RGB has to be a tone, not InkBleed308's heat / shadow / rim channels - lit (white) sinking
+    to 0.3 in the shadow, alpha kept. The particle's Color Over Life gives the ink / soot hue."""
+    img = np.asarray(Image.open(GAME / f'T_V308b_{name}.png').convert('RGBA'), np.float32) / 255
+    tone = 1.0 - .7 * np.clip(img[..., 1:2] / np.maximum(img[..., 3:4], 1e-3), 0, 1)
+    out = np.concatenate([np.repeat(tone, 3, -1), img[..., 3:4]], -1)
+    Image.fromarray((np.clip(out, 0, 1) * 255 + .5).astype(np.uint8), 'RGBA').save(GAME / f'T_V308b_{name}_vfx.png')
+    print('SHEET vfx', name, img.shape[0], 'alpha mean %.3f' % float(img[..., 3].mean()))
+
+
 if __name__ == '__main__':
     for nm in [a for a in sys.argv[1:] if not a.startswith('--')] or list(LOOK) + ['soot_wisp']:
-        wisp(nm) if nm == 'soot_wisp' else make(nm)
+        wisp(nm) if nm == 'soot_wisp' else vfx_tex() if nm == 'soot_wisp_vfx' else make(nm)

@@ -830,6 +830,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // drag: reach ~ v^2 / 2 drag, 3.5 - 7 m) and as it stops the rise turns the stretched wisps upward - smoke settling.
             // (The billow spike, smoke308.py, read as red cartoon puffs - not used.)
             // pq_smoke: fire_lick's cels end in a straight root block at their left border = a card edge in game -> soot_wisp (smoke308.py wisp: that root faded out)
+            // D308-88 (11.31): the VFX Graph smoke carries the spell when the graph is there; the soot sheet stays as the fallback
+            if (ConeSmokeGraph(root.transform, e, a)) return root;
             var soot = e.Key == "na" ? Bleed("M_V308b_na_soot_wisp", "soot_wisp", C(e.Ink, .85f), .3f, .92f) : e.LickSoot;
             Layer(root.transform, new L { Name = "Soot", Mat = soot, Mode = 3, Rate = 42f * a.Dense, Max = Mathf.CeilToInt(18 * a.Dense), Life = new Vector2(1.0f, 1.4f) * a.Slow, Size = new Vector2(1.6f, 2.3f) * a.Big,
                 Speed = new Vector2(7f, 10f), Drag = 7f, DragLinear = true, SpinRandom = false, Blend = true, RiseY = .9f,
