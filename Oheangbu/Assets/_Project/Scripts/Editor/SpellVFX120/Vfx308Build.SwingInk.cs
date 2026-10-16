@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Oheangbu.App.SpellVFX120;
 using Oheangbu.App.World;
 using Oheangbu.Data.Spell;
 using UnityEditor;
@@ -17,7 +18,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
     // SwingPlant / SwingDraw). Built from the v2 bleeding-ink sheets that already exist (ink_splat, ink_drops, ink_pool) -
     // no new texture. One prefab per swing state with the parts SwingInk308 moves: "Tip" follows the brush tip, "Apex" is
     // placed at the tip when the swing peaks, "Ground" on the ground under it. Ink colour only: the element's pigment
-    // belongs to the spell that comes out of this ink, not to the ink.
+    // belongs to the spell that comes out of this ink, not to the ink - until the apex: from there D308-90 lets the
+    // spell's pigment soak into the swung arc (SwingInk308Profile.Soaks, written here from the letter's own profile).
     //
     //   swingink                    build the five prefabs, their materials and Resources/SwingInk308/SwingInk308Profile (= on)
     //   swingink:off                delete the Resources profile (= off; the prefabs stay)
@@ -201,10 +203,42 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var profile = AssetDatabase.LoadAssetAtPath<SwingInk308Profile>(SwingProfilePath);
             if (profile == null) { profile = ScriptableObject.CreateInstance<SwingInk308Profile>(); AssetDatabase.CreateAsset(profile, SwingProfilePath); }
             profile.States = entries.ToArray();
+            SwingSoaks(profile, sb);
             EditorUtility.SetDirty(profile); Touched.Add(profile);
             foreach (var o in Touched) AssetDatabase.SaveAssetIfDirty(o);     // only this tool's own assets (the editor is shared)
             sb.AppendLine("profile " + SwingProfilePath + " valid=" + profile.IsValid + " (swing ink is ON from the next Play)");
             return sb.ToString();
+        }
+
+        // D308-90 (11.34 20th pass) [every number TEST]: from the apex on, the swung arc takes the spell's pigment, tip first,
+        // and stays a little longer. One row per letter that has it (노 first); the pigment is read off that letter's own
+        // profile, so the arc and the spell match. A missing profile leaves the rows already there (and says so).
+        static readonly (string Glyph, Oheangbu.Core.Domain.Element Element, float Max, float Seconds, float Reach, float Soft, float Aging)[] SoakRows =
+        {
+            ("노", Oheangbu.Core.Domain.Element.Fire, .75f, .28f, .35f, .08f, .55f),
+        };
+
+        static void SwingSoaks(SwingInk308Profile profile, StringBuilder sb)
+        {
+            var rows = new List<SwingInk308Profile.Soak>();
+            foreach (var r in SoakRows)
+            {
+                var spell = Spells.FirstOrDefault(x => x.Glyph == r.Glyph);
+                var atk = Attack.FirstOrDefault(x => x.Glyph == r.Glyph);
+                string path = spell != null ? ProfilePath(spell) : atk != null ? AttackProfilePath(atk) : null;
+                var source = path != null ? AssetDatabase.LoadAssetAtPath<Vfx120Profile>(path) : null;
+                if (source == null)
+                {
+                    Debug.LogWarning("Vfx308Build swingink: no profile for " + r.Glyph + " (" + path + ") - soak rows left as they were");
+                    sb.AppendLine("soak: no profile for " + r.Glyph + " (" + path + ") - soak rows left as they were");
+                    return;
+                }
+                var row = new SwingInk308Profile.Soak { Element = r.Element, Letters = r.Glyph, Pigment = source.Pigment, Max = r.Max, Seconds = r.Seconds, Reach = r.Reach, Soft = r.Soft, AgingAfterApex = r.Aging };
+                rows.Add(row);
+                sb.AppendLine("soak " + r.Glyph + " " + r.Element + " pigment #" + ColorUtility.ToHtmlStringRGB(source.Pigment) + " (" + path + ") max " + r.Max.ToString("0.00", CultureInfo.InvariantCulture)
+                    + " over " + r.Seconds.ToString("0.00", CultureInfo.InvariantCulture) + " s, aging x" + r.Aging.ToString("0.00", CultureInfo.InvariantCulture) + (row.Usable ? "" : " (NOT usable - skipped at runtime)"));
+            }
+            profile.Soaks = rows.ToArray();
         }
 
         static void ClearSwingPose()

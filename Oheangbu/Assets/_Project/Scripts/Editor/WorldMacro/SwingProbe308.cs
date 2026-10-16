@@ -124,7 +124,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     { var v = rest.Split(','); if (v.Length == 2 && float.TryParse(v[0], NumberStyles.Float, Inv, out float sx) && float.TryParse(v[1], NumberStyles.Float, Inv, out float sy)) { strokeAt = new Vector2(sx, sy); return "strokes at " + sx.ToString(Inv) + "," + sy.ToString(Inv); } return "refused: strokes:x,y"; }
                 case "view": return View();   // what is drawn on the line from the camera through the screen centre (D308-85: the pigment blob)   // D308-85 camera A/B: shoulder:x,y,z | shoulder:restore
                 case "nearhand": return NearHand();
-                case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; Tick(true); return "brush watch for " + rest + " s";
+                case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; launchedAt = float.NegativeInfinity; inkLast = null; Tick(true); return "brush watch for " + rest + " s";
                 case "trail":
                 {
                     var trail = walker.Body != null ? walker.Body.GetComponentInChildren<BrushInkTrail308>(true) : null;
@@ -324,7 +324,22 @@ namespace Oheangbu.EditorTools.WorldMacro
             Line("LAUNCHED " + cast.Letter + " after " + after.ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv)
                 + " | D308-84 bridges " + (ink != null ? ink.Bridges.ToString(Inv) : "?") + " shown " + (ink != null && ink.BridgeShown)
                 + " aim w " + (swing != null ? swing.AimWeight.ToString("F2", Inv) : "?") + " clip " + (swing != null ? swing.State : "?")
-                + " yaw " + (body != null ? body.transform.eulerAngles.y.ToString("F1", Inv) : "?"));
+                + " yaw " + (body != null ? body.transform.eulerAngles.y.ToString("F1", Inv) : "?")
+                + " | D308-90 stroke n " + (ink != null ? ink.StrokePoints.ToString(Inv) : "?") + " span " + (ink != null ? ink.StrokeSpan.ToString("F3", Inv) : "?") + " soak " + (ink != null ? ink.SoakIndex.ToString(Inv) : "?"));
+            launchedAt = Time.time;
+        }
+        // D308-90: when the swung arc comes and goes, against the last LAUNCHED (checked every frame while brushlog runs)
+        static float launchedAt = float.NegativeInfinity; static string inkLast;
+        // domain reload is off: these statics would carry into the next Play of the same editor life
+        [InitializeOnEnterPlayMode] static void ResetOnEnterPlay() { launchedAt = float.NegativeInfinity; inkLast = null; watchUntil = 0f; }
+        static void WatchInk()
+        {
+            var ink = UnityEngine.Object.FindFirstObjectByType<SwingInk308>();
+            string key = ink == null ? "none" : (ink.StrokeShown ? "on" : "off") + " soak " + ink.SoakIndex;
+            if (key == inkLast) return;
+            inkLast = key;
+            Line("INK stroke " + key + (ink != null ? " n " + ink.StrokePoints.ToString(Inv) + " span " + ink.StrokeSpan.ToString("F3", Inv) : "")
+                + (float.IsNegativeInfinity(launchedAt) ? "" : " launched " + (Time.time - launchedAt).ToString("+0.000;-0.000", Inv) + " s ago"));
         }
         static void OnFizzled(SpellCast cast) => Line("FIZZLED " + cast.Letter);
         static void OnAccepted(SpellCast cast, Vector3 origin, Vector3 forward) => Line("ACCEPTED " + cast.Letter + " power " + cast.Power.ToString("F4", Inv));
@@ -451,8 +466,9 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static void Update()
         {
-            if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; fxVariant = ""; Tick(false); return; }
+            if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; fxVariant = ""; launchedAt = float.NegativeInfinity; inkLast = null; Tick(false); return; }
             ApplyFx();
+            if (Time.time < watchUntil) WatchInk();
             if (Time.time < watchUntil && Time.time >= watchNext)
             {
                 watchNext = Time.time + .1f; var w = CurrentWalker;

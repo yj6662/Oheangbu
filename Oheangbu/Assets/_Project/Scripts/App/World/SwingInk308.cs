@@ -11,6 +11,8 @@ namespace Oheangbu.App.World
     // moves; at the apex the ink is flung (sweep / arc), lands (slam), stands (plant) or rises (draw) - one prefab per
     // swing state. Presentation only: it listens to the swing events, reads the tip transform and writes nothing back, so
     // recognition, power, the apex and the lock cannot see it. Ink, not light: no emission anywhere.
+    // D308-90 (11.34 20th pass): from the apex the spell's pigment soaks into the swung arc, tip first, and the arc dries
+    // slower (Profile.Soaks; no row for the cast = as before). Colour and stroke age only - the bridge stays ink.
     // Added by the gesture rig when the profile exists in Resources ("SwingInk308/SwingInk308Profile"); no profile = nothing.
     [DefaultExecutionOrder(1100)]   // after WorldMacroPlayerGestureRig (1000): the brush is where it will be drawn
     public sealed class SwingInk308 : MonoBehaviour
@@ -42,6 +44,11 @@ namespace Oheangbu.App.World
         MeshRenderer strokeRenderer;
         Mesh strokeMesh;
         float strokeSeconds = .4f;
+        // D308-90 (SPEC-SPELL-VFX-OVERHAUL-308 11.34 20th pass): the soak row of this cast (-1 = none), its pigment in the
+        // colour space the vertex colours are read in, and how fast the stroke ages after the apex (1 = as before)
+        int soak = -1;
+        Color soakPigment;
+        float inkK = 1f;
         readonly List<Sample> samples = new List<Sample>(96);
         readonly List<Vector3> vertices = new List<Vector3>(192);
         readonly List<Vector2> uvs = new List<Vector2>(192);
@@ -73,6 +80,9 @@ namespace Oheangbu.App.World
         /// <summary>Read by checks.</summary>
         public bool Following => following;
         public int StrokePoints => samples.Count;
+        public float StrokeSpan => samples.Count > 1 ? samples[samples.Count - 1].Time - samples[0].Time : 0f;   // ink-clock seconds
+        public bool StrokeShown => strokeRenderer != null && strokeRenderer.enabled && samples.Count >= 2;
+        public int SoakIndex => soak;
         public int Swings { get; private set; }
         public int Apexes { get; private set; }
         public int Bridges { get; private set; }
@@ -192,11 +202,29 @@ namespace Oheangbu.App.World
             followUntil = apexAt + e.FollowAfterApex;
             following = true; apexDone = false; has = false; velocity = Vector3.zero;
             samples.Clear(); strokeSeconds = e.StrokeSeconds;
+            soak = Profile.SoakFor(cast.Element, cast.Letter);
+            if (soak >= 0)
+            {
+                var row = Profile.Soaks[soak];
+                inkK = row.AgingAfterApex;
+                soakPigment = QualitySettings.activeColorSpace == ColorSpace.Linear ? row.Pigment.linear : row.Pigment;   // vertex colours are not converted
+            }
+            else inkK = 1f;
             if (strokeRenderer != null) { strokeRenderer.sharedMaterial = e.Stroke; strokeRenderer.enabled = e.Stroke != null; }
             Swings++;
         }
 
-        void OnFizzled(SpellCast cast) => StopFollowing();
+        // a fizzle = the waiting cast was dropped, no spell: no soak. It can come on the apex frame itself
+        // (TickSwing308 drops before it dispatches), so the test is apexDone (set in LateUpdate, after every Update), not the clock
+        void OnFizzled(SpellCast cast)
+        {
+            StopFollowing();
+            if (!apexDone) { soak = -1; inkK = 1f; }
+        }
+
+        // D308-90: the stroke's own clock - real time up to the apex, slower after it while a soak row holds (the arc stays
+        // until the ember has left). Continuous at the apex, so nothing jumps.
+        float InkNow(float now) => now <= apexAt ? now : apexAt + (now - apexAt) * inkK;
 
         void StopFollowing()
         {
@@ -207,7 +235,7 @@ namespace Oheangbu.App.World
         void LateUpdate()
         {
             if (!Bind()) return;
-            float now = Time.time, dt = Time.deltaTime;
+            float now = Time.time, dt = Time.deltaTime, inkNow = InkNow(now);
             if (view == null) view = Camera.main;
             Vector3 eye = view != null ? view.transform.position : transform.position + Vector3.up * 1.6f;
             if (following)
@@ -229,7 +257,7 @@ namespace Oheangbu.App.World
                     // the brush presses in over the first moments of the swing
                     float width = e.StrokeWidth * Mathf.SmoothStep(.35f, 1f, Mathf.Clamp01((now - releasedAt) / .1f));
                     if (samples.Count == 0 || (samples[samples.Count - 1].Point - tip).sqrMagnitude > Profile.MinVertexDistance * Profile.MinVertexDistance)
-                        samples.Add(new Sample { Point = tip, Time = now, Width = width });
+                        samples.Add(new Sample { Point = tip, Time = inkNow, Width = width });
                 }
                 previous = tip; has = true;
                 if (!hidden && now > originPinnedUntil) { originTip = tip; originAt = now; }
@@ -237,13 +265,22 @@ namespace Oheangbu.App.World
                 if (now >= followUntil) StopFollowing();
             }
             StepBridge(now, eye);
-            // the stroke ages whether the tip is still followed or not
-            while (samples.Count > 0 && now - samples[0].Time > strokeSeconds) samples.RemoveAt(0);
+            // the stroke ages whether the tip is still followed or not (on the ink clock: D308-90)
+            while (samples.Count > 0 && inkNow - samples[0].Time > strokeSeconds) samples.RemoveAt(0);
             if (strokeRenderer != null && strokeRenderer.enabled)
             {
                 if (samples.Count < 2) { strokeMesh.Clear(); if (!following) strokeRenderer.enabled = false; }
-                else BuildRibbon(strokeMesh, samples, now, strokeSeconds, eye, vertices, uvs, colours, triangles);
+                else BuildRibbon(strokeMesh, samples, inkNow, strokeSeconds, eye, vertices, uvs, colours, triangles, false, Front(now));
             }
+        }
+
+        // D308-90: how far the pigment has soaked back from the tip (real time from the apex; nothing before it)
+        SoakFront Front(float now)
+        {
+            if (soak < 0 || Profile.Soaks == null || soak >= Profile.Soaks.Length || now <= apexAt) return default;
+            var row = Profile.Soaks[soak];
+            float progress = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((now - apexAt) / row.Seconds));
+            return new SoakFront { On = true, ApexAt = apexAt, Front = (row.Reach + row.Soft) * progress, Soft = row.Soft, Max = Mathf.Clamp01(row.Max), Pigment = soakPigment };
         }
 
         void AtApex(Vector3 tip)
@@ -409,13 +446,19 @@ namespace Oheangbu.App.World
             return point + Vector3.up * .03f;
         }
 
+        /// <summary>D308-90: the soak front for one ribbon build (default = no soak).</summary>
+        public struct SoakFront { public bool On; public float ApexAt, Front, Soft, Max; public Color Pigment; }
+
+        static readonly List<Vector2> soakUv = new List<Vector2>(192);
+
         // The stroke as a ribbon that faces the eye. Samples run oldest -> newest (the tip). UV.x: 0 at the tip, 1 at the
         // oldest end of the stroke's life; colour alpha: the ink left (the shader breaks the stroke with it, it does not fade it).
+        // D308-90: UV1.x = how much of the soak pigment (colour rgb) the ink has taken; 0 everywhere without a soak front.
         // Shared with the edit-mode pose (Vfx308Build swingink:pose), so a still shows what the game builds.
         public static void BuildRibbon(Mesh mesh, List<Sample> list, float now, float seconds, Vector3 eye,
-            List<Vector3> v, List<Vector2> uv, List<Color> c, List<int> tri, bool lieFlat = false)
+            List<Vector3> v, List<Vector2> uv, List<Color> c, List<int> tri, bool lieFlat = false, SoakFront soak = default)
         {
-            v.Clear(); uv.Clear(); c.Clear(); tri.Clear();
+            v.Clear(); uv.Clear(); c.Clear(); tri.Clear(); soakUv.Clear();
             int n = list.Count;
             if (n < 2) { mesh.Clear(); return; }
             for (int i = 0; i < n; i++)
@@ -431,13 +474,18 @@ namespace Oheangbu.App.World
                 float left = 1f - Mathf.SmoothStep(.45f, 1f, age);
                 v.Add(s.Point - side * (width * .5f)); v.Add(s.Point + side * (width * .5f));
                 uv.Add(new Vector2(age, 0f)); uv.Add(new Vector2(age, 1f));
-                var colour = new Color(1f, 1f, 1f, left); c.Add(colour); c.Add(colour);
+                // D308-90: the soak runs back from the tip - a sample laid u seconds before the apex takes it once the front passes u
+                float soaked = 0f;
+                if (soak.On && soak.Soft > 0f) soaked = soak.Max * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((soak.Front - Mathf.Max(0f, soak.ApexAt - s.Time)) / soak.Soft));
+                soakUv.Add(new Vector2(soaked, 0f)); soakUv.Add(new Vector2(soaked, 0f));
+                var colour = soak.On ? new Color(soak.Pigment.r, soak.Pigment.g, soak.Pigment.b, left) : new Color(1f, 1f, 1f, left);
+                c.Add(colour); c.Add(colour);
                 if (i == 0) continue;
                 int a = (i - 1) * 2;
                 tri.Add(a); tri.Add(a + 1); tri.Add(a + 2); tri.Add(a + 1); tri.Add(a + 3); tri.Add(a + 2);
             }
             mesh.Clear();
-            mesh.SetVertices(v); mesh.SetUVs(0, uv); mesh.SetColors(c); mesh.SetTriangles(tri, 0, false);
+            mesh.SetVertices(v); mesh.SetUVs(0, uv); mesh.SetUVs(1, soakUv); mesh.SetColors(c); mesh.SetTriangles(tri, 0, false);
             mesh.RecalculateBounds();
         }
     }

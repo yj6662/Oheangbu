@@ -1,5 +1,6 @@
 // #308 휘두르기 먹 획 (SPEC-SPELL-VFX-OVERHAUL-308 11.10) — SwingInk308의 리본 메시가 쓴다.
 // 계약: UV0.x = 머리(0, 붓끝) → 꼬리(1), UV0.y = 폭 방향(0..1), 정점색 a = 남은 먹(1 → 0).
+// D308-90(11.34 20차): UV1.x = 스민 안료 비율(0 = 먹색 그대로), 정점색 rgb = 스미는 안료(선형). 꼴 · 알파 · 마름은 스밈과 무관.
 // 붓끝 자취(InkTrail308, 기체)와 달리 액체다: 사라질 때 투명해지지 않고 붓털 결을 따라 갈라지며 끊긴다.
 // 먹이지 빛이 아니다(ART-INK): 가산 · HDR 없음, 알파 블렌드만. 표현 전용.
 Shader "Oheangbu/SwingInk308/InkArc"
@@ -39,8 +40,8 @@ Shader "Oheangbu/SwingInk308/InkArc"
                 float4 _NearFade;
             CBUFFER_END
 
-            struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; half4 color : COLOR; };
-            struct Varyings { float4 positionCS : SV_POSITION; float3 uvd : TEXCOORD0; half4 color : COLOR; };
+            struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; float2 uv1 : TEXCOORD1; half4 color : COLOR; };
+            struct Varyings { float4 positionCS : SV_POSITION; float3 uvd : TEXCOORD0; half soak : TEXCOORD1; half4 color : COLOR; };
 
             Varyings Vert(Attributes input)
             {
@@ -48,6 +49,7 @@ Shader "Oheangbu/SwingInk308/InkArc"
                 float3 world = TransformObjectToWorld(input.positionOS.xyz);
                 output.positionCS = TransformWorldToHClip(world);
                 output.uvd = float3(input.uv, distance(world, _WorldSpaceCameraPos));
+                output.soak = (half)saturate(input.uv1.x);
                 output.color = input.color;
                 return output;
             }
@@ -82,7 +84,9 @@ Shader "Oheangbu/SwingInk308/InkArc"
                 half alpha = _Opacity * body * wet * near * smoothstep(0.0, 0.08, left);
                 clip(alpha - 0.004);
                 // one ink colour: a paler edge read as an outline round the stroke (2026-10-14 stills)
-                half3 ink = _InkColor.rgb;
+                // D308-90: the spell's pigment soaks into it unevenly, along the bristle grain (no light: an LDR pigment, blended)
+                half s = saturate(input.soak * (0.75 + 0.5 * grain));
+                half3 ink = lerp(_InkColor.rgb, input.color.rgb, s);
                 return half4(ink, alpha);
             }
             ENDHLSL

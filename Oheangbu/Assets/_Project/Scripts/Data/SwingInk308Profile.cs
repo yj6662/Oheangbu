@@ -1,4 +1,5 @@
 using System;
+using Oheangbu.Core.Domain;
 using UnityEngine;
 
 namespace Oheangbu.Data.Spell
@@ -70,5 +71,47 @@ namespace Oheangbu.Data.Spell
         [Serializable] public struct Variant { public string From, To; }
         [Tooltip("위치별 동작(D308-84)이 어느 먹을 쓰는지. 표에 없는 상태 이름이 오면 이것으로 찾는다.")]
         public Variant[] Variants = { new Variant { From = "SwingThrow", To = "SwingSweep" }, new Variant { From = "SwingStrikeFar", To = "SwingSlam" } };
+
+        // D308-90 (SPEC-SPELL-VFX-OVERHAUL-308 11.34 20th pass) [every number TEST]: from the apex on, the swung arc takes the
+        // spell's pigment - from the tip back toward the tail - and stays a little longer. No row for a cast = the arc as before.
+        [Serializable]
+        public struct Soak
+        {
+            [Tooltip("이 속성의 술식에만.")]
+            public Element Element;
+            [Tooltip("이 글자들에만(비우면 그 속성 전체).")]
+            public string Letters;
+            [Tooltip("스미는 안료(sRGB, swingink가 그 술식 프로필의 Pigment를 넣는다). 빛이 아니라 먹: 1을 넘기지 않는다.")]
+            public Color Pigment;
+            [Tooltip("가장 많이 스밀 때의 안료 비율.")]
+            [Range(0, 1)] public float Max;
+            [Tooltip("정점부터 스밈이 닿는 데까지 걸리는 시간(초).")]
+            [Min(.01f)] public float Seconds;
+            [Tooltip("붓끝에서 꼬리 쪽으로 닿는 길이(정점 전 획 시간, 초).")]
+            [Min(0)] public float Reach;
+            [Tooltip("스밈 앞머리의 부드러움(획 시간, 초).")]
+            [Min(.01f)] public float Soft;
+            [Tooltip("정점 뒤 획이 마르는 속도 배율(1 = 그대로, 작을수록 오래 남는다).")]
+            [Range(.1f, 1f)] public float AgingAfterApex;
+
+            public bool Usable => !float.IsNaN(Max + Seconds + Reach + Soft + AgingAfterApex) && !float.IsInfinity(Max + Seconds + Reach + Soft + AgingAfterApex)
+                && Seconds > 0f && Soft > 0f && AgingAfterApex > 0f;
+        }
+
+        [Header("D308-90 호 스밈")]
+        public Soak[] Soaks = Array.Empty<Soak>();
+
+        /// <summary>Index into Soaks of the first usable row for this cast, or -1 (a bad row is skipped, not fatal).</summary>
+        public int SoakFor(Element element, char letter)
+        {
+            if (Soaks == null) return -1;
+            for (int i = 0; i < Soaks.Length; i++)
+            {
+                var s = Soaks[i];
+                if (s.Element != element || !s.Usable) continue;
+                if (string.IsNullOrEmpty(s.Letters) || s.Letters.IndexOf(letter) >= 0) return i;
+            }
+            return -1;
+        }
     }
 }
