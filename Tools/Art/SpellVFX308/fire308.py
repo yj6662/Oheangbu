@@ -280,12 +280,19 @@ def make_drag(name, S=256, n=4):
         alpha = np.clip(body * inside * (.95 - .2 * u), 0, 1)
         blob = smooth(.0, .22, .22 - u) * (1 - smooth(.3, .8, d))          # the pressed head
         mott = lowfreq(S, S, 7, 300 + k)
+        # fire15: the near heads read as the same bright lozenge repeated - the head is no longer one solid rounded cap (hairs
+        # and patches bite into it) and its alpha drops a little, so it stays a pressed brush end instead of a pill
+        alpha *= 1 - blob * (.25 + .35 * (1 - hair)) * smooth(.35, .75, brk)
         # fire14: fire12's "red heads read as embers" was judged while the streaks were drawn off screen (11.34 13차) - void.
         # A wet red head again, and the red runs a third of the way down the body before the ink takes over (frame 3's road
         # marks are red-black, not brown)
         wet = .85 * np.clip(blob * smooth(.25, .6, mott) * 1.6
                             + (.45 + .4 * smooth(.4, .75, mott)) * (1 - smooth(.1, .55, u)) * (1 - smooth(.3, .9, d)), 0, 1)
-        col = INK[None, None] * (1 - wet[..., None]) + (DEEP * .5 + VERMILION * .5)[None, None] * wet[..., None]
+        # fire15: softened - each streak carries its own amount of red (a quarter are plain ink, the rest .35-.8), the red
+        # sits in patches rather than a full cap, and the pigment is the deep red more than vermilion (frame 3: red-black)
+        red_k = (0., .35, .6, .8)[int(rng.integers(0, 4))]
+        wet *= red_k * (.45 + .55 * smooth(.3, .7, lowfreq(S, S, 6, 700 + k)))
+        col = INK[None, None] * (1 - wet[..., None]) + (DEEP * .72 + VERMILION * .28)[None, None] * wet[..., None]
         col = col * (1 - .25 * dry[..., None]) + SOOT[None, None] * (.25 * dry[..., None])
         edge = 1 - smooth(.86, .98, np.maximum(np.abs(xx - .5), np.abs(yy - .5)) * 2)
         R, C = divmod(k, n)

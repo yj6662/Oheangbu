@@ -1,0 +1,47 @@
+# 11.34 fire15: drag sheet red softened - a quarter of the streaks plain ink, the rest .35-.8 red in patches, deeper red, the head
+# cap bitten by hairs; geometry, rate and the ring and column as fire14.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.45
+?call SpellLab308 Run shot:lab_fire15_3
+?call SpellLab308 Run side:lab_fire15_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire15_4
+?call SpellLab308 Run side:lab_fire15_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire15_5
+?call SpellLab308 Run side:lab_fire15_5
+?call SpellLab308 Run top:lab_fire15_5
+?call SwingProbe308 Run fx
+sleep 1.0
+?call SpellLab308 Run shot:lab_fire15_6
+?call SpellLab308 Run side:lab_fire15_6
+?call SpellLab308 Run top:lab_fire15_6
+?call SwingProbe308 Run fx
+sleep 1.5
+?call SpellLab308 Run shot:lab_fire15_7
+?call SpellLab308 Run side:lab_fire15_7
+?call SpellLab308 Run top:lab_fire15_7
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6
