@@ -840,9 +840,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // D308-88 (11.31): the VFX Graph smoke carries the spell when the graph is there; the soot sheet stays as the fallback
             // 11.34 fire8 (user 2026-10-16 "C 그을음 섞인 불" + a ring round the target, several sheets): the soot-tipped tongues,
             // the outward-leaning ring, the scorched road and the soot column; the soot carpet (SmokeVfx) is off for 노
+            // 11.33 fire15 (user 2026-10-16 "길자국 없애고"): the scorched road is off (ScorchGraph kept, tag na-fire-308-v15-scorch)
             if (ConeFireGraph(root.transform, e, a))
             {
-                RingGraph(root.transform, e, a); ScorchGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
+                RingGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
                 return root;
             }
             if (ConeSmokeGraph(root.transform, e, a)) return root;
