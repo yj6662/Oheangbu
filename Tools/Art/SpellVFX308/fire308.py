@@ -257,7 +257,9 @@ def make_drag(name, S=256, n=4):
         cx = .5 + .06 * (rng.random() - .5) + .05 * np.sin(u * (1.5 + 1.5 * rng.random()) + rng.random() * 6.28) * u
         # fire12: .07-.115 was 8-13 cm on the road and vanished past 6 m; wide again, but the width split into parallel hair
         # strands (the cure for the broom-stub look is the split, not narrowness)
-        w0 = .2 + .08 * rng.random()
+        # fire14: w0 is the half width - .2-.28 filled half the cel and read as broom stubs; ~.15-.2 of the cel across, and the
+        # quad's 2.2-3.4 stretch along the road makes it a long thin stroke
+        w0 = .075 + .025 * rng.random()
         m = 2 + int(rng.integers(0, 3))                                     # 2-4 strands across the brush
         # flat brush: even width over the first half, then the hairs splay a little and taper; the head end rounded (a pressed
         # brush tip, not a cut)
@@ -278,9 +280,12 @@ def make_drag(name, S=256, n=4):
         alpha = np.clip(body * inside * (.95 - .2 * u), 0, 1)
         blob = smooth(.0, .22, .22 - u) * (1 - smooth(.3, .8, d))          # the pressed head
         mott = lowfreq(S, S, 7, 300 + k)
-        # fire12: the full red heads read as stray embers on the road; dark ink with only a little pigment left in the head
-        wet = .45 * np.clip(blob * smooth(.35, .7, mott) * 1.4 + .35 * smooth(.6, .85, mott) * (1 - u) * (1 - d), 0, 1)
-        col = INK[None, None] * (1 - wet[..., None]) + (DEEP * .6 + VERMILION * .4)[None, None] * wet[..., None]
+        # fire14: fire12's "red heads read as embers" was judged while the streaks were drawn off screen (11.34 13차) - void.
+        # A wet red head again, and the red runs a third of the way down the body before the ink takes over (frame 3's road
+        # marks are red-black, not brown)
+        wet = .85 * np.clip(blob * smooth(.25, .6, mott) * 1.6
+                            + (.45 + .4 * smooth(.4, .75, mott)) * (1 - smooth(.1, .55, u)) * (1 - smooth(.3, .9, d)), 0, 1)
+        col = INK[None, None] * (1 - wet[..., None]) + (DEEP * .5 + VERMILION * .5)[None, None] * wet[..., None]
         col = col * (1 - .25 * dry[..., None]) + SOOT[None, None] * (.25 * dry[..., None])
         edge = 1 - smooth(.86, .98, np.maximum(np.abs(xx - .5), np.abs(yy - .5)) * 2)
         R, C = divmod(k, n)

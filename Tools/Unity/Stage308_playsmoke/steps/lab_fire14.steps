@@ -1,0 +1,47 @@
+# 11.34 fire14: road streaks thin (sheet half width .075-.1, was .2-.28) with wet red heads running down the body, box centres from 2.0 m
+# (streaks no longer reach behind the caster), rate 160; ring and column as fire10.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.45
+?call SpellLab308 Run shot:lab_fire14_3
+?call SpellLab308 Run side:lab_fire14_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire14_4
+?call SpellLab308 Run side:lab_fire14_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire14_5
+?call SpellLab308 Run side:lab_fire14_5
+?call SpellLab308 Run top:lab_fire14_5
+?call SwingProbe308 Run fx
+sleep 1.0
+?call SpellLab308 Run shot:lab_fire14_6
+?call SpellLab308 Run side:lab_fire14_6
+?call SpellLab308 Run top:lab_fire14_6
+?call SwingProbe308 Run fx
+sleep 1.5
+?call SpellLab308 Run shot:lab_fire14_7
+?call SpellLab308 Run side:lab_fire14_7
+?call SpellLab308 Run top:lab_fire14_7
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

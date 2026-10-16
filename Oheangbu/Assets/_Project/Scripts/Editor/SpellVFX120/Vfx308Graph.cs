@@ -216,8 +216,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var road = Block(init, "PositionShape", ("shape", "OrientedBox"), ("compositionPosition", "Overwrite"), ("positionMode", "Volume"));
             Space(road, "Box", "Local");
             // fire11: the probe put the host on the floor (59.80), so the .2 lift only floated the marks; just clear of z-fighting
-            PutPath(road, "Box", "center", new Vector3(0f, .05f, 3.8f));
-            PutPath(road, "Box", "size", new Vector3(1.8f, 0f, 6f));
+            // fire14: centres from 2.0 m (was .8) - a streak reaches ~1.1 m back from its centre (head end toward the caster), and
+            // in fire13 the first ones lay behind the caster and blurred across the bottom of the behind view
+            PutPath(road, "Box", "center", new Vector3(0f, .05f, 4.3f));
+            PutPath(road, "Box", "size", new Vector3(1.8f, 0f, 4.6f));
             // fire10: frame 3's road marks are dragged streaks along the cast, not round blots - stretched along local Y (= forward)
             var drag = Block(init, "SetAttribute", ("attribute", "scale"), ("Composition", "Overwrite"), ("Random", "Uniform"), ("channels", "Y"));
             Put(drag, "A", 2.2f); Put(drag, "B", 3.4f);   // fire11: the drag sheet's streaks are narrow in the cel - longer on the road

@@ -218,7 +218,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var (v, so) = RoleHost(root, e, "ScorchVfx", NaScorchGraph, "drag", new Vector2(4f, 4f));
             if (v == null) return false;
             float life = 3.5f * a.Slow;
-            SetF(so, "Spawn Rate", 90f * a.Dense);   // fewer, longer marks than fire10's 260 blots
+            SetF(so, "Spawn Rate", 160f * a.Dense);   // fire14: the streaks are a third as wide (sheet alpha .17 -> .06), so more of them
             SetV3(so, "Initial Velocity_vector", Vector3.zero);
             SetF(so, "Initial Velocity Divergence", 0f);
             SetF(so, "Drag", 0f);
