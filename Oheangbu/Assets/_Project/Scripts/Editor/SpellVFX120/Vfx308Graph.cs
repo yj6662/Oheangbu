@@ -212,16 +212,18 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var line = Block(init, "PositionShape", ("shape", "Line"), ("compositionPosition", "Overwrite"));
             Space(line, "line", "Local");
-            PutPath(line, "line", "start", new Vector3(0f, .2f, .8f));   // fire10: .12 still drew nothing readable (42 alive) - lifted again
-            PutPath(line, "line", "end", new Vector3(0f, .2f, 6.8f));
+            // fire11: the probe put the host on the floor (59.80), so the .2 lift only floated the marks; just clear of z-fighting
+            PutPath(line, "line", "start", new Vector3(0f, .05f, .8f));
+            PutPath(line, "line", "end", new Vector3(0f, .05f, 6.8f));
             var side = Block(init, "SetAttribute", ("attribute", "position"), ("Composition", "Add"), ("Random", "PerComponent"));
             Space(side, "A", "Local"); Space(side, "B", "Local");
-            Put(side, "A", new Vector3(-.7f, 0f, 0f)); Put(side, "B", new Vector3(.7f, 0f, 0f));
+            Put(side, "A", new Vector3(-.9f, 0f, 0f)); Put(side, "B", new Vector3(.9f, 0f, 0f));
             // fire10: frame 3's road marks are dragged streaks along the cast, not round blots - stretched along local Y (= forward)
             var drag = Block(init, "SetAttribute", ("attribute", "scale"), ("Composition", "Overwrite"), ("Random", "Uniform"), ("channels", "Y"));
-            Put(drag, "A", 1.8f); Put(drag, "B", 2.8f);
-            var first = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"));
-            Put(first, "_TexIndex", 0f);
+            Put(drag, "A", 2.2f); Put(drag, "B", 3.4f);   // fire11: the drag sheet's streaks are narrow in the cel - longer on the road
+            // fire11: one of the drag sheet's 16 streaks per particle, held for its whole life (the host's flipbook rate is 0)
+            var pick = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("Random", "Uniform"));
+            Put(pick, "A", 0f); Put(pick, "B", 15.99f);
             var o = Orient(output); Setting(o, "mode", "Advanced");
             Space(o, "AxisZ", "Local"); Space(o, "AxisY", "Local");
             Put(o, "AxisZ", Vector3.up); Put(o, "AxisY", Vector3.forward);

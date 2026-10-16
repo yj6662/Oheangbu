@@ -37,6 +37,10 @@ SHEETS = {
     # 9th pass: the DiscSmoke cels were a narrow flat-bottomed blob filling a quarter of the cel -> the column read as a strip of
     # rectangles (lab_fire8). Replaced by a procedural soft puff: round, warped, faded to zero on every side, thinning as it ages
     'puff': (None, 8, 8, 'puff'),
+    # 11th pass: the scorch blots were round mid-grey washes that sank into the sepia ground and, spun at random, never ran along
+    # the road (lab_fire10). Concept D frame 3's road marks are dark dragged brush streaks with red in their wet heads: 16 streak
+    # variants, one per cel, each held for the particle's whole life (texIndex picked at birth, no flipbook play)
+    'drag': (None, 4, 4, 'drag'),
 }
 ASH = np.array([.30, .27, .24])           # thin soot, the lightest tone of the column
 
@@ -108,7 +112,7 @@ def soot(a, heat, streak, cs, tipw=1.15):
 
 def make(name):
     src, cx, cy, style = SHEETS[name]
-    if style in ('curl', 'column', 'scorch', 'puff'):
+    if style in ('curl', 'column', 'scorch', 'puff', 'drag'):
         return make_role(name, src, cx, cy, style)
     img = np.asarray(Image.open(CC0 / src).convert('RGBA'), np.float32) / 255
     h, w = img.shape[:2]
@@ -157,6 +161,8 @@ def make_role(name, src, cx, cy, style):
     a plain colour 4 x 4 sheet: a red-ink heart that dries to soot over the 16 cels"""
     if style == 'puff':
         return make_puff(name)
+    if style == 'drag':
+        return make_drag(name)
     if style == 'scorch':
         img = np.asarray(Image.open(GAME / 'T_V308b_ink_splat.png').convert('RGBA'), np.float32) / 255
         h, w = img.shape[:2]
@@ -237,6 +243,43 @@ def make_puff(name, S=256, n=8):
     dst = GAME / f'T_V308b_fire_{name}_vfx.png'
     Image.fromarray(out, 'RGBA').save(dst)
     print('SHEET fire', name, '8x8 procedural', out.shape[1], out.shape[0], 'alpha mean %.3f' % float(sq[..., 3].mean()), dst.name)
+
+def make_drag(name, S=256, n=4):
+    """16 dragged brush streaks laid along the cel's vertical (= the cast direction once the quad lies on the road, local Y
+    forward): a pressed ink head at the cel's bottom with wet red pigment in it, a body that thins and splits into dry-brush
+    hairs toward the top, a slight wander; zero on every cel border"""
+    yy, xx = (np.mgrid[0:S, 0:S] + .5) / S                                  # 0..1, y down (row 0 = cel top = the streak's far end)
+    sq = np.zeros((S * n, S * n, 4), np.float32)
+    for k in range(n * n):
+        rng = np.random.default_rng(100 + k)
+        top, bot = .06 + .12 * rng.random(), .8 + .04 * rng.random()        # the streak's own length inside the cel
+        u = np.clip((bot - yy) / (bot - top), 0, 1)                         # 0 head .. 1 tail along the streak
+        cx = .5 + .06 * (rng.random() - .5) + .05 * np.sin(u * (1.5 + 1.5 * rng.random()) + rng.random() * 6.28) * u
+        w0 = .07 + .045 * rng.random()                                      # narrow: wide cels read as broom stubs, not drags
+        # flat brush: even width over the first half, then the hairs splay a little and taper; the head end rounded (a pressed
+        # brush tip, not a cut)
+        wid = w0 * (1 - .35 * smooth(.45, 1.0, u)) * np.sqrt(np.clip((bot + .02 - yy) / .06, 0, 1))
+        d = np.abs(xx - cx) / np.maximum(wid, 1e-3)
+        inside = (yy > top - .02) * (1 - smooth(.9, 1.0, u)) * (yy < bot + .02)
+        body = 1 - smooth(.75, 1.0, d)
+        hair = bristles(S, S, S, 40 + k)                                    # streaks along y = the drag direction
+        brk = lowfreq(S, S, 5, 500 + k)                                     # the hairs lift off in patches, not all at once
+        dry = np.clip(smooth(.3, 1.15, u) + .35 * (brk - .5), 0, 1)          # the brush runs dry toward the tail
+        body *= 1 - smooth(.3, .8, dry * (1.25 - hair))
+        body *= 1 - .4 * smooth(.55, 1.0, d) * (1 - hair)                   # ragged rim
+        alpha = np.clip(body * inside * (.95 - .2 * u), 0, 1)
+        blob = smooth(.0, .22, .22 - u) * (1 - smooth(.3, .8, d))          # the pressed head
+        mott = lowfreq(S, S, 7, 300 + k)
+        wet = np.clip(blob * smooth(.35, .7, mott) * 1.4 + .35 * smooth(.6, .85, mott) * (1 - u) * (1 - d), 0, 1)
+        col = INK[None, None] * (1 - wet[..., None]) + (DEEP * .6 + VERMILION * .4)[None, None] * wet[..., None]
+        col = col * (1 - .25 * dry[..., None]) + SOOT[None, None] * (.25 * dry[..., None])
+        edge = 1 - smooth(.86, .98, np.maximum(np.abs(xx - .5), np.abs(yy - .5)) * 2)
+        R, C = divmod(k, n)
+        sq[R * S:(R + 1) * S, C * S:(C + 1) * S] = np.concatenate([col, (alpha * edge)[..., None]], -1)
+    out = (np.clip(sq, 0, 1) * 255 + .5).astype(np.uint8)
+    dst = GAME / f'T_V308b_fire_{name}_vfx.png'
+    Image.fromarray(out, 'RGBA').save(dst)
+    print('SHEET fire', name, '4x4 procedural streaks', out.shape[1], out.shape[0], 'alpha mean %.3f' % float(sq[..., 3].mean()), dst.name)
 
 
 if __name__ == '__main__':

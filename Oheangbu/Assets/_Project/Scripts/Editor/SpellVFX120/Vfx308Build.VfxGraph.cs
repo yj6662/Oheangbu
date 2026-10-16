@@ -210,22 +210,24 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return true;
         }
 
-        // ⓑ the scorched road (scorch sheet 4x4: wet vermilion heart drying to soot): flat blots from the caster to the target
+        // ⓑ the scorched road: dark dragged brush streaks with wet red in their heads, laid along the cast from the caster to the
+        // target. fire11 (user 2026-10-16 "길 자국만 더 손봄" after lab_fire10: the scorch sheet's round grey blots sank into the
+        // ground and, spun 0-360, never ran along the road): drag sheet 4x4, one streak variant per particle, yaw only +-12
         static bool ScorchGraph(Transform root, Elem e, Atk a)
         {
-            var (v, so) = RoleHost(root, e, "ScorchVfx", NaScorchGraph, "scorch", new Vector2(4f, 4f));
+            var (v, so) = RoleHost(root, e, "ScorchVfx", NaScorchGraph, "drag", new Vector2(4f, 4f));
             if (v == null) return false;
             float life = 3.5f * a.Slow;
-            SetF(so, "Spawn Rate", 260f * a.Dense);   // fire10: 42 alive left gaps along 6 m
+            SetF(so, "Spawn Rate", 90f * a.Dense);   // fewer, longer marks than fire10's 260 blots
             SetV3(so, "Initial Velocity_vector", Vector3.zero);
             SetF(so, "Initial Velocity Divergence", 0f);
             SetF(so, "Drag", 0f);
             SetV3(so, "Global Force_vector", Vector3.zero);
-            SetV2(so, "Angle Min/Max", new Vector2(0f, 360f));
-            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 1.4f * a.Big), new Keyframe(.15f, 2.2f * a.Big), new Keyframe(1f, 2.6f * a.Big)));
-            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .04f, .75f, .95f));
+            SetV2(so, "Angle Min/Max", new Vector2(-12f, 12f));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, .9f * a.Big), new Keyframe(.15f, 1.1f * a.Big), new Keyframe(1f, 1.2f * a.Big)));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .04f, .8f, .95f));
             SetF(so, "LifeTime", life);
-            SetF(so, "Flipbook Framerate", 16f / (life * 1.1f));   // the 16 cels once: wet -> dried, never wrapping back to wet
+            SetF(so, "Flipbook Framerate", 0f);   // the cel picked at birth stays: each streak is its own drawing, not a sequence
             SetV3(so, "Bounds_center", new Vector3(0f, .5f, 3.8f));   // the streaks reach ~3.6 m along the road past each end
             SetV3(so, "Bounds_size", new Vector3(5f, 2f, 13f));
             so.ApplyModifiedPropertiesWithoutUndo();
