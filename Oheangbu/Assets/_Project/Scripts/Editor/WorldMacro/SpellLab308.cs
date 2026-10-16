@@ -22,7 +22,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   play    open LabScene and enter Play directly (no lobby)
     //   status  edit / running | waiting / running | holding
     //   shot:<name>  Game view still into Art/Playtest306/Checks;  side:<name>  the same moment from 9 m off the caster's right,
-    //   looking across the firing line (depth along the line is invisible from behind);  stop  leave Play
+    //   looking across the firing line (depth along the line is invisible from behind);  top:<name>  from 11 m up behind the
+    //   caster looking down the line (ground marks foreshorten to nothing from the low views);  stop  leave Play
     public static class SpellLab308
     {
         public const string LabScene = "Assets/_Project/Scenes/Dev/SpellLab308.unity";
@@ -46,7 +47,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             {
                 string c = (command ?? "").Trim();
                 if (c.StartsWith("shot:", StringComparison.Ordinal)) return Shot(c.Substring(5));
-                if (c.StartsWith("side:", StringComparison.Ordinal)) return Side(c.Substring(5));
+                if (c.StartsWith("side:", StringComparison.Ordinal)) return Side(c.Substring(5), false);
+                if (c.StartsWith("top:", StringComparison.Ordinal)) return Side(c.Substring(4), true);
                 switch (c)
                 {
                     case "build": return Build();
@@ -55,7 +57,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "stop": if (!EditorApplication.isPlaying) return "stop: not playing"; EditorApplication.isPlaying = false; return "stop: leaving Play";
                     // re-read Packages/manifest.json without window focus (an unfocused editor does not notice a manifest edit)
                     case "resolve": UnityEditor.PackageManager.Client.Resolve(); return "resolve: requested";
-                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | stop | resolve";
+                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | stop | resolve";
                 }
             }
             catch (Exception e)
@@ -242,7 +244,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         // a side still: a throw-away copy of the main camera 9 m to the caster's right, aimed at the line 5 m ahead, rendered once
-        static string Side(string name)
+        static string Side(string name, bool top)
         {
             if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
             var walker = Object.FindFirstObjectByType<WorldMacroCombatWalker>();
@@ -250,7 +252,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (walker == null || walker.Body == null || main == null) return "refused: no walker body / main camera";
             var body = walker.Body.transform;
             Vector3 fwd = Vector3.ProjectOnPlane(body.forward, Vector3.up).normalized, right = Vector3.Cross(Vector3.up, fwd);
-            Vector3 aim = body.position + fwd * 5f + Vector3.up, eye = aim + right * 9f + Vector3.up * 1.5f;
+            Vector3 aim = body.position + fwd * 5f + Vector3.up, eye = top ? body.position - fwd * 2f + Vector3.up * 11f : aim + right * 9f + Vector3.up * 1.5f;
             var go = new GameObject("Lab_SideCam") { hideFlags = HideFlags.HideAndDontSave };
             var rt = new RenderTexture(1600, 900, 24);
             var tex = new Texture2D(1600, 900, TextureFormat.RGB24, false);
@@ -267,9 +269,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                 RenderTexture.active = was;
                 string folder = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/Playtest306/Checks"));
                 Directory.CreateDirectory(folder);
-                string file = Path.Combine(folder, name + "_side.png");
+                string file = Path.Combine(folder, name + (top ? "_top.png" : "_side.png"));
                 File.WriteAllBytes(file, tex.EncodeToPNG());
-                return "side " + file + " | t " + Time.time.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                return (top ? "top " : "side ") + file + " | t " + Time.time.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
             }
             finally { Object.DestroyImmediate(go); Object.DestroyImmediate(tex); rt.Release(); Object.DestroyImmediate(rt); }
         }

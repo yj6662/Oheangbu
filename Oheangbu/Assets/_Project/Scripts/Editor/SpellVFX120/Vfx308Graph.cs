@@ -210,14 +210,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // scorch sheet's 16 cels from its first one
         static string GraphBuildScorch() => GraphBuildAt(NaScorchGraph, 200u, (init, update, output) =>
         {
-            var line = Block(init, "PositionShape", ("shape", "Line"), ("compositionPosition", "Overwrite"));
-            Space(line, "line", "Local");
+            // fire13: one flat box over the road, 1.8 m wide from .8 to 6.8 m. fire11-12 used a line plus a "position Add" of
+            // +-.9 in Local space - a position-typed slot converts with the host's translation too, so every streak was added the
+            // host's world position again and drawn kilometres away (27 alive, none on screen)
+            var road = Block(init, "PositionShape", ("shape", "OrientedBox"), ("compositionPosition", "Overwrite"), ("positionMode", "Volume"));
+            Space(road, "Box", "Local");
             // fire11: the probe put the host on the floor (59.80), so the .2 lift only floated the marks; just clear of z-fighting
-            PutPath(line, "line", "start", new Vector3(0f, .05f, .8f));
-            PutPath(line, "line", "end", new Vector3(0f, .05f, 6.8f));
-            var side = Block(init, "SetAttribute", ("attribute", "position"), ("Composition", "Add"), ("Random", "PerComponent"));
-            Space(side, "A", "Local"); Space(side, "B", "Local");
-            Put(side, "A", new Vector3(-.9f, 0f, 0f)); Put(side, "B", new Vector3(.9f, 0f, 0f));
+            PutPath(road, "Box", "center", new Vector3(0f, .05f, 3.8f));
+            PutPath(road, "Box", "size", new Vector3(1.8f, 0f, 6f));
             // fire10: frame 3's road marks are dragged streaks along the cast, not round blots - stretched along local Y (= forward)
             var drag = Block(init, "SetAttribute", ("attribute", "scale"), ("Composition", "Overwrite"), ("Random", "Uniform"), ("channels", "Y"));
             Put(drag, "A", 2.2f); Put(drag, "B", 3.4f);   // fire11: the drag sheet's streaks are narrow in the cel - longer on the road

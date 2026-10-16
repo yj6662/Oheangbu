@@ -255,7 +255,10 @@ def make_drag(name, S=256, n=4):
         top, bot = .06 + .12 * rng.random(), .8 + .04 * rng.random()        # the streak's own length inside the cel
         u = np.clip((bot - yy) / (bot - top), 0, 1)                         # 0 head .. 1 tail along the streak
         cx = .5 + .06 * (rng.random() - .5) + .05 * np.sin(u * (1.5 + 1.5 * rng.random()) + rng.random() * 6.28) * u
-        w0 = .07 + .045 * rng.random()                                      # narrow: wide cels read as broom stubs, not drags
+        # fire12: .07-.115 was 8-13 cm on the road and vanished past 6 m; wide again, but the width split into parallel hair
+        # strands (the cure for the broom-stub look is the split, not narrowness)
+        w0 = .2 + .08 * rng.random()
+        m = 2 + int(rng.integers(0, 3))                                     # 2-4 strands across the brush
         # flat brush: even width over the first half, then the hairs splay a little and taper; the head end rounded (a pressed
         # brush tip, not a cut)
         wid = w0 * (1 - .35 * smooth(.45, 1.0, u)) * np.sqrt(np.clip((bot + .02 - yy) / .06, 0, 1))
@@ -264,13 +267,19 @@ def make_drag(name, S=256, n=4):
         body = 1 - smooth(.75, 1.0, d)
         hair = bristles(S, S, S, 40 + k)                                    # streaks along y = the drag direction
         brk = lowfreq(S, S, 5, 500 + k)                                     # the hairs lift off in patches, not all at once
+        mott = lowfreq(S, S, 7, 300 + k)
         dry = np.clip(smooth(.3, 1.15, u) + .35 * (brk - .5), 0, 1)          # the brush runs dry toward the tail
         body *= 1 - smooth(.3, .8, dry * (1.25 - hair))
         body *= 1 - .4 * smooth(.55, 1.0, d) * (1 - hair)                   # ragged rim
+        # strands across the width, uneven (the phase wanders with the patch noise) and broken by the hairs - even lanes read as a comb
+        lane = .5 + .5 * np.cos(np.pi * m * np.clip(d, 0, 1) * (1 + .3 * (brk - .5)) + 1.2 * (mott - .5) + rng.random() * .6)
+        split = smooth(.25, .7, u)                                          # one pressed head, strands open toward the dry tail
+        body *= 1 - split * smooth(.55, .9, 1 - lane) * (.55 + .45 * hair)
         alpha = np.clip(body * inside * (.95 - .2 * u), 0, 1)
         blob = smooth(.0, .22, .22 - u) * (1 - smooth(.3, .8, d))          # the pressed head
         mott = lowfreq(S, S, 7, 300 + k)
-        wet = np.clip(blob * smooth(.35, .7, mott) * 1.4 + .35 * smooth(.6, .85, mott) * (1 - u) * (1 - d), 0, 1)
+        # fire12: the full red heads read as stray embers on the road; dark ink with only a little pigment left in the head
+        wet = .45 * np.clip(blob * smooth(.35, .7, mott) * 1.4 + .35 * smooth(.6, .85, mott) * (1 - u) * (1 - d), 0, 1)
         col = INK[None, None] * (1 - wet[..., None]) + (DEEP * .6 + VERMILION * .4)[None, None] * wet[..., None]
         col = col * (1 - .25 * dry[..., None]) + SOOT[None, None] * (.25 * dry[..., None])
         edge = 1 - smooth(.86, .98, np.maximum(np.abs(xx - .5), np.abs(yy - .5)) * 2)
