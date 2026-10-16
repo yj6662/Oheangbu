@@ -49,6 +49,8 @@ namespace Oheangbu.App.World
         int soak = -1;
         Color soakPigment;
         float inkK = 1f;
+        // D308-91 (11.35): the row's max and reach with this motion's additions, fixed once per cast
+        float soakMax, soakReach;
         readonly List<Sample> samples = new List<Sample>(96);
         readonly List<Vector3> vertices = new List<Vector3>(192);
         readonly List<Vector2> uvs = new List<Vector2>(192);
@@ -206,7 +208,9 @@ namespace Oheangbu.App.World
             if (soak >= 0)
             {
                 var row = Profile.Soaks[soak];
-                inkK = row.AgingAfterApex;
+                inkK = Mathf.Max(.1f, row.AgingAfterApex * (1f - Mathf.Clamp(e.SoakLinger, 0f, .9f)));
+                soakMax = Mathf.Clamp01(row.Max + Mathf.Max(0f, e.SoakMaxAdd));
+                soakReach = row.Reach + Mathf.Max(0f, e.SoakReachAdd);
                 soakPigment = QualitySettings.activeColorSpace == ColorSpace.Linear ? row.Pigment.linear : row.Pigment;   // vertex colours are not converted
             }
             else inkK = 1f;
@@ -280,7 +284,7 @@ namespace Oheangbu.App.World
             if (soak < 0 || Profile.Soaks == null || soak >= Profile.Soaks.Length || now <= apexAt) return default;
             var row = Profile.Soaks[soak];
             float progress = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((now - apexAt) / row.Seconds));
-            return new SoakFront { On = true, ApexAt = apexAt, Front = (row.Reach + row.Soft) * progress, Soft = row.Soft, Max = Mathf.Clamp01(row.Max), Pigment = soakPigment };
+            return new SoakFront { On = true, ApexAt = apexAt, Front = (soakReach + row.Soft) * progress, Soft = row.Soft, Max = soakMax, Pigment = soakPigment };
         }
 
         void AtApex(Vector3 tip)

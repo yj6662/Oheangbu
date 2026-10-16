@@ -39,6 +39,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             public string State; public float Width, Seconds, VisualApex, Follow, Apex;     // Apex: the rule's apex (pose only)
             public float Streaks = 14f, Dry = .85f;
+            public float SoakMaxAdd, SoakReachAdd, SoakLinger;     // D308-91 (11.35) [TEST]: this motion's soak on top of the row
             public Func<Swing, GameObject> Body;
         }
 
@@ -46,7 +47,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             new Swing { State = "SwingSweep", Width = .17f, Seconds = .60f, Follow = .10f, Apex = .40f, Body = SweepInk },
             new Swing { State = "SwingArc", Width = .24f, Seconds = .75f, Follow = .12f, Apex = .65f, Streaks = 11f, Body = ArcInk },
-            new Swing { State = "SwingSlam", Width = .14f, Seconds = .40f,   /* sw_w: .2 / .6 - the far strike arc crossed the view */ Follow = .05f, Apex = .65f, Body = SlamInk },
+            // D308-91 (11.35) [TEST]: soak21 - the slam arc stood edge-on to the camera and its pigment showed only in a tip-end
+            // piece for +.08 - +.12 s (모 · 오); user "내리치기만 스밈 보강". The whole live arc soaks, stronger and longer
+            new Swing { State = "SwingSlam", Width = .14f, Seconds = .40f,   /* sw_w: .2 / .6 - the far strike arc crossed the view */ Follow = .05f, Apex = .65f, Body = SlamInk,
+                SoakMaxAdd = .2f, SoakReachAdd = .15f, SoakLinger = .3f },
             new Swing { State = "SwingPlant", Width = .18f, Seconds = .42f, VisualApex = .12f, Follow = .06f, Dry = .7f, Body = PlantInk },
             new Swing { State = "SwingDraw", Width = .1f, Seconds = .90f, VisualApex = .22f, Follow = .30f, Streaks = 18f, Dry = 1f, Body = DrawInk },
             // D308-84: the far single throw. Play sw_m: the sweep's thrown sheets, flung straight ahead from head height, stretched
@@ -197,9 +201,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, SwingPrefabPath(s));
                 Object.DestroyImmediate(root);
-                entries.Add(new SwingInk308Profile.Entry { State = s.State, Prefab = prefab, Stroke = SwingStroke(s), StrokeWidth = s.Width, StrokeSeconds = s.Seconds, VisualApexSeconds = s.VisualApex, FollowAfterApex = s.Follow });
+                entries.Add(new SwingInk308Profile.Entry { State = s.State, Prefab = prefab, Stroke = SwingStroke(s), StrokeWidth = s.Width, StrokeSeconds = s.Seconds, VisualApexSeconds = s.VisualApex, FollowAfterApex = s.Follow,
+                    SoakMaxAdd = s.SoakMaxAdd, SoakReachAdd = s.SoakReachAdd, SoakLinger = s.SoakLinger });
                 sb.AppendLine(s.State + " -> " + SwingPrefabPath(s) + "  stroke " + s.Width.ToString("0.00", CultureInfo.InvariantCulture) + " m / " + s.Seconds.ToString("0.00", CultureInfo.InvariantCulture) + " s, particles <= " +
-                    prefab.GetComponentsInChildren<ParticleSystem>(true).Sum(p => p.main.maxParticles));
+                    prefab.GetComponentsInChildren<ParticleSystem>(true).Sum(p => p.main.maxParticles)
+                    + (s.SoakMaxAdd > 0f || s.SoakReachAdd > 0f || s.SoakLinger > 0f
+                        ? ", soak +max " + s.SoakMaxAdd.ToString("0.00", CultureInfo.InvariantCulture) + " +reach " + s.SoakReachAdd.ToString("0.00", CultureInfo.InvariantCulture) + " linger " + s.SoakLinger.ToString("0.00", CultureInfo.InvariantCulture)
+                        : ""));
             }
             var profile = AssetDatabase.LoadAssetAtPath<SwingInk308Profile>(SwingProfilePath);
             if (profile == null) { profile = ScriptableObject.CreateInstance<SwingInk308Profile>(); AssetDatabase.CreateAsset(profile, SwingProfilePath); }
@@ -220,6 +228,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         const string SoakProfiles = "Assets/_Project/Art/SpellVFX120/Profiles";
         const string SoakProfilesV2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
         const float SoakMax = .75f, SoakSeconds = .28f, SoakReach = .35f, SoakSoft = .08f, SoakAging = .55f;
+        // D308-91 (11.35) [TEST]: soak21 - the metal pigment #A6B0AD over black ink read as pale dry ink; user "금만 진하게".
+        // Metal rows only: the pigment darker (sRGB x .7, hue kept, alpha kept) and soaking further
+        const float MetalDarken = .7f, MetalMax = .9f;
 
         static bool SoakElement(char glyph, out Oheangbu.Core.Domain.Element element)
         {
@@ -275,8 +286,16 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     var p = pigments[k];
                     string letters = k == 0 ? "" : new string(p.Members.Select(x => x.Glyph).ToArray());
                     var row = new SwingInk308Profile.Soak { Element = byElement.Key, Letters = letters, Pigment = p.Members[0].Pigment, Max = SoakMax, Seconds = SoakSeconds, Reach = SoakReach, Soft = SoakSoft, AgingAfterApex = SoakAging };
+                    bool metal = byElement.Key == Oheangbu.Core.Domain.Element.Metal;
+                    if (metal)
+                    {
+                        var c = row.Pigment;
+                        row.Pigment = new Color(c.r * MetalDarken, c.g * MetalDarken, c.b * MetalDarken, c.a);
+                        row.Max = MetalMax;
+                    }
                     (k == 0 ? elementRows : letterRows).Add(row);
                     lines.Add((k == 0 ? "element " : "letters ") + byElement.Key + " " + (k == 0 ? "*" : letters) + " #" + ColorUtility.ToHtmlStringRGB(row.Pigment) + " x" + p.Members.Count
+                        + (metal ? " (metal x" + MetalDarken.ToString("0.00", CultureInfo.InvariantCulture) + " from #" + ColorUtility.ToHtmlStringRGB(p.Members[0].Pigment) + ", max " + MetalMax.ToString("0.00", CultureInfo.InvariantCulture) + ")" : "")
                         + (row.Usable ? "" : " (NOT usable - skipped at runtime)"));
                 }
             }
@@ -285,7 +304,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 sb.AppendLine("soak " + s);
             sb.AppendLine("soak rows " + profile.Soaks.Length + " (" + letterRows.Count + " letter + " + elementRows.Count + " element) from " + found.Count + "/" + files.Length + " profiles, max "
                 + SoakMax.ToString("0.00", CultureInfo.InvariantCulture) + " over " + SoakSeconds.ToString("0.00", CultureInfo.InvariantCulture) + " s, reach " + SoakReach.ToString("0.00", CultureInfo.InvariantCulture)
-                + ", aging x" + SoakAging.ToString("0.00", CultureInfo.InvariantCulture) + ", warnings " + warnings);
+                + ", aging x" + SoakAging.ToString("0.00", CultureInfo.InvariantCulture)
+                + ", metal x" + MetalDarken.ToString("0.00", CultureInfo.InvariantCulture) + " max " + MetalMax.ToString("0.00", CultureInfo.InvariantCulture) + ", warnings " + warnings);
         }
 
         static void ClearSwingPose()

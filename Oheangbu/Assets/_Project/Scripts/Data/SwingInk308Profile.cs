@@ -29,6 +29,13 @@ namespace Oheangbu.Data.Spell
             [Min(0)] public float VisualApexSeconds;
             [Tooltip("정점 뒤에도 붓끝을 따라가며 먹을 뿌리는 시간(초).")]
             [Min(0)] public float FollowAfterApex;
+            // D308-91 (11.35) [TEST]: this motion's soak on top of the cast's Soak row. 0 = the row as it is (old assets read 0)
+            [Tooltip("이 동작에서 스밈 최대 비율에 더하는 값(0 = 그대로).")]
+            [Range(0, 1)] public float SoakMaxAdd;
+            [Tooltip("이 동작에서 스밈이 꼬리 쪽으로 닿는 길이에 더하는 값(획 시간, 초. 0 = 그대로).")]
+            [Min(0)] public float SoakReachAdd;
+            [Tooltip("이 동작에서 정점 뒤 마름을 늦추는 정도(마름 배율 x (1 - 값), 0 = 그대로).")]
+            [Range(0, .9f)] public float SoakLinger;
         }
 
         public Entry[] States = Array.Empty<Entry>();
