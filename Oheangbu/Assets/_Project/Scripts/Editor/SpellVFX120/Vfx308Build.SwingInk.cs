@@ -19,7 +19,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
     // no new texture. One prefab per swing state with the parts SwingInk308 moves: "Tip" follows the brush tip, "Apex" is
     // placed at the tip when the swing peaks, "Ground" on the ground under it. Ink colour only: the element's pigment
     // belongs to the spell that comes out of this ink, not to the ink - until the apex: from there D308-90 lets the
-    // spell's pigment soak into the swung arc (SwingInk308Profile.Soaks, written here from the letter's own profile).
+    // spell's pigment soak into the swung arc (SwingInk308Profile.Soaks, written here for all 120 letters from each one's
+    // own profile).
     //
     //   swingink                    build the five prefabs, their materials and Resources/SwingInk308/SwingInk308Profile (= on)
     //   swingink:off                delete the Resources profile (= off; the prefabs stay)
@@ -210,35 +211,81 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return sb.ToString();
         }
 
-        // D308-90 (11.34 20th pass) [every number TEST]: from the apex on, the swung arc takes the spell's pigment, tip first,
-        // and stays a little longer. One row per letter that has it (노 first); the pigment is read off that letter's own
-        // profile, so the arc and the spell match. A missing profile leaves the rows already there (and says so).
-        static readonly (string Glyph, Oheangbu.Core.Domain.Element Element, float Max, float Seconds, float Reach, float Soft, float Aging)[] SoakRows =
+        // D308-90 (11.34 20th / 21st pass) [every number TEST]: from the apex on, the swung arc takes the spell's pigment, tip
+        // first, and stays a little longer. All 120 letters at once (user "전 술식 한 번에"), every row with 노's numbers.
+        // The pigment comes from each letter's own original profile (SpellVFX120/Profiles, NNN_HHHH.asset): per element the
+        // most common pigment is the element row (Letters empty), every other pigment is a letter row listing its letters.
+        // SoakFor takes the first match, so letter rows go before the element rows. No row at all leaves the rows already
+        // there (and says so).
+        const string SoakProfiles = "Assets/_Project/Art/SpellVFX120/Profiles";
+        const string SoakProfilesV2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
+        const float SoakMax = .75f, SoakSeconds = .28f, SoakReach = .35f, SoakSoft = .08f, SoakAging = .55f;
+
+        static bool SoakElement(char glyph, out Oheangbu.Core.Domain.Element element)
         {
-            ("노", Oheangbu.Core.Domain.Element.Fire, .75f, .28f, .35f, .08f, .55f),
-        };
+            element = default;
+            int o = glyph - 0xAC00;
+            if (o < 0 || o >= 11172) return false;
+            switch (o / 588)     // the initial consonant: 0 ㄱ, 2 ㄴ, 6 ㅁ, 9 ㅅ, 11 ㅇ (= the vocabulary CSV's 속성 for all 120 rows)
+            {
+                case 0: element = Oheangbu.Core.Domain.Element.Wood; return true;
+                case 2: element = Oheangbu.Core.Domain.Element.Fire; return true;
+                case 6: element = Oheangbu.Core.Domain.Element.Earth; return true;
+                case 9: element = Oheangbu.Core.Domain.Element.Metal; return true;
+                case 11: element = Oheangbu.Core.Domain.Element.Water; return true;
+                default: return false;
+            }
+        }
 
         static void SwingSoaks(SwingInk308Profile profile, StringBuilder sb)
         {
-            var rows = new List<SwingInk308Profile.Soak>();
-            foreach (var r in SoakRows)
+            var found = new List<(string Name, char Glyph, Oheangbu.Core.Domain.Element Element, Color Pigment)>();
+            string[] files = Directory.Exists(SoakProfiles) ? Directory.GetFiles(SoakProfiles, "*.asset").OrderBy(x => x, StringComparer.Ordinal).ToArray() : new string[0];
+            int warnings = 0;
+            void Warn(string s) { warnings++; Debug.LogWarning("Vfx308Build swingink: " + s); sb.AppendLine("soak warning: " + s); }
+            foreach (var file in files)
             {
-                var spell = Spells.FirstOrDefault(x => x.Glyph == r.Glyph);
-                var atk = Attack.FirstOrDefault(x => x.Glyph == r.Glyph);
-                string path = spell != null ? ProfilePath(spell) : atk != null ? AttackProfilePath(atk) : null;
-                var source = path != null ? AssetDatabase.LoadAssetAtPath<Vfx120Profile>(path) : null;
-                if (source == null)
-                {
-                    Debug.LogWarning("Vfx308Build swingink: no profile for " + r.Glyph + " (" + path + ") - soak rows left as they were");
-                    sb.AppendLine("soak: no profile for " + r.Glyph + " (" + path + ") - soak rows left as they were");
-                    return;
-                }
-                var row = new SwingInk308Profile.Soak { Element = r.Element, Letters = r.Glyph, Pigment = source.Pigment, Max = r.Max, Seconds = r.Seconds, Reach = r.Reach, Soft = r.Soft, AgingAfterApex = r.Aging };
-                rows.Add(row);
-                sb.AppendLine("soak " + r.Glyph + " " + r.Element + " pigment #" + ColorUtility.ToHtmlStringRGB(source.Pigment) + " (" + path + ") max " + r.Max.ToString("0.00", CultureInfo.InvariantCulture)
-                    + " over " + r.Seconds.ToString("0.00", CultureInfo.InvariantCulture) + " s, aging x" + r.Aging.ToString("0.00", CultureInfo.InvariantCulture) + (row.Usable ? "" : " (NOT usable - skipped at runtime)"));
+                string name = Path.GetFileNameWithoutExtension(file);
+                string[] parts = name.Split('_');
+                if (parts.Length < 2 || !int.TryParse(parts[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int code)) { Warn("no glyph in the name " + name + " - skipped"); continue; }
+                char glyph = (char)code;
+                if (!SoakElement(glyph, out var element)) { Warn(name + " (" + glyph + ") has no five-element initial - skipped"); continue; }
+                string path = SoakProfiles + "/" + name + ".asset";
+                var source = AssetDatabase.LoadAssetAtPath<Vfx120Profile>(path);
+                if (source == null) { Warn("cannot read " + path + " - " + glyph + " falls to its element row"); continue; }
+                found.Add((name, glyph, element, source.Pigment));
+                var v2 = AssetDatabase.LoadAssetAtPath<Vfx120Profile>(SoakProfilesV2 + "/" + name + "_308b.asset");
+                if (v2 != null && ColorUtility.ToHtmlStringRGB(v2.Pigment) != ColorUtility.ToHtmlStringRGB(source.Pigment))
+                    Warn(glyph + ": the V2 copy " + name + "_308b has #" + ColorUtility.ToHtmlStringRGB(v2.Pigment) + ", the original #" + ColorUtility.ToHtmlStringRGB(source.Pigment) + " - the original is used");
             }
-            profile.Soaks = rows.ToArray();
+            if (files.Length != 120) Warn(files.Length + " profiles in " + SoakProfiles + " (expected 120)");
+            if (found.Count == 0) { Warn("no pigment read - soak rows left as they were"); return; }
+
+            var letterRows = new List<SwingInk308Profile.Soak>();
+            var elementRows = new List<SwingInk308Profile.Soak>();
+            var lines = new List<string>();
+            foreach (var byElement in found.GroupBy(x => x.Element).OrderBy(g => (int)g.Key))
+            {
+                // pigments as 8-bit colours, the most common first (ties: the one that turns up first in file order)
+                var pigments = byElement.GroupBy(x => ColorUtility.ToHtmlStringRGBA(x.Pigment))
+                    .Select((g, i) => (Hex: g.Key, Members: g.ToList(), First: i))
+                    .OrderByDescending(g => g.Members.Count).ThenBy(g => g.First).ToList();
+                for (int k = 0; k < pigments.Count; k++)
+                {
+                    var p = pigments[k];
+                    string letters = k == 0 ? "" : new string(p.Members.Select(x => x.Glyph).ToArray());
+                    var row = new SwingInk308Profile.Soak { Element = byElement.Key, Letters = letters, Pigment = p.Members[0].Pigment, Max = SoakMax, Seconds = SoakSeconds, Reach = SoakReach, Soft = SoakSoft, AgingAfterApex = SoakAging };
+                    (k == 0 ? elementRows : letterRows).Add(row);
+                    lines.Add((k == 0 ? "element " : "letters ") + byElement.Key + " " + (k == 0 ? "*" : letters) + " #" + ColorUtility.ToHtmlStringRGB(row.Pigment) + " x" + p.Members.Count
+                        + (row.Usable ? "" : " (NOT usable - skipped at runtime)"));
+                }
+            }
+            profile.Soaks = letterRows.Concat(elementRows).ToArray();
+            foreach (var s in lines.Where(x => x.StartsWith("letters ", StringComparison.Ordinal)).Concat(lines.Where(x => x.StartsWith("element ", StringComparison.Ordinal))))
+                sb.AppendLine("soak " + s);
+            sb.AppendLine("soak rows " + profile.Soaks.Length + " (" + letterRows.Count + " letter + " + elementRows.Count + " element) from " + found.Count + "/" + files.Length + " profiles, max "
+                + SoakMax.ToString("0.00", CultureInfo.InvariantCulture) + " over " + SoakSeconds.ToString("0.00", CultureInfo.InvariantCulture) + " s, reach " + SoakReach.ToString("0.00", CultureInfo.InvariantCulture)
+                + ", aging x" + SoakAging.ToString("0.00", CultureInfo.InvariantCulture) + ", warnings " + warnings);
         }
 
         static void ClearSwingPose()
