@@ -21,7 +21,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   build   open W_Demo_Main, drop every other root, add ground / distance posts / dummies / the unlock stand-in, save as LabScene
     //   play    open LabScene and enter Play directly (no lobby)
     //   status  edit / running | waiting / running | holding
-    //   shot:<name>  Game view still into Art/Playtest306/Checks;  stop  leave Play
+    //   shot:<name>  Game view still into Art/Playtest306/Checks;  side:<name>  the same moment from 9 m off the caster's right,
+    //   looking across the firing line (depth along the line is invisible from behind);  stop  leave Play
     public static class SpellLab308
     {
         public const string LabScene = "Assets/_Project/Scenes/Dev/SpellLab308.unity";
@@ -45,13 +46,14 @@ namespace Oheangbu.EditorTools.WorldMacro
             {
                 string c = (command ?? "").Trim();
                 if (c.StartsWith("shot:", StringComparison.Ordinal)) return Shot(c.Substring(5));
+                if (c.StartsWith("side:", StringComparison.Ordinal)) return Side(c.Substring(5));
                 switch (c)
                 {
                     case "build": return Build();
                     case "play": return Play();
                     case "status": return Status();
                     case "stop": if (!EditorApplication.isPlaying) return "stop: not playing"; EditorApplication.isPlaying = false; return "stop: leaving Play";
-                    default: return "SpellLab308: build | play | status | shot:<name> | stop";
+                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | stop";
                 }
             }
             catch (Exception e)
@@ -235,6 +237,39 @@ namespace Oheangbu.EditorTools.WorldMacro
             string file = Path.Combine(folder, name + "_" + Screen.width + "x" + Screen.height + ".png");
             ScreenCapture.CaptureScreenshot(file);
             return "capture requested " + file + " | quality " + QualitySettings.names[QualitySettings.GetQualityLevel()];
+        }
+
+        // a side still: a throw-away copy of the main camera 9 m to the caster's right, aimed at the line 5 m ahead, rendered once
+        static string Side(string name)
+        {
+            if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
+            var walker = Object.FindFirstObjectByType<WorldMacroCombatWalker>();
+            var main = Camera.main;
+            if (walker == null || walker.Body == null || main == null) return "refused: no walker body / main camera";
+            var body = walker.Body.transform;
+            Vector3 fwd = Vector3.ProjectOnPlane(body.forward, Vector3.up).normalized, right = Vector3.Cross(Vector3.up, fwd);
+            Vector3 aim = body.position + fwd * 5f + Vector3.up, eye = aim + right * 9f + Vector3.up * 1.5f;
+            var go = new GameObject("Lab_SideCam") { hideFlags = HideFlags.HideAndDontSave };
+            var rt = new RenderTexture(1600, 900, 24);
+            var tex = new Texture2D(1600, 900, TextureFormat.RGB24, false);
+            try
+            {
+                var cam = go.AddComponent<Camera>();
+                cam.CopyFrom(main);
+                cam.fieldOfView = 50f;
+                cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(aim - eye));
+                cam.targetTexture = rt;
+                cam.Render();
+                var was = RenderTexture.active; RenderTexture.active = rt;
+                tex.ReadPixels(new Rect(0, 0, 1600, 900), 0, 0); tex.Apply();
+                RenderTexture.active = was;
+                string folder = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/Playtest306/Checks"));
+                Directory.CreateDirectory(folder);
+                string file = Path.Combine(folder, name + "_side.png");
+                File.WriteAllBytes(file, tex.EncodeToPNG());
+                return "side " + file + " | t " + Time.time.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            finally { Object.DestroyImmediate(go); Object.DestroyImmediate(tex); rt.Release(); Object.DestroyImmediate(rt); }
         }
 
         static string Status()

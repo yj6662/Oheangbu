@@ -1,0 +1,52 @@
+# lab_fire1 (Spec 11.33 fire D, copy of lab_na + side stills): 노 in the spell test scene - no save seed, no tutorial skip, no teleport. Rebuild the
+# lab first (build, ~20 s; drop the line when the rig has not changed). 노 at the 6 m dummy, fx probe, 0.35x, 8 stills.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call SpellLab308 Run shot:lab_fire1_0
+?call SwingProbe308 Run fx
+sleep 0.10
+?call SpellLab308 Run shot:lab_fire1_1
+?call SwingProbe308 Run fx
+sleep 0.10
+?call SpellLab308 Run shot:lab_fire1_2
+?call SpellLab308 Run side:lab_fire1_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call SpellLab308 Run shot:lab_fire1_3
+?call SpellLab308 Run side:lab_fire1_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire1_4
+?call SpellLab308 Run side:lab_fire1_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire1_5
+?call SpellLab308 Run side:lab_fire1_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call SpellLab308 Run shot:lab_fire1_6
+?call SpellLab308 Run side:lab_fire1_6
+?call SwingProbe308 Run fx
+sleep 1.00
+?call SpellLab308 Run shot:lab_fire1_7
+?call SwingProbe308 Run fx
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

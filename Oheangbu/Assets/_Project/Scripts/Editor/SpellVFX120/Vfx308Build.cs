@@ -833,6 +833,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // (The billow spike, smoke308.py, read as red cartoon puffs - not used.)
             // pq_smoke: fire_lick's cels end in a straight root block at their left border = a card edge in game -> soot_wisp (smoke308.py wisp: that root faded out)
             // D308-88 (11.31): the VFX Graph smoke carries the spell when the graph is there; the soot sheet stays as the fallback
+            ConeFireGraph(root.transform, e, a);   // 11.33 fire D: red-pigment tongues on the same graph (fire element only, own graph only)
             if (ConeSmokeGraph(root.transform, e, a)) return root;
             var soot = e.Key == "na" ? Bleed("M_V308b_na_soot_wisp", "soot_wisp", C(e.Ink, .85f), .3f, .92f) : e.LickSoot;
             Layer(root.transform, new L { Name = "Soot", Mat = soot, Mode = 3, Rate = 42f * a.Dense, Max = Mathf.CeilToInt(18 * a.Dense), Life = new Vector2(1.0f, 1.4f) * a.Slow, Size = new Vector2(1.6f, 2.3f) * a.Big,
