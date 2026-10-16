@@ -126,6 +126,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             walkerGo.transform.SetParent(rig.transform, false);
             var walker = walkerGo.AddComponent<WorldMacroCombatWalker>();
             EditorUtility.CopySerialized(source, walker);
+            // the kept roots' links to the session walker would go missing with it: point them at the copy. The gesture rig's
+            // _walker is how the brush swing (SpellSwing308) and the swing ink (SwingInk308) reach the wiring's swing events -
+            // without this they never ran in the lab (fire1 - fire19 all logged clip StanceIdle, bridges 0)
+            int repointed = Repoint(keep, source, walker);
 
             int dropped = 0;
             foreach (var r in roots) if (r != null && !keep.Contains(r)) { Object.DestroyImmediate(r); dropped++; }   // a root's own teardown may take another with it
@@ -193,8 +197,30 @@ namespace Oheangbu.EditorTools.WorldMacro
             string after = Hash(Harness303.MainScene);
             return "build ok " + LabScene + " | kept " + kept + " | missing " + (missing.Count == 0 ? "-" : string.Join(",", missing)) +
                    " | dropped " + dropped + " roots | pointed-at (dropped) " + (pointed.Count == 0 ? "-" : string.Join(",", pointed)) +
+                   " | walker refs repointed " + repointed +
                    " | dummies " + vitals.Count + " wiring enemies " + enemies + " | rig turned " + (-yaw).ToString("F1") +
                    " | main hash " + before + " -> " + after + (before == after ? " (unchanged)" : " CHANGED");
+        }
+
+        // every serialized reference to `from` under the roots now names `to`; the count of fields changed
+        static int Repoint(IEnumerable<GameObject> roots, Object from, Object to)
+        {
+            int n = 0;
+            foreach (var root in roots)
+            foreach (var c in root.GetComponentsInChildren<Component>(true))
+            {
+                if (c == null || c == to) continue;   // a missing script shows up as null
+                var so = new SerializedObject(c);
+                var p = so.GetIterator();
+                bool changed = false;
+                while (p.Next(true))
+                {
+                    if (p.propertyType != SerializedPropertyType.ObjectReference || p.objectReferenceValue != from) continue;
+                    p.objectReferenceValue = to; changed = true; n++;
+                }
+                if (changed) so.ApplyModifiedPropertiesWithoutUndo();
+            }
+            return n;
         }
 
         // a failed build never leaves the cut main scene open (a later save there would write it)

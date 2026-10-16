@@ -381,7 +381,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // bank's 2.6 - so not scaled by Big, the bank's ring is fixed in its graph), spreading in over the first .12 of its life
         // and outliving the bank. fire19 (user 2026-10-16 "바닥에 먹자국만 지금의 5퍼센트 수준으로 ... 경계가 너무 뚜렷해서
         // 어색해", "자국도 불 따라 늦게"): peak alpha .05, the stainwipe sheet (stain_wipe19.py, 4x4, near -> far, last cel =
-        // the whole stain) run by the graph's texIndex curve, yaw only +-18 so the near side stays toward the caster
+        // the whole stain) run by the graph's texIndex curve, yaw only +-18 so the near side stays toward the caster.
+        // fire20 (user 2026-10-16 "10–15 %로 조금 진하게"): peak alpha .05 -> .12 (TEST)
         static bool StainGraph(Transform root, Elem e, Atk a)
         {
             if (e.Key == "na") FireSheetImport("stainwipe", 2048);
@@ -395,7 +396,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetV3(so, "Global Force_vector", Vector3.zero);
             SetV2(so, "Angle Min/Max", new Vector2(-18f, 18f));
             SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 7.5f), new Keyframe(.12f, 10.8f), new Keyframe(1f, 10.8f)));
-            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .75f, .05f));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .75f, .12f));
             SetF(so, "LifeTime", life);
             SetF(so, "Flipbook Framerate", 0f);
             SetV3(so, "Bounds_center", new Vector3(0f, .2f, 6f));
