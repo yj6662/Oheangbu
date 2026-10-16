@@ -53,7 +53,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "play": return Play();
                     case "status": return Status();
                     case "stop": if (!EditorApplication.isPlaying) return "stop: not playing"; EditorApplication.isPlaying = false; return "stop: leaving Play";
-                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | stop";
+                    // re-read Packages/manifest.json without window focus (an unfocused editor does not notice a manifest edit)
+                    case "resolve": UnityEditor.PackageManager.Client.Resolve(); return "resolve: requested";
+                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | stop | resolve";
                 }
             }
             catch (Exception e)
