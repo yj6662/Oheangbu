@@ -118,8 +118,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static bool ConeFireGraph(Transform root, Elem e, Atk a)
         {
             if (e.Key != "na" || AssetDatabase.LoadAssetAtPath<VisualEffectAsset>(NaSmokeGraph) == null) return false;
-            var tongue = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Project/Art/SpellVFX308/V2/Textures/T_V308b_fire_tongue_vfx.png");
-            if (tongue == null) { Debug.LogWarning("[Vfx308Build] T_V308b_fire_tongue_vfx missing (python Tools/Art/SpellVFX308/fire308.py tongue)"); return false; }
+            // 11.34 fire8: the user picked fire7's C (soot-mixed tongues, fire308.py tongue_soot) at its 140/s
+            var tongue = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Project/Art/SpellVFX308/V2/Textures/T_V308b_fire_tongue_soot_vfx.png");
+            if (tongue == null) { Debug.LogWarning("[Vfx308Build] T_V308b_fire_tongue_soot_vfx missing (python Tools/Art/SpellVFX308/fire308.py tongue_soot)"); return false; }
             var v = GraphHost(root, "FireVfx", NaSmokeGraph);
             if (v == null) return false;
             var so = new SerializedObject(v);
@@ -136,7 +137,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // tall, gone to brown by shot 5; concept D frame 3 is a wide bloom around the target): the divergence is a per-axis
             // +-m/s spread, so 2.2 settles the tongues over ~+-1 m around the reach instead of +-.1 m; bigger late size; alpha held
             // full to .7 of life
-            SetF(so, "Spawn Rate", 110f * a.Dense);
+            SetF(so, "Spawn Rate", 140f * a.Dense);
             SetV3(so, "Initial Velocity_vector", new Vector3(0f, -1f, 16f));
             SetF(so, "Initial Velocity Divergence", 2.2f);
             SetF(so, "Drag", 2.2f);
@@ -155,6 +156,101 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetF(so, "Flipbook Framerate", 30f);   // the source flicker's own pace; 60 cels = 2 s, so a tongue never loops in its life
             SetV3(so, "Bounds_center", new Vector3(0f, 1.5f, 4.5f));
             SetV3(so, "Bounds_size", new Vector3(12f, 4f, 12f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return true;
+        }
+
+        // 11.34 fire8 (concept D frame 3 re-read, user 2026-10-16 "과녁 둘레 고리 ... 여러 시트를 이용하고"): three more hosts, each
+        // its own graph and sheet. Particles are born only in the seam's ~0.3 s emit window, so the late parts (the ring after
+        // the tongues arrive, the column after the ring) are held back by size 0 at the start of their lives. All TEST values.
+        static (VisualEffect v, SerializedObject so) RoleHost(Transform root, Elem e, string name, string graph, string sheet, Vector2 cels)
+        {
+            if (e.Key != "na" || AssetDatabase.LoadAssetAtPath<VisualEffectAsset>(graph) == null) return (null, null);
+            var tex = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Project/Art/SpellVFX308/V2/Textures/T_V308b_fire_" + sheet + "_vfx.png");
+            if (tex == null) { Debug.LogWarning("[Vfx308Build] T_V308b_fire_" + sheet + "_vfx missing (python Tools/Art/SpellVFX308/fire308.py " + sheet + ")"); return (null, null); }
+            var v = GraphHost(root, name, graph);
+            if (v == null) return (null, null);
+            var so = new SerializedObject(v);
+            SetObj(so, "Main Texture", tex); SetV2(so, "Flipbook Size", cels); SetB(so, "Use Flipbook", true);
+            SetV3(so, "Initial Position_position", Vector3.zero);   // the graph's own shape block overwrites the position anyway
+            SetV2(so, "Camera Fade Min/Max Distance", new Vector2(.45f, 1.4f));
+            return (v, so);
+        }
+        static Gradient FadeGrad(Color mid, Color end, float inA, float holdA, float peak)
+        {
+            var g = new Gradient();
+            g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(mid, .6f), new GradientColorKey(end, 1f) },
+                      new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(peak, inA), new GradientAlphaKey(peak, holdA), new GradientAlphaKey(0f, 1f) });
+            return g;
+        }
+
+        // ⓐ the ring (curl sheet: Flame03-hollow shape, red root, soot tip): born on a 2 m band round the target, leaning out
+        static bool RingGraph(Transform root, Elem e, Atk a)
+        {
+            var (v, so) = RoleHost(root, e, "RingVfx", NaRingGraph, "curl", new Vector2(8f, 8f));
+            if (v == null) return false;
+            float life = 1.8f * a.Slow;
+            SetF(so, "Spawn Rate", 200f * a.Dense);
+            // fire9: fire8's force 1.2 lifted the hidden (size 0) tongues ~1.5 m before they showed -> a floating hedge; now they
+            // barely climb and stay a low ring (frame 3: ~2 m tall, wide)
+            SetV3(so, "Initial Velocity_vector", new Vector3(0f, .9f, 0f));
+            SetF(so, "Initial Velocity Divergence", .2f);
+            SetF(so, "Drag", .9f);
+            SetV3(so, "Global Force_vector", new Vector3(0f, .15f, 0f));
+            SetV2(so, "Angle Min/Max", Vector2.zero);   // drawn along the velocity: any roll breaks the lean
+            // nothing until the tongues have reached the target (~.4 s = .22 of the life), then up to knee-to-chest height
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(.22f, 0f), new Keyframe(.4f, 1.0f * a.Big), new Keyframe(1f, 1.3f * a.Big)));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, new Color(.165f, .15f, .135f), .25f, .7f, 1f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Soft Particle Fade Distance", .2f);
+            SetF(so, "Flipbook Framerate", 30f);
+            SetV3(so, "Bounds_center", new Vector3(0f, 1.2f, 6f));
+            SetV3(so, "Bounds_size", new Vector3(9f, 4f, 9f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return true;
+        }
+
+        // ⓑ the scorched road (scorch sheet 4x4: wet vermilion heart drying to soot): flat blots from the caster to the target
+        static bool ScorchGraph(Transform root, Elem e, Atk a)
+        {
+            var (v, so) = RoleHost(root, e, "ScorchVfx", NaScorchGraph, "scorch", new Vector2(4f, 4f));
+            if (v == null) return false;
+            float life = 3.5f * a.Slow;
+            SetF(so, "Spawn Rate", 260f * a.Dense);   // fire10: 42 alive left gaps along 6 m
+            SetV3(so, "Initial Velocity_vector", Vector3.zero);
+            SetF(so, "Initial Velocity Divergence", 0f);
+            SetF(so, "Drag", 0f);
+            SetV3(so, "Global Force_vector", Vector3.zero);
+            SetV2(so, "Angle Min/Max", new Vector2(0f, 360f));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 1.4f * a.Big), new Keyframe(.15f, 2.2f * a.Big), new Keyframe(1f, 2.6f * a.Big)));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .04f, .75f, .95f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Flipbook Framerate", 16f / (life * 1.1f));   // the 16 cels once: wet -> dried, never wrapping back to wet
+            SetV3(so, "Bounds_center", new Vector3(0f, .5f, 3.8f));   // the streaks reach ~3.6 m along the road past each end
+            SetV3(so, "Bounds_size", new Vector3(5f, 2f, 13f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return true;
+        }
+
+        // ⓒ the soot column (puff sheet, fire9: soft round soot puffs, dark young -> ash; the DiscSmoke "column" cels were narrow and
+        // flat-bottomed and read as drifting rectangles in fire8): rising behind the target's right shoulder
+        static bool ColumnGraph(Transform root, Elem e, Atk a)
+        {
+            var (v, so) = RoleHost(root, e, "ColumnVfx", NaColumnGraph, "puff", new Vector2(8f, 8f));
+            if (v == null) return false;
+            float life = 2.2f * a.Slow;
+            SetF(so, "Spawn Rate", 18f * a.Dense);   // fire10: a wisp, not fire9's ball (50 puffs up to 3.2 m)
+            SetV3(so, "Initial Velocity_vector", new Vector3(0f, 1.6f, 0f));
+            SetF(so, "Initial Velocity Divergence", .15f);
+            SetF(so, "Drag", .3f);
+            SetV3(so, "Global Force_vector", new Vector3(0f, .4f, 0f));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(.3f, 0f), new Keyframe(.4f, .6f * a.Big), new Keyframe(1f, 1.6f * a.Big)));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .35f, .6f, .55f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Soft Particle Fade Distance", .4f);
+            SetF(so, "Flipbook Framerate", 64f / life);
+            SetV3(so, "Bounds_center", new Vector3(1.2f, 4.5f, 7.8f));
+            SetV3(so, "Bounds_size", new Vector3(5f, 8f, 5f));
             so.ApplyModifiedPropertiesWithoutUndo();
             return true;
         }

@@ -58,6 +58,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (command.StartsWith("pose", StringComparison.Ordinal)) return Pose(command.Split(':'));
             if (command.StartsWith("summon", StringComparison.Ordinal)) return Summon(command.Split(':'));         // 11.13: the ink body of a summon
             if (command.StartsWith("swingink", StringComparison.Ordinal)) return SwingInk(command.Split(':'));     // 11.10: the ink of the five swings
+            if (command.StartsWith("graph:blocks", StringComparison.Ordinal)) return GraphBlocks(command.Split(':'));   // 11.33 8th pass: real block / slot names
+            if (command.StartsWith("graph:dumpfull", StringComparison.Ordinal)) return GraphDump(command.Length > 15 ? command.Substring(15) : NaSmokeGraph, true);
             switch (command)
             {
                 case "build": return Build() + (V2 ? BuildAttack() : "");
@@ -71,6 +73,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
                 case "graph:build": return GraphBuild();             // 11.32: the 노 smoke graph (concepts C + D)
+                case "graph:build:ring": return GraphBuildRing();     // 11.34 fire8: tongues leaning out round the target
+                case "graph:build:scorch": return GraphBuildScorch(); // 11.34 fire8: red-ink scorch laid on the ground
+                case "graph:build:column": return GraphBuildColumn(); // 11.34 fire8: the thin soot column
                 case "graph:dump": return GraphDump(NaSmokeGraph);
                 case "revert": return Revert();
                 case "status": return Status();
@@ -833,7 +838,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // (The billow spike, smoke308.py, read as red cartoon puffs - not used.)
             // pq_smoke: fire_lick's cels end in a straight root block at their left border = a card edge in game -> soot_wisp (smoke308.py wisp: that root faded out)
             // D308-88 (11.31): the VFX Graph smoke carries the spell when the graph is there; the soot sheet stays as the fallback
-            ConeFireGraph(root.transform, e, a);   // 11.33 fire D: red-pigment tongues on the same graph (fire element only, own graph only)
+            // 11.34 fire8 (user 2026-10-16 "C 그을음 섞인 불" + a ring round the target, several sheets): the soot-tipped tongues,
+            // the outward-leaning ring, the scorched road and the soot column; the soot carpet (SmokeVfx) is off for 노
+            if (ConeFireGraph(root.transform, e, a))
+            {
+                RingGraph(root.transform, e, a); ScorchGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
+                return root;
+            }
             if (ConeSmokeGraph(root.transform, e, a)) return root;
             var soot = e.Key == "na" ? Bleed("M_V308b_na_soot_wisp", "soot_wisp", C(e.Ink, .85f), .3f, .92f) : e.LickSoot;
             Layer(root.transform, new L { Name = "Soot", Mat = soot, Mode = 3, Rate = 42f * a.Dense, Max = Mathf.CeilToInt(18 * a.Dense), Life = new Vector2(1.0f, 1.4f) * a.Slow, Size = new Vector2(1.6f, 2.3f) * a.Big,

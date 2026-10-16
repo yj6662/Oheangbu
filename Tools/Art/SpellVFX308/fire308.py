@@ -30,7 +30,15 @@ SHEETS = {
     # 11.33 method comparison (user 2026-10-16 "다양한 방식을 시도해보고 그 중 맞는 걸 선택"): same shapes, different technique
     'tongue_paint': ('SmallFlame01/SmallFlame01_16x4.tga', 15, 4, 'paint'),   # B: flat painted tones + ragged brushed edge + ink outline
     'tongue_soot': ('SmallFlame01/SmallFlame01_16x4.tga', 15, 4, 'soot'),     # C: soot streaks inside the red, tips turn to soot
+    # 11.33 8th pass (user 2026-10-16 "여러 시트를 이용"): one sheet per role of concept D frame 3
+    'curl': ('Flame03-hollow/Flame03-hollow_16x4.tga', 16, 5, 'curl'),       # ring around the target: bushy tongues (named 16x4, laid out 16 x 5, no alpha)
+    'column': ('DiscSmoke01/DiscSmoke01_16x4.tga', 16, 4, 'column'),         # the thin soot column rising off the target
+    'scorch': (None, 4, 4, 'scorch'),                                        # the burnt red-ink mark on the ground (from the ink splat sheet)
+    # 9th pass: the DiscSmoke cels were a narrow flat-bottomed blob filling a quarter of the cel -> the column read as a strip of
+    # rectangles (lab_fire8). Replaced by a procedural soft puff: round, warped, faded to zero on every side, thinning as it ages
+    'puff': (None, 8, 8, 'puff'),
 }
+ASH = np.array([.30, .27, .24])           # thin soot, the lightest tone of the column
 
 
 def smooth(e0, e1, x):
@@ -77,7 +85,7 @@ def paint(a, heat, streak):
     return col, np.maximum(mask, bleed)
 
 
-def soot(a, heat, streak, cs):
+def soot(a, heat, streak, cs, tipw=1.15):
     """C: one mixed mass - the same flame colour, but soot streaks run up through the red and the upper part of every tongue turns
     to soot, so the smoke is inside the fire rather than a separate grey carpet"""
     from scipy import ndimage as nd
@@ -90,7 +98,7 @@ def soot(a, heat, streak, cs):
     col = SOOT[None, None] * (1 - t1[..., None]) + DEEP[None, None] * t1[..., None]
     col = col * (1 - t2[..., None]) + VERMILION[None, None] * t2[..., None]
     # (first soot bake: .85 x tip read the same as the photo sheet - the tongues are mostly below the cel middle)
-    mix = np.clip(1.15 * tip + .75 * smooth(.42, .68, mott) * (1 - .6 * t2) + .45 * (1 - streak) * (1 - t2), 0, 1)
+    mix = np.clip(tipw * tip + .75 * smooth(.42, .68, mott) * (1 - .6 * t2) + .45 * (1 - streak) * (1 - t2), 0, 1)
     col = col * (1 - mix[..., None]) + SOOT[None, None] * mix[..., None]
     body = smooth(.03, .6, a)
     edge = 1 - smooth(.15, .55, a)
@@ -100,6 +108,8 @@ def soot(a, heat, streak, cs):
 
 def make(name):
     src, cx, cy, style = SHEETS[name]
+    if style in ('curl', 'column', 'scorch', 'puff'):
+        return make_role(name, src, cx, cy, style)
     img = np.asarray(Image.open(CC0 / src).convert('RGBA'), np.float32) / 255
     h, w = img.shape[:2]
     a = img[..., 3]
@@ -139,6 +149,94 @@ def pack(name, out, h, w, cx, cy, alpha, col):
     dst = GAME / f'T_V308b_fire_{name}_vfx.png'
     Image.fromarray(sq, 'RGBA').save(dst)
     print('SHEET fire', name, f'{cx}x{cy} -> 8x8 square', sq.shape[1], sq.shape[0], 'alpha mean %.3f' % float(alpha.mean()), 'max rgb %.2f' % float(col.max()), dst.name)
+
+
+def make_role(name, src, cx, cy, style):
+    """8th pass role sheets. curl / column come from CC0 flipbooks with fractional or tall cels and are re-packed into square
+    256 cels (8 x 8, 64 used); scorch re-colours the channel-packed ink splat (R heat, G wet heart, B pooled rim, A density) into
+    a plain colour 4 x 4 sheet: a red-ink heart that dries to soot over the 16 cels"""
+    if style == 'puff':
+        return make_puff(name)
+    if style == 'scorch':
+        img = np.asarray(Image.open(GAME / 'T_V308b_ink_splat.png').convert('RGBA'), np.float32) / 255
+        h, w = img.shape[:2]
+        cs = h // cy
+        k = (np.arange(h)[:, None] // cs) * cx + (np.arange(w)[None, :] // cs)   # cel index, frame 1 top-left
+        dry = (k / (cx * cy - 1))[..., None]
+        g, b, a = img[..., 1], img[..., 2], img[..., 3]
+        heart = DEEP * .65 + VERMILION * .35
+        col = INK[None, None] * (1 - smooth(.1, .6, g)[..., None]) + heart[None, None] * smooth(.1, .6, g)[..., None]
+        col = col * (1 - .7 * dry) + SOOT[None, None] * (.7 * dry)
+        alpha = np.clip(1.05 * a + .3 * b, 0, 1)
+        out = (np.clip(np.concatenate([col, alpha[..., None]], -1), 0, 1) * 255 + .5).astype(np.uint8)
+        dst = GAME / f'T_V308b_fire_{name}_vfx.png'
+        Image.fromarray(out, 'RGBA').save(dst)
+        print('SHEET fire', name, '4x4 colour', w, h, 'alpha mean %.3f' % float(alpha.mean()), 'max rgb %.2f' % float(col.max()), dst.name)
+        return
+    img = np.asarray(Image.open(CC0 / src).convert('RGBA'), np.float32) / 255
+    h, w = img.shape[:2]
+    lum = img[..., :3] @ np.array([.3, .59, .11])
+    streak = bristles(h, w, w // cx)
+    edge_brush = lambda a: 1 - (1 - smooth(.15, .55, a)) * smooth(.35, .75, 1 - streak)
+    if style == 'curl':
+        # additive flame on black: the density is the brightness
+        a = smooth(.02, .4, lum)
+        col, alpha = soot(a, lum, streak, h / cy, .55)   # the tall bushy tongues fill the cel: 1.15 turned their upper half grey
+    else:
+        a = img[..., 3]
+        col = ASH[None, None] * (1 - smooth(.2, .7, a)[..., None]) + SOOT[None, None] * smooth(.2, .7, a)[..., None]
+        col = col * (1 - .6 * smooth(.6, .95, a)[..., None]) + INK[None, None] * (.6 * smooth(.6, .95, a)[..., None])
+        col = col * (.85 + .3 * (lum - .5))[..., None]                       # keep the source's light / shadow side as a value shift
+        alpha = .9 * smooth(.02, .7, a) * edge_brush(a)
+    out = (np.clip(np.concatenate([col, alpha[..., None]], -1), 0, 1) * 255 + .5).astype(np.uint8)
+    S, n = 256, 8
+    sq = np.zeros((S * n, S * n, 4), np.uint8)
+    cw, ch = w / cx, h / cy
+    for k in range(min(cx * cy, n * n)):                                     # curl: 80 cels, the first 64 (rows 1-4) kept
+        r, c = divmod(k, cx)
+        cel = Image.fromarray(out[int(round(r * ch)):int(round((r + 1) * ch)), int(round(c * cw)):int(round((c + 1) * cw))], 'RGBA')
+        f = S / max(cel.size)
+        if abs(f - 1) > 1e-3:
+            cel = cel.resize((max(1, int(round(cel.size[0] * f))), max(1, int(round(cel.size[1] * f)))), Image.LANCZOS)
+        cel = np.asarray(cel)
+        R, C = divmod(k, n)
+        oy, ox = R * S + (S - cel.shape[0]) // 2, C * S + (S - cel.shape[1]) // 2
+        sq[oy:oy + cel.shape[0], ox:ox + cel.shape[1]] = cel
+    dst = GAME / f'T_V308b_fire_{name}_vfx.png'
+    Image.fromarray(sq, 'RGBA').save(dst)
+    print('SHEET fire', name, f'{cx}x{cy} -> 8x8 square', sq.shape[1], sq.shape[0], 'alpha mean %.3f' % float(alpha.mean()), 'max rgb %.2f' % float(col.max()), dst.name)
+
+
+def make_puff(name, S=256, n=8):
+    """one soot puff ageing over 64 cels: dense ink heart that swells, tears at the rim and thins to ash. Noise fields are
+    advected upward with age so the billows rise inside the puff; every cel is zero on its border (no cut edges)"""
+    big = 3 * S
+    warp_x, warp_y = lowfreq(big, big, 22, 11), lowfreq(big, big, 22, 12)
+    fine, coarse = lowfreq(big, big, 9, 13), lowfreq(big, big, 24, 14)
+    yy, xx = (np.mgrid[0:S, 0:S] + .5) / S * 2 - 1                          # cel coords in [-1, 1], y down
+    streak = bristles(S, S, S, 21)
+    sq = np.zeros((S * n, S * n, 4), np.float32)
+    for k in range(n * n):
+        t = k / (n * n - 1)
+        oy, ox = int(S + S * .6 * (1 - t)), S                               # the window slides down = the billows rise
+        win = lambda f: f[oy:oy + S, ox:ox + S]
+        wx, wy = (win(warp_x) - .5) * (.35 + .25 * t), (win(warp_y) - .5) * (.35 + .25 * t)
+        r = .8 + .12 * t
+        d = np.sqrt((xx + wx) ** 2 + ((yy + wy) * 1.08 - .08 * t) ** 2) / r
+        dens = (1 - smooth(.1, 1.0, d)) * (.45 + .3 * win(fine) + .5 * win(coarse))
+        rim = smooth(.55, 1.0, d)
+        dens *= 1 - .55 * rim * smooth(.4, .8, 1 - streak)                   # a dry-brush tear at the rim
+        alpha = np.clip(1.7 * dens * (1 - .6 * t), 0, 1)
+        alpha *= 1 - smooth(.78, .97, np.maximum(np.abs(xx), np.abs(yy)))    # never touches the cel border
+        heart = smooth(.35, .8, dens) * (1 - .7 * t)
+        col = ASH[None, None] * (1 - heart[..., None]) + INK[None, None] * heart[..., None]
+        col = col * (1 - .35 * t) + ASH[None, None] * (.35 * t) * 1.1
+        R, C = divmod(k, n)
+        sq[R * S:(R + 1) * S, C * S:(C + 1) * S] = np.concatenate([col, alpha[..., None]], -1)
+    out = (np.clip(sq, 0, 1) * 255 + .5).astype(np.uint8)
+    dst = GAME / f'T_V308b_fire_{name}_vfx.png'
+    Image.fromarray(out, 'RGBA').save(dst)
+    print('SHEET fire', name, '8x8 procedural', out.shape[1], out.shape[0], 'alpha mean %.3f' % float(sq[..., 3].mean()), dst.name)
 
 
 if __name__ == '__main__':
