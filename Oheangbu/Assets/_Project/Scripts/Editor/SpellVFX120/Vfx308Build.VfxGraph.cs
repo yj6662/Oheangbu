@@ -123,7 +123,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var v = GraphHost(root, "FireVfx", NaSmokeGraph);
             if (v == null) return false;
             var so = new SerializedObject(v);
-            SetObj(so, "Main Texture", tongue); SetV2(so, "Flipbook Size", new Vector2(8f, 8f));   // fire5: square cels (fire308.py re-pack) SetB(so, "Use Flipbook", true);
+            SetObj(so, "Main Texture", tongue); SetV2(so, "Flipbook Size", new Vector2(8f, 8f)); SetB(so, "Use Flipbook", true);   // fire5: square cels (fire308.py re-pack)
             float life = 1.4f * a.Slow;
             // fire2 (lab_fire1 side stills: the -3 down force landed the tongues by ~3 m and 600/s x 1.6 m merged them into a flat
             // carpet): fast and strongly dragged so they settle near v / drag ~ 6.4 m within ~0.45 s, almost no down force, sparser,
@@ -132,18 +132,22 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // the ground, so half of each camera-facing tongue is buried and the .5 m soft fade eats the rest): poured slightly down
             // from higher up, then a buoyant lift (terminal ~.9 m/s against drag 2.2) raises the centres as they grow, so the tongues
             // stand up at the reach (centre ~.8 m at .45 s, ~1.3 m at the end); soft fade .2
+            // fire6 (lab_fire5 side stills: upright tongues at last, but a narrow 1.5 m block standing in FRONT of the dummy, ~.7 m
+            // tall, gone to brown by shot 5; concept D frame 3 is a wide bloom around the target): the divergence is a per-axis
+            // +-m/s spread, so 2.2 settles the tongues over ~+-1 m around the reach instead of +-.1 m; bigger late size; alpha held
+            // full to .7 of life
             SetF(so, "Spawn Rate", 110f * a.Dense);
             SetV3(so, "Initial Velocity_vector", new Vector3(0f, -1f, 16f));
-            SetF(so, "Initial Velocity Divergence", .18f);
+            SetF(so, "Initial Velocity Divergence", 2.2f);
             SetF(so, "Drag", 2.2f);
             SetV3(so, "Global Force_vector", new Vector3(0f, 2f, 0f));
             SetV3(so, "Initial Position_position", new Vector3(0f, .9f, 0f));
             SetV2(so, "Angle Min/Max", Vector2.zero);
-            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, .5f * a.Big), new Keyframe(.35f, 1.1f * a.Big), new Keyframe(1f, 2f * a.Big)));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, .6f * a.Big), new Keyframe(.35f, 1.5f * a.Big), new Keyframe(1f, 2.6f * a.Big)));
             var soot = new Color(.165f, .15f, .135f);
             var g = new Gradient();
-            g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, .45f), new GradientColorKey(soot, 1f) },
-                      new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, .05f), new GradientAlphaKey(.9f, .55f), new GradientAlphaKey(0f, 1f) });
+            g.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, .6f), new GradientColorKey(soot, 1f) },
+                      new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, .05f), new GradientAlphaKey(1f, .7f), new GradientAlphaKey(0f, 1f) });
             SetGrad(so, "Color Over Life", g);
             SetF(so, "LifeTime", life);
             SetF(so, "Soft Particle Fade Distance", .2f);
