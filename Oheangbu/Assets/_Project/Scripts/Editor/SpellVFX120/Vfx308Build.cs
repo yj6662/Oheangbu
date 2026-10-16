@@ -80,6 +80,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "graph:build:pool": return GraphBuildPool();     // 11.34 fire16: the red-black ground pool
                 case "graph:build:bank": return GraphBuildBank();     // 11.34 fire17: the baked fluid fire band round the target
                 case "graph:build:stain": return GraphBuildStain();   // 11.34 fire17: the splash stain under it
+                case "graph:build:banks": return GraphBuildBanks();   // 11.34 fire18: the bank as five arcs opened in turn
+                case "graph:build:ember": return GraphBuildEmber();   // 11.34 fire18: the ember thrown from the brush tip
                 case "graph:dump": return GraphDump(NaSmokeGraph);
                 case "revert": return Revert();
                 case "status": return Status();
@@ -849,9 +851,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // soot wash and a red-black ground pool
             // 11.34 fire17 (same instruction): the baked fluid band + the splash stain replace the painted tongue ring, the soot
             // wash and the pool (RingGraph / WashGraph / PoolGraph, their graphs and sheets stay, off; tag na-fire-308-v16)
+            // 11.34 fire18 (user 2026-10-16 "시전자 쪽에서 작게 시작된 불씨가 시전 지역으로 가서 번지는듯한 느낌으로. 지금 vfx는 아주
+            // 좋아"): the same fire, lit by an ember thrown from the brush tip - the bank comes up as five arcs, near side first
+            // (Vfx308SeamTiming on each host); the 17th single bank = BankGraph in place of EmberGraph + BankArcGraphs (tag na-fire-308-v17)
             if (ConeFireGraph(root.transform, e, a))
             {
-                BankGraph(root.transform, e, a); StainGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
+                EmberGraph(root.transform, e, a); BankArcGraphs(root.transform, e, a); StainGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
                 return root;
             }
             if (ConeSmokeGraph(root.transform, e, a)) return root;

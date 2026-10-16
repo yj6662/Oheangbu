@@ -138,7 +138,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // +-m/s spread, so 2.2 settles the tongues over ~+-1 m around the reach instead of +-.1 m; bigger late size; alpha held
             // full to .7 of life
             SetF(so, "Spawn Rate", 140f * a.Dense);
-            SetV3(so, "Initial Velocity_vector", new Vector3(0f, -1f, 16f));
+            // fire18 (user 2026-10-16 "시전자 쪽에서 작게 시작된 불씨가 시전 지역으로 가서 번지는듯한"): the tongues no longer pour from the
+            // brush tip - the ember carries the fire there - but rise where it lands (2.6 m out, .5 m up, SeamTiming below) and run
+            // on to the reach: 9.5 / drag 2.2 ~ 4.3 m -> settling near 6.9 m (the 17th: 16 from the tip, near 7.3 m)
+            SetV3(so, "Initial Velocity_vector", new Vector3(0f, -1f, 9.5f));
             SetF(so, "Initial Velocity Divergence", 2.2f);
             SetF(so, "Drag", 2.2f);
             SetV3(so, "Global Force_vector", new Vector3(0f, 2f, 0f));
@@ -157,6 +160,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetV3(so, "Bounds_center", new Vector3(0f, 1.5f, 4.5f));
             SetV3(so, "Bounds_size", new Vector3(12f, 4f, 12f));
             so.ApplyModifiedPropertiesWithoutUndo();
+            SeamTiming(v, -.12f, 2.6f, .5f);   // fire18: on with the near arc, from where the ember lands
             return true;
         }
 
@@ -305,6 +309,74 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return true;
         }
 
+        // fire18 (user 2026-10-16 "시전자 쪽에서 작게 시작된 불씨가 시전 지역으로 가서 번지는듯한 느낌으로"): per-host timing for the
+        // area seam (Vfx308SeamTiming, display only): lead = seconds the host's emit window opens earlier (+) or later (-) than the
+        // shared one; forward / height = where its Initial Position goes (height < 0 = the brush tip)
+        static void SeamTiming(VisualEffect v, float lead, float forward = 0f, float height = -1f)
+        {
+            var t = v.gameObject.AddComponent<Oheangbu.App.SpellVFX120.Vfx308SeamTiming>();
+            t.Lead = lead; t.Forward = forward; t.Height = height;
+        }
+
+        // ⓕ' the bank as five arcs (fire18): the 17th bank, cut so the near side catches first where the ember lands, then the
+        // sides, then the far side (BankArcs: phi, seeds, lead). 19/s each = the 17th's 95/s; each arc keeps the 17th's life,
+        // size, fade and pace, so once all five are up the fire is the 17th's
+        static void BankArcGraphs(Transform root, Elem e, Atk a)
+        {
+            if (e.Key == "na") FireSheetImport("band", 4096);
+            foreach (var arc in BankArcs)
+            {
+                var (v, so) = RoleHost(root, e, arc.name, arc.path, "band", new Vector2(8f, 8f));
+                if (v == null) continue;
+                float life = 1.8f * a.Slow;
+                SetF(so, "Spawn Rate", 19f * a.Dense);
+                SetV3(so, "Initial Velocity_vector", Vector3.zero);
+                SetF(so, "Initial Velocity Divergence", 0f);
+                SetF(so, "Drag", 0f);
+                SetV3(so, "Global Force_vector", Vector3.zero);
+                SetV2(so, "Angle Min/Max", Vector2.zero);
+                SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 3.85f * a.Big), new Keyframe(1f, 3.85f * a.Big)));
+                SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .03f, .9f, 1f));
+                SetF(so, "LifeTime", life);
+                SetF(so, "Soft Particle Fade Distance", .3f);
+                SetF(so, "Flipbook Framerate", (BankCels - 1f) / life);
+                SetV3(so, "Bounds_center", new Vector3(0f, 2.6f, 6f));
+                SetV3(so, "Bounds_size", new Vector3(10.5f, 5.8f, 10.5f));
+                so.ApplyModifiedPropertiesWithoutUndo();
+                v.GetComponent<VFXRenderer>().sortingOrder = 1;
+                SeamTiming(v, arc.lead);
+            }
+        }
+
+        // ⓗ the ember (fire18): four small soot-edged tongues (tongue_soot) thrown once from the brush tip at the very start of the
+        // cast (lead +.28: its window is open at t=0; the spawner is one burst at Play, rate 0, so only the opening matters),
+        // falling on a short arc onto the ring's near side (~3.3 m)
+        // as it catches (.40). Shrinks away as it lands - no trail, nothing left on the ground (the road mark stays removed)
+        static bool EmberGraph(Transform root, Elem e, Atk a)
+        {
+            var (v, so) = RoleHost(root, e, "EmberVfx", NaEmberGraph, "tongue_soot", new Vector2(8f, 8f));
+            if (v == null) return false;
+            const float life = .43f;   // the flight time to the near band: y lift -> ground with vy -1 and g 9.8
+            SetF(so, "Spawn Rate", 0f);   // only the graph's one burst at Play
+            SetV3(so, "Initial Velocity_vector", new Vector3(0f, -1f, 6.25f));
+            SetF(so, "Initial Velocity Divergence", .35f);
+            SetF(so, "Drag", 0f);
+            SetV3(so, "Global Force_vector", new Vector3(0f, -9.8f, 0f));
+            SetV2(so, "Angle Min/Max", new Vector2(-15f, 15f));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, .25f), new Keyframe(.7f, .75f), new Keyframe(.88f, .9f), new Keyframe(1f, .2f)));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .85f, 1f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Soft Particle Fade Distance", .1f);
+            SetV2(so, "Camera Fade Min/Max Distance", new Vector2(.3f, .9f));
+            SetF(so, "Flipbook Framerate", 30f);
+            SetV3(so, "Bounds_center", new Vector3(0f, 1f, 2f));
+            SetV3(so, "Bounds_size", new Vector3(3f, 3f, 5f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            v.GetComponent<VFXRenderer>().sortingOrder = 2;
+            SeamTiming(v, .28f, .6f);
+            return true;
+        }
+
         // ⓖ the stain (fire17): one splash stain laid flat, 10.8 m across (the sheet covers +-5.4 m, its band at r 2.55 under the
         // bank's 2.6 - so not scaled by Big, the bank's ring is fixed in its graph), spreading in over the first .12 of its life
         // and outliving the bank
@@ -328,6 +400,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetV3(so, "Bounds_size", new Vector3(12f, 1f, 12f));
             so.ApplyModifiedPropertiesWithoutUndo();
             v.GetComponent<VFXRenderer>().sortingOrder = -1;
+            SeamTiming(v, -.12f);   // fire18: spreads in with the near arc, after the ember lands
             return true;
         }
 

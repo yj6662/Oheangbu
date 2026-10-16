@@ -11,7 +11,8 @@ namespace Oheangbu.App.SpellVFX120
   GameObject _areaHost;Transform[] _areaBodies;Renderer[] _areaRenderers;
   Vector3[] _areaFeet;ParticleSystem[] _areaParticles;Vfx120TraditionalMotif _areaSeal;
   Mesh _areaWater;Vector3[] _areaWaterVertices;float[] _areaGround;float _areaSim;
-  VisualEffect[] _areaGraphs;bool _areaGraphOn;float _areaGraphT;   // D308-88 / Spec 11.31: VFX Graph bodies, played over the emit window
+  VisualEffect[] _areaGraphs;bool[] _areaGraphOn;float _areaGraphT;   // D308-88 / Spec 11.31: VFX Graph bodies, played over the emit window
+  float[] _areaGraphLead,_areaGraphFwd,_areaGraphHeight;bool _areaGraphPlaced;Vector3 _areaGraphGround;Quaternion _areaGraphTurn;float _areaGraphLift;   // 11.34 fire18: Vfx308SeamTiming per graph, one ground frame per cast
   MaterialPropertyBlock _areaBlock;Vector3 _areaForward,_areaRight,_areaStart;
   ParticleSystem.Particle[] _wideParticles=new ParticleSystem.Particle[256];
   public int AreaRaised {get;private set;}
@@ -46,7 +47,9 @@ namespace Oheangbu.App.SpellVFX120
      if(Profile.AreaBambooLean>0f){float lean=Profile.AreaBambooLean,spread=Profile.AreaBambooHeightSpread;body.transform.rotation=Quaternion.Euler((Hash308(i,1)*2-1)*lean,i*71,(Hash308(i,2)*2-1)*lean);body.transform.localScale=new Vector3(.85f,1f+(Hash308(i,3)*2-1)*spread,.85f);}}
    }
    _areaParticles=_areaHost.GetComponentsInChildren<ParticleSystem>();
-   _areaGraphs=_areaHost.GetComponentsInChildren<VisualEffect>();_areaGraphOn=false;_areaGraphT=0;foreach(var g in _areaGraphs){g.Stop();g.Reinit();if(g.HasFloat("LifeTime"))Life=Mathf.Max(Life,plan.Delay+.7f+g.GetFloat("LifeTime"));}   /* 11.31: the effect outlives its last smoke */
+   _areaGraphs=_areaHost.GetComponentsInChildren<VisualEffect>();_areaGraphT=0;_areaGraphPlaced=false;int graphs=_areaGraphs.Length;_areaGraphOn=new bool[graphs];_areaGraphLead=new float[graphs];_areaGraphFwd=new float[graphs];_areaGraphHeight=new float[graphs];
+   for(int i=0;i<graphs;i++){var g=_areaGraphs[i];var timing=g.GetComponent<Vfx308SeamTiming>();_areaGraphLead[i]=timing!=null?timing.Lead:0f;_areaGraphFwd[i]=timing!=null?timing.Forward:0f;_areaGraphHeight[i]=timing!=null?timing.Height:-1f;
+    g.Stop();g.Reinit();if(g.HasFloat("LifeTime"))Life=Mathf.Max(Life,plan.Delay+.7f+g.GetFloat("LifeTime")+Mathf.Max(0f,-_areaGraphLead[i]));}   /* 11.31: the effect outlives its last smoke; 11.34: a late graph's lead too */
    for(int i=0;i<_areaParticles.Length;i++){var ps=_areaParticles[i];ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);ps.useAutoRandomSeed=false;ps.randomSeed=(uint)(271+i);var main=ps.main;main.playOnAwake=false;main.cullingMode=ParticleSystemCullingMode.AlwaysSimulate;ps.Simulate(0,false,true,false);}
    if(k==Vfx120AreaRemake.FlameCone)
    {
@@ -249,15 +252,24 @@ namespace Oheangbu.App.SpellVFX120
   bool AreaEmitting(Vfx120AreaRemake kind,AreaImpactPlan p,float time)=>kind==Vfx120AreaRemake.FlameCone?time>=Mathf.Max(0,p.Delay-.12f)&&time<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):time>=p.Delay&&time<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
   // 11.31: Play when the window opens (the host placed at the caster, facing the fan), Stop when it closes - the graph lets its
   // particles die out on their own; a scrub backwards starts it over. Display only: no rule, clock or hit reads it.
+  // 11.34 fire18: each graph tests the window at t + its Lead and opens / closes on its own; the ground frame is taken once per
+  // cast, at the first graph to open (with no Vfx308SeamTiming all graphs open together, as before)
   void SampleAreaGraphs(Vfx120AreaRemake kind,AreaImpactPlan p,float t)
   {
-   if(t<_areaGraphT){foreach(var g in _areaGraphs)if(g!=null){g.Stop();g.Reinit();}_areaGraphOn=false;}
-   _areaGraphT=t;bool on=AreaEmitting(kind,p,t);if(on==_areaGraphOn)return;_areaGraphOn=on;
-   if(!on){foreach(var g in _areaGraphs)if(g!=null)g.Stop();return;}
-   // 11.32: the host stands on the ground point under the origin (the graph's collision plane is its local y = 0) and the
-   // spawn is lifted back to the origin's height, so the soot leaves the brush and drops onto the paving
-   Vector3 ground=AreaGroundUnder(ReceivedOrigin);float lift=ReceivedOrigin.y-ground.y;
-   foreach(var g in _areaGraphs){if(g==null)continue;g.transform.SetPositionAndRotation(ground,Quaternion.LookRotation(Vector3.ProjectOnPlane(_areaForward,Vector3.up).sqrMagnitude>1e-4f?Vector3.ProjectOnPlane(_areaForward,Vector3.up):Vector3.forward));if(g.HasVector3("Initial Position_position"))g.SetVector3("Initial Position_position",new Vector3(0,lift,0));g.Play();}
+   if(t<_areaGraphT){foreach(var g in _areaGraphs)if(g!=null){g.Stop();g.Reinit();}System.Array.Clear(_areaGraphOn,0,_areaGraphOn.Length);_areaGraphPlaced=false;}
+   _areaGraphT=t;
+   for(int i=0;i<_areaGraphs.Length;i++)
+   {
+    var g=_areaGraphs[i];if(g==null)continue;
+    bool on=AreaEmitting(kind,p,t+_areaGraphLead[i]);if(on==_areaGraphOn[i])continue;_areaGraphOn[i]=on;
+    if(!on){g.Stop();continue;}
+    // 11.32: the host stands on the ground point under the origin (the graph's collision plane is its local y = 0) and the
+    // spawn is lifted back to the origin's height, so the soot leaves the brush and drops onto the paving
+    if(!_areaGraphPlaced){_areaGraphGround=AreaGroundUnder(ReceivedOrigin);_areaGraphLift=ReceivedOrigin.y-_areaGraphGround.y;_areaGraphTurn=Quaternion.LookRotation(Vector3.ProjectOnPlane(_areaForward,Vector3.up).sqrMagnitude>1e-4f?Vector3.ProjectOnPlane(_areaForward,Vector3.up):Vector3.forward);_areaGraphPlaced=true;}
+    g.transform.SetPositionAndRotation(_areaGraphGround,_areaGraphTurn);
+    if(g.HasVector3("Initial Position_position"))g.SetVector3("Initial Position_position",new Vector3(0,_areaGraphHeight[i]>=0f?_areaGraphHeight[i]:_areaGraphLift,_areaGraphFwd[i]));
+    g.Play();
+   }
   }
   // nearest solid, non-character surface straight below (triggers and character controllers skipped); 1 m below if none in 4 m
   static Vector3 AreaGroundUnder(Vector3 from)
@@ -271,7 +283,7 @@ namespace Oheangbu.App.SpellVFX120
    ClearProceduralRift();
    if(_areaHost!=null){_areaHost.SetActive(false);if(Application.isPlaying)Destroy(_areaHost);else DestroyImmediate(_areaHost);}
    if(_areaWater!=null){if(Application.isPlaying)Destroy(_areaWater);else DestroyImmediate(_areaWater);}
-   _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaGraphs=null;_areaGraphOn=false;_areaGraphT=0;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
+   _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaGraphs=null;_areaGraphOn=null;_areaGraphLead=_areaGraphFwd=_areaGraphHeight=null;_areaGraphPlaced=false;_areaGraphT=0;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
   }
   static float Hash308(int i,int k){float v=Mathf.Sin(i*12.9898f+k*78.233f)*43758.5453f;return v-Mathf.Floor(v);}
 }

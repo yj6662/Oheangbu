@@ -175,6 +175,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static object Orient(object output) => Kids(output).Cast<object>().First(b => b.GetType().Name == "Orient");
 
         static string GraphBuildAt(string path, uint capacity, Action<object, object, object> recipe)
+            => GraphBuildAt(path, capacity, (Action<object, object, object, object>)((spawner, init, update, output) => recipe(init, update, output)));
+        // fire18: the recipe also gets the spawner context (the ember's one-shot burst)
+        static string GraphBuildAt(string path, uint capacity, Action<object, object, object, object> recipe)
         {
             if (AssetDatabase.LoadAssetAtPath<UnityEngine.VFX.VisualEffectAsset>(SampleSmoke) == null) return "graph:build FAIL sample missing " + SampleSmoke;
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
@@ -184,7 +187,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var (res, graph) = OpenGraph(path);
             var init = Context(graph, "VFXBasicInitialize");
             Setting(Call(VT("VFXContext"), init, "GetData"), "capacity", capacity);
-            recipe(init, Context(graph, "VFXBasicUpdate"), Context(graph, "VFXPlanarPrimitiveOutput"));
+            recipe(Context(graph, "VFXBasicSpawner"), init, Context(graph, "VFXBasicUpdate"), Context(graph, "VFXPlanarPrimitiveOutput"));
             Call(VT("VisualEffectResourceExtensions"), null, "WriteAssetWithSubAssets", res);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
             return "graph:build ok " + path + " |" + GraphDump(path);
@@ -323,13 +326,16 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // ⓕ the fire bank: born on a band r 2.1-3.1 m round the target, facing the camera plane, standing on its root, one of the
         // 4 variants for its whole life (played from its first cel - the sheet's births rise out of the ground), mirrored half
         // the time, sized .65-1.35. "가까운 쪽 낮게" (near side lower) is TBD: uniform scale this round
-        static string GraphBuildBank() => GraphBuildAt(NaBankGraph, 160u, (init, update, output) =>
+        static string GraphBuildBank() => GraphBuildAt(NaBankGraph, 160u, (init, update, output) => BankRecipe(init, output, new Vector3(90f, 0f, 0f), 0f, 7u, 3u));
+        // arc 0 = the full circle (the sample's default arc); else the band covers local angles 0..arc, turned by angles.z
+        static void BankRecipe(object init, object output, Vector3 angles, float arc, uint flipSeed, uint pickSeed)
         {
             var ring = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "ThicknessRelative"));
             Space(ring, "arcCircle", "Local");
             PutPath(ring, "arcCircle", "circle.transform.position", new Vector3(0f, .05f, 6f));
-            PutPath(ring, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));
+            PutPath(ring, "arcCircle", "circle.transform.angles", angles);
             PutPath(ring, "arcCircle", "circle.radius", 3.1f);
+            if (arc > 0f) PutPath(ring, "arcCircle", "arc", arc);
             Put(ring, "Thickness", .32f);   // band 2.1-3.1 m (1/3.1 as a folded constant does not read back bit-equal)
             var pivot = Block(init, "SetAttribute", ("attribute", "pivot"), ("Composition", "Overwrite"), ("Random", "Off"));
             PutOnly(pivot, new Vector3(0f, BankPivot, 0f));
@@ -337,13 +343,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var scale = Block(init, "SetAttribute", ("attribute", "scale"), ("Composition", "Overwrite"), ("Random", "Uniform"));
             Put(scale, "A", new Vector3(BankAspect, 1f, 1f) * .65f); Put(scale, "B", new Vector3(BankAspect, 1f, 1f) * 1.35f);
             var flip = Block(init, "AttributeFromMap", ("attribute", "scale"), ("Composition", "Multiply"), ("SampleMode", "RandomConstantPerParticle"), ("channels", "X"));
-            Put(flip, "attributeMap", BankMap(BankFlipMapPath, "T_V308_bank_flip", new[] { -1f, 1f })); Put(flip, "Seed", 7u);
+            Put(flip, "attributeMap", BankMapShared(BankFlipMapPath, "T_V308_bank_flip", new[] { -1f, 1f })); Put(flip, "Seed", flipSeed);
             var pick = Block(init, "AttributeFromMap", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("SampleMode", "RandomConstantPerParticle"));
-            Put(pick, "attributeMap", BankMap(BankVariantMapPath, "T_V308_bank_variants", new[] { 0f, BankCels, 2f * BankCels, 3f * BankCels })); Put(pick, "Seed", 3u);
+            Put(pick, "attributeMap", BankMapShared(BankVariantMapPath, "T_V308_bank_variants", new[] { 0f, BankCels, 2f * BankCels, 3f * BankCels })); Put(pick, "Seed", pickSeed);
             Setting(Orient(output), "mode", "FaceCameraPlane");
             Setting(output, "cullMode", "Off");   // a mirrored quad shows its back face
             Setting(output, "primitiveType", "Quad");
-        });
+        }
         const string BankVariantMapPath = "Assets/_Project/Art/SpellVFX308/V2/Graphs/T_V308_bank_variants.asset";
         const string BankFlipMapPath = "Assets/_Project/Art/SpellVFX308/V2/Graphs/T_V308_bank_flip.asset";
         static Texture2D BankMap(string path, string name, float[] values)
@@ -355,6 +361,48 @@ namespace Oheangbu.EditorTools.SpellVFX120
             AssetDatabase.CreateAsset(t, path);
             return t;
         }
+        // fire18: the maps are shared by the full bank and the five arcs - re-creating one gives it a new GUID and every graph
+        // built before loses its reference, so an existing map with the same values is kept
+        static Texture2D BankMapShared(string path, string name, float[] values)
+        {
+            var t = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            try { if (t != null && t.width == values.Length && t.format == TextureFormat.RFloat && t.GetPixelData<float>(0).ToArray().SequenceEqual(values)) return t; }
+            catch (Exception) { }   // not readable: made again below
+            return BankMap(path, name, values);
+        }
+
+        // fire18 (user 2026-10-16 "시전자 쪽에서 작게 시작된 불씨가 시전 지역으로 가서 번지는듯한 느낌으로. 지금 vfx는 아주 좋아"): the
+        // 17th bank cut into five 72° arcs, one graph each, so the seam opens them in turn - the near side where the ember lands,
+        // then the two sides, then the far side (each host's Vfx308SeamTiming.Lead). The Circle block samples
+        // (sin θ, cos θ, 0) (PositionCircle.cs), θ in 0..72°; turned by angles (90, 0, phi) (Z, then X, then Y) a particle lands at
+        // host-local (sin(θ-phi), 0, cos(θ-phi)), i.e. world angle 90+phi-θ from +X toward +Z, so the arc covers
+        // phi+18..phi+90° round the target (270° = toward the caster). Near = 234..306 -> phi 216. Each arc draws its own
+        // variant / mirror per particle (distinct seeds), 19/s each = the 17th bank's 95/s in all
+        static readonly (string name, string path, float phi, uint flipSeed, uint pickSeed, float lead)[] BankArcs =
+        {
+            ("BankVfx_near", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_near.vfx", 216f, 11u, 13u, -.12f),
+            ("BankVfx_sideL", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_sideL.vfx", 144f, 17u, 19u, -.20f),
+            ("BankVfx_sideR", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_sideR.vfx", 288f, 23u, 29u, -.20f),
+            ("BankVfx_farL", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_farL.vfx", 72f, 31u, 37u, -.28f),
+            ("BankVfx_farR", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_farR.vfx", 0f, 41u, 43u, -.28f),
+        };
+        static string GraphBuildBanks()
+        {
+            var sb = new StringBuilder();
+            foreach (var b in BankArcs)
+                sb.Append(GraphBuildAt(b.path, 40u, (init, update, output) => BankRecipe(init, output, new Vector3(90f, 0f, b.phi), 1.2566f, b.flipSeed, b.pickSeed))).Append('\n');
+            return sb.ToString();
+        }
+
+        // fire18 the ember: a few small tongues thrown once from the brush tip (one burst at Play, the spawner's constant rate is 0
+        // on the host), arcing down to the near side of the ring. No trail, nothing left on the ground
+        const string NaEmberGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_ember.vfx";
+        static string GraphBuildEmber() => GraphBuildAt(NaEmberGraph, 16u, (spawner, init, update, output) =>
+        {
+            var burst = Block(spawner, "VFXSpawnerBurst", ("repeat", "Single"), ("spawnMode", "Constant"), ("delayMode", "Constant"));
+            Put(burst, "Count", 4f); Put(burst, "Delay", 0f);
+            Setting(output, "primitiveType", "Quad");   // the octagon clips the tongue cels' corners
+        });
 
         // ⓖ the stain: the splash stain (soot inside, a ragged red-black band at r 2.55, flung rays) laid flat on the ground under
         // the bank. Capacity 1: the first spawn of the emit window lands at once, the rest are dropped while it lives
