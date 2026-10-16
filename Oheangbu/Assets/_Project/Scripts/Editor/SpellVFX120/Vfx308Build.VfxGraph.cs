@@ -379,11 +379,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         // ⓖ the stain (fire17): one splash stain laid flat, 10.8 m across (the sheet covers +-5.4 m, its band at r 2.55 under the
         // bank's 2.6 - so not scaled by Big, the bank's ring is fixed in its graph), spreading in over the first .12 of its life
-        // and outliving the bank
+        // and outliving the bank. fire19 (user 2026-10-16 "바닥에 먹자국만 지금의 5퍼센트 수준으로 ... 경계가 너무 뚜렷해서
+        // 어색해", "자국도 불 따라 늦게"): peak alpha .05, the stainwipe sheet (stain_wipe19.py, 4x4, near -> far, last cel =
+        // the whole stain) run by the graph's texIndex curve, yaw only +-18 so the near side stays toward the caster
         static bool StainGraph(Transform root, Elem e, Atk a)
         {
-            if (e.Key == "na") FireSheetImport("stain", 1024);
-            var (v, so) = RoleHost(root, e, "StainVfx", NaStainGraph, "stain", Vector2.one);
+            if (e.Key == "na") FireSheetImport("stainwipe", 2048);
+            var (v, so) = RoleHost(root, e, "StainVfx", NaStainGraph, "stainwipe", new Vector2(4f, 4f));
             if (v == null) return false;
             float life = 3.4f * a.Slow;
             SetF(so, "Spawn Rate", 30f);   // capacity 1 in the graph
@@ -391,9 +393,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetF(so, "Initial Velocity Divergence", 0f);
             SetF(so, "Drag", 0f);
             SetV3(so, "Global Force_vector", Vector3.zero);
-            SetV2(so, "Angle Min/Max", new Vector2(0f, 360f));
+            SetV2(so, "Angle Min/Max", new Vector2(-18f, 18f));
             SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 7.5f), new Keyframe(.12f, 10.8f), new Keyframe(1f, 10.8f)));
-            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .75f, 1f));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .75f, .05f));
             SetF(so, "LifeTime", life);
             SetF(so, "Flipbook Framerate", 0f);
             SetV3(so, "Bounds_center", new Vector3(0f, .2f, 6f));

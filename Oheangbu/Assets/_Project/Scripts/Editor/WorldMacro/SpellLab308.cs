@@ -24,6 +24,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   shot:<name>  Game view still into Art/Playtest306/Checks;  side:<name>  the same moment from 9 m off the caster's right,
     //   looking across the firing line (depth along the line is invisible from behind);  top:<name>  from 11 m up behind the
     //   caster looking down the line (ground marks foreshorten to nothing from the low views);  stop  leave Play
+    //   rec:<name>:<seconds>  record main + side + top views every frame into Art/Playtest306/Checks/rec_<name>/ (Rec below);
+    //   rec:stop  end it early
     public static class SpellLab308
     {
         public const string LabScene = "Assets/_Project/Scenes/Dev/SpellLab308.unity";
@@ -49,6 +51,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c.StartsWith("shot:", StringComparison.Ordinal)) return Shot(c.Substring(5));
                 if (c.StartsWith("side:", StringComparison.Ordinal)) return Side(c.Substring(5), false);
                 if (c.StartsWith("top:", StringComparison.Ordinal)) return Side(c.Substring(4), true);
+                if (c == "rec:stop") return Rec.Stop("rec:stop");
+                if (c.StartsWith("rec:", StringComparison.Ordinal)) return Rec.Start(c.Substring(4));
                 switch (c)
                 {
                     case "build": return Build();
@@ -57,7 +61,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "stop": if (!EditorApplication.isPlaying) return "stop: not playing"; EditorApplication.isPlaying = false; return "stop: leaving Play";
                     // re-read Packages/manifest.json without window focus (an unfocused editor does not notice a manifest edit)
                     case "resolve": UnityEditor.PackageManager.Client.Resolve(); return "resolve: requested";
-                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | stop | resolve";
+                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | rec:<name>:<seconds> | rec:stop | stop | resolve";
                 }
             }
             catch (Exception e)
@@ -274,6 +278,148 @@ namespace Oheangbu.EditorTools.WorldMacro
                 return (top ? "top " : "side ") + file + " | t " + Time.time.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
             }
             finally { Object.DestroyImmediate(go); Object.DestroyImmediate(tex); rt.Release(); Object.DestroyImmediate(rt); }
+        }
+
+        // rec:<name>:<seconds> (Spec 11.34, user 2026-10-16 "다음부터는 영상으로 제공해줘"): every game frame, copies of the main
+        // camera render the first-person view (1280 x 720) and the side: / top: views (640 x 360 each, eyes fixed at the start)
+        // into one 1920 x 720 jpg f_<n>.jpg under Art/Playtest306/Checks/rec_<name>/, and index.csv gets the frame's clocks and
+        // the oldest live spell's age. Stops itself after <seconds> of real time, after MaxFrames, on rec:stop or when Play ends.
+        // Tools/Art/SpellVFX308/rec308.py turns the folder into the mp4 (game-time resampling, real speed + slow)
+        static class Rec
+        {
+            const int W = 1280, H = 720, SW = 640, SH = 360, MaxFrames = 1800;
+            static readonly System.Globalization.CultureInfo Inv = System.Globalization.CultureInfo.InvariantCulture;
+            static string folder;
+            static double until;
+            static int frames, lastFrame;
+            static Camera main, mainCam, sideCam, topCam;
+            static RenderTexture mainRt, sideRt, topRt;
+            static Texture2D sheet;
+            static StreamWriter index;
+
+            public static string Start(string arg)
+            {
+                if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
+                int k = arg.LastIndexOf(':');
+                string name = k > 0 ? arg.Substring(0, k) : arg;
+                float secs = k > 0 ? float.Parse(arg.Substring(k + 1), Inv) : 20f;
+                if (name.Length == 0 || name.Any(ch => !(char.IsLetterOrDigit(ch) || ch == '_' || ch == '-'))) return "refused: rec name [A-Za-z0-9_-]";
+                secs = Mathf.Clamp(secs, 1f, 120f);
+                if (index != null) Stop("restarted");
+                foreach (var left in UnityEngine.Resources.FindObjectsOfTypeAll<Camera>())   // left over by a crash or a lost domain
+                {
+                    if (left == null || !left.name.StartsWith("Lab_Rec") || left.hideFlags != HideFlags.HideAndDontSave) continue;
+                    var t = left.targetTexture;
+                    left.targetTexture = null;
+                    if (t != null) { t.Release(); Object.DestroyImmediate(t); }
+                    Object.DestroyImmediate(left.gameObject);
+                }
+                var walker = Object.FindFirstObjectByType<WorldMacroCombatWalker>();
+                main = Camera.main;
+                if (walker == null || walker.Body == null || main == null) return "refused: no walker body / main camera";
+
+                var body = walker.Body.transform;
+                Vector3 fwd = Vector3.ProjectOnPlane(body.forward, Vector3.up).normalized, right = Vector3.Cross(Vector3.up, fwd);
+                Vector3 aim = body.position + fwd * 5f + Vector3.up;
+                Vector3 sideEye = aim + right * 9f + Vector3.up * 1.5f, topEye = body.position - fwd * 2f + Vector3.up * 11f;
+                folder = Path.Combine(Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/Playtest306/Checks")), "rec_" + name);
+                Directory.CreateDirectory(folder);
+                foreach (var old in Directory.GetFiles(folder, "f_*.jpg")) File.Delete(old);   // this recorder's own earlier frames only
+                try
+                {
+                    mainCam = Copy("Lab_RecMain", mainRt = new RenderTexture(W, H, 24), main.transform.position, main.transform.rotation, main.fieldOfView);
+                    sideCam = Copy("Lab_RecSide", sideRt = new RenderTexture(SW, SH, 24), sideEye, Quaternion.LookRotation(aim - sideEye), 50f);
+                    topCam = Copy("Lab_RecTop", topRt = new RenderTexture(SW, SH, 24), topEye, Quaternion.LookRotation(aim - topEye), 50f);
+                    sheet = new Texture2D(W + SW, H, TextureFormat.RGB24, false);
+                    index = new StreamWriter(Path.Combine(folder, "index.csv"), false);
+                    index.WriteLine("frame,time,real,timescale,age,unityframe");
+                }
+                catch { Stop("start failed"); throw; }
+                until = EditorApplication.timeSinceStartup + secs;
+                frames = 0; lastFrame = -1;
+                EditorApplication.update += Tick;
+                EditorApplication.playModeStateChanged += OnPlayMode;
+                AssemblyReloadEvents.beforeAssemblyReload += OnReload;   // a script compile in Play reloads the domain: clean up first
+                return "rec " + name + " | " + secs.ToString("F0", Inv) + " s real | " + folder;
+            }
+
+            // a disabled throw-away copy of the main camera with its URP settings (post-processing on, like the game), no stack
+            static Camera Copy(string name, RenderTexture rt, Vector3 eye, Quaternion look, float fov)
+            {
+                var go = new GameObject(name) { hideFlags = HideFlags.HideAndDontSave };
+                var cam = go.AddComponent<Camera>();
+                cam.CopyFrom(main);
+                cam.enabled = false;
+                var data = UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(cam);
+                EditorUtility.CopySerialized(UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(main), data);
+                data.cameraStack?.Clear();
+                cam.targetTexture = rt;
+                cam.fieldOfView = fov;
+                cam.transform.SetPositionAndRotation(eye, look);
+                return cam;
+            }
+
+            static void OnPlayMode(PlayModeStateChange state)
+            {
+                if (state == PlayModeStateChange.ExitingPlayMode) Stop("Play ended");
+            }
+
+            static void OnReload() => Stop("script reload");
+
+            static void Tick()
+            {
+                if (index == null) return;
+                try
+                {
+                    if (!EditorApplication.isPlaying || main == null) { Stop("Play or main camera gone"); return; }
+                    if (EditorApplication.timeSinceStartup > until) { Stop("time up"); return; }
+                    if (frames >= MaxFrames) { Stop("frame cap " + MaxFrames); return; }
+                    if (Time.frameCount == lastFrame || EditorApplication.isPaused) return;   // one picture per game frame
+                    lastFrame = Time.frameCount;
+                    mainCam.transform.SetPositionAndRotation(main.transform.position, main.transform.rotation);
+                    mainCam.fieldOfView = main.fieldOfView;
+                    var was = RenderTexture.active;
+                    try
+                    {
+                        Grab(mainCam, mainRt, 0, 0);
+                        Grab(sideCam, sideRt, W, SH);   // texture rows count from the bottom: side top-right, top bottom-right
+                        Grab(topCam, topRt, W, 0);
+                    }
+                    finally { RenderTexture.active = was; }
+                    File.WriteAllBytes(Path.Combine(folder, "f_" + frames.ToString("D5") + ".jpg"), sheet.EncodeToJPG(88));
+                    float age = -1f;
+                    foreach (var e in Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx120Effect>(FindObjectsSortMode.None)) age = Mathf.Max(age, e.Age);
+                    index.WriteLine(string.Join(",", frames.ToString(Inv), Time.time.ToString("F4", Inv), EditorApplication.timeSinceStartup.ToString("F4", Inv),
+                        Time.timeScale.ToString("F3", Inv), age.ToString("F4", Inv), Time.frameCount.ToString(Inv)));
+                    frames++;
+                }
+                catch (Exception e) { Stop("error " + e.GetType().Name + " " + e.Message.Split('\n')[0]); }
+            }
+
+            static void Grab(Camera cam, RenderTexture rt, int x, int y)
+            {
+                cam.Render();
+                RenderTexture.active = rt;
+                sheet.ReadPixels(new Rect(0, 0, rt.width, rt.height), x, y, false);
+            }
+
+            public static string Stop(string why)
+            {
+                EditorApplication.update -= Tick;
+                EditorApplication.playModeStateChanged -= OnPlayMode;
+                AssemblyReloadEvents.beforeAssemblyReload -= OnReload;
+                if (index == null && mainCam == null) return "rec: not recording";
+                int n = frames;
+                try { index?.Dispose(); } catch (Exception) { }
+                index = null;
+                foreach (var cam in new[] { mainCam, sideCam, topCam }) if (cam != null) Object.DestroyImmediate(cam.gameObject);
+                foreach (var rt in new[] { mainRt, sideRt, topRt }) if (rt != null) { rt.Release(); Object.DestroyImmediate(rt); }
+                if (sheet != null) Object.DestroyImmediate(sheet);
+                mainCam = sideCam = topCam = null; mainRt = sideRt = topRt = null; sheet = null; main = null;
+                string line = "rec stop (" + why + ") | " + n + " frames | " + folder;
+                Debug.Log("[SpellLab308] " + line);
+                return line;
+            }
         }
 
         static string Status()

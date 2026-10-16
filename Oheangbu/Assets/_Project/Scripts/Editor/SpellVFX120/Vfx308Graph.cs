@@ -415,6 +415,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             PutPath(at, "arcCircle", "circle.radius", .01f);
             var first = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("Random", "Off"));
             PutOnly(first, 0f);
+            // 19th pass ("자국도 불 따라 늦게"): the stainwipe sheet reveals near -> far over its 16 cels; run them in the first
+            // .106 of the life (.36 of 3.4 s) and hold the whole stain. Added last in update so it overwrites the flipbook player;
+            // the hold is exactly 15 (the player wraps, 16 would be cel 0)
+            var wipe = Block(update, "AttributeFromCurve", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("SampleMode", "OverLife"));
+            const float wipeEnd = .106f, slope = 15f / wipeEnd;
+            Put(wipe, "TexIndex", new AnimationCurve(new Keyframe(0f, 0f, 0f, slope), new Keyframe(wipeEnd, 15f, slope, 0f), new Keyframe(1f, 15f, 0f, 0f)));
             var o = Orient(output); Setting(o, "mode", "Advanced");
             Space(o, "AxisZ", "Local"); Space(o, "AxisY", "Local");
             Put(o, "AxisZ", Vector3.up); Put(o, "AxisY", Vector3.forward);
