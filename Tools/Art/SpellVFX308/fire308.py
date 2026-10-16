@@ -63,9 +63,22 @@ def make(name):
     col = col * (1 - t2[..., None]) + VERMILION[None, None] * t2[..., None]
     col = col * (1 - .6 * edge[..., None]) + SOOT[None, None] * (.6 * edge[..., None])   # edges sink into ink
     out = np.concatenate([col, alpha[..., None]], -1)
+    # the source cels are tall (136.5 x 256) but the graph quad is square, so as baked 15 x 4 every tongue was stretched 1.9x
+    # sideways into a squat red lump (lab_fire1-4). Re-pack each cel, centred and unscaled, into a square 256 cel on an 8 x 8 sheet
+    # (60 used, the last 4 empty - the 30 fps flipbook reaches ~42 in a 1.4 s life)
+    out = (np.clip(out, 0, 1) * 255 + .5).astype(np.uint8)
+    cs = h // cy
+    sq = np.zeros((cs * 8, cs * 8, 4), np.uint8)
+    for k in range(cx * cy):
+        r, c = divmod(k, cx)
+        x0, x1 = int(round(c * w / cx)), int(round((c + 1) * w / cx))
+        cel = out[r * cs:(r + 1) * cs, x0:x1]
+        R, C = divmod(k, 8)
+        ox = C * cs + (cs - cel.shape[1]) // 2
+        sq[R * cs:(R + 1) * cs, ox:ox + cel.shape[1]] = cel
     dst = GAME / f'T_V308b_fire_{name}_vfx.png'
-    Image.fromarray((np.clip(out, 0, 1) * 255 + .5).astype(np.uint8), 'RGBA').save(dst)
-    print('SHEET fire', name, f'{cx}x{cy}', w, h, 'alpha mean %.3f' % float(alpha.mean()), 'max rgb %.2f' % float(col.max()), dst.name)
+    Image.fromarray(sq, 'RGBA').save(dst)
+    print('SHEET fire', name, f'{cx}x{cy} -> 8x8 square', sq.shape[1], sq.shape[0], 'alpha mean %.3f' % float(alpha.mean()), 'max rgb %.2f' % float(col.max()), dst.name)
 
 
 if __name__ == '__main__':

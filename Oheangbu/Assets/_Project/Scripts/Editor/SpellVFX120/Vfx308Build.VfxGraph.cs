@@ -123,7 +123,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var v = GraphHost(root, "FireVfx", NaSmokeGraph);
             if (v == null) return false;
             var so = new SerializedObject(v);
-            SetObj(so, "Main Texture", tongue); SetV2(so, "Flipbook Size", new Vector2(15f, 4f)); SetB(so, "Use Flipbook", true);
+            SetObj(so, "Main Texture", tongue); SetV2(so, "Flipbook Size", new Vector2(8f, 8f));   // fire5: square cels (fire308.py re-pack) SetB(so, "Use Flipbook", true);
             float life = 1.4f * a.Slow;
             // fire2 (lab_fire1 side stills: the -3 down force landed the tongues by ~3 m and 600/s x 1.6 m merged them into a flat
             // carpet): fast and strongly dragged so they settle near v / drag ~ 6.4 m within ~0.45 s, almost no down force, sparser,
