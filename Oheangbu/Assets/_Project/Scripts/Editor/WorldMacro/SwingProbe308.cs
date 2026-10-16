@@ -26,6 +26,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static SpellSwingProfile308 profile;
         static char burstLetter; static int burstLeft, burstTried, burstOpen; static float burstEvery, burstNext;
         static bool ticking;
+        static string fxVariant = "";
 
         public static string Run(string command)
         {
@@ -106,6 +107,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                     foreach (var r in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx308Residue>(FindObjectsSortMode.None)) sb.Append(" | residue at ").Append(r.transform.position.ToString("F1"));
                     return sb.ToString();
                 }
+                // 11.33 fire method comparison (user 2026-10-16 "다양한 방식을 시도해보고 그 중 맞는 걸 선택"): every frame until Play ends, the
+                // live 노 hosts get variant a (fire6 baseline) | b (painted sheet) | c (soot-mixed sheet, smoke carpet off) | d (painted
+                // sheet laid low and wide on the ground). Play memory only - the prefab and the graph are untouched.
+                case "fxset":
+                    if (rest != "a" && rest != "b" && rest != "c" && rest != "d") return "refused: fxset:a|b|c|d";
+                    fxVariant = rest; ApplyFx(); Tick(true); return "fx variant " + rest;
                 // slow motion for the stills (Play memory only): the rule and the presentation share Time.time, so both slow together
                 case "slow": { float k = Mathf.Clamp(float.Parse(rest, Inv), .05f, 1f); Time.timeScale = k; return "timeScale " + k.ToString("F2", Inv); }
                 case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }
@@ -125,7 +132,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     return trail == null ? "trail: no component" : "trail: enabled " + trail.isActiveAndEnabled + " emitting " + trail.Emitting + " points " + trail.PointCount;
                 }
             }
-            return "SwingProbe308: on | off | cast:<letter> | burst:<letter>:<n>:<interval> | dodge | ink | trail | report | reset";
+            return "SwingProbe308: on | off | cast:<letter> | burst:<letter>:<n>:<interval> | dodge | ink | trail | fxset:a|b|c|d | report | reset";
         }
 
         // the close-up (first person) brush in the draw mode: bristle press / splay, and how far the ink ribbon's head is from its tip
@@ -417,16 +424,42 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (on) EditorApplication.update += Update; else EditorApplication.update -= Update;
         }
 
+        static Texture2D FireSheet(string n) => AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Project/Art/SpellVFX308/V2/Textures/T_V308b_fire_" + n + "_vfx.png");
+
+        // the full fire property set per variant (values = ConeFireGraph fire6 for a), so a pooled host never keeps the last variant
+        static void ApplyFx()
+        {
+            if (fxVariant.Length == 0) return;
+            bool d = fxVariant == "d";
+            foreach (var vg in UnityEngine.Object.FindObjectsByType<UnityEngine.VFX.VisualEffect>(FindObjectsSortMode.None))
+            {
+                if (vg.name == "SmokeVfx") { if (vg.HasFloat("Spawn Rate")) vg.SetFloat("Spawn Rate", fxVariant == "c" ? 0f : 1600f); continue; }
+                if (vg.name != "FireVfx") continue;
+                var tex = FireSheet(fxVariant == "a" ? "tongue" : fxVariant == "c" ? "tongue_soot" : "tongue_paint");
+                if (tex != null) vg.SetTexture("Main Texture", tex);
+                vg.SetFloat("Spawn Rate", fxVariant == "c" ? 140f : d ? 160f : 110f);
+                vg.SetVector3("Initial Velocity_vector", d ? new Vector3(0f, -1.5f, 9f) : new Vector3(0f, -1f, 16f));
+                vg.SetFloat("Initial Velocity Divergence", d ? 3.2f : 2.2f);
+                vg.SetFloat("Drag", d ? 1.6f : 2.2f);
+                vg.SetVector3("Global Force_vector", d ? new Vector3(0f, 1.2f, 0f) : new Vector3(0f, 2f, 0f));
+                vg.SetVector3("Initial Position_position", d ? new Vector3(0f, .4f, 0f) : new Vector3(0f, .9f, 0f));
+                vg.SetAnimationCurve("Size Over Life", d ? new AnimationCurve(new Keyframe(0f, .4f), new Keyframe(.35f, 1.3f), new Keyframe(1f, 2.4f))
+                                                         : new AnimationCurve(new Keyframe(0f, .6f), new Keyframe(.35f, 1.5f), new Keyframe(1f, 2.6f)));
+                vg.SetFloat("LifeTime", d ? 1.8f : 1.4f);
+            }
+        }
+
         static void Update()
         {
-            if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; Tick(false); return; }
+            if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; fxVariant = ""; Tick(false); return; }
+            ApplyFx();
             if (Time.time < watchUntil && Time.time >= watchNext)
             {
                 watchNext = Time.time + .1f; var w = CurrentWalker;
                 if (w != null) { string now = Brush(w); string key = now.Split('|')[0]; int cut = key.IndexOf(" t ", StringComparison.Ordinal); string head = cut > 0 ? key.Substring(0, cut) : key; if (head != watchLast) { watchLast = head; Line("BRUSH " + now); } }
             }
             if (Time.time >= dodgeAt) { dodgeAt = float.PositiveInfinity; var h = CurrentWalker; if (h != null) Dodge(h); }
-            if (burstLeft <= 0) { if (burstTried > 0) Line("BURST END tried " + burstTried + " gate open " + burstOpen); burstTried = 0; if (float.IsPositiveInfinity(dodgeAt) && Time.time >= watchUntil) Tick(false); return; }
+            if (burstLeft <= 0) { if (burstTried > 0) Line("BURST END tried " + burstTried + " gate open " + burstOpen); burstTried = 0; if (float.IsPositiveInfinity(dodgeAt) && Time.time >= watchUntil && fxVariant.Length == 0) Tick(false); return; }
             if (Time.time < burstNext) return;
             burstNext = Time.time + burstEvery; burstLeft--; burstTried++;
             var bw = CurrentWalker; if (bw == null) return;
