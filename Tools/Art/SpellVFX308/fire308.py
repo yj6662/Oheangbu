@@ -41,6 +41,13 @@ SHEETS = {
     # the road (lab_fire10). Concept D frame 3's road marks are dark dragged brush streaks with red in their wet heads: 16 streak
     # variants, one per cel, each held for the particle's whole life (texIndex picked at birth, no flipbook play)
     'drag': (None, 4, 4, 'drag'),
+    # 11.34 (user 2026-10-16 "네가 자유롭게 만든다면 … 그렇게 진행해줘"): every sheet above re-paints a photographed flame, whose
+    # round blob shape piles into lava whatever the handles do. Concept D frame 3's fire is painted tongues - crisp S-curved
+    # licks with hooked tips, vermilion streaks along the flow over a deep-red body, a broken ink rim, ink at the root. 4 tongue
+    # variants x 16-frame lives (ink -> red soaks up from the root -> sway and curl -> split and thin -> the tip dries to soot)
+    'brush': (None, 8, 8, 'brush'),
+    # 16th pass: the red-ink pool on the ground the ring stands in (one 16-frame life, laid flat)
+    'pool': (None, 4, 4, 'pool'),
 }
 ASH = np.array([.30, .27, .24])           # thin soot, the lightest tone of the column
 
@@ -112,6 +119,10 @@ def soot(a, heat, streak, cs, tipw=1.15):
 
 def make(name):
     src, cx, cy, style = SHEETS[name]
+    if style == 'brush':
+        return make_brush(name)
+    if style == 'pool':
+        return make_pool(name)
     if style in ('curl', 'column', 'scorch', 'puff', 'drag'):
         return make_role(name, src, cx, cy, style)
     img = np.asarray(Image.open(CC0 / src).convert('RGBA'), np.float32) / 255
@@ -301,6 +312,245 @@ def make_drag(name, S=256, n=4):
     dst = GAME / f'T_V308b_fire_{name}_vfx.png'
     Image.fromarray(out, 'RGBA').save(dst)
     print('SHEET fire', name, '4x4 procedural streaks', out.shape[1], out.shape[0], 'alpha mean %.3f' % float(sq[..., 3].mean()), dst.name)
+
+
+HL = np.array([.90, .62, .50])            # thin flow streaks: the most diluted vermilion - still pigment on paper, no light
+MAROON = np.array([.26, .09, .07])        # the dark pockets between the painted flame bands
+BRICK = np.array([.66, .25, .17])         # the lit ribbon body, a little duller than VERMILION (concept D's red is brick, not orange)
+
+
+def _spine(t, L, th0, A, k, phase, H, side, base):
+    """a ribbon's centre line from its curvature, t 0 = root .. 1 = tip: an S whose sway grows toward the tip (the wave runs up
+    as the phase advances) and a tip that curls over in a hook (H rad of turn packed into the last 45 %), integrated so the hook
+    really turns instead of sliding sideways"""
+    dt = t[1] - t[0]
+    kap = A * np.sin(2 * np.pi * k * t - phase) * (.35 + t) + side * H * smooth(.55, 1., t)
+    th = th0 + np.cumsum(kap) * dt
+    P = np.stack([np.sin(th), -np.cos(th)], -1)
+    P = np.cumsum(P, 0) * dt * L
+    return P - P[0] + np.array(base)
+
+
+def _stroke(P, t, wid, S, rag):
+    """one painted band along spine P: per pixel the nearest spine parameter, the signed across-coordinate v (-1..1 inside)
+    and a crisp alpha (~1.5 px edge, the width wobbled by `rag` so the silhouette is painted, not a tube)"""
+    from scipy.spatial import cKDTree
+    yy, xx = (np.mgrid[0:S, 0:S] + .5) / S
+    q = np.stack([xx.ravel(), yy.ravel()], -1)
+    d, i = cKDTree(P).query(q)
+    tg = np.gradient(P, axis=0)
+    tg /= np.maximum(np.linalg.norm(tg, axis=1, keepdims=True), 1e-6)
+    rel = q - P[i]
+    sgn = np.sign(tg[i, 0] * rel[:, 1] - tg[i, 1] * rel[:, 0])
+    w = wid[i] * (1 + rag.ravel())
+    a = np.clip((w - d) * S / 1.5 + .5, 0, 1)
+    # past the tip the nearest point is the tip itself: no band there (keeps the point sharp)
+    a = np.where((i == len(t) - 1) & (d > w * .5), 0, a)
+    v = sgn * d / np.maximum(w, 1e-4)
+    return a.reshape(S, S), v.reshape(S, S), t[i].reshape(S, S)
+
+
+def make_brush(name, S=256, n=8):
+    """11.34: 4 painted flame tongues x 16-frame lives on an 8x8 sheet (variant k = texIndex 16k .. 16k+15 = rows 2k, 2k+1).
+    A tongue is not one tube but a braid of 4-5 thin brushed ribbons out of one root, painted back to front: a broad dark body
+    behind (maroon-ink), then ribbons that curl into hooked tips, each lit on one edge (brick -> vermilion band + a pale broken
+    streak along the flow) with a broken ink rim on the other, so dark pockets open wherever ribbons part - concept D frame 3's
+    flame bands. Life: 0-3 a small ink tongue rises and the red soaks up from the root, 4-9 full, the S wave running up and the
+    ribbons swaying apart, 10-12 the ribbons part and thin, 13-15 the tips dry to soot and break into hairs. Root at the cel's
+    bottom centre (quad pivot y -.5); zero on every cel border"""
+    yy, xx = (np.mgrid[0:S, 0:S] + .5) / S
+    border = 1 - smooth(.9, .985, np.maximum(np.abs(xx - .5), np.abs(yy - .5)) * 2)
+    base_y = .935
+    N = 300
+    t = np.linspace(0, 1, N)
+    sq = np.zeros((S * n, S * n, 4), np.float32)
+    for var in range(4):
+        rng = np.random.default_rng(910 + var)
+        side = 1 if var % 2 == 0 else -1
+        ph0 = rng.random() * 6.28
+        nr = 4
+        sw_ = var % 2 == 1                                          # variants 1, 3 lick sideways and hook back (C)
+        lean = -side * (.55 + .2 * rng.random()) if sw_ else 0.
+        rib = []
+        for r in range(nr):
+            body = r == 0
+            rib.append(dict(
+                body=body,
+                L=((.45 + .1 * rng.random()) if body else ((.74 + .08 * rng.random()) if r == 1 else (.48 + .18 * rng.random()))) * (.8 if sw_ else 1.),
+                th0=(rng.random() - .5) * .2 + (r - (nr - 1) / 2) * .13 * (0 if body else 1) + lean * (.7 if body else 1.),
+                A=1.2 if body else 2. + 1.5 * rng.random(),
+                k=.7 + .5 * rng.random(),
+                ph=ph0 + rng.random() * 2.,
+                H=(4. if sw_ else 2.) if body else ((9. + 3. * rng.random()) if r == 1 else (5. + 3. * rng.random())),
+                side=(side if (r % 3) else -side),
+                W=(.15 + .03 * rng.random()) if body else (.075 + .035 * rng.random()),
+                dx=(rng.random() - .5) * .07 - (np.sign(lean) * .13 if sw_ else 0.),
+                tone=0. if body else min(1., .3 + .18 * r + .2 * rng.random()),
+                lit=(-1 if rng.random() < .5 else 1),
+                hairs=rng.random(64),
+                hl=(-.8 + .08 * rng.random(), .06 + .04 * rng.random(), .15 + .25 * rng.random(), .7 + .25 * rng.random())))
+        mott = lowfreq(S, S, 6, 3000 + var)
+        for f in range(16):
+            k = var * 16 + f
+            grow = smooth(0, 3.5, f)                                    # 0-3 rising
+            part = smooth(8.5, 12.5, f)                                 # 10-12 the ribbons part and thin
+            dryf = smooth(12, 15.5, f)                                  # 13-15 drying
+            col_acc = np.zeros((S, S, 3))
+            a_acc = np.zeros((S, S))
+            for ri, R_ in enumerate(rib):
+                L = R_['L'] * (.35 + .65 * grow) * (1 - .2 * dryf)
+                W = R_['W'] * (.55 + .45 * grow) * (1 - .45 * part) * (1 - .3 * dryf)
+                if R_['body']:
+                    W *= 1 - .4 * part
+                phase = R_['ph'] + .6 * f                               # the wave runs up the tongue frame by frame
+                th0 = R_['th0'] * (1 + .8 * part) + .05 * np.sin(.7 * f + R_['ph'])
+                P = _spine(t, L, th0, R_['A'] * (.5 + .5 * grow), R_['k'], phase, R_['H'] * (.35 + .65 * grow),
+                           R_['side'], (.5 + R_['dx'] * (.3 + .7 * grow), base_y))
+                wid = W * (.75 + .45 * np.exp(-((t - .4) / .28) ** 2)) * np.clip(1 - t ** 3.2, 0, 1) ** .75
+                wid *= 1 + .12 * np.sin(2 * np.pi * (2.1 * t + .05 * f) + R_['ph']) + .07 * np.sin(2 * np.pi * 4.7 * t + 2 * R_['ph'])
+                rag = (.04 if R_['body'] else .08) * (lowfreq(S, S, 6 if R_['body'] else 3, 1000 + k * 8 + ri) - .5)
+                a, v, tp = _stroke(P, t, wid, S, rag)
+                a *= 1 - smooth(base_y - .012, base_y + .02, yy)        # cut flat on the ground line
+                hv = np.interp((v + 1.2) * 24 + 2 * np.sin(5 * tp + R_['ph']), np.arange(64), R_['hairs'])
+                # dry-brush tip: a little always, the whole upper ribbon when drying
+                dry_tip = smooth(.62, 1., tp) * (.4 + .6 * dryf) + dryf * smooth(.2, .6, tp) * .6
+                a *= 1 - smooth(.3, .62, dry_tip * (1.3 - hv))
+                a *= 1 - smooth(.35, .65, smooth(.72, 1., np.abs(v)) * (1.25 - hv))   # dry-brush streaks along both edges
+                # colour, in the ribbon's own stroke space
+                vl = v * R_['lit']                                      # -1 = lit edge, +1 = ink edge
+                tone = R_['tone']
+                m = np.clip(.05 + .65 * tone + .6 * (mott - .5), 0, 1)
+                col = MAROON[None, None] * (1 - m[..., None]) + DEEP[None, None] * m[..., None]
+                band = smooth(-.3, -.45, vl + .3 * (mott - .5)) * tone
+                col = col * (1 - band[..., None]) + BRICK[None, None] * band[..., None]
+                edge = smooth(-.68, -.78, vl) * tone
+                col = col * (1 - .8 * edge[..., None]) + VERMILION[None, None] * (.8 * edge[..., None])
+                c0, sw, ta, tb_ = R_['hl']
+                brk = lowfreq(S, S, 4, 5000 + k * 8 + ri)
+                line = (1 - smooth(0, sw, np.abs(vl - c0 - .06 * np.sin(6 * tp + .4 * f)))) \
+                    * smooth(ta, ta + .08, tp) * (1 - smooth(tb_ - .1, tb_, tp)) * smooth(.35, .5, np.interp(tp * 9 + 3 * ri + .3 * f, np.arange(64), R_['hairs'])) * (tone > .5)
+                col = col * (1 - .8 * line[..., None]) + HL[None, None] * (.8 * line[..., None])
+                rim = smooth(.55, .7, vl) * smooth(.4, .55, np.interp(tp * 4 + 5 * ri + .15 * f, np.arange(64), R_['hairs'][::-1]) * .6 + .4 * brk)
+                col = col * (1 - .45 * rim[..., None]) + MAROON[None, None] * (.45 * rim[..., None])   # shadow side, no ink outline
+                # bristle grain along the flow: +-7 % value stripes
+                col *= (.93 + .14 * hv)[..., None]
+                root = 1 - smooth(.05, .32, tp + .12 * (mott - .5))
+                col = col * (1 - .5 * root[..., None]) + MAROON[None, None] * (.5 * root[..., None])
+                a *= smooth(.0, .16, tp + .08 * (mott - .5))            # the base fades into the soot wash instead of a hard band
+                # 0-3: born ink, the red soaks up from the root
+                front = 1.25 * smooth(0, 3.2, f) + .12 * (mott - .5)
+                soak = smooth(front, front - .15, tp)
+                col = INK[None, None] * (1 - soak[..., None]) + col * soak[..., None]
+                dry = dryf * smooth(.2, .75, tp)
+                col = col * (1 - .85 * dry[..., None]) + SOOT[None, None] * (.85 * dry[..., None])
+                col_acc = col * a[..., None] + col_acc * (1 - a[..., None])
+                a_acc = a + a_acc * (1 - a)
+            Rr, Cc = divmod(k, n)
+            sq[Rr * S:(Rr + 1) * S, Cc * S:(Cc + 1) * S] = np.concatenate([col_acc, (a_acc * border)[..., None]], -1)
+    out = (np.clip(sq, 0, 1) * 255 + .5).astype(np.uint8)
+    dst = GAME / f'T_V308b_fire_{name}_vfx.png'
+    Image.fromarray(out, 'RGBA').save(dst)
+    print('SHEET fire', name, '8x8 procedural tongues (4 variants x 16)', out.shape[1], out.shape[0],
+          'alpha mean %.3f' % float(sq[..., 3].mean()), 'max rgb %.2f' % float(sq[..., :3].max()), dst.name)
+
+def make_pool(name, S=512, n=4):
+    """11.34 16th pass: the red-black wash on the ground the fire ring stands in. Concept D frame 3's ground is not a round
+    ink drop (v1-v2: a disc with splash pins read as a cartoon sun / an ink blot) but a pool laid down with the brush: broad
+    dark smears dragged round the target, deep-red strokes over them, thin brick-red licks with hooked ends lying on top, all
+    with dry-brush streaks along the drag. One 16-frame life, laid flat: 0-3 the strokes are painted on (plain ink first, the
+    red soaking up), a soft maroon under-wash spreading between them; 4-11 it holds and creeps; 12-15 it dries to soot and
+    lifts in patches from the thin rims inward. Zero on every cel border"""
+    from scipy import ndimage as nd
+    yy, xx = (np.mgrid[0:S, 0:S] + .5) / S
+    rr = np.sqrt((xx - .5) ** 2 + (yy - .5) ** 2)
+    border = 1 - smooth(.9, .985, np.maximum(np.abs(xx - .5), np.abs(yy - .5)) * 2)
+    rng = np.random.default_rng(1600)
+    gran = lowfreq(S, S, 1.3, 1604)                                         # paper grain: the dry break-up
+    mott = lowfreq(S, S, 10, 1602)
+    N = 240
+    t = np.linspace(0, 1, N)
+    strokes = []
+    # layer, count, radius range, half width range, sweep range, tone (0 ink .. 1 maroon .. 2 deep .. 3 brick lick)
+    for layer, cnt, (r0, r1), (w0, w1), (s0, s1), tone in (
+            (0, 7, (.08, .33), (.06, .09), (.7, 1.5), 0),
+            (1, 2, (0., .06), (.035, .05), (.4, .8), 0),                    # the middle under the target
+            (2, 8, (.14, .38), (.03, .05), (.5, 1.2), 1),
+            (3, 6, (.16, .36), (.02, .032), (.6, 1.3), 2),
+            (4, 5, (.2, .38), (.011, .018), (.7, 1.4), 3)):
+        for i in range(cnt):
+            a0 = rng.random() * 2 * np.pi
+            sw = (s0 + (s1 - s0) * rng.random()) * (1 if rng.random() < .5 else -1)
+            r = r0 + (r1 - r0) * rng.random()
+            strokes.append(dict(layer=layer, tone=tone, a0=a0, sw=sw, r=r, dr=(rng.random() - .5) * .08,
+                                W=w0 + (w1 - w0) * rng.random(), st=(-.9 + rng.random() if layer < 2 else .6 * layer - .6 + 1.2 * rng.random()),
+                                hook=(rng.random() - .3) * 2.5 if tone == 3 else 0., hairs=rng.random(64), ph=rng.random() * 6.28,
+                                lit=(-1 if rng.random() < .5 else 1)))
+    sq = np.zeros((S * n, S * n, 4), np.float32)
+    for f in range(n * n):
+        dryf = smooth(11, 15.5, f)
+        soakf = smooth(1.2, 4.5, f)
+        creep = 1 + .04 * smooth(4, 12, f)
+        col_acc = np.zeros((S, S, 3))
+        a_acc = np.zeros((S, S))
+        for si, k in enumerate(strokes):
+            vis = smooth(k['st'], k['st'] + 1.6, f)                         # painted on along its length
+            if vis <= .02:
+                continue
+            nv = max(3, int(N * vis))
+            tt = t[:nv]
+            ang = k['a0'] + k['sw'] * tt + k['hook'] * smooth(.75, 1., tt) * np.sign(k['sw'])
+            rad = (k['r'] + k['dr'] * tt + .012 * np.sin(5 * tt + k['ph'])) * creep
+            P = np.stack([.5 + rad * np.cos(ang), .5 + rad * np.sin(ang)], -1)
+            if k['r'] < .08:                                                # the middle smears: short straight drags
+                P = np.stack([.5 + (tt - .5) * .26 * np.cos(k['a0']) + k['r'] * np.cos(k['ph']),
+                              .5 + (tt - .5) * .26 * np.sin(k['a0']) + k['r'] * np.sin(k['ph'])], -1)
+            wid = k['W'] * creep * np.clip(np.sin(np.pi * np.clip(t[:nv] * .92 + .04, 0, 1)), 0, 1) ** .45 * (1.1 - .25 * tt)
+            wid *= 1 + .1 * np.sin(2 * np.pi * 2.3 * tt + k['ph'])
+            rag = .1 * (lowfreq(S, S, 3, 2000 + si) - .5)
+            a, v, tp = _stroke(P, tt / tt[-1], wid, S, rag)
+            hv = np.interp((v + 1.2) * 24 + 2 * np.sin(4 * tp + k['ph']), np.arange(64), k['hairs'])
+            # dry-brush: hairs split off along both edges and at the tail of the drag
+            a *= 1 - smooth(.35, .65, smooth(.65, 1., np.abs(v)) * (1.3 - hv))
+            a *= 1 - smooth(.3, .62, smooth(.7, 1., tp) * (1.25 - hv))
+            a *= (.9 if k['tone'] == 0 else .93)
+            tone = k['tone']
+            base = (INK, MAROON, DEEP, BRICK)[tone]
+            col = base[None, None] * np.ones((S, S, 1))
+            if tone == 0:
+                m = .4 * smooth(.45, .8, mott)
+                col = col * (1 - m[..., None]) + MAROON[None, None] * m[..., None]
+            if tone == 3:                                                   # the licks: a lit vermilion edge, a maroon shadow edge
+                vl = v * k['lit']
+                edge = smooth(-.45, -.75, vl)
+                col = col * (1 - .75 * edge[..., None]) + VERMILION[None, None] * (.75 * edge[..., None])
+                sh = smooth(.4, .8, vl)
+                col = col * (1 - .5 * sh[..., None]) + MAROON[None, None] * (.5 * sh[..., None])
+            col *= (.9 + .2 * hv)[..., None]                                # bristle grain along the drag
+            # born ink: the red soaks up after the stroke lands
+            soak = soakf * smooth(k['st'] + .5, k['st'] + 2.5, f)
+            col = INK[None, None] * (1 - soak) + col * soak
+            col_acc = col * a[..., None] + col_acc * (1 - a[..., None])
+            a_acc = a + a_acc * (1 - a)
+        # the under-wash: the strokes bleed together into one pool (soft, maroon, under everything)
+        wash = nd.gaussian_filter(a_acc, S * .03) * smooth(-.5, 4, f)
+        wash = np.clip(wash * 1.6, 0, 1) * .65 * (1 - smooth(.36, .44, rr))
+        wcol = MAROON * .6 + INK * .4
+        alpha = a_acc + wash * (1 - a_acc)
+        # col_acc is already alpha-weighted (premultiplied over): weighting it by a_acc again drew a dark rim round every stroke
+        col = (col_acc + wcol[None, None] * (wash * (1 - a_acc))[..., None]) / np.maximum(alpha, 1e-4)[..., None]
+        # drying: soot colour; patches lift from the thin rims inward (a moving threshold = crisp lifted patches, not a haze)
+        col = col * (1 - .55 * dryf) + SOOT[None, None] * (.55 * dryf)
+        field = .5 * gran + .3 * mott + .35 * (1 - np.clip(alpha, 0, 1))
+        thr = 1.2 - .85 * dryf
+        alpha *= 1 - smooth(thr - .04, thr + .04, field)
+        alpha *= .92 + .08 * gran
+        R_, C_ = divmod(f, n)
+        sq[R_ * S:(R_ + 1) * S, C_ * S:(C_ + 1) * S] = np.concatenate([col, (alpha * border)[..., None]], -1)
+    out = (np.clip(sq, 0, 1) * 255 + .5).astype(np.uint8)
+    dst = GAME / f'T_V308b_fire_{name}_vfx.png'
+    Image.fromarray(out, 'RGBA').save(dst)
+    print('SHEET fire', name, '4x4 procedural brushed ground wash (one 16-frame life)', out.shape[1], out.shape[0],
+          'alpha mean %.3f' % float(sq[..., 3].mean()), 'max rgb %.2f' % float(sq[..., :3].max()), dst.name)
 
 
 if __name__ == '__main__':

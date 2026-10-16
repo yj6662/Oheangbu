@@ -184,29 +184,83 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return g;
         }
 
-        // ⓐ the ring (curl sheet: Flame03-hollow shape, red root, soot tip): born on a 2 m band round the target, leaning out
+        // ⓐ the ring: born on a band round the target, leaning out. fire16 (user 2026-10-16 "네가 자유롭게 만든다면 ... 그렇게
+        // 진행해줘"): the painted tongue sheet (fire308.py brush: 4 tongues of brushed ribbons, each a 16-cel life - rises as ink,
+        // the red soaks up, sways, parts, dries to soot). The graph stands each tongue on its root and gives it one of the 4 for
+        // its whole life; here: shown from RingHide of the life (the poured fire has reached the target), the 15 visible cels
+        // once over the rest, size up at once and growing a little, barely drifting
         static bool RingGraph(Transform root, Elem e, Atk a)
         {
-            var (v, so) = RoleHost(root, e, "RingVfx", NaRingGraph, "curl", new Vector2(8f, 8f));
+            var (v, so) = RoleHost(root, e, "RingVfx", NaRingGraph, "brush", new Vector2(8f, 8f));
             if (v == null) return false;
             float life = 1.8f * a.Slow;
-            SetF(so, "Spawn Rate", 200f * a.Dense);
-            // fire9: fire8's force 1.2 lifted the hidden (size 0) tongues ~1.5 m before they showed -> a floating hedge; now they
-            // barely climb and stay a low ring (frame 3: ~2 m tall, wide)
-            SetV3(so, "Initial Velocity_vector", new Vector3(0f, .9f, 0f));
-            SetF(so, "Initial Velocity Divergence", .2f);
+            SetF(so, "Spawn Rate", 160f * a.Dense);   // ~48 tongues in the ~.3 s emit window, round a 1.4-2.3 m band
+            SetV3(so, "Initial Velocity_vector", new Vector3(0f, .12f, 0f));   // with the graph's .06 outward push: the lean, not a climb
+            SetF(so, "Initial Velocity Divergence", .02f);
             SetF(so, "Drag", .9f);
-            SetV3(so, "Global Force_vector", new Vector3(0f, .15f, 0f));
+            SetV3(so, "Global Force_vector", Vector3.zero);
             SetV2(so, "Angle Min/Max", Vector2.zero);   // drawn along the velocity: any roll breaks the lean
-            // nothing until the tongues have reached the target (~.4 s = .22 of the life), then up to knee-to-chest height
-            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(.22f, 0f), new Keyframe(.4f, 1.0f * a.Big), new Keyframe(1f, 1.3f * a.Big)));
-            SetGrad(so, "Color Over Life", FadeGrad(Color.white, new Color(.165f, .15f, .135f), .25f, .7f, 1f));
+            // zero tangents: a step from nothing to full in .02 of the life (no overshoot), then a slow swell
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(RingHide, 0f), new Keyframe(RingHide + .02f, 1.5f * a.Big), new Keyframe(1f, 1.9f * a.Big)));
+            // the sheet carries the colour (ink -> red -> soot): the particle only fades it in and out, a little dimmer at the end
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, new Color(.5f, .47f, .44f), RingHide + .01f, .85f, 1f));
             SetF(so, "LifeTime", life);
-            SetF(so, "Soft Particle Fade Distance", .2f);
-            SetF(so, "Flipbook Framerate", 30f);
+            SetF(so, "Soft Particle Fade Distance", .15f);
+            SetF(so, "Flipbook Framerate", RingCels / ((1f - RingHide) * life));   // the variant's last cel lands on the end of the life
             SetV3(so, "Bounds_center", new Vector3(0f, 1.2f, 6f));
             SetV3(so, "Bounds_size", new Vector3(9f, 4f, 9f));
             so.ApplyModifiedPropertiesWithoutUndo();
+            v.GetComponent<VFXRenderer>().sortingOrder = 1;   // over the wash and the pool
+            return true;
+        }
+
+        // ⓓ the soot wash (puff sheet): soft red-soot puffs filling the disc behind and between the tongues once they stand, so the
+        // tongues read against a dark ground (frame 3's maroon-black field) instead of the paving
+        static bool WashGraph(Transform root, Elem e, Atk a)
+        {
+            var (v, so) = RoleHost(root, e, "WashVfx", NaWashGraph, "puff", new Vector2(8f, 8f));
+            if (v == null) return false;
+            float life = 2.4f * a.Slow;
+            SetF(so, "Spawn Rate", 80f * a.Dense);
+            SetV3(so, "Initial Velocity_vector", new Vector3(0f, .25f, 0f));
+            SetF(so, "Initial Velocity Divergence", .1f);
+            SetF(so, "Drag", .5f);
+            SetV3(so, "Global Force_vector", Vector3.zero);
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(.2f, 0f), new Keyframe(.35f, 1.4f * a.Big), new Keyframe(1f, 2.2f * a.Big)));
+            // pigment-tinted soot, see-through: a ground under the tongues, never a wall in front of them (TEST)
+            var tint = new Color(.8f, .55f, .5f);
+            SetGrad(so, "Color Over Life", FadeGrad(tint, Color.white * .85f, .3f, .6f, .5f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Soft Particle Fade Distance", .5f);
+            SetF(so, "Flipbook Framerate", 63f / life);   // the puff sheet's 64 cels once (dark young -> ash)
+            SetV3(so, "Bounds_center", new Vector3(0f, 1.6f, 6.4f));
+            SetV3(so, "Bounds_size", new Vector3(8f, 5f, 8f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            v.GetComponent<VFXRenderer>().sortingOrder = 0;
+            return true;
+        }
+
+        // ⓔ the ground pool (pool sheet, fire308.py: one 16-cel life - the strokes painted on round the target as ink, the red
+        // soaking up, held, dried to soot and lifted in patches): two big blots laid flat, turned at random, outliving the fire
+        static bool PoolGraph(Transform root, Elem e, Atk a)
+        {
+            var (v, so) = RoleHost(root, e, "PoolVfx", NaPoolGraph, "pool", new Vector2(4f, 4f));
+            if (v == null) return false;
+            float life = 3.2f * a.Slow;
+            SetF(so, "Spawn Rate", 7f);   // ~2 blots in the ~.3 s emit window; more turns the strokes into mush
+            SetV3(so, "Initial Velocity_vector", Vector3.zero);
+            SetF(so, "Initial Velocity Divergence", 0f);
+            SetF(so, "Drag", 0f);
+            SetV3(so, "Global Force_vector", Vector3.zero);
+            SetV2(so, "Angle Min/Max", new Vector2(0f, 360f));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 6.5f * a.Big), new Keyframe(1f, 6.5f * a.Big)));   // the sheet paints its own growth
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .04f, .85f, 1f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Flipbook Framerate", 15f / life);
+            SetV3(so, "Bounds_center", new Vector3(0f, .5f, 6f));
+            SetV3(so, "Bounds_size", new Vector3(8f, 2f, 8f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            v.GetComponent<VFXRenderer>().sortingOrder = -1;
             return true;
         }
 

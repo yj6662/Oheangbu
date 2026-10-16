@@ -1,0 +1,47 @@
+# 11.34 fire16: free design - the scorch trail is gone; brush-sheet tongues stand in a ring round the target (pivot at the brush root,
+# four variants, scale .6-1.4), a soot wash breathes behind them, a brushed red-black pool lies flat under them; column as before.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.45
+?call SpellLab308 Run shot:lab_fire16_3
+?call SpellLab308 Run side:lab_fire16_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire16_4
+?call SpellLab308 Run side:lab_fire16_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire16_5
+?call SpellLab308 Run side:lab_fire16_5
+?call SpellLab308 Run top:lab_fire16_5
+?call SwingProbe308 Run fx
+sleep 1.0
+?call SpellLab308 Run shot:lab_fire16_6
+?call SpellLab308 Run side:lab_fire16_6
+?call SpellLab308 Run top:lab_fire16_6
+?call SwingProbe308 Run fx
+sleep 1.5
+?call SpellLab308 Run shot:lab_fire16_7
+?call SpellLab308 Run side:lab_fire16_7
+?call SpellLab308 Run top:lab_fire16_7
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

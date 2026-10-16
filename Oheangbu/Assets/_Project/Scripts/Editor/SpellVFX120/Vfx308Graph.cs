@@ -192,19 +192,47 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         // concept D frame 3 ⓐ: a low ring of tongues round the target, each leaning outward (born on a ring band, pushed out
         // from a point under the ring's centre, drawn along its velocity), the core left dark
+        // fire16 (user 2026-10-16 "네가 자유롭게 만든다면 ... 그렇게 진행해줘"): the painted tongue sheet (fire308.py brush, 4 tongues x
+        // 16-cel lives). Each tongue stands on its root (pivot at the cel's root line), barely moves (the velocity only sets the
+        // lean), is one of the 4 tongues for its whole life (a per-particle start cel from a 4-texel map) and plays that life once
         static string GraphBuildRing() => GraphBuildAt(NaRingGraph, 400u, (init, update, output) =>
         {
             var ring = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "ThicknessRelative"));
             Space(ring, "arcCircle", "Local");
             PutPath(ring, "arcCircle", "circle.transform.position", new Vector3(0f, .1f, 6f));
             PutPath(ring, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));   // the circle lies in its local XY plane -> onto the ground
-            PutPath(ring, "arcCircle", "circle.radius", 2.4f);   // fire9: wider than the target, as frame 3
-            Put(ring, "Thickness", .5f);
+            PutPath(ring, "arcCircle", "circle.radius", 2.3f);   // fire9: wider than the target, as frame 3
+            Put(ring, "Thickness", .4f);   // fire16: a band 1.4-2.3 m out, over the pool's red strokes
             var lean = Block(init, "VelocitySpherical", ("composition", "Add"));
             try { Space(lean, "center", "Local"); } catch (Exception) { }   // a plain Vector3 here: then it is in the system's (local) space
-            Put(lean, "center", new Vector3(0f, .1f, 6f)); Put(lean, "Speed", .6f);   // fire9: from the ring's own plane -> mostly outward, a ~30° lean with the up push
+            Put(lean, "center", new Vector3(0f, .1f, 6f)); Put(lean, "Speed", .06f);   // fire16: with the host's .12 up = a ~27° outward lean, ~.15 m of drift
+            var pivot = Block(init, "SetAttribute", ("attribute", "pivot"), ("Composition", "Overwrite"), ("Random", "Off"));
+            PutOnly(pivot, new Vector3(0f, -.43f, 0f));   // the brush sheet's root line sits at .935 of the cel (fire308.py base_y)
+            var scale = Block(init, "SetAttribute", ("attribute", "scale"), ("Composition", "Overwrite"), ("Random", "Uniform"));
+            Put(scale, "A", Vector3.one * .6f); Put(scale, "B", Vector3.one * 1.4f);
+            var pick = Block(init, "AttributeFromMap", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("SampleMode", "RandomConstantPerParticle"));
+            Put(pick, "attributeMap", BrushVariantMap());
             Setting(Orient(output), "mode", "AlongVelocity");
+            Setting(output, "primitiveType", "Quad");   // the sample's octagon clips the cel corners, where hooked tips can reach
         });
+
+        // the ring host hides a tongue for the first RingHide of its life (size 0, until the poured fire reaches the target) and
+        // plays RingCels cels over the rest, so each tongue starts RingCels x RingHide / (1 - RingHide) cels before its variant's
+        // first cel (variant k = rows 2k, 2k+1 = texIndex 16k): the hidden part runs through cels nobody sees
+        const float RingHide = .21f, RingCels = 15f;
+        const string BrushVariantMapPath = "Assets/_Project/Art/SpellVFX308/V2/Graphs/T_V308_brush_variants.asset";
+        static Texture2D BrushVariantMap()
+        {
+            if (AssetDatabase.LoadMainAssetAtPath(BrushVariantMapPath) != null) AssetDatabase.DeleteAsset(BrushVariantMapPath);
+            float lead = RingCels * RingHide / (1f - RingHide);
+            var t = new Texture2D(4, 1, TextureFormat.RFloat, false, true) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = "T_V308_brush_variants" };
+            t.SetPixelData(new[] { -lead, 16f - lead, 32f - lead, 48f - lead }, 0);
+            t.Apply(false, false);
+            AssetDatabase.CreateAsset(t, BrushVariantMapPath);
+            return t;
+        }
+        // a block whose only input is the value (SetAttribute with Random Off: the slot is named after the attribute)
+        static void PutOnly(object model, object value) => Put(model, SlotName(Slots(model).Cast<object>().First()), value);
 
         // ⓑ the scorched road: red-ink blots laid flat on the ground from the caster to the target, each drying through the
         // scorch sheet's 16 cels from its first one
@@ -244,6 +272,44 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var turb = Block(update, "Turbulence", ("Mode", "Absolute"), ("NoiseType", "Perlin"));
             Put(turb, "Intensity", .8f); Put(turb, "frequency", .4f); Put(turb, "octaves", 2); Put(turb, "roughness", .5f);
             PutFields(turb, "FieldTransform", ("scale", Vector3.one));
+        });
+
+        // fire16: two more layers under the ring (concept D frame 3: the tongues are painted over a dark red-black ground)
+        const string NaWashGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_wash.vfx";
+        const string NaPoolGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_pool.vfx";
+
+        // ⓓ the soot wash: soft red-soot puffs filling the disc behind and between the tongues, slowly lifting and torn a little.
+        // Every puff starts from the puff sheet's first (darkest, youngest) cel
+        static string GraphBuildWash() => GraphBuildAt(NaWashGraph, 160u, (init, update, output) =>
+        {
+            var disc = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "Volume"));
+            Space(disc, "arcCircle", "Local");
+            PutPath(disc, "arcCircle", "circle.transform.position", new Vector3(0f, .6f, 6.4f));   // a little behind the target
+            PutPath(disc, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));
+            PutPath(disc, "arcCircle", "circle.radius", 1.9f);
+            var first = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("Random", "Off"));
+            PutOnly(first, 0f);
+            var turb = Block(update, "Turbulence", ("Mode", "Absolute"), ("NoiseType", "Perlin"));
+            Put(turb, "Intensity", .5f); Put(turb, "frequency", .5f); Put(turb, "octaves", 2); Put(turb, "roughness", .5f);
+            PutFields(turb, "FieldTransform", ("scale", Vector3.one));
+        });
+
+        // ⓔ the ground pool: the red-black wash painted on the ground round the target (fire308.py pool: one 16-cel life - painted
+        // on, held, dried to soot and lifted in patches), laid flat like the scorch streaks were, turned at random
+        static string GraphBuildPool() => GraphBuildAt(NaPoolGraph, 32u, (init, update, output) =>
+        {
+            var disc = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "Volume"));
+            Space(disc, "arcCircle", "Local");
+            PutPath(disc, "arcCircle", "circle.transform.position", new Vector3(0f, .04f, 6f));   // just clear of z-fighting
+            PutPath(disc, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));
+            PutPath(disc, "arcCircle", "circle.radius", .3f);
+            var first = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("Random", "Off"));
+            PutOnly(first, 0f);
+            var o = Orient(output); Setting(o, "mode", "Advanced");
+            Space(o, "AxisZ", "Local"); Space(o, "AxisY", "Local");
+            Put(o, "AxisZ", Vector3.up); Put(o, "AxisY", Vector3.forward);
+            Setting(output, "cullMode", "Off"); Setting(output, "useSoftParticle", false);
+            Setting(output, "primitiveType", "Quad");
         });
 
         static string GraphDump(string path, bool settings = false)

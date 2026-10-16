@@ -76,6 +76,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "graph:build:ring": return GraphBuildRing();     // 11.34 fire8: tongues leaning out round the target
                 case "graph:build:scorch": return GraphBuildScorch(); // 11.34 fire8: red-ink scorch laid on the ground
                 case "graph:build:column": return GraphBuildColumn(); // 11.34 fire8: the thin soot column
+                case "graph:build:wash": return GraphBuildWash();     // 11.34 fire16: the soot wash under the ring
+                case "graph:build:pool": return GraphBuildPool();     // 11.34 fire16: the red-black ground pool
                 case "graph:dump": return GraphDump(NaSmokeGraph);
                 case "revert": return Revert();
                 case "status": return Status();
@@ -841,9 +843,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // 11.34 fire8 (user 2026-10-16 "C 그을음 섞인 불" + a ring round the target, several sheets): the soot-tipped tongues,
             // the outward-leaning ring, the scorched road and the soot column; the soot carpet (SmokeVfx) is off for 노
             // 11.33 fire15 (user 2026-10-16 "길자국 없애고"): the scorched road is off (ScorchGraph kept, tag na-fire-308-v15-scorch)
+            // 11.34 fire16 (user 2026-10-16 "네가 자유롭게 만든다면 ... 그렇게 진행해줘"): the ring is painted brush tongues over a
+            // soot wash and a red-black ground pool
             if (ConeFireGraph(root.transform, e, a))
             {
-                RingGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
+                RingGraph(root.transform, e, a); WashGraph(root.transform, e, a); PoolGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
                 return root;
             }
             if (ConeSmokeGraph(root.transform, e, a)) return root;
