@@ -312,6 +312,68 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Setting(output, "primitiveType", "Quad");
         });
 
+        // fire17 (user 2026-10-16 "네가 자유롭게 만든다면 어떻게 진행할거야? 그렇게 진행해줘"): the fire is a baked fluid sim
+        // (fire17_fluid.py band: 4 variants x 16-cel lives of a 2D heat / smoke sim painted as red-ink brush fire) stood round the
+        // target on camera-facing quads, over one splash stain laid flat on the ground (fire17_fluid.py stain)
+        const string NaBankGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank.vfx";
+        const string NaStainGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_stain.vfx";
+        // the quad the lab composite judged: 2.6 m x 3.85 m, standing on the cel's root line 1.03 of the cel height from the top
+        const float BankCels = 16f, BankAspect = 2.6f / 3.85f, BankPivot = .5f - 1.03f;
+
+        // ⓕ the fire bank: born on a band r 2.1-3.1 m round the target, facing the camera plane, standing on its root, one of the
+        // 4 variants for its whole life (played from its first cel - the sheet's births rise out of the ground), mirrored half
+        // the time, sized .65-1.35. "가까운 쪽 낮게" (near side lower) is TBD: uniform scale this round
+        static string GraphBuildBank() => GraphBuildAt(NaBankGraph, 160u, (init, update, output) =>
+        {
+            var ring = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "ThicknessRelative"));
+            Space(ring, "arcCircle", "Local");
+            PutPath(ring, "arcCircle", "circle.transform.position", new Vector3(0f, .05f, 6f));
+            PutPath(ring, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));
+            PutPath(ring, "arcCircle", "circle.radius", 3.1f);
+            Put(ring, "Thickness", .32f);   // band 2.1-3.1 m (1/3.1 as a folded constant does not read back bit-equal)
+            var pivot = Block(init, "SetAttribute", ("attribute", "pivot"), ("Composition", "Overwrite"), ("Random", "Off"));
+            PutOnly(pivot, new Vector3(0f, BankPivot, 0f));
+            // one random lerp over all three channels keeps the quad's aspect; the mirror after it multiplies x by -1 or 1
+            var scale = Block(init, "SetAttribute", ("attribute", "scale"), ("Composition", "Overwrite"), ("Random", "Uniform"));
+            Put(scale, "A", new Vector3(BankAspect, 1f, 1f) * .65f); Put(scale, "B", new Vector3(BankAspect, 1f, 1f) * 1.35f);
+            var flip = Block(init, "AttributeFromMap", ("attribute", "scale"), ("Composition", "Multiply"), ("SampleMode", "RandomConstantPerParticle"), ("channels", "X"));
+            Put(flip, "attributeMap", BankMap(BankFlipMapPath, "T_V308_bank_flip", new[] { -1f, 1f })); Put(flip, "Seed", 7u);
+            var pick = Block(init, "AttributeFromMap", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("SampleMode", "RandomConstantPerParticle"));
+            Put(pick, "attributeMap", BankMap(BankVariantMapPath, "T_V308_bank_variants", new[] { 0f, BankCels, 2f * BankCels, 3f * BankCels })); Put(pick, "Seed", 3u);
+            Setting(Orient(output), "mode", "FaceCameraPlane");
+            Setting(output, "cullMode", "Off");   // a mirrored quad shows its back face
+            Setting(output, "primitiveType", "Quad");
+        });
+        const string BankVariantMapPath = "Assets/_Project/Art/SpellVFX308/V2/Graphs/T_V308_bank_variants.asset";
+        const string BankFlipMapPath = "Assets/_Project/Art/SpellVFX308/V2/Graphs/T_V308_bank_flip.asset";
+        static Texture2D BankMap(string path, string name, float[] values)
+        {
+            if (AssetDatabase.LoadMainAssetAtPath(path) != null) AssetDatabase.DeleteAsset(path);
+            var t = new Texture2D(values.Length, 1, TextureFormat.RFloat, false, true) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, name = name };
+            t.SetPixelData(values, 0);
+            t.Apply(false, false);
+            AssetDatabase.CreateAsset(t, path);
+            return t;
+        }
+
+        // ⓖ the stain: the splash stain (soot inside, a ragged red-black band at r 2.55, flung rays) laid flat on the ground under
+        // the bank. Capacity 1: the first spawn of the emit window lands at once, the rest are dropped while it lives
+        static string GraphBuildStain() => GraphBuildAt(NaStainGraph, 1u, (init, update, output) =>
+        {
+            var at = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "Volume"));
+            Space(at, "arcCircle", "Local");
+            PutPath(at, "arcCircle", "circle.transform.position", new Vector3(0f, .03f, 6f));   // just clear of z-fighting, under the pool's .04
+            PutPath(at, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));
+            PutPath(at, "arcCircle", "circle.radius", .01f);
+            var first = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("Random", "Off"));
+            PutOnly(first, 0f);
+            var o = Orient(output); Setting(o, "mode", "Advanced");
+            Space(o, "AxisZ", "Local"); Space(o, "AxisY", "Local");
+            Put(o, "AxisZ", Vector3.up); Put(o, "AxisY", Vector3.forward);
+            Setting(output, "cullMode", "Off"); Setting(output, "useSoftParticle", false);
+            Setting(output, "primitiveType", "Quad");
+        });
+
         static string GraphDump(string path, bool settings = false)
         {
             var (_, graph) = OpenGraph(path);

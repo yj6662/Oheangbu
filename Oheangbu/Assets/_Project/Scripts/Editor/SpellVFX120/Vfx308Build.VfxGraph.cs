@@ -264,6 +264,73 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return true;
         }
 
+        // fire17: the band sheet is 3072 x 3520 (8 x 8 cels of 384 x 440) - the default import would shrink it to 2048 and round
+        // it to a power of two, resampling the cel grid; the sim leaves black RGB under zero alpha, so alpha-is-transparency
+        // bleeds the colour out before the mips (else the tongue edges darken with distance, as the leaf atlas did)
+        static void FireSheetImport(string sheet, int max)
+        {
+            string path = "Assets/_Project/Art/SpellVFX308/V2/Textures/T_V308b_fire_" + sheet + "_vfx.png";
+            if (!(AssetImporter.GetAtPath(path) is TextureImporter imp)) return;
+            if (imp.maxTextureSize == max && imp.npotScale == TextureImporterNPOTScale.None && imp.sRGBTexture && imp.alphaIsTransparency
+                && imp.wrapMode == TextureWrapMode.Clamp && imp.mipmapEnabled) return;
+            imp.textureType = TextureImporterType.Default; imp.sRGBTexture = true; imp.alphaSource = TextureImporterAlphaSource.FromInput;
+            imp.alphaIsTransparency = true; imp.mipmapEnabled = true; imp.wrapMode = TextureWrapMode.Clamp;
+            imp.npotScale = TextureImporterNPOTScale.None; imp.maxTextureSize = max; imp.textureCompression = TextureImporterCompression.Compressed;
+            imp.SaveAndReimport();
+        }
+
+        // ⓕ the fire bank (fire17): ~28 quads of the baked fluid band round the target, born in the ~.3 s emit window and standing
+        // still; each plays its variant's 16 cels once, cel 0 at birth to cel 15 at death
+        static bool BankGraph(Transform root, Elem e, Atk a)
+        {
+            if (e.Key == "na") FireSheetImport("band", 4096);
+            var (v, so) = RoleHost(root, e, "BankVfx", NaBankGraph, "band", new Vector2(8f, 8f));
+            if (v == null) return false;
+            float life = 1.8f * a.Slow;
+            SetF(so, "Spawn Rate", 95f * a.Dense);   // ~28 in the emit window (the lab composite's count)
+            SetV3(so, "Initial Velocity_vector", Vector3.zero);
+            SetF(so, "Initial Velocity Divergence", 0f);
+            SetF(so, "Drag", 0f);
+            SetV3(so, "Global Force_vector", Vector3.zero);
+            SetV2(so, "Angle Min/Max", Vector2.zero);   // upright: the sim's heat rises up the cel
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 3.85f * a.Big), new Keyframe(1f, 3.85f * a.Big)));   // the sheet paints its own growth
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .03f, .9f, 1f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Soft Particle Fade Distance", .3f);
+            SetF(so, "Flipbook Framerate", (BankCels - 1f) / life);   // never reaches the next variant's first cel
+            SetV3(so, "Bounds_center", new Vector3(0f, 2.6f, 6f));
+            SetV3(so, "Bounds_size", new Vector3(10.5f, 5.8f, 10.5f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            v.GetComponent<VFXRenderer>().sortingOrder = 1;
+            return true;
+        }
+
+        // ⓖ the stain (fire17): one splash stain laid flat, 10.8 m across (the sheet covers +-5.4 m, its band at r 2.55 under the
+        // bank's 2.6 - so not scaled by Big, the bank's ring is fixed in its graph), spreading in over the first .12 of its life
+        // and outliving the bank
+        static bool StainGraph(Transform root, Elem e, Atk a)
+        {
+            if (e.Key == "na") FireSheetImport("stain", 1024);
+            var (v, so) = RoleHost(root, e, "StainVfx", NaStainGraph, "stain", Vector2.one);
+            if (v == null) return false;
+            float life = 3.4f * a.Slow;
+            SetF(so, "Spawn Rate", 30f);   // capacity 1 in the graph
+            SetV3(so, "Initial Velocity_vector", Vector3.zero);
+            SetF(so, "Initial Velocity Divergence", 0f);
+            SetF(so, "Drag", 0f);
+            SetV3(so, "Global Force_vector", Vector3.zero);
+            SetV2(so, "Angle Min/Max", new Vector2(0f, 360f));
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 7.5f), new Keyframe(.12f, 10.8f), new Keyframe(1f, 10.8f)));
+            SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .75f, 1f));
+            SetF(so, "LifeTime", life);
+            SetF(so, "Flipbook Framerate", 0f);
+            SetV3(so, "Bounds_center", new Vector3(0f, .2f, 6f));
+            SetV3(so, "Bounds_size", new Vector3(12f, 1f, 12f));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            v.GetComponent<VFXRenderer>().sortingOrder = -1;
+            return true;
+        }
+
         // ⓑ the scorched road: dark dragged brush streaks with wet red in their heads, laid along the cast from the caster to the
         // target. fire11 (user 2026-10-16 "길 자국만 더 손봄" after lab_fire10: the scorch sheet's round grey blots sank into the
         // ground and, spun 0-360, never ran along the road): drag sheet 4x4, one streak variant per particle, yaw only +-12
