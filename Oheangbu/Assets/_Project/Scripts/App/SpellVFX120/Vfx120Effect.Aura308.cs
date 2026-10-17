@@ -11,6 +11,8 @@ namespace Oheangbu.App.SpellVFX120
     {
         GameObject _aura308;
         ParticleSystem[] _a3Systems = new ParticleSystem[0];
+        ParticleSystem[] _a3End = new ParticleSystem[0];
+        Transform _a3Cam;
         bool _a3Stopping;
 
         public bool Aura308Configured => _aura308 != null;
@@ -24,9 +26,24 @@ namespace Oheangbu.App.SpellVFX120
             // the ward ring is built at 1 m and scaled by WardRadius
             float world = Profile.Aura308ByWardRadius && Profile.WardRadius > 0f ? Profile.WardRadius : 1f;   // sw_z3: a buff copy carried WardRadius 3 from its source
             _aura308.transform.localScale = Vector3.one * world / Mathf.Max(1e-4f, transform.lossyScale.x);
-            _a3Systems = _aura308.GetComponentsInChildren<ParticleSystem>(true);
+            // 11.50: systems under an "End" child wait for the fade (the buff's dry rim); a "Cam" child turns with the camera
+            var end = _aura308.transform.Find("End");
+            _a3Cam = _aura308.transform.Find("Cam");
+            _a3End = end != null ? end.GetComponentsInChildren<ParticleSystem>(true) : new ParticleSystem[0];
+            _a3Systems = System.Array.FindAll(_aura308.GetComponentsInChildren<ParticleSystem>(true), ps => end == null || !ps.transform.IsChildOf(end));
             _a3Stopping = false;
+            foreach (var ps in _a3End) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             foreach (var ps in _a3Systems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ps.Play(false); }
+            FaceCamera308();
+        }
+
+        void FaceCamera308()
+        {
+            if (_a3Cam == null) return;
+            var cam = Camera.main;
+            if (cam == null) return;
+            Vector3 f = cam.transform.forward; f.y = 0f;
+            if (f.sqrMagnitude > 1e-6f) _a3Cam.rotation = Quaternion.LookRotation(f.normalized, Vector3.up);
         }
 
         void SampleAura308()
@@ -38,14 +55,20 @@ namespace Oheangbu.App.SpellVFX120
             // the old builders' children stay off (some are made after this one, or lazily)
             foreach (Transform child in transform)
                 if (child.gameObject != _aura308 && child.gameObject.activeSelf) child.gameObject.SetActive(false);
+            FaceCamera308();
             bool ending = Life > 0f && Age >= Life - Profile.Aura308FadeSeconds;
-            if (ending && !_a3Stopping) { _a3Stopping = true; foreach (var ps in _a3Systems) ps.Stop(false, ParticleSystemStopBehavior.StopEmitting); }
+            if (ending && !_a3Stopping)
+            {
+                _a3Stopping = true;
+                foreach (var ps in _a3Systems) ps.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+                foreach (var ps in _a3End) ps.Play(false);
+            }
         }
 
         void ClearAura308()
         {
             if (_aura308 != null) { _aura308.SetActive(false); if (Application.isPlaying) Destroy(_aura308); else DestroyImmediate(_aura308); }
-            _aura308 = null; _a3Systems = new ParticleSystem[0]; _a3Stopping = false;
+            _aura308 = null; _a3Systems = new ParticleSystem[0]; _a3End = new ParticleSystem[0]; _a3Cam = null; _a3Stopping = false;
         }
     }
 }

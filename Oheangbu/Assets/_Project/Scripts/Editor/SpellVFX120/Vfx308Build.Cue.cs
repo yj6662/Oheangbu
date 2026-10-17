@@ -84,6 +84,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     if (g.Kind == "field") TuneField(profile, g.Key);
                 }
                 else { profile.Bolt300Prefab = null; profile.Aura308Prefab = aura; }
+                if (g.Kind == "buff") profile.Aura308FadeSeconds = .85f;   // 11.50: the dry rim plays as the fade starts
                 // 11.41: the companion's shots fly a smaller copy of the element bolt; the sword form's swings lay a slash at the struck point
                 if (g.Kind == "companion") profile.CompanionShot308Prefab = ShotPair(g.Id, spell);
                 if (g.Kind == "sword")

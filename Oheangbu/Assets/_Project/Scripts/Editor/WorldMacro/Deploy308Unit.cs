@@ -1064,6 +1064,60 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                 }
 
+                // ---- D44 (11.49 · 11.50): the ward is the drawn circle (seven arc segments, ground stains gone by 3.5 s, only the
+                // delayed Hold repeats) and the buff the seal at the feet (no Pool / Band, the End rim one-shot, the repeating layers
+                // gone within the fade); all ten local, no additive material, every old body slot empty
+                {
+                    string[] wardIds = { "019_AD6C", "043_B204", "067_BB34", "091_C218", "115_C6B0" }, buffIds = { "008_AC71", "032_B109", "056_BA39", "080_C11D", "104_C5B5" };
+                    var bad = new List<string>(); int built = 0;
+                    foreach (var id in wardIds.Concat(buffIds))
+                    {
+                        bool ward = Array.IndexOf(wardIds, id) >= 0;
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>("Assets/_Project/Art/SpellVFX308/V2/Profiles/" + id + "_308f.asset");
+                        if (p == null || p.Aura308Prefab == null) { bad.Add(id + " not built"); continue; }
+                        built++;
+                        var aura = p.Aura308Prefab;
+                        if (p.Aura308ByWardRadius != ward || p.NativeBodyPrefab != null || p.NativeCastPrefab != null || p.NativeImpactPrefab != null || p.Aura308FadeSeconds <= 0f
+                            || (ward && p.WardKind != Oheangbu.App.SpellVFX120.Vfx120WardKind.None)) bad.Add(id + " profile");
+                        int additive = 0;
+                        foreach (var r in aura.GetComponentsInChildren<ParticleSystemRenderer>(true))
+                            foreach (var m in r.sharedMaterials)
+                                if (m != null && (m.shader.name.IndexOf("Additive", StringComparison.OrdinalIgnoreCase) >= 0
+                                    || (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One)))) additive++;
+                        if (additive > 0) bad.Add(id + " additive " + additive);
+                        var end = aura.transform.Find("End");
+                        foreach (var ps in aura.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            bool loops = ps.main.loop || ps.emission.rateOverTime.constantMax > 0f;
+                            if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(id + " world " + ps.name);
+                            if (ward)
+                            {
+                                if (loops && (ps.name != "Hold" || ps.main.startDelay.constantMax < .8f)) bad.Add(id + " loops " + ps.name);
+                                if (ps.name == "Stain")
+                                {
+                                    float at = 0f;
+                                    for (int b = 0; b < ps.emission.burstCount; b++) at = Mathf.Max(at, ps.emission.GetBurst(b).time);
+                                    if (at + ps.main.startLifetime.constantMax > 3.6f) bad.Add(id + " stain ends " + Deploy308.F(at + ps.main.startLifetime.constantMax));
+                                }
+                            }
+                            else
+                            {
+                                if (end != null && ps.transform.IsChildOf(end) && loops) bad.Add(id + " End loops");
+                                if (loops && ps.main.startLifetime.constantMax > p.Aura308FadeSeconds + .2f) bad.Add(id + " outlives fade " + ps.name);
+                                if (ps.name == "Ring" && (ps.shape.radius < .4f || ps.shape.radius > .7f)) bad.Add(id + " ring radius " + Deploy308.F(ps.shape.radius));
+                            }
+                        }
+                        if (ward)
+                        {
+                            int segs = 0; foreach (Transform t in aura.transform) if (t.name.StartsWith("Seg")) segs++;
+                            if (segs != 7) bad.Add(id + " segments " + segs);
+                            if (aura.transform.Find("Ring") != null || aura.transform.Find("Wall") != null) bad.Add(id + " old Ring/Wall");
+                        }
+                        else if (aura.transform.Find("Pool") != null || aura.transform.Find("Band") != null) bad.Add(id + " old Pool/Band");
+                    }
+                    Check("D44", built == 10 && bad.Count == 0, "built " + built + "/10" + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", ward 5 drawn circle + buff 5 foot seal"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
