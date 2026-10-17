@@ -18,9 +18,10 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
+    // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -404,6 +405,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     var footProfile = Object.Instantiate(profile); footProfile.hideFlags = Flags; trash.Add(footProfile);
                     footProfile.LayerEnabled = false; footProfile.Foot.Enabled = true;
+                    footProfile.Contacts = new SpellDeploy308ProfileSO.ContactsSet();   // the contact switches off: footprints alone (D31 covers the contacts)
                     var host = new GameObject("UnitFootOnly") { hideFlags = Flags }; host.transform.SetParent(root.transform, false);
                     var player = new GameObject("UnitPlayer") { hideFlags = Flags }; player.transform.SetParent(host.transform, false);
                     var footDirector = host.AddComponent<SpellDeployDirector308>();
@@ -556,6 +558,39 @@ namespace Oheangbu.EditorTools.WorldMacro
                             + " | re-hit while the flicks run " + rehitSoon + " (want 0, no restart), after them " + rehitAfter + " " + rehitOk + " | three small targets hit together (share " + Deploy308.F(crowdShare) + " each, big from "
                             + Deploy308.F(f0.BigShare) + "): " + crowd[0] + " / " + crowd[1] + " / " + crowd[2] + " flicks " + crowdOk);
                     }
+                }
+
+                // ---- D31 (D308-107 d): the layer switch off, a Contacts switch on = the contacts alone boot (no slots, the KTP contact stays)
+                {
+                    var cProfile = Object.Instantiate(profile); cProfile.hideFlags = Flags; trash.Add(cProfile);
+                    cProfile.LayerEnabled = false; cProfile.Foot.Enabled = false;
+                    cProfile.Contacts = new SpellDeploy308ProfileSO.ContactsSet { Flicker = true };
+                    var host = new GameObject("UnitContactOnly") { hideFlags = Flags }; host.transform.SetParent(root.transform, false);
+                    var cDirector = host.AddComponent<SpellDeployDirector308>();
+                    cDirector.Boot(cProfile, null, null, null, host.transform, null, null);
+                    bool flickOk = cDirector.ContactOnly && !cDirector.LayerLive && !cDirector.FootOnly && cDirector.PoolSize == 0 && cDirector.StandingSize == 0
+                        && cDirector.Flicker != null && cDirector.Impact != null && cDirector.HudBinder == null && cDirector.Present == null && cDirector.Field == null
+                        && cDirector.Foot == null && !cDirector.OwnsHitContact('가');
+                    string cLine = "flicker only: contact-only " + cDirector.ContactOnly + ", live " + cDirector.LayerLive + ", slots " + cDirector.PoolSize + "+" + cDirector.StandingSize
+                        + ", flicker " + (cDirector.Flicker != null) + ", impact " + (cDirector.Impact != null) + ", field " + (cDirector.Field != null) + ", present " + (cDirector.Present != null)
+                        + ", owns 가 " + cDirector.OwnsHitContact('가');
+                    foreach (var c in host.GetComponents<HitFlicker308>()) c.ReleaseResources();
+                    foreach (var c in host.GetComponents<ImpactFrameDirector308>()) c.ReleaseResources();
+                    Object.DestroyImmediate(host);
+                    // the splash switch: the present stage and the residue field come up too, still no slots
+                    var sProfile = Object.Instantiate(cProfile); sProfile.hideFlags = Flags; trash.Add(sProfile);
+                    sProfile.Contacts = new SpellDeploy308ProfileSO.ContactsSet { HitSplash = true };
+                    var sHost = new GameObject("UnitContactSplash") { hideFlags = Flags }; sHost.transform.SetParent(root.transform, false);
+                    var sDirector = sHost.AddComponent<SpellDeployDirector308>();
+                    sDirector.Boot(sProfile, null, null, null, sHost.transform, null, null);
+                    bool splashOk = sDirector.ContactOnly && sDirector.Present != null && sDirector.Field != null && sDirector.PoolSize == 0 && !sDirector.OwnsHitContact('가');
+                    string sLine = "splash on: present " + (sDirector.Present != null) + ", field " + (sDirector.Field != null) + ", slots " + sDirector.PoolSize;
+                    foreach (var c in sHost.GetComponents<SpellPresentStage308>()) c.ReleaseResources();
+                    foreach (var c in sHost.GetComponents<HitFlicker308>()) c.ReleaseResources();
+                    foreach (var c in sHost.GetComponents<ImpactFrameDirector308>()) c.ReleaseResources();
+                    foreach (var c in sHost.GetComponents<InkResidueField308>()) c.ReleaseResources();
+                    Object.DestroyImmediate(sHost);
+                    Check("D31", flickOk && splashOk, cLine + " | " + sLine);
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

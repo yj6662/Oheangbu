@@ -38,7 +38,7 @@ namespace Oheangbu.App.SpellVFX120
         private SpellPresentStage308 _present;   // #308 present add-on: what the spell presenter draws with (SPEC-SPELL-120-308 section 9)
         private UserSettingsService _settings;
         private DeployTier308 _tier;
-        private bool _booted, _subscribed, _anyAttack, _wiringReady, _footOnly;
+        private bool _booted, _subscribed, _anyAttack, _wiringReady, _footOnly, _contactOnly;
         private int _settingsRetry, _heldSerial;
         private Func<Transform, AreaImpactPlan, float, bool> _groggyProbe;
 
@@ -71,6 +71,10 @@ namespace Oheangbu.App.SpellVFX120
         public DeployTier308 Tier => _tier;
         /// <summary>D308-107: booted for the footprints alone (the layer switch is off) - field + emitter, nothing else.</summary>
         public bool FootOnly => _footOnly;
+        /// <summary>D308-107 (d): booted for the contacts alone (the layer switch is off, a Contacts switch is on) - no slots, no forms.</summary>
+        public bool ContactOnly => _contactOnly;
+        /// <summary>The layer itself runs (forms, hook B, splash slots): booted, and neither the footprints-only nor the contacts-only boot.</summary>
+        public bool LayerLive => _booted && !_footOnly && !_contactOnly;
         public float CutPause => _impact != null ? _impact.CutPause : 0f;
         public Camera ViewCamera { get { if (_camera == null) _camera = Camera.main; return _camera; } }
         public int ActiveBursts { get { int n = 0; if (_owners != null) for (int i = 0; i < _generalSlots; i++) if (_owners[i] != null) n++; return n; } }
@@ -107,6 +111,28 @@ namespace Oheangbu.App.SpellVFX120
             {
                 // D308-107 (11.37 3): the layer is retired but the prints live on - the residue field and the emitter only.
                 // No slots, flicker, impact, HUD, present stage or event subscription: nothing else of the layer runs.
+                if (profile.AnyContact)
+                {
+                    // D308-107 (d): the contacts on their own switches. No slots and no forms; the flicker and the impact director are
+                    // built (the impact frame's trigger is 11.37 (c)), the residue field only for the splash or the prints.
+                    _contactOnly = true;
+                    if (profile.Contacts.HitSplash || profile.Foot.Enabled) { _field = gameObject.AddComponent<InkResidueField308>(); _field.Configure(profile, _tier); }
+                    _flicker = gameObject.AddComponent<HitFlicker308>(); _flicker.Configure(profile, _tier);
+                    _impact = gameObject.AddComponent<ImpactFrameDirector308>(); _impact.Configure(profile, _tier, judgementNear, () => ViewCamera, _flicker);
+                    if (profile.Foot.Enabled) BootFoot(profile, player, motor);
+                    if (profile.Contacts.ImpactFrame && hud != null) { _hudBinder = gameObject.AddComponent<HudImpactBinder308>(); _hudBinder.Configure(hud, _impact, profile); }
+                    if (profile.Contacts.HitSplash)
+                    {
+                        try { _present = gameObject.AddComponent<SpellPresentStage308>(); _present.Configure(profile, this, wiring); }
+                        catch (Exception e) { Debug.LogException(e, this); if (_present != null) Destroy(_present); _present = null; }
+                    }
+                    _anyAttack = false;
+                    _booted = true;
+                    Subscribe();
+                    BindSettings();
+                    if (_settings == null) _impact.SetUserSettings(DeployFlash308.Reduced, false, true);
+                    return;
+                }
                 _footOnly = true;
                 if (!profile.Foot.Enabled) return;
                 _field = gameObject.AddComponent<InkResidueField308>(); _field.Configure(profile, _tier);
@@ -279,7 +305,7 @@ namespace Oheangbu.App.SpellVFX120
 
         /// <summary>D308-13b: does the deploy layer show this letter's enemy hit itself (the rule is InkDeployForms308.OwnsHitContact)?
         /// Only while the layer is up: the wiring then leaves out the KTP enemy-hit contact - the hit splash is the hit.</summary>
-        public bool OwnsHitContact(char letter) => _booted && !_footOnly && isActiveAndEnabled && _field != null && _field.Ready && InkDeployForms308.OwnsHitContact(_profile, letter);
+        public bool OwnsHitContact(char letter) => LayerLive && isActiveAndEnabled && _field != null && _field.Ready && InkDeployForms308.OwnsHitContact(_profile, letter);
 
         /// <summary>#308 present add-on: the wiring names the glyph of the hit it has just confirmed (one call per confirmed hit with an
         /// element, after EnemyDamageResolved and the hit hooks). The answer is the question it always asked - does the layer show
@@ -329,6 +355,9 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (result.Target == null || result.AppliedDamage <= 0f) return;
             bool routed = _anyAttack && ShowAttackHit(result);
+            // D308-107 (d): the flicker follows every confirmed hit - the layer's own (as before, with an attack row on) or the contact switch
+            if (_flicker != null && _impact != null && ((LayerLive && _anyAttack) || (_profile.Contacts != null && _profile.Contacts.Flicker)))
+                _flicker.Notify(result.Target, result.Attack.Source, ViewCamera, _impact.Flash, Time.unscaledTimeAsDouble, true, result.Target.transform.position + Vector3.up * InkDeployRuntime308.ChestHeight);
             // #308 present add-on: the presenter stage hears every confirmed hit and whether a live cast took it (it waits for the
             // glyph, ConfirmedHitLetter, before it shows anything)
             if (_present != null) _present.NoteConfirmedHit(result, routed);
@@ -355,8 +384,6 @@ namespace Oheangbu.App.SpellVFX120
                 }
                 if (pick >= 0 && _owners[pick].ConfirmHit(target)) { HitsRouted++; routed = true; } else HitsUnrouted++;
             }
-            if (_flicker != null && _impact != null)
-                _flicker.Notify(result.Target, result.Attack.Source, ViewCamera, _impact.Flash, Time.unscaledTimeAsDouble, true, target.position + Vector3.up * InkDeployRuntime308.ChestHeight);
             return routed || capped;
         }
 
@@ -371,7 +398,7 @@ namespace Oheangbu.App.SpellVFX120
 
         private void OnCastFailedAt(Vector3 point)
         {
-            if (_profile == null || _field == null || string.IsNullOrEmpty(_profile.EnabledLetters)) return;
+            if (!LayerLive || _profile == null || _field == null || string.IsNullOrEmpty(_profile.EnabledLetters)) return;
             // a misfire: the smear alone, drying where the letter was
             _field.SpawnAir(point, Vector3.zero, _profile.Stroke.IgniteRadius * 3f, InkBurstMeshBuilder308.CellIgnite, .5f, 0f, 0f);
             Misfires++;
@@ -383,6 +410,7 @@ namespace Oheangbu.App.SpellVFX120
             if (_settings == null && (++_settingsRetry & 15) == 0) BindSettings();
             // the wiring's own Awake (its target list) may run after the container built this layer: its listeners are laid then
             if (!_wiringReady) _wiringReady = _wiring == null || _wiring.EnsureDeployHooks308();
+            if (_contactOnly) return;   // D308-107 (d): no held marks, own deploys or queued casts without the layer
             float now = Time.time;
             for (int i = 0; i < MaxHeld; i++)
                 if (_held[i].Owner != 0 && now >= _held[i].Until) { _field.ReleaseHeld(_held[i].Owner); _held[i] = default; }
@@ -456,7 +484,7 @@ namespace Oheangbu.App.SpellVFX120
         /// splash and its impact frame are not dropped and it is drawn with the tier's counts). A field assignment: it never throws.</summary>
         public void HostEffect(SpellSequenceEffect effect, float grade01 = -1f)
         {
-            try { if (effect != null && _booted && !_footOnly && isActiveAndEnabled && _profile != null) effect.SetDeployHost(this, grade01 >= 0f ? Mathf.Clamp01(grade01) : _profile.Comet.EaGrade01); }
+            try { if (effect != null && LayerLive && isActiveAndEnabled && _profile != null) effect.SetDeployHost(this, grade01 >= 0f ? Mathf.Clamp01(grade01) : _profile.Comet.EaGrade01); }
             catch (Exception e) { Debug.LogException(e, this); }
         }
 
@@ -693,6 +721,11 @@ namespace Oheangbu.App.SpellVFX120
             if (_footOnly)
                 return "foot-only tier=" + _tier + " residue=" + spell + " foot=" + foot + " air=" + air + " footprints=" + (_foot != null ? _foot.Emitted : 0)
                     + " fallback=" + (_foot != null ? _foot.EmittedFallback : 0) + " blocked=" + (_foot != null ? _foot.Blocked() ?? "-" : "no emitter");
+            if (_contactOnly)
+                return "contact-only tier=" + _tier + " hits(unrouted=" + HitsUnrouted + ") flicker=" + (_flicker != null ? _flicker.Scheduled : 0)
+                    + " impact(full=" + (_impact != null ? _impact.FullGranted : 0) + " local=" + (_impact != null ? _impact.LocalGranted : 0) + ")"
+                    + " residue=" + spell + " foot=" + foot + " air=" + air + " footprints=" + (_foot != null ? _foot.Emitted : 0)
+                    + " hud=" + (_hudBinder != null) + " settings=" + (_settings != null) + (_present != null ? " | present(" + _present.Describe() + ")" : "");
             return "tier=" + _tier + " bursts=" + ActiveBursts + "/" + PoolSize + " evicted=" + Evicted + " standing=" + ActiveStanding + "/" + StandingSize + " evictedStanding=" + EvictedStanding
                 + " forms2(guard=" + GuardContacts + " curtain=" + SummonCurtains + "/" + SummonExits + " buffs=" + _buffMask + " marks=" + BuffMarks + " aura=" + AuraStamped + " ends=" + BuffEnds + ") residue=" + spell + " foot=" + foot + " air=" + air
                 + " queued=" + (_field != null ? _field.Queued : 0) + " impact(full=" + (_impact != null ? _impact.FullGranted : 0) + " local=" + (_impact != null ? _impact.LocalGranted : 0)

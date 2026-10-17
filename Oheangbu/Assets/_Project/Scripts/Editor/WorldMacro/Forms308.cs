@@ -344,7 +344,13 @@ namespace Oheangbu.EditorTools.WorldMacro
             // D308-107: the footprint switch and the Mobile footprint cap (12 -> 20) are newer than every backup of this stage
             bool footEnabled = hadProfile && before.Foot.Enabled;
             int mobileFootprints = hadProfile ? before.Tier(DeployTier308.Mobile).Footprints : 0;
-            if (hadProfile) sb.AppendLine("profile now: LayerEnabled=" + layerEnabled + " EnabledLetters='" + enabledLetters + "' Foot.Enabled=" + footEnabled + " Mobile.Footprints=" + mobileFootprints + " (kept)");
+            // D308-107 (d): the Contacts switches are newer than every backup as well
+            bool hitSplash = hadProfile && before.Contacts != null && before.Contacts.HitSplash;
+            bool flickerOn = hadProfile && before.Contacts != null && before.Contacts.Flicker;
+            bool impactOn = hadProfile && before.Contacts != null && before.Contacts.ImpactFrame;
+            string splashLetters = hadProfile && before.Contacts != null ? before.Contacts.HitSplashLetters ?? "" : "";
+            if (hadProfile) sb.AppendLine("profile now: LayerEnabled=" + layerEnabled + " EnabledLetters='" + enabledLetters + "' Foot.Enabled=" + footEnabled + " Mobile.Footprints=" + mobileFootprints
+                + " Contacts(splash=" + hitSplash + " flicker=" + flickerOn + " impact=" + impactOn + " letters='" + splashLetters + "') (kept)");
             foreach (string assetPath in new[] { Deploy308.MapPath, Deploy308.ProfilePath })
             {
                 // the OLDEST backup is the state before this stage touched the asset
@@ -358,12 +364,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             var after = AssetDatabase.LoadAssetAtPath<SpellDeploy308ProfileSO>(Deploy308.ProfilePath);
             if (hadProfile && after != null && (after.LayerEnabled != layerEnabled || (after.EnabledLetters ?? "") != enabledLetters
-                || after.Foot.Enabled != footEnabled || after.Tier(DeployTier308.Mobile).Footprints != mobileFootprints))
+                || after.Foot.Enabled != footEnabled || after.Tier(DeployTier308.Mobile).Footprints != mobileFootprints
+                || after.Contacts == null || after.Contacts.HitSplash != hitSplash || after.Contacts.Flicker != flickerOn || after.Contacts.ImpactFrame != impactOn
+                || (after.Contacts.HitSplashLetters ?? "") != splashLetters))
             {
                 sb.AppendLine("profile: the backup had LayerEnabled=" + after.LayerEnabled + " EnabledLetters='" + after.EnabledLetters + "' Foot.Enabled=" + after.Foot.Enabled
                     + " Mobile.Footprints=" + after.Tier(DeployTier308.Mobile).Footprints + " - today's values written back");
                 after.LayerEnabled = layerEnabled; after.EnabledLetters = enabledLetters;
                 after.Foot.Enabled = footEnabled; after.Tier(DeployTier308.Mobile).Footprints = mobileFootprints;
+                if (after.Contacts == null) after.Contacts = new SpellDeploy308ProfileSO.ContactsSet();
+                after.Contacts.HitSplash = hitSplash; after.Contacts.Flicker = flickerOn; after.Contacts.ImpactFrame = impactOn; after.Contacts.HitSplashLetters = splashLetters;
                 EditorUtility.SetDirty(after); AssetDatabase.SaveAssetIfDirty(after);
             }
             var map = AssetDatabase.LoadAssetAtPath<SpellDeploy308MapSO>(Deploy308.MapPath);

@@ -235,9 +235,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (EditorApplication.isPlaying)
             {
                 var wiring = Object.FindFirstObjectByType<CombatLoopWiring>();
-                // D308-107: with the layer off the director may still be up for the footprints alone ("발자국만")
+                // D308-107: with the layer off the director may still be up for the footprints alone ("발자국만") or the contacts ("접점만")
                 sb.Append(wiring == null ? " | no CombatLoopWiring" : wiring.DeployDirector308 == null ? " | layer asleep (no director)"
-                    : (wiring.DeployDirector308.FootOnly ? " | 발자국만 (layer off, footprints on): " : " | ") + wiring.DeployDirector308.Describe());
+                    : (wiring.DeployDirector308.FootOnly ? " | 발자국만 (layer off, footprints on): " : wiring.DeployDirector308.ContactOnly ? " | 접점만 (layer off, contacts on): " : " | ") + wiring.DeployDirector308.Describe());
             }
             return sb.ToString();
         }

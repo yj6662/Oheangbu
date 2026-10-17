@@ -107,6 +107,18 @@ namespace Oheangbu.App.SpellVFX120
             return (row.Category == DeployCategory308.Buff && sheet.Splash.OwnBuffRows) || (row.Category == DeployCategory308.ComboInstall && sheet.Splash.OwnInstallRows);
         }
 
+        /// <summary>D308-107 (d): with the layer down, does a confirmed hit of this letter throw the contact-only splash? The KTP contact
+        /// stays either way (the splash is added, it replaces nothing). The letter list wins when it is set; otherwise retired attack
+        /// bodies and the sheet's own buff / install rows.</summary>
+        public static bool ContactSplash(SpellDeploy308ProfileSO profile, SpellPresent308SheetSO sheet, char letter)
+        {
+            if (profile == null || profile.LayerEnabled || profile.Contacts == null || !profile.Contacts.HitSplash || letter == default) return false;
+            if (!string.IsNullOrEmpty(profile.Contacts.HitSplashLetters)) return profile.Contacts.HitSplashLetters.IndexOf(letter) >= 0;
+            if (profile.Map == null || !profile.Map.TryGet(letter, out var row)) return false;
+            return (IsAttack(row.Category) && row.LegacyBody == DeployLegacyBody308.Retire)
+                || (sheet != null && ((row.Category == DeployCategory308.Buff && sheet.Splash.OwnBuffRows) || (row.Category == DeployCategory308.ComboInstall && sheet.Splash.OwnInstallRows)));
+        }
+
         /// <summary>The hit splash of a confirmed hit no live cast took: its grade (0..2), DripOnly, or NoSplash. Only for a glyph
         /// whose hits the layer owns, and never for a hit a live cast already splashed.</summary>
         public static int FreeSplash(SpellPresent308SheetSO sheet, PresentHitSource308 source, bool routed, bool owned)

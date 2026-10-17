@@ -641,10 +641,11 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (!Ready) return owns;
             bool owned = owns || SpellPresentRules308.OwnsHit(_profile, _sheet, letter);
+            bool splash = owned || SpellPresentRules308.ContactSplash(_profile, _sheet, letter);   // D308-107 (d): splash only, KTP stays
             if (_pendingCount == 0) return owned;
             var hit = _pending[--_pendingCount]; _pending[_pendingCount] = default;
             if (hit.Frame != Time.frameCount) { _pendingCount = 0; return owned; }
-            int grade = SpellPresentRules308.FreeSplash(_sheet, hit.Source, hit.Routed, owned);
+            int grade = SpellPresentRules308.FreeSplash(_sheet, hit.Source, hit.Routed, splash);
             if (grade == SpellPresentRules308.NoSplash || hit.Target == null) return owned;
             Transform target = hit.Target.transform;
             Vector3 point = target.position + Vector3.up * InkDeployRuntime308.ChestHeight;

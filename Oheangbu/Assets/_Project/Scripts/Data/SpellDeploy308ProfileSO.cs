@@ -41,7 +41,7 @@ namespace Oheangbu.Data.Spell
         [Tooltip("Off = the whole layer stays asleep (no director, no footprints, no pass). Rows are switched on one by one on their Vfx120Profile.")]
         public bool LayerEnabled;
         public SpellDeploy308MapSO Map;
-        [Tooltip("Letters switched on (maintained by the editor command deploy308-enable). Hook B (casts the adapter skips), the misfire smear, the parry contact star and the hit flicker read it.")]
+        [Tooltip("Letters switched on (maintained by the editor command deploy308-enable). Hook B (casts the adapter skips), the misfire smear and the parry contact star read it.")]
         public string EnabledLetters = "";
         [Tooltip("Oheangbu/InkBurst308 material (cutout, no emission).")]
         public Material BurstMaterial;
@@ -249,6 +249,21 @@ namespace Oheangbu.Data.Spell
             [Tooltip("Knock distance as a share of the body's height, clamped to KnockMin..KnockMax (m).")]
             [Range(0f, .2f)] public float KnockShare = .06f;
             [Min(0f)] public float KnockMin = .05f, KnockMax = .4f;
+        }
+
+        // D308-107 (11.37 (d)): the contacts that outlive the retired layer, each on its own switch. With LayerEnabled on they are
+        // not read (the layer runs them as before); with it off and any of these on, the director boots for the contacts alone.
+        [Serializable]
+        public sealed class ContactsSet
+        {
+            [Tooltip("Contact-only hit splash: a confirmed hit of a letter whose old body is retired throws the present stage's splash (the KTP contact stays as well).")]
+            public bool HitSplash;
+            [Tooltip("Hit flicker (HitFlicker308) on every confirmed player hit, with the layer off.")]
+            public bool Flicker;
+            [Tooltip("Groggy impact frame (ImpactFrameDirector308 + HUD reaction), with the layer off. Its trigger comes with 11.37 (c).")]
+            public bool ImpactFrame;
+            [Tooltip("Letters the contact-only hit splash is limited to; empty = the rule (retired attack bodies + the sheet's own buff / install rows).")]
+            public string HitSplashLetters = "";
         }
 
         // D308-10c "the effect that bursts out when the enemy is hit": what a CONFIRMED hit adds to the plain burst. A cast that
@@ -1042,6 +1057,7 @@ namespace Oheangbu.Data.Spell
         public CameraSet Camera = new CameraSet();
         public ImpactSet Impact = new ImpactSet();
         public FlickerSet Flicker = new FlickerSet();
+        public ContactsSet Contacts = new ContactsSet();
         public HitSet Hit = new HitSet();
         public HudSet Hud = new HudSet();
         public ResidueSet Residue = new ResidueSet();
@@ -1178,6 +1194,8 @@ namespace Oheangbu.Data.Spell
         }
         public int BuffMarkCell(int index) => Buff.MarkCells != null && index >= 0 && index < Buff.MarkCells.Length ? Mathf.Clamp(Buff.MarkCells[index], 0, 15) : 4;
 
+        /// <summary>D308-107 (d): is any contact switched on on its own (read only while the layer is off)?</summary>
+        public bool AnyContact => Contacts != null && (Contacts.HitSplash || Contacts.Flicker || Contacts.ImpactFrame);
         public bool IsEnabled(char letter) => LayerEnabled && letter != default && !string.IsNullOrEmpty(EnabledLetters) && EnabledLetters.IndexOf(letter) >= 0;
         public bool FloodAllowed(string eventName)
         {
