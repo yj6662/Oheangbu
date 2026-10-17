@@ -2,7 +2,7 @@
 //  - 윤곽이 번진다: 눈에 비스듬한 면(실루엣 가장자리)을 결 잡음으로 파먹는다(오려내기, 깊이를 쓴다).
 //  - 한 부위만 밝다(_AccentFrom 위 — 사슴의 뿔): 뼈빛, 빛나지 않는다.
 //  - 가슴의 심(_CorePos, 물체 공간): 평소엔 안료색. _CoreGlow(0..1)로만 들어 올린다 — 활동 첫 두 칸(1/6 s)에
-//    DemoSummonPresentation이 켠다(D308-108). 선형 .45에서 자른다(D308-10c · ART-INK 중등: 순간 발광만, 지속 발광 없음). HDR · 가산 없음.
+//    DemoSummonPresentation이 켠다(D308-108). 더하는 양은 선형 .12까지(11.52), 선형 .45에서 자른다(D308-10c · ART-INK 중등: 순간 발광만, 지속 발광 없음). HDR · 가산 없음.
 //  - 나타남 / 사라짐은 기존 소환수 계약 그대로(_Age · _Ground · _Height): 발치의 먹에서 위로 차오르고, 끝에는 결을 따라 흩어진다.
 Shader "Oheangbu/SpellVFX308/InkBody"
 {
@@ -126,8 +126,11 @@ Shader "Oheangbu/SpellVFX308/InkBody"
                 // of activity, D308-108), then capped. The old _Age birth window is gone: _Age jumps past it, so it lit one cel at most.
                 half core = 1.0 - smoothstep(0.0, _CoreRadius, distance(input.world, TransformObjectToWorld(_CorePos.xyz)));     // metres, whatever the model's own unit
                 core *= core;
+                // 11.52 (D308-109): ink first - the chest fills black as the rise passes it (chest at .42 - .64 of the height
+                // -> _Age ~.5 - .66), the pigment soaks in over _Age .75 - 1.05; combat (2) and dissolving (3.8+) are 1
+                core *= saturate((_Age - 0.75) / 0.3);
                 half lift = saturate(_CoreGlow);
-                half3 pigment = _Core.rgb * (1.0 + 1.6 * lift);
+                half3 pigment = _Core.rgb + min(_Core.rgb * 1.6, 0.12) * lift;     // 11.52: the birth lift adds at most linear .12
                 pigment *= min(1.0, 0.45 / max(max(pigment.r, pigment.g), max(pigment.b, 0.001)));     // D308-10c: never above linear .45
                 colour = lerp(colour, pigment, saturate(core * (0.85 + 0.5 * lift)) * (1.0 - accent));
                 colour = MixFog(colour, input.fog);

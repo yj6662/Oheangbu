@@ -1149,6 +1149,40 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D45", built == 5 && bad.Count == 0, "built " + built + "/5" + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", guard 5: short foot stain, ink-first soak, strokes .6 m"));
                 }
 
+                // ---- D46 (11.52): the summon ink body - the birth lift adds at most linear .12, the core pigment soaks in after
+                // the rise (and is full at the default _Age), every renderer of the five combat bodies on InkBody, no glow at rest
+                {
+                    const string bodyShader = "Assets/_Project/Shaders/SpellVFX308/InkBody308.shader";
+                    string src = File.Exists(bodyShader) ? File.ReadAllText(bodyShader) : null;
+                    var body = Shader.Find("Oheangbu/SpellVFX308/InkBody");
+                    int ageAt = body != null ? body.FindPropertyIndex("_Age") : -1;
+                    bool srcOk = src != null && src.Contains("min(_Core.rgb * 1.6, 0.12) * lift") && src.Contains("core *= saturate((_Age - 0.75) / 0.3);")
+                        && ageAt >= 0 && body.GetPropertyDefaultFloatValue(ageAt) >= 1.05f;
+                    string[] keys = { "deer", "haetae", "dokkaebi", "tiger", "turtle" };
+                    var bad = new List<string>(); int built = 0;
+                    foreach (var key in keys)
+                    {
+                        var g = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Art/SpellVFX308/V2/Prefabs/PF_V308g_summon_" + key + "_combat.prefab");
+                        if (g == null) { bad.Add(key + " not built"); continue; }
+                        built++;
+                        int renderers = 0;
+                        foreach (var r in g.GetComponentsInChildren<Renderer>(true))
+                        {
+                            renderers++;
+                            foreach (var m in r.sharedMaterials)
+                            {
+                                if (m == null) { bad.Add(key + " null material " + r.name); continue; }
+                                if (m.shader != body) bad.Add(key + " " + r.name + " on " + m.shader.name);
+                                else if (m.GetFloat("_CoreGlow") > 0f) bad.Add(key + " rest glow " + Deploy308.F(m.GetFloat("_CoreGlow")));
+                                if (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One)) bad.Add(key + " additive " + m.name);
+                            }
+                        }
+                        if (renderers == 0) bad.Add(key + " no renderer");
+                    }
+                    Check("D46", srcOk && built == 5 && bad.Count == 0, "shader cap .12 + soak " + srcOk + " | built " + built + "/5"
+                        + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", every renderer InkBody, no rest glow, no additive"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
