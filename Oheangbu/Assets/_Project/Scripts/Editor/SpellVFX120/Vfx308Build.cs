@@ -75,6 +75,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "retire:summon": return ConnectSummonFx();         // 11.37 (f) D308-107: old summon effects off on the live profiles
                 case "retire:summon:revert": return RevertSummonFx();
+                case "haetae:flame": return BuildHaetaeBreath();              // 11.44: the haetae breath as an ink body
+                case "haetae:flame:connect": return ConnectHaetaeBreath();
+                case "haetae:flame:revert": return RevertHaetaeBreath();
                 case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
                 case "graph:build": return GraphBuild();             // 11.32: the 노 smoke graph (concepts C + D)
                 case "graph:build:ring": return GraphBuildRing();     // 11.34 fire8: tongues leaning out round the target
@@ -1240,6 +1243,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (attack) sb.AppendLine(ConnectAura());
             if (attack) sb.AppendLine(ConnectBeast());
             if (attack) sb.AppendLine(ConnectSummonFx());
+            if (attack) sb.AppendLine(ConnectHaetaeBreath());
             return sb.ToString();
         }
 
@@ -1267,6 +1271,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             sb.AppendLine(RevertAura());
             sb.AppendLine(RevertBeast());
             sb.AppendLine(RevertSummonFx());
+            sb.AppendLine(RevertHaetaeBreath());
             return sb.ToString();
         }
 

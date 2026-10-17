@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D38 D39 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
@@ -883,6 +883,45 @@ namespace Oheangbu.EditorTools.WorldMacro
                     bool inOk = !EAWardRuntime.RippleContact(c, r, h, c + new Vector3(1.5f, 0f, 1f), out _, out _);
                     Check("D38", outOk && highOk && inOk, "outside: on ring " + Deploy308.F(flat) + " m, up " + Deploy308.F(up) + " m ok " + outOk
                         + " | high attacker clamped " + highOk + " | inside refused " + inOk);
+                }
+
+                // ---- D39 (11.44): the haetae ink breath body takes the plan's cone angle and range scale on the manual clock, sprays,
+                // is gone after EndAt; the built body (if any) draws no additive material
+                {
+                    var sp = ScriptableObject.CreateInstance<Oheangbu.App.Demo.SummonCombatProfile>(); sp.hideFlags = Flags; trash.Add(sp);
+                    var body = new GameObject("D39 ink breath body") { hideFlags = Flags }; trash.Add(body);
+                    var bps = body.AddComponent<ParticleSystem>(); var bm = bps.main; bm.playOnAwake = false; bm.startLifetime = .3f; bm.startSpeed = 5f;
+                    var be = bps.emission; be.rateOverTime = 40f; var bs = bps.shape; bs.shapeType = ParticleSystemShapeType.Cone; bs.angle = 10f; bs.radius = .1f;
+                    sp.FlameInk308Prefab = body; sp.FlameInk308AuthoredRange = 4.5f;
+                    var plan = new Oheangbu.App.Demo.SummonFlameAttackPlan(Vector3.zero, Vector3.forward, 6f, 25f, 1f, 0f, .2f, .65f, .3f);
+                    var holder = new GameObject("D39 holder") { hideFlags = Flags }; trash.Add(holder);
+                    var vis = holder.AddComponent<Oheangbu.App.Demo.DemoSummonFlamePresentation>();
+                    string err = null; float angle = -1f, scale = -1f; int peak = 0, after = -1, children = -1;
+                    try
+                    {
+                        vis.Sample(sp, plan, 0f, true);
+                        var inst = holder.transform.childCount > 0 ? holder.transform.GetChild(0) : null;
+                        if (inst != null) { scale = inst.localScale.x; var ips = inst.GetComponentInChildren<ParticleSystem>(true); if (ips != null) angle = ips.shape.angle; }
+                        for (float t = plan.ReleaseAt; t < plan.SprayEndAt; t += 1f / 60f) { plan.AdvanceTo(t); vis.Sample(sp, plan, t, true); peak = Mathf.Max(peak, vis.LiveParticles); }
+                        plan.AdvanceTo(plan.EndAt); vis.Sample(sp, plan, plan.EndAt, true); after = vis.LiveParticles; children = holder.transform.childCount;
+                    }
+                    catch (Exception e) { err = e.GetType().Name + ": " + e.Message; }
+                    bool runOk = err == null && Mathf.Abs(angle - 25f) < 1e-3f && Mathf.Abs(scale - 6f / 4.5f) < 1e-3f && peak > 0 && after == 0 && children == 0;
+                    const string breathPath = "Assets/_Project/Art/SpellVFX308/V2/Prefabs/PF_V308i_haetae_breath.prefab";
+                    var built = AssetDatabase.LoadAssetAtPath<GameObject>(breathPath); int additive = 0, mats = 0;
+                    if (built != null)
+                        foreach (var r in built.GetComponentsInChildren<ParticleSystemRenderer>(true))
+                            foreach (var m in r.sharedMaterials)
+                            {
+                                if (m == null) continue; mats++;
+                                bool add = m.shader.name.IndexOf("Additive", StringComparison.OrdinalIgnoreCase) >= 0
+                                    || (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One));
+                                if (add) additive++;
+                            }
+                    bool builtOk = built == null || (mats > 0 && additive == 0);
+                    Check("D39", runOk && builtOk, (err ?? "no exception") + " | cone " + Deploy308.F(angle) + " deg (plan 25), scale " + Deploy308.F(scale)
+                        + " (6/4.5), spray peak " + peak + ", after EndAt " + after + " live / " + children + " bodies | built body "
+                        + (built == null ? "not built" : mats + " materials, additive " + additive));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

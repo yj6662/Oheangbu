@@ -67,6 +67,9 @@ namespace Oheangbu.App.Demo
         public Shader FlameAdditiveShader, FlameAlphaShader;
         [Min(.001f)] public float FlameBoundaryFeather = .15f;
         [Range(0, 1)] public float FlameVisualIntensity = .7f;
+        [Tooltip("#308 SPEC-SPELL-VFX-OVERHAUL-308 11.44 [TEST]: 있으면 불숨을 KTP 불꽃 대신 이 먹 몸으로 그린다 — 균일 배율(사거리 / 저작 사거리), 원뿔 각 = 계획 반각, 셰이더 교체 없음. 비면 FlamePrefab 경로 그대로. 라이브 사본에만 haetae:flame:connect가 쓴다(기록 · 되돌리기).")]
+        public GameObject FlameInk308Prefab;
+        [Min(.01f)] public float FlameInk308AuthoredRange = 4.5f;
 
         [Header("Optional metal tiger leap and alternating claws (demo TEST)")]
         public bool TigerAttackEnabled;
