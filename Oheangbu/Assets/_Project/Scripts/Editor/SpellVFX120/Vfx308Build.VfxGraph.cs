@@ -377,6 +377,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return true;
         }
 
+        // 11.37 (g) D308-104 size caps (TEST, 시안 대기): the ring band is .32 r but never wider than 1.0 m, the stain / mark
+        // radius never past r + 1.8 m. For the non-attack builder rows (② graph host: Band Half Width / Stain Size per r) -
+        // those rows are not built yet, so nothing calls these but deploy308-unit D35. Paths take no mark; the fan keeps its
+        // judgment 40 deg x 10 m. The frozen 노 ring (3.1 x .32 = .99, mark 4.87 <= 4.89) is already inside both.
+        public const float AreaBandRelative308 = .32f, AreaBandCap308 = 1f, AreaMarkMargin308 = 1.8f;
+        public static float AreaBand308(float r) => Mathf.Min(AreaBandRelative308 * r, AreaBandCap308);
+        public static float AreaMark308(float r, float want) => Mathf.Min(want, r + AreaMarkMargin308);
+
         // ⓖ the stain (fire17): one splash stain laid flat, 10.8 m across (the sheet covers +-5.4 m, its band at r 2.55 under the
         // bank's 2.6 - so not scaled by Big, the bank's ring is fixed in its graph), spreading in over the first .12 of its life
         // and outliving the bank. fire19 (user 2026-10-16 "바닥에 먹자국만 지금의 5퍼센트 수준으로 ... 경계가 너무 뚜렷해서

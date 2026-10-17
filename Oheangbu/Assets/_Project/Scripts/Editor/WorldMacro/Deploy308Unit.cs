@@ -18,13 +18,14 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
     // D32 = the impact frame's figure is the hit target's renderers, and the contact path asks it on a groggy spell hit only (D308-106 c).
     // D33 = a range-ㄱ letter's hit has no pool and its copy carries one foot stain, laid once per struck enemy on the ground below (D308-104 e).
     // D34 = the live summon profiles retire the old seal / phase particles / debris, a profile without the flag keeps them (D308-107 f).
+    // D35 = the builder size caps: ring band <= 1.0 m, mark radius <= r + 1.8 m (D308-104 g).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -805,6 +806,22 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                     finally { UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(preview); }
                     Check("D34", dataOk && runOk, dLine + " | " + string.Join("; ", runs));
+                }
+
+                // ---- D35 (D308-104 g, 11.37 8): the builder size caps - band = min(.32 r, 1.0 m), mark radius <= r + 1.8 m.
+                // The mock's mark / r ratios (size_basis: 고 1.556, 곡 1.583, 몽 1.615) give the wanted mark; 노 ring stays as frozen.
+                {
+                    var rows = new[] { ("go", 2.5f, 1.556f, .80f, 3.89f), ("gok", 3.5f, 1.583f, 1f, 5.3f), ("mong", 6f, 1.615f, 1f, 7.8f), ("no", 3.09f, 1.576f, .989f, 4.87f) };
+                    bool capOk = true; var parts = new List<string>();
+                    foreach (var (key, r, ratio, wantBand, wantMark) in rows)
+                    {
+                        float band = Oheangbu.EditorTools.SpellVFX120.Vfx308Build.AreaBand308(r);
+                        float mark = Oheangbu.EditorTools.SpellVFX120.Vfx308Build.AreaMark308(r, r * ratio);
+                        bool ok = Mathf.Abs(band - wantBand) < .005f && Mathf.Abs(mark - wantMark) < .01f && band <= 1f + 1e-4f && mark <= r + 1.8f + 1e-4f;
+                        capOk &= ok;
+                        parts.Add(key + " r" + r.ToString("0.##") + " band " + band.ToString("0.###") + " mark " + mark.ToString("0.##") + (ok ? "" : " (want " + wantBand + " / " + wantMark + ")"));
+                    }
+                    Check("D35", capOk, string.Join("; ", parts));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
