@@ -124,6 +124,10 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject Aura308Prefab;
         [Min(0f)] public float Aura308FadeSeconds = .5f;
         [Tooltip("Scale the loop body by WardRadius (wards only).")] public bool Aura308ByWardRadius;
+        [Tooltip("11.41: companion letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown once per shot (Secondary cue). Empty = old behaviour.")]
+        public GameObject CompanionShot308Prefab;
+        [Tooltip("11.41: sword-form letters - a one-shot particle prefab put down per swing (Hit / Miss cue with a point). Empty = old behaviour.")]
+        public GameObject SwordStrike308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

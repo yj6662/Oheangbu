@@ -96,12 +96,16 @@ namespace Oheangbu.App.SpellVFX120
             }
             int id = ++_next; if (id == 0) id = ++_next;
             _live.Add(id, live);
+            NoteCueBody308(id, live);
             return new SpellFxHandle(id);
         }
 
         public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args)
         {
-            if (!handle.Shown || !_live.TryGetValue(handle.Id, out var live) || live.Instance == null || live.Fx == null) return;
+            if (!handle.Shown) return;
+            // 11.41: companion shots / sword swings live in their own side table, past the 3 s cue life of the wrap
+            if (CueBody308(handle.Id, cue, args)) return;
+            if (!_live.TryGetValue(handle.Id, out var live) || live.Instance == null || live.Fx == null) return;
             bool handled = false;
             CueWP02(live.Fx, live.Request, cue, args, ref handled); CueWP03(live.Fx, live.Request, cue, args, ref handled);
             CueWP04(live.Fx, live.Request, cue, args, ref handled); CueWP05(live.Fx, live.Request, cue, args, ref handled);
@@ -126,7 +130,9 @@ namespace Oheangbu.App.SpellVFX120
 
         public void End(SpellFxHandle handle, bool immediate = false)
         {
-            if (!handle.Shown || !_live.TryGetValue(handle.Id, out var live)) return;
+            if (!handle.Shown) return;
+            ForgetCueBody308(handle.Id);
+            if (!_live.TryGetValue(handle.Id, out var live)) return;
             _live.Remove(handle.Id);
             Release(live);
         }
@@ -136,6 +142,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             foreach (var live in _live.Values) Release(live);
             _live.Clear();
+            ClearCueBodies308();
             foreach (var stack in _spares.Values)
                 while (stack.Count > 0) Destroy(stack.Pop());
             _spares.Clear();

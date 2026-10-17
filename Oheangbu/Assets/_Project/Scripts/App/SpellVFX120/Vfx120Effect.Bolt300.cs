@@ -21,7 +21,7 @@ namespace Oheangbu.App.SpellVFX120
         TrailRenderer[] _b3Trails;
         Renderer[] _b3BodyRenderers;
         float _b3Simulated;
-        bool _b3Impacted;
+        bool _b3Impacted, _b3MissDotted;
         Vector3 _b3Side;
 
         public static bool IsBolt300(Vfx120Profile p) => p != null && p.Bolt300Prefab != null;
@@ -69,7 +69,7 @@ namespace Oheangbu.App.SpellVFX120
 
         void ResetBolt300()
         {
-            _b3Simulated = 0f; _b3Impacted = false;
+            _b3Simulated = 0f; _b3Impacted = false; _b3MissDotted = false;
             foreach (var ps in _b3TravelSystems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); var em = ps.emission; em.enabled = true; ps.Simulate(0, false, true, false); }
             foreach (var ps in _b3ContactSystems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ps.Simulate(0, false, true, false); }
             _b3Travel.position = ReceivedOrigin;
@@ -131,6 +131,23 @@ namespace Oheangbu.App.SpellVFX120
             foreach (var ps in systems) ps.Play(true);
         }
 
+        // 11.41: a miss that ends on the ground leaves one faint ink dot there for about a second; a miss that ends in the air
+        // (the usual Play fallback, ahead of the camera) leaves nothing (D308-104 answer 16). Play only, once per cast.
+        const float MissDotAlpha = .07f, MissDotSeconds = 1.05f, MissDotDiameter = .5f, MissProbeUp = .3f, MissProbeDown = .8f;
+
+        void MissDot308()
+        {
+            if (_b3MissDotted || !Application.isPlaying) return;
+            _b3MissDotted = true;
+            Vector3 end = Bolt300Point(_flight);
+            if (!Physics.Raycast(end + Vector3.up * MissProbeUp, Vector3.down, out var ground, MissProbeUp + MissProbeDown, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore)) return;
+            if (ground.normal.y < .45f) return;
+            var eye = Camera.main;
+            if (eye != null && (ground.point - eye.transform.position).sqrMagnitude < .45f * .45f) return;
+            InkStamp308.Spawn(InkStamp308.Shape.Dot, ground.point + ground.normal * .02f, Quaternion.LookRotation(-ground.normal, Vector3.forward),
+                MissDotDiameter, Profile.Ink, Profile.Pigment, MissDotAlpha, MissDotSeconds, .25f, 1.15f);
+        }
+
         // element paths: straight thrust (wood, metal), straight with a small lift (fire), a heavy arc (earth),
         // a slow bend toward the target (water); Bolt300Ease > 1 starts slow (a gathering throw)
         Vector3 Bolt300Point(float at)
@@ -190,7 +207,7 @@ namespace Oheangbu.App.SpellVFX120
             ApplySoak308(end);
             bool stillFlying = end < arrive;
             foreach (var t in _b3Trails) t.emitting = stillFlying;
-            if (!stillFlying && hit < 0f) foreach (var r in _b3BodyRenderers) r.enabled = false;   // a miss simply ends at the fallback point
+            if (!stillFlying && hit < 0f) { foreach (var r in _b3BodyRenderers) r.enabled = false; MissDot308(); }   // a miss simply ends at the fallback point
             if (Age >= Life)
             {
                 foreach (var ps in _b3TravelSystems) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);

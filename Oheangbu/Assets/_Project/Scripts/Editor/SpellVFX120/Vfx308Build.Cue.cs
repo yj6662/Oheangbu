@@ -80,6 +80,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.BodyMesh = e.Bit;
                 }
                 else { profile.Bolt300Prefab = null; profile.Aura308Prefab = aura; }
+                // 11.41: the companion's shots fly a smaller copy of the element bolt; the sword form's swings lay a slash at the struck point
+                if (g.Kind == "companion") profile.CompanionShot308Prefab = ShotPair(g.Id, spell);
+                if (g.Kind == "sword")
+                {
+                    string strike = CueStrikePath(g.Key);
+                    profile.SwordStrike308Prefab = builtWraps.Add(strike) ? SaveWrap(StrikeWrap(e), strike) : Load<GameObject>(strike);
+                }
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
 
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + g.Id + ".prefab";
@@ -92,11 +99,51 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     PrefabUtility.SaveAsPrefabAsset(contents, CueEffectPath(g.Id));
                 }
                 finally { PrefabUtility.UnloadPrefabContents(contents); }
-                sb.AppendLine(g.Glyph + " " + g.Kind + " -> " + CueEffectPath(g.Id) + " (" + (bolt != null ? "bolt " + bolt.name : "wrap " + aura.name) + ")");
+                string extra = profile.CompanionShot308Prefab != null ? ", shot " + profile.CompanionShot308Prefab.name : profile.SwordStrike308Prefab != null ? ", strike " + profile.SwordStrike308Prefab.name : g.Kind == "companion" ? ", shot MISSING (run build first)" : "";
+                sb.AppendLine(g.Glyph + " " + g.Kind + " -> " + CueEffectPath(g.Id) + " (" + (bolt != null ? "bolt " + bolt.name : "wrap " + aura.name) + extra + ")");
             }
             builtWraps.Clear();
             foreach (var o in Touched) AssetDatabase.SaveAssetIfDirty(o);
             return sb.ToString();
+        }
+
+        static string CueStrikePath(string key) => Root2 + "/Prefabs/PF_V308h_strike_" + key + ".prefab";
+
+        // the companion shot (11.41): a copy of the element's built bolt effect and profile at .6 of its scale, flown once per
+        // Secondary cue by the presenter. Null when the element bolt is not built yet.
+        static GameObject ShotPair(string id, Spell spell)
+        {
+            if (!File.Exists(ProfilePath(spell)) || !File.Exists(EffectPath(spell))) return null;
+            string profilePath = Root2 + "/Profiles/" + id + "_308h_shot.asset", effectPath = Root2 + "/Effects/" + id + "_308h_shot.prefab";
+            if (!File.Exists(profilePath) && !AssetDatabase.CopyAsset(ProfilePath(spell), profilePath)) throw new Exception("copy failed " + ProfilePath(spell));
+            var shot = Load<Vfx120Profile>(profilePath);
+            shot.Bolt300Scale = spell.Scale * .6f; shot.Duration = 3f;
+            EditorUtility.SetDirty(shot); Touched.Add(shot);
+            if (!File.Exists(effectPath) && !AssetDatabase.CopyAsset(EffectPath(spell), effectPath)) throw new Exception("copy failed " + EffectPath(spell));
+            var contents = PrefabUtility.LoadPrefabContents(effectPath);
+            try
+            {
+                var fx = contents.GetComponentInChildren<Vfx120Effect>(true) ?? throw new Exception("no Vfx120Effect in " + effectPath);
+                fx.Profile = shot;
+                PrefabUtility.SaveAsPrefabAsset(contents, effectPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(contents); }
+            return Load<GameObject>(effectPath);
+        }
+
+        // the sword form's swing (11.41): one ink slash laid across the struck point (the presenter turns it to face along the
+        // swing), black first with the pigment soaking in, gone in about .65 s. A one-shot burst that plays itself on
+        // instantiate (Layer leaves playOnAwake off). No pool, no drops, no glow.
+        static GameObject StrikeWrap(Elem e)
+        {
+            var root = new GameObject(Path.GetFileNameWithoutExtension(CueStrikePath(e.Key)));
+            Color c = Color.Lerp(e.Pig, e.Ink, .6f);
+            var slash = SoakVariant(Bleed("M_V308h_strike_" + e.Key, "ink_throw", C(e.Ink, .92f), 0f, .85f));
+            Layer(root.transform, new L { Name = "Slash", Mat = slash, World = false, Burst = 4, Max = 6, Life = new Vector2(.5f, .65f), Size = new Vector2(.7f, .95f), Speed = new Vector2(0f, .3f),
+                Shape = ParticleSystemShapeType.Box, ShapeScale = new Vector3(1.1f, .25f, .05f), Blend = true, FrameFrom = 0f, FrameTo = 10f,
+                Colour = G((0f, C(c, 0f)), (.12f, C(c, .9f)), (.6f, C(c, .55f)), (1f, C(c, 0f))), Grow = Curve(0f, .7f, .25f, 1f, 1f, 1.1f) });
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true)) { var main = ps.main; main.playOnAwake = true; main.loop = false; }
+            return root;
         }
 
         static readonly System.Collections.Generic.HashSet<string> builtWraps = new System.Collections.Generic.HashSet<string>();
