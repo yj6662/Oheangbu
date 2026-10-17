@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D38 D39 D40 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D38 D39 D40 D41 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
@@ -958,6 +958,46 @@ namespace Oheangbu.EditorTools.WorldMacro
                     bool wired = File.Exists(traces) && File.ReadAllText(traces).Contains("SetReturn308(t.Bounce");
                     ok &= wired;
                     Check("D40", ok, (seen > 0 ? string.Join("; ", parts) : "not built") + " | runtime hands the return leg " + wired);
+                }
+
+                // ---- D41 (11.46): the field gates 눈 숫 웅 fly their own body and follow the gate at 1.1 m, never shrunk near the
+                // camera; no Residue child, every Contact system local, no additive material, and 웅's Contact is bursts only
+                // that are gone inside 1 s (the effect lives 3 s and the hit cue is 2.0 s)
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var rows = new[] { ("045_B208", "na"), ("095_C22B", "sa"), ("120_C6C5", "a") };
+                    var parts = new List<string>(); bool ok = true; int seen = 0;
+                    foreach (var (id, key) in rows)
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/" + id + "_308h.asset");
+                        if (p == null) continue; seen++;
+                        bool flags = p.Bolt300FollowTarget && Mathf.Abs(p.Bolt300FollowHeight - 1.1f) < 1e-4f && p.Bolt300NearContactMeters == 0f
+                            && !p.Bolt300Pierce && !p.Bolt300Return;
+                        var body = p.Bolt300Prefab; bool own = body != null && body.name == "PF_V308k_field_" + key;
+                        int additive = 0, world = 0, rated = 0, contactPs = 0; float longest = 0f; bool residue = false;
+                        if (body != null)
+                        {
+                            residue = body.transform.Find("Residue") != null;
+                            foreach (var r in body.GetComponentsInChildren<ParticleSystemRenderer>(true))
+                                foreach (var m in r.sharedMaterials)
+                                    if (m != null && (m.shader.name.IndexOf("Additive", StringComparison.OrdinalIgnoreCase) >= 0
+                                        || (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One)))) additive++;
+                            var contact = body.transform.Find("Contact");
+                            if (contact != null)
+                                foreach (var ps in contact.GetComponentsInChildren<ParticleSystem>(true))
+                                {
+                                    contactPs++;
+                                    if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) world++;
+                                    if (ps.emission.rateOverTime.constantMax > 0f) rated++;
+                                    longest = Mathf.Max(longest, ps.main.startLifetime.constantMax);
+                                }
+                        }
+                        bool timed = key != "a" || (rated == 0 && longest <= 1f);
+                        bool rowOk = flags && own && !residue && additive == 0 && world == 0 && contactPs > 0 && timed; ok &= rowOk;
+                        parts.Add(key + (rowOk ? " ok" : " FAIL") + " (flags " + flags + ", own body " + own + ", residue " + residue + ", additive " + additive
+                            + ", world contact " + world + ", contact systems " + contactPs + ", rated " + rated + ", longest " + Deploy308.F(longest) + " s)");
+                    }
+                    Check("D41", ok && seen == 3, (seen > 0 ? string.Join("; ", parts) : "not built"));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

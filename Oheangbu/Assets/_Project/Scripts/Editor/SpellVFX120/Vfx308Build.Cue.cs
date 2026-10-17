@@ -47,9 +47,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var e = Element(kit, g.Key);
                 var spell = Spells.First(x => x.Key == g.Key);
                 GameObject bolt = null, aura = null;
-                if (g.Kind == "mark" || g.Kind == "field")
+                if (g.Kind == "field") bolt = FieldBody(e);   // 11.46: the gate's own body (Field.cs)
+                else if (g.Kind == "mark")
                 {
-                    // the plain element bolt: FinalBolt does not take the ㅁ final, and a gate has none
+                    // the plain element bolt: FinalBolt does not take the ㅁ final
                     bolt = File.Exists(PrefabPath(spell)) ? Load<GameObject>(PrefabPath(spell)) : null;
                     if (bolt == null) { sb.AppendLine(g.Glyph + ": the element bolt is not built (run build first)"); continue; }
                 }
@@ -78,6 +79,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.Bolt300Prefab = bolt; profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
                     profile.Bolt300Scale = 1f; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = BodySoakSeconds; profile.Bolt300NearContactMeters = NearContactMeters; profile.Bolt300TravelScale = TravelScale;
                     profile.BodyMesh = e.Bit;
+                    if (g.Kind == "field") TuneField(profile, g.Key);
                 }
                 else { profile.Bolt300Prefab = null; profile.Aura308Prefab = aura; }
                 // 11.41: the companion's shots fly a smaller copy of the element bolt; the sword form's swings lay a slash at the struck point

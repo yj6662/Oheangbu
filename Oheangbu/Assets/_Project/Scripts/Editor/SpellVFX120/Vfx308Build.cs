@@ -70,6 +70,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "stain": return BuildStain();   // 11.37 (e) D308-104: the range-ㄱ foot stain alone
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
+                case "field": return BuildField();   // 11.46: the field gates 눈 숫 웅, their own bodies
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
                 case "cue": return BuildCue();       // 11.40: the 27 non-attack cue letters
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
