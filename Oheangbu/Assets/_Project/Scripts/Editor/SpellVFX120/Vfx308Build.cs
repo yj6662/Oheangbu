@@ -79,6 +79,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "haetae:flame": return BuildHaetaeBreath();              // 11.44: the haetae breath as an ink body
                 case "haetae:flame:connect": return ConnectHaetaeBreath();
                 case "haetae:flame:revert": return RevertHaetaeBreath();
+                case "beast:ink": return BuildBeastInk();                      // 11.47: deer roots + turtle jet as ink bodies
+                case "beast:ink:connect": return ConnectBeastInk();
+                case "beast:ink:revert": return RevertBeastInk();
                 case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
                 case "graph:build": return GraphBuild();             // 11.32: the 노 smoke graph (concepts C + D)
                 case "graph:build:ring": return GraphBuildRing();     // 11.34 fire8: tongues leaning out round the target
@@ -1245,6 +1248,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (attack) sb.AppendLine(ConnectBeast());
             if (attack) sb.AppendLine(ConnectSummonFx());
             if (attack) sb.AppendLine(ConnectHaetaeBreath());
+            if (attack) sb.AppendLine(ConnectBeastInk());
             return sb.ToString();
         }
 
@@ -1273,6 +1277,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             sb.AppendLine(RevertBeast());
             sb.AppendLine(RevertSummonFx());
             sb.AppendLine(RevertHaetaeBreath());
+            sb.AppendLine(RevertBeastInk());
             return sb.ToString();
         }
 

@@ -1000,6 +1000,36 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D41", ok && seen == 3, (seen > 0 ? string.Join("; ", parts) : "not built"));
                 }
 
+                // ---- D42 (11.47): the live wood deer's roots and water turtle's jet draw in ink (InkSolid308), and the shader's
+                // new seams leave every other InkSolid body as it was (_Soak 1, _GroundY far below)
+                {
+                    var solid = Shader.Find("Oheangbu/SpellVFX308/InkSolid");
+                    int soakAt = solid != null ? solid.FindPropertyIndex("_Soak") : -1, groundAt = solid != null ? solid.FindPropertyIndex("_GroundY") : -1;
+                    bool defaults = soakAt >= 0 && groundAt >= 0 && Mathf.Approximately(solid.GetPropertyDefaultFloatValue(soakAt), 1f)
+                        && solid.GetPropertyDefaultFloatValue(groundAt) <= -1000f;
+                    int deer = 0, deerInk = 0, turtle = 0, turtleInk = 0;
+                    foreach (var guid in AssetDatabase.FindAssets("t:SummonCombatProfile", new[] { "Assets/_Project/Art/World/Architecture296/Data" }))
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guid);
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.Demo.SummonCombatProfile>(path);
+                        if (p == null) continue;
+                        if (path.EndsWith("_WoodDeer.asset", StringComparison.Ordinal))
+                        {
+                            deer++;
+                            var m = p.RootInk308Material;
+                            if (m != null && m.shader == solid && m.HasProperty("_GroundY") && m.HasProperty("_Soak")) deerInk++;
+                        }
+                        if (path.EndsWith("_WaterTurtle.asset", StringComparison.Ordinal))
+                        {
+                            turtle++;
+                            var m = p.WaterJetInk308Material;
+                            if (m != null && m.shader == solid && m.HasProperty("_Soak")) turtleInk++;
+                        }
+                    }
+                    Check("D42", defaults && deer > 0 && deerInk == deer && turtle > 0 && turtleInk == turtle,
+                        "InkSolid defaults " + defaults + " | live WoodDeer " + deerInk + "/" + deer + " ink roots, live WaterTurtle " + turtleInk + "/" + turtle + " ink jet");
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

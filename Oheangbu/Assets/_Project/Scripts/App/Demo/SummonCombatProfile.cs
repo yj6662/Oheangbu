@@ -52,6 +52,8 @@ namespace Oheangbu.App.Demo
         public AnimationClip RootAttackClip;
         public Mesh RootMesh;
         public Material RootMaterial;
+        [Tooltip("#308 SPEC-SPELL-VFX-OVERHAUL-308 11.47 [TEST]: 있으면 뿌리 조각을 RootMaterial 대신 이 먹 재질(InkSolid308)로 그린다 — 솟을 때 먹으로 나타나 2칸에 걸쳐 안료가 스민다(_Soak). 비면 식물 껍질 그대로. 라이브 사본에만 beast:ink:connect가 쓴다(기록 · 되돌리기).")]
+        public Material RootInk308Material;
 
         [Header("Optional distance-keeping fire fan (demo TEST)")]
         public bool FlameAttackEnabled;
@@ -98,6 +100,8 @@ namespace Oheangbu.App.Demo
         public Vector3 WaterOriginOffset = new Vector3(0, .7f, 1f);
         public AnimationClip WaterAttackClip;
         public Material WaterJetMaterial, WaterFoamMaterial;
+        [Tooltip("#308 SPEC-SPELL-VFX-OVERHAUL-308 11.47 [TEST]: 있으면 물줄기 관을 WaterJetMaterial 대신 이 먹 재질(InkSolid308)로 그리고 거품 방울을 만들지 않는다 — 결이 앞으로 흐르고, 먹으로 나와 2칸에 걸쳐 안료가 스민다. 비면 물 셰이더 + 거품 그대로. 라이브 사본에만 beast:ink:connect가 쓴다.")]
+        public Material WaterJetInk308Material;
 
         public bool TryValidate(out string error, bool requirePresentation = false)
         {
