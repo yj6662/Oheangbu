@@ -967,7 +967,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static GameObject PathBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_path_" + e.Key);
-            var box = new Vector3(1f, .1f, 1.5f);      // 5th pass: the heads stand in a band 1.5 m deep, not on one line - they slide against each other as the camera moves
+            // 5th pass: the heads stand in a band, not on one line - they slide against each other as the camera moves.
+            // 11.42 (D308-105 front ring only): the band is AreaBand308(r) deep (was 1.5 m) - 공 .96 m, 모 · 오 1.0 m.
+            var box = new Vector3(1f, .1f, AreaBand308(a.Radius));
             Layer(root.transform, new L { Name = "Head", Mat = e.Head, World = false, Mode = 2, Rate = e.HeadRate * a.Dense, Max = Mathf.CeilToInt(e.HeadRate * a.Dense * e.HeadLife.y * a.Slow) + 3, Life = e.HeadLife * a.Slow, Size = e.HeadSize * a.Big, SpinRandom = false, Blend = true, ShapeScaling = true,
                 Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = InkFirst(e.Ink, e.Key == "ma" ? Color.Lerp(e.Wash, e.Dark, .55f) : e.Wash, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });   // pq_area: the earth head read as a muddy brown cloud - darker toward the ink
             // D308-109 audit (D308-105 front ring only, no stain): the wet wash left behind the front is gone; the head rides with the front (local sim).

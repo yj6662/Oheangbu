@@ -830,6 +830,29 @@ namespace Oheangbu.EditorTools.WorldMacro
                         capOk &= ok;
                         parts.Add(key + " r" + r.ToString("0.##") + " band " + band.ToString("0.###") + " mark " + mark.ToString("0.##") + (ok ? "" : " (want " + wantBand + " / " + wantMark + ")"));
                     }
+                    // 11.42 4: the built bodies - path Head band depth <= 1.0 m, circle Pool rim (end size x end grow x .85 / 2) <= 1.8 m past its point
+                    int seen = 0;
+                    foreach (var guid in AssetDatabase.FindAssets("PF_V308b_ t:GameObject", new[] { "Assets/_Project/Art/SpellVFX308/V2/Prefabs" }))
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guid), name = System.IO.Path.GetFileNameWithoutExtension(path);
+                        bool isPath = name.StartsWith("PF_V308b_path_"), isCircle = name.StartsWith("PF_V308b_circle_");
+                        if (!isPath && !isCircle) continue;
+                        var go = AssetDatabase.LoadAssetAtPath<GameObject>(path); if (go == null) continue;
+                        var layer = go.transform.Find(isPath ? "Head" : "Pool")?.GetComponent<ParticleSystem>(); if (layer == null) continue;
+                        seen++;
+                        if (isPath)
+                        {
+                            float depth = layer.shape.scale.z;
+                            if (depth > Oheangbu.EditorTools.SpellVFX120.Vfx308Build.AreaBandCap308 + 1e-3f) { capOk = false; parts.Add(name + " Head depth " + depth.ToString("0.##") + " > 1.0"); }
+                        }
+                        else
+                        {
+                            var sol = layer.sizeOverLifetime; float grow = sol.enabled ? sol.size.Evaluate(1f) * sol.size.curveMultiplier : 1f;
+                            float rim = layer.main.startSize.constantMax * grow * .85f * .5f;
+                            if (rim > Oheangbu.EditorTools.SpellVFX120.Vfx308Build.AreaMarkMargin308 + 1e-3f) { capOk = false; parts.Add(name + " Pool rim " + rim.ToString("0.##") + " > 1.8"); }
+                        }
+                    }
+                    parts.Add(seen > 0 ? "built bodies " + seen : "no built bodies");
                     Check("D35", capOk, string.Join("; ", parts));
                 }
 
