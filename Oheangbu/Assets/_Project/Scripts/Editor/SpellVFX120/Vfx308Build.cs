@@ -71,6 +71,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
+                case "cue": return BuildCue();       // 11.40: the 27 non-attack cue letters
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "retire:summon": return ConnectSummonFx();         // 11.37 (f) D308-107: old summon effects off on the live profiles
                 case "retire:summon:revert": return RevertSummonFx();
@@ -1212,6 +1213,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var targets = Spells.Select(x => (glyph: x.Glyph, path: EffectPath(x))).ToList();
             if (attack) targets.AddRange(Attack.Where(x => x.Shape != Form.Giyeok && Spells.All(b => b.Glyph != x.Glyph)).Select(x => (glyph: x.Glyph, path: AttackEffectPath(x))));
             if (attack) targets.AddRange(Guards.Where(g => File.Exists(GuardEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: GuardEffectPath(g.Id))));   // 11.22: once built
+            if (attack) targets.AddRange(Cues.Where(g => File.Exists(CueEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: CueEffectPath(g.Id))));         // 11.40: once built
             foreach (var s in targets)
             {
                 var effect = Load<GameObject>(s.path);
@@ -1320,6 +1322,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     if (e.FindPropertyRelative("Letter").stringValue == s.Glyph)
                         sb.AppendLine(s.Glyph + ": " + AssetDatabase.GetAssetPath(e.FindPropertyRelative("FxPrefab").objectReferenceValue)
                             + (File.Exists(PrefabPath(s)) ? "  [#308 built]" : "  [#308 not built]"));
+                }
+            foreach (var g in Cues)   // 11.40
+                for (int i = 0; i < entries.arraySize; i++)
+                {
+                    var e = entries.GetArrayElementAtIndex(i);
+                    if (e.FindPropertyRelative("Letter").stringValue == g.Glyph)
+                        sb.AppendLine(g.Glyph + " " + g.Kind + ": " + AssetDatabase.GetAssetPath(e.FindPropertyRelative("FxPrefab").objectReferenceValue)
+                            + (File.Exists(CueEffectPath(g.Id)) ? "  [#308 built]" : "  [#308 not built]"));
                 }
             sb.AppendLine("record: " + (File.Exists(Record) ? Record : "none"));
             return sb.ToString();
