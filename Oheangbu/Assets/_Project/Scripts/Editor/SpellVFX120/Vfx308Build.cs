@@ -518,6 +518,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return m;
         }
 
+        // D308-109 (ink first, the pigment soaks in): black ink at birth, the element's colour from a quarter of the life, fading out
+        static Gradient InkFirst(Color ink, Color pigment, Color end) => G((0f, C(ink, 1f)), (.25f, C(Color.Lerp(ink, pigment, .6f), 1f)), (.5f, C(pigment, 1f)), (1f, C(end, 0f)));
+
         // whole, then paling to nothing from `hold` of the life on
         static Gradient Fade(Color c, float hold = .35f, Color? end = null)
         {
@@ -528,7 +531,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // the birth: a small soft round glow on the body for two cels (the only light of an ordinary spell)
         static void Birth2(Transform travel, string key, Color c, float size)
         {
-            Layer(travel, new L { Name = "Birth", Mat = Bleed("M_V308b_" + key + "_birth", null, Color.clear, 0f, .5f, .3f), World = false, Burst = 1, Max = 2, Life = new Vector2(2f * Cel, 2f * Cel),
+            Layer(travel, new L { Name = "Birth", Mat = Bleed("M_V308b_" + key + "_birth", null, Color.clear, 0f, .5f, .12f)   /* D308-109 audit: the birth glow cap .12 (D308-103) */, World = false, Burst = 1, Max = 2, Life = new Vector2(2f * Cel, 2f * Cel),
                 Size = new Vector2(size, size), NoShape = true, Flipbook = false, SpinRandom = false, Colour = G((0f, C(c, .9f)), (.5f, C(c, .6f)), (1f, C(c, 0f))) });
             // 6th pass (D308-83): the body is made of thrown ink. Where it leaves, ink comes together (ink_gather sheet, the
             // cels in which the drops are already on their way in) and is drawn in as the body goes: ink first, colour after.
@@ -583,8 +586,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return v;
         }
 
-        // Deploy: scattered ink drawn together at the origin (the splat sheet backwards + drops flying inward), 0.15 s.
-        // Residue: a pool sheet the runtime drops on the ground under the hit and leaves 3 - 5 s. Bleeding Travel particles
+        // Deploy: scattered ink drawn together at the origin (the splat sheet backwards), 0.15 s. No Residue (D308-109). Bleeding Travel particles
         // swap to a soak copy of their material (black first, pigment by ParticleSoakTo of their life). Glow cels stay as they are.
         static void Bolt308Extras(GameObject root)
         {
@@ -600,14 +602,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Layer(deploy, new L { Name = "Gather", Mat = Bleed("M_V308c_deploy_splat", "ink_splat", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 1, Max = 2, Life = new Vector2(.15f, .15f),
                 Size = new Vector2(1.1f, 1.1f), NoShape = true, Blend = true, FrameFrom = 11f, FrameTo = 0f,
                 Colour = G((0f, C(SwingInkColour, 0f)), (.3f, C(SwingInkColour, 1f)), (1f, C(SwingInkColour, .7f))), Grow = Curve(0f, 1.25f, 1f, .5f) });
-            Layer(deploy, new L { Name = "Drops", Mat = Bleed("M_V308c_deploy_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 10, Max = 12, Life = new Vector2(.12f, .16f),
-                Size = new Vector2(.08f, .18f), Speed = new Vector2(-5f, -3.5f), Radius = .6f, Thickness = 0f, RandomCell = true, Blend = true, Colour = InkFade(.6f), Grow = Curve(0f, 1f, 1f, .6f) });
-            var residue = new GameObject("Residue").transform; residue.SetParent(root.transform, false);
-            Layer(residue, new L { Name = "Pool", Mat = Bleed("M_V308c_residue_pool", "ink_pool", C(SwingInkColour, .95f), 0f, .95f, 0f, 0f), World = false, Mode = 1, Burst = 1, Max = 2,
-                Life = new Vector2(3.5f, 3.5f), Size = new Vector2(2f, 2f),   /* sw_w: 1.4 / .85 hardly seen at 5 m */ NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 15.5f,
-                Colour = G((0f, C(SwingInkColour, .95f)), (.6f, C(SwingInkColour, .8f)), (1f, C(SwingInkColour, 0f))), Grow = Curve(0f, .5f, .15f, 1f, 1f, 1.1f) });
+            // D308-109 audit (rule: no flying droplets, single hits leave KTP only): the deploy drops and the residue pool are gone.
+            // Without a Residue child the runtime's DropResidue308 does nothing; FinalK's Linger finds no residue either.
             foreach (var t in deploy.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
-            foreach (var t in residue.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
         }
 
         static GameObject Ga2(Kit k, Vfx120Profile p)
@@ -817,7 +814,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             // The ground ink is now the larger thing (ink colour, not the element's dark), the cane is lower and ink-dark, and
             // ink leaves its top the whole time it stands (a stroke that bleeds away, not a post).
             Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.25f * a.Big);
-            Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(6.2f, 7.6f) * a.Big, Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
+            // D308-109 audit: the pool is held to the AreaMark308 cap (r + 1.8 m) - its rim reaches 1.73 m past a point at any Big; the band carries the ring.
+            Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(2.9f, 3.4f), Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
                 FrameFrom = 3f, FrameTo = 12f, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .75f), .75f, e.Ink), Grow = Curve(0f, .85f, 1f, 1.2f) });
             // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
@@ -894,39 +892,85 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return mesh;
         }
 
-        // Volley (4th pass): per shot the element's flying solid and a FAT bleeding speed stroke behind it (the weight of the
-        // 사 prototype's lines); denser letters cross a second one through it. Where a shot lands is drawn by the hit prefab.
-        static GameObject VolleyBody(Elem e, Atk a, Mesh ribbon)
+        // the volley needle (D308-109): an ink spindle along -Z, head at the origin, thickest just behind the head and tapering
+        // to a point at the tail. UVs as InkSolid reads them: u = angle round the flight axis, v = 0 at the head .. 1 at the
+        // tail (with _TipInk the tail goes to plain ink, the head keeps a little pigment - ink first, the element soaks in).
+        static Mesh NeedleMesh()
+        {
+            Directory.CreateDirectory(Root2 + "/Meshes");
+            string path = Root2 + "/Meshes/V308b_needle.asset";
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (mesh == null) { mesh = new Mesh { name = "V308b_needle" }; AssetDatabase.CreateAsset(mesh, path); }
+            const int around = 8, along = 12; const float length = NeedleLength308, radius = .035f;
+            float R(float t) => radius * (t < .12f ? Mathf.Lerp(.6f, 1f, t / .12f) : Mathf.Pow(Mathf.Max(0f, 1f - (t - .12f) / .88f), 1.3f));
+            var v = new List<Vector3>(); var n = new List<Vector3>(); var uv = new List<Vector2>(); var tri = new List<int>();
+            for (int j = 0; j <= along; j++)
+            {
+                float t = j / (float)along, r = R(t), slope = (R(Mathf.Min(1f, t + .01f)) - R(Mathf.Max(0f, t - .01f))) / (.02f * length);   // dr / d(distance toward the tail)
+                for (int i = 0; i <= around; i++)
+                {
+                    float ang = i / (float)around * Mathf.PI * 2f; var radial = new Vector3(Mathf.Cos(ang), Mathf.Sin(ang), 0f);
+                    v.Add(radial * r + Vector3.back * (t * length));
+                    n.Add((radial + Vector3.forward * slope).normalized);
+                    uv.Add(new Vector2(i / (float)around, t));
+                }
+            }
+            for (int j = 0; j < along; j++)
+                for (int i = 0; i < around; i++)
+                {
+                    int a0 = j * (around + 1) + i, b0 = a0 + around + 1;
+                    tri.AddRange(new[] { a0, b0, a0 + 1, a0 + 1, b0, b0 + 1 });
+                }
+            mesh.Clear(); mesh.SetVertices(v); mesh.SetNormals(n); mesh.SetUVs(0, uv); mesh.SetTriangles(tri, 0); mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh); Touched.Add(mesh);
+            return mesh;
+        }
+
+        // D308-109 (user 2026-10-17 "먹 바늘 + 끝만 금속", "짧게, 공중에서만"): lengths are absolute; the letter's size only thickens
+        const float NeedleLength308 = 1.1f, NeedleTail308 = 1.25f, NeedleTipLength308 = .2f;
+
+        // Volley (D308-109, replaces the 4th pass's pale element solid + 5.2 m speed stroke that read as a road mark): per shot
+        // a dark INK needle with a small element solid only at its head, and a short (1.25 m) bleeding tail behind it. The
+        // body is switched off outside [launch, hit), so the tail is only ever in the air. Where a shot lands = the hit prefab.
+        static GameObject VolleyBody(Elem e, Atk a, Mesh ribbon, Mesh needle)
         {
             var root = new GameObject("PF_V308b_volley_" + e.Key);
             var body = new GameObject("Needle"); body.transform.SetParent(root.transform, false);
-            body.AddComponent<MeshFilter>().sharedMesh = e.Spike;
-            var mr = body.AddComponent<MeshRenderer>(); mr.sharedMaterial = e.Solid; mr.shadowCastingMode = ShadowCastingMode.Off; mr.receiveShadows = false;
-            body.transform.localScale = Vector3.one * 1.5f * a.Big; if (Backward(e.Spike)) body.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            body.AddComponent<MeshFilter>().sharedMesh = needle;
+            var mr = body.AddComponent<MeshRenderer>(); mr.sharedMaterial = Solid("M_V308_" + e.Key + "_needle_strand", Color.Lerp(e.Pig, e.Ink, .8f), e.Ink, .45f, .3f); mr.shadowCastingMode = ShadowCastingMode.Off; mr.receiveShadows = false;
+            body.transform.localScale = new Vector3(a.Big, a.Big, 1f);
+            // the element only at the head: the element's solid, scaled to a 0.2 m point whose back sits just inside the needle
+            var tip = new GameObject("Tip"); tip.transform.SetParent(root.transform, false);
+            tip.AddComponent<MeshFilter>().sharedMesh = e.Spike;
+            var tr = tip.AddComponent<MeshRenderer>(); tr.sharedMaterial = e.Solid; tr.shadowCastingMode = ShadowCastingMode.Off; tr.receiveShadows = false;
+            bool back = Backward(e.Spike); var b = e.Spike.bounds; float k = NeedleTipLength308 / Mathf.Max(.01f, b.size.z);
+            tip.transform.localRotation = back ? Quaternion.Euler(0f, 180f, 0f) : Quaternion.identity;
+            tip.transform.localScale = new Vector3(k * a.Big, k * a.Big, k);
+            var centre = new Vector3(b.center.x * k * a.Big, b.center.y * k * a.Big, 0f); if (back) centre.x = -centre.x;
+            tip.transform.localPosition = new Vector3(-centre.x, -centre.y, -.04f + (back ? b.max.z * k : -b.min.z * k));
             int lines = a.Dense > 1.15f ? 2 : 1;
             for (int i = 0; i < lines; i++)
             {
                 var line = new GameObject("Line" + i); line.transform.SetParent(root.transform, false);
                 line.AddComponent<MeshFilter>().sharedMesh = ribbon;
                 var lr = line.AddComponent<MeshRenderer>(); lr.sharedMaterial = e.Ribbon; lr.shadowCastingMode = ShadowCastingMode.Off; lr.receiveShadows = false;
-                line.transform.localScale = new Vector3(1.5f * a.Big, 1.5f * a.Big, 5.2f * a.Big); line.transform.localRotation = Quaternion.Euler(0f, 0f, 45f * i);
-                line.transform.localPosition = new Vector3(0f, 0f, .35f);
+                line.transform.localScale = new Vector3(.6f * a.Big, .6f * a.Big, NeedleTail308); line.transform.localRotation = Quaternion.Euler(0f, 0f, 45f * i);
+                line.transform.localPosition = new Vector3(0f, 0f, -.1f);
             }
             return root;
         }
 
         // Path (4th pass): the element's HEAD stands up along the front (earth: a tall jagged heave; water: a low smooth crest
-        // with its dark rim; wood: a row of brush-stroke stalks), a wet wash is left flat on the ground behind it, and solid
+        // with its dark rim; wood: a row of brush-stroke stalks), born as ink and soaking to the element (D308-109), and solid
         // bits are thrown up. The seam scales the body across to the path's width, so the emitters use Shape scaling.
         static GameObject PathBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_path_" + e.Key);
             var box = new Vector3(1f, .1f, 1.5f);      // 5th pass: the heads stand in a band 1.5 m deep, not on one line - they slide against each other as the camera moves
-            Layer(root.transform, new L { Name = "Head", Mat = e.Head, Mode = 2, Rate = e.HeadRate * a.Dense, Max = Mathf.CeilToInt(e.HeadRate * a.Dense * e.HeadLife.y * a.Slow) + 3, Life = e.HeadLife * a.Slow, Size = e.HeadSize * a.Big, SpinRandom = false, Blend = true, ShapeScaling = true,
-                Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = Fade(e.Key == "ma" ? Color.Lerp(e.Wash, e.Dark, .55f) : e.Wash, .45f, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });   // pq_area: the earth head read as a muddy brown cloud - darker toward the ink
-            Layer(root.transform, new L { Name = "Wet", Mat = e.Pool, Mode = 1, Rate = 9f * a.Dense, Max = Mathf.CeilToInt(9 * a.Dense * 1.1f * a.Slow) + 3, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(3.4f, 4.4f) * a.Big, Blend = true, ShapeScaling = true,
-                Shape = ParticleSystemShapeType.Box, ShapeScale = box, ShapePos = new Vector3(0f, -.27f, 0f), FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(e.Dark, .45f, e.Dark), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.2f) });
-            // user 2026-10-15 (no flying bits): the beads / clumps thrown up off the front are gone - the head and the wet wash carry it
+            Layer(root.transform, new L { Name = "Head", Mat = e.Head, World = false, Mode = 2, Rate = e.HeadRate * a.Dense, Max = Mathf.CeilToInt(e.HeadRate * a.Dense * e.HeadLife.y * a.Slow) + 3, Life = e.HeadLife * a.Slow, Size = e.HeadSize * a.Big, SpinRandom = false, Blend = true, ShapeScaling = true,
+                Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = InkFirst(e.Ink, e.Key == "ma" ? Color.Lerp(e.Wash, e.Dark, .55f) : e.Wash, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });   // pq_area: the earth head read as a muddy brown cloud - darker toward the ink
+            // D308-109 audit (D308-105 front ring only, no stain): the wet wash left behind the front is gone; the head rides with the front (local sim).
+            // user 2026-10-15 (no flying bits): the beads / clumps thrown up off the front are gone - the head carries it
             return root;
         }
 
@@ -948,7 +992,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
             Touched.Clear(); seed = 30900;
-            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); var finals = new Dictionary<string, GameObject>(); var stains = new Dictionary<string, GameObject>(); Mesh ribbon = null;
+            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); var finals = new Dictionary<string, GameObject>(); var stains = new Dictionary<string, GameObject>(); Mesh ribbon = null, needle = null;
             var sb = new StringBuilder(); int built = 0, skipped = 0;
             foreach (var a in Attack)
             {
@@ -974,7 +1018,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     string key = AreaBodyPath(a);
                     if (!bodies.TryGetValue(key, out var body))
                     {
-                        var root = a.Shape == Form.Circle ? CircleBody(e, a) : a.Shape == Form.Cone ? ConeBody(e, a) : a.Shape == Form.Volley ? VolleyBody(e, a, ribbon ?? (ribbon = RibbonMesh())) : PathBody(e, a);
+                        var root = a.Shape == Form.Circle ? CircleBody(e, a) : a.Shape == Form.Cone ? ConeBody(e, a) : a.Shape == Form.Volley ? VolleyBody(e, a, ribbon ?? (ribbon = RibbonMesh()), needle ?? (needle = NeedleMesh())) : PathBody(e, a);
                         foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
                         bodies[key] = body = PrefabUtility.SaveAsPrefabAsset(root, key);
                         Object.DestroyImmediate(root);

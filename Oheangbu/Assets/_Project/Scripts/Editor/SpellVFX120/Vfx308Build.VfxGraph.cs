@@ -367,7 +367,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .85f, 1f));
             SetF(so, "LifeTime", life);
             SetF(so, "Soft Particle Fade Distance", .1f);
-            SetV2(so, "Camera Fade Min/Max Distance", new Vector2(.3f, .9f));
+            SetV2(so, "Camera Fade Min/Max Distance", new Vector2(.45f, 1.4f));     // D308-109 audit: nothing inside .45 m of the camera (was .3 - .9)
             SetF(so, "Flipbook Framerate", 30f);
             SetV3(so, "Bounds_center", new Vector3(0f, 1f, 2f));
             SetV3(so, "Bounds_size", new Vector3(3f, 3f, 5f));
