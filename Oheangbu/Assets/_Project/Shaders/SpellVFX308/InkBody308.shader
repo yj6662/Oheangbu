@@ -1,8 +1,8 @@
 // #308 소환수 먹 몸 (SPEC-SPELL-VFX-OVERHAUL-308 11.13, D308-83b): 검은 먹으로 된 몸.
 //  - 윤곽이 번진다: 눈에 비스듬한 면(실루엣 가장자리)을 결 잡음으로 파먹는다(오려내기, 깊이를 쓴다).
 //  - 한 부위만 밝다(_AccentFrom 위 — 사슴의 뿔): 뼈빛, 빛나지 않는다.
-//  - 가슴의 심(_CorePos, 물체 공간): 평소엔 안료색. _CoreGlow(0..1)와 태어나는 순간의 두 칸만 들어 올리고
-//    선형 .45에서 자른다(D308-10c · ART-INK 중등: 순간 발광만, 지속 발광 없음). HDR · 가산 없음.
+//  - 가슴의 심(_CorePos, 물체 공간): 평소엔 안료색. _CoreGlow(0..1)로만 들어 올린다 — 활동 첫 두 칸(1/6 s)에
+//    DemoSummonPresentation이 켠다(D308-108). 선형 .45에서 자른다(D308-10c · ART-INK 중등: 순간 발광만, 지속 발광 없음). HDR · 가산 없음.
 //  - 나타남 / 사라짐은 기존 소환수 계약 그대로(_Age · _Ground · _Height): 발치의 먹에서 위로 차오르고, 끝에는 결을 따라 흩어진다.
 Shader "Oheangbu/SpellVFX308/InkBody"
 {
@@ -122,11 +122,11 @@ Shader "Oheangbu/SpellVFX308/InkBody"
                 half glint = pow(saturate(dot(wet, normalize(sky + eye))), 12.0);
                 half film = pow(1.0 - saturate(abs(dot(wet, eye))), 3.0);
                 colour += half3(0.3, 0.3, 0.29) * _Gloss * saturate(glint * 0.8 + film * 0.55);
-                // the core: pigment, not light. Lifted only for a moment (_CoreGlow, and two cels as the body completes), then capped
+                // the core: pigment, not light. Lifted only for a moment (_CoreGlow - the presentation lights it for the first two cels
+                // of activity, D308-108), then capped. The old _Age birth window is gone: _Age jumps past it, so it lit one cel at most.
                 half core = 1.0 - smoothstep(0.0, _CoreRadius, distance(input.world, TransformObjectToWorld(_CorePos.xyz)));     // metres, whatever the model's own unit
                 core *= core;
-                half birth = step(1.1, _Age) * saturate(1.0 - (_Age - 1.1) / 0.17);
-                half lift = saturate(max(_CoreGlow, birth));
+                half lift = saturate(_CoreGlow);
                 half3 pigment = _Core.rgb * (1.0 + 1.6 * lift);
                 pigment *= min(1.0, 0.45 / max(max(pigment.r, pigment.g), max(pigment.b, 0.001)));     // D308-10c: never above linear .45
                 colour = lerp(colour, pigment, saturate(core * (0.85 + 0.5 * lift)) * (1.0 - accent));

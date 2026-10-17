@@ -1003,6 +1003,13 @@ namespace Oheangbu.App
             Vector3 origin = from.Value, goal = aim ?? pivot + Vector3.up * 1.1f, delta = goal - origin;
             float dist = delta.magnitude;
             if (dist > 1e-4f && col.Raycast(new Ray(origin, delta / dist), out RaycastHit hit, dist + 1f)) return hit.point;
+            // #308 D308-108 (TEST): a Scatter impact beside the body marks the edge the needle passed, not the side facing the caster.
+            if (aim.HasValue && dist > 1e-4f)
+            {
+                float t = Mathf.Clamp01(Vector3.Dot(col.bounds.center - origin, delta) / (dist * dist));
+                Vector3 pass = origin + delta * t, edge = col.ClosestPoint(pass);
+                if ((edge - pass).sqrMagnitude > 1e-8f) return edge;
+            }
             Vector3 closest = col.ClosestPoint(origin);
             return (closest - origin).sqrMagnitude < 1e-8f ? col.bounds.center : closest;
         }

@@ -38,6 +38,10 @@ namespace Oheangbu.App.Demo
         public bool HasAnimationGraph => graph.IsValid();
         public float LastRevealAge { get; private set; }
 
+        // #308 D308-108 (TEST): the core lights only for the first cels of activity (two 12 Hz cels at 1/6 s), never while forming or after.
+        public static float CoreBirthGlow(SummonCombatClock clock, float seconds) =>
+            clock != null && seconds > 0f && clock.IsCombatActive && clock.ActivityElapsed < seconds ? 1f : 0f;
+
         public void Configure(SummonCombatProfile value)
         {
             if (configured) throw new InvalidOperationException("Presentation is configured once per prepared summon.");
@@ -205,11 +209,12 @@ namespace Oheangbu.App.Demo
                 : clock.Phase == SummonPhase.Dissolving ? 3.8f + clock.DissolveProgress01 * .8f
                 : clock.Phase == SummonPhase.Ended ? 4.6f : 2f;
             float ground = transform.position.y - .03f, top = ground + Mathf.Max(.1f, profile.BodyHeight);
+            float coreGlow = CoreBirthGlow(clock, profile.CoreBirthGlowSeconds308);
             foreach (var r in renderers) if (r != null) top = Mathf.Max(top, r.bounds.max.y + .04f);
             foreach (var r in renderers)
             {
                 if (r == null) continue;
-                block.Clear(); block.SetFloat("_Age", LastRevealAge); block.SetFloat("_MotionTime", clock.Elapsed);
+                block.Clear(); block.SetFloat("_Age", LastRevealAge); block.SetFloat("_MotionTime", clock.Elapsed); block.SetFloat("_CoreGlow", coreGlow);
                 block.SetFloat("_Ground", ground); block.SetFloat("_Height", top - ground);
                 r.SetPropertyBlock(block); r.enabled = clock.Phase != SummonPhase.Ended;
             }

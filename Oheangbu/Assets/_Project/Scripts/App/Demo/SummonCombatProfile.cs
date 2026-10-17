@@ -14,6 +14,8 @@ namespace Oheangbu.App.Demo
         public GameObject FormationSeal, DissolveDebris;
         [Tooltip("#308 D308-107 (f) [TEST]: 참이면 옛 소환 연출(인장 · Formation/Mane/Dissolve 입자 · 파편)을 내지 않는다 — 새 먹 몸만. 몸 · 동작 · 공격 연출 · 시계는 그대로. 라이브 사본에만 retire:summon 명령이 켠다(기록 · 되돌리기).")]
         public bool RetireLegacySummonFx308;
+        [Tooltip("#308 D308-108 [TEST]: 활동이 시작된 뒤 이 시간 동안만 몸 심(_CoreGlow)이 밝아진다 — 12 Hz 셀 2칸(1/6 s). 0이면 끔. 지속 발광 없음.")]
+        [Min(0)] public float CoreBirthGlowSeconds308 = 1f / 6f;
         [Min(.01f)] public float WalkClipMetresPerSecond = 1.5f;
         [Min(0)] public float FormationSeconds = 1.2f;
         [Min(.01f)] public float ActivitySeconds = 20f;

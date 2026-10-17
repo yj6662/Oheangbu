@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
@@ -26,6 +26,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     // D33 = a range-ㄱ letter's hit has no pool and its copy carries one foot stain, laid once per struck enemy on the ground below (D308-104 e).
     // D34 = the live summon profiles retire the old seal / phase particles / debris, a profile without the flag keeps them (D308-107 f).
     // D35 = the builder size caps: ring band <= 1.0 m, mark radius <= r + 1.8 m (D308-104 g).
+    // D36 = a Scatter impact beside the body marks the edge the needle passed (D308-108). D37 = the summon core lights for the first two cels of activity only (D308-108).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -474,6 +475,14 @@ namespace Oheangbu.EditorTools.WorldMacro
                         Check("D30", frontOk && overOk && aimOk && insideOk && legacyOk,
                             "feet pivot, front: " + L(front, p) + " axis " + Deploy308.F(Axis(front, p)) + " ok " + frontOk + " | mid pivot, over the head: " + L(over, pm) + " ok " + overOk
                             + " | scatter aim: " + L(aimed, p) + " ok " + aimOk + " | from inside: " + L(inside, p) + " ok " + insideOk + " | no from / no collider = pivot + .8: " + legacyOk);
+                        // ---- D36 (D308-108, 11.38 2): a Scatter impact .6 m beside the capsule misses the ray; the mark sits on the edge the needle passed
+                        Vector3 shot = p + new Vector3(0f, 1f, 10f);
+                        Vector3 right = Surface(fv, shot, p + new Vector3(.6f, 1f, 0f)), left = Surface(fv, shot, p + new Vector3(-.6f, 1f, 0f));
+                        Vector3 facing = feet.GetComponent<CapsuleCollider>().ClosestPoint(shot);
+                        bool rightOk = Mathf.Abs(Axis(right, p) - .4f) < .02f && right.x - p.x > .3f && (right - facing).magnitude > .3f;
+                        bool leftOk = Mathf.Abs(Axis(left, p) - .4f) < .02f && left.x - p.x < -.3f && (left - facing).magnitude > .3f;
+                        Check("D36", rightOk && leftOk, "needle passes right: " + L(right, p) + " axis " + Deploy308.F(Axis(right, p)) + " ok " + rightOk
+                            + " | left: " + L(left, p) + " ok " + leftOk + " | facing side (old fallback): " + L(facing, p));
                         Object.DestroyImmediate(feet); Object.DestroyImmediate(mid); Object.DestroyImmediate(bare);
                     }
                 }
@@ -822,6 +831,23 @@ namespace Oheangbu.EditorTools.WorldMacro
                         parts.Add(key + " r" + r.ToString("0.##") + " band " + band.ToString("0.###") + " mark " + mark.ToString("0.##") + (ok ? "" : " (want " + wantBand + " / " + wantMark + ")"));
                     }
                     Check("D35", capOk, string.Join("; ", parts));
+                }
+
+                // ---- D37 (D308-108, 11.38 4): the summon core lights for the first two cels of activity only (B), the shader's _Age window is gone
+                {
+                    var sp = ScriptableObject.CreateInstance<Oheangbu.App.Demo.SummonCombatProfile>(); sp.hideFlags = Flags; trash.Add(sp);
+                    float secs = sp.CoreBirthGlowSeconds308;
+                    var clock = new Oheangbu.App.Demo.SummonCombatClock(1.2f, 20f, .8f);
+                    clock.Advance(.5f); float forming = Oheangbu.App.Demo.DemoSummonPresentation.CoreBirthGlow(clock, secs);
+                    clock.Advance(.75f); float born = Oheangbu.App.Demo.DemoSummonPresentation.CoreBirthGlow(clock, secs);
+                    float off0 = Oheangbu.App.Demo.DemoSummonPresentation.CoreBirthGlow(clock, 0f);
+                    clock.Advance(.15f); float after = Oheangbu.App.Demo.DemoSummonPresentation.CoreBirthGlow(clock, secs);
+                    const string bodyShader = "Assets/_Project/Shaders/SpellVFX308/InkBody308.shader";
+                    string src = File.Exists(bodyShader) ? File.ReadAllText(bodyShader) : null;
+                    bool shaderOk = src != null && !src.Contains("step(1.1, _Age)") && src.Contains("half lift = saturate(_CoreGlow);");
+                    bool ok = Mathf.Abs(secs - 1f / 6f) < 1e-4f && forming == 0f && born == 1f && off0 == 0f && after == 0f && shaderOk;
+                    Check("D37", ok, "default " + Deploy308.F(secs) + " s | forming " + forming + ", activity .05 s " + born + ", seconds 0 " + off0
+                        + ", activity .2 s " + after + " | shader: no _Age window, lift = _CoreGlow " + shaderOk);
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
