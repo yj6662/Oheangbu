@@ -30,6 +30,16 @@ namespace Oheangbu.EditorTools.SpellVFX120
         const float GuardPigment = .22f;         // pq_guard v2: how much of the element's pigment tints the black membrane (TEST)
         const float GuardDryAlpha = .45f;        // after the parry window: eroded, see-through (the old seal's *= .45)
         const float GuardContactScale = .6f;     // the struck splat, times the seam's .22 (TEST)
+        const float GuardStrokeLead = .1f;       // 11.51: the strokes stand this far in front of the body (was .25 - .45 m from the origin)
+        const float GuardFootLife = 1.2f;        // 11.51: the foot stain's whole life (s), out of the guard clock
+        const float GuardHoldSoakTo = .06f;      // 11.51: guard-clock layers coloured by this fraction of their life (~.24 s at 4 s)
+
+        static Material GuardSoak(Material m)
+        {
+            var v = SoakVariant(m);
+            v.SetFloat("_SoakTo", GuardHoldSoakTo); EditorUtility.SetDirty(v);
+            return v;
+        }
 
         static string BuildGuard()
         {
@@ -76,8 +86,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
         }
 
         // 11.28 the standing membrane, its root = its foot on the ground (Vfx120Effect.Guard308 stands it there): a wet ink blot
-        // stood up, three upright brush strokes drawn left to right inside 0.1 s, a stain at its foot, drops running down its
-        // face and one splash as it lands. "Wet*" lives the parry window (full, dark), "Hold*" the guard clock (eroded to ~.45 by
+        // stood up, three upright brush strokes drawn left to right inside 0.1 s, a short stain at its foot (11.51; the drops
+        // and the splash went with the 10-15 questionnaire). "Wet*" lives the parry window (full, dark), "Hold*" the guard clock (eroded to ~.45 by
         // the bleed shader's alpha, so the attack behind it stays readable) - the runtime sets those lifetimes from the clocks
         // it received; the values here are the preview's (4 s / 0.5 s, CombatConfig defaults). No glow.
         static GameObject GuardInk(Elem e)
@@ -85,32 +95,40 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var root = new GameObject(Path.GetFileNameWithoutExtension(GuardPrefabPath(e.Key)));
             // pq_guard v1: the soaked pool read as a flat green / red sticker - black ink with only a hint of the element (v2)
             Color c = Color.Lerp(e.Ink, e.Pig, GuardPigment);
-            var blot = Bleed("M_V308d_guard_" + e.Key + "_blot", "ink_pool", C(e.Ink, .9f), 0f, .92f);
-            var stroke = Bleed("M_V308d_guard_" + e.Key + "_sheet", "ink_throw", C(e.Ink, .9f), 0f, .95f);
+            // 11.51 (D308-109 ink first): the parry-window body soaks over the usual fraction of its life; the guard-clock
+            // layers (4 s preview, longer in play) get their own soak copies that are coloured by .06 of their life.
+            var blot = SoakVariant(Bleed("M_V308d_guard_" + e.Key + "_blot", "ink_pool", C(e.Ink, .9f), 0f, .92f));
+            var holdBlot = GuardSoak(Bleed("M_V308d_guard_" + e.Key + "_holdblot", "ink_pool", C(e.Ink, .9f), 0f, .92f));
+            var stroke = GuardSoak(Bleed("M_V308d_guard_" + e.Key + "_sheet", "ink_throw", C(e.Ink, .9f), 0f, .95f));
+            var foot = Bleed("M_V308d_guard_" + e.Key + "_foot", "ink_pool", C(e.Ink, .9f), 0f, .92f);
             Transform Host(string name, Vector3 at) { var h = new GameObject(name).transform; h.SetParent(root.transform, false); h.localPosition = at; return h; }
 
             var body = Host("BodyHost", new Vector3(0f, GuardHeight * .5f, 0f));
             Layer(body, new L { Name = "WetBody", Mat = blot, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardWindowPreview, GuardWindowPreview), Size = new Vector2(GuardHeight, GuardHeight), Size3D = new Vector3(1.3f, 1f, 1f),
                 NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, .45f, 4.5f / 16f, 1f, 5.5f / 16f),
                 Colour = G((0f, C(c, 0f)), (.05f, C(c, .85f)), (.7f, C(c, .8f)), (1f, C(c, 0f))), Grow = Curve(0f, .7f, .4f, 1f, 1f, 1.02f) });
-            Layer(body, new L { Name = "HoldBody", Mat = blot, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardClockPreview, GuardClockPreview), Size = new Vector2(GuardHeight, GuardHeight), Size3D = new Vector3(1.3f, 1f, 1f),
+            Layer(body, new L { Name = "HoldBody", Mat = holdBlot, World = false, Burst = 1, Max = 2, Life = new Vector2(GuardClockPreview, GuardClockPreview), Size = new Vector2(GuardHeight, GuardHeight), Size3D = new Vector3(1.3f, 1f, 1f),
                 NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, .06f, 4.5f / 16f, 1f, 6f / 16f),
                 Colour = G((0f, C(c, 0f)), (.03f, C(c, GuardDryAlpha)), (.88f, C(c, GuardDryAlpha * .92f)), (1f, C(c, 0f))), Grow = Curve(0f, .7f, .06f, 1f, 1f, 1.03f) });
 
             for (int i = 0; i < 3; i++)
             {
-                var h = Host("StrokeHost" + i, new Vector3((i - 1) * GuardHeight * .42f, GuardHeight * .52f, -.25f));
+                // 11.51: z -.25 put the strokes at .45 m from the effect origin (the 0.45 m camera rule's edge) - now .6 m
+                var h = Host("StrokeHost" + i, new Vector3((i - 1) * GuardHeight * .42f, GuardHeight * .52f, -GuardStrokeLead));
                 Layer(h, new L { Name = "HoldStroke" + i, Mat = stroke, World = false, Burst = 1, Max = 2, BurstTime = .012f + i * .04f, Life = new Vector2(GuardClockPreview, GuardClockPreview),
                     Size = new Vector2(GuardHeight * 1.1f, GuardHeight * 1.1f), NoShape = true, Blend = true, SpinRandom = false, RotDeg = new Vector2(84f + i * 4f, 88f + i * 4f),
                     FrameCurve = Curve(0f, 2f / 16f, .03f, 6f / 16f, 1f, 7.5f / 16f),
                     Colour = G((0f, C(e.Ink, 0f)), (.015f, C(e.Ink, 1f)), (.12f, C(e.Ink, 1f)), (.22f, C(e.Ink, .5f)), (.88f, C(e.Ink, .45f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .8f, .03f, 1f, 1f, 1.02f) });
             }
 
-            Layer(Host("FootHost", new Vector3(0f, .03f, 0f)), new L { Name = "HoldFoot", Mat = blot, World = false, Burst = 1, Max = 2, BurstTime = .03f, Life = new Vector2(GuardClockPreview, GuardClockPreview),
-                Size = new Vector2(GuardHeight * 1.3f, GuardHeight * 1.3f), Size3D = new Vector3(1.15f, .45f, 1f), Mode = 1, NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, .08f, 10f / 16f, 1f, 11f / 16f),
-                Colour = G((0f, C(e.Ink, 0f)), (.03f, C(e.Ink, .9f)), (.6f, C(e.Ink, .7f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .6f, .08f, 1f, 1f, 1.05f) });
+            // 11.51 (D308-109 no lasting ground mark): the foot stain was "HoldFoot" - dark (.9 -> .7) for the whole guard clock.
+            // Now "FootStain" (no Hold/Wet prefix, so the runtime keeps its own life): dark only around the landing, down to
+            // the ward stain's .045 by 0.95 s, gone at GuardFootLife.
+            float fl = GuardFootLife, peak = .1f / fl, low = .95f / fl;
+            Layer(Host("FootHost", new Vector3(0f, .03f, 0f)), new L { Name = "FootStain", Mat = foot, World = false, Burst = 1, Max = 2, BurstTime = .03f, Life = new Vector2(fl, fl),
+                Size = new Vector2(GuardHeight * 1.3f, GuardHeight * 1.3f), Size3D = new Vector3(1.15f, .45f, 1f), Mode = 1, NoShape = true, Blend = true, SpinRandom = false, FrameCurve = Curve(0f, 1f / 16f, low, 10f / 16f, 1f, 11f / 16f),
+                Colour = G((0f, C(e.Ink, 0f)), (peak, C(e.Ink, .7f)), (low, C(e.Ink, .045f)), (1f, C(e.Ink, 0f))), Grow = Curve(0f, .6f, peak * 2f, 1f, 1f, 1.05f) });
 
-            var drops = Bleed("M_V308d_guard_drops", "ink_drops", C(SwingInkColour, .9f), 0f, .9f);
             // user 2026-10-15 questionnaire "술식 쪽만 빼기": no drops running down the membrane, no splash
             return root;
         }

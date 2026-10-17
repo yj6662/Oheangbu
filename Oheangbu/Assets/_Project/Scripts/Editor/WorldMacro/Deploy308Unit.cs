@@ -1118,6 +1118,37 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D44", built == 10 && bad.Count == 0, "built " + built + "/10" + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", ward 5 drawn circle + buff 5 foot seal"));
                 }
 
+                // ---- D45 (11.51): the guard membrane - no foot stain living the guard clock (FootStain, own life <= 1.5 s), the
+                // body and the strokes soak ink -> pigment (_soak copies), the strokes no nearer the origin than .55 m, no
+                // additive material, all local, nothing repeating
+                {
+                    string[] keys = { "ga", "na", "ma", "sa", "a" };
+                    var bad = new List<string>(); int built = 0;
+                    foreach (var key in keys)
+                    {
+                        var g = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Art/SpellVFX308/V2/Prefabs/PF_V308d_guard_" + key + ".prefab");
+                        if (g == null) { bad.Add(key + " not built"); continue; }
+                        built++;
+                        bool foot = false;
+                        foreach (var ps in g.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            string n = ps.name;
+                            if (n == "HoldFoot") bad.Add(key + " HoldFoot");
+                            if (n == "FootStain") { foot = true; if (ps.main.startLifetime.constantMax > 1.5f) bad.Add(key + " foot life " + Deploy308.F(ps.main.startLifetime.constantMax)); }
+                            if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(key + " world " + n);
+                            if (ps.main.loop || ps.emission.rateOverTime.constantMax > 0f) bad.Add(key + " loops " + n);
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            var m = r != null ? r.sharedMaterial : null;
+                            if (m != null && (m.shader.name.IndexOf("Additive", StringComparison.OrdinalIgnoreCase) >= 0
+                                || (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One)))) bad.Add(key + " additive " + n);
+                            if ((n.StartsWith("Wet") || n.StartsWith("Hold")) && (m == null || !m.name.EndsWith("_soak"))) bad.Add(key + " no soak " + n);
+                            if (n.StartsWith("HoldStroke") && .7f + ps.transform.parent.localPosition.z < .55f) bad.Add(key + " stroke at " + Deploy308.F(.7f + ps.transform.parent.localPosition.z) + " m");
+                        }
+                        if (!foot) bad.Add(key + " no FootStain");
+                    }
+                    Check("D45", built == 5 && bad.Count == 0, "built " + built + "/5" + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", guard 5: short foot stain, ink-first soak, strokes .6 m"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
