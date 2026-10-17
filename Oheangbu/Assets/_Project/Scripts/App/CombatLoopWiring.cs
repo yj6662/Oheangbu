@@ -79,6 +79,8 @@ namespace Oheangbu.App
             public Vector3 Origin;
             public AttackProvenance Attack;
             public uint TargetLifeRevision;
+            public Vector3? From;   // #308 D308-107: where the hit came from (KTP lands on the body surface facing it)
+            public Vector3? Aim;    // #308 D308-107: optional aim point on the body (scatter volley ray); null = pivot + 1.1
         }
         private char _guardVisualLetter;
         private uint _guardVisualRevision;
@@ -276,7 +278,7 @@ namespace Oheangbu.App
                 if (pending.Target != null && pending.Target.IsAlive && pending.Target.isActiveAndEnabled &&
                     pending.Target.LifeRevision == pending.TargetLifeRevision && TargetVisible(pending.Target,pending.Origin))
                 {
-                    ApplyConfirmedEnemyHit(pending.Target, pending.Power, pending.Attack, pending.Letter);
+                    ApplyConfirmedEnemyHit(pending.Target, pending.Power, pending.Attack, pending.Letter, pending.From, pending.Aim);
                 }
             }
         }
@@ -491,7 +493,7 @@ namespace Oheangbu.App
             if(!isActiveAndEnabled||target==null||!target.IsAlive||!target.isActiveAndEnabled||target.LifeRevision!=life
                 ||!_targets.Contains(target)||!float.IsFinite(power)||power<=0||attack.Source!=DamageSource.PlayerDirect
                 ||attack.AttackId<=0||attack.Instigator==null||!EAGiyeokRuntime.Owns(letter)||!GiyeokTargetVisible(target,origin,Trait308(letter,SpellGrammar308.PierceKey)>0f))return default;
-            return ApplyConfirmedEnemyHit(target,power,attack,letter);
+            return ApplyConfirmedEnemyHit(target,power,attack,letter,origin);
         }
         private bool GiyeokTargetVisible(EnemyVitals target,Vector3 origin,bool piercesActors)
         {
@@ -519,7 +521,7 @@ namespace Oheangbu.App
                 if (hit.IsChildOf(target.transform) || hit.IsChildOf(SummonPlayer) || hit.GetComponentInParent<EnemyVitals>() != null) continue;
                 return default;
             }
-            return ApplyConfirmedEnemyHit(target, power, attack, letter);
+            return ApplyConfirmedEnemyHit(target, power, attack, letter, origin);
         }
 
         private void ResolveField(SpellCast cast)
@@ -567,11 +569,11 @@ namespace Oheangbu.App
             SummonAccepted?.Invoke(cast, origin, forward);
         }
 
-        private EnemyDamageResult ApplyConfirmedEnemyHit(EnemyVitals target, float power, AttackProvenance attack, char letter)
+        private EnemyDamageResult ApplyConfirmedEnemyHit(EnemyVitals target, float power, AttackProvenance attack, char letter, Vector3? from = null, Vector3? aim = null)
         {
             var result = target.TakeDamage(power, attack);
             if (result.AppliedDamage <= 0) return result;
-            var point = target.transform.position + Vector3.up * .8f;
+            var point = HitSurfacePoint(target, from, aim);
             // #308: the hit hooks are rules (a second stage, a detonation, a derived shot). A listener of the re-broadcast
             // that throws still throws, as it always did, but it cannot skip them.
             try { EnemyDamageResolved?.Invoke(result); }
@@ -610,7 +612,7 @@ namespace Oheangbu.App
             }
             if (_summonResolved.Count >= 4096) _summonResolved.Clear();
             _summonResolved.Add(key);
-            return ApplyConfirmedEnemyHit(target, power, attack, letter);
+            return ApplyConfirmedEnemyHit(target, power, attack, letter, origin);
         }
 
         private void ResolveParry(SpellCast cast)
@@ -691,7 +693,11 @@ namespace Oheangbu.App
             if(areaContact)source=emphasis.AreaContactPrefab;
             var cam = Camera.main;
             if(!elementalGuard&&emphasis!=null&&cam!=null&&emphasis.KtpContactSurfaceOffset>0)
-                point+=(cam.transform.position-point).normalized*emphasis.KtpContactSurfaceOffset;
+            {
+                // #308 D308-107: the point is already on the body surface; pull toward the camera only where the near fade (1.2 m) leaves room
+                Vector3 toCam=cam.transform.position-point;
+                point+=toCam.normalized*Mathf.Min(emphasis.KtpContactSurfaceOffset,Mathf.Max(0f,toCam.magnitude-1.2f));
+            }
             var facing = cam != null ? cam.transform.rotation : Quaternion.identity;
             var effect = SpellVFX120.KtpContactEffect.Spawn(source, point,
                 areaContact?facing:elementalGuard?(emphasis.KtpRectShield?facing:Quaternion.identity):facing * Quaternion.Euler(_contactVfx.SourceEuler), scale, gameObject.scene);
@@ -768,7 +774,7 @@ namespace Oheangbu.App
             // 탄속 배율=규칙 계층(SpellBook — 사=최속·아=느림): 판정·연출이 같은 시계를 나눠 쓴다(SPELL-FIDELITY §4.3)
             float speed = Mathf.Max(1f, _config.SpellProjectileSpeed * cast.SpeedMul);
             float duration = Vector3.Distance(PlayerPosition(), target.transform.position) / speed;
-            Schedule(plan, target, Time.time + duration, cast.Power);
+            Schedule(plan, target, Time.time + duration, cast.Power, PlayerPosition() + Vector3.up * .4f);
             if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(target.transform, duration);
             CastPlanned?.Invoke(plan);
             return plan;
@@ -795,7 +801,7 @@ namespace Oheangbu.App
             {
                 if (enemy == null || !enemy.IsAlive) continue;
                 if (!AreaGeometry.InCone(origin, forward, enemy.transform.position, _config.AreaConeAngle, _config.AreaConeRange, out _, out _)) continue;
-                Schedule(plan, enemy, impactTime, cast.Power);
+                Schedule(plan, enemy, impactTime, cast.Power, origin);
             }
             if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(null, 0f); // 연출 목표=전방(자체 시계) — 유도 없음
             if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
@@ -828,7 +834,7 @@ namespace Oheangbu.App
                 if (enemy == null || !enemy.IsAlive) continue;
                 if (!AreaGeometry.InCircle(center, enemy.transform.position, radius, out _)) continue;
                 float at=spikes?Time.time+AreaSpikePlanner.NearestRise(plan.Area,enemy.transform.position):impactTime;
-                Schedule(plan, enemy, at, cast.Power);
+                Schedule(plan, enemy, at, cast.Power, NearestSpikeOr308(plan.Area,enemy.transform.position,center));
             }
             if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
             if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
@@ -859,7 +865,7 @@ namespace Oheangbu.App
             {
                 if (enemy == null || !enemy.IsAlive) continue;
                 if (!AreaGeometry.InCorridor(start, direction, enemy.transform.position, halfWidth, length, out float along, out _)) continue;
-                Schedule(plan, enemy, Time.time + delay + along / speed, cast.Power);
+                Schedule(plan, enemy, Time.time + delay + along / speed, cast.Power, start + direction * along);
             }
             if (feedAdapter) _brushAdapter?.SetPatternAttackTarget(target != null ? target.transform : null, 0f);
             if (feedAdapter) _brushAdapter?.SetPatternAreaPlan(plan.Area);
@@ -915,8 +921,9 @@ namespace Oheangbu.App
                         hitTarget=candidate.vitals;distance=along;
                     }
                     float launch=Time.time+delay+i*interval,impact=launch+distance/speed;
-                    var hit=hitTarget!=null?Schedule(plan,hitTarget,impact,weighted?cast.Power*shotWeights[i]/weightSum:cast.Power/shots):new PlannedHit{ImpactTime=impact};
-                    hit.LaunchTime=launch;hit.HasImpactPoint=true;hit.ImpactPoint=origin+ray*distance+Vector3.up*(.65f+(float)random.NextDouble()*.8f);
+                    Vector3 impactPoint=origin+ray*distance+Vector3.up*(.65f+(float)random.NextDouble()*.8f);
+                    var hit=hitTarget!=null?Schedule(plan,hitTarget,impact,weighted?cast.Power*shotWeights[i]/weightSum:cast.Power/shots,origin+Vector3.up*.4f,impactPoint):new PlannedHit{ImpactTime=impact};
+                    hit.LaunchTime=launch;hit.HasImpactPoint=true;hit.ImpactPoint=impactPoint;
                     plan.Area.Shots.Add(hit);
                 }
                 plan.Area.Point=origin+forward*range;
@@ -936,7 +943,7 @@ namespace Oheangbu.App
             {
                 var target = candidates[i % candidates.Count].vitals;
                 float flight = Vector3.Distance(origin, target.transform.position) / speed;
-                var hit = Schedule(plan, target, Time.time + delay + i * interval + flight, weighted ? cast.Power * shotWeights[i] / weightSum : perShot);
+                var hit = Schedule(plan, target, Time.time + delay + i * interval + flight, weighted ? cast.Power * shotWeights[i] / weightSum : perShot, origin + Vector3.up * .4f);
                 hit.LaunchTime=Time.time+delay+i*interval;
                 plan.Area.Shots.Add(hit);
             }
@@ -948,17 +955,54 @@ namespace Oheangbu.App
         }
 
         // 착탄 예약 = 피해 시계(PendingCast) + 계획 기록 — 같은 값 한 번만
-        private PlannedHit Schedule(CastPlan plan, EnemyVitals target, float impactTime, float power)
+        // from (#308 D308-107): where the hit comes from, for the KTP surface point; null = the muzzle (player + .4)
+        private PlannedHit Schedule(CastPlan plan, EnemyVitals target, float impactTime, float power, Vector3? from = null, Vector3? aim = null)
         {
             float scale = PlayerDamageScale != null ? PlayerDamageScale(plan.Cast.Element) : 1f;
             if (float.IsNaN(scale) || float.IsInfinity(scale)) scale = 1f;
             power *= Mathf.Max(0f, scale);
             var attack = AttackProvenance.Create(_playerVitals != null ? (UnityEngine.Object)_playerVitals : this, DamageSource.PlayerDirect, plan.Cast.Element);
-            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter, Origin=_playerTransform!=null?_playerTransform.position+Vector3.up*.4f:Vector3.zero,
-                Attack=attack, TargetLifeRevision=target.LifeRevision });
+            Vector3 muzzle=_playerTransform!=null?_playerTransform.position+Vector3.up*.4f:Vector3.zero;
+            _pendingCasts.Add(new PendingCast { Target = target, ImpactTime = impactTime, Power = power, Element=plan.Cast.Element, Letter=plan.Cast.Letter, Origin=muzzle,
+                Attack=attack, TargetLifeRevision=target.LifeRevision, From=from ?? (_playerTransform!=null?muzzle:(Vector3?)null), Aim=aim });
             var hit = new PlannedHit { Target = target, ImpactTime = impactTime, Power = power, AttackId = attack.AttackId }; // #308: derived effects recognise their own impact
             plan.Hits.Add(hit);
             return hit;
+        }
+
+        private static Vector3 NearestSpikeOr308(AreaImpactPlan area, Vector3 target, Vector3 fallback)
+        {
+            if (area == null || area.Spikes.Count == 0) return fallback;
+            Vector3 best = fallback; float bestSq = float.PositiveInfinity;
+            foreach (var spike in area.Spikes)
+            {
+                float sq = AreaGeometry.Flat(spike.Point - target).sqrMagnitude;
+                if (sq < bestSq) { bestSq = sq; best = spike.Point; }
+            }
+            return best;
+        }
+
+        // #308 D308-107 (TEST): the KTP contact lands where the hit meets the body, not at pivot + .8 (pivots differ: mid-body for
+        // most world enemies, feet for the mine boss and the sinmok). One collider per hit; presentation only - damage is already done.
+        private static Vector3 HitSurfacePoint(EnemyVitals target, Vector3? from, Vector3? aim)
+        {
+            Vector3 pivot = target.transform.position;
+            Vector3 legacy = pivot + Vector3.up * .8f;
+            if (!from.HasValue) return legacy;
+            Collider col = target.GetComponent<CapsuleCollider>();
+            if (col == null || !col.enabled || col.isTrigger)
+            {
+                col = null;
+                foreach (var c in target.GetComponentsInChildren<Collider>(false))
+                    if (c.enabled && !c.isTrigger) { col = c; break; }
+            }
+            if (col == null) return legacy;
+            if (col is TerrainCollider || (col is MeshCollider mesh && !mesh.convex)) return col.bounds.center;
+            Vector3 origin = from.Value, goal = aim ?? pivot + Vector3.up * 1.1f, delta = goal - origin;
+            float dist = delta.magnitude;
+            if (dist > 1e-4f && col.Raycast(new Ray(origin, delta / dist), out RaycastHit hit, dist + 1f)) return hit.point;
+            Vector3 closest = col.ClosestPoint(origin);
+            return (closest - origin).sqrMagnitude < 1e-8f ? col.bounds.center : closest;
         }
 
         private EnemyVitals AimedTarget()

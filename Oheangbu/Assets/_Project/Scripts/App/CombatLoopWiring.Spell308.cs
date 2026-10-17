@@ -357,7 +357,7 @@ namespace Oheangbu.App
             if (!isActiveAndEnabled || target == null || !target.IsAlive || !target.isActiveAndEnabled || target.LifeRevision != life
                 || !_targets.Contains(target) || !float.IsFinite(power) || power <= 0 || !direct
                 || attack.AttackId <= 0 || attack.Instigator == null || !GiyeokTargetVisible(target, origin, piercesActors)) return default;
-            return ApplyConfirmedEnemyHit(target, power, attack, letter);
+            return ApplyConfirmedEnemyHit(target, power, attack, letter, origin);
         }
 
         EnemyDamageResult ISpellCastHost.ApplyPersistentHit(EnemyVitals target, float power, Vector3 origin, AttackProvenance attack, char letter)

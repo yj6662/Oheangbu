@@ -18,9 +18,9 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D18 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
-    // D29 = the footprints boot alone with the layer switch off (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
+    // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -425,6 +425,51 @@ namespace Oheangbu.EditorTools.WorldMacro
                     bool offOk = offDirector.Field == null && offDirector.Foot == null && offHost.GetComponents<Component>().Length == 2;
                     Object.DestroyImmediate(offHost);
                     Check("D29", footOk && offOk, footLine + " | both off: field " + !offOk + " -> nothing added " + offOk);
+                }
+
+                // ---- D30 (D308-107, 11.37 2): the KTP contact point is where the hit meets the body (CombatLoopWiring.HitSurfacePoint)
+                {
+                    var method = typeof(CombatLoopWiring).GetMethod("HitSurfacePoint", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+                    if (method == null) Check("D30", false, "CombatLoopWiring.HitSurfacePoint not found");
+                    else
+                    {
+                        Vector3 Surface(EnemyVitals t, Vector3? from, Vector3? aim) => (Vector3)method.Invoke(null, new object[] { t, from, aim });
+                        GameObject Body(string name, Vector3 pos, Vector3 center, bool withCollider)
+                        {
+                            var go = new GameObject(name) { hideFlags = Flags }; go.transform.SetParent(root.transform, false); go.transform.position = pos;
+                            if (withCollider) { var c = go.AddComponent<CapsuleCollider>(); c.center = center; c.height = 2f; c.radius = .4f; }
+                            go.AddComponent<EnemyVitals>();
+                            return go;
+                        }
+                        Vector3 p = new Vector3(300f, -500f, 300f);
+                        var feet = Body("UnitHitFeet", p, Vector3.up, true);                       // pivot at the feet (mine boss, sinmok)
+                        var mid = Body("UnitHitMid", p + Vector3.right * 20f, Vector3.zero, true);   // pivot mid-body (most world enemies)
+                        var bare = Body("UnitHitBare", p + Vector3.right * 40f, Vector3.zero, false);
+                        Physics.SyncTransforms();
+                        float Axis(Vector3 q, Vector3 pivot) => new Vector2(q.x - pivot.x, q.z - pivot.z).magnitude;
+                        var fv = feet.GetComponent<EnemyVitals>(); var mv = mid.GetComponent<EnemyVitals>(); var bv = bare.GetComponent<EnemyVitals>();
+                        Vector3 pm = mid.transform.position, pb = bare.transform.position;
+                        // front shot at chest height on the feet-pivot body: the ray to pivot + 1.1 meets the near side of the capsule
+                        Vector3 front = Surface(fv, p + new Vector3(0f, 1f, 10f), null);
+                        bool frontOk = Mathf.Abs(Axis(front, p) - .4f) < .02f && front.z - p.z > .35f && Mathf.Abs(front.y - p.y - 1.1f) < .05f;
+                        // mid-body pivot: the ray to pivot + 1.1 passes over the head, the closest point on the body facing the shooter is used
+                        Vector3 over = Surface(mv, pm + new Vector3(0f, .4f, 10f), null);
+                        bool overOk = Mathf.Abs(Axis(over, pm) - .4f) < .02f && over.z - pm.z > .35f && Mathf.Abs(over.y - pm.y - .4f) < .05f;
+                        // scatter aim: the ray goes to the given aim point instead of pivot + 1.1
+                        Vector3 aimed = Surface(fv, p + new Vector3(0f, 1f, 10f), p + new Vector3(.25f, .6f, 0f));
+                        bool aimOk = Mathf.Abs(Axis(aimed, p) - .4f) < .02f && aimed.x - p.x > .05f && (aimed - front).magnitude > .1f;
+                        // a shot that starts inside the body: the body centre
+                        Vector3 inside = Surface(fv, p + Vector3.up, null);
+                        bool insideOk = (inside - feet.GetComponent<CapsuleCollider>().bounds.center).sqrMagnitude < 1e-6f;
+                        // no source, or no collider: the old pivot + .8
+                        Vector3 noFrom = Surface(fv, null, null), noCol = Surface(bv, pb + Vector3.forward * 10f, null);
+                        bool legacyOk = (noFrom - (p + Vector3.up * .8f)).sqrMagnitude < 1e-6f && (noCol - (pb + Vector3.up * .8f)).sqrMagnitude < 1e-6f;
+                        string L(Vector3 q, Vector3 pivot) => "(" + Deploy308.F(q.x - pivot.x) + ", " + Deploy308.F(q.y - pivot.y) + ", " + Deploy308.F(q.z - pivot.z) + ")";
+                        Check("D30", frontOk && overOk && aimOk && insideOk && legacyOk,
+                            "feet pivot, front: " + L(front, p) + " axis " + Deploy308.F(Axis(front, p)) + " ok " + frontOk + " | mid pivot, over the head: " + L(over, pm) + " ok " + overOk
+                            + " | scatter aim: " + L(aimed, p) + " ok " + aimOk + " | from inside: " + L(inside, p) + " ok " + insideOk + " | no from / no collider = pivot + .8: " + legacyOk);
+                        Object.DestroyImmediate(feet); Object.DestroyImmediate(mid); Object.DestroyImmediate(bare);
+                    }
                 }
 
                 // ---- D18 (strengthened by D308-10c): the hit reaction redraws, the target's materials and property blocks stay as they were

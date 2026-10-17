@@ -190,7 +190,8 @@ namespace Oheangbu.App
         // #308 present add-on: this is also where the layer learns the GLYPH of the hit the wiring has just confirmed (the
         // re-broadcast carries none). The director answers the same question as before and hands the glyph to its presenter
         // stage, which may throw the hit splash for a hit no live cast took (a handler's second stage, a derived shot).
-        private bool DeployOwnsHit308(char letter) => _deployDirector308 != null && _deployDirector308.ConfirmedHitLetter(letter);
+        // #308 D308-107: with the layer down (footprints-only boot) the hit mark is the KTP contact alone
+        private bool DeployOwnsHit308(char letter) => _deployDirector308 != null && !_deployDirector308.FootOnly && _deployDirector308.ConfirmedHitLetter(letter);
 
         // ---- #308 forms2 (Tools/Unity/Stage308_forms2/DESIGN.md S3): read-only probes. Each one reads a state the rules already
         // keep and returns it; none of them changes a guard, a buff, a field, a summon or a clock.
