@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,10 +14,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
     // really plays - the skinned PF_<X>_Combat with its Animator and foot placement - instead of the melted static mesh
     // (which could not follow the animation). A copy of each combat prefab with every renderer's materials replaced by the
     // InkBody material (the shader already takes the summon contract _Age / _Ground / _Height that DemoSummonPresentation
-    // writes each frame). The core's light stays off (D308-83b: the user's choice). connect:attack writes the live summon
-    // profiles' PresentationPrefab (Architecture296 copies) once built, recording them in beast-before.json; revert restores.
+    // writes each frame). The core stays matte except the birth cue (D308-83b: 2 cels at completion; its timing is an open
+    // point in 11.37 §10). connect:attack writes the live summon profiles' PresentationPrefab (Architecture296 copies) once
+    // built, recording them in beast-before.json; revert restores.
+    // 11.37 (f) D308-107: the old summon effects (seal, phase particles, dissolve debris) retire on the live profiles only -
+    // RetireLegacySummonFx308 set by retire:summon / connect:attack, recorded in summonfx-before.json, revert restores.
+    // FormationSeal / DissolveDebris stay assigned (the authoring checks need them).
     // v1: no aura strands / pool on the skinned body - later.
     //   beast          - build the five
+    //   retire:summon  - retire the old summon effects on the live profiles (retire:summon:revert restores)
     public static partial class Vfx308Build
     {
         static readonly (string Folder, string Key)[] Beasts = { ("WoodDeer", "deer"), ("FireHaetae", "haetae"), ("DokkaebiClub", "dokkaebi"), ("MetalTiger", "tiger"), ("WaterTurtle", "turtle") };
@@ -107,6 +112,45 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             File.Delete(BeastRecord);
             return "beast: restored " + rec.profiles.Count + " summon presentations";
+        }
+
+        static string SummonFxRecord => Path.Combine(Path.GetDirectoryName(Record), "summonfx-before.json");
+
+        [Serializable] sealed class SummonFxRecorded { public List<string> profiles = new List<string>(); public List<bool> before = new List<bool>(); }
+
+        static string ConnectSummonFx()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new Exception("Vfx308Build retire:summon: Edit mode only");
+            var live = LiveBeasts();
+            if (!File.Exists(SummonFxRecord))
+            {
+                var rec = new SummonFxRecorded();
+                foreach (var p in live) { rec.profiles.Add(AssetDatabase.GetAssetPath(p)); rec.before.Add(p.RetireLegacySummonFx308); }
+                File.WriteAllText(SummonFxRecord, JsonUtility.ToJson(rec, true));
+            }
+            var sb = new StringBuilder("retire:summon:");
+            foreach (var p in live)
+            {
+                p.RetireLegacySummonFx308 = true;
+                EditorUtility.SetDirty(p); AssetDatabase.SaveAssetIfDirty(p);
+                sb.Append(' ').Append(p.name);
+            }
+            return sb.Append(" -> old seal / phase particles / debris off (" + live.Count + ")").ToString();
+        }
+
+        static string RevertSummonFx()
+        {
+            if (!File.Exists(SummonFxRecord)) return "retire:summon: nothing recorded";
+            var rec = JsonUtility.FromJson<SummonFxRecorded>(File.ReadAllText(SummonFxRecord));
+            for (int i = 0; i < rec.profiles.Count; i++)
+            {
+                var p = AssetDatabase.LoadAssetAtPath<SummonCombatProfile>(rec.profiles[i]);
+                if (p == null) continue;
+                p.RetireLegacySummonFx308 = i < rec.before.Count && rec.before[i];
+                EditorUtility.SetDirty(p); AssetDatabase.SaveAssetIfDirty(p);
+            }
+            File.Delete(SummonFxRecord);
+            return "retire:summon: restored " + rec.profiles.Count + " summon profiles";
         }
     }
 }

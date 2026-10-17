@@ -72,6 +72,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
+                case "retire:summon": return ConnectSummonFx();         // 11.37 (f) D308-107: old summon effects off on the live profiles
+                case "retire:summon:revert": return RevertSummonFx();
                 case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
                 case "graph:build": return GraphBuild();             // 11.32: the 노 smoke graph (concepts C + D)
                 case "graph:build:ring": return GraphBuildRing();     // 11.34 fire8: tongues leaning out round the target
@@ -1189,6 +1191,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (attack) sb.AppendLine(ConnectGiyeok());
             if (attack) sb.AppendLine(ConnectAura());
             if (attack) sb.AppendLine(ConnectBeast());
+            if (attack) sb.AppendLine(ConnectSummonFx());
             return sb.ToString();
         }
 
@@ -1215,6 +1218,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             sb.AppendLine(RevertGiyeok());
             sb.AppendLine(RevertAura());
             sb.AppendLine(RevertBeast());
+            sb.AppendLine(RevertSummonFx());
             return sb.ToString();
         }
 

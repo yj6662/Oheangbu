@@ -12,6 +12,8 @@ namespace Oheangbu.App.Demo
         public AnimationClip IdleClip, WalkClip, AttackClip;
         public AnimationClip FormationClip, DissolveClip;
         public GameObject FormationSeal, DissolveDebris;
+        [Tooltip("#308 D308-107 (f) [TEST]: 참이면 옛 소환 연출(인장 · Formation/Mane/Dissolve 입자 · 파편)을 내지 않는다 — 새 먹 몸만. 몸 · 동작 · 공격 연출 · 시계는 그대로. 라이브 사본에만 retire:summon 명령이 켠다(기록 · 되돌리기).")]
+        public bool RetireLegacySummonFx308;
         [Min(.01f)] public float WalkClipMetresPerSecond = 1.5f;
         [Min(0)] public float FormationSeconds = 1.2f;
         [Min(.01f)] public float ActivitySeconds = 20f;

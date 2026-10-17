@@ -18,12 +18,13 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
     // D32 = the impact frame's figure is the hit target's renderers, and the contact path asks it on a groggy spell hit only (D308-106 c).
     // D33 = a range-ㄱ letter's hit has no pool and its copy carries one foot stain, laid once per struck enemy on the ground below (D308-104 e).
+    // D34 = the live summon profiles retire the old seal / phase particles / debris, a profile without the flag keeps them (D308-107 f).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -753,6 +754,57 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                     finally { UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(preview); }
                     Check("D33", assetOk && runOk, aLine + " | " + rLine);
+                }
+
+                // ---- D34 (D308-107 f, 11.37 7): the live summon profiles retire the old seal / phase particles / debris; a profile
+                // without the flag keeps them. FormationSeal / DissolveDebris stay assigned (the authoring checks need them).
+                {
+                    var live = AssetDatabase.FindAssets("t:SummonCombatProfile", new[] { "Assets/_Project/Art/World/Architecture296/Data" })
+                        .Select(g => AssetDatabase.LoadAssetAtPath<Oheangbu.App.Demo.SummonCombatProfile>(AssetDatabase.GUIDToAssetPath(g))).Where(x => x != null).ToList();
+                    int flagged = live.Count(p => p.RetireLegacySummonFx308), sealKept = live.Count(p => p.FormationSeal != null), debrisKept = live.Count(p => p.DissolveDebris != null);
+                    bool dataOk = live.Count == 5 && flagged == 5;
+                    string dLine = "live profiles " + live.Count + " (want 5), retired " + flagged + ", seal assigned " + sealKept + ", debris assigned " + debrisKept;
+
+                    // the runtime side: a copy of 곰 (debris path) and of 놈 (phase-particle path), flag on and off, in a preview scene
+                    var runs = new List<string>(); bool runOk = true;
+                    var preview = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+                    try
+                    {
+                        foreach (string letter in new[] { "곰", "놈" })
+                        {
+                            var src = live.FirstOrDefault(p => p.Letter == letter && p.PresentationPrefab != null && p.FormationSeal != null);
+                            if (src == null) { runOk = false; runs.Add(letter + ": no live profile with a body and a seal"); continue; }
+                            foreach (bool retire in new[] { true, false })
+                            {
+                                var copy = Object.Instantiate(src); copy.hideFlags = Flags; trash.Add(copy);
+                                copy.RetireLegacySummonFx308 = retire;
+                                var host = new GameObject("UnitSummonFx_" + letter + (retire ? "_retired" : "_legacy"));
+                                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(host, preview);
+                                try
+                                {
+                                    var pres = host.AddComponent<Oheangbu.App.Demo.DemoSummonPresentation>();
+                                    pres.Configure(copy);
+                                    int before = host.transform.childCount;
+                                    var clock = new Oheangbu.App.Demo.SummonCombatClock(Mathf.Max(.1f, copy.FormationSeconds), 5f, 1f);
+                                    pres.Sample(clock, 0f, 0f);
+                                    bool seal = host.transform.Find("Summon_KTP_Bottom") != null;
+                                    if (seal) Object.DestroyImmediate(host.transform.Find("Summon_KTP_Bottom").gameObject);   // edit mode: Sample's Destroy would refuse
+                                    clock.Advance(Mathf.Max(.1f, copy.FormationSeconds) + .05f); clock.BeginDissolve(); clock.Advance(.05f);
+                                    pres.Sample(clock, 0f, 0f);
+                                    bool phase = host.GetComponent<Oheangbu.App.Demo.DemoSummonPhaseParticles>() != null;
+                                    bool debris = host.transform.childCount > before;   // the model was the only child before the clock ran (놈's phase particles parent their debris here too)
+                                    bool want = !retire;
+                                    bool ok = seal == want && phase == (want && letter == "놈")
+                                        && (retire ? !debris : letter == "놈" || debris == (copy.DissolveDebris != null));
+                                    runOk &= ok;
+                                    runs.Add(letter + (retire ? " retired" : " legacy") + ": seal " + seal + ", phase particles " + phase + ", debris " + debris + (ok ? "" : " FAIL"));
+                                }
+                                finally { Object.DestroyImmediate(host); }
+                            }
+                        }
+                    }
+                    finally { UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(preview); }
+                    Check("D34", dataOk && runOk, dLine + " | " + string.Join("; ", runs));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
