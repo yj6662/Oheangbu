@@ -88,6 +88,21 @@ namespace Oheangbu.App.SpellVFX120
         private int _seed;
         private readonly Dictionary<Camera, float> _fov = new Dictionary<Camera, float>();
 
+        // D308-106 (11.37 c): the hit body as the one figure. With a target the shader's brightness cut and depth outline are off
+        // (a dark evening ground no longer flips with the enemy) and the target's own renderers are drawn flat on top: ink on the
+        // paper frames, paper on the ink (invert) frame. Same renderer rule as HitFlicker308; depth-clipped by InkFlat308.
+        private static readonly int FlatColorId = Shader.PropertyToID("_FlatColor");
+        private const int MaxMask = 128;
+        private Material _maskInk, _maskPaper;
+        private readonly Renderer[] _mask = new Renderer[MaxMask];
+        private readonly int[] _maskSubMeshes = new int[MaxMask];
+        private int _maskCount;
+        private readonly List<Renderer> _maskScratch = new List<Renderer>(32);
+        private readonly List<Material> _maskMaterials = new List<Material>(8);
+        /// <summary>Renderers of the current impact's target (0 = no target: the old brightness cut).</summary>
+        public int MaskCount => _maskCount;
+        public bool MaskReady => _maskInk != null && _maskPaper != null;
+
         public ImpactLimiter308 Limiter => _limiter;
         public IImpactPass308 Pass => _pass;
         public bool PassAvailable => _pass != null && _material != null;
@@ -125,6 +140,22 @@ namespace Oheangbu.App.SpellVFX120
             if (_pass == null) CreatePass(ref _pass);
             if (_material == null && profile.ImpactShader != null) _material = new Material(profile.ImpactShader) { name = "ImpactFrame308 (runtime)", hideFlags = HideFlags.DontSave };
             if (_material != null && profile.FloodMask != null) _material.SetTexture(FloodMaskId, profile.FloodMask);
+            if (_maskInk == null && profile.FlatShader != null)
+            {
+                _maskInk = new Material(profile.FlatShader) { name = "InkFlat308 impact ink", hideFlags = HideFlags.DontSave };
+                _maskPaper = new Material(profile.FlatShader) { name = "InkFlat308 impact paper", hideFlags = HideFlags.DontSave };
+            }
+            if (_maskInk != null)
+            {
+                // the same two values the shader's frames use (ImpactFrame308 InkColor / PaperColor, display values - SetColor turns
+                // them linear, as HitFlicker308 does); InkFlat308 clamps to the ink ceiling (display .85), so the paper figure sits a
+                // hair under the paper field
+                var imp = profile.Impact;
+                float ink = imp.InkValue, paper = Mathf.Min(imp.PaperValue, SpellDeploy308ProfileSO.PaperCeiling), srgb = imp.TargetIsSrgbEncoded ? 1f : 0f;
+                _maskInk.SetColor(FlatColorId, new Color(ink, ink * .93f, ink * .86f, 1f));
+                _maskPaper.SetColor(FlatColorId, new Color(paper, paper * .977f, paper * .92f, 1f));
+                _maskInk.SetFloat(SrgbId, srgb); _maskPaper.SetFloat(SrgbId, srgb);
+            }
             _hudReact = _tier.HudReactDefault;
         }
 
@@ -163,6 +194,7 @@ namespace Oheangbu.App.SpellVFX120
             _frames = form == ImpactForm308.Full ? Mathf.Clamp(request.Frames, 1, 3) : 1;
             _worldPoint = request.WorldPoint; _strength = Mathf.Clamp01(request.Strength <= 0f ? 1f : request.Strength);
             _seed = (_seed * 31 + 7) & 1023;
+            CollectMask(request.Target);
             if (form == ImpactForm308.Full)
             {
                 FullGranted++; LastFullSeconds = _frames * _profile.ImpactFrameSeconds;
@@ -170,6 +202,25 @@ namespace Oheangbu.App.SpellVFX120
             }
             else LocalGranted++;
             return form;
+        }
+
+        // the target's drawable renderers, the HitFlicker308 rule: enabled mesh / skinned renderers with materials, at most 128
+        // (a bigger body keeps its first 128; the rest stays in the flat field). No target or none drawable = the old cut.
+        private void CollectMask(Component target)
+        {
+            for (int i = 0; i < _maskCount; i++) _mask[i] = null;
+            _maskCount = 0;
+            if (target == null || !MaskReady) return;
+            target.GetComponentsInChildren(false, _maskScratch);
+            for (int i = 0; i < _maskScratch.Count && _maskCount < MaxMask; i++)
+            {
+                var r = _maskScratch[i];
+                if (r == null || !r.enabled || !(r is MeshRenderer || r is SkinnedMeshRenderer)) continue;
+                r.GetSharedMaterials(_maskMaterials);
+                if (_maskMaterials.Count == 0) continue;
+                _mask[_maskCount] = r; _maskSubMeshes[_maskCount] = _maskMaterials.Count; _maskCount++;
+            }
+            _maskScratch.Clear(); _maskMaterials.Clear();
         }
 
         /// <summary>Screen ink flood (section 12): only events on the profile's list, never near a judgement window, one flip token.</summary>
@@ -196,17 +247,24 @@ namespace Oheangbu.App.SpellVFX120
             foreach (var pair in _fov) if (pair.Key != null) pair.Key.fieldOfView = pair.Value;
             _fov.Clear();
             _active = _flood = false;
+            CollectMask(null);
             Write(Vector4.zero, Vector4.zero);
         }
 
         private void OnDestroy() { ReleaseResources(); }
 
-        /// <summary>Destroys the runtime material (also called by edit-mode tools, where OnDestroy does not run).</summary>
+        /// <summary>Destroys the runtime materials (also called by edit-mode tools, where OnDestroy does not run).</summary>
         public void ReleaseResources()
         {
-            if (_material == null) return;
-            if (Application.isPlaying) Destroy(_material); else DestroyImmediate(_material);
-            _material = null;
+            Release(ref _material); Release(ref _maskInk); Release(ref _maskPaper);
+            CollectMask(null);
+        }
+
+        private static void Release(ref Material material)
+        {
+            if (material == null) return;
+            if (Application.isPlaying) Destroy(material); else DestroyImmediate(material);
+            material = null;
         }
 
         // domain reload is off: the globals must not carry an impact over into the next Play session
@@ -243,7 +301,7 @@ namespace Oheangbu.App.SpellVFX120
             if (_forced) return;
             if (!_active) { if (_impact.z != 0f) Write(Vector4.zero, Vector4.zero); return; }
             int index = (int)Math.Floor((now - _start) / _profile.ImpactFrameSeconds);   // clamped: 3 frames <= 126 ms
-            if (index >= _frames) { _active = false; _frame = -1; Write(Vector4.zero, Vector4.zero); return; }
+            if (index >= _frames) { _active = false; _frame = -1; CollectMask(null); Write(Vector4.zero, Vector4.zero); return; }
             if (index == _frame) return;
             _frame = index;
             int kind = _form == ImpactForm308.Full ? KindOf(_frames, index) : 2;
@@ -291,11 +349,14 @@ namespace Oheangbu.App.SpellVFX120
             }
             if (_pass == null) return;
             int full = -1, quad = -1;
+            bool masked = false;
             if (_material != null)
             {
                 var imp = _profile.Impact;
-                _material.SetVector(ValuesId, new Vector4(imp.Threshold, imp.InkValue, Mathf.Min(imp.PaperValue, SpellDeploy308ProfileSO.PaperCeiling), imp.RadialReach));
-                _material.SetVector(NeedlesId, new Vector4(imp.NeedleCount, imp.NeedleWidth, imp.OutlineStrength, imp.LocalRadius));
+                // D308-106: with a target body the field is flat - no brightness cut, no depth outline, no invert spread
+                masked = _active && FrameKind > 0 && _maskCount > 0 && (_form == ImpactForm308.Full || _tier.FullScreen);
+                _material.SetVector(ValuesId, new Vector4(masked ? -1f : imp.Threshold, imp.InkValue, Mathf.Min(imp.PaperValue, SpellDeploy308ProfileSO.PaperCeiling), masked ? 0f : imp.RadialReach));
+                _material.SetVector(NeedlesId, new Vector4(imp.NeedleCount, imp.NeedleWidth, masked ? 0f : imp.OutlineStrength, imp.LocalRadius));
                 _material.SetFloat(SeedId, _seed);
                 _material.SetFloat(SrgbId, imp.TargetIsSrgbEncoded ? 1f : 0f);
                 if (_active && FrameKind > 0)
@@ -315,6 +376,12 @@ namespace Oheangbu.App.SpellVFX120
             _pass.Setup(_material, full, quad);
             _pass.ClearFlicker();
             if (flicker) _flicker.Fill(_pass, now, this);
+            if (masked && full >= 0)
+            {
+                // the one figure, drawn last: paper on the inverted (ink) field, ink on every other frame
+                var figure = _form == ImpactForm308.Full && FrameKind == 1 ? _maskPaper : _maskInk;
+                for (int i = 0; i < _maskCount; i++) if (_mask[i] != null) _pass.AddFlicker(_mask[i], figure, _maskSubMeshes[i]);
+            }
             if (_pass.HasWork && _pass.Enqueue(camera)) EnqueuedFrames++;
         }
 

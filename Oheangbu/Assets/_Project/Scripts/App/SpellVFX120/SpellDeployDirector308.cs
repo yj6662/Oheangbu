@@ -114,7 +114,8 @@ namespace Oheangbu.App.SpellVFX120
                 if (profile.AnyContact)
                 {
                     // D308-107 (d): the contacts on their own switches. No slots and no forms; the flicker and the impact director are
-                    // built (the impact frame's trigger is 11.37 (c)), the residue field only for the splash or the prints.
+                    // built (the impact frame is asked from ShowEnemyHit on a groggy spell hit, 11.37 (c)), the residue field only for
+                    // the splash or the prints.
                     _contactOnly = true;
                     if (profile.Contacts.HitSplash || profile.Foot.Enabled) { _field = gameObject.AddComponent<InkResidueField308>(); _field.Configure(profile, _tier); }
                     _flicker = gameObject.AddComponent<HitFlicker308>(); _flicker.Configure(profile, _tier);
@@ -355,6 +356,15 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (result.Target == null || result.AppliedDamage <= 0f) return;
             bool routed = _anyAttack && ShowAttackHit(result);
+            // D308-106 (11.37 c): contact path (layer not live) - a spell hit on a groggy target gets the impact frame with the target as
+            // the one figure; asked before the flicker so the frame takes the limiter's flip token first
+            if (!LayerLive && _impact != null && _profile.Contacts != null && _profile.Contacts.ImpactFrame
+                && result.Attack.Source == DamageSource.PlayerDirect && result.Attack.Element.HasValue && TargetGroggy(result.Target.transform, null))
+                _impact.Request(new ImpactRequest308
+                {
+                    WorldPoint = result.Target.transform.position + Vector3.up * InkDeployRuntime308.ChestHeight,
+                    Frames = _profile.Impact.ContactFrames, Strength = 1f, Target = result.Target,
+                });
             // D308-107 (d): the flicker follows every confirmed hit - the layer's own (as before, with an attack row on) or the contact switch
             if (_flicker != null && _impact != null && ((LayerLive && _anyAttack) || (_profile.Contacts != null && _profile.Contacts.Flicker)))
                 _flicker.Notify(result.Target, result.Attack.Source, ViewCamera, _impact.Flash, Time.unscaledTimeAsDouble, true, result.Target.transform.position + Vector3.up * InkDeployRuntime308.ChestHeight);

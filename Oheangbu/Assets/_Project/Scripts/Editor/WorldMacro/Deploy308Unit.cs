@@ -18,10 +18,11 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
+    // D32 = the impact frame's figure is the hit target's renderers, and the contact path asks it on a groggy spell hit only (D308-106 c).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -591,6 +592,67 @@ namespace Oheangbu.EditorTools.WorldMacro
                     foreach (var c in sHost.GetComponents<InkResidueField308>()) c.ReleaseResources();
                     Object.DestroyImmediate(sHost);
                     Check("D31", flickOk && splashOk, cLine + " | " + sLine);
+                }
+
+                // ---- D32 (D308-106, 11.37 c): the impact frame's figure is the hit target (its renderers), not a brightness cut; the
+                // contact path asks it on a groggy spell hit only
+                {
+                    var flat = Shader.Find(Deploy308.FlatShader);
+                    var mProfile = Object.Instantiate(profile); mProfile.hideFlags = Flags; trash.Add(mProfile);
+                    mProfile.FlatShader = flat;
+                    var mHost = new GameObject("UnitImpactMask") { hideFlags = Flags }; mHost.transform.SetParent(root.transform, false);
+                    var mDirector = mHost.AddComponent<ImpactFrameDirector308>();
+                    mDirector.Configure(mProfile, DeployTier308.PC, (s, r) => false, null, null);
+                    mDirector.SetUserSettings(DeployFlash308.Full, true, false);
+                    var body = new GameObject("MaskTarget") { hideFlags = Flags }; body.transform.SetParent(root.transform, false); body.transform.position = new Vector3(0f, 0f, 12f);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        var part = GameObject.CreatePrimitive(PrimitiveType.Cube); part.hideFlags = Flags; part.transform.SetParent(body.transform, false);
+                        part.transform.localPosition = Vector3.up * i;
+                        if (i == 2) part.GetComponent<MeshRenderer>().enabled = false;   // a hidden part stays out of the figure
+                    }
+                    var vitals = body.AddComponent<EnemyVitals>();
+                    bool ready = mDirector.MaskReady;
+                    var targeted = new ImpactRequest308 { WorldPoint = body.transform.position, Frames = 2, Strength = 1f, Target = vitals };
+                    var tForm = mDirector.Request(targeted, 500.0); int tCount = mDirector.MaskCount;
+                    mDirector.Tick(500.0 + mProfile.ImpactFrameSeconds * 3.5); int endCount = mDirector.MaskCount; bool tEnded = !mDirector.Active;
+                    var plain = mDirector.Request(new ImpactRequest308 { WorldPoint = body.transform.position, Frames = 2, Strength = 1f }, 510.0); int plainCount = mDirector.MaskCount;
+                    mDirector.Tick(511.0);
+                    int want = mDirector.PassAvailable ? 2 : 0;   // without the pass nothing is granted, so nothing is collected
+                    bool maskOk = flat != null && ready && tCount == want && endCount == 0 && tEnded && plainCount == 0;
+                    string mLine = "mask materials " + ready + " (" + Deploy308.FlatShader + (flat != null ? "" : " MISSING") + ") | target request -> " + tForm + ", figure renderers " + tCount
+                        + " (want 2: the hidden part left out), after the frames " + endCount + " | no target -> " + plain + ", figure " + plainCount + " (the old cut)";
+                    mDirector.ReleaseResources();
+                    Object.DestroyImmediate(mHost);
+
+                    // the contact path: layer off, ImpactFrame switch on - a groggy spell hit asks, a calm one / a summon hit / no element does not
+                    var gProfile = Object.Instantiate(mProfile); gProfile.hideFlags = Flags; trash.Add(gProfile);
+                    gProfile.LayerEnabled = false; gProfile.Foot.Enabled = false;
+                    gProfile.Contacts = new SpellDeploy308ProfileSO.ContactsSet { ImpactFrame = true };
+                    bool groggy = false;
+                    var gHost = new GameObject("UnitContactImpact") { hideFlags = Flags }; gHost.transform.SetParent(root.transform, false);
+                    var gDirector = gHost.AddComponent<SpellDeployDirector308>();
+                    gDirector.Boot(gProfile, null, null, null, gHost.transform, null, null, (t, p, grace) => groggy);
+                    var hit = typeof(SpellDeployDirector308).GetMethod("OnEnemyDamage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    int Asked(DamageSource source, Oheangbu.Core.Domain.Element? element, bool isGroggy)
+                    {
+                        groggy = isGroggy;
+                        int before = gDirector.Impact != null ? gDirector.Impact.Requested : -1;
+                        hit?.Invoke(gDirector, new object[] { new EnemyDamageResult(vitals, AttackProvenance.Create(null, source, element), 10f, 0f, false) });
+                        int asked = gDirector.Impact != null ? gDirector.Impact.Requested - before : -1;
+                        if (gDirector.Impact != null) gDirector.Impact.Tick(Time.unscaledTimeAsDouble + 5.0);
+                        return asked;
+                    }
+                    var wood = (Oheangbu.Core.Domain.Element?)Oheangbu.Core.Domain.Element.Wood;
+                    int askGroggy = Asked(DamageSource.PlayerDirect, wood, true), askCalm = Asked(DamageSource.PlayerDirect, wood, false);
+                    int askSummon = Asked(DamageSource.Summon, wood, true), askPlain = Asked(DamageSource.PlayerDirect, null, true);
+                    bool contactOk = hit != null && gDirector.ContactOnly && gDirector.Impact != null && askGroggy == 1 && askCalm == 0 && askSummon == 0 && askPlain == 0;
+                    string gLine = "contact path: groggy spell hit asks " + askGroggy + ", calm " + askCalm + ", summon " + askSummon + ", no element " + askPlain
+                        + " (frames " + gProfile.Impact.ContactFrames + ")";
+                    foreach (var c in gHost.GetComponents<HitFlicker308>()) c.ReleaseResources();
+                    foreach (var c in gHost.GetComponents<ImpactFrameDirector308>()) c.ReleaseResources();
+                    Object.DestroyImmediate(gHost);
+                    Check("D32", maskOk && contactOk, mLine + " | " + gLine);
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

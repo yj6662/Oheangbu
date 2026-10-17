@@ -187,7 +187,7 @@ namespace Oheangbu.Data.Spell
             public bool Enabled = true;
             [Tooltip("One impact frame, unscaled seconds (one 24 fps cel).")]
             [Range(.016f, .042f)] public float FrameSeconds = .042f;
-            [Tooltip("Two-value cut in display (sRGB) luminance.")]
+            [Tooltip("Two-value cut in display (sRGB) luminance. Only for a request without a target (D308-106: with one, the target alone is the figure).")]
             [Range(.05f, .8f)] public float Threshold = .30f;
             [Range(0f, .3f)] public float InkValue = .07f;
             [Range(.5f, .9f)] public float PaperValue = .88f;
@@ -211,6 +211,8 @@ namespace Oheangbu.Data.Spell
             public DeployImpactTrigger308 Trigger = DeployImpactTrigger308.GroggyOnly;
             [Tooltip("A hit that kills the groggy target closes its weak-point window before the burst's first cel can ask (that cel may be half a cel late). The target still counts as groggy for this long after such a kill.")]
             [Range(0f, .5f)] public float GroggyKillGrace = .12f;
+            [Tooltip("D308-106 (11.37 c) [TEST]: contact-only path (layer off) - impact frames for a spell hit on a groggy target.")]
+            [Range(1, 3)] public int ContactFrames = 2;
             [Tooltip("Off = the colour buffer at the injection point holds linear values (expected). Editor check item.")]
             public bool TargetIsSrgbEncoded;
             [Tooltip("Full-screen total may not exceed this share of the real parry window (asserted by the unit command).")]

@@ -54,6 +54,8 @@ namespace Oheangbu.App.SpellVFX120
             // exactly this event: URP keeps post-processing in an intermediate texture when a pass sits here
             renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;
             profilingSampler = new ProfilingSampler("ImpactFrame308");
+            // the outline and InkFlat308's occlusion test read the scene depth: ask URP for it rather than hope it is there
+            ConfigureInput(ScriptableRenderPassInput.Depth);
         }
 
         public void Setup(Material material, int fullPass, int quadPass)

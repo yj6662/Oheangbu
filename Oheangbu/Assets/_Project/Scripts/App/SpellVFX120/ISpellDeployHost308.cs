@@ -26,6 +26,7 @@ namespace Oheangbu.App.SpellVFX120
         public int Frames;           // 1..3
         public float Strength;       // 0..1
         public bool LocalOnly;       // ask for the local form (never a full-screen flip)
+        public Component Target;     // D308-106 (11.37 c): the hit body - drawn as the one figure on a flat field; null = the old brightness cut
     }
 
     /// <summary>

@@ -10,6 +10,9 @@
 //   4 Flood       화면 먹 덮임과 걷힘(세로 결, 구멍이 넓어지고 남은 먹이 기둥으로 흘러내린다). 1단계는 미리보기만 쓴다.
 //   5 LocalInvert Mobile: 색 복사 없이 국소 반전 쿼드(Blend OneMinusDstColor OneMinusSrcAlpha).
 // 전역 _OhImpact308 = (화면 u, v, 세기, 장 번호). 색 버퍼가 선형이면(_SrgbTarget 0) 화면 값으로 바꿔 계산하고 되돌린다.
+// 대상 가면(D308-106, SPEC-SPELL-VFX-OVERHAUL-308 11.37 c): 요청에 맞은 몸이 있으면 디렉터가 임계 -1(밝기 자르기 없음) ·
+// 윤곽 0 · 번짐 반경 0을 넘긴다 → 바탕은 한 값으로 평평해지고, 몸은 ImpactFramePass308이 InkFlat308로 그 위에 그린다
+// (반전 장 = 종이, 그 밖의 장 = 먹). 몸이 없는 요청은 옛 꼴 그대로다.
 Shader "Hidden/Oheangbu/ImpactFrame308"
 {
     Properties
@@ -87,7 +90,8 @@ Shader "Hidden/Oheangbu/ImpactFrame308"
         float3 Silhouette(float2 uv, float3 scene)
         {
             float dark = step(OhLuma(scene), _ImpactValues.x);
-            float mark = max(dark, DepthEdge(uv) * saturate(_ImpactNeedles.z));
+            // outline strength 0 (a target mask, D308-106) skips the depth taps altogether
+            float mark = _ImpactNeedles.z > 0.001 ? max(dark, DepthEdge(uv) * saturate(_ImpactNeedles.z)) : dark;
             mark = max(mark, Needles(FromImpact(uv)) * 0.9);
             return lerp(PaperColor(), InkColor(), saturate(mark));
         }
@@ -103,7 +107,8 @@ Shader "Hidden/Oheangbu/ImpactFrame308"
             float reach = max(_ImpactValues.w, 0.01) * saturate(_OhImpact308.z);
             // the paper value spreads from the impact point in a hard-edged ragged disc: the "light", as a value
             float rag = OhValueNoise(float2(atan2(d.y, d.x) * 5.0, _ImpactSeed)) * 0.18;
-            float spread = step(length(d), reach * (0.55 + rag));
+            // reach 0 (a target mask, D308-106): no spread - the paper target must not sink into a paper disc
+            float spread = step(length(d), reach * (0.55 + rag)) * step(0.001, _ImpactValues.w);
             value = max(value, spread);
             value = max(value, Needles(d));
             float3 o = lerp(InkColor(), PaperColor(), saturate(value));
