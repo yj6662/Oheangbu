@@ -18,9 +18,9 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D18 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D18 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
-    // D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
+    // D29 = the footprints boot alone with the layer switch off (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -381,9 +381,50 @@ namespace Oheangbu.EditorTools.WorldMacro
                     float last = now;
                     field.Step(last + Mathf.Max(profile.SpellLife, profile.FootLife) + .1f, .1f, false);
                     field.CountAlive(out int afterSpell, out int afterFoot, out int afterAir);
-                    Check("D16", clamped && inRange && worstSpell <= pc.SpellResidue && worstFoot <= pc.Footprints && worstSpell > 0 && afterSpell + afterFoot + afterAir == 0,
+                    // D308-107: the Mobile footprint ring (raised 12 -> 20) holds at its own cap
+                    var mobileHost = new GameObject("UnitMobileField") { hideFlags = Flags }; mobileHost.transform.SetParent(root.transform, false);
+                    var mobileField = mobileHost.AddComponent<InkResidueField308>();
+                    mobileField.UseManualClock(50f); mobileField.Configure(profile, DeployTier308.Mobile); mobileField.UseManualClock(50f);
+                    float mobileNow = 50f; int worstMobileFoot = 0;
+                    for (int step = 0; step < 40; step++)
+                    {
+                        mobileField.Stamp(new ResidueStamp308 { Point = new Vector3(step * .1f, 0f, -step), Normal = Vector3.up, HasGround = true, Forward = Vector3.forward, Width = .1f, Length = .26f, Opacity = .5f, Life = profile.FootLife, Foot = true });
+                        for (int frame = 0; frame < 6; frame++) { mobileNow += 1f / 60f; mobileField.Step(mobileNow, 1f / 60f, false); }
+                        mobileField.CountAlive(out _, out int mf, out _); worstMobileFoot = Math.Max(worstMobileFoot, mf);
+                    }
+                    mobileField.ReleaseResources(); Object.DestroyImmediate(mobileHost);
+                    Check("D16", clamped && inRange && worstSpell <= pc.SpellResidue && worstFoot <= pc.Footprints && worstSpell > 0 && afterSpell + afterFoot + afterAir == 0
+                        && worstMobileFoot <= mobile.Footprints && worstMobileFoot > 0,
                         "lifetimes spell " + Deploy308.F(profile.SpellLife) + " foot " + Deploy308.F(profile.FootLife) + " field tail " + Deploy308.F(profile.FieldTail) + " s (raw 1 / 9 / 0 clamp to 3 / 5 / 3: " + clamped
-                        + ") | 20 casts: most alive spell " + worstSpell + "/" + pc.SpellResidue + ", foot " + worstFoot + "/" + pc.Footprints + " | alive at life + .1 s: " + (afterSpell + afterFoot + afterAir));
+                        + ") | 20 casts: most alive spell " + worstSpell + "/" + pc.SpellResidue + ", foot " + worstFoot + "/" + pc.Footprints + " | alive at life + .1 s: " + (afterSpell + afterFoot + afterAir)
+                        + " | Mobile, 40 steps at 10/s: most alive foot " + worstMobileFoot + "/" + mobile.Footprints);
+                }
+
+                // ---- D29 (D308-107, 11.37 3): the layer switch off, the footprint switch on = the footprints alone boot
+                {
+                    var footProfile = Object.Instantiate(profile); footProfile.hideFlags = Flags; trash.Add(footProfile);
+                    footProfile.LayerEnabled = false; footProfile.Foot.Enabled = true;
+                    var host = new GameObject("UnitFootOnly") { hideFlags = Flags }; host.transform.SetParent(root.transform, false);
+                    var player = new GameObject("UnitPlayer") { hideFlags = Flags }; player.transform.SetParent(host.transform, false);
+                    var footDirector = host.AddComponent<SpellDeployDirector308>();
+                    footDirector.Boot(footProfile, null, null, null, player.transform, null, null);
+                    bool footOk = footDirector.FootOnly && footDirector.Field != null && footDirector.Foot != null && footDirector.PoolSize == 0 && footDirector.StandingSize == 0
+                        && footDirector.Impact == null && footDirector.Flicker == null && footDirector.HudBinder == null && footDirector.Present == null
+                        && host.GetComponents<FootprintEmitter308>().Length == 1 && host.GetComponents<InkResidueField308>().Length == 1
+                        && footDirector.Foot.Blocked() != "off" && !footDirector.OwnsHitContact('가');
+                    string footLine = "layer off + foot on: foot-only " + footDirector.FootOnly + ", field " + (footDirector.Field != null) + ", emitter " + host.GetComponents<FootprintEmitter308>().Length
+                        + ", slots " + footDirector.PoolSize + "+" + footDirector.StandingSize + ", impact " + (footDirector.Impact != null) + ", flicker " + (footDirector.Flicker != null)
+                        + ", present " + (footDirector.Present != null) + ", emitter says " + (footDirector.Foot != null ? footDirector.Foot.Blocked() ?? "laying" : "-");
+                    foreach (var f in host.GetComponents<InkResidueField308>()) f.ReleaseResources();
+                    Object.DestroyImmediate(host);
+                    // both switches off: nothing at all
+                    var offProfile = Object.Instantiate(footProfile); offProfile.hideFlags = Flags; trash.Add(offProfile); offProfile.Foot.Enabled = false;
+                    var offHost = new GameObject("UnitAllOff") { hideFlags = Flags }; offHost.transform.SetParent(root.transform, false);
+                    var offDirector = offHost.AddComponent<SpellDeployDirector308>();
+                    offDirector.Boot(offProfile, null, null, null, offHost.transform, null, null);
+                    bool offOk = offDirector.Field == null && offDirector.Foot == null && offHost.GetComponents<Component>().Length == 2;
+                    Object.DestroyImmediate(offHost);
+                    Check("D29", footOk && offOk, footLine + " | both off: field " + !offOk + " -> nothing added " + offOk);
                 }
 
                 // ---- D18 (strengthened by D308-10c): the hit reaction redraws, the target's materials and property blocks stay as they were
@@ -580,7 +621,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     // edit mode never calls OnDestroy on these: release what they made by hand
                     foreach (var d in root.GetComponents<ImpactFrameDirector308>()) d.ReleaseResources();
                     foreach (var f in root.GetComponents<HitFlicker308>()) f.ReleaseResources();
-                    foreach (var r in root.GetComponents<InkResidueField308>()) r.ReleaseResources();
+                    foreach (var r in root.GetComponentsInChildren<InkResidueField308>(true)) r.ReleaseResources();
                     foreach (var runtime in root.GetComponentsInChildren<InkDeployRuntime308>(true)) runtime.Dispose();
                     Object.DestroyImmediate(root);
                 }

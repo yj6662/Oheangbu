@@ -1053,7 +1053,7 @@ namespace Oheangbu.Data.Spell
         {
             new TierSet { Name = "PC", Forms2Saved = true },
             new TierSet { Name = "Mobile", Bursts = 4, VertsPerBurst = 1024, BoldMax = 4, Fine = false, NeedleMax = 4, CelHz = 10f, ColumnStrips = 12,
-                SpellResidue = 64, Footprints = 12, AirDrops = 48, FullScreen = false, FlickerMax = 2, HudReactDefault = false, Flood = false,
+                SpellResidue = 64, Footprints = 20, AirDrops = 48, FullScreen = false, FlickerMax = 2, HudReactDefault = false, Flood = false,
                 FovBreath = false, UseMobileAtlas = true,
                 StandingBursts = 3, VertsPerStanding = 640, FencePosts = 6, FenceRails = 4, FenceRingDrops = 6, GuardNeedles = 2, GuardDryTicks = false,
                 CometTails = 1, CometDrops = 2, FootMarksPerStep = 1, FootMarksPerSecond = 2f, AuraStamps = 2, Forms2Saved = true },

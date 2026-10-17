@@ -341,7 +341,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             var before = AssetDatabase.LoadAssetAtPath<SpellDeploy308ProfileSO>(Deploy308.ProfilePath);
             bool hadProfile = before != null, layerEnabled = hadProfile && before.LayerEnabled;
             string enabledLetters = hadProfile ? before.EnabledLetters ?? "" : "";
-            if (hadProfile) sb.AppendLine("profile now: LayerEnabled=" + layerEnabled + " EnabledLetters='" + enabledLetters + "' (kept)");
+            // D308-107: the footprint switch and the Mobile footprint cap (12 -> 20) are newer than every backup of this stage
+            bool footEnabled = hadProfile && before.Foot.Enabled;
+            int mobileFootprints = hadProfile ? before.Tier(DeployTier308.Mobile).Footprints : 0;
+            if (hadProfile) sb.AppendLine("profile now: LayerEnabled=" + layerEnabled + " EnabledLetters='" + enabledLetters + "' Foot.Enabled=" + footEnabled + " Mobile.Footprints=" + mobileFootprints + " (kept)");
             foreach (string assetPath in new[] { Deploy308.MapPath, Deploy308.ProfilePath })
             {
                 // the OLDEST backup is the state before this stage touched the asset
@@ -354,10 +357,13 @@ namespace Oheangbu.EditorTools.WorldMacro
                 restored++;
             }
             var after = AssetDatabase.LoadAssetAtPath<SpellDeploy308ProfileSO>(Deploy308.ProfilePath);
-            if (hadProfile && after != null && (after.LayerEnabled != layerEnabled || (after.EnabledLetters ?? "") != enabledLetters))
+            if (hadProfile && after != null && (after.LayerEnabled != layerEnabled || (after.EnabledLetters ?? "") != enabledLetters
+                || after.Foot.Enabled != footEnabled || after.Tier(DeployTier308.Mobile).Footprints != mobileFootprints))
             {
-                sb.AppendLine("profile: the backup had LayerEnabled=" + after.LayerEnabled + " EnabledLetters='" + after.EnabledLetters + "' - today's values written back");
+                sb.AppendLine("profile: the backup had LayerEnabled=" + after.LayerEnabled + " EnabledLetters='" + after.EnabledLetters + "' Foot.Enabled=" + after.Foot.Enabled
+                    + " Mobile.Footprints=" + after.Tier(DeployTier308.Mobile).Footprints + " - today's values written back");
                 after.LayerEnabled = layerEnabled; after.EnabledLetters = enabledLetters;
+                after.Foot.Enabled = footEnabled; after.Tier(DeployTier308.Mobile).Footprints = mobileFootprints;
                 EditorUtility.SetDirty(after); AssetDatabase.SaveAssetIfDirty(after);
             }
             var map = AssetDatabase.LoadAssetAtPath<SpellDeploy308MapSO>(Deploy308.MapPath);

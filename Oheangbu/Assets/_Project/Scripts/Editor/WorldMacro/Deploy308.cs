@@ -23,7 +23,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   deploy308-status
     //   deploy308-assets[:dry|:revert]     texture import settings, M_InkBurst308 / M_InkResidue308, the profile asset (master switch OFF)
     //   deploy308-map[:dry]                Generated/deploy_map308.json (made from the glyph CSV) -> SpellDeploy308Map.asset, 120 rows
-    //   deploy308-unit                     AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D18 D26 D27 D23 (in memory, nothing saved)
+    //   deploy308-unit                     AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D18 D26 D27 D23 (in memory, nothing saved)
     //   deploy308-enable:<글자,…>[:dry|:revert]   Vfx120Profile.Deploy308 per letter + the profile's EnabledLetters / master switch
     // Saving: AssetDatabase.SaveAssetIfDirty on the named asset only - never SaveAssets (other sessions' dirty assets stay untouched).
     // Assets this tool creates are listed in the ledger (repo root, outside Assets); deploy308-assets:revert deletes only those.
@@ -235,7 +235,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (EditorApplication.isPlaying)
             {
                 var wiring = Object.FindFirstObjectByType<CombatLoopWiring>();
-                sb.Append(wiring == null ? " | no CombatLoopWiring" : wiring.DeployDirector308 == null ? " | layer asleep (no director)" : " | " + wiring.DeployDirector308.Describe());
+                // D308-107: with the layer off the director may still be up for the footprints alone ("발자국만")
+                sb.Append(wiring == null ? " | no CombatLoopWiring" : wiring.DeployDirector308 == null ? " | layer asleep (no director)"
+                    : (wiring.DeployDirector308.FootOnly ? " | 발자국만 (layer off, footprints on): " : " | ") + wiring.DeployDirector308.Describe());
             }
             return sb.ToString();
         }

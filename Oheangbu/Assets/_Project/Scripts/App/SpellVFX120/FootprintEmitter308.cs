@@ -46,7 +46,8 @@ namespace Oheangbu.App.SpellVFX120
         /// <summary>Why no print would be laid right now (null = prints are laid).</summary>
         public string Blocked()
         {
-            if (_profile == null || !_profile.LayerEnabled || !_profile.Foot.Enabled) return "off";
+            // D308-107 (11.37 3): the prints have their own switch - the deploy layer's switch no longer gates them
+            if (_profile == null || !_profile.Foot.Enabled) return "off";
             if (_field == null || !_field.Ready || _body == null) return "not ready";
             if (_walker != null && _walker.Seated) return "seated / riding";
             if (_motor == null) return null;
@@ -87,12 +88,13 @@ namespace Oheangbu.App.SpellVFX120
                 Vector3 side = Vector3.Cross(Vector3.up, heading);
                 Print(position - side * foot.SideOffset, heading, true, Mathf.Min(1f, foot.Opacity * 1.5f));
                 Print(position + side * foot.SideOffset, heading, false, Mathf.Min(1f, foot.Opacity * 1.5f));
+                // the drops are no prints: they dry in the residue ring and leave the footprint ring (its cap) to the feet
                 for (int i = 0; i < foot.LandingDrops; i++)
                 {
                     float a = (i + .35f) / Mathf.Max(1, foot.LandingDrops) * Mathf.PI * 2f;
                     float size = _profile.Residue.DropSmall * 1.6f;
                     _field.Stamp(new ResidueStamp308 { Point = position + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * (foot.SideOffset * 2.6f) + Vector3.up * .3f,
-                        Forward = heading, Width = size, Length = size, Cell = InkBurstMeshBuilder308.CellDrop, Opacity = foot.Opacity, Life = _profile.FootLife, Foot = true });
+                        Forward = heading, Width = size, Length = size, Cell = InkBurstMeshBuilder308.CellDrop, Opacity = foot.Opacity, Life = _profile.FootLife, Foot = false });
                 }
                 // the landing is its own mark: the support phases that begin on this frame are not printed a second time
                 Prime(position);

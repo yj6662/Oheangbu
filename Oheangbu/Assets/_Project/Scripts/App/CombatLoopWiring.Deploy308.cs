@@ -34,13 +34,14 @@ namespace Oheangbu.App
             try
             {
                 var profile = _deploy308 != null ? _deploy308 : Resources.Load<SpellDeploy308ProfileSO>(SpellDeploy308ProfileSO.ResourcesPath);
-                if (profile == null || !profile.LayerEnabled) return;
+                // D308-107 (11.37 3): the footprints boot on their own switch while the layer is retired (field + emitter only)
+                if (profile == null || !(profile.LayerEnabled || profile.Foot.Enabled)) return;
                 host = new GameObject("SpellDeploy308") { hideFlags = HideFlags.DontSave };
                 host.transform.SetParent(transform, false);
                 _deployDirector308 = host.AddComponent<SpellDeployDirector308>();
                 _bootFrame308 = Time.frameCount;
                 _deployDirector308.Boot(profile, this, _brushAdapter, _hud, _playerTransform != null ? _playerTransform : transform, _motor, JudgementWindowNear, DeployTargetGroggy308);
-                EnsureDeployHooks308();
+                if (profile.LayerEnabled) EnsureDeployHooks308();
             }
             catch (System.Exception e)
             {
