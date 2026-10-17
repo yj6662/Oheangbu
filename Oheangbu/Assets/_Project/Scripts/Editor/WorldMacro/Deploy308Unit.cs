@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D38 D39 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D38 D39 D40 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
@@ -922,6 +922,42 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D39", runOk && builtOk, (err ?? "no exception") + " | cone " + Deploy308.F(angle) + " deg (plan 25), scale " + Deploy308.F(scale)
                         + " (6/4.5), spray peak " + peak + ", after EndAt " + after + " live / " + children + " bodies | built body "
                         + (built == null ? "not built" : mats + " materials, additive " + additive));
+                }
+
+                // ---- D40 (11.45): the ㄱ-final copies carry one variation each (각 낙 follow, 삭 pierce, 악 return) and their own ink
+                // body; a body draws no ground-flat layer and no additive material, the pierce body has an empty Contact, and the
+                // runtime hands the return leg to the effect
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var rows = new[] { ("002_AC01", "ga"), ("026_B099", "na"), ("074_C0AD", "sa"), ("098_C545", "a") };
+                    var parts = new List<string>(); bool ok = true; int seen = 0;
+                    foreach (var (id, key) in rows)
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/" + id + "_308e.asset");
+                        if (p == null) continue; seen++;
+                        bool flags = p.Bolt300Pierce == (key == "sa") && p.Bolt300Return == (key == "a") && p.Bolt300FollowTarget == (key is "ga" or "na")
+                            && Mathf.Abs(p.Bolt300FollowHeight - (key == "na" ? 1f : 0f)) < 1e-4f;
+                        var body = p.Bolt300Prefab; bool own = body != null && body.name == "PF_V308j_giyeok_" + key;
+                        int flat = 0, additive = 0, contactPs = 0;
+                        if (body != null)
+                        {
+                            foreach (var r in body.GetComponentsInChildren<ParticleSystemRenderer>(true))
+                            {
+                                if (r.renderMode == ParticleSystemRenderMode.HorizontalBillboard) flat++;
+                                foreach (var m in r.sharedMaterials)
+                                    if (m != null && (m.shader.name.IndexOf("Additive", StringComparison.OrdinalIgnoreCase) >= 0
+                                        || (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One)))) additive++;
+                            }
+                            var contact = body.transform.Find("Contact"); if (contact != null) contactPs = contact.GetComponentsInChildren<ParticleSystem>(true).Length;
+                        }
+                        bool contactOk = key == "sa" ? contactPs == 0 : contactPs > 0;
+                        bool rowOk = flags && own && flat == 0 && additive == 0 && contactOk; ok &= rowOk;
+                        parts.Add(key + (rowOk ? " ok" : " FAIL") + " (flags " + flags + ", own body " + own + ", flat " + flat + ", additive " + additive + ", contact systems " + contactPs + ")");
+                    }
+                    const string traces = "Assets/_Project/Scripts/App/EAGiyeokRuntime.Traces.cs";
+                    bool wired = File.Exists(traces) && File.ReadAllText(traces).Contains("SetReturn308(t.Bounce");
+                    ok &= wired;
+                    Check("D40", ok, (seen > 0 ? string.Join("; ", parts) : "not built") + " | runtime hands the return leg " + wired);
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

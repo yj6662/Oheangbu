@@ -23,6 +23,10 @@ namespace Oheangbu.App.SpellVFX120
         float _b3Simulated;
         bool _b3Impacted, _b3MissDotted;
         Vector3 _b3Side;
+        // 11.45: the ㄱ-final variants (pierce / follow / return); the return leg is issued once and kept across seeks
+        Vector3 _b3ReturnBounce, _b3FollowLast;
+        float _b3ReturnEnd = -1f;
+        const float FollowFade = .9f, ReturnWait = .15f, ReturnTurn = .4f;
 
         public static bool IsBolt300(Vfx120Profile p) => p != null && p.Bolt300Prefab != null;
         public bool Bolt300Configured => _bolt300 != null;
@@ -37,6 +41,7 @@ namespace Oheangbu.App.SpellVFX120
             _b3Travel = _bolt300.transform.Find("Travel");
             _b3Contact = _bolt300.transform.Find("Contact");
             if (_b3Travel == null || _b3Contact == null) { ClearBolt300(); return; }
+            _b3ReturnEnd = -1f;
             _b3Spin = _b3Travel.Find("Spin");
             _b3TravelSystems = _b3Travel.GetComponentsInChildren<ParticleSystem>(true);
             _b3ContactSystems = _b3Contact.GetComponentsInChildren<ParticleSystem>(true);
@@ -71,7 +76,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             _b3Simulated = 0f; _b3Impacted = false; _b3MissDotted = false;
             foreach (var ps in _b3TravelSystems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); var em = ps.emission; em.enabled = true; ps.Simulate(0, false, true, false); }
-            foreach (var ps in _b3ContactSystems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ps.Simulate(0, false, true, false); }
+            foreach (var ps in _b3ContactSystems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); var em = ps.emission; em.enabled = true; ps.Simulate(0, false, true, false); }
             _b3Travel.position = ReceivedOrigin;
             _b3Travel.rotation = Quaternion.LookRotation(Bolt300Tangent(0f), Vector3.up);
             foreach (var t in _b3Trails) { t.Clear(); t.emitting = true; }
@@ -166,20 +171,65 @@ namespace Oheangbu.App.SpellVFX120
             return d.sqrMagnitude > 1e-6f ? d.normalized : transform.forward;
         }
 
+        // 11.45 (악): the return leg after the first hit - out to the bounce point (easing out), back into the live target
+        // (easing in), bowed to the homing side. u runs 0..1 from the first hit to the issued end age.
+        Vector3 ReturnPoint308(float at, float arrive)
+        {
+            float u = Mathf.Clamp01((at - arrive) / Mathf.Max(.001f, _b3ReturnEnd - arrive));
+            Vector3 start = Bolt300Point(arrive), p;
+            if (u < ReturnTurn) { float a = 1f - u / ReturnTurn; p = Vector3.Lerp(start, _b3ReturnBounce, 1f - a * a); }
+            else { float b = (u - ReturnTurn) / (1f - ReturnTurn); p = Vector3.Lerp(_b3ReturnBounce, TargetPoint(), b * b); }
+            return p + _b3Side * (.5f * Mathf.Sin(Mathf.PI * u));
+        }
+
+        // 11.45 (각 낙): the live target's pivot + the follow height; the last known point once it is gone or inactive
+        Vector3 FollowPoint308()
+        {
+            if (ReceivedTarget != null && ReceivedTarget.gameObject.activeInHierarchy)
+                _b3FollowLast = ReceivedTarget.position + Vector3.up * Profile.Bolt300FollowHeight;
+            return _b3FollowLast;
+        }
+
+        bool FollowAlive308 => ReceivedTarget != null && ReceivedTarget.gameObject.activeInHierarchy;
+
+        /// <summary>11.45: the ㄱ-final return (악) - the body stays after the first hit and flies back to the target, arriving at
+        /// endAge (effect age). Only for a Bolt300Return profile; issued once by the runtime at the first hit.</summary>
+        public void SetReturn308(Vector3 bounce, float endAge)
+        {
+            if (_bolt300 == null || Profile == null || !Profile.Bolt300Return) return;
+            _b3ReturnBounce = bounce; _b3ReturnEnd = endAge;
+            foreach (var r in _b3BodyRenderers) r.enabled = true;
+        }
+
         void SampleBolt300()
         {
             if (_bolt300 == null) return;
             float end = Mathf.Min(Age, Life);
             if (end + .00001f < _b3Simulated) ResetBolt300();
             const float step = 1f / 60f;
-            float hit = NativeImpactClock();
+            bool pierce = Profile.Bolt300Pierce, follow = Profile.Bolt300FollowTarget, ret = Profile.Bolt300Return;
+            // a pierce flies its whole line through every hit (the runtime still signals each hit; there is no Contact)
+            float hit = pierce ? -1f : NativeImpactClock();
             float arrive = hit >= 0f ? hit : _flight;
+            bool returning = ret && hit >= 0f && _b3ReturnEnd > arrive;
+            float travelEnd = returning ? _b3ReturnEnd : arrive;
             while (_b3Simulated + step <= end + .00001f)
             {
                 float at = _b3Simulated + step;
-                bool flying = at < arrive;
-                _b3Travel.position = Bolt300Point(Mathf.Min(at, arrive));
-                _b3Travel.rotation = Quaternion.LookRotation(Bolt300Tangent(Mathf.Min(at, arrive)), Vector3.up);
+                bool flying = at < travelEnd;
+                if (returning && at > arrive)
+                {
+                    float u = Mathf.Min(at, travelEnd);
+                    Vector3 here = ReturnPoint308(u, arrive), d = ReturnPoint308(Mathf.Min(u + .02f, travelEnd), arrive) - here;
+                    if (d.sqrMagnitude < 1e-6f) d = here - ReturnPoint308(Mathf.Max(arrive, u - .02f), arrive);
+                    _b3Travel.position = here;
+                    if (d.sqrMagnitude > 1e-6f) _b3Travel.rotation = Quaternion.LookRotation(d.normalized, Vector3.up);
+                }
+                else
+                {
+                    _b3Travel.position = Bolt300Point(Mathf.Min(at, arrive));
+                    _b3Travel.rotation = Quaternion.LookRotation(Bolt300Tangent(Mathf.Min(at, arrive)), Vector3.up);
+                }
                 if (_b3Spin != null && Mathf.Abs(Profile.Bolt300Spin) > .01f) _b3Spin.localRotation = Quaternion.Euler(at * Profile.Bolt300Spin, at * Profile.Bolt300Spin * .37f, 0f);
                 foreach (var ps in _b3TravelSystems) { var em = ps.emission; em.enabled = flying; ps.Simulate(step, false, false, false); }
                 foreach (var ps in _b3DeploySystems) ps.Simulate(step, false, false, false);
@@ -188,26 +238,49 @@ namespace Oheangbu.App.SpellVFX120
                     if (!_b3Impacted)
                     {
                         _b3Impacted = true;
-                        _b3Contact.position = TargetPoint();
                         Vector3 axis = Bolt300Tangent(hit);
-                        _b3Contact.rotation = Quaternion.LookRotation(-axis, Mathf.Abs(axis.y) > .98f ? Vector3.forward : Vector3.up);
+                        if (follow)
+                        {
+                            // upright on the target, facing along the flat flight line
+                            _b3FollowLast = TargetPoint() + Vector3.up * (Profile.Bolt300FollowHeight - 1.1f);
+                            Vector3 flat = axis; flat.y = 0f;
+                            _b3Contact.SetPositionAndRotation(FollowPoint308(), Quaternion.LookRotation(flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward, Vector3.up));
+                        }
+                        else
+                        {
+                            _b3Contact.position = TargetPoint();
+                            _b3Contact.rotation = Quaternion.LookRotation(-axis, Mathf.Abs(axis.y) > .98f ? Vector3.forward : Vector3.up);
+                        }
                         var eye = Camera.main;
                         if (Profile.Bolt300NearContactMeters > 0f && eye != null)
                         {
                             float k = Mathf.Clamp(Vector3.Distance(eye.transform.position, _b3Contact.position) / Profile.Bolt300NearContactMeters, .45f, 1f);
                             _b3Contact.localScale = Vector3.one * (Profile.Bolt300Scale > 0f ? Profile.Bolt300Scale : 1f) * k;
                         }
-                        foreach (var r in _b3BodyRenderers) r.enabled = false;
+                        if (!ret) foreach (var r in _b3BodyRenderers) r.enabled = false;
                         DropResidue308();
+                    }
+                    if (follow)
+                    {
+                        _b3Contact.position = FollowPoint308();
+                        bool keep = FollowAlive308 && at < Life - FollowFade;
+                        foreach (var ps in _b3ContactSystems) { var em = ps.emission; em.enabled = keep; }
                     }
                     foreach (var ps in _b3ContactSystems) ps.Simulate(Mathf.Min(step, at - hit), false, false, false);
                 }
                 _b3Simulated = at;
             }
             ApplySoak308(end);
-            bool stillFlying = end < arrive;
+            bool stillFlying = end < travelEnd;
             foreach (var t in _b3Trails) t.emitting = stillFlying;
-            if (!stillFlying && hit < 0f) { foreach (var r in _b3BodyRenderers) r.enabled = false; MissDot308(); }   // a miss simply ends at the fallback point
+            if (pierce)
+            {
+                // the end of the line: an enemy hit along the way leaves nothing more; a clean miss may leave the ground dot
+                if (!stillFlying) { foreach (var r in _b3BodyRenderers) r.enabled = false; if (HitAt < 0f) MissDot308(); }
+            }
+            else if (!stillFlying && hit < 0f) { foreach (var r in _b3BodyRenderers) r.enabled = false; MissDot308(); }   // a miss simply ends at the fallback point
+            else if (ret && hit >= 0f && ((!returning && end >= arrive + ReturnWait) || (returning && end >= _b3ReturnEnd)))
+                foreach (var r in _b3BodyRenderers) r.enabled = false;
             if (Age >= Life)
             {
                 foreach (var ps in _b3TravelSystems) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -218,7 +291,7 @@ namespace Oheangbu.App.SpellVFX120
         void ClearBolt300()
         {
             if (_bolt300 != null) { _bolt300.SetActive(false); if (Application.isPlaying) Destroy(_bolt300); else DestroyImmediate(_bolt300); }
-            _bolt300 = null; _b3Travel = _b3Contact = _b3Spin = null;
+            _bolt300 = null; _b3Travel = _b3Contact = _b3Spin = null; _b3ReturnEnd = -1f;
             _b3TravelSystems = _b3ContactSystems = null; _b3Trails = null; _b3BodyRenderers = null;
         }
     }

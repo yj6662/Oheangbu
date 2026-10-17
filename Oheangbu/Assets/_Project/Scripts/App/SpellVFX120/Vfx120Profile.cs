@@ -142,6 +142,13 @@ namespace Oheangbu.App.SpellVFX120
         public float Bolt300Spin;
         [Tooltip("Progress exponent along the line (1 = constant speed, >1 = starts slow).")]
         [Min(0f)] public float Bolt300Ease = 1f;
+        [Tooltip("11.45 (삭): the body flies the whole flight through every hit; no Contact, a hit does not stop it.")]
+        public bool Bolt300Pierce;
+        [Tooltip("11.45 (각 낙): after the impact the Contact stays on the live target (its pivot + Bolt300FollowHeight, upright) and keeps emitting until the effect's last .9 s.")]
+        public bool Bolt300FollowTarget;
+        public float Bolt300FollowHeight;
+        [Tooltip("11.45 (악): the body stays after the first hit and flies the return leg given by SetReturn308 (bounce point, then back into the target).")]
+        public bool Bolt300Return;
     }
 
 }
