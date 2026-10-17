@@ -15,8 +15,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
     // native body / cast / impact switched off. Installs and gates fly the element's single bolt (they send a real flight);
     // buffs reuse the 11.22 buff band; companions and sword forms get a small low ink wrap at the caster - a placeholder
     // until their shots / swings have a seam. connect:attack points the set entries at the copies once built (recorded per
-    // letter in visualset-before.json, so revert puts them back).
-    //   cue            - build the 27
+    // letter in visualset-before.json, so revert puts them back). 11.48 adds the healing tree 검: an ink ring round the caster.
+    //   cue            - build the 28
     public static partial class Vfx308Build
     {
         static readonly (string Glyph, string Id, string Key, string Kind)[] Cues =
@@ -27,6 +27,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             ("선", "081_C120", "sa", "buff"), ("섬", "082_C12C", "sa", "buff"), ("언", "105_C5B8", "a", "buff"), ("엄", "106_C5C4", "a", "buff"),
             ("겅", "012_AC85", "ga", "companion"), ("넝", "036_B11D", "na", "companion"), ("멍", "060_BA4D", "ma", "companion"), ("성", "084_C131", "sa", "companion"), ("엉", "108_C5C9", "a", "companion"),
             ("것", "011_AC83", "ga", "sword"), ("넛", "035_B11B", "na", "sword"), ("멋", "059_BA4B", "ma", "sword"), ("섯", "083_C12F", "sa", "sword"), ("엇", "107_C5C7", "a", "sword"),
+            ("검", "010_AC80", "ga", "tree"),   // 11.48
         };
 
         static string CueProfilePath(string id) => Root2 + "/Profiles/" + id + "_308h.asset";
@@ -59,6 +60,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     aura = File.Exists(AuraPrefabPath("buff", g.Key)) ? Load<GameObject>(AuraPrefabPath("buff", g.Key)) : null;
                     if (aura == null) aura = SaveWrap(BuffInk(e), AuraPrefabPath("buff", g.Key));
                 }
+                else if (g.Kind == "tree") aura = SaveWrap(TreeWrap(e), CueWrapPath(g.Kind, g.Key));   // 11.48
                 else
                 {
                     // rebuilt on every run (cheap), once per kind and element
@@ -172,6 +174,42 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 10f,
                 Colour = G((0f, C(c, 0f)), (.15f, C(c, .85f)), (.7f, C(c, .55f)), (1f, C(c, 0f))), Grow = Curve(0f, .6f, .3f, 1f, 1f, .7f) });
             return root;
+        }
+
+        // the healing tree 검 (11.48): its centre is the caster, so nothing rises in the middle. Ink poured once at the feet,
+        // an ink band round the 3 m ring and two waves of 17 upright wood-grain strokes on it, black first and the pigment
+        // soaking in. One burst per layer (no loop), all gone by about 2 s; no drops, no glow, nothing left on the ground.
+        const float TreeRadius = 3f;
+        static GameObject TreeWrap(Elem e)
+        {
+            var root = new GameObject(Path.GetFileNameWithoutExtension(CueWrapPath("tree", e.Key)));
+            Color c = Color.Lerp(e.Pig, e.Ink, .6f);
+            var pool = Bleed("M_V308f_pool", "ink_pool", C(SwingInkColour, .85f), 0f, .85f, 0f, 0f);
+            var grain = SoakVariant(Bleed("M_V308h_tree_" + e.Key + "_grain", "wood_stroke", C(e.Ink, .92f), 0f, .85f));
+            var band = SoakVariant(Bleed("M_V308h_tree_" + e.Key + "_band", "ink_pool", C(e.Ink, .85f), 0f, .8f, 0f, 0f));
+            Layer(root.transform, new L { Name = "Pour", Mat = pool, World = false, Mode = 1, Burst = 1, Max = 1, Life = new Vector2(1.3f, 1.5f), Size = new Vector2(1.2f, 1.6f),
+                NoShape = true, ShapePos = new Vector3(0f, .03f, 0f), Blend = true, FrameFrom = 3f, FrameTo = 12f, Colour = InkFade(.6f), Grow = Curve(0f, .6f, .35f, 1f, 1f, 1.15f) });
+            var ring = Layer(root.transform, new L { Name = "Band", Mat = band, World = false, Mode = 1, Burst = 20, BurstTime = .1f, Max = 20, Life = new Vector2(1.2f, 1.5f),
+                Size = new Vector2(.9f, AreaBand308(TreeRadius)), Shape = ParticleSystemShapeType.Circle, Radius = TreeRadius, Thickness = 0f, ShapeRot = new Vector3(-90f, 0f, 0f),
+                ShapePos = new Vector3(0f, .03f, 0f), Blend = true, FrameFrom = 3f, FrameTo = 12f,
+                Colour = G((0f, C(c, 0f)), (.15f, C(c, .7f)), (.6f, C(c, .45f)), (1f, C(c, 0f))), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.05f) });
+            Spread(ring, 0f);
+            for (int w = 0; w < 2; w++)
+            {
+                var strokes = Layer(root.transform, new L { Name = w == 0 ? "Grain" : "Grain2", Mat = grain, World = false, Mode = 2, Burst = 17, BurstTime = w == 0 ? .15f : .8f, Max = 17,
+                    Life = new Vector2(.9f, 1.2f), Size = new Vector2(1.1f, 1.4f), Pivot = new Vector3(0f, .45f, 0f), SpinRandom = false,
+                    Shape = ParticleSystemShapeType.Circle, Radius = TreeRadius, Thickness = 0f, ShapeRot = new Vector3(-90f, 0f, 0f), Blend = true, FrameFrom = 0f, FrameTo = 10f,
+                    Colour = G((0f, C(c, 0f)), (.12f, C(c, .9f)), (.65f, C(c, .55f)), (1f, C(c, 0f))), Grow = Curve(0f, .55f, .3f, 1f, 1f, .9f) });
+                Spread(strokes, w * 180f / 17f);
+            }
+            return root;
+        }
+
+        // evenly round the circle instead of random bunching; `turn` rotates the whole set about the up axis
+        static void Spread(ParticleSystem ps, float turn)
+        {
+            var sh = ps.shape; sh.arcMode = ParticleSystemShapeMultiModeValue.BurstSpread;
+            if (turn != 0f) sh.rotation = new Vector3(-90f, 0f, turn);
         }
     }
 }

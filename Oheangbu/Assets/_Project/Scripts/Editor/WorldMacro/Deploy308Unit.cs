@@ -1030,6 +1030,40 @@ namespace Oheangbu.EditorTools.WorldMacro
                         "InkSolid defaults " + defaults + " | live WoodDeer " + deerInk + "/" + deer + " ink roots, live WaterTurtle " + turtleInk + "/" + turtle + " ink jet");
                 }
 
+                // ---- D43 (11.48): the healing tree 검 draws its own ink ring (Aura308) with every old body slot empty; the ring is
+                // one-shot local bursts with no Residue, no additive material, and nothing outlives the 3 s cue
+                {
+                    var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>("Assets/_Project/Art/SpellVFX308/V2/Profiles/010_AC80_308h.asset");
+                    if (p == null) Check("D43", false, "not built (run cue)");
+                    else
+                    {
+                        bool slots = p.Aura308Prefab != null && p.Bolt300Prefab == null && p.BotanicalPrefab == null && p.NativeBodyPrefab == null
+                            && p.NativeCastPrefab == null && p.NativeImpactPrefab == null && p.Duration <= 3f;
+                        int additive = 0, world = 0, looped = 0, systems = 0; float latest = 0f; bool residue = false;
+                        var aura = p.Aura308Prefab;
+                        if (aura != null)
+                        {
+                            residue = aura.transform.Find("Residue") != null;
+                            foreach (var r in aura.GetComponentsInChildren<ParticleSystemRenderer>(true))
+                                foreach (var m in r.sharedMaterials)
+                                    if (m != null && (m.shader.name.IndexOf("Additive", StringComparison.OrdinalIgnoreCase) >= 0
+                                        || (m.HasProperty("_DstBlend") && Mathf.Approximately(m.GetFloat("_DstBlend"), (float)BlendMode.One)))) additive++;
+                            foreach (var ps in aura.GetComponentsInChildren<ParticleSystem>(true))
+                            {
+                                systems++;
+                                if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) world++;
+                                if (ps.main.loop || ps.emission.rateOverTime.constantMax > 0f) looped++;
+                                float at = 0f;
+                                for (int b = 0; b < ps.emission.burstCount; b++) at = Mathf.Max(at, ps.emission.GetBurst(b).time);
+                                latest = Mathf.Max(latest, at + ps.main.startLifetime.constantMax);
+                            }
+                        }
+                        Check("D43", slots && !residue && additive == 0 && world == 0 && looped == 0 && systems > 0 && latest <= 3f,
+                            "slots " + slots + " (aura " + (aura != null ? aura.name : "none") + "), residue " + residue + ", additive " + additive + ", world " + world
+                            + ", looped " + looped + ", systems " + systems + ", latest end " + Deploy308.F(latest) + " s");
+                    }
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
