@@ -67,6 +67,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "connect": case "connect:five": return Connect(false);
                 case "connect:attack": if (!V2) throw new ArgumentException("the attack set exists in the v2 look only"); return Connect(true);
                 case "attack": return AttackTable();
+                case "stain": return BuildStain();   // 11.37 (e) D308-104: the range-ㄱ foot stain alone
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
@@ -945,7 +946,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
             Touched.Clear(); seed = 30900;
-            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); var finals = new Dictionary<string, GameObject>(); Mesh ribbon = null;
+            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); var finals = new Dictionary<string, GameObject>(); var stains = new Dictionary<string, GameObject>(); Mesh ribbon = null;
             var sb = new StringBuilder(); int built = 0, skipped = 0;
             foreach (var a in Attack)
             {
@@ -982,6 +983,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
                     profile.NativeCastPrefab = null;
                     // the per-hit contact seam: the game scales the contact by KtpContactProfile.ParryScale (.22) x this
+                    profile.AreaStainPrefab = V2 && FinalOf(a.Glyph) == FinalK ? StainBody(e, stains) : null;   // 11.37 (e): one stain per struck enemy in place of the per-hit pool
                     profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f; profile.KtpContactBrightness = 1f;   // ink, not light (census: 3.5 copied from the old seal)
                 }
                 EditorUtility.SetDirty(profile); Touched.Add(profile);

@@ -54,6 +54,9 @@ namespace Oheangbu.App.SpellVFX120
         public bool KtpRectShield;
         public Vfx120AreaRemake AreaRemake;
         public GameObject AreaContactPrefab;
+        // #308 D308-104 (e): one small ink stain on the ground under an enemy hit by a range-ㄱ spell (TEST values; scale 1, outside the KTP scale chain)
+        public GameObject AreaStainPrefab;
+        public float AreaStainDiameter = 2f, AreaStainAlpha = .12f, AreaStainSeconds = 2.5f, AreaStainMinNormalY = .45f;
         public float AreaCastSeconds = .32f;
         public bool WideAreaRevision;
         public bool AreaFlowRevision;

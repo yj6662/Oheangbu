@@ -18,11 +18,12 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.WorldMacro
 {
     // SPEC-SPELL-DEPLOY-308 "deploy308-unit": the checks that need no Play mode
-    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D26 D27 D23).
+    // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
     // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
     // D32 = the impact frame's figure is the hit target's renderers, and the contact path asks it on a groggy spell hit only (D308-106 c).
+    // D33 = a range-ㄱ letter's hit has no pool and its copy carries one foot stain, laid once per struck enemy on the ground below (D308-104 e).
     // Everything is built in memory with HideFlags.DontSave and destroyed before the command returns; no asset, scene or setting
     // is written. A line is "ok" or "FAIL" with the measured numbers; the words PASS / VALIDATED are left to the report.
     internal static class Deploy308Unit
@@ -653,6 +654,105 @@ namespace Oheangbu.EditorTools.WorldMacro
                     foreach (var c in gHost.GetComponents<ImpactFrameDirector308>()) c.ReleaseResources();
                     Object.DestroyImmediate(gHost);
                     Check("D32", maskOk && contactOk, mLine + " | " + gLine);
+                }
+
+                // ---- D33 (D308-104 e, 11.37 6): a range-ㄱ letter leaves one foot stain per struck enemy instead of a pool per hit
+                {
+                    const string V2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    bool IsK(string glyph) => !string.IsNullOrEmpty(glyph) && glyph[0] >= 0xAC00 && glyph[0] <= 0xD7A3 && (glyph[0] - 0xAC00) % 28 == 1;
+                    bool Contract(GameObject g)
+                    {
+                        var ps = g != null ? g.GetComponent<ParticleSystem>() : null;
+                        return ps != null && !ps.main.loop && g.GetComponentsInChildren<MonoBehaviour>(true).Length == 0 && g.GetComponentsInChildren<Collider>(true).Length == 0
+                            && g.GetComponentsInChildren<Animator>(true).Length == 0 && g.GetComponentsInChildren<Rigidbody>(true).Length == 0;
+                    }
+                    // the asset side: the five range-ㄱ copies carry a stain that passes the contact pre-check, the other range copies none
+                    int kSet = 0, kBad = 0, otherSet = 0; GameObject sample = null; var bad = new List<string>();
+                    foreach (var guid in AssetDatabase.FindAssets("t:Vfx120Profile", new[] { V2 + "/Profiles" }))
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Vfx120Profile>(AssetDatabase.GUIDToAssetPath(guid));
+                        if (p == null || !p.name.EndsWith("_308b") || p.AreaRemake == Vfx120AreaRemake.None) continue;
+                        if (IsK(p.Glyph))
+                        {
+                            if (Contract(p.AreaStainPrefab)) { kSet++; sample = sample ?? p.AreaStainPrefab; }
+                            else { kBad++; bad.Add(p.Glyph); }
+                        }
+                        else if (p.AreaStainPrefab != null) { otherSet++; bad.Add(p.Glyph); }
+                    }
+                    // the range-ㄱ hit keeps its stakes and drops the pool (no Linger anywhere in it)
+                    int hitK = 0, hitLinger = 0;
+                    foreach (var guid in AssetDatabase.FindAssets("PF_V308b_hit_ t:GameObject", new[] { V2 + "/Prefabs" }))
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guid);
+                        if (!path.EndsWith("_k.prefab")) continue;
+                        hitK++;
+                        var g = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                        if (g != null && g.GetComponentsInChildren<Transform>(true).Any(t => t.name == "Linger")) hitLinger++;
+                    }
+                    bool assetOk = kSet == 5 && kBad == 0 && otherSet == 0 && hitK == 5 && hitLinger == 0;
+                    string aLine = "range-ㄱ copies with a stain " + kSet + " (want 5), broken " + kBad + ", other range copies with one " + otherSet
+                        + (bad.Count > 0 ? " [" + string.Join(" ", bad) + "]" : "") + " | hit_*_k prefabs " + hitK + ", with a Linger " + hitLinger;
+
+                    // the runtime side, on a wiring in a preview scene (the stain spawns there, not in the open scene)
+                    bool runOk = false; string rLine = "no stain prefab to try";
+                    var preview = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+                    try
+                    {
+                        var throttle = typeof(CombatLoopWiring).GetMethod("TrySpawnAreaStain308", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var ground = typeof(CombatLoopWiring).GetMethod("StainGround308", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var clear = typeof(CombatLoopWiring).GetMethod("ClearStains308", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var vfxField = typeof(CombatLoopWiring).GetField("_contactVfx", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        var listField = typeof(CombatLoopWiring).GetField("_contacts", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (throttle == null || ground == null || clear == null || vfxField == null || listField == null) rLine = "CombatLoopWiring stain members not found";
+                        else if (sample != null)
+                        {
+                            var host = new GameObject("UnitStainWiring");
+                            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(host, preview);
+                            var wiring = host.AddComponent<CombatLoopWiring>();
+                            var sProfile = ScriptableObject.CreateInstance<Vfx120Profile>(); sProfile.hideFlags = Flags; trash.Add(sProfile);
+                            sProfile.Glyph = "곡"; sProfile.KtpEmphasis = true; sProfile.AreaStainPrefab = sample;
+                            sProfile.AreaStainDiameter = 1.7f; sProfile.AreaStainAlpha = .2f; sProfile.AreaStainSeconds = 9f;
+                            var contact = ScriptableObject.CreateInstance<KtpContactProfile>(); contact.hideFlags = Flags; trash.Add(contact);
+                            contact.SpellProfiles = new[] { sProfile };
+                            vfxField.SetValue(wiring, contact);
+                            Vector3 q = new Vector3(-300f, -500f, 300f);
+                            EnemyVitals Enemy(string name, Vector3 at)
+                            {
+                                var go = new GameObject(name) { hideFlags = Flags }; go.transform.SetParent(root.transform, false); go.transform.position = at;
+                                return go.AddComponent<EnemyVitals>();
+                            }
+                            var one = Enemy("UnitStainA", q); var two = Enemy("UnitStainB", q + Vector3.right * 20f);
+                            bool Try(EnemyVitals t, char letter) => (bool)throttle.Invoke(wiring, new object[] { t, letter });
+                            bool first = Try(one, '곡'), again = Try(one, '곡'), other = Try(two, '곡'), plain = Try(one, '고');
+                            clear.Invoke(wiring, null);
+                            bool afterClear = Try(one, '곡');
+                            var effects = (System.Collections.IList)listField.GetValue(wiring);
+                            var made = effects.Count > 0 ? effects[0] as KtpContactEffect : null;
+                            var ps = made != null ? made.GetComponentInChildren<ParticleSystem>() : null;
+                            bool sized = ps != null && Mathf.Abs(ps.main.startSize.constant - 1.7f) < 1e-4f && Mathf.Abs(ps.main.startLifetime.constant - 9f) < 1e-4f
+                                && Mathf.Abs(ps.main.startColor.color.a - .2f) < 1e-4f && made.transform.localScale == Vector3.one;
+                            bool inPreview = made != null && made.gameObject.scene == preview;
+                            float pivotY = made != null ? made.transform.position.y - q.y : float.NaN;   // no collider, no ground: the pivot + .02
+                            // the ground: a slab under a capsule body, a steep slab above it is skipped, the body's own collider is skipped
+                            var slab = new GameObject("UnitStainGround") { hideFlags = Flags }; slab.transform.SetParent(root.transform, false);
+                            slab.transform.position = q + new Vector3(40f, -.5f, 0f); var box = slab.AddComponent<BoxCollider>(); box.size = new Vector3(6f, 1f, 6f);
+                            var steep = new GameObject("UnitStainSteep") { hideFlags = Flags }; steep.transform.SetParent(root.transform, false);
+                            steep.transform.SetPositionAndRotation(q + new Vector3(40f, 2.5f, 0f), Quaternion.Euler(0f, 0f, 70f)); var sBox = steep.AddComponent<BoxCollider>(); sBox.size = new Vector3(6f, .2f, 6f);
+                            var walker = Enemy("UnitStainC", q + new Vector3(40f, .3f, 0f));
+                            var cap = walker.gameObject.AddComponent<CapsuleCollider>(); cap.center = Vector3.up; cap.height = 2f; cap.radius = .4f;
+                            Physics.SyncTransforms();
+                            Vector3 g = (Vector3)ground.Invoke(wiring, new object[] { walker, .45f });
+                            bool groundOk = Mathf.Abs(g.y - q.y - .02f) < .01f && Mathf.Abs(g.x - walker.transform.position.x) < .01f;
+                            runOk = first && !again && other && !plain && afterClear && effects.Count == 3 && sized && inPreview && Mathf.Abs(pivotY - .02f) < .01f && groundOk;
+                            rLine = "first " + first + ", same enemy again " + again + ", another enemy " + other + ", a letter without a stain " + plain + ", after clear " + afterClear
+                                + " | spawned " + effects.Count + " (want 3), size/life/alpha from the profile at scale 1 " + sized + ", in the preview scene " + inPreview
+                                + " | no ground: pivot + " + Deploy308.F(pivotY) + " | slab under a capsule, steep slab above: y " + Deploy308.F(g.y - q.y) + " (want .02)";
+                            Object.DestroyImmediate(slab); Object.DestroyImmediate(steep);
+                            Object.DestroyImmediate(one.gameObject); Object.DestroyImmediate(two.gameObject); Object.DestroyImmediate(walker.gameObject);
+                        }
+                    }
+                    finally { UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(preview); }
+                    Check("D33", assetOk && runOk, aLine + " | " + rLine);
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

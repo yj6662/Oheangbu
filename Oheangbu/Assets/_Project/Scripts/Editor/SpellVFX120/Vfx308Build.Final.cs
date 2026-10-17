@@ -80,7 +80,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var root = HitBody(e);
             try
             {
-                if (final != FinalNone) Marker(e, final, null, root.transform, root.transform, .65f);
+                // D308-104 (e): no residue on a range hit - its pool came per shot (속: 24); the foot stain (StainBody) replaces it
+                if (final != FinalNone) Marker(e, final, null, root.transform, null, .65f);
                 foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
                 return cache[path] = PrefabUtility.SaveAsPrefabAsset(root, path);
             }

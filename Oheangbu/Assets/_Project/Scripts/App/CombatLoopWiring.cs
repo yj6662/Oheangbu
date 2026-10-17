@@ -241,6 +241,7 @@ namespace Oheangbu.App
             _guardVisualLetter = default;
             foreach (var effect in _contacts) if (effect != null) Destroy(effect.gameObject);
             _contacts.Clear();
+            ClearStains308();
         }
 
         private bool _hooked;
@@ -585,6 +586,7 @@ namespace Oheangbu.App
                 if (!DeployOwnsHit308(letter))   // #308 D308-13b: an enabled Retire attack row shows its hit with the deploy layer's ink splash, not the KTP contact
                 if (_contactVfx != null) SpawnContact(_contactVfx.ParrySource(element), point, _contactVfx.ParryScale, element, letter);
             }
+            TrySpawnAreaStain308(target, letter);   // #308 D308-104 (e): range-ㄱ foot stain, one per enemy life
             return result;
         }
 
