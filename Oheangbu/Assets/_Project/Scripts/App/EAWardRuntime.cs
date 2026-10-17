@@ -29,6 +29,37 @@ namespace Oheangbu.App
             if(profile==null || !profile.Valid || vitals==null || wiring==null)throw new ArgumentException("Valid ward owners required");
             this.profile=profile;this.vitals=vitals;this.wiring=wiring;this.clock=clock??(()=>Time.time);
             modifier=IncomingScale;vitals.BindIncomingDamageScale(modifier);
+            vitals.AttackDamaged+=OnAttackDamaged;
+        }
+        // SPEC-SPELL-VFX-OVERHAUL-308 11.43: an elemental hit the ward softened leaves an ink ripple on the membrane where the
+        // attack crossed it. Presentation only - the reduction is IncomingScale's. Two concentric InkStamp308 rings, no fragments, no glow.
+        const float RippleGap=.15f,RippleEyeClear=.45f;
+        float lastRipple=float.NegativeInfinity;
+        void OnAttackDamaged(PlayerHitInfo hit)
+        {
+            if(hit.Kind!=IncomingDamageKind.ElementalRanged&&hit.Kind!=IncomingDamageKind.ElementalMelee)return;
+            if(hit.Attacker==null||visual==null||visualProfile==null)return;
+            float now=clock();
+            if(now<lastRipple+RippleGap||!Contains(wiring.SummonPlayer.position,now))return;
+            if(!RippleContact(Centre,profile.Radius,profile.Height,hit.Attacker.transform.position,out var point,out var normal))return;
+            var cam=Camera.main;
+            if(cam!=null&&(point-cam.transform.position).sqrMagnitude<RippleEyeClear*RippleEyeClear)return;
+            lastRipple=now;
+            var ink=new Color(.075f,.065f,.058f);var facing=Quaternion.LookRotation(normal);
+            InkStamp308.Spawn(InkStamp308.Shape.Ring,point,facing,.3f,ink,visualProfile.Pigment,.45f,.45f,.5f,3f);
+            InkStamp308.Spawn(InkStamp308.Shape.Ring,point,facing,.5f,ink,visualProfile.Pigment,.45f,.45f,.5f,2.2f);
+        }
+        // Where an attack from `attacker` meets the membrane: the ring point toward the attacker, at its chest height kept on
+        // the membrane (.4 m up to Height - .2 m). False when the attacker stands inside the ring (nothing crossed).
+        public static bool RippleContact(Vector3 centre, float radius, float height, Vector3 attacker, out Vector3 point, out Vector3 normal)
+        {
+            point=default;normal=default;
+            var flat=new Vector3(attacker.x-centre.x,0f,attacker.z-centre.z);
+            if(!(radius>0f)||flat.sqrMagnitude<=radius*radius)return false;
+            normal=flat.normalized;
+            float y=Mathf.Clamp(attacker.y+1.1f-centre.y,.4f,Mathf.Max(.4f,height-.2f));
+            point=centre+normal*radius+Vector3.up*y;
+            return true;
         }
         public bool TryPrepare(char letter, out Vector3 centre)
         {
@@ -87,7 +118,7 @@ namespace Oheangbu.App
             visual=null;visualProfile=null;
         }
         public void Clear(){began=float.NegativeInfinity;Letter=default;ClearVisual();}
-        public void Dispose(){if(disposed)return;Clear();disposed=true;vitals.UnbindIncomingDamageScale(modifier);}
+        public void Dispose(){if(disposed)return;Clear();disposed=true;vitals.UnbindIncomingDamageScale(modifier);vitals.AttackDamaged-=OnAttackDamaged;}
         static bool Finite(Vector3 p)=>float.IsFinite(p.x)&&float.IsFinite(p.y)&&float.IsFinite(p.z);
     }
 }

@@ -873,6 +873,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                         + ", activity .2 s " + after + " | shader: no _Age window, lift = _CoreGlow " + shaderOk);
                 }
 
+                // ---- D38 (11.43): the ward ripple sits on the membrane toward an attacker outside the ring; inside = nothing crossed
+                {
+                    var c = new Vector3(10f, 2f, -4f); const float r = 3f, h = 2.2f;
+                    bool outOk = EAWardRuntime.RippleContact(c, r, h, c + new Vector3(8f, 0f, 6f), out var p, out var n);
+                    float flat = new Vector2(p.x - c.x, p.z - c.z).magnitude, up = p.y - c.y;
+                    outOk &= Mathf.Abs(flat - r) < 1e-3f && up >= .4f - 1e-4f && up <= h - .2f + 1e-4f && Vector3.Dot(n, new Vector3(.8f, 0f, .6f)) > .999f;
+                    bool highOk = EAWardRuntime.RippleContact(c, r, h, c + new Vector3(-9f, 6f, 0f), out var ph, out _) && Mathf.Abs(ph.y - c.y - (h - .2f)) < 1e-4f;
+                    bool inOk = !EAWardRuntime.RippleContact(c, r, h, c + new Vector3(1.5f, 0f, 1f), out _, out _);
+                    Check("D38", outOk && highOk && inOk, "outside: on ring " + Deploy308.F(flat) + " m, up " + Deploy308.F(up) + " m ok " + outOk
+                        + " | high attacker clamped " + highOk + " | inside refused " + inOk);
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
