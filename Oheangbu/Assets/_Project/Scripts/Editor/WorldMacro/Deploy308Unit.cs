@@ -1095,7 +1095,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                             if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(id + " world " + ps.name);
                             if (ward)
                             {
-                                if (loops && (ps.name != "Hold" || ps.main.startDelay.constantMax < .8f)) bad.Add(id + " loops " + ps.name);
+                                // 11.55: the rim ink line repeats too, after the circle is drawn
+                                if (loops && !((ps.name == "Hold" && ps.main.startDelay.constantMax >= .8f) || (ps.name == "Rim" && ps.main.startDelay.constantMax >= .5f))) bad.Add(id + " loops " + ps.name);
                                 if (ps.name == "Stain")
                                 {
                                     float at = 0f;
@@ -1115,10 +1116,17 @@ namespace Oheangbu.EditorTools.WorldMacro
                             int segs = 0; foreach (Transform t in aura.transform) if (t.name.StartsWith("Seg")) segs++;
                             if (segs != 7) bad.Add(id + " segments " + segs);
                             if (aura.transform.Find("Ring") != null || aura.transform.Find("Wall") != null) bad.Add(id + " old Ring/Wall");
+                            if (aura.transform.Find("Rim") == null) bad.Add(id + " no Rim");   // 11.55
                         }
-                        else if (aura.transform.Find("Pool") != null || aura.transform.Find("Band") != null) bad.Add(id + " old Pool/Band");
+                        else
+                        {
+                            if (aura.transform.Find("Pool") != null || aura.transform.Find("Band") != null) bad.Add(id + " old Pool/Band");
+                            // 11.55: the ink wound up the great brush
+                            var brush = aura.transform.Find("Brush");
+                            if (brush == null || brush.GetComponent<Oheangbu.App.SpellVFX120.AuraBrushWrap308>() == null) bad.Add(id + " no Brush wrap");
+                        }
                     }
-                    Check("D44", built == 10 && bad.Count == 0, "built " + built + "/10" + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", ward 5 drawn circle + buff 5 foot seal"));
+                    Check("D44", built == 10 && bad.Count == 0, "built " + built + "/10" + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", ward 5 drawn circle + rim + buff 5 foot seal + brush wrap"));
                 }
 
                 // ---- D45 (11.51): the guard membrane - no foot stain living the guard clock (FootStain, own life <= 1.5 s), the
