@@ -534,7 +534,7 @@ namespace Oheangbu.App
                 if(_ink==null||_config==null||!TrySpendSpell(_config.SpellInkCost,cast))
                 {MumBridges.CancelPrepared();_brushAdapter?.NotifyCastFailed();return;}
                 if(!MumBridges.CommitPrepared()){_ink.Restore(before);_brushAdapter?.NotifyCastFailed();return;}
-                _brushAdapter?.NotifyFieldPresentationOwned();AcceptCast308(cast,PlayerPosition(),PlayerForward());return;
+                _brushAdapter?.NotifyFieldPresentationOwned();FieldBirth308(cast.Letter,'\uBB44',PlayerPosition());AcceptCast308(cast,PlayerPosition(),PlayerForward());return;
             }
             if (FieldSpells == null || !FieldSpells.TryPrepare(cast, RowFor(cast.Letter), out _))
             { _brushAdapter?.NotifyCastFailed(); return; }
@@ -543,7 +543,15 @@ namespace Oheangbu.App
             { FieldSpells.CancelPrepared(); _brushAdapter?.NotifyCastFailed(); return; }
             if (!FieldSpells.CommitPrepared()) { _ink.Restore(fieldInkBefore); _brushAdapter?.NotifyCastFailed(); return; }
             _brushAdapter?.NotifyFieldPresentationOwned();
+            FieldBirth308(cast.Letter, '\uAD6D', FieldSpells.BasePoint);
             AcceptCast308(cast, PlayerPosition(), PlayerForward());
+        }
+
+        // SPEC-SPELL-VFX-OVERHAUL-308 11.65: one ink picture where 국 / 뭄 stand up (presentation only; the profile's Burst308Prefab).
+        // Only for the letter the picture was built for, so another letter routed here never plays a borrowed burst.
+        private void FieldBirth308(char letter, char builtFor, Vector3 point)
+        {
+            if (letter == builtFor) (Fx308 as ISpellBurstPresenter308)?.Burst(letter, point);
         }
 
         private void ResolveSummon(SpellCast cast)

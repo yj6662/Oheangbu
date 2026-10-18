@@ -80,6 +80,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "rock": return BuildRock();         // 11.59: the ink rock 막 leaves as cover
                 case "mark": return BuildMark();         // 11.61: the ink seal of the install letters 감 남 맘 삼 암
                 case "buffhit": return BuildBuffHit();   // 11.64: the moment 먼 멈 넘 do their work
+                case "fieldbirth": return BuildFieldBirth();   // 11.65: the moment 국 뭄 stand up
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "retire:summon": return ConnectSummonFx();         // 11.37 (f) D308-107: old summon effects off on the live profiles
                 case "retire:summon:revert": return RevertSummonFx();

@@ -1522,6 +1522,41 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D56", bad.Count == 0 && letters == 3, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | reflect / slow / poise where the buff works, local, one-shot, gone inside 1 s, no glow, seam called"));
                 }
 
+                // ---- D57 (11.65): 국 / 뭄 draw the moment they stand up - the catalogue prefab's Vfx120Effect.Profile (what the
+                // presenter reads) carries PF_V308n_<kind>_<key>, every system local, one-shot, on awake, gone inside 1 s, no glow;
+                // ResolveField calls the seam for both
+                {
+                    const string cat = "Assets/_Project/Art/SpellVFX120";
+                    var bad = new List<string>(); int letters = 0, systems = 0;
+                    string wiring = "Assets/_Project/Scripts/App/CombatLoopWiring.cs";
+                    string src = File.Exists(wiring) ? File.ReadAllText(wiring) : "";
+                    if (!src.Contains("FieldBirth308(cast.Letter,'\\uBB44'") || !src.Contains("FieldBirth308(cast.Letter, '\\uAD6D'") || !src.Contains("ISpellBurstPresenter308"))
+                        bad.Add("ResolveField does not call the burst seam for both");
+                    foreach (var (id, want) in new[] { ("020_AD6D", "PF_V308n_lift_ga"), ("070_BB44", "PF_V308n_bank_ma") })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(cat + "/Profiles/" + id + ".asset");
+                        var fx = AssetDatabase.LoadAssetAtPath<GameObject>(cat + "/Prefabs/" + id + ".prefab");
+                        var eff = fx != null ? fx.GetComponent<Oheangbu.App.SpellVFX120.Vfx120Effect>() : null;
+                        if (p == null || eff == null || eff.Profile != p) { bad.Add(id + " catalogue prefab does not read this profile"); continue; }
+                        if (p.Burst308Prefab == null || p.Burst308Prefab.name != want) { bad.Add(id + " " + (p.Burst308Prefab != null ? p.Burst308Prefab.name : "none") + " not " + want); continue; }
+                        letters++;
+                        foreach (var ps in p.Burst308Prefab.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(want + "/" + ps.name + " not local");
+                            if (main.loop) bad.Add(want + "/" + ps.name + " loops");
+                            if (!main.playOnAwake) bad.Add(want + "/" + ps.name + " not on awake");
+                            float end = main.startLifetime.constantMax + (ps.emission.burstCount > 0 ? ps.emission.GetBurst(0).time : 0f);
+                            if (end > 1f + 1e-3f) bad.Add(want + "/" + ps.name + " ends at " + Deploy308.F(end));
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            foreach (var m in r != null ? r.sharedMaterials : new Material[0])
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                        }
+                    }
+                    Check("D57", bad.Count == 0 && letters == 2, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | lift / bank where the field stands up, local, one-shot, gone inside 1 s, no glow, seam called"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
