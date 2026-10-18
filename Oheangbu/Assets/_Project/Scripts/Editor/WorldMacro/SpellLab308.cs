@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using Oheangbu.App;
 using Oheangbu.App.World;
@@ -35,8 +36,11 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string DummyConfig = "Assets/_Project/Data/Configs/CombatConfig_RangeDummy.asset";
         const string SessionRoot = "WorldMacro_Playtest";
         static readonly string[] KeepRoots = { "Macro_CombatPlayerRig", "Look308", "Macro_WorldLook", "RealmLook308", "Macro_Subtle_Post", "Macro_Sun" };
-        // dummies: distance ahead, angle off the facing (SPEC §2.3)
-        static readonly (float dist, float yaw)[] Dummies = { (6f, 0f), (10f, 0f), (15f, 0f), (10f, -30f), (10f, 30f) };
+        // dummies: distance ahead, angle off the facing (SPEC §2.3). Staggered (2026-10-18): with 6 · 10 · 15 m on one line the
+        // near dummy stood in the line of sight to the far ones and every visibility-checked cast at the 10 m lock did nothing
+        static readonly (float dist, float yaw)[] Dummies = { (6f, -14f), (10f, 0f), (15f, 9f), (10f, -30f), (10f, 30f) };
+        // the counterattack dummy (§2.4, D308-111): throws an elemental ranged shot at the player while armed (strike:on)
+        const string StrikerDummy = "Dummy_10m_R";
         // the lab stands where the main-scene spell runs stood (pq_* hold-teleport 1956,3184 in Hanyang): the realm look and fog
         // pick their colours by world position, and at the origin lab_na1 came out red-brown all over
         static readonly Vector3 Anchor = new Vector3(1956f, 59.8f, 3184f);
@@ -52,6 +56,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c.StartsWith("side:", StringComparison.Ordinal)) return Side(c.Substring(5), false);
                 if (c.StartsWith("top:", StringComparison.Ordinal)) return Side(c.Substring(4), true);
                 if (c == "rec:stop") return Rec.Stop("rec:stop");
+                if (c.StartsWith("lock:", StringComparison.Ordinal)) return Lock(c.Substring(5));
+                if (c.StartsWith("strike:", StringComparison.Ordinal)) return Strike(c.Substring(7));
                 if (c.StartsWith("rec:", StringComparison.Ordinal)) return Rec.Start(c.Substring(4));
                 switch (c)
                 {
@@ -61,7 +67,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "stop": if (!EditorApplication.isPlaying) return "stop: not playing"; EditorApplication.isPlaying = false; return "stop: leaving Play";
                     // re-read Packages/manifest.json without window focus (an unfocused editor does not notice a manifest edit)
                     case "resolve": UnityEditor.PackageManager.Client.Resolve(); return "resolve: requested";
-                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | rec:<name>:<seconds> | rec:stop | stop | resolve";
+                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | rec:<name>:<seconds> | rec:stop | lock:<dummy> | strike:on|off|status | stop | resolve";
                 }
             }
             catch (Exception e)
@@ -175,6 +181,17 @@ namespace Oheangbu.EditorTools.WorldMacro
                 var face = -off; face.y = 0f; go.transform.rotation = Quaternion.LookRotation(face);
                 vitals.Add(go.GetComponent<EnemyVitals>());
             }
+            var strikerGo = dummyRoot.transform.Find(StrikerDummy);
+            if (strikerGo == null) return Fail("no " + StrikerDummy);
+            var playerVitals = new SerializedObject(walker.Wiring).FindProperty("_playerVitals").objectReferenceValue as PlayerVitals;
+            if (playerVitals == null) return Fail("wiring has no _playerVitals");
+            var striker = strikerGo.gameObject.AddComponent<SpellLabStriker308>();
+            var kso = new SerializedObject(striker);
+            kso.FindProperty("_vitals").objectReferenceValue = strikerGo.GetComponent<EnemyVitals>();
+            kso.FindProperty("_player").objectReferenceValue = playerVitals;
+            kso.FindProperty("_aim").objectReferenceValue = player;
+            kso.ApplyModifiedPropertiesWithoutUndo();
+            strikerGo.GetComponent<SpellRangeDummy>().SetCaption("10 m 반격");
 
             // wiring: only the dummies are enemies; the main scene's single-enemy slots pointed into the dropped world
             var wso = new SerializedObject(walker.Wiring);
@@ -209,7 +226,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             return "build ok " + LabScene + " | kept " + kept + " | missing " + (missing.Count == 0 ? "-" : string.Join(",", missing)) +
                    " | dropped " + dropped + " roots | pointed-at (dropped) " + (pointed.Count == 0 ? "-" : string.Join(",", pointed)) +
                    " | walker refs repointed " + repointed + " | " + ea +
-                   " | dummies " + vitals.Count + " wiring enemies " + enemies + " | rig turned " + (-yaw).ToString("F1") +
+                   " | dummies " + vitals.Count + " (striker " + StrikerDummy + ") wiring enemies " + enemies + " | rig turned " + (-yaw).ToString("F1") +
                    " | main hash " + before + " -> " + after + (before == after ? " (unchanged)" : " CHANGED");
         }
 
@@ -457,6 +474,39 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Debug.Log("[SpellLab308] " + line);
                 return line;
             }
+        }
+
+        // lock:<dummy> - lock on to that dummy whatever the camera looks at: the lock picks the candidate nearest the screen
+        // centre, so the candidate list is narrowed to the one dummy for the toggle and given back right after
+        static string Lock(string name)
+        {
+            if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
+            var walker = Object.FindFirstObjectByType<WorldMacroCombatWalker>();
+            var lockOn = walker != null && walker.Motor != null ? walker.Motor.GetComponent<LockOn>() : null;
+            if (lockOn == null) return "lock: no LockOn on the walker motor";
+            var want = Object.FindObjectsByType<EnemyVitals>(FindObjectsSortMode.None).FirstOrDefault(v => v.name == name && v.IsAlive);
+            if (want == null) return "lock: no living " + name;
+            var field = typeof(LockOn).GetField("_candidates", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (field == null) return "lock: LockOn._candidates not found";
+            var saved = new List<EnemyVitals>((List<EnemyVitals>)field.GetValue(lockOn));
+            if (lockOn.IsLocked) lockOn.Toggle();
+            lockOn.SetCandidates(new[] { want });
+            lockOn.Toggle();
+            lockOn.SetCandidates(saved);
+            float d = walker.Body != null ? Vector3.Distance(walker.Body.transform.position, want.transform.position) : -1f;
+            return lockOn.Target == want ? "lock: " + name + " at " + d.ToString("F1") + " m" : "lock FAIL: " + name + " out of range or view";
+        }
+
+        // strike:on | off | status - the counterattack dummy (§2.4)
+        static string Strike(string arg)
+        {
+            if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
+            var s = Object.FindFirstObjectByType<SpellLabStriker308>();
+            if (s == null) return "strike: no striker (rebuild the lab)";
+            if (arg == "on") s.Arm(true); else if (arg == "off") s.Arm(false); else if (arg != "status") return "strike: on | off | status";
+            var pv = Object.FindFirstObjectByType<PlayerVitals>();
+            return "strike " + (s.Armed ? "armed" : "off") + " | " + s.name + " thrown " + s.Thrown + " landed " + s.Landed +
+                   (pv != null ? " | player hp " + pv.Hp01.ToString("F2") : "");
         }
 
         static string Status()

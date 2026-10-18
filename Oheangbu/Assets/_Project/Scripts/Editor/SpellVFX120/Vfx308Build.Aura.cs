@@ -94,6 +94,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Layer(root.transform, new L { Name = "Ring", Mat = pool, World = false, Mode = 1, Rate = 24f, Max = 32, Life = new Vector2(.8f, 1f), Size = new Vector2(.5f, .7f),
                 Shape = ParticleSystemShapeType.Circle, Radius = .55f, Thickness = 0f, ShapeRot = new Vector3(-90f, 0f, 0f), ShapePos = new Vector3(0f, .015f, 0f), Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 6f,
                 Colour = G((0f, C(band, 0f)), (.3f, C(band, .075f)), (.7f, C(band, .06f)), (1f, C(band, 0f))), Grow = Curve(0f, .85f, 1f, 1f) });
+            // 11.55 (D308-111): ink wound up the great brush - a local system laid along GripSocket -> TipSocket by AuraBrushWrap308
+            // (+Z = up the shaft); the looping arc round the shaft and the drift up it draw a rising spiral, black first, the
+            // element's band soaking in toward the tip. No great brush, or the brush not drawn: nothing.
+            var brush = Layer(root.transform, new L { Name = "Brush", Mat = throwInk, World = false, Rate = 20f, Max = 28, Life = new Vector2(.8f, .9f), Size = new Vector2(.06f, .09f),
+                Shape = ParticleSystemShapeType.Circle, Radius = .035f, Thickness = 0f, ArcSpeed = 1.5f, Blend = true, FrameFrom = 0f, FrameTo = 10f,
+                Colour = G((0f, C(ink, 0f)), (.12f, C(ink, .8f)), (.55f, C(band, .6f)), (1f, C(band, 0f))), Grow = Curve(0f, .6f, .2f, 1f, 1f, .8f) });
+            var bv = brush.velocityOverLifetime; bv.enabled = true; bv.space = ParticleSystemSimulationSpace.Local;   // AuraBrushWrap308 sets z = shaft length / life
+            bv.x = new ParticleSystem.MinMaxCurve(0f); bv.y = new ParticleSystem.MinMaxCurve(0f); bv.z = new ParticleSystem.MinMaxCurve(1.2f);
+            brush.gameObject.AddComponent<AuraBrushWrap308>();
             var cam = new GameObject("Cam").transform; cam.SetParent(root.transform, false);
             foreach (var (name, x) in new[] { ("StrokeL", -.6f), ("StrokeR", .6f) })
                 Layer(cam, new L { Name = name, Mat = throwInk, World = false, Mode = 2, Rate = .8f, Max = 3, Life = new Vector2(.7f, .9f), Size = new Vector2(.4f, .5f), RiseY = .6f,
@@ -134,7 +143,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     Colour = G((0f, C(c, .3f)), (.12f, C(c, .85f)), (.6f, C(c, .7f)), (1f, C(c, 0f))), Grow = Curve(0f, .55f, .2f, 1f, 1f, 1.05f) });
                 Arc(new L { Name = "Veil", Mat = wall, World = false, Mode = 2, Burst = 3, Max = 3, Life = new Vector2(1.1f, 1.3f), Size = new Vector2(.66f, .73f), Pivot = new Vector3(0f, .45f, 0f),
                     SpinRandom = false, Blend = true, FrameFrom = 0f, FrameTo = 10f,
-                    Colour = G((0f, C(c, 0f)), (.2f, C(c, .15f)), (.7f, C(c, .11f)), (1f, C(c, 0f))), Grow = Curve(0f, .4f, .25f, 1f, 1f, 1.03f) });
+                    Colour = G((0f, C(c, 0f)), (.2f, C(c, .05f)), (.7f, C(c, .035f)), (1f, C(c, 0f))), Grow = Curve(0f, .4f, .25f, 1f, 1f, 1.03f) });   // 11.55: the face all but clear
                 float life = 3.5f - at, peak = .1f / life, low = (Mathf.Max(.95f, at + .22f) - at) / life;
                 Arc(new L { Name = "Stain", Mat = stain, World = false, Mode = 1, Burst = 4, Max = 4, Life = new Vector2(life, life), Size = new Vector2(.32f, .38f), ShapePos = new Vector3(0f, .005f, 0f),
                     Blend = true, FrameFrom = 3f, FrameTo = 12f,
@@ -142,8 +151,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             var hold = Layer(root.transform, new L { Name = "Hold", Mat = wall, World = false, Mode = 2, Rate = 6f, Max = 8, Life = new Vector2(.9f, 1f), Size = new Vector2(.6f, .73f), Pivot = new Vector3(0f, .45f, 0f),
                 Shape = ParticleSystemShapeType.Circle, Radius = 1f, Thickness = 0f, ShapeRot = new Vector3(-90f, 0f, 0f), SpinRandom = false, Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 8f,
-                Colour = G((0f, C(c, 0f)), (.3f, C(c, .12f)), (.7f, C(c, .09f)), (1f, C(c, 0f))), Grow = Curve(0f, .9f, 1f, 1f) });
+                Colour = G((0f, C(c, 0f)), (.3f, C(c, .035f)), (.7f, C(c, .025f)), (1f, C(c, 0f))), Grow = Curve(0f, .9f, 1f, 1f) });   // 11.55: the face all but clear
             var hm = hold.main; hm.startDelay = 1f;   // once the drawn ring has stood
+            // 11.55 (D308-111): the ward reads by its rim - a dark ink line on the ground along the ring for the life (ink first,
+            // the element's colour under it), while the faces above stay all but clear; the 3 s late fade thins it with the rest
+            Color rim = Color.Lerp(c, ink, .55f);
+            var line = Layer(root.transform, new L { Name = "Rim", Mat = stain, World = false, Mode = 1, Rate = 36f, Max = 48, Life = new Vector2(.9f, 1.1f), Size = new Vector2(.22f, .3f),
+                Shape = ParticleSystemShapeType.Circle, Radius = 1f, Thickness = 0f, ShapeRot = new Vector3(-90f, 0f, 0f), ShapePos = new Vector3(0f, .012f, 0f), Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 6f,
+                Colour = G((0f, C(rim, 0f)), (.25f, C(rim, .55f)), (.7f, C(rim, .45f)), (1f, C(rim, 0f))), Grow = Curve(0f, .9f, 1f, 1f) });
+            var lm = line.main; lm.startDelay = .7f;   // as the drawn segments close
             return root;
         }
 
