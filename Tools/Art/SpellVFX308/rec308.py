@@ -77,6 +77,9 @@ def main():
     times = [r[0] for r in rows]
     aged = [r for r in rows if r[1] >= 0]
     t0 = aged[0][0] - aged[0][1] if aged else times[0]
+    if t0 < times[0] - a.pre:              # an effect left over from the letter before (a buff still alive): take the first one born here
+        fresh = [r for r in aged if r[0] - r[1] >= times[0] - a.pre]
+        t0 = fresh[0][0] - fresh[0][1] if fresh else times[0]
     start, end = max(times[0], t0 - a.pre), min(times[-1], t0 + a.len)
     if end <= start:
         raise SystemExit('empty range: game time %.2f..%.2f, spell start %.2f' % (times[0], times[-1], t0))
