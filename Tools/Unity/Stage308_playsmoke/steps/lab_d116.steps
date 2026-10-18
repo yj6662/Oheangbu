@@ -21,7 +21,8 @@ sleep 11
 ?call SpellLab308 Run rec:stop
 ?call SpellLab308 Run top:lab_d116_nang_end
 ?call SwingProbe308 Run slow:1
-sleep 5?call SwingProbe308 Run reset
+sleep 5
+?call SwingProbe308 Run reset
 ?call SwingProbe308 Run on
 ?call SwingProbe308 Run target:6
 ?call SpellLab308 Run lock:Dummy_10m
@@ -37,7 +38,8 @@ sleep 4
 ?call SpellLab308 Run rec:stop
 ?call SpellLab308 Run top:lab_d116_nang1x_end
 ?call SwingProbe308 Run slow:1
-sleep 5?call SwingProbe308 Run reset
+sleep 5
+?call SwingProbe308 Run reset
 ?call SwingProbe308 Run on
 ?call SwingProbe308 Run target:6
 ?call SpellLab308 Run lock:Dummy_6m_L
@@ -53,7 +55,8 @@ sleep 11
 ?call SpellLab308 Run rec:stop
 ?call SpellLab308 Run top:lab_d116_mong_end
 ?call SwingProbe308 Run slow:1
-sleep 5?call SwingProbe308 Run reset
+sleep 5
+?call SwingProbe308 Run reset
 ?call SwingProbe308 Run on
 ?call SwingProbe308 Run target:6
 ?call SpellLab308 Run lock:Dummy_6m_L
@@ -69,7 +72,8 @@ sleep 8
 ?call SpellLab308 Run rec:stop
 ?call SpellLab308 Run top:lab_d116_mong1x_end
 ?call SwingProbe308 Run slow:1
-sleep 5?call SwingProbe308 Run report
+sleep 5
+?call SwingProbe308 Run report
 mem
 finally:
 ?call SpellLab308 Run strike:off
