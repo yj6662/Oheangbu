@@ -132,6 +132,8 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject CompanionShot308Prefab;
         [Tooltip("11.41: sword-form letters - a one-shot particle prefab put down per swing (Hit / Miss cue with a point). Empty = old behaviour.")]
         public GameObject SwordStrike308Prefab;
+        [Tooltip("11.56: second-strike letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown from the split point to each derived target. Empty = old behaviour.")]
+        public GameObject Derived308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

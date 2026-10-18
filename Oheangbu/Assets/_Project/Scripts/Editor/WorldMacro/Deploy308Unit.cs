@@ -1242,6 +1242,25 @@ namespace Oheangbu.EditorTools.WorldMacro
                         + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | no old hit body, 막 one stain, no Linger, player hit silent, ward/buff faint after 3 s"));
                 }
 
+                // ---- D48 (11.56): the second-strike letters 간 낫 속 안 carry a derived shot - an effect with a Bolt300 profile, no
+                // larger than the parent body (the parent's Bolt300Scale; 속's parent is a volley, so 1)
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var bad = new List<string>(); var sizes = new List<string>();
+                    foreach (var id in new[] { "003_AC04", "029_B0AB", "086_C18D", "099_C548" })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/" + id + "_308b.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        if (p.Derived308Prefab == null) { bad.Add(id + " no derived"); continue; }
+                        var fx = p.Derived308Prefab.GetComponent<Oheangbu.App.SpellVFX120.Vfx120Effect>();
+                        if (fx == null || fx.Profile == null || fx.Profile.Bolt300Prefab == null) { bad.Add(id + " derived " + p.Derived308Prefab.name + " no bolt effect"); continue; }
+                        float parent = p.Bolt300Prefab != null ? p.Bolt300Scale : 1f;
+                        if (!(fx.Profile.Bolt300Scale > 0f) || fx.Profile.Bolt300Scale > parent + 1e-4f) bad.Add(id + " derived " + Deploy308.F(fx.Profile.Bolt300Scale) + " > parent " + Deploy308.F(parent));
+                        sizes.Add(id.Substring(4) + " " + Deploy308.F(fx.Profile.Bolt300Scale) + "/" + Deploy308.F(parent));
+                    }
+                    Check("D48", bad.Count == 0, string.Join(", ", sizes) + (bad.Count > 0 ? " | " + string.Join("; ", bad) : " | 4 derived shots, each under its parent"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

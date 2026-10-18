@@ -97,12 +97,14 @@ namespace Oheangbu.App.SpellVFX120
             int id = ++_next; if (id == 0) id = ++_next;
             _live.Add(id, live);
             NoteCueBody308(id, live);
+            NoteDerived308(id, live);
             return new SpellFxHandle(id);
         }
 
         public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args)
         {
             if (!handle.Shown) return;
+            Derived308(handle.Id, cue, args);   // 11.56: derived shots fly from here; the cue still goes on
             // 11.41: companion shots / sword swings live in their own side table, past the 3 s cue life of the wrap
             if (CueBody308(handle.Id, cue, args)) return;
             if (!_live.TryGetValue(handle.Id, out var live) || live.Instance == null || live.Fx == null) return;
@@ -132,6 +134,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (!handle.Shown) return;
             ForgetCueBody308(handle.Id);
+            ForgetDerived308(handle.Id);
             if (!_live.TryGetValue(handle.Id, out var live)) return;
             _live.Remove(handle.Id);
             Release(live);
@@ -143,6 +146,7 @@ namespace Oheangbu.App.SpellVFX120
             foreach (var live in _live.Values) Release(live);
             _live.Clear();
             ClearCueBodies308();
+            ClearDerived308();
             foreach (var stack in _spares.Values)
                 while (stack.Count > 0) Destroy(stack.Pop());
             _spares.Clear();

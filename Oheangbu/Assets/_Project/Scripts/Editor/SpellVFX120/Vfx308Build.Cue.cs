@@ -118,13 +118,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         // the companion shot (11.41): a copy of the element's built bolt effect and profile at .6 of its scale, flown once per
         // Secondary cue by the presenter. Null when the element bolt is not built yet.
-        static GameObject ShotPair(string id, Spell spell)
+        static GameObject ShotPair(string id, Spell spell, string suffix = "_308h_shot", float scale = .6f)   // 11.56: the derived shots reuse it
         {
             if (!File.Exists(ProfilePath(spell)) || !File.Exists(EffectPath(spell))) return null;
-            string profilePath = Root2 + "/Profiles/" + id + "_308h_shot.asset", effectPath = Root2 + "/Effects/" + id + "_308h_shot.prefab";
+            string profilePath = Root2 + "/Profiles/" + id + suffix + ".asset", effectPath = Root2 + "/Effects/" + id + suffix + ".prefab";
             if (!File.Exists(profilePath) && !AssetDatabase.CopyAsset(ProfilePath(spell), profilePath)) throw new Exception("copy failed " + ProfilePath(spell));
             var shot = Load<Vfx120Profile>(profilePath);
-            shot.Bolt300Scale = spell.Scale * .6f; shot.Duration = 3f;
+            shot.Bolt300Scale = spell.Scale * scale; shot.Duration = 3f;
             EditorUtility.SetDirty(shot); Touched.Add(shot);
             if (!File.Exists(effectPath) && !AssetDatabase.CopyAsset(EffectPath(spell), effectPath)) throw new Exception("copy failed " + EffectPath(spell));
             var contents = PrefabUtility.LoadPrefabContents(effectPath);
