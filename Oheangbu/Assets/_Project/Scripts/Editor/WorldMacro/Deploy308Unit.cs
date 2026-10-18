@@ -1337,6 +1337,41 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D50", bad.Count == 0 && systems > 0, (burst != null ? burst.name + " " + systems + " systems" : "no burst") + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | one shot, local, speed 0, life <= 1 s, no glow"));
                 }
 
+                // ---- D51 (11.59): 막's rooted rock carries an ink rock body - a Vfx308ZoneBody (faint after 3 s), every system local and
+                // all but drifting dust standing still (start speed <= .12), nothing above 1.5 m at 1 m radius, no material glows; the
+                // presenter's floor table takes Role Ward
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var bad = new List<string>(); int systems = 0; float top = 0f;
+                    var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/050_B9C9_308b.asset");
+                    var rock = p != null ? p.Zone308Prefab : null;
+                    if (p == null) bad.Add("050_B9C9 not built");
+                    else if (rock == null) bad.Add("막 no rock body");
+                    else
+                    {
+                        var body = rock.GetComponent<Oheangbu.App.SpellVFX120.Vfx308ZoneBody>();
+                        if (body == null) bad.Add("rock without Vfx308ZoneBody");
+                        else if (Mathf.Abs(body.LateAfter - 3f) > 1e-3f) bad.Add("late after " + Deploy308.F(body.LateAfter));
+                        foreach (var ps in rock.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(ps.name + " not local");
+                            if (main.startSpeed.constantMax > .12f) bad.Add(ps.name + " speed " + Deploy308.F(main.startSpeed.constantMax));
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            float h = ps.transform.localPosition.y + main.startSize.constantMax * (r != null && r.renderMode == ParticleSystemRenderMode.VerticalBillboard ? .5f + r.pivot.y : 0f);
+                            top = Mathf.Max(top, h);
+                        }
+                        if (top > 1.5f) bad.Add("stands " + Deploy308.F(top) + " m (1.5)");
+                        foreach (var r in rock.GetComponentsInChildren<Renderer>(true))
+                            foreach (var m in r.sharedMaterials)
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                    }
+                    string zoneSource = "Assets/_Project/Scripts/App/SpellVFX120/Vfx120SpellPresenter308.Zone308.cs";
+                    if (!File.Exists(zoneSource) || !File.ReadAllText(zoneSource).Contains("request.Role == SpellFxRole.Ward")) bad.Add("floor table does not take Role Ward");
+                    Check("D51", bad.Count == 0 && systems > 0, (rock != null ? rock.name + " " + systems + " systems, top " + Deploy308.F(top) : "no rock") + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | ink rock, local, still, faint after 3 s, no glow, Ward accepted"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
