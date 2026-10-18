@@ -128,8 +128,10 @@ namespace Oheangbu.App.SpellVFX120
                 case SpellFxCue.TargetDefeated: live.Fx.Signal(Vfx120Effect.Cue.TargetDefeated, args.Target); break;
                 case SpellFxCue.Break: live.Fx.Signal(Vfx120Effect.Cue.Break); break;
                 case SpellFxCue.Expire:
-                case SpellFxCue.Consume:
-                case SpellFxCue.Return: live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
+                case SpellFxCue.Consume: live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
+                case SpellFxCue.Return:
+                    live.Fx.SetCasterReturn308(args.Target, args.At);   // 11.60 (앙): no-op unless the profile flies back to the caster
+                    live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
                 case SpellFxCue.Split: if (args.Targets != null) live.Fx.SetSecondaryTargets(args.Target, args.Targets); break;
             }
         }

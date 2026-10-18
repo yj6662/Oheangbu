@@ -68,7 +68,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static void TuneField(Vfx120Profile profile, string key)
         {
             profile.Bolt300FollowTarget = true; profile.Bolt300FollowHeight = 1.1f;
-            profile.Bolt300Pierce = false; profile.Bolt300Return = false;
+            profile.Bolt300Pierce = false; profile.Bolt300Return = false; profile.Bolt300ReturnToCaster = false;
             profile.Bolt300Curve = 0f; profile.Bolt300Scale = 1f; profile.Bolt300NearContactMeters = 0f;
             profile.Aura308Prefab = null; profile.Duration = 3f;
             switch (key)

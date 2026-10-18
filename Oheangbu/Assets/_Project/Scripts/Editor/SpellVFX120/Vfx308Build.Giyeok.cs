@@ -52,7 +52,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 if (!File.Exists(GiyeokProfilePath(g.Id)) && !AssetDatabase.CopyAsset(srcProfile, GiyeokProfilePath(g.Id))) throw new Exception("copy failed " + srcProfile);
                 var profile = Load<Vfx120Profile>(GiyeokProfilePath(g.Id));
                 profile.Bolt300Prefab = bolt; profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
-                profile.Bolt300Pierce = g.Key == "sa"; profile.Bolt300Return = g.Key == "a";
+                profile.Bolt300Pierce = g.Key == "sa"; profile.Bolt300Return = g.Key == "a"; profile.Bolt300ReturnToCaster = false;
                 profile.Bolt300FollowTarget = g.Key is "ga" or "na"; profile.Bolt300FollowHeight = g.Key == "na" ? 1f : 0f;
                 profile.Bolt300Scale = 1f; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = BodySoakSeconds; profile.Bolt300NearContactMeters = NearContactMeters; profile.Bolt300TravelScale = TravelScale;
                 profile.AreaRemake = Vfx120AreaRemake.None;

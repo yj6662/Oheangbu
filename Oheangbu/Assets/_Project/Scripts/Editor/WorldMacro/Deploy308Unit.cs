@@ -1372,6 +1372,31 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D51", bad.Count == 0 && systems > 0, (rock != null ? rock.name + " " + systems + " systems, top " + Deploy308.F(top) : "no rock") + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | ink rock, local, still, faint after 3 s, no glow, Ward accepted"));
                 }
 
+                // ---- D52 (11.60): only 앙's copy flies its ink back to the caster; the presenter hands the Return cue to it and the body
+                // hides itself before it reaches the eye
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
+                    var bad = new List<string>(); int seen = 0, flagged = 0;
+                    var ang = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/102_C559_308b.asset");
+                    if (ang == null) bad.Add("102_C559 not built");
+                    else if (!ang.Bolt300ReturnToCaster) bad.Add("앙 does not fly back");
+                    else if (ang.Bolt300Prefab == null) bad.Add("앙 has no flight body");
+                    foreach (var guid in AssetDatabase.FindAssets("t:Vfx120Profile", new[] { v2 }))
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(AssetDatabase.GUIDToAssetPath(guid));
+                        if (p == null) continue;
+                        seen++;
+                        if (!p.Bolt300ReturnToCaster) continue;
+                        flagged++;
+                        if (p != ang) bad.Add(p.name + " flies back too");
+                        if (p.Bolt300Return || p.Bolt300Pierce) bad.Add(p.name + " mixes return modes");
+                    }
+                    string presenter = "Assets/_Project/Scripts/App/SpellVFX120/Vfx120SpellPresenter308.cs", bolt = "Assets/_Project/Scripts/App/SpellVFX120/Vfx120Effect.Bolt300.cs";
+                    if (!File.Exists(presenter) || !File.ReadAllText(presenter).Contains("SetCasterReturn308(args.Target, args.At)")) bad.Add("presenter does not hand Return to the body");
+                    if (!File.Exists(bolt) || !File.ReadAllText(bolt).Contains("CasterHideMeters")) bad.Add("body does not hide near the eye");
+                    Check("D52", bad.Count == 0 && flagged == 1, seen + " profiles, " + flagged + " fly back" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | 앙 only, Return cue wired, hidden near the eye"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

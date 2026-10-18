@@ -159,6 +159,8 @@ namespace Oheangbu.App.SpellVFX120
         public float Bolt300FollowHeight;
         [Tooltip("11.45 (악): the body stays after the first hit and flies the return leg given by SetReturn308 (bounce point, then back into the target).")]
         public bool Bolt300Return;
+        [Tooltip("11.60 (앙): the body stays after the hit and flies back to the caster given by SetCasterReturn308 (a small rebound, then bowed in; gone 1.3 m from the eye).")]
+        public bool Bolt300ReturnToCaster;
     }
 
 }

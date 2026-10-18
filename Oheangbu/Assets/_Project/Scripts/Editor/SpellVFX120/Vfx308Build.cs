@@ -1016,6 +1016,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 string src = "Assets/_Project/Art/SpellVFX120/Profiles/" + a.Effect + ".asset";
                 if (!File.Exists(AttackProfilePath(a)) && !AssetDatabase.CopyAsset(src, AttackProfilePath(a))) throw new Exception("copy failed " + src);
                 var profile = Load<Vfx120Profile>(AttackProfilePath(a));
+                profile.Bolt300ReturnToCaster = V2 && a.Shape == Form.Single && a.Glyph == "앙";   // 11.60: the cycle shot's ink flies back to the caster
                 if (a.Shape == Form.Single)
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
