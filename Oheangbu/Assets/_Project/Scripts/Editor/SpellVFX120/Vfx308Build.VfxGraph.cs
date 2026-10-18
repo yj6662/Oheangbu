@@ -291,7 +291,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var (v, so) = RoleHost(root, e, "BankVfx", NaBankGraph, "band", new Vector2(8f, 8f));
             if (v == null) return false;
             float life = 1.8f * a.Slow;
-            SetF(so, "Spawn Rate", 95f * a.Dense);   // ~28 in the emit window (the lab composite's count)
+            SetF(so, "Spawn Rate", 95f * BankWiden * a.Dense);   // ~28 in the emit window (the lab composite's count); 11.69 x the longer band
             SetV3(so, "Initial Velocity_vector", Vector3.zero);
             SetF(so, "Initial Velocity Divergence", 0f);
             SetF(so, "Drag", 0f);
@@ -302,8 +302,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetF(so, "LifeTime", life);
             SetF(so, "Soft Particle Fade Distance", .3f);
             SetF(so, "Flipbook Framerate", (BankCels - 1f) / life);   // never reaches the next variant's first cel
-            SetV3(so, "Bounds_center", new Vector3(0f, 2.6f, 6f));
-            SetV3(so, "Bounds_size", new Vector3(10.5f, 5.8f, 10.5f));
+            SetV3(so, "Bounds_center", new Vector3(0f, 2.6f, BankCentre));   // 11.69 the moved, wider ring
+            SetV3(so, "Bounds_size", new Vector3(12f, 5.8f, 12f));
             so.ApplyModifiedPropertiesWithoutUndo();
             v.GetComponent<VFXRenderer>().sortingOrder = 1;
             return true;
@@ -329,7 +329,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 var (v, so) = RoleHost(root, e, arc.name, arc.path, "band", new Vector2(8f, 8f));
                 if (v == null) continue;
                 float life = 1.8f * a.Slow;
-                SetF(so, "Spawn Rate", 19f * a.Dense);
+                SetF(so, "Spawn Rate", 19f * BankWiden * a.Dense);   // 11.69: the 17th's density along the longer band
                 SetV3(so, "Initial Velocity_vector", Vector3.zero);
                 SetF(so, "Initial Velocity Divergence", 0f);
                 SetF(so, "Drag", 0f);
@@ -340,8 +340,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 SetF(so, "LifeTime", life);
                 SetF(so, "Soft Particle Fade Distance", .3f);
                 SetF(so, "Flipbook Framerate", (BankCels - 1f) / life);
-                SetV3(so, "Bounds_center", new Vector3(0f, 2.6f, 6f));
-                SetV3(so, "Bounds_size", new Vector3(10.5f, 5.8f, 10.5f));
+                SetV3(so, "Bounds_center", new Vector3(0f, 2.6f, BankCentre));   // 11.69 the moved, wider ring
+                SetV3(so, "Bounds_size", new Vector3(12f, 5.8f, 12f));
                 so.ApplyModifiedPropertiesWithoutUndo();
                 v.GetComponent<VFXRenderer>().sortingOrder = 1;
                 SeamTiming(v, arc.lead);
@@ -380,7 +380,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // 11.37 (g) D308-104 size caps (TEST, 시안 대기): the ring band is .32 r but never wider than 1.0 m, the stain / mark
         // radius never past r + 1.8 m. For the non-attack builder rows (② graph host: Band Half Width / Stain Size per r) -
         // those rows are not built yet, so nothing calls these but deploy308-unit D35. Paths take no mark; the fan keeps its
-        // judgment 40 deg x 10 m. The frozen 노 ring (3.1 x .32 = .99, mark 4.87 <= 4.89) is already inside both.
+        // judgment 40 deg x 10 m. The 노 ring (11.69: r 3.7, band 1.0 = cap, stain mark 5.5 = r + 1.8) sits on both caps.
         public const float AreaBandRelative308 = .32f, AreaBandCap308 = 1f, AreaMarkMargin308 = 1.8f;
         public static float AreaBand308(float r) => Mathf.Min(AreaBandRelative308 * r, AreaBandCap308);
         public static float AreaMark308(float r, float want) => Mathf.Min(want, r + AreaMarkMargin308);
@@ -403,12 +403,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
             SetF(so, "Drag", 0f);
             SetV3(so, "Global Force_vector", Vector3.zero);
             SetV2(so, "Angle Min/Max", new Vector2(-18f, 18f));
-            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, 7.5f), new Keyframe(.12f, 10.8f), new Keyframe(1f, 10.8f)));
+            // 11.69: grown with the moved ring, but the mark stays inside r + 1.8 m (D308-104: 4.87 m x 1.13 = 5.5 m)
+            float stain = 10.8f * Mathf.Min(BankWiden, AreaMark308(BankRadius, 4.87f * BankWiden) / 4.87f);
+            SetCurve(so, "Size Over Life", new AnimationCurve(new Keyframe(0f, stain * 7.5f / 10.8f), new Keyframe(.12f, stain), new Keyframe(1f, stain)));
             SetGrad(so, "Color Over Life", FadeGrad(Color.white, Color.white, .06f, .75f, .12f));
             SetF(so, "LifeTime", life);
             SetF(so, "Flipbook Framerate", 0f);
-            SetV3(so, "Bounds_center", new Vector3(0f, .2f, 6f));
-            SetV3(so, "Bounds_size", new Vector3(12f, 1f, 12f));
+            SetV3(so, "Bounds_center", new Vector3(0f, .2f, BankCentre));
+            SetV3(so, "Bounds_size", new Vector3(13.5f, 1f, 13.5f));
             so.ApplyModifiedPropertiesWithoutUndo();
             v.GetComponent<VFXRenderer>().sortingOrder = -1;
             SeamTiming(v, -.12f);   // fire18: spreads in with the near arc, after the ember lands

@@ -819,8 +819,9 @@ namespace Oheangbu.EditorTools.WorldMacro
 
                 // ---- D35 (D308-104 g, 11.37 8): the builder size caps - band = min(.32 r, 1.0 m), mark radius <= r + 1.8 m.
                 // The mock's mark / r ratios (size_basis: 고 1.556, 곡 1.583, 몽 1.615) give the wanted mark; 노 ring stays as frozen.
+                // 11.69 (D308-113 picture = judgment): the 노 ring moved to r 3.7 - band 1.0 (cap), mark 5.81 capped to 5.5 (the stain is sized by it).
                 {
-                    var rows = new[] { ("go", 2.5f, 1.556f, .80f, 3.89f), ("gok", 3.5f, 1.583f, 1f, 5.3f), ("mong", 6f, 1.615f, 1f, 7.8f), ("no", 3.09f, 1.576f, .989f, 4.87f) };
+                    var rows = new[] { ("go", 2.5f, 1.556f, .80f, 3.89f), ("gok", 3.5f, 1.583f, 1f, 5.3f), ("mong", 6f, 1.615f, 1f, 7.8f), ("no", 3.09f, 1.576f, .989f, 4.87f), ("no69", 3.7f, 1.571f, 1f, 5.5f) };
                     bool capOk = true; var parts = new List<string>();
                     foreach (var (key, r, ratio, wantBand, wantMark) in rows)
                     {

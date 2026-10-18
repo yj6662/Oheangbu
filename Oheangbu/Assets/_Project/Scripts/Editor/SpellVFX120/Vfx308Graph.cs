@@ -322,21 +322,25 @@ namespace Oheangbu.EditorTools.SpellVFX120
         const string NaStainGraph = "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_stain.vfx";
         // the quad the lab composite judged: 2.6 m x 3.85 m, standing on the cel's root line 1.03 of the cel height from the top
         const float BankCels = 16f, BankAspect = 2.6f / 3.85f, BankPivot = .5f - 1.03f;
+        // 11.69 D308-113 (the cone picture = the judgment, CombatConfig +-40 deg x 10 m): the ring was centre 6 m, r 3.1 - reach 9.1 m
+        // but only asin(3.1 / 6) = 31 deg wide. Centre 6.3, r 3.7: reach 10.0 m, asin(3.7 / 6.3) = 36 deg (both inside the 10 %
+        // the rubric allows); the band stays 1.0 m wide (D308-104 cap: thickness 1 / 3.7)
+        internal const float BankCentre = 6.3f, BankRadius = 3.7f, BankThickness = .27f, BankWiden = BankRadius / 3.1f;
 
         // ⓕ the fire bank: born on a band r 2.1-3.1 m round the target, facing the camera plane, standing on its root, one of the
         // 4 variants for its whole life (played from its first cel - the sheet's births rise out of the ground), mirrored half
         // the time, sized .65-1.35. "가까운 쪽 낮게" (near side lower) is TBD: uniform scale this round
-        static string GraphBuildBank() => GraphBuildAt(NaBankGraph, 160u, (init, update, output) => BankRecipe(init, output, new Vector3(90f, 0f, 0f), 0f, 7u, 3u));
+        static string GraphBuildBank() => GraphBuildAt(NaBankGraph, 190u, (init, update, output) => BankRecipe(init, output, new Vector3(90f, 0f, 0f), 0f, 7u, 3u));
         // arc 0 = the full circle (the sample's default arc); else the band covers local angles 0..arc, turned by angles.z
         static void BankRecipe(object init, object output, Vector3 angles, float arc, uint flipSeed, uint pickSeed)
         {
             var ring = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "ThicknessRelative"));
             Space(ring, "arcCircle", "Local");
-            PutPath(ring, "arcCircle", "circle.transform.position", new Vector3(0f, .05f, 6f));
+            PutPath(ring, "arcCircle", "circle.transform.position", new Vector3(0f, .05f, BankCentre));
             PutPath(ring, "arcCircle", "circle.transform.angles", angles);
-            PutPath(ring, "arcCircle", "circle.radius", 3.1f);
+            PutPath(ring, "arcCircle", "circle.radius", BankRadius);
             if (arc > 0f) PutPath(ring, "arcCircle", "arc", arc);
-            Put(ring, "Thickness", .32f);   // band 2.1-3.1 m (1/3.1 as a folded constant does not read back bit-equal)
+            Put(ring, "Thickness", BankThickness);   // band 2.7-3.7 m (1/3.7 as a folded constant does not read back bit-equal)
             var pivot = Block(init, "SetAttribute", ("attribute", "pivot"), ("Composition", "Overwrite"), ("Random", "Off"));
             PutOnly(pivot, new Vector3(0f, BankPivot, 0f));
             // one random lerp over all three channels keeps the quad's aspect; the mirror after it multiplies x by -1 or 1
@@ -386,11 +390,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             ("BankVfx_farL", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_farL.vfx", 72f, 31u, 37u, -.28f),
             ("BankVfx_farR", "Assets/_Project/Art/SpellVFX308/V2/Graphs/VFX_V308_na_bank_farR.vfx", 0f, 41u, 43u, -.28f),
         };
+        // 11.69: capacity x 1.19 with the rate (BankWiden), so the longer band keeps the 17th's headroom
         static string GraphBuildBanks()
         {
             var sb = new StringBuilder();
             foreach (var b in BankArcs)
-                sb.Append(GraphBuildAt(b.path, 40u, (init, update, output) => BankRecipe(init, output, new Vector3(90f, 0f, b.phi), 1.2566f, b.flipSeed, b.pickSeed))).Append('\n');
+                sb.Append(GraphBuildAt(b.path, 48u, (init, update, output) => BankRecipe(init, output, new Vector3(90f, 0f, b.phi), 1.2566f, b.flipSeed, b.pickSeed))).Append('\n');
             return sb.ToString();
         }
 
@@ -410,7 +415,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var at = Block(init, "PositionShape", ("shape", "Circle"), ("compositionPosition", "Overwrite"), ("positionMode", "Volume"));
             Space(at, "arcCircle", "Local");
-            PutPath(at, "arcCircle", "circle.transform.position", new Vector3(0f, .03f, 6f));   // just clear of z-fighting, under the pool's .04
+            PutPath(at, "arcCircle", "circle.transform.position", new Vector3(0f, .03f, BankCentre));   // just clear of z-fighting, under the pool's .04; 11.69 under the moved bank
             PutPath(at, "arcCircle", "circle.transform.angles", new Vector3(90f, 0f, 0f));
             PutPath(at, "arcCircle", "circle.radius", .01f);
             var first = Block(init, "SetAttribute", ("attribute", "texIndex"), ("Composition", "Overwrite"), ("Random", "Off"));

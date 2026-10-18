@@ -879,8 +879,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (ConeSmokeGraph(root.transform, e, a)) return root;
             var soot = e.Key == "na" ? Bleed("M_V308b_na_soot_wisp", "soot_wisp", C(e.Ink, .85f), .3f, .92f) : e.LickSoot;
             Layer(root.transform, new L { Name = "Soot", Mat = soot, Mode = 3, Rate = 42f * a.Dense, Max = Mathf.CeilToInt(18 * a.Dense), Life = new Vector2(1.0f, 1.4f) * a.Slow, Size = new Vector2(1.6f, 2.3f) * a.Big,
-                Speed = new Vector2(7f, 10f), Drag = 7f, DragLinear = true, SpinRandom = false, Blend = true, RiseY = .9f,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, ShapeScale = FanFlat, ShapeRot = FanTip, FrameFrom = 0f, FrameTo = 6f,
+                // 11.69 D308-113 (the picture = the judgment +-40 deg x 10 m): reach v^2 / 2 drag 5.8 - 10.3 m (was 3.5 - 7), cone 40 (was 30)
+                Speed = new Vector2(9f, 12f), Drag = 7f, DragLinear = true, SpinRandom = false, Blend = true, RiseY = .9f,
+                Shape = ParticleSystemShapeType.Cone, Angle = 40f, ShapeScale = FanFlat, ShapeRot = FanTip, FrameFrom = 0f, FrameTo = 6f,
                 Colour = G((0f, C(Color.Lerp(e.Wash, e.Dark, .6f), 0f)), (.05f, C(Color.Lerp(e.Wash, e.Dark, .6f), .9f)), (.4f, C(Color.Lerp(e.Wash, e.Dark, .7f), .7f)), (1f, C(e.Dark, 0f))),
                 Grow = Curve(0f, .6f, .4f, 1f, 1f, 1.3f) });   // pq_smoke: 2.6 - 3.6 m swelling to ~5 m read as broad see-through fans - the wisps the user pointed at were ~2 m
             return root;
