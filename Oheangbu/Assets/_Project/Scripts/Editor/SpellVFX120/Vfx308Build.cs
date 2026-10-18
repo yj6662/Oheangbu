@@ -611,7 +611,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Size = new Vector2(1.1f, 1.1f), NoShape = true, Blend = true, FrameFrom = 11f, FrameTo = 0f,
                 Colour = G((0f, C(SwingInkColour, 0f)), (.3f, C(SwingInkColour, 1f)), (1f, C(SwingInkColour, .7f))), Grow = Curve(0f, 1.25f, 1f, .5f) });
             // D308-109 audit (rule: no flying droplets, single hits leave KTP only): the deploy drops and the residue pool are gone.
-            // Without a Residue child the runtime's DropResidue308 does nothing; FinalK's Linger finds no residue either.
+            // Without a Residue child the runtime's DropResidue308 does nothing; FinalK adds no Linger pool since 11.54.
             foreach (var t in deploy.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
         }
 
@@ -1022,6 +1022,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
                     // other ones so they are not built beside the new body (BodyMesh must stay non-null)
                     profile.BodyMesh = e.Bit; profile.NativeBodyPrefab = null;
+                    // 11.54 (D308-110): the old catalogue hit body is not built beside the ink hit; 막's Original_2_3 pattern is off and
+                    // one foot stain marks the hit instead (TEST: 1.6 m, alpha .12, 1.5 s)
+                    profile.NativeImpactPrefab = null;
+                    bool stain = V2 && FinalOf(a.Glyph) == FinalK;
+                    if (stain) profile.NativeFieldPrefab = null;
+                    profile.AreaStainPrefab = stain ? StainBody(e, stains) : null;
+                    if (stain) { profile.AreaStainDiameter = 1.6f; profile.AreaStainAlpha = .12f; profile.AreaStainSeconds = 1.5f; }
                 }
                 else
                 {
@@ -1037,7 +1044,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaKeepShape308 = a.Shape == Form.Cone;   /* 11.29: the fan seam keeps this body's shape and sizes */ profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f; profile.Bolt300Prefab = null;   // D308-84 7th pass: not a fence
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
-                    profile.NativeCastPrefab = null;
+                    profile.NativeCastPrefab = null; profile.NativeImpactPrefab = null;   // 11.54: no old catalogue hit body
                     // the per-hit contact seam: the game scales the contact by KtpContactProfile.ParryScale (.22) x this
                     profile.AreaStainPrefab = V2 && FinalOf(a.Glyph) == FinalK ? StainBody(e, stains) : null;   // 11.37 (e): one stain per struck enemy in place of the per-hit pool
                     profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f; profile.KtpContactBrightness = 1f;   // ink, not light (census: 3.5 copied from the old seal)
@@ -1187,6 +1194,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;
                 profile.NativeCastPrefab = null;   // 11.26 (D308-87): no old KTP cast beside the ink body
+                profile.NativeImpactPrefab = null;   // 11.54: nor the old catalogue hit body
                 profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + s.Effect + ".prefab";
@@ -1308,14 +1316,26 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             foreach (var g in Guards) { var gp = File.Exists(GuardProfilePath(g.Id)) ? Load<Vfx120Profile>(GuardProfilePath(g.Id)) : null; if (gp != null) mine.Add(gp); }   // 11.22: the guard contact
             ktp.SpellProfiles = mine.Concat(ktp.SpellProfiles.Where(x => x != null && !mine.Contains(x))).ToArray();
+            // 11.54 (D308-110 "the rest is rebuilt in ink"): a contact with no emphasis (an EA spell, a sword cut) gets the
+            // element's ink hit instead of the old KTP pattern seal
+            var inks = new List<KtpContactProfile.Entry>();
+            foreach (var (key, element) in new[] { ("ga", Oheangbu.Core.Domain.Element.Wood), ("na", Oheangbu.Core.Domain.Element.Fire), ("ma", Oheangbu.Core.Domain.Element.Earth),
+                                                   ("sa", Oheangbu.Core.Domain.Element.Metal), ("a", Oheangbu.Core.Domain.Element.Water) })
+            {
+                var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(key));
+                if (hit != null) inks.Add(new KtpContactProfile.Entry { Element = element, Source = hit });
+            }
+            ktp.InkHits = inks.ToArray();
             EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
-            return "hit contacts: " + (mine.Count - singles) + " range + " + singles + " single profiles put first in KTP_ContactProfile.SpellProfiles";
+            return "hit contacts: " + (mine.Count - singles) + " range + " + singles + " single profiles put first in KTP_ContactProfile.SpellProfiles, " + inks.Count + " ink hits";
         }
 
         static string UnregisterContacts()
         {
-            if (!File.Exists(KtpRecord)) return "hit contacts: nothing recorded";
             var ktp = Load<KtpContactProfile>(KtpProfile);
+            ktp.InkHits = Array.Empty<KtpContactProfile.Entry>();   // 11.54: the ink hits go with the connection
+            EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
+            if (!File.Exists(KtpRecord)) return "hit contacts: nothing recorded (ink hits cleared)";
             ktp.SpellProfiles = JsonUtility.FromJson<Paths>(File.ReadAllText(KtpRecord)).paths.Select(x => AssetDatabase.LoadAssetAtPath<Vfx120Profile>(x)).ToArray();
             EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
             File.Delete(KtpRecord);

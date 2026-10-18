@@ -85,6 +85,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 }
                 else { profile.Bolt300Prefab = null; profile.Aura308Prefab = aura; }
                 if (g.Kind == "buff") profile.Aura308FadeSeconds = .85f;   // 11.50: the dry rim plays as the fade starts
+                profile.Aura308Lasting = g.Kind == "tree"; profile.Aura308LateAfter = 0f; profile.Aura308LateAlpha = 1f;
+                if (g.Kind == "tree") { profile.Duration = 20f; profile.Aura308FadeSeconds = 1f; }   // 11.54: the tree's 20 s drawn in ink (TEST)
                 // 11.41: the companion's shots fly a smaller copy of the element bolt; the sword form's swings lay a slash at the struck point
                 if (g.Kind == "companion") profile.CompanionShot308Prefab = ShotPair(g.Id, spell);
                 if (g.Kind == "sword")
@@ -203,6 +205,13 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     Colour = G((0f, C(c, 0f)), (.12f, C(c, .9f)), (.65f, C(c, .55f)), (1f, C(c, 0f))), Grow = Curve(0f, .55f, .3f, 1f, 1f, .9f) });
                 Spread(strokes, w * 180f / 17f);
             }
+            // 11.54 (D308-110): dark first, faint after - the tree lives 20 s; once the pour and the grain are gone only a faint
+            // band keeps the ring (no glow, nothing drawn near the camera: the ring is 3 m out)
+            var hold = Layer(root.transform, new L { Name = "Hold", Mat = band, World = false, Mode = 1, Rate = 15f, Max = 24, Life = new Vector2(1.2f, 1.5f),
+                Size = new Vector2(.9f, AreaBand308(TreeRadius)), Shape = ParticleSystemShapeType.Circle, Radius = TreeRadius, Thickness = 0f, ShapeRot = new Vector3(-90f, 0f, 0f),
+                ShapePos = new Vector3(0f, .03f, 0f), Blend = true, RandomStart = true, FrameFrom = 0f, FrameTo = 6f,
+                Colour = G((0f, C(c, 0f)), (.3f, C(c, .3f)), (.7f, C(c, .2f)), (1f, C(c, 0f))), Grow = Curve(0f, .9f, 1f, 1.05f) });
+            var hm = hold.main; hm.startDelay = 1.8f;   // as the first band fades
             return root;
         }
 

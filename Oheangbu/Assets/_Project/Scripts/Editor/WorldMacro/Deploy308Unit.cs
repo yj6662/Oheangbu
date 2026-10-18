@@ -1030,15 +1030,16 @@ namespace Oheangbu.EditorTools.WorldMacro
                         "InkSolid defaults " + defaults + " | live WoodDeer " + deerInk + "/" + deer + " ink roots, live WaterTurtle " + turtleInk + "/" + turtle + " ink jet");
                 }
 
-                // ---- D43 (11.48): the healing tree 검 draws its own ink ring (Aura308) with every old body slot empty; the ring is
-                // one-shot local bursts with no Residue, no additive material, and nothing outlives the 3 s cue
+                // ---- D43 (11.48 · 11.54): the healing tree 검 draws its own ink ring (Aura308) with every old body slot empty; the
+                // bursts are one-shot local layers gone by 3 s, only the faint "Hold" band repeats (from 1.5 s on) through the
+                // tree's lasting life (<= 20 s); no Residue, no additive material
                 {
                     var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>("Assets/_Project/Art/SpellVFX308/V2/Profiles/010_AC80_308h.asset");
                     if (p == null) Check("D43", false, "not built (run cue)");
                     else
                     {
                         bool slots = p.Aura308Prefab != null && p.Bolt300Prefab == null && p.BotanicalPrefab == null && p.NativeBodyPrefab == null
-                            && p.NativeCastPrefab == null && p.NativeImpactPrefab == null && p.Duration <= 3f;
+                            && p.NativeCastPrefab == null && p.NativeImpactPrefab == null && p.Aura308Lasting && p.Duration <= 20f;
                         int additive = 0, world = 0, looped = 0, systems = 0; float latest = 0f; bool residue = false;
                         var aura = p.Aura308Prefab;
                         if (aura != null)
@@ -1052,7 +1053,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                             {
                                 systems++;
                                 if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) world++;
-                                if (ps.main.loop || ps.emission.rateOverTime.constantMax > 0f) looped++;
+                                bool loops = ps.main.loop || ps.emission.rateOverTime.constantMax > 0f;
+                                if (loops && (ps.name != "Hold" || ps.main.startDelay.constantMax < 1.5f)) looped++;
+                                if (loops) continue;
                                 float at = 0f;
                                 for (int b = 0; b < ps.emission.burstCount; b++) at = Mathf.Max(at, ps.emission.GetBurst(b).time);
                                 latest = Mathf.Max(latest, at + ps.main.startLifetime.constantMax);
@@ -1181,6 +1184,54 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                     Check("D46", srcOk && built == 5 && bad.Count == 0, "shader cap .12 + soak " + srcOk + " | built " + built + "/5"
                         + (bad.Count > 0 ? ", " + string.Join("; ", bad.Take(8)) : ", every renderer InkBody, no rest glow, no additive"));
+                }
+
+                // ---- D47 (11.54, D308-110): the rest rebuilt in ink - no #308 attack profile keeps an old catalogue hit body; 막
+                // loses the Original_2_3 pattern for one capped foot stain and its bolt no 5 m / 5 s pool; a contact with no emphasis
+                // gets the element's ink hit (5 while connected, none after revert); the player hit draws nothing; ward and buff
+                // go faint after 3 s
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var bad = new List<string>(); int attack = 0;
+                    foreach (var guid in AssetDatabase.FindAssets("t:Vfx120Profile", new[] { v2 + "/Profiles" }))
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guid);
+                        if (!path.EndsWith("_308b.asset")) continue;
+                        attack++;
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(path);
+                        if (p != null && p.NativeImpactPrefab != null) bad.Add(Path.GetFileNameWithoutExtension(path) + " impact " + p.NativeImpactPrefab.name);
+                    }
+                    var mak = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/050_B9C9_308b.asset");
+                    if (mak == null) bad.Add("막 not built");
+                    else if (mak.NativeFieldPrefab != null || mak.AreaStainPrefab == null || mak.AreaStainDiameter > 2f || mak.AreaStainAlpha > .15f || mak.AreaStainSeconds > 3f)
+                        bad.Add("막 field " + (mak.NativeFieldPrefab != null) + " stain " + (mak.AreaStainPrefab != null ? mak.AreaStainPrefab.name : "none")
+                            + " " + Deploy308.F(mak.AreaStainDiameter) + " m a" + Deploy308.F(mak.AreaStainAlpha) + " " + Deploy308.F(mak.AreaStainSeconds) + " s");
+                    var bolt = AssetDatabase.LoadAssetAtPath<GameObject>(v2 + "/Prefabs/PF_V308b_ma_k.prefab");
+                    if (bolt == null) bad.Add("PF_V308b_ma_k not built");
+                    else if (bolt.GetComponentsInChildren<Transform>(true).Any(t => t.name == "Linger")) bad.Add("PF_V308b_ma_k Linger");
+                    var ktp = AssetDatabase.LoadAssetAtPath<KtpContactProfile>("Assets/_Project/Art/SpellVFX120/Resources/KTP_ContactProfile.asset");
+                    bool connected = ktp != null && ktp.SpellProfiles.Any(x => x != null && AssetDatabase.GetAssetPath(x).EndsWith("_308b.asset"));
+                    int inks = ktp != null ? ktp.InkHits.Count(x => x.Source != null && x.Source.name.StartsWith("PF_V308b_hit_")) : -1;
+                    int elements = ktp != null ? ktp.InkHits.Select(x => x.Element).Distinct().Count() : 0;
+                    if (ktp == null) bad.Add("KTP profile missing");
+                    else if (connected ? inks != 5 || elements != 5 || ktp.InkHits.Length != 5 || !(ktp.InkHitMultiplier > 0f) : ktp.InkHits.Length != 0)
+                        bad.Add("ink hits " + ktp.InkHits.Length + " (#308 " + inks + ", elements " + elements + ") connected " + connected);
+                    const string wiring = "Assets/_Project/Scripts/App/CombatLoopWiring.cs";
+                    string src = File.Exists(wiring) ? File.ReadAllText(wiring) : "";
+                    int at = src.IndexOf("private void OnPlayerDamaged(", StringComparison.Ordinal);
+                    int end = at >= 0 ? src.IndexOf("\n        }", at, StringComparison.Ordinal) : -1;
+                    string body = at >= 0 && end > at ? src.Substring(at, end - at) : null;
+                    if (body == null || body.Contains("SpawnContact")) bad.Add("player hit draws a contact");
+                    if (!src.Contains("_contactVfx.InkHit(")) bad.Add("SpawnContact reads no ink hit");
+                    string[] auraIds = { "019_AD6C", "043_B204", "067_BB34", "091_C218", "115_C6B0", "008_AC71", "032_B109", "056_BA39", "080_C11D", "104_C5B5" };
+                    foreach (var id in auraIds)
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/" + id + "_308f.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        if (!Mathf.Approximately(p.Aura308LateAfter, 3f) || !(p.Aura308LateAlpha < 1f) || p.Aura308Lasting) bad.Add(id + " late " + Deploy308.F(p.Aura308LateAfter) + "/" + Deploy308.F(p.Aura308LateAlpha));
+                    }
+                    Check("D47", attack > 0 && bad.Count == 0, attack + " attack profiles, connected " + connected + ", ink hits " + inks
+                        + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | no old hit body, 막 one stain, no Linger, player hit silent, ward/buff faint after 3 s"));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit

@@ -67,7 +67,7 @@ namespace Oheangbu.App.SpellVFX120
                     // The body is a cast cue: never longer than it was authored for, and a lasting effect gets a short cue
                     // only (SpellCueLife308). The shared asset is never written: a body that keeps its authored life reads
                     // the asset itself, any other life goes into a private copy taken from the spares.
-                    float life = SpellCueLife308.Seconds(request.Duration, source.Duration);
+                    float life = SpellCueLife308.Seconds(request.Duration, source.Duration, source.Aura308Prefab != null && source.Aura308Lasting);   // 11.54: the tree draws its own 20 s
                     if (life != source.Duration)
                     {
                         live.ProfileSource = source; live.ProfileCopy = Rent(source);

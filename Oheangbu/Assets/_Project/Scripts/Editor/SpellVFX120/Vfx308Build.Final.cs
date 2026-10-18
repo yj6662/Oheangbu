@@ -123,14 +123,11 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     Top(Layer(contact, new L { Name = "RingOut", Mat = Mk(key, "ring", "water_ring", C(e.Ink, 1f)), World = false, Burst = 1, BurstTime = .15f, Max = 2, Life = new Vector2(.7f, .7f), Size = Vector2.one * 7f * k,
                         NoShape = true, FrameFrom = 0f, FrameTo = 15f, Colour = Fade(mark, .35f), Grow = Curve(0f, .4f, 1f, 1.3f) }));
                     break;
-                case FinalK:   // short strokes stuck in the ground at the hit, a big pool that stays
+                case FinalK:   // short strokes stuck in the ground at the hit
                     Top(Layer(contact, new L { Name = "Stakes", Mat = Mk(key, "stroke", "speed_line", C(e.Ink, 1f)), World = false, Mode = 2, Burst = 3, BurstTime = .1f, Max = 3, Life = new Vector2(.8f, .8f),
                         Size = new Vector2(2f, 2.6f) * k, Shape = ParticleSystemShapeType.Circle, Radius = 1.1f * k, ShapeRot = new Vector3(90f, 0f, 0f), RotDeg = new Vector2(84f, 96f),
                         FrameFrom = 0f, FrameTo = .99f, RandomCell = true, Colour = Melt(mark, .65f), Grow = Curve(0f, .3f, .1f, 1f, 1f, 1f) }));
-                    if (residue != null)
-                        Top(Layer(residue, new L { Name = "Linger", Mat = Mk(key, "linger", "ink_pool", C(e.Ink, 1f), 1f, 0f), World = false, Mode = 1, Burst = 1, Max = 2, Life = Vector2.one * (travel != null ? 5f : 2.5f),
-                            Size = Vector2.one * 5f * k, NoShape = true, Blend = true, FrameFrom = 0f, FrameTo = 15.5f,
-                            Colour = G((0f, C(mark, 1f)), (.7f, C(mark, .9f)), (1f, C(mark, 0f))), Grow = Curve(0f, .4f, .1f, 1f, 1f, 1.1f) }));
+                    // 11.54 (D308-110): no 5 m / 5 s pool on the single's residue any more - the one foot stain (StainBody) is the mark
                     break;
             }
         }

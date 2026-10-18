@@ -693,6 +693,9 @@ namespace Oheangbu.App
             if(elementalGuard)source=emphasis.GuardContactPrefab;
             bool areaContact=emphasis!=null&&emphasis.AreaContactPrefab!=null;
             if(areaContact)source=emphasis.AreaContactPrefab;
+            // #308 11.54 (D308-110): no emphasis -> the ink hit (the singles' body) instead of the KTP burst; the size already carries Parry/HalfScale
+            var inkHit=emphasis==null&&element.HasValue?_contactVfx.InkHit(element.Value):null;
+            if(inkHit!=null){source=inkHit;scale*=_contactVfx.InkHitMultiplier;}
             var cam = Camera.main;
             if(!elementalGuard&&emphasis!=null&&cam!=null&&emphasis.KtpContactSurfaceOffset>0)
             {
@@ -702,9 +705,9 @@ namespace Oheangbu.App
             }
             var facing = cam != null ? cam.transform.rotation : Quaternion.identity;
             var effect = SpellVFX120.KtpContactEffect.Spawn(source, point,
-                areaContact?facing:elementalGuard?(emphasis.KtpRectShield?facing:Quaternion.identity):facing * Quaternion.Euler(_contactVfx.SourceEuler), scale, gameObject.scene);
+                areaContact||inkHit!=null?facing:elementalGuard?(emphasis.KtpRectShield?facing:Quaternion.identity):facing * Quaternion.Euler(_contactVfx.SourceEuler), scale, gameObject.scene);
             if (effect == null) return false;
-            if(!elementalGuard&&!areaContact)
+            if(!elementalGuard&&!areaContact&&inkHit==null)
             {
                 if(emphasis != null) effect.ApplyElementColor(emphasis.Pigment, emphasis.KtpContactBrightness>0?emphasis.KtpContactBrightness:emphasis.KtpBrightness);
                 else if(element.HasValue&&_palette!=null)effect.ApplyElementColor(_palette.GetBaseColor(InitialOf(element.Value)));
@@ -1092,14 +1095,7 @@ namespace Oheangbu.App
             bool interrupts = true;
             NotifyPlayerHit308(ref interrupts); // #308 player-hit hooks (a steadfast buff may keep the letter; nothing is rewarded)
             if (interrupts) _drawingInput?.InterruptLetter();
-            var cam = Camera.main;
-            if (damage > 0 && _contactVfx != null && cam != null)
-            {
-                var offset = _contactVfx.PlayerHitOffset;
-                var point = cam.transform.TransformPoint(new Vector3(offset.x, offset.y,
-                    Mathf.Max(cam.nearClipPlane + .2f, _contactVfx.PlayerHitDistance)));
-                SpawnContact(_contactVfx.PlayerHit, point, _contactVfx.PlayerHitScale);
-            }
+            // #308 11.54 (D308-110): no contact burst when the player is hit (it sat in the screen centre); PlayerHit* are LEGACY
         }
 
         public void ResetEncounterGroggy()

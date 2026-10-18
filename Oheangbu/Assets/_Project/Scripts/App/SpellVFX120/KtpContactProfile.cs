@@ -16,7 +16,9 @@ namespace Oheangbu.App.SpellVFX120
         }
 
         public Entry[] Parries = Array.Empty<Entry>();
-        public GameObject PlayerHit;
+        public GameObject PlayerHit;   // LEGACY (D308-110): the player-hit contact is off; nothing reads it
+        public Entry[] InkHits = Array.Empty<Entry>();   // 11.54: the ink hit for contacts with no emphasis (written by Vfx308Build connect)
+        [Min(.001f)] public float InkHitMultiplier = 1.8f;   // TEST: ~ the singles' .4 / ParryScale .22
         public Vfx120Profile[] SpellProfiles = Array.Empty<Vfx120Profile>();
         public Vfx120Profile ForSpell(char letter)
         {
@@ -27,13 +29,19 @@ namespace Oheangbu.App.SpellVFX120
         public Vector3 SourceEuler = new Vector3(0, 90, 0);
         [Min(.001f)] public float ParryScale = .22f;
         [Range(.01f, 1f)] public float HalfScale = .5f;
-        [Min(.001f)] public float PlayerHitScale = .09f;
+        [Min(.001f)] public float PlayerHitScale = .09f;   // LEGACY (D308-110) - with the two below
         [Min(.1f)] public float PlayerHitDistance = 1.6f;
         public Vector2 PlayerHitOffset = new Vector2(0, -.12f);
 
         public GameObject ParrySource(Element element)
         {
             foreach (var entry in Parries) if (entry.Element == element) return entry.Source;
+            return null;
+        }
+
+        public GameObject InkHit(Element element)
+        {
+            foreach (var entry in InkHits) if (entry.Element == element) return entry.Source;
             return null;
         }
     }

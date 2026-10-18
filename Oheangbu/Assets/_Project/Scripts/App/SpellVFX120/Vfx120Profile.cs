@@ -124,6 +124,10 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject Aura308Prefab;
         [Min(0f)] public float Aura308FadeSeconds = .5f;
         [Tooltip("Scale the loop body by WardRadius (wards only).")] public bool Aura308ByWardRadius;
+        [Tooltip("11.54: at this age (s) the still-emitting loop systems' start alpha drops to Aura308LateAlpha - dark first, faint after. 0 = off.")]
+        [Min(0f)] public float Aura308LateAfter;
+        [Range(0f, 1f)] public float Aura308LateAlpha = 1f;
+        [Tooltip("11.54: a lasting body (the tree) - the presenter does not cut it to the 3 s cue.")] public bool Aura308Lasting;
         [Tooltip("11.41: companion letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown once per shot (Secondary cue). Empty = old behaviour.")]
         public GameObject CompanionShot308Prefab;
         [Tooltip("11.41: sword-form letters - a one-shot particle prefab put down per swing (Hit / Miss cue with a point). Empty = old behaviour.")]

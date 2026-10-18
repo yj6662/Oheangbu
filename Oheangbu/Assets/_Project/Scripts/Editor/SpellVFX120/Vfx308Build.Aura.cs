@@ -58,6 +58,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     profile.NativeCastPrefab = null; profile.NativeImpactPrefab = null;   // 11.49 / 11.50: Aura308 hid them already - now not built at all
                     profile.KtpContactBrightness = 1f;
                     profile.Aura308FadeSeconds = kind == "ward" ? 1f : .85f;   // 11.49 / 11.50: the hold layer / the dry rim
+                    profile.Aura308LateAfter = 3f; profile.Aura308LateAlpha = .45f;   // 11.54 (D308-110): dark first, faint after 3 s
+                    profile.Aura308Lasting = false;
                     EditorUtility.SetDirty(profile); Touched.Add(profile);
 
                     string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + g.Id + ".prefab";

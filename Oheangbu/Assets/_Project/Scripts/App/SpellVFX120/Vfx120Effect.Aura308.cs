@@ -14,6 +14,7 @@ namespace Oheangbu.App.SpellVFX120
         ParticleSystem[] _a3End = new ParticleSystem[0];
         Transform _a3Cam;
         bool _a3Stopping;
+        bool _a3Late;
 
         public bool Aura308Configured => _aura308 != null;
 
@@ -31,7 +32,7 @@ namespace Oheangbu.App.SpellVFX120
             _a3Cam = _aura308.transform.Find("Cam");
             _a3End = end != null ? end.GetComponentsInChildren<ParticleSystem>(true) : new ParticleSystem[0];
             _a3Systems = System.Array.FindAll(_aura308.GetComponentsInChildren<ParticleSystem>(true), ps => end == null || !ps.transform.IsChildOf(end));
-            _a3Stopping = false;
+            _a3Stopping = false; _a3Late = false;
             foreach (var ps in _a3End) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             foreach (var ps in _a3Systems) { ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); ps.Play(false); }
             FaceCamera308();
@@ -56,6 +57,12 @@ namespace Oheangbu.App.SpellVFX120
             foreach (Transform child in transform)
                 if (child.gameObject != _aura308 && child.gameObject.activeSelf) child.gameObject.SetActive(false);
             FaceCamera308();
+            // 11.54 (D308-110): dark first, faint after - from LateAfter the loops emit at LateAlpha; drawn particles keep their colour and die out
+            if (!_a3Late && !_a3Stopping && Profile.Aura308LateAfter > 0f && Age >= Profile.Aura308LateAfter)
+            {
+                _a3Late = true;
+                foreach (var ps in _a3Systems) FadeStart308(ps, Profile.Aura308LateAlpha);
+            }
             bool ending = Life > 0f && Age >= Life - Profile.Aura308FadeSeconds;
             if (ending && !_a3Stopping)
             {
@@ -65,10 +72,18 @@ namespace Oheangbu.App.SpellVFX120
             }
         }
 
+        static void FadeStart308(ParticleSystem ps, float alpha)
+        {
+            var main = ps.main;
+            var c = main.startColor;
+            if (c.mode == ParticleSystemGradientMode.Color) { var k = c.color; k.a *= alpha; main.startColor = new ParticleSystem.MinMaxGradient(k); }
+            else if (c.mode == ParticleSystemGradientMode.TwoColors) { var a = c.colorMin; var b = c.colorMax; a.a *= alpha; b.a *= alpha; main.startColor = new ParticleSystem.MinMaxGradient(a, b); }
+        }
+
         void ClearAura308()
         {
             if (_aura308 != null) { _aura308.SetActive(false); if (Application.isPlaying) Destroy(_aura308); else DestroyImmediate(_aura308); }
-            _aura308 = null; _a3Systems = new ParticleSystem[0]; _a3End = new ParticleSystem[0]; _a3Cam = null; _a3Stopping = false;
+            _aura308 = null; _a3Systems = new ParticleSystem[0]; _a3End = new ParticleSystem[0]; _a3Cam = null; _a3Stopping = false; _a3Late = false;
         }
     }
 }
