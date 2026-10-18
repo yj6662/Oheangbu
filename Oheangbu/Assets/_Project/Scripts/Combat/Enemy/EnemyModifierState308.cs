@@ -111,12 +111,18 @@ namespace Oheangbu.Combat
         // Damage this enemy takes from one hit (already multiplied by the weak-point multiplier). The hit's pierce entry is
         // used up. No entry and no defence: the input comes back untouched (bit for bit what it was before WP-07).
         public float Intake(float damage, float baseDefence, long attackId, float now)
+            => Intake(damage, baseDefence, attackId, now, 1f, true);
+
+        // #308 WP-15: defenceCap = the most any defence may remove (CombatConfigSO.DefenceCap; 1 or more = no cap).
+        // guardable = the guard stance acts on this hit (the caster's own spell shot; summons, lasting damage, harvest,
+        // retaliation and detonations go past the guard as the rules before WP-15 had them for every enemy that never guards).
+        public float Intake(float damage, float baseDefence, long attackId, float now, float defenceCap, bool guardable)
         {
-            damage = Stance.Intake(damage, attackId);   // WP-13: a raised guard, and the hit that ignores it (untouched when there is neither)
+            if (guardable) damage = Stance.Intake(damage, attackId);   // WP-13: a raised guard, and the hit that ignores it
             if (_timed.Count == 0 && _pierce.Count == 0 && !(baseDefence > 0f)) return damage;
             float ignored = attackId > 0 ? IgnoredShare(attackId) : 0f;
             if (ignored > 0f) ForgetIgnore(attackId);
-            return EnemyIntakeRule308.Apply(damage, EnemyIntakeRule308.Defence(baseDefence, DefenceShred(now), ignored), DamageTakenScale(now));
+            return EnemyIntakeRule308.Apply(damage, EnemyIntakeRule308.Defence(baseDefence, DefenceShred(now), ignored, defenceCap), DamageTakenScale(now));
         }
 
         // Amount of the strike this enemy delivers now. The dull charge is used up by it (whatever the strike then does).
@@ -166,10 +172,15 @@ namespace Oheangbu.Combat
     public static class EnemyIntakeRule308
     {
         // Defence that acts on one hit: base defence (0..1) minus the shred, never below 0, then the share the hit ignores.
-        public static float Defence(float baseDefence, float shred, float ignoredShare)
+        public static float Defence(float baseDefence, float shred, float ignoredShare) => Defence(baseDefence, shred, ignoredShare, 1f);
+
+        // #308 WP-15: the base defence is first cut to `cap` (CombatConfigSO.DefenceCap, TEST .6 — no enemy is immune).
+        // cap 1 or more, or not a number = no cap. The shred and the ignored share then act on what is left.
+        public static float Defence(float baseDefence, float shred, float ignoredShare, float cap)
         {
             if (!(baseDefence > 0f)) return 0f;
-            float defence = (baseDefence > 1f ? 1f : baseDefence) - (shred > 0f ? shred : 0f);
+            float top = float.IsFinite(cap) && cap < 1f ? (cap > 0f ? cap : 0f) : 1f;
+            float defence = (baseDefence > top ? top : baseDefence) - (shred > 0f ? shred : 0f);
             if (!(defence > 0f)) return 0f;
             if (ignoredShare > 0f) defence *= 1f - (ignoredShare > 1f ? 1f : ignoredShare);
             return defence;

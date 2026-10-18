@@ -158,6 +158,9 @@ namespace Oheangbu.Combat
         [SerializeField] private Vector2 _attackCooldownRange = new Vector2(1.2f, 2.2f);
         [Tooltip("적 시야 광선이 무시하는 레이어 이름 — #306 근접 자연물 충돌(NatureSolid)은 몸만 막고 시야는 막지 않는다 [TEST #308]")]
         [SerializeField] private string[] _enemySightIgnoreLayerNames = { "NatureSolid" };
+        [Tooltip("방어 상한 [TEST — D308-113 · SPEC-SPELL-120-308 WP-15]: 적 방어(프로필 Defence)가 줄일 수 있는 피해의 최대 비율. " +
+            "이보다 높은 방어는 이 값으로 잘린다(면역 없음). 1=상한 없음(WP-15 이전 동작)")]
+        [SerializeField, Range(0f, 1f)] private float _defenceCap = 0.6f;
 
         [Header("적 체력 표시 [TEST — D306 #8]: 락온 체력 획 · 교전 보스 바(속성색 없음)")]
         [Tooltip("보스 교전 기억(초, scaled) — 락온이 아니어도 이 시간 안에 서로 피해를 주고받았으면 보스 바를 보인다")]
@@ -166,6 +169,7 @@ namespace Oheangbu.Combat
         [SerializeField, Min(1f)] private float _bossEngageRange = 45f;
 
         public string[] EnemySightIgnoreLayerNames => _enemySightIgnoreLayerNames;
+        public float DefenceCap => _defenceCap;
         public float MoveSpeed => _moveSpeed;
         public float LookSensitivity => _lookSensitivity;
         public float Gravity => _gravity;

@@ -31,20 +31,20 @@ namespace Pure308
         static partial void RunWP13(Report r, Context c)
         {
             if (c.Build == null || !c.Build.Ok) { r.Check("W13", false, "the table did not build"); return; }
-            // grid cells (no glyph is named): 18 wood o + ieung, 42 fire o + ieung, 50 earth a + giyeok, 66 earth o + ieung,
+            // grid cells (no glyph is named): 18 wood o + ieung, 42 fire o + ieung, 50 earth a + giyeok,
             // 77 metal a + siot, 78 metal a + ieung, 90 metal o + ieung, 111 water o + nieun
-            SpellRow wave = c.RowAt(18), steam = c.RowAt(42), rock = c.RowAt(50), mud = c.RowAt(66), thrust = c.RowAt(77), needle = c.RowAt(78),
+            SpellRow wave = c.RowAt(18), steam = c.RowAt(42), rock = c.RowAt(50), thrust = c.RowAt(77), needle = c.RowAt(78),
                 barrage = c.RowAt(90), purge = c.RowAt(111);
-            bool rows = wave.Handler == "path.cover" && steam.Handler == "zone.haze" && rock.Handler == "single.cover" && mud.Handler == "zone.haze" &&
+            bool rows = wave.Handler == "path.cover" && steam.Handler == "zone.haze" && rock.Handler == "single.cover" &&
                 thrust.Handler == "single.unblockable" && needle.Handler == "intercept.single" && barrage.Handler == "intercept.barrage" && purge.Handler == "path.purge";
-            if (!r.Check("W13", rows, "the eight WP-13 rows name their handlers (the WP-13 sheet is in the table)")) return;
-            r.Check("W13", new[] { wave, steam, rock, mud, thrust, needle, barrage, purge }.All(x => x.Feature == SpellLegacyFeature.None && x.Gate != SpellGateMode.Open && x.Final != SpellFinal.None && string.IsNullOrEmpty(x.Pending)),
+            if (!r.Check("W13", rows, "the seven WP-13 rows name their handlers (the WP-13 sheet is in the table)")) return;
+            r.Check("W13", new[] { wave, steam, rock, thrust, needle, barrage, purge }.All(x => x.Feature == SpellLegacyFeature.None && x.Gate != SpellGateMode.Open && x.Final != SpellFinal.None && string.IsNullOrEmpty(x.Pending)),
                 "they are new rows behind their final consonant: no legacy feature, no open gate, no pending mark");
             // 2026-10-04 (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target): the rock-cover row is
             // the one WP-13 row behind the final the main game grants, so it is the one that must stay TEST-only (Cases_Core308 checks
             // what a normal save and the TEST unlock resolve).
-            r.Check("W13", new[] { wave, steam, rock, mud, thrust, needle, barrage, purge }.All(x => x.Gate == SpellGateMode.Test),
-                "#308b: all eight WP-13 rows are TEST-unlock only (Gate test in their rule sheet): the main game now grants every final and their world side does not exist yet", rock.Gate.ToString());
+            r.Check("W13", new[] { wave, steam, rock, thrust, needle, barrage, purge }.All(x => x.Gate == SpellGateMode.Test),
+                "#308b: all seven WP-13 rows are TEST-unlock only (Gate test in their rule sheet): the main game now grants every final and their world side does not exist yet", rock.Gate.ToString());
 
             // ---- the freezing needle and the barrage ----
             Vector3 caster = new Vector3(5f, 0f, 5f), forward = Vector3.forward;
@@ -134,7 +134,7 @@ namespace Pure308
 
             // ---- the haze ----
             // clause ids are built from the row's own glyph (no glyph is named in this file)
-            foreach (var pair in new[] { new KeyValuePair<string, SpellRow>(steam.Letter, steam), new KeyValuePair<string, SpellRow>(mud.Letter, mud) })
+            foreach (var pair in new[] { new KeyValuePair<string, SpellRow>(steam.Letter, steam) })
             {
                 SpellRow row = pair.Value; string glyph = pair.Key;
                 float radius = row.F("haze.radius", 0f), life = row.F("haze.life", 0f), miss = row.F("haze.miss", 0f);
@@ -173,7 +173,7 @@ namespace Pure308
                 r.Check("농-2", both == 20 && weaker == 10, "two hazes do not add up: the stronger one counts; when it goes, the weaker one counts", both + " then " + weaker);
                 var tenth = new EnemyStrikeVeil308(); tenth.Blur(1, 100f, .1f);
                 var pattern = WP13Misses(tenth, 30, false, 0f);
-                r.Check("몽-2", pattern.SequenceEqual(new[] { 9, 19, 29 }), "a share of one in ten misses every tenth strike, whatever the float sum says", string.Join(" ", pattern));
+                r.Check("농-2", pattern.SequenceEqual(new[] { 9, 19, 29 }), "a share of one in ten misses every tenth strike, whatever the float sum says", string.Join(" ", pattern));
                 r.Check("W13", !new EnemyStrikeVeil308().Misses(true, 0f) && !tenth.Blur(0, 100f, .5f) && !tenth.Blur(5, 100f, 0f) && !tenth.Blur(5, float.NaN, .5f) && !tenth.Screen(0, 100f),
                     "an enemy nothing was hung on never misses (every enemy that exists today); an entry without an owner, a share or an end is refused");
                 var state = new EnemyModifierState308(); state.Veil.Blur(3, 50f, .5f); state.Veil.Screen(4, 50f);

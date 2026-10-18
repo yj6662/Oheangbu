@@ -158,7 +158,11 @@ namespace Oheangbu.Combat
             // #308 WP-07 intake: this enemy's defence (data, default 0), the defence shred and damage-taken brand a spell left
             // on it, and whether this very hit ignores defence. An enemy with defence 0 and no modifier gets the value back
             // untouched, so every enemy and every spell that existed before behaves exactly as it did.
-            damage = Modifiers.Intake(damage, Defence, attack.AttackId, Time.time);
+            // #308 WP-15: defence is cut to the config cap, and a raised guard acts only on the caster's own spell shots
+            // (PlayerDirect · Companion). DamageSource has no melee/ranged split, so the sword form and the riposte are
+            // guarded too — an open item of SPEC-SPELL-120-308 WP-15.
+            damage = Modifiers.Intake(damage, Defence, attack.AttackId, Time.time, _config != null ? _config.DefenceCap : 1f,
+                attack.Source == DamageSource.PlayerDirect || attack.Source == DamageSource.Companion);
             if (damage <= 0f || float.IsNaN(damage)) return default; // only a full defence (1) the hit does not ignore
             float bonus = 0f;
             if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect &&

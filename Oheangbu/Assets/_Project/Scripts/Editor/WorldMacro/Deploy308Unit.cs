@@ -1458,11 +1458,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
 
                 // ---- D55 (11.63): the eight modifier letters' hit carries its modifier - a single's bolt / a range letter's hit is the
-                // _<mod> prefab with Mod_ layers, each local, not looping, gone inside .8 s, no material glows; 난 (no modifier) keeps _n
+                // _<mod> prefab with Mod_ layers, each local, not looping, gone inside .8 s, no material glows; 난 (no modifier) keeps _n; 낭 = _guardbreak (WP-15)
                 {
                     const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
                     var bad = new List<string>(); int letters = 0, layers = 0;
-                    foreach (var (id, single, want) in new[] { ("006_AC15", true, "PF_V308b_ga_ng_pierce"), ("030_B0AD", true, "PF_V308b_na_ng_pierce"),
+                    foreach (var (id, single, want) in new[] { ("006_AC15", true, "PF_V308b_ga_ng_pierce"), ("030_B0AD", true, "PF_V308b_na_ng_guardbreak"),
                                                                ("041_B18B", false, "PF_V308b_hit_na_s_shred"), ("053_B9DB", true, "PF_V308b_ma_s_shred"),
                                                                ("063_BAAC", false, "PF_V308b_hit_ma_n_brand"), ("075_C0B0", true, "PF_V308b_sa_n_brand"),
                                                                ("051_B9CC", true, "PF_V308b_ma_n_blast"), ("015_ACE4", false, "PF_V308b_hit_ga_n_lift") })

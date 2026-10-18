@@ -49,15 +49,36 @@ namespace Oheangbu.App.Prologue
             attackSeen = false;
         }
 
+        // #308 WP-15 (D308-113, TEST): the guard this brain raises on its own enemy's stance. Only what it raised itself is
+        // lowered (a TEST dummy or another writer keeps its own); a profile with no guard share never touches the stance.
+        bool guardRaised308;
+
+        void Guard308(bool up, float now)
+        {
+            var b = Brain;
+            // groggy (weak point open) it cannot guard: the guard never stands between the player and a groggy reward
+            bool wants = up && b != null && b.GuardShare > 0f && b.GuardFacingDegrees >= 1f && vitals != null && !vitals.WeakPointActive;
+            if (wants) { if (vitals.Modifiers.Stance.Raise(b.GuardShare, now)) guardRaised308 = true; else LowerGuard308(); }
+            else LowerGuard308();
+        }
+
+        void LowerGuard308()
+        {
+            if (!guardRaised308) return;
+            guardRaised308 = false;
+            if (vitals != null) vitals.Modifiers.Stance.Lower();
+        }
+
         void LeaveBrain308()
         {
+            LowerGuard308();
             if (pack308 != null) pack308.Leave(this);
             pack308 = null; packPlayer308 = null; Phase = Phase308.None; alertPending = called = attackSeen = false; searchArrivedAt = -1f;
         }
 
         void ResetBrain308()
         {
-            ReleaseTurn308(Time.time, false);
+            ReleaseTurn308(Time.time, false); LowerGuard308();
             Phase = Phase308.None; alertPending = called = false; retakeAt = 0f; searchArrivedAt = -1f; slipHas = false;
             MovedSeconds308 = SideSlipSeconds308 = 0f; turning308 = false;
         }
@@ -130,6 +151,8 @@ namespace Oheangbu.App.Prologue
             bool sensed = Current == Behaviour.Patrol
                 ? sight && (distance < b.ProximityRadius || distance < DetectionRange && facing <= b.VisionHalfAngleDegrees)
                 : distance < DetectionRange && sight;
+            // #308 WP-15 (몽): standing in a blinding ink cloud it sees nothing — the chase falls back to the last known place
+            sensed &= !vitals.Modifiers.Veil.Blinded(now);
             if (sensed) { lastSeen = now; lastKnown = Player.position; }
 
             if (Current == Behaviour.Patrol && (sensed || alertPending && now >= alertAt))
@@ -147,7 +170,7 @@ namespace Oheangbu.App.Prologue
             if (Current != Behaviour.Chase)
             {
                 // patrol and the way home: nothing to attack, and the body follows its path
-                Phase = Phase308.None; ReleaseTurn308(now, false);
+                Phase = Phase308.None; ReleaseTurn308(now, false); Guard308(false, now);
                 attacks.AttackEnabled = false; attacks.FaceTarget = false; agent.updateRotation = !turning308;
                 agent.speed = Speed * vitals.Control.MovementScale(now) * (Current == Behaviour.Patrol ? PatrolSpeedScale : 1f);
                 agent.isStopped = attacks.AttackInProgress || turning308;
@@ -179,6 +202,8 @@ namespace Oheangbu.App.Prologue
             attacks.AttackEnabled = sensed && (attacking || holds && facing <= b.AttackFacingDegrees);
 
             Phase = searching ? Phase308.Search : holds || attacking ? Phase308.Engage : distance <= range + b.ClaimMargin ? Phase308.Wait : Phase308.Approach;
+            // #308 WP-15: waiting for its turn with the player in front, it holds a guard up (spell shots only; 낭 breaks it)
+            Guard308(Phase == Phase308.Wait && sensed && facing <= b.GuardFacingDegrees, now);
             bool moving = agent.velocity.sqrMagnitude > .04f;
             bool face = !searching && sensed && (distance <= range + b.FaceMargin || !moving);
             attacks.FaceTarget = face; agent.updateRotation = !face;

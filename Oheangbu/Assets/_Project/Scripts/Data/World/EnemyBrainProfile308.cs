@@ -64,6 +64,13 @@ namespace Oheangbu.Data.World
         [Min(0)] public float SearchLookDegrees;
         [Min(0)] public float SearchLookPeriodSeconds;
 
+        [Header("가드 [TEST]")]
+        [Tooltip("공격 차례를 기다리는 동안(Wait) 플레이어가 정면 반각 안에 있으면 드는 가드가 막는 몫(0..1). 0 = 가드를 들지 않는다(예전 그대로). " +
+                 "가드는 시전자의 원거리 술식만 줄이고 삿(꿰뚫음)·낭(가드 깨기)은 지나간다 — D308-113 · SPEC-SPELL-120-308 WP-15.")]
+        [Range(0, 1)] public float GuardShare;
+        [Tooltip("가드를 드는 정면 반각(도). 플레이어가 이 각 밖(옆·뒤)이면 가드를 내린다. 1 미만 = 가드 없음.")]
+        [Range(0, 180)] public float GuardFacingDegrees;
+
         // An asset that was created but never filled in must not switch anything on.
         public bool Usable =>
             Finite(VisionHalfAngleDegrees) && VisionHalfAngleDegrees >= 1 && Finite(ProximityRadius) && Finite(NoticeSeconds) &&

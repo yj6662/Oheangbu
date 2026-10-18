@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 namespace Oheangbu.EditorTools.SpellVFX120
 {
     // SPEC-SPELL-VFX-OVERHAUL-308 11.63: the eight letters whose effect carries a modifier (CSV, LOCKED attack rows) draw it at
-    // the hit - 강 낭 pierce, 놋 맛 shred, 몬 산 brand, 만 blast, 곤 lift (난 has none). One more "Mod_" layer group next to the
+    // the hit - 강 pierce, 낭 guardbreak (WP-15, D308-113), 놋 맛 shred, 몬 산 brand, 만 blast, 곤 lift (난 has none). One more "Mod_" layer group next to the
     // final's marker: a single's bolt copy PF_V308b_<key>_<final>_<mod>, a range letter's hit PF_V308b_hit_<key>_<final>_<mod>.
     // Ink, local, no light, gone inside .7 s (D308-109); sizes are TEST.
     public static partial class Vfx308Build
@@ -20,7 +20,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             switch (glyph)
             {
-                case "강": case "낭": return "pierce";
+                case "강": return "pierce";
+                case "낭": return "guardbreak";   // WP-15 (D308-113): 낭 left the pierce pair
                 case "놋": case "맛": return "shred";
                 case "몬": case "산": return "brand";
                 case "만": return "blast";
@@ -90,6 +91,16 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     ps.GetComponent<ParticleSystemRenderer>().lengthScale = 5f;
                     Top(Layer(contact, new L { Name = "Mod_PierceHole", Mat = ring, World = false, Burst = 1, BurstTime = .02f, Max = 1, Life = new Vector2(.35f, .35f), Size = Vector2.one * 1.6f * k,
                         NoShape = true, SpinRandom = true, FrameFrom = 4f, FrameTo = 4.5f, RandomCell = true, Colour = Fade(mark, .4f), Grow = Curve(0f, 1.4f, 1f, .5f) }));
+                    break;
+                }
+                case "guardbreak":   // a raised guard broken (낭, WP-15): a ring closes on the hit, snaps, and its pieces are thrown out flat across the caster's view
+                {
+                    Top(Layer(contact, new L { Name = "Mod_GuardRing", Mat = ring, World = false, Burst = 1, BurstTime = .02f, Max = 1, Life = new Vector2(.32f, .32f), Size = Vector2.one * 1.9f * k,
+                        NoShape = true, SpinRandom = true, FrameFrom = 4f, FrameTo = 4.5f, RandomCell = true, Colour = Fade(mark, .45f), Grow = Curve(0f, 1f, .35f, .7f, 1f, 1.6f) }));
+                    var ps = Top(Layer(contact, new L { Name = "Mod_GuardShards", Mat = stroke, World = false, Mode = 3, Burst = 6, BurstTime = .11f, Max = 6, Life = new Vector2(.3f, .4f),
+                        Size = new Vector2(.3f, .45f) * k, Speed = new Vector2(5f, 7f) * k, Shape = ParticleSystemShapeType.Circle, Radius = .35f * k, Thickness = 0f,
+                        Drag = 14f * k, DragLinear = true, SpinRandom = false, FrameFrom = 0f, FrameTo = .99f, RandomCell = true, Colour = Melt(mark, .5f) }));
+                    ps.GetComponent<ParticleSystemRenderer>().lengthScale = 3f;
                     break;
                 }
                 case "shred":    // dry strokes lying on a shell round the hit, pushed off a little as they dry: armour coming apart

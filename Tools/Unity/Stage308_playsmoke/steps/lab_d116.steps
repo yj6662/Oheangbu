@@ -1,0 +1,78 @@
+# 11.70 D308-113 WP-15 after spell308-import:all:skip=가마아 (2026-10-19): 낭 mod.guardbreak at the 10 m dummy (slow + plain),
+# 몽 zone.blind at the 6 m dummy (the cloud sits at the middle of the 12 m path = 6 m; slow + plain to see its 6 s life). Lab dummies have no guard / brain: the guard drop and the search do not show.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d116_nang:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB0AD
+sleep 11
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d116_nang_end
+?call SwingProbe308 Run slow:1
+sleep 5?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:1
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d116_nang1x:6
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB0AD
+sleep 4
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d116_nang1x_end
+?call SwingProbe308 Run slow:1
+sleep 5?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_6m_L
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d116_mong:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uBABD
+sleep 11
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d116_mong_end
+?call SwingProbe308 Run slow:1
+sleep 5?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_6m_L
+sleep 1
+?call SwingProbe308 Run slow:1
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d116_mong1x:10
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uBABD
+sleep 8
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d116_mong1x_end
+?call SwingProbe308 Run slow:1
+sleep 5?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

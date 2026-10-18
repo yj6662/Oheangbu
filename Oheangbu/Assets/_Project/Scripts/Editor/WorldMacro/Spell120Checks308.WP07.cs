@@ -19,13 +19,13 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         static partial void FixturesWP07(Report r)
         {
-            // grid cells by index: 6 wood / 30 fire single + ieung (pierce), 53 earth single + siot (break), 41 fire cone + siot (break),
+            // grid cells by index: 6 wood single + ieung (pierce; 30 = the fire one went to WP-15 mod.guardbreak, D308-113), 53 earth single + siot (break), 41 fire cone + siot (break),
             // 75 metal single + nieun (brand), 63 earth path + nieun (brand), 65 earth path + siot (dull), 113 water path + siot (weaken),
             // 1 = wood single (an existing glyph: the plain hit), 16 = wood summon (letter of a summon-source hit)
-            char pierceWood = SpellGrammar308.LetterAt(6), pierceFire = SpellGrammar308.LetterAt(30), breakOne = SpellGrammar308.LetterAt(53), breakCone = SpellGrammar308.LetterAt(41);
+            char pierceWood = SpellGrammar308.LetterAt(6), breakOne = SpellGrammar308.LetterAt(53), breakCone = SpellGrammar308.LetterAt(41);
             char brandOne = SpellGrammar308.LetterAt(75), brandPath = SpellGrammar308.LetterAt(63), dullPath = SpellGrammar308.LetterAt(65), weakenPath = SpellGrammar308.LetterAt(113);
             char single = SpellGrammar308.LetterAt(1), summon = SpellGrammar308.LetterAt(16);
-            if (!r.Wants(new string(new[] { pierceWood, pierceFire, breakOne, breakCone, brandOne, brandPath, dullPath, weakenPath }))) return;
+            if (!r.Wants(new string(new[] { pierceWood, breakOne, breakCone, brandOne, brandPath, dullPath, weakenPath }))) return;
 
             const float Armour = .4f, Strike = 10f;
             var profile = ScriptableObject.CreateInstance<EnemyVitalsProfileSO>();
@@ -62,7 +62,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     r.Check("W07", Near(shut, planned * (1f - Armour)), "the armoured TEST target takes (1 - defence) of the same hit  [" + shut + " of " + planned + "]");
 
                     // ---- mod.pierce ----
-                    foreach (char letter in new[] { pierceWood, pierceFire })
+                    foreach (char letter in new[] { pierceWood })
                     {
                         f.RestoreAll(); f.Aim(armoured); f.Cast(letter);
                         bool cast = f.Misfires.Count == 0 && f.Accepted.Count == 1 && f.Plans.Count == 1 && f.Plans[0].Hits.Count == 1 && f.Plans[0].Hits[0].Target == armoured;
