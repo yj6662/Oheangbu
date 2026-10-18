@@ -16,7 +16,10 @@ namespace Oheangbu.App
 
         public void OnPlayerHit(in PlayerHitInfo hit, in SpellTickContext ctx, ref bool interruptsDrawing)
         {
+            bool before = interruptsDrawing;
             BuffRule308.Steadfast(Active(ctx.Now), hit.Amount, ref interruptsDrawing);
+            if (before && !interruptsDrawing && ctx.Host != null)
+                (ctx.Fx as ISpellBurstPresenter308)?.Burst(Letter, ctx.Host.PlayerPosition);   // 11.64: presentation only
         }
     }
 }

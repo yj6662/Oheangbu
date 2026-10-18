@@ -1491,6 +1491,37 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D55", bad.Count == 0 && letters == 8, letters + " letters, " + layers + " Mod_ layers" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | pierce / shred / brand / blast / lift at the hit, local, one-shot, gone inside .8 s, no glow; 난 keeps _n"));
                 }
 
+                // ---- D56 (11.64): 먼 / 멈 / 넘 draw the moment they work - the _308h profile's Burst308Prefab is PF_V308n_<kind>_<key>,
+                // every system local, one-shot, playing on awake and gone inside 1 s, no material glows; the three effects call the seam
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
+                    var bad = new List<string>(); int letters = 0, systems = 0;
+                    foreach (var (id, want, source) in new[] { ("057_BA3C", "PF_V308n_reflect_ma", "ReflectEffect308"), ("058_BA48", "PF_V308n_slow_ma", "SlowbackEffect308"),
+                                                               ("034_B118", "PF_V308n_poise_na", "SteadfastEffect308") })
+                    {
+                        string path = "Assets/_Project/Scripts/App/" + source + ".cs";
+                        if (!File.Exists(path) || !File.ReadAllText(path).Contains("ISpellBurstPresenter308")) bad.Add(source + " does not call the burst seam");
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/" + id + "_308h.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        if (p.Burst308Prefab == null || p.Burst308Prefab.name != want) { bad.Add(id + " " + (p.Burst308Prefab != null ? p.Burst308Prefab.name : "none") + " not " + want); continue; }
+                        letters++;
+                        foreach (var ps in p.Burst308Prefab.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(want + "/" + ps.name + " not local");
+                            if (main.loop) bad.Add(want + "/" + ps.name + " loops");
+                            if (!main.playOnAwake) bad.Add(want + "/" + ps.name + " not on awake");
+                            float end = main.startLifetime.constantMax + (ps.emission.burstCount > 0 ? ps.emission.GetBurst(0).time : 0f);
+                            if (end > 1f + 1e-3f) bad.Add(want + "/" + ps.name + " ends at " + Deploy308.F(end));
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            foreach (var m in r != null ? r.sharedMaterials : new Material[0])
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                        }
+                    }
+                    Check("D56", bad.Count == 0 && letters == 3, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | reflect / slow / poise where the buff works, local, one-shot, gone inside 1 s, no glow, seam called"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
