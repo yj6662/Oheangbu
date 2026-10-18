@@ -134,6 +134,8 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject SwordStrike308Prefab;
         [Tooltip("11.56: second-strike letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown from the split point to each derived target. Empty = old behaviour.")]
         public GameObject Derived308Prefab;
+        [Tooltip("11.57: lingering-zone letters - the floor the zone leaves (Vfx308ZoneBody, built at 1 m radius), put down at the zone centre (or per heal zone) and kept for the rule's life. Empty = old behaviour.")]
+        public GameObject Zone308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

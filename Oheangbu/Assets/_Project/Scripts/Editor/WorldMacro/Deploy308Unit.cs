@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1259,6 +1259,52 @@ namespace Oheangbu.EditorTools.WorldMacro
                         sizes.Add(id.Substring(4) + " " + Deploy308.F(fx.Profile.Bolt300Scale) + "/" + Deploy308.F(parent));
                     }
                     Check("D48", bad.Count == 0, string.Join(", ", sizes) + (bad.Count > 0 ? " | " + string.Join("; ", bad) : " | 4 derived shots, each under its parent"));
+                }
+
+                // ---- D49 (11.57): the lingering-zone letters 곡 곳 녹 농 몽 carry a zone floor - a Vfx308ZoneBody whose systems are local
+                // (scaled by the radius) and knee-low; one instance ticked through its clock starts at Delay, goes faint at Delay + 3 s
+                // (start alpha times LateAlpha), dries at Delay + Life and is gone DryFade later
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var bad = new List<string>(); var notes = new List<string>();
+                    foreach (var id in new[] { "014_ACE1", "017_ACF3", "038_B179", "042_B18D", "066_BABD" })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/" + id + "_308b.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        if (p.Zone308Prefab == null) { bad.Add(id + " no zone floor"); continue; }
+                        if (p.Zone308Prefab.GetComponent<Oheangbu.App.SpellVFX120.Vfx308ZoneBody>() == null) { bad.Add(id + " floor without Vfx308ZoneBody"); continue; }
+                        float top = 0f;
+                        foreach (var ps in p.Zone308Prefab.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            if (ps.main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(id + "/" + ps.name + " not local");
+                            var shape = ps.shape; top = Mathf.Max(top, ps.transform.localPosition.y + (shape.enabled ? shape.position.y : 0f));
+                        }
+                        if (top > .15f) bad.Add(id + " emits at " + Deploy308.F(top) + " m (knee-low .15)");
+                        notes.Add(id.Substring(4) + " " + Deploy308.F(top));
+                    }
+                    // the clock, on one fixture (hidden, never saved)
+                    var floorProfile = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/014_ACE1_308b.asset");
+                    if (floorProfile != null && floorProfile.Zone308Prefab != null)
+                    {
+                        var go = UnityEngine.Object.Instantiate(floorProfile.Zone308Prefab);
+                        go.hideFlags = HideFlags.HideAndDontSave;
+                        var body = go.GetComponent<Oheangbu.App.SpellVFX120.Vfx308ZoneBody>();
+                        body.Delay = .2f; body.Life = 4f;
+                        ParticleSystem probe = null;
+                        foreach (var ps in body.Body) if (ps != null && ps.main.loop) { probe = ps; break; }
+                        float before = probe != null ? probe.main.startColor.color.a : -1f;
+                        body.Tick(.1f); bool early = !body.Started;
+                        body.Tick(.15f); bool started = body.Started && !body.Late;
+                        body.Tick(3f); bool late = body.Late && !body.Drying;
+                        float after = probe != null ? probe.main.startColor.color.a : -1f;
+                        bool faint = probe != null && Mathf.Abs(after - before * body.LateAlpha) < 1e-3f;
+                        body.Tick(1f); bool drying = body.Drying && !body.Gone;
+                        body.Tick(body.DryFade + .05f); bool gone = body.Gone;
+                        if (!gone && go != null) UnityEngine.Object.DestroyImmediate(go);
+                        if (!(early && started && late && faint && drying && gone))
+                            bad.Add("clock early " + early + " start " + started + " late " + late + " faint " + Deploy308.F(before) + "->" + Deploy308.F(after) + " dry " + drying + " gone " + gone);
+                    }
+                    Check("D49", bad.Count == 0, string.Join(", ", notes) + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | 5 zone floors, local, knee-low; clock start / faint / dry / gone"));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
