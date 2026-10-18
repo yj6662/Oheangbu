@@ -120,6 +120,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (scope == null) return Fail("no CombatLifetimeScope under the rig");
             var config = AssetDatabase.LoadAssetAtPath<CombatConfigSO>(DummyConfig);
             if (config == null) return Fail("dummy config missing " + DummyConfig);
+            // §3.1: the ㄱ-final runtimes' profiles live on the session, which the lab drops - read them first
+            var macro = session.GetComponent<WorldMacroPlaytestSession>();
+            if (macro == null) return Fail("no WorldMacroPlaytestSession on " + SessionRoot);
+            var eaBuffs = macro.EABuffProfile; var eaWards = macro.EAWardProfile; var eaGiyeok = macro.EAGiyeokProfile;
 
             // the walker sits on the session root, which the lab drops: copy it onto the rig (its references all point into the rig)
             var walkerGo = new GameObject("Lab_Walker");
@@ -187,6 +191,13 @@ namespace Oheangbu.EditorTools.WorldMacro
             sso.FindProperty("_macroPlaytest").objectReferenceValue = null;
             sso.FindProperty("_prologue").objectReferenceValue = null;
             sso.ApplyModifiedPropertiesWithoutUndo();
+            var uso = new SerializedObject(unlocks);
+            uso.FindProperty("_wiring").objectReferenceValue = walker.Wiring;
+            uso.FindProperty("_buffs").objectReferenceValue = eaBuffs;
+            uso.FindProperty("_wards").objectReferenceValue = eaWards;
+            uso.FindProperty("_giyeok").objectReferenceValue = eaGiyeok;
+            uso.ApplyModifiedPropertiesWithoutUndo();
+            string ea = "ea buffs " + (eaBuffs != null ? eaBuffs.name : "-") + " wards " + (eaWards != null ? eaWards.name : "-") + " giyeok " + (eaGiyeok != null ? eaGiyeok.name : "-");
 
             Directory.CreateDirectory(Path.GetDirectoryName(LabScene));
             if (!EditorSceneManager.SaveScene(scene, LabScene, true)) return Fail("save as copy");
@@ -197,7 +208,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             string after = Hash(Harness303.MainScene);
             return "build ok " + LabScene + " | kept " + kept + " | missing " + (missing.Count == 0 ? "-" : string.Join(",", missing)) +
                    " | dropped " + dropped + " roots | pointed-at (dropped) " + (pointed.Count == 0 ? "-" : string.Join(",", pointed)) +
-                   " | walker refs repointed " + repointed +
+                   " | walker refs repointed " + repointed + " | " + ea +
                    " | dummies " + vitals.Count + " wiring enemies " + enemies + " | rig turned " + (-yaw).ToString("F1") +
                    " | main hash " + before + " -> " + after + (before == after ? " (unchanged)" : " CHANGED");
         }
