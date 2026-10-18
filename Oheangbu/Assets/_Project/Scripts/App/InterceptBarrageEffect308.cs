@@ -17,7 +17,7 @@ namespace Oheangbu.App
         public const string HandlerId = "intercept.barrage";
         static readonly SpellParamSpec[] Specs = { new SpellParamSpec("intercept.max", 1f, 64f) };
 
-        struct Barrage { public Vector3 Caster, Forward; public float At, HalfAngle, Range; public int Max; public long Owner; }
+        struct Barrage { public Vector3 Caster, Forward; public float At, HalfAngle, Range; public int Max; public long Owner; public char Letter; }
         readonly List<Barrage> _barrages = new List<Barrage>();
         readonly List<ISpellInterceptable308> _found = new List<ISpellInterceptable308>();
         readonly List<SpellProjectileSnap> _snaps = new List<SpellProjectileSnap>();
@@ -43,6 +43,7 @@ namespace Oheangbu.App
             {
                 Caster = caster, Forward = forward, At = ctx.Now + area.Delay, HalfAngle = area.Radius, Range = area.Length,
                 Max = Mathf.RoundToInt(ctx.Row.F("intercept.max", 0f)), Owner = SingleShots308.Identity(host, cast.Element).AttackId,
+                Letter = cast.Letter,
             });
             return true;
         }
@@ -59,7 +60,12 @@ namespace Oheangbu.App
                 Intercepts308.Snap(_found, _snaps);
                 InterceptRule308.PickMany(_snaps, barrage.Caster, barrage.Forward, barrage.HalfAngle, barrage.Range, barrage.Max, _picked);
                 for (int p = 0; p < _picked.Count; p++)
-                    if (_found[_picked[p]].Intercept(barrage.Owner)) Downed++;
+                {
+                    Vector3 point = _snaps[_picked[p]].Position;   // read before Intercept drops it
+                    if (!_found[_picked[p]].Intercept(barrage.Owner)) continue;
+                    Downed++;
+                    (ctx.Fx as ISpellBurstPresenter308)?.Burst(barrage.Letter, point);   // 11.58: presentation only
+                }
                 _found.Clear();
             }
         }

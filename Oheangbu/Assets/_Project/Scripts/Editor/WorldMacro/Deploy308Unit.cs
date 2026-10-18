@@ -1307,6 +1307,36 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D49", bad.Count == 0, string.Join(", ", notes) + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | 5 zone floors, local, knee-low; clock start / faint / dry / gone"));
                 }
 
+                // ---- D50 (11.58): the intercept letters 상 송 carry one burst - every system one shot (no loop, plays on awake), local,
+                // start speed 0 (nothing flies off), life <= 1 s; no material glows
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2";
+                    var bad = new List<string>(); int systems = 0; GameObject burst = null;
+                    foreach (var id in new[] { "078_C0C1", "090_C1A1" })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/Profiles/" + id + "_308b.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        if (p.Burst308Prefab == null) { bad.Add(id + " no burst"); continue; }
+                        burst = p.Burst308Prefab;
+                    }
+                    if (burst != null)
+                    {
+                        foreach (var ps in burst.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.loop || !main.playOnAwake) bad.Add(ps.name + " loop " + main.loop + " awake " + main.playOnAwake);
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(ps.name + " not local");
+                            if (main.startLifetime.constantMax > 1f) bad.Add(ps.name + " life " + Deploy308.F(main.startLifetime.constantMax));
+                            if (main.startSpeed.constantMax > 1e-4f) bad.Add(ps.name + " speed " + Deploy308.F(main.startSpeed.constantMax));
+                        }
+                        foreach (var r in burst.GetComponentsInChildren<Renderer>(true))
+                            foreach (var m in r.sharedMaterials)
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                    }
+                    Check("D50", bad.Count == 0 && systems > 0, (burst != null ? burst.name + " " + systems + " systems" : "no burst") + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | one shot, local, speed 0, life <= 1 s, no glow"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

@@ -136,6 +136,8 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject Derived308Prefab;
         [Tooltip("11.57: lingering-zone letters - the floor the zone leaves (Vfx308ZoneBody, built at 1 m radius), put down at the zone centre (or per heal zone) and kept for the rule's life. Empty = old behaviour.")]
         public GameObject Zone308Prefab;
+        [Tooltip("11.58: intercept letters - a one-shot particle prefab put down where an enemy projectile was shot down (Intercept cue, or ISpellBurstPresenter308.Burst). Empty = old behaviour.")]
+        public GameObject Burst308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]

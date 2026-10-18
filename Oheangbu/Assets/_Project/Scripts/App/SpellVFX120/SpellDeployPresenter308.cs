@@ -12,7 +12,7 @@ namespace Oheangbu.App.SpellVFX120
     // The switch is read per call, so a glyph can be switched while a scene runs; a handle keeps the side it began on.
     // Rules never read anything back: handlers get a handle and pass it back for cues. The wiring calls this class through
     // SpellPresenterGuard308, which isolates every call (a failure here never reaches a rule).
-    public sealed class SpellDeployPresenter308 : ISpellPresenter, ISpellPresenterBinding, ISpellPresenterProbe
+    public sealed class SpellDeployPresenter308 : ISpellPresenter, ISpellPresenterBinding, ISpellPresenterProbe, ISpellBurstPresenter308
     {
         // Handles of the interim presenter that may still be alive. A bound of bookkeeping: the oldest is forgotten first.
         private const int FallbackCapacity = 256;
@@ -94,6 +94,9 @@ namespace Oheangbu.App.SpellVFX120
             var stage = Stage;
             if (stage != null) stage.End(handle.Id, immediate);
         }
+
+        // 11.58: a handle-less burst is drawn by the interim presenter (the deploy layer has no burst form).
+        public void Burst(char letter, Vector3 point) => _fallback.Burst(letter, point);
 
         // Death, rest, scene leave: both sides let go of everything.
         public void EndAll()

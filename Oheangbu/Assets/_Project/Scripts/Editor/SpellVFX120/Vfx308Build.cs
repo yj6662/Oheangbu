@@ -75,6 +75,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "cue": return BuildCue();       // 11.40: the 27 non-attack cue letters
                 case "derived": return BuildDerived();   // 11.56: the derived shots of 간 낫 속 안
                 case "zone": return BuildZone();         // 11.57: the floors of the lingering zones 곡 곳 녹 농 몽
+                case "burst": return BuildBurst();       // 11.58: the intercept burst of 상 송
                 case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
                 case "retire:summon": return ConnectSummonFx();         // 11.37 (f) D308-107: old summon effects off on the live profiles
                 case "retire:summon:revert": return RevertSummonFx();
