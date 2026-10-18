@@ -155,24 +155,46 @@ def main():
         for r in rows:
             h.write("%s,%s,%s,%d,%s\n" % r)
     mb = lambda b: "%.1f" % (b / 1048576.0)
+
+    # a folder may go whole only when nothing in it is live (keep 0) and no builder names it by path
+    def whole(f):
+        d = folders[f]
+        if d["keep#"] or f == "(root)" or by_path.get(f):
+            return "안 됨"
+        return "가능(A만)" if not d["B#"] else "가능(A+B, legacy 은퇴 뒤)"
+
+    # A-only file list, largest first: what a confirmation question points at (files, not folders)
+    a_rows = sorted((r for r in rows if r[0] == "A"), key=lambda r: -r[3])
+    with open(os.path.join(a.out, "orphans308_A.txt"), "w", encoding="utf-8", newline="\n") as h:
+        h.write("# A tier files (no scene / Resources / lab reaches them), largest first. Folder rows marked 안 됨 keep live files beside these.\n")
+        for r in a_rows:
+            h.write("%10d  %s\n" % (r[3], r[2]))
+
     lines = ["# orphans308 - Art/SpellVFX120 정리 후보 (읽기만, 지우지 않음)", "",
              "keep = main 또는 lab이 닿음 · A = 아무도 안 닿음 · B = legacy 장면 / 옛 세트 사본만 닿음", "",
-             "| 폴더 | keep MB (#) | A MB (#) | B MB (#) | 편집기 빌더가 경로로 씀 |", "|---|---|---|---|---|"]
+             "**A · B는 파일 단위 등급이다. 폴더 단위가 아니다.** 같은 폴더에 keep 파일이 섞여 있으면 폴더째 지우면 게임이 깨진다 — "
+             "\"폴더째 삭제\" 열이 `안 됨`인 줄은 폴더를 지우지 말 것. 지울 후보는 파일 목록 `orphans308_A.txt`(큰 것부터)로만 본다.", "",
+             "| 폴더 | 폴더째 삭제 | keep MB (#) | A MB (#) | B MB (#) | 편집기 빌더가 경로로 씀 |", "|---|---|---|---|---|---|"]
     tot = defaultdict(int)
+    n_whole = 0
     for f in sorted(folders):
         d = folders[f]
         for t in ("keep", "A", "B"):
             tot[t] += d[t]
             tot[t + "#"] += d[t + "#"]
-        lines.append("| %s | %s (%d) | %s (%d) | %s (%d) | %s |" % (
-            f, mb(d["keep"]), d["keep#"], mb(d["A"]), d["A#"], mb(d["B"]), d["B#"], ", ".join(sorted(by_path.get(f, ()))) or "-"))
-    lines.append("| **합계** | %s (%d) | %s (%d) | %s (%d) | |" % (
-        mb(tot["keep"]), tot["keep#"], mb(tot["A"]), tot["A#"], mb(tot["B"]), tot["B#"]))
+        w = whole(f)
+        n_whole += w != "안 됨"
+        lines.append("| %s | %s | %s (%d) | %s (%d) | %s (%d) | %s |" % (
+            f, w, mb(d["keep"]), d["keep#"], mb(d["A"]), d["A#"], mb(d["B"]), d["B#"], ", ".join(sorted(by_path.get(f, ()))) or "-"))
+    lines.append("| **합계** | 가능 %d / %d | %s (%d) | %s (%d) | %s (%d) | |" % (
+        n_whole, len(folders), mb(tot["keep"]), tot["keep#"], mb(tot["A"]), tot["A#"], mb(tot["B"]), tot["B#"]))
     lines += ["", "뿌리: main = %s + Realm_* + Resources 폴더 전부(옛 세트 사본 3개는 끊음) · lab = SpellLab308 장면 · legacy = 나머지 빌드 장면 · sets = 옛 세트 사본 3개." % ", ".join(os.path.basename(s) for s in MAIN_SCENES),
-              "주의: 스크립트가 경로 문자열로 불러오는 에셋(Resources.Load 밖, AssetDatabase 경로)은 그래프에 안 잡힌다 — 오른쪽 열의 빌더를 같이 볼 것. 삭제는 사용자 확인 뒤."]
+              "주의: 스크립트가 경로 문자열로 불러오는 에셋(Resources.Load 밖, AssetDatabase 경로)은 그래프에 안 잡힌다 — 오른쪽 열의 빌더를 같이 볼 것. "
+              "장면을 이름으로 Additive 로드하는 경로도 안 잡힌다(W_Cheongrim_FarSet은 허브 포탈 → AreaLoader 경로라 legacy로 둠; W_Demo_Main 런타임은 이름으로 부르지 않음 — 2026-10-18 grep). 삭제는 사용자 확인 뒤."]
     with open(os.path.join(a.out, "orphans308.md"), "w", encoding="utf-8", newline="\n") as h:
         h.write("\n".join(lines) + "\n")
     print("\n".join(lines))
+    print("A files", len(a_rows), "-> orphans308_A.txt")
 
 
 if __name__ == "__main__":
