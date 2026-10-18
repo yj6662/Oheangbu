@@ -1021,6 +1021,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 if (!File.Exists(AttackProfilePath(a)) && !AssetDatabase.CopyAsset(src, AttackProfilePath(a))) throw new Exception("copy failed " + src);
                 var profile = Load<Vfx120Profile>(AttackProfilePath(a));
                 profile.Bolt300ReturnToCaster = V2 && a.Shape == Form.Single && a.Glyph == "앙";   // 11.60: the cycle shot's ink flies back to the caster
+                profile.BotanicalPrefab = null; profile.BotanicalKind = Vfx120BotanicalKind.None;   // 11.68 (D308-112): 공's coloured bamboo mesh is off, the ink path front is the wall
                 if (a.Shape == Form.Single)
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
