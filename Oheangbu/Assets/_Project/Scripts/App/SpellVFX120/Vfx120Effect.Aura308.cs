@@ -72,6 +72,15 @@ namespace Oheangbu.App.SpellVFX120
             }
         }
 
+        // 11.62: a lasting body let go before its life (a consumed WP buff, an expired tree) dries over its fade instead of
+        // vanishing; the effect then destroys itself. False = not a lasting #308 body, the caller removes it as before.
+        public bool DryAura308()
+        {
+            if (_aura308 == null || Profile == null || !Profile.Aura308Lasting || !Begun || PreviewControlled) return false;
+            Life = Mathf.Min(Life, Age + Mathf.Max(.1f, Profile.Aura308FadeSeconds));
+            return true;
+        }
+
         static void FadeStart308(ParticleSystem ps, float alpha)
         {
             var main = ps.main;

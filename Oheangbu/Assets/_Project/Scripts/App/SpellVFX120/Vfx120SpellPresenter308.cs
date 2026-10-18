@@ -147,6 +147,8 @@ namespace Oheangbu.App.SpellVFX120
             ForgetBurst308(handle.Id);
             ForgetMark308(handle.Id);
             if (!_live.TryGetValue(handle.Id, out var live)) return;
+            // 11.62: a lasting aura dries first and destroys itself; Sweep hands its profile copy back
+            if (!immediate && live.Fx != null && live.Fx.DryAura308()) return;
             _live.Remove(handle.Id);
             Release(live);
         }

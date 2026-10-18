@@ -1431,6 +1431,31 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D53", bad.Count == 0 && seals == 5, seals + " seals, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | ink seal, local, still, faint after 3 s, no glow, Anchor / Detonate / Expire wired"));
                 }
 
+                // ---- D54 (11.62): the nine WP buffs draw their ink on the brush for as long as the buff lives - lasting, 30 s cap,
+                // dark for 3 s and faint after; 건 asks 4 s and gets 4; an End that is not immediate lets a lasting body dry first
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
+                    var bad = new List<string>(); int buffs = 0;
+                    foreach (var (id, key) in new[] { ("009_AC74", "ga"), ("033_B10C", "na"), ("034_B118", "na"), ("057_BA3C", "ma"), ("058_BA48", "ma"),
+                                                      ("081_C120", "sa"), ("082_C12C", "sa"), ("105_C5B8", "a"), ("106_C5C4", "a") })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/" + id + "_308h.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        buffs++;
+                        if (p.Aura308Prefab == null || p.Aura308Prefab.name != "PF_V308f_buff_" + key) bad.Add(id + " aura " + (p.Aura308Prefab != null ? p.Aura308Prefab.name : "none"));
+                        if (!p.Aura308Lasting) bad.Add(id + " not lasting");
+                        if (Mathf.Abs(p.Duration - 30f) > 1e-3f) bad.Add(id + " duration " + Deploy308.F(p.Duration));
+                        if (Mathf.Abs(p.Aura308LateAfter - 3f) > 1e-3f) bad.Add(id + " late after " + Deploy308.F(p.Aura308LateAfter));
+                        if (!(p.Aura308LateAlpha > 0f && p.Aura308LateAlpha < 1f)) bad.Add(id + " late alpha " + Deploy308.F(p.Aura308LateAlpha));
+                    }
+                    float short4 = Oheangbu.App.SpellVFX120.SpellCueLife308.Seconds(4f, 30f, true), full = Oheangbu.App.SpellVFX120.SpellCueLife308.Seconds(30f, 30f, true);
+                    if (Mathf.Abs(short4 - 4f) > 1e-3f || Mathf.Abs(full - 30f) > 1e-3f) bad.Add("life " + Deploy308.F(short4) + " / " + Deploy308.F(full));
+                    string presenterSource = "Assets/_Project/Scripts/App/SpellVFX120/Vfx120SpellPresenter308.cs";
+                    string presenter = File.Exists(presenterSource) ? File.ReadAllText(presenterSource) : "";
+                    if (!presenter.Contains("!immediate && live.Fx != null && live.Fx.DryAura308()")) bad.Add("End does not let a lasting aura dry");
+                    Check("D54", bad.Count == 0 && buffs == 9, buffs + " buffs" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | lasting 30 s cap (건 4 s), faint after 3 s, dries on a non-immediate End"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

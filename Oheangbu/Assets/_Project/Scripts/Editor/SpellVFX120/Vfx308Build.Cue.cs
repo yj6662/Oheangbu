@@ -86,6 +86,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 else { profile.Bolt300Prefab = null; profile.Aura308Prefab = aura; }
                 if (g.Kind == "buff") profile.Aura308FadeSeconds = .85f;   // 11.50: the dry rim plays as the fade starts
                 profile.Aura308Lasting = g.Kind == "tree"; profile.Aura308LateAfter = 0f; profile.Aura308LateAlpha = 1f;
+                // 11.62: a WP buff lives as long as the buff (min(request, 30)), dark for 3 s and faint after, like the EA buffs
+                if (g.Kind == "buff") { profile.Aura308Lasting = true; profile.Duration = 30f; profile.Aura308LateAfter = 3f; profile.Aura308LateAlpha = .45f; }
                 if (g.Kind == "tree") { profile.Duration = 20f; profile.Aura308FadeSeconds = 1f; }   // 11.54: the tree's 20 s drawn in ink (TEST)
                 // 11.41: the companion's shots fly a smaller copy of the element bolt; the sword form's swings lay a slash at the struck point
                 if (g.Kind == "companion") profile.CompanionShot308Prefab = ShotPair(g.Id, spell);
