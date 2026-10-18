@@ -68,6 +68,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "connect:attack": if (!V2) throw new ArgumentException("the attack set exists in the v2 look only"); return Connect(true);
                 case "attack": return AttackTable();
                 case "stain": return BuildStain();   // 11.37 (e) D308-104: the range-ㄱ foot stain alone
+                case "mod": return BuildMod();       // 11.63: the eight modifier letters' hit pictures alone
                 case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
                 case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
                 case "field": return BuildField();   // 11.46: the field gates 눈 숫 웅, their own bodies
@@ -1021,7 +1022,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 if (a.Shape == Form.Single)
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
-                    profile.Bolt300Prefab = V2 ? FinalBolt(e, spell, FinalOf(a.Glyph), finals) : Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;   // 11.23: the final's marker
+                    profile.Bolt300Prefab = V2 ? ModBolt(e, spell, a.Glyph, finals) : Load<GameObject>(PrefabPath(spell));   // 11.63: + the modifier profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;   // 11.23: the final's marker
                     profile.NativeCastPrefab = null;   // 11.26 (D308-87): the old KTP cast (glowing zigzag + sparks at the launch point) is retired
                     profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
@@ -1046,7 +1047,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                         bodies[key] = body = PrefabUtility.SaveAsPrefabAsset(root, key);
                         Object.DestroyImmediate(root);
                     }
-                    var hit = FinalHit(e, FinalOf(a.Glyph), hits);   // 11.23: the final's marker where a range letter hits
+                    var hit = V2 ? ModHit(e, a.Glyph, hits) : FinalHit(e, FinalOf(a.Glyph), hits);   // 11.23: the final's marker where a range letter hits; 11.63: + the modifier
                     profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaKeepShape308 = a.Shape == Form.Cone;   /* 11.29: the fan seam keeps this body's shape and sizes */ profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f; profile.Bolt300Prefab = null;   // D308-84 7th pass: not a fence
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;

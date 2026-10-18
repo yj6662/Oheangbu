@@ -1456,6 +1456,41 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D54", bad.Count == 0 && buffs == 9, buffs + " buffs" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | lasting 30 s cap (건 4 s), faint after 3 s, dries on a non-immediate End"));
                 }
 
+                // ---- D55 (11.63): the eight modifier letters' hit carries its modifier - a single's bolt / a range letter's hit is the
+                // _<mod> prefab with Mod_ layers, each local, not looping, gone inside .8 s, no material glows; 난 (no modifier) keeps _n
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
+                    var bad = new List<string>(); int letters = 0, layers = 0;
+                    foreach (var (id, single, want) in new[] { ("006_AC15", true, "PF_V308b_ga_ng_pierce"), ("030_B0AD", true, "PF_V308b_na_ng_pierce"),
+                                                               ("041_B18B", false, "PF_V308b_hit_na_s_shred"), ("053_B9DB", true, "PF_V308b_ma_s_shred"),
+                                                               ("063_BAAC", false, "PF_V308b_hit_ma_n_brand"), ("075_C0B0", true, "PF_V308b_sa_n_brand"),
+                                                               ("051_B9CC", true, "PF_V308b_ma_n_blast"), ("015_ACE4", false, "PF_V308b_hit_ga_n_lift") })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/" + id + "_308b.asset");
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        var prefab = single ? p.Bolt300Prefab : p.AreaContactPrefab;
+                        if (prefab == null || prefab.name != want) { bad.Add(id + " " + (prefab != null ? prefab.name : "none") + " not " + want); continue; }
+                        letters++;
+                        var mods = prefab.GetComponentsInChildren<ParticleSystem>(true).Where(x => x.name.StartsWith("Mod_")).ToList();
+                        if (mods.Count == 0) bad.Add(want + " has no Mod_ layer");
+                        foreach (var ps in mods)
+                        {
+                            layers++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(want + "/" + ps.name + " not local");
+                            if (main.loop) bad.Add(want + "/" + ps.name + " loops");
+                            float end = main.startLifetime.constantMax + (ps.emission.burstCount > 0 ? ps.emission.GetBurst(0).time : 0f);
+                            if (end > .8f + 1e-3f) bad.Add(want + "/" + ps.name + " ends at " + Deploy308.F(end));
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            foreach (var m in r != null ? r.sharedMaterials : new Material[0])
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                        }
+                    }
+                    var nan = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/027_B09C_308b.asset");
+                    if (nan == null || nan.Bolt300Prefab == null || nan.Bolt300Prefab.name != "PF_V308b_na_n") bad.Add("난 " + (nan != null && nan.Bolt300Prefab != null ? nan.Bolt300Prefab.name : "none") + " not PF_V308b_na_n");
+                    Check("D55", bad.Count == 0 && letters == 8, letters + " letters, " + layers + " Mod_ layers" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | pierce / shred / brand / blast / lift at the hit, local, one-shot, gone inside .8 s, no glow; 난 keeps _n"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
