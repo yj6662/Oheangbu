@@ -1397,6 +1397,40 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D52", bad.Count == 0 && flagged == 1, seen + " profiles, " + flagged + " fly back" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | 앙 only, Return cue wired, hidden near the eye"));
                 }
 
+                // ---- D53 (11.61): the install letters 감 남 맘 삼 암 carry an ink seal - a Vfx308ZoneBody (faint after 3 s), every system
+                // local and still (start speed <= .12), no material glows; the presenter's mark table puts it on at Anchor, breaks it at
+                // Detonate and dries it at Expire
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles";
+                    var bad = new List<string>(); int seals = 0, systems = 0;
+                    foreach (var id in new[] { "004_AC10", "028_B0A8", "052_B9D8", "076_C0BC", "100_C554" })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(v2 + "/" + id + "_308h.asset");
+                        var seal = p != null ? p.Mark308Prefab : null;
+                        if (p == null) { bad.Add(id + " not built"); continue; }
+                        if (seal == null) { bad.Add(id + " no seal"); continue; }
+                        seals++;
+                        var body = seal.GetComponent<Oheangbu.App.SpellVFX120.Vfx308ZoneBody>();
+                        if (body == null) bad.Add(seal.name + " without Vfx308ZoneBody");
+                        else if (Mathf.Abs(body.LateAfter - 3f) > 1e-3f) bad.Add(seal.name + " late after " + Deploy308.F(body.LateAfter));
+                        foreach (var ps in seal.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(seal.name + "/" + ps.name + " not local");
+                            if (main.startSpeed.constantMax > .12f) bad.Add(seal.name + "/" + ps.name + " speed " + Deploy308.F(main.startSpeed.constantMax));
+                        }
+                        foreach (var r in seal.GetComponentsInChildren<Renderer>(true))
+                            foreach (var m in r.sharedMaterials)
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                    }
+                    string markSource = "Assets/_Project/Scripts/App/SpellVFX120/Vfx120SpellPresenter308.Mark308.cs";
+                    string mark = File.Exists(markSource) ? File.ReadAllText(markSource) : "";
+                    foreach (var cue in new[] { "SpellFxCue.Anchor", "SpellFxCue.Detonate", "SpellFxCue.Expire" })
+                        if (!mark.Contains(cue)) bad.Add("mark table does not take " + cue);
+                    Check("D53", bad.Count == 0 && seals == 5, seals + " seals, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | ink seal, local, still, faint after 3 s, no glow, Anchor / Detonate / Expire wired"));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

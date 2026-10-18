@@ -100,6 +100,7 @@ namespace Oheangbu.App.SpellVFX120
             NoteDerived308(id, live);
             NoteZone308(id, live);
             NoteBurst308(id, live);
+            NoteMark308(id, live);
             return new SpellFxHandle(id);
         }
 
@@ -109,6 +110,7 @@ namespace Oheangbu.App.SpellVFX120
             Derived308(handle.Id, cue, args);   // 11.56: derived shots fly from here; the cue still goes on
             Zone308(handle.Id, cue, args);      // 11.57: the zone floor dries / breaks / opens here; the cue still goes on
             Burst308(handle.Id, cue, args);     // 11.58: an intercepted projectile freezes and cracks here; the cue still goes on
+            Mark308(handle.Id, cue, args);      // 11.61: the install seal goes on the enemy / breaks / dries here; the cue still goes on
             // 11.41: companion shots / sword swings live in their own side table, past the 3 s cue life of the wrap
             if (CueBody308(handle.Id, cue, args)) return;
             if (!_live.TryGetValue(handle.Id, out var live) || live.Instance == null || live.Fx == null) return;
@@ -143,6 +145,7 @@ namespace Oheangbu.App.SpellVFX120
             ForgetDerived308(handle.Id);
             ForgetZone308(handle.Id);
             ForgetBurst308(handle.Id);
+            ForgetMark308(handle.Id);
             if (!_live.TryGetValue(handle.Id, out var live)) return;
             _live.Remove(handle.Id);
             Release(live);
@@ -157,6 +160,7 @@ namespace Oheangbu.App.SpellVFX120
             ClearDerived308();
             ClearZone308();
             ClearBurst308();
+            ClearMark308();
             foreach (var stack in _spares.Values)
                 while (stack.Count > 0) Destroy(stack.Pop());
             _spares.Clear();

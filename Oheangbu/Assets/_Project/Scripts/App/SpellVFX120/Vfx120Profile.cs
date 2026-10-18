@@ -138,6 +138,8 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject Zone308Prefab;
         [Tooltip("11.58: intercept letters - a one-shot particle prefab put down where an enemy projectile was shot down (Intercept cue, or ISpellBurstPresenter308.Burst). Empty = old behaviour.")]
         public GameObject Burst308Prefab;
+        [Tooltip("11.61: install letters - the ink seal (Vfx308ZoneBody, built at 1 m) put on the marked enemy at the Anchor cue and kept for the mark's life; Detonate breaks it, Expire / a lost target dries it. Empty = old behaviour.")]
+        public GameObject Mark308Prefab;
         [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
         [Range(0f, 30f)] public float AreaBambooLean;
         [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]
