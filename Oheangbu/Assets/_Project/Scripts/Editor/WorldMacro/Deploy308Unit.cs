@@ -1557,6 +1557,69 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D57", bad.Count == 0 && letters == 2, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | lift / bank where the field stands up, local, one-shot, gone inside 1 s, no glow, seam called"));
                 }
 
+                // ---- D58 (11.58 / 11.64 / 11.65): the burst seam end to end on a fixture - the live presenter chain
+                // (SpellPresenterGuard308 -> SpellDeployPresenter308 -> Vfx120SpellPresenter308) bound to the live set, Burst(letter, far point)
+                // for 상 송 먼 멈 넘 국 뭄: exactly one Spell308_<letter>_Burst lands in the owner's preview scene, made from the profile's
+                // Burst308Prefab, no fault; nothing stays in the open scene. The Data copy of the set is read for comparison only.
+                {
+                    const string liveSet = "Assets/_Project/Art/World/Architecture296/Data/9f55ff4897c35bf408434d2fd4cd5dbc_278c3cdf45b3ab24fb93a8f33e2264e2_9ba170fd23c53dc418707872eb7b2056_SpellVisualSet_120.asset";
+                    const string dataSet = "Assets/_Project/Art/SpellVFX120/Data/SpellVisualSet_120.asset";
+                    var bad = new List<string>(); var notes = new List<string>(); int landed = 0;
+                    var set = AssetDatabase.LoadAssetAtPath<SpellVisualSetSO>(liveSet);
+                    var copy = AssetDatabase.LoadAssetAtPath<SpellVisualSetSO>(dataSet);
+                    var open = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+                    int openRoots = open.IsValid() ? open.rootCount : -1; bool openDirty = open.IsValid() && open.isDirty;
+                    if (set == null) bad.Add("live set missing");
+                    else
+                    {
+                        var preview = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+                        var owner = new GameObject("D58_Owner") { hideFlags = HideFlags.HideAndDontSave };
+                        UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(owner, preview);
+                        try
+                        {
+                            var presenter = new SpellDeployPresenter308();
+                            presenter.Bind(set, owner.transform);
+                            var guard = new SpellPresenterGuard308();
+                            guard.Bind(presenter);
+                            var eye = Camera.main;
+                            Vector3 far = (eye != null ? eye.transform.position : Vector3.zero) + new Vector3(500f, 0f, 500f);
+                            foreach (char letter in "상송먼멈넘국뭄")
+                            {
+                                GameObject want = null;
+                                if (set.TryGet(letter, out var visual) && visual.FxPrefab != null)
+                                {
+                                    var eff = visual.FxPrefab.GetComponent<Vfx120Effect>();
+                                    if (eff != null && eff.Profile != null) want = eff.Profile.Burst308Prefab;
+                                }
+                                string name = "Spell308_" + letter + "_Burst";
+                                int faults = guard.Faults;
+                                guard.Burst(letter, far);
+                                var made = preview.GetRootGameObjects().Where(g => g.name == name).ToList();
+                                int stray = open.IsValid() ? open.GetRootGameObjects().Count(g => g.name == name) : 0;
+                                if (guard.Faults != faults) bad.Add(letter + " faulted");
+                                if (want == null) bad.Add(letter + " live prefab " + (visual.FxPrefab != null ? visual.FxPrefab.name : "none") + " has no Burst308Prefab");
+                                else if (made.Count != 1) bad.Add(letter + " " + made.Count + " bursts in the preview scene");
+                                else if (PrefabUtility.GetCorrespondingObjectFromSource(made[0]) != want && !made[0].GetComponentsInChildren<ParticleSystem>(true).Select(p => p.name).SequenceEqual(want.GetComponentsInChildren<ParticleSystem>(true).Select(p => p.name)))
+                                    bad.Add(letter + " burst is not " + want.name);
+                                else { landed++; notes.Add(letter + " " + want.name); }
+                                if (stray > 0) bad.Add(letter + " " + stray + " left in the open scene");
+                                if (copy != null && copy.TryGet(letter, out var old) && old.FxPrefab != visual.FxPrefab)
+                                    notes.Add(letter + " Data copy differs (" + (old.FxPrefab != null ? old.FxPrefab.name : "none") + ")");
+                                foreach (var g in made) Object.DestroyImmediate(g);
+                                if (open.IsValid()) foreach (var g in open.GetRootGameObjects().Where(g => g.name == name).ToList()) Object.DestroyImmediate(g);
+                            }
+                        }
+                        finally
+                        {
+                            Object.DestroyImmediate(owner);
+                            UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(preview);
+                        }
+                    }
+                    if (open.IsValid() && open.rootCount != openRoots) bad.Add("open scene roots " + openRoots + " -> " + open.rootCount);
+                    if (open.IsValid() && open.isDirty != openDirty) bad.Add("open scene dirty " + openDirty + " -> " + open.isDirty);
+                    Check("D58", bad.Count == 0 && landed == 7, landed + "/7 landed, open scene dirty " + openDirty + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : "") + " | " + string.Join(", ", notes));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };
