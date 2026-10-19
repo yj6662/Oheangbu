@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "source": "goat251910",
+  "target": "boar",
+  "forward": [
+    0,
+    -1,
+    0
+  ],
+  "sideNote": "Target Fore_L/Hind_L of the D308-119 boar sit at +X (the animal's own left: it faces -Y, +Z up). Source *_L bones sit at +X too, so L pairs with L.",
+  "reference": {
+    "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Idle.fbx",
+    "action": "Armature|Take 001|BaseLayer",
+    "frame": "start",
+    "why": "Calm standing idle, four hooves planted."
+  },
+  "pelvis": "Pelvis_joint",
+  "axisChain": {
+    "source": [
+      "Pelvis_joint",
+      "Spine1_M_joint",
+      "Spine2_M_joint",
+      "Neck_M_joint",
+      "Neck1_M_joint",
+      "Head_M_joint"
+    ],
+    "target": [
+      "Pelvis",
+      "Spine",
+      "Chest",
+      "Neck",
+      "Head"
+    ]
+  },
+  "legs": {
+    "Fore_L": {
+      "hip": "HipFront_L_joint",
+      "foot": "ToesFront_L_joint",
+      "parent": "Spine2_M_joint"
+    },
+    "Fore_R": {
+      "hip": "HipFront_R_joint",
+      "foot": "ToesFront_R_joint",
+      "parent": "Spine2_M_joint"
+    },
+    "Hind_L": {
+      "hip": "Hip_L_joint",
+      "foot": "Toes_L_joint",
+      "parent": "Pelvis_joint"
+    },
+    "Hind_R": {
+      "hip": "Hip_R_joint",
+      "foot": "Toes_R_joint",
+      "parent": "Pelvis_joint"
+    }
+  },
+  "footPointNote": "Toes*_joint heads are the hoof points (z .043 m at rest). The goat tail is not mapped: the boar mesh has no tail."
+}

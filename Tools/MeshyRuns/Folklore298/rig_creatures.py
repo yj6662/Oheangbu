@@ -49,7 +49,9 @@ import sys
 
 
 VERSION = 1
-SPECIES = ("bulgasari", "fox_spirit", "imugi", "cheongryong")
+SPECIES = ("bulgasari", "fox_spirit", "imugi", "cheongryong", "boar", "bear")
+# D308-119: Meshy enemy bodies (SPEC-ENEMY-BODIES-308) reuse the quadruped rig unchanged
+QUADRUPEDS = ("bulgasari", "fox_spirit", "boar", "bear")
 LEGS = ("Fore_L", "Fore_R", "Hind_L", "Hind_R")
 CLIPS = {"Idle": (2.0, True), "Walk": (1.2, True), "Attack": (1.4, False),
          "Hit": (.55, False), "Stun": (1.5, True), "Death": (1.7, False)}
@@ -163,7 +165,7 @@ def skin_weights(point, region, bones):
 
 
 def schema(species):
-    quadruped = species in ("bulgasari", "fox_spirit")
+    quadruped = species in QUADRUPEDS
     legs = {name: {"hip": None, "knee": None, "ankle": None, "toe": None,
                    "parent": "Chest" if name.startswith("Fore") else "Pelvis"}
             for name in LEGS} if quadruped else {}
@@ -220,7 +222,7 @@ def bone_definitions(config):
         result[name] = {"head": head, "tail": tail, "parent": parent, "deform": deform}
     root = v3(config["root"], "root")
     bone("Root", root, add(root, (0, 0, config["rootBoneLengthM"])), deform=False)
-    if config["species"] in ("bulgasari", "fox_spirit"):
+    if config["species"] in QUADRUPEDS:
         joints = config["joints"]
         chain = [("Pelvis", "pelvis", "spine", "Root"), ("Spine", "spine", "chest", "Pelvis"),
                  ("Chest", "chest", "neck", "Spine"), ("Neck", "neck", "head", "Chest"),
@@ -289,7 +291,7 @@ def verify_config(config, source_hash):
             if region.get("chainBlend"):
                 for a, b in zip(region["bones"], region["bones"][1:]):
                     require(bones[b]["parent"] == a, "chainBlend must list a contiguous parent chain")
-    if config["species"] in ("bulgasari", "fox_spirit"):
+    if config["species"] in QUADRUPEDS:
         require(set(config["contactVertices"]) == set(LEGS), "Explicit four sole vertex selections required")
     return bones
 

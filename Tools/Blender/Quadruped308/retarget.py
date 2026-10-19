@@ -58,7 +58,8 @@ PACKS = ROOT / "Art/Characters/Quadruped308/Packages"
 OUT = ROOT / "Art/Characters/Quadruped308"
 FOLKLORE = ROOT / "Art/Characters/Folklore298"
 RIG_TOOL = ROOT / "Tools/MeshyRuns/Folklore298"
-SPECIES = ("bulgasari", "fox_spirit")
+SPECIES = ("bulgasari", "fox_spirit", "boar")
+ENEMY_BODIES = ROOT / "Art/Characters/EnemyBodies308/Rig"   # D308-119 Meshy enemy bodies: <species>/target.json
 ROLES = ("Idle", "Walk", "Attack", "Hit", "Stun", "Death")
 LEGS = ("Fore_L", "Fore_R", "Hind_L", "Hind_R")
 VERSION = 1
@@ -149,6 +150,9 @@ def load_maps(species):
 
 
 def manifest_row(species):
+    local = ENEMY_BODIES / species / "target.json"   # {id, model, targetLength, lengthAxis}; model = rig_creatures run creature.fbx
+    if local.is_file():
+        return read_json(local)
     rows = read_json(FOLKLORE / "import-manifest.json")["rows"]
     row = next((r for r in rows if r["id"] == species), None)
     require(row is not None, "Folklore298 manifest has no row " + species)

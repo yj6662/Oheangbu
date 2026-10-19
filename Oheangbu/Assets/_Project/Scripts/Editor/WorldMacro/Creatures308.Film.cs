@@ -25,6 +25,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    using(var w=new Work())
    {
     var agent=prefab.GetComponent<NavMeshAgent>();var go=w.Adopt(Object.Instantiate(prefab));go.transform.SetPositionAndRotation(new Vector3(0,agent!=null?agent.baseOffset:0,0),Quaternion.Euler(0,90,0));
+    // every frame is rendered inside one editor frame: without this a skin keeps the bone matrices of its first render (boar film: bones turned 75 deg, image unchanged)
+    foreach(var k in go.GetComponentsInChildren<SkinnedMeshRenderer>(true))k.forceMatrixRecalculationPerRender=true;
     var rig=go.GetComponent<EnemyRigMotion298>();var m=ReadMeasured().rows.FirstOrDefault(r=>r.key==s.key);float L=m!=null&&m.length>0?m.length:2f,H=m!=null&&m.height>0?m.height:1f;
     var seq=new (string role,AnimationClip clip,float seconds,bool loop)[]
     {
@@ -45,7 +47,11 @@ namespace Oheangbu.EditorTools.WorldMacro
     foreach(var (role,clip,seconds,loop) in seq)
     {
      if(clip==null||seconds<=0){sb.Append("  ").Append(role).Append(": -\n");continue;}
-     int frames=Mathf.CeilToInt(seconds*fps);sb.Append("  ").Append(role).Append(": ").Append(clip.name).Append(" ").Append(frames).Append(" frames from ").Append(n).Append('\n');
+     int frames=Mathf.CeilToInt(seconds*fps);sb.Append("  ").Append(role).Append(": ").Append(clip.name).Append(" ").Append(frames).Append(" frames from ").Append(n);
+     // motion check: the largest skin-bone turn between the clip's start and middle (0 = the clip does not move this body)
+     var skin=go.GetComponentsInChildren<SkinnedMeshRenderer>(true).First();Pose(rig.Animator,clip,0);var start=skin.bones.Select(k=>k!=null?k.localRotation:Quaternion.identity).ToArray();
+     Pose(rig.Animator,clip,clip.length*.5f);float turn=0;for(int i=0;i<start.Length;i++)if(skin.bones[i]!=null)turn=Mathf.Max(turn,Quaternion.Angle(start[i],skin.bones[i].localRotation));
+     sb.Append(" | bones turn ").Append(F(turn,"0.#")).Append(" deg\n");
      for(int i=0;i<frames;i++){float t=i/(float)fps;Pose(rig.Animator,clip,loop?t%clip.length:Mathf.Min(t,clip.length));Capture(cam,960,540,Path.Combine(dir,"f_"+n.ToString("0000")+".png"),w);n++;}
     }
    }
