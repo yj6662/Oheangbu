@@ -71,10 +71,11 @@ ROWS = {
         part('spurs', 'jackal/Spine4', 'Spine4', .45, (0, .2, -.05), (0, 1, -.35), note='등뼈를 뚫고 나온 뼈 가시(물든 몸)', **BONE),
         part('crystal', 'jackal/Spine5', 'Spine5', .26, (.06, .16, 0), (.6, 1, 0), note='어깨 위 오른쪽 작은 마석 결정', **STONE),
     ],
-    # light, different from the jackal: a second jaw on the right of the neck (남는 입) + a broken shackle on the right hind leg
+    # light, different from the jackal: a second jaw on the right of the neck (남는 입; pale bone tint so it reads on the dark coat at
+    # fighting distance) + a broken shackle on the right hind leg (the chain trails toward the tail, so it lies along the ground on death)
     'ember_dog': [
-        part('jaw', 'wolf/Neck', 'Neck', .3, (.06, .03, 0), (1, .3, 0), (0, 0, 1), note='목 오른쪽에 돋은 남는 턱(이빨)', **BONE),
-        part('shackle', 'wolf/LegBack2.R', 'LegBack2.R', .4, (0, 0, 0), (0, 0, 1), (-.03, -.80, -.60), grip=.76, keep='fwd', note='오른 뒷다리 끊긴 족쇄', **IRON),
+        part('jaw', 'wolf/Neck', 'Neck', .36, (.1, -.06, .03), (1, .3, 0), (0, 0, 1), note='목 오른쪽에 돋은 남는 턱(이빨)', saturation=.3, value=.98, tint=[1.5, 1.45, 1.3]),
+        part('shackle', 'wolf/LegBack2.R', 'LegBack2.R', .4, (0, 0, 0), (0, 0, -1), (-.03, -.80, -.60), grip=.76, keep='fwd', note='오른 뒷다리 끊긴 족쇄(사슬은 꼬리 쪽으로 끌림)', **IRON),
     ],
     # strong: the only human - a talisman nailed over the face (turned a little to the right so it reads from the side too),
     # crystals through the back and the left shoulder, a shackle on the left wrist; the right arm and the axe (the telegraph) stay clear
@@ -93,10 +94,11 @@ ROWS = {
         part('tumor', 'rig298/Spine', 'Spine', .34, (.19, .02, 0), (1, .3, 0), (0, .3, 1), note='오른 옆구리 눈 달린 혹(남는 눈)'),
         part('crystal', 'rig298/Pelvis', 'Pelvis', .32, (-.12, .15, .05), (-.7, 1, -.2), note='왼 엉덩이 결정', **STONE),
     ],
-    # light: a talisman nailed to the right haunch + a straw 금줄 round the neck (a fox someone tried to bind)
+    # light: a talisman nailed to the right haunch + a straw 금줄 round the neck (a fox someone tried to bind); both darker and warmer
+    # than the paper elsewhere so they separate from the white fur
     'fox': [
-        part('talisman', 'rig298/Spine', 'Pelvis', .36, (.17, -.02, 0), (0, 1, 0), (1, 0, 0), note='오른 엉덩이에 못 박힌 부적', smoothness=.05, saturation=.7, value=.8),
-        part('rope', 'rig298/Chest', 'Neck', .34, (0, 0, 0), (0, -.06, 1), (0, 1, 0), saturation=0, value=.95, note='목 금줄(종이 수술)'),
+        part('talisman', 'rig298/Spine', 'Pelvis', .36, (.17, -.02, 0), (0, 1, 0), (1, 0, 0), note='오른 엉덩이에 못 박힌 부적', smoothness=.05, saturation=.7, value=.55, tint=[.8, .65, .45]),
+        part('rope', 'rig298/Chest', 'Neck', .34, (0, 0, 0), (0, -.06, 1), (0, 1, 0), saturation=.6, value=.5, tint=[.85, .7, .5], note='목 금줄(종이 수술)'),
     ],
     # strong: the shell bristles - crystals, two stakes driven in, a 금줄 round the rim with paper strips, a talisman on the right
     # side; the head (the bite) stays clear
