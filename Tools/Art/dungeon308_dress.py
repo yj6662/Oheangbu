@@ -22,7 +22,7 @@ LAYOUT = ROOT / 'Art/World/Compact/Rebuild/Dungeon308'
 CFG = ROOT / 'Tools/Unity/Stage308_dungeon/dungeon308.json'
 FRONT = ROOT / 'Tools/Unity/Stage308_populate/dungeon_front308.json'
 OUT = ROOT / 'Tools/Unity/Stage308_dungeon/dress308'
-VERSION = 'c3b.8'
+VERSION = 'c3d.1'
 WALK_HALF = 1.5
 A = 'Assets/'
 FLORA = A + '_Project/Art/World/Flora308/Prefabs/'
@@ -52,6 +52,19 @@ KIT = {
     'mat': dict(prefab=FEST + 'SM_MeongseogMat.prefab', size=(1.78, 0.34, 1.49), fit=1.5, axis=3),
     'charlog': dict(prefab=FLORA + 'Pack_CharLog_thin.prefab', size=(3.05, 0.29, 0.28), fit=1.9, axis=3, along=0),
     'branches': dict(prefab=FLORA + 'Pack_CharBranches.prefab', size=(0.32, 0.34, 1.30), fit=1.2, axis=3, along=2),
+    # C3d: the 부엌's own straw and wicker (KoreanTraditionalFestival, sizes from DungeonDress308 probe) - by the walls, on the 시렁, a 새끼 coil on the 중인방
+    'sheaf': dict(prefab=FEST + 'SM_SheafOfRice.prefab', size=(0.80, 0.45, 1.89), fit=1.2, axis=3, along=2),      # 짚단 for the fires
+    'broom': dict(prefab=FEST + 'SM_LineFan.prefab', size=(0.72, 0.81, 0.07), fit=0.85, axis=1, tilt=(-12.0, 0.0), along=0, pad=0.25),      # 수수 빗자루 leant on the wall
+    'ladle': dict(prefab=FEST + 'SM_PanaebagLadle.prefab', size=(0.31, 1.68, 0.14), fit=1.45, axis=1, tilt=(-10.0, 0.0), along=0, pad=0.3),
+    'samtaegi': dict(prefab=FEST + 'SM_SamtaegiTray.prefab', size=(0.55, 0.31, 0.63), fit=0.6, axis=3),      # 삼태기 (ash, charcoal)
+    'jolong': dict(prefab=FEST + 'SM_JolongtaegiBag.prefab', size=(0.41, 0.31, 0.58), fit=0.5, axis=3),
+    'ricemat': dict(prefab=FEST + 'SM_RiceBale.prefab', size=(0.76, 0.11, 0.91), fit=0.95, axis=3, flat=True),      # a straw 거적 on the floor
+    'coil': dict(prefab=FEST + 'SM_GalaeRope.prefab', size=(0.37, 0.30, 0.22), fit=0.42, axis=3),
+    'rope_hang': dict(prefab=FEST + 'SM_Rope.prefab', size=(0.37, 0.55, 0.14), fit=0.55, axis=1, along=0, seat='centre', lift=(1.25, 1.25)),      # its foot on the 중인방 (1.15)
+    'basket': dict(prefab=FEST + 'SM_Basket.prefab', size=(0.29, 0.13, 0.22), fit=0.42, axis=3),      # 시렁 pieces: along the wall wider than deep, <= 0.3 deep
+    'hamper': dict(prefab=FEST + 'SM_Hamper.prefab', size=(0.39, 0.09, 0.39), fit=0.45, axis=3),
+    'tray': dict(prefab=FEST + 'SM_Tray.prefab', size=(0.34, 0.04, 0.34), fit=0.4, axis=3),
+    'gourd': dict(prefab=FEST + 'SM_CucurbitBucket.prefab', size=(0.43, 0.09, 0.20), fit=0.4, axis=3),      # 바가지
     'post': dict(prefab=FLORA + 'Pack_CharLog_thin.prefab', size=(0.29, 3.05, 0.28), fit=0.0, axis=1, tilt=(0.0, 90.0)),
     'cap': dict(prefab=FLORA + 'Pack_CharLog_thin.prefab', size=(3.05, 0.29, 0.28), fit=0.0, axis=2),
     'root_wall_1': dict(prefab=A + 'SeyeonjeongPavilion/Prefabs/SM_TreeRoot_1.prefab', size=(3.40, 3.18, 0.84), fit=3.8, axis=3, tilt=(-90.0, 0.0), seat='centre', along=0),
@@ -83,14 +96,17 @@ ROCK = {'cr_kiln': DRESS + 'Materials/DD_KilnWall.mat', 'cr_root': DMAT + 'CaveR
 
 # cells are named as in layout.json (A1 = the entry cell). per dungeon: (kit name, how many, where: wall | corner | floor | ceiling | cells=[...] limits the cells)
 PLAN = {
-    'cr_kiln': dict(seed=11702, lampsPerCell=1, lamp=dict(intensity=10.0, range=13.0), hero=[
+    'cr_kiln': dict(seed=11702, lampsPerCell=1, lamp=dict(intensity=9.0, range=13.0), hero=[
             ('kiln_mouth', ['A2:in', 'B2:out', 'B4:out']),
             ('charcoal_heap', ['A4', 'B3', 'B1', 'A3']),
         ], rows=[
-            ('rockfall', 3, 'corner', None),      # C3c: the rooms are a 부엌's 심벽 and 연등천장 now (dungeon308 wall 'hanok'): no stone blades on the plaster, nothing through the ceiling; the danger is the snapped 대들보 and hanging rafters
-            ('timber_stack', 3, 'wall', None), ('sack', 7, 'wall', None), ('firewood', 6, 'wall', None), ('charlog', 5, 'wall', None),
-            ('jar', 4, 'corner', None), ('pot', 3, 'corner', None), ('shovel', 2, 'wall', None), ('mat', 2, 'wall', None), ('branches', 4, 'wall', None),
-        ]),
+            # C3c: the rooms are a 부엌's 심벽 and 연등천장 now (dungeon308 wall 'hanok'): no stone blades on the plaster, nothing through the ceiling; the danger is the snapped 대들보 and hanging rafters.
+            # C3d: no rockfall, no mine timber stacks in a 부엌 - the fuel and the straw and wicker of the house instead; the 시렁 get theirs in the shelf pass
+            ('sheaf', 3, 'wall', ['A2', 'B2', 'B4', 'A3']), ('sack', 6, 'wall', None), ('firewood', 6, 'wall', None), ('charlog', 2, 'wall', None),
+            ('jar', 4, 'corner', None), ('pot', 3, 'corner', None), ('samtaegi', 3, 'wall', None), ('broom', 3, 'wall', None), ('ladle', 2, 'wall', None),
+            ('rope_hang', 4, 'wall', None), ('jolong', 2, 'corner', None), ('coil', 2, 'corner', None), ('shovel', 1, 'wall', None), ('branches', 2, 'wall', None),
+            ('ricemat', 3, 'floor', None),
+        ], shelf=('basket', 'hamper', 'tray', 'gourd', 'hamper', 'tray')),
     'cr_root': dict(seed=11701, lampsPerCell=1, lamp=dict(intensity=8.0, range=11.0), hero=[
             ('bone_pile', ['B2', 'A3', 'A1', 'B1']),
             ('fungus_log', ['A2', 'B3', 'B1']),
@@ -110,6 +126,7 @@ KILN_MATS = dict(
         dict(path=DRESS + 'Materials/DD_KilnFloor.mat', source=DMAT + 'CaveRock_Cheongrim.mat', color=[0.27, 0.24, 0.2]),
         dict(path=DRESS + 'Materials/DD_KilnPlaster.mat', source=FIN + 'plaster.mat', color=[0.56, 0.52, 0.45]),      # 회벽 gone grey with the smoke of the fires
         dict(path=DRESS + 'Materials/DD_KilnSoot.mat', source=FIN + 'plaster.mat', color=[0.3, 0.28, 0.25]),        # 앙토 over the rafters, blacker still
+        dict(path=DRESS + 'Materials/DD_KilnWood.mat', source=A + 'HwaseongHaenggung/Material/MI_KoreanWood_1.mat', color=[0.7, 0.62, 0.55]),      # C3d: brown wood with its grain, smoked (the house frame; Drawn_Prop keeps the charred mine timber)
     ],
     mats=[
         dict(renderer='Drawn_Wall', **{'from': 'brick_dark'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
@@ -117,9 +134,9 @@ KILN_MATS = dict(
         dict(renderer='Drawn_Roof', **{'from': 'stone_rough'}, to=DRESS + 'Materials/DD_KilnRoof.mat'),
         dict(renderer='Drawn_Floor', **{'from': 'paving'}, to=DRESS + 'Materials/DD_KilnFloor.mat'),
         dict(renderer='Drawn_Wall', **{'from': 'plaster'}, to=DRESS + 'Materials/DD_KilnPlaster.mat'),
-        dict(renderer='Drawn_Wall', **{'from': 'wood_dark'}, to=DMAT + 'CaveTimber_Char.mat'),
+        dict(renderer='Drawn_Wall', **{'from': 'wood_dark'}, to=DRESS + 'Materials/DD_KilnWood.mat'),
         dict(renderer='Drawn_Roof', **{'from': 'plaster'}, to=DRESS + 'Materials/DD_KilnSoot.mat'),
-        dict(renderer='Drawn_Roof', **{'from': 'wood_dark'}, to=DMAT + 'CaveTimber_Char.mat'),
+        dict(renderer='Drawn_Roof', **{'from': 'wood_dark'}, to=DRESS + 'Materials/DD_KilnWood.mat'),
         dict(renderer='Drawn_Prop', **{'from': 'wood_dark'}, to=DMAT + 'CaveTimber_Char.mat'),
         dict(renderer='Drawn_Prop', **{'from': 'brick_dark'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
         dict(renderer='Drawn_Prop', **{'from': 'stone_rough'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
@@ -203,6 +220,7 @@ def build(did):
     for e in json.loads(FRONT.read_text(encoding='utf-8'))['enemies']:
         if e['dungeon'] == did: k_(e['id'] + ' feet', e['feet'], 1.7); k_(e['id'] + ' patrol', e['patrol2'], 1.4)
     if did == 'cr_kiln': k_('dg308_cr_kiln_sack', [2754.2, F.y0, 2705.0], 1.1)
+    for i, pp in enumerate(L.get('hanok', {}).get('posts', [])): k_(f'post {i}', pp, 0.3, 3.0)      # C3d: the 심벽 posts of dungeon308 (layout 'hanok'): nothing stands through them
 
     ext = lambda r: r if isinstance(r, tuple) else (r, r)      # world half extents (x, z) of a footprint
 
@@ -331,6 +349,23 @@ def build(did):
     for name, count, where, only in P['rows']:
         pool = [c for c in cells if only is None or c[0] + str(c[1] + 1) in only]
         for i in range(count): put(name, pool[(i * 3 + rng.randrange(len(pool))) % len(pool)], where)
+    shelved = 0      # C3d: small wicker on the 시렁 poles (layout 'hanok' shelves: a - b along the pole tops, centre 0.34 m off the face; out = 1 m into the room)
+    for sh in L.get('hanok', {}).get('shelves', []) if P.get('shelf') else []:
+        a, b, o = sh['a'], sh['b'], sh['out']; span = math.hypot(b[0] - a[0], b[2] - a[2]); y = a[1]
+        if span < 0.5: continue
+        ux, uz = (b[0] - a[0]) / span, (b[2] - a[2]) / span; din = (o[0] - a[0], o[2] - a[2]); want = rng.randint(1, 3); got = 0
+        for _ in range(14):
+            if got >= want: break
+            name = rng.choice(P['shelf']); sx, sy, sz = dims(name); t = rng.uniform(0.2, span - 0.2)
+            p = (a[0] + ux * t, a[2] + uz * t); hd, ha = sz / 2 * 1.1, sx / 2 * 1.1; fp = (hd, ha) if abs(din[0]) > abs(din[1]) else (ha, hd)
+            if in_keep(p, fp, y, y + sy) or clash(p, 0.5 * math.hypot(sx, sz) * 0.85, y, y + sy): continue
+            lx = (p[0] - F.o[0]) * F.ax[0] + (p[1] - F.o[1]) * F.ax[1]; lz = (p[0] - F.o[0]) * F.az[0] + (p[1] - F.o[1]) * F.az[1]
+            cell = ('A' if lz < F.cd else 'B') + str(min(F.n - 1, max(0, int(lx // F.cw))) + 1)
+            items.append(dict(id=f'{name}_{len([i for i in items if i["kind"] == name])}', kind=name, cell=cell, prefab=KIT[name]['prefab'],
+                              pos=[round(p[0], 3), round(y, 3), round(p[1], 3)], rot=[0.0, round((yaw_facing(din) + rng.uniform(-8.0, 8.0)) % 360.0, 1), 0.0],
+                              seat='floor', fit=KIT[name]['fit'], fitAxis=float(KIT[name]['axis']), sink=0.0, solid=False))
+            placed.append((p[0], p[1], 0.5 * math.hypot(sx, sz), y, y + sy)); got += 1; shelved += 1
+    if P.get('shelf'): report.append(f'shelf pieces {shelved} on {len(L.get("hanok", {}).get("shelves", []))} 시렁')
     margin = 2.4 if F.cave else 1.2      # cave walls bulge out (bulge_m 1.0) and the wall roots sit in them; the wall blades sit half in the rock
     xs = [F.w(x, z) for x in (0, F.n * F.cw) for z in (0, 2 * F.cd)]; lo_y = F.y0 - 0.8; hi_y = F.y0 + max(F.levels.values()) + F.roof + 2.5
     data = dict(version=VERSION, id=did, doc='D308-117 C3b dress pass (SPEC-FIELD-FIRST-HOUR-308 §8.7). Written by Tools/Art/dungeon308_dress.py - do not edit by hand',

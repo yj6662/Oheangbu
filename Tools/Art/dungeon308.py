@@ -219,7 +219,7 @@ class Kit:
     def __init__(self, did, origin, yaw, rng, th):
         self.id = did; self.o = np.asarray(origin, float); c, s = math.cos(math.radians(yaw)), math.sin(math.radians(yaw)); self.yaw = yaw
         self.ax = np.array([c, 0.0, -s]); self.az = np.array([s, 0.0, c]); self.rng = rng; self.th = th
-        self.m = {}; self.cols = []; self.cave = False; self.seed = 0; self.roof_amp = 0.8; self.bulge = 0.5; self.organic = 0.0; self.grid = None; self.wall_h = 4.3; self.dome = 0.0; self.jamb = False; self.sides = []
+        self.m = {}; self.cols = []; self.cave = False; self.seed = 0; self.roof_amp = 0.8; self.bulge = 0.5; self.organic = 0.0; self.grid = None; self.wall_h = 4.3; self.dome = 0.0; self.jamb = False; self.sides = []; self.marks = dict(posts=[], shelves=[])
 
     def W(self, x, y, z):
         return self.o + self.ax * np.asarray(x, float)[..., None] + UP * np.asarray(y, float)[..., None] + self.az * np.asarray(z, float)[..., None]
@@ -374,8 +374,9 @@ class Kit:
             for ya, yb, d in ((0.3, 0.46, 0.12), (1.0, 1.15, 0.11), (2.0, 2.15, 0.11), (2.7, 2.98, 0.16)): fb(ua, ub, f + ya, f + yb, 0.0, d, wood)
             if not (y0 <= f + 0.05 and y1 >= f + 2.9): continue      # a riser or the wall over a door: bands only, no posts
             pa, pb = ua + 0.1, ub - 0.1; n = max(1, round((pb - pa) / 2.4)); us = [pa + (pb - pa) * k / n for k in range(n + 1)]
+            loc = lambda u, y, c: [round(float(v), 3) for v in (self.w(u, y, c) if alongx else self.w(c, y, u))]      # recorded for the dress planner (keep-outs, shelf seats): no draw
             for u in us:
-                fb(u - 0.1, u + 0.1, f + 0.24, f + 2.98, 0.0, 0.2, wood); w_ = hr.uniform(0.17, 0.22); fb(u - w_, u + w_, f, f + hr.uniform(0.22, 0.3), 0.0, hr.uniform(0.3, 0.4), 'fieldstone')
+                self.marks['posts'].append(loc(u, f, face + sd * 0.1)); fb(u - 0.1, u + 0.1, f + 0.24, f + 2.98, 0.0, 0.2, wood); w_ = hr.uniform(0.17, 0.22); fb(u - w_, u + w_, f, f + hr.uniform(0.22, 0.3), 0.0, hr.uniform(0.3, 0.4), 'fieldstone')
             if n >= 2 and hr.random() < 0.55:      # 살창: a dark slot behind upright bars in one bay, between the 중인방 and the 상인방
                 k = hr.randrange(n); uc = (us[k] + us[k + 1]) / 2; hw = min(0.55, (us[k + 1] - us[k]) / 2 - 0.3)
                 fb(uc - hw, uc + hw, f + 1.2, f + 1.95, 0.0, 0.035, 'iron')
@@ -389,6 +390,7 @@ class Kit:
                     q0 = (pa + 0.15, face + sd * d); q1 = (pb - 0.15, face + sd * d)
                     P0 = self.w(q0[0], f + 2.3, q0[1]) if alongx else self.w(q0[1], f + 2.3, q0[0]); P1 = self.w(q1[0], f + 2.3, q1[1]) if alongx else self.w(q1[1], f + 2.3, q1[0])
                     self.mesh('Wall').log(P0, P1, 0.035, 0.035, wood)
+                self.marks['shelves'].append(dict(a=loc(pa + 0.15, f + 2.335, face + sd * 0.34), b=loc(pb - 0.15, f + 2.335, face + sd * 0.34), out=loc(pa + 0.15, f + 2.335, face + sd * 1.34)))
 
     def hanok_roof(self, x0, x1, z0, z1, f, ry, t, broken):
         """wall kind 'hanok': the 연등천장 of a 부엌 under the stone roof slab (drawn only). Ridge (종도리) along x over the cell's middle, 대들보 across at the
@@ -816,6 +818,7 @@ def build_one(cfg, D, site, f):
                door=dict(id=f"dg308_{D['id']}_door", pos=door['pos'], yaw=door['yaw'], width=dw, height=G['door_h'], inside=[round(float(v), 3) for v in (np.asarray(door['pos']) + K.az * 1.1)]) if door else None,
                rewards=rewards, lamps=lamps, rocks=rocks, pools=pools, cave=cave, entrance=[round(float(v), 3) for v in (K.w(ex, sol['yl'] - y0, -sol['run']) if under else K.w(ex, 0.0, -t / 2))], underground=under, holes=holes, holesFlat=[v for h_ in holes for v in h_], depth_m=round(sol['yl'] - y0, 2) if under else 0.0, stair_run_m=round(sol['run'], 1) if under else 0.0,
                vertices=int(sum(len(m.v) for m in K.m.values())))
+    if K.marks['posts']: lay['hanok'] = K.marks      # wall kind 'hanok' only (cr_kiln): the other layouts keep their keys
     B.write_json(out / 'layout.json', lay)
     return lay
 
