@@ -21,5 +21,9 @@ namespace Oheangbu.App
         // Share of its strikes an enemy at this position misses now: the zone's value inside the active haze, 0 anywhere else.
         public static float MissShare(in SpellZone308 zone, Vector3 position, float now)
             => SpellZoneRule308.Covers(zone, position, now) ? Mathf.Clamp01(zone.Value) : 0f;
+
+        // #308 WP-16 (D308-114): the same with the enemy's body radius - its body edge in the haze counts as inside.
+        public static float MissShare(in SpellZone308 zone, Vector3 position, float now, float body)
+            => SpellZoneRule308.Covers(zone, position, now, body) ? Mathf.Clamp01(zone.Value) : 0f;
     }
 }

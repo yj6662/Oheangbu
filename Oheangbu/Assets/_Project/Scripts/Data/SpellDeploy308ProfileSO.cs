@@ -264,6 +264,8 @@ namespace Oheangbu.Data.Spell
             public bool Flicker;
             [Tooltip("Groggy impact frame (ImpactFrameDirector308 + HUD reaction), with the layer off. Its trigger comes with 11.37 (c).")]
             public bool ImpactFrame;
+            [Tooltip("D308-114: enemy state marks (bound / slowed / exposed / weakened + guard / broken guard / blind) as ink on the enemy, with the layer off. No glow, no HUD; the retired forms stay off.")]
+            public bool StatusMarks;
             [Tooltip("Letters the contact-only hit splash is limited to; empty = the rule (retired attack bodies + the sheet's own buff / install rows).")]
             public string HitSplashLetters = "";
         }
@@ -1197,7 +1199,7 @@ namespace Oheangbu.Data.Spell
         public int BuffMarkCell(int index) => Buff.MarkCells != null && index >= 0 && index < Buff.MarkCells.Length ? Mathf.Clamp(Buff.MarkCells[index], 0, 15) : 4;
 
         /// <summary>D308-107 (d): is any contact switched on on its own (read only while the layer is off)?</summary>
-        public bool AnyContact => Contacts != null && (Contacts.HitSplash || Contacts.Flicker || Contacts.ImpactFrame);
+        public bool AnyContact => Contacts != null && (Contacts.HitSplash || Contacts.Flicker || Contacts.ImpactFrame || Contacts.StatusMarks);
         public bool IsEnabled(char letter) => LayerEnabled && letter != default && !string.IsNullOrEmpty(EnabledLetters) && EnabledLetters.IndexOf(letter) >= 0;
         public bool FloodAllowed(string eventName)
         {

@@ -49,7 +49,7 @@ namespace Oheangbu.App.SpellVFX120
 
     /// <summary>What a spell left on an enemy (read from the enemy's own control / modifier state, never written).</summary>
     [Flags]
-    public enum PresentState308 { None = 0, Bound = 1, Slowed = 2, Exposed = 4, Weakened = 8 }
+    public enum PresentState308 { None = 0, Bound = 1, Slowed = 2, Exposed = 4, Weakened = 8, Guarded = 16, GuardBroken = 32, Blind = 64 }
 
     /// <summary>Where a confirmed hit came from (the presenter's own reading of the damage source).</summary>
     public enum PresentHitSource308 { Direct, Companion, Retaliation, Harmony, Persistent, Other }

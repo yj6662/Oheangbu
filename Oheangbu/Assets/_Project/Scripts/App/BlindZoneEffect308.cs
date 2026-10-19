@@ -71,7 +71,7 @@ namespace Oheangbu.App
                 {
                     var enemy = targets[i];
                     if (enemy == null) continue;
-                    bool inside = enemy.IsAlive && enemy.isActiveAndEnabled && SpellZoneRule308.Covers(zone, enemy.transform.position, ctx.Now);
+                    bool inside = enemy.IsAlive && enemy.isActiveAndEnabled && SpellZoneRule308.Covers(zone, enemy.transform.position, ctx.Now, enemy.BodyRadius);   // WP-16: body edge counts
                     if (!inside) { _holds.Release(enemy, zone.Token); continue; }
                     // one owner, two entries (blind, blur): Release and ReleaseAll take both back by owner
                     _holds.Blind(enemy, zone.Token, zone.Until);

@@ -130,6 +130,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     {next.BossDrops=Array.ConvertAll(prev.BossDrops,g=>g==null?null:new WorldMacroPlaytestSO.BossDrop308{BossId=g.BossId,ItemId=g.ItemId,Notice=g.Notice});settings++;}
     if(next.EnemyBrain==null&&prev.EnemyBrain!=null){next.EnemyBrain=prev.EnemyBrain;settings++;}
     if(next.EnemyStrikeRead==null&&prev.EnemyStrikeRead!=null){next.EnemyStrikeRead=prev.EnemyStrikeRead;settings++;}
+    // #308 WP-16 (D308-114): the guard-raising field-enemy table also lives only on the Main clone
+    if((next.GuardBrains==null||next.GuardBrains.Length==0)&&prev.GuardBrains!=null&&prev.GuardBrains.Length>0)
+    {next.GuardBrains=Array.ConvertAll(prev.GuardBrains,g=>g==null?null:new WorldMacroPlaytestSO.GuardBrain308{ContentId=g.ContentId,GuardShare=g.GuardShare,GuardFacingDegrees=g.GuardFacingDegrees});settings++;}
    }
    finally{Object.DestroyImmediate(d);}
    return "#306 carried "+(points+commissions+settings)+" fields (points "+points+", commissions "+commissions+", settings "+settings+")"+

@@ -147,6 +147,19 @@ namespace Oheangbu.App.SpellVFX120
             return state;
         }
 
+        /// <summary>D308-114 (WP-16 b): the same reading plus the guard and the blinding. A broken guard reads as broken, not as
+        /// raised (the stance can still say raised in the frame it breaks); guarded = the stance is up, broken = inside the break
+        /// window, blind = the veil's blinding is running.</summary>
+        public static PresentState308 StateOf(SpellPresent308SheetSO sheet, bool blocksActions, float moveScale, float takenScale, float defenceShred, float outgoingScale,
+            bool guarded, bool guardBroken, bool blind)
+        {
+            var state = StateOf(sheet, blocksActions, moveScale, takenScale, defenceShred, outgoingScale);
+            if (guardBroken) state |= PresentState308.GuardBroken;
+            else if (guarded) state |= PresentState308.Guarded;
+            if (blind) state |= PresentState308.Blind;
+            return state;
+        }
+
         public static DeployCategory308 CastCategory(PresentRoute308 route, DeployCategory308 mapCategory)
         {
             if (route == null) return mapCategory;

@@ -134,5 +134,18 @@ namespace Oheangbu.Data.World
         public EnemyBrainProfile308 EnemyBrain;
         [Tooltip("D308-70 (SPEC-ENEMY-BRAIN-308): how the attack clip is timed so the blow reads (draw back, hold, swing, contact hold). The session hands it to every actor rig that has none of its own. None = the even stretch as before.")]
         public EnemyStrikeRead308 EnemyStrikeRead;
+        // #308 WP-16 (D308-114) guard-raising field enemies [TEST]. The session clones the brain an actor already uses (its own or
+        // EnemyBrain) for every actor whose encounter ContentId matches an entry and writes the guard into the clone only; the shipped
+        // brain assets keep GuardShare = 0. A brain that already guards is left as it is. The guard stops ranged spells only (melee
+        // passes, D308-114). Empty array = nobody guards (every other content asset).
+        [Serializable] public sealed class GuardBrain308
+        {
+            [Tooltip("Encounter ContentId (e.g. field308/deserter) whose actors raise the guard.")]
+            public string ContentId="";
+            [Range(0,1)] public float GuardShare;
+            [Range(0,180)] public float GuardFacingDegrees;
+        }
+        [Header("#308 가드 올리는 필드 적 [TEST]")]
+        public GuardBrain308[] GuardBrains=Array.Empty<GuardBrain308>();
     }
 }

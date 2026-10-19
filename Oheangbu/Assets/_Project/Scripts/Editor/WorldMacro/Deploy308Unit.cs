@@ -21,7 +21,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     // (AC-D2 D3 D4 D5 D9 D10 D11 D12 D19 D22 D16 D29 D30 D18 D31 D32 D33 D34 D35 D36 D37 D38 D39 D40 D41 D26 D27 D23).
     // D308-10c: D5 = momentary glow only, D9 = impact frames only for a groggy target, D18 = the stronger hit reaction,
     // D29 = the footprints boot alone with the layer switch off (D308-107), D30 = the KTP contact sits on the body surface facing the hit (D308-107). D26 = the hit splash only on a confirmed hit, D27 = which rows replace the KTP enemy-hit contact (D308-13b).
-    // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays.
+    // D31 = the contacts boot alone with the layer switch off (D308-107 d): flicker + impact director, no slots, the KTP contact stays;
+    // the state-marks switch alone brings the present stage up for the marks only, and the guard / broken guard / blind bits (D308-114).
     // D32 = the impact frame's figure is the hit target's renderers, and the contact path asks it on a groggy spell hit only (D308-106 c).
     // D33 = a range-ㄱ letter's hit has no pool and its copy carries one foot stain, laid once per struck enemy on the ground below (D308-104 e).
     // D34 = the live summon profiles retire the old seal / phase particles / debris, a profile without the flag keeps them (D308-107 f).
@@ -603,7 +604,36 @@ namespace Oheangbu.EditorTools.WorldMacro
                     foreach (var c in sHost.GetComponents<ImpactFrameDirector308>()) c.ReleaseResources();
                     foreach (var c in sHost.GetComponents<InkResidueField308>()) c.ReleaseResources();
                     Object.DestroyImmediate(sHost);
-                    Check("D31", flickOk && splashOk, cLine + " | " + sLine);
+                    // D308-114 (WP-16 b) 표식-1: the state-marks switch alone brings the present stage up for the marks only -
+                    // no residue field, no slots, no layer letter, no splash rule, the KTP contact stays
+                    var kProfile = Object.Instantiate(cProfile); kProfile.hideFlags = Flags; trash.Add(kProfile);
+                    kProfile.Contacts = new SpellDeploy308ProfileSO.ContactsSet { StatusMarks = true };
+                    bool marksDefault = !new SpellDeploy308ProfileSO.ContactsSet().StatusMarks && kProfile.AnyContact;
+                    var kHost = new GameObject("UnitContactMarks") { hideFlags = Flags }; kHost.transform.SetParent(root.transform, false);
+                    var kDirector = kHost.AddComponent<SpellDeployDirector308>();
+                    kDirector.Boot(kProfile, null, null, null, kHost.transform, null, null);
+                    bool marksOk = marksDefault && kDirector.ContactOnly && kDirector.Present != null && kDirector.Field == null && kDirector.PoolSize == 0
+                        && !kDirector.OwnsHitContact('가') && (kDirector.Present == null || !kDirector.Present.Uses('가'))
+                        && !SpellPresentRules308.ContactSplash(kProfile, null, '가');
+                    string kLine = "marks on: default off " + marksDefault + ", present " + (kDirector.Present != null) + ", field " + (kDirector.Field != null) + ", slots " + kDirector.PoolSize
+                        + ", uses 가 " + (kDirector.Present != null && kDirector.Present.Uses('가'));
+                    foreach (var c in kHost.GetComponents<SpellPresentStage308>()) c.ReleaseResources();
+                    foreach (var c in kHost.GetComponents<HitFlicker308>()) c.ReleaseResources();
+                    foreach (var c in kHost.GetComponents<ImpactFrameDirector308>()) c.ReleaseResources();
+                    Object.DestroyImmediate(kHost);
+                    // 표식-2: the three new bits come from the stance (raised / inside the break window) and the veil (blinding)
+                    var stance = new EnemyGuardStance308(); var veil = new EnemyStrikeVeil308();
+                    stance.Raise(.5f);
+                    var guardState = SpellPresentRules308.StateOf(null, false, 1f, 1f, 0f, 1f, stance.Raised, stance.Broken && 10f < stance.BreakUntil, veil.Blinded(10f));
+                    stance.Break(12f); veil.Blind(7, 13f);
+                    var brokenState = SpellPresentRules308.StateOf(null, false, 1f, 1f, 0f, 1f, stance.Raised, stance.Broken && 10f < stance.BreakUntil, veil.Blinded(10f));
+                    var laterState = SpellPresentRules308.StateOf(null, false, 1f, 1f, 0f, 1f, stance.Raised, stance.Broken && 14f < stance.BreakUntil, veil.Blinded(14f));
+                    bool bothState = SpellPresentRules308.StateOf(null, false, 1f, 1f, 0f, 1f, true, true, false) == PresentState308.GuardBroken;
+                    bool oldSame = SpellPresentRules308.StateOf(null, true, .2f, 1.2f, 0f, .8f, false, false, false) == SpellPresentRules308.StateOf(null, true, .2f, 1.2f, 0f, .8f);
+                    bool bitsOk = guardState == PresentState308.Guarded && brokenState == (PresentState308.GuardBroken | PresentState308.Blind) && laterState == PresentState308.None
+                        && bothState && oldSame && stance.Broken;   // reading the break window leaves the stance's break in place (CanRaise not called)
+                    string bLine = "bits: raised " + guardState + ", broken+blind " + brokenState + ", after both end " + laterState + ", raised+broken reads broken " + bothState + ", old reading unchanged " + oldSame;
+                    Check("D31", flickOk && splashOk && marksOk && bitsOk, cLine + " | " + sLine + " | " + kLine + " | " + bLine);
                 }
 
                 // ---- D32 (D308-106, 11.37 c): the impact frame's figure is the hit target (its renderers), not a brightness cut; the

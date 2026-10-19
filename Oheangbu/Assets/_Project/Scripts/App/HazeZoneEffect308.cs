@@ -70,7 +70,7 @@ namespace Oheangbu.App
                 {
                     var enemy = targets[i];
                     if (enemy == null) continue;
-                    float share = enemy.IsAlive && enemy.isActiveAndEnabled ? HazeRule308.MissShare(zone, enemy.transform.position, ctx.Now) : 0f;
+                    float share = enemy.IsAlive && enemy.isActiveAndEnabled ? HazeRule308.MissShare(zone, enemy.transform.position, ctx.Now, enemy.BodyRadius) : 0f;   // WP-16: body edge counts
                     if (share > 0f) _holds.Blur(enemy, zone.Token, zone.Until, share);
                     else _holds.Release(enemy, zone.Token);
                 }

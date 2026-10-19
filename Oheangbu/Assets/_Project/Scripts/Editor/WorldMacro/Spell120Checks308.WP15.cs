@@ -187,6 +187,18 @@ namespace Oheangbu.EditorTools.WorldMacro
             bool freshOff = fresh.GuardShare == 0f; UnityEngine.Object.DestroyImmediate(fresh);
             r.Check("가드-1", freshOff && raising.Length == 0,
                 "GuardShare is 0 on a new brain profile and on every shipped one (" + guids.Length + "): no field enemy guards until its profile says so" + (raising.Length > 0 ? " | raising: " + string.Join(", ", raising) : ""));
+
+            // ---- #308 WP-16 (D308-114): the guard opts in per content (session clones), never on the shipped asset ----
+            foreach (var path in AssetDatabase.FindAssets("t:" + nameof(WorldMacroPlaytestSO)).Select(AssetDatabase.GUIDToAssetPath))
+            {
+                var content = AssetDatabase.LoadAssetAtPath<WorldMacroPlaytestSO>(path);
+                if (content == null || content.GuardBrains == null || content.GuardBrains.Length == 0) continue;
+                var kinds = new System.Collections.Generic.HashSet<string>((content.Encounters ?? Array.Empty<WorldMacroPlaytestSO.Encounter>()).Where(e => e != null && !string.IsNullOrEmpty(e.ContentId)).Select(e => e.ContentId));
+                var bad = content.GuardBrains.Where(g => g == null || !kinds.Contains(g.ContentId) || !(g.GuardShare > 0f) || g.GuardShare > 1f || g.GuardFacingDegrees < 1f || g.GuardFacingDegrees > 180f)
+                    .Select(g => g == null ? "(null)" : g.ContentId).ToArray();
+                r.Check("가드-2", bad.Length == 0 && content.EnemyBrain != null,
+                    System.IO.Path.GetFileName(path) + ": " + content.GuardBrains.Length + " guard entries name enemy kinds of this content with a share in (0, 1] and a front of 1-180 degrees, and the content hands out a brain to clone" + (bad.Length > 0 ? " | bad: " + string.Join(", ", bad) : ""));
+            }
         }
     }
 }

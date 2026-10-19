@@ -216,6 +216,35 @@ namespace Oheangbu.App.SpellVFX120
                 { c.S.Sprites++; Born(ref c, 0); Reach(ref c, at + Vector3.up * (s * .8f)); }
                 Needle(ref c, p, at + new Vector3(0f, s * 1.3f, -.01f), Vector3.down, s * 1.1f, 1);
             }
+            // D308-114 (WP-16 b): the guard, the broken guard and the blinded enemy, all as ink - no glow, no HUD
+            if ((input.States & PresentState308.GuardBroken) != 0)
+            {
+                // a split rim in front of the chest: two short arcs pulled apart and the pieces falling off it
+                Vector3 at = chest + new Vector3(0f, 0f, -s * .6f);
+                for (int k = -1; k <= 1; k += 2)
+                {
+                    Vector3 from = at + new Vector3(k * s * .25f, s * .9f, 0f);
+                    Vector3 direction = new Vector3(k * .55f, -1f, 0f).normalized;
+                    Needle(ref c, p, from, direction, s * .95f, 0);
+                    Sprite(ref c, at + new Vector3(k * s * 1.05f, -s * .7f, -.01f), s * .2f, s * .3f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                }
+                Sprite(ref c, at + new Vector3(s * .1f, -s * 1.25f, -.01f), s * .16f, s * .24f, InkBurstMeshBuilder308.CellDrop, 1);
+            }
+            else if ((input.States & PresentState308.Guarded) != 0)
+            {
+                // a rim of ink held up in front of the chest: one brushed ring, flat to the eye, a little ahead of the body
+                Vector3 at = chest + new Vector3(0f, 0f, -s * .6f);
+                Sprite(ref c, at, s * 1.05f, s * 1.25f, InkBurstMeshBuilder308.CellRing, 0);
+                Needle(ref c, p, at + new Vector3(-s * .55f, s * 1.15f, -.01f), Vector3.right, s * 1.1f, 1);
+            }
+            if ((input.States & PresentState308.Blind) != 0)
+            {
+                // a blurred ring of ink round the head (the eyes are covered), two drops running off it
+                Vector3 at = new Vector3(0f, chest.y * 1.32f, chest.z);
+                Sprite(ref c, at, s * .9f, s * .55f, InkBurstMeshBuilder308.CellRing, 0);
+                Sprite(ref c, at + new Vector3(-s * .5f, -s * .55f, -.01f), s * .16f, s * .26f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                Sprite(ref c, at + new Vector3(s * .45f, -s * .6f, -.01f), s * .14f, s * .22f, InkBurstMeshBuilder308.CellDropTailed, 1);
+            }
         }
 
         // ---- the zone's edge (body root = the zone's centre on the ground, +Y = the ground's normal)

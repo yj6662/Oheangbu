@@ -155,7 +155,7 @@ namespace Oheangbu.App
             var target = targets[id]; uint life = target.LifeRevision;
             UnityEngine.Object instigator = host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player;
             // the player's own elemental attack: PlayerDirect (the only source a counter strike may carry)
-            var attack = AttackProvenance.Create(instigator, DamageSource.PlayerDirect, _element);
+            var attack = AttackProvenance.CreateMelee(instigator, DamageSource.PlayerDirect, _element);   // WP-16: melee passes a guard
             bool counter = SwordFormRule308.IsCounter(_element, TryElementOf(target, out Element theirs), theirs);
             var hit = host.ApplyDirectHit(target, life, _power * host.DamageScale(_element), origin + Vector3.up * .4f, attack, _letter);
             bool gained = false;

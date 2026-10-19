@@ -122,7 +122,7 @@ namespace Oheangbu.App.SpellVFX120
                     _impact = gameObject.AddComponent<ImpactFrameDirector308>(); _impact.Configure(profile, _tier, judgementNear, () => ViewCamera, _flicker);
                     if (profile.Foot.Enabled) BootFoot(profile, player, motor);
                     if (profile.Contacts.ImpactFrame && hud != null) { _hudBinder = gameObject.AddComponent<HudImpactBinder308>(); _hudBinder.Configure(hud, _impact, profile); }
-                    if (profile.Contacts.HitSplash)
+                    if (profile.Contacts.HitSplash || profile.Contacts.StatusMarks)   // D308-114: the marks need the stage too
                     {
                         try { _present = gameObject.AddComponent<SpellPresentStage308>(); _present.Configure(profile, this, wiring); }
                         catch (Exception e) { Debug.LogException(e, this); if (_present != null) Destroy(_present); _present = null; }

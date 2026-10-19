@@ -16,10 +16,17 @@ namespace Oheangbu.Combat
         public readonly Object Instigator;
         public readonly DamageSource Source;
         public readonly Element? Element;
+        // #308 WP-16 (D308-114): a hit landed by the caster's body or weapon (the sword form, the riposte), not a spell shot.
+        // A raised guard reduces spell shots only, so a melee hit passes it. false for every attack made before this flag.
+        public readonly bool Melee;
         public AttackProvenance(long attackId, Object instigator, DamageSource source, Element? element)
-        { AttackId = attackId; Instigator = instigator; Source = source; Element = element; }
+            : this(attackId, instigator, source, element, false) { }
+        public AttackProvenance(long attackId, Object instigator, DamageSource source, Element? element, bool melee)
+        { AttackId = attackId; Instigator = instigator; Source = source; Element = element; Melee = melee; }
         public static AttackProvenance Create(Object instigator, DamageSource source, Element? element) =>
             new AttackProvenance(Interlocked.Increment(ref _sequence), instigator, source, element);
+        public static AttackProvenance CreateMelee(Object instigator, DamageSource source, Element? element) =>
+            new AttackProvenance(Interlocked.Increment(ref _sequence), instigator, source, element, true);
 
         // With domain reload disabled the counter would carry over between play sessions.
         // Kept in a nested class so the attribute is certain to be discovered.

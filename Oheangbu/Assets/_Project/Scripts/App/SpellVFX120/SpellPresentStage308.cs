@@ -596,7 +596,8 @@ namespace Oheangbu.App.SpellVFX120
         private void Watch(float now)
         {
             if (_wiring == null) return;
-            bool on = _sheet.Mark.StateMarks && !string.IsNullOrEmpty(_profile.EnabledLetters);
+            // D308-114 (WP-16 b): the marks also run on the contact-only boot when their own switch is on
+            bool on = _sheet.Mark.StateMarks && (!string.IsNullOrEmpty(_profile.EnabledLetters) || (_profile.Contacts != null && _profile.Contacts.StatusMarks));
             var targets = ((ISpellCastHost)_wiring).Targets;
             Camera camera = _host.ViewCamera;
             for (int i = 0; targets != null && i < targets.Count; i++)
@@ -605,8 +606,12 @@ namespace Oheangbu.App.SpellVFX120
                 if (enemy == null) continue;
                 var state = PresentState308.None;
                 if (on && enemy.IsAlive && enemy.isActiveAndEnabled)
+                {
+                    var stance = enemy.Modifiers.Stance;   // read only: CanRaise(now) would clear the break as a side effect
                     state = SpellPresentRules308.StateOf(_sheet, enemy.Control.BlocksActions(now), enemy.Control.MovementScale(now), enemy.Modifiers.DamageTakenScale(now),
-                        enemy.Modifiers.DefenceShred(now), enemy.Modifiers.OutgoingScale(now));
+                        enemy.Modifiers.DefenceShred(now), enemy.Modifiers.OutgoingScale(now),
+                        stance.Raised, stance.Broken && now < stance.BreakUntil, enemy.Modifiers.Veil.Blinded(now));
+                }
                 Transform carrier = enemy.transform;
                 int b = -1;
                 for (int k = 0; k < _bodies.Length; k++)

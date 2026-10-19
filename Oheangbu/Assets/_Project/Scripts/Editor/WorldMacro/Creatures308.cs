@@ -59,6 +59,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    public string key="",pack="",model="",keep="",avatar="",albedo="",normal="",idle="",walk="",run="",attack="",hit="",stun="",death="",template="",audio="",attackFrom="",vitalsFrom="",displayName="";
    public bool merge,loopStun,isBoss;
    public float length_m,yaw_deg,attackPeak01,walkMps,runMps,runThresholdMps,scaleTemplate,telegraph,recovery,damage,range,rangeMargin,arc,cooldownMin,cooldownMax,hp,speed,detection,leash,capsuleRadius,capsuleHeight,saturation,value;
+   public float defence;   // #308 WP-16 (D308-114): TEST share of a hit the body takes off (0 = none; the WP-15 cap still applies in play)
   }
   [Serializable] sealed class BossRow{public string id="",name="",species="",realm="";}
   [Serializable] sealed class Cfg
@@ -543,6 +544,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    var from=AssetDatabase.LoadAssetAtPath<EnemyVitalsProfileSO>(s.vitalsFrom);if(from==null)throw new Refuse(s.key+": vitalsFrom missing "+s.vitalsFrom);
    EditorUtility.CopySerialized(from,v);v.name="Vitals308_"+s.key;
    var so=new SerializedObject(v);so.FindProperty("_maxHp").floatValue=s.hp;so.FindProperty("_displayName").stringValue=s.displayName??"";so.FindProperty("_isBoss").boolValue=s.isBoss;so.FindProperty("_showLockOnBar").boolValue=!s.isBoss;
+   so.FindProperty("_defence").floatValue=Mathf.Clamp01(float.IsNaN(s.defence)?0f:s.defence);   // WP-16: the sheet decides, not the copied tier
    so.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(v);AssetDatabase.SaveAssetIfDirty(v);return v;
   }
 
