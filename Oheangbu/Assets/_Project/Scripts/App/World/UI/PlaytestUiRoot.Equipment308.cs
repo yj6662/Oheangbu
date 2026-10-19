@@ -128,6 +128,7 @@ namespace Oheangbu.App.World.UI
             equip308SlotKey=equip308InfoKey=equip308LegendKey=equip308ArtKey=null;equip308Candidate=null;equip308InMiddle=false;
             bool gear=Session.EquipmentEnabled,fragments=Equip308Fragments;
             Content304SubTabs(gear);
+            fragments=Equip308Fragments;   // D308-117 B2: SubTabs clears documentTab when no paper is held
             Content304Currency(contentRoot,"Currency",E308StatusR,E308MoneyY,Session.Progress.ledger.currency);
             if(th!=null)
             {
