@@ -46,7 +46,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   check           the placed actors (NavMesh, rig, materials, collider, wiring, ids, boss rules, clearances) + Populate308's still whole
  //   shots           edit-mode stills of each boss and one actor per group (plain camera, no post) -> <stillDir>/place_*.png
  // Queue-safe: no dialog, refusals are strings. Writes need W_Demo_Main active, Edit mode, compiled, not dirty.
- public static class Creatures308
+ public static partial class Creatures308
  {
   const string StoreRoot="Assets/Store308/Creatures308";
   [Serializable] sealed class Look{public string reference="";public float saturation,value,smoothness,eyeSmoothness,eyeTriangleShare,boundsScale;public int textureSize,normalMaxSize;public float[] eyeColor=Array.Empty<float>();}
@@ -59,6 +59,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    public string key="",pack="",model="",keep="",avatar="",albedo="",normal="",idle="",walk="",run="",attack="",hit="",stun="",death="",template="",audio="",attackFrom="",vitalsFrom="",displayName="";
    public bool merge,loopStun,isBoss;
    public float length_m,yaw_deg,attackPeak01,walkMps,runMps,runThresholdMps,scaleTemplate,telegraph,recovery,damage,range,rangeMargin,arc,cooldownMin,cooldownMax,hp,speed,detection,leash,capsuleRadius,capsuleHeight,saturation,value;
+   public float[] tint=Array.Empty<float>();   // D308-119: optional albedo multiply (r, g, b) after the ink tone - one-part colour change, e.g. a grey wolf as a rust jackal
    public float defence;   // #308 WP-16 (D308-114): TEST share of a hit the body takes off (0 = none; the WP-15 cap still applies in play)
   }
   [Serializable] sealed class BossRow{public string id="",name="",species="",realm="";}
@@ -66,7 +67,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   {
    public string version="",content="",prefix="",boss_prefix="",root="",prefabDir="",stillDir="";
    public Look look=new Look();public Proc proc=new Proc();public Fit fit=new Fit();public StillCfg still=new StillCfg();public PlaceCfg place=new PlaceCfg();
-   public Sp[] species=Array.Empty<Sp>();public BossRow[] bosses=Array.Empty<BossRow>();
+   public Sp[] species=Array.Empty<Sp>();public BossRow[] bosses=Array.Empty<BossRow>();public SwapRow[] swaps=Array.Empty<SwapRow>();
   }
   [Serializable] sealed class PlanEnemy{public string id="",name="",contentId="",species="",realm="",group="";public float[] feet=Array.Empty<float>(),patrol2=Array.Empty<float>();}
   [Serializable] sealed class PlanBoss{public string id="",name="",species="",realm="",relaxed="";public float yaw_deg;public float[] feet=Array.Empty<float>();}
@@ -124,10 +125,12 @@ namespace Oheangbu.EditorTools.WorldMacro
      if(c=="status")return Status(cfg,scene,session,content);
      if(c=="check")return Check(cfg,scene,session,content);
      if(c=="shots")return Shots(cfg,scene);
+     if(c=="swap:dry")return Swap(cfg,scene,session,content,false);
      if(scene.isDirty)return "REFUSED the play scene has unsaved changes";
      if(c=="bodies:build"||c.StartsWith("bodies:build:",StringComparison.Ordinal))result=Build(cfg,scene,c.Length>13?c.Substring(13):"");
      else if(c=="place"||c=="revert")return PlaceOrRevert(cfg,scene,session,content,c=="place");
-     else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots)";
+     else if(c=="swap:apply")return Swap(cfg,scene,session,content,true);
+     else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots | swap:dry | swap:apply)";
     }
     scene=SceneManager.GetActiveScene();
     if(scene.isDirty!=dirtyBefore||scene.rootCount!=rootsBefore)result+="\nWARNING the open scene changed during a command that must not touch it (dirty "+dirtyBefore+" -> "+scene.isDirty+", roots "+rootsBefore+" -> "+scene.rootCount+")";
@@ -470,7 +473,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    for(int i=0;i<px.Length;i++)
    {
     float r=px[i].r,g=px[i].g,b=px[i].b,l=.299f*r+.587f*g+.114f*b;
-    px[i]=new Color32((byte)Mathf.Clamp((l+(r-l)*sat)*val,0,255),(byte)Mathf.Clamp((l+(g-l)*sat)*val,0,255),(byte)Mathf.Clamp((l+(b-l)*sat)*val,0,255),255);
+    float tr=s.tint!=null&&s.tint.Length==3?s.tint[0]:1f,tg=s.tint!=null&&s.tint.Length==3?s.tint[1]:1f,tb=s.tint!=null&&s.tint.Length==3?s.tint[2]:1f;
+    px[i]=new Color32((byte)Mathf.Clamp((l+(r-l)*sat)*val*tr,0,255),(byte)Mathf.Clamp((l+(g-l)*sat)*val*tg,0,255),(byte)Mathf.Clamp((l+(b-l)*sat)*val*tb,0,255),255);
    }
    tex.SetPixels32(px);tex.Apply();
    string file=cfg.prefabDir+"/Textures/T_"+s.key+"_ink.png";Folder(cfg.prefabDir+"/Textures");
