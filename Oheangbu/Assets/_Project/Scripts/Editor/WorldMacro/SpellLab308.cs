@@ -355,9 +355,11 @@ namespace Oheangbu.EditorTools.WorldMacro
 
             public static string Start(string arg)
             {
-                if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
                 int k = arg.LastIndexOf(':');
                 string name = k > 0 ? arg.Substring(0, k) : arg;
+                // 11.74 (2026-10-19): 국 / 뭄 build no body in the lab (no field services there), so a main_* recording may run in the
+                // main world too - it needs only the walker body and the main camera
+                if (!EditorApplication.isPlaying || !(InLab || name.StartsWith("main_", StringComparison.Ordinal))) return "refused: Play in the lab only (main_* anywhere)";
                 float secs = k > 0 ? float.Parse(arg.Substring(k + 1), Inv) : 20f;
                 if (name.Length == 0 || name.Any(ch => !(char.IsLetterOrDigit(ch) || ch == '_' || ch == '-'))) return "refused: rec name [A-Za-z0-9_-]";
                 secs = Mathf.Clamp(secs, 1f, 120f);

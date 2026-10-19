@@ -1,0 +1,78 @@
+# 2026-10-19 main_d308d = sw_perf (본편 시전 프레임 시간) + 11.74 국 · 뭄 먹 겉 영상 (같은 수명).
+# 국 = 한양 기준점(1956,3184)에서, 뭄 = 철옹 서쪽 강 (865.6,3644.9) 북쪽 35 m(기억: 뭄 자연 강둑). rec는 main_* 이름이라 본편에서도 돈다.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 2
+?call PlayProbe308 Run frames:20
+sleep 22
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:20
+?call SwingProbe308 Run cast:uAC00
+sleep 2
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SwingProbe308 Run cast:uB178
+sleep 2
+?call SwingProbe308 Run cast:uC18C
+sleep 2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2
+?call SwingProbe308 Run cast:uAC00
+sleep 2
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SwingProbe308 Run cast:uB178
+sleep 2
+?call SwingProbe308 Run cast:uC18C
+sleep 2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2
+sleep 2
+?call PlayProbe308 Run frames
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+sleep 2
+?call SpellLab308 Run rec:main_guk:16
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAD6D
+sleep 12
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+sleep 3
+?call Map307Capture Run hold-teleport:865.6,3644.9,0
+sleep 20
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+sleep 2
+?call SpellLab308 Run rec:main_mum:18
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBB44
+sleep 14
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean
