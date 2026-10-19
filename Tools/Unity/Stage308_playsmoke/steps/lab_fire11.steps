@@ -1,0 +1,44 @@
+# 11.34 fire11: road scorch = drag sheet (16 dark dragged brush streaks, red wet heads), one cel per particle held,
+# yaw +-12, y .05, side +-.9, scaleY 2.2-3.4, rate 90; ring and column as fire10.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.45
+?call SpellLab308 Run shot:lab_fire11_3
+?call SpellLab308 Run side:lab_fire11_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire11_4
+?call SpellLab308 Run side:lab_fire11_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire11_5
+?call SpellLab308 Run side:lab_fire11_5
+?call SwingProbe308 Run fx
+sleep 1.0
+?call SpellLab308 Run shot:lab_fire11_6
+?call SpellLab308 Run side:lab_fire11_6
+?call SwingProbe308 Run fx
+sleep 1.5
+?call SpellLab308 Run shot:lab_fire11_7
+?call SpellLab308 Run side:lab_fire11_7
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

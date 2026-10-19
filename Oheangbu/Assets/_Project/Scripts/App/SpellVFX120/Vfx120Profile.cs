@@ -54,6 +54,9 @@ namespace Oheangbu.App.SpellVFX120
         public bool KtpRectShield;
         public Vfx120AreaRemake AreaRemake;
         public GameObject AreaContactPrefab;
+        // #308 D308-104 (e): one small ink stain on the ground under an enemy hit by a range-ㄱ spell (TEST values; scale 1, outside the KTP scale chain)
+        public GameObject AreaStainPrefab;
+        public float AreaStainDiameter = 2f, AreaStainAlpha = .12f, AreaStainSeconds = 2.5f, AreaStainMinNormalY = .45f;
         public float AreaCastSeconds = .32f;
         public bool WideAreaRevision;
         public bool AreaFlowRevision;
@@ -109,6 +112,40 @@ namespace Oheangbu.App.SpellVFX120
         [Tooltip("Prefab with Travel (moves along the path; optional Spin mesh body) and Contact (bursts at the impact). Replaces the procedural body.")]
         public GameObject Bolt300Prefab;
         [Min(0f)] public float Bolt300Scale = 1f;
+        [Tooltip("D308-84: seconds over which the solid body goes from ink to its pigment after leaving (0 = off; particles soak in their own material).")]
+        [Min(0f)] public float Bolt300SoakSeconds;
+        [Tooltip("D308-84: the hit (Contact) shrinks when the camera is nearer than this (m), down to 45 % (0 = off). Play sw_s: a 5 m hit filled a third of the view.")]
+        [Min(0f)] public float Bolt300NearContactMeters;
+        [Tooltip("D308-84: extra scale of the flying body only (Travel), times Bolt300Scale (0 or 1 = same as the hit).")]
+        [Min(0f)] public float Bolt300TravelScale;
+        [Tooltip("D308-84 stage 4: the #308 guard membrane, stood for the guard clock in place of the pattern shield (set NativeFieldPrefab to none on the same copy).")]
+        public GameObject Guard308Prefab;
+        [Tooltip("D308-84 stage 4: the #308 loop body of a buff / ward, played for the effect's life; it owns the effect (other children off). A ward's ring is built at 1 m and scaled by WardRadius.")]
+        public GameObject Aura308Prefab;
+        [Min(0f)] public float Aura308FadeSeconds = .5f;
+        [Tooltip("Scale the loop body by WardRadius (wards only).")] public bool Aura308ByWardRadius;
+        [Tooltip("11.54: at this age (s) the still-emitting loop systems' start alpha drops to Aura308LateAlpha - dark first, faint after. 0 = off.")]
+        [Min(0f)] public float Aura308LateAfter;
+        [Range(0f, 1f)] public float Aura308LateAlpha = 1f;
+        [Tooltip("11.54: a lasting body (the tree) - the presenter does not cut it to the 3 s cue.")] public bool Aura308Lasting;
+        [Tooltip("11.41: companion letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown once per shot (Secondary cue). Empty = old behaviour.")]
+        public GameObject CompanionShot308Prefab;
+        [Tooltip("11.41: sword-form letters - a one-shot particle prefab put down per swing (Hit / Miss cue with a point). Empty = old behaviour.")]
+        public GameObject SwordStrike308Prefab;
+        [Tooltip("11.56: second-strike letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown from the split point to each derived target. Empty = old behaviour.")]
+        public GameObject Derived308Prefab;
+        [Tooltip("11.57: lingering-zone letters - the floor the zone leaves (Vfx308ZoneBody, built at 1 m radius), put down at the zone centre (or per heal zone) and kept for the rule's life. Empty = old behaviour.")]
+        public GameObject Zone308Prefab;
+        [Tooltip("11.58: intercept letters - a one-shot particle prefab put down where an enemy projectile was shot down (Intercept cue, or ISpellBurstPresenter308.Burst). Empty = old behaviour.")]
+        public GameObject Burst308Prefab;
+        [Tooltip("11.61: install letters - the ink seal (Vfx308ZoneBody, built at 1 m) put on the marked enemy at the Anchor cue and kept for the mark's life; Detonate breaks it, Expire / a lost target dries it. Empty = old behaviour.")]
+        public GameObject Mark308Prefab;
+        [Tooltip("D308-84: BambooField bodies lean up to this many degrees each their own way (0 = the old small fixed jitter). Play sw_t: 17 equal canes read as a fence.")]
+        [Range(0f, 30f)] public float AreaBambooLean;
+        [Tooltip("D308-84: BambooField body heights spread +-this (0 = the old fixed set).")]
+        [Range(0f, .6f)] public float AreaBambooHeightSpread;
+        [Tooltip("11.29: the FlameCone seam sets only the half-angle and the emitting point on this body (a #308 fan keeps its own shape, scale and sizes). Off = the old full override.")]
+        public bool AreaKeepShape308;
         [Tooltip("Peak height of the flight arc (m).")]
         public float Bolt300Arc;
         [Tooltip("Sideways bend of the flight (m) — the slow homing curve.")]
@@ -117,6 +154,15 @@ namespace Oheangbu.App.SpellVFX120
         public float Bolt300Spin;
         [Tooltip("Progress exponent along the line (1 = constant speed, >1 = starts slow).")]
         [Min(0f)] public float Bolt300Ease = 1f;
+        [Tooltip("11.45 (삭): the body flies the whole flight through every hit; no Contact, a hit does not stop it.")]
+        public bool Bolt300Pierce;
+        [Tooltip("11.45 (각 낙): after the impact the Contact stays on the live target (its pivot + Bolt300FollowHeight, upright) and keeps emitting until the effect's last .9 s.")]
+        public bool Bolt300FollowTarget;
+        public float Bolt300FollowHeight;
+        [Tooltip("11.45 (악): the body stays after the first hit and flies the return leg given by SetReturn308 (bounce point, then back into the target).")]
+        public bool Bolt300Return;
+        [Tooltip("11.60 (앙): the body stays after the hit and flies back to the caster given by SetCasterReturn308 (a small rebound, then bowed in; gone 1.3 m from the eye).")]
+        public bool Bolt300ReturnToCaster;
     }
 
 }

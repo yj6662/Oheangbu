@@ -101,7 +101,7 @@ namespace Pure308
             {
                 RunTable(r, c);
                 RunWP00(r, c); RunWP02(r, c); RunWP03(r, c); RunWP04(r, c); RunWP05(r, c); RunWP06(r, c); RunWP07(r, c);
-                RunWP08(r, c); RunWP09(r, c); RunWP10(r, c); RunWP11(r, c); RunWP12(r, c); RunWP13(r, c); RunWP14(r, c);
+                RunWP08(r, c); RunWP09(r, c); RunWP10(r, c); RunWP11(r, c); RunWP12(r, c); RunWP13(r, c); RunWP14(r, c); RunWP15(r, c); RunWP16(r, c);
                 RunCore308(r, c);
             }
             catch (Exception exception) { r.Check("runner", false, "unhandled exception", exception.ToString()); }
@@ -127,6 +127,8 @@ namespace Pure308
         static partial void RunWP12(Report r, Context c);
         static partial void RunWP13(Report r, Context c);
         static partial void RunWP14(Report r, Context c);
+        static partial void RunWP15(Report r, Context c);   // #308 WP-15 (D308-113): guard break, blinding cloud, defence cap
+        static partial void RunWP16(Report r, Context c);   // #308 WP-16 (D308-114): zone tests with the enemy's body radius
         static partial void RunCore308(Report r, Context c);   // 2026-10-04 fix pass: TEST-only gate, cast order, cue life (Cases_Core308.cs)
 
         // books.tsv (written by spell120_pure308.py from the SpellBookSO assets):

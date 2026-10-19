@@ -1,0 +1,45 @@
+# lab_fire8 (Spec 11.34 fire8, user 2026-10-16: C soot-mixed tongues + a ring round the target, several sheets): one 노 cast in the
+# lab at 0.35x with the four hosts (FireVfx tongue_soot, RingVfx curl, ScorchVfx scorch, ColumnVfx column), shot + side at five
+# moments (the ring is held back to ~.4 s of its life, the column to ~.8 s), fx probe after each.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.45
+?call SpellLab308 Run shot:lab_fire8_3
+?call SpellLab308 Run side:lab_fire8_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire8_4
+?call SpellLab308 Run side:lab_fire8_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire8_5
+?call SpellLab308 Run side:lab_fire8_5
+?call SwingProbe308 Run fx
+sleep 1.0
+?call SpellLab308 Run shot:lab_fire8_6
+?call SpellLab308 Run side:lab_fire8_6
+?call SwingProbe308 Run fx
+sleep 1.5
+?call SpellLab308 Run shot:lab_fire8_7
+?call SpellLab308 Run side:lab_fire8_7
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

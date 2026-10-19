@@ -1,0 +1,74 @@
+# 11.34 fire18 (user 2026-10-16 "시전자 쪽에서 작게 시작된 불씨가 시전 지역으로 가서 번지는듯한 느낌으로"): an ember thrown from
+# the brush side lands short of the ring, then the 17th fire band comes up as five arcs - near, sides, far (Vfx308SeamTiming).
+# Early cuts run at timeScale .05 so the ember and the spread are caught in small steps; each fx line gives the real age.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.15
+?call SwingProbe308 Run slow:0.05
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_1
+?call SpellLab308 Run side:lab_fire18_1
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_2
+?call SpellLab308 Run side:lab_fire18_2
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_3
+?call SpellLab308 Run side:lab_fire18_3
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_4
+?call SpellLab308 Run side:lab_fire18_4
+?call SpellLab308 Run top:lab_fire18_4
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_5
+?call SpellLab308 Run side:lab_fire18_5
+?call SpellLab308 Run top:lab_fire18_5
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_6
+?call SpellLab308 Run side:lab_fire18_6
+?call SpellLab308 Run top:lab_fire18_6
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_7
+?call SpellLab308 Run side:lab_fire18_7
+?call SpellLab308 Run top:lab_fire18_7
+sleep 3
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_8
+?call SpellLab308 Run side:lab_fire18_8
+?call SpellLab308 Run top:lab_fire18_8
+?call SwingProbe308 Run slow:0.35
+sleep 1.6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_9
+?call SpellLab308 Run side:lab_fire18_9
+?call SpellLab308 Run top:lab_fire18_9
+sleep 2.4
+?call SwingProbe308 Run fx
+?call SpellLab308 Run shot:lab_fire18_10
+?call SpellLab308 Run side:lab_fire18_10
+?call SpellLab308 Run top:lab_fire18_10
+sleep 4
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

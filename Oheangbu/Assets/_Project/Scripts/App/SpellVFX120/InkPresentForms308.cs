@@ -216,6 +216,62 @@ namespace Oheangbu.App.SpellVFX120
                 { c.S.Sprites++; Born(ref c, 0); Reach(ref c, at + Vector3.up * (s * .8f)); }
                 Needle(ref c, p, at + new Vector3(0f, s * 1.3f, -.01f), Vector3.down, s * 1.1f, 1);
             }
+            // D308-114 (WP-16 b): the guard, the broken guard and the blinded enemy, all as ink - no glow, no HUD
+            if ((input.States & PresentState308.GuardBroken) != 0)
+            {
+                // a split rim in front of the chest: the two halves of the guard's ring pulled apart as broad dry strokes,
+                // a crack line down each break and the pieces falling off it (marks2: 4 m read was thin needles only)
+                Vector3 at = chest + new Vector3(0f, 0f, -s * .6f);
+                for (int k = -1; k <= 1; k += 2)
+                {
+                    Vector3 rimFrom = at + new Vector3(k * s * .3f, s * 1.05f, 0f);
+                    Vector3 rimAxis = new Vector3(k * .7f, -1f, 0f).normalized;
+                    Vector3 rimSide = Vector3.Cross(rimAxis, Vector3.forward).normalized;
+                    if (InkBurstMeshBuilder308.AddDryStroke(c.B, rimFrom, rimAxis, rimSide, s * 1.3f, s * .34f, (int)(c.R.Next() * 3.99f), 0f, c.R.Next(), c.Tint, Vector3.zero, 0f))
+                    { c.S.Fine++; Born(ref c, 0); Reach(ref c, rimFrom + rimAxis * (s * 1.3f)); }
+                    Needle(ref c, p, at + new Vector3(k * s * .12f, s * .95f, -.01f), new Vector3(k * .25f, -1f, 0f).normalized, s * 1.2f, 0);
+                    Sprite(ref c, at + new Vector3(k * s * 1.2f, -s * .85f, -.01f), s * .32f, s * .48f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                }
+                Sprite(ref c, at + new Vector3(s * .1f, -s * 1.45f, -.01f), s * .26f, s * .38f, InkBurstMeshBuilder308.CellDrop, 1);
+            }
+            else if ((input.States & PresentState308.Guarded) != 0)
+            {
+                // a rim of ink held up in front of the chest: one brushed ring, flat to the eye, a little ahead of the body
+                Vector3 at = chest + new Vector3(0f, 0f, -s * .6f);
+                Sprite(ref c, at, s * 1.05f, s * 1.25f, InkBurstMeshBuilder308.CellRing, 0);
+                Needle(ref c, p, at + new Vector3(-s * .55f, s * 1.15f, -.01f), Vector3.right, s * 1.1f, 1);
+            }
+            if ((input.States & PresentState308.Blind) != 0)
+            {
+                // a blurred ring of ink round the head (the eyes are covered), two drops running off it
+                // (marks2: x1.5 - at 4 m the ring was a few pixels of contrast)
+                Vector3 at = new Vector3(0f, chest.y * 1.32f, chest.z - s * .3f);
+                Sprite(ref c, at, s * 1.35f, s * .85f, InkBurstMeshBuilder308.CellRing, 0);
+                Sprite(ref c, at + new Vector3(-s * .75f, -s * .85f, -.01f), s * .24f, s * .39f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                Sprite(ref c, at + new Vector3(s * .7f, -s * .9f, -.01f), s * .21f, s * .33f, InkBurstMeshBuilder308.CellDropTailed, 1);
+            }
+            // D308-115: the summons' marks, ink only (no glow, no HUD)
+            if ((input.States & PresentState308.Root) != 0)
+            {
+                // 곰: roots that grip the legs - three dry strokes climbing from the ground to the waist, leaning in
+                float climb = Mathf.Max(s * 2f, chest.y * .62f);
+                for (int k = -1; k <= 1; k++)
+                {
+                    Vector3 from = new Vector3(k * s * .95f, .03f, -s * .25f);
+                    Vector3 axis = new Vector3(-k * .28f, 1f, 0f).normalized;
+                    float run = k == 0 ? climb * .7f : climb;
+                    if (InkBurstMeshBuilder308.AddDryStroke(c.B, from, axis, Vector3.Cross(axis, Vector3.forward).normalized, run, s * .3f, (int)(c.R.Next() * 3.99f), k == 0 ? 1f : 0f, c.R.Next(), c.Tint, Vector3.zero, 0f))
+                    { c.S.Fine++; Born(ref c, k == 0 ? 1 : 0); Reach(ref c, from + axis * run); }
+                }
+                Sprite(ref c, new Vector3(0f, .04f, -s * .25f), s * .9f, s * .35f, InkBurstMeshBuilder308.CellCluster, 0);
+            }
+            if ((input.States & PresentState308.Sin) != 0)
+            {
+                // 놈: a brand on the shoulder - a pressed cluster of ink and one bar struck under it
+                Vector3 at = new Vector3(-s * 1.05f, chest.y * 1.2f, chest.z - s * .2f);
+                Sprite(ref c, at, s * .75f, s * .75f, InkBurstMeshBuilder308.CellCluster, 0);
+                Needle(ref c, p, at + new Vector3(-s * .6f, -s * .6f, -.01f), Vector3.right, s * 1.2f, 1);
+            }
         }
 
         // ---- the zone's edge (body root = the zone's centre on the ground, +Y = the ground's normal)

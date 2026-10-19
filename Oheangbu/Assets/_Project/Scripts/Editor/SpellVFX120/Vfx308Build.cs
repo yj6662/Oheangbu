@@ -31,7 +31,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
     //   pose:<letter>:<when>[:ox,oy,oz:tx,ty,tz]  - Edit mode: one unsaved preview posed at a moment of its flight
     //                               when = seconds | launch | mid (6 m out) | hit | hit+<seconds>
     //   pose:clear
-    public static class Vfx308Build
+    public static partial class Vfx308Build
     {
         const string Root = "Assets/_Project/Art/SpellVFX308";
         const string VisualSet = "Assets/_Project/Art/World/Architecture296/Data/9f55ff4897c35bf408434d2fd4cd5dbc_278c3cdf45b3ab24fb93a8f33e2264e2_9ba170fd23c53dc418707872eb7b2056_SpellVisualSet_120.asset";
@@ -56,6 +56,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
             V2 = !command.EndsWith(":v1", StringComparison.Ordinal);
             if (!V2) command = command.Substring(0, command.Length - 3);
             if (command.StartsWith("pose", StringComparison.Ordinal)) return Pose(command.Split(':'));
+            if (command.StartsWith("summon", StringComparison.Ordinal)) return Summon(command.Split(':'));         // 11.13: the ink body of a summon
+            if (command.StartsWith("swingink", StringComparison.Ordinal)) return SwingInk(command.Split(':'));     // 11.10: the ink of the five swings
+            if (command.StartsWith("graph:blocks", StringComparison.Ordinal)) return GraphBlocks(command.Split(':'));   // 11.33 8th pass: real block / slot names
+            if (command.StartsWith("graph:dumpfull", StringComparison.Ordinal)) return GraphDump(command.Length > 15 ? command.Substring(15) : NaSmokeGraph, true);
             switch (command)
             {
                 case "build": return Build() + (V2 ? BuildAttack() : "");
@@ -63,6 +67,41 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "connect": case "connect:five": return Connect(false);
                 case "connect:attack": if (!V2) throw new ArgumentException("the attack set exists in the v2 look only"); return Connect(true);
                 case "attack": return AttackTable();
+                case "stain": return BuildStain();   // 11.37 (e) D308-104: the range-ㄱ foot stain alone
+                case "mod": return BuildMod();       // 11.63: the eight modifier letters' hit pictures alone
+                case "guard": return BuildGuard();   // 11.22 stage 4: the guard membranes
+                case "giyeok": return BuildGiyeok(); // 11.22 stage 4: the ㄱ-final attacks as #308 bolts
+                case "field": return BuildField();   // 11.46: the field gates 눈 숫 웅, their own bodies
+                case "aura": return BuildAura();     // 11.22 stage 4: buffs and wards as #308 loop bodies
+                case "cue": return BuildCue();       // 11.40: the 27 non-attack cue letters
+                case "derived": return BuildDerived();   // 11.56: the derived shots of 간 낫 속 안
+                case "zone": return BuildZone();         // 11.57: the floors of the lingering zones 곡 곳 녹 농 몽
+                case "burst": return BuildBurst();       // 11.58: the intercept burst of 상 송
+                case "rock": return BuildRock();         // 11.59: the ink rock 막 leaves as cover
+                case "mark": return BuildMark();         // 11.61: the ink seal of the install letters 감 남 맘 삼 암
+                case "buffhit": return BuildBuffHit();   // 11.64: the moment 먼 멈 넘 do their work
+                case "fieldbirth": return BuildFieldBirth();   // 11.65: the moment 국 뭄 stand up
+                case "beast": return BuildBeast();   // 11.22 stage 4: the ink body on the skinned summons
+                case "retire:summon": return ConnectSummonFx();         // 11.37 (f) D308-107: old summon effects off on the live profiles
+                case "retire:summon:revert": return RevertSummonFx();
+                case "haetae:flame": return BuildHaetaeBreath();              // 11.44: the haetae breath as an ink body
+                case "haetae:flame:connect": return ConnectHaetaeBreath();
+                case "haetae:flame:revert": return RevertHaetaeBreath();
+                case "beast:ink": return BuildBeastInk();                      // 11.47: deer roots + turtle jet as ink bodies
+                case "beast:ink:connect": return ConnectBeastInk();
+                case "beast:ink:revert": return RevertBeastInk();
+                case "unravel": return BuildUnravel();   // 11.25: the letter coming apart into the brush (particle prefab + Resources profile)
+                case "graph:build": return GraphBuild();             // 11.32: the 노 smoke graph (concepts C + D)
+                case "graph:build:ring": return GraphBuildRing();     // 11.34 fire8: tongues leaning out round the target
+                case "graph:build:scorch": return GraphBuildScorch(); // 11.34 fire8: red-ink scorch laid on the ground
+                case "graph:build:column": return GraphBuildColumn(); // 11.34 fire8: the thin soot column
+                case "graph:build:wash": return GraphBuildWash();     // 11.34 fire16: the soot wash under the ring
+                case "graph:build:pool": return GraphBuildPool();     // 11.34 fire16: the red-black ground pool
+                case "graph:build:bank": return GraphBuildBank();     // 11.34 fire17: the baked fluid fire band round the target
+                case "graph:build:stain": return GraphBuildStain();   // 11.34 fire17: the splash stain under it
+                case "graph:build:banks": return GraphBuildBanks();   // 11.34 fire18: the bank as five arcs opened in turn
+                case "graph:build:ember": return GraphBuildEmber();   // 11.34 fire18: the ember thrown from the brush tip
+                case "graph:dump": return GraphDump(NaSmokeGraph);
                 case "revert": return Revert();
                 case "status": return Status();
                 case "budget": return Budget();
@@ -74,7 +113,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         static readonly string[] Sheets = { "ink_splat", "ink_drops", "wood_splinter", "fire_tongue", "fire_burst", "earth_dust", "metal_streak", "water_ring", "water_orb" };
         static readonly string[] MeshNames = { "thorn", "splinter", "clod", "chunk", "blade", "stalk", "drop", "tongue" };
-        static readonly string[] Sheets2 = Sheets.Concat(new[] { "wood_stroke", "fire_lick", "speed_line", "earth_heave", "water_crest", "ink_pool" }).ToArray();     // v2 only (4th pass, range forms)
+        static readonly string[] Sheets2 = Sheets.Concat(new[] { "wood_stroke", "fire_lick", "speed_line", "earth_heave", "water_crest", "ink_pool", "ink_throw", "ink_wisp", "ink_gather" }).ToArray();     // v2 only (4th pass, range forms)
 
         static Texture2D Sheet(string name)
         {
@@ -175,12 +214,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
             public ParticleSystemShapeType Shape = ParticleSystemShapeType.Sphere; public float Radius = .04f, Angle = 20f, ArcSpeed, Thickness = 1f;
             public Vector3 ShapeRot, ShapeScale, ShapePos; public bool NoShape, ShapeScaling;      // ShapeScaling: the parent's scale widens the emitter only (path fronts)
             public float Gravity, Spin, Drag, RiseY, Roll;             // Roll: deg/s about the flight axis (mesh particles)
+            public bool DragLinear;                                    // pq_fan3: Unity's drag is times size and speed by default (a 3 m sheet hardly moved); true = plain drag
             public bool SpinRandom = true, Tumble, AlongVelocity;
+            public Vector2? RotDeg;                                    // billboards: a fixed start rotation range in degrees (11.23 markers)
             public Mesh Mesh; public Vector3 Pivot;
             // flipbook: frames FrameFrom..FrameTo of 16 played over the lifetime; RandomCell = one random cel held;
             // RandomStart = start anywhere and advance FrameTo - FrameFrom cels; Cycles = whole-sheet loops over the lifetime
             public int Mode;                                         // billboard: 0 camera, 1 flat on the ground, 2 upright, 3 stretched along its velocity
             public bool Flipbook = true, RandomCell, RandomStart, Blend; public float FrameFrom, FrameTo = 16f, Cycles;
+            public AnimationCurve FrameCurve;                        // 11.28: overrides the linear run - the frame (0..1 of the sheet) over the lifetime, to reach a cel and hold it
         }
 
         static Gradient G(params (float t, Color c)[] keys)
@@ -228,6 +270,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             }
             else if (s.Mesh != null && Backward(s.Mesh)) { main.startRotation3D = true; main.startRotationX = main.startRotationZ = new ParticleSystem.MinMaxCurve(0f); main.startRotationY = new ParticleSystem.MinMaxCurve(Mathf.PI); }
             else main.startRotation = s.SpinRandom && s.Mesh == null ? new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f) : new ParticleSystem.MinMaxCurve(0f);
+            if (s.RotDeg.HasValue && s.Mesh == null && !s.Tumble) main.startRotation = new ParticleSystem.MinMaxCurve(s.RotDeg.Value.x * Mathf.Deg2Rad, s.RotDeg.Value.y * Mathf.Deg2Rad);
             main.simulationSpace = s.World ? ParticleSystemSimulationSpace.World : ParticleSystemSimulationSpace.Local;
             main.scalingMode = s.ShapeScaling ? ParticleSystemScalingMode.Shape : ParticleSystemScalingMode.Hierarchy;
             main.gravityModifier = s.Gravity;
@@ -251,7 +294,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 }
                 else rot.z = new ParticleSystem.MinMaxCurve(-s.Spin * Mathf.Deg2Rad, s.Spin * Mathf.Deg2Rad);
             }
-            if (s.Drag > 0f) { var lv = ps.limitVelocityOverLifetime; lv.enabled = true; lv.drag = s.Drag; lv.limit = 100f; }
+            if (s.Drag > 0f) { var lv = ps.limitVelocityOverLifetime; lv.enabled = true; lv.drag = s.Drag; lv.limit = 100f; if (s.DragLinear) { lv.multiplyDragByParticleSize = false; lv.multiplyDragByParticleVelocity = false; } }
             if (Mathf.Abs(s.RiseY) > .001f)
             {
                 var v = ps.velocityOverLifetime; v.enabled = true; v.space = ParticleSystemSimulationSpace.World;
@@ -261,7 +304,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             {
                 var tsa = ps.textureSheetAnimation; tsa.enabled = true; tsa.mode = ParticleSystemAnimationMode.Grid;
                 tsa.numTilesX = 4; tsa.numTilesY = 4; tsa.animation = ParticleSystemAnimationType.WholeSheet; tsa.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
-                if (s.RandomCell) { tsa.startFrame = new ParticleSystem.MinMaxCurve(s.FrameFrom, Mathf.Min(s.FrameTo, 15.99f)); tsa.frameOverTime = new ParticleSystem.MinMaxCurve(0f); tsa.cycleCount = 1; }
+                if (s.FrameCurve != null) { tsa.frameOverTime = new ParticleSystem.MinMaxCurve(1f, s.FrameCurve); tsa.cycleCount = 1; }
+                else if (s.RandomCell) { tsa.startFrame = new ParticleSystem.MinMaxCurve(s.FrameFrom, Mathf.Min(s.FrameTo, 15.99f)); tsa.frameOverTime = new ParticleSystem.MinMaxCurve(0f); tsa.cycleCount = 1; }
                 else if (s.Cycles > 0f) { tsa.frameOverTime = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0f, 1f, 1f)); tsa.cycleCount = Mathf.Max(1, Mathf.RoundToInt(s.Cycles)); }
                 else
                 {
@@ -457,6 +501,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static readonly List<ParticleSystemVertexStream> BlendStreams = new List<ParticleSystemVertexStream>
         {
             ParticleSystemVertexStream.Position, ParticleSystemVertexStream.Color, ParticleSystemVertexStream.UV, ParticleSystemVertexStream.UV2, ParticleSystemVertexStream.AnimBlend,
+            ParticleSystemVertexStream.AgePercent,   // D308-84: TEXCOORD1.y, the ink -> pigment soak (InkBleed308 _SoakTo)
         };
 
         static Texture2D Sheet2(string name)
@@ -489,6 +534,9 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return m;
         }
 
+        // D308-109 (ink first, the pigment soaks in): black ink at birth, the element's colour from a quarter of the life, fading out
+        static Gradient InkFirst(Color ink, Color pigment, Color end) => G((0f, C(ink, 1f)), (.25f, C(Color.Lerp(ink, pigment, .6f), 1f)), (.5f, C(pigment, 1f)), (1f, C(end, 0f)));
+
         // whole, then paling to nothing from `hold` of the life on
         static Gradient Fade(Color c, float hold = .35f, Color? end = null)
         {
@@ -499,8 +547,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // the birth: a small soft round glow on the body for two cels (the only light of an ordinary spell)
         static void Birth2(Transform travel, string key, Color c, float size)
         {
-            Layer(travel, new L { Name = "Birth", Mat = Bleed("M_V308b_" + key + "_birth", null, Color.clear, 0f, .5f, .3f), World = false, Burst = 1, Max = 2, Life = new Vector2(2f * Cel, 2f * Cel),
+            Layer(travel, new L { Name = "Birth", Mat = Bleed("M_V308b_" + key + "_birth", null, Color.clear, 0f, .5f, .12f)   /* D308-109 audit: the birth glow cap .12 (D308-103) */, World = false, Burst = 1, Max = 2, Life = new Vector2(2f * Cel, 2f * Cel),
                 Size = new Vector2(size, size), NoShape = true, Flipbook = false, SpinRandom = false, Colour = G((0f, C(c, .9f)), (.5f, C(c, .6f)), (1f, C(c, 0f))) });
+            // 6th pass (D308-83): the body is made of thrown ink. Where it leaves, ink comes together (ink_gather sheet, the
+            // cels in which the drops are already on their way in) and is drawn in as the body goes: ink first, colour after.
+            // World space: it stays where the spell left the brush. Plain ink colour, no glow.
+            var gatherInk = new Color(.06f, .055f, .05f, 1f);
+            Layer(travel, new L { Name = "Gather", Mat = Bleed("M_V308b_ink_gather", "ink_gather", C(gatherInk, .95f), 0f, .95f), Burst = 1, Max = 2, Life = new Vector2(3f * Cel, 3f * Cel),
+                Size = new Vector2(size * 1.25f, size * 1.25f), NoShape = true, Blend = true, FrameFrom = 6f, FrameTo = 13f, Colour = G((0f, C(gatherInk, 1f)), (.7f, C(gatherInk, 1f)), (1f, C(gatherInk, 0f))), Grow = Curve(0f, 1.15f, 1f, .45f) });
         }
 
         // a whole sheet played once over the hit (the .9 s the effect outlives its impact), swelling as it pales
@@ -529,21 +583,58 @@ namespace Oheangbu.EditorTools.SpellVFX120
 
         static Material B(string key, string sheet, Color ink, float heat = 0f, float opacity = 1f) => Bleed("M_V308b_" + key + "_" + sheet, sheet, ink, heat, opacity);
 
+        // ---- D308-84 (SPEC-SPELL-VFX-OVERHAUL-308 11.21): the body forms from the ink, then the pigment soaks in; ink stays ----
+        const float BodySoakSeconds = .6f;    // solid body: ink -> pigment after leaving (TEST; sw_t .35 was not readable)
+        const float ParticleSoakTo = .6f;     // bleeding particles: pigment full at this fraction of their life (TEST; .45)
+        const float TravelScale = 1.35f;      // the flying body only (sw_w: a small dark dot at 0.2x)
+        const float NearContactMeters = 18f;  // hits nearer the camera than this shrink, to 45 % (TEST; 12 left the earth hit wide)
+        const float SingleHitScale = .4f;     // single hits: the bolt's own Contact splat is the hit - the contact seam only adds a small splat (sw_r: x1 covered a third of the view at 5 m)    // bleeding particles: pigment full at this fraction of their life (TEST)
+
+        static Material SoakVariant(Material m)
+        {
+            string path = AssetDatabase.GetAssetPath(m);
+            if (string.IsNullOrEmpty(path) || path.EndsWith("_soak.mat", StringComparison.Ordinal)) return m;
+            string soakPath = path.Substring(0, path.Length - 4) + "_soak.mat";
+            var v = AssetDatabase.LoadAssetAtPath<Material>(soakPath);
+            if (v == null) { v = new Material(m); AssetDatabase.CreateAsset(v, soakPath); } else { v.shader = m.shader; v.CopyPropertiesFromMaterial(m); }
+            v.SetColor("_SoakInk", SwingInkColour); v.SetFloat("_SoakFrom", 0f); v.SetFloat("_SoakTo", ParticleSoakTo);
+            EditorUtility.SetDirty(v); Touched.Add(v);
+            return v;
+        }
+
+        // Deploy: scattered ink drawn together at the origin (the splat sheet backwards), 0.15 s. No Residue (D308-109). Bleeding Travel particles
+        // swap to a soak copy of their material (black first, pigment by ParticleSoakTo of their life). Glow cels stay as they are.
+        static void Bolt308Extras(GameObject root)
+        {
+            var streams = new List<ParticleSystemVertexStream>();
+            foreach (var r in root.transform.Find("Travel").GetComponentsInChildren<ParticleSystemRenderer>(true))
+            {
+                var m = r.sharedMaterial;
+                if (m == null || m.shader == null || m.shader.name != "Oheangbu/SpellVFX308/InkBleed" || m.GetFloat("_Radial") > .5f) continue;
+                streams.Clear(); r.GetActiveVertexStreams(streams);
+                if (streams.Contains(ParticleSystemVertexStream.AgePercent)) r.sharedMaterial = SoakVariant(m);
+            }
+            var deploy = new GameObject("Deploy").transform; deploy.SetParent(root.transform, false);
+            Layer(deploy, new L { Name = "Gather", Mat = Bleed("M_V308c_deploy_splat", "ink_splat", C(SwingInkColour, .9f), 0f, .9f), World = false, Burst = 1, Max = 2, Life = new Vector2(.15f, .15f),
+                Size = new Vector2(1.1f, 1.1f), NoShape = true, Blend = true, FrameFrom = 11f, FrameTo = 0f,
+                Colour = G((0f, C(SwingInkColour, 0f)), (.3f, C(SwingInkColour, 1f)), (1f, C(SwingInkColour, .7f))), Grow = Curve(0f, 1.25f, 1f, .5f) });
+            // D308-109 audit (rule: no flying droplets, single hits leave KTP only): the deploy drops and the residue pool are gone.
+            // Without a Residue child the runtime's DropResidue308 does nothing; FinalK adds no Linger pool since 11.54.
+            foreach (var t in deploy.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
+        }
+
         static GameObject Ga2(Kit k, Vfx120Profile p)
         {
             var (travel, contact, root) = Shell("PF_V308b_ga");
             Color pig = p.Pigment, ink = k.Ink, leaf = Color.Lerp(pig, ink, .45f), dark = Color.Lerp(pig, ink, .75f);
             var solid = Solid("M_V308_ga_solid", Color.Lerp(pig, ink, .2f), ink);
             var drops = B("ga", "ink_drops", C(ink, .85f));
-            Layer(SpinRoot(travel), new L { Name = "Thorn", Mat = solid, Mesh = k.Thorn, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.1f, 2.1f), NoShape = true, Roll = 540f, Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
-            Blots(travel, "Wisps", drops, leaf, dark, 45f, new Vector2(.5f, .85f), new Vector2(.3f, .45f), 0f, .22f, 2.5f);
-            Layer(travel, new L { Name = "Splinters", Mat = solid, Mesh = k.Splinter, Rate = 18, Max = 16, Life = new Vector2(.3f, .45f), Size = new Vector2(.3f, .55f), Speed = new Vector2(1.5f, 3.5f),
-                Shape = ParticleSystemShapeType.Cone, Radius = .05f, Angle = 40f, ShapeRot = new Vector3(0f, 180f, 0f), Gravity = .6f, Tumble = true, Spin = 200f, Grow = Curve(0, 1f, 1, 0f) });
+            // D308-86: ink that keeps forming instead of the thorn mesh; wood = fine ink sprigs reaching out of it
+            var gaSpin = InkMass(travel, "ga", ink, leaf, dark, 1.15f);
             Birth2(travel, "ga", pig, 1.1f);
             Wash(contact, "Burst", B("ga", "wood_splinter", C(ink, .9f)), leaf, dark, 6.2f, .9f, .4f, 1.12f, depth: 3);
             Wash(contact, "Splat", B("ga", "ink_splat", C(ink, .9f), 0f, .85f), dark, dark, 4.2f, .9f, .35f, 1.25f, 15.5f, default, true);
-            Layer(contact, new L { Name = "Shards", World = false, Mat = solid, Mesh = k.Splinter, Burst = 12, Max = 12, Life = new Vector2(.45f, .8f), Size = new Vector2(.6f, 1.1f), Speed = new Vector2(3f, 7f),
-                Shape = ParticleSystemShapeType.Hemisphere, Radius = .1f, Gravity = 1.4f, Tumble = true, Spin = 260f, Grow = Curve(0, 1f, .5f, .8f, 1, 0f) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -553,19 +644,19 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, ink = k.Ink, ember = Color.Lerp(pig, ink, .45f), soot = Color.Lerp(pig, ink, .85f);
             var flame = B("na", "fire_tongue", C(ink, .35f), 1f, .85f);
             var drops = B("na", "ink_drops", C(ink, .85f), 0f, .8f);
-            var naSpin = SpinRoot(travel);
-            Layer(naSpin, new L { Name = "Coal", Mat = Solid("M_V308_na_solid", Color.Lerp(pig, ink, .55f), ink, .45f, .3f), Mesh = k.Clod, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(.5f, .5f), NoShape = true,
-                Tumble = true, Spin = 110f, Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
+            var naSpin = InkMass(travel, "na", ink, ember, soot, .9f, rate: 22f, shed: 20f);   // D308-86: ink under the flame, not a coal
             Layer(naSpin, new L { Name = "Flame", Mat = flame, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.5f, 2.5f), NoShape = true, SpinRandom = false, Blend = true,
                 Cycles = 6f, Pivot = new Vector3(0f, .2f, 0f), Colour = G((0f, C(ember, 1f)), (1f, C(ember, 1f))), Grow = Curve(0f, .35f, .04f, 1f, 1f, 1f) });
             Layer(travel, new L { Name = "Licks", Mat = flame, Rate = 9, Max = 10, Life = new Vector2(.45f, .6f), Size = new Vector2(1.3f, 1.8f), NoShape = true, SpinRandom = false, Blend = true,
                 RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = 1.2f, Pivot = new Vector3(0f, .2f, 0f), Colour = Fade(ember, .15f, soot), Grow = Curve(0, .9f, 1, 1.4f) });
-            Blots(travel, "Soot", drops, soot, soot, 12f, new Vector2(.4f, .65f), new Vector2(.35f, .55f), -.15f, .18f);
             Birth2(travel, "na", new Color(.6f, .28f, .1f), 1.2f);
-            Wash(contact, "Burst", B("na", "fire_burst", C(ink, .35f), 1f), ember, soot, 6.4f, .9f, .4f, 1.15f, depth: 3);
-            Layer(contact, new L { Name = "Tongues", World = false, Mat = flame, Burst = 7, Max = 8, Life = new Vector2(.55f, .85f), Size = new Vector2(1.8f, 2.6f), Radius = .6f, SpinRandom = false, Blend = true,
+            // 6th pass (sheets r5): from 12 m the hit was one red mass. Its own burst material with half the heat and more ink, one
+            // layer fewer, smaller; fewer tongues; the ink splat under it is the larger shape now.
+            Wash(contact, "Burst", Bleed("M_V308b_na_fire_burst_hit", "fire_burst", C(ink, .7f), .5f, 1f), Color.Lerp(ember, soot, .45f), soot, 5.2f, .9f, .3f, 1.15f, depth: 2);
+            Layer(contact, new L { Name = "Tongues", World = false, Mat = flame, Burst = 4, Max = 5, Life = new Vector2(.55f, .85f), Size = new Vector2(1.5f, 2.1f), Radius = .6f, SpinRandom = false, Blend = true,
                 RandomStart = true, FrameFrom = 0f, FrameTo = 8f, RiseY = 1.7f, Colour = Fade(ember, .3f, soot), Grow = Curve(0, .9f, 1, 1.3f) });
-            Wash(contact, "Splat", B("na", "ink_splat", C(ink, .9f), 0f, .8f), soot, soot, 4.2f, .9f, .35f, 1.25f, 15.5f, default, true);
+            Wash(contact, "Splat", B("na", "ink_splat", C(ink, .9f), 0f, .95f), soot, soot, 5.6f, .9f, .4f, 1.25f, 15.5f, default, true);
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -575,17 +666,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, ink = k.Ink, soil = Color.Lerp(pig, ink, .3f), dark = Color.Lerp(pig, ink, .7f);
             var solid = Solid("M_V308_ma_solid", Color.Lerp(pig, ink, .15f), ink, .6f, .3f);
             var drops = B("ma", "ink_drops", C(ink, .6f));
-            Body(SpinRoot(travel), k.Clod, solid, .5f);
-            Layer(travel, new L { Name = "Crumbs", Mat = solid, Mesh = k.Chunk, Rate = 20, Max = 20, Life = new Vector2(.45f, .7f), Size = new Vector2(.1f, .2f), Speed = new Vector2(.3f, 1f), Radius = .2f,
-                Gravity = 2.2f, Tumble = true, Spin = 300f });
-            Blots(travel, "Dust", drops, soil, dark, 30f, new Vector2(.7f, 1.1f), new Vector2(.45f, .65f), .9f, .18f, 0f, 1.8f);
+            // D308-86: a heavy mass of earth-grained ink instead of the clod; ink drops fall off it instead of crumbs
+            InkMass(travel, "ma", ink, soil, dark, 1.05f, "earth_dust", 24f, 40f, .34f);
             Birth2(travel, "ma", soil, 1.0f);
             Wash(contact, "DustRoll", B("ma", "earth_dust", C(ink, .6f)), soil, dark, 6.8f, .9f, .5f, 1.12f, 15.5f, new Vector3(0f, .12f, 0f), depth: 3);
-            Layer(contact, new L { Name = "Chunks", World = false, Mat = solid, Mesh = k.Chunk, Burst = 12, Max = 12, Life = new Vector2(.6f, .9f), Size = new Vector2(.2f, .4f), Speed = new Vector2(3f, 6.5f), Radius = .2f,
-                Gravity = 2.4f, Tumble = true, Spin = 400f, Grow = Curve(0, 1f, .7f, 1f, 1, 0f) });
-            Layer(contact, new L { Name = "Clods", World = false, Mat = solid, Mesh = k.Clod, Burst = 3, Max = 4, Life = new Vector2(.7f, .9f), Size = new Vector2(.3f, .45f), Speed = new Vector2(2f, 4f), Radius = .15f,
-                Gravity = 2.6f, Tumble = true, Spin = 240f, Grow = Curve(0, 1f, .7f, 1f, 1, 0f) });
             Wash(contact, "Splat", B("ma", "ink_splat", C(ink, .8f), 0f, .85f), dark, dark, 4.6f, .9f, .35f, 1.25f, 15.5f, default, true);
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -594,19 +680,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var (travel, contact, root) = Shell("PF_V308b_sa");
             Color pig = p.Pigment, ink = k.Ink, steel = Color.Lerp(pig, ink, .5f), dark = Color.Lerp(pig, ink, .8f);
-            var solid = Solid("M_V308_sa_solid", Color.Lerp(pig, ink, .1f), ink, .5f, .3f);
             var line = Solid("M_V308_sa_line", dark, ink, .5f, 0f);
             var streak = B("sa", "metal_streak", C(ink, .8f));
-            Layer(SpinRoot(travel), new L { Name = "Blade", Mat = solid, Mesh = k.Blade, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.1f, 2.1f), NoShape = true, Roll = 900f, Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
-            Layer(travel, new L { Name = "Lines", Mat = line, Mesh = k.Splinter, Rate = 70, Max = 20, Life = new Vector2(.12f, .2f), Size = new Vector2(.9f, 1.4f), Size3D = new Vector3(1.7f, 1.7f, 2.4f),
-                Shape = ParticleSystemShapeType.Circle, Radius = .55f, Thickness = .5f, Grow = Curve(0, 1f, 1, .3f) });
+            // D308-86: dry, quick ink instead of the blade (metal bleeds least: short-lived cels, little breath behind)
+            InkMass(travel, "sa", ink, steel, dark, .85f, rate: 26f, spin: 0f, life: .16f, shed: 14f);
             Layer(travel, new L { Name = "Glint", Mat = streak, World = false, Rate = 12, Max = 4, Life = new Vector2(Cel, Cel), Size = new Vector2(2.8f, 3.3f), NoShape = true, Blend = true,
                 RandomCell = true, FrameFrom = 0f, FrameTo = 1.99f, Colour = G((0f, C(steel, 1f)), (1f, C(steel, .8f))) });
             Birth2(travel, "sa", steel, 1.1f);
             Wash(contact, "Streaks", streak, steel, dark, 7f, 7f * Cel, .5f, 1.05f, 8f, default, true, depth: 2);
             Wash(contact, "Splat", B("sa", "ink_splat", C(ink, .9f), 0f, .8f), dark, dark, 2.6f, .5f, .3f, 1.1f, 9f, default, true);
-            Layer(contact, new L { Name = "Filings", World = false, Mat = line, Mesh = k.Splinter, Burst = 14, Max = 14, Life = new Vector2(.12f, .25f), Size = new Vector2(.6f, 1.1f), Size3D = new Vector3(.4f, .4f, 1f), Speed = new Vector2(8f, 14f),
-                Radius = .05f, AlongVelocity = true, Grow = Curve(0, 1f, 1, .2f) });
             return root;
         }
 
@@ -616,19 +698,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Color pig = p.Pigment, acc = p.Accent, ink = k.Ink, water = Color.Lerp(pig, acc, .15f), dark = Color.Lerp(pig, ink, .6f);
             var deep = C(Color.Lerp(pig, ink, .7f), .9f);
             var drops = B("a", "ink_drops", deep);
-            var aSpin = SpinRoot(travel);
-            Layer(aSpin, new L { Name = "Bead", Mat = Solid("M_V308_a_solid", Color.Lerp(pig, acc, .1f), Color.Lerp(pig, ink, .9f), .45f, .34f), Mesh = k.Drop, World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(.78f, .78f), NoShape = true,
-                Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
+            var aSpin = InkMass(travel, "a", ink, water, dark, .95f, rate: 24f, spin: 25f, shed: 22f);   // D308-86: round wet ink inside the veil, not a bead
             // the wobbling wash is now a veil round the solid bead, not a black disc over it
             Layer(aSpin, new L { Name = "Orb", Mat = Bleed("M_V308b_a_water_orb_veil", "water_orb", C(Color.Lerp(pig, ink, .7f), .3f), 0f, .6f), World = false, Burst = 1, Max = 2, Life = new Vector2(8f, 8f), Size = new Vector2(2.2f, 2.2f), NoShape = true, SpinRandom = false, Blend = true,
                 Cycles = 6f, Colour = G((0f, C(water, 1f)), (1f, C(water, 1f))), Grow = Curve(0f, .3f, .05f, 1f, 1f, 1f) });
-            Blots(travel, "Wake", drops, water, dark, 12f, new Vector2(.6f, .95f), new Vector2(.5f, .8f), 1.1f, .2f, 0f, 1.7f);
-            Blots(travel, "Curl", drops, Color.Lerp(pig, acc, .3f), dark, 16f, new Vector2(.4f, .6f), new Vector2(.5f, .7f), .2f, .45f, 1.2f);
             Birth2(travel, "a", water, 1.0f);
             Wash(contact, "Crown", B("a", "water_ring", deep), water, dark, 6.6f, .9f, .5f, 1.12f, depth: 3);
             Wash(contact, "Splat", B("a", "ink_splat", C(ink, .85f), 0f, .8f), dark, dark, 4.0f, .9f, .35f, 1.25f, 15.5f, default, true);
-            Layer(contact, new L { Name = "Beads", World = false, Mat = drops, Burst = 8, Max = 8, Life = new Vector2(.6f, .9f), Size = new Vector2(.5f, .8f), Speed = new Vector2(2.5f, 5f), Gravity = 2.6f, Radius = .2f,
-                RandomCell = true, Blend = true, Colour = Fade(pig, .4f, dark) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -713,16 +790,16 @@ namespace Oheangbu.EditorTools.SpellVFX120
             e.Flame = key == "na" ? B(key, "fire_tongue", C(ink, .35f), 1f) : e.Burst;
             e.Stroke = key == "ga" ? B(key, "wood_stroke", C(ink, .92f)) : e.Burst;
             e.Stalk = key == "ga" ? k.Stalk : e.Spike;
-            e.StrokeSolid = Solid("M_V308_" + key + "_stroke", Color.Lerp(pig, ink, .35f), ink, .45f, .3f);
+            e.StrokeSolid = Solid("M_V308_" + key + "_stroke", Color.Lerp(pig, ink, .78f), ink, .5f, .3f);   /* 7th pass (sw_w): still green posts - more ink */      // 6th pass: ink first - the canes read as green bamboo posts
             e.Lick = key == "na" ? B(key, "fire_lick", C(ink, .3f), 1f) : e.Burst;
-            e.LickSoot = key == "na" ? Bleed("M_V308b_na_fire_lick_soot", "fire_lick", C(ink, .7f), .55f, .7f) : e.Burst;       // mostly soot, a little heat at the root
-            e.Strand = Solid("M_V308_" + key + "_strand", Color.Lerp(pig, ink, key == "na" ? .3f : .45f), ink, .45f, .3f);
+            e.LickSoot = key == "na" ? Bleed("M_V308b_na_fire_lick_soot", "fire_lick", C(ink, .85f), .3f, .92f) : e.Burst;       // mostly soot, a little heat at the root
+            e.Strand = Solid("M_V308_" + key + "_strand", Color.Lerp(pig, ink, key == "na" ? .62f : .55f), ink, .45f, .3f);      // 6th pass: soot-dark strands, not red flakes
             e.Tongue = k.Tongue;
             e.Ring = Bleed("M_V308b_" + key + "_ring", "ink_pool", C(ink, .9f), 0f, .9f, 0f, 0f);
             e.Head = e.Burst;
-            if (key == "ga") { e.Head = e.Stroke; e.HeadSize = new Vector2(3.4f, 4.4f); e.HeadPivot = .36f; e.HeadRate = 14f; }
-            if (key == "ma") { e.Head = B(key, "earth_heave", C(ink, .7f)); e.HeadSize = new Vector2(4.6f, 5.8f); e.HeadLife = new Vector2(.8f, 1f); e.HeadPivot = .36f; e.HeadRate = 12f; }
-            if (key == "a") { e.Head = B(key, "water_crest", C(Color.Lerp(pig, ink, .7f), .95f)); e.HeadSize = new Vector2(4.8f, 6f); e.HeadLife = new Vector2(.6f, .8f); e.HeadPivot = .24f; e.HeadRate = 15f; }
+            if (key == "ga") { e.Head = e.Stroke; e.HeadSize = new Vector2(2.8f, 3.6f);   /* sw_y: the path heads walled the view - all smaller */ e.HeadPivot = .36f; e.HeadRate = 14f; }
+            if (key == "ma") { e.Head = B(key, "earth_heave", C(ink, .7f)); e.HeadSize = new Vector2(3f, 3.8f); e.HeadLife = new Vector2(.8f, 1f);   /* sw_y 4.6 - 5.8: an earth wall over 2/3 of the view */ e.HeadPivot = .36f; e.HeadRate = 12f; }
+            if (key == "a") { e.Head = B(key, "water_crest", C(Color.Lerp(pig, ink, .7f), .95f)); e.HeadSize = new Vector2(3.4f, 4.2f); e.HeadLife = new Vector2(.6f, .8f); e.HeadPivot = .24f; e.HeadRate = 15f; }
             e.Pool = Bleed("M_V308b_" + key + "_pool", "ink_splat", C(ink, .9f), 0f, .9f, 0f, 0f);                          // lies on the ground: no depth fade
             e.Ribbon = Bleed("M_V308b_" + key + "_ribbon", "speed_line", C(ink, .95f), 0f, 1f, 0f, .3f, e.Dark);
             return e;
@@ -749,11 +826,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
         static GameObject CircleBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_circle_" + e.Key);
-            Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.55f * a.Big);
-            Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(4.2f, 5.4f) * a.Big, Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
-                FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(e.Dark, .5f, e.Dark), Grow = Curve(0f, .85f, 1f, 1.2f) });
-            Layer(root.transform, new L { Name = "Wisp", Mat = e.Drops, World = false, Rate = 1.6f, Max = 3, Life = new Vector2(.6f, .8f) * a.Slow, Size = new Vector2(.9f, 1.4f) * a.Big, Radius = .15f, ShapePos = new Vector3(0f, 1.1f * a.Big, 0f),
-                RandomCell = true, Blend = true, Colour = Fade(e.Wash, .25f, e.Dark), Grow = Curve(0f, .7f, 1f, 1.7f) });
+            // 6th pass (edit-mode sheets r5, 2026-10-14): the pools were too small to run together and the canes read as a fence of posts.
+            // The ground ink is now the larger thing (ink colour, not the element's dark), the cane is lower and ink-dark, and
+            // ink leaves its top the whole time it stands (a stroke that bleeds away, not a post).
+            Upright(root.transform, "Stalk", e.Stalk, e.StrokeSolid, 1.25f * a.Big);
+            // D308-109 audit: the pool is held to the AreaMark308 cap (r + 1.8 m) - its rim reaches 1.73 m past a point at any Big; the band carries the ring.
+            Layer(root.transform, new L { Name = "Pool", Mat = e.Ring, World = false, Mode = 1, Rate = 3f * a.Dense, Max = Mathf.CeilToInt(3.4f * a.Dense * a.Slow) + 1, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(2.9f, 3.4f), Radius = .01f, ShapePos = new Vector3(0f, .08f, 0f), Blend = true,
+                FrameFrom = 3f, FrameTo = 12f, Colour = Fade(Color.Lerp(e.Dark, e.Ink, .75f), .75f, e.Ink), Grow = Curve(0f, .85f, 1f, 1.2f) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return root;
         }
 
@@ -761,15 +841,49 @@ namespace Oheangbu.EditorTools.SpellVFX120
         // the tip) are thrown down the cone along their own velocity - each strand reads on its own and there is air between
         // them - with only a few soot washes and blots among them. A strand grows as it travels, so what is near the caster
         // is thin and low and the volume is out in front. Mostly soot and pale wash; red only near the roots.
+        static readonly Vector3 FanFlat = new Vector3(1f, .3f, 1f), FanTip = new Vector3(6f, 0f, 0f);   // pq_area: the fan's cone, pressed flat and tipped down (TEST)
         static GameObject ConeBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_cone_" + e.Key);
-            Layer(root.transform, new L { Name = "Strands", Mat = e.Strand, Mesh = e.Tongue, AlongVelocity = true, Rate = 80f * a.Dense, Max = Mathf.CeilToInt(28 * a.Dense), Life = new Vector2(.45f, .7f) * a.Slow, Size = new Vector2(.9f, 1.5f) * a.Big, Size3D = new Vector3(1.5f, 1.5f, 1.9f),
-                Speed = new Vector2(4f, 8f), Drag = 1.5f, Shape = ParticleSystemShapeType.Cone, Angle = 30f, Grow = Curve(0f, .4f, .5f, 1.1f, 1f, 0f) });
-            Layer(root.transform, new L { Name = "Soot", Mat = e.LickSoot, Mode = 3, Rate = 30f * a.Dense, Max = Mathf.CeilToInt(11 * a.Dense), Life = new Vector2(.5f, .75f) * a.Slow, Size = new Vector2(1.8f, 2.6f) * a.Big, Speed = new Vector2(5f, 9f), Drag = 2.2f, SpinRandom = false, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomStart = true, FrameFrom = 0f, FrameTo = 6f, RiseY = .6f, Colour = Fade(Color.Lerp(e.Wash, e.Dark, .6f), .3f, e.Dark), Grow = Curve(0f, .5f, 1f, 1.4f) });
-            Layer(root.transform, new L { Name = "Blots", Mat = e.Drops, Rate = 20f * a.Dense, Max = Mathf.CeilToInt(7 * a.Dense), Life = new Vector2(.4f, .7f) * a.Slow, Size = new Vector2(.6f, 1f) * a.Big, Speed = new Vector2(6f, 12f), Drag = 2f, Blend = true,
-                Shape = ParticleSystemShapeType.Cone, Angle = 30f, RandomCell = true, Colour = Fade(e.Dark, .3f, e.Dark), Grow = Curve(0f, .8f, 1f, 1.6f) });
+            // pq_area (2026-10-15): the tongues flew up and round the caster like red feathers and the wash was faint - every
+            // emitter's cone is pressed flat into a fan over the ground (FanFlat) and tipped down a little, the tongues are smaller,
+            // the ground wash and the soot denser. pq_fan (11.29 on): the fan stopped ~2 m out against a 6 m reach - faster, less drag; pq_fan3 probe: the sheets stopped at ~1 m (drag times size), the tongues at 3.4 m - plain drag.
+            // user 2026-10-15 "'노'를 이 방식인데 입자만 없는 버전으로 ... 꼭 부채꼴 모양일 필요는 없어" (pq_fan4 picture): no flying bits -
+            // the flame jet and the blots are gone, the scorched ground ink and the soot wash carry the spell.
+            // user 2026-10-15 "여러겹의 불 입자가 겹쳐있는게 너무 부자연스럽게": a third of the sheets, each larger and longer-lived -
+            //   the wash reads as one scorch from the caster to the target instead of a stack of overlapping flame cards.
+            // 6th pass (sheets r5): the strands alone were a handful of red flakes with nothing between them. A flat ink wash is
+            // thrown over the ground under the fan and the soot is what fills it; the strands are the dark threads in it.
+            // user 2026-10-15 "판을 만들어서 퍼뜨리는 것보다 연기같은 VFX로 현실적인 느낌을 더 살릴 수는 없을까?" then, showing the
+            // early soot of pq_drop, "내가 의도한 건 이런 연기였는데": the torn soot wisps are the spell. The red ground wash (the
+            // stacked red cards) is gone; the soot lives longer, only its wispy cels play (0-6 of fire_lick), it slows hard (linear
+            // drag: reach ~ v^2 / 2 drag, 3.5 - 7 m) and as it stops the rise turns the stretched wisps upward - smoke settling.
+            // (The billow spike, smoke308.py, read as red cartoon puffs - not used.)
+            // pq_smoke: fire_lick's cels end in a straight root block at their left border = a card edge in game -> soot_wisp (smoke308.py wisp: that root faded out)
+            // D308-88 (11.31): the VFX Graph smoke carries the spell when the graph is there; the soot sheet stays as the fallback
+            // 11.34 fire8 (user 2026-10-16 "C 그을음 섞인 불" + a ring round the target, several sheets): the soot-tipped tongues,
+            // the outward-leaning ring, the scorched road and the soot column; the soot carpet (SmokeVfx) is off for 노
+            // 11.33 fire15 (user 2026-10-16 "길자국 없애고"): the scorched road is off (ScorchGraph kept, tag na-fire-308-v15-scorch)
+            // 11.34 fire16 (user 2026-10-16 "네가 자유롭게 만든다면 ... 그렇게 진행해줘"): the ring is painted brush tongues over a
+            // soot wash and a red-black ground pool
+            // 11.34 fire17 (same instruction): the baked fluid band + the splash stain replace the painted tongue ring, the soot
+            // wash and the pool (RingGraph / WashGraph / PoolGraph, their graphs and sheets stay, off; tag na-fire-308-v16)
+            // 11.34 fire18 (user 2026-10-16 "시전자 쪽에서 작게 시작된 불씨가 시전 지역으로 가서 번지는듯한 느낌으로. 지금 vfx는 아주
+            // 좋아"): the same fire, lit by an ember thrown from the brush tip - the bank comes up as five arcs, near side first
+            // (Vfx308SeamTiming on each host); the 17th single bank = BankGraph in place of EmberGraph + BankArcGraphs (tag na-fire-308-v17)
+            if (ConeFireGraph(root.transform, e, a))
+            {
+                EmberGraph(root.transform, e, a); BankArcGraphs(root.transform, e, a); StainGraph(root.transform, e, a); ColumnGraph(root.transform, e, a);
+                return root;
+            }
+            if (ConeSmokeGraph(root.transform, e, a)) return root;
+            var soot = e.Key == "na" ? Bleed("M_V308b_na_soot_wisp", "soot_wisp", C(e.Ink, .85f), .3f, .92f) : e.LickSoot;
+            Layer(root.transform, new L { Name = "Soot", Mat = soot, Mode = 3, Rate = 42f * a.Dense, Max = Mathf.CeilToInt(18 * a.Dense), Life = new Vector2(1.0f, 1.4f) * a.Slow, Size = new Vector2(1.6f, 2.3f) * a.Big,
+                // 11.69 D308-113 (the picture = the judgment +-40 deg x 10 m): reach v^2 / 2 drag 5.8 - 10.3 m (was 3.5 - 7), cone 40 (was 30)
+                Speed = new Vector2(9f, 12f), Drag = 7f, DragLinear = true, SpinRandom = false, Blend = true, RiseY = .9f,
+                Shape = ParticleSystemShapeType.Cone, Angle = 40f, ShapeScale = FanFlat, ShapeRot = FanTip, FrameFrom = 0f, FrameTo = 6f,
+                Colour = G((0f, C(Color.Lerp(e.Wash, e.Dark, .6f), 0f)), (.05f, C(Color.Lerp(e.Wash, e.Dark, .6f), .9f)), (.4f, C(Color.Lerp(e.Wash, e.Dark, .7f), .7f)), (1f, C(e.Dark, 0f))),
+                Grow = Curve(0f, .6f, .4f, 1f, 1f, 1.3f) });   // pq_smoke: 2.6 - 3.6 m swelling to ~5 m read as broad see-through fans - the wisps the user pointed at were ~2 m
             return root;
         }
 
@@ -795,44 +909,87 @@ namespace Oheangbu.EditorTools.SpellVFX120
             return mesh;
         }
 
-        // Volley (4th pass): per shot the element's flying solid and a FAT bleeding speed stroke behind it (the weight of the
-        // 사 prototype's lines); denser letters cross a second one through it. Where a shot lands is drawn by the hit prefab.
-        static GameObject VolleyBody(Elem e, Atk a, Mesh ribbon)
+        // the volley needle (D308-109): an ink spindle along -Z, head at the origin, thickest just behind the head and tapering
+        // to a point at the tail. UVs as InkSolid reads them: u = angle round the flight axis, v = 0 at the head .. 1 at the
+        // tail (with _TipInk the tail goes to plain ink, the head keeps a little pigment - ink first, the element soaks in).
+        static Mesh NeedleMesh()
+        {
+            Directory.CreateDirectory(Root2 + "/Meshes");
+            string path = Root2 + "/Meshes/V308b_needle.asset";
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (mesh == null) { mesh = new Mesh { name = "V308b_needle" }; AssetDatabase.CreateAsset(mesh, path); }
+            const int around = 8, along = 12; const float length = NeedleLength308, radius = .035f;
+            float R(float t) => radius * (t < .12f ? Mathf.Lerp(.6f, 1f, t / .12f) : Mathf.Pow(Mathf.Max(0f, 1f - (t - .12f) / .88f), 1.3f));
+            var v = new List<Vector3>(); var n = new List<Vector3>(); var uv = new List<Vector2>(); var tri = new List<int>();
+            for (int j = 0; j <= along; j++)
+            {
+                float t = j / (float)along, r = R(t), slope = (R(Mathf.Min(1f, t + .01f)) - R(Mathf.Max(0f, t - .01f))) / (.02f * length);   // dr / d(distance toward the tail)
+                for (int i = 0; i <= around; i++)
+                {
+                    float ang = i / (float)around * Mathf.PI * 2f; var radial = new Vector3(Mathf.Cos(ang), Mathf.Sin(ang), 0f);
+                    v.Add(radial * r + Vector3.back * (t * length));
+                    n.Add((radial + Vector3.forward * slope).normalized);
+                    uv.Add(new Vector2(i / (float)around, t));
+                }
+            }
+            for (int j = 0; j < along; j++)
+                for (int i = 0; i < around; i++)
+                {
+                    int a0 = j * (around + 1) + i, b0 = a0 + around + 1;
+                    tri.AddRange(new[] { a0, b0, a0 + 1, a0 + 1, b0, b0 + 1 });
+                }
+            mesh.Clear(); mesh.SetVertices(v); mesh.SetNormals(n); mesh.SetUVs(0, uv); mesh.SetTriangles(tri, 0); mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh); Touched.Add(mesh);
+            return mesh;
+        }
+
+        // D308-109 (user 2026-10-17 "먹 바늘 + 끝만 금속", "짧게, 공중에서만"): lengths are absolute; the letter's size only thickens
+        const float NeedleLength308 = 1.1f, NeedleTail308 = 1.25f, NeedleTipLength308 = .2f;
+
+        // Volley (D308-109, replaces the 4th pass's pale element solid + 5.2 m speed stroke that read as a road mark): per shot
+        // a dark INK needle with a small element solid only at its head, and a short (1.25 m) bleeding tail behind it. The
+        // body is switched off outside [launch, hit), so the tail is only ever in the air. Where a shot lands = the hit prefab.
+        static GameObject VolleyBody(Elem e, Atk a, Mesh ribbon, Mesh needle)
         {
             var root = new GameObject("PF_V308b_volley_" + e.Key);
             var body = new GameObject("Needle"); body.transform.SetParent(root.transform, false);
-            body.AddComponent<MeshFilter>().sharedMesh = e.Spike;
-            var mr = body.AddComponent<MeshRenderer>(); mr.sharedMaterial = e.Solid; mr.shadowCastingMode = ShadowCastingMode.Off; mr.receiveShadows = false;
-            body.transform.localScale = Vector3.one * 1.5f * a.Big; if (Backward(e.Spike)) body.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            body.AddComponent<MeshFilter>().sharedMesh = needle;
+            var mr = body.AddComponent<MeshRenderer>(); mr.sharedMaterial = Solid("M_V308_" + e.Key + "_needle_strand", Color.Lerp(e.Pig, e.Ink, .8f), e.Ink, .45f, .3f); mr.shadowCastingMode = ShadowCastingMode.Off; mr.receiveShadows = false;
+            body.transform.localScale = new Vector3(a.Big, a.Big, 1f);
+            // the element only at the head: the element's solid, scaled to a 0.2 m point whose back sits just inside the needle
+            var tip = new GameObject("Tip"); tip.transform.SetParent(root.transform, false);
+            tip.AddComponent<MeshFilter>().sharedMesh = e.Spike;
+            var tr = tip.AddComponent<MeshRenderer>(); tr.sharedMaterial = e.Solid; tr.shadowCastingMode = ShadowCastingMode.Off; tr.receiveShadows = false;
+            bool back = Backward(e.Spike); var b = e.Spike.bounds; float k = NeedleTipLength308 / Mathf.Max(.01f, b.size.z);
+            tip.transform.localRotation = back ? Quaternion.Euler(0f, 180f, 0f) : Quaternion.identity;
+            tip.transform.localScale = new Vector3(k * a.Big, k * a.Big, k);
+            var centre = new Vector3(b.center.x * k * a.Big, b.center.y * k * a.Big, 0f); if (back) centre.x = -centre.x;
+            tip.transform.localPosition = new Vector3(-centre.x, -centre.y, -.04f + (back ? b.max.z * k : -b.min.z * k));
             int lines = a.Dense > 1.15f ? 2 : 1;
             for (int i = 0; i < lines; i++)
             {
                 var line = new GameObject("Line" + i); line.transform.SetParent(root.transform, false);
                 line.AddComponent<MeshFilter>().sharedMesh = ribbon;
                 var lr = line.AddComponent<MeshRenderer>(); lr.sharedMaterial = e.Ribbon; lr.shadowCastingMode = ShadowCastingMode.Off; lr.receiveShadows = false;
-                line.transform.localScale = new Vector3(1.5f * a.Big, 1.5f * a.Big, 5.2f * a.Big); line.transform.localRotation = Quaternion.Euler(0f, 0f, 45f * i);
-                line.transform.localPosition = new Vector3(0f, 0f, .35f);
+                line.transform.localScale = new Vector3(.6f * a.Big, .6f * a.Big, NeedleTail308); line.transform.localRotation = Quaternion.Euler(0f, 0f, 45f * i);
+                line.transform.localPosition = new Vector3(0f, 0f, -.1f);
             }
             return root;
         }
 
         // Path (4th pass): the element's HEAD stands up along the front (earth: a tall jagged heave; water: a low smooth crest
-        // with its dark rim; wood: a row of brush-stroke stalks), a wet wash is left flat on the ground behind it, and solid
+        // with its dark rim; wood: a row of brush-stroke stalks), born as ink and soaking to the element (D308-109), and solid
         // bits are thrown up. The seam scales the body across to the path's width, so the emitters use Shape scaling.
         static GameObject PathBody(Elem e, Atk a)
         {
             var root = new GameObject("PF_V308b_path_" + e.Key);
-            var box = new Vector3(1f, .1f, 1.5f);      // 5th pass: the heads stand in a band 1.5 m deep, not on one line - they slide against each other as the camera moves
-            Layer(root.transform, new L { Name = "Head", Mat = e.Head, Mode = 2, Rate = e.HeadRate * a.Dense, Max = Mathf.CeilToInt(e.HeadRate * a.Dense * e.HeadLife.y * a.Slow) + 3, Life = e.HeadLife * a.Slow, Size = e.HeadSize * a.Big, SpinRandom = false, Blend = true, ShapeScaling = true,
-                Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = Fade(e.Wash, .45f, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });
-            Layer(root.transform, new L { Name = "Wet", Mat = e.Pool, Mode = 1, Rate = 9f * a.Dense, Max = Mathf.CeilToInt(9 * a.Dense * 1.1f * a.Slow) + 3, Life = new Vector2(.9f, 1.1f) * a.Slow, Size = new Vector2(3.4f, 4.4f) * a.Big, Blend = true, ShapeScaling = true,
-                Shape = ParticleSystemShapeType.Box, ShapeScale = box, ShapePos = new Vector3(0f, -.27f, 0f), FrameFrom = 0f, FrameTo = 15.5f, Colour = Fade(e.Dark, .45f, e.Dark), Grow = Curve(0f, .7f, .3f, 1f, 1f, 1.2f) });
-            if (e.Key == "a")
-                Layer(root.transform, new L { Name = "Beads", Mat = e.Drops, Rate = 20f * a.Dense, Max = 24, Life = new Vector2(.5f, .8f), Size = new Vector2(.5f, .8f), RiseY = 3f, Gravity = 2.2f, Blend = true, ShapeScaling = true,
-                    Shape = ParticleSystemShapeType.Box, ShapeScale = box, RandomCell = true, Colour = Fade(e.Wash, .4f, e.Dark) });
-            else
-                Layer(root.transform, new L { Name = "Bits", Mat = e.Solid, Mesh = e.Bit, Rate = 24f * a.Dense, Max = Mathf.CeilToInt(24 * a.Dense * .85f) + 4, Life = new Vector2(.5f, .85f), Size = new Vector2(e.Key == "ma" ? .22f : .45f, e.Key == "ma" ? .46f : .9f) * a.Big, RiseY = 4.5f, Gravity = 2.4f, ShapeScaling = true,
-                    Shape = ParticleSystemShapeType.Box, ShapeScale = box, Tumble = true, Spin = 300f, Grow = Curve(0f, 1f, .7f, 1f, 1f, 0f) });
+            // 5th pass: the heads stand in a band, not on one line - they slide against each other as the camera moves.
+            // 11.42 (D308-105 front ring only): the band is AreaBand308(r) deep (was 1.5 m) - 공 .96 m, 모 · 오 1.0 m.
+            var box = new Vector3(1f, .1f, AreaBand308(a.Radius));
+            Layer(root.transform, new L { Name = "Head", Mat = e.Head, World = false, Mode = 2, Rate = e.HeadRate * a.Dense, Max = Mathf.CeilToInt(e.HeadRate * a.Dense * e.HeadLife.y * a.Slow) + 3, Life = e.HeadLife * a.Slow, Size = e.HeadSize * a.Big, SpinRandom = false, Blend = true, ShapeScaling = true,
+                Shape = ParticleSystemShapeType.Box, ShapeScale = box, FrameFrom = 0f, FrameTo = 15.5f, Pivot = new Vector3(0f, e.HeadPivot, 0f), Colour = InkFirst(e.Ink, e.Key == "ma" ? Color.Lerp(e.Wash, e.Dark, .55f) : e.Wash, e.Dark), Grow = Curve(0f, 1f, 1f, 1.12f) });   // pq_area: the earth head read as a muddy brown cloud - darker toward the ink
+            // D308-109 audit (D308-105 front ring only, no stain): the wet wash left behind the front is gone; the head rides with the front (local sim).
+            // user 2026-10-15 (no flying bits): the beads / clumps thrown up off the front are gone - the head carries it
             return root;
         }
 
@@ -844,8 +1001,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var ps = Layer(null, new L { Name = "PF_V308b_hit_" + e.Key, Mat = B(e.Key, "ink_splat", C(e.Ink, .9f), 0f, .9f), World = false, Burst = 1, Max = 2, Life = new Vector2(.5f, .5f), Size = new Vector2(2.6f, 2.6f), NoShape = true, Blend = true,
                 FrameFrom = 0f, FrameTo = 10f, Colour = Fade(e.Dark, .35f, e.Dark), Grow = Curve(0f, .9f, 1f, 1.25f) });
-            Layer(ps.transform, new L { Name = "Blots", Mat = e.Drops, World = false, Burst = 6, Max = 6, Life = new Vector2(.35f, .55f), Size = new Vector2(.5f, .85f), Speed = new Vector2(2f, 5f), Gravity = 2f, Radius = .15f,
-                RandomCell = true, Blend = true, Colour = Fade(e.Wash, .3f, e.Dark) });
+            // user 2026-10-15 questionnaire "술식 쪽만 빼기": the drops falling off the flight / thrown off the hit are gone (the swing's own ink stays)
             return ps.gameObject;
         }
 
@@ -855,7 +1011,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
         {
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
             Touched.Clear(); seed = 30900;
-            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); Mesh ribbon = null;
+            var elems = new Dictionary<string, Elem>(); var bodies = new Dictionary<string, GameObject>(); var hits = new Dictionary<string, GameObject>(); var finals = new Dictionary<string, GameObject>(); var stains = new Dictionary<string, GameObject>(); Mesh ribbon = null, needle = null;
             var sb = new StringBuilder(); int built = 0, skipped = 0;
             foreach (var a in Attack)
             {
@@ -865,39 +1021,44 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 string src = "Assets/_Project/Art/SpellVFX120/Profiles/" + a.Effect + ".asset";
                 if (!File.Exists(AttackProfilePath(a)) && !AssetDatabase.CopyAsset(src, AttackProfilePath(a))) throw new Exception("copy failed " + src);
                 var profile = Load<Vfx120Profile>(AttackProfilePath(a));
+                profile.Bolt300ReturnToCaster = V2 && a.Shape == Form.Single && a.Glyph == "앙";   // 11.60: the cycle shot's ink flies back to the caster
+                profile.BotanicalPrefab = null; profile.BotanicalKind = Vfx120BotanicalKind.None;   // 11.68 (D308-112): 공's coloured bamboo mesh is off, the ink path front is the wall
                 if (a.Shape == Form.Single)
                 {
                     var spell = Spells.First(x => x.Key == a.Elem);
-                    profile.Bolt300Prefab = Load<GameObject>(PrefabPath(spell)); profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;
-                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f;
+                    profile.Bolt300Prefab = V2 ? ModBolt(e, spell, a.Glyph, finals) : Load<GameObject>(PrefabPath(spell));   // 11.63: + the modifier profile.Bolt300Arc = spell.Arc; profile.Bolt300Curve = spell.Curve; profile.Bolt300Spin = spell.Spin;   // 11.23: the final's marker
+                    profile.NativeCastPrefab = null;   // 11.26 (D308-87): the old KTP cast (glowing zigzag + sparks at the launch point) is retired
+                    profile.Bolt300Scale = a.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                     profile.AreaRemake = Vfx120AreaRemake.None;
                     // the old bespoke bodies are keyed on the letter + the name of its body mesh / native body: give the copy
                     // other ones so they are not built beside the new body (BodyMesh must stay non-null)
                     profile.BodyMesh = e.Bit; profile.NativeBodyPrefab = null;
+                    // 11.54 (D308-110): the old catalogue hit body is not built beside the ink hit; 막's Original_2_3 pattern is off and
+                    // one foot stain marks the hit instead (TEST: 1.6 m, alpha .12, 1.5 s)
+                    profile.NativeImpactPrefab = null;
+                    bool stain = V2 && FinalOf(a.Glyph) == FinalK;
+                    if (stain) profile.NativeFieldPrefab = null;
+                    profile.AreaStainPrefab = stain ? StainBody(e, stains) : null;
+                    if (stain) { profile.AreaStainDiameter = 1.6f; profile.AreaStainAlpha = .12f; profile.AreaStainSeconds = 1.5f; }
                 }
                 else
                 {
                     string key = AreaBodyPath(a);
                     if (!bodies.TryGetValue(key, out var body))
                     {
-                        var root = a.Shape == Form.Circle ? CircleBody(e, a) : a.Shape == Form.Cone ? ConeBody(e, a) : a.Shape == Form.Volley ? VolleyBody(e, a, ribbon ?? (ribbon = RibbonMesh())) : PathBody(e, a);
+                        var root = a.Shape == Form.Circle ? CircleBody(e, a) : a.Shape == Form.Cone ? ConeBody(e, a) : a.Shape == Form.Volley ? VolleyBody(e, a, ribbon ?? (ribbon = RibbonMesh()), needle ?? (needle = NeedleMesh())) : PathBody(e, a);
                         foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
                         bodies[key] = body = PrefabUtility.SaveAsPrefabAsset(root, key);
                         Object.DestroyImmediate(root);
                     }
-                    if (!hits.TryGetValue(a.Elem, out var hit))
-                    {
-                        var root = HitBody(e);
-                        foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
-                        hits[a.Elem] = hit = PrefabUtility.SaveAsPrefabAsset(root, HitPath(a.Elem));
-                        Object.DestroyImmediate(root);
-                    }
-                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.Bolt300Prefab = null;
+                    var hit = V2 ? ModHit(e, a.Glyph, hits) : FinalHit(e, FinalOf(a.Glyph), hits);   // 11.23: the final's marker where a range letter hits; 11.63: + the modifier
+                    profile.AreaRemake = Kind(a.Shape); profile.NativeBodyPrefab = body; profile.AreaKeepShape308 = a.Shape == Form.Cone;   /* 11.29: the fan seam keeps this body's shape and sizes */ profile.AreaBambooLean = a.Shape == Form.Circle ? 18f : 0f; profile.AreaBambooHeightSpread = a.Shape == Form.Circle ? .4f : 0f; profile.Bolt300Prefab = null;   // D308-84 7th pass: not a fence
                     // the plain variants of the seam only: no older revision look, no rift lines, no cast seal
                     profile.WideAreaRevision = profile.AreaFlowRevision = profile.AreaReadabilityRevision = profile.EarthRift = profile.BranchedEarthRift = profile.ProceduralEarthRift = false;
-                    profile.NativeCastPrefab = null;
+                    profile.NativeCastPrefab = null; profile.NativeImpactPrefab = null;   // 11.54: no old catalogue hit body
                     // the per-hit contact seam: the game scales the contact by KtpContactProfile.ParryScale (.22) x this
-                    profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f;
+                    profile.AreaStainPrefab = V2 && FinalOf(a.Glyph) == FinalK ? StainBody(e, stains) : null;   // 11.37 (e): one stain per struck enemy in place of the per-hit pool
+                    profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = 1f / .22f; profile.KtpContactBrightness = 1f;   // ink, not light (census: 3.5 copied from the old seal)
                 }
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + a.Effect + ".prefab";
@@ -1038,10 +1199,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     ? s.Key switch { "ga" => Ga2(kit, original), "na" => Na2(kit, original), "ma" => Ma2(kit, original), "sa" => Sa2(kit, original), _ => A2(kit, original) }
                     : s.Key switch { "ga" => Ga(kit, original), "na" => Na(kit, original), "ma" => Ma(kit, original), "sa" => Sa(kit, original), _ => A(kit, original) };
                 foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = AfterFogLayer;
+                if (V2) Bolt308Extras(root);
+                if (V2) InkTrail(root.transform.Find("Travel"), s.Key, original.Ink, Color.Lerp(original.Pigment, original.Ink, .75f));   // 11.23: the line of the flight
                 var prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(s));
                 Object.DestroyImmediate(root);
                 profile.Bolt300Prefab = prefab; profile.Bolt300Arc = s.Arc; profile.Bolt300Curve = s.Curve; profile.Bolt300Spin = s.Spin;
-                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f;
+                profile.NativeCastPrefab = null;   // 11.26 (D308-87): no old KTP cast beside the ink body
+                profile.NativeImpactPrefab = null;   // 11.54: nor the old catalogue hit body
+                profile.Bolt300Scale = s.Scale; profile.Bolt300Ease = 1f; profile.Bolt300SoakSeconds = V2 ? BodySoakSeconds : 0f; profile.Bolt300NearContactMeters = V2 ? NearContactMeters : 0f; profile.Bolt300TravelScale = V2 ? TravelScale : 0f;
                 EditorUtility.SetDirty(profile); Touched.Add(profile);
                 string srcEffect = "Assets/_Project/Art/SpellVFX120/Prefabs/" + s.Effect + ".prefab";
                 if (!File.Exists(EffectPath(s)) && !AssetDatabase.CopyAsset(srcEffect, EffectPath(s))) throw new Exception("copy failed " + srcEffect);
@@ -1075,6 +1240,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var sb = new StringBuilder();
             var targets = Spells.Select(x => (glyph: x.Glyph, path: EffectPath(x))).ToList();
             if (attack) targets.AddRange(Attack.Where(x => x.Shape != Form.Giyeok && Spells.All(b => b.Glyph != x.Glyph)).Select(x => (glyph: x.Glyph, path: AttackEffectPath(x))));
+            if (attack) targets.AddRange(Guards.Where(g => File.Exists(GuardEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: GuardEffectPath(g.Id))));   // 11.22: once built
+            if (attack) targets.AddRange(Cues.Where(g => File.Exists(CueEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: CueEffectPath(g.Id))));         // 11.40: once built
             foreach (var s in targets)
             {
                 var effect = Load<GameObject>(s.path);
@@ -1095,6 +1262,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             Directory.CreateDirectory(Path.GetDirectoryName(Record));
             File.WriteAllText(Record, JsonUtility.ToJson(rec, true));
             if (attack) sb.AppendLine(RegisterContacts());
+            if (attack) sb.AppendLine(ConnectGiyeok());
+            if (attack) sb.AppendLine(ConnectAura());
+            if (attack) sb.AppendLine(ConnectBeast());
+            if (attack) sb.AppendLine(ConnectSummonFx());
+            if (attack) sb.AppendLine(ConnectHaetaeBreath());
+            if (attack) sb.AppendLine(ConnectBeastInk());
             return sb.ToString();
         }
 
@@ -1118,6 +1291,12 @@ namespace Oheangbu.EditorTools.SpellVFX120
             EditorUtility.SetDirty(set); AssetDatabase.SaveAssetIfDirty(set);
             File.Delete(Record);
             sb.AppendLine(UnregisterContacts());
+            sb.AppendLine(RevertGiyeok());
+            sb.AppendLine(RevertAura());
+            sb.AppendLine(RevertBeast());
+            sb.AppendLine(RevertSummonFx());
+            sb.AppendLine(RevertHaetaeBreath());
+            sb.AppendLine(RevertBeastInk());
             return sb.ToString();
         }
 
@@ -1133,15 +1312,41 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var ktp = Load<KtpContactProfile>(KtpProfile);
             if (!File.Exists(KtpRecord)) File.WriteAllText(KtpRecord, JsonUtility.ToJson(new Paths { paths = ktp.SpellProfiles.Select(x => AssetDatabase.GetAssetPath(x)).ToList() }, true));
             var mine = Attack.Where(x => x.Shape != Form.Giyeok && x.Shape != Form.Single).Select(x => Load<Vfx120Profile>(AttackProfilePath(x))).ToList();
+            // D308-84 (11.21, plan stage 3 "hit = ink splat"): singles too - Play sw_p still showed the KTP pattern seal (Fly prefab,
+            // x3.5) on every single-target hit. Their #308 profile copies get the element's ink-splat hit as the contact.
+            int singles = 0;
+            foreach (var a in Attack.Where(x => x.Shape == Form.Single))
+            {
+                var spell = Spells.FirstOrDefault(x => x.Glyph == a.Glyph);
+                var profile = Load<Vfx120Profile>(spell != null ? ProfilePath(spell) : AttackProfilePath(a));
+                var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(a.Elem));
+                if (profile == null || hit == null) continue;
+                profile.AreaContactPrefab = hit; profile.KtpEmphasis = true; profile.KtpContactMultiplier = SingleHitScale / .22f; profile.KtpContactBrightness = 1f;
+                EditorUtility.SetDirty(profile); AssetDatabase.SaveAssetIfDirty(profile);
+                mine.Add(profile); singles++;
+            }
+            foreach (var g in Guards) { var gp = File.Exists(GuardProfilePath(g.Id)) ? Load<Vfx120Profile>(GuardProfilePath(g.Id)) : null; if (gp != null) mine.Add(gp); }   // 11.22: the guard contact
             ktp.SpellProfiles = mine.Concat(ktp.SpellProfiles.Where(x => x != null && !mine.Contains(x))).ToArray();
+            // 11.54 (D308-110 "the rest is rebuilt in ink"): a contact with no emphasis (an EA spell, a sword cut) gets the
+            // element's ink hit instead of the old KTP pattern seal
+            var inks = new List<KtpContactProfile.Entry>();
+            foreach (var (key, element) in new[] { ("ga", Oheangbu.Core.Domain.Element.Wood), ("na", Oheangbu.Core.Domain.Element.Fire), ("ma", Oheangbu.Core.Domain.Element.Earth),
+                                                   ("sa", Oheangbu.Core.Domain.Element.Metal), ("a", Oheangbu.Core.Domain.Element.Water) })
+            {
+                var hit = AssetDatabase.LoadAssetAtPath<GameObject>(HitPath(key));
+                if (hit != null) inks.Add(new KtpContactProfile.Entry { Element = element, Source = hit });
+            }
+            ktp.InkHits = inks.ToArray();
             EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
-            return "hit contacts: " + mine.Count + " range profiles put first in KTP_ContactProfile.SpellProfiles";
+            return "hit contacts: " + (mine.Count - singles) + " range + " + singles + " single profiles put first in KTP_ContactProfile.SpellProfiles, " + inks.Count + " ink hits";
         }
 
         static string UnregisterContacts()
         {
-            if (!File.Exists(KtpRecord)) return "hit contacts: nothing recorded";
             var ktp = Load<KtpContactProfile>(KtpProfile);
+            ktp.InkHits = Array.Empty<KtpContactProfile.Entry>();   // 11.54: the ink hits go with the connection
+            EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
+            if (!File.Exists(KtpRecord)) return "hit contacts: nothing recorded (ink hits cleared)";
             ktp.SpellProfiles = JsonUtility.FromJson<Paths>(File.ReadAllText(KtpRecord)).paths.Select(x => AssetDatabase.LoadAssetAtPath<Vfx120Profile>(x)).ToArray();
             EditorUtility.SetDirty(ktp); AssetDatabase.SaveAssetIfDirty(ktp);
             File.Delete(KtpRecord);
@@ -1161,6 +1366,14 @@ namespace Oheangbu.EditorTools.SpellVFX120
                     if (e.FindPropertyRelative("Letter").stringValue == s.Glyph)
                         sb.AppendLine(s.Glyph + ": " + AssetDatabase.GetAssetPath(e.FindPropertyRelative("FxPrefab").objectReferenceValue)
                             + (File.Exists(PrefabPath(s)) ? "  [#308 built]" : "  [#308 not built]"));
+                }
+            foreach (var g in Cues)   // 11.40
+                for (int i = 0; i < entries.arraySize; i++)
+                {
+                    var e = entries.GetArrayElementAtIndex(i);
+                    if (e.FindPropertyRelative("Letter").stringValue == g.Glyph)
+                        sb.AppendLine(g.Glyph + " " + g.Kind + ": " + AssetDatabase.GetAssetPath(e.FindPropertyRelative("FxPrefab").objectReferenceValue)
+                            + (File.Exists(CueEffectPath(g.Id)) ? "  [#308 built]" : "  [#308 not built]"));
                 }
             sb.AppendLine("record: " + (File.Exists(Record) ? Record : "none"));
             return sb.ToString();

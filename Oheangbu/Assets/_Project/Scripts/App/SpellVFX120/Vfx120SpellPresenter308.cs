@@ -67,7 +67,7 @@ namespace Oheangbu.App.SpellVFX120
                     // The body is a cast cue: never longer than it was authored for, and a lasting effect gets a short cue
                     // only (SpellCueLife308). The shared asset is never written: a body that keeps its authored life reads
                     // the asset itself, any other life goes into a private copy taken from the spares.
-                    float life = SpellCueLife308.Seconds(request.Duration, source.Duration);
+                    float life = SpellCueLife308.Seconds(request.Duration, source.Duration, source.Aura308Prefab != null && source.Aura308Lasting);   // 11.54: the tree draws its own 20 s
                     if (life != source.Duration)
                     {
                         live.ProfileSource = source; live.ProfileCopy = Rent(source);
@@ -96,12 +96,24 @@ namespace Oheangbu.App.SpellVFX120
             }
             int id = ++_next; if (id == 0) id = ++_next;
             _live.Add(id, live);
+            NoteCueBody308(id, live);
+            NoteDerived308(id, live);
+            NoteZone308(id, live);
+            NoteBurst308(id, live);
+            NoteMark308(id, live);
             return new SpellFxHandle(id);
         }
 
         public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args)
         {
-            if (!handle.Shown || !_live.TryGetValue(handle.Id, out var live) || live.Instance == null || live.Fx == null) return;
+            if (!handle.Shown) return;
+            Derived308(handle.Id, cue, args);   // 11.56: derived shots fly from here; the cue still goes on
+            Zone308(handle.Id, cue, args);      // 11.57: the zone floor dries / breaks / opens here; the cue still goes on
+            Burst308(handle.Id, cue, args);     // 11.58: an intercepted projectile freezes and cracks here; the cue still goes on
+            Mark308(handle.Id, cue, args);      // 11.61: the install seal goes on the enemy / breaks / dries here; the cue still goes on
+            // 11.41: companion shots / sword swings live in their own side table, past the 3 s cue life of the wrap
+            if (CueBody308(handle.Id, cue, args)) return;
+            if (!_live.TryGetValue(handle.Id, out var live) || live.Instance == null || live.Fx == null) return;
             bool handled = false;
             CueWP02(live.Fx, live.Request, cue, args, ref handled); CueWP03(live.Fx, live.Request, cue, args, ref handled);
             CueWP04(live.Fx, live.Request, cue, args, ref handled); CueWP05(live.Fx, live.Request, cue, args, ref handled);
@@ -118,15 +130,25 @@ namespace Oheangbu.App.SpellVFX120
                 case SpellFxCue.TargetDefeated: live.Fx.Signal(Vfx120Effect.Cue.TargetDefeated, args.Target); break;
                 case SpellFxCue.Break: live.Fx.Signal(Vfx120Effect.Cue.Break); break;
                 case SpellFxCue.Expire:
-                case SpellFxCue.Consume:
-                case SpellFxCue.Return: live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
+                case SpellFxCue.Consume: live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
+                case SpellFxCue.Return:
+                    live.Fx.SetCasterReturn308(args.Target, args.At);   // 11.60 (앙): no-op unless the profile flies back to the caster
+                    live.Fx.Signal(Vfx120Effect.Cue.Release, args.Target); break;
                 case SpellFxCue.Split: if (args.Targets != null) live.Fx.SetSecondaryTargets(args.Target, args.Targets); break;
             }
         }
 
         public void End(SpellFxHandle handle, bool immediate = false)
         {
-            if (!handle.Shown || !_live.TryGetValue(handle.Id, out var live)) return;
+            if (!handle.Shown) return;
+            ForgetCueBody308(handle.Id);
+            ForgetDerived308(handle.Id);
+            ForgetZone308(handle.Id);
+            ForgetBurst308(handle.Id);
+            ForgetMark308(handle.Id);
+            if (!_live.TryGetValue(handle.Id, out var live)) return;
+            // 11.62: a lasting aura dries first and destroys itself; Sweep hands its profile copy back
+            if (!immediate && live.Fx != null && live.Fx.DryAura308()) return;
             _live.Remove(handle.Id);
             Release(live);
         }
@@ -136,6 +158,11 @@ namespace Oheangbu.App.SpellVFX120
         {
             foreach (var live in _live.Values) Release(live);
             _live.Clear();
+            ClearCueBodies308();
+            ClearDerived308();
+            ClearZone308();
+            ClearBurst308();
+            ClearMark308();
             foreach (var stack in _spares.Values)
                 while (stack.Count > 0) Destroy(stack.Pop());
             _spares.Clear();

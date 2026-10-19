@@ -1,0 +1,82 @@
+"""#308 D308-84: the motion-by-place and ink-bridge Play check (steps sw_l) on one sheet.
+
+  python Tools/Art/SpellVFX308/review_sw_l.py
+
+Rows = one cast each (free aim / near / far / high target), columns = the shots asked at later moments.
+Output: Art/SpellVFX308/Review/swingplay_sw_l.png
+"""
+from pathlib import Path
+
+from PIL import Image, ImageDraw, ImageFont
+
+ROOT = Path(__file__).resolve().parents[3]
+SHOTS = ROOT / 'Art/Playtest306/Checks'
+ROWS = [('free_ga', '가 · 대상 없음 → 내려 던지기'), ('free_go', '고 · 대상 없음 → 멀리 찍기 + 바닥 먹'), ('ward_gu', '구 · 방벽 짧은 내리찍기'),
+        ('path_mo', '모 · 경로 땅 찍기'), ('near_ga', '가 · 5 m → 쓸기 + 줄기'), ('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹'),
+        ('far_ga', '가 · 12 m → 내려 던지기'), ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹'), ('high_ga', '가 · 6 m 높이 4 m → 상체 조준')]
+ROWS_M = [('near_ga', '가 · 5 m 락온 → 쓸기 + 줄기'), ('far_ga', '가 · 12 m 락온 → 내려 던지기 + 줄기'), ('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹'),
+          ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹'), ('ward_gu', '구 · 방벽 짧은 내리찍기'), ('high_ga', '가 · 6 m 높이 4 m → 상체 조준')]
+ROWS_O = [('near_go', '고 · 4 m → 땅 찍기 + 바닥 먹 얼룩'), ('far_go', '고 · 12 m → 멀리 찍기 + 바닥 먹 얼룩'), ('near_ga', '가 · 5 m → 줄기(얼룩 없어야 함)')]
+ROWS_P = [('near_ga', '가 · 5 m → 줄기 → 먹으로 맺힘 → 색 스밈 → 잔먹'), ('far_ga', '가 · 12 m'), ('near_go', '고 · 4 m → 바닥 먹 → 새 원 몸'), ('mid_ma', '마 · 8 m')]
+ROWS_X = [('ga', '가 · 5 m 단발'), ('go', '고 · 5 m 원'), ('no', '노 · 6 m 부채'), ('so', '소 · 10 m 연발'), ('mo', '모 · 8 m 경로'), ('geo', '거 · 방어'), ('gu', '구 · 결계'), ('geok', '걱 · 강화'), ('gom', '곰 · 소환')]
+ROWS_Y = [('no', '노 · 6 m 부채 (정점 뒤)'), ('so', '소 · 10 m 연발 (정점 뒤)'), ('mo', '모 · 8 m 경로 (정점 뒤)')]
+ROWS_Z = [('so', '소 · 10 m 연발'), ('mo', '모 · 8 m 경로 (머리 축소)'), ('geo', '거 · 방어 먹 막'), ('meo', '머 · 방어 먹 막'), ('gak', '각 · ㄱ받침 #308 볼트'), ('sak', '삭 · ㄱ받침 #308 볼트'), ('gu', '구 · 결계 먹 막 루프'), ('geok', '걱 · 강화 먹 띠'), ('gom', '곰 · 소환 먹 몸')]
+ROWS_Z2 = [('geo', '거 · 방어 먹 막'), ('meo', '머 · 방어 먹 막'), ('gak', '각 · ㄱ받침'), ('sak', '삭 · ㄱ받침'), ('gu', '구 · 결계'), ('geok', '걱 · 강화')]
+ROWS_Z3 = [('geo', '거 · 방어 먹 막 (키움)'), ('meo', '머 · 방어 먹 막 (키움)'), ('geok', '걱 · 강화 (보통 속도)')]
+ROWS_H = [('geok', '걱 · 강화 (배율 고침)')]
+ROWS_H3 = [('neo', '너 · 방어 (옛 불 방패 뺌)'), ('geok', '걱 · 강화 (띠 .9-1.3)'), ('neok', '넉 · 강화')]
+ROWS_H2 = [('geok', '걱 · 강화 (띠 반경 .62 · 진하게)'), ('gu', '구 · 결계')]
+ROWS_CAM = [('c0_ga', '가 12 m · 카메라 x 0 (지금)'), ('c5_ga', '가 · x 0.5'), ('c7_ga', '가 · x 0.7'), ('c0_no', '노 6 m · x 0'), ('c5_no', '노 · x 0.5'), ('c7_no', '노 · x 0.7'),
+            ('c0_so', '소 10 m · x 0'), ('c5_so', '소 · x 0.5'), ('c7_so', '소 · x 0.7'),
+            ('f_ga', '가 · 받침 없음 (궤적)'), ('f_gan', '간 · ㄴ 두 번째 번짐'), ('f_gat', '갓 · ㅅ 가는 궤적 + X'), ('f_gang', '강 · ㅇ 먹 고리'),
+            ('f_na', '나 · 받침 없음'), ('f_nan', '난 · ㄴ'), ('f_nat', '낫 · ㅅ'), ('f_nang', '낭 · ㅇ')]
+ROWS_MARK = [(k[2:], v) for k, v in ROWS_CAM if k.startswith('f_')]
+ROWS_MARK2 = [('fly_ga', '가 · 먹 몸 비행 12 m'), ('fly_na', '나 · 먹 몸'), ('fly_ma', '마 · 먹 몸'), ('fly_sa', '사 · 먹 몸'), ('fly_a', '아 · 먹 몸')] + ROWS_MARK
+ROWS_PQB = [('ga', '가 8 m · 목 단발'), ('na', '나 · 화 단발'), ('ma', '마 · 토 단발'), ('sa', '사 · 금 단발'), ('a', '아 · 수 단발'), ('geo', '거 6 m · 목 방어'), ('neo', '너 · 화 방어'), ('meo', '머 · 토 방어'), ('seo', '서 · 금 방어'), ('eo', '어 · 수 방어')]
+ROWS_PQG = [('geo', '거 6 m · 선 먹 막 (0.25배 셋 → 1배, 4 s 시계)'), ('neo', '너 · 방어'), ('eo', '어 · 방어')]
+ROWS_FAN = [('no', '노 6 m · 부채 (이음매 덮어쓰기 끔)'), ('no2', '노 · 다시')]
+ROWS_INK = [('ga', '가 8 m · 명중 (조각 없음)'), ('na', '나'), ('ma', '마 (흙덩이 없음)'), ('sa', '사 (쇳가루 없음)'), ('a', '아'), ('mo', '모 8 m · 경로 (조각 없음)'), ('no', '노 6 m · 그을린 먹 + 그을음 (입자 없음)')]
+ROWS_DROP = [('no', '노 6 m · 판 1/3 · 크게'), ('ga', '가 8 m · 궤적 방울 없음'), ('ma', '마 8 m'), ('a', '아 8 m'), ('geo', '거 · 막 방울 없음')]
+ROWS_SMOKE = [('no', '노 6 m · 그을음 연기 (1)'), ('no2', '노 6 m · 그을음 연기 (2)')]
+ROWS_PQA = [('go', '고 8 m · 원'), ('no', '노 6 m · 부채'), ('mo', '모 8 m · 경로'), ('so', '소 10 m · 연발'), ('o', '오 8 m · 경로')]
+ROWS_CAT = [('meo', '머 6 m · 방어'), ('gak', '각 8 m · ㄱ받침'), ('sak', '삭 8 m · ㄱ받침'), ('neok', '넉 · 강화'), ('gom', '곰 6 m · 소환 (0.5배)')]
+ROWS_GLYPH = [('geo', '거 · 막기 (글자 풀림)'), ('neo', '너 6 m · 막기'), ('gu', '구 8 m · 결계'), ('geok', '걱 · 강화')]
+ROWS_GUARD = [('geo', '거 · 막기 온몸'), ('neo', '너 6 m · 막기 온몸'), ('ga', '가 12 m · 풀림 0.35 s')]
+ROWS_BODY = [('sweep', '가 5 m · 쓸기 온몸'), ('throw', '가 12 m · 던지기 온몸'), ('arc', '노 · 광역 쓸기 온몸'), ('far', '고 12 m · 멀리 찍기 온몸'), ('buff', '걱 · 버프 온몸')]
+ROWS_SLAMD = [('go', '고 4 m · 온몸 땅 찍기'), ('mo', '모 · 경로'), ('gu', '구 · 방벽 짧은 찍기')]
+ROWS_UNRAVEL2 = [('ga', '가 12 m · 풀림(0.01 – 0.5 s)'), ('gat', '갓 8 m · 지그재그 없음?'), ('gang', '강 8 m'), ('nat', '낫 8 m')]
+ROWS_UNRAVEL = [('ga', '가 12 m · 글자 → 붓끝 풀림'), ('no', '노 6 m'), ('geo', '거 6 m (방어)')]
+W, H = 560, 350
+
+
+def main():
+    import sys
+    run = sys.argv[1] if len(sys.argv) > 1 else 'sw_l'
+    rows = ROWS_SMOKE if run in ('pq_smoke', 'pq_vfxg', 'pq_vfxg2', 'pq_vfxg3', 'pq_vfxg4', 'pq_vfxg5') else ROWS_DROP if run == 'pq_drop' else ROWS_INK if run == 'pq_ink' else ROWS_FAN if run in ('pq_fan', 'pq_fan2', 'pq_fan3', 'pq_fan4', 'pq_fan5') else ROWS_PQA if run == 'pq_area2' else ROWS_PQG if run in ('pq_guard', 'pq_guard2') else ROWS_PQB if run == 'pq_bolt' else ROWS_PQA if run in ('pq_area', 'pq_area2') else ROWS_CAT if run == 'sw_cat' else ROWS_GLYPH if run == 'sw_glyph' else ROWS_GUARD if run == 'sw_guard' else ROWS_BODY if run == 'sw_body' else ROWS_SLAMD if run == 'sw_slamd' else ROWS_UNRAVEL2 if run == 'sw_unravel2' else ROWS_UNRAVEL if run == 'sw_unravel' else ROWS_MARK2 if run in ('sw_mark2', 'sw_mark3') else ROWS_MARK if run == 'sw_mark' else ROWS_CAM if run == 'sw_cam' else ROWS_H3 if run == 'sw_hitch3' else ROWS_H2 if run == 'sw_hitch2' else ROWS_H if run == 'sw_hitch' else ROWS_Z3 if run == 'sw_z3' else ROWS_Z2 if run == 'sw_z2' else ROWS_Z if run == 'sw_z' else ROWS_Y if run == 'sw_y' else ROWS_X if run == 'sw_x' else ROWS_P if run in ('sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch') else ROWS_O if run == 'sw_o' else ROWS_M if run in ('sw_m', 'sw_n') else ROWS
+    cols = 4 if run in ('sw_m', 'sw_n', 'sw_o', 'sw_p', 'sw_q', 'sw_r', 'sw_s', 'sw_t', 'sw_u', 'sw_v', 'sw_w', 'sw_x', 'sw_y', 'sw_z', 'sw_z2', 'sw_z3', 'sw_hitch', 'sw_hitch2', 'sw_hitch3', 'sw_cam', 'sw_mark', 'sw_mark2', 'sw_mark3') else 8 if run in ('sw_slamd', 'sw_body', 'sw_guard', 'sw_glyph', 'sw_cat', 'pq_bolt', 'pq_area', 'pq_guard', 'pq_guard2', 'pq_area2', 'pq_drop', 'pq_smoke', 'pq_vfxg', 'pq_vfxg2', 'pq_vfxg3', 'pq_vfxg4', 'pq_vfxg5', 'pq_fan', 'pq_fan2', 'pq_fan3', 'pq_fan4', 'pq_fan5', 'pq_ink') else 6 if run in ('sw_unravel', 'sw_unravel2') else 3
+    font = ImageFont.truetype('C:/Windows/Fonts/malgunbd.ttf', 20)
+    sheet = Image.new('RGB', (W * cols, H * len(rows)), (20, 20, 20))
+    d = ImageDraw.Draw(sheet)
+    missing = []
+    for y, (key, label) in enumerate(rows):
+        for x in range(cols):
+            path = SHOTS / f'{run}_{key}_{x}_2560x1440.png'
+            if not path.exists():
+                if x == 0:
+                    missing.append(path.name)
+                continue
+            im = Image.open(path).convert('RGB')
+            w, h = im.size
+            box = (0, 0, w, h) if run == 'sw_cam' and key.startswith('c') else (int(w * .15), int(h * .15), int(w * .85), int(h * .95))
+            sheet.paste(im.crop(box).resize((W, H)), (x * W, y * H))
+        d.rectangle((0, y * H, d.textlength(label, font=font) + 14, y * H + 30), fill=(0, 0, 0))
+        d.text((7, y * H + 2), label, font=font, fill=(255, 225, 120))
+    out = ROOT / f'Art/SpellVFX308/Review/swingplay_{run}.png'
+    sheet.save(out)
+    print(out)
+    if missing:
+        print('missing:', ', '.join(missing))
+
+
+if __name__ == '__main__':
+    main()

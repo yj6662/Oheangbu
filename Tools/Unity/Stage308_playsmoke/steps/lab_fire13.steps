@@ -1,0 +1,47 @@
+# 11.34 fire13: road scorch spawn fixed - one flat OrientedBox (1.8 x 6 m, Local) replaces line + Local position Add, which re-added the host's world
+# position and drew every streak km away in fire11-12; drag sheet of fire12 unchanged; ring and column as fire10.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 0.45
+?call SpellLab308 Run shot:lab_fire13_3
+?call SpellLab308 Run side:lab_fire13_3
+?call SwingProbe308 Run fx
+sleep 0.25
+?call SpellLab308 Run shot:lab_fire13_4
+?call SpellLab308 Run side:lab_fire13_4
+?call SwingProbe308 Run fx
+sleep 0.40
+?call SpellLab308 Run shot:lab_fire13_5
+?call SpellLab308 Run side:lab_fire13_5
+?call SpellLab308 Run top:lab_fire13_5
+?call SwingProbe308 Run fx
+sleep 1.0
+?call SpellLab308 Run shot:lab_fire13_6
+?call SpellLab308 Run side:lab_fire13_6
+?call SpellLab308 Run top:lab_fire13_6
+?call SwingProbe308 Run fx
+sleep 1.5
+?call SpellLab308 Run shot:lab_fire13_7
+?call SpellLab308 Run side:lab_fire13_7
+?call SpellLab308 Run top:lab_fire13_7
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run stop
+sleep 6

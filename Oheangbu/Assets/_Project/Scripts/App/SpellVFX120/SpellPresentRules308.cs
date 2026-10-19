@@ -107,6 +107,18 @@ namespace Oheangbu.App.SpellVFX120
             return (row.Category == DeployCategory308.Buff && sheet.Splash.OwnBuffRows) || (row.Category == DeployCategory308.ComboInstall && sheet.Splash.OwnInstallRows);
         }
 
+        /// <summary>D308-107 (d): with the layer down, does a confirmed hit of this letter throw the contact-only splash? The KTP contact
+        /// stays either way (the splash is added, it replaces nothing). The letter list wins when it is set; otherwise retired attack
+        /// bodies and the sheet's own buff / install rows.</summary>
+        public static bool ContactSplash(SpellDeploy308ProfileSO profile, SpellPresent308SheetSO sheet, char letter)
+        {
+            if (profile == null || profile.LayerEnabled || profile.Contacts == null || !profile.Contacts.HitSplash || letter == default) return false;
+            if (!string.IsNullOrEmpty(profile.Contacts.HitSplashLetters)) return profile.Contacts.HitSplashLetters.IndexOf(letter) >= 0;
+            if (profile.Map == null || !profile.Map.TryGet(letter, out var row)) return false;
+            return (IsAttack(row.Category) && row.LegacyBody == DeployLegacyBody308.Retire)
+                || (sheet != null && ((row.Category == DeployCategory308.Buff && sheet.Splash.OwnBuffRows) || (row.Category == DeployCategory308.ComboInstall && sheet.Splash.OwnInstallRows)));
+        }
+
         /// <summary>The hit splash of a confirmed hit no live cast took: its grade (0..2), DripOnly, or NoSplash. Only for a glyph
         /// whose hits the layer owns, and never for a hit a live cast already splashed.</summary>
         public static int FreeSplash(SpellPresent308SheetSO sheet, PresentHitSource308 source, bool routed, bool owned)
@@ -132,6 +144,19 @@ namespace Oheangbu.App.SpellVFX120
             else if (moveScale < (sheet != null ? sheet.Mark.SlowBelow : 1f)) state |= PresentState308.Slowed;
             if (takenScale > 1f || defenceShred > 0f) state |= PresentState308.Exposed;
             if (outgoingScale < 1f) state |= PresentState308.Weakened;
+            return state;
+        }
+
+        /// <summary>D308-114 (WP-16 b): the same reading plus the guard and the blinding. A broken guard reads as broken, not as
+        /// raised (the stance can still say raised in the frame it breaks); guarded = the stance is up, broken = inside the break
+        /// window, blind = the veil's blinding is running.</summary>
+        public static PresentState308 StateOf(SpellPresent308SheetSO sheet, bool blocksActions, float moveScale, float takenScale, float defenceShred, float outgoingScale,
+            bool guarded, bool guardBroken, bool blind)
+        {
+            var state = StateOf(sheet, blocksActions, moveScale, takenScale, defenceShred, outgoingScale);
+            if (guardBroken) state |= PresentState308.GuardBroken;
+            else if (guarded) state |= PresentState308.Guarded;
+            if (blind) state |= PresentState308.Blind;
             return state;
         }
 

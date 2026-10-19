@@ -1,0 +1,111 @@
+# sw_unravel2 (D308-87, Spec 11.25 · 11.26): ① 풀림 from the release on (가 12 m, letter at the aim point, shots every ~0.1-0.3 s game) ② the old KTP cast (glowing zigzag) gone - 갓 강 낫 8 m with the letter at the lower left. Builds first.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run unravel
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run attack
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run giyeok
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_unravel2_first_discard
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 0.05
+?call Map307Capture Run hold-shot:sw_unravel2_ga_0
+sleep 0.2
+?call Map307Capture Run hold-shot:sw_unravel2_ga_1
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_unravel2_ga_2
+sleep 0.4
+?call Map307Capture Run hold-shot:sw_unravel2_ga_3
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_unravel2_ga_4
+sleep 0.9
+?call Map307Capture Run hold-shot:sw_unravel2_ga_5
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run strokes:.2,.28
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC13
+sleep 0.4
+?call Map307Capture Run hold-shot:sw_unravel2_gat_0
+sleep 1.35
+?call Map307Capture Run hold-shot:sw_unravel2_gat_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_unravel2_gat_2
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_unravel2_gat_3
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_unravel2_gat_4
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_unravel2_gat_5
+sleep 1
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC15
+sleep 0.4
+?call Map307Capture Run hold-shot:sw_unravel2_gang_0
+sleep 1.35
+?call Map307Capture Run hold-shot:sw_unravel2_gang_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_unravel2_gang_2
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_unravel2_gang_3
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_unravel2_gang_4
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_unravel2_gang_5
+sleep 1
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AB
+sleep 0.4
+?call Map307Capture Run hold-shot:sw_unravel2_nat_0
+sleep 1.35
+?call Map307Capture Run hold-shot:sw_unravel2_nat_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_unravel2_nat_2
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_unravel2_nat_3
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_unravel2_nat_4
+sleep 1.5
+?call Map307Capture Run hold-shot:sw_unravel2_nat_5
+sleep 1
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

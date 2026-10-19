@@ -114,6 +114,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             f.Wiring = f.Obj("Spell308_Wiring", Origin).AddComponent<CombatLoopWiring>();
             Set(f.Wiring, "_config", f.Config); Set(f.Wiring, "_enemies", all.ToArray()); Set(f.Wiring, "_playerTransform", player.transform);
             Set(f.Wiring, "_playerVitals", f.Player); Set(f.Wiring, "_lockOn", f.Lock);
+            // SPEC-SPELL-SWING-308: the wiring would load the swing profile from Resources and keep every waiting cast for an
+            // apex that Edit Mode never reaches (no frame loop). The fixtures check the rule at the dispatch, so the swing is
+            // marked as already looked up and absent ("no profile = none of this runs"); the swing has its own checks.
+            Set(f.Wiring, "_swing308", null); Set(f.Wiring, "_swingLooked", true);
             Call(f.Wiring, "CollectControllers");
             f.Resolver = new SpellResolver(book);
             f.Ink = new InkPool(f.Config, null);

@@ -596,7 +596,8 @@ namespace Oheangbu.App.SpellVFX120
         private void Watch(float now)
         {
             if (_wiring == null) return;
-            bool on = _sheet.Mark.StateMarks && !string.IsNullOrEmpty(_profile.EnabledLetters);
+            // D308-114 (WP-16 b): the marks also run on the contact-only boot when their own switch is on
+            bool on = _sheet.Mark.StateMarks && (!string.IsNullOrEmpty(_profile.EnabledLetters) || (_profile.Contacts != null && _profile.Contacts.StatusMarks));
             var targets = ((ISpellCastHost)_wiring).Targets;
             Camera camera = _host.ViewCamera;
             for (int i = 0; targets != null && i < targets.Count; i++)
@@ -605,8 +606,14 @@ namespace Oheangbu.App.SpellVFX120
                 if (enemy == null) continue;
                 var state = PresentState308.None;
                 if (on && enemy.IsAlive && enemy.isActiveAndEnabled)
+                {
+                    var stance = enemy.Modifiers.Stance;   // read only: CanRaise(now) would clear the break as a side effect
                     state = SpellPresentRules308.StateOf(_sheet, enemy.Control.BlocksActions(now), enemy.Control.MovementScale(now), enemy.Modifiers.DamageTakenScale(now),
-                        enemy.Modifiers.DefenceShred(now), enemy.Modifiers.OutgoingScale(now));
+                        enemy.Modifiers.DefenceShred(now), enemy.Modifiers.OutgoingScale(now),
+                        stance.Raised, stance.Broken && now < stance.BreakUntil, enemy.Modifiers.Veil.Blinded(now));
+                    // D308-115: a summon's own marks (root, sin) - the manager keeps them, the stage only reads them
+                    if (_wiring.SummonCombat != null) state |= (PresentState308)_wiring.SummonCombat.Mark308(enemy);
+                }
                 Transform carrier = enemy.transform;
                 int b = -1;
                 for (int k = 0; k < _bodies.Length; k++)
@@ -641,10 +648,11 @@ namespace Oheangbu.App.SpellVFX120
         {
             if (!Ready) return owns;
             bool owned = owns || SpellPresentRules308.OwnsHit(_profile, _sheet, letter);
+            bool splash = owned || SpellPresentRules308.ContactSplash(_profile, _sheet, letter);   // D308-107 (d): splash only, KTP stays
             if (_pendingCount == 0) return owned;
             var hit = _pending[--_pendingCount]; _pending[_pendingCount] = default;
             if (hit.Frame != Time.frameCount) { _pendingCount = 0; return owned; }
-            int grade = SpellPresentRules308.FreeSplash(_sheet, hit.Source, hit.Routed, owned);
+            int grade = SpellPresentRules308.FreeSplash(_sheet, hit.Source, hit.Routed, splash);
             if (grade == SpellPresentRules308.NoSplash || hit.Target == null) return owned;
             Transform target = hit.Target.transform;
             Vector3 point = target.position + Vector3.up * InkDeployRuntime308.ChestHeight;

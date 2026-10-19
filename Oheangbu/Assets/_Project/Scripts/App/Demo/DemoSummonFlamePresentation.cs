@@ -24,7 +24,8 @@ namespace Oheangbu.App.Demo
             if (!ReferenceEquals(plan, next))
             {
                 Clear(); plan = next;
-                if (plan != null && profile.FlamePrefab != null) Build(profile);
+                if (plan != null && profile.FlameInk308Prefab != null) BuildInk308(profile);
+                else if (plan != null && profile.FlamePrefab != null) Build(profile);
             }
             LiveParticles = 0;
             if (instance == null) return;
@@ -94,6 +95,30 @@ namespace Oheangbu.App.Demo
                     }
                     renderer.sharedMaterials=materials;
                 }
+            }
+            instance.SetActive(true);
+        }
+
+        // SPEC-SPELL-VFX-OVERHAUL-308 11.44: the ink breath body. Uniform scale keeps the cone angle (Hierarchy scaling);
+        // cone shapes take the plan's half angle; no shader swap (InkBleed308 is not in the cone map). Same clock and seeds.
+        void BuildInk308(SummonCombatProfile profile)
+        {
+            instance = Instantiate(profile.FlameInk308Prefab, transform, false);
+            instance.name = "Ink308_Haetae_Breath_ManualClock";
+            instance.transform.localScale = Vector3.one * (plan.Range / Mathf.Max(.01f, profile.FlameInk308AuthoredRange));
+            foreach (var script in instance.GetComponentsInChildren<MonoBehaviour>(true)) script.enabled = false;
+            foreach (var collider in instance.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
+            particles = instance.GetComponentsInChildren<ParticleSystem>(true);
+            for (int i = 0; i < particles.Length; i++)
+            {
+                var ps = particles[i]; ps.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                var main = ps.main; main.playOnAwake = false; main.useUnscaledTime = false;
+                main.cullingMode = ParticleSystemCullingMode.AlwaysSimulate;
+                main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+                var shape = ps.shape;
+                if (shape.enabled && shape.shapeType == ParticleSystemShapeType.Cone) shape.angle = plan.HalfAngleDegrees;
+                ps.useAutoRandomSeed = false; ps.randomSeed = (uint)(743 + i);
+                ps.Simulate(0, false, true, false);
             }
             instance.SetActive(true);
         }

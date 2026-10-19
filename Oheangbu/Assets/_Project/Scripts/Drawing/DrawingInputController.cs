@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Oheangbu.Core;
 using Oheangbu.Core.Domain;
 using Oheangbu.Core.Events;
+using Oheangbu.Data;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -102,6 +103,8 @@ namespace Oheangbu.Drawing
         // true only between EnterMode and the ExitMode that gives the scale back: ExitMode can be reached twice in one commit (a UI
         // surface opened from inside the letter event cancels the drawing, then Commit ends it again) and must restore once.
         private bool _ownsTimeScale;
+        // SPEC-PACE-308 (D308-116): real seconds the slow-down lasts after entering; 0 = the whole drawing (the rule before it)
+        private float _drawSlowSeconds;
 
         public bool InDrawMode { get; private set; }
         /// <summary>The scale the world runs at while drawing (1 = no slow-down).</summary>
@@ -125,6 +128,7 @@ namespace Oheangbu.Drawing
 
         private void Awake()
         {
+            _drawSlowSeconds = PaceProfile308.DrawSlowOf(PaceProfile308.Load());
             if (_actions == null)
             {
                 Debug.LogError("[Drawing] InputActionAsset 미할당 — 작도 입력 비활성");
@@ -174,6 +178,7 @@ namespace Oheangbu.Drawing
             }
             if (_drawMode.WasPressedThisFrame() && !_entryRequiresRelease && !InDrawMode) EnterMode();
             if (!InDrawMode) return;
+            LiftSlowDown308();
 
             HasPointer = _point != null;
             if (HasPointer) PointerScreenPosition = _point.ReadValue<Vector2>();
@@ -181,6 +186,20 @@ namespace Oheangbu.Drawing
 
             if (_drawMode.WasReleasedThisFrame()) Commit();
         }
+
+        // SPEC-PACE-308 section 4: after the first DrawSlowSeconds the world runs at its resting scale again while the drawing goes on.
+        // Only a scale that is still ours is given back - a hit stop (another owner, briefly lower) defers the lift to a later frame.
+        // Samples, the stroke speed and the hold decay are real time already, so recognition and the brush force do not move.
+        private void LiftSlowDown308()
+        {
+            if (!_ownsTimeScale || !ShouldLift(_modeEnterTime, Time.unscaledTime, _drawSlowSeconds)) return;
+            if (!Mathf.Approximately(Time.timeScale, _drawTimeScale)) return;
+            Time.timeScale = _cachedTimeScale;
+            _ownsTimeScale = false;
+        }
+
+        // PURE308
+        public static bool ShouldLift(float enter, float now, float slowSeconds) => slowSeconds > 0f && now - enter >= slowSeconds;
 
         // 피격=작도 중단(COMBAT-ATTACK LOCKED)의 적용 지점 — 글자만 소멸, 모드는 유지(§3-4).
         // 넘(부동심)의 판정은 호출자(전투 층) 몫: 넘이 켜져 있으면 이 메서드를 부르지 않으면 된다.

@@ -1,0 +1,37 @@
+# 11.34 fire19 (user 2026-10-16 "바닥에 먹자국만 지금의 5퍼센트 수준으로 줄이고 확정" / "자국도 불 따라 늦게" / "다음부터는 영상으로 제공해줘"):
+# the 18th fire as confirmed, the ground stain at peak alpha .05 revealed near -> far with the fire (stainwipe sheet). One cast at
+# timeScale .25 is recorded by SpellLab308 rec:fire19 (first person | side | top, one jpg per editor tick + index.csv);
+# Tools/Art/SpellVFX308/rec308.py fire19 turns it into rec_fire19.mp4 (real speed + 1/4 speed, placed by game time).
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:fire19:34
+sleep 1
+?call SwingProbe308 Run cast:uB178
+sleep 6
+?call SwingProbe308 Run fx
+sleep 8
+?call SwingProbe308 Run fx
+sleep 14
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_fire19_end
+?call SpellLab308 Run shot:lab_fire19_end
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

@@ -1,0 +1,59 @@
+# 11.71 check (2026-10-19): go (U+ACE0) floor ink renews while the canes stand and dries with them; one pool per cane on the first frame.
+# Pass 1 at slow 0.25 (fx probes through the life), pass 2 at full speed for the feel; Dummy_10m, no overlay.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d119_go_slow:18
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SwingProbe308 Run fx
+?call SpellLab308 Run top:lab_d119_go_early
+sleep 2
+?call SwingProbe308 Run fx
+?call SpellLab308 Run top:lab_d119_go_mid
+sleep 3
+?call SwingProbe308 Run fx
+?call SpellLab308 Run top:lab_d119_go_late
+sleep 3
+?call SwingProbe308 Run fx
+sleep 4
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d119_go_end
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d119_go_real:8
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACE0
+sleep 1
+?call SwingProbe308 Run fx
+sleep 1
+?call SwingProbe308 Run fx
+sleep 1
+?call SwingProbe308 Run fx
+sleep 4
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run report
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

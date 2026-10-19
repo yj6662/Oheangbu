@@ -1,0 +1,240 @@
+# sw_mark2 (D308-86, Spec 11.24): ink-formed bodies of the five singles in flight at 12 m (가 나 마 사 아), then the stronger finals (가 간 갓 강 · 나 난 낫 낭) at 8 m. Builds first.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run attack
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run giyeok
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_mark2_first_discard
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_mark2_fly_ga_0
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_ga_1
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_ga_2
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_ga_3
+sleep 0.3
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB098
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_mark2_fly_na_0
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_na_1
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_na_2
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_na_3
+sleep 0.3
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB9C8
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_mark2_fly_ma_0
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_ma_1
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_ma_2
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_ma_3
+sleep 0.3
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC0AC
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_mark2_fly_sa_0
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_sa_1
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_sa_2
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_sa_3
+sleep 0.3
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC544
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_mark2_fly_a_0
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_a_1
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_a_2
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_mark2_fly_a_3
+sleep 0.3
+sleep 2.5
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC04
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_gan_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_gan_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_gan_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_gan_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC13
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_gat_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_gat_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_gat_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_gat_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC15
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_gang_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_gang_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_gang_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_gang_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB098
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_na_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_na_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_na_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_na_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB09C
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_nan_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_nan_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_nan_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_nan_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AB
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_nat_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_nat_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_nat_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_nat_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AD
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark2_nang_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark2_nang_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark2_nang_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark2_nang_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

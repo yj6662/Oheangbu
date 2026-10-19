@@ -22,10 +22,10 @@ namespace Oheangbu.EditorTools.WorldMacro
         {
             // grid cells by index (no glyph is named): 18 wood o + ieung, 42 fire o + ieung, 50 earth a + giyeok, 66 earth o + ieung,
             // 77 metal a + siot, 78 metal a + ieung, 90 metal o + ieung, 111 water o + nieun, 73 = the metal single shot without a final
-            char wave = SpellGrammar308.LetterAt(18), steam = SpellGrammar308.LetterAt(42), rock = SpellGrammar308.LetterAt(50), mud = SpellGrammar308.LetterAt(66);
+            char wave = SpellGrammar308.LetterAt(18), steam = SpellGrammar308.LetterAt(42), rock = SpellGrammar308.LetterAt(50);
             char thrust = SpellGrammar308.LetterAt(77), needle = SpellGrammar308.LetterAt(78), barrage = SpellGrammar308.LetterAt(90), purge = SpellGrammar308.LetterAt(111);
             char plain = SpellGrammar308.LetterAt(73);
-            if (!r.Wants(new string(new[] { wave, steam, rock, mud, thrust, needle, barrage, purge }))) return;
+            if (!r.Wants(new string(new[] { wave, steam, rock, thrust, needle, barrage, purge }))) return;
             var effects = SpellEffectInstaller308.CreateAll();
             var needleFx = effects.OfType<InterceptShotEffect308>().FirstOrDefault(); var barrageFx = effects.OfType<InterceptBarrageEffect308>().FirstOrDefault();
             var thrustFx = effects.OfType<UnblockableEffect308>().FirstOrDefault(); var hazeFx = effects.OfType<HazeZoneEffect308>().FirstOrDefault();
@@ -94,8 +94,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     UnityEngine.Object.DestroyImmediate(guard);
                 }
 
-                // ---- the haze (two bodies, one act) ----
-                foreach (char letter in new[] { steam, mud })
+                // ---- the haze (66 earth o + ieung left for WP-15 zone.blind, D308-113: the fire one keeps it) ----
+                foreach (char letter in new[] { steam })
                 {
                     if (!r.Wants(letter.ToString())) continue;
                     Reset(); SendAway();

@@ -84,6 +84,7 @@ namespace Oheangbu.App
      {var obstacle=traceHits[i];if(!obstacle.collider.isTrigger&&!obstacle.transform.IsChildOf(wiring.SummonPlayer)&&obstacle.transform.GetComponentInParent<EnemyVitals>()==null)reach=Mathf.Min(reach,Mathf.Max(0,obstacle.distance-.08f));}
      t.Bounce=impact+t.Direction*reach;
      t.Fx?.Signal(Vfx120Effect.Cue.Hit);
+     t.Fx?.SetReturn308(t.Bounce,t.End-t.Start);   // SPEC-SPELL-VFX-OVERHAUL-308 11.45: presentation only (a Bolt300Return profile flies the return leg)
     }
     if(now>=t.End)
     {

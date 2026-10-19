@@ -50,6 +50,14 @@ namespace Oheangbu.App
 
         public static bool Covers(in SpellZone308 zone, Vector3 position, float now) => Active(zone, now) && Inside(zone, position);
 
+        // #308 WP-16 (D308-114): an enemy whose body edge reaches the circle is inside. body = the enemy's flat body radius
+        // (a negative or NaN radius counts as 0, so the point test above is the body-0 case). Only the zone glyphs that
+        // ask for it (zone.blind, zone.haze) use this; fixed wards and floors keep the point test.
+        public static bool Inside(in SpellZone308 zone, Vector3 position, float body)
+            => AreaGeometry.InCircle(zone.Centre, position, zone.Radius + (body > 0f ? body : 0f), out _);
+
+        public static bool Covers(in SpellZone308 zone, Vector3 position, float now, float body) => Active(zone, now) && Inside(zone, position, body);
+
         // Movement scale of an enemy at this position: the zone's value inside an active zone, 1 anywhere else.
         public static float SlowScale(in SpellZone308 zone, Vector3 position, float now)
             => Covers(zone, position, now) ? Mathf.Clamp01(zone.Value) : 1f;

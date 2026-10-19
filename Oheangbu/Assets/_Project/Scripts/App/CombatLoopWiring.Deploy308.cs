@@ -34,13 +34,14 @@ namespace Oheangbu.App
             try
             {
                 var profile = _deploy308 != null ? _deploy308 : Resources.Load<SpellDeploy308ProfileSO>(SpellDeploy308ProfileSO.ResourcesPath);
-                if (profile == null || !profile.LayerEnabled) return;
+                // D308-107 (11.37 3, (d)): the footprints and the contacts boot on their own switches while the layer is retired
+                if (profile == null || !(profile.LayerEnabled || profile.Foot.Enabled || profile.AnyContact)) return;
                 host = new GameObject("SpellDeploy308") { hideFlags = HideFlags.DontSave };
                 host.transform.SetParent(transform, false);
                 _deployDirector308 = host.AddComponent<SpellDeployDirector308>();
                 _bootFrame308 = Time.frameCount;
                 _deployDirector308.Boot(profile, this, _brushAdapter, _hud, _playerTransform != null ? _playerTransform : transform, _motor, JudgementWindowNear, DeployTargetGroggy308);
-                EnsureDeployHooks308();
+                if (profile.LayerEnabled || profile.AnyContact) EnsureDeployHooks308();
             }
             catch (System.Exception e)
             {
@@ -189,7 +190,9 @@ namespace Oheangbu.App
         // #308 present add-on: this is also where the layer learns the GLYPH of the hit the wiring has just confirmed (the
         // re-broadcast carries none). The director answers the same question as before and hands the glyph to its presenter
         // stage, which may throw the hit splash for a hit no live cast took (a handler's second stage, a derived shot).
-        private bool DeployOwnsHit308(char letter) => _deployDirector308 != null && _deployDirector308.ConfirmedHitLetter(letter);
+        // #308 D308-107: with the layer not live (footprints- or contacts-only boot) the KTP contact always stays. The letter is still
+        // handed over first: the present stage takes its pending hit then (the contact-only splash rides on it).
+        private bool DeployOwnsHit308(char letter) => _deployDirector308 != null && _deployDirector308.ConfirmedHitLetter(letter) && _deployDirector308.LayerLive;
 
         // ---- #308 forms2 (Tools/Unity/Stage308_forms2/DESIGN.md S3): read-only probes. Each one reads a state the rules already
         // keep and returns it; none of them changes a guard, a buff, a field, a summon or a clock.

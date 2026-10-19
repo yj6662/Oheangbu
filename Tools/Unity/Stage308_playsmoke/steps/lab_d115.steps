@@ -1,0 +1,47 @@
+# 11.69 D308-113 the moved 노 ring (6.3 / r 3.7 = +-36 deg x 10 m) - one 노 at the 10 m dummy, plus a plain-speed take (2026-10-19).
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d115_no:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB178
+sleep 11
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d115_no_end
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:1
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d115_no1x:6
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB178
+sleep 4
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d115_no1x_end
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

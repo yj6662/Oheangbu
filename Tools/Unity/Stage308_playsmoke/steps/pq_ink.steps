@@ -1,0 +1,200 @@
+# pq_ink (user "전체 술식들도 이렇게 입자를 없애는 방향으로": no flying bits at all (user "'노'를 이 방식인데 입자만 없는 버전으로") - 노 = scorched ground + soot wash only, hit debris / path bits removed; singles at 8 m + 모 path) (D308-87 polish, user 2026-10-15 "광역 방어, 투사체 vfx들도 계속 폴리싱 및 퀄리티업"): baseline of the single projectiles (가 나 마 사 아 at 8 m) and the guards (거 너 머 서 어), 0.25x time
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uAC00
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_ga_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_ga_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_ga_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_ga_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_ga_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_ga_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_ga_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_ga_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB098
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_na_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_na_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_na_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_na_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_na_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_na_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_na_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_na_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB9C8
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_ma_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_ma_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_ma_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_ma_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_ma_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_ma_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_ma_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_ma_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC0AC
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_sa_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_sa_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_sa_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_sa_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_sa_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_sa_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_sa_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_sa_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC544
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_a_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_a_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_a_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_a_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_a_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_a_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_a_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_a_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uBAA8
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_mo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_mo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_mo_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_mo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_mo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_mo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_mo_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_mo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_no_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_no_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_ink_no_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_ink_no_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_ink_no_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_ink_no_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_ink_no_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_ink_no_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

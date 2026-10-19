@@ -1,0 +1,58 @@
+# sw_hitch3 (2026-10-15): 너 guard without the old fire guard body (NativeBodyPrefab cleared), the buff band at size .9-1.3 / radius .7 (걱 넉).
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run guard
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run aura
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+sleep 3
+sleep 3
+?call SwingProbe308 Run cast:uB108
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_hitch3_neo_0
+?call SwingProbe308 Run fx
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_hitch3_neo_1
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_hitch3_neo_2
+sleep 4
+?call SwingProbe308 Run cast:uAC71
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_hitch3_geok_0
+?call SwingProbe308 Run fx
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_hitch3_geok_1
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_hitch3_geok_2
+sleep 4
+sleep 8
+?call SwingProbe308 Run cast:uB109
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_hitch3_neok_0
+?call SwingProbe308 Run fx
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_hitch3_neok_1
+sleep 1.2
+?call Map307Capture Run hold-shot:sw_hitch3_neok_2
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

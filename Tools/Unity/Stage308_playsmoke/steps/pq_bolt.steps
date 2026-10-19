@@ -1,0 +1,269 @@
+# pq_bolt (D308-87 polish, user 2026-10-15 "광역 방어, 투사체 vfx들도 계속 폴리싱 및 퀄리티업"): baseline of the single projectiles (가 나 마 사 아 at 8 m) and the guards (거 너 머 서 어), 0.25x time
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uAC00
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_ga_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_ga_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_ga_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_ga_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_ga_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_ga_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_ga_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_ga_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB098
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_na_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_na_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_na_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_na_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_na_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_na_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_na_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_na_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB9C8
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_ma_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_ma_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_ma_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_ma_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_ma_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_ma_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_ma_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_ma_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC0AC
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_sa_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_sa_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_sa_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_sa_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_sa_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_sa_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_sa_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_sa_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC544
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_a_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_a_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_a_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_a_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_a_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_a_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_a_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_a_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uAC70
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_geo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_geo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_geo_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_geo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_geo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_geo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_geo_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_geo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB108
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_neo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_neo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_neo_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_neo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_neo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_neo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_neo_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_neo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uBA38
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_meo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_meo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_meo_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_meo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_meo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_meo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_meo_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_meo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC11C
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_seo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_seo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_seo_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_seo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_seo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_seo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_seo_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_seo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC5B4
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_eo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_eo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_bolt_eo_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_bolt_eo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_bolt_eo_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_bolt_eo_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_bolt_eo_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_bolt_eo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

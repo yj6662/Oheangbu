@@ -12,6 +12,13 @@ namespace Oheangbu.App
         bool CanShow(in SpellFxRequest request);
     }
 
+    // 11.58: a presenter that can put down a one-shot burst for a letter at a point without a handle (an enemy projectile
+    // shot down by a volley that never began a presentation). Optional - found with `as`; rules never read anything back.
+    public interface ISpellBurstPresenter308
+    {
+        void Burst(char letter, Vector3 point);
+    }
+
     // #308 the presenter every effect handler really talks to (SPEC-SPELL-120-308 section 9, decision of 2026-10-04:
     // "a presentation failure never changes rules"). It stands between the handlers and the registered ISpellPresenter:
     //  - isolated: every call into the presenter runs inside its own guard. A presenter that throws is reported and the
@@ -21,7 +28,7 @@ namespace Oheangbu.App
     //    the waiting calls run in the order they were made. A cast that was withdrawn shows nothing;
     //  - best effort: the handles it gives out are its own numbers. Whether the presenter really showed something is
     //    never visible to a rule (handlers only pass handles back for cues).
-    public sealed class SpellPresenterGuard308 : ISpellPresenter
+    public sealed class SpellPresenterGuard308 : ISpellPresenter, ISpellBurstPresenter308
     {
         enum Call { Begin, Cue, End }
         struct Waiting
@@ -38,6 +45,7 @@ namespace Oheangbu.App
 
         ISpellPresenter _inner;
         ISpellPresenterProbe _probe;
+        ISpellBurstPresenter308 _burst;
         readonly List<Waiting> _waiting = new List<Waiting>();
         readonly Dictionary<int, SpellFxHandle> _shown = new Dictionary<int, SpellFxHandle>();
         readonly Queue<int> _order = new Queue<int>();
@@ -51,6 +59,7 @@ namespace Oheangbu.App
         {
             _inner = inner is SpellPresenterGuard308 ? null : inner;
             _probe = _inner as ISpellPresenterProbe;
+            _burst = _inner as ISpellBurstPresenter308;
         }
 
         // From here on calls wait. Nested holds count.
@@ -111,6 +120,14 @@ namespace Oheangbu.App
             _waiting.Clear(); _shown.Clear(); _order.Clear();
             if (_inner == null) return;
             try { _inner.EndAll(); }
+            catch (Exception exception) { Fault(exception); }
+        }
+
+        // 11.58: a burst comes from a Tick (after the rules), so it never waits on a hold; isolated like every other call.
+        public void Burst(char letter, Vector3 point)
+        {
+            if (_burst == null) return;
+            try { _burst.Burst(letter, point); }
             catch (Exception exception) { Fault(exception); }
         }
 

@@ -556,9 +556,111 @@ def ink_pool(rnd):
     return build
 
 
+def ink_throw(rnd):
+    """6th pass (D308-83): ink THROWN off the brush along +X - not a splat. A bundle of bristle lines (a wet middle, thinner
+    hairs beside it, all running the way of the throw), a wet lump that leads them, specks torn off ahead of it only. Then
+    the lines sag, thin and snap into beads from the tail. Drawn stretched along its velocity in the game."""
+    hairs = [dict(z=z, l=rnd.uniform(.55, 1.0) * (1.0 - abs(z) * 1.6), r=rnd.uniform(.035, .06) * (1.6 - abs(z) * 3.2), ph=rnd.uniform(0, 6.28), cut=rnd.uniform(0, 1))
+             for z in (-.26, -.17, -.09, -.02, .05, .12, .2, .27)]
+    ahead = [Drop(rnd, Vector((1, 0, math.tan(math.radians(a)))), rnd.uniform(5, 9.5), rnd.uniform(.03, .075), drag=rnd.uniform(4.5, 7), gravity=rnd.uniform(1.5, 3.5), birth=rnd.uniform(0, .16), tail=rnd.uniform(.1, .22), life=rnd.uniform(.6, 1.1), origin=(-1.05, 0, rnd.uniform(-.15, .15)))
+             for a in [rnd.uniform(-22, 26) for _ in range(few(12))]]
+    spray = [Drop(rnd, Vector((1, 0, math.tan(math.radians(a)))), rnd.uniform(7, 12), rnd.uniform(.014, .03), drag=rnd.uniform(6, 9), gravity=rnd.uniform(2, 5), birth=rnd.uniform(0, .12), tail=rnd.uniform(.04, .09), life=rnd.uniform(.4, .8), origin=(-1.0, 0, rnd.uniform(-.2, .2)))
+             for a in [rnd.uniform(-30, 34) for _ in range(few(18))]]
+
+    def build(i):
+        t = (i + 1) * DT; f = Frame()
+        xh = -1.2 + 2.25 * (1 - math.exp(-5.5 * t))                       # the lump leads, fast then spent
+        dry = max(0.0, (t - .5) / .75)                                    # 0 wet .. 1 gone
+        for j, H in enumerate(hairs):
+            L = 2.3 * H['l'] * min(1.0, t / .22)
+            xa = max(-1.32, xh - L); n = 9; prev = None; pr = 0
+            for k in range(n + 1):
+                v = k / n                                                  # 0 tail .. 1 head
+                x = xa + (xh - xa) * v
+                z = H['z'] * (.55 + .45 * v) + .03 * math.sin(v * 7 + H['ph']) - .42 * t * t * (1 - v) ** 1.5
+                r = max(0.0, H['r']) * (.25 + .75 * v ** .7) * max(0.0, 1 - dry * (1.15 - .5 * v))
+                pt = Vector((x, 0, z))
+                # the line breaks from the tail: a segment is dropped once the drying has passed its place on the line
+                gone = dry * 1.5 > v + .35 * math.sin(k * 2.3 + H['cut'] * 9) + .25
+                if prev is not None and r > .004 and not gone:
+                    f.cone(prev, pt, pr, r)
+                elif gone and r > .012 and (k + j) % 2 == 0:
+                    f.ball(pt + Vector((0, 0, -.12 * dry)), r * .8)       # what is left of it: a bead
+                prev, pr = pt, max(r, 0.0)
+        lump = max(0.0, 1.0 - t / .95)
+        f.ball((xh, 0, -.1 * t * t), .21 * lump, squash=(1.25, 1, .9))
+        f.ball((xh - .16, 0, .06 - .1 * t * t), .15 * lump); f.ball((xh - .1, 0, -.09 - .12 * t * t), .13 * lump)
+        for d in ahead + spray:
+            d.draw(f, t)
+        return f
+    return build
+
+
+def ink_wisp(rnd):
+    """6th pass, looping: ink smoke that streams off a body toward -X (root right, tip left) and curls up as it thins - the
+    strands behind an ink creature, the ink that climbs a buffed body. No heart, no heat: all of it is wash."""
+    strands = [dict(z=dz, ph=rnd.uniform(0, 6.28), L=rnd.uniform(1.5, 2.1), w=rnd.uniform(.05, .095), k=rnd.choice((1, 1, 2)), o=rnd.uniform(0, 1)) for dz in (-.3, -.1, .1, .3)]
+
+    def build(i):
+        f = Frame(); u = i / FRAMES
+        for T in strands:
+            cyc = (u * T['k'] + T['o']) % 1.0
+            L = T['L'] * (.6 + .4 * math.sin(math.pi * min(1.0, cyc * 1.2)) ** .6)
+            n = 13; prev = None; pr = 0
+            for sg in range(n + 1):
+                v = sg / n
+                x = .85 - L * v
+                z = T['z'] * (1 - .25 * v) + .24 * math.sin(6.283 * (v * 1.4 - cyc * 2) + T['ph']) * v + .34 * v * v
+                r = T['w'] * math.sin(math.pi * .5 * min(1.0, v / .2 + .45)) ** .7 * (1 - v) ** .9
+                pt = Vector((x, 0, z))
+                if prev is not None:
+                    f.cone(prev, pt, pr, r)
+                prev, pr = pt, r
+            # a curl that lets go of the tip and drifts on
+            q = cyc
+            f.ball((.85 - L * (1.0 + .22 * q), 0, T['z'] * .75 + .34 + .3 * q + .1 * math.sin(T['ph'] + q * 6)), T['w'] * .55 * (1 - q))
+        return f
+    return build
+
+
+def ink_gather(rnd):
+    """6th pass: thrown ink that comes TOGETHER - drops spiral in from all round and a round wet body swells where they meet
+    (the moment before the spell takes its shape). The last cels hold a compact body."""
+    drops = [dict(d=d, R=rnd.uniform(.95, 1.45), r=rnd.uniform(.05, .12), delay=rnd.uniform(0, .3), swirl=rnd.uniform(.9, 1.7)) for d in ring_dirs(rnd, max(10, few(22)), depth=.15)]
+    lobes = [(Vector((rnd.uniform(-.16, .16), 0, rnd.uniform(-.14, .14))), rnd.uniform(.12, .2)) for _ in range(5)]
+
+    def place(D, s):
+        s = min(1.0, max(0.0, s)); e = s * s * (3 - 2 * s)
+        a = D['swirl'] * (1 - e); ca, sa = math.cos(a), math.sin(a)
+        d = D['d']; v = Vector((d.x * ca - d.z * sa, d.y, d.x * sa + d.z * ca))
+        return v * (D['R'] * (1 - e))
+
+    def build(i):
+        t = i / (FRAMES - 1); f = Frame()
+        body = min(1.0, t / .72); body = body * body * (3 - 2 * body)
+        f.ball((0, 0, 0), .1 + .25 * body, squash=(1 + .06 * math.sin(t * 9), 1, 1 - .06 * math.sin(t * 9)))
+        for o, r in lobes:
+            f.ball(o * (1.9 - .7 * body), r * (.35 + .75 * body))
+        for D in drops:
+            s = (t - D['delay']) / .55
+            if s <= 0 or s >= 1.0:
+                if s <= 0:
+                    f.ball(place(D, 0), D['r'] * .8)                       # waiting where it was thrown
+                continue
+            p = place(D, s); r = D['r'] * (1 - .45 * s)
+            f.ball(p, r)
+            prev, pr = p, r * .8
+            for k in range(1, 5):                                          # the tail lies back along the way it came
+                q = place(D, s - .07 * k); qr = r * .8 * (1 - k / 4) ** 1.2
+                f.cone(prev, q, pr, qr); prev, pr = q, qr
+        return f
+    return build
+
+
 PRESETS = dict(ink_splat=ink_splat, ink_drops=ink_drops, wood_splinter=wood_splinter, fire_tongue=fire_tongue, fire_burst=fire_burst,
                earth_dust=earth_dust, metal_streak=metal_streak, water_ring=water_ring, water_orb=water_orb,
-               wood_stroke=wood_stroke, fire_lick=fire_lick, speed_line=speed_line, earth_heave=earth_heave, water_crest=water_crest, ink_pool=ink_pool)
+               wood_stroke=wood_stroke, fire_lick=fire_lick, speed_line=speed_line, earth_heave=earth_heave, water_crest=water_crest, ink_pool=ink_pool,
+               ink_throw=ink_throw, ink_wisp=ink_wisp, ink_gather=ink_gather)     # 6th pass (D308-83): the ink before the spell
 
 # ---------------------------------------------------------------- scene: flat render, data colours, transparent film
 bpy.ops.wm.read_factory_settings(use_empty=True)

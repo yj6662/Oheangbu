@@ -1,0 +1,115 @@
+# 11.71 fun-eval §6 item 1 (2026-10-19): zone overlay (magenta = centre rule, yellow = +0.4 m body edge) against the ink for
+# 고 circle · 공 / 모 / 오 path · 소 volley, all locked on Dummy_10m at slow 0.25; top stills mid-effect and at the end, zone:last per letter.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SpellLab308 Run zone:on
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d117_go:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACE0
+sleep 4
+?call SpellLab308 Run top:lab_d117_go_mid
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d117_go_end
+?call SpellLab308 Run zone:last
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d117_gong:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACF5
+sleep 4
+?call SpellLab308 Run top:lab_d117_gong_mid
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d117_gong_end
+?call SpellLab308 Run zone:last
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d117_mo:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uBAA8
+sleep 4
+?call SpellLab308 Run top:lab_d117_mo_mid
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d117_mo_end
+?call SpellLab308 Run zone:last
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d117_o:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uC624
+sleep 4
+?call SpellLab308 Run top:lab_d117_o_mid
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d117_o_end
+?call SpellLab308 Run zone:last
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d117_so:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uC18C
+sleep 4
+?call SpellLab308 Run top:lab_d117_so_mid
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d117_so_end
+?call SpellLab308 Run zone:last
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+finally:
+?call SpellLab308 Run zone:off
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

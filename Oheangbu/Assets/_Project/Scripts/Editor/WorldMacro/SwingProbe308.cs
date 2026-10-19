@@ -17,7 +17,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     // SPEC-SPELL-SWING-308 Play probe (editor only, isolated store only). Turns the swing rule on for the running Play with an
     // in-memory profile (nothing is written: the game's default stays "no profile"), injects letters the way SpellSmoke308 does
     // (the letter channel) but only when the real drawing gate is open, and records release / launch / fizzle / damage clocks.
-    //   on | off | cast:<letter> | burst:<letter>:<count>:<intervalSeconds> | dodge | ink | trail | report | reset
+    //   on | off | cast:<letter> | burst:<letter>:<count>:<intervalSeconds> | dodge | ink | trail | report | reset | shoulder:x,y,z | shoulder:restore
     public static class SwingProbe308
     {
         static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
@@ -26,6 +26,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static SpellSwingProfile308 profile;
         static char burstLetter; static int burstLeft, burstTried, burstOpen; static float burstEvery, burstNext;
         static bool ticking;
+        static string fxVariant = "";
 
         public static string Run(string command)
         {
@@ -34,16 +35,28 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         static string T => Time.time.ToString("F3", Inv);
+        // the session's walker, or in the spell lab (no session) the scene's own
+        static WorldMacroCombatWalker CurrentWalker => Harness303.Session?.Walker ?? (SpellLab308.InLab ? UnityEngine.Object.FindFirstObjectByType<WorldMacroCombatWalker>() : null);
         static void Line(string text) { lines.Add(T + " " + text); }
 
         static string Dispatch(string command)
         {
             if (command == "report") return lines.Count == 0 ? "no lines" : string.Join("\n", lines);
-            if (command == "reset") { lines.Clear(); return "reset"; }
+            if (command == "reset") { lines.Clear(); strokeAt = new Vector2(.5f, .5f); return "reset"; }
             if (!EditorApplication.isPlaying) return "refused: Play only";
-            var s = Harness303.Session; if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Wiring == null) return "refused: no ready session";
-            if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
-            var walker = s.Walker; var wiring = walker.Wiring;
+            var s = Harness303.Session; WorldMacroCombatWalker walker;
+            if (s == null && SpellLab308.InLab)
+            {
+                // SPEC-SPELL-LAB-308 §4: the spell test scene has no session and no save slot - use its walker directly
+                walker = CurrentWalker; if (walker == null || walker.Wiring == null) return "refused: lab walker not ready";
+            }
+            else
+            {
+                if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Wiring == null) return "refused: no ready session";
+                if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
+                walker = s.Walker;
+            }
+            var wiring = walker.Wiring;
             string head = command.Split(':')[0], rest = command.Contains(":") ? command.Substring(command.IndexOf(':') + 1) : "";
             switch (head)
             {
@@ -62,12 +75,56 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Tick(true); return "burst started " + burstLetter + " x" + burstLeft + " every " + burstEvery.ToString("F2", Inv) + " s";
                 }
                 case "dodge": return Dodge(walker);
+                case "target": return Target(s, walker, wiring, rest);
+                // live spell effects (D308-84 stage 2: which prefab really spawned - #308 bolt or the old body)
+                case "fx":
+                {
+                    var sb = new System.Text.StringBuilder("fx");
+                    foreach (var e in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx120Effect>(FindObjectsSortMode.None))
+                    {
+                        sb.Append(" | ").Append(e.name).Append(" profile ").Append(e.Profile != null ? e.Profile.name : "-").Append(" bolt ").Append(e.Profile != null && e.Profile.Bolt300Prefab != null ? e.Profile.Bolt300Prefab.name : "-").Append(" age ").Append(e.Age.ToString("F2", Inv)).Append(" shots ").Append(e.AreaVisibleShots).Append(" raised ").Append(e.AreaRaised).Append(" kids");
+                        foreach (Transform c in e.transform) sb.Append(' ').Append(c.name).Append(c.gameObject.activeInHierarchy ? "" : "(off)");
+                        // #308 guard / loop bodies: where their particles really are (sw_z2: the buff band spread over the sky)
+                        foreach (Transform c in e.transform)
+                        {
+                            if (!c.name.StartsWith("PF_V308d", StringComparison.Ordinal) && !c.name.StartsWith("PF_V308f", StringComparison.Ordinal) && !c.name.StartsWith("AreaRemake_", StringComparison.Ordinal)) continue;   // pq_fan2: the fan body too
+                            sb.Append(" | ").Append(c.name).Append(" lossy ").Append(c.lossyScale.x.ToString("F2", Inv)).Append(" host lossy ").Append(e.transform.lossyScale.x.ToString("F2", Inv));
+                            foreach (var ps in c.GetComponentsInChildren<ParticleSystem>(true))
+                            {
+                                var buf = new ParticleSystem.Particle[ps.main.maxParticles]; int n = ps.GetParticles(buf); float far = 0f, big = 0f, fwd = -99f, up = -99f;
+                                for (int i = 0; i < n; i++)
+                                {
+                                    Vector3 w = ps.main.simulationSpace == ParticleSystemSimulationSpace.Local ? ps.transform.TransformPoint(buf[i].position) : buf[i].position;
+                                    far = Mathf.Max(far, Vector3.Distance(w, c.position)); big = Mathf.Max(big, buf[i].GetCurrentSize(ps)); fwd = Mathf.Max(fwd, e.transform.InverseTransformPoint(w).z); up = Mathf.Max(up, w.y - e.transform.position.y);
+                                }
+                                sb.Append(" [").Append(ps.name).Append(" n ").Append(n).Append(" far ").Append(far.ToString("F1", Inv)).Append(" m size ").Append(big.ToString("F2", Inv)).Append(" fwd ").Append(fwd.ToString("F1", Inv)).Append(" up ").Append(up.ToString("F1", Inv)).Append(']');
+                            }
+                            // D308-88: VFX Graph bodies (the 노 smoke) - alive count, playing, culled, where the host stands
+                            foreach (var vg in c.GetComponentsInChildren<UnityEngine.VFX.VisualEffect>(true))
+                                sb.Append(" [vfx ").Append(vg.name).Append(" alive ").Append(vg.aliveParticleCount).Append(" culled ").Append(vg.culled).Append(" asset ").Append(vg.visualEffectAsset != null ? vg.visualEffectAsset.name : "-").Append(" fwd ").Append(e.transform.InverseTransformPoint(vg.transform.position).z.ToString("F1", Inv)).Append(" dir ").Append(vg.transform.forward.ToString("F2")).Append(" rate ").Append(vg.HasFloat("Spawn Rate") ? vg.GetFloat("Spawn Rate").ToString("F0", Inv) : "?").Append(" life ").Append(vg.HasFloat("LifeTime") ? vg.GetFloat("LifeTime").ToString("F2", Inv) : "?").Append(" vel ").Append(vg.HasVector3("Initial Velocity_vector") ? vg.GetVector3("Initial Velocity_vector").ToString("F1") : "?").Append(" ip ").Append(vg.HasVector3("Initial Position_position") ? vg.GetVector3("Initial Position_position").ToString("F2") : "?").Append(" lead ").Append(vg.TryGetComponent<Oheangbu.App.SpellVFX120.Vfx308SeamTiming>(out var st) ? st.Lead.ToString("F2", Inv) : "-").Append(" tex ").Append(vg.HasTexture("Main Texture") && vg.GetTexture("Main Texture") != null ? vg.GetTexture("Main Texture").name : "?").Append(" at ").Append(vg.transform.position.ToString("F2")).Append(" floor ").Append(Physics.Raycast(vg.transform.position + Vector3.up * 3f, Vector3.down, out var fh, 8f) ? fh.point.y.ToString("F2", Inv) + " " + fh.collider.name : "-").Append(']');
+                        }
+                    }
+                    foreach (var r in UnityEngine.Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx308Residue>(FindObjectsSortMode.None)) sb.Append(" | residue at ").Append(r.transform.position.ToString("F1"));
+                    return sb.ToString();
+                }
+                // 11.33 fire method comparison (user 2026-10-16 "다양한 방식을 시도해보고 그 중 맞는 걸 선택"): every frame until Play ends, the
+                // live 노 hosts get variant a (fire6 baseline) | b (painted sheet) | c (soot-mixed sheet, smoke carpet off) | d (painted
+                // sheet laid low and wide on the ground). Play memory only - the prefab and the graph are untouched.
+                case "fxset":
+                    if (rest != "a" && rest != "b" && rest != "c" && rest != "d") return "refused: fxset:a|b|c|d";
+                    fxVariant = rest; ApplyFx(); Tick(true); return "fx variant " + rest;
+                // slow motion for the stills (Play memory only): the rule and the presentation share Time.time, so both slow together
+                case "slow": { float k = Mathf.Clamp(float.Parse(rest, Inv), .05f, 1f); Time.timeScale = k; return "timeScale " + k.ToString("F2", Inv); }
                 case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
                 case "nearset": return NearSet(rest);
+                case "shoulder": return Shoulder(rest);
+                case "strokes":   // 11.24: where the fed letter is drawn, as screen fractions (default .5,.5); off the aim point, the commit flash does not hide the flight
+                    { var v = rest.Split(','); if (v.Length == 2 && float.TryParse(v[0], NumberStyles.Float, Inv, out float sx) && float.TryParse(v[1], NumberStyles.Float, Inv, out float sy)) { strokeAt = new Vector2(sx, sy); return "strokes at " + sx.ToString(Inv) + "," + sy.ToString(Inv); } return "refused: strokes:x,y"; }
+                case "view": return View();   // what is drawn on the line from the camera through the screen centre (D308-85: the pigment blob)   // D308-85 camera A/B: shoulder:x,y,z | shoulder:restore
                 case "nearhand": return NearHand();
-                case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; Tick(true); return "brush watch for " + rest + " s";
+                case "brushlog": watchUntil = Time.time + float.Parse(rest, Inv); watchNext = 0f; launchedAt = float.NegativeInfinity; inkLast = null; Tick(true); return "brush watch for " + rest + " s";
                 case "trail":
                 {
                     var trail = walker.Body != null ? walker.Body.GetComponentInChildren<BrushInkTrail308>(true) : null;
@@ -75,7 +132,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     return trail == null ? "trail: no component" : "trail: enabled " + trail.isActiveAndEnabled + " emitting " + trail.Emitting + " points " + trail.PointCount;
                 }
             }
-            return "SwingProbe308: on | off | cast:<letter> | burst:<letter>:<n>:<interval> | dodge | ink | trail | report | reset";
+            return "SwingProbe308: on | off | cast:<letter> | burst:<letter>:<n>:<interval> | dodge | ink | trail | fxset:a|b|c|d | report | reset";
         }
 
         // the close-up (first person) brush in the draw mode: bristle press / splay, and how far the ink ribbon's head is from its tip
@@ -120,6 +177,53 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             return text.ToString();
         }
+        // every enabled renderer whose bounds the ray from the main camera through the screen centre crosses within 40 m,
+        // with its hierarchy path, material and shader - to name what covers the middle of the view
+        static string View()
+        {
+            var cam = Camera.main; if (cam == null) return "view: no main camera";
+            var ray = new Ray(cam.transform.position, cam.transform.forward);
+            var hits = new List<(float d, string text)>();
+            foreach (var r in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                if (!r.enabled || !r.gameObject.activeInHierarchy || !r.isVisible) continue;
+                if (!r.bounds.IntersectRay(ray, out float d) || d > 40f) continue;
+                string path = r.name; for (var t = r.transform.parent; t != null; t = t.parent) path = t.name + "/" + path;
+                var m = r.sharedMaterial;
+                hits.Add((d, d.ToString("F1", Inv) + " m | " + r.GetType().Name + " | " + path + " | " + (m != null ? m.name + " (" + (m.shader != null ? m.shader.name : "-") + ")" : "-") + " | size " + r.bounds.size.ToString("F1")));
+            }
+            hits.Sort((x, y) => x.d.CompareTo(y.d));
+            var sb = new System.Text.StringBuilder("view " + hits.Count + " renderers on the centre ray");
+            foreach (var h in hits) sb.Append("\n  " + h.text);
+            return sb.ToString();
+        }
+
+        // D308-85: the live CombatConfig's shoulder offset for this Play only. A ScriptableObject changed in Play keeps the change,
+        // so the first set records the asset's value and it is put back by shoulder:restore or when Play is left.
+        static CombatConfigSO shoulderConfig; static Vector3? shoulderOriginal;
+        static string Shoulder(string text)
+        {
+            var rig = UnityEngine.Object.FindFirstObjectByType<CameraRigController>();
+            var field = typeof(CameraRigController).GetField("_config", BindingFlags.Instance | BindingFlags.NonPublic);
+            var config = rig != null && field != null ? field.GetValue(rig) as CombatConfigSO : null;
+            var offset = typeof(CombatConfigSO).GetField("_shoulderOffset", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (config == null || offset == null) return "shoulder: no camera rig / config";
+            if (text == "restore") return ShoulderRestore();
+            var n = text.Split(','); if (n.Length != 3) return "refused: shoulder:x,y,z | shoulder:restore";
+            if (shoulderOriginal == null) { shoulderConfig = config; shoulderOriginal = (Vector3)offset.GetValue(config); EditorApplication.playModeStateChanged += ShoulderOnExit; }
+            offset.SetValue(config, new Vector3(float.Parse(n[0], Inv), float.Parse(n[1], Inv), float.Parse(n[2], Inv)));
+            return "shoulder " + config.name + " " + ((Vector3)offset.GetValue(config)).ToString("F2") + " (asset value " + shoulderOriginal.Value.ToString("F2") + ")";
+        }
+        static string ShoulderRestore()
+        {
+            if (shoulderOriginal == null || shoulderConfig == null) return "shoulder: nothing to restore";
+            typeof(CombatConfigSO).GetField("_shoulderOffset", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(shoulderConfig, shoulderOriginal.Value);
+            string reply = "shoulder restored " + shoulderConfig.name + " " + shoulderOriginal.Value.ToString("F2");
+            shoulderOriginal = null; shoulderConfig = null; EditorApplication.playModeStateChanged -= ShoulderOnExit;
+            return reply;
+        }
+        static void ShoulderOnExit(PlayModeStateChange change) { if (change == PlayModeStateChange.ExitingPlayMode) Debug.Log("[SwingProbe308] " + ShoulderRestore()); }
+
         static readonly Dictionary<string, object> nearOriginal = new Dictionary<string, object>();
         static string NearSet(string text)
         {
@@ -210,11 +314,65 @@ namespace Oheangbu.EditorTools.WorldMacro
             hooked.CastAccepted -= OnAccepted; hooked.EnemyDamageResolved -= OnDamage;
             hooked = null;
         }
-        static void OnBegan(SpellCast cast, string state, float apex, float until) => Line("BEGAN " + cast.Letter + " kind " + cast.Kind + " state " + state + " apex +" + (apex - Time.time).ToString("F3", Inv) + " lock +" + (until - Time.time).ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
-        static void OnLaunched(SpellCast cast, float after) => Line("LAUNCHED " + cast.Letter + " after " + after.ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
+        static void OnBegan(SpellCast cast, string state, float apex, float until) => Line("BEGAN " + cast.Letter + " kind " + cast.Kind + " state " + state
+            + (hooked != null ? " (base " + hooked.SwingBaseState308 + " lead " + hooked.SwingClipLead308.ToString("F2", Inv) + " aim " + hooked.SwingAim308.ToString("F1") + " target " + hooked.SwingAimHasTarget308 + ")" : "")
+            + " yaw " + (CurrentWalker?.Body != null ? CurrentWalker.Body.transform.eulerAngles.y.ToString("F1", Inv) : "?") + " apex +" + (apex - Time.time).ToString("F3", Inv) + " lock +" + (until - Time.time).ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv));
+        static void OnLaunched(SpellCast cast, float after)
+        {
+            var ink = UnityEngine.Object.FindFirstObjectByType<SwingInk308>(); var swing = UnityEngine.Object.FindFirstObjectByType<SpellSwing308>();
+            var body = hooked != null ? CurrentWalker?.Body : null;
+            Line("LAUNCHED " + cast.Letter + " after " + after.ToString("F3", Inv) + " power " + cast.Power.ToString("F4", Inv)
+                + " | D308-84 bridges " + (ink != null ? ink.Bridges.ToString(Inv) : "?") + " shown " + (ink != null && ink.BridgeShown)
+                + " aim w " + (swing != null ? swing.AimWeight.ToString("F2", Inv) : "?") + " clip " + (swing != null ? swing.State : "?")
+                + " yaw " + (body != null ? body.transform.eulerAngles.y.ToString("F1", Inv) : "?")
+                + " | D308-90 stroke n " + (ink != null ? ink.StrokePoints.ToString(Inv) : "?") + " span " + (ink != null ? ink.StrokeSpan.ToString("F3", Inv) : "?") + " soak " + (ink != null ? ink.SoakIndex.ToString(Inv) : "?"));
+            launchedAt = Time.time;
+        }
+        // D308-90: when the swung arc comes and goes, against the last LAUNCHED (checked every frame while brushlog runs)
+        static float launchedAt = float.NegativeInfinity; static string inkLast;
+        // domain reload is off: these statics would carry into the next Play of the same editor life
+        [InitializeOnEnterPlayMode] static void ResetOnEnterPlay() { launchedAt = float.NegativeInfinity; inkLast = null; watchUntil = 0f; }
+        static void WatchInk()
+        {
+            var ink = UnityEngine.Object.FindFirstObjectByType<SwingInk308>();
+            string key = ink == null ? "none" : (ink.StrokeShown ? "on" : "off") + " soak " + ink.SoakIndex;
+            if (key == inkLast) return;
+            inkLast = key;
+            Line("INK stroke " + key + (ink != null ? " n " + ink.StrokePoints.ToString(Inv) + " span " + ink.StrokeSpan.ToString("F3", Inv) : "")
+                + (float.IsNegativeInfinity(launchedAt) ? "" : " launched " + (Time.time - launchedAt).ToString("+0.000;-0.000", Inv) + " s ago"));
+        }
         static void OnFizzled(SpellCast cast) => Line("FIZZLED " + cast.Letter);
         static void OnAccepted(SpellCast cast, Vector3 origin, Vector3 forward) => Line("ACCEPTED " + cast.Letter + " power " + cast.Power.ToString("F4", Inv));
         static void OnDamage(EnemyDamageResult result) => Line("DAMAGE " + result);
+
+        // D308-84 check (Play memory only): put the first living enemy of this wiring <distance> m in front of the player, <height> m
+        // up, its navigation and brain off, so the release-time aim sees a target near / far / high. target:off releases nothing - the
+        // enemy just stays where it was put until the Play ends.
+        static string Target(WorldMacroPlaytestSession s, WorldMacroCombatWalker walker, CombatLoopWiring wiring, string rest)
+        {
+            var a = rest.Split(':'); if (a.Length < 1 || !float.TryParse(a[0], NumberStyles.Float, Inv, out float distance)) return "refused: target:<distance>[:<height>]";
+            float height = a.Length > 1 ? float.Parse(a[1], Inv) : 0f;
+            var targets = Harness303.Field<List<EnemyVitals>>(wiring, "_targets"); if (targets == null) return "target: no target list";
+            EnemyVitals pick = null; foreach (var t in targets) if (t != null && t.IsAlive && t.isActiveAndEnabled) { pick = t; break; }
+            if (pick == null) return "target: no living enemy in this wiring (" + targets.Count + " listed)";
+            var body = walker.Body != null ? walker.Body.transform : walker.transform;
+            Vector3 flat = body.forward; flat.y = 0f; flat = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
+            Transform root = pick.transform;
+            foreach (var b in root.GetComponentsInChildren<Behaviour>(true))
+                if (b is UnityEngine.AI.NavMeshAgent || b.GetType().Name.Contains("Brain")) b.enabled = false;
+            foreach (var rb in root.GetComponentsInChildren<Rigidbody>(true)) rb.isKinematic = true;
+            root.SetPositionAndRotation(body.position + flat * distance + Vector3.up * height, Quaternion.LookRotation(-flat, Vector3.up));
+            // lock on to it (a near target low in the view is not taken by the free aim): toggle until this one is the lock
+            string locked = "no LockOn";
+            var lockOn = walker.Motor != null ? walker.Motor.GetComponent<LockOn>() : null;
+            if (lockOn != null)
+            {
+                if (lockOn.IsLocked && lockOn.Target != pick) lockOn.Toggle();
+                if (!lockOn.IsLocked) lockOn.Toggle();
+                locked = lockOn.IsLocked ? (lockOn.Target == pick ? "locked" : "locked another: " + lockOn.Target.name) : "not locked";
+            }
+            return locked + " | target " + pick.name + " at " + distance.ToString("F1", Inv) + " m, +" + height.ToString("F1", Inv) + " m (" + root.position.ToString("F1") + ")";
+        }
 
         static string Cast(WorldMacroCombatWalker walker, char letter)
         {
@@ -227,9 +385,42 @@ namespace Oheangbu.EditorTools.WorldMacro
             var drawn = new DrawnLetter(letter, glyph.Initial, glyph.Medial, final, .8f, .75f, 1.2f, 1.4f, 2);
             var channel = Harness303.Field<DrawnLetterEventChannelSO>(wiring, "_letterDrawn");
             Line("RELEASE " + letter + " ink " + before.ToString("F3", Inv));
+            // D308-84 stage 2: the brush adapter makes the spell body only from strokes + a commit (the drawing input normally
+            // sends them; the letter channel alone gives none - sw_q had no Vfx120Effect at all). Feed its own handlers a short
+            // two-stroke letter near the screen centre, the letter, then the commit: the wiring's swing holds the commit and
+            // releases it at the apex, as with real drawing. The input's events are not fired (gesture rig / lean / audio stay out).
+            var adapter = Harness303.Field<BrushStrokeFeedAdapter>(wiring, "_brushAdapter");
+            bool fed = adapter != null && adapter.isActiveAndEnabled;
+            if (fed) FeedStrokes(adapter);
             channel.Raise(drawn);
+            if (fed) Invoke(adapter, "OnCommitted", true);
             float after = ink != null ? ink.Value : -1f;
             return "released " + letter + " | ink " + before.ToString("F3", Inv) + " -> " + after.ToString("F3", Inv) + " | pending " + wiring.SwingPending308 + " locked " + wiring.SwingLocked308;
+        }
+
+        static Vector2 strokeAt = new Vector2(.5f, .5f);
+
+        static void FeedStrokes(BrushStrokeFeedAdapter adapter)
+        {
+            Vector2 c = new Vector2(Screen.width * strokeAt.x, Screen.height * strokeAt.y); float u = Mathf.Min(Screen.width, Screen.height) * .035f;   // sw_r: .08 drew a slab of a letter
+            for (int stroke = 0; stroke < 2; stroke++)
+            {
+                Invoke(adapter, "OnStrokeStarted");
+                for (int i = 0; i < 8; i++)
+                {
+                    float t = i / 7f;
+                    Vector2 at = stroke == 0 ? c + new Vector2(Mathf.Lerp(-u, u, t), u) : c + new Vector2(u * .2f, Mathf.Lerp(u, -u, t));
+                    Invoke(adapter, "OnStrokePointAdded", at);
+                }
+                Invoke(adapter, "OnStrokeEnded");
+            }
+        }
+
+        static void Invoke(object target, string method, params object[] args)
+        {
+            var m = target.GetType().GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (m == null) throw new MissingMethodException(target.GetType().Name, method);
+            m.Invoke(target, args);
         }
 
         static string Dodge(WorldMacroCombatWalker walker)
@@ -248,20 +439,47 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (on) EditorApplication.update += Update; else EditorApplication.update -= Update;
         }
 
+        static Texture2D FireSheet(string n) => AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/_Project/Art/SpellVFX308/V2/Textures/T_V308b_fire_" + n + "_vfx.png");
+
+        // the full fire property set per variant (values = ConeFireGraph fire6 for a), so a pooled host never keeps the last variant
+        static void ApplyFx()
+        {
+            if (fxVariant.Length == 0) return;
+            bool d = fxVariant == "d";
+            foreach (var vg in UnityEngine.Object.FindObjectsByType<UnityEngine.VFX.VisualEffect>(FindObjectsSortMode.None))
+            {
+                if (vg.name == "SmokeVfx") { if (vg.HasFloat("Spawn Rate")) vg.SetFloat("Spawn Rate", fxVariant == "c" ? 0f : 1600f); continue; }
+                if (vg.name != "FireVfx") continue;
+                var tex = FireSheet(fxVariant == "a" ? "tongue" : fxVariant == "c" ? "tongue_soot" : "tongue_paint");
+                if (tex != null) vg.SetTexture("Main Texture", tex);
+                vg.SetFloat("Spawn Rate", fxVariant == "c" ? 140f : d ? 160f : 110f);
+                vg.SetVector3("Initial Velocity_vector", d ? new Vector3(0f, -1.5f, 9f) : new Vector3(0f, -1f, 16f));
+                vg.SetFloat("Initial Velocity Divergence", d ? 3.2f : 2.2f);
+                vg.SetFloat("Drag", d ? 1.6f : 2.2f);
+                vg.SetVector3("Global Force_vector", d ? new Vector3(0f, 1.2f, 0f) : new Vector3(0f, 2f, 0f));
+                vg.SetVector3("Initial Position_position", d ? new Vector3(0f, .4f, 0f) : new Vector3(0f, .9f, 0f));
+                vg.SetAnimationCurve("Size Over Life", d ? new AnimationCurve(new Keyframe(0f, .4f), new Keyframe(.35f, 1.3f), new Keyframe(1f, 2.4f))
+                                                         : new AnimationCurve(new Keyframe(0f, .6f), new Keyframe(.35f, 1.5f), new Keyframe(1f, 2.6f)));
+                vg.SetFloat("LifeTime", d ? 1.8f : 1.4f);
+            }
+        }
+
         static void Update()
         {
-            if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; Tick(false); return; }
+            if (!EditorApplication.isPlaying) { burstLeft = 0; dodgeAt = float.PositiveInfinity; fxVariant = ""; launchedAt = float.NegativeInfinity; inkLast = null; Tick(false); return; }
+            ApplyFx();
+            if (Time.time < watchUntil) WatchInk();
             if (Time.time < watchUntil && Time.time >= watchNext)
             {
-                watchNext = Time.time + .1f; var w = Harness303.Session;
-                if (w != null && w.Walker != null) { string now = Brush(w.Walker); string key = now.Split('|')[0]; int cut = key.IndexOf(" t ", StringComparison.Ordinal); string head = cut > 0 ? key.Substring(0, cut) : key; if (head != watchLast) { watchLast = head; Line("BRUSH " + now); } }
+                watchNext = Time.time + .1f; var w = CurrentWalker;
+                if (w != null) { string now = Brush(w); string key = now.Split('|')[0]; int cut = key.IndexOf(" t ", StringComparison.Ordinal); string head = cut > 0 ? key.Substring(0, cut) : key; if (head != watchLast) { watchLast = head; Line("BRUSH " + now); } }
             }
-            if (Time.time >= dodgeAt) { dodgeAt = float.PositiveInfinity; var h = Harness303.Session; if (h != null && h.Walker != null) Dodge(h.Walker); }
-            if (burstLeft <= 0) { if (burstTried > 0) Line("BURST END tried " + burstTried + " gate open " + burstOpen); burstTried = 0; if (float.IsPositiveInfinity(dodgeAt) && Time.time >= watchUntil) Tick(false); return; }
+            if (Time.time >= dodgeAt) { dodgeAt = float.PositiveInfinity; var h = CurrentWalker; if (h != null) Dodge(h); }
+            if (burstLeft <= 0) { if (burstTried > 0) Line("BURST END tried " + burstTried + " gate open " + burstOpen); burstTried = 0; if (float.IsPositiveInfinity(dodgeAt) && Time.time >= watchUntil && fxVariant.Length == 0) Tick(false); return; }
             if (Time.time < burstNext) return;
             burstNext = Time.time + burstEvery; burstLeft--; burstTried++;
-            var s = Harness303.Session; if (s == null || s.Walker == null) return;
-            string reply = Cast(s.Walker, burstLetter);
+            var bw = CurrentWalker; if (bw == null) return;
+            string reply = Cast(bw, burstLetter);
             if (reply.StartsWith("released", StringComparison.Ordinal)) burstOpen++;
         }
     }

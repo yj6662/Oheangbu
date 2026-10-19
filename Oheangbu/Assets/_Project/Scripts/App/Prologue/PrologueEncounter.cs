@@ -60,7 +60,7 @@ namespace Oheangbu.App.Prologue
         {
             if(Current==Behaviour.Dead){if(!float.IsNegativeInfinity(hideDeadAt)&&Time.time>=hideDeadAt){foreach(var r in renderers)r.enabled=false;hideDeadAt=float.NegativeInfinity;}return;}
             if(Player==null || !vitals.IsAlive || !agent.isOnNavMesh)return;
-            if(vitals.Control.BlocksActions(Time.time)){attacks.AttackEnabled=false;agent.isStopped=true;return;}
+            if(vitals.Control.BlocksActions(Time.time)){attacks.AttackEnabled=false;agent.isStopped=true;LowerGuard308();return;}   // #308 WP-15: held, it drops its guard
             if(growth!=null&&growth.IsWindingUp){attacks.AttackEnabled=false;agent.isStopped=true;return;}
             Slip308();if(BrainActive308)BrainFrame308();   // #308 D308-70: per frame (the look-around turn, the side-slip record)
             if(Time.time<next)return;next=Time.time+.12f;

@@ -53,6 +53,11 @@ namespace Oheangbu.App.World
         private int _entry = -1;                 // index into Profile.States of the state shown on the layer (idle states included)
         private float _stateStarted, _swingReleasedAt, _swingApexAt, _swingLockUntil, _holdUntil, _clipTime;
         private int _swingFrame = -1;
+        // D308-84: the clip starts this far in when the category does not wait (the ward's short slam); the aim of this swing
+        private float _clipStart;
+        private bool _aimOn;
+        private Vector3 _aimPoint;
+        private float _aimWeight;
 
         private float _upper, _body, _left;
 
@@ -223,17 +228,72 @@ namespace Oheangbu.App.World
                 Touch();
                 _swingFrame = Time.frameCount;
                 if (!Active || Profile == null) return;
-                int index = Profile.Find(Profile.Resolve(state));
-                if (index < 0 || Profile.States[index].ClipSeconds <= 0f || !Has(_layer, Profile.States[index].State)) return;
+                int index = Playable(state);
+                // D308-84: a position variant the controller does not have yet falls back to the category's own motion
+                if (index < 0 && _subscribedWiring != null) index = Playable(_subscribedWiring.SwingBaseState308);
+                if (index < 0) return;
                 EnterStance();
                 ShowUpperNow();   // released from the close-up in this frame: the motion starts at full weight
                 _swinging = true; _holding = false; Swings++;
                 _swingReleasedAt = Time.time; _swingApexAt = apexTime; _swingLockUntil = lockUntil;
+                var shown = Profile.States[index];
+                float lead = _subscribedWiring != null ? _subscribedWiring.SwingClipLead308 : 0f;
+                _clipStart = apexTime <= Time.time && lead > 0f && shown.ClipApexSeconds > 0f ? Mathf.Max(0f, shown.ClipApexSeconds - lead) : 0f;
                 Show(index, Profile.SwingFadeIn, true);
-                SetTime(_timeHash, _hasTime, 0f);
+                SetTime(_timeHash, _hasTime, shown.ClipSeconds > 0f ? Mathf.Clamp01(_clipStart / shown.ClipSeconds) : 0f);
+                // the aim: only toward a target (a free-aim point has the player's own height), only for a cast that waits for its apex
+                _aimOn = _subscribedWiring != null && _subscribedWiring.SwingAimHasTarget308 && apexTime > Time.time;
+                _aimPoint = _aimOn ? _subscribedWiring.SwingAim308 : default;
             }
             catch (System.Exception e) { Debug.LogException(e, this); }
         }
+
+        private int Playable(string state)
+        {
+            if (string.IsNullOrEmpty(state)) return -1;
+            int index = Profile.Find(Profile.Resolve(state));
+            return index >= 0 && Profile.States[index].ClipSeconds > 0f && Has(_layer, Profile.States[index].State) ? index : -1;
+        }
+
+        // D308-84 (SPEC section 5c): the upper body turns a little more toward a high, low or off-centre target around the apex.
+        // After the Animator, before the gesture rig (1000) puts the brush in the hand. Bones only - the root, PlayerForward() and the
+        // rule never move. Weight rises over AimInSeconds before the apex and falls to zero at the lock's end.
+        private void LateUpdate()
+        {
+            _aimWeight = 0f;
+            if (!_aimOn || !_swinging || !Active || Animator == null || !Animator.isHuman || _motor == null || _subscribedWiring == null) return;
+            if (_drawing != null && _drawing.InDrawMode) return;
+            var swing = _subscribedWiring.SwingProfile308;
+            if (swing == null || !swing.Position.Enabled) return;
+            var rule = swing.Position;
+            float now = Time.time;
+            float rise = Mathf.Clamp01(1f - (_swingApexAt - now) / rule.AimInSeconds);
+            float fall = now <= _swingApexAt ? 1f : Mathf.Clamp01((_swingLockUntil - now) / Mathf.Max(.01f, _swingLockUntil - _swingApexAt));
+            float w = Mathf.SmoothStep(0f, 1f, Mathf.Min(rise, fall)) * _upper;
+            if (w <= .001f) return;
+            Transform spine = Animator.GetBoneTransform(HumanBodyBones.Spine), chest = Animator.GetBoneTransform(HumanBodyBones.Chest);
+            Transform upper = Animator.GetBoneTransform(HumanBodyBones.UpperChest);
+            if (spine == null || chest == null) return;
+            Transform top = upper != null ? upper : chest;
+            Transform body = _motor.transform;
+            Vector3 to = _aimPoint - top.position;
+            Vector3 flat = Vector3.ProjectOnPlane(to, Vector3.up);
+            if (flat.sqrMagnitude < .01f) return;
+            float pitch = Mathf.Atan2(to.y, flat.magnitude) * Mathf.Rad2Deg;
+            if (Mathf.Abs(pitch) < rule.AimDeadbandDegrees) pitch = 0f;
+            pitch = Mathf.Clamp(pitch, -rule.AimPitchDown, rule.AimPitchUp);
+            float yaw = Mathf.Clamp(Vector3.SignedAngle(Vector3.ProjectOnPlane(body.forward, Vector3.up), flat, Vector3.up), -rule.AimYaw, rule.AimYaw);
+            if (Mathf.Abs(pitch) < .01f && Mathf.Abs(yaw) < .01f) return;
+            _aimWeight = w;
+            // up = lean back: a positive angle about the body's right axis tips the chest forward and down
+            Quaternion turn = Quaternion.AngleAxis(yaw * w, Vector3.up) * Quaternion.AngleAxis(-pitch * w, body.right);
+            spine.rotation = Quaternion.Slerp(Quaternion.identity, turn, .4f) * spine.rotation;
+            chest.rotation = Quaternion.Slerp(Quaternion.identity, turn, upper != null ? .35f : .6f) * chest.rotation;
+            if (upper != null) upper.rotation = Quaternion.Slerp(Quaternion.identity, turn, .25f) * upper.rotation;
+        }
+
+        /// <summary>Read-only: the upper-body aim's weight in the last frame (0 = none).</summary>
+        public float AimWeight => _aimWeight;
 
         // ---------------------------------------------------------------- frame
 
@@ -321,7 +381,7 @@ namespace Oheangbu.App.World
                 // the clip's apex is put on the rule's apex; after it the clip runs at its own speed
                 _clipTime = toApex > .0001f && entry.ClipApexSeconds > 0f
                     ? elapsed < toApex ? entry.ClipApexSeconds * (elapsed / toApex) : entry.ClipApexSeconds + (elapsed - toApex) * profile.PostApexSpeed
-                    : elapsed;
+                    : _clipStart + elapsed;   // a category that does not wait runs at the clip's own speed (from _clipStart: D308-84 ward)
                 SetTime(_timeHash, _hasTime, Mathf.Clamp01(_clipTime / entry.ClipSeconds));
                 int next = profile.Find(entry.Next);
                 bool chained = next >= 0 && Has(_layer, profile.States[next].State);

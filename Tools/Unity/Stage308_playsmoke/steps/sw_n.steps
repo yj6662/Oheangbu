@@ -1,0 +1,114 @@
+# sw_n (2026-10-14, after the sw_m fixes: own throw ink, smaller sweep sheets, wider bridges): D308-84 again, slowed to timeScale 0.2 for the stills (sw_l shots came too late to see the bridge), each target locked on.
+# Free aim first (single -> SwingThrow, circle -> SwingStrikeFar, ward 구 -> short slam, path 모 -> slam), then an enemy put
+# 5 m / 12 m / 6 m + 4 m up in front (SwingProbe308 target:). The report's BEGAN lines carry the picked state, LAUNCHED the
+# apex seconds (must equal the category's), bridges, aim weight and body yaw. Shots are asked ~0.25 s early (capture lag).
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_n_first_discard
+sleep 3
+?call SwingProbe308 Run target:5
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.60
+?call Map307Capture Run hold-shot:sw_n_near_ga_0
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_n_near_ga_1
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_n_near_ga_2
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_n_near_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.60
+?call Map307Capture Run hold-shot:sw_n_far_ga_0
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_n_far_ga_1
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_n_far_ga_2
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_n_far_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:4
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 2.80
+?call Map307Capture Run hold-shot:sw_n_near_go_0
+sleep 0.45
+?call Map307Capture Run hold-shot:sw_n_near_go_1
+sleep 0.45
+?call Map307Capture Run hold-shot:sw_n_near_go_2
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_n_near_go_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 2.80
+?call Map307Capture Run hold-shot:sw_n_far_go_0
+sleep 0.45
+?call Map307Capture Run hold-shot:sw_n_far_go_1
+sleep 0.45
+?call Map307Capture Run hold-shot:sw_n_far_go_2
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_n_far_go_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAD6C
+sleep 0.50
+?call Map307Capture Run hold-shot:sw_n_ward_gu_0
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_n_ward_gu_1
+sleep 0.45
+?call Map307Capture Run hold-shot:sw_n_ward_gu_2
+sleep 2.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:6:4
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.60
+?call Map307Capture Run hold-shot:sw_n_high_ga_0
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_n_high_ga_1
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_n_high_ga_2
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run slow:1
+?call SwingProbe308 Run ink
+sleep 2
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+finally:
+?call SwingProbe308 Run slow:1
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

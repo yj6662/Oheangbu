@@ -5,6 +5,8 @@ namespace Oheangbu.App.Demo
 {
     // One geometry/particle sample clock shared with the committed damage front.
     // This class never queries enemies or generates contact feedback.
+    // #308 SPEC-SPELL-VFX-OVERHAUL-308 11.47: with WaterJetInk308Material set the same tube is drawn in ink (InkSolid308),
+    // its grain flowing forward, the pigment soaking in after one cel; no foam drops (no flying droplets).
     [ExecuteAlways]
     public sealed class DemoSummonWaterPresentation : MonoBehaviour
     {
@@ -17,6 +19,7 @@ namespace Oheangbu.App.Demo
         readonly Vector2[] uv=new Vector2[Rings*Sides];
         readonly ParticleSystem.Particle[] drops=new ParticleSystem.Particle[64];
         MaterialPropertyBlock block;
+        bool ink;
         public float VisibleLength {get;private set;}
         public int LiveDrops {get;private set;}
         public Vector3 VisibleStart {get;private set;}
@@ -35,6 +38,7 @@ namespace Oheangbu.App.Demo
             jet.transform.SetPositionAndRotation(plan.Origin,Quaternion.LookRotation(plan.Direction,Vector3.up));
             float local=age-plan.ReleaseAt;
             float fade=Mathf.Clamp01((head-tail)/.18f);
+            float flow=ink?profile.WaterTravelSpeed*.5f*local:0;
             for(int ring=0;ring<Rings;ring++)
             {
                 float u=(float)ring/(Rings-1),z=Mathf.Lerp(tail,head,u);
@@ -45,11 +49,13 @@ namespace Oheangbu.App.Demo
                     // Never exceeds the combat corridor radius; ripples are radial only.
                     float radius=plan.Radius*(.53f+.10f*Mathf.Sin(z*19-local*28+theta*3)+.06f*Mathf.Sin(z*33-local*37-theta*2))*taper;
                     int i=ring*Sides+side;vertices[i]=new Vector3(Mathf.Cos(theta)*radius,Mathf.Sin(theta)*radius,z);
-                    uv[i]=new Vector2((float)side/Sides,z*1.4f);
+                    uv[i]=new Vector2((float)side/Sides,(z-flow)*1.4f);
                 }
             }
             mesh.vertices=vertices;mesh.uv=uv;mesh.RecalculateNormals();mesh.RecalculateBounds();
-            block.Clear();block.SetFloat("_FlowTime",local);block.SetFloat("_Fade",fade);surface.SetPropertyBlock(block);
+            block.Clear();block.SetFloat("_FlowTime",local);block.SetFloat("_Fade",fade);
+            if(ink){block.SetFloat("_Visibility",fade);block.SetFloat("_Soak",DemoSummonRootPresentation.Soak308(local));}
+            surface.SetPropertyBlock(block);
             LiveDrops=0;
             if(foam!=null && VisibleLength > .05f)
             {
@@ -73,7 +79,8 @@ namespace Oheangbu.App.Demo
         }
         void Build(SummonCombatProfile profile)
         {
-            if(profile.WaterJetMaterial==null)return;
+            ink=profile.WaterJetInk308Material!=null;
+            if(!ink&&profile.WaterJetMaterial==null)return;
             block=new MaterialPropertyBlock();jet=new GameObject("TurtleWater_ClockedStream");jet.transform.SetParent(transform,false);
             mesh=new Mesh{name="TurtleWater_OwnedSurface"};mesh.MarkDynamic();
             var indices=new int[(Rings-1)*Sides*6];int k=0;
@@ -81,9 +88,9 @@ namespace Oheangbu.App.Demo
             {int a=r*Sides+s,b=r*Sides+(s+1)%Sides,c=a+Sides,d=b+Sides;
              indices[k++]=a;indices[k++]=b;indices[k++]=c;indices[k++]=b;indices[k++]=d;indices[k++]=c;}
             mesh.vertices=vertices;mesh.triangles=indices;
-            jet.AddComponent<MeshFilter>().sharedMesh=mesh;surface=jet.AddComponent<MeshRenderer>();surface.sharedMaterial=profile.WaterJetMaterial;
+            jet.AddComponent<MeshFilter>().sharedMesh=mesh;surface=jet.AddComponent<MeshRenderer>();surface.sharedMaterial=ink?profile.WaterJetInk308Material:profile.WaterJetMaterial;
             surface.shadowCastingMode=ShadowCastingMode.Off;surface.receiveShadows=false;
-            if(profile.WaterFoamMaterial!=null)
+            if(!ink&&profile.WaterFoamMaterial!=null)
             {
                 var child=new GameObject("StreamFoam");child.transform.SetParent(jet.transform,false);foam=child.AddComponent<ParticleSystem>();
                 foam.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);

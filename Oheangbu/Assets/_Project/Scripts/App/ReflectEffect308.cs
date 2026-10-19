@@ -54,6 +54,7 @@ namespace Oheangbu.App
                 if (target == null || instigator == null) continue;
                 ctx.Host.ApplyDirectHit(target, order.Life, order.Power * ctx.Host.DamageScale(Element), origin,
                     AttackProvenance.Create(instigator, DamageSource.Retaliation, Element), Letter);
+                (ctx.Fx as ISpellBurstPresenter308)?.Burst(Letter, target.transform.position + Vector3.up * 1f);   // 11.64: presentation only
             }
             _pending.Clear();
         }

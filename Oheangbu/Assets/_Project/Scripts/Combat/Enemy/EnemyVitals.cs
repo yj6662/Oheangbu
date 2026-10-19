@@ -28,6 +28,24 @@ namespace Oheangbu.Combat
         public EnemyModifierState308 Modifiers { get; } = new EnemyModifierState308();
         // #308 WP-07 (D308-13 Q4): share of incoming damage this enemy's armour removes, 0..1. Enemy data, default 0.
         public float Defence => _profile != null ? _profile.Defence : 0f;
+        // #308 WP-16 (D308-114): flat radius of this enemy's body, for the zone glyphs that count a body edge in the circle
+        // (zone.blind, zone.haze). The first solid CharacterController, then capsule, then sphere on this object or below,
+        // times the larger flat scale of its transform; 0.4 m when there is none. Measured on first read, again after a disable.
+        public float BodyRadius { get { if (_bodyRadius < 0f) _bodyRadius = MeasureBodyRadius(); return _bodyRadius; } }
+        private float _bodyRadius = -1f;
+        private const float DefaultBodyRadius = .4f;
+        private float MeasureBodyRadius()
+        {
+            foreach (var body in GetComponentsInChildren<CharacterController>()) if (body.enabled) return Flat(body.radius, body.transform);
+            foreach (var body in GetComponentsInChildren<CapsuleCollider>()) if (body.enabled && !body.isTrigger) return Flat(body.radius, body.transform);
+            foreach (var body in GetComponentsInChildren<SphereCollider>()) if (body.enabled && !body.isTrigger) return Flat(body.radius, body.transform);
+            return DefaultBodyRadius;
+        }
+        private static float Flat(float radius, Transform t)
+        {
+            float r = radius * Mathf.Max(Mathf.Abs(t.lossyScale.x), Mathf.Abs(t.lossyScale.z));
+            return r > 0f && !float.IsNaN(r) && !float.IsInfinity(r) ? r : DefaultBodyRadius;
+        }
         public float Hp => _hp;
         // 최대 체력의 유일 경로 — Awake·Restore·Hp01·Heal이 모두 여기를 읽는다(부활 때 60으로 돌아가지 않게)
         public float MaxHp => _profile != null && _profile.MaxHp > 0f ? _profile.MaxHp : _config != null ? _config.EnemyMaxHp : 60f;
@@ -136,7 +154,7 @@ namespace Oheangbu.Combat
         }
 
         private void Update() { ExpireWeakPoint(Time.time); }
-        private void OnDisable() { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); }
+        private void OnDisable() { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); _bodyRadius = -1f; }
         public void ExpireWeakPoint(float now)
         {
             if (!float.IsNegativeInfinity(_weakPointUntil) && now >= _weakPointUntil) ResetCombatState();
@@ -158,7 +176,10 @@ namespace Oheangbu.Combat
             // #308 WP-07 intake: this enemy's defence (data, default 0), the defence shred and damage-taken brand a spell left
             // on it, and whether this very hit ignores defence. An enemy with defence 0 and no modifier gets the value back
             // untouched, so every enemy and every spell that existed before behaves exactly as it did.
-            damage = Modifiers.Intake(damage, Defence, attack.AttackId, Time.time);
+            // #308 WP-15: defence is cut to the config cap, and a raised guard acts only on the caster's own spell shots
+            // (PlayerDirect · Companion). #308 WP-16 (D308-114): a melee hit (the sword form, the riposte) passes the guard.
+            damage = Modifiers.Intake(damage, Defence, attack.AttackId, Time.time, _config != null ? _config.DefenceCap : 1f,
+                (attack.Source == DamageSource.PlayerDirect || attack.Source == DamageSource.Companion) && !attack.Melee);
             if (damage <= 0f || float.IsNaN(damage)) return default; // only a full defence (1) the hit does not ignore
             float bonus = 0f;
             if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect &&

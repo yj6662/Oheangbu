@@ -1,0 +1,53 @@
+# sw_perf (2026-10-15): frame time - 20 s idle, then 20 s casting (가 / 고 / 노 / 소 / 모, one every 2 s, normal speed, an enemy 8 m ahead). PlayProbe308 frames.
+# (Deploy gather) -> pigment soaks in -> hit -> residue on the ground. timeScale 0.2, each target locked on.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+sleep 3
+?call SwingProbe308 Run target:8
+sleep 2
+?call PlayProbe308 Run frames:20
+sleep 22
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:20
+?call SwingProbe308 Run cast:uAC00
+sleep 2
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SwingProbe308 Run cast:uB178
+sleep 2
+?call SwingProbe308 Run cast:uC18C
+sleep 2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2
+?call SwingProbe308 Run cast:uAC00
+sleep 2
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SwingProbe308 Run cast:uB178
+sleep 2
+?call SwingProbe308 Run cast:uC18C
+sleep 2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2
+sleep 2
+?call PlayProbe308 Run frames
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

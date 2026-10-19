@@ -1,0 +1,97 @@
+# 11.34 soak21 (user 2026-10-16 "전 술식 한 번에 (Recommended)", D308-90 addendum, TEST):
+# swingink now writes soak rows for all 120 letters (letter rows first, then one row per element, every row with
+# 노's numbers). Five representative letters one after another at timeScale .25, each recorded on its own:
+# 가 Wood (row 3 #426E58) · 노 Fire (row 4 #BE543B) · 소 Metal (row 6 #A6B0AD) · 모 Earth (row 5 #977343) · 오 Water (row 7 #2C465A).
+# LAUNCHED / INK lines print the soak row each cast took.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run swingink
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:soak21_ga:12
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uAC00
+sleep 9
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:soak21_no:12
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB178
+sleep 9
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:soak21_so:12
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uC18C
+sleep 9
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:soak21_mo:12
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uBAA8
+sleep 9
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:soak21_o:12
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uC624
+sleep 9
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SpellLab308 Run top:lab_soak21_end
+?call SwingProbe308 Run brush
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

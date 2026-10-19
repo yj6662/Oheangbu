@@ -59,20 +59,20 @@ def shoot(tag, groups):
     call('Oheangbu.EditorTools.SpellVFX120.Vfx308Build', 'pose:clear')
 
 
-def sheets():
+def sheets(pair=('r4', 'r5')):
     tw, th, bar = 320, 180, 22
     for group, cases in CASES.items():
         card = Image.new('RGB', (tw * 8 + 12, 40 + (th + bar) * len(cases)), (40, 38, 36)); d = ImageDraw.Draw(card)
-        d.text((10, 10), f'#308 5th pass - {group}: left four = 4th pass, right four = 5th pass; behind / 45 deg / side / first person (EDIT-MODE POSES, not Play)', fill=(230, 226, 214), font=FONT)
+        d.text((10, 10), f'#308 5th pass - {group}: left four = {pair[0]}, right four = {pair[1]}; behind / 45 deg / side / first person (EDIT-MODE POSES, not Play)', fill=(230, 226, 214), font=FONT)
         for r, (label, *_rest) in enumerate(cases):
             y = 40 + r * (th + bar)
-            for t, tag in enumerate(('r4', 'r5')):
+            for t, tag in enumerate(pair):
                 for v in range(4):
                     f = OUT / 'round5_tiles' / tag / f'{group}_{r}_{v}.png'; x = t * (tw * 4 + 12) + v * tw
                     if f.exists():
                         card.paste(Image.open(f).resize((tw, th), Image.LANCZOS), (x, y + bar))
-                    d.text((x + 6, y + 3), f'{label}  {"4th" if tag == "r4" else "5th"}  {VIEWS[v]}', fill=(230, 226, 214), font=FONT)
-        card.save(OUT / f'round5_{group}.png')
+                    d.text((x + 6, y + 3), f'{label}  {tag}  {VIEWS[v]}', fill=(230, 226, 214), font=FONT)
+        card.save(OUT / (f'round5_{group}.png' if pair == ('r4', 'r5') else f'round_{pair[0]}_{pair[1]}_{group}.png'))
     print('round5 sheets', OUT)
 
 
@@ -80,4 +80,4 @@ if __name__ == '__main__':
     if len(sys.argv) > 2 and sys.argv[1] == 'shoot':
         shoot(sys.argv[2], (sys.argv[3] if len(sys.argv) > 3 else 'single,circle,cone,volley,path').split(','))
     else:
-        sheets()
+        sheets(tuple(sys.argv[2:4])) if len(sys.argv) > 3 else sheets()

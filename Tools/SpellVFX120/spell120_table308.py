@@ -36,7 +36,7 @@ STAGE = ROOT / 'Tools/Unity/Stage308_spell'
 STAGE_SHEETS = STAGE / '_ProjectAssets/Data/Spells'
 LIVE_SHEETS = ROOT / 'Oheangbu/Assets/_Project/Data/Spells'
 OUT = ROOT / 'Art/SpellVFX120/Spell120_308'
-EXPECTED_CSV_SHA = '467f1dc904cf261bf8a1b04213fcc46b04080037ee5caf6ec1252eb4b11bc23f'  # raw file bytes
+EXPECTED_CSV_SHA = '117a2689ed10b427a0bb2ff9df37b5b5bf38536bfa6b2c0fcad657ac37c3b776'  # raw file bytes (D308-113, 2026-10-18: 낭 · 몽 rows)
 
 CANONICAL_HEADER = '글자,초성,속성,중성,프레임,종성,분류,효과,상태,비고'
 RULE_COLUMNS = ['글자', 'Mode', 'Handler', 'Pending', 'Kind', 'Gate', 'Feature', 'Inherit', 'BasePower', 'SpeedMul', 'AreaShape',

@@ -6,6 +6,8 @@ namespace Oheangbu.App.Demo
 {
     // Existing botanical mesh, positioned from the same immutable ground plan as combat.
     // No independent Update, physics, random path, or damage callback.
+    // #308 SPEC-SPELL-VFX-OVERHAUL-308 11.47: with RootInk308Material set the same pieces are drawn in ink (InkSolid308);
+    // each piece holds bare ink for one cel after it starts to rise, then the pigment soaks in over two cels.
     public sealed class DemoSummonRootPresentation : MonoBehaviour
     {
         sealed class Piece
@@ -18,6 +20,7 @@ namespace Oheangbu.App.Demo
         readonly List<Piece> pieces = new List<Piece>();
         MaterialPropertyBlock block;
         SummonRootAttackPlan plan;
+        bool ink;
         public int VisiblePieces { get; private set; }
 
         public void Sample(SummonCombatProfile profile, SummonRootAttackPlan next, float age, bool active)
@@ -26,7 +29,8 @@ namespace Oheangbu.App.Demo
             if (!ReferenceEquals(plan, next))
             {
                 Clear(); plan = next;
-                if (plan != null && profile.RootMesh != null && profile.RootMaterial != null) Build(profile);
+                ink = profile.RootInk308Material != null;
+                if (plan != null && profile.RootMesh != null && (ink || profile.RootMaterial != null)) Build(profile);
             }
             VisiblePieces = 0;
             foreach (var piece in pieces)
@@ -43,6 +47,7 @@ namespace Oheangbu.App.Demo
                 block.Clear(); block.SetFloat("_Visibility", 1 - retract);
                 // The authored botanical shader clips buried surfaces to its ground plane.
                 block.SetFloat("_GroundY", piece.GroundY);
+                if (ink) block.SetFloat("_Soak", Soak308(since + .12f));
                 piece.Renderer.SetPropertyBlock(block);
             }
         }
@@ -72,13 +77,15 @@ namespace Oheangbu.App.Demo
                 go.transform.position = position;
                 go.AddComponent<MeshFilter>().sharedMesh = profile.RootMesh;
                 var renderer = go.AddComponent<MeshRenderer>();
-                renderer.sharedMaterial = profile.RootMaterial;
+                renderer.sharedMaterial = ink ? profile.RootInk308Material : profile.RootMaterial;
                 renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
                 renderer.enabled = false;
                 pieces.Add(new Piece { Transform=go.transform, Renderer=renderer, Position=position, Up=up, Arrival=times[i], GroundY=Mathf.Min(points[i].y,points[end].y)-.025f });
                 i = end;
             }
         }
+        // 11.47 [TEST]: one cel (12 Hz) of bare ink, then the pigment over two cels.
+        internal static float Soak308(float t) => Mathf.SmoothStep(0, 1, Mathf.Clamp01((t - .083f) / .167f));
         void Clear()
         {
             foreach (var piece in pieces) if (piece.Transform != null)

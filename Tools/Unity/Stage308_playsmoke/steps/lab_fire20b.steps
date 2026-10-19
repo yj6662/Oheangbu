@@ -1,0 +1,41 @@
+# 11.34 fire20b (user 2026-10-16 "정점부터 호에 붉은 기 스밈 (Recommended)", D308-90 TEST):
+# the swung arc stays ink while the brush swings; from the apex 노's pigment soaks into it from the tip back toward the
+# tail (SwingInk308Profile.Soaks, written by swingink) and the arc dries slower after the apex (aging x .55).
+# One cast at timeScale .25, recorded by rec:fire20b; brushlog prints BRUSH lines and INK on/off lines against LAUNCHED.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run swingink
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:fire20b:34
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB178
+sleep 6
+?call SwingProbe308 Run fx
+sleep 8
+?call SwingProbe308 Run fx
+sleep 14
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_fire20b_end
+?call SpellLab308 Run shot:lab_fire20b_end
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run brush
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

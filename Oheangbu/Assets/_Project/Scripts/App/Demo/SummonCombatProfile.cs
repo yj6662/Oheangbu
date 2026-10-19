@@ -12,6 +12,10 @@ namespace Oheangbu.App.Demo
         public AnimationClip IdleClip, WalkClip, AttackClip;
         public AnimationClip FormationClip, DissolveClip;
         public GameObject FormationSeal, DissolveDebris;
+        [Tooltip("#308 D308-107 (f) [TEST]: 참이면 옛 소환 연출(인장 · Formation/Mane/Dissolve 입자 · 파편)을 내지 않는다 — 새 먹 몸만. 몸 · 동작 · 공격 연출 · 시계는 그대로. 라이브 사본에만 retire:summon 명령이 켠다(기록 · 되돌리기).")]
+        public bool RetireLegacySummonFx308;
+        [Tooltip("#308 D308-108 [TEST]: 활동이 시작된 뒤 이 시간 동안만 몸 심(_CoreGlow)이 밝아진다 — 12 Hz 셀 2칸(1/6 s). 0이면 끔. 지속 발광 없음.")]
+        [Min(0)] public float CoreBirthGlowSeconds308 = 1f / 6f;
         [Min(.01f)] public float WalkClipMetresPerSecond = 1.5f;
         [Min(0)] public float FormationSeconds = 1.2f;
         [Min(.01f)] public float ActivitySeconds = 20f;
@@ -48,6 +52,8 @@ namespace Oheangbu.App.Demo
         public AnimationClip RootAttackClip;
         public Mesh RootMesh;
         public Material RootMaterial;
+        [Tooltip("#308 SPEC-SPELL-VFX-OVERHAUL-308 11.47 [TEST]: 있으면 뿌리 조각을 RootMaterial 대신 이 먹 재질(InkSolid308)로 그린다 — 솟을 때 먹으로 나타나 2칸에 걸쳐 안료가 스민다(_Soak). 비면 식물 껍질 그대로. 라이브 사본에만 beast:ink:connect가 쓴다(기록 · 되돌리기).")]
+        public Material RootInk308Material;
 
         [Header("Optional distance-keeping fire fan (demo TEST)")]
         public bool FlameAttackEnabled;
@@ -63,6 +69,9 @@ namespace Oheangbu.App.Demo
         public Shader FlameAdditiveShader, FlameAlphaShader;
         [Min(.001f)] public float FlameBoundaryFeather = .15f;
         [Range(0, 1)] public float FlameVisualIntensity = .7f;
+        [Tooltip("#308 SPEC-SPELL-VFX-OVERHAUL-308 11.44 [TEST]: 있으면 불숨을 KTP 불꽃 대신 이 먹 몸으로 그린다 — 균일 배율(사거리 / 저작 사거리), 원뿔 각 = 계획 반각, 셰이더 교체 없음. 비면 FlamePrefab 경로 그대로. 라이브 사본에만 haetae:flame:connect가 쓴다(기록 · 되돌리기).")]
+        public GameObject FlameInk308Prefab;
+        [Min(.01f)] public float FlameInk308AuthoredRange = 4.5f;
 
         [Header("Optional metal tiger leap and alternating claws (demo TEST)")]
         public bool TigerAttackEnabled;
@@ -91,6 +100,32 @@ namespace Oheangbu.App.Demo
         public Vector3 WaterOriginOffset = new Vector3(0, .7f, 1f);
         public AnimationClip WaterAttackClip;
         public Material WaterJetMaterial, WaterFoamMaterial;
+        [Tooltip("#308 SPEC-SPELL-VFX-OVERHAUL-308 11.47 [TEST]: 있으면 물줄기 관을 WaterJetMaterial 대신 이 먹 재질(InkSolid308)로 그리고 거품 방울을 만들지 않는다 — 결이 앞으로 흐르고, 먹으로 나와 2칸에 걸쳐 안료가 스민다. 비면 물 셰이더 + 거품 그대로. 라이브 사본에만 beast:ink:connect가 쓴다.")]
+        public Material WaterJetInk308Material;
+
+        [Header("D308-115 Behaviour (TEST, all off by default — live copies only via behaviour308:on)")]
+        [Tooltip("곰: 확정 명중한 적에게 뿌리 표식. 표식 적을 플레이어가 맞히면 다음 Tick에 BasePower × RootMarkBurstMultiplier 한 번.")]
+        public bool RootMark308Enabled;
+        [Min(.01f)] public float RootMarkSeconds = 4f;
+        [Min(0)] public float RootMarkBurstMultiplier = .6f;
+        [Tooltip("놈: 플레이어를 노린 공격을 끝낸 적에게 죄 표식, 표식 적만 화염 부채로 응징(간격마다 한 번).")]
+        public bool JudgeEnabled;
+        [Min(0)] public float JudgeFollowDistance = 4f;
+        [Min(.01f)] public float JudgeIntervalSeconds = 2.5f, JudgeMarkSeconds = 5f;
+        [Min(0)] public float JudgeMultiplier = 1f;
+        [Tooltip("몸: 패링 성공 · 되받아치기 · 응보 뒤 BeatDelay초에 같은 적을 몽둥이 경로로 내려찍음.")]
+        public bool BeatEnabled;
+        [Min(0)] public float BeatDelay = .3f, BeatMultiplier = 1.8f, BeatSideDistance = 3f;
+        [Min(.01f)] public float BeatCooldown = 3f;
+        [Tooltip("솜: HP 비율이 문턱 이하인 적을 먼저 노리고 할퀴기 위력 배.")]
+        public bool HuntEnabled;
+        [Range(0, 1)] public float HuntHpThreshold = .25f;
+        [Min(0)] public float HuntMultiplier = 2f;
+        [Tooltip("옴: 패링 방어막이 없을 때 플레이어에게 닿는 원거리 탄을 막음(충전식). 물줄기는 제자리에서만.")]
+        public bool WardEnabled;
+        [Min(1)] public int WardCharges = 2;
+        [Min(.01f)] public float WardRechargeSeconds = 8f;
+        [Min(0)] public float WardFollowDistance = 2f;
 
         public bool TryValidate(out string error, bool requirePresentation = false)
         {
@@ -193,6 +228,23 @@ namespace Oheangbu.App.Demo
                     WaterRadius >= WaterRange || WaterRange / WaterTravelSpeed >= WaterStreamSeconds || WaterRecoverySeconds < WaterRange / WaterTravelSpeed ||
                     WaterWindupSeconds + WaterStreamSeconds + WaterRecoverySeconds >= ActivitySeconds)
                 { error = "Water needs a finite mouth, minimum < preferred <= range <= detection, a front reaching range during stream, and a cast within activity."; return false; }
+            }
+            // D308-115 values are checked even while every behaviour is off, so a NaN never waits in the asset for the switch.
+            foreach (float value in new[] { RootMarkSeconds, RootMarkBurstMultiplier, JudgeFollowDistance, JudgeIntervalSeconds, JudgeMarkSeconds,
+                JudgeMultiplier, BeatDelay, BeatMultiplier, BeatSideDistance, BeatCooldown, HuntHpThreshold, HuntMultiplier,
+                WardRechargeSeconds, WardFollowDistance })
+                if (!float.IsFinite(value) || value < 0) { error = "D308-115 behaviour values must be finite and non-negative."; return false; }
+            if (RootMark308Enabled || JudgeEnabled || BeatEnabled || HuntEnabled || WardEnabled)
+            {
+                if ((RootMark308Enabled && Letter != "곰") || (JudgeEnabled && Letter != "놈") || (BeatEnabled && Letter != "몸") ||
+                    (HuntEnabled && Letter != "솜") || (WardEnabled && Letter != "옴"))
+                { error = "D308-115 behaviours are exclusive: root mark 곰, judge 놈, beat 몸, hunt 솜, ward 옴."; return false; }
+                if (RootMarkSeconds <= 0 || JudgeIntervalSeconds <= 0 || JudgeMarkSeconds <= 0 || BeatCooldown <= 0 || WardRechargeSeconds <= 0 ||
+                    WardCharges < 1 || HuntHpThreshold > 1 || BeatDelay >= BeatCooldown ||
+                    JudgeFollowDistance >= LeashRange || BeatSideDistance >= LeashRange || WardFollowDistance >= LeashRange)
+                { error = "D308-115 lifetimes, intervals and charges must be positive; follow distances stay inside the leash; beat delay below cooldown."; return false; }
+                if ((JudgeEnabled && !FlameAttackEnabled) || (BeatEnabled && !ClubAttackEnabled) || (HuntEnabled && !TigerAttackEnabled))
+                { error = "Judge needs the flame fan, beat needs the club sweep and hunt needs the tiger claws."; return false; }
             }
             error = null; return true;
         }

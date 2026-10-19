@@ -23,7 +23,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   present308-assets[:dry|:revert]   the sheet as an asset (Resources/Deploy308/SpellPresent308Sheet), made from the code
     //                                     defaults. Optional: without it the code defaults are used as they are.
     //   present308-unit                   the checks that need Unity objects but no Play (in memory, nothing is saved)
-    //   preview:on:<form>[:view=4][:t=s][:at=x,y,z][:yaw=deg][:fov=60][:element=wood|fire|earth|metal|water][:grade=0|1|2][:radius=3][:states=bound,slowed,exposed,weakened][:allowdirty]
+    //   preview:on:<form>[:view=4][:t=s][:at=x,y,z][:yaw=deg][:fov=60][:element=wood|fire|earth|metal|water][:grade=0|1|2][:radius=3][:states=bound,slowed,exposed,weakened,guarded,guardbroken,blind][:allowdirty]
     //             [:tier=pc|mobile][:letter=<glyph>][:life=6]
     //        form = slash | slashhit | blade | install | carried | state | ring | fling | shed | spent | splash | drip | cover | combo
     //        forms3 (D9 / D11): ring = the zone's ring stroke (a body lying on the ground) over its held ground marks;
@@ -475,7 +475,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         string names = opt.TryGetValue("states", out var statesText) ? statesText : "bound";
                         foreach (string name in names.Split(','))
                         {
-                            if (!Enum.TryParse(name.Trim(), true, out PresentState308 state) || state == PresentState308.None) throw new PostLedger308.Refused("states must be a comma list of bound, slowed, exposed, weakened");
+                            if (!Enum.TryParse(name.Trim(), true, out PresentState308 state) || state == PresentState308.None) throw new PostLedger308.Refused("states must be a comma list of bound, slowed, exposed, weakened, guarded, guardbroken, blind, root, sin");
                             input.States |= state;
                         }
                         break;

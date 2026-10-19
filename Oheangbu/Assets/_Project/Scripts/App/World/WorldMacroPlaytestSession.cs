@@ -148,6 +148,7 @@ namespace Oheangbu.App.World
             foreach(var actor in Actors){actor.Defeated+=EnemyDefeated;if(Progress.defeated.Contains(actor.Id))actor.GetComponent<EnemyVitals>().TakeDamage(float.MaxValue);}
             // #308 D308-70 (SPEC-ENEMY-BRAIN-308): the content's behaviour and strike-read profiles go to every actor that has none of its own (bosses ignore the brain)
             foreach(var actor in Actors){if(actor==null)continue;if(actor.Brain==null)actor.Brain=Content.EnemyBrain;var rig=actor.GetComponent<EnemyRigMotion298>();if(rig!=null&&rig.StrikeRead==null)rig.StrikeRead=Content.EnemyStrikeRead;}
+            ApplyGuardBrains308();   // #308 WP-16 (D308-114): guard-raising field enemies get a guarded clone of their brain (WorldMacroPlaytestSession.Guard308.cs)
             vitals.Died+=OnDeath;ready=true;InitializeEquipment();nextSave=Time.unscaledTime+Content.TestRules.AutosaveSeconds;RefreshDrop();RefreshFragmentPickups();
             BindDemoEscort();
             if(LoadStatus=="invalid")SaveError="저장 파일이 손상되었다. 제목 화면에서 백업을 복구하거나 보관 후 새로 시작한다.";
@@ -686,6 +687,6 @@ namespace Oheangbu.App.World
         void SyncHudFallback(){if(hudFallback!=null){bool on=isActiveAndEnabled&&!CanvasHudPresenterActive;if(hudFallback.enabled!=on)hudFallback.enabled=on;}}
         void OnApplicationQuit(){Save();DrainAutosave();}
         void OnDisable(){DisarmInteract();UnbindDemoSouthGate();UnbindDemoEscort();SuspendDemoField();SuspendMumBridges();Save();DrainAutosave();if(hudFallback!=null)hudFallback.enabled=false;}
-        void OnDestroy(){UnbindFieldGates308();UnbindCinematic308();UnbindMineTutorial306();UnbindVehicle308();DrainAutosave();UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);}
+        void OnDestroy(){UnbindFieldGates308();UnbindCinematic308();UnbindMineTutorial306();UnbindVehicle308();DrainAutosave();UnbindDemoSouthGate();UnbindDemoEscort();UnbindDemoField();UnbindMumBridges();UnbindDemoRen();if(vitals!=null)vitals.Died-=OnDeath;foreach(var a in Actors)if(a!=null)a.Defeated-=EnemyDefeated;if(drop!=null)Destroy(drop);ReleaseGuardBrains308();}
     }
 }

@@ -24,6 +24,12 @@ namespace Oheangbu.App
             if (enemy != null && enemy.Modifiers.Veil.Screen(owner, until)) Remember(enemy, owner);
         }
 
+        // #308 WP-15 (몽): the enemy loses sight of the player while it stands in the owner's zone.
+        public void Blind(EnemyVitals enemy, long owner, float until)
+        {
+            if (enemy != null && enemy.Modifiers.Veil.Blind(owner, until)) Remember(enemy, owner);
+        }
+
         // The entry of that owner on that enemy ends now.
         public void Release(EnemyVitals enemy, long owner)
         {

@@ -1,0 +1,169 @@
+# sw_x (2026-10-15): the other categories - cone 노, volley 소, path 모 (bridges G), ward 거, field 구, buff 걱, summon 곰 - plus 가 / 고 after A-F. 0.2x.
+# (Deploy gather) -> pigment soaks in -> hit -> residue on the ground. timeScale 0.2, each target locked on.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_x_first_discard
+sleep 3
+?call SwingProbe308 Run target:5
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_x_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:5
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 2.6
+?call Map307Capture Run hold-shot:sw_x_go_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_go_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_go_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_go_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 2.0
+?call Map307Capture Run hold-shot:sw_x_no_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_no_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_no_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_no_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:10
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uC18C
+sleep 2.0
+?call Map307Capture Run hold-shot:sw_x_so_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_so_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_so_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_so_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.6
+?call Map307Capture Run hold-shot:sw_x_mo_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_mo_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_mo_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_mo_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC70
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_geo_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_geo_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_geo_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_geo_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAD6C
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_gu_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_gu_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_gu_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_gu_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC71
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_geok_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_geok_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_geok_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_geok_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACF0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_gom_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_x_gom_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_x_gom_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_x_gom_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

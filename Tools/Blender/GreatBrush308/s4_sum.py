@@ -10,6 +10,7 @@ for ln in sys.stdin:
         print('S4  R reach', mm(ra.get('r_reach')), 'wrist', mm(ra.get('r_wrist')), 'swivel', sorted(set(ra.get('r_swivel', []))), '| shaft_in frames', S['shaft_in_frames'], 'max', S['shaft_in_max'], 'bristle_in', S['bristle_in_frames'], 'head_hit', S['head_hit_frames'], S['in_by_bone'])
         print('S4  start/end vs stance deg', S['start_vs_stance_deg'], S['end_vs_stance_deg'], '| loop', S['loop_err_deg'], '| max rot step', S['max_rot_step_deg'][:3], '| ankle ik err cm', S['ankle_ik_err_cm'], 'min z', S['min_body_z'])
         if ra.get('r_reach') and max(ra['r_reach']) > .97: print('S4  R reach curve', ra['r_reach'])
+        if S.get('l_minreach') and max(S['l_minreach']) > .985: print('S4  L minreach', S['l_minreach'])
     elif 'Error' in ln or 'Traceback' in ln or ln.startswith('  File') or ln.startswith('M1 DONE'): print(ln[:300])
     if ln.startswith('M1 DONE'):
         import os

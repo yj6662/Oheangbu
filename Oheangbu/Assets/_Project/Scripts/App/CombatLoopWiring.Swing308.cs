@@ -35,6 +35,17 @@ namespace Oheangbu.App
         /// <summary>(cast). The waiting cast was dropped (dodge before the apex, death, the wiring switched off).</summary>
         public event Action<SpellCast> SwingFizzled308;
 
+        // D308-84 (SPEC section 5c): read by the presentation in the SwingBegan308 handler of the same release. Never read by the rule.
+        /// <summary>The category's own state (the fallback when the picked variant is not in the controller).</summary>
+        public string SwingBaseState308 { get; private set; }
+        /// <summary>Zero-apex categories only: start the clip this many seconds before its apex (the ward's short slam). 0 = from the start.</summary>
+        public float SwingClipLead308 { get; private set; }
+        /// <summary>Where the cast is expected to land, as seen at release: the aimed target's chest, or the free-aim point.</summary>
+        public Vector3 SwingAim308 { get; private set; }
+        /// <summary>SwingAim308 is a target (its height means something); false = the flat free-aim point.</summary>
+        public bool SwingAimHasTarget308 { get; private set; }
+        public SpellSwingProfile308 SwingProfile308 => Swing308();
+
         private SpellSwingProfile308 Swing308()
         {
             if (_swing308 == null && !_swingLooked)
@@ -96,8 +107,42 @@ namespace Oheangbu.App
                 _swingPending = true; _swingCast = cast; _swingRow = row;
                 _brushAdapter?.HoldCommit308();
             }
-            SwingBegan308?.Invoke(cast, entry.State, _swingApexAt, _swingLockUntil);
+            string state = SwingVariant308(profile, cast, row, entry.State);
+            SwingBegan308?.Invoke(cast, state, _swingApexAt, _swingLockUntil);
             return waits;
+        }
+
+        // D308-84: the motion for this category at the expected place. Fenced: a fault here only loses the variant, never the cast.
+        private string SwingVariant308(SpellSwingProfile308 profile, in SpellCast cast, SpellRow row, string state)
+        {
+            SwingBaseState308 = state; SwingClipLead308 = 0f; SwingAimHasTarget308 = false;
+            try
+            {
+                var rule = profile.Position;
+                EnemyVitals target = AimedTarget();
+                float range = cast.Area.Length > 0f ? cast.Area.Length : _freeAimRange;
+                Vector3 at = target != null ? target.transform.position : AimPoint(range);
+                SwingAim308 = target != null ? at + Vector3.up * 1.1f : at;
+                SwingAimHasTarget308 = target != null;
+                if (!rule.Enabled || row == null) return state;
+                Vector3 flat = at - PlayerPosition(); flat.y = 0f;
+                float distance = flat.magnitude;
+                string picked = null;
+                switch (row.Category)
+                {
+                    case SpellCategory.Attack:
+                        if (cast.Kind != SpellKind.AttackArea) picked = distance >= rule.SingleFarMeters ? rule.SingleFarState : null;
+                        else if (cast.AreaShape == AreaShape.Circle) picked = distance >= rule.CircleFarMeters ? rule.CircleFarState : rule.CircleNearState;
+                        else if (cast.AreaShape == AreaShape.Path) picked = rule.PathState;
+                        break;
+                    case SpellCategory.Ward:
+                        picked = rule.WardState;
+                        if (!string.IsNullOrEmpty(picked)) SwingClipLead308 = rule.WardLeadSeconds;
+                        break;
+                }
+                return string.IsNullOrEmpty(picked) ? state : picked;
+            }
+            catch (Exception e) { Debug.LogException(e, this); SwingClipLead308 = 0f; return state; }
         }
 
         private void TickSwing308()

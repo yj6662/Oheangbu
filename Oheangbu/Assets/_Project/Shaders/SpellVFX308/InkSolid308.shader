@@ -6,6 +6,7 @@
 // stays on a body that rolls, tumbles or is drawn as a particle mesh. It also bends the shading normal (a height bump).
 // No highlight, no emission, LDR, clamped to the ink ceiling. Opaque; writes depth (DepthOnly / DepthNormals).
 // _Visibility (set per body by the range seam's property block) eats the body away through the grain as it goes.
+// 11.47: _GroundY cuts what is below the ground (summon roots), _Soak fades the pigment in from ink (defaults = no change).
 Shader "Oheangbu/SpellVFX308/InkSolid"
 {
     Properties
@@ -23,6 +24,8 @@ Shader "Oheangbu/SpellVFX308/InkSolid"
         _Visibility("Visibility (range seam)", Range(0,1)) = 1
         _NearClip("Nothing nearer than (m)", Float) = .45
         _NearFade("Whole from (m)", Float) = .8
+        _GroundY("Cut below (world y; 11.47)", Float) = -10000
+        _Soak("Pigment soaked in (0 = ink only; 11.47)", Range(0,1)) = 1
     }
     SubShader
     {
@@ -35,7 +38,7 @@ Shader "Oheangbu/SpellVFX308/InkSolid"
         struct Varyings { float4 positionCS:SV_POSITION; float3 normalWS:TEXCOORD0; float3 positionWS:TEXCOORD1; float2 uv:TEXCOORD2; };
         CBUFFER_START(UnityPerMaterial)
         half4 _BaseColor, _Ink; float4 _Grain;
-        float _Shade, _Split, _Rim, _Bump, _Cavity, _Under, _TipInk, _Visibility, _NearClip, _NearFade;
+        float _Shade, _Split, _Rim, _Bump, _Cavity, _Under, _TipInk, _Visibility, _NearClip, _NearFade, _GroundY, _Soak;
         CBUFFER_END
         Varyings vert(Attributes v)
         {
@@ -64,6 +67,7 @@ Shader "Oheangbu/SpellVFX308/InkSolid"
         {
             float eye = -TransformWorldToView(i.positionWS).z;
             clip(OhNearVisibility(eye, _NearClip, _NearFade) - OhDither(i.positionCS.xy) - .001);
+            clip(i.positionWS.y - _GroundY);               // 11.47: a body rising out of the ground
             float g = Grain(i.uv);
             clip(g * .9 + _Visibility * 1.15 - 1.0);       // whole at 1; eaten through the grain toward 0
             return g;
@@ -90,9 +94,10 @@ Shader "Oheangbu/SpellVFX308/InkSolid"
                 float3 view = normalize(GetWorldSpaceViewDir(i.positionWS));
                 float tone = dot(nb, normalize(float3(-.35, .8, -.3))) * .5 + .5 + (g - .5) * .3 * _Grain.w - saturate(-n.y) * _Under * .35;
                 float split = _Split * .5 + .5;
-                float3 mid = lerp(_BaseColor.rgb, _Ink.rgb, _Shade), deep = lerp(_BaseColor.rgb, _Ink.rgb, .85);
+                float3 pig = lerp(_Ink.rgb, _BaseColor.rgb, _Soak);     // 11.47: ink first, the pigment soaks in
+                float3 mid = lerp(pig, _Ink.rgb, _Shade), deep = lerp(pig, _Ink.rgb, .85);
                 float3 rgb = lerp(deep, mid, smoothstep(split - .2, split - .15, tone));
-                rgb = lerp(rgb, _BaseColor.rgb, smoothstep(split + .08, split + .13, tone));
+                rgb = lerp(rgb, pig, smoothstep(split + .08, split + .13, tone));
                 rgb = lerp(rgb, _Ink.rgb, smoothstep(.36, .22, g) * _Cavity * _Grain.w);             // ink lying in the grain
                 rgb = lerp(rgb, _Ink.rgb, saturate(i.uv.y) * _TipInk);
                 rgb = lerp(_Ink.rgb, rgb, step(_Rim + (g - .5) * .16, abs(dot(n, view))));

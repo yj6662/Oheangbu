@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 using Oheangbu.Spellcraft;
 namespace Oheangbu.App.SpellVFX120
 {
@@ -10,7 +11,10 @@ namespace Oheangbu.App.SpellVFX120
   GameObject _areaHost;Transform[] _areaBodies;Renderer[] _areaRenderers;
   Vector3[] _areaFeet;ParticleSystem[] _areaParticles;Vfx120TraditionalMotif _areaSeal;
   Mesh _areaWater;Vector3[] _areaWaterVertices;float[] _areaGround;float _areaSim;
+  VisualEffect[] _areaGraphs;bool[] _areaGraphOn;float _areaGraphT;   // D308-88 / Spec 11.31: VFX Graph bodies, played over the emit window
+  float[] _areaGraphLead,_areaGraphFwd,_areaGraphHeight;bool _areaGraphPlaced;Vector3 _areaGraphGround;Quaternion _areaGraphTurn;float _areaGraphLift;   // 11.34 fire18: Vfx308SeamTiming per graph, one ground frame per cast
   MaterialPropertyBlock _areaBlock;Vector3 _areaForward,_areaRight,_areaStart;
+  readonly List<ParticleSystem> _circlePools=new List<ParticleSystem>();float _circlePoolLongest,_circlePoolEvery,_circlePoolClock;   // 11.71: the circle's pools, their longest life, the hand-emit interval and its clock
   ParticleSystem.Particle[] _wideParticles=new ParticleSystem.Particle[256];
   public int AreaRaised {get;private set;}
   public float AreaWavePeak {get;private set;}
@@ -38,15 +42,21 @@ namespace Oheangbu.App.SpellVFX120
    _areaBodies=new Transform[count];_areaRenderers=new Renderer[count];_areaFeet=new Vector3[count];
    for(int i=0;i<count;i++)
    {
+    // D308-84: each cane its own lean and height (AreaBambooLean / HeightSpread), stable per spike
     var body=Instantiate(Profile.NativeBodyPrefab,_areaHost.transform,false);body.name="AreaBody_"+i;_areaBodies[i]=body.transform;_areaRenderers[i]=body.GetComponentInChildren<MeshRenderer>();
-    if(k==Vfx120AreaRemake.BambooField){var point=plan.Spikes[i].Point;point.y=GroundHeight(point,point.y);_areaFeet[i]=point;body.transform.localScale=new Vector3(.8f+i%3*.11f,.85f+i%5*.1f,.8f+i%3*.11f);body.transform.rotation=Quaternion.Euler(i%3*3,i*71,i%2*4-2);}
+    if(k==Vfx120AreaRemake.BambooField){var point=plan.Spikes[i].Point;point.y=GroundHeight(point,point.y);_areaFeet[i]=point;body.transform.localScale=new Vector3(.8f+i%3*.11f,.85f+i%5*.1f,.8f+i%3*.11f);body.transform.rotation=Quaternion.Euler(i%3*3,i*71,i%2*4-2);
+     if(Profile.AreaBambooLean>0f){float lean=Profile.AreaBambooLean,spread=Profile.AreaBambooHeightSpread;body.transform.rotation=Quaternion.Euler((Hash308(i,1)*2-1)*lean,i*71,(Hash308(i,2)*2-1)*lean);body.transform.localScale=new Vector3(.85f,1f+(Hash308(i,3)*2-1)*spread,.85f);}}
    }
    _areaParticles=_areaHost.GetComponentsInChildren<ParticleSystem>();
+   _areaGraphs=_areaHost.GetComponentsInChildren<VisualEffect>();_areaGraphT=0;_areaGraphPlaced=false;int graphs=_areaGraphs.Length;_areaGraphOn=new bool[graphs];_areaGraphLead=new float[graphs];_areaGraphFwd=new float[graphs];_areaGraphHeight=new float[graphs];
+   for(int i=0;i<graphs;i++){var g=_areaGraphs[i];var timing=g.GetComponent<Vfx308SeamTiming>();_areaGraphLead[i]=timing!=null?timing.Lead:0f;_areaGraphFwd[i]=timing!=null?timing.Forward:0f;_areaGraphHeight[i]=timing!=null?timing.Height:-1f;
+    g.Stop();g.Reinit();if(g.HasFloat("LifeTime"))Life=Mathf.Max(Life,plan.Delay+.7f+g.GetFloat("LifeTime")+Mathf.Max(0f,-_areaGraphLead[i]));}   /* 11.31: the effect outlives its last smoke; 11.34: a late graph's lead too */
    for(int i=0;i<_areaParticles.Length;i++){var ps=_areaParticles[i];ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);ps.useAutoRandomSeed=false;ps.randomSeed=(uint)(271+i);var main=ps.main;main.playOnAwake=false;main.cullingMode=ParticleSystemCullingMode.AlwaysSimulate;ps.Simulate(0,false,true,false);}
+   if(k==Vfx120AreaRemake.BambooField)FitCirclePools(plan);   /* 11.70 */
    if(k==Vfx120AreaRemake.FlameCone)
    {
     _areaBodies[0].SetPositionAndRotation(plan.Point,Quaternion.LookRotation(_areaForward));
-    foreach(var ps in _areaParticles){var shape=ps.shape;shape.shapeType=Profile.AreaFlowRevision?ParticleSystemShapeType.Cone:ParticleSystemShapeType.ConeVolume;shape.angle=plan.Angle;shape.radius=.08f;shape.length=Profile.AreaFlowRevision?0:Mathf.Max(1,plan.Length-1.6f);shape.position=_areaBodies[0].InverseTransformPoint(ReceivedOrigin);shape.scale=Vector3.one;var m=ps.main;m.startSize=Profile.AreaFlowRevision?.12f:ps.name=="FlameCore"?1.3f:.85f;}
+    foreach(var ps in _areaParticles){var shape=ps.shape;if(Profile.AreaKeepShape308){shape.angle=plan.Angle;shape.position=_areaBodies[0].InverseTransformPoint(ReceivedOrigin);continue;}   /* 11.29 */ shape.shapeType=Profile.AreaFlowRevision?ParticleSystemShapeType.Cone:ParticleSystemShapeType.ConeVolume;shape.angle=plan.Angle;shape.radius=.08f;shape.length=Profile.AreaFlowRevision?0:Mathf.Max(1,plan.Length-1.6f);shape.position=_areaBodies[0].InverseTransformPoint(ReceivedOrigin);shape.scale=Vector3.one;var m=ps.main;m.startSize=Profile.AreaFlowRevision?.12f:ps.name=="FlameCore"?1.3f:.85f;}
    }
    if(k==Vfx120AreaRemake.SandFront||k==Vfx120AreaRemake.WaterWave)
    {
@@ -133,7 +143,7 @@ namespace Oheangbu.App.SpellVFX120
     {
      float rise=Mathf.SmoothStep(0,1,Mathf.InverseLerp(p.Spikes[i].RiseAt-.12f,p.Spikes[i].RiseAt,t));
      if(rise>=.999f)AreaRaised++;_areaBodies[i].position=_areaFeet[i]-Vector3.up*((1-rise)*2.1f);
-     _areaRenderers[i].enabled=rise>0&&fade>0;_areaBlock.Clear();_areaBlock.SetFloat("_Visibility",fade);_areaBlock.SetFloat("_DissolveHeight",Mathf.Lerp(0,2.2f,fade));_areaBlock.SetFloat("_GroundY",_areaFeet[i].y);_areaRenderers[i].SetPropertyBlock(_areaBlock);
+     if(_areaRenderers[i]!=null){_areaRenderers[i].enabled=rise>0&&fade>0;_areaBlock.Clear();_areaBlock.SetFloat("_Visibility",fade);_areaBlock.SetFloat("_DissolveHeight",Mathf.Lerp(0,2.2f,fade));_areaBlock.SetFloat("_GroundY",_areaFeet[i].y);_areaRenderers[i].SetPropertyBlock(_areaBlock);}   // D308-84: a #308 body may carry no mesh (particle canes)
     }
    }
    else if(kind==Vfx120AreaRemake.NeedleVolley)
@@ -170,14 +180,16 @@ namespace Oheangbu.App.SpellVFX120
     }
    }
    if(Profile.EarthRift)SampleEarthRift(t,fade);
+   if(_areaGraphs!=null&&_areaGraphs.Length>0)SampleAreaGraphs(kind,p,t);   /* 11.31 */
    if(_areaParticles!=null&&_areaParticles.Length>0)
    {
-    if(t<_areaSim){foreach(var ps in _areaParticles){ps.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);ps.Simulate(0,false,true,false);}_areaSim=0;}
+    if(t<_areaSim){foreach(var ps in _areaParticles){ps.Stop(false,ParticleSystemStopBehavior.StopEmittingAndClear);ps.Simulate(0,false,true,false);}_areaSim=0;_circlePoolClock=0;}
     const float dt=1f/120;
     while(_areaSim+dt<=t+.00001f)
     {
-     _areaSim+=dt;bool emit=kind==Vfx120AreaRemake.FlameCone?_areaSim>=Mathf.Max(0,p.Delay-.12f)&&_areaSim<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):_areaSim>=p.Delay&&_areaSim<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
-     foreach(var ps in _areaParticles){var em=ps.emission;em.enabled=emit;ps.Simulate(dt,false,false,false);}
+     _areaSim+=dt;bool emit=AreaEmitting(kind,p,_areaSim);
+     if(kind==Vfx120AreaRemake.BambooField&&emit)EmitCirclePools(_areaSim-dt<p.Delay,dt);   /* 11.71: the pools are emitted by hand */
+     foreach(var ps in _areaParticles){var em=ps.emission;em.enabled=emit&&!(kind==Vfx120AreaRemake.BambooField&&ps.name=="Pool");ps.Simulate(dt,false,false,false);}
     }
     if((Profile.AreaFlowRevision&&kind==Vfx120AreaRemake.FlameCone)||Profile.WideAreaRevision&&(kind==Vfx120AreaRemake.SandFront||kind==Vfx120AreaRemake.WaterWave))
     {
@@ -239,12 +251,76 @@ namespace Oheangbu.App.SpellVFX120
     }
    }
   }
+  // 11.70: the circle's ground pools follow the hit circle. A circle plan has no Length / Speed, so its window is fixed after the
+  // delay (the canes rise in it); an inner pool keeps its built size (the pools run together), an outer one shrinks until its rim
+  // stands at r + CirclePoolMargin308 (rim = start size x size curve x sheet fill / 2 x the body's scale). Display only.
+  // 11.71: the pools renew while the canes stand and the last ones dry as the canes dissolve (window end = Life - longest pool
+  // life, on the plan clock, read live); one pool per cane as the window opens, then one each built-rate interval. The pools are
+  // emitted by hand in the fixed step - their rate emission gave nothing past the first frame under the stepped Simulate (lab_d119).
+  const float CircleInkSeconds308=.7f,CirclePoolMargin308=.3f,CirclePoolFill308=.85f,CirclePoolMin308=.25f;
+  void FitCirclePools(AreaImpactPlan plan)
+  {
+   float longest=0f,rate=0f;_circlePools.Clear();_circlePoolClock=0f;
+   for(int i=0;i<_areaBodies.Length;i++)
+   {
+    var flat=_areaFeet[i]-plan.Point;flat.y=0;float d=flat.magnitude;
+    foreach(var ps in _areaBodies[i].GetComponentsInChildren<ParticleSystem>(true))
+    {
+     if(ps.name!="Pool")continue;_circlePools.Add(ps);var main=ps.main;var built=ps.emission.rateOverTime;rate=Mathf.Max(rate,built.mode==ParticleSystemCurveMode.TwoConstants?built.constantMax:built.constant);var size=main.startSize;bool two=size.mode==ParticleSystemCurveMode.TwoConstants;
+     var sol=ps.sizeOverLifetime;float grow=sol.enabled?Mathf.Max(sol.size.Evaluate(0f),sol.size.Evaluate(1f)):1f;
+     float reach=(two?size.constantMax:size.constant)*grow*CirclePoolFill308*.5f*Mathf.Abs(ps.transform.lossyScale.x);if(reach<=.001f)continue;
+     float m=Mathf.Clamp((plan.Radius+CirclePoolMargin308-d)/reach,CirclePoolMin308,1f);
+     main.startSize=two?new ParticleSystem.MinMaxCurve(size.constantMin*m,size.constantMax*m):new ParticleSystem.MinMaxCurve(size.constant*m);
+     var life=main.startLifetime;longest=Mathf.Max(longest,life.mode==ParticleSystemCurveMode.TwoConstants?life.constantMax:life.constant);
+    }
+   }
+   Life=Mathf.Max(Life,plan.Delay+CircleInkSeconds308+longest);
+   _circlePoolLongest=longest;_circlePoolEvery=rate>.01f?1f/rate:0f;
+  }
+  float CircleInkEnd(AreaImpactPlan p)=>Mathf.Max(p.Delay+CircleInkSeconds308,Life-_circlePoolLongest+Mathf.Max(0f,_startedAt-p.CreatedAt));
+  void EmitCirclePools(bool opening,float dt)
+  {
+   int n=opening?1:0;
+   if(!opening&&_circlePoolEvery>0f){_circlePoolClock+=dt;while(_circlePoolClock>=_circlePoolEvery){_circlePoolClock-=_circlePoolEvery;n++;}}
+   if(n>0)foreach(var pool in _circlePools)pool.Emit(n);
+  }
+  // the emit window of the area bodies (particle systems and VFX Graph bodies share it)
+  bool AreaEmitting(Vfx120AreaRemake kind,AreaImpactPlan p,float time)=>kind==Vfx120AreaRemake.BambooField?time>=p.Delay&&time<CircleInkEnd(p):kind==Vfx120AreaRemake.FlameCone?time>=Mathf.Max(0,p.Delay-.12f)&&time<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):time>=p.Delay&&time<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
+  // 11.31: Play when the window opens (the host placed at the caster, facing the fan), Stop when it closes - the graph lets its
+  // particles die out on their own; a scrub backwards starts it over. Display only: no rule, clock or hit reads it.
+  // 11.34 fire18: each graph tests the window at t + its Lead and opens / closes on its own; the ground frame is taken once per
+  // cast, at the first graph to open (with no Vfx308SeamTiming all graphs open together, as before)
+  void SampleAreaGraphs(Vfx120AreaRemake kind,AreaImpactPlan p,float t)
+  {
+   if(t<_areaGraphT){foreach(var g in _areaGraphs)if(g!=null){g.Stop();g.Reinit();}System.Array.Clear(_areaGraphOn,0,_areaGraphOn.Length);_areaGraphPlaced=false;}
+   _areaGraphT=t;
+   for(int i=0;i<_areaGraphs.Length;i++)
+   {
+    var g=_areaGraphs[i];if(g==null)continue;
+    bool on=AreaEmitting(kind,p,t+_areaGraphLead[i]);if(on==_areaGraphOn[i])continue;_areaGraphOn[i]=on;
+    if(!on){g.Stop();continue;}
+    // 11.32: the host stands on the ground point under the origin (the graph's collision plane is its local y = 0) and the
+    // spawn is lifted back to the origin's height, so the soot leaves the brush and drops onto the paving
+    if(!_areaGraphPlaced){_areaGraphGround=AreaGroundUnder(ReceivedOrigin);_areaGraphLift=ReceivedOrigin.y-_areaGraphGround.y;_areaGraphTurn=Quaternion.LookRotation(Vector3.ProjectOnPlane(_areaForward,Vector3.up).sqrMagnitude>1e-4f?Vector3.ProjectOnPlane(_areaForward,Vector3.up):Vector3.forward);_areaGraphPlaced=true;}
+    g.transform.SetPositionAndRotation(_areaGraphGround,_areaGraphTurn);
+    if(g.HasVector3("Initial Position_position"))g.SetVector3("Initial Position_position",new Vector3(0,_areaGraphHeight[i]>=0f?_areaGraphHeight[i]:_areaGraphLift,_areaGraphFwd[i]));
+    g.Play();
+   }
+  }
+  // nearest solid, non-character surface straight below (triggers and character controllers skipped); 1 m below if none in 4 m
+  static Vector3 AreaGroundUnder(Vector3 from)
+  {
+   var hits=Physics.RaycastAll(from+Vector3.up*.1f,Vector3.down,4.1f,~0,QueryTriggerInteraction.Ignore);float best=float.MaxValue;Vector3 at=from+Vector3.down;
+   foreach(var h in hits){if(h.collider is CharacterController||h.collider.attachedRigidbody!=null&&!h.collider.attachedRigidbody.isKinematic)continue;if(h.distance<best){best=h.distance;at=h.point;}}
+   return at;
+  }
   void ClearAreaRemake()
   {
    ClearProceduralRift();
    if(_areaHost!=null){_areaHost.SetActive(false);if(Application.isPlaying)Destroy(_areaHost);else DestroyImmediate(_areaHost);}
    if(_areaWater!=null){if(Application.isPlaying)Destroy(_areaWater);else DestroyImmediate(_areaWater);}
-   _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
+   _riftLines=null;_areaHost=null;_areaWater=null;_areaParticles=null;_areaGraphs=null;_areaGraphOn=null;_areaGraphLead=_areaGraphFwd=_areaGraphHeight=null;_areaGraphPlaced=false;_areaGraphT=0;_areaSeal=null;_areaSim=0;AreaRaised=AreaVisibleShots=0;
   }
- }
+  static float Hash308(int i,int k){float v=Mathf.Sin(i*12.9898f+k*78.233f)*43758.5453f;return v-Mathf.Floor(v);}
+}
 }

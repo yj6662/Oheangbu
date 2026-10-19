@@ -377,7 +377,7 @@ namespace Oheangbu.App.World
                 _savedScale = Mathf.Max(1f, Time.timeScale); Time.timeScale = Profile.HitStopScale; _hitStopLeft = Profile.HitStopSeconds; _shake += Profile.ShakeAmplitude * 2f;
             }
             if (_target == null || !_target.IsAlive || _target.LifeRevision != _targetLife) return;
-            _target.TakeDamage(_damagePerGlyph, AttackProvenance.Create(this, DamageSource.PlayerDirect, null));
+            _target.TakeDamage(_damagePerGlyph, AttackProvenance.CreateMelee(this, DamageSource.PlayerDirect, null));   // #308 WP-16: melee passes a guard
         }
 
         float PoseWeight()

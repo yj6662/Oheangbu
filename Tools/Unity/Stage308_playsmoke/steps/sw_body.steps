@@ -1,0 +1,152 @@
+# sw_body (D308-87, Swing Spec 5d): the five approved whole-body swings in the game - import, editor sample, then 가 5 m (SwingSweep) · 가 12 m (SwingThrow) · 노 (SwingArc) · 고 12 m (SwingStrikeFar) · 걱 (BuffDraw), 0.2x time, behind camera. The first cast also shows the slower unravel (0.35 s).
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call GreatBrush308Build Run import
+sleep 3
+call GreatBrush308Build Run check
+call GreatBrush308Build Run sample
+sleep 2
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_body_first_discard
+sleep 2
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:5
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_sweep_0
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_sweep_1
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_sweep_2
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_sweep_3
+sleep 0.15
+?call Map307Capture Run hold-shot:sw_body_sweep_4
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_body_sweep_5
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_body_sweep_6
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_body_sweep_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_throw_0
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_throw_1
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_throw_2
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_throw_3
+sleep 0.15
+?call Map307Capture Run hold-shot:sw_body_throw_4
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_body_throw_5
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_body_throw_6
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_body_throw_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_arc_0
+sleep 0.65
+?call Map307Capture Run hold-shot:sw_body_arc_1
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_body_arc_2
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_body_arc_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_arc_4
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_arc_5
+sleep 0.50
+?call Map307Capture Run hold-shot:sw_body_arc_6
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_body_arc_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_far_0
+sleep 0.65
+?call Map307Capture Run hold-shot:sw_body_far_1
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_body_far_2
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_body_far_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_far_4
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_far_5
+sleep 0.50
+?call Map307Capture Run hold-shot:sw_body_far_6
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_body_far_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC71
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_body_buff_0
+sleep 0.15
+?call Map307Capture Run hold-shot:sw_body_buff_1
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_buff_2
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_buff_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_body_buff_4
+sleep 0.35
+?call Map307Capture Run hold-shot:sw_body_buff_5
+sleep 0.45
+?call Map307Capture Run hold-shot:sw_body_buff_6
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_body_buff_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

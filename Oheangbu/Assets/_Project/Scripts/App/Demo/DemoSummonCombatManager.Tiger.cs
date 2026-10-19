@@ -104,8 +104,9 @@ namespace Oheangbu.App.Demo
                 CancelTigerAttack(actor);return;
             }
             actor.TigerClawArmed=false;actor.TigerNextClaw++;ConsumedStrikes++;TigerClawContacts++;
-            var result=Wiring.ApplySummonHit(target,plan.TargetLifeRevision,actor.TigerPower,StrikeOrigin(actor),actor.Strike,actor.Cast.Letter);
-            if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;}
+            float huntScale=HuntScale308(actor,target);   // 솜 (D308-115): a weakened enemy takes the claw harder
+            var result=Wiring.ApplySummonHit(target,plan.TargetLifeRevision,actor.TigerPower*huntScale,StrikeOrigin(actor),actor.Strike,actor.Cast.Letter);
+            if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;if(huntScale!=1f)HuntBoostedHits++;}
             if(active!=actor||actor.Root==null)return;
             // Shared callbacks can kill/revive or unregister the fixed target; never transfer the next claw.
             if(!TigerTargetLifeValid(actor))CancelTigerAttack(actor);

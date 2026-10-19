@@ -1,0 +1,152 @@
+# sw_mark (D308-85): finals of one initial side by side (가 간 갓 강 · 나 난 낫 낭) at 8 m, with the live shoulder x .7 and the short commit flash (.15 + .2 s).
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_mark_first_discard
+sleep 2
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_ga_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_ga_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC04
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_gan_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_gan_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_gan_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_gan_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC13
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_gat_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_gat_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_gat_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_gat_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC15
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_gang_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_gang_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_gang_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_gang_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB098
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_na_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_na_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_na_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_na_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB09C
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_nan_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_nan_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_nan_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_nan_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AB
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_nat_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_nat_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_nat_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_nat_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB0AD
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_mark_nang_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_mark_nang_1
+?call SwingProbe308 Run fx
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_mark_nang_2
+sleep 1.8
+?call Map307Capture Run hold-shot:sw_mark_nang_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

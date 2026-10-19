@@ -77,7 +77,7 @@ namespace Oheangbu.App.Demo
             public SummonCombatProfile Profile;
             public SummonCombatClock Clock;
             public SpellCast Cast;
-            public float Power,RootPower,FlamePower,NextPath,NextTarget,RecoveryUntil,AttackStarted,AttackDuration,PreviousRootFront;
+            public float Power,BasePower,RootPower,FlamePower,NextPath,NextTarget,RecoveryUntil,AttackStarted,AttackDuration,PreviousRootFront;
             public EnemyVitals Target,StrikeTarget;
             public uint StrikeRevision;
             public AttackProvenance Strike;
@@ -109,6 +109,12 @@ namespace Oheangbu.App.Demo
             public bool WaterReleased;
             public float WaterPower;
             public long WaterReleaseTargetId;
+            // #308 D308-115: behaviour switches copied at acceptance (Behaviour308.cs).
+            public bool RootMark308,Judge308,Beat308,Hunt308,Ward308;
+            public float JudgeNextAt,BeatDueAt,BeatCooldownUntil;
+            public EnemyVitals BeatTarget;
+            public uint BeatRevision;
+            public WardCharges308 Ward;
         }
         Actor active,prepared;
         readonly SummonCombatSlot slot=new SummonCombatSlot();
@@ -200,6 +206,7 @@ namespace Oheangbu.App.Demo
                 candidate.TigerPower=tigerPower;
                 candidate.ClubPower=clubPower;
                 candidate.WaterPower=waterPower;
+                candidate.BasePower=basePower;
                 candidate.Clock=new SummonCombatClock(profile.FormationSeconds,profile.ActivitySeconds,profile.DissolveSeconds);
                 candidate.Presentation=root.AddComponent<DemoSummonPresentation>();
                 candidate.Presentation.Configure(profile);
@@ -229,6 +236,7 @@ namespace Oheangbu.App.Demo
             candidate.Presentation.DeployOwnsEntrance308=Wiring!=null&&Wiring.DeployOwnsSummon308(cast.Letter);   // #308 forms2 S5 (read-only; it never throws)
             candidate.Root.SetActive(true);candidate.Presentation.Sample(candidate.Clock,0,0);
             Release(previous);AcceptedSummons++;
+            BeginBehaviour308(candidate);
             Wiring.NotifyCombatSummonStarted(cast.Letter,candidate.Root.transform.position);
         }
         public void Clear()
@@ -243,6 +251,7 @@ namespace Oheangbu.App.Demo
             actor.TigerPlan?.Cancel();
             actor.ClubPlan?.Cancel();
             actor.WaterPlan?.Cancel();
+            EndBehaviour308(actor);
             actor.Clock.EndImmediately();
             if(actor.Root!=null)
             {
@@ -257,6 +266,8 @@ namespace Oheangbu.App.Demo
             if(active==null||scaledDelta==0)return;
             if(!isActiveAndEnabled||Wiring==null||!Wiring.isActiveAndEnabled||Wiring.SummonPlayer==null||PlayerVitals!=null&&PlayerVitals.Hp01<=0||VehicleSeat!=null&&VehicleSeat.Occupied)
             {Clear();return;}
+            TickBehaviour308();
+            if(active==null)return;
             // Small physical steps keep hitch recovery from jumping across thin walls or missing a strike boundary.
             float remaining=scaledDelta;
             while(active!=null&&remaining>0)
@@ -315,9 +326,9 @@ namespace Oheangbu.App.Demo
                         actor.Target=null;
                         actor.KeepingDistance=false;
                         if(!returning)actor.Clock.SetActivityPhase(SummonPhase.Following);
-                        Vector3 forward=Vector3.ProjectOnPlane(Wiring.SummonPlayer.forward,Vector3.up).normalized;
-                        Vector3 follow=player-forward*actor.Profile.FollowDistance;
-                        if(HorizontalDistance(before,player)>actor.Profile.FollowDistance+.4f||returning)Navigate(actor,follow,dt,.35f);
+                        Vector3 follow=FollowSpot308(actor,player);
+                        if(!returning&&BesideTarget308(actor)){if(HorizontalDistance(before,follow)>.6f)Navigate(actor,follow,dt,.35f);else actor.HasPath=false;}
+                        else if(HorizontalDistance(before,player)>FollowDistance308(actor)+.4f||returning)Navigate(actor,follow,dt,.35f);
                         else actor.HasPath=false;
                     }
                 }
@@ -337,6 +348,7 @@ namespace Oheangbu.App.Demo
         }
         EnemyVitals FindTarget(Actor actor)
         {
+            if(TryBehaviourTarget308(actor,out var behaviourTarget))return behaviourTarget;
             var locked=Wiring.SummonLockTarget;
             if(Registered(locked)&&Eligible(actor,locked)&&Sight(actor,locked))return locked;
             EnemyVitals nearest=null;float distance=float.MaxValue;
@@ -403,7 +415,7 @@ namespace Oheangbu.App.Demo
             if(actor.Clock.PendingAttackId==0)ConsumedStrikes++;
             if(!hit)return;
             var result=Wiring.ApplySummonHit(target,actor.StrikeRevision,actor.Power,StrikeOrigin(actor),actor.Strike,actor.Cast.Letter);
-            if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;}
+            if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;MarkRoot308(actor,target);}
         }
         void BeginRootAttack(Actor actor,float dt)
         {
@@ -524,7 +536,7 @@ namespace Oheangbu.App.Demo
                 Vector3 rootGround=plan.GroundAt(along);
                 if(Mathf.Abs(rootGround.y-targetGround.y)>actor.Profile.RootMaxStepHeight+.05f)continue;
                 var result=Wiring.ApplySummonHit(target,snapshot.LifeRevision,actor.RootPower,rootGround+Vector3.up*.2f,actor.Strike,actor.Cast.Letter);
-                if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;}
+                if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;MarkRoot308(actor,target);}
                 if(active!=actor||actor.Root==null)return;
             }
         }
@@ -566,6 +578,7 @@ namespace Oheangbu.App.Demo
         void BeginFlameAttack(Actor actor,float dt)
         {
             var profile=actor.Profile;
+            if(!JudgeAllows308(actor))return;
             if(!actor.Clock.CanAttack||actor.Clock.ActivityRemaining<=profile.FlameWindupSeconds+profile.FlameSpraySeconds||
                 !TryFace(actor,actor.Target.transform.position,dt*240))return;
             Vector3 origin=actor.Root.transform.TransformPoint(profile.FlameOriginOffset);
@@ -602,6 +615,7 @@ namespace Oheangbu.App.Demo
                 CancelFlameAttack(actor);return;
             }
             actor.FlameReleased=true;ConsumedStrikes++;
+            if(actor.Judge308){actor.JudgeNextAt=actor.Clock.Elapsed+actor.Profile.JudgeIntervalSeconds;JudgeShots++;}
             foreach(var snapshot in actor.FlameTargets)
             {
                 if(snapshot.Resolved)continue;snapshot.Resolved=true;
@@ -609,7 +623,11 @@ namespace Oheangbu.App.Demo
                 if(target==null||!target.isActiveAndEnabled||!target.IsAlive||target.LifeRevision!=snapshot.LifeRevision||
                     !Registered(target)||!plan.Contains(FlameAimPoint(target))||
                     HorizontalDistance(target.transform.position,Wiring.SummonPlayer.position)>actor.Profile.LeashRange)continue;
-                var result=Wiring.ApplySummonHit(target,snapshot.LifeRevision,actor.FlamePower,plan.Origin,actor.Strike,actor.Cast.Letter);
+                // 놈 (D308-115): only a sin-marked enemy is burned; the mark is spent by the hit.
+                if(actor.Judge308&&!SinMarked308(actor,target))continue;
+                float flamePower=actor.Judge308?actor.FlamePower*actor.Profile.JudgeMultiplier:actor.FlamePower;
+                var result=Wiring.ApplySummonHit(target,snapshot.LifeRevision,flamePower,plan.Origin,actor.Strike,actor.Cast.Letter);
+                if(actor.Judge308)sinMarks308.Remove(target);
                 if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;}
                 if(active!=actor||actor.Root==null)return;
             }

@@ -1,0 +1,95 @@
+# sw_j (2026-10-14): swing ink (SPEC-SPELL-VFX-OVERHAUL-308 11.10 / 11.11) against the real swing clips - third person.
+# Five states: sweep 나, arc 노, slam 곰, plant 거, draw 걱. Each cast three times, shot at a different delay. Nothing is connected.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_j_first_discard
+sleep 3
+?call SwingProbe308 Run cast:uB098
+sleep 0.15
+?call Map307Capture Run hold-shot:sw_j_sweep_0
+sleep 4
+?call SwingProbe308 Run cast:uB098
+sleep 0.32
+?call Map307Capture Run hold-shot:sw_j_sweep_1
+sleep 4
+?call SwingProbe308 Run cast:uB098
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_j_sweep_2
+sleep 4
+?call SwingProbe308 Run ink
+sleep 4
+?call SwingProbe308 Run cast:uB178
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_j_arc_0
+sleep 4
+?call SwingProbe308 Run cast:uB178
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_j_arc_1
+sleep 4
+?call SwingProbe308 Run cast:uB178
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_j_arc_2
+sleep 4
+?call SwingProbe308 Run ink
+sleep 4
+?call SwingProbe308 Run cast:uACF0
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_j_slam_0
+sleep 4
+?call SwingProbe308 Run cast:uACF0
+sleep 0.55
+?call Map307Capture Run hold-shot:sw_j_slam_1
+sleep 4
+?call SwingProbe308 Run cast:uACF0
+sleep 0.85
+?call Map307Capture Run hold-shot:sw_j_slam_2
+sleep 4
+?call SwingProbe308 Run ink
+sleep 4
+?call SwingProbe308 Run cast:uAC70
+sleep 0.1
+?call Map307Capture Run hold-shot:sw_j_plant_0
+sleep 4
+?call SwingProbe308 Run cast:uAC70
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_j_plant_1
+sleep 4
+?call SwingProbe308 Run cast:uAC70
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_j_plant_2
+sleep 4
+?call SwingProbe308 Run ink
+sleep 4
+?call SwingProbe308 Run cast:uAC71
+sleep 0.1
+?call Map307Capture Run hold-shot:sw_j_draw_0
+sleep 4
+?call SwingProbe308 Run cast:uAC71
+sleep 0.3
+?call Map307Capture Run hold-shot:sw_j_draw_1
+sleep 4
+?call SwingProbe308 Run cast:uAC71
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_j_draw_2
+sleep 4
+?call SwingProbe308 Run ink
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

@@ -29,12 +29,12 @@ namespace Pure308
         {
             if (c.Build == null || !c.Build.Ok) { r.Check("W07", false, "WP-07 cases need the table"); return; }
 
-            // grid cells by index (no glyph is named): 6 wood single + ieung, 30 fire single + ieung -> mod.pierce /
+            // grid cells by index (no glyph is named): 6 wood single + ieung -> mod.pierce (30 fire single + ieung left for mod.guardbreak, WP-15 D308-113) /
             // 53 earth single + siot, 41 fire cone + siot -> mod.armorbreak / 75 metal single + nieun, 63 earth path + nieun -> mod.brand /
             // 65 earth path + siot -> mod.dull / 113 water path + siot -> mod.weaken
-            int[] cells = { 6, 30, 53, 41, 75, 63, 65, 113 };
-            string[] handlers = { "mod.pierce", "mod.pierce", "mod.armorbreak", "mod.armorbreak", "mod.brand", "mod.brand", "mod.dull", "mod.weaken" };
-            SpellRow pierceWood = c.RowAt(6), pierceFire = c.RowAt(30), breakOne = c.RowAt(53), breakCone = c.RowAt(41);
+            int[] cells = { 6, 53, 41, 75, 63, 65, 113 };
+            string[] handlers = { "mod.pierce", "mod.armorbreak", "mod.armorbreak", "mod.brand", "mod.brand", "mod.dull", "mod.weaken" };
+            SpellRow pierceWood = c.RowAt(6), guardBreak = c.RowAt(30), breakOne = c.RowAt(53), breakCone = c.RowAt(41);
             SpellRow brandOne = c.RowAt(75), brandPath = c.RowAt(63), dullPath = c.RowAt(65), weakenPath = c.RowAt(113);
 
             // ---- the rows ----
@@ -57,11 +57,11 @@ namespace Pure308
                     cast.AreaShape == row.AreaShape && cast.Element == row.Element;
                 if (!ok) wrong.Add(cells[i] + ":" + row.Handler + ":" + locked + "/" + open);
             }
-            r.Check("W07", wrong.Count == 0, "the eight rows carry their mod.* handler and no legacy feature, inherit kind / shape / power / speed from the glyph " +
+            r.Check("W07", wrong.Count == 0, "the seven rows carry their mod.* handler and no legacy feature, inherit kind / shape / power / speed from the glyph " +
                 "without a final, stay Locked behind their final consonant and cast with base power x brush once it is open", string.Join(" ", wrong));
             r.Check("W07", brandOne.Has("brand.scale") && brandOne.Has("brand.duration") && brandPath.Has("brand.scale") && brandPath.Has("brand.duration") &&
                 breakOne.Has("break.defence") && breakOne.Has("break.duration") && breakCone.Has("break.defence") && breakCone.Has("break.duration") &&
-                pierceWood.Has("pierce.defence") && pierceFire.Has("pierce.defence") && dullPath.Has("dull.scale") && dullPath.Has("dull.duration") &&
+                pierceWood.Has("pierce.defence") && dullPath.Has("dull.scale") && dullPath.Has("dull.duration") &&
                 weakenPath.Has("weaken.scale") && weakenPath.Has("weaken.duration"), "every number the handlers read is in the row (rule sheet), none in code");
 
             // ---- an untouched enemy: the intake before WP-07, bit for bit ----
@@ -113,7 +113,7 @@ namespace Pure308
             const float Armour = .4f;   // TEST target: an armoured enemy. Enemy data; no enemy of the project has defence yet (default 0)
 
             // ---- mod.pierce: the hit ignores defence ----
-            foreach (var row in new[] { pierceWood, pierceFire })
+            foreach (var row in new[] { pierceWood })
             {
                 string clause = row.Letter + "-1";
                 float share = row.F("pierce.defence", 0f);
@@ -144,8 +144,8 @@ namespace Pure308
                 for (long id = 1; id <= 100; id++) many.IgnoreDefence(id, 1f);
                 r.Check("W07", many.IgnoredShare(1) == 0f && many.IgnoredShare(36) == 0f && many.IgnoredShare(37) == 1f && many.IgnoredShare(100) == 1f,
                     "remembered hit ids are bounded: the oldest are dropped (a bound, not a balance number)");
-                r.Check("W07", pierceWood.Handler == pierceFire.Handler && pierceWood.F("pierce.defence", 0f) == pierceFire.F("pierce.defence", -1f) && pierceWood.Element != pierceFire.Element,
-                    "the two pierce glyphs do the same thing in two elements (canon: same act, different body)");
+                r.Check("W07", guardBreak.Handler == "mod.guardbreak" && !guardBreak.Has("pierce.defence") && pierceWood.Element != guardBreak.Element,
+                    "#308 WP-15 (D308-113): the fire twin of the pierce glyph is no longer a copy of it; it breaks the guard (Cases_WP15)", guardBreak.Handler);
             }
 
             // ---- mod.armorbreak: defence lowered for a while ----

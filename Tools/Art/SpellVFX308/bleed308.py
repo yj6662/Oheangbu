@@ -52,6 +52,10 @@ LOOK = {
     'earth_heave': dict(cell=256, curl=1.8, scale=18, bias=(0, .25), spread=.7, keep=.92, pour=.85, heart=.8, out=.2, dense=.85, pig=(.47, .38, .26), ink=(.14, .10, .06)),
     'ink_pool': dict(cell=256, curl=1.3, scale=18, bias=(0, 0), spread=.6, keep=.92, pour=.9, heart=.22, out=.9, dense=.95, pig=(.13, .2, .15), ink=(.03, .05, .04)),      # 5th pass: the ground of a circle
     'water_crest': dict(cell=256, curl=1.7, scale=16, bias=(0, .4), spread=.55, keep=.9, pour=.9, heart=.95, dense=.85, pig=(.14, .25, .38), ink=(.03, .05, .09)),
+    # 6th pass (D308-83): the ink before the spell. hair = bristle lines along +X cut into the wash (a thrown stroke has a direction)
+    'ink_throw': dict(cell=256, curl=.9, scale=12, bias=(.8, .3), spread=.4, keep=.86, pour=.95, heart=1.0, dense=.8, hair=.55, pig=(.16, .16, .17), ink=(.03, .03, .04)),
+    'ink_wisp': dict(cell=256, curl=2.0, scale=14, bias=(-.8, -.5), spread=.5, keep=.72, pour=.6, heart=.4, loop=True, dense=.9, hair=.2, pig=(.16, .16, .17), ink=(.03, .03, .04)),
+    'ink_gather': dict(cell=256, curl=1.5, scale=14, bias=(0, 0), spread=.45, keep=.82, pour=.9, heart=.8, out=-.5, dense=.85, pig=(.16, .16, .17), ink=(.03, .03, .04)),
 }
 PAPER = np.array((.87, .84, .77), np.float32)
 HEAT = np.array((.93, .46, .13), np.float32)
@@ -134,6 +138,12 @@ def pack(name):
             a = np.asarray(Image.open(plain[i]).convert('RGB'), np.float32) / 255
             rim = np.clip(a[..., 2] - ndi.gaussian_filter(a[..., 2], 9), 0, 1)
         hot, heart, density = a[..., 0], a[..., 1], a[..., 2]
+        if look.get('hair'):
+            # bristle lines: noise that changes fast across the stroke and slowly along it, the same for every cel of a sheet
+            hr = np.random.default_rng(sum(map(ord, name)) + 97).standard_normal(density.shape).astype(np.float32)
+            hr = ndi.gaussian_filter(hr, (1.3, density.shape[1] / 9.0), mode='nearest'); hr = hr / (np.abs(hr).max() + 1e-6)
+            comb = np.clip(1.0 - look['hair'] * np.clip(hr * 2.2 + .35, 0, 1), 0, 1)
+            density = density * comb; heart = heart * np.clip(comb * 1.15, 0, 1)
         # paler toward the edge: a soft curve on the wash, the heart stays full; the rim is where the ink pooled
         alpha = np.clip(np.maximum(density ** look['dense'] * .95, heart), 0, 1)
         rim = np.clip(rim * 3.2, 0, 1) * (1 - np.clip(heart * 1.2, 0, 1))

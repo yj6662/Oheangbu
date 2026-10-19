@@ -1,4 +1,5 @@
 using Oheangbu.Core.Events;
+using Oheangbu.Data;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -28,6 +29,9 @@ namespace Oheangbu.Combat
         private bool _drawingPresentationActive;
         private float _closeupHold;   // #300 cast follow-through: seconds the close-up is kept after the draw mode ends
         private bool _fovReturning;
+        // SPEC-PACE-308 section 6 (D308-116): sprint FOV is added as a difference so other FOV writers (impact breath, render offset) keep theirs
+        private float _sprintFovDegrees, _sprintFovSmooth = .15f, _sprint01, _sprintFovApplied;
+        private int _sprintFrame308 = -10;
 
         public bool IsShoulder => _shoulder;
         public bool IsDrawingCloseup => _drawing;
@@ -43,6 +47,8 @@ namespace Oheangbu.Combat
             ApplyBodyVisibility(IsBodyVisible);
         }
         public void SetBodyRenderers(Renderer[] renderers) { _bodyRenderers = renderers; }
+        // the motor reports a running frame (presentation only); a frame without a report - stopped, riding, a dialog - is not running
+        public void SetSprinting308(bool sprinting) { if (sprinting) _sprintFrame308 = Time.frameCount; }
 
         // #300 presentation only: keep the close-up pose and FOV for a moment after the draw mode ended (the cast
         // follow-through arm is framed by it). 0 releases the hold; a new draw mode supersedes it.
@@ -55,6 +61,7 @@ namespace Oheangbu.Combat
                 {
                     _cam.fieldOfView = _config.DrawCloseupFov;
                     _fovReturning = false;
+                    _sprintFovApplied = 0f;
                 }
             }
             else if (_closeupHold > 0f)
@@ -83,6 +90,9 @@ namespace Oheangbu.Combat
         {
             _cam = _camera != null ? _camera.GetComponent<Camera>() : null;
             if (_cam != null) _baseFov = _cam.fieldOfView;
+            var pace = PaceProfile308.Load();
+            _sprintFovDegrees = PaceProfile308.SprintFovOf(pace);
+            if (_sprintFovDegrees > 0f) _sprintFovSmooth = pace.SprintFovSmoothSeconds;
         }
 
         private void OnEnable()
@@ -118,6 +128,7 @@ namespace Oheangbu.Combat
                 _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, _baseFov, blend);
                 if (Mathf.Abs(_cam.fieldOfView - _baseFov) < .01f) { _cam.fieldOfView = _baseFov; _fovReturning = false; }
             }
+            UpdateSprintFov308(dt, closeup);
             _localPose = Vector3.Lerp(_localPose, target, blend);
             if ((target - _localPose).sqrMagnitude < SnapSqrEpsilon) _localPose = target;
 
@@ -129,6 +140,23 @@ namespace Oheangbu.Combat
             float show = _config.BodyShowDistance;
             ApplyBodyVisibility(!_drawingPresentationActive && _camera.localPosition.sqrMagnitude > show * show);
         }
+
+        // The close-up and its return own the whole FOV (they write it outright and zero the added sum); outside them the sprint
+        // share follows the run state over SprintFovSmoothSeconds of real time.
+        private void UpdateSprintFov308(float dt, bool closeup)
+        {
+            if (_cam == null || _sprintFovDegrees <= 0f) return;
+            bool sprinting = Time.frameCount - _sprintFrame308 <= 1;
+            _sprint01 = NextSprint01(_sprint01, sprinting && !closeup, dt, _sprintFovSmooth);
+            if (closeup || _fovReturning) return;
+            float target = _sprint01 * _sprintFovDegrees;
+            _cam.fieldOfView += target - _sprintFovApplied;
+            _sprintFovApplied = target;
+        }
+
+        // PURE308
+        public static float NextSprint01(float current, bool sprinting, float dt, float smoothSeconds)
+            => Mathf.MoveTowards(current, sprinting ? 1f : 0f, dt / Mathf.Max(.01f, smoothSeconds));
 
         // 피벗→목표 지점 SphereCast — 지면·벽에 막히면 즉시 당겨 붙이고, 풀리면 점진 복원.
         // 피벗은 플레이어 캡슐 내부라 자기 몸(시작 겹침 콜라이더)은 캐스트에서 제외된다.
@@ -157,6 +185,7 @@ namespace Oheangbu.Combat
             if (_cam == null || _config == null) return;
             bool closeup = drawing && _config.DrawCloseupFov > 0f;
             _cam.fieldOfView = closeup ? _config.DrawCloseupFov : _baseFov;
+            _sprintFovApplied = 0f;
         }
 
         private void ApplyBodyVisibility(bool show)

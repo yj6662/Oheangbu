@@ -1,0 +1,72 @@
+# sw_o (2026-10-14): D308-84 circle bridge as ground blots (SwingInk308 Run child of the slam prefab). Rebuild the swing ink first,
+# then 고 near 4 m / far 12 m / free aim at timeScale 0.2, and 가 5 m to check the single stem lays no blots.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run swingink
+sleep 5
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_o_first_discard
+sleep 3
+?call SwingProbe308 Run target:4
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 3.0
+?call Map307Capture Run hold-shot:sw_o_near_go_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_o_near_go_1
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_o_near_go_2
+sleep 1.6
+?call Map307Capture Run hold-shot:sw_o_near_go_3
+sleep 4.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 3.0
+?call Map307Capture Run hold-shot:sw_o_far_go_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_o_far_go_1
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_o_far_go_2
+sleep 1.6
+?call Map307Capture Run hold-shot:sw_o_far_go_3
+sleep 4.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:5
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 3.0
+?call Map307Capture Run hold-shot:sw_o_near_ga_0
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_o_near_ga_1
+sleep 0.8
+?call Map307Capture Run hold-shot:sw_o_near_ga_2
+sleep 1.6
+?call Map307Capture Run hold-shot:sw_o_near_ga_3
+sleep 4.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

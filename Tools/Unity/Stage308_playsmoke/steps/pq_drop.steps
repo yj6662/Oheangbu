@@ -1,0 +1,153 @@
+# pq_drop (user questionnaire 2026-10-15 "술식 쪽만 빼기" - no drops off the flight, the hit, the guard membrane; "여러겹의 불 입자가 겹쳐있는게 너무 부자연스럽게" - 노 = a third of the sheets, larger) - 노 6 m, 가 · 마 · 아 8 m, 거 6 m (D308-87 polish, Spec 11.30)
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run guard
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run connect:attack
+sleep 3
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.35
+?call SwingProbe308 Run cast:uB178
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_no_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_no_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_no_2
+?call SwingProbe308 Run fx
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_drop_no_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_drop_no_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_drop_no_5
+?call SwingProbe308 Run fx
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_drop_no_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_drop_no_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uAC00
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_ga_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_ga_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_ga_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_drop_ga_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_drop_ga_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_drop_ga_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_drop_ga_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_drop_ga_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uB9C8
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_ma_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_ma_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_ma_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_drop_ma_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_drop_ma_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_drop_ma_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_drop_ma_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_drop_ma_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uC544
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_a_0
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_a_1
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_a_2
+sleep 0.15
+?call Map307Capture Run hold-shot:pq_drop_a_3
+sleep 0.25
+?call Map307Capture Run hold-shot:pq_drop_a_4
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_drop_a_5
+sleep 0.60
+?call Map307Capture Run hold-shot:pq_drop_a_6
+sleep 1.00
+?call Map307Capture Run hold-shot:pq_drop_a_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run cast:uAC70
+sleep 0.10
+?call Map307Capture Run hold-shot:pq_drop_geo_0
+sleep 0.30
+?call Map307Capture Run hold-shot:pq_drop_geo_1
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_drop_geo_2
+?call SwingProbe308 Run slow:1
+sleep 0.40
+?call Map307Capture Run hold-shot:pq_drop_geo_3
+sleep 0.90
+?call Map307Capture Run hold-shot:pq_drop_geo_4
+sleep 1.40
+?call Map307Capture Run hold-shot:pq_drop_geo_5
+sleep 0.70
+?call Map307Capture Run hold-shot:pq_drop_geo_6
+sleep 0.80
+?call Map307Capture Run hold-shot:pq_drop_geo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

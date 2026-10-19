@@ -1,5 +1,6 @@
 using System;
 using Oheangbu.Core.Domain;
+using Oheangbu.Data;
 using UnityEngine;
 
 namespace Oheangbu.Combat
@@ -22,7 +23,10 @@ namespace Oheangbu.Combat
         private bool LegacyMeleeSelected => _attackMode == AttackMode.MeleeOnly || (_attackMode == AttackMode.LegacyDistance && _player != null && Distance() <= (_config != null ? _config.EnemyMeleePreferRange : 3f));
         public float AttackDamage => ProfileActive ? _attackProfile.Damage : LegacyMeleeSelected ? (_config != null ? _config.MeleeDamage : 15f) : (_config != null ? _config.RangedDamage : 12f);
         public float TelegraphDuration => ProfileActive ? _attackProfile.Telegraph : LegacyMeleeSelected ? (_config != null ? _config.MeleeTelegraph : .8f) : (_config != null ? _config.RangedTelegraph : 1.2f);
-        public float RecoveryDuration => ProfileActive ? _attackProfile.Recovery : .4f;
+        // SPEC-PACE-308 section 5 (D308-116): one recovery for the state clock, its progress and the rig motion; the pace scale is read once in Awake
+        public float RecoveryDuration => (ProfileActive ? _attackProfile.Recovery : .4f) * _recoveryScale308;
+        private float _recoveryScale308 = 1f;
+        private void LoadPace308() => _recoveryScale308 = PaceProfile308.RecoveryScaleOf(PaceProfile308.Load());
         public AttackProvenance CurrentAttack => _attack;
         public Vector3 AuthoredTargetPoint => _authoredPoint;
         public event Action<EnemyAttackCue> AttackTelegraphed;

@@ -21,7 +21,8 @@
         "Unity.AI.Navigation.Editor",
         "Unity.Splines",
         "Unity.Splines.Editor",
-        "Unity.ProBuilder"
+        "Unity.ProBuilder",
+        "Unity.VisualEffectGraph.Runtime"
     ],
     "includePlatforms": [
         "Editor"

@@ -17,13 +17,17 @@ namespace Oheangbu.Combat
         const int Capacity = 64;
 
         float _share;                                         // share of a hit the stance stops, 0 = not guarding
+        float _breakUntil = float.NegativeInfinity;           // #308 WP-15: no guard before this time (broken by 낭)
         readonly List<long> _through = new List<long>();
 
         public bool Raised => _share > 0f;
         public float Share => _share;
-        public bool IsEmpty => !(_share > 0f) && _through.Count == 0;
+        public bool Broken => !float.IsNegativeInfinity(_breakUntil);
+        public float BreakUntil => _breakUntil;
+        public bool IsEmpty => !(_share > 0f) && _through.Count == 0 && !Broken;
 
         // share = how much of every hit the stance stops, 0..1 (1 = all of it). false = nothing changed.
+        // Knows no clock, so it does not see a break: a caller that can meet 낭 uses Raise(share, now).
         public bool Raise(float share)
         {
             if (!float.IsFinite(share) || !(share > 0f)) return false;
@@ -31,7 +35,32 @@ namespace Oheangbu.Combat
             return true;
         }
 
+        // #308 WP-15: the same, refused while the guard is broken (CanRaise false at `now`).
+        public bool Raise(float share, float now) => CanRaise(now) && Raise(share);
+
         public void Lower() { _share = 0f; }
+
+        // #308 WP-15 (낭): the guard drops now and cannot be raised again before `until`. A later break only moves the time
+        // (no stacking: the latest hit decides). false = nothing changed.
+        public bool Break(float until)
+        {
+            if (!float.IsFinite(until)) return false;
+            _share = 0f;
+            _breakUntil = until;
+            return true;
+        }
+
+        // A broken guard is allowed again from its time on. The break is forgotten the first time it is asked after that.
+        public bool CanRaise(float now)
+        {
+            if (float.IsNegativeInfinity(_breakUntil)) return true;
+            if (now < _breakUntil) return false;
+            _breakUntil = float.NegativeInfinity;
+            return true;
+        }
+
+        // The caster died, rested or left: the break it set ends now.
+        public void EndBreak() { _breakUntil = float.NegativeInfinity; }
 
         // The hit with this attack id ignores the stance. Used up when that hit is taken.
         public bool LetThrough(long attackId)
@@ -61,7 +90,7 @@ namespace Oheangbu.Combat
             return damage * (1f - _share);
         }
 
-        public void Clear() { _share = 0f; _through.Clear(); }
+        public void Clear() { _share = 0f; _breakUntil = float.NegativeInfinity; _through.Clear(); }
     }
 
     // What stands between this enemy's strikes and the player.
@@ -74,7 +103,9 @@ namespace Oheangbu.Combat
     // Nothing here gives the player anything but the missed strike itself.
     public sealed class EnemyStrikeVeil308
     {
-        struct Entry { public long Owner; public float Until, Share; public bool Screen; }
+        // #308 WP-15 (몽): Blind = the enemy has lost sight of the player (its brain stops chasing). Kept apart from the
+        // blur share: a blind entry counts for neither MissShare nor Screened.
+        struct Entry { public long Owner; public float Until, Share; public bool Screen, Blind; }
 
         // Slack of the credit comparison: ten strikes at a share of 0.1 must add up to one miss whatever the float says.
         const float Slack = 1e-4f;
@@ -100,6 +131,25 @@ namespace Oheangbu.Combat
             return true;
         }
 
+        // #308 WP-15: this enemy cannot see the player until `until` (a brain reads Blinded and drops the chase).
+        public bool Blind(long owner, float until)
+        {
+            if (owner <= 0 || !float.IsFinite(until)) return false;
+            Set(new Entry { Owner = owner, Until = until, Blind = true });
+            return true;
+        }
+
+        public bool Blinded(float now)
+        {
+            for (int i = _entries.Count - 1; i >= 0; i--)
+            {
+                var entry = _entries[i];
+                if (entry.Until <= now) { _entries.RemoveAt(i); continue; }
+                if (entry.Blind) return true;
+            }
+            return false;
+        }
+
         public void Remove(long owner)
         {
             for (int i = _entries.Count - 1; i >= 0; i--)
@@ -114,7 +164,7 @@ namespace Oheangbu.Combat
             {
                 var entry = _entries[i];
                 if (entry.Until <= now) { _entries.RemoveAt(i); continue; }
-                if (!entry.Screen && entry.Share > best) best = entry.Share;
+                if (!entry.Screen && !entry.Blind && entry.Share > best) best = entry.Share;
             }
             return best;
         }
@@ -149,7 +199,8 @@ namespace Oheangbu.Combat
         void Set(Entry entry)
         {
             for (int i = 0; i < _entries.Count; i++)
-                if (_entries[i].Owner == entry.Owner && _entries[i].Screen == entry.Screen) { _entries[i] = entry; return; }
+                if (_entries[i].Owner == entry.Owner && _entries[i].Screen == entry.Screen && _entries[i].Blind == entry.Blind)
+                { _entries[i] = entry; return; }
             _entries.Add(entry);
         }
     }

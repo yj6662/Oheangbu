@@ -1,0 +1,64 @@
+# 11.38 D308-108 (user 2026-10-17 "게임 적용까지 끝내서, 테스트 씬에서 촬영까지 끝내줘", TEST):
+# 1) 소 (Scatter, 24 needles) at 6 m - the impact marks of needles that pass beside the body sit on the edge they passed;
+# 2) 곡 (range ㄱ) at 6 m - one foot stain per enemy (D308-104 e), no hit pool;
+# 3) 곰 (summon) - the core lights for the first two cels of activity only (_CoreGlow), then pigment.
+# Builders are not run (no asset is written): the lab scene is built, then Play. Each cast at timeScale .25, recorded on its own.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d108_so:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uC18C
+sleep 11
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d108_so_end
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d108_gok:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACE1
+sleep 11
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d108_gok_end
+?call SwingProbe308 Run slow:1
+sleep 5
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d108_gom:22
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACF0
+sleep 19
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run shot:lab_d108_gom_end
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

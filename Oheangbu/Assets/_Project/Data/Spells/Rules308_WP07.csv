@@ -5,7 +5,6 @@
 # dull.scale = multiplier of the enemy's next strike (once) / weaken.scale = multiplier of every strike / durations in seconds
 글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
 강,replace,mod.pierce,,,,,base,,,,,,,,,,,,pierce.defence=1
-낭,replace,mod.pierce,,,,,base,,,,,,,,,,,,pierce.defence=1
 놋,replace,mod.armorbreak,,,,,base,,,,,,,,,,,,break.defence=0.2;break.duration=8
 맛,replace,mod.armorbreak,,,,,base,,,,,,,,,,,,break.defence=0.3;break.duration=10
 몬,replace,mod.brand,,,,,base,,,,,,,,,,,,brand.scale=1.2;brand.duration=8

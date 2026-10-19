@@ -1,0 +1,120 @@
+# sw_glyph (D308-87, VFX Spec 11.27): parry / ward / buff casts no longer flash the letter in the element colour - the letter unravels into the brush at the commit. 거 · 너 6 m · 구 · 걱, 0.2x time.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call PlayProbe308 Run log:reset
+?call Map307Capture Run hold-shot:sw_glyph_first_discard
+sleep 2
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC70
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geo_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_glyph_geo_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_glyph_geo_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_glyph_geo_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_glyph_geo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB108
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_neo_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_neo_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_neo_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_neo_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_glyph_neo_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_glyph_neo_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_glyph_neo_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_glyph_neo_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAD6C
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_gu_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_gu_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_gu_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_gu_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_glyph_gu_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_glyph_gu_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_glyph_gu_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_glyph_gu_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC71
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geok_0
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geok_1
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geok_2
+sleep 0.10
+?call Map307Capture Run hold-shot:sw_glyph_geok_3
+sleep 0.25
+?call Map307Capture Run hold-shot:sw_glyph_geok_4
+sleep 0.75
+?call Map307Capture Run hold-shot:sw_glyph_geok_5
+sleep 1.25
+?call Map307Capture Run hold-shot:sw_glyph_geok_6
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_glyph_geok_7
+sleep 2
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

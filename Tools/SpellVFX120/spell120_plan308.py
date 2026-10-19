@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CSV_PATH = ROOT / 'Docs' / '오행부_작도어휘_v0_1.csv'
 OUT = ROOT / 'Art' / 'SpellVFX120' / 'Spell120_308'
-EXPECTED_SHA = '467f1dc904cf261bf8a1b04213fcc46b04080037ee5caf6ec1252eb4b11bc23f'
+EXPECTED_SHA = '117a2689ed10b427a0bb2ff9df37b5b5bf38536bfa6b2c0fcad657ac37c3b776'  # D308-113 (2026-10-18): 낭 · 몽 rows
 COUNTS = {'공격': 50, '상합 설치': 5, '패링': 5, '버프': 25, '소환': 5, '방벽': 5, '필드': 5, '공백': 20}
 
 # handler id -> (work package, glyphs). 'legacy' handlers wrap code that exists today (the 36 resolvable glyphs).
@@ -37,7 +37,7 @@ HANDLERS = [
     # WP-06 world-fixed zones
     ('zone.slow', 'WP-06', '곡'), ('zone.spikes', 'WP-06', '곳'), ('cone.healzone', 'WP-06', '녹'), ('zone.tree', 'WP-06', '검'),
     # WP-07 enemy modifiers (gated: Q4)
-    ('mod.brand', 'WP-07', '산몬'), ('mod.armorbreak', 'WP-07', '맛놋'), ('mod.pierce', 'WP-07', '강낭'),
+    ('mod.brand', 'WP-07', '산몬'), ('mod.armorbreak', 'WP-07', '맛놋'), ('mod.pierce', 'WP-07', '강'),
     ('mod.dull', 'WP-07', '못'), ('mod.weaken', 'WP-07', '옷'),
     # WP-08 self buffs
     ('buff.burstheal', 'WP-08', '건'), ('buff.empower', 'WP-08', '넌'), ('buff.steadfast', 'WP-08', '넘'),
@@ -51,9 +51,11 @@ HANDLERS = [
     ('field.burn', 'WP-12', '눈'), ('field.cut', 'WP-12', '숫'), ('field.purify', 'WP-12', '웅'),
     # WP-13 attacks that need enemy-side systems first (gated: Q5)
     ('intercept.single', 'WP-13', '상'), ('intercept.barrage', 'WP-13', '송'), ('single.unblockable', 'WP-13', '삿'),
-    ('zone.haze', 'WP-13', '농몽'), ('path.purge', 'WP-13', '온'), ('single.cover', 'WP-13', '막'), ('path.cover', 'WP-13', '공'),
+    ('zone.haze', 'WP-13', '농'), ('path.purge', 'WP-13', '온'), ('single.cover', 'WP-13', '막'), ('path.cover', 'WP-13', '공'),
     # WP-14 sword forms (gated: Q7)
     ('sword.form', 'WP-14', '것넛멋섯엇'),
+    # WP-15 pair split (D308-113): 낭 strips the timed guard, 몽 makes enemies lose the player
+    ('mod.guardbreak', 'WP-15', '낭'), ('zone.blind', 'WP-15', '몽'),
 ]
 # Opened by the user answers of 2026-10-04 (DECISIONS D308-13) and built in phase B; the question that gated each is kept for the record.
 GATED = {'WP-07': 'Q4', 'WP-12': 'Q5', 'WP-13': 'Q5', 'WP-14': 'Q7'}
@@ -117,7 +119,7 @@ CLAUSES = {
     '난': [('부가 효과 없이', 'L2', '통제·영역·파생 판정이 없다'), ('최대 위력의 한 방', 'L2', '단일 착탄 1건, 기본 위력 = 단발 행 중 최대')],
     '남': _INSTALL,
     '낫': [('명중 후', 'L2', '확정 명중이 있어야 한다'), ('두 줄기', 'L2', '2차 판정 2개'), ('부채꼴로 갈라져 나감', 'L2', '착탄점에서 좌우 대칭 부채꼴'), ('새 몸=화', 'L2', '2차 피해 속성 = 화')],
-    '낭': [('방어력 무시 피해', 'L2', '강-1과 같은 규칙(같은 처리기 mod.pierce, 속성만 화)')],
+    '낭': [('명중하면 적의 시한 가드를 내리고', 'L2', '단일: 착탄이 확정된 그 대상의 가드 자세가 내려간다(가드 중이 아니어도 붙는다). 허공 시전·다른 술식의 타격으로는 없음'), ('잠시 다시 못 올림', 'L2', 'guard.lock 동안 Raise가 거부되고 그 뒤 원래대로, 재시전은 잠금 갱신(누적 없음)'), ('그로기 미축적', 'L2', '가드를 녹여도 그로기 단계·5속 마스크가 바뀌지 않는다(그로기 원천 삼원 유지)')],
     '너': _PARRY,
     '넉': [('근접한 적에게', 'L3·기존', '반경 안 보이는 적'), ('지속 피해 오라', 'L3·기존', '초당 피해')],
     '넌': [('다음 한 번의 공격', 'L2', '다음 공격 술식 1회에만 적용되고 소모된다'), ('대폭 증폭', 'L2', '위력 × 데이터 배율')],
@@ -151,7 +153,7 @@ CLAUSES = {
     '몬': [('훑인 전원에', 'L2', '복도(행 기하)가 훑은 적 전원에만 낙인, 밖은 0. 착탄 전에 죽은 적에는 붙지 않음'), ('받는 피해 증가 낙인', 'L2', '낙인 중 받는 피해 x brand.scale(모든 출처), brand.duration 뒤 원래대로, 중첩 없음. 낙인을 찍는 타격 자체는 증폭 없음')],
     '몸': _SUMMON,
     '못': [('훑인 적들의', 'L2', '복도가 훑은 적 전원에만 무딤 1회분, 밖은 0'), ('다음 공격 1회 무딤', 'L2', '다음 타격 1회만 x dull.scale, 그다음은 원래대로. 재시전은 1회분 갱신(누적 없음), dull.duration 뒤 소멸. 플레이어 피해 관문 연결은 L3')],
-    '몽': [('경로에 잔존', 'L2', '1차 = 모와 같은 복도. 복도 가운데에 원 1개(haze.radius)가 haze.life 동안 남는다'), ('안의 적 명중률 감소', 'L2', '농-2와 같은 규칙(같은 처리기 zone.haze)')],
+    '몽': [('경로에 잔존', 'L2', '1차 = 모와 같은 복도. 복도 가운데에 원 1개(haze.radius)가 haze.life 동안 남는다'), ('안의 적이 플레이어를 놓침', 'L2', '안에 선 적은 놓침 상태: 추적 감지가 꺼져 수색으로 넘어간다(나가면 즉시 복귀, 겹쳐도 하나). 두뇌 이음매 + 시험용 과녁, 실제 적 행동은 Play'), ('보스·두뇌 없는 적은 명중률 감소', 'L2', '놓침을 받을 두뇌가 없는 적(보스 포함)에는 농-2와 같은 명중률 감소(haze.miss)로 대신한다 — 면역 없음')],
     '무': _WARD,
     '뭄': [('땅을 생성해 다리를 만든다', 'L3·기존', 'MumBridge295Checks'), ('비전투 전용', 'L3·기존', '전투 중 거부'), ('최후 어휘', 'L2', 'ㅁ 종성 해금 증명 없이는 Locked')],
     '사': [('단일 대상에', 'L3·기존', '착탄 예약 1건'), ('최속', 'L2', '탄속 배율이 단일 5자 중 최대'), ('저위력', 'L2', '기본 위력이 단일 5자 중 최소')],

@@ -35,7 +35,10 @@ namespace Oheangbu.App
             var targets = ctx.Host.Targets;
             if (BuffRule308.Slowback(true, true, SpellSnapshots308.Fill(targets, ref _snaps), SpellSnapshots308.IndexOf(targets, hit.Attacker),
                     ctx.Now, _seconds, _speed, out float until, out float scale))
+            {
                 hit.Attacker.Control.Apply(_owner, until, scale, false);
+                (ctx.Fx as ISpellBurstPresenter308)?.Burst(Letter, hit.Attacker.transform.position);   // 11.64: presentation only
+            }
         }
 
         protected override void OnCleared(SpellClearReason reason) { _speed = 1f; _seconds = 0f; _owner = 0; }

@@ -1,0 +1,39 @@
+# 11.34 fire20a (user 2026-10-16 "10–15 %로 조금 진하게" / "정점부터 호에 붉은 기 스밈"):
+# 1) the lab harness fix - SpellLab308.Build points the rig's walker links at Lab_Walker, so the brush swing (SpellSwing308) and
+# the swing ink (SwingInk308) run in the lab for the first time (fire1 - fire19 logged clip StanceIdle, bridges 0);
+# 2) the ground stain at peak alpha .12. One cast at timeScale .25, recorded by rec:fire20a; brushlog prints BRUSH lines.
+call SpellLab308 Run build
+sleep 3
+call Oheangbu.EditorTools.SpellVFX120.Vfx308Build Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:fire20a:34
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uB178
+sleep 6
+?call SwingProbe308 Run fx
+sleep 8
+?call SwingProbe308 Run fx
+sleep 14
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_fire20a_end
+?call SpellLab308 Run shot:lab_fire20a_end
+?call SwingProbe308 Run slow:1
+sleep 1
+?call SwingProbe308 Run brush
+?call SwingProbe308 Run report
+mem
+finally:
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

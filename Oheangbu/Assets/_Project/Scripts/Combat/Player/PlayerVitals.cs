@@ -32,6 +32,36 @@ namespace Oheangbu.Combat
         }
         public void UnbindIncomingDamageScale(Func<IncomingDamageKind,float> scale)
         { _incomingDamageScales.Remove(scale); }
+
+        // #308 D308-115: a single ranged ward owner (the water summon). A second owner is refused, not replaced.
+        private IRangedWard308 _rangedWard308;
+        public bool BindRangedWard308(IRangedWard308 ward)
+        {
+            if(ward==null)throw new ArgumentNullException(nameof(ward));
+            if(_rangedWard308!=null&&_rangedWard308!=ward&&!(_rangedWard308 is UnityEngine.Object gone&&gone==null))return false;
+            _rangedWard308=ward;return true;
+        }
+        public void UnbindRangedWard308(IRangedWard308 ward){if(_rangedWard308==ward)_rangedWard308=null;}
+        public bool HasRangedWard308=>_rangedWard308!=null&&!(_rangedWard308 is UnityEngine.Object gone&&gone==null);
+        // Would TakeAttackDamage really take this hit (finite and positive after the incoming scales, no dodge
+        // invulnerability, still alive)? Reads only — nothing changes.
+        public bool WouldLand308(float amount, IncomingDamageKind kind)
+        {
+            if(!float.IsFinite(amount)||amount<=0)return false;
+            if(_dodge!=null&&_dodge.IsInvulnerable)return false;
+            if(_hp<=0f)return false;
+            foreach(var modifier in _incomingDamageScales)
+            { float scale=modifier(kind);if(float.IsFinite(scale))amount*=Mathf.Clamp01(scale); }
+            return amount>0;
+        }
+        // EnemyStrike308.Deliver only. Ranged kinds that would land are offered to the ward; everything else passes untouched.
+        public bool TryRangedWard308(EnemyVitals attacker, float amount, IncomingDamageKind kind)
+        {
+            if(!HasRangedWard308)return false;
+            if(kind!=IncomingDamageKind.Ranged&&kind!=IncomingDamageKind.ElementalRanged)return false;
+            if(!WouldLand308(amount,kind))return false;
+            return _rangedWard308.TryBlockRanged308(attacker,amount,kind);
+        }
         public float Heal(float amount)
         {
             if(_hp<=0||!float.IsFinite(amount)||amount<=0)return 0;

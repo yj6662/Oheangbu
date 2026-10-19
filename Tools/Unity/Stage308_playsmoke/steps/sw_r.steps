@@ -1,0 +1,93 @@
+# sw_r (2026-10-14): D308-84 stage 2 with the probe feeding the brush adapter strokes + commit (sw_q: no body ever spawned) and single hits as #308 ink splats.
+# (Deploy gather) -> pigment soaks in -> hit -> residue on the ground. timeScale 0.2, each target locked on.
+clean
+call MemoryFix308 Run "scene:open:Assets/_Project/Scenes/World/W_Demo_Main.unity"
+sleep 15
+call PlayProbe308 Run "hold-from:C:/Users/yj666/Oheangbu/Tools/Unity/Stage308_ops/logs/play/probe/hy_g1.json"
+wait hold
+sleep 3
+?call SpellSmoke308 Run tutorial-skip
+sleep 10
+?call Map307Capture Run hold-teleport:1956,3184,0
+sleep 28
+?call PlayProbe308 Run log:reset
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call Map307Capture Run hold-shot:sw_r_first_discard
+sleep 3
+?call SwingProbe308 Run target:5
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_r_near_ga_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_r_near_ga_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_r_near_ga_2
+?call SwingProbe308 Run fx
+sleep 2.2
+?call Map307Capture Run hold-shot:sw_r_near_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:12
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uAC00
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_r_far_ga_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_r_far_ga_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_r_far_ga_2
+?call SwingProbe308 Run fx
+sleep 2.2
+?call Map307Capture Run hold-shot:sw_r_far_ga_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:4
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uACE0
+sleep 3.0
+?call Map307Capture Run hold-shot:sw_r_near_go_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_r_near_go_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_r_near_go_2
+?call SwingProbe308 Run fx
+sleep 2.2
+?call Map307Capture Run hold-shot:sw_r_near_go_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run target:8
+sleep 1
+?call SwingProbe308 Run slow:0.2
+?call SwingProbe308 Run cast:uB9C8
+sleep 1.75
+?call Map307Capture Run hold-shot:sw_r_mid_ma_0
+?call SwingProbe308 Run fx
+sleep 0.5
+?call Map307Capture Run hold-shot:sw_r_mid_ma_1
+sleep 0.6
+?call Map307Capture Run hold-shot:sw_r_mid_ma_2
+?call SwingProbe308 Run fx
+sleep 2.2
+?call Map307Capture Run hold-shot:sw_r_mid_ma_3
+sleep 3.0
+?call SwingProbe308 Run slow:1
+sleep 2
+?call SwingProbe308 Run report
+?call PlayProbe308 Run log
+mem
+finally:
+release-if-held
+sleep 8
+call Restart307 Run stale
+clean

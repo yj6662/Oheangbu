@@ -23,6 +23,16 @@ namespace Oheangbu.App.SpellVFX120
             return wish < authored ? wish : authored;                    // never longer than authored
         }
 
+        // 11.54 (D308-110): a #308 lasting body (Aura308Lasting - the tree) draws its own persistence in ink (dark first,
+        // faint after, no glow): it lives as long as asked, still never longer than authored.
+        public static float Seconds(float requested, float authored, bool lasting)
+        {
+            if (!lasting) return Seconds(requested, authored);
+            if (!(authored > 0f)) authored = LastingCueSeconds;
+            if (!(requested > 0f)) return authored;
+            return requested < authored ? requested : authored;
+        }
+
         // true = the body will be gone before the effect it stands for is over (its persistence is not drawn here).
         public static bool CueOnly(float requested, float authored) => requested > 0f && Seconds(requested, authored) < requested;
     }
