@@ -57,5 +57,39 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    return sb.Append("  ").Append(n).Append(" frames at ").Append(fps).Append(" fps -> ").Append(dir).ToString();
   }
+
+  // face:<key> (D308-120: grotesque faces are judged up close) - the head at the idle start from the front, the front left and the
+  // left side, 960x540 each: <stillDir>/face_<key>_{front,frontleft,left}.png. Read only, like film.
+  static string Face(Cfg cfg,string key)
+  {
+   var s=cfg.species.FirstOrDefault(k=>k.key==key);if(s==null)return "REFUSED unknown species "+key;
+   var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(cfg,s.key));if(prefab==null)return "REFUSED no prefab (bodies:build:"+key+" first)";
+   var st=cfg.still;string dir=Path.Combine(Harness303.RepoRoot,cfg.stillDir);var sb=new StringBuilder("Creatures308 face:"+key+"\n");
+   using(var w=new Work())
+   {
+    var agent=prefab.GetComponent<NavMeshAgent>();var go=w.Adopt(Object.Instantiate(prefab));go.transform.SetPositionAndRotation(new Vector3(0,agent!=null?agent.baseOffset:0,0),Quaternion.Euler(0,90,0));
+    foreach(var k in go.GetComponentsInChildren<SkinnedMeshRenderer>(true))k.forceMatrixRecalculationPerRender=true;
+    var rig=go.GetComponent<EnemyRigMotion298>();Pose(rig.Animator,rig.Idle,0);
+    var an=rig.Animator;Transform head=an!=null&&an.avatar!=null&&an.avatar.isHuman?an.GetBoneTransform(HumanBodyBones.Head):null;
+    if(head==null)head=go.GetComponentsInChildren<Transform>(true).Where(t=>t.name.IndexOf("head",System.StringComparison.OrdinalIgnoreCase)>=0&&t.name.IndexOf("end",System.StringComparison.OrdinalIgnoreCase)<0).OrderBy(t=>t.name.Length).FirstOrDefault();
+    if(head==null)return "REFUSED no head bone on "+key;
+    var m=ReadMeasured().rows.FirstOrDefault(r=>r.key==s.key);float H=m!=null&&m.height>0?m.height:1f,span=Mathf.Max(.6f,H*.5f);
+    var target=head.position+go.transform.forward*span*.25f;
+    var shader=go.GetComponentsInChildren<SkinnedMeshRenderer>(true).First().sharedMaterial.shader;
+    var ground=w.Adopt(GameObject.CreatePrimitive(PrimitiveType.Plane));ground.transform.localScale=Vector3.one*10;
+    var gm=w.Temp(new Material(shader));gm.SetColor("_BaseColor",new Color(.78f,.75f,.69f));ground.GetComponent<Renderer>().sharedMaterial=gm;
+    var lightGo=w.Empty("Light");var light=lightGo.AddComponent<Light>();light.type=LightType.Directional;light.intensity=1.3f;light.shadows=LightShadows.Soft;lightGo.transform.rotation=Quaternion.Euler(42,25,0);
+    var camGo=w.Empty("Camera");var cam=camGo.AddComponent<Camera>();cam.scene=w.Scene;cam.clearFlags=CameraClearFlags.SolidColor;cam.backgroundColor=new Color(.9f,.88f,.83f);cam.fieldOfView=st.fov;cam.nearClipPlane=.05f;cam.farClipPlane=100;cam.enabled=false;
+    float dist=span*.5f/Mathf.Tan(st.fov*Mathf.Deg2Rad*.5f)*1.1f;Vector3 fwd=go.transform.forward,left=-go.transform.right;
+    string warm=Path.Combine(dir,"face_warmup.png");camGo.transform.position=target+fwd*dist;camGo.transform.LookAt(target);Capture(cam,960,540,warm,w);File.Delete(warm);
+    foreach(var (name,d) in new[]{("front",fwd),("frontleft",(fwd+left).normalized),("left",left)})
+    {
+     camGo.transform.position=target+(d+Vector3.up*.15f).normalized*dist;camGo.transform.LookAt(target);
+     sb.Append("  ").Append(name).Append(": ").Append(Capture(cam,960,540,Path.Combine(dir,"face_"+key+"_"+name+".png"),w)).Append('\n');
+    }
+    sb.Append("  head bone ").Append(head.name).Append(", frame ").Append(F(span)).Append(" m");
+   }
+   return sb.ToString();
+  }
  }
 }
