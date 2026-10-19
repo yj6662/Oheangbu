@@ -21,6 +21,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     // Queue-safe: refusals come back as strings, never a dialog. Run(string):
     //   status                          bake reports, imported assets, apply records (no scene is opened)
     //   audit                           AC-Q7: no raw pack file (extract-manifest.json size+SHA256) anywhere under Assets
+    //   import:<species>@<tag>          the same for a tagged subset bake <sp>_RT308_<tag>.fbx, beside the full one (fox run 2026-10-20)
     //   import[:<species>]              copy Art/Characters/Quadruped308/Retarget/<sp>/<sp>_RT308.fbx to Assets/_Project/Art/Characters/
     //                                   Quadruped308/<sp>/, Generic + CopyFromOther avatar (the Folklore298 model), then refuse unless every
     //                                   curve path resolves on the model, bone rest frames match it and each PASS clip length matches the report
@@ -55,10 +56,13 @@ namespace Oheangbu.EditorTools.WorldMacro
         static string Repo => Path.GetFullPath(Path.Combine(Application.dataPath, "../.."));
         static string ProjectFile(string assetPath) => Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
         static string Out => Path.Combine(Repo, "Art/Characters/Quadruped308");
-        static string SourceFbx(string sp) => Path.Combine(Out, "Retarget", sp, sp + "_RT308.fbx");
-        static string ReportFile(string sp) => Path.Combine(Out, "Retarget", sp, sp + "_RT308.report.json");
-        static string AssetFbx(string sp) => AssetDir + "/" + sp + "/" + sp + "_RT308.fbx";
-        static string ImportReceipt(string sp) => Path.Combine(Out, "reports", "unity-import-" + sp + ".json");
+        // tag: a retarget.py `build --tag <t>` subset bake (<sp>_RT308_<t>.fbx) imported beside the full FBX, never replacing it
+        // (2026-10-20 fox run: import:fox_spirit@run). apply/revert/status only ever use the untagged FBX.
+        static string Stem(string sp, string tag) => sp + "_RT308" + (string.IsNullOrEmpty(tag) ? "" : "_" + tag);
+        static string SourceFbx(string sp, string tag = null) => Path.Combine(Out, "Retarget", sp, Stem(sp, tag) + ".fbx");
+        static string ReportFile(string sp, string tag = null) => Path.Combine(Out, "Retarget", sp, Stem(sp, tag) + ".report.json");
+        static string AssetFbx(string sp, string tag = null) => AssetDir + "/" + sp + "/" + Stem(sp, tag) + ".fbx";
+        static string ImportReceipt(string sp, string tag = null) => Path.Combine(Out, "reports", "unity-import-" + sp + (string.IsNullOrEmpty(tag) ? "" : "_" + tag) + ".json");
         static string RecordFile(string scene) => Path.Combine(Out, "Backups", "apply_" + Path.GetFileNameWithoutExtension(scene) + ".json");
 
         // ------------------------------------------------------------------ report (JsonUtility subset of <sp>_RT308.report.json)
@@ -143,16 +147,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             string parent = Path.GetDirectoryName(path).Replace('\\', '/'); Folder(parent);
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
         }
-        static Report ReadReport(string sp, out string why)
+        static Report ReadReport(string sp, out string why, string tag = null)
         {
-            why = null; string file = ReportFile(sp);
+            why = null; string file = ReportFile(sp, tag);
             if (!File.Exists(file)) { why = "no bake report " + file; return null; }
             var report = JsonUtility.FromJson<Report>(File.ReadAllText(file));
             if (report?.unity?.roles == null || report.unity.species != sp) why = "unreadable report " + file;
             else if (report.status != "BAKED") why = "bake status " + report.status + " (not BAKED)";
             else if (!report.candidateUnchanged) why = "report says candidate.blend changed";
             else if (report.roundtrip == null || report.roundtrip.status != "TECHNICAL_ROUNDTRIP_PASS") why = "FBX roundtrip not PASS (" + report.roundtrip?.status + ")";
-            else if (!File.Exists(SourceFbx(sp)) || report.outputs == null || report.outputs.fbxSha256 != Sha(SourceFbx(sp))) why = "baked FBX missing or not the one the report gated (outputs.fbxSha256)";
+            else if (!File.Exists(SourceFbx(sp, tag)) || report.outputs == null || report.outputs.fbxSha256 != Sha(SourceFbx(sp, tag))) why = "baked FBX missing or not the one the report gated (outputs.fbxSha256)";
             return why == null ? report : null;
         }
         static AnimationClip ClipIn(string assetPath, string take) =>
@@ -196,38 +200,45 @@ namespace Oheangbu.EditorTools.WorldMacro
             var rows = JsonUtility.FromJson<ManifestRows>("{\"rows\":" + File.ReadAllText(manifest) + "}").rows;
             var bySize = rows.GroupBy(r => r.bytes).ToDictionary(g => g.Key, g => new HashSet<string>(g.Select(r => r.sha256)));
             var hits = new List<string>(); int scanned = 0;
+            // D308-71: the store packs themselves live in the gitignored Assets/Store308 (Standard EULA, never redistributed), so
+            // AC-Q7 now guards everything else - _Project and any other folder - against a raw pack copy.
+            string store = Path.GetFullPath(Path.Combine(Application.dataPath, "Store308")) + Path.DirectorySeparatorChar;
             foreach (var file in Directory.EnumerateFiles(Application.dataPath, "*", SearchOption.AllDirectories))
             {
                 if (file.EndsWith(".meta", StringComparison.OrdinalIgnoreCase)) continue;
+                if (Path.GetFullPath(file).StartsWith(store, StringComparison.OrdinalIgnoreCase)) continue;
                 long size = new FileInfo(file).Length;
                 if (!bySize.TryGetValue(size, out var shas)) continue;
                 scanned++;
                 if (shas.Contains(Sha(file))) hits.Add(file);
             }
-            return hits.Count == 0 ? "AUDIT PASS (AC-Q7): 0 raw pack files under Assets (" + rows.Length + " manifest files, " + scanned + " same-size candidates hashed)"
+            return hits.Count == 0 ? "AUDIT PASS (AC-Q7): 0 raw pack files under Assets outside Store308 (" + rows.Length + " manifest files, " + scanned + " same-size candidates hashed)"
                 : "REFUSED AC-Q7: raw Asset Store pack files under Assets:\n  " + string.Join("\n  ", hits);
         }
 
         // ------------------------------------------------------------------ import
         static string Import(string only)
         {
+            string tag = null;
+            if (only != null && only.Contains("@")) { tag = only.Substring(only.IndexOf('@') + 1).Trim(); only = only.Substring(0, only.IndexOf('@')).Trim(); }
             if (only != null && !Species.Contains(only)) return "REFUSED unknown species " + only;
+            if (tag != null && (tag.Length == 0 || !tag.All(char.IsLetterOrDigit))) return "REFUSED tag must be letters/digits: " + tag;
             string audit = Audit(); if (!audit.StartsWith("AUDIT PASS", StringComparison.Ordinal)) return audit;
             var sb = new StringBuilder(audit + "\n");
-            foreach (var sp in Species.Where(s => only == null || s == only)) sb.AppendLine(ImportSpecies(sp));
+            foreach (var sp in Species.Where(s => only == null || s == only)) sb.AppendLine(ImportSpecies(sp, tag));
             return sb.ToString().TrimEnd();
         }
 
-        static string ImportSpecies(string sp)
+        static string ImportSpecies(string sp, string tag = null)
         {
-            var report = ReadReport(sp, out string why); if (report == null) return "REFUSED " + sp + ": " + why;
+            var report = ReadReport(sp, out string why, tag); if (report == null) return "REFUSED " + sp + ": " + why;
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CompactFolklore298.PrefabPath(sp));
             var avatar = prefab != null ? prefab.GetComponentInChildren<Animator>(true)?.avatar : null;
             if (avatar == null || !avatar.isValid) return "REFUSED " + sp + ": Folklore298 prefab/avatar missing (" + CompactFolklore298.PrefabPath(sp) + ")";
             string modelPath = AssetDatabase.GetAssetPath(avatar);
             var model = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
             if (model == null) return "REFUSED " + sp + ": model asset for avatar not found";
-            string source = SourceFbx(sp), asset = AssetFbx(sp), file = ProjectFile(asset);
+            string source = SourceFbx(sp, tag), asset = AssetFbx(sp, tag), file = ProjectFile(asset);
             if (!File.Exists(source)) return "REFUSED " + sp + ": baked FBX missing " + source;
             Folder(AssetDir + "/" + sp);
             if (!File.Exists(file) || Sha(file) != Sha(source)) File.Copy(source, file, true);
@@ -288,7 +299,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             foreach (var row in report.unity.roles.Where(r => !r.pass)) notes.Add(row.role + " gate FAIL in bake: procedural clip stays");
             var receipt = new ImportRow { species = sp, asset = asset, model = modelPath, utc = DateTime.UtcNow.ToString("O"), fbxSha256 = Sha(file), clips = clipNames.ToArray(), notes = notes.Concat(errors).ToArray(), passed = errors.Count == 0 };
-            Directory.CreateDirectory(Path.GetDirectoryName(ImportReceipt(sp))); File.WriteAllText(ImportReceipt(sp), JsonUtility.ToJson(receipt, true));
+            Directory.CreateDirectory(Path.GetDirectoryName(ImportReceipt(sp, tag))); File.WriteAllText(ImportReceipt(sp, tag), JsonUtility.ToJson(receipt, true));
             return (errors.Count == 0 ? "IMPORTED " : "REFUSED ") + sp + ": " + asset + " (avatar from " + modelPath + "), clips " + string.Join(", ", clipNames)
                 + (errors.Count > 0 ? "\n    errors: " + string.Join("; ", errors.Take(12)) : "") + (notes.Count > 0 ? "\n    notes: " + string.Join("; ", notes) : "");
         }

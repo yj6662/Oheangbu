@@ -1004,6 +1004,7 @@ def build(args):
     paths = target_paths(species)
     out = species_out(species)
     out.mkdir(parents=True, exist_ok=True)
+    stem = f"{species}_RT308" + (f"_{args.tag}" if getattr(args, "tag", None) else "")
     roles = [r.strip() for r in args.roles.split(",")] if args.roles else list(recipe["roles"]) + list(recipe.get("extras", {}))
     candidate_hash = sha(paths["candidate"])
     started = time.time()
@@ -1129,7 +1130,7 @@ def build(args):
     walk_pass = walk.get("status") == "PASS"
     attack = report["roles"].get("Attack", {})
     report["unity"] = {
-        "species": species, "rigObject": rig.name, "fbx": rel(out / f"{species}_RT308.fbx"), "unityScale": scale,
+        "species": species, "rigObject": rig.name, "fbx": rel(out / f"{stem}.fbx"), "unityScale": scale,
         "walkMetresPerSecondNative": walk["attempts"][-1]["walk"]["stanceFootSpeedNativeMps"] if walk_pass else 0.0,
         "walkMetresPerSecondUnity": walk["attempts"][-1]["walk"]["stanceFootSpeedUnityMps"] if walk_pass else 0.0,
         "attackPeak01": attack["attempts"][-1]["peak"]["peak01"] if attack.get("status") == "PASS" else 0.0,
@@ -1141,8 +1142,8 @@ def build(args):
                    if report["roles"][role]["status"] == "PASS" else 0.0} for role in roles]}
     report["status"] = "BAKED" if passed else "NOTHING_PASSED"
     report["seconds"] = round(time.time() - started, 1)
-    fbx = out / f"{species}_RT308.fbx"
-    blend = out / f"{species}_RT308.blend"
+    fbx = out / f"{stem}.fbx"
+    blend = out / f"{stem}.blend"
     if passed:
         assign(rig, None)
         rc.reset(rig)
@@ -1174,7 +1175,7 @@ def build(args):
                              "weights": [{obj.vertex_groups[g.group].name: g.weight for g in v.groups if g.weight > 1e-7} for v in obj.data.vertices],
                              "cornerSignature": rc.mesh_corner_signature(obj), "uvLayerCount": len(obj.data.uv_layers)} for obj in meshes}
         bones = {b.name: {"parent": b.parent.name if b.parent else None} for b in rig.data.bones}
-        save_json(out / f"{species}_RT308.report.json", report)
+        save_json(out / f"{stem}.report.json", report)
         try:
             report["roundtrip"] = rc.roundtrip(fbx, native, config, clips_for_roundtrip, bones)
             report["roundtrip"]["restFrames"] = compare_rest_frames(paths["creature"], fbx)
@@ -1183,10 +1184,10 @@ def build(args):
             report["status"] = "ROUNDTRIP_FAIL"
     report["candidateUnchanged"] = sha(paths["candidate"]) == candidate_hash
     require(report["candidateUnchanged"], "candidate.blend changed - it must never be re-saved")
-    save_json(out / f"{species}_RT308.report.json", report)
-    save_json(no_assets(OUT / "reports") / f"{species}_RT308.report.json", report)
+    save_json(out / f"{stem}.report.json", report)
+    save_json(no_assets(OUT / "reports") / f"{stem}.report.json", report)
     return {"status": report["status"], "passed": passed, "failed": report["failedRoles"],
-            "report": rel(out / f"{species}_RT308.report.json"), "seconds": report["seconds"]}
+            "report": rel(out / f"{stem}.report.json"), "seconds": report["seconds"]}
 
 
 def compare_rest_frames(creature, fbx):
@@ -1491,6 +1492,8 @@ def main(argv=None):
     p = commands.add_parser("build", help="Retarget the recipe roles onto the species rig, gate, export FBX + report")
     p.add_argument("--species", required=True, choices=SPECIES)
     p.add_argument("--roles", help="Comma-separated subset (default: every role and extra in the recipe)")
+    p.add_argument("--tag", help="Output name suffix: <species>_RT308_<tag>.fbx/.blend/.report.json. A subset build exports only "
+                                 "its own roles, so a tag keeps it from replacing the full <species>_RT308.fbx (fox run 2026-10-20)")
     p = commands.add_parser("render", help="Pose/turntable sheets from the retarget blend")
     p.add_argument("--species", required=True, choices=SPECIES)
     p.add_argument("--size", type=int, nargs=2, default=(360, 270))

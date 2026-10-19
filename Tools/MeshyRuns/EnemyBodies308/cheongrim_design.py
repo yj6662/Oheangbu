@@ -75,7 +75,7 @@ SPEC = {
         # fists (the punch) clear. Its body is a scaled template (parts:probe builds from a model), so the axes were read off probe
         # crystals in the face stills
         'tree_dokkaebi': {
-            'from': 'fox', 'drop': ['fox_pack_before'], 'template': 'folklore298/dokkaebi', 'scaleTemplate': 1.0, 'hp': 60, 'damage': 20, 'telegraph': 1.1, 'saturation': 0.0, 'value': 0.0,
+            'from': 'fox', 'drop': ['fox_pack_before', 'run', 'runMps'], 'template': 'folklore298/dokkaebi', 'scaleTemplate': 1.0, 'hp': 60, 'damage': 20, 'telegraph': 1.1, 'saturation': 0.0, 'value': 0.0,
             'note': 'D308-120: 청림 나무 도깨비 = 민담 도깨비 몸 + 뿌리 뿔 · 이끼 어깨',
             'parts': [
                 root('antler', 'dok/Head', 'Head', .55, (0, .2, -.02), (0, 1, -.2), grip=.08, note='머리를 뚫은 뿌리 뿔(도깨비 뿔 자리)', **BARK),

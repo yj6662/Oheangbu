@@ -280,7 +280,9 @@
   "tree_dokkaebi": {
    "from": "fox",
    "drop": [
-    "fox_pack_before"
+    "fox_pack_before",
+    "run",
+    "runMps"
    ],
    "template": "folklore298/dokkaebi",
    "scaleTemplate": 1.0,
