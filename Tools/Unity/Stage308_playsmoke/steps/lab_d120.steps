@@ -1,0 +1,83 @@
+# Stage 5 (2026-10-19): frame time in the lab + video of the glyphs the edit-mode sweep could not draw.
+# Pass A: 20 s idle frames, then 20 s casting (ga go no so mo mong on neom, one every 2.5 s, full speed, no recording) - PlayProbe308 frames.
+# Pass B: one recording at full speed of no (VFX Graph cone), mong / on (path), neom (buff), geot (sword), geong (companion); Dummy_10m.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 2
+?call PlayProbe308 Run log:reset
+?call PlayProbe308 Run frames:20
+sleep 22
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:20
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uAC00
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uACE0
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uC18C
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uBABD
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uC628
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB118
+sleep 3
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run log
+sleep 8
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SpellLab308 Run rec:d120_gapfill:36
+sleep 1
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uBABD
+sleep 6
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uC628
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB118
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uAC83
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uAC85
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run report
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

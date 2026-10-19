@@ -55,6 +55,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (command == "log") return "log exceptions " + exceptions + " errors " + errors + (firstErrors.Count > 0 ? "\n" + string.Join("\n", firstErrors) : "");
             if (command.StartsWith("hold-from:", StringComparison.Ordinal)) return HoldFrom(command.Substring(10).Trim());
             if (!EditorApplication.isPlaying) return "refused: Play only (hold first)";
+            // frames only reads frame clocks, so it also runs without a harness session (spell lab, 2026-10-19 stage 5)
+            if (command == "frames") return FramesReport();
+            if (command.StartsWith("frames:", StringComparison.Ordinal)) return FramesStart(float.Parse(command.Substring(7), Inv));
             var s = Harness303.Session; if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Body == null) return "refused: no ready session";
             if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
             WatchDeaths(s);
@@ -240,7 +243,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             if (Time.frameCount == lastFrame) return; lastFrame = Time.frameCount; frameMs.Add(Time.unscaledDeltaTime * 1000f); if (UnityEditorInternal.InternalEditorUtility.isApplicationActive) focusedFrames++;
         }
-        static string FramesReport() { var s = Harness303.Session; return framesNote + (s != null ? " | player " + V(s.Walker.Body.transform.position) : ""); }
+        static string FramesReport() { var s = Harness303.Session; return framesNote + (s != null && s.Walker != null && s.Walker.Body != null ? " | player " + V(s.Walker.Body.transform.position) : ""); }
 
         // ------------------------------------------------------------------ watch
         static double watchUntil; static readonly List<PrologueEncounter> watched = new List<PrologueEncounter>(); static readonly Dictionary<int, string> watchState = new Dictionary<int, string>(); static readonly Dictionary<int, HashSet<string>> watchPoses = new Dictionary<int, HashSet<string>>();

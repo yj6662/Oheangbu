@@ -1,0 +1,48 @@
+# Stage 5 (2026-10-19) pass A only: lab frame time, 20 s idle vs about 20 s casting (ga go no so mo mong on neom, every 2.5 s, full speed, no recording).
+# PlayProbe308 frames now runs without a harness session (lab).
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 2
+?call PlayProbe308 Run log:reset
+?call PlayProbe308 Run frames:20
+sleep 22
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run frames:20
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uAC00
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uACE0
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB178
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uC18C
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uBABD
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uC628
+sleep 2.5
+?call SwingProbe308 Run ink
+?call SwingProbe308 Run cast:uB118
+sleep 3
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run log
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6
