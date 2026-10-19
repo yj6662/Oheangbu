@@ -1,4 +1,4 @@
-# 2026-10-19 lab_d120d = lab_d120c (52.71 ms 추적, frames 표식) + 빈 27자 보충 영상 4판 + 15 m · 10 m 공격 영상 2판 (한 수명).
+# 2026-10-19 lab_d120d = lab_d120c (52.71 ms 추적, frames 표식) + 빈 27자 보충 영상 4판 + 15 m · 12 m 공격 영상 2판 (한 수명).
 # 보충: 노 몽 온은 lab_d120에서 그려짐 확인 → 나머지 24자. 먹은 시전마다 ink:full로 채운다(겅 미시전 원인 제거).
 call SpellLab308 Run build
 sleep 3
@@ -258,11 +258,11 @@ sleep 5
 sleep 6
 ?call SwingProbe308 Run reset
 ?call SwingProbe308 Run on
-?call SwingProbe308 Run target:10
-?call SpellLab308 Run lock:Dummy_10m
+?call SwingProbe308 Run target:12
+?call SpellLab308 Run lock:Dummy_12m_R
 sleep 1
-# 공격 10 m
-?call SpellLab308 Run rec:d120d_fp10:40
+# 공격 12 m
+?call SpellLab308 Run rec:d120d_fp12:40
 sleep 1
 ?call SwingProbe308 Run ink:full
 ?call SwingProbe308 Run cast:uAC00
