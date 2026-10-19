@@ -607,6 +607,26 @@ namespace Oheangbu.EditorTools.WorldMacro
        preferred=Mathf.Min(range-cfg.fit.preferredBelowRange,(from!=null?from.PreferredDistanceHint:enc.PreferredDistance)*k);
        row.scale=k;row.capsuleRadius=capsule.radius;row.capsuleHeight=capsule.height;row.walkMps=rig.WalkMetresPerSecond;row.attackPeak01=rig.AttackPeak01;row.deathSeconds=rig.Death!=null?rig.Death.length:0;
        var skin=actor.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault();if(skin!=null&&skin.sharedMesh!=null){Bounds sbn=default;bool any=false;foreach(var q in SkinWorld(skin)){if(!any){sbn=new Bounds(q,Vector3.zero);any=true;}else sbn.Encapsulate(q);}row.length=sbn.size.z;row.width=sbn.size.x;row.height=sbn.size.y;}
+       if(!string.IsNullOrEmpty(s.run))
+       {
+        // D308-120 fox run (사용자 A): the template has no run of its own (fox_spirit's RT308_Pace was baked but never wired) - a run clip
+        // from data, its stance-foot speed measured on this scaled body (actor space = world metres, so no x k afterwards)
+        var run=Clip(s.run);var gb=new Body{wrapper=actor,model=visual.gameObject,animator=rig.Animator,length=row.length,height=row.height};
+        gb.skins=actor.GetComponentsInChildren<SkinnedMeshRenderer>(true).Where(k=>k.sharedMesh!=null&&!k.GetComponentsInParent<Transform>(true).Any(t=>t.name.StartsWith("Part308_",StringComparison.Ordinal))).ToArray();
+        if(gb.skins.Length==0||gb.length<=0)throw new Refuse(s.key+": no skin to measure the run clip on");
+        gb.bones=gb.skins.SelectMany(k=>k.bones).Where(k=>k!=null).Distinct().ToArray();gb.hips=gb.skins[0].rootBone!=null?gb.skins[0].rootBone:gb.bones[0];
+        // the template's walk is measured the same way: a run clip whose stance is not faster than the walk's is no run (fox_spirit RT308_Pace
+        // 0.10 vs walk 0.14 m/s, 2026-10-20 - both tiny-stride clips; the walk's 1.5 x k is a hand figure, not a stance speed)
+        float runV=MeasureGait(gb,run,cfg.fit,out string runFeet,out float runDrift);float walkV=rig.Walk!=null?MeasureGait(gb,rig.Walk,cfg.fit,out _,out _):0f;
+        if(rig.Idle!=null)Pose(rig.Animator,rig.Idle,0);
+        float runRate=s.runMps>0?s.runMps:runV;
+        float threshold=s.runThresholdMps>0?s.runThresholdMps:s.runThresholdMps<0?0f:Mathf.Max(patrolSpeed*cfg.fit.runOverPatrol,runRate*cfg.fit.runThresholdShare);
+        bool faster=s.runMps>0||runV>walkV*cfg.fit.runOverPatrol;
+        bool useRun=faster&&runRate>.1f&&threshold>0&&threshold<s.speed;
+        if(useRun){rig.Run=run;rig.RunThresholdMetresPerSecond=threshold;rig.RunMetresPerSecond=runRate;rig.RunProfile=null;}
+        row.runMps=useRun?runRate:0;row.runDrift=runDrift;
+        row.note+="; run "+run.name+" measured "+F(runV)+" m/s feet "+runFeet+(s.runMps>0?"; clip rate from data "+F(s.runMps)+" m/s":"")+(runDrift>row.length*cfg.fit.driftWarnShare?"; RUN DRIFTS "+F(runDrift)+" m per cycle":"")+(useRun?"; runs above "+F(threshold)+" m/s":!faster?"; run clip unused (not faster than the walk clip, "+F(walkV)+" m/s measured)":"; run clip unused (threshold "+F(threshold)+" vs speed "+F(s.speed)+")");
+       }
       }
       else
       {
