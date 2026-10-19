@@ -383,7 +383,7 @@ namespace Oheangbu.Presentation
 
         public void UpdateMotion(PlayerVisualFrame frame)
         {
-            UpdateMotion(frame, Time.unscaledDeltaTime);
+            UpdateMotion(frame, Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime);   // fixed-rate captures: frame-exact, as the camera rig does
         }
 
         public void UpdateMotion(PlayerVisualFrame frame, float unscaledDeltaTime)
@@ -437,7 +437,7 @@ namespace Oheangbu.Presentation
 
         public void ApplyFrame(PlayerVisualFrame frame)
         {
-            ApplyFrame(frame, Time.unscaledDeltaTime, Time.deltaTime);
+            ApplyFrame(frame, Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime, Time.deltaTime);
         }
 
         public void ApplyFrame(PlayerVisualFrame frame, float unscaledDeltaTime)
