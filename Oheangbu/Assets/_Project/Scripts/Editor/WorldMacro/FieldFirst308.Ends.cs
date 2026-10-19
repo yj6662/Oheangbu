@@ -160,9 +160,10 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var pair in (arg??"").Split(new[]{';'},StringSplitOptions.RemoveEmptyEntries))
    {
     var f=pair.Split(',').Select(x=>float.Parse(x,System.Globalization.CultureInfo.InvariantCulture)).ToArray();n++;
-    var at=new Vector3(f[0],GroundY(f[0],f[1]),f[1]);
+    // x,z = the highest ground there; x,y,z = that height (a floor under the terrain: the dungeons)
+    var at=f.Length>=3?new Vector3(f[0],f[1],f[2]):new Vector3(f[0],GroundY(f[0],f[1]),f[1]);
     bool hit=UnityEngine.AI.NavMesh.SamplePosition(at,out var h,2f,UnityEngine.AI.NavMesh.AllAreas);if(hit)ok++;
-    sb.AppendLine("  ("+f[0].ToString("F1")+", "+f[1].ToString("F1")+") "+(hit?"O navmesh "+Vector3.Distance(h.position,at).ToString("F2")+" m":"X no navmesh within 2 m"));
+    sb.AppendLine("  ("+string.Join(", ",f.Select(v=>v.ToString("F1")))+") "+(hit?"O navmesh "+Vector3.Distance(h.position,at).ToString("F2")+" m (y "+h.position.y.ToString("F2")+")":"X no navmesh within 2 m"));
    }
    return sb.Insert(0,"navmesh "+ok+" / "+n+"\n").ToString().TrimEnd();
   }

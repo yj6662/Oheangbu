@@ -58,6 +58,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     var content=AssetDatabase.LoadAssetAtPath<WorldMacroPlaytestSO>(PopContent308);if(content==null||session.Content!=content)return "REFUSED the session does not read "+PopContent308;
     if(c=="status")return PopStatus308(scene,session,content);
     if(c=="check")return PopCheck308(scene,session,content);
+    if(c.StartsWith("front:",StringComparison.Ordinal))return PopFront308(c.Substring(6),scene,session,content);      // D308-117 C3 (Content308.DungeonFront.cs)
     if(EditorApplication.isPlayingOrWillChangePlaymode)return "REFUSED Edit mode only (Play is running)";
     if(EditorApplication.isCompiling||EditorUtility.scriptCompilationFailed)return "REFUSED scripts are compiling or failed to compile";
     if(scene.isDirty)return "REFUSED the play scene has unsaved changes";
