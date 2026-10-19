@@ -22,7 +22,7 @@ LAYOUT = ROOT / 'Art/World/Compact/Rebuild/Dungeon308'
 CFG = ROOT / 'Tools/Unity/Stage308_dungeon/dungeon308.json'
 FRONT = ROOT / 'Tools/Unity/Stage308_populate/dungeon_front308.json'
 OUT = ROOT / 'Tools/Unity/Stage308_dungeon/dress308'
-VERSION = 'c3b.6'
+VERSION = 'c3b.8'
 WALK_HALF = 1.5
 A = 'Assets/'
 FLORA = A + '_Project/Art/World/Flora308/Prefabs/'
@@ -30,6 +30,7 @@ FEST = A + 'KoreanTraditionalFestival/Prefabs/'
 TREAS = A + 'Korea_TreasureProps/Prefabs/'
 DRESS = A + '_Project/Art/World/Dungeon308/Dress308/'
 DMAT = A + '_Project/Art/World/Dungeon308/Materials/'
+LAVA = A + 'BillemotdonggulLavaTubePack/Prefabs/'      # shapes only: worn in the dungeon's own rock (rock=True), the pack shaders carry an unknown emissive constant
 MESHY = ('kiln_mouth', 'charcoal_heap', 'bone_pile', 'fungus_log', 'root_mass')
 
 # name: source (prefab | mesh + material), measured size (DungeonDress308 probe, x y z), fit target and axis (0 x, 1 y, 2 z, 3 widest
@@ -63,7 +64,20 @@ KIT = {
     'floor_roots_b': dict(prefab=FLORA + 'pine_roots_b.prefab', size=(1.63, 0.15, 1.00), fit=1.8, axis=3, flat=True),
     'stump': dict(prefab=FLORA + 'Pack_Stump_B_rotten.prefab', size=(0.89, 1.25, 0.69), fit=0.9, axis=1),
     'fern': dict(prefab=FLORA + 'fern_02_a.prefab', size=(0.55, 0.29, 0.62), fit=0.6, axis=3),
+    # danger forms (C3b form pass): fangs hang from the roof (foot >= 2.9 m kiln / 3.5 m root over the floor), blades jut from the walls, rockfalls choke the corners
+    'fang_k': dict(prefab=LAVA + 'SM_Ceiling01A.prefab', size=(0.40, 1.70, 1.34), fit=1.6, axis=1, seat='ceiling', rock=True),
+    'fang_r': dict(prefab=LAVA + 'SM_Ceiling01A.prefab', size=(0.40, 1.70, 1.34), fit=3.4, axis=1, seat='ceiling', rock=True),      # foot ~3.45 m over the floor
+    'tooth_k': dict(prefab=LAVA + 'SM_Rockfall01F.prefab', size=(0.93, 1.37, 1.32), fit=1.5, axis=1, seat='ceiling', tilt=(180.0, 0.0), rock=True),
+    'tooth_r': dict(prefab=LAVA + 'SM_Rockfall01F.prefab', size=(0.93, 1.37, 1.32), fit=3.1, axis=1, seat='ceiling', tilt=(180.0, 0.0), rock=True),
+    'slab_r': dict(prefab=LAVA + 'SM_Ceiling04A.prefab', size=(4.03, 0.93, 4.72), fit=4.2, axis=3, seat='ceiling', rock=True),
+    'blade_a': dict(prefab=LAVA + 'SM_Wall04A.prefab', size=(1.03, 2.26, 3.91), fit=3.4, axis=3, along=1, embed=0.55, seat='centre', lift=(0.6, 2.4), rock=True),
+    'blade_b': dict(prefab=LAVA + 'SM_Wall03A.prefab', size=(1.43, 1.20, 5.25), fit=4.0, axis=3, along=1, embed=0.62, seat='centre', lift=(0.3, 2.8), rock=True),
+    'blade_ra': dict(prefab=LAVA + 'SM_Wall04A.prefab', size=(1.03, 2.26, 3.91), fit=5.2, axis=3, along=1, embed=0.4, seat='centre', lift=(0.0, 1.6), solid=True, rock=True),      # cave: big, juts ~0.8 m, collides
+    'blade_rb': dict(prefab=LAVA + 'SM_Wall03A.prefab', size=(1.43, 1.20, 5.25), fit=5.8, axis=3, along=1, embed=0.45, seat='centre', lift=(0.0, 2.6), solid=True, rock=True),
+    'rockfall': dict(prefab=LAVA + 'SM_Rockfall02A.prefab', size=(2.78, 2.10, 2.51), fit=2.4, axis=3, solid=True, rock=True),
+    'rockfall_low': dict(prefab=LAVA + 'SM_Rockfall05A.prefab', size=(2.26, 0.65, 3.08), fit=2.6, axis=3, solid=True, rock=True),
 }
+ROCK = {'cr_kiln': DRESS + 'Materials/DD_KilnWall.mat', 'cr_root': DMAT + 'CaveRock_Cheongrim.mat'}
 
 # cells are named as in layout.json (A1 = the entry cell). per dungeon: (kit name, how many, where: wall | corner | floor | ceiling | cells=[...] limits the cells)
 PLAN = {
@@ -71,6 +85,7 @@ PLAN = {
             ('kiln_mouth', ['A2:in', 'B2:out', 'B4:out']),
             ('charcoal_heap', ['A4', 'B3', 'B1', 'A3']),
         ], rows=[
+            ('rockfall', 3, 'corner', None), ('blade_a', 6, 'wall', None), ('blade_b', 4, 'wall', None), ('fang_k', 14, 'ceiling', None), ('tooth_k', 8, 'ceiling', None),
             ('timber_stack', 3, 'wall', None), ('sack', 7, 'wall', None), ('firewood', 6, 'wall', None), ('charlog', 5, 'wall', None),
             ('jar', 4, 'corner', None), ('pot', 3, 'corner', None), ('shovel', 2, 'wall', None), ('mat', 2, 'wall', None), ('branches', 4, 'wall', None),
         ]),
@@ -78,7 +93,9 @@ PLAN = {
             ('bone_pile', ['B2', 'A3', 'A1', 'B1']),
             ('fungus_log', ['A2', 'B3', 'B1']),
         ], rows=[
-            ('root_mass', 12, 'ceiling', None), ('root_hang', 24, 'ceiling', None), ('root_hang_b', 12, 'ceiling', None), ('root_wall_1', 6, 'wall', None), ('root_wall_2', 6, 'wall', None), ('root_wall_3', 6, 'wall', None),
+            ('root_mass', 10, 'ceiling', None), ('root_wall_1', 3, 'wall', None), ('root_wall_3', 3, 'wall', None),      # the cave's name first, the danger forms after
+            ('rockfall', 4, 'corner', None), ('rockfall_low', 3, 'wall', None), ('blade_ra', 8, 'wall', None), ('blade_rb', 6, 'wall', None),
+            ('slab_r', 8, 'ceiling', None), ('fang_r', 26, 'ceiling', None), ('tooth_r', 14, 'ceiling', None), ('root_hang', 24, 'ceiling', None), ('root_hang_b', 12, 'ceiling', None), ('root_wall_1', 3, 'wall', None), ('root_wall_2', 4, 'wall', None), ('root_wall_3', 3, 'wall', None),
             ('moss_rock_a', 4, 'wall', None), ('moss_rock_b', 4, 'corner', None), ('moss_rock_c', 2, 'corner', None),
             ('floor_roots_a', 4, 'floor', None), ('floor_roots_b', 4, 'floor', None), ('stump', 3, 'corner', None), ('fern', 0, 'wall', None),
         ]),
@@ -202,7 +219,7 @@ def build(did):
         k = 1.0 if not K['fit'] else K['fit'] / (sx if K['axis'] == 0 else sy if K['axis'] == 1 else sz if K['axis'] == 2 else max(sx, sz))
         return sx * k, sy * k, sz * k
 
-    def spots(cell, where, depth):
+    def spots(cell, where, depth, embed=0.0):
         """candidate (local x, z, inward direction) on the solid walls of a cell, `depth` = the item's depth off the wall"""
         x0, x1, z0, z1 = F.rect(cell); half_t = F.t / 2 + (0.35 if F.cave else 0.05); out = []; gaps = F.doorways(cell); g = F.dw / 2 + 0.5
         sides = [('z0', (x0, z0), (x1, z0), (0, 1)), ('z1', (x0, z1), (x1, z1), (0, -1)), ('x0', (x0, z0), (x0, z1), (1, 0)), ('x1', (x1, z0), (x1, z1), (-1, 0))]
@@ -213,7 +230,7 @@ def build(did):
                 if any(math.hypot(px - gx, pz - gz) < g for gx, gz in gaps): continue
                 corner = min(u, L_ - u) < 1.4
                 if where == 'corner' and not corner: continue
-                off = half_t + depth / 2 + 0.05
+                off = half_t + depth / 2 * (1 - 2 * embed) + 0.05
                 out.append((px + inward[0] * off, pz + inward[1] * off, inward, nm_, corner))
         rng.shuffle(out); return out
 
@@ -225,34 +242,40 @@ def build(did):
         elif where == 'floor':
             x0, x1, z0, z1 = F.rect(cell); cands = [(rng.uniform(x0 + 1.6, x1 - 1.6), rng.uniform(z0 + 1.6, z1 - 1.6), (0, 1), 'floor', False) for _ in range(30)]
         else:
-            cands = spots(cell, where, depth)
+            cands = spots(cell, where, depth, K.get('embed', 0.0))
             if side: cands = [c for c in cands if c[3] == side] + [c for c in cands if c[3] != side]
         r = 0.5 * math.hypot(sx, sz)
         for (lx, lz, inward, nm_, corner) in cands:
             p = F.w(lx, lz); dwld = F.dirw(*inward)
+            lift = rng.uniform(*K['lift']) if 'lift' in K else 0.0
             if where == 'ceiling': y0_, y1_ = y + F.roof - sy, y + F.roof
+            elif K.get('seat') == 'centre': y0_, y1_ = y + lift - 0.15, y + lift + sy      # the centre seat puts the foot 0.1 under the lift (+0.05 for the jitter)
             else: y0_, y1_ = y, y + sy
             if where in ('wall', 'corner'):      # wall-set: the footprint is a rectangle, depth along the inward direction (+10 % for the yaw jitter)
                 hd, ha = (sz if along == 0 else sx) / 2 * 1.1, (sx if along == 0 else sz) / 2 * 1.1
-                hd += K.get('pad', 0.0); fp = (hd, ha) if abs(dwld[0]) > abs(dwld[1]) else (ha, hd)
+                jit = 0.0 if K.get('solid') else (12.0 if max(sx, sz) < 2.5 else 4.0)      # long pieces turn less (their far ends swing out)
+                hd += K.get('pad', 0.0) + ha * math.sin(math.radians(jit)); fp = (hd, ha) if abs(dwld[0]) > abs(dwld[1]) else (ha, hd)
             else: fp = r
-            if where not in ('ceiling',) and not K.get('flat') and in_walk(p, fp, y): continue
-            if in_keep(p, fp, y0_, y1_): continue      # a hanging item too (a reward on a ledge sits high)
-            if clash(p, r * (0.4 if where == 'ceiling' else 0.85), y0_, y1_): continue      # hanging roots may tangle into each other
+            pk = p; fp_full = fp
+            if K.get('embed'):      # keep / walk / clash on the part out of the wall (the rest is in the rock)
+                e = K['embed']; hd2 = hd * (1 - e) + 0.2; pk = (p[0] + dwld[0] * hd * e, p[1] + dwld[1] * hd * e); fp = (hd2, ha) if abs(dwld[0]) > abs(dwld[1]) else (ha, hd2)
+            if where not in ('ceiling',) and not K.get('flat') and y0_ < y + 2.2 and in_walk(pk, fp, y): continue
+            if in_keep(pk, fp, y0_, y1_) or (K.get('embed') and in_keep(p, fp_full, y0_, y1_)): continue      # a hanging item too (a reward on a ledge sits high); a blade with its whole body
+            if clash(pk, r * (0.4 if where == 'ceiling' else 0.85), y0_, y1_): continue      # hanging roots may tangle into each other
             if where in ('wall', 'corner'):
                 yaw = yaw_facing(dwld) if along == 0 else (yaw_facing(dwld) + 90.0) % 360
-                if not K.get('solid'): yaw = (yaw + rng.uniform(-12, 12)) % 360
+                if jit: yaw = (yaw + rng.uniform(-jit, jit)) % 360
             else: yaw = round(rng.uniform(0, 360), 1)
             tilt = K.get('tilt', (0.0, 0.0)); row = dict(id=f'{name}_{len([i for i in items if i["kind"] == name])}', kind=name, cell=cell[0] + str(cell[1] + 1))
-            if 'prefab' in K: row['prefab'] = K['prefab']
+            if 'prefab' in K: row['prefab'] = K['prefab']; row.update(material=ROCK[did]) if K.get('rock') else None
             else: row['mesh'] = K['mesh']; row['material'] = K['material']
             seat = K.get('seat', 'ceiling' if where == 'ceiling' else 'floor')
             if seat == 'ceiling': py = y + F.roof      # the slab underside; the item's top goes `sink` into it
-            elif seat == 'centre': py = y + sy / 2 - 0.1
+            elif seat == 'centre': py = y + sy / 2 - 0.1 + lift
             else: py = y
             row.update(pos=[round(p[0], 3), round(py, 3), round(p[1], 3)], rot=[tilt[0], yaw, tilt[1]], seat=seat, fit=K['fit'], fitAxis=float(K['axis']), sink=0.04 if seat == 'floor' else 0.0, solid=bool(K.get('solid')))
             if seat == 'ceiling': row['sink'] = 0.35 if F.cave else 0.05
-            items.append(row); placed.append((p[0], p[1], r, y0_, y1_)); return row
+            items.append(row); placed.append((pk[0], pk[1], r * (0.6 if K.get('embed') else 1.0), y0_, y1_)); return row
         report.append(f'{name} in {cell}: no free spot'); return None
 
     def cell_of(s):
@@ -273,8 +296,13 @@ def build(did):
                 cy = y + F.roof - 0.2
                 if any(in_keep((a[0] + (b[0] - a[0]) * u / 8, a[1] + (b[1] - a[1]) * u / 8), 0.25, cy - 0.2, cy + 0.2) for u in range(9)): continue
                 along_world = (b[0] - a[0], b[1] - a[1]); yaw = round(math.degrees(math.atan2(along_world[1], along_world[0])) * -1 % 360.0, 1)      # the log's long axis (local x) along the span
+                sag = 0.0      # danger form: every second beam sags (one end dropped), unless its low end would enter a keep-out
+                if len([i for i in items if i['kind'] == 'cap']) % 2 == 1:
+                    sag = rng.choice((-1, 1)) * 13.0; drop = span / 2 * math.sin(math.radians(abs(sag)))
+                    hx, hz = abs(b[0] - a[0]) / 2 + 0.3, abs(b[1] - a[1]) / 2 + 0.3
+                    if cy - drop < y + 2.9 or in_keep(m, (hx, hz), cy - drop - 0.2, cy + drop + 0.2): sag = 0.0
                 items.append(dict(id=f'cap_{len([i for i in items if i["kind"] == "cap"])}', kind='cap', cell=cell[0] + str(cell[1] + 1), prefab=KIT['cap']['prefab'],
-                                  pos=[round(m[0], 3), round(cy, 3), round(m[1], 3)], rot=[0.0, yaw, 0.0], scale=[1.0, 0.55, 0.55], seat='centre', fit=span + 0.1, fitAxis=3.0, sink=0.0, solid=False))
+                                  pos=[round(m[0], 3), round(cy, 3), round(m[1], 3)], rot=[0.0, yaw, sag], scale=[1.0, 0.55, 0.55], seat='centre', fit=span + 0.1, fitAxis=3.0, sink=0.0, solid=False))
     for name, where_list in P['hero']:
         for s in where_list:
             cs, _, side = s.partition(':'); cell = cell_of(cs)
@@ -295,7 +323,7 @@ def build(did):
     for name, count, where, only in P['rows']:
         pool = [c for c in cells if only is None or c[0] + str(c[1] + 1) in only]
         for i in range(count): put(name, pool[(i * 3 + rng.randrange(len(pool))) % len(pool)], where)
-    margin = 1.6 if F.cave else 0.6      # cave walls bulge out (bulge_m 1.0) and the wall roots sit in them
+    margin = 2.4 if F.cave else 1.2      # cave walls bulge out (bulge_m 1.0) and the wall roots sit in them; the wall blades sit half in the rock
     xs = [F.w(x, z) for x in (0, F.n * F.cw) for z in (0, 2 * F.cd)]; lo_y = F.y0 - 0.8; hi_y = F.y0 + max(F.levels.values()) + F.roof + 2.5
     data = dict(version=VERSION, id=did, doc='D308-117 C3b dress pass (SPEC-FIELD-FIRST-HOUR-308 §8.7). Written by Tools/Art/dungeon308_dress.py - do not edit by hand',
                 boundsMin=[round(min(p[0] for p in xs) - margin, 2), round(lo_y, 2), round(min(p[1] for p in xs) - margin, 2)],

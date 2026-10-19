@@ -241,6 +241,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(it.prefab); if (prefab == null) throw new Exception(it.id + ": prefab missing " + it.prefab);
                     go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene); go.transform.SetParent(mine, false);
+                    if (!string.IsNullOrEmpty(it.material))      // the pack's shape in the realm's own rock (pack shaders carry an unknown emissive constant)
+                    {
+                        var over = AssetDatabase.LoadAssetAtPath<Material>(it.material); if (over == null) throw new Exception(it.id + ": material missing " + it.material);
+                        foreach (var r in go.GetComponentsInChildren<Renderer>(true)) { var ms = r.sharedMaterials; for (int i = 0; i < ms.Length; i++) ms[i] = over; r.sharedMaterials = ms; }
+                    }
                 }
                 else
                 {
