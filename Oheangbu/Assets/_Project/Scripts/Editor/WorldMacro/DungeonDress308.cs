@@ -308,6 +308,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     var t = home.Find(row.path); var r = t != null ? t.GetComponent<Renderer>() : null; if (r == null) throw new Exception("ledger renderer gone: " + row.path);
                     var mats = row.materials.Select(p => AssetDatabase.LoadAssetAtPath<Material>(p)).ToArray(); if (mats.Any(m => m == null)) throw new Exception("ledger material gone on " + row.path);
+                    if (r.sharedMaterials.Length != mats.Length) continue;      // the renderer was built again since (Dungeon308 build, other submeshes): it already wears the build's own materials; the old row would cut its slots
                     r.sharedMaterials = mats; EditorUtility.SetDirty(r); put++;
                 }
                 File.Delete(LedgerFile(id));

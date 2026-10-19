@@ -30,6 +30,8 @@ FEST = A + 'KoreanTraditionalFestival/Prefabs/'
 TREAS = A + 'Korea_TreasureProps/Prefabs/'
 DRESS = A + '_Project/Art/World/Dungeon308/Dress308/'
 DMAT = A + '_Project/Art/World/Dungeon308/Materials/'
+FIN = A + '_Project/Art/World/Finish297/Materials/'
+HANOK_KILN = True      # cr_kiln is drawn as a Joseon 부엌 (D308-117 C3c)
 LAVA = A + 'BillemotdonggulLavaTubePack/Prefabs/'      # shapes only: worn in the dungeon's own rock (rock=True), the pack shaders carry an unknown emissive constant
 MESHY = ('kiln_mouth', 'charcoal_heap', 'bone_pile', 'fungus_log', 'root_mass')
 
@@ -85,7 +87,7 @@ PLAN = {
             ('kiln_mouth', ['A2:in', 'B2:out', 'B4:out']),
             ('charcoal_heap', ['A4', 'B3', 'B1', 'A3']),
         ], rows=[
-            ('rockfall', 3, 'corner', None), ('blade_a', 6, 'wall', None), ('blade_b', 4, 'wall', None), ('fang_k', 14, 'ceiling', None), ('tooth_k', 8, 'ceiling', None),
+            ('rockfall', 3, 'corner', None),      # C3c: the rooms are a 부엌's 심벽 and 연등천장 now (dungeon308 wall 'hanok'): no stone blades on the plaster, nothing through the ceiling; the danger is the snapped 대들보 and hanging rafters
             ('timber_stack', 3, 'wall', None), ('sack', 7, 'wall', None), ('firewood', 6, 'wall', None), ('charlog', 5, 'wall', None),
             ('jar', 4, 'corner', None), ('pot', 3, 'corner', None), ('shovel', 2, 'wall', None), ('mat', 2, 'wall', None), ('branches', 4, 'wall', None),
         ]),
@@ -106,12 +108,18 @@ KILN_MATS = dict(
         dict(path=DRESS + 'Materials/DD_KilnWall.mat', source=DMAT + 'CaveRock_Cheongrim.mat', color=[0.33, 0.28, 0.22]),
         dict(path=DRESS + 'Materials/DD_KilnRoof.mat', source=DMAT + 'CaveRock_Cheongrim.mat', color=[0.2, 0.18, 0.16]),
         dict(path=DRESS + 'Materials/DD_KilnFloor.mat', source=DMAT + 'CaveRock_Cheongrim.mat', color=[0.27, 0.24, 0.2]),
+        dict(path=DRESS + 'Materials/DD_KilnPlaster.mat', source=FIN + 'plaster.mat', color=[0.56, 0.52, 0.45]),      # 회벽 gone grey with the smoke of the fires
+        dict(path=DRESS + 'Materials/DD_KilnSoot.mat', source=FIN + 'plaster.mat', color=[0.3, 0.28, 0.25]),        # 앙토 over the rafters, blacker still
     ],
     mats=[
         dict(renderer='Drawn_Wall', **{'from': 'brick_dark'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
         dict(renderer='Drawn_Wall', **{'from': 'stone_rough'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
         dict(renderer='Drawn_Roof', **{'from': 'stone_rough'}, to=DRESS + 'Materials/DD_KilnRoof.mat'),
         dict(renderer='Drawn_Floor', **{'from': 'paving'}, to=DRESS + 'Materials/DD_KilnFloor.mat'),
+        dict(renderer='Drawn_Wall', **{'from': 'plaster'}, to=DRESS + 'Materials/DD_KilnPlaster.mat'),
+        dict(renderer='Drawn_Wall', **{'from': 'wood_dark'}, to=DMAT + 'CaveTimber_Char.mat'),
+        dict(renderer='Drawn_Roof', **{'from': 'plaster'}, to=DRESS + 'Materials/DD_KilnSoot.mat'),
+        dict(renderer='Drawn_Roof', **{'from': 'wood_dark'}, to=DMAT + 'CaveTimber_Char.mat'),
         dict(renderer='Drawn_Prop', **{'from': 'wood_dark'}, to=DMAT + 'CaveTimber_Char.mat'),
         dict(renderer='Drawn_Prop', **{'from': 'brick_dark'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
         dict(renderer='Drawn_Prop', **{'from': 'stone_rough'}, to=DRESS + 'Materials/DD_KilnWall.mat'),
@@ -282,7 +290,7 @@ def build(did):
         return (s[0], int(s[1]) - 1)
 
     # kiln: timber sets first (they fix the rhythm of the tunnel)
-    if did == 'cr_kiln':
+    if did == 'cr_kiln' and not HANOK_KILN:      # C3c: the 심벽 posts and 대들보 of dungeon308 stand where the mine sets stood
         for cell in cells:
             x0, x1, z0, z1 = F.rect(cell); y = F.y0 + F.level(cell); h = F.roof - 0.05
             for xe in (x0 + 0.45, x1 - 0.45):

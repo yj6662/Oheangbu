@@ -71,10 +71,41 @@ def stone(mesh, c, size, mat, rng):
     c = np.asarray(c, float); a, b, g = rng.uniform(0, 2 * math.pi, 3); ca, sa, cb, sb, cg, sg = math.cos(a), math.sin(a), math.cos(b), math.sin(b), math.cos(g), math.sin(g)
     R = np.array([[ca * cb, ca * sb * sg - sa * cg, ca * sb * cg + sa * sg], [sa * cb, sa * sb * sg + ca * cg, sa * sb * cg - ca * sg], [-sb, cb * sg, cb * cg]])
     P = (_ICO * rng.uniform(0.82, 1.18, (12, 1)) * (np.array([rng.uniform(0.75, 1.25), rng.uniform(0.5, 0.95), rng.uniform(0.75, 1.25)]) * size / 2)) @ R.T + c
-    k = len(mesh.v); tri = mesh.sub.setdefault(mat, [])
+    top = float(np.sort(P[:, 1])[-3]); k = len(mesh.v); tri = mesh.sub.setdefault(mat, [])
+    if getattr(mesh, 'organic', False) and size >= 0.55:      # grammar organic: the same twelve corners, split and pushed about by value noise: a lump, not a die (no rng: the draws stay as they were)
+        V, T = _lump(P - c, c, 2 if size >= 1.8 else 1); nrm = np.zeros_like(V)
+        for a_, b_, d_ in T.reshape(-1, 3): fn = np.cross(V[b_] - V[a_], V[d_] - V[a_]); nrm[[a_, b_, d_]] += fn
+        nrm /= np.linalg.norm(nrm, axis=1, keepdims=True) + 1e-12; out = (nrm * V).sum(1) < 0; nrm[out] *= -1; V = V + c
+        for q, n_ in zip(V, nrm): mesh.v.append(q); mesh.n.append(n_); mesh.uv.append(((q[0] + q[1]) * 0.5, q[2] * 0.5))
+        tri += [k + int(t) for t in T]; return top
     for q in P: mesh.v.append(q); n_ = q - c; mesh.n.append(n_ / (np.linalg.norm(n_) + 1e-12)); mesh.uv.append(((q[0] + q[1]) * 0.5, q[2] * 0.5))
     tri += [k + t for t in _ICO_TRI]
-    return float(np.sort(P[:, 1])[-3])
+    return top
+
+
+def _split(V, T):
+    """one loop of midpoint subdivision of a closed triangle list (shared edges keep one midpoint)."""
+    V = list(V); mid = {}; out = []
+    def m(a, b):
+        key = (min(a, b), max(a, b))
+        if key not in mid: mid[key] = len(V); V.append((np.asarray(V[a]) + np.asarray(V[b])) / 2)
+        return mid[key]
+    for a, b, c in np.asarray(T).reshape(-1, 3):
+        ab, bc, ca = m(a, b), m(b, c), m(c, a); out += [a, ab, ca, ab, b, bc, ca, bc, c, ab, bc, ca]
+    return np.array(V, float), np.array(out, int)
+
+
+def _lump(Q, c, levels=2):
+    """the stone's corners Q (12, 3) about its centre c -> a rounded, lumpy surface: subdivide (twice for the big ones), pull every point out to the radius its
+    direction would have on the corners' hull (so the size stays), then bumps of value noise at two scales (a function of the place)."""
+    V, T = _split(Q, _ICO_TRI)
+    for _ in range(levels - 1): V, T = _split(V, T)
+    r = np.linalg.norm(V, axis=1, keepdims=True) + 1e-12; d = V / r
+    R0 = np.linalg.norm(Q, axis=1); w = np.maximum(d @ (Q / R0[:, None]).T, 0.0) ** 6; base = (w @ R0) / (w.sum(1) + 1e-12)
+    P = d * base[:, None]; s = float(np.mean(R0)); seed = int(abs(c[0] * 7.3 + c[1] * 13.1 + c[2] * 3.7) * 100) % 99991
+    bump = 0.17 * (vnoise(P / (0.55 * s) + c, seed) - 0.5) * 2 + 0.07 * (vnoise(P / (0.22 * s) + c, seed + 5) - 0.5) * 2
+    flat = np.clip(-d[:, 1] - 0.55, 0, None) * 0.5      # a little flatter where it sits
+    return P * (1 + bump - flat)[:, None], T
 
 
 def seed_of(*parts):
@@ -188,7 +219,7 @@ class Kit:
     def __init__(self, did, origin, yaw, rng, th):
         self.id = did; self.o = np.asarray(origin, float); c, s = math.cos(math.radians(yaw)), math.sin(math.radians(yaw)); self.yaw = yaw
         self.ax = np.array([c, 0.0, -s]); self.az = np.array([s, 0.0, c]); self.rng = rng; self.th = th
-        self.m = {}; self.cols = []; self.cave = False; self.seed = 0; self.roof_amp = 0.8; self.bulge = 0.5
+        self.m = {}; self.cols = []; self.cave = False; self.seed = 0; self.roof_amp = 0.8; self.bulge = 0.5; self.organic = 0.0; self.grid = None; self.wall_h = 4.3; self.dome = 0.0; self.jamb = False; self.sides = []
 
     def W(self, x, y, z):
         return self.o + self.ax * np.asarray(x, float)[..., None] + UP * np.asarray(y, float)[..., None] + self.az * np.asarray(z, float)[..., None]
@@ -218,18 +249,59 @@ class Kit:
         """rock: a flat backing block, a rough face on each side that bulges into the room (calm at the ends: jambs and corners), a collider a little thicker than the block."""
         th = self.th; q = bx(a0, a1, c_ - t / 2, c_ + t / 2); self.box('Wall', q[0], q[1], y0, y1, q[2], q[3], th['wall_mat'])
         U, V = np.meshgrid(np.linspace(a0, a1, max(2, int((a1 - a0) / 0.55) + 1)), np.linspace(y0, y1, max(2, int((y1 - y0) / 0.55) + 1)), indexing='ij')
-        ends = np.clip(np.minimum(U - a0, a1 - U) / 0.7, 0, 1); ends = ends * ends * (3 - 2 * ends)
+        sm = lambda x: x * x * (3 - 2 * x); e0 = sm(np.clip((U - a0) / 0.7, 0, 1)); e1 = sm(np.clip((a1 - U) / 0.7, 0, 1)); ends = np.minimum(e0, e1)
         low = V - y0 < 2.2; stp = max(1, int(round(1.5 / 0.55))); nU = U.shape[0]
+        org = self.organic; g_ = (self.grid[0] if alongx else self.grid[1]) if self.grid else 0.0
+        corner = lambda a: org > 0 and g_ > 0 and abs(a / g_ - round(a / g_)) < 1e-6      # a cell corner (a doorway jamb is never on the grid)
+        if org > 0:      # the drawn roof meets the wall at ry - roof_n - dome (e = 1 on every cell edge): curl in under that line, not at a fixed height
+            ry = y1 - 0.18; Pr = self.W(U, np.full(U.shape, ry), np.full(U.shape, c_)) if alongx else self.W(np.full(U.shape, c_), np.full(U.shape, ry), U)
+            ceil = ry - self.roof_n(Pr) - self.dome; ramp = sm(np.clip((V - (ceil - 1.9)) / 1.6, 0, 1))      # 0 up to 1.9 m under the roof line, 1 from 0.3 m under it
+        else: ramp = np.zeros(U.shape)
         for sd in (-1, 1):
             C = np.full(U.shape, c_ + sd * t / 2); P = self.W(U, V, C) if alongx else self.W(C, V, U); nrm = (self.az if alongx else self.ax) * sd
-            amp = 0.05 + self.bulge * np.clip((0.6 * vnoise(P / 5.5, self.seed + 3) + 0.4 * rough(P, self.seed) - 0.5) * 2.8 + 0.5, 0.0, 1.0) * ends      # value noise sits near its mean: stretch it, or the wall is only pushed out, not shaped
-            P = P + nrm * amp[..., None]; sheet(self.mesh('Wall'), P, th['wall_mat'], nrm)
+            base = self.bulge * np.clip((0.6 * vnoise(P / 5.5, self.seed + 3) + 0.4 * rough(P, self.seed) - 0.5) * 2.8 + 0.5, 0.0, 1.0)
+            amp = 0.05 + base * ends      # value noise sits near its mean: stretch it, or the wall is only pushed out, not shaped
+            draw = amp
+            if org > 0:      # grammar organic (drawn only, the colliders below keep `amp`): over head height the wall leans into the room and
+                # the corners fill in to a rounded hollow, so no straight vertical edge and no crisp ceiling line; at the foot only a little
+                d0 = e0 + (1 - e0) * (0.25 + 0.75 * ramp) if corner(a0) else e0; d1 = e1 + (1 - e1) * (0.25 + 0.75 * ramp) if corner(a1) else e1
+                fine = 0.25 * (vnoise(P / 2.2, self.seed + 53) - 0.5) * 2 * np.minimum(e0, e1)      # a shorter octave: one period of P/5.5 over a 7 m wall only pushes the plane out (+-0.25 m: the colliders stay near)
+                draw = 0.05 + base * np.minimum(d0, d1) + fine + org * (0.3 + 0.9 * vnoise(P / 7.0, self.seed + 41)) * ramp ** 1.5
+                R = 0.35 + 1.15 * ramp
+                for a_, dist in ((a0, U - a0 - t / 2), (a1, a1 - U - t / 2)):
+                    if corner(a_): draw = draw + org * R * np.clip(1 - np.maximum(dist, 0) / R, 0, 1) ** 2
+            P = P + nrm * draw[..., None]; sheet(self.mesh('Wall'), P, th['wall_mat'], nrm)
             for i0 in range(0, nU - 1, stp):
                 i1 = min(nU - 1, i0 + stp); m_ = low[i0:i1 + 1]; depth = max(0.12, float(amp[i0:i1 + 1][m_].mean() if m_.any() else amp[i0:i1 + 1].mean()) - 0.12); e_ = c_ + sd * (t / 2 + depth)
                 q = bx(float(U[i0, 0]), float(U[i1, 0]), min(c_, e_), max(c_, e_)); self.collide(q[0], q[1], y0, y1, q[2], q[3])
+        if org > 0 and self.jamb:      # a doorway jamb (not a cell corner, not a door): a rounded noisy cap over the flat end of the block, drawn only (0.15-0.3 m into the way)
+            Vv = V[0]; th_ = np.linspace(-math.pi / 2, math.pi / 2, 9)
+            for a_, out in ((a0, -1.0), (a1, 1.0)):
+                if corner(a_): continue
+                TH, VV = np.meshgrid(th_, Vv, indexing='ij'); A_ = np.full(TH.shape, a_); C0 = np.full(TH.shape, c_)
+                Pn = self.W(A_, VV, C0) if alongx else self.W(C0, VV, A_); pro = (0.15 + 0.15 * rough(Pn, self.seed + 59)) * np.cos(TH)
+                UU = a_ + out * pro; CC = c_ + np.sin(TH) * (t / 2 + 0.05)
+                P = self.W(UU, VV, CC) if alongx else self.W(CC, VV, UU); sheet(self.mesh('Wall'), P, th['wall_mat'], (self.ax if alongx else self.az) * out)
+
+    def cave_arch(self, alongx, mid, c_, base, top, t, dw):
+        """grammar organic: the rock closes over a doorway slot of a cave in an uneven arch from a little over head height. One sheet each side:
+        the underside from the wall's middle, a rounded lip, then the face up to the wall top, tapering back to the wall face at both ends.
+        Drawn only: nothing there to walk into (the arch springs 2.8 m over the higher floor)."""
+        org = self.organic; half = dw / 2 + 0.3; U = np.linspace(mid - half, mid + half, 13); q = np.clip(np.abs(U - mid) / (dw / 2), 0, 1)
+        soff = base + 2.8 + (0.7 + 0.5 * org) * np.sqrt(np.clip(1 - q ** 2, 0, 1)); taper = np.clip(1 - np.abs(U - mid) / half, 0, 1) ** 0.6
+        nV = max(4, int((top - soff.min()) / 0.5)); r = 0.45
+        for sd in (-1, 1):
+            nrm = (self.az if alongx else self.ax) * sd; w = t / 2 + 0.05 + 0.4 * taper; rows = []
+            prof = [(k / 3 * (w - r), np.zeros_like(U)) for k in range(4)] + [((w - r) + r * math.sin(f_), r - r * math.cos(f_)) for f_ in np.linspace(0, math.pi / 2, 5)[1:]]
+            for co, yo in prof: rows.append((np.broadcast_to(co, U.shape), soff + yo))
+            for k in range(1, nV + 1): rows.append((w, soff + r + (top - soff - r) * k / nV))
+            CO = np.stack([np.broadcast_to(a_, U.shape) for a_, _ in rows], 1); Y = np.stack([b_ for _, b_ in rows], 1); UU = np.broadcast_to(U[:, None], CO.shape)
+            C = c_ + sd * CO; P = self.W(UU, Y, C) if alongx else self.W(C, Y, UU)
+            n_ = 0.32 * (rough(P, self.seed + 67) - 0.5) * 2 * taper[:, None]; P = P + nrm * n_[..., None] - UP * (0.18 * (rough(P, self.seed + 71) - 0.5) * 2)[..., None] * (CO < w[:, None] - 0.01)[..., None]
+            sheet(self.mesh('Wall'), P, self.th['wall_mat'], nrm)
 
     def mesh(self, name):
-        if name not in self.m: self.m[name] = Mesh(f'{self.id}_{name}')
+        if name not in self.m: self.m[name] = Mesh(f'{self.id}_{name}'); self.m[name].organic = self.organic > 0
         return self.m[name]
 
     def w(self, x, y, z):
@@ -251,6 +323,8 @@ class Kit:
         if self.cave: self.cave_wall(alongx, a0, a1, c_, y0, y1, t, bx); return
         def put(name, u0, u1, ya, yb, v0, v1, mat):
             q = bx(u0, u1, v0, v1); self.box(name, q[0], q[1], ya, yb, q[2], q[3], mat)
+        hanok = kind == 'hanok'
+        if hanok: real = self.mesh('Wall'); self.m['Wall'] = Mesh('_discard'); self.m['Wall'].organic = False; kind = 'rubble'      # the rubble wall's rng draws, thrown away: nothing else in the dungeon moves
         if kind in ('rubble', 'ashlar', 'earth'):
             put('Wall', a0, a1, y0, y1, c_ - t / 2, c_ + t / 2, th['wall_mat'])
             if kind == 'ashlar': put('Wall', a0 - 0.04, a1 + 0.04, y1, y1 + 0.16, c_ - t / 2 - 0.08, c_ + t / 2 + 0.08, th['cope_mat'])
@@ -277,7 +351,73 @@ class Kit:
             yy = y0
             while yy < y1 - 0.05:
                 hb = min(rng.uniform(0.2, 0.32), y1 - yy); put('Wall', a0 + rng.uniform(0.0, 0.08), a1 - rng.uniform(0.0, 0.08), yy + 0.01, yy + hb - 0.01, c_ - 0.04 + rng.uniform(-0.015, 0.015), c_ + 0.04, th['wall_mat']); yy += hb
+        if hanok: self.m['Wall'] = real; put('Wall', a0, a1, y0, y1, c_ - t / 2, c_ + t / 2, th['wall_mat']); self.hanok_face(alongx, a0, a1, c_, y0, y1, t, put)
         q = bx(a0, a1, c_ - t / 2 + 0.02, c_ + t / 2 - 0.02); self.collide(q[0], q[1], y0, y1, q[2], q[3])
+
+    def hanok_face(self, alongx, a0, a1, c_, y0, y1, t, put):
+        """wall kind 'hanok' (cr_kiln, D308-117 C3c): the room faces of the stone wall dressed as the 심벽 of a Joseon 부엌. Drawn only, all within 0.5 m
+        of the face (the collider is the wall's own). Over the floor of that side: 고막이 stones to 0.3, 하인방 0.3-0.46, 중인방 1.0-1.15, 상인방 2.0-2.15,
+        창방 2.7-2.98; square posts 0.2 on 덤벙주초 stones at bays of about 2.4 m; plaster between; now and then a 살창 in a bay or a 시렁 over the posts.
+        Sourced: 심벽 = posts and 인방 framing plaster/clay panels, 살창, 시렁 (encykorea 벽 · 살창 · 부엌). Estimated: every height and size above."""
+        import random
+        g_ = self.grid[0] if alongx else self.grid[1]; corner = lambda a: g_ > 0 and abs(a / g_ - round(a / g_)) < 1e-6
+        hr = random.Random(int(hashlib.md5(f'{self.id}|{alongx}|{a0:.2f}|{a1:.2f}|{c_:.2f}|{y0:.2f}'.encode()).hexdigest()[:8], 16)); wood = 'wood_dark'
+        for a_, out in ((a0, -1.0), (a1, 1.0)):      # a doorway jamb: a board over the flat stone end (문설주 lining)
+            if not corner(a_): put('Wall', min(a_, a_ + out * 0.04), max(a_, a_ + out * 0.04), y0, y1, c_ - t / 2 - 0.02, c_ + t / 2 + 0.02, wood)
+        for sd, f, ry in self.sides:
+            face = c_ + sd * t / 2
+            def fb(u0, u1, ya, yb, d0, d1, mat):
+                ya, yb = max(ya, y0), min(yb, y1, ry)
+                if yb - ya > 0.02 and u1 - u0 > 0.02: put('Wall', u0, u1, ya, yb, min(face + sd * d0, face + sd * d1), max(face + sd * d0, face + sd * d1), mat)
+            ua = a0 + (t / 2 if corner(a0) else 0.0); ub = a1 - (t / 2 if corner(a1) else 0.0)
+            fb(ua, ub, f, ry, 0.0, 0.03, 'plaster'); fb(ua, ub, f, f + 0.3, 0.0, 0.08, 'fieldstone')
+            for ya, yb, d in ((0.3, 0.46, 0.12), (1.0, 1.15, 0.11), (2.0, 2.15, 0.11), (2.7, 2.98, 0.16)): fb(ua, ub, f + ya, f + yb, 0.0, d, wood)
+            if not (y0 <= f + 0.05 and y1 >= f + 2.9): continue      # a riser or the wall over a door: bands only, no posts
+            pa, pb = ua + 0.1, ub - 0.1; n = max(1, round((pb - pa) / 2.4)); us = [pa + (pb - pa) * k / n for k in range(n + 1)]
+            for u in us:
+                fb(u - 0.1, u + 0.1, f + 0.24, f + 2.98, 0.0, 0.2, wood); w_ = hr.uniform(0.17, 0.22); fb(u - w_, u + w_, f, f + hr.uniform(0.22, 0.3), 0.0, hr.uniform(0.3, 0.4), 'fieldstone')
+            if n >= 2 and hr.random() < 0.55:      # 살창: a dark slot behind upright bars in one bay, between the 중인방 and the 상인방
+                k = hr.randrange(n); uc = (us[k] + us[k + 1]) / 2; hw = min(0.55, (us[k + 1] - us[k]) / 2 - 0.3)
+                fb(uc - hw, uc + hw, f + 1.2, f + 1.95, 0.0, 0.035, 'iron')
+                for ya, yb in ((1.15, 1.2), (1.95, 2.0)): fb(uc - hw - 0.05, uc + hw + 0.05, f + ya, f + yb, 0.0, 0.1, wood)
+                for e_ in (-1, 1): fb(uc + e_ * hw - (0.05 if e_ > 0 else 0.0), uc + e_ * hw + (0.05 if e_ < 0 else 0.0), f + 1.15, f + 2.0, 0.0, 0.1, wood)
+                bu = uc - hw + 0.11
+                while bu < uc + hw - 0.05: fb(bu - 0.022, bu + 0.022, f + 1.2, f + 1.95, 0.04, 0.085, wood); bu += 0.12
+            elif hr.random() < 0.4:      # 시렁: two poles on brackets from the posts, over head height
+                for u in (us[1:-1] or us): fb(u - 0.03, u + 0.03, f + 2.2, f + 2.27, 0.2, 0.48, wood)
+                for d in (0.26, 0.42):
+                    q0 = (pa + 0.15, face + sd * d); q1 = (pb - 0.15, face + sd * d)
+                    P0 = self.w(q0[0], f + 2.3, q0[1]) if alongx else self.w(q0[1], f + 2.3, q0[0]); P1 = self.w(q1[0], f + 2.3, q1[1]) if alongx else self.w(q1[1], f + 2.3, q1[0])
+                    self.mesh('Wall').log(P0, P1, 0.035, 0.035, wood)
+
+    def hanok_roof(self, x0, x1, z0, z1, f, ry, t, broken):
+        """wall kind 'hanok': the 연등천장 of a 부엌 under the stone roof slab (drawn only). Ridge (종도리) along x over the cell's middle, 대들보 across at the
+        inner post lines of the long walls, a 동자주 on each, round rafters (서까래) every 0.33 m from the wall plates (도리, 3.05 m) to the ridge, plastered 앙토
+        over them. `broken` (every second cell, the danger form): one 대들보 snapped and sagging to 2.45 m, a few rafters hanging. Sourced: 연등천장, 서까래
+        ~15 cm at ~30 cm. Estimated: the heights, the slope (about 22 deg in a 4.7 m room)."""
+        import random
+        hr = random.Random(int(hashlib.md5(f'{self.id}|roof|{x0:.2f}|{z0:.2f}|{f:.2f}'.encode()).hexdigest()[:8], 16)); wood = 'wood_dark'; M = self.mesh('Roof')
+        xa, xb, za, zb = x0 + t / 2, x1 - t / 2, z0 + t / 2, z1 - t / 2; zc = (za + zb) / 2; yp, yr = f + 3.05, ry - 0.18
+        slope = lambda z: yp + (yr - yp) * (1 - abs(z - zc) / (zc - za))
+        pa, pb = xa + 0.1, xb - 0.1; n = max(1, round((pb - pa) / 2.4)); inner = [pa + (pb - pa) * k / n for k in range(1, n)] or [(xa + xb) / 2]
+        M.log(self.w(xa, yr - 0.02, zc), self.w(xb, yr - 0.02, zc), 0.12, 0.12, wood, sides=8)
+        for zz in (za + 0.13, zb - 0.13): M.log(self.w(xa, yp - 0.04, zz), self.w(xb, yp - 0.04, zz), 0.11, 0.11, wood, sides=8)
+        snap = hr.randrange(len(inner)) if broken else -1
+        for k, x in enumerate(inner):
+            if k != snap:
+                M.box(self.w(x, f + 3.15, zc), self.ax, UP, self.az, (0.28, 0.34, zb - za), wood); M.box(self.w(x, (f + 3.32 + yr) / 2, zc), self.ax, UP, self.az, (0.18, yr - f - 3.32, 0.18), wood)
+            else:
+                for zz, low in ((za, 2.45), (zb, 2.75)):
+                    M.log(self.w(x, f + 3.15, zz), self.w(x + hr.uniform(-0.25, 0.25), f + low, zc + (0.15 if zz == za else -0.25)), 0.15, 0.13, wood, sides=6, rng=hr, wob=0.04)
+        xs = list(np.arange(xa + 0.17, xb - 0.1, 0.33)); hang = set(hr.sample(range(len(xs)), 4)) if broken else set()
+        for i, x in enumerate(xs):
+            for zz in (za, zb):
+                if i in hang and zz == za:      # snapped: the low end let go and swung down
+                    zt = zc - 0.4; M.log(self.w(x, slope(zt), zt), self.w(x + hr.uniform(-0.3, 0.3), f + hr.uniform(2.35, 2.7), zt - hr.uniform(1.0, 1.6)), 0.065, 0.055, wood, sides=6); continue
+                M.log(self.w(x, yp + 0.06, zz), self.w(x, yr + 0.02, zc), 0.065, 0.065, wood, sides=6)
+        for zz in (za, zb):
+            X, Z = np.meshgrid(np.array([xa, xb]), np.array([zz, zc]), indexing='ij'); Y = yp + 0.14 + (yr + 0.1 - yp - 0.14) * (Z == zc)
+            sheet(M, self.W(X, Y, Z), 'plaster', -UP, uvs=3.0)
 
 
 def dress_cave(K, G, st, chain, rect, level, n, avoid, rng):
@@ -384,7 +524,7 @@ def dress_cave(K, G, st, chain, rect, level, n, avoid, rng):
         def mass(u, v, top_y, s0, s1):
             yy = yl - 0.3
             while yy < top_y:
-                sz_ = rng.uniform(s0, s1); stone(K.mesh('Rubble'), K.w(u + rng.uniform(-0.3, 0.3), yy + sz_ * 0.35, v + rng.uniform(-0.3, 0.3)), sz_, rockm, rng); yy += sz_ * rng.uniform(0.45, 0.65)
+                sz_ = rng.uniform(s0, s1); js = 0.35 if K.organic > 0 else 1.0; stone(K.mesh('Rubble'), K.w(u + rng.uniform(-0.3, 0.3) * js, yy + sz_ * 0.35, v + rng.uniform(-0.3, 0.3) * js), sz_, rockm, rng); yy += sz_ * rng.uniform(0.45, 0.65)
         for cx_, cz_ in ((x0 + 0.8, z0 + 0.8), (x1 - 0.8, z0 + 0.8), (x0 + 0.8, z1 - 0.8), (x1 - 0.8, z1 - 0.8)):
             if near(cx_, cz_, 2.3) or rng.random() < 0.15: continue
             mass(cx_, cz_, ceil(cx_, cz_) + 0.3, 1.7, 2.7); K.collide(cx_ - 0.75, cx_ + 0.75, yl, yl + 2.4, cz_ - 0.75, cz_ + 0.75); avoid.append((cx_, cz_))
@@ -521,7 +661,7 @@ def build_one(cfg, D, site, f):
     y0 = sol['y0'] if under else max(samples) + G['podium_lift']; yb = y0 - 0.6 if under else min(samples) - 1.0
     style = next((c_ for c_ in cfg.get('caveStyles', []) if c_['realm'] == D['realm']), {}) if cave else {}
     if cave: th.update(CAVE); th.update(wall_mat=style.get('rockMaterial', ROCK), roof_mat=style.get('rockMaterial', ROCK), wood_mat=style.get('woodMaterial', TIMBER))
-    K = Kit(D['id'], [o2[0], y0, o2[1]], site['yaw'], rng, th); K.cave = cave; K.seed = seed_of(cfg['seed'], D['id'], 'rock') % 100000; K.roof_amp = float(G.get('roof_amp_m', 1.3)); K.bulge = float(G.get('bulge_m', 1.0)); K.ax = np.array([ax[0], 0.0, ax[1]]); K.az = np.array([az[0], 0.0, az[1]])
+    K = Kit(D['id'], [o2[0], y0, o2[1]], site['yaw'], rng, th); K.cave = cave; K.seed = seed_of(cfg['seed'], D['id'], 'rock') % 100000; K.roof_amp = float(G.get('roof_amp_m', 1.3)); K.bulge = float(G.get('bulge_m', 1.0)); K.organic = float(G.get('organic', 0.0)); K.grid = (cw, cd); K.wall_h = wall_h; K.dome = float(G.get('dome_m', 1.6)); K.ax = np.array([ax[0], 0.0, ax[1]]); K.az = np.array([az[0], 0.0, az[1]])
     # ---- the chain of cells and the level of each
     feats = D['features']; assert len(feats) == 2 * n - 1, f"{D['id']}: features must have {2 * n - 1} entries"
     chain = [('A', k) for k in range(n)] + [('B', k) for k in range(n - 1, -1, -1)]; level = {chain[0]: 0.0}; lv = 0.0
@@ -539,7 +679,9 @@ def build_one(cfg, D, site, f):
         if under or (cell[0], cell[1]) in roofed or D.get('all_roofed'):
             ry = level[cell] + G['roof_h']; K.box('Roof', x0 - 0.3, x1 + 0.3, ry, ry + 0.18, z0 - 0.3, z1 + 0.3, th['roof_mat']); K.collide(x0, x1, ry, ry + 0.18, z0, z1)
             if cave: K.cave_roof(x0, x1, ry, z0, z1, th['roof_mat'], float(G.get('dome_m', 1.6))); continue
-            for u in np.arange(x0 + 0.5, x1, rng.uniform(1.4, 2.0)): K.mesh('Roof').log(K.w(u, ry - 0.12, z0 - 0.4), K.w(u + rng.uniform(-0.1, 0.1), ry - 0.12, z1 + 0.4), 0.09, 0.08, th['cope_mat'], rng=rng, wob=0.08)
+            hanok = th['wall'] == 'hanok'; junk = Mesh('_discard')      # hanok: the slab's log draws still taken (into nothing), then the 연등천장
+            if hanok: K.hanok_roof(x0, x1, z0, z1, level[cell], ry, t, chain.index(cell) % 2 == 1)
+            for u in np.arange(x0 + 0.5, x1, rng.uniform(1.4, 2.0)): (junk if hanok else K.mesh('Roof')).log(K.w(u, ry - 0.12, z0 - 0.4), K.w(u + rng.uniform(-0.1, 0.1), ry - 0.12, z1 + 0.4), 0.09, 0.08, th['cope_mat'], rng=rng, wob=0.08)
     # ---- walls: every cell edge, with a doorway where the way passes
     conn = {}
     for k, ft in enumerate(feats): conn[frozenset((chain[k], chain[k + 1]))] = ft
@@ -548,12 +690,24 @@ def build_one(cfg, D, site, f):
         """wall between cells a and b (b may be None = outside) along the segment; a doorway in its middle when they connect."""
         top = max(level[a], level[b] if b else 0.0) + wall_h; bot = yb - y0 if b is None else min(level[a], level[b])
         ft = conn.get(frozenset((a, b))) if b else None; entrance = b is None and a == ('A', 0) and z0 == 0.0 and z1 == 0.0
+        if th['wall'] == 'hanok':      # which side of the wall faces which room: its floor and roof (D308-117 C3c)
+            ax_ = abs(x1 - x0) > abs(z1 - z0); c0 = z0 if ax_ else x0; K.sides = []
+            for cell in (a, b):
+                if cell is None: continue
+                rc = rect(cell); mid_ = (rc[2] + rc[3]) / 2 if ax_ else (rc[0] + rc[1]) / 2; K.sides.append((1 if mid_ > c0 else -1, level[cell], level[cell] + G['roof_h']))
         if not ft and not entrance: K.wall(x0, z0, x1, z1, bot, top, t); return
+        K.jamb = bool(ft) and ft != 'door'      # grammar organic: round the jambs of the open ways (never a door's: its leaves close on them)
         alongx = abs(x1 - x0) > abs(z1 - z0); mid = (x0 + x1) / 2 if alongx else (z0 + z1) / 2
         if alongx: K.wall(x0, z0, mid - dw / 2, z1, bot, top, t); K.wall(mid + dw / 2, z0, x1, z1, bot, top, t)
         else: K.wall(x0, z0, x1, mid - dw / 2, bot, top, t); K.wall(x0, mid + dw / 2, x1, z1, bot, top, t)
         pos = (mid, z0) if alongx else (x0, mid); lo = min(level[a], level[b]) if b else 0.0; hi = max(level[a], level[b]) if b else 0.0
         if hi > lo: K.wall(*( (mid - dw / 2, z0, mid + dw / 2, z1) if alongx else (x0, mid - dw / 2, x1, mid + dw / 2) ), bot, hi, t)      # the riser of a ledge fills the doorway up to the upper floor
+        K.jamb = False
+        if th['wall'] == 'hanok' and ft and ft != 'door' and hi == lo:      # an open way through a 심벽: a lintel at 2.25 m and plaster over it (drawn only)
+            ua_, ub_ = mid - dw / 2 - 0.1, mid + dw / 2 + 0.1; cc_ = z0 if alongx else x0
+            for (ya_, yb_, d_, m_) in ((lo + 2.25, lo + 2.45, t / 2 + 0.06, 'wood_dark'), (lo + 2.45, top, t / 2 - 0.02, 'plaster')):
+                q_ = (ua_, ub_, cc_ - d_, cc_ + d_) if alongx else (cc_ - d_, cc_ + d_, ua_, ub_); K.box('Wall', q_[0], q_[1], ya_, yb_, q_[2], q_[3], m_)
+        if cave and K.organic > 0 and ft and ft != 'door': K.cave_arch(alongx, mid, z0 if alongx else x0, hi, top, t, dw)
         rec = dict(a=list(a), b=list(b) if b else None, feature=ft or 'entrance', pos=[round(float(v), 3) for v in K.w(pos[0], lo, pos[1])], yaw=round(site['yaw'] + (0.0 if alongx else 90.0), 1), width=dw, across='x' if alongx else 'z', lo=lo, hi=hi)
         if ft in ('vine', 'boulder', 'taint'): gates.append(rec)
         elif ft == 'lift' or ft == 'drop': ledges.append(rec)
@@ -629,7 +783,7 @@ def build_one(cfg, D, site, f):
     rewards.append(dict(id=f"dg308_{D['id']}_fragment", kind='fragment', prefab=R['celadon'][seed_of(D['id'], 'c') % len(R['celadon'])], pos=[round(float(v), 3) for v in K.w(px, level[top_cell] + 0.72, pz)], stand=[round(float(v), 3) for v in K.w(px + 0.9, level[top_cell], pz)]))
     jar_cell = chain[max(1, len(chain) // 2 - 1)] if chain[max(1, len(chain) // 2 - 1)] != top_cell else chain[1]
     x0, x1, z0, z1 = rect(jar_cell); jx, jz = x0 + 1.5, (z0 + 1.5 if jar_cell[0] == 'A' else z1 - 1.5); jy = level[jar_cell] + led
-    K.box('Prop', jx - 1.1, jx + 1.1, level[jar_cell], jy, jz - 1.1, jz + 1.1, th['wall_mat'] if th['wall'] in ('rubble', 'ashlar', 'earth') else th['cope_mat'], collide=True)
+    K.box('Prop', jx - 1.1, jx + 1.1, level[jar_cell], jy, jz - 1.1, jz + 1.1, th['wall_mat'] if th['wall'] in ('rubble', 'ashlar', 'earth', 'hanok') else th['cope_mat'], collide=True)
     rewards.append(dict(id=f"dg308_{D['id']}_jar", kind='coins', currency=int(R['coins']), prefab=R['white'][seed_of(D['id'], 'w') % len(R['white'])], pos=[round(float(v), 3) for v in K.w(jx, jy, jz)], stand=[round(float(v), 3) for v in K.w(jx, jy, jz)]))
     # ---- props that say where this is (drawn only, small)
     for pr in D.get('props', []):
