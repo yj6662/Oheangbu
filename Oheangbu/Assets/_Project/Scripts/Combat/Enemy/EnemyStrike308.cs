@@ -20,6 +20,9 @@ namespace Oheangbu.Combat
             // WP-07 (weaken, dull: the dull charge is used up here) and WP-13 (haze miss, cover): the pure rule, line for line
             // what stood here before, so the offline runner checks what the player really takes (EnemyStrikeRule308).
             if (!EnemyStrikeRule308.Resolve(attacker != null ? attacker.Modifiers : null, amount, ranged, UnityEngine.Time.time, out float delivered)) return false;
+            // D308-115 (옴): a ranged strike that would land may be stopped by the player's ranged ward. Without a ward
+            // (every case but an active water summon with its behaviour on) this is a no-op.
+            if (ranged && player.TryRangedWard308(attacker, delivered, kind)) return false;
             return player.TakeAttackDamage(delivered, kind, attacker);
         }
     }

@@ -250,6 +250,28 @@ namespace Oheangbu.App.SpellVFX120
                 Sprite(ref c, at + new Vector3(-s * .75f, -s * .85f, -.01f), s * .24f, s * .39f, InkBurstMeshBuilder308.CellDropTailed, 1);
                 Sprite(ref c, at + new Vector3(s * .7f, -s * .9f, -.01f), s * .21f, s * .33f, InkBurstMeshBuilder308.CellDropTailed, 1);
             }
+            // D308-115: the summons' marks, ink only (no glow, no HUD)
+            if ((input.States & PresentState308.Root) != 0)
+            {
+                // 곰: roots that grip the legs - three dry strokes climbing from the ground to the waist, leaning in
+                float climb = Mathf.Max(s * 2f, chest.y * .62f);
+                for (int k = -1; k <= 1; k++)
+                {
+                    Vector3 from = new Vector3(k * s * .95f, .03f, -s * .25f);
+                    Vector3 axis = new Vector3(-k * .28f, 1f, 0f).normalized;
+                    float run = k == 0 ? climb * .7f : climb;
+                    if (InkBurstMeshBuilder308.AddDryStroke(c.B, from, axis, Vector3.Cross(axis, Vector3.forward).normalized, run, s * .3f, (int)(c.R.Next() * 3.99f), k == 0 ? 1f : 0f, c.R.Next(), c.Tint, Vector3.zero, 0f))
+                    { c.S.Fine++; Born(ref c, k == 0 ? 1 : 0); Reach(ref c, from + axis * run); }
+                }
+                Sprite(ref c, new Vector3(0f, .04f, -s * .25f), s * .9f, s * .35f, InkBurstMeshBuilder308.CellCluster, 0);
+            }
+            if ((input.States & PresentState308.Sin) != 0)
+            {
+                // 놈: a brand on the shoulder - a pressed cluster of ink and one bar struck under it
+                Vector3 at = new Vector3(-s * 1.05f, chest.y * 1.2f, chest.z - s * .2f);
+                Sprite(ref c, at, s * .75f, s * .75f, InkBurstMeshBuilder308.CellCluster, 0);
+                Needle(ref c, p, at + new Vector3(-s * .6f, -s * .6f, -.01f), Vector3.right, s * 1.2f, 1);
+            }
         }
 
         // ---- the zone's edge (body root = the zone's centre on the ground, +Y = the ground's normal)

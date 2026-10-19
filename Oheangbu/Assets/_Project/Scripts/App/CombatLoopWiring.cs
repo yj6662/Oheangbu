@@ -693,6 +693,11 @@ namespace Oheangbu.App
             if (!layerParry && !originalContact && !authoredGuardContact) ParryBurstEffect.Spawn(impactPoint, burst, Camera.main, PlayerParryBurstScale306());
         }
 
+        // #308 D308-115 (옴): the water summon stopped a ranged strike - one small ink splash where it stopped
+        // (the ink hit at half the parry size, no letter emphasis, no glow). It changes nothing in combat.
+        public bool SpawnWardSplash308(Vector3 point, Element element)
+            => _contactVfx != null && SpawnContact(_contactVfx.ParrySource(element), point, _contactVfx.ParryScale * _contactVfx.HalfScale, element);
+
         private bool SpawnContact(GameObject source, Vector3 point, float scale, Element? element=null, char letter=default)
         {
             var emphasis = _contactVfx.ForSpell(letter);

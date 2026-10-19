@@ -52,6 +52,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (command.StartsWith("club:")) return DemoClubAuthoring.Execute(command.Substring(5));
             if (command == "manager-tests") return Save("manager_tests.json", DemoSummonManagerChecks.Run());
             if (command.StartsWith("play:")) return DemoSummonPlayChecks.Execute(command.Substring(5));
+            if (command == "behaviour308-tests") return Save("behaviour308_tests.json", DemoSummonBehaviour308Checks.Run());
+            if (command.StartsWith("behaviour308:")) return DemoSummonBehaviour308Switch.Execute(command.Substring(13));
             throw new ArgumentException("summons: apply/audit/tests/damage-tests");
         }
         static string Save(string name, string json) { File.WriteAllText(Path.Combine(Output,name),json); return json; }

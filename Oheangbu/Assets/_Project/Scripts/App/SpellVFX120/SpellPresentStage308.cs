@@ -611,6 +611,8 @@ namespace Oheangbu.App.SpellVFX120
                     state = SpellPresentRules308.StateOf(_sheet, enemy.Control.BlocksActions(now), enemy.Control.MovementScale(now), enemy.Modifiers.DamageTakenScale(now),
                         enemy.Modifiers.DefenceShred(now), enemy.Modifiers.OutgoingScale(now),
                         stance.Raised, stance.Broken && now < stance.BreakUntil, enemy.Modifiers.Veil.Blinded(now));
+                    // D308-115: a summon's own marks (root, sin) - the manager keeps them, the stage only reads them
+                    if (_wiring.SummonCombat != null) state |= (PresentState308)_wiring.SummonCombat.Mark308(enemy);
                 }
                 Transform carrier = enemy.transform;
                 int b = -1;

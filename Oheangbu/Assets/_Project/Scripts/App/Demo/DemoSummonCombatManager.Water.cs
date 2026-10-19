@@ -20,6 +20,21 @@ namespace Oheangbu.App.Demo
         {
             var p = actor.Profile; var target = actor.Target.transform.position;
             float distance = HorizontalDistance(actor.Root.transform.position, target);
+            // 옴 (D308-115): the ward stays by the player. It never closes in or backs off; it fires only from where it stands.
+            if (actor.Ward308)
+            {
+                actor.KeepingDistance = false;
+                Vector3 wardOrigin = actor.Root.transform.TransformPoint(p.WaterOriginOffset);
+                if (Vector3.Distance(wardOrigin, ClubAimPoint(actor.Target)) > p.WaterRange || !Sight(actor, actor.Target))
+                {
+                    actor.Clock.SetActivityPhase(SummonPhase.Following);
+                    Vector3 player = Wiring.SummonPlayer.position;
+                    if (HorizontalDistance(actor.Root.transform.position, player) > p.WardFollowDistance + .4f) Navigate(actor, FollowSpot308(actor, player), dt, .35f);
+                    else actor.HasPath = false;
+                    return;
+                }
+                BeginWaterAttack(actor, dt); return;
+            }
             if (distance < p.WaterMinimumDistance && !actor.KeepingDistance)
             { actor.KeepingDistance = true; actor.HasPath = false; actor.NextPath = actor.Clock.Elapsed; }
             if (actor.KeepingDistance && distance >= p.WaterPreferredDistance - .1f)

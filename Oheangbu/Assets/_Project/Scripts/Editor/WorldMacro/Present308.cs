@@ -475,7 +475,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         string names = opt.TryGetValue("states", out var statesText) ? statesText : "bound";
                         foreach (string name in names.Split(','))
                         {
-                            if (!Enum.TryParse(name.Trim(), true, out PresentState308 state) || state == PresentState308.None) throw new PostLedger308.Refused("states must be a comma list of bound, slowed, exposed, weakened, guarded, guardbroken, blind");
+                            if (!Enum.TryParse(name.Trim(), true, out PresentState308 state) || state == PresentState308.None) throw new PostLedger308.Refused("states must be a comma list of bound, slowed, exposed, weakened, guarded, guardbroken, blind, root, sin");
                             input.States |= state;
                         }
                         break;
