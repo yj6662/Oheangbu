@@ -37,6 +37,14 @@ namespace Oheangbu.EditorTools.WorldMacro
    return (a.transform.Find("Creature308_Visual")!=null?"Creature308:":"")+(r!=null?r.name:"?");
   }
 
+  // the numbers a swap must not change (SPEC-ENEMY-BODIES-308 invariant): hp, damage, telegraph; detection is copied over
+  static string Stats(GameObject a)
+  {
+   var v=a.GetComponent<EnemyVitals>();var c=a.GetComponent<EnemyController>();
+   var ap=c!=null?new SerializedObject(c).FindProperty("_attackProfile")?.objectReferenceValue as EnemyAttackProfileSO:null;
+   return "hp "+(v!=null?F(v.MaxHp):"-")+" dmg "+(ap!=null?F(ap.Damage):"-")+" tel "+(ap!=null?F(ap.Telegraph):"-");
+  }
+
   static string Swap(Cfg cfg,Scene scene,WorldMacroPlaytestSession session,WorldMacroPlaytestSO content,bool write)
   {
    var sb=new StringBuilder("Creatures308 swap "+(write?"apply":"dry"));
@@ -65,7 +73,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      if(done!=null&&done.species==s.key&&old.transform.Find("Creature308_Visual")!=null){kept++;sb.Append("\n    = ").Append(old.Id).Append(" already ").Append(s.key);continue;}
      bool onNav=NavMesh.SamplePosition(feet,out _,2f,NavMesh.AllAreas);
      string from=BodyName(old);
-     sb.Append("\n    ").Append(write?"* ":"~ ").Append(old.Id).Append(" ").Append(from).Append(" -> ").Append(s.key).Append(" at ").Append(V(feet)).Append(onNav?"":" (WARN no NavMesh within 2 m)");
+     sb.Append("\n    ").Append(write?"* ":"~ ").Append(old.Id).Append(" ").Append(from).Append(" -> ").Append(s.key).Append(" at ").Append(V(feet)).Append(onNav?"":" (WARN no NavMesh within 2 m)")
+      .Append(" | ").Append(Stats(old.gameObject)).Append(" -> ").Append(Stats(prefab));
      if(!write)continue;
      var go=Object.Instantiate(prefab);SceneManager.MoveGameObjectToScene(go,scene);go.transform.SetParent(old.transform.parent,true);go.name=old.gameObject.name;
      go.transform.SetPositionAndRotation(feet+Vector3.up*newOffset,old.transform.rotation);go.SetActive(old.gameObject.activeSelf);
