@@ -1,0 +1,146 @@
+{
+ "species": {
+  "root_beast": {
+   "from": "goat",
+   "length_m": 1.5,
+   "hp": 24,
+   "damage": 12,
+   "telegraph": 1.35,
+   "note": "D308-120: 청림 뿌리 짐승 = 무료 산양 몸 + 뿌리 부품(아귀 인간형 몸 대신). 청림에 없는 네발 실루엣(뿔)",
+   "parts": [
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_antler.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_antler_albedo.png",
+     "bone": "Head_M_joint",
+     "length": 0.72,
+     "grip01": 0.08,
+     "pos": [
+      -0.128,
+      0.083,
+      0.0
+     ],
+     "euler": [
+      7.4,
+      270.0,
+      180.0
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "뿔을 삼킨 뿌리 뿔(머리 앞은 비움 - 박치기 예고)",
+     "saturation": 0.45,
+     "value": 0.8
+    },
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump_albedo.png",
+     "bone": "Spine1_M_joint",
+     "length": 0.62,
+     "grip01": 0.5,
+     "pos": [
+      -0.005,
+      -0.25,
+      0.0
+     ],
+     "euler": [
+      82.6,
+      90.0,
+      0.0
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "등을 뚫고 터져 나온 뿌리 덩이",
+     "saturation": 0.45,
+     "value": 0.8
+    },
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_moss.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_moss_albedo.png",
+     "bone": "Spine2_M_joint",
+     "length": 0.55,
+     "grip01": 0.5,
+     "pos": [
+      -0.064,
+      -0.157,
+      0.0
+     ],
+     "euler": [
+      67.8,
+      270.0,
+      180.0
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "어깨 위 이끼 낀 나무껍질",
+     "saturation": 0.6,
+     "value": 0.9
+    },
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump_albedo.png",
+     "bone": "Pelvis_joint",
+     "length": 0.4,
+     "grip01": 0.5,
+     "pos": [
+      0.062,
+      -0.166,
+      0.08
+     ],
+     "euler": [
+      51.8,
+      48.7,
+      313.8
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "왼 엉덩이 작은 뿌리",
+     "saturation": 0.45,
+     "value": 0.8
+    },
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump_albedo.png",
+     "bone": "Pelvis_joint",
+     "length": 0.42,
+     "grip01": 0.5,
+     "pos": [
+      -0.119,
+      0.272,
+      0.0
+     ],
+     "euler": [
+      285.3,
+      270.0,
+      0.0
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "배 밑에 늘어진 뿌리(젖통 가림)",
+     "saturation": 0.45,
+     "value": 0.8
+    }
+   ]
+  }
+ },
+ "swaps": [
+  {
+   "match": "field308/cheongrim_root_beast_",
+   "species": "root_beast",
+   "note": "D308-120 청림 뿌리 짐승(산양 몸 + 뿌리 부품)"
+  }
+ ]
+}
