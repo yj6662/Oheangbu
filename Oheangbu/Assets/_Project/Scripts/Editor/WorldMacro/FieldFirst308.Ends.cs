@@ -153,6 +153,19 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var q in pass.OrderBy(q=>q.d).Take(16))sb.AppendLine("  ("+q.p.x.ToString("F1")+", "+q.p.z.ToString("F1")+") y "+q.p.y.ToString("F2")+" d "+q.d.ToString("F0")+" slope "+q.s.ToString("F1")+"°");
    return sb.ToString().TrimEnd();
   }
+  // field308-nav:x,z[;x,z...] (read only): NavMesh.SamplePosition within 2 m of the physical ground at each point
+  static string Nav(string arg)
+  {
+   var sb=new StringBuilder("field308-nav (sample radius 2 m)\n");int ok=0,n=0;
+   foreach(var pair in (arg??"").Split(new[]{';'},StringSplitOptions.RemoveEmptyEntries))
+   {
+    var f=pair.Split(',').Select(x=>float.Parse(x,System.Globalization.CultureInfo.InvariantCulture)).ToArray();n++;
+    var at=new Vector3(f[0],GroundY(f[0],f[1]),f[1]);
+    bool hit=UnityEngine.AI.NavMesh.SamplePosition(at,out var h,2f,UnityEngine.AI.NavMesh.AllAreas);if(hit)ok++;
+    sb.AppendLine("  ("+f[0].ToString("F1")+", "+f[1].ToString("F1")+") "+(hit?"O navmesh "+Vector3.Distance(h.position,at).ToString("F2")+" m":"X no navmesh within 2 m"));
+   }
+   return sb.Insert(0,"navmesh "+ok+" / "+n+"\n").ToString().TrimEnd();
+  }
   static float PolyDist(Vector2[] pts,Vector2 q)
   {
    if(pts.Length==0)return float.PositiveInfinity;if(pts.Length==1)return Vector2.Distance(pts[0],q);

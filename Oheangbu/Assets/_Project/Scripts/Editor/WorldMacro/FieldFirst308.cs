@@ -55,6 +55,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      case "field308-heights":return Heights();
      case "field308-sight":return Sight();
      case "field308-ends":return Ends();
+     case "field308-nav":return Nav(parts.Length>1?parts[1]:"");
      case "field308-flat":return Flat(parts.Length>1?parts[1].Split(','):new string[0]);
      case "field308-cloud":return revert?CloudRevert():Cloud(dry);
     }
