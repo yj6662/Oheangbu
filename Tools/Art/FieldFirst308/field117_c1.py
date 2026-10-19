@@ -3,6 +3,9 @@
   - content308_relayout.json encounter_moves[]: the moss jackal pack (field308/cheongrim_moss_jackal_1_*) from the wood 92 m
     north of the 신목 to the approach, 23 - 27 m south of the path (populate308 road_min_m 22), pack spacing 4 - 6 m,
     slope <= 14 deg (FieldFirst308 field308-flat). Facing the approach. Applied by Content308 content-apply:main.
+  - content308_scene.json actors.moves[]: the same three jackals, so Content308 scene-apply:main poses the SCENE actors on the moved
+    rows (feet + baseOffset, the row yaw, patrol). content-apply moves the content rows only and the runtime reads the scene actors
+    (PrologueSession.Encounters) - without these rows the gatekeepers stayed in the wood 92 m north (scene-check T4, found in C3).
   - places308.json places[] C_crest: the crest of the 주막 갈림 -> 벌목장 road (A4 L4b) - one dry tree on the NW bank and
     fresh stumps (existing Flora308 prefabs, colliders stripped). Applied by Places308 scene-apply:main.
   The two content points (herb_cache308, sinmok_bark308) are rows of Content308.Content.cs Points308 (text in code).
@@ -16,6 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 RELAYOUT = ROOT / 'Art/World/Compact/Rebuild/CliffBoundary308/content308_relayout.json'
 PLACES = ROOT / 'Art/World/Compact/Rebuild/CliffBoundary308/places308.json'
+SCENE = ROOT / 'Art/World/Compact/Rebuild/CliffBoundary308/content308_scene.json'
 BACKUP = ROOT / 'Art/Playtest306/Backups/FieldFirst308'
 GROUP = 'F117_C1_gate'
 
@@ -93,15 +97,24 @@ def main():
     # (3196, 3500); no ledger names the writer. C1 lets content-apply put main back on the code value (§8.5) - an earlier run
     # of this script pinned it and is taken out here
     r['points'] = [q for q in r.get('points', []) if not (q.get('id') == 'sanctuary_trace308' and q.get('op') == 'C1-keep')]
+    # the scene data is hand-formatted (arrays on one line): edit the row lines of actors.moves only, as text
+    st = SCENE.read_text(encoding='utf-8')
+    head = '"actors": {\n  "moves": [\n'; a = st.index(head) + len(head); b = st.index('\n  ],', a)
+    sm = [ln.rstrip(',') for ln in st[a:b].split('\n') if ln.strip() and json.loads(ln.strip().rstrip(','))['id'] not in ids]
+    if not revert:
+        sm += ['   ' + json.dumps({'id': i, 'enabled': True, 'group': GROUP, 'note': 'D308-117 C1 gatekeeper of the 신목 end: pose the scene actor on its moved row'},
+                              ensure_ascii=False) for i, _, _, _ in JACKALS]
+    st = st[:a] + ',\n'.join(sm) + st[b:]; json.loads(st)
     p = json.loads(PLACES.read_text(encoding='utf-8'))
     places = [q for q in p['places'] if q.get('id') not in (CREST['id'], ENDS['id'])]
     if not revert:
         places += [CREST, ENDS]
     p['places'] = places
-    print('backup', backup(RELAYOUT).name, backup(PLACES).name)
+    print('backup', backup(RELAYOUT).name, backup(PLACES).name, backup(SCENE).name)
     RELAYOUT.write_text(json.dumps(r, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     PLACES.write_text(json.dumps(p, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    print(('reverted' if revert else 'wrote'), 'encounter_moves', len(moves), 'places', [q['id'] for q in places])
+    SCENE.write_text(st, encoding='utf-8', newline='\n')
+    print(('reverted' if revert else 'wrote'), 'encounter_moves', len(moves), 'scene actor moves', len(sm), 'places', [q['id'] for q in places])
 
 
 if __name__ == '__main__':
