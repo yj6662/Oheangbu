@@ -59,6 +59,39 @@ def build():
             'shape': [380, 0.62, 0.14, 2000],        # bank noise scale m, coverage, edge softness, sky far cap m
             'colour': [0.94, 0.93, 0.89, 0.96],      # paper; a = maximum opacity
         },
+        # SPEC-FIELD-FIRST-HOUR-308 A4 (TEST): from each beat, facing the next beat, is a guide of the next beat in the front view
+        # and is the line of sight open? Read by FieldFirst308 field308-sight (read only). eye = beat place (x, z; eye 1.65 m over
+        # the ground), toward = the next beat (heading), guides = what should lead there: x, z and up = metres over the ground
+        # there, or y = an absolute height (beacon smoke column, summits). Positions from the Spec §1 beat table and the fh views.
+        'sightline': {
+            'eye_up': 1.65, 'front_half_deg': 51, 'end_gap_m': 3.0, 'soft_min_size_m': 2.0, 'soft_max_size_m': 40.0,
+            'eye_steps_m': [0, 15, 30, 45, 60, 90, 120, 150, 200, 250, 300, 350, 400], 'road_snap_m': 30,   # the player walks on: the eye is taken at these metres along the heading, first open wins
+            'legs': [
+                {'id': 'L0 마당 → 성황당', 'eye': [3261.9, 1885.9], 'toward': [3301, 2226],
+                 'guides': [{'name': '성황당', 'x': 3301, 'z': 2226, 'up': 4}, {'name': '금표 비석', 'x': 3339, 'z': 2173, 'up': 3}]},
+                {'id': 'L1 성황당 → 금표 주막', 'eye': [3293.8, 2229.5], 'toward': [3069, 2339],
+                 'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}]},
+                {'id': 'L2 주막 → 역참', 'eye': [3061.2, 2340.8], 'toward': [2844, 2390],
+                 'guides': [{'name': '역참 지붕', 'x': 2844, 'z': 2390, 'up': 7}]},
+                {'id': 'L3 역참 → 마을', 'eye': [2841.6, 2382.4], 'toward': [2761, 2132],
+                 'guides': [{'name': '마을 분소 지붕', 'x': 2761, 'z': 2132, 'up': 7}]},
+                # MainPath runs village -> back down past the inn (arc 1231 -> 1663) -> logging camp (2177): the inn is passed twice,
+                # so the leg is read in two halves at that crossroads
+                {'id': 'L4a 마을 → 주막 갈림(되짚기)', 'eye': [2766.7, 2137.7], 'toward': [3075, 2339],
+                 'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}, {'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6},
+                            {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                {'id': 'L4b 주막 갈림 → 벌목장', 'eye': [3075, 2339], 'toward': [3318, 2688],
+                 'guides': [{'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                {'id': 'L5 벌목장 → 깊은 숲 갈림', 'eye': [3317.0, 2695.9], 'toward': [3266, 3082],
+                 'guides': [{'name': '갈림 자리', 'x': 3266, 'z': 3082, 'up': 3}, {'name': '신목 수관', 'x': 3710, 'z': 3255, 'y': 254},
+                            {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                {'id': 'L6 갈림 → 사냥꾼 주막', 'eye': [3262.7, 3089.3], 'toward': [3205, 3215],
+                 'guides': [{'name': '사냥꾼 주막 지붕', 'x': 3205, 'z': 3215, 'up': 7}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                {'id': 'L7 사냥꾼 주막 → 청룡', 'eye': [3205.1, 3223.0], 'toward': [3210, 3550],
+                 'guides': [{'name': '성소', 'x': 3211, 'z': 3430, 'up': 5}, {'name': '청룡 자리', 'x': 3210, 'z': 3550, 'up': 10},
+                            {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+            ],
+        },
     }
     return json.dumps(data, ensure_ascii=False, indent=1) + '\n'
 

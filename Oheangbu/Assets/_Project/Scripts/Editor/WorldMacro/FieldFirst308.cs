@@ -20,6 +20,9 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   field308-check                the two writes against the data and the runtime wiring rules (read only)
  //   field308-cloud[:dry|:revert]  D308-118: cloud_band{} of the data -> _CloudBand308 / _CloudShape308 / _CloudColor308 of the live fog
  //        material (RealmFog297); revert puts the before-values back while the material still holds what this tool wrote
+ //   field308-sight                A4 sightline audit, read only: per leg (beat -> next beat) and guide: distance, angle off the
+ //        heading, in the front view, the line of sight by colliders (hard) and by renderer bounds (soft, foliage / props), the
+ //        first blockers named. Report file Art/Playtest306/Backups/FieldFirst308/sight-<utc>.txt. Open the realms first.
  //   field308-heights              read only: the highest collider surface on a 25 m grid of the open scenes, as 500 m cells
  //        (max per cell, rows north first) + world percentiles - where the 운해 band of RealmFog297 should sit (D308-118)
  // Data: Art/World/Compact/Rebuild/FieldFirst308/field117.json (built by Tools/Art/FieldFirst308/field117_build.py from
@@ -50,6 +53,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      case "field308-start":return revert?StartRevert():Start(dry);
      case "field308-check":return Check();
      case "field308-heights":return Heights();
+     case "field308-sight":return Sight();
      case "field308-cloud":return revert?CloudRevert():Cloud(dry);
     }
    }
@@ -265,6 +269,149 @@ namespace Oheangbu.EditorTools.WorldMacro
    EditorUtility.SetDirty(m);AssetDatabase.SaveAssetIfDirty(m);
    ledger.cloudBefore=ledger.cloudAfter=null;WriteLedger(ledger);
    return "field308-cloud:revert "+CloudJson(m);
+  }
+
+  static float GroundY(float x,float z)
+  {
+   float best=float.NegativeInfinity;
+   foreach(var h in Physics.RaycastAll(new Vector3(x,3000f,z),Vector3.down,6000f,~0,QueryTriggerInteraction.Ignore))
+    if(!(h.collider is CharacterController)&&h.normal.y>.5f&&h.point.y>best)best=h.point.y;
+   if(float.IsNegativeInfinity(best))throw new Refused("no ground at ("+x.ToString("F0")+", "+z.ToString("F0")+") - open the realms (RealmStream308 open-all)");
+   return best;
+  }
+  static string Kind(Transform t)
+  {
+   for(var p=t;p!=null;p=p.parent)
+   {
+    string n=p.name;
+    if(n.Contains("Terrain")||n.Contains("Surface")||n.Contains("Cliff")||n.Contains("Rugged"))return "지형";
+    if(n.Contains("Tree")||n.Contains("tree")||n.Contains("Pine")||n.Contains("Flora")||n.Contains("Foliage")||n.Contains("Bush")||n.Contains("Veg"))return "식생";
+    if(n.Contains("House")||n.Contains("Building")||n.Contains("Realm_")||n.Contains("Wall"))return "건물";
+   }
+   return "소품";
+  }
+  sealed class SightTry{public float step,hardAt=float.PositiveInfinity;public string hard="열림",soft="열림";public int softCount;public bool Open=>float.IsPositiveInfinity(hardAt)&&softCount==0;}
+  static string Sight()
+  {
+   var c=Data()["sightline"]??throw new Refused("field117.json: sightline missing (python Tools/Art/FieldFirst308/field117_build.py)");
+   float eyeUp=c["eye_up"].Value<float>(),half=c["front_half_deg"].Value<float>(),gap=c["end_gap_m"].Value<float>();
+   float softMin=c["soft_min_size_m"].Value<float>(),softMax=c["soft_max_size_m"].Value<float>();
+   var steps=((c["eye_steps_m"] as JArray)??new JArray{0}).Select(x=>x.Value<float>()).ToArray();
+   float roadSnap=c["road_snap_m"]?.Value<float>()??30f;
+   var content=Load<WorldMacroPlaytestSO>(S(Data(),"content"));
+   var roads=new[]{content.MainPath,content.BranchPath}.Where(r=>r!=null&&r.Length>1).ToArray();
+   Physics.SyncTransforms();
+   // soft blockers: single objects (foliage, props) whose bounds are softMin .. softMax; merged / terrain-sized meshes are
+   // left to the colliders (their box would block everything)
+   var soft=new List<Renderer>();
+   for(int si=0;si<UnityEngine.SceneManagement.SceneManager.sceneCount;si++)
+   {
+    var sc=UnityEngine.SceneManagement.SceneManager.GetSceneAt(si);if(!sc.isLoaded)continue;
+    foreach(var g in sc.GetRootGameObjects())foreach(var r in g.GetComponentsInChildren<Renderer>(false))
+    {
+     if(!r.enabled||r is ParticleSystemRenderer||r is TrailRenderer||r is LineRenderer)continue;
+     float size=r.bounds.size.magnitude;if(size>=softMin&&size<=softMax)soft.Add(r);
+    }
+   }
+   var sb=new StringBuilder("field308-sight (open scenes "+UnityEngine.SceneManagement.SceneManager.sceneCount+", soft renderers "+soft.Count+" of "+softMin.ToString("F0")+" - "+softMax.ToString("F0")+" m, eye steps "+string.Join("/",steps.Select(x=>x.ToString("F0")))+" m)\n");
+   sb.AppendLine(" leg | guide | dist m | angle° | front | result (first open eye step, else the last step's blockers)");
+   int legs=0,legsOpen=0;
+   foreach(var leg in (c["legs"] as JArray)??new JArray())
+   {
+    legs++;var e=leg["eye"] as JArray;var to=leg["toward"] as JArray;
+    float ex=e[0].Value<float>(),ez=e[1].Value<float>();
+    var heading=new Vector2(to[0].Value<float>()-ex,to[1].Value<float>()-ez).normalized;
+    // the player walks the road: when both the beat and the next beat lie on one content path (within road_snap_m), the eye
+    // steps are arc lengths along that path toward the next beat; else straight along the heading
+    Func<float,Vector2> walk=step=>new Vector2(ex+heading.x*step,ez+heading.y*step);string how="직선";
+    {
+     float best=float.PositiveInfinity;
+     foreach(var road in roads)
+     {
+      // a path passes a beat more than once (the loop back by the inn): pair the visits of the two beats with the shortest
+      // stretch of road between them
+      var v0=Visits(road,new Vector2(ex,ez),roadSnap);var v1=Visits(road,new Vector2(to[0].Value<float>(),to[1].Value<float>()),roadSnap);
+      foreach(var a0 in v0)foreach(var b0 in v1)
+      {
+       float span=Mathf.Abs(b0-a0);if(span>=best)continue;
+       best=span;var r=road;float a=a0,b=b0;walk=step=>At(r,a+Mathf.Sign(b-a)*Mathf.Min(step,Mathf.Abs(b-a)));
+      how="길 "+(road==content.MainPath?"Main":"Branch")+" "+Mathf.Abs(b-a).ToString("F0")+" m";
+      }
+     }
+    }
+    sb.AppendLine(" "+S(leg,"id")+" 눈 이동 = "+how);
+    bool any=false;
+    foreach(var g in (leg["guides"] as JArray)??new JArray())
+    {
+     float gx=g["x"].Value<float>(),gz=g["z"].Value<float>();
+     float gy=g["y"]!=null?g["y"].Value<float>():GroundY(gx,gz)+g["up"].Value<float>();
+     var target=new Vector3(gx,gy,gz);
+     var first=new Vector3(ex,GroundY(ex,ez)+eyeUp,ez);var d0=target-first;
+     float angle=Vector2.SignedAngle(heading,new Vector2(d0.x,d0.z));bool front=Mathf.Abs(angle)<=half;
+     SightTry last=null,open=null;
+     foreach(float step in steps)
+     {
+      var w=walk(step);float sx=w.x,sz=w.y;var eye=new Vector3(sx,GroundY(sx,sz)+eyeUp,sz);
+      var d=target-eye;float dist=d.magnitude;var dir=d/dist;float reach=Mathf.Max(0,dist-gap);
+      var t=new SightTry{step=step};
+      foreach(var h in Physics.RaycastAll(eye,dir,reach,~0,QueryTriggerInteraction.Ignore))
+       if(!(h.collider is CharacterController)&&h.distance>.5f&&h.distance<t.hardAt){t.hardAt=h.distance;t.hard=Kind(h.collider.transform)+" "+h.distance.ToString("F0")+" m "+h.collider.name;}
+      var ray=new Ray(eye,dir);var hits=new List<(float t,Renderer r)>();
+      foreach(var r in soft){if(r.bounds.Contains(eye))continue;if(r.bounds.IntersectRay(ray,out float hit)&&hit>.5f&&hit<Mathf.Min(reach,t.hardAt))hits.Add((hit,r));}
+      t.softCount=hits.Count;
+      if(hits.Count>0)t.soft=hits.Count+"개, 첫 "+string.Join(" / ",hits.OrderBy(x=>x.t).Take(2).Select(x=>Kind(x.r.transform)+" "+x.t.ToString("F0")+" m "+x.r.name));
+      last=t;if(t.Open){open=t;break;}
+     }
+     if(open!=null&&front)any=true;
+     string result=open!=null?"열림 (+"+open.step.ToString("F0")+" m)"+(front?"  [O]":""):"막힘 — 단단 "+last.hard+" | 무른 "+last.soft;
+     sb.AppendLine(" "+S(leg,"id")+" | "+S(g,"name")+" | "+d0.magnitude.ToString("F0")+" | "+angle.ToString("F0")+" | "+(front?"앞":"옆/뒤")+" | "+result);
+    }
+    if(any)legsOpen++;
+    sb.AppendLine(" "+S(leg,"id")+" => "+(any?"길잡이 보임 O":"막힘 X"));
+   }
+   sb.Insert(0,"legs open "+legsOpen+" / "+legs+"\n");
+   string text=sb.ToString().TrimEnd();
+   Directory.CreateDirectory(BackupRoot);File.WriteAllText(Path.Combine(BackupRoot,"sight-"+PostLedger308.Utc()+".txt"),text);
+   return text;
+  }
+  // arc lengths where a polyline passes within snap of q: one (the closest) per run of near segments
+  static List<float> Visits(Vector3[] path,Vector2 q,float snap)
+  {
+   var list=new List<float>();float runBest=float.PositiveInfinity,runArc=0,arc=0;bool inRun=false;
+   for(int i=0;i+1<path.Length;i++)
+   {
+    var a=new Vector2(path[i].x,path[i].z);var b=new Vector2(path[i+1].x,path[i+1].z);var ab=b-a;float len=ab.magnitude;
+    float t=len<1e-4f?0:Mathf.Clamp01(Vector2.Dot(q-a,ab)/(len*len));float d=Vector2.Distance(q,a+ab*t);
+    if(d<=snap){if(!inRun){inRun=true;runBest=float.PositiveInfinity;}if(d<runBest){runBest=d;runArc=arc+t*len;}}
+    else if(inRun){inRun=false;list.Add(runArc);}
+    arc+=len;
+   }
+   if(inRun)list.Add(runArc);
+   return list;
+  }
+  // nearest point of a polyline (xz): distance and arc length there
+  static (float dist,float arc) Project(Vector3[] path,Vector2 q)
+  {
+   float best=float.PositiveInfinity,arcBest=0,arc=0;
+   for(int i=0;i+1<path.Length;i++)
+   {
+    var a=new Vector2(path[i].x,path[i].z);var b=new Vector2(path[i+1].x,path[i+1].z);var ab=b-a;float len=ab.magnitude;
+    float t=len<1e-4f?0:Mathf.Clamp01(Vector2.Dot(q-a,ab)/(len*len));float d=Vector2.Distance(q,a+ab*t);
+    if(d<best){best=d;arcBest=arc+t*len;}
+    arc+=len;
+   }
+   return (best,arcBest);
+  }
+  static Vector2 At(Vector3[] path,float s)
+  {
+   float arc=0;
+   for(int i=0;i+1<path.Length;i++)
+   {
+    var a=new Vector2(path[i].x,path[i].z);var b=new Vector2(path[i+1].x,path[i+1].z);float len=Vector2.Distance(a,b);
+    if(arc+len>=s)return len<1e-4f?a:Vector2.Lerp(a,b,(s-arc)/len);
+    arc+=len;
+   }
+   var e=path[path.Length-1];return new Vector2(e.x,e.z);
   }
  }
 }
