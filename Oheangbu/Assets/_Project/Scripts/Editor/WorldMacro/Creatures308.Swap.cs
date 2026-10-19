@@ -22,6 +22,9 @@ namespace Oheangbu.EditorTools.WorldMacro
  // Taken from the species: body, clips, attack and vitals profiles. Data: creatures308.json swaps[] {match, species, note}.
  //   swap:dry     what would change (read only)
  //   swap:apply   replace, back up the scene + content first, save. Idempotent: an actor that already wears the species is left alone.
+ //   swap:dry:<species> | swap:apply:<species>   only the swaps[] rows of that species (D308-120: re-dress one rebuilt body, leave the rest)
+ // The ledger keeps a hash of the prefab file each actor was dressed from: after bodies:build changes a body, swap:apply dresses the
+ // already-swapped actors again (they are copies, not prefab instances, so a rebuilt prefab does not reach them by itself).
  // own: true on a row also re-dresses this tool's own placed actors (field308b/, fieldboss308/) where they stand now - a species
  // whose body changed after place, without a full place that would undo moves other tools made since (Hanyang T15 moved own actors).
  // Undo = the Populate pipeline (Content308 Populate apply -> Content308 content-apply:main -> Texts308 content-apply:main) clones the
@@ -29,7 +32,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  public static partial class Creatures308
  {
   [Serializable] sealed class SwapRow{public string match="",species="",note="";public bool own;}
-  [Serializable] sealed class SwapLedgerRow{public string id="",species="",from="",utc="";}
+  [Serializable] sealed class SwapLedgerRow{public string id="",species="",from="",utc="",body="";}
   [Serializable] sealed class SwapLedger{public List<SwapLedgerRow> rows=new List<SwapLedgerRow>();}
   static string SwapLedgerPath=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","Creatures308","swap_ledger.json");
 
@@ -47,9 +50,13 @@ namespace Oheangbu.EditorTools.WorldMacro
    return "hp "+(v!=null?F(v.MaxHp):"-")+" dmg "+(ap!=null?F(ap.Damage):"-")+" tel "+(ap!=null?F(ap.Telegraph):"-");
   }
 
-  static string Swap(Cfg cfg,Scene scene,WorldMacroPlaytestSession session,WorldMacroPlaytestSO content,bool write)
+  static string BodyHash(Cfg cfg,string key){string f=Path.Combine(Harness303.RepoRoot,"Oheangbu",PrefabPath(cfg,key));return File.Exists(f)?Hash128.Compute(File.ReadAllBytes(f)).ToString():"";}
+  static bool Dressed(SwapLedgerRow done,PrologueEncounter a,string key,string hash)=>done!=null&&done.species==key&&a.transform.Find("Creature308_Visual")!=null&&done.body==hash;
+
+  static string Swap(Cfg cfg,Scene scene,WorldMacroPlaytestSession session,WorldMacroPlaytestSO content,bool write,string only="")
   {
-   var sb=new StringBuilder("Creatures308 swap "+(write?"apply":"dry"));
+   var sb=new StringBuilder("Creatures308 swap "+(write?"apply":"dry")+(only.Length>0?":"+only:""));
+   if(only.Length>0&&!cfg.species.Any(k=>k.key==only))return sb.Append(": REFUSED unknown species "+only).ToString();
    if(cfg.swaps==null||cfg.swaps.Length==0)return sb.Append(": no swaps[] rows in the data").ToString();
    var ledger=File.Exists(SwapLedgerPath)?JsonUtility.FromJson<SwapLedger>(File.ReadAllText(SwapLedgerPath)):new SwapLedger();
    var actors=(session.Actors??Array.Empty<PrologueEncounter>()).ToList();var rows=(content.Encounters??Array.Empty<WorldMacroPlaytestSO.Encounter>()).ToList();
@@ -59,23 +66,25 @@ namespace Oheangbu.EditorTools.WorldMacro
     File.Copy(Path.GetFullPath(scene.path),Path.Combine(dir,Path.GetFileName(scene.path)),true);File.Copy(Path.GetFullPath(cfg.content),Path.Combine(dir,Path.GetFileName(cfg.content)),true);
     sb.Append(", backup ").Append(dir);
    }
-   int swapped=0,kept=0,refused=0;
+   int swapped=0,kept=0,refused=0,would=0;
    foreach(var row in cfg.swaps)
    {
+    if(only.Length>0&&row.species!=only)continue;
     var s=cfg.species.FirstOrDefault(k=>k.key==row.species);var prefab=s!=null?AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(cfg,s.key)):null;var template=s!=null?FindActor(scene,s.template):null;
     var hits=actors.Where(a=>a!=null&&a.Id!=null&&a.Id.StartsWith(row.match,StringComparison.Ordinal)&&(row.own||!Own(cfg,a.Id))).ToArray();
     sb.Append("\n  ").Append(row.match).Append("* -> ").Append(row.species).Append(" (").Append(hits.Length).Append(" actor(s))");
     if(s==null||prefab==null||template==null){sb.Append(" REFUSED ").Append(s==null?"unknown species":prefab==null?"no prefab - bodies:build:"+row.species+" first":"template "+s.template+" not in the scene");refused+=hits.Length;continue;}
     if(hits.Length==0){sb.Append(" WARN nothing matches");continue;}
-    var newAgent=prefab.GetComponent<NavMeshAgent>();float newOffset=newAgent!=null?newAgent.baseOffset:0f;
+    var newAgent=prefab.GetComponent<NavMeshAgent>();float newOffset=newAgent!=null?newAgent.baseOffset:0f;string hash=BodyHash(cfg,s.key);
     foreach(var old in hits)
     {
      var oldAgent=old.GetComponent<NavMeshAgent>();var feet=old.transform.position-Vector3.up*(oldAgent!=null?oldAgent.baseOffset:0f);
      var done=ledger.rows.FirstOrDefault(r=>r.id==old.Id);
-     if(done!=null&&done.species==s.key&&old.transform.Find("Creature308_Visual")!=null){kept++;sb.Append("\n    = ").Append(old.Id).Append(" already ").Append(s.key);continue;}
+     if(Dressed(done,old,s.key,hash)){kept++;sb.Append("\n    = ").Append(old.Id).Append(" already ").Append(s.key);continue;}
+     would++;bool again=done!=null&&done.species==s.key;
      bool onNav=NavMesh.SamplePosition(feet,out _,2f,NavMesh.AllAreas);
      string from=BodyName(old);
-     sb.Append("\n    ").Append(write?"* ":"~ ").Append(old.Id).Append(" ").Append(from).Append(" -> ").Append(s.key).Append(" at ").Append(V(feet)).Append(onNav?"":" (WARN no NavMesh within 2 m)")
+     sb.Append("\n    ").Append(write?"* ":"~ ").Append(old.Id).Append(" ").Append(from).Append(" -> ").Append(s.key).Append(again?" (body rebuilt - dressed again)":"").Append(" at ").Append(V(feet)).Append(onNav?"":" (WARN no NavMesh within 2 m)")
       .Append(" | ").Append(Stats(old.gameObject)).Append(" -> ").Append(Stats(prefab));
      if(!write)continue;
      var go=Object.Instantiate(prefab);SceneManager.MoveGameObjectToScene(go,scene);go.transform.SetParent(old.transform.parent,true);go.name=old.gameObject.name;
@@ -88,10 +97,10 @@ namespace Oheangbu.EditorTools.WorldMacro
      Content308.CrSetWired308(session,old.GetComponent<EnemyVitals>(),false);
      actors[actors.IndexOf(old)]=actor;Content308.CrSetWired308(session,go.GetComponent<EnemyVitals>(),true);
      Object.DestroyImmediate(old.gameObject);
-     ledger.rows.RemoveAll(r=>r.id==actor.Id);ledger.rows.Add(new SwapLedgerRow{id=actor.Id,species=s.key,from=from,utc=DateTime.UtcNow.ToString("o")});swapped++;
+     ledger.rows.RemoveAll(r=>r.id==actor.Id);ledger.rows.Add(new SwapLedgerRow{id=actor.Id,species=s.key,from=again?done.from:from,utc=DateTime.UtcNow.ToString("o"),body=hash});swapped++;
     }
    }
-   sb.Append("\n  ").Append(write?"swapped ":"would swap ").Append(write?swapped:actors.Count(a=>a!=null&&cfg.swaps.Any(r=>a.Id!=null&&a.Id.StartsWith(r.match,StringComparison.Ordinal))&&!ledger.rows.Any(l=>l.id==a.Id&&a.transform.Find("Creature308_Visual")!=null)))
+   sb.Append("\n  ").Append(write?"swapped ":"would swap ").Append(write?swapped:would)
      .Append(", already ").Append(kept).Append(", refused ").Append(refused);
    if(!write)return sb.ToString();
    if(swapped==0)return sb.Append("\n  nothing written").ToString();

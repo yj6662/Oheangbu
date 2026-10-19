@@ -131,11 +131,11 @@ namespace Oheangbu.EditorTools.WorldMacro
      if(c=="status")return Status(cfg,scene,session,content);
      if(c=="check")return Check(cfg,scene,session,content);
      if(c=="shots")return Shots(cfg,scene);
-     if(c=="swap:dry")return Swap(cfg,scene,session,content,false);
+     if(c=="swap:dry"||c.StartsWith("swap:dry:",StringComparison.Ordinal))return Swap(cfg,scene,session,content,false,c.Length>9?c.Substring(9):"");
      if(scene.isDirty)return "REFUSED the play scene has unsaved changes";
      if(c=="bodies:build"||c.StartsWith("bodies:build:",StringComparison.Ordinal))result=Build(cfg,scene,c.Length>13?c.Substring(13):"");
      else if(c=="place"||c=="revert")return PlaceOrRevert(cfg,scene,session,content,c=="place");
-     else if(c=="swap:apply")return Swap(cfg,scene,session,content,true);
+     else if(c=="swap:apply"||c.StartsWith("swap:apply:",StringComparison.Ordinal))return Swap(cfg,scene,session,content,true,c.Length>11?c.Substring(11):"");
      else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots | swap:dry | swap:apply)";
     }
     scene=SceneManager.GetActiveScene();
@@ -601,6 +601,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         if(!feet.Configured){row.note="foot placement did not re-calibrate at x"+F(k)+" ("+feet.LastStatus+") - removed on this body";rig.FootPlacement=null;Object.DestroyImmediate(feet);}
         else row.note="foot placement re-calibrated at x"+F(k);
        }
+       row.note+=AttachParts(cfg,s,new Body{animator=rig.Animator,model=visual.gameObject},w);   // D308-120: rigid parts on the scaled template body too
        range=s.range>0?s.range:2.8f*k;var from=AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(s.attackFrom);
        preferred=Mathf.Min(range-cfg.fit.preferredBelowRange,(from!=null?from.PreferredDistanceHint:enc.PreferredDistance)*k);
        row.scale=k;row.capsuleRadius=capsule.radius;row.capsuleHeight=capsule.height;row.walkMps=rig.WalkMetresPerSecond;row.attackPeak01=rig.AttackPeak01;row.deathSeconds=rig.Death!=null?rig.Death.length:0;

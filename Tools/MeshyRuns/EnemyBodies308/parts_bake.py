@@ -11,6 +11,7 @@ import bpy
 
 args = sys.argv[sys.argv.index("--") + 1:]
 src, out_fbx, out_png, tris = args[:4]
+out_png = str(Path(out_png).resolve())   # Blender saves a relative image path against its own folder, not the shell's
 flat = "flat" in args[4:]   # faceted (crystal): the Meshy smooth normals made the cluster read as round lumps
 tris = int(tris)
 bpy.ops.wm.read_factory_settings(use_empty=True)
