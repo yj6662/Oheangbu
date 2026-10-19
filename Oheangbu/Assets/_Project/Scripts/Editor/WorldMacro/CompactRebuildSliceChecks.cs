@@ -84,7 +84,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     Check(s.Actors.Length==s.Content.Encounters.Length&&s.Actors.All(a=>a!=null&&a.Player==s.Walker.Body.transform),"all authored actors target candidate player");
     Check(s.Actors.All(a=>a.GetComponent<NavMeshAgent>().isOnNavMesh),"mine actors bound to baked candidate navigation");
     Check(Vector3.Distance(s.Walker.Body.transform.position,s.Content.StartFeet)<10,"fresh player starts at relocated mine");
-    Check(s.Progress.campaign.Completed.Contains("commission")&&string.IsNullOrEmpty(s.DemoObjective),"commission active without persistent quest objective");
+    Check((s.Progress.campaign.Completed.Contains("commission")||!System.Array.Exists(s.Content.Campaign.InitialCompletedIds??System.Array.Empty<string>(),id=>id=="commission"))&&string.IsNullOrEmpty(s.DemoObjective),"commission as authored (initial or from the 덕대, D308-117) without persistent quest objective");
    }
    else if(command=="slice-defeat")
    {

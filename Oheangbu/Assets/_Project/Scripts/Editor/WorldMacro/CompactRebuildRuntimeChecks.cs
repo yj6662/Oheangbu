@@ -43,7 +43,9 @@ namespace Oheangbu.EditorTools.WorldMacro
    Check(s.TestSaveSuffix==SessionState.GetString(Key,""),"diagnostic save namespace applied before startup");
    Check(s.DemoCampaignActive&&s.Content.Campaign.UseExplicitPrerequisites,"explicit campaign active in actual Compact runtime");
    Check(WorldMacroProgress.Valid(p)&&!s.SaveBlocked&&string.IsNullOrEmpty(s.SaveError),"runtime progress valid without save error");
-   Check(p.campaign.Completed.Contains("commission")&&p.campaign.Facts.Contains("case:mine_commissioned"),"fresh game starts commissioned");
+   // D308-117 B1: the commission comes from the 덕대 on the first talk unless the campaign still lists it as initially completed
+   var initial=s.Content.Campaign.InitialCompletedIds??System.Array.Empty<string>();
+   Check(System.Linq.Enumerable.All(initial,id=>p.campaign.Completed.Contains(id))&&(!System.Array.Exists(initial,id=>id=="commission")||p.campaign.Facts.Contains("case:mine_commissioned")),"fresh game starts with the authored initial stages");
    Check(!p.campaign.Completed.Contains("office_report"),"office report is not auto-completed");
    Check(string.IsNullOrEmpty(s.DemoObjective),"persistent campaign objective suppressed");
    Check(s.Content.Opening==null,"forced office opening removed");

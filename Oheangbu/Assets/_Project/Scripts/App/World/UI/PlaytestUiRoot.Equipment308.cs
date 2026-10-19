@@ -112,7 +112,7 @@ namespace Oheangbu.App.World.UI
             if(!equip308DataLoaded){equip308DataLoaded=true;equip308Data=Resources.Load<EquipmentScreen308SO>(EquipmentScreen308SO.ResourcePath);}
             return equip308Data;
         }
-        bool Equip308Fragments=>fragmentTab||Session==null||!Session.EquipmentEnabled;
+        bool Equip308Fragments=>fragmentTab||documentTab||Session==null||!Session.EquipmentEnabled;   // 문서 rides the 석경 column (D308-117 B2)
         static string Equip308Name(Equip308Def d)=>d.Kind==Equip308Kind.Gear?"Equipped_"+(EquipmentSlot)d.Index:d.Kind==Equip308Kind.Stone?"Stone_"+(DemoUpgradeTrack)d.Index:"VirtueSlot_"+d.Index;
         static int Equip308IndexOf(EquipmentSlot slot){for(int i=0;i<Equip308Slots.Length;i++)if(Equip308Slots[i].Kind==Equip308Kind.Gear&&Equip308Slots[i].Index==(int)slot)return i;return -1;}
         /// <summary>The live cell of slot i, or a real null (never a destroyed object, so ?. is safe on the result).</summary>
@@ -147,10 +147,15 @@ namespace Oheangbu.App.World.UI
             GameObject fallback=null;
             if(fragments)
             {
-                if(th!=null){Content304FragmentGrid(E308TGridX,E308TGridY,E308FragmentCols,E308TPitchX,E308TPitchY,true);Equip308FragmentLattice(th);}
+                if(documentTab)
+                {
+                    if(th!=null){Content308DocumentGrid(E308TGridX,E308TGridY,E308FragmentCols,E308TPitchX,E308TPitchY);Equip308FragmentLattice(th);}
+                    else Content308DocumentGrid(E308GridX,E308GridY,E308FragmentCols,E308PitchX,E308PitchY);
+                }
+                else if(th!=null){Content304FragmentGrid(E308TGridX,E308TGridY,E308FragmentCols,E308TPitchX,E308TPitchY,true);Equip308FragmentLattice(th);}
                 else Content304FragmentGrid(E308GridX,E308GridY,E308FragmentCols,E308PitchX,E308PitchY,true);
                 fallback=Content304FirstFragment();
-                if(content304GearCells.All(c=>c.name!=content304Kept))content304Kept="Fragment_"+selectedItem;
+                if(content304GearCells.All(c=>c.name!=content304Kept))content304Kept=documentTab?"Document_"+selectedDocument:"Fragment_"+selectedItem;
             }
             else
             {
@@ -162,9 +167,9 @@ namespace Oheangbu.App.World.UI
             }
             Content304RefreshGear();
             // §6 처음 초점: a build never starts inside the middle column; the slot (or the sub tab the player is on) takes it
-            bool onTab=content304Focus=="EquipmentTab"||content304Focus=="FragmentsTab";
+            bool onTab=content304Focus=="EquipmentTab"||content304Focus=="FragmentsTab"||content304Focus=="DocumentsTab";
             if(!onTab&&fallback!=null)content304Focus=fallback.name;
-            if(fallback==null)fallback=contentRoot.Find(fragments?"FragmentsTab":"EquipmentTab")?.gameObject;
+            if(fallback==null)fallback=contentRoot.Find(documentTab?"DocumentsTab":fragments?"FragmentsTab":"EquipmentTab")?.gameObject;
             Content304Restore(contentRoot,fallback);
             Equip308Legend();
         }
@@ -518,7 +523,7 @@ namespace Oheangbu.App.World.UI
             if(content304Detail==null||Session==null)return;
             var s=Content304Style;bool fragments=Equip308Fragments;
             long revision=Session.EquipmentReady?Session.Progress.equipment.Revision:-1;
-            string slotKey=content304Detail.GetInstanceID()+"|"+fragments+"|"+(fragments?selectedItem:equip308Slot.ToString())+"|"+revision;
+            string slotKey=content304Detail.GetInstanceID()+"|"+fragments+"|"+documentTab+"|"+(documentTab?selectedDocument:fragments?selectedItem:equip308Slot.ToString())+"|"+revision;
             if(slotKey!=equip308SlotKey)
             {
                 equip308SlotKey=slotKey;equip308InfoKey=null;equip308Middle.Clear();
@@ -531,7 +536,7 @@ namespace Oheangbu.App.World.UI
             equip308InfoKey=infoKey;
             V.Clear(equip308Info);
             equip308SectionsTop=E308SubY;
-            if(fragments)Equip308FragmentInfo(s);else Equip308SlotInfo(s);
+            if(documentTab)Equip308DocumentInfo(s);else if(fragments)Equip308FragmentInfo(s);else Equip308SlotInfo(s);
             if(!slotBuild)return;
             Equip308SlotParts(s);
             Equip308WireMiddle();
@@ -1065,6 +1070,7 @@ namespace Oheangbu.App.World.UI
             if(Equip308Fragments)
             {
                 if(equip308InMiddle)entries.Add(("Esc","칸으로",Equip308LegendBack));
+                else if(documentTab){if(Equip308SelectedDocument()!=null)entries.Add(("Enter","읽기",Equip308ReadDocument));}
                 else if(Equip308SelectedFragment()!=null)entries.Add(("Enter","술식 도감에서 보기",Equip308ReadCodex));
             }
             else if(Equip308Cell(equip308Slot)!=null)
