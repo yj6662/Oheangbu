@@ -13,6 +13,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  //        Finish297_Attraction/Beacon_*: Halo, Light, Core0–2 SetActive(false); stone LOD0–2 beacon_core slots -> M_BeaconAsh308
  //        (URP Lit like the kit stone slots, no emission, no light marker). Stone, LODGroup, collider, position unchanged.
  //        Never attraction-revert. Ledger Art/Playtest306/Backups/EventWash308/ledger.json, scene backups <utc>/.
+ //   wash308-smoke[:dry|:revert][:scene=..]  봉수 먹 연기 (SPEC-FIELD-FIRST-HOUR-308 A1) — EventWash308.Smoke.cs
  //   wash308-halo-feature[:dry|:revert]   removes Renderer297's BeaconHalo297 feature only when no active renderer in any of the
  //        three scenes draws that pass (Renderer297 backed up first; :revert copies the backup back)
  //   wash308-audit[:scene=..][:label=..]  beacons (AC-W2/W4), halo-pass renderers, persistent emission census vs the ART-INK
@@ -65,6 +66,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     switch(head)
     {
      case "wash308-beacons":return o.ContainsKey("revert")?BeaconsRevert(o):Beacons(o,o.ContainsKey("dry"));
+     case "wash308-smoke":return o.ContainsKey("revert")?SmokeRevert(o):Smoke(o,o.ContainsKey("dry"));
      case "wash308-halo-feature":return o.ContainsKey("revert")?HaloFeatureRevert():HaloFeature(o.ContainsKey("dry"));
      case "wash308-audit":return Audit(o);
      case "wash308-sheet":return o.ContainsKey("revert")?SheetRevert():Sheet(o.ContainsKey("dry"));
@@ -82,7 +84,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    catch(PostLedger308.Refused r){return "refused: "+r.Message;}
    catch(Exception e){return "FAILED "+e;}   // same as the neighbours (MineBoss306): never an unhandled throw into the queue
-   return "refused: unknown command '"+command+"' (wash308-beacons[:dry|:revert] | wash308-halo-feature[:dry|:revert] | wash308-audit | wash308-sheet[:dry|:revert] | wash308-apply[:dry|:revert] | wash308-unit | wash308-preview[:location=..|:all][:kind=..][:eye=x,y,z][:off] | wash308-views[:location=..] | wash308-debug:<0..8>)";
+   return "refused: unknown command '"+command+"' (wash308-beacons[:dry|:revert] | wash308-smoke[:dry|:revert] | wash308-halo-feature[:dry|:revert] | wash308-audit | wash308-sheet[:dry|:revert] | wash308-apply[:dry|:revert] | wash308-unit | wash308-preview[:location=..|:all][:kind=..][:eye=x,y,z][:off] | wash308-views[:location=..] | wash308-debug:<0..8>)";
   }
 
   internal static void EnsureFolder(string folder)
