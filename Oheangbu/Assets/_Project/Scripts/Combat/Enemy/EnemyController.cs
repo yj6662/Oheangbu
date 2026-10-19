@@ -135,6 +135,7 @@ namespace Oheangbu.Combat
         private void Awake()
         {
             ValidateAuthoredProfile();
+            LoadPace308();
             if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
             if (_renderer != null){var material=_tintMaterial=_renderer.material;_tintProperty=material.HasProperty("_BaseColor")?"_BaseColor":material.HasProperty("_Color")?"_Color":null;if(_tintProperty!=null)_baseColor=material.GetColor(_tintProperty);}
 
@@ -402,7 +403,7 @@ namespace Oheangbu.Combat
         {
             Tint(_baseColor);
             _state = State.Recover;
-            _stateUntil = Time.time + (ProfileActive ? _attackProfile.Recovery : 0.4f);
+            _stateUntil = Time.time + RecoveryDuration;
         }
 
         private void EnterIdle()

@@ -37,7 +37,7 @@ namespace Oheangbu.App.World
         readonly bool[] looping = new bool[4];
         sealed class EnemyEdge { public EnemyController Actor; public bool Windup, Active; public Vector3 Previous;public float Walked; public EnemyRigMotion298 Rig; public bool RigLooked; }
         Vector3 previous,companionPrevious;float companionWalked;bool companionTracked;
-        float walked, nextAmbient, nextSettings;
+        float walked, nextAmbient, nextSettings, windGain308, windMax308 = 1f;
         int jump, land, markers, inspections;
         bool initialized, dodging, dead, seated, carried, awaitingRespawn, focused = true;
         int currency;string saveError;
@@ -57,6 +57,8 @@ namespace Oheangbu.App.World
             escort = FindFirstObjectByType<DemoEscortPresentation>();
             rests = FindObjectsByType<WorldMacroInnRestPresentation>(FindObjectsInactive.Include,FindObjectsSortMode.None);
             focused = Application.isFocused;
+            // SPEC-PACE-308 section 7: running lifts the wind loop (0 gain = the game before)
+            var pace=Oheangbu.Data.PaceProfile308.Load();windGain308=Oheangbu.Data.PaceProfile308.WindSprintGainOf(pace);if(windGain308>0f)windMax308=pace.WindMax;
             if(vitals!=null)vitals.Died+=Died;
             if (target != null) target.Changed += LockChanged;
             if (brush != null) brush.CastRejected += Misfire;
@@ -211,7 +213,8 @@ namespace Oheangbu.App.World
         {
             bool cave=Map!=null&&Map.ZoneAt(feet)?.ExploreWalkedPassages==true;
             Loop(0,"vehicle_roll_loop",feet,seated&&speed>.6f?Mathf.Clamp01(speed/9f)*.45f:0);
-            Loop(1,"wind_loop",feet,cave?0:.3f);
+            bool running=Session.Walker.Motor.IsSprinting&&speed>.6f;
+            Loop(1,"wind_loop",feet,cave?0:Mathf.Min(windMax308,.3f+(running?windGain308:0f)));
             Vector3 nearest=feet;float river=1000;
             if(Map!=null&&!cave)foreach(var line in Map.Lines)
             {
