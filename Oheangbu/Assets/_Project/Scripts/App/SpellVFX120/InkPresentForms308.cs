@@ -219,16 +219,20 @@ namespace Oheangbu.App.SpellVFX120
             // D308-114 (WP-16 b): the guard, the broken guard and the blinded enemy, all as ink - no glow, no HUD
             if ((input.States & PresentState308.GuardBroken) != 0)
             {
-                // a split rim in front of the chest: two short arcs pulled apart and the pieces falling off it
+                // a split rim in front of the chest: the two halves of the guard's ring pulled apart as broad dry strokes,
+                // a crack line down each break and the pieces falling off it (marks2: 4 m read was thin needles only)
                 Vector3 at = chest + new Vector3(0f, 0f, -s * .6f);
                 for (int k = -1; k <= 1; k += 2)
                 {
-                    Vector3 from = at + new Vector3(k * s * .25f, s * .9f, 0f);
-                    Vector3 direction = new Vector3(k * .55f, -1f, 0f).normalized;
-                    Needle(ref c, p, from, direction, s * .95f, 0);
-                    Sprite(ref c, at + new Vector3(k * s * 1.05f, -s * .7f, -.01f), s * .2f, s * .3f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                    Vector3 rimFrom = at + new Vector3(k * s * .3f, s * 1.05f, 0f);
+                    Vector3 rimAxis = new Vector3(k * .7f, -1f, 0f).normalized;
+                    Vector3 rimSide = Vector3.Cross(rimAxis, Vector3.forward).normalized;
+                    if (InkBurstMeshBuilder308.AddDryStroke(c.B, rimFrom, rimAxis, rimSide, s * 1.3f, s * .34f, (int)(c.R.Next() * 3.99f), 0f, c.R.Next(), c.Tint, Vector3.zero, 0f))
+                    { c.S.Fine++; Born(ref c, 0); Reach(ref c, rimFrom + rimAxis * (s * 1.3f)); }
+                    Needle(ref c, p, at + new Vector3(k * s * .12f, s * .95f, -.01f), new Vector3(k * .25f, -1f, 0f).normalized, s * 1.2f, 0);
+                    Sprite(ref c, at + new Vector3(k * s * 1.2f, -s * .85f, -.01f), s * .32f, s * .48f, InkBurstMeshBuilder308.CellDropTailed, 1);
                 }
-                Sprite(ref c, at + new Vector3(s * .1f, -s * 1.25f, -.01f), s * .16f, s * .24f, InkBurstMeshBuilder308.CellDrop, 1);
+                Sprite(ref c, at + new Vector3(s * .1f, -s * 1.45f, -.01f), s * .26f, s * .38f, InkBurstMeshBuilder308.CellDrop, 1);
             }
             else if ((input.States & PresentState308.Guarded) != 0)
             {
@@ -240,10 +244,11 @@ namespace Oheangbu.App.SpellVFX120
             if ((input.States & PresentState308.Blind) != 0)
             {
                 // a blurred ring of ink round the head (the eyes are covered), two drops running off it
-                Vector3 at = new Vector3(0f, chest.y * 1.32f, chest.z);
-                Sprite(ref c, at, s * .9f, s * .55f, InkBurstMeshBuilder308.CellRing, 0);
-                Sprite(ref c, at + new Vector3(-s * .5f, -s * .55f, -.01f), s * .16f, s * .26f, InkBurstMeshBuilder308.CellDropTailed, 1);
-                Sprite(ref c, at + new Vector3(s * .45f, -s * .6f, -.01f), s * .14f, s * .22f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                // (marks2: x1.5 - at 4 m the ring was a few pixels of contrast)
+                Vector3 at = new Vector3(0f, chest.y * 1.32f, chest.z - s * .3f);
+                Sprite(ref c, at, s * 1.35f, s * .85f, InkBurstMeshBuilder308.CellRing, 0);
+                Sprite(ref c, at + new Vector3(-s * .75f, -s * .85f, -.01f), s * .24f, s * .39f, InkBurstMeshBuilder308.CellDropTailed, 1);
+                Sprite(ref c, at + new Vector3(s * .7f, -s * .9f, -.01f), s * .21f, s * .33f, InkBurstMeshBuilder308.CellDropTailed, 1);
             }
         }
 
