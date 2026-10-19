@@ -11,10 +11,11 @@ namespace Oheangbu.EditorTools.WorldMacro
  // (RightHand ...) or a transform name on a Generic one. The prefab copy is scaled so its longest side is `length` m, held at grip01
  // along that side (0 = one end, .5 = the middle), then moved by pos (bone space, metres) and turned by euler. Colliders are stripped:
  // the part is looks only (the attack profile and capsule decide combat). prefab may be a model file (a Meshy part FBX); albedo (optional)
- // then gives it the body's ink look - the Folklore298 shader on an ink-toned copy at the part's saturation / value (0 = the species'), no emission.
+ // then gives it the body's ink look - the Folklore298 shader on an ink-toned copy at the part's saturation / value (0 = the species'),
+ // smoothness (-1 = the look's; D308-120 wet clouded eyes), no emission.
  public static partial class Creatures308
  {
-  [Serializable] sealed class PartRow{public string prefab="",bone="",note="",albedo="";public float length,grip01=.5f,saturation,value;public float[] pos=Array.Empty<float>(),euler=Array.Empty<float>();}
+  [Serializable] sealed class PartRow{public string prefab="",bone="",note="",albedo="";public float length,grip01=.5f,saturation,value,smoothness=-1;public float[] pos=Array.Empty<float>(),euler=Array.Empty<float>(),tint=Array.Empty<float>();}
 
   static Transform PartBone(Body b,string name)
   {
@@ -41,6 +42,18 @@ namespace Oheangbu.EditorTools.WorldMacro
       Pose(b.animator,clip,t);
       sb.Append("  ").Append(bone.name).Append(" ").Append(label).Append(": x").Append(D(bone.right)).Append(" y").Append(D(bone.up)).Append(" z").Append(D(bone.forward))
        .Append(" from parent").Append(bone.parent!=null?D(bone.position-bone.parent.position):"-").Append('\n');
+     }
+     // bind pose (D308-120 eyes): the centre of the vertices this bone carries (> .5) in mesh space and as a part pos (bone space,
+     // metres), and the body axes as seen from the bone - pos = centre + offsets along these axes, independent of the clip
+     foreach(var k in b.skins)
+     {
+      int i=Array.IndexOf(k.bones,bone);if(i<0)continue;var mesh=k.sharedMesh;var bw=mesh.boneWeights;var vs=mesh.vertices;var c=Vector3.zero;int n=0;
+      for(int v=0;v<vs.Length;v++){var q=bw[v];if(q.boneIndex0==i&&q.weight0>.5f||q.boneIndex1==i&&q.weight1>.5f){c+=vs[v];n++;}}
+      var bind=mesh.bindposes[i];float lossy=bone.lossyScale.x;
+      string L(Vector3 d){var u=bind.MultiplyVector(k.transform.InverseTransformDirection(W.TransformDirection(d))).normalized;return "("+u.x.ToString("0.00")+","+u.y.ToString("0.00")+","+u.z.ToString("0.00")+")";}
+      sb.Append("  ").Append(bone.name).Append(" bind: ").Append(n).Append(" verts");
+      if(n>0){c/=n;var pc=bind.MultiplyPoint3x4(c)*lossy;sb.Append(" mesh(").Append(c.x.ToString("0.###")).Append(',').Append(c.y.ToString("0.###")).Append(',').Append(c.z.ToString("0.###")).Append(") pos(").Append(pc.x.ToString("0.###")).Append(',').Append(pc.y.ToString("0.###")).Append(',').Append(pc.z.ToString("0.###")).Append(')');}
+      sb.Append(" body x").Append(L(Vector3.right)).Append(" y").Append(L(Vector3.up)).Append(" z").Append(L(Vector3.forward)).Append(" mesh scale ").Append(F(k.transform.lossyScale.x)).Append('\n');
      }
     }
    }
@@ -71,10 +84,10 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(!string.IsNullOrEmpty(p.albedo))
     {
      if(shader==null){var reference=AssetDatabase.LoadAssetAtPath<Material>(cfg.look.reference);if(reference==null||reference.shader==null)throw new Refuse("look.reference material missing "+cfg.look.reference);shader=reference.shader;}
-     var tone=new Sp{key=s.key+"_"+prefab.name,albedo=p.albedo,saturation=p.saturation>0?p.saturation:s.saturation,value=p.value>0?p.value:s.value,tint=s.tint};
+     var tone=new Sp{key=s.key+"_"+prefab.name,albedo=p.albedo,saturation=p.saturation>0?p.saturation:s.saturation,value=p.value>0?p.value:s.value,tint=p.tint!=null&&p.tint.Length==3?p.tint:s.tint};   // D308-120: a part may keep its own colour (bone, crystal) under a fur tint
      var m=Mat(cfg,cfg.prefabDir+"/Materials/M_"+tone.key+".mat",shader);var tex=InkTexture(cfg,tone,w);
      m.SetTexture("_BaseMap",tex);if(m.HasProperty("_MainTex"))m.SetTexture("_MainTex",tex);m.SetColor("_BaseColor",Color.white);
-     if(m.HasProperty("_Smoothness"))m.SetFloat("_Smoothness",cfg.look.smoothness);if(m.HasProperty("_Metallic"))m.SetFloat("_Metallic",0);
+     if(m.HasProperty("_Smoothness"))m.SetFloat("_Smoothness",p.smoothness>=0?p.smoothness:cfg.look.smoothness);if(m.HasProperty("_Metallic"))m.SetFloat("_Metallic",0);
      if(m.HasProperty("_BumpMap"))m.SetTexture("_BumpMap",null);m.DisableKeyword("_NORMALMAP");
      m.DisableKeyword("_EMISSION");m.globalIlluminationFlags=MaterialGlobalIlluminationFlags.EmissiveIsBlack;if(m.HasProperty("_EmissionColor"))m.SetColor("_EmissionColor",Color.black);
      EditorUtility.SetDirty(m);AssetDatabase.SaveAssetIfDirty(m);
