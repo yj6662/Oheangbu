@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Oheangbu.App;
 using Oheangbu.App.World;
 using Oheangbu.Combat;
+using Oheangbu.Spellcraft;
 
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -59,6 +60,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (c.StartsWith("lock:", StringComparison.Ordinal)) return Lock(c.Substring(5));
                 if (c.StartsWith("strike:", StringComparison.Ordinal)) return Strike(c.Substring(7));
                 if (c.StartsWith("rec:", StringComparison.Ordinal)) return Rec.Start(c.Substring(4));
+                if (c.StartsWith("zone:", StringComparison.Ordinal)) return Zone.Run(c.Substring(5));
                 switch (c)
                 {
                     case "build": return Build();
@@ -67,7 +69,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "stop": if (!EditorApplication.isPlaying) return "stop: not playing"; EditorApplication.isPlaying = false; return "stop: leaving Play";
                     // re-read Packages/manifest.json without window focus (an unfocused editor does not notice a manifest edit)
                     case "resolve": UnityEditor.PackageManager.Client.Resolve(); return "resolve: requested";
-                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | rec:<name>:<seconds> | rec:stop | lock:<dummy> | strike:on|off|status | stop | resolve";
+                    default: return "SpellLab308: build | play | status | shot:<name> | side:<name> | top:<name> | rec:<name>:<seconds> | rec:stop | lock:<dummy> | strike:on|off|status | zone:on|off|last | stop | resolve";
                 }
             }
             catch (Exception e)
@@ -474,6 +476,152 @@ namespace Oheangbu.EditorTools.WorldMacro
                 Debug.Log("[SpellLab308] " + line);
                 return line;
             }
+        }
+
+        // zone:on | off | last (Spec 11.70, fun-eval §6 item 1): while on, every CombatLoopWiring.CastPlanned draws the plan's hit
+        // shape on the lab ground as thin unlit lines (HideAndDontSave, dropped on the next plan, zone:off or leaving Play), so
+        // the top: / rec: views show the ink against the rule. Magenta = the centre-point rule (AreaGeometry), yellow = the same
+        // shape grown by the dummies' body radius (WP-16: the body edge counts). Volley: the candidate cone and a cross at every
+        // shot's impact point. Measurement only - the overlay never touches the plan or the effect
+        static class Zone
+        {
+            static readonly System.Globalization.CultureInfo Inv = System.Globalization.CultureInfo.InvariantCulture;
+            static CombatLoopWiring wiring;
+            static Transform body;
+            static GameObject root;
+            static Material centreMat, edgeMat;
+            static readonly List<string> log = new List<string>();
+
+            public static string Run(string arg)
+            {
+                if (arg == "last") return log.Count == 0 ? "zone: no plan yet" : string.Join(" || ", log);
+                if (arg == "off") { Off(); return "zone off"; }
+                if (arg != "on") return "zone: on | off | last";
+                if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
+                var walker = Object.FindFirstObjectByType<WorldMacroCombatWalker>();
+                if (walker == null || walker.Wiring == null || walker.Body == null) return "zone: no walker / wiring";
+                Off();
+                wiring = walker.Wiring; body = walker.Body.transform;
+                wiring.CastPlanned += Draw;
+                EditorApplication.playModeStateChanged += Leave;
+                return "zone on | wiring " + wiring.name;
+            }
+
+            static void Leave(PlayModeStateChange s) { if (s == PlayModeStateChange.ExitingPlayMode) Off(); }
+
+            static void Off()
+            {
+                if (wiring != null) wiring.CastPlanned -= Draw;
+                EditorApplication.playModeStateChanged -= Leave;
+                if (root != null) Object.DestroyImmediate(root);
+                if (centreMat != null) Object.DestroyImmediate(centreMat);
+                if (edgeMat != null) Object.DestroyImmediate(edgeMat);
+                wiring = null; body = null; root = null; centreMat = edgeMat = null;
+            }
+
+            static Material Line(Color c)
+            {
+                var m = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { hideFlags = HideFlags.HideAndDontSave };
+                m.SetColor("_BaseColor", c);
+                return m;
+            }
+
+            static float Ground(Vector3 p)
+            {
+                // the lab ground only: dummies, the player and spell bodies are skipped by taking the lowest hit
+                var hits = Physics.RaycastAll(p + Vector3.up * 6f, Vector3.down, 14f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+                float y = p.y;
+                bool any = false;
+                foreach (var h in hits) if (!any || h.point.y < y) { y = h.point.y; any = true; }
+                return y + .05f;
+            }
+
+            static void Poly(string name, IList<Vector3> pts, bool closed, Material mat, float width)
+            {
+                var go = new GameObject(name) { hideFlags = HideFlags.HideAndDontSave };
+                go.transform.SetParent(root.transform, false);
+                var lr = go.AddComponent<LineRenderer>();
+                lr.useWorldSpace = true; lr.loop = closed; lr.sharedMaterial = mat;
+                lr.widthMultiplier = width; lr.numCornerVertices = 2;
+                lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; lr.receiveShadows = false;
+                lr.positionCount = pts.Count;
+                for (int i = 0; i < pts.Count; i++) { var p = pts[i]; p.y = Ground(p); lr.SetPosition(i, p); }
+            }
+
+            static List<Vector3> Circle(Vector3 c, float r)
+            {
+                var pts = new List<Vector3>();
+                for (int i = 0; i < 64; i++) { float a = i / 64f * Mathf.PI * 2f; pts.Add(c + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * r); }
+                return pts;
+            }
+
+            static List<Vector3> Corridor(Vector3 start, Vector3 dir, float half, float len, float grow)
+            {
+                Vector3 right = Vector3.Cross(Vector3.up, dir);
+                Vector3 a = start - dir * grow, b = start + dir * (len + grow);
+                float w = half + grow;
+                var pts = new List<Vector3>();
+                for (int i = 0; i <= 12; i++) pts.Add(Vector3.Lerp(a, b, i / 12f) + right * w);
+                for (int i = 12; i >= 0; i--) pts.Add(Vector3.Lerp(a, b, i / 12f) - right * w);
+                return pts;
+            }
+
+            static List<Vector3> Fan(Vector3 o, Vector3 dir, float halfDeg, float range)
+            {
+                var pts = new List<Vector3> { o };
+                for (int i = 0; i <= 24; i++) pts.Add(o + Quaternion.Euler(0f, Mathf.Lerp(-halfDeg, halfDeg, i / 24f), 0f) * dir * range);
+                return pts;
+            }
+
+            static void Draw(CastPlan plan)
+            {
+                if (plan == null || plan.Area == null || body == null) return;
+                if (root != null) Object.DestroyImmediate(root);
+                root = new GameObject("Lab_ZoneOverlay") { hideFlags = HideFlags.HideAndDontSave };
+                if (centreMat == null) centreMat = Line(new Color(1f, 0f, .85f));
+                if (edgeMat == null) edgeMat = Line(new Color(1f, .9f, 0f));
+                var a = plan.Area;
+                const float Body = .4f;   // EnemyVitals.DefaultBodyRadius; the lab dummies measure close to it
+                Vector3 dir = Vector3.ProjectOnPlane(a.Direction.sqrMagnitude > 1e-4f ? a.Direction : body.forward, Vector3.up).normalized;
+                string letter = plan.Cast.Letter != '\0' ? plan.Cast.Letter.ToString() : "?";
+                string line;
+                switch (a.Shape)
+                {
+                    case AreaShape.Circle:
+                        Poly("circle", Circle(a.Point, a.Radius), true, centreMat, .09f);
+                        Poly("circle_body", Circle(a.Point, a.Radius + Body), true, edgeMat, .05f);
+                        line = "circle r " + a.Radius.ToString("F2", Inv) + " at " + Flat(a.Point);
+                        break;
+                    case AreaShape.Path:
+                        Poly("path", Corridor(a.Point, dir, a.Radius, a.Length, 0f), true, centreMat, .09f);
+                        Poly("path_body", Corridor(a.Point, dir, a.Radius, a.Length, Body), true, edgeMat, .05f);
+                        line = "path half " + a.Radius.ToString("F2", Inv) + " len " + a.Length.ToString("F1", Inv) + " speed " + a.Speed.ToString("F1", Inv) + " from " + Flat(a.Point);
+                        break;
+                    case AreaShape.Cone:
+                        Poly("cone", Fan(a.Point, dir, a.Angle, a.Length), true, centreMat, .09f);
+                        line = "cone half " + a.Angle.ToString("F0", Inv) + " len " + a.Length.ToString("F1", Inv);
+                        break;
+                    case AreaShape.Volley:
+                        Poly("volley", Fan(body.position, dir, a.Radius, a.Length), true, centreMat, .09f);
+                        int marked = 0;
+                        foreach (var s in a.Shots)
+                        {
+                            if (!s.HasImpactPoint) continue;
+                            Vector3 p = s.ImpactPoint, r = Vector3.Cross(Vector3.up, dir) * .3f, f = dir * .3f;
+                            Poly("shot_" + marked + "a", new[] { p - r, p + r }, false, edgeMat, .05f);
+                            Poly("shot_" + marked + "b", new[] { p - f, p + f }, false, edgeMat, .05f);
+                            marked++;
+                        }
+                        line = "volley half " + a.Radius.ToString("F0", Inv) + " len " + a.Length.ToString("F1", Inv) + " shots " + a.Shots.Count + " (points " + marked + ")";
+                        break;
+                    default: line = a.Shape.ToString(); break;
+                }
+                line = letter + " " + line + " | hits " + plan.Hits.Count;
+                log.Add(line);
+                Debug.Log("[SpellLab308] zone " + line);
+            }
+
+            static string Flat(Vector3 p) => "(" + p.x.ToString("F1", Inv) + "," + p.z.ToString("F1", Inv) + ")";
         }
 
         // lock:<dummy> - lock on to that dummy whatever the camera looks at: the lock picks the candidate nearest the screen

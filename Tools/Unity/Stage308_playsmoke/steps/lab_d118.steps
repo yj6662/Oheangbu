@@ -1,0 +1,62 @@
+# 11.70 check (2026-10-19): go (U+ACE0) circle ground pools now emit (0.7 s window) and the outer pools shrink to r + 0.3 m.
+# Pass 1 with the zone overlay (magenta = r 2.5 centre rule, yellow = +0.4 m body edge), pass 2 clean for the look; Dummy_10m, slow 0.25.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SpellLab308 Run zone:on
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d118_go_zone:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SpellLab308 Run top:lab_d118_go_zone_early
+sleep 2
+?call SpellLab308 Run top:lab_d118_go_zone_mid
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d118_go_zone_end
+?call SpellLab308 Run zone:last
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SpellLab308 Run zone:off
+sleep 1
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:6
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+?call SwingProbe308 Run slow:0.25
+?call SwingProbe308 Run ink
+?call SpellLab308 Run rec:d118_go_clean:14
+sleep 1
+?call SwingProbe308 Run brushlog:6
+?call SwingProbe308 Run cast:uACE0
+sleep 2
+?call SpellLab308 Run top:lab_d118_go_clean_early
+sleep 2
+?call SpellLab308 Run top:lab_d118_go_clean_mid
+?call SwingProbe308 Run fx
+sleep 6
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run top:lab_d118_go_clean_end
+?call SwingProbe308 Run slow:1
+sleep 4
+?call SwingProbe308 Run report
+finally:
+?call SpellLab308 Run zone:off
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

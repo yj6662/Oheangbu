@@ -51,6 +51,7 @@ namespace Oheangbu.App.SpellVFX120
    for(int i=0;i<graphs;i++){var g=_areaGraphs[i];var timing=g.GetComponent<Vfx308SeamTiming>();_areaGraphLead[i]=timing!=null?timing.Lead:0f;_areaGraphFwd[i]=timing!=null?timing.Forward:0f;_areaGraphHeight[i]=timing!=null?timing.Height:-1f;
     g.Stop();g.Reinit();if(g.HasFloat("LifeTime"))Life=Mathf.Max(Life,plan.Delay+.7f+g.GetFloat("LifeTime")+Mathf.Max(0f,-_areaGraphLead[i]));}   /* 11.31: the effect outlives its last smoke; 11.34: a late graph's lead too */
    for(int i=0;i<_areaParticles.Length;i++){var ps=_areaParticles[i];ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);ps.useAutoRandomSeed=false;ps.randomSeed=(uint)(271+i);var main=ps.main;main.playOnAwake=false;main.cullingMode=ParticleSystemCullingMode.AlwaysSimulate;ps.Simulate(0,false,true,false);}
+   if(k==Vfx120AreaRemake.BambooField)FitCirclePools(plan);   /* 11.70 */
    if(k==Vfx120AreaRemake.FlameCone)
    {
     _areaBodies[0].SetPositionAndRotation(plan.Point,Quaternion.LookRotation(_areaForward));
@@ -248,8 +249,30 @@ namespace Oheangbu.App.SpellVFX120
     }
    }
   }
+  // 11.70: the circle's ground pools follow the hit circle. A circle plan has no Length / Speed, so its window is fixed after the
+  // delay (the canes rise in it); an inner pool keeps its built size (the pools run together), an outer one shrinks until its rim
+  // stands at r + CirclePoolMargin308 (rim = start size x size curve x sheet fill / 2 x the body's scale). Display only.
+  const float CircleInkSeconds308=.7f,CirclePoolMargin308=.3f,CirclePoolFill308=.85f,CirclePoolMin308=.25f;
+  void FitCirclePools(AreaImpactPlan plan)
+  {
+   float longest=0f;
+   for(int i=0;i<_areaBodies.Length;i++)
+   {
+    var flat=_areaFeet[i]-plan.Point;flat.y=0;float d=flat.magnitude;
+    foreach(var ps in _areaBodies[i].GetComponentsInChildren<ParticleSystem>(true))
+    {
+     if(ps.name!="Pool")continue;var main=ps.main;var size=main.startSize;bool two=size.mode==ParticleSystemCurveMode.TwoConstants;
+     var sol=ps.sizeOverLifetime;float grow=sol.enabled?Mathf.Max(sol.size.Evaluate(0f),sol.size.Evaluate(1f)):1f;
+     float reach=(two?size.constantMax:size.constant)*grow*CirclePoolFill308*.5f*Mathf.Abs(ps.transform.lossyScale.x);if(reach<=.001f)continue;
+     float m=Mathf.Clamp((plan.Radius+CirclePoolMargin308-d)/reach,CirclePoolMin308,1f);
+     main.startSize=two?new ParticleSystem.MinMaxCurve(size.constantMin*m,size.constantMax*m):new ParticleSystem.MinMaxCurve(size.constant*m);
+     var life=main.startLifetime;longest=Mathf.Max(longest,life.mode==ParticleSystemCurveMode.TwoConstants?life.constantMax:life.constant);
+    }
+   }
+   Life=Mathf.Max(Life,plan.Delay+CircleInkSeconds308+longest);
+  }
   // the emit window of the area bodies (particle systems and VFX Graph bodies share it)
-  bool AreaEmitting(Vfx120AreaRemake kind,AreaImpactPlan p,float time)=>kind==Vfx120AreaRemake.FlameCone?time>=Mathf.Max(0,p.Delay-.12f)&&time<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):time>=p.Delay&&time<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
+  bool AreaEmitting(Vfx120AreaRemake kind,AreaImpactPlan p,float time)=>kind==Vfx120AreaRemake.BambooField?time>=p.Delay&&time<p.Delay+CircleInkSeconds308:kind==Vfx120AreaRemake.FlameCone?time>=Mathf.Max(0,p.Delay-.12f)&&time<p.Delay+(Profile.AreaFlowRevision?1.68f:Profile.WideAreaRevision?.65f:.18f):time>=p.Delay&&time<p.Delay+p.Length/Mathf.Max(.1f,p.Speed);
   // 11.31: Play when the window opens (the host placed at the caster, facing the fan), Stop when it closes - the graph lets its
   // particles die out on their own; a scrub backwards starts it over. Display only: no rule, clock or hit reads it.
   // 11.34 fire18: each graph tests the window at t + its Lead and opens / closes on its own; the ground frame is taken once per
