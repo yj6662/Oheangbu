@@ -46,6 +46,31 @@ CREST = {
     ],
 }
 
+# 2nd pass (user, 2026-10-19 night): the two filled ends get something to see - points alone show nothing until 2.5 m
+ENDS = {
+    'id': 'D_ends', 'enabled': True,
+    'what': 'D308-117 C1: the props of the two filled side-path ends - the herb gatherer bag at herb_cache308 (약초길 갈림) and '
+            'the bark pile at sinmok_bark308 (신목 밑동). Existing props only, colliders stripped, no text.',
+    'rows': [
+        {'id': 'D_herb_bag', 'kind': 'prefab', 'prefab': 'Assets/KoreanTraditionalFestival/Prefabs/SM_JolongtaegiBag.prefab',
+         'x': 3121.8, 'z': 2576.6, 'yaw': 40.0, 'sink_m': 0.02, 'solid': False, 'max_slope_deg': 12.0, 'corner_gap_max_m': 0.3,
+         'note': 'the bag of herb_cache308 (F8), 1 m beside the point'},
+        {'id': 'D_herb_basket', 'kind': 'prefab', 'prefab': 'Assets/_Project/Art/World/Flora308/Prefabs/Pack_P_Basket.prefab',
+         'x': 3120.4, 'z': 2577.2, 'yaw': 300.0, 'sink_m': 0.02, 'solid': False, 'max_slope_deg': 12.0, 'corner_gap_max_m': 0.3,
+         'note': "a second basket: a gatherer's stop, not a dropped item"},
+        {'id': 'D_herb_jige', 'kind': 'prefab', 'prefab': 'Assets/_Project/Art/World/Hanyang308/Prefabs/Prop_Jige.prefab',
+         'x': 3122.6, 'z': 2577.6, 'yaw': 220.0, 'sink_m': 0.02, 'solid': False, 'max_slope_deg': 12.0, 'corner_gap_max_m': 0.3,
+         'note': 'still 1: bag and basket (0.3 - 0.4 m) vanish past ~10 m; the A-frame carrier is the silhouette from the path'},
+        {'id': 'D_bark_1', 'kind': 'mesh', 'mesh': 'BarkLitter', 'x': 3698.6, 'z': 3249.2, 'yaw': 20.0, 'sink_m': 0.0, 'solid': False,
+         'max_slope_deg': 8.0, 'scale': 1.3, 'note': 'bark of sinmok_bark308 (F9)'},
+        {'id': 'D_bark_2', 'kind': 'mesh', 'mesh': 'BarkLitter', 'x': 3697.0, 'z': 3247.6, 'yaw': 130.0, 'sink_m': -0.05, 'solid': False,
+         'max_slope_deg': 8.0, 'scale': 1.1},
+        {'id': 'D_bark_bundle', 'kind': 'prefab', 'prefab': 'Assets/_Project/Art/Characters/Npc306/Tools/PF_NpcTool306_Firewood.prefab',
+         'x': 3698.2, 'z': 3247.0, 'yaw': 75.0, 'sink_m': 0.0, 'solid': False, 'max_slope_deg': 8.0, 'corner_gap_max_m': 0.3,
+         'note': 'a tied bundle on the bark: someone came for it before'},
+    ],
+}
+
 
 def backup(p):
     BACKUP.mkdir(parents=True, exist_ok=True)
@@ -69,9 +94,9 @@ def main():
     # of this script pinned it and is taken out here
     r['points'] = [q for q in r.get('points', []) if not (q.get('id') == 'sanctuary_trace308' and q.get('op') == 'C1-keep')]
     p = json.loads(PLACES.read_text(encoding='utf-8'))
-    places = [q for q in p['places'] if q.get('id') != CREST['id']]
+    places = [q for q in p['places'] if q.get('id') not in (CREST['id'], ENDS['id'])]
     if not revert:
-        places.append(CREST)
+        places += [CREST, ENDS]
     p['places'] = places
     print('backup', backup(RELAYOUT).name, backup(PLACES).name)
     RELAYOUT.write_text(json.dumps(r, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
