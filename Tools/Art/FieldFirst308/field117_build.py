@@ -63,6 +63,16 @@ def build():
         # and is the line of sight open? Read by FieldFirst308 field308-sight (read only). eye = beat place (x, z; eye 1.65 m over
         # the ground), toward = the next beat (heading), guides = what should lead there: x, z and up = metres over the ground
         # there, or y = an absolute height (beacon smoke column, summits). Positions from the Spec §1 beat table and the fh views.
+        # SPEC-FIELD-FIRST-HOUR-308 C1 (TEST): side-path ends of the realm and what stands there. Read by FieldFirst308
+        # field308-ends (read only). An end needs a reward / info / scene within radius_m; the nearest field enemies are the
+        # gatekeeper candidates (enemy_prefixes). scene_words = scene object names that count (kind -> words).
+        'ends': {
+            'layout': 'Assets/_Project/Scenes/World/Main/WorldLayout_Main.asset', 'realm': 'cheongrim',
+            'radius_m': 15, 'run_gap_m': 40, 'enemy_near_m': 60, 'bbox_pad_m': 150, 'mouth_m': 20, 'loop_m': 60,
+            'enemy_prefixes': ['field308/', 'field308b/', 'forest_beast308/'],
+            'scene_words': {'보상': ['Ore_Vein', 'Fragment', 'Satchel', 'Treasure', 'Jar308'], '정보': ['Stele', 'Notice'],
+                            '서사': ['Shrine', 'Grave', 'Wreck']},
+        },
         'sightline': {
             'eye_up': 1.65, 'front_half_deg': 51, 'end_gap_m': 3.0, 'soft_min_size_m': 2.0, 'soft_max_size_m': 40.0,
             'eye_steps_m': [0, 15, 30, 45, 60, 90, 120, 150, 200, 250, 300, 350, 400], 'road_snap_m': 30,   # the player walks on: the eye is taken at these metres along the heading, first open wins
@@ -81,7 +91,8 @@ def build():
                  'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}, {'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6},
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
                 {'id': 'L4b 주막 갈림 → 벌목장', 'eye': [3075, 2339], 'toward': [3318, 2688],
-                 'guides': [{'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                 'guides': [{'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280},
+                            {'name': '고개 마루 마른 고목(C1, 6 m 지점)', 'x': 3290, 'z': 2522, 'up': 6}]},
                 {'id': 'L5 벌목장 → 깊은 숲 갈림', 'eye': [3317.0, 2695.9], 'toward': [3266, 3082],
                  'guides': [{'name': '갈림 자리', 'x': 3266, 'z': 3082, 'up': 3}, {'name': '신목 수관', 'x': 3710, 'z': 3255, 'y': 254},
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
@@ -90,6 +101,9 @@ def build():
                 {'id': 'L7 사냥꾼 주막 → 청룡', 'eye': [3205.1, 3223.0], 'toward': [3210, 3550],
                  'guides': [{'name': '성소', 'x': 3211, 'z': 3430, 'up': 5}, {'name': '청룡 자리', 'x': 3210, 'z': 3550, 'up': 10},
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                # C1 (D308-117): the 신목 side path - does the walker see the gatekeepers and the end before reaching them?
+                {'id': 'C1 신목 갈래 → 끝', 'eye': [3602, 3234], 'toward': [3709, 3254],
+                 'guides': [{'name': '이끼 승냥이 문지기', 'x': 3694, 'z': 3216, 'up': 1.0}, {'name': '신목 밑동 껍질', 'x': 3697.6, 'z': 3248.3, 'up': 0.6}]},
             ],
         },
     }

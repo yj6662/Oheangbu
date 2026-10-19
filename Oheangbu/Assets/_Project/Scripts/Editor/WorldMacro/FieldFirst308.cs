@@ -28,7 +28,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  // Data: Art/World/Compact/Rebuild/FieldFirst308/field117.json (built by Tools/Art/FieldFirst308/field117_build.py from
  // DECISIONS D308-117 F2; the code holds no line). Ledger + asset backups: Art/Playtest306/Backups/FieldFirst308/. Edit mode only,
  // no AssetDatabase.SaveAssets (the target asset is saved alone).
- public static class FieldFirst308
+ public static partial class FieldFirst308
  {
   sealed class Refused:Exception{public Refused(string m):base(m){}}
   [Serializable] sealed class DocsWrap{public WorldMacroPlaytestSO.DocumentSpec[] items=Array.Empty<WorldMacroPlaytestSO.DocumentSpec>();}
@@ -54,6 +54,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      case "field308-check":return Check();
      case "field308-heights":return Heights();
      case "field308-sight":return Sight();
+     case "field308-ends":return Ends();
+     case "field308-flat":return Flat(parts.Length>1?parts[1].Split(','):new string[0]);
      case "field308-cloud":return revert?CloudRevert():Cloud(dry);
     }
    }
@@ -357,7 +359,7 @@ namespace Oheangbu.EditorTools.WorldMacro
       foreach(var h in Physics.RaycastAll(eye,dir,reach,~0,QueryTriggerInteraction.Ignore))
        if(!(h.collider is CharacterController)&&h.distance>.5f&&h.distance<t.hardAt){t.hardAt=h.distance;t.hard=Kind(h.collider.transform)+" "+h.distance.ToString("F0")+" m "+h.collider.name;}
       var ray=new Ray(eye,dir);var hits=new List<(float t,Renderer r)>();
-      foreach(var r in soft){if(r.bounds.Contains(eye))continue;if(r.bounds.IntersectRay(ray,out float hit)&&hit>.5f&&hit<Mathf.Min(reach,t.hardAt))hits.Add((hit,r));}
+      foreach(var r in soft){if(r.bounds.Contains(eye)||r.bounds.Contains(target))continue;if(r.bounds.IntersectRay(ray,out float hit)&&hit>.5f&&hit<Mathf.Min(reach,t.hardAt))hits.Add((hit,r));}
       t.softCount=hits.Count;
       if(hits.Count>0)t.soft=hits.Count+"개, 첫 "+string.Join(" / ",hits.OrderBy(x=>x.t).Take(2).Select(x=>Kind(x.r.transform)+" "+x.t.ToString("F0")+" m "+x.r.name));
       last=t;if(t.Open){open=t;break;}

@@ -50,6 +50,11 @@ namespace Oheangbu.EditorTools.WorldMacro
     Text="돌바닥에 비늘이 긁고 간 자국이 겹겹이 나 있다."},
    new PointSpec308{Id="road_yeomak308",Kind=PrologueInteractionKind.Evidence,X=AgwiNow308().x+12,Z=AgwiNow308().y+6,Prompt="여막 터",Currency=60,
     Text="무너진 여막 터다. 주춧돌 틈에 누가 꾸려 둔 엽전 꾸러미가 그대로 남았다."},
+   // D308-117 C1 (SPEC-FIELD-FIRST-HOUR-308 §8.5): the two empty side-path ends of 청림 (field308-ends) - F8 / F9 of the decision
+   new PointSpec308{Id="herb_cache308",Kind=PrologueInteractionKind.Evidence,X=3121,Z=2576,Prompt="약초꾼 망태",Currency=60,
+    Text="바위 그늘에 망태 하나가 걸려 있다. 말린 뿌리 밑에 엽전 꾸러미가 들었다."},
+   new PointSpec308{Id="sinmok_bark308",Kind=PrologueInteractionKind.Evidence,X=3697.6f,Z=3248.3f,Prompt="신목 밑동 껍질",
+    Text="신목 밑동에 벗겨진 껍질이 두껍게 쌓였다. 너와로 쓸 만큼 넓고 곧다."},
    new PointSpec308{Id="hunter_innkeeper308",Kind=PrologueInteractionKind.Conversation,Anchor="hunter_inn308",X=1.8f,Z=1.2f,Radius=2.3f,Speaker="사냥꾼 주막 주인",
     Prompt="사냥꾼 주막 주인과 이야기",Text="이 깊은 데까지 오는 이는 드무오. 쉬어 가려거든 쉬고, 볼일이 끝나면 내려가시오.",
     Services=new[]{new PrologueContentSO.PointService306{Kind=PrologueContentSO.PointServiceKind306.Rest,Target="hunter_inn308"},
