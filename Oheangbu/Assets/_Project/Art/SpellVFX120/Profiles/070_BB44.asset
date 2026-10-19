@@ -18,6 +18,7 @@ MonoBehaviour:
     \uBE44\uC804\uD22C \uC804\uC6A9(\uCD5C\uD6C4 \uC5B4\uD718)"
   Family: BridgeSlab
   Assigned: 1
+  Deploy308: {fileID: 0}
   Behavior: 4
   Layout: 5
   BodyMesh: {fileID: 4300000, guid: 7859d01f39dc334449617cf7e360ea0a, type: 2}
@@ -36,12 +37,80 @@ MonoBehaviour:
   NativeFieldRole: 2
   NativeScale: 0.32
   NativeImpactScale: 0.45
+  KtpEmphasis: 0
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1
+  KtpBrightness: 1
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 0
+  AreaContactPrefab: {fileID: 0}
+  AreaStainPrefab: {fileID: 0}
+  AreaStainDiameter: 2
+  AreaStainAlpha: 0.12
+  AreaStainSeconds: 2.5
+  AreaStainMinNormalY: 0.45
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 0
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 0
+  EarthRift: 0
+  BranchedEarthRift: 0
+  ProceduralEarthRift: 0
+  WardKind: 0
+  WardRadius: 3
+  WardHeight: 2.2
+  WardFormation: 0.45
+  WardFade: 0.5
+  WardGroundProbeHeight: 16
+  WardGroundProbeDepth: 48
+  WardMaterial: {fileID: 0}
+  WardWaterMaterial: {fileID: 0}
+  WardPatternPrefab: {fileID: 0}
+  WardContactPrefab: {fileID: 0}
+  WardDebrisPrefab: {fileID: 0}
   NativeReplaceBody: 0
   NativeBodyPrefab: {fileID: 0}
   NativeBodyMotion: 0
   BotanicalPrefab: {fileID: 0}
   BotanicalKind: 0
   SummonPrefab: {fileID: 0}
+  WoodDeerPresentation: 0
+  WoodDeerPrefab: {fileID: 0}
+  WoodDeerSeal: {fileID: 0}
+  WoodDeerDebris: {fileID: 0}
+  FireHaetaePresentation: 0
+  FireHaetaePrefab: {fileID: 0}
+  FireHaetaeSeal: {fileID: 0}
+  FireHaetaeDebris: {fileID: 0}
+  MetalTigerPresentation: 0
+  MetalTigerPrefab: {fileID: 0}
+  MetalTigerSeal: {fileID: 0}
+  MetalTigerDebris: {fileID: 0}
+  DokkaebiClubPresentation: 0
+  DokkaebiClubPrefab: {fileID: 0}
+  DokkaebiClubSeal: {fileID: 0}
+  DokkaebiClubDebris: {fileID: 0}
+  WaterTurtlePresentation: 0
+  WaterTurtlePrefab: {fileID: 0}
+  WaterTurtleSeal: {fileID: 0}
+  WaterTurtleDebris: {fileID: 0}
+  StoneDokkaebiPresentation: 0
+  StoneDokkaebiPrefab: {fileID: 0}
+  StoneDokkaebiSeal: {fileID: 0}
+  StoneDokkaebiDebris: {fileID: 0}
   SummonScale: 1
   SummonYaw: 0
   Pigment: {r: 0.75, g: 0.72, b: 0.66, a: 1}
@@ -119,3 +188,33 @@ MonoBehaviour:
     (RGB is solid white).\",\"source_materials\":[{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_25.mat\",\"guid\":\"c5459b93451d1924ba3ded1057255934\",\"shader\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\"}],\"source_prefab_examples\":[{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Bottom/Bottom01-08.prefab\",\"guid\":\"0ed00e7e33480994d85c91e43884da40\",\"particle_systems\":14,\"looping_systems\":1}]},\"dispatchStatus\":\"REVIEW_ONLY_UNCONNECTED\",\"runtimeLimit\":\"Recipe
     data alone does not implement per-glyph gameplay event choreography; inspect
     runtime and real capture separately.\"}"
+  Bolt300Prefab: {fileID: 0}
+  Bolt300Scale: 1
+  Bolt300SoakSeconds: 0
+  Bolt300NearContactMeters: 0
+  Bolt300TravelScale: 0
+  Guard308Prefab: {fileID: 0}
+  Aura308Prefab: {fileID: 0}
+  Aura308FadeSeconds: 0.5
+  Aura308ByWardRadius: 0
+  Aura308LateAfter: 0
+  Aura308LateAlpha: 1
+  Aura308Lasting: 0
+  CompanionShot308Prefab: {fileID: 0}
+  SwordStrike308Prefab: {fileID: 0}
+  Derived308Prefab: {fileID: 0}
+  Zone308Prefab: {fileID: 0}
+  Burst308Prefab: {fileID: 4324537720975261689, guid: bec78b35cc857bf4fbe90327ad4dcd84, type: 3}
+  Mark308Prefab: {fileID: 0}
+  AreaBambooLean: 0
+  AreaBambooHeightSpread: 0
+  AreaKeepShape308: 0
+  Bolt300Arc: 0
+  Bolt300Curve: 0
+  Bolt300Spin: 0
+  Bolt300Ease: 1
+  Bolt300Pierce: 0
+  Bolt300FollowTarget: 0
+  Bolt300FollowHeight: 0
+  Bolt300Return: 0
+  Bolt300ReturnToCaster: 0
