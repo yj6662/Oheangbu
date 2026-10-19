@@ -276,6 +276,97 @@
      "value": 0.8
     }
    ]
+  },
+  "tree_dokkaebi": {
+   "from": "fox",
+   "drop": [
+    "fox_pack_before"
+   ],
+   "template": "folklore298/dokkaebi",
+   "scaleTemplate": 1.0,
+   "hp": 60,
+   "damage": 20,
+   "telegraph": 1.1,
+   "saturation": 0.0,
+   "value": 0.0,
+   "note": "D308-120: 청림 나무 도깨비 = 민담 도깨비 몸 + 뿌리 뿔 · 이끼 어깨",
+   "parts": [
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_antler.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_antler_albedo.png",
+     "bone": "Head",
+     "length": 0.55,
+     "grip01": 0.08,
+     "pos": [
+      0.0,
+      -0.02,
+      -0.2
+     ],
+     "euler": [
+      11.3,
+      180.0,
+      180.0
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "머리를 뚫은 뿌리 뿔(도깨비 뿔 자리)",
+     "saturation": 0.45,
+     "value": 0.8
+    },
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_moss.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_moss_albedo.png",
+     "bone": "Chest",
+     "length": 0.5,
+     "grip01": 0.5,
+     "pos": [
+      0.0,
+      0.36,
+      -0.16
+     ],
+     "euler": [
+      338.2,
+      180.0,
+      180.0
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "등과 어깨를 덮은 이끼 껍질",
+     "saturation": 0.6,
+     "value": 0.9
+    },
+    {
+     "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump.fbx",
+     "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/RootPart308_clump_albedo.png",
+     "bone": "Chest",
+     "length": 0.62,
+     "grip01": 0.5,
+     "pos": [
+      0.36,
+      0.26,
+      -0.06
+     ],
+     "euler": [
+      329.5,
+      101.3,
+      264.2
+     ],
+     "tint": [
+      1,
+      1,
+      1
+     ],
+     "note": "오른 어깨를 뚫은 뿌리",
+     "saturation": 0.45,
+     "value": 0.8
+    }
+   ]
   }
  },
  "swaps": [
@@ -295,6 +386,11 @@
    "species": "forest_bear",
    "own": true,
    "note": "D308-120 청림 숲 곰(곰 몸 + 이끼 · 뿌리)"
+  },
+  {
+   "match": "field308/cheongrim_tree_dokkaebi_",
+   "species": "tree_dokkaebi",
+   "note": "D308-120 청림 나무 도깨비(민담 도깨비 몸 + 뿌리 뿔 · 이끼 · 어깨 뿌리)"
   }
  ]
 }

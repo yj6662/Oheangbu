@@ -21,6 +21,8 @@ g.AXES.update({
     'bear/Chest': 'x(0.01,0.02,-1.00) y(0.00,-1.00,-0.02) z(-1.00,0.00,-0.01)',
     'bear/Spine2': 'x(0.00,-0.01,-1.00) y(0.00,-1.00,0.01) z(-1.00,0.00,0.00)',
     'bear/Root': 'x(0.00,-0.01,-1.00) y(0.00,-1.00,0.01) z(-1.00,0.00,0.00)',
+    'dok/Head': 'x(1.00,0.00,0.00) y(0.00,0.00,1.00) z(0.00,-1.00,0.00)',   # read off probe crystals (+x right, +z at the upper chest)
+    'dok/Chest': 'x(1.00,0.00,0.00) y(0.00,1.00,0.00) z(0.00,0.00,1.00)',  # humanoid Chest = the Meshy Spine (belly height)
     'goat/Pelvis': 'x(0.00,0.07,-1.00) y(0.00,-1.00,-0.07) z(-1.00,0.00,0.00)',
 })
 
@@ -69,11 +71,24 @@ SPEC = {
                 root('clump', 'bear/Chest', 'Chest_M', .42, (-.16, .26, 0), (-.5, 1, 0), note='왼 어깨 작은 뿌리', **BARK),
             ],
         },
+        # the human-looking brute of Folklore298 - roots for horns, moss over the shoulders, roots out of the right shoulder; face and
+        # fists (the punch) clear. Its body is a scaled template (parts:probe builds from a model), so the axes were read off probe
+        # crystals in the face stills
+        'tree_dokkaebi': {
+            'from': 'fox', 'drop': ['fox_pack_before'], 'template': 'folklore298/dokkaebi', 'scaleTemplate': 1.0, 'hp': 60, 'damage': 20, 'telegraph': 1.1, 'saturation': 0.0, 'value': 0.0,
+            'note': 'D308-120: 청림 나무 도깨비 = 민담 도깨비 몸 + 뿌리 뿔 · 이끼 어깨',
+            'parts': [
+                root('antler', 'dok/Head', 'Head', .55, (0, .2, -.02), (0, 1, -.2), grip=.08, note='머리를 뚫은 뿌리 뿔(도깨비 뿔 자리)', **BARK),
+                root('moss', 'dok/Chest', 'Chest', .5, (0, .36, -.16), (0, .4, -1), (0, 1, 0), note='등과 어깨를 덮은 이끼 껍질', **MOSS),
+                root('clump', 'dok/Chest', 'Chest', .62, (.36, .26, -.06), (1, .6, -.2), note='오른 어깨를 뚫은 뿌리', **BARK),
+            ],
+        },
     },
     'swaps': [
         {'match': 'field308/cheongrim_root_beast_', 'species': 'root_beast', 'note': 'D308-120 청림 뿌리 짐승(산양 몸 + 뿌리 부품)'},
         {'match': 'field308b/cheongrim_moss_wolf_', 'species': 'moss_wolf', 'own': True, 'note': 'D308-120 청림 이끼 늑대(늑대 몸 + 이끼 · 뿌리)'},
         {'match': 'field308b/cheongrim_forest_bear_', 'species': 'forest_bear', 'own': True, 'note': 'D308-120 청림 숲 곰(곰 몸 + 이끼 · 뿌리)'},
+        {'match': 'field308/cheongrim_tree_dokkaebi_', 'species': 'tree_dokkaebi', 'note': 'D308-120 청림 나무 도깨비(민담 도깨비 몸 + 뿌리 뿔 · 이끼 · 어깨 뿌리)'},
     ],
 }
 

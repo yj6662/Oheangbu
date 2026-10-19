@@ -1,7 +1,7 @@
 """D308-120 청림 first hour, the rest: species rows made from a pack species (root_beast <- goat, moss_wolf <- wolf, forest_bear <- bear)
 and their swaps[] rows, written into creatures308.json (read - change - write, short). Only these keys are touched.
   python cheongrim_rows.py <spec.json>
-spec.json = {"species": {key: {"from": base, ...overrides incl. parts}}, "swaps": [swap rows]}; a key's row is rebuilt from its base
+spec.json = {"species": {key: {"from": base, "drop": [base fields to remove], ...overrides incl. parts}}, "swaps": [swap rows]}; a key's row is rebuilt from its base
 every run (so an override removed from spec.json goes back to the base value), a swap row is replaced by its match.
 """
 import copy
@@ -19,7 +19,9 @@ data = json.loads(DATA.read_text(encoding='utf-8'))
 by = {s['key']: s for s in data['species']}
 for key, row in spec.get('species', {}).items():
     base = copy.deepcopy(by[row['from']])
-    base.update({k: v for k, v in row.items() if k != 'from'})
+    base.update({k: v for k, v in row.items() if k not in ('from', 'drop')})
+    for k in row.get('drop', []):   # base fields that do not belong to the new species (fox_pack_before on a dokkaebi)
+        base.pop(k, None)
     base['key'] = key
     base.setdefault('parts', [])
     if key in by:
