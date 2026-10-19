@@ -30,7 +30,10 @@ orphans = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(orphans)
 
 ROOT, PROJECT, ASSETS = orphans.ROOT, orphans.PROJECT, orphans.ASSETS
-QUAR = os.path.join(ROOT, "_Quarantine308")
+# 2026-10-19: the moved files were taken out of the repo to the user's own quarantine (the user empties it). --revert looks
+# there first; QUARANTINE308 points it somewhere else.
+QUAR_OUT = r"C:\Users\yj666\_Quarantine\Oheangbu_Quarantine308_20261019"
+QUAR = os.environ.get("QUARANTINE308") or (QUAR_OUT if os.path.isdir(QUAR_OUT) else os.path.join(ROOT, "_Quarantine308"))
 COVER = os.path.join(PROJECT, "Screenshots", "SpellVFX308", "coverage")
 SCRIPTS = os.path.join(ASSETS, "_Project", "Scripts")
 TEMPLATE = re.compile(r"/SpellVFX120/(Profiles|Prefabs)/\d{3}_[0-9A-F]{4}\.(asset|prefab)$")
