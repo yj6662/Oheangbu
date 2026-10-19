@@ -22,11 +22,13 @@ namespace Oheangbu.EditorTools.WorldMacro
  // Taken from the species: body, clips, attack and vitals profiles. Data: creatures308.json swaps[] {match, species, note}.
  //   swap:dry     what would change (read only)
  //   swap:apply   replace, back up the scene + content first, save. Idempotent: an actor that already wears the species is left alone.
+ // own: true on a row also re-dresses this tool's own placed actors (field308b/, fieldboss308/) where they stand now - a species
+ // whose body changed after place, without a full place that would undo moves other tools made since (Hanyang T15 moved own actors).
  // Undo = the Populate pipeline (Content308 Populate apply -> Content308 content-apply:main -> Texts308 content-apply:main) clones the
  // template bodies again; run swap:apply after every Populate apply.
  public static partial class Creatures308
  {
-  [Serializable] sealed class SwapRow{public string match="",species="",note="";}
+  [Serializable] sealed class SwapRow{public string match="",species="",note="";public bool own;}
   [Serializable] sealed class SwapLedgerRow{public string id="",species="",from="",utc="";}
   [Serializable] sealed class SwapLedger{public List<SwapLedgerRow> rows=new List<SwapLedgerRow>();}
   static string SwapLedgerPath=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","Creatures308","swap_ledger.json");
@@ -61,7 +63,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    foreach(var row in cfg.swaps)
    {
     var s=cfg.species.FirstOrDefault(k=>k.key==row.species);var prefab=s!=null?AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(cfg,s.key)):null;var template=s!=null?FindActor(scene,s.template):null;
-    var hits=actors.Where(a=>a!=null&&a.Id!=null&&a.Id.StartsWith(row.match,StringComparison.Ordinal)&&!Own(cfg,a.Id)).ToArray();
+    var hits=actors.Where(a=>a!=null&&a.Id!=null&&a.Id.StartsWith(row.match,StringComparison.Ordinal)&&(row.own||!Own(cfg,a.Id))).ToArray();
     sb.Append("\n  ").Append(row.match).Append("* -> ").Append(row.species).Append(" (").Append(hits.Length).Append(" actor(s))");
     if(s==null||prefab==null||template==null){sb.Append(" REFUSED ").Append(s==null?"unknown species":prefab==null?"no prefab - bodies:build:"+row.species+" first":"template "+s.template+" not in the scene");refused+=hits.Length;continue;}
     if(hits.Length==0){sb.Append(" WARN nothing matches");continue;}
