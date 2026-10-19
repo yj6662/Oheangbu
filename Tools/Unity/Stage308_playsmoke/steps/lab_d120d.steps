@@ -1,0 +1,301 @@
+# 2026-10-19 lab_d120d = lab_d120c (52.71 ms 추적, frames 표식) + 빈 27자 보충 영상 4판 + 15 m · 10 m 공격 영상 2판 (한 수명).
+# 보충: 노 몽 온은 lab_d120에서 그려짐 확인 → 나머지 24자. 먹은 시전마다 ink:full로 채운다(겅 미시전 원인 제거).
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 2
+?call PlayProbe308 Run log:reset
+?call PlayProbe308 Run frames:46
+?call PlayProbe308 Run frames:mark:idle
+sleep 4
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:ga1
+?call SwingProbe308 Run cast:uAC00
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:go1
+?call SwingProbe308 Run cast:uACE0
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:no1
+?call SwingProbe308 Run cast:uB178
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:so1
+?call SwingProbe308 Run cast:uC18C
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mo1
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mong1
+?call SwingProbe308 Run cast:uBABD
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:on1
+?call SwingProbe308 Run cast:uC628
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:neom1
+?call SwingProbe308 Run cast:uB118
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:ga2
+?call SwingProbe308 Run cast:uAC00
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:go2
+?call SwingProbe308 Run cast:uACE0
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:no2
+?call SwingProbe308 Run cast:uB178
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:so2
+?call SwingProbe308 Run cast:uC18C
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mo2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mong2
+?call SwingProbe308 Run cast:uBABD
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:on2
+?call SwingProbe308 Run cast:uC628
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:neom2
+?call SwingProbe308 Run cast:uB118
+sleep 2.5
+sleep 3
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run log
+sleep 6
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+# 건 검 것 겅 넌 넘
+?call SpellLab308 Run rec:d120d_gap1:40
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAC74
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAC80
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAC83
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAC85
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB10C
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB118
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+sleep 6
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+# 넛 넝 녹 논 놋 농
+?call SpellLab308 Run rec:d120d_gap2:40
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB11B
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB11D
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB179
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB17C
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB18B
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB18D
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+sleep 6
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+# 먼 멈 멋 멍 선 섬
+?call SpellLab308 Run rec:d120d_gap3:40
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBA3C
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBA48
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBA4B
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBA4D
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC120
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC12C
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+sleep 6
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+# 섯 성 언 엄 엇 엉
+?call SpellLab308 Run rec:d120d_gap4:40
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC12F
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC131
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC5B8
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC5C4
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC5C7
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC5C9
+sleep 5.5
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+sleep 6
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:15
+?call SpellLab308 Run lock:Dummy_15m_R
+sleep 1
+# 공격 15 m
+?call SpellLab308 Run rec:d120d_fp15:40
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAC00
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uACE0
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB178
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC18C
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBAA8
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBABD
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC628
+sleep 5
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+sleep 6
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 1
+# 공격 10 m
+?call SpellLab308 Run rec:d120d_fp10:40
+sleep 1
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uAC00
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uACE0
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uB178
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC18C
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBAA8
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uBABD
+sleep 5
+?call SwingProbe308 Run fx
+?call SwingProbe308 Run ink:full
+?call SwingProbe308 Run cast:uC628
+sleep 5
+?call SwingProbe308 Run fx
+?call SpellLab308 Run rec:stop
+?call SwingProbe308 Run report
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run rec:stop
+?call SpellLab308 Run stop
+sleep 6

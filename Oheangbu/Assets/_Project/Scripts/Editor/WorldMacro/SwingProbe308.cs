@@ -115,7 +115,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     fxVariant = rest; ApplyFx(); Tick(true); return "fx variant " + rest;
                 // slow motion for the stills (Play memory only): the rule and the presentation share Time.time, so both slow together
                 case "slow": { float k = Mathf.Clamp(float.Parse(rest, Inv), .05f, 1f); Time.timeScale = k; return "timeScale " + k.ToString("F2", Inv); }
-                case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }
+                // ink:full (2026-10-19, lab_d120d): fill the pool first (Play memory only) - in lab_d120 겅 never left because 넘 · 것 had spent it
+                case "ink": { var ink = Harness303.Field<InkPool>(wiring, "_ink"); if (rest == "full") ink?.Restore(1f); return "ink " + (ink != null ? ink.Value.ToString("F3", Inv) : "?") + " | locked " + wiring.SwingLocked308 + " pending " + wiring.SwingPending308; }
                 case "brush": return Brush(walker);
                 case "near": return Near(walker);
                 case "nearset": return NearSet(rest);
