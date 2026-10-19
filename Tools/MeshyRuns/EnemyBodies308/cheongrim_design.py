@@ -18,6 +18,9 @@ g.AXES.update({
     'goat/Neck1': 'x(0.00,-0.78,-0.63) y(0.00,-0.63,0.78) z(-1.00,0.00,0.00)',
     'goat/Spine1': 'x(0.00,-0.02,-1.00) y(0.00,-1.00,0.02) z(-1.00,0.00,0.00)',
     'goat/Spine2': 'x(0.00,-0.38,-0.93) y(0.00,-0.93,0.38) z(-1.00,0.00,0.00)',
+    'bear/Chest': 'x(0.01,0.02,-1.00) y(0.00,-1.00,-0.02) z(-1.00,0.00,-0.01)',
+    'bear/Spine2': 'x(0.00,-0.01,-1.00) y(0.00,-1.00,0.01) z(-1.00,0.00,0.00)',
+    'bear/Root': 'x(0.00,-0.01,-1.00) y(0.00,-1.00,0.01) z(-1.00,0.00,0.00)',
     'goat/Pelvis': 'x(0.00,0.07,-1.00) y(0.00,-1.00,-0.07) z(-1.00,0.00,0.00)',
 })
 
@@ -45,9 +48,32 @@ SPEC = {
                 root('clump', 'goat/Pelvis', 'Pelvis_joint', .42, (0, -.28, .1), (0, -1, .2), note='배 밑에 늘어진 뿌리(젖통 가림)', **BARK),
             ],
         },
+        # light (pack of 8): moss bark over the back + a small root clump breaking out of the right shoulder - unlike the moss jackal's
+        # bone spurs and crystal; head and forepaws clear
+        'moss_wolf': {
+            'from': 'wolf', 'tint': [.92, 1.0, .86],
+            'note': 'D308-120: 청림 이끼 늑대 = 늑대 몸 + 이끼 껍질 · 어깨 뿌리(가벼움, 무리)',
+            'parts': [
+                root('moss', 'jackal/Spine4', 'Spine4', .72, (0, .15, -.12), (0, 1, 0), note='등을 덮은 이끼 낀 나무껍질', **MOSS),
+                root('clump', 'jackal/Spine5', 'Spine5', .42, (.08, .2, -.02), (.45, 1, -.2), note='오른 어깨를 뚫은 작은 뿌리', **BARK),
+            ],
+        },
+        'forest_bear': {
+            'from': 'bear',
+            'note': 'D308-120: 청림 숲 곰 = 곰 몸 + 뿌리 · 이끼(보스 마석 곰보다 가볍게)',
+            # light-to-medium: moss bark over the hump, a root clump out of the right hip, a smaller one at the left shoulder - wood and
+            # moss, where the boss bear has crystals and shackles; head and forepaws (the swipe) clear
+            'parts': [
+                root('moss', 'bear/Spine2', 'Spine2_M', .9, (0, .28, 0), (0, 1, 0), note='등 혹을 덮은 이끼 낀 나무껍질', **MOSS),
+                root('clump', 'bear/Root', 'Root_M', .75, (.12, .3, -.05), (.4, 1, -.3), note='오른 엉덩이를 뚫은 뿌리 덩이', **BARK),
+                root('clump', 'bear/Chest', 'Chest_M', .42, (-.16, .26, 0), (-.5, 1, 0), note='왼 어깨 작은 뿌리', **BARK),
+            ],
+        },
     },
     'swaps': [
         {'match': 'field308/cheongrim_root_beast_', 'species': 'root_beast', 'note': 'D308-120 청림 뿌리 짐승(산양 몸 + 뿌리 부품)'},
+        {'match': 'field308b/cheongrim_moss_wolf_', 'species': 'moss_wolf', 'own': True, 'note': 'D308-120 청림 이끼 늑대(늑대 몸 + 이끼 · 뿌리)'},
+        {'match': 'field308b/cheongrim_forest_bear_', 'species': 'forest_bear', 'own': True, 'note': 'D308-120 청림 숲 곰(곰 몸 + 이끼 · 뿌리)'},
     ],
 }
 
@@ -56,4 +82,4 @@ if __name__ == '__main__':
     out.write_text(json.dumps(SPEC, ensure_ascii=False, indent=1), encoding='utf-8')
     for k, s in SPEC['species'].items():
         for r in s['parts']:
-            print(k, r['bone'], Path(r['prefab']).stem, 'pos', r['pos'], 'euler', r['euler'])
+            print(k, r['bone'], Path(r['prefab']).stem, 'pos', r.get('pos'), 'euler', r.get('euler'))
