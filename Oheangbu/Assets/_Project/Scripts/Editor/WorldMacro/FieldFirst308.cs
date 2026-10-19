@@ -18,6 +18,10 @@ namespace Oheangbu.EditorTools.WorldMacro
  //        (village_commission, the 덕대 of Texts308 XF1) is a Conversation point of WorldContent_Main, is the stage's TriggerId and
  //        is no commission giver: without it a new game could never complete the stage.
  //   field308-check                the two writes against the data and the runtime wiring rules (read only)
+ //   field308-cloud[:dry|:revert]  D308-118: cloud_band{} of the data -> _CloudBand308 / _CloudShape308 / _CloudColor308 of the live fog
+ //        material (RealmFog297); revert puts the before-values back while the material still holds what this tool wrote
+ //   field308-heights              read only: the highest collider surface on a 25 m grid of the open scenes, as 500 m cells
+ //        (max per cell, rows north first) + world percentiles - where the 운해 band of RealmFog297 should sit (D308-118)
  // Data: Art/World/Compact/Rebuild/FieldFirst308/field117.json (built by Tools/Art/FieldFirst308/field117_build.py from
  // DECISIONS D308-117 F2; the code holds no line). Ledger + asset backups: Art/Playtest306/Backups/FieldFirst308/. Edit mode only,
  // no AssetDatabase.SaveAssets (the target asset is saved alone).
@@ -26,7 +30,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   sealed class Refused:Exception{public Refused(string m):base(m){}}
   [Serializable] sealed class DocsWrap{public WorldMacroPlaytestSO.DocumentSpec[] items=Array.Empty<WorldMacroPlaytestSO.DocumentSpec>();}
   [Serializable] sealed class IdsWrap{public string[] items=Array.Empty<string>();}
-  [Serializable] sealed class Ledger{public string docsBefore,docsAfter,initialBefore,initialAfter;public List<string> backups=new List<string>();}
+  [Serializable] sealed class Ledger{public string docsBefore,docsAfter,initialBefore,initialAfter,cloudBefore,cloudAfter;public List<string> backups=new List<string>();}
 
   static string DataFile=>PostLedger308.RepoPath("Art/World/Compact/Rebuild/FieldFirst308/field117.json");
   static string BackupRoot=>PostLedger308.RepoPath("Art/Playtest306/Backups/FieldFirst308");
@@ -45,6 +49,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      case "field308-docs":return revert?DocsRevert():Docs(dry);
      case "field308-start":return revert?StartRevert():Start(dry);
      case "field308-check":return Check();
+     case "field308-heights":return Heights();
+     case "field308-cloud":return revert?CloudRevert():Cloud(dry);
     }
    }
    catch(Refused r){return "refused: "+r.Message;}
@@ -194,5 +200,71 @@ namespace Oheangbu.EditorTools.WorldMacro
   }
 
   static bool WorldMacroCollectionCatalogHasLetter()=>Oheangbu.App.World.UI.WorldMacroCollectionCatalog.AllFragments.Any(f=>WorldMacroPlaytestSO.DocumentSpec.IsDocumentItem(f.ItemId));
+
+  static string Heights()
+  {
+   const float W=4000f,D=6000f,step=25f,cell=500f;int cols=(int)(W/cell),rows=(int)(D/cell);
+   var max=new float[cols,rows];for(int x=0;x<cols;x++)for(int z=0;z<rows;z++)max[x,z]=float.NegativeInfinity;
+   var all=new List<float>();Physics.SyncTransforms();
+   for(float x=step*.5f;x<W;x+=step)for(float z=step*.5f;z<D;z+=step)
+   {
+    float top=float.NegativeInfinity;
+    foreach(var h in Physics.RaycastAll(new Vector3(x,3000f,z),Vector3.down,6000f,~0,QueryTriggerInteraction.Ignore))
+     if(!(h.collider is CharacterController)&&h.point.y>top)top=h.point.y;
+    if(float.IsNegativeInfinity(top))continue;
+    all.Add(top);int cx=(int)(x/cell),cz=(int)(z/cell);if(top>max[cx,cz])max[cx,cz]=top;
+   }
+   var sb=new StringBuilder("field308-heights ("+all.Count+" columns hit, open scenes "+UnityEngine.SceneManagement.SceneManager.sceneCount+")\n");
+   if(all.Count==0)return sb.Append("  nothing hit").ToString();
+   all.Sort();string P(float q)=>all[Mathf.Clamp((int)(q*(all.Count-1)),0,all.Count-1)].ToString("F0");
+   sb.AppendLine("  percentiles p10 "+P(.1f)+" p50 "+P(.5f)+" p75 "+P(.75f)+" p90 "+P(.9f)+" p97 "+P(.97f)+" max "+P(1f));
+   sb.AppendLine("  max per 500 m cell, z rows north (5500) to south (0), x columns 0 .. 3500:");
+   for(int z=rows-1;z>=0;z--){sb.Append("  z"+(z*cell).ToString("0000")+" ");for(int x=0;x<cols;x++)sb.Append(float.IsNegativeInfinity(max[x,z])?"    -":max[x,z].ToString("F0").PadLeft(5));sb.AppendLine();}
+   return sb.ToString().TrimEnd();
+  }
+
+  static readonly string[] CloudProps={"_CloudBand308","_CloudShape308","_CloudColor308"};
+  static string Inv(float f)=>f.ToString("R",System.Globalization.CultureInfo.InvariantCulture);
+  static string CloudJson(Material m)=>string.Join(";",CloudProps.Select(p=>{var v=m.GetVector(p);return Inv(v.x)+","+Inv(v.y)+","+Inv(v.z)+","+Inv(v.w);}));
+  static Vector4 V4(JToken o,string key)
+  {
+   var a=o?[key] as JArray;if(a==null||a.Count!=4)throw new Refused("field117.json: cloud_band."+key+" needs 4 numbers");
+   return new Vector4(a[0].Value<float>(),a[1].Value<float>(),a[2].Value<float>(),a[3].Value<float>());
+  }
+  static string Cloud(bool dry)
+  {
+   PostLedger308.RequireEditable();
+   var c=Data()["cloud_band"]??throw new Refused("field117.json: cloud_band missing (python Tools/Art/FieldFirst308/field117_build.py)");
+   var m=Load<Material>(S(c,"material"));
+   foreach(var p in CloudProps)if(!m.HasProperty(p))throw new Refused(m.name+" has no "+p+" (RealmFog297 without the D308-118 band: reimport the shader)");
+   var want=new[]{V4(c,"band"),V4(c,"shape"),V4(c,"colour")};
+   if(want[0].y<1||want[0].z<0||want[0].z>.05f||want[1].x<10||want[1].y<0||want[1].y>1||want[2].w<0||want[2].w>1)throw new Refused("cloud_band values out of range (half-width >= 1, density 0 .. .05, scale >= 10, coverage 0 .. 1, alpha 0 .. 1)");
+   if(Mathf.Max(want[2].x,Mathf.Max(want[2].y,want[2].z))>1)throw new Refused("cloud_band colour must be LDR (<= 1): pigment, not light (ART-INK)");
+   string before=CloudJson(m);
+   var sb=new StringBuilder("field308-cloud"+(dry?" (dry)":"")+"\n material "+AssetDatabase.GetAssetPath(m)+"\n");
+   for(int i=0;i<3;i++)sb.AppendLine(" "+CloudProps[i]+" "+m.GetVector(CloudProps[i])+" -> "+want[i]);
+   if(dry)return sb.ToString().TrimEnd();
+   var ledger=ReadLedger();
+   ledger.backups.Add(PostLedger308.Backup(BackupRoot,PostLedger308.Utc(),AssetDatabase.GetAssetPath(m)));
+   if(ledger.cloudBefore==null)ledger.cloudBefore=before;
+   for(int i=0;i<3;i++)m.SetVector(CloudProps[i],want[i]);
+   EditorUtility.SetDirty(m);AssetDatabase.SaveAssetIfDirty(m);
+   ledger.cloudAfter=CloudJson(m);WriteLedger(ledger);
+   return sb.Append(" wrote; ledger "+LedgerPath).ToString();
+  }
+  static string CloudRevert()
+  {
+   PostLedger308.RequireEditable();
+   var c=Data()["cloud_band"]??throw new Refused("field117.json: cloud_band missing");
+   var m=Load<Material>(S(c,"material"));var ledger=ReadLedger();
+   if(ledger.cloudBefore==null)return "field308-cloud:revert nothing recorded";
+   if(CloudJson(m)!=ledger.cloudAfter)return "refused: the cloud values changed since field308-cloud (kept; the backup is in "+BackupRoot+")";
+   ledger.backups.Add(PostLedger308.Backup(BackupRoot,PostLedger308.Utc(),AssetDatabase.GetAssetPath(m)));
+   var parts=ledger.cloudBefore.Split(';');
+   for(int i=0;i<3;i++){var f=parts[i].Split(',').Select(x=>float.Parse(x,System.Globalization.CultureInfo.InvariantCulture)).ToArray();m.SetVector(CloudProps[i],new Vector4(f[0],f[1],f[2],f[3]));}
+   EditorUtility.SetDirty(m);AssetDatabase.SaveAssetIfDirty(m);
+   ledger.cloudBefore=ledger.cloudAfter=null;WriteLedger(ledger);
+   return "field308-cloud:revert "+CloudJson(m);
+  }
  }
 }

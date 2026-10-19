@@ -15,6 +15,11 @@
 //    the hanji fibre shows in the air; drifting motes (ash, snow, rain, spores, dust) in three world-anchored shells around
 //    the eye, in front of the fog and over the sky, hidden behind nearer geometry. Motes are pigment: never brighter than
 //    their own colour, no emission.
+//  * 운해 band (D308-118, SPEC-FIELD-FIRST-HOUR-308 §5.1, TEST; _CloudBand308.z 0 = the output above, bit for bit): paper mist
+//    in a world-height band (Gaussian around centre y, half-width w) broken into banks by a STATIC world-XZ noise - no time,
+//    no wind term (DECISIONS #151 iii). Marched in 10 steps over the part of the ray inside the band, from a start distance on
+//    (the near ground stays clear), and over the sky up to a far cap, so a bank reads against the horizon and peaks above the
+//    band stand out of it. Pigment only (LDR, never brighter than its colour); light-source markers stay out as for the fog.
 Shader "Oheangbu/Finish297/RealmFog297"
 {
  Properties
@@ -35,6 +40,10 @@ Shader "Oheangbu/Finish297/RealmFog297"
   [Header(Near hills 302)]
   _NearHillFog("Fog and mist thinned over the near-hill band (0 = off)",Range(0,1))=0
   _NearHill("Near hill band (m): in start, in full, out start, out end (same as InkWash297)",Vector)=(70,220,700,1600)
+  [Header(Cloud band 308)]
+  _CloudBand308("운해 band: centre y, half-width m, density per metre (0 = off), start metres",Vector)=(290,40,0,250)
+  _CloudShape308("운해 shape: bank noise scale m, coverage 0-1, edge softness, sky far cap m",Vector)=(700,.5,.25,5000)
+  _CloudColor308("운해 colour (a = maximum)",Color)=(.93,.92,.88,.9)
  }
  SubShader
  {
@@ -54,6 +63,7 @@ Shader "Oheangbu/Finish297/RealmFog297"
    float _LightMarkerFog,_EmissiveMark,_EmissiveLo,_EmissiveHi,_EmissiveChroma;
    float _NearHillFog;float4 _NearHill;
    float _SkyFogFollow;
+   float4 _CloudBand308,_CloudShape308,_CloudColor308;
    CBUFFER_END
    // #308 globals: regional sky fog (WorldLookDriver) and the 권역 담채 zones (EventWashDriver308; arrays always 8 long)
    float4 _OhSkyFog;
@@ -90,6 +100,42 @@ Shader "Oheangbu/Finish297/RealmFog297"
     }
     return lerp(colour,_OhLook308MoteColour.rgb,saturate(cover)*amount);
    }
+   // 운해 bank cover at a world XZ: two octaves of the static value noise, thresholded by the coverage (no _Time)
+   float CloudCover308(float2 xz)
+   {
+    float2 q=xz/max(_CloudShape308.x,1);
+    float n=Noise308(q)*.65+Noise308(q*2.3+31.7)*.35;
+    float soft=max(_CloudShape308.z,.01);
+    return smoothstep(1-_CloudShape308.y-soft,1-_CloudShape308.y+soft,n);
+   }
+   // opacity of the band along eye + dir * [s0, s1] (dir normalised): 10 steps over the slab centre +- 2.2 half-widths
+   float CloudBand308(float3 eye,float3 dir,float s0,float s1)
+   {
+    if(_CloudBand308.z<=0||s1<=s0)return 0;
+    float w=max(_CloudBand308.y,1),lo=_CloudBand308.x-2.2*w,hi=_CloudBand308.x+2.2*w;
+    if(abs(dir.y)>1e-4)
+    {
+     float ta=(lo-eye.y)/dir.y,tb=(hi-eye.y)/dir.y;
+     s0=max(s0,min(ta,tb));s1=min(s1,max(ta,tb));
+    }
+    else if(eye.y<lo||eye.y>hi)return 0;
+    if(s1<=s0)return 0;
+    float ds=(s1-s0)/10,optical=0;
+    [unroll]for(int k=0;k<10;k++)
+    {
+     float3 p=eye+dir*(s0+ds*(k+.5));float u=(p.y-_CloudBand308.x)/w;
+     optical+=exp(-u*u)*CloudCover308(p.xz);
+    }
+    return (1-exp(-optical*ds*_CloudBand308.z))*_CloudColor308.a;
+   }
+   float3 Cloud308(float3 colour,float3 dir,float d,float keep)
+   {
+    if(_CloudBand308.z<=0)return colour;
+    float c=CloudBand308(_WorldSpaceCameraPos,dir,_CloudBand308.w,d)*keep;
+    // a gentle fade-in over the first start..2 x start metres so a bank never begins as an edge on the ground
+    float s=_CloudBand308.w;c*=smoothstep(s,2*s,d);
+    return lerp(colour,_CloudColor308.rgb,c);
+   }
    float3 Chroma293(float3 c){return clamp(c/max(.05,dot(c,float3(.2126,.7152,.0722))),.6,1.5);}
    float Ramp01(float x,float a,float b){float t=saturate((x-a)/max(b-a,1e-4));return t*t*(3-2*t);}
    half4 Frag(Varyings i):SV_Target
@@ -98,9 +144,9 @@ Shader "Oheangbu/Finish297/RealmFog297"
     half4 source=SAMPLE_TEXTURE2D_X(_BlitTexture,sampler_LinearClamp,i.texcoord);
     float raw=SampleSceneDepth(i.texcoord);
     #if UNITY_REVERSED_Z
-    if(raw<.000001)return half4(Motes308(source.rgb,i.texcoord,1e6),source.a);
+    if(raw<.000001)return half4(Motes308(Cloud308(source.rgb,normalize(ComputeWorldSpacePosition(i.texcoord,.5,UNITY_MATRIX_I_VP)-_WorldSpaceCameraPos),_CloudShape308.w,1),i.texcoord,1e6),source.a);
     #else
-    if(raw>.999999)return half4(Motes308(source.rgb,i.texcoord,1e6),source.a);
+    if(raw>.999999)return half4(Motes308(Cloud308(source.rgb,normalize(ComputeWorldSpacePosition(i.texcoord,.5,UNITY_MATRIX_I_VP)-_WorldSpaceCameraPos),_CloudShape308.w,1),i.texcoord,1e6),source.a);
     raw=lerp(UNITY_NEAR_CLIP_VALUE,1,raw);
     #endif
     float3 world=ComputeWorldSpacePosition(i.texcoord,raw,UNITY_MATRIX_I_VP);
@@ -160,6 +206,7 @@ Shader "Oheangbu/Finish297/RealmFog297"
     fog*=1-_NearHillFog*nearHill;mist*=1-_NearHillFog*nearHill;
     float3 colour=lerp(source.rgb,fogColour,fog);
     colour=lerp(colour,mistColour,mist);
+    colour=Cloud308(colour,ray/max(d,.001),d,keep);
     // #308 look: hanji fibre in the air (fog = bare paper), then the drifting motes in front of it
     if(look>0)colour*=1+(Fibre308(i.positionCS.xy)-.5)*.06*_OhLook308Paper.x*look*saturate(fog+mist);
     return half4(Motes308(colour,i.texcoord,d),source.a);

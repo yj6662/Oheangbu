@@ -75,7 +75,7 @@ def rows():
         {'op': 'XF7', 'id': 'mine_refugee308', 'kind': 'Conversation', 'speaker': 'F7_speaker', 'prompt': 'F7_prompt', 'first': ['F7_first'],
          'radius': 2.5, 'max_slope_deg': 16,
          'rows': [{'label': 'F7_row', 'lines': ['F7_1', 'F7_2']}],
-         'places': [{'x': 3345.0, 'z': 2135.0}, {'x': 3350.0, 'z': 2128.0}, {'x': 3338.0, 'z': 2142.0}],
+         'places': [{'x': 3334.0, 'z': 2148.0}, {'x': 3340.0, 'z': 2148.0}, {'x': 3326.0, 'z': 2140.0}],
          'clear': {'enemies': ['mine_fire/0', 'mine_beast/1'], 'enemies_min_m': 44.0, 'points_min_m': 5.0},
          'note': NOTE_F7_POINT},
     ]

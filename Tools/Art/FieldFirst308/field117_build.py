@@ -51,6 +51,14 @@ def build():
             'notes': [{'after_stage': 'mine_evidence', 'text': F2[5]}, {'after_stage': 'cargo_contract', 'text': F2[6]}],
         }],
         'campaign_start': {'remove_initial': ['commission'], 'stage': 'commission', 'trigger_point': 'village_commission'},
+        # D308-118 (2026-10-19, TEST): the 운해 band of RealmFog297 on the live fog material. Heights from field308-heights
+        # (walkable ground p50 163 / p90 266, peaks 300 - 400): the band wraps the upper slopes, the summits stand above it.
+        'cloud_band': {
+            'decision': 'D308-118', 'material': 'Assets/_Project/Art/World/Finish297/Materials/Fog297.mat',
+            'band': [285, 25, 0.006, 250],          # centre y, half-width m, density per metre, start m
+            'shape': [380, 0.45, 0.12, 2500],        # bank noise scale m, coverage, edge softness, sky far cap m
+            'colour': [0.93, 0.92, 0.88, 0.9],      # paper; a = maximum opacity
+        },
     }
     return json.dumps(data, ensure_ascii=False, indent=1) + '\n'
 
