@@ -57,6 +57,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (!EditorApplication.isPlaying) return "refused: Play only (hold first)";
             // frames only reads frame clocks, so it also runs without a harness session (spell lab, 2026-10-19 stage 5)
             if (command == "frames") return FramesReport();
+            if (command.StartsWith("frames:mark:", StringComparison.Ordinal)) return FramesMark(command.Substring(12));
             if (command.StartsWith("frames:", StringComparison.Ordinal)) return FramesStart(float.Parse(command.Substring(7), Inv));
             var s = Harness303.Session; if (s == null || !s.InitializationComplete || s.Walker == null || s.Walker.Body == null) return "refused: no ready session";
             if (string.IsNullOrEmpty(s.TestSaveSuffix) || !s.TestSaveSuffix.StartsWith("_", StringComparison.Ordinal)) return "refused: this session is on the real slot (no suffix)";
@@ -226,11 +227,19 @@ namespace Oheangbu.EditorTools.WorldMacro
         }
 
         // ------------------------------------------------------------------ frames
-        static double framesUntil; static readonly List<float> frameMs = new List<float>(); static int lastFrame, focusedFrames; static string framesNote = "frames: not asked";
+        static double framesUntil, framesBegan; static readonly List<float> frameMs = new List<float>(); static int lastFrame, focusedFrames, lastGc; static string framesNote = "frames: not asked";
+        // per frame: seconds since start, ms, a gen-0 collection ran; marks = (seconds, label) from frames:mark:<label> (2026-10-19, the 52.71 ms frame)
+        static readonly List<(float t, float ms, bool gc)> frameRows = new List<(float, float, bool)>(); static readonly List<(float t, string label)> frameMarks = new List<(float, string)>();
+        static string FramesCsv => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Tools/Unity/Stage308_ops/logs/frames_last.csv"));
         static string FramesStart(float seconds)
         {
-            framesUntil = Now + seconds; frameMs.Clear(); lastFrame = Time.frameCount; focusedFrames = 0; framesNote = "frames: running";
+            framesUntil = Now + seconds; framesBegan = Now; frameMs.Clear(); frameRows.Clear(); frameMarks.Clear(); lastFrame = Time.frameCount; focusedFrames = 0; lastGc = GC.CollectionCount(0); framesNote = "frames: running";
             EditorApplication.update -= FramesTick; EditorApplication.update += FramesTick; return framesNote + " " + F(seconds, "F0") + " s | quality " + QualitySettings.names[QualitySettings.GetQualityLevel()] + " vsync " + QualitySettings.vSyncCount + " targetFrameRate " + Application.targetFrameRate + " screen " + Screen.width + "x" + Screen.height;
+        }
+        static string FramesMark(string label)
+        {
+            if (framesNote != "frames: running") return "frames: mark ignored (not running)";
+            float t = (float)(Now - framesBegan); frameMarks.Add((t, label)); return "frames: mark " + label + " at " + F(t, "F3") + " s";
         }
         static void FramesTick()
         {
@@ -238,10 +247,26 @@ namespace Oheangbu.EditorTools.WorldMacro
             {
                 EditorApplication.update -= FramesTick; var ms = frameMs.OrderBy(v => v).ToList(); int n = ms.Count;
                 framesNote = n == 0 ? "frames: done, no frames" : "frames: done | n " + n + " median " + F(ms[n / 2]) + " ms p95 " + F(ms[Mathf.Min(n - 1, (int)(n * .95f))]) + " ms p99 " + F(ms[Mathf.Min(n - 1, (int)(n * .99f))]) + " ms max " + F(ms[n - 1]) + " ms mean " + F(ms.Average()) + " ms | focused frames " + F(100f * focusedFrames / n, "F0") + " % | batches " + UnityStats.batches + " drawCalls " + UnityStats.drawCalls + " setPass " + UnityStats.setPassCalls + " tris " + UnityStats.triangles +
-                    " | quality " + QualitySettings.names[QualitySettings.GetQualityLevel()] + " screen " + Screen.width + "x" + Screen.height + " | managed " + F(GC.GetTotalMemory(false) / 1048576f, "F0") + " MB unity allocated " + F(UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / 1048576f, "F0") + " MB reserved " + F(UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong() / 1048576f, "F0") + " MB";
+                    " | quality " + QualitySettings.names[QualitySettings.GetQualityLevel()] + " screen " + Screen.width + "x" + Screen.height + " | managed " + F(GC.GetTotalMemory(false) / 1048576f, "F0") + " MB unity allocated " + F(UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / 1048576f, "F0") + " MB reserved " + F(UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong() / 1048576f, "F0") + " MB" + FramesSpikes();
                 return;
             }
-            if (Time.frameCount == lastFrame) return; lastFrame = Time.frameCount; frameMs.Add(Time.unscaledDeltaTime * 1000f); if (UnityEditorInternal.InternalEditorUtility.isApplicationActive) focusedFrames++;
+            if (Time.frameCount == lastFrame) return; lastFrame = Time.frameCount; float frame = Time.unscaledDeltaTime * 1000f; frameMs.Add(frame); if (UnityEditorInternal.InternalEditorUtility.isApplicationActive) focusedFrames++;
+            int gc = GC.CollectionCount(0); frameRows.Add(((float)(Now - framesBegan), frame, gc != lastGc)); lastGc = gc;
+        }
+        // The five slowest frames with the last mark before each, and the whole run as csv (t, ms, gc, last mark).
+        static string FramesSpikes()
+        {
+            if (frameRows.Count == 0) return "";
+            string MarkBefore(float t) { var m = frameMarks.LastOrDefault(x => x.t <= t); return m.label == null ? "-" : m.label + " +" + F(t - m.t, "F2") + " s"; }
+            var top = frameRows.OrderByDescending(r => r.ms).Take(5).Select(r => F(r.ms) + " ms at " + F(r.t, "F2") + " s" + (r.gc ? " gc" : "") + " (" + MarkBefore(r.t) + ")");
+            string csv = "?";
+            try
+            {
+                var lines = new List<string> { "t,ms,gc,mark" }; lines.AddRange(frameRows.Select(r => F(r.t, "F4") + "," + F(r.ms, "F3") + "," + (r.gc ? 1 : 0) + "," + MarkBefore(r.t)));
+                File.WriteAllLines(FramesCsv, lines); csv = FramesCsv;
+            }
+            catch (Exception e) { csv = "not written (" + e.Message + ")"; }
+            return "\nslowest: " + string.Join(" | ", top) + "\nmarks " + frameMarks.Count + " | gc frames " + frameRows.Count(r => r.gc) + " | csv " + csv;
         }
         static string FramesReport() { var s = Harness303.Session; return framesNote + (s != null && s.Walker != null && s.Walker.Body != null ? " | player " + V(s.Walker.Body.transform.position) : ""); }
 

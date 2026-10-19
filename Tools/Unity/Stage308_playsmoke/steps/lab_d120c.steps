@@ -1,0 +1,88 @@
+# 2026-10-19 d308d: where is the 52.71 ms frame? Same 8 casts twice in one 45 s frames run, each cast marked.
+# Pass 1 = first use, pass 2 = warm. A spike only in pass 1 at a mark = first-use stall (warmup Spec). Spikes anywhere / with gc = editor or GC noise.
+# Output: frames report (slowest five with the mark before each) + Tools/Unity/Stage308_ops/logs/frames_last.csv.
+call SpellLab308 Run build
+sleep 3
+call SpellLab308 Run play
+wait lab
+sleep 3
+?call SwingProbe308 Run reset
+?call SwingProbe308 Run on
+?call SwingProbe308 Run target:10
+?call SpellLab308 Run lock:Dummy_10m
+sleep 2
+?call PlayProbe308 Run log:reset
+?call PlayProbe308 Run frames:46
+?call PlayProbe308 Run frames:mark:idle
+sleep 4
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:ga1
+?call SwingProbe308 Run cast:uAC00
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:go1
+?call SwingProbe308 Run cast:uACE0
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:no1
+?call SwingProbe308 Run cast:uB178
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:so1
+?call SwingProbe308 Run cast:uC18C
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mo1
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mong1
+?call SwingProbe308 Run cast:uBABD
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:on1
+?call SwingProbe308 Run cast:uC628
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:neom1
+?call SwingProbe308 Run cast:uB118
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:ga2
+?call SwingProbe308 Run cast:uAC00
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:go2
+?call SwingProbe308 Run cast:uACE0
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:no2
+?call SwingProbe308 Run cast:uB178
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:so2
+?call SwingProbe308 Run cast:uC18C
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mo2
+?call SwingProbe308 Run cast:uBAA8
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:mong2
+?call SwingProbe308 Run cast:uBABD
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:on2
+?call SwingProbe308 Run cast:uC628
+sleep 2.5
+?call SwingProbe308 Run ink
+?call PlayProbe308 Run frames:mark:neom2
+?call SwingProbe308 Run cast:uB118
+sleep 2.5
+sleep 3
+?call PlayProbe308 Run frames
+?call PlayProbe308 Run log
+finally:
+?call SpellLab308 Run strike:off
+?call SpellLab308 Run stop
+sleep 6
