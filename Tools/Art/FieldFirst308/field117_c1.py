@@ -19,10 +19,13 @@ PLACES = ROOT / 'Art/World/Compact/Rebuild/CliffBoundary308/places308.json'
 BACKUP = ROOT / 'Art/Playtest306/Backups/FieldFirst308'
 GROUP = 'F117_C1_gate'
 
-JACKALS = [  # id, x, z, yaw (toward the approach path at (3690, 3242))
-    ('field308/cheongrim_moss_jackal_1_0', 3694.0, 3216.0, 351.0),
-    ('field308/cheongrim_moss_jackal_1_1', 3691.0, 3219.0, 358.0),
-    ('field308/cheongrim_moss_jackal_1_2', 3697.0, 3219.0, 344.0),
+# 2nd placement (user, 2026-10-19 night): the end gatekeepers are exempt from road_min_m 22 - "길에서 10 m 안팎 · 감지 범위
+# 안" - so the walker on the approach passes inside their Detection 16 m. Feet 9.1 / 9.5 / 13.0 m from the approach path,
+# 26 - 30 m short of the bark point, slope <= 14 deg, NavMesh at the feet and the patrol seconds (field308-nav 6 / 6).
+JACKALS = [  # id, x, z, yaw (toward the approach path at (3682, 3236))
+    ('field308/cheongrim_moss_jackal_1_0', 3683.0, 3227.0, 354.0),
+    ('field308/cheongrim_moss_jackal_1_1', 3679.0, 3227.0, 0.0),
+    ('field308/cheongrim_moss_jackal_1_2', 3681.0, 3223.0, 4.0),
 ]
 FLORA = 'Assets/_Project/Art/World/Flora308/Prefabs/'
 CREST = {
@@ -59,7 +62,7 @@ def main():
     if not revert:
         for i, x, z, yaw in JACKALS:
             moves.append({'id': i, 'op': 'C1', 'group': GROUP, 'x': x, 'z': z, 'yaw': yaw, 'force': True,
-                          'note': 'D308-117 C1 gatekeeper of the 신목 end (sinmok_bark308): from the wood 92 m north of the tree'})
+                          'note': 'D308-117 C1 gatekeeper of the 신목 end (sinmok_bark308), road_min exception: 9 - 13 m off the approach, inside Detection 16 m'})
     r['encounter_moves'] = moves
     # sanctuary_trace308: main held (3215, 3422) while the code row, both candidate scenes and content308_keepout.json say
     # (3196, 3500); no ledger names the writer. C1 lets content-apply put main back on the code value (§8.5) - an earlier run

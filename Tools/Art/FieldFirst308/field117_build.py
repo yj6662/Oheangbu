@@ -103,7 +103,7 @@ def build():
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
                 # C1 (D308-117): the 신목 side path - does the walker see the gatekeepers and the end before reaching them?
                 {'id': 'C1 신목 갈래 → 끝', 'eye': [3602, 3234], 'toward': [3709, 3254],
-                 'guides': [{'name': '이끼 승냥이 문지기', 'x': 3694, 'z': 3216, 'up': 1.0}, {'name': '신목 밑동 껍질', 'x': 3697.6, 'z': 3248.3, 'up': 0.6}]},
+                 'guides': [{'name': '이끼 승냥이 문지기', 'x': 3683, 'z': 3227, 'up': 1.0}, {'name': '신목 밑동 껍질', 'x': 3697.6, 'z': 3248.3, 'up': 0.6}]},
             ],
         },
     }
