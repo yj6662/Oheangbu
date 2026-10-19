@@ -39,7 +39,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         static readonly string[] KeepRoots = { "Macro_CombatPlayerRig", "Look308", "Macro_WorldLook", "RealmLook308", "Macro_Subtle_Post", "Macro_Sun" };
         // dummies: distance ahead, angle off the facing (SPEC §2.3). Staggered (2026-10-18): with 6 · 10 · 15 m on one line the
         // near dummy stood in the line of sight to the far ones and every visibility-checked cast at the 10 m lock did nothing
-        static readonly (float dist, float yaw)[] Dummies = { (6f, -14f), (10f, 0f), (15f, 9f), (10f, -30f), (10f, 30f) };
+        // 12 m (2026-10-19, SPELL-FUN-EVAL-308 외형 · 판독성 "12 – 15 m"): 18 deg right, clear of the 10 m line and in front of nothing
+        static readonly (float dist, float yaw)[] Dummies = { (6f, -14f), (10f, 0f), (15f, 9f), (10f, -30f), (10f, 30f), (12f, 18f) };
         // the counterattack dummy (§2.4, D308-111): throws an elemental ranged shot at the player while armed (strike:on)
         const string StrikerDummy = "Dummy_10m_R";
         // the lab stands where the main-scene spell runs stood (pq_* hold-teleport 1956,3184 in Hanyang): the realm look and fog
@@ -355,9 +356,11 @@ namespace Oheangbu.EditorTools.WorldMacro
 
             public static string Start(string arg)
             {
-                if (!EditorApplication.isPlaying || !InLab) return "refused: Play in the lab only";
                 int k = arg.LastIndexOf(':');
                 string name = k > 0 ? arg.Substring(0, k) : arg;
+                // 11.74 (2026-10-19): 국 / 뭄 build no body in the lab (no field services there), so a main_* recording may run in the
+                // main world too - it needs only the walker body and the main camera
+                if (!EditorApplication.isPlaying || !(InLab || name.StartsWith("main_", StringComparison.Ordinal))) return "refused: Play in the lab only (main_* anywhere)";
                 float secs = k > 0 ? float.Parse(arg.Substring(k + 1), Inv) : 20f;
                 if (name.Length == 0 || name.Any(ch => !(char.IsLetterOrDigit(ch) || ch == '_' || ch == '-'))) return "refused: rec name [A-Za-z0-9_-]";
                 secs = Mathf.Clamp(secs, 1f, 120f);

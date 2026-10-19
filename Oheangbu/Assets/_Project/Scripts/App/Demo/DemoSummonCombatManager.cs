@@ -627,8 +627,8 @@ namespace Oheangbu.App.Demo
                 if(actor.Judge308&&!SinMarked308(actor,target))continue;
                 float flamePower=actor.Judge308?actor.FlamePower*actor.Profile.JudgeMultiplier:actor.FlamePower;
                 var result=Wiring.ApplySummonHit(target,snapshot.LifeRevision,flamePower,plan.Origin,actor.Strike,actor.Cast.Letter);
-                if(actor.Judge308)sinMarks308.Remove(target);
-                if(result.AppliedDamage>0){ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;}
+                // The mark is spent only by a landed hit; an occluded or rejected impact keeps it for the next shot.
+                if(result.AppliedDamage>0){if(actor.Judge308)sinMarks308.Remove(target);ConfirmedHits++;ConfirmedDamage+=result.AppliedDamage;}
                 if(active!=actor||actor.Root==null)return;
             }
         }

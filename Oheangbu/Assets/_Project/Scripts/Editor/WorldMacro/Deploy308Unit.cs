@@ -1651,6 +1651,27 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D58", bad.Count == 0 && landed == 7, landed + "/7 landed, open scene dirty " + openDirty + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : "") + " | " + string.Join(", ", notes));
                 }
 
+                // ---- D59 (11.74): the 국 lift / 뭄 bridge the main world points at wear the ink materials on what is seen, and
+                // nothing else of them changed (the lift is still a WoodLift, its foot mark is the recorded one). Not connected = FAIL.
+                {
+                    var bad = new List<string>();
+                    var (lift, bridge) = Oheangbu.EditorTools.SpellVFX120.Vfx308Build.FieldSkinTargets();
+                    bool Ink(Material m) => m != null && m.shader != null && m.shader.name == "Oheangbu/SpellVFX308/InkSolid" && (!m.HasProperty("_Glow") || m.GetFloat("_Glow") <= 0f);
+                    if (lift == null) bad.Add("no lift profile in " + Oheangbu.EditorTools.SpellVFX120.Vfx308Build.FieldSkinScene);
+                    else
+                    {
+                        if (!Vfx120Effect.IsWoodLift(lift)) bad.Add("lift is no longer a WoodLift");
+                        if (!Ink(lift.BodyMaterial)) bad.Add("lift body " + (lift.BodyMaterial != null ? lift.BodyMaterial.name : "null"));
+                        if (!Ink(lift.InkMaterial)) bad.Add("lift leaf " + (lift.InkMaterial != null ? lift.InkMaterial.name : "null"));
+                        string pattern = Oheangbu.EditorTools.SpellVFX120.Vfx308Build.FieldSkinRecordedPattern();
+                        if (pattern == null) bad.Add("no fieldskin record");
+                        else if (AssetDatabase.GetAssetPath(lift.PatternMaterial) != pattern) bad.Add("lift foot mark changed");
+                    }
+                    if (bridge == null) bad.Add("no bridge profile");
+                    else if (!Ink(bridge.BlockMaterial)) bad.Add("bridge block " + (bridge.BlockMaterial != null ? bridge.BlockMaterial.name : "null"));
+                    Check("D59", bad.Count == 0, bad.Count == 0 ? "국 body+leaf, 뭄 block = InkSolid, no glow, WoodLift kept, foot mark kept" : string.Join("; ", bad));
+                }
+
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
                 {
                     float[] grades = { 0f, .5f, 1f };

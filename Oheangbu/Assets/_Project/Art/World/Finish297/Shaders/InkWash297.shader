@@ -15,6 +15,13 @@
 //    _SlopeInk / _SlopeWashKeep keep steep faces inked, _PaperWashMax caps the distance wash; optional soft highlight
 //    shoulder (_ShoulderValue/_ShoulderSlope/_PaperPoint) and a far tint (_TintFar, -1 = same as _Tint).
 // Recognition untouched: presentation only (spell strokes are transparent and drawn after this pass).
+// v5 (#308 look "PBZ-Ink", D308-78, PLAN_look308.md, TEST; global _OhLook308 = 0 or unset runs the v4 math only, bit for bit):
+//  * the ink..paper tone mapping stops owning the picture: LookDriver308 scales it down (_OhLook308Ink.x) and a low-key GRADED
+//    base (exposure, saturation with 주홍/비색 kept, contrast, cool shadows / warm highlights, realm 담채 in the mid-tones)
+//    shows through; rim / wet response from the normals texture (screen space, no surface shader changed).
+//  * ink layer over that base: lines widen near the eye and thin on sunlit faces; darks POOL into an uneven ink wash with a
+//    wet edge; distance dilutes forms in soft 농담 steps toward the air colour; silhouettes against the sky break up (갈필);
+//    the hanji fibre grows in the highlights. Debug 9 = pool R / band G / dry brush B.
 // v3 (#308, TEST; every addition renders v2 at its default):
 //  * _SkyInkTone (SPEC-REGION-SKY-308): sky pixels move onto the ink..paper ramp by _InkTone * _SkyInkTone (.5 = v2).
 //  * 권역 담채 (SPEC-EVENT-WASH-308 §2): world-space zones of available campaign stages, written as globals by
@@ -124,6 +131,15 @@ Shader "Oheangbu/Finish297/InkWash"
             // VolA = (split, cap, near clip m, near keep); VolB = (near ramp m, surface keep, surface ramp start m, end m);
             // VolC = (edge noise, mottle, noise scale, value keep). Unset globals read 0 = split 0 = no volume.
             float4 _OhEventWashVolume[8]; float4 _OhEventWashVolA; float4 _OhEventWashVolB; float4 _OhEventWashVolC;
+            // v5 look globals (LookDriver308). Ink = (ink tone x, paper wash x, highlight paper x, line ink x); Line = (near width
+            // texels, width fade m, lit-side line x, near-hill ink x); Grade = (exposure x, contrast power, saturation x, pivot);
+            // Shadow / High / Wash = hue at unit luminance, a = amount; Accent = (protect, chroma lo, chroma hi, -), AccentA/B =
+            // unit chroma directions; Sky = (value x, saturation x); Pool = (lo, hi, amount, wet edge); Band = (start m, end m,
+            // steps, amount); Air = rgb, a = step softness; Paper = (highlight fibre x, value lo, value hi, dry brush);
+            // Dry = (reach px, noise scale, threshold); Rim = rgb x amount, a = power; Wet = (wetness, darken, specular, gloss).
+            float _OhLook308; float4 _OhLook308Ink, _OhLook308Line, _OhLook308Grade, _OhLook308Shadow, _OhLook308High, _OhLook308Wash;
+            float4 _OhLook308Accent, _OhLook308AccentA, _OhLook308AccentB, _OhLook308Sky, _OhLook308Pool, _OhLook308Band, _OhLook308Air;
+            float4 _OhLook308Paper, _OhLook308Dry, _OhLook308Rim, _OhLook308Wet;
             CBUFFER_START(UnityPerMaterial)
                 half _WashRadius, _WashAmount, _WashSigma, _InkTone, _SkyInkTone, _Tint, _TintFar, _ToneGamma, _InkLow, _InkHigh, _Pool, _LineLo, _LineHi;
                 half _ShoulderValue, _ShoulderSlope, _PaperPoint, _LandCeiling, _LandDetail, _SlopeInk, _SlopeWashKeep;
@@ -176,6 +192,42 @@ Shader "Oheangbu/Finish297/InkWash"
                 return pow(saturate(t), _ToneGamma);
             }
 
+            // v5: the low-key base. Exposure -> saturation (accent hues kept) -> power contrast around the pivot -> split tone and
+            // realm wash (hues at unit luminance, so the value is kept). k = 0 returns c untouched. Only called while _OhLook308 > 0.
+            half3 Grade308(half3 c, bool sky, half k)
+            {
+                half3 g = max(c, 0) * _OhLook308Grade.x * (sky ? _OhLook308Sky.x : 1);
+                half l = Luminance(g);
+                half3 cv = g - l;
+                half hi = max(g.r, max(g.g, g.b)), lo = min(g.r, min(g.g, g.b));
+                half chroma = (hi - lo) / max(hi, 1e-3);
+                half3 dir = cv * rsqrt(max(dot(cv, cv), 1e-8));
+                half match = max(dot(dir, _OhLook308AccentA.xyz), dot(dir, _OhLook308AccentB.xyz));
+                half protect = sky ? 0 : _OhLook308Accent.x * Ramp01(chroma, _OhLook308Accent.y, _OhLook308Accent.z) * Ramp01(match, .8, .95);
+                half sat = sky ? _OhLook308Sky.y : lerp(_OhLook308Grade.z, max(_OhLook308Grade.z, 1), protect);
+                g = max(l + cv * sat, 0);
+                half pivot = max(_OhLook308Grade.w, 1e-3);
+                g = pivot * pow(g / pivot, max(_OhLook308Grade.y, .1));
+                if (!sky)
+                {
+                    half l2 = Luminance(g); half v = sqrt(saturate(l2));
+                    g = lerp(g, _OhLook308Shadow.rgb * l2, (1 - Ramp01(v, 0, .45)) * _OhLook308Shadow.a);
+                    g = lerp(g, _OhLook308High.rgb * l2, Ramp01(v, .5, 1) * _OhLook308High.a);
+                    g = lerp(g, _OhLook308Wash.rgb * l2, saturate(4 * v * (1 - v)) * _OhLook308Wash.a * (1 - protect));
+                }
+                return lerp(c, g, k);
+            }
+            // v5: is this texel sky? Explicit LOD (called inside a branch), the raw-depth test of the #308 sky fix.
+            float SkyAt308(float2 uv)
+            {
+                float r = SAMPLE_TEXTURE2D_X_LOD(_CameraDepthTexture, sampler_PointClamp, uv, 0).r;
+                #if UNITY_REVERSED_Z
+                return r < .000001 ? 1.0 : 0.0;
+                #else
+                return r > .999999 ? 1.0 : 0.0;
+                #endif
+            }
+
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
@@ -217,6 +269,32 @@ Shader "Oheangbu/Finish297/InkWash"
                 }
                 half3 washed = acc / wsum;
                 half3 col = lerp(c, washed, sky ? 0 : _WashAmount);
+                // v5 look: the low-key graded base under the ink layer, then the screen-space surface response (rim / wet)
+                half look308 = saturate(_OhLook308);
+                half3 washedG308 = washed;
+                half dbgPool308 = 0, dbgBand308 = 0, dbgDry308 = 0;
+                if (look308 > 0)
+                {
+                    col = Grade308(col, sky, look308);
+                    washedG308 = Grade308(washed, sky, look308);
+                    if (!sky && hasN > .5)
+                    {
+                        half3 before308 = col;
+                        float3 world308 = ComputeWorldSpacePosition(uv, rawD, UNITY_MATRIX_I_VP);
+                        float3 V308 = normalize(_WorldSpaceCameraPos - world308), L308 = _MainLightPosition.xyz;
+                        // rim / back light: grazing faces, strongest when the sun is behind the form and the face is turned to it
+                        half fres308 = pow(saturate(1 - dot(nC, V308)), max(_OhLook308Rim.a, .5));
+                        half back308 = saturate(.5 - .5 * dot(V308, L308));
+                        half facing308 = saturate(dot(nC, L308) + .35);
+                        col += _OhLook308Rim.rgb * (fres308 * back308 * facing308 * look308);
+                        // wet: upward faces darken and take a tight highlight where the picture is already lit
+                        col *= 1 - _OhLook308Wet.x * _OhLook308Wet.y * saturate(nC.y) * look308;
+                        half spec308 = pow(saturate(dot(nC, normalize(L308 + V308))), max(_OhLook308Wet.w, 1));
+                        col += Luminance(before308) * _OhLook308Wet.x * _OhLook308Wet.z * spec308 * look308;
+                        // pigment, not light: never above the paper (or what was already there)
+                        col = min(col, max(before308, paper));
+                    }
+                }
 
                 // 2. ink tone: luminance onto ink..paper, keep a part of the hue (light colour over ink = 담채)
                 // perceptual value (linear buffer -> ~sRGB), then a paper-favouring curve: most of the frame is 여백, ink holds the darks
@@ -235,8 +313,8 @@ Shader "Oheangbu/Finish297/InkWash"
                 half3 ramp = pow(lerp(pow(ink, 1 / 2.2), pow(paper, 1 / 2.2), t), 2.2);
                 half3 chroma = col / max(L, 1e-3) * Luminance(ramp);
                 half3 toned = lerp(ramp, chroma, lerp(_Tint, _TintFar < 0 ? _Tint : _TintFar, fade));
-                col = lerp(col, toned, sky ? _InkTone * _SkyInkTone : _InkTone);
-                col = lerp(col, paper, _HighlightPaper * smoothstep(.6, 1, L));
+                col = lerp(col, toned, (sky ? _InkTone * _SkyInkTone : _InkTone) * lerp(1, _OhLook308Ink.x, look308));
+                col = lerp(col, paper, _HighlightPaper * lerp(1, _OhLook308Ink.z, look308) * smoothstep(.6, 1, L));
 
                 // 3. pigment pooling: washes darken slightly where the washed colour changes (dried border of a stroke)
                 half3 cx = Src(uv + float2(texel.x * 1.5 * scale, 0)), cy = Src(uv + float2(0, texel.y * 1.5 * scale));
@@ -246,7 +324,8 @@ Shader "Oheangbu/Finish297/InkWash"
                 col = lerp(col, source.rgb * _LightGain, emissive);
 
                 // 4. ink lines: depth + normal Sobel, thinned with distance, broken by brush noise
-                float dL = Lin(uv - float2(texel.x, 0)), dR = Lin(uv + float2(texel.x, 0)), dD = Lin(uv - float2(0, texel.y)), dU = Lin(uv + float2(0, texel.y));
+                float2 lt308 = texel * lerp(1, lerp(_OhLook308Line.x, 1, saturate(d / max(_OhLook308Line.y, 1))), look308);
+                float dL = Lin(uv - float2(lt308.x, 0)), dR = Lin(uv + float2(lt308.x, 0)), dD = Lin(uv - float2(0, lt308.y)), dU = Lin(uv + float2(0, lt308.y));
                 float depthEdge = saturate((abs(dL - dR) + abs(dD - dU)) / max(d * .08, _DepthEdgeBias)) * _DepthEdgeStrength;
                 if (_DepthEdgeMode307 > .5)
                 {
@@ -256,10 +335,10 @@ Shader "Oheangbu/Finish297/InkWash"
                     float relative = (abs(iL + iR - 2 * iC) + abs(iD + iU - 2 * iC)) / iC;
                     depthEdge = saturate(max(0, relative - _DepthEdgeFloor307) / .08) * _DepthEdgeStrength;
                 }
-                float3 nL = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv - float2(texel.x, 0)).xyz;
-                float3 nR = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv + float2(texel.x, 0)).xyz;
-                float3 nD = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv - float2(0, texel.y)).xyz;
-                float3 nU = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv + float2(0, texel.y)).xyz;
+                float3 nL = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv - float2(lt308.x, 0)).xyz;
+                float3 nR = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv + float2(lt308.x, 0)).xyz;
+                float3 nD = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv - float2(0, lt308.y)).xyz;
+                float3 nU = SAMPLE_TEXTURE2D_X(_CameraNormalsTexture, sampler_CameraNormalsTexture, uv + float2(0, lt308.y)).xyz;
                 float normalEdge = saturate(length(nL - nR) + length(nD - nU)) * _NormalEdgeStrength * hasN * (1 - saturate(d / max(_NormalEdgeFadeDistance, 1)));
                 // #306: upward ground (terrain, grass cover, litter) keeps only _GroundNormalEdge of its normal lines — its dense
                 // small-scale normals drew a web of black hairlines around the camera (user playtest 2026-09-30); vertical faces
@@ -270,11 +349,60 @@ Shader "Oheangbu/Finish297/InkWash"
                 float edge = smoothstep(_LineLo, _LineHi, saturate(depthEdge + normalEdge)) * lerp(1, smoothstep(.15, .75, brush), _LineBreak);
                 edge *= 1 - smoothstep(_LineFar.x, _LineFar.y, d);
                 edge = sky ? 0 : edge;
-                col = lerp(col, ink, edge * _LineInk);
+                // v5: lines thin on faces turned to the sun (lineK308 = 1 at look 0)
+                half lineK308 = lerp(1, _OhLook308Ink.w * lerp(1, _OhLook308Line.z, hasN * saturate(dot(nC, _MainLightPosition.xyz))), look308);
+                col = lerp(col, ink, saturate(edge * _LineInk * lineK308));
+
+                // 4b. v5 ink layer over the graded base (skipped at _OhLook308 0). No gradient-based sample inside the branch.
+                if (look308 > 0 && !sky)
+                {
+                    half exempt308 = (1 - max(markN, emissive)) * look308;
+                    float pn308 = Noise(world.xz * .6 + world.y * .37);
+                    // ink pooling: what is darker than the threshold in the WASHED picture dissolves into an uneven ink wash; a darker
+                    // rim where the pool mask of the sharp picture and of the washed one disagree (the wet edge of a drying pool)
+                    if (_OhLook308Pool.z > 0)
+                    {
+                        half vW308 = pow(saturate(Luminance(washedG308)), .4545) + (pn308 - .5) * .06;
+                        half vC308 = pow(saturate(Luminance(col)), .4545);
+                        half pool308 = 1 - Ramp01(vW308, _OhLook308Pool.x, _OhLook308Pool.y);
+                        half poolC308 = 1 - Ramp01(vC308, _OhLook308Pool.x, _OhLook308Pool.y);
+                        dbgPool308 = pool308;
+                        col = lerp(col, ink * lerp(.7, 1.3, pn308), pool308 * _OhLook308Pool.z * exempt308);
+                        col *= 1 - saturate(abs(poolC308 - pool308) * 2) * _OhLook308Pool.w * .5 * exempt308;
+                    }
+                    // 농담: Euclidean distance in soft steps; each step dilutes the form toward the air colour (담묵). The step
+                    // boundaries wobble with a low-frequency world noise, so no ring is drawn around the eye.
+                    if (_OhLook308Band.w > 0)
+                    {
+                        float bd308 = distance(world, _WorldSpaceCameraPos);
+                        float bu308 = sqrt(saturate((bd308 - _OhLook308Band.x) / max(_OhLook308Band.y - _OhLook308Band.x, 1)));
+                        float bn308 = max(_OhLook308Band.z, 1), bs308 = clamp(_OhLook308Air.a, .02, .5);
+                        float bx308 = bu308 * bn308 + (Noise(world.xz * .006 + 31.7) - .5) * .5;
+                        float bq308 = saturate((floor(bx308) + smoothstep(.5 - bs308, .5 + bs308, frac(bx308))) / bn308);
+                        dbgBand308 = bq308;
+                        col = lerp(col, _OhLook308Air.rgb * lerp(.92, 1.08, pn308), bq308 * _OhLook308Band.w * exempt308 * (1 - .5 * _SlopeWashKeep * slope));
+                    }
+                    // 갈필: a silhouette within the brush reach of the sky breaks up and the sky shows through the stroke
+                    if (_OhLook308Paper.w > 0)
+                    {
+                        float2 o308 = texel * (max(_OhLook308Dry.x, 1) * scale);
+                        float2 uA308 = uv + float2(0, o308.y), uB308 = uv - float2(0, o308.y), uC308 = uv + float2(o308.x, 0), uD308 = uv - float2(o308.x, 0);
+                        float sA308 = SkyAt308(uA308), sB308 = SkyAt308(uB308), sC308 = SkyAt308(uC308), sD308 = SkyAt308(uD308);
+                        if (sA308 + sB308 + sC308 + sD308 > 0)
+                        {
+                            float2 uS308 = sA308 > 0 ? uA308 : (sB308 > 0 ? uB308 : (sC308 > 0 ? uC308 : uD308));
+                            float streak308 = Noise(float2(world.x + world.z, world.y * 3) * _OhLook308Dry.y);
+                            half dry308 = smoothstep(_OhLook308Dry.z, _OhLook308Dry.z + .2, streak308) * _OhLook308Paper.w * exempt308;
+                            dbgDry308 = dry308;
+                            half3 skyC308 = SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_LinearClamp, uS308, 0).rgb;
+                            col = lerp(col, Grade308(skyC308, true, look308), dry308);
+                        }
+                    }
+                }
 
                 // 5. distance paper wash (ink holds out longer), capped, less on steep faces; light sources exempt
                 float pw = sky ? 0 : fade * _WashStrength * (1 - _WashKeep * (1 - saturate(Luminance(col)))) * (1 - .6 * _NearHillInk * NearHillBand(d));
-                pw = min(pw, _PaperWashMax) * (1 - _SlopeWashKeep * slope) * (1 - max(markN, emissive));
+                pw = min(pw, _PaperWashMax) * (1 - _SlopeWashKeep * slope) * (1 - max(markN, emissive)) * lerp(1, _OhLook308Ink.y, look308);
                 col = lerp(col, paper, pw);
                 // #302 near mountains read as a dark wash (농묵 near, 담묵 far): a distance band, strongest on mountain faces.
                 // Applied last (after the highlight paper and the paper wash, which would lift it back); light sources exempt.
@@ -282,7 +410,7 @@ Shader "Oheangbu/Finish297/InkWash"
                 // strongest where the land rises above the eye (a mountain, not the valley floor) or stands steep
                 float3 hillWorld = ComputeWorldSpacePosition(uv, rawD, UNITY_MATRIX_I_VP);
                 half rise = smoothstep(-15, 45, hillWorld.y - _WorldSpaceCameraPos.y);
-                if (!sky) col *= pow(saturate(1 - _NearHillInk * .68 * NearHillBand(d) * lerp(.3, 1, max(slope, rise)) * (1 - max(markN, emissive))), 2.2);
+                if (!sky) col *= pow(saturate(1 - _NearHillInk * lerp(1, _OhLook308Line.w, look308) * .68 * NearHillBand(d) * lerp(.3, 1, max(slope, rise)) * (1 - max(markN, emissive))), 2.2);
 
                 // 5b. #308 권역 담채: zone weight w = (1 - smoothstep(r(1 - feather), r, dXZ + (noise - .5) edge r)) * band(y) * strength,
                 // sum capped at 1, colour = weight average. Perceptual space: lift toward paper (more where dark), then a hue move at
@@ -387,7 +515,7 @@ Shader "Oheangbu/Finish297/InkWash"
                 // 6. hanji fibre (screen space, stretched fibres + fine tooth), also over the sky
                 float2 fp = input.positionCS.xy / (scale * _GrainScale);
                 float fibre = Noise(fp * float2(.06, .9)) * .55 + Noise(fp * float2(.9, .07) + 17) * .25 + Hash21(floor(fp * .5)) * .2;
-                col *= 1 + (fibre - .5) * 2 * _Grain;
+                col *= 1 + (fibre - .5) * 2 * _Grain * (1 + look308 * _OhLook308Paper.x * Ramp01(pow(saturate(Luminance(col)), .4545), _OhLook308Paper.y, _OhLook308Paper.z));
 
                 half debugView = _OhInkWashDebug308 > 0 ? (half)_OhInkWashDebug308 : _DebugView;
                 if (debugView > .5)
@@ -396,6 +524,7 @@ Shader "Oheangbu/Finish297/InkWash"
                     if (debugView < 2.5) return half4(washed, 1);
                     if (debugView < 3.5) return half4(toned, 1);
                     if (debugView < 4.5) return half4(markN, emissive, 0, 1);
+                    if (debugView > 8.5) return half4(dbgPool308, dbgBand308, dbgDry308, 1);
                     if (debugView > 7.5) return half4(volAlpha / max(saturate(_OhEventWashVolA.y), 1e-4), saturate(volTau / 2), saturate(volOver * 10), 1);
                     if (debugView > 6.5) return half4(washW, washN / 8, saturate(washOver * 10), 1);
                     if (debugView > 5.5) return half4(NearHillBand(d), saturate(d / 2000), sky ? 1 : 0, 1);

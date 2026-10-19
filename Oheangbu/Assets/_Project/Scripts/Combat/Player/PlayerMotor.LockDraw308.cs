@@ -47,7 +47,7 @@ namespace Oheangbu.Combat
                 Pitch = _pitch,
                 TargetYaw = flatValid ? Quaternion.LookRotation(new Vector3(to.x, 0f, to.z)).eulerAngles.y : 0f,
                 TargetPitch = -Mathf.Asin(Mathf.Clamp(to.normalized.y, -1f, 1f)) * Mathf.Rad2Deg,
-                DeltaTime = Time.unscaledDeltaTime,
+                DeltaTime = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime,   // fixed-rate captures: frame-exact
             };
             // 화면 위치는 가장자리 추적에만 쓴다 — 다른 모드·평시에는 재지 않는다
             if (_drawing && settings.Mode == LockOnDrawMode.EdgeOnly)

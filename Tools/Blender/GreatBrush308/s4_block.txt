@@ -1,0 +1,94 @@
+# ================================================================ 0) s4: 새 쥐기(오른손 = 앞손 · 조종, 왼손 = 꼬리 축) · 새 전투 태세 · 열쇠 자세 클립
+SHIFT2 = C2.SHIFT2; LZ = C2.LZ; HG = -SHIFT2 - LZ         # HG = 왼손(꼬리 축) → 오른손 쥠 점(자루를 따라 붓끝 쪽, m)
+bpy.data.objects['GripSocketL'].location = (0, 0, LZ)     # 붓 리그의 왼손 소켓(저장된다)
+GRT = C.Grip('Right', dict(C.GRIP_CFG, **clips_m2.THUMB_UP))
+src = Source('Great_Sword_Idle'); OLD = src.sample(1); src.close(); ref = Vector((.009, .037))     # 옛 전투 태세(모캡) — 어깨 걸치기 몸이 여기서 나온다
+SC = dict(clips_m2.STANCE4)
+if opt('--stance'): SC.update({kv.split('=', 1)[0].strip(): eval(kv.split('=', 1)[1]) for kv in opt('--stance').split(';') if '=' in kv})
+L1R = (RH['RightForeArm'] - RH['RightArm']).length; L2R = (RH['RightHand'] - RH['RightForeArm']).length
+HINT_R = Vector((-.5, .1, -.85)); HINT_L = Vector((.45, .55, -.7))        # 팔꿈치 방향(가슴 기준): 오른 = 아래 · 바깥, 왼 = 뒤 · 바깥 · 아래
+def dirv(yaw, pitch): y_ = math.radians(yaw); p_ = math.radians(pitch); return Vector((-math.sin(y_) * math.cos(p_), -math.cos(y_) * math.cos(p_), math.sin(p_)))
+def kcol(keys, t, col):
+    if len(keys) == 1: return keys[0][col]
+    return pchip([k[0] for k in keys], [k[col] for k in keys], 0.0, 0.0)(min(max(t, keys[0][0]), keys[-1][0]))
+def n_pref(d, v): v = Vector(v); v = v - d * v.dot(d); return v.normalized() if v.length > .05 else (Z - d * Z.dot(d)).normalized()
+def body_pose(b):
+    """b = (골반 요, 가슴 요, 숙임, 옆 기울임, dx, dy, dz, 머리 요, 머리 숙임) — 전투 태세(STANCE4) 대비 차이. 발은 태세 자리에 박혀 있다."""
+    hy = SC['hy'] + b[0]; cy = SC['cy'] + b[1]; lean = SC['lean'] + b[2]; side = b[3]; hd = SC['hd'] + b[7]; hp = SC['hp'] + b[8]
+    P = C.Pose(); P.hips_t = Vector(SC['hips']) + Vector(b[4:7]); P.fk()
+    R = lambda yw, ln, sd=0: C.rot('Z', -yw) @ C.rot('X', ln) @ C.rot('Y', sd)
+    P.set_world('Hips', R(hy, lean * .25, side * .3)); P.set_world('Spine02', R(hy + (cy - hy) * .35, lean * .5, side * .6)); P.set_world('Spine01', R(hy + (cy - hy) * .7, lean * .8, side * .9)); P.set_world('Spine', R(cy, lean, side))
+    P.set_world('neck', R((cy + hd) / 2, lean * .4 + hp * .5, side * .4)); P.set_world('Head', R(hd, hp))
+    ank = {}; fq = {}; knee = {}
+    for s, k in (('Left', 'lf'), ('Right', 'rf')):
+        ank[s] = Vector((SC[k][0], SC[k][1], tgt_ankle[s])); fq[s] = C.rot('Z', -SC[k][2]); knee[s] = fq[s] @ Vector((0, -1, .3))
+    legs(P, ank, fq, knee); F = Frame(P, ank, fq, knee); F.src_hand = 0; F.srcf = 0; F.hint = P.Q['Spine'] @ HINT_R; return F
+def tail_pen4(P, G, d, n, hint):
+    """오른손 뒤쪽 자루가 제 오른팔에 닿는 벌점."""
+    qh = GR.hand_q(d, n); W = G - qh @ (GR.C - RH['RightHand']); A = P.H['RightArm']; E, W2, reach = two_bone(A, W, L1R, L2R, hint); pen = 0
+    for sd in (-.10, -.20, -.30):
+        p_ = G + d * sd; pen += (max(0, .10 - seg_pt(p_, A, E)) * 60) ** 2 + (max(0, .05 - seg_pt(p_, E, E.lerp(W2, .7))) * 80) ** 2
+    return pen
+def ring_fix(e1, d, nref, K_):
+    """고리 기준 e1 을 조금 돌려 nref 가 정확히 격자 위에 오게 한다(클립끼리 이음매가 격자 반 칸만큼 어긋나지 않게)."""
+    e2 = d.cross(e1); a0 = math.atan2(nref.dot(e2), nref.dot(e1)); st = 2 * math.pi / K_; k = int(round(a0 / st)); dl = a0 - k * st
+    e1n = (e1 * math.cos(dl) + e2 * math.sin(dl)).normalized(); return e1n, d.cross(e1n), k % K_
+def ref_n(P, s, sock, d, hint, pref, soft, extra=None):
+    """한 프레임 기준 풀이: 손바닥 방향 n 을 72방향에서 고른다(비용 + 약한 선호). 클립 처음 · 끝 자세는 이것으로 정의된다."""
+    e1 = n_pref(d, pref); e2 = d.cross(e1); best = None
+    for k in range(72):
+        a = 2 * math.pi * k / 72; nk = e1 * math.cos(a) + e2 * math.sin(a); c = attempt(P, s, sock, d, nk, torso_caps(P), hint)[0] + (nk.angle(e1) / math.radians(soft)) ** 2 + (extra(nk) if extra else 0)
+        if best is None or c < best[0]: best = (c, nk)
+    return best[1]
+def solve_right_seq(out, a0=True, a1=True):
+    """프레임 목록(F.aim = (오른손 쥠 점, 자루 방향))의 오른팔: 손바닥 방향 · 팔꿈치 돌림을 프레임 사이 DP 로. 처음 · 끝은 한 프레임 기준 풀이에 묶는다."""
+    N_ = len(out); K_ = 72; cs = np.zeros((N_, K_)); E_ = []; e1_ = None; refs = {}; nR = SC['nR']; soft = math.radians(SC['nR_soft'])
+    for i_, on_ in ((0, a0), (N_ - 1, a1)):
+        if on_: F = out[i_]; refs[i_] = ref_n(F.P, 'Right', F.aim[0], F.aim[1], F.hint, nR, SC['nR_soft'], lambda nk, F=F: tail_pen4(F.P, F.aim[0], F.aim[1], nk, F.hint))
+    for i, F in enumerate(out):
+        G_, d = F.aim; base = n_pref(d, nR); e1_ = base if e1_ is None else (e1_ - d * e1_.dot(d)).normalized(); kr = None
+        if i in refs: e1_, e2_, kr = ring_fix(e1_, d, refs[i], K_)
+        else: e2_ = d.cross(e1_)
+        E_.append((e1_.copy(), e2_.copy())); caps = torso_caps(F.P)
+        for k in range(K_):
+            a_ = 2 * math.pi * k / K_; nk = e1_ * math.cos(a_) + e2_ * math.sin(a_); cs[i, k] = attempt(F.P, 'Right', G_, d, nk, caps, F.hint)[0] + (nk.angle(base) / soft) ** 2
+        if kr is not None: cs[i, :] += 1e5; cs[i, kr] -= 1e5
+    dk_ = np.abs(np.arange(K_)[:, None] - np.arange(K_)[None, :]); dk_ = np.minimum(dk_, K_ - dk_) * (360 / K_); TR_ = (dk_ / 20.0) ** 2
+    acc_ = cs[0].copy(); back_ = np.zeros((N_, K_), dtype=int)
+    for i in range(1, N_): tot_ = acc_[:, None] + TR_; back_[i] = tot_.argmin(axis=0); acc_ = tot_.min(axis=0) + cs[i]
+    path_ = [int(acc_.argmin())]
+    for i in range(N_ - 1, 0, -1): path_.append(int(back_[i][path_[-1]]))
+    path_.reverse(); PH = list(range(-150, 181, 30)); S_ = len(PH); c2 = np.zeros((N_, S_)); HN = []
+    for i, F in enumerate(out):
+        G_, d = F.aim; e1_, e2_ = E_[i]; a_ = 2 * math.pi * path_[i] / K_; nk = e1_ * math.cos(a_) + e2_ * math.sin(a_); ax = (G_ - F.P.H['RightArm']).normalized(); h0 = (F.hint - ax * F.hint.dot(ax)).normalized(); caps = torso_caps(F.P); row = []
+        for j, ph in enumerate(PH):
+            h_ = axis_rot(ax, ph) @ h0; c2[i, j] = attempt(F.P, 'Right', G_, d, nk, caps, h_)[0] + tail_pen4(F.P, G_, d, nk, h_) + (ph / 70.0) ** 2 + (1e5 if i in refs and ph != 0 else 0); row.append(h_)
+        HN.append((nk, row))
+    dp_ = np.abs(np.arange(S_)[:, None] - np.arange(S_)[None, :]); dp_ = np.minimum(dp_, S_ - dp_) * 30; T2 = (dp_ / 35.0) ** 2; acc_ = c2[0].copy(); bk = np.zeros((N_, S_), dtype=int)
+    for i in range(1, N_): tot_ = acc_[:, None] + T2; bk[i] = tot_.argmin(axis=0); acc_ = tot_.min(axis=0) + c2[i]
+    p2 = [int(acc_.argmin())]
+    for i in range(N_ - 1, 0, -1): p2.append(int(bk[i][p2[-1]]))
+    p2.reverse(); reach_ = []; wr_ = []
+    for i, F in enumerate(out):
+        G_, d = F.aim; c_, r_ = attempt(F.P, 'Right', G_, d, HN[i][0], torso_caps(F.P), HN[i][1][p2[i]]); set_arm(F.P, 'Right', r_); F.P.fk(); reach_.append(r_['reach']); wr_.append(math.degrees(r_['swing']))
+    return dict(r_reach=[round(x, 2) for x in reach_], r_wrist=[round(x) for x in wr_], r_swivel=[PH[j] for j in p2])
+def stance_brush(): return (0, 0) + tuple(SC['p']) + (SC['yaw'], SC['pitch'])
+def brush_at(k):
+    """brush 열쇠 값(틀 요, px, py, pz, yaw, pitch) → (왼손 축 점, 자루 방향)"""
+    fy, px, py, pz, yw, pt = k; return C.rot('Z', -fy) @ Vector((px, py, pz)), dirv(fy + yw, pt)
+def make_stance():
+    F = body_pose((0,) * 9); p, d = brush_at(stance_brush()[1:]); F.aim = (p + d * HG, d); solve_right_seq([F]); hl = F.P.Q['Spine'] @ HINT_L
+    nl = ref_n(F.P, 'Left', p, d, hl, SC['nL'], SC['nL_soft']); c, r = attempt(F.P, 'Left', p, d, nl, torso_caps(F.P), hl); set_arm(F.P, 'Left', r); F.P.fk(); F.t = 0; return F
+STANCE = make_stance()
+def build_keyed():
+    N_ = int(round(SPEC['seconds'] * FPS)) + 1; out = []; LIFE = SPEC.get('life'); BK = SPEC['body']; RK = [(k[0],) + stance_brush()[1:] if k[1] == 'S' else k for k in SPEC['brush']]
+    for i in range(N_):
+        t = i / FPS; F = body_pose([kcol(BK, t, c) for c in range(1, 10)]); kb = [kcol(RK, t, c) for c in range(1, 7)]
+        for n_b in ('LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand'): F.P.L[n_b] = STANCE.P.L[n_b].copy()
+        F.P.fk(); dp_ = Vector((0, 0, 0))
+        if LIFE:
+            x = i / (N_ - 1); th = 2 * math.pi * x; base = F.P.H['Spine'].copy(); life(F.P, x, LIFE); legs(F.P, F.ank, F.fq, F.knee); dp_ = (F.P.H['Spine'] - base) * LIFE.get('brush_follow', .7)
+            kb[4] += LIFE.get('tip_yaw', 0) * (wv(th, 1, 1.3) * .6 + wv(th, 2, 3.9) * .4); kb[5] += LIFE.get('tip_pitch', 0) * (wv(th, 2, .4) * .5 + wv(th, 1, 2.7) * .6)
+            F.hint = F.P.Q['Spine'] @ HINT_R
+        p, d = brush_at(kb); F.aim = (p + dp_ + d * HG, d); F.t = t; out.append(F)
+    info['right_arm'] = solve_right_seq(out); return out

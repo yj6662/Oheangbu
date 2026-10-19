@@ -123,3 +123,12 @@ __pycache__/
 /Tools/Art/_backup_*/
 /Tools/Art/pitch30*.py
 /Tools/Art/*.pre_relayout
+
+# 2026-10-19 (308d 정리)
+# 도구가 설치하는 Unity RQL 스킬 묶음
+Oheangbu/.claude/skills/rql-*/
+Oheangbu/.claude/skills/unity-rql/
+# 블렌더 풀이 스크립트 백업 사본 (*.pre_relayout와 같은 이유)
+Tools/Blender/GreatBrush308/*.pre_*
+# 블렌더가 작업 폴더에 남기는 웨이블릿 잡음 캐시(25 MB)
+waveletNoiseTile.bin
