@@ -122,6 +122,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(c=="clips"||c.StartsWith("clips:",StringComparison.Ordinal))result=Clips(cfg,c.Length>6?c.Substring(6):"");
     else if(c.StartsWith("parts:probe:",StringComparison.Ordinal))result=ProbeParts(cfg,c.Substring(12));
     else if(c.StartsWith("film:",StringComparison.Ordinal))result=Film(cfg,c.Substring(5));
+    else if(c.StartsWith("face:",StringComparison.Ordinal))result=Face(cfg,c.Substring(5));
     else if(c=="stills"||c.StartsWith("stills:",StringComparison.Ordinal))result=Stills(cfg,c.Length>7?c.Substring(7):"");
     else
     {
