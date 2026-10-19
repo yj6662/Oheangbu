@@ -611,7 +611,7 @@ namespace Oheangbu.EditorTools.WorldMacro
        foreach(var child in actor.transform.Cast<Transform>().ToArray())Object.DestroyImmediate(child.gameObject);
        var oldFeet=actor.GetComponent<EnemyFootPlacement298>();if(oldFeet!=null)Object.DestroyImmediate(oldFeet);
        foreach(var gone in actor.GetComponents<Component>().Where(x=>x is EnemyOrganSet||x is Oheangbu.App.Demo.EnemyElementTelegraph||x is FolkloreCullingBounds298||x is FolkloreReadability298).ToArray())Object.DestroyImmediate(gone);
-       var b=BuildVisual(cfg,s,w,true,out _);Materials(cfg,s,b,w);string partNote=AttachParts(s,b);
+       var b=BuildVisual(cfg,s,w,true,out _);Materials(cfg,s,b,w);string partNote=AttachParts(cfg,s,b,w);
        var idle=Clip(s.idle);
        AnimationClip Role(string spec)=>string.IsNullOrEmpty(spec)?null:spec.StartsWith("proc:",StringComparison.Ordinal)?MakeProc(cfg,s,b,spec.Substring(5),idle):Clip(spec);
        var walk=Role(s.walk);var run=Role(s.run);var attack=Role(s.attack);var hit=Role(s.hit);var stun=Role(s.stun);var death=Role(s.death);
