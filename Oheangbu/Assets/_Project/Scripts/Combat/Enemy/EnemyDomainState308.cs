@@ -19,11 +19,12 @@ namespace Oheangbu.Combat
     //   turn       turn rate x value                                                            (웃)
     //   hold       the enemy cannot START an attack before the entry's time; one already started goes on (굿)
     //   aim        a ranged attack's aim locks at this share of its telegraph (0 = at its start) (눙)
+    //   exclude    the enemy cannot enter the circle (centre, radius); it walks around it          (굼)
     // Nothing here deals damage, raises groggy, opens a weak point or changes whom the enemy targets.
     // Plain C#, no clock of its own (every call takes "now"): the offline runner executes this file.
     public sealed class EnemyDomainState308
     {
-        public enum Kind { Seal, Dash, Move, Leash, Telegraph, Guard, Call, Turn, Hold, Aim }
+        public enum Kind { Seal, Dash, Move, Leash, Telegraph, Guard, Call, Turn, Hold, Aim, Exclude }
         struct Entry { public long Owner; public Kind Kind; public float Until, Value, Extra; public Vector3 Centre; }
 
         readonly List<Entry> _entries = new List<Entry>();
@@ -47,6 +48,7 @@ namespace Oheangbu.Combat
         public bool Telegraph(long owner, float until, float scale) => scale > 1f && Set(owner, Kind.Telegraph, until, scale, default);
 
         public bool Leash(long owner, float until, Vector3 centre, float radius) => radius > 0f && Set(owner, Kind.Leash, until, radius, centre);
+        public bool Exclude(long owner, float until, Vector3 centre, float radius) => radius > 0f && Set(owner, Kind.Exclude, until, radius, centre);
 
         // No attack may start before `until` (the entry is its own end).
         public bool Hold(long owner, float until) => Set(owner, Kind.Hold, until, 1f, default);
@@ -134,12 +136,21 @@ namespace Oheangbu.Combat
             return false;
         }
 
-        // Where a step that wants to reach `next` may end: inside the leash circle (on the ground plane), else unchanged.
+        // Where a step that wants to reach `next` may end: inside the leash circle and outside every circle that shuts this
+        // enemy out (on the ground plane), else unchanged.
         public Vector3 Contain(Vector3 next, float now)
         {
-            if (!Leashed(now, out var centre, out float radius)) return next;
-            return DomainLeashRule308.Contain(centre, radius, next);
+            if (Leashed(now, out var centre, out float radius)) next = DomainLeashRule308.Contain(centre, radius, next);
+            for (int i = _entries.Count - 1; i >= 0; i--)
+            {
+                var entry = _entries[i];
+                if (entry.Until <= now) { _entries.RemoveAt(i); continue; }
+                if (entry.Kind == Kind.Exclude) next = DomainLeashRule308.Exclude(entry.Centre, entry.Value, next);
+            }
+            return next;
         }
+
+        public bool Excluded(float now) => Any(Kind.Exclude, now);
 
         // ---- internals ----
 
@@ -191,6 +202,19 @@ namespace Oheangbu.Combat
             float dx = point.x - centre.x, dz = point.z - centre.z;
             float sq = dx * dx + dz * dz;
             if (sq <= radius * radius) return point;
+            float scale = radius / Mathf.Sqrt(sq);
+            return new Vector3(centre.x + dx * scale, point.y, centre.z + dz * scale);
+        }
+
+        // The other way round (굼): a point inside the circle is put out on its edge, straight away from the centre (a point on
+        // the centre itself goes along +z). A point outside or on the edge is unchanged.
+        public static Vector3 Exclude(Vector3 centre, float radius, Vector3 point)
+        {
+            if (!(radius > 0f)) return point;
+            float dx = point.x - centre.x, dz = point.z - centre.z;
+            float sq = dx * dx + dz * dz;
+            if (sq >= radius * radius) return point;
+            if (sq < 1e-8f) return new Vector3(centre.x, point.y, centre.z + radius);
             float scale = radius / Mathf.Sqrt(sq);
             return new Vector3(centre.x + dx * scale, point.y, centre.z + dz * scale);
         }

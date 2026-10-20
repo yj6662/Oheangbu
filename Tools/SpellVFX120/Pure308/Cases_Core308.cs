@@ -120,9 +120,10 @@ namespace Pure308
             // grid cell 50 = earth a + giyeok (the rock that stays as cover): the one enemy / world dependent row behind the final
             // the main game grants. No glyph is named: the cell is found by its number, the rule by the sheet's Gate column.
             var rock = c.RowAt(50);
-            r.Check("A5", testOnly.Select(x => x.Index).SequenceEqual(new[] { 18, 42, 45, 50, 66, 77, 78, 90, 95, 111, 120 }) && testOnly.Contains(rock) && rock.Final == SpellFinal.Giyeok &&
+            // WP-17 (D308-121) added three domain rows whose world target does not exist yet: 68, 94, 117
+            r.Check("A5", testOnly.Select(x => x.Index).SequenceEqual(new[] { 18, 42, 45, 50, 66, 68, 77, 78, 90, 94, 95, 111, 117, 120 }) && testOnly.Contains(rock) && rock.Final == SpellFinal.Giyeok &&
                 testOnly.All(x => x.HasHandler && x.Feature == SpellLegacyFeature.None && x.Final != SpellFinal.None),
-                "#308b: eleven rows are TEST-only, the enemy / world dependent rows of the field and counter packages (the rock-cover row behind the giyeok final among them)", string.Join(" ", testOnly.Select(x => x.Index)));
+                "#308b: fourteen rows are TEST-only, the enemy / world dependent rows of the field, counter and domain packages (the rock-cover row behind the giyeok final among them)", string.Join(" ", testOnly.Select(x => x.Index)));
             r.Check("A5", c.Build.Unlocks.Any(u => u.Final == rock.Final && u.GrantedInMain) && Status(rock, normal) == SpellResolveStatus.Locked,
                 "a normal save cannot resolve it: with the campaign running, its final granted in the main game, the ledger id recorded and every evidence complete it is Locked (the misfire)",
                 Status(rock, normal).ToString());
@@ -131,15 +132,17 @@ namespace Pure308
             var opened = rows.Where(x => x.Final != SpellFinal.None && x.HasHandler && x.Feature == SpellLegacyFeature.None && x.Gate != SpellGateMode.Open && Status(x, normal) == SpellResolveStatus.Ok)
                 .Select(x => x.Index).ToArray();
             r.Fact("mainGameNewRows", string.Join(" ", opened));
-            // 14 wood o, 38 fire o, 62 earth o, 86 metal o, 110 water o, each + giyeok: the five glyphs the main story opens after its first final
+            // 14 wood o, 38 fire o, 62 earth o, 86 metal o, 110 water o, each + giyeok: the five glyphs the main story opens after its first final;
+            // WP-17 (D308-121) adds the three giyeok domain rows that do not wait on a world target (눅 숙 욱)
             var openedRows = rows.Where(x => opened.Contains(x.Index)).ToArray();
-            r.Check("A5", openedRows.Where(x => x.Final == SpellFinal.Giyeok).Select(x => x.Index).SequenceEqual(new[] { 14, 38, 62, 86, 110 }) && opened.Length == 53 &&
-                openedRows.Count(x => x.Final == SpellFinal.Nieun) == 14 && openedRows.Count(x => x.Final == SpellFinal.Siot) == 14 &&
-                openedRows.Count(x => x.Final == SpellFinal.Ieung) == 10 && openedRows.Count(x => x.Final == SpellFinal.Mieum) == 10 && !openedRows.Any(x => x.Gate == SpellGateMode.Test),
-                "#308b: a normal save that earned all five finals resolves 53 new rows (giyeok 5: the o glyphs of the five elements; nieun 14, siot 14, ieung 10, mieum 10) and no TEST-only row", string.Join(" ", opened));
+            var giyeokOpened = new[] { 14, 38, 62, 86, 110, c.Row('눅').Index, c.Row('숙').Index, c.Row('욱').Index }.OrderBy(x => x).ToArray();
+            r.Check("A5", openedRows.Where(x => x.Final == SpellFinal.Giyeok).Select(x => x.Index).SequenceEqual(giyeokOpened) && opened.Length == 70 &&
+                openedRows.Count(x => x.Final == SpellFinal.Nieun) == 17 && openedRows.Count(x => x.Final == SpellFinal.Siot) == 18 &&
+                openedRows.Count(x => x.Final == SpellFinal.Ieung) == 14 && openedRows.Count(x => x.Final == SpellFinal.Mieum) == 13 && !openedRows.Any(x => x.Gate == SpellGateMode.Test),
+                "#308b + WP-17: a normal save that earned all five finals resolves 70 new rows (giyeok 8: the o glyphs of the five elements and three domains; nieun 17, siot 18, ieung 14, mieum 13) and no TEST-only row", string.Join(" ", opened));
             var newRows = rows.Where(x => x.HasHandler && x.Feature == SpellLegacyFeature.None).ToArray();
-            r.Check("A5", newRows.Length == 64 && newRows.All(x => Status(x, testing) == SpellResolveStatus.Ok),
-                "with the TEST unlock in the isolated store all 64 new rows resolve, the TEST-only row among them", newRows.Count(x => Status(x, testing) == SpellResolveStatus.Ok).ToString());
+            r.Check("A5", newRows.Length == 84 && newRows.All(x => Status(x, testing) == SpellResolveStatus.Ok),
+                "with the TEST unlock in the isolated store all 84 new rows resolve (64 + the 20 domain rows of WP-17), the TEST-only rows among them", newRows.Count(x => Status(x, testing) == SpellResolveStatus.Ok).ToString());
             var giyeokRule = c.Build.Unlocks.First(u => u.Final == SpellFinal.Giyeok);
             var ordinary = c.RowAt(14);
             r.Check("A5", SpellUnlockPolicy308.RuleFor(rock, giyeokRule).GrantedInMain == false && SpellUnlockPolicy308.RuleFor(ordinary, giyeokRule).GrantedInMain &&

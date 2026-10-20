@@ -35,7 +35,8 @@ namespace Oheangbu.App
             if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
             if (_vitals == null) return;
             // #308 WP-15: a guard broken by 낭 stays down until its time (Raise with the clock refuses before that).
-            if (_guarding && _share > 0f) _vitals.Modifiers.Stance.Raise(_share, Time.time);
+            // #308 WP-17: inside 순 a guard that is down is not raised again; one already up stays (CanGuard says both).
+            if (_guarding && _share > 0f) { if (_vitals.Modifiers.CanGuard(Time.time)) _vitals.Modifiers.Stance.Raise(_share, Time.time); }
             else _vitals.Modifiers.Stance.Lower();
         }
     }

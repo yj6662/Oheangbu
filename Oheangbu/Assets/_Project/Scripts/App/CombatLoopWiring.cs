@@ -265,7 +265,7 @@ namespace Oheangbu.App
             bool drawing = _drawingInput != null && _drawingInput.InDrawMode || _motor != null && _motor.IsDrawing;
             bool blocked = _motor != null && (_motor.InputBlocked || !_motor.isActiveAndEnabled) || _playerVitals != null && _playerVitals.Hp01 <= 0f;
             bool inCombat = _lockOn != null && _lockOn.Target != null || Time.time - _lastPlayerHitTime < _config.InkRegenCombatLinger;
-            InkRegen.Tick(Time.time, Time.deltaTime, drawing, blocked, inCombat);
+            InkRegen.Tick(Time.time, Time.deltaTime, drawing, blocked, inCombat, _playerDomain308.RegenScale(Time.time));   // #308 WP-17 (움)
         }
 
         // 착탄 시각 도래 = 피해 적용(피해=착탄 동기화 — 5차 검수). 대상이 먼저 죽었으면 허공이 된다

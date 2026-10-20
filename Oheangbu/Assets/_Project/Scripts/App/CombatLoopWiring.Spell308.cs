@@ -158,6 +158,7 @@ namespace Oheangbu.App
             _row308 = null;
             _buffs308.Clear();
             _spells308?.Clear(reason);
+            _playerDomain308.Clear();
             _fxGuard308.EndAll();
         }
 

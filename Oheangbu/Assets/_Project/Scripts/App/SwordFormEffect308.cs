@@ -118,7 +118,8 @@ namespace Oheangbu.App
             var ink = _ink;
             if (ink == null) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
             float drain = SwordFormRule308.DrainAmount(_drain, ctx.Delta);
-            if (drain > 0f) ink.SpendClamped(drain);
+            bool held = ctx.Host is IPlayerDomainHost308 domain && domain.PlayerDomain308.DrainHeld(ctx.Now);   // #308 WP-17 (눔)
+            if (drain > 0f && !held) ink.SpendClamped(drain);
             if (SwordFormRule308.Exhausted(ink.Value)) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
             // the input side: the draw mode stays shut, the release press puts the sword away, a click is one strike
             var seam = _seam;

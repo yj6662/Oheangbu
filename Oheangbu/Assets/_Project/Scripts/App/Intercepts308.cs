@@ -15,6 +15,9 @@ namespace Oheangbu.App
 
         public EnemyProjectileIntercept308(EnemyController controller) { _controller = controller; }
 
+        // #308 WP-17 (눗 · 숭): who shot it (a domain lets through the shots fired from inside, and 숭 strikes the shooter back).
+        public EnemyController Controller => _controller;
+
         public bool InFlight => _controller != null && _controller.isActiveAndEnabled && _controller.IsProjectileFlying;
 
         public Vector3 Position

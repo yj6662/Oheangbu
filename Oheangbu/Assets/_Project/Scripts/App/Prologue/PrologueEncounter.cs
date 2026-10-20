@@ -96,14 +96,15 @@ namespace Oheangbu.App.Prologue
             agent.stoppingDistance=.3f;agent.SetDestination(Contain308(PatrolPoints[patrol]));
             if(!agent.pathPending && agent.remainingDistance<.6f){patrol=(patrol+1)%PatrolPoints.Length;if(PatrolPauseMax>0&&PatrolPoints.Length>1)patrolPauseUntil=Time.time+Random.Range(PatrolPauseMin,PatrolPauseMax);}
         }
-        // #308 WP-17 (숙, D308-121): a caged enemy walks only to points inside its cage, and one pushed out of it (by anything) is
-        // put back on its edge the same frame. No cage = the point as asked.
+        // #308 WP-17 (숙 · 굼, D308-121): a caged enemy walks only to points inside its cage and a shut-out enemy only to points
+        // outside the ring; one that ends up on the wrong side (pushed, or the ring came to it) is put on the edge the same
+        // frame. No cage and no ring = the point as asked.
         Vector3 Contain308(Vector3 point)=>vitals.Modifiers.Domain.Contain(point,Time.time);
         void Leash308()
         {
-            if(!vitals.Modifiers.Domain.Leashed(Time.time,out var centre,out float radius))return;
-            Vector3 p=transform.position;float dx=p.x-centre.x,dz=p.z-centre.z,edge=radius+.05f;
-            if(dx*dx+dz*dz>edge*edge)agent.Warp(DomainLeashRule308.Contain(centre,radius,p));
+            if(vitals.Modifiers.Domain.IsEmpty)return;
+            Vector3 p=transform.position,q=vitals.Modifiers.Domain.Contain(p,Time.time);float dx=q.x-p.x,dz=q.z-p.z;
+            if(dx*dx+dz*dz>.0025f)agent.Warp(q);
         }
     }
 }
