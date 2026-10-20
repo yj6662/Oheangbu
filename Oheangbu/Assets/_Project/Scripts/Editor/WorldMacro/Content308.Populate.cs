@@ -75,15 +75,17 @@ namespace Oheangbu.EditorTools.WorldMacro
    var g=AssetDatabase.LoadAssetAtPath<GameObject>(k.projectile);if(g==null)throw new Refuse308(k.contentId+": projectile "+k.projectile+" is missing");
    return g;
   }
-  // one clone's attack: profile + projectile on the controller, Ranged / PreferredDistance on the actor, Ranged on its content row
-  static void PopArm308(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,Object profile,Object projectile,bool ranged,float preferred)
+  // one clone's attack: profile + projectile + legacy _attackMode on the controller, Ranged / PreferredDistance on the actor, Ranged on its
+  // content row. A valid profile governs at runtime (EnemyController.Update -> TickAuthoredAttack); _attackMode follows the profile's Mode
+  // (as TelegraphOrgans306 does) so the legacy fallback agrees if the profile is ever dropped.
+  static void PopArm308(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,Object profile,Object projectile,int mode,bool ranged,float preferred)
   {
-   var so=new SerializedObject(actor.GetComponent<EnemyController>());so.FindProperty("_attackProfile").objectReferenceValue=profile;so.FindProperty("_projectilePrefab").objectReferenceValue=projectile;so.ApplyModifiedPropertiesWithoutUndo();
+   var so=new SerializedObject(actor.GetComponent<EnemyController>());so.FindProperty("_attackProfile").objectReferenceValue=profile;so.FindProperty("_projectilePrefab").objectReferenceValue=projectile;so.FindProperty("_attackMode").intValue=mode;so.ApplyModifiedPropertiesWithoutUndo();
    actor.Ranged=ranged;actor.PreferredDistance=preferred;if(row!=null)row.Ranged=ranged;EditorUtility.SetDirty(actor);
   }
   static void PopArmKind308(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,PopKind308 k)
   {
-   var p=PopProfile308(k);PopArm308(actor,row,p,PopProjectile308(k,actor),p.Mode==EnemyController.AttackMode.RangedOnly,p.PreferredDistanceHint);
+   var p=PopProfile308(k);PopArm308(actor,row,p,PopProjectile308(k,actor),(int)p.Mode,p.Mode==EnemyController.AttackMode.RangedOnly,p.PreferredDistanceHint);
   }
   // the guard entries of the listed kinds (one per ContentId): written on arm, dropped on revert
   static string PopGuards308(WorldMacroPlaytestSO content,PopCfg308 cfg,bool arm)
@@ -115,7 +117,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    {
     if(arm){PopArmKind308(w.actor,w.row,w.kind);continue;}
     var tso=new SerializedObject(w.template.GetComponent<EnemyController>());
-    PopArm308(w.actor,w.row,tso.FindProperty("_attackProfile").objectReferenceValue,tso.FindProperty("_projectilePrefab").objectReferenceValue,w.trow.Ranged,w.template.PreferredDistance);
+    PopArm308(w.actor,w.row,tso.FindProperty("_attackProfile").objectReferenceValue,tso.FindProperty("_projectilePrefab").objectReferenceValue,tso.FindProperty("_attackMode").intValue,w.trow.Ranged,w.template.PreferredDistance);
    }
    return (arm?"armed ":"put back ")+work.Count+" actors ("+string.Join(", ",work.Select(w=>w.actor.Id.Substring(PopPrefix308.Length)))+"), "+PopGuards308(content,cfg,arm);
   }
@@ -280,6 +282,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      if(p==null||AssetDatabase.GetAssetPath(p)!=k.profile)why="profile "+(p!=null?AssetDatabase.GetAssetPath(p):"none");
      else if(!p.TryValidate(out string err))why="profile invalid: "+err;
      else if(a.Ranged!=(p.Mode==EnemyController.AttackMode.RangedOnly)||r.Ranged!=a.Ranged)why="Ranged actor "+a.Ranged+" / row "+r.Ranged+" / profile "+p.Mode;
+     else if(so.FindProperty("_attackMode").intValue!=(int)p.Mode)why="legacy _attackMode "+(EnemyController.AttackMode)so.FindProperty("_attackMode").intValue+" vs profile "+p.Mode;
      else if(!(a.PreferredDistance>0f&&a.PreferredDistance<=p.Range))why="stop distance "+a.PreferredDistance+" outside (0, "+p.Range+"]";
      else if(!string.IsNullOrEmpty(k.projectile)&&(proj==null||AssetDatabase.GetAssetPath(proj)!=k.projectile))why="projectile "+(proj!=null?AssetDatabase.GetAssetPath(proj):"none");
      else if(a.Ranged&&proj==null)why="ranged without a projectile";
