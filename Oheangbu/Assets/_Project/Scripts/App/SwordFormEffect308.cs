@@ -126,7 +126,9 @@ namespace Oheangbu.App
             if (seam == null) return;
             HoldSeam();
             bool release = false, strike = false;
-            try { release = seam.SwordReleasePressed308; strike = !release && seam.SwordStrikePressed308; }
+            // only a form the player may put away reads the release key: the same press may fire the 앞잡 volley, and a volley
+            // always takes the sword with it (D308-123)
+            try { release = _manual && seam.SwordReleasePressed308; strike = !release && seam.SwordStrikePressed308; }
             catch (Exception exception) { Debug.LogException(exception); }
             if (release && ReleaseByPlayer(ctx)) return;
             if (strike) Strike(ctx);

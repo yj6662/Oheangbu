@@ -20,8 +20,21 @@ namespace Oheangbu.App
         void DropSwordForm308(bool byPlayer);
         // This frame's click, while the player may act with the brush hand (not in a menu, a dodge, a seat or the air).
         bool SwordStrikePressed308 { get; }
-        // This frame's "put the sword away" press: the key that raises the brush.
+        // This frame's "put the sword away" press: the key that raises the brush. The same key fires the 앞잡 volley
+        // (D308-123, TEST): when the counter can fire, the press fires it and the sword goes with it; when it cannot, the
+        // press only puts the sword away. A counter chosen but not fired puts nothing away (one press, one action).
+        // The form reads it once per frame.
         bool SwordReleasePressed308 { get; }
+    }
+
+    // D308-123 (TEST): the counter that may take the release press while the sword is out (Riposte301, the 앞잡 volley).
+    // Its target is the locked one; without a lock, the fallback the wiring aims at (the same order as 상's fallback).
+    public interface ISwordRiposte308
+    {
+        // Could fire right now.
+        bool CanRiposteFor308(EnemyVitals fallback);
+        // Fires it. false = nothing fired.
+        bool RiposteFor308(EnemyVitals fallback);
     }
 
     // The seam on the wiring. No rule lives here: the strike, its numbers, the counter strike and the end of the form are
@@ -46,6 +59,9 @@ namespace Oheangbu.App
 
         // Read-only for presentation and checks: the brush is a sword right now.
         public bool SwordFormHeld308 => _swordHeld308;
+
+        // The counter that shares the release key (set by the walker that owns both; null = the key only puts the sword away).
+        public ISwordRiposte308 SwordRiposte308 { get; set; }
 
         void ISwordFormSeam308.HoldSwordForm308()
         {
@@ -86,8 +102,19 @@ namespace Oheangbu.App
             {
                 if (!_swordHeld308 || !SwordInputOpen308()) return false;
                 var key = _drawingInput != null ? _drawingInput.DrawModeAction : null;
-                return key != null && key.WasPressedThisFrame();
+                return key != null && key.WasPressedThisFrame() && SwordReleaseOrRiposte308();
             }
+        }
+
+        // The pressed release key, arbitrated in one place: the volley if it can fire now (and the sword goes with it),
+        // otherwise the sword is put away. The counter's own Q handling stands aside while the sword is held (Riposte301).
+        private bool SwordReleaseOrRiposte308()
+        {
+            var riposte = SwordRiposte308;
+            if (riposte == null || (riposte is UnityEngine.Object owner && owner == null)) return true;
+            var aimed = AimedTarget();
+            if (!riposte.CanRiposteFor308(aimed)) return true;
+            return riposte.RiposteFor308(aimed);   // chosen but not fired: no fall-through to a release
         }
 
         // The same conditions that stop every other player action: a disabled wiring or motor, a menu, a stopped clock, death.
