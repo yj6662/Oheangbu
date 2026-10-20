@@ -1,11 +1,14 @@
 ﻿# SPEC-SPELL-120-308 section 7 + 받침 지급 #308b (D308-51): final-consonant unlocks. The main game grants all five, in the LOCKED order
 # giyeok (cheongryong) - nieun - siot - ieung - mieum; the four later ledger ids are written by the boss chain of the content asset
 # (WorldMacroPlaytestSO.FinalGrants, D308-53: a realm boss defeat; those bosses do not exist yet, so nothing writes them today).
-# The editor-only TEST unlock in the isolated save <slot>_spell308_test.json stays. mieum keeps its evidence (the mum bridge precedent).
+# The editor-only TEST unlock in the isolated save <slot>_spell308_test.json stays. mieum had the fallen_hwangryong evidence (the mum bridge
+# precedent); while D308-114 links mieum to the folklore demon it has none, like the other temporary links, so the chain's grant opens it
+# (the ledger id is written only after that demon's recorded defeat). It goes back to fallen_hwangryong with the chain when that boss exists.
+# The mum bridge (MumBridgeUnlock295) keeps fallen_hwangryong.
 # A rule-sheet row marked Gate test is not opened by GrantedInMain either: only the TEST unlock of its final reaches it.
 종성,LedgerId,EvidenceId,GrantedInMain
 ㄱ,demo_unlock_coda_giyeok,,1
 ㄴ,world_unlock_coda_nieun,,1
 ㅅ,world_unlock_coda_siot,,1
 ㅇ,world_unlock_coda_ieung,,1
-ㅁ,world_unlock_coda_mieum,fallen_hwangryong,1
+ㅁ,world_unlock_coda_mieum,,1

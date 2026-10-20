@@ -248,8 +248,9 @@ namespace Pure308
             r.Check("A5", build.Unlocks.Length == 5 && build.Unlocks.All(u => u.GrantedInMain) && build.Unlocks.Select(u => u.Final).Distinct().Count() == 5,
                 "#308b (D308-51): all five finals are granted in the main game (the ledger ids are written by the realm boss defeats)");
             var mieum = build.Unlocks.Single(u => u.Final == SpellFinal.Mieum);
-            r.Check("A5", mieum.LedgerId == "world_unlock_coda_mieum" && mieum.EvidenceId == "fallen_hwangryong" &&
-                build.Unlocks.Single(u => u.Final == SpellFinal.Giyeok).LedgerId == "demo_unlock_coda_giyeok", "ledger ids equal the ids the session already uses; #308b: the mieum final keeps its late-boss evidence");
+            r.Check("A5", mieum.LedgerId == "world_unlock_coda_mieum" && build.Unlocks.All(u => string.IsNullOrEmpty(u.EvidenceId)) &&
+                build.Unlocks.Single(u => u.Final == SpellFinal.Giyeok).LedgerId == "demo_unlock_coda_giyeok",
+                "ledger ids equal the ids the session already uses; no final asks for an extra evidence while the grant chain is temporary (D308-114: mieum = the folklore demon, not the fallen hwangryong)");
             var probe = new SpellRow { Handler = "x.y", Final = SpellFinal.Nieun, Gate = SpellGateMode.Final };
             var openRow = new SpellRow { Handler = "x.y", Final = SpellFinal.Mieum, Gate = SpellGateMode.Open };
             var bare = new SpellRow { Handler = "x.y", Final = SpellFinal.None };
