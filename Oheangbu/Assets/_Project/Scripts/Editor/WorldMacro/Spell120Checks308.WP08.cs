@@ -95,10 +95,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                 float empowerMul = RowOf(empowerGlyph).F("empower.mul", 0f);
                 Reset(); f.Aim(f.Inside[0]); f.Cast(attack);
                 float basePower = f.Plans[0].Hits[0].Power, baseFlight = f.Plans[0].Hits[0].ImpactTime - Time.time;
-                Reset(); f.Aim(f.Inside[0]); f.Cast(empowerGlyph); f.Cast(parry); f.Cast(attack); f.Cast(attack);
+                Reset(); f.Aim(f.Inside[0]); f.Cast(empowerGlyph); f.Cast(parry); f.Cast(attack); f.Land(); f.Cast(attack);
                 var attackPlans = f.Plans.Where(p => p.Cast.Letter == attack).ToList();
                 r.Check("넌-1", attackPlans.Count == 2 && Near(attackPlans[1].Hits[0].Power, basePower) && f.Accepted.Count == 4,
-                    "one attack only: a parry in between does not use the buff, the second attack is back to its own power");
+                    "one attack only: a parry in between does not use the buff; once the amplified attack has landed the next one is back to its own power");
                 r.Check("넌-2", attackPlans.Count == 2 && Near(attackPlans[0].Hits[0].Power, basePower * empowerMul) && Near(attackPlans[0].Hits[0].ImpactTime - Time.time, baseFlight),
                     "the next attack's planned hit carries power x " + empowerMul + "; its flight time is unchanged");
                 Reset(); f.Aim(f.Inside[0]); f.Cast(empowerGlyph); f.Ink.Restore(cost * .5f); f.Cast(attack);
@@ -107,6 +107,20 @@ namespace Oheangbu.EditorTools.WorldMacro
                 attackPlans = f.Plans.Where(p => p.Cast.Letter == attack).ToList();
                 r.Check("넌-1", refusedAttacks == 0 && attackPlans.Count == 1 && Near(attackPlans[0].Hits[0].Power, basePower * empowerMul),
                     "an attack refused for ink does not use the buff: the next accepted attack is the amplified one");
+                // D308-123: the charge goes when the amplified attack lands, not when it is accepted
+                var empowerFx = (EmpowerEffect308)f.Registry.Find(EmpowerEffect308.HandlerId);
+                Reset(); f.Aim(f.Inside[0]); f.Cast(empowerGlyph); f.Cast(attack); f.Cast(attack);
+                bool heldInFlight = empowerFx.Active(Time.time);
+                f.Land();
+                attackPlans = f.Plans.Where(p => p.Cast.Letter == attack).ToList();
+                r.Check("넌-1", heldInFlight && !empowerFx.Active(Time.time) && attackPlans.Count == 2 && attackPlans.All(p => Near(p.Hits[0].Power, basePower * empowerMul)),
+                    "the charge stays while the amplified attack flies (an attack cast meanwhile is amplified too, TEST) and goes when it lands");
+                Reset(); f.Aim(f.Inside[0]); f.Cast(empowerGlyph); f.Cast(attack);
+                SpellFixture308.Call(f.Wiring, "Unschedule308", 0);   // every hit of the amplified attack is lost: nothing lands
+                f.Land(); f.Cast(attack);
+                attackPlans = f.Plans.Where(p => p.Cast.Letter == attack).ToList();
+                r.Check("넌-1", attackPlans.Count == 2 && Near(attackPlans[1].Hits[0].Power, basePower * empowerMul) && empowerFx.Active(Time.time),
+                    "an amplified attack that lands nothing keeps the charge: the next attack is amplified");
 
                 // ---- swift ----
                 float swiftMul = RowOf(swiftGlyph).F("speed.mul", 0f);

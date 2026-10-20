@@ -92,29 +92,62 @@ namespace Oheangbu.App
         public void Clear() { Running = false; }
     }
 
-    // Empower: the next attack cast is amplified once. The multiplier is applied before dispatch (Modify); the charge is
-    // used up only when that same cast was accepted (Accept). A cast that was refused (no ink, refused Prepare) keeps it.
+    // Empower: the next attack cast is amplified once. The multiplier is applied before dispatch (Modify). D308-123 (TEST): the
+    // charge is used when that cast lands, not when it is accepted. Accept keeps the attack ids its dispatch handed out
+    // (SpellAttackWindow308) and the first confirmed hit with one of them uses the charge (Hit). A cast refused for ink, and one
+    // that lands nothing (an air cast, every shot missed), keep the buff. While an amplified cast is in flight the charge is
+    // still there, so a second attack cast made then is amplified too and whichever lands first uses it (TEST).
+    // A cast accepted without a window (outside a dispatch) uses the charge at its accept, as before.
     public sealed class EmpowerState308
     {
-        bool _applied; char _appliedTo; float _appliedAt;
+        const int SeenCap = 32, FlyingCap = 16;
+        bool _applied; char _appliedTo;
+        // hits between the multiplier and the accept: a handler's Commit may land a hit inside the dispatch
+        readonly List<long> _seen = new List<long>();
+        readonly List<SpellAttackWindow308> _flying = new List<SpellAttackWindow308>();
 
         // The speed is handed in so the rule owns the whole answer: it leaves it alone.
         public void Modify(SpellBuffState308 buffs, char buff, char castLetter, SpellKind kind, float mul, float now, ref float power, ref float speedMul)
         {
-            _applied = false;
+            _applied = false; _seen.Clear();
             if (buffs == null || buffs.Charges(buff, now) <= 0 || !BuffRule308.IsAttack(kind) || !(mul > 0f)) return;
-            power *= mul; _applied = true; _appliedTo = castLetter; _appliedAt = now;
+            power *= mul; _applied = true; _appliedTo = castLetter;
         }
 
-        // true = the amplified cast was accepted and the buff is spent.
-        public bool Accept(SpellBuffState308 buffs, char buff, char castLetter, SpellKind kind, float now)
+        // true = the buff is spent now (no window, or the cast already landed inside its own dispatch). The cast is matched by
+        // its glyph, not by the moment: a swing dispatches at its apex, later than the multiplier.
+        public bool Accept(SpellBuffState308 buffs, char buff, char castLetter, SpellKind kind, SpellAttackWindow308 attacks, float now)
         {
-            if (!_applied || castLetter != _appliedTo || now != _appliedAt || !BuffRule308.IsAttack(kind)) return false;
+            if (!_applied || castLetter != _appliedTo || !BuffRule308.IsAttack(kind)) return false;
             _applied = false;
+            bool landed = attacks == null;
+            for (int i = 0; !landed && i < _seen.Count; i++) landed = attacks.Holds(_seen[i]);
+            _seen.Clear();
+            if (landed) return Spend(buffs, buff, now);
+            for (int i = _flying.Count - 1; i >= 0; i--)
+                if (_flying[i].Empty) _flying.RemoveAt(i);
+            if (_flying.Count >= FlyingCap) _flying.RemoveAt(0);
+            _flying.Add(attacks);
+            return false;
+        }
+
+        // true = a hit of an amplified cast landed and the buff is spent. Its other hits find nothing left to use.
+        public bool Hit(SpellBuffState308 buffs, char buff, long attackId, float now)
+        {
+            if (attackId <= 0) return false;
+            if (_applied && _seen.Count < SeenCap) _seen.Add(attackId);
+            for (int i = 0; i < _flying.Count; i++)
+                if (_flying[i].Holds(attackId)) return Spend(buffs, buff, now);
+            return false;
+        }
+
+        bool Spend(SpellBuffState308 buffs, char buff, float now)
+        {
+            _flying.Clear();
             return buffs != null && buffs.Consume(buff, now);
         }
 
-        public void Clear() { _applied = false; }
+        public void Clear() { _applied = false; _seen.Clear(); _flying.Clear(); }
     }
 
     // Chain discount: while the buff runs, a cast whose element differs from the element of the cast accepted just before it

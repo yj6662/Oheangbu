@@ -32,6 +32,9 @@ namespace Oheangbu.Combat
             new AttackProvenance(Interlocked.Increment(ref _sequence), instigator, source, element);
         public static AttackProvenance CreateMelee(Object instigator, DamageSource source, Element? element) =>
             new AttackProvenance(Interlocked.Increment(ref _sequence), instigator, source, element, true);
+        // #308 D308-123: the last id handed out. Ids only grow, so an id above a value read before some work and not above one
+        // read after it was handed out by that work.
+        public static long Issued => Interlocked.Read(ref _sequence);
 
         // With domain reload disabled the counter would carry over between play sessions.
         // Kept in a nested class so the attribute is certain to be discovered.

@@ -439,6 +439,7 @@ namespace Oheangbu.App
         private void Dispatch308(SpellCast cast, SpellRow row)
         {
             _row308 = row;
+            var attacks = _attacks308 = new SpellAttackWindow308(AttackProvenance.Issued);   // #308 D308-123: this cast's attack ids
             try
             {
                 // #308: a row without a legacy feature runs its registered effect handler; the 36 glyphs below are unchanged.
@@ -467,7 +468,7 @@ namespace Oheangbu.App
                         break;
                 }
             }
-            finally { _row308 = null; }
+            finally { _row308 = null; attacks.Close(AttackProvenance.Issued); _attacks308 = null; }
         }
 
         private bool TrySpendSpell(float cost, in SpellCast cast) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f) * CostScale308(cast));

@@ -29,6 +29,8 @@ namespace Oheangbu.App
         // The row of the letter being dispatched (set only inside OnLetterDrawn). Old callers hand the Resolve* methods a
         // bare SpellCast through reflection; those fall back to the table, then to the grammar (RowFor).
         private SpellRow _row308;
+        // #308 D308-123: the attack ids the cast being dispatched hands out (opened and closed by Dispatch308).
+        private SpellAttackWindow308 _attacks308;
 
         // Misfire re-broadcast (read only): the glyph and why it did not cast. No rule and no HUD hangs on it.
         public event Action<char, SpellResolveStatus> CastMisfired;
@@ -115,7 +117,7 @@ namespace Oheangbu.App
         private void AcceptCast308(SpellCast cast, Vector3 origin, Vector3 forward)
         {
             CastAccepted?.Invoke(cast, origin, forward);
-            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308));
+            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308, attacks: _attacks308));
         }
 
         // The accept of a cast its handler has judged. CastAccepted is a read-only re-broadcast that presentation listens to
@@ -131,7 +133,7 @@ namespace Oheangbu.App
                     try { listener(cast, origin, forward); }
                     catch (Exception exception) { Debug.LogException(exception, this); }
                 }
-            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308));
+            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308, attacks: _attacks308));
         }
 
         private void NotifyEnemyHit308(in EnemyDamageResult result)
