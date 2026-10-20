@@ -31,6 +31,9 @@ namespace Oheangbu.App
         // 0 = a plain timed buff; above 0 the buff also ends with its last charge.
         protected virtual int Charges => 0;
 
+        // How much faster the player's projectiles fly while the buff runs (SpellBuffState308.SpeedScale); 1 = no change.
+        protected virtual float SpeedScale => 1f;
+
         public bool Active(float now) => Buffs != null && Buffs.Active(Letter, now);
 
         // A buff needs a living caster (no revival through a buff) and a duration from its row.
@@ -44,7 +47,7 @@ namespace Oheangbu.App
             if (!(duration > 0f) || !OnActivating(ctx, duration)) return false;
             if (_running && ctx.Fx != null && _aura.Shown) ctx.Fx.End(_aura, true);   // a recast replaces the old aura
             Buffs = ctx.Host.Buffs; Letter = ctx.Cast.Letter; Element = ctx.Cast.Element;
-            Buffs.Activate(Letter, ctx.Now, duration, Charges);
+            Buffs.Activate(Letter, ctx.Now, duration, Charges, SpeedScale);
             _running = true; _aura = default;
             // The rule is complete at this point. A presenter that fails must not undo it.
             try

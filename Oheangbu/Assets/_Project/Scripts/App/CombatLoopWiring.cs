@@ -899,7 +899,8 @@ namespace Oheangbu.App
         {
             float halfAngle = cast.Area.Angle > 0f ? cast.Area.Angle : 25f;
             float range = cast.Area.Length > 0f ? cast.Area.Length : 16f;
-            float speed = cast.Area.Speed > 0f ? cast.Area.Speed : 32f;
+            // #308 D308-123: the cast's speed multiplier reaches the volley too (the 선 buff); every volley row has 1 of its own
+            float speed = (cast.Area.Speed > 0f ? cast.Area.Speed : 32f) * cast.SpeedMul;
             float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
             int shots = cast.Area.Shots > 0 ? cast.Area.Shots : 9;
             float interval = cast.Area.Interval > 0f ? cast.Area.Interval : 0.1f;

@@ -54,8 +54,10 @@ namespace Oheangbu.App
             var targets = ctx.Host.Targets; var actors = SpellSnapshots308.Fill(targets, ref _snaps);
             Vector3 point = result.Target.transform.position;
             _orders.Clear();
+            // D308-123: droplets launched while a speed buff runs fly faster (SpellBuffState308.SpeedScale)
+            float speed = watch.Row.F("drop.speed", 0f) * (ctx.Host.Buffs != null ? ctx.Host.Buffs.SpeedScale(ctx.Now) : 1f);
             DropletRule308.Plan(actors, SpellSnapshots308.IndexOf(targets, result.Target), point, Mathf.RoundToInt(watch.Row.F("drop.count", 0f)),
-                watch.Row.F("drop.radius", 0f), watch.Row.F("drop.speed", 0f), ctx.Now, watch.Power * watch.Row.F("drop.power", 0f), watch.Element, _scratch, _orders);
+                watch.Row.F("drop.radius", 0f), speed, ctx.Now, watch.Power * watch.Row.F("drop.power", 0f), watch.Element, _scratch, _orders);
             var chased = new Transform[_orders.Count];
             for (int i = 0; i < _orders.Count; i++)
             {

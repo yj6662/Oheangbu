@@ -3,9 +3,10 @@ using Oheangbu.Spellcraft;
 
 namespace Oheangbu.App
 {
-    // WP-08 metal buff with the nieun final: attack casts fly faster while it runs (projectile speed multiplier of the
-    // cast); the power is not changed. The cast hook can only reach SpellCast.SpeedMul, which today drives the single
-    // projectile and the giyeok trace flight time; shapes with their own speed in the area data keep it.
+    // WP-08 metal buff with the nieun final: the player's projectiles fly faster while it runs; the power is not changed.
+    // D308-123: every real player projectile. The cast hook multiplies SpellCast.SpeedMul of attack casts (single shots,
+    // the giyeok trace, the volley); shots whose speed is their own row number (bounces, droplets, companion shots) read
+    // the shared timers' SpeedScale at launch. Install marks, summons and the cast interval are not projectiles of it.
     public sealed class SwiftEffect308 : SelfBuffEffect308, ISpellCastHook
     {
         public const string HandlerId = "buff.swift";
@@ -14,6 +15,7 @@ namespace Oheangbu.App
 
         public override string Id => HandlerId;
         public override IReadOnlyList<SpellParamSpec> Params => Specs;
+        protected override float SpeedScale => _mul;
 
         protected override bool OnActivating(in SpellCastContext ctx, float duration)
         {

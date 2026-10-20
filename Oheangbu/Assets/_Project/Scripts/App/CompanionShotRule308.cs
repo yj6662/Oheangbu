@@ -61,16 +61,18 @@ namespace Oheangbu.App
 
             // The shots that go with one accepted cast, whatever that cast is. No aimed enemy, or a dead one: no shot.
             // Every running buff adds its own shots; shot i lands at now + i x interval + distance / speed.
+            // D308-123: the speed is the row's, times the running speed buffs' scale (SpellBuffState308.SpeedScale).
             public void Accompany(SpellBuffState308 timers, SpellActorSnap[] actors, int aimedId, Vector3 from, float now, List<Shot> shots)
             {
                 if (timers == null || actors == null || shots == null || aimedId < 0 || aimedId >= actors.Length || !actors[aimedId].Alive) return;
                 var target = actors[aimedId];
                 float distance = Vector3.Distance(from, target.Position);
+                float scale = timers.SpeedScale(now);
                 for (int c = 0; c < _active.Count; c++)
                 {
                     var companion = _active[c];
                     if (!timers.Active(companion.Letter, now)) continue;
-                    float flight = distance / companion.Speed;
+                    float flight = distance / (companion.Speed * scale);
                     float interval = companion.Interval > 0f ? companion.Interval : 0f;
                     for (int i = 0; i < companion.Shots; i++)
                         shots.Add(new Shot(target.Id, target.Life, now + i * interval + flight, companion.Power, companion.Element, companion.Letter, i));
