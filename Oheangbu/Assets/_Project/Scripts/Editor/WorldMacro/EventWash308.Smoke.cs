@@ -96,6 +96,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    var r=go.GetComponent<ParticleSystemRenderer>();r.sharedMaterial=mat;r.renderMode=ParticleSystemRenderMode.Billboard;r.sortMode=ParticleSystemSortMode.Distance;
    r.minParticleSize=0f;r.maxParticleSize=4f;r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;r.receiveShadows=false;
    r.lightProbeUsage=UnityEngine.Rendering.LightProbeUsage.Off;r.reflectionProbeUsage=UnityEngine.Rendering.ReflectionProbeUsage.Off;
+   // drawn after the realm fog so the 운해 band never paints over a column against the sky (§8.14, EventWash308.AfterFog.cs)
+   int layer=SmokeLayer();if(layer>=0)go.layer=layer;
   }
 
   static string Smoke(Dictionary<string,string> o,bool dry)
