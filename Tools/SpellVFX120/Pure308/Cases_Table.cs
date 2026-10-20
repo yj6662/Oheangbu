@@ -257,8 +257,21 @@ namespace Pure308
                 SpellUnlockPolicy308.JudgeNew(probe, true, true) == SpellResolveStatus.Ok && SpellUnlockPolicy308.JudgeNew(openRow, true, false) == SpellResolveStatus.Ok &&
                 SpellUnlockPolicy308.JudgeNew(bare, true, false) == SpellResolveStatus.Ok, "new rows: unregistered = Unavailable, locked final = Locked, open row or no final = Ok");
             r.Check("A5", new LegacySpellGate(true, true, true, true, true).Judge(probe) == SpellResolveStatus.Unavailable, "a new row never opens through the old flag overloads");
-            // the five summons keep their open gate (current behaviour, waiting for the user's confirmation)
-            r.Check("A5", build.Rows.Where(x => x.Category == SpellCategory.Summon).All(x => x.Gate == SpellGateMode.Open && x.Feature == SpellLegacyFeature.Book), "summon rows are open rows");
+            // D308-124: the five summons left the open exception; they are book rows behind the mieum final (Rules308_Gate124)
+            var summonRows = build.Rows.Where(x => x.Category == SpellCategory.Summon).ToArray();
+            r.Check("A5", summonRows.Length == 5 && summonRows.All(x => x.Gate == SpellGateMode.Final && x.Feature == SpellLegacyFeature.Book && x.Final == SpellFinal.Mieum),
+                "summon rows are book rows gated by the mieum final (D308-124)", string.Join(",", summonRows.Select(x => x.Letter + "=" + x.Gate)));
+            r.Check("A5", build.Rows.Where(x => x.Feature == SpellLegacyFeature.Book && x.Final != SpellFinal.None).All(x => x.Category == SpellCategory.Summon),
+                "the summons are the only book rows with a final: no other legacy glyph changes gate");
+            var summon = summonRows[0];
+            var bookBare = build.Rows.First(x => x.Feature == SpellLegacyFeature.Book && x.Final == SpellFinal.None);
+            var summonOpen = new SpellRow { Feature = SpellLegacyFeature.Book, Final = SpellFinal.Mieum, Gate = SpellGateMode.Open, Kind = SpellKind.Summon };
+            r.Check("A5", SpellUnlockPolicy308.JudgeBook(summon, true, false) == SpellResolveStatus.Locked && SpellUnlockPolicy308.JudgeBook(summon, true, true) == SpellResolveStatus.Ok &&
+                SpellUnlockPolicy308.JudgeBook(summon, false, false) == SpellResolveStatus.Ok && SpellUnlockPolicy308.JudgeBook(bookBare, true, false) == SpellResolveStatus.Ok &&
+                SpellUnlockPolicy308.JudgeBook(summonOpen, true, false) == SpellResolveStatus.Ok && SpellUnlockPolicy308.JudgeBook(null, true, true) == SpellResolveStatus.Unavailable,
+                "book gate: a summon without mieum is Locked, with it Ok; no unlock source (old scene) keeps the book; a book row without a final and an open summon row stay Ok");
+            r.Check("A5", new LegacySpellGate(false, false, false, false, false).Judge(summon) == SpellResolveStatus.Ok,
+                "the old flag overloads (no unlock source) still cast the summons: old scenes and tools are unchanged");
             // the earth field glyph (last vocabulary): without its proof it does not cast
             var mumRow = build.Rows.Single(x => x.Feature == SpellLegacyFeature.Mum);
             r.Check("뭄-3", SpellResolveCore308.Resolve(mumRow.Letter[0], 1f, 1f, mumRow, shut, out _) != SpellResolveStatus.Ok &&

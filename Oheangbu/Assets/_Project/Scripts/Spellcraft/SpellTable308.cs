@@ -171,5 +171,16 @@ namespace Oheangbu.Spellcraft
             if (row.Gate == SpellGateMode.Open || row.Final == SpellFinal.None || finalUnlocked) return SpellResolveStatus.Ok;
             return SpellResolveStatus.Locked;
         }
+
+        // Book rows (glyphs that cast before #308, no handler of the registry): open, except a book row with a final of its own
+        // that its rule sheet does not keep open (D308-124: the five summons, all mieum) - it waits for that final like a new
+        // row. unlockSource = false: the scene has no final to wait for (no campaign session, no lab; the old flag overloads),
+        // so its book stays as it was.
+        public static SpellResolveStatus JudgeBook(SpellRow row, bool unlockSource, bool finalUnlocked)
+        {
+            if (row == null) return SpellResolveStatus.Unavailable;
+            if (!unlockSource || row.Gate == SpellGateMode.Open || row.Final == SpellFinal.None || finalUnlocked) return SpellResolveStatus.Ok;
+            return SpellResolveStatus.Locked;
+        }
     }
 }

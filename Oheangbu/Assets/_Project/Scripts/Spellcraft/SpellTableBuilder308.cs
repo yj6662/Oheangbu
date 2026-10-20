@@ -176,8 +176,9 @@ namespace Oheangbu.Spellcraft
                     if (draft.Feature.Length > 0 && (FeatureOf(draft.Feature) == SpellLegacyFeature.None || draft.Handler.Length == 0))
                     { result.Errors.Add(where + ": unknown Feature '" + draft.Feature + "' or Feature without Handler"); fine = false; }
                     if (draft.Gate.Length > 0 && draft.Gate != "final" && draft.Gate != "open" && draft.Gate != "test") { result.Errors.Add(where + ": Gate must be final, open or test"); fine = false; }
-                    // A row may not open itself: the only rows usable whatever their final are the five summons (the current
-                    // exception). Every other final consonant opens through the unlock sheet, so a rule sheet cannot leak one.
+                    // A row may not open itself: only a summon row may be usable whatever its final (the five summons were the
+                    // exception until D308-124 put them behind mieum, Rules308_Gate124). Every other final consonant opens through
+                    // the unlock sheet, so a rule sheet cannot leak one.
                     if (draft.Gate == "open" && categories[index - 1] != SpellCategory.Summon)
                     { result.Errors.Add(where + ": Gate open is the summon exception only (a final consonant opens through Unlock308.csv)"); fine = false; }
                     // Gate test narrows a row: its final's TEST unlock opens it, the main-game grant of that final does not
