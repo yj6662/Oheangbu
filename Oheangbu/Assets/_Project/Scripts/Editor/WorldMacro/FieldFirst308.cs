@@ -39,7 +39,14 @@ namespace Oheangbu.EditorTools.WorldMacro
   static string DataFile=>PostLedger308.RepoPath("Art/World/Compact/Rebuild/FieldFirst308/field117.json");
   static string BackupRoot=>PostLedger308.RepoPath("Art/Playtest306/Backups/FieldFirst308");
   static string LedgerPath=>Path.Combine(BackupRoot,"ledger.json");
-  static Ledger ReadLedger()=>File.Exists(LedgerPath)?JsonUtility.FromJson<Ledger>(File.ReadAllText(LedgerPath))??new Ledger():new Ledger();
+  // JsonUtility writes a null string as "": read "" back as null, or a revert (x=null) makes the next apply skip its "before"
+  // and the next revert parse "" (2026-10-20: cloudBefore / initialBefore were lost that way)
+  static Ledger ReadLedger()
+  {
+   var l=File.Exists(LedgerPath)?JsonUtility.FromJson<Ledger>(File.ReadAllText(LedgerPath))??new Ledger():new Ledger();
+   foreach(var f in typeof(Ledger).GetFields())if(f.FieldType==typeof(string)&&(string)f.GetValue(l)=="")f.SetValue(l,null);
+   return l;
+  }
   static void WriteLedger(Ledger l){Directory.CreateDirectory(BackupRoot);File.WriteAllText(LedgerPath,JsonUtility.ToJson(l,true));}
 
   public static string Run(string command)
