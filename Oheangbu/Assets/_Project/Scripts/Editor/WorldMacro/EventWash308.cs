@@ -14,6 +14,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  //        (URP Lit like the kit stone slots, no emission, no light marker). Stone, LODGroup, collider, position unchanged.
  //        Never attraction-revert. Ledger Art/Playtest306/Backups/EventWash308/ledger.json, scene backups <utc>/.
  //   wash308-smoke[:dry|:revert][:scene=..]  봉수 먹 연기 (SPEC-FIELD-FIRST-HOUR-308 A1) — EventWash308.Smoke.cs
+ //   wash308-hearth[:dry|:revert]  마을 · 주막 아궁이 연기 (SPEC-FIELD-FIRST-HOUR-308 §8.13) — EventWash308.Hearth.cs
  //   wash308-halo-feature[:dry|:revert]   removes Renderer297's BeaconHalo297 feature only when no active renderer in any of the
  //        three scenes draws that pass (Renderer297 backed up first; :revert copies the backup back)
  //   wash308-audit[:scene=..][:label=..]  beacons (AC-W2/W4), halo-pass renderers, persistent emission census vs the ART-INK
@@ -67,6 +68,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     {
      case "wash308-beacons":return o.ContainsKey("revert")?BeaconsRevert(o):Beacons(o,o.ContainsKey("dry"));
      case "wash308-smoke":return o.ContainsKey("revert")?SmokeRevert(o):Smoke(o,o.ContainsKey("dry"));
+     case "wash308-hearth":return o.ContainsKey("revert")?HearthRevert():o.ContainsKey("probe")?HearthProbe():Hearth(o.ContainsKey("dry"));
      case "wash308-halo-feature":return o.ContainsKey("revert")?HaloFeatureRevert():HaloFeature(o.ContainsKey("dry"));
      case "wash308-audit":return Audit(o);
      case "wash308-sheet":return o.ContainsKey("revert")?SheetRevert():Sheet(o.ContainsKey("dry"));

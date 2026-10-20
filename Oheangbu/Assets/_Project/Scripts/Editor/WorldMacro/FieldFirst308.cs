@@ -303,7 +303,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    }
    return "소품";
   }
-  sealed class SightTry{public float step,hardAt=float.PositiveInfinity;public string hard="열림",soft="열림";public int softCount;public bool Open=>float.IsPositiveInfinity(hardAt)&&softCount==0;}
+  sealed class SightTry{public float step,hardAt=float.PositiveInfinity;public Vector3 eye;public string hard="열림",soft="열림";public int softCount;public bool Open=>float.IsPositiveInfinity(hardAt)&&softCount==0;}
   static string Sight()
   {
    var c=Data()["sightline"]??throw new Refused("field117.json: sightline missing (python Tools/Art/FieldFirst308/field117_build.py)");
@@ -326,7 +326,26 @@ namespace Oheangbu.EditorTools.WorldMacro
      float size=r.bounds.size.magnitude;if(size>=softMin&&size<=softMax)soft.Add(r);
     }
    }
-   var sb=new StringBuilder("field308-sight (open scenes "+UnityEngine.SceneManagement.SceneManager.sceneCount+", soft renderers "+soft.Count+" of "+softMin.ToString("F0")+" - "+softMax.ToString("F0")+" m, eye steps "+string.Join("/",steps.Select(x=>x.ToString("F0")))+" m)\n");
+   // sheet vegetation (Flora308 and the other dressing sheets) is drawn instanced by CompactRebuildArtRenderer: no Renderer, no
+   // collider, so the scan above never saw it (2026-10-20: legs the audit called open were solid canopy in the stills). Tree / shrub
+   // rows become soft boxes with the renderer's own footprint (Prepare: Size x Scale, radius max(x,z) x .75); the lower 30 % of the
+   // height is left out - the eye sees between trunks under the crowns.
+   var sheetSoft=new List<(Bounds b,string name)>();var sheetsSeen=new HashSet<WorldMacroDressingSheetSO>();
+   foreach(var art in UnityEngine.Object.FindObjectsByType<Oheangbu.App.World.CompactRebuildArtRenderer>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+   {
+    var sheet=art.Sheet;if(!art.enabled||sheet==null||!sheetsSeen.Add(sheet))continue;
+    var protos=sheet.Prototypes.Where(p=>p!=null&&p.Id!=null).GroupBy(p=>p.Id).ToDictionary(g=>g.Key,g=>g.First());
+    foreach(var f in sheet.FixedPlacements)
+    {
+     if(f==null||f.PrototypeId==null||!protos.TryGetValue(f.PrototypeId,out var p))continue;
+     if(p.Category!=WorldMacroDressingSheetSO.Kind.Tree&&p.Category!=WorldMacroDressingSheetSO.Kind.Shrub)continue;
+     var size=p.Size*f.Scale;float radius=Mathf.Max(size.x,size.z)*.75f;float h=Mathf.Max(size.y,.2f);
+     var b=new Bounds(f.Position+Vector3.up*h*.65f,new Vector3(radius*2,h*.7f,radius*2));
+     float mag=new Vector3(radius*2,h,radius*2).magnitude;if(mag<softMin||mag>softMax)continue;
+     sheetSoft.Add((b,"식생(시트) "+f.PrototypeId));
+    }
+   }
+   var sb=new StringBuilder("field308-sight (open scenes "+UnityEngine.SceneManagement.SceneManager.sceneCount+", soft renderers "+soft.Count+" + sheet trees / shrubs "+sheetSoft.Count+" of "+softMin.ToString("F0")+" - "+softMax.ToString("F0")+" m, eye steps "+string.Join("/",steps.Select(x=>x.ToString("F0")))+" m)\n");
    sb.AppendLine(" leg | guide | dist m | angle° | front | result (first open eye step, else the last step's blockers)");
    int legs=0,legsOpen=0;
    foreach(var leg in (c["legs"] as JArray)??new JArray())
@@ -366,17 +385,20 @@ namespace Oheangbu.EditorTools.WorldMacro
      {
       var w=walk(step);float sx=w.x,sz=w.y;var eye=new Vector3(sx,GroundY(sx,sz)+eyeUp,sz);
       var d=target-eye;float dist=d.magnitude;var dir=d/dist;float reach=Mathf.Max(0,dist-gap);
-      var t=new SightTry{step=step};
+      var t=new SightTry{step=step,eye=eye};
       foreach(var h in Physics.RaycastAll(eye,dir,reach,~0,QueryTriggerInteraction.Ignore))
        if(!(h.collider is CharacterController)&&h.distance>.5f&&h.distance<t.hardAt){t.hardAt=h.distance;t.hard=Kind(h.collider.transform)+" "+h.distance.ToString("F0")+" m "+h.collider.name;}
       var ray=new Ray(eye,dir);var hits=new List<(float t,Renderer r)>();
       foreach(var r in soft){if(r.bounds.Contains(eye)||r.bounds.Contains(target))continue;if(r.bounds.IntersectRay(ray,out float hit)&&hit>.5f&&hit<Mathf.Min(reach,t.hardAt))hits.Add((hit,r));}
-      t.softCount=hits.Count;
-      if(hits.Count>0)t.soft=hits.Count+"개, 첫 "+string.Join(" / ",hits.OrderBy(x=>x.t).Take(2).Select(x=>Kind(x.r.transform)+" "+x.t.ToString("F0")+" m "+x.r.name));
+      var named=hits.Select(x=>(x.t,label:Kind(x.r.transform)+" "+x.t.ToString("F0")+" m "+x.r.name)).ToList();
+      foreach(var s in sheetSoft){if(s.b.Contains(eye)||s.b.Contains(target))continue;if(s.b.IntersectRay(ray,out float hit)&&hit>.5f&&hit<Mathf.Min(reach,t.hardAt))named.Add((hit,s.name+" "+hit.ToString("F0")+" m"));}
+      t.softCount=named.Count;
+      if(named.Count>0)t.soft=named.Count+"개, 첫 "+string.Join(" / ",named.OrderBy(x=>x.t).Take(2).Select(x=>x.label));
       last=t;if(t.Open){open=t;break;}
      }
      if(open!=null&&front)any=true;
-     string result=open!=null?"열림 (+"+open.step.ToString("F0")+" m)"+(front?"  [O]":""):"막힘 — 단단 "+last.hard+" | 무른 "+last.soft;
+     // the eye of the first open step (xz) and the guide point, so a still can be shot from where the guide first shows
+     string result=open!=null?"열림 (+"+open.step.ToString("F0")+" m)"+(front?"  [O]":"")+" eye ("+open.eye.x.ToString("F1")+", "+open.eye.z.ToString("F1")+") guide ("+gx.ToString("F1")+", "+gy.ToString("F1")+", "+gz.ToString("F1")+")":"막힘 — 단단 "+last.hard+" | 무른 "+last.soft+" | last eye ("+last.eye.x.ToString("F1")+", "+last.eye.z.ToString("F1")+")";
      sb.AppendLine(" "+S(leg,"id")+" | "+S(g,"name")+" | "+d0.magnitude.ToString("F0")+" | "+angle.ToString("F0")+" | "+(front?"앞":"옆/뒤")+" | "+result);
     }
     if(any)legsOpen++;

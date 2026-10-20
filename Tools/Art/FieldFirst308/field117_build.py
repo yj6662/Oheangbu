@@ -135,15 +135,15 @@ def build():
                 {'id': 'L0 마당 → 성황당', 'eye': [3261.9, 1885.9], 'toward': [3301, 2226],
                  'guides': [{'name': '성황당', 'x': 3301, 'z': 2226, 'up': 4}, {'name': '금표 비석', 'x': 3339, 'z': 2173, 'up': 3}]},
                 {'id': 'L1 성황당 → 금표 주막', 'eye': [3293.8, 2229.5], 'toward': [3069, 2339],
-                 'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}]},
+                 'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}, {'name': '주막 아궁이 연기', 'x': 3067.8, 'z': 2336.1, 'y': 169}]},
                 {'id': 'L2 주막 → 역참', 'eye': [3061.2, 2340.8], 'toward': [2844, 2390],
                  'guides': [{'name': '역참 지붕', 'x': 2844, 'z': 2390, 'up': 7}]},
                 {'id': 'L3 역참 → 마을', 'eye': [2841.6, 2382.4], 'toward': [2761, 2132],
-                 'guides': [{'name': '마을 분소 지붕', 'x': 2761, 'z': 2132, 'up': 7}]},
+                 'guides': [{'name': '마을 분소 지붕', 'x': 2761, 'z': 2132, 'up': 7}, {'name': '분소 아궁이 연기', 'x': 2755.1, 'z': 2122.6, 'y': 257.7}]},
                 # MainPath runs village -> back down past the inn (arc 1231 -> 1663) -> logging camp (2177): the inn is passed twice,
                 # so the leg is read in two halves at that crossroads
                 {'id': 'L4a 마을 → 주막 갈림(되짚기)', 'eye': [2766.7, 2137.7], 'toward': [3075, 2339],
-                 'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}, {'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6},
+                 'guides': [{'name': '금표 주막 지붕', 'x': 3069, 'z': 2339, 'up': 7}, {'name': '주막 아궁이 연기', 'x': 3067.8, 'z': 2336.1, 'y': 169}, {'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6},
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
                 {'id': 'L4b 주막 갈림 → 벌목장', 'eye': [3075, 2339], 'toward': [3318, 2688],
                  'guides': [{'name': '벌목장', 'x': 3318, 'z': 2688, 'up': 6}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280},
@@ -152,13 +152,28 @@ def build():
                  'guides': [{'name': '갈림 자리', 'x': 3266, 'z': 3082, 'up': 3}, {'name': '신목 수관', 'x': 3710, 'z': 3255, 'y': 254},
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
                 {'id': 'L6 갈림 → 사냥꾼 주막', 'eye': [3262.7, 3089.3], 'toward': [3205, 3215],
-                 'guides': [{'name': '사냥꾼 주막 지붕', 'x': 3205, 'z': 3215, 'up': 7}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
+                 'guides': [{'name': '사냥꾼 주막 지붕', 'x': 3205, 'z': 3215, 'up': 7}, {'name': '사냥꾼 주막 아궁이 연기', 'x': 3203.6, 'z': 3205.1, 'y': 184}, {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
                 {'id': 'L7 사냥꾼 주막 → 청룡', 'eye': [3205.1, 3223.0], 'toward': [3210, 3550],
                  'guides': [{'name': '성소', 'x': 3211, 'z': 3430, 'up': 5}, {'name': '청룡 자리', 'x': 3210, 'z': 3550, 'up': 10},
                             {'name': '청림 봉수 연기', 'x': 2854.6, 'z': 3494.9, 'y': 280}]},
                 # C1 (D308-117): the 신목 side path - does the walker see the gatekeepers and the end before reaching them?
                 {'id': 'C1 신목 갈래 → 끝', 'eye': [3602, 3234], 'toward': [3709, 3254],
                  'guides': [{'name': '이끼 승냥이 문지기', 'x': 3683, 'z': 3227, 'up': 1.0}, {'name': '신목 밑동 껍질', 'x': 3697.6, 'z': 3248.3, 'up': 0.6}]},
+            ],
+        },
+        # §8.13 (TEST): cooking smoke over the main roof of the settlement beats - the sheet forest hides the roofs until the player
+        # is nearly there (field308-sight with sheet trees, 2026-10-20), a column of ink smoke rises above the crowns. Read by
+        # EventWash308 wash308-hearth (the roof = largest "roof" renderer within r of x, z in the open scenes; the houses are in
+        # W_Demo_Main). Column: rise x life ~ 44 m, about 35 m seen (the guide has to clear the crowns: field308-sight at +20/30/40/55 m over the roof, 2026-10-20, opened L4a only from +30 m and L3 from the start at +40 m). Density: rate 1.9 / size 2.2 / alpha .42 read as scattered smudges at 250 m (fhs stills), so 4.5 / 3 / .55, ink like the beacon (M_BeaconSmoke308, no emission).
+        # 역참 (2844, 2390) has no building within 30 m - only 정담 standing on the road (wash308-hearth:probe) - so no row: smoke
+        # from bare ground would have no source. It needs a building or a hearth prop first (PENDING_QUESTIONS_308).
+        'hearth': {
+            'column': {'rise': 2.2, 'life': 20.0, 'rate': 4.5, 'wind': 0.5, 'size0': 3.0, 'size1': 11.0, 'ink': [0.16, 0.155, 0.15, 0.55],
+                       'cap': 100, 'radius': 0.5},
+            'rows': [
+                {'id': 'hearth_inn', 'name': '금표 주막', 'x': 3069, 'z': 2339, 'r': 30},
+                {'id': 'hearth_village', 'name': '마을 분소', 'x': 2761, 'z': 2132, 'r': 30},
+                {'id': 'hearth_hunter', 'name': '사냥꾼 주막', 'x': 3205, 'z': 3215, 'r': 30},
             ],
         },
     }

@@ -71,20 +71,23 @@ namespace Oheangbu.EditorTools.WorldMacro
    return r!=null?new Vector3(r.bounds.center.x,r.bounds.max.y,r.bounds.center.z):beacon.position;
   }
 
-  static void BuildSmoke(GameObject go,Material mat)
+  static void BuildSmoke(GameObject go,Material mat)=>BuildSmoke(go,mat,SmokeRise,SmokeLife,SmokeRate,SmokeWind,SmokeSize0,SmokeSize1,SmokeInk,64,.8f);
+  // the column shape shared by the beacon smoke and the hearth smoke (EventWash308.Hearth.cs): rise m/s, life s, rate /s, wind m/s,
+  // puff size at birth / at death, ink colour (alpha = density), particle cap, emitter radius
+  internal static void BuildSmoke(GameObject go,Material mat,float rise,float life,float rate,float wind,float size0,float size1,Color ink,int cap,float radius)
   {
    var ps=go.AddComponent<ParticleSystem>();ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
    var main=ps.main;main.duration=10f;main.loop=true;main.prewarm=true;main.playOnAwake=true;
-   main.startLifetime=new ParticleSystem.MinMaxCurve(SmokeLife*.85f,SmokeLife);main.startSpeed=new ParticleSystem.MinMaxCurve(SmokeRise*.8f,SmokeRise);
-   main.startSize=new ParticleSystem.MinMaxCurve(SmokeSize0*.8f,SmokeSize0);main.startRotation=new ParticleSystem.MinMaxCurve(0f,Mathf.PI*2f);
-   main.startColor=SmokeInk;main.simulationSpace=ParticleSystemSimulationSpace.World;main.maxParticles=64;main.scalingMode=ParticleSystemScalingMode.Local;
-   var em=ps.emission;em.rateOverTime=SmokeRate;
-   var sh=ps.shape;sh.shapeType=ParticleSystemShapeType.Cone;sh.angle=4f;sh.radius=.8f;sh.rotation=new Vector3(-90f,0f,0f);
+   main.startLifetime=new ParticleSystem.MinMaxCurve(life*.85f,life);main.startSpeed=new ParticleSystem.MinMaxCurve(rise*.8f,rise);
+   main.startSize=new ParticleSystem.MinMaxCurve(size0*.8f,size0);main.startRotation=new ParticleSystem.MinMaxCurve(0f,Mathf.PI*2f);
+   main.startColor=ink;main.simulationSpace=ParticleSystemSimulationSpace.World;main.maxParticles=cap;main.scalingMode=ParticleSystemScalingMode.Local;
+   var em=ps.emission;em.rateOverTime=rate;
+   var sh=ps.shape;sh.shapeType=ParticleSystemShapeType.Cone;sh.angle=4f;sh.radius=radius;sh.rotation=new Vector3(-90f,0f,0f);
    // wind: a constant sideways push that grows with age (the column leans more as it rises); no Drag (the size x speed trap)
    var vel=ps.velocityOverLifetime;vel.enabled=true;vel.space=ParticleSystemSimulationSpace.World;
-   vel.x=new ParticleSystem.MinMaxCurve(SmokeWind,AnimationCurve.Linear(0f,.1f,1f,1f));vel.y=new ParticleSystem.MinMaxCurve(0f);vel.z=new ParticleSystem.MinMaxCurve(SmokeWind*.35f,AnimationCurve.Linear(0f,.1f,1f,1f));
+   vel.x=new ParticleSystem.MinMaxCurve(wind,AnimationCurve.Linear(0f,.1f,1f,1f));vel.y=new ParticleSystem.MinMaxCurve(0f);vel.z=new ParticleSystem.MinMaxCurve(wind*.35f,AnimationCurve.Linear(0f,.1f,1f,1f));
    var noise=ps.noise;noise.enabled=true;noise.strength=.6f;noise.frequency=.12f;noise.scrollSpeed=.15f;noise.quality=ParticleSystemNoiseQuality.Medium;
-   var size=ps.sizeOverLifetime;size.enabled=true;size.size=new ParticleSystem.MinMaxCurve(SmokeSize1/SmokeSize0,AnimationCurve.EaseInOut(0f,SmokeSize0/SmokeSize1,1f,1f));
+   var size=ps.sizeOverLifetime;size.enabled=true;size.size=new ParticleSystem.MinMaxCurve(size1/size0,AnimationCurve.EaseInOut(0f,size0/size1,1f,1f));
    var col=ps.colorOverLifetime;col.enabled=true;
    var g=new Gradient();g.SetKeys(new[]{new GradientColorKey(Color.white,0f),new GradientColorKey(new Color(.85f,.84f,.82f),1f)},
     new[]{new GradientAlphaKey(0f,0f),new GradientAlphaKey(1f,.08f),new GradientAlphaKey(.7f,.45f),new GradientAlphaKey(0f,1f)});
