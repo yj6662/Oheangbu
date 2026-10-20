@@ -29,11 +29,61 @@ def decision_strings():
     return out
 
 
+TEXTS = ROOT / 'Art' / 'World' / 'Compact' / 'Rebuild' / 'CliffBoundary308' / 'texts308.json'
+
+# C2 (SPEC-FIELD-FIRST-HOUR-308 §C2, D308-117 F3 - F6): bullet -> commission. The quoted strings of a bullet are, in order,
+# speaker, first, offer 1, offer 2, waiting, report, completed [, row, row line 1 (before the request), row line 2 (pick-up)].
+# giver = the Texts308 XF3 - XF6 point id; evidence = a point id, or target = an encounter id. Reward = TEST inside the Spec's
+# 50 - 120 band (fetch inside a gated end 60, the dungeon fetch 80, two bandits 90, the beast pack by the sanctuary road 100).
+C2 = [
+    {'bullet': 'F3', 'id': 'commission308_mansok', 'giver': 'shingle_mansok308', 'evidence': 'sinmok_bark308', 'reward': 60},
+    {'bullet': 'F4', 'id': 'commission308_dolsoe', 'giver': 'woodcutter_dolsoe308', 'target': 'field308/cheongrim_charcoal_bandit_2_0', 'reward': 90},
+    {'bullet': 'F5', 'id': 'commission308_bunnyeo', 'giver': 'herb_bunnyeo308', 'target': 'forest_beast308/1', 'reward': 100},
+    {'bullet': 'F6', 'id': 'commission308_eopdong', 'giver': 'charcoal_eopdong308', 'evidence': 'dg308_cr_kiln_sack', 'reward': 80},
+]
+
+
+def commissions(D):
+    rows, evidence = [], []
+    for c in C2:
+        s = D[c['bullet']]
+        if len(s) not in (7, 10): raise SystemExit('%s: %d quoted strings (7 or 10 expected)' % (c['bullet'], len(s)))
+        offer, waiting, report, done = s[1:4], [s[4]], [s[5]], [s[6]]
+        rows.append({'id': c['id'], 'giver': c['giver'], 'evidence': c.get('evidence', ''), 'target': c.get('target', ''),
+                     'reward': c['reward'], 'speaker': s[0], 'src': [c['bullet'], 0, 6],
+                     'offer_lines': offer, 'waiting_lines': waiting, 'report_lines': report, 'completed_lines': done,
+                     # the old (non-306) talk path reads the *Text fields only
+                     'offer_text': ' '.join(offer), 'waiting_text': ' '.join(waiting), 'report_text': ' '.join(report), 'completed_text': ' '.join(done)})
+        if c.get('evidence'):
+            if len(s) != 10: raise SystemExit('%s: a fetch commission needs the row and its two lines' % c['bullet'])
+            evidence.append({'id': c['evidence'], 'commission': c['id'], 'label': s[7], 'locked': s[8], 'text': s[9], 'src': [c['bullet'], 7, 9]})
+    return rows, evidence
+
+
+def text_rules_fail(rows, evidence):
+    tr = json.loads(TEXTS.read_text(encoding='utf-8'))['text_rules']; bad = []
+    def chk(name, text, mx):
+        if len(text) > mx: bad.append('%s %d>%d' % (name, len(text), mx))
+        if any(b in text for b in tr['banned']) or re.search(tr['banned_regex'], text): bad.append(name + ' banned word')
+        if any(e in text for e in tr['banned_endings']): bad.append(name + ' banned ending')   # Texts308 TextRule: Contains
+    for r in rows:
+        chk(r['id'] + ' speaker', r['speaker'], tr['speaker_max_chars'])
+        for k in ('offer_lines', 'waiting_lines', 'report_lines', 'completed_lines'):
+            for n, t in enumerate(r[k]): chk('%s %s[%d]' % (r['id'], k, n), t, tr['max_chars'])
+    for e in evidence:
+        chk(e['id'] + ' label', e['label'], tr['label_max_chars'])
+        chk(e['id'] + ' locked', e['locked'], tr['max_chars']); chk(e['id'] + ' text', e['text'], tr['max_chars'])
+    return bad
+
+
 def build():
-    F2 = decision_strings()['F2']
+    D = decision_strings(); F2 = D['F2']
+    c2, c2_evidence = commissions(D)
+    bad = text_rules_fail(c2, c2_evidence)
+    if bad: raise SystemExit('REFUSED text rules: %s' % bad)
     data = {
-        'id': 'field117', 'version': '117.1', 'status': 'TEST - D308-117 (2026-10-19). Built by Tools/Art/FieldFirst308/field117_build.py '
-                                                       '(lines copied from Docs/DECISIONS.md D308-117 F2 by position).',
+        'id': 'field117', 'version': '117.2', 'status': 'TEST - D308-117 (2026-10-19 / C2 2026-10-20). Built by Tools/Art/FieldFirst308/field117_build.py '
+                                                       '(lines copied from Docs/DECISIONS.md D308-117 F2 - F6 by position).',
         'doc': [
             'Read by FieldFirst308 (Editor/WorldMacro/FieldFirst308.cs). Every word the tool writes is here; the code holds none.',
             'documents[]: WorldMacroPlaytestSO.Documents rows. id = the UiProgress item id (prefix "letter."), grant_on_stage = the campaign '
@@ -51,6 +101,11 @@ def build():
             'notes': [{'after_stage': 'mine_evidence', 'text': F2[5]}, {'after_stage': 'cargo_contract', 'text': F2[6]}],
         }],
         'campaign_start': {'remove_initial': ['commission'], 'stage': 'commission', 'trigger_point': 'village_commission'},
+        # C2 (TEST): the four sub-NPC commissions. Read by FieldFirst308 field308-c2: commissions[] -> WorldContentSO.Commissions
+        # rows (giver point = the Texts308 point, must be a Conversation point with no talk rows), evidence[] -> the Evidence
+        # point's LockedText (before the request) and Text (the pick-up). reward_band = the Spec range a reward must sit in.
+        'c2': {'decision': {'file': 'Docs/DECISIONS.md', 'entry': ENTRY, 'bullets': ['F3', 'F4', 'F5', 'F6']},
+               'reward_band': [50, 120], 'commissions': c2, 'evidence': c2_evidence},
         # D308-118 (2026-10-19, TEST): the 운해 band of RealmFog297 on the live fog material. Heights from field308-heights
         # (walkable ground p50 163 / p90 266, peaks 300 - 400): the band wraps the upper slopes, the summits stand above it.
         'cloud_band': {

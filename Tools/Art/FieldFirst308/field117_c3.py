@@ -14,7 +14,8 @@ Writes the BUILT data (git-ignored, like field117_c1.py does for places308.json)
 (door + reward rows; a later `dungeon308.py build` drops them - rerun this script after it) and
 Tools/Unity/Stage308_populate/dungeon_front308.json. Applied by `Dungeon308 refit:cr_root`, `refit:cr_kiln`, `Content308 Populate front:apply`.
 Idempotent; a byte copy of each file goes to Art/Playtest306/Backups/FieldFirst308 first.
-python Tools/Art/FieldFirst308/field117_c3.py [--revert]
+python Tools/Art/FieldFirst308/field117_c3.py [--revert | --texts]
+  --texts = only the evidence rows' prompt / locked / text, in place (C2: the layout is shared with dungeon308_dress.py)
 """
 import json, shutil, sys, time
 from pathlib import Path
@@ -35,10 +36,23 @@ ROWS = {
         {'id': 'dg308_cr_kiln_cache', 'kind': 'coins', 'currency': 40, 'prefab': 'SM_051_A_Ceramic_Bottle', 'text': COINS_TEXT,
          'pos': [2744.0, 233.494, 2713.8], 'stand': [2744.0, 233.494, 2713.8]},
         {'id': 'dg308_cr_kiln_sack', 'kind': 'evidence', 'prefab': 'Assets/KoreanTraditionalFestival/Prefabs/SM_SackOfRice',
-         'prompt': '숯자루', 'text': '숯자루가 굴 바닥에 엎어져 있다. 입구가 그을렸다.',
+         'prompt': '숯자루', 'locked': None, 'text': None,   # from field117.json c2.evidence (D308-117 F6 row lines 1 / 2)
          'pos': [2754.2, 233.494, 2705.0], 'stand': [2754.2, 233.494, 2705.0]},
     ],
 }
+FIELD117 = ROOT / 'Art/World/Compact/Rebuild/FieldFirst308/field117.json'
+
+
+def evidence_texts():
+    """C2 (2026-10-20): an evidence row's words come from the built field117.json (field117_build.py, D308-117 by position):
+    prompt = the row name, locked = row line 1 (seen before the request), text = row line 2 (the pick-up)."""
+    ev = {e['id']: e for e in json.loads(FIELD117.read_text(encoding='utf-8'))['c2']['evidence']}
+    for rows in ROWS.values():
+        for r in rows:
+            if r['kind'] != 'evidence': continue
+            e = ev.get(r['id'])
+            if e is None: raise SystemExit('%s: no c2 evidence row in %s - run field117_build.py first' % (r['id'], FIELD117.name))
+            r['prompt'], r['locked'], r['text'] = e['label'], e['locked'], e['text']
 ENEMIES = [  # 3-D feet on the cave floor; patrol2 inside the same room
     {'id': 'dg308f/cr_root_0', 'name': '뿌리 짐승', 'source': 'field308/cheongrim_root_beast_4_0', 'dungeon': 'cr_root',
      'feet': [3324.0, 199.782, 1774.5], 'patrol2': [3321.0, 199.782, 1773.0]},
@@ -62,7 +76,29 @@ def near(a, b):
     return ((a[0] - b[0]) ** 2 + (a[2] - b[2]) ** 2) ** 0.5
 
 
+def texts_only():
+    """--texts: rewrite prompt / locked / text of the evidence rows already in the layout and nothing else (the layout is also
+    written by dungeon308.py / dungeon308_dress.py; a full rerun of this script would put its own copy of the other rows back)."""
+    for did, rows in ROWS.items():
+        ev = {r['id']: r for r in rows if r['kind'] == 'evidence'}
+        if not ev: continue
+        p = DG / did / 'layout.json'; lay = json.loads(p.read_text(encoding='utf-8')); changed = []
+        for r in lay['rewards']:
+            w = ev.get(r['id'])
+            if w is None: continue
+            for k in ('prompt', 'locked', 'text'):
+                if r.get(k) != w[k]: changed.append('%s.%s %r -> %r' % (r['id'], k, r.get(k), w[k])); r[k] = w[k]
+        missing = set(ev) - {r['id'] for r in lay['rewards']}
+        if missing: raise SystemExit('%s: %s not in the layout - run this script without --texts' % (did, sorted(missing)))
+        if not changed: print(did, '변경 없음'); continue
+        print('backup', backup(p)); p.write_text(json.dumps(lay, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+        for c in changed: print(' ', did, c)
+
+
 def main():
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    evidence_texts()
+    if '--texts' in sys.argv: return texts_only()
     revert = '--revert' in sys.argv
     for did, rows in ROWS.items():
         p = DG / did / 'layout.json'; lay = json.loads(p.read_text(encoding='utf-8')); print('backup', backup(p))

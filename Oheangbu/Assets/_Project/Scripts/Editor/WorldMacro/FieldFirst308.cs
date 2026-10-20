@@ -17,7 +17,8 @@ namespace Oheangbu.EditorTools.WorldMacro
  //   field308-start[:dry|:revert]  campaign InitialCompletedIds minus campaign_start.remove_initial. Refused until the trigger point
  //        (village_commission, the 덕대 of Texts308 XF1) is a Conversation point of WorldContent_Main, is the stage's TriggerId and
  //        is no commission giver: without it a new game could never complete the stage.
- //   field308-check                the two writes against the data and the runtime wiring rules (read only)
+ //   field308-check                the writes against the data and the runtime wiring rules (read only; C2 rows included)
+ //   field308-c2[:dry|:revert]     C2 sub-NPC commissions + their evidence texts (FieldFirst308.C2.cs)
  //   field308-cloud[:dry|:revert]  D308-118: cloud_band{} of the data -> _CloudBand308 / _CloudShape308 / _CloudColor308 of the live fog
  //        material (RealmFog297); revert puts the before-values back while the material still holds what this tool wrote
  //   field308-sight                A4 sightline audit, read only: per leg (beat -> next beat) and guide: distance, angle off the
@@ -33,7 +34,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   sealed class Refused:Exception{public Refused(string m):base(m){}}
   [Serializable] sealed class DocsWrap{public WorldMacroPlaytestSO.DocumentSpec[] items=Array.Empty<WorldMacroPlaytestSO.DocumentSpec>();}
   [Serializable] sealed class IdsWrap{public string[] items=Array.Empty<string>();}
-  [Serializable] sealed class Ledger{public string docsBefore,docsAfter,initialBefore,initialAfter,cloudBefore,cloudAfter;public List<string> backups=new List<string>();}
+  [Serializable] sealed class Ledger{public string docsBefore,docsAfter,initialBefore,initialAfter,cloudBefore,cloudAfter,c2Before,c2After;public List<string> backups=new List<string>();}
 
   static string DataFile=>PostLedger308.RepoPath("Art/World/Compact/Rebuild/FieldFirst308/field117.json");
   static string BackupRoot=>PostLedger308.RepoPath("Art/Playtest306/Backups/FieldFirst308");
@@ -58,6 +59,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      case "field308-nav":return Nav(parts.Length>1?parts[1]:"");
      case "field308-flat":return Flat(parts.Length>1?parts[1].Split(','):new string[0]);
      case "field308-cloud":return revert?CloudRevert():Cloud(dry);
+     case "field308-c2":return revert?C2Revert():C2(dry);
     }
    }
    catch(Refused r){return "refused: "+r.Message;}
@@ -203,6 +205,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    C(why==null,"B1 commission wiring"+(why!=null?": "+why:" (Conversation point, TriggerId, not a giver, no prerequisite)"));
    var remove=((j["campaign_start"]["remove_initial"] as JArray)??new JArray()).Select(x=>x.Value<string>()).ToArray();
    C(!(campaign.InitialCompletedIds??Array.Empty<string>()).Any(remove.Contains),"B1 a new game no longer starts with ["+string.Join(", ",remove)+"]");
+   C2Check(j,content,C);
    return "field308-check "+(fail==0?"PASS":"FAIL "+fail)+"\n"+string.Join("\n",lines);
   }
 

@@ -51,7 +51,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         [Serializable] sealed class Col { public float[] center = Array.Empty<float>(), size = Array.Empty<float>(); public float yaw; }
         [Serializable] sealed class GateRow { public string id = "", kind = "", closed = "", open = ""; public float[] pos = Array.Empty<float>(), size = Array.Empty<float>(); public float yaw; }
         [Serializable] sealed class DoorRow { public string id = ""; public float[] pos = Array.Empty<float>(), inside = Array.Empty<float>(); public float yaw, width, height; public bool twoSided; }
-        [Serializable] sealed class Reward { public string id = "", kind = "", prefab = "", prompt = "", text = ""; public int currency; public float[] pos = Array.Empty<float>(), stand = Array.Empty<float>(); }
+        [Serializable] sealed class Reward { public string id = "", kind = "", prefab = "", prompt = "", text = "", locked = ""; public int currency; public float[] pos = Array.Empty<float>(), stand = Array.Empty<float>(); }
         [Serializable] sealed class Layout { public string id = "", realm = "", name = "", theme = ""; public string[] drawn = Array.Empty<string>(); public Col[] colliders = Array.Empty<Col>(); public GateRow[] gates = Array.Empty<GateRow>(); public DoorRow door = new DoorRow(); public Reward[] rewards = Array.Empty<Reward>(); public float[] entrance = Array.Empty<float>(); public int[] holesFlat = Array.Empty<int>(); public Lamp[] lamps = Array.Empty<Lamp>(); public RockRow[] rocks = Array.Empty<RockRow>(); public Pool[] pools = Array.Empty<Pool>(); }
         [Serializable] sealed class RockRow { public string prefab = ""; public float[] pos = Array.Empty<float>(); public float yaw, size; }
         [Serializable] sealed class Pool { public float[] centre = Array.Empty<float>(), size = Array.Empty<float>(); public float yaw; }
@@ -305,7 +305,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             bool fragment = r.kind == "fragment", evidence = r.kind == "evidence";
             string prompt = !string.IsNullOrEmpty(r.prompt) ? r.prompt : fragment ? cfg.fragmentPrompt : cfg.coinsPrompt, text = !string.IsNullOrEmpty(r.text) ? r.text : fragment ? cfg.fragmentText : cfg.coinsText;
             rows.Add(new PrologueContentSO.Point { Id = r.id, Kind = fragment || evidence ? PrologueInteractionKind.Evidence : PrologueInteractionKind.Currency, Position = V(r.stand), Prompt = prompt,
-                Text = text, Currency = fragment || evidence ? 0 : r.currency, Radius = fragment || evidence ? 2.1f : 1.3f, LockedText = "" });
+                Text = text, Currency = fragment || evidence ? 0 : r.currency, Radius = fragment || evidence ? 2.1f : 1.3f, LockedText = r.locked ?? "" });   // locked = shown before the commission that wants it is taken (C2)
         }
         static string Refit(string id)
         {
