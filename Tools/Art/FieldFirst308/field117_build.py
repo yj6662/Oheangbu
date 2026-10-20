@@ -17,6 +17,8 @@ ENTRY = 'D308-117'
 MAIN_CONTENT = 'Assets/_Project/Scenes/World/Main/WorldContent_Main.asset'
 CAMPAIGN = ('Assets/_Project/Art/World/Architecture296/Data/85ebc15b71d242841913ba8297c7b933_af510ae16a71e3d429dc77075aeb7371_'
             '839cb9257ad263442a19c248dffabd22_Campaign.asset')
+# the shared 청림 dressing sheet (#296 Architecture bake; the Flora308 realm sheets are other assets)
+DRY_SHEET = 'Assets/_Project/Art/World/Architecture296/Data/757de110844e3b4479c04f9c49d8a6b6_DryLandscape.asset'
 
 
 def decision_strings():
@@ -159,6 +161,21 @@ def build():
                 # C1 (D308-117): the 신목 side path - does the walker see the gatekeepers and the end before reaching them?
                 {'id': 'C1 신목 갈래 → 끝', 'eye': [3602, 3234], 'toward': [3709, 3254],
                  'guides': [{'name': '이끼 승냥이 문지기', 'x': 3683, 'z': 3227, 'up': 1.0}, {'name': '신목 밑동 껍질', 'x': 3697.6, 'z': 3248.3, 'up': 0.6}]},
+            ],
+        },
+        # §8.15 (TEST): sheet trees that close an A4 leg, taken out through the BuildingFix308.VegRows ledger (FieldFirst308
+        # field308-rows:plan|apply|revert; "Veg replay" brings the removal back after a #296 re-bake). L5: the two elms 6 and 16 m
+        # from the deep fork rest altar (deep_fork_rest308) were the last blockers of the fork (field308-sight +350 m, script probe
+        # 2026-10-21); with them gone the altar shows from +350 m. Stumps at the same spots: field117_l5.py (places308 C_fork).
+        # The 봉수 smoke (15 - 30 rows per eye over 120 - 320 m of rising forest) and the 신목 crown (terrain) are not vegetation
+        # fixes - left closed. Positions are the sheet's own floats (round-trip), tol .05 m.
+        'sight_rows': {
+            'tag': 'fieldfirst308-l5', 'tol_m': 0.05,
+            'rows': [
+                {'sheet': DRY_SHEET, 'id': '292_tree_3266_3074', 'proto': 'Detail261_Cheongrim_SM_UlmusDavidiana_Summer_2',
+                 'x': 3269.86719, 'y': 138.167084, 'z': 3071.845, 'leg': 'L5', 'why': '갈림 +350 m, 5 m from the eye'},
+                {'sheet': DRY_SHEET, 'id': '292_tree_3278_3062', 'proto': 'Detail261_Cheongrim_SM_UlmusDavidiana_Summer_2',
+                 'x': 3275.088, 'y': 136.6104, 'z': 3063.34863, 'leg': 'L5', 'why': '갈림 +350 m (with the row above, the last two)'},
             ],
         },
         # §8.13 (TEST): cooking smoke over the main roof of the settlement beats - the sheet forest hides the roofs until the player

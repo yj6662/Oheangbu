@@ -26,6 +26,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  //        first blockers named. Report file Art/Playtest306/Backups/FieldFirst308/sight-<utc>.txt. Open the realms first.
  //   field308-heights              read only: the highest collider surface on a 25 m grid of the open scenes, as 500 m cells
  //        (max per cell, rows north first) + world percentiles - where the 운해 band of RealmFog297 should sit (D308-118)
+ //   field308-rows[:plan|:apply|:revert]  sheet trees that close a sightline leg, through the Veg ledger (FieldFirst308.Rows.cs)
  // Data: Art/World/Compact/Rebuild/FieldFirst308/field117.json (built by Tools/Art/FieldFirst308/field117_build.py from
  // DECISIONS D308-117 F2; the code holds no line). Ledger + asset backups: Art/Playtest306/Backups/FieldFirst308/. Edit mode only,
  // no AssetDatabase.SaveAssets (the target asset is saved alone).
@@ -67,6 +68,7 @@ namespace Oheangbu.EditorTools.WorldMacro
      case "field308-flat":return Flat(parts.Length>1?parts[1].Split(','):new string[0]);
      case "field308-cloud":return revert?CloudRevert():Cloud(dry);
      case "field308-c2":return revert?C2Revert():C2(dry);
+     case "field308-rows":return Rows(parts.Length>1?parts[1]:"plan");
     }
    }
    catch(Refused r){return "refused: "+r.Message;}
