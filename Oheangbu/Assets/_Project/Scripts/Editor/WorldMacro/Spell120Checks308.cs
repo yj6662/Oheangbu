@@ -423,7 +423,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 new KeyValuePair<string, Action<Report>>("WP09", x => FixturesWP09(x)), new KeyValuePair<string, Action<Report>>("WP10", x => FixturesWP10(x)),
                 new KeyValuePair<string, Action<Report>>("WP11", x => FixturesWP11(x)), new KeyValuePair<string, Action<Report>>("WP12", x => FixturesWP12(x)),
                 new KeyValuePair<string, Action<Report>>("WP13", x => FixturesWP13(x)), new KeyValuePair<string, Action<Report>>("WP14", x => FixturesWP14(x)),
-                new KeyValuePair<string, Action<Report>>("WP15", x => FixturesWP15(x)),
+                new KeyValuePair<string, Action<Report>>("WP15", x => FixturesWP15(x)), new KeyValuePair<string, Action<Report>>("C124", x => FixturesC124(x)),
             };
             foreach (var package in packages)
             {
@@ -494,6 +494,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static partial void FixturesWP13(Report r);
         static partial void FixturesWP14(Report r);
         static partial void FixturesWP15(Report r);
+        static partial void FixturesC124(Report r);   // #308 D308-124: the weak-point counter-element scale and the boss element slot
 
         // A handler the foundation checks drive: it records what the host asked of it and can be told to refuse.
         sealed class ProbeEffect : ISpellEffect, ISpellCostHook, ISpellCastHook, ISpellAcceptHook, ISpellHitHook, IPlayerHitHook

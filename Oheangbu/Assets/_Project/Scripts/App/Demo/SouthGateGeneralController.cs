@@ -6,8 +6,10 @@ using UnityEngine;
 namespace Oheangbu.App.Demo
 {
     [DisallowMultipleComponent, RequireComponent(typeof(EnemyVitals))]
-    public sealed class SouthGateGeneralController : MonoBehaviour
+    public sealed class SouthGateGeneralController : MonoBehaviour, IEnemyAttackElement308
     {
+        // The general's empowered blow is earth: the wave pulse, the sword counter and the counter-element scale (D308-124) read this
+        public const Element AttackElement308 = Element.Earth;
         [SerializeField] SouthGateGeneralProfile _profile;
         [SerializeField] CombatConfigSO _config;
         [SerializeField] EnemyVitals _vitals;
@@ -41,6 +43,7 @@ namespace Oheangbu.App.Demo
         public event Action<SouthGateGeneralAttackPlan, bool> AttackEnded;
         public event Action<SouthGateGeneralAttackPlan> EmpowerInterrupted;
         public event Action<SouthGateCombatState> StateChanged;
+        public bool TryAttackElement(out Element element) { element = AttackElement308; return true; }
         void Awake() { Bind(); ValidateProfile(); ResetEncounter(); }
         void OnEnable() { Bind(); ValidateProfile(); ResetEncounter(); }
         void OnDisable() { CancelPlan(); Unbind(); SetState(_vitals != null && !_vitals.IsAlive ? SouthGateCombatState.Dead : SouthGateCombatState.Idle); }
@@ -70,9 +73,9 @@ namespace Oheangbu.App.Demo
             if (_vitals == null) _vitals = GetComponent<EnemyVitals>();
             if (_subscribedVitals != _vitals)
             {
-                if (_subscribedVitals != null) { _subscribedVitals.Died -= OnDied; _subscribedVitals.WeakPointOpened -= OnWeakPoint; _subscribedVitals.DamageResolved -= OnDamage; }
+                if (_subscribedVitals != null) { _subscribedVitals.Died -= OnDied; _subscribedVitals.WeakPointOpened -= OnWeakPoint; _subscribedVitals.DamageResolved -= OnDamage; _subscribedVitals.ClearAttackElementSource308(this); }
                 _subscribedVitals = _vitals;
-                if (_subscribedVitals != null) { _subscribedVitals.Died += OnDied; _subscribedVitals.WeakPointOpened += OnWeakPoint; _subscribedVitals.DamageResolved += OnDamage; }
+                if (_subscribedVitals != null) { _subscribedVitals.Died += OnDied; _subscribedVitals.WeakPointOpened += OnWeakPoint; _subscribedVitals.DamageResolved += OnDamage; _subscribedVitals.SetAttackElementSource308(this); }
             }
             if (_subscribedPlayer != _playerVitals)
             {
@@ -83,6 +86,7 @@ namespace Oheangbu.App.Demo
         }
         void Unbind()
         {
+            // the element registration stays: it is who the general is, not whether he is fighting (a destroyed source drops itself)
             if (_subscribedVitals != null) { _subscribedVitals.Died -= OnDied; _subscribedVitals.WeakPointOpened -= OnWeakPoint; _subscribedVitals.DamageResolved -= OnDamage; }
             if (_subscribedPlayer != null) _subscribedPlayer.Died -= OnPlayerDied;
             _subscribedVitals = null; _subscribedPlayer = null;
