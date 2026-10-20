@@ -186,8 +186,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                 bool fired = Arbitrate();
                 counter.Fires = false;
                 bool failed = Arbitrate();
-                r.Check("W14", fired && !failed && counter.Fired == 2 && sword.Active,
-                    "a counter that can fire takes the press and the sword goes with it; a counter chosen but not fired puts nothing away");
+                bool held = sword.Active;                                       // the answer alone ends nothing
+                bool away = fired && sword.ReleaseByPlayer(At(2f));             // what the form's tick does with a yes
+                r.Check("W14", fired && !failed && counter.Fired == 2 && held && away && !sword.Active,
+                    "a counter that can fire takes the press and the answer is a release (the tick then puts the sword away); a counter chosen but not fired answers no release");
                 var real = f.Obj("Spell308_Riposte", SpellFixture308.Origin).AddComponent<Oheangbu.App.World.Riposte301>();
                 f.Wiring.SwordRiposte308 = real;
                 bool bare = Arbitrate();
