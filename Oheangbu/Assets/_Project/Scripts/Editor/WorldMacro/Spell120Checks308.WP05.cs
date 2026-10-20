@@ -125,6 +125,16 @@ namespace Oheangbu.EditorTools.WorldMacro
                 f.Cast(single); f.Land();
                 r.Check("앗-3", f.Hits.Count == 1 && Near(before - f.Inside[0].Hp, plainPower), "a further hit finds no ice: no second bonus");
 
+                // D308-123: the extra damage is never five-element credit, even when the freezing hit landed before the weak point opened
+                f.Wiring.ClearSpells308(SpellClearReason.Rest); f.RestoreAll(); f.Aim(f.Inside[0]);
+                f.Cast(freeze); f.Land();
+                bool frozenShut = freezeFx.FrozenCount == 1 && !f.Inside[0].WeakPointActive;
+                f.Inside[0].OpenWeakPoint(); f.ClearLog();
+                f.Cast(single); f.Land();
+                int waterBit = 1 << (int)Element.Water, mask = f.Inside[0].WeakPointElementMask;
+                r.Check("앗-3", frozenShut && f.Hits.Count == 2 && f.Hits.Any(h => h.Attack.Element == Element.Water && h.Attack.NoCredit) && (mask & waterBit) == 0 && mask != 0,
+                    "frozen while the weak point was shut, broken while it is open: the breaking hit counts, the water extra damage does not (mask " + mask + ")");
+
                 f.Wiring.ClearSpells308(SpellClearReason.Rest); f.RestoreAll(); f.Aim(f.Inside[0]);
                 f.Cast(freeze); f.Land();
                 float fDuration = fRow.F("freeze.duration", 0f);

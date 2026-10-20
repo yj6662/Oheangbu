@@ -98,7 +98,9 @@ namespace Pure308
                 "with room for all of them it picks exactly the incoming projectiles inside the fan; a barrage with no room picks none");
             r.Check("송-2", barrage.AreaShape == AreaShape.Volley && barrage.AreaShape == c.RowAt(85).AreaShape && barrage.AreaImpactDelay == c.RowAt(85).AreaImpactDelay &&
                 barrage.AreaAngle == c.RowAt(85).AreaAngle && barrage.AreaLength == c.RowAt(85).AreaLength && barrage.BasePower == c.RowAt(85).BasePower,
-                "the barrage is the base glyph's volley (same fan, same formation delay, same power): all its picks come from one judgement at the moment it forms");
+                "the barrage is the base glyph's volley (same fan, same formation delay, same power); from the moment it forms it judges its fan again each frame of intercept.window (D308-123)");
+            r.Check("송-2", barrage.F("intercept.window", -1f) > 0f && barrage.F("intercept.window", -1f) <= 10f,
+                "the barrage stands for a while after it forms (D308-123, TEST): intercept.window is set on its row, within its spec");
             var again = new List<int>();
             InterceptRule308.PickMany(swarm.Select(s => picked.Contains(s.Id) ? new SpellProjectileSnap(s.Id, s.Position, s.Velocity, false) : s).ToList(), caster, forward, fanAngle, fanRange, max, again);
             r.Check("송-2", again.Count > 0 && !again.Intersect(picked).Any(), "projectiles a barrage shot down are out of the air together: a later barrage picks only the others", string.Join(" ", again));

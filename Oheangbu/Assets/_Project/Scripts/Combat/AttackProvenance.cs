@@ -19,10 +19,15 @@ namespace Oheangbu.Combat
         // #308 WP-16 (D308-114): a hit landed by the caster's body or weapon (the sword form, the riposte), not a spell shot.
         // A raised guard reduces spell shots only, so a melee hit passes it. false for every attack made before this flag.
         public readonly bool Melee;
+        // #308 D308-123: damage that follows an earlier hit of the same attack (the icicle's shatter). It never counts toward
+        // the five-element completion, whether or not the first hit did. false for every attack made before this flag.
+        public readonly bool NoCredit;
         public AttackProvenance(long attackId, Object instigator, DamageSource source, Element? element)
-            : this(attackId, instigator, source, element, false) { }
+            : this(attackId, instigator, source, element, false, false) { }
         public AttackProvenance(long attackId, Object instigator, DamageSource source, Element? element, bool melee)
-        { AttackId = attackId; Instigator = instigator; Source = source; Element = element; Melee = melee; }
+            : this(attackId, instigator, source, element, melee, false) { }
+        public AttackProvenance(long attackId, Object instigator, DamageSource source, Element? element, bool melee, bool noCredit)
+        { AttackId = attackId; Instigator = instigator; Source = source; Element = element; Melee = melee; NoCredit = noCredit; }
         public static AttackProvenance Create(Object instigator, DamageSource source, Element? element) =>
             new AttackProvenance(Interlocked.Increment(ref _sequence), instigator, source, element);
         public static AttackProvenance CreateMelee(Object instigator, DamageSource source, Element? element) =>

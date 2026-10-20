@@ -213,7 +213,7 @@ namespace Oheangbu.Combat
                 (attack.Source == DamageSource.PlayerDirect || attack.Source == DamageSource.Companion) && !attack.Melee);
             if (damage <= 0f || float.IsNaN(damage)) return default; // only a full defence (1) the hit does not ignore
             float bonus = 0f;
-            if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect &&
+            if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect && !attack.NoCredit &&
                 attack.Instigator != null && attack.AttackId > 0 && attack.Element.HasValue &&
                 !_completionAwarded && _directAttacks.Add(attack.AttackId))
             {

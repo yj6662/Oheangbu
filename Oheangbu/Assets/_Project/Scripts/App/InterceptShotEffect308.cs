@@ -10,11 +10,16 @@ namespace Oheangbu.App
     //    intercept.range), the needle goes for the one nearest to the caster (InterceptRule308): it reaches it after the
     //    flight time of the base glyph's shot and the projectile is frozen and dropped, if it is still in the air then.
     //    That cast hits no enemy: the needle is used up on the projectile.
-    //  - With nothing to intercept, the cast is the base glyph's single shot, unchanged (the stroke adapter presents it).
+    //  - With nothing to intercept, the cast is the base glyph's single shot (the stroke adapter presents it) at
+    //    intercept.fallback of its power (D308-123: a weaker metal needle; it still counts as metal for the five elements).
+    //    Its target is the host's aimed target: the lock-on, else the enemy on the aim line, else none (never the nearest).
     public sealed class InterceptShotEffect308 : ISpellEffect
     {
         public const string HandlerId = "intercept.single";
-        static readonly SpellParamSpec[] Specs = { new SpellParamSpec("intercept.range", 1f, 100f), new SpellParamSpec("intercept.angle", 1f, 180f) };
+        static readonly SpellParamSpec[] Specs =
+        {
+            new SpellParamSpec("intercept.range", 1f, 100f), new SpellParamSpec("intercept.angle", 1f, 180f), new SpellParamSpec("intercept.fallback", 0.01f, 1f),
+        };
 
         readonly InterceptQueue308 _queue = new InterceptQueue308();
         readonly List<ISpellInterceptable308> _found = new List<ISpellInterceptable308>();
@@ -35,7 +40,7 @@ namespace Oheangbu.App
             Intercepts308.Gather(host, range, _found, ref _overlaps);
             Intercepts308.Snap(_found, _snaps);
             int pick = InterceptRule308.PickOne(_snaps, host.PlayerPosition, host.PlayerForward, row.F("intercept.angle", 0f), range);
-            if (pick == InterceptRule308.None) { _found.Clear(); return host.PlanSingle(cast, true) != null; }
+            if (pick == InterceptRule308.None) { _found.Clear(); return host.PlanSingle(Fallback(cast, row.F("intercept.fallback", 1f)), true) != null; }
             var shot = _found[pick];
             _found.Clear();
             Vector3 muzzle = SingleShots308.Muzzle(host), point = shot.Position;
@@ -48,6 +53,13 @@ namespace Oheangbu.App
             });
             _queue.Add(shot, ctx.Now + flight, SingleShots308.Identity(host, cast.Element).AttackId, handle.Id);
             return true;
+        }
+
+        // The cast with its power cut to the share; the brush and everything else stay.
+        public static SpellCast Fallback(in SpellCast cast, float share)
+        {
+            if (!(share > 0f) || share >= 1f) return cast;
+            return new SpellCast(cast.Letter, cast.Kind, cast.Element, cast.Power * share, cast.Area, cast.SpeedMul, cast.HoldScale, cast.Brush, cast.Brush01);
         }
 
         public void Tick(in SpellTickContext ctx) { _queue.Fire(ctx.Now, ctx.Fx); }

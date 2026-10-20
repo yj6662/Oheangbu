@@ -62,12 +62,15 @@ namespace Oheangbu.App
             // The shots that go with one accepted cast, whatever that cast is. No aimed enemy, or a dead one: no shot.
             // Every running buff adds its own shots; shot i lands at now + i x interval + distance / speed.
             // D308-123: the speed is the row's, times the running speed buffs' scale (SpellBuffState308.SpeedScale).
-            public void Accompany(SpellBuffState308 timers, SpellActorSnap[] actors, int aimedId, Vector3 from, float now, List<Shot> shots)
+            // D308-123: the power is the row's, times the brush of the accompanied cast (SpellCast.Brush), once. The brush of
+            // the buff's own cast is never kept, so the two are never multiplied together. Not a usable number: 1.
+            public void Accompany(SpellBuffState308 timers, SpellActorSnap[] actors, int aimedId, Vector3 from, float now, List<Shot> shots, float brush = 1f)
             {
                 if (timers == null || actors == null || shots == null || aimedId < 0 || aimedId >= actors.Length || !actors[aimedId].Alive) return;
                 var target = actors[aimedId];
                 float distance = Vector3.Distance(from, target.Position);
                 float scale = timers.SpeedScale(now);
+                if (!(brush > 0f) || float.IsInfinity(brush)) brush = 1f;
                 for (int c = 0; c < _active.Count; c++)
                 {
                     var companion = _active[c];
@@ -75,7 +78,7 @@ namespace Oheangbu.App
                     float flight = distance / (companion.Speed * scale);
                     float interval = companion.Interval > 0f ? companion.Interval : 0f;
                     for (int i = 0; i < companion.Shots; i++)
-                        shots.Add(new Shot(target.Id, target.Life, now + i * interval + flight, companion.Power, companion.Element, companion.Letter, i));
+                        shots.Add(new Shot(target.Id, target.Life, now + i * interval + flight, companion.Power * brush, companion.Element, companion.Letter, i));
                 }
             }
 

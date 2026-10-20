@@ -228,8 +228,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                     r.Check("상-2", incoming.Frozen && !incoming.InFlight && incoming.InterceptedBy > 0 && !leaving.Frozen && needleFx.Downed == 1 && f.Inside[0].Hp == hp,
                         "TEST target: the incoming projectile is frozen and out of the air; the one flying away is left alone");
                     f.ClearLog(); f.Aim(f.Inside[0]); f.Cast(needle);
-                    r.Check("상-1", f.Plans.Count == 1 && f.Plans[0].Hits.Count == 1 && Near(f.Plans[0].Hits[0].Power, needleRow.BasePower * brush) && needleFx.NeedlesInFlight == 0,
-                        "with nothing left to intercept the cast is the base glyph's single shot");
+                    float share = needleRow.F("intercept.fallback", 1f);
+                    r.Check("상-1", share > 0f && share < 1f && f.Plans.Count == 1 && f.Plans[0].Hits.Count == 1 && Near(f.Plans[0].Hits[0].Power, needleRow.BasePower * brush * share) &&
+                        f.Plans[0].Hits[0].Target == f.Inside[0] && needleFx.NeedlesInFlight == 0,
+                        "with nothing left to intercept the cast is the base glyph's single shot at the aimed enemy, at intercept.fallback of its power (D308-123)");
 
                     Reset();
                     var swarm = new[] { Shot(origin + forward * 5f + Vector3.up, -forward * 4f), Shot(origin + forward * 7f + Vector3.right + Vector3.up, -forward * 4f),
@@ -245,8 +247,34 @@ namespace Oheangbu.EditorTools.WorldMacro
                         Tick(barrageFx, formsAt - .05f);
                         bool early = swarm.All(s => !s.Frozen);
                         Tick(barrageFx, formsAt + .05f);
-                        r.Check("송-2", early && swarm[0].Frozen && swarm[1].Frozen && swarm[2].Frozen && !swarm[3].Frozen && barrageFx.Downed == 3 && barrageFx.BarragesForming == 0,
-                            "TEST targets: at the moment the barrage forms the three projectiles in its fan are shot down together; the one behind the caster is not");
+                        float window = barrageRow.F("intercept.window", 0f); int max = Mathf.RoundToInt(barrageRow.F("intercept.max", 0f));
+                        r.Check("송-2", early && swarm[0].Frozen && swarm[1].Frozen && swarm[2].Frozen && !swarm[3].Frozen && barrageFx.Downed == 3 && barrageFx.BarragesForming == (window > .05f && max > 3 ? 1 : 0),
+                            "TEST targets: at the moment the barrage forms the three projectiles in its fan are shot down together; the one behind the caster is not; the barrage still stands");
+                        // D308-123: while it stands (intercept.window) it keeps shooting down what enters its fan, at most intercept.max in all
+                        if (window > .2f && max == 6)
+                        {
+                            Vector3 Lane(int k) => k == 0 ? origin + forward * 5f + Vector3.up : k == 1 ? origin + forward * 7f + Vector3.right + Vector3.up : origin + forward * 9f - Vector3.right + Vector3.up;
+                            swarm[0].Relaunch(Lane(0), -forward * 4f); Sync();
+                            Tick(barrageFx, formsAt + window * .3f);
+                            r.Check("송-3", swarm[0].Frozen && barrageFx.Downed == 4 && barrageFx.BarragesForming == 1,
+                                "a projectile that enters the fan while the barrage stands is shot down too");
+                            for (int k = 0; k < 3; k++) swarm[k].Relaunch(Lane(k), -forward * 4f);
+                            Sync();
+                            Tick(barrageFx, formsAt + window * .5f);
+                            r.Check("송-3", swarm[0].Frozen && swarm[1].Frozen && !swarm[2].Frozen && barrageFx.Downed == 6 && barrageFx.BarragesForming == 0,
+                                "intercept.max is the count of the whole window: two more nearest first, the third is left in the air and the barrage ends early");
+                            for (int k = 0; k < 3; k++) swarm[k].Relaunch(origin + forward * 200f + Vector3.right * k, -forward);   // out of every fan
+                            Sync();
+                            f.RestoreAll(); f.ClearLog(); clock = Time.time; f.Cast(barrage);
+                            float formsAgain = clock + (f.Plans.Count == 1 && f.Plans[0].Area != null ? f.Plans[0].Area.Delay : 0f);
+                            Tick(barrageFx, formsAgain + .05f);
+                            bool standing = barrageFx.BarragesForming == 1;
+                            Tick(barrageFx, formsAgain + window + .05f);
+                            swarm[0].Relaunch(Lane(0), -forward * 4f); Sync();
+                            Tick(barrageFx, formsAgain + window + .1f);
+                            r.Check("송-3", standing && barrageFx.BarragesForming == 0 && !swarm[0].Frozen && barrageFx.Downed == 6,
+                                "a barrage that found nothing stands for its window and then ends: a projectile entering the fan after it is left alone");
+                        }
                     }
                 }
             }
