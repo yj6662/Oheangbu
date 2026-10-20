@@ -9,8 +9,10 @@ namespace Oheangbu.Combat
     // and ends at its own time; the domain refreshes it every frame the enemy is inside and removes it the frame the enemy
     // leaves. The enemy's own code asks the readers at its seams (guard entry, ally call, telegraph, turn, dash, leash,
     // attack start, aim, regen). An enemy without an entry answers every reader with the neutral value.
-    //   seal       no regeneration, no revival and no new floor hazard of this enemy           (눅)
-    //   dash       dash and leap speed x value, 0 = the enemy cannot dash or leap at all        (묵)
+    //   seal       no regeneration and no revival of this enemy (it stands inside)              (눅)
+    //   floor      no new floor hazard of this enemy forms at a point inside the circle (centre, radius); every enemy
+    //              of the session carries it, inside or not (D308-125 적용 2: the hazard's place counts) (눅)
+    //   dash      dash and leap speed x value, 0 = the enemy cannot dash or leap at all        (묵)
     //   move       walking speed x value                                                        (숙 on a boss)
     //   leash      the enemy cannot leave the circle (centre, radius)                           (숙)
     //   telegraph  attack telegraph x value (above 1 = longer)                                  (욱)
@@ -24,7 +26,7 @@ namespace Oheangbu.Combat
     // Plain C#, no clock of its own (every call takes "now"): the offline runner executes this file.
     public sealed class EnemyDomainState308
     {
-        public enum Kind { Seal, Dash, Move, Leash, Telegraph, Guard, Call, Turn, Hold, Aim, Exclude }
+        public enum Kind { Seal, Dash, Move, Leash, Telegraph, Guard, Call, Turn, Hold, Aim, Exclude, Floor }
         struct Entry { public long Owner; public Kind Kind; public float Until, Value, Extra; public Vector3 Centre; }
 
         readonly List<Entry> _entries = new List<Entry>();
@@ -49,6 +51,7 @@ namespace Oheangbu.Combat
 
         public bool Leash(long owner, float until, Vector3 centre, float radius) => radius > 0f && Set(owner, Kind.Leash, until, radius, centre);
         public bool Exclude(long owner, float until, Vector3 centre, float radius) => radius > 0f && Set(owner, Kind.Exclude, until, radius, centre);
+        public bool Floor(long owner, float until, Vector3 centre, float radius) => radius > 0f && Set(owner, Kind.Floor, until, radius, centre);
 
         // No attack may start before `until` (the entry is its own end).
         public bool Hold(long owner, float until) => Set(owner, Kind.Hold, until, 1f, default);
@@ -151,6 +154,20 @@ namespace Oheangbu.Combat
         }
 
         public bool Excluded(float now) => Any(Kind.Exclude, now);
+
+        // A floor hazard of this enemy may not form at `point`: it lies inside a floor circle (ground plane; the edge counts).
+        public bool FloorBlocked(Vector3 point, float now)
+        {
+            for (int i = _entries.Count - 1; i >= 0; i--)
+            {
+                var entry = _entries[i];
+                if (entry.Until <= now) { _entries.RemoveAt(i); continue; }
+                if (entry.Kind != Kind.Floor) continue;
+                float dx = point.x - entry.Centre.x, dz = point.z - entry.Centre.z;
+                if (dx * dx + dz * dz <= entry.Value * entry.Value) return true;
+            }
+            return false;
+        }
 
         // ---- internals ----
 

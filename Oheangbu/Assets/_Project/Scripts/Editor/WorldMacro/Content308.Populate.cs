@@ -44,7 +44,8 @@ namespace Oheangbu.EditorTools.WorldMacro
   [Serializable] sealed class PopIdle308{public float breath_period_s=4.2f,breath_chest_deg=2.6f,breath_shoulder_m=.013f,sway_deg=.9f,combat_leg_deg=11f,combat_arm_deg=17f,combat_lean_deg=5f,combat_range_m=26f;}
   [Serializable] sealed class PopGuard308{public float share,facing_deg;}
   // members: the trailing n of "field308/<realm>_<key>_<group>_<n>"; empty = every member. projectile empty = the template's.
-  [Serializable] sealed class PopKind308{public string contentId="",profile="",projectile="";public int[] members=Array.Empty<int>();public PopGuard308 guard=new PopGuard308();}
+  // ground: an eruption kind's ground cue prefabs (warning, spike, impact) for EnemyAttackPresentation; an eruption kind must list all three.
+  [Serializable] sealed class PopKind308{public string contentId="",profile="",projectile="";public int[] members=Array.Empty<int>();public PopGuard308 guard=new PopGuard308();public string[] ground=Array.Empty<string>();}
   [Serializable] sealed class PopCfg308{public PopPatrol308 patrol=new PopPatrol308();public PopIdle308 idle=new PopIdle308();public PopKind308[] kinds=Array.Empty<PopKind308>();}
   [Serializable] sealed class PopPlan308{public string version="";public float nav_radius_m=2f;public PopEnemy308[] enemies=Array.Empty<PopEnemy308>();public PopNpc308[] npcs=Array.Empty<PopNpc308>();}
   static string PopStage308=>Path.Combine(Harness303.RepoRoot,"Tools","Unity","Stage308_populate");
@@ -86,6 +87,18 @@ namespace Oheangbu.EditorTools.WorldMacro
   static void PopArmKind308(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,PopKind308 k)
   {
    var p=PopProfile308(k);PopArm308(actor,row,p,PopProjectile308(k,actor),(int)p.Mode,p.Mode==EnemyController.AttackMode.RangedOnly,p.PreferredDistanceHint);
+   var g=PopGround308(k,p);if(g==null)return;
+   var fx=actor.GetComponent<Oheangbu.App.Demo.EnemyAttackPresentation>();if(fx==null)fx=actor.gameObject.AddComponent<Oheangbu.App.Demo.EnemyAttackPresentation>();
+   fx.Configure(actor.GetComponent<EnemyController>(),g[0],g[1],g[2],p.Element);EditorUtility.SetDirty(fx);
+  }
+  // D308-125 적용 2: the ground cue of an eruption kind (warning ring, rising spikes, impact), shown for the profile's element; null = not an eruption
+  static GameObject[] PopGround308(PopKind308 k,EnemyAttackProfileSO p)
+  {
+   if(p.Delivery!=EnemyAttackDelivery.GroundEruption)return null;
+   if(k.ground==null||k.ground.Length!=3)throw new Refuse308(k.contentId+": an eruption kind lists its ground cue (warning, spike, impact)");
+   var g=k.ground.Select(x=>AssetDatabase.LoadAssetAtPath<GameObject>(x)).ToArray();int miss=Array.IndexOf(g,null);
+   if(miss>=0)throw new Refuse308(k.contentId+": ground cue "+k.ground[miss]+" is missing");
+   return g;
   }
   // the guard entries of the listed kinds (one per ContentId): written on arm, dropped on revert
   static string PopGuards308(WorldMacroPlaytestSO content,PopCfg308 cfg,bool arm)
@@ -109,7 +122,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     var e=plan.enemies.FirstOrDefault(x=>x.id==a.Id);var k=e!=null?PopKindFor308(cfg,e.id,e.contentId):null;if(k==null)continue;
     var row=Encounter308(content,a.Id);if(row==null)throw new Refuse308(a.Id+" has no content row (Populate check)");
     var t=all.FirstOrDefault(x=>x.Id==e.template);var trow=Encounter308(content,e.template);
-    if(arm){PopProfile308(k);PopProjectile308(k,a);}
+    if(arm){PopGround308(k,PopProfile308(k));PopProjectile308(k,a);}
     else if(t==null||trow==null)throw new Refuse308(a.Id+": template "+e.template+" is gone, nothing to put back");
     work.Add((a,row,k,t,trow));
    }
@@ -118,6 +131,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(arm){PopArmKind308(w.actor,w.row,w.kind);continue;}
     var tso=new SerializedObject(w.template.GetComponent<EnemyController>());
     PopArm308(w.actor,w.row,tso.FindProperty("_attackProfile").objectReferenceValue,tso.FindProperty("_projectilePrefab").objectReferenceValue,tso.FindProperty("_attackMode").intValue,w.trow.Ranged,w.template.PreferredDistance);
+    var fx=w.actor.GetComponent<Oheangbu.App.Demo.EnemyAttackPresentation>();
+    if(fx!=null&&w.template.GetComponent<Oheangbu.App.Demo.EnemyAttackPresentation>()==null){Object.DestroyImmediate(fx);EditorUtility.SetDirty(w.actor.gameObject);}
    }
    return (arm?"armed ":"put back ")+work.Count+" actors ("+string.Join(", ",work.Select(w=>w.actor.Id.Substring(PopPrefix308.Length)))+"), "+PopGuards308(content,cfg,arm);
   }
@@ -285,7 +300,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      else if(so.FindProperty("_attackMode").intValue!=(int)p.Mode)why="legacy _attackMode "+(EnemyController.AttackMode)so.FindProperty("_attackMode").intValue+" vs profile "+p.Mode;
      else if(!(a.PreferredDistance>0f&&a.PreferredDistance<=p.Range))why="stop distance "+a.PreferredDistance+" outside (0, "+p.Range+"]";
      else if(!string.IsNullOrEmpty(k.projectile)&&(proj==null||AssetDatabase.GetAssetPath(proj)!=k.projectile))why="projectile "+(proj!=null?AssetDatabase.GetAssetPath(proj):"none");
-     else if(a.Ranged&&proj==null)why="ranged without a projectile";
+     else if((p.Delivery==EnemyAttackDelivery.HomingProjectile||p.Delivery==EnemyAttackDelivery.AimedProjectile)&&proj==null)why=p.Delivery+" without a projectile";   // an eruption needs none
+     else if(p.Delivery==EnemyAttackDelivery.GroundEruption&&!(a.GetComponent<Oheangbu.App.Demo.EnemyAttackPresentation>() is var gfx&&gfx!=null&&gfx.HasAllSources&&gfx.GroundElement==p.Element))why="eruption without its "+p.Element+" ground cue";
      if(why!=null)bad.Add(r.Id.Substring(PopPrefix308.Length)+" ("+why+")");
     }
     var unused=kinds.Where(k=>!rows.Any(r=>PopKindFor308(cfg,r.Id,r.ContentId)==k)).Select(k=>k.contentId).ToArray();

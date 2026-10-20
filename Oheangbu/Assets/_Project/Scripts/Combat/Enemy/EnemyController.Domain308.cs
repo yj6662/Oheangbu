@@ -8,6 +8,7 @@ namespace Oheangbu.Combat
     //   욱 telegraph  the telegraph is read once when it starts and lasts that many times as long
     //   웃 turn       the body turns slower; a melee arc then swings where the body faces, not where the player stands
     //   눙 aim        the aim locks at a share of the telegraph; a player who moved off the locked point is missed
+    //   눅 floor      a ground eruption does not start at, and is called off over, a point inside the circle
     public sealed partial class EnemyController
     {
         private float _aimLockAt308 = float.PositiveInfinity, _aimRadius308, _telegraph308;
@@ -19,6 +20,9 @@ namespace Oheangbu.Combat
         private float DomainTelegraph308() => Domain308 != null ? Domain308.TelegraphScale(Time.time) : 1f;
         private float DomainTurn308(float rate) => Domain308 != null ? Domain308.TurnRate(rate, Time.time) : rate;
         private bool DomainTurned308() => Domain308 != null && Domain308.TurnScale(Time.time) < 1f;
+        // 눅 floor: an eruption aimed at a point inside the circle does not start, and one in its telegraph is called off.
+        private bool DomainFloorBlocked308(Vector3 point) => ProfileActive && _attackProfile.Delivery == EnemyAttackDelivery.GroundEruption
+            && Domain308 != null && Domain308.FloorBlocked(point, Time.time);
 
         /// <summary>The aim of the current attack was locked by a domain (눙); where it locked.</summary>
         public bool AimLocked308 => _aimLocked308;

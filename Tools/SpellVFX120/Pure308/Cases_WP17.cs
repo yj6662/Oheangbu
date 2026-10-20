@@ -116,6 +116,18 @@ namespace Pure308
             r.Check("눅-1", d.Sealed(1f) && d.CallBlocked(1f), "눅 · 뭇: sealed and hushed while the entries stand");
             d.Remove(8);
             r.Check("눅-1", !d.Sealed(1f) && d.CallBlocked(1f), "removing one owner ends only its entries (the enemy stepped out of that domain)");
+            d.Clear();
+
+            // D308-125 적용 2: the hazard's place counts. Floor (centre (10, 0, 0), 3 m) on an enemy that stands 7 m away.
+            d.Seal(8, 5f); d.Floor(8, 5f, new Vector3(10f, 0f, 0f), 3f);
+            r.Check("눅-2", d.FloorBlocked(new Vector3(12f, 4f, 0f), 1f) && d.FloorBlocked(new Vector3(13f, 0f, 0f), 1f) && !d.FloorBlocked(new Vector3(13.1f, 0f, 0f), 1f),
+                "눅: an eruption point inside the circle (height ignored, the edge counts) is blocked; one outside is not");
+            d.Remove(8, EnemyDomainState308.Kind.Seal);
+            r.Check("눅-2", !d.Sealed(1f) && d.FloorBlocked(new Vector3(10f, 0f, 0f), 1f), "an enemy that steps out drops the seal but keeps the floor circle");
+            r.Check("눅-2", !d.FloorBlocked(new Vector3(10f, 0f, 0f), 5f) && !d.Floor(8, 5f, Vector3.zero, 0f) && d.IsEmpty,
+                "the floor ends at its time; a circle of no size is refused");
+            d.Floor(8, 5f, Vector3.zero, 3f); d.Remove(8);
+            r.Check("눅-2", !d.FloorBlocked(Vector3.zero, 1f) && d.IsEmpty, "the domain ending (its owner removed) takes the floor back");
         }
 
         static void RunWP17Rule(Report r)

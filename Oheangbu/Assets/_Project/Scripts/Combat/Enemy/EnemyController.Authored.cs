@@ -73,10 +73,11 @@ namespace Oheangbu.Combat
             {
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
-                    if (AttackEnabled && !AttackHeld && !DomainHeld308() && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()) BeginAuthoredTelegraph();
+                    if (AttackEnabled && !AttackHeld && !DomainHeld308() && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()
+                        && !(_player != null && DomainFloorBlocked308(_player.position))) BeginAuthoredTelegraph();
                     break;
                 case State.Telegraph:
-                    if (!AttackEnabled || !HasLineOfSight()) { CancelAttack(); EnterRecover(); break; }
+                    if (!AttackEnabled || !HasLineOfSight() || DomainFloorBlocked308(_authoredPoint)) { CancelAttack(); EnterRecover(); break; }
                     if (Time.time >= _stateUntil) FinishAuthoredTelegraph();
                     break;
                 case State.Flight:

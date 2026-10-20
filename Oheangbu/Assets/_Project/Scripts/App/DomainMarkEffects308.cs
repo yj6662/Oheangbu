@@ -33,7 +33,8 @@ namespace Oheangbu.App
         protected abstract bool Mark(EnemyDomainState308 domain, in SpellZone308 zone, bool boss, float value);
     }
 
-    // 눅: no regeneration, no revival and no new floor hazard of an enemy inside. Hazards already laid stay. Bosses the same.
+    // 눅: no regeneration and no revival of an enemy inside, and no new floor hazard of any enemy forms inside the circle
+    // (the hazard's place counts, not where its caster stands: D308-125 적용 2). Hazards already laid stay. Bosses the same.
     public sealed class DomainSealEffect308 : DomainMarkEffect308
     {
         public const string HandlerId = "domain.seal";
@@ -43,6 +44,16 @@ namespace Oheangbu.App
         public override string Id => HandlerId;
         public override IReadOnlyList<SpellParamSpec> Params => Specs;
         protected override bool Mark(EnemyDomainState308 domain, in SpellZone308 zone, bool boss, float value) => domain.Seal(zone.Token, zone.Until);
+
+        // Every living enemy gets the floor circle; only one inside is sealed. One that steps out drops the seal, not the floor.
+        protected override void Enemy(in SpellTickContext ctx, in SpellZone308 zone, EnemyVitals enemy, bool inside)
+        {
+            if (!enemy.IsAlive || !enemy.isActiveAndEnabled) { Holds.Release(enemy, zone.Token); return; }
+            var domain = enemy.Modifiers.Domain;
+            bool floor = domain.Floor(zone.Token, zone.Until, zone.Centre, zone.Radius);
+            if (inside) Holds.Hold(enemy, zone.Token, Inside(ctx, zone, enemy) | floor);
+            else { domain.Remove(zone.Token, EnemyDomainState308.Kind.Seal); Holds.Hold(enemy, zone.Token, floor); }
+        }
     }
 
     // 묵: an enemy inside cannot dash or leap (it walks); a boss dashes at domain.boss of its speed.
