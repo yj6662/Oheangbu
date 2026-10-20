@@ -28,6 +28,11 @@ namespace Oheangbu.EditorTools.WorldMacro
  //            nothing at run time: a place and a name for later.
  //   revert   removes exactly that: the root, the session / wiring links and the content rows whose Id starts with "field308/"
  //   check    one actor per field308 row, linked and wired, on the NavMesh; no field308 actor without a row
+ //   attacks | attacks:revert   D308-125 [TEST]: the "kinds" list of populate308.json onto the actors already placed (nothing is re-rolled):
+ //            a kind's members get its attack profile and projectile, Ranged and PreferredDistance (the brain's stop distance reads those
+ //            two fields, not the profile) and the content row's Ranged; a kind with a guard gets its Content.GuardBrains entry. apply
+ //            does the same to each clone it makes. The revert puts the template's values back and drops the guard entries the list
+ //            names. Run it after Creatures308 swap:apply (a swap writes the species attack over it).
  // Only the main play scene and its content asset are written, both backed up first (Tools/Unity/Stage308_populate/Backup). No dialog.
  public static partial class Content308
  {
@@ -37,7 +42,10 @@ namespace Oheangbu.EditorTools.WorldMacro
   [Serializable] sealed class PopNpc308{public string id="",name="",job="",realm="";public float[] pos=Array.Empty<float>();}
   [Serializable] sealed class PopPatrol308{public float walk_speed_mps=1.7f,pause_min_s=1.5f,pause_max_s=4f;}
   [Serializable] sealed class PopIdle308{public float breath_period_s=4.2f,breath_chest_deg=2.6f,breath_shoulder_m=.013f,sway_deg=.9f,combat_leg_deg=11f,combat_arm_deg=17f,combat_lean_deg=5f,combat_range_m=26f;}
-  [Serializable] sealed class PopCfg308{public PopPatrol308 patrol=new PopPatrol308();public PopIdle308 idle=new PopIdle308();}
+  [Serializable] sealed class PopGuard308{public float share,facing_deg;}
+  // members: the trailing n of "field308/<realm>_<key>_<group>_<n>"; empty = every member. projectile empty = the template's.
+  [Serializable] sealed class PopKind308{public string contentId="",profile="",projectile="";public int[] members=Array.Empty<int>();public PopGuard308 guard=new PopGuard308();}
+  [Serializable] sealed class PopCfg308{public PopPatrol308 patrol=new PopPatrol308();public PopIdle308 idle=new PopIdle308();public PopKind308[] kinds=Array.Empty<PopKind308>();}
   [Serializable] sealed class PopPlan308{public string version="";public float nav_radius_m=2f;public PopEnemy308[] enemies=Array.Empty<PopEnemy308>();public PopNpc308[] npcs=Array.Empty<PopNpc308>();}
   static string PopStage308=>Path.Combine(Harness303.RepoRoot,"Tools","Unity","Stage308_populate");
   static PopPlan308 PopData308()
@@ -47,6 +55,70 @@ namespace Oheangbu.EditorTools.WorldMacro
    return JsonUtility.FromJson<PopPlan308>(File.ReadAllText(f));
   }
   static Vector3 PopV308(float[] a)=>new Vector3(a[0],a[1],a[2]);
+  static PopCfg308 PopCfgFile308()=>JsonUtility.FromJson<PopCfg308>(File.ReadAllText(Path.Combine(PopStage308,"populate308.json")));
+
+  // D308-125: the kind entry that arms this actor, or null
+  static PopKind308 PopKindFor308(PopCfg308 cfg,string id,string contentId)
+  {
+   int cut=id!=null?id.LastIndexOf('_'):-1;int n=cut>=0&&int.TryParse(id.Substring(cut+1),out int v)?v:-1;
+   return (cfg.kinds??Array.Empty<PopKind308>()).FirstOrDefault(k=>k!=null&&!string.IsNullOrEmpty(k.profile)&&k.contentId==contentId&&(k.members==null||k.members.Length==0||k.members.Contains(n)));
+  }
+  static EnemyAttackProfileSO PopProfile308(PopKind308 k)
+  {
+   var p=AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(k.profile);string why=null;
+   if(p==null||!p.TryValidate(out why))throw new Refuse308(k.contentId+": attack profile "+k.profile+(p==null?" is missing":" is invalid ("+why+")"));
+   return p;
+  }
+  static GameObject PopProjectile308(PopKind308 k,Component actor)
+  {
+   if(string.IsNullOrEmpty(k.projectile))return new SerializedObject(actor.GetComponent<EnemyController>()).FindProperty("_projectilePrefab").objectReferenceValue as GameObject;
+   var g=AssetDatabase.LoadAssetAtPath<GameObject>(k.projectile);if(g==null)throw new Refuse308(k.contentId+": projectile "+k.projectile+" is missing");
+   return g;
+  }
+  // one clone's attack: profile + projectile on the controller, Ranged / PreferredDistance on the actor, Ranged on its content row
+  static void PopArm308(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,Object profile,Object projectile,bool ranged,float preferred)
+  {
+   var so=new SerializedObject(actor.GetComponent<EnemyController>());so.FindProperty("_attackProfile").objectReferenceValue=profile;so.FindProperty("_projectilePrefab").objectReferenceValue=projectile;so.ApplyModifiedPropertiesWithoutUndo();
+   actor.Ranged=ranged;actor.PreferredDistance=preferred;if(row!=null)row.Ranged=ranged;EditorUtility.SetDirty(actor);
+  }
+  static void PopArmKind308(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,PopKind308 k)
+  {
+   var p=PopProfile308(k);PopArm308(actor,row,p,PopProjectile308(k,actor),p.Mode==EnemyController.AttackMode.RangedOnly,p.PreferredDistanceHint);
+  }
+  // the guard entries of the listed kinds (one per ContentId): written on arm, dropped on revert
+  static string PopGuards308(WorldMacroPlaytestSO content,PopCfg308 cfg,bool arm)
+  {
+   var list=new List<WorldMacroPlaytestSO.GuardBrain308>(content.GuardBrains??Array.Empty<WorldMacroPlaytestSO.GuardBrain308>());int had=0,set=0;
+   foreach(var k in (cfg.kinds??Array.Empty<PopKind308>()).Where(k=>k!=null&&k.guard!=null&&k.guard.share>0f))
+   {
+    had+=list.RemoveAll(g=>g!=null&&g.ContentId==k.contentId);
+    if(arm){list.Add(new WorldMacroPlaytestSO.GuardBrain308{ContentId=k.contentId,GuardShare=Mathf.Clamp01(k.guard.share),GuardFacingDegrees=Mathf.Clamp(k.guard.facing_deg,1f,180f)});set++;}
+   }
+   content.GuardBrains=list.ToArray();
+   return arm?"guard entries "+set+" written ("+had+" replaced)":"guard entries "+had+" removed";
+  }
+  static string PopAttacks308(Scene scene,WorldMacroPlaytestSession session,WorldMacroPlaytestSO content,bool arm)
+  {
+   var cfg=PopCfgFile308();var plan=PopData308();var all=Saved308<PrologueEncounter>(scene).ToArray();
+   // everything is looked up before the first write: a refusal leaves the scene untouched
+   var work=new List<(PrologueEncounter actor,WorldMacroPlaytestSO.Encounter row,PopKind308 kind,PrologueEncounter template,WorldMacroPlaytestSO.Encounter trow)>();
+   foreach(var a in all.Where(a=>a.Id!=null&&a.Id.StartsWith(PopPrefix308,StringComparison.Ordinal)))
+   {
+    var e=plan.enemies.FirstOrDefault(x=>x.id==a.Id);var k=e!=null?PopKindFor308(cfg,e.id,e.contentId):null;if(k==null)continue;
+    var row=Encounter308(content,a.Id);if(row==null)throw new Refuse308(a.Id+" has no content row (Populate check)");
+    var t=all.FirstOrDefault(x=>x.Id==e.template);var trow=Encounter308(content,e.template);
+    if(arm){PopProfile308(k);PopProjectile308(k,a);}
+    else if(t==null||trow==null)throw new Refuse308(a.Id+": template "+e.template+" is gone, nothing to put back");
+    work.Add((a,row,k,t,trow));
+   }
+   foreach(var w in work)
+   {
+    if(arm){PopArmKind308(w.actor,w.row,w.kind);continue;}
+    var tso=new SerializedObject(w.template.GetComponent<EnemyController>());
+    PopArm308(w.actor,w.row,tso.FindProperty("_attackProfile").objectReferenceValue,tso.FindProperty("_projectilePrefab").objectReferenceValue,w.trow.Ranged,w.template.PreferredDistance);
+   }
+   return (arm?"armed ":"put back ")+work.Count+" actors ("+string.Join(", ",work.Select(w=>w.actor.Id.Substring(PopPrefix308.Length)))+"), "+PopGuards308(content,cfg,arm);
+  }
 
   public static string Populate(string command)
   {
@@ -90,11 +162,15 @@ namespace Oheangbu.EditorTools.WorldMacro
      EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))return "FAILED the play scene was not saved";
      return "Content308.Populate "+c+": "+n+" actors (walk "+pc.walk_speed_mps+" m/s, pause "+pc.pause_min_s+"-"+pc.pause_max_s+" s)";
     }
-    if(c!="apply"&&c!="revert")return "REFUSED unknown Content308.Populate command '"+c+"' (status | apply | revert | check | patrol | patrol:revert)";
-    string dir=Path.Combine(PopStage308,"Backup",DateTime.Now.ToString("yyyyMMddTHHmmss")+"_"+c);Directory.CreateDirectory(dir);
+    bool attacks=c=="attacks"||c=="attacks:revert";
+    if(c!="apply"&&c!="revert"&&!attacks)return "REFUSED unknown Content308.Populate command '"+c+"' (status | apply | revert | check | patrol | patrol:revert | attacks | attacks:revert)";
+    if(c=="apply")PopKindsValid308(PopCfgFile308());
+    string dir=Path.Combine(PopStage308,"Backup",DateTime.Now.ToString("yyyyMMddTHHmmss")+"_"+c.Replace(':','-'));Directory.CreateDirectory(dir);
     File.Copy(Path.GetFullPath(scene.path),Path.Combine(dir,Path.GetFileName(scene.path)),true);File.Copy(Path.GetFullPath(PopContent308),Path.Combine(dir,Path.GetFileName(PopContent308)),true);
     var sb=new StringBuilder("Content308.Populate "+c+", backup "+dir);
-    sb.Append("\n  removed first: ").Append(PopRemove308(scene,session,content));
+    if(attacks)sb.Append("\n  ").Append(PopAttacks308(scene,session,content,c=="attacks"));
+    else sb.Append("\n  removed first: ").Append(PopRemove308(scene,session,content));
+    if(c=="revert")sb.Append(", ").Append(PopGuards308(content,PopCfgFile308(),false));
     if(c=="apply")PopApply308(scene,session,content,sb);
     EditorUtility.SetDirty(content);AssetDatabase.SaveAssetIfDirty(content);EditorUtility.SetDirty(session);
     EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))return "FAILED the play scene was not saved";
@@ -121,6 +197,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    var actorsHome=new GameObject("Actors").transform;actorsHome.SetParent(root.transform,false);var spots=new GameObject("SubNpcSpots").transform;spots.SetParent(root.transform,false);
    var all=Saved308<PrologueEncounter>(scene).ToArray();var rows=new List<WorldMacroPlaytestSO.Encounter>(content.Encounters??Array.Empty<WorldMacroPlaytestSO.Encounter>());
    var added=new List<PrologueEncounter>();var demoted=new List<string>();int placed=0;var left=new List<string>();var perRealm=new Dictionary<string,int>();
+   var cfg=PopCfgFile308();var armed=new List<string>();
    foreach(var e in data.enemies)
    {
     var template=all.FirstOrDefault(x=>x.Id==e.template);var trow=Encounter308(content,e.template);
@@ -140,9 +217,11 @@ namespace Oheangbu.EditorTools.WorldMacro
      var fieldProfile=AssetDatabase.LoadAssetAtPath<EnemyVitalsProfileSO>(PopFieldVitals308);if(fieldProfile==null||fieldProfile.IsBoss)throw new Refuse308("no field vitals profile at "+PopFieldVitals308);
      var so=new SerializedObject(cloneVitals);so.FindProperty("_profile").objectReferenceValue=fieldProfile;so.ApplyModifiedPropertiesWithoutUndo();demoted.Add(e.id);
     }
+    var kind=PopKindFor308(cfg,e.id,e.contentId);if(kind!=null){PopArmKind308(actor,rows[rows.Count-1],kind);armed.Add(e.id.Substring(PopPrefix308.Length));}      // D308-125
     added.Add(actor);SetWired308(session,go.GetComponent<EnemyVitals>(),true);placed++;perRealm[e.realm]=perRealm.TryGetValue(e.realm,out int n)?n+1:1;
    }
    content.Encounters=rows.ToArray();session.Actors=(session.Actors??Array.Empty<PrologueEncounter>()).Concat(added).ToArray();
+   string guards=PopGuards308(content,cfg,true);
    int npcs=0;
    foreach(var p in data.npcs)
    {
@@ -152,6 +231,16 @@ namespace Oheangbu.EditorTools.WorldMacro
    sb.Append("\n  enemies placed ").Append(placed).Append(" of ").Append(data.enemies.Length).Append(" (").Append(string.Join(", ",perRealm.OrderBy(k=>k.Key).Select(k=>k.Key+" "+k.Value))).Append("), sub NPC spots ").Append(npcs);
    foreach(string s in left)sb.Append("\n  LEFT OUT ").Append(s);
    if(demoted.Count>0)sb.Append("\n  boss template -> field vitals (").Append(PopFieldVitals308).Append("): ").Append(string.Join(", ",demoted));
+   sb.Append("\n  attacks armed ").Append(armed.Count).Append(armed.Count>0?" ("+string.Join(", ",armed)+")":"").Append(", ").Append(guards);
+  }
+  // the listed kinds' assets, before anything in the scene is touched
+  static void PopKindsValid308(PopCfg308 cfg)
+  {
+   foreach(var k in (cfg.kinds??Array.Empty<PopKind308>()).Where(k=>k!=null&&!string.IsNullOrEmpty(k.profile)))
+   {
+    PopProfile308(k);
+    if(!string.IsNullOrEmpty(k.projectile)&&AssetDatabase.LoadAssetAtPath<GameObject>(k.projectile)==null)throw new Refuse308(k.contentId+": projectile "+k.projectile+" is missing");
+   }
   }
 
   static string PopStatus308(Scene scene,WorldMacroPlaytestSession session,WorldMacroPlaytestSO content)
@@ -176,6 +265,32 @@ namespace Oheangbu.EditorTools.WorldMacro
    C(bossy.Length==0,"no field308/ actor carries a boss vitals profile unless its plan row says boss:true (asked "+askedBoss.Count+") - boss: "+(bossy.Length==0?"none":string.Join(", ",bossy)));
    var root=scene.GetRootGameObjects().FirstOrDefault(g=>g.name==PopRoot308);var spots=root!=null?root.transform.Find("SubNpcSpots"):null;
    C(spots==null||spots.GetComponentsInChildren<Component>(true).All(x=>x is Transform),"sub NPC spots are names only: no component, no body");
+   // D308-125: every row a kind lists carries that kind's profile and projectile, Ranged agrees on profile / actor / row, the stop distance is inside the reach
+   PopCfg308 cfg=null;try{cfg=PopCfgFile308();}catch(Exception){}
+   var kinds=(cfg?.kinds??Array.Empty<PopKind308>()).Where(k=>k!=null&&!string.IsNullOrEmpty(k.profile)).ToArray();
+   if(kinds.Length>0&&rows.Length>0)
+   {
+    var bad=new List<string>();int armed=0;
+    foreach(var r in rows)
+    {
+     var k=PopKindFor308(cfg,r.Id,r.ContentId);if(k==null)continue;armed++;var a=actors.FirstOrDefault(x=>x.Id==r.Id);var ctrl=a!=null?a.GetComponent<EnemyController>():null;
+     if(ctrl==null){bad.Add(r.Id+" (no actor / controller)");continue;}
+     var so=new SerializedObject(ctrl);var p=so.FindProperty("_attackProfile").objectReferenceValue as EnemyAttackProfileSO;var proj=so.FindProperty("_projectilePrefab").objectReferenceValue as GameObject;
+     string why=null;
+     if(p==null||AssetDatabase.GetAssetPath(p)!=k.profile)why="profile "+(p!=null?AssetDatabase.GetAssetPath(p):"none");
+     else if(!p.TryValidate(out string err))why="profile invalid: "+err;
+     else if(a.Ranged!=(p.Mode==EnemyController.AttackMode.RangedOnly)||r.Ranged!=a.Ranged)why="Ranged actor "+a.Ranged+" / row "+r.Ranged+" / profile "+p.Mode;
+     else if(!(a.PreferredDistance>0f&&a.PreferredDistance<=p.Range))why="stop distance "+a.PreferredDistance+" outside (0, "+p.Range+"]";
+     else if(!string.IsNullOrEmpty(k.projectile)&&(proj==null||AssetDatabase.GetAssetPath(proj)!=k.projectile))why="projectile "+(proj!=null?AssetDatabase.GetAssetPath(proj):"none");
+     else if(a.Ranged&&proj==null)why="ranged without a projectile";
+     if(why!=null)bad.Add(r.Id.Substring(PopPrefix308.Length)+" ("+why+")");
+    }
+    var unused=kinds.Where(k=>!rows.Any(r=>PopKindFor308(cfg,r.Id,r.ContentId)==k)).Select(k=>k.contentId).ToArray();
+    C(bad.Count==0&&unused.Length==0,"D308-125 armed kinds: "+armed+" actors carry their kind's profile / projectile / Ranged / stop distance"+(bad.Count>0?" - wrong: "+string.Join(", ",bad):"")+(unused.Length>0?" - kinds that arm no row: "+string.Join(", ",unused):""));
+    var guards=content.GuardBrains??Array.Empty<WorldMacroPlaytestSO.GuardBrain308>();
+    var gbad=kinds.Where(k=>k.guard!=null&&k.guard.share>0f).Where(k=>{var g=guards.Where(x=>x!=null&&x.ContentId==k.contentId).ToArray();return g.Length!=1||!Mathf.Approximately(g[0].GuardShare,Mathf.Clamp01(k.guard.share))||!Mathf.Approximately(g[0].GuardFacingDegrees,Mathf.Clamp(k.guard.facing_deg,1f,180f));}).Select(k=>k.contentId).ToArray();
+    C(gbad.Length==0,"D308-125 guard entries: one per guarded kind with its share / facing"+(gbad.Length>0?" - wrong: "+string.Join(", ",gbad):""));
+   }
    return sb.Append(pass).Append(" checks, ").Append(fail).Append(" failed").ToString();
   }
  }
