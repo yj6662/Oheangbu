@@ -60,6 +60,7 @@ namespace Oheangbu.App.Prologue
         {
             if(Current==Behaviour.Dead){if(!float.IsNegativeInfinity(hideDeadAt)&&Time.time>=hideDeadAt){foreach(var r in renderers)r.enabled=false;hideDeadAt=float.NegativeInfinity;}return;}
             if(Player==null || !vitals.IsAlive || !agent.isOnNavMesh)return;
+            Leash308();   // #308 WP-17 (숙): every frame, before anything can return
             if(vitals.Control.BlocksActions(Time.time)){attacks.AttackEnabled=false;agent.isStopped=true;LowerGuard308();return;}   // #308 WP-15: held, it drops its guard
             if(growth!=null&&growth.IsWindingUp){attacks.AttackEnabled=false;agent.isStopped=true;return;}
             Slip308();if(BrainActive308)BrainFrame308();   // #308 D308-70: per frame (the look-around turn, the side-slip record)
@@ -79,21 +80,30 @@ namespace Oheangbu.App.Prologue
             // along its path. The dragon and the general turn themselves (their EnemyController is off) and are left alone.
             if(boss==null&&general==null){bool face=Current==Behaviour.Chase||HoldPosition;attacks.FaceTarget=face;agent.updateRotation=!face;}
             if(HoldPosition){if(agent.isOnNavMesh)agent.isStopped=true;return;}   // #306 #11: a tutorial wait stands still, still watching
-            agent.speed=Speed*vitals.Control.MovementScale(Time.time)*(Current==Behaviour.Patrol?PatrolSpeedScale:1f);agent.isStopped=boss!=null?Current==Behaviour.Chase&&!boss.CanNavigate:general!=null?Current==Behaviour.Chase&&!general.CanNavigate:attacks.AttackInProgress;
+            agent.speed=Speed*vitals.Control.MovementScale(Time.time)*vitals.Modifiers.Domain.MoveScale(Time.time)*(Current==Behaviour.Patrol?PatrolSpeedScale:1f);agent.isStopped=boss!=null?Current==Behaviour.Chase&&!boss.CanNavigate:general!=null?Current==Behaviour.Chase&&!general.CanNavigate:attacks.AttackInProgress;
             if(agent.isStopped)return;
             if(Current==Behaviour.Return)StepReturn308();
-            else if(Current==Behaviour.Chase){agent.stoppingDistance=PreferredDistance>0?PreferredDistance:Ranged?9:1.7f;agent.SetDestination(Player.position);}
+            else if(Current==Behaviour.Chase){agent.stoppingDistance=PreferredDistance>0?PreferredDistance:Ranged?9:1.7f;agent.SetDestination(Contain308(Player.position));}
             else StepPatrol();
         }
         // #308 D308-70: the way home stops at home. The stopping distance of the chase (1.7 m, 2.2 m, 9 m for a ranged actor) used to stay on the agent,
         // so it stood that far from home, never came within the 1.2 m that ends Return, and ignored the player from then on.
-        void StepReturn308(){agent.stoppingDistance=.3f;agent.SetDestination(home);if(Vector3.Distance(transform.position,home)<1.2f)Current=Behaviour.Patrol;}
+        void StepReturn308(){agent.stoppingDistance=.3f;agent.SetDestination(Contain308(home));if(Vector3.Distance(transform.position,home)<1.2f)Current=Behaviour.Patrol;}
         void StepPatrol()
         {
             if(PatrolPoints==null || PatrolPoints.Length==0)return;
             if(Time.time<patrolPauseUntil){agent.isStopped=true;return;}
-            agent.stoppingDistance=.3f;agent.SetDestination(PatrolPoints[patrol]);
+            agent.stoppingDistance=.3f;agent.SetDestination(Contain308(PatrolPoints[patrol]));
             if(!agent.pathPending && agent.remainingDistance<.6f){patrol=(patrol+1)%PatrolPoints.Length;if(PatrolPauseMax>0&&PatrolPoints.Length>1)patrolPauseUntil=Time.time+Random.Range(PatrolPauseMin,PatrolPauseMax);}
+        }
+        // #308 WP-17 (숙, D308-121): a caged enemy walks only to points inside its cage, and one pushed out of it (by anything) is
+        // put back on its edge the same frame. No cage = the point as asked.
+        Vector3 Contain308(Vector3 point)=>vitals.Modifiers.Domain.Contain(point,Time.time);
+        void Leash308()
+        {
+            if(!vitals.Modifiers.Domain.Leashed(Time.time,out var centre,out float radius))return;
+            Vector3 p=transform.position;float dx=p.x-centre.x,dz=p.z-centre.z,edge=radius+.05f;
+            if(dx*dx+dz*dz>edge*edge)agent.Warp(DomainLeashRule308.Contain(centre,radius,p));
         }
     }
 }

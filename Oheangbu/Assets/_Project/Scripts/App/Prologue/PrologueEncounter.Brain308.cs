@@ -58,7 +58,8 @@ namespace Oheangbu.App.Prologue
             var b = Brain;
             // groggy (weak point open) it cannot guard: the guard never stands between the player and a groggy reward
             bool wants = up && b != null && b.GuardShare > 0f && b.GuardFacingDegrees >= 1f && vitals != null && !vitals.WeakPointActive;
-            if (wants) { if (vitals.Modifiers.Stance.Raise(b.GuardShare, now)) guardRaised308 = true; else LowerGuard308(); }
+            // #308 WP-17 (순): inside a guard-sealing domain no new guard goes up; one already raised stays (CanGuard)
+            if (wants) { if (vitals.Modifiers.CanGuard(now) && vitals.Modifiers.Stance.Raise(b.GuardShare, now)) guardRaised308 = true; else LowerGuard308(); }
             else LowerGuard308();
         }
 
@@ -162,7 +163,8 @@ namespace Oheangbu.App.Prologue
                 Current = Behaviour.Chase; Phase = Phase308.Notice; noticeUntil = now + b.NoticeSeconds;
                 alertPending = called = false; searchArrivedAt = -1f;
                 PlayerDetected?.Invoke();
-                if (calls && b.CallRadius > 0f && pack != null) pack.Call(this, lastKnown, b.CallRadius, now + b.CallDelaySeconds);
+                // #308 WP-17 (뭇): standing in a hushing domain it calls nobody
+                if (calls && b.CallRadius > 0f && pack != null && !vitals.Modifiers.Domain.CallBlocked(now)) pack.Call(this, lastKnown, b.CallRadius, now + b.CallDelaySeconds);
             }
             if (Current == Behaviour.Chase && (Vector3.Distance(Player.position, home) > Leash || now - lastSeen > b.GiveUpSeconds))
             { Current = Behaviour.Return; attacks.StopAttack(); }
@@ -172,7 +174,7 @@ namespace Oheangbu.App.Prologue
                 // patrol and the way home: nothing to attack, and the body follows its path
                 Phase = Phase308.None; ReleaseTurn308(now, false); Guard308(false, now);
                 attacks.AttackEnabled = false; attacks.FaceTarget = false; agent.updateRotation = !turning308;
-                agent.speed = Speed * vitals.Control.MovementScale(now) * (Current == Behaviour.Patrol ? PatrolSpeedScale : 1f);
+                agent.speed = Speed * vitals.Control.MovementScale(now) * vitals.Modifiers.Domain.MoveScale(now) * (Current == Behaviour.Patrol ? PatrolSpeedScale : 1f);
                 agent.isStopped = attacks.AttackInProgress || turning308;
                 if (attacks.AttackInProgress) return;
                 if (Current == Behaviour.Return) StepReturn308(); else StepPatrol();
@@ -208,12 +210,13 @@ namespace Oheangbu.App.Prologue
             bool face = !searching && sensed && (distance <= range + b.FaceMargin || !moving);
             attacks.FaceTarget = face; agent.updateRotation = !face;
 
-            agent.speed = Speed * vitals.Control.MovementScale(now);
+            agent.speed = Speed * vitals.Control.MovementScale(now) * vitals.Modifiers.Domain.MoveScale(now);
             agent.isStopped = attacking;
             if (attacking) return;
             if (searching)
             {
-                agent.stoppingDistance = .3f; agent.SetDestination(lastKnown);
+                // #308 WP-17 (숙): a caged enemy heads for the nearest point inside its cage
+                agent.stoppingDistance = .3f; agent.SetDestination(vitals.Modifiers.Domain.Contain(lastKnown, now));
                 if (!agent.pathPending && agent.remainingDistance <= Mathf.Max(.35f, b.SearchArriveMeters))
                 {
                     if (searchArrivedAt < 0f) { searchArrivedAt = now; searchYaw = transform.eulerAngles.y; }
@@ -224,7 +227,7 @@ namespace Oheangbu.App.Prologue
             searchArrivedAt = -1f;
             float stop = PreferredDistance > 0 ? PreferredDistance : Ranged ? 9 : 1.7f;      // as before
             if (!ranged && !holds) stop = Mathf.Max(stop, range + b.WaitRingMargin);        // waits outside its reach; never backs away
-            agent.stoppingDistance = stop; agent.SetDestination(sensed ? Player.position : lastKnown);
+            agent.stoppingDistance = stop; agent.SetDestination(vitals.Modifiers.Domain.Contain(sensed ? Player.position : lastKnown, now));
         }
     }
 }

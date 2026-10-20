@@ -51,6 +51,14 @@ namespace Oheangbu.App
             return id;
         }
 
+        // Removes every zone of this handler now and ends their presentations (WP-17: a domain of another handler took
+        // the player's one domain slot).
+        protected void DropAll(ISpellPresenter fx)
+        {
+            Zones.Drop(Id, _removed);
+            Retire(fx);
+        }
+
         // Who the zone's own judgements are attributed to.
         protected static Object Instigator(ISpellCastHost host)
             => host.PlayerVitals != null ? (Object)host.PlayerVitals : host.Player;

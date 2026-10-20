@@ -22,7 +22,7 @@ namespace Oheangbu.Combat
         public float AttackRange => ProfileActive ? _attackProfile.Range : EffectiveAttackMode == AttackMode.MeleeOnly ? (_config != null ? _config.MeleeRange : 2.4f) : (_config != null ? _config.EnemyEngageRange : 12f);
         private bool LegacyMeleeSelected => _attackMode == AttackMode.MeleeOnly || (_attackMode == AttackMode.LegacyDistance && _player != null && Distance() <= (_config != null ? _config.EnemyMeleePreferRange : 3f));
         public float AttackDamage => ProfileActive ? _attackProfile.Damage : LegacyMeleeSelected ? (_config != null ? _config.MeleeDamage : 15f) : (_config != null ? _config.RangedDamage : 12f);
-        public float TelegraphDuration => ProfileActive ? _attackProfile.Telegraph : LegacyMeleeSelected ? (_config != null ? _config.MeleeTelegraph : .8f) : (_config != null ? _config.RangedTelegraph : 1.2f);
+        public float TelegraphDuration => IsTelegraphing && _telegraph308 > 0f ? _telegraph308 : ProfileActive ? _attackProfile.Telegraph : LegacyMeleeSelected ? (_config != null ? _config.MeleeTelegraph : .8f) : (_config != null ? _config.RangedTelegraph : 1.2f);
         // SPEC-PACE-308 section 5 (D308-116): one recovery for the state clock, its progress and the rig motion; the pace scale is read once in Awake
         public float RecoveryDuration => (ProfileActive ? _attackProfile.Recovery : .4f) * _recoveryScale308;
         private float _recoveryScale308 = 1f;
@@ -73,7 +73,7 @@ namespace Oheangbu.Combat
             {
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
-                    if (AttackEnabled && !AttackHeld && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()) BeginAuthoredTelegraph();
+                    if (AttackEnabled && !AttackHeld && !DomainHeld308() && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()) BeginAuthoredTelegraph();
                     break;
                 case State.Telegraph:
                     if (!AttackEnabled || !HasLineOfSight()) { CancelAttack(); EnterRecover(); break; }
@@ -96,13 +96,16 @@ namespace Oheangbu.Combat
             if (_attackProfile.Delivery == EnemyAttackDelivery.GroundEruption && !TryAuthoredGround(_player.position, out _authoredPoint))
             { EnterRecover(); return; }
             _authoredOrigin = transform.position;
-            _authoredForward = Vector3.ProjectOnPlane(_player.position - transform.position, Vector3.up).normalized;
+            // #308 WP-17 웃: a slowed body swings where it faces
+            _authoredForward = Vector3.ProjectOnPlane(DomainTurned308() ? transform.forward : _player.position - transform.position, Vector3.up).normalized;
             if (_authoredForward.sqrMagnitude < .01f) _authoredForward = transform.forward;
             _attack = AttackProvenance.Create(_vitals, DamageSource.Enemy, _attackProfile.Elemental ? _attackProfile.Element : (Element?)null);
-            _state = State.Telegraph; _stateUntil = Time.time + _attackProfile.Telegraph; AttackStartTime = Time.time; RefreshOrganTint();
+            float tell = _attackProfile.Telegraph * DomainTelegraph308();
+            _state = State.Telegraph; _stateUntil = Time.time + tell; AttackStartTime = Time.time; RefreshOrganTint();
+            StartTelegraph308(tell);
             _authoredCueActive = true;
             if (!_attackProfile.Elemental) Tint(_neutralColor); else if (_tintBodyOnTelegraph) Tint(_elementColor); // neutral keeps the darkening-ink cue
-            AttackTelegraphed?.Invoke(new EnemyAttackCue(_attack, _attackProfile.Delivery, _authoredPoint, _attackProfile.Telegraph, _attackProfile.ImpactRadius));
+            AttackTelegraphed?.Invoke(new EnemyAttackCue(_attack, _attackProfile.Delivery, _authoredPoint, tell, _attackProfile.ImpactRadius));
         }
 
         private void FinishAuthoredTelegraph()
@@ -120,7 +123,7 @@ namespace Oheangbu.Combat
             }
             _projectileStart = transform.position + Vector3.up * 1.2f;
             _authoredProjectilePrevious = _projectileStart;
-            _authoredPoint = _player.position + Vector3.up * .5f; // Aimed water shots stop following here.
+            _authoredPoint = AimTarget308(_player.position) + Vector3.up * .5f; // Aimed water shots stop following here (or where a domain locked the aim).
             _authoredFlightDuration = Mathf.Max(.05f, Vector3.Distance(_projectileStart, _authoredPoint) / _attackProfile.ProjectileSpeed);
             _impactTime = Time.time + _authoredFlightDuration;
             if (_projectile != null) { _projectile.position = _projectileStart; ShowProjectile(); }
@@ -130,7 +133,7 @@ namespace Oheangbu.Combat
         private void TickAuthoredProjectile()
         {
             float remaining = _impactTime - Time.time;
-            bool homing = _attackProfile.Delivery == EnemyAttackDelivery.HomingProjectile;
+            bool homing = _attackProfile.Delivery == EnemyAttackDelivery.HomingProjectile && !_aimLocked308;
             Vector3 target = homing ? _player.position + Vector3.up * .5f : _authoredPoint;
             // #306 #11: a held shard waits short of the player; the impact time slides so nothing resolves while it waits
             bool hold = FlightHold != null && FlightHoldDistance > 0f && remaining > 0f &&

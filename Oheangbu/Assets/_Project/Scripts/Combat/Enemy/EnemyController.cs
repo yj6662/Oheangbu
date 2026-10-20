@@ -245,6 +245,7 @@ namespace Oheangbu.Combat
             if (_state == State.Dead || _config == null || _player == null) return;
 
             if (FaceTarget && _state != State.Stunned && (!ProfileActive || (_state != State.Telegraph && _state != State.Flight))) FacePlayer();
+            if (_state == State.Telegraph || _state == State.Flight) TickAimLock308();
 
             if (ProfileActive) TickAuthoredAttack();
             else switch (_state)
@@ -252,7 +253,7 @@ namespace Oheangbu.Combat
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
                     float range = _attackMode==AttackMode.MeleeOnly ? _config.MeleeRange : _config.EnemyEngageRange;
-                    if (AttackEnabled && _cooldown <= 0f && Distance() <= range && HasLineOfSight()) BeginTelegraph();
+                    if (AttackEnabled && !DomainHeld308() && _cooldown <= 0f && Distance() <= range && HasLineOfSight()) BeginTelegraph();
                     break;
 
                 case State.Telegraph:
@@ -293,9 +294,10 @@ namespace Oheangbu.Combat
             AttackStartTime = Time.time; RefreshOrganTint();
             _pattern = _attackMode==AttackMode.MeleeOnly ? Pattern.Melee : _attackMode==AttackMode.RangedOnly ? Pattern.Ranged : Distance() <= _config.EnemyMeleePreferRange ? Pattern.Melee : Pattern.Ranged;
             _attack = AttackProvenance.Create(_vitals, DamageSource.Enemy, _pattern == Pattern.Ranged ? _rangedElement : (Element?)null);
-            float duration = _pattern == Pattern.Melee ? _config.MeleeTelegraph : _config.RangedTelegraph;
+            float duration = (_pattern == Pattern.Melee ? _config.MeleeTelegraph : _config.RangedTelegraph) * DomainTelegraph308();
             _state = State.Telegraph;
             _stateUntil = Time.time + duration;
+            StartTelegraph308(duration);
 
             if (_pattern == Pattern.Ranged)
             {
@@ -331,12 +333,14 @@ namespace Oheangbu.Combat
             if(_environmentOcclusion && (!AttackEnabled || !HasLineOfSight())) {FinishProjectile();return;}
             float remain = _impactTime - Time.time;
             float t = Mathf.Clamp01(1f - remain / Mathf.Max(_config.ProjectileFlight, 0.01f));
-            _projectile.position = Vector3.Lerp(_projectileStart, _player.position, t);
+            _projectile.position = Vector3.Lerp(_projectileStart, AimTarget308(_player.position), t);
 
             if (remain <= 0f)
             {
                 // 접점 = 눈높이에서 접근 방향으로 1m 앞 — 투사체 lerp 목표(플레이어 중심)는 몸 안이라,
                 // 방어막의 개념 위치(작도면 앵커와 같은 전방 1m)로 보정한다. 「글자가 선 곳에서 튕긴다」
+                // #308 WP-17 눙: the shot flew to the locked point and the player is not there
+                if (AimMissed308(_player.position)) { FinishProjectile(); return; }
                 Vector3 eye = _player.position + Vector3.up * 1.1f;
                 Vector3 approach = (_player.position - _projectileStart).normalized;
                 Vector3 contact = eye - approach * 1.0f;
@@ -396,12 +400,14 @@ namespace Oheangbu.Combat
         private void CancelAttack()
         {
             if(_projectile!=null)_projectile.gameObject.SetActive(false);
+            EndAimLock308();
             EndAuthoredCue(true);
         }
 
         private void EnterRecover()
         {
             Tint(_baseColor);
+            EndAimLock308();
             _state = State.Recover;
             _stateUntil = Time.time + RecoveryDuration;
         }
@@ -432,7 +438,8 @@ namespace Oheangbu.Combat
             to.y = 0f;
             if (to.sqrMagnitude <= 0.001f) return;
             var look = Quaternion.LookRotation(to);
-            transform.rotation = TurnDegreesPerSecond > 0f ? Quaternion.RotateTowards(transform.rotation, look, TurnDegreesPerSecond * Time.deltaTime) : look;
+            float rate = DomainTurn308(TurnDegreesPerSecond);
+            transform.rotation = rate > 0f ? Quaternion.RotateTowards(transform.rotation, look, rate * Time.deltaTime) : look;
         }
 
         private void Tint(Color color)

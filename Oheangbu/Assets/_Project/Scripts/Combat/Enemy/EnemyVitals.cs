@@ -82,9 +82,11 @@ namespace Oheangbu.Combat
 
         public bool IsAlive => _hp > 0f;
         // In-encounter healing: never resurrect or reset pending-hit ownership, groggy or weak points.
+        // #308 WP-17 (눅, D308-121): an enemy standing in a sealing domain does not heal at all.
         public float Heal(float amount)
         {
             if (!IsAlive || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return 0f;
+            if (Modifiers.Domain.Sealed(Time.time)) return 0f;
             float restored = Mathf.Max(0f, Mathf.Min(amount, MaxHp - _hp));
             if (restored <= 0f) return 0f;
             _hp += restored;
