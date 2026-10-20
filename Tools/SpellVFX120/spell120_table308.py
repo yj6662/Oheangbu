@@ -36,25 +36,25 @@ STAGE = ROOT / 'Tools/Unity/Stage308_spell'
 STAGE_SHEETS = STAGE / '_ProjectAssets/Data/Spells'
 LIVE_SHEETS = ROOT / 'Oheangbu/Assets/_Project/Data/Spells'
 OUT = ROOT / 'Art/SpellVFX120/Spell120_308'
-EXPECTED_CSV_SHA = 'ea5a52eae1a49ec11a113a410d0335fb480f0cc99df47c125e1cb5a4198ec515'  # raw file bytes (D308-115, 2026-10-19: 곰 놈 몸 솜 옴 비고 [TEST D308-115] - resolved table hash 15744b56 unchanged; before: D308-113 117a2689)
+EXPECTED_CSV_SHA = '61c72adbe6eec3e8a09404fdc3a7ddf23c5642b98c46e90921ca82fba7833fd3'  # raw file bytes (D308-121, 2026-10-21: the 20 blanks are 결계 rows, TEST; before: D308-115 ea5a52ea, D308-113 117a2689)
 
 CANONICAL_HEADER = '글자,초성,속성,중성,프레임,종성,분류,효과,상태,비고'
 RULE_COLUMNS = ['글자', 'Mode', 'Handler', 'Pending', 'Kind', 'Gate', 'Feature', 'Inherit', 'BasePower', 'SpeedMul', 'AreaShape',
                 'AreaAngle', 'AreaRadius', 'AreaLength', 'AreaSpeed', 'AreaDelay', 'Shots', 'Interval', 'Scatter', 'Params']
 UNLOCK_COLUMNS = ['종성', 'LedgerId', 'EvidenceId', 'GrantedInMain']
-CATEGORY_NAMES = ['공격', '상합 설치', '패링', '버프', '소환', '방벽', '필드', '공백']
-CATEGORIES = ['Attack', 'Install', 'Parry', 'Buff', 'Summon', 'Ward', 'Field', 'Blank']
-CATEGORY_COUNTS = [50, 5, 5, 25, 5, 5, 5, 20]
+CATEGORY_NAMES = ['공격', '상합 설치', '패링', '버프', '소환', '방벽', '필드', '공백', '결계']
+CATEGORIES = ['Attack', 'Install', 'Parry', 'Buff', 'Summon', 'Ward', 'Field', 'Blank', 'Domain']  # Domain appended (D308-121)
+CATEGORY_COUNTS = [50, 5, 5, 25, 5, 5, 5, 0, 20]
 ELEMENTS = ['Wood', 'Fire', 'Earth', 'Metal', 'Water']
 ELEMENT_NAMES = '목화토금수'
 INITIALS, MEDIALS = 'ㄱㄴㅁㅅㅇ', 'ㅏㅓㅗㅜ'
 MEDIAL_NAMES = ['A', 'Eo', 'O', 'U']
 FINALS = ['None', 'Giyeok', 'Nieun', 'Mieum', 'Siot', 'Ieung']
-KINDS = ['AttackSingle', 'AttackArea', 'Parry', 'Summon', 'Field', 'Buff', 'Ward', 'Install']
+KINDS = ['AttackSingle', 'AttackArea', 'Parry', 'Summon', 'Field', 'Buff', 'Ward', 'Install', 'Domain']
 SHAPES = ['None', 'Cone', 'Circle', 'Path', 'Volley']
 FEATURES = {'': 'None', 'book': 'Book', 'ward': 'Ward', 'buff.g': 'BuffG', 'guk': 'Guk', 'giyeok': 'Giyeok', 'mum': 'Mum'}
 DEFAULT_KIND = {'Attack': 'AttackSingle', 'Install': 'Install', 'Parry': 'Parry', 'Buff': 'Buff', 'Summon': 'Summon', 'Ward': 'Ward',
-                'Field': 'Field', 'Blank': 'AttackSingle'}
+                'Field': 'Field', 'Blank': 'AttackSingle', 'Domain': 'Domain'}
 LEAD, VOWEL, TAIL = [0, 2, 6, 9, 11], [0, 4, 8, 13], [0, 1, 4, 16, 19, 21]
 # key -> (min, max). Keys the built-in paths read; handlers declare their own (SpellParamSpec in the handler source).
 CORE_KEYS = {'cost': (0, 10), 'area.spikes': (0, 1), 'area.seed': (0, 1), 'trace.pierce': (0, 1), 'lift.height': (.1, 20),
@@ -134,7 +134,7 @@ def category_of(initial, medial, final):
         return 'Summon' if final == 3 else 'Attack'
     if final == 0:
         return 'Ward'
-    return 'Field' if final == initial + 1 else 'Blank'
+    return 'Field' if final == initial + 1 else 'Domain'  # D308-121: the 20 former blanks
 
 
 def kind_fits(category, kind):
@@ -307,7 +307,7 @@ def build(canonical_text, sheets, unlock_text, catalog=None, strict=False):
         errors.append('canonical CSV: unexpected header')
     if len(canonical) != 121:
         errors.append('canonical CSV: %d rows, expected 120' % (len(canonical) - 1))
-    counts = [0] * 8
+    counts = [0] * len(CATEGORIES)
     categories, effects = [], []
     for i in range(120):
         initial, medial, final = cell_of(i + 1)
@@ -338,7 +338,7 @@ def build(canonical_text, sheets, unlock_text, catalog=None, strict=False):
             if CATEGORIES[c] != categories[i]:
                 errors.append('%s: CSV category %s but the grammar grid says %s' % (cells[0], CATEGORIES[c], categories[i]))
     if len(canonical) == 121:
-        for c in range(8):
+        for c in range(len(CATEGORIES)):
             if counts[c] != CATEGORY_COUNTS[c]:
                 errors.append('category %s: %d rows, expected %d' % (CATEGORIES[c], counts[c], CATEGORY_COUNTS[c]))
 

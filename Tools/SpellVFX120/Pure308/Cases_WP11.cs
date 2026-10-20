@@ -1,6 +1,6 @@
 // SPEC-SPELL-120-308 L2 cases of WP-11: the three single shots that are handed over to a handler (range, unguided fall,
 // turn-limited guidance), the handover rule itself, and the table clauses of the five single shots without a final and of
-// the 20 blank cells (the clause checklist gives each of them one L2 clause; no package owns those rows).
+// the 20 domain cells (blank until D308-121; the clause checklist gives each of them one L2 clause, WP-17 owns those rows).
 // The handover proof: with the WP-11 sheet in the table, (1) the dispatch rule without a registry is the rule of before for
 // all 120 rows, (2) all 120 glyphs resolve to the same status and the same cast as with the sheet taken out, under the old
 // flag gate and under the handler gate, (3) exactly the rows the sheet names are handed over when a registry holds their
@@ -118,15 +118,19 @@ namespace Pure308
             r.Check("아-2", casts[4].SpeedMul < 1f && casts[4].SpeedMul > 0f && casts.Where((x, i) => i != 4).All(x => x.SpeedMul > casts[4].SpeedMul),
                 "the water single shot is slow: a projectile speed multiplier below 1, the lowest of the five", casts[4].SpeedMul.ToString("R"));
 
-            // ---- the 20 blank cells, one clause each: a declared misfire whatever is registered or unlocked ----
+            // ---- the 20 domain cells (D308-121, blank before), one clause each: kind Domain; a reserved row is a declared misfire
+            //      whatever is registered or unlocked (WP-17 hands them over one by one) ----
             var everything = new ModelGate { Guk = true, Buffs = true, Wards = true, Giyeok = true, Mum = true,
                 Registered = new HashSet<string>(rows.Where(x => x.HasHandler).Select(x => x.Handler)),
                 Unlocked = new HashSet<SpellFinal> { SpellFinal.Giyeok, SpellFinal.Nieun, SpellFinal.Mieum, SpellFinal.Siot, SpellFinal.Ieung } };
-            foreach (var blank in rows.Where(x => x.Category == SpellCategory.Blank))
-                r.Check(blank.Letter + "-1", !blank.HasHandler && string.IsNullOrEmpty(blank.Pending) &&
-                    SpellResolveCore308.Resolve(blank.Letter[0], 1f, 1f, blank, everything, out _) == SpellResolveStatus.Blank &&
-                    SpellResolveCore308.Resolve(blank.Letter[0], 1f, 1f, blank, flags, out _) == SpellResolveStatus.Blank,
-                    "blank cell " + blank.Index + " resolves to Blank under every gate (the misfire: ink MisfireInkCost, the strokes evaporate)");
+            var domains = rows.Where(x => x.Category == SpellCategory.Domain).ToArray();
+            r.Check("A2", domains.Length == 20 && rows.All(x => x.Category != SpellCategory.Blank), "20 domain cells, no blank cell", domains.Length.ToString());
+            foreach (var domain in domains)
+                r.Check(domain.Letter + "-1", domain.Kind == SpellKind.Domain && (domain.HasHandler ||
+                    !string.IsNullOrEmpty(domain.Pending) &&
+                    SpellResolveCore308.Resolve(domain.Letter[0], 1f, 1f, domain, everything, out _) == SpellResolveStatus.Unimplemented &&
+                    SpellResolveCore308.Resolve(domain.Letter[0], 1f, 1f, domain, flags, out _) == SpellResolveStatus.Unimplemented),
+                    "domain cell " + domain.Index + " is a Domain row; while reserved it resolves to Unimplemented under every gate (the misfire: ink MisfireInkCost)");
 
             // ---- wood single: range ----
             float range = wood.F("range", 0f);

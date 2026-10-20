@@ -38,8 +38,8 @@ namespace Oheangbu.Spellcraft
             "AreaAngle", "AreaRadius", "AreaLength", "AreaSpeed", "AreaDelay", "Shots", "Interval", "Scatter", "Params"
         };
         static readonly string[] UnlockColumns = { "종성", "LedgerId", "EvidenceId", "GrantedInMain" };
-        static readonly string[] CategoryNames = { "공격", "상합 설치", "패링", "버프", "소환", "방벽", "필드", "공백" };
-        static readonly int[] CategoryCounts = { 50, 5, 5, 25, 5, 5, 5, 20 };
+        static readonly string[] CategoryNames = { "공격", "상합 설치", "패링", "버프", "소환", "방벽", "필드", "공백", "결계" };
+        static readonly int[] CategoryCounts = { 50, 5, 5, 25, 5, 5, 5, 0, 20 };
         const string InitialJamo = "ㄱㄴㅁㅅㅇ", MedialJamo = "ㅏㅓㅗㅜ";
 
         // Keys the built-in paths read. Handlers declare their own keys (SpellParamSpec); "cost" scales the ink cost of any row.

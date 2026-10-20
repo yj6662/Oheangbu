@@ -66,7 +66,8 @@ namespace Oheangbu.App
                 case SpellCategory.Field: entry = profile.Field; waits = true; break;
                 case SpellCategory.Install: entry = profile.Install; waits = true; break;
                 case SpellCategory.Parry: entry = profile.Parry; break;
-                case SpellCategory.Ward: entry = profile.Ward; break;
+                case SpellCategory.Ward:
+                case SpellCategory.Domain: entry = profile.Ward; break; // D308-121: a domain is laid like a ward until it has its own motion
                 case SpellCategory.Buff: entry = profile.Buff; break;
                 default: return false;
             }
@@ -136,6 +137,7 @@ namespace Oheangbu.App
                         else if (cast.AreaShape == AreaShape.Path) picked = rule.PathState;
                         break;
                     case SpellCategory.Ward:
+                    case SpellCategory.Domain:
                         picked = rule.WardState;
                         if (!string.IsNullOrEmpty(picked)) SwingClipLead308 = rule.WardLeadSeconds;
                         break;

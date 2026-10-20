@@ -14,7 +14,8 @@ namespace Oheangbu.Spellcraft
         Field,        // Opt-in demo utility; appended to preserve existing serialized kind values.
         Buff,         // Candidate-only temporary combat state; existing serialized values remain stable.
         Ward,         // Fixed survival area; no parry ownership.
-        Install       // #308: harmony mark attached to one enemy (no damage of its own); appended, serialized values stay stable.
+        Install,      // #308: harmony mark attached to one enemy (no damage of its own); appended, serialized values stay stable.
+        Domain        // D308-121: combat zone that rules a spot (gate 0, damage 0, groggy 0); appended, serialized values stay stable.
     }
 
     // 광역 실판정 형상 [TEST — #137 §9-1 해제 · #141 기하 3종]: None=단일 판정(연출만 광역).

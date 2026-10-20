@@ -9,7 +9,8 @@ namespace Oheangbu.Spellcraft
     // Docs/오행부_작도어휘_v0_1.csv plus the rule sheets (Data/Spells/Rules308_*.csv). No UnityEngine.Object in this file:
     // the same types run inside Unity and in the offline runner (Tools/SpellVFX120/spell120_pure308.py).
 
-    public enum SpellCategory { Attack, Install, Parry, Buff, Summon, Ward, Field, Blank }
+    // Domain (결계) = u + a final that is not the initial's pair (D308-121); appended so Blank keeps its serialized value.
+    public enum SpellCategory { Attack, Install, Parry, Buff, Summon, Ward, Field, Blank, Domain }
 
     // Final consonant of a glyph. Value = Jamo value + 1 (None = no final), same order as the CSV column.
     public enum SpellFinal { None, Giyeok, Nieun, Mieum, Siot, Ieung }

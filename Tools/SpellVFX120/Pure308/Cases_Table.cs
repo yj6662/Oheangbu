@@ -42,7 +42,7 @@ namespace Pure308
             if (!build.Ok) return;
             File.WriteAllText(Path.Combine(c.OutDir, "pure308_table.txt"), build.CanonicalText + "\n", new UTF8Encoding(false));
             r.Check("A2", build.Rows.Length == 120, "120 rows");
-            int[] expected = { 50, 5, 5, 25, 5, 5, 5, 20 };
+            int[] expected = { 50, 5, 5, 25, 5, 5, 5, 0, 20 };   // D308-121: the 20 former blank cells are domains
             for (int k = 0; k < expected.Length; k++)
                 r.Check("A2", build.Rows.Count(x => (int)x.Category == k) == expected[k], "category " + (SpellCategory)k + " = " + expected[k]);
             bool grid = true;
@@ -60,8 +60,8 @@ namespace Pure308
             int waiting = build.MissingSheet.Count;
             r.Fact("legacyRows", legacy); r.Fact("registeredRows", registered); r.Fact("reservedRows", reserved); r.Fact("blankRows", blank); r.Fact("waitingForSheet", waiting);
             r.Check("A2", legacy == 36, "36 rows keep a legacy feature", legacy.ToString());
-            r.Check("A2", blank == 20 && build.Rows.Where(x => x.Category == SpellCategory.Blank).All(x => !x.HasHandler && string.IsNullOrEmpty(x.Pending)), "20 blank rows carry no handler");
-            r.Check("A2", legacy + registered + reserved + waiting == 100, "every assigned glyph is legacy, registered, reserved or waiting for its sheet",
+            r.Check("A2", blank == 0, "no blank row (D308-121)", blank.ToString());
+            r.Check("A2", legacy + registered + reserved + waiting == 120, "every glyph is legacy, registered, reserved or waiting for its sheet",
                 legacy + "+" + registered + "+" + reserved + "+" + waiting);
             r.Check("A2", build.Rows.All(x => string.IsNullOrEmpty(x.Pending) || !x.HasHandler), "a reserved row has no handler");
             r.Check("A2", build.Rows.All(x => !x.HasHandler || !string.IsNullOrEmpty(x.Handler.Trim())), "handler ids are not blank text");
@@ -72,7 +72,7 @@ namespace Pure308
 
             // builder refusals (section 2), on small sheets of their own (independent of the project's sheets)
             string head = "글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params\n";
-            string g1 = SpellGrammar308.LetterAt(1).ToString(), g2 = SpellGrammar308.LetterAt(2).ToString(), blankGlyph = SpellGrammar308.LetterAt(21).ToString();
+            string g1 = SpellGrammar308.LetterAt(1).ToString(), g2 = SpellGrammar308.LetterAt(2).ToString(), domainGlyph = SpellGrammar308.LetterAt(21).ToString();
             SpellBuildResult308 Try(params string[] texts)
             {
                 var sheets = new List<SpellSheet308>();
@@ -85,7 +85,8 @@ namespace Pure308
             r.Check("A2", Try(good, head + g1 + ",replace,core.cone,,AttackArea,,,,9,,Cone,,,,,,,,,\n").Ok, "one replace of an existing row is accepted");
             r.Check("A2", !Try(good, head + g1 + ",replace,core.cone,,,,,,,,,,,,,,,,,\n", head + g1 + ",replace,core.path,,,,,,,,,,,,,,,,,\n").Ok, "a second replace of the same glyph is refused");
             r.Check("A2", !Try(head + g1 + ",replace,core.single,,,,,,,,,,,,,,,,,\n").Ok, "replace without an existing row is refused");
-            r.Check("A2", !Try(head + blankGlyph + ",,core.single,,,,,,,,,,,,,,,,,\n").Ok, "a handler on a blank glyph is refused");
+            r.Check("A2", Try(head + domainGlyph + ",,x.test,,,,,,,,,,,,,,,,,\n").Ok && !Try(head + domainGlyph + ",,x.test,,AttackSingle,,,,,,,,,,,,,,,\n").Ok,
+                "a domain glyph takes a handler of its own kind and refuses an attack kind (D308-121)");
             r.Check("A2", !Try(head.Replace("Params", "Params,Extra") + g1 + ",,core.single,,,,,,,,,,,,,,,,,,\n").Ok, "an unknown column is refused");
             r.Check("A2", !Try(head + g1 + ",,core.single,,,,,,5000,,,,,,,,,,,\n").Ok, "an out-of-range value is refused");
             r.Check("A2", !Try(head + g1 + ",,core.single,,,,,,1.2345678,,,,,,,,,,,\n").Ok, "a number with more than six significant digits is refused");
@@ -122,7 +123,7 @@ namespace Pure308
             int Count(Dictionary<SpellResolveStatus, int> d, SpellResolveStatus s) => d.TryGetValue(s, out int n) ? n : 0;
             r.Fact("statusAllOpen", string.Join(" ", counts.OrderBy(p => p.Key).Select(p => p.Key + "=" + p.Value)));
             r.Fact("statusAllShut", string.Join(" ", shutCounts.OrderBy(p => p.Key).Select(p => p.Key + "=" + p.Value)));
-            r.Check("A6", Count(counts, SpellResolveStatus.Blank) == 20, "20 glyphs answer Blank");
+            r.Check("A6", Count(counts, SpellResolveStatus.Blank) == 0, "no glyph answers Blank (D308-121)");
             r.Check("A6", Count(counts, SpellResolveStatus.Unimplemented) == reserved + waiting, "reserved and waiting glyphs answer Unimplemented", Count(counts, SpellResolveStatus.Unimplemented).ToString());
             r.Check("A6", Count(counts, SpellResolveStatus.Ok) == legacy + registered, "everything else casts when all gates are open");
             r.Check("A6", Count(shutCounts, SpellResolveStatus.Ok) == build.Rows.Count(x => x.Feature == SpellLegacyFeature.Book) +

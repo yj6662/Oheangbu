@@ -239,7 +239,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             int legacy = build.Rows.Count(x => x.Feature != SpellLegacyFeature.None), registered = build.Rows.Count(x => x.HasHandler && x.Feature == SpellLegacyFeature.None);
             int reserved = build.Rows.Count(x => !string.IsNullOrEmpty(x.Pending)), blank = build.Rows.Count(x => x.Category == SpellCategory.Blank);
             r.notes.Add("rows: legacy " + legacy + ", registered " + registered + ", reserved " + reserved + ", blank " + blank + ", waiting for a sheet " + build.MissingSheet.Count);
-            r.Check("A2", legacy == 36 && blank == 20 && legacy + registered + reserved + build.MissingSheet.Count == 100, "36 legacy rows, 20 blank rows, every assigned glyph accounted for");
+            // D308-121: the 20 former blank cells are the domain category, so every one of the 120 glyphs is assigned
+            r.Check("A2", legacy == 36 && blank == 0 && legacy + registered + reserved + build.MissingSheet.Count == SpellGrammar308.Count, "36 legacy rows, no blank row, all 120 glyphs accounted for");
             var known = new HashSet<string>(SpellEffectInstaller308.CreateAll().Select(e => e.Id));
             var orphan = build.Rows.Where(x => x.HasHandler && x.Feature == SpellLegacyFeature.None && !known.Contains(x.Handler)).Select(x => x.Letter + ":" + x.Handler).ToList();
             r.Check("A2", orphan.Count == 0, "every row of a registered handler names a handler that exists: " + string.Join(" ", orphan.Take(10)));
@@ -527,11 +528,11 @@ namespace Oheangbu.EditorTools.WorldMacro
         static void FixturesFoundation(Report r)
         {
             // grid cells used below, by index (no glyph is named): 1 = wood single, 7 = wood parry, 13 = wood circle, 19 = wood ward,
-            // 21 = a blank cell, 6 = a reserved cell, 27 / 3 / 5 = cells without a row in the foundation sheets
+            // 21 = a domain cell (D308-121, blank before), 6 = a reserved cell, 27 / 3 / 5 = cells without a row in the foundation sheets
             char single = SpellGrammar308.LetterAt(1), parry = SpellGrammar308.LetterAt(7), circle = SpellGrammar308.LetterAt(13), ward = SpellGrammar308.LetterAt(19);
-            char blank = SpellGrammar308.LetterAt(21), reserved = SpellGrammar308.LetterAt(6);
+            char domain = SpellGrammar308.LetterAt(21), reserved = SpellGrammar308.LetterAt(6);
             char coreRow = SpellGrammar308.LetterAt(27), probeRow = SpellGrammar308.LetterAt(3), ghostRow = SpellGrammar308.LetterAt(5);
-            if (!r.Wants(new string(new[] { single, parry, circle, ward, blank, reserved, coreRow, probeRow, ghostRow }))) return;
+            if (!r.Wants(new string(new[] { single, parry, circle, ward, domain, reserved, coreRow, probeRow, ghostRow }))) return;
             var probe = new ProbeEffect();
             var effects = SpellEffectInstaller308.CreateAll().Concat(new ISpellEffect[] { probe }).ToArray();
             var test = new SpellSheet308("Rules308_ZZFixture", RuleHeader +
@@ -548,7 +549,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         f.Accepted.Count == 0 && f.Plans.Count == 0 && f.PendingCount == 0,
                         text + ": ink -" + misfire + ", one CastMisfired(" + expected + "), no effect  [got " + (f.Misfires.Count > 0 ? f.Misfires[0].Value.ToString() : "none") + ", ink " + (before - f.Ink.Value) + "]");
                 }
-                Misfire("A6", blank, SpellResolveStatus.Blank, "blank glyph");
+                Misfire("A6", domain, SpellResolveStatus.Unimplemented, "domain glyph without a handler");
                 Misfire("A6", reserved, SpellResolveStatus.Unimplemented, "reserved glyph");
                 Misfire("A6", coreRow, SpellResolveStatus.Locked, "glyph behind a locked final");
                 Misfire("A6", ghostRow, SpellResolveStatus.Unavailable, "row whose handler is not registered");

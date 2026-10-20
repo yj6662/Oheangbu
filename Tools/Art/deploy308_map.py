@@ -23,7 +23,9 @@ INITIAL = {'ㄱ': 'Wood', 'ㄴ': 'Fire', 'ㅁ': 'Earth', 'ㅅ': 'Metal', 'ㅇ': 
 FRAME = {'ㅏ': 'YangSingle', 'ㅓ': 'YinSingle', 'ㅗ': 'YangArea', 'ㅜ': 'YinArea'}
 FRAME_NAME = {'ㅏ': '양·단일', 'ㅓ': '음·단일', 'ㅗ': '양·광역', 'ㅜ': '음·광역'}
 FINAL = {'무': 'None', 'ㄱ': 'Giyeok', 'ㄴ': 'Nieun', 'ㅁ': 'Mieum', 'ㅅ': 'Siot', 'ㅇ': 'Ieung'}
-EXPECTED = {'공격': 50, '상합 설치': 5, '패링': 5, '버프': 25, '소환': 5, '방벽': 5, '필드': 5, '공백': 20}
+EXPECTED = {'공격': 50, '상합 설치': 5, '패링': 5, '버프': 25, '소환': 5, '방벽': 5, '필드': 5, '결계': 20}
+# D308-121 (2026-10-21): the 20 former blank cells are the domain category (결계). Until the domain presentation exists they
+# keep the deploy layer's Blank set (no stroke, one residue drop): every domain row is reserved, so it misfires anyway.
 # what the game still reads from the old presentation when a row is switched on (Spec section 1 table):
 #   Keep = the old body stays as it is, the deploy layer is drawn on top
 #   Wrap = the old body stays, its entrance / exit is wrapped by the ink column
@@ -65,7 +67,7 @@ def category(row):
         if medial == 'ㅗ': return 'AttackArea'
         raise SystemExit('attack row with medial %s: %s' % (medial, row['글자']))
     return {'상합 설치': 'ComboInstall', '패링': 'Parry', '버프': 'Buff', '소환': 'Summon', '방벽': 'Ward', '필드': 'Field',
-            '공백': 'Blank'}[kind]
+            '결계': 'Blank'}[kind]
 
 
 def grid_expectation(medial, final, initial):
@@ -74,7 +76,7 @@ def grid_expectation(medial, final, initial):
     if medial == 'ㅓ': return '패링' if final == '무' else '버프'
     if medial == 'ㅗ': return '소환' if final == 'ㅁ' else '공격'
     if final == '무': return '방벽'
-    return '필드' if final == initial else '공백'
+    return '필드' if final == initial else '결계'
 
 
 def build():
