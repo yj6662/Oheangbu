@@ -30,6 +30,11 @@ FORK = {
         {'id': 'C_fork_stump_2', 'kind': 'prefab', 'prefab': FLORA + 'Pack_CharStump_two.prefab', 'x': 3275.1, 'z': 3063.3,
          'yaw': 320.0, 'sink_m': 0.1, 'solid': False, 'max_slope_deg': 26.0, 'corner_gap_max_m': 0.8,
          'note': 'on 292_tree_3278_3062 (elm, scale 1.07)'},
+        # the 1.6 m altar sits below the crest from the +350 m eye (stills fhl5_fork): a 4.8 m white cloth pole beside it is
+        # the vertical mark - a 서낭 pole, no light. 2.7 m from the altar toward the eye, cloth broadside to it (yaw 59).
+        {'id': 'C_fork_flag', 'kind': 'prefab', 'prefab': FLORA + 'Pack_P_Flag_Wind_1.prefab', 'x': 3268.2, 'z': 3080.4,
+         'yaw': 59.0, 'sink_m': 0.3, 'solid': False, 'max_slope_deg': 26.0, 'corner_gap_max_m': 0.8,
+         'note': 'deep_fork_rest308 altar mark'},
     ],
 }
 
