@@ -63,11 +63,17 @@ C2_GIVERS = [
      (3281.5, 3005.9), 'Rebuild_InnPeople/herbalist', 'herbalist', 'herbalist', [], [],
      "약초꾼 분녀: below the deep-forest fork on the sanctuary road, facing the herb ground where the beast pack is "
      "(target forest_beast308/1). Body = a clone of the inn herbalist - the same body as the miner's wife (F7); still FX5."),
-    ('XF6', 'charcoal_eopdong308', 'F6', [(3736.31, 3211.23), (3739.7, 3212.5), (3733.2, 3213.4)],
-     ['field308/cheongrim_moss_jackal_1_0', 'field308/cheongrim_moss_jackal_1_1', 'field308/cheongrim_moss_jackal_1_2'],
-     (3602.0, 3234.0), 'Roadside303/Givers/carter303', 'carter303', 'resident', ['RiceSack'], [],
-     "숯쟁이 업동: on the 신목 side path past the jackals, facing back toward the fork. His sack (dg308_cr_kiln_sack) lies in the "
-     "숯가마 골 dungeon. Body = a clone of the carter without the rice sack (the sack is lost); the same body as 덕대 칠복 (F1); still FX6."),
+    # first place (3736.31, 3211.23) was on the 신목 side path past the jackals: 457 m off the road and 1.1 km from his sack
+    # (PENDING_QUESTIONS_308 C2-1, the recommendation applied 2026-10-20) - now beside the deep-fork -> village branch road
+    # (BranchPath s ~1900, 5 m west of its centre) where it passes closest to the 숯가마 골 mouth (2772, 2706): 220 m up the valley.
+    # (2980.6, 2647.2) stood on the 암릉 rib the road crosses at the red-roofed gate (AC-T6: RibCore_08 +5.35 m, still c2_FX6top) -
+    # now the open grass south of the rib; (2979.5, 2637.5) stood inside a collider-less boulder (still c2_FX6down/near) - 5 m south
+    ('XF6', 'charcoal_eopdong308', 'F6', [(2980.5, 2632.5), (2979.0, 2632.0), (2982.0, 2632.5)],
+     ['village_road_raider_0', 'village_road_raider_1'],
+     (2772.0, 2706.0), 'Roadside303/Givers/carter303', 'carter303', 'resident', ['RiceSack'], [],
+     "숯쟁이 업동: beside the deep-fork -> village branch road where it passes the 숯가마 골 valley, looking up the valley at the "
+     "cave mouth he ran out of. His sack (dg308_cr_kiln_sack) lies just inside (A1). Body = a clone of the carter without the rice "
+     "sack (the sack is lost); the same body as 덕대 칠복 (F1); still FX6."),
 ]
 
 NOTE_F1_POINT = ("D308-117 B1: id = the campaign stage commission TriggerId (village_commission), so the general demo path completes the "
