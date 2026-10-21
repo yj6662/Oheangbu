@@ -25,6 +25,13 @@ namespace Oheangbu.App
         // press only puts the sword away. A counter chosen but not fired puts nothing away (one press, one action).
         // The form reads it once per frame.
         bool SwordReleasePressed308 { get; }
+        // D308-127 debate 16 (TEST), the bow: the click is down this frame, behind the same doors as the press (so a menu,
+        // a dodge, a jump or death read as "not held"), and the click came up this frame (only asks that the form is held:
+        // letting go is never refused). Held and released both false while drawing = the draw is cancelled.
+        bool SwordStrikeHeld308 { get; }
+        bool SwordStrikeReleased308 { get; }
+        // The form's ground-speed scale for this frame (1 = none). Put back to 1 when the form ends.
+        void HoldMovementScale308(float scale);
     }
 
     // D308-123 (TEST): the counter that may take the release press while the sword is out (Riposte301, the 앞잡 volley).
@@ -79,6 +86,7 @@ namespace Oheangbu.App
         {
             bool held = _swordHeld308;
             _swordHeld308 = false;
+            if (_motor != null) _motor.FormMovementScale308 = 1f;
             if (_swordHarvestOff308) { _swordHarvestOff308 = false; if (_harvest != null) _harvest.enabled = true; }
             // Put away by the player: the gate stays until that key is up again, so the press that ends the sword does not
             // raise the brush in the same breath. It hands itself back from SwordDrawGate308.
@@ -94,6 +102,31 @@ namespace Oheangbu.App
                 var click = SwordClick308();
                 return click != null && click.WasPressedThisFrame();
             }
+        }
+
+        bool ISwordFormSeam308.SwordStrikeHeld308
+        {
+            get
+            {
+                if (!_swordHeld308 || !SwordInputOpen308() || (_motor != null && !_motor.CanBeginDrawing)) return false;
+                var click = SwordClick308();
+                return click != null && click.IsPressed();
+            }
+        }
+
+        bool ISwordFormSeam308.SwordStrikeReleased308
+        {
+            get
+            {
+                if (!_swordHeld308) return false;
+                var click = SwordClick308();
+                return click != null && click.WasReleasedThisFrame();
+            }
+        }
+
+        void ISwordFormSeam308.HoldMovementScale308(float scale)
+        {
+            if (_motor != null) _motor.FormMovementScale308 = _swordHeld308 ? Mathf.Clamp01(scale) : 1f;
         }
 
         bool ISwordFormSeam308.SwordReleasePressed308

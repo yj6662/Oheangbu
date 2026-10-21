@@ -89,6 +89,7 @@ namespace Oheangbu.App.SpellVFX120
         public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args)
         {
             if (!handle.Shown) return;
+            if (_weapons.Bow(handle.Id, cue, args)) return;   // debate 16: the bow's draw and arrow are the weapon's own
             if (cue == SpellFxCue.Hit || cue == SpellFxCue.Miss) _weapons.Strike(handle.Id, args.At, args.Finish);   // D308-127: the weapon swings (presentation)
             if (_fallbackHandles.TryGetValue(handle.Id, out var inner)) { _fallback.Cue(inner, cue, args); return; }
             var stage = Stage;

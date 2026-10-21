@@ -73,9 +73,21 @@ namespace Oheangbu.App
             new SpellParamSpec("combo.finish", 0f, 5f, false, 1f),
             new SpellParamSpec("hold.per", 0f, 10f, false),
             new SpellParamSpec("hold.cap", 0f, 10f, false),
+            // D308-127 debate 16 (TEST): the horn bow (shot.draw > 0 = the row is a bow; sword.interval is its recovery)
+            new SpellParamSpec("shot.draw", 0f, 5f, false),
+            new SpellParamSpec("shot.speed", 0f, 200f, false),
+            new SpellParamSpec("shot.range", 0f, 100f, false),
+            new SpellParamSpec("shot.ink", 0f, 1f, false),
+            new SpellParamSpec("shot.move", 0f, 1f, false, 1f),
         };
 
         struct Shredded { public EnemyVitals Enemy; public float Until; }
+        // an arrow in the air (debate 16): everything it needs to land is fixed when it leaves the bow
+        struct Arrow
+        {
+            public EnemyVitals Target; public uint Life; public float At, Power; public Vector3 Origin;
+            public AttackProvenance Attack; public Element Element; public char Letter;
+        }
 
         bool _active, _manual;
         char _letter;
@@ -92,6 +104,11 @@ namespace Oheangbu.App
         float _comboRest, _comboWindow, _comboBuffer, _comboFinish, _holdPer, _holdCap, _holdUntil;
         bool _pending;
         long _holdOwner;
+        // debate 16, the bow (a row with shot.draw > 0): drawing since _drawStart, the shot numbers, the arrows in the air
+        bool _bow, _drawing;
+        float _drawStart, _shotDraw, _shotSpeed, _shotRange, _shotInk, _shotMove;
+        readonly List<Arrow> _arrows = new List<Arrow>();
+        readonly List<Arrow> _landing = new List<Arrow>();
         IPlayerDomainHost308 _domain;
         int[] _hitIds = Array.Empty<int>();
         float[] _hitDistances = Array.Empty<float>();
@@ -115,6 +132,9 @@ namespace Oheangbu.App
         public bool BlocksDrawing => _active;
         public bool ManualReleaseAllowed => _active && _manual;
         public float NextStrikeAt => _nextStrikeAt;
+        public bool IsBow => _active && _bow;
+        public bool Drawing => _active && _drawing;
+        public int ArrowsInFlight => _arrows.Count;
 
         // A sword without strike power is a data error, not a cast.
         public bool Prepare(in SpellCastContext ctx) => ctx.Host != null && ctx.Row != null && ctx.Host.Ink != null && ctx.Cast.Power > 0f;
@@ -134,6 +154,8 @@ namespace Oheangbu.App
             _comboHits = Mathf.RoundToInt(row.F("combo.hits", 0f)); _comboRest = row.F("combo.rest", 0f); _comboWindow = row.F("combo.window", 0f);
             _comboBuffer = row.F("combo.buffer", 0f); _comboFinish = row.F("combo.finish", 1f); _comboStep = 0; _pending = false;
             _holdPer = row.F("hold.per", 0f); _holdCap = row.F("hold.cap", 0f); _holdUntil = float.NegativeInfinity;
+            _shotDraw = row.F("shot.draw", 0f); _bow = _shotDraw > 0f; _drawing = false;
+            _shotSpeed = row.F("shot.speed", 0f); _shotRange = row.F("shot.range", 0f); _shotInk = row.F("shot.ink", 0f); _shotMove = row.F("shot.move", 1f);
             _domain = host as IPlayerDomainHost308;
             // the hold's owner token: a fresh attack id (only the counter moves). It lies inside this cast's attack window
             // (D308-123), but it never lands a hit, so the empower charge's "first confirmed hit in the window" never sees it
@@ -168,24 +190,32 @@ namespace Oheangbu.App
             // a shred that ran out is no longer this form's to take back (also after the form itself ended)
             for (int i = _shredded.Count - 1; i >= 0; i--)
                 if (_shredded[i].Enemy == null || ctx.Now >= _shredded[i].Until) _shredded.RemoveAt(i);
+            // an arrow already in the air lands even when the form has just ended (debate 16)
+            if (_arrows.Count > 0) Land(ctx);
             if (!_active) return;
             var ink = _ink;
             if (ink == null) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
             float drain = SwordFormRule308.DrainAmount(_drain, ctx.Delta);
-            bool held = ctx.Host is IPlayerDomainHost308 domain && domain.PlayerDomain308.DrainHeld(ctx.Now);   // #308 WP-17 (눔)
-            if (drain > 0f && !held) ink.SpendClamped(drain);
+            bool drainHeld = ctx.Host is IPlayerDomainHost308 domain && domain.PlayerDomain308.DrainHeld(ctx.Now);   // #308 WP-17 (눔)
+            if (drain > 0f && !drainHeld) ink.SpendClamped(drain);
             if (SwordFormRule308.Exhausted(ink.Value)) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
             // the input side: the draw mode stays shut, the release press puts the sword away, a click is one strike
             var seam = _seam;
             if (seam == null) return;
             HoldSeam();
-            bool release = false, strike = false;
+            bool release = false, strike = false, held = false, released = false;
             // only a form the player may put away reads the release key: the same press may fire the 앞잡 volley, and a volley
-            // always takes the sword with it (D308-123)
-            try { release = _manual && seam.SwordReleasePressed308; strike = !release && seam.SwordStrikePressed308; }
+            // always takes the sword with it (D308-123). Accepted, it also ends a draw: no arrow leaves on that frame.
+            try
+            {
+                release = _manual && seam.SwordReleasePressed308;
+                if (_bow) { held = !release && seam.SwordStrikeHeld308; released = !release && seam.SwordStrikeReleased308; }
+                else strike = !release && seam.SwordStrikePressed308;
+            }
             catch (Exception exception) { Debug.LogException(exception); }
             if (release && ReleaseByPlayer(ctx)) return;
             if (release) _pending = false;
+            if (_bow) { BowInput(ctx, held, released); return; }
             if (strike && !SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt))
             {
                 // debate 15: a click just before the next strike is allowed is kept for it (combo.buffer; 0 = dropped as before)
@@ -204,7 +234,7 @@ namespace Oheangbu.App
         public SwordStrike308 Strike(in SpellTickContext ctx)
         {
             var host = ctx.Host;
-            if (!_active || host == null || !SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt)) return default;
+            if (!_active || _bow || host == null || !SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt)) return default;   // the bow shoots (BowInput)
             // debate 15: the step of the combo (0 = a row without one) sets the wait after this strike and its share
             int step = SwordFormRule308.ComboStep(_comboStep, ctx.Now, _nextStrikeAt, _comboHits, _comboWindow);
             _comboStep = step; _pending = false;
@@ -254,6 +284,87 @@ namespace Oheangbu.App
             return new SwordStrike308(true, first, firstDamage, firstCounter, firstGained, struck, total, step);
         }
 
+        // The bow (debate 16): this frame's click (held = down behind the action doors, released = came up). The seam calls it
+        // from Tick; checks call it with their own clock. Returns what the bow did. The presentation hears the draw as Tick cues
+        // (Value = how far drawn, -1 = the draw ended without an arrow) and the arrow as one Secondary cue (Shoot).
+        public BowStep308 BowInput(in SpellTickContext ctx, bool held, bool released)
+        {
+            if (!_active || !_bow || ctx.Host == null) return BowStep308.None;
+            var step = SwordFormRule308.BowStep(_drawing, ctx.Now, _drawStart, _shotDraw, held, released, _nextStrikeAt);
+            switch (step)
+            {
+                case BowStep308.Begin: _drawing = true; _drawStart = ctx.Now; break;
+                case BowStep308.Fizzle:
+                case BowStep308.Cancel: _drawing = false; Cue(ctx.Fx, SpellFxCue.Tick, new SpellFxCueArgs { Value = -1f, At = ctx.Now }); break;
+                case BowStep308.Fire: _drawing = false; Shoot(ctx); break;
+            }
+            if (_drawing) Cue(ctx.Fx, SpellFxCue.Tick, new SpellFxCueArgs { Value = SwordFormRule308.Drawn01(ctx.Now, _drawStart, _shotDraw), At = ctx.Now });
+            var seam = _seam;
+            if (seam != null)
+                try { seam.HoldMovementScale308(SwordFormRule308.MoveScale(_drawing, _shotMove)); }
+                catch (Exception exception) { Debug.LogException(exception); }
+            return step;
+        }
+
+        // One arrow: at the aimed enemy inside shot.range, or straight ahead to a miss. It flies distance / speed (the haste of
+        // this moment included) and lands in Land. shot.ink is paid here once; the form ends when that empties the pool.
+        void Shoot(in SpellTickContext ctx)
+        {
+            var host = ctx.Host;
+            _nextStrikeAt = SwordFormRule308.NextStrikeAt(ctx.Now, _interval);
+            var targets = host.Targets;
+            var actors = SpellSnapshots308.Take(targets);
+            int aimed = SpellSnapshots308.IndexOf(targets, host.AimedTarget());
+            Vector3 feet = host.PlayerPosition, origin = feet + Vector3.up * .4f;
+            int id = SwordFormRule308.ShotTarget(actors, feet, _shotRange, aimed);
+            float haste = host.Buffs != null ? host.Buffs.SpeedScale(ctx.Now) : 1f;
+            if (_shotInk > 0f && _ink != null) _ink.SpendClamped(_shotInk);
+            float life = _ink != null ? SwordFormRule308.LongestLife(_ink.Value, _ink.CapacityMultiplier, _drain) : 0f;
+            if (id < 0)
+            {
+                Cue(ctx.Fx, SpellFxCue.Secondary, new SpellFxCueArgs
+                { Point = origin + host.PlayerForward * _shotRange, At = SwordFormRule308.FlightTime(_shotRange, _shotSpeed, haste), Value = life });
+            }
+            else
+            {
+                var target = targets[id];
+                Vector3 point = target.transform.position + Vector3.up * .4f;
+                float flight = SwordFormRule308.FlightTime(Vector3.Distance(feet, target.transform.position), _shotSpeed, haste);
+                UnityEngine.Object instigator = host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player;
+                _arrows.Add(new Arrow
+                {
+                    Target = target, Life = target.LifeRevision, At = ctx.Now + flight, Power = _power, Origin = origin,
+                    Attack = AttackProvenance.Create(instigator, DamageSource.PlayerDirect, _element),   // ranged: a guard takes it
+                    Element = _element, Letter = _letter,
+                });
+                Cue(ctx.Fx, SpellFxCue.Secondary, new SpellFxCueArgs { Target = target.transform, Point = point, At = flight, Value = life });
+            }
+            if (_ink != null && SwordFormRule308.Exhausted(_ink.Value)) End(ctx.Fx, SpellFxCue.Expire, false);
+        }
+
+        // Arrows whose time has come. They leave the list before any is applied: a damage callback may clear this handler.
+        // The hit itself is the host's direct hit (a dead or new life misses, a wall in the line misses); the look of the
+        // landing belongs to the arrow the presenter flies (no Hit cue: the form may be gone by now).
+        void Land(in SpellTickContext ctx)
+        {
+            var host = ctx.Host;
+            _landing.Clear();
+            for (int i = 0; i < _arrows.Count;)
+            {
+                if (ctx.Now >= _arrows[i].At) { _landing.Add(_arrows[i]); _arrows.RemoveAt(i); }
+                else i++;
+            }
+            if (host == null) { _landing.Clear(); return; }
+            for (int i = 0; i < _landing.Count; i++)
+            {
+                var arrow = _landing[i];
+                if (arrow.Target == null) continue;
+                try { host.ApplyDirectHit(arrow.Target, arrow.Life, arrow.Power * host.DamageScale(arrow.Element), arrow.Origin, arrow.Attack, arrow.Letter); }
+                catch (Exception exception) { Debug.LogException(exception); }
+            }
+            _landing.Clear();
+        }
+
         // The flail's ink hold (debate 15): a swing that landed holds the upkeep for hold.per per enemy, at most hold.cap ahead.
         void Hold(int landed, float now)
         {
@@ -296,7 +407,8 @@ namespace Oheangbu.App
         public void Clear(SpellClearReason reason)
         {
             // the host ends every presentation right after (ISpellPresenter.EndAll)
-            _active = false; _fx = default;
+            _active = false; _fx = default; _drawing = false;
+            _arrows.Clear(); _landing.Clear();   // death, rest, leaving: the arrows in the air are gone too
             StopListening();
             ReleaseHold();
             DropSeam(false);
@@ -318,7 +430,7 @@ namespace Oheangbu.App
         void End(ISpellPresenter fx, SpellFxCue cue, bool byPlayer)
         {
             if (!_active) return;
-            _active = false;
+            _active = false; _drawing = false;
             StopListening();
             ReleaseHold();
             DropSeam(byPlayer);

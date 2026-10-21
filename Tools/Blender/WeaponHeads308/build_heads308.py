@@ -1,4 +1,4 @@
-"""#308 D308-127 2단계: 무기 변신 머리 넷(장창 · 부월 · 쌍수도 · 편곤). 각궁은 5단계(붓 전체를 바꾸고 한 손 쥐기가 필요).
+"""#308 D308-127 2단계: 무기 변신 머리 넷(장창 · 부월 · 쌍수도 · 편곤) + 5단계 각궁(토론 16: 붓 전체를 숨기고 왼손에 쥔다).
     blender -b --factory-startup -P build_heads308.py -- <out_dir> [--spear-ext 1.58] [--sword-blade 1.2] [--sword-width .17] [--axe-ext .35]
 원점 = 큰 붓의 페룰(붓털 뿌리, GripSocket +.57 m). +Z = 자루 축(털끝 쪽). Unity 에서는 GripSocket 의 자식으로 붙는다(+Y = 자루 축).
 머리는 붓털의 먹이 굳은 것: 무광 먹(칸 0) + 날 가장자리 안료 띠(칸 1, 머리 면적의 15 % 이내). 발광 · 금속 반사 없음(재질은 Unity 에서).
@@ -209,6 +209,48 @@ cap(bm, rings_[0], flip=True); cap(bm, rings_[-1])
 rod = finish('Flail_Rod', bm, parent); rod.location = (0, 0, L)
 end_socket = empty('FlailEndSocket', rod); end_socket.location = (0, 0, FLAIL_BAR)
 
+# ---- 각궁(토론 16): 줌통 + 위 · 아래 활채(안 · 바깥 두 마디, 바깥 끝이 고자로 되휜다) — 강체 부품, 스키닝 없음 ----
+# 원점 = 줌통 가운데(왼손이 쥐는 곳). +Z = 위 활채, +X = 과녁 쪽(활 등), 시위는 -X 쪽(쏘는 사람 쪽), Y = 활채 폭.
+# 이름: Bow_Grip · Bow_UpperIn → Bow_UpperOut → Bow_NockTop · Bow_LowerIn → Bow_LowerOut → Bow_NockBottom · ArrowRest308.
+# 마디 원점 = 그 마디의 뿌리(돌리는 축). Unity HornBow308 이 당김 정도만큼 뿌리를 -X 쪽으로 돌린다(휨을 두 마디에 나눔).
+BOW_HALF = arg('--bow-length', 1.05) * .5; BOW_GRIP = .07
+BOW_PTS = [(0.0, BOW_GRIP), (-.030, .30), (-.085, .44), (-.105, .475), (-.075, BOW_HALF)]   # (x, z) 줌통 끝 → 안 마디 끝 → 바깥 → 고자 뿌리 → 끝
+
+
+def sweep(bm, pts, widths, thick, mat=INK, n=8):
+    """a tube through pts (Vector, in the part's own space) with an elliptic section: widths along Y, thick along the bow's plane."""
+    rings_ = []
+    for k, p in enumerate(pts):
+        t = (pts[min(k + 1, len(pts) - 1)] - pts[max(k - 1, 0)]).normalized()
+        side = Vector((0, 1, 0)); across = t.cross(side).normalized()   # the ring turns like lathe's (faces out)
+        rings_.append([bm.verts.new(p + side * math.cos(2 * math.pi * i / n) * widths[k] + across * math.sin(2 * math.pi * i / n) * thick[k]) for i in range(n)])
+    for k in range(len(rings_) - 1): bridge(bm, rings_[k], rings_[k + 1], mat)
+    cap(bm, rings_[0], flip=True, mat=mat); cap(bm, rings_[-1], mat=mat)
+
+
+def curve(a, b, steps):
+    (xa, za), (xb, zb) = a, b
+    return [Vector((xa + (xb - xa) * (k / steps) ** 1.15, 0, za + (zb - za) * k / steps)) for k in range(steps + 1)]
+
+
+bow = empty('Head_Bow')
+bm = bmesh.new()
+lathe(bm, [(-BOW_GRIP - .01, .012), (-BOW_GRIP, .017), (-.03, .020), (.03, .020), (BOW_GRIP, .017), (BOW_GRIP + .01, .012)], n=10, jitter=.01)
+grip = finish('Bow_Grip', bm, bow)
+for side, sign in (('Upper', 1), ('Lower', -1)):
+    p0, p1, p2, p3, p4 = BOW_PTS
+    inner = [Vector((v.x, 0, sign * v.z)) for v in curve(p0, p1, 6)]
+    outer = [Vector((v.x, 0, sign * v.z)) for v in curve(p1, p2, 4)] + [Vector((p3[0], 0, sign * p3[1])), Vector((p4[0], 0, sign * p4[1]))]
+    root_in, root_out = inner[0].copy(), outer[0].copy()
+    bm = bmesh.new()
+    sweep(bm, [v - root_in for v in inner], [.016 - .004 * k / 6 for k in range(7)], [.0085 - .002 * k / 6 for k in range(7)])
+    limb_in = finish('Bow_%sIn' % side, bm, bow); limb_in.location = root_in
+    bm = bmesh.new()
+    sweep(bm, [v - root_out for v in outer], [.012, .011, .010, .009, .008, .007, .005], [.0065, .006, .0058, .0055, .0052, .006, .004])
+    limb_out = finish('Bow_%sOut' % side, bm, limb_in); limb_out.location = root_out - root_in
+    nock = empty('Bow_Nock' + ('Top' if sign > 0 else 'Bottom'), limb_out); nock.location = Vector((p3[0], 0, sign * p3[1])) - root_out
+rest = empty('ArrowRest308', bow); rest.location = (.005, .018, BOW_GRIP + .006)
+
 # ---- report ----
 bpy.context.view_layer.update()
 
@@ -226,7 +268,8 @@ def measure(obs):
 report = dict(version='heads308-v1', params=dict(spear_ext=SPEAR_EXT, spear_leaf=SPEAR_LEAF, spear_width=SPEAR_WIDTH, sword_blade=SWORD_BLADE, sword_width=SWORD_WIDTH,
               axe_ext=AXE_EXT, axe_height=AXE_H, axe_width=AXE_W, flail_chain=FLAIL_CHAIN, flail_bar=FLAIL_BAR, flail_radius=FLAIL_R),
               origin='ferrule (GripSocket +0.57 m), +Z = shaft axis toward the tip; Unity +Y', materials=MATS,
-              heads=dict(Head_Spear=measure([spear]), Head_Sword=measure([sword]), Head_Axe=measure([axe]), Head_Flail=measure(list(flail.children_recursive))))
+              heads=dict(Head_Spear=measure([spear]), Head_Sword=measure([sword]), Head_Axe=measure([axe]), Head_Flail=measure(list(flail.children_recursive)),
+                         Head_Bow=dict(measure(list(bow.children_recursive)), span=round(2 * BOW_HALF, 4))))
 json.dump(report, open(os.path.join(OUT, 'build-report.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, 'SM_WeaponHeads308.blend'))
 for o in bpy.context.scene.objects: o.select_set(True)

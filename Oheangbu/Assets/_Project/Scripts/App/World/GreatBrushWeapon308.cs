@@ -39,6 +39,8 @@ namespace Oheangbu.App.World
         [SerializeField, Min(.01f)] private float _retractSeconds = .3f;
         [Tooltip("sRGB: dried ink - pale bone, not gold (concept e), no brighter than the paper.")]
         [SerializeField, ColorUsage(false, false)] private Color _dried = new Color(.62f, .59f, .54f, 1f);
+        [Header("D308-127 debate 16: the bow is the whole brush bent (every renderer of the brush draws the hidden material)")]
+        [SerializeField] private bool _wholeBrush;
 
         private Renderer _brush;
         // the form's clock (presentation): grown from, last moment of the form, sinking since (NaN = not)
@@ -50,10 +52,15 @@ namespace Oheangbu.App.World
         private int _slot = -1;
         private Material[] _restore;
         private Renderer[] _own = Array.Empty<Renderer>();
+        // whole-brush heads: every other renderer of the brush and the materials it had
+        private Renderer[] _hiddenOthers = Array.Empty<Renderer>();
+        private Material[][] _othersRestore = Array.Empty<Material[]>();
 
         public Renderer BrushRenderer => _brush;
         public int BristleSlot => _slot;
         public Material HiddenBristle => _hiddenBristle;
+        public bool WholeBrush => _wholeBrush;
+        public Color DriedColour => _dried;
         public string StrikeState => _strikeState;
         public float StrikeToApex => _strikeToApex;
         public float StrikeLock => _strikeLock;
@@ -78,8 +85,14 @@ namespace Oheangbu.App.World
             Step(now);
         }
 
+        // The form's end moved (the bow pays ink per shot, which the first life did not know): the grow is left as it is.
+        public void SetLifeEnd(float now, float seconds)
+        {
+            _lifeEnd = seconds > 0f && !float.IsInfinity(seconds) && !float.IsNaN(seconds) ? now + seconds : float.PositiveInfinity;
+        }
+
         // The editor build fills these in (the prefab is made by a tool, not by hand).
-        public void Configure(Material hiddenBristle, float roll) { _hiddenBristle = hiddenBristle; _roll = roll; }
+        public void Configure(Material hiddenBristle, float roll, bool wholeBrush = false) { _hiddenBristle = hiddenBristle; _roll = roll; _wholeBrush = wholeBrush; }
         public void ConfigureStrike(string state, float toApex, float lockSeconds) { _strikeState = state; _strikeToApex = toApex; _strikeLock = lockSeconds; }
         public void ConfigureFinish(string state, float lockSeconds, float width) { _finishState = state ?? ""; _finishLock = lockSeconds; _finishWidth = width; }
 
@@ -132,9 +145,11 @@ namespace Oheangbu.App.World
             if (brush != null && _hiddenBristle != null)
             {
                 _restore = brush.sharedMaterials;
-                var swapped = (Material[])_restore.Clone(); swapped[slot] = _hiddenBristle;
+                var swapped = (Material[])_restore.Clone();
+                if (_wholeBrush) for (int i = 0; i < swapped.Length; i++) swapped[i] = _hiddenBristle; else swapped[slot] = _hiddenBristle;
                 brush.sharedMaterials = swapped;
             }
+            if (_wholeBrush && _hiddenBristle != null) HideOthers(brushRoot, brush);
             _brush = brush; _slot = slot;
             Mirror();
             return true;
@@ -203,14 +218,38 @@ namespace Oheangbu.App.World
                 if (renderer != null) { renderer.enabled = on; renderer.shadowCastingMode = shadows; }
         }
 
+        // A whole-brush head (the bow) also hides the brush's other renderers (shaft pieces, the tassel): every slot draws the
+        // hidden material until Restore.
+        private void HideOthers(Transform brushRoot, Renderer bristles)
+        {
+            var others = new System.Collections.Generic.List<Renderer>(); var restores = new System.Collections.Generic.List<Material[]>();
+            foreach (var renderer in brushRoot.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer == null || renderer == bristles || renderer.transform.IsChildOf(transform)) continue;
+                var materials = renderer.sharedMaterials; var swapped = new Material[materials.Length];
+                for (int i = 0; i < swapped.Length; i++) swapped[i] = _hiddenBristle;
+                others.Add(renderer); restores.Add(materials);
+                renderer.sharedMaterials = swapped;
+            }
+            _hiddenOthers = others.ToArray(); _othersRestore = restores.ToArray();
+        }
+
         // only this head's own swap is undone: a brush whose materials were changed since by someone else is left alone
         private void Restore()
         {
+            var others = _hiddenOthers; var othersRestore = _othersRestore;
+            _hiddenOthers = Array.Empty<Renderer>(); _othersRestore = Array.Empty<Material[]>();
+            for (int i = 0; i < others.Length && i < othersRestore.Length; i++)
+            {
+                var renderer = others[i]; if (renderer == null) continue;
+                var now = renderer.sharedMaterials;
+                if (now.Length == othersRestore[i].Length && (now.Length == 0 || now[0] == _hiddenBristle)) renderer.sharedMaterials = othersRestore[i];
+            }
             var brush = _brush; var restore = _restore; int slot = _slot;
             _brush = null; _restore = null; _slot = -1;
             if (brush == null || restore == null || slot < 0) return;
-            var now = brush.sharedMaterials;
-            if (slot < now.Length && now[slot] == _hiddenBristle && now.Length == restore.Length) brush.sharedMaterials = restore;
+            var current = brush.sharedMaterials;
+            if (slot < current.Length && current[slot] == _hiddenBristle && current.Length == restore.Length) brush.sharedMaterials = restore;
         }
 
         private static Transform Find(Transform root, string name)

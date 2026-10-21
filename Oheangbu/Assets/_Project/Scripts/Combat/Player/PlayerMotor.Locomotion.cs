@@ -212,7 +212,7 @@ namespace Oheangbu.Combat
             direction = Vector3.ClampMagnitude(direction, 1f);
             float speed = IsCrouching ? _locomotion.CrouchSpeed : IsSprinting ? _locomotion.RunSpeed : _locomotion.WalkSpeed;
             if (_cameraRig != null && IsSprinting && !IsSitting && input.sqrMagnitude >= .01f) _cameraRig.SetSprinting308(true); // SPEC-PACE-308 section 6
-            Vector3 desired = IsSitting ? Vector3.zero : direction * speed * Mathf.Clamp01(TerrainMovementScale);
+            Vector3 desired = IsSitting ? Vector3.zero : direction * speed * Mathf.Clamp01(TerrainMovementScale) * Mathf.Clamp01(FormMovementScale308);
             if (supported && IsLocomotionGrounded)
             {
                 _groundNormal = support.normal;

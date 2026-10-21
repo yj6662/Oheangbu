@@ -196,13 +196,15 @@ namespace Pure308
 
             // ---- the rows that keep the common sword spec (D308-127: the two-handed sword's numbers until each weapon's own step) ----
             r.Check(c1, rows.All(x => x.F("draw.lock", 0f) == lockScale && x.F("sword.drain", 0f) == drain && x.F("release.manual", -1f) == sword.F("release.manual", -2f) &&
-                x.F("groggy.steps", -1f) == steps), "every form shares the common form rules: the price lock, the upkeep, the release, the groggy step");
+                (x.F("groggy.steps", -1f) == steps || x.F("shot.draw", 0f) > 0f)),
+                "every form shares the common form rules: the price lock, the upkeep, the release, the groggy step (the bow has none: debate 16)");
             foreach (var row in rows)
             {
                 if (row == wood || row == earth) continue;   // the spear and the axe: Cases_Weapon127
                 string clause = row.Letter + "-1";
-                // the flail's own numbers (debate 15) are Cases_Combo127's; it still resolves, locks and counters like every form
-                if (row.Element != Element.Water)
+                // the flail's own numbers (debate 15) are Cases_Combo127's, the bow's (debate 16) Cases_Bow127's; both still resolve,
+                // lock and counter like every form
+                if (row.Element != Element.Water && row.Element != Element.Fire)
                     r.Check(clause, Common(row) == Common(sword), "same strike power and the same eight numbers as the metal form (the common sword spec)", Common(row));
                 var rowStatus = SpellResolveCore308.Resolve(row.Letter[0], 1f, 1f, row, open, out SpellCast rowCast);
                 r.Check(clause, rowStatus == SpellResolveStatus.Ok && rowCast.Kind == SpellKind.Buff && rowCast.Element == row.Element && rowCast.Power == row.BasePower,

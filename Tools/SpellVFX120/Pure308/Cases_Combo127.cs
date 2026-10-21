@@ -1,5 +1,5 @@
 // SPEC-SPELL-120-308 L2 cases of D308-127 debate 15 (TEST): the metal form (two-handed sword) strikes in a chain of three, the
-// last one a heavier finisher followed by a rest; the fire form borrows it until the bow (step 5). The water form is the flail:
+// last one a heavier finisher followed by a rest; the fire form borrowed it until the bow (debate 16). The water form is the flail:
 // three enemies in a wide cone, the ones after the first weaker, and every landed swing holds the ink upkeep a little.
 // Clause ids are built from the rows' letters: no glyph literal in this file.
 using System;
@@ -72,11 +72,9 @@ namespace Pure308
                     "gain on strike " + gainAt);
             }
 
-            // ---- the fire form borrows the two-handed sword until the bow ----
-            string[] keys = { "sword.reach", "sword.arc", "sword.interval", "sword.drain", "groggy.hits", "groggy.steps", "release.manual", "draw.lock",
-                "combo.hits", "combo.rest", "combo.window", "combo.buffer", "combo.finish", "strike.count", "strike.width", "hold.per" };
-            string Numbers(SpellRow x) => x.BasePower + "|" + string.Join("|", keys.Select(k => x.F(k, -1f).ToString(System.Globalization.CultureInfo.InvariantCulture)));
-            r.Check(f7, Numbers(fire) == Numbers(sword), "TEMPORARY until step 5 (the bow): the fire form is the metal form's numbers, combo included", Numbers(fire));
+            // ---- the fire form was the two-handed sword's stand-in until the bow (debate 16): it keeps none of the combo ----
+            r.Check(f7, Mathf.RoundToInt(fire.F("combo.hits", 0f)) < 2 && fire.F("combo.finish", 1f) == 1f && fire.F("hold.per", 0f) == 0f && fire.F("shot.draw", 0f) > 0f,
+                "the stand-in is gone: the fire form is the bow (Cases_Bow127), no combo and no hold");
 
             // ---- the flail ----
             float reach = flail.F("sword.reach", 0f), arc = flail.F("sword.arc", 0f), through = flail.F("strike.through", 1f);

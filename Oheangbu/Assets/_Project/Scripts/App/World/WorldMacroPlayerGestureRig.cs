@@ -157,6 +157,16 @@ namespace Oheangbu.App.World
         // D308-127 step 2: the two brushes the weapon head goes on (read only, presentation)
         public Transform WorldBrushRoot308 => _worldBrushRoot;
         public Transform NearBrushRoot308 => _nearBrushRoot;
+        // D308-127 debate 16: the world body's arms and root for the bow's pose (HornBow308 writes them after this rig, order > 1000;
+        // the animator and SaveAnimatedPose rewrite them every frame, so nothing it writes is fed back). false = not bound.
+        public bool WorldArms308(out Transform root, out Transform rightUpper, out Transform rightForearm, out Transform rightHand,
+            out Transform leftUpper, out Transform leftForearm, out Transform leftHand)
+        {
+            var b = _world;
+            root = b?.Root; rightUpper = b?.Upper; rightForearm = b?.Forearm; rightHand = b?.Hand;
+            leftUpper = b?.LeftUpper; leftForearm = b?.LeftForearm; leftHand = b?.LeftHand;
+            return b != null && b.Valid && leftUpper != null && leftForearm != null && leftHand != null;
+        }
 
         public void Configure(WorldMacroPlayerGestureProfile profile, Animator animator,
             PlayerMotor motor, CharacterController controller, DrawingInputController drawing,

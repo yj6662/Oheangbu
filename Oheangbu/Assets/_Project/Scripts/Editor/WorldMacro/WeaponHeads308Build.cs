@@ -25,8 +25,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //                       profiles inside the protected trees are never written
     //   Run("check")        prefabs, attach / mirror / detach on a brush model copy in a preview scene, the build report bounds
     //   Run("stills")       the five glyphs' brushes with their heads, rendered in a preview scene (no focus, no Play)
-    // Glyph -> head (D308-127): wood 것 spear, fire 넛 two-handed sword until the bow (step 5), earth 멋 axe, metal 섯
-    // two-handed sword, water 엇 flail (straight along the shaft until the chain of step 4).
+    // Glyph -> head (D308-127): wood 것 spear, fire 넛 horn bow (debate 16: the whole brush hidden, HornBow308), earth 멋 axe,
+    // metal 섯 two-handed sword, water 엇 flail (the chain of debate 15).
     public static class WeaponHeads308Build
     {
         const string Folder = "Assets/_Project/Art/Characters/GreatBrush308/WeaponHeads308";
@@ -35,13 +35,15 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string BrushModel = "Assets/_Project/Art/Characters/GreatBrush308/Models/SM_GreatBrush308.fbx";
         const string BrushShader = "Oheangbu/WorldMacroTexturedSurface", HiddenShader = "Oheangbu/WeaponBristleHidden308";
         const string InkPath = Folder + "/Materials/M_WeaponHead308_Ink.mat", HiddenPath = Folder + "/Materials/M_WeaponHead308_BristleHidden.mat";
+        // debate 16: the bow's string, the shaft of its arrows (ink only: pigment = ink); the arrow head takes the fire trail material
+        const string BowInkPath = Folder + "/Materials/M_BowArrow308_Ink.mat", BowHead = "Head_Bow";
         static readonly string[] Protected = { "Watershed295", "Reworld292", "MountainTrail285", "W_Demo_Compact", "03_Content" };
         static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
 
         // grid cell (SpellGrammar308.LetterAt), element key, head object in the model, pigment (sRGB, the element palette)
         static readonly (int Cell, string Key, string Head, string Hex)[] Glyphs =
         {
-            (11, "wood", "Head_Spear", "426E58"), (35, "fire", "Head_Sword", "BE543B"), (59, "earth", "Head_Axe", "977343"),
+            (11, "wood", "Head_Spear", "426E58"), (35, "fire", "Head_Bow", "BE543B"), (59, "earth", "Head_Axe", "977343"),
             (83, "metal", "Head_Sword", "A6B0AD"), (107, "water", "Head_Flail", "2C465A"),
         };
 
@@ -182,6 +184,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                     m.SetColor("_PigmentColor", Hex(pair.Value.Rim)); m.SetColor("_InkColor", Hex(pair.Value.Core)); m.SetFloat("_RimShare", pair.Value.RimShare);
                     m.SetFloat("_Opacity", TrailOpacity); m.SetFloat("_StreakDensity", 14f); m.SetFloat("_DryStrength", TrailDry); m.SetFloat("_EdgeSoftness", .12f);
                 });
+            Make(BowInkPath, trail, m =>
+            {
+                m.SetColor("_PigmentColor", Hex(TrailInk)); m.SetColor("_InkColor", Hex(TrailInk)); m.SetFloat("_RimShare", .3f);
+                m.SetFloat("_Opacity", 1f); m.SetFloat("_StreakDensity", 10f); m.SetFloat("_DryStrength", .35f); m.SetFloat("_EdgeSoftness", .15f);
+            });
             return b.ToString().TrimEnd();
         }
 
@@ -212,7 +219,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                         renderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off; renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
                     }
                     foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.hideFlags = HideFlags.None;
-                    var weapon = root.AddComponent<GreatBrushWeapon308>(); weapon.Configure(hidden, 0f);
+                    var weapon = root.AddComponent<GreatBrushWeapon308>(); weapon.Configure(hidden, 0f, g.Head == BowHead);
+                    if (g.Head == BowHead)
+                    {
+                        // debate 16: no swing and no afterimage; the bow's string and nocked arrow are made into the prefab
+                        var bowInk = AssetDatabase.LoadAssetAtPath<Material>(BowInkPath); var arrowHead = AssetDatabase.LoadAssetAtPath<Material>(TrailPath(g.Key));
+                        if (bowInk == null || arrowHead == null) throw new Exception("run materials first (" + BowInkPath + ")");
+                        root.AddComponent<HornBow308>().Configure(bowInk, arrowHead);
+                        var bowBounds = BoundsIn(root.transform, root.transform);
+                        PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(g.Key, g.Head));
+                        b.AppendLine("  " + SpellGrammar308.LetterAt(g.Cell) + " " + g.Key + " -> " + PrefabPath(g.Key, g.Head) + " · y " + F(bowBounds.min.y) + ".." + F(bowBounds.max.y) + " · x " + F(bowBounds.min.x) + ".." + F(bowBounds.max.x));
+                        continue;
+                    }
                     // debate 13: the strike's swing and the afterimage's two points (children of the head, so they ride its pose)
                     var strike = Strikes[g.Head];
                     weapon.ConfigureStrike(strike.State, StrikeToApex, StrikeLock);
@@ -306,8 +324,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                 return float.TryParse(report.Substring(colon, end - colon).Trim(), NumberStyles.Float, Inv, out float v) ? v : float.NaN;
             }
             const float ShaftDiameter = .034f, GripToFerrule = .57f, ButtToFerrule = 1.17f, GripAhead = .4f, GripFromButt = .6f;
-            foreach (string head in Glyphs.Select(g => g.Head).Distinct())
+            foreach (string head in Glyphs.Select(g => g.Head).Distinct().Where(h => h != BowHead))
                 Line(Num(head, "pigmentShare") <= .15f && Num(head, "pigmentShare") >= .12f, head + " pigment " + F(Num(head, "pigmentShare") * 100f) + " % of the head's area (12-15 %: debate 13 fills the D308-127 cap)");
+            // debate 16: the bow is ink only (vermilion only on the arrow head's edge), 1.05 m from tip to tip
+            Line(Num(BowHead, "pigmentShare") <= .01f && Mathf.Abs(Num(BowHead, "span") - 1.05f) <= .01f && Mathf.Abs(2f * Num(BowHead, "length") - 1.05f) <= .03f,
+                BowHead + " ink only (pigment " + F(Num(BowHead, "pigmentShare") * 100f) + " %), span " + F(Num(BowHead, "span")) + " m, measured " + F(2f * Num(BowHead, "length")) + " m (D308-127: 1.05)");
             Line(2f * Num("Head_Spear", "maxX") <= 3f * ShaftDiameter, "spear leaf width " + F(2f * Num("Head_Spear", "maxX")) + " m <= 3 x shaft (" + F(3f * ShaftDiameter) + ")");
             Line(Num("Head_Axe", "maxX") >= 8f * ShaftDiameter, "axe blade reach from the shaft " + F(Num("Head_Axe", "maxX")) + " m >= 8 x shaft (" + F(8f * ShaftDiameter) + ")");
             Line(Num("Head_Sword", "widthX") <= .18f, "two-handed sword blade width " + F(Num("Head_Sword", "widthX")) + " m <= .18");
@@ -332,8 +353,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var component = prefab != null ? prefab.GetComponent<GreatBrushWeapon308>() : null;
                     Line(component != null && component.HiddenBristle == hidden, tag + " prefab carries GreatBrushWeapon308 with the hidden bristle material");
                     if (component == null) continue;
-                    var renderers = prefab.GetComponentsInChildren<Renderer>(true);
-                    Line(renderers.Length > 0 && renderers.All(r => r.sharedMaterials.Length == 2 && r.sharedMaterials[0] == ink && r.sharedMaterials[1] == pigment), tag + " head renderers: ink + its element's pigment");
+                    var renderers = prefab.GetComponentsInChildren<MeshRenderer>(true);
+                    Line(renderers.Length > 0 && renderers.All(r => r.sharedMaterials.Length == 2 && r.sharedMaterials[0] == ink && r.sharedMaterials[1] == pigment), tag + " head meshes: ink + its element's pigment");
+                    bool isBow = g.Head == BowHead;
+                    Line(component.WholeBrush == isBow && (prefab.GetComponent<HornBow308>() != null) == isBow, tag + (isBow ? " the bow hides the whole brush and carries HornBow308" : " a head hides only the bristles"));
 
                     var brush = (GameObject)Object.Instantiate(brushModel); brush.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(brush, scene);
                     var head = (GameObject)Object.Instantiate(prefab); head.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(head, scene);
@@ -344,14 +367,22 @@ namespace Oheangbu.EditorTools.WorldMacro
                         var bristleRenderer = brush.GetComponentsInChildren<Renderer>(true).FirstOrDefault(r => r.sharedMaterials.Any(m => m != null && m.name.IndexOf("Bristle", StringComparison.OrdinalIgnoreCase) >= 0));
                         var before = bristleRenderer != null ? bristleRenderer.sharedMaterials : Array.Empty<Material>();
                         var weapon = head.GetComponent<GreatBrushWeapon308>();
+                        var others = brush.GetComponentsInChildren<Renderer>(true).Where(r => r != bristleRenderer).ToArray();
+                        var othersBefore = others.Select(r => r.sharedMaterials).ToArray();
+                        bool OthersBack() => others.Select((r, i) => r.sharedMaterials.Length == othersBefore[i].Length && r.sharedMaterials.Zip(othersBefore[i], (x, y) => ReferenceEquals(x, y)).All(x => x)).All(x => x);
                         bool attached = weapon.Attach(brush.transform);
                         Vector3 axis = (ferrule.position - butt.position).normalized;
                         Line(attached && head.transform.parent == grip && (head.transform.position - ferrule.position).magnitude < .001f && Vector3.Dot(head.transform.up, axis) > .999f,
                             tag + " attached under GripSocket at the ferrule (" + F((head.transform.position - ferrule.position).magnitude * 1000f) + " mm) along the shaft (dot " + F(Vector3.Dot(head.transform.up, axis)) + ")");
                         Line(Vector3.Dot(grip.up, axis) > .999f, tag + " GripSocket +Y runs along the shaft toward the tip");
                         int slot = weapon.BristleSlot;
-                        Line(bristleRenderer != null && weapon.BrushRenderer == bristleRenderer && slot >= 0 && bristleRenderer.sharedMaterials[slot] == hidden && before[slot] != hidden &&
-                            bristleRenderer.sharedMaterials.Where((m, i) => i != slot).SequenceEqual(before.Where((m, i) => i != slot)), tag + " only the bristle slot (" + slot + ") draws the hidden material");
+                        var brushRenderers = brush.GetComponentsInChildren<Renderer>(true).Where(r => !r.transform.IsChildOf(head.transform)).ToArray();
+                        if (isBow)
+                            Line(bristleRenderer != null && weapon.BrushRenderer == bristleRenderer && slot >= 0 && before[slot] != hidden &&
+                                brushRenderers.All(r => r.sharedMaterials.All(m => m == hidden)), tag + " every slot of every brush renderer (" + brushRenderers.Length + ") draws the hidden material: the bow is the whole brush");
+                        else
+                            Line(bristleRenderer != null && weapon.BrushRenderer == bristleRenderer && slot >= 0 && bristleRenderer.sharedMaterials[slot] == hidden && before[slot] != hidden &&
+                                bristleRenderer.sharedMaterials.Where((m, i) => i != slot).SequenceEqual(before.Where((m, i) => i != slot)), tag + " only the bristle slot (" + slot + ") draws the hidden material");
                         Line(head.GetComponentsInChildren<Transform>(true).All(t => t.gameObject.layer == bristleRenderer.gameObject.layer), tag + " head on the brush renderer's layer " + bristleRenderer.gameObject.layer);
                         var mirror = typeof(GreatBrushWeapon308).GetMethod("LateUpdate", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                         bristleRenderer.enabled = false; mirror.Invoke(weapon, null);
@@ -362,10 +393,15 @@ namespace Oheangbu.EditorTools.WorldMacro
                         // debate 13: the strike's swing state and the afterimage (emits only after a strike, gone EmitSeconds + FadeSeconds later)
                         var trail = head.GetComponent<WeaponTrail308>();
                         var swingProfile = Resources.Load<GreatBrush308Profile>(GreatBrush308Profile.ResourcesPath);
-                        Line(trail != null && trail.Material != null && trail.Material.shader != null && trail.Material.shader.name == TrailShader && trail.Lifetime <= .45f + 1e-4f,
-                            tag + " afterimage: " + TrailShader + ", whole life " + (trail != null ? F(trail.Lifetime) : "-") + " s (<= .45: Codex .30 / Fable .35-.5)");
-                        Line(swingProfile != null && swingProfile.States.Any(s => s.State == weapon.StrikeState && s.ClipSeconds > 0f) && weapon.StrikeToApex <= 2f / 60f + 1e-4f,
-                            tag + " strike swing " + weapon.StrikeState + " · contact " + F(weapon.StrikeToApex * 1000f) + " ms after the click (<= 2 frames)");
+                        if (isBow) Line(trail == null, tag + " no afterimage: the bow's arrows are its stroke");
+                        else
+                        {
+                            Line(trail != null && trail.Material != null && trail.Material.shader != null && trail.Material.shader.name == TrailShader && trail.Lifetime <= .45f + 1e-4f,
+                                tag + " afterimage: " + TrailShader + ", whole life " + (trail != null ? F(trail.Lifetime) : "-") + " s (<= .45: Codex .30 / Fable .35-.5)");
+                            Line(swingProfile != null && swingProfile.States.Any(s => s.State == weapon.StrikeState && s.ClipSeconds > 0f) && weapon.StrikeToApex <= 2f / 60f + 1e-4f,
+                                tag + " strike swing " + weapon.StrikeState + " · contact " + F(weapon.StrikeToApex * 1000f) + " ms after the click (<= 2 frames)");
+                        }
+                        if (isBow) Bow(Line, tag, head, brush, scene);
                         if (trail != null)
                         {
                             float t0 = Time.time;
@@ -447,8 +483,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                         weapon.Step(Time.time + weapon.RetractSeconds * .5f); float sinking = head != null ? weapon.Grown : -1f;
                         weapon.Step(Time.time + weapon.RetractSeconds + .01f);
                         var back = bristleRenderer.sharedMaterials;
-                        Line(stillOn && sinking > 0f && sinking < 1f && head == null && back.Zip(before, (x, y) => ReferenceEquals(x, y)).All(x => x) && weapon.RetractSeconds <= .5f,
-                            tag + " the form's end: the head sinks back (" + F(sinking) + " at half time) and is gone with the bristles back after " + F(weapon.RetractSeconds) + " s (<= .5)");
+                        Line(stillOn && sinking > 0f && sinking < 1f && head == null && back.Zip(before, (x, y) => ReferenceEquals(x, y)).All(x => x) && OthersBack() && weapon.RetractSeconds <= .5f,
+                            tag + " the form's end: the head sinks back (" + F(sinking) + " at half time) and is gone with the bristles" + (isBow ? " and the whole brush" : "") + " back after " + F(weapon.RetractSeconds) + " s (<= .5)");
                         // a head attached again over one still sinking: the old one ends first, the bristles stay hidden under the new one
                         var first = (GameObject)Object.Instantiate(prefab); first.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(first, scene);
                         var firstHead = first.GetComponent<GreatBrushWeapon308>(); firstHead.Attach(brush.transform); firstHead.Detach(false);
@@ -487,6 +523,64 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             finally { EditorSceneManager.ClosePreviewScene(scene); }
             return Done(b, fail, warn);
+        }
+
+        // debate 16: the bow on a brush model copy without a body (it pulls its own string): parts, bend, string, nocked arrow,
+        // one hit and one miss with an explicit clock. The arrows are moved into the preview scene the moment they are made.
+        static void Bow(Action<bool, string, bool> line, string tag, GameObject head, GameObject brush, UnityEngine.SceneManagement.Scene scene)
+        {
+            var horn = head.GetComponent<HornBow308>();
+            bool bound = horn != null && horn.Bind(null);
+            line(bound, tag + " bow parts found: grip, two limbs of two segments, both nocks, the arrow rest, string and nocked lines", false);
+            if (!bound) return;
+            horn.Draw(0f); horn.Apply();
+            Vector3 top0 = horn.NockTop.position, bottom0 = horn.NockBottom.position, up = (top0 - bottom0).normalized;
+            Vector3 middle0 = (top0 + bottom0) * .5f, archer = Vector3.ProjectOnPlane(middle0 - horn.Rest.position, up).normalized;
+            float span0 = Vector3.Distance(top0, bottom0);
+            Vector3 string0 = horn.String.GetPosition(1);
+            bool restHidden = !horn.Nocked.enabled && horn.NockedShown == 0f && horn.String.enabled && horn.String.positionCount == 3;
+            line(span0 > .85f && span0 < 1.05f && (string0 - middle0).magnitude < 1e-3f && restHidden,
+                tag + " at rest: string nock to nock " + F(span0) + " m, straight (its middle on the nock line), no arrow nocked", false);
+            horn.Draw(.1f); horn.Apply(); float early = horn.NockedShown;
+            horn.Draw(.5f); horn.Apply(); float half = horn.NockedShown;
+            horn.Draw(1f); horn.Apply(); float full = horn.NockedShown;
+            Vector3 top1 = horn.NockTop.position, bottom1 = horn.NockBottom.position;
+            float inTop = Vector3.Dot(top1 - top0, archer), inBottom = Vector3.Dot(bottom1 - bottom0, archer), span1 = Vector3.Distance(top1, bottom1);
+            float pulled = Vector3.Dot(horn.String.GetPosition(1) - string0, archer);
+            line(inTop > .02f && inBottom > .02f && span1 < span0 && pulled > .4f,
+                tag + " full draw: both nocks come toward the archer (" + F(inTop * 1000f) + " / " + F(inBottom * 1000f) + " mm), the string comes back " + F(pulled) + " m", false);
+            line(early > 0f && early < horn.ArrowLength && Mathf.Abs(half - horn.ArrowLength) < 1e-3f && Mathf.Abs(full - horn.ArrowLength) < 1e-3f && horn.Nocked.enabled,
+                tag + " nocked arrow revealed with the draw (" + F(early) + " m at .1), then " + F(horn.ArrowLength) + " m whatever the pull (no stretch)", false);
+            var ink = horn.String.sharedMaterial;
+            line(ink != null && ink.shader != null && ink.shader.name == TrailShader && ink.GetColor("_PigmentColor") == ink.GetColor("_InkColor"),
+                tag + " string and arrow shaft: ink only (" + (ink != null ? ink.name : "-") + ")", false);
+            // one hit at 15 m and one miss at 30 m, the rule's flight times at 40 m/s
+            var target = new GameObject("BowTarget308") { hideFlags = HideFlags.HideAndDontSave }; SceneManager308.Move(target, scene);
+            Vector3 from = horn.Rest.position, toward = -archer;
+            target.transform.position = from + toward * 15f;
+            float t0 = 1000f;
+            var arrow = horn.Shoot(target.transform, target.transform.position + Vector3.up * .4f, .375f, t0);
+            arrow.gameObject.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(arrow.gameObject, scene);
+            bool nockGone = !horn.Nocked.enabled && horn.Drawn == 0f;
+            var lines = arrow.GetComponentsInChildren<LineRenderer>(true);
+            var tail = lines.FirstOrDefault(l => l.name == "Tail"); var tip = lines.FirstOrDefault(l => l.name == "Head");
+            arrow.Step(t0 + .1875f);
+            float midway = Vector3.Distance(from, arrow.HeadPosition), tailLength = tail != null ? Vector3.Distance(tail.GetPosition(0), tail.GetPosition(1)) : -1f;
+            bool vermilionHead = tip != null && tip.sharedMaterial != null && tip.sharedMaterial.HasProperty("_PigmentColor") && tip.sharedMaterial.GetColor("_PigmentColor").r > .6f;
+            line(nockGone && Mathf.Abs(midway - 7.5f) < .6f && arrow.Width >= .08f && Mathf.Abs(arrow.Length - 1.2f) < 1e-3f && tailLength > 0f && tailLength <= .6f + 1e-3f && vermilionHead,
+                tag + " the arrow leaves (nocked one gone): halfway at half the flight (" + F(midway) + " m of 15), " + F(arrow.Width) + " m wide, " + F(arrow.Length) + " m long, soot tail " + F(tailLength) + " m, vermilion only on the head", false);
+            arrow.Step(t0 + .375f + 1e-3f);
+            bool hit = arrow.Landed && arrow.Hit && arrow.transform.parent == target.transform;
+            arrow.Step(t0 + .375f + BowArrow308.UnravelSeconds + .01f);
+            line(hit && arrow == null, tag + " on time it strikes the target, sticks, unravels and is gone after " + F(BowArrow308.UnravelSeconds) + " s", false);
+            float t1 = 2000f;
+            var miss = horn.Shoot(null, from + toward * 30f, .75f, t1);
+            miss.gameObject.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(miss.gameObject, scene);
+            miss.Step(t1 + .75f + 1e-3f);
+            bool missed = miss.Landed && !miss.Hit;
+            miss.Step(t1 + .75f + .6f);
+            line(missed && miss == null, tag + " no target: the arrow reaches its 30 m point, scatters and is gone", false);
+            Object.DestroyImmediate(target);
         }
 
         static string Done(StringBuilder b, int fail, int warn) => b.Insert(0, "weaponheads308: " + (fail == 0 ? "COMPLETE" : "FAILED") + ", " + fail + " failed, " + warn + " warnings\n").ToString().TrimEnd();
@@ -646,6 +740,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var head = Make(prefab); var weapon = head.GetComponent<GreatBrushWeapon308>();
                     weapon.Attach(brush.transform);
                     var trail = head.GetComponent<WeaponTrail308>();
+                    if (trail == null) { b.AppendLine("  " + g.Key + " " + g.Head + ": no afterimage (the bow draws its arrows instead)"); continue; }
                     var grip = Find(brush.transform, "GripSocket");
                     var lightObject = new GameObject("Light") { hideFlags = HideFlags.HideAndDontSave }; SceneManager308.Move(lightObject, scene); made.Add(lightObject);
                     var light = lightObject.AddComponent<Light>(); light.type = LightType.Directional; light.intensity = 1.3f; light.color = new Color(1f, .97f, .9f); lightObject.transform.rotation = Quaternion.Euler(40f, -30f, 0f);

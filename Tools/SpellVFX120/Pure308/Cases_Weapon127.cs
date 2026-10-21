@@ -124,7 +124,8 @@ namespace Pure308
             r.Check(a1, n == 1 && ids[0] == 1, "two enemies inside its cone: the axe strikes one (the nearer)");
             // debate 15: read per cycle (a combo row's chain of strikes and its rest); the combo rows may carry a premium of at most
             // 15 % (every strike of the chain must land on one enemy to earn it)
-            var plainRates = rows.Where(x => Mathf.RoundToInt(x.F("combo.hits", 0f)) < 2).Select(CycleRate127).ToArray();
+            // (the bow is the ranged exception of debate 16: 70 % of this, read in Cases_Bow127)
+            var plainRates = rows.Where(x => Mathf.RoundToInt(x.F("combo.hits", 0f)) < 2 && x.F("shot.draw", 0f) <= 0f).Select(CycleRate127).ToArray();
             var comboRates = rows.Where(x => Mathf.RoundToInt(x.F("combo.hits", 0f)) >= 2).Select(CycleRate127).ToArray();
             r.Check(a1, plainRates.Length >= 3 && plainRates.All(v => Math.Abs(v - plainRates[0]) <= plainRates[0] * 1e-3f) &&
                 comboRates.All(v => v >= plainRates[0] * (1f - 1e-3f) && v <= plainRates[0] * 1.15f),

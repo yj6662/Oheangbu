@@ -108,6 +108,32 @@ Shoulder camera as in picture 1 (the caster about 3 m in front of the camera, fa
 Panel 1 WOOD SPEAR, a straight thrust: the caster lunges one step; the narrow leaf-shaped ink spear point has run through the first bandit and touches a second bandit right behind him on the same line; a thin straight streak of black ink spatter behind them along that line; moss-green only on the spatter edges.
 Panel 2 EARTH AXE, an overhead chop: the caster's whole body committed low; the axe head is ONE broad single-edged ink blade no wider than the caster's torso (much smaller than a person), fixed near the top of the haft; it lands on a bandit's wooden shield and padded armour, which split open with pale cracks and short ink runs; a few heavy black ink drops on the ground (no puddle); ochre only on the blade's cutting edge and the crack edges.
 Panel 3 WATER FLAIL, a wide sweep: a short ink rod (about half a metre) on a chain of TWISTED BLACK INK STRANDS (no iron links, no metal rings) whips across three bandits standing side by side; ONE thin curved ink smear follows the arc and small ink flecks fly off each bandit; deep blue only on the smear edges."""),
+    # Debate 16 (step 5, the bow): wf_c passed the transformation; these test the held draw at game scale and the arrow's read
+    # at range before the implementation is decided (one-hand grip, draw state, arrow body, hit).
+    'h_bow_draw': ([SHOULDER, BRUSH], """--- THE PICTURE: the horn bow at game scale, the draw held (fire) ---
+The game camera is behind and slightly above the caster's right shoulder (about 2.8 m behind, 0.55 m up, field of view 60 degrees); the caster's body fills about half of the frame height. A bandit stands 20 m ahead on the plaza.
+The bow is the great brush bent: the same black staff, now a short deeply recurved Korean horn bow about 1.05 m tip to tip (shorter than the caster's legs), held upright in the LEFT hand at its middle; the small dark crimson tassel hangs from the lower limb tip. The string is ONE thin strand of black bristle. Matte black hardened ink with dry-brush grain; the limbs show fine ink-scale cracks at the bends. No metal, no shine.
+LAYOUT: ONE wide strip of THREE equal panels, identical camera, thin paper-coloured gaps.
+Panel 1 (0.0 s, the click is pressed): the caster raises the bow, left arm extending toward the bandit; the right hand takes the string at the nock; a bead of ink gathers on the string.
+Panel 2 (0.35 s, half drawn): the right hand pulls the string back past the chin; the bead has stretched into a thin ink arrow along the left arm, its head edges stained vermilion like a brush dipped in pigment (pigment, NOT fire, NOT glowing); the bow limbs bend further.
+Panel 3 (0.7 s, full draw, held): the string at the right cheek, the arrow fully stretched (as long as the caster's arm span), the bow deeply bent and steady; the caster's body turned side-on, feet planted wide; a few tiny ink drops trembling off the string. Everything ready, nothing released yet."""),
+    'i_bow_shot': ([SHOULDER, BRUSH, BANDIT], """--- THE PICTURE: the ink arrow in flight and on the hit, two distances ---
+Shoulder camera as in picture 1 (the caster about 3 m in front of the camera, facing away, holding the short black ink horn bow in the left hand, drawing hand open after the release). The enemies are bandits (picture 3) in worn dark Joseon commoner clothes.
+LAYOUT: TWO rows of TWO equal panels, thin paper-coloured gaps.
+TOP LEFT (release, target at 15 m): the ink arrow is a thin dark streak about 1.2 m long and a finger wide, flying straight from the bow toward a bandit 15 m away; behind it a short torn soot trail no longer than the arrow; the bow string still shivering.
+TOP RIGHT (hit, 15 m): the arrow has struck the bandit's chest; a SMALL local splash of black ink bursts from the point (smaller than his head), a thin vermilion stain only on the splash edges; the arrow shaft sticks out of him and is already unravelling into ink strands. He staggers but keeps his outline readable.
+BOTTOM LEFT (release, target at 25 m, small in the frame): the same streak and soot trail, still clearly visible as a dark line against the pale plaza.
+BOTTOM RIGHT (hit, 25 m): the same small splash on the far bandit, still readable as a hit from this distance.
+No arrow made of light, no fire arrow, no glow, no sparks. The arrow is ink."""),
+    # Round 2 of i (Fable: the great brush still stood beside the caster - the bow IS the brush; the bow was in the right hand
+    # against h; the hit splash had red in it; the unravelling arrow cut was missing).
+    'i2_bow_shot': ([SHOULDER, BRUSH, BANDIT], """--- THE PICTURE: the ink arrow in flight, on the hit and unravelling, round 2 ---
+Shoulder camera as in picture 1 (the caster about 3 m in front of the camera, facing away). The caster holds ONLY the short black ink horn bow (about 1.05 m tip to tip, deeply recurved, matte black hardened ink, a small dark crimson tassel on the lower limb tip) in his LEFT hand, left arm extended toward the target, the RIGHT hand open near the right cheek just after the release. The great brush is NOT in the picture anywhere: the bow is the brush bent into a bow, so there is no brush on his back, in his hand or beside him. The enemies are bandits (picture 3) in worn dark Joseon commoner clothes.
+LAYOUT: TWO rows of THREE equal panels, thin paper-coloured gaps. TOP row: the target 15 m away. BOTTOM row: the same three moments with the target 25 m away (small in the panel).
+Panel 1 (release): the ink arrow is a thin dark streak about 1.2 m long and a finger wide flying straight at the bandit, a short torn soot trail behind it no longer than the arrow; vermilion stain only on the very edge of the arrow head; the bow string still shivering.
+Panel 2 (hit): the arrow has struck the bandit's chest; a SMALL local splash of BLACK ink only (no red, no vermilion, nothing that could read as blood) bursts from the point, smaller than his head; he staggers, his outline still readable.
+Panel 3 (0.4 s after the hit): the arrow shaft sticking out of him is unravelling into loose black ink strands that droop and fade to grey; the splash is already drying.
+No arrow made of light, no fire arrow, no glow, no sparks. No red on the enemy."""),
 }
 
 

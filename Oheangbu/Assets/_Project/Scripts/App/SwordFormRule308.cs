@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Oheangbu.App
 {
+    // What the bow does on one frame (SwordFormRule308.BowStep).
+    public enum BowStep308 { None, Begin, Fire, Fizzle, Cancel }
+
     // Sword form (SPELL-BUFF, the five eo + siot glyphs): the brush becomes a sword of the glyph's element. While it lasts
     // no spell can be cast, a click is a sword strike, ink only goes down, and the form ends when the ink is gone.
     // A strike whose element overcomes the enemy's element is a counter strike: the third canon groggy source, and a small one.
@@ -94,6 +97,41 @@ namespace Oheangbu.App
             if (landed <= 0 || per <= 0f || cap <= 0f) return running;
             return Mathf.Max(running, now + Mathf.Min(cap, per * landed));
         }
+
+        // ---- the horn bow (D308-127 debate 16, TEST) ----
+        // What the bow does this frame. Not drawing: a held click (once the recovery allows it) begins the draw. Drawing: the
+        // release fires when the draw lasted draw seconds, earlier it fizzles; a click that is neither held nor released
+        // (the input doors shut: a menu, a dodge, a jump, death) cancels. There is no automatic shot: a full draw waits.
+        public static BowStep308 BowStep(bool drawing, float now, float drawStart, float draw, bool held, bool released, float readyAt)
+        {
+            if (!drawing) return held && CanStrike(now, readyAt) ? BowStep308.Begin : BowStep308.None;
+            if (released) return now - drawStart >= Mathf.Max(0f, draw) - 1e-4f ? BowStep308.Fire : BowStep308.Fizzle;
+            return held ? BowStep308.None : BowStep308.Cancel;
+        }
+
+        // How far the bow is drawn (0..1; presentation and the movement scale read it, the shot only asks Fire).
+        public static float Drawn01(float now, float drawStart, float draw) => draw <= 0f ? 1f : Mathf.Clamp01((now - drawStart) / draw);
+
+        // The shot's target: the aimed enemy when it is alive and inside range (straight-line distance from the bow);
+        // -1 = no target, the arrow flies range ahead and misses. The bow has no cone: it shoots what the reticle holds.
+        public static int ShotTarget(SpellActorSnap[] actors, Vector3 origin, float range, int aimedId)
+        {
+            if (actors == null || aimedId < 0 || range <= 0f) return -1;
+            for (int i = 0; i < actors.Length; i++)
+                if (actors[i].Id == aimedId) return actors[i].Alive && (actors[i].Position - origin).sqrMagnitude <= range * range ? aimedId : -1;
+            return -1;
+        }
+
+        // Seconds the arrow flies, fixed when it leaves the bow (the haste scale of that moment included, D308-123).
+        public static float FlightTime(float distance, float speed, float speedScale)
+        {
+            float v = Mathf.Max(0f, speed) * Mathf.Max(0f, speedScale);
+            if (!(v > 1e-3f) || float.IsInfinity(v)) return 0f;
+            return Mathf.Max(0f, distance) / v;
+        }
+
+        // The ground speed multiplier of the form: move while the bow is drawn (Drawing and Ready), 1 otherwise.
+        public static float MoveScale(bool drawing, float move) => drawing ? Mathf.Clamp(move, .05f, 1f) : 1f;
 
         // ---- weapon strikes (D308-127, TEST: the five forms became five weapons; numbers are row parameters) ----
         // Up to count enemies of one strike, in the order they take it: their ids and distances (horizontal; along the line

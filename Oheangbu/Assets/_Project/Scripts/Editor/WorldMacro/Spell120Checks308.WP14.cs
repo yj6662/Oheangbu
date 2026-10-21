@@ -359,8 +359,107 @@ namespace Oheangbu.EditorTools.WorldMacro
                     finally { for (int i = 0; i < crowd.Length; i++) crowd[i].transform.position = homes[i]; }
                 }
 
-                // ---- the other four forms: they cast, strike with their element and lock spells (each at its own reach) ----
-                foreach (int cell in cells.Skip(1))
+                // ---- D308-127 debate 16 (TEST) the fire form is a horn bow: hold the click shot.draw, let go to loose one arrow at
+                //      the aimed enemy inside shot.range; it lands distance / shot.speed later and pays shot.ink once. A short
+                //      draw fizzles (nothing spent), the draw slows the walk to shot.move. Clocks are driven by hand (Edit Mode
+                //      cannot hold a key); the pure harness checks the 60 fps input ----
+                char fire = SpellGrammar308.LetterAt(cells[1]);
+                if (r.Check(fire + "-8", f.Resolver.TryRow(fire, out var bowRow) && bowRow.F("shot.draw", 0f) > 0f && bowRow.F("shot.speed", 0f) > 0f && bowRow.F("shot.range", 0f) > 0f,
+                    "the fire form's row is a bow (shot.draw, shot.speed, shot.range)"))
+                {
+                    float draw = bowRow.F("shot.draw", 0f), speed = bowRow.F("shot.speed", 0f), range = bowRow.F("shot.range", 0f), shotInk = bowRow.F("shot.ink", 0f);
+                    float move = bowRow.F("shot.move", 1f), recover = bowRow.F("sword.interval", 0f), bowWhole = bowRow.BasePower * brush;
+                    string b8 = fire + "-8", b9 = fire + "-9";
+                    var cues = new WP14CuePresenter();
+                    var motorBefore = SpellFixture308.Get(f.Wiring, "_motor");
+                    var motor = f.Obj("Spell308_BowMotor", SpellFixture308.Origin).AddComponent<PlayerMotor>();
+                    try
+                    {
+                        f.Wiring.ConstructSpells(f.Registry, f.Finals, cues);
+                        SpellFixture308.Set(f.Wiring, "_motor", motor);
+                        SpellTickContext Clock(float seconds) => new SpellTickContext(t + seconds, 0f, host, cues);
+                        BowStep308 Bow(float seconds, bool down, bool up) => sword.BowInput(Clock(seconds), down, up);
+                        float dist = range * .8f, flight = dist / speed;
+                        Reset(); f.Cast(fire); f.Aim(target);
+                        target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, dist);
+                        r.Check(b8, sword.IsBow && !sword.Strike(Clock(1f)).Swung, "the bow form holds a bow: a strike is no swing (the click draws)");
+
+                        // a short draw fizzles: nothing leaves, nothing is spent; letting go of nothing cancels
+                        float bowInk = f.Ink.Value; cues.Cues.Clear();
+                        var begin = Bow(1f, true, false); bool drawingNow = sword.Drawing; float slowed = motor.FormMovementScale308;
+                        Bow(1f + draw * .5f - .01f, true, false);
+                        var midCue = cues.Cues.LastOrDefault(c => c.Cue == SpellFxCue.Tick);
+                        var fizzle = Bow(1f + draw * .5f, false, true);
+                        r.Check(b8, begin == BowStep308.Begin && drawingNow && fizzle == BowStep308.Fizzle && !sword.Drawing && sword.ArrowsInFlight == 0 && f.Ink.Value == bowInk &&
+                            !cues.Cues.Any(c => c.Cue == SpellFxCue.Secondary) && cues.Cues.Last().Cue == SpellFxCue.Tick,
+                            "let go before shot.draw (" + draw + " s): the draw fizzles, no arrow and no ink");
+                        r.Check(b8, midCue.Cue == SpellFxCue.Tick && Mathf.Abs(midCue.At - (t + 1f + draw * .5f - .01f)) < 1e-3f,
+                            "while drawn, each frame sends how far drawn as a Tick cue (the presenter bends the bow from it)");
+                        r.Check(b9, Near(slowed, Mathf.Clamp(move, .05f, 1f)) && Near(motor.FormMovementScale308, 1f),
+                            "the draw slows the walk to shot.move (" + move + "); the walk is whole again once the draw ends");
+                        var again = Bow(2f, true, false); var cancel = Bow(2.1f, false, false);
+                        r.Check(b8, again == BowStep308.Begin && cancel == BowStep308.Cancel && !sword.Drawing && f.Ink.Value == bowInk, "a draw that ends without a release (the click lost) is cancelled, nothing spent");
+
+                        // the full draw: one arrow at the aimed enemy, shot.ink once, the hit lands after the flight
+                        cues.Cues.Clear(); float bowHp = target.Hp; f.ClearLog();
+                        Bow(3f, true, false);
+                        float loosed = 3f + draw + .01f;
+                        var shot = Bow(loosed, false, true);
+                        var arrowCue = cues.Cues.FirstOrDefault(c => c.Cue == SpellFxCue.Secondary);
+                        r.Check(b8, shot == BowStep308.Fire && sword.ArrowsInFlight == 1 && Near(bowInk - f.Ink.Value, shotInk) && target.Hp == bowHp && f.Hits.Count == 0 &&
+                            arrowCue.Cue == SpellFxCue.Secondary && Mathf.Abs(arrowCue.At - flight) < 1e-3f,
+                            "drawn " + draw + " s and let go: one arrow flies " + flight.ToString("0.###") + " s (" + dist + " m at " + speed + " m/s), shot.ink (" + shotInk + ") is paid once, nothing hits yet");
+                        var tooSoon = Bow(loosed + recover * .5f, true, false);
+                        var ready = Bow(loosed + recover + .01f, true, false);
+                        Bow(loosed + recover + .02f, false, false);
+                        r.Check(b8, tooSoon == BowStep308.None && ready == BowStep308.Begin, "after a shot the bow recovers sword.interval (" + recover + " s) before the next draw");
+                        sword.Tick(Clock(loosed + flight - .02f));
+                        bool waits = target.Hp == bowHp && sword.ArrowsInFlight == 1;
+                        sword.Tick(Clock(loosed + flight + .01f));
+                        r.Check(b8, waits && sword.ArrowsInFlight == 0 && Near(bowHp - target.Hp, bowWhole) && f.Hits.Count == 1 && f.Hits[0].Attack.Source == DamageSource.PlayerDirect &&
+                            f.Hits[0].Attack.Element == bowRow.Element,
+                            "the arrow lands when its flight is over: the form's power (row base power x brush) as the player's own elemental attack");
+
+                        // no aimed enemy, or one beyond shot.range: the arrow flies straight ahead to a miss (ink still paid)
+                        f.Aim(null); bowInk = f.Ink.Value; cues.Cues.Clear();
+                        Bow(10f, true, false); Bow(10f + draw + .01f, false, true);
+                        var loose = cues.Cues.FirstOrDefault(c => c.Cue == SpellFxCue.Secondary);
+                        f.Aim(target); target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, range * 1.2f);
+                        Bow(12f, true, false); Bow(12f + draw + .01f, false, true);
+                        r.Check(b8, loose.Cue == SpellFxCue.Secondary && sword.ArrowsInFlight == 0 && Near(bowInk - f.Ink.Value, shotInk * 2f),
+                            "no aimed enemy, or the aimed one beyond shot.range: the arrow is loosed at nothing (a miss to look at, no hit kept)");
+
+                        // an arrow in the air outlives the form; rest (Clear) takes it back
+                        target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, dist);
+                        Bow(14f, true, false); Bow(14f + draw + .01f, false, true);
+                        bowHp = target.Hp;
+                        bool putAway = sword.ReleaseByPlayer(Clock(14.1f + draw));
+                        sword.Tick(Clock(14f + draw + flight + .05f));
+                        r.Check(b8, putAway && !sword.Active && sword.ArrowsInFlight == 0 && Near(bowHp - target.Hp, bowWhole) && Near(motor.FormMovementScale308, 1f),
+                            "the sword put away with an arrow in the air: the arrow still lands; the walk is whole");
+                        Reset(); f.Cast(fire); f.Aim(target);
+                        Bow(20f, true, false); Bow(20f + draw + .01f, false, true);
+                        bowHp = target.Hp;
+                        f.Wiring.ClearSpells308(SpellClearReason.Rest);
+                        sword.Tick(Clock(20f + draw + flight + .05f));
+                        r.Check(b8, sword.ArrowsInFlight == 0 && target.Hp == bowHp, "rest (Clear) takes back an arrow in the air: nothing lands");
+
+                        // the last of the ink: the shot that empties the pool ends the form; its arrow still flies
+                        Reset(); f.Cast(fire); f.Aim(target);
+                        f.Ink.Restore(shotInk * .5f);
+                        Bow(30f, true, false); var lastShot = Bow(30f + draw + .01f, false, true);
+                        r.Check(b8, lastShot == BowStep308.Fire && f.Ink.Value == 0f && !sword.Active && sword.ArrowsInFlight == 1, "the shot that empties the ink ends the form; the arrow is already on its way");
+                        sword.Tick(Clock(30f + draw + flight + .05f));
+                    }
+                    finally
+                    {
+                        SpellFixture308.Set(f.Wiring, "_motor", motorBefore);
+                        f.Wiring.ConstructSpells(f.Registry, f.Finals, f.Fx); f.Aim(null); target.transform.position = home;
+                    }
+                }
+
+                // ---- the other forms (the bow has its own block): they cast, strike with their element and lock spells (each at its own reach) ----
+                foreach (int cell in cells.Skip(1).Where(c => c != cells[1]))
                 {
                     char letter = SpellGrammar308.LetterAt(cell);
                     Reset(); f.Cast(letter);

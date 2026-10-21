@@ -24,6 +24,9 @@ namespace Oheangbu.Combat
         [SerializeField] private CameraRigController _cameraRig; // [실험 2026-08-27] 숄더뷰 피치 클램프 조회(없으면 기본 ±80)
         public GameplayRuntimeStateSO RuntimeState;
         public float TerrainMovementScale {get;set;}=1f;
+        // D308-127 debate 16 (TEST): the weapon form's own ground-speed scale (the drawn bow), kept apart from the terrain's,
+        // which the terrain system overwrites every frame. Walking only: the dodge and the jump never read it.
+        public float FormMovementScale308 {get;set;}=1f;
         public bool EnvironmentalInputBlocked {get;set;}
 
         private CharacterController _controller;

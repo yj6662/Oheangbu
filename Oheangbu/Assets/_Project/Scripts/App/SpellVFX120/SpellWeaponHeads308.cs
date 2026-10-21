@@ -39,6 +39,25 @@ namespace Oheangbu.App.SpellVFX120
 
         private readonly Dictionary<int, float> _lastAt = new Dictionary<int, float>();
 
+        // Debate 16, the bow's own cues: Tick = how far drawn (Value; negative = the draw ended without an arrow), Secondary = one
+        // arrow (Target / Point / At = flight seconds, Value = the form's remaining life, re-sent because every shot spends ink).
+        // true = the handle carries a bow and the cue was its (nothing else draws it).
+        public bool Bow(int id, SpellFxCue cue, in SpellFxCueArgs args)
+        {
+            if (cue != SpellFxCue.Tick && cue != SpellFxCue.Secondary) return false;
+            if (!_heads.TryGetValue(id, out var heads) || heads.Length == 0) return false;
+            bool any = false;
+            foreach (var head in heads)
+            {
+                var horn = head != null ? head.GetComponent<HornBow308>() : null;
+                if (horn == null) continue;
+                any = true;
+                if (cue == SpellFxCue.Tick) horn.Draw(args.Value);
+                else { horn.Shoot(args.Target, args.Point, args.At); head.SetLifeEnd(Time.time, args.Value); }
+            }
+            return any;
+        }
+
         // The head prefab of a glyph: its catalogue body's profile (the cue profile the visual set points at).
         public static GameObject PrefabFor(SpellVisualSetSO visuals, char letter)
         {
@@ -58,13 +77,21 @@ namespace Oheangbu.App.SpellVFX120
                 if (rig == null) return;
                 var swing = rig.GetComponent<SpellSwing308>();
                 if (swing != null) _swings[id] = swing;
-                foreach (var brush in new[] { rig.WorldBrushRoot308, rig.NearBrushRoot308 })
+                // debate 16: the bow is held by the world body only (the close-up arm shows only while drawing a glyph, which the
+                // form keeps shut)
+                bool bow = prefab.GetComponent<HornBow308>() != null;
+                foreach (var brush in bow ? new[] { rig.WorldBrushRoot308 } : new[] { rig.WorldBrushRoot308, rig.NearBrushRoot308 })
                 {
                     if (brush == null) continue;
                     var instance = Object.Instantiate(prefab);
                     var head = instance.GetComponent<GreatBrushWeapon308>();
                     // step 3: the head grows from now and dries over the last seconds of the form (Duration = the form's longest life)
-                    if (head != null && head.Attach(brush)) { head.SetLife(Time.time, request.Duration); made.Add(head); }
+                    if (head != null && head.Attach(brush))
+                    {
+                        head.SetLife(Time.time, request.Duration); made.Add(head);
+                        var horn = instance.GetComponent<HornBow308>();
+                        if (horn != null) horn.Bind(rig);
+                    }
                     else if (Application.isPlaying) Object.Destroy(instance); else Object.DestroyImmediate(instance);
                 }
             }
