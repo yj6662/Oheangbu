@@ -20,7 +20,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     //  상: the stone in the fan is taken out of the air: the attack ends as a cancel (that clears the stone's look), no damage.
     //  송: the pair's two stones go down together; a stone behind the caster flies on.
     //  막 / 공: with the rock (the wave front) between, the real stone lands through the real doorway and is stopped there
-    //  (an impact, no damage); a thrower to the side still hurts; after the cover the same stone hurts again.
+    //  (an impact, no damage); a thrower to the side still hurts; after the cover the same stone hurts again. A stone
+    //  already in the air whose path meets the cover is stopped there and the throw ends as on the terrain (D308-125 적용 6).
     // Every cast below is on the main game's proof alone (Gate final, no TEST unlock). Left to Play: the flight and its look.
     public static partial class Spell120Checks308
     {
@@ -180,6 +181,19 @@ namespace Oheangbu.EditorTools.WorldMacro
                                 "the real stone of a thrower behind the rock lands and is stopped at the doorway: an impact, no damage, the thrower recovers as after any throw");
                             Throw(flanker); impacts0 = impacts; Lands(flanker);
                             r.Check("막-4", Hurt(impacts0), "a thrower to the side has the rock out of its line: its stone hurts");
+                            // D308-125 적용 6: a stone already in the air (its last point put past the rock by hand: Edit Mode's
+                            // flight does not move) is stopped where its path met the rock; the flanker's stone flies on
+                            f.Player.Restore();
+                            int caught0 = rockFx.Caught; thrown = Throw(thrower) && Throw(flanker); impacts0 = impacts; int ended0 = ended;
+                            Vector3 aim = f.Player.transform.position + Vector3.up * .5f;
+                            SpellFixture308.Set(thrower, "_authoredProjectilePrevious", Vector3.Lerp(thrower.FlightStart308, aim, .9f));
+                            SpellFixture308.Set(flanker, "_authoredProjectilePrevious", Vector3.Lerp(flanker.FlightStart308, aim, .9f));
+                            Tick(rockFx, landsAt + .2f);
+                            r.Check("막-6", thrown && !thrower.IsProjectileFlying && thrower.IsRecovering && rockFx.Caught == caught0 + 1 && ended == ended0 + 1 && cancelled &&
+                                impacts == impacts0 && Near(f.Player.Hp01, 1f) && flanker.IsProjectileFlying,
+                                "a stone in the air whose path reached the rock is stopped there and the throw ends as on the terrain: called off (no impact, no damage), then the thrower recovers; the flanker's stone flies on");
+                            Lands(flanker);
+                            r.Check("막-6", Hurt(impacts0), "the flanker's stone lands and hurts");
                             Tick(rockFx, landsAt + life + .1f);
                             Throw(thrower); impacts0 = impacts; Lands(thrower);
                             r.Check("막-4", rockFx.PieceCount == 0 && Hurt(impacts0) && thrower.GetComponent<EnemyVitals>().Modifiers.IsEmpty,
@@ -209,6 +223,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                                 "while the wave runs, the real stone of a thrower ahead of it lands and is stopped at the doorway (an impact, no damage)");
                             Throw(flanker); impacts0 = impacts; Lands(flanker);
                             r.Check("공-4", Hurt(impacts0), "a thrower behind the player is not cut off: its stone hurts");
+                            // D308-125 적용 6: a stone already in the air is stopped where its path crossed the wall
+                            f.Player.Restore();
+                            int caught0 = waveFx.Caught; thrown = Throw(thrower) && Throw(flanker); impacts0 = impacts; int ended0 = ended;
+                            Vector3 aim = f.Player.transform.position + Vector3.up * .5f;
+                            SpellFixture308.Set(thrower, "_authoredProjectilePrevious", Vector3.Lerp(thrower.FlightStart308, aim, .9f));
+                            SpellFixture308.Set(flanker, "_authoredProjectilePrevious", Vector3.Lerp(flanker.FlightStart308, aim, .5f));
+                            Tick(waveFx, running);
+                            r.Check("공-6", thrown && !thrower.IsProjectileFlying && thrower.IsRecovering && waveFx.Caught == caught0 + 1 && ended == ended0 + 1 && cancelled &&
+                                impacts == impacts0 && Near(f.Player.Hp01, 1f) && flanker.IsProjectileFlying,
+                                "a stone in the air whose path crossed the wave's wall is stopped there, as on the terrain; the stone thrown from behind the player flies on");
+                            Lands(flanker);
+                            r.Check("공-6", Hurt(impacts0), "that stone lands and hurts");
                             Tick(waveFx, clock + area.Delay + area.Length / area.Speed + .1f);
                             Throw(thrower); impacts0 = impacts; Lands(thrower);
                             r.Check("공-4", waveFx.PieceCount == 0 && Hurt(impacts0) && thrower.GetComponent<EnemyVitals>().Modifiers.IsEmpty,

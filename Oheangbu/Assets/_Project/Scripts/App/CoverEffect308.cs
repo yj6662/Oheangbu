@@ -21,6 +21,7 @@ namespace Oheangbu.App
         public abstract IReadOnlyList<SpellParamSpec> Params { get; }
         public int PieceCount => _pieces.Count;
         public int ScreenedEnemies => _holds.Count;        // enemies whose ranged strikes a piece stops right now (checks read this)
+        public int Caught { get; private set; }            // shots in the air a piece stopped so far (checks read this)
 
         public virtual bool Prepare(in SpellCastContext ctx) => ctx.Host != null && ctx.Row != null;
         public abstract bool Commit(in SpellCastContext ctx);
@@ -88,10 +89,23 @@ namespace Oheangbu.App
                     var enemy = targets[i];
                     if (enemy == null) continue;
                     bool cut = enemy.IsAlive && enemy.isActiveAndEnabled && CoverRule308.Blocks(piece, enemy.transform.position, player, ctx.Now);
-                    if (cut) _holds.Screen(enemy, piece.Token, piece.Until);
+                    if (cut) { _holds.Screen(enemy, piece.Token, piece.Until); Catch(piece, enemy, ctx); }
                     else _holds.Release(enemy, piece.Token);
                 }
             }
+        }
+
+        // D308-125 적용 6: a shot the enemy already threw is stopped where its path meets the piece that cuts its line, and
+        // ends the way a shot that hits the terrain ends; the stop shows the burst of the glyph that put the piece there.
+        // A shot another piece or a domain stopped earlier this frame is no longer in the air and is skipped.
+        void Catch(in SpellCover308 piece, EnemyVitals enemy, in SpellTickContext ctx)
+        {
+            var controller = enemy.GetComponent<EnemyController>();
+            if (controller == null || !controller.isActiveAndEnabled || !controller.IsProjectileFlying) return;
+            if (!CoverRule308.Meets(piece, controller.FlightStart308, controller.FlightPoint308, ctx.Now, out Vector3 entry)) return;
+            if (!controller.StopFlight308()) return;
+            Caught++;
+            (ctx.Fx as ISpellBurstPresenter308)?.Burst(piece.Letter, entry);
         }
     }
 }

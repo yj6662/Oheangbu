@@ -304,6 +304,18 @@ namespace Pure308
                 var veil = new EnemyStrikeVeil308(); veil.Screen(9, 20f + life);
                 r.Check("막-2", WP13Misses(veil, 10, true, 21f).Count == 10 && WP13Misses(veil, 10, false, 21f).Count == 0 && WP13Misses(veil, 10, true, 20f + life).Count == 0,
                     "cover stops ranged strikes only, every one of them while it holds; melee strikes are not stopped; the screen ends with the rock");
+                // D308-125 적용 6: a shot already in the air is stopped where its path meets the rock, at its own height
+                Vector3 hand = behindRock + Vector3.up * 1.2f, face = landing + new Vector3(0f, 1.2f, radius);
+                bool met = CoverRule308.Meets(piece, hand, new Vector3(0f, 1.2f, 4f), 21f, out Vector3 entry);
+                r.Check("막-5", met && r.Near((entry - face).magnitude, 0f, .001f),
+                    "a shot whose path from the hand reached the rock is stopped on the rock's face, at the shot's height", entry.ToString("F3"));
+                bool through = CoverRule308.Meets(piece, hand, new Vector3(0f, 1.2f, 1f), 21f, out Vector3 throughEntry);
+                r.Check("막-5", through && r.Near((throughEntry - face).magnitude, 0f, .001f),
+                    "a shot that crossed the whole rock within one frame is stopped on the face it entered, not let through");
+                r.Check("막-5", !CoverRule308.Meets(piece, hand, new Vector3(0f, 1.2f, landing.z + radius + .3f), 21f, out _) &&
+                    !CoverRule308.Meets(piece, grazing + Vector3.up * 1.2f, new Vector3(radius * 1.5f, 1.2f, 1f), 21f, out _) &&
+                    !CoverRule308.Meets(piece, hand, new Vector3(0f, 1.2f, 4f), 20f + life, out _) && !CoverRule308.Meets(piece, hand, hand, 21f, out _),
+                    "a shot short of the rock, one passing beside it, one after the rock is gone and one still in the hand are not stopped");
             }
 
             // ---- the wave that covers who walks behind it ----
@@ -339,6 +351,15 @@ namespace Pure308
                     "the cover moves with the wave: an enemy the front has already passed is no longer cut off");
                 r.Check("공-2", !CoverRule308.Blocks(wall, ahead, player, startsAt - .01f) && !CoverRule308.Blocks(CoverRule308.WallOf(front, 17, front.EndsAt), ahead, player, front.EndsAt),
                     "there is no cover before the wave starts or after it reached the far end of its corridor");
+                // D308-125 적용 6: a shot already in the air is stopped where its path crosses the wall
+                Vector3 hand = ahead + Vector3.up * 1.2f, past = new Vector3(.3f, 1.2f, length * .5f - 1f);
+                bool met = CoverRule308.Meets(wall, hand, past, mid, out Vector3 entry);
+                r.Check("공-5", met && r.Near(entry.z, length * .5f, .001f) && r.Near(entry.y, 1.2f, .001f) && Mathf.Abs(entry.x) <= half,
+                    "a shot whose path from the hand crossed the wave's wall is stopped on the wall, at the shot's height", entry.ToString("F3"));
+                r.Check("공-5", !CoverRule308.Meets(wall, hand, new Vector3(.3f, 1.2f, length * .5f + 1f), mid, out _) &&
+                    !CoverRule308.Meets(wall, flank + Vector3.up * 1.2f, new Vector3(half * 6f, 1.2f, length * .5f - 1f), mid, out _) &&
+                    !CoverRule308.Meets(wall, behind + Vector3.up * 1.2f, new Vector3(0f, 1.2f, length * .5f + 1f), mid, out _),
+                    "a shot still ahead of the wall, one crossing beyond the wall's end and one thrown from behind the wave are not stopped");
             }
         }
     }
