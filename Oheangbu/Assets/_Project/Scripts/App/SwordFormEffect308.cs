@@ -135,6 +135,8 @@ namespace Oheangbu.App
             _comboBuffer = row.F("combo.buffer", 0f); _comboFinish = row.F("combo.finish", 1f); _comboStep = 0; _pending = false;
             _holdPer = row.F("hold.per", 0f); _holdCap = row.F("hold.cap", 0f); _holdUntil = float.NegativeInfinity;
             _domain = host as IPlayerDomainHost308;
+            // the hold's owner token: a fresh attack id (only the counter moves). It lies inside this cast's attack window
+            // (D308-123), but it never lands a hit, so the empower charge's "first confirmed hit in the window" never sees it
             _holdOwner = _holdPer > 0f ? AttackProvenance.Create(host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player, DamageSource.PlayerDirect, _element).AttackId : 0L;
             if (_hitIds.Length < _count) { Array.Resize(ref _hitIds, _count); Array.Resize(ref _hitDistances, _count); }
             _nextStrikeAt = ctx.Now; _active = true;

@@ -200,9 +200,10 @@ namespace Pure308
             foreach (var row in rows)
             {
                 if (row == wood || row == earth) continue;   // the spear and the axe: Cases_Weapon127
-                if (row.Element == Element.Water) continue;   // the flail (debate 15): Cases_Combo127
                 string clause = row.Letter + "-1";
-                r.Check(clause, Common(row) == Common(sword), "same strike power and the same eight numbers as the metal form (the common sword spec)", Common(row));
+                // the flail's own numbers (debate 15) are Cases_Combo127's; it still resolves, locks and counters like every form
+                if (row.Element != Element.Water)
+                    r.Check(clause, Common(row) == Common(sword), "same strike power and the same eight numbers as the metal form (the common sword spec)", Common(row));
                 var rowStatus = SpellResolveCore308.Resolve(row.Letter[0], 1f, 1f, row, open, out SpellCast rowCast);
                 r.Check(clause, rowStatus == SpellResolveStatus.Ok && rowCast.Kind == SpellKind.Buff && rowCast.Element == row.Element && rowCast.Power == row.BasePower,
                     "resolves as a sword of its initial's element", rowStatus + " " + rowCast.Element);
