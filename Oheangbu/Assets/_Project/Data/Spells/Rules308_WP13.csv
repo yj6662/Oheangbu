@@ -5,14 +5,15 @@
 # single.cover: cover.radius / cover.life = the rooted rock, cover.max = rocks at once, cover.range = where the rock of a cast without a target falls (metres ahead).
 # intercept.single: intercept.range / intercept.angle = the fan the needle looks for an incoming projectile in; intercept.fallback = power share of the metal needle shot at an enemy when nothing is in the air (D308-123, TEST). intercept.barrage: intercept.max = projectiles one barrage can shoot down in all; intercept.window = how long the barrage stands after it forms, shooting down what enters its fan (D308-123, TEST; 0 = the one moment it forms).
 # single.unblockable and path.purge carry no number of their own.
-# Gate test (every row of this sheet since #308b, D308-51: the main game now grants all five finals): the row stays behind its final's TEST unlock.
-# The main-game grant of that final does not open it until its world side exists
-# (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target). Remove the word to let the final's own unlock open it.
+# Gate test (D308-51: the main game grants all five finals): the row stays behind its final's TEST unlock; the main-game grant
+# of that final does not open it until its world side exists (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target).
+# A row leaves TEST when the main world arms its consumer (D308-125 적용 5 Q5): 온 the 적로 burning ground (E125); 공 · 막 · 상 · 송 the
+# main world's stone-throwers, MineRangedNeutral308 (R125). 농 · 삿 still wait for theirs.
 글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
-공,replace,path.cover,,AttackArea,test,,,4,,Path,,3,12,5,0.4,,,,
+공,replace,path.cover,,AttackArea,,,,4,,Path,,3,12,5,0.4,,,,
 농,replace,zone.haze,,,test,,base,,,,,,,,,,,,haze.radius=3;haze.life=8;haze.miss=0.5;haze.max=1
-막,replace,single.cover,,,test,,base,,,,,,,,,,,,cover.radius=1.2;cover.life=12;cover.max=2;cover.range=8
+막,replace,single.cover,,,,,base,,,,,,,,,,,,cover.radius=1.2;cover.life=12;cover.max=2;cover.range=8
 삿,replace,single.unblockable,,,test,,base,,,,,,,,,,,,
-상,replace,intercept.single,,,test,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20;intercept.fallback=0.5
-송,replace,intercept.barrage,,,test,,base,,,,,,,,,,,,intercept.max=6;intercept.window=0.6
+상,replace,intercept.single,,,,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20;intercept.fallback=0.5
+송,replace,intercept.barrage,,,,,base,,,,,,,,,,,,intercept.max=6;intercept.window=0.6
 온,replace,path.purge,,,,,base,,,,,,,,,,,,

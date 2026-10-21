@@ -14,6 +14,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     // fixture scene (SpellFixture308.Hazard / Projectile) and go with it: none of them ever stands in an open scene.
     // What stays for Play: enemies that really shoot, guard or leave hazards, the projectile of today's EnemyController being
     // stopped in flight, the look of everything (the fixtures use the null presenter).
+    // D308-125 R125: the wave, rock, needle and barrage rows left the TEST gate; Spell120Checks308.R125.cs checks them against
+    // the main world's own stone-throw profile on real EnemyControllers. This file keeps every final open (the TEST unlock).
     public static partial class Spell120Checks308
     {
         static readonly string[] WP13Sheets = { "Rules308_Base", "Rules308_WP00", "Rules308_WP11", "Rules308_WP13" };
@@ -279,27 +281,28 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
             }
 
-            // ---- the rock row is TEST-only (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell
+            // ---- the thrust row is TEST-only (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell
             // rule plus a TEST target). A normal save that earned its final opens the other rows of that final, never this one.
-            if (r.Wants(rock.ToString()))
+            // The rock row held this case until the main world's stone-throwers became its consumer (D308-125 R125).
+            if (r.Wants(thrust.ToString()))
             {
-                char spine = SpellGrammar308.LetterAt(62);      // earth o + giyeok: a row of the same final that the main game does open
-                string[] sheets = { "Rules308_Base", "Rules308_WP00", "Rules308_WP03", "Rules308_WP11", "Rules308_WP13" };
+                char execute = SpellGrammar308.LetterAt(5);     // wood a + siot: a row of the same final that the main game does open
+                string[] sheets = { "Rules308_Base", "Rules308_WP00", "Rules308_WP02", "Rules308_WP11", "Rules308_WP13" };
                 using (var g = NewFixture(r, effects, sheets))
                 {
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled);
-                    g.Resolver.TryRow(rock, out var rockRow); g.Resolver.TryRow(spine, out var spineRow);
-                    g.Finals.Proven.Add(SpellFinal.Giyeok);                         // the main-game proof, no TEST unlock
-                    g.Aim(g.Inside[0]); g.Cast(spine);
-                    bool mainOpens = spineRow != null && spineRow.Gate == SpellGateMode.Final && g.Accepted.Count == 1 && g.Misfires.Count == 0;
+                    g.Resolver.TryRow(thrust, out var thrustRow); g.Resolver.TryRow(execute, out var executeRow);
+                    g.Finals.Proven.Add(SpellFinal.Siot);                           // the main-game proof, no TEST unlock
+                    g.Aim(g.Inside[0]); g.Cast(execute);
+                    bool mainOpens = executeRow != null && executeRow.Gate == SpellGateMode.Final && g.Accepted.Count == 1 && g.Misfires.Count == 0;
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled); g.RestoreAll(); g.Aim(g.Inside[0]);
-                    float ink = g.Ink.Value; g.Cast(rock);
-                    r.Check("A5", rockRow != null && rockRow.Gate == SpellGateMode.Test && mainOpens && g.Accepted.Count == 0 && g.Misfires.Count == 1 &&
-                        g.Misfires[0].Value == SpellResolveStatus.Locked && Near(ink - g.Ink.Value, g.Config.MisfireInkCost) && g.PendingCount == 0 && rockFx.RocksInFlight == 0,
-                        "a normal save that proved the final: the other row of that final casts, the TEST-only rock row is a Locked misfire (misfire ink, nothing scheduled, no rock)");
-                    g.Finals.Proven.Clear(); g.Finals.Open.Add(SpellFinal.Giyeok);  // the TEST unlock of the isolated store
-                    g.RestoreAll(); g.Aim(g.Inside[0]); g.Cast(rock);
-                    r.Check("A5", g.Accepted.Count == 1 && g.Misfires.Count == 0 && rockFx.RocksInFlight == 1, "the TEST unlock of its final opens the rock row");
+                    float ink = g.Ink.Value; g.Cast(thrust);
+                    r.Check("A5", thrustRow != null && thrustRow.Gate == SpellGateMode.Test && mainOpens && g.Accepted.Count == 0 && g.Misfires.Count == 1 &&
+                        g.Misfires[0].Value == SpellResolveStatus.Locked && Near(ink - g.Ink.Value, g.Config.MisfireInkCost) && g.PendingCount == 0,
+                        "a normal save that proved the final: the other row of that final casts, the TEST-only thrust row is a Locked misfire (misfire ink, nothing scheduled)");
+                    g.Finals.Proven.Clear(); g.Finals.Open.Add(SpellFinal.Siot);    // the TEST unlock of the isolated store
+                    g.RestoreAll(); g.Aim(g.Inside[0]); g.Cast(thrust);
+                    r.Check("A5", g.Accepted.Count == 1 && g.Misfires.Count == 0, "the TEST unlock of its final opens the thrust row");
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled);
                 }
             }

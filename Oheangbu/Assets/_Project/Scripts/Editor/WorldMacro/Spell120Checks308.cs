@@ -425,6 +425,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 new KeyValuePair<string, Action<Report>>("WP13", x => FixturesWP13(x)), new KeyValuePair<string, Action<Report>>("WP14", x => FixturesWP14(x)),
                 new KeyValuePair<string, Action<Report>>("WP15", x => FixturesWP15(x)), new KeyValuePair<string, Action<Report>>("C124", x => FixturesC124(x)),
                 new KeyValuePair<string, Action<Report>>("E125", x => FixturesE125(x)), new KeyValuePair<string, Action<Report>>("M125", x => FixturesM125(x)), new KeyValuePair<string, Action<Report>>("F125", x => FixturesF125(x)),
+                new KeyValuePair<string, Action<Report>>("R125", x => FixturesR125(x)),
             };
             foreach (var package in packages)
             {
@@ -499,6 +500,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static partial void FixturesE125(Report r);   // #308 D308-125 적용 5: burning ground, the scorch, 운's wash and 온's wipe on the real wiring
         static partial void FixturesM125(Report r);   // #308 D308-125 적용 3 (b): 묵's circle against the real 적로 불승냥이 charge and its bite
         static partial void FixturesF125(Report r);   // #308 D308-125 F125: 눈 · 숫 · 웅 against the main world's own dungeon gates
+        static partial void FixturesR125(Report r);   // #308 D308-125 R125: 상 · 송 · 막 · 공 against the main world's own stone-throwers
 
         // A handler the foundation checks drive: it records what the host asked of it and can be told to refuse.
         sealed class ProbeEffect : ISpellEffect, ISpellCostHook, ISpellCastHook, ISpellAcceptHook, ISpellHitHook, IPlayerHitHook

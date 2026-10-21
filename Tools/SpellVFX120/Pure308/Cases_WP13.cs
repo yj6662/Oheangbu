@@ -40,12 +40,14 @@ namespace Pure308
             if (!r.Check("W13", rows, "the seven WP-13 rows name their handlers (the WP-13 sheet is in the table)")) return;
             r.Check("W13", new[] { wave, steam, rock, thrust, needle, barrage, purge }.All(x => x.Feature == SpellLegacyFeature.None && x.Gate != SpellGateMode.Open && x.Final != SpellFinal.None && string.IsNullOrEmpty(x.Pending)),
                 "they are new rows behind their final consonant: no legacy feature, no open gate, no pending mark");
-            // 2026-10-04 (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target): the rock-cover row is
-            // the one WP-13 row behind the final the main game grants, so it is the one that must stay TEST-only (Cases_Core308 checks
-            // what a normal save and the TEST unlock resolve).
-            r.Check("W13", new[] { wave, steam, rock, thrust, needle, barrage }.All(x => x.Gate == SpellGateMode.Test) && purge.Gate != SpellGateMode.Test,
-                "#308b: six WP-13 rows are TEST-unlock only (Gate test in their rule sheet): the main game now grants every final and their world side does not exist yet; " +
-                "D308-125 (적용 5): the purge row left the TEST gate, the ember patch is its world consumer", rock.Gate + " " + purge.Gate);
+            // 2026-10-04 (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target): a WP-13 row stays
+            // TEST-only until the main world arms its consumer (Cases_Core308 checks what a normal save and the TEST unlock resolve).
+            // D308-125: the purge row on the ember patch (적용 5), the wave, rock, needle and barrage rows on the main world's
+            // stone-throwers (R125); the haze and the thrust rows still wait for theirs.
+            r.Check("W13", new[] { steam, thrust }.All(x => x.Gate == SpellGateMode.Test) && new[] { wave, rock, needle, barrage, purge }.All(x => x.Gate != SpellGateMode.Test),
+                "#308b: the haze and thrust rows are TEST-unlock only (Gate test in their rule sheet): their world side does not exist yet; " +
+                "D308-125: the purge row (the ember patch) and the wave, rock, needle and barrage rows (the stone-throwers) left the TEST gate",
+                string.Join(" ", new[] { wave, steam, rock, thrust, needle, barrage, purge }.Select(x => x.Gate)));
 
             // ---- the freezing needle and the barrage ----
             Vector3 caster = new Vector3(5f, 0f, 5f), forward = Vector3.forward;
