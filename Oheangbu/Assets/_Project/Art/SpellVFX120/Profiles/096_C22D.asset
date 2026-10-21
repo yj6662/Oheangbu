@@ -18,6 +18,7 @@ MonoBehaviour:
     5\uC790 \uC81C\uD55C)"
   Family: Ring
   Assigned: 0
+  Deploy308: {fileID: 0}
   Behavior: 10
   Layout: 6
   BodyMesh: {fileID: 4300000, guid: d6b9c9dd55c13524788ba8ab335303cf, type: 2}
@@ -29,16 +30,87 @@ MonoBehaviour:
   InkMaterial: {fileID: 2100000, guid: 9de1b3f3ec0821940b7d34b50e978169, type: 2}
   PatternMaterial: {fileID: 2100000, guid: 6f25d3cc7e0d5394fb97d1d650fa8ea3, type: 2}
   MistMaterial: {fileID: 2100000, guid: 479f5907501a36b4695d04b02d86b553, type: 2}
+  UseOriginalKtp: 0
   NativeCastPrefab: {fileID: 751476649039435752, guid: d195f052dd319ff4cb2d5f06740da195, type: 3}
   NativeImpactPrefab: {fileID: 0}
   NativeFieldPrefab: {fileID: 0}
   NativeFieldRole: 2
   NativeScale: 0.4
   NativeImpactScale: 1
+  KtpEmphasis: 0
+  KtpCastMultiplier: 1
+  KtpImpactMultiplier: 1
+  KtpFieldMultiplier: 1
+  KtpContactMultiplier: 1
+  KtpBrightness: 1
+  KtpCastOffset: {x: 0, y: 0, z: 0}
+  KtpImpactOffset: {x: 0, y: 0, z: 0}
+  KtpFieldOffset: {x: 0, y: 0, z: 0}
+  KtpQuickCast: 0
+  KtpPatternShield: 0
+  CameraOffsetLaunch: 0
+  LaunchViewport: {x: 0.6666667, y: 0.33333334}
+  LaunchDepth: 1.6
+  KtpContactBrightness: 0
+  KtpContactSurfaceOffset: 0
+  GuardContactPrefab: {fileID: 0}
+  KtpRectShield: 0
+  AreaRemake: 0
+  AreaContactPrefab: {fileID: 0}
+  AreaStainPrefab: {fileID: 0}
+  AreaStainDiameter: 2
+  AreaStainAlpha: 0.12
+  AreaStainSeconds: 2.5
+  AreaStainMinNormalY: 0.45
+  AreaCastSeconds: 0.32
+  WideAreaRevision: 0
+  AreaFlowRevision: 0
+  AreaReadabilityRevision: 0
+  EarthRift: 0
+  BranchedEarthRift: 0
+  ProceduralEarthRift: 0
+  WardKind: 0
+  WardRadius: 3
+  WardHeight: 2.2
+  WardFormation: 0.45
+  WardFade: 0.5
+  WardGroundProbeHeight: 16
+  WardGroundProbeDepth: 48
+  WardMaterial: {fileID: 0}
+  WardWaterMaterial: {fileID: 0}
+  WardPatternPrefab: {fileID: 0}
+  WardContactPrefab: {fileID: 0}
+  WardDebrisPrefab: {fileID: 0}
   NativeReplaceBody: 0
   NativeBodyPrefab: {fileID: 0}
   NativeBodyMotion: 0
+  BotanicalPrefab: {fileID: 0}
+  BotanicalKind: 0
   SummonPrefab: {fileID: 0}
+  WoodDeerPresentation: 0
+  WoodDeerPrefab: {fileID: 0}
+  WoodDeerSeal: {fileID: 0}
+  WoodDeerDebris: {fileID: 0}
+  FireHaetaePresentation: 0
+  FireHaetaePrefab: {fileID: 0}
+  FireHaetaeSeal: {fileID: 0}
+  FireHaetaeDebris: {fileID: 0}
+  MetalTigerPresentation: 0
+  MetalTigerPrefab: {fileID: 0}
+  MetalTigerSeal: {fileID: 0}
+  MetalTigerDebris: {fileID: 0}
+  DokkaebiClubPresentation: 0
+  DokkaebiClubPrefab: {fileID: 0}
+  DokkaebiClubSeal: {fileID: 0}
+  DokkaebiClubDebris: {fileID: 0}
+  WaterTurtlePresentation: 0
+  WaterTurtlePrefab: {fileID: 0}
+  WaterTurtleSeal: {fileID: 0}
+  WaterTurtleDebris: {fileID: 0}
+  StoneDokkaebiPresentation: 0
+  StoneDokkaebiPrefab: {fileID: 0}
+  StoneDokkaebiSeal: {fileID: 0}
+  StoneDokkaebiDebris: {fileID: 0}
   SummonScale: 1
   SummonYaw: 0
   Pigment: {r: 0.6509804, g: 0.6901961, b: 0.6784314, a: 1}
@@ -115,3 +187,33 @@ MonoBehaviour:
     (RGB is solid white).\",\"source_materials\":[{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Materials/TraditionalPatternMaterials/Pattern_232.mat\",\"guid\":\"b00d421878d6d36488d289df17727b0f\",\"shader\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Shader/AlphaBlend_Scroll_customdata.shadergraph\"}],\"source_prefab_examples\":[{\"path\":\"Oheangbu/Assets/KoreanTraditionalPattern_Effect/Prefabs/Fly/Fly10-07.prefab\",\"guid\":\"07de186f1843f344e84415d133fa1f90\",\"particle_systems\":89,\"looping_systems\":53}]},\"dispatchStatus\":\"INTENTIONAL_BLANK_GALLERY_ONLY\",\"runtimeLimit\":\"Recipe
     data alone does not implement per-glyph gameplay event choreography; inspect
     runtime and real capture separately.\"}"
+  Bolt300Prefab: {fileID: 0}
+  Bolt300Scale: 1
+  Bolt300SoakSeconds: 0
+  Bolt300NearContactMeters: 0
+  Bolt300TravelScale: 0
+  Guard308Prefab: {fileID: 0}
+  Aura308Prefab: {fileID: 0}
+  Aura308FadeSeconds: 0.5
+  Aura308ByWardRadius: 0
+  Aura308LateAfter: 0
+  Aura308LateAlpha: 1
+  Aura308Lasting: 0
+  CompanionShot308Prefab: {fileID: 0}
+  SwordStrike308Prefab: {fileID: 0}
+  Derived308Prefab: {fileID: 0}
+  Zone308Prefab: {fileID: 0}
+  Burst308Prefab: {fileID: 2107658653327676884, guid: 851ac8f66cfcd1e469467b02195c7a7f, type: 3}
+  Mark308Prefab: {fileID: 0}
+  AreaBambooLean: 0
+  AreaBambooHeightSpread: 0
+  AreaKeepShape308: 0
+  Bolt300Arc: 0
+  Bolt300Curve: 0
+  Bolt300Spin: 0
+  Bolt300Ease: 1
+  Bolt300Pierce: 0
+  Bolt300FollowTarget: 0
+  Bolt300FollowHeight: 0
+  Bolt300Return: 0
+  Bolt300ReturnToCaster: 0

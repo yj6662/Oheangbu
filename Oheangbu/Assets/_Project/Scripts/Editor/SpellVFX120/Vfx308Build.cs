@@ -82,6 +82,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "mark": return BuildMark();         // 11.61: the ink seal of the install letters 감 남 맘 삼 암
                 case "buffhit": return BuildBuffHit();   // 11.64: the moment 먼 멈 넘 do their work
                 case "fieldbirth": return BuildFieldBirth();   // 11.65: the moment 국 뭄 stand up
+                case "fate": return BuildFate();               // D308-125 적용 6: where 막 공 눗 숭 stop a thrown stone
                 case "fieldskin": return BuildFieldSkin();               // 11.74: the 국 lift / 뭄 bridge surfaces as ink
                 case "fieldskin:connect": return ConnectFieldSkin();
                 case "fieldskin:revert": return RevertFieldSkin();

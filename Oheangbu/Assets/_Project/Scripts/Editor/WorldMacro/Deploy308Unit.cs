@@ -1588,9 +1588,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     Check("D57", bad.Count == 0 && letters == 2, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | lift / bank where the field stands up, local, one-shot, gone inside 1 s, no glow, seam called"));
                 }
 
-                // ---- D58 (11.58 / 11.64 / 11.65): the burst seam end to end on a fixture - the live presenter chain
+                // ---- D58 (11.58 / 11.64 / 11.65 / D308-125 적용 6): the burst seam end to end on a fixture - the live presenter chain
                 // (SpellPresenterGuard308 -> SpellDeployPresenter308 -> Vfx120SpellPresenter308) bound to the live set, Burst(letter, far point)
-                // for 상 송 먼 멈 넘 국 뭄: exactly one Spell308_<letter>_Burst lands in the owner's preview scene, made from the profile's
+                // for 상 송 먼 멈 넘 국 뭄 막 공 눗 숭: exactly one Spell308_<letter>_Burst lands in the owner's preview scene, made from the profile's
                 // Burst308Prefab, no fault; nothing stays in the open scene. The Data copy of the set is read for comparison only.
                 {
                     const string liveSet = "Assets/_Project/Art/World/Architecture296/Data/9f55ff4897c35bf408434d2fd4cd5dbc_278c3cdf45b3ab24fb93a8f33e2264e2_9ba170fd23c53dc418707872eb7b2056_SpellVisualSet_120.asset";
@@ -1614,7 +1614,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                             guard.Bind(presenter);
                             var eye = Camera.main;
                             Vector3 far = (eye != null ? eye.transform.position : Vector3.zero) + new Vector3(500f, 0f, 500f);
-                            foreach (char letter in "상송먼멈넘국뭄")
+                            foreach (char letter in "상송먼멈넘국뭄막공눗숭")
                             {
                                 GameObject want = null;
                                 if (set.TryGet(letter, out var visual) && visual.FxPrefab != null)
@@ -1648,7 +1648,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     }
                     if (open.IsValid() && open.rootCount != openRoots) bad.Add("open scene roots " + openRoots + " -> " + open.rootCount);
                     if (open.IsValid() && open.isDirty != openDirty) bad.Add("open scene dirty " + openDirty + " -> " + open.isDirty);
-                    Check("D58", bad.Count == 0 && landed == 7, landed + "/7 landed, open scene dirty " + openDirty + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : "") + " | " + string.Join(", ", notes));
+                    Check("D58", bad.Count == 0 && landed == 11, landed + "/11 landed, open scene dirty " + openDirty + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : "") + " | " + string.Join(", ", notes));
                 }
 
                 // ---- D59 (11.74): the 국 lift / 뭄 bridge the main world points at wear the ink materials on what is seen, and
@@ -1670,6 +1670,47 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (bridge == null) bad.Add("no bridge profile");
                     else if (!Ink(bridge.BlockMaterial)) bad.Add("bridge block " + (bridge.BlockMaterial != null ? bridge.BlockMaterial.name : "null"));
                     Check("D59", bad.Count == 0, bad.Count == 0 ? "국 body+leaf, 뭄 block = InkSolid, no glow, WoodLift kept, foot mark kept" : string.Join("; ", bad));
+                }
+
+                // ---- D60 (D308-125 적용 6): 막 / 공 / 눗 / 숭 draw where they stop a thrown stone - the profile the presenter reads
+                // (막 공 the _308b attack profile, 눗 숭 the catalogue prefab's Vfx120Effect.Profile) carries PF_V308i_fate_<key>, every
+                // system local, one-shot, on awake, gone inside 1 s, no glow; the cover and the domain call the seam at the stop
+                {
+                    const string v2 = "Assets/_Project/Art/SpellVFX308/V2/Profiles", cat = "Assets/_Project/Art/SpellVFX120";
+                    var bad = new List<string>(); int letters = 0, systems = 0;
+                    foreach (var source in new[] { "CoverEffect308", "DomainShotEffects308" })
+                    {
+                        string path = "Assets/_Project/Scripts/App/" + source + ".cs";
+                        if (!File.Exists(path) || !File.ReadAllText(path).Contains("ISpellBurstPresenter308")) bad.Add(source + " does not call the burst seam");
+                    }
+                    foreach (var (glyph, id, want, attack) in new[] { ("막", "050_B9C9", "PF_V308i_fate_ma", true), ("공", "018_ACF5", "PF_V308i_fate_ga", true),
+                                                                       ("눗", "047_B217", "PF_V308i_fate_na", false), ("숭", "096_C22D", "PF_V308i_fate_sa", false) })
+                    {
+                        var p = AssetDatabase.LoadAssetAtPath<Oheangbu.App.SpellVFX120.Vfx120Profile>(attack ? v2 + "/" + id + "_308b.asset" : cat + "/Profiles/" + id + ".asset");
+                        if (p == null) { bad.Add(glyph + " " + id + " profile missing"); continue; }
+                        if (!attack)
+                        {
+                            var fx = AssetDatabase.LoadAssetAtPath<GameObject>(cat + "/Prefabs/" + id + ".prefab");
+                            var eff = fx != null ? fx.GetComponent<Oheangbu.App.SpellVFX120.Vfx120Effect>() : null;
+                            if (eff == null || eff.Profile != p) { bad.Add(glyph + " " + id + " catalogue prefab does not read this profile"); continue; }
+                        }
+                        if (p.Burst308Prefab == null || p.Burst308Prefab.name != want) { bad.Add(glyph + " " + (p.Burst308Prefab != null ? p.Burst308Prefab.name : "none") + " not " + want); continue; }
+                        letters++;
+                        foreach (var ps in p.Burst308Prefab.GetComponentsInChildren<ParticleSystem>(true))
+                        {
+                            systems++;
+                            var main = ps.main;
+                            if (main.simulationSpace != ParticleSystemSimulationSpace.Local) bad.Add(want + "/" + ps.name + " not local");
+                            if (main.loop) bad.Add(want + "/" + ps.name + " loops");
+                            if (!main.playOnAwake) bad.Add(want + "/" + ps.name + " not on awake");
+                            float end = main.startLifetime.constantMax + (ps.emission.burstCount > 0 ? ps.emission.GetBurst(0).time : 0f);
+                            if (end > 1f + 1e-3f) bad.Add(want + "/" + ps.name + " ends at " + Deploy308.F(end));
+                            var r = ps.GetComponent<ParticleSystemRenderer>();
+                            foreach (var m in r != null ? r.sharedMaterials : new Material[0])
+                                if (m != null && m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0f) bad.Add(m.name + " glow " + Deploy308.F(m.GetFloat("_Glow")));
+                        }
+                    }
+                    Check("D60", bad.Count == 0 && letters == 4, letters + " letters, " + systems + " systems" + (bad.Count > 0 ? " | " + string.Join("; ", bad.Take(8)) : " | rock / cane / tongue / blade where the stone stops, local, one-shot, gone inside 1 s, no glow, seam called"));
                 }
 
                 // ---- D26 (D308-10c): the hit splash comes only with a CONFIRMED hit
