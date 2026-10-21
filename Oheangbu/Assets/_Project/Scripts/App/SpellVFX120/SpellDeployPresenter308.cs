@@ -97,6 +97,7 @@ namespace Oheangbu.App.SpellVFX120
 
         // 11.58: a handle-less burst is drawn by the interim presenter (the deploy layer has no burst form).
         public void Burst(char letter, Vector3 point) => _fallback.Burst(letter, point);
+        public void Return(char letter, Vector3 from, Vector3 to) => _fallback.Return(letter, from, to);
 
         // Death, rest, scene leave: both sides let go of everything.
         public void EndAll()

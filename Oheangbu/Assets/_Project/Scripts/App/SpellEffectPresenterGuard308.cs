@@ -14,9 +14,12 @@ namespace Oheangbu.App
 
     // 11.58: a presenter that can put down a one-shot burst for a letter at a point without a handle (an enemy projectile
     // shot down by a volley that never began a presentation). Optional - found with `as`; rules never read anything back.
+    // D308-125 적용 6: Return draws a letter's stroke from one point to another (숭: from where the circle took a shot to the
+    // shooter's chest), on top of the bursts; same contract as Burst.
     public interface ISpellBurstPresenter308
     {
         void Burst(char letter, Vector3 point);
+        void Return(char letter, Vector3 from, Vector3 to);
     }
 
     // #308 the presenter every effect handler really talks to (SPEC-SPELL-120-308 section 9, decision of 2026-10-04:
@@ -128,6 +131,13 @@ namespace Oheangbu.App
         {
             if (_burst == null) return;
             try { _burst.Burst(letter, point); }
+            catch (Exception exception) { Fault(exception); }
+        }
+
+        public void Return(char letter, Vector3 from, Vector3 to)
+        {
+            if (_burst == null) return;
+            try { _burst.Return(letter, from, to); }
             catch (Exception exception) { Fault(exception); }
         }
 

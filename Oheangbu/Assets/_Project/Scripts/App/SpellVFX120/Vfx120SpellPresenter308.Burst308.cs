@@ -67,6 +67,36 @@ namespace Oheangbu.App.SpellVFX120
             residue.Life = StrikeLife;
         }
 
+        // D308-125 적용 6 (숭): the stroke from where the circle took a shot to its shooter (the catalogue prefab's profile
+        // Return308Prefab, a Vfx308Stroke). The part inside EyeClear is cut off; nothing if the end is in it.
+        public void Return(char letter, Vector3 from, Vector3 to)
+        {
+            if (_visuals == null || !_visuals.TryGet(letter, out var visual) || visual.FxPrefab == null) return;
+            var fx = visual.FxPrefab.GetComponent<Vfx120Effect>();
+            var prefab = fx != null && fx.Profile != null ? fx.Profile.Return308Prefab : null;
+            if (prefab == null) return;
+            var eye = Camera.main;
+            if (eye != null && !ClearOfEye308(eye.transform.position, ref from, to)) return;
+            var go = Object.Instantiate(prefab, from, Quaternion.identity);
+            go.name = "Spell308_" + letter + "_Return";
+            if (_owner != null && go.scene != _owner.gameObject.scene) SceneManager.MoveGameObjectToScene(go, _owner.gameObject.scene);
+            var stroke = go.GetComponent<Vfx308Stroke>();
+            if (stroke != null) stroke.Draw(from, to);
+        }
+
+        // from moves along the line to where it leaves the EyeClear ball; false = the end is inside it
+        static bool ClearOfEye308(Vector3 eye, ref Vector3 from, Vector3 to)
+        {
+            float r2 = EyeClearMeters * EyeClearMeters;
+            if ((to - eye).sqrMagnitude < r2) return false;
+            Vector3 f = from - eye;
+            if (f.sqrMagnitude >= r2) return true;
+            Vector3 d = to - from;
+            float a = d.sqrMagnitude, b = 2f * Vector3.Dot(f, d), c = f.sqrMagnitude - r2;
+            from += d * ((-b + Mathf.Sqrt(b * b - 4f * a * c)) / (2f * a));   // the far root: c < 0, so it lies in (0, 1]
+            return true;
+        }
+
         void ForgetBurst308(int id) => _bursts.Remove(id);
 
         void ClearBurst308() => _bursts.Clear();

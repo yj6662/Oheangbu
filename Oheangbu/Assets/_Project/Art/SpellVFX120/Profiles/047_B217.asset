@@ -202,6 +202,7 @@ MonoBehaviour:
   Derived308Prefab: {fileID: 0}
   Zone308Prefab: {fileID: 0}
   Burst308Prefab: {fileID: 2649546739011447052, guid: 90b49fd8acf0d5842b5cd20393fb9b26, type: 3}
+  Return308Prefab: {fileID: 0}
   Mark308Prefab: {fileID: 0}
   AreaBambooLean: 0
   AreaBambooHeightSpread: 0

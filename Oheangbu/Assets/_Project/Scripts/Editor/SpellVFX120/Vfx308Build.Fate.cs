@@ -19,14 +19,15 @@ namespace Oheangbu.EditorTools.SpellVFX120
     //             stone in .25 s, soot-dark, with a thin #B8432F dry-brush rim behind it (the only vermilion, about 1/5 of the
     //             tongue) that comes apart into soot wisps and fine ash
     //   숭 (sa) - in the ring: one blade and one diagonal metal stroke across the stone, no clump (상 / 송 are radial: a clump
-    //             and six blades); blue-grey #6F7A80
-    //   fate           - build the four prefabs and point the four profiles at them
+    //             and six blades); blue-grey #6F7A80. Its stroke back to the shooter is Return308Prefab (a Vfx308Stroke line).
+    //   fate           - build the four prefabs (and 숭's stroke) and point the four profiles at them
     public static partial class Vfx308Build
     {
         static readonly (string glyph, string key, string id, bool attack)[] Fates = { ("막", "ma", "050_B9C9", true), ("공", "ga", "018_ACF5", true), ("눗", "na", "047_B217", false), ("숭", "sa", "096_C22D", false) };
         internal static string FatePath(string key) => Root2 + "/Prefabs/PF_V308i_fate_" + key + ".prefab";
         internal static string FateProfilePath(string id) { var a = Attack.FirstOrDefault(x => x.Effect == id); return a != null && Fates.Any(f => f.id == id && f.attack) ? AttackProfilePath(a) : FieldBirthProfilePath(id); }
         internal static (string glyph, string key, string id)[] FateTable() => Fates.Select(f => (f.glyph, f.key, f.id)).ToArray();
+        internal static string FateReturnPath => Root2 + "/Prefabs/PF_V308i_fate_sa_return.prefab";
         static readonly Color FateMetal = new Color(.435f, .478f, .502f);   // #6F7A80, the 상 / 송 blue-grey
         const float FateTilt = 40f;                                       // 숭: the stroke's slant on screen, degrees
 
@@ -35,7 +36,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (EditorApplication.isPlayingOrWillChangePlaymode) throw new Exception("Vfx308Build fate: Edit mode only");
             V2 = true; Touched.Clear(); seed = 47400;
             foreach (var d in new[] { "/Prefabs", "/Materials" }) Directory.CreateDirectory(Root2 + d);
-            foreach (var s in new[] { "ink_splat", "ink_drops", "earth_dust", "ink_throw", "soot_wisp" }) Sheet2(s);
+            foreach (var s in new[] { "ink_splat", "ink_drops", "earth_dust", "ink_throw", "soot_wisp", "speed_line" }) Sheet2(s);
             var kit = new Kit { Thorn = Model("thorn"), Splinter = Model("splinter"), Clod = Model("clod"), Chunk = Model("chunk"), Blade = Model("blade"), Stalk = Model("stalk"), Drop = Model("drop"), Tongue = Model("tongue") };
             var sb = new StringBuilder();
             foreach (var (glyph, key, id, attack) in Fates)
@@ -47,8 +48,10 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 string profilePath = FateProfilePath(id);
                 var profile = File.Exists(profilePath) ? Load<Vfx120Profile>(profilePath) : null;
                 if (profile == null) { sb.AppendLine(glyph + ": " + profilePath + " missing - " + prefab.name + " built, not assigned"); continue; }
-                profile.Burst308Prefab = prefab; EditorUtility.SetDirty(profile); Touched.Add(profile);
-                sb.AppendLine(glyph + " fate -> " + FatePath(key) + " on " + profilePath);
+                profile.Burst308Prefab = prefab;
+                if (key == "sa") profile.Return308Prefab = SaveWrap(FateReturnStroke(e), FateReturnPath);
+                EditorUtility.SetDirty(profile); Touched.Add(profile);
+                sb.AppendLine(glyph + " fate -> " + FatePath(key) + (key == "sa" ? " + " + FateReturnPath : "") + " on " + profilePath);
             }
             foreach (var o in Touched) AssetDatabase.SaveAssetIfDirty(o);
             return sb.ToString();
@@ -155,6 +158,26 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var q = Quaternion.LookRotation(new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0f), Vector3.forward).eulerAngles * Mathf.Deg2Rad;
             var main = blade.main; main.startRotation3D = true;
             main.startRotationX = new ParticleSystem.MinMaxCurve(q.x); main.startRotationY = new ParticleSystem.MinMaxCurve(q.y); main.startRotationZ = new ParticleSystem.MinMaxCurve(q.z);
+            return root;
+        }
+
+        // 숭, the stroke back to the shooter (Vfx308Stroke, ISpellBurstPresenter308.Return): one speed_line cel stretched over the
+        // line, its head (the cel's .24 end, as on the bolt trail) at the shooter; a hairline at the stone thickening into the
+        // body, blue-grey with the darker metal in its heart; drawn in .05 s, gone by .3 s
+        static GameObject FateReturnStroke(Elem e)
+        {
+            var root = new GameObject(Path.GetFileNameWithoutExtension(FateReturnPath));
+            var m = Bleed("M_V308i_fate_sa_return", "speed_line", C(Color.Lerp(FateMetal, e.Ink, .55f), .7f), 0f, 1f, 0f, .3f);
+            m.SetTextureScale("_MainTex", new Vector2(.23f, .09f));
+            m.SetTextureOffset("_MainTex", new Vector2(.01f, .83f));
+            EditorUtility.SetDirty(m);
+            var line = root.AddComponent<LineRenderer>();
+            line.sharedMaterial = m; line.useWorldSpace = true; line.positionCount = 2; line.SetPositions(new[] { Vector3.zero, Vector3.zero });
+            line.widthMultiplier = .14f; line.widthCurve = Curve(0f, 0f, .4f, .55f, .88f, 1f, 1f, .7f);
+            line.colorGradient = G((0f, C(FateMetal, 0f)), (.25f, C(FateMetal, .85f)), (1f, C(FateMetal, 1f)));
+            line.alignment = LineAlignment.View; line.textureMode = LineTextureMode.Stretch; line.numCapVertices = 0; line.numCornerVertices = 0;
+            line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; line.receiveShadows = false;
+            var stroke = root.AddComponent<Vfx308Stroke>(); stroke.DrawSeconds = .05f; stroke.LifeSeconds = .3f;
             return root;
         }
     }
