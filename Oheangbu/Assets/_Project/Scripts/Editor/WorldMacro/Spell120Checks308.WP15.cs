@@ -180,6 +180,31 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             finally { UnityEngine.Object.DestroyImmediate(profile); }
 
+            // ---- the blind row is TEST-only (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell
+            // rule plus a TEST target). A normal save that earned its final opens the other rows of that final, never this one.
+            // The rock row and then the thrust row held this case until the main world gave each its consumer (D308-125 R125, S125).
+            if (r.Wants(blind.ToString()))
+            {
+                using (var g = NewFixture(r, effects, WP15Sheets))
+                {
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled);
+                    g.Resolver.TryRow(blind, out var blindRow); g.Resolver.TryRow(breaker, out var breakerRow);   // the breaker: a row of the same final that the main game does open
+                    g.Finals.Proven.Add(SpellFinal.Ieung);                          // the main-game proof, no TEST unlock
+                    g.Aim(g.Inside[0]); g.Cast(breaker);
+                    bool mainOpens = breakerRow != null && breakerRow.Gate == SpellGateMode.Final && breakerRow.Final == blindRow?.Final && g.Accepted.Count == 1 && g.Misfires.Count == 0;
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled); g.RestoreAll(); g.Aim(g.Inside[0]);
+                    float ink = g.Ink.Value; g.Cast(blind);
+                    r.Check("A5", blindRow != null && blindRow.Gate == SpellGateMode.Test && mainOpens && g.Accepted.Count == 0 && g.Misfires.Count == 1 &&
+                        g.Misfires[0].Value == SpellResolveStatus.Locked && Near(ink - g.Ink.Value, g.Config.MisfireInkCost) && g.PendingCount == 0,
+                        "a normal save that proved the final: the other row of that final casts, the TEST-only blind row is a Locked misfire (misfire ink, nothing scheduled)");
+                    g.Finals.Proven.Clear(); g.Finals.Open.Add(SpellFinal.Ieung);   // the TEST unlock of the isolated store
+                    g.RestoreAll(); g.Aim(g.Inside[0]); g.Cast(blind);
+                    r.Check("A5", g.Accepted.Count == 1 && g.Misfires.Count == 0, "the TEST unlock of its final opens the blind row");
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled);
+                    g.Finals.Proven.Clear(); g.Finals.Open.Clear();
+                }
+            }
+
             // ---- the brain's guard stays off until a profile opts in ----
             var guids = AssetDatabase.FindAssets("t:" + nameof(EnemyBrainProfile308));
             var raising = guids.Select(AssetDatabase.GUIDToAssetPath).Where(p => { var b = AssetDatabase.LoadAssetAtPath<EnemyBrainProfile308>(p); return b != null && b.GuardShare > 0f; }).ToArray();

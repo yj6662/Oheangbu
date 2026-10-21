@@ -9,12 +9,13 @@
 # of that final does not open it until its world side exists (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target).
 # A row leaves TEST when the main world arms its consumer (D308-125 적용 5 Q5): 온 the 적로 burning ground (E125); 공 · 막 · 상 · 송 the
 # main world's stone-throwers, MineRangedNeutral308 (R125); 농 the main world's own strikes, the goat arcs, the old melee bodies and
-# the stone-throwers (N125). 삿 still waits for its own.
+# the stone-throwers (N125); 삿 the main world's guarding field enemies, WorldContent_Main GuardBrains through the session's
+# brain clone and PrologueEncounter.Guard308 (S125). No row of this sheet is TEST any more.
 글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
 공,replace,path.cover,,AttackArea,,,,4,,Path,,3,12,5,0.4,,,,
 농,replace,zone.haze,,,,,base,,,,,,,,,,,,haze.radius=3;haze.life=8;haze.miss=0.5;haze.max=1
 막,replace,single.cover,,,,,base,,,,,,,,,,,,cover.radius=1.2;cover.life=12;cover.max=2;cover.range=8
-삿,replace,single.unblockable,,,test,,base,,,,,,,,,,,,
+삿,replace,single.unblockable,,,,,base,,,,,,,,,,,,
 상,replace,intercept.single,,,,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20;intercept.fallback=0.5
 송,replace,intercept.barrage,,,,,base,,,,,,,,,,,,intercept.max=6;intercept.window=0.6
 온,replace,path.purge,,,,,base,,,,,,,,,,,,

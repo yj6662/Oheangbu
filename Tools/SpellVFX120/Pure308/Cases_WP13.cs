@@ -43,11 +43,12 @@ namespace Pure308
             // 2026-10-04 (D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST target): a WP-13 row stays
             // TEST-only until the main world arms its consumer (Cases_Core308 checks what a normal save and the TEST unlock resolve).
             // D308-125: the purge row on the ember patch (적용 5), the wave, rock, needle and barrage rows on the main world's
-            // stone-throwers (R125), the haze row on the main world's own strikes (N125); the thrust row still waits for its own.
-            r.Check("W13", new[] { thrust }.All(x => x.Gate == SpellGateMode.Test) && new[] { wave, steam, rock, needle, barrage, purge }.All(x => x.Gate != SpellGateMode.Test),
-                "#308b: the thrust row is TEST-unlock only (Gate test in its rule sheet): its world side does not exist yet; " +
-                "D308-125: the purge row (the ember patch), the wave, rock, needle and barrage rows (the stone-throwers) and the haze row " +
-                "(the goat arcs, the old melee bodies and the stone-throwers) left the TEST gate",
+            // stone-throwers (R125), the haze row on the main world's own strikes (N125), the thrust row on the main world's guarding
+            // field enemies (S125). No WP-13 row is TEST any more.
+            r.Check("W13", new[] { wave, steam, rock, thrust, needle, barrage, purge }.All(x => x.Gate != SpellGateMode.Test),
+                "D308-125: every WP-13 row left the TEST gate: the purge row (the ember patch), the wave, rock, needle and barrage rows " +
+                "(the stone-throwers), the haze row (the goat arcs, the old melee bodies and the stone-throwers) and the thrust row " +
+                "(the guarding field enemies)",
                 string.Join(" ", new[] { wave, steam, rock, thrust, needle, barrage, purge }.Select(x => x.Gate)));
 
             // ---- the freezing needle and the barrage ----
