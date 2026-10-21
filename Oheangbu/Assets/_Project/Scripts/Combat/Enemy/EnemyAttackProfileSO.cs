@@ -31,6 +31,9 @@ namespace Oheangbu.Combat
         [Min(0f)] public float ChargeOvershoot = 2.5f;
         [Min(.1f)] public float ChargeMinTravel = 4f;
         [Min(.05f)] public float ChargeWallRecovery = 2f;
+        // #308 D308-125 적용 4 (Charge only, TEST): what a charger does while it cannot start its run (묵's circle, no straight path):
+        // it closes in and lands this melee arc once, then goes back to the charge. null = it only waits.
+        public EnemyAttackProfileSO Fallback;
 
         // TEST starting data only. Each asset is independent; shared CombatConfig is never edited.
         public void ApplyDefaults(EnemyArchetype archetype)
@@ -77,6 +80,9 @@ namespace Oheangbu.Combat
                 ChargeOvershoot < 0 || !float.IsFinite(ChargeMinTravel) || ChargeMinTravel <= 0 || ChargeMinTravel > Range ||
                 !float.IsFinite(ChargeWallRecovery) || ChargeWallRecovery <= 0))
             { error = "Invalid charge lock, overshoot, minimum travel or wall recovery"; return false; }
+            if (Fallback != null && (Delivery != EnemyAttackDelivery.Charge || Fallback == this || Fallback.Delivery != EnemyAttackDelivery.MeleeArc ||
+                Fallback.Fallback != null || !(Fallback.Range <= Range) || !Fallback.TryValidate(out _)))
+            { error = "A fallback belongs to a charge and must be a valid melee arc within its range, without a fallback of its own"; return false; }
             error = null; return true;
         }
     }

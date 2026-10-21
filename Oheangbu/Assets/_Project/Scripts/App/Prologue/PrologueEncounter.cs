@@ -83,7 +83,7 @@ namespace Oheangbu.App.Prologue
             agent.speed=Speed*vitals.Control.MovementScale(Time.time)*vitals.Modifiers.Domain.MoveScale(Time.time)*(Current==Behaviour.Patrol?PatrolSpeedScale:1f);agent.isStopped=boss!=null?Current==Behaviour.Chase&&!boss.CanNavigate:general!=null?Current==Behaviour.Chase&&!general.CanNavigate:attacks.AttackInProgress;
             if(agent.isStopped)return;
             if(Current==Behaviour.Return)StepReturn308();
-            else if(Current==Behaviour.Chase){agent.stoppingDistance=PreferredDistance>0?PreferredDistance:Ranged?9:1.7f;agent.SetDestination(Contain308(Player.position));}
+            else if(Current==Behaviour.Chase){agent.stoppingDistance=attacks.CloseIn308?attacks.CloseInDistance308:PreferredDistance>0?PreferredDistance:Ranged?9:1.7f;agent.SetDestination(Contain308(Player.position));}   // #308 D308-125 적용 4: a blocked charger walks in to bite, as in the brain
             else StepPatrol();
         }
         // #308 D308-70: the way home stops at home. The stopping distance of the chase (1.7 m, 2.2 m, 9 m for a ranged actor) used to stay on the agent,

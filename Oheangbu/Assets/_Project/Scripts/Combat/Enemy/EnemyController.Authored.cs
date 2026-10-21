@@ -50,6 +50,7 @@ namespace Oheangbu.Combat
         {
             if (profile == null || _state != State.Idle || !float.IsFinite(cooldown) || !profile.TryValidate(out _)) return false;
             _attackProfile = profile; _authoredProfileValid = true; _cooldown = Mathf.Max(0f, cooldown);
+            _home308 = null; CloseIn308 = false; _closeInCheck308 = 0f;
             return true;
         }
 
@@ -58,6 +59,7 @@ namespace Oheangbu.Combat
             if (profile != null && !profile.TryValidate(out var error)) throw new ArgumentException(error, nameof(profile));
             StopAttack();
             _attackProfile = profile; _authoredProfileValid = profile != null;
+            _home308 = null; CloseIn308 = false; _closeInCheck308 = 0f;
             if (_state == State.Idle) EnterIdle();
         }
 
@@ -73,11 +75,15 @@ namespace Oheangbu.Combat
             switch (_state)
             {
                 case State.Idle:
+                {
                     _cooldown -= Time.deltaTime;
-                    if (AttackEnabled && !AttackHeld && !DomainHeld308() && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()
-                        && !(_player != null && DomainFloorBlocked308(_player.position))
-                        && (_attackProfile.Delivery != EnemyAttackDelivery.Charge || ChargeCanStart308())) BeginAuthoredTelegraph();
+                    bool ready = AttackEnabled && !AttackHeld && !DomainHeld308() && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()
+                        && !(_player != null && DomainFloorBlocked308(_player.position));
+                    if (_attackProfile.Delivery != EnemyAttackDelivery.Charge) { CloseIn308 = false; if (ready) BeginAuthoredTelegraph(); }
+                    else if (ChargePathOpen308(ready)) { if (ready) BeginAuthoredTelegraph(); }
+                    else if (ready && CloseIn308 && _attackProfile.Fallback != null && Distance() <= _attackProfile.Fallback.Range) BeginFallback308();
                     break;
+                }
                 case State.Telegraph:
                     if (!AttackEnabled || !HasLineOfSight() || DomainFloorBlocked308(_authoredPoint)) { CancelAttack(); EnterRecover(); break; }
                     if (_attackProfile.Delivery == EnemyAttackDelivery.Charge && !TickChargeTelegraph308()) { CancelAttack(); EnterRecover(); break; }
@@ -361,6 +367,53 @@ namespace Oheangbu.Combat
         {
             if (!_chargeHit308) AttackImpactResolved?.Invoke(new EnemyAttackImpact(_attack, transform.position, ParryOutcome.None, 0, false));
             EndAuthoredCue(false); EnterRecover();
+        }
+
+        // #308 D308-125 적용 4 (TEST, 토론 6): a charger that cannot start its run (묵's circle, no straight path) closes in and
+        // lands its Fallback melee arc once; back in idle it is the charge again and the charge's cooldown runs. CloseIn308 is the
+        // same path check the attack choice uses (re-read every CloseInCheck308 s while idle, fresh at the moment of choice; once on,
+        // it holds until that choice), and the brain walks in on it. Only the path or 묵 closes it in, never a cooldown or a missing turn.
+        private const float CloseInCheck308 = .25f;
+        private EnemyAttackProfileSO _home308;
+        private float _closeInCheck308;
+        private bool _chargeOpen308;
+        /// <summary>Read only: the charger cannot start its run and has a fallback, so its owner should walk it in to bite.</summary>
+        public bool CloseIn308 { get; private set; }
+        private EnemyAttackProfileSO CloseInProfile308
+        {
+            get
+            {
+                var home = _home308 != null ? _home308 : _attackProfile;
+                return ProfileActive && home.Delivery == EnemyAttackDelivery.Charge ? home.Fallback : null;
+            }
+        }
+        public float CloseInRange308 => CloseInProfile308 != null ? CloseInProfile308.Range : AttackRange;
+        public float CloseInDistance308 => CloseInProfile308 != null ? CloseInProfile308.PreferredDistanceHint : PreferredDistanceHint;
+
+        private bool ChargePathOpen308(bool fresh)
+        {
+            _closeInCheck308 -= Time.deltaTime;
+            if (!fresh && _closeInCheck308 > 0f) return _chargeOpen308;
+            _closeInCheck308 = CloseInCheck308;
+            bool near = _player != null && Distance() <= _attackProfile.Range;
+            _chargeOpen308 = near && ChargeCanStart308();
+            // a close-in holds until the next choice, so a packmate crossing the line does not flip the walk in and out (토론 6 Fable)
+            CloseIn308 = near && _attackProfile.Fallback != null && (!_chargeOpen308 || CloseIn308 && !fresh);
+            return _chargeOpen308;
+        }
+
+        private void BeginFallback308()
+        {
+            _home308 = _attackProfile; _attackProfile = _home308.Fallback;
+            BeginAuthoredTelegraph();
+            if (_state == State.Idle) RestoreHome308(); // it did not start
+        }
+
+        // every way back to idle (recovery, a stun's end, a bind, a reset), a disable and a death
+        private void RestoreHome308()
+        {
+            if (_home308 != null) { _attackProfile = _home308; _home308 = null; }
+            _closeInCheck308 = 0f;
         }
     }
 }

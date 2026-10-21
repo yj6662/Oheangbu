@@ -189,8 +189,10 @@ namespace Oheangbu.App.Prologue
                 return;
             }
 
-            bool ranged = Ranged || attacks.EffectiveAttackMode == EnemyController.AttackMode.RangedOnly;
-            float range = attacks.AttackRange;
+            // #308 D308-125 적용 4: a charger whose run is blocked (묵, no straight path) is a biter for the turn rule and the walk in
+            bool closeIn = attacks.CloseIn308;
+            bool ranged = !closeIn && (Ranged || attacks.EffectiveAttackMode == EnemyController.AttackMode.RangedOnly);
+            float range = closeIn ? attacks.CloseInRange308 : attacks.AttackRange;
             bool searching = !sensed && now - lastSeen > b.LoseSightSeconds;
 
             // attack turns: at most so many actors of a kind are in an attack on this player, and not right on one another's heels
@@ -225,7 +227,7 @@ namespace Oheangbu.App.Prologue
                 return;
             }
             searchArrivedAt = -1f;
-            float stop = PreferredDistance > 0 ? PreferredDistance : Ranged ? 9 : 1.7f;      // as before
+            float stop = closeIn ? attacks.CloseInDistance308 : PreferredDistance > 0 ? PreferredDistance : Ranged ? 9 : 1.7f;      // as before
             if (!ranged && !holds) stop = Mathf.Max(stop, range + b.WaitRingMargin);        // waits outside its reach; never backs away
             agent.stoppingDistance = stop; agent.SetDestination(vitals.Modifiers.Domain.Contain(sensed ? Player.position : lastKnown, now));
         }

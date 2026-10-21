@@ -205,7 +205,7 @@ namespace Oheangbu.Combat
                 _vitals?.ResetCombatState();
             }
             _state = State.Idle;
-            ResetCharge308();
+            ResetCharge308(); RestoreHome308(); CloseIn308 = false;
             _cooldown = 1f;
             _parriedFlashUntil = 0f;
             if (gameObject.activeInHierarchy) Tint(_baseColor);
@@ -422,7 +422,7 @@ namespace Oheangbu.Combat
         {
             Tint(_baseColor);
             _state = State.Idle;
-            ResetCharge308();
+            ResetCharge308(); RestoreHome308();
             var range = ProfileActive ? _attackProfile.CooldownRange : _config != null ? _config.AttackCooldownRange : new Vector2(1.2f, 2.2f);
             _cooldown = Random.Range(range.x, range.y);
         }
@@ -430,6 +430,7 @@ namespace Oheangbu.Combat
         private void OnDied()
         {
             CancelAttack();
+            RestoreHome308(); CloseIn308 = false;
             _state = State.Dead;
             Tint(new Color(0.2f, 0.19f, 0.18f));
         }
