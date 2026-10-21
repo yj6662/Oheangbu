@@ -12,7 +12,7 @@ namespace Pure308
     public static partial class Program
     {
         static readonly string Domain17 = "군굼굿궁눅눔눗눙묵문뭇뭉숙순숨숭욱운움웃";
-        static readonly string DomainTest17 = "묵숨";      // no world target yet (dashing enemy, a force on the player); 운 left with D308-125 (the ember patch status)
+        static readonly string DomainTest17 = "숨";       // no world target yet (a force on the player); 운 left with D308-125 (the ember patch status), 묵 with the 적로 불승냥이 charge (M125)
 
         static partial void RunWP17(Report r, Context c)
         {
@@ -37,8 +37,8 @@ namespace Pure308
             }
             r.Fact("wp17.handled", handled);
             r.Fact("wp17.gate_test", tests);
-            r.Check("결계-표", handled == 20 && tests == 2 && wrong.Length == 0,
-                "all twenty domain glyphs have a domain.* handler (none reserved); Gate test only where the world has no target yet (묵 숨)", wrong);
+            r.Check("결계-표", handled == 20 && tests == 1 && wrong.Length == 0,
+                "all twenty domain glyphs have a domain.* handler (none reserved); Gate test only where the world has no target yet (숨)", wrong);
 
             // the canonical CSV numbers carried by the sheet (a value the CSV does not give is the sheet's own)
             bool Has(char letter, string key, float value) { var row = c.Row(letter); return row != null && r.Near(row.F(key, float.NaN), value); }

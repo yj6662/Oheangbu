@@ -375,8 +375,9 @@ def main():
     # a. an enemy / world dependent row behind a final the main game grants stays TEST-only
     granted = {u['final'] for u in table['unlocks'] if u['granted']}
     # the plan sheet predates WP-17: its domain rows with no world target yet (D308-121) are named here, and a row the world
-    # now consumes leaves the set (D308-125 적용 5: the 적로 ember patch consumes 온 purge and 운 status ward)
-    waiting, consumed = {'묵', '숨'}, {'온', '운'}
+    # now consumes leaves the set (D308-125 적용 5: the 적로 ember patch consumes 온 purge and 운 status ward; 적용 3: the
+    # 적로 불승냥이 charge consumes 묵's ground circle)
+    waiting, consumed = {'숨'}, {'온', '운', '묵'}
     world = [x for x in table['rows'] if x['handler'] and x['feature'] == 'None' and x['final'] in granted and x['letter'] not in consumed and
              (plan[x['letter']]['묶음'] in ('WP-12', 'WP-13') or x['letter'] in waiting)]
     r.note('testOnlyRows', [x['letter'] for x in table['rows'] if x['gate'] == 'Test'])
