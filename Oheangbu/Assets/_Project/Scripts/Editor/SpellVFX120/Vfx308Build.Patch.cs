@@ -73,11 +73,18 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 BurnDown(Tongues(Layer(t, new L { Name = "Inner", Mat = tongue, World = false, Mode = 2, Max = 4, Life = new Vector2(.7f, 1f),
                     Shape = ParticleSystemShapeType.Circle, Radius = .55f, Thickness = 1f, ShapeRot = new Vector3(-90f, 0f, 0f), ShapeScaling = true, Pivot = TonguePivot, SpinRandom = false,
                     Flipbook = false, Colour = TongueLife() }), 0f), 3f, new Vector2(.3f, .36f), new Vector2(.14f, .16f));
-                // soot: a few slow wisps rising off the rim (the sheet is drawn lying down, so stood up a quarter turn)
-                BurnDown(Layer(t, new L { Name = "Wisps", Mat = wisp, World = false, Mode = 2, Max = 3, Life = new Vector2(1.6f, 2.2f), Size = new Vector2(.35f, .5f),
+                // D308-126 적용 1 (debate 10, Fable's Q4): what rises off the patch is bent soot smoke and ash, never a straight strand
+                // (straight posts are the domain's grammar) - 2-3 thick slow leaning smokes <= 1.3 m at alpha <= .3, red 0 above .35 m
+                Color soot = Hex("#3E362C");
+                BurnDown(Layer(t, new L { Name = "Wisps", Mat = wisp, World = false, Mode = 2, Max = 3, Life = new Vector2(2.2f, 3f), Size = new Vector2(.5f, .7f),
                     Shape = ParticleSystemShapeType.Circle, Radius = .8f, Thickness = 1f, ShapeRot = new Vector3(-90f, 0f, 0f), ShapePos = new Vector3(0f, .3f, 0f), ShapeScaling = true,
-                    SpinRandom = false, RotDeg = new Vector2(75f, 105f), RiseY = .3f, Blend = true, RandomStart = true, FrameTo = 5f,
-                    Colour = G((0f, C(EmberAsh, 0f)), (.25f, C(EmberAsh, .35f)), (.7f, C(EmberAsh, .25f)), (1f, C(EmberAsh, 0f))), Grow = Curve(0f, .7f, 1f, 1.3f) }), 1.2f, Vector2.zero, Vector2.zero);
+                    SpinRandom = false, RotDeg = new Vector2(70f, 110f), RiseY = .22f, Noise = .12f, NoiseFreq = .3f, Blend = true, RandomStart = true, FrameTo = 6f,
+                    Colour = G((0f, C(soot, 0f)), (.25f, C(soot, .3f)), (.7f, C(soot, .2f)), (1f, C(soot, 0f))), Grow = Curve(0f, .7f, 1f, 1.4f) }), 1.2f, Vector2.zero, Vector2.zero);
+                // ash flakes drifting up to ~1.8 m (#867C6B, world space so they stay where they left)
+                BurnDown(Layer(t, new L { Name = "Ash", Mat = ash, World = true, Mode = 0, Max = 6, Life = new Vector2(3f, 4f), Size = new Vector2(.03f, .06f),
+                    Shape = ParticleSystemShapeType.Circle, Radius = .8f, Thickness = 1f, ShapeRot = new Vector3(-90f, 0f, 0f), ShapePos = new Vector3(0f, .1f, 0f), ShapeScaling = true,
+                    RiseY = .35f, Noise = .15f, NoiseFreq = .4f, Spin = 40f, RandomCell = true, FrameFrom = 0f, FrameTo = 16f,
+                    Colour = G((0f, C(EmberAsh, 0f)), (.15f, C(EmberAsh, .8f)), (.7f, C(EmberAsh, .5f)), (1f, C(EmberAsh, 0f))) }), 1.6f, Vector2.zero, Vector2.zero);
 
                 // burnt out: the pool's last cel - its crumbled specks - laid over it in grey, the ash ring
                 var end = new GameObject("End").transform; end.SetParent(t, false);

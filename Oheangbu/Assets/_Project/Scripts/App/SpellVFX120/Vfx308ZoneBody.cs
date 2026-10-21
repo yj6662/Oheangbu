@@ -14,6 +14,8 @@ namespace Oheangbu.App.SpellVFX120
         public float Delay, Life = 6f;
         [Tooltip("Seconds after Delay at which the body systems' start alpha drops to LateAlpha (0 = off).")]
         [Min(0f)] public float LateAfter = 3f;
+        [Tooltip("D308-126: seconds before the end at which the body pales instead (wins over LateAfter when > 0; off when Life is under twice this).")]
+        [Min(0f)] public float LateBefore;
         [Range(0f, 1f)] public float LateAlpha = .35f;
         [Tooltip("Seconds from drying (emission stopped) to the object going.")]
         [Min(0f)] public float DryFade = 1.2f;
@@ -63,7 +65,8 @@ namespace Oheangbu.App.SpellVFX120
                 foreach (var ps in _body) if (ps != null) ps.Play(false);
             }
             if (!_started) return;
-            if (!_late && LateAfter > 0f && _age >= Delay + LateAfter)
+            float lateAt = LateBefore > 0f ? (Life > 2f * LateBefore ? Life - LateBefore : -1f) : (LateAfter > 0f ? LateAfter : -1f);
+            if (!_late && lateAt >= 0f && _age >= Delay + lateAt)
             {
                 _late = true;
                 foreach (var ps in _body) if (ps != null) FadeStart(ps, LateAlpha);

@@ -83,6 +83,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "buffhit": return BuildBuffHit();   // 11.64: the moment 먼 멈 넘 do their work
                 case "fieldbirth": return BuildFieldBirth();   // 11.65: the moment 국 뭄 stand up
                 case "fate": return BuildFate();               // D308-125 적용 6: where 막 공 눗 숭 stop a thrown stone
+                case "domain": return BuildDomain();           // D308-126 적용 1: the 20 domains' rising rim (결계)
                 case "fieldskin": return BuildFieldSkin();               // 11.74: the 국 lift / 뭄 bridge surfaces as ink
                 case "fieldskin:connect": return ConnectFieldSkin();
                 case "fieldskin:revert": return RevertFieldSkin();
@@ -219,6 +220,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             public ParticleSystemShapeType Shape = ParticleSystemShapeType.Sphere; public float Radius = .04f, Angle = 20f, ArcSpeed, Thickness = 1f;
             public Vector3 ShapeRot, ShapeScale, ShapePos; public bool NoShape, ShapeScaling;      // ShapeScaling: the parent's scale widens the emitter only (path fronts)
             public float Gravity, Spin, Drag, RiseY, Roll;             // Roll: deg/s about the flight axis (mesh particles)
+            public float ArcSpread, Noise, NoiseFreq = .3f;            // D308-126: ArcSpread = spawn on a grid of the arc (uneven gaps come from the rate); Noise = slow sway (m)
             public bool DragLinear;                                    // pq_fan3: Unity's drag is times size and speed by default (a 3 m sheet hardly moved); true = plain drag
             public bool SpinRandom = true, Tumble, AlongVelocity;
             public Vector2? RotDeg;                                    // billboards: a fixed start rotation range in degrees (11.23 markers)
@@ -285,6 +287,8 @@ namespace Oheangbu.EditorTools.SpellVFX120
             var sh = ps.shape; sh.enabled = !s.NoShape; sh.shapeType = s.Shape; sh.radius = s.Radius; sh.angle = s.Angle; sh.rotation = s.ShapeRot; sh.radiusThickness = s.Thickness; sh.position = s.ShapePos;
             if (s.ShapeScale != Vector3.zero) sh.scale = s.ShapeScale;
             if (s.ArcSpeed > 0f) { sh.arcMode = ParticleSystemShapeMultiModeValue.Loop; sh.arcSpeed = s.ArcSpeed; }
+            if (s.ArcSpread > 0f) { sh.arcMode = ParticleSystemShapeMultiModeValue.Random; sh.arcSpread = s.ArcSpread; }
+            if (s.Noise > 0f) { var n = ps.noise; n.enabled = true; n.strength = s.Noise; n.frequency = s.NoiseFreq; n.scrollSpeed = .3f; n.quality = ParticleSystemNoiseQuality.Low; }
             if (s.Colour != null) { var col = ps.colorOverLifetime; col.enabled = true; col.color = new ParticleSystem.MinMaxGradient(s.Colour); }
             if (s.Grow != null) { var sz = ps.sizeOverLifetime; sz.enabled = true; sz.size = new ParticleSystem.MinMaxCurve(1f, s.Grow); }
             if (Mathf.Abs(s.Spin) > .001f || Mathf.Abs(s.Roll) > .001f)
@@ -1247,6 +1251,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
             if (attack) targets.AddRange(Attack.Where(x => x.Shape != Form.Giyeok && Spells.All(b => b.Glyph != x.Glyph)).Select(x => (glyph: x.Glyph, path: AttackEffectPath(x))));
             if (attack) targets.AddRange(Guards.Where(g => File.Exists(GuardEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: GuardEffectPath(g.Id))));   // 11.22: once built
             if (attack) targets.AddRange(Cues.Where(g => File.Exists(CueEffectPath(g.Id))).Select(g => (glyph: g.Glyph, path: CueEffectPath(g.Id))));         // 11.40: once built
+            if (attack) targets.AddRange(Domains.Where(d => File.Exists(CueEffectPath(d.Id))).Select(d => (glyph: d.Glyph, path: CueEffectPath(d.Id))));   // D308-126
             foreach (var s in targets)
             {
                 var effect = Load<GameObject>(s.path);
