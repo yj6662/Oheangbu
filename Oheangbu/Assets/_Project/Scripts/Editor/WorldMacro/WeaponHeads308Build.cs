@@ -96,7 +96,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "connect": return Connect(false);
                     case "connect:dry": return Connect(true);
                     case "check": return Check();
-                    case "stills": return Stills();
+                    case "stills": return Stills("");
+                    case "stills:grow": return Stills("grow");
+                    case "stills:dry": return Stills("dry");
                     case "rig": return Rig();
                     case "trails": return Trails();
                 }
@@ -367,6 +369,38 @@ namespace Oheangbu.EditorTools.WorldMacro
                             trail.Step(t0 + trail.Lifetime + .01f, null);
                             Line(idle && during >= 2 && trail.Samples == 0, tag + " afterimage: none before the strike, " + during + " samples while it swings, none " + F(trail.Lifetime) + " s after it");
                         }
+                        // step 3: grows out of the ferrule (criterion 1: <= .5 s), dries over the last 3 s, sinks back (criterion 8: <= .5 s)
+                        float c0 = Time.time, life = 10f;
+                        weapon.SetLife(c0, life);
+                        float atStart = weapon.Grown; weapon.Step(c0 + weapon.GrowSeconds * .5f); float half = weapon.Grown;
+                        weapon.Step(c0 + .5f); float grown = weapon.Grown;
+                        Line(atStart <= .05f && half > atStart && half < 1f && grown >= .9f && weapon.GrowSeconds <= .5f,
+                            tag + " the head grows out of the ferrule: " + F(atStart) + " -> " + F(half) + " -> " + F(grown) + " (>= .9 by .5 s)");
+                        weapon.Step(c0 + life - weapon.DrySeconds - .01f); float wet = weapon.Dryness;
+                        weapon.Step(c0 + life - weapon.DrySeconds * .5f); float halfDry = weapon.Dryness;
+                        var block = new MaterialPropertyBlock(); var probe = head.GetComponentsInChildren<Renderer>(true)[0];
+                        probe.GetPropertyBlock(block, 0); var tinted = block.GetColor("_BaseColor");
+                        weapon.Step(c0 + life); float dried = weapon.Dryness;
+                        Line(wet == 0f && halfDry > 0f && halfDry < 1f && dried >= .999f && weapon.DrySeconds >= 2.99f && tinted.r > ink.GetColor("_BaseColor").r,
+                            tag + " dries over the last " + F(weapon.DrySeconds) + " s of the form: " + F(wet) + " -> " + F(halfDry) + " -> " + F(dried) + " (the ink goes pale)");
+                        weapon.Detach(false);
+                        bool stillOn = head != null && bristleRenderer.sharedMaterials[slot] == hidden;
+                        weapon.Step(Time.time + weapon.RetractSeconds * .5f); float sinking = head != null ? weapon.Grown : -1f;
+                        weapon.Step(Time.time + weapon.RetractSeconds + .01f);
+                        var back = bristleRenderer.sharedMaterials;
+                        Line(stillOn && sinking > 0f && sinking < 1f && head == null && back.Zip(before, (x, y) => ReferenceEquals(x, y)).All(x => x) && weapon.RetractSeconds <= .5f,
+                            tag + " the form's end: the head sinks back (" + F(sinking) + " at half time) and is gone with the bristles back after " + F(weapon.RetractSeconds) + " s (<= .5)");
+                        // a head attached again over one still sinking: the old one ends first, the bristles stay hidden under the new one
+                        var first = (GameObject)Object.Instantiate(prefab); first.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(first, scene);
+                        var firstHead = first.GetComponent<GreatBrushWeapon308>(); firstHead.Attach(brush.transform); firstHead.Detach(false);
+                        var second = (GameObject)Object.Instantiate(prefab); second.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(second, scene);
+                        second.GetComponent<GreatBrushWeapon308>().Attach(brush.transform);
+                        bool firstGone = first == null, hiddenUnderSecond = bristleRenderer.sharedMaterials[slot] == hidden;
+                        second.GetComponent<GreatBrushWeapon308>().Detach(true);
+                        Line(firstGone && hiddenUnderSecond && ReferenceEquals(bristleRenderer.sharedMaterials[slot], before[slot]),
+                            tag + " cast again while the old head sinks: the old one ends at once, the new one hides the bristles and gives them back");
+                        head = (GameObject)Object.Instantiate(prefab); head.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(head, scene);
+                        weapon = head.GetComponent<GreatBrushWeapon308>(); weapon.Attach(brush.transform);
                         weapon.Detach();
                         var after = bristleRenderer.sharedMaterials;
                         Line(head == null && after.Length == before.Length && after.Zip(before, (x, y) => ReferenceEquals(x, y)).All(x => x), tag + " Detach: the head is gone and the brush has its very own materials back");
@@ -442,7 +476,7 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         // ---------------------------------------------------------------- stills
 
-        static string Stills()
+        static string Stills(string state)
         {
             var brushModel = AssetDatabase.LoadAssetAtPath<GameObject>(BrushModel);
             if (brushModel == null) return "refused: no brush model";
@@ -477,7 +511,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                 {
                     var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(g.Key, g.Head)); if (prefab == null) continue;
                     var brush = Brush(); var head = Make(prefab);
-                    if (!head.GetComponent<GreatBrushWeapon308>().Attach(brush.transform)) b.AppendLine("  " + g.Key + " did not attach");
+                    var weapon = head.GetComponent<GreatBrushWeapon308>();
+                    if (!weapon.Attach(brush.transform)) b.AppendLine("  " + g.Key + " did not attach");
+                    // step 3 states: half grown out of the ferrule / fully dried (the form's last moment)
+                    if (state == "grow") { weapon.SetLife(Time.time, 10f); weapon.Step(Time.time + weapon.GrowSeconds * .5f); }
+                    else if (state == "dry") { weapon.SetLife(Time.time - 20f, 10f); weapon.Step(Time.time); }
                     columns.Add((SpellGrammar308.LetterAt(g.Cell) + "_" + g.Key, brush));
                 }
                 for (int i = 0; i < columns.Count; i++)
@@ -505,8 +543,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     string file = Path.Combine(folder, name + ".png"); File.WriteAllBytes(file, tex.EncodeToPNG()); b.AppendLine("  " + file);
                 }
                 Vector3 centre = new Vector3((columns.Count - 1) * .4f, 1.6f, 0f);
-                Shot("lineup_front", centre + new Vector3(0f, 0f, -8f), centre, true, 1.75f);
-                Shot("lineup_three_quarter", centre + new Vector3(2.6f, .6f, -6.5f), centre, false, 0f);
+                Shot("lineup" + (state.Length > 0 ? "_" + state : "") + "_front", centre + new Vector3(0f, 0f, -8f), centre, true, 1.75f);
+                Shot("lineup" + (state.Length > 0 ? "_" + state : "") + "_three_quarter", centre + new Vector3(2.6f, .6f, -6.5f), centre, false, 0f);
             }
             finally
             {

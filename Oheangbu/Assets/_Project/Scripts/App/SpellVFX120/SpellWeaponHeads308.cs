@@ -52,7 +52,8 @@ namespace Oheangbu.App.SpellVFX120
                     if (brush == null) continue;
                     var instance = Object.Instantiate(prefab);
                     var head = instance.GetComponent<GreatBrushWeapon308>();
-                    if (head != null && head.Attach(brush)) made.Add(head);
+                    // step 3: the head grows from now and dries over the last seconds of the form (Duration = the form's longest life)
+                    if (head != null && head.Attach(brush)) { head.SetLife(Time.time, request.Duration); made.Add(head); }
                     else if (Application.isPlaying) Object.Destroy(instance); else Object.DestroyImmediate(instance);
                 }
             }
@@ -65,12 +66,13 @@ namespace Oheangbu.App.SpellVFX120
             if (made.Count > 0) _heads[id] = made.ToArray();
         }
 
+        // The form ended (ink gone, put away): each head sinks back into its ferrule, then the bristles return (step 3).
         public void End(int id)
         {
             _swings.Remove(id);
             if (!_heads.TryGetValue(id, out var heads)) return;
             _heads.Remove(id);
-            foreach (var head in heads) if (head != null) head.Detach();
+            foreach (var head in heads) if (head != null) head.Detach(false);
         }
 
         public void EndAll()

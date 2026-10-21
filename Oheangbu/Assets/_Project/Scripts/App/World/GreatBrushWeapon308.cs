@@ -23,11 +23,25 @@ namespace Oheangbu.App.World
         [SerializeField, Range(-180f, 180f)] private float _roll;
         [Header("debate 13: the strike's swing (SpellSwing308 state) and its afterimage")]
         [SerializeField] private string _strikeState = "SwingSweep";
-        [Tooltip("s from the click to the clip's apex: the wind-up is pressed into it (contact vs damage <= 2 frames).")]
+        [Tooltip("s: the clip starts this long before its apex (contact vs damage <= 2 frames; the wind-up is not shown).")]
         [SerializeField, Min(0f)] private float _strikeToApex = .033f;
         [SerializeField, Min(0f)] private float _strikeLock = .3f;
+        [Header("D308-127 step 3: the head grows out of the ferrule, dries before the ink is gone, goes back into the bristles")]
+        [Tooltip("s: the ink hardens from the ferrule outward (criterion 1: the outline within 10 % of its final size in <= .5 s).")]
+        [SerializeField, Min(.01f)] private float _growSeconds = .3f;
+        [Tooltip("s before the form's last moment the head starts to dry (criterion 8: 3 s; the only clock the player has - no HUD).")]
+        [SerializeField, Min(.01f)] private float _drySeconds = 3f;
+        [Tooltip("s: the head sinks back into the ferrule, then the bristles return (criterion 8: <= .5 s).")]
+        [SerializeField, Min(.01f)] private float _retractSeconds = .3f;
+        [Tooltip("sRGB: dried ink - pale bone, not gold (concept e), no brighter than the paper.")]
+        [SerializeField, ColorUsage(false, false)] private Color _dried = new Color(.62f, .59f, .54f, 1f);
 
         private Renderer _brush;
+        // the form's clock (presentation): grown from, last moment of the form, sinking since (NaN = not)
+        private float _bornAt = float.NegativeInfinity, _lifeEnd = float.PositiveInfinity, _retractFrom = float.NaN;
+        private MaterialPropertyBlock _block;
+        private Color[][] _baseColours;   // per own renderer, per material slot: the shared material's _BaseColor
+        private float _dryShown = -1f;
         private WeaponTrail308[] _trails = Array.Empty<WeaponTrail308>();
         private int _slot = -1;
         private Material[] _restore;
@@ -40,6 +54,22 @@ namespace Oheangbu.App.World
         public float StrikeToApex => _strikeToApex;
         public float StrikeLock => _strikeLock;
         public WeaponTrail308[] Trails => _trails;
+        public float GrowSeconds => _growSeconds;
+        public float DrySeconds => _drySeconds;
+        public float RetractSeconds => _retractSeconds;
+        public bool Retracting => !float.IsNaN(_retractFrom);
+        /// <summary>0 = fresh ink, 1 = dried (read by checks; what the head shows after the last Step).</summary>
+        public float Dryness => Mathf.Max(0f, _dryShown);
+        /// <summary>The head's size along the shaft now, 0..1 (grow, then retract).</summary>
+        public float Grown => transform.localScale.y;
+
+        // The form's clock: the head grows from now, and dries over the last DrySeconds of `seconds` (0 / infinity = no end known).
+        public void SetLife(float now, float seconds)
+        {
+            _bornAt = now;
+            _lifeEnd = seconds > 0f && !float.IsInfinity(seconds) && !float.IsNaN(seconds) ? now + seconds : float.PositiveInfinity;
+            Step(now);
+        }
 
         // The editor build fills these in (the prefab is made by a tool, not by hand).
         public void Configure(Material hiddenBristle, float roll) { _hiddenBristle = hiddenBristle; _roll = roll; }
@@ -58,6 +88,10 @@ namespace Oheangbu.App.World
             Transform grip = Find(brushRoot, GripName), ferrule = Find(brushRoot, FerruleName);
             if (grip == null || ferrule == null) return false;
             Restore();
+            // a head still sinking back on this brush (the form was cast again at once) ends now: its bristle swap must be
+            // undone before this head takes the brush's materials as the ones to give back
+            foreach (var other in grip.GetComponentsInChildren<GreatBrushWeapon308>(true))
+                if (other != this) other.Detach(true);
             // the brush renderer whose material slot holds the bristles (found by the material's name, never by index)
             Renderer brush = null; int slot = -1;
             foreach (var renderer in brushRoot.GetComponentsInChildren<Renderer>(true))
@@ -75,6 +109,13 @@ namespace Oheangbu.App.World
             int layer = brush != null ? brush.gameObject.layer : grip.gameObject.layer;
             foreach (var child in GetComponentsInChildren<Transform>(true)) child.gameObject.layer = layer;
             _own = GetComponentsInChildren<Renderer>(true);
+            _baseColours = new Color[_own.Length][];
+            for (int r = 0; r < _own.Length; r++)
+            {
+                var shared = _own[r].sharedMaterials; _baseColours[r] = new Color[shared.Length];
+                for (int m = 0; m < shared.Length; m++) _baseColours[r][m] = shared[m] != null && shared[m].HasProperty("_BaseColor") ? shared[m].GetColor("_BaseColor") : Color.black;
+            }
+            _dryShown = -1f; _retractFrom = float.NaN;
             _trails = GetComponentsInChildren<WeaponTrail308>(true);
             foreach (var trail in _trails) trail.ShownBy(brush);
             if (brush != null && _hiddenBristle != null)
@@ -89,14 +130,55 @@ namespace Oheangbu.App.World
         }
 
         // Takes the head off: the bristles come back with the exact materials they had, then the head is destroyed.
-        public void Detach()
+        // immediate false (the form ended): the head first sinks back into the ferrule over RetractSeconds (Step does the rest).
+        public void Detach(bool immediate = true)
         {
-            Restore();
             if (this == null) return;
+            if (!immediate && _brush != null) { if (!Retracting) _retractFrom = Time.time; return; }
+            Restore();
             if (Application.isPlaying) Destroy(gameObject); else DestroyImmediate(gameObject);
         }
 
-        private void LateUpdate() => Mirror();
+        private void LateUpdate() => Step(Time.time);
+
+        // Advance the head's presentation to `now` (checks call this with their own clock).
+        public void Step(float now)
+        {
+            if (this == null) return;
+            Mirror();
+            // grow out of the ferrule: along the shaft first, the width a little behind (ink hardening outward)
+            float grown = float.IsNegativeInfinity(_bornAt) ? 1f : Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((now - _bornAt) / _growSeconds));
+            if (Retracting)
+            {
+                float back = Mathf.Clamp01((now - _retractFrom) / _retractSeconds);
+                grown = Mathf.Min(grown, 1f - Mathf.SmoothStep(0f, 1f, back));
+                if (back >= 1f) { Detach(true); return; }
+            }
+            float along = Mathf.Max(.02f, grown), across = Mathf.Lerp(.55f, 1f, Mathf.Clamp01(grown * 1.25f - .25f));
+            transform.localScale = new Vector3(across, along, across);
+            // dry over the last DrySeconds of the form: ink and pigment both go to pale bone
+            float dry = float.IsPositiveInfinity(_lifeEnd) ? 0f : Mathf.Clamp01((now - (_lifeEnd - _drySeconds)) / _drySeconds);
+            if (Mathf.Abs(dry - _dryShown) > .004f) Dry(dry);
+        }
+
+        private void Dry(float dry)
+        {
+            _dryShown = dry;
+            if (_baseColours == null) return;
+            if (_block == null) _block = new MaterialPropertyBlock();
+            float k = dry * dry * (3f - 2f * dry);
+            for (int r = 0; r < _own.Length; r++)
+            {
+                var renderer = _own[r]; if (renderer == null || r >= _baseColours.Length) continue;
+                for (int m = 0; m < _baseColours[r].Length; m++)
+                {
+                    if (k <= 0f) { renderer.SetPropertyBlock(null, m); continue; }
+                    renderer.GetPropertyBlock(_block, m);
+                    _block.SetColor("_BaseColor", Color.Lerp(_baseColours[r][m], _dried, k));
+                    renderer.SetPropertyBlock(_block, m);
+                }
+            }
+        }
 
         // a head destroyed with its scene (or by anyone else) still gives the bristles back
         private void OnDestroy() => Restore();
