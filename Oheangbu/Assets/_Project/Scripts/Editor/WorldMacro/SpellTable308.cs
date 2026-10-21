@@ -184,9 +184,48 @@ namespace Oheangbu.EditorTools.WorldMacro
                 case "spell308-verify": return Verify(strict, parts);
                 case "spell308-summon-power": return SummonPower(dry);
                 case "spell308-catalog": return Catalog(dry);
+                case "spell308-reactions": return Reactions(dry, parts.Contains("off"));
             }
             return "refused: expected spell308-import[:dry][:strict][:takeover][:only=<packages>][:skip=<glyphs>][:all] | spell308-revert[:dry] | spell308-report | " +
-                "spell308-verify[:strict][:only=..][:skip=..][:all] | spell308-summon-power[:dry] | spell308-catalog[:dry]";
+                "spell308-verify[:strict][:only=..][:skip=..][:all] | spell308-summon-power[:dry] | spell308-catalog[:dry] | spell308-reactions[:dry][:off]";
+        }
+
+        // ---- spell308-reactions (D308-132) ----
+        // Reactions308.csv -> the Resources copy the game reads (SpellReactionSet308SO). :off removes the copy (no reaction at all).
+        const string ReactionAsset = "Assets/_Project/Resources/Spell308/SpellReactionSet308.asset";
+        static string Reactions(bool dry, bool off)
+        {
+            var log = new List<string> { "spell308-reactions" + (dry ? ":dry" : "") + (off ? ":off" : "") };
+            if (off)
+            {
+                bool there = AssetDatabase.LoadAssetAtPath<SpellReactionSet308SO>(ReactionAsset) != null;
+                log.Add(there ? (dry ? "DRY: would remove " : "removed ") + ReactionAsset : "nothing to remove: " + ReactionAsset);
+                if (there && !dry) AssetDatabase.DeleteAsset(ReactionAsset);
+                return Write(dry ? "reactions_dry.txt" : "reactions_apply.txt", log);
+            }
+            string sheet = Path.Combine(SheetFolder, ReactionTable308.FileName);
+            if (!File.Exists(sheet)) { log.Add("refused: missing " + sheet); return string.Join("\n", log); }
+            string csv = File.ReadAllText(sheet, Encoding.UTF8);
+            var errors = new List<string>();
+            var rows = ReactionTable308.Parse(csv, errors);
+            if (errors.Count > 0) { log.Add("refused: " + errors.Count + " errors"); log.AddRange(errors); return string.Join("\n", log); }
+            foreach (var row in rows)
+                log.Add("ROW " + row.Id + ": " + row.Material + (row.Generates ? " feeds " : " broken by ") + row.Trigger + " -> " + row.Kind + " " + row.Product);
+            var set = AssetDatabase.LoadAssetAtPath<SpellReactionSet308SO>(ReactionAsset);
+            bool change = set == null || set.Csv != csv;
+            log.Add(set == null ? "new " + ReactionAsset : change ? "update " + ReactionAsset : "already up to date: " + ReactionAsset);
+            if (dry || !change) { log.Add(dry ? "DRY: nothing was written" : "DONE: nothing to write"); return Write(dry ? "reactions_dry.txt" : "reactions_apply.txt", log); }
+            if (set == null)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(ReactionAsset));
+                set = ScriptableObject.CreateInstance<SpellReactionSet308SO>();
+                set.Csv = csv;
+                AssetDatabase.CreateAsset(set, ReactionAsset);
+            }
+            else { set.Csv = csv; EditorUtility.SetDirty(set); }
+            AssetDatabase.SaveAssetIfDirty(set);
+            log.Add("DONE: " + rows.Count + " rows written");
+            return Write("reactions_apply.txt", log);
         }
 
         // ---- shared ----

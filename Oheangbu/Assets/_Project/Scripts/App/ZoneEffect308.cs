@@ -73,7 +73,8 @@ namespace Oheangbu.App
                 if (zone.Fx == 0 || fx == null || Zones.HoldsFx(Id, zone.Fx) || ToldAlready(i, zone.Fx)) continue;
                 var handle = new SpellFxHandle(zone.Fx);
                 if (zone.End == SpellZoneEnd.Replaced || zone.End == SpellZoneEnd.Dropped) { fx.End(handle, true); continue; }
-                fx.Cue(handle, zone.End == SpellZoneEnd.Broken ? SpellFxCue.Break : SpellFxCue.Expire,
+                // #308 D308-132: a zone a reaction consumed bursts like a broken one until the reaction look (React cue) lands
+                fx.Cue(handle, zone.End == SpellZoneEnd.Broken || zone.End == SpellZoneEnd.Reacted ? SpellFxCue.Break : SpellFxCue.Expire,
                     new SpellFxCueArgs { Point = zone.Centre, At = zone.Until, Value = zone.Radius });
             }
             _removed.Clear();

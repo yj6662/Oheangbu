@@ -84,6 +84,11 @@ namespace Oheangbu.App
     // Runs after CastAccepted, for every accepted cast (legacy rows too).
     public interface ISpellAcceptHook { void OnCastAccepted(in SpellCastContext ctx); }
 
+    // #308 D308-132: runs once per accepted cast at the end of its dispatch, while the cast's attack window is still open
+    // (ctx.Attacks), with every plan the cast's judgement made (empty for a cast without one). Legacy rows too: their accept
+    // comes before their plan, so the accept hook cannot see where they went.
+    public interface ISpellDispatchHook { void OnCastDispatched(in SpellCastContext ctx, IReadOnlyList<CastPlan> plans); }
+
     // Runs for every confirmed player-side hit on an enemy (applied damage > 0).
     public interface ISpellHitHook { void OnEnemyHit(in EnemyDamageResult result, in SpellTickContext ctx); }
 

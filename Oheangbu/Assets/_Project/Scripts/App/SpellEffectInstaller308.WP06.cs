@@ -14,6 +14,8 @@ namespace Oheangbu.App
             effects.Register<SpikeZoneEffect308>();
             effects.Register<HealZoneEffect308>();
             effects.Register<HealTreeEffect308>();
+            // #308 D308-132: the five-element reactions work on the same zone list (no row names it; it is never cast)
+            effects.Register<ReactionZoneEffect308>();
         }
     }
 }

@@ -103,7 +103,7 @@ namespace Pure308
                 RunWP00(r, c); RunWP02(r, c); RunWP03(r, c); RunWP04(r, c); RunWP05(r, c); RunWP06(r, c); RunWP07(r, c);
                 RunWP08(r, c); RunWP09(r, c); RunWP10(r, c); RunWP11(r, c); RunWP12(r, c); RunWP13(r, c); RunWP14(r, c); RunWP15(r, c); RunWP16(r, c);
                 RunWP17(r, c); RunSpeed123(r, c); RunCounter124(r, c); RunFix123(r, c); RunEmber125(r, c); RunWeapon127(r, c); RunCombo127(r, c);
-                RunBow127(r, c); RunCore308(r, c);
+                RunBow127(r, c); RunReact128(r, c); RunCore308(r, c);
             }
             catch (Exception exception) { r.Check("runner", false, "unhandled exception", exception.ToString()); }
             Directory.CreateDirectory(c.OutDir);
@@ -138,6 +138,7 @@ namespace Pure308
         static partial void RunWeapon127(Report r, Context c);   // #308 D308-127 1단계: the spear and the axe forms (Cases_Weapon127.cs)
         static partial void RunCombo127(Report r, Context c);   // #308 D308-127 debate 15: the sword's combo, the flail (Cases_Combo127.cs)
         static partial void RunBow127(Report r, Context c);   // #308 D308-127 debate 16: the fire form's horn bow (Cases_Bow127.cs)
+        static partial void RunReact128(Report r, Context c);   // #308 D308-128 B / D308-132: five-element reactions (Cases_React128.cs)
         static partial void RunCore308(Report r, Context c);   // 2026-10-04 fix pass: TEST-only gate, cast order, cue life (Cases_Core308.cs)
 
         // books.tsv (written by spell120_pure308.py from the SpellBookSO assets):

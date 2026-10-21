@@ -428,6 +428,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 new KeyValuePair<string, Action<Report>>("R125", x => FixturesR125(x)), new KeyValuePair<string, Action<Report>>("N125", x => FixturesN125(x)),
                 new KeyValuePair<string, Action<Report>>("S125", x => FixturesS125(x)), new KeyValuePair<string, Action<Report>>("G125", x => FixturesG125(x)),
                 new KeyValuePair<string, Action<Report>>("H125", x => FixturesH125(x)), new KeyValuePair<string, Action<Report>>("P129", x => FixturesP129(x)),
+                new KeyValuePair<string, Action<Report>>("R128", x => FixturesR128(x)),
             };
             foreach (var package in packages)
             {
@@ -508,6 +509,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static partial void FixturesG125(Report r);   // #308 D308-125 G125: 낭 · 순 against the main world's guarding field enemies, 눗 · 숭 against its stone-throwers
         static partial void FixturesH125(Report r);   // #308 D308-125 H125: 몽's cloud against the main world's field brains (search) and field bosses (miss only)
         static partial void FixturesP129(Report r);   // #308 D308-129: 숨's anchor against the 적로 불승냥이 charge's push on a real PlayerMotor
+        static partial void FixturesR128(Report r);   // #308 D308-128 B / D308-132: five-element reactions between the player's zones and a later spell
 
         // A handler the foundation checks drive: it records what the host asked of it and can be told to refuse.
         sealed class ProbeEffect : ISpellEffect, ISpellCostHook, ISpellCastHook, ISpellAcceptHook, ISpellHitHook, IPlayerHitHook

@@ -18,6 +18,7 @@ namespace Oheangbu.App
         private readonly ISpellCostHook[] _cost;
         private readonly ISpellCastHook[] _cast;
         private readonly ISpellAcceptHook[] _accept;
+        private readonly ISpellDispatchHook[] _dispatch;
         private readonly ISpellHitHook[] _hit;
         private readonly IPlayerHitHook[] _playerHit;
 
@@ -33,7 +34,7 @@ namespace Oheangbu.App
             if (failures != null) _failures.AddRange(failures);
             var all = new List<ISpellEffect>();
             var cost = new List<ISpellCostHook>(); var cast = new List<ISpellCastHook>(); var accept = new List<ISpellAcceptHook>();
-            var hit = new List<ISpellHitHook>(); var playerHit = new List<IPlayerHitHook>();
+            var dispatch = new List<ISpellDispatchHook>(); var hit = new List<ISpellHitHook>(); var playerHit = new List<IPlayerHitHook>();
             foreach (var effect in effects ?? Array.Empty<ISpellEffect>())
             {
                 if (effect == null) { _failures.Add("(null): no effect"); continue; }
@@ -47,11 +48,12 @@ namespace Oheangbu.App
                 if (effect is ISpellCostHook c) cost.Add(c);
                 if (effect is ISpellCastHook m) cast.Add(m);
                 if (effect is ISpellAcceptHook a) accept.Add(a);
+                if (effect is ISpellDispatchHook d) dispatch.Add(d);
                 if (effect is ISpellHitHook h) hit.Add(h);
                 if (effect is IPlayerHitHook p) playerHit.Add(p);
             }
             _all = all.ToArray(); _cost = cost.ToArray(); _cast = cast.ToArray(); _accept = accept.ToArray();
-            _hit = hit.ToArray(); _playerHit = playerHit.ToArray();
+            _dispatch = dispatch.ToArray(); _hit = hit.ToArray(); _playerHit = playerHit.ToArray();
         }
 
         public bool Has(string id) => !string.IsNullOrEmpty(id) && _byId.ContainsKey(id);
@@ -95,6 +97,15 @@ namespace Oheangbu.App
             for (int i = 0; i < _accept.Length; i++)
             {
                 try { _accept[i].OnCastAccepted(ctx); }
+                catch (Exception exception) { Debug.LogException(exception); }
+            }
+        }
+
+        public void OnCastDispatched(in SpellCastContext ctx, IReadOnlyList<CastPlan> plans)
+        {
+            for (int i = 0; i < _dispatch.Length; i++)
+            {
+                try { _dispatch[i].OnCastDispatched(ctx, plans ?? Array.Empty<CastPlan>()); }
                 catch (Exception exception) { Debug.LogException(exception); }
             }
         }

@@ -36,7 +36,7 @@ namespace Oheangbu.App
             int verdict = SpellZoneRule308.Admit(_zones, zone.Owner, zone.Cast, max);
             if (verdict == SpellZoneRule308.Refused) return 0;
             if (verdict >= 0) RemoveAt(verdict, SpellZoneEnd.Replaced, removed);
-            zone.Id = ++_lastId; zone.Ticks = 0; zone.Broken = false; zone.End = SpellZoneEnd.None;
+            zone.Id = ++_lastId; zone.Ticks = 0; zone.Broken = false; zone.Reacted = false; zone.End = SpellZoneEnd.None;
             _zones.Add(zone);
             return zone.Id;
         }
@@ -48,7 +48,7 @@ namespace Oheangbu.App
             {
                 var zone = _zones[i];
                 if (zone.Owner != owner || !SpellZoneRule308.Ended(zone, now)) continue;
-                RemoveAt(i, zone.Broken ? SpellZoneEnd.Broken : SpellZoneEnd.Expired, removed);
+                RemoveAt(i, zone.Reacted ? SpellZoneEnd.Reacted : zone.Broken ? SpellZoneEnd.Broken : SpellZoneEnd.Expired, removed);
             }
         }
 
@@ -118,6 +118,23 @@ namespace Oheangbu.App
                 _zones[i] = zone;
             }
             return broken;
+        }
+
+        // #308 D308-132: a reaction consumed the zone. Like a strike that breaks it, the zone stops acting at once and its owner
+        // sweeps it (End = Reacted) on its next tick, so the owner still takes back what it applied to the world. Only one
+        // reaction gets a zone: false = unknown id or already ended.
+        public bool React(int id, float now)
+        {
+            for (int i = 0; i < _zones.Count; i++)
+            {
+                if (_zones[i].Id != id) continue;
+                var zone = _zones[i];
+                if (SpellZoneRule308.Ended(zone, now)) return false;
+                zone.Reacted = true;
+                _zones[i] = zone;
+                return true;
+            }
+            return false;
         }
 
         // Is this position inside an active zone (owner = null: of any owner)?
