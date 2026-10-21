@@ -64,8 +64,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "connect:dry": return Connect(true);
                     case "check": return Check();
                     case "stills": return Stills();
+                    case "rig": return Rig();
                 }
-                return "WeaponHeads308Build: import | materials | prefabs | connect[:dry] | check | stills";
+                return "WeaponHeads308Build: import | materials | prefabs | connect[:dry] | check | stills | rig";
             }
             catch (Exception e) { return "WeaponHeads308Build exception: " + e.GetType().Name + " " + e.Message + " @ " + (e.StackTrace ?? "").Split('\n')[0].Trim(); }
         }
@@ -343,6 +344,30 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (pair.StartsWith("sword.reach=", StringComparison.Ordinal) && float.TryParse(pair.Substring(12), NumberStyles.Float, Inv, out float v)) result[g.Cell] = v;
             }
             return result;
+        }
+
+        // ---------------------------------------------------------------- rig (read only)
+
+        // What a head would find on the player rigs of the open scenes: the two brushes, their grip and ferrule, the bristle slot.
+        static string Rig()
+        {
+            var b = new StringBuilder("WeaponHeads308 rig (read only)\n");
+            var rigs = Object.FindObjectsByType<WorldMacroPlayerGestureRig>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if (rigs.Length == 0) return b.Append("  no WorldMacroPlayerGestureRig in the open scenes").ToString();
+            foreach (var rig in rigs)
+            {
+                b.AppendLine("  rig " + rig.gameObject.scene.name + "/" + rig.name);
+                foreach (var (label, root) in new[] { ("world", rig.WorldBrushRoot308), ("near", rig.NearBrushRoot308) })
+                {
+                    if (root == null) { b.AppendLine("    " + label + ": no brush root"); continue; }
+                    Transform grip = Find(root, GreatBrushWeapon308.GripName), ferrule = Find(root, GreatBrushWeapon308.FerruleName);
+                    var bristle = root.GetComponentsInChildren<Renderer>(true).Select(r => (r, slot: Array.FindIndex(r.sharedMaterials, m => m != null && m.name.IndexOf("Bristle", StringComparison.OrdinalIgnoreCase) >= 0))).FirstOrDefault(x => x.slot >= 0);
+                    b.AppendLine("    " + label + ": " + root.name + " · grip " + (grip != null) + " · ferrule " + (ferrule != null) +
+                        (grip != null && ferrule != null ? " (" + F(grip.InverseTransformPoint(ferrule.position).y) + " m along the grip's +Y)" : "") +
+                        " · bristle slot " + (bristle.r != null ? bristle.r.name + "[" + bristle.slot + "] " + bristle.r.sharedMaterials[bristle.slot].name + " layer " + LayerMask.LayerToName(bristle.r.gameObject.layer) + " enabled " + bristle.r.enabled : "NONE"));
+                }
+            }
+            return b.ToString().TrimEnd();
         }
 
         // ---------------------------------------------------------------- stills
