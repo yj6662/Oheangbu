@@ -222,6 +222,54 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 Reset();
             }
+
+            // ================= the same cast never reacts with what it laid (the dispatch window at hook time) =================
+            // No real handler lays a zone that is already formed when its own dispatch ends, so a probe does: it lays a fire zone
+            // that is active at once on the aimed enemy and plans a single shot there. A fire + fire row (outside the real table)
+            // would make it react with itself if the cast's window did not hold its token.
+            {
+                char probeCell = SpellGrammar308.LetterAt(27);
+                var probeZones = new SpellZoneRuntime308();
+                var probe = new R128SameCastProbe(probeZones);
+                var same = new ReactionZoneEffect308(probeZones);
+                same.UseTable(new[] { new ReactionRow308 { Id = "same", Material = Element.Fire, Trigger = Element.Fire, Product = Element.Fire, Kind = ReactionProductKind308.None, RadiusMul = 1f, LifeMode = ReactionLifeMode308.Fixed, LifeCap = 1f } });
+                var sheet = new SpellSheet308("Rules308_ZZFixture", RuleHeader + probeCell + ",,zone.probe,,AttackSingle,,,,10,,,,,,,,,,,\n");
+                using (var f = NewFixture(r, new ISpellEffect[] { probe, same }, R128Sheets, sheet))
+                {
+                    f.Finals.Open.Add(SpellFinal.Nieun);
+                    f.Aim(f.Inside[1]);
+                    f.Cast(probeCell);
+                    var first = probeZones.Zones.Where(z => z.Owner == R128SameCastProbe.HandlerId).ToArray();
+                    r.Check("R128-same", f.Misfires.Count == 0 && f.Accepted.Count == 1 && first.Length == 1 && !first[0].Reacted && probeZones.CountOf(ReactionZoneEffect308.HandlerId) == 0,
+                        "a cast whose own zone is formed and under its own ground does not react with it (its token is in the cast's window)");
+                    f.Ink.Restore(); f.Cast(probeCell);
+                    var both = probeZones.Zones.Where(z => z.Owner == R128SameCastProbe.HandlerId).OrderBy(z => z.Id).ToArray();
+                    r.Check("R128-same", both.Length == 2 && both[0].Reacted && !both[1].Reacted && probeZones.CountOf(ReactionZoneEffect308.HandlerId) == 1,
+                        "the next cast does react with the zone the first one laid, and not with its own");
+                }
+            }
+        }
+
+        // A handler for the check above only: lays a fire zone that is active at once, plans a single shot on the aimed enemy.
+        sealed class R128SameCastProbe : ZoneEffect308
+        {
+            public const string HandlerId = "zone.probe";
+            public R128SameCastProbe(SpellZoneRuntime308 zones) : base(zones) { }
+            public override string Id => HandlerId;
+            public override IReadOnlyList<SpellParamSpec> Params => System.Array.Empty<SpellParamSpec>();
+            public override bool Commit(in SpellCastContext ctx)
+            {
+                var target = ctx.Host.AimedTarget();
+                if (target == null || ctx.Host.PlanSingle(ctx.Cast, false) == null) return false;
+                var zone = new SpellZone308
+                {
+                    Owner = HandlerId, Cast = Zones.NextCast(), Element = ctx.Cast.Element, Centre = target.transform.position, Radius = 2f,
+                    From = ctx.Now, Until = ctx.Now + 5f, Life = 5f,
+                    Token = AttackProvenance.Create(Instigator(ctx.Host), DamageSource.PersistentSpell, ctx.Cast.Element).AttackId,
+                };
+                return Place(zone, 2, ctx.Now, ctx.Fx) != 0;
+            }
+            protected override void Act(in SpellTickContext ctx) { }
         }
     }
 }

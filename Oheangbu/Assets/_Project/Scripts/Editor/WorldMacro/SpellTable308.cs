@@ -217,7 +217,9 @@ namespace Oheangbu.EditorTools.WorldMacro
             if (dry || !change) { log.Add(dry ? "DRY: nothing was written" : "DONE: nothing to write"); return Write(dry ? "reactions_dry.txt" : "reactions_apply.txt", log); }
             if (set == null)
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(ReactionAsset));
+                // the asset database must know the folder (a folder made on disk only is refused by CreateAsset)
+                if (!AssetDatabase.IsValidFolder("Assets/_Project/Resources")) AssetDatabase.CreateFolder("Assets/_Project", "Resources");
+                if (!AssetDatabase.IsValidFolder("Assets/_Project/Resources/Spell308")) AssetDatabase.CreateFolder("Assets/_Project/Resources", "Spell308");
                 set = ScriptableObject.CreateInstance<SpellReactionSet308SO>();
                 set.Csv = csv;
                 AssetDatabase.CreateAsset(set, ReactionAsset);

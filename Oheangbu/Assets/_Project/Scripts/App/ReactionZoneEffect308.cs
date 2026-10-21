@@ -48,7 +48,9 @@ namespace Oheangbu.App
             var host = ctx.Host;
             if (rows == null || rows.Count == 0 || host == null || plans == null) return;
             _feet.Clear();
-            for (int i = 0; i < plans.Count; i++) AddFootprints(plans[i], _feet);
+            // only the cast's own plans: another effect that plans inside the same dispatch does not lend its ground
+            for (int i = 0; i < plans.Count; i++)
+                if (plans[i] != null && plans[i].Cast.Letter == ctx.Cast.Letter) AddFootprints(plans[i], _feet);
             if (_feet.Count == 0) return;
             float now = ctx.Now;
             Vector3 caster = host.PlayerPosition;
