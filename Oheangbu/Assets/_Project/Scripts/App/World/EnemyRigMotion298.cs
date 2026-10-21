@@ -42,6 +42,9 @@ namespace Oheangbu.App.World
             "enter speed has to hold, walk on patrol, blend time, the run clip's metres per second, arm relax at run weight, the avatar the clip is for. " +
             "None, or an asset that is not filled in = the three fields above with the fixed 85 % exit and TransitionSeconds (pre-D308-23 behaviour, same arithmetic).")]
         public EnemyRunProfile308 RunProfile;
+        [Tooltip("#308 D308-125 적용 3 (TEST): while the enemy charges the Run clip plays at the body's pace (actor metres / the Run metres per second), " +
+            "at most this many clip seconds per second, so a fast charge does not pump the stride. Needs a Run node.")]
+        [Min(1)] public float ChargeCadenceMax = 1.8f;
         [Tooltip("#308 D308-70 (SPEC-ENEMY-BRAIN-308, TEST): the attack clip as three beats that end on the same contact time - draw back, hold, swing - " +
             "a short stand on the contact pose, and the upper body of a humanoid leaning back then forward. None (and none handed out by the session), or an " +
             "asset that is not filled in = the clip stretched evenly over the telegraph, as before. Not used with General.")]
@@ -70,6 +73,7 @@ namespace Oheangbu.App.World
         bool gaitBlend;      // #308 D308-23: the blend in progress is walk <-> run of a RunProfile actor (its own blend time, both gaits keep stepping)
         float gaitPhase;     // #308 D308-23: normalised step phase shared by Walk and Run of a RunProfile actor
         float runHeld;       // #308 D308-23: seconds the ground speed has stayed above the profile's enter speed (EnterHoldSeconds)
+        float chargePhase;   // #308 D308-125 적용 3: Run clip phase while the enemy charges
         bool runProfiled;    // #308 D308-23: latched with the graph - this actor's Run node is switched by its RunProfile
         PrologueEncounter encounter;   // #308 D308-23: read only (Current), for RunProfile.WalkOnPatrol; none = the speed rule alone
         [Range(0, .2f)] public float TransitionSeconds = .1f;
@@ -124,7 +128,7 @@ namespace Oheangbu.App.World
         }
         void ResetPose()
         {
-            previous = transform.position; distance = 0; hitAt = deathAt = stunAt = -100; wasStunned = false; plan = null; priorInput = -1; running = false; gaitBlend = false; gaitPhase = 0; runHeld = 0;
+            previous = transform.position; distance = 0; hitAt = deathAt = stunAt = -100; wasStunned = false; plan = null; priorInput = -1; running = false; gaitBlend = false; gaitPhase = 0; runHeld = 0; chargePhase = 0;
             if (Vitals != null) revision = Vitals.LifeRevision;
             if (SerpentFollow != null) { RestoreSerpentPose(); resetSerpentHistory = true; }
             RemoveWarning();
@@ -239,6 +243,13 @@ namespace Oheangbu.App.World
             if (!Vitals.IsAlive) { if (deathAt < 0) deathAt = now; index = 5; t = Mathf.Min(Mathf.Max(0, now - deathAt), Death.length); CurrentPose = "Death"; }
             else if (stunned) { index = 4; t = LoopStun ? Mathf.Repeat(Mathf.Max(0, now - stunAt), Stun.length) : Mathf.Min(Mathf.Max(0, now - stunAt), Stun.length); CurrentPose = "Stun"; }
             else if (General != null && plan != null) { float phase = GeneralPhase(out index); t = phase * (index == 6 ? Sweep.length : index == 7 ? Wave.length : Attack.length); CurrentPose = index == 6 ? "Sweep" : index == 7 ? "Wave" : "Thrust"; }
+            else if (General == null && Enemy != null && Enemy.IsCharging && Run != null && runIndex >= 0)
+            {
+                // #308 D308-125 적용 3: a charge runs the Run clip at the body's pace, the clip rate held under ChargeCadenceMax
+                float rate = Mathf.Min(travel / Mathf.Max(.1f, profiled ? RunProfile.RunMetresPerSecond : RunMetresPerSecond), dt * ChargeCadenceMax);
+                chargePhase = Mathf.Repeat(chargePhase + rate / Run.length, 1f);
+                index = runIndex; t = chargePhase * Run.length; CurrentPose = "Charge";
+            }
             else if (General == null && Enemy != null && Enemy.AttackInProgress)
             {
                 int move = MoveIndex(Enemy.AttackProfile);

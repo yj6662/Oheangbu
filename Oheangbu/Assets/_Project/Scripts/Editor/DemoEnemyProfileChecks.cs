@@ -129,6 +129,41 @@ namespace Oheangbu.EditorTools
                     "Wood ground impact damages standing target with wood provenance");
                 floorCollider.enabled = false; Physics.SyncTransforms(); previousCues = cues; Begin(EnemyArchetype.WoodVine, 6);
                 Check(cues == previousCues, "Missing ground cancels vine cast instead of erupting in midair");
+
+                // #308 D308-125 적용 3: a charge runs the line it locked, hits the swept player once, and a wall stops it short
+                var charge = ScriptableObject.CreateInstance<EnemyAttackProfileSO>(); profiles.Add(charge); charge.ApplyDefaults(EnemyArchetype.NeutralMelee);
+                charge.Delivery = EnemyAttackDelivery.Charge; charge.Mode = EnemyController.AttackMode.RangedOnly; charge.Damage = 18; charge.Range = 8;
+                charge.ProjectileSpeed = 7; charge.ImpactRadius = .7f; charge.MovementSpeedHint = 2.2f; charge.PreferredDistanceHint = 6;
+                Check(charge.TryValidate(out _), "Charge profile with ranged mode validates");
+                charge.Mode = EnemyController.AttackMode.MeleeOnly; Check(!charge.TryValidate(out _), "Charge with melee mode rejected");
+                charge.Mode = EnemyController.AttackMode.RangedOnly; charge.ChargeMinTravel = 9; Check(!charge.TryValidate(out _), "Charge minimum travel beyond range rejected");
+                charge.ChargeMinTravel = 4;
+                float scale = Get<float>(controller, "_recoveryScale308");
+                void ChargeAt(float playerAt)
+                {
+                    enemy.transform.SetPositionAndRotation(origin, Quaternion.identity); wallCollider.enabled = false;
+                    controller.AttackEnabled = true; player.transform.position = origin + Vector3.forward * playerAt;
+                    controller.Configure(charge); hp.Restore(); judge.ClearGuard(); Physics.SyncTransforms();
+                    Call(controller, "BeginAuthoredTelegraph"); Resolve();
+                }
+                bool RunCharge() { for (int i = 0; i < 200 && controller.IsCharging; i++) { Call(controller, "TickAuthoredAttack"); Physics.SyncTransforms(); } return !controller.IsCharging; }
+                float Ran() => enemy.transform.position.z - origin.z;
+                ChargeAt(6); bool charging = controller.IsCharging && cue.Delivery == EnemyAttackDelivery.Charge; int before = impacts;
+                Check(charging && RunCharge() && impacts == before + 1 && impact.InShape && Near(impact.AppliedDamage, 18) && !impact.Attack.Element.HasValue &&
+                    Mathf.Abs(Ran() - 8) < .01f && Near(controller.RecoveryDuration, charge.Recovery * scale),
+                    "Charge hits the swept player once and runs on to distance + overshoot, cut to range");
+                ChargeAt(6); player.transform.position += Vector3.right * 2; Physics.SyncTransforms(); before = impacts;
+                Check(controller.IsCharging && RunCharge() && impacts == before + 1 && !impact.InShape && Near(hp.Hp01, 1),
+                    "Charge keeps its locked line and misses a sidestep after the lock");
+                ChargeAt(7); wall.transform.position = origin + Vector3.forward * 5.5f + Vector3.up; wallCollider.enabled = true; Physics.SyncTransforms();
+                Check(controller.IsCharging && RunCharge() && Mathf.Abs(Ran() - 4.75f) < .02f && !impact.InShape && Near(hp.Hp01, 1) &&
+                    Near(controller.RecoveryDuration, charge.ChargeWallRecovery * scale),
+                    "Wall stops a charge a body radius short and gives the long wall recovery");
+                enemy.transform.SetPositionAndRotation(origin, Quaternion.identity); player.transform.position = origin + Vector3.forward * 6;
+                wall.transform.position = origin + Vector3.forward * 4 + Vector3.up; Physics.SyncTransforms();
+                Check(!(bool)Call(controller, "ChargeCanStart308"), "No charge starts with less than its minimum travel of open path");
+                wallCollider.enabled = false; Physics.SyncTransforms();
+                Check((bool)Call(controller, "ChargeCanStart308"), "Charge starts on an open path");
                 controller.Configure(null);
                 Check(controller.AttackProfile == null && controller.EffectiveAttackMode == EnemyController.AttackMode.LegacyDistance,
                     "Removing optional profile restores original mode");

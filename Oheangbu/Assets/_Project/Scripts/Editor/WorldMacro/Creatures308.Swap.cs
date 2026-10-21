@@ -105,6 +105,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    if(!write)return sb.ToString();
    if(swapped==0)return sb.Append("\n  nothing written").ToString();
    session.Actors=actors.ToArray();content.Encounters=rows.ToArray();
+   sb.Append("\n  ").Append(RolesAfter(cfg,scene,content));   // D308-125: a role member dressed again gets its role's attack back
    EditorUtility.SetDirty(content);AssetDatabase.SaveAssetIfDirty(content);EditorUtility.SetDirty(session);
    EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))return sb.Append("\nFAILED the play scene was not saved").ToString();
    Directory.CreateDirectory(Path.GetDirectoryName(SwapLedgerPath));File.WriteAllText(SwapLedgerPath,JsonUtility.ToJson(ledger,true));

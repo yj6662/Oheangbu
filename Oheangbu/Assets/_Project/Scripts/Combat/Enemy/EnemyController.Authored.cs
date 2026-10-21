@@ -2,6 +2,7 @@ using System;
 using Oheangbu.Core.Domain;
 using Oheangbu.Data;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Oheangbu.Combat
 {
@@ -24,7 +25,7 @@ namespace Oheangbu.Combat
         public float AttackDamage => ProfileActive ? _attackProfile.Damage : LegacyMeleeSelected ? (_config != null ? _config.MeleeDamage : 15f) : (_config != null ? _config.RangedDamage : 12f);
         public float TelegraphDuration => IsTelegraphing && _telegraph308 > 0f ? _telegraph308 : ProfileActive ? _attackProfile.Telegraph : LegacyMeleeSelected ? (_config != null ? _config.MeleeTelegraph : .8f) : (_config != null ? _config.RangedTelegraph : 1.2f);
         // SPEC-PACE-308 section 5 (D308-116): one recovery for the state clock, its progress and the rig motion; the pace scale is read once in Awake
-        public float RecoveryDuration => (ProfileActive ? _attackProfile.Recovery : .4f) * _recoveryScale308;
+        public float RecoveryDuration => (ProfileActive ? (_chargeWall308 ? _attackProfile.ChargeWallRecovery : _attackProfile.Recovery) : .4f) * _recoveryScale308;
         private float _recoveryScale308 = 1f;
         private void LoadPace308() => _recoveryScale308 = PaceProfile308.RecoveryScaleOf(PaceProfile308.Load());
         public AttackProvenance CurrentAttack => _attack;
@@ -74,15 +75,20 @@ namespace Oheangbu.Combat
                 case State.Idle:
                     _cooldown -= Time.deltaTime;
                     if (AttackEnabled && !AttackHeld && !DomainHeld308() && _cooldown <= 0 && Distance() <= _attackProfile.Range && HasLineOfSight()
-                        && !(_player != null && DomainFloorBlocked308(_player.position))) BeginAuthoredTelegraph();
+                        && !(_player != null && DomainFloorBlocked308(_player.position))
+                        && (_attackProfile.Delivery != EnemyAttackDelivery.Charge || ChargeCanStart308())) BeginAuthoredTelegraph();
                     break;
                 case State.Telegraph:
                     if (!AttackEnabled || !HasLineOfSight() || DomainFloorBlocked308(_authoredPoint)) { CancelAttack(); EnterRecover(); break; }
+                    if (_attackProfile.Delivery == EnemyAttackDelivery.Charge && !TickChargeTelegraph308()) { CancelAttack(); EnterRecover(); break; }
                     if (Time.time >= _stateUntil) FinishAuthoredTelegraph();
                     break;
                 case State.Flight:
                     if (!AttackEnabled || !HasLineOfSight()) { CancelAttack(); EnterRecover(); break; }
                     TickAuthoredProjectile(); break;
+                case State.Charge:
+                    if (!AttackEnabled) { CancelAttack(); EnterRecover(); break; }
+                    TickAuthoredCharge(); break;
                 case State.Recover:
                     if (Time.time >= _stateUntil) EnterIdle(); break;
                 case State.Stunned:
@@ -93,6 +99,7 @@ namespace Oheangbu.Combat
         private void BeginAuthoredTelegraph()
         {
             if (!ProfileActive || !AttackEnabled || _player == null || !HasLineOfSight()) return;
+            ResetCharge308();
             _authoredPoint = _player.position;
             if (_attackProfile.Delivery == EnemyAttackDelivery.GroundEruption && !TryAuthoredGround(_player.position, out _authoredPoint))
             { EnterRecover(); return; }
@@ -102,6 +109,7 @@ namespace Oheangbu.Combat
             if (_authoredForward.sqrMagnitude < .01f) _authoredForward = transform.forward;
             _attack = AttackProvenance.Create(_vitals, DamageSource.Enemy, _attackProfile.Elemental ? _attackProfile.Element : (Element?)null);
             float tell = _attackProfile.Telegraph * DomainTelegraph308();
+            if (_attackProfile.Delivery == EnemyAttackDelivery.Charge) _chargeLockAt308 = Time.time + Mathf.Max(0f, tell - _attackProfile.ChargeLockLead);
             _state = State.Telegraph; _stateUntil = Time.time + tell; AttackStartTime = Time.time; RefreshOrganTint();
             StartTelegraph308(tell);
             _authoredCueActive = true;
@@ -120,6 +128,13 @@ namespace Oheangbu.Combat
                     : InAuthoredRadius(_player.position, _authoredPoint, _attackProfile.ImpactRadius);
                 ResolveAuthoredContact(_authoredPoint, inShape);
                 if (_state == State.Telegraph) FinishAuthoredAttack();
+                return;
+            }
+            if (delivery == EnemyAttackDelivery.Charge)
+            {
+                if (!_chargeLocked308) LockCharge308();
+                _chargeDone308 = 0f; _chargeHit308 = _chargeWall308 = false;
+                _state = State.Charge;
                 return;
             }
             _projectileStart = transform.position + Vector3.up * 1.2f;
@@ -164,7 +179,9 @@ namespace Oheangbu.Combat
             else if (outcome == ParryOutcome.Half) damage *= _config.HalfParryDamageFactor;
             else if (outcome == ParryOutcome.Block) damage *= _config.GuardBlockFactor;
             float before = _playerVitals.Hp01 * _playerVitals.MaxHp;
-            if (damage > 0) EnemyStrike308.Deliver(_playerVitals, _vitals, damage, _attackProfile.Delivery == EnemyAttackDelivery.MeleeArc ? (_attack.Element.HasValue ? IncomingDamageKind.ElementalMelee : IncomingDamageKind.Melee) : (_attack.Element.HasValue ? IncomingDamageKind.ElementalRanged : IncomingDamageKind.Ranged));
+            // a charge is the body itself: it lands as melee (D308-125 적용 3)
+            bool melee = _attackProfile.Delivery == EnemyAttackDelivery.MeleeArc || _attackProfile.Delivery == EnemyAttackDelivery.Charge;
+            if (damage > 0) EnemyStrike308.Deliver(_playerVitals, _vitals, damage, melee ? (_attack.Element.HasValue ? IncomingDamageKind.ElementalMelee : IncomingDamageKind.Melee) : (_attack.Element.HasValue ? IncomingDamageKind.ElementalRanged : IncomingDamageKind.Ranged));
             float applied = Mathf.Max(0, before - _playerVitals.Hp01 * _playerVitals.MaxHp);
             AttackImpactResolved?.Invoke(new EnemyAttackImpact(_attack, point, outcome, applied, true));
         }
@@ -204,6 +221,146 @@ namespace Oheangbu.Combat
             FlightHeld = false;
             if (!_authoredCueActive) return;
             _authoredCueActive = false; AttackPresentationEnded?.Invoke(_attack, cancelled);
+        }
+
+        // #308 D308-125 적용 3 (TEST): a charge runs the body itself. The telegraph tracks the player until ChargeLockLead before
+        // its end (or until 눙 locked the aim); the body then runs that line at ProjectileSpeed x 묵 dash for the player's distance
+        // + ChargeOvershoot (ChargeMinTravel..Range), clipped by the navmesh, steep solids and a domain's circle. The swept segment
+        // hits the player once (a dodge that takes it still spends it) and the run goes on. Stopped short = ChargeWallRecovery.
+        private bool _chargeLocked308, _chargeHit308, _chargeWall308;
+        private float _chargeLockAt308 = float.PositiveInfinity, _chargeTravel308, _chargeDone308;
+        private NavMeshAgent _agent308; private bool _agentRead308;
+        private RaycastHit[] _chargeHits308;
+        private bool ChargeTracking308 => ProfileActive && _state == State.Telegraph && _attackProfile.Delivery == EnemyAttackDelivery.Charge && !_chargeLocked308;
+        private NavMeshAgent ChargeAgent308
+        {
+            get
+            {
+                if (!_agentRead308) { _agent308 = GetComponent<NavMeshAgent>(); _agentRead308 = true; }
+                return _agent308 != null && _agent308.enabled && _agent308.isOnNavMesh ? _agent308 : null;
+            }
+        }
+        private void ResetCharge308()
+        {
+            _chargeLocked308 = _chargeHit308 = _chargeWall308 = false;
+            _chargeDone308 = _chargeTravel308 = 0f; _chargeLockAt308 = float.PositiveInfinity;
+        }
+        // below the walking speed a dash is a walk (묵 dash 0 on a common enemy): no charge starts and one under way stops
+        private bool ChargeDashes308() => _attackProfile.ProjectileSpeed * DomainDash308() >= _attackProfile.MovementSpeedHint;
+
+        // Read-only clock (PredictedImpactTime): the telegraph's end + the run to the player; while running, when the body reaches
+        // the player's place along its line. NegativeInfinity once it hit or ran past.
+        private float ChargeImpactTime308()
+        {
+            if (!ProfileActive || _player == null || _chargeHit308) return float.NegativeInfinity;
+            float speed = Mathf.Max(.1f, _attackProfile.ProjectileSpeed * DomainDash308());
+            Vector3 to = Vector3.ProjectOnPlane(_player.position - transform.position, Vector3.up);
+            if (_state == State.Telegraph) return _stateUntil + Mathf.Max(0f, to.magnitude - _attackProfile.ImpactRadius) / speed;
+            float along = Vector3.Dot(to, _authoredForward);
+            return along < -_attackProfile.ImpactRadius ? float.NegativeInfinity : Time.time + Mathf.Max(0f, along - _attackProfile.ImpactRadius) / speed;
+        }
+
+        private bool ChargeCanStart308()
+        {
+            if (_player == null || !ChargeDashes308()) return false;
+            Vector3 dir = Vector3.ProjectOnPlane(_player.position - transform.position, Vector3.up);
+            if (dir.sqrMagnitude < .0001f) dir = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+            if (dir.sqrMagnitude < .0001f) return false;
+            float need = _attackProfile.ChargeMinTravel;
+            return ChargePathLength308(dir.normalized, need) >= need - 1e-3f;
+        }
+
+        // How far the body can run straight along dir, up to max: the navmesh edge or the nearest steep solid (a wall, a packmate).
+        private float ChargePathLength308(Vector3 dir, float max)
+        {
+            Vector3 from = transform.position; float length = max;
+            var agent = ChargeAgent308;
+            if (agent != null && NavMesh.Raycast(from, from + dir * max, out var navHit, agent.areaMask)) length = Mathf.Min(length, navHit.distance);
+            float radius = agent != null ? agent.radius : .5f;
+            float wall = ChargeWallDistance308(from, dir, max + radius);
+            if (wall < float.PositiveInfinity) length = Mathf.Min(length, Mathf.Max(0f, wall - radius));
+            return length;
+        }
+
+        // Nearest solid along a knee-high ray that is not this body, not the player and not ground one can run up (normal.y < .5).
+        private float ChargeWallDistance308(Vector3 from, Vector3 dir, float distance)
+        {
+            float nearest = float.PositiveInfinity;
+            int count = ScenePhysicsQuery.RaycastAll(gameObject.scene, from + Vector3.up * .4f, dir, distance, ~0, ref _chargeHits308);
+            for (int i = 0; i < count; i++)
+            {
+                var hit = _chargeHits308[i];
+                if (hit.transform.IsChildOf(transform) || (_player != null && hit.transform.IsChildOf(_player)) || hit.normal.y >= .5f) continue;
+                if (hit.distance < nearest) nearest = hit.distance;
+            }
+            return nearest;
+        }
+
+        // Every telegraph frame of a charge; false = call it off (the body may no longer dash).
+        private bool TickChargeTelegraph308()
+        {
+            if (!ChargeDashes308()) return false;
+            if (!_chargeLocked308 && (Time.time >= _chargeLockAt308 || _aimLocked308)) LockCharge308();
+            return true;
+        }
+
+        private void LockCharge308()
+        {
+            Vector3 fwd = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+            if (fwd.sqrMagnitude > .0001f) _authoredForward = fwd.normalized;
+            float distance = _player != null ? Vector3.ProjectOnPlane(AimTarget308(_player.position) - transform.position, Vector3.up).magnitude : 0f;
+            _chargeTravel308 = Mathf.Clamp(distance + _attackProfile.ChargeOvershoot, _attackProfile.ChargeMinTravel, _attackProfile.Range);
+            _chargeLocked308 = true;
+        }
+
+        private void TickAuthoredCharge()
+        {
+            if (!ChargeDashes308()) { EndCharge308(); return; } // 묵: ran into the circle; it stops there, no hit
+            Vector3 fwd = _authoredForward, from = transform.position;
+            float step = Mathf.Min(_attackProfile.ProjectileSpeed * DomainDash308() * Time.deltaTime, Mathf.Max(0f, _chargeTravel308 - _chargeDone308));
+            if (step > 0f)
+            {
+                Vector3 want = from + fwd * step;
+                var agent = ChargeAgent308;
+                if (agent != null && NavMesh.Raycast(from, want, out var navHit, agent.areaMask)) want = navHit.position;
+                float radius = agent != null ? agent.radius : .5f;
+                float wall = ChargeWallDistance308(from, fwd, step + radius);
+                if (wall < float.PositiveInfinity)
+                {
+                    float allowed = Mathf.Max(0f, wall - radius);
+                    if (Vector3.Dot(Vector3.ProjectOnPlane(want - from, Vector3.up), fwd) > allowed) want = new Vector3(from.x, want.y, from.z) + fwd * allowed;
+                }
+                if (Domain308 != null) want = Domain308.Contain(want, Time.time);
+                if (agent != null) agent.Move(want - from); else transform.position = want;
+            }
+            transform.rotation = Quaternion.LookRotation(fwd);
+            float advanced = Vector3.Dot(Vector3.ProjectOnPlane(transform.position - from, Vector3.up), fwd);
+            _chargeDone308 += Mathf.Max(0f, advanced);
+            if (!_chargeHit308 && _player != null && ChargeSwept308(from, transform.position))
+            {
+                _chargeHit308 = true;
+                ResolveAuthoredContact(_player.position + Vector3.up, true);
+                if (_state != State.Charge) return;
+            }
+            if (step > 1e-4f && advanced < .5f * step && _chargeDone308 < _chargeTravel308 - 1e-3f) _chargeWall308 = true;
+            if (_chargeWall308 || _chargeDone308 >= _chargeTravel308 - 1e-3f) EndCharge308();
+        }
+
+        // The player within ImpactRadius of the segment the body swept this frame (ground plane, 2 m of height).
+        private bool ChargeSwept308(Vector3 a, Vector3 b)
+        {
+            Vector3 p = _player.position;
+            if (Mathf.Abs(p.y - b.y) > 2f) return false;
+            float abx = b.x - a.x, abz = b.z - a.z, apx = p.x - a.x, apz = p.z - a.z, ab2 = abx * abx + abz * abz;
+            float t = ab2 > 1e-6f ? Mathf.Clamp01((apx * abx + apz * abz) / ab2) : 0f;
+            float dx = apx - abx * t, dz = apz - abz * t, r = _attackProfile.ImpactRadius;
+            return dx * dx + dz * dz <= r * r;
+        }
+
+        private void EndCharge308()
+        {
+            if (!_chargeHit308) AttackImpactResolved?.Invoke(new EnemyAttackImpact(_attack, transform.position, ParryOutcome.None, 0, false));
+            EndAuthoredCue(false); EnterRecover();
         }
     }
 }

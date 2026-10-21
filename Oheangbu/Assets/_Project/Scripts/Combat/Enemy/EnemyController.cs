@@ -21,6 +21,8 @@ namespace Oheangbu.Combat
         public bool IsTelegraphing => _state == State.Telegraph;
         public bool IsRecovering => _state == State.Recover;
         public bool IsProjectileFlying => _state == State.Flight;
+        // #308 D308-125 적용 3: the body itself runs (a charge); 송 never counts it as a projectile
+        public bool IsCharging => _state == State.Charge;
         // #308 D308-70 (SPEC-ENEMY-BRAIN-308): who turns the body. A navigating owner (PrologueEncounter) clears FaceTarget while the
         // actor walks somewhere else (patrol, return, running in), so the body follows its path instead of sliding sideways with its
         // face locked on the player. Defaults = the behaviour before: always face the player, in one frame.
@@ -40,8 +42,10 @@ namespace Oheangbu.Combat
             get
             {
                 if (_state == State.Flight) return _impactTime;
+                if (_state == State.Charge) return ChargeImpactTime308();
                 if (_state != State.Telegraph) return float.NegativeInfinity;
                 if (!ProfileActive) return _pattern == Pattern.Ranged ? _impactTime : _stateUntil;
+                if (_attackProfile.Delivery == EnemyAttackDelivery.Charge) return ChargeImpactTime308();
                 if (!CurrentAttackIsProjectile || _player == null) return _stateUntil;
                 Vector3 start = transform.position + Vector3.up * 1.2f; // FinishAuthoredTelegraph와 같은 발사점
                 return _stateUntil + Mathf.Max(.05f, Vector3.Distance(start, _player.position + Vector3.up * .5f) / _attackProfile.ProjectileSpeed);
@@ -91,7 +95,7 @@ namespace Oheangbu.Combat
                 _sightMask308=names!=null&&names.Length>0?~LayerMask.GetMask(names):~0;_sightMaskReady308=true;return _sightMask308;
             }
         }
-        private enum State { Idle, Telegraph, Flight, Recover, Stunned, Dead }
+        private enum State { Idle, Telegraph, Flight, Recover, Stunned, Dead, Charge }
         private enum Pattern { Melee, Ranged }
 
         [SerializeField] private CombatConfigSO _config;
@@ -201,6 +205,7 @@ namespace Oheangbu.Combat
                 _vitals?.ResetCombatState();
             }
             _state = State.Idle;
+            ResetCharge308();
             _cooldown = 1f;
             _parriedFlashUntil = 0f;
             if (gameObject.activeInHierarchy) Tint(_baseColor);
@@ -244,7 +249,8 @@ namespace Oheangbu.Combat
             _controlBlocked=false;
             if (_state == State.Dead || _config == null || _player == null) return;
 
-            if (FaceTarget && _state != State.Stunned && (!ProfileActive || (_state != State.Telegraph && _state != State.Flight))) FacePlayer();
+            // a charge turns with the player through its telegraph until the line locks, then runs where it locked
+            if (FaceTarget && _state != State.Stunned && _state != State.Charge && (!ProfileActive || (_state != State.Telegraph && _state != State.Flight) || ChargeTracking308)) FacePlayer();
             if (_state == State.Telegraph || _state == State.Flight) TickAimLock308();
 
             if (ProfileActive) TickAuthoredAttack();
@@ -416,6 +422,7 @@ namespace Oheangbu.Combat
         {
             Tint(_baseColor);
             _state = State.Idle;
+            ResetCharge308();
             var range = ProfileActive ? _attackProfile.CooldownRange : _config != null ? _config.AttackCooldownRange : new Vector2(1.2f, 2.2f);
             _cooldown = Random.Range(range.x, range.y);
         }

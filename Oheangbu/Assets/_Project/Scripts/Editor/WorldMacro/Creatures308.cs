@@ -45,6 +45,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  //                   up the scene and the content asset first (Tools/Unity/Stage308_creatures/Backup). Idempotent.
  //   check           the placed actors (NavMesh, rig, materials, collider, wiring, ids, boss rules, clearances) + Populate308's still whole
  //   shots           edit-mode stills of each boss and one actor per group (plain camera, no post) -> <stillDir>/place_*.png
+ //   attacks | attacks:revert   D308-125 roles[]: another attack on some members of a group (Creatures308.Roles.cs); place and swap:apply re-arm
  // Queue-safe: no dialog, refusals are strings. Writes need W_Demo_Main active, Edit mode, compiled, not dirty.
  public static partial class Creatures308
  {
@@ -71,7 +72,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   {
    public string version="",content="",prefix="",boss_prefix="",root="",prefabDir="",stillDir="";
    public Look look=new Look();public Proc proc=new Proc();public Fit fit=new Fit();public StillCfg still=new StillCfg();public PlaceCfg place=new PlaceCfg();
-   public Sp[] species=Array.Empty<Sp>();public BossRow[] bosses=Array.Empty<BossRow>();public SwapRow[] swaps=Array.Empty<SwapRow>();
+   public Sp[] species=Array.Empty<Sp>();public BossRow[] bosses=Array.Empty<BossRow>();public SwapRow[] swaps=Array.Empty<SwapRow>();public RoleRow[] roles=Array.Empty<RoleRow>();
   }
   [Serializable] sealed class PlanEnemy{public string id="",name="",contentId="",species="",realm="",group="";public float[] feet=Array.Empty<float>(),patrol2=Array.Empty<float>();}
   [Serializable] sealed class PlanBoss{public string id="",name="",species="",realm="",relaxed="";public float yaw_deg;public float[] feet=Array.Empty<float>();}
@@ -137,7 +138,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      if(c=="bodies:build"||c.StartsWith("bodies:build:",StringComparison.Ordinal))result=Build(cfg,scene,c.Length>13?c.Substring(13):"");
      else if(c=="place"||c=="revert")return PlaceOrRevert(cfg,scene,session,content,c=="place");
      else if(c=="swap:apply"||c.StartsWith("swap:apply:",StringComparison.Ordinal))return Swap(cfg,scene,session,content,true,c.Length>11?c.Substring(11):"");
-     else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots | swap:dry | swap:apply)";
+     else if(c=="attacks"||c=="attacks:revert")return Attacks(cfg,scene,session,content,c=="attacks");
+     else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots | swap:dry | swap:apply | attacks | attacks:revert)";
     }
     scene=SceneManager.GetActiveScene();
     if(scene.isDirty!=dirtyBefore||scene.rootCount!=rootsBefore)result+="\nWARNING the open scene changed during a command that must not touch it (dirty "+dirtyBefore+" -> "+scene.isDirty+", roots "+rootsBefore+" -> "+scene.rootCount+")";
@@ -824,6 +826,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     content.Encounters=rows.ToArray();session.Actors=(session.Actors??Array.Empty<PrologueEncounter>()).Concat(added).ToArray();
     sb.Append("\n  placed ").Append(added.Count).Append(" of ").Append(plan.enemies.Length+plan.bosses.Length).Append(" (").Append(string.Join(", ",per.OrderBy(k=>k.Key).Select(k=>k.Key+" "+k.Value))).Append(" + bosses ").Append(added.Count(a=>a.Id.StartsWith(cfg.boss_prefix,StringComparison.Ordinal))).Append("), scene references refilled ").Append(rewired);
     foreach(string s in left)sb.Append("\n  LEFT OUT ").Append(s);
+    sb.Append("\n  ").Append(RolesAfter(cfg,scene,content));
    }
    EditorUtility.SetDirty(content);AssetDatabase.SaveAssetIfDirty(content);EditorUtility.SetDirty(session);
    EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))return "FAILED the play scene was not saved";
@@ -869,6 +872,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    C(noRef.Length==0,"scene references refilled (player, player vitals, config) and profiles set - not: "+Names(noRef));
    var badProfile=actors.Where(a=>{var p=new SerializedObject(a.GetComponent<EnemyController>()).FindProperty("_attackProfile").objectReferenceValue as EnemyAttackProfileSO;return p==null||!p.TryValidate(out _)||a.PreferredDistance>p.Range;}).ToArray();
    C(badProfile.Length==0,"attack profiles valid, preferred distance inside the range - not: "+Names(badProfile));
+   string roles=RoleCheck(cfg,rows,actors,out bool rolesOk);C(rolesOk,roles);
    var bossActors=actors.Where(a=>a.Id.StartsWith(cfg.boss_prefix,StringComparison.Ordinal)).ToArray();
    C(cfg.bosses.All(b=>bossActors.Count(a=>a.Id==b.id)==1)&&bossActors.Length==cfg.bosses.Length,"the "+cfg.bosses.Length+" field bosses are there by their exact ids ("+string.Join(", ",bossActors.Select(a=>a.Id))+")");
    var bossBad=bossActors.Where(a=>{var v=a.GetComponent<EnemyVitals>();var r=rows.FirstOrDefault(x=>x.Id==a.Id);return v==null||!v.IsBoss||string.IsNullOrEmpty(v.DisplayName)||r==null||r.RespawnOnRest||a.PatrolPoints==null||a.PatrolPoints.Length!=1;}).ToArray();
