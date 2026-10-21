@@ -198,7 +198,8 @@ namespace Oheangbu.App.SpellVFX120
                     { c.S.Fine++; Born(ref c, 1); Reach(ref c, from + axis * (s * 2.2f)); }
                 }
             }
-            // D308-127: Armour (a lowered defence) keeps this picture until its own body-region drawing (the cracks) is built
+            // D308-127: with region marks bound (RegionMarks308SO) the stage takes Bound, Slowed, Exposed, Armour, Weakened and Blind
+            // off this chest mark and draws them on the body's parts; these pictures stay for a stage without that data
             if ((input.States & (PresentState308.Exposed | PresentState308.Armour)) != 0)
             {
                 // an opened cut beside the chest: two crossed lines and ink running out of it

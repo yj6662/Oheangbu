@@ -23,6 +23,8 @@ namespace Oheangbu.App
 
         // D308-127(TEST): 강화 띠 — 붓 위 세 자리에 감기는 버프 표시(표현 전용, 비어 있으면 띠 없음)
         public SpellVFX120.BuffBands308SO BuffBands308;
+        // D308-127(TEST): 약화 부위 — 적 몸의 부위에서 흘러내리는 먹(표현 전용, 비어 있으면 가슴 표식 그대로)
+        public SpellVFX120.RegionMarks308SO RegionMarks308;
 
         public bool TryGet(char letter, out Entry entry)
         {

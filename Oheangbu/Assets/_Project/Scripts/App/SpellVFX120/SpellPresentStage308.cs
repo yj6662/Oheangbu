@@ -59,6 +59,7 @@ namespace Oheangbu.App.SpellVFX120
         private Live[] _live;
         private CastSlot[] _casts;
         private InkPresentBody308[] _bodies;
+        private EnemyRegionMarks308 _regions;   // D308-127: the enemy's body-part marks (null = the chest mark draws every reading)
         private Delayed[] _delayed;
         private PresentOp308[] _ops, _freeOps;
         private DeployDrop308[] _hitScratch;
@@ -101,6 +102,7 @@ namespace Oheangbu.App.SpellVFX120
         public int ActiveBodies { get { int n = 0; if (_bodies != null) foreach (var body in _bodies) if (body != null && body.Busy) n++; return n; } }
         public InkPresentBody308 BodyAt(int index) => _bodies != null && index >= 0 && index < _bodies.Length ? _bodies[index] : null;
         public int BodySlots => _bodies != null ? _bodies.Length : 0;
+        public EnemyRegionMarks308 Regions308 => _regions;
         private float Now => _manualClock ? _manualNow : Time.time;
 
         /// <summary>sheet = null: Resources/Deploy308/SpellPresent308Sheet, else the code defaults. wiring = null in checks.</summary>
@@ -184,6 +186,7 @@ namespace Oheangbu.App.SpellVFX120
                 _casts[i].Busy = false;
             }
             foreach (var body in _bodies) if (body != null) body.Hide();
+            if (_regions != null) _regions.EndAll();
             _pendingCount = 0;
         }
 
@@ -589,6 +592,18 @@ namespace Oheangbu.App.SpellVFX120
             Camera camera = _host.ViewCamera;
             Vector3 eye = camera != null ? camera.transform.position : transform.position + Vector3.up * EyeHeight;
             foreach (var body in _bodies) if (body != null && body.Busy) body.Sample(now, eye);
+            if (_regions != null) _regions.Sample(now, eye);
+        }
+
+        // D308-127: the region marks, made when the bound visual set names its data (rebuilt if that changes)
+        private EnemyRegionMarks308 RegionsReady()
+        {
+            var data = _visuals != null ? _visuals.RegionMarks308 : null;
+            if (data == null || data.Material == null) return null;
+            if (_regions != null && _regions.Data == data) return _regions;
+            if (_regions != null) _regions.Destroy();
+            _regions = new EnemyRegionMarks308(transform, data, _profile.RenderLayer);
+            return _regions;
         }
 
         // ---- what a spell left on an enemy: read from the enemy, shown as a mark it carries ----
@@ -615,6 +630,14 @@ namespace Oheangbu.App.SpellVFX120
                     if (_wiring.SummonCombat != null) state |= (PresentState308)_wiring.SummonCombat.Mark308(enemy);
                 }
                 Transform carrier = enemy.transform;
+                // D308-127: the body-part readings go to their parts; the chest mark keeps the guard, the root and the brand
+                var regions = RegionsReady();
+                if (regions != null)
+                {
+                    Measure(carrier, out _, out float standOff);
+                    regions.Watch(carrier, state, standOff, now);
+                    state &= ~RegionMarks308SO.RegionBits;
+                }
                 int b = -1;
                 for (int k = 0; k < _bodies.Length; k++)
                     if (_bodies[k] != null && _bodies[k].Busy && !_bodies[k].Melting && _bodies[k].Form == PresentBody308.MarkState && _bodies[k].Carrier == carrier) { b = k; break; }
@@ -783,6 +806,7 @@ namespace Oheangbu.App.SpellVFX120
                     DestroyNow(_bodies[i].gameObject);
                     _bodies[i] = null;
                 }
+            if (_regions != null) { _regions.Destroy(); _regions = null; }
             if (_ownsSheet && _sheet != null) DestroyNow(_sheet);
             _sheet = null; _ownsSheet = false; _configured = false;
         }
