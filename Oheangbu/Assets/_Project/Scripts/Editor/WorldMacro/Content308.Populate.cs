@@ -287,7 +287,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    var kinds=(cfg?.kinds??Array.Empty<PopKind308>()).Where(k=>k!=null&&!string.IsNullOrEmpty(k.profile)).ToArray();
    if(kinds.Length>0&&rows.Length>0)
    {
-    var bad=new List<string>();int armed=0;
+    var bad=new List<string>();int armed=0,patched=0;
     foreach(var r in rows)
     {
      var k=PopKindFor308(cfg,r.Id,r.ContentId);if(k==null)continue;armed++;var a=actors.FirstOrDefault(x=>x.Id==r.Id);var ctrl=a!=null?a.GetComponent<EnemyController>():null;
@@ -302,8 +302,10 @@ namespace Oheangbu.EditorTools.WorldMacro
      else if(!string.IsNullOrEmpty(k.projectile)&&(proj==null||AssetDatabase.GetAssetPath(proj)!=k.projectile))why="projectile "+(proj!=null?AssetDatabase.GetAssetPath(proj):"none");
      else if((p.Delivery==EnemyAttackDelivery.HomingProjectile||p.Delivery==EnemyAttackDelivery.AimedProjectile)&&proj==null)why=p.Delivery+" without a projectile";   // an eruption needs none
      else if(p.Delivery==EnemyAttackDelivery.GroundEruption&&!(a.GetComponent<Oheangbu.App.Demo.EnemyAttackPresentation>() is var gfx&&gfx!=null&&gfx.HasAllSources&&gfx.GroundElement==p.Element))why="eruption without its "+p.Element+" ground cue";
+     if(why==null&&p.Patch!=null){patched++;if(p.Patch.Look308==null||p.Patch.ScorchLook308==null)why="patch "+p.Patch.name+" without its look";}   // D308-125 5 (c): an armed patch is never invisible
      if(why!=null)bad.Add(r.Id.Substring(PopPrefix308.Length)+" ("+why+")");
     }
+    C(patched>=1,"D308-125 ember patch: "+patched+" armed actors lay a ground patch (the main world needs at least one)");
     var unused=kinds.Where(k=>!rows.Any(r=>PopKindFor308(cfg,r.Id,r.ContentId)==k)).Select(k=>k.contentId).ToArray();
     C(bad.Count==0&&unused.Length==0,"D308-125 armed kinds: "+armed+" actors carry their kind's profile / projectile / Ranged / stop distance"+(bad.Count>0?" - wrong: "+string.Join(", ",bad):"")+(unused.Length>0?" - kinds that arm no row: "+string.Join(", ",unused):""));
     var guards=content.GuardBrains??Array.Empty<WorldMacroPlaytestSO.GuardBrain308>();
