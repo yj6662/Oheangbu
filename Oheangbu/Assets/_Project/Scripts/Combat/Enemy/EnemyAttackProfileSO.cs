@@ -34,6 +34,9 @@ namespace Oheangbu.Combat
         // #308 D308-125 적용 4 (Charge only, TEST): what a charger does while it cannot start its run (묵's circle, no straight path):
         // it closes in and lands this melee arc once, then goes back to the charge. null = it only waits.
         public EnemyAttackProfileSO Fallback;
+        // #308 D308-125 적용 5 (GroundEruption only, TEST): the ember patch each burst leaves where it landed, hit or miss
+        // (a parried burst leaves none). null = nothing stays on the ground.
+        public EnemyGroundPatchSO Patch;
 
         // TEST starting data only. Each asset is independent; shared CombatConfig is never edited.
         public void ApplyDefaults(EnemyArchetype archetype)
@@ -83,6 +86,8 @@ namespace Oheangbu.Combat
             if (Fallback != null && (Delivery != EnemyAttackDelivery.Charge || Fallback == this || Fallback.Delivery != EnemyAttackDelivery.MeleeArc ||
                 Fallback.Fallback != null || !(Fallback.Range <= Range) || !Fallback.TryValidate(out _)))
             { error = "A fallback belongs to a charge and must be a valid melee arc within its range, without a fallback of its own"; return false; }
+            if (Patch != null && Delivery != EnemyAttackDelivery.GroundEruption) { error = "A ground patch belongs to a ground eruption"; return false; }
+            if (Patch != null && !Patch.TryValidate(out string patchError)) { error = patchError; return false; }
             error = null; return true;
         }
     }

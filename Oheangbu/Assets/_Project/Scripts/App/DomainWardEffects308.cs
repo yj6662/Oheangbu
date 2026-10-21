@@ -48,6 +48,7 @@ namespace Oheangbu.App
         public float Incoming(IncomingDamageKind kind)
         {
             if (_bound == null || !_inside) return 1f;
+            if (kind == IncomingDamageKind.Lingering) return 1f;   // #308 D308-125 적용 5: burning ground is walked out of, not warded
             if (_elementalOnly && kind != IncomingDamageKind.ElementalMelee && kind != IncomingDamageKind.ElementalRanged) return 1f;
             return _scale;
         }

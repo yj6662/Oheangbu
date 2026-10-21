@@ -134,7 +134,7 @@ namespace Oheangbu.App
             EABuffs?.Dispose();
             EABuffs = profile != null ? new EABuffRuntime(profile, _playerVitals, this, unlocked, Time.time) : null;
         }
-        private void OnDestroy() { EABuffs?.Dispose(); EABuffs = null; EAWards?.Dispose(); EAWards = null; EAGiyeok?.Dispose(); EAGiyeok = null; }
+        private void OnDestroy() { EABuffs?.Dispose(); EABuffs = null; EAWards?.Dispose(); EAWards = null; EAGiyeok?.Dispose(); EAGiyeok = null; ClearPatches308(); }
         public IReadOnlyList<EnemyVitals> SummonTargets => _targets;
         public EnemyVitals SummonLockTarget => _lockOn != null ? _lockOn.Target : null;
         public Transform SummonPlayer => _playerTransform != null ? _playerTransform : transform;
@@ -214,6 +214,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
             if (_playerVitals != null) _playerVitals.HpChanged += RefreshHud;
             if (_playerVitals != null) _playerVitals.Died += OnPlayerDied;
+            if (_playerVitals != null) _playerVitals.Spared308 += OnSpared308;   // #308 D308-125 적용 5
             if (_lockOn != null) _lockOn.Changed += RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed += OnHarvestChunkAbsorbed;
             TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
@@ -232,6 +233,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
             if (_playerVitals != null) _playerVitals.HpChanged -= RefreshHud;
             if (_playerVitals != null) _playerVitals.Died -= OnPlayerDied;
+            if (_playerVitals != null) _playerVitals.Spared308 -= OnSpared308;
             if (_lockOn != null) _lockOn.Changed -= RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed -= OnHarvestChunkAbsorbed;
             UnhookServices();
@@ -242,6 +244,7 @@ namespace Oheangbu.App
             foreach (var effect in _contacts) if (effect != null) Destroy(effect.gameObject);
             _contacts.Clear();
             ClearStains308();
+            ClearPatches308();
         }
 
         private bool _hooked;
@@ -251,6 +254,7 @@ namespace Oheangbu.App
             TryHookServices();
             EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
             TickSpells308();
+            TickPatches308(Time.time);   // #308 D308-125 적용 5: after the spells (온's wave this frame wipes before the feet burn)
             TickSwing308();
             TickPendingCasts();
             TickInkRegen();
@@ -293,6 +297,7 @@ namespace Oheangbu.App
             _judge.OwnedImpactResolved += OnOwnedParryImpactResolved;
             foreach (var target in _targets)
                 if (target != null) { target.CombatStateChanged += RefreshHud; target.DamageResolved += OnTargetDamageResolved; }
+            HookPatches308();
             _hooked = true;
         }
 
@@ -304,6 +309,7 @@ namespace Oheangbu.App
             if (_judge != null) _judge.OwnedImpactResolved -= OnOwnedParryImpactResolved;
             foreach (var target in _targets)
                 if (target != null) { target.CombatStateChanged -= RefreshHud; target.DamageResolved -= OnTargetDamageResolved; }
+            UnhookPatches308();
             _hooked = false;
         }
 
@@ -472,7 +478,7 @@ namespace Oheangbu.App
         }
 
         private bool TrySpendSpell(float cost, in SpellCast cast) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f) * CostScale308(cast));
-        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ResetEncounterGroggy(); ClearBossEngagement(); }
+        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ClearPatches308(); ResetEncounterGroggy(); ClearBossEngagement(); }
         private void ResolveWard(SpellCast cast)
         {
             if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost, cast))
