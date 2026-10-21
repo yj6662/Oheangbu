@@ -38,6 +38,8 @@ namespace Oheangbu.App
             builder.RegisterInstance<ISpellUnlocks>(_macroPlaytest!=null ? (ISpellUnlocks)_macroPlaytest : _labUnlocks!=null ? _labUnlocks : new LockedSpellUnlocks308());
             // #308 spell deploy layer (SPEC-SPELL-DEPLOY-308): boots only when its profile exists and its master switch is on
             builder.RegisterBuildCallback(resolver => resolver.Resolve<CombatLoopWiring>().BootDeploy308());
+            // #308 D308-125 5 (c): the look of the ember patches and the scorch (presentation only)
+            builder.RegisterBuildCallback(resolver => resolver.Resolve<CombatLoopWiring>().BootEmberLook308());
         }
     }
 }

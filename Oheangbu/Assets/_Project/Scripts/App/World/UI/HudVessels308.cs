@@ -36,6 +36,8 @@ namespace Oheangbu.App.World.UI
         float lowInkThreshold = -1f, inkCost01;
         float userScale = 1f;
         bool reducedMotion, hidden, previewing, built;
+        VesselSmoke308 smoke;                                 // D308-125 5 (c): soot in the HP vessel's head while scorched
+        float smokeTarget, topTarget = 1f, smokeNow;
 
         public HudLiquid308ProfileSO Profile => profile;
         public InkVesselGraphic308 Hp => hp;
@@ -43,6 +45,7 @@ namespace Oheangbu.App.World.UI
         public InkVesselGraphic308 MarkDodge => markDodge;
         public InkVesselGraphic308 MarkJump => markJump;
         public InkVesselGraphic308 MarkVehicle => markVehicle;
+        public VesselSmoke308 Smoke => smoke;
         public LiquidState308 HpState => hpState;
         public LiquidState308 InkState => inkState;
         public HudMarkView308 DodgeView => viewDodge;
@@ -79,6 +82,11 @@ namespace Oheangbu.App.World.UI
             // fallback quad span in rect-height shares (quad uv -> rect uv)
             float q = atlas.QuadRef.y, m = atlas.MarginPx;
             var span = new Vector2((atlas.FloorUv * q - m) / Mathf.Max(1f, q - 2f * m), (atlas.FullUv * q - m) / Mathf.Max(1f, q - 2f * m));
+            // D308-125 5 (c): the soot is drawn just before the HP vessel - its liquid covers the soot below the surface
+            var soot = V.Rect("HP_Soot308", rect, l.Hp.x, l.Hp.y, l.Hp.width, l.Hp.height);
+            self.smoke = soot.gameObject.AddComponent<VesselSmoke308>();
+            self.smoke.raycastTarget = false;
+            self.smoke.Configure(profile.Smoke308, profile.Material, profile.AtlasTexture, outset);
             self.hp = Element(profile, rect, "HP_BrushStroke", l.Hp, style.Cinnabar, outset, span);
             self.ink = Element(profile, rect, "Ink_BrushBar", l.Ink, style.Ink, outset, span);     // drawn after HP: in front where they touch
             // a mark quad is its rect + the atlas cell's margin on every side: the paper rim spills past the 44 px rect, uncut
@@ -162,6 +170,15 @@ namespace Oheangbu.App.World.UI
             LiquidSim308.Jolt(ref hpState, ref inkState, in hpParams, in inkParams, strength);
         }
 
+        /// <summary>D308-125 5 (c), from EmberPatchLook308: the scorch's strength 0..1 (0 = not scorched) and its seconds left.
+        /// Soot fills the HP vessel's head while scorched; in the last second its top sinks from the neck to the floor, and a
+        /// wash or the end clears it within .3 s.</summary>
+        public void SetScorch01(float scorch01, float secondsLeft)
+        {
+            smokeTarget = scorch01 > 0f ? 1f : 0f;
+            if (scorch01 > 0f) topTarget = Mathf.Clamp01(secondsLeft);   // once it ends the top stays where it was while the soot leaves
+        }
+
         /// <summary>Cost of the stroke being drawn as a share of the full vessel; 0 hides the line.</summary>
         public void SetInkCostPreview(float cost01) { inkCost01 = Mathf.Clamp01(cost01); }
 
@@ -225,6 +242,14 @@ namespace Oheangbu.App.World.UI
             float real = Mathf.Min(Time.unscaledDeltaTime, motion.MaxDt);
             float dt = motion.FreezeWhenPaused && Time.timeScale <= 0f ? 0f : real;
             bool reduced = reducedMotion;
+
+            // ---- soot (D308-125 5 (c)): comes in over .2 s, leaves over .3 s; it only answers the scorch
+            if (smoke != null)
+            {
+                float rate = smokeTarget > smokeNow ? 1f / .2f : 1f / .3f;
+                smokeNow = Mathf.MoveTowards(smokeNow, smokeTarget, real * rate);
+                smoke.Set(smokeNow, topTarget);
+            }
 
             // ---- impact frame (D308-10b): one kick when it begins, value light while its cells run.
             // Only the STRENGTH travels to the shader; the side the light comes from is taken there, per pixel, from the live

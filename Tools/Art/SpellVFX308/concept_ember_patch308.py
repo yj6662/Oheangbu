@@ -77,8 +77,49 @@ Copy the two liquid jars from picture 1 at the lower left (red health liquid, bl
 }
 
 
+# --- round 2 (debate 8, Codex + Fable): the merged direction at the true camera geometry ------------------------------
+GRID = """--- LAYOUT ---
+The image is a 2 x 2 grid of four equal 16:9 panels (reading order: top-left, top-right, bottom-left, bottom-right), separated by thin plain paper-coloured gaps, all with the identical camera."""
+
+GEOMETRY = """--- TRUE SIZE ---
+The camera is at 1.7 m eye height. The patch centre lies on the ground 4 m ahead; the patch is 2.7 m across, so its near edge is about 2.65 m and its far edge about 5.35 m from the viewer. Draw it at that true size and foreshortening (seen from about 23 degrees above the ground)."""
+
+MERGED = """The patch is a flat, matte, soot-black char pool exactly filling the 2.7 m circle, darker than the rust-red earth, with a crisp dry-brush outer rim that runs unbroken around the whole circle (small bristle gaps are fine, no missing stretches). Along that rim, just inside it, stands a ring of 10 to 14 separate low flame tongues with gaps between them, each a single bold vermilion red-ink brush stroke turning soot-black and split at its tip, at most 35 cm high, leaning slightly up and inward, never reaching outside the rim. Inside the circle only 3 or 4 short sparse tongues (under 15 cm) and at most three thin soot wisps. NO red cracks or veins, NO continuous red surface anywhere (it must never read as lava), NO tall smoke column, NO white ash."""
+
+SCORCH_SCENE2 = """--- THE SHOT ---
+First-person game view on a rust-red earth slope of 적로 with burnt black trees and a pale grey-green sky, framed exactly like picture 1: ONLY the player's right hand gripping the long brush shaft at the lower right, with the dark sleeve cuff at the bottom-right corner. There is NO left arm, NO left hand and NO left sleeve anywhere in the frame. The brush tip is clean ink-black and nothing comes off it. At the lower left are the game's two liquid jars from picture 1 (red health liquid, black ink liquid): copy them and no other interface element. The centre of the screen, where an enemy stands about 8 m ahead, stays completely clear. The player has just stepped out of a patch of burning ground and is SCORCHED: for 4 seconds they keep burning wherever they go. The player must understand without any text: I am burning, it is still going, it is about to end."""
+
+ROUND2 = {
+    'p_e_merged': ('patch', """--- THE PATCH (round 2): a ring of low tongues on a black char pool ---
+""" + MERGED + """
+Panel 1 (0.3 s after the burst): the black pool has just spread to the full rim and the rim tongues spring up together.
+Panel 2 (3 s): full strength: the ring of tongues on the unbroken black rim, clearly a burning circle.
+Panel 3 (5.5 s, about to end): the rim tongues are half as many and half as tall, their red tips mostly dried to soot, but the black pool and its rim still hold exactly the same circle.
+Panel 4 (just after 6 s, over): no tongues and no red at all; a ring of warm grey ash stubs (#867C6B, NOT white) where the tongues stood and a faint motionless soot stain, already fading into the earth."""),
+    'p_f_wiped': ('patch', """--- THE PATCH WIPED BY 온 (the player's water wave) ---
+The patch: """ + MERGED + """
+온 is a low sheet of dark wet ink-water (blue-black ink, matte, never shiny, no foam highlights) sweeping along the ground away from the viewer.
+Panel 1: the patch burns at full strength; the leading edge of the ink-water wave reaches its near rim.
+Panel 2: the wave passes over the patch: the tongues are pressed flat and collapse inward toward the centre, their red turning at once to wet black ink; the char pool blurs and bleeds like wet ink on paper.
+Panel 3: half a second later the wave has passed: no tongues, no red; only a wet, darker, slightly spread grey-black stain with soft bled edges where the patch was.
+Panel 4: two seconds later: the stain has nearly sunk into the red earth; nothing burns."""),
+    's_e_merged': ('scorch', """--- THE SCORCH (round 2): the right hand smoulders, the health jar clouds ---
+On the back of the right hand and the right cuff: 3 or 4 flat strokes of vermilion red pigment ink (#B8432F, matte) like a burn painted on the knuckles and cloth. From the knuckles and the cuff rise at most three thin matte soot wisps (#3E362C fading to #867C6B) that drift up and off to the right edge of the frame, never higher than a quarter of the screen and never crossing toward the centre. Inside the glass of the red health jar only, grey soot smoke swirls above the liquid; nothing comes out of the jar's mouth; the red liquid level is the same in every panel.
+Panel 1 (0.3 s after catching): the red strokes flash onto the knuckles and cuff, the first wisp curls up, smoke begins to rise inside the jar from the bottom.
+Panel 2 (2 s, full): red strokes, three wisps, the jar's glass clouded with smoke above the liquid.
+Panel 3 (3.8 s, just before it ends): the strokes have dried mostly to soot-black, one single short wisp, the jar's smoke clearing from the top down.
+Panel 4 (washed off by 운, the player's water ring, at 2 s): the wisps are cut off at once, the red strokes are washed to a wet grey smear running down the back of the hand, the jar's smoke is gone; 2 m ahead on the ground the ember patch the player stepped out of is still burning with its low red-ink tongues."""),
+}
+
+
 def prompt(pid):
-    if pid in PATCH:
+    if pid in ROUND2:
+        kind, body = ROUND2[pid]
+        if kind == 'patch':
+            parts = [HEAD, PATCH_REF, INK, PATCH_SCENE, GEOMETRY, GRID, body, BAN % '']
+        else:
+            parts = [HEAD, SCORCH_REF, INK, SCORCH_SCENE2, GRID, body, BAN % '']
+    elif pid in PATCH:
         parts = [HEAD, PATCH_REF, INK, PATCH_SCENE, STRIP % PATCH_TIMES, PATCH[pid], BAN % '']
     else:
         hud = '' if pid == 's_d_health_jar' else ' No HUD of any kind.'
@@ -87,11 +128,12 @@ def prompt(pid):
 
 
 def refs(pid):
-    return [GROUND, FIRE] if pid in PATCH else [FP, FIRE]
+    kind = ROUND2[pid][0] if pid in ROUND2 else ('patch' if pid in PATCH else 'scorch')
+    return [GROUND, FIRE] if kind == 'patch' else [FP, FIRE]
 
 
 def main():
-    ids = [a for a in sys.argv[1:] if not a.startswith('--')] or list(PATCH) + list(SCORCH)
+    ids = [a for a in sys.argv[1:] if not a.startswith('--')] or list(PATCH) + list(SCORCH) + list(ROUND2)
     OUT.mkdir(parents=True, exist_ok=True)
     for pid in ids:
         (OUT / f'{pid}.prompt.txt').write_text(prompt(pid), encoding='utf-8')

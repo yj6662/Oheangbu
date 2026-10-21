@@ -150,6 +150,10 @@ namespace Oheangbu.App.World
         public string BindingError { get; private set; }
         public Transform EffectTip => _effectTip;
         public Transform WorldTip => _worldTipSocket;
+        // D308-125 5 (c): the ember scorch follows whichever right hand is on screen (read only, presentation)
+        public Transform NearHand308 => _near != null ? _near.Hand : null;
+        public Transform WorldHand308 => _world != null ? _world.Hand : null;
+        public int NearLayer308 { get { foreach (var r in _nearRenderers) if (r != null) return r.gameObject.layer; return -1; } }
 
         public void Configure(WorldMacroPlayerGestureProfile profile, Animator animator,
             PlayerMotor motor, CharacterController controller, DrawingInputController drawing,
