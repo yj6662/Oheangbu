@@ -64,8 +64,8 @@ namespace Oheangbu.App
         protected override bool Mark(PlayerDomainState308 state, in SpellZone308 zone) => state.HoldDrain(zone.Token, zone.Until);
     }
 
-    // 숨: the player inside cannot be pushed or pulled. No enemy pushes or pulls the player yet: the entry is written and
-    // waits for its reader (Gate test until a pushing enemy exists).
+    // 숨: the player inside cannot be pushed or pulled. The reader is CombatLoopWiring.Shove308 (D308-129): the 적로 불승냥이
+    // charge's push neither starts inside nor goes on once the player stands inside; the damage is unchanged.
     public sealed class DomainAnchorEffect308 : DomainSelfEffect308
     {
         public const string HandlerId = "domain.anchor";

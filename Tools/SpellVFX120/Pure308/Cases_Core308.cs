@@ -119,9 +119,21 @@ namespace Pure308
             r.Fact("testOnlyRows", string.Join(" ", testOnly.Select(x => x.Index + ":" + x.Handler)));
             // grid cell 94 = metal u + mieum (the domain that keeps the player from being pushed): an enemy / world dependent row behind a
             // final the main game grants. No glyph is named: the cell is found by its number, the rule by the sheet's Gate column.
-            // Cell 50 = earth a + giyeok (the rock that stays as cover), cell 77 = metal a + siot (the hit that goes through a guard) and
-            // cell 66 = earth o + ieung (the cloud that blinds an enemy's brain) were this case's row until they left the TEST gate (R125, S125, H125).
-            var anchor = c.RowAt(94);
+            // Cell 50 = earth a + giyeok (the rock that stays as cover), cell 77 = metal a + siot (the hit that goes through a guard),
+            // cell 66 = earth o + ieung (the cloud that blinds an enemy's brain) and cell 94 itself left the TEST gate on their main-world
+            // consumers (R125, S125, H125, D308-129 P129). No shipped row is TEST now: the TEST-only rule runs on a check-only copy of the
+            // live sheets in which cell 94's row carries Gate test (never imported, never one of the 120).
+            var liveAnchor = c.RowAt(94);
+            r.Check("A5", testOnly.Length == 0 && liveAnchor != null && liveAnchor.Gate != SpellGateMode.Test && Status(liveAnchor, normal) == SpellResolveStatus.Ok,
+                "D308-129: no shipped row is TEST-only; the anchor domain resolves on a normal save that earned the mieum final", string.Join(" ", testOnly.Select(x => x.Index)));
+            string anchorLine = liveAnchor.Letter + ",new,domain.anchor,,,,";
+            var synthetic = c.Sheets.Select(s => s.Text.Contains("\n" + anchorLine) ? new SpellSheet308(s.Name, s.Text.Replace("\n" + anchorLine, "\n" + liveAnchor.Letter + ",new,domain.anchor,,,test,")) : s).ToList();
+            var testBuild = SpellTableBuilder308.Build(c.CanonicalCsv, synthetic, c.UnlockCsv);
+            if (!r.Check("A5", testBuild.Ok && synthetic.Count(s => !c.Sheets.Contains(s)) == 1, "the check-only copy marks exactly one sheet's anchor row test and builds")) return;
+            rows = testBuild.Rows;
+            testOnly = rows.Where(x => x.Gate == SpellGateMode.Test).ToArray();
+            ids = new HashSet<string>(rows.Where(x => x.HasHandler).Select(x => x.Handler));
+            var anchor = rows.First(x => x.Index == 94);
             var blind = c.RowAt(66);
             var thrust = c.RowAt(77);
             var rock = c.RowAt(50);
@@ -133,7 +145,7 @@ namespace Pure308
             // guarding field enemies (S125); the blind row 66 on the main world's searching field brains (H125).
             r.Check("A5", testOnly.Select(x => x.Index).SequenceEqual(new[] { 94 }) && testOnly.Contains(anchor) && anchor.Final == SpellFinal.Mieum && !testOnly.Contains(rock) && !testOnly.Contains(thrust) && !testOnly.Contains(blind) &&
                 testOnly.All(x => x.HasHandler && x.Feature == SpellLegacyFeature.None && x.Final != SpellFinal.None),
-                "#308b: one row is TEST-only, the enemy / world dependent row still without a main-world target (the anchor domain behind the mieum final)", string.Join(" ", testOnly.Select(x => x.Index)));
+                "#308b (check-only copy): one row is TEST-only, an enemy / world dependent row behind a main-game final (the anchor domain behind the mieum final)", string.Join(" ", testOnly.Select(x => x.Index)));
             r.Check("A5", c.Build.Unlocks.Any(u => u.Final == anchor.Final && u.GrantedInMain) && Status(anchor, normal) == SpellResolveStatus.Locked,
                 "a normal save cannot resolve it: with the campaign running, its final granted in the main game, the ledger id recorded and every evidence complete it is Locked (the misfire)",
                 Status(anchor, normal).ToString());

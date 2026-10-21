@@ -37,6 +37,11 @@ namespace Oheangbu.Combat
         // #308 D308-125 적용 5 (GroundEruption only, TEST): the ember patch each burst leaves where it landed, hit or miss
         // (a parried burst leaves none). null = nothing stays on the ground.
         public EnemyGroundPatchSO Patch;
+        // #308 D308-129 (토론 17, TEST): a hit of this profile that lands (past a dodge's invulnerability) pushes the player
+        // ShoveDistance m over ShoveSeconds s along the attacker's facing (PlayerMotor.Shove308; 숨 keeps the player in place).
+        // 0 = no push. The App reads the attacker's current profile, so a charge's Fallback bite pushes only with its own values.
+        [Min(0f)] public float ShoveDistance;
+        [Min(0f)] public float ShoveSeconds;
 
         // TEST starting data only. Each asset is independent; shared CombatConfig is never edited.
         public void ApplyDefaults(EnemyArchetype archetype)
@@ -88,6 +93,8 @@ namespace Oheangbu.Combat
             { error = "A fallback belongs to a charge and must be a valid melee arc within its range, without a fallback of its own"; return false; }
             if (Patch != null && Delivery != EnemyAttackDelivery.GroundEruption) { error = "A ground patch belongs to a ground eruption"; return false; }
             if (Patch != null && !Patch.TryValidate(out string patchError)) { error = patchError; return false; }
+            if (!float.IsFinite(ShoveDistance) || ShoveDistance < 0 || !float.IsFinite(ShoveSeconds) || ShoveSeconds < 0 || (ShoveDistance > 0) != (ShoveSeconds > 0))
+            { error = "A shove needs both a distance and a time (or neither)"; return false; }
             error = null; return true;
         }
     }

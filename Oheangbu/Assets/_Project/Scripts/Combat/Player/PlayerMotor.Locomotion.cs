@@ -103,7 +103,7 @@ namespace Oheangbu.Combat
         }
         private void ResetLocomotion()
         {
-            _dodge?.Cancel();
+            _dodge?.Cancel(); CancelShove308(); _shoveLock308 = 0f;
             _planarVelocity = _actualLocalVelocity = Vector3.zero; _sitTarget = _posture = _crouch = _crouchTarget = _actualYawSpeed = 0f;
             _jumping = false; _rolling = false; _standBlocked = false; _grounded = _controller != null && _controller.enabled && _controller.isGrounded;
             _sprintLatched = false; _sprintIdle = 0f;
@@ -223,6 +223,7 @@ namespace Oheangbu.Combat
             _planarVelocity = Vector3.MoveTowards(_planarVelocity, desired, rate * dt);
             Vector3 planar = _planarVelocity;
             if (IsLocomotionGrounded && !IsSitting && _dodge != null && _dodge.TryGetDashVelocity(out Vector3 dash)) planar = dash * Mathf.Clamp01(TerrainMovementScale);
+            planar = StepShove308(planar, dt);   // #308 D308-129: an outside push replaces walking; a dash ends it
 
             float verticalMove;
             if (IsLocomotionGrounded && _verticalVelocity <= 0f)
@@ -236,6 +237,7 @@ namespace Oheangbu.Combat
             Vector3 before = transform.position;
             CollisionFlags flags = _controller.Move(planar * dt + Vector3.up * verticalMove);
             if ((flags & CollisionFlags.Above) != 0 && _verticalVelocity > 0f) _verticalVelocity = 0f;
+            if ((flags & CollisionFlags.Sides) != 0 && IsShoved308) CancelShove308();   // a wall stops the push; it does not keep pressing
             bool nowGrounded = (flags & CollisionFlags.Below) != 0 && _verticalVelocity <= 0f;
             if (!nowGrounded && _verticalVelocity <= 0f && ProbeGround(out support) && GroundGap(support) <= .045f) nowGrounded = true;
             if (!wasGrounded && nowGrounded) { _landSerial++; _needsHarvestRelease = true; }

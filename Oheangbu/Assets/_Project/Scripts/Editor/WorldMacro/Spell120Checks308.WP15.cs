@@ -183,13 +183,17 @@ namespace Oheangbu.EditorTools.WorldMacro
 
             // ---- a TEST-only row (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST
             // target). A normal save that earned its final opens the other rows of that final, never this one. The rock row, the thrust
-            // row and then the blind row held this case until the main world gave each its consumer (D308-125 R125, S125, H125); the
-            // anchor domain (grid cell 94, metal u + mieum: no enemy pushes or pulls the player yet) holds it now, beside the spring
-            // domain of the same final (cell 118, water u + mieum).
+            // row, the blind row and the anchor row held this case until the main world gave each its consumer (D308-125 R125, S125,
+            // H125, D308-129 P129); no shipped row is TEST now, so the case runs on a fixture-only sheet: the anchor domain (grid cell
+            // 94, metal u + mieum) as its WP-17 row with Gate test, beside the spring domain of the same final (cell 118, water u +
+            // mieum). The sheet lives in this check alone (never imported, never one of the 120).
             char anchor = SpellGrammar308.LetterAt(94), spring = SpellGrammar308.LetterAt(118);
             if (r.Wants(anchor.ToString()))
             {
-                using (var g = NewFixture(r, effects, WP15Sheets.Append("Rules308_WP17")))
+                var testOnly = new SpellSheet308("Rules308_ZZTestOnly", RuleHeader +
+                    anchor + ",new,domain.anchor,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6\n" +
+                    spring + ",new,domain.regen,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=10;domain.scale=2\n");
+                using (var g = NewFixture(r, effects, WP15Sheets, testOnly))
                 {
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled);
                     g.Resolver.TryRow(anchor, out var anchorRow); g.Resolver.TryRow(spring, out var springRow);   // the spring: a row of the same final that the main game does open

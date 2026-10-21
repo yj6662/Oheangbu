@@ -215,6 +215,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.HpChanged += RefreshHud;
             if (_playerVitals != null) _playerVitals.Died += OnPlayerDied;
             if (_playerVitals != null) _playerVitals.Spared308 += OnSpared308;   // #308 D308-125 적용 5
+            HookShove308();                                                        // #308 D308-129
             if (_lockOn != null) _lockOn.Changed += RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed += OnHarvestChunkAbsorbed;
             TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
@@ -234,6 +235,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.HpChanged -= RefreshHud;
             if (_playerVitals != null) _playerVitals.Died -= OnPlayerDied;
             if (_playerVitals != null) _playerVitals.Spared308 -= OnSpared308;
+            UnhookShove308();
             if (_lockOn != null) _lockOn.Changed -= RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed -= OnHarvestChunkAbsorbed;
             UnhookServices();
