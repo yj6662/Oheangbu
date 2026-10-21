@@ -21,6 +21,9 @@ namespace Oheangbu.App
 
         [SerializeField] private Entry[] _entries = Array.Empty<Entry>();
 
+        // D308-127(TEST): 강화 띠 — 붓 위 세 자리에 감기는 버프 표시(표현 전용, 비어 있으면 띠 없음)
+        public SpellVFX120.BuffBands308SO BuffBands308;
+
         public bool TryGet(char letter, out Entry entry)
         {
             foreach (var e in _entries)

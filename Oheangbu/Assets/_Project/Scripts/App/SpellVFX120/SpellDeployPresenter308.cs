@@ -37,6 +37,13 @@ namespace Oheangbu.App.SpellVFX120
             _visuals = visuals;
             _wiring = owner != null ? owner.GetComponent<CombatLoopWiring>() : null;
             _fallback.Bind(visuals, owner);
+            // D308-127: the buff bands read the buff stores themselves (the EA buffs never pass this presenter)
+            if (Application.isPlaying && _wiring != null && visuals != null && visuals.BuffBands308 != null)
+            {
+                var bands = owner.GetComponent<AuraBrushBands308>();
+                if (bands == null) bands = owner.gameObject.AddComponent<AuraBrushBands308>();
+                bands.Bind(new WiringBandSource308(_wiring), visuals.BuffBands308);
+            }
         }
 
         // The stage lives on the layer's director, which the wiring boots after this object was injected: looked up per call.
