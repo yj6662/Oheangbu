@@ -49,10 +49,14 @@ namespace Pure308
             string Common(SpellRow x) => x.BasePower + "|" + string.Join("|", keys.Select(k => x.F(k, -1f).ToString(System.Globalization.CultureInfo.InvariantCulture)));
             var open = new ModelGate { Registered = new HashSet<string> { WP14HandlerId }, Unlocked = new HashSet<SpellFinal> { SpellFinal.Siot } };
             var shut = new ModelGate { Registered = new HashSet<string> { WP14HandlerId } };
+            // the canonical text carries the common clauses on the wood row; since D308-127 (TEST) the wood form is the spear and
+            // the earth form the axe (Cases_Weapon127), so the common sword numbers are read from the metal row (the twin swords)
             var wood = rows.Single(x => x.Element == Element.Wood);
-            float reach = wood.F("sword.reach", 0f), arc = wood.F("sword.arc", 0f), interval = wood.F("sword.interval", 0f), drain = wood.F("sword.drain", 0f);
-            float lockScale = wood.F("draw.lock", 0f);
-            int hits = (int)wood.F("groggy.hits", 0f), steps = (int)wood.F("groggy.steps", 0f);
+            var earth = rows.Single(x => x.Element == Element.Earth);
+            var sword = rows.Single(x => x.Element == Element.Metal);
+            float reach = sword.F("sword.reach", 0f), arc = sword.F("sword.arc", 0f), interval = sword.F("sword.interval", 0f), drain = sword.F("sword.drain", 0f);
+            float lockScale = sword.F("draw.lock", 0f);
+            int hits = (int)sword.F("groggy.hits", 0f), steps = (int)sword.F("groggy.steps", 0f);
             string c1 = wood.Letter + "-1", c2 = wood.Letter + "-2", c3 = wood.Letter + "-3", c4 = wood.Letter + "-4";
 
             // ---- clause 1: no drawing (no spell can be cast while the form lasts) ----
@@ -190,12 +194,14 @@ namespace Pure308
             r.Check(c4, SwordFormRule308.DrainAmount(drain, 0f) == 0f && SwordFormRule308.DrainAmount(-1f, 1f) == 0f && SwordFormRule308.DrainAmount(float.NaN, 1f) == 0f && drain > 0f,
                 "the upkeep is never negative or non-finite; the row drains ink (TEST " + drain + " per second)");
 
-            // ---- the other four swords: the common sword spec ----
+            // ---- the rows that keep the common sword spec (D308-127: the twin swords' numbers until each weapon's own step) ----
+            r.Check(c1, rows.All(x => x.F("draw.lock", 0f) == lockScale && x.F("sword.drain", 0f) == drain && x.F("release.manual", -1f) == sword.F("release.manual", -2f) &&
+                x.F("groggy.steps", -1f) == steps), "every form shares the common form rules: the price lock, the upkeep, the release, the groggy step");
             foreach (var row in rows)
             {
-                if (row == wood) continue;
+                if (row == wood || row == earth) continue;   // the spear and the axe: Cases_Weapon127
                 string clause = row.Letter + "-1";
-                r.Check(clause, Common(row) == Common(wood), "same strike power and the same eight numbers as the wood sword (the common sword spec)", Common(row));
+                r.Check(clause, Common(row) == Common(sword), "same strike power and the same eight numbers as the metal form (the common sword spec)", Common(row));
                 var rowStatus = SpellResolveCore308.Resolve(row.Letter[0], 1f, 1f, row, open, out SpellCast rowCast);
                 r.Check(clause, rowStatus == SpellResolveStatus.Ok && rowCast.Kind == SpellKind.Buff && rowCast.Element == row.Element && rowCast.Power == row.BasePower,
                     "resolves as a sword of its initial's element", rowStatus + " " + rowCast.Element);

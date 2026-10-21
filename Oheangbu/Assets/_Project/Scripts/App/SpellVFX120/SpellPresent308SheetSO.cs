@@ -51,7 +51,9 @@ namespace Oheangbu.App.SpellVFX120
     [Flags]
     public enum PresentState308 { None = 0, Bound = 1, Slowed = 2, Exposed = 4, Weakened = 8, Guarded = 16, GuardBroken = 32, Blind = 64,
         // D308-115: marks a summon left (read from DemoSummonCombatManager.Mark308) - 곰's root mark, 놈's sin mark
-        Root = 128, Sin = 256 }
+        Root = 128, Sin = 256,
+        // D308-127: a lowered defence (맛 · 놋 · the axe form) reads apart from taking more damage (Exposed)
+        Armour = 512 }
 
     /// <summary>Where a confirmed hit came from (the presenter's own reading of the damage source).</summary>
     public enum PresentHitSource308 { Direct, Companion, Retaliation, Harmony, Persistent, Other }

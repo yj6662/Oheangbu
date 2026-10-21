@@ -11,12 +11,17 @@ namespace Oheangbu.App
     public readonly struct SwordStrike308
     {
         public readonly bool Swung;          // false = no form, or still inside the strike interval
-        public readonly EnemyVitals Target;  // null = the strike cut air
-        public readonly float Damage;        // applied damage
-        public readonly bool Counter;        // the sword's element overcomes the enemy's element
-        public readonly bool GroggyGained;   // this strike raised the enemy's groggy
-        public SwordStrike308(bool swung, EnemyVitals target, float damage, bool counter, bool groggyGained)
-        { Swung = swung; Target = target; Damage = damage; Counter = counter; GroggyGained = groggyGained; }
+        public readonly EnemyVitals Target;  // the first enemy the strike met (null = the strike cut air)
+        public readonly float Damage;        // damage applied to that first enemy
+        public readonly bool Counter;        // the sword's element overcomes that enemy's element
+        public readonly bool GroggyGained;   // this strike raised that enemy's groggy
+        public readonly int Struck;          // enemies the strike was judged on (a line weapon may pass through to more)
+        public readonly float TotalDamage;   // damage applied to all of them
+        public SwordStrike308(bool swung, EnemyVitals target, float damage, bool counter, bool groggyGained, int struck, float totalDamage)
+        {
+            Swung = swung; Target = target; Damage = damage; Counter = counter; GroggyGained = groggyGained;
+            Struck = struck; TotalDamage = totalDamage;
+        }
     }
 
     // #308 WP-14 sword form (SPELL-BUFF sword column; the five eo + siot glyphs share this handler, the element is the row's).
@@ -50,13 +55,32 @@ namespace Oheangbu.App
             new SpellParamSpec("groggy.steps", 0f, 10f),
             new SpellParamSpec("release.manual", 0f, 1f),
             new SpellParamSpec("draw.lock", 0f, 100000f),
+            // D308-127 (TEST) weapon strikes; a row without them is the plain sword (one enemy in the cone, full power)
+            new SpellParamSpec("strike.width", 0f, 5f, false),
+            new SpellParamSpec("strike.count", 1f, 8f, false, 1f),
+            new SpellParamSpec("strike.through", 0f, 1f, false, 1f),
+            new SpellParamSpec("strike.near", 0f, 20f, false),
+            new SpellParamSpec("strike.inner", 0f, 1f, false, 1f),
+            new SpellParamSpec("strike.aim", 0f, 90f, false),
+            new SpellParamSpec("break.defence", 0f, 1f, false),
+            new SpellParamSpec("break.duration", 0f, 120f, false),
         };
+
+        struct Shredded { public EnemyVitals Enemy; public float Until; }
 
         bool _active, _manual;
         char _letter;
         Element _element;
         float _power, _reach, _arc, _interval, _drain, _lock, _nextStrikeAt;
         int _groggyHits, _groggySteps;
+        // weapon strike (D308-127): line half width (0 = cone), enemies per strike, share behind the first, the near zone
+        // and its share, the line's aim correction, the defence a landed strike takes away and for how long
+        float _width, _through, _near, _inner, _aim, _shred, _shredFor;
+        int _count;
+        int[] _hitIds = Array.Empty<int>();
+        float[] _hitDistances = Array.Empty<float>();
+        // enemies whose defence a strike lowered (taken back on Clear; a form that ran out leaves the running shred alone)
+        readonly List<Shredded> _shredded = new List<Shredded>();
         SpellFxHandle _fx;
         // the pool the form listens to while it lasts (set in Commit, dropped when the form ends)
         InkPool _ink;
@@ -88,6 +112,10 @@ namespace Oheangbu.App
             _reach = row.F("sword.reach", 0f); _arc = row.F("sword.arc", 0f); _interval = row.F("sword.interval", 0f);
             _drain = row.F("sword.drain", 0f); _lock = row.F("draw.lock", 0f); _manual = row.F("release.manual", 0f) > 0f;
             _groggyHits = Mathf.RoundToInt(row.F("groggy.hits", 1f)); _groggySteps = Mathf.RoundToInt(row.F("groggy.steps", 0f));
+            _width = row.F("strike.width", 0f); _count = Mathf.Max(1, Mathf.RoundToInt(row.F("strike.count", 1f)));
+            _through = row.F("strike.through", 1f); _near = row.F("strike.near", 0f); _inner = row.F("strike.inner", 1f);
+            _aim = row.F("strike.aim", 0f); _shred = row.F("break.defence", 0f); _shredFor = row.F("break.duration", 0f);
+            if (_hitIds.Length < _count) { Array.Resize(ref _hitIds, _count); Array.Resize(ref _hitDistances, _count); }
             _nextStrikeAt = ctx.Now; _active = true;
             _ink = host.Ink; _ink.Gained += OnInkGained;
             _seam = host as ISwordFormSeam308;
@@ -114,6 +142,9 @@ namespace Oheangbu.App
 
         public void Tick(in SpellTickContext ctx)
         {
+            // a shred that ran out is no longer this form's to take back (also after the form itself ended)
+            for (int i = _shredded.Count - 1; i >= 0; i--)
+                if (_shredded[i].Enemy == null || ctx.Now >= _shredded[i].Until) _shredded.RemoveAt(i);
             if (!_active) return;
             var ink = _ink;
             if (ink == null) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
@@ -147,30 +178,56 @@ namespace Oheangbu.App
             if (!_active || host == null || !SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt)) return default;
             _nextStrikeAt = SwordFormRule308.NextStrikeAt(ctx.Now, _interval);
             var targets = host.Targets;
+            var actors = SpellSnapshots308.Take(targets);
+            int aimed = SpellSnapshots308.IndexOf(targets, host.AimedTarget());
             Vector3 origin = host.PlayerPosition, forward = host.PlayerForward;
-            int id = SwordFormRule308.SelectTarget(SpellSnapshots308.Take(targets), origin, forward, _reach, _arc,
-                SpellSnapshots308.IndexOf(targets, host.AimedTarget()));
-            if (id < 0)
+            Vector3 direction = _width > 0f ? SwordFormRule308.StrikeDirection(actors, origin, forward, _reach, _aim, aimed) : forward;
+            int struck = SwordFormRule308.SelectTargets(actors, origin, direction, _reach, _arc, _width, aimed, _count, _hitIds, _hitDistances);
+            if (struck == 0)
             {
-                Cue(ctx.Fx, SpellFxCue.Miss, new SpellFxCueArgs { Point = origin + forward * _reach, At = ctx.Now });
-                return new SwordStrike308(true, null, 0f, false, false);
+                Cue(ctx.Fx, SpellFxCue.Miss, new SpellFxCueArgs { Point = origin + direction * _reach, At = ctx.Now });
+                return new SwordStrike308(true, null, 0f, false, false, 0, 0f);
             }
-            var target = targets[id]; uint life = target.LifeRevision;
             UnityEngine.Object instigator = host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player;
-            // the player's own elemental attack: PlayerDirect (the only source a counter strike may carry)
-            var attack = AttackProvenance.CreateMelee(instigator, DamageSource.PlayerDirect, _element);   // WP-16: melee passes a guard
-            // D308-124: the same element the counter-element damage scale reads (EnemyVitals.TryAttackElement)
-            bool counter = SwordFormRule308.IsCounter(_element, target.TryAttackElement(out Element theirs), theirs);
-            var hit = host.ApplyDirectHit(target, life, _power * host.DamageScale(_element), origin + Vector3.up * .4f, attack, _letter);
-            bool gained = false;
-            if (hit.AppliedDamage > 0f && counter && !hit.Killed)
+            EnemyVitals first = null; float firstDamage = 0f, total = 0f; bool firstCounter = false, firstGained = false;
+            for (int k = 0; k < struck; k++)
             {
-                int steps = SwordFormRule308.CounterGain(ref Progress(id, life, targets.Count), _groggyHits, _groggySteps);
-                if (steps > 0) gained = target.AddGroggy(GroggySource.SwordCounter, attack, steps);
+                int id = _hitIds[k];
+                var target = targets[id]; uint life = target.LifeRevision;
+                // the player's own elemental attack: PlayerDirect (the only source a counter strike may carry), one per enemy
+                var attack = AttackProvenance.CreateMelee(instigator, DamageSource.PlayerDirect, _element);   // WP-16: melee passes a guard
+                // D308-124: the same element the counter-element damage scale reads (EnemyVitals.TryAttackElement)
+                bool counter = SwordFormRule308.IsCounter(_element, target.TryAttackElement(out Element theirs), theirs);
+                float share = SwordFormRule308.TargetShare(k, _hitDistances[k], _through, _near, _inner);
+                var hit = host.ApplyDirectHit(target, life, _power * share * host.DamageScale(_element), origin + Vector3.up * .4f, attack, _letter);
+                bool gained = false;
+                if (hit.AppliedDamage > 0f && !hit.Killed)
+                {
+                    if (counter)
+                    {
+                        int steps = SwordFormRule308.CounterGain(ref Progress(id, life, targets.Count), _groggyHits, _groggySteps);
+                        if (steps > 0) gained = target.AddGroggy(GroggySource.SwordCounter, attack, steps);
+                    }
+                    Shred(target, ctx.Now);
+                }
+                Cue(ctx.Fx, hit.AppliedDamage > 0f ? SpellFxCue.Hit : SpellFxCue.Miss,
+                    new SpellFxCueArgs { Target = target.transform, Point = target.transform.position + Vector3.up * .4f, At = ctx.Now, Value = hit.AppliedDamage });
+                total += hit.AppliedDamage;
+                if (k == 0) { first = target; firstDamage = hit.AppliedDamage; firstCounter = counter; firstGained = gained; }
             }
-            Cue(ctx.Fx, hit.AppliedDamage > 0f ? SpellFxCue.Hit : SpellFxCue.Miss,
-                new SpellFxCueArgs { Target = target.transform, Point = target.transform.position + Vector3.up * .4f, At = ctx.Now, Value = hit.AppliedDamage });
-            return new SwordStrike308(true, target, hit.AppliedDamage, counter, gained);
+            return new SwordStrike308(true, first, firstDamage, firstCounter, firstGained, struck, total);
+        }
+
+        // The axe's armour break (the 맛 path: EnemyModifierState308.ShredDefence, the strongest running shred counts).
+        // A row without break.defence / break.duration lowers nothing.
+        void Shred(EnemyVitals target, float now)
+        {
+            if (_shred <= 0f || _shredFor <= 0f) return;
+            float until = now + _shredFor;
+            if (!target.Modifiers.ShredDefence(until, _shred)) return;
+            for (int i = 0; i < _shredded.Count; i++)
+                if (_shredded[i].Enemy == target) { if (until > _shredded[i].Until) _shredded[i] = new Shredded { Enemy = target, Until = until }; return; }
+            _shredded.Add(new Shredded { Enemy = target, Until = until });
         }
 
         // The player puts the sword away (the release press of the seam, or a check). false = no form, or the row forbids it.
@@ -188,6 +245,11 @@ namespace Oheangbu.App
             StopListening();
             DropSeam(false);
             Array.Clear(_progress, 0, _progress.Length); Array.Clear(_progressLife, 0, _progressLife.Length);
+            // the caster died, rested or left: the shred the axe hung on an enemy is taken back. EndShred ends every running
+            // shred of that enemy (a 맛 / 놋 one included), like ArmorBreakEffect308.AtClear does for its own carriers.
+            for (int i = 0; i < _shredded.Count; i++)
+                if (_shredded[i].Enemy != null) _shredded[i].Enemy.Modifiers.EndShred();
+            _shredded.Clear();
         }
 
         void StopListening()

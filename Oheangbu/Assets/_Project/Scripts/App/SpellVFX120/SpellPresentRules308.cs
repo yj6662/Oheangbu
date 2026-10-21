@@ -136,13 +136,15 @@ namespace Oheangbu.App.SpellVFX120
         }
 
         /// <summary>What an enemy's own state reads as. Blocked actions (a freeze, a bind, an interrupt's stun) come before a
-        /// slow; taking more damage and a lowered defence are one reading; weaker strikes are another.</summary>
+        /// slow; taking more damage is one reading, a lowered defence another (D308-127: the body region differs); weaker
+        /// strikes are a third.</summary>
         public static PresentState308 StateOf(SpellPresent308SheetSO sheet, bool blocksActions, float moveScale, float takenScale, float defenceShred, float outgoingScale)
         {
             var state = PresentState308.None;
             if (blocksActions) state |= PresentState308.Bound;
             else if (moveScale < (sheet != null ? sheet.Mark.SlowBelow : 1f)) state |= PresentState308.Slowed;
-            if (takenScale > 1f || defenceShred > 0f) state |= PresentState308.Exposed;
+            if (takenScale > 1f) state |= PresentState308.Exposed;
+            if (defenceShred > 0f) state |= PresentState308.Armour;
             if (outgoingScale < 1f) state |= PresentState308.Weakened;
             return state;
         }

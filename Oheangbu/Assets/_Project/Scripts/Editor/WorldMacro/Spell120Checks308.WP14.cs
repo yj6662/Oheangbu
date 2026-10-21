@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Oheangbu.App;
+using Oheangbu.App.SpellVFX120;
 using Oheangbu.Combat;
 using Oheangbu.Core.Domain;
 using Oheangbu.Drawing;
@@ -219,13 +220,62 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
                 finally { Debug.unityLogger.logEnabled = logging; f.Wiring.ConstructSpells(f.Registry, f.Finals, f.Fx); }
 
-                // ---- the other four swords: the common sword spec ----
+                // ---- D308-127 (TEST) the wood form is a spear: the line through two, weaker behind and too close ----
+                float width = row.F("strike.width", 0f), through = row.F("strike.through", 1f), near = row.F("strike.near", 0f), inner = row.F("strike.inner", 1f);
+                if (r.Check(wood + "-5", width > 0f, "the wood form's row is a line weapon (strike.width)"))
+                {
+                    var second = f.Inside[1]; Vector3 secondHome = second.transform.position;
+                    Reset(); f.Cast(wood); f.Aim(null);
+                    target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, reach * .5f);
+                    second.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, reach * .9f);
+                    float hp0 = target.Hp, hp1 = second.Hp; f.ClearLog();
+                    var pierce = sword.Strike(At(1f));
+                    r.Check(wood + "-5", pierce.Struck == 2 && pierce.Target == target && Near(hp0 - target.Hp, row.BasePower * brush) && Near(hp1 - second.Hp, row.BasePower * brush * through) &&
+                        f.Hits.Count == 2 && Near(pierce.TotalDamage, row.BasePower * brush * (1f + through)),
+                        "the spear strikes both enemies on its line: the first for the whole strike, the one behind for strike.through of it");
+                    second.transform.position = SpellFixture308.Origin + new Vector3(width + .1f, 0f, reach * .9f);
+                    hp1 = second.Hp; f.ClearLog();
+                    var beside = sword.Strike(At(1f + interval * 1.5f));
+                    r.Check(wood + "-5", beside.Struck == 1 && beside.Target == target && second.Hp == hp1 && f.Hits.Count == 1, "an enemy beside the line (half width + 0.1 m) is not struck");
+                    target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, near * .5f);
+                    hp0 = target.Hp; f.ClearLog();
+                    var tooClose = sword.Strike(At(1f + interval * 3f));
+                    r.Check(wood + "-6", tooClose.Struck == 1 && tooClose.Target == target && Near(hp0 - target.Hp, row.BasePower * brush * inner),
+                        "an enemy inside strike.near takes strike.inner of the strike");
+                    second.transform.position = secondHome; target.transform.position = home;
+                }
+
+                // ---- D308-127 (TEST) the earth form is an axe: a landed strike lowers defence; the form's end leaves it, Clear takes it back ----
+                char axe = SpellGrammar308.LetterAt(cells[2]);
+                if (r.Check(axe + "-2", f.Resolver.TryRow(axe, out var axeRow) && axeRow.F("break.defence", 0f) > 0f && axeRow.F("break.duration", 0f) > 0f,
+                    "the earth form's row lowers defence (break.defence, break.duration)"))
+                {
+                    float shred = axeRow.F("break.defence", 0f), axeReach = axeRow.F("sword.reach", 0f), axeDrain = axeRow.F("sword.drain", 0f);
+                    Reset(); f.Cast(axe);
+                    target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, axeReach * .75f);
+                    float hpA = target.Hp; f.ClearLog();
+                    var chop = sword.Strike(At(1f));
+                    float now = t + 1f;
+                    r.Check(axe + "-1", chop.Struck == 1 && chop.Target == target && Near(hpA - target.Hp, axeRow.BasePower * brush) && f.Hits.Count == 1,
+                        "one heavy strike on one enemy for the axe's power (row base power x brush)");
+                    r.Check(axe + "-2", Near(target.Modifiers.DefenceShred(now), shred) &&
+                        SpellPresentRules308.StateOf(null, false, 1f, target.Modifiers.DamageTakenScale(now), target.Modifiers.DefenceShred(now), 1f) == PresentState308.Armour,
+                        "the struck enemy's defence is lowered by break.defence and reads as Armour (not Exposed)");
+                    f.Ink.Restore(axeDrain * .5f);
+                    sword.Tick(At(2f, 1f));
+                    r.Check(axe + "-2", !sword.Active && Near(target.Modifiers.DefenceShred(t + 2f), shred), "the form running out of ink leaves the running shred alone");
+                    f.Wiring.ClearSpells308(SpellClearReason.Rest);
+                    r.Check(axe + "-2", target.Modifiers.DefenceShred(t + 2f) == 0f, "rest (Clear) takes the shred back");
+                    target.transform.position = home;
+                }
+
+                // ---- the other four forms: they cast, strike with their element and lock spells (each at its own reach) ----
                 foreach (int cell in cells.Skip(1))
                 {
                     char letter = SpellGrammar308.LetterAt(cell);
                     Reset(); f.Cast(letter);
                     bool on = f.Resolver.TryRow(letter, out var other308) && sword.Active && sword.SwordElement == other308.Element && f.Accepted.Count == 1;
-                    target.transform.position = close;
+                    target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, (other308 != null ? other308.F("sword.reach", 0f) : reach) * .75f);
                     var hit = sword.Strike(At(1f));
                     r.Check(letter + "-1", on && hit.Swung && hit.Target == target && f.Hits.Count == 1 && f.Hits[0].Attack.Element == other308.Element,
                         "the glyph turns the brush into a sword of its own element and strikes with it");
