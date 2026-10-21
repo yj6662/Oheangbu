@@ -154,6 +154,9 @@ namespace Oheangbu.App.World
         public Transform NearHand308 => _near != null ? _near.Hand : null;
         public Transform WorldHand308 => _world != null ? _world.Hand : null;
         public int NearLayer308 { get { foreach (var r in _nearRenderers) if (r != null) return r.gameObject.layer; return -1; } }
+        // D308-127 step 2: the two brushes the weapon head goes on (read only, presentation)
+        public Transform WorldBrushRoot308 => _worldBrushRoot;
+        public Transform NearBrushRoot308 => _nearBrushRoot;
 
         public void Configure(WorldMacroPlayerGestureProfile profile, Animator animator,
             PlayerMotor motor, CharacterController controller, DrawingInputController drawing,

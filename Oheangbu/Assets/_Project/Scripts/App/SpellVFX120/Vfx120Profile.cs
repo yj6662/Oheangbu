@@ -132,6 +132,8 @@ namespace Oheangbu.App.SpellVFX120
         public GameObject CompanionShot308Prefab;
         [Tooltip("11.41: sword-form letters - a one-shot particle prefab put down per swing (Hit / Miss cue with a point). Empty = old behaviour.")]
         public GameObject SwordStrike308Prefab;
+        [Tooltip("D308-127 step 2: sword-form letters - the weapon head (GreatBrushWeapon308) put on the great brush the player holds while the form lasts. Empty = old behaviour.")]
+        public GameObject WeaponHead308Prefab;
         [Tooltip("11.56: second-strike letters - an effect prefab (Vfx120Effect with a Bolt300 profile) flown from the split point to each derived target. Empty = old behaviour.")]
         public GameObject Derived308Prefab;
         [Tooltip("11.57: lingering-zone letters - the floor the zone leaves (Vfx308ZoneBody, built at 1 m radius), put down at the zone centre (or per heal zone) and kept for the rule's life. Empty = old behaviour.")]

@@ -18,6 +18,8 @@ namespace Oheangbu.App.SpellVFX120
         private const int FallbackCapacity = 256;
 
         private readonly Vfx120SpellPresenter308 _fallback = new Vfx120SpellPresenter308();
+        // D308-127 step 2: the sword form's weapon head on the brushes, whichever side draws the cast
+        private readonly SpellWeaponHeads308 _weapons = new SpellWeaponHeads308();
         private readonly Dictionary<int, SpellFxHandle> _fallbackHandles = new Dictionary<int, SpellFxHandle>();
         private readonly Queue<int> _fallbackOrder = new Queue<int>();
         private CombatLoopWiring _wiring;
@@ -28,6 +30,7 @@ namespace Oheangbu.App.SpellVFX120
         public int DeployBegun { get; private set; }
         public int FallbackBegun { get; private set; }
         public Vfx120SpellPresenter308 Fallback => _fallback;
+        public SpellWeaponHeads308 Weapons308 => _weapons;
 
         public void Bind(SpellVisualSetSO visuals, Transform owner)
         {
@@ -63,6 +66,7 @@ namespace Oheangbu.App.SpellVFX120
                 int id = NextId();
                 stage.Begin(id, request);
                 DeployBegun++;
+                _weapons.Begin(id, request, SpellWeaponHeads308.PrefabFor(_visuals, request.Letter));
                 return new SpellFxHandle(id);
             }
             var inner = _fallback.Begin(request);
@@ -71,6 +75,7 @@ namespace Oheangbu.App.SpellVFX120
             while (_fallbackOrder.Count >= FallbackCapacity) _fallbackHandles.Remove(_fallbackOrder.Dequeue());
             _fallbackHandles[key] = inner; _fallbackOrder.Enqueue(key);
             FallbackBegun++;
+            _weapons.Begin(key, request, SpellWeaponHeads308.PrefabFor(_visuals, request.Letter));
             return new SpellFxHandle(key);
         }
 
@@ -85,6 +90,7 @@ namespace Oheangbu.App.SpellVFX120
         public void End(SpellFxHandle handle, bool immediate = false)
         {
             if (!handle.Shown) return;
+            _weapons.End(handle.Id);
             if (_fallbackHandles.TryGetValue(handle.Id, out var inner))
             {
                 _fallbackHandles.Remove(handle.Id);
@@ -103,6 +109,7 @@ namespace Oheangbu.App.SpellVFX120
         public void EndAll()
         {
             _fallbackHandles.Clear(); _fallbackOrder.Clear();
+            _weapons.EndAll();
             _fallback.EndAll();
             var director = _wiring != null ? _wiring.DeployDirector308 : null;
             var stage = director != null ? director.Present : null;
