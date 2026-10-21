@@ -19,14 +19,25 @@ namespace Oheangbu.App.SpellVFX120
         public int Strikes { get; private set; }
 
         // A strike of the form (its Hit / Miss cue): the body plays the weapon's swing and every head shows its afterimage.
-        public void Strike(int id)
+        // One strike sends a cue per enemy it met (the spear's two, the flail's three): only the first cue of a strike moves
+        // the body (debate 15) - the rest carry the same rule time `at`. finish = the combo's last strike (its own swing).
+        public void Strike(int id, float at = float.NaN, bool finish = false)
         {
             if (!_heads.TryGetValue(id, out var heads) || heads.Length == 0) return;
+            if (!float.IsNaN(at))
+            {
+                if (_lastAt.TryGetValue(id, out float last) && last == at) return;
+                _lastAt[id] = at;
+            }
             Strikes++;
             var first = heads[0];
-            if (first != null && _swings.TryGetValue(id, out var swing) && swing != null) swing.PlayStrike308(first.StrikeState, first.StrikeToApex, first.StrikeLock);
-            foreach (var head in heads) if (head != null) head.Strike();
+            bool finisher = finish && first != null && !string.IsNullOrEmpty(first.FinishState);
+            if (first != null && _swings.TryGetValue(id, out var swing) && swing != null)
+                swing.PlayStrike308(finisher ? first.FinishState : first.StrikeState, first.StrikeToApex, finisher ? first.FinishLock : first.StrikeLock);
+            foreach (var head in heads) if (head != null) head.Strike(finisher);
         }
+
+        private readonly Dictionary<int, float> _lastAt = new Dictionary<int, float>();
 
         // The head prefab of a glyph: its catalogue body's profile (the cue profile the visual set points at).
         public static GameObject PrefabFor(SpellVisualSetSO visuals, char letter)
@@ -69,7 +80,7 @@ namespace Oheangbu.App.SpellVFX120
         // The form ended (ink gone, put away): each head sinks back into its ferrule, then the bristles return (step 3).
         public void End(int id)
         {
-            _swings.Remove(id);
+            _swings.Remove(id); _lastAt.Remove(id);
             if (!_heads.TryGetValue(id, out var heads)) return;
             _heads.Remove(id);
             foreach (var head in heads) if (head != null) head.Detach(false);
@@ -79,7 +90,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             foreach (var heads in _heads.Values)
                 foreach (var head in heads) if (head != null) head.Detach();
-            _heads.Clear(); _swings.Clear();
+            _heads.Clear(); _swings.Clear(); _lastAt.Clear();
         }
 
         // checks: the heads a handle put on (empty when none)

@@ -34,6 +34,7 @@ namespace Oheangbu.App
         public Vector3 Point, Normal;
         public float At, Value;
         public int Index;
+        public bool Finish;   // D308-127 debate 15: the last strike of a combo (Index = its step)
     }
 
     // Id 0 = nothing is shown. Rules never depend on it.

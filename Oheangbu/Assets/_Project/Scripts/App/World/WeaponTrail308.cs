@@ -53,12 +53,15 @@ namespace Oheangbu.App.World
         // The head shows only when its brush renderer does: the afterimage follows that renderer too (null = always).
         public void ShownBy(Renderer renderer) => _shownBy = renderer;
 
-        // One strike: the record starts fresh at this frame.
-        public void Strike()
+        // One strike: the record starts fresh at this frame. widthScale: the finisher's wider stroke (debate 15: x1.5, the time kept).
+        public void Strike(float widthScale = 1f)
         {
-            _count = 0; _hasTip = false;
+            _count = 0; _hasTip = false; _widthScale = Mathf.Max(.1f, widthScale);
             _emitUntil = Time.time + _emitSeconds;
         }
+
+        private float _widthScale = 1f;
+        public float WidthScale => _widthScale;
 
         private void OnDisable() { _count = 0; if (_renderer != null) _renderer.enabled = false; }
 
@@ -98,7 +101,7 @@ namespace Oheangbu.App.World
                 Vector3 side = Vector3.Cross(motion, look);
                 if (side.sqrMagnitude < 1e-10f) side = Vector3.Cross(motion, Vector3.up);
                 if (side.sqrMagnitude < 1e-10f) side = Vector3.right;
-                side = side.normalized * Mathf.Max(_halfWidth, .005f);
+                side = side.normalized * Mathf.Max(_halfWidth * _widthScale, .005f);
                 if (_count == 0) Add(_lastTip - side, _lastTip + side, _firstBorn);
                 Add(tip - side, tip + side, now);
                 _lastTip = tip;

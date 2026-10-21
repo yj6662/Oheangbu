@@ -3,7 +3,7 @@
 원점 = 큰 붓의 페룰(붓털 뿌리, GripSocket +.57 m). +Z = 자루 축(털끝 쪽). Unity 에서는 GripSocket 의 자식으로 붙는다(+Y = 자루 축).
 머리는 붓털의 먹이 굳은 것: 무광 먹(칸 0) + 날 가장자리 안료 띠(칸 1, 머리 면적의 15 % 이내). 발광 · 금속 반사 없음(재질은 Unity 에서).
 X = 날이 옆으로 나가는 쪽(부월 날 · 칼날 · 창 잎 폭), Y = 날 두께.
-편곤: 빈 물체 Head_Flail 아래 Head_Flail_Swing(원점 = 페룰) 하나에 사슬 + 막대. Unity 가 Swing 을 돌려 매단다(4단계 Verlet 전 임시).
+편곤: 빈 물체 Head_Flail 아래 Head_Flail_Swing(원점 = 페룰, 빈 물체) → Flail_01..08 → Flail_Rod → FlailEndSocket(토론 15, 강체 사슬).
 build-report.json = 머리마다 길이 · 최대 폭 · 두께 · 삼각형 · 안료 면적 몫(Unity 검사가 읽는다)."""
 import bpy, bmesh, json, math, os, sys, random
 from mathutils import Vector
@@ -189,33 +189,44 @@ for i in range(NU):                        # 위 · 아래 테
     f = bm.faces.new((top_v[i + 1][NV], bot_v[i + 1][NV], bot_v[i][NV], top_v[i][NV])); f.material_index = m
 axe = finish('Head_Axe', bm)
 
-# ---- 편곤: 밑동 매듭(머리 루트) + Swing(페룰 원점) 아래 꼬인 먹 가닥 사슬 고리 6 + 막대(양 끝 안료 테) ----
+# ---- 편곤: 밑동 매듭(머리 루트) + Swing(페룰 원점, 빈 물체) 아래 꼬인 먹 가닥 사슬 고리 8 + 막대(양 끝 안료 테) ----
+# 토론 15: 고리 하나하나 · 막대가 따로 된 강체 물체(부모 → 자식, 원점 = 위 이음매). Unity FlailChain308 이 Verlet 로 돌린다.
+# 이름: Flail_01..08 · Flail_Rod · FlailEndSocket(막대 끝). 스키닝 없음(PROD-RIG 기계 = 강체 부품).
 flail = empty('Head_Flail')
 bm = bmesh.new(); root_knot(bm, .045); finish('Head_Flail_Knot', bm, flail)
+swing = empty('Head_Flail_Swing', flail)
+FLAIL_LINKS = int(arg('--flail-links', 8))
+L = FLAIL_CHAIN / FLAIL_LINKS
+parent, links = swing, []
+for k in range(FLAIL_LINKS):               # 고리 = 꼬인 먹 가닥 고리(번갈아 90도), 이음이 보이게 조금씩 겹친다
+    bm = bmesh.new(); loop_link(bm, L * .5, L * .62, .015, (k % 2) * math.pi / 2, .0045)
+    link = finish('Flail_%02d' % (k + 1), bm, parent); link.location = (0, 0, .045 if k == 0 else L); parent = link; links.append(link)
 bm = bmesh.new()
-L = FLAIL_CHAIN / 6
-for k in range(6):                         # 고리 = 꼬인 먹 가닥 고리(번갈아 90도), 이음이 보이게 조금씩 겹친다
-    loop_link(bm, .045 + L * (k + .5), L * .62, .017, (k % 2) * math.pi / 2, .0045)
-zb_ = .045 + FLAIL_CHAIN
-prof = [(zb_, FLAIL_R * .55), (zb_ + .02, FLAIL_R * .95), (zb_ + .05, FLAIL_R), (zb_ + FLAIL_BAR * .5, FLAIL_R * 1.08), (zb_ + FLAIL_BAR - .05, FLAIL_R), (zb_ + FLAIL_BAR - .02, FLAIL_R * .95), (zb_ + FLAIL_BAR, FLAIL_R * .55)]   # 끝 테 3 cm(토론 13)
+prof = [(0, FLAIL_R * .55), (.02, FLAIL_R * .95), (.05, FLAIL_R), (FLAIL_BAR * .5, FLAIL_R * 1.08), (FLAIL_BAR - .05, FLAIL_R), (FLAIL_BAR - .02, FLAIL_R * .95), (FLAIL_BAR, FLAIL_R * .55)]   # 끝 테 3 cm(토론 13)
 rings_ = [ring(bm, z, r, 10, .02) for z, r in prof]
 for k in range(len(rings_) - 1): bridge(bm, rings_[k], rings_[k + 1], PIG if k in (1, len(rings_) - 3) else INK)
 cap(bm, rings_[0], flip=True); cap(bm, rings_[-1])
-swing = finish('Head_Flail_Swing', bm, flail)
+rod = finish('Flail_Rod', bm, parent); rod.location = (0, 0, L)
+end_socket = empty('FlailEndSocket', rod); end_socket.location = (0, 0, FLAIL_BAR)
 
 # ---- report ----
+bpy.context.view_layer.update()
+
+
 def measure(obs):
     tris = 0; area = [0.0, 0.0]; lo = Vector((1e9, 1e9, 1e9)); hi = -lo
     for ob in obs:
+        if ob.type != 'MESH': continue
         me = ob.data; me.calc_loop_triangles(); tris += len(me.loop_triangles)
         for p in me.polygons: area[p.material_index] += p.area
-        for v in me.vertices: lo = Vector(map(min, lo, v.co)); hi = Vector(map(max, hi, v.co))
+        for v in me.vertices:
+            co = ob.matrix_world @ v.co; lo = Vector(map(min, lo, co)); hi = Vector(map(max, hi, co))
     return dict(tris=tris, length=round(hi.z, 4), widthX=round(hi.x - lo.x, 4), maxX=round(hi.x, 4), thicknessY=round(hi.y - lo.y, 4),
                 pigmentShare=round(area[1] / max(1e-9, area[0] + area[1]), 4))
 report = dict(version='heads308-v1', params=dict(spear_ext=SPEAR_EXT, spear_leaf=SPEAR_LEAF, spear_width=SPEAR_WIDTH, sword_blade=SWORD_BLADE, sword_width=SWORD_WIDTH,
               axe_ext=AXE_EXT, axe_height=AXE_H, axe_width=AXE_W, flail_chain=FLAIL_CHAIN, flail_bar=FLAIL_BAR, flail_radius=FLAIL_R),
               origin='ferrule (GripSocket +0.57 m), +Z = shaft axis toward the tip; Unity +Y', materials=MATS,
-              heads=dict(Head_Spear=measure([spear]), Head_Sword=measure([sword]), Head_Axe=measure([axe]), Head_Flail=measure([c for c in flail.children])))
+              heads=dict(Head_Spear=measure([spear]), Head_Sword=measure([sword]), Head_Axe=measure([axe]), Head_Flail=measure(list(flail.children_recursive))))
 json.dump(report, open(os.path.join(OUT, 'build-report.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, 'SM_WeaponHeads308.blend'))
 for o in bpy.context.scene.objects: o.select_set(True)

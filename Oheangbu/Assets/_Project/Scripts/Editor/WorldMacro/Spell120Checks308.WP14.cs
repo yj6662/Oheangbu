@@ -33,6 +33,16 @@ namespace Oheangbu.EditorTools.WorldMacro
             public void EndAll() { Calls++; }
         }
 
+        // Writes down every cue with its step and finisher flag (debate 15: the presenter learns the combo from the cue).
+        sealed class WP14CuePresenter : ISpellPresenter
+        {
+            public readonly System.Collections.Generic.List<(SpellFxCue Cue, int Index, bool Finish, float At)> Cues = new System.Collections.Generic.List<(SpellFxCue, int, bool, float)>();
+            public SpellFxHandle Begin(in SpellFxRequest request) => new SpellFxHandle(1);
+            public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args) { Cues.Add((cue, args.Index, args.Finish, args.At)); }
+            public void End(SpellFxHandle handle, bool immediate = false) { }
+            public void EndAll() { }
+        }
+
         // A counter whose answers are set by hand (D308-123, Q with the sword out): what the wiring's arbitration does with them.
         sealed class WP14FakeRiposte : ISwordRiposte308
         {
@@ -267,6 +277,86 @@ namespace Oheangbu.EditorTools.WorldMacro
                     f.Wiring.ClearSpells308(SpellClearReason.Rest);
                     r.Check(axe + "-2", target.Modifiers.DefenceShred(t + 2f) == 0f, "rest (Clear) takes the shred back");
                     target.transform.position = home;
+                }
+
+                // ---- D308-127 debate 15 (TEST) the metal form is a two-handed sword: a chain of strikes, the last one the finisher,
+                //      then a rest; the cue carries the step (the presenter swings the finisher from it). Clock steps sit .01 s
+                //      past each boundary. The buffered click needs a pressed key (Play); the pure harness checks its rule ----
+                char metal = SpellGrammar308.LetterAt(cells[3]);
+                if (r.Check(metal + "-7", f.Resolver.TryRow(metal, out var comboRow) && comboRow.F("combo.hits", 0f) >= 2f, "the metal form's row strikes in a chain (combo.hits)"))
+                {
+                    int chain = Mathf.RoundToInt(comboRow.F("combo.hits", 0f));
+                    float gap = comboRow.F("sword.interval", 0f), rest = comboRow.F("combo.rest", 0f), window = comboRow.F("combo.window", 0f), finish = comboRow.F("combo.finish", 1f);
+                    float whole = comboRow.BasePower * brush;
+                    var cues = new WP14CuePresenter();
+                    try
+                    {
+                        f.Wiring.ConstructSpells(f.Registry, f.Finals, cues);
+                        Reset(); f.Cast(metal); f.Aim(null);
+                        target.transform.position = SpellFixture308.Origin + new Vector3(0f, 0f, comboRow.F("sword.reach", 0f) * .75f);
+                        SpellTickContext Clock(float seconds) => new SpellTickContext(t + seconds, 0f, host, cues);
+                        var chained = new System.Collections.Generic.List<SwordStrike308>(); var dealt = new System.Collections.Generic.List<float>();
+                        float when = 1f;
+                        for (int i = 0; i < chain; i++) { float hpBefore = target.Hp; chained.Add(sword.Strike(Clock(when))); dealt.Add(hpBefore - target.Hp); when += gap + .01f; }
+                        bool order = chained.Select((s, i) => s.Swung && s.Step == i + 1).All(x => x);
+                        bool shares = dealt.Take(chain - 1).All(d => Near(d, whole)) && Near(dealt[chain - 1], whole * finish);
+                        r.Check(metal + "-7", order && shares, "a chain of " + chain + " strikes " + gap + " s apart: steps 1.." + chain + ", the last one x" + finish + " (" + string.Join(" / ", dealt.Select(d => d.ToString("0.##"))) + ")");
+                        float finisherAt = 1f + (chain - 1) * (gap + .01f);
+                        var resting = sword.Strike(Clock(finisherAt + gap + .01f));
+                        var anew = sword.Strike(Clock(finisherAt + rest + .01f));
+                        r.Check(metal + "-7", !resting.Swung && anew.Swung && anew.Step == 1, "after the finisher the sword rests combo.rest (" + rest + " s, not the " + gap + " s interval), then the chain starts over at 1");
+                        float late = finisherAt + rest + .01f + gap + window + .1f;
+                        var dropped = sword.Strike(Clock(late));
+                        r.Check(metal + "-7", dropped.Swung && dropped.Step == 1, "a strike later than combo.window after the allowed moment starts the chain over (step 1, not 2)");
+                        var hitCues = cues.Cues.Where(c => c.Cue == SpellFxCue.Hit).ToList();
+                        r.Check(metal + "-7", hitCues.Count == chain + 2 && hitCues.Take(chain).Select((c, i) => c.Index == i + 1 && c.Finish == (i == chain - 1)).All(x => x) && !hitCues[chain].Finish,
+                            "each Hit cue carries its step, and only the finisher's says Finish (the presenter swings it differently)");
+                    }
+                    finally { f.Wiring.ConstructSpells(f.Registry, f.Finals, f.Fx); target.transform.position = home; }
+                }
+
+                // ---- D308-127 debate 15 (TEST) the water form is a flail: up to three enemies in a wide cone, the ones after the
+                //      first weaker; every landed swing holds the ink upkeep (per enemy, capped) through the player's domain ----
+                char water = SpellGrammar308.LetterAt(cells[4]);
+                if (r.Check(water + "-5", f.Resolver.TryRow(water, out var flailRow) && Mathf.RoundToInt(flailRow.F("strike.count", 1f)) >= 3 && flailRow.F("hold.per", 0f) > 0f,
+                    "the water form's row strikes a crowd (strike.count) and holds the upkeep (hold.per)"))
+                {
+                    float fReach = flailRow.F("sword.reach", 0f), fThrough = flailRow.F("strike.through", 1f), per = flailRow.F("hold.per", 0f), cap = flailRow.F("hold.cap", 0f);
+                    float fDrain = flailRow.F("sword.drain", 0f), fWhole = flailRow.BasePower * brush;
+                    var crowd = f.Inside; var homes = crowd.Select(e => e.transform.position).ToArray();
+                    Vector3 P(float degrees, float distance) => SpellFixture308.Origin + new Vector3(Mathf.Sin(degrees * Mathf.Deg2Rad), 0f, Mathf.Cos(degrees * Mathf.Deg2Rad)) * distance;
+                    try
+                    {
+                        Reset(); f.Cast(water); f.Aim(null);
+                        crowd[0].transform.position = P(0f, fReach * .4f); crowd[1].transform.position = P(40f, fReach * .6f); crowd[2].transform.position = P(-55f, fReach * .8f);
+                        float[] hpBefore = crowd.Select(e => e.Hp).ToArray(); f.ClearLog();
+                        var swing = sword.Strike(At(1f));
+                        r.Check(water + "-5", swing.Struck == 3 && swing.Target == crowd[0] && Near(hpBefore[0] - crowd[0].Hp, fWhole) && Near(hpBefore[1] - crowd[1].Hp, fWhole * fThrough) &&
+                            Near(hpBefore[2] - crowd[2].Hp, fWhole * fThrough) && f.Hits.Count == 3,
+                            "three enemies ahead and at 40 / -55 degrees: all struck, the nearest for the whole swing, the other two for strike.through (" + fThrough + ") of it");
+                        float held3 = 1f + Mathf.Min(cap, per * 3f);
+                        // the domain's reader drops what has run out as it is asked: ask in clock order, as the game does
+                        f.Ink.Restore(.5f);
+                        sword.Tick(At(held3 - .05f, .5f)); float inkHeld = f.Ink.Value;
+                        bool on3 = f.Wiring.PlayerDomain308.DrainHeld(t + held3 - .01f), off3 = !f.Wiring.PlayerDomain308.DrainHeld(t + held3 + .01f);
+                        sword.Tick(At(held3 + .05f, .5f)); float inkAfter = f.Ink.Value;
+                        r.Check(water + "-6", on3 && off3 && Near(inkHeld, .5f) && Near(inkAfter, .5f - fDrain * .5f),
+                            "three landed hold the upkeep " + Mathf.Min(cap, per * 3f) + " s (the cap): no ink drains inside it, the drain runs again after it (held " + on3 + "/" + !off3 +
+                            ", ink " + inkHeld.ToString("0.###") + " -> " + inkAfter.ToString("0.###") + ", drain " + fDrain + ")");
+                        crowd[1].transform.position = homes[1] + new Vector3(0f, 0f, 60f); crowd[2].transform.position = homes[2] + new Vector3(0f, 0f, 60f);
+                        float second = held3 + .2f;   // past the interval's boundary (1 + 1.0 s), not on it
+                        var lone = sword.Strike(At(second));
+                        bool on1 = f.Wiring.PlayerDomain308.DrainHeld(t + second + per - .01f), off1 = !f.Wiring.PlayerDomain308.DrainHeld(t + second + per + .01f);
+                        r.Check(water + "-6", lone.Struck == 1 && on1 && off1, "one enemy landed holds hold.per (" + per + " s)");
+                        Vector3 ahead = crowd[0].transform.position; crowd[0].transform.position = homes[0] + new Vector3(0f, 0f, 60f);
+                        var nobody = sword.Strike(At(second + 1.5f));
+                        bool none = nobody.Swung && nobody.Struck == 0 && !f.Wiring.PlayerDomain308.DrainHeld(t + second + 1.5f + .01f);
+                        crowd[0].transform.position = ahead;
+                        sword.Strike(At(second + 3f));
+                        f.Wiring.ClearSpells308(SpellClearReason.Rest);
+                        r.Check(water + "-6", none && !f.Wiring.PlayerDomain308.DrainHeld(t + second + 3f + .01f), "a swing that met no one holds nothing; the form's end lets its hold go at once");
+                    }
+                    finally { for (int i = 0; i < crowd.Length; i++) crowd[i].transform.position = homes[i]; }
                 }
 
                 // ---- the other four forms: they cast, strike with their element and lock spells (each at its own reach) ----

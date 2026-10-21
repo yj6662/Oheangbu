@@ -26,6 +26,10 @@ namespace Oheangbu.App.World
         [Tooltip("s: the clip starts this long before its apex (contact vs damage <= 2 frames; the wind-up is not shown).")]
         [SerializeField, Min(0f)] private float _strikeToApex = .033f;
         [SerializeField, Min(0f)] private float _strikeLock = .3f;
+        [Header("debate 15: the finisher of a combo (empty state = the plain swing)")]
+        [SerializeField] private string _finishState = "";
+        [SerializeField, Min(0f)] private float _finishLock = .5f;
+        [SerializeField, Min(.1f)] private float _finishWidth = 1.5f;
         [Header("D308-127 step 3: the head grows out of the ferrule, dries before the ink is gone, goes back into the bristles")]
         [Tooltip("s: the ink hardens from the ferrule outward (criterion 1: the outline within 10 % of its final size in <= .5 s).")]
         [SerializeField, Min(.01f)] private float _growSeconds = .3f;
@@ -53,6 +57,9 @@ namespace Oheangbu.App.World
         public string StrikeState => _strikeState;
         public float StrikeToApex => _strikeToApex;
         public float StrikeLock => _strikeLock;
+        public string FinishState => _finishState;
+        public float FinishLock => _finishLock;
+        public float FinishWidth => _finishWidth;
         public WeaponTrail308[] Trails => _trails;
         public float GrowSeconds => _growSeconds;
         public float DrySeconds => _drySeconds;
@@ -74,11 +81,15 @@ namespace Oheangbu.App.World
         // The editor build fills these in (the prefab is made by a tool, not by hand).
         public void Configure(Material hiddenBristle, float roll) { _hiddenBristle = hiddenBristle; _roll = roll; }
         public void ConfigureStrike(string state, float toApex, float lockSeconds) { _strikeState = state; _strikeToApex = toApex; _strikeLock = lockSeconds; }
+        public void ConfigureFinish(string state, float lockSeconds, float width) { _finishState = state ?? ""; _finishLock = lockSeconds; _finishWidth = width; }
 
         // One strike of the form: every afterimage of this head starts fresh (the body's swing is SpellSwing308's).
-        public void Strike()
+        // finish = the last strike of a combo: a wider stroke (only when this head has a finisher).
+        public void Strike(bool finish = false)
         {
-            foreach (var trail in _trails) if (trail != null) trail.Strike();
+            float width = finish && !string.IsNullOrEmpty(_finishState) ? _finishWidth : 1f;
+            foreach (var trail in _trails) if (trail != null) trail.Strike(width);
+            foreach (var chain in GetComponentsInChildren<FlailChain308>(true)) chain.Strike(Time.time);
         }
 
         // Puts the head on the brush under brushRoot. false = no grip or ferrule there (nothing changed).

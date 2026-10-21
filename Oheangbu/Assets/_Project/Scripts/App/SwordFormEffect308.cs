@@ -17,10 +17,11 @@ namespace Oheangbu.App
         public readonly bool GroggyGained;   // this strike raised that enemy's groggy
         public readonly int Struck;          // enemies the strike was judged on (a line weapon may pass through to more)
         public readonly float TotalDamage;   // damage applied to all of them
-        public SwordStrike308(bool swung, EnemyVitals target, float damage, bool counter, bool groggyGained, int struck, float totalDamage)
+        public readonly int Step;            // its place in the combo (1 = first, combo.hits = finisher; 0 = a row without one)
+        public SwordStrike308(bool swung, EnemyVitals target, float damage, bool counter, bool groggyGained, int struck, float totalDamage, int step = 0)
         {
             Swung = swung; Target = target; Damage = damage; Counter = counter; GroggyGained = groggyGained;
-            Struck = struck; TotalDamage = totalDamage;
+            Struck = struck; TotalDamage = totalDamage; Step = step;
         }
     }
 
@@ -64,6 +65,14 @@ namespace Oheangbu.App
             new SpellParamSpec("strike.aim", 0f, 90f, false),
             new SpellParamSpec("break.defence", 0f, 1f, false),
             new SpellParamSpec("break.duration", 0f, 120f, false),
+            // D308-127 debate 15 (TEST): the two-handed sword's combo, the flail's ink hold
+            new SpellParamSpec("combo.hits", 0f, 8f, false),
+            new SpellParamSpec("combo.rest", 0f, 10f, false),
+            new SpellParamSpec("combo.window", 0f, 10f, false),
+            new SpellParamSpec("combo.buffer", 0f, 1f, false),
+            new SpellParamSpec("combo.finish", 0f, 5f, false, 1f),
+            new SpellParamSpec("hold.per", 0f, 10f, false),
+            new SpellParamSpec("hold.cap", 0f, 10f, false),
         };
 
         struct Shredded { public EnemyVitals Enemy; public float Until; }
@@ -77,6 +86,13 @@ namespace Oheangbu.App
         // and its share, the line's aim correction, the defence a landed strike takes away and for how long
         float _width, _through, _near, _inner, _aim, _shred, _shredFor;
         int _count;
+        // debate 15: the combo (hits < 2 = none), the step of the last strike, a click kept for the next allowed moment;
+        // the flail's ink hold (its owner token for the player's domain state, the hold's running end)
+        int _comboHits, _comboStep;
+        float _comboRest, _comboWindow, _comboBuffer, _comboFinish, _holdPer, _holdCap, _holdUntil;
+        bool _pending;
+        long _holdOwner;
+        IPlayerDomainHost308 _domain;
         int[] _hitIds = Array.Empty<int>();
         float[] _hitDistances = Array.Empty<float>();
         // enemies whose defence a strike lowered (taken back on Clear; a form that ran out leaves the running shred alone)
@@ -115,6 +131,11 @@ namespace Oheangbu.App
             _width = row.F("strike.width", 0f); _count = Mathf.Max(1, Mathf.RoundToInt(row.F("strike.count", 1f)));
             _through = row.F("strike.through", 1f); _near = row.F("strike.near", 0f); _inner = row.F("strike.inner", 1f);
             _aim = row.F("strike.aim", 0f); _shred = row.F("break.defence", 0f); _shredFor = row.F("break.duration", 0f);
+            _comboHits = Mathf.RoundToInt(row.F("combo.hits", 0f)); _comboRest = row.F("combo.rest", 0f); _comboWindow = row.F("combo.window", 0f);
+            _comboBuffer = row.F("combo.buffer", 0f); _comboFinish = row.F("combo.finish", 1f); _comboStep = 0; _pending = false;
+            _holdPer = row.F("hold.per", 0f); _holdCap = row.F("hold.cap", 0f); _holdUntil = float.NegativeInfinity;
+            _domain = host as IPlayerDomainHost308;
+            _holdOwner = _holdPer > 0f ? AttackProvenance.Create(host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player, DamageSource.PlayerDirect, _element).AttackId : 0L;
             if (_hitIds.Length < _count) { Array.Resize(ref _hitIds, _count); Array.Resize(ref _hitDistances, _count); }
             _nextStrikeAt = ctx.Now; _active = true;
             _ink = host.Ink; _ink.Gained += OnInkGained;
@@ -162,7 +183,13 @@ namespace Oheangbu.App
             try { release = _manual && seam.SwordReleasePressed308; strike = !release && seam.SwordStrikePressed308; }
             catch (Exception exception) { Debug.LogException(exception); }
             if (release && ReleaseByPlayer(ctx)) return;
-            if (strike) Strike(ctx);
+            if (release) _pending = false;
+            if (strike && !SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt))
+            {
+                // debate 15: a click just before the next strike is allowed is kept for it (combo.buffer; 0 = dropped as before)
+                if (SwordFormRule308.Buffered(ctx.Now, _nextStrikeAt, _comboBuffer)) _pending = true;
+            }
+            else if (strike || (_pending && SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt))) Strike(ctx);
         }
 
         // Intake stop: income that arrives while the form lasts is handed straight back. Nothing is gained and nothing is lost.
@@ -176,7 +203,11 @@ namespace Oheangbu.App
         {
             var host = ctx.Host;
             if (!_active || host == null || !SwordFormRule308.CanStrike(ctx.Now, _nextStrikeAt)) return default;
-            _nextStrikeAt = SwordFormRule308.NextStrikeAt(ctx.Now, _interval);
+            // debate 15: the step of the combo (0 = a row without one) sets the wait after this strike and its share
+            int step = SwordFormRule308.ComboStep(_comboStep, ctx.Now, _nextStrikeAt, _comboHits, _comboWindow);
+            _comboStep = step; _pending = false;
+            _nextStrikeAt = SwordFormRule308.NextStrikeAt(ctx.Now, SwordFormRule308.ComboGap(step, _comboHits, _interval, _comboRest));
+            float comboShare = SwordFormRule308.ComboShare(step, _comboHits, _comboFinish);
             var targets = host.Targets;
             var actors = SpellSnapshots308.Take(targets);
             int aimed = SpellSnapshots308.IndexOf(targets, host.AimedTarget());
@@ -185,9 +216,10 @@ namespace Oheangbu.App
             int struck = SwordFormRule308.SelectTargets(actors, origin, direction, _reach, _arc, _width, aimed, _count, _hitIds, _hitDistances);
             if (struck == 0)
             {
-                Cue(ctx.Fx, SpellFxCue.Miss, new SpellFxCueArgs { Point = origin + direction * _reach, At = ctx.Now });
-                return new SwordStrike308(true, null, 0f, false, false, 0, 0f);
+                Cue(ctx.Fx, SpellFxCue.Miss, new SpellFxCueArgs { Point = origin + direction * _reach, At = ctx.Now, Index = step, Finish = step > 0 && step >= _comboHits });
+                return new SwordStrike308(true, null, 0f, false, false, 0, 0f, step);
             }
+            int landed = 0;
             UnityEngine.Object instigator = host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player;
             EnemyVitals first = null; float firstDamage = 0f, total = 0f; bool firstCounter = false, firstGained = false;
             for (int k = 0; k < struck; k++)
@@ -199,7 +231,8 @@ namespace Oheangbu.App
                 // D308-124: the same element the counter-element damage scale reads (EnemyVitals.TryAttackElement)
                 bool counter = SwordFormRule308.IsCounter(_element, target.TryAttackElement(out Element theirs), theirs);
                 float share = SwordFormRule308.TargetShare(k, _hitDistances[k], _through, _near, _inner);
-                var hit = host.ApplyDirectHit(target, life, _power * share * host.DamageScale(_element), origin + Vector3.up * .4f, attack, _letter);
+                var hit = host.ApplyDirectHit(target, life, _power * share * comboShare * host.DamageScale(_element), origin + Vector3.up * .4f, attack, _letter);
+                if (hit.AppliedDamage > 0f) landed++;
                 bool gained = false;
                 if (hit.AppliedDamage > 0f && !hit.Killed)
                 {
@@ -211,11 +244,31 @@ namespace Oheangbu.App
                     Shred(target, ctx.Now);
                 }
                 Cue(ctx.Fx, hit.AppliedDamage > 0f ? SpellFxCue.Hit : SpellFxCue.Miss,
-                    new SpellFxCueArgs { Target = target.transform, Point = target.transform.position + Vector3.up * .4f, At = ctx.Now, Value = hit.AppliedDamage });
+                    new SpellFxCueArgs { Target = target.transform, Point = target.transform.position + Vector3.up * .4f, At = ctx.Now, Value = hit.AppliedDamage, Index = step, Finish = step > 0 && step >= _comboHits });
                 total += hit.AppliedDamage;
                 if (k == 0) { first = target; firstDamage = hit.AppliedDamage; firstCounter = counter; firstGained = gained; }
             }
-            return new SwordStrike308(true, first, firstDamage, firstCounter, firstGained, struck, total);
+            Hold(landed, ctx.Now);
+            return new SwordStrike308(true, first, firstDamage, firstCounter, firstGained, struck, total, step);
+        }
+
+        // The flail's ink hold (debate 15): a swing that landed holds the upkeep for hold.per per enemy, at most hold.cap ahead.
+        void Hold(int landed, float now)
+        {
+            float until = SwordFormRule308.HoldUntil(_holdUntil, now, landed, _holdPer, _holdCap);
+            if (!(until > _holdUntil) || _domain == null || _holdOwner == 0L) return;
+            _holdUntil = until;
+            try { _domain.PlayerDomain308.HoldDrain(_holdOwner, until); }
+            catch (Exception exception) { Debug.LogException(exception); }
+        }
+
+        void ReleaseHold()
+        {
+            var domain = _domain; long owner = _holdOwner;
+            _domain = null; _holdOwner = 0L; _holdUntil = float.NegativeInfinity; _pending = false; _comboStep = 0;
+            if (domain == null || owner == 0L) return;
+            try { domain.PlayerDomain308.End(owner); }
+            catch (Exception exception) { Debug.LogException(exception); }
         }
 
         // The axe's armour break (the 맛 path: EnemyModifierState308.ShredDefence, the strongest running shred counts).
@@ -243,6 +296,7 @@ namespace Oheangbu.App
             // the host ends every presentation right after (ISpellPresenter.EndAll)
             _active = false; _fx = default;
             StopListening();
+            ReleaseHold();
             DropSeam(false);
             Array.Clear(_progress, 0, _progress.Length); Array.Clear(_progressLife, 0, _progressLife.Length);
             // the caster died, rested or left: the shred the axe hung on an enemy is taken back. EndShred ends every running
@@ -264,6 +318,7 @@ namespace Oheangbu.App
             if (!_active) return;
             _active = false;
             StopListening();
+            ReleaseHold();
             DropSeam(byPlayer);
             var handle = _fx; _fx = default;
             if (fx == null) return;

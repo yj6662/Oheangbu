@@ -102,7 +102,7 @@ namespace Pure308
                 RunTable(r, c);
                 RunWP00(r, c); RunWP02(r, c); RunWP03(r, c); RunWP04(r, c); RunWP05(r, c); RunWP06(r, c); RunWP07(r, c);
                 RunWP08(r, c); RunWP09(r, c); RunWP10(r, c); RunWP11(r, c); RunWP12(r, c); RunWP13(r, c); RunWP14(r, c); RunWP15(r, c); RunWP16(r, c);
-                RunWP17(r, c); RunSpeed123(r, c); RunCounter124(r, c); RunFix123(r, c); RunEmber125(r, c); RunWeapon127(r, c);
+                RunWP17(r, c); RunSpeed123(r, c); RunCounter124(r, c); RunFix123(r, c); RunEmber125(r, c); RunWeapon127(r, c); RunCombo127(r, c);
                 RunCore308(r, c);
             }
             catch (Exception exception) { r.Check("runner", false, "unhandled exception", exception.ToString()); }
@@ -136,6 +136,7 @@ namespace Pure308
         static partial void RunFix123(Report r, Context c);   // #308 D308-123: the fixes that run without Unity (Cases_Fix123.cs)
         static partial void RunEmber125(Report r, Context c);   // #308 D308-125 적용 5: burning ground and the scorch (Cases_Ember125.cs)
         static partial void RunWeapon127(Report r, Context c);   // #308 D308-127 1단계: the spear and the axe forms (Cases_Weapon127.cs)
+        static partial void RunCombo127(Report r, Context c);   // #308 D308-127 debate 15: the sword's combo, the fire stand-in, the flail (Cases_Combo127.cs)
         static partial void RunCore308(Report r, Context c);   // 2026-10-04 fix pass: TEST-only gate, cast order, cue life (Cases_Core308.cs)
 
         // books.tsv (written by spell120_pure308.py from the SpellBookSO assets):

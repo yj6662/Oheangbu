@@ -6,6 +6,7 @@ using System.Linq;
 using Oheangbu.App;
 using Oheangbu.Combat;
 using Oheangbu.Core.Domain;
+using Oheangbu.Spellcraft;
 using UnityEngine;
 
 namespace Pure308
@@ -121,10 +122,15 @@ namespace Pure308
                 "interval " + axeInterval + " power " + axe.BasePower + " reach " + axeReach + " arc " + axeArc);
             n = SwordFormRule308.SelectTargets(new[] { At(0, 0f, axeReach * .8f), At(1, .2f, axeReach * .5f) }, origin, forward, axeReach, axeArc, 0f, -1, 1, ids, distances);
             r.Check(a1, n == 1 && ids[0] == 1, "two enemies inside its cone: the axe strikes one (the nearer)");
-            var rates = rows.Select(x => x.BasePower / Mathf.Max(1e-3f, x.F("sword.interval", 0f))).ToArray();
-            r.Check(a1, rates.All(v => Math.Abs(v - rates[0]) <= rates[0] * 1e-3f),
-                "D308-127 parity reading: every form deals the same power per second to its first enemy (base power / interval); the axe's weight is per strike, not per second",
-                string.Join(" ", rates.Select(v => v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture))));
+            // debate 15: read per cycle (a combo row's chain of strikes and its rest); the combo rows may carry a premium of at most
+            // 15 % (every strike of the chain must land on one enemy to earn it)
+            var plainRates = rows.Where(x => Mathf.RoundToInt(x.F("combo.hits", 0f)) < 2).Select(CycleRate127).ToArray();
+            var comboRates = rows.Where(x => Mathf.RoundToInt(x.F("combo.hits", 0f)) >= 2).Select(CycleRate127).ToArray();
+            r.Check(a1, plainRates.Length >= 3 && plainRates.All(v => Math.Abs(v - plainRates[0]) <= plainRates[0] * 1e-3f) &&
+                comboRates.All(v => v >= plainRates[0] * (1f - 1e-3f) && v <= plainRates[0] * 1.15f),
+                "D308-127 parity reading (per cycle since debate 15): every form deals the same power per second to its first enemy; the axe's weight is per strike, not per second; the combo rows earn at most +15 %",
+                "plain " + string.Join(" ", plainRates.Select(v => v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture))) +
+                " combo " + string.Join(" ", comboRates.Select(v => v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture))));
             float spearGroggy = spear.F("groggy.hits", 0f) * spear.F("sword.interval", 0f), axeGroggy = axe.F("groggy.hits", 0f) * axeInterval;
             r.Check(s3, spearGroggy >= 1.8f - 1e-3f && axeGroggy <= 2.4f + 1e-3f && spearGroggy < axeGroggy &&
                 spear.F("groggy.steps", 0f) / spear.F("groggy.hits", 1f) < 1f && axe.F("groggy.steps", 0f) / axe.F("groggy.hits", 1f) < 1f,
@@ -151,6 +157,16 @@ namespace Pure308
             state.EndShred();
             r.Check(a2, state.DefenceShred(t0 + 1f) == 0f, "taken back on Clear (death, rest, leaving): EndShred ends the running shred");
             r.Check(a2, !state.ShredDefence(t0, 0f), "a form without break.defence lowers nothing (the state refuses a zero shred)");
+        }
+
+        // Power per second on the first enemy over one cycle: a plain row is base power / interval; a combo row is its chain
+        // ((hits - 1) strikes and the finisher's share) over (hits - 1) intervals and the rest.
+        static float CycleRate127(SpellRow x)
+        {
+            float interval = x.F("sword.interval", 0f); int hits = Mathf.RoundToInt(x.F("combo.hits", 0f));
+            if (hits < 2) return x.BasePower / Mathf.Max(1e-3f, interval);
+            float power = x.BasePower * ((hits - 1) + x.F("combo.finish", 1f)), time = interval * (hits - 1) + x.F("combo.rest", 0f);
+            return power / Mathf.Max(1e-3f, time);
         }
     }
 }

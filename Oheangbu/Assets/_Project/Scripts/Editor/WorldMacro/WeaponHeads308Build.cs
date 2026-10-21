@@ -71,7 +71,12 @@ namespace Oheangbu.EditorTools.WorldMacro
             { "Head_Spear", ("SwingThrow", Vector3.zero, new Vector3(0f, 2.0f, 0f), .1f, null) },              // Fable: StrikeFar belongs to the far circle
             { "Head_Sword", ("SwingSweep", Vector3.zero, new Vector3(0f, 1.1f, 0f), .2f, null) },
             { "Head_Axe", ("SwingSlam", Vector3.zero, new Vector3(-.31f, .56f, 0f), .22f, null) },
-            { "Head_Flail", ("SwingArc", Vector3.zero, new Vector3(0f, .70f, 0f), .16f, "Head_Flail_Swing") },
+            { "Head_Flail", ("SwingArc", Vector3.zero, new Vector3(0f, .70f, 0f), .16f, "Flail_Rod") },   // debate 15: the rod swings on the chain
+        };
+        // debate 15: the two-handed sword's finisher (and the fire form's, which borrows the sword until the bow)
+        static readonly Dictionary<string, (string State, float Lock, float Width)> Finishers = new Dictionary<string, (string, float, float)>
+        {
+            { "Head_Sword", ("SwingArc", .5f, 1.5f) },
         };
         // the clip starts this long before its apex (the wind-up is not shown: contact <= 2 frames after the click)
         const float StrikeToApex = .03f, StrikeLock = .3f;
@@ -211,6 +216,8 @@ namespace Oheangbu.EditorTools.WorldMacro
                     // debate 13: the strike's swing and the afterimage's two points (children of the head, so they ride its pose)
                     var strike = Strikes[g.Head];
                     weapon.ConfigureStrike(strike.State, StrikeToApex, StrikeLock);
+                    if (Finishers.TryGetValue(g.Head, out var fin)) weapon.ConfigureFinish(fin.State, fin.Lock, fin.Width);
+                    if (Find(root.transform, FlailChain308.RodName) != null) root.AddComponent<FlailChain308>();
                     Transform under = strike.Under != null ? Find(root.transform, strike.Under) ?? root.transform : root.transform;
                     Transform Point(string name, Vector3 at)
                     {
@@ -368,6 +375,58 @@ namespace Oheangbu.EditorTools.WorldMacro
                             int during = trail.Samples;
                             trail.Step(t0 + trail.Lifetime + .01f, null);
                             Line(idle && during >= 2 && trail.Samples == 0, tag + " afterimage: none before the strike, " + during + " samples while it swings, none " + F(trail.Lifetime) + " s after it");
+                        }
+                        // debate 15: the finisher (its own swing, a wider stroke) and the flail's chain (hangs, keeps off the shaft, flies out on a strike)
+                        if (Finishers.TryGetValue(g.Head, out var finisher))
+                        {
+                            bool knownState = swingProfile != null && swingProfile.States.Any(s => s.State == weapon.FinishState && s.ClipSeconds > 0f);
+                            float wide = -1f;
+                            if (trail != null) { weapon.Strike(true); wide = trail.WidthScale; weapon.Strike(); }
+                            Line(weapon.FinishState == finisher.State && knownState && Mathf.Abs(weapon.FinishLock - finisher.Lock) < 1e-4f && Mathf.Abs(wide - finisher.Width) < 1e-4f && (trail == null || trail.WidthScale == 1f),
+                                tag + " finisher: " + weapon.FinishState + " · lock " + F(weapon.FinishLock) + " s · stroke x" + F(wide) + ", back to x1 on the next plain strike");
+                        }
+                        else Line(string.IsNullOrEmpty(weapon.FinishState), tag + " no finisher (only the combo rows have one)");
+                        var chain = head.GetComponent<FlailChain308>();
+                        if (chain != null)
+                        {
+                            float k0 = 5000f;
+                            Quaternion keepRotation = brush.transform.rotation;
+                            brush.transform.rotation = Quaternion.FromToRotation(head.transform.up, Vector3.up) * brush.transform.rotation;   // upright
+                            bool bound = chain.TryBind();
+                            chain.Settle(1.5f, k0);
+                            Vector3 hangUp = chain.HangDirection; float clearUp = chain.NearestToShaft;
+                            Line(bound && chain.Count == 9 && chain.TotalLength > .7f && chain.TotalLength < 1f,
+                                tag + " chain: " + chain.Count + " parts (8 links + the rod), " + F(chain.TotalLength) + " m" + (bound ? "" : " - " + chain.BindingError));
+                            Line(hangUp.y < -.9f && (clearUp < 0f || clearUp >= .029f),
+                                tag + " brush upright: the chain hangs down (y " + F(hangUp.y) + ") beside the shaft, never inside it (" + (clearUp < 0f ? "none alongside" : F(clearUp * 1000f) + " mm") + ")");
+                            brush.transform.rotation = Quaternion.FromToRotation(head.transform.up, Vector3.right) * brush.transform.rotation;   // level
+                            chain.Settle(1.5f, k0 + 2f);
+                            Vector3 hangLevel = chain.HangDirection;
+                            Line(hangLevel.y < -.9f, tag + " brush level: the chain hangs down (y " + F(hangLevel.y) + ")");
+                            float k1 = k0 + 4f;
+                            chain.Strike(k1); chain.Step(k1 + 1f / 60f, 1f / 60f);
+                            Vector3 anchor = head.GetComponentsInChildren<Transform>(true).First(t => t.name == FlailChain308.Prefix + "01").position;
+                            float offAxis = (chain.EndPoint - (anchor + head.transform.up * chain.TotalLength)).magnitude;
+                            chain.Step(k1 + .05f + .25f + .01f, .05f + .25f);
+                            chain.Settle(1.5f, k1 + .4f);
+                            Vector3 hangAgain = chain.HangDirection;
+                            Line(chain.PullWeight(k1) == 1f && chain.PullWeight(k1 + .04f) == 1f && chain.PullWeight(k1 + .175f) > 0f && chain.PullWeight(k1 + .175f) < 1f && chain.PullWeight(k1 + .31f) == 0f && offAxis < .05f && hangAgain.y < -.9f,
+                                tag + " strike: the chain flies out along the brush (end " + F(offAxis * 1000f) + " mm off the axis line), held .05 s, let go over .25 s, hangs again (y " + F(hangAgain.y) + ")");
+                            brush.transform.rotation = keepRotation;
+                            chain.ResetChain();
+                        }
+                        else Line(g.Head != "Head_Flail", tag + " no chain (only the flail has one)");
+                        if (g.Head == Glyphs[0].Head)
+                        {
+                            // one strike sends a cue per enemy it met: only the first moves the body (same rule time = same strike)
+                            var heads = new SpellWeaponHeads308();
+                            var table = (Dictionary<int, GreatBrushWeapon308[]>)typeof(SpellWeaponHeads308).GetField("_heads", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(heads);
+                            table[7] = new[] { weapon };
+                            heads.Strike(7, 2f); heads.Strike(7, 2f); heads.Strike(7, 2f); int one = heads.Strikes;
+                            heads.Strike(7, 2.5f, true); int two = heads.Strikes;
+                            heads.Strike(7); heads.Strike(7); int untimed = heads.Strikes;
+                            table.Clear();
+                            Line(one == 1 && two == 2 && untimed == 4, "strike cues: three cues of one strike swing once (" + one + "), the next strike swings (" + two + "), untimed cues each swing (" + untimed + ")");
                         }
                         // step 3: grows out of the ferrule (criterion 1: <= .5 s), dries over the last 3 s, sinks back (criterion 8: <= .5 s)
                         float c0 = Time.time, life = 10f;

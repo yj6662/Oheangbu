@@ -66,6 +66,35 @@ namespace Oheangbu.App
             return best;
         }
 
+        // ---- the combo of the two-handed sword (D308-127 debate 15, TEST) ----
+        // This strike's place in the chain: 1 = the first, hits = the finisher; 0 = a row without a combo (hits < 2). The chain
+        // goes back to 1 after the finisher, or when the strike comes later than window seconds after it could have come
+        // (readyAt = when the previous strike allowed the next one). A strike that cuts air still counts: the rhythm is the body's.
+        public static int ComboStep(int previous, float now, float readyAt, int hits, float window)
+        {
+            if (hits < 2) return 0;
+            if (previous <= 0 || previous >= hits || now > readyAt + Mathf.Max(0f, window)) return 1;
+            return previous + 1;
+        }
+
+        // The wait after a strike of that step: the finisher rests, the others take the row's interval.
+        public static float ComboGap(int step, int hits, float interval, float rest) => hits >= 2 && step >= hits ? Mathf.Max(0f, rest) : Mathf.Max(0f, interval);
+
+        // The power share of that step (only the finisher is heavier).
+        public static float ComboShare(int step, int hits, float finish) => hits >= 2 && step >= hits ? Mathf.Max(0f, finish) : 1f;
+
+        // A click this close before the next strike is allowed is kept and fires then (the click is read on its frame only).
+        public static bool Buffered(float now, float readyAt, float buffer) => buffer > 0f && now < readyAt && now >= readyAt - buffer;
+
+        // ---- the flail's ink hold (D308-127 debate 15, TEST) ----
+        // One swing that landed on `landed` enemies holds the upkeep until the returned time: never shortened, never more than
+        // cap seconds ahead of now. 0 enemies (or no per) leaves the running hold as it is.
+        public static float HoldUntil(float running, float now, int landed, float per, float cap)
+        {
+            if (landed <= 0 || per <= 0f || cap <= 0f) return running;
+            return Mathf.Max(running, now + Mathf.Min(cap, per * landed));
+        }
+
         // ---- weapon strikes (D308-127, TEST: the five forms became five weapons; numbers are row parameters) ----
         // Up to count enemies of one strike, in the order they take it: their ids and distances (horizontal; along the line
         // for a line weapon) are written to ids / distances, the return is how many. halfWidth > 0 = a line weapon (the spear): a corridor of that half width
