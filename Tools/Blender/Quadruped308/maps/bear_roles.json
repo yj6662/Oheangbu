@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "target": "bear",
+  "spec": "SPEC-ENEMY-BODIES-308 (D308-119) on SPEC-ANIM-QUADRUPED-308 design 2",
+  "notes": [
+    "Bear pack clips on the Meshy bear body (마석 곰 boss): bear to bear, no mirror (the bulgasari's mirror was for its own weak armpit).",
+    "Run (extra) = Bear_RunForward for the boss chase; Attack3 (extra) kept as the second swipe."
+  ],
+  "roles": {
+    "Idle": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_IdleCombat.fbx",
+      "action": "Bear_IdleCombat",
+      "loop": "periodic",
+      "feet": "contact"
+    },
+    "Walk": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_WalkForward.fbx",
+      "action": "Bear_WalkForward",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": 0,
+      "autoBodyDrop": 0.25
+    },
+    "Attack": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Attack1.fbx",
+      "action": "Bear_Attack1",
+      "loop": false,
+      "feet": "blend"
+    },
+    "Hit": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_GetHitFromFront.fbx",
+      "action": "Bear_GetHitFromFront",
+      "loop": false,
+      "feet": "blend"
+    },
+    "Stun": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_StunnedLoop.fbx",
+      "action": "Bear_StunnedLoop",
+      "loop": "periodic",
+      "feet": "contact"
+    },
+    "Death": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Death.fbx",
+      "action": "Bear_Death",
+      "loop": false,
+      "feet": "body",
+      "footRotation": "parent",
+      "fullCollapse": true,
+      "minLegExtension": 0.35
+    }
+  },
+  "extras": {
+    "Attack3": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_Attack3.fbx",
+      "action": "Bear_Attack3",
+      "loop": false,
+      "feet": "blend",
+      "measurePeak": true
+    },
+    "Run": {
+      "map": "bear228910_to_bear",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_RunForward.fbx",
+      "action": "Bear_RunForward",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": 0,
+      "autoBodyDrop": 0.25
+    }
+  }
+}

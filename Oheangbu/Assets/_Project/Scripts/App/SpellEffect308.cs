@@ -24,10 +24,13 @@ namespace Oheangbu.App
         // when that glyph's row names no handler for it: the first stage is then the host's lock-on single judgement.
         public readonly ISpellPrimaryStage308 Primary;
         public readonly SpellRow Ballistics;
+        // #308 D308-123: the attack ids of the dispatch this cast was accepted in (still open at the accept). null = accepted
+        // outside a dispatch (an editor fixture, an old caller): nobody knows which hits are this cast's.
+        public readonly SpellAttackWindow308 Attacks;
 
         public SpellCastContext(SpellCast cast, SpellRow row, float now, ISpellCastHost host, ISpellPresenter fx,
-            ISpellPrimaryStage308 primary = null, SpellRow ballistics = null)
-        { Cast = cast; Row = row; Now = now; Host = host; Fx = fx; Primary = primary; Ballistics = primary != null ? ballistics : null; }
+            ISpellPrimaryStage308 primary = null, SpellRow ballistics = null, SpellAttackWindow308 attacks = null)
+        { Cast = cast; Row = row; Now = now; Host = host; Fx = fx; Primary = primary; Ballistics = primary != null ? ballistics : null; Attacks = attacks; }
     }
 
     public readonly struct SpellTickContext

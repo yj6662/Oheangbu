@@ -20,6 +20,7 @@ namespace Oheangbu.App.World.UI
     public sealed partial class PlaytestUiRoot
     {
         string gearSelection="",gearError="";bool fragmentTab;
+        bool documentTab;string selectedDocument="";   // D308-117 B2: 소지품 > 문서 (rides the 석경 column machinery, PlaytestUiRoot.Documents308.cs)
         RectTransform content304Detail;
         string content304Kept;                  // name of the chip that owns the page selection (ink frame while unfocused)
         string content304DetailKey;             // what the detail column currently shows
@@ -63,7 +64,7 @@ namespace Oheangbu.App.World.UI
             if(content304Detail==null)return;
             if(Page=="소지품"){Equip308Refresh();return;}   // #308: slot / fragment detail + 바꿔 낄 것 (PlaytestUiRoot.Equipment308.cs)
             // focus moves call this every time; rebuild only when what the column shows changed (a page rebuild = new root)
-            string key=content304Detail.GetInstanceID()+"|"+Page+"|"+fragmentTab+"|"+gearSelection+"|"+content304EmptySlot+"|"+selectedItem+"|"+gearError;
+            string key=content304Detail.GetInstanceID()+"|"+Page+"|"+fragmentTab+"|"+documentTab+"|"+selectedDocument+"|"+gearSelection+"|"+content304EmptySlot+"|"+selectedItem+"|"+gearError;
             if(key==content304DetailKey)return;
             content304DetailKey=key;
             V.Clear(content304Detail);
@@ -87,8 +88,12 @@ namespace Oheangbu.App.World.UI
             var owned=Session.Progress.equipment?.Owned;
             bool newGear=owned!=null&&owned.Any(o=>o!=null&&seen.IsNew("gear:"+o.Id)),newFragment=held.Any(f=>seen.IsNew("item:"+f.ItemId));
             float x=64;
-            if(equipment)x=Content304SubTab("EquipmentTab","장비",owned?.Count??0,!fragmentTab,newGear,x,()=>{if(!fragmentTab)return;fragmentTab=false;content304Focus="EquipmentTab";OpenPage("소지품");})+44;
-            Content304SubTab("FragmentsTab","석경",held.Length,fragmentTab||!equipment,newFragment,x,()=>{if(fragmentTab)return;fragmentTab=true;content304Focus="FragmentsTab";OpenPage("소지품");});
+            if(equipment)x=Content304SubTab("EquipmentTab","장비",owned?.Count??0,!fragmentTab&&!documentTab,newGear,x,()=>{if(!fragmentTab&&!documentTab)return;fragmentTab=false;documentTab=false;content304Focus="EquipmentTab";OpenPage("소지품");})+44;
+            x=Content304SubTab("FragmentsTab","석경",held.Length,(fragmentTab||!equipment)&&!documentTab,newFragment,x,()=>{if(fragmentTab&&!documentTab)return;fragmentTab=true;documentTab=false;content304Focus="FragmentsTab";OpenPage("소지품");})+44;
+            // D308-117 B2: the 문서 tab shows only once a paper is held (no empty tab before the commission)
+            var papers=Documents308Held();
+            if(papers.Length>0)Content304SubTab("DocumentsTab","문서",papers.Length,documentTab,papers.Any(d=>seen.IsNew("item:"+d.Id)),x,()=>{if(documentTab)return;documentTab=true;content304Focus="DocumentsTab";OpenPage("소지품");});
+            else documentTab=false;
         }
 
         /// <summary>하위 탭 (DESIGN §5.4): selected = Title32 Paper + swell, other = Label24 Mist; count meta 20. Focus = 방점 only (rail grammar).

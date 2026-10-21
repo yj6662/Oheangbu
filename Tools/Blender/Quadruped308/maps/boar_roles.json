@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "target": "boar",
+  "spec": "SPEC-ENEMY-BODIES-308 (D308-119) on SPEC-ANIM-QUADRUPED-308 design 2",
+  "notes": [
+    "Goat = hoofed quadruped like the boar; Attack01 is a head butt (the boar's tusk toss). Stun from the bear pack (the goat has none).",
+    "Run (extra) = goat Run_Forward for the 3+ m/s chase; Walk stays the goat walk.",
+    "Attack: hooves stay planted (feet contact) and the body moves at half amplitude - a gore driven by the neck and head; the goat's full-body rear tore the armpit skin (4.6 at k .55).",
+    "Run (extra) = goat Trot_Forward: the goat gallop tore the armpit (3.35 at k .55).",
+    "Death: every rung fails (armpit 2.9+, collapse < .25 at k .55); Unity keeps rig_creatures' procedural Death (stretch 1.35)."
+  ],
+  "roles": {
+    "Idle": {
+      "map": "goat251910_to_boar",
+      "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Idle.fbx",
+      "action": "Armature|Take 001|BaseLayer",
+      "loop": "periodic",
+      "feet": "contact"
+    },
+    "Walk": {
+      "map": "goat251910_to_boar",
+      "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Walk_Forward.fbx",
+      "action": "Armature|Take 001|BaseLayer",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": true,
+      "autoBodyDrop": 0.25
+    },
+    "Attack": {
+      "map": "goat251910_to_boar",
+      "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Attack01.fbx",
+      "action": "Armature|Take 001|BaseLayer",
+      "loop": false,
+      "feet": "contact",
+      "peakBones": [
+        "MouthOrigin"
+      ],
+      "bodyAmplitude": 0.3,
+      "pelvisVerticalAmplitude": 0.5,
+      "attempts": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0.85
+        ],
+        [
+          0.85,
+          0.85
+        ],
+        [
+          0.85,
+          0.7
+        ],
+        [
+          0.7,
+          0.7
+        ],
+        [
+          0.7,
+          0.55
+        ],
+        [
+          0.55,
+          0.55
+        ],
+        [
+          0.45,
+          0.45
+        ],
+        [
+          0.4,
+          0.4
+        ]
+      ]
+    },
+    "Hit": {
+      "map": "goat251910_to_boar",
+      "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Hit_Reaction.fbx",
+      "action": "Armature|Take 001|BaseLayer",
+      "loop": false,
+      "feet": "blend"
+    },
+    "Stun": {
+      "map": "bear228910_to_boar",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_StunnedLoop.fbx",
+      "action": "Bear_StunnedLoop",
+      "loop": "periodic",
+      "feet": "contact"
+    },
+    "Death": {
+      "map": "goat251910_to_boar",
+      "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Death.fbx",
+      "action": "Armature|Take 001|BaseLayer",
+      "loop": false,
+      "feet": "body",
+      "footRotation": "parent",
+      "fullCollapse": true,
+      "minLegExtension": 0.35
+    }
+  },
+  "extras": {
+    "Run": {
+      "map": "goat251910_to_boar",
+      "file": "goat251910/UrsaAnimation/Animation/Goat&Sheep/GoatSheep_Trot_Forward.fbx",
+      "action": "Armature|Take 001|BaseLayer",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": true,
+      "autoBodyDrop": 0.25,
+      "attempts": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0.85
+        ],
+        [
+          0.85,
+          0.85
+        ],
+        [
+          0.85,
+          0.7
+        ],
+        [
+          0.7,
+          0.7
+        ],
+        [
+          0.7,
+          0.55
+        ],
+        [
+          0.55,
+          0.55
+        ],
+        [
+          0.45,
+          0.45
+        ],
+        [
+          0.4,
+          0.4
+        ]
+      ],
+      "bodyAmplitude": 0.4,
+      "pelvisVerticalAmplitude": 0.6
+    }
+  }
+}

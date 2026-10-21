@@ -7,8 +7,10 @@ namespace Oheangbu.App.Demo
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(EnemyVitals))]
-    public sealed class CheongryongCombatController : MonoBehaviour
+    public sealed class CheongryongCombatController : MonoBehaviour, IEnemyAttackElement308
     {
+        // The dragon fights with wood: the parry answer, the sword counter and the counter-element scale (D308-124) read this
+        public const Element AttackElement308 = Element.Wood;
         [SerializeField] private CheongryongCombatProfile _profile;
         [SerializeField] private CombatConfigSO _config;
         [SerializeField] private EnemyVitals _vitals;
@@ -47,6 +49,7 @@ namespace Oheangbu.App.Demo
         public event Action<CheongryongCombatState> StateChanged;
 
         private bool GrowthBlocks => _growth != null && _growth.isActiveAndEnabled && _growth.IsWindingUp;
+        public bool TryAttackElement(out Element element) { element = AttackElement308; return true; }
         private void Awake() { Bind(); ValidateProfile(); ResetEncounter(); }
         private void OnEnable() { Bind(); ValidateProfile(); ResetEncounter(); }
         private void OnDisable() { CancelPlan(); Unbind(); SetState(_vitals != null && !_vitals.IsAlive ? CheongryongCombatState.Dead : CheongryongCombatState.Idle); }
@@ -99,9 +102,9 @@ namespace Oheangbu.App.Demo
             if (_growth == null) _growth = GetComponent<CheongryongGrowthController>();
             if (_subscribedVitals != _vitals)
             {
-                if (_subscribedVitals != null) { _subscribedVitals.Died -= OnDied; _subscribedVitals.WeakPointOpened -= OnWeakPoint; }
+                if (_subscribedVitals != null) { _subscribedVitals.Died -= OnDied; _subscribedVitals.WeakPointOpened -= OnWeakPoint; _subscribedVitals.ClearAttackElementSource308(this); }
                 _subscribedVitals = _vitals;
-                if (_subscribedVitals != null) { _subscribedVitals.Died += OnDied; _subscribedVitals.WeakPointOpened += OnWeakPoint; }
+                if (_subscribedVitals != null) { _subscribedVitals.Died += OnDied; _subscribedVitals.WeakPointOpened += OnWeakPoint; _subscribedVitals.SetAttackElementSource308(this); }
             }
             if (_subscribedPlayer != _playerVitals)
             {
@@ -194,7 +197,7 @@ namespace Oheangbu.App.Demo
             if (direction.sqrMagnitude < .0001f) direction = transform.forward;
             if (Obstructed(origin, _player.position + Vector3.up * .8f)) return false;
             var attack = AttackProvenance.Create(_vitals, DamageSource.Enemy,
-                kind >= CheongryongAttackKind.RootEruption ? Element.Wood : (Element?)null);
+                kind >= CheongryongAttackKind.RootEruption ? AttackElement308 : (Element?)null);
             var plan = new CheongryongAttackPlan(_profile, kind, attack, origin, direction, target, Now);
             if ((kind == CheongryongAttackKind.HeadBite || kind == CheongryongAttackKind.TailSweep) && !plan.Contains(_player.position)) return false;
             CurrentPlan = plan; SetState(CheongryongCombatState.Windup); AttackStarted?.Invoke(plan);
@@ -259,7 +262,7 @@ namespace Oheangbu.App.Demo
             if (!contact) { AttackImpactResolved?.Invoke(new CheongryongAttackImpact(plan, point, ParryOutcome.None, 0f, false)); return; }
             Vector3 parryPoint = _player.position + Vector3.up * 1.1f - (point - plan.Origin).normalized;
             ParryOutcome outcome = plan.IsElemental && _judge != null
-                ? _judge.ResolveImpact(Element.Wood, now, parryPoint, plan.Attack) : ParryOutcome.None;
+                ? _judge.ResolveImpact(AttackElement308, now, parryPoint, plan.Attack) : ParryOutcome.None;
             float damage = plan.Damage;
             if (outcome == ParryOutcome.Success) damage = 0f;
             else if (outcome == ParryOutcome.Half) damage *= _config != null ? _config.HalfParryDamageFactor : .4f;

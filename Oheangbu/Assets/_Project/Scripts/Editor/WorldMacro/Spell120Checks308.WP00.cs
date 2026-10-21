@@ -21,7 +21,8 @@ namespace Oheangbu.EditorTools.WorldMacro
             char root = SpellGrammar308.LetterAt(2), circle = SpellGrammar308.LetterAt(13), lift = SpellGrammar308.LetterAt(20);
             if (!r.Wants(new string(summonCells.Select(SpellGrammar308.LetterAt).Concat(new[] { root, circle, lift }).ToArray()))) return;
             var mainGuids = SpellTable308.MainSceneGuids();
-            using (var f = NewFixture(r, SpellEffectInstaller308.CreateAll(), FoundationSheets))
+            // + Rules308_Gate124 (D308-124): the summon rows as the live table has them, behind the mieum final
+            using (var f = NewFixture(r, SpellEffectInstaller308.CreateAll(), FoundationSheets.Concat(new[] { "Rules308_Gate124" }).ToArray()))
             {
                 // ---- summons: resolver -> cast power 0 -> profile base power -> a strike that applies damage ----
                 var profiles = AssetDatabase.FindAssets("t:SummonCombatProfile").Where(g => mainGuids.Contains(g))
@@ -34,8 +35,19 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var drawn = new DrawnLetter(letter, default, default, null, .6f, .6f, 1f, 1f, 3);
                     var status = f.Resolver.Resolve(drawn, new LegacySpellGate(false, false, false, false, false), out SpellCast cast, out SpellRow row);
                     var profile = profiles.FirstOrDefault(p => p.Letter == letter.ToString());
-                    r.Check(clause, status == SpellResolveStatus.Ok && cast.Kind == SpellKind.Summon && cast.Power == 0f && row.Gate == SpellGateMode.Open,
-                        "a drawn summon resolves (open row) with the book's power 0");
+                    r.Check(clause, status == SpellResolveStatus.Ok && cast.Kind == SpellKind.Summon && cast.Power == 0f && row.Gate == SpellGateMode.Final,
+                        "a drawn summon resolves through the old flag gate (no unlock source) with the book's power 0");
+                    // D308-124: the wiring's own gate holds the summon until the player owns mieum (TEST unlock or main-game proof)
+                    var wiringGate = (ISpellGate)f.Wiring;
+                    bool hadOpen = f.Finals.Open.Remove(SpellFinal.Mieum), hadProven = f.Finals.Proven.Remove(SpellFinal.Mieum);
+                    var shut = wiringGate.Judge(row);
+                    f.Finals.Proven.Add(SpellFinal.Mieum);
+                    var proven = wiringGate.Judge(row);
+                    f.Finals.Proven.Remove(SpellFinal.Mieum);
+                    if (hadOpen) f.Finals.Open.Add(SpellFinal.Mieum);
+                    if (hadProven) f.Finals.Proven.Add(SpellFinal.Mieum);
+                    r.Check(clause, shut == SpellResolveStatus.Locked && proven == SpellResolveStatus.Ok,
+                        "the wiring gate: without mieum the summon is Locked, with the main-game proof of mieum it casts (" + shut + " / " + proven + ")");
                     if (!r.Check(clause, profile != null && profile.BasePower > 0f && profile.TryValidate(out _), "its profile carries a positive base power and still validates")) continue;
                     float before = cast.Power * f.Wiring.SummonDamageScale(cast.Element) * profile.DamageMultiplier;                       // the pre-#308 snapshot: 0
                     float after = SummonPowerRule308.CastPower(cast.Power, profile.BasePower, cast.Brush, cast.HoldScale) * f.Wiring.SummonDamageScale(cast.Element) * profile.DamageMultiplier;

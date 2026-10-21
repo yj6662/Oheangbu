@@ -34,15 +34,18 @@ namespace Oheangbu.App.World
             if (riposte != null) riposte.Walker = this;
             drawingGate = () => (Motor == null || Motor.CanBeginDrawing) && (riposte == null || !riposte.SuppressDraw) && (Wiring == null || !Wiring.SwingLocked308);   // SPEC-SPELL-SWING-308: no new glyph during a swing
             if (Drawing != null) Drawing.EntryAllowed = drawingGate;
+            if (Wiring != null && riposte != null) Wiring.SwordRiposte308 = riposte;   // D308-123: Q with the sword out
         }
         // Authoring may assign references immediately after AddComponent/OnEnable.
         void Start()
         {
             if (Drawing != null) Drawing.EntryAllowed = drawingGate;
+            if (Wiring != null && riposte != null) Wiring.SwordRiposte308 = riposte;
         }
         void OnDisable()
         {
             if (Drawing != null && Drawing.EntryAllowed == drawingGate) Drawing.EntryAllowed = null;
+            if (Wiring != null && riposte != null && ReferenceEquals(Wiring.SwordRiposte308, riposte)) Wiring.SwordRiposte308 = null;
         }
         public void Suspend()
         {

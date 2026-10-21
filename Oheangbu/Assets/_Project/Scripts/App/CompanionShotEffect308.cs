@@ -89,7 +89,7 @@ namespace Oheangbu.App
             int aimedId = SpellSnapshots308.IndexOf(targets, aimed);
             if (aimedId < 0) return;
             _shots.Clear();
-            _state.Accompany(ctx.Host.Buffs, SpellSnapshots308.Take(targets), aimedId, ctx.Host.PlayerPosition, ctx.Now, _shots);
+            _state.Accompany(ctx.Host.Buffs, SpellSnapshots308.Take(targets), aimedId, ctx.Host.PlayerPosition, ctx.Now, _shots, ctx.Cast.Brush);
             if (_shots.Count == 0) return;
             Object caster = ctx.Host.PlayerVitals != null ? (Object)ctx.Host.PlayerVitals : ctx.Host.Player;
             Vector3 origin = ctx.Host.PlayerPosition + Vector3.up * .4f;

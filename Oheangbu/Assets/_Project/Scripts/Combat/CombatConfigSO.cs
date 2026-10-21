@@ -143,6 +143,9 @@ namespace Oheangbu.Combat
         [SerializeField, Min(1f)] private float _blossomDamageMultiplier = 1.5f;
         [Tooltip("[TEST] 급소창 안 플레이어 직접 5속 완주 추가 피해. 순서 자유, 부분 보상 없음, 창당 1회. 이 추가 피해에는 급소 배율을 다시 곱하지 않는다.")]
         [SerializeField, Min(0f)] private float _fiveElementCompletionDamage = 30f;
+        [Tooltip("[TEST D308-124] 급소창 안에서 적의 공격 속성을 상극으로 이기는 플레이어 술식(본탄 · 검 변신 · 잔탄 · 장판 · 표식 기폭)의 피해 배율. " +
+            "급소 배율 다음, 방어 앞에 곱한다. 5속 완주 추가 피해에는 곱하지 않는다. 1=끔")]
+        [SerializeField, Min(1f)] private float _counterElementWindowMultiplier = 1.25f;
 
         [Header("적 — 일반몹 규칙: 무속성 근접 + 단일 속성 원거리, 콤보 없음(COMBAT-ENEMY)")]
         [SerializeField, Min(1f)] private float _enemyMaxHp = 60f;
@@ -242,6 +245,7 @@ namespace Oheangbu.Combat
         public float BlossomStunDuration => _blossomStunDuration;
         public float BlossomDamageMultiplier => _blossomDamageMultiplier;
         public float FiveElementCompletionDamage => _fiveElementCompletionDamage;
+        public float CounterElementWindowMultiplier => _counterElementWindowMultiplier;
         public float EnemyMaxHp => _enemyMaxHp;
         public float EnemyEngageRange => _enemyEngageRange;
         public float EnemyMeleePreferRange => _enemyMeleePreferRange;

@@ -13,7 +13,8 @@
     "Walk = wolf Running_New (trot substitute for the 3.1 m/s chase); the take ends one frame before the cycle closes (periodExtraFrames 1).",
     "Idle = calm breathing window [1,97] of the 21.5 s Idle_New (the rest sniffs the ground and scratches with a hind leg).",
     "Stun = Wolf Boss sturn. TailAttack (extra, toon fox Attack_Tail) is baked for MoveClips but needs a second attack profile to play.",
-    "Pace (extra) = wolf Walking: a gentler gait candidate for Walk when Running fails the skin gates (apply override Walk=Pace)."
+    "Pace (extra) = wolf Walking: a gentler gait candidate for Walk when Running fails the skin gates (apply override Walk=Pace).",
+    "Run (extra, 2026-10-20) = toon fox Fox_Run_InPlace for the D308-120 fox body (fox_spirit x0.7), baked with --tag run (fox_spirit_RT308_run.fbx beside the full FBX, which it never replaces). Passed at k .5 / stride .5 with chainAmplitude .5: stretch 2.425, compression .177, stance slip .019, 4.86x the Pace stance-foot speed. The lowered attempts ladder is a search order, not a gate change - every gate is the Spec value. Swept and rejected the same day: wolf Running_New (stretch 3.21 even at .55; with chainAmplitude .5 + timeScale .8 still 2.64 at .35), Wolf Boss run (2.85, plus fore-paw IK error .025), toon run at full chain amplitude (2.63 / compression .147 at .55), toon run mirrored (passes only at .4), Pace with timeScale .55 (passes, 1.94x Pace, but stance slip 1.23 and the same short stride). The weak skin is the chest midline: adjacent vertices 9025/9023 carry Fore_R_Upper and Fore_L_Upper (cross-side weights), so opposed fore-leg swing stretches it."
   ],
   "roles": {
     "Idle": {
@@ -94,6 +95,35 @@
       "centerStride": true,
       "autoBodyDrop": 0.25,
       "measureWalk": true
+    },
+    "Run": {
+      "map": "toonfox183005_to_fox_spirit",
+      "file": "toonfox183005/Fox/Animations/Fox_Run_InPlace.fbx",
+      "action": "Take 001",
+      "loop": "seam",
+      "feet": "contact",
+      "centerStride": true,
+      "autoBodyDrop": 0.25,
+      "measureWalk": true,
+      "chainAmplitude": 0.5,
+      "attempts": [
+        [
+          0.8,
+          0.8
+        ],
+        [
+          0.7,
+          0.7
+        ],
+        [
+          0.6,
+          0.6
+        ],
+        [
+          0.5,
+          0.5
+        ]
+      ]
     }
   }
 }

@@ -31,6 +31,7 @@ namespace Oheangbu.App
             InstallWP00(effects); InstallWP02(effects); InstallWP03(effects); InstallWP04(effects); InstallWP05(effects);
             InstallWP06(effects); InstallWP07(effects); InstallWP08(effects); InstallWP09(effects); InstallWP10(effects);
             InstallWP11(effects); InstallWP12(effects); InstallWP13(effects); InstallWP14(effects); InstallWP15(effects);
+            InstallWP17(effects);
             // The registry is put together from the effects one by one (SpellEffectList308.Build): an effect the container
             // cannot build is left out and reported. It never stops the combat scope, so the 36 existing glyphs, the other
             // handlers and the deploy layer's boot callback go on.
@@ -52,6 +53,7 @@ namespace Oheangbu.App
         static partial void InstallWP13(SpellEffectList308 effects);
         static partial void InstallWP14(SpellEffectList308 effects);
         static partial void InstallWP15(SpellEffectList308 effects);
+        static partial void InstallWP17(SpellEffectList308 effects);
 
         // Fresh instances of every registered effect, outside any scene scope: the importer (parameter catalogue),
         // the edit-mode fixtures and the status report use this. Each call builds its own short-lived container.

@@ -7,17 +7,19 @@ namespace Oheangbu.App
     // intercept.barrage (SPEC-SPELL-120-308 WP-13, opened by D308-13 Q5): the barrage that shoots enemy projectiles down
     // together.
     //  - first hit = the base glyph's volley on the enemies in its fan, unchanged (the stroke adapter presents it);
-    //  - at the moment the barrage forms (the volley's formation delay), every incoming enemy projectile inside the same
-    //    fan (the volley's half angle and range, from where the caster stood) is frozen and dropped at once, nearest
-    //    first, at most intercept.max of them (InterceptRule308). What is in the air is judged at that moment, not at
-    //    cast time: a projectile that has landed by then is not there to shoot down.
+    //  - from the moment the barrage forms (the volley's formation delay) and while it stands (intercept.window seconds,
+    //    D308-123), every incoming enemy projectile inside the same fan (the volley's half angle and range, from where the
+    //    caster stood) is frozen and dropped, nearest first, at most intercept.max of them over the whole window
+    //    (InterceptRule308). What is in the air is judged each frame of the window, not at cast time: a projectile that has
+    //    landed is not there to shoot down, one that enters the fan while the barrage stands is. A projectile is shot down
+    //    once (a dropped one is out of the air); the barrage ends early when its count is used up.
     // The interceptions cost the volley nothing: its shots and its power on enemies are the base glyph's.
     public sealed class InterceptBarrageEffect308 : ISpellEffect
     {
         public const string HandlerId = "intercept.barrage";
-        static readonly SpellParamSpec[] Specs = { new SpellParamSpec("intercept.max", 1f, 64f) };
+        static readonly SpellParamSpec[] Specs = { new SpellParamSpec("intercept.max", 1f, 64f), new SpellParamSpec("intercept.window", 0f, 10f) };
 
-        struct Barrage { public Vector3 Caster, Forward; public float At, HalfAngle, Range; public int Max; public long Owner; public char Letter; }
+        struct Barrage { public Vector3 Caster, Forward; public float At, Until, HalfAngle, Range; public int Max, Downed; public long Owner; public char Letter; }
         readonly List<Barrage> _barrages = new List<Barrage>();
         readonly List<ISpellInterceptable308> _found = new List<ISpellInterceptable308>();
         readonly List<SpellProjectileSnap> _snaps = new List<SpellProjectileSnap>();
@@ -26,7 +28,7 @@ namespace Oheangbu.App
 
         public string Id => HandlerId;
         public IReadOnlyList<SpellParamSpec> Params => Specs;
-        public int BarragesForming => _barrages.Count;
+        public int BarragesForming => _barrages.Count;      // forming or standing
         public int Downed { get; private set; }            // projectiles shot down so far (checks read this)
 
         public bool Prepare(in SpellCastContext ctx) => ctx.Host != null && ctx.Row != null;
@@ -39,9 +41,11 @@ namespace Oheangbu.App
             if (plan == null) return false;
             var area = plan.Area;
             if (area == null) return true;
+            float window = ctx.Row.F("intercept.window", 0f);
+            if (!(window > 0f)) window = 0f;
             _barrages.Add(new Barrage
             {
-                Caster = caster, Forward = forward, At = ctx.Now + area.Delay, HalfAngle = area.Radius, Range = area.Length,
+                Caster = caster, Forward = forward, At = ctx.Now + area.Delay, Until = ctx.Now + area.Delay + window, HalfAngle = area.Radius, Range = area.Length,
                 Max = Mathf.RoundToInt(ctx.Row.F("intercept.max", 0f)), Owner = SingleShots308.Identity(host, cast.Element).AttackId,
                 Letter = cast.Letter,
             });
@@ -54,19 +58,21 @@ namespace Oheangbu.App
             {
                 var barrage = _barrages[i];
                 if (ctx.Now < barrage.At) continue;
-                _barrages.RemoveAt(i);
                 // the fan may reach further than the caster stands now: gather around where the caster stood, by the fan's range
                 Intercepts308.Gather(ctx.Host, barrage.Range + Vector3.Distance(ctx.Host.PlayerPosition, barrage.Caster), _found, ref _overlaps);
                 Intercepts308.Snap(_found, _snaps);
-                InterceptRule308.PickMany(_snaps, barrage.Caster, barrage.Forward, barrage.HalfAngle, barrage.Range, barrage.Max, _picked);
+                InterceptRule308.PickMany(_snaps, barrage.Caster, barrage.Forward, barrage.HalfAngle, barrage.Range, barrage.Max - barrage.Downed, _picked);
                 for (int p = 0; p < _picked.Count; p++)
                 {
                     Vector3 point = _snaps[_picked[p]].Position;   // read before Intercept drops it
                     if (!_found[_picked[p]].Intercept(barrage.Owner)) continue;
-                    Downed++;
+                    Downed++; barrage.Downed++;
                     (ctx.Fx as ISpellBurstPresenter308)?.Burst(barrage.Letter, point);   // 11.58: presentation only
                 }
                 _found.Clear();
+                if (i >= _barrages.Count) continue;   // cleared while the projectiles were dropped
+                if (barrage.Downed >= barrage.Max || ctx.Now >= barrage.Until) _barrages.RemoveAt(i);
+                else _barrages[i] = barrage;
             }
         }
 

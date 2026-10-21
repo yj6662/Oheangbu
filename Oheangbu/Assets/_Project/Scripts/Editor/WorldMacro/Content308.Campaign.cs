@@ -27,7 +27,7 @@ namespace Oheangbu.EditorTools.WorldMacro
   // its own XZ is kept and only y follows the general's feet.
   static readonly (string stage,string point,string encounter)[] Destinations308=
   {
-   ("commission","mine_inquiry",null),("mine_evidence","mine_inquiry",null),("inn_rest","geumpyo_inn",null),("relay","jeongdam_j1",null),
+   ("commission","village_commission",null),("mine_evidence","mine_inquiry",null),("inn_rest","geumpyo_inn",null),("relay","jeongdam_j1",null),
    ("cargo_contract","wangso_w1",null),("logging","logging_inquiry",null),("deep_forest","metal_growth_lesson",null),("cheongryong",null,"cheongryong"),
    ("guk_return","guk_high_reward",null),("escort","escort_start",null),("checkpoint_one","checkpoint_1",null),("checkpoint_two","checkpoint_2",null),
    ("delivery","cargo_delivery",null),("south_gate",null,"south_gate_general"),("ending",null,"south_gate_general"),

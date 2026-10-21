@@ -3,7 +3,7 @@
 # path.cover (wood o + ieung): its own corridor (half width 3, length 12, front speed 5, delay 0.4) and a small base power; the wave front is a moving wall of cover.
 # zone.haze (nong only; mong moved to Rules308_WP15 as zone.blind, D308-113): haze.radius / haze.life = the circle left at the middle of the spray and how long it stays, haze.miss = share of strikes an enemy inside misses, haze.max = hazes at once.
 # single.cover: cover.radius / cover.life = the rooted rock, cover.max = rocks at once, cover.range = where the rock of a cast without a target falls (metres ahead).
-# intercept.single: intercept.range / intercept.angle = the fan the needle looks for an incoming projectile in. intercept.barrage: intercept.max = projectiles one barrage can shoot down.
+# intercept.single: intercept.range / intercept.angle = the fan the needle looks for an incoming projectile in; intercept.fallback = power share of the metal needle shot at an enemy when nothing is in the air (D308-123, TEST). intercept.barrage: intercept.max = projectiles one barrage can shoot down in all; intercept.window = how long the barrage stands after it forms, shooting down what enters its fan (D308-123, TEST; 0 = the one moment it forms).
 # single.unblockable and path.purge carry no number of their own.
 # Gate test (every row of this sheet since #308b, D308-51: the main game now grants all five finals): the row stays behind its final's TEST unlock.
 # The main-game grant of that final does not open it until its world side exists
@@ -13,6 +13,6 @@
 농,replace,zone.haze,,,test,,base,,,,,,,,,,,,haze.radius=3;haze.life=8;haze.miss=0.5;haze.max=1
 막,replace,single.cover,,,test,,base,,,,,,,,,,,,cover.radius=1.2;cover.life=12;cover.max=2;cover.range=8
 삿,replace,single.unblockable,,,test,,base,,,,,,,,,,,,
-상,replace,intercept.single,,,test,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20
-송,replace,intercept.barrage,,,test,,base,,,,,,,,,,,,intercept.max=6
+상,replace,intercept.single,,,test,,base,,,,,,,,,,,,intercept.range=16;intercept.angle=20;intercept.fallback=0.5
+송,replace,intercept.barrage,,,test,,base,,,,,,,,,,,,intercept.max=6;intercept.window=0.6
 온,replace,path.purge,,,test,,base,,,,,,,,,,,,

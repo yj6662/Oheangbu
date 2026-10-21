@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Oheangbu.Combat
 {
     public enum EnemyArchetype { NeutralMelee, FireRanged, WoodVine, WaterRanged, MetalSoldier, EarthHeavy }
-    public enum EnemyAttackDelivery { MeleeArc, HomingProjectile, AimedProjectile, GroundEruption }
+    public enum EnemyAttackDelivery { MeleeArc, HomingProjectile, AimedProjectile, GroundEruption, Charge }
 
     [CreateAssetMenu(menuName = "Oheangbu/Combat/Enemy Attack Profile", fileName = "EnemyAttackProfile")]
     public sealed class EnemyAttackProfileSO : ScriptableObject
@@ -24,6 +24,19 @@ namespace Oheangbu.Combat
         public Vector2 CooldownRange = new Vector2(1.2f, 2.2f);
         [Min(.1f)] public float MovementSpeedHint = 2.6f;
         [Min(.1f)] public float PreferredDistanceHint = 1.7f;
+        // #308 D308-125 적용 3 (Charge only, TEST): the body runs ProjectileSpeed m/s straight along the line it locked ChargeLockLead s
+        // before the telegraph ends, for the player's distance then + ChargeOvershoot, cut to ChargeMinTravel..Range; the swept line
+        // hits once within ImpactRadius. No ChargeMinTravel of straight path ahead = no charge; stopped by a wall = ChargeWallRecovery.
+        [Min(0f)] public float ChargeLockLead = .25f;
+        [Min(0f)] public float ChargeOvershoot = 2.5f;
+        [Min(.1f)] public float ChargeMinTravel = 4f;
+        [Min(.05f)] public float ChargeWallRecovery = 2f;
+        // #308 D308-125 적용 4 (Charge only, TEST): what a charger does while it cannot start its run (묵's circle, no straight path):
+        // it closes in and lands this melee arc once, then goes back to the charge. null = it only waits.
+        public EnemyAttackProfileSO Fallback;
+        // #308 D308-125 적용 5 (GroundEruption only, TEST): the ember patch each burst leaves where it landed, hit or miss
+        // (a parried burst leaves none). null = nothing stays on the ground.
+        public EnemyGroundPatchSO Patch;
 
         // TEST starting data only. Each asset is independent; shared CombatConfig is never edited.
         public void ApplyDefaults(EnemyArchetype archetype)
@@ -66,6 +79,15 @@ namespace Oheangbu.Combat
             foreach (float v in positive) if (!float.IsFinite(v) || v <= 0) { error = "Attack values must be finite and positive"; return false; }
             if (!float.IsFinite(Damage) || Damage < 0 || ArcDegrees > 360 || CooldownRange.y < CooldownRange.x || PreferredDistanceHint > Range)
             { error = "Invalid damage, arc, cooldown or preferred distance"; return false; }
+            if (Delivery == EnemyAttackDelivery.Charge && (!float.IsFinite(ChargeLockLead) || ChargeLockLead < 0 || !float.IsFinite(ChargeOvershoot) ||
+                ChargeOvershoot < 0 || !float.IsFinite(ChargeMinTravel) || ChargeMinTravel <= 0 || ChargeMinTravel > Range ||
+                !float.IsFinite(ChargeWallRecovery) || ChargeWallRecovery <= 0))
+            { error = "Invalid charge lock, overshoot, minimum travel or wall recovery"; return false; }
+            if (Fallback != null && (Delivery != EnemyAttackDelivery.Charge || Fallback == this || Fallback.Delivery != EnemyAttackDelivery.MeleeArc ||
+                Fallback.Fallback != null || !(Fallback.Range <= Range) || !Fallback.TryValidate(out _)))
+            { error = "A fallback belongs to a charge and must be a valid melee arc within its range, without a fallback of its own"; return false; }
+            if (Patch != null && Delivery != EnemyAttackDelivery.GroundEruption) { error = "A ground patch belongs to a ground eruption"; return false; }
+            if (Patch != null && !Patch.TryValidate(out string patchError)) { error = patchError; return false; }
             error = null; return true;
         }
     }

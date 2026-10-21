@@ -66,8 +66,10 @@ namespace Oheangbu.App
             var targets = ctx.Host.Targets; var actors = SpellSnapshots308.Fill(targets, ref _snaps);
             DerivedHits308.Ids(targets, visited, _visited);
             Vector3 point = from.transform.position;
+            // D308-123: a bounce launched while a speed buff runs flies faster (SpellBuffState308.SpeedScale)
+            float speed = row.F("bounce.speed", 0f) * (ctx.Host.Buffs != null ? ctx.Host.Buffs.SpeedScale(ctx.Now) : 1f);
             if (!RicochetRule308.Bounce(actors, point, _visited, shot, depth, Mathf.RoundToInt(row.F("bounce.count", 0f)), row.F("bounce.range", 0f),
-                row.F("bounce.speed", 0f), ctx.Now, shotPower, row.F("bounce.power", 0f), element, _scratch, out SpellHitOrder order)) return;
+                speed, ctx.Now, shotPower, row.F("bounce.power", 0f), element, _scratch, out SpellHitOrder order)) return;
             var next = targets[order.TargetId];
             var touched = new EnemyVitals[visited.Length + 1];
             visited.CopyTo(touched, 0); touched[visited.Length] = next;

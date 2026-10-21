@@ -304,7 +304,7 @@ namespace Oheangbu.App.World.UI
             {
                 case "소지품":
                 {
-                    int fragments=ui!=null&&ui.items!=null?ui.items.Sum(x=>x.count):0;
+                    int fragments=ui!=null&&ui.items!=null?ui.items.Where(x=>x!=null&&!Oheangbu.Data.World.WorldMacroPlaytestSO.DocumentSpec.IsDocumentItem(x.id)).Sum(x=>x.count):0;   // 문서 (letter.*) is not a 석경 조각
                     var equipment=Session!=null&&Session.EquipmentEnabled&&Session.Progress!=null?Session.Progress.equipment:null;
                     return (equipment!=null&&equipment.Owned!=null?"장비 "+equipment.Owned.Count+"  ":"")+"석경 조각 "+fragments;
                 }

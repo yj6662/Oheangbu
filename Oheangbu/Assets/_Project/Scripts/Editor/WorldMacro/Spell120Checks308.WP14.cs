@@ -32,6 +32,14 @@ namespace Oheangbu.EditorTools.WorldMacro
             public void EndAll() { Calls++; }
         }
 
+        // A counter whose answers are set by hand (D308-123, Q with the sword out): what the wiring's arbitration does with them.
+        sealed class WP14FakeRiposte : ISwordRiposte308
+        {
+            public bool Can, Fires; public int Asked, Fired; public EnemyVitals Fallback;
+            public bool CanRiposteFor308(EnemyVitals fallback) { Asked++; Fallback = fallback; return Can; }
+            public bool RiposteFor308(EnemyVitals fallback) { Fired++; Fallback = fallback; return Fires; }
+        }
+
         static partial void FixturesWP14(Report r)
         {
             // grid cells by index: 11 / 35 / 59 / 83 / 107 = the five swords (eo + siot), 1 = wood single attack, 7 = wood parry
@@ -163,6 +171,32 @@ namespace Oheangbu.EditorTools.WorldMacro
                 r.Check("W14", drawing.EntryAllowed == null && harvest.enabled, "a draw mode without an owner's gate has none again after the form");
                 SpellFixture308.Set(f.Wiring, "_drawingInput", null); SpellFixture308.Set(f.Wiring, "_harvest", null);
                 Object.DestroyImmediate(harvest);
+
+                // ---- Q with the sword out (D308-123, TEST): one press, one action. The arbitration behind a pressed release key
+                //      (Edit Mode cannot press it): the volley when it can fire, and the sword goes with it; else the sword only ----
+                bool Arbitrate() => (bool)SpellFixture308.Call(f.Wiring, "SwordReleaseOrRiposte308");
+                Reset(); f.Cast(wood); f.Aim(target);
+                var counter = new WP14FakeRiposte();
+                bool alone = Arbitrate();
+                f.Wiring.SwordRiposte308 = counter;
+                bool cannot = Arbitrate();
+                r.Check("W14", alone && cannot && counter.Asked == 1 && counter.Fired == 0 && counter.Fallback == target,
+                    "no counter, or one that cannot fire: the press puts the sword away (the counter is asked with the aimed target)");
+                counter.Can = counter.Fires = true;
+                bool fired = Arbitrate();
+                counter.Fires = false;
+                bool failed = Arbitrate();
+                bool held = sword.Active;                                       // the answer alone ends nothing
+                bool away = fired && sword.ReleaseByPlayer(At(2f));             // what the form's tick does with a yes
+                r.Check("W14", fired && !failed && counter.Fired == 2 && held && away && !sword.Active,
+                    "a counter that can fire takes the press and the answer is a release (the tick then puts the sword away); a counter chosen but not fired answers no release");
+                var real = f.Obj("Spell308_Riposte", SpellFixture308.Origin).AddComponent<Oheangbu.App.World.Riposte301>();
+                f.Wiring.SwordRiposte308 = real;
+                bool bare = Arbitrate();
+                Object.DestroyImmediate(real);
+                bool gone = Arbitrate();
+                r.Check("W14", bare && gone, "the volley without a profile or walker cannot fire, a destroyed one is none: the press puts the sword away");
+                f.Wiring.SwordRiposte308 = null; f.Aim(null);
 
                 // ---- a presenter that throws changes nothing (no refund with the form on, no lost strike) ----
                 var broken = new WP14BrokenPresenter();

@@ -44,6 +44,22 @@ namespace Oheangbu.Data.World
                 (!string.IsNullOrWhiteSpace(EvidenceId)||!string.IsNullOrWhiteSpace(TargetEncounterId))&&Reward>=0;
         }
         public CommissionSpec[] Commissions=Array.Empty<CommissionSpec>();
+        // 문서 (SPEC-FIELD-FIRST-HOUR-308 B2, D308-117, TEST): a paper in the world the player carries and reads again from
+        // 소지품 > 문서. Held = its Id in UiProgress.items (the "letter." prefix keeps it out of the 석경 count); given once in the
+        // same save as the campaign step that completes GrantOnStage. Notes = short lines added on the back after a stage, not goals.
+        [Serializable] public sealed class DocumentNote{public string AfterStage;[TextArea] public string Text;}
+        [Serializable] public sealed class DocumentSpec
+        {
+            public const string ItemPrefix="letter.";
+            public string Id,Title,GrantOnStage;
+            [TextArea] public string[] Pages=Array.Empty<string>();
+            public DocumentNote[] Notes=Array.Empty<DocumentNote>();
+            public string State="TEST";
+            public bool IsConfigured=>!string.IsNullOrWhiteSpace(Id)&&Id.StartsWith(ItemPrefix,StringComparison.Ordinal)&&!string.IsNullOrWhiteSpace(Title)&&Pages!=null&&Pages.Length>0;
+            public static bool IsDocumentItem(string itemId)=>itemId!=null&&itemId.StartsWith(ItemPrefix,StringComparison.Ordinal);
+        }
+        public DocumentSpec[] Documents=Array.Empty<DocumentSpec>();
+        public DocumentSpec FindDocument(string id)=>string.IsNullOrEmpty(id)||Documents==null?null:Array.Find(Documents,d=>d!=null&&d.Id==id);
         public Oheangbu.Data.Demo.DemoCampaignProfile Campaign;
         public Oheangbu.Data.Demo.DemoEconomyProfileSO Economy;
         public Oheangbu.Data.Demo.EquipmentCatalogSO EquipmentCatalog;

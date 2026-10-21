@@ -78,6 +78,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     if((a=Arg(c,"scene-adopt:"))!=null)return SceneAdopt(a);
     if((a=Arg(c,"check:"))!=null)return Check(a);
     if((a=Arg(c,"probe:"))!=null)return Probe(a);
+    if((a=Arg(c,"scan:"))!=null)return Scan(a);
    }
    catch(Refuse r){return "REFUSED "+r.Message;}
    catch(Exception e){return "FAILED "+e;}

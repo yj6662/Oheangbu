@@ -63,6 +63,7 @@ namespace Oheangbu.App.World.UI
 
         GameObject Content304FirstFragment()
         {
+            if(documentTab)return Content308FirstDocument();   // D308-117 B2: the 문서 tab uses the same back / kept-chip paths
             var cell=content304GearCells.FirstOrDefault(c=>c!=null&&c.Id==selectedItem&&c.name.StartsWith("Fragment_",StringComparison.Ordinal))
                 ??content304GearCells.FirstOrDefault(c=>c!=null&&c.name.StartsWith("Fragment_",StringComparison.Ordinal));
             return cell!=null?cell.gameObject:null;

@@ -1,0 +1,540 @@
+{
+ "jackal": [
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_spurs.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_spurs_albedo.png",
+   "bone": "Spine4",
+   "length": 0.45,
+   "grip01": 0.5,
+   "pos": [
+    0.003,
+    0.001,
+    -0.206
+   ],
+   "euler": [
+    4.8,
+    179.1,
+    181.1
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "등뼈를 뚫고 나온 뼈 가시(물든 몸)",
+   "saturation": 0.5,
+   "value": 0.98
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal_albedo.png",
+   "bone": "Spine5",
+   "length": 0.26,
+   "grip01": 0.5,
+   "pos": [
+    0.062,
+    0.114,
+    -0.11
+   ],
+   "euler": [
+    316.6,
+    2.4,
+    326.7
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "어깨 위 오른쪽 작은 마석 결정",
+   "saturation": 0.45,
+   "value": 1.0
+  }
+ ],
+ "ember_dog": [
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_jaw.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_jaw_albedo.png",
+   "bone": "Neck",
+   "length": 0.36,
+   "grip01": 0.5,
+   "pos": [
+    0.103,
+    -0.027,
+    0.056
+   ],
+   "euler": [
+    341.4,
+    99.8,
+    236.2
+   ],
+   "tint": [
+    1.5,
+    1.45,
+    1.3
+   ],
+   "note": "목 오른쪽에 돋은 남는 턱(이빨)",
+   "saturation": 0.3,
+   "value": 0.98
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_shackle.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_shackle_albedo.png",
+   "bone": "LegBack2.R",
+   "length": 0.4,
+   "grip01": 0.76,
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "euler": [
+    270.0,
+    172.7,
+    0.0
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "오른 뒷다리 끊긴 족쇄(사슬은 꼬리 쪽으로 끌림)",
+   "saturation": 0,
+   "value": 0.95
+  }
+ ],
+ "bandit": [
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_talisman.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_talisman_albedo.png",
+   "bone": "Head",
+   "length": 0.32,
+   "grip01": 0.5,
+   "pos": [
+    -0.128,
+    0.179,
+    -0.014
+   ],
+   "euler": [
+    5.8,
+    270.0,
+    204.8
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "얼굴을 덮은 못 박힌 부적",
+   "smoothness": 0.05,
+   "saturation": 0.7,
+   "value": 1.0
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal_albedo.png",
+   "bone": "Chest",
+   "length": 0.5,
+   "grip01": 0.5,
+   "pos": [
+    -0.131,
+    -0.121,
+    -0.07
+   ],
+   "euler": [
+    334.8,
+    298.7,
+    129.7
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "등을 뚫고 나온 마석 결정",
+   "saturation": 0.45,
+   "value": 1.0
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal_albedo.png",
+   "bone": "LeftShoulder",
+   "length": 0.32,
+   "grip01": 0.5,
+   "pos": [
+    -0.024,
+    0.065,
+    0.071
+   ],
+   "euler": [
+    50.2,
+    324.6,
+    337.9
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "왼 어깨 결정",
+   "saturation": 0.45,
+   "value": 1.0
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_shackle.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_shackle_albedo.png",
+   "bone": "LeftLowerArm",
+   "length": 0.4,
+   "grip01": 0.76,
+   "pos": [
+    -0.2,
+    -0.001,
+    -0.001
+   ],
+   "euler": [
+    359.7,
+    89.8,
+    148.6
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "왼 손목 족쇄 + 끊긴 사슬",
+   "saturation": 0,
+   "value": 0.95
+  }
+ ],
+ "boar": [
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_spurs.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_spurs_albedo.png",
+   "bone": "Chest",
+   "length": 0.45,
+   "grip01": 0.5,
+   "pos": [
+    0.0,
+    -0.013,
+    -0.22
+   ],
+   "euler": [
+    20.1,
+    180.0,
+    180.0
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "어깨 위 등뼈 가시",
+   "saturation": 0.5,
+   "value": 0.98
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_spurs.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_spurs_albedo.png",
+   "bone": "Spine",
+   "length": 0.36,
+   "grip01": 0.5,
+   "pos": [
+    0.0,
+    0.0,
+    0.22
+   ],
+   "euler": [
+    346.0,
+    0.0,
+    0.0
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "허리 등뼈 가시",
+   "saturation": 0.5,
+   "value": 0.98
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_stake.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_stake_albedo.png",
+   "bone": "Pelvis",
+   "length": 0.6,
+   "grip01": 0.35,
+   "pos": [
+    -0.08,
+    -0.082,
+    -0.179
+   ],
+   "euler": [
+    23.0,
+    205.4,
+    177.2
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "엉덩이에 박힌 채 남은 사냥꾼 쇠말뚝",
+   "saturation": 0,
+   "value": 0.95
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_tumor.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_tumor_albedo.png",
+   "bone": "Spine",
+   "length": 0.34,
+   "grip01": 0.5,
+   "pos": [
+    -0.19,
+    0.0,
+    0.02
+   ],
+   "euler": [
+    0.0,
+    286.7,
+    164.0
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "오른 옆구리 눈 달린 혹(남는 눈)"
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal_albedo.png",
+   "bone": "Pelvis",
+   "length": 0.32,
+   "grip01": 0.5,
+   "pos": [
+    -0.12,
+    0.065,
+    -0.144
+   ],
+   "euler": [
+    275.6,
+    250.6,
+    144.1
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "왼 엉덩이 결정",
+   "saturation": 0.45,
+   "value": 1.0
+  }
+ ],
+ "fox": [
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_talisman.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_talisman_albedo.png",
+   "bone": "Pelvis",
+   "length": 0.36,
+   "grip01": 0.5,
+   "pos": [
+    -0.17,
+    0.0,
+    -0.02
+   ],
+   "euler": [
+    0.0,
+    0.0,
+    270.0
+   ],
+   "tint": [
+    0.8,
+    0.65,
+    0.45
+   ],
+   "note": "오른 엉덩이에 못 박힌 부적",
+   "smoothness": 0.05,
+   "saturation": 0.7,
+   "value": 0.55
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_rope.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_rope_albedo.png",
+   "bone": "Neck",
+   "length": 0.34,
+   "grip01": 0.5,
+   "pos": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "euler": [
+    360.0,
+    180.0,
+    0.0
+   ],
+   "tint": [
+    0.85,
+    0.7,
+    0.5
+   ],
+   "note": "목 금줄(종이 수술)",
+   "saturation": 0.6,
+   "value": 0.5
+  }
+ ],
+ "turtle": [
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal_albedo.png",
+   "bone": "Shell",
+   "length": 0.6,
+   "grip01": 0.5,
+   "pos": [
+    0.122,
+    0.199,
+    0.006
+   ],
+   "euler": [
+    338.6,
+    275.1,
+    346.0
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "등껍질 한가운데를 뚫은 마석 결정",
+   "saturation": 0.45,
+   "value": 1.0
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_crystal_albedo.png",
+   "bone": "Shell",
+   "length": 0.38,
+   "grip01": 0.5,
+   "pos": [
+    -0.148,
+    0.144,
+    0.254
+   ],
+   "euler": [
+    7.6,
+    264.7,
+    327.0
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "오른 앞 결정",
+   "saturation": 0.45,
+   "value": 1.0
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_stake.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_stake_albedo.png",
+   "bone": "Shell",
+   "length": 0.6,
+   "grip01": 0.3,
+   "pos": [
+    0.051,
+    0.147,
+    -0.246
+   ],
+   "euler": [
+    302.6,
+    151.5,
+    114.9
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "등껍질에 박힌 쇠말뚝",
+   "saturation": 0,
+   "value": 0.95
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_stake.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_stake_albedo.png",
+   "bone": "Shell",
+   "length": 0.5,
+   "grip01": 0.3,
+   "pos": [
+    0.302,
+    0.192,
+    0.156
+   ],
+   "euler": [
+    313.1,
+    62.0,
+    215.7
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "뒤쪽 쇠말뚝",
+   "saturation": 0,
+   "value": 0.95
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_rope.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/BearPart308_rope_albedo.png",
+   "bone": "Shell",
+   "length": 1.02,
+   "grip01": 0.5,
+   "pos": [
+    0.0,
+    0.02,
+    0.001
+   ],
+   "euler": [
+    359.4,
+    270.0,
+    358.3
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "등껍질 둘레 금줄",
+   "saturation": 0,
+   "value": 0.95
+  },
+  {
+   "prefab": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_talisman.fbx",
+   "albedo": "Assets/_Project/Art/Characters/Creatures308/Parts/GrotPart308_talisman_albedo.png",
+   "bone": "Shell",
+   "length": 0.32,
+   "grip01": 0.5,
+   "pos": [
+    0.001,
+    0.066,
+    0.452
+   ],
+   "euler": [
+    271.8,
+    18.4,
+    341.6
+   ],
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "note": "오른 옆 부적",
+   "smoothness": 0.05,
+   "saturation": 0.7,
+   "value": 1.0
+  }
+ ]
+}

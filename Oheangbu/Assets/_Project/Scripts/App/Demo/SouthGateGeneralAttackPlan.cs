@@ -88,7 +88,7 @@ namespace Oheangbu.App.Demo
             {
                 EmpowerStartAt = kind == SouthGateAttackKind.NeutralEarthCombo ? hits[0].ActiveEndAt : now;
                 EmpowerEndAt = EmpowerStartAt + (kind == SouthGateAttackKind.NeutralEarthCombo ? p.ComboEmpowerSeconds : p.WaveWindup);
-                hits.Add(new SouthGateAttackPulse(SouthGatePulseShape.Wave, AttackProvenance.Create(owner, DamageSource.Enemy, Element.Earth),
+                hits.Add(new SouthGateAttackPulse(SouthGatePulseShape.Wave, AttackProvenance.Create(owner, DamageSource.Enemy, SouthGateGeneralController.AttackElement308),
                     EmpowerEndAt, p.WaveRange / p.WaveSpeed, kind == SouthGateAttackKind.NeutralEarthCombo ? p.ComboEarthDamage : p.WaveDamage,
                     p.WaveRange, p.WaveWidth, p.WaveHalfAngle, p.WaveSpeed));
             }
@@ -125,7 +125,7 @@ namespace Oheangbu.App.Demo
         {
             if (!InEarthPreparation(now)) return false;
             EmpowerInterrupted = true;
-            foreach (var hit in Pulses) if (hit.Attack.Element == Element.Earth && !hit.Consumed) hit.Cancel();
+            foreach (var hit in Pulses) if (hit.Attack.Element == SouthGateGeneralController.AttackElement308 && !hit.Consumed) hit.Cancel();
             return true;
         }
         internal void Cancel() { IsCancelled = true; foreach (var hit in Pulses) if (!hit.Consumed) hit.Cancel(); }

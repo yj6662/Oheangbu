@@ -9,16 +9,28 @@ namespace Oheangbu.App
     // their own runtime (EABuffRuntime) and are not in here.
     public sealed class SpellBuffState308
     {
-        struct Slot { public char Letter; public float Until; public int Charges; }
+        struct Slot { public char Letter; public float Until; public int Charges; public float SpeedScale; }
         readonly List<Slot> _slots = new List<Slot>();
 
         // charges = 0: a plain timed buff. charges > 0: also ends when the last charge is consumed.
-        public void Activate(char letter, float now, float duration, int charges = 0)
+        // speedScale: how much faster the player's projectiles fly while the buff runs (1 = not at all; D308-123).
+        public void Activate(char letter, float now, float duration, int charges = 0, float speedScale = 1f)
         {
             if (float.IsNaN(now) || float.IsNaN(duration) || duration <= 0f) return;
-            var slot = new Slot { Letter = letter, Until = now + duration, Charges = charges > 0 ? charges : 0 };
+            var slot = new Slot { Letter = letter, Until = now + duration, Charges = charges > 0 ? charges : 0, SpeedScale = speedScale > 0f ? speedScale : 1f };
             int at = IndexOf(letter);
             if (at >= 0) _slots[at] = slot; else _slots.Add(slot);
+        }
+
+        // D308-123: the speed scale of every player projectile launched now whose speed is its own row number (volley
+        // bounces, droplets, companion shots): the product of the running buffs' scales. Single shots get the same buff
+        // through the cast hook (SpellCast.SpeedMul); install marks, summons and the cast interval never read this.
+        public float SpeedScale(float now)
+        {
+            float scale = 1f;
+            for (int i = 0; i < _slots.Count; i++)
+                if (now < _slots[i].Until) scale *= _slots[i].SpeedScale;
+            return scale;
         }
 
         public bool Active(char letter, float now)

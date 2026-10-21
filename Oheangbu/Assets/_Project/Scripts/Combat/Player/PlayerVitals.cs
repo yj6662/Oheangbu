@@ -8,7 +8,8 @@ namespace Oheangbu.Combat
     // 달지 않는 것으로 지켜진다. 「피격=작도 중단」은 Damaged 이벤트를 App 배선이
     // InterruptLetter로 연결해 이행한다(COMBAT-ATTACK — 표현·입력 계층에 직접 닿지 않는다).
     public enum EnvironmentDeathCause { None, Fall, DeepWater }
-    public enum IncomingDamageKind { Unspecified, Melee, Ranged, ElementalMelee, ElementalRanged }
+    // #308 D308-125 적용 5: Lingering = burning ground and the scorch it leaves (TakeLingeringDamage308 only)
+    public enum IncomingDamageKind { Unspecified, Melee, Ranged, ElementalMelee, ElementalRanged, Lingering }
     // #308: one damaging hit as the player took it. Attacker = null for the environment and for old callers.
     public readonly struct PlayerHitInfo
     {
@@ -81,6 +82,11 @@ namespace Oheangbu.Combat
         public PlayerHitInfo LastHit { get; private set; } // #308: set before Damaged fires, so a Damaged listener can read who struck
         public event Action Died;
         public event Action HpChanged;
+        // #308 D308-125 적용 5: burning-ground ticks. No Damaged, no AttackDamaged, no LastHit: a tick neither breaks a letter
+        // nor counts as a hit (EnemyStrike308 Spec §10 exception, recorded in DECISIONS).
+        public event Action<float> LingeringDamaged;
+        // #308 D308-125 적용 5: the lethal guard just kept the player alive (any damage path). Listeners end what keeps burning.
+        public event Action Spared308;
 
         // One App owner may durably accept survival before HP or damage events become observable.
         public void BindLethalDamageGuard(Func<float,bool> guard)
@@ -124,17 +130,43 @@ namespace Oheangbu.Combat
             { float scale=modifier(kind);if(float.IsFinite(scale))amount*=Mathf.Clamp01(scale); }
             if(amount<=0)return false;
 
-            float remaining=Mathf.Max(0f,_hp-amount);
-            float survivingHp=Mathf.Min(1f,MaxHp);
-            if(remaining<=0f&&survivingHp>0f&&_lethalDamageGuard!=null&&_lethalDamageGuard(survivingHp/MaxHp))
-                remaining=survivingHp;
-            _hp=remaining;
+            bool spared=Lose308(amount);
             HpChanged?.Invoke();
             LastHit = new PlayerHitInfo(attacker, amount, kind);
             Damaged?.Invoke(amount);
             AttackDamaged?.Invoke(LastHit);
+            if (spared) Spared308?.Invoke();
             if (_hp <= 0f) Died?.Invoke();
             return true;
+        }
+
+        // #308 D308-125 적용 5: one tick of burning ground (dodgeable = a dodge's invulnerability skips it) or of the scorch
+        // (not dodgeable). The incoming scales see Lingering; the lethal guard is the same as for a hit.
+        public bool TakeLingeringDamage308(float amount, bool dodgeable)
+        {
+            if(!float.IsFinite(amount)||amount<=0)return false;
+            if(dodgeable&&_dodge!=null&&_dodge.IsInvulnerable)return false;
+            if(_hp<=0f)return false;
+            foreach(var modifier in _incomingDamageScales)
+            { float scale=modifier(IncomingDamageKind.Lingering);if(float.IsFinite(scale))amount*=Mathf.Clamp01(scale); }
+            if(amount<=0)return false;
+            bool spared=Lose308(amount);
+            HpChanged?.Invoke();
+            LingeringDamaged?.Invoke(amount);
+            if(spared)Spared308?.Invoke();
+            if(_hp<=0f)Died?.Invoke();
+            return true;
+        }
+
+        // true = the lethal guard held the player at the surviving HP
+        private bool Lose308(float amount)
+        {
+            float remaining=Mathf.Max(0f,_hp-amount);
+            float survivingHp=Mathf.Min(1f,MaxHp);
+            bool spared=remaining<=0f&&survivingHp>0f&&_lethalDamageGuard!=null&&_lethalDamageGuard(survivingHp/MaxHp);
+            if(spared)remaining=survivingHp;
+            _hp=remaining;
+            return spared;
         }
     }
 }

@@ -81,11 +81,31 @@ namespace Oheangbu.App.World
             catch(OverflowException){Show("통보 보유량을 확인한 뒤 다시 시도한다.");return true;}
             if(first)proposal.ledger.completed.Add(point.Id);
             proposal.campaign=next;
+            string given=GrantStageDocuments308(Progress.campaign,next,proposal.ui);   // D308-117 B2: the commission letter rides the same save
             if(!TryCommitInteraction(proposal,out var error)){Show(error);return true;}
-            if(point.Kind==PrologueInteractionKind.Conversation)Speak306(point,point.Prompt,point.Text,reward>0?"조선통보 +"+reward:null);   // #306
-            else Present(point.Prompt,point.Text+(reward>0?"\n조선통보 +"+reward:""));
+            string receipt=reward>0?"조선통보 +"+reward:null;
+            if(given!=null)receipt=receipt==null?given:receipt+"\n"+given;
+            if(point.Kind==PrologueInteractionKind.Conversation)Speak306(point,point.Prompt,point.Text,receipt);   // #306
+            else Present(point.Prompt,point.Text+(receipt!=null?"\n"+receipt:""));
             InteractionResolved?.Invoke(point.Kind,point.Position);
             success=true;return true;
+        }
+
+        /// <summary>D308-117 B2 (SPEC-FIELD-FIRST-HOUR-308): every configured document whose GrantOnStage this step completed goes
+        /// into the bundle once. Returns the receipt line ("&lt;제목&gt;을 받았다") or null.</summary>
+        string GrantStageDocuments308(DemoCampaignState before,DemoCampaignState after,Oheangbu.App.World.UI.UiProgress ui)
+        {
+            if(Content.Documents==null||ui==null||after?.Completed==null)return null;
+            string receipt=null;
+            foreach(var d in Content.Documents)
+            {
+                if(d==null||!d.IsConfigured||string.IsNullOrEmpty(d.GrantOnStage))continue;
+                if(!after.Completed.Contains(d.GrantOnStage)||(before?.Completed?.Contains(d.GrantOnStage)??false)||ui.HasItem(d.Id))continue;
+                ui.AddItem(d.Id);
+                char last=d.Title[d.Title.Length-1];bool batchim=last>='가'&&last<='힣'&&(last-'가')%28!=0;
+                receipt=(receipt==null?"":receipt+"\n")+d.Title+(batchim?"을":"를")+" 받았다";
+            }
+            return receipt;
         }
     }
 }

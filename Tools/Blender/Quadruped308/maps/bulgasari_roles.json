@@ -75,6 +75,31 @@
       "feet": "blend",
       "mirror": true,
       "measurePeak": true
+    },
+    "Run": {
+      "map": "bear228910_to_bulgasari",
+      "file": "bear228910/Blink/Art/Animals/Stylized/Bear/Bear_Animations/Bear_RunForward.fbx",
+      "action": "Bear_RunForward",
+      "loop": "periodic",
+      "feet": "contact",
+      "centerStride": 0,
+      "autoBodyDrop": 0.25,
+      "mirror": true,
+      "measureWalk": true,
+      "attempts": [
+        [
+          0.85,
+          0.85
+        ],
+        [
+          0.7,
+          0.7
+        ],
+        [
+          0.55,
+          0.55
+        ]
+      ]
     }
   }
 }

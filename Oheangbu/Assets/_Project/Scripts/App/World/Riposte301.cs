@@ -13,8 +13,10 @@ namespace Oheangbu.App.World
     // an initial at its centre; the glyphs pour out of them and weave to the target like 도깨비불, leaving faint
     // afterimages; every hit splashes ink and shakes the view, the last one holds the frame for a moment.
     // Runs before the drawing controller so the same frame's press never opens the draw mode.
+    // D308-123 (TEST): while the brush is a sword the wiring arbitrates the same Q press (ISwordRiposte308): the volley
+    // when it can fire, at the locked target or else at the one the wiring aims at, and the sword goes with it.
     [DefaultExecutionOrder(-80)]
-    public sealed class Riposte301 : MonoBehaviour
+    public sealed class Riposte301 : MonoBehaviour, ISwordRiposte308
     {
         public Riposte301Profile Profile;
         public WorldMacroCombatWalker Walker;
@@ -88,7 +90,7 @@ namespace Oheangbu.App.World
             if (_lockOn == null) _lockOn = Walker.Motor.GetComponent<LockOn>();
             if (_q == null) _q = Walker.Drawing.DrawModeAction;
             if (SuppressDraw && (_q == null || !_q.IsPressed())) SuppressDraw = false;
-            if (_q != null && _q.WasPressedThisFrame() && !Walker.Drawing.InDrawMode && !Active && TryBegin()) SuppressDraw = true;
+            if (_q != null && _q.WasPressedThisFrame() && !Walker.Drawing.InDrawMode && !Active && !SwordOwnsPress308() && TryBegin(LockedTarget())) SuppressDraw = true;
             float real = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime;
             // Paused by a menu or a card (0, while the hit stop itself runs at Profile.HitStopScale > 0): the countdown waits. It used to
             // run on real time and write the saved scale back over the pause.
@@ -101,25 +103,56 @@ namespace Oheangbu.App.World
         }
 
         // presentation hook (#302 trailer cue): fire the volley now if the same conditions as the Q press hold
-        public bool Fire()
+        public bool Fire() => Ready() && TryBegin(LockedTarget());
+
+        bool ISwordRiposte308.CanRiposteFor308(EnemyVitals fallback) => isActiveAndEnabled && Ready() && Profile.GlyphMaterial != null && CanRiposteAt(SwordTarget308(fallback));
+
+        bool ISwordRiposte308.RiposteFor308(EnemyVitals fallback)
         {
-            if (Profile == null || Walker == null || Walker.Motor == null || Walker.Drawing == null || Active || Walker.Drawing.InDrawMode) return false;
+            if (!isActiveAndEnabled || !Ready() || !TryBegin(SwordTarget308(fallback))) return false;
+            SuppressDraw = true;   // held until Q is up, like a volley fired from Update
+            return true;
+        }
+
+        // The wiring asks through ISwordRiposte308 while the sword is held; the press is not taken here as well.
+        bool SwordOwnsPress308()
+        {
+            var wiring = Walker.Wiring;
+            return wiring != null && wiring.SwordFormHeld308 && ReferenceEquals(wiring.SwordRiposte308, this);
+        }
+
+        bool Ready()
+        {
+            if (Profile == null || Walker == null || Walker.Motor == null || Walker.Body == null || Walker.Drawing == null || Active || Walker.Drawing.InDrawMode) return false;
             if (_lockOn == null) _lockOn = Walker.Motor.GetComponent<LockOn>();
-            return TryBegin();
+            return true;
+        }
+
+        EnemyVitals LockedTarget() => _lockOn != null ? _lockOn.Target : null;
+
+        EnemyVitals SwordTarget308(EnemyVitals fallback)
+        {
+            var locked = LockedTarget();
+            return locked != null ? locked : fallback;
         }
 
         public bool CanRiposte(out EnemyVitals target)
         {
-            target = _lockOn != null ? _lockOn.Target : null;
+            target = LockedTarget();
+            return CanRiposteAt(target);
+        }
+
+        bool CanRiposteAt(EnemyVitals target)
+        {
             if (target == null || !target.IsAlive || !target.WeakPointActive || Walker.Seated || !Walker.Motor.CanBeginDrawing) return false;
             return Vector3.Distance(target.transform.position, Walker.Body.transform.position) <= Profile.Range;
         }
 
         Vector3 Chest(EnemyVitals t) => t.transform.position + Vector3.up * 1.2f;
 
-        bool TryBegin()
+        bool TryBegin(EnemyVitals target)
         {
-            if (!CanRiposte(out var target) || Profile.GlyphMaterial == null) return false;
+            if (!CanRiposteAt(target) || Profile.GlyphMaterial == null) return false;
             _target = target; _targetLife = target.LifeRevision; _clock = 0f; _hits = 0;
             int n = Mathf.Max(1, Profile.GlyphCount); _count = n;
             _damagePerGlyph = Profile.TotalDamage / n;

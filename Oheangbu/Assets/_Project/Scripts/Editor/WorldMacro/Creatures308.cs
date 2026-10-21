@@ -45,8 +45,9 @@ namespace Oheangbu.EditorTools.WorldMacro
  //                   up the scene and the content asset first (Tools/Unity/Stage308_creatures/Backup). Idempotent.
  //   check           the placed actors (NavMesh, rig, materials, collider, wiring, ids, boss rules, clearances) + Populate308's still whole
  //   shots           edit-mode stills of each boss and one actor per group (plain camera, no post) -> <stillDir>/place_*.png
+ //   attacks | attacks:revert   D308-125 roles[]: another attack on some members of a group (Creatures308.Roles.cs); place and swap:apply re-arm
  // Queue-safe: no dialog, refusals are strings. Writes need W_Demo_Main active, Edit mode, compiled, not dirty.
- public static class Creatures308
+ public static partial class Creatures308
  {
   const string StoreRoot="Assets/Store308/Creatures308";
   [Serializable] sealed class Look{public string reference="";public float saturation,value,smoothness,eyeSmoothness,eyeTriangleShare,boundsScale;public int textureSize,normalMaxSize;public float[] eyeColor=Array.Empty<float>();}
@@ -59,14 +60,19 @@ namespace Oheangbu.EditorTools.WorldMacro
    public string key="",pack="",model="",keep="",avatar="",albedo="",normal="",idle="",walk="",run="",attack="",hit="",stun="",death="",template="",audio="",attackFrom="",vitalsFrom="",displayName="";
    public bool merge,loopStun,isBoss;
    public float length_m,yaw_deg,attackPeak01,walkMps,runMps,runThresholdMps,scaleTemplate,telegraph,recovery,damage,range,rangeMargin,arc,cooldownMin,cooldownMax,hp,speed,detection,leash,capsuleRadius,capsuleHeight,saturation,value;
+   public float[] tint=Array.Empty<float>();   // D308-119: optional albedo multiply (r, g, b) after the ink tone - one-part colour change, e.g. a grey wolf as a rust jackal
    public float defence;   // #308 WP-16 (D308-114): TEST share of a hit the body takes off (0 = none; the WP-15 cap still applies in play)
+   // D308-119 two-legged bodies (a Humanoid model + Humanoid clips): height_m > 0 scales by standing height instead of length_m;
+   // alphaClip > 0 keeps the albedo alpha and cuts below it (hair strands of the PeopleLite atlas)
+   public float height_m,alphaClip;
+   public PartRow[] parts=Array.Empty<PartRow>();   // D308-119 rigid parts on bones (Creatures308.Parts.cs)
   }
   [Serializable] sealed class BossRow{public string id="",name="",species="",realm="";}
   [Serializable] sealed class Cfg
   {
    public string version="",content="",prefix="",boss_prefix="",root="",prefabDir="",stillDir="";
    public Look look=new Look();public Proc proc=new Proc();public Fit fit=new Fit();public StillCfg still=new StillCfg();public PlaceCfg place=new PlaceCfg();
-   public Sp[] species=Array.Empty<Sp>();public BossRow[] bosses=Array.Empty<BossRow>();
+   public Sp[] species=Array.Empty<Sp>();public BossRow[] bosses=Array.Empty<BossRow>();public SwapRow[] swaps=Array.Empty<SwapRow>();public RoleRow[] roles=Array.Empty<RoleRow>();
   }
   [Serializable] sealed class PlanEnemy{public string id="",name="",contentId="",species="",realm="",group="";public float[] feet=Array.Empty<float>(),patrol2=Array.Empty<float>();}
   [Serializable] sealed class PlanBoss{public string id="",name="",species="",realm="",relaxed="";public float yaw_deg;public float[] feet=Array.Empty<float>();}
@@ -114,7 +120,10 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(EditorApplication.isPlayingOrWillChangePlaymode)return "REFUSED Edit mode only (Play is running)";
     if(EditorApplication.isCompiling||EditorUtility.scriptCompilationFailed)return "REFUSED scripts are compiling or failed to compile";
     var cfg=Data();var scene=SceneManager.GetActiveScene();bool dirtyBefore=scene.isDirty;int rootsBefore=scene.rootCount;string result;
-    if(c=="clips")result=Clips(cfg);
+    if(c=="clips"||c.StartsWith("clips:",StringComparison.Ordinal))result=Clips(cfg,c.Length>6?c.Substring(6):"");
+    else if(c.StartsWith("parts:probe:",StringComparison.Ordinal))result=ProbeParts(cfg,c.Substring(12));
+    else if(c.StartsWith("film:",StringComparison.Ordinal))result=Film(cfg,c.Substring(5));
+    else if(c.StartsWith("face:",StringComparison.Ordinal))result=Face(cfg,c.Substring(5));
     else if(c=="stills"||c.StartsWith("stills:",StringComparison.Ordinal))result=Stills(cfg,c.Length>7?c.Substring(7):"");
     else
     {
@@ -124,10 +133,13 @@ namespace Oheangbu.EditorTools.WorldMacro
      if(c=="status")return Status(cfg,scene,session,content);
      if(c=="check")return Check(cfg,scene,session,content);
      if(c=="shots")return Shots(cfg,scene);
+     if(c=="swap:dry"||c.StartsWith("swap:dry:",StringComparison.Ordinal))return Swap(cfg,scene,session,content,false,c.Length>9?c.Substring(9):"");
      if(scene.isDirty)return "REFUSED the play scene has unsaved changes";
      if(c=="bodies:build"||c.StartsWith("bodies:build:",StringComparison.Ordinal))result=Build(cfg,scene,c.Length>13?c.Substring(13):"");
      else if(c=="place"||c=="revert")return PlaceOrRevert(cfg,scene,session,content,c=="place");
-     else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots)";
+     else if(c=="swap:apply"||c.StartsWith("swap:apply:",StringComparison.Ordinal))return Swap(cfg,scene,session,content,true,c.Length>11?c.Substring(11):"");
+     else if(c=="attacks"||c=="attacks:revert")return Attacks(cfg,scene,session,content,c=="attacks");
+     else return "REFUSED unknown Creatures308 command '"+c+"' (status | assets | inspect:<id> | clips | bodies:build[:<species>] | stills[:<species>] | place | revert | check | shots | swap:dry | swap:apply | attacks | attacks:revert)";
     }
     scene=SceneManager.GetActiveScene();
     if(scene.isDirty!=dirtyBefore||scene.rootCount!=rootsBefore)result+="\nWARNING the open scene changed during a command that must not touch it (dirty "+dirtyBefore+" -> "+scene.isDirty+", roots "+rootsBefore+" -> "+scene.rootCount+")";
@@ -324,8 +336,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    b.animator.avatar=s.avatar=="none"?null:AssetDatabase.LoadAllAssetsAtPath(s.model).OfType<Avatar>().FirstOrDefault(a=>a.isValid);
    b.animator.runtimeAnimatorController=null;b.animator.applyRootMotion=false;b.animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;b.animator.enabled=true;
    var idle=Clip(s.idle)??throw new Refuse(s.key+": idle clip missing");
-   Pose(b.animator,idle,0);var m=Measure(b);if(m.size.z<1e-4f)throw new Refuse(s.key+": zero body length");
-   b.scale=s.length_m/m.size.z;b.model.transform.localScale=b.model.transform.localScale*b.scale;
+   Pose(b.animator,idle,0);var m=Measure(b);if(m.size.z<1e-4f||m.size.y<1e-4f)throw new Refuse(s.key+": zero body length or height");
+   b.scale=s.height_m>0?s.height_m/m.size.y:s.length_m/m.size.z;b.model.transform.localScale=b.model.transform.localScale*b.scale;
    Pose(b.animator,idle,0);m=Measure(b);b.model.transform.localPosition+=new Vector3(-m.center.x,-m.min.y,-m.center.z);
    Pose(b.animator,idle,0);m=Measure(b);b.length=m.size.z;b.width=m.size.x;b.height=m.max.y;
    foreach(var k in b.skins)
@@ -381,11 +393,12 @@ namespace Oheangbu.EditorTools.WorldMacro
 
   // ---------- clips (read only) ----------
 
-  static string Clips(Cfg cfg)
+  static string Clips(Cfg cfg,string only)
   {
    var sb=new StringBuilder("Creatures308 clips (measured in a preview scene; nothing written)\n");
    foreach(var s in cfg.species)
    {
+    if(only.Length>0&&s.key!=only)continue;
     if(s.scaleTemplate>0){sb.Append(s.key).Append(": scaled copy of ").Append(s.template).Append(" x").Append(F(s.scaleTemplate)).Append(" (its own clips)\n");continue;}
     try
     {
@@ -393,7 +406,8 @@ namespace Oheangbu.EditorTools.WorldMacro
      {
       var b=BuildVisual(cfg,s,w,false,out _);
       sb.Append(s.key).Append(": scale ").Append(F(b.scale,"0.####")).Append(" L ").Append(F(b.length)).Append(" W ").Append(F(b.width)).Append(" H ").Append(F(b.height)).Append(" bones ").Append(b.bones.Length).Append(" skins ").Append(b.skins.Length)
-       .Append(" verts ").Append(b.skins.Sum(k=>k.sharedMesh.vertexCount)).Append(" bodyRoot ").Append(b.bodyRoot.name).Append(" hips ").Append(b.hips.name).Append('\n');
+       .Append(" verts ").Append(b.skins.Sum(k=>k.sharedMesh.vertexCount)).Append(" bodyRoot ").Append(b.bodyRoot.name).Append(" hips ").Append(b.hips.name)
+       .Append(" avatar ").Append(b.animator.avatar==null?"none":(b.animator.avatar.isValid?"valid":"INVALID")+(b.animator.avatar.isHuman?" human":"")).Append('\n');
       foreach(var (role,spec) in new[]{("idle",s.idle),("walk",s.walk),("run",s.run),("attack",s.attack),("hit",s.hit),("stun",s.stun),("death",s.death)})
       {
        if(string.IsNullOrEmpty(spec)){sb.Append("   ").Append(role).Append(": -\n");continue;}
@@ -470,7 +484,8 @@ namespace Oheangbu.EditorTools.WorldMacro
    for(int i=0;i<px.Length;i++)
    {
     float r=px[i].r,g=px[i].g,b=px[i].b,l=.299f*r+.587f*g+.114f*b;
-    px[i]=new Color32((byte)Mathf.Clamp((l+(r-l)*sat)*val,0,255),(byte)Mathf.Clamp((l+(g-l)*sat)*val,0,255),(byte)Mathf.Clamp((l+(b-l)*sat)*val,0,255),255);
+    float tr=s.tint!=null&&s.tint.Length==3?s.tint[0]:1f,tg=s.tint!=null&&s.tint.Length==3?s.tint[1]:1f,tb=s.tint!=null&&s.tint.Length==3?s.tint[2]:1f;
+    px[i]=new Color32((byte)Mathf.Clamp((l+(r-l)*sat)*val*tr,0,255),(byte)Mathf.Clamp((l+(g-l)*sat)*val*tg,0,255),(byte)Mathf.Clamp((l+(b-l)*sat)*val*tb,0,255),s.alphaClip>0?px[i].a:(byte)255);
    }
    tex.SetPixels32(px);tex.Apply();
    string file=cfg.prefabDir+"/Textures/T_"+s.key+"_ink.png";Folder(cfg.prefabDir+"/Textures");
@@ -502,6 +517,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    body.SetTexture("_BaseMap",albedo);if(body.HasProperty("_MainTex"))body.SetTexture("_MainTex",albedo);body.SetColor("_BaseColor",Color.white);
    if(body.HasProperty("_Smoothness"))body.SetFloat("_Smoothness",cfg.look.smoothness);if(body.HasProperty("_Metallic"))body.SetFloat("_Metallic",0);
    if(body.HasProperty("_BumpMap")){body.SetTexture("_BumpMap",normal);if(normal!=null)body.EnableKeyword("_NORMALMAP");else body.DisableKeyword("_NORMALMAP");}
+   if(s.alphaClip>0){body.SetFloat("_AlphaClip",1);body.SetFloat("_Cutoff",s.alphaClip);body.EnableKeyword("_ALPHATEST_ON");body.renderQueue=2450;}   // D308-119 PeopleLite hair strands
    body.DisableKeyword("_EMISSION");body.globalIlluminationFlags=MaterialGlobalIlluminationFlags.EmissiveIsBlack;if(body.HasProperty("_EmissionColor"))body.SetColor("_EmissionColor",Color.black);
    EditorUtility.SetDirty(body);AssetDatabase.SaveAssetIfDirty(body);
    Material eye=null;
@@ -588,17 +604,38 @@ namespace Oheangbu.EditorTools.WorldMacro
         if(!feet.Configured){row.note="foot placement did not re-calibrate at x"+F(k)+" ("+feet.LastStatus+") - removed on this body";rig.FootPlacement=null;Object.DestroyImmediate(feet);}
         else row.note="foot placement re-calibrated at x"+F(k);
        }
+       row.note+=AttachParts(cfg,s,new Body{animator=rig.Animator,model=visual.gameObject},w);   // D308-120: rigid parts on the scaled template body too
        range=s.range>0?s.range:2.8f*k;var from=AssetDatabase.LoadAssetAtPath<EnemyAttackProfileSO>(s.attackFrom);
        preferred=Mathf.Min(range-cfg.fit.preferredBelowRange,(from!=null?from.PreferredDistanceHint:enc.PreferredDistance)*k);
        row.scale=k;row.capsuleRadius=capsule.radius;row.capsuleHeight=capsule.height;row.walkMps=rig.WalkMetresPerSecond;row.attackPeak01=rig.AttackPeak01;row.deathSeconds=rig.Death!=null?rig.Death.length:0;
        var skin=actor.GetComponentsInChildren<SkinnedMeshRenderer>(true).FirstOrDefault();if(skin!=null&&skin.sharedMesh!=null){Bounds sbn=default;bool any=false;foreach(var q in SkinWorld(skin)){if(!any){sbn=new Bounds(q,Vector3.zero);any=true;}else sbn.Encapsulate(q);}row.length=sbn.size.z;row.width=sbn.size.x;row.height=sbn.size.y;}
+       if(!string.IsNullOrEmpty(s.run))
+       {
+        // D308-120 fox run (사용자 A): the template has no run of its own (fox_spirit's RT308_Pace was baked but never wired) - a run clip
+        // from data, its stance-foot speed measured on this scaled body (actor space = world metres, so no x k afterwards)
+        var run=Clip(s.run);var gb=new Body{wrapper=actor,model=visual.gameObject,animator=rig.Animator,length=row.length,height=row.height};
+        gb.skins=actor.GetComponentsInChildren<SkinnedMeshRenderer>(true).Where(k=>k.sharedMesh!=null&&!k.GetComponentsInParent<Transform>(true).Any(t=>t.name.StartsWith("Part308_",StringComparison.Ordinal))).ToArray();
+        if(gb.skins.Length==0||gb.length<=0)throw new Refuse(s.key+": no skin to measure the run clip on");
+        gb.bones=gb.skins.SelectMany(k=>k.bones).Where(k=>k!=null).Distinct().ToArray();gb.hips=gb.skins[0].rootBone!=null?gb.skins[0].rootBone:gb.bones[0];
+        // the template's walk is measured the same way: a run clip whose stance is not faster than the walk's is no run (fox_spirit RT308_Pace
+        // 0.10 vs walk 0.14 m/s, 2026-10-20 - both tiny-stride clips; the walk's 1.5 x k is a hand figure, not a stance speed)
+        float runV=MeasureGait(gb,run,cfg.fit,out string runFeet,out float runDrift);float walkV=rig.Walk!=null?MeasureGait(gb,rig.Walk,cfg.fit,out _,out _):0f;
+        if(rig.Idle!=null)Pose(rig.Animator,rig.Idle,0);
+        float runRate=s.runMps>0?s.runMps:runV;
+        float threshold=s.runThresholdMps>0?s.runThresholdMps:s.runThresholdMps<0?0f:Mathf.Max(patrolSpeed*cfg.fit.runOverPatrol,runRate*cfg.fit.runThresholdShare);
+        bool faster=s.runMps>0||runV>walkV*cfg.fit.runOverPatrol;
+        bool useRun=faster&&runRate>.1f&&threshold>0&&threshold<s.speed;
+        if(useRun){rig.Run=run;rig.RunThresholdMetresPerSecond=threshold;rig.RunMetresPerSecond=runRate;rig.RunProfile=null;}
+        row.runMps=useRun?runRate:0;row.runDrift=runDrift;
+        row.note+="; run "+run.name+" measured "+F(runV)+" m/s feet "+runFeet+(s.runMps>0?"; clip rate from data "+F(s.runMps)+" m/s":"")+(runDrift>row.length*cfg.fit.driftWarnShare?"; RUN DRIFTS "+F(runDrift)+" m per cycle":"")+(useRun?"; runs above "+F(threshold)+" m/s":!faster?"; run clip unused (not faster than the walk clip, "+F(walkV)+" m/s measured)":"; run clip unused (threshold "+F(threshold)+" vs speed "+F(s.speed)+")");
+       }
       }
       else
       {
        foreach(var child in actor.transform.Cast<Transform>().ToArray())Object.DestroyImmediate(child.gameObject);
        var oldFeet=actor.GetComponent<EnemyFootPlacement298>();if(oldFeet!=null)Object.DestroyImmediate(oldFeet);
        foreach(var gone in actor.GetComponents<Component>().Where(x=>x is EnemyOrganSet||x is Oheangbu.App.Demo.EnemyElementTelegraph||x is FolkloreCullingBounds298||x is FolkloreReadability298).ToArray())Object.DestroyImmediate(gone);
-       var b=BuildVisual(cfg,s,w,true,out _);Materials(cfg,s,b,w);
+       var b=BuildVisual(cfg,s,w,true,out _);Materials(cfg,s,b,w);string partNote=AttachParts(cfg,s,b,w);
        var idle=Clip(s.idle);
        AnimationClip Role(string spec)=>string.IsNullOrEmpty(spec)?null:spec.StartsWith("proc:",StringComparison.Ordinal)?MakeProc(cfg,s,b,spec.Substring(5),idle):Clip(spec);
        var walk=Role(s.walk);var run=Role(s.run);var attack=Role(s.attack);var hit=Role(s.hit);var stun=Role(s.stun);var death=Role(s.death);
@@ -626,7 +663,7 @@ namespace Oheangbu.EditorTools.WorldMacro
        enc.DeathVisualSeconds=death.length+.1f;
        row.scale=b.scale;row.length=b.length;row.width=b.width;row.height=b.height;row.attackPeak01=rig.AttackPeak01;row.attackReach=reach;row.walkMps=rig.WalkMetresPerSecond;row.runMps=useRun?rig.RunMetresPerSecond:0;row.walkDrift=walkDrift;row.runDrift=runDrift;
        row.capsuleRadius=r;row.capsuleHeight=h;row.feet=feetNames;row.deathSeconds=death.length;
-       row.note="contact bone "+who+(walkDrift>b.length*cfg.fit.driftWarnShare?"; WALK DRIFTS "+F(walkDrift)+" m per cycle":"")+(run!=null&&runDrift>b.length*cfg.fit.driftWarnShare?"; RUN DRIFTS "+F(runDrift)+" m per cycle":"")+(run!=null&&!useRun?"; run clip unused":useRun?"; runs above "+F(threshold)+" m/s":"")+"; patrol "+F(patrolSpeed)+" m/s";
+       row.note="contact bone "+who+(walkDrift>b.length*cfg.fit.driftWarnShare?"; WALK DRIFTS "+F(walkDrift)+" m per cycle":"")+(run!=null&&runDrift>b.length*cfg.fit.driftWarnShare?"; RUN DRIFTS "+F(runDrift)+" m per cycle":"")+(run!=null&&!useRun?"; run clip unused":useRun?"; runs above "+F(threshold)+" m/s":"")+"; patrol "+F(patrolSpeed)+" m/s"+partNote;
       }
       var attackAsset=AttackProfile(cfg,s,range,preferred);var vitalsAsset=VitalsProfile(cfg,s);
       SetRef(ctrl,"_attackProfile",attackAsset);SetRef(vit,"_profile",vitalsAsset);
@@ -789,6 +826,7 @@ namespace Oheangbu.EditorTools.WorldMacro
     content.Encounters=rows.ToArray();session.Actors=(session.Actors??Array.Empty<PrologueEncounter>()).Concat(added).ToArray();
     sb.Append("\n  placed ").Append(added.Count).Append(" of ").Append(plan.enemies.Length+plan.bosses.Length).Append(" (").Append(string.Join(", ",per.OrderBy(k=>k.Key).Select(k=>k.Key+" "+k.Value))).Append(" + bosses ").Append(added.Count(a=>a.Id.StartsWith(cfg.boss_prefix,StringComparison.Ordinal))).Append("), scene references refilled ").Append(rewired);
     foreach(string s in left)sb.Append("\n  LEFT OUT ").Append(s);
+    sb.Append("\n  ").Append(RolesAfter(cfg,scene,content));
    }
    EditorUtility.SetDirty(content);AssetDatabase.SaveAssetIfDirty(content);EditorUtility.SetDirty(session);
    EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))return "FAILED the play scene was not saved";
@@ -834,6 +872,7 @@ namespace Oheangbu.EditorTools.WorldMacro
    C(noRef.Length==0,"scene references refilled (player, player vitals, config) and profiles set - not: "+Names(noRef));
    var badProfile=actors.Where(a=>{var p=new SerializedObject(a.GetComponent<EnemyController>()).FindProperty("_attackProfile").objectReferenceValue as EnemyAttackProfileSO;return p==null||!p.TryValidate(out _)||a.PreferredDistance>p.Range;}).ToArray();
    C(badProfile.Length==0,"attack profiles valid, preferred distance inside the range - not: "+Names(badProfile));
+   string roles=RoleCheck(cfg,rows,actors,out bool rolesOk);C(rolesOk,roles);
    var bossActors=actors.Where(a=>a.Id.StartsWith(cfg.boss_prefix,StringComparison.Ordinal)).ToArray();
    C(cfg.bosses.All(b=>bossActors.Count(a=>a.Id==b.id)==1)&&bossActors.Length==cfg.bosses.Length,"the "+cfg.bosses.Length+" field bosses are there by their exact ids ("+string.Join(", ",bossActors.Select(a=>a.Id))+")");
    var bossBad=bossActors.Where(a=>{var v=a.GetComponent<EnemyVitals>();var r=rows.FirstOrDefault(x=>x.Id==a.Id);return v==null||!v.IsBoss||string.IsNullOrEmpty(v.DisplayName)||r==null||r.RespawnOnRest||a.PatrolPoints==null||a.PatrolPoints.Length!=1;}).ToArray();

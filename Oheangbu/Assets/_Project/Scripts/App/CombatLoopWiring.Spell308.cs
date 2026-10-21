@@ -29,6 +29,8 @@ namespace Oheangbu.App
         // The row of the letter being dispatched (set only inside OnLetterDrawn). Old callers hand the Resolve* methods a
         // bare SpellCast through reflection; those fall back to the table, then to the grammar (RowFor).
         private SpellRow _row308;
+        // #308 D308-123: the attack ids the cast being dispatched hands out (opened and closed by Dispatch308).
+        private SpellAttackWindow308 _attacks308;
 
         // Misfire re-broadcast (read only): the glyph and why it did not cast. No rule and no HUD hangs on it.
         public event Action<char, SpellResolveStatus> CastMisfired;
@@ -58,7 +60,9 @@ namespace Oheangbu.App
             switch (row.Feature)
             {
                 // the same five conditions the old TryResolve call passed as flags
-                case SpellLegacyFeature.Book: open = true; break;
+                // D308-124: a book row with a final (the five summons) waits for it; a scene with no unlock source keeps its book
+                case SpellLegacyFeature.Book:
+                    return SpellUnlockPolicy308.JudgeBook(row, _unlocks308 != null && !(_unlocks308 is LockedSpellUnlocks308), FinalOwned308(row));
                 case SpellLegacyFeature.Guk: open = FieldSpells != null && FieldSpells.IsUnlocked; break;
                 case SpellLegacyFeature.BuffG: open = EABuffs != null && EABuffs.Unlocked; break;
                 case SpellLegacyFeature.Ward: open = EAWards != null && EAWards.Available; break;
@@ -66,13 +70,15 @@ namespace Oheangbu.App
                 case SpellLegacyFeature.Mum: open = MumBridges != null && MumBridges.IsUnlocked; break;
                 default:
                     bool registered = _spells308 != null && _spells308.Has(row.Handler);
-                    // a TEST-only row (Gate test in its rule sheet) is judged without the main-game grant of its final
-                    bool unlocked = registered && row.Final != SpellFinal.None && _unlocks308 != null && _resolver != null &&
-                        _resolver.TryUnlock(row.Final, out var rule) && _unlocks308.FinalUnlocked(SpellUnlockPolicy308.RuleFor(row, rule));
-                    return SpellUnlockPolicy308.JudgeNew(row, registered, unlocked);
+                    return SpellUnlockPolicy308.JudgeNew(row, registered, registered && FinalOwned308(row));
             }
             return open ? SpellResolveStatus.Ok : SpellResolveStatus.Unavailable;
         }
+
+        // The player owns the row's final. A TEST-only row (Gate test in its rule sheet) is judged without the main-game grant of its final.
+        private bool FinalOwned308(SpellRow row)
+            => row.Final != SpellFinal.None && _unlocks308 != null && _resolver != null &&
+               _resolver.TryUnlock(row.Final, out var rule) && _unlocks308.FinalUnlocked(SpellUnlockPolicy308.RuleFor(row, rule));
 
         // ---- row lookups for the legacy bodies ----
         private SpellRow RowFor(char letter)
@@ -111,7 +117,7 @@ namespace Oheangbu.App
         private void AcceptCast308(SpellCast cast, Vector3 origin, Vector3 forward)
         {
             CastAccepted?.Invoke(cast, origin, forward);
-            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308));
+            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308, attacks: _attacks308));
         }
 
         // The accept of a cast its handler has judged. CastAccepted is a read-only re-broadcast that presentation listens to
@@ -127,7 +133,7 @@ namespace Oheangbu.App
                     try { listener(cast, origin, forward); }
                     catch (Exception exception) { Debug.LogException(exception, this); }
                 }
-            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308));
+            _spells308?.OnCastAccepted(new SpellCastContext(cast, RowFor(cast.Letter), Time.time, this, Fx308, attacks: _attacks308));
         }
 
         private void NotifyEnemyHit308(in EnemyDamageResult result)
@@ -158,6 +164,7 @@ namespace Oheangbu.App
             _row308 = null;
             _buffs308.Clear();
             _spells308?.Clear(reason);
+            _playerDomain308.Clear();
             _fxGuard308.EndAll();
         }
 

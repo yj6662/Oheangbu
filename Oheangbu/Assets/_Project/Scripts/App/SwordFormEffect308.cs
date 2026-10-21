@@ -118,14 +118,17 @@ namespace Oheangbu.App
             var ink = _ink;
             if (ink == null) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
             float drain = SwordFormRule308.DrainAmount(_drain, ctx.Delta);
-            if (drain > 0f) ink.SpendClamped(drain);
+            bool held = ctx.Host is IPlayerDomainHost308 domain && domain.PlayerDomain308.DrainHeld(ctx.Now);   // #308 WP-17 (눔)
+            if (drain > 0f && !held) ink.SpendClamped(drain);
             if (SwordFormRule308.Exhausted(ink.Value)) { End(ctx.Fx, SpellFxCue.Expire, false); return; }
             // the input side: the draw mode stays shut, the release press puts the sword away, a click is one strike
             var seam = _seam;
             if (seam == null) return;
             HoldSeam();
             bool release = false, strike = false;
-            try { release = seam.SwordReleasePressed308; strike = !release && seam.SwordStrikePressed308; }
+            // only a form the player may put away reads the release key: the same press may fire the 앞잡 volley, and a volley
+            // always takes the sword with it (D308-123)
+            try { release = _manual && seam.SwordReleasePressed308; strike = !release && seam.SwordStrikePressed308; }
             catch (Exception exception) { Debug.LogException(exception); }
             if (release && ReleaseByPlayer(ctx)) return;
             if (strike) Strike(ctx);
@@ -156,7 +159,8 @@ namespace Oheangbu.App
             UnityEngine.Object instigator = host.PlayerVitals != null ? (UnityEngine.Object)host.PlayerVitals : host.Player;
             // the player's own elemental attack: PlayerDirect (the only source a counter strike may carry)
             var attack = AttackProvenance.CreateMelee(instigator, DamageSource.PlayerDirect, _element);   // WP-16: melee passes a guard
-            bool counter = SwordFormRule308.IsCounter(_element, TryElementOf(target, out Element theirs), theirs);
+            // D308-124: the same element the counter-element damage scale reads (EnemyVitals.TryAttackElement)
+            bool counter = SwordFormRule308.IsCounter(_element, target.TryAttackElement(out Element theirs), theirs);
             var hit = host.ApplyDirectHit(target, life, _power * host.DamageScale(_element), origin + Vector3.up * .4f, attack, _letter);
             bool gained = false;
             if (hit.AppliedDamage > 0f && counter && !hit.Killed)
@@ -236,21 +240,6 @@ namespace Oheangbu.App
             if (_progress.Length < slots) { Array.Resize(ref _progress, slots); Array.Resize(ref _progressLife, slots); }
             if (_progressLife[id] != life) { _progressLife[id] = life; _progress[id] = 0; }
             return ref _progress[id];
-        }
-
-        // The element an enemy fights with, read from its controller: the authored profile's element when that attack is
-        // elemental, the legacy ranged element otherwise. No controller, a neutral profile or a legacy melee-only enemy =
-        // no element, so no counter strike.
-        static bool TryElementOf(EnemyVitals target, out Element element)
-        {
-            element = default;
-            var controller = target != null ? target.GetComponent<EnemyController>() : null;
-            if (controller == null) return false;
-            var profile = controller.AttackProfile;
-            if (profile != null) { element = profile.Element; return profile.Elemental; }
-            if (controller.EffectiveAttackMode == EnemyController.AttackMode.MeleeOnly) return false;
-            element = controller.RangedElement;
-            return true;
         }
     }
 }

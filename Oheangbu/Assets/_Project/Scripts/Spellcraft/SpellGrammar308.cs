@@ -63,7 +63,8 @@ namespace Oheangbu.Spellcraft
         }
 
         // a = attack (mieum final: harmony install) / eo = parry without a final, buff with one /
-        // o = attack (mieum final: summon) / u = ward without a final, field when the final is the initial, blank otherwise.
+        // o = attack (mieum final: summon) / u = ward without a final, field when the final is the initial, domain otherwise (D308-121;
+        // these 20 cells were the deliberate blanks). No glyph of the 120 is Blank any more; the value stays for old data.
         public static SpellCategory CategoryOf(Jamo initial, Jamo medial, SpellFinal final)
         {
             switch (medial)
@@ -73,7 +74,7 @@ namespace Oheangbu.Spellcraft
                 case Jamo.O: return final == SpellFinal.Mieum ? SpellCategory.Summon : SpellCategory.Attack;
                 default:
                     if (final == SpellFinal.None) return SpellCategory.Ward;
-                    return (int)final == (int)initial + 1 ? SpellCategory.Field : SpellCategory.Blank;
+                    return (int)final == (int)initial + 1 ? SpellCategory.Field : SpellCategory.Domain;
             }
         }
 
@@ -87,6 +88,7 @@ namespace Oheangbu.Spellcraft
                 case SpellCategory.Summon: return SpellKind.Summon;
                 case SpellCategory.Ward: return SpellKind.Ward;
                 case SpellCategory.Field: return SpellKind.Field;
+                case SpellCategory.Domain: return SpellKind.Domain;
                 default: return SpellKind.AttackSingle;
             }
         }

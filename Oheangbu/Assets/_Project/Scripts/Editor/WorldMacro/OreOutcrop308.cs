@@ -38,7 +38,7 @@ namespace Oheangbu.EditorTools.WorldMacro
  // scene-revert below serves both tries - it removes exactly what the scene ledger created).
  public static partial class OreOutcrop308
  {
-  const string Usage="status | bake-plan | bake | bake-revert | bake-adopt | plan:<scene> | scene-apply:<scene> | scene-revert:<scene> | scene-adopt:<scene> | check:<scene> | shot:<scene>:<eye>:<PC|Mobile>[:label=<text>]";
+  const string Usage="status | bake-plan | bake | bake-revert | bake-adopt | trail-prefab[:dry] | trail-revert | plan:<scene> | scene-apply:<scene> | scene-revert:<scene> | scene-adopt:<scene> | check:<scene> | shot:<scene>:<eye>:<PC|Mobile>[:label=<text>]";
   static string DataFile=>Path.Combine(Harness303.RepoRoot,"Art","World","Compact","Rebuild","CliffBoundary308","ore308.json");
   static string OutDir=>Path.Combine(Harness303.RepoRoot,"Art","Playtest308","Pacing");
   sealed class Refuse:Exception{public Refuse(string m):base(m){}}
@@ -54,6 +54,9 @@ namespace Oheangbu.EditorTools.WorldMacro
     if(c=="bake")return Bake(false);
     if(c=="bake-revert")return BakeRevert();
     if(c=="bake-adopt")return BakeAdopt();
+    if(c=="trail-prefab:dry")return TrailPrefab(true);
+    if(c=="trail-prefab")return TrailPrefab(false);
+    if(c=="trail-revert")return TrailRevert();
     string a;
     if((a=Arg(c,"plan:"))!=null)return V2(Load())?ApplyV2(a,true):Apply(a,true);
     if((a=Arg(c,"scene-apply:"))!=null)return V2(Load())?ApplyV2(a,false):Apply(a,false);

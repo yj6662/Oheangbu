@@ -9,7 +9,8 @@ namespace Oheangbu.Spellcraft
     // Docs/오행부_작도어휘_v0_1.csv plus the rule sheets (Data/Spells/Rules308_*.csv). No UnityEngine.Object in this file:
     // the same types run inside Unity and in the offline runner (Tools/SpellVFX120/spell120_pure308.py).
 
-    public enum SpellCategory { Attack, Install, Parry, Buff, Summon, Ward, Field, Blank }
+    // Domain (결계) = u + a final that is not the initial's pair (D308-121); appended so Blank keeps its serialized value.
+    public enum SpellCategory { Attack, Install, Parry, Buff, Summon, Ward, Field, Blank, Domain }
 
     // Final consonant of a glyph. Value = Jamo value + 1 (None = no final), same order as the CSV column.
     public enum SpellFinal { None, Giyeok, Nieun, Mieum, Siot, Ieung }
@@ -168,6 +169,17 @@ namespace Oheangbu.Spellcraft
         {
             if (row == null || !handlerRegistered) return SpellResolveStatus.Unavailable;
             if (row.Gate == SpellGateMode.Open || row.Final == SpellFinal.None || finalUnlocked) return SpellResolveStatus.Ok;
+            return SpellResolveStatus.Locked;
+        }
+
+        // Book rows (glyphs that cast before #308, no handler of the registry): open, except a book row with a final of its own
+        // that its rule sheet does not keep open (D308-124: the five summons, all mieum) - it waits for that final like a new
+        // row. unlockSource = false: the scene has no final to wait for (no campaign session, no lab; the old flag overloads),
+        // so its book stays as it was.
+        public static SpellResolveStatus JudgeBook(SpellRow row, bool unlockSource, bool finalUnlocked)
+        {
+            if (row == null) return SpellResolveStatus.Unavailable;
+            if (!unlockSource || row.Gate == SpellGateMode.Open || row.Final == SpellFinal.None || finalUnlocked) return SpellResolveStatus.Ok;
             return SpellResolveStatus.Locked;
         }
     }

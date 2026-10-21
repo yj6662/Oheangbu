@@ -134,7 +134,7 @@ namespace Oheangbu.App
             EABuffs?.Dispose();
             EABuffs = profile != null ? new EABuffRuntime(profile, _playerVitals, this, unlocked, Time.time) : null;
         }
-        private void OnDestroy() { EABuffs?.Dispose(); EABuffs = null; EAWards?.Dispose(); EAWards = null; EAGiyeok?.Dispose(); EAGiyeok = null; }
+        private void OnDestroy() { EABuffs?.Dispose(); EABuffs = null; EAWards?.Dispose(); EAWards = null; EAGiyeok?.Dispose(); EAGiyeok = null; ClearPatches308(); }
         public IReadOnlyList<EnemyVitals> SummonTargets => _targets;
         public EnemyVitals SummonLockTarget => _lockOn != null ? _lockOn.Target : null;
         public Transform SummonPlayer => _playerTransform != null ? _playerTransform : transform;
@@ -214,6 +214,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.Damaged += OnPlayerDamaged;
             if (_playerVitals != null) _playerVitals.HpChanged += RefreshHud;
             if (_playerVitals != null) _playerVitals.Died += OnPlayerDied;
+            if (_playerVitals != null) _playerVitals.Spared308 += OnSpared308;   // #308 D308-125 적용 5
             if (_lockOn != null) _lockOn.Changed += RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed += OnHarvestChunkAbsorbed;
             TryHookServices(); // 재활성화 시 첫 프레임 구독 공백 방지(주입 완료 후엔 즉시 성공)
@@ -232,6 +233,7 @@ namespace Oheangbu.App
             if (_playerVitals != null) _playerVitals.Damaged -= OnPlayerDamaged;
             if (_playerVitals != null) _playerVitals.HpChanged -= RefreshHud;
             if (_playerVitals != null) _playerVitals.Died -= OnPlayerDied;
+            if (_playerVitals != null) _playerVitals.Spared308 -= OnSpared308;
             if (_lockOn != null) _lockOn.Changed -= RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed -= OnHarvestChunkAbsorbed;
             UnhookServices();
@@ -242,6 +244,7 @@ namespace Oheangbu.App
             foreach (var effect in _contacts) if (effect != null) Destroy(effect.gameObject);
             _contacts.Clear();
             ClearStains308();
+            ClearPatches308();
         }
 
         private bool _hooked;
@@ -251,6 +254,7 @@ namespace Oheangbu.App
             TryHookServices();
             EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
             TickSpells308();
+            TickPatches308(Time.time);   // #308 D308-125 적용 5: after the spells (온's wave this frame wipes before the feet burn)
             TickSwing308();
             TickPendingCasts();
             TickInkRegen();
@@ -265,7 +269,7 @@ namespace Oheangbu.App
             bool drawing = _drawingInput != null && _drawingInput.InDrawMode || _motor != null && _motor.IsDrawing;
             bool blocked = _motor != null && (_motor.InputBlocked || !_motor.isActiveAndEnabled) || _playerVitals != null && _playerVitals.Hp01 <= 0f;
             bool inCombat = _lockOn != null && _lockOn.Target != null || Time.time - _lastPlayerHitTime < _config.InkRegenCombatLinger;
-            InkRegen.Tick(Time.time, Time.deltaTime, drawing, blocked, inCombat);
+            InkRegen.Tick(Time.time, Time.deltaTime, drawing, blocked, inCombat, _playerDomain308.RegenScale(Time.time));   // #308 WP-17 (움)
         }
 
         // 착탄 시각 도래 = 피해 적용(피해=착탄 동기화 — 5차 검수). 대상이 먼저 죽었으면 허공이 된다
@@ -293,6 +297,7 @@ namespace Oheangbu.App
             _judge.OwnedImpactResolved += OnOwnedParryImpactResolved;
             foreach (var target in _targets)
                 if (target != null) { target.CombatStateChanged += RefreshHud; target.DamageResolved += OnTargetDamageResolved; }
+            HookPatches308();
             _hooked = true;
         }
 
@@ -304,6 +309,7 @@ namespace Oheangbu.App
             if (_judge != null) _judge.OwnedImpactResolved -= OnOwnedParryImpactResolved;
             foreach (var target in _targets)
                 if (target != null) { target.CombatStateChanged -= RefreshHud; target.DamageResolved -= OnTargetDamageResolved; }
+            UnhookPatches308();
             _hooked = false;
         }
 
@@ -439,6 +445,7 @@ namespace Oheangbu.App
         private void Dispatch308(SpellCast cast, SpellRow row)
         {
             _row308 = row;
+            var attacks = _attacks308 = new SpellAttackWindow308(AttackProvenance.Issued);   // #308 D308-123: this cast's attack ids
             try
             {
                 // #308: a row without a legacy feature runs its registered effect handler; the 36 glyphs below are unchanged.
@@ -467,11 +474,11 @@ namespace Oheangbu.App
                         break;
                 }
             }
-            finally { _row308 = null; }
+            finally { _row308 = null; attacks.Close(AttackProvenance.Issued); _attacks308 = null; }
         }
 
         private bool TrySpendSpell(float cost, in SpellCast cast) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f) * CostScale308(cast));
-        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ResetEncounterGroggy(); ClearBossEngagement(); }
+        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ClearPatches308(); ResetEncounterGroggy(); ClearBossEngagement(); }
         private void ResolveWard(SpellCast cast)
         {
             if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost, cast))
@@ -899,7 +906,8 @@ namespace Oheangbu.App
         {
             float halfAngle = cast.Area.Angle > 0f ? cast.Area.Angle : 25f;
             float range = cast.Area.Length > 0f ? cast.Area.Length : 16f;
-            float speed = cast.Area.Speed > 0f ? cast.Area.Speed : 32f;
+            // #308 D308-123: the cast's speed multiplier reaches the volley too (the 선 buff); every volley row has 1 of its own
+            float speed = (cast.Area.Speed > 0f ? cast.Area.Speed : 32f) * cast.SpeedMul;
             float delay = cast.Area.ImpactDelay > 0f ? cast.Area.ImpactDelay : _config.AreaImpactDelay;
             int shots = cast.Area.Shots > 0 ? cast.Area.Shots : 9;
             float interval = cast.Area.Interval > 0f ? cast.Area.Interval : 0.1f;

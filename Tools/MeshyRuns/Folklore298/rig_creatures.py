@@ -49,7 +49,9 @@ import sys
 
 
 VERSION = 1
-SPECIES = ("bulgasari", "fox_spirit", "imugi", "cheongryong")
+SPECIES = ("bulgasari", "fox_spirit", "imugi", "cheongryong", "boar", "bear")
+# D308-119: Meshy enemy bodies (SPEC-ENEMY-BODIES-308) reuse the quadruped rig unchanged
+QUADRUPEDS = ("bulgasari", "fox_spirit", "boar", "bear")
 LEGS = ("Fore_L", "Fore_R", "Hind_L", "Hind_R")
 CLIPS = {"Idle": (2.0, True), "Walk": (1.2, True), "Attack": (1.4, False),
          "Hit": (.55, False), "Stun": (1.5, True), "Death": (1.7, False)}
@@ -159,11 +161,21 @@ def skin_weights(point, region, bones):
         names = names[max(0, nearest - 1):nearest + 2]
     spread = float(region.get("blendRadiusM", .025))
     require(spread > 0, "blendRadiusM must be positive")
-    return normalized({name: (spread + distances[name]) ** -3 for name in names}), min(distances.values())
+    weights = normalized({name: (spread + distances[name]) ** -3 for name in names})
+    # D308-119 fade: a box edge is a hard weight step (bear thigh top: .9 Upper next to 0) that 40 smoothing hops cannot
+    # spread. Along one axis, from "inner" (the region's own weights) to "outer" (its box edge), hand the weight to "toward"
+    # with a smoothstep, so the edge already matches the neighbouring torso region.
+    for fade in region.get("fade", []):
+        t = min(1.0, max(0.0, (point[fade["axis"]] - fade["outer"]) / (fade["inner"] - fade["outer"])))
+        t = t * t * (3 - 2 * t)
+        raw = {name: weight * t for name, weight in weights.items()}
+        raw[fade["toward"]] = raw.get(fade["toward"], 0) + 1 - t
+        weights = normalized(raw)
+    return weights, min(distances.values())
 
 
 def schema(species):
-    quadruped = species in ("bulgasari", "fox_spirit")
+    quadruped = species in QUADRUPEDS
     legs = {name: {"hip": None, "knee": None, "ankle": None, "toe": None,
                    "parent": "Chest" if name.startswith("Fore") else "Pelvis"}
             for name in LEGS} if quadruped else {}
@@ -220,7 +232,7 @@ def bone_definitions(config):
         result[name] = {"head": head, "tail": tail, "parent": parent, "deform": deform}
     root = v3(config["root"], "root")
     bone("Root", root, add(root, (0, 0, config["rootBoneLengthM"])), deform=False)
-    if config["species"] in ("bulgasari", "fox_spirit"):
+    if config["species"] in QUADRUPEDS:
         joints = config["joints"]
         chain = [("Pelvis", "pelvis", "spine", "Root"), ("Spine", "spine", "chest", "Pelvis"),
                  ("Chest", "chest", "neck", "Spine"), ("Neck", "neck", "head", "Chest"),
@@ -289,7 +301,10 @@ def verify_config(config, source_hash):
             if region.get("chainBlend"):
                 for a, b in zip(region["bones"], region["bones"][1:]):
                     require(bones[b]["parent"] == a, "chainBlend must list a contiguous parent chain")
-    if config["species"] in ("bulgasari", "fox_spirit"):
+            for fade in region.get("fade", []):
+                require(set(fade) == {"axis", "outer", "inner", "toward"} and fade["axis"] in (0, 1, 2)
+                        and fade["outer"] != fade["inner"] and fade["toward"] in region["bones"], "Invalid fade " + region["id"])
+    if config["species"] in QUADRUPEDS:
         require(set(config["contactVertices"]) == set(LEGS), "Explicit four sole vertex selections required")
     return bones
 

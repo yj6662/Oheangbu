@@ -231,6 +231,13 @@ namespace Oheangbu.EditorTools.WorldMacro
                     if (off) driver.enabled = false; else { driver.enabled = true; driver.SetEditPreview(true); }
                 }
                 if (debug > 0) Shader.SetGlobalFloat(DebugId, debug);
+                // 봉수 연기 (SPEC-FIELD-FIRST-HOUR-308 A1): a particle system does not tick in edit mode, so a still would show none;
+                // run each Smoke308 column forward one lifetime first (simulation only, nothing is saved)
+                int warmed = 0;
+                for (int si = 0; si < SceneManager.sceneCount; si++)
+                    foreach (var ps in SceneManager.GetSceneAt(si).GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<ParticleSystem>(false)))
+                        if (ps.name == EventWash308.SmokeName) { ps.Simulate(ps.main.startLifetime.constantMax, true, true); warmed++; }
+                if (warmed > 0) sb.AppendLine("smoke columns warmed: " + warmed);
                 foreach (var v in views)
                 {
                     // eyeY / targetY (absolute world heights, the city_views.json convention): interiors, where a ray from above lands on the roof

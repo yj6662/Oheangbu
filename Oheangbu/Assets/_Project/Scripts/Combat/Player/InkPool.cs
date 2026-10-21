@@ -112,10 +112,15 @@ namespace Oheangbu.Combat
             => _config != null && _pool != null && _config.InkRegenPerSecond > 0f && !drawing && !blocked
                && now - _pool.LastSpendTime >= _config.InkRegenDelay && _pool.Value < _config.InkRegenCap;
 
-        public float Tick(float now, float deltaTime, bool drawing, bool blocked, bool inCombat)
+        public float Tick(float now, float deltaTime, bool drawing, bool blocked, bool inCombat) => Tick(now, deltaTime, drawing, blocked, inCombat, 1f);
+
+        // #308 WP-17 (움): scale = a domain's regen multiplier (applied only when finite and above 1). When regen may run is
+        // not changed: drawing, blocked, the delay after a spend and the cap stay as they are.
+        public float Tick(float now, float deltaTime, bool drawing, bool blocked, bool inCombat, float scale)
         {
             if (deltaTime <= 0f || !CanRegenerate(now, drawing, blocked)) return 0f;
             float rate = _config.InkRegenPerSecond * GradeMultiplier * (inCombat ? 1f : _config.InkRegenOutOfCombatMultiplier);
+            if (float.IsFinite(scale) && scale > 1f) rate *= scale;
             return _pool.Regenerate(rate * deltaTime, _config.InkRegenCap);
         }
     }

@@ -6,11 +6,13 @@ using UnityEngine.SceneManagement;
 
 namespace Oheangbu.App.Demo
 {
-    // Wood ground attacks only. Reuses authored KTP/mesh prefabs; no combat or shared material mutation.
+    // Ground attacks of one element (wood unless configured: the demo vine; D308-125 adds the 적로 fire eruption).
+    // Reuses authored KTP/mesh prefabs; no combat or shared material mutation.
     [DisallowMultipleComponent]
     public sealed class EnemyAttackPresentation : MonoBehaviour
     {
         [SerializeField] private EnemyController _controller;
+        [SerializeField] private Element _element = Element.Wood;
         [SerializeField] private GameObject _warningPrefab;
         [SerializeField] private GameObject _spikePrefab;
         [SerializeField] private GameObject _impactPrefab;
@@ -42,6 +44,7 @@ namespace Oheangbu.App.Demo
             }
         }
         public bool HasAllSources => _warningPrefab != null && _spikePrefab != null && _impactPrefab != null;
+        public Element GroundElement => _element;
 
         private sealed class Effect
         {
@@ -55,10 +58,12 @@ namespace Oheangbu.App.Demo
             public Vector3[] Feet;
         }
 
-        public void Configure(EnemyController controller, GameObject warning, GameObject spike, GameObject impact)
+        public void Configure(EnemyController controller, GameObject warning, GameObject spike, GameObject impact) =>
+            Configure(controller, warning, spike, impact, Element.Wood);
+        public void Configure(EnemyController controller, GameObject warning, GameObject spike, GameObject impact, Element element)
         {
             Clear(); Unbind();
-            _controller = controller; _warningPrefab = warning; _spikePrefab = spike; _impactPrefab = impact;
+            _controller = controller; _warningPrefab = warning; _spikePrefab = spike; _impactPrefab = impact; _element = element;
             if (isActiveAndEnabled) Bind();
         }
         private void OnEnable() { Bind(); }
@@ -89,7 +94,7 @@ namespace Oheangbu.App.Demo
         }
         private void OnTelegraphed(EnemyAttackCue cue)
         {
-            if (!isActiveAndEnabled || cue.Attack.Source != DamageSource.Enemy || cue.Attack.Element != Element.Wood ||
+            if (!isActiveAndEnabled || cue.Attack.Source != DamageSource.Enemy || cue.Attack.Element != _element ||
                 cue.Delivery != EnemyAttackDelivery.GroundEruption || cue.Attack.AttackId <= 0 ||
                 _boundController == null || cue.Attack.Instigator != _vitals || !_seen.Add(cue.Attack.AttackId)) return;
             _seenOrder.Enqueue(cue.Attack.AttackId);
@@ -173,7 +178,7 @@ namespace Oheangbu.App.Demo
         {
             if (source == null) return null;
             var instance = Instantiate(source, position, source.transform.rotation);
-            instance.name = "EnemyWood_" + source.name;
+            instance.name = "Enemy" + _element + "_" + source.name;
             instance.transform.localScale = source.transform.localScale * Mathf.Max(.01f, scale);
             SceneManager.MoveGameObjectToScene(instance, gameObject.scene);
             // Source references are visual prefabs. Defensive clones must never introduce blockers.

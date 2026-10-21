@@ -31,7 +31,14 @@ namespace Oheangbu.Combat
         public EnemyGuardStance308 Stance { get; } = new EnemyGuardStance308();
         public EnemyStrikeVeil308 Veil { get; } = new EnemyStrikeVeil308();
 
-        public bool IsEmpty => _timed.Count == 0 && _pierce.Count == 0 && Stance.IsEmpty && Veil.IsEmpty;
+        // #308 WP-17 (D308-121): what a player's domain does to this enemy while it stands inside (EnemyDomainState308.cs).
+        public EnemyDomainState308 Domain { get; } = new EnemyDomainState308();
+
+        public bool IsEmpty => _timed.Count == 0 && _pierce.Count == 0 && Stance.IsEmpty && Veil.IsEmpty && Domain.IsEmpty;
+
+        // #308 WP-17 (순): may this enemy raise (or keep) a guard now? A broken guard (낭) says no; a guard-sealing domain says
+        // no to a new guard only — a guard already raised when the enemy walked in stays.
+        public bool CanGuard(float now) => Stance.CanRaise(now) && (Stance.Raised || !Domain.GuardBlocked(now));
 
         // ---- writers (a value that would change nothing is refused: false) ----
 
@@ -67,7 +74,7 @@ namespace Oheangbu.Combat
                 if (_pierce[i].AttackId == attackId) _pierce.RemoveAt(i);
         }
 
-        public void Clear() { _timed.Clear(); _pierce.Clear(); Stance.Clear(); Veil.Clear(); }
+        public void Clear() { _timed.Clear(); _pierce.Clear(); Stance.Clear(); Veil.Clear(); Domain.Clear(); }
 
         // The caster died, rested or left: the handler that hung a modifier on this enemy takes it back (every running
         // entry of that kind ends now, like the controls and the veils the other spell handlers take back). The guard

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Oheangbu.Core.Domain;
 using UnityEngine;
 
 namespace Oheangbu.Combat
@@ -82,9 +83,11 @@ namespace Oheangbu.Combat
 
         public bool IsAlive => _hp > 0f;
         // In-encounter healing: never resurrect or reset pending-hit ownership, groggy or weak points.
+        // #308 WP-17 (눅, D308-121): an enemy standing in a sealing domain does not heal at all.
         public float Heal(float amount)
         {
             if (!IsAlive || amount <= 0f || float.IsNaN(amount) || float.IsInfinity(amount)) return 0f;
+            if (Modifiers.Domain.Sealed(Time.time)) return 0f;
             float restored = Mathf.Max(0f, Mathf.Min(amount, MaxHp - _hp));
             if (restored <= 0f) return 0f;
             _hp += restored;
@@ -160,6 +163,34 @@ namespace Oheangbu.Combat
             if (!float.IsNegativeInfinity(_weakPointUntil) && now >= _weakPointUntil) ResetCombatState();
         }
 
+        // #308 D308-124: the element this enemy's attacks carry. The one place the counter-element sword strike and the
+        // weak-point counter scale read it. A controller that owns these vitals registers itself (its vitals may be wired from
+        // another object); otherwise an IEnemyAttackElement308 on this object answers. No source = none.
+        public bool TryAttackElement(out Element element)
+        {
+            element = default;
+            var source = _elementSource308;
+            if (source is UnityEngine.Object registered && registered == null) source = _elementSource308 = null;
+            if (source == null) source = GetComponent<IEnemyAttackElement308>();
+            return source != null && source.TryAttackElement(out element);
+        }
+        public void SetAttackElementSource308(IEnemyAttackElement308 source) { _elementSource308 = source; }
+        public void ClearAttackElementSource308(IEnemyAttackElement308 source) { if (ReferenceEquals(_elementSource308, source)) _elementSource308 = null; }
+        private IEnemyAttackElement308 _elementSource308;
+
+        // #308 D308-124 (debate decision, TEST): inside the window a spell of the player whose element overcomes this enemy's
+        // attack element is multiplied (CombatConfigSO, 1.25). Before defence, like the window's own multiplier; the five-element
+        // completion bonus is not multiplied. Spell = the player's main shot and sword form, a companion shot, a lasting zone,
+        // a mark detonation; summons and retaliation are not.
+        private float CounterScale308(in AttackProvenance attack)
+        {
+            if (!WeakPointActive || !attack.Element.HasValue || !IsSpell308(attack.Source)) return 1f;
+            bool has = TryAttackElement(out Element enemy);
+            return CounterElementRule308.Scale(true, true, attack.Element, has, enemy, _config != null ? _config.CounterElementWindowMultiplier : 1.25f);
+        }
+        private static bool IsSpell308(DamageSource source) => source == DamageSource.PlayerDirect || source == DamageSource.Companion ||
+            source == DamageSource.PersistentSpell || source == DamageSource.Harmony;
+
         // floorAtOneHp: 갈무리 전용 — 단독 처치 성립 불가(COMBAT-HARVEST)
         public void TakeDamage(float amount, bool floorAtOneHp = false)
         {
@@ -171,7 +202,7 @@ namespace Oheangbu.Combat
         {
             ExpireWeakPoint(Time.time);
             if (!IsAlive || amount <= 0f || float.IsNaN(amount)) return default;
-            float damage = amount * DamageMultiplier;
+            float damage = amount * DamageMultiplier * CounterScale308(attack);
             if (damage <= 0f || float.IsNaN(damage)) return default;
             // #308 WP-07 intake: this enemy's defence (data, default 0), the defence shred and damage-taken brand a spell left
             // on it, and whether this very hit ignores defence. An enemy with defence 0 and no modifier gets the value back
@@ -182,7 +213,7 @@ namespace Oheangbu.Combat
                 (attack.Source == DamageSource.PlayerDirect || attack.Source == DamageSource.Companion) && !attack.Melee);
             if (damage <= 0f || float.IsNaN(damage)) return default; // only a full defence (1) the hit does not ignore
             float bonus = 0f;
-            if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect &&
+            if (WeakPointActive && !floorAtOneHp && attack.Source == DamageSource.PlayerDirect && !attack.NoCredit &&
                 attack.Instigator != null && attack.AttackId > 0 && attack.Element.HasValue &&
                 !_completionAwarded && _directAttacks.Add(attack.AttackId))
             {

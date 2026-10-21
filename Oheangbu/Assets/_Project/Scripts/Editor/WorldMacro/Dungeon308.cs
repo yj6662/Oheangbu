@@ -24,12 +24,16 @@ namespace Oheangbu.EditorTools.WorldMacro
     //   Dungeon308/<id>/Colliders    BoxColliders, each inside a drawn wall / floor block (no invisible wall)
     //   Dungeon308/<id>/Gate_*       SpellFieldGate308: the closed body (drawn + one BoxCollider inside it) and what is left when it is open.
     //                                The session saves an opened gate (WorldMacroPlaytestSession.FieldGates308)
-    //   Dungeon308/<id>/Door         WorldShortcutDoor, unbarred from the inside (content point = the door id)
+    //   Dungeon308/<id>/Door         WorldShortcutDoor, unbarred from the inside (content point = the door id). twoSided (D308-117 C3, the front
+    //                                section of a dungeon opened before 청룡): the point sits in the door plane and the door carries a
+    //                                WorldMacroContentPoint of the same id, so the sight test passes its own leaves from either room
     //   Dungeon308/<id>/Reward_*     a porcelain prefab of the heritage prop pack + WorldMacroContentPoint: celadon = a stone-scripture
     //                                fragment (Evidence), white porcelain on a high stand = coins (Currency)
     //   Dungeon308/<id>/Lamp_*       cave dungeons only (D308-61): a lantern set down on the floor, its paper glowing, one point light in it
     // No other light, no emissive material, no text object, no HUD. Queue-safe: Run(string) never opens a dialog; refusals come back as "REFUSED ...".
     // The play scene and the content asset are backed up before they are written; AssetDatabase.SaveAssets is never called.
+    //   refit:<id>   rebuilds only that dungeon's Door and Reward_* objects and its door / reward content rows from its layout.json
+    //                (D308-117 C3: a layout patch must not cost a rebuild of every mesh and renderer of all fifteen)
     //   status | build | clear | check | cavemats (the realm rock / charred timber / water materials of cave dungeons; build runs it too)
     //   hamlet:build | hamlet:clear   the realm outbuildings of Tools/Art/hamlet308.py (SPEC-WORLD-REALM-IDENTITY-308): root Hamlet308, one drawn
     //                                 mesh set per realm, one BoxCollider per building, no content row
@@ -46,8 +50,8 @@ namespace Oheangbu.EditorTools.WorldMacro
         [Serializable] sealed class MeshData { public string name = ""; public float[] vertices = Array.Empty<float>(), normals = Array.Empty<float>(), uvs = Array.Empty<float>(); public Sub[] submeshes = Array.Empty<Sub>(); }
         [Serializable] sealed class Col { public float[] center = Array.Empty<float>(), size = Array.Empty<float>(); public float yaw; }
         [Serializable] sealed class GateRow { public string id = "", kind = "", closed = "", open = ""; public float[] pos = Array.Empty<float>(), size = Array.Empty<float>(); public float yaw; }
-        [Serializable] sealed class DoorRow { public string id = ""; public float[] pos = Array.Empty<float>(), inside = Array.Empty<float>(); public float yaw, width, height; }
-        [Serializable] sealed class Reward { public string id = "", kind = "", prefab = ""; public int currency; public float[] pos = Array.Empty<float>(), stand = Array.Empty<float>(); }
+        [Serializable] sealed class DoorRow { public string id = ""; public float[] pos = Array.Empty<float>(), inside = Array.Empty<float>(); public float yaw, width, height; public bool twoSided; }
+        [Serializable] sealed class Reward { public string id = "", kind = "", prefab = "", prompt = "", text = "", locked = ""; public int currency; public float[] pos = Array.Empty<float>(), stand = Array.Empty<float>(); }
         [Serializable] sealed class Layout { public string id = "", realm = "", name = "", theme = ""; public string[] drawn = Array.Empty<string>(); public Col[] colliders = Array.Empty<Col>(); public GateRow[] gates = Array.Empty<GateRow>(); public DoorRow door = new DoorRow(); public Reward[] rewards = Array.Empty<Reward>(); public float[] entrance = Array.Empty<float>(); public int[] holesFlat = Array.Empty<int>(); public Lamp[] lamps = Array.Empty<Lamp>(); public RockRow[] rocks = Array.Empty<RockRow>(); public Pool[] pools = Array.Empty<Pool>(); }
         [Serializable] sealed class RockRow { public string prefab = ""; public float[] pos = Array.Empty<float>(); public float yaw, size; }
         [Serializable] sealed class Pool { public float[] centre = Array.Empty<float>(), size = Array.Empty<float>(); public float yaw; }
@@ -69,6 +73,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 if (EditorApplication.isCompiling || EditorUtility.scriptCompilationFailed) return "REFUSED scripts are compiling or failed to compile";
                 if (c == "cavemats") return CaveMaterials(JsonUtility.FromJson<Cfg>(File.ReadAllText(Path.Combine(StageDir, "dungeon308.json"))));
                 if (c == "build") return Build();
+                if (c.StartsWith("refit:", StringComparison.Ordinal)) return Refit(c.Substring(6).Trim());
                 if (c == "clear") return Clear();
                 if (c == "check") return Check();
                 if (c == "hamlet:build") return Hamlet(true);
@@ -236,20 +241,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     gate.Configure(row.id, (SpellFieldGateKind)Enum.Parse(typeof(SpellFieldGateKind), row.kind), row.size[0] * .5f + .3f, new[] { closed }, open != null ? new[] { open } : Array.Empty<GameObject>());
                     EditorUtility.SetDirty(gate); gates++;
                 }
-                if (!string.IsNullOrEmpty(lay.door.id))
-                {
-                    var d = lay.door; var g = new GameObject("Door"); g.transform.SetParent(home.transform, false); g.transform.SetPositionAndRotation(V(d.pos), Quaternion.Euler(0f, d.yaw, 0f));
-                    Transform Leaf(string name, float sign)
-                    {
-                        var hinge = new GameObject(name); hinge.transform.SetParent(g.transform, false); hinge.transform.localPosition = new Vector3(sign * d.width * .5f, 0f, 0f);
-                        Slab("Board", hinge.transform, new Vector3(-sign * d.width * .25f, d.height * .5f, 0f), new Vector3(d.width * .5f - .02f, d.height, .09f), wood); return hinge.transform;
-                    }
-                    var door = g.AddComponent<WorldShortcutDoor>(); door.Session = session; door.Id = d.id; door.LeftLeaf = Leaf("LeftLeaf", -1f); door.RightLeaf = Leaf("RightLeaf", 1f);
-                    door.Bar = Slab("Bar", g.transform, new Vector3(0f, 1.15f, .14f), new Vector3(d.width + .5f, .13f, .13f), iron != null ? iron : wood).transform;
-                    var block = g.AddComponent<BoxCollider>(); block.center = new Vector3(0f, d.height * .5f, 0f); block.size = new Vector3(d.width, d.height, .3f); door.Blockers = new Collider[] { block };
-                    EditorUtility.SetDirty(door); doors++;
-                    rows.Add(new PrologueContentSO.Point { Id = d.id, Kind = PrologueInteractionKind.Evidence, Position = V(d.inside), Prompt = cfg.doorPrompt, Text = cfg.doorText, Radius = 1.9f, LockedText = "" });
-                }
+                if (!string.IsNullOrEmpty(lay.door.id)) { BuildDoor(lay.door, home.transform, session, cfg, wood, iron, rows); doors++; }
                 foreach (var lamp in lay.lamps)      // D308-61: a cave dungeon is lit by lanterns set down on the floor (attraction lights); the paper panes glow, the light sits in their middle
                 {
                     if (paperMesh == null || frameMesh == null || paperMat == null || frameMat == null || lampCfg.color.Length != 3) throw new Exception("lantern mesh or material missing (dungeon308.json lamp)");
@@ -274,25 +266,71 @@ namespace Oheangbu.EditorTools.WorldMacro
                     var g = Slab("Water_" + pools, home.transform, Vector3.zero, new Vector3(pool.size[0], .01f, pool.size[1]), water); g.transform.SetPositionAndRotation(V(pool.centre), Quaternion.Euler(0f, pool.yaw, 0f));
                     var wr = g.GetComponent<MeshRenderer>(); wr.shadowCastingMode = ShadowCastingMode.Off; pools++;
                 }
-                foreach (var r in lay.rewards)
-                {
-                    var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(cfg.prefabDir + r.prefab + ".prefab"); if (prefab == null) throw new Exception("reward prefab missing: " + cfg.prefabDir + r.prefab);
-                    var inst = (GameObject)PrefabUtility.InstantiatePrefab(prefab, home.transform); inst.name = "Reward_" + r.id;
-                    foreach (var col in inst.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(col);
-                    var rs = inst.GetComponentsInChildren<Renderer>(); var b = rs[0].bounds; foreach (var x in rs) b.Encapsulate(x.bounds);
-                    float scale = Mathf.Clamp(.55f / Mathf.Max(b.size.y, .01f), .4f, 3f); inst.transform.localScale *= scale;      // every piece about 0.55 m tall: read at a glance
-                    b = rs[0].bounds; foreach (var x in rs) b.Encapsulate(x.bounds);
-                    inst.transform.position += V(r.pos) - new Vector3(b.center.x, b.min.y, b.center.z);
-                    var point = inst.AddComponent<WorldMacroContentPoint>(); point.Id = r.id; point.Visual = inst.transform; rewards++;
-                    bool fragment = r.kind == "fragment";
-                    rows.Add(new PrologueContentSO.Point { Id = r.id, Kind = fragment ? PrologueInteractionKind.Evidence : PrologueInteractionKind.Currency, Position = V(r.stand), Prompt = fragment ? cfg.fragmentPrompt : cfg.coinsPrompt,
-                        Text = fragment ? cfg.fragmentText : cfg.coinsText, Currency = fragment ? 0 : r.currency, Radius = fragment ? 2.1f : 1.3f, LockedText = "" });
-                }
+                foreach (var r in lay.rewards) { BuildReward(r, home.transform, cfg, rows); rewards++; }
             }
             content.Points = content.Points.Where(p => !p.Id.StartsWith(RowPrefix, StringComparison.Ordinal)).Concat(rows).ToArray();
             EditorUtility.SetDirty(content); AssetDatabase.SaveAssetIfDirty(content);
             EditorSceneManager.MarkSceneDirty(scene); if (!EditorSceneManager.SaveScene(scene)) throw new Exception("the play scene was not saved");
             return "Dungeon308 build: " + index.dungeons.Length + " dungeons, vertices " + vertices + ", colliders " + colliders + ", gates " + gates + ", doors " + doors + ", rewards " + rewards + ", lanterns " + lamps + ", realm rocks " + realmRocks + ", pools " + pools + ", content rows " + rows.Count + ", backup " + backup + "\n" + Check();
+        }
+
+        static void BuildDoor(DoorRow d, Transform home, WorldMacroPlaytestSession session, RewardCfg cfg, Material wood, Material iron, List<PrologueContentSO.Point> rows)
+        {
+            var g = new GameObject("Door"); g.transform.SetParent(home, false); g.transform.SetPositionAndRotation(V(d.pos), Quaternion.Euler(0f, d.yaw, 0f));
+            Transform Leaf(string name, float sign)
+            {
+                var hinge = new GameObject(name); hinge.transform.SetParent(g.transform, false); hinge.transform.localPosition = new Vector3(sign * d.width * .5f, 0f, 0f);
+                Slab("Board", hinge.transform, new Vector3(-sign * d.width * .25f, d.height * .5f, 0f), new Vector3(d.width * .5f - .02f, d.height, .09f), wood); return hinge.transform;
+            }
+            var door = g.AddComponent<WorldShortcutDoor>(); door.Session = session; door.Id = d.id; door.LeftLeaf = Leaf("LeftLeaf", -1f); door.RightLeaf = Leaf("RightLeaf", 1f);
+            door.Bar = Slab("Bar", g.transform, new Vector3(0f, 1.15f, .14f), new Vector3(d.width + .5f, .13f, .13f), iron != null ? iron : wood).transform;
+            var block = g.AddComponent<BoxCollider>(); block.center = new Vector3(0f, d.height * .5f, 0f); block.size = new Vector3(d.width, d.height, .3f); door.Blockers = new Collider[] { block };
+            if (d.twoSided) { var own = g.AddComponent<WorldMacroContentPoint>(); own.Id = d.id; }      // the sight test skips the door's own leaves and blocker
+            EditorUtility.SetDirty(door);
+            rows.Add(new PrologueContentSO.Point { Id = d.id, Kind = PrologueInteractionKind.Evidence, Position = V(d.inside), Prompt = cfg.doorPrompt, Text = cfg.doorText, Radius = 1.9f, LockedText = "" });
+        }
+        // kind fragment = a celadon with a stone-scripture fragment (Evidence), coins = white porcelain with coins (Currency), evidence = a found
+        // object with its own prompt / text (D308-117 C3: 업동's charcoal sack); a prefab path starting "Assets/" is used as it is
+        static void BuildReward(Reward r, Transform home, RewardCfg cfg, List<PrologueContentSO.Point> rows)
+        {
+            string path = r.prefab.StartsWith("Assets/", StringComparison.Ordinal) ? r.prefab + (r.prefab.EndsWith(".prefab", StringComparison.Ordinal) ? "" : ".prefab") : cfg.prefabDir + r.prefab + ".prefab";
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path); if (prefab == null) throw new Exception("reward prefab missing: " + path);
+            var inst = (GameObject)PrefabUtility.InstantiatePrefab(prefab, home); inst.name = "Reward_" + r.id;
+            foreach (var col in inst.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(col);
+            var rs = inst.GetComponentsInChildren<Renderer>(); var b = rs[0].bounds; foreach (var x in rs) b.Encapsulate(x.bounds);
+            float scale = Mathf.Clamp(.55f / Mathf.Max(b.size.y, .01f), .4f, 3f); inst.transform.localScale *= scale;      // every piece about 0.55 m tall: read at a glance
+            b = rs[0].bounds; foreach (var x in rs) b.Encapsulate(x.bounds);
+            inst.transform.position += V(r.pos) - new Vector3(b.center.x, b.min.y, b.center.z);
+            var point = inst.AddComponent<WorldMacroContentPoint>(); point.Id = r.id; point.Visual = inst.transform;
+            bool fragment = r.kind == "fragment", evidence = r.kind == "evidence";
+            string prompt = !string.IsNullOrEmpty(r.prompt) ? r.prompt : fragment ? cfg.fragmentPrompt : cfg.coinsPrompt, text = !string.IsNullOrEmpty(r.text) ? r.text : fragment ? cfg.fragmentText : cfg.coinsText;
+            rows.Add(new PrologueContentSO.Point { Id = r.id, Kind = fragment || evidence ? PrologueInteractionKind.Evidence : PrologueInteractionKind.Currency, Position = V(r.stand), Prompt = prompt,
+                Text = text, Currency = fragment || evidence ? 0 : r.currency, Radius = fragment || evidence ? 2.1f : 1.3f, LockedText = r.locked ?? "" });   // locked = shown before the commission that wants it is taken (C2)
+        }
+        static string Refit(string id)
+        {
+            var scene = PlayScene(true); if (!ReadIndex().dungeons.Contains(id)) throw new Exception("no dungeon '" + id + "' in the index");
+            var root = scene.GetRootGameObjects().FirstOrDefault(g => g.name == RootName); var home = root != null ? root.transform.Find(id) : null;
+            if (home == null) throw new Exception("no " + RootName + "/" + id + " in the play scene (run build once)");
+            var lay = ReadLayout(id); var all = JsonUtility.FromJson<Cfg>(File.ReadAllText(Path.Combine(StageDir, "dungeon308.json"))); var cfg = all.rewards;
+            var content = AssetDatabase.LoadAssetAtPath<WorldMacroPlaytestSO>(ContentAsset); if (content == null) throw new Exception("content asset missing: " + ContentAsset);
+            var session = Object.FindObjectsByType<WorldMacroPlaytestSession>(FindObjectsInactive.Include, FindObjectsSortMode.None).FirstOrDefault(s => s.gameObject.scene == scene);
+            if (session == null) throw new Exception("no WorldMacroPlaytestSession in the play scene");
+            string backup = Backup(scene, "refit-" + id);
+            int removed = 0;
+            foreach (Transform t in home.Cast<Transform>().ToArray()) if (t.name == "Door" || t.name.StartsWith("Reward_", StringComparison.Ordinal)) { Object.DestroyImmediate(t.gameObject); removed++; }
+            var wood = AssetDatabase.LoadAssetAtPath<Material>(MaterialDir + "wood_dark.mat"); var iron = AssetDatabase.LoadAssetAtPath<Material>(MaterialDir + "iron.mat");
+            var rows = new List<PrologueContentSO.Point>();
+            if (!string.IsNullOrEmpty(lay.door.id)) BuildDoor(lay.door, home, session, cfg, wood, iron, rows);
+            foreach (var r in lay.rewards) BuildReward(r, home, cfg, rows);
+            // this dungeon's rows only (the door and every reward of the layout share the prefix dg308_<id>_)
+            string mine = RowPrefix + id + "_"; int before = content.Points.Count(p => p.Id.StartsWith(mine, StringComparison.Ordinal));
+            if (rows.Any(r => !r.Id.StartsWith(mine, StringComparison.Ordinal))) throw new Exception("a door / reward id of " + id + " does not start with " + mine);
+            content.Points = content.Points.Where(p => !p.Id.StartsWith(mine, StringComparison.Ordinal)).Concat(rows).ToArray();
+            EditorUtility.SetDirty(content); AssetDatabase.SaveAssetIfDirty(content);
+            EditorSceneManager.MarkSceneDirty(scene); if (!EditorSceneManager.SaveScene(scene)) throw new Exception("the play scene was not saved");
+            return "Dungeon308 refit " + id + ": objects removed " + removed + ", rebuilt door " + (string.IsNullOrEmpty(lay.door.id) ? "-" : lay.door.id + (lay.door.twoSided ? " (two-sided)" : "")) + " + " + lay.rewards.Length
+                + " rewards (" + string.Join(", ", lay.rewards.Select(r => r.id + " " + r.kind + (r.currency > 0 ? " " + r.currency : ""))) + "), content rows " + before + " -> " + rows.Count + ", backup " + backup + "\n" + Check();
         }
 
         static string Clear()
@@ -323,7 +361,10 @@ namespace Oheangbu.EditorTools.WorldMacro
             var doors = root.GetComponentsInChildren<WorldShortcutDoor>(true);
             C(doors.All(d => d.Session != null && ids.Contains(d.Id) && d.LeftLeaf != null && d.RightLeaf != null && d.Blockers.Length == 1), "every door is wired to the session and has its content row (" + doors.Length + " doors)");
             var points = root.GetComponentsInChildren<WorldMacroContentPoint>(true);
-            C(points.All(p => ids.Contains(p.Id)) && points.Length == index.dungeons.Length * 2, "two rewards per dungeon, each with its content row (" + points.Length + ")");
+            var rewardPoints = points.Where(p => p.name.StartsWith("Reward_", StringComparison.Ordinal)).ToArray(); int planned = index.dungeons.Sum(d => ReadLayout(d).rewards.Length);
+            C(points.All(p => ids.Contains(p.Id)) && rewardPoints.Length == planned, "every reward of the layouts stands, each with its content row (" + rewardPoints.Length + " of " + planned + ")");
+            var twoSided = index.dungeons.Select(ReadLayout).Where(l => l.door.twoSided).Select(l => l.door.id).ToArray();
+            C(twoSided.All(t => doors.Any(d => d.Id == t && d.GetComponent<WorldMacroContentPoint>() != null && d.GetComponent<WorldMacroContentPoint>().Id == t)), "D308-117 C3 every two-sided door carries its own content point (" + string.Join(", ", twoSided) + ")");
             int fragments = content.Points.Count(p => p.Id.StartsWith(RowPrefix, StringComparison.Ordinal) && p.Id.EndsWith("_fragment", StringComparison.Ordinal));
             C(fragments == index.dungeons.Length, "one stone-scripture fragment per dungeon (" + fragments + ")");
             // a collider box must sit inside the ground or a drawn block: its centre is never above every renderer of its dungeon (cheap sanity)

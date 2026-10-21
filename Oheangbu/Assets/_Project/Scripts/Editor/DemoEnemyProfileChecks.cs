@@ -129,6 +129,85 @@ namespace Oheangbu.EditorTools
                     "Wood ground impact damages standing target with wood provenance");
                 floorCollider.enabled = false; Physics.SyncTransforms(); previousCues = cues; Begin(EnemyArchetype.WoodVine, 6);
                 Check(cues == previousCues, "Missing ground cancels vine cast instead of erupting in midair");
+
+                // #308 D308-125 적용 3: a charge runs the line it locked, hits the swept player once, and a wall stops it short
+                var charge = ScriptableObject.CreateInstance<EnemyAttackProfileSO>(); profiles.Add(charge); charge.ApplyDefaults(EnemyArchetype.NeutralMelee);
+                charge.Delivery = EnemyAttackDelivery.Charge; charge.Mode = EnemyController.AttackMode.RangedOnly; charge.Damage = 18; charge.Range = 8;
+                charge.ProjectileSpeed = 7; charge.ImpactRadius = .7f; charge.MovementSpeedHint = 2.2f; charge.PreferredDistanceHint = 6;
+                Check(charge.TryValidate(out _), "Charge profile with ranged mode validates");
+                charge.Mode = EnemyController.AttackMode.MeleeOnly; Check(!charge.TryValidate(out _), "Charge with melee mode rejected");
+                charge.Mode = EnemyController.AttackMode.RangedOnly; charge.ChargeMinTravel = 9; Check(!charge.TryValidate(out _), "Charge minimum travel beyond range rejected");
+                charge.ChargeMinTravel = 4;
+                float scale = Get<float>(controller, "_recoveryScale308");
+                void ChargeAt(float playerAt)
+                {
+                    enemy.transform.SetPositionAndRotation(origin, Quaternion.identity); wallCollider.enabled = false;
+                    controller.AttackEnabled = true; player.transform.position = origin + Vector3.forward * playerAt;
+                    controller.Configure(charge); hp.Restore(); judge.ClearGuard(); Physics.SyncTransforms();
+                    Call(controller, "BeginAuthoredTelegraph"); Resolve();
+                }
+                bool RunCharge() { for (int i = 0; i < 200 && controller.IsCharging; i++) { Call(controller, "TickAuthoredAttack"); Physics.SyncTransforms(); } return !controller.IsCharging; }
+                float Ran() => enemy.transform.position.z - origin.z;
+                ChargeAt(6); bool charging = controller.IsCharging && cue.Delivery == EnemyAttackDelivery.Charge; int before = impacts;
+                Check(charging && RunCharge() && impacts == before + 1 && impact.InShape && Near(impact.AppliedDamage, 18) && !impact.Attack.Element.HasValue &&
+                    Mathf.Abs(Ran() - 8) < .01f && Near(controller.RecoveryDuration, charge.Recovery * scale),
+                    "Charge hits the swept player once and runs on to distance + overshoot, cut to range");
+                ChargeAt(6); player.transform.position += Vector3.right * 2; Physics.SyncTransforms(); before = impacts;
+                Check(controller.IsCharging && RunCharge() && impacts == before + 1 && !impact.InShape && Near(hp.Hp01, 1),
+                    "Charge keeps its locked line and misses a sidestep after the lock");
+                ChargeAt(7); wall.transform.position = origin + Vector3.forward * 5.5f + Vector3.up; wallCollider.enabled = true; Physics.SyncTransforms();
+                Check(controller.IsCharging && RunCharge() && Mathf.Abs(Ran() - 4.75f) < .02f && !impact.InShape && Near(hp.Hp01, 1) &&
+                    Near(controller.RecoveryDuration, charge.ChargeWallRecovery * scale),
+                    "Wall stops a charge a body radius short and gives the long wall recovery");
+                enemy.transform.SetPositionAndRotation(origin, Quaternion.identity); player.transform.position = origin + Vector3.forward * 6;
+                wall.transform.position = origin + Vector3.forward * 4 + Vector3.up; Physics.SyncTransforms();
+                Check(!(bool)Call(controller, "ChargeCanStart308"), "No charge starts with less than its minimum travel of open path");
+                wallCollider.enabled = false; Physics.SyncTransforms();
+                Check((bool)Call(controller, "ChargeCanStart308"), "Charge starts on an open path");
+
+                // #308 D308-125 적용 4: a charger that cannot start its run closes in and bites once with its fallback, then is the charge again
+                var bite = ScriptableObject.CreateInstance<EnemyAttackProfileSO>(); profiles.Add(bite); bite.ApplyDefaults(EnemyArchetype.NeutralMelee);
+                bite.Damage = 12; bite.Range = 2.2f; bite.Telegraph = .75f; bite.Recovery = .6f; bite.ArcDegrees = 80; bite.PreferredDistanceHint = 1.35f;
+                charge.Fallback = bite; Check(charge.TryValidate(out _), "Charge with a melee fallback validates");
+                bite.Fallback = charge; Check(!bite.TryValidate(out _) && !charge.TryValidate(out _), "A fallback off a charge, or one with its own fallback, rejected");
+                bite.Fallback = null; bite.Range = 9; Check(!charge.TryValidate(out _), "A fallback beyond the charge's range rejected");
+                bite.Range = 2.2f; charge.Fallback = profiles[1]; Check(!charge.TryValidate(out _), "A fallback that is not a melee arc rejected");
+                charge.Fallback = bite;
+                void IdleAt(float playerAt, float wallAt)
+                {
+                    enemy.transform.SetPositionAndRotation(origin, Quaternion.identity); controller.AttackEnabled = true;
+                    player.transform.position = origin + Vector3.forward * playerAt; wall.transform.position = origin + Vector3.forward * wallAt + Vector3.up;
+                    wallCollider.enabled = wallAt > 0f; controller.Configure(charge); hp.Restore(); judge.ClearGuard(); Physics.SyncTransforms();
+                    Set(controller, "_cooldown", 0f); Call(controller, "TickAuthoredAttack");
+                }
+                IdleAt(3, 3.75f);
+                Check(!controller.AttackInProgress && controller.CloseIn308 && Near(controller.CloseInRange308, 2.2f) && Near(controller.CloseInDistance308, 1.35f),
+                    "A blocked charger out of bite reach starts nothing and asks to close in to the bite's distance");
+                Set(controller, "_cooldown", 5f); wallCollider.enabled = false; Physics.SyncTransforms(); Set(controller, "_closeInCheck308", 0f);
+                Call(controller, "TickAuthoredAttack"); bool held = controller.CloseIn308 && !controller.AttackInProgress;
+                Set(controller, "_cooldown", 0f); Call(controller, "TickAuthoredAttack");
+                Check(held && controller.IsTelegraphing && cue.Delivery == EnemyAttackDelivery.Charge && !controller.CloseIn308,
+                    "A close-in holds while the cooldown runs, and the next choice on an open path is the charge");
+                controller.StopAttack();
+                IdleAt(2, 2.75f); before = impacts;
+                bool bit = controller.IsTelegraphing && cue.Delivery == EnemyAttackDelivery.MeleeArc && controller.AttackProfile == bite &&
+                    controller.EffectiveAttackMode == EnemyController.AttackMode.MeleeOnly &&
+                    Near(controller.PredictedImpactTime, Get<float>(controller, "_stateUntil")) && Near(controller.TelegraphDuration, bite.Telegraph); Resolve();
+                Check(bit && impacts == before + 1 && impact.InShape && Near(impact.AppliedDamage, 12) && controller.IsRecovering &&
+                    Near(controller.RecoveryDuration, bite.Recovery * scale),
+                    "A blocked charger within bite reach lands its fallback bite with the bite's own damage and recovery");
+                Resolve(); float cooldown = Get<float>(controller, "_cooldown");
+                Check(!controller.AttackInProgress && controller.AttackProfile == charge && cooldown >= charge.CooldownRange.x && cooldown <= charge.CooldownRange.y,
+                    "Back in idle the charger is the charge again and the charge's cooldown runs");
+                IdleAt(2, 2.75f); beforeCancelled = cancelled; controller.StopAttack();
+                Check(cancelled == beforeCancelled + 1 && controller.AttackProfile == charge && !controller.AttackInProgress,
+                    "A bind or stop during the bite gives the charge back");
+                IdleAt(6, 0f);
+                Check(controller.IsTelegraphing && cue.Delivery == EnemyAttackDelivery.Charge && !controller.CloseIn308 && controller.AttackProfile == charge,
+                    "An open path still charges and the charger does not close in");
+                controller.StopAttack(); charge.Fallback = null; IdleAt(2, 2.75f);
+                Check(!controller.AttackInProgress && !controller.CloseIn308, "Without a fallback a blocked charger only waits, as before");
+                wallCollider.enabled = false; Physics.SyncTransforms();
                 controller.Configure(null);
                 Check(controller.AttackProfile == null && controller.EffectiveAttackMode == EnemyController.AttackMode.LegacyDistance,
                     "Removing optional profile restores original mode");

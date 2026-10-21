@@ -107,14 +107,14 @@ namespace Pure308
                     "owed " + owed.ToString(CultureInfo.InvariantCulture) + " then " + rest.ToString(CultureInfo.InvariantCulture));
             }
 
-            // ---- empower: the next attack, once ----
+            // ---- empower: the next attack, once; the charge goes when it lands (D308-123) ----
             {
                 float duration = empower.F("duration", 0f), mul = empower.F("empower.mul", 0f);
                 char buff = empower.Letter[0], attack = SpellGrammar308.LetterAt(1), other = SpellGrammar308.LetterAt(25);
                 var buffs = new SpellBuffState308(); var state = new EmpowerState308();
                 float power = 12f, speed = 1.3f;
                 state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 0f, ref power, ref speed);
-                r.Check("넌-1", power == 12f && !state.Accept(buffs, buff, attack, SpellKind.AttackSingle, 0f), "without the buff an attack is not changed");
+                r.Check("넌-1", power == 12f && !state.Accept(buffs, buff, attack, SpellKind.AttackSingle, null, 0f), "without the buff an attack is not changed");
                 buffs.Activate(buff, 0f, duration, 1);
                 buffs.Activate(buff, 0f, duration, 1);
                 r.Check("넌-1", buffs.Charges(buff, 0f) == 1, "the buff holds one charge; a recast does not stack a second one");
@@ -122,10 +122,13 @@ namespace Pure308
                 foreach (SpellKind kind in new[] { SpellKind.Parry, SpellKind.Summon, SpellKind.Field, SpellKind.Buff, SpellKind.Ward, SpellKind.Install })
                 {
                     float p = 5f, s = 1f;
+                    var window = new SpellAttackWindow308(1);
                     state.Modify(buffs, buff, other, kind, mul, 1f, ref p, ref s);
-                    untouched &= p == 5f && s == 1f && !state.Accept(buffs, buff, other, kind, 1f) && buffs.Charges(buff, 1f) == 1;
+                    untouched &= p == 5f && s == 1f && !state.Accept(buffs, buff, other, kind, window, 1f);
+                    window.Close(2);
+                    untouched &= !state.Hit(buffs, buff, 2, 1f) && buffs.Charges(buff, 1f) == 1;
                 }
-                r.Check("넌-1", untouched, "a cast that is not an attack (parry, summon, field, buff, ward, install) neither takes nor uses the charge");
+                r.Check("넌-1", untouched, "a cast that is not an attack (parry, summon, field, buff, ward, install) neither takes nor uses the charge, nor does its hit");
                 power = 12f; speed = 1.3f;
                 state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 2f, ref power, ref speed);
                 r.Check("넌-2", r.Near(power, 12f * mul) && mul > 1f && speed == 1.3f, "the attack's power is multiplied by the row's multiplier; the projectile speed is not touched",
@@ -134,16 +137,60 @@ namespace Pure308
                 float areaPower = 9f, areaSpeed = 1f;
                 state.Modify(buffs, buff, other, SpellKind.AttackArea, mul, 3f, ref areaPower, ref areaSpeed);
                 r.Check("넌-2", r.Near(areaPower, 9f * mul), "an area attack is amplified the same way (once, not on top of the refused cast)", areaPower.ToString(CultureInfo.InvariantCulture));
-                r.Check("넌-1", !state.Accept(buffs, buff, attack, SpellKind.AttackSingle, 3f) && !state.Accept(buffs, buff, other, SpellKind.AttackArea, 4f) && buffs.Charges(buff, 4f) == 1,
-                    "an accepted cast that is not the one that was amplified (another glyph, another moment) does not use the charge");
-                r.Check("넌-1", state.Accept(buffs, buff, other, SpellKind.AttackArea, 3f) && !buffs.Active(buff, 3f), "accepting the amplified cast uses the charge and ends the buff");
+                var first = new SpellAttackWindow308(10);
+                r.Check("넌-1", !state.Accept(buffs, buff, attack, SpellKind.AttackSingle, first, 3.4f) && buffs.Charges(buff, 3.4f) == 1,
+                    "an accepted cast of another glyph than the amplified one takes nothing");
+                r.Check("넌-1", !state.Accept(buffs, buff, other, SpellKind.AttackArea, first, 3.4f) && buffs.Charges(buff, 3.4f) == 1,
+                    "accepting the amplified cast does not use the charge yet, also when the accept comes later than the multiplier (a swing's apex)");
+                first.Close(12);   // the dispatch handed out 11 and 12
+                r.Check("넌-1", !state.Hit(buffs, buff, 10, 3.5f) && !state.Hit(buffs, buff, 13, 3.5f) && buffs.Charges(buff, 3.5f) == 1,
+                    "a hit of an attack from before the cast, or handed out after its dispatch (a later cast, a second stage), does not use it");
+                r.Check("넌-1", state.Hit(buffs, buff, 12, 3.6f) && !buffs.Active(buff, 3.6f), "the first hit of the amplified cast uses the charge and ends the buff");
+                r.Check("넌-1", !state.Hit(buffs, buff, 11, 3.7f), "its other hits find nothing left to use");
                 power = 12f; speed = 1.3f;
                 state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 5f, ref power, ref speed);
-                r.Check("넌-1", power == 12f && !state.Accept(buffs, buff, attack, SpellKind.AttackSingle, 5f), "the attack after that is back to its own power: one attack only");
+                r.Check("넌-1", power == 12f && !state.Accept(buffs, buff, attack, SpellKind.AttackSingle, null, 5f), "the attack after that is back to its own power: one attack only");
+
+                // a cast that lands nothing keeps the charge; one made while another is in flight is amplified too (TEST)
+                buffs.Activate(buff, 6f, duration, 1);
+                power = 12f; state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 6f, ref power, ref speed);
+                var missed = new SpellAttackWindow308(20);
+                state.Accept(buffs, buff, attack, SpellKind.AttackSingle, missed, 6f); missed.Close(21);
+                float again = 12f; state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 6.5f, ref again, ref speed);
+                var air = new SpellAttackWindow308(21);
+                state.Accept(buffs, buff, attack, SpellKind.AttackSingle, air, 6.5f); air.Close(21);
+                float third = 12f; state.Modify(buffs, buff, other, SpellKind.AttackArea, mul, 7f, ref third, ref speed);
+                var late = new SpellAttackWindow308(21);
+                state.Accept(buffs, buff, other, SpellKind.AttackArea, late, 7f); late.Close(23);
+                r.Check("넌-1", r.Near(power, 12f * mul) && r.Near(again, 12f * mul) && r.Near(third, 12f * mul) && air.Empty && buffs.Charges(buff, 7f) == 1,
+                    "a cast that lands nothing (every shot missed, an air cast) keeps the charge; a second attack cast while the first flies is amplified too (TEST)");
+                r.Check("넌-1", state.Hit(buffs, buff, 23, 7.2f) && !state.Hit(buffs, buff, 21, 7.3f) && !buffs.Active(buff, 7.2f),
+                    "whichever amplified cast lands first uses the charge; a late hit of the other one finds nothing");
+
+                // a hit inside the dispatch, before its accept (a handler's Commit that lands at once)
+                buffs.Activate(buff, 8f, duration, 1);
+                power = 12f; state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 8f, ref power, ref speed);
+                var instant = new SpellAttackWindow308(30);
+                bool early = state.Hit(buffs, buff, 31, 8f);
+                r.Check("넌-1", !early && state.Accept(buffs, buff, attack, SpellKind.AttackSingle, instant, 8f) && !buffs.Active(buff, 8f),
+                    "a hit that lands inside its own dispatch, before the accept, uses the charge at the accept");
+
+                // no window: outside a dispatch nobody knows which hits are the cast's
+                buffs.Activate(buff, 9f, duration, 1);
+                power = 12f; state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 9f, ref power, ref speed);
+                r.Check("넌-1", state.Accept(buffs, buff, attack, SpellKind.AttackSingle, null, 9f) && !buffs.Active(buff, 9f),
+                    "a cast accepted without a window uses the charge at its accept, as before");
+
                 buffs.Activate(buff, 10f, duration, 1);
+                power = 12f; state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 10f, ref power, ref speed);
+                var expiring = new SpellAttackWindow308(40);
+                state.Accept(buffs, buff, attack, SpellKind.AttackSingle, expiring, 10f); expiring.Close(41);
+                r.Check("넌-1", !state.Hit(buffs, buff, 41, 10f + duration) && !buffs.Active(buff, 10f + duration),
+                    "a hit that lands after the buff ran out uses nothing");
+                buffs.Activate(buff, 20f, duration, 1);
                 power = 12f;
-                state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 10f + duration, ref power, ref speed);
-                r.Check("넌-1", power == 12f && !buffs.Active(buff, 10f + duration), "an unused buff runs out after its duration");
+                state.Modify(buffs, buff, attack, SpellKind.AttackSingle, mul, 20f + duration, ref power, ref speed);
+                r.Check("넌-1", power == 12f && !buffs.Active(buff, 20f + duration), "an unused buff runs out after its duration");
             }
 
             // ---- steadfast: the letter survives a hit, the damage does not change ----

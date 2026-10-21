@@ -75,6 +75,20 @@ namespace Oheangbu.App
             return 0;
         }
 
+        // #308 WP-17: a zone that follows something (the walking domain) moves its centre. false = unknown id.
+        public bool Move(int id, Vector3 centre)
+        {
+            for (int i = 0; i < _zones.Count; i++)
+            {
+                if (_zones[i].Id != id) continue;
+                var zone = _zones[i];
+                zone.Centre = centre;
+                _zones[i] = zone;
+                return true;
+            }
+            return false;
+        }
+
         // An enemy strike landing at point with this reach: every breakable zone it touches loses one hit and breaks at its
         // last one (owner = null: zones of every owner). A broken zone stops acting at once; its owner sweeps it on its next
         // tick. Returns how many zones broke.

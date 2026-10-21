@@ -1,0 +1,11 @@
+﻿# D308-124 (2026-10-21, debate decision Codex · Fable · Claude — user not yet asked, TEST): the five summons leave the open exception and wait for the
+# mieum final like every other mieum row (SpellUnlockPolicy308.JudgeBook). The rows are the Base rows with Gate emptied (= final). The main game has
+# DemoAllFinals = 1 and the lab opens every final in the editor, so nothing changes in Play there; a scene without a campaign session or lab keeps its book.
+# Without the presentation switch mieum opens when the folklore demon chain (D308-114) grants it: Unlock308.csv drops the fallen_hwangryong
+# evidence while the chain is linked to that demon.
+글자,Mode,Handler,Pending,Kind,Gate,Feature,Inherit,BasePower,SpeedMul,AreaShape,AreaAngle,AreaRadius,AreaLength,AreaSpeed,AreaDelay,Shots,Interval,Scatter,Params
+곰,replace,core.summon,,Summon,,book,,,,,,,,,,,,,
+놈,replace,core.summon,,Summon,,book,,,,,,,,,,,,,
+몸,replace,core.summon,,Summon,,book,,,,,,,,,,,,,
+솜,replace,core.summon,,Summon,,book,,,,,,,,,,,,,
+옴,replace,core.summon,,Summon,,book,,,,,,,,,,,,,
