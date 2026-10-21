@@ -13,8 +13,20 @@ namespace Oheangbu.App.SpellVFX120
     public sealed class SpellWeaponHeads308
     {
         private readonly Dictionary<int, GreatBrushWeapon308[]> _heads = new Dictionary<int, GreatBrushWeapon308[]>();
+        private readonly Dictionary<int, SpellSwing308> _swings = new Dictionary<int, SpellSwing308>();
 
         public int Count => _heads.Count;
+        public int Strikes { get; private set; }
+
+        // A strike of the form (its Hit / Miss cue): the body plays the weapon's swing and every head shows its afterimage.
+        public void Strike(int id)
+        {
+            if (!_heads.TryGetValue(id, out var heads) || heads.Length == 0) return;
+            Strikes++;
+            var first = heads[0];
+            if (first != null && _swings.TryGetValue(id, out var swing) && swing != null) swing.PlayStrike308(first.StrikeState, first.StrikeToApex, first.StrikeLock);
+            foreach (var head in heads) if (head != null) head.Strike();
+        }
 
         // The head prefab of a glyph: its catalogue body's profile (the cue profile the visual set points at).
         public static GameObject PrefabFor(SpellVisualSetSO visuals, char letter)
@@ -33,6 +45,8 @@ namespace Oheangbu.App.SpellVFX120
             {
                 var rig = request.Follow.root.GetComponentInChildren<WorldMacroPlayerGestureRig>(true);
                 if (rig == null) return;
+                var swing = rig.GetComponent<SpellSwing308>();
+                if (swing != null) _swings[id] = swing;
                 foreach (var brush in new[] { rig.WorldBrushRoot308, rig.NearBrushRoot308 })
                 {
                     if (brush == null) continue;
@@ -53,6 +67,7 @@ namespace Oheangbu.App.SpellVFX120
 
         public void End(int id)
         {
+            _swings.Remove(id);
             if (!_heads.TryGetValue(id, out var heads)) return;
             _heads.Remove(id);
             foreach (var head in heads) if (head != null) head.Detach();
@@ -62,7 +77,7 @@ namespace Oheangbu.App.SpellVFX120
         {
             foreach (var heads in _heads.Values)
                 foreach (var head in heads) if (head != null) head.Detach();
-            _heads.Clear();
+            _heads.Clear(); _swings.Clear();
         }
 
         // checks: the heads a handle put on (empty when none)

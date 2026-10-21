@@ -82,6 +82,7 @@ namespace Oheangbu.App.SpellVFX120
         public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args)
         {
             if (!handle.Shown) return;
+            if (cue == SpellFxCue.Hit || cue == SpellFxCue.Miss) _weapons.Strike(handle.Id);   // D308-127: the weapon swings (presentation)
             if (_fallbackHandles.TryGetValue(handle.Id, out var inner)) { _fallback.Cue(inner, cue, args); return; }
             var stage = Stage;
             if (stage != null) stage.Cue(handle.Id, cue, args);

@@ -248,6 +248,33 @@ namespace Oheangbu.App.World
             catch (System.Exception e) { Debug.LogException(e, this); }
         }
 
+        // D308-127 (TEST, debate 13): a weapon-form strike shows a swing. Presentation only - called by the weapon head presenter
+        // on the strike's Hit / Miss cue; the rule judged the strike on the click and never reads this. The clip starts toApex
+        // seconds before its apex and runs at its own speed (the wind-up is not shown: the afterimage is the head's path after
+        // the contact, and pressing the wind-up into two frames would draw it as one long streak).
+        public bool PlayStrike308(string state, float toApex, float lockSeconds)
+        {
+            try
+            {
+                Touch();
+                _swingFrame = Time.frameCount;
+                if (!Active || Profile == null) return false;
+                int index = Playable(state);
+                if (index < 0) return false;
+                EnterStance();
+                ShowUpperNow();
+                _swinging = true; _holding = false; Swings++;
+                float now = Time.time; var shown = Profile.States[index];
+                // apex time = now: StepSwing then runs the clip from _clipStart at its own speed
+                _swingReleasedAt = now; _swingApexAt = now; _swingLockUntil = now + Mathf.Max(0f, lockSeconds);
+                _clipStart = Mathf.Max(0f, shown.ClipApexSeconds - Mathf.Max(0f, toApex)); _aimOn = false;
+                Show(index, Profile.SwingFadeIn, true);
+                SetTime(_timeHash, _hasTime, shown.ClipSeconds > 0f ? Mathf.Clamp01(_clipStart / shown.ClipSeconds) : 0f);
+                return true;
+            }
+            catch (System.Exception e) { Debug.LogException(e, this); return false; }
+        }
+
         private int Playable(string state)
         {
             if (string.IsNullOrEmpty(state)) return -1;

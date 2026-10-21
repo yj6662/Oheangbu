@@ -21,8 +21,14 @@ namespace Oheangbu.App.World
         [SerializeField] private Material _hiddenBristle;
         [Tooltip("Turn of the head around the shaft (deg): which way the blade faces against the grip.")]
         [SerializeField, Range(-180f, 180f)] private float _roll;
+        [Header("debate 13: the strike's swing (SpellSwing308 state) and its afterimage")]
+        [SerializeField] private string _strikeState = "SwingSweep";
+        [Tooltip("s from the click to the clip's apex: the wind-up is pressed into it (contact vs damage <= 2 frames).")]
+        [SerializeField, Min(0f)] private float _strikeToApex = .033f;
+        [SerializeField, Min(0f)] private float _strikeLock = .3f;
 
         private Renderer _brush;
+        private WeaponTrail308[] _trails = Array.Empty<WeaponTrail308>();
         private int _slot = -1;
         private Material[] _restore;
         private Renderer[] _own = Array.Empty<Renderer>();
@@ -30,9 +36,20 @@ namespace Oheangbu.App.World
         public Renderer BrushRenderer => _brush;
         public int BristleSlot => _slot;
         public Material HiddenBristle => _hiddenBristle;
+        public string StrikeState => _strikeState;
+        public float StrikeToApex => _strikeToApex;
+        public float StrikeLock => _strikeLock;
+        public WeaponTrail308[] Trails => _trails;
 
         // The editor build fills these in (the prefab is made by a tool, not by hand).
         public void Configure(Material hiddenBristle, float roll) { _hiddenBristle = hiddenBristle; _roll = roll; }
+        public void ConfigureStrike(string state, float toApex, float lockSeconds) { _strikeState = state; _strikeToApex = toApex; _strikeLock = lockSeconds; }
+
+        // One strike of the form: every afterimage of this head starts fresh (the body's swing is SpellSwing308's).
+        public void Strike()
+        {
+            foreach (var trail in _trails) if (trail != null) trail.Strike();
+        }
 
         // Puts the head on the brush under brushRoot. false = no grip or ferrule there (nothing changed).
         public bool Attach(Transform brushRoot)
@@ -58,6 +75,8 @@ namespace Oheangbu.App.World
             int layer = brush != null ? brush.gameObject.layer : grip.gameObject.layer;
             foreach (var child in GetComponentsInChildren<Transform>(true)) child.gameObject.layer = layer;
             _own = GetComponentsInChildren<Renderer>(true);
+            _trails = GetComponentsInChildren<WeaponTrail308>(true);
+            foreach (var trail in _trails) trail.ShownBy(brush);
             if (brush != null && _hiddenBristle != null)
             {
                 _restore = brush.sharedMaterials;

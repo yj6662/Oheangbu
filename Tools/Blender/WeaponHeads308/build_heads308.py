@@ -20,6 +20,9 @@ SWORD_BLADE = arg('--sword-blade', 1.2); SWORD_WIDTH = arg('--sword-width', .17)
 AXE_EXT = arg('--axe-ext', .35); AXE_H = arg('--axe-height', .40); AXE_W = arg('--axe-width', .30)
 FLAIL_CHAIN = arg('--flail-chain', .45); FLAIL_BAR = arg('--flail-bar', .35); FLAIL_R = arg('--flail-radius', .034)
 R_POLE = .016                      # 먹 자루 연장 반지름(붓 자루 .017 보다 조금 가늘게)
+# debate 13 (Codex · Fable): the element did not read on the still heads - pigment moved to what the camera sees (wider edge
+# bands, the sword's guard, a ring at the root), the share brought to 12-15 % (the 15 % cap stays)
+BAND_SPEAR = arg('--band-spear', .012); BAND_SWORD = arg('--band-sword', .010)
 R_ROOT = .045                      # 붓털 뿌리 반지름: 밑동 먹 매듭이 이것을 덮는다
 rnd = random.Random(1271)
 MATS = ['M_WeaponHead308_Ink', 'M_WeaponHead308_Pigment']
@@ -64,8 +67,11 @@ def lathe(bm, profile, n=10, jitter=.02, mat=INK, close_bottom=True, close_top=T
 
 
 def root_knot(bm, top=.06):
-    """the bristle root turned to ink: covers the ferrule's open end (r .045) and narrows into the head."""
-    lathe(bm, [(-.004, R_ROOT * .98), (.012, R_ROOT * 1.02), (top * .55, R_ROOT * .72), (top, R_POLE * 1.25)], n=12, jitter=.03)
+    """the bristle root turned to ink: covers the ferrule's open end (r .045) and narrows into the head. debate 13 (Fable): a
+    2 cm pigment ring at the bottom, seen from every side."""
+    rings = [ring(bm, z, r, 12, .03) for z, r in [(-.004, R_ROOT * .98), (.004, R_ROOT * 1.02), (.024, R_ROOT * 1.02), (top * .55, R_ROOT * .72), (top, R_POLE * 1.25)]]
+    for k in range(len(rings) - 1): bridge(bm, rings[k], rings[k + 1], PIG if k == 1 else INK)
+    cap(bm, rings[0], flip=True); cap(bm, rings[-1])
 
 
 def blade(bm, stations, edges_both, band, mat_body=INK):
@@ -126,19 +132,19 @@ def empty(name, parent=None):
 bm = bmesh.new(); root_knot(bm)
 lathe(bm, [(.05, R_POLE * 1.1), (SPEAR_EXT * .5, R_POLE), (SPEAR_EXT, R_POLE * .95)], n=8, jitter=.015, close_bottom=False, close_top=False)
 z0 = SPEAR_EXT
-lathe(bm, [(z0 - .02, R_POLE * 1.05), (z0 + .02, .021), (z0 + .055, .017), (z0 + .07, .012)], n=8, jitter=.02)
+lathe(bm, [(z0 - .02, R_POLE * 1.05), (z0 + .02, .021), (z0 + .055, .017), (z0 + .07, .012)], n=8, jitter=.02, mat=PIG)   # 잎 받침 — 안료(토론 13)
 st = []
 N = 12
 for k in range(N + 1):
     s = k / N; z = z0 + .06 + SPEAR_LEAF * s
     w = SPEAR_WIDTH * .5 * (math.sin(math.pi * min(1.0, s / .42) * .5) if s < .42 else (1 - ((s - .42) / .58) ** 1.6))
     w = max(w, .0015); st.append((z, -w, w, .007 * (1 - .75 * s) + .002))
-blade(bm, st, True, .009)
+blade(bm, st, True, BAND_SPEAR)
 spear = finish('Head_Spear', bm)
 
 # ---- 쌍수도: 밑동 매듭 → 코등이 → 곧은 외날(등 · 날), 끝은 날 쪽이 등으로 모이는 뾰족 ----
 bm = bmesh.new(); root_knot(bm, .05)
-lathe(bm, [(.045, .02), (.05, .07), (.075, .07), (.08, .02)], n=12, jitter=.01)   # 코등이(둥근 테)
+lathe(bm, [(.045, .02), (.05, .07), (.075, .07), (.08, .02)], n=12, jitter=.01, mat=PIG)   # 코등이(둥근 테) — 안료(토론 13)
 st = []; N = 16; tip = .14
 for k in range(N + 1):
     s = k / N; z = .08 + SWORD_BLADE * s
@@ -146,7 +152,7 @@ for k in range(N + 1):
     if z > .08 + SWORD_BLADE - tip:
         u = (z - (.08 + SWORD_BLADE - tip)) / tip; we = wb + (we - wb) * max(.02, 1 - u ** 1.3)
     st.append((z, wb, we, .011 * (1 - .4 * s) + .003))
-blade(bm, st, False, .012)
+blade(bm, st, False, BAND_SWORD)
 sword = finish('Head_Sword', bm)
 
 # ---- 부월: 밑동 매듭 → 먹 자루 연장 → 자루에 붙은 넓은 외날(볼록한 날, 낫 아님) → 자루 끝 마개 ----
@@ -191,7 +197,7 @@ L = FLAIL_CHAIN / 6
 for k in range(6):                         # 고리 = 꼬인 먹 가닥 고리(번갈아 90도), 이음이 보이게 조금씩 겹친다
     loop_link(bm, .045 + L * (k + .5), L * .62, .017, (k % 2) * math.pi / 2, .0045)
 zb_ = .045 + FLAIL_CHAIN
-prof = [(zb_, FLAIL_R * .55), (zb_ + .02, FLAIL_R * .95), (zb_ + .035, FLAIL_R), (zb_ + FLAIL_BAR * .5, FLAIL_R * 1.08), (zb_ + FLAIL_BAR - .035, FLAIL_R), (zb_ + FLAIL_BAR - .02, FLAIL_R * .95), (zb_ + FLAIL_BAR, FLAIL_R * .55)]
+prof = [(zb_, FLAIL_R * .55), (zb_ + .02, FLAIL_R * .95), (zb_ + .05, FLAIL_R), (zb_ + FLAIL_BAR * .5, FLAIL_R * 1.08), (zb_ + FLAIL_BAR - .05, FLAIL_R), (zb_ + FLAIL_BAR - .02, FLAIL_R * .95), (zb_ + FLAIL_BAR, FLAIL_R * .55)]   # 끝 테 3 cm(토론 13)
 rings_ = [ring(bm, z, r, 10, .02) for z, r in prof]
 for k in range(len(rings_) - 1): bridge(bm, rings_[k], rings_[k + 1], PIG if k in (1, len(rings_) - 3) else INK)
 cap(bm, rings_[0], flip=True); cap(bm, rings_[-1])

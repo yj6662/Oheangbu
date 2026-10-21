@@ -7,6 +7,7 @@ using System.Text;
 using Oheangbu.App;
 using Oheangbu.App.SpellVFX120;
 using Oheangbu.App.World;
+using Oheangbu.Data.Spell;
 using Oheangbu.Spellcraft;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -44,6 +45,38 @@ namespace Oheangbu.EditorTools.WorldMacro
             (83, "metal", "Head_Sword", "A6B0AD"), (107, "water", "Head_Flail", "2C465A"),
         };
 
+        // debate 13 (TEST): the swing afterimage. Colour per element (ArtAudio LOCKED 오행 강조색 번안, starting values to be judged
+        // in the film), ink core, the share of the width that is pigment rim; the swing clip per head and the two points of its
+        // ribbon in the head's own space (Unity: +Y along the shaft, the axe blade on -X). A line head (halfWidth > 0) widens one
+        // point toward the camera: the spear thrusts along its own axis and sweeps no band.
+        // colours (debate 13, merged): rim pigment per element, core = ink except water (the core itself is 현색 so the rim can be
+        // a lighter 청묵 that does not vanish into black); metal no brighter than the paper (Fable: a rim brighter than the ground
+        // reads as light) and a narrower rim
+        const string TrailShader = "Oheangbu/PigmentTrail308", TrailInk = "1E1C1A";
+        static readonly Dictionary<string, (string Rim, string Core, float RimShare)> TrailHex = new Dictionary<string, (string, string, float)>
+        {
+            // still round 2: rim .6 left the grey core the larger read - .7 (the core a third of the width)
+            { "wood", ("368B75", TrailInk, .7f) }, { "fire", ("BE543B", TrailInk, .7f) }, { "earth", ("B68A3D", TrailInk, .7f) },
+            // metal: Fable's rim <= 35 % read as a grey ink stroke in still round 2 - .5, the colour still no brighter than the paper
+            { "metal", ("A6B0AD", TrailInk, .5f) }, { "water", ("4F6A84", "2C465A", .7f) },
+        };
+        // still round 1 (10-22): opacity .9 and a long dry tail left the stroke faint
+        const float TrailOpacity = 1f, TrailDry = .55f, TrailEmit = .15f, TrailFade = .3f;
+        // still round 1: a band between two points of the head lies in the swing's own surface and is seen nearly edge-on from
+        // the shoulder camera (a thin line). Every head draws the stroke along its striking point instead, its width turned
+        // toward the camera (the pigment shader, not the gas one; the head's point, not the hidden bristle tip).
+        static readonly Dictionary<string, (string State, Vector3 From, Vector3 To, float HalfWidth, string Under)> Strikes =
+            new Dictionary<string, (string, Vector3, Vector3, float, string)>
+        {
+            { "Head_Spear", ("SwingThrow", Vector3.zero, new Vector3(0f, 2.0f, 0f), .1f, null) },              // Fable: StrikeFar belongs to the far circle
+            { "Head_Sword", ("SwingSweep", Vector3.zero, new Vector3(0f, 1.1f, 0f), .2f, null) },
+            { "Head_Axe", ("SwingSlam", Vector3.zero, new Vector3(-.31f, .56f, 0f), .22f, null) },
+            { "Head_Flail", ("SwingArc", Vector3.zero, new Vector3(0f, .70f, 0f), .16f, "Head_Flail_Swing") },
+        };
+        // the clip starts this long before its apex (the wind-up is not shown: contact <= 2 frames after the click)
+        const float StrikeToApex = .03f, StrikeLock = .3f;
+        static string TrailPath(string key) => Folder + "/Materials/M_WeaponTrail308_" + key + ".mat";
+
         static string Repo => Path.GetFullPath(Path.Combine(Application.dataPath, "..", ".."));
         static string Source => Path.Combine(Repo, "Art", "Characters308", "WeaponHeads308", "v1");
         static string PigmentPath(string key) => Folder + "/Materials/M_WeaponHead308_Pigment_" + key + ".mat";
@@ -65,8 +98,9 @@ namespace Oheangbu.EditorTools.WorldMacro
                     case "check": return Check();
                     case "stills": return Stills();
                     case "rig": return Rig();
+                    case "trails": return Trails();
                 }
-                return "WeaponHeads308Build: import | materials | prefabs | connect[:dry] | check | stills | rig";
+                return "WeaponHeads308Build: import | materials | prefabs | connect[:dry] | check | stills | rig | trails";
             }
             catch (Exception e) { return "WeaponHeads308Build exception: " + e.GetType().Name + " " + e.Message + " @ " + (e.StackTrace ?? "").Split('\n')[0].Trim(); }
         }
@@ -133,6 +167,14 @@ namespace Oheangbu.EditorTools.WorldMacro
             foreach (var g in Glyphs.GroupBy(x => x.Key).Select(x => x.First()))
                 Make(PigmentPath(g.Key), brush, m => Matte(m, Hex(g.Hex)));
             Make(HiddenPath, hidden, m => { });
+            var trail = Shader.Find(TrailShader);
+            if (trail == null) return b.AppendLine("  refused: shader " + TrailShader + " not found").ToString().TrimEnd();
+            foreach (var pair in TrailHex)
+                Make(TrailPath(pair.Key), trail, m =>
+                {
+                    m.SetColor("_PigmentColor", Hex(pair.Value.Rim)); m.SetColor("_InkColor", Hex(pair.Value.Core)); m.SetFloat("_RimShare", pair.Value.RimShare);
+                    m.SetFloat("_Opacity", TrailOpacity); m.SetFloat("_StreakDensity", 14f); m.SetFloat("_DryStrength", TrailDry); m.SetFloat("_EdgeSoftness", .12f);
+                });
             return b.ToString().TrimEnd();
         }
 
@@ -163,7 +205,18 @@ namespace Oheangbu.EditorTools.WorldMacro
                         renderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off; renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
                     }
                     foreach (var t in root.GetComponentsInChildren<Transform>(true)) t.gameObject.hideFlags = HideFlags.None;
-                    root.AddComponent<GreatBrushWeapon308>().Configure(hidden, 0f);
+                    var weapon = root.AddComponent<GreatBrushWeapon308>(); weapon.Configure(hidden, 0f);
+                    // debate 13: the strike's swing and the afterimage's two points (children of the head, so they ride its pose)
+                    var strike = Strikes[g.Head];
+                    weapon.ConfigureStrike(strike.State, StrikeToApex, StrikeLock);
+                    Transform under = strike.Under != null ? Find(root.transform, strike.Under) ?? root.transform : root.transform;
+                    Transform Point(string name, Vector3 at)
+                    {
+                        var p = new GameObject(name).transform; p.SetParent(under, true); p.position = root.transform.TransformPoint(at); p.rotation = root.transform.rotation; return p;
+                    }
+                    var to = Point("TrailTo", strike.To);
+                    var from = strike.HalfWidth > 0f ? null : Point("TrailFrom", strike.From);
+                    root.AddComponent<WeaponTrail308>().Configure(from, to, strike.HalfWidth, AssetDatabase.LoadAssetAtPath<Material>(TrailPath(g.Key)), TrailEmit, TrailFade);
                     var bounds = BoundsIn(root.transform, root.transform);
                     PrefabUtility.SaveAsPrefabAsset(root, PrefabPath(g.Key, g.Head));
                     b.AppendLine("  " + SpellGrammar308.LetterAt(g.Cell) + " " + g.Key + " -> " + PrefabPath(g.Key, g.Head) + " · y " + F(bounds.min.y) + ".." + F(bounds.max.y) + " · x " + F(bounds.min.x) + ".." + F(bounds.max.x));
@@ -245,7 +298,7 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             const float ShaftDiameter = .034f, GripToFerrule = .57f, ButtToFerrule = 1.17f, GripAhead = .4f, GripFromButt = .6f;
             foreach (string head in Glyphs.Select(g => g.Head).Distinct())
-                Line(Num(head, "pigmentShare") <= .15f, head + " pigment " + F(Num(head, "pigmentShare") * 100f) + " % of the head's area (<= 15 %)");
+                Line(Num(head, "pigmentShare") <= .15f && Num(head, "pigmentShare") >= .12f, head + " pigment " + F(Num(head, "pigmentShare") * 100f) + " % of the head's area (12-15 %: debate 13 fills the D308-127 cap)");
             Line(2f * Num("Head_Spear", "maxX") <= 3f * ShaftDiameter, "spear leaf width " + F(2f * Num("Head_Spear", "maxX")) + " m <= 3 x shaft (" + F(3f * ShaftDiameter) + ")");
             Line(Num("Head_Axe", "maxX") >= 8f * ShaftDiameter, "axe blade reach from the shaft " + F(Num("Head_Axe", "maxX")) + " m >= 8 x shaft (" + F(8f * ShaftDiameter) + ")");
             Line(Num("Head_Sword", "widthX") <= .18f, "two-handed sword blade width " + F(Num("Head_Sword", "widthX")) + " m <= .18");
@@ -297,6 +350,23 @@ namespace Oheangbu.EditorTools.WorldMacro
                         bristleRenderer.enabled = true; bristleRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; mirror.Invoke(weapon, null);
                         bool on = head.GetComponentsInChildren<Renderer>(true).All(r => r.enabled && r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.Off);
                         Line(off && on, tag + " the head follows its brush renderer (enabled, shadows): the close-up brush is hidden that way");
+                        // debate 13: the strike's swing state and the afterimage (emits only after a strike, gone EmitSeconds + FadeSeconds later)
+                        var trail = head.GetComponent<WeaponTrail308>();
+                        var swingProfile = Resources.Load<GreatBrush308Profile>(GreatBrush308Profile.ResourcesPath);
+                        Line(trail != null && trail.Material != null && trail.Material.shader != null && trail.Material.shader.name == TrailShader && trail.Lifetime <= .45f + 1e-4f,
+                            tag + " afterimage: " + TrailShader + ", whole life " + (trail != null ? F(trail.Lifetime) : "-") + " s (<= .45: Codex .30 / Fable .35-.5)");
+                        Line(swingProfile != null && swingProfile.States.Any(s => s.State == weapon.StrikeState && s.ClipSeconds > 0f) && weapon.StrikeToApex <= 2f / 60f + 1e-4f,
+                            tag + " strike swing " + weapon.StrikeState + " · contact " + F(weapon.StrikeToApex * 1000f) + " ms after the click (<= 2 frames)");
+                        if (trail != null)
+                        {
+                            float t0 = Time.time;
+                            trail.Step(t0, null); bool idle = trail.Samples == 0;
+                            weapon.Strike();
+                            for (int k = 0; k < 6; k++) { brush.transform.Rotate(0f, 12f, 0f, Space.World); trail.Step(t0 + .02f * k, null); }
+                            int during = trail.Samples;
+                            trail.Step(t0 + trail.Lifetime + .01f, null);
+                            Line(idle && during >= 2 && trail.Samples == 0, tag + " afterimage: none before the strike, " + during + " samples while it swings, none " + F(trail.Lifetime) + " s after it");
+                        }
                         weapon.Detach();
                         var after = bristleRenderer.sharedMaterials;
                         Line(head == null && after.Length == before.Length && after.Zip(before, (x, y) => ReferenceEquals(x, y)).All(x => x), tag + " Detach: the head is gone and the brush has its very own materials back");
@@ -445,6 +515,96 @@ namespace Oheangbu.EditorTools.WorldMacro
                 rt.Release(); Object.DestroyImmediate(rt); Object.DestroyImmediate(tex);
                 EditorSceneManager.ClosePreviewScene(scene);
             }
+            return b.ToString().TrimEnd();
+        }
+
+        // ---------------------------------------------------------------- trails (stills of one afterimage per glyph)
+
+        // Each glyph's brush and head on a paper-coloured ground, moved through a made-up strike (no clip, no Play: the brush
+        // is turned about its grip by hand) while its WeaponTrail308 is stepped with the same clock, then rendered from behind
+        // the caster's right shoulder. Judges colour, width and fade only - the real motion is the film's.
+        static string Trails()
+        {
+            var brushModel = AssetDatabase.LoadAssetAtPath<GameObject>(BrushModel);
+            if (brushModel == null) return "refused: no brush model";
+            var b = new StringBuilder("WeaponHeads308 trails\n");
+            string folder = Path.Combine(Source, "unity"); Directory.CreateDirectory(folder);
+            var rt = new RenderTexture(1280, 800, 24); var tex = new Texture2D(1280, 800, TextureFormat.RGB24, false);
+            foreach (var g in Glyphs)
+            {
+                var scene = EditorSceneManager.NewPreviewScene();
+                var made = new List<GameObject>(); var meshes = new List<Mesh>();
+                GameObject Make(GameObject source) { var o = (GameObject)Object.Instantiate(source); o.hideFlags = HideFlags.HideAndDontSave; SceneManager308.Move(o, scene); made.Add(o); return o; }
+                try
+                {
+                    var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath(g.Key, g.Head)); if (prefab == null) { b.AppendLine("  " + g.Key + " no prefab"); continue; }
+                    var brush = Make(brushModel);
+                    foreach (var r in brush.GetComponentsInChildren<Renderer>(true))
+                        r.sharedMaterials = r.sharedMaterials.Select(m =>
+                        {
+                            string name = m != null ? new[] { "Bamboo", "Brass", "Bristle", "Cord" }.FirstOrDefault(n => m.name.IndexOf(n, StringComparison.OrdinalIgnoreCase) >= 0) : null;
+                            var project = name != null ? AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Art/Characters/GreatBrush308/Materials/M_GreatBrush308_" + name + ".mat") : null;
+                            return project != null ? project : m;
+                        }).ToArray();
+                    var head = Make(prefab); var weapon = head.GetComponent<GreatBrushWeapon308>();
+                    weapon.Attach(brush.transform);
+                    var trail = head.GetComponent<WeaponTrail308>();
+                    var grip = Find(brush.transform, "GripSocket");
+                    var lightObject = new GameObject("Light") { hideFlags = HideFlags.HideAndDontSave }; SceneManager308.Move(lightObject, scene); made.Add(lightObject);
+                    var light = lightObject.AddComponent<Light>(); light.type = LightType.Directional; light.intensity = 1.3f; light.color = new Color(1f, .97f, .9f); lightObject.transform.rotation = Quaternion.Euler(40f, -30f, 0f);
+                    var camObject = new GameObject("Camera") { hideFlags = HideFlags.HideAndDontSave }; SceneManager308.Move(camObject, scene); made.Add(camObject);
+                    var cam = camObject.AddComponent<Camera>(); cam.scene = scene; cam.targetTexture = rt; cam.clearFlags = CameraClearFlags.SolidColor;
+                    cam.backgroundColor = new Color(.74f, .71f, .64f); cam.nearClipPlane = .05f; cam.farClipPlane = 40f; cam.fieldOfView = 50f;
+                    // the grip at chest height; the strike's pose at a moment u (0..1) - the shaft's direction and the grip's place
+                    Vector3 chest = new Vector3(0f, 1.25f, 0f), Tilt = new Vector3(-.35f, 1f, .3f).normalized;
+                    (Quaternion, Vector3) Pose(float u)
+                    {
+                        switch (g.Head)
+                        {
+                            case "Head_Spear": return (Quaternion.Euler(90f, 0f, 0f), chest + Vector3.forward * Mathf.Lerp(-.4f, .9f, u));   // shaft level, forward thrust
+                            case "Head_Axe": return (Quaternion.Euler(Mathf.Lerp(-20f, 120f, u), 0f, 0f), chest);                         // raised behind -> chopped down in front
+                            case "Head_Flail": return (Quaternion.AngleAxis(Mathf.Lerp(-80f, 70f, u), Tilt) * Quaternion.Euler(80f, 0f, 0f), chest);
+                            default: return (Quaternion.AngleAxis(Mathf.Lerp(-60f, 55f, u), Tilt) * Quaternion.Euler(78f, 0f, 0f), chest);       // diagonal sweep right-high -> left-low
+                        }
+                    }
+                    void Place(float u)
+                    {
+                        var (rotation, at) = Pose(u);
+                        // turn the brush so its grip's +Y (the shaft) points along `rotation * up`, grip on `at`
+                        brush.transform.rotation = rotation * Quaternion.Inverse(Quaternion.Inverse(brush.transform.rotation) * grip.rotation);
+                        brush.transform.position += at - grip.position;
+                    }
+                    // the camera stands where it will shoot before the stroke is sampled: a line head turns its width toward it
+                    // behind the right shoulder; the spear's thrust runs into that view, so it is seen from its right side
+                    cam.transform.position = chest + (g.Head == "Head_Spear" ? new Vector3(3.2f, .8f, .4f) : new Vector3(.9f, .7f, -3.2f));
+                    cam.transform.LookAt(chest + Vector3.forward * (g.Head == "Head_Spear" ? 1.6f : .8f) + Vector3.up * .3f);
+                    float t0 = Time.time; const int Steps = 9;
+                    Place(0f); weapon.Strike();
+                    for (int k = 0; k <= Steps; k++) { Place(k / (float)Steps); trail.Step(t0 + TrailEmit * k / Steps, cam); }
+                    trail.Step(t0 + TrailEmit + .02f, cam);   // just after the last sample: the freshest stroke the eye sees
+                    foreach (var sk in brush.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                    {
+                        var baked = new Mesh { hideFlags = HideFlags.HideAndDontSave }; sk.BakeMesh(baked, true); meshes.Add(baked);
+                        var copy = new GameObject(sk.name + "_baked") { hideFlags = HideFlags.HideAndDontSave }; SceneManager308.Move(copy, scene); made.Add(copy);
+                        copy.transform.SetPositionAndRotation(sk.transform.position, sk.transform.rotation);
+                        copy.AddComponent<MeshFilter>().sharedMesh = baked; copy.AddComponent<MeshRenderer>().sharedMaterials = sk.sharedMaterials; sk.enabled = false;
+                    }
+                    var holder = scene.GetRootGameObjects().FirstOrDefault(o => o.name == "WeaponTrail308");
+                    var trailBounds = holder != null && holder.GetComponent<MeshFilter>() != null ? holder.GetComponent<MeshFilter>().sharedMesh.bounds : new Bounds(chest, Vector3.one);
+                    cam.transform.LookAt(trailBounds.center);
+                    cam.Render(); var old = RenderTexture.active; RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); tex.Apply(); RenderTexture.active = old;
+                    string file = Path.Combine(folder, "trail_" + g.Key + ".png"); File.WriteAllBytes(file, tex.EncodeToPNG());
+                    b.AppendLine("  " + SpellGrammar308.LetterAt(g.Cell) + " " + g.Key + " " + g.Head + " samples " + trail.Samples + " · band " + F(trailBounds.size.magnitude) + " m · " + file);
+                    if (holder != null) made.Add(holder);
+                }
+                finally
+                {
+                    foreach (var o in made) if (o != null) Object.DestroyImmediate(o);
+                    foreach (var m in meshes) if (m != null) Object.DestroyImmediate(m);
+                    EditorSceneManager.ClosePreviewScene(scene);
+                }
+            }
+            rt.Release(); Object.DestroyImmediate(rt); Object.DestroyImmediate(tex);
             return b.ToString().TrimEnd();
         }
 
