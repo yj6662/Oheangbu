@@ -427,6 +427,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                 new KeyValuePair<string, Action<Report>>("E125", x => FixturesE125(x)), new KeyValuePair<string, Action<Report>>("M125", x => FixturesM125(x)), new KeyValuePair<string, Action<Report>>("F125", x => FixturesF125(x)),
                 new KeyValuePair<string, Action<Report>>("R125", x => FixturesR125(x)), new KeyValuePair<string, Action<Report>>("N125", x => FixturesN125(x)),
                 new KeyValuePair<string, Action<Report>>("S125", x => FixturesS125(x)), new KeyValuePair<string, Action<Report>>("G125", x => FixturesG125(x)),
+                new KeyValuePair<string, Action<Report>>("H125", x => FixturesH125(x)),
             };
             foreach (var package in packages)
             {
@@ -505,6 +506,7 @@ namespace Oheangbu.EditorTools.WorldMacro
         static partial void FixturesN125(Report r);   // #308 D308-125 N125: 농's haze against the main world's goat arcs, old melee bodies and stone-throwers
         static partial void FixturesS125(Report r);   // #308 D308-125 S125: 삿's thrust against the main world's guarding field enemies (GuardBrains -> session clone -> Guard308)
         static partial void FixturesG125(Report r);   // #308 D308-125 G125: 낭 · 순 against the main world's guarding field enemies, 눗 · 숭 against its stone-throwers
+        static partial void FixturesH125(Report r);   // #308 D308-125 H125: 몽's cloud against the main world's field brains (search) and field bosses (miss only)
 
         // A handler the foundation checks drive: it records what the host asked of it and can be told to refuse.
         sealed class ProbeEffect : ISpellEffect, ISpellCostHook, ISpellCastHook, ISpellAcceptHook, ISpellHitHook, IPlayerHitHook

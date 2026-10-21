@@ -13,7 +13,8 @@ namespace Oheangbu.EditorTools.WorldMacro
     // (낭 = mod.guardbreak, 몽 = zone.blind) and the two enemy-side rules they lean on (the defence cap, the guard seam that
     // stays off on every shipped brain profile). Every cast goes through the resolver; effects are driven with an explicit
     // clock (Edit Mode has no frame loop). The guarding dummy is the WP-13 TEST target (SpellGuardTestTarget308).
-    // What stays for Play: a field enemy's brain losing the player inside the cloud and searching, a real enemy that guards
+    // The main world's brains losing the player in the cloud are H125's (Spell120Checks308.H125.cs).
+    // What stays for Play: a field enemy walking to the last known place and searching, a real enemy that guards
     // in its Wait phase, the look of both glyphs (the fixtures use the null presenter).
     public static partial class Spell120Checks308
     {
@@ -180,26 +181,30 @@ namespace Oheangbu.EditorTools.WorldMacro
             }
             finally { UnityEngine.Object.DestroyImmediate(profile); }
 
-            // ---- the blind row is TEST-only (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell
-            // rule plus a TEST target). A normal save that earned its final opens the other rows of that final, never this one.
-            // The rock row and then the thrust row held this case until the main world gave each its consumer (D308-125 R125, S125).
-            if (r.Wants(blind.ToString()))
+            // ---- a TEST-only row (Gate test in its sheet; D308-13 Q5: an enemy / world dependent glyph is the spell rule plus a TEST
+            // target). A normal save that earned its final opens the other rows of that final, never this one. The rock row, the thrust
+            // row and then the blind row held this case until the main world gave each its consumer (D308-125 R125, S125, H125); the
+            // anchor domain (grid cell 94, metal u + mieum: no enemy pushes or pulls the player yet) holds it now, beside the spring
+            // domain of the same final (cell 118, water u + mieum).
+            char anchor = SpellGrammar308.LetterAt(94), spring = SpellGrammar308.LetterAt(118);
+            if (r.Wants(anchor.ToString()))
             {
-                using (var g = NewFixture(r, effects, WP15Sheets))
+                using (var g = NewFixture(r, effects, WP15Sheets.Append("Rules308_WP17")))
                 {
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled);
-                    g.Resolver.TryRow(blind, out var blindRow); g.Resolver.TryRow(breaker, out var breakerRow);   // the breaker: a row of the same final that the main game does open
-                    g.Finals.Proven.Add(SpellFinal.Ieung);                          // the main-game proof, no TEST unlock
-                    g.Aim(g.Inside[0]); g.Cast(breaker);
-                    bool mainOpens = breakerRow != null && breakerRow.Gate == SpellGateMode.Final && breakerRow.Final == blindRow?.Final && g.Accepted.Count == 1 && g.Misfires.Count == 0;
+                    g.Resolver.TryRow(anchor, out var anchorRow); g.Resolver.TryRow(spring, out var springRow);   // the spring: a row of the same final that the main game does open
+                    g.Finals.Proven.Add(SpellFinal.Mieum);                          // the main-game proof, no TEST unlock
+                    g.Aim(g.Inside[0]); g.Cast(spring);
+                    bool mainOpens = springRow != null && springRow.Gate == SpellGateMode.Final && springRow.Final == anchorRow?.Final && g.Accepted.Count == 1 && g.Misfires.Count == 0;
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled); g.RestoreAll(); g.Aim(g.Inside[0]);
-                    float ink = g.Ink.Value; g.Cast(blind);
-                    r.Check("A5", blindRow != null && blindRow.Gate == SpellGateMode.Test && mainOpens && g.Accepted.Count == 0 && g.Misfires.Count == 1 &&
+                    float ink = g.Ink.Value; g.Cast(anchor);
+                    r.Check("A5", anchorRow != null && anchorRow.Gate == SpellGateMode.Test && mainOpens && g.Accepted.Count == 0 && g.Misfires.Count == 1 &&
                         g.Misfires[0].Value == SpellResolveStatus.Locked && Near(ink - g.Ink.Value, g.Config.MisfireInkCost) && g.PendingCount == 0,
-                        "a normal save that proved the final: the other row of that final casts, the TEST-only blind row is a Locked misfire (misfire ink, nothing scheduled)");
-                    g.Finals.Proven.Clear(); g.Finals.Open.Add(SpellFinal.Ieung);   // the TEST unlock of the isolated store
-                    g.RestoreAll(); g.Aim(g.Inside[0]); g.Cast(blind);
-                    r.Check("A5", g.Accepted.Count == 1 && g.Misfires.Count == 0, "the TEST unlock of its final opens the blind row");
+                        "a normal save that proved the final: the other row of that final casts, the TEST-only anchor row is a Locked misfire (misfire ink, nothing scheduled)");
+                    g.Wiring.ClearSpells308(SpellClearReason.Disabled);
+                    g.Finals.Proven.Clear(); g.Finals.Open.Add(SpellFinal.Mieum);   // the TEST unlock of the isolated store
+                    g.RestoreAll(); g.Aim(g.Inside[0]); g.Cast(anchor);
+                    r.Check("A5", g.Accepted.Count == 1 && g.Misfires.Count == 0, "the TEST unlock of its final opens the anchor row");
                     g.Wiring.ClearSpells308(SpellClearReason.Disabled);
                     g.Finals.Proven.Clear(); g.Finals.Open.Clear();
                 }

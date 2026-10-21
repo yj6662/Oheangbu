@@ -9,8 +9,9 @@ namespace Oheangbu.App
     // The first hit is the base glyph's own path judgement, unchanged. Where it went, a muddy cloud stays for haze.life
     // seconds: one circle of haze.radius at the middle of the path (HazeRule308). An enemy standing in it is blinded
     // (EnemyStrikeVeil308.Blind: a field enemy's brain loses the player and falls back to the last known place, then
-    // searches) and haze.miss of its strikes miss. An enemy without a brain (bosses included) is not blinded in its
-    // behaviour but still misses that share: no enemy is immune. An enemy that walks out sees again at once.
+    // searches) and haze.miss of its strikes miss. A boss (EnemyVitals.IsBoss, the field bosses' brains included) or an enemy
+    // without a brain is not blinded in its behaviour but still misses that share: no enemy is immune. An enemy that walks
+    // out sees again at once.
     // No damage of its own, no control, no weak point. It takes the player away from the enemy; it gives the player nothing.
     public sealed class BlindZoneEffect308 : ZoneEffect308
     {

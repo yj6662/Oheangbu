@@ -379,8 +379,9 @@ def main():
     # 적로 불승냥이 charge consumes 묵's ground circle; F125: the main world's 16 dungeon gates consume the WP-12 field rows 눈 숫 웅;
     # R125: the main world's stone-throwers (MineRangedNeutral308) consume the WP-13 cover and intercept rows 공 막 상 송;
     # N125: the main world's own strikes, the goat arcs, the old melee bodies and the stone-throwers, consume the WP-13 haze 농;
-    # S125: the main world's guarding field enemies (WorldContent_Main GuardBrains) consume the WP-13 thrust 삿)
-    waiting, consumed = {'숨'}, {'온', '운', '묵', '눈', '숫', '웅', '공', '막', '상', '송', '농', '삿'}
+    # S125: the main world's guarding field enemies (WorldContent_Main GuardBrains) consume the WP-13 thrust 삿;
+    # H125: the main world's searching field brains (WorldContent_Main EnemyBrain) consume the cloud 몽, a WP-13 row of the plan sheet)
+    waiting, consumed = {'숨'}, {'온', '운', '묵', '눈', '숫', '웅', '공', '막', '상', '송', '농', '삿', '몽'}
     world = [x for x in table['rows'] if x['handler'] and x['feature'] == 'None' and x['final'] in granted and x['letter'] not in consumed and
              (plan[x['letter']]['묶음'] in ('WP-12', 'WP-13') or x['letter'] in waiting)]
     r.note('testOnlyRows', [x['letter'] for x in table['rows'] if x['gate'] == 'Test'])
