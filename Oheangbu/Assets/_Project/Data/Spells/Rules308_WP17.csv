@@ -21,6 +21,6 @@
 숨,new,domain.anchor,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6
 숭,new,domain.reflectshot,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.cap=3;domain.reflect=0.5
 욱,new,domain.slowtell,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=1.3;domain.boss=1.15
-운,new,domain.ward.status,,,test,,,,,,,,,,,,,,domain.radius=3;domain.life=6
+운,new,domain.ward.status,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6
 움,new,domain.regen,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=10;domain.scale=2
 웃,new,domain.slowturn,,,,,,,,,,,,,,,,,domain.radius=3;domain.life=6;domain.scale=0.5;domain.boss=0.75;domain.turn.instant=360
