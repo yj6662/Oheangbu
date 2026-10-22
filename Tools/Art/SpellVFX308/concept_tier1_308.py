@@ -197,6 +197,35 @@ LAYOUT: ONE wide strip of FIVE equal panels side by side, thin paper-coloured ga
 5 water: wet dark ink running DOWN the spear and dripping from its tip and the coat hem, small drops falling to the ground.
 Each tell must be told apart by MOTION DIRECTION and shape alone (wood = curls forward, fire = lifts up, earth = sinks down, metal = snaps sideways, water = drips down). All matte ink, nothing glows, no text."""),
 })
+PICTURES['v2_attack_tells2'] = (PICTURES['v2_attack_tells'][0], PICTURES['v2_attack_tells'][1]
+    .replace('the five tells', 'the five tells, second version')
+    .replace('only the two hands and the lower brush at the bottom edge', 'only a small part of one hand and the brush tip in the bottom-right corner (at most 15% of the panel)')
+    .replace("""3 earth: the soldier visibly heavy and sinking: feet pressed into the ground with ochre dust and clods sliding down around them, the spear head dragging dust downward.""",
+             """3 earth: NOTHING falls or drips. The soldier's feet are driven ankle-deep INTO the ground and the cracked earth around them has heaved UP into a low raised ring of broken clods and slabs, like ground pushed up by a heavy weight; the spear shaft bowed down by weight.""")
+    .replace('a few small dark flakes snapping off sideways - hard, angular, dry, no shine.', 'a few small dark flakes snapping off sideways - hard, angular, dry, MATTE dark grey like the rest of the ink, no white edges, no glint, no shine.')
+    .replace('wet dark ink running DOWN the spear and dripping from its tip and the coat hem, small drops falling to the ground.', 'thin wet BLACK ink running down the spear and dripping from its tip and the coat hem, the only thing in the five panels that drips; matte, no blue sheen, no reflection.')
+    .replace('earth = sinks down', 'earth = sinks in and the ground heaves up'))
+
+# vol.2 round 7 (debate 25): the melee once more, and how a used-up child residue disappears
+PICTURES.update({
+    'v2_melee_read6': ([SHOULDER, BRUSH, JEOKRO, FIRE, PATCH], FIRST + '\n' + INKLOOK + """
+--- THE PICTURE: a busy fight, the moment before a reaction - readability test, sixth version ---
+ONE single full frame (no panels). Red-earth valley, muted and slightly desaturated like ink on tinted paper. Three gaunt enemies 6-12 m ahead: a soot-dark wolf charging from the left, a Joseon-era soldier in a lamellar coat with a long rectangular wooden shield on the RIGHT side of the frame, an enemy ink-caster at the back slightly right of centre with one hand raised.
+OWNERSHIP RULE, shown by EDGES: the PLAYER's ink is HOLLOW dry-brush strokes with a dry, broken, feathered edge, ground visible between strokes. The ENEMY's ink is a SOLID wet pool with a smooth soaked edge.
+On the ground, exactly these:
+1. The player's TWO marks: (a) a low tangle of hollow dry-brush vine strokes 7 m ahead on the LEFT in open ground, apart from every enemy - dark ink with only a faint dull olive tint, not bright green; (b) ONE flat band about 0.6 m wide of hollow dark indigo-grey dry-brush strokes on the ground as a short arc about 3 m ahead, spanning at most HALF the frame width, low in the frame above the hands.
+2. The enemy's ONE mark: a solid wet black pool around the caster's feet whose FIRE nature shows in the same vocabulary as fire everywhere in this game: fine black ash flakes and thin soot curls LIFTING UP from its rim (upward motion), a few black tongue-shaped licks, soot-brown at most.
+3. THE WARNING: a WIDE, SOFT, PALE-GREY ink-wash band (about 1 m wide, lighter than the black pool, darker than the ground, like diluted ink soaking into paper) runs flat from the LEFT edge of the enemy pool across EMPTY ground - passing under NO enemy - to the player's vine tangle and soaks into its outer strokes.
+4. Above the caster's raised hand, a small floating glyph of a few brush strokes, crossed out and smeared with a blot of ink.
+No crack lines on the ground. Hands and brush at the very bottom edge. Matte ink, nothing glows, no HUD. Enemies at least 70% visible."""),
+    'v2_child_consumed': ([SHOULDER, JEOKRO], FIRST.replace('no body in view except two hands and the lower part of the great brush at the bottom edge of the frame', 'no body in view') + '\n' + INKLOOK + """
+--- THE PICTURE: a real reaction versus a used-up leftover - two panels ---
+LAYOUT: ONE wide strip of TWO equal panels left and right, the SAME first-person view of flat red-earth ground 5 m ahead, a thin paper-coloured gap. In both panels a small black fire-ink stroke (torn black ink with a thin dull vermilion edge) has just landed on a patch of the player's hollow dry-brush vine strokes about 1.5 m across.
+Panel 1 (a real reaction, 0.4 s later): the vines have CAUGHT: on that spot a NEW thing now stands - a small cluster of black fire-ink tongues rising from the vine strokes with fine ash lifting up, clearly a new mark born there, as dark as before.
+Panel 2 (a used-up leftover, 0.4 s later): the vine strokes are a used-up leftover: they simply DRY OUT and FADE like ink drying on paper - the strokes go from black to pale grey, thin, broken, their edges crumbling into faint dust, almost gone; NOTHING new appears, no flame, no tongues, no smoke. The fire stroke too has gone pale.
+The two must read at a glance as 'something new was born' versus 'it just dried away'. Matte ink, nothing glows, no text."""),
+})
+
 
 
 def prompt(pid):
