@@ -18,7 +18,7 @@ namespace Oheangbu.App
     public sealed class ReactionZoneEffect308 : ZoneEffect308, ISpellDispatchHook
     {
         public const string HandlerId = ReactionRule308.ProductOwner;
-        const int MaxProducts = 4;   // two reactions of one frame never push each other out
+        const int MaxProducts = 3;   // D308-133 guard: at most three products at once (a fourth replaces the oldest)
         static readonly SpellParamSpec[] Specs = Array.Empty<SpellParamSpec>();
 
         IReadOnlyList<ReactionRow308> _rows;
