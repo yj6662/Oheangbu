@@ -1,0 +1,3465 @@
+{
+  "schema": "vol2-v3/1",
+  "hashes": {
+    "numbers": "bbc72344d20e7b96e0fe8f371d2ab854d642c1482509dd3f75f44e8c3910836c",
+    "table": "2491f63253954651a11ef5ed23c59fca28c05f3b53cefd288cc8c4e2fdc87f21",
+    "markdown": "6a6a7c58af1fe2f7915d3a49f0001464577a3cfdb02be42198ffa68de02ab61f",
+    "checker": "9622c6eb4bd44d0ca2cd1ce1aa00753f22766452fbbd713d1ebc7f041b797c13",
+    "sheet": "810b9b1c4d06a521b566863514ed221ab71a92aab8ad5b8bfb51b1ef76ffaf60",
+    "contract": "3271e9a2ee24a36752a6f8c5f5540dcaceceb9521d09a444a846fd4d09353f3e"
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "pass": 10,
+      "fail": 0,
+      "warn": 0
+    },
+    {
+      "id": "C2",
+      "pass": 2,
+      "fail": 0,
+      "warn": 0
+    },
+    {
+      "id": "C3",
+      "pass": 7,
+      "fail": 0,
+      "warn": 0
+    },
+    {
+      "id": "C4",
+      "pass": 63,
+      "fail": 0,
+      "warn": 0
+    },
+    {
+      "id": "C5",
+      "pass": 11,
+      "fail": 0,
+      "warn": 1
+    }
+  ],
+  "rows": [
+    {
+      "letter": "가",
+      "cost": 11,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "각",
+      "cost": 24,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "재료",
+          "amount": 0.9,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 2.4
+    },
+    {
+      "letter": "간",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "감",
+      "cost": 12,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "갓",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "강",
+      "cost": 12,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "거",
+      "cost": 0,
+      "perTarget": 0,
+      "shared": 0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "걱",
+      "cost": 26,
+      "perTarget": 1.0,
+      "shared": 1.65,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "둘째 접촉",
+          "amount": 0.3,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "재료",
+          "amount": 0.9,
+          "count": 1,
+          "shared": true
+        },
+        {
+          "name": "재료",
+          "amount": 0.25,
+          "count": 3,
+          "shared": true
+        }
+      ],
+      "cap": 2.85
+    },
+    {
+      "letter": "건",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "검",
+      "cost": 13,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "것",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "겅",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "고",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "곡",
+      "cost": 30,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "재료",
+          "amount": 0.9,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 2.4
+    },
+    {
+      "letter": "곤",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "곰",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "곳",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "공",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "구",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "국",
+      "cost": 30,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "재료",
+          "amount": 0.9,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 2.4
+    },
+    {
+      "letter": "군",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "굼",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "굿",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "궁",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "나",
+      "cost": 11,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "낙",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "난",
+      "cost": 24,
+      "perTarget": 0.7,
+      "shared": 1.5,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "번짐",
+          "amount": 0.5,
+          "count": 3,
+          "shared": true
+        }
+      ],
+      "cap": 2.55
+    },
+    {
+      "letter": "남",
+      "cost": 12,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "낫",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "낭",
+      "cost": 12,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "너",
+      "cost": 0,
+      "perTarget": 0,
+      "shared": 0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "넉",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "넌",
+      "cost": 26,
+      "perTarget": 1.0,
+      "shared": 1.5,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "둘째 접촉",
+          "amount": 0.3,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "번짐",
+          "amount": 0.5,
+          "count": 3,
+          "shared": true
+        }
+      ],
+      "cap": 3.0
+    },
+    {
+      "letter": "넘",
+      "cost": 13,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "넛",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "넝",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "노",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "녹",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "논",
+      "cost": 30,
+      "perTarget": 0.7,
+      "shared": 1.5,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "번짐",
+          "amount": 1.0,
+          "count": 1,
+          "shared": true
+        },
+        {
+          "name": "되번짐",
+          "amount": 0.5,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 2.55
+    },
+    {
+      "letter": "놈",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "놋",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "농",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "누",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "눅",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "눈",
+      "cost": 30,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "번짐",
+          "amount": 1.0,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 2.55
+    },
+    {
+      "letter": "눔",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "눗",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "눙",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "마",
+      "cost": 11,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "막",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "만",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "맘",
+      "cost": 24,
+      "perTarget": 1.2,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "작동",
+          "amount": 1.2,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.8
+    },
+    {
+      "letter": "맛",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "망",
+      "cost": 12,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "머",
+      "cost": 0,
+      "perTarget": 0,
+      "shared": 0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "먹",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "먼",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "멈",
+      "cost": 26,
+      "perTarget": 1.2,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "작동",
+          "amount": 1.2,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.8
+    },
+    {
+      "letter": "멋",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "멍",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "모",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "목",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "몬",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "몸",
+      "cost": 30,
+      "perTarget": 1.8,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "작동",
+          "amount": 1.8,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.8
+    },
+    {
+      "letter": "못",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "몽",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "무",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "묵",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "문",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "뭄",
+      "cost": 30,
+      "perTarget": 1.2,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "작동",
+          "amount": 1.2,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.8
+    },
+    {
+      "letter": "뭇",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "뭉",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "사",
+      "cost": 11,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "삭",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "산",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "삼",
+      "cost": 12,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "삿",
+      "cost": 24,
+      "perTarget": 1.05,
+      "shared": 0.4,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 1.05,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "벗김",
+          "amount": 0.4,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 1.65
+    },
+    {
+      "letter": "상",
+      "cost": 12,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "서",
+      "cost": 0,
+      "perTarget": 0,
+      "shared": 0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "석",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "선",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "섬",
+      "cost": 13,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "섯",
+      "cost": 26,
+      "perTarget": 1.7,
+      "shared": 0.4,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "둘째 접촉",
+          "amount": 0.3,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "벗김",
+          "amount": 0.4,
+          "count": 1,
+          "shared": true
+        },
+        {
+          "name": "뒤쪽 가름",
+          "amount": 0.35,
+          "count": 2,
+          "shared": false
+        }
+      ],
+      "cap": 2.1
+    },
+    {
+      "letter": "성",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "소",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "속",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "손",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "솜",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "솟",
+      "cost": 30,
+      "perTarget": 0.7,
+      "shared": 0.75,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "재료",
+          "amount": 0.35,
+          "count": 1,
+          "shared": true
+        },
+        {
+          "name": "벗김",
+          "amount": 0.4,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 1.65
+    },
+    {
+      "letter": "송",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "수",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "숙",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "순",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "숨",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "숫",
+      "cost": 30,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "벗김",
+          "amount": 0.4,
+          "count": 1,
+          "shared": true
+        }
+      ],
+      "cap": 1.65
+    },
+    {
+      "letter": "숭",
+      "cost": 15,
+      "perTarget": 1.05,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "아",
+      "cost": 11,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "악",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "안",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "암",
+      "cost": 12,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "앗",
+      "cost": 12,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "앙",
+      "cost": 24,
+      "perTarget": 1.225,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "귀환",
+          "amount": 0.525,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.575
+    },
+    {
+      "letter": "어",
+      "cost": 0,
+      "perTarget": 0,
+      "shared": 0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "억",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "언",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "엄",
+      "cost": 13,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "엇",
+      "cost": 13,
+      "perTarget": 1.0,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "엉",
+      "cost": 26,
+      "perTarget": 1.0,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "둘째 접촉",
+          "amount": 0.3,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.5
+    },
+    {
+      "letter": "오",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "옥",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "온",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "옴",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "옷",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "옹",
+      "cost": 30,
+      "perTarget": 1.0499999999999998,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "귀환",
+          "amount": 0.35,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.575
+    },
+    {
+      "letter": "우",
+      "cost": 14,
+      "perTarget": 1.0,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "욱",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.9,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "운",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 1.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "움",
+      "cost": 15,
+      "perTarget": 1.2,
+      "shared": 0.0,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "웃",
+      "cost": 15,
+      "perTarget": 0.7,
+      "shared": 0.4,
+      "terms": [],
+      "cap": null
+    },
+    {
+      "letter": "웅",
+      "cost": 30,
+      "perTarget": 1.0499999999999998,
+      "shared": 0,
+      "terms": [
+        {
+          "name": "즉시",
+          "amount": 0.7,
+          "count": 1,
+          "shared": false
+        },
+        {
+          "name": "귀환",
+          "amount": 0.35,
+          "count": 1,
+          "shared": false
+        }
+      ],
+      "cap": 1.575
+    }
+  ],
+  "rankings": {
+    "1": [
+      {
+        "letter": "먼",
+        "score": 0.19307692307692306
+      },
+      {
+        "letter": "넉",
+        "score": 0.18999999999999997
+      },
+      {
+        "letter": "먹",
+        "score": 0.18342307692307688
+      },
+      {
+        "letter": "만",
+        "score": 0.17779166666666665
+      },
+      {
+        "letter": "선",
+        "score": 0.1769230769230769
+      },
+      {
+        "letter": "낙",
+        "score": 0.17333333333333334
+      },
+      {
+        "letter": "석",
+        "score": 0.16807692307692304
+      },
+      {
+        "letter": "막",
+        "score": 0.16733333333333333
+      },
+      {
+        "letter": "산",
+        "score": 0.16291666666666665
+      },
+      {
+        "letter": "건",
+        "score": 0.15384615384615385
+      },
+      {
+        "letter": "언",
+        "score": 0.15384615384615385
+      },
+      {
+        "letter": "삭",
+        "score": 0.15333333333333332
+      },
+      {
+        "letter": "억",
+        "score": 0.14615384615384613
+      },
+      {
+        "letter": "몬",
+        "score": 0.14223333333333332
+      },
+      {
+        "letter": "문",
+        "score": 0.14223333333333332
+      },
+      {
+        "letter": "간",
+        "score": 0.14166666666666666
+      },
+      {
+        "letter": "안",
+        "score": 0.14166666666666666
+      },
+      {
+        "letter": "넛",
+        "score": 0.13999999999999999
+      },
+      {
+        "letter": "녹",
+        "score": 0.13866666666666666
+      },
+      {
+        "letter": "눅",
+        "score": 0.13866666666666666
+      },
+      {
+        "letter": "멋",
+        "score": 0.13515384615384612
+      },
+      {
+        "letter": "목",
+        "score": 0.13386666666666666
+      },
+      {
+        "letter": "묵",
+        "score": 0.13386666666666666
+      },
+      {
+        "letter": "악",
+        "score": 0.13333333333333333
+      },
+      {
+        "letter": "손",
+        "score": 0.13033333333333333
+      },
+      {
+        "letter": "순",
+        "score": 0.13033333333333333
+      },
+      {
+        "letter": "남",
+        "score": 0.13
+      },
+      {
+        "letter": "넌",
+        "score": 0.125
+      },
+      {
+        "letter": "속",
+        "score": 0.12266666666666666
+      },
+      {
+        "letter": "숙",
+        "score": 0.12266666666666666
+      },
+      {
+        "letter": "넘",
+        "score": 0.12000000000000001
+      },
+      {
+        "letter": "난",
+        "score": 0.11916666666666668
+      },
+      {
+        "letter": "낫",
+        "score": 0.11916666666666668
+      },
+      {
+        "letter": "나",
+        "score": 0.11818181818181818
+      },
+      {
+        "letter": "맛",
+        "score": 0.11504166666666667
+      },
+      {
+        "letter": "삼",
+        "score": 0.11499999999999999
+      },
+      {
+        "letter": "마",
+        "score": 0.11409090909090908
+      },
+      {
+        "letter": "낭",
+        "score": 0.11375000000000002
+      },
+      {
+        "letter": "곤",
+        "score": 0.11333333333333333
+      },
+      {
+        "letter": "군",
+        "score": 0.11333333333333333
+      },
+      {
+        "letter": "온",
+        "score": 0.11333333333333333
+      },
+      {
+        "letter": "운",
+        "score": 0.11333333333333333
+      },
+      {
+        "letter": "망",
+        "score": 0.1098125
+      },
+      {
+        "letter": "것",
+        "score": 0.10769230769230768
+      },
+      {
+        "letter": "엇",
+        "score": 0.10769230769230768
+      },
+      {
+        "letter": "옥",
+        "score": 0.10666666666666667
+      },
+      {
+        "letter": "욱",
+        "score": 0.10666666666666667
+      },
+      {
+        "letter": "섬",
+        "score": 0.10615384615384614
+      },
+      {
+        "letter": "사",
+        "score": 0.10454545454545454
+      },
+      {
+        "letter": "놈",
+        "score": 0.10400000000000001
+      },
+      {
+        "letter": "눔",
+        "score": 0.10400000000000001
+      },
+      {
+        "letter": "걱",
+        "score": 0.10192307692307692
+      },
+      {
+        "letter": "상",
+        "score": 0.100625
+      },
+      {
+        "letter": "넝",
+        "score": 0.1
+      },
+      {
+        "letter": "감",
+        "score": 0.09999999999999999
+      },
+      {
+        "letter": "암",
+        "score": 0.09999999999999999
+      },
+      {
+        "letter": "멍",
+        "score": 0.09653846153846153
+      },
+      {
+        "letter": "논",
+        "score": 0.09533333333333334
+      },
+      {
+        "letter": "놋",
+        "score": 0.09533333333333334
+      },
+      {
+        "letter": "눗",
+        "score": 0.09533333333333334
+      },
+      {
+        "letter": "섯",
+        "score": 0.09288461538461538
+      },
+      {
+        "letter": "노",
+        "score": 0.09285714285714286
+      },
+      {
+        "letter": "누",
+        "score": 0.09285714285714286
+      },
+      {
+        "letter": "검",
+        "score": 0.0923076923076923
+      },
+      {
+        "letter": "엄",
+        "score": 0.0923076923076923
+      },
+      {
+        "letter": "못",
+        "score": 0.09203333333333334
+      },
+      {
+        "letter": "뭇",
+        "score": 0.09203333333333334
+      },
+      {
+        "letter": "솜",
+        "score": 0.092
+      },
+      {
+        "letter": "숨",
+        "score": 0.092
+      },
+      {
+        "letter": "갓",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "앗",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "농",
+        "score": 0.09100000000000001
+      },
+      {
+        "letter": "눙",
+        "score": 0.09100000000000001
+      },
+      {
+        "letter": "가",
+        "score": 0.09090909090909091
+      },
+      {
+        "letter": "아",
+        "score": 0.09090909090909091
+      },
+      {
+        "letter": "모",
+        "score": 0.08964285714285714
+      },
+      {
+        "letter": "무",
+        "score": 0.08964285714285714
+      },
+      {
+        "letter": "성",
+        "score": 0.08846153846153845
+      },
+      {
+        "letter": "몽",
+        "score": 0.08785
+      },
+      {
+        "letter": "뭉",
+        "score": 0.08785
+      },
+      {
+        "letter": "강",
+        "score": 0.08750000000000001
+      },
+      {
+        "letter": "소",
+        "score": 0.08214285714285714
+      },
+      {
+        "letter": "수",
+        "score": 0.08214285714285714
+      },
+      {
+        "letter": "송",
+        "score": 0.0805
+      },
+      {
+        "letter": "숭",
+        "score": 0.0805
+      },
+      {
+        "letter": "곰",
+        "score": 0.08
+      },
+      {
+        "letter": "굼",
+        "score": 0.08
+      },
+      {
+        "letter": "옴",
+        "score": 0.08
+      },
+      {
+        "letter": "움",
+        "score": 0.08
+      },
+      {
+        "letter": "겅",
+        "score": 0.07692307692307693
+      },
+      {
+        "letter": "몸",
+        "score": 0.07529999999999999
+      },
+      {
+        "letter": "눈",
+        "score": 0.07366666666666667
+      },
+      {
+        "letter": "곳",
+        "score": 0.07333333333333333
+      },
+      {
+        "letter": "굿",
+        "score": 0.07333333333333333
+      },
+      {
+        "letter": "옷",
+        "score": 0.07333333333333333
+      },
+      {
+        "letter": "웃",
+        "score": 0.07333333333333333
+      },
+      {
+        "letter": "고",
+        "score": 0.07142857142857142
+      },
+      {
+        "letter": "구",
+        "score": 0.07142857142857142
+      },
+      {
+        "letter": "오",
+        "score": 0.07142857142857142
+      },
+      {
+        "letter": "우",
+        "score": 0.07142857142857142
+      },
+      {
+        "letter": "공",
+        "score": 0.07
+      },
+      {
+        "letter": "궁",
+        "score": 0.07
+      },
+      {
+        "letter": "삿",
+        "score": 0.06947916666666666
+      },
+      {
+        "letter": "각",
+        "score": 0.06666666666666667
+      },
+      {
+        "letter": "맘",
+        "score": 0.06274999999999999
+      },
+      {
+        "letter": "멈",
+        "score": 0.05792307692307692
+      },
+      {
+        "letter": "솟",
+        "score": 0.055583333333333325
+      },
+      {
+        "letter": "곡",
+        "score": 0.05333333333333334
+      },
+      {
+        "letter": "국",
+        "score": 0.05333333333333334
+      },
+      {
+        "letter": "앙",
+        "score": 0.05104166666666667
+      },
+      {
+        "letter": "뭄",
+        "score": 0.050199999999999995
+      },
+      {
+        "letter": "숫",
+        "score": 0.042166666666666665
+      },
+      {
+        "letter": "엉",
+        "score": 0.038461538461538464
+      },
+      {
+        "letter": "옹",
+        "score": 0.035
+      },
+      {
+        "letter": "웅",
+        "score": 0.035
+      }
+    ],
+    "2": [
+      {
+        "letter": "넉",
+        "score": 0.29
+      },
+      {
+        "letter": "먼",
+        "score": 0.2896153846153846
+      },
+      {
+        "letter": "먹",
+        "score": 0.27996153846153843
+      },
+      {
+        "letter": "선",
+        "score": 0.2653846153846154
+      },
+      {
+        "letter": "남",
+        "score": 0.26
+      },
+      {
+        "letter": "석",
+        "score": 0.2565384615384615
+      },
+      {
+        "letter": "만",
+        "score": 0.25099999999999995
+      },
+      {
+        "letter": "낙",
+        "score": 0.24916666666666665
+      },
+      {
+        "letter": "막",
+        "score": 0.24054166666666663
+      },
+      {
+        "letter": "넘",
+        "score": 0.24000000000000002
+      },
+      {
+        "letter": "넛",
+        "score": 0.24000000000000002
+      },
+      {
+        "letter": "멋",
+        "score": 0.23169230769230767
+      },
+      {
+        "letter": "건",
+        "score": 0.23076923076923078
+      },
+      {
+        "letter": "언",
+        "score": 0.23076923076923078
+      },
+      {
+        "letter": "산",
+        "score": 0.22999999999999998
+      },
+      {
+        "letter": "삼",
+        "score": 0.22999999999999998
+      },
+      {
+        "letter": "낭",
+        "score": 0.22750000000000004
+      },
+      {
+        "letter": "억",
+        "score": 0.22307692307692306
+      },
+      {
+        "letter": "삭",
+        "score": 0.22041666666666662
+      },
+      {
+        "letter": "망",
+        "score": 0.219625
+      },
+      {
+        "letter": "섬",
+        "score": 0.21230769230769228
+      },
+      {
+        "letter": "놈",
+        "score": 0.20800000000000002
+      },
+      {
+        "letter": "눔",
+        "score": 0.20800000000000002
+      },
+      {
+        "letter": "상",
+        "score": 0.20125
+      },
+      {
+        "letter": "몬",
+        "score": 0.20079999999999998
+      },
+      {
+        "letter": "문",
+        "score": 0.20079999999999998
+      },
+      {
+        "letter": "넝",
+        "score": 0.2
+      },
+      {
+        "letter": "간",
+        "score": 0.19999999999999998
+      },
+      {
+        "letter": "감",
+        "score": 0.19999999999999998
+      },
+      {
+        "letter": "안",
+        "score": 0.19999999999999998
+      },
+      {
+        "letter": "암",
+        "score": 0.19999999999999998
+      },
+      {
+        "letter": "녹",
+        "score": 0.1993333333333333
+      },
+      {
+        "letter": "눅",
+        "score": 0.1993333333333333
+      },
+      {
+        "letter": "멍",
+        "score": 0.19307692307692306
+      },
+      {
+        "letter": "목",
+        "score": 0.1924333333333333
+      },
+      {
+        "letter": "묵",
+        "score": 0.1924333333333333
+      },
+      {
+        "letter": "악",
+        "score": 0.19166666666666665
+      },
+      {
+        "letter": "노",
+        "score": 0.18571428571428572
+      },
+      {
+        "letter": "누",
+        "score": 0.18571428571428572
+      },
+      {
+        "letter": "검",
+        "score": 0.1846153846153846
+      },
+      {
+        "letter": "것",
+        "score": 0.1846153846153846
+      },
+      {
+        "letter": "엄",
+        "score": 0.1846153846153846
+      },
+      {
+        "letter": "엇",
+        "score": 0.1846153846153846
+      },
+      {
+        "letter": "손",
+        "score": 0.184
+      },
+      {
+        "letter": "솜",
+        "score": 0.184
+      },
+      {
+        "letter": "순",
+        "score": 0.184
+      },
+      {
+        "letter": "숨",
+        "score": 0.184
+      },
+      {
+        "letter": "농",
+        "score": 0.18200000000000002
+      },
+      {
+        "letter": "눙",
+        "score": 0.18200000000000002
+      },
+      {
+        "letter": "모",
+        "score": 0.17928571428571427
+      },
+      {
+        "letter": "무",
+        "score": 0.17928571428571427
+      },
+      {
+        "letter": "성",
+        "score": 0.1769230769230769
+      },
+      {
+        "letter": "속",
+        "score": 0.17633333333333331
+      },
+      {
+        "letter": "숙",
+        "score": 0.17633333333333331
+      },
+      {
+        "letter": "몽",
+        "score": 0.1757
+      },
+      {
+        "letter": "뭉",
+        "score": 0.1757
+      },
+      {
+        "letter": "강",
+        "score": 0.17500000000000002
+      },
+      {
+        "letter": "넌",
+        "score": 0.175
+      },
+      {
+        "letter": "섯",
+        "score": 0.16807692307692304
+      },
+      {
+        "letter": "소",
+        "score": 0.16428571428571428
+      },
+      {
+        "letter": "수",
+        "score": 0.16428571428571428
+      },
+      {
+        "letter": "송",
+        "score": 0.161
+      },
+      {
+        "letter": "숭",
+        "score": 0.161
+      },
+      {
+        "letter": "곤",
+        "score": 0.16
+      },
+      {
+        "letter": "곰",
+        "score": 0.16
+      },
+      {
+        "letter": "군",
+        "score": 0.16
+      },
+      {
+        "letter": "굼",
+        "score": 0.16
+      },
+      {
+        "letter": "온",
+        "score": 0.16
+      },
+      {
+        "letter": "옴",
+        "score": 0.16
+      },
+      {
+        "letter": "운",
+        "score": 0.16
+      },
+      {
+        "letter": "움",
+        "score": 0.16
+      },
+      {
+        "letter": "난",
+        "score": 0.15708333333333332
+      },
+      {
+        "letter": "놋",
+        "score": 0.156
+      },
+      {
+        "letter": "눗",
+        "score": 0.156
+      },
+      {
+        "letter": "겅",
+        "score": 0.15384615384615385
+      },
+      {
+        "letter": "옥",
+        "score": 0.15333333333333332
+      },
+      {
+        "letter": "욱",
+        "score": 0.15333333333333332
+      },
+      {
+        "letter": "몸",
+        "score": 0.15059999999999998
+      },
+      {
+        "letter": "못",
+        "score": 0.15059999999999996
+      },
+      {
+        "letter": "뭇",
+        "score": 0.15059999999999996
+      },
+      {
+        "letter": "고",
+        "score": 0.14285714285714285
+      },
+      {
+        "letter": "구",
+        "score": 0.14285714285714285
+      },
+      {
+        "letter": "오",
+        "score": 0.14285714285714285
+      },
+      {
+        "letter": "우",
+        "score": 0.14285714285714285
+      },
+      {
+        "letter": "걱",
+        "score": 0.14038461538461539
+      },
+      {
+        "letter": "공",
+        "score": 0.14
+      },
+      {
+        "letter": "궁",
+        "score": 0.14
+      },
+      {
+        "letter": "논",
+        "score": 0.12566666666666668
+      },
+      {
+        "letter": "맘",
+        "score": 0.12549999999999997
+      },
+      {
+        "letter": "곳",
+        "score": 0.11999999999999998
+      },
+      {
+        "letter": "굿",
+        "score": 0.11999999999999998
+      },
+      {
+        "letter": "옷",
+        "score": 0.11999999999999998
+      },
+      {
+        "letter": "웃",
+        "score": 0.11999999999999998
+      },
+      {
+        "letter": "삿",
+        "score": 0.11979166666666667
+      },
+      {
+        "letter": "낫",
+        "score": 0.11916666666666668
+      },
+      {
+        "letter": "나",
+        "score": 0.11818181818181818
+      },
+      {
+        "letter": "멈",
+        "score": 0.11584615384615383
+      },
+      {
+        "letter": "맛",
+        "score": 0.11504166666666667
+      },
+      {
+        "letter": "마",
+        "score": 0.11409090909090908
+      },
+      {
+        "letter": "사",
+        "score": 0.10454545454545454
+      },
+      {
+        "letter": "눈",
+        "score": 0.10400000000000001
+      },
+      {
+        "letter": "앙",
+        "score": 0.10208333333333335
+      },
+      {
+        "letter": "뭄",
+        "score": 0.10039999999999999
+      },
+      {
+        "letter": "각",
+        "score": 0.09583333333333333
+      },
+      {
+        "letter": "갓",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "앗",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "가",
+        "score": 0.09090909090909091
+      },
+      {
+        "letter": "아",
+        "score": 0.09090909090909091
+      },
+      {
+        "letter": "솟",
+        "score": 0.08241666666666665
+      },
+      {
+        "letter": "엉",
+        "score": 0.07692307692307693
+      },
+      {
+        "letter": "곡",
+        "score": 0.07666666666666666
+      },
+      {
+        "letter": "국",
+        "score": 0.07666666666666666
+      },
+      {
+        "letter": "옹",
+        "score": 0.07
+      },
+      {
+        "letter": "웅",
+        "score": 0.07
+      },
+      {
+        "letter": "숫",
+        "score": 0.06899999999999999
+      }
+    ],
+    "4": [
+      {
+        "letter": "낭",
+        "score": 0.45500000000000007
+      },
+      {
+        "letter": "망",
+        "score": 0.43925
+      },
+      {
+        "letter": "놈",
+        "score": 0.41600000000000004
+      },
+      {
+        "letter": "눔",
+        "score": 0.41600000000000004
+      },
+      {
+        "letter": "상",
+        "score": 0.4025
+      },
+      {
+        "letter": "낙",
+        "score": 0.4008333333333333
+      },
+      {
+        "letter": "만",
+        "score": 0.3974166666666666
+      },
+      {
+        "letter": "넉",
+        "score": 0.39
+      },
+      {
+        "letter": "남",
+        "score": 0.38999999999999996
+      },
+      {
+        "letter": "막",
+        "score": 0.3869583333333333
+      },
+      {
+        "letter": "먼",
+        "score": 0.3861538461538461
+      },
+      {
+        "letter": "먹",
+        "score": 0.3765
+      },
+      {
+        "letter": "노",
+        "score": 0.37142857142857144
+      },
+      {
+        "letter": "누",
+        "score": 0.37142857142857144
+      },
+      {
+        "letter": "솜",
+        "score": 0.368
+      },
+      {
+        "letter": "숨",
+        "score": 0.368
+      },
+      {
+        "letter": "산",
+        "score": 0.3641666666666666
+      },
+      {
+        "letter": "농",
+        "score": 0.36400000000000005
+      },
+      {
+        "letter": "눙",
+        "score": 0.36400000000000005
+      },
+      {
+        "letter": "넘",
+        "score": 0.36
+      },
+      {
+        "letter": "모",
+        "score": 0.35857142857142854
+      },
+      {
+        "letter": "무",
+        "score": 0.35857142857142854
+      },
+      {
+        "letter": "삭",
+        "score": 0.35458333333333325
+      },
+      {
+        "letter": "선",
+        "score": 0.3538461538461538
+      },
+      {
+        "letter": "몽",
+        "score": 0.3514
+      },
+      {
+        "letter": "뭉",
+        "score": 0.3514
+      },
+      {
+        "letter": "강",
+        "score": 0.35000000000000003
+      },
+      {
+        "letter": "삼",
+        "score": 0.345
+      },
+      {
+        "letter": "석",
+        "score": 0.345
+      },
+      {
+        "letter": "넛",
+        "score": 0.33999999999999997
+      },
+      {
+        "letter": "소",
+        "score": 0.32857142857142857
+      },
+      {
+        "letter": "수",
+        "score": 0.32857142857142857
+      },
+      {
+        "letter": "멋",
+        "score": 0.3282307692307692
+      },
+      {
+        "letter": "송",
+        "score": 0.322
+      },
+      {
+        "letter": "숭",
+        "score": 0.322
+      },
+      {
+        "letter": "녹",
+        "score": 0.32066666666666666
+      },
+      {
+        "letter": "눅",
+        "score": 0.32066666666666666
+      },
+      {
+        "letter": "곰",
+        "score": 0.32
+      },
+      {
+        "letter": "굼",
+        "score": 0.32
+      },
+      {
+        "letter": "옴",
+        "score": 0.32
+      },
+      {
+        "letter": "움",
+        "score": 0.32
+      },
+      {
+        "letter": "섬",
+        "score": 0.31846153846153846
+      },
+      {
+        "letter": "몬",
+        "score": 0.3179333333333333
+      },
+      {
+        "letter": "문",
+        "score": 0.3179333333333333
+      },
+      {
+        "letter": "간",
+        "score": 0.31666666666666665
+      },
+      {
+        "letter": "안",
+        "score": 0.31666666666666665
+      },
+      {
+        "letter": "목",
+        "score": 0.30956666666666666
+      },
+      {
+        "letter": "묵",
+        "score": 0.30956666666666666
+      },
+      {
+        "letter": "악",
+        "score": 0.3083333333333333
+      },
+      {
+        "letter": "건",
+        "score": 0.3076923076923077
+      },
+      {
+        "letter": "언",
+        "score": 0.3076923076923077
+      },
+      {
+        "letter": "몸",
+        "score": 0.30119999999999997
+      },
+      {
+        "letter": "넝",
+        "score": 0.30000000000000004
+      },
+      {
+        "letter": "감",
+        "score": 0.3
+      },
+      {
+        "letter": "암",
+        "score": 0.3
+      },
+      {
+        "letter": "억",
+        "score": 0.3
+      },
+      {
+        "letter": "손",
+        "score": 0.2913333333333333
+      },
+      {
+        "letter": "순",
+        "score": 0.2913333333333333
+      },
+      {
+        "letter": "멍",
+        "score": 0.2896153846153846
+      },
+      {
+        "letter": "고",
+        "score": 0.2857142857142857
+      },
+      {
+        "letter": "구",
+        "score": 0.2857142857142857
+      },
+      {
+        "letter": "오",
+        "score": 0.2857142857142857
+      },
+      {
+        "letter": "우",
+        "score": 0.2857142857142857
+      },
+      {
+        "letter": "속",
+        "score": 0.2836666666666666
+      },
+      {
+        "letter": "숙",
+        "score": 0.2836666666666666
+      },
+      {
+        "letter": "공",
+        "score": 0.28
+      },
+      {
+        "letter": "궁",
+        "score": 0.28
+      },
+      {
+        "letter": "놋",
+        "score": 0.2773333333333333
+      },
+      {
+        "letter": "눗",
+        "score": 0.2773333333333333
+      },
+      {
+        "letter": "검",
+        "score": 0.2769230769230769
+      },
+      {
+        "letter": "엄",
+        "score": 0.2769230769230769
+      },
+      {
+        "letter": "못",
+        "score": 0.26773333333333327
+      },
+      {
+        "letter": "뭇",
+        "score": 0.26773333333333327
+      },
+      {
+        "letter": "성",
+        "score": 0.2653846153846154
+      },
+      {
+        "letter": "것",
+        "score": 0.26153846153846155
+      },
+      {
+        "letter": "엇",
+        "score": 0.26153846153846155
+      },
+      {
+        "letter": "곤",
+        "score": 0.2533333333333333
+      },
+      {
+        "letter": "군",
+        "score": 0.2533333333333333
+      },
+      {
+        "letter": "온",
+        "score": 0.2533333333333333
+      },
+      {
+        "letter": "운",
+        "score": 0.2533333333333333
+      },
+      {
+        "letter": "옥",
+        "score": 0.24666666666666665
+      },
+      {
+        "letter": "욱",
+        "score": 0.24666666666666665
+      },
+      {
+        "letter": "섯",
+        "score": 0.24326923076923074
+      },
+      {
+        "letter": "난",
+        "score": 0.23291666666666666
+      },
+      {
+        "letter": "겅",
+        "score": 0.23076923076923078
+      },
+      {
+        "letter": "넌",
+        "score": 0.22500000000000003
+      },
+      {
+        "letter": "삿",
+        "score": 0.22041666666666668
+      },
+      {
+        "letter": "곳",
+        "score": 0.21333333333333332
+      },
+      {
+        "letter": "굿",
+        "score": 0.21333333333333332
+      },
+      {
+        "letter": "옷",
+        "score": 0.21333333333333332
+      },
+      {
+        "letter": "웃",
+        "score": 0.21333333333333332
+      },
+      {
+        "letter": "앙",
+        "score": 0.2041666666666667
+      },
+      {
+        "letter": "뭄",
+        "score": 0.20079999999999998
+      },
+      {
+        "letter": "맘",
+        "score": 0.18824999999999995
+      },
+      {
+        "letter": "논",
+        "score": 0.18633333333333332
+      },
+      {
+        "letter": "걱",
+        "score": 0.17884615384615385
+      },
+      {
+        "letter": "멈",
+        "score": 0.17376923076923073
+      },
+      {
+        "letter": "눈",
+        "score": 0.16466666666666666
+      },
+      {
+        "letter": "각",
+        "score": 0.15416666666666665
+      },
+      {
+        "letter": "옹",
+        "score": 0.14
+      },
+      {
+        "letter": "웅",
+        "score": 0.14
+      },
+      {
+        "letter": "솟",
+        "score": 0.1360833333333333
+      },
+      {
+        "letter": "곡",
+        "score": 0.12333333333333332
+      },
+      {
+        "letter": "국",
+        "score": 0.12333333333333332
+      },
+      {
+        "letter": "숫",
+        "score": 0.12266666666666665
+      },
+      {
+        "letter": "낫",
+        "score": 0.11916666666666668
+      },
+      {
+        "letter": "나",
+        "score": 0.11818181818181818
+      },
+      {
+        "letter": "엉",
+        "score": 0.11538461538461539
+      },
+      {
+        "letter": "맛",
+        "score": 0.11504166666666667
+      },
+      {
+        "letter": "마",
+        "score": 0.11409090909090908
+      },
+      {
+        "letter": "사",
+        "score": 0.10454545454545454
+      },
+      {
+        "letter": "갓",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "앗",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "가",
+        "score": 0.09090909090909091
+      },
+      {
+        "letter": "아",
+        "score": 0.09090909090909091
+      }
+    ],
+    "3": [
+      {
+        "letter": "넉",
+        "score": 0.39
+      },
+      {
+        "letter": "남",
+        "score": 0.38999999999999996
+      },
+      {
+        "letter": "먼",
+        "score": 0.3861538461538461
+      },
+      {
+        "letter": "먹",
+        "score": 0.3765
+      },
+      {
+        "letter": "넘",
+        "score": 0.36
+      },
+      {
+        "letter": "선",
+        "score": 0.3538461538461538
+      },
+      {
+        "letter": "삼",
+        "score": 0.345
+      },
+      {
+        "letter": "석",
+        "score": 0.345
+      },
+      {
+        "letter": "낭",
+        "score": 0.34125000000000005
+      },
+      {
+        "letter": "넛",
+        "score": 0.33999999999999997
+      },
+      {
+        "letter": "망",
+        "score": 0.3294375
+      },
+      {
+        "letter": "멋",
+        "score": 0.3282307692307692
+      },
+      {
+        "letter": "낙",
+        "score": 0.32499999999999996
+      },
+      {
+        "letter": "만",
+        "score": 0.32420833333333327
+      },
+      {
+        "letter": "섬",
+        "score": 0.31846153846153846
+      },
+      {
+        "letter": "막",
+        "score": 0.3137499999999999
+      },
+      {
+        "letter": "놈",
+        "score": 0.312
+      },
+      {
+        "letter": "눔",
+        "score": 0.312
+      },
+      {
+        "letter": "건",
+        "score": 0.3076923076923077
+      },
+      {
+        "letter": "언",
+        "score": 0.3076923076923077
+      },
+      {
+        "letter": "상",
+        "score": 0.301875
+      },
+      {
+        "letter": "넝",
+        "score": 0.30000000000000004
+      },
+      {
+        "letter": "감",
+        "score": 0.3
+      },
+      {
+        "letter": "암",
+        "score": 0.3
+      },
+      {
+        "letter": "억",
+        "score": 0.3
+      },
+      {
+        "letter": "산",
+        "score": 0.2970833333333333
+      },
+      {
+        "letter": "멍",
+        "score": 0.2896153846153846
+      },
+      {
+        "letter": "삭",
+        "score": 0.2874999999999999
+      },
+      {
+        "letter": "노",
+        "score": 0.2785714285714286
+      },
+      {
+        "letter": "누",
+        "score": 0.2785714285714286
+      },
+      {
+        "letter": "검",
+        "score": 0.2769230769230769
+      },
+      {
+        "letter": "엄",
+        "score": 0.2769230769230769
+      },
+      {
+        "letter": "솜",
+        "score": 0.27599999999999997
+      },
+      {
+        "letter": "숨",
+        "score": 0.27599999999999997
+      },
+      {
+        "letter": "농",
+        "score": 0.273
+      },
+      {
+        "letter": "눙",
+        "score": 0.273
+      },
+      {
+        "letter": "모",
+        "score": 0.2689285714285714
+      },
+      {
+        "letter": "무",
+        "score": 0.2689285714285714
+      },
+      {
+        "letter": "성",
+        "score": 0.2653846153846154
+      },
+      {
+        "letter": "몽",
+        "score": 0.26355
+      },
+      {
+        "letter": "뭉",
+        "score": 0.26355
+      },
+      {
+        "letter": "강",
+        "score": 0.2625
+      },
+      {
+        "letter": "것",
+        "score": 0.26153846153846155
+      },
+      {
+        "letter": "엇",
+        "score": 0.26153846153846155
+      },
+      {
+        "letter": "녹",
+        "score": 0.25999999999999995
+      },
+      {
+        "letter": "눅",
+        "score": 0.25999999999999995
+      },
+      {
+        "letter": "몬",
+        "score": 0.25936666666666663
+      },
+      {
+        "letter": "문",
+        "score": 0.25936666666666663
+      },
+      {
+        "letter": "간",
+        "score": 0.2583333333333333
+      },
+      {
+        "letter": "안",
+        "score": 0.2583333333333333
+      },
+      {
+        "letter": "목",
+        "score": 0.25099999999999995
+      },
+      {
+        "letter": "묵",
+        "score": 0.25099999999999995
+      },
+      {
+        "letter": "악",
+        "score": 0.24999999999999997
+      },
+      {
+        "letter": "소",
+        "score": 0.2464285714285714
+      },
+      {
+        "letter": "수",
+        "score": 0.2464285714285714
+      },
+      {
+        "letter": "섯",
+        "score": 0.24326923076923074
+      },
+      {
+        "letter": "송",
+        "score": 0.2415
+      },
+      {
+        "letter": "숭",
+        "score": 0.2415
+      },
+      {
+        "letter": "곰",
+        "score": 0.23999999999999996
+      },
+      {
+        "letter": "굼",
+        "score": 0.23999999999999996
+      },
+      {
+        "letter": "옴",
+        "score": 0.23999999999999996
+      },
+      {
+        "letter": "움",
+        "score": 0.23999999999999996
+      },
+      {
+        "letter": "손",
+        "score": 0.23766666666666664
+      },
+      {
+        "letter": "순",
+        "score": 0.23766666666666664
+      },
+      {
+        "letter": "겅",
+        "score": 0.23076923076923078
+      },
+      {
+        "letter": "속",
+        "score": 0.22999999999999995
+      },
+      {
+        "letter": "숙",
+        "score": 0.22999999999999995
+      },
+      {
+        "letter": "몸",
+        "score": 0.22590000000000002
+      },
+      {
+        "letter": "넌",
+        "score": 0.22500000000000003
+      },
+      {
+        "letter": "놋",
+        "score": 0.21666666666666665
+      },
+      {
+        "letter": "눗",
+        "score": 0.21666666666666665
+      },
+      {
+        "letter": "고",
+        "score": 0.21428571428571427
+      },
+      {
+        "letter": "구",
+        "score": 0.21428571428571427
+      },
+      {
+        "letter": "오",
+        "score": 0.21428571428571427
+      },
+      {
+        "letter": "우",
+        "score": 0.21428571428571427
+      },
+      {
+        "letter": "공",
+        "score": 0.21000000000000002
+      },
+      {
+        "letter": "궁",
+        "score": 0.21000000000000002
+      },
+      {
+        "letter": "못",
+        "score": 0.2091666666666666
+      },
+      {
+        "letter": "뭇",
+        "score": 0.2091666666666666
+      },
+      {
+        "letter": "곤",
+        "score": 0.20666666666666664
+      },
+      {
+        "letter": "군",
+        "score": 0.20666666666666664
+      },
+      {
+        "letter": "온",
+        "score": 0.20666666666666664
+      },
+      {
+        "letter": "운",
+        "score": 0.20666666666666664
+      },
+      {
+        "letter": "옥",
+        "score": 0.19999999999999998
+      },
+      {
+        "letter": "욱",
+        "score": 0.19999999999999998
+      },
+      {
+        "letter": "난",
+        "score": 0.19499999999999998
+      },
+      {
+        "letter": "맘",
+        "score": 0.18824999999999995
+      },
+      {
+        "letter": "걱",
+        "score": 0.17884615384615385
+      },
+      {
+        "letter": "멈",
+        "score": 0.17376923076923073
+      },
+      {
+        "letter": "삿",
+        "score": 0.17010416666666664
+      },
+      {
+        "letter": "곳",
+        "score": 0.16666666666666663
+      },
+      {
+        "letter": "굿",
+        "score": 0.16666666666666663
+      },
+      {
+        "letter": "옷",
+        "score": 0.16666666666666663
+      },
+      {
+        "letter": "웃",
+        "score": 0.16666666666666663
+      },
+      {
+        "letter": "논",
+        "score": 0.156
+      },
+      {
+        "letter": "앙",
+        "score": 0.153125
+      },
+      {
+        "letter": "뭄",
+        "score": 0.15059999999999996
+      },
+      {
+        "letter": "눈",
+        "score": 0.1343333333333333
+      },
+      {
+        "letter": "각",
+        "score": 0.12499999999999999
+      },
+      {
+        "letter": "낫",
+        "score": 0.11916666666666668
+      },
+      {
+        "letter": "나",
+        "score": 0.11818181818181818
+      },
+      {
+        "letter": "엉",
+        "score": 0.11538461538461539
+      },
+      {
+        "letter": "맛",
+        "score": 0.11504166666666667
+      },
+      {
+        "letter": "마",
+        "score": 0.11409090909090908
+      },
+      {
+        "letter": "솟",
+        "score": 0.10924999999999999
+      },
+      {
+        "letter": "옹",
+        "score": 0.10500000000000001
+      },
+      {
+        "letter": "웅",
+        "score": 0.10500000000000001
+      },
+      {
+        "letter": "사",
+        "score": 0.10454545454545454
+      },
+      {
+        "letter": "곡",
+        "score": 0.09999999999999999
+      },
+      {
+        "letter": "국",
+        "score": 0.09999999999999999
+      },
+      {
+        "letter": "숫",
+        "score": 0.0958333333333333
+      },
+      {
+        "letter": "갓",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "앗",
+        "score": 0.09166666666666667
+      },
+      {
+        "letter": "가",
+        "score": 0.09090909090909091
+      },
+      {
+        "letter": "아",
+        "score": 0.09090909090909091
+      }
+    ]
+  },
+  "negative": [
+    {
+      "cells": [
+        {
+          "row": 82,
+          "column": 9,
+          "value": "ㅅ 책(가른다) · 먹 26(TEST) · 극치 ㅓ+가른다 · 휘두르기 두 번, 각각 앞 · 뒤를 함께 · 뒤쪽 가름 ×0.5 · 먹 ×2 · 총 작용량 2.5(상한 2.1) = 즉시 0.7 + 둘째 접촉 0.3 + 뒤쪽 가름 0.35×2 + 벗김 0.4 · 같은 동사 평균 ×1.5 상한(한 시전 총 작용량 기준) · 급소창 같은 글자 연속 금지 · ㅓ 부착 = 접촉 2회(몸 즉시 0.7 + 둘째 접촉 0.3 · 동사 몫 1회) · 둘째 접촉 = (시전 ID, 대상 ID)마다 최대 1회 — 같은 시전의 부착 수명 안에서 그 대상의 첫 접촉 0.3 s 뒤 별도 휘두르기에 0.3 · 시전당 효과 대상 상한 3(먼저 닿은 셋 — 넷째부터 휘두르기 자체 타격만) · 전부 TEST"
+        }
+      ],
+      "document": [],
+      "sourceFailures": 3,
+      "name": "섯 선언값 2.5"
+    },
+    {
+      "cells": [
+        {
+          "row": 6,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 후불(성공 0 · 실패 14 고정)(TEST) · 첫 30분 어휘 · 패링(Combat 3장 판정점, 반응표 밖) · 성공 시 먹 전액 환급 · 적 탄은 패링 밖 · 틀린 몸도 방어 성립(그로기만 없음) · 패링 재사용 ≥ 0.8 s · 그로기 반복(패링 · 상합 · 상극 검격 합쳐) ×0.6^(n−1) · 적 1체당 합 ≤ 2.5 · 먹 부족 시 무먹 붓 휘두르기(목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음 · 작도 없음 · 재사용 ≥ 1.1 s · 첫 적 하나 · 배율 없음 · 내 공격 · 내 휘두르기로 셈)는 언제나 · 전부 TEST"
+        },
+        {
+          "row": 30,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 후불(성공 0 · 실패 14 고정)(TEST) · 첫 30분 어휘 · 패링(Combat 3장 판정점, 반응표 밖) · 성공 시 먹 전액 환급 · 적 탄은 패링 밖 · 틀린 몸도 방어 성립(그로기만 없음) · 패링 재사용 ≥ 0.8 s · 그로기 반복(패링 · 상합 · 상극 검격 합쳐) ×0.6^(n−1) · 적 1체당 합 ≤ 2.5 · 먹 부족 시 무먹 붓 휘두르기(목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음 · 작도 없음 · 재사용 ≥ 1.1 s · 첫 적 하나 · 배율 없음 · 내 공격 · 내 휘두르기로 셈)는 언제나 · 전부 TEST"
+        },
+        {
+          "row": 54,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 후불(성공 0 · 실패 14 고정)(TEST) · 몸 개방 뒤(2강토 토 — 지역별 첫 일반 글자) · 패링(Combat 3장 판정점, 반응표 밖) · 성공 시 먹 전액 환급 · 적 탄은 패링 밖 · 틀린 몸도 방어 성립(그로기만 없음) · 패링 재사용 ≥ 0.8 s · 그로기 반복(패링 · 상합 · 상극 검격 합쳐) ×0.6^(n−1) · 적 1체당 합 ≤ 2.5 · 먹 부족 시 무먹 붓 휘두르기(목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음 · 작도 없음 · 재사용 ≥ 1.1 s · 첫 적 하나 · 배율 없음 · 내 공격 · 내 휘두르기로 셈)는 언제나 · 전부 TEST"
+        },
+        {
+          "row": 78,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 후불(성공 0 · 실패 14 고정)(TEST) · 몸 개방 뒤(3강토 금 — 지역별 첫 일반 글자) · 패링(Combat 3장 판정점, 반응표 밖) · 성공 시 먹 전액 환급 · 적 탄은 패링 밖 · 틀린 몸도 방어 성립(그로기만 없음) · 패링 재사용 ≥ 0.8 s · 그로기 반복(패링 · 상합 · 상극 검격 합쳐) ×0.6^(n−1) · 적 1체당 합 ≤ 2.5 · 먹 부족 시 무먹 붓 휘두르기(목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음 · 작도 없음 · 재사용 ≥ 1.1 s · 첫 적 하나 · 배율 없음 · 내 공격 · 내 휘두르기로 셈)는 언제나 · 전부 TEST"
+        },
+        {
+          "row": 102,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 후불(성공 0 · 실패 14 고정)(TEST) · 몸 개방 뒤(4강토 수 — 지역별 첫 일반 글자) · 패링(Combat 3장 판정점, 반응표 밖) · 성공 시 먹 전액 환급 · 적 탄은 패링 밖 · 틀린 몸도 방어 성립(그로기만 없음) · 패링 재사용 ≥ 0.8 s · 그로기 반복(패링 · 상합 · 상극 검격 합쳐) ×0.6^(n−1) · 적 1체당 합 ≤ 2.5 · 먹 부족 시 무먹 붓 휘두르기(목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음 · 작도 없음 · 재사용 ≥ 1.1 s · 첫 적 하나 · 배율 없음 · 내 공격 · 내 휘두르기로 셈)는 언제나 · 전부 TEST"
+        }
+      ],
+      "document": [
+        {
+          "old": "| 패링 먹 (v0.7 · v0.8) | **후불** — 먹이 모자라도 시전된다 · **성공 0 · 실패 14 고정**(모자라면 0까지) · 환급 없음 · (v0.8) **재사용 ≥ 0.8 s(TEST)** | 피격 보상이 아니다 — 성공한 방어는 값을 치르지 않고, **실패한 패링은 그대로 맞는다**(실패의 값은 먹이 아니라 피격). v0.5의 \"선불 후 성공 시 전액 환급\"은 먹 14 미만에서 방어가 비었고(플레이어) 환급 유입이 루프를 만들었다(밸런스) — 후불은 경제가 같고(성공 0 · 실패 14) 두 문제가 함께 사라진다. 패링이 소울라이크의 기본 방어라 먹 0에서도 서야 한다(r5 판정 6 · r6 결정 1). (v0.7) 실패 값은 **고정 14**(TEST) — 무받침 먹에서 떼었다(맨몸이 틀마다 11 · 14로 갈라져 묶을 값이 없다, 결정 1). 검사기가 \"고정 14\"를 읽고 CSV 패링 5행과 대조한다 |\n",
+          "new": "| 패링 먹 (v0.5) | 성공 시 14 **전액 환급** · 실패 시 소모 | 성공한 방어의 환급 |\n"
+        }
+      ],
+      "sourceFailures": 2,
+      "name": "패링 환급 문구 복귀"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "| 무먹 붓 휘두르기 (v0.7 · v0.8) | **목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음(TEST)** · **재사용 ≥ 1.1 s(TEST)** · (v0.8) **대상 1 · 배율 1(고정)** — 붓만 휘두른 타격은 목 몸의 즉시 몫 절반(검사기가 몸별 즉시 피해 목 값에서 계산). 붙듦 · 젖음 같은 부가 효과 없음 · 재료 없음 · 작도 없음 · 급소창 그로기 원천 아님(밸런스, r6 고칠 것 3). (v0.8) **첫 닿는 적 하나에만 0.3, 세 · 급소창 · 상극 배율을 곱하지 않는다. \"내 공격 · 내 휘두르기\"로 센다 — ㅏ+ㅁ 씨앗 조건을 채우고 ㅓ 부착의 첫 · 둘째 접촉을 낸다(예산은 대상별 규칙 그대로)**(r8 고칠 것 1). (v0.7 · v0.8) 재사용 ≥ 1.1 s: 0.3 × 대상 1 × 배율 1 / 1.1 = 0.27/s < 전투 중 회복 초당 2로 유지되는 최고 글자 지속 딜(**ㅓ ㄴ**) 2 / 13 × 2.0 = 0.31/s(ㅏ ㄴ 0.28/s — 검사기 max는 ㅓ 열 · ㅗ ㅜ 열까지 본다, r8 고칠 것 2). (v0.9, r9 고칠 것 5) **PASS 기준 = 작도 시간 포함**: 무먹 0.3 / 1.1 = 0.273 < ㅓ ㄴ 2.0 / (13 / 2 + 작도 0.7) = 0.278(C-1 작도 ≤ 0.7 s) — 등호가 되는 작도 상한 ≈ 0.83 s, 검사기가 이 부등식과 상한을 계산한다(Codex 8R · 9R). 작도를 뺀 상한 비교(0.31)는 참고로만 남긴다. 무먹은 \"최고\"가 아니되 한 글자의 지속 딜에 닿고, 대상 1 · 배율 1 · 그로기 0 · 재료 0이라 가치가 다르다 — 사용률 · 먹 회복 대기 비율은 (v0.10) E7 ⑮가 잰다(⑦은 상위 5글자 점유라 무먹을 재지 않는다, 밸런스 10R) |\n",
+          "new": "| 무먹 붓 휘두르기 (v0.7 · v0.8) | **목 즉시 0.6 × 0.5 = 0.4 · 그로기 없음(TEST)** · **재사용 ≥ 1.1 s(TEST)** · (v0.8) **대상 1 · 배율 1(고정)** — 붓만 휘두른 타격은 목 몸의 즉시 몫 절반(검사기가 몸별 즉시 피해 목 값에서 계산). 붙듦 · 젖음 같은 부가 효과 없음 · 재료 없음 · 작도 없음 · 급소창 그로기 원천 아님(밸런스, r6 고칠 것 3). (v0.8) **첫 닿는 적 하나에만 0.3, 세 · 급소창 · 상극 배율을 곱하지 않는다. \"내 공격 · 내 휘두르기\"로 센다 — ㅏ+ㅁ 씨앗 조건을 채우고 ㅓ 부착의 첫 · 둘째 접촉을 낸다(예산은 대상별 규칙 그대로)**(r8 고칠 것 1). (v0.7 · v0.8) 재사용 ≥ 1.1 s: 0.3 × 대상 1 × 배율 1 / 1.1 = 0.27/s < 전투 중 회복 초당 2로 유지되는 최고 글자 지속 딜(**ㅓ ㄴ**) 2 / 13 × 2.0 = 0.31/s(ㅏ ㄴ 0.28/s — 검사기 max는 ㅓ 열 · ㅗ ㅜ 열까지 본다, r8 고칠 것 2). (v0.9, r9 고칠 것 5) **PASS 기준 = 작도 시간 포함**: 무먹 0.3 / 1.1 = 0.273 < ㅓ ㄴ 2.0 / (13 / 2 + 작도 0.7) = 0.278(C-1 작도 ≤ 0.7 s) — 등호가 되는 작도 상한 ≈ 0.83 s, 검사기가 이 부등식과 상한을 계산한다(Codex 8R · 9R). 작도를 뺀 상한 비교(0.31)는 참고로만 남긴다. 무먹은 \"최고\"가 아니되 한 글자의 지속 딜에 닿고, 대상 1 · 배율 1 · 그로기 0 · 재료 0이라 가치가 다르다 — 사용률 · 먹 회복 대기 비율은 (v0.10) E7 ⑮가 잰다(⑦은 상위 5글자 점유라 무먹을 재지 않는다, 밸런스 10R) |\n"
+        }
+      ],
+      "sourceFailures": 3,
+      "name": "무먹 휘두르기 0.4"
+    },
+    {
+      "cells": [
+        {
+          "row": 101,
+          "column": 5,
+          "value": "조준 대상까지 간 물이 돌아올 때 내 잔존물 하나를 날라 온다 — 경로 위 내 재료 1개가 시전자 앞 2 m로 옮겨지고, 귀환 작용 ×0.75(빌린 위력)."
+        }
+      ],
+      "document": [],
+      "sourceFailures": 1,
+      "name": "빌린 위력을 앙에"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "| ⑫ (v0.6) | **급소창 안 유효 시전 중 극치 비율** | **≤ 80 %** — 넘으면 1.725로 복귀. (v0.7) 표본 = **같은 해금 · 배치에서 급소창 ≥ 5회 관찰, 그 창들 안 전체 유효 시전이 분모**(한 창에 시전 다섯을 요구하지 않는다 — v0.6의 \"창당 표본 ≥ 5\"는 \"극치 한 자 틈\"과 어긋났다, Codex). 이견 14의 둘째 복귀 조건을 F 표에 올렸다 — F만 읽는 측정자도 잰다(밸런스, r6 고칠 것 11) | E-2 최종 배율 상한 행 · C-2 |\n",
+          "new": ""
+        },
+        {
+          "old": "반영 못 한 항목: 없음. 판정문보다 한 걸음 더 정한 것 — 결정 1의 **30행 범위 · 기본 타격 = 0.3** · ⑭ 3인 이상 구간의 60 % 재질문 선 · ⑮의 다음 후보(재사용 1.3 s)(이견 23).\n",
+          "new": "반영 못 한 항목: 없음. 판정문보다 한 걸음 더 정한 것 — 결정 1의 **30행 범위 · 기본 타격 = 0.3** · ⑭ 3인 이상 구간의 60 % 재질문 선 · ⑮의 다음 후보(재사용 1.3 s)(이견 23)."
+        }
+      ],
+      "sourceFailures": 1,
+      "name": "E7 ⑫ 행 삭제"
+    },
+    {
+      "cells": [
+        {
+          "row": 0,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 14(TEST) · 첫 30분 어휘 · 전부 TEST"
+        },
+        {
+          "row": 24,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 14(TEST) · 첫 30분 어휘 · 전부 TEST"
+        },
+        {
+          "row": 48,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 14(TEST) · 몸 개방 뒤(2강토 토 — 지역별 첫 일반 글자) · 전부 TEST"
+        },
+        {
+          "row": 72,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 14(TEST) · 몸 개방 뒤(3강토 금 — 지역별 첫 일반 글자) · 전부 TEST"
+        },
+        {
+          "row": 96,
+          "column": 9,
+          "value": "기본층(처음부터) · 먹 14(TEST) · 몸 개방 뒤(4강토 수 — 지역별 첫 일반 글자) · 전부 TEST"
+        }
+      ],
+      "document": [
+        {
+          "old": "| 무받침 ㅏ (v0.7) | **11** | 맨몸 = 같은 틀 일반 받침 − 1(결정 1). 맨몸 효율비(아래 단락) 1인 0.820 — 맨몸은 먹당 작용이 받침 평균의 0.75 – 0.9배, 대신 획 하나 빠르고 재료를 남기지 않는다 |\n",
+          "new": "| 무받침 ㅏ (v0.7) | **14** | 맨몸 = 같은 틀 일반 받침 − 1(결정 1). 맨몸 효율비(아래 단락) 1인 0.820 — 맨몸은 먹당 작용이 받침 평균의 0.75 – 0.9배, 대신 획 하나 빠르고 재료를 남기지 않는다 |\n"
+        }
+      ],
+      "sourceFailures": 3,
+      "name": "맨몸 ㅏ 14(효율비 위반)"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "| 같은 적 패링 그로기 반복 (v0.7 · v0.8) | **×0.6^(n−1) 누적 · 적 1체당 합 ≤ 2.5 단위(TEST) · 풀린 뒤 6 s 초기화** — (v0.8) **패링 · 상합 · 상극 검격 그로기를 합쳐서** 앞의 0.6배씩 거듭(원천이 바뀌어도 같은 n). 1 / (1 − 0.6) = 2.5가 급수의 합이라 상한은 계산값과 같다(검사기가 계산). v0.3의 \"둘째부터 ×0.6\"은 고정 배율로 읽혀 먹 0으로 한 적에게 무한히 쌓였다(밸런스 악용 2) |\n",
+          "new": "| 같은 적 패링 그로기 반복 (v0.7 · v0.8) | **×0.7^(n−1) 누적 · 적 1체당 합 ≤ 2.5 단위(TEST) · 풀린 뒤 6 s 초기화** — (v0.8) **패링 · 상합 · 상극 검격 그로기를 합쳐서** 앞의 0.6배씩 거듭(원천이 바뀌어도 같은 n). 1 / (1 − 0.6) = 2.5가 급수의 합이라 상한은 계산값과 같다(검사기가 계산). v0.3의 \"둘째부터 ×0.6\"은 고정 배율로 읽혀 먹 0으로 한 적에게 무한히 쌓였다(밸런스 악용 2) |\n"
+        }
+      ],
+      "sourceFailures": 1,
+      "name": "그로기 반복 ×0.7"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "| 광역 가격 기준 (v0.5 · v0.7) | (v0.7) **검사기는 모든 틀(ㅏ ㅓ ㅗ ㅜ)을 1인 · 2인 둘 다로 잰다** — 2인 = **모든 행**의 대상별 항 ×2, 공유 항은 한 번(v0.6까지는 ㅗ · ㅜ만 2인이라 면 · 둘레는 N을 올려도 상위 10이 면 5 · 둘레 5로 남고 부착은 1인 덕에 통과했을 수 있었다 — 같은 N이 아니면 틀끼리 비교가 안 선다, 밸런스 악용 4 · r7 고칠 것 13). 2인은 가격 지표의 가정(기대 대상 2)이지 글자의 실제 대상 수가 아니다(r5 판정 4 — 몬의 번짐 합 1.0은 둘이어도 1.0). (v0.8) **예외 = 정의가 \"첫 대상 · 첫 적\"으로 못 박은 글자(무받침 ㅏ 5행 · ㅏ+ㅅ 일반 4행)는 2인 표에서도 대상별 항 ×1**이다 — 첫 대상만 맞는 글자를 둘에 닿는 것처럼 세면 값이 허구가 된다(밸런스 6, r8 고칠 것 6). 검사기는 CSV 정의 문장(\"첫 대상에 \" · \"첫 적을 통과\")으로 그 행을 고른다. 두 표의 편중 수는 바뀌지 않았다(무받침 ㅏ 화 \"나\"가 2인 12위에서 사라진 것뿐). (v0.9, r9 고칠 것 2) **맨몸 효율비의 분모(ㅏ 틀 받침 평균)와 3 · 4인 참고 줄에서도 같은 ×1**이다 — ㅏ+ㅅ(첫 적)은 N에 비례하지 않는다(2인 ㅏ 참고값 0.496 → 0.530, Codex). (v0.10, r10 결정 1) **ㅓ 행(패링 제외)과 ㅏ+ㅁ 행의 대상별 항은 N ≥ 4에서 ×3에 멈춘다**(효과 대상 상한 3). 대상별 항: 없음 1.0 · ㄱ 0.7 · ㄴ 0.7 · ㅁ 1.2 · ㅅ 0.7 · ㅇ 1.05 / 공유 항: 없음 0 · ㄱ 0.9 · ㄴ 1.0 · ㅁ 0 · ㅅ 0.4 · ㅇ 0 (대상별 + 공유 = 동사별 일반 총 작용량 — 검사기가 대조한다; (v0.7) ㄱ 잔존 0.9는 잔존물 하나당 총량이라 공유 항이다, A-5 · 이견 20). (v0.7) ㅓ 열 대상별 항: ㄱ 1.0 · ㄴ 1.0 · ㅁ 1.2 · ㅅ 1.0 · ㅇ 1.0 / ㅓ 열 공유 항: ㄱ 0.9 · ㄴ 1.0 · ㅁ 0 · ㅅ 0.4 · ㅇ 0 — 둘째 접촉 0.30은 (시전 ID, 대상 ID)마다라 대상별 항이다(A-5; 대상별 + 공유 = ㅓ 열 총량, 검사기가 대조). 극치는 비고 수식의 항을 같은 규칙으로 가른다 — 재료 · 번짐 · 되번짐 · 벗김 · 누적 생성 = 공유, 그 밖(즉시 · 둘째 접촉 · 작동 · 귀환) = 대상별. 1인 · 2인 **두 표 모두 몸 편중 ≤ 4 · 틀 편중 ≤ 6 · (v0.7 메인 판정 2) 동사(받침) 편중 ≤ 5**(FAIL 기준). 실패하면 검사를 느슨하게 하지 않고 설계를 고친다 — 받침 게이트를 넣기 전의 v0.7 첫 판은 1인 ㄱ 6 · 2인 ㄱ 9였고, **ㄱ 잔존을 공유 항 0.9로 · 둘째 접촉을 0.30으로** 고쳐 통과시켰다(e3_check_v07 C5 — 1인 토 4 · 금 3 · 화 2 · 목 1 / 부착 6 · 경로 4 / ㄱ 5 · ㄴ 5, 2인 화 4 · 토 4 · 금 2 / 부착 6 · 경로 4 / ㄱ 5 · ㄴ 3 · ㅁ 2; 1인 10 · 11위는 쌍둥이 몸(목 · 수 총가치 1.0)의 같은 글자라 어느 쪽이 들어와도 편중 수가 같다). (v0.10) 한때 둘째 후보였던 \"4번째 대상부터 ×0.5\"는 r9 결정 3으로 폐기 — 현행 후보는 F ⑨의 한 벌 |\n",
+          "new": "| 광역 가격 기준 (v0.5 · v0.7) | (v0.7) **검사기는 모든 틀(ㅏ ㅓ ㅗ ㅜ)을 1인 · 2인 둘 다로 잰다** — 2인 = **모든 행**의 대상별 항 ×2, 공유 항은 한 번(v0.6까지는 ㅗ · ㅜ만 2인이라 면 · 둘레는 N을 올려도 상위 10이 면 5 · 둘레 5로 남고 부착은 1인 덕에 통과했을 수 있었다 — 같은 N이 아니면 틀끼리 비교가 안 선다, 밸런스 악용 4 · r7 고칠 것 13). 2인은 가격 지표의 가정(기대 대상 2)이지 글자의 실제 대상 수가 아니다(r5 판정 4 — 몬의 번짐 합 1.0은 둘이어도 1.0). (v0.8) **예외 = 정의가 \"첫 대상 · 첫 적\"으로 못 박은 글자(무받침 ㅏ 5행 · ㅏ+ㅅ 일반 4행)는 2인 표에서도 대상별 항 ×1**이다 — 첫 대상만 맞는 글자를 둘에 닿는 것처럼 세면 값이 허구가 된다(밸런스 6, r8 고칠 것 6). 검사기는 CSV 정의 문장(\"첫 대상에 \" · \"첫 적을 통과\")으로 그 행을 고른다. 두 표의 편중 수는 바뀌지 않았다(무받침 ㅏ 화 \"나\"가 2인 12위에서 사라진 것뿐). (v0.9, r9 고칠 것 2) **맨몸 효율비의 분모(ㅏ 틀 받침 평균)와 3 · 4인 참고 줄에서도 같은 ×1**이다 — ㅏ+ㅅ(첫 적)은 N에 비례하지 않는다(2인 ㅏ 참고값 0.496 → 0.530, Codex). (v0.10, r10 결정 1) **ㅓ 행(패링 제외)과 ㅏ+ㅁ 행의 대상별 항은 N ≥ 4에서 ×3에 멈춘다**(효과 대상 상한 3). 대상별 항: 없음 1.0 · ㄱ 1.6 · ㄴ 0.7 · ㅁ 1.2 · ㅅ 0.7 · ㅇ 1.05 / 공유 항: 없음 0 · ㄱ 0 · ㄴ 1.0 · ㅁ 0 · ㅅ 0.4 · ㅇ 0 (대상별 + 공유 = 동사별 일반 총 작용량 — 검사기가 대조한다; (v0.7) ㄱ 잔존 0.9는 잔존물 하나당 총량이라 공유 항이다, A-5 · 이견 20). (v0.7) ㅓ 열 대상별 항: ㄱ 1.0 · ㄴ 1.0 · ㅁ 1.2 · ㅅ 1.0 · ㅇ 1.0 / ㅓ 열 공유 항: ㄱ 0.9 · ㄴ 1.0 · ㅁ 0 · ㅅ 0.4 · ㅇ 0 — 둘째 접촉 0.30은 (시전 ID, 대상 ID)마다라 대상별 항이다(A-5; 대상별 + 공유 = ㅓ 열 총량, 검사기가 대조). 극치는 비고 수식의 항을 같은 규칙으로 가른다 — 재료 · 번짐 · 되번짐 · 벗김 · 누적 생성 = 공유, 그 밖(즉시 · 둘째 접촉 · 작동 · 귀환) = 대상별. 1인 · 2인 **두 표 모두 몸 편중 ≤ 4 · 틀 편중 ≤ 6 · (v0.7 메인 판정 2) 동사(받침) 편중 ≤ 5**(FAIL 기준). 실패하면 검사를 느슨하게 하지 않고 설계를 고친다 — 받침 게이트를 넣기 전의 v0.7 첫 판은 1인 ㄱ 6 · 2인 ㄱ 9였고, **ㄱ 잔존을 공유 항 0.9로 · 둘째 접촉을 0.30으로** 고쳐 통과시켰다(e3_check_v07 C5 — 1인 토 4 · 금 3 · 화 2 · 목 1 / 부착 6 · 경로 4 / ㄱ 5 · ㄴ 5, 2인 화 4 · 토 4 · 금 2 / 부착 6 · 경로 4 / ㄱ 5 · ㄴ 3 · ㅁ 2; 1인 10 · 11위는 쌍둥이 몸(목 · 수 총가치 1.0)의 같은 글자라 어느 쪽이 들어와도 편중 수가 같다). (v0.10) 한때 둘째 후보였던 \"4번째 대상부터 ×0.5\"는 r9 결정 3으로 폐기 — 현행 후보는 F ⑨의 한 벌 |\n"
+        }
+      ],
+      "sourceFailures": 6,
+      "name": "ㄱ 잔존 대상별 복귀(받침 편중)"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "| 무먹 붓 휘두르기 (v0.7 · v0.8) | **목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음(TEST)** · **재사용 ≥ 1.1 s(TEST)** · (v0.8) **대상 1 · 배율 1(고정)** — 붓만 휘두른 타격은 목 몸의 즉시 몫 절반(검사기가 몸별 즉시 피해 목 값에서 계산). 붙듦 · 젖음 같은 부가 효과 없음 · 재료 없음 · 작도 없음 · 급소창 그로기 원천 아님(밸런스, r6 고칠 것 3). (v0.8) **첫 닿는 적 하나에만 0.3, 세 · 급소창 · 상극 배율을 곱하지 않는다. \"내 공격 · 내 휘두르기\"로 센다 — ㅏ+ㅁ 씨앗 조건을 채우고 ㅓ 부착의 첫 · 둘째 접촉을 낸다(예산은 대상별 규칙 그대로)**(r8 고칠 것 1). (v0.7 · v0.8) 재사용 ≥ 1.1 s: 0.3 × 대상 1 × 배율 1 / 1.1 = 0.27/s < 전투 중 회복 초당 2로 유지되는 최고 글자 지속 딜(**ㅓ ㄴ**) 2 / 13 × 2.0 = 0.31/s(ㅏ ㄴ 0.28/s — 검사기 max는 ㅓ 열 · ㅗ ㅜ 열까지 본다, r8 고칠 것 2). (v0.9, r9 고칠 것 5) **PASS 기준 = 작도 시간 포함**: 무먹 0.3 / 1.1 = 0.273 < ㅓ ㄴ 2.0 / (13 / 2 + 작도 0.7) = 0.278(C-1 작도 ≤ 0.7 s) — 등호가 되는 작도 상한 ≈ 0.83 s, 검사기가 이 부등식과 상한을 계산한다(Codex 8R · 9R). 작도를 뺀 상한 비교(0.31)는 참고로만 남긴다. 무먹은 \"최고\"가 아니되 한 글자의 지속 딜에 닿고, 대상 1 · 배율 1 · 그로기 0 · 재료 0이라 가치가 다르다 — 사용률 · 먹 회복 대기 비율은 (v0.10) E7 ⑮가 잰다(⑦은 상위 5글자 점유라 무먹을 재지 않는다, 밸런스 10R) |\n",
+          "new": "| 무먹 붓 휘두르기 (v0.7 · v0.8) | **목 즉시 0.6 × 0.5 = 0.3 · 그로기 없음(TEST)** · **재사용 ≥ 1.1 s(TEST)** · (v0.8) **대상 2 · 배율 1.15(고정)** — 붓만 휘두른 타격은 목 몸의 즉시 몫 절반(검사기가 몸별 즉시 피해 목 값에서 계산). 붙듦 · 젖음 같은 부가 효과 없음 · 재료 없음 · 작도 없음 · 급소창 그로기 원천 아님(밸런스, r6 고칠 것 3). (v0.8) **첫 닿는 적 하나에만 0.3, 세 · 급소창 · 상극 배율을 곱하지 않는다. \"내 공격 · 내 휘두르기\"로 센다 — ㅏ+ㅁ 씨앗 조건을 채우고 ㅓ 부착의 첫 · 둘째 접촉을 낸다(예산은 대상별 규칙 그대로)**(r8 고칠 것 1). (v0.7 · v0.8) 재사용 ≥ 1.1 s: 0.3 × 대상 1 × 배율 1 / 1.1 = 0.27/s < 전투 중 회복 초당 2로 유지되는 최고 글자 지속 딜(**ㅓ ㄴ**) 2 / 13 × 2.0 = 0.31/s(ㅏ ㄴ 0.28/s — 검사기 max는 ㅓ 열 · ㅗ ㅜ 열까지 본다, r8 고칠 것 2). (v0.9, r9 고칠 것 5) **PASS 기준 = 작도 시간 포함**: 무먹 0.3 / 1.1 = 0.273 < ㅓ ㄴ 2.0 / (13 / 2 + 작도 0.7) = 0.278(C-1 작도 ≤ 0.7 s) — 등호가 되는 작도 상한 ≈ 0.83 s, 검사기가 이 부등식과 상한을 계산한다(Codex 8R · 9R). 작도를 뺀 상한 비교(0.31)는 참고로만 남긴다. 무먹은 \"최고\"가 아니되 한 글자의 지속 딜에 닿고, 대상 1 · 배율 1 · 그로기 0 · 재료 0이라 가치가 다르다 — 사용률 · 먹 회복 대기 비율은 (v0.10) E7 ⑮가 잰다(⑦은 상위 5글자 점유라 무먹을 재지 않는다, 밸런스 10R) |\n"
+        }
+      ],
+      "sourceFailures": 1,
+      "name": "무먹 대상 2 · 배율 1.15"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "누락 · 중복(글자) · 쌍둥이(한줄정의 동일) · 반응 커버리지(각 몸의 재료가 25칸 중 몇 칸을 실제로 여는가) · 비용 규칙((v0.7) 맨몸 ㅏ 11 · ㅗ ㅜ 14 · 일반 12 / 13 / 15 · 극치 = ×2 · 패링 실패 14 고정 — **맨몸 효율비 1인 ∈ [0.75, 0.9] · 2인 ∈ [0.75, 1.0)**, 문서가 적은 효율비 여섯 값도 계산값과 대조; 옛 가드 \"맨몸 ≥ 받침 평균\"은 결정 1로 폐기, 평균은 참고로만) · **극치 총 작용량 — 선언값 대 계산값(v0.4, 판정 8)**: 검사기가 극치 20행의 정의 · 반응재료 문장에서 즉시 몫(0.7 — (v0.5 · v0.7) ㅓ는 + 둘째 접촉 0.30) · 재료 작용량 × 누적 개수 · 번짐 0.5 × 대상 수 · 귀환 0.7 × 배율 · 벗김 0.4 · 씨앗 작동 1.2 × 배율을 **직접 계산**해 비고의 선언값 N과 다르면 FAIL, N ≤ M(ㅏ ㅗ ㅜ와 ㅓ 열 상한 따로) · 반응재료에 적힌 작용량이 계산에서 빠지면 FAIL · 벗김 ≤ 3 s(극치 ≤ 4.5 s) · 개수 축 ≤ 4 · 재료 수명 ≤ 일반 × 1.5 · 속박 ≤ 1.5 s · \"막을 수 없\" 낱말 0 · 패링 5행 반응재료 = 방어 판정(반응표 낱말 0) · **먹당 총가치 상위 10의 몸 편중 ≤ 4 · (v0.5) 틀 편중 ≤ 6 — 1인 기준과 ㅗ · ㅜ 2인 기준 둘 다 FAIL 기준** · (v0.5) **2인 기준 산식 = 대상별 항에만 ×2**(E-2 광역 가격 기준 행의 분할을 읽고 대상별 + 공유 = 동사 총량인지 대조) · (v0.5) 10위 · 11위 차 < 0.005면 참고 경고 · 같은 먹 묶음의 총가치/먹 1위 ÷ 2위 < 1.3(경고 기준) · (v0.5) 최종 배율 상한(극치 × 세 ≤ 1.5, 상극 밖 → 1.875가 문서 값과 같은지) · (v0.5) E-1 회복 우선순위 행 · 지배 후보(후보만, 우열 판정 아님) · (v0.6) **E-1 패링 먹 = 후불(성공 0 · 실패 14 = 무받침 먹 · 모자라면 0까지), CSV 패링 5행 비고 \"후불\" 5 · \"전액 환급\" 0** · **E-2 무먹 붓 휘두르기 0.3 = 몸별 즉시 피해 목 × 0.5(계산)** · **빌린 위력 낱말을 가진 CSV 행 = 엉 하나, E-2 행에 \"엉 반사뿐 · 꺾음 산물은 반응 산물\"** · **섯 총 작용량 — A-5 값 = E-3 값 = CSV 선언 = 정의 계산(2.1), 상한 = ㅓ 열 ㅅ 상한(2.1) — (v0.8) 검사기의 섯 값 스캔은 A-5 · E-4 · 반영 표까지(현행 절 전부; 옛 반영 표 v0.4 – v0.6은 이력이라 밖)** · **E7 ⑫ 존재(80 % · 1.725 = 1.5 × 1.15 · (v0.7) 급소창 ≥ 5회 관찰) · ⑪ 0.72 < 1 / 1.30 · ⑨ (v0.7) ㅓ 14 — 맨몸 그대로 · ㉡ (v0.7) 60 % / 80 %** · **G 2항 ㅓ+ㅁ 예외 · G 4항 \"끊거나 피할 수 있다\"(G 4항에 \"받아쳐\" 0) · B-4 · G 전조 다섯 거동 낱말** · C-2 먹 부족 문구(비용 기준 + 예외 둘) · ㅓ+ㅁ 5행 비고 \"둘째 접촉 없음\" · ㅓ 나머지 받침 행 비고에 둘째 접촉 정의((v0.7) (시전 ID, 대상 ID)마다 최대 1회 · 첫 접촉 0.3 s 뒤) · (v0.7) **모든 틀 1인 · 2인 두 표 — 몸 편중 ≤ 4 · 틀 편중 ≤ 6 · 동사(받침) 편중 ≤ 5(메인 판정 2)**(2인 = 모든 행의 대상별 항 ×2, ㅓ 열 분할도 E-2에서 읽어 합을 대조, 10 · 11위가 쌍둥이 몸의 같은 글자면 경계 경고 대신 참고) · **그로기 반복 1 / (1 − 0.6) = 2.5 ≤ 합 2.5 · 6 s 초기화** · **엉 반사 합 ≤ 1.0(E-2 행 · CSV 엉 행)** · **무먹 재사용 ≥ 1.1 s, 0.3 × 대상 1 × 배율 1 / 1.1 < 최고 글자 지속 딜(ㅏ ㅗ ㅜ · ㅓ 열 전부에서 max = ㅓ ㄴ 2 / 13 × 2.0)(v0.8) · E-2 행 \"대상 1 · 배율 1(고정)\" · \"내 공격 · 내 휘두르기\"** · (v0.8) **패링 재사용 ≥ 0.8 s(E-1 · CSV) · 그로기 행 \"상합 · 상극 검격 … 합쳐서\"(E-2 · C-2) · G 8항(ㅏ · ㅗ · ㅜ · 일반 받침 · ㅓ 무받침은 패링 · 1 · 2인 · ⑭) · B-3 \"소비는 방향이 없다\" · B-4 \"예비 동작 ≥ 0.8 s가 적 종 데이터 게이트\" · 머리 \"현행 값\" 줄 = 계산값 · 음성 시험 수 · 2인 표의 \"첫 대상\" 글자 ×1 · ⑨ 대안 참고 줄** · **B-4 · G 전조 = 방향 어휘 다섯(\"재가 일어\" · \"발이 박히고\" · \"판으로 밀려 오\") · ≥ 0.8 s · 0.3 s 가장 또렷 · 틀린 몸 방어 성립 · 탄은 패링 밖 · 사양(적 종 데이터 · 최소 굵기 · 6 m)** · C-3 붓 방울 · G 3항 ㅁ \"피해를 받을 때(패링 성공 · 회피 제외)\" + CSV ㅓ+ㅁ 5행 · D · G 무속성 적 · A-5 · CSV 둘째 접촉 \"(시전 ID, 대상 ID)마다 최대 1회\" · A-5 · CSV 섯 \"각각 앞 · 뒤를 함께\" · E7 ⑤ 화 ≤ 60 % · ⑨ 새 후보(ㅓ 14 · \"맨몸 15\" 0) · ⑪ 작도 제외 · ⑫ 급소창 ≥ 5회 관찰 · ⑬ 0.5 s 패링 불가 · ⑭ 맨몸 선택률 · ㉡ 60 % / 80 % · E4½ 패링 전이 · E-1 옛 문장(\"비싼 것은 먹과 그 0.2 s이지\") 0 · 음성 시험(`--selftest`: 섯 선언 2.5 · 패링 행 환급 문구 · 무먹 0.4 · 빌린 위력을 앙 행에 · ⑫ 행 삭제 · (v0.7) 맨몸 ㅏ 11 → 14(E-1 · CSV 같이) · 그로기 ×0.6 → ×0.7 · ㄱ 잔존을 공유에서 대상별로 되돌림(E-2 분할 행) · (v0.8) 무먹 \"대상 1 · 배율 1\" → \"대상 2 · 배율 1.15\"(둘째 대상에 닿거나 배율을 받으면 0.55 · 0.31/s로 최고 글자 지속 딜을 넘는다) · (v0.9) E-4 섯 \"정의 계산(2.1)\" → \"(2.15)\"(스캔이 E-4 문장을 잡는지) · E-2 ㅓ 열 \"최대 3 대상\" → \"최대 4 대상\"(ㅓ 부착 넷째 대상 작용) → 전부 FAIL이어야 한다). (v0.9) 검사기 줄 추가: ㅓ 부착 상한 3 문구(A-5 · E-2 · CSV) · 4인 참고 표(ㅓ ×3 멈춤) · 무먹 대 최고 글자 = 작도 포함 부등식(작도 ≤ 0.7 s · 등호 0.83 s) · 한 장(e2_sheet) G = 본문 G 글자 대조 · G 3항 \"0.8 s에 한 번 · 셋을 합쳐 · 무속성\" · ⑨ 대안(둘째 0.25 단독 · 0.25 + ㄱ 0.85) 참고 줄 · 섯 E-4 문장 정규식.\n",
+          "new": "누락 · 중복(글자) · 쌍둥이(한줄정의 동일) · 반응 커버리지(각 몸의 재료가 25칸 중 몇 칸을 실제로 여는가) · 비용 규칙((v0.7) 맨몸 ㅏ 11 · ㅗ ㅜ 14 · 일반 12 / 13 / 15 · 극치 = ×2 · 패링 실패 14 고정 — **맨몸 효율비 1인 ∈ [0.75, 0.9] · 2인 ∈ [0.75, 1.0)**, 문서가 적은 효율비 여섯 값도 계산값과 대조; 옛 가드 \"맨몸 ≥ 받침 평균\"은 결정 1로 폐기, 평균은 참고로만) · **극치 총 작용량 — 선언값 대 계산값(v0.4, 판정 8)**: 검사기가 극치 20행의 정의 · 반응재료 문장에서 즉시 몫(0.7 — (v0.5 · v0.7) ㅓ는 + 둘째 접촉 0.30) · 재료 작용량 × 누적 개수 · 번짐 0.5 × 대상 수 · 귀환 0.7 × 배율 · 벗김 0.4 · 씨앗 작동 1.2 × 배율을 **직접 계산**해 비고의 선언값 N과 다르면 FAIL, N ≤ M(ㅏ ㅗ ㅜ와 ㅓ 열 상한 따로) · 반응재료에 적힌 작용량이 계산에서 빠지면 FAIL · 벗김 ≤ 3 s(극치 ≤ 4.5 s) · 개수 축 ≤ 4 · 재료 수명 ≤ 일반 × 1.5 · 속박 ≤ 1.5 s · \"막을 수 없\" 낱말 0 · 패링 5행 반응재료 = 방어 판정(반응표 낱말 0) · **먹당 총가치 상위 10의 몸 편중 ≤ 4 · (v0.5) 틀 편중 ≤ 6 — 1인 기준과 ㅗ · ㅜ 2인 기준 둘 다 FAIL 기준** · (v0.5) **2인 기준 산식 = 대상별 항에만 ×2**(E-2 광역 가격 기준 행의 분할을 읽고 대상별 + 공유 = 동사 총량인지 대조) · (v0.5) 10위 · 11위 차 < 0.005면 참고 경고 · 같은 먹 묶음의 총가치/먹 1위 ÷ 2위 < 1.3(경고 기준) · (v0.5) 최종 배율 상한(극치 × 세 ≤ 1.5, 상극 밖 → 1.875가 문서 값과 같은지) · (v0.5) E-1 회복 우선순위 행 · 지배 후보(후보만, 우열 판정 아님) · (v0.6) **E-1 패링 먹 = 후불(성공 0 · 실패 14 = 무받침 먹 · 모자라면 0까지), CSV 패링 5행 비고 \"후불\" 5 · \"전액 환급\" 0** · **E-2 무먹 붓 휘두르기 0.3 = 몸별 즉시 피해 목 × 0.5(계산)** · **빌린 위력 낱말을 가진 CSV 행 = 엉 하나, E-2 행에 \"엉 반사뿐 · 꺾음 산물은 반응 산물\"** · **섯 총 작용량 — A-5 값 = E-3 값 = CSV 선언 = 정의 계산(2.15), 상한 = ㅓ 열 ㅅ 상한(2.1) — (v0.8) 검사기의 섯 값 스캔은 A-5 · E-4 · 반영 표까지(현행 절 전부; 옛 반영 표 v0.4 – v0.6은 이력이라 밖)** · **E7 ⑫ 존재(80 % · 1.725 = 1.5 × 1.15 · (v0.7) 급소창 ≥ 5회 관찰) · ⑪ 0.72 < 1 / 1.30 · ⑨ (v0.7) ㅓ 14 — 맨몸 그대로 · ㉡ (v0.7) 60 % / 80 %** · **G 2항 ㅓ+ㅁ 예외 · G 4항 \"끊거나 피할 수 있다\"(G 4항에 \"받아쳐\" 0) · B-4 · G 전조 다섯 거동 낱말** · C-2 먹 부족 문구(비용 기준 + 예외 둘) · ㅓ+ㅁ 5행 비고 \"둘째 접촉 없음\" · ㅓ 나머지 받침 행 비고에 둘째 접촉 정의((v0.7) (시전 ID, 대상 ID)마다 최대 1회 · 첫 접촉 0.3 s 뒤) · (v0.7) **모든 틀 1인 · 2인 두 표 — 몸 편중 ≤ 4 · 틀 편중 ≤ 6 · 동사(받침) 편중 ≤ 5(메인 판정 2)**(2인 = 모든 행의 대상별 항 ×2, ㅓ 열 분할도 E-2에서 읽어 합을 대조, 10 · 11위가 쌍둥이 몸의 같은 글자면 경계 경고 대신 참고) · **그로기 반복 1 / (1 − 0.6) = 2.5 ≤ 합 2.5 · 6 s 초기화** · **엉 반사 합 ≤ 1.0(E-2 행 · CSV 엉 행)** · **무먹 재사용 ≥ 1.1 s, 0.3 × 대상 1 × 배율 1 / 1.1 < 최고 글자 지속 딜(ㅏ ㅗ ㅜ · ㅓ 열 전부에서 max = ㅓ ㄴ 2 / 13 × 2.0)(v0.8) · E-2 행 \"대상 1 · 배율 1(고정)\" · \"내 공격 · 내 휘두르기\"** · (v0.8) **패링 재사용 ≥ 0.8 s(E-1 · CSV) · 그로기 행 \"상합 · 상극 검격 … 합쳐서\"(E-2 · C-2) · G 8항(ㅏ · ㅗ · ㅜ · 일반 받침 · ㅓ 무받침은 패링 · 1 · 2인 · ⑭) · B-3 \"소비는 방향이 없다\" · B-4 \"예비 동작 ≥ 0.8 s가 적 종 데이터 게이트\" · 머리 \"현행 값\" 줄 = 계산값 · 음성 시험 수 · 2인 표의 \"첫 대상\" 글자 ×1 · ⑨ 대안 참고 줄** · **B-4 · G 전조 = 방향 어휘 다섯(\"재가 일어\" · \"발이 박히고\" · \"판으로 밀려 오\") · ≥ 0.8 s · 0.3 s 가장 또렷 · 틀린 몸 방어 성립 · 탄은 패링 밖 · 사양(적 종 데이터 · 최소 굵기 · 6 m)** · C-3 붓 방울 · G 3항 ㅁ \"피해를 받을 때(패링 성공 · 회피 제외)\" + CSV ㅓ+ㅁ 5행 · D · G 무속성 적 · A-5 · CSV 둘째 접촉 \"(시전 ID, 대상 ID)마다 최대 1회\" · A-5 · CSV 섯 \"각각 앞 · 뒤를 함께\" · E7 ⑤ 화 ≤ 60 % · ⑨ 새 후보(ㅓ 14 · \"맨몸 15\" 0) · ⑪ 작도 제외 · ⑫ 급소창 ≥ 5회 관찰 · ⑬ 0.5 s 패링 불가 · ⑭ 맨몸 선택률 · ㉡ 60 % / 80 % · E4½ 패링 전이 · E-1 옛 문장(\"비싼 것은 먹과 그 0.2 s이지\") 0 · 음성 시험(`--selftest`: 섯 선언 2.5 · 패링 행 환급 문구 · 무먹 0.4 · 빌린 위력을 앙 행에 · ⑫ 행 삭제 · (v0.7) 맨몸 ㅏ 11 → 14(E-1 · CSV 같이) · 그로기 ×0.6 → ×0.7 · ㄱ 잔존을 공유에서 대상별로 되돌림(E-2 분할 행) · (v0.8) 무먹 \"대상 1 · 배율 1\" → \"대상 2 · 배율 1.15\"(둘째 대상에 닿거나 배율을 받으면 0.55 · 0.31/s로 최고 글자 지속 딜을 넘는다) · (v0.9) E-4 섯 \"정의 계산(2.1)\" → \"(2.15)\"(스캔이 E-4 문장을 잡는지) · E-2 ㅓ 열 \"최대 3 대상\" → \"최대 4 대상\"(ㅓ 부착 넷째 대상 작용) → 전부 FAIL이어야 한다). (v0.9) 검사기 줄 추가: ㅓ 부착 상한 3 문구(A-5 · E-2 · CSV) · 4인 참고 표(ㅓ ×3 멈춤) · 무먹 대 최고 글자 = 작도 포함 부등식(작도 ≤ 0.7 s · 등호 0.83 s) · 한 장(e2_sheet) G = 본문 G 글자 대조 · G 3항 \"0.8 s에 한 번 · 셋을 합쳐 · 무속성\" · ⑨ 대안(둘째 0.25 단독 · 0.25 + ㄱ 0.85) 참고 줄 · 섯 E-4 문장 정규식.\n"
+        }
+      ],
+      "sourceFailures": 1,
+      "name": "E-4 섯 2.15"
+    },
+    {
+      "cells": [],
+      "document": [
+        {
+          "old": "| ㅓ 열 일반 총 작용량 (v0.5 · v0.7) | **ㅓ 부착 = 접촉 2회**로 센다 — (v0.5 · v0.7) 몸 즉시 0.7 + **둘째 접촉 0.3**(= 1.0) · 동사 몫 1회: ㄱ 1.9(1.0 + 잔존 총량 0.9) · ㄴ 2.0(1.0 + 번짐 합 1.0) · ㅁ 1.2(씨앗 작동 1회, 즉시 몫 없음) · ㅅ 1.4(1.0 + 벗김 0.4) · ㅇ 1.0(몸 둘레를 돌 뿐 귀환 없음) · 없음 = 패링(방어 — 작용량 지표 밖). (v0.9 · v0.10, r10 결정 1) **ㅓ 부착은 시전 하나당 최대 3 대상(첫 · 둘째 접촉 모두) — 넷째 대상부터는 휘두르기의 기본 타격만**; 패링을 뺀 ㅓ 효과 전부(직접 접촉 · 씨앗 · 번짐)와 ㅏ+ㅁ 씨앗이 같은 상한(효과 받는 대상은 시전 ID마다 최대 3명 — 먼저 닿은(심긴) 셋)이다 — 4인 표에서 ㅓ 행과 ㅏ+ㅁ 행의 대상별 항은 ×3에서 멈춘다(검사기 참고 줄). 둘째 접촉이 첫 닿음보다 작은(0.3) 이유: 두 번째 닿음은 내가 이미 가까이 선 뒤의 휘두르기라 첫 닿음보다 싸다(밸런스 · Fable, r5 판정 5). 먹은 13(E-1) — 검사기 C5 틀 편중 ≤ 6이 FAIL 기준이 되면서 0.35만으로는 부착 7/10이라 후보를 썼다. E7 ⑨에서 ㅓ 선택률 ≤ 50 %를 본다 |\n",
+          "new": "| ㅓ 열 일반 총 작용량 (v0.5 · v0.7) | **ㅓ 부착 = 접촉 2회**로 센다 — (v0.5 · v0.7) 몸 즉시 0.7 + **둘째 접촉 0.3**(= 1.0) · 동사 몫 1회: ㄱ 1.9(1.0 + 잔존 총량 0.9) · ㄴ 2.0(1.0 + 번짐 합 1.0) · ㅁ 1.2(씨앗 작동 1회, 즉시 몫 없음) · ㅅ 1.4(1.0 + 벗김 0.4) · ㅇ 1.0(몸 둘레를 돌 뿐 귀환 없음) · 없음 = 패링(방어 — 작용량 지표 밖). (v0.9 · v0.10, r10 결정 1) **ㅓ 부착은 시전 하나당 최대 4 대상(첫 · 둘째 접촉 모두) — 넷째 대상부터는 휘두르기의 기본 타격만**; 패링을 뺀 ㅓ 효과 전부(직접 접촉 · 씨앗 · 번짐)와 ㅏ+ㅁ 씨앗이 같은 상한(효과 받는 대상은 시전 ID마다 최대 3명 — 먼저 닿은(심긴) 셋)이다 — 4인 표에서 ㅓ 행과 ㅏ+ㅁ 행의 대상별 항은 ×3에서 멈춘다(검사기 참고 줄). 둘째 접촉이 첫 닿음보다 작은(0.3) 이유: 두 번째 닿음은 내가 이미 가까이 선 뒤의 휘두르기라 첫 닿음보다 싸다(밸런스 · Fable, r5 판정 5). 먹은 13(E-1) — 검사기 C5 틀 편중 ≤ 6이 FAIL 기준이 되면서 0.35만으로는 부착 7/10이라 후보를 썼다. E7 ⑨에서 ㅓ 선택률 ≤ 50 %를 본다 |\n"
+        }
+      ],
+      "sourceFailures": 1,
+      "name": "ㅓ 부착 넷째 대상"
+    },
+    {
+      "cells": [
+        {
+          "row": 3,
+          "column": 9,
+          "value": "ㅁ 책(심는다) · 먹 12(TEST) · 일반 — 틀 × 동사 템플릿, 몸만 다름 · ㅏ+ㅁ 씨앗 — 시전당 효과 대상 상한 4(먼저 심긴 셋 — 넷째부터 씨앗이 서지 않음) · 전부 TEST"
+        }
+      ],
+      "document": [],
+      "sourceFailures": 1,
+      "name": "ㅏ+ㅁ 씨앗 넷째 대상(감)"
+    },
+    {
+      "cells": [
+        {
+          "row": 57,
+          "column": 9,
+          "value": "ㅁ 책(심는다) · 먹 26(TEST) · 극치 ㅓ+심는다 · 경직 면제 1회 · 먹 ×2 · 총 작용량 1.2(상한 1.8) = 작동 1.2 · 같은 동사 평균 ×1.5 상한(한 시전 총 작용량 기준) · 급소창 같은 글자 연속 금지 · ㅓ+ㅁ 예외 — 씨앗은 닿지 않고 한 번 작동(즉시 몫 · 둘째 접촉 없음, 작동 1.2) · 시전당 효과 대상 상한 4(먼저 심긴 셋 — 넷째부터 씨앗이 서지 않음) · 전부 TEST"
+        }
+      ],
+      "document": [],
+      "sourceFailures": 1,
+      "name": "ㅓ+ㅁ 씨앗 넷째 대상(멈)"
+    }
+  ],
+  "reactionCells": [
+    {
+      "acting": "목",
+      "existing": "목",
+      "text": "비화 — 덩굴이 굵어짐 1회 / **없음**"
+    },
+    {
+      "acting": "목",
+      "existing": "화",
+      "text": "먹임(목생화) — 불이 덩굴을 먹고 자람 / **자식 화**(불 꼴)"
+    },
+    {
+      "acting": "목",
+      "existing": "토",
+      "text": "꺾음(목극토) — 뿌리가 흙을 갈라 무너뜨림, 둑 · 벽 사라짐 / **감속**(발 빠짐 2 s, 접촉 윤곽)"
+    },
+    {
+      "acting": "목",
+      "existing": "금",
+      "text": "막힘(금극목) — 덩굴이 날에 잘림 / **없음**(금 ×1/2)"
+    },
+    {
+      "acting": "목",
+      "existing": "수",
+      "text": "옮겨붙음(수생목) — 물이 마르고 그 자리에 덩굴이 돋음 / **자식 목**(물 꼴)"
+    },
+    {
+      "acting": "화",
+      "existing": "목",
+      "text": "옮겨붙음(목생화) — 덩굴이 타서 들불 / **자식 화**(덩굴 꼴)"
+    },
+    {
+      "acting": "화",
+      "existing": "화",
+      "text": "비화 — 불이 굵어짐 1회 / **없음**"
+    },
+    {
+      "acting": "화",
+      "existing": "토",
+      "text": "먹임(화생토) — 흙이 구워져 굳음 / **자식 토**(흙 꼴)"
+    },
+    {
+      "acting": "화",
+      "existing": "금",
+      "text": "꺾음(화극금) — 쇠를 달굼, 날 사라짐 / **피해**(달군 쇠에 닿는 적 지속 2 s, 접촉 윤곽)"
+    },
+    {
+      "acting": "화",
+      "existing": "수",
+      "text": "막힘(수극화) — 불이 물에 꺼짐 / **없음**(수 ×1/2)"
+    },
+    {
+      "acting": "토",
+      "existing": "목",
+      "text": "막힘(목극토) — 흙이 덩굴에 걸림 / **없음**(목 ×1/2)"
+    },
+    {
+      "acting": "토",
+      "existing": "화",
+      "text": "옮겨붙음(화생토) — 불이 사그라지고 그 자리에 흙이 쌓임 / **자식 토**(불 꼴)"
+    },
+    {
+      "acting": "토",
+      "existing": "토",
+      "text": "비화 — 흙이 두꺼워짐 1회 / **없음**"
+    },
+    {
+      "acting": "토",
+      "existing": "금",
+      "text": "먹임(토생금) — 쇠가 흙을 먹고 굵어짐 / **자식 금**(날 꼴)"
+    },
+    {
+      "acting": "토",
+      "existing": "수",
+      "text": "꺾음(토극수) — 물을 머금어 진창, 물 사라짐 / **감속**(진창 3 s, 접촉 윤곽)"
+    },
+    {
+      "acting": "금",
+      "existing": "목",
+      "text": "꺾음(금극목) — 날이 덩굴을 벰, 붙든 적 풀림 / **피해**(튀는 가시 1회, 접촉 윤곽)"
+    },
+    {
+      "acting": "금",
+      "existing": "화",
+      "text": "막힘(화극금) — 날이 불에 무뎌짐 / **없음**(화 ×1/2)"
+    },
+    {
+      "acting": "금",
+      "existing": "토",
+      "text": "옮겨붙음(토생금) — 흙에서 쇠가 돋음 / **자식 금**(흙 꼴)"
+    },
+    {
+      "acting": "금",
+      "existing": "금",
+      "text": "비화 — 날이 겹쳐 날선 1회 / **없음**"
+    },
+    {
+      "acting": "금",
+      "existing": "수",
+      "text": "먹임(금생수) — 물이 쇠를 타고 늘어남 / **자식 수**(물 꼴)"
+    },
+    {
+      "acting": "수",
+      "existing": "목",
+      "text": "먹임(수생목) — 덩굴이 물을 먹고 자람 / **자식 목**(덩굴 꼴)"
+    },
+    {
+      "acting": "수",
+      "existing": "화",
+      "text": "꺾음(수극화) — 불을 끄며 김, 불 사라짐 / **피해**(김에 데임 1회, 접촉 윤곽 · 0.3 s 가림)"
+    },
+    {
+      "acting": "수",
+      "existing": "토",
+      "text": "막힘(토극수) — 물이 둑에 막힘 / **없음**(토 ×1/2)"
+    },
+    {
+      "acting": "수",
+      "existing": "금",
+      "text": "옮겨붙음(금생수) — 쇠가 녹아 물이 고임 / **자식 수**(날 꼴)"
+    },
+    {
+      "acting": "수",
+      "existing": "수",
+      "text": "비화 — 물이 깊어짐 1회 / **없음**"
+    }
+  ]
+}
