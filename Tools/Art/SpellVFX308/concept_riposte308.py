@@ -85,6 +85,54 @@ ONE single full frame. Third-person shoulder camera, 4 m from a kneeling stagger
 })
 
 
+# round 4 (Docs/Research/debate32/c3_codex_answer.md: set 87, b3 88, c3 85): no thin tails linking the masses,
+# irregular rings, impact marks only along the incoming direction (no star around the chest)
+REF4 = """--- THE ATTACHED PICTURES ---
+Picture 1 is a game screenshot: use it for the ink-wash tone. Do not copy the user interface.
+Picture 2 is the player character with the great calligraphy brush. Keep that character and that brush.
+Picture 3 is the THIRD version of this exact picture: keep its camera, layout, matte torn ink masses and readable consonants, and fix only what the list below says."""
+FIX4 = """--- FOURTH VERSION FIXES (version 3 failed these) ---
+- NO thin tails or threads between the ink masses: each small cluster of 2 masses has its own very short dry-brush tail, then fully EMPTY air until the next cluster. Nothing connects one cluster to the next or to the ring.
+- Rings are NOT neat circles: each is a single hand-brushed loop with uneven thickness, slightly oval and tilted differently, one end overlapping and one dry broken gap where the brush lifted.
+- Impact marks run ONLY along each projectile's incoming direction - short parallel dry-brush slashes continuing through and past the body. No star-shaped splatter, nothing radiating outward from the chest in all directions.
+- The enemy's head, torso, both arms and legs stay clearly readable; ink marks cross the body only as thin slashes."""
+
+PICTURES.update({
+    'rp_b4_first_person': ([base.SHOULDER, base.BRUSH, OUT / 'rp_b3_first_person.png'],
+                           PICTURES['rp_b3_first_person'][1].split('--- THIRD VERSION')[0] + FIX4, REF4),
+    'rp_c4_impact': ([base.SHOULDER, base.BRUSH, OUT / 'rp_c3_impact.png'],
+                     PICTURES['rp_c3_impact'][1].split('--- THIRD VERSION')[0] + FIX4, REF4),
+})
+
+
+# round 5 (Docs/Research/debate32/c4_codex_answer.md: b4 86 bug-like masses, c4 88 star at the chest)
+REF5 = REF4.replace('THIRD version', 'FOURTH version').replace('matte torn ink masses and ', '')
+FIX5 = """--- FIFTH VERSION FIXES (version 4 failed these) ---
+- Projectiles must NOT look like insects, beetles, ticks or bullets: no closed oval bodies, no spikes or legs sticking out to the sides. Each projectile is ONE asymmetric swept brush mark - a short calligraphy stroke flicked in the flight direction: blunt wet head, thinning dry tail with split bristle lines and gaps where the paper shows through. Every mark has a different shape and length.
+- Keep the version-4 spacing: pairs of marks with fully empty air between pairs, no connecting threads.
+- Each ring is ONE single brush stroke drawn round in one motion: starts thick and wet, thins out, the end overshoots past the start, slightly oval and tilted differently per ring; no dashed or broken-up outlines, no neat circles.
+- At the enemy, each arriving mark continues as 1-2 short parallel dry slashes along its own flight direction only. At the chest: one tiny dark-crimson fleck, no lines radiating from it."""
+
+PICTURES.update({
+    'rp_b5_first_person': ([base.SHOULDER, base.BRUSH, OUT / 'rp_b4_first_person.png'],
+                           PICTURES['rp_b3_first_person'][1].split('--- THIRD VERSION')[0] + FIX5, REF5),
+    'rp_c5_impact': ([base.SHOULDER, base.BRUSH, OUT / 'rp_c4_impact.png'],
+                     PICTURES['rp_c3_impact'][1].split('--- THIRD VERSION')[0] + FIX5, REF5),
+})
+
+
+# round 6 (Docs/Research/debate32/c5_codex_answer.md: b5 89 kept, c5 82 crossing burst at the chest): impact only
+REF6 = REF5.replace('FOURTH version', 'FIFTH version')
+FIX6 = """--- SIXTH VERSION FIXES (version 5 failed these) ---
+- Keep the flying brush marks exactly as in picture 3 (swept, asymmetric, split dry tails, pairs with empty air between).
+- At the enemy's chest there is NOTHING but one small dark-crimson brush dab, about the size of a palm, elongated along the flight direction of the marks arriving from the upper right. No black spikes, no crossing strokes, no lines radiating from the chest, no new strokes sprouting from the body.
+- Marks that already passed the body continue as one or two thin dry flecks on the ground BEHIND him, along their own flight direction.
+- Rings: each one a single irregular brush loop with a visible thick wet start, thinning, and a dry overshooting end - no concentric double outlines."""
+
+PICTURES['rp_c6_impact'] = ([base.SHOULDER, base.BRUSH, OUT / 'rp_c5_impact.png'],
+                            PICTURES['rp_c3_impact'][1].split('--- THIRD VERSION')[0] + FIX6, REF6)
+
+
 def prompt(pid):
     refs, body, *ref = PICTURES[pid]
     return '\n\n'.join([base.HEAD, ref[0] if ref else REF, STYLE, body, base.BAN, base.TAIL % (OUT / f'{pid}.png').as_posix()])
