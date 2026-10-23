@@ -174,6 +174,64 @@ ONE single full frame. First-person view: the caster's right hand and the great 
 })
 
 
+# one stroke, round 3 (user 10-24: "낙관은 없애고 진행"): no seal; matte drops; the stroke must read as drawn by the swing
+REF_STROKE3 = REF_FREE + """
+Picture 3 is the SECOND version of this move (three moments): keep its camera, its timing, the stroke's shape and scale, and change only what the text below asks."""
+STROKE3 = FREE + """
+--- THE MOVE: ONE STROKE (일필휘지) ---
+The caster sweeps the great brush once, from upper left to lower right. The swing leaves ONE giant calligraphy stroke hanging in the air on invisible paper, passing straight THROUGH the kneeling enemy: a fat wet black head where the swing began, bristle grooves running along its length, a dry split tail full of paper-white gaps where the swing ended. The stroke is the only effect - no seal, no stamp, no symbols, no extra marks.
+MATERIAL: the stroke and every drop are MATTE ink soaked into paper. Drops are small irregular blots and short dry flecks, never round glossy beads; no specular highlights, no sheen, no blue or metallic tint anywhere in the ink.
+THE WORLD: for the instant of the cut, the plaza, sky and buildings drain toward pale warm paper tones with low contrast, so the black stroke and the enemy are the strongest values on screen."""
+PICTURES.update({
+    'rp_stroke3_board': ([base.SHOULDER, base.BRUSH, OUT / 'rp_stroke2_board.png'], STROKE3 + """
+--- THE PICTURE: readability board, three moments ---
+LAYOUT: ONE wide strip of THREE equal panels, the SAME shoulder camera and the same palace plaza, the kneeling enemy 6 m ahead, thin paper-coloured gaps between panels.
+Panel 1 (0.00-0.15 s, the swing): the caster mid-swing; the brush tip is laying down the stroke - the wet head already hangs at the upper left and the stroke's leading edge is racing toward the enemy, its body visibly growing out of the brush's path.
+Panel 2 (0.2 s, the cut): the full stroke hangs across the frame and through the enemy's body; along the stroke line the enemy is soaked dark; the world is at its palest.
+Panel 3 (0.6 s, the aftermath): the stroke is drying - cracking into dry fibres and flaking away from its head like old ink on paper, only a faint grey ghost of it left; the enemy collapses forward, a dark ink line across the body where the stroke passed; colour returns to the plaza.""", REF_STROKE3),
+    'rp_stroke3_first_person': ([base.SHOULDER, base.BRUSH, OUT / 'rp_stroke2_board.png'], STROKE3 + """
+--- THE PICTURE: first-person, the cut (0.2 s) ---
+ONE single full frame. First-person view: the caster's right hand and the great brush at the bottom-RIGHT corner, the arm having just finished the sweep, bristles splayed and dripping. The giant stroke starts at the upper LEFT of the frame (its fat wet head) and runs diagonally down through the kneeling enemy 6 m ahead in the centre, its dry split tail ending in the air a short way past him on the lower right - it does NOT touch the hand or the brush. The enemy's head, shoulders and both arms are clearly readable on both sides of the stroke. The world around is drained toward pale paper tones.""", REF_STROKE3),
+})
+
+
+# one stroke, round 4 (Docs/Research/debate32/s3_codex_answer.md: board 84, first person 70 - stray brush head):
+# one brush only, a real dry break-up in the last moment, a narrower stroke through the body, the colour drain made visible
+REF_STROKE4 = REF_STROKE3.replace('SECOND version', 'THIRD version')
+FIX_S4 = """
+--- FOURTH VERSION FIXES ---
+- Exactly ONE brush in the picture: the one in the caster's hand. No second brush head, no floating bristles anywhere in the stroke.
+- Where the stroke crosses the enemy's body it narrows and concentrates (like the brush pressing down hard), then thins quickly into a dry broken tail past him. His head, torso and knees stay readable.
+- No round drops at all - only small irregular blots and dry flecks."""
+PICTURES.update({
+    'rp_stroke4_board': ([base.SHOULDER, base.BRUSH, OUT / 'rp_stroke3_board.png'], STROKE3 + """
+--- THE PICTURE: readability board, three moments ---
+LAYOUT: ONE wide strip of THREE equal panels, the SAME shoulder camera and the same palace plaza, the kneeling enemy 6 m ahead, thin paper-coloured gaps between panels.
+Panel 1 (0.00-0.15 s, the swing): the plaza still in its NORMAL colours (red pillars, warm stone); the caster mid-swing, the brush tip laying down the stroke - wet head at the upper left, its leading edge racing toward the enemy, visibly growing out of the brush's path.
+Panel 2 (0.2 s, the cut): the colours have DRAINED - the whole plaza is pale low-contrast paper tone, red pillars faded to grey-beige; the full stroke hangs through the enemy's body; along the stroke line the enemy is soaked dark.
+Panel 3 (0.6 s, the drying): colour is coming back; the stroke is still there in its full shape but DRY - pale grey-black, its body split by long bristle gaps and irregular cracks, its thin parts breaking into short dry fragments falling away, like old ink cracking off paper; the enemy collapses forward with a dark ink line across the body.""" + FIX_S4, REF_STROKE4),
+    'rp_stroke4_first_person': ([base.SHOULDER, base.BRUSH, OUT / 'rp_stroke3_board.png'], STROKE3 + """
+--- THE PICTURE: first-person, the cut (0.2 s) ---
+ONE single full frame. First-person view: the caster's right hand holds the great brush at the bottom-right; the arm has just swept from upper left to lower right, the brush tip now low at the right, bristles splayed, still trailing the last thin dry wisp of the stroke from its tip. The giant stroke: its fat wet head at the upper LEFT of the frame, running diagonally down through the kneeling enemy 6 m ahead in the centre, thinning into a dry broken tail that fades out in the air before reaching the brush. The enemy's head, shoulders and both arms are clearly readable on both sides of the stroke. The world around is drained toward pale paper tones.""" + FIX_S4, REF_STROKE4),
+})
+
+
+# one stroke, round 5 (Docs/Research/debate32/s4_codex_answer.md: board 87, first person 86): local fixes only
+REF_STROKE5 = REF_STROKE3.replace('SECOND version of this move (three moments)', 'FOURTH version of this exact picture').replace('keep its camera, its timing, the stroke\'s shape and scale', 'keep EVERYTHING - camera, layout, colours, the caster, the enemy, the stroke\'s shape')
+FIX_S5 = """
+--- FIFTH VERSION: LOCAL FIXES ONLY ---
+- The light lines inside the stroke are GAPS between bristle marks where the background shows through - never light lying on top of the ink. No golden, tan or shiny streaks on the ink; the ink is matte black with only darker and lighter (thinner) ink."""
+PICTURES.update({
+    'rp_stroke5_board': ([base.SHOULDER, base.BRUSH, OUT / 'rp_stroke4_board.png'], STROKE3 + FIX_S4 + FIX_S5 + """
+- Panel 3 ONLY: the stroke keeps its full shape from panel 2 but is DRY and pale grey-black; irregular cracks open inside its body like dried mud or old lacquer, and its edges break into short FLAT dry flakes that drop straight down. No thin threads, no web of strings, no new splashes flying in other directions.
+Keep the three panels, their timing and the colour change exactly as in picture 3 (normal colours, then drained, then returning).""", REF_STROKE5),
+    'rp_stroke5_first_person': ([base.SHOULDER, base.BRUSH, OUT / 'rp_stroke4_first_person.png'], STROKE3 + FIX_S4 + FIX_S5 + """
+- Where the stroke crosses the enemy's face and chest, the band is NARROWER (about the width of his forearm), so his helmet, face and chest stay readable.
+- The big wet head at the upper left is one continuous part of the stroke, not a separate shape that looks like bristles or a brush.
+Keep the single frame, the first-person hand and brush at the bottom-right and everything else exactly as in picture 3.""", REF_STROKE5),
+})
+
+
 def prompt(pid):
     refs, body, *ref = PICTURES[pid]
     return '\n\n'.join([base.HEAD, ref[0] if ref else REF, STYLE, body, base.BAN, base.TAIL % (OUT / f'{pid}.png').as_posix()])
