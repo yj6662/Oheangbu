@@ -133,6 +133,47 @@ PICTURES['rp_c6_impact'] = ([base.SHOULDER, base.BRUSH, OUT / 'rp_c5_impact.png'
                             PICTURES['rp_c3_impact'][1].split('--- THIRD VERSION')[0] + FIX6, REF6)
 
 
+# free directions (user 10-24: "자음이 보이는 형태가 생각보다 별로야. 아예 자유주제로 너가 한번 만들어볼래?") - the
+# glyph-ring structure is dropped; only the finisher's job (one tap, a staggered enemy, ink, no glow) is kept
+REF_FREE = """--- THE ATTACHED PICTURES ---
+Picture 1 is a game screenshot: use it for the camera (third person, behind and slightly above the caster's right shoulder), the palace plaza and the ink-wash tone. Do not copy the user interface.
+Picture 2 is the player character with the great calligraphy brush. Keep that character and that brush."""
+FREE = """--- WHAT THIS MOVE IS ---
+A finisher in an ink-wash action game: the enemy 6 m ahead is staggered, kneeling with its guard broken. The caster answers with ONE decisive move of the great brush. It must read instantly as "the end of this fight", powered only by INK - wet ink, dry brush, paper. Matte, no light of any kind. No letters, no magic circles, no glyphs. The enemy (gaunt soldier, matte armour) stays clearly readable."""
+PICTURES.update({
+    'rp_free_stroke': ([base.SHOULDER, base.BRUSH], FREE + """
+--- DIRECTION: ONE STROKE (일필휘지) ---
+ONE single full frame, the instant after the move. The caster has swept the great brush in one huge diagonal from upper left to lower right; that single stroke now hangs in the air across the whole frame like a giant calligraphy stroke on invisible paper, 12 m long, passing straight THROUGH the kneeling enemy: a fat wet black head at the upper left, bristle grooves running along its length, splitting into a dry broken tail full of paper-white gaps at the lower right. Where the stroke crosses the enemy, his body is cleanly cut by it and ink soaks into him along the stroke line. The rest of the world is drained toward pale paper tones for this instant, so the stroke is the darkest thing on screen. A few heavy ink drops fall from the stroke's underside.""", REF_FREE),
+    'rp_free_seal': ([base.SHOULDER, base.BRUSH], FREE + """
+--- DIRECTION: THE SEAL (낙관) ---
+ONE single full frame. Finishing a painting by stamping the artist's seal: the caster has swung the brush down like a gavel, and a huge square seal-stamp imprint made of deep cinnabar-red and black ink, 3 m wide, has slammed onto the ground and the enemy from above, flattening the dust. The seal is a carved square block print with uneven pressure - some areas dense pigment, some patchy where the stone did not touch - and its border is cracked and chipped like an old stone seal. NO characters inside the seal: its interior is an abstract carved pattern of cut lines and blank channels. The enemy is crushed to one knee inside the imprint, still fully readable. Ink spreads outward from the seal's edges into the cracks of the ground like ink into paper fibres. The cinnabar is pigment, not light.""", REF_FREE),
+    'rp_free_wave': ([base.SHOULDER, base.BRUSH], FREE + """
+--- DIRECTION: THE PAINTED WAVE (먹 파도) ---
+ONE single full frame. The caster has flicked the brush upward and a towering wave painted in the style of a Korean folk painting of waves (minhwa) rises from the ground behind the enemy and curls over him, 7 m tall: layered ink-wash bands, the crest drawn with crisp dry-brush claw-like curls, the inside graded from deep black to pale grey wash, paper texture visible through the thin layers. The wave is about to crash; its first black fingers already touch the enemy's shoulders. The enemy is in the lower centre, kneeling, still clearly readable in front of the dark wave. No water reflections, no foam highlights - it is painted ink, not real water.""", REF_FREE),
+})
+
+
+# one stroke, round 2 (user 10-24: "앞잡은 ① 한 획(일필휘지) 방향으로 가자. 끝에 먹색 낙관을 작게 찍는 것까지 넣어서 2차 시안을
+# 만들어 줘."): matte drops, the stroke's life in three moments, a small ink-black seal at the stroke's end
+REF_STROKE = REF_FREE + """
+Picture 3 is the FIRST version of this exact move: keep its idea (one giant brush stroke hanging in the air and passing through the enemy, wet head, bristle grooves, dry split tail), its colours and its scale, and change only what the text below asks."""
+STROKE = FREE.replace('No letters, no magic circles, no glyphs.', 'No letters, no magic circles, no glyphs (the only exception is the small seal described below, whose face is an abstract carved pattern, not a character).') + """
+--- THE MOVE: ONE STROKE, SIGNED (일필휘지 + 낙관) ---
+The caster sweeps the great brush once, from upper left to lower right. The swing leaves ONE giant calligraphy stroke hanging in the air on invisible paper, passing straight THROUGH the kneeling enemy: a fat wet black head, bristle grooves along its length, a dry split tail full of paper-white gaps. Like a painter signing a finished work, the move ends with a SMALL seal stamp pressed at the very END of the stroke's tail: a square ink-BLACK seal impression about 40 cm wide, uneven pressure, patchy where the stone did not touch, chipped border, its face an abstract carved pattern of cut lines (no readable character). The seal is black ink like the stroke - not red, not glowing.
+MATERIAL: every drop and splatter is MATTE ink, like ink soaked into paper - no round glossy beads, no specular highlights, no shine anywhere."""
+PICTURES.update({
+    'rp_stroke2_board': ([base.SHOULDER, base.BRUSH, OUT / 'rp_free_stroke.png'], STROKE + """
+--- THE PICTURE: readability board, three moments ---
+LAYOUT: ONE wide strip of THREE equal panels, the SAME shoulder camera and the same palace plaza, the kneeling enemy 6 m ahead, thin paper-coloured gaps between panels.
+Panel 1 (0.00-0.15 s, the swing): the caster mid-swing, the brush tip laying down the stroke's wet head at the upper left; the stroke is half drawn, its leading edge racing toward the enemy; the plaza around starts draining toward pale paper tones.
+Panel 2 (0.2 s, the cut): the full stroke hangs across the frame and through the enemy's body; along the stroke line the enemy is soaked dark; the world is at its palest so the stroke is the darkest thing on screen; a few heavy matte drops fall from the stroke's underside.
+Panel 3 (0.6 s, the seal): the caster's brush is raised and turned like pressing a seal; the small black seal is stamped at the stroke's tail end; the stroke above is already drying - cracking into dry fibres and flaking away from its head - while the enemy collapses forward. Colour is returning to the plaza.""", REF_STROKE),
+    'rp_stroke2_first_person': ([base.SHOULDER, base.BRUSH, OUT / 'rp_free_stroke.png'], STROKE + """
+--- THE PICTURE: first-person, the cut (0.2 s) ---
+ONE single full frame. First-person view: the caster's right hand and the great brush at the bottom-right, just finished the sweep, bristles splayed and dripping. The giant stroke runs diagonally from the upper left of the frame, through the kneeling enemy 6 m ahead in the centre, to the lower right, where the small black seal is being pressed at its tail end. The stroke is thick but the enemy's head, shoulders and arms are still clearly readable on both sides of it. The world around is drained toward pale paper tones.""", REF_STROKE),
+})
+
+
 def prompt(pid):
     refs, body, *ref = PICTURES[pid]
     return '\n\n'.join([base.HEAD, ref[0] if ref else REF, STYLE, body, base.BAN, base.TAIL % (OUT / f'{pid}.png').as_posix()])
