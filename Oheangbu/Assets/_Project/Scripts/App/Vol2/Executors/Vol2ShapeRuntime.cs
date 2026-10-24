@@ -65,6 +65,16 @@ namespace Oheangbu.App
             go.AddComponent<Vol2ShapeRuntimeTicker>().Bind(runtime);
             runtime.Presenter = Vol2DebugPresenter.Attach(runtime.Coordinator, go.transform);
             runtime.Vfx = Vol2VfxPresenter.Attach(runtime.Coordinator, go.transform, null, runtime.Presenter);      // slice 9a
+            // NB20: a successful parry (the combat wiring's verdict, never decided here) lets the ㅓ look splash at the impact point, on the scope clock
+            if (runtime.Vfx != null && wiring != null)
+            {
+                Action<ParryOutcome, Oheangbu.Core.Domain.Element, Vector3> onParry = (outcome, element, point) =>
+                {
+                    if (outcome == ParryOutcome.Success && runtime.Vfx != null && runtime.Vfx.Model != null) runtime.Vfx.Model.Parried(point, services.Clock.NowUs);
+                };
+                wiring.ParryResolved += onParry;
+                runtime._unbind = () => wiring.ParryResolved -= onParry;
+            }
             // slice 8: reactions on, the field gates bound, the world's materials and the dash block. All of this exists only in a Vol2 scope: CreateForScope is never reached in Legacy308.
             runtime.Coordinator.Reactions.Enabled = true;
             runtime.Field = new Vol2FieldGateAdapter(caster, services.Clock, runtime.Coordinator.Reactions.Tuning) { Targets = () => runtime.Coordinator.Targets };
@@ -75,7 +85,8 @@ namespace Oheangbu.App
             return runtime;
         }
 
-        public void Dispose() { Field?.Clear(); Coordinator.Dispose(); }
+        Action _unbind;
+        public void Dispose() { _unbind?.Invoke(); _unbind = null; Field?.Clear(); Coordinator.Dispose(); }
     }
 
     /// <summary>Ticks the coordinator once per frame with the scaled delta, and lets go of the event subscriptions when the scene object dies.</summary>

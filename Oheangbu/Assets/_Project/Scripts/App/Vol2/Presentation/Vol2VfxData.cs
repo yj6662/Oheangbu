@@ -19,8 +19,9 @@ namespace Oheangbu.App
     /// <summary>Plan C "자연 종료": what a body does when it ends by expiry - wood fibres loosen forward, fire turns to ash that rises, earth sinks, metal snaps and parts sideways, water runs down.</summary>
     public enum Vol2EndBehaviour { UnravelForward = 0, AshRise = 1, SinkLift = 2, SnapSideways = 3, RunDown = 4 }
 
-    /// <summary>Which drawing routine a template uses (slice 9a: the six ㅏ templates; A / F / R and the peaks are later slices).</summary>
-    public enum Vol2Recipe { None = 0, PathOneHit = 1, PathLeave = 2, PathSpread = 3, PathSeed = 4, PathSplit = 5, PathReturn = 6 }
+    /// <summary>Which drawing routine a template uses (slice 9a: the six ㅏ templates; NB20 (D308-150 V6): the 한 번 of ㅓ ㅗ ㅜ, played from the authored ink atlas; the rest of A / F / R
+    /// and the peaks are later slices).</summary>
+    public enum Vol2Recipe { None = 0, PathOneHit = 1, PathLeave = 2, PathSpread = 3, PathSeed = 4, PathSplit = 5, PathReturn = 6, AttachOnce = 7, FanOnce = 8, RingOnce = 9 }
 
     public static class Vol2EndCodes
     {
@@ -84,20 +85,45 @@ namespace Oheangbu.App
             return l;
         }
 
+        /// <summary>The recipe of a template: the six ㅏ verbs (slice 9a) and the 한 번 of ㅓ ㅗ ㅜ (NB20); the other 15 are later slices.</summary>
+        public static Vol2Recipe RecipeOf(Vol2TemplateId id)
+        {
+            if (id.Frame == Frame.Path) return (Vol2Recipe)((int)id.Verb + 1);
+            if (id.Verb != Verb.Once) return Vol2Recipe.None;
+            switch (id.Frame)
+            {
+                case Frame.Attachment: return Vol2Recipe.AttachOnce;
+                case Frame.Fan: return Vol2Recipe.FanOnce;
+                case Frame.Ring: return Vol2Recipe.RingOnce;
+                default: return Vol2Recipe.None;
+            }
+        }
+
         public static Vol2VfxTemplate NewTemplate(Vol2TemplateId id)
         {
             var t = ScriptableObject.CreateInstance<Vol2VfxTemplate>();
             t.name = "Template_" + id.Name;
             t.id = id.Name; t.frame = id.Frame; t.verb = id.Verb;
-            t.recipe = id.Frame == Frame.Path ? (Vol2Recipe)((int)id.Verb + 1) : Vol2Recipe.None;
+            t.recipe = RecipeOf(id);
             t.filled = t.recipe != Vol2Recipe.None;
             string[] verbs = { "once", "leave", "spread", "seed", "split", "return" };
             t.summary = (t.filled ? "" : "(later slice) ") + id.Name + " " + id.Frame + " x " + verbs[(int)id.Verb];
             if (!t.filled) return t;
+            if (id.Frame != Frame.Path)
+            {
+                // NB20: the authored ink (Blender + After Effects atlas), plan B rows A0 / F0 / R0
+                switch (id.Frame)
+                {
+                    case Frame.Attachment: t.summary = "A0 (NB20): a short dry ink pulse along the brush shaft / sleeve for the parry window (0.5 s); a splash + needle star only on a successful parry"; break;
+                    case Frame.Fan: t.summary = "F0 (NB20): an instant bundle on the ground - both radial edges, the far arc, two inner strokes, one by one in 0.1 s; a contact stroke on each body; dry <= 0.18 s after"; break;
+                    default: t.summary = "R0 (NB20): instant strokes on the hollow band (r 2 m, 0.6 m wide, centre empty) + a standing pair at +/-20 deg; a contact stroke on each body crossing it; dry with the band"; break;
+                }
+                return t;
+            }
             switch (id.Verb)
             {
-                case Verb.Once:   // P0: one narrow flick, contact accent, dries 0.12 - 0.18 s after the contact
-                    t.summary = "P0: ground stroke to the first body, a vertical landing stroke and 3 - 5 flecks (spatter), dry 0.15 s after the contact"; break;
+                case Verb.Once:   // P0 (NB20): a travelling ink head + a short dry tail, a real-size contact stroke + 2 support strokes + 3 - 5 flecks, dries 0.12 - 0.27 s after the contact
+                    t.summary = "P0 (NB20): ignition at the brush tip, a hollow pressed ink head (dry rim) flying 36 m/s with a 1.5 m dry tail, at the first body a contact stroke + 2 support strokes (+33 / +67 ms) + flecks, dry 0.12 s after the contact over 0.15 s"; break;
                 case Verb.Leave:  // P1: the path lands, branches rise from the landing point
                     t.summary = "P1: ground stroke, then a trunk that forks upward at the landing (10 s residue); height by distance (G)"; t.height = 0.9f; break;
                 case Verb.Spread: // P2: flat bundle at the landing, flat strokes to each approved neighbour (3 s marks)

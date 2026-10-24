@@ -22,6 +22,7 @@ namespace Oheangbu.EditorTools.Vol2
         public const string MaterialPath = Root + "/M_Vol2Ink.mat";
         public const string BristleTexture = "Assets/_Project/Art/SpellVFX308/RiposteStroke/RipStroke308_Bristle.png";
         public const string CataloguePath = ResourcesFolder + "/Vol2VfxCatalogue.asset";
+        public const string SheetTexture = Root + "/NB20/NB20_Sheet.png", SheetTimeTexture = Root + "/NB20/NB20_SheetTime.png";
 
         public static string Run(string command)
         {
@@ -70,12 +71,44 @@ namespace Oheangbu.EditorTools.Vol2
             // the riposte one-stroke dry-brush bristle mask (R = ink coverage, tiles along the stroke): the stroke texture of every vol.2 stroke
             var bristle = AssetDatabase.LoadAssetAtPath<Texture2D>(BristleTexture);
             if (bristle != null) mat.SetTexture("_Bristle", bristle); else log.Add("WARNING: no bristle texture at " + BristleTexture);
+            // NB20 (D308-150 V6): the authored ink atlas pair (Blender + After Effects, packed by Tools/Art/SpellVFX308/nb20/nb20_pack.py): data, not colour - linear, mips that keep the
+            // cutout coverage, BC7 (high quality) to keep the two 4096 maps at ~21 MB each
+            foreach (var (prop, path) in new[] { ("_Sheet", SheetTexture), ("_SheetTime", SheetTimeTexture) })
+            {
+                var ti = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (ti == null) { log.Add("WARNING: no NB20 atlas at " + path + " (run nb20_pack.py, then refresh)"); continue; }
+                bool dirty = ti.sRGBTexture || !ti.mipmapEnabled || ti.alphaIsTransparency || ti.textureCompression != TextureImporterCompression.CompressedHQ || ti.maxTextureSize < 4096
+                    || (prop == "_Sheet" && (!ti.mipMapsPreserveCoverage || Mathf.Abs(ti.alphaTestReferenceValue - 0.5f) > 0.01f)) || ti.wrapMode != TextureWrapMode.Clamp || ti.npotScale != TextureImporterNPOTScale.None;
+                if (dirty)
+                {
+                    ti.textureType = TextureImporterType.Default; ti.sRGBTexture = false; ti.alphaIsTransparency = false; ti.mipmapEnabled = true; ti.maxTextureSize = 4096;
+                    ti.textureCompression = TextureImporterCompression.CompressedHQ; ti.wrapMode = TextureWrapMode.Clamp; ti.filterMode = FilterMode.Trilinear; ti.npotScale = TextureImporterNPOTScale.None;
+                    ti.alphaSource = TextureImporterAlphaSource.FromInput;
+                    if (prop == "_Sheet") { ti.mipMapsPreserveCoverage = true; ti.alphaTestReferenceValue = 0.5f; }
+                    ti.SaveAndReimport(); log.Add("imported " + path + " (linear, mips" + (prop == "_Sheet" ? " preserving coverage" : "") + ", BC7)");
+                }
+                var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                if (tex != null && mat.GetTexture(prop) != tex) { mat.SetTexture(prop, tex); log.Add("material " + prop + " = " + path); }
+            }
+            // NB20 look numbers (pixels on screen): the paper rim of the flying head / parry, the broken dry pigment edge of every element
+            if (mat.HasProperty("_RimPx")) mat.SetFloat("_RimPx", 3f);
+            if (mat.HasProperty("_EdgePx")) mat.SetFloat("_EdgePx", 1.75f);
             mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
             EditorUtility.SetDirty(mat);
 
             var templates = new List<Vol2VfxTemplate>();
             foreach (var id in Vol2TemplateId.All())
-                templates.Add(Make(TemplateFolder + "/Template_" + id.Name + ".asset", Vol2VfxDefaults.NewTemplate(id), reset, log));
+            {
+                var t = Make(TemplateFolder + "/Template_" + id.Name + ".asset", Vol2VfxDefaults.NewTemplate(id), reset, log);
+                // NB20: a template the code now fills (A0 / F0 / R0) but whose asset was written empty by slice 9a takes the new defaults; P0 keeps its numbers, only its summary moves
+                var code = Vol2VfxDefaults.RecipeOf(id);
+                if (t.recipe != code)
+                {
+                    var fresh = Vol2VfxDefaults.NewTemplate(id); EditorUtility.CopySerialized(fresh, t); UnityEngine.Object.DestroyImmediate(fresh);
+                    EditorUtility.SetDirty(t); log.Add("filled " + id.Name + " -> " + code);
+                }
+                templates.Add(t);
+            }
             var bodies = new List<Vol2BodyLook>();
             foreach (Body b in Enum.GetValues(typeof(Body)))
                 bodies.Add(Make(BodyFolder + "/BodyLook_" + b + ".asset", Vol2VfxDefaults.NewLook(b), reset, log));

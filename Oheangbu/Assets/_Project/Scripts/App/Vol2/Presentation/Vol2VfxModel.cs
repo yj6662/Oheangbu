@@ -153,6 +153,8 @@ namespace Oheangbu.App
             var p = inst.PartOf(m);
             if (p != null) inst.EndPart(p, m.EndedUs, Vol2EndCodes.From(why));
         }
+        /// <summary>NB20: a successful parry landed while this cast's window was open (the combat wiring's ParryResolved, relayed by the scope on the scope clock).</summary>
+        public virtual bool OnParried(Vol2VfxInstance inst, Vector3 point, long nowUs) => false;
         public virtual void Update(Vol2VfxInstance inst, long nowUs) { }
         /// <summary>The path head (metres from the cast point) the shader reveals the line up to.</summary>
         public virtual float Head(Vol2VfxInstance inst, long nowUs) => inst.HeadAlong(nowUs);
@@ -177,18 +179,25 @@ namespace Oheangbu.App
             if (_by.ContainsKey(r.Kind)) throw new InvalidOperationException("recipe " + r.Kind + " already registered");
             _by.Add(r.Kind, r); return this;
         }
+        /// <summary>Puts <paramref name="r"/> in place of the recipe of its kind (a capture or a fixture comparing two looks of one template; the game never calls it).</summary>
+        public Vol2VfxRecipeRegistry Set(Vol2VfxRecipe r) { _by[r.Kind] = r; return this; }
         public bool TryGet(Vol2Recipe kind, out Vol2VfxRecipe r) => _by.TryGetValue(kind, out r);
         public int Count => _by.Count;
 
         public static Vol2VfxRecipeRegistry CreateDefault()
         {
             var reg = new Vol2VfxRecipeRegistry();
+            // P0: the slice 9a recipe stays the registered one (coordinator 2026-10-25: the NB20 P0 judged 59 - 63 is not what the lab plays); Vol2Nb20PathRecipe is
+            // kept and swapped in only by a capture / fixture (Set) for comparison
             reg.Add(new Vol2PathOneHitRecipe());        // P0
             reg.Add(new Vol2PathLeaveRecipe());         // P1
             reg.Add(new Vol2PathSpreadRecipe());        // P2
             reg.Add(new Vol2PathSeedRecipe());          // P3
             reg.Add(new Vol2PathSplitRecipe());         // P4
             reg.Add(new Vol2PathReturnRecipe());        // P5
+            reg.Add(new Vol2Nb20AttachRecipe());        // A0 (NB20)
+            reg.Add(new Vol2Nb20FanRecipe());           // F0 (NB20)
+            reg.Add(new Vol2Nb20RingRecipe());          // R0 (NB20)
             return reg;
         }
     }
@@ -213,6 +222,23 @@ namespace Oheangbu.App
         /// <summary>Plan H "기술 슬롯": my sustained instances at most 3. NOT ENFORCED in slice 9a (no shrink / hysteresis yet): the count is recorded, the overflow is counted here.</summary>
         public int LastingCap = 3;
         public int CapExceeded { get; private set; }
+        /// <summary>NB20: where the player's brush tip and grip are now (the view binds it to the great brush of the scene; null in a fixture: the recipes fall back to the caster's hand height).</summary>
+        public Func<Vector3?> BrushTip, BrushGrip;
+        public int ParriesDrawn { get; private set; }
+
+        /// <summary>NB20: a successful parry at <paramref name="point"/> - every live ㅓ instance whose parry window is open at <paramref name="nowUs"/> draws its splash. A plain call
+        /// (the scope relays the combat wiring's ParryResolved; the capture calls it for a lab-simulated parry); never decides anything of the parry.</summary>
+        public void Parried(Vector3 point, long nowUs)
+        {
+            foreach (var inst in _list)
+            {
+                if (inst.Retired || inst.TemplateId.Frame != Frame.Attachment) continue;
+                var host = inst.Log.Emitter as Vol2AttachmentHost;
+                if (host != null && !host.Open(nowUs)) continue;
+                var i = inst;
+                Safe(() => { if (i.Recipe.OnParried(i, point, nowUs)) ParriesDrawn++; });
+            }
+        }
 
         public Vol2VfxModel(Vol2CastCoordinator coordinator, Vol2VfxCatalogue catalogue, Vol2VfxRecipeRegistry recipes = null)
         {

@@ -63,9 +63,9 @@ namespace Oheangbu.EditorTools.Vol2
         {
             public Rig Rig; public Vol2VfxModel Model; public Vol2VfxCatalogue Cat;
             public readonly List<Vol2StrokeAttr> Strokes = new List<Vol2StrokeAttr>();
-            public Setup(Vol2Rulebook book, Vol2VfxCatalogue cat)
+            public Setup(Vol2Rulebook book, Vol2VfxCatalogue cat, Vol2VfxRecipeRegistry recipes = null)
             {
-                Cat = cat; Rig = Rig.Create(book); Model = new Vol2VfxModel(Rig.Coord, cat);
+                Cat = cat; Rig = Rig.Create(book); Model = new Vol2VfxModel(Rig.Coord, cat, recipes);
             }
             public long NowUs => Rig.Services.Clock.NowUs;
             /// <summary>Advance the hand clock (steps of dt) and tick the model on it, like the view does each frame.</summary>
@@ -99,12 +99,15 @@ namespace Oheangbu.EditorTools.Vol2
             {
                 bool complete = cat.Complete(out string problem);
                 var filled = cat.templates.Where(t => t.filled).Select(t => t.id).OrderBy(x => x).ToList();
-                Check(r, "V0a", complete && cat.templates.Length == 24 && filled.SequenceEqual(new[] { "P0", "P1", "P2", "P3", "P4", "P5" }) && cat.templates.Select(t => t.id).Distinct().Count() == 24,
-                    "24 distinct template ids, exactly P0 - P5 filled (A / F / R are later slices)" + (complete ? "" : " [" + problem + "]"));
+                Check(r, "V0a", complete && cat.templates.Length == 24 && filled.SequenceEqual(new[] { "A0", "F0", "P0", "P1", "P2", "P3", "P4", "P5", "R0" }) && cat.templates.Select(t => t.id).Distinct().Count() == 24,
+                    "24 distinct template ids, exactly P0 - P5 + the NB20 A0 F0 R0 filled (the other 15 A / F / R are later slices) [" + string.Join(",", filled) + "]" + (complete ? "" : " [" + problem + "]"));
                 var recipes = Vol2VfxRecipeRegistry.CreateDefault();
                 bool allMapped = true;
-                foreach (var t in cat.templates.Where(t => t.filled)) allMapped &= recipes.TryGet(t.recipe, out _) && (int)t.recipe == (int)t.verb + 1 && t.frame == Frame.Path;
-                Check(r, "V0b", recipes.Count == 6 && allMapped, "six recipes registered, one per filled template, each the Path frame x its verb");
+                foreach (var t in cat.templates.Where(t => t.filled))
+                    allMapped &= recipes.TryGet(t.recipe, out _) && t.recipe == Vol2VfxDefaults.RecipeOf(new Vol2TemplateId(t.frame, t.verb))
+                        && (t.frame == Frame.Path ? (int)t.recipe == (int)t.verb + 1 : t.verb == Verb.Once);
+                Check(r, "V0b", recipes.Count == 9 && allMapped && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2PathOneHitRecipe,
+                    "nine recipes registered, one per filled template: the Path frame x its verb (P0 = the slice 9a recipe; the NB20 one is kept unregistered) and the 한 번 of Attachment / Fan / Ring");
                 bool distinct = cat.bodies.Select(b => b.edge).Distinct().Count() == 5 && cat.bodies.Select(b => b.end).Distinct().Count() == 5;
                 Check(r, "V0c", cat.bodies.Length == 5 && distinct, "5 body looks: 5 different edge cues (fibre tear / saw-tooth / plates / straight cut / hook) and 5 different end behaviours");
                 var wood = cat.Look(Body.Wood); var fire = cat.Look(Body.Fire); var earth = cat.Look(Body.Earth); var metal = cat.Look(Body.Metal); var water = cat.Look(Body.Water);
@@ -169,6 +172,17 @@ namespace Oheangbu.EditorTools.Vol2
                 Check(r, "V2c", matsOk && noLight && (matCount >= 1 || !fromAsset), matCount + " vol.2 VFX material(s), " + prefabs.Length + " prefab(s): ink shader only, no _EMISSION keyword, no emission colour, no additive blend, no glow / radial, no Light" + (matBad.Length > 0 ? " [" + matBad + "]" : ""));
                 var mat = cat.inkMaterial;
                 Check(r, "V2e", mat == null || !fromAsset || (mat.HasProperty("_Bristle") && mat.GetTexture("_Bristle") != null && mat.GetTexture("_Bristle").name == "RipStroke308_Bristle"), "the ink material carries the riposte one-stroke bristle mask (RipStroke308_Bristle) as the stroke texture");
+                {
+                    // NB20: the authored atlas pair on the shared material, imported as data (linear), mips keeping the cutout coverage; the shader's sheet path has no emission either (V2a)
+                    var sheet = mat != null && mat.HasProperty("_Sheet") ? mat.GetTexture("_Sheet") as Texture2D : null;
+                    var time = mat != null && mat.HasProperty("_SheetTime") ? mat.GetTexture("_SheetTime") as Texture2D : null;
+                    var ti = AssetImporter.GetAtPath(Vol2VfxBuild.SheetTexture) as TextureImporter; var tt = AssetImporter.GetAtPath(Vol2VfxBuild.SheetTimeTexture) as TextureImporter;
+                    bool ok = !fromAsset || (sheet != null && time != null && sheet.width == 4096 && sheet.height == 4096 && time.width == 4096 && ti != null && tt != null && !ti.sRGBTexture && !tt.sRGBTexture
+                        && ti.mipmapEnabled && ti.mipMapsPreserveCoverage && sheet.name == "NB20_Sheet" && time.name == "NB20_SheetTime");
+                    Check(r, "V2f", ok, "NB20: the ink material carries the authored atlas pair (NB20_Sheet 4096 linear, coverage-preserving mips + NB20_SheetTime 4096 linear)" + (sheet == null ? " [no _Sheet]" : "") + (time == null ? " [no _SheetTime]" : ""));
+                    bool paper = mat == null || !mat.HasProperty("_PaperColor") || LabL(mat.GetColor("_PaperColor")) <= 86f;
+                    Check(r, "V2g", paper && src.Contains("SheetCut(i)") && Regex.Matches(code, @"SheetCut\(i\)").Count >= 3, "NB20 sheet path: the depth passes cut the same texels as the colour pass; the paper rim is a flat colour below paper white (L* <= 86), no light");
+                }
                 Check(r, "V2d", mat != null && mat.shader != null && mat.shader.name == Vol2VfxCatalogue.ShaderName && !mat.IsKeywordEnabled("_EMISSION") && mat.renderQueue == 2450 && mat.renderQueue < 3000,
                     "the catalogue's ink material: the ink shader, opaque cutout queue " + (mat != null ? mat.renderQueue.ToString() : "-") + ", no emission keyword");
             }
@@ -176,7 +190,7 @@ namespace Oheangbu.EditorTools.Vol2
             // ---- V3 no presenter-owned lifetime ----
             {
                 string dir = Path.GetFullPath(Path.Combine(Application.dataPath, "_Project/Scripts/App/Vol2/Presentation"));
-                var files = new[] { "Vol2VfxData.cs", "Vol2VfxModel.cs", "Vol2VfxRecipes.cs", "Vol2VfxPresenter.cs", "Vol2InkMesh.cs", "Vol2BodyLook.cs", "Vol2VfxTemplate.cs", "Vol2VfxCatalogue.cs" };
+                var files = new[] { "Vol2VfxData.cs", "Vol2VfxModel.cs", "Vol2VfxRecipes.cs", "Vol2Nb20Recipes.cs", "Vol2VfxPresenter.cs", "Vol2InkMesh.cs", "Vol2BodyLook.cs", "Vol2VfxTemplate.cs", "Vol2VfxCatalogue.cs" };
                 var timers = new Regex(@"Time\.(time|deltaTime|unscaled\w*|fixed\w*|realtimeSinceStartup|timeAsDouble)|StartCoroutine|IEnumerator|WaitFor\w+|(?<![.\w])Invoke\s*\(|InvokeRepeating|UniTask\.(Delay|Yield)|Task\.Delay|System\.Timers|new\s+Timer|DOTween|Destroy\s*\([^)]*,\s*[0-9]");
                 string found = ""; int scanned = 0;
                 foreach (string f in files)
@@ -210,7 +224,7 @@ namespace Oheangbu.EditorTools.Vol2
                         string what;
                         switch (verb)
                         {
-                            case 0: shape = follow == 1 && drift >= 3 && drift <= (body == Body.Fire ? 6 : 5) && normalBillboard >= 3; what = "stroke + landing stroke + X + " + drift + " flecks"; break;
+                            case 0: shape = follow == 1 && drift >= 3 && drift <= (body == Body.Fire ? 6 : 5) && normalBillboard >= 3; what = "stroke + landing stroke + X + " + drift + " flecks (the registered slice 9a P0)"; break;
                             case 1: shape = follow <= 1 && normalBillboard >= 6 && inst.Parts.Any(p => p.Mat != null); what = "stroke + trunk, 3 branches, 2 twigs (" + normalBillboard + " standing strokes)"; break;
                             case 2: shape = follow == 1 && flat >= 8; what = "stroke + flat bundles (" + flat + " flat strokes)"; break;
                             case 3: shape = follow == 1 && inst.Parts.Any(p => p.Mat != null && p.Mat.Tag == Vol2SeedExecutor.TagSeed) && normalBillboard >= 2; what = "stroke + a stem and a ring standing on the host"; break;
@@ -224,6 +238,94 @@ namespace Oheangbu.EditorTools.Vol2
                         Check(r, "V4e." + tag, s.Model.Instances.Count == 0 && s.Model.RetiredCount == 1 && log != null && log.Finished, letter + " " + body + ": the cast and its look are over after the executors' own ends (retired " + s.Model.RetiredCount + ", live " + s.Model.Instances.Count + ")");
                     }
                 }
+
+            // ---- V4b NB20 P0 (kept, unregistered: swapped in with Set) x five bodies ----
+            for (int bi = 0; bi < 5; bi++)
+            {
+                char letter = Rows[0][bi]; Body body = Bodies[bi];
+                using (var s = new Setup(book, cat, Vol2VfxRecipeRegistry.CreateDefault().Set(new Vol2Nb20PathRecipe())))
+                {
+                    s.Rig.Add("A", 4f, 0f);
+                    var log = s.Rig.Cast(letter, out _);
+                    var inst = log != null ? s.Inst(log) : null;
+                    s.Drive(0.3);
+                    var strokes = inst != null ? s.Write(inst) : new List<Vol2StrokeAttr>();
+                    int drift = strokes.Count(x => x.Role == Vol2StrokeRole.Drift);
+                    // the flying head has folded into the contact by 0.3 s; the tail (rigid with the head, revealed by it) still dries; 3 upright contact sheets + 3 thrown flat on the ground + 3 - 5 flecks
+                    int sheets = strokes.Count(x => x.IsSheet && x.Cell >= 0 && x.Cell < Vol2Nb20Atlas.Cells), contactSheets = strokes.Count(x => x.IsSheet && x.Role == Vol2StrokeRole.Normal && x.Cell >= Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.Contact, Body.Wood) && x.Cell <= Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.SupportB, Body.Water));
+                    bool tail = strokes.Any(x => x.Role == Vol2StrokeRole.RigidOffset && (x.Sheet & Vol2SheetFlags.RevealByHead) != 0 && x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.Tail, body));
+                    bool bodyCells = strokes.Where(x => x.IsSheet && x.Cell < 50).All(x => x.Cell % 5 == Vol2Nb20Atlas.BodyIndex(body));
+                    bool shape = inst != null && inst.Recipe is Vol2Nb20PathRecipe && sheets == strokes.Count && tail && contactSheets == 6 && strokes.Count(x => x.Layout == Vol2StrokeLayout.SheetFlat) == 3 && drift >= 3 && drift <= 5 && bodyCells;
+                    Check(r, "V4b.P0" + body, shape, letter + " " + body + " (NB20 P0 swapped in): tail + " + contactSheets + " contact sheets + " + drift + " flecks, every element the " + body + " variant");
+                    s.Drive(3.0, 0.1);
+                    Check(r, "V4be.P0" + body, s.Model.Instances.Count == 0 && s.Model.RetiredCount == 1, letter + " " + body + " (NB20 P0): over after the executor's own end");
+                }
+            }
+
+            // ---- V4n NB20: the 15 casts of A0 / F0 / R0 x five bodies (P0 is in V4 / V4b) ----
+            {
+                string[] rows = { "거너머서어", "고노모소오", "구누무수우" };
+                string[] ids = { "A0", "F0", "R0" };
+                for (int f = 0; f < 3; f++)
+                    for (int bi = 0; bi < 5; bi++)
+                    {
+                        char letter = rows[f][bi]; Body body = Bodies[bi]; string tag = ids[f] + body;
+                        using (var s = new Setup(book, cat))
+                        {
+                            if (f == 0) s.Rig.Add("A", 1.6f, 0f); else if (f == 1) s.Rig.Add("A", 3.4f, 0f); else s.Rig.Add("A", 1.9f, 0.5f);
+                            var log = s.Rig.Cast(letter, out _);
+                            var inst = log != null ? s.Inst(log) : null;
+                            bool spawned = inst != null && inst.Template.id == ids[f] && inst.Look.body == body && inst.Recipe.Kind == (Vol2Recipe)(7 + f);
+                            s.Drive(0.05, 0.025);
+                            var strokes = inst != null ? s.Write(inst) : new List<Vol2StrokeAttr>();
+                            bool allSheets = strokes.Count > 0 && strokes.All(x => x.IsSheet && x.Cell >= 0 && x.Cell < Vol2Nb20Atlas.Cells && x.Hollow > 0f);
+                            bool bodyCells = strokes.Where(x => x.Cell < 50).All(x => x.Cell % 5 == Vol2Nb20Atlas.BodyIndex(body));
+                            bool shape; string what;
+                            if (f == 0)
+                            {
+                                int pulses = strokes.Count(x => x.Role == Vol2StrokeRole.RigidOffset && x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.Pulse, body));
+                                bool endsAtWindow = strokes.Where(x => x.Role == Vol2StrokeRole.RigidOffset).All(x => Mathf.Abs(x.End - 0.5f) < 0.02f && x.EndCode == Vol2EndCode.Child);
+                                shape = pulses == 2 && endsAtWindow && !strokes.Any(x => x.Cell >= Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.Contact, Body.Wood) && x.Cell <= Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.SupportB, Body.Water));
+                                what = "a shaft pulse + a sleeve pulse riding the brush, ending with the 0.5 s window (child-dry), no splash without a parry";
+                            }
+                            else if (f == 1)
+                            {
+                                var flat = strokes.Where(x => x.Layout == Vol2StrokeLayout.SheetFlat).ToList();
+                                int edges = flat.Count(x => x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.FanRadial, body)), arc = flat.Count(x => x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.FanArc, body));
+                                bool order = flat.Where(x => x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.FanArc, body)).All(x => x.Appear > 0.02f);
+                                bool contact = strokes.Count(x => x.Layout == Vol2StrokeLayout.Sheet && x.Cell >= 10 && x.Cell < 25) == 3;
+                                shape = edges == 4 && arc == 1 && order && contact;
+                                what = "two radial edges + the far arc (+33 ms) + two inner strokes flat on the ground, a contact look on the body in the fan (" + flat.Count + " flat)";
+                            }
+                            else
+                            {
+                                int band = strokes.Count(x => x.Layout == Vol2StrokeLayout.SheetFlat && x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.RingArc, body));
+                                int standing = strokes.Count(x => x.Layout == Vol2StrokeLayout.Sheet && x.Cell == Vol2Nb20Atlas.Cell(Vol2Nb20Atlas.E.Standing, body));
+                                bool contact = strokes.Count(x => x.Layout == Vol2StrokeLayout.Sheet && x.Cell >= 10 && x.Cell < 25) == 3;
+                                shape = band == 6 && standing == 2 && contact;
+                                what = "six band strokes (r 2 m) + a standing pair + a contact look on the body in the band";
+                            }
+                            bool dry = strokes.Where(x => x.Role != Vol2StrokeRole.Drift && x.Role != Vol2StrokeRole.RigidOffset).All(x => x.End < 0.5f && x.EndSeconds <= 0.15f + 1e-4f);
+                            Check(r, "V4n." + tag, spawned && allSheets && bodyCells && shape && (f == 0 || dry), letter + " " + body + ": " + what + (spawned ? "" : " NOT SPAWNED") + (shape ? "" : " NOT MET (" + strokes.Count + " elements)") + (allSheets ? "" : ", not all NB20 sheets") + (bodyCells ? "" : ", a cell of another body") + (f == 0 || dry ? "" : ", something does not dry by 0.27 s"));
+                            s.Drive(3.0, 0.1);
+                            Check(r, "V4ne." + tag, s.Model.Instances.Count == 0 && s.Model.RetiredCount == 1, letter + " " + body + ": over after the executor's own end (retired " + s.Model.RetiredCount + ", live " + s.Model.Instances.Count + ")");
+                        }
+                    }
+                using (var s = new Setup(book, cat))
+                {
+                    s.Rig.Add("A", 1.6f, 0f);
+                    var log = s.Rig.Cast('거', out _); s.Drive(0.1, 0.05);
+                    var inst = s.Inst(log);
+                    int before = inst != null ? inst.Parts.Count : -1;
+                    s.Model.Parried(new Vector3(0f, 1.1f, 1.0f), s.NowUs);
+                    s.Model.Parried(new Vector3(0f, 1.1f, 1.0f), s.NowUs);       // the same impact relayed twice: one splash
+                    var strokes = inst != null ? s.Write(inst) : new List<Vol2StrokeAttr>();
+                    bool splash = inst != null && inst.Parts.Count == before + 2 && strokes.Any(x => x.Cell == Vol2Nb20Atlas.Ignite) && strokes.Count(x => x.Cell >= 10 && x.Cell < 25) == 3 && strokes.Count(x => x.Role == Vol2StrokeRole.Drift) == 3;
+                    s.Drive(0.6, 0.05);
+                    s.Model.Parried(new Vector3(0f, 1.1f, 1.0f), s.NowUs);       // after the window: nothing
+                    Check(r, "V4p", splash && s.Model.ParriesDrawn == 1, "거: a successful parry inside the window splashes once (needle star + contact stroke + 3 flecks); a repeat of the same impact and a parry after the window draw nothing (drawn " + s.Model.ParriesDrawn + ")");
+                }
+            }
 
             // ---- V5 end reasons on a residue (낙: fire, 남긴다, 10 s) ----
             {
@@ -303,7 +405,9 @@ namespace Oheangbu.EditorTools.Vol2
                     var parry = s.Rig.Cast('거', out _); s.Drive(0.3);
                     var fan = s.Rig.Cast('고', out _); s.Drive(0.3);
                     var ring = s.Rig.Cast('구', out _); s.Drive(0.3);
-                    Check(r, "V7b", s.Model.SpawnedCount == 0 && !s.Model.Covers(parry) && !s.Model.Covers(fan) && !s.Model.Covers(ring), "A / F / R casts (거 고 구) spawn nothing in slice 9a: the debug lines stay for them");
+                    var leave = s.Rig.Cast('곡', out _); s.Drive(0.3);
+                    Check(r, "V7b", s.Model.SpawnedCount == 3 && s.Model.Covers(parry) && s.Model.Covers(fan) && s.Model.Covers(ring) && (leave == null || !s.Model.Covers(leave)),
+                        "NB20: the 한 번 of A / F / R (거 고 구) spawn their look (" + s.Model.SpawnedCount + "); a later-slice A / F / R template (곡) is still left to the debug lines");
                 }
             }
 

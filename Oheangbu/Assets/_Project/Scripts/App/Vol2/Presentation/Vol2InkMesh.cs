@@ -4,8 +4,12 @@ using UnityEngine;
 
 namespace Oheangbu.App
 {
-    /// <summary>How one stroke is laid out: camera-facing around its own axis (a line in the air), or flat on the ground.</summary>
-    public enum Vol2StrokeLayout { Billboard = 0, Flat = 1 }
+    /// <summary>How one stroke is laid out: camera-facing around its own axis (a line in the air), or flat on the ground. Sheet / SheetFlat (NB20): the same two layouts, but the
+    /// stroke is ONE authored ink element of the NB20 atlas (Blender bristles + After Effects bleed / drying), played by its reveal and drying order maps.</summary>
+    public enum Vol2StrokeLayout { Billboard = 0, Flat = 1, Sheet = 2, SheetFlat = 3 }
+
+    /// <summary>NB20 sheet flags (uv4.y bits).</summary>
+    [Flags] public enum Vol2SheetFlags { None = 0, PaperRim = 1, FlipAcross = 2, MinAspect = 4, RevealByHead = 8, FlipAlong = 16 }
 
     /// <summary>What a stroke does with the instance uniforms (the shader's role code).</summary>
     public enum Vol2StrokeRole { Normal = 0, FollowHead = 1, RigidOffset = 2, Drift = 3 }
@@ -37,18 +41,23 @@ namespace Oheangbu.App
         /// <summary>Drift velocity (m/s) over <see cref="DriftSeconds"/>, eased out (linear drag): the flecks.</summary>
         public Vector3 Drift;
         public float DriftSeconds;
+        /// <summary>NB20 sheet: the atlas cell (-1 = not a sheet), its flags, and for a sheet <see cref="Speed"/> is the REVEAL time in seconds (0 = at once).</summary>
+        public int Cell;
+        public Vol2SheetFlags Sheet;
 
-        public static Vol2StrokeAttr Default => new Vol2StrokeAttr { Width = 0.12f, Speed = 1e5f, End = 1e6f, EndSeconds = 0.3f, EndCode = Vol2EndCode.Expire, Hollow = 1f, Density = 1f };
+        public static Vol2StrokeAttr Default => new Vol2StrokeAttr { Width = 0.12f, Speed = 1e5f, End = 1e6f, EndSeconds = 0.3f, EndCode = Vol2EndCode.Expire, Hollow = 1f, Density = 1f, Cell = -1 };
+        public bool IsSheet => Layout == Vol2StrokeLayout.Sheet || Layout == Vol2StrokeLayout.SheetFlat;
         public const float Forever = 1e6f;
     }
 
     /// <summary>Collects strokes and writes ONE mesh (one draw call per instance). Per vertex: position = a point of the stroke's centre line (world), normal = the line's direction there,
     /// tangent = fleck drift, uv0 = (arc length, across -1..1, total length, half width), uv1 = (appear, speed, end, end seconds), uv2 = (end mode, warn seconds, seed, hollow),
-    /// uv3 = (layout, density, role, flags). The shader (Oheangbu/SpellVFX308/Vol2Ink) widens the line to a ribbon facing the camera or lying on the ground.</summary>
+    /// uv3 = (layout, density, role, flags), uv4 = (NB20 atlas cell, sheet flags, 0, 0). The shader (Oheangbu/SpellVFX308/Vol2Ink) widens the line to a ribbon facing the camera or lying on the ground.</summary>
     public sealed class Vol2InkWriter
     {
         readonly List<Vector3> _pos = new List<Vector3>(512), _nrm = new List<Vector3>(512);
-        readonly List<Vector4> _tan = new List<Vector4>(512), _uv0 = new List<Vector4>(512), _uv1 = new List<Vector4>(512), _uv2 = new List<Vector4>(512), _uv3 = new List<Vector4>(512);
+        readonly List<Vector4> _tan = new List<Vector4>(512), _uv0 = new List<Vector4>(512), _uv1 = new List<Vector4>(512), _uv2 = new List<Vector4>(512), _uv3 = new List<Vector4>(512), _uv4 = new List<Vector4>(512);
+        readonly List<Vector3> _two = new List<Vector3>(2);
         readonly List<int> _idx = new List<int>(1536);
         readonly List<float> _arc = new List<float>(64);
         public int Strokes { get; private set; }
@@ -59,7 +68,15 @@ namespace Oheangbu.App
 
         public void Clear()
         {
-            _pos.Clear(); _nrm.Clear(); _tan.Clear(); _uv0.Clear(); _uv1.Clear(); _uv2.Clear(); _uv3.Clear(); _idx.Clear(); Strokes = 0;
+            _pos.Clear(); _nrm.Clear(); _tan.Clear(); _uv0.Clear(); _uv1.Clear(); _uv2.Clear(); _uv3.Clear(); _uv4.Clear(); _idx.Clear(); Strokes = 0;
+        }
+
+        /// <summary>NB20: one authored ink element of the atlas as a quad from <paramref name="a"/> (u = 0, the element's pressed start) to <paramref name="b"/>, <see cref="Vol2StrokeAttr.Width"/>
+        /// across (the element's full cell height in metres). The layout must be Sheet or SheetFlat and the cell set.</summary>
+        public void Sheet(Vector3 a, Vector3 b, in Vol2StrokeAttr attr)
+        {
+            _two.Clear(); _two.Add(a); _two.Add(b);
+            Stroke(_two, attr);
         }
 
         /// <summary>Adds a stroke along <paramref name="pts"/> (at least 2 points; points closer than a millimetre are skipped).</summary>
@@ -87,6 +104,7 @@ namespace Oheangbu.App
                     _uv1.Add(new Vector4(a.Appear, a.Speed, a.End, Mathf.Max(0.001f, a.EndSeconds)));
                     _uv2.Add(new Vector4((float)(int)a.EndCode, a.Warn, a.Seed, a.Hollow));
                     _uv3.Add(new Vector4((float)(int)a.Layout, a.Density, (float)(int)a.Role, flags));
+                    _uv4.Add(new Vector4(a.Cell, (float)(int)a.Sheet, 0f, 0f));
                 }
             }
             for (int i = 0; i < n - 1; i++)
@@ -106,7 +124,7 @@ namespace Oheangbu.App
             if (_pos.Count == 0) return;
             mesh.indexFormat = _pos.Count > 60000 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
             mesh.SetVertices(_pos); mesh.SetNormals(_nrm); mesh.SetTangents(_tan);
-            mesh.SetUVs(0, _uv0); mesh.SetUVs(1, _uv1); mesh.SetUVs(2, _uv2); mesh.SetUVs(3, _uv3);
+            mesh.SetUVs(0, _uv0); mesh.SetUVs(1, _uv1); mesh.SetUVs(2, _uv2); mesh.SetUVs(3, _uv3); mesh.SetUVs(4, _uv4);
             mesh.SetTriangles(_idx, 0, false);
             mesh.bounds = new Bounds(centre, Vector3.one * (radius * 2f));
         }

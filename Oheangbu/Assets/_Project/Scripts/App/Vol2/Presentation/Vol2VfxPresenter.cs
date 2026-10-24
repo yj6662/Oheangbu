@@ -57,8 +57,22 @@ namespace Oheangbu.App
             p._coordinator = coordinator; p._catalogue = catalogue;
             p._model = new Vol2VfxModel(coordinator, catalogue);
             p._model.Retired += p.OnRetired;
+            // NB20: the brush tip / grip of the player's great brush (ignition, the ㅏ head's start, the ㅓ pulse on the shaft); searched lazily, a bounded number of times
+            p._model.BrushTip = () => p.Rig() is var r && r != null && r.WorldTip != null ? r.WorldTip.position : (Vector3?)null;
+            p._model.BrushGrip = () => p.Rig() is var r && r != null && r.WorldBrushRoot308 != null ? r.WorldBrushRoot308.position : (Vector3?)null;
             if (debug != null) debug.Skip = log => p.Enabled && p._model.Covers(log);
             return p;
+        }
+
+        World.WorldMacroPlayerGestureRig _rig;
+        int _rigSearches;
+        World.WorldMacroPlayerGestureRig Rig()
+        {
+            if (_rig != null) return _rig;
+            if (_rigSearches >= 40 || !Application.isPlaying) return null;
+            _rigSearches++;
+            _rig = FindFirstObjectByType<World.WorldMacroPlayerGestureRig>();
+            return _rig;
         }
 
         void OnDestroy() { Release(); }

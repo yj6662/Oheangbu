@@ -39,6 +39,11 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
         _SettleEnd("Settle end (s)", Float) = .30
         _NearClip("Nothing nearer than (m)", Float) = .12
         _NearFade("Whole from (m)", Float) = .3
+        [NoScaleOffset] _Sheet("NB20 ink atlas (R tone, G dry pigment, B paper-rim distance, A coverage)", 2D) = "black" {}
+        [NoScaleOffset] _SheetTime("NB20 order atlas (R reveal order, G drying order, B fragment)", 2D) = "black" {}
+        _PaperColor("NB20 dry paper rim (flat, no light)", Color) = (.80,.76,.66,1)
+        _RimPx("NB20 paper rim width (px)", Float) = 3
+        _EdgePx("NB20 dry pigment edge band (px)", Float) = 1.75
     }
     SubShader
     {
@@ -50,15 +55,25 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
         struct Attributes
         {
             float4 positionOS : POSITION; float3 dirOS : NORMAL; float4 drift : TANGENT;
-            float4 a : TEXCOORD0; float4 b : TEXCOORD1; float4 c : TEXCOORD2; float4 d : TEXCOORD3;
+            float4 a : TEXCOORD0; float4 b : TEXCOORD1; float4 c : TEXCOORD2; float4 d : TEXCOORD3; float4 e : TEXCOORD4;
             UNITY_VERTEX_INPUT_INSTANCE_ID
         };
-        struct Varyings { float4 positionCS : SV_POSITION; float4 A : TEXCOORD0; float4 B : TEXCOORD1; float4 C : TEXCOORD2; float4 D : TEXCOORD3; };
+        struct Varyings { float4 positionCS : SV_POSITION; float4 A : TEXCOORD0; float4 B : TEXCOORD1; float4 C : TEXCOORD2; float4 D : TEXCOORD3; float4 E : TEXCOORD4; };
         TEXTURE2D(_Bristle); SAMPLER(sampler_Bristle);
+        TEXTURE2D(_Sheet); SAMPLER(sampler_Sheet);
+        TEXTURE2D(_SheetTime); SAMPLER(sampler_SheetTime);
         CBUFFER_START(UnityPerMaterial)
-        half4 _InkColor, _PigmentColor, _WetColor; float4 _EndDir, _Offset;
-        float _BristleLen, _BristleBand, _EdgeKind, _EndKind, _Age, _Head, _TailLen, _BaseY, _Fray, _Gap, _HeadRag, _MinPx, _SettleStart, _SettleEnd, _NearClip, _NearFade;
+        half4 _InkColor, _PigmentColor, _WetColor, _PaperColor; float4 _EndDir, _Offset;
+        float _BristleLen, _BristleBand, _EdgeKind, _EndKind, _Age, _Head, _TailLen, _BaseY, _Fray, _Gap, _HeadRag, _MinPx, _SettleStart, _SettleEnd, _NearClip, _NearFade, _RimPx, _EdgePx;
         CBUFFER_END
+
+        // ---- NB20 (D308-150 V6): the authored ink atlas (Blender bristle brushes + After Effects bleed / drying order, Tools/Art/SpellVFX308/nb20) ----
+        // 4 x 16 cells of 1024 x 256 in a 4096 atlas, 8 px gutter; cell row 0 at the top of the image. uv4 = (cell, flags, -, -): flags 1 paper rim, 2 flip across, 4 least aspect, 8 reveal by the head, 16 (placed reversed by the recipe)
+        #define NB_ATLAS 4096.0
+        #define NB_CW 1024.0
+        #define NB_CH 256.0
+        #define NB_GUT 8.0
+        float NbBit(float flags, float bit) { return fmod(floor(flags / bit), 2.0); }
 
         float OhTri(float x) { return abs(frac(x) - 0.5) * 2.0; }
 
@@ -69,6 +84,8 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             float t0 = v.b.x, speed = v.b.y, tEnd = v.b.z, endDur = v.b.w;
             float mode = v.c.x, warnDur = v.c.y, seed = v.c.z;
             float layout = v.d.x, role = v.d.z, flags = v.d.w;
+            bool sheet = layout > 1.5;
+            bool flatL = abs(layout - 1.0) < 0.5 || layout > 2.5;
             float3 P = TransformObjectToWorld(v.positionOS.xyz);
             float ageS = _Age - t0;
             bool follow = role > 0.5 && role < 1.5;
@@ -95,17 +112,17 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
                     dir *= (seg < 0.5 || seg > 1.5) ? 1.0 : -1.0;
                     dir *= (frac(seed * 7.13) < 0.5 ? 1.0 : -1.0);
                 }
-                if (layout > 0.5 && (abs(_EndKind - 2.0) < 0.5)) k = 0.0;                          // a flat stroke cannot sink: it breaks into plates instead
-                if (layout > 0.5 && (abs(_EndKind - 4.0) < 0.5)) dir = normalize(v.dirOS + 0.0001);   // water on the ground runs along the line
+                if (flatL && (abs(_EndKind - 2.0) < 0.5)) k = 0.0;                          // a flat stroke cannot sink: it breaks into plates instead
+                if (flatL && (abs(_EndKind - 4.0) < 0.5)) dir = normalize(v.dirOS + 0.0001);   // water on the ground runs along the line
                 P += dir * k;
-                if (abs(_EndKind - 2.0) < 0.5 && layout < 0.5) P.y += abs(side) * 0.14 * dry;       // earth: the middle sinks, the rim stays up and lifts
+                if (abs(_EndKind - 2.0) < 0.5 && !flatL) P.y += abs(side) * 0.14 * dry;       // earth: the middle sinks, the rim stays up and lifts
             }
             if (abs(mode - 4.0) < 0.5) P.y = lerp(P.y, _BaseY, dry);                               // replaced: flattened
             float3 T = normalize(TransformObjectToWorldDir(v.dirOS) + 0.00001);
             float3 toCam = _WorldSpaceCameraPos.xyz - P;
             float eye = -TransformWorldToView(P).z;
             float3 sd;
-            if (layout > 0.5)
+            if (flatL)
             {
                 sd = cross(float3(0, 1, 0), T);
                 sd = dot(sd, sd) < 0.00001 ? float3(1, 0, 0) : normalize(sd);
@@ -119,7 +136,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             float span = clamp(0.22 * L, 0.2, 0.9);
             float tipD = (follow ? lim : L) - s;
             // water: the end is an open hook - the ribbon bends away sideways over its last stretch
-            if (_EdgeKind > 3.5)
+            if (_EdgeKind > 3.5 && !sheet)
             {
                 float tk = 1.0 - saturate(tipD / span);
                 P += sd * (tk * tk * span * 1.6);
@@ -128,13 +145,40 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             float pool = follow ? (1.0 - smoothstep(0.0, 0.5, s)) : 0.0;                          // the start is loaded: wider
             float minPx = lerp(14.0, _MinPx, saturate((hw - 0.04) / 0.11)) * (role > 2.5 ? 0.5 : 1.0);   // a wide stroke keeps the full pixel floor, a thin one (a twig, a fleck) a smaller one
             float hwEff = clamp(0.5 * minPx * pxWorld, hw * (1.0 + 0.3 * pool), hw * 4.0);
+            float4 E = float4(v.e.x, v.e.y, 1.0, 0.0);
             float3 Pw = P + sd * (side * hwEff);
             o.positionCS = TransformWorldToHClip(Pw);
+            if (sheet)
+            {
+                // NB20: the authored element keeps its real size (no pixel floor: the 0.3 m lane is not widened)
+                hwEff = hw;
+                Pw = P + sd * (side * hwEff);
+                o.positionCS = TransformWorldToHClip(Pw);
+                if (!flatL)
+                {
+                    // r4: a STROKE IN THE VIEW PLANE (a velocity-aligned billboard): the quad lies at the depth of its u = 0 point (the press), its long axis is the screen
+                    // direction of the element's world axis, its size is its world size there. A head / tail flying away from the shoulder camera is no longer seen edge-on
+                    // (a degenerate ribbon whose texels collapse to noise): it reads as a pressed stroke pointing where it goes, the tail streaming behind it
+                    float3 P0w = P - T * s;
+                    float3 v0 = TransformWorldToView(P0w), v1 = TransformWorldToView(P0w + T * max(L, 0.05));
+                    float2 ds = v1.xy / max(-v1.z, 0.05) - v0.xy / max(-v0.z, 0.05);
+                    ds = dot(ds, ds) < 1e-10 ? float2(0.0, 1.0) : normalize(ds);
+                    float2 dn = float2(-ds.y, ds.x);
+                    float3 vp = v0 + float3(ds * s + dn * (side * hw), 0.0);
+                    o.positionCS = TransformWViewToHClip(vp);
+                    eye = -vp.z;
+                }
+                // reveal: by the element's order map over its reveal time (uv1.y), or as far as the path head has gone (the tail)
+                float prog = ageS < 0.0 ? -1.0 : (speed < 0.001 ? 1.0 : saturate(ageS / speed));
+                if (NbBit(v.e.y, 8.0) > 0.5) prog = ageS < 0.0 ? -1.0 : saturate((_Head - 0.05) / max(L, 0.01));
+                E = float4(v.e.x, v.e.y, prog, 1.0);
+            }
             float wear = (warnDur > 0.0 && tEnd < 900000.0) ? saturate(1.0 - (tEnd - _Age) / warnDur) : 0.0;
             o.A = float4(s, side, L, lim);
             o.B = float4(dry, mode, seed, v.c.w);
             o.C = float4(wear, v.d.y, role, eye);
             o.D = float4(ageS, flags, 2.0 * hwEff / pxWorld, Pw.y);
+            o.E = E;
             return o;
         }
 
@@ -254,6 +298,54 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             float inkEdge = (ash || body >= 0.5) ? 0.0 : 1.0;
             return float4(inkEdge, grain, body, ash ? 1.0 : 0.0);
         }
+
+        // NB20: cuts an authored element out of the atlas; returns (kind: 0 ink / 1 pigment / 2 paper rim, ink tone 0..1, drying edge 0..1, ash)
+        float4 SheetCut(Varyings i)
+        {
+            float u = saturate(i.A.x / max(i.A.z, 0.001)), v = i.A.y * 0.5 + 0.5;
+            float flags = i.E.y, prog = i.E.z;
+            if (NbBit(flags, 2.0) > 0.5) v = 1.0 - v;
+            float cell = floor(i.E.x + 0.5);
+            float row = floor(cell * 0.25), col = cell - row * 4.0;
+            float2 texel = float2(u * (NB_CW - 2.0 * NB_GUT), (1.0 - v) * (NB_CH - 2.0 * NB_GUT));
+            float2 uv = float2((col * NB_CW + NB_GUT + texel.x) / NB_ATLAS, 1.0 - (row * NB_CH + NB_GUT + texel.y) / NB_ATLAS);
+            // texels of the packed cell per screen pixel (the rim is drawn in PIXELS: >= 3 px at every distance, never a fat sticker outline up close)
+            float tpp = max(max(length(ddx(texel)), length(ddy(texel))), 1e-4);
+            float4 sh = SAMPLE_TEXTURE2D(_Sheet, sampler_Sheet, uv);
+            float4 tm = SAMPLE_TEXTURE2D(_SheetTime, sampler_SheetTime, uv);
+            float dry = i.B.x, mode = i.B.y, seed = i.B.z;
+            // laid in the element's own order (the press first, the needle lines last) - each texel appears whole, never a soft fade
+            clip(prog - tm.r + 0.002);
+            // drying by the After Effects order: crack lines first, then the thin edges, then fragment by fragment (consume / cleanse fold back to the press instead)
+            float edgeDry = 0.0;
+            if (dry > 0.0)
+            {
+                if (abs(mode - 2.0) < 0.5 || abs(mode - 6.0) < 0.5) clip((1.0 - dry * 1.03) - tm.r);
+                else
+                {
+                    clip(tm.g - dry * 1.03);
+                    edgeDry = 1.0 - saturate((tm.g - dry * 1.03) / 0.10);
+                }
+            }
+            clip(OhNearVisibility(i.C.w, _NearClip, _NearFade) - OhDither(i.positionCS.xy) - 0.001);
+            bool ash = fmod(floor(i.D.y * 0.25), 2.0) > 0.5;
+            if (sh.a >= 0.5)
+            {
+                // r4: the dry pigment edge - within _EdgePx screen pixels of the stroke's own edge (order map B = sqrt(texels in / 160)), broken here and there:
+                // every stroke carries its body hue as a thin dry edge (two lightness layers, plan C-2) and so reads on a dark ground without a paper outline
+                float dIn = tm.b * tm.b * 160.0 / tpp;
+                bool edgePig = dIn < _EdgePx && OhValueNoise(texel / tpp * 0.05 + seed * 1.7) > 0.42;       // r5: a broken dry edge (about half of the outline), never a closed coloured outline
+                return float4((sh.g >= 0.5 || edgePig) && !ash ? 1.0 : 0.0, sh.r, edgeDry, ash ? 1.0 : 0.0);
+            }
+            // outside the ink: the dry paper rim (mine, plan E) - only on elements that carry it, within _RimPx screen pixels of the ink, broken by the paper's tooth
+            clip(NbBit(flags, 1.0) - 0.5);
+            float dpx = sh.b * sh.b * 160.0 / tpp;                  // the packer stores sqrt(texels / 160)
+            clip(_RimPx - dpx);
+            clip(0.97 - sh.b);
+            // broken by the paper's tooth at a SCREEN scale (a gap every few pixels), so it never turns into salt-and-pepper when the element is small
+            clip(OhValueNoise(texel / tpp * 0.06 + seed * 3.1) - 0.14);           // r4: a few long breaks (every ~20 px), not a dotted line
+            return float4(2.0, 0.0, edgeDry, 0.0);
+        }
         ENDHLSL
         Pass
         {
@@ -265,8 +357,18 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             #pragma multi_compile_instancing
             half4 frag(Varyings i) : SV_Target
             {
-                float4 c = Cut(i);
                 float settle = smoothstep(_SettleStart, _SettleEnd, i.D.x);
+                if (i.E.w > 0.5)
+                {
+                    // NB20: ink L* ~10 (wet pool) .. ~30 (dry streak) around the reading layer L* 18; dry pigment (body hue, L* 60) settling from the wet colour; the paper rim flat; ash grey
+                    float4 k = SheetCut(i);
+                    float3 inkC = _InkColor.rgb * lerp(0.45, 2.4, k.y) * (1.0 + 0.5 * k.z);
+                    float3 pigC = lerp(_WetColor.rgb, _PigmentColor.rgb, settle) * (1.0 - 0.18 * k.z);
+                    float3 rgbS = k.x > 1.5 ? _PaperColor.rgb : (k.x > 0.5 ? pigC : inkC);
+                    if (k.w > 0.5) rgbS = float3(0.30, 0.29, 0.28);
+                    return half4(min(rgbS, OH_INK_CEILING_OUT), 1);
+                }
+                float4 c = Cut(i);
                 float3 pig = lerp(_WetColor.rgb, _PigmentColor.rgb, settle) * (0.9 + 0.2 * c.y);
                 float3 rgb = c.x > 0.5 ? _InkColor.rgb : pig;
                 // ash is burnt ink: a neutral grey, whatever the body hue
@@ -286,7 +388,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            half4 frag(Varyings i) : SV_Target { Cut(i); return i.positionCS.z; }
+            half4 frag(Varyings i) : SV_Target { if (i.E.w > 0.5) SheetCut(i); else Cut(i); return i.positionCS.z; }
             ENDHLSL
         }
         Pass
@@ -297,7 +399,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            half4 frag(Varyings i) : SV_Target { Cut(i); return half4(-GetViewForwardDir(), 0); }
+            half4 frag(Varyings i) : SV_Target { if (i.E.w > 0.5) SheetCut(i); else Cut(i); return half4(-GetViewForwardDir(), 0); }
             ENDHLSL
         }
     }
