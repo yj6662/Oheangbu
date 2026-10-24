@@ -420,6 +420,7 @@ namespace Oheangbu.App
         // ---- 작도 → 전투: 커밋된 글자 하나가 술식 한 발이 된다 ----
         private void OnLetterDrawn(DrawnLetter letter)
         {
+            if (TryRouteVol2(letter)) return;   // S5-b slice 1: in Vol2 mode the old spell handling below is skipped (CombatLoopWiring.Vol2.cs)
             if (_resolver == null || _config == null) return;
 
             // #308: the route is the book's table; this wiring is the gate (CombatLoopWiring.Spell308.cs). Every refusal

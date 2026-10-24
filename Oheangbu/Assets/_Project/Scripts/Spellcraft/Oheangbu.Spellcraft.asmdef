@@ -3,7 +3,8 @@
     "rootNamespace": "Oheangbu.Spellcraft",
     "references": [
         "Oheangbu.Core",
-        "Oheangbu.Data"
+        "Oheangbu.Data",
+        "Oheangbu.Vol2.Rules"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

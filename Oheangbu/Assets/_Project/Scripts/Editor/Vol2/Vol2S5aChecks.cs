@@ -19,7 +19,7 @@ namespace Oheangbu.EditorTools.Vol2
     ///   L  NumbersV3SO + Vol2TableSO load through Vol2DataLoader (rebuilt DTOs hash to the frozen manifest): 414 numbers, 120 spells
     ///   G  golden replay (120 rows, rankings, efficiency, 12 budget event cases, 25 reaction cells) through the Unity-side copies
     ///   T  tampered copies of the asset data are refused by the loader (numbers, spells, manifest, swapped sources)
-    ///   P  Oheangbu.Vol2.Rules / .Import reference no engine assembly; no gameplay assembly references Oheangbu.Vol2.* (not wired)
+    ///   P  Oheangbu.Vol2.Rules / .Import reference no engine assembly; only the S5-b wiring assemblies (Spellcraft, App) reference Oheangbu.Vol2.*
     /// Not covered (S5-b and later): casting, contacts, the adapter, scenes, Play.</summary>
     public static class Vol2S5aChecks
     {
@@ -104,7 +104,11 @@ namespace Oheangbu.EditorTools.Vol2
             var users = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(a => a.GetName().Name.StartsWith("Oheangbu.", StringComparison.Ordinal) && !a.GetName().Name.StartsWith("Oheangbu.Vol2.", StringComparison.Ordinal) && !a.GetName().Name.StartsWith("Oheangbu.EditorTools.Vol2", StringComparison.Ordinal))
                 .Where(a => a.GetReferencedAssemblies().Any(n => n.Name.StartsWith("Oheangbu.Vol2.", StringComparison.Ordinal))).Select(a => a.GetName().Name).ToArray();
-            Check(r, "P2", users.Length == 0, users.Length == 0 ? "no existing game assembly references Oheangbu.Vol2.* (S5-a is not wired)" : "wired by: " + string.Join(",", users));
+            // S5-b slice 1 wires the vol.2 route on purpose: Spellcraft (adapter, route) and App (installer, lab runner). Any other game assembly
+            // (Core, Data, Combat, Drawing, BrushRender, Presentation ...) referencing Oheangbu.Vol2.* is still a layering violation.
+            var allowed = new[] { "Oheangbu.Spellcraft", "Oheangbu.App" };
+            var unexpected = users.Where(u => !allowed.Contains(u)).ToArray();
+            Check(r, "P2", unexpected.Length == 0, unexpected.Length == 0 ? "only " + (users.Length == 0 ? "(nobody)" : string.Join(",", users)) + " reference Oheangbu.Vol2.* (whitelist: Spellcraft, App)" : "unexpected references from: " + string.Join(",", unexpected));
         }
 
         static bool Docs(Report r, string relative, string sha)
