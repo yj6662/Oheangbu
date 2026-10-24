@@ -42,6 +42,8 @@ namespace Oheangbu.App
         public double SettleSeconds = 0.4;
         /// <summary>Seconds the clock must have run before the fast-forward at the very least (a growing fan needs time to grow).</summary>
         public double MinSeconds;
+        /// <summary>S5-b slice 8: the reaction rows run on the real clock (a burn that ticks for 2 s is watched, not skipped): no fast-forward.</summary>
+        public bool SkipFastForward;
         public Vol2LabDummy Find(string name) { foreach (var d in Dummies) if (d.Name == name) return d; return null; }
     }
 
@@ -54,6 +56,10 @@ namespace Oheangbu.App
         public Vol2CastCoordinator Coordinator => Shapes.Coordinator;
         public Vol2LabScenario Scenario { get; set; }
         public int SwingsRaised { get; private set; }
+        /// <summary>S5-b slice 8: casts another letter through the recognition channel (set by the runner; a step of a reaction row casts a second glyph with it).</summary>
+        public Action<char> Cast { get; set; }
+        /// <summary>S5-b slice 8: the scope's defence kit (null without one) - the seams row reads what the installer bound.</summary>
+        public Vol2DefenceKit Kit { get; set; }
         public Vol2LabContext(Vol2ShapeRuntime shapes, Vol2Services services) { Shapes = shapes; Services = services; }
 
         Vector3 Right => Vector3.Cross(Vector3.up, Scenario.Forward);

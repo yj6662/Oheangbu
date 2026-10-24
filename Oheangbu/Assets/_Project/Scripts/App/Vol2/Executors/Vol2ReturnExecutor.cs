@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Oheangbu.Combat;
@@ -144,7 +144,7 @@ namespace Oheangbu.App
 
             public override void Start(long nowUs, IReadOnlyList<IVol2Target> targets)
             {
-                if (_cleanse) Host.FieldRequest(Run, "pollution gate: cleanse the ring's ground (" + Run.Spec.RingRadius.ToString("0.##", CultureInfo.InvariantCulture) + " m to " + _r1.ToString("0.##", CultureInfo.InvariantCulture) + " m)", f => "no cleanse API on IVol2FieldPort: recorded only");
+                if (_cleanse) Host.FieldRequest(Run, "pollution gate: cleanse the ring's ground (" + Run.Spec.RingRadius.ToString("0.##", CultureInfo.InvariantCulture) + " m to " + _r1.ToString("0.##", CultureInfo.InvariantCulture) + " m)", f => f.OnCleanse(Run.Cast, Run.Spec.Origin, Run.Spec.RingRadius, _r1));
             }
 
             public override void OnContact(Vol2ShapeContact c, long nowUs)
@@ -503,7 +503,7 @@ namespace Oheangbu.App
                     if (Host.Damage == null) rec.DamageNote = "NoDamageSink" + unit;
                     else
                     {
-                        var request = new Vol2DamageRequest(Run.Cast, p.Attack, 0, t, Run.Glyph, Run.Body.Element, Run.Body.Instant, p.Units, 1m, p.Units, 1m, true, nowUs, p.Point, Host.Caster != null ? Host.Caster.Anchor : null);
+                        var request = new Vol2DamageRequest(Run.Cast, p.Attack, 0, t, Run.Glyph, Run.Body.Element, Run.Body.Instant, p.Units, 1m, p.Units, 1m, true, nowUs, p.Point, Host.Caster != null ? Host.Caster.Anchor : null, Vol2DamageOrigin.Borrowed);
                         var res = Host.Damage.Apply(request);
                         rec.DamageApplied = res.Applied; rec.HpApplied = res.Hp; rec.Killed = res.Killed; rec.DamageNote = res.Reason + unit;
                     }
@@ -635,7 +635,8 @@ namespace Oheangbu.App
                     else if (m.FactionId == Vol2Faction.Player && m.Cast != Run.Cast && !_rep.WetRequests.Contains(m.Id.Value))
                     {
                         _rep.WetRequests.Add(m.Id.Value);
-                        Run.Log.Notes.Add("wet request for my material " + m.Id + " (no wet flag on a material yet)");
+                        Host.Materials.TrySetWet(m.Id, nowUs + Run.Body.DurationUs, nowUs);      // slice 8: the wet flag exists now (Vol2Material.Wet)
+                        Run.Log.Notes.Add("wet request for my material " + m.Id + " (set wet for " + Run.Body.DurationUs + " us)");
                     }
                 }
                 if (_rep.Cleansed.Count >= cap || enemy.Count == 0) return;

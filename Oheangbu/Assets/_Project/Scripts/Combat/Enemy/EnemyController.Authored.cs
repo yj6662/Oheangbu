@@ -178,8 +178,8 @@ namespace Oheangbu.Combat
         {
             if (!inShape || !AttackEnabled || !HasLineOfSight() || _playerVitals == null)
             { AttackImpactResolved?.Invoke(new EnemyAttackImpact(_attack, point, ParryOutcome.None, 0, false)); return; }
-            ParryOutcome outcome = _attack.Element.HasValue && _judge != null
-                ? _judge.ResolveImpact(_attack.Element.Value, Time.time, point, _attack) : ParryOutcome.None;
+            ParryOutcome outcome = _judge != null && (_attack.Element.HasValue || _judge.Vol2Resolver != null)   // S5-b slice 8: in a vol.2 scope a NEUTRAL attack is asked of the parry too (the rules defend it fully, no posture); the old judge still never sees it
+                ? _judge.ResolveImpact(_attack.Element ?? Oheangbu.Core.Domain.Element.Wood, Time.time, point, _attack) : ParryOutcome.None;
             float damage = _attackProfile.Damage;
             if (outcome == ParryOutcome.Success) { damage = 0; FlashParried(); }
             else if (outcome == ParryOutcome.Half) damage *= _config.HalfParryDamageFactor;

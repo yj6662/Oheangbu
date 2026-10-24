@@ -15,8 +15,16 @@ namespace Oheangbu.App
     /// <summary>What the coordinator asks the damage entry to apply. All amounts are in ACTION UNITS (the unit of body.*.instant), never HP:
     /// the data has no HP per action unit (design section 8: do not read 1.0 as HP 1). The entry converts, and applies the
     /// window state (B) and the counter-element factor (K) at the moment of the hit (D308-147), not the coordinator.</summary>
+    /// <summary>S5-b slice 8: where a damage request comes from (the "request kind" slice 7 asked for). Spell = a hit of a cast; Lasting = a tick of a lasting damage;
+    /// Borrowed = a reflected shot's lent power (slice 7); Reaction = a product of the reaction rules - it gives NO groggy, NO posture and cannot trigger a seed (the
+    /// reaction engine never announces it as a contact of a cast, so the seed hub does not hear it).</summary>
+    public enum Vol2DamageOrigin { Spell, Lasting, Borrowed, Reaction }
+
     public readonly struct Vol2DamageRequest
     {
+        public readonly Vol2DamageOrigin Origin;
+        public bool IsReaction => Origin == Vol2DamageOrigin.Reaction;
+        /// <summary>The cast that owns the damage (for a reaction: the ACTING material's cast); the reaction depth and the original owner are in the attack's Vol2AttackMetadata.</summary>
         public readonly CastId Cast;
         public readonly AttackId Attack;
         public readonly long SwingId;
@@ -40,8 +48,10 @@ namespace Oheangbu.App
         public readonly Vector3 Point;
         /// <summary>The attacker object (the caster); may be null.</summary>
         public readonly UnityEngine.Object Instigator;
-        public Vol2DamageRequest(CastId cast, AttackId attack, long swing, IVol2Target target, Glyph glyph, Element element, decimal h, decimal r, decimal s, decimal units, decimal statusFactor, bool lasting, long nowUs, Vector3 point, UnityEngine.Object instigator)
+        public Vol2DamageRequest(CastId cast, AttackId attack, long swing, IVol2Target target, Glyph glyph, Element element, decimal h, decimal r, decimal s, decimal units, decimal statusFactor, bool lasting, long nowUs, Vector3 point, UnityEngine.Object instigator,
+            Vol2DamageOrigin? origin = null)
         {
+            Origin = origin ?? (lasting ? Vol2DamageOrigin.Lasting : Vol2DamageOrigin.Spell);
             Cast = cast; Attack = attack; SwingId = swing; Target = target; TargetLifeRevision = target != null ? target.LifeRevision : 0; Glyph = glyph; Element = element;
             BaseH = h; Structure = r; Force = s; Units = units; StatusFactor = statusFactor; Lasting = lasting; NowUs = nowUs; Point = point; Instigator = instigator;
         }

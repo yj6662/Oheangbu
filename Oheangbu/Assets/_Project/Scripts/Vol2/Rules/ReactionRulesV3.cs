@@ -50,6 +50,17 @@ namespace Oheangbu.Vol2.Rules
                 return new State(map.Values,new HashSet<long>(Seen),new HashSet<string>(Contacts),LastUs);
             }
             public State(IEnumerable<Material> materials) : this(materials,new HashSet<long>(),new HashSet<string>(),0) { }
+            // S5-b slice 8: the App keeps the rule's own ledger (event ids seen, "cast:material" contacts, last time) between resolutions and
+            // hands it a fresh set of materials read from the registry each time. The previous state is not modified.
+            public static State Carry(State previous,IEnumerable<Material> materials)
+            {
+                if(previous==null)return new State(materials);
+                return new State(materials,new HashSet<long>(previous.Seen),new HashSet<string>(previous.Contacts),previous.LastUs);
+            }
+            public bool HasContact(long castId,long materialId)=>Contacts.Contains(castId+":"+materialId);
+            public bool HasSeen(long eventId)=>Seen.Contains(eventId);
+            public int ContactCount=>Contacts.Count;
+            public int SeenCount=>Seen.Count;
             internal State(IEnumerable<Material> materials, HashSet<long> seen, HashSet<string> contacts, long lastUs)
             {
                 var map=new Dictionary<long,Material>(); foreach(var m in materials)map.Add(m.Id,m);

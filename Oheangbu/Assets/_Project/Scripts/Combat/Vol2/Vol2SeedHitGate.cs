@@ -53,20 +53,37 @@ namespace Oheangbu.Combat
             if (vitals == null) throw new ArgumentNullException(nameof(vitals));
             if (ReferenceEquals(_vitals, vitals)) return;
             Detach();
-            _vitals = vitals;
+            _vitals = vitals; _lastSerial = 0;          // slice 8: a new player starts counting its hits from 0 again
             _vitals.Damaged += OnDamaged;
         }
 
         public void Detach()
         {
             if (_vitals != null) _vitals.Damaged -= OnDamaged;
-            _vitals = null;
+            _vitals = null; _lastSerial = 0;
         }
+
+        long _lastSerial;
 
         void OnDamaged(float amount)
         {
+            // S5-b slice 8: a hit is reported ONCE however many ask first (the stagger listener may run before this subscription: EnsureReported)
+            if (_vitals != null && _vitals.HitSerial308 != 0 && _vitals.HitSerial308 == _lastSerial) return;
+            if (_vitals != null) _lastSerial = _vitals.HitSerial308;
             var info = _vitals != null ? _vitals.LastHit : default;
             Report(amount, info.Attacker, info.Kind);
+        }
+
+        /// <summary>S5-b slice 8 (closes the 멈 seam): the body-stagger listener asks THIS before <see cref="TakeStaggerExemption"/>, because it may have subscribed to
+        /// PlayerVitals.Damaged before the gate did and so run first. If the player's latest hit was not reported yet it is reported now (the Confirmed handlers - the 멈 seed - run, and
+        /// may grant the exemption); a hit already reported is not reported again. No change to the player's damage.</summary>
+        public Vol2PlayerHit EnsureReported(PlayerVitals vitals)
+        {
+            if (vitals == null || !ReferenceEquals(vitals, _vitals) || vitals.HitSerial308 == 0) return default;
+            if (vitals.HitSerial308 == _lastSerial) return Last;
+            _lastSerial = vitals.HitSerial308;
+            var info = vitals.LastHit;
+            return Report(info.Amount, info.Attacker, info.Kind);
         }
 
         /// <summary>A real hit was confirmed. A non-positive or non-finite amount is not a hit (returns the default, nothing is raised).</summary>

@@ -32,12 +32,13 @@ namespace Oheangbu.App
             coordinator.ContactResolved += p.OnContact;
             coordinator.Materials.Created += p.OnMaterial;
             coordinator.Materials.Ended += p.OnMaterialEnded;
+            coordinator.Reactions.ReactionResolved += p.OnReaction;
             return p;
         }
 
         void OnDestroy()
         {
-            if (_coordinator != null) { _coordinator.CastBegan -= OnBegan; _coordinator.ContactResolved -= OnContact; _coordinator.Materials.Created -= OnMaterial; _coordinator.Materials.Ended -= OnMaterialEnded; }
+            if (_coordinator != null) { _coordinator.CastBegan -= OnBegan; _coordinator.ContactResolved -= OnContact; _coordinator.Materials.Created -= OnMaterial; _coordinator.Materials.Ended -= OnMaterialEnded; _coordinator.Reactions.ReactionResolved -= OnReaction; }
             if (_material != null) Destroy(_material);
         }
 
@@ -120,6 +121,23 @@ namespace Oheangbu.App
             l.Lr.SetPosition(0, p + Vector3.left * 0.35f + Vector3.up * 0.35f); l.Lr.SetPosition(1, p + Vector3.right * 0.35f - Vector3.up * 0.35f);
             var l2 = NewLine(log, "Contact", 2, 0.12f, 0.5f, false);
             l2.Lr.SetPosition(0, p + Vector3.left * 0.35f - Vector3.up * 0.35f); l2.Lr.SetPosition(1, p + Vector3.right * 0.35f + Vector3.up * 0.35f);
+        }
+
+        // ---- slice 8: a committed reaction (placeholder: a diamond in the ACTING body's ink at the contact; the child, if any, is a material and is outlined by OnMaterial) ----
+
+        /// <summary>How many reactions asked for a Mud (진창) look that has no prefab yet - the TODO of slice 8: the signal is emitted, the plain diamond stands in.</summary>
+        public int MudMissing { get; private set; }
+        public int ReactionsDrawn { get; private set; }
+
+        void OnReaction(Vol2ReactionVisual v)
+        {
+            if (v.MudPrefabMissing) MudMissing++;
+            ReactionsDrawn++;
+            if (!Enabled) return;
+            Vector3 p = v.Point + Vector3.up * 0.9f;
+            var l = NewLine(new Vol2CastLog { Glyph = new Glyph('\0', v.ActingBody, Frame.Path, Verb.Leave) }, "Reaction_" + v.EventId + "_" + v.Relation, 5, 0.1f, 0.8f, false);
+            float r = v.Relation == ReactionRulesV3.Kind.Block ? 0.25f : 0.45f;
+            l.Lr.SetPosition(0, p + Vector3.left * r); l.Lr.SetPosition(1, p + Vector3.up * r); l.Lr.SetPosition(2, p + Vector3.right * r); l.Lr.SetPosition(3, p + Vector3.down * r); l.Lr.SetPosition(4, p + Vector3.left * r);
         }
 
         // ---- materials (placeholder outlines: residue = a ring / fan / disc rising as dark ink, mark = a small flat disc) ----

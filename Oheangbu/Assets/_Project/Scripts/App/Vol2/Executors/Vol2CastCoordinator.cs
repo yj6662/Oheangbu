@@ -92,12 +92,17 @@ namespace Oheangbu.App
         public void Clear() { _wetUntil.Clear(); }
     }
 
-    /// <summary>The field's side of a few peaks (국's platform, 눈's vine door). No field API exists yet; slice 8 binds one. Until then the
-    /// coordinator only RECORDS the request in the cast log (FieldNotes).</summary>
+    /// <summary>The field's side of the five field glyphs (국's platform, 눈's vine door, 뭄's ground, 숫's rock / iron gate, 웅's pollution). Slice 8 binds the real
+    /// one (<see cref="Vol2FieldGateAdapter"/>, over the existing SpellFieldGate308); without a port the coordinator only RECORDS the request in the cast log
+    /// (FieldNotes). The two slice 8 methods have default bodies, so a fake of an earlier slice still compiles.</summary>
     public interface IVol2FieldPort
     {
         string OnPlatform(CastId cast, Vector3 centre, float radius, long lifeUs);
         string OnVineBurn(CastId cast, Vol2Material vine);
+        /// <summary>숫: the cast cut the rock / iron gate within <paramref name="radius"/> of <paramref name="centre"/> (the ring's centre and radius). The answer is a note for the log.</summary>
+        string OnGateCut(CastId cast, Vector3 centre, float radius) => "no gate cut on this field port: recorded only";
+        /// <summary>웅: the returning ring cleansed the ground from <paramref name="inner"/> to <paramref name="outer"/> metres around <paramref name="centre"/> (the non-combat pollution gate).</summary>
+        string OnCleanse(CastId cast, Vector3 centre, float inner, float outer) => "no cleanse on this field port: recorded only";
     }
 
     /// <summary>S5-b slices 3 and 4: CastAccepted -> shape -> contacts -> rules' budget -> damage / body action / material, for the verbs whose
@@ -141,6 +146,9 @@ namespace Oheangbu.App
         /// <summary>Is this body a boss (bind x0.5 ...)? Default: the enemy's own flag. A fixture sets its own.</summary>
         public Func<IVol2Target, bool> BossTest { get; set; } = t => t is Vol2EnemyTarget e && e.Vitals != null && e.Vitals.IsBoss;
         public Vol2StatusBook Wet { get; } = new Vol2StatusBook();
+        /// <summary>S5-b slice 8: the reaction engine of this scope (ticked from <see cref="Tick"/>). Created OFF: <see cref="Vol2ReactionEngine.Enabled"/> is turned on by the
+        /// scope's runtime (Vol2ShapeRuntime.CreateForScope) and by the fixtures that test it, so the fixtures of slices 3 to 7 see no reaction.</summary>
+        public Vol2ReactionEngine Reactions { get; }
         public Vol2TargetRegistry Registry => _registry;
         public Vol2SwingSignal Swings => _swings;
         public Vol2ShapeTuning Tuning => _tuning;
@@ -176,6 +184,7 @@ namespace Oheangbu.App
             _materials = materials ?? new Vol2MaterialRegistry(_clock, services.Ids);
             _verbTuning = verbTuning ?? new Vol2VerbTuning();
             foreach (Body b in Enum.GetValues(typeof(Body))) _profiles[b] = Vol2BodyProfile.For(b, _numbers);
+            Reactions = new Vol2ReactionEngine(this);
             services.Route.Adapter.CastAccepted += OnAccepted;
             _swings.Contact += OnSwing;
         }
@@ -187,6 +196,7 @@ namespace Oheangbu.App
             _services.Route.Adapter.CastAccepted -= OnAccepted;
             _swings.Contact -= OnSwing;
             _active.Clear(); _dots.Clear();
+            Reactions.Dispose();
         }
 
         public bool TryGetLog(CastId cast, out Vol2CastLog log) => _logs.TryGetValue(cast.Value, out log);
@@ -215,6 +225,7 @@ namespace Oheangbu.App
             }
             _active.Clear(); _dots.Clear();
             _materials.EndAll(now);
+            Reactions.Reset();
         }
 
         // ---- accept ----
@@ -271,6 +282,7 @@ namespace Oheangbu.App
             run.Verb.Start(now, _targets);
             Step(run, now, _targets);
             run.Verb.Tick(now, _targets);
+            Reactions.Tick(now, _targets);          // slice 8: the shape's first step and the materials it made are read at once (a fan lands on a standing patch NOW, not next frame)
             Settle(run, now);
         }
 
@@ -292,6 +304,7 @@ namespace Oheangbu.App
             for (int i = 0; i < _active.Count; i++) Step(_active[i], now, _targets);
             for (int i = 0; i < _active.Count; i++) _active[i].Verb.Tick(now, _targets);
             TickDots(now);
+            Reactions.Tick(now, _targets);          // slice 8: one single-threaded pass - collect, order, reserve, resolve once, commit as one batch
             for (int i = _active.Count - 1; i >= 0; i--) Settle(_active[i], now);
             Status?.Tick(dt);
         }
@@ -300,6 +313,7 @@ namespace Oheangbu.App
         {
             var found = new List<Vol2ShapeContact>();
             a.Emitter.Tick(now, targets, found);
+            Reactions.OnShapeStep(a, now);          // slice 8: the moving shape's reach this step is a reaction contact against standing materials (before its own body contacts)
             foreach (var c in found) a.Verb.OnContact(c, now);
         }
 

@@ -21,6 +21,10 @@ namespace Oheangbu.App
         /// <summary>Non-null when the ink comes from the combat InkPool (the lab refills it between rows).</summary>
         public Vol2InkPoolSpender PoolInk { get; }
         public GameObject Host { get; private set; }
+        /// <summary>S5-b slice 8 (Vol2 scopes only): the field gates (the coordinator's field port), the world's materials and the 뭄 dash block. Null in a fixture runtime.</summary>
+        public Vol2FieldGateAdapter Field { get; private set; }
+        public Vol2WorldMaterials World { get; private set; }
+        public Vol2MovementBlock Block { get; private set; }
         /// <summary>The TEMPORARY debug presenter (null in a fixture). Its Drawn counter is how the lab knows the shapes were drawn.</summary>
         public Vol2DebugPresenter Presenter { get; private set; }
 
@@ -55,10 +59,17 @@ namespace Oheangbu.App
             runtime.Host = go;
             go.AddComponent<Vol2ShapeRuntimeTicker>().Bind(runtime);
             runtime.Presenter = Vol2DebugPresenter.Attach(runtime.Coordinator, go.transform);
+            // slice 8: reactions on, the field gates bound, the world's materials and the dash block. All of this exists only in a Vol2 scope: CreateForScope is never reached in Legacy308.
+            runtime.Coordinator.Reactions.Enabled = true;
+            runtime.Field = new Vol2FieldGateAdapter(caster, services.Clock, runtime.Coordinator.Reactions.Tuning) { Targets = () => runtime.Coordinator.Targets };
+            runtime.Coordinator.Field = runtime.Field;
+            runtime.World = new Vol2WorldMaterials(runtime.Materials, services.Clock, runtime.Coordinator.Reactions.Tuning);
+            runtime.Block = new Vol2MovementBlock(runtime.Materials, runtime.Coordinator.Reactions.Tuning);
+            go.AddComponent<Vol2WorldBinder>().Bind(runtime.World);
             return runtime;
         }
 
-        public void Dispose() { Coordinator.Dispose(); }
+        public void Dispose() { Field?.Clear(); Coordinator.Dispose(); }
     }
 
     /// <summary>Ticks the coordinator once per frame with the scaled delta, and lets go of the event subscriptions when the scene object dies.</summary>
@@ -66,7 +77,14 @@ namespace Oheangbu.App
     {
         Vol2ShapeRuntime _runtime;
         public void Bind(Vol2ShapeRuntime runtime) { _runtime = runtime; }
-        void Update() { _runtime?.Coordinator.Tick(Time.deltaTime); }
+        void Update()
+        {
+            if (_runtime == null) return;
+            _runtime.Coordinator.Tick(Time.deltaTime);
+            long now = _runtime.Coordinator.Services.Clock.NowUs;
+            _runtime.Field?.Tick(now);
+            _runtime.Block?.Tick(now, _runtime.Coordinator.Targets, Time.time);
+        }
         void OnDestroy() { _runtime?.Dispose(); _runtime = null; }
     }
 }

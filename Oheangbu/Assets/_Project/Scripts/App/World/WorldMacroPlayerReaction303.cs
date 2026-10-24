@@ -51,12 +51,20 @@ namespace Oheangbu.App.World
         void OnDamaged(float amount)
         {
             if (_layer < 0 || _vitals == null || _vitals.Hp01 <= 0f || Lying) return;   // the killing blow belongs to the death
+            if (Vol2StaggerExempt()) return;   // S5-b slice 8: a 멈 seed exempted THIS hit from the body stagger (decided after the damage was confirmed, before any stagger plays); false in Legacy308
             bool large = amount >= Profile.LargeHitShare * _vitals.MaxHp;
             string dir = Direction(out Vector3 from);
             Play(large ? Profile.HitLarge : dir, Profile.HitFadeIn, large ? Profile.LargeHitHold : Profile.HitHold);
             if (_lean == null) _lean = GetComponent<WorldMacroPlayerLean303>();
             if (_lean != null) _lean.Recoil(from, large ? 1.6f : 1f);   // the clip's flinch is subtle at play distance
             Hits++;
+        }
+
+        CombatLoopWiring _vol2Wiring; bool _vol2Looked;
+        bool Vol2StaggerExempt()
+        {
+            if (!_vol2Looked) { _vol2Looked = true; _vol2Wiring = FindFirstObjectByType<CombatLoopWiring>(); }
+            return _vol2Wiring != null && _vol2Wiring.SpellMode == Oheangbu.Spellcraft.SpellRuntimeMode.Vol2 && _vol2Wiring.TryTakeVol2StaggerExemption(_vitals);
         }
 
         WorldMacroPlayerLean303 _lean;

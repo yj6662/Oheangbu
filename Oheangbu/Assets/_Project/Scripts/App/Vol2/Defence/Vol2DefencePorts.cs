@@ -39,7 +39,7 @@ namespace Oheangbu.App
                 ? Vol2DamageResolver.Resolve(_kit.Numbers, r.BaseH * r.StatusFactor, r.Structure, r.Force, counter, true, window, _kit.HpPerUnit)
                 : Vol2DamageResolver.Resolve(_kit.Numbers, r.Units, 1m, 1m, false, false, window, _kit.HpPerUnit);   // a lasting tick: B only
             var source = spell ? DamageSource.PlayerDirect : DamageSource.PersistentSpell;
-            bool melee = r.Glyph.Frame == Frame.Attachment;
+            bool melee = !r.IsReaction && r.Glyph.Frame == Frame.Attachment;       // S5-b slice 8: a reaction is nobody's swing, whatever the acting cast was
             var attack = Vol2Attack.Create(r.Instigator, source, r.Element, melee);
             var result = v.TakeResolvedVol2Damage(terms.RawHp, attack, terms, false);
             LastTerms = terms; LastHit = v.LastVol2Hit; Hits++;

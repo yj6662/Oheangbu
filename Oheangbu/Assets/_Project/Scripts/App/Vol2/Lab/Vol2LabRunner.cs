@@ -27,6 +27,8 @@ namespace Oheangbu.App
         {
             public string status, runId, commit, mode, csv, startedAt, finishedAt, dtoHash, numbersSha256, tableSha256, scenario, rulebookError;
             public int rows, pass, fail, accepted, rejected, exceptions, logErrors, framesWaited;
+            /// <summary>S5-b slice 8: the reaction pass runs AFTER the rows above and is counted apart (rows / pass / fail stay the original 125); it still decides the run's status.</summary>
+            public int reactionRows, reactionPass, reactionFail;
             public string[] firstProblems = new string[0];
         }
 
@@ -71,6 +73,7 @@ namespace Oheangbu.App
         readonly List<Vol2CastDecision> _decisions = new List<Vol2CastDecision>();
         readonly List<string> _problems = new List<string>();
         int _logErrors, _rows, _pass, _fail, _exceptions, _accepted, _rejected, _frames;
+        int _xRows, _xPass, _xFail;           // slice 8: the reaction pass
         bool _finished, _started, _running;
         string _startedAt = "";
 
@@ -177,7 +180,7 @@ namespace Oheangbu.App
         }
 
         /// <summary>Counts the row and writes it. <paramref name="once"/> (slice 3) carries what the cast did and can turn the verdict to FAIL.</summary>
-        bool Commit(int index, Vol2SpellRowDto row, Injected injected, OnceRow once)
+        bool Commit(int index, Vol2SpellRowDto row, Injected injected, OnceRow once, bool extra = false)
         {
             string verdict = injected.Verdict, note = injected.Note;
             var d = injected.Decision;
@@ -185,9 +188,18 @@ namespace Oheangbu.App
             if (once != null && once.Log == null && injected.Decision != null && injected.Decision.Accepted) { verdict = "FAIL"; note += (note.Length > 0 ? "; " : "") + "no cast log for the accepted cast"; }
             int newErrors = _logErrors - injected.LogErrorsBefore;
             if (newErrors > 0) note += (note.Length > 0 ? "; " : "") + "log errors during row: " + newErrors;
-            if (d != null) { if (d.Accepted) _accepted++; else _rejected++; }
-            if (verdict == "PASS") _pass++; else { _fail++; if (_problems.Count < 8) _problems.Add(row.Letter + " " + note); }
-            _rows++;
+            if (extra)
+            {
+                // slice 8: the reaction pass is counted apart (the original rows / pass / fail stay what they were) and does not touch accepted / rejected
+                if (verdict == "PASS") _xPass++; else { _xFail++; if (_problems.Count < 8) _problems.Add(row.Letter + " " + (once != null ? once.Variant + ": " : "") + note); }
+                _xRows++;
+            }
+            else
+            {
+                if (d != null) { if (d.Accepted) _accepted++; else _rejected++; }
+                if (verdict == "PASS") _pass++; else { _fail++; if (_problems.Count < 8) _problems.Add(row.Letter + " " + note); }
+                _rows++;
+            }
             WriteRow(_request.runId, index, row, d, injected.Exception, verdict, note, once);
             return verdict == "PASS";
         }
@@ -238,7 +250,7 @@ namespace Oheangbu.App
         /// <summary>One row of a verb with a lab provider: scenario in, letter through the channel, the scenario's steps on the scope clock, the clock
         /// fast-forwarded to the end of the cast's life, the provider's verdict, everything out. A row starts from nothing (the coordinator's
         /// casts and every material are aborted first) and leaves nothing behind.</summary>
-        async UniTask ProcessVerbRowAsync(int index, Vol2SpellRowDto row, IVol2LabProvider provider, System.Threading.CancellationToken token)
+        async UniTask ProcessVerbRowAsync(int index, Vol2SpellRowDto row, IVol2LabProvider provider, System.Threading.CancellationToken token, string scenarioName = null, bool extra = false)
         {
             var shapes = _services.Shapes;
             shapes.Coordinator.AbortAll();
@@ -246,12 +258,13 @@ namespace Oheangbu.App
             float inkBefore = shapes.PoolInk != null ? shapes.PoolInk.InkNow : -1f;
             int linesBefore = shapes.Presenter != null ? shapes.Presenter.Drawn : 0;
             shapes.Registry.ExtrasOnly = true; shapes.Registry.ClearExtras();
-            var ctx = new Vol2LabContext(shapes, _services);
+            var ctx = new Vol2LabContext(shapes, _services) { Kit = _wiring != null ? _wiring.Vol2Defence : null };
+            ctx.Cast = letter => { try { _wiring.LetterChannel.Raise(new DrawnLetter(letter, default, default, null, 0.6f, 0.6f, 1f, 1f, 3)); } catch (Exception e) { Debug.LogException(e); } };
             var scenario = provider.Build(row, ctx);
             try
             {
                 var injected = Inject(row);
-                var once = new OnceRow { Variant = scenario.Variant, Describe = scenario.Describe, SimulatedSwing = scenario.UsesSwings, ScenarioName = Vol2VerbLab.Scenario };
+                var once = new OnceRow { Variant = scenario.Variant, Describe = scenario.Describe, SimulatedSwing = scenario.UsesSwings, ScenarioName = scenarioName ?? Vol2VerbLab.Scenario };
                 if (inkBefore >= 0f) once.InkDelta = (shapes.PoolInk.InkNow - inkBefore).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
                 Vol2CastLog log = null;
                 if (injected.Decision != null && injected.Decision.Accepted) shapes.Coordinator.TryGetLog(injected.Decision.CastId, out log);
@@ -269,16 +282,34 @@ namespace Oheangbu.App
                     double last = scenario.Steps.Count > 0 ? scenario.Steps[scenario.Steps.Count - 1].AtSeconds : 0.0;
                     double settle = Math.Max(last + scenario.SettleSeconds, scenario.MinSeconds);
                     while ((_services.Clock.NowUs - t0) / 1000000.0 < settle && Time.unscaledTime < guard) await UniTask.Yield(PlayerLoopTiming.Update, token);
-                    Vol2VerbLab.FastForward(ctx, log, injected.Decision);
+                    if (!scenario.SkipFastForward) Vol2VerbLab.FastForward(ctx, log, injected.Decision);
                     float until = Time.unscaledTime + 4f;
                     while (!log.Finished && Time.unscaledTime < until) await UniTask.Yield(PlayerLoopTiming.Update, token);
                     for (int k = 0; k < 3; k++) await UniTask.Yield(PlayerLoopTiming.Update, token);     // the push / slow / marks take a frame to show
                     once.Verdict = provider.Evaluate(row, scenario, log, injected.Decision, ctx);
                 }
                 once.PresenterLines = shapes.Presenter != null ? shapes.Presenter.Drawn - linesBefore : 0;
-                Commit(index, row, injected, once);
+                Commit(index, row, injected, once, extra);
             }
             finally { Vol2VerbLab.Cleanup(scenario, shapes.Registry); shapes.Coordinator.AbortAll(); shapes.Registry.ExtrasOnly = false; }
+        }
+
+        // ---- slice 8: the reaction pass (real casts, real contacts; counted apart from the 125 rows) ----
+
+        async UniTask ProcessReactionPassAsync(Vol2Rulebook book, System.Threading.CancellationToken token)
+        {
+            var shapes = _services.Shapes;
+            var lab = new Vol2ReactionLab();
+            shapes.Coordinator.Reactions.Enabled = true;
+            int index = book.Spells.Count;
+            foreach (var c in lab.Cases)
+            {
+                Vol2SpellRowDto row = null;
+                foreach (var r in book.Spells) if (r.Letter == c.Letter) { row = r; break; }
+                if (row == null) { _xRows++; _xFail++; if (_problems.Count < 8) _problems.Add("reaction case " + c.Variant + ": no table row for " + c.Letter); continue; }
+                await ProcessVerbRowAsync(index++, row, lab.ProviderFor(c), token, Vol2ReactionLab.Scenario, true);
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
+            }
         }
 
         /// <summary>Stops counting, writes the summary and closes the CSV. Returns the status (PASS | FAIL | the forced one).</summary>
@@ -289,7 +320,7 @@ namespace Oheangbu.App
             Application.logMessageReceived -= OnLog;
             _services.Route.Adapter.Decided -= OnDecided;
             if (_kit != null && _kitHooked) { _kit.Posture.Applied -= OnPosture; _kitHooked = false; }
-            string status = forcedStatus ?? (_fail == 0 && _exceptions == 0 && _logErrors == 0 && _rows > 0 ? "PASS" : "FAIL");
+            string status = forcedStatus ?? (_fail == 0 && _xFail == 0 && _exceptions == 0 && _logErrors == 0 && _rows > 0 ? "PASS" : "FAIL");
             try { WriteSummary(status); } catch (Exception e) { Debug.LogWarning("[Vol2Lab] summary failed: " + e.Message); }
             _finished = true;
             CloseCsv();
@@ -309,6 +340,11 @@ namespace Oheangbu.App
 
                 var book = _services.Rulebook;
                 BeginRun();
+                // slice 8: the rows of the verbs are verb-isolation rows - they run with the reaction engine paused (as before slice 8); the reaction pass below turns it on
+                // (a diagnostic run: an empty file Art/SpellVFX308/Vol2Lab/reactions_on.flag keeps the engine ON through the verb rows too - the game configuration - to see what the verbs do beside reactions)
+                bool reactionsOnThroughout = File.Exists(Path.Combine(Folder, "reactions_on.flag"));
+                if (_services.Shapes != null) _services.Shapes.Coordinator.Reactions.Enabled = reactionsOnThroughout;
+                if (reactionsOnThroughout) Debug.Log("[Vol2Lab] reactions stay ON through the verb rows (reactions_on.flag)");
                 if (book == null || !book.Ok) ProcessUnavailable();
                 else
                     for (int i = 0; i < book.Spells.Count; i++)
@@ -324,6 +360,8 @@ namespace Oheangbu.App
                         else ProcessRow(i, row);
                         await UniTask.Yield(PlayerLoopTiming.Update, token);   // one letter per frame: the scene and the presenters live between rows
                     }
+                if (book != null && book.Ok && _services.Shapes != null) await ProcessReactionPassAsync(book, token);
+                if (_services.Shapes != null) _services.Shapes.Coordinator.Reactions.Enabled = true;      // the scope's normal state
                 string status = EndRun();
                 Debug.Log("[Vol2Lab] done " + status + " rows=" + _rows + " pass=" + _pass + " fail=" + _fail + " accepted=" + _accepted + " rejected=" + _rejected + " exceptions=" + _exceptions + " logErrors=" + _logErrors + " csv=" + _csvPath);
             }
@@ -447,10 +485,11 @@ namespace Oheangbu.App
             var s = new Summary
             {
                 status = status, runId = _request != null ? _request.runId : "", commit = _request != null ? _request.commit : "", mode = _services != null ? _services.Mode.ToString() : "",
-                csv = _csvPath ?? "", startedAt = _startedAt, finishedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), scenario = _services != null && _services.Shapes != null ? Scenario + "+" + Vol2OnceLab.Scenario + "+" + Vol2VerbLab.Scenario : Scenario,
+                csv = _csvPath ?? "", startedAt = _startedAt, finishedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), scenario = _services != null && _services.Shapes != null ? Scenario + "+" + Vol2OnceLab.Scenario + "+" + Vol2VerbLab.Scenario + "+" + Vol2ReactionLab.Scenario + (_services.Shapes.Coordinator.Reactions.Enabled && File.Exists(Path.Combine(Folder, "reactions_on.flag")) ? "+reactions-on-throughout" : "") : Scenario,
                 dtoHash = book != null ? book.DtoHash : "", numbersSha256 = book != null ? book.NumbersSha256 : "", tableSha256 = book != null ? book.TableSha256 : "",
                 rulebookError = book != null ? book.Error ?? "" : "no rulebook",
                 rows = _rows, pass = _pass, fail = _fail, accepted = _accepted, rejected = _rejected, exceptions = _exceptions, logErrors = _logErrors, framesWaited = _frames,
+                reactionRows = _xRows, reactionPass = _xPass, reactionFail = _xFail,
                 firstProblems = _problems.ToArray()
             };
             File.WriteAllText(_summaryPath, JsonUtility.ToJson(s, true), new UTF8Encoding(false));

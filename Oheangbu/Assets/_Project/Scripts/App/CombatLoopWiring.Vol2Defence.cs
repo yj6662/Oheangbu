@@ -95,6 +95,19 @@ namespace Oheangbu.App
             return _vol2Defence != null ? _vol2Defence.Gather.OnSwingFirstHit(target, swing, _playerVitals) : default;
         }
 
+        /// <summary>S5-b slice 8 (closes the 멈 seam): asked by the body-stagger listener (WorldMacroPlayerReaction303.OnDamaged) BEFORE it plays a hit reaction. true = this very hit
+        /// is exempt from the body stagger (a 멈 seed worked on it); the damage and the letter interruption are untouched. false in Legacy308 and whenever no gate is bound.</summary>
+        public bool TryTakeVol2StaggerExemption(PlayerVitals vitals)
+        {
+            var gate = _vol2Defence != null ? _vol2Defence.HitGate : null;
+            if (gate == null) return false;
+            gate.EnsureReported(vitals);
+            return gate.TakeStaggerExemption();
+        }
+
+        /// <summary>S5-b slice 8: the player the wiring drives (the installer binds the 심는다 hub to its real hits).</summary>
+        public PlayerVitals Vol2Player => _playerVitals;
+
         /// <summary>The swing met no enemy.</summary>
         public Vol2GatherRecord ReportVol2SwingMissed(SwingId swing)
         {

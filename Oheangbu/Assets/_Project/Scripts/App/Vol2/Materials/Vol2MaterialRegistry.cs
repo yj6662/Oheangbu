@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Oheangbu.Vol2.Rules;
 using UnityEngine;
@@ -50,6 +50,11 @@ namespace Oheangbu.App
         public static Vol2Footprint Fan(Vol2ShapeSpec spec, float growLinear = 1f, long growStartUs = 0, long growEndUs = 0)
             => new Vol2Footprint(Vol2FootprintKind.Fan, spec.Origin, spec.Forward, 0f, spec.FanDepth, spec.FanHalfAngleRad, 0f, 0f, growLinear, growStartUs, growEndUs);
         public static Vol2Footprint Ring(Vol2ShapeSpec spec) => new Vol2Footprint(Vol2FootprintKind.Ring, spec.Origin, spec.Forward, 0f, 0f, 0f, spec.RingInner, spec.RingOuter, 1f, 0, 0);
+        /// <summary>S5-b slice 8 (open seam of slice 7): a ring footprint from plain numbers - a world ring, the band of a returning ring, a ring the reaction rules put down.</summary>
+        public static Vol2Footprint RingAt(Vector3 centre, float inner, float outer) => new Vol2Footprint(Vol2FootprintKind.Ring, centre, Vector3.forward, 0f, 0f, 0f, Mathf.Max(0f, inner), Mathf.Max(inner, outer), 1f, 0, 0);
+        /// <summary>S5-b slice 8: a fan from plain numbers (a world fan; a carried fan keeps its shape at its new apex).</summary>
+        public static Vol2Footprint FanAt(Vector3 apex, Vector3 forward, float depth, float halfAngleRad, float growLinear = 1f, long growStartUs = 0, long growEndUs = 0)
+            => new Vol2Footprint(Vol2FootprintKind.Fan, apex, forward, 0f, depth, halfAngleRad, 0f, 0f, growLinear, growStartUs, growEndUs);
 
         /// <summary>The linear scale at a moment (1 unless the footprint grows; linear in time between start and end).</summary>
         public float ScaleAt(long nowUs)
@@ -137,6 +142,26 @@ namespace Oheangbu.App
         public int Splits { get; internal set; }
         public bool GateDoor { get; internal set; }
         public string Tag { get; internal set; } = "";
+        /// <summary>S5-b slice 8: counts every change the registry makes to this material (draw, split, move, extend, thicken, wet, end). The reaction engine reserves a contact by the
+        /// revisions it read; a changed revision means another commit got there first and the contact is read again.</summary>
+        public int Revision { get; internal set; } = 1;
+        /// <summary>S5-b slice 8: the casts this material descends from, besides its own (a reaction child carries both parents'). The rules refuse a reaction between two materials
+        /// that share any cast. null = only its own cast.</summary>
+        public HashSet<long> Ancestors { get; internal set; }
+        /// <summary>S5-b slice 8: a thickened (비화) material cannot be thickened again.</summary>
+        public bool Thickened { get; internal set; }
+        /// <summary>S5-b slice 8 (open seam of slice 7): "wet" - set by 옹 / 웅 / 엉 on my materials. Presentation and later rules read it; no reaction rule depends on it.</summary>
+        public bool Wet { get; internal set; }
+        public long WetUntilUs { get; internal set; }
+        /// <summary>S5-b slice 8: last time the material was moved (앙). A material moved since the reaction engine last looked is a MOVING body for the rules.</summary>
+        public long MovedUs { get; internal set; } = -1;
+        /// <summary>The registry's move counter at the last move (0 = never moved). The reaction engine remembers the counter it has seen: a material with a higher one is moving NOW.</summary>
+        public long MovedSerial { get; internal set; }
+        /// <summary>S5-b slice 8: where it came from - "cast" (a vol.2 cast), "world" (pre-placed field material), "reaction" (a child of a reaction), "split" (half of a split).</summary>
+        public string Origin { get; internal set; } = "cast";
+        /// <summary>S5-b slice 8 (design section 10, body-attached materials): a material on the caster's body reacts through NORMAL CONTACT only (a hostile shape that touches the host);
+        /// an enemy caster must not CHOOSE it as a target. Two separate eligibilities: this is the second (see Vol2ReactionEligibility).</summary>
+        public bool SelectableByEnemyCaster => Alive && Remaining > 0m && !(Attached && FactionId == Vol2Faction.Player);
         public Vol2MaterialEnd End { get; internal set; }
         public long EndedUs { get; internal set; }
         public bool Alive => End == Vol2MaterialEnd.None;
@@ -161,6 +186,8 @@ namespace Oheangbu.App
 
         public int AliveCount => _alive.Count;
         public long TotalCreated { get; private set; }
+        /// <summary>Counts every TryMove (see Vol2Material.MovedSerial).</summary>
+        public long MoveSerial { get; private set; }
 
         public Vol2MaterialRegistry(IVol2Clock clock, Vol2IdIssuer ids)
         { _clock = clock ?? throw new ArgumentNullException(nameof(clock)); _ids = ids ?? throw new ArgumentNullException(nameof(ids)); }
@@ -179,7 +206,8 @@ namespace Oheangbu.App
 
         /// <summary>Makes a material. <paramref name="id"/> 0 = a fresh MaterialId. The expiry is half-open: the material is gone AT created + life.</summary>
         public Vol2Material Create(CastId cast, char letter, Body body, Vol2MaterialKind kind, decimal amount, long lifeUs, Vol2Footprint footprint,
-            long ownerId, long factionId, bool paysPool, long nowUs, int depth = 0, long id = 0, string tag = "", bool gateDoor = false)
+            long ownerId, long factionId, bool paysPool, long nowUs, int depth = 0, long id = 0, string tag = "", bool gateDoor = false,
+            IEnumerable<long> ancestors = null, string origin = "cast")
         {
             if (!cast.IsValid) throw new ArgumentException("CastId required");
             if (amount < 0m || lifeUs <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
@@ -188,8 +216,10 @@ namespace Oheangbu.App
             var m = new Vol2Material
             {
                 Id = mid, Cast = cast, Letter = letter, Body = body, Kind = kind, OwnerId = ownerId, FactionId = factionId, CreatedUs = nowUs, ExpiresUs = checked(nowUs + lifeUs),
-                Initial = amount, Remaining = amount, Depth = depth, Footprint = footprint ?? Vol2Footprint.Attached(Vector3.zero), PaysPool = paysPool, Tag = tag ?? "", GateDoor = gateDoor
+                Initial = amount, Remaining = amount, Depth = depth, Footprint = footprint ?? Vol2Footprint.Attached(Vector3.zero), PaysPool = paysPool, Tag = tag ?? "", GateDoor = gateDoor,
+                Origin = origin ?? "cast"
             };
+            if (ancestors != null) { var set = new HashSet<long>(ancestors); set.Remove(cast.Value); if (set.Count > 0) m.Ancestors = set; }
             _all.Add(mid.Value, m); _alive.Add(m); TotalCreated++;
             Created?.Invoke(m);
             return m;
@@ -202,7 +232,7 @@ namespace Oheangbu.App
             taken = 0m;
             if (amount <= 0m || !_all.TryGetValue(id.Value, out var m) || !m.Alive || nowUs < m.CreatedUs || nowUs >= m.ExpiresUs || m.Remaining <= 0m) return false;
             taken = Math.Min(amount, m.Remaining);
-            m.Remaining -= taken; m.Drawn += taken;
+            m.Remaining -= taken; m.Drawn += taken; m.Revision++;
             Changed?.Invoke(m, "drawn");
             if (m.Remaining <= 0m) End(m, Vol2MaterialEnd.Consumed, nowUs);
             return true;
@@ -217,14 +247,15 @@ namespace Oheangbu.App
             if (parts < 2 || !_all.TryGetValue(id.Value, out var m) || !m.Alive || m.Remaining <= 0m || nowUs >= m.ExpiresUs) return false;
             decimal before = m.Remaining, each = Math.Round(before / parts, 12);
             children = new List<Vol2Material>();
-            m.Remaining = each; m.Splits++;
+            m.Remaining = each; m.Splits++; m.Revision++;
             for (int i = 1; i < parts; i++)
             {
                 decimal part = i == parts - 1 ? before - each * (parts - 1) : each;
                 var c = new Vol2Material
                 {
                     Id = _ids.NextMaterial(), Cast = m.Cast, Letter = m.Letter, Body = m.Body, Kind = m.Kind, OwnerId = m.OwnerId, FactionId = m.FactionId, CreatedUs = m.CreatedUs, ExpiresUs = m.ExpiresUs,
-                    Initial = part, Remaining = part, Depth = m.Depth, Footprint = m.Footprint, PaysPool = m.PaysPool, LifeExtended = m.LifeExtended, Splits = m.Splits, Tag = m.Tag
+                    Initial = part, Remaining = part, Depth = m.Depth, Footprint = m.Footprint, PaysPool = m.PaysPool, LifeExtended = m.LifeExtended, Splits = m.Splits, Tag = m.Tag,
+                    Ancestors = m.Ancestors, Thickened = m.Thickened, Wet = m.Wet, WetUntilUs = m.WetUntilUs, Origin = "split"      // slice 8: a half is a material the reaction rules read like any other
                 };
                 _all.Add(c.Id.Value, c); _alive.Add(c); TotalCreated++; children.Add(c);
             }
@@ -237,8 +268,38 @@ namespace Oheangbu.App
         public bool TryMove(MaterialId id, Vol2Footprint footprint, long nowUs)
         {
             if (footprint == null || !_all.TryGetValue(id.Value, out var m) || !m.Alive || nowUs >= m.ExpiresUs) return false;
-            m.Footprint = footprint;
+            m.Footprint = footprint; m.MovedUs = nowUs; m.MovedSerial = ++MoveSerial; m.Revision++;
             Changed?.Invoke(m, "moved");
+            return true;
+        }
+
+        /// <summary>S5-b slice 8, 비화 (same body meets same body): the contacted material is made THICKER - it holds the rules' new amount and its life is renewed from now.
+        /// The same material, not a new one: id, owner and lineage stay. A thickened material is never thickened again. Raises Initial if the new amount is above what it
+        /// was made with, so the audit (nothing drawn beyond what it held) still holds.</summary>
+        public bool TryThicken(MaterialId id, decimal newRemaining, long newExpiresUs, long nowUs)
+        {
+            if (newRemaining <= 0m || !_all.TryGetValue(id.Value, out var m) || !m.Alive || m.Thickened || nowUs >= m.ExpiresUs) return false;
+            m.Remaining = newRemaining; m.ExpiresUs = Math.Max(m.ExpiresUs, newExpiresUs); m.Thickened = true; m.Revision++;
+            if (m.Remaining + m.Drawn > m.Initial) m.Initial = m.Remaining + m.Drawn;
+            Changed?.Invoke(m, "thickened");
+            return true;
+        }
+
+        /// <summary>S5-b slice 8, 막힘 (the contacted material holds half): the remaining amount is SET (not drawn: nothing was paid to a body).</summary>
+        public bool TrySetRemaining(MaterialId id, decimal remaining, long nowUs)
+        {
+            if (remaining <= 0m || !_all.TryGetValue(id.Value, out var m) || !m.Alive || nowUs >= m.ExpiresUs || remaining > m.Remaining) return false;
+            m.Remaining = remaining; m.Revision++;
+            Changed?.Invoke(m, "blocked");
+            return true;
+        }
+
+        /// <summary>S5-b slice 8 (open seam of slice 7): marks a material wet until <paramref name="untilUs"/> (a flag, not a rule). False if it is gone.</summary>
+        public bool TrySetWet(MaterialId id, long untilUs, long nowUs)
+        {
+            if (!_all.TryGetValue(id.Value, out var m) || !m.Alive || nowUs >= m.ExpiresUs) return false;
+            m.Wet = true; m.WetUntilUs = untilUs; m.Revision++;
+            Changed?.Invoke(m, "wet");
             return true;
         }
 
@@ -251,7 +312,7 @@ namespace Oheangbu.App
             long life = m.ExpiresUs - m.CreatedUs;
             long grown = checked((long)(life * factor));
             extraUs = grown - life;
-            m.ExpiresUs = checked(m.CreatedUs + grown); m.LifeExtended = true;
+            m.ExpiresUs = checked(m.CreatedUs + grown); m.LifeExtended = true; m.Revision++;
             Changed?.Invoke(m, "extended");
             return true;
         }
@@ -289,7 +350,7 @@ namespace Oheangbu.App
 
         void End(Vol2Material m, Vol2MaterialEnd reason, long nowUs)
         {
-            m.End = reason; m.EndedUs = nowUs;
+            m.End = reason; m.EndedUs = nowUs; m.Revision++;
             _alive.Remove(m);
             _endedOrder.Enqueue(m.Id.Value);
             while (_endedOrder.Count > KeepEnded) { long old = _endedOrder.Dequeue(); if (_all.TryGetValue(old, out var o) && !o.Alive) _all.Remove(old); }

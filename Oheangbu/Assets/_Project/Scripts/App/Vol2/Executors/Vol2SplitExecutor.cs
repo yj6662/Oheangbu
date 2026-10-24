@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Oheangbu.Combat;
@@ -126,7 +126,7 @@ namespace Oheangbu.App
                     case Vol2ShapeKind.Ring:
                         if (_gate)
                             Host.FieldRequest(Run, "cut rock/iron gate r=" + spec.RingRadius.ToString("0.##", CultureInfo.InvariantCulture) + " at (" + spec.Origin.x.ToString("0.##", CultureInfo.InvariantCulture) + ", " + spec.Origin.z.ToString("0.##", CultureInfo.InvariantCulture) + ")",
-                                f => "no gate API on IVol2FieldPort: recorded only");
+                                f => f.OnGateCut(Run.Cast, spec.Origin, spec.RingRadius));
                         break;
                     case Vol2ShapeKind.Attachment:
                         _prevCaster = Host.Caster.Position; _casterInit = true;

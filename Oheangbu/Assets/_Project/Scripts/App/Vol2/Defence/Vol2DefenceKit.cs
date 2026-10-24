@@ -47,6 +47,9 @@ namespace Oheangbu.App
         /// <summary>The ports for slice 3's cast coordinator (bound by Vol2DefenceInstaller): the real damage entry and the "already paid" ink port.</summary>
         public Vol2DefenceDamageSink DamageSink { get; }
         public Vol2PaidInkSpender PaidInk { get; }
+        /// <summary>S5-b slice 8: the player's real-hit gate of the 심는다 hub (set by the installer after Vol2SeedWiring.Bind). The body-stagger listener asks it
+        /// (CombatLoopWiring.TryTakeVol2StaggerExemption) for 멈; null until bound and in Legacy308.</summary>
+        public Vol2SeedHitGate HitGate { get; set; }
         /// <summary>true (default): the gate takes the ink of an ordinary cast, before CastAccepted - and the coordinator's ink port must be PaidInk.
         /// false: the gate leaves ordinary casts to whoever else pays (the coordinator's temporary spender), and only the parry and the 걱 recovery
         /// are handled here - used when the kit was bound without the installer, so a cast is never charged twice.</summary>
