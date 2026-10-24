@@ -21,7 +21,9 @@ namespace Oheangbu.EditorTools.WorldMacro
         const string V128LookAsset = "Assets/_Project/Resources/Spell308/SpellReactionLook308.asset";
         const string V128InkShader = "Oheangbu/SpellVFX308/InkBleed";
         const int V128FogLayer = 20, V128FireBudget = 48, V128SteamBudget = 32, V128TransitionBudget = 30;
-        const float V128MaxHeight = 1.3f;
+        // steam: the decided 1.3 m (D308-128 21). Wildfire: tongues stay low and the soot smoke is a few thin sparse grey strands, not a
+        // cloud (checklist): leaning wisps may rise to 2.0 m at the largest radius; no layer other than the ash flakes goes higher.
+        const float V128MaxHeight = 1.3f, V128FireSmokeHeight = 2f;
 
         // A presenter the checks can read: every call it hears, in order.
         sealed class V128Probe : ISpellPresenter, ISpellReactionPresenter308
@@ -220,7 +222,11 @@ namespace Oheangbu.EditorTools.WorldMacro
                 }
 
                 // simulated: nothing taller than 1.3 m, nothing over budget, something really drawn
-                float ground = go.transform.position.y; int alive = 0, peakAlive = 0; float top = 0f; string how = "";
+                // Measured on the particles themselves (GetParticles, world space) plus the most a drawn quad can stand above its
+                // centre (half its current size; a vertical billboard also by its pivot; flat ones and flat mesh quads add nothing).
+                // Renderer bounds are NOT used: after Simulate in edit mode they are a box around the largest particle size of a
+                // layer (a 12 m flat pour at radius 5.25 reads as 9 m "high" though it lies on the ground).
+                float ground = go.transform.position.y; int alive = 0, peakAlive = 0; float top = 0f; string how = "", worst = "";
                 foreach (float t in new[] { .3f, .7f, 1.2f, 1.9f, 3f })
                 {
                     int now = 0;
@@ -230,18 +236,23 @@ namespace Oheangbu.EditorTools.WorldMacro
                         ps.Simulate(t, false, true, true);
                         if (ps.particleCount == 0) continue;
                         now += ps.particleCount;
+                        if (ps.name == "Ash") continue;   // ash flakes drift up as far as the ember patch's do (~1.8 m, world space); the height rule is the smoke's and the steam's
                         var rd = ps.GetComponent<ParticleSystemRenderer>();
                         var ps2 = new ParticleSystem.Particle[ps.particleCount]; int n = ps.GetParticles(ps2);
-                        float pTop = float.NegativeInfinity;
-                        for (int i = 0; i < n; i++) pTop = Mathf.Max(pTop, (ps.main.simulationSpace == ParticleSystemSimulationSpace.World ? ps2[i].position : ps.transform.TransformPoint(ps2[i].position)).y);
-                        if (ps.name == "Ash") continue;   // ash flakes drift up as far as the ember patch's do (~1.8 m, world space); the 1.3 m rule is the smoke's and the steam's
-                        float bTop = rd.bounds.size.sqrMagnitude > 0f ? rd.bounds.max.y : float.NegativeInfinity;
-                        top = Mathf.Max(top, bTop > float.NegativeInfinity ? bTop : pTop); how = bTop > float.NegativeInfinity ? "renderer bounds" : "particle centres";
+                        bool flat = rd.renderMode == ParticleSystemRenderMode.HorizontalBillboard || rd.renderMode == ParticleSystemRenderMode.Mesh;
+                        float reach = flat ? 0f : .5f + (rd.renderMode == ParticleSystemRenderMode.VerticalBillboard ? Mathf.Abs(rd.pivot.y) : 0f);
+                        for (int i = 0; i < n; i++)
+                        {
+                            float size = ps2[i].GetCurrentSize(ps), centre = V128World(ps, ps2[i].position).y, y = centre + reach * size;
+                            if (y > top) { top = y; worst = ps.name + " (centre " + (centre - ground).ToString("0.00") + ", size " + size.ToString("0.00") + ", t " + t + ")"; }
+                        }
                     }
                     peakAlive = Mathf.Max(peakAlive, now); alive += now;
                 }
-                r.Check(c, alive > 0 && peakAlive <= budget && top - ground <= V128MaxHeight,
-                    name + ": simulated at radius " + radius + " - " + peakAlive + " particles alive at most (budget " + budget + "), highest point " + (top - ground).ToString("0.00") + " m, ash flakes aside (<= " + V128MaxHeight + ", " + how + ")" + (alive == 0 ? " - the simulation made no particle: not conclusive" : ""));
+                how = "particle positions + half size, worst " + worst;
+                float cap = name == "steam" ? V128MaxHeight : V128FireSmokeHeight;
+                r.Check(c, alive > 0 && peakAlive <= budget && top - ground <= cap,
+                    name + ": simulated at radius " + radius + " - " + peakAlive + " particles alive at most (budget " + budget + "), highest point " + (top - ground).ToString("0.00") + " m, ash flakes aside (<= " + cap + ", " + how + ")" + (alive == 0 ? " - the simulation made no particle: not conclusive" : ""));
 
                 // a zone body that a reaction consumes goes quietly: React pales it, it is not Splash and not Dry
                 var probe = PrefabUtility.LoadPrefabContents(path);
@@ -257,6 +268,21 @@ namespace Oheangbu.EditorTools.WorldMacro
                 finally { PrefabUtility.UnloadPrefabContents(probe); }
             }
             finally { PrefabUtility.UnloadPrefabContents(go); }
+        }
+
+        // Where a particle really is in the world. A Local-space particle is drawn with the system's matrix as its Scaling Mode
+        // says: Hierarchy = the whole scale, Local = its own scale, Shape = none (the root scale only widened the emitter shape and
+        // is already in the stored position) - so TransformPoint over-reads a Shape-scaled system by the root's scale.
+        static Vector3 V128World(ParticleSystem ps, Vector3 p)
+        {
+            var tr = ps.transform;
+            if (ps.main.simulationSpace == ParticleSystemSimulationSpace.World) return p;
+            switch (ps.main.scalingMode)
+            {
+                case ParticleSystemScalingMode.Shape: return tr.position + tr.rotation * p;
+                case ParticleSystemScalingMode.Local: return tr.position + tr.rotation * Vector3.Scale(p, tr.localScale);
+                default: return tr.TransformPoint(p);
+            }
         }
 
         static bool Ldr(ParticleSystem ps)
