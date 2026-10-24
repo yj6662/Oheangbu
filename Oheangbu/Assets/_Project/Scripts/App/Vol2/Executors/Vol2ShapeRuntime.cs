@@ -30,6 +30,8 @@ namespace Oheangbu.App
         public Vol2SwingDriver Swing { get; set; }
         /// <summary>The TEMPORARY debug presenter (null in a fixture). Its Drawn counter is how the lab knows the shapes were drawn.</summary>
         public Vol2DebugPresenter Presenter { get; private set; }
+        /// <summary>S5-b slice 9a: the vol.2 spell look (null when no catalogue / shader). The debug presenter skips the casts it covers.</summary>
+        public Vol2VfxPresenter Vfx { get; private set; }
 
         Vol2ShapeRuntime(Vol2CastCoordinator coordinator, IVol2Caster caster, Vol2InkPoolSpender poolInk)
         { Coordinator = coordinator; Caster = caster; PoolInk = poolInk; }
@@ -62,6 +64,7 @@ namespace Oheangbu.App
             runtime.Host = go;
             go.AddComponent<Vol2ShapeRuntimeTicker>().Bind(runtime);
             runtime.Presenter = Vol2DebugPresenter.Attach(runtime.Coordinator, go.transform);
+            runtime.Vfx = Vol2VfxPresenter.Attach(runtime.Coordinator, go.transform, null, runtime.Presenter);      // slice 9a
             // slice 8: reactions on, the field gates bound, the world's materials and the dash block. All of this exists only in a Vol2 scope: CreateForScope is never reached in Legacy308.
             runtime.Coordinator.Reactions.Enabled = true;
             runtime.Field = new Vol2FieldGateAdapter(caster, services.Clock, runtime.Coordinator.Reactions.Tuning) { Targets = () => runtime.Coordinator.Targets };

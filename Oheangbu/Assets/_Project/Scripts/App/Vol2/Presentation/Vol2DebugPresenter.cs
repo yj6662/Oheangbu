@@ -20,7 +20,10 @@ namespace Oheangbu.App
         Vol2CastCoordinator _coordinator;
         Material _material;
         public bool Enabled = true;
+        public Vol2CastCoordinator Coordinator => _coordinator;
         public int Drawn { get; private set; }
+        /// <summary>S5-b slice 9a: the vol.2 VFX presenter draws the casts it covers; this one stays for the rest (A / F / R frames, reactions). null = draw everything.</summary>
+        public System.Func<Vol2CastLog, bool> Skip;
 
         public static Vol2DebugPresenter Attach(Vol2CastCoordinator coordinator, Transform parent)
         {
@@ -75,7 +78,7 @@ namespace Oheangbu.App
 
         void OnBegan(Vol2CastLog log)
         {
-            if (!Enabled || log.Spec == null) return;
+            if (!Enabled || log.Spec == null || (Skip != null && Skip(log))) return;
             var s = log.Spec; Vector3 o = s.Origin + Vector3.up * 0.06f; Vector3 f = s.Forward;
             switch (s.Kind)
             {
@@ -112,7 +115,7 @@ namespace Oheangbu.App
 
         void OnContact(Vol2CastLog log, Vol2ContactRecord rec)
         {
-            if (!Enabled) return;
+            if (!Enabled || (Skip != null && Skip(log))) return;
             Vector3 p = log.Spec != null ? log.Spec.Origin : Vector3.zero;
             var target = _coordinator.Registry.Find(rec.TargetId);
             if (target != null) p = target.Position;
@@ -145,6 +148,7 @@ namespace Oheangbu.App
         void OnMaterial(Vol2Material m)
         {
             if (!Enabled || m.Attached) return;
+            if (Skip != null && _coordinator.TryGetLog(m.Cast, out var castLog) && Skip(castLog)) return;
             var fp = m.Footprint;
             int n = fp.Kind == Vol2FootprintKind.Fan ? 16 : 32;
             var line = NewLine(new Vol2CastLog { Glyph = new Glyph(m.Letter, m.Body, Frame.Path, Verb.Leave) }, "Material_" + m.Id.Value + (m.Kind == Vol2MaterialKind.Mark ? "_mark" : ""), n + 3, m.Kind == Vol2MaterialKind.Mark ? 0.05f : 0.09f, float.MaxValue / 2f, fp.Kind != Vol2FootprintKind.Fan);
