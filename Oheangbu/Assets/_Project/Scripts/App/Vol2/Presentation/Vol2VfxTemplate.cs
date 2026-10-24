@@ -35,22 +35,22 @@ namespace Oheangbu.App
         [Tooltip("a plain drying (the path after its head stopped): plan B P0 0.12 - 0.18")] public float dryAfterContactSeconds = 0.15f;
 
         [Header("drawing sizes (metres)")]
-        public float lineWidth = 0.24f;
+        public float lineWidth = 0.30f;
         public float lineLift = 0.04f;
         public float tailMeters = 3.6f;
         public float strokeSpeed = 14f;
         public float height = 0.9f;
-        public float branchWidth = 0.13f;
+        public float branchWidth = 0.20f;
         public float forkAngleDegrees = 34f;
         public float bundleLength = 0.6f;
         public float bundleSpread = 0.3f;
         public float dotHeight = 0.45f;
-        public float dotRadius = 0.11f;
+        public float dotRadius = 0.14f;
         public float lipGap = 0.12f;
         public float lipLength = 0.6f;
-        public float cutFaceHeight = 0.38f;
+        public float cutFaceHeight = 0.45f;
         public float loopRadius = 0.35f;
-        public float accentLength = 0.55f;
+        public float accentLength = 0.65f;
         public int fleckCount = 4;
         [Tooltip("path ink: how much of the stroke is hollow (my strokes are hollow, plan E)")] [Range(0f, 1f)] public float hollow = 1f;
 

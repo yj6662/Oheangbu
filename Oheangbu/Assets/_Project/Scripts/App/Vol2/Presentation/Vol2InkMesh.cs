@@ -32,6 +32,8 @@ namespace Oheangbu.App
         public Vol2StrokeLayout Layout;
         public Vol2StrokeRole Role;
         public bool TaperTip, TaperBase;
+        /// <summary>A fleck of burnt ink: drawn neutral grey whatever the body hue (fire's ash).</summary>
+        public bool Ash;
         /// <summary>Drift velocity (m/s) over <see cref="DriftSeconds"/>, eased out (linear drag): the flecks.</summary>
         public Vector3 Drift;
         public float DriftSeconds;
@@ -71,7 +73,7 @@ namespace Oheangbu.App
             if (total < 0.001f) return;
             Record?.Add(a);
             int baseIndex = _pos.Count;
-            float flags = (a.TaperTip ? 1f : 0f) + (a.TaperBase ? 2f : 0f);
+            float flags = (a.TaperTip ? 1f : 0f) + (a.TaperBase ? 2f : 0f) + (a.Ash ? 4f : 0f);
             for (int i = 0; i < n; i++)
             {
                 Vector3 d = i == 0 ? pts[1] - pts[0] : i == n - 1 ? pts[n - 1] - pts[n - 2] : pts[i + 1] - pts[i - 1];

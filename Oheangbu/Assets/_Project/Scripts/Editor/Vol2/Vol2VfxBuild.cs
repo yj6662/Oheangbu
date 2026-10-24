@@ -20,6 +20,7 @@ namespace Oheangbu.EditorTools.Vol2
         public const string ResourcesFolder = Root + "/Resources/Vol2Vfx";
         public const string TemplateFolder = Root + "/Templates", BodyFolder = Root + "/Bodies";
         public const string MaterialPath = Root + "/M_Vol2Ink.mat";
+        public const string BristleTexture = "Assets/_Project/Art/SpellVFX308/RiposteStroke/RipStroke308_Bristle.png";
         public const string CataloguePath = ResourcesFolder + "/Vol2VfxCatalogue.asset";
 
         public static string Run(string command)
@@ -64,7 +65,11 @@ namespace Oheangbu.EditorTools.Vol2
             if (mat == null) { mat = new Material(shader) { name = "M_Vol2Ink" }; AssetDatabase.CreateAsset(mat, MaterialPath); log.Add("created " + MaterialPath); }
             mat.shader = shader;
             mat.renderQueue = 2450;
+            mat.SetFloat("_MinPx", 56f);
             mat.DisableKeyword("_EMISSION");
+            // the riposte one-stroke dry-brush bristle mask (R = ink coverage, tiles along the stroke): the stroke texture of every vol.2 stroke
+            var bristle = AssetDatabase.LoadAssetAtPath<Texture2D>(BristleTexture);
+            if (bristle != null) mat.SetTexture("_Bristle", bristle); else log.Add("WARNING: no bristle texture at " + BristleTexture);
             mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
             EditorUtility.SetDirty(mat);
 

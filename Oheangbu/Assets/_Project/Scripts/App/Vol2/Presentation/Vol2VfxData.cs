@@ -101,13 +101,13 @@ namespace Oheangbu.App
                 case Verb.Leave:  // P1: the path lands, branches rise from the landing point
                     t.summary = "P1: ground stroke, then a trunk that forks upward at the landing (10 s residue); height by distance (G)"; t.height = 0.9f; break;
                 case Verb.Spread: // P2: flat bundle at the landing, flat strokes to each approved neighbour (3 s marks)
-                    t.summary = "P2: ground stroke, a flat bundle at the landing, a flat connector and bundle to each approved neighbour (3 s marks)"; break;
+                    t.lineWidth = 0.22f; t.summary = "P2: ground stroke, a flat bundle at the landing, a flat connector and bundle to each approved neighbour (3 s marks)"; break;
                 case Verb.Seed:   // P3: vertical dot on the target (8 s), pressed once when it works
                     t.summary = "P3: ground stroke, a vertical dot standing on the target (waits 8 s), pressed to its base when it works"; break;
                 case Verb.Split:  // P4: engraved cut with dry lips on the ground, a cut-face pair on the armour contact
                     t.summary = "P4: engraved cut with two dry lips on the ground (<= 0.3 s), a pair of cut faces at the armour contact (strip 3 s)"; t.hollow = 0f; break;
                 default:          // P5: thin ground stroke out and back, a small closed loop riding its head
-                    t.summary = "P5: thin stroke out and back at chest height, a small closed loop (diameter < 1 m) riding the head, dry 0.15 s after the return"; t.tailMeters = 12f; t.lineWidth = 0.12f; break;
+                    t.summary = "P5: thin stroke out and back at chest height, a small closed loop (diameter < 1 m) riding the head, dry 0.15 s after the return"; t.tailMeters = 12f; t.lineWidth = 0.18f; break;
             }
             return t;
         }

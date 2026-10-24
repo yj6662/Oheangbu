@@ -74,7 +74,7 @@ namespace Oheangbu.EditorTools.Vol2
         static readonly Body[] Bodies = { Body.Wood, Body.Fire, Body.Earth, Body.Metal, Body.Water };
         static readonly (float L, float a, float b) RedEarth = (35f, 30f, 25f), GreenForest = (25f, -22f, 15f);
 
-        public static string OutRoot => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/SpellVFX308/Vol2Vfx/9a"));
+        public static string OutRoot => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/SpellVFX308/Vol2Vfx/9a_r2"));
 
         sealed class Step { public double At; public string Name; public Func<Ctx, bool> Do; public bool Done; }
 
@@ -138,6 +138,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "back") backs = v.Split(',').Select(x => x.Trim()).ToList();
                 else if (k == "video") videoOnRed = v == "1";
                 else if (k == "variant") variantOnly = v;
+                else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
             }
             foreach (string t in templates)
             {
@@ -180,16 +181,16 @@ namespace Oheangbu.EditorTools.Vol2
             int verb = template[1] - '0';
             var j = new Job { Template = template, Variant = variant, Body = body, Back = back, Video = video, Keys = variant != "expire" };
             j.Letter = Rows[verb][(int)body];
-            j.Dummies.Add((6f, 0f));
+            j.Dummies.Add((4.6f, 0f));
             switch (template)
             {
-                case "P0": j.Dummies.Add((9.5f, 0f)); j.MaxAge = 1.0; j.MinAge = 0.7; break;
+                case "P0": j.Dummies.Add((8f, 0f)); j.MaxAge = 1.0; j.MinAge = 0.7; break;
                 case "P1":
-                    j.Dummies[0] = (6f, 0f); j.MaxAge = 14.0; j.MinAge = 1.2;
-                    j.Steps.Add(new Step { At = 1.0, Name = "JUMP to 0.55 s before the residue expires (LAB-SIMULATED: 10 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
+                    j.Dummies[0] = (4.6f, 0f); j.MaxAge = 14.0; j.MinAge = 1.2;
+                    j.Steps.Add(new Step { At = 2.0, Name = "JUMP to 0.55 s before the residue expires (LAB-SIMULATED: 10 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
                     break;
                 case "P2":
-                    j.Dummies[0] = (5.5f, 0f); j.Dummies.Add((7.0f, 1.6f)); j.Dummies.Add((6.5f, -1.8f)); j.Dummies.Add((4.2f, 2.0f)); j.MaxAge = 8.0; j.MinAge = 1.2;
+                    j.Dummies[0] = (4.6f, 0f); j.Dummies.Add((6.2f, 1.7f)); j.Dummies.Add((5.8f, -1.9f)); j.Dummies.Add((3.6f, 2.3f)); j.MaxAge = 8.0; j.MinAge = 1.2;
                     j.Steps.Add(new Step { At = 0.9, Name = "JUMP to 0.55 s before the marks expire (LAB-SIMULATED: 3 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
                     break;
                 case "P3":
@@ -348,7 +349,9 @@ namespace Oheangbu.EditorTools.Vol2
             return new Color(Mathf.Clamp01(gam(r)), Mathf.Clamp01(gam(g)), Mathf.Clamp01(gam(bl)), 1f);
         }
 
-        static readonly Dictionary<string, Color> Albedo = new Dictionary<string, Color>();
+        const string JeokroSoil = "Assets/_Project/Art/World/Reworld292/Highlands293/Sections/Materials/Jeokro_Soil.mat", CheongrimSoil = "Assets/_Project/Art/World/Reworld292/Highlands293/Sections/Materials/Cheongrim_Soil.mat";
+        static string EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_forest_bear.prefab";
+        static readonly HashSet<string> MeasuredGround = new HashSet<string>();
 
         static (float L, float a, float b) LabOf(Color c)
         {
@@ -359,36 +362,17 @@ namespace Oheangbu.EditorTools.Vol2
             return (116f * f(Y) - 16f, 500f * (f(X) - f(Y)), 200f * (f(Y) - f(Z)));
         }
 
-        /// <summary>Makes the RENDERED ground (after the lab's light, fog and the ink post of the shoulder camera) the plan's Lab colour: the albedo is corrected per channel (linear) until a patch of the
-        /// picture measures the target. The result is kept for the run and written to the capture report.</summary>
-        static void CalibrateBackdrop(Ctx c, string back, (float L, float a, float b) target)
+        /// <summary>Measures (not forces) the Lab colour of the RENDERED real ground (after light, fog and the ink post of the shoulder camera) in a patch right of the caster, for the report.</summary>
+        static void MeasureGround(Ctx c, string back)
         {
-            Color tgt = FromLab(target.L, target.a, target.b);
-            Color albedo = tgt;
             Vector3 origin = c.Origin; float yaw = Quaternion.LookRotation(c.Forward, Vector3.up).eulerAngles.y;
-            (float L, float a, float b) got = default;
-            for (int it = 0; it < 4; it++)
-            {
-                c.BackdropMat.color = albedo;
-                Shoot(origin, yaw, 15f, _rtVideo, _texVideo, Path.Combine(OutRoot, "calib_" + back + ".jpg"), false);
-                var px = _texVideo.GetPixels((int)(VideoW * 0.60f), (int)(VideoH * 0.18f), (int)(VideoW * 0.10f), (int)(VideoH * 0.12f));      // texture rows count from the bottom
-                float r = 0, g = 0, b = 0; foreach (var p in px) { r += p.r; g += p.g; b += p.b; }
-                var mean = new Color(r / px.Length, g / px.Length, b / px.Length);
-                got = LabOf(mean);
-                Func<float, float> lin = u => u <= 0.04045f ? u / 12.92f : Mathf.Pow((u + 0.055f) / 1.055f, 2.4f);
-                Func<float, float> gam = u => u <= 0.0031308f ? 12.92f * u : 1.055f * Mathf.Pow(Mathf.Max(u, 0f), 1f / 2.4f) - 0.055f;
-                Color next = new Color(
-                    gam(Mathf.Clamp(lin(albedo.r) * lin(tgt.r) / Mathf.Max(lin(mean.r), 0.0005f), 0.0002f, 1.5f)),
-                    gam(Mathf.Clamp(lin(albedo.g) * lin(tgt.g) / Mathf.Max(lin(mean.g), 0.0005f), 0.0002f, 1.5f)),
-                    gam(Mathf.Clamp(lin(albedo.b) * lin(tgt.b) / Mathf.Max(lin(mean.b), 0.0005f), 0.0002f, 1.5f)), 1f);
-                albedo = new Color(Mathf.Clamp01(next.r), Mathf.Clamp01(next.g), Mathf.Clamp01(next.b), 1f);
-            }
-            c.BackdropMat.color = albedo;
-            Albedo[back] = albedo;
-            Finished.Add("backdrop " + back + ": target Lab(" + target.L.ToString("0", Inv) + "," + target.a.ToString("0", Inv) + "," + target.b.ToString("0", Inv) + ") measured last pass Lab(" + got.L.ToString("0.0", Inv) + "," + got.a.ToString("0.0", Inv) + "," + got.b.ToString("0.0", Inv)
-                + ") albedo " + ColorUtility.ToHtmlStringRGB(albedo));
+            Shoot(origin, yaw, 15f, _rtVideo, _texVideo, Path.Combine(OutRoot, "ground_" + back + ".jpg"), false);
+            var px = _texVideo.GetPixels((int)(VideoW * 0.60f), (int)(VideoH * 0.18f), (int)(VideoW * 0.10f), (int)(VideoH * 0.12f));
+            float r = 0, g = 0, b = 0; foreach (var p in px) { r += p.r; g += p.g; b += p.b; }
+            var lab = LabOf(new Color(r / px.Length, g / px.Length, b / px.Length));
+            MeasuredGround.Add(back);
+            Finished.Add("ground " + back + " (" + (back == "red" ? JeokroSoil : CheongrimSoil) + "): rendered patch Lab(" + lab.L.ToString("0.0", Inv) + "," + lab.a.ToString("0.0", Inv) + "," + lab.b.ToString("0.0", Inv) + ") [plan: " + (back == "red" ? "35,30,25" : "25,-22,15") + "]");
         }
-
         static void Setup()
         {
             var c = _ctx; var j = _job;
@@ -404,39 +388,56 @@ namespace Oheangbu.EditorTools.Vol2
                 if (v.gameObject.activeSelf && !v.name.StartsWith("Vol2VfxDummy", StringComparison.Ordinal)) { c.HiddenLab.Add(v.gameObject); v.gameObject.SetActive(false); }
             c.Origin = c.Shapes.Caster.Position; c.Forward = Vol2ShapeGeometry.FlatUnit(c.Shapes.Caster.AimDirection);
             Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
-            var lab = j.Back == "red" ? RedEarth : GreenForest;
-            if (!Albedo.TryGetValue(j.Back, out var albedo)) albedo = FromLab(lab.L, lab.a, lab.b);
-            c.BackdropMat = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { color = albedo, name = "Vol2VfxBackdrop" };
-            // the lab's own 200 m ground plane takes the backdrop colour (and its distance posts go away): the picture is a plain ground of the plan's Lab value
-            var groundGo = GameObject.Find("Lab_Ground");
-            if (groundGo != null) { c.GroundRenderer = groundGo.GetComponent<Renderer>(); c.GroundOriginal = c.GroundRenderer.sharedMaterial; c.GroundRenderer.sharedMaterial = c.BackdropMat; }
-            else
-            {
-                c.Backdrop = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                c.Backdrop.name = "Vol2VfxBackdrop"; Object.DestroyImmediate(c.Backdrop.GetComponent<Collider>());
-                c.Backdrop.transform.SetPositionAndRotation(c.Origin + Vector3.up * 0.012f + c.Forward * 8f, Quaternion.Euler(90f, 0f, 0f));
-                c.Backdrop.transform.localScale = new Vector3(200f, 200f, 1f);
-                c.Backdrop.GetComponent<MeshRenderer>().sharedMaterial = c.BackdropMat;
-            }
+            // the REAL ground look: the realm's own soil material (적로 / 청림) on a flat ground quad, and a real enemy prefab as the target (never saved into a scene; destroyed at the end of the job)
+            string soil = j.Back == "red" ? JeokroSoil : CheongrimSoil;
+            var soilMat = AssetDatabase.LoadAssetAtPath<Material>(soil);
+            if (soilMat == null) { Problems.Add("ground material not found: " + soil + " (a flat colour stands in)"); soilMat = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { color = j.Back == "red" ? new Color(0.45f, 0.2f, 0.15f) : new Color(0.1f, 0.25f, 0.12f) }; c.BackdropMat = soilMat; }
+            c.Backdrop = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            c.Backdrop.name = "Vol2VfxGround"; Object.DestroyImmediate(c.Backdrop.GetComponent<Collider>());
+            c.Backdrop.transform.SetPositionAndRotation(c.Origin + Vector3.up * 0.012f + c.Forward * 30f, Quaternion.Euler(90f, 0f, 0f));
+            c.Backdrop.transform.localScale = new Vector3(240f, 240f, 1f);
+            c.Backdrop.GetComponent<MeshRenderer>().sharedMaterial = soilMat;
             var posts = GameObject.Find("Lab_DistancePosts");
             if (posts != null && posts.activeSelf) { posts.SetActive(false); c.HiddenLab.Add(posts); }
+            var enemyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefab);
+            if (enemyPrefab == null) Problems.Add("enemy prefab not found: " + EnemyPrefab + " (a capsule stands in)");
             c.DummyMat = new Material(Shader.Find("Universal Render Pipeline/Unlit")) { color = new Color(0.38f, 0.37f, 0.35f, 1f), name = "Vol2VfxDummy" };
             int n = 0;
             foreach (var d in j.Dummies)
             {
-                var go = new GameObject("Vol2VfxDummy_" + (char)('A' + n++));
-                go.transform.position = c.Origin + c.Forward * d.ahead + right * d.side;
-                var cap = go.AddComponent<CapsuleCollider>(); cap.radius = 0.4f; cap.height = 1.8f; cap.center = new Vector3(0f, 0.9f, 0f);
-                var vitals = go.AddComponent<EnemyVitals>();
-                var vis = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                Object.DestroyImmediate(vis.GetComponent<Collider>());
-                vis.transform.SetParent(go.transform, false); vis.transform.localPosition = new Vector3(0f, 0.9f, 0f); vis.transform.localScale = new Vector3(0.8f, 0.9f, 0.8f);
-                vis.GetComponent<MeshRenderer>().sharedMaterial = c.DummyMat;
+                Vector3 at = c.Origin + c.Forward * d.ahead + right * d.side;
+                GameObject go; EnemyVitals vitals;
+                if (enemyPrefab != null)
+                {
+                    // instantiated under an inactive parent so the enemy's own brain never wakes; the code of the game that is not the body is switched off
+                    var holder = new GameObject("Vol2VfxHolder"); holder.SetActive(false);
+                    go = Object.Instantiate(enemyPrefab, holder.transform);
+                    go.name = "Vol2VfxDummy_" + (char)('A' + n++);
+                    foreach (var mb in go.GetComponentsInChildren<MonoBehaviour>(true))
+                        if (mb != null && !(mb is EnemyVitals) && mb.GetType().Namespace != null && mb.GetType().Namespace.StartsWith("Oheangbu", StringComparison.Ordinal)) mb.enabled = false;
+                    foreach (var agent in go.GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>(true)) agent.enabled = false;
+                    go.transform.SetParent(null, false);
+                    go.transform.SetPositionAndRotation(at, Quaternion.LookRotation(-c.Forward, Vector3.up));
+                    Object.Destroy(holder);
+                    go.SetActive(true);
+                    vitals = go.GetComponentInChildren<EnemyVitals>(true) ?? go.AddComponent<EnemyVitals>();
+                }
+                else
+                {
+                    go = new GameObject("Vol2VfxDummy_" + (char)('A' + n++));
+                    go.transform.position = at;
+                    var cap = go.AddComponent<CapsuleCollider>(); cap.radius = 0.4f; cap.height = 1.8f; cap.center = new Vector3(0f, 0.9f, 0f);
+                    vitals = go.AddComponent<EnemyVitals>();
+                    var vis = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                    Object.DestroyImmediate(vis.GetComponent<Collider>());
+                    vis.transform.SetParent(go.transform, false); vis.transform.localPosition = new Vector3(0f, 0.9f, 0f); vis.transform.localScale = new Vector3(0.8f, 0.9f, 0.8f);
+                    vis.GetComponent<MeshRenderer>().sharedMaterial = c.DummyMat;
+                }
                 reg.AddExtra(vitals);
                 c.Dummies.Add(go);
             }
             Physics.SyncTransforms();
-            if (!Albedo.ContainsKey(j.Back)) CalibrateBackdrop(c, j.Back, lab);
+            if (!MeasuredGround.Contains(j.Back)) MeasureGround(c, j.Back);
             c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f;
             foreach (var s in _job.Steps) s.Done = false;
             _folder = Path.Combine(OutRoot, "frames", _job.Name);
@@ -473,7 +474,8 @@ namespace Oheangbu.EditorTools.Vol2
                 if (s.Do(c)) { s.Done = true; _note = s.Name; }
             }
             bool keyWindow = j.Keys && ((age >= 0.065 && age <= 0.10) || (age >= 0.285 && age <= 0.315));
-            if (j.Video || keyWindow) SaveFrame(c, age, stepUs, j.Video, keyWindow);
+            bool lateKey = j.Keys && j.Template == "P1" && j.Body == Body.Wood && age >= 1.70 && age <= 1.74;       // 각 cages its body for 1.5 s: the residue stands after that
+            if (j.Video || keyWindow || lateKey) SaveFrame(c, age, stepUs, j.Video, keyWindow || lateKey);
             _note = "";
             bool retired = !c.Presenter.Model.TryGet(c.Log.Cast, out _);
             if (age >= j.MaxAge || (retired && age >= j.MinAge) || EditorApplication.timeSinceStartup > _guardUntil) { _st = St.Teardown; return; }
@@ -487,7 +489,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (video) { Shoot(origin, yaw, 15f, _rtVideo, _texVideo, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"), false); }
             if (key)
             {
-                string tag = age < 0.2 ? "a008" : "b030";
+                string tag = age < 0.2 ? "a008" : age > 1.0 ? "x172" : "b030";
                 string stamp = age.ToString("0.000", Inv);
                 Shoot(origin, yaw, 15f, _rtKey, _texKey, Path.Combine(_folder, "key_" + tag + "_p15_" + stamp + ".png"), true);
                 Shoot(origin, yaw, 0f, _rtKey, _texKey, Path.Combine(_folder, "key_" + tag + "_p00_" + stamp + ".png"), true);
@@ -531,7 +533,7 @@ namespace Oheangbu.EditorTools.Vol2
             string summary = j.Name + " | letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (c.Log != null ? " | cast " + c.Log.Status + " contacts " + c.Log.Contacts.Count + " materials " + c.Log.Materials.Count : " | NO CAST");
             Finished.Add(summary);
             c.Coordinator.AbortAll(); c.Presenter.ClearAll();
-            foreach (var d in c.Dummies) { if (d != null) { c.Shapes.Registry.RemoveExtra(d.GetComponent<EnemyVitals>()); Object.Destroy(d); } }
+            foreach (var d in c.Dummies) { if (d != null) { c.Shapes.Registry.RemoveExtra(d.GetComponentInChildren<EnemyVitals>(true)); Object.Destroy(d); } }
             c.Dummies.Clear();
             if (c.Backdrop != null) Object.Destroy(c.Backdrop);
             if (c.GroundRenderer != null) c.GroundRenderer.sharedMaterial = c.GroundOriginal;

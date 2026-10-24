@@ -83,16 +83,17 @@ namespace Oheangbu.App
         {
             var part = inst.FirstOf(KLine); if (part == null || part.Dead) return;
             var t = inst.Template; var spec = inst.Log.Spec;
-            // the stroke flies at the height of the brush / the enemy's chest (the path's own wall check and contact point are at ChestHeight), and starts a little to the right of the body
-            // so the first metres are not hidden behind the caster from the shoulder camera (the judged path is the straight axis: the visual leaves it by at most 0.22 m, back on it at 3.2 m)
-            float h = inst.ChestY - inst.Origin.y;
+            // the stroke leaves the brush tip (chest height, a little to the right of the body so the first metres are not hidden behind the caster) and DESCENDS toward the ground,
+            // reaching it about 5 m out and running on along it (a swoop, not a standing plank); the judged lane is the straight axis: the visual leaves it by at most 0.22 m, back on it at 3.2 m
+            float h0 = inst.ChestY - inst.Origin.y;
             Pts.Clear();
-            const int n = 24;
+            const int n = 32;
             for (int i = 0; i <= n; i++)
             {
-                float along = LineStart + (spec.PathLength - LineStart) * (i / (float)n);
+                float along = LineStart + (spec.PathLength - LineStart) * Mathf.Pow(i / (float)n, 1.7f);
                 float lat = 0.22f * Mathf.Max(0f, 1f - along / 3.2f);
-                Pts.Add(inst.Origin + inst.Forward * along + inst.Right * lat + Vector3.up * h);
+                float k = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((along - 0.3f) / 2.7f));
+                Pts.Add(inst.Origin + inst.Forward * along + inst.Right * lat + Vector3.up * Mathf.Lerp(h0, 0.06f, k));
             }
             var at = Attr(inst, width);
             at.Layout = Vol2StrokeLayout.Billboard; at.Role = Vol2StrokeRole.FollowHead; at.TaperTip = true;
@@ -122,25 +123,28 @@ namespace Oheangbu.App
                 float sign = k == 0 ? 1f : -1f;
                 Vector3 d = (inst.Right * (Mathf.Cos(40f * Mathf.Deg2Rad) * sign) + Vector3.up * Mathf.Sin(40f * Mathf.Deg2Rad)).normalized;
                 Vol2Curves.Line(Pts, c - d * half, c + d * half, 3);
-                var a = Attr(inst, 0.11f);
+                var a = Attr(inst, 0.14f);
                 a.Appear = t0; a.Speed = 30f; a.TaperTip = true; a.TaperBase = true; a.Layout = Vol2StrokeLayout.Billboard; a.Hollow = 0.6f;
                 a.End = t0 + t.accentSeconds; a.EndSeconds = t.accentStableSeconds; a.EndCode = Vol2EndCode.Expire;
                 w.Stroke(Pts, a);
             }
-            int n = Mathf.Clamp(t.fleckCount, 3, 5);
+            bool ashy = inst.Look.end == Vol2EndBehaviour.AshRise;           // fire: grey ash that RISES; the other bodies: slivers that fly out
+            int n = ashy ? 6 : Mathf.Clamp(t.fleckCount, 3, 5);
             for (int i = 0; i < n; i++)
             {
                 float ang = (i + Vol2Curves.Hash(p.Seed, i)) * Mathf.PI * 2f / n;
-                Vector3 dir = (inst.Right * Mathf.Cos(ang) + Vector3.up * (Mathf.Sin(ang) * 0.8f + 0.25f) - inst.Forward * 0.35f).normalized;
-                Vol2Curves.Line(Pts, c, c + dir * 0.13f, 2);
-                var a = Attr(inst, 0.065f);
-                a.Appear = t0; a.Speed = 1e5f; a.Role = Vol2StrokeRole.Drift; a.Drift = dir * 2.4f; a.DriftSeconds = 0.2f; a.Hollow = 0f; a.TaperTip = true; a.Layout = Vol2StrokeLayout.Billboard;
+                Vector3 dir = ashy
+                    ? (inst.Right * Mathf.Cos(ang) * 0.45f + inst.Forward * Mathf.Sin(ang) * 0.3f + Vector3.up).normalized
+                    : (inst.Right * Mathf.Cos(ang) + Vector3.up * (Mathf.Sin(ang) * 0.8f + 0.25f) - inst.Forward * 0.35f).normalized;
+                Vol2Curves.Line(Pts, c, c + dir * (ashy ? 0.10f : 0.2f), 2);
+                var a = Attr(inst, ashy ? 0.09f : 0.10f);
+                a.Appear = t0; a.Speed = 1e5f; a.Role = Vol2StrokeRole.Drift; a.Hollow = 0f; a.TaperTip = true; a.Layout = Vol2StrokeLayout.Billboard; a.Ash = ashy;
+                a.Drift = dir * (ashy ? 1.5f : 2.4f); a.DriftSeconds = ashy ? 0.6f : 0.2f;
                 a.Seed = inst.Seed + i * 3.7f;
-                a.End = t0 + t.accentSeconds; a.EndSeconds = t.accentStableSeconds * 0.8f; a.EndCode = Vol2EndCode.Expire;
+                a.End = t0 + t.accentSeconds + (ashy ? 0.2f : 0f); a.EndSeconds = t.accentStableSeconds * (ashy ? 1.5f : 0.8f); a.EndCode = Vol2EndCode.Expire;
                 w.Stroke(Pts, a);
             }
         }
-
         protected Vol2VfxPart AddAccent(Vol2VfxInstance inst, long atUs, Vector3 ground, long targetId)
         {
             var acc = inst.AddPart(KAccent, atUs);
@@ -179,7 +183,7 @@ namespace Oheangbu.App
                 Vector3 end = c + dir * len + side * (lat * t.bundleSpread * 0.5f);
                 Vector3 mid = c + dir * (len * 0.5f) + side * (lat * t.bundleSpread * 0.2f + (Vol2Curves.Hash(p.Seed, 9 + k) - 0.5f) * 0.05f);
                 Pts.Clear(); Pts.Add(c + Vector3.up * 0.03f); Pts.Add(mid + Vector3.up * 0.03f); Pts.Add(end + Vector3.up * 0.03f);
-                var a = Attr(inst, 0.13f);
+                var a = Attr(inst, 0.28f);
                 a.Layout = Vol2StrokeLayout.Flat; a.Appear = appear + 0.01f * k; a.Speed = len / 0.08f; a.TaperTip = true; a.Hollow = 0.85f; a.Density = density;
                 a.Seed = inst.Seed + p.Seed * 1.3f + k;
                 EndOf(inst, p, ref a);
@@ -218,7 +222,7 @@ namespace Oheangbu.App
             foreach (var p in inst.Parts)
             {
                 if (p.Dead) continue;
-                if (p.Kind == KLanding) WriteStanding(inst, w, p, p.Pos, 0.6f, 0.16f, inst.Rel(p.AppearUs), 0.6f / 0.05f);
+                if (p.Kind == KLanding) WriteStanding(inst, w, p, p.Pos, 0.6f, 0.24f, inst.Rel(p.AppearUs), 0.6f / 0.05f);
                 else if (p.Kind == KAccent) WriteAccent(inst, w, p);
             }
         }
@@ -367,7 +371,7 @@ namespace Oheangbu.App
                         Vector3 from = inst.Landing + p.Dir * 0.3f + Vector3.up * 0.03f, to = p.Pos - p.Dir * 0.2f + Vector3.up * 0.03f;
                         Vector3 sideDir = Vector3.Cross(Vector3.up, p.Dir) * ((Vol2Curves.Hash(p.Seed, 1) - 0.5f) * 0.3f);
                         Pts.Clear(); Pts.Add(from); Pts.Add(Vector3.Lerp(from, to, 0.5f) + sideDir); Pts.Add(to);
-                        var a = Attr(inst, 0.13f);
+                        var a = Attr(inst, 0.18f);
                         a.Layout = Vol2StrokeLayout.Flat; a.Appear = t0 - 0.03f; a.Speed = Mathf.Max(1f, p.F0) / 0.1f; a.TaperTip = true; a.Hollow = 0.85f; a.Density = p.Density; a.Seed = inst.Seed + p.Seed * 2.1f;
                         EndOf(inst, p, ref a);
                         w.Stroke(Pts, a);
@@ -433,13 +437,13 @@ namespace Oheangbu.App
                 float t0 = inst.Rel(p.AppearUs), H = t.dotHeight, r = t.dotRadius;
                 float stemH = H - r;
                 Vol2Curves.Rise(Pts, p.Pos, Vector3.zero, stemH, 4);
-                var a = Attr(inst, 0.075f);
+                var a = Attr(inst, 0.12f);
                 a.Appear = t0; a.Speed = stemH / 0.05f; a.TaperBase = false; a.Hollow = 0.45f; a.Seed = inst.Seed + 1.7f;
                 EndOf(inst, p, ref a);
                 w.Stroke(Pts, a);
                 // the dot: a ring standing on the stem, facing the camera (a waiting seed is an OPEN ring; plan P3 "대기점")
                 Vol2Curves.Circle(Pts, p.Pos + Vector3.up * (stemH + r), inst.Right, Vector3.up, r, 14);
-                var b = Attr(inst, 0.05f);
+                var b = Attr(inst, 0.09f);
                 b.Appear = t0 + 0.04f; b.Speed = (Mathf.PI * 2f * r) / 0.05f; b.Hollow = 0.3f; b.Seed = inst.Seed + 2.9f;
                 EndOf(inst, p, ref b);
                 w.Stroke(Pts, b);
@@ -487,19 +491,19 @@ namespace Oheangbu.App
         public override void Write(Vol2VfxInstance inst, Vol2InkWriter w)
         {
             var t = inst.Template;
-            WriteLine(inst, w, 0.09f);                                  // the blade's own stroke, thin, at chest height
+            WriteLine(inst, w, 0.14f);                                  // the blade's own stroke, thin, at chest height
             var line = inst.FirstOf(KLine);
             if (line != null && !line.Dead)
             {
                 var spec = inst.Log.Spec;
                 Vector3 a0 = inst.Origin + inst.Forward * LineStart + Vector3.up * t.lineLift, b0 = inst.Origin + inst.Forward * spec.PathLength + Vector3.up * t.lineLift;
-                float lipW = 0.06f, off = t.lipGap * 0.5f + lipW * 0.5f;
+                float lipW = 0.10f, off = t.lipGap * 0.5f + lipW * 0.5f;
                 for (int k = 0; k < 3; k++)
                 {
                     // k = 0 the cut itself (a dark thin line), 1 and 2 the two dry lips either side of it
                     float lat = k == 0 ? 0f : (k == 1 ? -off : off);
                     Vol2Curves.Line(Pts, a0 + inst.Right * lat, b0 + inst.Right * lat, 24);
-                    var at = Attr(inst, k == 0 ? 0.05f : lipW);
+                    var at = Attr(inst, k == 0 ? 0.07f : lipW);
                     at.Layout = Vol2StrokeLayout.Flat; at.Role = Vol2StrokeRole.FollowHead; at.TaperTip = true; at.Hollow = k == 0 ? 0f : 0.35f; at.Seed = inst.Seed + k * 1.9f;
                     EndOf(inst, line, ref at);
                     w.Stroke(Pts, at);
@@ -516,7 +520,7 @@ namespace Oheangbu.App
                 {
                     float lat = (k == 0 ? -1f : 1f) * (t.lipGap * 0.5f + 0.035f);
                     Vol2Curves.Rise(Pts, p.Pos + inst.Right * lat, Vector3.zero, t.cutFaceHeight, 4);
-                    var a = Attr(inst, 0.07f);
+                    var a = Attr(inst, 0.11f);
                     a.Appear = t0; a.Speed = t.cutFaceHeight / 0.06f; a.TaperTip = true; a.Hollow = 0.3f; a.Seed = inst.Seed + 3.3f + k;
                     if (p.Ended) EndOf(inst, p, ref a);
                     else if (p.EndSchedule > 0) { a.End = inst.Rel(p.EndSchedule); a.EndSeconds = t.endExpireSeconds; a.EndCode = Vol2EndCode.Expire; }
@@ -588,7 +592,7 @@ namespace Oheangbu.App
             {
                 // authored around the cast point, a small closed loop (diameter < 1 m) in the plane across the path; the shader adds the head's offset
                 Vol2Curves.Circle(Pts, inst.Origin + Vector3.up * t.loopRadius, inst.Right, Vector3.up, t.loopRadius, 24);
-                var a = Attr(inst, 0.09f);
+                var a = Attr(inst, 0.13f);
                 a.Role = Vol2StrokeRole.RigidOffset; a.Layout = Vol2StrokeLayout.Billboard; a.Appear = 0f; a.Speed = 1e5f; a.Hollow = 0.6f; a.Seed = inst.Seed + 4.4f;
                 EndOf(inst, loop, ref a);
                 w.Stroke(Pts, a);

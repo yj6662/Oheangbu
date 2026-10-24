@@ -168,6 +168,7 @@ namespace Oheangbu.EditorTools.Vol2
                 foreach (string guid in prefabs) { var go = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid)); if (go != null && go.GetComponentInChildren<Light>(true) != null) noLight = false; }
                 Check(r, "V2c", matsOk && noLight && (matCount >= 1 || !fromAsset), matCount + " vol.2 VFX material(s), " + prefabs.Length + " prefab(s): ink shader only, no _EMISSION keyword, no emission colour, no additive blend, no glow / radial, no Light" + (matBad.Length > 0 ? " [" + matBad + "]" : ""));
                 var mat = cat.inkMaterial;
+                Check(r, "V2e", mat == null || !fromAsset || (mat.HasProperty("_Bristle") && mat.GetTexture("_Bristle") != null && mat.GetTexture("_Bristle").name == "RipStroke308_Bristle"), "the ink material carries the riposte one-stroke bristle mask (RipStroke308_Bristle) as the stroke texture");
                 Check(r, "V2d", mat != null && mat.shader != null && mat.shader.name == Vol2VfxCatalogue.ShaderName && !mat.IsKeywordEnabled("_EMISSION") && mat.renderQueue == 2450 && mat.renderQueue < 3000,
                     "the catalogue's ink material: the ink shader, opaque cutout queue " + (mat != null ? mat.renderQueue.ToString() : "-") + ", no emission keyword");
             }
@@ -209,14 +210,14 @@ namespace Oheangbu.EditorTools.Vol2
                         string what;
                         switch (verb)
                         {
-                            case 0: shape = follow == 1 && drift >= 3 && drift <= 5 && normalBillboard >= 3; what = "stroke + landing stroke + X + " + drift + " flecks"; break;
+                            case 0: shape = follow == 1 && drift >= 3 && drift <= (body == Body.Fire ? 6 : 5) && normalBillboard >= 3; what = "stroke + landing stroke + X + " + drift + " flecks"; break;
                             case 1: shape = follow <= 1 && normalBillboard >= 6 && inst.Parts.Any(p => p.Mat != null); what = "stroke + trunk, 3 branches, 2 twigs (" + normalBillboard + " standing strokes)"; break;
                             case 2: shape = follow == 1 && flat >= 8; what = "stroke + flat bundles (" + flat + " flat strokes)"; break;
                             case 3: shape = follow == 1 && inst.Parts.Any(p => p.Mat != null && p.Mat.Tag == Vol2SeedExecutor.TagSeed) && normalBillboard >= 2; what = "stroke + a stem and a ring standing on the host"; break;
                             case 4: shape = follow == 4 && flat == 3 && normalBillboard >= 2; what = "chest blade + engraved cut (centre + 2 lips) + a pair of cut faces"; break;
                             default: shape = follow == 1 && offset == 1; what = "stroke + one closed loop riding the head"; break;
                         }
-                        bool mine = strokes.Where(x => x.Role != Vol2StrokeRole.Drift).All(x => x.Hollow > 0f || (verb == 4 && x.Width <= 0.1f));
+                        bool mine = strokes.Where(x => x.Role != Vol2StrokeRole.Drift).All(x => x.Hollow > 0f || (verb == 4 && x.Width <= 0.15f));
                         Check(r, "V4." + tag, spawned && shape && mine, letter + " " + body + ": instance P" + verb + " x " + body + (spawned ? "" : " NOT SPAWNED") + ", " + what + (shape ? "" : " NOT MET (strokes " + strokes.Count + ")") + (mine ? "" : ", a stroke is solid (not mine)"));
                         // everything ends by itself on the executors' clock
                         s.Drive(14.0, 0.25);

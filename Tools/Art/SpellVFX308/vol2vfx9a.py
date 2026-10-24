@@ -17,7 +17,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 REPO = Path(__file__).resolve().parents[3]
-ROOT = REPO / 'Art/SpellVFX308/Vol2Vfx/9a'
+ROOT = REPO / 'Art/SpellVFX308/Vol2Vfx/9a_r2'
 FRAMES = ROOT / 'frames'
 BODIES = ['Wood', 'Fire', 'Earth', 'Metal', 'Water']
 BODY_KO = {'Wood': '목', 'Fire': '화', 'Earth': '토', 'Metal': '금', 'Water': '수'}
@@ -53,45 +53,42 @@ def key_frame(folder, tag, pitch, target):
 
 
 def sheet(template, crop, pitch, variant='main'):
-    SW, SH = (528, 444) if crop else (640, 360)
-    pad, head, side = 8, 34, 118
-    backs = [b for b in ('red', 'green') if any((FRAMES / ('%s_%s_%s_%s' % (template, variant, bd, b))).exists() for bd in BODIES)]
-    moments = [('a008', 0.08, '0.08 s'), ('b030', 0.30, '0.30 s')]
-    rows = [(b, m) for b in backs for m in moments]
-    W = side + len(BODIES) * (SW + pad) + pad
-    H = head + len(rows) * (SH + pad) + pad + 24
-    img = Image.new('RGB', (W, H), (24, 22, 20))
-    d = ImageDraw.Draw(img)
-    f1, f2, f3 = font(22), font(17), font(14)
-    d.text((pad, 4), '%s %s   ㅏ x %s   shoulder camera pitch %d deg, FOV 60, 1920x1080   scope-clock ages shown on each cell' % (template, VERB[template], VERB[template], pitch), font=f1, fill=INK)
-    for ci, body in enumerate(BODIES):
-        letter = ROWS[template][ci]
-        t = '%s %s%s' % (BODY_KO[body], letter, ' *peak (base look)' if letter in PEAKS else '')
-        d.text((side + ci * (SW + pad) + pad, head - 6 + 0), '', font=f2)
-    for ri, (back, (tag, target, name)) in enumerate(rows):
-        y0 = head + ri * (SH + pad) + pad
-        d.text((6, y0 + 6), '%s\n%s' % ('적로' if back == 'red' else '청림', name), font=f1, fill=INK)
-        for ci, body in enumerate(BODIES):
-            folder = FRAMES / ('%s_%s_%s_%s' % (template, variant, body, back))
-            x0 = side + ci * (SW + pad)
-            p, age = key_frame(folder, tag, pitch, target) if folder.exists() else (None, None)
-            if p is None:
-                d.rectangle((x0, y0, x0 + SW, y0 + SH), outline=(90, 60, 60))
-                d.text((x0 + 8, y0 + 8), 'no frame', font=f2, fill=(200, 120, 120))
-                continue
-            im = Image.open(p).convert('RGB')
-            if crop:
-                im = im.crop((520, 250, 1400, 990))
-            im = im.resize((SW, SH), Image.LANCZOS)
-            img.paste(im, (x0, y0))
-            letter = ROWS[template][ci]
-            label(d, (x0 + 4, y0 + 4), '%s %s  %s  age %.3f' % (BODY_KO[body], letter + ('*' if letter in PEAKS else ''), body, age), f3)
+    """Plan J: at most 8 cells a sheet, a cell 960 x 540 at NATIVE 1080p resolution (a crop of the key frame around the action, never scaled).
+    One sheet per template x background x moment (5 bodies), in colour and in greyscale (the body cue must read without colour)."""
+    CW, CH = 960, 540
+    X0, Y0 = 430, 380
+    paths = []
     out = ROOT / 'sheets'
     out.mkdir(parents=True, exist_ok=True)
-    path = out / ('%s_%s_sheet%s_p%02d.png' % (template, variant, '_crop' if crop else '', pitch))
-    img.save(path)
-    return path
-
+    f3 = font(20)
+    for back in ('red', 'green'):
+        for tag, target, name in (('a008', 0.08, '0.08 s'), ('b030', 0.30, '0.30 s')):
+            cols = 3
+            W, H = cols * CW, 2 * CH
+            img = Image.new('RGB', (W, H), (24, 22, 20))
+            d = ImageDraw.Draw(img)
+            for ci, body in enumerate(BODIES):
+                folder = FRAMES / ('%s_%s_%s_%s' % (template, variant, body, back))
+                p, age = key_frame(folder, tag, pitch, target) if folder.exists() else (None, None)
+                note = ''
+                if template == 'P1' and body == 'Wood' and tag == 'b030' and folder.exists():       # 각 cages its body for 1.5 s: the residue stands after it
+                    p2, age2 = key_frame(folder, 'x172', pitch, 1.72)
+                    if p2: p, age, note = p2, age2, 'cage 1.5 s: residue shown at 1.72 s'
+                x, y = (ci % cols) * CW, (ci // cols) * CH
+                if p is None:
+                    d.text((x + 8, y + 8), 'no frame ' + body, font=f3, fill=(200, 120, 120))
+                    continue
+                im = Image.open(p).convert('RGB').crop((X0, Y0, X0 + CW, Y0 + CH))
+                img.paste(im, (x, y))
+                letter = ROWS[template][ci]
+                label(d, (x + 6, y + 6), '%s %s %s%s | %s | %s | age %.3f s | %s' % (template, VERB[template], BODY_KO[body], letter, body, '적로' if back == 'red' else '청림', age, ('peak: base look; ' if letter in PEAKS else '') + note), f3)
+            # the sixth cell: the legend
+            d.text((2 * CW + 20, CH + 20), '%s %s  %s  %s\nshoulder camera pitch %d deg, FOV 60, 1920x1080 crop 960x540 (native pixels)\nscope-clock age on each cell' % (template, VERB[template], '적로' if back == 'red' else '청림', name, pitch), font=font(24), fill=INK)
+            p1 = out / ('%s_%s_%s_p%02d.png' % (template, back, tag, pitch))
+            img.save(p1)
+            img.convert('L').convert('RGB').save(out / ('%s_%s_%s_p%02d_grey.png' % (template, back, tag, pitch)))
+            paths.append(p1)
+    return paths[0].parent
 
 def load_index(folder):
     rows = []
