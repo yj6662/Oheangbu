@@ -28,6 +28,7 @@ namespace Oheangbu.Vol2.Rules
         public sealed class Plan
         {
             public Glyph Glyph { get; }
+            public bool IsRecovery => Glyph.Letter=='걱'&&EffectTerms.Count==0;
             public NumbersV3Dto Numbers { get; }
             public ReadOnlyCollection<EffectTerm> EffectTerms { get; }
             public decimal Cost { get; }
@@ -45,6 +46,8 @@ namespace Oheangbu.Vol2.Rules
                 Cost = glyph.IsParry ? 0 : n.Get("ink." + (glyph.Kind == SpellKind.Bare ? "bare." : glyph.Kind == SpellKind.Peak ? "peak." : "normal.") + f);
                 string life = glyph.Verb == Verb.Seed ? "timing.seed.life" : glyph.Frame == Frame.Attachment ? "timing.attachment.life" : glyph.Verb == Verb.Spread ? "timing.n.life" : glyph.Verb == Verb.Split && glyph.Frame == Frame.Ring ? "timing.s.ringLife" : glyph.Verb == Verb.Return ? "timing.return.roundTrip" : "timing.g.life";
                 LifeUs = RuleTypesV3.Microseconds(n.Get(life));
+                if(IsRecovery)
+                { var decision=new DefenceNumbersV3Dto(n); Cost=decision.HealingCost; LifeUs=decision.HealingLifeUs; }
             }
             public int EffectiveTargets(int count) => count <= 0 ? 0 : FirstOnly ? 1 : Limited ? Math.Min(count, (int)Numbers.Get("action.effectTargetCap")) : count;
             public decimal TotalFor(int count) => count <= 0 ? 0 : PerTarget * EffectiveTargets(count) + Shared;
@@ -54,7 +57,9 @@ namespace Oheangbu.Vol2.Rules
         public static Plan Build(Glyph g, NumbersV3Dto n)
         {
             if (n == null || !n.IsValidated) throw new InvalidOperationException("Validated import required before casting");
-            return BuildCore(g, n);
+            var plan=BuildCore(g,n);
+            // 원본 CSV 대조는 BuildCore, 실행은 결정 D308-145의 회복 경로를 쓴다.
+            return g.Letter=='걱'?new Plan(g,n,new EffectTerm[0]):plan;
         }
         internal static Plan BuildCore(Glyph g, NumbersV3Dto n)
         {

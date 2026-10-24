@@ -23,9 +23,15 @@ namespace Vol2V3.Tests
                 bool decoded=GlyphRulesV3.TryDecode(row.Letter,out var glyph);
                 r.Check("roundtrip/"+row.Letter,decoded&&GlyphRulesV3.Encode(glyph.Body,glyph.Frame,glyph.Verb)==row.Letter&&glyph.Kind==row.Kind);
             }
+            foreach(var row in c.Import.Spells)
+            {
+                var current=c.Plan(row.Letter);var source=c.SourcePlan(row.Letter);
+                r.Check("runtime-decision/"+row.Letter,row.Letter=='걱'?current.IsRecovery&&current.Total==0:
+                    !current.IsRecovery&&current.Total==source.Total&&current.Cost==source.Cost&&current.LifeUs==source.LifeUs);
+            }
             foreach(char ch in new[]{'ㄱ','ㅏ','값','까','기','A','\0','한','\uD800'})r.Check("illegal/"+(int)ch,!GlyphRulesV3.TryDecode(ch,out _));
             foreach(var row in c.Import.Spells.Where(x=>x.Kind==SpellKind.Bare))
-            {var p=c.Plan(row.Letter);r.Check("bare-material/"+row.Letter,p.Shared==0&&p.Term(EffectKind.Residue)==0&&(!row.Glyph.IsParry||p.Total==0));}
+            {var p=c.SourcePlan(row.Letter);r.Check("bare-material/"+row.Letter,p.Shared==0&&p.Term(EffectKind.Residue)==0&&(!row.Glyph.IsParry||p.Total==0));}
             var types=typeof(GlyphRulesV3).Assembly.GetTypes().Where(t=>t.Namespace=="Oheangbu.Vol2.Rules").ToArray();
             r.Check("system-only-namespace",types.All(t=>t.BaseType==null||t.BaseType.Namespace.StartsWith("System",StringComparison.Ordinal)));
             var globals=types.SelectMany(t=>t.GetFields(BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)).Where(f=>!f.IsLiteral&&!f.IsInitOnly&& !f.DeclaringType.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute),false)).ToArray();
@@ -37,7 +43,7 @@ namespace Vol2V3.Tests
         {
             foreach(var row in c.Golden.RootElement.GetProperty("rows").EnumerateArray())
             {
-                char letter=row.GetProperty("letter").GetString()[0];var p=c.Plan(letter);string id="source/"+letter;
+                char letter=row.GetProperty("letter").GetString()[0];var p=c.SourcePlan(letter);string id="source/"+letter;
                 r.Near(id+"/cost",row.GetProperty("cost").GetDecimal(),p.Cost);
                 r.Near(id+"/per-target",row.GetProperty("perTarget").GetDecimal(),p.PerTarget);
                 r.Near(id+"/shared",row.GetProperty("shared").GetDecimal(),p.Shared);
@@ -66,7 +72,7 @@ namespace Vol2V3.Tests
                     r.Check(id+"/force-counter/N"+targets+"/C"+contacts,plain.FinalMultiplier<=1.5m&&counter.FinalMultiplier<=1.875m&&counter.FinalTotal==plain.FinalTotal*1.25m);
                 }
             }
-            var plans=c.Import.Spells.Select(x=>c.Plan(x.Letter)).ToArray();
+            var plans=c.Import.Spells.Select(x=>c.SourcePlan(x.Letter)).ToArray();
             for(int n=1;n<=4;n++)Rank(r,plans,n,c.Golden.RootElement.GetProperty("rankings").GetProperty(n.ToString()),"current",c.Numbers,n<=2);
             using(var balance=JsonDocument.Parse(File.ReadAllBytes(Path.Combine(c.Stage,"Golden/balance.json"))))
             {
@@ -93,23 +99,23 @@ namespace Vol2V3.Tests
                     }
                     r.Near("efficiency-overall/N"+targetCount,balance.RootElement.GetProperty("efficiency").GetProperty(targetCount.ToString()).GetProperty("전체").GetDecimal(),(bareAll/frames)/(normalAll/frames));
                 }
-                var candidate=c.Numbers.CreateEoCandidateProfile();var candidatePlans=c.Import.Spells.Select(x=>c.Plan(x.Letter,candidate)).ToArray();
+                var candidate=c.Numbers.CreateEoCandidateProfile();var candidatePlans=c.Import.Spells.Select(x=>c.SourcePlan(x.Letter,candidate)).ToArray();
                 foreach(var row in balance.RootElement.GetProperty("candidatePeaks").EnumerateArray())
                 {
-                    var p=c.Plan(row.GetProperty("letter").GetString()[0],candidate);
+                    var p=c.SourcePlan(row.GetProperty("letter").GetString()[0],candidate);
                     r.Near("candidate/"+p.Glyph.Letter,row.GetProperty("total").GetDecimal(),p.Total);
                     r.Check("candidate-cap/"+p.Glyph.Letter,PeakRulesV3.Evaluate(p,new ContactProfile(),1,false).WithinStructuralCap);
                 }
                 for(int n=1;n<=2;n++)Rank(r,candidatePlans,n,balance.RootElement.GetProperty("candidateRankings").GetProperty(n.ToString()),"candidate",candidate,true);
                 r.Check("candidate-drawing",candidate.Get("action.eo.n.total")/(candidate.Get("ink.normal.eo")/candidate.Get("ink.regen.combat")+candidate.Get("timing.drawing.eoMax"))>candidate.Get("combat.noInk.damage")/candidate.Get("combat.noInk.cooldown"));
             }
-            r.Equal("seot-total",2.1m,c.Plan('섯').Total);
-            r.Equal("seot-cap",2.1m,PeakRulesV3.Evaluate(c.Plan('섯'),new ContactProfile(),1,false).StructureForceCap);
-            r.Equal("seot-critical-max",1.875m,PeakRulesV3.Evaluate(c.Plan('섯'),new ContactProfile(),1.15m,true).FinalMultiplier);
-            r.Equal("normal-critical",1.4375m,PeakRulesV3.Evaluate(c.Plan('넛'),new ContactProfile(),1.15m,true).FinalMultiplier);
-            r.Equal("no-contact-no-shared",0m,PeakRulesV3.Evaluate(c.Plan('섯'),new ContactProfile(0,0,false,false,false),1,true).FinalTotal);
-            r.Equal("one-contact-cap",1.65m,PeakRulesV3.Evaluate(c.Plan('섯'),new ContactProfile(1,1),1,false).StructureForceCap);
-            r.Equal("seed-untriggered",0m,PeakRulesV3.Evaluate(c.Plan('몸'),new ContactProfile(1,0,false,false,false),1,false).FinalTotal);
+            r.Equal("seot-total",2.1m,c.SourcePlan('섯').Total);
+            r.Equal("seot-cap",2.1m,PeakRulesV3.Evaluate(c.SourcePlan('섯'),new ContactProfile(),1,false).StructureForceCap);
+            r.Equal("seot-critical-max",1.875m,PeakRulesV3.Evaluate(c.SourcePlan('섯'),new ContactProfile(),1.15m,true).FinalMultiplier);
+            r.Equal("normal-critical",1.4375m,PeakRulesV3.Evaluate(c.SourcePlan('넛'),new ContactProfile(),1.15m,true).FinalMultiplier);
+            r.Equal("no-contact-no-shared",0m,PeakRulesV3.Evaluate(c.SourcePlan('섯'),new ContactProfile(0,0,false,false,false),1,true).FinalTotal);
+            r.Equal("one-contact-cap",1.65m,PeakRulesV3.Evaluate(c.SourcePlan('섯'),new ContactProfile(1,1),1,false).StructureForceCap);
+            r.Equal("seed-untriggered",0m,PeakRulesV3.Evaluate(c.SourcePlan('몸'),new ContactProfile(1,0,false,false,false),1,false).FinalTotal);
         }
         static void Rank(Report r,GlyphRulesV3.Plan[] plans,int count,JsonElement golden,string label,NumbersV3Dto numbers,bool gates)
         {
@@ -143,7 +149,7 @@ namespace Vol2V3.Tests
                 r.Equal("events-contract-hash",Vol2ImportManifestDto.Sha256(c.Sources["contract"]),fixture.RootElement.GetProperty("contractHash").GetString());
                 foreach(var test in fixture.RootElement.GetProperty("cases").EnumerateArray())
                 {
-                    string id=test.GetProperty("caseId").GetString();var p=c.Plan(test.GetProperty("letter").GetString()[0]);
+                    string id=test.GetProperty("caseId").GetString();var p=c.SourcePlan(test.GetProperty("letter").GetString()[0]);
                     var s=new EffectBudgetV3.State(test.GetProperty("castId").GetInt64(),p,test.GetProperty("startedUs").GetInt64());
                     var commandIds=new HashSet<string>();int index=0;
                     foreach(var item in test.GetProperty("events").EnumerateArray())
@@ -178,9 +184,9 @@ namespace Vol2V3.Tests
         }
         static void StateCases(Report r,Context c)
         {
-            foreach(var row in c.Import.Spells.Where(x=>c.Plan(x.Letter).Limited))
+            foreach(var row in c.Import.Spells.Where(x=>x.Letter!='걱'&&c.SourcePlan(x.Letter).Limited))
             {
-                var p=c.Plan(row.Letter);var state=new EffectBudgetV3.State(1,p);
+                var p=c.SourcePlan(row.Letter);var state=new EffectBudgetV3.State(1,p);
                 for(int target=1;target<=4;target++)
                 {
                     var step=EffectBudgetV3.Apply(state,new Contact(target,1,target,0,1,p.Glyph.Verb==Verb.Seed?ContactKind.Plant:ContactKind.Touch),p);state=step.State;
@@ -190,7 +196,7 @@ namespace Vol2V3.Tests
             }
             foreach(char ch in new[]{'고','구','녹','눅','몸','뭄'})
             {
-                var p=c.Plan(ch);var s=new EffectBudgetV3.State(2,p);
+                var p=c.SourcePlan(ch);var s=new EffectBudgetV3.State(2,p);
                 for(int t=1;t<=4;t++)
                 {
                     bool isSeed=p.Glyph.Verb==Verb.Seed;
@@ -199,17 +205,18 @@ namespace Vol2V3.Tests
                 }
                 r.Equal("uncapped-four/"+ch,4,s.Targets.Count);
             }
-            var root=c.Plan('걱');var rs=new EffectBudgetV3.State(3,root);
-            for(int i=1;i<=5;i++)
+            // 걱의 옛 재료 예산은 Golden에서 원문만 대조한다. 실행은 회복 전용이다.
+            var recovery=c.Plan('걱');var recoveryState=new EffectBudgetV3.State(3,recovery);
+            r.Check("geok-current-recovery",recovery.IsRecovery&&recovery.Cost==26&&recovery.LifeUs==3000000&&recovery.Total==0);
+            foreach(var kind in new[]{ContactKind.Touch,ContactKind.Shared,ContactKind.Transfer,ContactKind.Return})
             {
-                var step=EffectBudgetV3.Apply(rs,new Contact(i,3,1,i,kind:ContactKind.Shared,amount:2,materialId:i),root);rs=step.State;
-                r.Equal("root-material-count/"+i,i<=4,step.Accepted);
-                if(i<=4)r.Equal("root-material-amount/"+i,i==1?0.9m:0.25m,step.Commands.Sum(v=>v.ActionAmount));
+                var blocked=EffectBudgetV3.Apply(recoveryState,new Contact(1,3,1,0,1,kind,amount:1,materialId:1),recovery);
+                r.Check("geok-no-attack/"+kind,!blocked.Accepted&&blocked.Reason=="RecoveryOutsideBudget"&&blocked.Commands.Count==0);
             }
-            r.Equal("root-total",1.65m,rs.PaidShared);
+            r.Equal("geok-no-damage-multiplier",0m,PeakRulesV3.Evaluate(recovery,new ContactProfile(),1.15m,true).FinalTotal);
             foreach(char ch in new[]{'난','넌'})
             {
-                var p=c.Plan(ch);var s=new EffectBudgetV3.State(30,p);
+                var p=c.SourcePlan(ch);var s=new EffectBudgetV3.State(30,p);
                 var firstSpread=EffectBudgetV3.Apply(s,new Contact(1,30,1,0,kind:ContactKind.Shared,effect:EffectKind.Spread,amount:2,materialId:1),p);s=firstSpread.State;
                 r.Equal("peak-spread-per-target/"+ch,0.5m,firstSpread.Commands.Sum(x=>x.ActionAmount));
                 r.Equal("peak-spread-once/"+ch,"SpreadTargetExhausted",EffectBudgetV3.Apply(s,new Contact(2,30,1,1,kind:ContactKind.Shared,effect:EffectKind.Spread,amount:0.5m,materialId:1),p).Reason);
@@ -217,34 +224,38 @@ namespace Vol2V3.Tests
                 r.Equal("peak-spread-total/"+ch,1.5m,s.PaidShared);
                 r.Check("peak-spread-fourth/"+ch,!EffectBudgetV3.Apply(s,new Contact(5,30,4,4,kind:ContactKind.Shared,effect:EffectKind.Spread,amount:0.5m,materialId:1),p).Accepted);
             }
-            var spread=c.Plan('간');var spreadState=new EffectBudgetV3.State(31,spread);
+            var spread=c.SourcePlan('간');var spreadState=new EffectBudgetV3.State(31,spread);
             for(int t=1;t<=4;t++)spreadState=EffectBudgetV3.Apply(spreadState,new Contact(t,31,t,t,kind:ContactKind.Shared,effect:EffectKind.Spread,amount:0.1m,materialId:1),spread).State;
             r.Equal("general-spread-four-targets","SpreadTargetCap",EffectBudgetV3.Apply(spreadState,new Contact(5,31,5,5,kind:ContactKind.Shared,effect:EffectKind.Spread,amount:0.1m,materialId:1),spread).Reason);
             r.Equal("general-spread-unused-budget",0.6m,spreadState.SharedRemaining);
-            var reflect=c.Plan('엉');var bs=new EffectBudgetV3.State(4,reflect);
+            var reflect=c.SourcePlan('엉');var bs=new EffectBudgetV3.State(4,reflect);
             for(int i=1;i<=4;i++)
             {
                 var step=EffectBudgetV3.Apply(bs,new Contact(i,4,1,i,kind:ContactKind.Reflect,amount:0.2m,materialId:i),reflect);bs=step.State;
                 r.Equal("reflection-count/"+i,i<=3,step.Accepted);
             }
             r.Equal("borrowed-separate",0m,bs.TotalPaid);r.Equal("borrowed-three",0.3m,bs.BorrowedPaid);
-            var ang=c.Plan('앙');r.Equal("ang-no-borrowed","BorrowedScope",EffectBudgetV3.Apply(new EffectBudgetV3.State(5,ang),new Contact(1,5,1,0,kind:ContactKind.Reflect,amount:1,materialId:1),ang).Reason);
-            var seed=c.Plan('감');var ss=new EffectBudgetV3.State(6,seed);
+            var ang=c.SourcePlan('앙');r.Equal("ang-no-borrowed","BorrowedScope",EffectBudgetV3.Apply(new EffectBudgetV3.State(5,ang),new Contact(1,5,1,0,kind:ContactKind.Reflect,amount:1,materialId:1),ang).Reason);
+            var seed=c.SourcePlan('감');var ss=new EffectBudgetV3.State(6,seed);
             ss=EffectBudgetV3.Apply(ss,new Contact(1,6,1,0,1,ContactKind.Plant),seed).State;
             r.Check("seed-before-expiry",EffectBudgetV3.Apply(ss,new Contact(2,6,1,7999999,2,ContactKind.Activate,trigger:TriggerKind.OwnerAttack),seed).Accepted);
             r.Equal("seed-at-expiry","Expired",EffectBudgetV3.Apply(ss,new Contact(2,6,1,8000000,2,ContactKind.Activate,trigger:TriggerKind.OwnerAttack),seed).Reason);
-            var a=c.Plan('넉');var first=EffectBudgetV3.Apply(new EffectBudgetV3.State(7,a),new Contact(1,7,1,0,1),a);
+            var a=c.SourcePlan('넉');var first=EffectBudgetV3.Apply(new EffectBudgetV3.State(7,a),new Contact(1,7,1,0,1),a);
             r.Check("separate-cast-same-target",EffectBudgetV3.Apply(new EffectBudgetV3.State(8,a),new Contact(1,8,1,0,1),a).Accepted);
             r.Equal("second-does-not-free-slot",1,EffectBudgetV3.Apply(first.State,new Contact(2,7,1,300000,2),a).State.Targets.Count);
             var snapshot=first.State.Targets; snapshot[0].Paid=99;
             r.Equal("target-snapshot-defensive-copy",0.7m,first.State.Targets[0].Paid);
             r.Check("budget-negative-rejected",!EffectBudgetV3.Apply(first.State,new Contact(2,7,1,1,kind:ContactKind.Shared,amount:-1,materialId:1),a).Accepted);
-            var critical=new PeakRulesV3.State();var one=PeakRulesV3.TryCritical(critical,10,c.Plan('각'));
+            var critical=new PeakRulesV3.State();var one=PeakRulesV3.TryCritical(critical,10,c.SourcePlan('각'));
             r.Check("critical-first",one.Accepted);
-            r.Check("critical-repeat-rejected",!PeakRulesV3.TryCritical(one.State,10,c.Plan('각')).Accepted);
-            var other=PeakRulesV3.TryCritical(one.State,10,c.Plan('난'));r.Check("critical-other-letter",other.Accepted);
-            r.Check("critical-return-after-other",PeakRulesV3.TryCritical(other.State,10,c.Plan('각')).Accepted);
-            r.Check("critical-new-window",PeakRulesV3.TryCritical(one.State,11,c.Plan('각')).Accepted);
+            r.Check("critical-repeat-rejected",!PeakRulesV3.TryCritical(one.State,10,c.SourcePlan('각')).Accepted);
+            r.Check("critical-one-slot",!PeakRulesV3.TryCritical(one.State,10,c.Plan('난')).Accepted);
+            var other=PeakRulesV3.TryCritical(one.State,11,c.Plan('난'));r.Check("critical-other-letter",other.Accepted);
+            r.Check("critical-return-after-other",PeakRulesV3.TryCritical(other.State,12,c.Plan('각')).Accepted);
+            r.Check("critical-new-window-same-rejected",!PeakRulesV3.TryCritical(one.State,11,c.Plan('각')).Accepted);
+            var normal=PeakRulesV3.TryCritical(one.State,11,c.Plan('낙'));
+            r.Check("critical-normal-keeps-peak-record",normal.Accepted&&normal.State.PreviousPeak=='각'&&!PeakRulesV3.TryCritical(normal.State,12,c.Plan('각')).Accepted);
+            r.Check("critical-old-window-rejected",!PeakRulesV3.TryCritical(other.State,9,c.Plan('걱')).Accepted);
             r.Check("critical-state-immutable",critical.WindowId==0&&one.State.PreviousPeak=='각');
         }
     }

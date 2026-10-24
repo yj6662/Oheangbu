@@ -17,6 +17,7 @@ namespace Oheangbu.Vol2.Rules
         public static Result Evaluate(GlyphRulesV3.Plan p, ContactProfile c, decimal force, bool counter)
         {
             if (p == null || c == null || c.Targets < 0 || c.Contacts < 0 || c.Contacts > 2) throw new ArgumentException("Contact profile");
+            if(p.IsRecovery)return new Result(0,0,0,0);
             var n = p.Numbers;
             if (force < n.Get("combat.force.min") || force > n.Get("combat.force.max")) throw new ArgumentOutOfRangeException(nameof(force));
             decimal structure = 0; int targets = p.EffectiveTargets(c.Targets);
@@ -62,8 +63,8 @@ namespace Oheangbu.Vol2.Rules
         public static Step TryCritical(State state, long windowId, GlyphRulesV3.Plan plan)
         {
             if (windowId <= 0) throw new ArgumentOutOfRangeException(nameof(windowId));
-            if (state.WindowId == windowId && state.PreviousPeak == plan.Glyph.Letter && plan.Glyph.Kind == SpellKind.Peak) return new Step(state, false);
-            return new Step(new State(windowId, plan.Glyph.Kind == SpellKind.Peak ? plan.Glyph.Letter : '\0'), true);
+            if (windowId <= state.WindowId || state.PreviousPeak == plan.Glyph.Letter && plan.Glyph.Kind == SpellKind.Peak) return new Step(state, false);
+            return new Step(new State(windowId, plan.Glyph.Kind == SpellKind.Peak ? plan.Glyph.Letter : state.PreviousPeak), true);
         }
     }
 }

@@ -107,6 +107,7 @@ namespace Oheangbu.Vol2.Rules
             if (e.NowUs < s.LastUs) return Reject("TimeOrder");
             if (e.NowUs - s.StartedUs >= p.LifeUs) return Reject("Expired");
             if (p.Glyph.IsParry) return Reject("ParryOutsideBudget");
+            if (p.Glyph.Letter=='걱') return Reject("RecoveryOutsideBudget");
             var next = new State(s); next.events.Add(e.EventId); next.LastUs = e.NowUs;
             Step Done(bool accepted, string reason) => new Step(next, accepted, reason, commands);
             var g = p.Glyph; var n = p.Numbers;

@@ -46,6 +46,9 @@ namespace Vol2V3.Tests
         }
         public GlyphRulesV3.Plan Plan(char letter,NumbersV3Dto n=null)
         { if(!GlyphRulesV3.TryDecode(letter,out var glyph))throw new ArgumentException("Illegal glyph");return GlyphRulesV3.Build(glyph,n??Numbers); }
+        // E9 전 CSV 골든은 원본 스냅샷으로만 대조한다. 실행용 Plan은 위 메서드다.
+        public GlyphRulesV3.Plan SourcePlan(char letter,NumbersV3Dto n=null)
+        { if(!GlyphRulesV3.TryDecode(letter,out var glyph))throw new ArgumentException("Illegal glyph");return GlyphRulesV3.BuildCore(glyph,n??Numbers); }
         public Dictionary<string,byte[]> Copy() => Sources.ToDictionary(p=>p.Key,p=>(byte[])p.Value.Clone());
         public static byte[] Csv(IEnumerable<IEnumerable<string>> rows) => Encoding.UTF8.GetBytes(string.Join("\n",rows.Select(row=>string.Join(",",row.Select(cell=>"\""+cell.Replace("\"","\"\"")+"\""))))+"\n");
         public static string Text(byte[] bytes)=>Encoding.UTF8.GetString(bytes).TrimStart('\uFEFF').Replace("\r\n","\n");
