@@ -239,6 +239,7 @@ namespace Oheangbu.App
             if (_lockOn != null) _lockOn.Changed -= RefreshHud;
             if (_harvestVfx != null) _harvestVfx.ChunkAbsorbed -= OnHarvestChunkAbsorbed;
             UnhookServices();
+            UnhookVol2Defence();
             ClearBossEngagement(); if (_hud != null) { _hud.SetTargetHealth(null); _hud.SetBossHealth(null); } // 씬 해제 중 파괴된 HUD 보호
             ResetEncounterGroggy();
             _pendingCasts.Clear(); // 비활성 동안의 기한 지난 착탄이 재활성 시 유령 피해가 되지 않게
@@ -254,6 +255,7 @@ namespace Oheangbu.App
         private void Update()
         {
             TryHookServices();
+            TickVol2Defence();   // S5-b slice 2: binds / ticks the vol.2 defence kit (CombatLoopWiring.Vol2Defence.cs); nothing in Legacy308
             EABuffs?.Tick(Time.time); EAWards?.Tick(Time.time); EAGiyeok?.Tick(Time.time);
             TickSpells308();
             TickPatches308(Time.time);   // #308 D308-125 적용 5: after the spells (온's wave this frame wipes before the feet burn)
@@ -486,7 +488,7 @@ namespace Oheangbu.App
         }
 
         private bool TrySpendSpell(float cost, in SpellCast cast) => _ink != null && _ink.TrySpend(cost * (EABuffs?.CostScale(Time.time) ?? 1f) * CostScale308(cast));
-        private void OnPlayerDied() { EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ClearPatches308(); ResetEncounterGroggy(); ClearBossEngagement(); }
+        private void OnPlayerDied() { OnVol2PlayerDied(); EABuffs?.Clear(Time.time); EAWards?.Clear(); EAGiyeok?.Clear(); ClearSpells308(SpellClearReason.PlayerDied); ClearPatches308(); ResetEncounterGroggy(); ClearBossEngagement(); }
         private void ResolveWard(SpellCast cast)
         {
             if (EAWards == null || !EAWards.TryPrepare(cast.Letter, out var centre) || !TrySpendSpell(_config.SpellInkCost, cast))
@@ -671,6 +673,7 @@ namespace Oheangbu.App
 
         private void ApplyParryProgress(ParryImpactResult result)
         {
+            if (Vol2DefenceActive) return;   // S5-b slice 2: in vol.2 the posture comes from the rules (Vol2PostureBridge), never from AddParry / the old step meter
             if (result.Outcome == ParryOutcome.Success && result.Attack.Instigator is EnemyVitals attacker &&
                 _targets.Contains(attacker)) { attacker.AddParry(result.Attack); OnParryCountered306(result, attacker); }
         }
@@ -699,7 +702,7 @@ namespace Oheangbu.App
                 return;
             }
             if (outcome != ParryOutcome.Success) return;
-            _ink?.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY)
+            if (!Vol2DefenceActive) _ink?.Gain(_config.ParryInkRefund);  // 소모 초과 환급 = 순증(COMBAT-PARRY) — vol.2: 환급 없음(combat.parry.refund = 0)
             PulseReticle306();                   // 살짝의 효과 — 결투 계약의 고리가 응답한다 (#306: C2 hook may delay it to the counter stroke)
 
             // 접점 버스트(임시 — 3차 검수): 투사체가 방어막에 부딪혀 꺼지는 자리에서
@@ -1120,6 +1123,7 @@ namespace Oheangbu.App
         {
             SwingHit308(damage);   // SPEC-SPELL-SWING-308: a heavy blow before the apex drops the waiting cast
             _lastPlayerHitTime = Time.time;
+            OnVol2PlayerDamaged(damage);   // S5-b slice 2: a running 걱 recovery stops at once
             if (damage > 0) MarkPlayerHitBoss();
             bool interrupts = true;
             NotifyPlayerHit308(ref interrupts); // #308 player-hit hooks (a steadfast buff may keep the letter; nothing is rewarded)
@@ -1129,6 +1133,7 @@ namespace Oheangbu.App
 
         public void ResetEncounterGroggy()
         {
+            _vol2Defence?.ResetEncounter();
             foreach (var target in _targets) if (target != null) target.ResetCombatState();
             RefreshHud();
         }

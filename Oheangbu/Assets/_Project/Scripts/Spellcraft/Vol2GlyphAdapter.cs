@@ -25,6 +25,8 @@ namespace Oheangbu.Spellcraft
         RulebookUnavailable,
         /// <summary>The rules threw while building the plan (a data problem; Detail has the message).</summary>
         RulesError,
+        /// <summary>S5-b slice 2: the payment gate (ink, parry cooldown, recovery gate) refused the cast. Detail has the reason; no CastId, no Plan.</summary>
+        PaymentRefused,
     }
 
     /// <summary>The validated vol.2 numbers and the 120-row table, plus where they came from. An unavailable rulebook carries the loader's error.</summary>
@@ -80,6 +82,16 @@ namespace Oheangbu.Spellcraft
         readonly Vol2IdIssuer _ids;
         readonly Func<Glyph, bool> _isOpen;
 
+        // S5-b slice 2 (additive): the payment gate. Called once per cast, after the plan is built and the CastId is issued and BEFORE
+        // Decided / CastAccepted are raised, so a cast that cannot be paid never reaches an executor. null result / empty = paid; any other
+        // text = refused (Reason PaymentRefused, Detail = the text, CastId and Plan cleared). An exception of the gate is a refusal too, never an
+        // accepted free cast. Set by the combat wiring (Vol2DefenceKit.TryPay); null = no payment (slice 1 behaviour, the switch fixture).
+        public Func<Vol2CastDecision, string> Payment { get; set; }
+        // Read-only views of what the adapter was built with, so the wiring can build its defence kit from the route alone.
+        public NumbersV3Dto Numbers => _numbers;
+        public IVol2Clock Clock => _clock;
+        public Vol2IdIssuer Ids => _ids;
+
         /// <summary>Raised once per received letter, accepted or refused, after the decision is final. A throwing subscriber is logged and isolated.</summary>
         public event Action<Vol2CastDecision> Decided;
         public event Action<Vol2CastDecision> CastAccepted;
@@ -130,6 +142,15 @@ namespace Oheangbu.Spellcraft
             catch (Exception e) { d.Reason = Vol2CastRejectReason.RulesError; d.Detail = e.GetType().Name + ": " + e.Message; return d; }
             d.Plan = plan; d.IsRecovery = plan.IsRecovery;
             d.Accepted = true; d.CastId = _ids.NextCast();
+            var pay = Payment;
+            if (pay != null)
+            {
+                string refusal;
+                try { refusal = pay(d); }
+                catch (Exception e) { Debug.LogException(e); refusal = "payment gate threw " + e.GetType().Name + ": " + e.Message; }
+                if (!string.IsNullOrEmpty(refusal))
+                { d.Accepted = false; d.CastId = default; d.Plan = null; d.Reason = Vol2CastRejectReason.PaymentRefused; d.Detail = refusal; }
+            }
             return d;
         }
 

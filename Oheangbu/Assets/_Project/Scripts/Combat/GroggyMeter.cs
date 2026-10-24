@@ -20,7 +20,20 @@ namespace Oheangbu.Combat
         // Legacy DI consumers reset this service at encounter boundaries.
         public event Action ResetRequested;
 
-        public float Value01 => _parriesToBlossom > 0 ? Mathf.Clamp01(_count / (float)_parriesToBlossom) : 0f;
+        // S5-b slice 2 (D308-149): in a vol.2 scope the posture (GroggyRulesV3: 40 / 60 / 10 toward 100) is the rules' own state, kept by
+        // Vol2PostureBridge. It is shown through this meter (the HUD reads Value01) but NEVER fed into the step counter below:
+        // ProjectExternal replaces what Value01 answers until Reset (the end of the window, a new encounter) puts the meter back.
+        private float _external = -1f;
+        public bool HasExternal => _external >= 0f;
+        public void ProjectExternal(float value01)
+        {
+            float v = float.IsNaN(value01) ? 0f : Mathf.Clamp01(value01);
+            if (Mathf.Approximately(v, _external)) return;
+            _external = v;
+            Changed?.Invoke();
+        }
+
+        public float Value01 => _external >= 0f ? _external : _parriesToBlossom > 0 ? Mathf.Clamp01(_count / (float)_parriesToBlossom) : 0f;
 
         public GroggyMeter(CombatConfigSO config)
         {
@@ -53,7 +66,7 @@ namespace Oheangbu.Combat
 
         public void Reset()
         {
-            _count = 0;
+            _count = 0; _external = -1f;
             Changed?.Invoke();
             ResetRequested?.Invoke();
         }

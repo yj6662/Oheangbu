@@ -138,15 +138,27 @@ namespace Oheangbu.Combat
             return true;
         }
 
-        public void OpenWeakPoint()
+        public void OpenWeakPoint() => OpenWeakPointCore(_config != null ? _config.BlossomStunDuration : 4f);
+
+        // S5-b slice 2 (D308-149): the vol.2 posture bridge opens the window for the length the rules computed (2 s x 0.6^(n-1), a bundle
+        // of at most 5 s). Same state, same generation, same events as the legacy bloom: the riposte's TryConsumeWeakPointWindow and the
+        // HUD read it unchanged. false = the window was not opened (dead, already open, or a non-positive / non-finite length).
+        public bool OpenWeakPointFor(float seconds)
         {
-            if (!IsAlive || WeakPointActive) return;
+            if (!(seconds > 0f) || float.IsInfinity(seconds)) return false;
+            return OpenWeakPointCore(seconds);
+        }
+
+        private bool OpenWeakPointCore(float seconds)
+        {
+            if (!IsAlive || WeakPointActive) return false;
             WeakPointGeneration++;
-            _weakPointUntil = Time.time + (_config != null ? _config.BlossomStunDuration : 4f);
+            _weakPointUntil = Time.time + seconds;
             DamageMultiplier = _config != null ? _config.BlossomDamageMultiplier : 1.5f;
             _elementMask = 0; _completionAwarded = false; _directAttacks.Clear();
             WeakPointOpened?.Invoke();
             CombatStateChanged?.Invoke();
+            return true;
         }
 
         public void ResetCombatState()
@@ -253,6 +265,42 @@ namespace Oheangbu.Combat
             var result = new EnemyDamageResult(this, attack, before - _hp, appliedBonus, _hp <= 0f);
             HpChanged?.Invoke();
             DamageResolved?.Invoke(result);
+            if (_hp <= 0f) { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); Died?.Invoke(); }
+            return result;
+        }
+
+        // ---- S5-b slice 2 (D308-149, design section 5): the vol.2 damage entry ----
+        // The vol.2 rules compute the whole damage themselves (D = H x min(R x S, 1.5) x K x B x (1 + M) x (1 + min(A, 10) / 100), B judged at
+        // this very frame). So this entry applies NONE of the old terms: not DamageMultiplier (the window's legacy 1.5 - the riposte still reads
+        // it), not CounterScale308, not the five-element completion bonus, not the five-element mask. It applies exactly ONE thing of the target
+        // itself: its own armour state, once, through Modifiers.Intake (base defence, the strip / shred a spell left, a brand, a pierce
+        // entry, the guard stance). Then HP, the optional one-HP floor, death and the same signals as TakeDamage (HpChanged, DamageResolved,
+        // Died). hp is already in real HP (units x HpPerUnit, converted by the caller; the factor is in the terms for the log).
+        public Vol2HitRecord LastVol2Hit { get; private set; }
+        public event Action<Vol2HitRecord> Vol2DamageApplied;
+
+        public EnemyDamageResult TakeResolvedVol2Damage(float hp, AttackProvenance attack, bool floorAtOneHp = false)
+            => TakeResolvedVol2Damage(hp, attack, default, false, floorAtOneHp);
+
+        public EnemyDamageResult TakeResolvedVol2Damage(float hp, AttackProvenance attack, in Vol2DamageTerms terms, bool floorAtOneHp = false)
+            => TakeResolvedVol2Damage(hp, attack, terms, true, floorAtOneHp);
+
+        private EnemyDamageResult TakeResolvedVol2Damage(float hp, AttackProvenance attack, in Vol2DamageTerms terms, bool hasTerms, bool floorAtOneHp)
+        {
+            ExpireWeakPoint(Time.time);
+            if (!IsAlive || !(hp > 0f) || float.IsInfinity(hp)) return default;
+            float damage = Modifiers.Intake(hp, Defence, attack.AttackId, Time.time, _config != null ? _config.DefenceCap : 1f,
+                (attack.Source == DamageSource.PlayerDirect || attack.Source == DamageSource.Companion) && !attack.Melee);
+            if (damage <= 0f || float.IsNaN(damage)) return default; // a full defence (1) that the hit does not ignore
+            float floor = floorAtOneHp ? 1f : 0f;
+            float before = _hp;
+            _hp = Mathf.Max(Mathf.Min(floor, _hp), _hp - damage);
+            bool floored = floorAtOneHp && _hp <= floor && before - damage < floor;
+            var result = new EnemyDamageResult(this, attack, before - _hp, 0f, _hp <= 0f);
+            LastVol2Hit = new Vol2HitRecord(terms, hasTerms, attack.AttackId, hp, damage, before - _hp, floored, _hp <= 0f);
+            HpChanged?.Invoke();
+            DamageResolved?.Invoke(result);
+            Vol2DamageApplied?.Invoke(LastVol2Hit);
             if (_hp <= 0f) { LifeRevision++; Control.Clear(); Modifiers.Clear(); ResetCombatState(); Died?.Invoke(); }
             return result;
         }

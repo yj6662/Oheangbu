@@ -28,8 +28,10 @@ namespace Oheangbu.App
         private bool TryRouteVol2(DrawnLetter letter)
         {
             if (_spellRoute == null || !_spellRoute.IsVol2) return false;
+            EnsureVol2Defence();   // slice 2: the payment gate must stand before the first letter (CombatLoopWiring.Vol2Defence.cs)
             var decision = _spellRoute.RouteVol2(letter);
-            // a refusal looks like the old misfire to the brush (no ink is spent in slice 1: the cost belongs to slice 2)
+            // a refusal (not a letter, locked, no data, not paid for) looks like the old misfire to the brush; the ink of an accepted cast is
+            // paid inside the adapter by the defence kit's payment gate, before CastAccepted is raised
             if (!decision.Accepted) _brushAdapter?.NotifyCastFailed();
             return true;
         }
