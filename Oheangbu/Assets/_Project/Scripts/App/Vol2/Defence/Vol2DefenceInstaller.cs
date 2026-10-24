@@ -17,7 +17,8 @@ namespace Oheangbu.App
         ///  - 심는다: Vol2SeedWiring.Bind (kit posture / 갈무리 / stable target ids, the player's real hits, the drawing state) and the kit's HitGate (the 멈 stagger exemption is read from it).
         ///  - 가른다: the 날붓 port, explicitly (the executor no longer has to look the wiring up late).
         ///  - 돌아온다: the borrowed power's HP-per-unit is the kit's (closes TE-S7-6: one conversion for the scope).
-        ///  - the field: a Vol2FieldGateAdapter was bound by the shape runtime; nothing more here.</summary>
+        ///  - the field: a Vol2FieldGateAdapter was bound by the shape runtime; nothing more here.
+        ///  - slice 9: the swing driver (Vol2SwingBinder): the 갈무리 / ㅓ contact swing on the left click, the legacy lock-on pull off while the player's rig exists.</summary>
         static void BindSeams(Vol2ShapeRuntime shapes, Vol2DefenceKit kit, CombatLoopWiring wiring)
         {
             var coordinator = shapes.Coordinator;
@@ -31,6 +32,8 @@ namespace Oheangbu.App
             kit.HitGate = hub != null ? hub.Hits : null;
             if (coordinator.Verbs.TryGet(Verb.Split, out var split) && split is Vol2SplitExecutor se) se.Blade = new Vol2PostureBladePort(kit.Posture);
             if (coordinator.Verbs.TryGet(Verb.Return, out var ret) && ret is Vol2ReturnExecutor re) re.Tuning.HpPerUnit = kit.HpPerUnit;
+            // slice 9 (D308-150 V2): the swing driver - the left click's brush-tip swing raises the swing signal (the ㅓ contacts) and reports the 갈무리 (first enemy / air)
+            Vol2SwingBinder.Bind(shapes, wiring);
         }
 
         public static void Register(IContainerBuilder builder, Vol2Services services, float hpPerUnit = Vol2Units.DefaultHpPerUnit)

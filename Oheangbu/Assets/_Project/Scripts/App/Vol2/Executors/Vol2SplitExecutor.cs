@@ -84,6 +84,8 @@ namespace Oheangbu.App
             readonly HashSet<long> _onBand = new HashSet<long>();
             readonly HashSet<long> _resTouched = new HashSet<long>();
             readonly HashSet<long> _bladeAttacks = new HashSet<long>();
+            readonly HashSet<long> _swingsCut = new HashSet<long>();        // TE-S6-11: the swings (SwingIds) 섯 has cut with so far
+            readonly HashSet<long> _swingsRefused = new HashSet<long>();
             readonly HashSet<(long swing, long target, string kind)> _bladeSeen = new HashSet<(long, long, string)>();
             bool _valuePaid, _casterInit, _subscribed;
             int _bodies;
@@ -322,6 +324,17 @@ namespace Oheangbu.App
             {
                 var host = Run.Emitter as Vol2AttachmentHost;
                 if (host == null || !host.Open(e.NowUs)) return;
+                // TE-S6-11 (closed by slice 9): "휘두르기 두 번" - the material cut happens on the first SeotSwings distinct swings of the window only. The swing driver gives every
+                // swing its own SwingId (several events of one swing share it), so a swing is counted once however many frames its window lasts.
+                if (!_swingsCut.Contains(e.SwingId))
+                {
+                    if (T.SeotSwings > 0 && _swingsCut.Count >= T.SeotSwings)
+                    {
+                        if (_swingsRefused.Add(e.SwingId)) _data.SwingsCapped++;
+                        return;
+                    }
+                    _swingsCut.Add(e.SwingId); _data.SwingsCut++;
+                }
                 Vector3 rear = e.Sleeve - (e.Tip - e.Sleeve);
                 float rad = Run.Spec.SwingRadius;
                 SplitWhere(e.NowUs, "swing-front", s => Vol2SplitGeometry.SegmentHit(e.Sleeve, e.Tip, rad, s), m => e.Tip - e.Sleeve);

@@ -144,6 +144,8 @@ namespace Oheangbu.App
         public readonly List<Vol2StripEntry> Strips = new List<Vol2StripEntry>();
         public readonly List<Vol2BladeEvent> Blades = new List<Vol2BladeEvent>();
         public int BladeDuplicates, RearHits;
+        /// <summary>TE-S6-11: the swings 섯 cut with, and the further swings it refused (the table says two).</summary>
+        public int SwingsCut, SwingsCapped;
     }
 
     // ------------------------------------------------------------------------------------------------------------------------------

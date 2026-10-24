@@ -86,10 +86,26 @@ namespace Oheangbu.App
         /// <summary>One lab-simulated swing reported by three colliders (the same SwingId), from the caster toward the aim.</summary>
         public void Swing()
         {
+            if (Driver != null && Script != null) { SwingThroughDriver(); return; }
             long swing = Services.Ids.NextSwing().Value;
             Vector3 sleeve = Scenario.Origin + Vector3.up * 1.1f, tip = sleeve + Scenario.Forward * Coordinator.Tuning.BrushReach;
             for (int k = 0; k < 3; k++) Shapes.Swings.Raise(new Vol2SwingEvent(swing, sleeve, tip, Services.Clock.NowUs, k));
             SwingsRaised++;
+        }
+
+        /// <summary>Slice 9 (the swing pass of the lab): when set, <see cref="Swing"/> is a real click on the swing driver - the driver opens a SwingId, sweeps the capsule over its
+        /// window and raises the swing signal and the 갈무리 report itself. The pose is the same one the simulated swing uses (the sleeve at the caster's chest, the tip one
+        /// brush reach ahead), so every row keeps the geometry its expectations were written for; only the path to the contacts is the real one.</summary>
+        public Vol2SwingDriver Driver { get; set; }
+        public Vol2ScriptedSwingSource Script { get; set; }
+        /// <summary>Clicks the driver refused (a swing in progress, the cooldown, no source). A row expects 0.</summary>
+        public int SwingsRefused { get; private set; }
+
+        void SwingThroughDriver()
+        {
+            Vector3 sleeve = Scenario.Origin + Vector3.up * 1.1f, tip = sleeve + Scenario.Forward * Coordinator.Tuning.BrushReach;
+            Script.Aim(sleeve, tip);
+            if (Driver.TryBeginSwing()) SwingsRaised++; else SwingsRefused++;
         }
 
         /// <summary>A material that belongs to no cast of this row (an old residue of mine, an enemy patch, a world vine), standing at (ahead, side).</summary>
@@ -390,7 +406,7 @@ namespace Oheangbu.App
                 Need(Near(marks.Sum(m => m.Initial), spreadPaid + returnPaid), "marks hold " + Fmt(marks.Sum(m => m.Initial)) + ", the bodies were paid " + Fmt(spreadPaid + returnPaid));
                 Need(Near(budget.SharedRemaining, plan.Shared - spreadPaid - returnPaid), "budget balance " + Fmt(budget.SharedRemaining));
                 v.MaterialIds = string.Join("|", log.Materials.Select(m => m.Id.Value.ToString(CultureInfo.InvariantCulture)));
-                SpreadPeaks(row, sc, log, plan, n, co, problems, v);
+                SpreadPeaks(row, sc, log, plan, n, co, problems, v, ctx);
             }
             v.Created = string.Join("|", log.Materials.Select(m => m.Id + ":" + m.Kind + ":" + Fmt(m.Initial)));
             v.Consumed = string.Join("|", log.Materials.Select(m => m.Id + ":" + m.End));
@@ -456,7 +472,7 @@ namespace Oheangbu.App
             v.Checks = string.Join(" | ", checks);
         }
 
-        void SpreadPeaks(Vol2SpellRowDto row, Vol2LabScenario sc, Vol2CastLog log, GlyphRulesV3.Plan plan, NumbersV3Dto n, Vol2CastCoordinator co, List<string> problems, Vol2OnceVerdict v)
+        void SpreadPeaks(Vol2SpellRowDto row, Vol2LabScenario sc, Vol2CastLog log, GlyphRulesV3.Plan plan, NumbersV3Dto n, Vol2CastCoordinator co, List<string> problems, Vol2OnceVerdict v, Vol2LabContext ctx)
         {
             char letter = row.Letter; var checks = new List<string>();
             void Need(bool ok, string what) { if (!ok) problems.Add(what); else checks.Add(what); }
@@ -472,7 +488,8 @@ namespace Oheangbu.App
                         Need(carrier != null && carrier.Initial == 0m && carrier.Attached && carrier.LifeUs == RuleTypesV3.Microseconds(n.Get("timing.attachment.life")), "넌: the body carries a 6 s fire carrier holding 0");
                         Need(forward.Count == 2 && forward.All(c => Near(c.Amount, n.Get("peak.spread.amountPerTarget"))), "넌: two bodies, 0.5 each, from the one shared 1.5");
                         Need(forward.Count == 2 && forward[0].NowUs < forward[1].NowUs && forward[1].NowUs - forward[0].NowUs >= 150000, "넌: the second body is spread to by the second swing");
-                        Need(ctxSwings(sc) == 3 && log.SwingReports == 9, "넌: three swings reported, three colliders each");
+                        // simulated: three swings, three colliders each = 9 reports; the swing driver (slice 9) reports one event per swept step of each window: at least one per swing
+                        Need(ctxSwings(sc) == 3 && (ctx.Driver != null ? ctx.SwingsRaised == 3 && ctx.SwingsRefused == 0 && log.SwingReports >= 3 : log.SwingReports == 9), "넌: three swings reported" + (ctx.Driver != null ? " by the swing driver" : ", three colliders each"));
                         break;
                     }
                 case '논':

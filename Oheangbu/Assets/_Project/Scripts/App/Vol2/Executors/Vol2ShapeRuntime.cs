@@ -25,6 +25,9 @@ namespace Oheangbu.App
         public Vol2FieldGateAdapter Field { get; private set; }
         public Vol2WorldMaterials World { get; private set; }
         public Vol2MovementBlock Block { get; private set; }
+        /// <summary>S5-b slice 9 (D308-150 V2): the swing driver of the scope - the 갈무리 and the ㅓ contacts of a real brush swing. Bound by Vol2DefenceInstaller.BindSeams (Vol2 scopes
+        /// only); null in Legacy308 and in a fixture runtime until the fixture makes one.</summary>
+        public Vol2SwingDriver Swing { get; set; }
         /// <summary>The TEMPORARY debug presenter (null in a fixture). Its Drawn counter is how the lab knows the shapes were drawn.</summary>
         public Vol2DebugPresenter Presenter { get; private set; }
 

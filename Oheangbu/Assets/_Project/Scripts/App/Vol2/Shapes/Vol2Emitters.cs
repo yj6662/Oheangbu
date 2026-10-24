@@ -161,9 +161,9 @@ namespace Oheangbu.App
         { SwingId = swingId; Sleeve = sleeve; Tip = tip; NowUs = nowUs; ColliderIndex = colliderIndex; }
     }
 
-    /// <summary>The scope's swing contact signal. TODAY NOTHING IN THE GAME RAISES IT: the wiring's Vol2 route returns before the old swing starts
-    /// (TryRouteVol2), and slice 2 owns the swing that carries the 갈무리. The hook is stated in the slice 3 report; the lab raises it itself
-    /// and marks those rows as lab-simulated.</summary>
+    /// <summary>The scope's swing contact signal. Raised by the swing driver (slice 9, Vol2SwingDriver: one event per swept step of the contact window of a real
+    /// brush swing, all steps of a swing sharing its SwingId). The wiring's Vol2 route returns before the old swing starts (TryRouteVol2), so the old swing
+    /// never raised it. The lab's 125 rows still raise it by hand and mark those rows as lab-simulated; its swing pass runs the same rows through the driver.</summary>
     public sealed class Vol2SwingSignal
     {
         public event Action<Vol2SwingEvent> Contact;

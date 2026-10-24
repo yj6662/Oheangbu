@@ -29,6 +29,8 @@ namespace Oheangbu.App
             public int rows, pass, fail, accepted, rejected, exceptions, logErrors, framesWaited;
             /// <summary>S5-b slice 8: the reaction pass runs AFTER the rows above and is counted apart (rows / pass / fail stay the original 125); it still decides the run's status.</summary>
             public int reactionRows, reactionPass, reactionFail;
+            /// <summary>S5-b slice 9 (D308-150 V2): the swing pass runs after the reaction pass and is counted apart too - the ㅓ rows again with REAL swings (the swing driver sweeps a scripted brush) and the 갈무리 rows on the real wiring.</summary>
+            public int swingRows, swingPass, swingFail;
             public string[] firstProblems = new string[0];
         }
 
@@ -74,6 +76,8 @@ namespace Oheangbu.App
         readonly List<string> _problems = new List<string>();
         int _logErrors, _rows, _pass, _fail, _exceptions, _accepted, _rejected, _frames;
         int _xRows, _xPass, _xFail;           // slice 8: the reaction pass
+        int _sRows, _sPass, _sFail;           // slice 9: the swing pass
+        bool _swingPass;
         bool _finished, _started, _running;
         string _startedAt = "";
 
@@ -194,6 +198,12 @@ namespace Oheangbu.App
                 if (verdict == "PASS") _xPass++; else { _xFail++; if (_problems.Count < 8) _problems.Add(row.Letter + " " + (once != null ? once.Variant + ": " : "") + note); }
                 _xRows++;
             }
+            else if (_swingPass)
+            {
+                // slice 9: the swing pass is counted apart as well (the 125 rows and the reaction pass stay what they were)
+                if (verdict == "PASS") _sPass++; else { _sFail++; if (_problems.Count < 8) _problems.Add((row != null ? row.Letter + " " : "") + (once != null ? once.Variant + ": " : "") + note); }
+                _sRows++;
+            }
             else
             {
                 if (d != null) { if (d.Accepted) _accepted++; else _rejected++; }
@@ -208,7 +218,7 @@ namespace Oheangbu.App
 
         /// <summary>Runs one scenario variant of a 한 번 row: dummies in, the letter through the channel, wait for the cast to end, compare, dummies out.
         /// Starts an unfinished row only after BeginRun; always cleans the dummies and the registry flag.</summary>
-        async UniTask ProcessOnceRowAsync(int index, Vol2SpellRowDto row, string variant, System.Threading.CancellationToken token)
+        async UniTask<bool> ProcessOnceRowAsync(int index, Vol2SpellRowDto row, string variant, System.Threading.CancellationToken token, bool swingPass = false)
         {
             var shapes = _services.Shapes;
             shapes.PoolInk?.Refill();
@@ -216,10 +226,16 @@ namespace Oheangbu.App
             int linesBefore = shapes.Presenter != null ? shapes.Presenter.Drawn : 0;
             shapes.Registry.ExtrasOnly = true; shapes.Registry.ClearExtras();
             var scenario = Vol2OnceLab.Build(row.Frame, variant, shapes.Caster, shapes.Registry);
+            SwingPassRig swingRig = null;
             try
             {
+                if (swingPass)
+                {
+                    if (!scenario.NeedsSwing) return false;             // the swing pass runs the ㅓ rows again with real swings; the others have none
+                    swingRig = SwingPassRig.Begin(shapes, _services);
+                }
                 var injected = Inject(row);
-                var once = new OnceRow { Variant = variant, Describe = scenario.Describe, SimulatedSwing = scenario.NeedsSwing };
+                var once = new OnceRow { Variant = variant, Describe = scenario.Describe, SimulatedSwing = scenario.NeedsSwing && swingRig == null, ScenarioName = swingRig != null ? Vol2SwingLab.Scenario : null };
                 if (inkBefore >= 0f) once.InkDelta = (shapes.PoolInk.InkNow - inkBefore).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
                 Vol2CastLog log = null;
                 if (injected.Decision != null && injected.Decision.Accepted) shapes.Coordinator.TryGetLog(injected.Decision.CastId, out log);
@@ -229,20 +245,26 @@ namespace Oheangbu.App
                     if (scenario.NeedsSwing)
                     {
                         await UniTask.Yield(PlayerLoopTiming.Update, token);
-                        long swing = _services.Ids.NextSwing().Value;
                         Vector3 sleeve = scenario.Origin + Vector3.up * 1.1f, tip = sleeve + scenario.Forward * shapes.Coordinator.Tuning.BrushReach;
-                        for (int k = 0; k < 3; k++) shapes.Swings.Raise(new Vol2SwingEvent(swing, sleeve, tip, _services.Clock.NowUs, k));
+                        if (swingRig != null) swingRig.Click(sleeve, tip);       // slice 9: a real click on the swing driver
+                        else
+                        {
+                            long swing = _services.Ids.NextSwing().Value;
+                            for (int k = 0; k < 3; k++) shapes.Swings.Raise(new Vol2SwingEvent(swing, sleeve, tip, _services.Clock.NowUs, k));
+                        }
                     }
                     float until = Time.unscaledTime + 4f;
                     while (!log.Finished && Time.unscaledTime < until) await UniTask.Yield(PlayerLoopTiming.Update, token);
                     float settle = Time.unscaledTime + 0.45f;       // the earth push and the slow take a moment to show on the body
                     while (Time.unscaledTime < settle) await UniTask.Yield(PlayerLoopTiming.Update, token);
-                    once.Verdict = Vol2OnceLab.Evaluate(row, scenario, log, shapes.Coordinator, _services.Rulebook.Numbers);
+                    once.Verdict = Vol2OnceLab.Evaluate(row, scenario, log, shapes.Coordinator, _services.Rulebook.Numbers, swingRig != null);
+                    if (swingRig != null) swingRig.Judge(once.Verdict, 1);
                 }
                 once.PresenterLines = shapes.Presenter != null ? shapes.Presenter.Drawn - linesBefore : 0;
                 Commit(index, row, injected, once);
+                return true;
             }
-            finally { Vol2OnceLab.Cleanup(scenario, shapes.Registry); shapes.Registry.ExtrasOnly = false; }
+            finally { swingRig?.End(); Vol2OnceLab.Cleanup(scenario, shapes.Registry); shapes.Registry.ExtrasOnly = false; }
         }
 
         // ---- slice 4: the verbs with a lab provider (Play only: the contacts take frames) ----
@@ -250,7 +272,7 @@ namespace Oheangbu.App
         /// <summary>One row of a verb with a lab provider: scenario in, letter through the channel, the scenario's steps on the scope clock, the clock
         /// fast-forwarded to the end of the cast's life, the provider's verdict, everything out. A row starts from nothing (the coordinator's
         /// casts and every material are aborted first) and leaves nothing behind.</summary>
-        async UniTask ProcessVerbRowAsync(int index, Vol2SpellRowDto row, IVol2LabProvider provider, System.Threading.CancellationToken token, string scenarioName = null, bool extra = false)
+        async UniTask<bool> ProcessVerbRowAsync(int index, Vol2SpellRowDto row, IVol2LabProvider provider, System.Threading.CancellationToken token, string scenarioName = null, bool extra = false, bool swingPass = false)
         {
             var shapes = _services.Shapes;
             shapes.Coordinator.AbortAll();
@@ -261,10 +283,17 @@ namespace Oheangbu.App
             var ctx = new Vol2LabContext(shapes, _services) { Kit = _wiring != null ? _wiring.Vol2Defence : null };
             ctx.Cast = letter => { try { _wiring.LetterChannel.Raise(new DrawnLetter(letter, default, default, null, 0.6f, 0.6f, 1f, 1f, 3)); } catch (Exception e) { Debug.LogException(e); } };
             var scenario = provider.Build(row, ctx);
+            SwingPassRig swingRig = null;
             try
             {
+                if (swingPass)
+                {
+                    if (!scenario.UsesSwings) return false;             // the swing pass runs the rows that swing; the others have nothing to show again
+                    swingRig = SwingPassRig.Begin(shapes, _services);
+                    ctx.Driver = swingRig.Driver; ctx.Script = swingRig.Script;
+                }
                 var injected = Inject(row);
-                var once = new OnceRow { Variant = scenario.Variant, Describe = scenario.Describe, SimulatedSwing = scenario.UsesSwings, ScenarioName = scenarioName ?? Vol2VerbLab.Scenario };
+                var once = new OnceRow { Variant = scenario.Variant, Describe = scenario.Describe, SimulatedSwing = scenario.UsesSwings && swingRig == null, ScenarioName = scenarioName ?? Vol2VerbLab.Scenario };
                 if (inkBefore >= 0f) once.InkDelta = (shapes.PoolInk.InkNow - inkBefore).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
                 Vol2CastLog log = null;
                 if (injected.Decision != null && injected.Decision.Accepted) shapes.Coordinator.TryGetLog(injected.Decision.CastId, out log);
@@ -287,11 +316,13 @@ namespace Oheangbu.App
                     while (!log.Finished && Time.unscaledTime < until) await UniTask.Yield(PlayerLoopTiming.Update, token);
                     for (int k = 0; k < 3; k++) await UniTask.Yield(PlayerLoopTiming.Update, token);     // the push / slow / marks take a frame to show
                     once.Verdict = provider.Evaluate(row, scenario, log, injected.Decision, ctx);
+                    if (swingRig != null && once.Verdict != null) swingRig.Judge(once.Verdict, ctx.SwingsRaised);
                 }
                 once.PresenterLines = shapes.Presenter != null ? shapes.Presenter.Drawn - linesBefore : 0;
                 Commit(index, row, injected, once, extra);
+                return true;
             }
-            finally { Vol2VerbLab.Cleanup(scenario, shapes.Registry); shapes.Coordinator.AbortAll(); shapes.Registry.ExtrasOnly = false; }
+            finally { swingRig?.End(); Vol2VerbLab.Cleanup(scenario, shapes.Registry); shapes.Coordinator.AbortAll(); shapes.Registry.ExtrasOnly = false; }
         }
 
         // ---- slice 8: the reaction pass (real casts, real contacts; counted apart from the 125 rows) ----
@@ -312,6 +343,170 @@ namespace Oheangbu.App
             }
         }
 
+        // ---- slice 9: the swing pass (the ㅓ rows again with real swings through the swing driver; the 갈무리 on the real wiring; counted apart) ----
+
+        async UniTask ProcessSwingPassAsync(Vol2Rulebook book, System.Threading.CancellationToken token)
+        {
+            var shapes = _services.Shapes;
+            int index = book.Spells.Count + _xRows;
+            _swingPass = true;
+            try
+            {
+                if (shapes.Swing == null)
+                {
+                    _sRows++; _sFail++;
+                    if (_problems.Count < 8) _problems.Add("swing pass: the scope has no swing driver (Vol2DefenceInstaller.BindSeams)");
+                    return;
+                }
+                shapes.Coordinator.Reactions.Enabled = false;          // verb isolation, as in the 125 rows
+                foreach (var row in book.Spells)
+                {
+                    var provider = Vol2VerbLab.Find(row);
+                    if (provider != null) { if (await ProcessVerbRowAsync(index, row, provider, token, Vol2SwingLab.Scenario, false, true)) index++; }
+                    else if (row.Verb == Verb.Once && row.Frame == Frame.Attachment)
+                        foreach (string variant in Vol2OnceLab.Variants(row.Frame)) { if (await ProcessOnceRowAsync(index, row, variant, token, true)) index++; }
+                    await UniTask.Yield(PlayerLoopTiming.Update, token);
+                }
+                await ProcessGatherCasesAsync(index, token);
+            }
+            finally { _swingPass = false; shapes.Coordinator.Reactions.Enabled = true; }
+        }
+
+        void CommitCase(int index, string variant, string describe, string failure)
+        {
+            var injected = new Injected { Verdict = failure.Length == 0 ? "PASS" : "FAIL", Note = failure };
+            var once = new OnceRow { Variant = variant, Describe = describe, ScenarioName = "S9-gather" };
+            Commit(index, null, injected, once);
+        }
+
+        async UniTask WaitSwingClosedAsync(Vol2SwingDriver driver, System.Threading.CancellationToken token)
+        {
+            float until = Time.unscaledTime + 3f;
+            while (driver.InSwing && Time.unscaledTime < until) await UniTask.Yield(PlayerLoopTiming.Update, token);
+            for (int k = 0; k < 2; k++) await UniTask.Yield(PlayerLoopTiming.Update, token);
+        }
+
+        // The 갈무리 on the REAL wiring (the kit's gather service, the rules' ledger and cooldown, real HP of runtime dummies): the swing driver's first-contact report.
+        async UniTask ProcessGatherCasesAsync(int index, System.Threading.CancellationToken token)
+        {
+            var shapes = _services.Shapes; var driver = shapes.Swing;
+            var savedSource = driver.Source; var savedGather = driver.Gather; bool savedGate = driver.Tuning.GateByCooldown;
+            var script = new Vol2ScriptedSwingSource(_services.Clock); var port = new Vol2WiringGatherPort(_wiring);
+            shapes.Coordinator.AbortAll(); shapes.Registry.ExtrasOnly = true; shapes.Registry.ClearExtras();
+            var ctx = new Vol2LabContext(shapes, _services) { Kit = _wiring != null ? _wiring.Vol2Defence : null };
+            var sc = new Vol2LabScenario { Variant = "gather", Origin = shapes.Caster.Position, Forward = Vol2ShapeGeometry.FlatUnit(shapes.Caster.AimDirection) };
+            ctx.Scenario = sc;
+            Vector3 sleeve = sc.Origin + Vector3.up * 1.1f, tip = sleeve + sc.Forward * shapes.Coordinator.Tuning.BrushReach;
+            try
+            {
+                driver.Reset(); driver.Source = script; driver.Gather = port; driver.Tuning.GateByCooldown = true;
+                // 0. the production source: the player's great brush in this scene (informational when the lab scene's player is not set up for it)
+                {
+                    var prod = savedSource as Vol2RigSwingSource;
+                    string fail = ""; string describe;
+                    if (prod != null && prod.TryPose(out var ps, out var pt))
+                    {
+                        float length = (pt - ps).magnitude;
+                        describe = "production source: sleeve-to-tip " + length.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + " m from the world brush's sockets";
+                        if (length < 1.0f || length > 2.4f) fail = "the capsule the rig gives is " + length.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + " m long (a great brush plus a sleeve is 1.0 - 2.4 m)";
+                    }
+                    else describe = "production source: NA in this scene (" + (prod != null ? prod.Why : "no source") + ")";
+                    CommitCase(index++, "source", describe, fail);
+                }
+                // 0b. the production animation: the click (HarvestAction.Pressed -> the host -> the driver) plays SwingSweep on the player, and the window opens and closes with the REAL clip
+                {
+                    var prod = savedSource as Vol2RigSwingSource;
+                    var swing308 = prod != null ? prod.Swing : null;
+                    var harvest = _wiring != null ? _wiring.Harvest : null;
+                    string fail = "", describe;
+                    if (swing308 == null || !swing308.Active || harvest == null)
+                        describe = "production click: NA in this scene (" + (swing308 == null ? "no SpellSwing308 found" : !swing308.Active ? "SpellSwing308 is not active" : "the wiring has no HarvestAction") + ")";
+                    else
+                    {
+                        var rec = new Vol2RecordingGatherPort();
+                        driver.Source = prod; driver.Gather = rec; driver.Tuning.GateByCooldown = false;
+                        int swings0 = driver.Swings, played0 = swing308.Swings, cancelled0 = driver.Cancelled;
+                        harvest.TryBeginPull();
+                        bool intercepted = harvest.Intercepted, idle = harvest.State == HarvestState.Idle;
+                        await WaitSwingClosedAsync(driver, token);
+                        var last = driver.Last;
+                        double seconds = (last.ClosedUs - last.OpenedUs) / 1000000.0;
+                        describe = "production click: HarvestAction.Pressed -> SpellSwing308." + driver.Tuning.BareSwingState + " -> window [" + driver.WindowStartClip.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + ", "
+                            + driver.WindowEndClip.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "] s of clip, closed after " + seconds.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + " s with " + last.Frames + " swept frames";
+                        if (!intercepted || !idle) fail += "the legacy pull was not switched off (Intercepted " + intercepted + ", pull state " + harvest.State + "); ";
+                        if (driver.Swings - swings0 != 1 || swing308.Swings - played0 != 1) fail += "swings " + (driver.Swings - swings0) + ", animations " + (swing308.Swings - played0) + ", expected 1 / 1; ";
+                        if (driver.Cancelled != cancelled0 || last.Frames < 1 || last.Why != "Window") fail += "the swing did not reach its window (" + last + "); ";
+                        if (Mathf.Abs(driver.WindowStartClip - 0.25f) > 0.01f || Mathf.Abs(driver.WindowEndClip - 0.60f) > 0.01f) fail += "window " + driver.WindowStartClip + ".." + driver.WindowEndClip + " is not SwingSweep's [0.25, 0.60]; ";
+                        if (seconds < 0.55 || seconds > 0.95) fail += "the window closed " + seconds.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + " s after the click (the clip's 0.60 s +- a frame expected); ";
+                        if (rec.Misses.Count + rec.Hits.Count != 1) fail += "reports " + (rec.Misses.Count + rec.Hits.Count) + ", expected 1; ";
+                        driver.Source = script; driver.Gather = port; driver.Tuning.GateByCooldown = true;
+                    }
+                    CommitCase(index++, "click", describe, fail);
+                }
+                // 1. a swing at a body: the first enemy is gathered, once, on the real ledger
+                {
+                    var a = ctx.Dummy("G1_near", 1.0f, 0f); float hp0 = a.Vitals.Hp;
+                    _services.Skew.Seconds += 1.3;
+                    int calls0 = port.Calls, hits0 = driver.FirstHits, miss0 = driver.Misses;
+                    script.Aim(sleeve, tip); bool began = driver.TryBeginSwing(); await WaitSwingClosedAsync(driver, token);
+                    string fail = "";
+                    if (!began) fail += "the click was refused; ";
+                    if (port.Calls != calls0 + 1 || driver.FirstHits - hits0 != 1 || driver.Misses - miss0 != 0) fail += "expected one first-hit report, got calls " + (port.Calls - calls0) + " hits " + (driver.FirstHits - hits0) + " misses " + (driver.Misses - miss0) + "; ";
+                    if (!(port.Last.Accepted && port.Last.Reason == "Gathered")) fail += "gather record: " + port.Last + "; ";
+                    if (!(a.Vitals.Hp < hp0 && a.Vitals.Hp >= 1f)) fail += "hp " + hp0 + " -> " + a.Vitals.Hp + " (damaged but never lethal); ";
+                    CommitCase(index++, "hit", "a swing at a body 1 m ahead: the brush tip's capsule meets it, ReportVol2SwingFirstHit once, 0.3 u damage with the HP floor, ink gained", fail);
+                    Vol2VerbLab.Cleanup(sc, shapes.Registry);
+                }
+                // 2. a swing at the air: the swing is booked as a miss, once
+                {
+                    _services.Skew.Seconds += 1.3;
+                    int calls0 = port.Calls, hits0 = driver.FirstHits, miss0 = driver.Misses;
+                    script.Aim(sleeve, tip); bool began = driver.TryBeginSwing(); await WaitSwingClosedAsync(driver, token);
+                    string fail = "";
+                    if (!began) fail += "the click was refused; ";
+                    if (port.Calls != calls0 + 1 || driver.FirstHits - hits0 != 0 || driver.Misses - miss0 != 1) fail += "expected one miss report, got calls " + (port.Calls - calls0) + " hits " + (driver.FirstHits - hits0) + " misses " + (driver.Misses - miss0) + "; ";
+                    if (!(port.Last.Accepted && port.Last.Reason == "Swing")) fail += "gather record: " + port.Last + "; ";
+                    CommitCase(index++, "air", "a swing at nothing: ReportVol2SwingMissed once when the window closes (the swing is booked, no damage, no ink)", fail);
+                }
+                // 3. two bodies in reach: one report, the body nearest the capsule's axis
+                {
+                    var a = ctx.Dummy("G3_axis", 1.0f, 0.1f); var b = ctx.Dummy("G3_wide", 1.2f, -0.3f); float hpA = a.Vitals.Hp, hpB = b.Vitals.Hp;
+                    _services.Skew.Seconds += 1.3;
+                    int calls0 = port.Calls;
+                    script.Aim(sleeve, tip); bool began = driver.TryBeginSwing(); await WaitSwingClosedAsync(driver, token);
+                    string fail = "";
+                    if (!began) fail += "the click was refused; ";
+                    if (port.Calls != calls0 + 1) fail += "expected ONE report for two bodies, got " + (port.Calls - calls0) + "; ";
+                    if (!(a.Vitals.Hp < hpA && b.Vitals.Hp == hpB)) fail += "the body on the axis must be the one gathered (A " + hpA + " -> " + a.Vitals.Hp + ", B " + hpB + " -> " + b.Vitals.Hp + "); ";
+                    CommitCase(index++, "first-only", "two bodies in reach, one 0.1 m off the axis and one 0.3 m: the swing reports its FIRST enemy (nearest the axis) once; the other is untouched", fail);
+                    Vol2VerbLab.Cleanup(sc, shapes.Registry);
+                }
+                // 4. the click's gate: a swing in progress and the rules' 1.1 s refuse a second click; after the cooldown it swings again
+                {
+                    var a = ctx.Dummy("G4_gate", 1.0f, 0f);
+                    _services.Skew.Seconds += 1.3;
+                    int calls0 = port.Calls, swings0 = driver.Swings, refused0 = driver.Refused;
+                    script.Aim(sleeve, tip);
+                    bool first = driver.TryBeginSwing();
+                    bool during = driver.TryBeginSwing();                        // the first swing is still open
+                    await WaitSwingClosedAsync(driver, token);
+                    bool cooling = driver.TryBeginSwing();                       // closed, but well inside 1.1 s of its report
+                    _services.Skew.Seconds += 1.2;
+                    bool later = driver.TryBeginSwing(); await WaitSwingClosedAsync(driver, token);
+                    string fail = "";
+                    if (!first || during || cooling || !later) fail += "click answers (first, during, cooling, later) = " + first + "/" + during + "/" + cooling + "/" + later + ", expected true/false/false/true; ";
+                    if (driver.Swings - swings0 != 2 || driver.Refused - refused0 != 2 || port.Calls - calls0 != 2) fail += "swings " + (driver.Swings - swings0) + " refused " + (driver.Refused - refused0) + " reports " + (port.Calls - calls0) + ", expected 2 / 2 / 2; ";
+                    CommitCase(index++, "gate", "a second click during a swing and one inside the rules' 1.1 s are refused (no animation for a swing the rules would refuse); after the cooldown the swing goes again", fail);
+                    Vol2VerbLab.Cleanup(sc, shapes.Registry);
+                }
+            }
+            finally
+            {
+                driver.Reset(); driver.Source = savedSource; driver.Gather = savedGather; driver.Tuning.GateByCooldown = savedGate;
+                Vol2VerbLab.Cleanup(sc, shapes.Registry); shapes.Coordinator.AbortAll(); shapes.Registry.ExtrasOnly = false;
+            }
+        }
+
         /// <summary>Stops counting, writes the summary and closes the CSV. Returns the status (PASS | FAIL | the forced one).</summary>
         public string EndRun(string forcedStatus = null)
         {
@@ -320,7 +515,7 @@ namespace Oheangbu.App
             Application.logMessageReceived -= OnLog;
             _services.Route.Adapter.Decided -= OnDecided;
             if (_kit != null && _kitHooked) { _kit.Posture.Applied -= OnPosture; _kitHooked = false; }
-            string status = forcedStatus ?? (_fail == 0 && _xFail == 0 && _exceptions == 0 && _logErrors == 0 && _rows > 0 ? "PASS" : "FAIL");
+            string status = forcedStatus ?? (_fail == 0 && _xFail == 0 && _sFail == 0 && _exceptions == 0 && _logErrors == 0 && _rows > 0 ? "PASS" : "FAIL");
             try { WriteSummary(status); } catch (Exception e) { Debug.LogWarning("[Vol2Lab] summary failed: " + e.Message); }
             _finished = true;
             CloseCsv();
@@ -361,6 +556,7 @@ namespace Oheangbu.App
                         await UniTask.Yield(PlayerLoopTiming.Update, token);   // one letter per frame: the scene and the presenters live between rows
                     }
                 if (book != null && book.Ok && _services.Shapes != null) await ProcessReactionPassAsync(book, token);
+                if (book != null && book.Ok && _services.Shapes != null) await ProcessSwingPassAsync(book, token);       // slice 9: the ㅓ rows with real swings + the 갈무리 on the real wiring
                 if (_services.Shapes != null) _services.Shapes.Coordinator.Reactions.Enabled = true;      // the scope's normal state
                 string status = EndRun();
                 Debug.Log("[Vol2Lab] done " + status + " rows=" + _rows + " pass=" + _pass + " fail=" + _fail + " accepted=" + _accepted + " rejected=" + _rejected + " exceptions=" + _exceptions + " logErrors=" + _logErrors + " csv=" + _csvPath);
@@ -485,11 +681,12 @@ namespace Oheangbu.App
             var s = new Summary
             {
                 status = status, runId = _request != null ? _request.runId : "", commit = _request != null ? _request.commit : "", mode = _services != null ? _services.Mode.ToString() : "",
-                csv = _csvPath ?? "", startedAt = _startedAt, finishedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), scenario = _services != null && _services.Shapes != null ? Scenario + "+" + Vol2OnceLab.Scenario + "+" + Vol2VerbLab.Scenario + "+" + Vol2ReactionLab.Scenario + (_services.Shapes.Coordinator.Reactions.Enabled && File.Exists(Path.Combine(Folder, "reactions_on.flag")) ? "+reactions-on-throughout" : "") : Scenario,
+                csv = _csvPath ?? "", startedAt = _startedAt, finishedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), scenario = _services != null && _services.Shapes != null ? Scenario + "+" + Vol2OnceLab.Scenario + "+" + Vol2VerbLab.Scenario + "+" + Vol2ReactionLab.Scenario + "+" + Vol2SwingLab.Scenario + (_services.Shapes.Coordinator.Reactions.Enabled && File.Exists(Path.Combine(Folder, "reactions_on.flag")) ? "+reactions-on-throughout" : "") : Scenario,
                 dtoHash = book != null ? book.DtoHash : "", numbersSha256 = book != null ? book.NumbersSha256 : "", tableSha256 = book != null ? book.TableSha256 : "",
                 rulebookError = book != null ? book.Error ?? "" : "no rulebook",
                 rows = _rows, pass = _pass, fail = _fail, accepted = _accepted, rejected = _rejected, exceptions = _exceptions, logErrors = _logErrors, framesWaited = _frames,
                 reactionRows = _xRows, reactionPass = _xPass, reactionFail = _xFail,
+                swingRows = _sRows, swingPass = _sPass, swingFail = _sFail,
                 firstProblems = _problems.ToArray()
             };
             File.WriteAllText(_summaryPath, JsonUtility.ToJson(s, true), new UTF8Encoding(false));

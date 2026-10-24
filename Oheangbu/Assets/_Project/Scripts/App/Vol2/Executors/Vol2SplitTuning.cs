@@ -22,7 +22,10 @@ namespace Oheangbu.App
     ///  TE-S6-9 BladeOnDirectHits: the 날붓 (posture 10) is asked for every paid Instant / Second contact of a ㅓ+ㅅ cast, once per AttackId (and
     ///          once per swing, body and kind); the rear cut and the reaction draw are not direct hits.
     ///  TE-S6-10 StripValueEventId: the rules want a positive MaterialId on any shared draw; the strip makes no material, so the strip's own
-    ///          AttackId is passed.</summary>
+    ///          AttackId is passed.
+    ///  TE-S6-11 SeotSwings (slice 9, CLOSES the open seam): 섯 = "휘두르기 두 번, 각각 앞 · 뒤를 함께 가른다". The front and back material cut runs on the first
+    ///          SeotSwings DISTINCT swings (SwingIds) that fall in the attachment's window; a third swing cuts no material (the body contacts were
+    ///          already capped by the budget: second contact once, TargetCap). 0 = no cap (the old behaviour: every open swing cuts).</summary>
     public sealed class Vol2SplitTuning
     {
         public float HalfOffsetFraction = 0.5f;
@@ -35,5 +38,6 @@ namespace Oheangbu.App
         public bool PierceStopsAtCount = true;
         public bool RecrossRestrips = true;
         public bool BladeOnDirectHits = true;
+        public int SeotSwings = 2;
     }
 }

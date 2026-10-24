@@ -106,7 +106,7 @@ namespace Oheangbu.App
 
         /// <summary>Compares what the cast did with what the frame must do. Independent of the code under test: the action words come from the
         /// 한줄정의 of the 20 rows (붙든다 / 데운다 / 민다 / 벤다 / 적신다), the sets from the coordinates above.</summary>
-        public static Vol2OnceVerdict Evaluate(Vol2SpellRowDto row, Vol2OnceScenario sc, Vol2CastLog log, Vol2CastCoordinator coordinator, NumbersV3Dto numbers)
+        public static Vol2OnceVerdict Evaluate(Vol2SpellRowDto row, Vol2OnceScenario sc, Vol2CastLog log, Vol2CastCoordinator coordinator, NumbersV3Dto numbers, bool realSwings = false)
         {
             var v = new Vol2OnceVerdict();
             var problems = new List<string>();
@@ -125,7 +125,9 @@ namespace Oheangbu.App
             {
                 long window = RuleTypesV3.Microseconds(numbers.Get("combat.parry.window"));
                 if (!log.ParryWindowOpened || log.WindowEndUs - log.WindowStartUs != window) problems.Add("parry window " + (log.WindowEndUs - log.WindowStartUs) + " us, expected " + window);
-                if (log.SwingReports != 3 || log.SwingDuplicates != 2) problems.Add("swing reports " + log.SwingReports + " duplicates " + log.SwingDuplicates + ", expected 3 and 2");
+                // the lab-simulated swing reports 3 colliders of one swing (3 reports, 2 duplicates); the swing driver (slice 9) reports one event per swept step of its window: at least one
+                if (realSwings) { if (log.SwingReports < 1) problems.Add("the swing driver reported no swing to the attachment"); }
+                else if (log.SwingReports != 3 || log.SwingDuplicates != 2) problems.Add("swing reports " + log.SwingReports + " duplicates " + log.SwingDuplicates + ", expected 3 and 2");
                 if (log.Contacts.Any(c => c.DamageRequested || c.BodyEffect.Length > 0 || c.BudgetAccepted)) problems.Add("a parry glyph produced an effect");
                 if (log.InkRequested != 0m || log.InkPaid != 0m) problems.Add("parry ink must be 0 here (post-payment is slice 2)");
             }
