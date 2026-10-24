@@ -220,3 +220,39 @@ dotnet build Tools/SpellVFX120/Pure308/Vol2V3/tests/portability/Rules.Portabilit
 6. 갈무리의 비치명 바닥은 자체 피해에 적용한다. 운반한 기존 씨앗·부착은 원래 글자 장부로 처리한다. 진 피해까지 비치명으로 만드는 규칙은 추가하지 않았다. 휴식 후 실제 재생성과 구역 재로드를 구별할 안정된 EncounterId 제공은 연결 계층의 책임이다.
 7. 반응 HP 산물의 개별 대상 배분·화 지속 틱 주기, 적 소유 반응의 0.5초 예고·동시 수 제한, 세계 재생 45초·둘레 1·지속 묶음 3·교체 예고는 실제 세계/시간 연결에서 확인해야 한다. 이번 순수 반응은 총 HP 상한·진영 면제를 명령으로 제공한다.
 8. 禮 수치·오상 세부 입력·앞잡 Q 해제·황경 콘텐츠는 이번 범위 밖이다. ㅁ/ㅅ의 늦은 그로기 자격은 순수 defence 시험에서만 검증했으며 첫 구현의 해금 범위를 넓히지 않았다. E9 CSV/SO 전이 및 걱 교체 후 전체 C5/E7 재평가는 별도다.
+
+
+## S5-a — Unity 이식 첫 조각 (D308-149)
+
+2026-10-24. 순수 규칙·통합표를 Unity 프로젝트에 **컴파일·시험되지만 게임플레이에는 연결되지 않은** 층으로 들였다. 편집기는 꺼져 있었고 vol2:import/check는 아직 실행하지 않았다. 실행 기록은 [Validation/results_s5a.json](Validation/results_s5a.json).
+
+### 이 디렉터리 src/ 변경 (나머지 16개 .cs + asmdef는 그대로)
+
+| 파일 | 변경 |
+|---|---|
+| src/Vol2ContractValidator.cs | `ReadNumbers`·`ValidateNumbers`의 접근자만 `static` → `internal static`. 논리 변경 없음. 새 임포터가 같은 수치 관문을 쓰기 위함. |
+| src/Vol2TableV11Importer.cs | 신규. `Import(numbersCsv, tableCsv, expected, roundTripDtoHash)` — v11 통합표용 임포터. |
+| tests/Cases_TableV11.cs · Program.cs | 신규 suite `table-v11`(219). 기존 suite는 그대로. |
+| golden_manifest_v11.py · Golden/import_manifest_v11.json | v11 DTO 해시를 Python으로 독립 계산해 동결(`6b25ad43…89f82a7`). C# 해시와 일치. 기존 파일이 있으면 갱신 거부. |
+| mirror/ | Unity 쪽 사본(Assets/_Project/Scripts/Vol2/{Rules,Import})을 같은 시험으로 돌리는 프로젝트(Vol2Mirror.csproj, Program.cs, Cases_S5a.cs)와 Rules+Import netstandard2.1/C# 9 이식 빌드(Import.Portability.csproj). |
+
+### 왜 v10 `Import()`를 그대로 두고 새 임포터를 만들었나
+
+`Vol2ContractValidator.Import()`의 서술 지문(`ContractSchemaV3.Narratives`)과 `ParsePeak`는 v10 방언의 관문이다. v11은 비고 열 120행 전부와 정의 12 · 윤곽 1 · 몸거동 1 · 반응재료 1칸을 바꿨고(걱 = D308-145 자기 회복 예외) 그대로 넣으면 UnparsedNarrative 135건 + 걱 4건으로 거절된다. v10 관문은 동결 시험(import suite·frozen manifest)이 의존하므로 건드리지 않는다. `Import()`가 v11을 거절하는 것도 시험으로 고정했다(`v10-gate-refuses-v11`).
+
+v11 임포터는 서술 지문을 버리고 다음을 엄격히 검사한다: 수치는 같은 ReadNumbers/ValidateNumbers(414행·파생식·현행 계약), 표는 헤더 · 10열 · 빈칸 · 생략 · 음절 해독 · 자모=이름 · 구분 · 비용(=Plan.Cost) · 패링 후불 · 효과 대상 상한 · 둘째 접촉 · 씨앗 · 빌린 위력 범위 · 극치 19자의 `총 작용량 X(상한 Y) = 항` 선언(=수치로 만든 Plan) · 중복 · 120/20/80/20. 걱은 `DefenceNumbersV3Dto` 값(HP 30 / 3 s · 재사용 20 s)을 글에서 확인하고 공격 항이 없어야 한다. 행의 EffectTerms는 서술이 아니라 `GlyphRulesV3.Build`에서 나오며, 표 전체는 원본 바이트 SHA-256(매니페스트 `table`)으로 고정된다. 규칙은 런타임에 표 글을 읽지 않는다.
+
+### Unity 쪽 구성 (Tools/Unity/Vol2S5aStage → Oheangbu/Assets/_Project/Scripts)
+
+Oheangbu.Vol2.Rules(참조 0 · noEngineReferences) ← Oheangbu.Vol2.Import(엔진 없음: MiniJson · Vol2Snapshot · Vol2Golden) ← Oheangbu.Vol2.Data(UnityEngine: NumbersV3SO · Vol2TableSO · Vol2DataLoader) ← Oheangbu.Vol2.Editor(Editor 전용, 네임스페이스 `Oheangbu.EditorTools.Vol2` — 큐의 형식 이름 관문). Import를 따로 둔 이유는 직렬화 DTO·골든 재생을 Unity 없이 같은 시험으로 돌리기 위해서다. 사본 일치는 `python Tools/Unity/verify_vol2_s5a.py`, 새 asmdef 4개 컴파일은 `python Tools/Unity/offline_compile_vol2_s5a.py [--source assets]`.
+
+### 결과
+
+| 검사 | PASS | FAIL |
+|---|---:|---:|
+| 순수 all (import 80 · grammar-budget 3768 · reaction 248 · defence 348 · table-v11 219) | 4663 | 0 |
+| mirror all (위 5개 + s5a 65, Assets 사본으로 실행. 골든 재생 2968 포함) | 4728 | 0 |
+| 이식 빌드 Rules / Rules+Import (netstandard2.1, C# 9) | 오류 0 · 경고 0 | |
+| 오프라인 컴파일 Rules · Import · Data · Editor | 4 × OK, 오류 0 | |
+
+미실행: vol2:import · vol2:check · `Vol2S5aChecks`(편집기 필요), SO 직렬화·AssetDatabase 경로, 게임 연결(S5-b).

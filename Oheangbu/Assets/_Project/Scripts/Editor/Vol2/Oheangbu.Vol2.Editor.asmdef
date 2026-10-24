@@ -1,0 +1,20 @@
+{
+  "name": "Oheangbu.Vol2.Editor",
+  "rootNamespace": "Oheangbu.EditorTools.Vol2",
+  "references": [
+    "Oheangbu.Vol2.Rules",
+    "Oheangbu.Vol2.Import",
+    "Oheangbu.Vol2.Data"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

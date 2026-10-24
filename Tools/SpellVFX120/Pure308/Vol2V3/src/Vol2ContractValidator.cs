@@ -70,7 +70,7 @@ namespace Oheangbu.Vol2.Rules
         static decimal D(string s) => decimal.Parse(s, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
         static string Match(string s, string pattern, int group = 1) { var m = Regex.Match(s, pattern); return m.Success ? m.Groups[group].Value : ""; }
         static decimal? Num(string s, string pattern, int group = 1) { var v = Match(s, pattern, group); return v.Length == 0 ? null : D(v); }
-        static NumbersV3Dto ReadNumbers(byte[] bytes, Action<string,string,string> error)
+        internal static NumbersV3Dto ReadNumbers(byte[] bytes, Action<string,string,string> error)
         {
             var parsed = CsvV3.Parse(bytes); var rows = new List<NumbersV3RowDto>();
             string header = "Key,Value,Unit,Status,Source,Candidate,CandidateTrigger,Note";
@@ -89,7 +89,7 @@ namespace Oheangbu.Vol2.Rules
             }
             return new NumbersV3Dto(rows);
         }
-        static void ValidateNumbers(NumbersV3Dto n, Action<string,string,string> error)
+        internal static void ValidateNumbers(NumbersV3Dto n, Action<string,string,string> error)
         {
             void Check(bool ok, string code, string key, string detail) { if (!ok) error(code,key,detail); }
             Check(n.Rows.Count == 414, "NumbersCount", "numbers", "Expected 414 rows");
