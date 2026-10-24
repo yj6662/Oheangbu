@@ -75,13 +75,21 @@ namespace Oheangbu.App
             for (int z = 0; z < zones.Count; z++) if (zones[z].Id == id) { material = zones[z]; found = true; break; }
             if (!found) return;
             var row = ReactionRule308.Find(rows, material.Element, ctx.Cast.Element);
-            if (row == null || !Zones.React(id, ctx.Now)) return;
             var host = ctx.Host;
+            // the way the wave ran: caster -> the material and on beyond it (the steam flows along it)
+            Vector3 way = SpellReaction308.FlatDirection(host.PlayerPosition, material.Centre);
+            if (row == null || !Zones.React(id, ctx.Now, way)) return;
             var product = ReactionRule308.Product(row, material, ctx.Now, ctx.Cast.Power, Zones.NextCast());
             product.Token = AttackProvenance.Create(Instigator(host), DamageSource.PersistentSpell, row.Product).AttackId;
             if (row.Kind == ReactionProductKind308.Damage) product.Value *= host.DamageScale(row.Product);
             HitMaterial(ctx, row, material, product.Token);
-            if (product.Life > 0f) Place(product, MaxProducts, ctx.Now, ctx.Fx);
+            if (product.Life > 0f && Place(product, MaxProducts, ctx.Now, ctx.Fx) != 0)
+            {
+                // D308-132 step 6: the product's look, keyed by kind (the consumed floor is told by its owner: Reacted -> React cue)
+                var kind = SpellReaction308.KindOf(row);
+                if (kind != ReactionKind308.None)
+                    (ctx.Fx as ISpellReactionPresenter308)?.React(SpellReaction308.Args(kind, product.Centre, way, material.Radius, product.Radius, product.Life));
+            }
         }
 
         // The instant blow of a breaking reaction: every enemy standing in the material (body edge counts), once.

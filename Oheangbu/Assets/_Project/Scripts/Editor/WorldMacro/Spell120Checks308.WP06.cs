@@ -18,14 +18,17 @@ namespace Oheangbu.EditorTools.WorldMacro
 
         // A presenter that draws nothing but hands out real handles and remembers what it was told (the null presenter's
         // handle is always 0, and a handler has nothing to cue on a presentation that was never shown).
-        sealed class WP06Presenter : ISpellPresenter
+        sealed class WP06Presenter : ISpellPresenter, ISpellReactionPresenter308
         {
+            public readonly List<SpellFxCueArgs> Reacts = new List<SpellFxCueArgs>();       // D308-132 step 6: the product looks it was told, in order
+            public readonly List<SpellFxCueArgs> ReactCues = new List<SpellFxCueArgs>();    // ... and the args of every React cue (a consumed floor)
+            public void React(in SpellFxCueArgs args) { Reacts.Add(args); }
             public readonly List<SpellFxRequest> Begun = new List<SpellFxRequest>();
             public readonly List<KeyValuePair<int, SpellFxCue>> Cues = new List<KeyValuePair<int, SpellFxCue>>();
             public readonly List<int> Ended = new List<int>();
             int _next;
             public SpellFxHandle Begin(in SpellFxRequest request) { Begun.Add(request); return new SpellFxHandle(++_next); }
-            public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args) { Cues.Add(new KeyValuePair<int, SpellFxCue>(handle.Id, cue)); }
+            public void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args) { Cues.Add(new KeyValuePair<int, SpellFxCue>(handle.Id, cue)); if (cue == SpellFxCue.React) ReactCues.Add(args); }
             public void End(SpellFxHandle handle, bool immediate = false) { Ended.Add(handle.Id); }
             public void EndAll() { }
             public int Count(SpellFxCue cue) => Cues.Count(c => c.Value == cue);

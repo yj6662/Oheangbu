@@ -10,7 +10,12 @@ namespace Oheangbu.App
 
     public enum SpellFxRole { Cast, Projectile, Attached, Zone, Aura, Mark, Ward, Summon, Field, Companion }
 
-    public enum SpellFxCue { Hit, Miss, Tick, Secondary, Split, Return, Detonate, Intercept, Consume, Break, Expire, TargetDefeated, Anchor }
+    public enum SpellFxCue { Hit, Miss, Tick, Secondary, Split, Return, Detonate, Intercept, Consume, Break, Expire, TargetDefeated, Anchor, React }
+
+    // #308 D308-128 21 / D308-132: what a five-element reaction looks like is keyed by this kind, not by a table row, so the legacy
+    // reaction handler and the vol.2 adapter raise the same call (SpellReaction308 builds the args, ISpellReactionPresenter308 takes them).
+    // Mud is a recognised kind whose look is not built yet.
+    public enum ReactionKind308 { None, Wildfire, Steam, Mud }
 
     public struct SpellFxRequest
     {
@@ -35,6 +40,12 @@ namespace Oheangbu.App
         public float At, Value;
         public int Index;
         public bool Finish;   // D308-127 debate 15: the last strike of a combo (Index = its step)
+        // D308-132 step 6 (React cue on the consumed zone's handle; ISpellReactionPresenter308.React for the product's look):
+        // Kind = the reaction, Direction = the flat way the wave ran (caster -> beyond), Point = centre, Value = the product's
+        // radius, FromRadius = the radius the material had, Life = seconds the product stands.
+        public ReactionKind308 Kind;
+        public Vector3 Direction;
+        public float Life, FromRadius;
     }
 
     // Id 0 = nothing is shown. Rules never depend on it.
@@ -51,6 +62,13 @@ namespace Oheangbu.App
         void Cue(SpellFxHandle handle, SpellFxCue cue, in SpellFxCueArgs args);
         void End(SpellFxHandle handle, bool immediate = false);
         void EndAll();
+    }
+
+    // #308 D308-132 step 6: optional, found with `as` like ISpellBurstPresenter308 (the guard forwards it after the rules of the cast
+    // are in). Draws a reaction's product where the material stood. Rules never read anything back.
+    public interface ISpellReactionPresenter308
+    {
+        void React(in SpellFxCueArgs args);
     }
 
     // The wiring hands scene-side lookups to a presenter that wants them (the catalogue visual set, a parent for instances).

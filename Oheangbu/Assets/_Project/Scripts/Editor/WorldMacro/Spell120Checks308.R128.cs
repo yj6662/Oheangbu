@@ -73,7 +73,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                     int vines = Material(VineZoneEffect308.HandlerId, Element.Wood, spot, 3.5f, .5f);
                     Tick(vineFx, now, 0f);
                     bool slowed = Near(f.Inside[1].Control.MovementScale(now), .5f);
-                    float[] hp = all.Select(e => e.Hp).ToArray(); int breaks = fx.Count(SpellFxCue.Break);
+                    float[] hp = all.Select(e => e.Hp).ToArray(); int breaks = fx.Count(SpellFxCue.Break), reacts = fx.Count(SpellFxCue.React), looks = fx.Reacts.Count;
                     f.Cast(fireCone);
                     var product = Of(ReactionZoneEffect308.HandlerId);
                     float power = LastPower();
@@ -89,8 +89,17 @@ namespace Oheangbu.EditorTools.WorldMacro
                             Near(fire.Value, SpellZoneRule308.StepPower(power, wild.PerSecond, wild.Tick) * host.DamageScale(Element.Fire)),
                             "the wildfire: same centre, radius x1.5, remaining 7 s -> " + life + " s, step = cone power x .25 x .5 s (" + fire.Value + ")");
                         Tick(vineFx, now, 0f);
-                        r.Check("R128-wild", Of(VineZoneEffect308.HandlerId).Length == 0 && all.All(e => e.Control.MovementScale(now) == 1f) && fx.Count(SpellFxCue.Break) == breaks + 1,
-                            "the vines' owner sweeps them at its next tick: the slow is gone, its look bursts once");
+                        r.Check("R128-wild", Of(VineZoneEffect308.HandlerId).Length == 0 && all.All(e => e.Control.MovementScale(now) == 1f) && fx.Count(SpellFxCue.Break) == breaks && fx.Count(SpellFxCue.React) == reacts + 1,
+                            "the vines' owner sweeps them at its next tick: the slow is gone, its floor is told React (no Break splash)");
+                        // D308-132 step 6: the consumed floor hears the way the wave ran; the product's look is told once, by kind
+                        Vector3 way = (spot - home); way.y = 0f; way.Normalize();
+                        var told = fx.ReactCues.LastOrDefault();
+                        r.Check("R128-wild", fx.ReactCues.Count == 1 && Vector3.Dot(told.Direction, way) > .99f && Near(told.Value, 3.5f) && told.Point == spot,
+                            "the floor's React cue carries the wave's flat direction, the material's radius and its centre");
+                        var look = fx.Reacts.Skip(looks).ToArray();
+                        r.Check("R128-wild", look.Length == 1 && look[0].Kind == ReactionKind308.Wildfire && look[0].Point == spot && Near(look[0].Value, 3.5f * 1.5f) && Near(look[0].FromRadius, 3.5f) &&
+                            Near(look[0].Life, life, room) && Vector3.Dot(look[0].Direction, way) > .99f,
+                            "the wildfire look is told once: kind, centre, radius x1.5 (grown from the material's 3.5), the product's life, the wave's direction");
                         r.Check("R128-wild", all.Select(e => e.Hp).SequenceEqual(hp), "a burning reaction has no instant blow (the cone's own hits are still on their way)");
                         f.Land(); f.ClearLog();
                         var inFire = all.Where(e => e.IsAlive && SpellZoneRule308.Inside(fire, e.transform.position)).ToArray();
@@ -141,6 +150,10 @@ namespace Oheangbu.EditorTools.WorldMacro
                         var veil = product[0];
                         r.Check("R128-steam", veil.Element == Element.Water && veil.Value == 0f && veil.TickEvery == 0f && Near(veil.Until - veil.From, steam.LifeCap, room) && veil.Depth == 1,
                             "the steam: water, no rule, " + steam.LifeCap + " s");
+                        var seen = fx.Reacts.LastOrDefault();
+                        r.Check("R128-steam", seen.Kind == ReactionKind308.Steam && seen.Point == spot && Near(seen.Value, 3f) && Near(seen.FromRadius, 3f) && Near(seen.Life, steam.LifeCap, room) &&
+                            Vector3.Dot(seen.Direction, new Vector3(spot.x - home.x, 0f, spot.z - home.z).normalized) > .99f,
+                            "the steam look is told: kind, the haze's centre and radius (no growth), 2 s, along the wave's way (caster -> beyond)");
                         var instant = f.Hits.Where(h => h.Attack.AttackId == veil.Token).ToArray();
                         r.Check("R128-steam", inHaze.Length >= 2 && instant.Length == inHaze.Length && instant.All(h => h.Attack.Source == DamageSource.PersistentSpell && Near(h.AppliedDamage, blow, .01f)) &&
                             all.Except(inHaze).All(e => e.Hp == hp[System.Array.IndexOf(all, e)]),
@@ -155,6 +168,7 @@ namespace Oheangbu.EditorTools.WorldMacro
                         r.Check("R128-mud", f.Accepted.Count == 1 && mire.Length == 1 && mire[0].Depth == 2 && Near(mire[0].Value, mud.Slow) && mire[0].TickEvery == 0f &&
                             Near(mire[0].Until - mire[0].From, Mathf.Min(veil.Until - now, mud.LifeCap), room),
                             "the earth wave turns the steam into mud (depth 2, movement x" + mud.Slow + ", never longer than the steam it came from)");
+                        r.Check("R128-mud", fx.Reacts.Count > 0 && fx.Reacts.Last().Kind == ReactionKind308.Mud, "the mud look is told by its own kind (the presenter has no prefab for it yet and says so once)");
                         if (mire.Length == 1)
                         {
                             float at = now + .1f;

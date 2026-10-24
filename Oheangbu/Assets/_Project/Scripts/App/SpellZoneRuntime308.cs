@@ -123,7 +123,7 @@ namespace Oheangbu.App
         // #308 D308-132: a reaction consumed the zone. Like a strike that breaks it, the zone stops acting at once and its owner
         // sweeps it (End = Reacted) on its next tick, so the owner still takes back what it applied to the world. Only one
         // reaction gets a zone: false = unknown id or already ended.
-        public bool React(int id, float now)
+        public bool React(int id, float now, Vector3 dir = default)
         {
             for (int i = 0; i < _zones.Count; i++)
             {
@@ -131,6 +131,7 @@ namespace Oheangbu.App
                 var zone = _zones[i];
                 if (SpellZoneRule308.Ended(zone, now)) return false;
                 zone.Reacted = true;
+                zone.ReactDir = dir;
                 _zones[i] = zone;
                 return true;
             }

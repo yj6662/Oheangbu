@@ -7,6 +7,7 @@ namespace Oheangbu.App.SpellVFX120
     // body systems start at Delay, go faint at Delay + LateAfter (dark first, faint after - D308-110) and dry at Delay +
     // Life. Optional children "End" (played once when it dries) and "Break" (played once when the zone is broken) are not
     // part of the body. No emission, no droplets; nothing is left once it has dried. Presentation only.
+    // D308-132 step 6: a fourth way out, React (a reaction consumed the zone: it pales out, an optional "React" child folds along the wave).
     // D308-125 5 (c), the enemy ember patch: three ways to go - Dry (its life ran out: End), Splash (washed: Break, and End
     // only while EndOnSplash) and Fade (replaced / cleared: no End, no Break, everything pales out).
     public sealed class Vfx308ZoneBody : MonoBehaviour
@@ -24,15 +25,16 @@ namespace Oheangbu.App.SpellVFX120
 
         static readonly int OpacityId = Shader.PropertyToID("_Opacity");
 
-        ParticleSystem[] _body, _end, _break;
+        ParticleSystem[] _body, _end, _break, _react;
         float _age, _dryAge, _fade;
-        bool _started, _late, _dry, _gone, _splashed;
+        bool _started, _late, _dry, _gone, _splashed, _reacted;
         ParticleSystemRenderer[] _fadeR; float[] _fadeBase; MaterialPropertyBlock _mpb;
 
         public bool Started => _started;
         public bool Late => _late;
         public bool Drying => _dry;
         public bool Gone => _gone;
+        public bool Reacted => _reacted;
         public IReadOnlyList<ParticleSystem> Body { get { Collect(); return _body; } }
 
         void Update() => Tick(Time.deltaTime);
@@ -94,6 +96,28 @@ namespace Oheangbu.App.SpellVFX120
             Dry();
         }
 
+        // D308-132 step 6: a reaction consumed the zone (SpellZoneEnd.Reacted), Splash's sibling. An optional "React" child is turned so
+        // its +Z runs along `dir` (the way the wave ran) and played once; then the floor pales out like Fade - no End, no Break, no
+        // splash: the reaction's product takes its place. A floor without a React child just pales.
+        public void React(Vector3 dir, float seconds = .4f)
+        {
+            if (_gone) return;
+            Collect();
+            if (!_started) { Vanish(); return; }
+            if (_dry) return;       // already going (dried, washed, replaced): nothing to add
+            _reacted = true;
+            if (_react.Length > 0)
+            {
+                var child = transform.Find("React");
+                dir.y = 0f;
+                if (child != null && dir.sqrMagnitude > 1e-6f) child.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
+                float last = 0f;
+                foreach (var ps in _react) if (ps != null) { ps.Play(false); last = Mathf.Max(last, ps.main.duration + ps.main.startLifetime.constantMax); }
+                seconds = Mathf.Max(seconds, last);
+            }
+            Fade(seconds);
+        }
+
         // go quietly: no End, no Break, everything that is out pales to nothing over `seconds` (a replaced or cleared floor)
         public void Fade(float seconds)
         {
@@ -126,20 +150,20 @@ namespace Oheangbu.App.SpellVFX120
         void Collect()
         {
             if (_body != null) return;
-            var body = new List<ParticleSystem>(); var end = new List<ParticleSystem>(); var brk = new List<ParticleSystem>();
+            var body = new List<ParticleSystem>(); var end = new List<ParticleSystem>(); var brk = new List<ParticleSystem>(); var react = new List<ParticleSystem>();
             foreach (var ps in GetComponentsInChildren<ParticleSystem>(true))
             {
                 string part = Part(ps.transform);
-                (part == "End" ? end : part == "Break" ? brk : body).Add(ps);
+                (part == "End" ? end : part == "Break" ? brk : part == "React" ? react : body).Add(ps);
             }
-            _body = body.ToArray(); _end = end.ToArray(); _break = brk.ToArray();
+            _body = body.ToArray(); _end = end.ToArray(); _break = brk.ToArray(); _react = react.ToArray();
         }
 
         // the named child (End / Break) a system sits under, or null for the body
         string Part(Transform t)
         {
             for (; t != null && t != transform; t = t.parent)
-                if (t.parent == transform && (t.name == "End" || t.name == "Break")) return t.name;
+                if (t.parent == transform && (t.name == "End" || t.name == "Break" || t.name == "React")) return t.name;
             return null;
         }
 

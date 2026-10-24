@@ -121,13 +121,15 @@ namespace Pure308
                 var removed = new List<SpellZone308>();
                 var stepping = Z("zone.spikes", Element.Wood); stepping.TickEvery = .5f;
                 int id = zones.Add(stepping, 1, 0f, removed);
-                r.Check("R128", zones.React(id, 1f) && !zones.React(id, 1f) && !zones.React(999, 1f), "React marks a live zone once; a second reaction or an unknown id gets nothing");
+                r.Check("R128", zones.React(id, 1f, new Vector3(0f, 0f, 1f)) && !zones.React(id, 1f) && !zones.React(999, 1f), "React marks a live zone once; a second reaction or an unknown id gets nothing");
                 var after = zones.Zones[0];
                 r.Check("R128", after.Reacted && !SpellZoneRule308.Active(after, 1f) && SpellZoneRule308.Ended(after, 1f) && zones.Ticks(id, 3f) == 0 && SpellZoneRule308.ActiveSeconds(after, 0f, 5f) == 0f,
                     "a consumed zone stops at once: not active, ended, no more steps or seconds");
                 r.Check("R128", !zones.Covered(centre, 1f), "a consumed zone covers nothing");
                 zones.Sweep("zone.spikes", 1f, removed);
                 r.Check("R128", zones.Count == 0 && removed.Count == 1 && removed[0].End == SpellZoneEnd.Reacted, "its owner sweeps it as Reacted (and so takes back what it applied)");
+                // D308-132 step 6: the way the wave ran travels with the swept zone, so its owner can tell the floor (React cue); a zone nobody reacted to has none
+                r.Check("R128", removed.Count == 1 && removed[0].ReactDir == new Vector3(0f, 0f, 1f) && Z("zone.slow", Element.Wood).ReactDir == Vector3.zero, "the swept zone carries the flat way the reaction wave ran; an unreacted zone has none");
                 var expired = Z("zone.slow", Element.Wood, life: 1f);
                 int old = zones.Add(expired, 1, 0f, removed);
                 r.Check("R128", !zones.React(old, 2f), "a zone that already ran out cannot be consumed");

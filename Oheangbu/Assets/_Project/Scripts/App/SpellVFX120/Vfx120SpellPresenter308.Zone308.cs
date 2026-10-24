@@ -55,6 +55,9 @@ namespace Oheangbu.App.SpellVFX120
                 case SpellFxCue.Break:
                     foreach (var body in floor.Bodies) if (body != null) body.Splash();
                     break;
+                case SpellFxCue.React:   // D308-132 step 6: consumed by a reaction - the floor pales out, folding along the way the wave ran
+                    foreach (var body in floor.Bodies) if (body != null) body.React(args.Direction);
+                    break;
             }
         }
 

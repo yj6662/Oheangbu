@@ -36,6 +36,7 @@ namespace Oheangbu.App
         public SpellZoneEnd End;    // set by the runtime when the zone leaves the list
         public bool Reacted;        // #308 D308-132: consumed by a reaction; stops acting at once like Broken, its owner sweeps it
         public int Depth;           // #308 D308-132: 0 = laid by a spell, n = the product of n reactions in a row
+        public Vector3 ReactDir;    // #308 D308-132 step 6: the flat way the wave ran that consumed it (presentation only; zero = not told)
     }
 
     // Zone arithmetic (SPEC-SPELL-120-308 WP-06). Flat geometry through AreaGeometry, like every area judgement.

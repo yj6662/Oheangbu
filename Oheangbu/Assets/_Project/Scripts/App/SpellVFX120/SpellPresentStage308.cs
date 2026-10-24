@@ -219,7 +219,7 @@ namespace Oheangbu.App.SpellVFX120
             Vector3 eyeForward = camera != null ? camera.transform.forward : request.FallbackPoint - request.Origin;
             var e = new PresentEvent308
             {
-                Role = request.Role, Moment = moment, Cue = cue, MapCategory = _live[slot].Row.Category, Element = request.Element, Tier = _tier,
+                Role = request.Role, Moment = moment, Cue = cue == SpellFxCue.React ? SpellFxCue.Expire : cue /* D308-132: a consumed zone ends quietly on the deploy layer (its ground marks dry): no ink burst, the reaction look is the product's */, MapCategory = _live[slot].Row.Category, Element = request.Element, Tier = _tier,
                 Grade = _profile.GradeIndex(request.Grade01), Seed = _live[slot].Serial * 7919 + (int)cue * 131 + (++_events),
                 Origin = request.Origin, FallbackPoint = request.FallbackPoint, HasTarget = request.Target != null, HasPlan = request.Area != null,
                 TargetPoint = request.Target != null ? request.Target.position + Vector3.up * InkDeployRuntime308.ChestHeight : request.FallbackPoint,

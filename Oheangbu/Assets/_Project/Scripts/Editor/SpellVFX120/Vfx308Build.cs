@@ -79,6 +79,7 @@ namespace Oheangbu.EditorTools.SpellVFX120
                 case "burst": return BuildBurst();       // 11.58: the intercept burst of 상 송
                 case "rock": return BuildRock();         // 11.59: the ink rock 막 leaves as cover
                 case "patch": return BuildPatch();       // D308-125 5 (c): the enemy ember patch + the hand scorch
+                case "reaction": return BuildReaction(); // D308-128 21 / D308-132 step 6: the wildfire and the steam of the five-element reactions + their Resources look
                 case "mark": return BuildMark();         // 11.61: the ink seal of the install letters 감 남 맘 삼 암
                 case "buffhit": return BuildBuffHit();   // 11.64: the moment 먼 멈 넘 do their work
                 case "fieldbirth": return BuildFieldBirth();   // 11.65: the moment 국 뭄 stand up
