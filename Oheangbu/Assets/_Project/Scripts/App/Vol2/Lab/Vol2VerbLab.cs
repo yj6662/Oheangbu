@@ -114,6 +114,9 @@ namespace Oheangbu.App
         public static readonly IVol2LabProvider[] Providers =
         {
             new Vol2LeaveSpreadLab(),      // 남긴다 / 번진다 (slice 4)
+            new Vol2SeedLab(),             // 심는다 (slice 5)
+            new Vol2SplitLab(),            // 가른다 (slice 6)
+            new Vol2ReturnLab(),           // 돌아온다 (slice 7)
         };
 
         public static IVol2LabProvider Find(Vol2SpellRowDto row)

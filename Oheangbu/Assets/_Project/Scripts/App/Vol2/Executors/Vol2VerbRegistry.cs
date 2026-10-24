@@ -36,6 +36,9 @@ namespace Oheangbu.App
             reg.Add(new Vol2OnceExecutor());        // 한 번   (slice 3)
             reg.Add(new Vol2ResidueExecutor());     // 남긴다 (slice 4)
             reg.Add(new Vol2SpreadExecutor());      // 번진다 (slice 4)
+            reg.Add(new Vol2SeedExecutor());        // 심는다 (slice 5)
+            reg.Add(new Vol2SplitExecutor());       // 가른다 (slice 6)
+            reg.Add(new Vol2ReturnExecutor());      // 돌아온다 (slice 7)
             return reg;
         }
     }
