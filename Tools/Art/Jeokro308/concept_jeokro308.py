@@ -120,6 +120,35 @@ The creature seen from directly behind, facing AWAY: back of the head, back of t
 })
 
 
+# parts for Meshy (user 10-24: "주작은 파츠(몸통 · 날개 · 꼬리 깃 · 도자기 판)로 생성해. 파츠 시안 먼저 만들고 항목별 견적 보여줘.")
+REF_PARTS = REF_BIRD + """
+Pictures 2, 3 and 4 show the finished creature from the front, the left side and behind. Keep its design, colours and proportions; this picture shows only ONE PART of it."""
+PART = """
+--- FOR 3D MODELLING OF ONE PART ---
+ONE drawing on plain light paper with only this part: no other parts, no human figure, no scale bar, no text, no shadow, no background. Clean readable silhouette, the part shown complete."""
+TRIO = lambda: [base.REPO / 'Art/SpellVFX308/Concepts/ground_rise/ref_jeokro.png', V1('jj_front4'), V1('jj_side4'), V1('jj_rear4')]
+BODY_PART = """
+--- THE PART: the BODY without wings, tail feathers and ceramic plates ---
+The creature's body only: head with crest and beak, long thick neck, barrel torso covered in dull vermilion and rust-brown feathers with black ink tips, sturdy legs with scaled shins and four-toed feet. NO wings: at each shoulder only a short rounded feathered stump (the wing socket). NO long tail feathers: only a short feathered tail root block at the back. NO ceramic plates: bare feathers where the plates were. Neutral standing pose, legs apart."""
+PICTURES.update({
+    'jp_body_front': (TRIO(), REF_PARTS + "\n\n" + WORLD + "\n\n" + BODY_PART + """
+View: from directly in front, symmetric.""" + PART),
+    'jp_body_side': (TRIO(), REF_PARTS + "\n\n" + WORLD + "\n\n" + BODY_PART + """
+View: exactly from the left side, facing left.""" + PART),
+    'jp_body_rear': (TRIO(), REF_PARTS + "\n\n" + WORLD + "\n\n" + BODY_PART + """
+View: from directly behind, facing AWAY - back of the head and neck, no beak or eyes visible.""" + PART),
+    'jp_wing': (TRIO(), REF_PARTS + "\n\n" + WORLD + """
+--- THE PART: ONE LEFT WING, fully extended ---
+The left wing alone, fully spread, seen from above: from the shoulder joint (a rounded root where it attaches to the body) to the wing tip, about 5 m long. Covert feathers near the bone, then long primary and secondary feathers in 4 fans; dull vermilion and rust-brown with black ink tips and grey ash. NO ceramic plates on it (bare feathers). Flat, clear outline of every feather group.""" + PART),
+    'jp_tail': (TRIO(), REF_PARTS + "\n\n" + WORLD + """
+--- THE PART: ONE TAIL FEATHER ---
+A single long ribbon-like tail feather lying straight, about 4 m long and 35 cm wide: a short rounded quill root at the top, a central shaft, vanes of dull vermilion fading to rust-brown with a black ink tip and soot along the edges, slightly ragged. Seen flat from above.""" + PART),
+    'jp_plates': (TRIO(), REF_PARTS + "\n\n" + WORLD + """
+--- THE PART: the set of CERAMIC armour plates ---
+The creature's pale ceramic plates laid out flat and separate from each other with clear gaps, like pieces on a table: 1 large shoulder plate, 1 curved neck plate made of 3 overlapping tiles, 1 chest plate, 1 shin guard. Each is a thick fired stoneware tile: matte crackled pale-celadon glaze, chipped edges showing the coarse reddish clay inside, soot in the cracks, small holes along the edge with dark cords tied through them. No rivets, no metal.""" + PART),
+})
+
+
 def prompt(pid):
     refs, body = PICTURES[pid]
     return '\n\n'.join([base.HEAD, body, base.STYLE, base.BAN, base.TAIL % (OUT / f'{pid}.png').as_posix()])
