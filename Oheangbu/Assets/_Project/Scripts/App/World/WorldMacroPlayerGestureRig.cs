@@ -458,7 +458,7 @@ namespace Oheangbu.App.World
                 JuiceSuspend308();   // #308: no camera reaction is left running under a pause
                 // UI cancellation has already happened in the input owner. Retain the sampled
                 // skeletal pose, but do not leave a cancelled close-up arm over the menu.
-                if (_drawing == null || !_drawing.InDrawMode)
+                if (_drawing == null || !_drawing.InDrawPresentation)
                 {
                     EndCast();
                     SetNearVisible(false);
@@ -475,7 +475,7 @@ namespace Oheangbu.App.World
 
         private void EvaluateGesturePose(float dt)
         {
-            bool drawing = JuiceInput308Drawing(_drawing != null && _drawing.InDrawMode);   // #308 preview seam: the live input unless Juice308Build feeds it
+            bool drawing = JuiceInput308Drawing(_drawing != null && _drawing.InDrawPresentation);   // #308 preview seam: the live input unless Juice308Build feeds it (D308-147: the draw presentation - the arm pose waits for a riposte candidate's first stroke)
             if (drawing) EndCast();   // a new draw mode supersedes the follow-through
             bool casting = _castActive;
             bool stroking = drawing && JuiceInput308Stroking();

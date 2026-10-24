@@ -22,9 +22,12 @@ namespace Oheangbu.App.World
         bool[] visualStates;
         PlayerVisualDriver visualDriver;bool visualDriverWasEnabled;
         Riposte301 riposte;
+        DrawingInputController hookedDrawing;
+        CameraRigController hookedRig;
         void OnEnable()
         {
-            // D301 앞잡: a Q press claimed by the volley never opens the draw mode
+            // D301 앞잡 (D308-147 plan C): the volley answers the draw key as the drawing input's press arbiter (a candidate that is released
+            // without a stroke); a window the volley answered shuts the draw gate below
             if (riposte == null) riposte = GetComponent<Riposte301>();
             if (riposte == null)
             {
@@ -34,19 +37,61 @@ namespace Oheangbu.App.World
             if (riposte != null) riposte.Walker = this;
             drawingGate = () => (Motor == null || Motor.CanBeginDrawing) && (riposte == null || !riposte.SuppressDraw) && (Wiring == null || !Wiring.SwingLocked308);   // SPEC-SPELL-SWING-308: no new glyph during a swing
             if (Drawing != null) Drawing.EntryAllowed = drawingGate;
-            if (Wiring != null && riposte != null) Wiring.SwordRiposte308 = riposte;   // D308-123: Q with the sword out
+            HookDrawingPresentation();
         }
         // Authoring may assign references immediately after AddComponent/OnEnable.
         void Start()
         {
             if (Drawing != null) Drawing.EntryAllowed = drawingGate;
-            if (Wiring != null && riposte != null) Wiring.SwordRiposte308 = riposte;
+            HookDrawingPresentation();
         }
         void OnDisable()
         {
             if (Drawing != null && Drawing.EntryAllowed == drawingGate) Drawing.EntryAllowed = null;
-            if (Wiring != null && riposte != null && ReferenceEquals(Wiring.SwordRiposte308, riposte)) Wiring.SwordRiposte308 = null;
+            UnhookDrawingPresentation();
         }
+
+        // D308-147: the press arbiter goes onto the drawing input, and the camera's close-up is told by the drawing's PRESENTATION signal
+        // (the first stroke of a riposte candidate) instead of the draw-mode channel. The camera rig sits in an assembly that cannot see
+        // the drawing input, so the walker - which holds both - forwards. Without a rig there is nothing to forward to (it keeps its
+        // channel); without a riposte the arbiter stays empty and every press is an ordinary draw with its presentation on the press
+        // (the rig still follows the presentation signal, which then equals the draw mode).
+        void HookDrawingPresentation()
+        {
+            if (Drawing == null) return;
+            if (!ReferenceEquals(hookedDrawing, Drawing))
+            {
+                UnhookDrawingPresentation();
+                hookedDrawing = Drawing;
+                if (riposte != null) Drawing.PressArbiter = riposte;
+                Drawing.PresentationEntered += OnDrawPresentationEntered;
+                Drawing.PresentationExited += OnDrawPresentationExited;
+            }
+            if (CameraRig != null && !ReferenceEquals(hookedRig, CameraRig))
+            {
+                hookedRig = CameraRig;
+                hookedRig.UsePresentationSignal308 = true;
+                if (Drawing.InDrawPresentation) hookedRig.SetDrawPresentation308(true);
+            }
+        }
+        void UnhookDrawingPresentation()
+        {
+            if (hookedDrawing != null)
+            {
+                if (riposte != null && ReferenceEquals(hookedDrawing.PressArbiter, riposte))
+                {
+                    ((IDrawPressArbiter)riposte).CancelCandidate();   // a held candidate dies with its arbiter
+                    hookedDrawing.PressArbiter = null;
+                }
+                hookedDrawing.PresentationEntered -= OnDrawPresentationEntered;
+                hookedDrawing.PresentationExited -= OnDrawPresentationExited;
+            }
+            hookedDrawing = null;
+            if (hookedRig != null) hookedRig.UsePresentationSignal308 = false;
+            hookedRig = null;
+        }
+        void OnDrawPresentationEntered() { if (hookedRig != null) hookedRig.SetDrawPresentation308(true); }
+        void OnDrawPresentationExited() { if (hookedRig != null) hookedRig.SetDrawPresentation308(false); }
         public void Suspend()
         {
             cameraParent=ViewCamera.transform.parent;cameraPosition=ViewCamera.transform.localPosition;cameraRotation=ViewCamera.transform.localRotation;

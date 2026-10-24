@@ -1,26 +1,35 @@
 using System.Collections.Generic;
 using Oheangbu.Combat;
+using Oheangbu.Drawing;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 namespace Oheangbu.App.World
 {
-    // D301 앞잡(글자 난사): Q pressed with the locked target's weak point open and in range fires a volley of brush-script
-    // glyphs instead of opening the draw mode. The press is swallowed until Q is released (the walker's draw gate asks
-    // SuppressDraw). Recognition is untouched: the drawing controller simply never enters draw mode for this press.
+    // D301 앞잡(글자 난사): Q pressed and released with no stroke, with the locked target's weak point open and in range, fires a volley
+    // of brush-script glyphs. D308-147 (plan C): the press itself fires nothing. The drawing controller enters its draw mode as usual
+    // and asks this class (IDrawPressArbiter) whether the press is a riposte candidate; a candidate holds back the draw presentation
+    // until the first stroke (then the gesture is a drawing and this window's riposte is gone), and a release without a stroke comes
+    // back here after the mode is left quietly: the candidate is checked again (same lock, same life, same opening, in reach, able
+    // to act) and fires once. A window is answered once: by this volley or by a drawing, named by the enemy + its life + the opening
+    // of its weak point (RiposteWindowClaim308). Recognition is untouched: nothing here reads a stroke.
     // #302 presentation (SPEC-PLAYER-FEEL-300 F): magic circles open in an arc in front of and above the caster, each with
     // an initial at its centre; the glyphs pour out of them and weave to the target like 도깨비불, leaving faint
     // afterimages; every hit splashes ink and shakes the view, the last one holds the frame for a moment.
-    // Runs before the drawing controller so the same frame's press never opens the draw mode.
-    // D308-123 (TEST): while the brush is a sword the wiring arbitrates the same Q press (ISwordRiposte308): the volley
-    // when it can fire, at the locked target or else at the one the wiring aims at, and the sword goes with it.
+    // D308-147: with the sword out the Q press only puts the sword away (the wiring's ordinary release) - the volley is not
+    // arbitrated there any more, and no aim-target fallback exists: a riposte is always the locked target's.
     [DefaultExecutionOrder(-80)]
-    public sealed class Riposte301 : MonoBehaviour, ISwordRiposte308
+    public sealed class Riposte301 : MonoBehaviour, IDrawPressArbiter
     {
         public Riposte301Profile Profile;
         public WorldMacroCombatWalker Walker;
-        public bool SuppressDraw { get; private set; }
+        /// <summary>A riposte has taken the locked target's open window: the walker's draw gate stays shut for it (no new drawing in a
+        /// window the volley answered). Never true while a draw mode is on - a drawing in progress is not cancelled by a lock change.</summary>
+        public bool SuppressDraw => Walker != null && Walker.Drawing != null && !Walker.Drawing.InDrawMode && _candidate.Claims.BlocksNewDraw(KeyOf(LockedTarget()));
+        /// <summary>The Q press that is held right now is a riposte candidate that has not drawn (the prompt's condition).</summary>
+        public bool IsRiposteCandidate => _candidate.Active;
+        /// <summary>The enemy the candidate was fixed on (null when there is none).</summary>
+        public EnemyVitals CandidateTarget => _candidate.Active ? _candidateTarget : null;
         public int Volleys { get; private set; }
         public bool Active => _glyphs.Count > 0 || _circles.Count > 0;
 
@@ -42,7 +51,11 @@ namespace Oheangbu.App.World
         readonly List<Circle> _circles = new List<Circle>();
         readonly List<Mote> _motes = new List<Mote>();
         EnemyVitals _target; uint _targetLife; float _clock, _damagePerGlyph; int _hits, _count;
-        LockOn _lockOn; InputAction _q;
+        LockOn _lockOn;
+        // D308-147: the windows already answered, the candidate of the held press, the window of the volley that runs
+        readonly RiposteCandidate308 _candidate = new RiposteCandidate308();
+        bool _beginning;
+        EnemyVitals _candidateTarget; RiposteWindowKey308 _volleyKey;
         Riposte301Pose _pose;
         float _shake, _hitStopLeft, _savedScale = 1f;
         static Mesh[] _cells;
@@ -88,9 +101,7 @@ namespace Oheangbu.App.World
         {
             if (Profile == null || Walker == null || Walker.Motor == null || Walker.Drawing == null) return;
             if (_lockOn == null) _lockOn = Walker.Motor.GetComponent<LockOn>();
-            if (_q == null) _q = Walker.Drawing.DrawModeAction;
-            if (SuppressDraw && (_q == null || !_q.IsPressed())) SuppressDraw = false;
-            if (_q != null && _q.WasPressedThisFrame() && !Walker.Drawing.InDrawMode && !Active && !SwordOwnsPress308() && TryBegin(LockedTarget())) SuppressDraw = true;
+            // D308-147: no press-time fire any more - the drawing controller calls the IDrawPressArbiter members below
             float real = Time.captureDeltaTime > 0f ? Time.captureDeltaTime : Time.unscaledDeltaTime;
             // Paused by a menu or a card (0, while the hit stop itself runs at Profile.HitStopScale > 0): the countdown waits. It used to
             // run on real time and write the saved scale back over the pause.
@@ -102,24 +113,47 @@ namespace Oheangbu.App.World
             if (_pose != null) _pose.Weight = PoseWeight();
         }
 
-        // presentation hook (#302 trailer cue): fire the volley now if the same conditions as the Q press hold
+        // presentation hook (#302 trailer cue): fire the volley now if the same conditions as the released Q hold. It takes the same
+        // window claim as the key does: a window answered by a drawing or an earlier volley refuses it.
         public bool Fire() => Ready() && TryBegin(LockedTarget());
 
-        bool ISwordRiposte308.CanRiposteFor308(EnemyVitals fallback) => isActiveAndEnabled && Ready() && Profile.GlyphMaterial != null && CanRiposteAt(SwordTarget308(fallback));
+        // ---- IDrawPressArbiter (D308-147, plan C): called by the drawing controller, in this order for one Q gesture:
+        //      BeginCandidate (key down) -> OnStrokeChosen (first stroke) | OnReleasedWithoutStroke (key up, no stroke) | CancelCandidate
 
-        bool ISwordRiposte308.RiposteFor308(EnemyVitals fallback)
+        // The key went down. A candidate fixes the lock target and its window and consumes nothing.
+        DrawPressMode IDrawPressArbiter.BeginCandidate()
         {
-            if (!isActiveAndEnabled || !Ready() || !TryBegin(SwordTarget308(fallback))) return false;
-            SuppressDraw = true;   // held until Q is up, like a volley fired from Update
-            return true;
+            _candidate.Cancel(); _candidateTarget = null;
+            if (!isActiveAndEnabled || !Ready() || Profile.GlyphMaterial == null) return DrawPressMode.None;
+            var target = LockedTarget();
+            // a candidate needs a real window nobody has answered yet (a drawing or a volley in it refuses the candidate)
+            if (!_candidate.Begin(KeyOf(target), CanRiposteAt(target))) return DrawPressMode.None;
+            _candidateTarget = target;
+            return Profile.DeferPresentationOnRiposteCandidate ? DrawPressMode.Deferred : DrawPressMode.Immediate;
         }
 
-        // The wiring asks through ISwordRiposte308 while the sword is held; the press is not taken here as well.
-        bool SwordOwnsPress308()
+        // The candidate's first stroke: a drawing. This window takes no riposte from now on, whatever happens to the drawing.
+        void IDrawPressArbiter.OnStrokeChosen()
         {
-            var wiring = Walker.Wiring;
-            return wiring != null && wiring.SwordFormHeld308 && ReferenceEquals(wiring.SwordRiposte308, this);
+            _candidate.StrokeChosen(); _candidateTarget = null;
         }
+
+        // The key came up with no stroke (the draw mode is left already). The candidate is checked again: the same lock, the same life
+        // and opening still open, in reach, able to act. Anything else is a miss - never another target, never a drawing or a sword.
+        bool IDrawPressArbiter.OnReleasedWithoutStroke()
+        {
+            if (!_candidate.Active) return false;
+            var target = _candidateTarget; _candidateTarget = null;
+            bool eligible = isActiveAndEnabled && target != null && LockedTarget() == target && Ready();
+            if (!_candidate.ReleaseWithoutStroke(KeyOf(target), eligible)) return false;
+            return TryBegin(target);
+        }
+
+        void IDrawPressArbiter.CancelCandidate() { _candidate.Cancel(); _candidateTarget = null; }
+
+        // The window the enemy has open right now (none when it is closed or the enemy is gone).
+        static RiposteWindowKey308 KeyOf(EnemyVitals target)
+            => target == null || !target.IsAlive || !target.WeakPointActive ? default : new RiposteWindowKey308(target.GetInstanceID(), target.LifeRevision, target.WeakPointGeneration);
 
         bool Ready()
         {
@@ -130,16 +164,10 @@ namespace Oheangbu.App.World
 
         EnemyVitals LockedTarget() => _lockOn != null ? _lockOn.Target : null;
 
-        EnemyVitals SwordTarget308(EnemyVitals fallback)
-        {
-            var locked = LockedTarget();
-            return locked != null ? locked : fallback;
-        }
-
         public bool CanRiposte(out EnemyVitals target)
         {
             target = LockedTarget();
-            return CanRiposteAt(target);
+            return CanRiposteAt(target) && _candidate.Claims.CanOfferRiposte(KeyOf(target));
         }
 
         bool CanRiposteAt(EnemyVitals target)
@@ -150,9 +178,21 @@ namespace Oheangbu.App.World
 
         Vector3 Chest(EnemyVitals t) => t.transform.position + Vector3.up * 1.2f;
 
+        // The one door of a volley (the released key and the Fire() cue both come through here): not while one is being built, and only
+        // if this window has not been answered - the claim is taken last, after every check that can refuse.
         bool TryBegin(EnemyVitals target)
         {
-            if (!CanRiposteAt(target) || Profile.GlyphMaterial == null) return false;
+            if (_beginning || !CanRiposteAt(target) || Profile.GlyphMaterial == null) return false;
+            var key = KeyOf(target);
+            if (!_candidate.TryClaim(key)) return false;
+            _beginning = true;
+            try { return Launch(target, key); }
+            finally { _beginning = false; }
+        }
+
+        bool Launch(EnemyVitals target, RiposteWindowKey308 key)
+        {
+            _volleyKey = key;
             _target = target; _targetLife = target.LifeRevision; _clock = 0f; _hits = 0;
             int n = Mathf.Max(1, Profile.GlyphCount); _count = n;
             _damagePerGlyph = Profile.TotalDamage / n;
@@ -438,9 +478,11 @@ namespace Oheangbu.App.World
             if (_shaken.TryGetValue(camera, out var pos)) { camera.transform.position = pos; _shaken.Remove(camera); }
         }
 
+        // D308-147: the volley closes only its own window (this life, this opening). A late finish whose window has gone - or has been
+        // replaced by the next one - changes nothing; the attack records on the enemy are not touched.
         void Finish()
         {
-            if (Profile.ConsumesWindow && _target != null && _target.IsAlive && _target.LifeRevision == _targetLife) _target.ResetCombatState();
+            if (Profile.ConsumesWindow && _target != null) _target.TryConsumeWeakPointWindow(_volleyKey.Life, _volleyKey.Generation);
             _target = null;
         }
 
@@ -453,7 +495,7 @@ namespace Oheangbu.App.World
             foreach (var g in _glyphs) if (g.T != null) Destroy(g.T.gameObject);
             foreach (var c in _circles) { if (c.T != null) Destroy(c.T.gameObject); if (c.Centre != null) Destroy(c.Centre.gameObject); }
             foreach (var m in _motes) if (m.T != null) Destroy(m.T.gameObject);
-            _glyphs.Clear(); _circles.Clear(); _motes.Clear(); _target = null; SuppressDraw = false;
+            _glyphs.Clear(); _circles.Clear(); _motes.Clear(); _target = null; _candidate.Cancel(); _candidateTarget = null;
             if (_pose != null) _pose.Weight = 0f;
         }
     }

@@ -20,10 +20,9 @@ namespace Oheangbu.App
         void DropSwordForm308(bool byPlayer);
         // This frame's click, while the player may act with the brush hand (not in a menu, a dodge, a seat or the air).
         bool SwordStrikePressed308 { get; }
-        // This frame's "put the sword away" press: the key that raises the brush. The same key fires the 앞잡 volley
-        // (D308-123, TEST): when the counter can fire, the press fires it and the sword goes with it; when it cannot, the
-        // press only puts the sword away. A counter chosen but not fired puts nothing away (one press, one action).
-        // The form reads it once per frame.
+        // This frame's "put the sword away" press: the key that raises the brush. With a counter set (ISwordRiposte308, none today -
+        // D308-147) the same key may fire it instead and the sword goes with it; a counter chosen but not fired puts nothing away
+        // (one press, one action). The form reads it once per frame.
         bool SwordReleasePressed308 { get; }
         // D308-127 debate 16 (TEST), the bow: the click is down this frame, behind the same doors as the press (so a menu,
         // a dodge, a jump or death read as "not held"), and the click came up this frame (only asks that the form is held:
@@ -34,8 +33,11 @@ namespace Oheangbu.App
         void HoldMovementScale308(float scale);
     }
 
-    // D308-123 (TEST): the counter that may take the release press while the sword is out (Riposte301, the 앞잡 volley).
-    // Its target is the locked one; without a lock, the fallback the wiring aims at (the same order as 상's fallback).
+    // D308-123 (TEST): the counter that may take the release press while the sword is out. Its target is the locked one; without a
+    // lock, the fallback the wiring aims at (the same order as 상's fallback).
+    // D308-147: nobody registers here any more. The 앞잡 volley (Riposte301) answers the draw key through the drawing input's press
+    // arbiter instead (a candidate released without a stroke), and with the sword out the draw mode is shut, so the sword's Q press is
+    // only the ordinary release. The seam stays for a later counter; with none set, SwordReleaseOrRiposte308 answers "release".
     public interface ISwordRiposte308
     {
         // Could fire right now.
@@ -139,8 +141,8 @@ namespace Oheangbu.App
             }
         }
 
-        // The pressed release key, arbitrated in one place: the volley if it can fire now (and the sword goes with it),
-        // otherwise the sword is put away. The counter's own Q handling stands aside while the sword is held (Riposte301).
+        // The pressed release key, arbitrated in one place: a registered counter if it can fire now (and the sword goes with it),
+        // otherwise the sword is put away. D308-147: no counter is registered, so the press is the ordinary release.
         private bool SwordReleaseOrRiposte308()
         {
             var riposte = SwordRiposte308;

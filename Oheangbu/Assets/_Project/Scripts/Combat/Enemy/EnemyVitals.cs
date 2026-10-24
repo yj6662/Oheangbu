@@ -68,6 +68,9 @@ namespace Oheangbu.Combat
         }
         public GroggyMeter Groggy { get { EnsureGroggy(); return _groggy; } }
         public bool WeakPointActive => IsAlive && Time.time < _weakPointUntil;
+        // D308-147 (riposte window key): counts the windows this enemy has opened (OpenWeakPoint). With LifeRevision it names one
+        // window: the same enemy, the same life, the same opening. A window that closed and opened again is a new generation.
+        public uint WeakPointGeneration { get; private set; }
         public int WeakPointElementMask => _elementMask;
         public bool CompletionAwarded => _completionAwarded;
 
@@ -138,6 +141,7 @@ namespace Oheangbu.Combat
         public void OpenWeakPoint()
         {
             if (!IsAlive || WeakPointActive) return;
+            WeakPointGeneration++;
             _weakPointUntil = Time.time + (_config != null ? _config.BlossomStunDuration : 4f);
             DamageMultiplier = _config != null ? _config.BlossomDamageMultiplier : 1.5f;
             _elementMask = 0; _completionAwarded = false; _directAttacks.Clear();
@@ -154,6 +158,22 @@ namespace Oheangbu.Combat
             _groggy?.Reset();
             if (wasOpen) WeakPointClosed?.Invoke();
             CombatStateChanged?.Invoke();
+        }
+
+        // D308-147: the end of one window, by key. Closes the window and its groggy only if that very window (this life, this
+        // opening) is still the open one; a late caller whose window has gone - or has been replaced by the next one - changes
+        // nothing. Narrower than ResetCombatState: the attack-identity records (_parriedAttacks, _groggyAttacks) belong to no
+        // window and stay. Nothing else is kept on this object (there is no repeat counter or extreme-hit record in EnemyVitals).
+        public bool TryConsumeWeakPointWindow(uint life, uint generation)
+        {
+            if (!IsAlive || LifeRevision != life || WeakPointGeneration != generation || float.IsNegativeInfinity(_weakPointUntil)) return false;
+            _weakPointUntil = float.NegativeInfinity;
+            DamageMultiplier = 1f; _elementMask = 0; _completionAwarded = false;
+            _directAttacks.Clear();
+            _groggy?.Reset();
+            WeakPointClosed?.Invoke();
+            CombatStateChanged?.Invoke();
+            return true;
         }
 
         private void Update() { ExpireWeakPoint(Time.time); }

@@ -33,6 +33,8 @@ namespace Oheangbu.App.World
         public Color HitFlash = new Color(1.4f, .35f, .18f, 1f);
         [Tooltip("The volley consumes the open window: groggy and weak point reset after the last glyph.")]
         public bool ConsumesWindow = true;
+        [Tooltip("D308-147 plan C: a Q press that is a riposte candidate holds back the draw presentation (slow-down, close-up, swing cut, arm pose) until the first stroke. Off = the old early presentation on the press (A/B); the release still decides the riposte.")]
+        public bool DeferPresentationOnRiposteCandidate = true;
         [Tooltip("Layer the glyphs draw on (VfxAfterFog, drawn after the realm fog).")]
         public int Layer = 20;
 

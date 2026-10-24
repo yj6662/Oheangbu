@@ -64,7 +64,7 @@ namespace Oheangbu.App.World
         /// <summary>The great brush presentation is running (profile, layer and a bound great brush).</summary>
         public bool Active { get; private set; }
         /// <summary>The Animator's pose is the arms' pose: true whenever the great brush is active and the draw mode is off.</summary>
-        public bool OwnsArms => Active && !(_drawing != null && _drawing.InDrawMode);
+        public bool OwnsArms => Active && !(_drawing != null && _drawing.InDrawPresentation);   // D308-147: the draw PRESENTATION (a riposte candidate has none yet)
         /// <summary>0..1: how much the left hand holds the shaft now (the state's curve, eased, times the layer's weight).</summary>
         public float LeftHandOnShaft => Active ? _left * _upper * (1f - Mathf.SmoothStep(0f, 1f, BackBlend)) : 0f;
         /// <summary>0 = shoulder carry, 1 = combat stance (eased over the transition).</summary>
@@ -157,9 +157,9 @@ namespace Oheangbu.App.World
         {
             if (_subscribedDrawing != _drawing)
             {
-                if (_subscribedDrawing != null) { _subscribedDrawing.ModeEntered -= OnModeEntered; _subscribedDrawing.ModeExited -= OnModeExited; }
+                if (_subscribedDrawing != null) { _subscribedDrawing.PresentationEntered -= OnModeEntered; _subscribedDrawing.PresentationExited -= OnModeExited; }
                 _subscribedDrawing = _drawing;
-                if (_drawing != null) { _drawing.ModeEntered += OnModeEntered; _drawing.ModeExited += OnModeExited; }
+                if (_drawing != null) { _drawing.PresentationEntered += OnModeEntered; _drawing.PresentationExited += OnModeExited; }
             }
             var walker = _rig.Walker308;
             CombatLoopWiring wiring = walker != null ? walker.Wiring : null;   // may be wired after this component woke: looked at every frame
@@ -183,7 +183,7 @@ namespace Oheangbu.App.World
 
         private void Unsubscribe()
         {
-            if (_subscribedDrawing != null) { _subscribedDrawing.ModeEntered -= OnModeEntered; _subscribedDrawing.ModeExited -= OnModeExited; }
+            if (_subscribedDrawing != null) { _subscribedDrawing.PresentationEntered -= OnModeEntered; _subscribedDrawing.PresentationExited -= OnModeExited; }
             _subscribedDrawing = null;
             if (!ReferenceEquals(_subscribedWiring, null))
             {
@@ -206,6 +206,8 @@ namespace Oheangbu.App.World
         // ---------------------------------------------------------------- events (all of them only note a time or start a state)
 
         private void Touch() { _lastCombatAt = Time.time; }
+        // D308-147: the draw PRESENTATION starts / ends (the press of an ordinary draw, the first stroke of a riposte candidate): a candidate that
+        // is released without a stroke never cuts a swing and never shows the upper body again
         private void OnModeEntered() { Touch(); if (Active) Cut(); }
         private void OnDamaged(float amount) { Touch(); }
         // The draw mode ends and the world body is shown again on this very frame: the brush layer is there at once, not faded in
@@ -289,7 +291,7 @@ namespace Oheangbu.App.World
         {
             _aimWeight = 0f;
             if (!_aimOn || !_swinging || !Active || Animator == null || !Animator.isHuman || _motor == null || _subscribedWiring == null) return;
-            if (_drawing != null && _drawing.InDrawMode) return;
+            if (_drawing != null && _drawing.InDrawPresentation) return;
             var swing = _subscribedWiring.SwingProfile308;
             if (swing == null || !swing.Position.Enabled) return;
             var rule = swing.Position;
@@ -335,7 +337,7 @@ namespace Oheangbu.App.World
             }
             Active = true;
             float now = Time.time, dt = Time.deltaTime;
-            bool drawing = _drawing != null && _drawing.InDrawMode;
+            bool drawing = _drawing != null && _drawing.InDrawPresentation;
             bool dodging = _motor.IsDodging;
             bool dodgeStarted = dodging && !_wasDodging; _wasDodging = dodging;
             bool locked = _lockOn != null && _lockOn.IsLocked;

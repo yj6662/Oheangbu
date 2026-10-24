@@ -201,12 +201,12 @@ namespace Oheangbu.EditorTools.WorldMacro
                 bool away = fired && sword.ReleaseByPlayer(At(2f));             // what the form's tick does with a yes
                 r.Check("W14", fired && !failed && counter.Fired == 2 && held && away && !sword.Active,
                     "a counter that can fire takes the press and the answer is a release (the tick then puts the sword away); a counter chosen but not fired answers no release");
-                var real = f.Obj("Spell308_Riposte", SpellFixture308.Origin).AddComponent<Oheangbu.App.World.Riposte301>();
-                f.Wiring.SwordRiposte308 = real;
-                bool bare = Arbitrate();
-                Object.DestroyImmediate(real);
-                bool gone = Arbitrate();
-                r.Check("W14", bare && gone, "the volley without a profile or walker cannot fire, a destroyed one is none: the press puts the sword away");
+                // D308-147: the riposte volley is no counter of this seam any more (it answers the draw key through the drawing input's press
+                // arbiter, a candidate released without a stroke); with the sword out the draw mode is shut and the press is only the release
+                bool notCounter = !typeof(ISwordRiposte308).IsAssignableFrom(typeof(Oheangbu.App.World.Riposte301));
+                f.Wiring.SwordRiposte308 = null;
+                bool plain = Arbitrate();
+                r.Check("W14", notCounter && plain, "the riposte volley takes no part in the sword's Q press (D308-147): with the sword out the press is only the release");
                 f.Wiring.SwordRiposte308 = null; f.Aim(null);
 
                 // ---- a presenter that throws changes nothing (no refund with the form on, no lost strike) ----

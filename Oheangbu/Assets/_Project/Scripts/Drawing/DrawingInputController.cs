@@ -11,6 +11,8 @@ namespace Oheangbu.Drawing
 {
     // 작도 입력의 유일한 수집 지점(SPEC-DRAWING-INPUT §6) — Q 홀드 상태머신 + Raw 획 기록.
     // 흐름: 작도 키 다운=모드 진입 → 획 긋기(Raw 기록) → 키 업=커밋(분할 인식 → 성공: 글자 방송 / 실패: 불발).
+    // D308-147(앞잡 C안): 모드 진입(입력)과 작도 연출(감속 · 근접 · 휘두르기 끊기 · 팔 자세)을 나눈다. 전투 쪽 중재자
+    // (IDrawPressArbiter)가 앞잡 후보로 답하면 연출은 첫 획까지 미루고, 획 없이 뗀 후보는 커밋 대신 중재자에게 넘긴다.
     // 인식 불가침: 여기 기록되는 Raw가 인식·표현 양쪽의 유일한 원천이다 — 표현(붓 스무딩 등)은
     // 이벤트를 받아 제 계층에서 하고, Raw에는 어떤 보정도 섞지 않는다(레거시 §11 교훈 승계).
     public sealed class DrawingInputController : MonoBehaviour
@@ -26,6 +28,9 @@ namespace Oheangbu.Drawing
         public GameplayRuntimeStateSO RuntimeState;
         // Optional movement gate. It owns permission to enter, never raw stroke sampling.
         public Func<bool> EntryAllowed { get; set; }
+        // D308-147: the combat side of the draw key (the riposte). Set by its owner like EntryAllowed; null = every press is an
+        // ordinary draw. Never read by recognition: it only decides when the presentation starts and who gets a stroke-less release.
+        public IDrawPressArbiter PressArbiter { get; set; }
         private bool _entryRequiresRelease;
 
         [Header("인식")]
@@ -46,8 +51,13 @@ namespace Oheangbu.Drawing
         // 표현(어댑터)용 저수준 이벤트 — 같은 프레임의 Raw 사실만 흘린다
         // read-only: presentation/combat layers may watch the Q press (D301 앞잡) without touching recognition
         public InputAction DrawModeAction => _drawMode;
+        // ModeEntered / ModeExited = the input mode (the pointer is the brush). PresentationEntered / PresentationExited = the draw
+        // presentation bundle (slow-down, close-up, swing cut, arm pose): the same moments as the mode for an ordinary draw, the
+        // first stroke for a deferred riposte candidate. PresentationExited comes only if PresentationEntered came.
         public event Action ModeEntered;
         public event Action ModeExited;
+        public event Action PresentationEntered;
+        public event Action PresentationExited;
         public event Action StrokeStarted;
         public event Action<Vector2> StrokePointAdded; // 화면 좌표 그대로
         public event Action StrokeEnded;
@@ -98,8 +108,12 @@ namespace Oheangbu.Drawing
         private InputAction _point;
         private StrokeData _currentStroke;
         private Vector2 _lastSample;
+        // start of the presentation (not of the key press): the slow-down window and the hold decay count from here, so the wait of a
+        // riposte candidate is not drawing time
         private float _modeEnterTime;
         private float _cachedTimeScale = 1f;
+        private readonly DrawGestureDecision308 _gesture = new DrawGestureDecision308();
+        private bool _presenting;
         // true only between EnterMode and the ExitMode that gives the scale back: ExitMode can be reached twice in one commit (a UI
         // surface opened from inside the letter event cancels the drawing, then Commit ends it again) and must restore once.
         private bool _ownsTimeScale;
@@ -107,6 +121,10 @@ namespace Oheangbu.Drawing
         private float _drawSlowSeconds;
 
         public bool InDrawMode { get; private set; }
+        /// <summary>The draw presentation bundle is on: the draw mode, except while a riposte candidate has not drawn yet.</summary>
+        public bool InDrawPresentation => _presenting;
+        /// <summary>This Q gesture started a stroke at least once (a hit that clears the strokes does not clear this).</summary>
+        public bool HasStartedStroke => _gesture.HasStartedStroke;
         /// <summary>The scale the world runs at while drawing (1 = no slow-down).</summary>
         public float DrawTimeScale => _drawTimeScale;
         public bool IsStroking => _currentStroke != null;
@@ -184,7 +202,31 @@ namespace Oheangbu.Drawing
             if (HasPointer) PointerScreenPosition = _point.ReadValue<Vector2>();
             HandleStroke();
 
-            if (_drawMode.WasReleasedThisFrame()) Commit();
+            // after this frame's stroke handling and before the commit: a first stroke of this very frame wins over the release
+            if (_drawMode.WasReleasedThisFrame()) OnDrawKeyReleased();
+        }
+
+        private void OnDrawKeyReleased()
+        {
+            if (_gesture.Release() == DrawRelease308.RiposteRelease) { ReleaseCandidate(); return; }
+            Commit();
+        }
+
+        // A riposte candidate that never drew: leave the mode quietly (no recognition, no ink, no misfire, no Committed), then ask
+        // the arbiter. It is asked after the mode is gone: its readiness check refuses while the draw mode is on.
+        private void ReleaseCandidate()
+        {
+            var arbiter = LiveArbiter();
+            ExitMode(committed: false, silent: true);
+            if (arbiter == null) return;
+            try { arbiter.OnReleasedWithoutStroke(); }
+            catch (Exception e) { Debug.LogException(e, this); }
+        }
+
+        private IDrawPressArbiter LiveArbiter()
+        {
+            var arbiter = PressArbiter;
+            return arbiter is UnityEngine.Object owner && owner == null ? null : arbiter;
         }
 
         // SPEC-PACE-308 section 4: after the first DrawSlowSeconds the world runs at its resting scale again while the drawing goes on.
@@ -224,9 +266,30 @@ namespace Oheangbu.Drawing
             // A paused world (Time.timeScale 0: a menu, a tutorial card) is not drawn in. Entering here cached 0 and wrote the
             // slow-down scale over the pause, so the game ran at 0.35 under the card (2026-10-08 report). The key must come up first.
             if (Time.timeScale <= 0f) { _entryRequiresRelease = true; return; }
+            // asked before the mode is on: the arbiter's readiness check refuses while the draw mode is entered
+            var mode = AskArbiter();
             InDrawMode = true;
+            _gesture.Press(mode);
+            if (mode != DrawPressMode.Deferred) StartPresentationState();
+            _modeChanged?.Raise(true);
+            ModeEntered?.Invoke();
+            if (mode != DrawPressMode.Deferred) PresentationEntered?.Invoke();
+        }
+
+        private DrawPressMode AskArbiter()
+        {
+            var arbiter = LiveArbiter();
+            if (arbiter == null) return DrawPressMode.None;
+            try { return arbiter.BeginCandidate(); }
+            catch (Exception e) { Debug.LogException(e, this); return DrawPressMode.None; }
+        }
+
+        // The presentation's own state: the start time of the slow-down window / hold decay and the slow-down itself.
+        private void StartPresentationState()
+        {
+            _presenting = true;
             _modeEnterTime = Time.unscaledTime; // 감쇠 구간(§3-2)의 시작점
-            if (_drawTimeScale < 1f)
+            if (_drawTimeScale < 1f && Time.timeScale > 0f)
             {
                 // The scale to go back to is the resting one. A temporary scale that is live right now (a hit stop at 0.06) is
                 // not cached: restoring it later would leave the game slow for good.
@@ -234,19 +297,31 @@ namespace Oheangbu.Drawing
                 Time.timeScale = _drawTimeScale;
                 _ownsTimeScale = true;
             }
-            _modeChanged?.Raise(true);
-            ModeEntered?.Invoke();
         }
 
-        private void HandleStroke()
+        // The first stroke of a deferred riposte candidate: the presentation bundle starts now (before StrokeStarted, so a listener
+        // that resets on the presentation start sees the stroke after it).
+        private void BeginPresentation()
+        {
+            if (_presenting) return;
+            StartPresentationState();
+            PresentationEntered?.Invoke();
+        }
+
+        private void HandleStroke() => HandleStroke(_stroke.IsPressed(), _stroke.WasReleasedThisFrame());
+
+        // the two key facts are read once by the caller (an edit-mode check feeds them by hand; the order of the work is unchanged)
+        private void HandleStroke(bool pressed, bool releasedThisFrame)
         {
             // 「누른 채 진입」 방어(레거시 실측 교훈): Down 프레임을 못 받아도 눌린 상태면 획 시작으로 취급
-            bool pressed = _stroke.IsPressed();
             if (pressed && _currentStroke == null)
             {
                 _currentStroke = new StrokeData();
                 _strokes.Add(_currentStroke);
                 _lastSample = new Vector2(float.MinValue, 0f);
+                var first = _gesture.StrokeStarted();
+                if (first.ChooseDraw) ChooseDraw();
+                if (first.BeginPresentation) BeginPresentation();
                 StrokeStarted?.Invoke();
             }
 
@@ -262,7 +337,16 @@ namespace Oheangbu.Drawing
                 }
             }
 
-            if (_currentStroke != null && _stroke.WasReleasedThisFrame()) EndCurrentStroke();
+            if (_currentStroke != null && releasedThisFrame) EndCurrentStroke();
+        }
+
+        // the candidate's first stroke: the window belongs to the drawing now; the first point is recorded below as always
+        private void ChooseDraw()
+        {
+            var arbiter = LiveArbiter();
+            if (arbiter == null) return;
+            try { arbiter.OnStrokeChosen(); }
+            catch (Exception e) { Debug.LogException(e, this); }
         }
 
         private void EndCurrentStroke()
@@ -323,6 +407,9 @@ namespace Oheangbu.Drawing
 
         private void ExitMode(bool committed, bool silent = false)
         {
+            bool cancelCandidate = _gesture.End();
+            bool wasPresenting = _presenting;
+            _presenting = false;
             EndCurrentStroke();
             _strokes.Clear();
             InDrawMode = false;
@@ -334,8 +421,19 @@ namespace Oheangbu.Drawing
                 if (Mathf.Approximately(Time.timeScale, _drawTimeScale)) Time.timeScale = _cachedTimeScale;
             }
             _modeChanged?.Raise(false);
+            if (wasPresenting) PresentationExited?.Invoke();   // never for a presentation that did not begin
             if (!silent) Committed?.Invoke(committed);
             ModeExited?.Invoke();
+            if (cancelCandidate) CancelCandidate();
+        }
+
+        // a candidate gesture ended with no choice (a menu, a shut gate, a disable): the arbiter forgets it, nothing fires later
+        private void CancelCandidate()
+        {
+            var arbiter = LiveArbiter();
+            if (arbiter == null) return;
+            try { arbiter.CancelCandidate(); }
+            catch (Exception e) { Debug.LogException(e, this); }
         }
     }
 }

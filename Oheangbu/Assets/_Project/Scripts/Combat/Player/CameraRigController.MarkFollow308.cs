@@ -44,7 +44,7 @@ namespace Oheangbu.Combat
         {
             shiftPixels = default;
             Vector3 o = _renderOffset308;
-            if (!_marksFollow308 || (o.x == 0f && o.y == 0f && o.z == 0f) || _drawing) return false;
+            if (!_marksFollow308 || (o.x == 0f && o.y == 0f && o.z == 0f) || _drawing || _drawInput308) return false;
             if (camera == null || _camera == null || camera.transform != _camera) return false;
             return MarkShift308(camera, world, o, out shiftPixels);
         }
