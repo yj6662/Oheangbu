@@ -86,6 +86,40 @@ Same mood and camera as picture 3, with these fixes:
 })
 
 
+# round 3: the turnaround keeps drawing a face on the rear view -> the rear view and the wing poses as their own pictures
+PICTURES.update({
+    'jj_rear3': ([base.REPO / 'Art/SpellVFX308/Concepts/ground_rise/ref_jeokro.png', V1('jj_three2')], REF_BIRD + """
+Picture 2 shows the same creature from the front (left) and from the side (middle). Ignore its right-hand drawing.""" + "\n\n" + WORLD + "\n\n" + BIRD + """
+--- THE PICTURE: REAR VIEW ONLY, for 3D modelling ---
+ONE drawing on plain light paper: the same creature seen from DIRECTLY BEHIND, standing, facing AWAY from the viewer. We see the back of its head (the crest feathers from behind), the back of the long neck, the back and both folded wings from behind, and the 5 tail feathers hanging down the middle. The beak and the eyes are NOT visible at all - the head points away from us. Same proportions as picture 2. No background, no shadow.""" + CERAMIC),
+    'jj_wingpose3': ([base.REPO / 'Art/SpellVFX308/Concepts/ground_rise/ref_jeokro.png', V1('jj_wings2')], REF_BIRD + """
+Picture 2 shows this creature's wing and tail parts: keep their feathers and colours.""" + "\n\n" + WORLD + "\n\n" + BIRD + """
+--- THE PICTURE: ONE wing in THREE poses, for rigging ---
+ONE sheet on plain light paper, three drawings in a single row, all of the SAME left wing seen from above at the same scale: (1) FOLDED tight against the body, (2) HALF-OPEN at about 45 degrees, (3) FULLY EXTENDED. In all three the same three joints are marked with small ink circles - shoulder, elbow, wrist - and the same 4 fans of primary feathers attach at the wrist. The pale ceramic plates sit only on the bone segments between joints, never across a joint, and keep the same count and shape in all three poses. Nothing else on the sheet.""" + CERAMIC),
+})
+
+
+# round 4 (Docs/Research/jeokro308/c2_codex_answer.md: set 84 - scale reads 7-8 m, armour still metal): single views for Meshy
+SINGLE = """
+--- FOR 3D MODELLING ---
+ONE drawing on plain light paper, the creature alone: no human figure, no scale bar, no text, no other poses, no shadow, no background. Same body proportions, same folded wings, same 5 tail feathers and same crest as pictures 2 and 3. Neutral standing pose with clear space between the legs, between the wings and the body, and between the tail and the legs.
+- Heavy, compact proportions of a 5 m tall creature: the neck is thick and strong, the legs are sturdy (not stilt-thin), the body is a large barrel.
+- The pale plates are fired CERAMIC tiles laced onto the body with dark cords - matte crackled glaze, chipped edges that show the coarse reddish clay body inside, soot in the cracks. NO rivets, NO metal edges, NO bolts."""
+REF_TRIO = REF_BIRD + """
+Picture 2 shows this creature from the front and side (ignore its right-hand drawing); picture 3 shows it from behind. Keep this design."""
+PICTURES.update({
+    'jj_front4': ([base.REPO / 'Art/SpellVFX308/Concepts/ground_rise/ref_jeokro.png', V1('jj_three2'), V1('jj_rear3')], REF_TRIO + "\n\n" + WORLD + "\n\n" + BIRD + """
+--- THE PICTURE: FRONT VIEW ONLY ---
+The creature seen from directly in front, facing the viewer, symmetric.""" + SINGLE),
+    'jj_side4': ([base.REPO / 'Art/SpellVFX308/Concepts/ground_rise/ref_jeokro.png', V1('jj_three2'), V1('jj_rear3')], REF_TRIO + "\n\n" + WORLD + "\n\n" + BIRD + """
+--- THE PICTURE: SIDE VIEW ONLY ---
+The creature seen exactly from its left side, facing left, orthographic.""" + SINGLE),
+    'jj_rear4': ([base.REPO / 'Art/SpellVFX308/Concepts/ground_rise/ref_jeokro.png', V1('jj_three2'), V1('jj_rear3')], REF_TRIO + "\n\n" + WORLD + "\n\n" + BIRD + """
+--- THE PICTURE: REAR VIEW ONLY ---
+The creature seen from directly behind, facing AWAY: back of the head, back of the neck, back, folded wings from behind, the 5 tail feathers down the middle. No beak, no eyes visible.""" + SINGLE),
+})
+
+
 def prompt(pid):
     refs, body = PICTURES[pid]
     return '\n\n'.join([base.HEAD, body, base.STYLE, base.BAN, base.TAIL % (OUT / f'{pid}.png').as_posix()])
