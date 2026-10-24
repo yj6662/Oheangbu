@@ -217,7 +217,8 @@ def asset_urls(result):
 def poll(download=False):
     data = ledger()
     for entry in data['tasks']:
-        if not entry.get('id'):
+        # downloaded tasks are finished; the provider forgets old task ids (HTTP 404), so they are not asked again
+        if not entry.get('id') or entry.get('downloaded_at'):
             continue
         task_dir = OUT / 'Source' / entry['name']
         result = call('GET', entry['endpoint'] + '/' + entry['id'])
