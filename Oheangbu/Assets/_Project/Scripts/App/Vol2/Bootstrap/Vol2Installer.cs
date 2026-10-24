@@ -19,6 +19,9 @@ namespace Oheangbu.App
         public SpellRoute Route { get; }
         /// <summary>Null in Legacy308.</summary>
         public Vol2Rulebook Rulebook { get; }
+        /// <summary>Slice 3: the shape / cast coordinator runtime of this scope. Null in Legacy308, and null until the scope's build callback
+        /// (Vol2Installer.Install) has made it; an edit-mode fixture sets it through Vol2ShapeRuntime.Create.</summary>
+        public Vol2ShapeRuntime Shapes { get; set; }
         public Vol2Services(SpellRuntimeMode mode, IVol2Clock clock, Vol2IdIssuer ids, Vol2AttackLedger attacks, CommandLedger commands, SpellRoute route, Vol2Rulebook rulebook)
         { Mode = mode; Clock = clock; Ids = ids; Attacks = attacks; Commands = commands; Route = route; Rulebook = rulebook; }
     }
@@ -29,6 +32,9 @@ namespace Oheangbu.App
     public static class Vol2Installer
     {
         public const int CombatScopeId = 1;
+        /// <summary>TEMPORARY (slice 3), the one place the temporary damage adapter's scale is set: HP per action unit is UNDEFINED in the
+        /// data. 45 is the D308-147 앞잡 hit and is only a stand-in. Remove together with Vol2TempEnemyDamageSink when slice 2's entry is bound.</summary>
+        public const float TempHpPerActionUnit = Vol2TempEnemyDamageSink.UnconfirmedDefaultHpPerActionUnit;
 
         public static Vol2Services Build(SpellRuntimeMode mode, Vol2Rulebook rulebook, Func<Glyph, bool> isOpen, Func<double> seconds = null)
         {
@@ -53,6 +59,10 @@ namespace Oheangbu.App
             builder.RegisterInstance(services.Ids);
             builder.RegisterInstance(services.Attacks);
             builder.RegisterInstance(services.Commands);
+            // slice 3: the shape executors and the cast coordinator (Vol2 scopes only; Legacy308 gets nothing). Built after the container, so the
+            // wiring, the ink pool and the combat scene are resolvable; the lab runner, built later, finds it as services.Shapes.
+            if (services.Mode == SpellRuntimeMode.Vol2 && services.Rulebook != null && services.Rulebook.Ok)
+                builder.RegisterBuildCallback(resolver => Vol2ShapeRuntime.CreateForScope(resolver, services));
         }
     }
 
