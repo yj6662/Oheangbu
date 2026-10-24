@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -39,6 +39,8 @@ namespace Oheangbu.App
         public string Note = "";
         public string Hit = "", Expected = "", Unexpected = "", BodyObserved = "";
         public decimal Units; public float Hp;
+        // slice 4: the ledger of a 남긴다 / 번진다 row (CSV columns MaterialId, MaterialCreated, MaterialConsumed, MaterialDepth, OriginalOwner, BudgetBalance, ShareLedger, PeakChecks)
+        public string MaterialIds = "", Created = "", Consumed = "", Depth = "", Owner = "", Balance = "", Ledger = "", Checks = "";
     }
 
     public static class Vol2OnceLab

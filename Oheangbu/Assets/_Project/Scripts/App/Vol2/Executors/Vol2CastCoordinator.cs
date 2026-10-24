@@ -14,7 +14,13 @@ namespace Oheangbu.App
         public string TargetName = "";
         public AttackId Attack;
         public float Along;
-        /// <summary>The rules' budget answer (EffectBudgetV3.Step.Reason): FirstContact, FirstTargetOnly, ... "ParryNoEffect" for a ㅓ 한 번.</summary>
+        /// <summary>What kind of contact it was (slice 4): Touch (a refused or not-yet-paid touch) | Instant | Second | Residue | Spread | ReturnSpread.</summary>
+        public string Kind = "Touch";
+        /// <summary>The material this contact drew from (Residue) or left behind (Spread / ReturnSpread mark); 0 = none.</summary>
+        public long MaterialId;
+        /// <summary>The action amount the contact was paid (R of the damage formula); 0 when nothing was paid.</summary>
+        public decimal Amount;
+        /// <summary>The rules' budget answer (EffectBudgetV3.Step.Reason): FirstContact, FirstTargetOnly, ... "ParryNoEffect" for a ㅓ 한 번; "ResidueShare" for a draw from a residue.</summary>
         public bool BudgetAccepted;
         public string BudgetReason = "";
         public bool DamageRequested;
@@ -45,7 +51,7 @@ namespace Oheangbu.App
         public Vol2ShapeSpec Spec;
         public IVol2ShapeEmitter Emitter;
         public long StartUs, EndUs;
-        /// <summary>Running | Done | Unsupported | InkRefused</summary>
+        /// <summary>Running | Done | Unsupported | InkRefused | Recovery(slice2) | Aborted</summary>
         public string Status = "Running";
         public bool Finished;
         public decimal InkRequested, InkPaid;
@@ -55,11 +61,25 @@ namespace Oheangbu.App
         public long WindowStartUs, WindowEndUs;
         public int SwingReports, SwingDuplicates;
         public int PendingTicks;
+        /// <summary>Slice 4: every material the cast made (residue, marks, carrier), in order; live objects, so the end reason is read from them.</summary>
+        public readonly List<Vol2Material> Materials = new List<Vol2Material>();
+        /// <summary>The cast's budget (null for a parry): Transferred, PaidShared, PaidPerTarget, SharedRemaining after the run.</summary>
+        public Vol2CastBudget Budget;
+        /// <summary>Materials of OTHER casts this cast ended by burning (눈), with the reason: "id:Consumed".</summary>
+        public readonly List<string> Burned = new List<string>();
+        /// <summary>Materials of other casts this cast stretched (국): "id:+µs".</summary>
+        public readonly List<string> Extended = new List<string>();
+        /// <summary>Requests to the field (platform, gate) and whether a field port answered or it was only recorded.</summary>
+        public readonly List<string> FieldNotes = new List<string>();
+        /// <summary>Free-form facts a verb wants on the log (cage start / end, spread rooms ...).</summary>
+        public readonly List<string> Notes = new List<string>();
 
         public int ContactCount => Contacts.Count;
         public decimal TotalUnits { get { decimal u = 0; foreach (var c in Contacts) if (c.DamageApplied) u += c.Units; foreach (var t in Ticks) if (t.Applied) u += t.Units; return u; } }
         public float TotalHp { get { float h = 0; foreach (var c in Contacts) h += c.HpApplied; foreach (var t in Ticks) h += t.HpApplied; return h; } }
         public int PaidContacts { get { int n = 0; foreach (var c in Contacts) if (c.BudgetAccepted) n++; return n; } }
+        public int Count(string kind) { int n = 0; foreach (var c in Contacts) if (c.Kind == kind && c.BudgetAccepted) n++; return n; }
+        public decimal AmountOf(string kind) { decimal a = 0; foreach (var c in Contacts) if (c.Kind == kind && c.BudgetAccepted) a += c.Amount; return a; }
     }
 
     /// <summary>Marks wet bodies for body.water.duration. Keyed by the body and its life: a new life is dry.</summary>
@@ -72,20 +92,24 @@ namespace Oheangbu.App
         public void Clear() { _wetUntil.Clear(); }
     }
 
-    /// <summary>S5-b slice 3: CastAccepted -> shape -> contacts -> rules' budget -> damage / body action, for the 한 번 (Verb.Once) glyphs.
-    /// The other verbs are answered "Unsupported" (a status on the log, no error) until slices 4 to 8 add their executors.
-    /// What it owns: the shape of a cast, the budget State of a cast, the lasting damage ticks, the wet marks. What it does NOT own: the
-    /// ink rules, the damage entry, the defence judge (ports, slice 2). One instance per combat scope; no statics.</summary>
+    /// <summary>The field's side of a few peaks (국's platform, 눈's vine door). No field API exists yet; slice 8 binds one. Until then the
+    /// coordinator only RECORDS the request in the cast log (FieldNotes).</summary>
+    public interface IVol2FieldPort
+    {
+        string OnPlatform(CastId cast, Vector3 centre, float radius, long lifeUs);
+        string OnVineBurn(CastId cast, Vol2Material vine);
+    }
+
+    /// <summary>S5-b slices 3 and 4: CastAccepted -> shape -> contacts -> rules' budget -> damage / body action / material, for the verbs whose
+    /// executor is registered (<see cref="Vol2VerbRegistry"/>). A verb nobody registered is answered "Unsupported" (a status on the log, no error).
+    /// 걱 (the recovery) is the defence kit's: the coordinator does not run it, it notes "Recovery(slice2)" and goes on.
+    /// What it owns: the shape of a cast, the budget State of a cast, the lasting damage ticks, the wet marks, the material registry. What it does
+    /// NOT own: the ink rules, the damage entry, the defence judge (ports, slice 2). One instance per combat scope; no statics.</summary>
     public sealed class Vol2CastCoordinator : IDisposable
     {
-        sealed class Active
-        {
-            public CastId Cast; public Vol2CastDecision Decision; public GlyphRulesV3.Plan Plan;
-            public IVol2ShapeEmitter Emitter; public EffectBudgetV3.State State; public Vol2BodyProfile Body; public Vol2CastLog Log;
-        }
         sealed class Dot
         {
-            public Active Owner; public AttackId Attack; public IVol2Target Target; public long LifeRevision;
+            public Vol2CastRun Owner; public AttackId Attack; public IVol2Target Target; public long LifeRevision;
             public long NextUs, TickUs; public int Remaining, Index; public decimal UnitsPerTick; public Vector3 Point;
         }
 
@@ -98,31 +122,49 @@ namespace Oheangbu.App
         readonly IVol2Obstruction _wall;
         readonly Vol2ShapeTuning _tuning;
         readonly Vol2SwingSignal _swings;
+        readonly Vol2VerbRegistry _verbs;
+        readonly Vol2MaterialRegistry _materials;
+        readonly Vol2VerbTuning _verbTuning;
         readonly Dictionary<Body, Vol2BodyProfile> _profiles = new Dictionary<Body, Vol2BodyProfile>();
-        readonly List<Active> _active = new List<Active>();
+        readonly List<Vol2CastRun> _active = new List<Vol2CastRun>();
         readonly List<Dot> _dots = new List<Dot>();
         readonly Dictionary<long, Vol2CastLog> _logs = new Dictionary<long, Vol2CastLog>();
         readonly Queue<long> _logOrder = new Queue<long>();
-        readonly List<Vol2ShapeContact> _contacts = new List<Vol2ShapeContact>();
+        IReadOnlyList<IVol2Target> _targets = new List<IVol2Target>();
         bool _disposed;
 
         public IVol2DamageSink Damage { get; set; }
         public IVol2StatusSink Status { get; set; }
         public IVol2InkSpender Ink { get; set; }
         public IVol2ParryPort ParryPort { get; set; }
+        public IVol2FieldPort Field { get; set; }
+        /// <summary>Is this body a boss (bind x0.5 ...)? Default: the enemy's own flag. A fixture sets its own.</summary>
+        public Func<IVol2Target, bool> BossTest { get; set; } = t => t is Vol2EnemyTarget e && e.Vitals != null && e.Vitals.IsBoss;
         public Vol2StatusBook Wet { get; } = new Vol2StatusBook();
         public Vol2TargetRegistry Registry => _registry;
         public Vol2SwingSignal Swings => _swings;
         public Vol2ShapeTuning Tuning => _tuning;
+        public Vol2VerbTuning VerbTuning => _verbTuning;
+        public Vol2VerbRegistry Verbs => _verbs;
+        public Vol2MaterialRegistry Materials => _materials;
+        public Vol2Services Services => _services;
+        public NumbersV3Dto Numbers => _numbers;
+        public DefenceNumbersV3Dto Defence => _defence;
+        public IVol2Caster Caster => _caster;
+        public IVol2Obstruction Wall => _wall;
+        /// <summary>The candidate bodies of the latest tick / swing.</summary>
+        public IReadOnlyList<IVol2Target> Targets => _targets;
         public IReadOnlyList<Vol2CastLog> ActiveLogs { get { var l = new List<Vol2CastLog>(); foreach (var a in _active) l.Add(a.Log); return l; } }
         public int ActiveCount => _active.Count;
         public int UnsupportedCasts { get; private set; }
+        public int RecoveryRouted { get; private set; }
 
         public event Action<Vol2CastLog> CastBegan, CastEnded, CastUnsupported;
         public event Action<Vol2CastLog, Vol2ContactRecord> ContactResolved;
 
         public Vol2CastCoordinator(Vol2Services services, Vol2TargetRegistry registry, IVol2Caster caster, IVol2Obstruction wall,
-            IVol2DamageSink damage, IVol2StatusSink status, IVol2InkSpender ink, Vol2ShapeTuning tuning, Vol2SwingSignal swings)
+            IVol2DamageSink damage, IVol2StatusSink status, IVol2InkSpender ink, Vol2ShapeTuning tuning, Vol2SwingSignal swings,
+            Vol2VerbRegistry verbs = null, Vol2MaterialRegistry materials = null, Vol2VerbTuning verbTuning = null)
         {
             _services = services ?? throw new ArgumentNullException(nameof(services));
             if (!services.Route.IsVol2 || services.Rulebook == null || !services.Rulebook.Ok) throw new InvalidOperationException("Vol2CastCoordinator needs a Vol2 scope with a loaded rulebook");
@@ -130,6 +172,9 @@ namespace Oheangbu.App
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
             _caster = caster ?? throw new ArgumentNullException(nameof(caster));
             _wall = wall; Damage = damage; Status = status; Ink = ink; _tuning = tuning ?? new Vol2ShapeTuning(); _swings = swings ?? new Vol2SwingSignal();
+            _verbs = verbs ?? Vol2VerbRegistry.CreateDefault();
+            _materials = materials ?? new Vol2MaterialRegistry(_clock, services.Ids);
+            _verbTuning = verbTuning ?? new Vol2VerbTuning();
             foreach (Body b in Enum.GetValues(typeof(Body))) _profiles[b] = Vol2BodyProfile.For(b, _numbers);
             services.Route.Adapter.CastAccepted += OnAccepted;
             _swings.Contact += OnSwing;
@@ -156,6 +201,22 @@ namespace Oheangbu.App
             return false;
         }
 
+        /// <summary>Scope reset / the spell lab between rows (design section 12 step 2): every running cast stops (status Aborted), every material
+        /// ends with <see cref="Vol2MaterialEnd.Aborted"/>, the lasting damage stops. Nothing of the previous row survives.</summary>
+        public void AbortAll()
+        {
+            long now = _clock.NowUs;
+            for (int i = _active.Count - 1; i >= 0; i--)
+            {
+                var a = _active[i];
+                try { a.Verb.Abort(now); } catch (Exception e) { Debug.LogException(e); }
+                a.Log.Finished = true; a.Log.Status = "Aborted"; a.Log.EndUs = now;
+                _services.Attacks.ReleaseCast(a.Cast);
+            }
+            _active.Clear(); _dots.Clear();
+            _materials.EndAll(now);
+        }
+
         // ---- accept ----
 
         void OnAccepted(Vol2CastDecision d)
@@ -171,7 +232,14 @@ namespace Oheangbu.App
             long now = _clock.NowUs;
             var log = new Vol2CastLog { Cast = d.CastId, Glyph = g, Template = d.Template, BodyAction = Vol2BodyProfile.ActionOf(g.Body), StartUs = now, InkRequested = plan.Cost };
             Remember(log);
-            if (g.Verb != Verb.Once)
+            if (d.IsRecovery)
+            {
+                // 걱 is the defence kit's (Vol2RecoveryExecutor): it was paid and begun by the payment gate before CastAccepted. Charging or running it here
+                // would pay twice and build an attack out of a recovery.
+                log.Status = "Recovery(slice2)"; log.Finished = true; log.EndUs = now; RecoveryRouted++;
+                return;
+            }
+            if (!_verbs.TryGet(g.Verb, out var executor))
             {
                 log.Status = "Unsupported"; log.Finished = true; log.EndUs = now; UnsupportedCasts++;
                 CastUnsupported?.Invoke(log); return;
@@ -182,28 +250,28 @@ namespace Oheangbu.App
                 if (Ink != null && !Ink.TrySpend(d.CastId, plan.Cost, out paid)) { log.Status = "InkRefused"; log.Finished = true; log.EndUs = now; return; }
                 log.InkPaid = paid;
             }
-            var targets = _registry.Refresh();
+            _targets = _registry.Refresh();
             var spec = Vol2ShapeSpec.Create(g.Frame, _numbers, _caster.Position, _caster.AimDirection, _tuning);
-            IVol2ShapeEmitter emitter;
-            switch (spec.Kind)
+            var run = new Vol2CastRun
             {
-                case Vol2ShapeKind.Path: emitter = new Vol2PathEmitter(spec, now, plan.FirstOnly, _wall, _tuning.ChestHeight); break;
-                case Vol2ShapeKind.Fan: emitter = new Vol2FanEmitter(spec, now); break;
-                case Vol2ShapeKind.Ring: emitter = new Vol2RingEmitter(spec, now); break;
-                default: emitter = new Vol2AttachmentHost(spec, now, _defence.ParryWindowUs); break;
-            }
-            var a = new Active { Cast = d.CastId, Decision = d, Plan = plan, Emitter = emitter, Body = _profiles[g.Body], Log = log,
-                State = g.IsParry ? null : new EffectBudgetV3.State(d.CastId.Value, plan, now) };
-            log.Shape = spec.Kind; log.Spec = spec; log.Emitter = emitter;
-            _active.Add(a);
-            if (emitter is Vol2AttachmentHost host)
+                Cast = d.CastId, Decision = d, Plan = plan, Host = this, Body = _profiles[g.Body], Log = log, Spec = spec, StartUs = now,
+                Budget = g.IsParry ? null : new Vol2CastBudget(d.CastId, plan, now)
+            };
+            run.Verb = executor.Begin(run);
+            if (run.Verb == null) { log.Status = "Unsupported"; log.Finished = true; log.EndUs = now; UnsupportedCasts++; CastUnsupported?.Invoke(log); return; }
+            run.Emitter = run.Verb.CreateEmitter(spec, now);
+            log.Shape = spec.Kind; log.Spec = spec; log.Emitter = run.Emitter; log.Budget = run.Budget;
+            _active.Add(run);
+            if (g.IsParry && run.Emitter is Vol2AttachmentHost host)
             {
                 log.ParryWindowOpened = true; log.WindowStartUs = host.StartUs; log.WindowEndUs = host.EndUs;
-                ParryPort?.WindowOpened(new Vol2ParryWindow(a.Cast, a.Body.Element, host.StartUs, host.EndUs));
+                ParryPort?.WindowOpened(new Vol2ParryWindow(run.Cast, run.Body.Element, host.StartUs, host.EndUs));
             }
             CastBegan?.Invoke(log);
-            Step(a, now, targets);
-            Settle(a, now);
+            run.Verb.Start(now, _targets);
+            Step(run, now, _targets);
+            run.Verb.Tick(now, _targets);
+            Settle(run, now);
         }
 
         void Remember(Vol2CastLog log)
@@ -219,24 +287,27 @@ namespace Oheangbu.App
         {
             if (_disposed) return;
             long now = _clock.NowUs;
-            var targets = _registry.Refresh();
-            for (int i = 0; i < _active.Count; i++) Step(_active[i], now, targets);
+            _targets = _registry.Refresh();
+            _materials.Sweep(now);
+            for (int i = 0; i < _active.Count; i++) Step(_active[i], now, _targets);
+            for (int i = 0; i < _active.Count; i++) _active[i].Verb.Tick(now, _targets);
             TickDots(now);
             for (int i = _active.Count - 1; i >= 0; i--) Settle(_active[i], now);
             Status?.Tick(dt);
         }
 
-        void Step(Active a, long now, IReadOnlyList<IVol2Target> targets)
+        void Step(Vol2CastRun a, long now, IReadOnlyList<IVol2Target> targets)
         {
             var found = new List<Vol2ShapeContact>();
             a.Emitter.Tick(now, targets, found);
-            foreach (var c in found) Resolve(a, c, now);
+            foreach (var c in found) a.Verb.OnContact(c, now);
         }
 
-        void Settle(Active a, long now)
+        void Settle(Vol2CastRun a, long now)
         {
             if (a.Emitter is Vol2AttachmentHost host) { a.Log.SwingReports = host.Reports; a.Log.SwingDuplicates = host.Duplicates; }
             if (!a.Emitter.Finished) return;
+            if (!a.Verb.Idle(now)) return;
             int pending = 0; foreach (var dot in _dots) if (dot.Owner == a) pending++;
             a.Log.PendingTicks = pending;
             if (pending > 0) return;
@@ -253,89 +324,97 @@ namespace Oheangbu.App
             if (_disposed) return;
             try
             {
-                var targets = _registry.Refresh();
+                _targets = _registry.Refresh();
                 for (int i = 0; i < _active.Count; i++)
                 {
                     var a = _active[i];
                     if (!(a.Emitter is Vol2AttachmentHost host)) continue;
                     var found = new List<Vol2ShapeContact>();
-                    host.OnSwing(e, targets, found);
-                    foreach (var c in found) Resolve(a, c, e.NowUs);
+                    host.OnSwing(e, _targets, found);
+                    foreach (var c in found) a.Verb.OnContact(c, e.NowUs);
                     a.Log.SwingReports = host.Reports; a.Log.SwingDuplicates = host.Duplicates;
                 }
             }
             catch (Exception ex) { Debug.LogException(ex); }
         }
 
-        // ---- a contact ----
+        // ---- services for the verb runs ----
 
-        void Resolve(Active a, Vol2ShapeContact c, long now)
+        /// <summary>A new AttackId for one actual hit / draw / transfer of a cast, registered with its cast and swing. The id is also the rules' EventId.</summary>
+        public AttackId NewAttack(Vol2CastRun a, long swingId, long nowUs)
         {
-            var g = a.Decision.Glyph;
             var attack = _services.Ids.NextAttack();
-            _services.Attacks.Register(new Vol2AttackMetadata(attack, a.Cast, new SwingId(c.SwingId), g, now));
-            var rec = new Vol2ContactRecord { Shape = c.Shape, TargetId = c.TargetId, LifeRevision = c.LifeRevision, NowUs = c.NowUs, SwingId = c.SwingId, Attack = attack, Along = c.Along,
-                TargetName = c.Target != null ? c.Target.Name : "" };
-            a.Log.Contacts.Add(rec);
-            if (g.IsParry) { rec.BudgetReason = "ParryNoEffect"; ContactResolved?.Invoke(a.Log, rec); return; }
-
-            var contact = new Contact(attack.Value, a.Cast.Value, c.TargetId, now, c.SwingId, ContactKind.Touch, EffectKind.Instant, 0m, TriggerKind.None, c.LifeRevision, 0);
-            var step = EffectBudgetV3.Apply(a.State, contact, a.Plan);
-            a.State = step.State; rec.BudgetAccepted = step.Accepted; rec.BudgetReason = step.Reason;
-            if (step.Accepted)
-            {
-                int ordinal = 0;
-                foreach (var cmd in step.Commands)
-                {
-                    if (cmd.Effect != EffectKind.Instant) continue;     // 한 번 pays the instant term only; the others belong to later verbs
-                    if (!_services.Commands.TryBegin(new CommandKey(_services.Ids.ScopeId, CommandRuleKind.Damage, attack.Value, ordinal++))) { rec.DuplicateCommands++; continue; }
-                    Hit(a, c, rec, cmd, attack, now);
-                    if (_services.Commands.TryBegin(new CommandKey(_services.Ids.ScopeId, CommandRuleKind.Status, attack.Value, 0))) BodyEffect(a, c, rec, attack, now);
-                    else rec.DuplicateCommands++;
-                }
-            }
-            ContactResolved?.Invoke(a.Log, rec);
+            _services.Attacks.Register(new Vol2AttackMetadata(attack, a.Cast, new SwingId(swingId), a.Decision.Glyph, nowUs));
+            return attack;
         }
 
-        void Hit(Active a, Vol2ShapeContact c, Vol2ContactRecord rec, EffectBudgetV3.Command cmd, AttackId attack, long now)
+        public Vol2ContactRecord NewRecord(Vol2CastRun a, Vol2ShapeContact c, AttackId attack, string kind)
         {
+            var rec = new Vol2ContactRecord
+            {
+                Shape = c.Shape, TargetId = c.TargetId, LifeRevision = c.LifeRevision, NowUs = c.NowUs, SwingId = c.SwingId, Attack = attack, Along = c.Along,
+                TargetName = c.Target != null ? c.Target.Name : "", Kind = kind
+            };
+            a.Log.Contacts.Add(rec);
+            return rec;
+        }
+
+        public void NotifyContact(Vol2CastLog log, Vol2ContactRecord rec) { ContactResolved?.Invoke(log, rec); }
+
+        /// <summary>One damage request for <paramref name="amount"/> action units (R). The units are H x min(R x S, cap); B and K are the damage entry's, at the hit.</summary>
+        public void Hit(Vol2CastRun a, IVol2Target t, Vol2ContactRecord rec, decimal amount, AttackId attack, long now, Vector3 point, long swing, int ordinal)
+        {
+            if (!_services.Commands.TryBegin(new CommandKey(_services.Ids.ScopeId, CommandRuleKind.Damage, attack.Value, ordinal))) { rec.DuplicateCommands++; return; }
             decimal force = _numbers.Get("combat.force.min");
-            decimal h = a.Body.Instant, r = cmd.ActionAmount;
-            decimal baseUnits = _defence.Damage(h, r, force, false, true, false);      // H x min(R x S, cap); B and K are the entry's, at the hit
-            decimal factor = a.Body.WetFactor(c.Target != null && Wet.IsWet(c.Target, now));
-            rec.StatusFactor = factor; rec.Units = baseUnits * factor; rec.DamageRequested = true;
+            decimal h = a.Body.Instant;
+            decimal baseUnits = _defence.Damage(h, amount, force, false, true, false);
+            decimal factor = a.Body.WetFactor(t != null && Wet.IsWet(t, now));
+            rec.Amount = amount; rec.StatusFactor = factor; rec.Units = baseUnits * factor; rec.DamageRequested = true;
             if (Damage == null) { rec.DamageNote = "NoDamageSink"; return; }
-            var request = new Vol2DamageRequest(a.Cast, attack, c.SwingId, c.Target, a.Decision.Glyph, a.Body.Element, h, r, force, rec.Units, factor, false, now, c.Point, _caster.Anchor);
+            var request = new Vol2DamageRequest(a.Cast, attack, swing, t, a.Decision.Glyph, a.Body.Element, h, amount, force, rec.Units, factor, false, now, point, _caster.Anchor);
             var result = Damage.Apply(request);
             rec.DamageApplied = result.Applied; rec.HpApplied = result.Hp; rec.Killed = result.Killed; rec.DamageNote = result.Reason;
         }
 
-        void BodyEffect(Active a, Vol2ShapeContact c, Vol2ContactRecord rec, AttackId attack, long now)
+        /// <summary>The body's action on a target (bind / burn / push / cut / wet). <paramref name="bindUs"/> &gt;= 0 overrides a bind's length (the peaks that cap it at 1.5 s).</summary>
+        public void BodyEffect(Vol2CastRun a, IVol2Target t, Vol2ContactRecord rec, AttackId attack, long now, long bindUs = -1)
         {
-            var p = a.Body; var t = c.Target;
+            if (!_services.Commands.TryBegin(new CommandKey(_services.Ids.ScopeId, CommandRuleKind.Status, attack.Value, 0))) { rec.DuplicateCommands++; return; }
+            var p = a.Body;
             Vector3 dir = Vol2ShapeGeometry.FlatUnit(t.Position - a.Log.Spec.Origin);
             long duration = p.DurationUs; float magnitude = 1f, meters = 0f;
             string note;
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
             switch (p.Action)
             {
                 case Vol2BodyActionKind.Bind:
-                    magnitude = (float)p.MoveMultiplier; note = "bind x" + magnitude.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture); break;
+                    if (bindUs >= 0) duration = bindUs;
+                    magnitude = (float)p.MoveMultiplier; note = "bind x" + magnitude.ToString("0.##", inv); break;
                 case Vol2BodyActionKind.Burn:
                     {
                         long tick = Math.Max(1, _tuning.DotTickUs);
                         int ticks = (int)Math.Max(1, p.DurationUs / tick);
-                        _dots.Add(new Dot { Owner = a, Attack = attack, Target = t, LifeRevision = c.LifeRevision, NextUs = now + tick, TickUs = tick, Remaining = ticks, UnitsPerTick = p.BurnTotal / ticks, Point = c.Point });
-                        note = "burn " + p.BurnTotal.ToString(System.Globalization.CultureInfo.InvariantCulture) + "u/" + ticks + " ticks"; break;
+                        _dots.Add(new Dot { Owner = a, Attack = attack, Target = t, LifeRevision = t.LifeRevision, NextUs = now + tick, TickUs = tick, Remaining = ticks, UnitsPerTick = p.BurnTotal / ticks, Point = t.Position });
+                        note = "burn " + p.BurnTotal.ToString(inv) + "u/" + ticks + " ticks"; break;
                     }
                 case Vol2BodyActionKind.Push:
-                    meters = _tuning.PushMeters; duration = Vol2Time.FromSeconds(_tuning.PushSeconds); note = "push " + meters.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "m"; break;
+                    meters = _tuning.PushMeters; duration = Vol2Time.FromSeconds(_tuning.PushSeconds); note = "push " + meters.ToString("0.##", inv) + "m"; break;
                 case Vol2BodyActionKind.Wet:
-                    Wet.MarkWet(t, now + p.DurationUs); note = "wet " + Vol2Time.ToSecondsF(p.DurationUs).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "s"; break;
+                    Wet.MarkWet(t, now + p.DurationUs); note = "wet " + Vol2Time.ToSecondsF(p.DurationUs).ToString("0.##", inv) + "s"; break;
                 default:
-                    note = "cut" + (rec.StatusFactor != 1m ? " wet x" + rec.StatusFactor.ToString(System.Globalization.CultureInfo.InvariantCulture) : ""); break;
+                    note = "cut" + (rec.StatusFactor != 1m ? " wet x" + rec.StatusFactor.ToString(inv) : ""); break;
             }
             string sinkNote = Status != null ? Status.Apply(new Vol2BodyEffectRequest(p.Action, a.Cast, attack, t, now, duration, magnitude, dir, meters)) : "NoStatusSink";
             rec.BodyEffect = note + (sinkNote.Length > 0 && sinkNote != note ? " [" + sinkNote + "]" : "");
+        }
+
+        /// <summary>The field request of a peak (국's platform, 눈's vine door): the field port answers if there is one; the request is ALWAYS written to the log.</summary>
+        public string FieldRequest(Vol2CastRun a, string what, Func<IVol2FieldPort, string> ask)
+        {
+            string answer = Field != null ? ask(Field) : "no field port: recorded only";
+            string note = what + " -> " + answer;
+            a.Log.FieldNotes.Add(note);
+            return note;
         }
 
         void TickDots(long now)

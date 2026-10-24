@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Oheangbu.Combat;
 using Oheangbu.Vol2.Rules;
 using UnityEngine;
@@ -14,6 +14,8 @@ namespace Oheangbu.App
     {
         public Vol2CastCoordinator Coordinator { get; }
         public Vol2TargetRegistry Registry => Coordinator.Registry;
+        /// <summary>Slice 4: every residue, mark and carrier of the scope. Slice 8 (reactions) reads and commits through it.</summary>
+        public Vol2MaterialRegistry Materials => Coordinator.Materials;
         public Vol2SwingSignal Swings => Coordinator.Swings;
         public IVol2Caster Caster { get; }
         /// <summary>Non-null when the ink comes from the combat InkPool (the lab refills it between rows).</summary>
@@ -27,9 +29,10 @@ namespace Oheangbu.App
 
         /// <summary>Builds the runtime with explicit parts (fixtures use this with fakes; no scene object is made).</summary>
         public static Vol2ShapeRuntime Create(Vol2Services services, Vol2TargetRegistry registry, IVol2Caster caster, IVol2Obstruction wall,
-            IVol2DamageSink damage, IVol2StatusSink status, IVol2InkSpender ink, Vol2ShapeTuning tuning = null)
+            IVol2DamageSink damage, IVol2StatusSink status, IVol2InkSpender ink, Vol2ShapeTuning tuning = null,
+            Vol2VerbRegistry verbs = null, Vol2MaterialRegistry materials = null, Vol2VerbTuning verbTuning = null)
         {
-            var coordinator = new Vol2CastCoordinator(services, registry, caster, wall, damage, status, ink, tuning, new Vol2SwingSignal());
+            var coordinator = new Vol2CastCoordinator(services, registry, caster, wall, damage, status, ink, tuning, new Vol2SwingSignal(), verbs, materials, verbTuning);
             var runtime = new Vol2ShapeRuntime(coordinator, caster, ink as Vol2InkPoolSpender);
             services.Shapes = runtime;
             return runtime;

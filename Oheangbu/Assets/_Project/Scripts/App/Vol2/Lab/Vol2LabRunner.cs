@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -42,13 +42,15 @@ namespace Oheangbu.App
             "Expected","Actual","Verdict","Note",
             // slice 3 (S3-once): empty on the rows the slice-1 scenario writes
             "Variant","ShapeKind","ContactCount","PaidContacts","HitTargets","ExpectedTargets","UnexpectedTargets","DamageUnits","HpApplied","BodyAction","BodyObserved",
-            "ParryWindowUs","SwingReports","SwingDuplicates","InkPaid","LabSimulated","ScenarioNote","PresenterLines"
+            "ParryWindowUs","SwingReports","SwingDuplicates","InkPaid","LabSimulated","ScenarioNote","PresenterLines",
+            // slice 4 (S4-verb): the share ledger (kind:body:amount of every paid contact) and the peak rule checks that held
+            "ShareLedger","PeakChecks"
         };
 
         /// <summary>The slice 3 part of a CSV row: what the cast did to the scenario's dummies.</summary>
         sealed class OnceRow
         {
-            public string Variant, Describe; public Vol2CastLog Log; public Vol2OnceVerdict Verdict; public bool SimulatedSwing;
+            public string Variant, Describe, ScenarioName; public Vol2CastLog Log; public Vol2OnceVerdict Verdict; public bool SimulatedSwing;
             /// <summary>Measured: the pool before the letter and right after it (empty without a pool). The cast's requested cost is InkPaid.</summary>
             public string InkDelta = ""; public int PresenterLines;
         }
@@ -231,6 +233,54 @@ namespace Oheangbu.App
             finally { Vol2OnceLab.Cleanup(scenario, shapes.Registry); shapes.Registry.ExtrasOnly = false; }
         }
 
+        // ---- slice 4: the verbs with a lab provider (Play only: the contacts take frames) ----
+
+        /// <summary>One row of a verb with a lab provider: scenario in, letter through the channel, the scenario's steps on the scope clock, the clock
+        /// fast-forwarded to the end of the cast's life, the provider's verdict, everything out. A row starts from nothing (the coordinator's
+        /// casts and every material are aborted first) and leaves nothing behind.</summary>
+        async UniTask ProcessVerbRowAsync(int index, Vol2SpellRowDto row, IVol2LabProvider provider, System.Threading.CancellationToken token)
+        {
+            var shapes = _services.Shapes;
+            shapes.Coordinator.AbortAll();
+            shapes.PoolInk?.Refill();
+            float inkBefore = shapes.PoolInk != null ? shapes.PoolInk.InkNow : -1f;
+            int linesBefore = shapes.Presenter != null ? shapes.Presenter.Drawn : 0;
+            shapes.Registry.ExtrasOnly = true; shapes.Registry.ClearExtras();
+            var ctx = new Vol2LabContext(shapes, _services);
+            var scenario = provider.Build(row, ctx);
+            try
+            {
+                var injected = Inject(row);
+                var once = new OnceRow { Variant = scenario.Variant, Describe = scenario.Describe, SimulatedSwing = scenario.UsesSwings, ScenarioName = Vol2VerbLab.Scenario };
+                if (inkBefore >= 0f) once.InkDelta = (shapes.PoolInk.InkNow - inkBefore).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+                Vol2CastLog log = null;
+                if (injected.Decision != null && injected.Decision.Accepted) shapes.Coordinator.TryGetLog(injected.Decision.CastId, out log);
+                once.Log = log;
+                if (log != null)
+                {
+                    long t0 = _services.Clock.NowUs;
+                    float guard = Time.unscaledTime + 30f;
+                    scenario.Steps.Sort((a, b) => a.AtSeconds.CompareTo(b.AtSeconds));
+                    foreach (var step in scenario.Steps)
+                    {
+                        while ((_services.Clock.NowUs - t0) / 1000000.0 < step.AtSeconds && Time.unscaledTime < guard) await UniTask.Yield(PlayerLoopTiming.Update, token);
+                        step.Do(ctx);
+                    }
+                    double last = scenario.Steps.Count > 0 ? scenario.Steps[scenario.Steps.Count - 1].AtSeconds : 0.0;
+                    double settle = Math.Max(last + scenario.SettleSeconds, scenario.MinSeconds);
+                    while ((_services.Clock.NowUs - t0) / 1000000.0 < settle && Time.unscaledTime < guard) await UniTask.Yield(PlayerLoopTiming.Update, token);
+                    Vol2VerbLab.FastForward(ctx, log, injected.Decision);
+                    float until = Time.unscaledTime + 4f;
+                    while (!log.Finished && Time.unscaledTime < until) await UniTask.Yield(PlayerLoopTiming.Update, token);
+                    for (int k = 0; k < 3; k++) await UniTask.Yield(PlayerLoopTiming.Update, token);     // the push / slow / marks take a frame to show
+                    once.Verdict = provider.Evaluate(row, scenario, log, injected.Decision, ctx);
+                }
+                once.PresenterLines = shapes.Presenter != null ? shapes.Presenter.Drawn - linesBefore : 0;
+                Commit(index, row, injected, once);
+            }
+            finally { Vol2VerbLab.Cleanup(scenario, shapes.Registry); shapes.Coordinator.AbortAll(); shapes.Registry.ExtrasOnly = false; }
+        }
+
         /// <summary>Stops counting, writes the summary and closes the CSV. Returns the status (PASS | FAIL | the forced one).</summary>
         public string EndRun(string forcedStatus = null)
         {
@@ -264,7 +314,9 @@ namespace Oheangbu.App
                     for (int i = 0; i < book.Spells.Count; i++)
                     {
                         var row = book.Spells[i];
-                        if (_services.Shapes != null && row.Verb == Verb.Once)
+                        IVol2LabProvider provider = _services.Shapes != null ? Vol2VerbLab.Find(row) : null;
+                        if (provider != null) await ProcessVerbRowAsync(i, row, provider, token);       // slice 4: 남긴다 / 번진다 (and later verbs) through their lab provider
+                        else if (_services.Shapes != null && row.Verb == Verb.Once)
                         {
                             // slice 3: the 20 한 번 glyphs run the real shapes against runtime dummies (path: line + wall; the others: one scenario)
                             foreach (string variant in Vol2OnceLab.Variants(row.Frame)) await ProcessOnceRowAsync(i, row, variant, token);
@@ -316,16 +368,16 @@ namespace Oheangbu.App
                 : d.Letter + " (not decoded)";
             var f = new string[]
             {
-                runId, _request.commit ?? "", book != null ? book.DtoHash : "", book != null ? book.NumbersSha256 : "", "0", once != null ? Vol2OnceLab.Scenario : Scenario, index.ToString(inv),
+                runId, _request.commit ?? "", book != null ? book.DtoHash : "", book != null ? book.NumbersSha256 : "", "0", once != null ? (once.ScenarioName ?? Vol2OnceLab.Scenario) : Scenario, index.ToString(inv),
                 row != null ? row.Letter.ToString() : "", row != null ? row.Body.ToString() : "", row != null ? row.Frame.ToString() : "", row != null ? row.Verb.ToString() : "",
                 row != null && row.Kind == VolSpellKind.Peak ? row.Letter.ToString() : "", row != null ? Vol2TemplateId.Of(row.Glyph).Name : "",
                 d != null && d.CastId.IsValid ? d.CastId.Value.ToString(inv) : "", Join(once, c => c.Attack.Value.ToString(inv)), Join(once, c => c.SwingId > 0 ? c.SwingId.ToString(inv) : ""),
-                Join(once, c => c.TargetId.ToString(inv)), Join(once, c => c.LifeRevision.ToString(inv)), "",
+                Join(once, c => c.TargetId.ToString(inv)), Join(once, c => c.LifeRevision.ToString(inv)), once != null && once.Verdict != null ? once.Verdict.MaterialIds : "",
                 decision, d != null ? d.Reason.ToString() : exception.Length > 0 ? "Exception" : "NoDecision", d != null ? d.Detail : exception,
                 once != null ? once.InkDelta : defence[0], once != null && once.Log != null ? (-once.Log.TotalHp).ToString("0.###", inv) : defence[1], defence[2], defence[3],
                 d != null && d.Plan != null ? d.Plan.Cost.ToString(inv) : "", d != null && d.Plan != null ? d.Plan.LifeUs.ToString(inv) : "", d != null ? d.DecidedUs.ToString(inv) : "",
-                d != null && d.Plan != null ? d.Plan.PerTarget.ToString(inv) : "", d != null && d.Plan != null ? d.Plan.Shared.ToString(inv) : "", "", "",
-                "", "", "", "", "",
+                d != null && d.Plan != null ? d.Plan.PerTarget.ToString(inv) : "", d != null && d.Plan != null ? d.Plan.Shared.ToString(inv) : "", once != null && once.Verdict != null ? once.Verdict.Balance : "", "",
+                once != null && once.Verdict != null ? once.Verdict.Created : "", once != null && once.Verdict != null ? once.Verdict.Consumed : "", once != null && once.Verdict != null ? once.Verdict.Depth : "", once != null && once.Verdict != null ? once.Verdict.Owner : "", "",
                 once != null && once.Log != null ? once.Log.StartUs.ToString(inv) : "", once != null && once.Log != null && once.Log.Contacts.Count > 0 ? once.Log.Contacts[0].NowUs.ToString(inv) : "",
                 once != null && once.Log != null ? once.Log.EndUs.ToString(inv) : "", "", "",
                 expected, actual, verdict, note,
@@ -336,7 +388,8 @@ namespace Oheangbu.App
                 once != null && once.Verdict != null ? once.Verdict.BodyObserved : "",
                 once != null && once.Log != null && once.Log.ParryWindowOpened ? (once.Log.WindowEndUs - once.Log.WindowStartUs).ToString(inv) : "",
                 once != null && once.Log != null ? once.Log.SwingReports.ToString(inv) : "", once != null && once.Log != null ? once.Log.SwingDuplicates.ToString(inv) : "",
-                once != null && once.Log != null ? once.Log.InkPaid.ToString(inv) : "", once != null ? (once.SimulatedSwing ? "swing" : "") : "", once != null ? once.Describe : "", once != null ? once.PresenterLines.ToString(inv) : ""
+                once != null && once.Log != null ? once.Log.InkPaid.ToString(inv) : "", once != null ? (once.SimulatedSwing ? "swing" : "") : "", once != null ? once.Describe : "", once != null ? once.PresenterLines.ToString(inv) : "",
+                once != null && once.Verdict != null ? once.Verdict.Ledger : "", once != null && once.Verdict != null ? once.Verdict.Checks : ""
             };
             if (f.Length != Columns.Length) throw new InvalidOperationException("CSV row has " + f.Length + " fields, header has " + Columns.Length);
             var sb = new StringBuilder();
@@ -394,7 +447,7 @@ namespace Oheangbu.App
             var s = new Summary
             {
                 status = status, runId = _request != null ? _request.runId : "", commit = _request != null ? _request.commit : "", mode = _services != null ? _services.Mode.ToString() : "",
-                csv = _csvPath ?? "", startedAt = _startedAt, finishedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), scenario = _services != null && _services.Shapes != null ? Scenario + "+" + Vol2OnceLab.Scenario : Scenario,
+                csv = _csvPath ?? "", startedAt = _startedAt, finishedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), scenario = _services != null && _services.Shapes != null ? Scenario + "+" + Vol2OnceLab.Scenario + "+" + Vol2VerbLab.Scenario : Scenario,
                 dtoHash = book != null ? book.DtoHash : "", numbersSha256 = book != null ? book.NumbersSha256 : "", tableSha256 = book != null ? book.TableSha256 : "",
                 rulebookError = book != null ? book.Error ?? "" : "no rulebook",
                 rows = _rows, pass = _pass, fail = _fail, accepted = _accepted, rejected = _rejected, exceptions = _exceptions, logErrors = _logErrors, framesWaited = _frames,

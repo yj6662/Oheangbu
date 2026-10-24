@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Oheangbu.App;
@@ -23,7 +23,7 @@ namespace Oheangbu.EditorTools.Vol2
     ///   C4 ring: the band, the walker across it, not the middle, not outside
     ///   C5 attachment (ㅓ 한 번 = parry): the window [t, t + 0.5 s), half-open; 3 colliders of one swing = ONE contact; a second swing = a second; outside the window nothing; no effect
     ///   C6 command ledger: the damage and body-effect keys of a contact are taken once
-    ///   C7 ink refused: no shape, no effect.  C8 other verbs: Unsupported, no error log.  C9 burn ticks.  C10 wet factor
+    ///   C7 ink refused: no shape, no effect.  C8 a verb with no executor: Unsupported, no error log.  C9 burn ticks.  C10 wet factor
     /// Expected values are written here from the frame geometry and the NumbersV3 rows, never read back from a run.</summary>
     public static class Vol2ShapeFixture
     {
@@ -228,12 +228,17 @@ namespace Oheangbu.EditorTools.Vol2
                 Check(r, "C7", log.Status == "InkRefused" && log.Finished && log.Contacts.Count == 0 && rig.Damage.Requests.Count == 0 && rig.Coord.ActiveCount == 0, "a refused ink spend: no shape, no contact, no damage");
             }
 
-            // ---- C8 other verbs ----
+            // ---- C8 a verb nobody registered (slice 4: 남긴다 and 번진다 have executors now; the registry is asked, so later slices need no edit here) ----
             {
                 var rig = Rig.Create(book); rig.Add("A4", 4, 0);
-                int unsupported = 0; rig.Coord.CastUnsupported += _ => unsupported++;
-                var log = rig.Cast('각', out _); rig.Advance(0.2);
-                Check(r, "C8", log.Status == "Unsupported" && log.Finished && unsupported == 1 && rig.Coord.UnsupportedCasts == 1 && rig.Damage.Requests.Count == 0, "남긴다 (not this slice): the cast is accepted by the route, Unsupported on the log, nothing happens, no error");
+                char unregistered = book.Spells.Select(s => s.Glyph).Where(g => g.Letter != '걱' && !rig.Coord.Verbs.Handles(g.Verb)).Select(g => g.Letter).FirstOrDefault();
+                if (unregistered == '\0') Check(r, "C8", true, "every verb has an executor (nothing is Unsupported any more)");
+                else
+                {
+                    int unsupported = 0; rig.Coord.CastUnsupported += _ => unsupported++;
+                    var log = rig.Cast(unregistered, out _); rig.Advance(0.2);
+                    Check(r, "C8", log.Status == "Unsupported" && log.Finished && unsupported == 1 && rig.Coord.UnsupportedCasts == 1 && rig.Damage.Requests.Count == 0, "a verb without an executor (" + unregistered + "): the cast is accepted by the route, Unsupported on the log, nothing happens, no error");
+                }
             }
 
             // ---- C9 burn ----

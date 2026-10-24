@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Oheangbu.Core.Domain;
 using Oheangbu.Vol2.Rules;
 using UnityEngine;
@@ -14,6 +14,9 @@ namespace Oheangbu.App
         sealed class Line { public GameObject Go; public LineRenderer Lr; public float DieAt; public Vol2CastLog Log; public bool Follow; }
 
         readonly List<Line> _lines = new List<Line>();
+        // slice 4: one outline per living material (residue, mark); it stays until the registry says the material ended
+        sealed class MatLine { public Line L; public Vol2Material M; }
+        readonly Dictionary<long, MatLine> _mats = new Dictionary<long, MatLine>();
         Vol2CastCoordinator _coordinator;
         Material _material;
         public bool Enabled = true;
@@ -27,12 +30,14 @@ namespace Oheangbu.App
             p._coordinator = coordinator;
             coordinator.CastBegan += p.OnBegan;
             coordinator.ContactResolved += p.OnContact;
+            coordinator.Materials.Created += p.OnMaterial;
+            coordinator.Materials.Ended += p.OnMaterialEnded;
             return p;
         }
 
         void OnDestroy()
         {
-            if (_coordinator != null) { _coordinator.CastBegan -= OnBegan; _coordinator.ContactResolved -= OnContact; }
+            if (_coordinator != null) { _coordinator.CastBegan -= OnBegan; _coordinator.ContactResolved -= OnContact; _coordinator.Materials.Created -= OnMaterial; _coordinator.Materials.Ended -= OnMaterialEnded; }
             if (_material != null) Destroy(_material);
         }
 
@@ -117,8 +122,58 @@ namespace Oheangbu.App
             l2.Lr.SetPosition(0, p + Vector3.left * 0.35f - Vector3.up * 0.35f); l2.Lr.SetPosition(1, p + Vector3.right * 0.35f + Vector3.up * 0.35f);
         }
 
+        // ---- materials (placeholder outlines: residue = a ring / fan / disc rising as dark ink, mark = a small flat disc) ----
+
+        void OnMaterial(Vol2Material m)
+        {
+            if (!Enabled || m.Attached) return;
+            var fp = m.Footprint;
+            int n = fp.Kind == Vol2FootprintKind.Fan ? 16 : 32;
+            var line = NewLine(new Vol2CastLog { Glyph = new Glyph(m.Letter, m.Body, Frame.Path, Verb.Leave) }, "Material_" + m.Id.Value + (m.Kind == Vol2MaterialKind.Mark ? "_mark" : ""), n + 3, m.Kind == Vol2MaterialKind.Mark ? 0.05f : 0.09f, float.MaxValue / 2f, fp.Kind != Vol2FootprintKind.Fan);
+            _mats[m.Id.Value] = new MatLine { L = line, M = m };
+            PlaceMaterial(_mats[m.Id.Value], _coordinator.Services.Clock.NowUs);
+        }
+
+        void OnMaterialEnded(Vol2Material m, Vol2MaterialEnd why)
+        {
+            if (!_mats.TryGetValue(m.Id.Value, out var ml)) return;
+            _mats.Remove(m.Id.Value);
+            if (ml.L != null) ml.L.DieAt = 0f;      // Update destroys it
+        }
+
+        void PlaceMaterial(MatLine ml, long nowUs)
+        {
+            var fp = ml.M.Footprint; var lr = ml.L.Lr; Vector3 o = fp.Origin + Vector3.up * 0.07f;
+            switch (fp.Kind)
+            {
+                case Vol2FootprintKind.Fan:
+                    {
+                        int arc = 16; float depth = fp.FanDepth * fp.ScaleAt(nowUs);
+                        lr.positionCount = arc + 3; lr.SetPosition(0, o);
+                        for (int i = 0; i <= arc; i++)
+                        {
+                            float a = Mathf.Lerp(-fp.FanHalfAngleRad, fp.FanHalfAngleRad, i / (float)arc);
+                            lr.SetPosition(i + 1, o + Quaternion.AngleAxis(a * Mathf.Rad2Deg, Vector3.up) * fp.Forward * depth);
+                        }
+                        lr.SetPosition(arc + 2, o); break;
+                    }
+                default:
+                    {
+                        float r = fp.Kind == Vol2FootprintKind.Ring ? (fp.RingInner + fp.RingOuter) * 0.5f : fp.Radius;
+                        int n = 32; lr.positionCount = n;
+                        for (int i = 0; i < n; i++) { float a = i * Mathf.PI * 2f / n; lr.SetPosition(i, o + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * r); }
+                        break;
+                    }
+            }
+        }
+
         void Update()
         {
+            if (_mats.Count > 0 && _coordinator != null)
+            {
+                long now = _coordinator.Services.Clock.NowUs;
+                foreach (var ml in _mats.Values) if (ml.M.Footprint.Kind == Vol2FootprintKind.Fan && ml.L.Lr != null) PlaceMaterial(ml, now);
+            }
             for (int i = _lines.Count - 1; i >= 0; i--)
             {
                 var l = _lines[i];
