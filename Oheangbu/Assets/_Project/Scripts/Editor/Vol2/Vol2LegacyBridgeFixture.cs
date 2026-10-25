@@ -251,7 +251,8 @@ namespace Oheangbu.EditorTools.Vol2
                             if (m.IsKeywordEnabled("_EMISSION")) { emissive++; if (emissiveNames.Count < 6) emissiveNames.Add(m.name); }
                         }
                     }
-                Check(r, "L4", hits.Count == 0 && lights == 0, "no emission added: the bridge code writes no material, keyword, colour or light" + (hits.Count > 0 ? " FOUND: " + string.Join("; ", hits) : "")
+                // D308-150 V11 (2026-10-25, "남긴 규칙까지 전부 지워버려"): spell VFX have no look rules (glow / emission / light allowed) - L4 / L8 / L10 report these as INFO, never fail
+                Check(r, "L4", true, "INFO (D308-150 V11: no look rule) - emission added by the bridge code: the bridge code writes no material, keyword, colour or light" + (hits.Count > 0 ? " FOUND: " + string.Join("; ", hits) : "")
                     + "; the legacy bodies carry no Light (" + lights + "); their " + mats + " materials are used as they are (_EMISSION on " + emissive + (emissiveNames.Count > 0 ? ": " + string.Join(", ", emissiveNames) : "") + ", unchanged)");
             }
 
@@ -498,8 +499,71 @@ namespace Oheangbu.EditorTools.Vol2
                 Need("derived", Vol2LegacyDonors.Derived, p => p.Derived308Prefab, false, "마");
                 Need("floor", Vol2LegacyDonors.FanFloor + "막농몽곳", p => p.Zone308Prefab, true);
                 Need("burst", "뭄멈넘", p => p.Burst308Prefab);
-                Check(r, "L8", set != null && missing.Count == 0 && lights == 0, "every donor part of the step 4 mapping resolves in the main glyph table (" + zoneBodies + " lasting Vfx308ZoneBody parts), no Light; their " + mats + " materials used as they are (_EMISSION on " + emissive + ", unchanged)"
+                Check(r, "L8", set != null && missing.Count == 0, "every donor part of the step 4 mapping resolves in the main glyph table (" + zoneBodies + " lasting Vfx308ZoneBody parts), no Light; their " + mats + " materials used as they are (_EMISSION on " + emissive + ", unchanged)"
                     + (missing.Count > 0 ? " MISSING: " + string.Join(", ", missing) : ""));
+            }
+
+            // ---- L9 (step 5a, task A) one glyph body per vol.2 cast: the stroke adapter is told the presentation is owned elsewhere when the vol.2 route accepts ----
+            // (the Play-mode proof is the capture's stroke=1 check: Art/SpellVFX308/Vol2Vfx/legacy_bridge/step5a/probe_*; this is the code contract that keeps it)
+            {
+                string p = Path.Combine(Application.dataPath, "_Project/Scripts/App/CombatLoopWiring.Vol2.cs");
+                string code = File.Exists(p) ? File.ReadAllText(p) : "";
+                int route = code.IndexOf("bool TryRouteVol2(", StringComparison.Ordinal);
+                string body = route >= 0 ? code.Substring(route, Math.Min(1600, code.Length - route)) : "";
+                int refuse = body.IndexOf("if (!decision.Accepted) _brushAdapter?.NotifyCastFailed();", StringComparison.Ordinal);
+                int owned = body.IndexOf("else _brushAdapter?.NotifyFieldPresentationOwned();", StringComparison.Ordinal);
+                bool legacyFirst = body.IndexOf("if (_spellRoute == null || !_spellRoute.IsVol2) return false;", StringComparison.Ordinal) is int g && g >= 0 && (owned < 0 || g < owned);
+                // the adapter side: FieldOwned stops SpawnPattern only (its first line), the unravel / fade of the commit stay
+                string ap = Path.Combine(Application.dataPath, "_Project/Scripts/App/BrushStrokeFeedAdapter.cs");
+                string adapter = File.Exists(ap) ? File.ReadAllText(ap) : "";
+                bool spawnGuard = adapter.Contains("if ((_pendingSummon && _pendingSummonExternal) || _pendingFieldExternal) return;");
+                Check(r, "L9", route >= 0 && refuse >= 0 && owned > refuse && legacyFirst && spawnGuard,
+                    "vol.2 accept -> BrushStrokeFeedAdapter.NotifyFieldPresentationOwned (its SpawnPattern makes no second glyph body; the drawn letter still unravels), refusal -> NotifyCastFailed, Legacy308 returns before both"
+                    + (route < 0 ? " NO TryRouteVol2" : "") + (refuse < 0 ? " NO refusal line" : "") + (owned <= refuse ? " NO accept line" : "") + (!legacyFirst ? " LEGACY NOT FIRST" : "") + (!spawnGuard ? " ADAPTER GUARD CHANGED" : ""));
+            }
+
+            // ---- L10 (step 5a, task B) the lasting variants: copies under Vol2Vfx/LegacyLasting of the very parts the stage borrows, no light / emission / glow ----
+            {
+                var lset = AssetDatabase.LoadAssetAtPath<Vol2LegacyLastingSet>(Vol2LastingBuild.SetPath);
+                var bad = new List<string>(); int lights = 0, emissive = 0, glow = 0, notInk = 0, mats = 0, variants = 0;
+                if (lset != null)
+                {
+                    var all = new List<GameObject>();
+                    foreach (var pr in lset.Variants ?? new Vol2LegacyLastingSet.Pair[0])
+                    {
+                        if (pr.From == null || pr.To == null) { bad.Add("pair " + (pr.From != null ? pr.From.name : "null") + " -> " + (pr.To != null ? pr.To.name : "null")); continue; }
+                        if (AssetDatabase.GetAssetPath(pr.From).StartsWith(Vol2LastingBuild.Out, StringComparison.Ordinal)) bad.Add("source inside LegacyLasting: " + pr.From.name);
+                        all.Add(pr.To);
+                    }
+                    foreach (var (name, arr) in new[] { ("growth", lset.Growth), ("wrap", lset.Wrap), ("stake", lset.Stake), ("band", lset.Band), ("ring pattern", lset.PatRing), ("fan pattern", lset.PatFan), ("seal pattern", lset.PatSeal) })
+                        for (int i = 0; i < 5; i++) { if (arr == null || i >= arr.Length || arr[i] == null) bad.Add(name + " " + i); else all.Add(arr[i]); }
+                    foreach (var go in all.Distinct())
+                    {
+                        variants++;
+                        if (!AssetDatabase.GetAssetPath(go).StartsWith(Vol2LastingBuild.Out + "/", StringComparison.Ordinal)) bad.Add("not under LegacyLasting: " + go.name);
+                        lights += go.GetComponentsInChildren<Light>(true).Length;
+                        foreach (var rr in go.GetComponentsInChildren<Renderer>(true))
+                            foreach (var m in rr.sharedMaterials)
+                            {
+                                if (m == null) continue; mats++;
+                                if (m.IsKeywordEnabled("_EMISSION")) emissive++;
+                                if (m.HasProperty("_Glow") && m.GetFloat("_Glow") > 0.001f) glow++;
+                                if (m.shader == null || (m.shader.name != "Oheangbu/SpellVFX308/InkBleed" && m.shader.name != "Oheangbu/VFX120/SeedLeafMark")) notInk++;   // the old ink parts' shader, or the old pattern-mark shader (KCISA decals)
+                            }
+                    }
+                    // every donor the stage reaches has its variant (the rims / seals / buff bands of the glyph table, the lab ward membranes)
+                    var vset = AssetDatabase.LoadAssetAtPath<SpellVisualSetSO>(AssetDatabase.GUIDToAssetPath(MainVisualSetGuid));
+                    Vfx120Profile PP(char c) { var fx = vset != null && vset.TryGet(c, out var v) && v.FxPrefab != null ? v.FxPrefab.GetComponent<Vfx120Effect>() : null; return fx != null ? fx.Profile : null; }
+                    for (int i = 0; i < 5; i++)
+                    {
+                        if (lset.VariantOf(PP(Vol2LegacyDonors.Rim[i])?.Zone308Prefab) == null) bad.Add("no variant of rim " + Vol2LegacyDonors.Rim[i]);
+                        if (lset.VariantOf(PP(Vol2LegacyDonors.Seal[i])?.Mark308Prefab) == null) bad.Add("no variant of seal " + Vol2LegacyDonors.Seal[i]);
+                        if (lset.VariantOf(PP(Vol2LegacyDonors.Aura[i])?.Aura308Prefab) == null) bad.Add("no variant of buff band " + Vol2LegacyDonors.Aura[i]);
+                    }
+                }
+                Check(r, "L10", lset != null && bad.Count == 0,   // light / emission / glow / shader counts: INFO (D308-150 V11)
+                    "the step 5a lasting variants (" + (lset != null ? "set at " + Vol2LastingBuild.SetPath + ", Enabled=" + lset.Enabled : "NO SET at " + Vol2LastingBuild.SetPath) + "): " + variants + " prefabs under LegacyLasting, light " + lights
+                    + ", emission " + emissive + ", glow " + glow + ", non-InkBleed " + notInk + " (of " + mats + " material uses)" + (bad.Count > 0 ? " BAD: " + string.Join(", ", bad) : ""));
             }
         }
     }

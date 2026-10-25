@@ -95,9 +95,17 @@ namespace Oheangbu.App
         Body B(Vol2VfxInstance inst) => inst.Log.Glyph.Body;
         char L(Vol2VfxInstance inst) => inst.Log.Glyph.Letter;
 
-        Vol2VfxPart Lay(Vol2VfxInstance inst, string role, char donor, char fallback, Vol2LegacyField field, Vector3 point, float radius, Vol2Material mat, long nowUs, long hostId = 0, bool onCaster = false, float seconds = 0f)
+        Vol2VfxPart Lay(Vol2VfxInstance inst, string role, char donor, char fallback, Vol2LegacyField field, Vector3 point, float radius, Vol2Material mat, long nowUs, long hostId = 0, bool onCaster = false, float seconds = 0f, Vol2Footprint shape = null)
         {
             var def = new Vol2LegacyPart { Donor = donor, Fallback = fallback, Field = field, Body = B(inst), Point = point, Facing = inst.Forward, Radius = radius, HostId = hostId, OnCaster = onCaster, Seconds = seconds, Role = role };
+            // step 5a: the footprint's shape, for a pattern the stage lays on the state (a ring's band, a fan clipped to its sector)
+            var f = shape ?? (mat != null ? mat.Footprint : null);
+            if (f != null && f.Kind == Vol2FootprintKind.Ring) def.IsRing = true;
+            else if (f != null && f.Kind == Vol2FootprintKind.Fan)
+            {
+                def.IsFan = true; def.FanApex = Ground(inst, f.Origin); def.FanForward = f.Forward;
+                def.FanDepth = f.FanDepth * f.ScaleAt(nowUs); def.FanHalfAngle = f.FanHalfAngleRad * Mathf.Rad2Deg;
+            }
             var p = LayPart(inst, def, mat, nowUs);
             St(inst).Laid.Add((role, p));
             return p;
@@ -176,12 +184,12 @@ namespace Oheangbu.App
             // ㅜ the timed rings of 번진다 / 가른다 (the band lives timing.n.life / timing.s.ringLife, not a material) and the 돌아온다 ring going out and back: the glyph's own 결계 rim
             if (Frame == Frame.Ring && (Verb == Verb.Spread || Verb == Verb.Split || Verb == Verb.Return))
             {
-                var p = Lay(inst, Verb == Verb.Return ? "trip" : "ring", Vol2LegacyDonors.Of(Vol2LegacyDonors.Ward, body), '\0', Vol2LegacyField.Ward, spec.Origin, Mathf.Max(0.5f, spec.RingRadius), null, now);
+                var p = Lay(inst, Verb == Verb.Return ? "trip" : "ring", Vol2LegacyDonors.Of(Vol2LegacyDonors.Ward, body), '\0', Vol2LegacyField.Ward, spec.Origin, Mathf.Max(0.5f, spec.RingRadius), null, now, shape: Vol2Footprint.Ring(spec));
                 if (Verb == Verb.Return) s.Trip = p; else s.Ring = p;
             }
             // ㅗ 돌아온다: the fan's floor that goes out with the fan and comes back
             if (Frame == Frame.Fan && Verb == Verb.Return)
-                s.Trip = Lay(inst, "trip", Vol2LegacyDonors.Of(Vol2LegacyDonors.Ward, body), '\0', Vol2LegacyField.Ward, spec.Origin + spec.Forward * (spec.FanDepth * 0.5f), Mathf.Clamp(spec.FanDepth * 0.5f, 1f, 3.5f), null, now);
+                s.Trip = Lay(inst, "trip", Vol2LegacyDonors.Of(Vol2LegacyDonors.Ward, body), '\0', Vol2LegacyField.Ward, spec.Origin + spec.Forward * (spec.FanDepth * 0.5f), Mathf.Clamp(spec.FanDepth * 0.5f, 1f, 3.5f), null, now, shape: Vol2Footprint.Fan(spec));
         }
 
         // ---- materials ----
@@ -213,7 +221,8 @@ namespace Oheangbu.App
                 {
                     // ㅏ 심는다: the install seal on the body it was planted on (the glyph's own: 감 남 맘 삼 암)
                     long host = HostAt(inst, fp.Origin);
-                    Lay(inst, "seed", letter, Vol2LegacyDonors.Of(Vol2LegacyDonors.Seal, body), Vol2LegacyField.Mark, fp.Origin, 1f, m, now, host);
+                    // (Seconds = the seed's scheduled life: the old seal ignores it; a step 5a stake fits its held strokes' look to it, the end is still the executor's)
+                    Lay(inst, "seed", letter, Vol2LegacyDonors.Of(Vol2LegacyDonors.Seal, body), Vol2LegacyField.Mark, fp.Origin, 1f, m, now, host, false, Vol2Time.ToSecondsF(m.ExpiresUs - now));
                     // the seal alone was not read on a dark body (step 4 probe): the element's plain hit is held on the body's near side while the seed waits
                     Lay(inst, "seed-ink", Vol2LegacyDonors.Of(Vol2LegacyDonors.HitPlain, body), '\0', Vol2LegacyField.Contact, fp.Origin, 1f, m, now, host, false, Vol2Time.ToSecondsF(m.ExpiresUs - now));
                 }

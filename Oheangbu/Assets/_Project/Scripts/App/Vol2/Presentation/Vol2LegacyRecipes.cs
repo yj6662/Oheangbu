@@ -62,6 +62,11 @@ namespace Oheangbu.App
         /// The end itself is still the executor's event.</summary>
         public float Seconds;
         public string Role;
+        /// <summary>Step 5a: the shape of the footprint the part shows (read from the material's footprint or the cast's spec; presentation only): a ring (its band),
+        /// or a fan (its apex on the ground, forward, depth, half angle in degrees) - a pattern laid on the state follows it (a fan's pattern is clipped to the fan).</summary>
+        public bool IsRing, IsFan;
+        public Vector3 FanApex, FanForward;
+        public float FanDepth, FanHalfAngle;
     }
 
     /// <summary>Step 4: one short old picture (a hit, a burst, a derived shot, the back leg's body). It plays out on its own (a beat, never a state).</summary>

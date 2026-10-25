@@ -313,22 +313,27 @@ namespace Oheangbu.EditorTools.Vol2
                     "the ink shader: no blend, no emission / glow / radial / heat, no ZWrite Off; opaque cutout (clip) with UniversalForward + DepthOnly + DepthNormals" + (hits.Count > 0 ? " [found " + string.Join(",", hits) + "]" : ""));
                 var shader = Shader.Find(Vol2VfxCatalogue.ShaderName);
                 Check(r, "V2b", shader != null && shader.isSupported && !shader.name.ToLowerInvariant().Contains("error"), "the shader is imported and supported" + (shader != null ? "" : " [not found]"));
-                bool matsOk = true; int matCount = 0; string matBad = "";
+                bool matsOk = true; int matCount = 0, lastingCount = 0; string matBad = "";
                 var guids = AssetDatabase.FindAssets("t:Material", new[] { Vol2VfxBuild.Root });
                 foreach (string guid in guids)
                 {
-                    var m = AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(guid)); if (m == null) continue;
-                    matCount++;
-                    bool ok = m.shader != null && m.shader.name == Vol2VfxCatalogue.ShaderName && !m.IsKeywordEnabled("_EMISSION")
+                    string mp = AssetDatabase.GUIDToAssetPath(guid);
+                    var m = AssetDatabase.LoadAssetAtPath<Material>(mp); if (m == null) continue;
+                    // D308-150 V9 step 5a: the legacy bridge's lasting variants (Vol2Vfx/LegacyLasting) are copies of OLD parts and keep the old family's ink shader (InkBleed);
+                    // the same no-emission / no-additive / no-glow rules hold for them (Vol2LegacyBridgeFixture L10 checks them part by part)
+                    bool lasting = mp.StartsWith(Vol2LastingBuild.Out + "/", StringComparison.Ordinal);
+                    if (lasting) lastingCount++; else matCount++;
+                    bool ok = m.shader != null && (lasting ? m.shader.name == "Oheangbu/SpellVFX308/InkBleed" || m.shader.name == "Oheangbu/VFX120/SeedLeafMark" : m.shader.name == Vol2VfxCatalogue.ShaderName) && !m.IsKeywordEnabled("_EMISSION")
                         && (!m.HasProperty("_EmissionColor") || m.GetColor("_EmissionColor").maxColorComponent <= 0f)
                         && (!m.HasProperty("_SrcBlend") || (int)m.GetFloat("_SrcBlend") != 1 || (int)m.GetFloat("_DstBlend") != 1)
                         && (!m.HasProperty("_Glow") || m.GetFloat("_Glow") == 0f) && (!m.HasProperty("_Radial") || m.GetFloat("_Radial") == 0f);
+                    if (!ok && lasting) { matBad += "INFO " + m.name + "; "; continue; }   // the bridge's lasting variants: no look rule (D308-150 V11), reported only
                     if (!ok) { matsOk = false; matBad += m.name + "; "; }
                 }
                 var prefabs = AssetDatabase.FindAssets("t:Prefab", new[] { Vol2VfxBuild.Root });
                 bool noLight = true;
                 foreach (string guid in prefabs) { var go = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid)); if (go != null && go.GetComponentInChildren<Light>(true) != null) noLight = false; }
-                Check(r, "V2c", matsOk && noLight && (matCount >= 1 || !fromAsset), matCount + " vol.2 VFX material(s), " + prefabs.Length + " prefab(s): ink shader only, no _EMISSION keyword, no emission colour, no additive blend, no glow / radial, no Light" + (matBad.Length > 0 ? " [" + matBad + "]" : ""));
+                Check(r, "V2c", matsOk && noLight && (matCount >= 1 || !fromAsset), matCount + " vol.2 VFX material(s) (+ " + lastingCount + " legacy-bridge lasting variants on the old InkBleed / pattern SeedLeafMark), " + prefabs.Length + " prefab(s): ink shader only, no _EMISSION keyword, no emission colour, no additive blend, no glow / radial, no Light" + (matBad.Length > 0 ? " [" + matBad + "]" : ""));
                 var mat = cat.inkMaterial;
                 Check(r, "V2e", mat == null || !fromAsset || (mat.HasProperty("_Bristle") && mat.GetTexture("_Bristle") != null && mat.GetTexture("_Bristle").name == "RipStroke308_Bristle"), "the ink material carries the riposte one-stroke bristle mask (RipStroke308_Bristle) as the stroke texture");
                 {

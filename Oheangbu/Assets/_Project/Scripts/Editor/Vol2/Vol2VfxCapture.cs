@@ -107,6 +107,11 @@ namespace Oheangbu.EditorTools.Vol2
         // the pending hit context the wiring computed (target, flight, area plan). apex=0|1 sets the vol.2 TE-S3-6 launch switch for the run (restored at the end).
         static bool _legacyFeed, _wardBand; static bool? _apex; static bool _apexSaved; static Vol2ShapeTuning _apexTuning; static int _fed, _fedMissing;
         static readonly List<EnemyVitals> LegacyTargets = new List<EnemyVitals>(); static LockOn LegacyLock;
+        // step 5a (task A, the double-spawn guard): stroke=1 hands the REAL stroke adapter one drawn stroke before the letter and commits it after (its private input
+        // handlers OnStrokeStarted / OnStrokePointAdded / OnStrokeEnded / OnCommitted, as DrawingProjectionRegression drives them), so the adapter's own commit path runs
+        // exactly as with a drawn letter; every game frame the glyph bodies on screen are counted by who made them (the adapter's "SpellPattern" / the bridge's
+        // "Vol2Legacy_*"). LAB-ONLY. lasting=0|1 = the step 5a lasting variants of the bridge stage for this run (Vol2LegacyLastingSet; restored at the end).
+        static bool _strokeFeed; static bool? _lasting; static bool? _lastingSaved; static readonly HashSet<int> AdapterBodies = new HashSet<int>(), BridgeBodies = new HashSet<int>(), Unravels = new HashSet<int>();
 
         /// <summary>D308-150 V9: the end of a job of the bridge comparison: every old body still running its own life (Vfx120Effect destroys itself only when its life is over)
         /// and the dummies the old route was given are taken away, so nothing of one glyph shows in the next one's frames. LAB-ONLY.</summary>
@@ -205,7 +210,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else templates.Add(t.Trim());
             }
             _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _rules = false; _p09a = false; _legacy = false; Dists.Clear();
-            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f;
+            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; AdapterBodies.Clear(); BridgeBodies.Clear();
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
             {
@@ -226,6 +231,8 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "legacy") { _legacy = v == "1" || v == "2"; _legacyFeed = v == "2"; }
                 else if (k == "apex") _apex = v.Trim() == "1";
                 else if (k == "wardband") _wardBand = v.Trim() == "1";
+                else if (k == "stroke") _strokeFeed = v.Trim() == "1";
+                else if (k == "lasting") _lasting = v.Trim() == "1";
                 else if (k == "dist") Dists.AddRange(v.Split('/').Select(x => float.Parse(x, Inv)));
                 else if (k == "p0" && v.Trim() == "9a") _p09a = true;
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
@@ -313,7 +320,7 @@ namespace Oheangbu.EditorTools.Vol2
                     break;
                 default: j.MaxAge = 1.5; j.MinAge = 1.2; break;
             }
-            if (Batchim(template) && !_p09a && !_legacy) Step4Job(j);
+            if (Batchim(template) && !_p09a && !_legacy) { Step4Job(j); if (_lasting.HasValue) j.Variant = _lasting.Value ? "lasting1" : "lasting0"; }   // step 5a: old / new in their own folders
             if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : Batchim(template) ? 4.5 : 1.6; j.MinAge = j.MaxAge; j.Variant = _legacyFeed ? "old" : "legacy"; }
             // D308-150 V9: the old visuals live longer than the vol.2 ink looks (windup + flight + impact): both sides of the legacy bridge comparison record the same full
             // length (no early stop), with no lab-simulated parry (the old route only shows a parry's success on a real enemy impact)
@@ -608,6 +615,8 @@ namespace Oheangbu.EditorTools.Vol2
             _apexTuning = p.Coordinator.Tuning; _apexSaved = _apexTuning.LaunchAtApex;
             if (_apex.HasValue) _apexTuning.LaunchAtApex = _apex.Value;
             if (p.Legacy != null) p.Legacy.WardOnRingBand = _wardBand;
+            // step 5a: lasting=0|1 = the bridge stage's lasting variants for this run (Finish puts the stage's own override back)
+            if (p.Legacy != null) { _lastingSaved = p.Legacy.LastingOverride; if (_lasting.HasValue) p.Legacy.LastingOverride = _lasting; Finished.Add("step 5a lasting variants = " + p.Legacy.LastingVariants + (_lasting.HasValue ? " (lasting=" + (_lasting.Value ? 1 : 0) + ")" : " (the set's switch)")); }
             Finished.Add("TE-S3-6 LaunchAtApex = " + _apexTuning.LaunchAtApex + " (scope default " + _apexSaved + ", path " + _apexTuning.PathApexSeconds.ToString("0.00", Inv) + " s, fan " + _apexTuning.FanApexSeconds.ToString("0.00", Inv) + " s)"
                 + " | bridge stage " + (p.Legacy != null ? "bound" : "MISSING"));
             _lookDriver = Object.FindFirstObjectByType<Oheangbu.App.World.LookDriver308>();
@@ -973,12 +982,14 @@ namespace Oheangbu.EditorTools.Vol2
         static void CastNow()
         {
             var c = _ctx;
-            if (_legacy) { LegacyRefill(c); RaiseLetter(c, _job.Letter); c.Log = null; _legacyFrames = 0; _st = St.Record; return; }
+            if (_legacy) { LegacyRefill(c); if (_strokeFeed) FeedStroke(c); RaiseLetter(c, _job.Letter); if (_strokeFeed) CommitStroke(c); c.Log = null; _legacyFrames = 0; _st = St.Record; return; }
             c.Shapes.PoolInk?.Refill();
             c.Wiring.Vol2Defence?.ResetForRow();
             _beganLog = null; _lastDecision = null;
             if (_job.Template == "AJ") { BeginRiposte(c); return; }
+            if (_strokeFeed) FeedStroke(c);
             RaiseLetter(c, _job.Letter);
+            if (_strokeFeed) CommitStroke(c);
             c.Log = _beganLog;
             // step 4: 걱 is the recovery (the defence kit runs it, no vol.2 cast log): its old look comes from the kit's own records - recorded on the frame count
             if (c.Log == null && _lastDecision != null && _lastDecision.Accepted && _lastDecision.IsRecovery) { _noLogFrames = 0; _note = "recovery (the defence kit's, no cast log)"; _st = St.Record; return; }
@@ -1024,9 +1035,61 @@ namespace Oheangbu.EditorTools.Vol2
             if (age >= j.MaxAge || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
         }
 
+        /// <summary>stroke=1: one drawn stroke into the real adapter (its private input handlers; the projection happens in its LateUpdate, as for a drawn letter).</summary>
+        static void FeedStroke(Ctx c)
+        {
+            var a = c.Wiring != null ? c.Wiring.BrushAdapter308 : null;
+            if (a == null) { Problems.Add(_job.Name + ": stroke=1 but no BrushStrokeFeedAdapter on the wiring"); return; }
+            try
+            {
+                AdapterCall(a, "OnStrokeStarted");
+                for (int i = 0; i < 6; i++) AdapterCall(a, "OnStrokePointAdded", new Vector2(Screen.width * (0.42f + 0.03f * i), Screen.height * (0.56f - 0.02f * i)));
+                AdapterCall(a, "OnStrokeEnded");
+            }
+            catch (Exception e) { Problems.Add(_job.Name + " stroke feed: " + (e.InnerException ?? e).Message); }
+        }
+
+        /// <summary>stroke=1: the drawing input's commit (recognised = true) right after the letter, in the same frame, as the input raises it.</summary>
+        static void CommitStroke(Ctx c)
+        {
+            var a = c.Wiring != null ? c.Wiring.BrushAdapter308 : null;
+            if (a == null) return;
+            try { AdapterCall(a, "OnCommitted", true); }
+            catch (Exception e) { Problems.Add(_job.Name + " stroke commit: " + (e.InnerException ?? e).Message); }
+        }
+
+        static void AdapterCall(BrushStrokeFeedAdapter a, string method, params object[] args)
+        {
+            var m = typeof(BrushStrokeFeedAdapter).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance);
+            if (m == null) throw new MissingMethodException("BrushStrokeFeedAdapter." + method);
+            m.Invoke(a, args.Length == 0 ? null : args);
+        }
+
+        /// <summary>stroke=1: every glyph body on screen this frame, by who made it (the stroke adapter names its pattern "SpellPattern"; the bridge stage "Vol2Legacy_*").</summary>
+        static void CountBodies()
+        {
+            foreach (var fx in Object.FindObjectsByType<SpellSequenceEffect>(FindObjectsSortMode.None))
+            {
+                if (fx == null || !fx.gameObject.scene.IsValid()) continue;
+                var root = fx.transform.root.gameObject;
+                if (root.name == "SpellPattern") AdapterBodies.Add(root.GetInstanceID());
+                // the bridge's cast body is "Vol2Legacy_<one glyph>_<kind>" (its lasting parts are "Vol2Legacy_<role>_<prefab>")
+                else if (root.name.Length > 13 && root.name.StartsWith("Vol2Legacy_", StringComparison.Ordinal) && root.name[12] == '_' && fx.transform == root.transform) BridgeBodies.Add(root.GetInstanceID());
+            }
+            foreach (var u in Object.FindObjectsByType<InkUnravel308>(FindObjectsSortMode.None)) if (u != null) Unravels.Add(u.GetInstanceID());   // the drawn letter coming apart into the brush
+        }
+
+        static string BodyCount()
+        {
+            string s = " | stroke check: adapter bodies " + AdapterBodies.Count + ", bridge bodies " + BridgeBodies.Count + ", letter unravels " + Unravels.Count;
+            AdapterBodies.Clear(); BridgeBodies.Clear(); Unravels.Clear();
+            return s;
+        }
+
         static void Record()
         {
             var c = _ctx; var j = _job;
+            if (_strokeFeed) CountBodies();
             if (_legacy)
             {
                 _legacyFrames++;
@@ -1186,7 +1249,7 @@ namespace Oheangbu.EditorTools.Vol2
             {
                 try { _index?.Dispose(); } catch (Exception) { }
                 _index = null;
-                Finished.Add(j.Name + " | legacy letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (_legacyFeed ? " | old bodies fed " + _fed + " missing " + _fedMissing : ""));
+                Finished.Add(j.Name + " | legacy letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (_legacyFeed ? " | old bodies fed " + _fed + " missing " + _fedMissing : "") + (_strokeFeed ? BodyCount() : ""));
                 _fed = 0; _fedMissing = 0;
                 ClearOldBodies(c);
                 foreach (var d in c.Dummies) if (d != null) Object.Destroy(d);
@@ -1204,13 +1267,14 @@ namespace Oheangbu.EditorTools.Vol2
             try { _rulesCsv?.Dispose(); } catch (Exception) { }
             _rulesCsv = null;
             string summary = j.Name + " | letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (c.Log != null ? " | cast " + c.Log.Status + " contacts " + c.Log.Contacts.Count + " materials " + c.Log.Materials.Count : " | NO CAST");
-            Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : ""));
+            Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : "") + (_strokeFeed ? BodyCount() : ""));
             _rip?.CancelAll(); _ripSlot = null;
             var stage = c.Presenter.Legacy;
             string bridge = stage != null ? " | bridge begun " + stage.Begun + " missing " + stage.Missing + " swings " + stage.SwingsShown + " tip-ink " + stage.InkShown + " stems " + stage.StemsShown
                 + " last body " + stage.LastPrefab + " live-before-reset " + stage.LiveCount : "";
             if (stage != null) bridge += " | parts laid " + stage.PartsLaid + " missing " + stage.PartsMissing + " closed " + stage.PartsClosed + " live " + stage.LivePartCount + " | pulses " + stage.PulsesShown + " missing " + stage.PulsesMissing
-                + " | last part " + stage.LastPart + " | last pulse " + stage.LastPulse + (stage.RecoveriesShown > 0 ? " | recoveries " + stage.RecoveriesShown : "");
+                + " | last part " + stage.LastPart + " | last pulse " + stage.LastPulse + (stage.RecoveriesShown > 0 ? " | recoveries " + stage.RecoveriesShown : "")
+                + " | variants " + stage.PartsVaried + " skipped " + stage.PartsSkipped;
             try { var rec = c.Wiring.Vol2Defence != null ? c.Wiring.Vol2Defence.Recovery : null; if (rec != null && rec.Active) rec.Cancel(); } catch (Exception) { }
             if (_casterOverride != null) { _casterOverride.CasterPositionOverride = null; _casterOverride = null; }
             c.Coordinator.AbortAll(); c.Presenter.Model.Tick(c.Services.Clock.NowUs); c.Presenter.ClearAll();
@@ -1280,6 +1344,8 @@ namespace Oheangbu.EditorTools.Vol2
                 if (lw != null && _onLegacyPlanned != null) lw.CastPlanned -= _onLegacyPlanned;
                 if (lw != null && _onLegacyAccepted != null) lw.CastAccepted -= _onLegacyAccepted;
                 if (_apexTuning != null) _apexTuning.LaunchAtApex = _apexSaved;
+                var pres2 = Object.FindFirstObjectByType<Vol2VfxPresenter>();
+                if (pres2 != null && pres2.Legacy != null && _lasting.HasValue) pres2.Legacy.LastingOverride = _lastingSaved;
             }
             catch (Exception) { }
             _onLegacyPlanned = null; _onLegacyAccepted = null; _apexTuning = null;

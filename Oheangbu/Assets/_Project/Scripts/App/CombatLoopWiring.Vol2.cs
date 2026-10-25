@@ -33,6 +33,10 @@ namespace Oheangbu.App
             // a refusal (not a letter, locked, no data, not paid for) looks like the old misfire to the brush; the ink of an accepted cast is
             // paid inside the adapter by the defence kit's payment gate, before CastAccepted is raised
             if (!decision.Accepted) _brushAdapter?.NotifyCastFailed();
+            // D308-150 V9 step 5a: an accepted vol.2 cast's glyph body is the vol.2 view's (Vol2LegacyStage plays the old body on the executor's clock). The stroke
+            // adapter must not spawn its own copy at the commit (SpawnPattern, aimed at nothing): the same "presentation owned elsewhere" notice the field casts use
+            // stops only that body - the drawn letter still unravels into the brush and fades as the old game's commit does (BeginUnravel308 / BeginFading).
+            else _brushAdapter?.NotifyFieldPresentationOwned();
             return true;
         }
     }
