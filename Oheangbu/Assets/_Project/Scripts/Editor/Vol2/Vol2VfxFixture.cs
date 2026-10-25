@@ -141,19 +141,23 @@ namespace Oheangbu.EditorTools.Vol2
                             case 2: shape = flat >= 5 && slash; what = "2 radial edges + far arc + 2 inner strokes (" + flat + " flat) + small 앞잡 on the body"; break;
                             default: shape = flat >= 6 && atContact.Count(x => x.Layout == Vol2StrokeLayout.Brush && x.Width >= 0.15f && x.Width < 0.2f) >= 2 && slash; what = "6 band strokes + standing pair + small 앞잡 on the body"; break;
                         }
-                        // ---- dry-out window: every stroke but the riding pulses starts to crack <= 0.18 s after the contact (the contact look not before 0.12 s) and is gone 0.15 s later ----
-                        float endMax = -1f, tailMax = 0f; bool contactLate = true;
+                        // ---- D308-150 V8: the contact MARK (the small 오의 at the body) holds 0.5 s and cracks over 0.3 s (0.6 - 1 s on screen, visual only); every other stroke but the
+                        // riding pulses starts to crack <= 0.18 s after the contact / the brush's apex and is gone 0.15 s later; nothing of the cast is drawn 1 s after the contact ----
+                        float tc = Mathf.Max(tContact, Vol2StrokeRecipeBase.SwingToApex);
+                        float endMax = -1f, tailMax = 0f, markEnd = -1f; bool othersQuick = true;
                         foreach (var x in atContact)
                         {
                             if (x.Role == Vol2StrokeRole.RigidOffset) continue;
                             endMax = Mathf.Max(endMax, x.End); tailMax = Mathf.Max(tailMax, x.EndSeconds);
-                            if (x.Role == Vol2StrokeRole.Normal && x.Appear >= tContact - Eps && x.End < tContact + 0.12f - Eps && x.Width >= 0.2f) contactLate = false;
+                            bool mark = x.Appear >= tc - Eps && x.End >= tc + 0.45f - Eps;
+                            if (mark) markEnd = Mathf.Max(markEnd, x.End);
+                            else if (x.End > tc + 0.18f + Eps) othersQuick = false;
                         }
-                        bool dryWindow = tContact >= 0f && endMax <= Mathf.Max(tContact, 0f) + 0.18f + Eps && tailMax <= 0.15f + Eps && contactLate;
-                        // ---- no residue: no part holds a material; alive through the accent, over by the end of its look-tail ----
+                        bool dryWindow = tContact >= 0f && markEnd >= tc + 0.45f - Eps && markEnd <= tc + 0.55f + Eps && endMax <= tc + 0.55f + Eps && tailMax <= 0.31f + Eps && othersQuick;
+                        // ---- no residue: no part holds a material; the mark is alive 0.6 s after the contact, nothing is drawn 1 s after it ----
                         bool noMat = inst.Parts.All(p => p.Mat == null) && log.Materials.All(m => m.Kind != Vol2MaterialKind.Residue);
-                        float over = f == 1 ? 0.5f + 0.12f + 0.06f : Mathf.Max(tContact, 0f) + 0.12f + 0.15f + 0.06f;
-                        float aliveAt = f == 1 ? 0.55f : Mathf.Max(tContact, 0f) + 0.20f;
+                        float over = Mathf.Max(f == 1 ? 0.5f + 0.12f + 0.06f : 0f, tc + 1.0f);
+                        float aliveAt = tc + 0.6f;
                         s.Drive(Math.Max(0.0, aliveAt - inst.Rel(s.NowUs)), Frame60);
                         bool alive = s.Model.Instances.Count == 1;
                         s.Drive(Math.Max(0.0, over - inst.Rel(s.NowUs)), Frame60);
@@ -161,7 +165,7 @@ namespace Oheangbu.EditorTools.Vol2
                         bool gone = s.Model.Instances.Count == 0 || s.Write(inst).Count == 0;       // nothing is written any more (an empty swing-ink part of a fixture without a brush draws nothing)
                         Check(r, "V10." + tag, brushOnly && shape, letter + " " + body + ": " + what + (shape ? "" : " NOT MET (" + atContact.Count + " strokes, follow " + follow + " offset " + offs + " flat " + flat + " drift " + drift + " slash " + slash + ")") + (brushOnly ? "" : ", not all brush ribbons"));
                         Check(r, "V10t." + tag, firstAppear <= 0.08f && first.Count > 0 && dryWindow && noMat && alive && gone,
-                            letter + " " + body + ": first cue at " + firstAppear.ToString("0.000") + " s (<= 0.08), contact " + tContact.ToString("0.000") + " s, everything cracks by +" + (endMax - Mathf.Max(tContact, 0f)).ToString("0.000") + " s (<= 0.18) over <= " + tailMax.ToString("0.00") + " s, no residue " + noMat + ", alive at " + aliveAt.ToString("0.00") + " s " + alive + ", gone by " + over.ToString("0.00") + " s " + gone);
+                            letter + " " + body + ": first cue at " + firstAppear.ToString("0.000") + " s (<= 0.08), contact " + tContact.ToString("0.000") + " s, the mark holds to +" + (markEnd - tc).ToString("0.000") + " s (0.45 - 0.55, then 0.3 s of cracking), the rest cracks <= +0.18 s " + othersQuick + ", tails <= " + tailMax.ToString("0.00") + " s, no residue " + noMat + ", alive at " + aliveAt.ToString("0.00") + " s " + alive + ", gone by " + over.ToString("0.00") + " s " + gone);
                     }
                 }
             // ---- sizes (analytic, the settled shoulder camera pitch 0, FOV 60, 1080p: 935.3 px x size / camera depth): P0 at 3 / 6 / 12 m ----

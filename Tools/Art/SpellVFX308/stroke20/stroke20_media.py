@@ -182,6 +182,8 @@ def thickness(mask_png, region=None):
     """the widest stroke in a VFX mask: 2 x the largest inscribed radius (scipy distance transform), px of the 1280x720 frame"""
     from scipy import ndimage
     m = np.asarray(Image.open(mask_png).convert('RGB'))[:, :, 0] > 127
+    # V8: a body-coloured stroke whose fill is close to the ground's value is still read by its ink rim: the silhouette (holes filled) is the stroke's size
+    m = ndimage.binary_fill_holes(m)
     if region is not None:
         x0, y0, x1, y1 = region; mm = np.zeros_like(m); mm[y0:y1, x0:x1] = m[y0:y1, x0:x1]; m = mm
     if not m.any():
@@ -214,14 +216,14 @@ def rules(rnd, frames, out):
         if t == 'P0' and variant.startswith('d') and contact is not None:
             # the contact stroke's head 0.08 s after the contact; the flying stroke at half way to the body
             i_c = min(range(len(age)), key=lambda i: abs(age[i] - (contact + 0.08)))
-            i_f = min(range(len(age)), key=lambda i: abs(age[i] - contact * 0.6))
+            i_f = min(range(len(age)), key=lambda i: abs(age[i] - (0.06 + (contact - 0.06) * 0.6)))      # V8: the head leaves the tip at the swing's apex (0.06 s)
             rec['contact_head_px_720'] = thickness(folder / ('m_%05d.png' % int(rr[i_c]['frame'])))
             rec['flying_px_720'] = thickness(folder / ('m_%05d.png' % int(rr[i_f]['frame'])))
             rec['contact_head_px_1080'] = round(rec['contact_head_px_720'] * 1.5, 1); rec['flying_px_1080'] = round(rec['flying_px_720'] * 1.5, 1)
         res.append(rec)
     # verdicts (the rules of D308-150 V7 / plan B; the look itself is the user's)
     lines = ['# stroke20 rule checks (machine) — round %s' % rnd, '',
-             'Judging = the user by eye (D308-150 V7). These are only the rules: first cue <= 0.08 s, drying from the contact <= 0.18 s + 0.15 s look-tail (gone <= contact + 0.36 s at 60 fps), '
+             'Judging = the user by eye (D308-150 V7 / V8). These are only the rules: first cue <= 0.08 s, the contact mark visible 0.6 - 1 s then gone (V8, visual only), '
              'no residue, enemy body >= 70 % visible in every frame where it is on screen, sizes at 3 / 6 / 12 m. Pixels are of the 1280x720 video frame (x 1.5 for 1080p).', '',
              '| job | first cue s | contact s | last VFX s | gone after contact s | min enemy visible | sizes (1080p px) | verdict |', '|---|---:|---:|---:|---:|---:|---|---|']
     ok_all = True
@@ -229,10 +231,9 @@ def rules(rnd, frames, out):
         bad = []
         if r['first_cue'] is None or r['first_cue'] > 0.0834:
             bad.append('first cue')
-        if r['template'] != 'A0' and (r['gone_after_contact'] is None or r['gone_after_contact'] > 0.36):
-            bad.append('dry-out')
-        if r['template'] == 'A0' and (r['last_visible'] is None or r['last_visible'] > 0.5 + 0.12 + 0.15 + 0.02):
-            bad.append('dry-out')
+        # D308-150 V8: the contact mark stays 0.6 - 1 s (visual only), then nothing; the swing's apex (0.06 s) is the earliest visual contact
+        if r['gone_after_contact'] is None or r['gone_after_contact'] > 1.05 or r['gone_after_contact'] < 0.55:
+            bad.append('mark 0.6-1 s')
         if r['min_enemy_visible'] is not None and r['min_enemy_visible'] < 0.70:
             bad.append('enemy visible < 70 %')
         size = ''

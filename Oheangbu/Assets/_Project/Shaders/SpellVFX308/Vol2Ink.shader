@@ -53,6 +53,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
         _BrushTailDry("stroke20 how dry the tail runs", Range(0,1)) = .55
         _BrushTint("stroke20 body pigment in the starved fibres (0..1)", Range(0,1)) = .5
         _BrushPigment("stroke20 pigment value scale", Range(0,1)) = .8
+        _BrushBodyDark("stroke20 V8 wet body ink: share of the body colour in the loaded ink (0 black .. 1 pure body hue)", Range(0,1)) = .65
     }
     SubShader
     {
@@ -76,7 +77,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
         half4 _InkColor, _PigmentColor, _WetColor, _PaperColor; float4 _EndDir, _Offset;
         float _BristleLen, _BristleBand, _EdgeKind, _EndKind, _Age, _Head, _TailLen, _BaseY, _Fray, _Gap, _HeadRag, _MinPx, _SettleStart, _SettleEnd, _NearClip, _NearFade, _RimPx, _EdgePx;
         half4 _BrushInk, _BrushDry;
-        float _BrushTile, _CrackTile, _BrushRag, _BrushTailDry, _BrushTint, _BrushPigment;
+        float _BrushTile, _CrackTile, _BrushRag, _BrushTailDry, _BrushTint, _BrushPigment, _BrushBodyDark;
         CBUFFER_END
 
         // ---- NB20 (D308-150 V6): the authored ink atlas (Blender bristle brushes + After Effects bleed / drying order, Tools/Art/SpellVFX308/nb20) ----
@@ -434,11 +435,15 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
                 {
                     // stroke20: the 앞잡 ink (near black, dry grey-black where it runs dry); the body hue only in the starved fibres and the rim, never a coloured outline
                     float4 kb = BrushCut(i);
+                    // D308-150 V8 ("전체를 옛 것처럼 진하게"): the stroke is BODY-COLOURED ink like the old 120 (same palette: plan C = the old profiles' primaries) -
+                    // the loaded ink a dark body hue, the starved fibres, the rim and the drying the full body colour; still flat, matte, cut out (no light)
                     float dried = saturate(kb.w * 1.6 + kb.x * 0.45);
-                    float3 rgbB = lerp(_BrushInk.rgb, _BrushDry.rgb, dried) * (0.92 + 0.16 * kb.y);
-                    float tint = _BrushTint * smoothstep(0.30, 0.95, kb.x + (1.0 - kb.z) * 0.30);
-                    float3 bodyC = lerp(_WetColor.rgb, _PigmentColor.rgb, settle) * _BrushPigment;
-                    rgbB = lerp(rgbB, bodyC, tint);
+                    float3 inkC = lerp(_BrushInk.rgb, _BrushDry.rgb, dried);
+                    float3 wetBody = lerp(_BrushInk.rgb, _WetColor.rgb, _BrushBodyDark);
+                    float3 dryBody = lerp(_WetColor.rgb, _PigmentColor.rgb, settle) * _BrushPigment;
+                    float3 bodyC = lerp(wetBody, dryBody, saturate(kb.x * 1.3 + (1.0 - kb.z) * 0.35 + kb.w * 0.5));
+                    // r13: the outer edge of every stroke stays ink (the 오의's dark brush edge), the body colour fills inside it, the bristle streaks show in the value
+                    float3 rgbB = lerp(inkC, bodyC, _BrushTint * smoothstep(0.04, 0.30, kb.z)) * (0.78 + 0.40 * kb.y);
                     if (fmod(floor(i.D.y * 0.25), 2.0) > 0.5) rgbB = float3(0.10, 0.095, 0.09);           // fire's ash: burnt ink grey
                     return half4(min(rgbB, OH_INK_CEILING_OUT), 1);
                 }

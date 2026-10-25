@@ -225,6 +225,7 @@ namespace Oheangbu.App.World
         // Raised inside the letter's dispatch (a gameplay event): fenced, so a fault here can never cut the cast short.
         private void OnSwingBegan(SpellCast cast, string state, float apexTime, float lockUntil)
         {
+            ShowOnly = false;
             try
             {
                 Touch();
@@ -254,8 +255,21 @@ namespace Oheangbu.App.World
         // on the strike's Hit / Miss cue; the rule judged the strike on the click and never reads this. The clip starts toApex
         // seconds before its apex and runs at its own speed (the wind-up is not shown: the afterimage is the head's path after
         // the contact, and pressing the wind-up into two frames would draw it as one long streak).
+        /// <summary>D308-150 V8 (보여 주기 휘두르기): the body's swing for a vol.2 spell cast - the same motion as <see cref="PlayStrike308"/>, but marked
+        /// <see cref="ShowOnly"/> so the vol.2 swing driver (Vol2RigSwingSource) does not open a hit window for it: the real left-click swing alone hits.</summary>
+        public bool PlayShow308(string state, float toApex, float lockSeconds)
+        {
+            bool ok = PlayStrike308(state, toApex, lockSeconds);
+            ShowOnly = ok;
+            return ok;
+        }
+
+        /// <summary>D308-150 V8: the motion playing now was started by <see cref="PlayShow308"/> (a presentation-only swing; never a hit). Cleared by any other swing.</summary>
+        public bool ShowOnly { get; private set; }
+
         public bool PlayStrike308(string state, float toApex, float lockSeconds)
         {
+            ShowOnly = false;
             try
             {
                 Touch();

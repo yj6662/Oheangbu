@@ -20,9 +20,26 @@ namespace Oheangbu.App
         protected const int KIgnite = 1, KContact = 2, KSwing = 3;
         /// <summary>r9: the body's swing state the presenter asks SpellSwing308 for (SPEC-SPELL-SWING-308 states), and how soon its apex falls after the cast (plan B's first beat).</summary>
         public abstract string SwingState { get; }
-        public const float SwingToApex = 0.08f;
+        public const float SwingToApex = 0.06f;
+
+        /// <summary>D308-150 V8 ("전체를 옛 것처럼 진하게"): the body colour of the stroke20 ink = the OLD 120 effects' pigment of the row's body (Art/SpellVFX120/Profiles
+        /// 001_AC00 가 / 025_B098 나 / 049_B9C8 마 / 073_C0AC 사 / 097_C544 아, field Pigment; read once 2026-10-25, sRGB). The presenter puts it on the stroke's property block
+        /// in place of the plan C base colour (fire and metal are the same; wood, earth and water are the old, darker ones).</summary>
+        public static Color OldPigment(Body b)
+        {
+            switch (b)
+            {
+                case Body.Wood: return new Color(0.2588f, 0.4314f, 0.3451f, 1f);
+                case Body.Fire: return new Color(0.7451f, 0.3294f, 0.2314f, 1f);
+                case Body.Earth: return new Color(0.5922f, 0.4510f, 0.2627f, 1f);
+                case Body.Metal: return new Color(0.6510f, 0.6902f, 0.6784f, 1f);
+                default: return new Color(0.1725f, 0.2745f, 0.3529f, 1f);
+            }
+        }
+        /// <summary>D308-150 V8 (무받침 맞은 자국 0.6 - 1 s, visual only - the judgement still ends per plan B): the contact mark holds this long, then cracks over <see cref="MarkDry"/>.</summary>
+        public const float MarkHold = 0.5f, MarkDry = 0.3f;
         /// <summary>r9: the swing's ink - the brush tip's own path as a 오의 stroke - is sampled this long after the cast, then cracks with the cast's look.</summary>
-        public const float SwingSampleSeconds = 0.18f;
+        public const float SwingSampleSeconds = 0.26f;
         /// <summary>Plan B: the contact accent (0.09 s) and its settling: the contact look starts to crack 0.12 s after the contact and is gone 0.15 s later (".12 - .18 s").</summary>
         public const float DryStart = 0.12f, DrySeconds = 0.15f;
         /// <summary>The 앞잡 / vol.2 scale: the 앞잡 head is 1.5 m wide, a vol.2 contact stroke head ~0.36 m.</summary>
@@ -185,12 +202,13 @@ namespace Oheangbu.App
         /// <summary>A contact look at a body: its torso mark is on the body's side facing the caster (so the stroke is not buried in the body mesh), at <see cref="TorsoHeight"/>.</summary>
         protected Vol2VfxPart AddContact(Vol2VfxInstance inst, long atUs, Vector3 bodyPos, float radius, float scale)
         {
+            atUs = Math.Max(atUs, inst.StartUs + Vol2Time.FromSeconds(SwingToApex));      // V8: nothing lands before the brush's apex
             var p = inst.AddPart(KContact, atUs);
             Vector3 to = bodyPos - inst.Origin; to.y = 0f;
             Vector3 dir = to.sqrMagnitude > 1e-4f ? to.normalized : inst.Forward;
             p.Pos = new Vector3(bodyPos.x, inst.Origin.y + TorsoHeight, bodyPos.z) - dir * (radius * 0.7f);
             p.Dir = dir; p.F0 = scale; p.F1 = radius;
-            inst.EndPart(p, atUs + Vol2Time.FromSeconds(DryStart), Vol2EndCode.Expire, DrySeconds);
+            inst.EndPart(p, atUs + Vol2Time.FromSeconds(MarkHold), Vol2EndCode.Expire, MarkDry);
             return p;
         }
 
@@ -379,7 +397,8 @@ namespace Oheangbu.App
                 if (along > 0.3f && along - t.Radius * 0.7f < hit && lat <= spec.PathWidth * 0.5f + t.Radius) { hit = Mathf.Max(0.6f, along - t.Radius * 0.7f); found = true; }
             }
             trail.F0 = hit; trail.F1 = found ? 1f : 0f;
-            AddIgnite(inst, inst.StartUs, trail.Pos);
+            AddIgnite(inst, inst.StartUs + Vol2Time.FromSeconds(SwingToApex), trail.Pos);
+            AddSwing(inst);
         }
 
         static float TipAlong(Vol2VfxInstance inst, Vector3 tip) => Mathf.Max(0f, Vector3.Dot(tip - inst.Origin, inst.Forward));
@@ -413,14 +432,22 @@ namespace Oheangbu.App
         {
             var trail = inst.FirstOf(KTrail);
             if (trail == null) return inst.HeadAlong(nowUs);
-            return TrailArc(inst, trail, inst.HeadAlong(nowUs)) + Vol2PathRecipeBase.LineStart;
+            // V8 (visual timing only; the executor's launch and contact are unchanged): the head waits at the brush tip until the swing's apex, then flies so that it
+            // reaches the predicted first body exactly when the executor touches it (faster than 36 m/s over a shorter time); never ahead of the executor's own head
+            float exec = inst.HeadAlong(nowUs), t = inst.Rel(nowUs), a0 = TipAlong(inst, trail.Pos);
+            float hit = trail.F0 > 0f ? trail.F0 : inst.Log.Spec.PathLength, tHit = hit / Mathf.Max(0.01f, inst.Log.Spec.PathSpeed);
+            float along;
+            if (t <= SwingToApex) along = Mathf.Min(a0, exec);
+            else if (t < tHit && tHit > SwingToApex + 0.005f) along = Mathf.Min(exec, a0 + (hit - a0) * Mathf.Clamp01((t - SwingToApex) / (tHit - SwingToApex)));
+            else along = exec;
+            return TrailArc(inst, trail, along) + Vol2PathRecipeBase.LineStart;
         }
 
         public override void OnContact(Vol2VfxInstance inst, Vol2ContactRecord rec)
         {
             if (HasContact(inst, rec.TargetId) || inst.HasLanding) return;          // the first body only (ㅏ 한 번)
             Vector3 pos = TargetPos(inst, rec.TargetId, inst.Origin + inst.Forward * rec.Along, out float r);
-            var p = AddContact(inst, rec.NowUs, pos, r, 1f); p.Aux = rec.TargetId;
+            var p = AddContact(inst, rec.NowUs, pos, r, 1.35f); p.Aux = rec.TargetId;      // V8 r14: the hit mark as big as the old 가's impact reads (still ~4:1 under the 오의)
             inst.HasLanding = true; inst.Landing = pos;
         }
 
@@ -501,6 +528,7 @@ namespace Oheangbu.App
             inst.EndPart(pulse, end, Vol2EndCode.Child, 0.12f);
             var sleeve = inst.AddPart(KSleeve, inst.StartUs + Vol2Time.FromSeconds(0.03)); sleeve.Pos = grip; sleeve.Dir = pulse.Dir;
             inst.EndPart(sleeve, end, Vol2EndCode.Child, 0.12f);
+            AddSwing(inst);
         }
 
         public override Vector3 Offset(Vol2VfxInstance inst, long nowUs)
@@ -520,7 +548,7 @@ namespace Oheangbu.App
             var tipNow = inst.Model.BrushTip?.Invoke();
             Vector3 c = tipNow.HasValue ? Vector3.Lerp(tipNow.Value, point, 0.3f) : point - dir * 0.10f;
             var sp = inst.AddPart(KSplash, nowUs); sp.Pos = c; sp.Dir = dir; sp.F0 = 1f;
-            inst.EndPart(sp, nowUs + Vol2Time.FromSeconds(DryStart), Vol2EndCode.Expire, DrySeconds);
+            inst.EndPart(sp, nowUs + Vol2Time.FromSeconds(MarkHold), Vol2EndCode.Expire, MarkDry);
             return true;
         }
 
@@ -607,16 +635,18 @@ namespace Oheangbu.App
 
         public override void OnBegan(Vol2VfxInstance inst)
         {
-            var p = inst.AddPart(KFan, inst.StartUs);
-            inst.EndPart(p, inst.StartUs + Vol2Time.FromSeconds(DryStart), Vol2EndCode.Expire, DrySeconds);
-            AddIgnite(inst, inst.StartUs, TipAtCast(inst));
+            long apex = inst.StartUs + Vol2Time.FromSeconds(SwingToApex);       // V8: the fan is laid when the brush comes down (visual; the executor judged at the cast)
+            var p = inst.AddPart(KFan, apex);
+            inst.EndPart(p, apex + Vol2Time.FromSeconds(DryStart), Vol2EndCode.Expire, DrySeconds);
+            AddIgnite(inst, apex, TipAtCast(inst));
+            AddSwing(inst);
         }
 
         public override void OnContact(Vol2VfxInstance inst, Vol2ContactRecord rec)
         {
             if (HasContact(inst, rec.TargetId)) return;
             Vector3 pos = TargetPos(inst, rec.TargetId, inst.Origin + inst.Forward * rec.Along, out float r);
-            AddContact(inst, rec.NowUs, pos, r, 0.85f).Aux = rec.TargetId;
+            AddContact(inst, rec.NowUs, pos, r, 1.15f).Aux = rec.TargetId;
         }
 
         public override void Write(Vol2VfxInstance inst, Vol2InkWriter w)
@@ -686,16 +716,18 @@ namespace Oheangbu.App
 
         public override void OnBegan(Vol2VfxInstance inst)
         {
-            var p = inst.AddPart(KBand, inst.StartUs);
-            inst.EndPart(p, inst.StartUs + Vol2Time.FromSeconds(DryStart), Vol2EndCode.Expire, DrySeconds);
-            AddIgnite(inst, inst.StartUs, TipAtCast(inst));
+            long apex = inst.StartUs + Vol2Time.FromSeconds(SwingToApex);       // V8: the band is laid when the brush comes down (visual)
+            var p = inst.AddPart(KBand, apex);
+            inst.EndPart(p, apex + Vol2Time.FromSeconds(DryStart), Vol2EndCode.Expire, DrySeconds);
+            AddIgnite(inst, apex, TipAtCast(inst));
+            AddSwing(inst);
         }
 
         public override void OnContact(Vol2VfxInstance inst, Vol2ContactRecord rec)
         {
             if (HasContact(inst, rec.TargetId)) return;
             Vector3 pos = TargetPos(inst, rec.TargetId, inst.Origin + inst.Forward * rec.Along, out float r);
-            AddContact(inst, rec.NowUs, pos, r, 0.85f).Aux = rec.TargetId;
+            AddContact(inst, rec.NowUs, pos, r, 1.15f).Aux = rec.TargetId;
         }
 
         public override void Write(Vol2VfxInstance inst, Vol2InkWriter w)

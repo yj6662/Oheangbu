@@ -77,7 +77,7 @@ namespace Oheangbu.EditorTools.Vol2
             if (crack != null && mat.HasProperty("_Crack")) { if (mat.GetTexture("_Crack") != crack) { mat.SetTexture("_Crack", crack); log.Add("material _Crack = " + CrackTexture); } }
             else log.Add("WARNING: no crack texture at " + CrackTexture + " or no _Crack on the shader (refresh first)");
             // stroke20 look numbers (TEST, judged by the user by eye): the 앞잡 ink and dry grey-black, the streak / flake sizes in metres, the ragged head, the faint body pigment
-            foreach (var (prop, value) in new[] { ("_BrushTile", 0.45f), ("_CrackTile", 0.80f), ("_BrushRag", 0.07f), ("_BrushTailDry", 0.55f), ("_BrushTint", 0.32f), ("_BrushPigment", 0.7f) })
+            foreach (var (prop, value) in new[] { ("_BrushTile", 0.45f), ("_CrackTile", 0.80f), ("_BrushRag", 0.07f), ("_BrushTailDry", 0.55f), ("_BrushTint", 0.85f), ("_BrushPigment", 0.85f), ("_BrushBodyDark", 0.45f) })
                 if (mat.HasProperty(prop) && !Mathf.Approximately(mat.GetFloat(prop), value)) { mat.SetFloat(prop, value); log.Add("material " + prop + " = " + value); }
             foreach (var (prop, value) in new[] { ("_BrushInk", new Color(.055f, .05f, .047f, 1f)), ("_BrushDry", new Color(.2f, .185f, .17f, 1f)) })
                 if (mat.HasProperty(prop) && mat.GetColor(prop) != value) { mat.SetColor(prop, value); log.Add("material " + prop + " = " + value); }

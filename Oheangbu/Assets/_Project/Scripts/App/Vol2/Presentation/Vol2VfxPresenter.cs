@@ -71,20 +71,20 @@ namespace Oheangbu.App
         int _swingSearches;
         /// <summary>stroke20: swings the presenter asked the body for (presentation only).</summary>
         public int SwingsShown { get; private set; }
-        /// <summary>stroke20 r11 experiment: play the body's swing on a stroke20 cast. FALSE: in a vol.2 scope the swinging brush hits (see OnSpawned).</summary>
-        public bool BodySwing308;
+        /// <summary>D308-150 V8: play the body's show swing (no hit) on a stroke20 cast.</summary>
+        public bool BodySwing308 = true;
 
         /// <summary>stroke20 (D308-150 V7, coordinator 2026-10-25 "the old 가 is the floor"): the old route shows a cast as a swing of the great brush (SPEC-SPELL-SWING-308);
         /// the vol.2 route launched with the arm still. A stroke20 cast now asks the body for the same swing motion, presentation only (SpellSwing308.PlayStrike308: the clip
         /// is started so its apex falls 0.08 s after the cast, the plan's first beat; the rule never waits for it and never reads it).</summary>
         void OnSpawned(Vol2VfxInstance inst)
         {
-            // OFF (r11, lab run_20261025_120907 FAIL 110/125): in a vol.2 scope the great brush's swing is a REAL hit (Vol2SwingRig: 갈무리 / the swing contacts) - the
-            // body swing touched bodies again and again. Kept for a later decision (a swing that does not hit, or the swing before the launch as in the old route).
+            // D308-150 V8 (보여 주기 휘두르기): ON, through SpellSwing308.PlayShow308 - marked ShowOnly, so the vol.2 swing driver opens no hit window for it
+            // (r11 played it as a normal strike and the swing driver hit with it: lab FAIL 110/125). The real left-click swing alone hits.
             if (!BodySwing308) return;
             if (!Application.isPlaying || !(inst.Recipe is Vol2StrokeRecipeBase sr)) return;
             if (_swing == null && _swingSearches < 40) { _swingSearches++; _swing = FindFirstObjectByType<World.SpellSwing308>(); }
-            if (_swing != null && _swing.PlayStrike308(sr.SwingState, Vol2StrokeRecipeBase.SwingToApex, 0.4f)) SwingsShown++;
+            if (_swing != null && _swing.PlayShow308(sr.SwingState, Vol2StrokeRecipeBase.SwingToApex, 0.4f)) SwingsShown++;
         }
         World.WorldMacroPlayerGestureRig Rig()
         {
@@ -175,6 +175,8 @@ namespace Oheangbu.App
             var b = v.Block;
             b.Clear();
             b.SetColor(IdInk, look.inkLayer); b.SetColor(IdPigment, look.dryPigment); b.SetColor(IdWet, look.wetColor);
+            // D308-150 V8: a stroke20 cast is inked in the OLD effects' body pigment (strong, like the old 120)
+            if (inst.Recipe is Vol2StrokeRecipeBase) { var old = Vol2StrokeRecipeBase.OldPigment(look.body); b.SetColor(IdWet, old); b.SetColor(IdPigment, old); }
             b.SetFloat(IdEdge, (float)(int)look.edge); b.SetFloat(IdEnd, (float)(int)look.end);
             Vector3 dir = inst.Right * look.endDirection.x + Vector3.up * look.endDirection.y + inst.Forward * look.endDirection.z;
             if (dir.sqrMagnitude > 1e-6f) dir.Normalize();

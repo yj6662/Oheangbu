@@ -57,7 +57,8 @@ namespace Oheangbu.App
             if (index < 0) return true;
             var entry = profile.States[index];
             // only a motion that has a strike in it carries a window; a chained hold (GuardHold) or an idle is not a swing
-            sample.Swinging = _swing.Active && _swing.Swinging && entry.ClipApexSeconds > 0f && !entry.Loop;
+            // D308-150 V8: a presentation-only swing (a vol.2 spell cast's 보여 주기 휘두르기, SpellSwing308.PlayShow308) is never a hit window
+            sample.Swinging = _swing.Active && _swing.Swinging && !_swing.ShowOnly && entry.ClipApexSeconds > 0f && !entry.Loop;
             sample.ClipSeconds = _swing.ClipSeconds; sample.ApexSeconds = entry.ClipApexSeconds; sample.LengthSeconds = entry.ClipSeconds;
             return true;
         }
