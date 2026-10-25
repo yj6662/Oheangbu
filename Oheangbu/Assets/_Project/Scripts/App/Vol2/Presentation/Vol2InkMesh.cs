@@ -5,8 +5,11 @@ using UnityEngine;
 namespace Oheangbu.App
 {
     /// <summary>How one stroke is laid out: camera-facing around its own axis (a line in the air), or flat on the ground. Sheet / SheetFlat (NB20): the same two layouts, but the
-    /// stroke is ONE authored ink element of the NB20 atlas (Blender bristles + After Effects bleed / drying), played by its reveal and drying order maps.</summary>
-    public enum Vol2StrokeLayout { Billboard = 0, Flat = 1, Sheet = 2, SheetFlat = 3 }
+    /// stroke is ONE authored ink element of the NB20 atlas (Blender bristles + After Effects bleed / drying), played by its reveal and drying order maps.
+    /// Brush / BrushFlat (stroke20, D308-150 V7): the approved 앞잡 one-stroke ink (RiposteInk308) scaled down - ONE dry-brush ribbon of per-point width and ink density, lying on a fixed
+    /// world plane (<see cref="Vol2StrokeAttr.Normal"/>) or facing the camera around its own axis, written in brush order with a ragged head, starved from the edges in, dried through the
+    /// crack field (never a fade). Written by <see cref="Vol2InkWriter.Brush"/>.</summary>
+    public enum Vol2StrokeLayout { Billboard = 0, Flat = 1, Sheet = 2, SheetFlat = 3, Brush = 4, BrushFlat = 5 }
 
     /// <summary>NB20 sheet flags (uv4.y bits).</summary>
     [Flags] public enum Vol2SheetFlags { None = 0, PaperRim = 1, FlipAcross = 2, MinAspect = 4, RevealByHead = 8, FlipAlong = 16 }
@@ -44,9 +47,14 @@ namespace Oheangbu.App
         /// <summary>NB20 sheet: the atlas cell (-1 = not a sheet), its flags, and for a sheet <see cref="Speed"/> is the REVEAL time in seconds (0 = at once).</summary>
         public int Cell;
         public Vol2SheetFlags Sheet;
+        /// <summary>stroke20 brush: the normal of the stroke's world plane (zero = the ribbon faces the camera around its own axis). A Drift stroke always faces the camera (its tangent is the drift).</summary>
+        public Vector3 Normal;
+        /// <summary>stroke20 brush with role FollowHead: metres of ink behind the flying head before it has cracked away (the short dry tail).</summary>
+        public float TailLen;
 
         public static Vol2StrokeAttr Default => new Vol2StrokeAttr { Width = 0.12f, Speed = 1e5f, End = 1e6f, EndSeconds = 0.3f, EndCode = Vol2EndCode.Expire, Hollow = 1f, Density = 1f, Cell = -1 };
         public bool IsSheet => Layout == Vol2StrokeLayout.Sheet || Layout == Vol2StrokeLayout.SheetFlat;
+        public bool IsBrush => Layout == Vol2StrokeLayout.Brush || Layout == Vol2StrokeLayout.BrushFlat;
         public const float Forever = 1e6f;
     }
 
@@ -79,8 +87,17 @@ namespace Oheangbu.App
             Stroke(_two, attr);
         }
 
+        /// <summary>stroke20: one brush ribbon of the 앞잡 technique along <paramref name="pts"/> with a FULL width (metres) and an ink density (1 loaded .. 0 starved) per point. The layout must be
+        /// Brush or BrushFlat. uv0.w = the half width of that point, uv4 = (-1, 0, ink, tail length), tangent = the plane normal (a Drift stroke: the drift).</summary>
+        public void Brush(IList<Vector3> pts, IList<float> width, IList<float> ink, in Vol2StrokeAttr a)
+        {
+            Emit(pts, a, width, ink);
+        }
+
         /// <summary>Adds a stroke along <paramref name="pts"/> (at least 2 points; points closer than a millimetre are skipped).</summary>
-        public void Stroke(IList<Vector3> pts, in Vol2StrokeAttr a)
+        public void Stroke(IList<Vector3> pts, in Vol2StrokeAttr a) { Emit(pts, a, null, null); }
+
+        void Emit(IList<Vector3> pts, in Vol2StrokeAttr a, IList<float> width, IList<float> ink)
         {
             int n = pts.Count;
             if (n < 2) return;
@@ -91,20 +108,23 @@ namespace Oheangbu.App
             Record?.Add(a);
             int baseIndex = _pos.Count;
             float flags = (a.TaperTip ? 1f : 0f) + (a.TaperBase ? 2f : 0f) + (a.Ash ? 4f : 0f);
+            bool brush = width != null && ink != null && width.Count >= n && ink.Count >= n;
+            Vector4 tan = brush && a.Role != Vol2StrokeRole.Drift ? new Vector4(a.Normal.x, a.Normal.y, a.Normal.z, 0f) : new Vector4(a.Drift.x, a.Drift.y, a.Drift.z, a.DriftSeconds);
             for (int i = 0; i < n; i++)
             {
                 Vector3 d = i == 0 ? pts[1] - pts[0] : i == n - 1 ? pts[n - 1] - pts[n - 2] : pts[i + 1] - pts[i - 1];
                 if (d.sqrMagnitude < 1e-10f) d = Vector3.forward;
                 d.Normalize();
+                float hw = brush ? Mathf.Max(0.002f, width[i]) * 0.5f : a.Width * 0.5f;
                 for (int side = 0; side < 2; side++)
                 {
                     _pos.Add(pts[i]); _nrm.Add(d);
-                    _tan.Add(new Vector4(a.Drift.x, a.Drift.y, a.Drift.z, a.DriftSeconds));
-                    _uv0.Add(new Vector4(_arc[i], side == 0 ? -1f : 1f, total, a.Width * 0.5f));
+                    _tan.Add(tan);
+                    _uv0.Add(new Vector4(_arc[i], side == 0 ? -1f : 1f, total, hw));
                     _uv1.Add(new Vector4(a.Appear, a.Speed, a.End, Mathf.Max(0.001f, a.EndSeconds)));
                     _uv2.Add(new Vector4((float)(int)a.EndCode, a.Warn, a.Seed, a.Hollow));
                     _uv3.Add(new Vector4((float)(int)a.Layout, a.Density, (float)(int)a.Role, flags));
-                    _uv4.Add(new Vector4(a.Cell, (float)(int)a.Sheet, 0f, 0f));
+                    _uv4.Add(brush ? new Vector4(-1f, 0f, Mathf.Clamp01(ink[i]), a.TailLen) : new Vector4(a.Cell, (float)(int)a.Sheet, 0f, 0f));
                 }
             }
             for (int i = 0; i < n - 1; i++)

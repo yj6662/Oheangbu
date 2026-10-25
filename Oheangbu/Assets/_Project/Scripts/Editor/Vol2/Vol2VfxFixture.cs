@@ -85,6 +85,147 @@ namespace Oheangbu.EditorTools.Vol2
             public void Dispose() { Model.Dispose(); }
         }
 
+        /// <summary>The default registry with the kept NB20 recipes of A0 / F0 / R0 swapped in (their checks V4n / V4p stay valid while stroke20 is the registered look).</summary>
+        static Vol2VfxRecipeRegistry Nb20Registry() => Vol2VfxRecipeRegistry.CreateDefault().Set(new Vol2Nb20AttachRecipe()).Set(new Vol2Nb20FanRecipe()).Set(new Vol2Nb20RingRecipe());
+
+        /// <summary>stroke20 rule checks (D308-150 V7: the user judges the look by eye; the machine checks only the rules): the 20 no-batchim casts on the hand clock.</summary>
+        static void Stroke20(Report r, Vol2Rulebook book, Vol2VfxCatalogue cat, bool fromAsset)
+        {
+            string[] rows = { "가나마사아", "거너머서어", "고노모소오", "구누무수우" };
+            string[] ids = { "P0", "A0", "F0", "R0" };
+            Type[] kinds = { typeof(Vol2StrokePathRecipe), typeof(Vol2StrokeAttachRecipe), typeof(Vol2StrokeFanRecipe), typeof(Vol2StrokeRingRecipe) };
+            const double Frame60 = 1.0 / 60.0;
+            const float Eps = 0.0015f;
+            for (int f = 0; f < 4; f++)
+                for (int bi = 0; bi < 5; bi++)
+                {
+                    char letter = rows[f][bi]; Body body = Bodies[bi]; string tag = ids[f] + body;
+                    using (var s = new Setup(book, cat))
+                    {
+                        if (f == 0) s.Rig.Add("A", 4.6f, 0f); else if (f == 1) s.Rig.Add("A", 1.6f, 0.25f); else if (f == 2) s.Rig.Add("A", 3.4f, -0.3f); else s.Rig.Add("A", 1.9f, 0.5f);
+                        var log = s.Rig.Cast(letter, out _);
+                        var inst = log != null ? s.Inst(log) : null;
+                        bool spawned = inst != null && inst.Template.id == ids[f] && inst.Look.body == body && inst.Recipe.GetType() == kinds[f];
+                        if (!spawned) { Check(r, "V10." + tag, false, letter + " " + body + ": NOT SPAWNED as stroke20 " + ids[f]); continue; }
+                        // ---- first cue: what is written in the first game frame, and the earliest appear of any stroke (plan B: a cue <= 0.08 s) ----
+                        s.Drive(Frame60, Frame60);
+                        var first = s.Write(inst);
+                        float firstAppear = first.Count > 0 ? first.Min(x => x.Appear) : 99f;
+                        bool brushOnly = first.Count > 0 && first.All(x => x.IsBrush && x.Hollow > 0f);
+                        // ---- run to the contact (A0: a successful parry 0.22 s into the window, as the capture simulates it) ----
+                        float tContact = -1f; long parryUs = -1;
+                        List<Vol2StrokeAttr> atContact = null;
+                        for (int i = 0; i < 40 && tContact < 0f; i++)
+                        {
+                            s.Drive(Frame60, Frame60);
+                            if (f == 1)
+                            {
+                                if (inst.Rel(s.NowUs) >= 0.22f) { parryUs = s.NowUs; s.Model.Parried(new Vector3(0f, 1.15f, 1.05f), s.NowUs); tContact = inst.Rel(s.NowUs); }
+                            }
+                            else
+                            {
+                                var acc = log.Contacts.Where(x => x.BudgetAccepted).ToList();
+                                if (acc.Count > 0) tContact = inst.Rel(acc.Min(x => x.NowUs));
+                            }
+                        }
+                        s.Drive(0.07, Frame60);          // past the contact stroke's 0.06 s writing
+                        atContact = s.Write(inst);
+                        bool shape; string what;
+                        int follow = atContact.Count(x => x.Role == Vol2StrokeRole.FollowHead), offs = atContact.Count(x => x.Role == Vol2StrokeRole.RigidOffset);
+                        int flat = atContact.Count(x => x.Layout == Vol2StrokeLayout.BrushFlat), drift = atContact.Count(x => x.Role == Vol2StrokeRole.Drift);
+                        bool slash = atContact.Any(x => x.Role == Vol2StrokeRole.Normal && x.Layout == Vol2StrokeLayout.Brush && x.Width >= 0.2f && x.Normal.sqrMagnitude > 0.5f && x.Appear >= tContact - Eps);
+                        switch (f)
+                        {
+                            case 0: shape = follow == 1 && slash && drift >= 3; what = "flying stroke + small 앞잡 at the body + flecks"; break;
+                            case 1: shape = offs == 3 && atContact.Count(x => x.Role == Vol2StrokeRole.Normal && x.Normal.sqrMagnitude > 0.5f && x.Appear >= tContact - Eps) >= 5 && atContact.Where(x => x.Role == Vol2StrokeRole.RigidOffset).All(x => Mathf.Abs(x.End - 0.5f) < 0.02f && x.EndCode == Vol2EndCode.Child); what = "shaft pulse + tip bead + sleeve pulse ending with the 0.5 s window + the parry burst (5 strokes)"; break;
+                            case 2: shape = flat >= 5 && slash; what = "2 radial edges + far arc + 2 inner strokes (" + flat + " flat) + small 앞잡 on the body"; break;
+                            default: shape = flat >= 6 && atContact.Count(x => x.Layout == Vol2StrokeLayout.Brush && x.Width >= 0.15f && x.Width < 0.2f) >= 2 && slash; what = "6 band strokes + standing pair + small 앞잡 on the body"; break;
+                        }
+                        // ---- dry-out window: every stroke but the riding pulses starts to crack <= 0.18 s after the contact (the contact look not before 0.12 s) and is gone 0.15 s later ----
+                        float endMax = -1f, tailMax = 0f; bool contactLate = true;
+                        foreach (var x in atContact)
+                        {
+                            if (x.Role == Vol2StrokeRole.RigidOffset) continue;
+                            endMax = Mathf.Max(endMax, x.End); tailMax = Mathf.Max(tailMax, x.EndSeconds);
+                            if (x.Role == Vol2StrokeRole.Normal && x.Appear >= tContact - Eps && x.End < tContact + 0.12f - Eps && x.Width >= 0.2f) contactLate = false;
+                        }
+                        bool dryWindow = tContact >= 0f && endMax <= Mathf.Max(tContact, 0f) + 0.18f + Eps && tailMax <= 0.15f + Eps && contactLate;
+                        // ---- no residue: no part holds a material; alive through the accent, over by the end of its look-tail ----
+                        bool noMat = inst.Parts.All(p => p.Mat == null) && log.Materials.All(m => m.Kind != Vol2MaterialKind.Residue);
+                        float over = f == 1 ? 0.5f + 0.12f + 0.06f : Mathf.Max(tContact, 0f) + 0.12f + 0.15f + 0.06f;
+                        float aliveAt = f == 1 ? 0.55f : Mathf.Max(tContact, 0f) + 0.20f;
+                        s.Drive(Math.Max(0.0, aliveAt - inst.Rel(s.NowUs)), Frame60);
+                        bool alive = s.Model.Instances.Count == 1;
+                        s.Drive(Math.Max(0.0, over - inst.Rel(s.NowUs)), Frame60);
+                        // gone = nothing of it is drawn any more (a burn cast stays open for its lasting damage with no look: the presenter has returned its view)
+                        bool gone = s.Model.Instances.Count == 0 || s.Write(inst).Count == 0;       // nothing is written any more (an empty swing-ink part of a fixture without a brush draws nothing)
+                        Check(r, "V10." + tag, brushOnly && shape, letter + " " + body + ": " + what + (shape ? "" : " NOT MET (" + atContact.Count + " strokes, follow " + follow + " offset " + offs + " flat " + flat + " drift " + drift + " slash " + slash + ")") + (brushOnly ? "" : ", not all brush ribbons"));
+                        Check(r, "V10t." + tag, firstAppear <= 0.08f && first.Count > 0 && dryWindow && noMat && alive && gone,
+                            letter + " " + body + ": first cue at " + firstAppear.ToString("0.000") + " s (<= 0.08), contact " + tContact.ToString("0.000") + " s, everything cracks by +" + (endMax - Mathf.Max(tContact, 0f)).ToString("0.000") + " s (<= 0.18) over <= " + tailMax.ToString("0.00") + " s, no residue " + noMat + ", alive at " + aliveAt.ToString("0.00") + " s " + alive + ", gone by " + over.ToString("0.00") + " s " + gone);
+                    }
+                }
+            // ---- sizes (analytic, the settled shoulder camera pitch 0, FOV 60, 1080p: 935.3 px x size / camera depth): P0 at 3 / 6 / 12 m ----
+            {
+                string detail = ""; bool ok = true;
+                foreach (float d in new[] { 3f, 6f, 12f })
+                    using (var s = new Setup(book, cat))
+                    {
+                        s.Rig.Add("A", d, 0f);
+                        var log = s.Rig.Cast('가', out _); var inst = log != null ? s.Inst(log) : null;
+                        s.Drive(d / 36f + 0.12, Frame60);
+                        var st = inst != null ? s.Write(inst) : new List<Vol2StrokeAttr>();
+                        var trail = st.FirstOrDefault(x => x.Role == Vol2StrokeRole.FollowHead);
+                        var head = st.Where(x => x.Role == Vol2StrokeRole.Normal && x.Normal.sqrMagnitude > 0.5f && x.Layout == Vol2StrokeLayout.Brush).Select(x => x.Width).DefaultIfEmpty(0f).Max();
+                        float zc = d - 0.35f + 2.8f;
+                        float pxTrail = 935.3f * trail.Width / zc, pxHead = 935.3f * head / zc;
+                        bool okD = pxTrail >= 16f && pxHead >= 20f;
+                        ok &= okD;
+                        detail += d.ToString("0") + " m: path " + pxTrail.ToString("0") + " px, contact head " + pxHead.ToString("0") + " px" + (okD ? "" : " LOW") + "; ";
+                    }
+                Check(r, "V10s", ok, "minimum sizes on screen (P0, shoulder camera pitch 0): the flying stroke >= 16 px and the contact stroke head >= 20 px at 3 / 6 / 12 m [" + detail + "]");
+            }
+            // ---- glow 0: the brush branch is the same opaque cutout material (no second material, no blend, no light); the 앞잡 ink is near black ----
+            {
+                var mat = cat.inkMaterial;
+                string src = File.Exists(Path.GetFullPath("Assets/_Project/Shaders/SpellVFX308/Vol2Ink.shader")) ? File.ReadAllText(Path.GetFullPath("Assets/_Project/Shaders/SpellVFX308/Vol2Ink.shader")) : "";
+                var crack = mat != null && mat.HasProperty("_Crack") ? mat.GetTexture("_Crack") : null;
+                float inkL = mat != null && mat.HasProperty("_BrushInk") ? LabL(mat.GetColor("_BrushInk")) : 99f, dryL = mat != null && mat.HasProperty("_BrushDry") ? LabL(mat.GetColor("_BrushDry")) : 99f;
+                bool ok = mat != null && (!fromAsset || (crack != null && crack.name == "RipStroke308_Crack")) && inkL <= 12f && dryL <= 55f && !mat.IsKeywordEnabled("_EMISSION")
+                    && Regex.Matches(Regex.Replace(src, "//[^\n]*", ""), @"BrushCut\(i\)").Count >= 3;
+                Check(r, "V10g", ok, "glow 0: the brush strokes are the shared opaque-cutout ink material (V2a / V2c), the 앞잡 crack field on it" + (crack != null ? "" : " [no _Crack]") + ", wet ink L* " + inkL.ToString("0.0") + " (<= 12), dry L* " + dryL.ToString("0.0") + ", the depth passes cut the same brush texels");
+            }
+            // ---- pool / leak: the four templates through one presenter ----
+            {
+                int meshesBefore = Resources.FindObjectsOfTypeAll<Mesh>().Count(m => m.name == "Vol2Vfx");
+                Vol2VfxPresenter pres = null; string detail = ""; bool ok = true;
+                using (var s = new Setup(book, cat))
+                {
+                    pres = Vol2VfxPresenter.Attach(s.Rig.Coord, null, cat, null, HideFlags.HideAndDontSave);
+                    try
+                    {
+                        s.Rig.Add("A", 3.4f, 0.2f);
+                        pres.Step();
+                        foreach (char letter in "가거고구")
+                        {
+                            var log = s.Rig.Cast(letter, out _);
+                            for (int i = 0; i < 60; i++)
+                            {
+                                s.Rig.Advance(0.02); pres.Step();
+                                if (letter == '거' && i == 11) s.Model.Parried(new Vector3(0f, 1.15f, 1.0f), s.NowUs);
+                            }
+                            bool back = pres.ActiveViews == 0 && pres.PoolFree == pres.PoolCreated;
+                            ok &= back && log != null; detail += letter + (back ? " returned; " : " NOT RETURNED; ");
+                        }
+                        bool empty = Resources.FindObjectsOfTypeAll<Mesh>().Where(m => m.name == "Vol2Vfx").All(m => m.vertexCount == 0);
+                        ok &= pres.PoolCreated == 1 && empty; detail += "created " + pres.PoolCreated + ", meshes emptied " + empty;
+                    }
+                    finally { if (pres != null) { pres.Release(); UnityEngine.Object.DestroyImmediate(pres.gameObject); } }
+                }
+                int meshesAfter = Resources.FindObjectsOfTypeAll<Mesh>().Count(m => m.name == "Vol2Vfx");
+                Check(r, "V10p", ok && meshesAfter == meshesBefore, "pool: 가 거 고 구 one after another take ONE pooled view and give it back emptied; nothing left after the presenter is destroyed (meshes " + meshesBefore + " -> " + meshesAfter + ") [" + detail + "]");
+            }
+        }
+
         static void Cases(Report r)
         {
             var book = Vol2RulebookLoader.Load(null, null);
@@ -106,8 +247,10 @@ namespace Oheangbu.EditorTools.Vol2
                 foreach (var t in cat.templates.Where(t => t.filled))
                     allMapped &= recipes.TryGet(t.recipe, out _) && t.recipe == Vol2VfxDefaults.RecipeOf(new Vol2TemplateId(t.frame, t.verb))
                         && (t.frame == Frame.Path ? (int)t.recipe == (int)t.verb + 1 : t.verb == Verb.Once);
-                Check(r, "V0b", recipes.Count == 9 && allMapped && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2PathOneHitRecipe,
-                    "nine recipes registered, one per filled template: the Path frame x its verb (P0 = the slice 9a recipe; the NB20 one is kept unregistered) and the 한 번 of Attachment / Fan / Ring");
+                Check(r, "V0b", recipes.Count == 9 && allMapped && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2StrokePathRecipe
+                    && recipes.TryGet(Vol2Recipe.AttachOnce, out var a0r) && a0r is Vol2StrokeAttachRecipe && recipes.TryGet(Vol2Recipe.FanOnce, out var f0r) && f0r is Vol2StrokeFanRecipe
+                    && recipes.TryGet(Vol2Recipe.RingOnce, out var r0r) && r0r is Vol2StrokeRingRecipe,
+                    "nine recipes registered, one per filled template: the Path frame x its verb and the 한 번 of Attachment / Fan / Ring; the 20 no-batchim P0 / A0 / F0 / R0 = stroke20 (the small 앞잡); the slice 9a P0 and the NB20 ones are kept unregistered");
                 bool distinct = cat.bodies.Select(b => b.edge).Distinct().Count() == 5 && cat.bodies.Select(b => b.end).Distinct().Count() == 5;
                 Check(r, "V0c", cat.bodies.Length == 5 && distinct, "5 body looks: 5 different edge cues (fibre tear / saw-tooth / plates / straight cut / hook) and 5 different end behaviours");
                 var wood = cat.Look(Body.Wood); var fire = cat.Look(Body.Fire); var earth = cat.Look(Body.Earth); var metal = cat.Look(Body.Metal); var water = cat.Look(Body.Water);
@@ -190,7 +333,7 @@ namespace Oheangbu.EditorTools.Vol2
             // ---- V3 no presenter-owned lifetime ----
             {
                 string dir = Path.GetFullPath(Path.Combine(Application.dataPath, "_Project/Scripts/App/Vol2/Presentation"));
-                var files = new[] { "Vol2VfxData.cs", "Vol2VfxModel.cs", "Vol2VfxRecipes.cs", "Vol2Nb20Recipes.cs", "Vol2VfxPresenter.cs", "Vol2InkMesh.cs", "Vol2BodyLook.cs", "Vol2VfxTemplate.cs", "Vol2VfxCatalogue.cs" };
+                var files = new[] { "Vol2VfxData.cs", "Vol2VfxModel.cs", "Vol2VfxRecipes.cs", "Vol2Nb20Recipes.cs", "Vol2StrokeRecipes.cs", "Vol2VfxPresenter.cs", "Vol2InkMesh.cs", "Vol2BodyLook.cs", "Vol2VfxTemplate.cs", "Vol2VfxCatalogue.cs" };
                 var timers = new Regex(@"Time\.(time|deltaTime|unscaled\w*|fixed\w*|realtimeSinceStartup|timeAsDouble)|StartCoroutine|IEnumerator|WaitFor\w+|(?<![.\w])Invoke\s*\(|InvokeRepeating|UniTask\.(Delay|Yield)|Task\.Delay|System\.Timers|new\s+Timer|DOTween|Destroy\s*\([^)]*,\s*[0-9]");
                 string found = ""; int scanned = 0;
                 foreach (string f in files)
@@ -224,7 +367,13 @@ namespace Oheangbu.EditorTools.Vol2
                         string what;
                         switch (verb)
                         {
-                            case 0: shape = follow == 1 && drift >= 3 && drift <= (body == Body.Fire ? 6 : 5) && normalBillboard >= 3; what = "stroke + landing stroke + X + " + drift + " flecks (the registered slice 9a P0)"; break;
+                            case 0:
+                            {
+                                // stroke20 P0: one flying brush stroke following the head + the small 앞잡 at the body (+ needles + 3 - 5 flecks + the body accent), every stroke a brush ribbon
+                                int fl = strokes.Count(x => x.Role == Vol2StrokeRole.Drift && !x.Ash);
+                                shape = follow == 1 && strokes.All(x => x.IsBrush) && strokes.Any(x => x.Role == Vol2StrokeRole.Normal && x.Width >= 0.28f) && (body == Body.Fire ? drift >= 4 : fl >= 3 && fl <= 5);
+                                what = "flying brush stroke + small 앞잡 + needles + " + drift + " flecks (stroke20 P0)"; break;
+                            }
                             case 1: shape = follow <= 1 && normalBillboard >= 6 && inst.Parts.Any(p => p.Mat != null); what = "stroke + trunk, 3 branches, 2 twigs (" + normalBillboard + " standing strokes)"; break;
                             case 2: shape = follow == 1 && flat >= 8; what = "stroke + flat bundles (" + flat + " flat strokes)"; break;
                             case 3: shape = follow == 1 && inst.Parts.Any(p => p.Mat != null && p.Mat.Tag == Vol2SeedExecutor.TagSeed) && normalBillboard >= 2; what = "stroke + a stem and a ring standing on the host"; break;
@@ -262,7 +411,7 @@ namespace Oheangbu.EditorTools.Vol2
                 }
             }
 
-            // ---- V4n NB20: the 15 casts of A0 / F0 / R0 x five bodies (P0 is in V4 / V4b) ----
+            // ---- V4n NB20 (kept, unregistered since stroke20: swapped in with Set): the 15 casts of A0 / F0 / R0 x five bodies (P0 is in V4b) ----
             {
                 string[] rows = { "거너머서어", "고노모소오", "구누무수우" };
                 string[] ids = { "A0", "F0", "R0" };
@@ -270,7 +419,7 @@ namespace Oheangbu.EditorTools.Vol2
                     for (int bi = 0; bi < 5; bi++)
                     {
                         char letter = rows[f][bi]; Body body = Bodies[bi]; string tag = ids[f] + body;
-                        using (var s = new Setup(book, cat))
+                        using (var s = new Setup(book, cat, Nb20Registry()))
                         {
                             if (f == 0) s.Rig.Add("A", 1.6f, 0f); else if (f == 1) s.Rig.Add("A", 3.4f, 0f); else s.Rig.Add("A", 1.9f, 0.5f);
                             var log = s.Rig.Cast(letter, out _);
@@ -311,7 +460,7 @@ namespace Oheangbu.EditorTools.Vol2
                             Check(r, "V4ne." + tag, s.Model.Instances.Count == 0 && s.Model.RetiredCount == 1, letter + " " + body + ": over after the executor's own end (retired " + s.Model.RetiredCount + ", live " + s.Model.Instances.Count + ")");
                         }
                     }
-                using (var s = new Setup(book, cat))
+                using (var s = new Setup(book, cat, Nb20Registry()))
                 {
                     s.Rig.Add("A", 1.6f, 0f);
                     var log = s.Rig.Cast('거', out _); s.Drive(0.1, 0.05);
@@ -326,6 +475,9 @@ namespace Oheangbu.EditorTools.Vol2
                     Check(r, "V4p", splash && s.Model.ParriesDrawn == 1, "거: a successful parry inside the window splashes once (needle star + contact stroke + 3 flecks); a repeat of the same impact and a parry after the window draw nothing (drawn " + s.Model.ParriesDrawn + ")");
                 }
             }
+
+            // ---- V10 stroke20 (D308-150 V7): the 20 no-batchim casts, the rule checks ----
+            Stroke20(r, book, cat, fromAsset);
 
             // ---- V5 end reasons on a residue (낙: fire, 남긴다, 10 s) ----
             {

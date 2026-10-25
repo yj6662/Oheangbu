@@ -21,6 +21,7 @@ namespace Oheangbu.EditorTools.Vol2
         public const string TemplateFolder = Root + "/Templates", BodyFolder = Root + "/Bodies";
         public const string MaterialPath = Root + "/M_Vol2Ink.mat";
         public const string BristleTexture = "Assets/_Project/Art/SpellVFX308/RiposteStroke/RipStroke308_Bristle.png";
+        public const string CrackTexture = "Assets/_Project/Art/SpellVFX308/RiposteStroke/RipStroke308_Crack.png";
         public const string CataloguePath = ResourcesFolder + "/Vol2VfxCatalogue.asset";
         public const string SheetTexture = Root + "/NB20/NB20_Sheet.png", SheetTimeTexture = Root + "/NB20/NB20_SheetTime.png";
 
@@ -71,6 +72,15 @@ namespace Oheangbu.EditorTools.Vol2
             // the riposte one-stroke dry-brush bristle mask (R = ink coverage, tiles along the stroke): the stroke texture of every vol.2 stroke
             var bristle = AssetDatabase.LoadAssetAtPath<Texture2D>(BristleTexture);
             if (bristle != null) mat.SetTexture("_Bristle", bristle); else log.Add("WARNING: no bristle texture at " + BristleTexture);
+            // stroke20 (D308-150 V7): the 앞잡's crack field drives the brush strokes' drying (the same texture asset the riposte material uses; its importer is not touched)
+            var crack = AssetDatabase.LoadAssetAtPath<Texture2D>(CrackTexture);
+            if (crack != null && mat.HasProperty("_Crack")) { if (mat.GetTexture("_Crack") != crack) { mat.SetTexture("_Crack", crack); log.Add("material _Crack = " + CrackTexture); } }
+            else log.Add("WARNING: no crack texture at " + CrackTexture + " or no _Crack on the shader (refresh first)");
+            // stroke20 look numbers (TEST, judged by the user by eye): the 앞잡 ink and dry grey-black, the streak / flake sizes in metres, the ragged head, the faint body pigment
+            foreach (var (prop, value) in new[] { ("_BrushTile", 0.45f), ("_CrackTile", 0.80f), ("_BrushRag", 0.07f), ("_BrushTailDry", 0.55f), ("_BrushTint", 0.32f), ("_BrushPigment", 0.7f) })
+                if (mat.HasProperty(prop) && !Mathf.Approximately(mat.GetFloat(prop), value)) { mat.SetFloat(prop, value); log.Add("material " + prop + " = " + value); }
+            foreach (var (prop, value) in new[] { ("_BrushInk", new Color(.055f, .05f, .047f, 1f)), ("_BrushDry", new Color(.2f, .185f, .17f, 1f)) })
+                if (mat.HasProperty(prop) && mat.GetColor(prop) != value) { mat.SetColor(prop, value); log.Add("material " + prop + " = " + value); }
             // NB20 (D308-150 V6): the authored ink atlas pair (Blender + After Effects, packed by Tools/Art/SpellVFX308/nb20/nb20_pack.py): data, not colour - linear, mips that keep the
             // cutout coverage, BC7 (high quality) to keep the two 4096 maps at ~21 MB each
             foreach (var (prop, path) in new[] { ("_Sheet", SheetTexture), ("_SheetTime", SheetTimeTexture) })

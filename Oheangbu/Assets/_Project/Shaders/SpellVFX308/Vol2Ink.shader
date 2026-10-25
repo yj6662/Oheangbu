@@ -44,6 +44,15 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
         _PaperColor("NB20 dry paper rim (flat, no light)", Color) = (.80,.76,.66,1)
         _RimPx("NB20 paper rim width (px)", Float) = 3
         _EdgePx("NB20 dry pigment edge band (px)", Float) = 1.75
+        [NoScaleOffset] _Crack("stroke20 crack field (R: 0 on a crack .. 1 at a flake centre; RipStroke308_Crack)", 2D) = "white" {}
+        _BrushInk("stroke20 wet ink (the 앞잡 ink)", Color) = (.055,.05,.047,1)
+        _BrushDry("stroke20 dry grey-black", Color) = (.2,.185,.17,1)
+        _BrushTile("stroke20 metres per bristle tile", Float) = .45
+        _CrackTile("stroke20 metres per crack tile", Float) = .80
+        _BrushRag("stroke20 ragged head (m)", Float) = .07
+        _BrushTailDry("stroke20 how dry the tail runs", Range(0,1)) = .55
+        _BrushTint("stroke20 body pigment in the starved fibres (0..1)", Range(0,1)) = .5
+        _BrushPigment("stroke20 pigment value scale", Range(0,1)) = .8
     }
     SubShader
     {
@@ -62,9 +71,12 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
         TEXTURE2D(_Bristle); SAMPLER(sampler_Bristle);
         TEXTURE2D(_Sheet); SAMPLER(sampler_Sheet);
         TEXTURE2D(_SheetTime); SAMPLER(sampler_SheetTime);
+        TEXTURE2D(_Crack); SAMPLER(sampler_Crack);
         CBUFFER_START(UnityPerMaterial)
         half4 _InkColor, _PigmentColor, _WetColor, _PaperColor; float4 _EndDir, _Offset;
         float _BristleLen, _BristleBand, _EdgeKind, _EndKind, _Age, _Head, _TailLen, _BaseY, _Fray, _Gap, _HeadRag, _MinPx, _SettleStart, _SettleEnd, _NearClip, _NearFade, _RimPx, _EdgePx;
+        half4 _BrushInk, _BrushDry;
+        float _BrushTile, _CrackTile, _BrushRag, _BrushTailDry, _BrushTint, _BrushPigment;
         CBUFFER_END
 
         // ---- NB20 (D308-150 V6): the authored ink atlas (Blender bristle brushes + After Effects bleed / drying order, Tools/Art/SpellVFX308/nb20) ----
@@ -84,8 +96,9 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             float t0 = v.b.x, speed = v.b.y, tEnd = v.b.z, endDur = v.b.w;
             float mode = v.c.x, warnDur = v.c.y, seed = v.c.z;
             float layout = v.d.x, role = v.d.z, flags = v.d.w;
-            bool sheet = layout > 1.5;
-            bool flatL = abs(layout - 1.0) < 0.5 || layout > 2.5;
+            bool brush = layout > 3.5;                                                                // stroke20: the 앞잡 brush ribbon (layouts 4 / 5)
+            bool sheet = layout > 1.5 && !brush;
+            bool flatL = abs(layout - 1.0) < 0.5 || (layout > 2.5 && layout < 3.5) || layout > 4.5;
             float3 P = TransformObjectToWorld(v.positionOS.xyz);
             float ageS = _Age - t0;
             bool follow = role > 0.5 && role < 1.5;
@@ -114,6 +127,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
                 }
                 if (flatL && (abs(_EndKind - 2.0) < 0.5)) k = 0.0;                          // a flat stroke cannot sink: it breaks into plates instead
                 if (flatL && (abs(_EndKind - 4.0) < 0.5)) dir = normalize(v.dirOS + 0.0001);   // water on the ground runs along the line
+                if (brush) k *= 0.4;                                                               // stroke20: the body's end is a small accent, not a journey
                 P += dir * k;
                 if (abs(_EndKind - 2.0) < 0.5 && !flatL) P.y += abs(side) * 0.14 * dry;       // earth: the middle sinks, the rim stays up and lifts
             }
@@ -136,7 +150,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             float span = clamp(0.22 * L, 0.2, 0.9);
             float tipD = (follow ? lim : L) - s;
             // water: the end is an open hook - the ribbon bends away sideways over its last stretch
-            if (_EdgeKind > 3.5 && !sheet)
+            if (_EdgeKind > 3.5 && !sheet && !brush)
             {
                 float tk = 1.0 - saturate(tipD / span);
                 P += sd * (tk * tk * span * 1.6);
@@ -172,6 +186,30 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
                 float prog = ageS < 0.0 ? -1.0 : (speed < 0.001 ? 1.0 : saturate(ageS / speed));
                 if (NbBit(v.e.y, 8.0) > 0.5) prog = ageS < 0.0 ? -1.0 : saturate((_Head - 0.05) / max(L, 0.01));
                 E = float4(v.e.x, v.e.y, prog, 1.0);
+            }
+            if (brush)
+            {
+                // stroke20: the ribbon lies on its own fixed world plane (tangent = the plane normal; the 앞잡 stroke never follows the camera), or faces the camera around its axis
+                // when it has no plane (a flying path, a fleck). Width is per point (uv0.w), as RiposteStroke308Path writes it: pressed start, thin dry end.
+                float3 Nw = role > 2.5 ? float3(0, 0, 0) : v.drift.xyz;
+                float3 sdB;
+                if (dot(Nw, Nw) > 0.01) { sdB = cross(normalize(Nw), T); sdB = dot(sdB, sdB) < 0.000001 ? sd : normalize(sdB); }
+                else { sdB = cross(T, toCam); sdB = dot(sdB, sdB) < 0.000001 ? float3(1, 0, 0) : normalize(sdB); }
+                float inkV = v.e.z, tl = max(v.e.w, 0.05), headDry = 0.0, hwB = hw;
+                if (follow)
+                {
+                    // the flying stroke: the press is AT the head (blunt front), the ink thins and starves behind it and cracks away past the tail length
+                    float dh = _Head - s;
+                    float kT = saturate(dh / tl);
+                    hwB = hw * lerp(1.0, 0.30, pow(kT, 0.7)) * lerp(0.35, 1.0, sqrt(saturate(dh / 0.22)));               // r6: a rounded press, not a square end
+                    inkV *= lerp(1.0, 0.45, kT);
+                    headDry = saturate((dh - tl * 0.55) / (tl * 0.45));
+                }
+                hwB = max(hwB, 1.25 * pxWorld);                                                   // never thinner than 2.5 px across (a hairline would shimmer)
+                Pw = P + sdB * (side * hwB);
+                o.positionCS = TransformWorldToHClip(Pw);
+                hwEff = hwB;
+                E = float4(inkV, headDry, hwB, 2.0);
             }
             float wear = (warnDur > 0.0 && tEnd < 900000.0) ? saturate(1.0 - (tEnd - _Age) / warnDur) : 0.0;
             o.A = float4(s, side, L, lim);
@@ -346,6 +384,40 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             clip(OhValueNoise(texel / tpp * 0.06 + seed * 3.1) - 0.14);           // r4: a few long breaks (every ~20 px), not a dotted line
             return float4(2.0, 0.0, edgeDry, 0.0);
         }
+
+        // stroke20 (D308-150 V7, "앞잡 한 획을 작게"): RiposteInk308's Cut() on a small ribbon, tiled in METRES so a 0.3 m stroke keeps the 앞잡's streak and flake sizes on screen.
+        // returns (starve 0..1, bristle, across 0 rim .. 1 centre, drying 0..1) for the colour
+        float4 BrushCut(Varyings i)
+        {
+            float s = i.A.x, side = i.A.y, L = max(i.A.z, 0.001), lim = i.A.w;
+            float dry = i.B.x, mode = i.B.y, seed = i.B.z;
+            float wear = i.C.x, role = i.C.z, eye = i.C.w;
+            float ink = i.E.x, headDry = i.E.y, hwB = max(i.E.z, 0.004);
+            bool follow = role > 0.5 && role < 1.5;
+            float u = saturate(s / L), v = side * 0.5 + 0.5;
+            // the bristle rows across: a narrow stroke takes fewer of them (a 0.3 m stroke ~6 streaks, the 1.5 m 앞잡 head all of them)
+            float rows = clamp(hwB * 2.0 / 1.2, 0.22, 1.0);
+            // along: _BrushTile metres per tile, but never more than 3 tiles over a long stroke (the 앞잡 tiles 3 times over its length: a 4 m ground stroke tiled every 0.45 m read as a ladder)
+            float tileL = max(_BrushTile, L / 3.0);
+            float bristle = SAMPLE_TEXTURE2D(_Bristle, sampler_Bristle, float2(s / tileL + seed * 0.37, frac(seed * 0.173) * (1.0 - rows) + v * rows)).r;
+            // written so far; the head edge is ragged by the bristles, never a soft edge
+            clip(lim - s + (bristle - 0.5) * _BrushRag);
+            // dry-brush coverage: the edges go first, then the starved ink and the tail
+            float across = 1.0 - abs(side);
+            // the tail runs dry only where the stroke itself is starved there (a burst stroke that lands pressed keeps its wet end)
+            float starve = saturate(1.0 - ink) + (follow ? 0.0 : _BrushTailDry * smoothstep(0.5, 1.0, u) * saturate((1.0 - ink) * 3.0)) + wear * 0.5;
+            clip(bristle - starve * 0.8 + (across - 0.3) * 0.9 - 0.35);
+            // drying through the crack field, the end of the stroke first (a flying stroke: its tail behind the head)
+            float dd = saturate(dry * 1.04);
+            float dryLocal = saturate(max(dd > 0.0 ? dd * 1.35 - (1.0 - u) * 0.35 : 0.0, headDry * 1.2));
+            if ((abs(mode - 2.0) < 0.5 || abs(mode - 6.0) < 0.5) && dd > 0.0) clip(L * (1.0 - dd) - s + (bristle - 0.5) * 0.05);      // consumed / cleansed: back to its root
+            float crack = SAMPLE_TEXTURE2D(_Crack, sampler_Crack, float2(s / _CrackTile + seed * 0.19, side * hwB / _CrackTile + seed * 0.07)).r;
+            clip(dryLocal > 0.0 ? crack - dryLocal - 0.001 : 1.0);
+            // fire: burnt-through holes where the ink runs dry
+            if (abs(_EdgeKind - 1.0) < 0.5 && starve > 0.35) clip(0.70 - OhFbm(float2(s * 7.0 + seed * 5.0, side * hwB * 7.0 + seed)) + (1.0 - saturate(starve)) * 0.3);
+            clip(OhNearVisibility(eye, _NearClip, _NearFade) - OhDither(i.positionCS.xy) - 0.001);
+            return float4(saturate(starve), bristle, across, dryLocal);
+        }
         ENDHLSL
         Pass
         {
@@ -358,6 +430,18 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             half4 frag(Varyings i) : SV_Target
             {
                 float settle = smoothstep(_SettleStart, _SettleEnd, i.D.x);
+                if (i.E.w > 1.5)
+                {
+                    // stroke20: the 앞잡 ink (near black, dry grey-black where it runs dry); the body hue only in the starved fibres and the rim, never a coloured outline
+                    float4 kb = BrushCut(i);
+                    float dried = saturate(kb.w * 1.6 + kb.x * 0.45);
+                    float3 rgbB = lerp(_BrushInk.rgb, _BrushDry.rgb, dried) * (0.92 + 0.16 * kb.y);
+                    float tint = _BrushTint * smoothstep(0.30, 0.95, kb.x + (1.0 - kb.z) * 0.30);
+                    float3 bodyC = lerp(_WetColor.rgb, _PigmentColor.rgb, settle) * _BrushPigment;
+                    rgbB = lerp(rgbB, bodyC, tint);
+                    if (fmod(floor(i.D.y * 0.25), 2.0) > 0.5) rgbB = float3(0.10, 0.095, 0.09);           // fire's ash: burnt ink grey
+                    return half4(min(rgbB, OH_INK_CEILING_OUT), 1);
+                }
                 if (i.E.w > 0.5)
                 {
                     // NB20: ink L* ~10 (wet pool) .. ~30 (dry streak) around the reading layer L* 18; dry pigment (body hue, L* 60) settling from the wet colour; the paper rim flat; ash grey
@@ -388,7 +472,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            half4 frag(Varyings i) : SV_Target { if (i.E.w > 0.5) SheetCut(i); else Cut(i); return i.positionCS.z; }
+            half4 frag(Varyings i) : SV_Target { if (i.E.w > 1.5) BrushCut(i); else if (i.E.w > 0.5) SheetCut(i); else Cut(i); return i.positionCS.z; }
             ENDHLSL
         }
         Pass
@@ -399,7 +483,7 @@ Shader "Oheangbu/SpellVFX308/Vol2Ink"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            half4 frag(Varyings i) : SV_Target { if (i.E.w > 0.5) SheetCut(i); else Cut(i); return half4(-GetViewForwardDir(), 0); }
+            half4 frag(Varyings i) : SV_Target { if (i.E.w > 1.5) BrushCut(i); else if (i.E.w > 0.5) SheetCut(i); else Cut(i); return half4(-GetViewForwardDir(), 0); }
             ENDHLSL
         }
     }

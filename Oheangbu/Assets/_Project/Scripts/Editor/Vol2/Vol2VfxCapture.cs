@@ -35,6 +35,7 @@ namespace Oheangbu.EditorTools.Vol2
             try
             {
                 if (c == "play") return Play();
+                if (c == "play-legacy") return PlayLegacy();
                 if (c == "probe") return Vol2VfxCapture.Probe();
                 if (c == "status") return Vol2VfxCapture.Status();
                 if (c == "stop") return Vol2VfxCapture.Stop("stop command");
@@ -43,6 +44,18 @@ namespace Oheangbu.EditorTools.Vol2
                 return "REFUSED vfx9a: play | run:<templates|all>[:bodies=..][:back=red,green][:video=0|1][:variant=..] | status | stop | build";
             }
             catch (Exception e) { return "REFUSED vfx9a:" + c + ": " + e.GetType().Name + " " + e.Message; }
+        }
+
+        /// <summary>stroke20 comparison: the lab in Play WITHOUT a vol.2 request = the Legacy308 route the main game plays (SpellResolver -> the old 120 effects). Capture with legacy=1.</summary>
+        static string PlayLegacy()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return "REFUSED vfx9a:play-legacy: Play is running or starting";
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating) return "REFUSED vfx9a:play-legacy: editor busy (compile / import)";
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+                if (SceneManager.GetSceneAt(i).isDirty) return "REFUSED vfx9a:play-legacy: unsaved changes in " + SceneManager.GetSceneAt(i).path;
+            if (File.Exists(Vol2LabRequestFile.RequestPath)) return "REFUSED vfx9a:play-legacy: a vol.2 lab request is pending (" + Vol2LabRequestFile.RequestPath + ")";
+            string started = SpellLab308.Run("play");
+            return started.StartsWith("play:", StringComparison.Ordinal) ? "PLAY-REQUESTED (Legacy308 route, the main game's) " + started : "REFUSED vfx9a:play-legacy: " + started;
         }
 
         static string Play()
@@ -81,6 +94,11 @@ namespace Oheangbu.EditorTools.Vol2
         // realm=auto makes the look step at a point inside the realm of the soil (적로 for red, 청림 for green) before every render instead of at the lab's own position;
         // p0=nb20 swaps the kept NB20 P0 recipe in for the run; template AJ = the approved 앞잡 one stroke (RiposteStroke308Effect) fired at the first body
         static bool _mainLook, _p0Nb20; static string _realmMode = "lab";
+        // stroke20 (D308-150 V7): pitch= the video camera pitch (the in-game shoulder camera is pitch 0 by default; the old captures used 15), rules=1 renders every video frame three times
+        // (with / without the VFX / without the enemy body) and writes rules.csv + m_NNNNN.png masks (R = VFX pixels, G = enemy body pixels) for the machine checks, dist=3/6/12 adds P0 jobs
+        // with the body at those distances; p0=9a swaps the kept slice 9a P0 back in
+        static float _videoPitch = 15f; static bool _rules, _p09a, _legacy; static int _legacyFrames; static Vol2WiringCaster _legacyCaster; static readonly List<float> Dists = new List<float>();
+        static StreamWriter _rulesCsv; static RenderTexture _rtB, _rtC; static Texture2D _texB, _texC, _mask;
         static Oheangbu.App.World.LookDriver308 _lookDriver; static Oheangbu.Data.World.LookProfile308 _lookSaved; static bool _lookSwapped;
         static Vector3? _realmEye;
         static Oheangbu.App.World.RiposteStroke308Effect _rip; static Oheangbu.App.World.RiposteStroke308Effect.Slot _ripSlot; static int _ripFrames;
@@ -141,8 +159,8 @@ namespace Oheangbu.EditorTools.Vol2
             string[] parts = spec.Split(':');
             var templates = new List<string>();
             foreach (string t in parts[0].Split(',')) { if (t == "all") templates.AddRange(new[] { "P0", "P1", "P2", "P3", "P4", "P5" }); else if (t == "nb20") templates.AddRange(new[] { "P0", "A0", "F0", "R0" }); else templates.Add(t.Trim()); }
-            _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear();
-            var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true; string variantOnly = null;
+            _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _rules = false; _p09a = false; _legacy = false; Dists.Clear();
+            var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
             {
                 int eq = parts[i].IndexOf('=');
@@ -150,18 +168,23 @@ namespace Oheangbu.EditorTools.Vol2
                 string k = parts[i].Substring(0, eq), v = parts[i].Substring(eq + 1);
                 if (k == "bodies") bodies = v.Split(',').Select(x => (Body)Enum.Parse(typeof(Body), x.Trim(), true)).ToList();
                 else if (k == "back") backs = v.Split(',').Select(x => x.Trim()).ToList();
-                else if (k == "video") videoOnRed = v == "1";
+                else if (k == "video") { videoOnRed = v == "1" || v == "2"; videoAll = v == "2"; }
                 else if (k == "variant") variantOnly = v;
                 else if (k == "out") _out = v.Trim().Trim('/').Replace("..", "");
                 else if (k == "look") _mainLook = v.Trim() == "main";
                 else if (k == "realm") _realmMode = v.Trim();
-                else if (k == "p0") _p0Nb20 = v.Trim() == "nb20";
+                else if (k == "p0") { _p0Nb20 = v.Trim() == "nb20"; _p09a = v.Trim() == "9a"; }
+                else if (k == "pitch") _videoPitch = float.Parse(v, Inv);
+                else if (k == "rules") _rules = v == "1";
+                else if (k == "legacy") _legacy = v == "1";
+                else if (k == "dist") Dists.AddRange(v.Split('/').Select(x => float.Parse(x, Inv)));
+                else if (k == "p0" && v.Trim() == "9a") _p09a = true;
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
             }
             foreach (string t in templates)
             {
                 if (!(t.Length == 2 && t[0] == 'P' && t[1] >= '0' && t[1] <= '5') && !RowOf.ContainsKey(t) && t != "AJ") return "REFUSED vfx9a:run: template " + t + " (slice 9a draws P0 - P5, NB20 also A0 F0 R0)";
-                var variants = t == "P3" ? new[] { "work", "expire" } : new[] { "main" };
+                var variants = t == "P3" ? new[] { "work", "expire" } : t == "P0" && Dists.Count > 0 ? new[] { "main" }.Concat(Dists.Select(d => "d" + d.ToString("0", Inv))).ToArray() : new[] { "main" };
                 foreach (string variant in variants)
                 {
                     if (variantOnly != null && variant != variantOnly) continue;
@@ -169,7 +192,7 @@ namespace Oheangbu.EditorTools.Vol2
                         foreach (var body in bodies)
                         {
                             if (t == "AJ" && body != bodies[0]) continue;      // the 앞잡 stroke has no body variant: one job per ground
-                            var job = MakeJob(t, variant, body, back, videoOnRed && back == backs[0]);
+                            var job = MakeJob(t, variant, body, back, videoAll || (videoOnRed && back == backs[0]));
                             Queue.Enqueue(job);
                         }
                 }
@@ -211,7 +234,9 @@ namespace Oheangbu.EditorTools.Vol2
                     break;
                 case "F0": j.Dummies[0] = (3.4f, -0.3f); j.Dummies.Add((4.3f, 1.25f)); j.MaxAge = 0.6; j.MinAge = 0.45; break;
                 case "R0": j.Dummies[0] = (1.85f, 0.75f); j.MaxAge = 0.6; j.MinAge = 0.45; break;
-                case "P0": j.Dummies.Add((8f, 0f)); j.MaxAge = 1.0; j.MinAge = 0.7; break;
+                case "P0":
+                    if (variant.StartsWith("d", StringComparison.Ordinal)) { j.Dummies[0] = (float.Parse(variant.Substring(1), Inv), 0f); j.MaxAge = 1.0; j.MinAge = 0.75; break; }
+                    j.Dummies.Add((8f, 0f)); j.MaxAge = 1.0; j.MinAge = 0.7; break;
                 case "P1":
                     j.Dummies[0] = (4.6f, 0f); j.MaxAge = 14.0; j.MinAge = 1.2;
                     j.Steps.Add(new Step { At = 2.0, Name = "JUMP to 0.55 s before the residue expires (LAB-SIMULATED: 10 s wait)", Do = c => JumpBeforeExpiry(c, 0.55) });
@@ -239,6 +264,7 @@ namespace Oheangbu.EditorTools.Vol2
                     break;
                 default: j.MaxAge = 1.5; j.MinAge = 1.2; break;
             }
+            if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : 1.6; j.Variant = "legacy"; }
             return j;
         }
 
@@ -317,6 +343,27 @@ namespace Oheangbu.EditorTools.Vol2
 
         static void WaitPresenter()
         {
+            if (_legacy)
+            {
+                var w = Object.FindFirstObjectByType<CombatLoopWiring>();
+                if (w == null || w.LetterChannel == null || w.SummonPlayer == null) { if (++_settle > 900) { Problems.Add("legacy: no wiring / player after 900 frames"); Finish("no wiring"); } return; }
+                if (Object.FindFirstObjectByType<Vol2VfxPresenter>() != null) Problems.Add("legacy=1 but a vol.2 presenter exists: this Play is a Vol2 scope, not the main game's route (use vfx9a:play-legacy)");
+                _settle = 0;
+                _ctx = new Ctx { Wiring = w };
+                _legacyCaster = new Vol2WiringCaster(w);
+                if (Camera.main == null) { Problems.Add("no main camera"); Finish("no camera"); return; }
+                MakeCamera(Camera.main);
+                Time.captureFramerate = 60;
+                _lookDriver = Object.FindFirstObjectByType<Oheangbu.App.World.LookDriver308>();
+                if (_mainLook)
+                {
+                    var prof = AssetDatabase.LoadAssetAtPath<Oheangbu.Data.World.LookProfile308>(MainLookProfile);
+                    if (_lookDriver != null && prof != null) { _lookSaved = _lookDriver.Profile; _lookDriver.Profile = prof; _lookSwapped = true; Finished.Add("look=main: LookDriver308 profile -> " + prof.name + " (runtime only)"); }
+                }
+                Finished.Add("legacy=1: the Legacy308 route (the main game's SpellResolver and the old 120 effects), letters raised on the same channel");
+                _st = St.Idle;
+                return;
+            }
             var p = Object.FindFirstObjectByType<Vol2VfxPresenter>();
             var wiring = Object.FindFirstObjectByType<CombatLoopWiring>();
             if (p == null)
@@ -337,6 +384,7 @@ namespace Oheangbu.EditorTools.Vol2
             Time.captureFramerate = 60;
             // calibration options (runtime only; Finish puts everything back)
             if (_p0Nb20) p.Model.Recipes.Set(new Vol2Nb20PathRecipe());
+            if (_p09a) p.Model.Recipes.Set(new Vol2PathOneHitRecipe());
             _lookDriver = Object.FindFirstObjectByType<Oheangbu.App.World.LookDriver308>();
             if (_mainLook)
             {
@@ -434,15 +482,17 @@ namespace Oheangbu.EditorTools.Vol2
             }
             _rtVideo = new RenderTexture(VideoW, VideoH, 24); _rtKey = new RenderTexture(KeyW, KeyH, 24);
             _texVideo = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false); _texKey = new Texture2D(KeyW, KeyH, TextureFormat.RGB24, false);
+            _rtB = new RenderTexture(VideoW, VideoH, 24); _rtC = new RenderTexture(VideoW, VideoH, 24);
+            _texB = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false); _texC = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false);
+            _mask = new Texture2D(VideoW, VideoH, TextureFormat.RGB24, false);
         }
 
         static void DestroyCamera()
         {
             if (_cam != null) Object.DestroyImmediate(_cam.gameObject);
-            foreach (var rt in new[] { _rtVideo, _rtKey }) if (rt != null) { rt.Release(); Object.DestroyImmediate(rt); }
-            if (_texVideo != null) Object.DestroyImmediate(_texVideo);
-            if (_texKey != null) Object.DestroyImmediate(_texKey);
-            _cam = null; _rtVideo = _rtKey = null; _texVideo = _texKey = null;
+            foreach (var rt in new[] { _rtVideo, _rtKey, _rtB, _rtC }) if (rt != null) { rt.Release(); Object.DestroyImmediate(rt); }
+            foreach (var tx in new[] { _texVideo, _texKey, _texB, _texC, _mask }) if (tx != null) Object.DestroyImmediate(tx);
+            _cam = null; _rtVideo = _rtKey = _rtB = _rtC = null; _texVideo = _texKey = _texB = _texC = _mask = null;
         }
 
         static void NextJob()
@@ -487,9 +537,68 @@ namespace Oheangbu.EditorTools.Vol2
             MeasuredGround.Add(back);
             Finished.Add("ground " + back + " (" + (back == "red" ? JeokroSoil : CheongrimSoil) + "): rendered patch Lab(" + lab.L.ToString("0.0", Inv) + "," + lab.a.ToString("0.0", Inv) + "," + lab.b.ToString("0.0", Inv) + ") [plan: " + (back == "red" ? "35,30,25" : "25,-22,15") + "]");
         }
+        /// <summary>legacy=1: a full ink pool before every letter (the old route spends it; a dry pool would misfire the later jobs). The pool is private to the wiring: reflection, editor capture only.</summary>
+        static void LegacyRefill(Ctx c)
+        {
+            try
+            {
+                var pool = typeof(CombatLoopWiring).GetField("_ink", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(c.Wiring);
+                pool?.GetType().GetMethod("Restore", new[] { typeof(float) })?.Invoke(pool, new object[] { 1f });
+            }
+            catch (Exception e) { Problems.Add("legacy refill: " + e.Message); }
+        }
+
+        /// <summary>legacy=1: the same ground, enemy, distances and camera as the vol.2 jobs, around the player of the Legacy308 lab (no vol.2 registry: the old route finds the enemy itself).</summary>
+        static void SetupLegacy(Ctx c, Job j)
+        {
+            foreach (var v in Object.FindObjectsByType<EnemyVitals>(FindObjectsSortMode.None))
+                if (v.gameObject.activeSelf && !v.name.StartsWith("Vol2VfxDummy", StringComparison.Ordinal)) { c.HiddenLab.Add(v.gameObject); v.gameObject.SetActive(false); }
+            c.Origin = _legacyCaster.Position; c.Forward = Vol2ShapeGeometry.FlatUnit(_legacyCaster.AimDirection);
+            _realmEye = _realmMode == "auto" ? RealmPoint(j.Back == "red" ? "Jeokro" : "Cheongrim") : (Vector3?)null;
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            string soil = j.Back == "red" ? JeokroSoil : CheongrimSoil;
+            var soilMat = AssetDatabase.LoadAssetAtPath<Material>(soil);
+            c.Backdrop = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            c.Backdrop.name = "Vol2VfxGround"; Object.DestroyImmediate(c.Backdrop.GetComponent<Collider>());
+            c.Backdrop.transform.SetPositionAndRotation(c.Origin + Vector3.up * 0.012f + c.Forward * 30f, Quaternion.Euler(90f, 0f, 0f));
+            c.Backdrop.transform.localScale = new Vector3(240f, 240f, 1f);
+            if (soilMat != null) c.Backdrop.GetComponent<MeshRenderer>().sharedMaterial = soilMat;
+            var posts = GameObject.Find("Lab_DistancePosts");
+            if (posts != null && posts.activeSelf) { posts.SetActive(false); c.HiddenLab.Add(posts); }
+            var enemyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefab);
+            int n = 0;
+            foreach (var d in j.Dummies)
+            {
+                if (enemyPrefab == null) { Problems.Add("enemy prefab not found: " + EnemyPrefab); break; }
+                Vector3 at = c.Origin + c.Forward * d.ahead + right * d.side;
+                var holder = new GameObject("Vol2VfxHolder"); holder.SetActive(false);
+                var go = Object.Instantiate(enemyPrefab, holder.transform);
+                go.name = "Vol2VfxDummy_" + (char)('A' + n++);
+                foreach (var mb in go.GetComponentsInChildren<MonoBehaviour>(true))
+                    if (mb != null && !(mb is EnemyVitals) && mb.GetType().Namespace != null && mb.GetType().Namespace.StartsWith("Oheangbu", StringComparison.Ordinal)) mb.enabled = false;
+                foreach (var agent in go.GetComponentsInChildren<UnityEngine.AI.NavMeshAgent>(true)) agent.enabled = false;
+                go.transform.SetParent(null, false);
+                go.transform.SetPositionAndRotation(at, Quaternion.LookRotation(-c.Forward, Vector3.up));
+                Object.Destroy(holder);
+                go.SetActive(true);
+                c.Dummies.Add(go);
+            }
+            Physics.SyncTransforms();
+            c.Log = null; _note = "";
+            _folder = Path.Combine(OutRoot, "frames", j.Name);
+            if (Directory.Exists(_folder)) foreach (var f in Directory.GetFiles(_folder)) File.Delete(f);
+            Directory.CreateDirectory(_folder);
+            _index = new StreamWriter(Path.Combine(_folder, "index.csv"), false, new UTF8Encoding(false));
+            _index.WriteLine("frame,unityFrame,clockUs,ageSec,video,key,note,template,variant,body,back,letter,parts,version,verts,views");
+            _frames = 0; _keys = 0;
+            _guardUntil = EditorApplication.timeSinceStartup + 120.0;
+            _settle = 20; _st = St.Settle;          // the old route's previous effects die out before the next letter
+        }
+
         static void Setup()
         {
             var c = _ctx; var j = _job;
+            if (_legacy) { SetupLegacy(c, j); return; }
             c.Shapes.PoolInk?.Refill();
             c.Wiring.Vol2Defence?.ResetForRow();
             c.Coordinator.AbortAll();
@@ -561,6 +670,13 @@ namespace Oheangbu.EditorTools.Vol2
             Directory.CreateDirectory(_folder);
             _index = new StreamWriter(Path.Combine(_folder, "index.csv"), false, new UTF8Encoding(false));
             _index.WriteLine("frame,unityFrame,clockUs,ageSec,video,key,note,template,variant,body,back,letter,parts,version,verts,views");
+            try { _rulesCsv?.Dispose(); } catch (Exception) { }
+            _rulesCsv = null;
+            if (_rules)
+            {
+                _rulesCsv = new StreamWriter(Path.Combine(_folder, "rules.csv"), false, new UTF8Encoding(false));
+                _rulesCsv.WriteLine("frame,ageSec,vfxPx,enemyPx,occludedPx,enemyVisible,contacts,pitch");
+            }
             _frames = 0; _keys = 0;
             _guardUntil = EditorApplication.timeSinceStartup + 120.0;
             _settle = 5; _st = St.Settle;
@@ -569,6 +685,7 @@ namespace Oheangbu.EditorTools.Vol2
         static void CastNow()
         {
             var c = _ctx;
+            if (_legacy) { LegacyRefill(c); RaiseLetter(c, _job.Letter); c.Log = null; _legacyFrames = 0; _st = St.Record; return; }
             c.Shapes.PoolInk?.Refill();
             c.Wiring.Vol2Defence?.ResetForRow();
             _beganLog = null; _lastDecision = null;
@@ -620,6 +737,16 @@ namespace Oheangbu.EditorTools.Vol2
         static void Record()
         {
             var c = _ctx; var j = _job;
+            if (_legacy)
+            {
+                _legacyFrames++;
+                double la = _legacyFrames / 60.0;
+                bool kw = j.Keys && ((la >= 0.065 && la <= 0.10) || (la >= 0.165 && la <= 0.20) || (la >= 0.285 && la <= 0.315));
+                if (j.Video || kw) SaveFrame(c, la, 0, j.Video, kw);
+                _note = "";
+                if (la >= j.MaxAge || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
+                return;
+            }
             if (j.Template == "AJ") { RecordRiposte(); return; }
             // one picture per game frame, after the presenter stepped on the scope clock (Vol2VfxPresenter.LastStepUs)
             long stepUs = c.Presenter.LastStepUs;
@@ -641,7 +768,7 @@ namespace Oheangbu.EditorTools.Vol2
         {
             Vector3 origin = c.Log != null ? c.Log.Spec.Origin : c.Origin, fwd = c.Log != null ? c.Log.Spec.Forward : c.Forward;
             float yaw = Quaternion.LookRotation(fwd, Vector3.up).eulerAngles.y;
-            if (video) { Shoot(origin, yaw, 15f, _rtVideo, _texVideo, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"), false); }
+            if (video) { Shoot(origin, yaw, _videoPitch, _rtVideo, _texVideo, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"), false); if (_rules && !_legacy) Rules(c, origin, yaw, age); }
             if (key)
             {
                 string tag = _job.Template == "AJ" ? (age < 0.13 ? "a008" : age < 0.4 ? "r025" : "r070") : age < 0.13 ? "a008" : age < 0.24 ? "b018" : age > 1.0 ? "x172" : "b030";
@@ -653,6 +780,56 @@ namespace Oheangbu.EditorTools.Vol2
             _index.WriteLine(string.Join(",", _frames.ToString(Inv), Time.frameCount.ToString(Inv), stepUs.ToString(Inv), age.ToString("0.0000", Inv), video ? "1" : "0", key ? "1" : "0", _note.Replace(',', ';'),
                 _job.Template, _job.Variant, _job.Body, _job.Back, _job.Letter, PartInfo(c)));
             _frames++;
+        }
+
+        /// <summary>stroke20 rule probe: the frame just shot (_texVideo) against the same frame rendered without the VFX (B) and without the VFX and the enemy body (C, the body made
+        /// shadows-only so its shadow stays): VFX pixels = A != B, enemy body pixels = B != C, occluded = enemy body pixels the VFX changed in A. Tolerance 12/255 on any channel.</summary>
+        static void Rules(Ctx c, Vector3 origin, float yaw, double age)
+        {
+            var vfx = c.Presenter.GetComponentsInChildren<Renderer>(false).Where(r => r.enabled).ToList();
+            var body = new List<(Renderer r, UnityEngine.Rendering.ShadowCastingMode m)>();
+            foreach (var d in c.Dummies) if (d != null) foreach (var r in d.GetComponentsInChildren<Renderer>(false)) if (r.enabled) body.Add((r, r.shadowCastingMode));
+            try
+            {
+                foreach (var r in vfx) r.enabled = false;
+                Render(origin, yaw, _videoPitch, _rtB, _texB);
+                foreach (var b in body) b.r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                Render(origin, yaw, _videoPitch, _rtC, _texC);
+            }
+            finally
+            {
+                foreach (var r in vfx) if (r != null) r.enabled = true;
+                foreach (var b in body) if (b.r != null) b.r.shadowCastingMode = b.m;
+            }
+            var A = _texVideo.GetPixels32(); var B = _texB.GetPixels32(); var C = _texC.GetPixels32();
+            var M = new Color32[A.Length];
+            int vfxPx = 0, enemyPx = 0, occ = 0; const int Tol = 12;
+            for (int i = 0; i < A.Length; i++)
+            {
+                bool v = Mathf.Max(Mathf.Abs(A[i].r - B[i].r), Mathf.Max(Mathf.Abs(A[i].g - B[i].g), Mathf.Abs(A[i].b - B[i].b))) > Tol;
+                bool e = Mathf.Max(Mathf.Abs(B[i].r - C[i].r), Mathf.Max(Mathf.Abs(B[i].g - C[i].g), Mathf.Abs(B[i].b - C[i].b))) > Tol;
+                if (v) vfxPx++; if (e) enemyPx++; if (v && e) occ++;
+                M[i] = new Color32(v ? (byte)255 : (byte)0, e ? (byte)255 : (byte)0, 0, 255);
+            }
+            _mask.SetPixels32(M); _mask.Apply(false);
+            File.WriteAllBytes(Path.Combine(_folder, "m_" + _frames.ToString("D5", Inv) + ".png"), _mask.EncodeToPNG());
+            int contacts = c.Log != null ? c.Log.Contacts.Count(x => x.BudgetAccepted) : (_ripSlot != null && _ripSlot.HasImpact ? 1 : 0);
+            float vis = enemyPx > 0 ? 1f - occ / (float)enemyPx : 1f;
+            _rulesCsv?.WriteLine(string.Join(",", _frames.ToString(Inv), age.ToString("0.0000", Inv), vfxPx.ToString(Inv), enemyPx.ToString(Inv), occ.ToString(Inv), vis.ToString("0.0000", Inv), contacts.ToString(Inv), _videoPitch.ToString("0", Inv)));
+        }
+
+        static void Render(Vector3 origin, float yawDegrees, float pitchDegrees, RenderTexture rt, Texture2D tex)
+        {
+            Quaternion rot = Quaternion.Euler(pitchDegrees, yawDegrees, 0f);
+            Vector3 pivot = origin + Vector3.up * 1.7f;
+            _cam.transform.SetPositionAndRotation(pivot + rot * new Vector3(0.7f, 0.55f, -2.8f), rot);
+            _cam.fieldOfView = 60f;
+            _cam.targetTexture = rt;
+            if (_realmEye.HasValue && _lookDriver != null) _lookDriver.Refresh(_realmEye.Value);
+            _cam.Render();
+            var was = RenderTexture.active;
+            try { RenderTexture.active = rt; tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0, false); tex.Apply(false); }
+            finally { RenderTexture.active = was; }
         }
 
         /// <summary>The plan's shoulder camera: pivot 1.7 m above the cast point, local offset (0.7, 0.55, -2.8) turned with the aim (yaw) and the pitch about the pivot, FOV 60.</summary>
@@ -678,6 +855,7 @@ namespace Oheangbu.EditorTools.Vol2
 
         static string PartInfo(Ctx c)
         {
+            if (_legacy) return "legacy,-,-,-";
             if (c.Log == null) return "riposte," + (_ripSlot != null ? _ripSlot.RevealU.ToString("0.00", Inv) + "," + _ripSlot.DryNow.ToString("0.00", Inv) : "-,-") + "," + (_rip != null ? _rip.LookWeight.ToString("0.00", Inv) : "-");
             if (!c.Presenter.Model.TryGet(c.Log.Cast, out var inst)) return "0,0,0," + c.Presenter.ActiveViews;
             return inst.Parts.Count + "," + inst.Version + "," + c.Presenter.LastVertices + "," + c.Presenter.ActiveViews;
@@ -686,8 +864,25 @@ namespace Oheangbu.EditorTools.Vol2
         static void Teardown()
         {
             var c = _ctx; var j = _job;
+            if (_legacy)
+            {
+                try { _index?.Dispose(); } catch (Exception) { }
+                _index = null;
+                Finished.Add(j.Name + " | legacy letter " + j.Letter + " | frames " + _frames + " | keys " + _keys);
+                foreach (var d in c.Dummies) if (d != null) Object.Destroy(d);
+                c.Dummies.Clear();
+                if (c.Backdrop != null) Object.Destroy(c.Backdrop);
+                if (c.BackdropMat != null) Object.Destroy(c.BackdropMat);
+                if (c.DummyMat != null) Object.Destroy(c.DummyMat);
+                foreach (var go in c.HiddenLab) if (go != null) go.SetActive(true);
+                c.HiddenLab.Clear();
+                _done++; _st = St.Idle;
+                return;
+            }
             try { _index?.Dispose(); } catch (Exception) { }
             _index = null;
+            try { _rulesCsv?.Dispose(); } catch (Exception) { }
+            _rulesCsv = null;
             string summary = j.Name + " | letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (c.Log != null ? " | cast " + c.Log.Status + " contacts " + c.Log.Contacts.Count + " materials " + c.Log.Materials.Count : " | NO CAST");
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : ""));
             _rip?.CancelAll(); _ripSlot = null;
@@ -719,8 +914,15 @@ namespace Oheangbu.EditorTools.Vol2
             {
                 try
                 {
-                    if (_onDecided != null) _ctx.Services.Route.Adapter.Decided -= _onDecided;
-                    if (_onBegan != null) _ctx.Coordinator.CastBegan -= _onBegan;
+                    if (_onDecided != null && _ctx.Services != null) _ctx.Services.Route.Adapter.Decided -= _onDecided;
+                    if (_onBegan != null && _ctx.Coordinator != null) _ctx.Coordinator.CastBegan -= _onBegan;
+                    if (_legacy)
+                    {
+                        foreach (var d in _ctx.Dummies) if (d != null) Object.DestroyImmediate(d);
+                        if (_ctx.Backdrop != null) Object.DestroyImmediate(_ctx.Backdrop);
+                        foreach (var go in _ctx.HiddenLab) if (go != null) go.SetActive(true);
+                        throw new OperationCanceledException("legacy: no vol.2 scope to restore");
+                    }
                     foreach (var d in _ctx.Dummies) if (d != null) Object.DestroyImmediate(d);
                     if (_ctx.Backdrop != null) Object.DestroyImmediate(_ctx.Backdrop);
                     if (_ctx.GroundRenderer != null) _ctx.GroundRenderer.sharedMaterial = _ctx.GroundOriginal;
@@ -739,7 +941,9 @@ namespace Oheangbu.EditorTools.Vol2
             _rip = null; _ripSlot = null;
             if (_lookSwapped && _lookDriver != null) _lookDriver.Profile = _lookSaved;
             _lookSwapped = false; _lookSaved = null; _realmEye = null;
-            if (_p0Nb20) { var pres = Object.FindFirstObjectByType<Vol2VfxPresenter>(); if (pres != null && pres.Model != null) pres.Model.Recipes.Set(new Vol2PathOneHitRecipe()); }
+            if (_p0Nb20 || _p09a) { var pres = Object.FindFirstObjectByType<Vol2VfxPresenter>(); if (pres != null && pres.Model != null) pres.Model.Recipes.Set(new Vol2StrokePathRecipe()); }
+            try { _rulesCsv?.Dispose(); } catch (Exception) { }
+            _rulesCsv = null;
             DestroyCamera();
             Queue.Clear(); _job = null; _st = St.Idle;
             try

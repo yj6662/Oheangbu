@@ -57,6 +57,7 @@ namespace Oheangbu.App
             p._coordinator = coordinator; p._catalogue = catalogue;
             p._model = new Vol2VfxModel(coordinator, catalogue);
             p._model.Retired += p.OnRetired;
+            p._model.Spawned += p.OnSpawned;
             // NB20: the brush tip / grip of the player's great brush (ignition, the ㅏ head's start, the ㅓ pulse on the shaft); searched lazily, a bounded number of times
             p._model.BrushTip = () => p.Rig() is var r && r != null && r.WorldTip != null ? r.WorldTip.position : (Vector3?)null;
             p._model.BrushGrip = () => p.Rig() is var r && r != null && r.WorldBrushRoot308 != null ? r.WorldBrushRoot308.position : (Vector3?)null;
@@ -66,6 +67,25 @@ namespace Oheangbu.App
 
         World.WorldMacroPlayerGestureRig _rig;
         int _rigSearches;
+        World.SpellSwing308 _swing;
+        int _swingSearches;
+        /// <summary>stroke20: swings the presenter asked the body for (presentation only).</summary>
+        public int SwingsShown { get; private set; }
+        /// <summary>stroke20 r11 experiment: play the body's swing on a stroke20 cast. FALSE: in a vol.2 scope the swinging brush hits (see OnSpawned).</summary>
+        public bool BodySwing308;
+
+        /// <summary>stroke20 (D308-150 V7, coordinator 2026-10-25 "the old 가 is the floor"): the old route shows a cast as a swing of the great brush (SPEC-SPELL-SWING-308);
+        /// the vol.2 route launched with the arm still. A stroke20 cast now asks the body for the same swing motion, presentation only (SpellSwing308.PlayStrike308: the clip
+        /// is started so its apex falls 0.08 s after the cast, the plan's first beat; the rule never waits for it and never reads it).</summary>
+        void OnSpawned(Vol2VfxInstance inst)
+        {
+            // OFF (r11, lab run_20261025_120907 FAIL 110/125): in a vol.2 scope the great brush's swing is a REAL hit (Vol2SwingRig: 갈무리 / the swing contacts) - the
+            // body swing touched bodies again and again. Kept for a later decision (a swing that does not hit, or the swing before the launch as in the old route).
+            if (!BodySwing308) return;
+            if (!Application.isPlaying || !(inst.Recipe is Vol2StrokeRecipeBase sr)) return;
+            if (_swing == null && _swingSearches < 40) { _swingSearches++; _swing = FindFirstObjectByType<World.SpellSwing308>(); }
+            if (_swing != null && _swing.PlayStrike308(sr.SwingState, Vol2StrokeRecipeBase.SwingToApex, 0.4f)) SwingsShown++;
+        }
         World.WorldMacroPlayerGestureRig Rig()
         {
             if (_rig != null) return _rig;
@@ -80,7 +100,7 @@ namespace Oheangbu.App
         /// <summary>Frees every view, mesh and the model's subscriptions (what OnDestroy does; public because OnDestroy does not run for an edit-mode fixture).</summary>
         public void Release()
         {
-            if (_model != null) { _model.Retired -= OnRetired; _model.Dispose(); _model = null; }
+            if (_model != null) { _model.Retired -= OnRetired; _model.Spawned -= OnSpawned; _model.Dispose(); _model = null; }
             foreach (var v in _views.Values) Kill(v);
             _views.Clear();
             while (_free.Count > 0) Kill(_free.Pop());

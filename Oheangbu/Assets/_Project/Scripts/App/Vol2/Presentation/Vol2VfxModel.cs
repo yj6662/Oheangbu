@@ -52,6 +52,8 @@ namespace Oheangbu.App
         public float F0, F1, Density = 1f;
         public int Seed;
         public long Aux;
+        /// <summary>stroke20: the brush tip's path sampled on the scope clock (the swing's ink); null for every other part.</summary>
+        public List<Vector3> Trail;
         public long BuiltExpiresUs;
         /// <summary>The executor's SCHEDULED end for a part with no material of its own (a strip's UntilUs, the latest mark's expiry): > 0 once known. The part is ended by the recipe at that moment.</summary>
         public long EndSchedule;
@@ -187,17 +189,17 @@ namespace Oheangbu.App
         public static Vol2VfxRecipeRegistry CreateDefault()
         {
             var reg = new Vol2VfxRecipeRegistry();
-            // P0: the slice 9a recipe stays the registered one (coordinator 2026-10-25: the NB20 P0 judged 59 - 63 is not what the lab plays); Vol2Nb20PathRecipe is
-            // kept and swapped in only by a capture / fixture (Set) for comparison
-            reg.Add(new Vol2PathOneHitRecipe());        // P0
+            // stroke20 (D308-150 V7, "앞잡 한 획을 작게"): the 20 no-batchim spells P0 / A0 / F0 / R0 are the scaled-down 앞잡 brush strokes. The slice 9a P0 (Vol2PathOneHitRecipe) and the
+            // NB20 recipes (Vol2Nb20*) are kept in the code, unregistered: a capture / fixture swaps them in with Set for comparison
+            reg.Add(new Vol2StrokePathRecipe());        // P0 (stroke20)
             reg.Add(new Vol2PathLeaveRecipe());         // P1
             reg.Add(new Vol2PathSpreadRecipe());        // P2
             reg.Add(new Vol2PathSeedRecipe());          // P3
             reg.Add(new Vol2PathSplitRecipe());         // P4
             reg.Add(new Vol2PathReturnRecipe());        // P5
-            reg.Add(new Vol2Nb20AttachRecipe());        // A0 (NB20)
-            reg.Add(new Vol2Nb20FanRecipe());           // F0 (NB20)
-            reg.Add(new Vol2Nb20RingRecipe());          // R0 (NB20)
+            reg.Add(new Vol2StrokeAttachRecipe());      // A0 (stroke20)
+            reg.Add(new Vol2StrokeFanRecipe());         // F0 (stroke20)
+            reg.Add(new Vol2StrokeRingRecipe());        // R0 (stroke20)
             return reg;
         }
     }
