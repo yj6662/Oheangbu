@@ -21,7 +21,14 @@ namespace Oheangbu.App
 
     /// <summary>Which drawing routine a template uses (slice 9a: the six ㅏ templates; NB20 (D308-150 V6): the 한 번 of ㅓ ㅗ ㅜ, played from the authored ink atlas; the rest of A / F / R
     /// and the peaks are later slices).</summary>
-    public enum Vol2Recipe { None = 0, PathOneHit = 1, PathLeave = 2, PathSpread = 3, PathSeed = 4, PathSplit = 5, PathReturn = 6, AttachOnce = 7, FanOnce = 8, RingOnce = 9 }
+    // D308-150 V9 step 4: the 15 batchim templates of ㅓ ㅗ ㅜ (A1 - A5, F1 - F5, R1 - R5) - played by the legacy bridge (Vol2LegacyVerbRecipes), appended after the old values.
+    public enum Vol2Recipe
+    {
+        None = 0, PathOneHit = 1, PathLeave = 2, PathSpread = 3, PathSeed = 4, PathSplit = 5, PathReturn = 6, AttachOnce = 7, FanOnce = 8, RingOnce = 9,
+        AttachLeave = 10, AttachSpread = 11, AttachSeed = 12, AttachSplit = 13, AttachReturn = 14,
+        FanLeave = 15, FanSpread = 16, FanSeed = 17, FanSplit = 18, FanReturn = 19,
+        RingLeave = 20, RingSpread = 21, RingSeed = 22, RingSplit = 23, RingReturn = 24,
+    }
 
     public static class Vol2EndCodes
     {
@@ -85,11 +92,15 @@ namespace Oheangbu.App
             return l;
         }
 
-        /// <summary>The recipe of a template: the six ㅏ verbs (slice 9a) and the 한 번 of ㅓ ㅗ ㅜ (NB20); the other 15 are later slices.</summary>
+        /// <summary>The recipe of a template: the six ㅏ verbs (slice 9a), the 한 번 of ㅓ ㅗ ㅜ (NB20) and, since D308-150 V9 step 4, the 15 batchim templates of ㅓ ㅗ ㅜ (the legacy bridge).</summary>
         public static Vol2Recipe RecipeOf(Vol2TemplateId id)
         {
             if (id.Frame == Frame.Path) return (Vol2Recipe)((int)id.Verb + 1);
-            if (id.Verb != Verb.Once) return Vol2Recipe.None;
+            if (id.Verb != Verb.Once)
+            {
+                int row = id.Frame == Frame.Attachment ? 0 : id.Frame == Frame.Fan ? 1 : id.Frame == Frame.Ring ? 2 : -1;
+                return row < 0 ? Vol2Recipe.None : (Vol2Recipe)((int)Vol2Recipe.AttachLeave + row * 5 + (int)id.Verb - 1);
+            }
             switch (id.Frame)
             {
                 case Frame.Attachment: return Vol2Recipe.AttachOnce;
@@ -97,6 +108,24 @@ namespace Oheangbu.App
                 case Frame.Ring: return Vol2Recipe.RingOnce;
                 default: return Vol2Recipe.None;
             }
+        }
+
+        /// <summary>The template a recipe kind belongs to (the inverse of <see cref="RecipeOf"/>); false for None.</summary>
+        public static bool TemplateOf(Vol2Recipe kind, out Vol2TemplateId id)
+        {
+            id = default;
+            int k = (int)kind;
+            if (k >= 1 && k <= 6) { id = new Vol2TemplateId(Frame.Path, (Verb)(k - 1)); return true; }
+            if (kind == Vol2Recipe.AttachOnce) { id = new Vol2TemplateId(Frame.Attachment, Verb.Once); return true; }
+            if (kind == Vol2Recipe.FanOnce) { id = new Vol2TemplateId(Frame.Fan, Verb.Once); return true; }
+            if (kind == Vol2Recipe.RingOnce) { id = new Vol2TemplateId(Frame.Ring, Verb.Once); return true; }
+            if (k >= (int)Vol2Recipe.AttachLeave && k <= (int)Vol2Recipe.RingReturn)
+            {
+                int i = k - (int)Vol2Recipe.AttachLeave;
+                var frame = i / 5 == 0 ? Frame.Attachment : i / 5 == 1 ? Frame.Fan : Frame.Ring;
+                id = new Vol2TemplateId(frame, (Verb)(i % 5 + 1)); return true;
+            }
+            return false;
         }
 
         public static Vol2VfxTemplate NewTemplate(Vol2TemplateId id)
@@ -109,6 +138,13 @@ namespace Oheangbu.App
             string[] verbs = { "once", "leave", "spread", "seed", "split", "return" };
             t.summary = (t.filled ? "" : "(later slice) ") + id.Name + " " + id.Frame + " x " + verbs[(int)id.Verb];
             if (!t.filled) return t;
+            if (id.Frame != Frame.Path && id.Verb != Verb.Once)
+            {
+                // D308-150 V9 step 4: the legacy bridge draws these (the old glyph body + old lasting parts on the executor's events); the numbers below are not read by it
+                string[] verbKo = { "", "남긴다", "번진다", "심는다", "가른다", "돌아온다" };
+                t.summary = id.Name + " (legacy bridge, D308-150 V9 step 4): the glyph's old main-game body at the commit + the " + verbKo[(int)id.Verb] + " state as old parts (Vol2LegacyVerbRecipes)";
+                return t;
+            }
             if (id.Frame != Frame.Path)
             {
                 // NB20: the authored ink (Blender + After Effects atlas), plan B rows A0 / F0 / R0

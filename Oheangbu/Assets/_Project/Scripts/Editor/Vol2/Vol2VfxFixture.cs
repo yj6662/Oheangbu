@@ -90,8 +90,10 @@ namespace Oheangbu.EditorTools.Vol2
         /// <summary>The default registry with the kept NB20 recipes of A0 / F0 / R0 swapped in (their checks V4n / V4p stay valid while stroke20 is the registered look).</summary>
         static Vol2VfxRecipeRegistry Nb20Registry() => Stroke20Registry().Set(new Vol2Nb20AttachRecipe()).Set(new Vol2Nb20FanRecipe()).Set(new Vol2Nb20RingRecipe());
         /// <summary>D308-150 V9: the default registry with the kept stroke20 recipes swapped back in for P0 / A0 / F0 / R0 (the legacy bridge is the registered look).</summary>
-        static void StrokeLooks(Vol2VfxPresenter p) { if (p != null && p.Model != null) p.Model.Recipes.Set(new Vol2StrokePathRecipe()).Set(new Vol2StrokeAttachRecipe()).Set(new Vol2StrokeFanRecipe()).Set(new Vol2StrokeRingRecipe()); }
-        static Vol2VfxRecipeRegistry Stroke20Registry() => Vol2VfxRecipeRegistry.CreateDefault().Set(new Vol2StrokePathRecipe()).Set(new Vol2StrokeAttachRecipe()).Set(new Vol2StrokeFanRecipe()).Set(new Vol2StrokeRingRecipe());
+        static void StrokeLooks(Vol2VfxPresenter p) { if (p != null && p.Model != null) Ink9a(p.Model.Recipes.Set(new Vol2StrokePathRecipe()).Set(new Vol2StrokeAttachRecipe()).Set(new Vol2StrokeFanRecipe()).Set(new Vol2StrokeRingRecipe())); }
+        static Vol2VfxRecipeRegistry Stroke20Registry() => Ink9a(Vol2VfxRecipeRegistry.CreateDefault().Set(new Vol2StrokePathRecipe()).Set(new Vol2StrokeAttachRecipe()).Set(new Vol2StrokeFanRecipe()).Set(new Vol2StrokeRingRecipe()));
+        /// <summary>D308-150 V9 step 4: the batchim ㅏ templates P1 - P5 are the legacy bridge too; the checks below were written for the kept slice 9a ink recipes and swap them back in.</summary>
+        static Vol2VfxRecipeRegistry Ink9a(Vol2VfxRecipeRegistry reg) => reg.Set(new Vol2PathLeaveRecipe()).Set(new Vol2PathSpreadRecipe()).Set(new Vol2PathSeedRecipe()).Set(new Vol2PathSplitRecipe()).Set(new Vol2PathReturnRecipe());
 
         /// <summary>stroke20 rule checks (D308-150 V7: the user judges the look by eye; the machine checks only the rules): the 20 no-batchim casts on the hand clock.</summary>
         static void Stroke20(Report r, Vol2Rulebook book, Vol2VfxCatalogue cat, bool fromAsset)
@@ -249,19 +251,22 @@ namespace Oheangbu.EditorTools.Vol2
             {
                 bool complete = cat.Complete(out string problem);
                 var filled = cat.templates.Where(t => t.filled).Select(t => t.id).OrderBy(x => x).ToList();
-                Check(r, "V0a", complete && cat.templates.Length == 24 && filled.SequenceEqual(new[] { "A0", "F0", "P0", "P1", "P2", "P3", "P4", "P5", "R0" }) && cat.templates.Select(t => t.id).Distinct().Count() == 24,
-                    "24 distinct template ids, exactly P0 - P5 + the NB20 A0 F0 R0 filled (the other 15 A / F / R are later slices) [" + string.Join(",", filled) + "]" + (complete ? "" : " [" + problem + "]"));
+                Check(r, "V0a", complete && cat.templates.Length == 24 && filled.Count == 24 && cat.templates.Select(t => t.id).Distinct().Count() == 24,
+                    "24 distinct template ids, all 24 filled (D308-150 V9 step 4: the 15 batchim A / F / R templates are the legacy bridge) [" + string.Join(",", filled) + "]" + (complete ? "" : " [" + problem + "]"));
                 var recipes = Vol2VfxRecipeRegistry.CreateDefault();
                 bool allMapped = true;
                 foreach (var t in cat.templates.Where(t => t.filled))
                     allMapped &= recipes.TryGet(t.recipe, out _) && t.recipe == Vol2VfxDefaults.RecipeOf(new Vol2TemplateId(t.frame, t.verb))
-                        && (t.frame == Frame.Path ? (int)t.recipe == (int)t.verb + 1 : t.verb == Verb.Once);
+                        && (t.frame == Frame.Path ? (int)t.recipe == (int)t.verb + 1 : t.recipe != Vol2Recipe.None);
                 // D308-150 V9 (2026-10-25): the registered look of the 20 no-batchim P0 / A0 / F0 / R0 is the LEGACY BRIDGE (the old main game's visuals, Vol2LegacyRecipes);
                 // stroke20 / NB20 / slice 9a P0 are kept unregistered - this fixture's own checks of them swap them in (Setup's default = Stroke20Registry)
-                Check(r, "V0b", recipes.Count == 9 && allMapped && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2LegacyPathRecipe
+                bool batchim = true;
+                foreach (Frame fr in new[] { Frame.Path, Frame.Attachment, Frame.Fan, Frame.Ring })
+                    for (int v = 1; v <= 5; v++) batchim &= recipes.TryGet(Vol2VfxDefaults.RecipeOf(new Vol2TemplateId(fr, (Verb)v)), out var br) && br is Vol2LegacyVerbRecipe;
+                Check(r, "V0b", recipes.Count == 24 && allMapped && batchim && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2LegacyPathRecipe
                     && recipes.TryGet(Vol2Recipe.AttachOnce, out var a0r) && a0r is Vol2LegacyAttachRecipe && recipes.TryGet(Vol2Recipe.FanOnce, out var f0r) && f0r is Vol2LegacyFanRecipe
                     && recipes.TryGet(Vol2Recipe.RingOnce, out var r0r) && r0r is Vol2LegacyRingRecipe,
-                    "nine recipes registered, one per filled template: the Path frame x its verb and the 한 번 of Attachment / Fan / Ring; the 20 no-batchim P0 / A0 / F0 / R0 = the legacy bridge (D308-150 V9: the old main game's visuals); stroke20, the slice 9a P0 and the NB20 ones are kept unregistered");
+                    "24 recipes registered, one per template: the 20 no-batchim P0 / A0 / F0 / R0 and the 100 batchim P1 - R5 = the legacy bridge (D308-150 V9 + step 4: the old main game's visuals); stroke20, the slice 9a P0 - P5 and the NB20 ones are kept unregistered" + (batchim ? "" : " [a batchim template is not the bridge]"));
                 bool distinct = cat.bodies.Select(b => b.edge).Distinct().Count() == 5 && cat.bodies.Select(b => b.end).Distinct().Count() == 5;
                 Check(r, "V0c", cat.bodies.Length == 5 && distinct, "5 body looks: 5 different edge cues (fibre tear / saw-tooth / plates / straight cut / hook) and 5 different end behaviours");
                 var wood = cat.Look(Body.Wood); var fire = cat.Look(Body.Fire); var earth = cat.Look(Body.Earth); var metal = cat.Look(Body.Metal); var water = cat.Look(Body.Water);
@@ -344,7 +349,7 @@ namespace Oheangbu.EditorTools.Vol2
             // ---- V3 no presenter-owned lifetime ----
             {
                 string dir = Path.GetFullPath(Path.Combine(Application.dataPath, "_Project/Scripts/App/Vol2/Presentation"));
-                var files = new[] { "Vol2VfxData.cs", "Vol2VfxModel.cs", "Vol2VfxRecipes.cs", "Vol2Nb20Recipes.cs", "Vol2StrokeRecipes.cs", "Vol2VfxPresenter.cs", "Vol2InkMesh.cs", "Vol2BodyLook.cs", "Vol2VfxTemplate.cs", "Vol2VfxCatalogue.cs" };
+                var files = new[] { "Vol2VfxData.cs", "Vol2VfxModel.cs", "Vol2VfxRecipes.cs", "Vol2Nb20Recipes.cs", "Vol2StrokeRecipes.cs", "Vol2VfxPresenter.cs", "Vol2InkMesh.cs", "Vol2BodyLook.cs", "Vol2VfxTemplate.cs", "Vol2VfxCatalogue.cs", "Vol2LegacyRecipes.cs", "Vol2LegacyVerbRecipes.cs" };
                 var timers = new Regex(@"Time\.(time|deltaTime|unscaled\w*|fixed\w*|realtimeSinceStartup|timeAsDouble)|StartCoroutine|IEnumerator|WaitFor\w+|(?<![.\w])Invoke\s*\(|InvokeRepeating|UniTask\.(Delay|Yield)|Task\.Delay|System\.Timers|new\s+Timer|DOTween|Destroy\s*\([^)]*,\s*[0-9]");
                 string found = ""; int scanned = 0;
                 foreach (string f in files)
@@ -569,8 +574,8 @@ namespace Oheangbu.EditorTools.Vol2
                     var fan = s.Rig.Cast('고', out _); s.Drive(0.3);
                     var ring = s.Rig.Cast('구', out _); s.Drive(0.3);
                     var leave = s.Rig.Cast('곡', out _); s.Drive(0.3);
-                    Check(r, "V7b", s.Model.SpawnedCount == 3 && s.Model.Covers(parry) && s.Model.Covers(fan) && s.Model.Covers(ring) && (leave == null || !s.Model.Covers(leave)),
-                        "NB20: the 한 번 of A / F / R (거 고 구) spawn their look (" + s.Model.SpawnedCount + "); a later-slice A / F / R template (곡) is still left to the debug lines");
+                    Check(r, "V7b", s.Model.SpawnedCount == (leave != null ? 4 : 3) && s.Model.Covers(parry) && s.Model.Covers(fan) && s.Model.Covers(ring) && (leave == null || s.Model.Covers(leave)),
+                        "the 한 번 of A / F / R (거 고 구) spawn their look and, since D308-150 V9 step 4, a batchim A / F / R template (곡) too (" + s.Model.SpawnedCount + "): no cast is left to the debug lines");
                 }
             }
 

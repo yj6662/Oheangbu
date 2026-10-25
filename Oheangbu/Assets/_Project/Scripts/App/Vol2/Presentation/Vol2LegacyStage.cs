@@ -120,6 +120,27 @@ namespace Oheangbu.App
             return row != null ? row.AreaShape : AreaShape.Cone;
         }
 
+        /// <summary>Step 4: the old route swung a glyph by its old row's category (SwingEntry308): an install / summon / field slams, a buff draws, a domain is laid like a
+        /// ward. The batchim glyphs keep their old swing this way; an attack / parry / ward glyph (or no row) keeps the frame's kind (<see cref="StateFor"/>).</summary>
+        public static bool CategoryState(Data.Spell.SpellSwingProfile308 p, SpellCategory category, out string state, out float lockSeconds)
+        {
+            state = null; lockSeconds = 0.4f;
+            if (p == null) return false;
+            Data.Spell.SpellSwingProfile308.Entry e;
+            switch (category)
+            {
+                case SpellCategory.Install: e = p.Install; break;
+                case SpellCategory.Summon: e = p.Summon; break;
+                case SpellCategory.Field: e = p.Field; break;
+                case SpellCategory.Buff: e = p.Buff; break;
+                case SpellCategory.Domain: e = p.Ward; break;
+                default: return false;
+            }
+            if (string.IsNullOrEmpty(e.State)) return false;
+            state = e.State; lockSeconds = e.LockSeconds;
+            return true;
+        }
+
         public void Swing(in Vol2LegacySwing s)
         {
             if (!Application.isPlaying) return;
@@ -127,6 +148,8 @@ namespace Oheangbu.App
             {
                 var profile = _wiring != null ? _wiring.SwingProfile308 : null;
                 string state = StateFor(profile, s.Kind, s.Kind == Vol2LegacyKind.Area ? AreaOf(s.Letter) : AreaShape.None, s.Distance, out float lockSeconds, out float lead);
+                var row = _wiring != null ? _wiring.LegacyRow308(s.Letter) : null;
+                if (row != null && CategoryState(profile, row.Category, out string byCategory, out float catLock)) { state = byCategory; lockSeconds = catLock; lead = 0f; }
                 float now = Time.time;
                 // a waiting category comes down at its launch; the parry starts its clip from the start (the old apex 0); the ward starts its short slam `lead` before the apex
                 float toApex = s.Kind == Vol2LegacyKind.Ward && lead > 0f ? lead : s.FromClipStart ? 10f : s.ToApex;
@@ -148,6 +171,12 @@ namespace Oheangbu.App
             {
                 var ward = _wiring.EAWards.PresentationPrefab308(cue.Letter);
                 if (ward != null) return ward;
+            }
+            // step 4: 각 낙 삭 악 - the old route presented them through EAGiyeokRuntime (its profile's own ink bodies), not through the visual set's catalogue prefab
+            if (cue.Kind == Vol2LegacyKind.Single && _wiring != null && _wiring.EAGiyeok != null && EAGiyeokRuntime.Owns(cue.Letter))
+            {
+                var g = _wiring.EAGiyeok.PresentationPrefab308(cue.Letter);
+                if (g != null) return g;
             }
             var set = _wiring != null ? _wiring.VisualSet308 : null;
             return set != null && set.TryGet(cue.Letter, out var v) ? v.FxPrefab : null;
@@ -174,6 +203,17 @@ namespace Oheangbu.App
                     case Vol2LegacyKind.Single: BeginSingle(live, cue); break;
                     case Vol2LegacyKind.Area: BeginArea(live, cue); break;
                     case Vol2LegacyKind.Guard: BeginGuard(live, cue); break;
+                    case Vol2LegacyKind.Self:
+                        {
+                            // the old stroke adapter's branch for a glyph that is neither an attack nor a parry: the body stands where the letter was drawn
+                            Vector3 c = LetterCentre(cue);
+                            live.Fx.Begin(c, null, c, live.Fx.Profile.Pigment);
+                            break;
+                        }
+                    case Vol2LegacyKind.Domain:
+                        // the old 결계 / field cast: the glyph's cue body at the caster's feet (its rim is the recipe's lasting part)
+                        live.Fx.Begin(cue.Origin, null, cue.Origin + cue.Forward, live.Fx.Profile.Pigment);
+                        break;
                     default: BeginWard(live, cue); break;
                 }
             }
@@ -354,6 +394,464 @@ namespace Oheangbu.App
             live.Fx.Begin(centre, null, centre + cue.Forward, copy.Pigment);
         }
 
+        // ---------------------------------------------------------------- step 4: the lasting old parts of the verb states, and the short pictures
+
+        sealed class Part
+        {
+            public GameObject Go; public Vfx308ZoneBody Zone; public Vfx120Effect Aura; public Vfx120Profile Copy;
+            public Vol2LegacyField Field; public string Prefab = "", Role = ""; public float Lead; public Vector3 BaseScale = Vector3.one;
+            public bool Closed, Follows, Parented;
+        }
+
+        /// <summary>A lasting part's own life is only a safety cap (seconds): its end is the executor's event (Close). Far longer than any vol.2 state.</summary>
+        public const float PartLifeCap = 600f;
+        /// <summary>TEST (presentation): how pale a warned part becomes (start colour alpha of what it still emits, and of what is out).</summary>
+        public float WarnAlpha = 0.45f;
+        /// <summary>TEST (presentation): the fade of a held stain / guard stroke when its state ends (they have no End / Break child of their own).</summary>
+        public float HeldFadeSeconds = 0.5f;
+        /// <summary>TEST (presentation, step 4 probe 2026-10-25): a lasting part stays dark until the executor's expiry warning instead of the old "dark 3 s, faint after"
+        /// (LateAfter) - a 10 s residue went faint at 3 s and was hardly read from the shoulder camera. false = the old prefab's own LateAfter.</summary>
+        public bool KeepDark = true;
+        /// <summary>TEST (presentation): the foot stain's alpha at least this (the old foot stain's .12 is not seen on the 적로 soil from the shoulder camera).</summary>
+        public float StainAlphaMin = 0.45f;
+
+        readonly Dictionary<int, Part> _parts = new Dictionary<int, Part>();
+        readonly List<int> _deadParts = new List<int>();
+        readonly List<GameObject> _pulses = new List<GameObject>();
+        int _nextPart;
+
+        public int PartsLaid { get; private set; }
+        public int PartsMissing { get; private set; }
+        public int PartsClosed { get; private set; }
+        public int PulsesShown { get; private set; }
+        public int PulsesMissing { get; private set; }
+        public string LastPart { get; private set; } = "";
+        public string LastPulse { get; private set; } = "";
+        public int LivePartCount { get { SweepParts(); return _parts.Count; } }
+        /// <summary>Every donor prefab a part / pulse used (name -> count), for the capture's report.</summary>
+        public readonly Dictionary<string, int> Used = new Dictionary<string, int>();
+
+        Vfx120Profile ProfileOf(char letter)
+        {
+            var set = _wiring != null ? _wiring.VisualSet308 : null;
+            if (letter == '\0' || set == null || !set.TryGet(letter, out var v) || v.FxPrefab == null) return null;
+            var fx = v.FxPrefab.GetComponent<Vfx120Effect>();
+            return fx != null ? fx.Profile : null;
+        }
+
+        GameObject BodyOf(char letter)
+        {
+            var set = _wiring != null ? _wiring.VisualSet308 : null;
+            return letter != '\0' && set != null && set.TryGet(letter, out var v) ? v.FxPrefab : null;
+        }
+
+        /// <summary>The prefab a donor glyph's OLD profile holds for a field (read only; the main game's glyph table, the same one the old route used).</summary>
+        public GameObject FieldOf(char letter, Vol2LegacyField field)
+        {
+            var p = ProfileOf(letter);
+            if (p == null) return null;
+            switch (field)
+            {
+                case Vol2LegacyField.Zone: return p.Zone308Prefab;
+                case Vol2LegacyField.Mark: return p.Mark308Prefab;
+                case Vol2LegacyField.Stain: return p.AreaStainPrefab;
+                case Vol2LegacyField.Guard: return p.Guard308Prefab;
+                case Vol2LegacyField.Contact: return p.AreaContactPrefab;
+                case Vol2LegacyField.Burst: return p.Burst308Prefab;
+                case Vol2LegacyField.Derived: return p.Derived308Prefab;
+                case Vol2LegacyField.Aura: return p.Aura308Prefab != null ? BodyOf(letter) : null;
+                default: return BodyOf(letter);
+            }
+        }
+
+        GameObject Resolve(char donor, char fallback, Vol2LegacyField field, out char from)
+        {
+            if (field == Vol2LegacyField.Ward)
+            {
+                from = donor;
+                var w = _wiring != null && _wiring.EAWards != null ? _wiring.EAWards.PresentationPrefab308(donor) : null;
+                if (w == null) { from = fallback; w = _wiring != null && _wiring.EAWards != null ? _wiring.EAWards.PresentationPrefab308(fallback) : null; }
+                return w;
+            }
+            if (field == Vol2LegacyField.Unravel)
+            {
+                // the 풀림 has no per-glyph prefab: its drop system is the Resources profile's; the donor only lends its pigment
+                from = ProfileOf(donor) != null ? donor : fallback;
+                var u = InkUnravel308.Profile;
+                return u != null ? u.ParticlePrefab : null;
+            }
+            from = donor; var g = FieldOf(donor, field);
+            if (g != null) return g;
+            from = fallback; g = FieldOf(fallback, field);
+            if (g != null) return g;
+            if (field == Vol2LegacyField.Derived) { from = fallback; return BodyOf(fallback); }     // earth has no derived shot: its single body flies
+            return null;
+        }
+
+        void Use(string name) { Used.TryGetValue(name, out int n); Used[name] = n + 1; }
+
+        GameObject Spawn(GameObject prefab, Vector3 at, Quaternion rot)
+        {
+            var go = Object.Instantiate(prefab, at, rot);
+            if (_wiring != null && go.scene != _wiring.gameObject.scene) SceneManager.MoveGameObjectToScene(go, _wiring.gameObject.scene);
+            return go;
+        }
+
+        Transform Caster => _wiring != null ? _wiring.SummonPlayer : null;
+
+        static Quaternion FaceEye(Vector3 at, Vector3 fallbackForward)
+        {
+            var cam = Camera.main;
+            Vector3 f = cam != null ? at - cam.transform.position : fallbackForward; f.y = 0f;
+            if (f.sqrMagnitude < 1e-6f) f = fallbackForward; f.y = 0f;
+            return f.sqrMagnitude > 1e-6f ? Quaternion.LookRotation(f.normalized, Vector3.up) : Quaternion.identity;
+        }
+
+        public int Lay(in Vol2LegacyPart def)
+        {
+            if (!Application.isPlaying) return 0;
+            SweepParts();
+            var prefab = Resolve(def.Donor, def.Fallback, def.Field, out char from);
+            if (prefab == null) { PartsMissing++; LastPart = "no " + def.Field + " on " + def.Donor + "/" + def.Fallback + " for " + def.Role; return 0; }
+            var part = new Part { Field = def.Field, Prefab = prefab.name, Role = def.Role ?? "" };
+            try
+            {
+                switch (def.Field)
+                {
+                    case Vol2LegacyField.Aura: LayAura(part, prefab, def); break;
+                    case Vol2LegacyField.Ward: LayWard(part, prefab, def); break;
+                    case Vol2LegacyField.Zone:
+                    case Vol2LegacyField.Mark: LayZone(part, prefab, def); break;
+                    default: LayHeld(part, prefab, def, from); break;
+                }
+            }
+            catch (Exception e) { Debug.LogException(e); FreePart(part, true); PartsMissing++; return 0; }
+            if (part.Go == null) { FreePart(part, true); PartsMissing++; LastPart = "refused " + prefab.name; return 0; }
+            int id = ++_nextPart; if (id == 0) id = ++_nextPart;
+            _parts.Add(id, part); PartsLaid++; LastPart = def.Role + " " + prefab.name + " (" + from + ")"; Use(prefab.name);
+            return id;
+        }
+
+        /// <summary>The donor's glyph body as a lasting aura on the caster (what the old route's Aura request did): a private DontSave profile copy with a capped life, marked
+        /// lasting so DryAura308 lets it dry when the state ends; it follows the caster.</summary>
+        void LayAura(Part part, GameObject prefab, in Vol2LegacyPart def)
+        {
+            var go = Spawn(prefab, def.Point, Quaternion.identity);
+            go.name = "Vol2Legacy_" + def.Role + "_" + prefab.name; go.SetActive(true);
+            part.Go = go;
+            var fx = go.GetComponent<Vfx120Effect>();
+            if (fx == null || fx.Profile == null) { part.Go = null; Object.Destroy(go); return; }
+            var copy = Object.Instantiate(fx.Profile); copy.hideFlags = HideFlags.DontSave; CopiesMade++;
+            copy.Duration = PartLifeCap; copy.Aura308Lasting = true;
+            if (KeepDark) copy.Aura308LateAfter = 0f;
+            part.Copy = copy; part.Aura = fx;
+            fx.Profile = copy; fx.PreviewControlled = false; fx.DemonstrationCues = false;
+            var caster = Caster;
+            Vector3 at = caster != null ? caster.position : def.Point;
+            Vector3 fwd = caster != null ? caster.forward : def.Facing;
+            fx.Begin(at, null, at + fwd, copy.Pigment);
+            if (caster != null && def.OnCaster) { go.transform.SetParent(caster, true); part.Parented = true; }
+        }
+
+        /// <summary>The element's old ward membrane as a lasting state on a ring (what BeginWard plays for R0, but held: a DontSave profile copy, the state's radius, a capped
+        /// life, lasting so DryAura308 lets it dry on the executor's end). The radius is live (Place) - a ring going out and back breathes with it.</summary>
+        void LayWard(Part part, GameObject prefab, in Vol2LegacyPart def)
+        {
+            var go = Spawn(prefab, def.Point, Quaternion.identity);
+            go.name = "Vol2Legacy_" + def.Role + "_" + prefab.name; go.SetActive(true);
+            part.Go = go;
+            var fx = go.GetComponent<Vfx120Effect>();
+            if (fx == null || fx.Profile == null) { part.Go = null; Object.Destroy(go); return; }
+            var copy = Object.Instantiate(fx.Profile); copy.hideFlags = HideFlags.DontSave; CopiesMade++;
+            var ward = _wiring != null && _wiring.EAWards != null ? _wiring.EAWards.Profile308 : null;
+            copy.Duration = PartLifeCap; copy.Aura308Lasting = true; copy.WardRadius = Mathf.Max(0.5f, def.Radius);
+            if (ward != null) { copy.WardHeight = ward.Height; copy.WardFormation = ward.Formation; copy.WardFade = ward.Fade; }
+            copy.WardGroundProbeHeight = .6f; copy.WardGroundProbeDepth = 3f;
+            if (KeepDark) copy.Aura308LateAfter = 0f;
+            part.Copy = copy; part.Aura = fx;
+            fx.Profile = copy; fx.PreviewControlled = false; fx.DemonstrationCues = false;
+            fx.Begin(def.Point, null, def.Point + (def.Facing.sqrMagnitude > 1e-4f ? def.Facing : Vector3.forward), copy.Pigment);
+        }
+
+        /// <summary>A Vfx308ZoneBody part (a 결계 rim / zone floor: on the ground, scaled by the radius like PutZone308; a seal: on its host like PutMark308). Its Life is only the cap.</summary>
+        void LayZone(Part part, GameObject prefab, in Vol2LegacyPart def)
+        {
+            Transform host = def.Field == Vol2LegacyField.Mark ? TargetOf(def.HostId) : null;
+            Vector3 at = def.Point;
+            float scale = Mathf.Max(0.25f, def.Radius);
+            if (host != null)
+            {
+                // PutMark308: the middle of the host's renderers, sized by their bounds (clamped), parented so it follows
+                Vector3 centre = host.position + Vector3.up; float radius = .8f; bool found = false; var bounds = new Bounds();
+                foreach (var r in host.GetComponentsInChildren<Renderer>())
+                {
+                    if (r is ParticleSystemRenderer || !r.enabled) continue;
+                    if (!found) { bounds = r.bounds; found = true; } else bounds.Encapsulate(r.bounds);
+                }
+                if (found) { centre = new Vector3(bounds.center.x, host.position.y + Mathf.Clamp(bounds.center.y - host.position.y, .5f, 2.5f), bounds.center.z); radius = Mathf.Max(bounds.extents.x, bounds.extents.z); }
+                // step 4 probe: on the forest bear the old clamp (.4 - 1.5 of the extents) put the ring of strokes inside the fur - it stands outside the body now
+                at = centre; scale = Mathf.Clamp(radius * SealOutside, .6f, 2.4f);
+            }
+            var go = Spawn(prefab, at, Quaternion.identity);
+            go.name = "Vol2Legacy_" + def.Role + "_" + prefab.name;
+            part.BaseScale = prefab.transform.localScale;
+            go.transform.localScale = part.BaseScale * scale;
+            if (def.Field == Vol2LegacyField.Zone) foreach (var density in go.GetComponentsInChildren<Vfx308RingDensity>(true)) density.Apply(scale);   // counts per metre of rim
+            var body = go.GetComponent<Vfx308ZoneBody>();
+            if (body == null) { Object.Destroy(go); return; }
+            part.Lead = body.LateBefore;
+            body.Delay = 0f; body.Life = PartLifeCap; body.LateBefore = 0f;
+            if (KeepDark) body.LateAfter = 0f;
+            Boost(go);
+            part.Go = go; part.Zone = body;
+            if (host != null) { go.transform.SetParent(host, true); part.Parented = true; }
+            else if (def.OnCaster && Caster != null)
+            {
+                var f = go.AddComponent<Vfx308ZoneFollow>(); f.Target = Caster; f.Body = body; part.Follows = true;
+            }
+        }
+
+        /// <summary>A one-shot old prefab held as a state (the foot stain: one particle; the guard strokes): it is wrapped in a Vfx308ZoneBody of its own so the executor's event
+        /// ends it (Fade - these prefabs have no End / Break child). The stain's size and alpha are the donor profile's (CombatLoopWiring.TrySpawnAreaStain308 sets the same).</summary>
+        void LayHeld(Part part, GameObject prefab, in Vol2LegacyPart def, char donor)
+        {
+            var wrap = new GameObject("Vol2Legacy_" + def.Role + "_" + prefab.name);
+            if (_wiring != null) SceneManager.MoveGameObjectToScene(wrap, _wiring.gameObject.scene);
+            wrap.SetActive(false);
+            wrap.transform.SetPositionAndRotation(def.Point, def.Field == Vol2LegacyField.Guard ? FaceEye(def.Point, def.Facing) : Quaternion.identity);
+            var inner = Object.Instantiate(prefab, wrap.transform, false);
+            inner.name = prefab.name; inner.transform.localPosition = Vector3.zero;
+            float life = def.Seconds > 0f ? def.Seconds : PartLifeCap;
+            foreach (var ps in inner.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                var main = ps.main; main.playOnAwake = false;
+                if (def.Field == Vol2LegacyField.Stain)
+                {
+                    var src = ProfileOf(donor);
+                    main.startSize = Mathf.Max(.05f, src != null ? src.AreaStainDiameter : 2f) * Mathf.Clamp(def.Radius, .5f, 2f);
+                    main.startLifetime = PartLifeCap;
+                    main.startColor = new Color(1f, 1f, 1f, Mathf.Clamp01(Mathf.Max(StainAlphaMin, src != null ? src.AreaStainAlpha : .12f)));
+                }
+                else if (def.Field == Vol2LegacyField.Contact)
+                {
+                    // a HELD hit (step 4 probe: the hits read, the old floors / seals did not): its particles live as long as the state is scheduled to (the executor's
+                    // ExpiresUs - now, handed in as Seconds), so their over-lifetime look runs over the state; the end is still the executor's event (Fade)
+                    var lt = main.startLifetime;
+                    float longest = lt.mode == ParticleSystemCurveMode.TwoConstants ? lt.constantMax : lt.constant;
+                    if (def.Seconds > longest) main.startLifetimeMultiplier *= def.Seconds / Mathf.Max(0.05f, longest);
+                    main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+                }
+                else if (def.Field == Vol2LegacyField.Guard)
+                {
+                    // 11.28: "Hold*" lives the guard clock (here: the strip's scheduled length), "Wet*" the bright window (a short first beat)
+                    string n = ps.gameObject.name;
+                    if (n.StartsWith("Hold", StringComparison.Ordinal)) main.startLifetime = life;
+                    else if (n.StartsWith("Wet", StringComparison.Ordinal)) main.startLifetime = Mathf.Min(0.35f, life);
+                }
+            }
+            if (def.Field == Vol2LegacyField.Guard) Boost(wrap);
+            var body = wrap.AddComponent<Vfx308ZoneBody>();
+            body.Delay = 0f; body.Life = PartLifeCap; body.LateAfter = 0f; body.LateBefore = 0f; body.DryFade = HeldFadeSeconds;
+            // a held hit on a body (a seed waiting on it) sits at its chest, on the side that faces the caster, and goes with it
+            var host = def.Field == Vol2LegacyField.Contact ? TargetOf(def.HostId) : null;
+            if (host != null)
+            {
+                Vector3 toCaster = Caster != null ? Caster.position - host.position : -def.Facing; toCaster.y = 0f;
+                toCaster = toCaster.sqrMagnitude > 1e-4f ? toCaster.normalized : -def.Facing;
+                wrap.transform.SetPositionAndRotation(host.position + Vector3.up * 0.9f + toCaster * 0.6f, FaceEye(host.position, def.Facing));
+                wrap.transform.SetParent(host, true); part.Parented = true;
+            }
+            else if (def.Field == Vol2LegacyField.Contact) wrap.transform.rotation = FaceEye(def.Point, def.Facing);
+            wrap.SetActive(true);
+            part.Go = wrap; part.Zone = body;
+        }
+
+        /// <summary>TEST (presentation, step 4 probe 2026-10-25): the old rims / seals / floors were built faint (a 결계 under a figure's knee, 18 - 38 live particles on a 2 m
+        /// ring) and a vol.2 state drawn with them was hardly read from the shoulder camera. A laid part's body systems (not its End / Break / React) emit
+        /// <see cref="PresenceRate"/> times as often, <see cref="PresenceSize"/> times as large and <see cref="PresenceAlpha"/> times as opaque - on this instance only (no
+        /// material, no colour hue, no light). 1 / 1 / 1 = the old look as built.</summary>
+        public float PresenceRate = 2.5f, PresenceSize = 1.3f, PresenceAlpha = 1.5f;
+
+        void Boost(GameObject root)
+        {
+            if (PresenceRate == 1f && PresenceSize == 1f && PresenceAlpha == 1f) return;
+            foreach (var ps in root.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                if (UnderEndChild(ps.transform, root.transform)) continue;
+                var main = ps.main;
+                main.startSizeMultiplier *= PresenceSize;
+                main.maxParticles = Mathf.Max(1, Mathf.RoundToInt(main.maxParticles * PresenceRate));
+                var em = ps.emission; em.rateOverTimeMultiplier *= PresenceRate;
+                var c = main.startColor;
+                if (c.mode == ParticleSystemGradientMode.Color) { var k = c.color; k.a = Mathf.Clamp01(k.a * PresenceAlpha); main.startColor = new ParticleSystem.MinMaxGradient(k); }
+                else if (c.mode == ParticleSystemGradientMode.TwoColors) { var a = c.colorMin; var b = c.colorMax; a.a = Mathf.Clamp01(a.a * PresenceAlpha); b.a = Mathf.Clamp01(b.a * PresenceAlpha); main.startColor = new ParticleSystem.MinMaxGradient(a, b); }
+            }
+        }
+
+        public void Place(int handle, Vector3 point, float radius)
+        {
+            if (!_parts.TryGetValue(handle, out var part) || part.Go == null || part.Closed) return;
+            if (!part.Parented && !part.Follows) part.Go.transform.position = point;
+            if (part.Field == Vol2LegacyField.Zone && radius > 0f) part.Go.transform.localScale = part.BaseScale * Mathf.Max(0.25f, radius);
+            if (part.Field == Vol2LegacyField.Ward && part.Copy != null && radius > 0f) part.Copy.WardRadius = Mathf.Max(0.5f, radius);      // the aura reads it every frame
+        }
+
+        /// <summary>A report line of the live parts (role, prefab, where, scale, live particles / playing systems) for the capture's log.</summary>
+        public string Describe()
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var kv in _parts)
+            {
+                var p = kv.Value; if (p.Go == null) continue;
+                int n = 0, playing = 0, systems = 0;
+                foreach (var ps in p.Go.GetComponentsInChildren<ParticleSystem>(true)) { systems++; n += ps.particleCount; if (ps.isPlaying) playing++; }
+                sb.Append(p.Role).Append(' ').Append(p.Prefab).Append(" @").Append(p.Go.transform.position.ToString("F1")).Append(" s").Append(p.Go.transform.lossyScale.x.ToString("0.00"))
+                  .Append(p.Parented ? " parented" : "").Append(p.Closed ? " closed" : "").Append(" particles ").Append(n).Append(" playing ").Append(playing).Append('/').Append(systems).Append("; ");
+            }
+            return sb.ToString();
+        }
+
+        public float WarnLead(int handle) => _parts.TryGetValue(handle, out var part) ? part.Lead : 0f;
+
+        ParticleSystem.Particle[] Buffer = new ParticleSystem.Particle[512];
+        /// <summary>TEST (presentation): a seal sits this many times the host's horizontal extent out from its centre (the old PutMark308 used 1).</summary>
+        public float SealOutside = 1.35f;
+
+        public void Warn(int handle)
+        {
+            if (!_parts.TryGetValue(handle, out var part) || part.Go == null || part.Closed) return;
+            foreach (var ps in part.Go.GetComponentsInChildren<ParticleSystem>(false))
+            {
+                if (UnderEndChild(ps.transform, part.Go.transform)) continue;
+                var main = ps.main; var c = main.startColor;
+                if (c.mode == ParticleSystemGradientMode.Color) { var k = c.color; k.a *= WarnAlpha; main.startColor = new ParticleSystem.MinMaxGradient(k); }
+                else if (c.mode == ParticleSystemGradientMode.TwoColors) { var a = c.colorMin; var b = c.colorMax; a.a *= WarnAlpha; b.a *= WarnAlpha; main.startColor = new ParticleSystem.MinMaxGradient(a, b); }
+                if (Buffer.Length < ps.main.maxParticles) Buffer = new ParticleSystem.Particle[ps.main.maxParticles];
+                int n = ps.GetParticles(Buffer);
+                for (int i = 0; i < n; i++) { var col = Buffer[i].startColor; col.a = (byte)(col.a * WarnAlpha); Buffer[i].startColor = col; }
+                if (n > 0) ps.SetParticles(Buffer, n);
+            }
+        }
+
+        static bool UnderEndChild(Transform t, Transform root)
+        {
+            for (; t != null && t != root; t = t.parent)
+                if (t.parent == root && (t.name == "End" || t.name == "Break" || t.name == "React")) return true;
+            return false;
+        }
+
+        public void Close(int handle, Vol2EndCode code, Vector3 direction, bool immediate)
+        {
+            if (!_parts.TryGetValue(handle, out var part)) return;
+            if (immediate) { _parts.Remove(handle); FreePart(part, true); PartsClosed++; return; }
+            if (part.Closed) return;
+            part.Closed = true; PartsClosed++;
+            try
+            {
+                if (part.Aura != null)
+                {
+                    if (!part.Aura.DryAura308() && part.Go != null) Object.Destroy(part.Go);
+                    return;
+                }
+                if (part.Zone == null) { if (part.Go != null) Object.Destroy(part.Go); return; }
+                if (part.Parented && part.Go != null)
+                {
+                    // the seal leaves the body it sat on (stays where it was) before it dries, like the old LetGo
+                    part.Go.transform.SetParent(null, true);
+                    if (_wiring != null) SceneManager.MoveGameObjectToScene(part.Go, _wiring.gameObject.scene);
+                    part.Parented = false;
+                }
+                bool held = part.Field != Vol2LegacyField.Zone && part.Field != Vol2LegacyField.Mark;
+                switch (code)
+                {
+                    case Vol2EndCode.Consume: if (held) part.Zone.Fade(HeldFadeSeconds * 0.5f); else part.Zone.Splash(); break;
+                    case Vol2EndCode.Child:
+                    case Vol2EndCode.Cleanse: if (held) part.Zone.Fade(HeldFadeSeconds); else part.Zone.React(direction); break;
+                    case Vol2EndCode.Replace: part.Zone.Fade(0.4f); break;
+                    case Vol2EndCode.HitCancel: part.Zone.Fade(0.25f); break;
+                    case Vol2EndCode.Expire: if (held) part.Zone.Fade(HeldFadeSeconds); else part.Zone.Dry(); break;
+                    default: part.Zone.Fade(0.3f); break;
+                }
+            }
+            catch (Exception e) { Debug.LogException(e); _parts.Remove(handle); FreePart(part, true); }
+        }
+
+        public bool Standing(int handle)
+        {
+            SweepParts();
+            return _parts.TryGetValue(handle, out var part) && part.Go != null;
+        }
+
+        void SweepParts()
+        {
+            _deadParts.Clear();
+            foreach (var kv in _parts) if (kv.Value.Go == null) _deadParts.Add(kv.Key);
+            foreach (int id in _deadParts) { var p = _parts[id]; _parts.Remove(id); FreePart(p, false); }
+            _pulses.RemoveAll(g => g == null);
+        }
+
+        void FreePart(Part part, bool destroy)
+        {
+            if (destroy && part.Go != null) { if (Application.isPlaying) Object.Destroy(part.Go); else Object.DestroyImmediate(part.Go); }
+            if (part.Copy != null) { if (Application.isPlaying) Object.Destroy(part.Copy); else Object.DestroyImmediate(part.Copy); CopiesFreed++; }
+            part.Go = null; part.Copy = null; part.Aura = null; part.Zone = null;
+        }
+
+        public void Pulse(in Vol2LegacyPulse pulse)
+        {
+            if (!Application.isPlaying) return;
+            var prefab = Resolve(pulse.Donor, pulse.Fallback, pulse.Field, out char from);
+            if (prefab == null) { PulsesMissing++; LastPulse = "no " + pulse.Field + " on " + pulse.Donor + "/" + pulse.Fallback + " for " + pulse.Role; return; }
+            try
+            {
+                GameObject go = null;
+                var target = TargetOf(pulse.TargetId);
+                switch (pulse.Field)
+                {
+                    case Vol2LegacyField.Unravel:
+                        {
+                            // the old 풀림: points along the line come apart one after another and the drops are pulled into the swinging brush tip (or to the line's end)
+                            var pts = new List<Vector3>(48);
+                            for (int i = 0; i < 48; i++) { Vector3 p = Vector3.Lerp(pulse.From, pulse.To, i / 47f * 0.8f); pts.Add(p + UnityEngine.Random.insideUnitSphere * 0.25f); }
+                            var src = ProfileOf(from);
+                            var u = InkUnravel308.Begin(pts, pulse.To, src != null ? src.Pigment : Color.black);
+                            go = u != null ? u.gameObject : null;
+                            break;
+                        }
+                    case Vol2LegacyField.Derived:
+                    case Vol2LegacyField.Body:
+                        {
+                            go = Spawn(prefab, pulse.From, Quaternion.identity);
+                            go.name = "Vol2Legacy_" + pulse.Role + "_" + prefab.name; go.SetActive(true);
+                            var fx = go.GetComponent<Vfx120Effect>();
+                            if (fx == null || fx.Profile == null) { Object.Destroy(go); go = null; break; }
+                            fx.PreviewControlled = false; fx.DemonstrationCues = false;
+                            if (pulse.Seconds > 0f) fx.SetImpactClock(pulse.Seconds);
+                            fx.Begin(pulse.From, target, pulse.To, fx.Profile.Pigment);
+                            break;
+                        }
+                    default:
+                        {
+                            // a hit on its body (the chest, like the old area contacts), a burst / stain where it was asked; turned to the eye (local +Z away from it)
+                            Vector3 at = target != null && pulse.Field == Vol2LegacyField.Contact ? target.position + Vector3.up * 0.9f : pulse.To;
+                            var rot = FaceEye(at, Vector3.forward);
+                            var ktp = KtpContactEffect.Spawn(prefab, at, rot, 1f, _wiring != null ? _wiring.gameObject.scene : SceneManager.GetActiveScene());
+                            if (ktp != null) { go = ktp.gameObject; break; }
+                            // not a particles-only contact (a burst with nested parts): played as it is and gone after its longest system
+                            go = Spawn(prefab, at, rot); go.name = "Vol2Legacy_" + pulse.Role + "_" + prefab.name; go.SetActive(true);
+                            float longest = 1f;
+                            foreach (var ps in go.GetComponentsInChildren<ParticleSystem>(true)) { var m = ps.main; longest = Mathf.Max(longest, m.duration + m.startLifetime.constantMax + m.startDelay.constantMax); if (m.playOnAwake) continue; ps.Play(false); }
+                            var res = go.AddComponent<Vfx308Residue>(); res.Life = Mathf.Min(longest, 4f);
+                            break;
+                        }
+                }
+                if (go == null) { PulsesMissing++; LastPulse = "refused " + prefab.name; return; }
+                _pulses.Add(go); PulsesShown++; LastPulse = pulse.Role + " " + prefab.name + " (" + from + ")"; Use(prefab.name);
+            }
+            catch (Exception e) { Debug.LogException(e); PulsesMissing++; }
+        }
+
         // ---------------------------------------------------------------- bookkeeping
 
         public void Contact(int handle, long targetId, Vector3 point)
@@ -382,6 +880,49 @@ namespace Oheangbu.App
             _dead.Clear();
             foreach (var kv in _live) if (kv.Value.Go == null) _dead.Add(kv.Key);
             foreach (int id in _dead) { var live = _live[id]; _live.Remove(id); Release(live); }
+            SweepParts();
+            BindRecovery();
+        }
+
+        // ---------------------------------------------------------------- step 4: 걱, the recovery (the defence kit's: no vol.2 cast log, so no model instance)
+
+        Vol2RecoveryExecutor _recovery; Action<Vol2RecoveryRecord> _onRecovery; int _recoverySearches, _recoveryPart;
+        public int RecoveriesShown { get; private set; }
+
+        /// <summary>걱 never reaches the coordinator (the payment gate runs it in the defence kit: Vol2RecoveryExecutor). Its old look - the swing of a buff and the wood buff
+        /// band on the caster (걱 was an EA buff: its band is 건's) - is laid on the kit's own Begin record and closed on the record that says it no longer runs
+        /// (ran out = Dry, a hit / cancel = the short fade). Presentation only; the records are read, never answered.</summary>
+        void BindRecovery()
+        {
+            if (_recovery != null || !Application.isPlaying || _recoverySearches >= 40) return;
+            _recoverySearches++;
+            var kit = _wiring != null ? _wiring.Vol2Defence : null;
+            if (kit == null || kit.Recovery == null) return;
+            _recovery = kit.Recovery;
+            _recovery.Recorded += _onRecovery = OnRecovery;
+        }
+
+        void OnRecovery(Vol2RecoveryRecord rec)
+        {
+            try
+            {
+                if (rec.Kind == "Begin" && rec.Accepted && rec.Active)
+                {
+                    if (_recoveryPart != 0) Close(_recoveryPart, Vol2EndCode.Replace, Vector3.zero, false);
+                    var caster = Caster;
+                    Swing(new Vol2LegacySwing { Letter = '걱', Body = Body.Wood, Kind = Vol2LegacyKind.Self, ToApex = Vol2LegacyRecipeBase.MinToApex, FromClipStart = true });
+                    _recoveryPart = Lay(new Vol2LegacyPart { Donor = '걱', Fallback = Vol2LegacyDonors.Of(Vol2LegacyDonors.Aura, Body.Wood), Field = Vol2LegacyField.Aura, Body = Body.Wood,
+                        Point = caster != null ? caster.position : Vector3.zero, Facing = caster != null ? caster.forward : Vector3.forward, Radius = 1f, OnCaster = true, Role = "recovery" });
+                    if (_recoveryPart != 0) RecoveriesShown++;
+                    return;
+                }
+                if (_recoveryPart != 0 && !rec.Active && rec.Kind != "Rest")
+                {
+                    Close(_recoveryPart, rec.Kind == "Damage" || rec.Kind == "Cancel" ? Vol2EndCode.HitCancel : Vol2EndCode.Expire, Vector3.zero, false);
+                    _recoveryPart = 0;
+                }
+            }
+            catch (Exception e) { Debug.LogException(e); }
         }
 
         void Release(Live live)
@@ -397,8 +938,17 @@ namespace Oheangbu.App
         {
             foreach (var live in _live.Values) Release(live);
             _live.Clear();
+            foreach (var part in _parts.Values) FreePart(part, true);
+            _parts.Clear(); _recoveryPart = 0;
+            foreach (var go in _pulses) if (go != null) { if (Application.isPlaying) Object.Destroy(go); else Object.DestroyImmediate(go); }
+            _pulses.Clear();
         }
 
-        public void Dispose() { ClearAll(); }
+        public void Dispose()
+        {
+            if (_recovery != null && _onRecovery != null) _recovery.Recorded -= _onRecovery;
+            _recovery = null; _onRecovery = null;
+            ClearAll();
+        }
     }
 }

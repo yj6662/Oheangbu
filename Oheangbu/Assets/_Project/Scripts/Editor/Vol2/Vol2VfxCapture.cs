@@ -132,7 +132,17 @@ namespace Oheangbu.EditorTools.Vol2
         const string MainLookProfile = "Assets/_Project/Art/World/Look308/Data/LookProfile308_PBZInkWash.asset";
         const string RiposteProfile = "Assets/_Project/Art/SpellVFX308/RiposteStroke/RiposteStroke308Profile.asset";
         public static string OutRoot => Path.GetFullPath(Path.Combine(Application.dataPath, "../../Art/SpellVFX308/Vol2Vfx/" + _out));
-        static readonly Dictionary<string, string> RowOf = new Dictionary<string, string> { { "A0", "거너머서어" }, { "F0", "고노모소오" }, { "R0", "구누무수우" } };
+        static readonly Dictionary<string, string> RowOf = new Dictionary<string, string>
+        {
+            { "A0", "거너머서어" }, { "F0", "고노모소오" }, { "R0", "구누무수우" },
+            // D308-150 V9 step 4: the batchim rows of ㅓ ㅗ ㅜ (ㅏ's are Rows)
+            { "A1", "걱넉먹석억" }, { "A2", "건넌먼선언" }, { "A3", "검넘멈섬엄" }, { "A4", "것넛멋섯엇" }, { "A5", "겅넝멍성엉" },
+            { "F1", "곡녹목속옥" }, { "F2", "곤논몬손온" }, { "F3", "곰놈몸솜옴" }, { "F4", "곳놋못솟옷" }, { "F5", "공농몽송옹" },
+            { "R1", "국눅묵숙욱" }, { "R2", "군눈문순운" }, { "R3", "굼눔뭄숨움" }, { "R4", "굿눗뭇숫웃" }, { "R5", "궁눙뭉숭웅" },
+        };
+        /// <summary>Step 4: a batchim template (P1 - R5) recorded as the legacy bridge plays it (bridge4 = 1, the default; p0=9a keeps the slice 9a jobs of P1 - P5).</summary>
+        static bool Batchim(string t) => t.Length == 2 && "PAFR".IndexOf(t[0]) >= 0 && t[1] >= '1' && t[1] <= '5';
+        static int _noLogFrames, _describe; static float _pitch2;
 
         sealed class Step { public double At; public string Name; public Func<Ctx, bool> Do; public bool Done; }
 
@@ -140,6 +150,8 @@ namespace Oheangbu.EditorTools.Vol2
         {
             public string Template, Variant = "main", Back = "red"; public Body Body; public char Letter; public bool Video, Keys;
             public double MaxAge = 1.2, MinAge = 0.4;
+            /// <summary>Step 4 F2: the bodies are placed from the fan's own spec at setup (in it / outside its edges within the spread's reach).</summary>
+            public bool FanNeighbours;
             public readonly List<Step> Steps = new List<Step>();
             public List<(float ahead, float side)> Dummies = new List<(float, float)>();
             public string Name => Template + "_" + Variant + "_" + Body + "_" + Back;
@@ -185,9 +197,15 @@ namespace Oheangbu.EditorTools.Vol2
             if (_running) return "REFUSED vfx9a:run: a capture is running: " + Status();
             string[] parts = spec.Split(':');
             var templates = new List<string>();
-            foreach (string t in parts[0].Split(',')) { if (t == "all") templates.AddRange(new[] { "P0", "P1", "P2", "P3", "P4", "P5" }); else if (t == "nb20") templates.AddRange(new[] { "P0", "A0", "F0", "R0" }); else templates.Add(t.Trim()); }
+            foreach (string t in parts[0].Split(','))
+            {
+                if (t == "all") templates.AddRange(new[] { "P0", "P1", "P2", "P3", "P4", "P5" });
+                else if (t == "nb20") templates.AddRange(new[] { "P0", "A0", "F0", "R0" });
+                else if (t == "batchim") foreach (char f in "PAFR") for (int v = 1; v <= 5; v++) templates.Add(f + v.ToString());
+                else templates.Add(t.Trim());
+            }
             _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _rules = false; _p09a = false; _legacy = false; Dists.Clear();
-            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false;
+            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
             {
@@ -203,6 +221,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "realm") _realmMode = v.Trim();
                 else if (k == "p0") { _p0Nb20 = v.Trim() == "nb20"; _p09a = v.Trim() == "9a"; }
                 else if (k == "pitch") _videoPitch = float.Parse(v, Inv);
+                else if (k == "pitch2") _pitch2 = float.Parse(v, Inv);       // step 4: a second, higher view of every video frame (g_NNNNN.jpg) to read the state on the ground
                 else if (k == "rules") _rules = v == "1";
                 else if (k == "legacy") { _legacy = v == "1" || v == "2"; _legacyFeed = v == "2"; }
                 else if (k == "apex") _apex = v.Trim() == "1";
@@ -213,8 +232,8 @@ namespace Oheangbu.EditorTools.Vol2
             }
             foreach (string t in templates)
             {
-                if (!(t.Length == 2 && t[0] == 'P' && t[1] >= '0' && t[1] <= '5') && !RowOf.ContainsKey(t) && t != "AJ") return "REFUSED vfx9a:run: template " + t + " (slice 9a draws P0 - P5, NB20 also A0 F0 R0)";
-                var variants = t == "P3" ? new[] { "work", "expire" } : t == "P0" && Dists.Count > 0 ? new[] { "main" }.Concat(Dists.Select(d => "d" + d.ToString("0", Inv))).ToArray() : new[] { "main" };
+                if (!(t.Length == 2 && t[0] == 'P' && t[1] >= '0' && t[1] <= '5') && !RowOf.ContainsKey(t) && t != "AJ") return "REFUSED vfx9a:run: template " + t + " (P0 - P5, A0 - A5, F0 - F5, R0 - R5, AJ)";
+                var variants = t == "P3" && _p09a ? new[] { "work", "expire" } : t == "P0" && Dists.Count > 0 ? new[] { "main" }.Concat(Dists.Select(d => "d" + d.ToString("0", Inv))).ToArray() : new[] { "main" };
                 foreach (string variant in variants)
                 {
                     if (variantOnly != null && variant != variantOnly) continue;
@@ -294,7 +313,8 @@ namespace Oheangbu.EditorTools.Vol2
                     break;
                 default: j.MaxAge = 1.5; j.MinAge = 1.2; break;
             }
-            if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : 1.6; j.Variant = _legacyFeed ? "old" : "legacy"; }
+            if (Batchim(template) && !_p09a && !_legacy) Step4Job(j);
+            if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : Batchim(template) ? 4.5 : 1.6; j.MinAge = j.MaxAge; j.Variant = _legacyFeed ? "old" : "legacy"; }
             // D308-150 V9: the old visuals live longer than the vol.2 ink looks (windup + flight + impact): both sides of the legacy bridge comparison record the same full
             // length (no early stop), with no lab-simulated parry (the old route only shows a parry's success on a real enemy impact)
             if (template == "P0" || template == "A0" || template == "F0" || template == "R0")
@@ -304,6 +324,161 @@ namespace Oheangbu.EditorTools.Vol2
                     if (!_legacy) j.Variant = _apex == true ? "bridge_apex" : "bridge";
                 }
             return j;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------------------------------------
+        // step 4 (D308-150 V9): the batchim templates as the legacy bridge plays them - the cast AND the lasting verb state long enough to read it
+        // ------------------------------------------------------------------------------------------------------------------------------------------------
+
+        /// <summary>The scenario of one batchim template: real bear bodies, the steps that make the verb's state appear, work and end. LAB-SIMULATED steps are named so
+        /// (a swing's touch, the player's lost HP, a body walking in, the caster stepping on the band); the long waits are JUMPs of the scope clock that stop
+        /// 1.4 s before the executor's scheduled end, so the expiry warning (1.0 s before) and the end reason are on the video.</summary>
+        static void Step4Job(Job j)
+        {
+            j.Variant = "bridge4"; j.Steps.Clear(); j.Dummies.Clear();
+            char f = j.Template[0]; int v = j.Template[1] - '0';
+            const double Lead = 1.4;
+            void Step(double at, string name, Func<Ctx, bool> act) => j.Steps.Add(new Step { At = at, Name = name, Do = act });
+            void JumpMat(double at) => Step(at, "JUMP to " + Lead + " s before the state's scheduled end (LAB-SIMULATED long wait)", c => JumpBeforeExpiry(c, Lead));
+            void JumpStrip(double at) => Step(at, "JUMP to " + Lead + " s before the strip ends (LAB-SIMULATED 3 s wait)", c => JumpBeforeStripEnd(c, Lead));
+            void JumpHost(double at) => Step(at, "JUMP to " + Lead + " s before the attachment ends (LAB-SIMULATED 6 s wait)", c => JumpBeforeEmitterEnd(c, Lead));
+            void SwingAt(double at) => Step(at, "LAB-SIMULATED: the swing's touch (the caster's brush sweeps the body)", c => { SimSwing(c); return true; });
+            switch (f)
+            {
+                case 'P':
+                    j.Dummies.Add((4.6f, 0f));
+                    switch (v)
+                    {
+                        case 1: j.MaxAge = 14; j.MinAge = 2.5; JumpMat(3.0); break;                                                        // residue 10 s (각: the cage first)
+                        case 2: j.Dummies.Add((6.2f, 1.7f)); j.Dummies.Add((5.8f, -1.9f)); j.MaxAge = 8; j.MinAge = 1.5; JumpMat(1.3); break;   // marks 3 s on the neighbours
+                        case 3:
+                            j.MaxAge = 4; j.MinAge = 2.0;
+                            char follow = Rows[0][(int)j.Body];
+                            Step(1.4, "LAB-SIMULATED: a direct hit of the same body works the seed (" + follow + ")", c => { RaiseLetter(c, follow); return true; });
+                            break;
+                        case 4: j.MaxAge = 8; j.MinAge = 1.5; JumpStrip(1.2); break;
+                        default: j.Dummies.Add((8.5f, 0.4f)); j.MaxAge = 3.2; j.MinAge = 2.0; break;                                    // out to 12 m and back
+                    }
+                    break;
+                case 'A':
+                    j.Dummies.Add((1.2f, 0.3f));
+                    switch (v)
+                    {
+                        case 1: j.MaxAge = 9; j.MinAge = 2.0; SwingAt(0.35); JumpHost(1.6); break;
+                        case 2: j.Dummies.Add((2.9f, 1.9f)); j.Dummies.Add((3.3f, -1.6f)); j.MaxAge = 9; j.MinAge = 2.0; SwingAt(0.35); JumpMat(1.5); break;
+                        case 3:
+                            j.Dummies.Add((1.6f, -0.7f)); j.MaxAge = 4.5; j.MinAge = 2.4;
+                            Step(1.3, "LAB-SIMULATED: the player really loses 6 HP (PlayerVitals.TakeAttackDamage from the first body)", c => { HurtPlayer(c); return true; });
+                            break;
+                        case 4: j.MaxAge = 9; j.MinAge = 2.0; SwingAt(0.35); if (j.Letter == '섯') SwingAt(0.9); JumpStrip(1.3); break;
+                        default: j.Dummies[0] = (1.6f, 0f); j.MaxAge = 9; j.MinAge = 2.0; JumpHost(2.2); break;                            // the orbit (r 1.6 m) meets the body
+                    }
+                    if (j.Letter == '걱') { j.Steps.Clear(); j.MaxAge = 4.0; j.MinAge = 4.0; }       // the recovery (the defence kit's): recorded without a cast log
+                    break;
+                case 'F':
+                    j.Dummies.Add((3.4f, -0.3f));
+                    switch (v)
+                    {
+                        case 1: j.Dummies.Add((4.3f, 1.25f)); j.MaxAge = 14; j.MinAge = 2.5; JumpMat(3.0); break;
+                        case 2: j.MaxAge = 9; j.MinAge = 1.5; j.FanNeighbours = true; JumpMat(1.3); break;
+                        case 3:
+                            j.Dummies.Add((7.6f, 0.4f)); j.MaxAge = 5; j.MinAge = 2.6;
+                            Step(1.3, "LAB-SIMULATED: a body walks into the fan (an entry: the seed works)", c => MoveDummy(c, 1, 4.1f, 0.4f));
+                            if (j.Letter == '몸') { j.MaxAge = 9; JumpMat(2.6); }
+                            break;
+                        case 4: j.Dummies.Add((4.3f, 1.25f)); j.MaxAge = 8; j.MinAge = 1.5; JumpStrip(1.2); break;
+                        default: j.Dummies.Add((5.6f, 0.5f)); j.MaxAge = 3.2; j.MinAge = 2.0; break;
+                    }
+                    break;
+                default:
+                    j.Dummies.Add((1.9f, 0.5f));
+                    switch (v)
+                    {
+                        case 1: j.MaxAge = 14; j.MinAge = 2.5; JumpMat(3.0); break;
+                        case 2:
+                            j.Dummies.Add((4.4f, 1.2f)); j.Dummies.Add((5.3f, 2.6f)); j.MaxAge = 9; j.MinAge = 2.0;
+                            Step(1.0, "LAB-SIMULATED: a body crosses onto the band", c => MoveDummy(c, 1, 2.0f, 1.0f));
+                            JumpMat(1.8);
+                            break;
+                        case 3:
+                            j.Dummies.Add((4.4f, 1.2f)); j.MaxAge = 5; j.MinAge = 2.6;
+                            if (j.Letter == '뭄') { Step(1.3, "LAB-SIMULATED: the caster steps onto the band", c => CasterOnBand(c)); j.MaxAge = 9; JumpMat(2.6); }
+                            else Step(1.3, "LAB-SIMULATED: a body crosses onto the band (the seed works)", c => MoveDummy(c, 1, 2.0f, 1.0f));
+                            break;
+                        case 4:
+                            j.Dummies.Add((4.4f, 1.2f)); j.MaxAge = 14; j.MinAge = 2.0;
+                            Step(1.0, "LAB-SIMULATED: a body crosses onto the band (stripped)", c => MoveDummy(c, 1, 2.0f, 1.0f));
+                            JumpStrip(1.6);
+                            Step(4.6, "JUMP to " + Lead + " s before the 10 s ring line ends (LAB-SIMULATED long wait)", c => JumpBeforeEmitterEnd(c, Lead));
+                            break;
+                        default: j.Dummies.Add((3.7f, 0.9f)); j.MaxAge = 3.2; j.MinAge = 2.0; break;                                // the ring goes 2 -> 4 m and back
+                    }
+                    break;
+            }
+        }
+
+        static bool MoveDummy(Ctx c, int index, float ahead, float side)
+        {
+            if (index >= c.Dummies.Count || c.Dummies[index] == null) return true;
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            c.Dummies[index].transform.position = c.Origin + c.Forward * ahead + right * side;
+            Physics.SyncTransforms();
+            return true;
+        }
+
+        static void SimSwing(Ctx c)
+        {
+            long swing = c.Services.Ids.NextSwing().Value;
+            Vector3 sleeve = c.Origin + Vector3.up * 1.1f, tip = sleeve + c.Forward * c.Coordinator.Tuning.BrushReach;
+            for (int k = 0; k < 3; k++) c.Shapes.Swings.Raise(new Vol2SwingEvent(swing, sleeve, tip, c.Services.Clock.NowUs, k));
+        }
+
+        static void HurtPlayer(Ctx c)
+        {
+            try
+            {
+                // as the lab's 심는다 row does (Vol2SeedLab.Wire): the scene's player vitals, bound to the seed hub with the wiring's defence kit, then a real hit
+                var player = Object.FindFirstObjectByType<PlayerVitals>() ?? c.Wiring.Vol2Player;
+                var from = c.Dummies.Count > 0 && c.Dummies[0] != null ? c.Dummies[0].GetComponentInChildren<EnemyVitals>(true) : null;
+                if (player == null) { Problems.Add(_job.Name + ": no player vitals (the 심는다 ㅓ seed cannot work)"); return; }
+                if (c.Wiring.Vol2Defence != null) Vol2SeedWiring.Bind(c.Coordinator, c.Wiring.Vol2Defence, player);
+                var took = player.TakeAttackDamage(6f, IncomingDamageKind.Melee, from);
+                Finished.Add("  " + _job.Name + ": player hit took=" + took + " hp01=" + player.Hp01.ToString("0.00", Inv));
+            }
+            catch (Exception e) { Problems.Add(_job.Name + " hurt: " + e.Message); }
+        }
+
+        static bool CasterOnBand(Ctx c)
+        {
+            var hub = Vol2SeedExecutor.HubOf(c.Coordinator);
+            if (hub == null) { Problems.Add(_job.Name + ": no seed hub (뭄)"); return true; }
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            Vector3 onBand = c.Log != null ? c.Log.Spec.Origin + right * c.Log.Spec.RingRadius : c.Origin + right * 2f;
+            hub.CasterPositionOverride = () => onBand;
+            _casterOverride = hub;
+            return true;
+        }
+        static Vol2SeedHub _casterOverride;
+
+        static bool JumpBeforeEmitterEnd(Ctx c, double before)
+        {
+            long end = c.Log != null && c.Log.Emitter is Vol2AttachmentHost h ? h.EndUs : c.Log != null && c.Log.Emitter is Vol2TimedEmitter te ? te.EndUs : 0;
+            if (end <= 0) return true;
+            Jump(c, end - Vol2Time.FromSeconds(before));
+            return true;
+        }
+
+        /// <summary>F2: two bodies outside the fan, within the spread's 3 m of its edge (placed from the fan's own spec numbers), one inside it.</summary>
+        static void FanNeighbours(Ctx c, Job j)
+        {
+            var spec = Vol2ShapeSpec.Create(Frame.Fan, c.Coordinator.Numbers, c.Origin, c.Forward, c.Coordinator.Tuning);
+            float half = spec.FanHalfAngleRad * Mathf.Rad2Deg, depth = spec.FanDepth;
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            (float ahead, float side) Local(float angleDeg, float dist) { Vector3 p = Quaternion.AngleAxis(angleDeg, Vector3.up) * c.Forward * dist; return (Vector3.Dot(p, c.Forward), Vector3.Dot(p, right)); }
+            j.Dummies.Clear();
+            j.Dummies.Add(Local(-half * 0.3f, depth * 0.75f));                  // in the fan (struck)
+            j.Dummies.Add(Local(half + 22f, depth * 0.7f));                     // right of the edge
+            j.Dummies.Add(Local(-half - 20f, depth * 0.55f));                   // left of the edge
         }
 
         // ------------------------------------------------------------------------------------------------------------------------------------------------
@@ -725,6 +900,7 @@ namespace Oheangbu.EditorTools.Vol2
             _realmEye = _realmMode == "auto" ? RealmPoint(j.Back == "red" ? "Jeokro" : "Cheongrim") : (Vector3?)null;
             if (_realmMode == "auto" && _realmEye == null) Problems.Add("realm=auto: no geography region for " + j.Back);
             Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            if (j.FanNeighbours) FanNeighbours(c, j);
             // the REAL ground look: the realm's own soil material (적로 / 청림) on a flat ground quad, and a real enemy prefab as the target (never saved into a scene; destroyed at the end of the job)
             string soil = j.Back == "red" ? JeokroSoil : CheongrimSoil;
             var soilMat = AssetDatabase.LoadAssetAtPath<Material>(soil);
@@ -775,7 +951,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             Physics.SyncTransforms();
             if (!MeasuredGround.Contains(j.Back)) MeasureGround(c, j.Back);
-            c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f;
+            c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f; _describe = 0;
             foreach (var s in _job.Steps) s.Done = false;
             _folder = Path.Combine(OutRoot, "frames", _job.Name);
             if (Directory.Exists(_folder)) foreach (var f in Directory.GetFiles(_folder)) File.Delete(f);
@@ -804,6 +980,8 @@ namespace Oheangbu.EditorTools.Vol2
             if (_job.Template == "AJ") { BeginRiposte(c); return; }
             RaiseLetter(c, _job.Letter);
             c.Log = _beganLog;
+            // step 4: 걱 is the recovery (the defence kit runs it, no vol.2 cast log): its old look comes from the kit's own records - recorded on the frame count
+            if (c.Log == null && _lastDecision != null && _lastDecision.Accepted && _lastDecision.IsRecovery) { _noLogFrames = 0; _note = "recovery (the defence kit's, no cast log)"; _st = St.Record; return; }
             if (c.Log == null) { Problems.Add(_job.Name + ": the letter " + _job.Letter + " started no cast (" + (_lastDecision != null ? "accepted=" + _lastDecision.Accepted + " reason=" + _lastDecision.Reason : "no decision") + ")"); _st = St.Teardown; return; }
             _st = St.Record;
         }
@@ -860,6 +1038,15 @@ namespace Oheangbu.EditorTools.Vol2
                 return;
             }
             if (j.Template == "AJ") { RecordRiposte(); return; }
+            if (c.Log == null)
+            {
+                _noLogFrames++;
+                double ra = _noLogFrames / 60.0;
+                if (j.Video) SaveFrame(c, ra, c.Services.Clock.NowUs, true, false);
+                _note = "";
+                if (ra >= j.MaxAge || EditorApplication.timeSinceStartup > _guardUntil) _st = St.Teardown;
+                return;
+            }
             // one picture per game frame, after the presenter stepped on the scope clock (Vol2VfxPresenter.LastStepUs)
             long stepUs = c.Presenter.LastStepUs;
             double age = (stepUs - c.Log.StartUs) / 1000000.0;
@@ -869,6 +1056,7 @@ namespace Oheangbu.EditorTools.Vol2
                 if (s.Do(c)) { s.Done = true; _note = s.Name; }
             }
             bool keyWindow = j.Keys && ((age >= 0.065 && age <= 0.10) || (age >= 0.165 && age <= 0.20) || (age >= 0.285 && age <= 0.315));
+            if (Batchim(j.Template) && c.Presenter.Legacy != null && (_describe == 0 && age >= 1.0 || _describe == 1 && age >= 2.2)) { _describe++; Finished.Add("  parts at " + age.ToString("0.00", Inv) + " s: " + c.Presenter.Legacy.Describe()); }
             bool lateKey = j.Keys && j.Template == "P1" && j.Body == Body.Wood && age >= 1.70 && age <= 1.74;       // 각 cages its body for 1.5 s: the residue stands after that
             if (j.Video || keyWindow || lateKey) SaveFrame(c, age, stepUs, j.Video, keyWindow || lateKey);
             _note = "";
@@ -881,6 +1069,7 @@ namespace Oheangbu.EditorTools.Vol2
             Vector3 origin = c.Log != null ? c.Log.Spec.Origin : c.Origin, fwd = c.Log != null ? c.Log.Spec.Forward : c.Forward;
             float yaw = Quaternion.LookRotation(fwd, Vector3.up).eulerAngles.y;
             if (video) { Shoot(origin, yaw, _videoPitch, _rtVideo, _texVideo, Path.Combine(_folder, "f_" + _frames.ToString("D5", Inv) + ".jpg"), false); if (_rules && !_legacy) Rules(c, origin, yaw, age); }
+            if (video && _pitch2 > 0f) Shoot2(origin, yaw, Path.Combine(_folder, "g_" + _frames.ToString("D5", Inv) + ".jpg"));
             if (key)
             {
                 string tag = _job.Template == "AJ" ? (age < 0.13 ? "a008" : age < 0.4 ? "r025" : "r070") : age < 0.13 ? "a008" : age < 0.24 ? "b018" : age > 1.0 ? "x172" : "b030";
@@ -965,6 +1154,23 @@ namespace Oheangbu.EditorTools.Vol2
             File.WriteAllBytes(file, png ? tex.EncodeToPNG() : tex.EncodeToJPG(90));
         }
 
+        /// <summary>Step 4 reading view (NOT the game camera): the same shoulder rig pulled back x2 and pitched down by pitch2, so a state lying on the ground round the caster or
+        /// a body can be read. The game camera (pitch 0) stays the main picture.</summary>
+        static void Shoot2(Vector3 origin, float yawDegrees, string file)
+        {
+            Quaternion rot = Quaternion.Euler(_pitch2, yawDegrees, 0f);
+            Vector3 pivot = origin + Vector3.up * 1.7f;
+            _cam.transform.SetPositionAndRotation(pivot + rot * new Vector3(0.7f, 0.55f, -2.8f) * 2f, rot);
+            _cam.fieldOfView = 60f;
+            _cam.targetTexture = _rtVideo;
+            if (_realmEye.HasValue && _lookDriver != null) _lookDriver.Refresh(_realmEye.Value);
+            _cam.Render();
+            var was = RenderTexture.active;
+            try { RenderTexture.active = _rtVideo; _texVideo.ReadPixels(new Rect(0, 0, _rtVideo.width, _rtVideo.height), 0, 0, false); }
+            finally { RenderTexture.active = was; }
+            File.WriteAllBytes(file, _texVideo.EncodeToJPG(88));
+        }
+
         static string PartInfo(Ctx c)
         {
             if (_legacy) return "legacy,-,-,-";
@@ -1003,8 +1209,12 @@ namespace Oheangbu.EditorTools.Vol2
             var stage = c.Presenter.Legacy;
             string bridge = stage != null ? " | bridge begun " + stage.Begun + " missing " + stage.Missing + " swings " + stage.SwingsShown + " tip-ink " + stage.InkShown + " stems " + stage.StemsShown
                 + " last body " + stage.LastPrefab + " live-before-reset " + stage.LiveCount : "";
+            if (stage != null) bridge += " | parts laid " + stage.PartsLaid + " missing " + stage.PartsMissing + " closed " + stage.PartsClosed + " live " + stage.LivePartCount + " | pulses " + stage.PulsesShown + " missing " + stage.PulsesMissing
+                + " | last part " + stage.LastPart + " | last pulse " + stage.LastPulse + (stage.RecoveriesShown > 0 ? " | recoveries " + stage.RecoveriesShown : "");
+            try { var rec = c.Wiring.Vol2Defence != null ? c.Wiring.Vol2Defence.Recovery : null; if (rec != null && rec.Active) rec.Cancel(); } catch (Exception) { }
+            if (_casterOverride != null) { _casterOverride.CasterPositionOverride = null; _casterOverride = null; }
             c.Coordinator.AbortAll(); c.Presenter.Model.Tick(c.Services.Clock.NowUs); c.Presenter.ClearAll();
-            if (stage != null) bridge += " live-after-reset " + stage.LiveCount + " profile copies " + stage.CopiesMade + "/" + stage.CopiesFreed + " freed";
+            if (stage != null) bridge += " live-after-reset " + stage.LiveCount + " parts-after-reset " + stage.LivePartCount + " profile copies " + stage.CopiesMade + "/" + stage.CopiesFreed + " freed";
             if (bridge.Length > 0) Finished[Finished.Count - 1] += bridge;
             ClearOldBodies(c);
             foreach (var d in c.Dummies) { if (d != null) { c.Shapes.Registry.RemoveExtra(d.GetComponentInChildren<EnemyVitals>(true)); Object.Destroy(d); } }

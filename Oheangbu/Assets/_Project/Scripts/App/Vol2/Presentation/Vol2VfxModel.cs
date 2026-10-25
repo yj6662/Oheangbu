@@ -195,15 +195,14 @@ namespace Oheangbu.App
             // D308-150 V9 (2026-10-25, the user: "기존 투사체 방식이 전부 낫다"): the 20 no-batchim spells P0 / A0 / F0 / R0 play the OLD main game's visuals of each glyph
             // through the legacy bridge (Vol2LegacyRecipes + Vol2LegacyStage). The rejected looks stay in the code, unregistered, for comparison (a capture / fixture
             // swaps them in with Set): stroke20 (Vol2Stroke*, V7 / V8), NB20 (Vol2Nb20*, V6), slice 9a P0 (Vol2PathOneHitRecipe, V5)
+            // Step 4: the 100 batchim spells (P1 - P5, A1 - A5, F1 - F5, R1 - R5) play the old glyph bodies + the verb states as old parts (Vol2LegacyVerbRecipes); the slice 9a ink
+            // recipes of P1 - P5 (Vol2PathLeave / Spread / Seed / Split / ReturnRecipe) stay in the code, unregistered
             reg.Add(new Vol2LegacyPathRecipe());        // P0 (legacy bridge)
-            reg.Add(new Vol2PathLeaveRecipe());         // P1
-            reg.Add(new Vol2PathSpreadRecipe());        // P2
-            reg.Add(new Vol2PathSeedRecipe());          // P3
-            reg.Add(new Vol2PathSplitRecipe());         // P4
-            reg.Add(new Vol2PathReturnRecipe());        // P5
             reg.Add(new Vol2LegacyAttachRecipe());      // A0 (legacy bridge)
             reg.Add(new Vol2LegacyFanRecipe());         // F0 (legacy bridge)
             reg.Add(new Vol2LegacyRingRecipe());        // R0 (legacy bridge)
+            foreach (var frame in new[] { Frame.Path, Frame.Attachment, Frame.Fan, Frame.Ring })
+                for (int v = 1; v <= 5; v++) reg.Add(new Vol2LegacyVerbRecipe(frame, (Verb)v));      // P1 - R5 (legacy bridge, step 4)
             return reg;
         }
     }
