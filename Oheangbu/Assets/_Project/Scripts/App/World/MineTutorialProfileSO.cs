@@ -86,7 +86,7 @@ namespace Oheangbu.App.World
                 B("l2_dodge", MineTutorialSignal.NeutralTelegraph, "피하기", "빛 없는 것은 몸으로 피한다 [Shift]", new[] { "Shift" }),
                 B("l3_draw", MineTutorialSignal.AfterNeutral, "긋기", "[Q]를 누른 채 긋고, 떼면 글자가 선다 — 사", new[] { "Q" }, "사", MineTutorialWait.PlayerHit, 8f),
                 B("l4_parry", MineTutorialSignal.ElementalShard, "받아치기", "청록은 목이다. 金이 木을 이긴다 — 서.\n닿기 직전에 뗀다.", new[] { "Q" }, "서"),
-                B("l5_riposte", MineTutorialSignal.GroggyFull, "앞잡", "고리가 닫혔다 — [Q] 한 번", new[] { "Q" }),
+                B("l5_riposte", MineTutorialSignal.GroggyFull, "오의", "고리가 닫혔다 — [Q] 한 번", new[] { "Q" }),
                 B("l6_harvest", MineTutorialSignal.InkLow, "먹 뽑기", "먹이 마르면 [좌클릭]으로 덩어리를 뽑는다", new[] { "좌클릭" }),
                 B("l7_ward", MineTutorialSignal.GroundRing, "두르기", "사방에서 오면 두른다 — 수", new[] { "Q" }, "수"),
             };
