@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""D308-150 V10-V11 free showcase media: engine frames (Vol2VfxCapture, out=free_showcase/<round>) -> per-spell mp4 (1x then 0.5x),
+a side-by-side still (concept | engine frame at the matching moment), a frame contact sheet, and one combined mp4 of all three.
+
+  python Tools/Art/SpellVFX308/free_showcase_media308.py r1                     # sheets only (to pick the moments)
+  python Tools/Art/SpellVFX308/free_showcase_media308.py r1 --video na=0.40 go=0.70 gak=1.40   # + videos and side-by-sides at those ages (s)
+Out: Art/SpellVFX308/Vol2Vfx/free_showcase/<round>/media/"""
+import csv, sys
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFont
+
+REPO = Path(__file__).resolve().parents[3]
+BASE = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase'
+CONCEPTS = BASE / 'concepts'
+SPELLS = [  # key, template prefix of the job folder, concept(s), label
+    ('na', 'P0_', ['na_b.png', 'na_c.png'], '나 · 화 · ㅏ 경로 · 한 번 — 붓끝에서 불화살이 첫 적에게 날아가 한 번 맞고 2초 태운다'),
+    ('go', 'F0_', ['go_b.png'], '고 · 목 · ㅗ 면 · 한 번 — 앞 부채꼴(5 m)을 덩굴·죽순이 한 번 쓸고 안의 적을 붙든다'),
+    ('gak', 'P1_', ['gak_a.png', 'gak_c.png'], '각 · 목 · ㅏ 경로 · 남긴다 — 맞은 적의 다리를 가지 새장이 1.5초 붙들고, 풀린 자리에 덤불이 남는다'),
+]
+W, H = 1280, 720
+FONT = 'C:/Windows/Fonts/malgunbd.ttf'
+
+
+def font(size):
+    try:
+        return ImageFont.truetype(FONT, size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def job_dir(rnd, prefix):
+    frames = BASE / rnd / 'frames'
+    c = sorted([d for d in frames.iterdir() if d.is_dir() and d.name.startswith(prefix)]) if frames.exists() else []
+    return c[0] if c else None
+
+
+def rows(d):
+    with open(d / 'index.csv', encoding='utf-8', errors='replace') as f:
+        return [r for r in csv.DictReader(f) if r.get('video') == '1']
+
+
+def frame_path(d, r):
+    return d / ('f_%05d.jpg' % int(r['frame']))
+
+
+def label(img, text, sub=None):
+    img = img.convert('RGB'); dr = ImageDraw.Draw(img)
+    f = font(26); x, y = 18, 14
+    bb = dr.textbbox((x, y), text, font=f)
+    dr.rectangle((bb[0] - 8, bb[1] - 6, bb[2] + 8, bb[3] + 6), fill=(0, 0, 0))
+    dr.text((x, y), text, font=f, fill=(255, 255, 255))
+    if sub:
+        f2 = font(20); bb = dr.textbbox((x, H - 44), sub, font=f2)
+        dr.rectangle((bb[0] - 8, bb[1] - 6, bb[2] + 8, bb[3] + 6), fill=(0, 0, 0))
+        dr.text((x, H - 44), sub, font=f2, fill=(255, 230, 200))
+    return img
+
+
+def sheet(rnd, key, d):
+    rs = rows(d)
+    step = max(1, len(rs) // 40)
+    pick = rs[::step][:40]
+    tw, th = 320, 180
+    out = Image.new('RGB', (tw * 8, th * ((len(pick) + 7) // 8)), (0, 0, 0))
+    dr = ImageDraw.Draw(out)
+    for i, r in enumerate(pick):
+        p = frame_path(d, r)
+        if not p.exists():
+            continue
+        im = Image.open(p).resize((tw, th))
+        out.paste(im, ((i % 8) * tw, (i // 8) * th))
+        dr.text(((i % 8) * tw + 6, (i // 8) * th + 4), '%s f%s' % (r['ageSec'], r['frame']), font=font(16), fill=(255, 255, 0))
+    dst = BASE / rnd / 'media' / f'{key}_sheet.jpg'
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    out.save(dst, quality=88)
+    print('sheet', dst)
+
+
+def at_age(d, age):
+    rs = rows(d)
+    best = min(rs, key=lambda r: abs(float(r['ageSec']) - age))
+    return frame_path(d, best), best
+
+
+def side_by_side(rnd, key, d, ages, concepts):
+    outs = []
+    for i, age in enumerate(ages):
+        p, r = at_age(d, age)
+        eng = label(Image.open(p).resize((W, H)), 'ENGINE (실제 게임 카메라) · %.2f s' % float(r['ageSec']))
+        con = label(Image.open(CONCEPTS / concepts[min(i, len(concepts) - 1)]).resize((W, H)), 'CONCEPT ' + concepts[min(i, len(concepts) - 1)][:-4])
+        sbs = Image.new('RGB', (W * 2 + 16, H), (20, 20, 20))
+        sbs.paste(con, (0, 0)); sbs.paste(eng, (W + 16, 0))
+        dst = BASE / rnd / f'{key}_side_by_side{"" if i == 0 else "_" + str(i + 1)}.jpg'
+        sbs.save(dst, quality=92)
+        outs.append(dst)
+        print('side', dst)
+    return outs
+
+
+def frames_for(d, text):
+    rs = rows(d)
+    one = [label(Image.open(frame_path(d, r)).resize((W, H)), text + ' · 1×', 't = %s s' % r['ageSec']) for r in rs if frame_path(d, r).exists()]
+    half = []
+    for r in rs:
+        p = frame_path(d, r)
+        if p.exists():
+            im = label(Image.open(p).resize((W, H)), text + ' · 0.5×', 't = %s s' % r['ageSec'])
+            half += [im, im]
+    return one, half
+
+
+def write_mp4(dst, frames, fps=60):
+    import imageio_ffmpeg
+    gen = imageio_ffmpeg.write_frames(str(dst), (W, H), fps=fps, codec='libx264', pix_fmt_out='yuv420p', output_params=['-crf', '19', '-preset', 'medium'], macro_block_size=8)
+    gen.send(None)
+    for im in frames:
+        gen.send(im.convert('RGB').tobytes())
+    gen.close()
+    print('mp4', dst, len(frames))
+
+
+def title(concept, text, seconds=1.5, fps=60):
+    im = Image.open(CONCEPTS / concept).resize((W, H))
+    im = label(im, 'CONCEPT (자유 시안) · ' + concept[:-4], text)
+    return [im] * int(seconds * fps)
+
+
+def main():
+    rnd = sys.argv[1]
+    ages = {}
+    if '--video' in sys.argv:
+        for a in sys.argv[sys.argv.index('--video') + 1:]:
+            k, v = a.split('='); ages[k] = [float(x) for x in v.split('/')]
+    combined = []
+    for key, prefix, concepts, text in SPELLS:
+        d = job_dir(rnd, prefix)
+        if d is None:
+            print('NO FRAMES', key); continue
+        sheet(rnd, key, d)
+        if key not in ages:
+            continue
+        side_by_side(rnd, key, d, ages[key], concepts)
+        one, half = frames_for(d, text.split(' — ')[0])
+        write_mp4(BASE / rnd / f'{key}_1x_then_half.mp4', one + half)
+        combined += title(concepts[0], text) + one + half
+    if combined:
+        write_mp4(BASE / rnd / 'free_showcase_all.mp4', combined)
+
+
+if __name__ == '__main__':
+    main()
