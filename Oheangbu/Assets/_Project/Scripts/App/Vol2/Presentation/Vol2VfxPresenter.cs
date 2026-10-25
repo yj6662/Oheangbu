@@ -46,7 +46,8 @@ namespace Oheangbu.App
         public long LastStepUs { get; private set; }
 
         /// <summary>Builds the presenter under <paramref name="parent"/>. Null (and a warning) when no catalogue can be had (no asset, no shader).</summary>
-        public static Vol2VfxPresenter Attach(Vol2CastCoordinator coordinator, Transform parent, Vol2VfxCatalogue catalogue = null, Vol2DebugPresenter debug = null, HideFlags flags = HideFlags.None)
+        public static Vol2VfxPresenter Attach(Vol2CastCoordinator coordinator, Transform parent, Vol2VfxCatalogue catalogue = null, Vol2DebugPresenter debug = null, HideFlags flags = HideFlags.None,
+            CombatLoopWiring wiring = null)
         {
             catalogue = catalogue ?? Vol2VfxCatalogue.Load();
             if (catalogue == null) { Debug.LogWarning("[Vol2Vfx] no catalogue / shader: the debug lines stay"); return null; }
@@ -62,8 +63,19 @@ namespace Oheangbu.App
             p._model.BrushTip = () => p.Rig() is var r && r != null && r.WorldTip != null ? r.WorldTip.position : (Vector3?)null;
             p._model.BrushGrip = () => p.Rig() is var r && r != null && r.WorldBrushRoot308 != null ? r.WorldBrushRoot308.position : (Vector3?)null;
             if (debug != null) debug.Skip = log => p.Enabled && p._model.Covers(log);
+            // D308-150 V9: the legacy bridge's Unity side (the old visuals of the 20 no-batchim glyphs); in Play only - an edit-mode fixture binds its own recording stage
+            if (Application.isPlaying)
+            {
+                if (wiring == null) wiring = FindFirstObjectByType<CombatLoopWiring>();
+                p._legacy = new Vol2LegacyStage(coordinator, wiring, p._model.BrushTip);
+                p._model.Legacy = p._legacy;
+            }
             return p;
         }
+
+        Vol2LegacyStage _legacy;
+        /// <summary>D308-150 V9: the legacy bridge's stage (null in edit mode).</summary>
+        public Vol2LegacyStage Legacy => _legacy;
 
         World.WorldMacroPlayerGestureRig _rig;
         int _rigSearches;
@@ -101,6 +113,7 @@ namespace Oheangbu.App
         public void Release()
         {
             if (_model != null) { _model.Retired -= OnRetired; _model.Spawned -= OnSpawned; _model.Dispose(); _model = null; }
+            _legacy?.Dispose(); _legacy = null;
             foreach (var v in _views.Values) Kill(v);
             _views.Clear();
             while (_free.Count > 0) Kill(_free.Pop());
@@ -153,6 +166,7 @@ namespace Oheangbu.App
             long now = _coordinator.Services.Clock.NowUs;
             LastStepUs = now;
             _model.Tick(now);
+            _legacy?.Sweep();
             if (!Enabled) return;
             var list = _model.Instances;
             for (int i = 0; i < list.Count; i++)
@@ -212,6 +226,7 @@ namespace Oheangbu.App
         {
             if (_model == null) return;
             foreach (var kv in new List<KeyValuePair<Vol2VfxInstance, View>>(_views)) OnRetired(kv.Key);
+            _legacy?.ClearAll();          // D308-150 V9: the old bodies of the bridge go too (a finished cast's body may still be running its own life)
         }
     }
 }

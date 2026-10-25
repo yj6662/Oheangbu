@@ -64,7 +64,13 @@ namespace Oheangbu.App
             runtime.Host = go;
             go.AddComponent<Vol2ShapeRuntimeTicker>().Bind(runtime);
             runtime.Presenter = Vol2DebugPresenter.Attach(runtime.Coordinator, go.transform);
-            runtime.Vfx = Vol2VfxPresenter.Attach(runtime.Coordinator, go.transform, null, runtime.Presenter);      // slice 9a
+            runtime.Vfx = Vol2VfxPresenter.Attach(runtime.Coordinator, go.transform, null, runtime.Presenter, HideFlags.None, wiring);      // slice 9a (+ D308-150 V9 legacy bridge)
+            // TE-S3-6 (D308-150 V9, TEST, the user decides on return): the old feel launches a waiting cast at the swing's apex. ON in the spell lab scope only (the only
+            // scene a Vol2 scope runs in today: Vol2LabRequestFile); the apex seconds are the live swing profile's (single / area), so the two never drift apart.
+            var tuning = runtime.Coordinator.Tuning;
+            tuning.LaunchAtApex = wiring != null && wiring.gameObject.scene.path == Vol2LabRequestFile.LabScenePath;
+            var swing = wiring != null ? wiring.SwingProfile308 : null;
+            if (swing != null) { tuning.PathApexSeconds = swing.AttackSingle.ApexSeconds; tuning.FanApexSeconds = swing.AttackArea.ApexSeconds; }
             // NB20: a successful parry (the combat wiring's verdict, never decided here) lets the ㅓ look splash at the impact point, on the scope clock
             if (runtime.Vfx != null && wiring != null)
             {

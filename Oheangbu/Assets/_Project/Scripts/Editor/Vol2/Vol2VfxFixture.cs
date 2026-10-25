@@ -63,9 +63,11 @@ namespace Oheangbu.EditorTools.Vol2
         {
             public Rig Rig; public Vol2VfxModel Model; public Vol2VfxCatalogue Cat;
             public readonly List<Vol2StrokeAttr> Strokes = new List<Vol2StrokeAttr>();
+            /// <summary>recipes = null: the stroke20 registry (D308-150 V9 unregistered stroke20 for the 20 no-batchim; the checks below were written for it and keep
+            /// checking the kept code). The registered legacy bridge has its own fixture (Vol2LegacyBridgeFixture).</summary>
             public Setup(Vol2Rulebook book, Vol2VfxCatalogue cat, Vol2VfxRecipeRegistry recipes = null)
             {
-                Cat = cat; Rig = Rig.Create(book); Model = new Vol2VfxModel(Rig.Coord, cat, recipes);
+                Cat = cat; Rig = Rig.Create(book); Model = new Vol2VfxModel(Rig.Coord, cat, recipes ?? Stroke20Registry());
             }
             public long NowUs => Rig.Services.Clock.NowUs;
             /// <summary>Advance the hand clock (steps of dt) and tick the model on it, like the view does each frame.</summary>
@@ -86,7 +88,10 @@ namespace Oheangbu.EditorTools.Vol2
         }
 
         /// <summary>The default registry with the kept NB20 recipes of A0 / F0 / R0 swapped in (their checks V4n / V4p stay valid while stroke20 is the registered look).</summary>
-        static Vol2VfxRecipeRegistry Nb20Registry() => Vol2VfxRecipeRegistry.CreateDefault().Set(new Vol2Nb20AttachRecipe()).Set(new Vol2Nb20FanRecipe()).Set(new Vol2Nb20RingRecipe());
+        static Vol2VfxRecipeRegistry Nb20Registry() => Stroke20Registry().Set(new Vol2Nb20AttachRecipe()).Set(new Vol2Nb20FanRecipe()).Set(new Vol2Nb20RingRecipe());
+        /// <summary>D308-150 V9: the default registry with the kept stroke20 recipes swapped back in for P0 / A0 / F0 / R0 (the legacy bridge is the registered look).</summary>
+        static void StrokeLooks(Vol2VfxPresenter p) { if (p != null && p.Model != null) p.Model.Recipes.Set(new Vol2StrokePathRecipe()).Set(new Vol2StrokeAttachRecipe()).Set(new Vol2StrokeFanRecipe()).Set(new Vol2StrokeRingRecipe()); }
+        static Vol2VfxRecipeRegistry Stroke20Registry() => Vol2VfxRecipeRegistry.CreateDefault().Set(new Vol2StrokePathRecipe()).Set(new Vol2StrokeAttachRecipe()).Set(new Vol2StrokeFanRecipe()).Set(new Vol2StrokeRingRecipe());
 
         /// <summary>stroke20 rule checks (D308-150 V7: the user judges the look by eye; the machine checks only the rules): the 20 no-batchim casts on the hand clock.</summary>
         static void Stroke20(Report r, Vol2Rulebook book, Vol2VfxCatalogue cat, bool fromAsset)
@@ -204,7 +209,7 @@ namespace Oheangbu.EditorTools.Vol2
                 Vol2VfxPresenter pres = null; string detail = ""; bool ok = true;
                 using (var s = new Setup(book, cat))
                 {
-                    pres = Vol2VfxPresenter.Attach(s.Rig.Coord, null, cat, null, HideFlags.HideAndDontSave);
+                    pres = Vol2VfxPresenter.Attach(s.Rig.Coord, null, cat, null, HideFlags.HideAndDontSave); StrokeLooks(pres);   // D308-150 V9: the pool is checked with the kept ink looks (the bridge draws no mesh)
                     try
                     {
                         s.Rig.Add("A", 3.4f, 0.2f);
@@ -251,10 +256,12 @@ namespace Oheangbu.EditorTools.Vol2
                 foreach (var t in cat.templates.Where(t => t.filled))
                     allMapped &= recipes.TryGet(t.recipe, out _) && t.recipe == Vol2VfxDefaults.RecipeOf(new Vol2TemplateId(t.frame, t.verb))
                         && (t.frame == Frame.Path ? (int)t.recipe == (int)t.verb + 1 : t.verb == Verb.Once);
-                Check(r, "V0b", recipes.Count == 9 && allMapped && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2StrokePathRecipe
-                    && recipes.TryGet(Vol2Recipe.AttachOnce, out var a0r) && a0r is Vol2StrokeAttachRecipe && recipes.TryGet(Vol2Recipe.FanOnce, out var f0r) && f0r is Vol2StrokeFanRecipe
-                    && recipes.TryGet(Vol2Recipe.RingOnce, out var r0r) && r0r is Vol2StrokeRingRecipe,
-                    "nine recipes registered, one per filled template: the Path frame x its verb and the 한 번 of Attachment / Fan / Ring; the 20 no-batchim P0 / A0 / F0 / R0 = stroke20 (the small 앞잡); the slice 9a P0 and the NB20 ones are kept unregistered");
+                // D308-150 V9 (2026-10-25): the registered look of the 20 no-batchim P0 / A0 / F0 / R0 is the LEGACY BRIDGE (the old main game's visuals, Vol2LegacyRecipes);
+                // stroke20 / NB20 / slice 9a P0 are kept unregistered - this fixture's own checks of them swap them in (Setup's default = Stroke20Registry)
+                Check(r, "V0b", recipes.Count == 9 && allMapped && recipes.TryGet(Vol2Recipe.PathOneHit, out var p0r) && p0r is Vol2LegacyPathRecipe
+                    && recipes.TryGet(Vol2Recipe.AttachOnce, out var a0r) && a0r is Vol2LegacyAttachRecipe && recipes.TryGet(Vol2Recipe.FanOnce, out var f0r) && f0r is Vol2LegacyFanRecipe
+                    && recipes.TryGet(Vol2Recipe.RingOnce, out var r0r) && r0r is Vol2LegacyRingRecipe,
+                    "nine recipes registered, one per filled template: the Path frame x its verb and the 한 번 of Attachment / Fan / Ring; the 20 no-batchim P0 / A0 / F0 / R0 = the legacy bridge (D308-150 V9: the old main game's visuals); stroke20, the slice 9a P0 and the NB20 ones are kept unregistered");
                 bool distinct = cat.bodies.Select(b => b.edge).Distinct().Count() == 5 && cat.bodies.Select(b => b.end).Distinct().Count() == 5;
                 Check(r, "V0c", cat.bodies.Length == 5 && distinct, "5 body looks: 5 different edge cues (fibre tear / saw-tooth / plates / straight cut / hook) and 5 different end behaviours");
                 var wood = cat.Look(Body.Wood); var fire = cat.Look(Body.Fire); var earth = cat.Look(Body.Earth); var metal = cat.Look(Body.Metal); var water = cat.Look(Body.Water);
@@ -620,7 +627,7 @@ namespace Oheangbu.EditorTools.Vol2
                 Vol2VfxPresenter pres = null;
                 using (var s = new Setup(book, cat))
                 {
-                    pres = Vol2VfxPresenter.Attach(s.Rig.Coord, null, cat, null, HideFlags.HideAndDontSave);
+                    pres = Vol2VfxPresenter.Attach(s.Rig.Coord, null, cat, null, HideFlags.HideAndDontSave); StrokeLooks(pres);   // D308-150 V9: the pool is checked with the kept ink looks (the bridge draws no mesh)
                     try
                     {
                         s.Rig.Add("A", 4f, 0f);

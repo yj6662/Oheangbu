@@ -56,7 +56,7 @@ namespace Oheangbu.App
 
         public void Tick(long nowUs, IReadOnlyList<IVol2Target> targets, List<Vol2ShapeContact> output)
         {
-            if (Finished) return;
+            if (Finished || nowUs < StartUs) return;          // TE-S3-6: a launch at the apex starts later than the commit
             float to = Mathf.Min(Spec.PathLength, Spec.PathSpeed * Vol2Time.ToSecondsF(Math.Max(0, nowUs - StartUs)));
             float from = _along;
             bool walled = false;
@@ -100,7 +100,7 @@ namespace Oheangbu.App
         public Vol2FanEmitter(Vol2ShapeSpec spec, long startUs) { Spec = spec; StartUs = startUs; }
         public void Tick(long nowUs, IReadOnlyList<IVol2Target> targets, List<Vol2ShapeContact> output)
         {
-            if (Finished) return;
+            if (Finished || nowUs < StartUs) return;          // TE-S3-6: a launch at the apex starts later than the commit
             Finished = true;
             var found = new List<(float d, IVol2Target t)>();
             for (int i = 0; i < targets.Count; i++)

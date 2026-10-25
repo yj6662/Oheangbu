@@ -270,7 +270,8 @@ namespace Oheangbu.App
             };
             run.Verb = executor.Begin(run);
             if (run.Verb == null) { log.Status = "Unsupported"; log.Finished = true; log.EndUs = now; UnsupportedCasts++; CastUnsupported?.Invoke(log); return; }
-            run.Emitter = run.Verb.CreateEmitter(spec, now);
+            // TE-S3-6 (D308-150 V9, TEST): with LaunchAtApex a 한 번 path / fan leaves at the swing's apex (its emitter starts later and reports nothing before it)
+            run.Emitter = run.Verb.CreateEmitter(spec, now + _tuning.LaunchDelayUs(g.Frame, g.Verb));
             log.Shape = spec.Kind; log.Spec = spec; log.Emitter = run.Emitter; log.Budget = run.Budget;
             _active.Add(run);
             if (g.IsParry && run.Emitter is Vol2AttachmentHost host)

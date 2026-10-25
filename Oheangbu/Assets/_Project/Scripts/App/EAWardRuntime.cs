@@ -24,6 +24,14 @@ namespace Oheangbu.App
         public bool HasVisual => visual != null;
         public bool Active(float now) => Available && now >= began + profile.Formation && now < began + profile.Duration - profile.Fade;
         public bool Exists(float now) => Available && now >= began && now < began + profile.Duration;
+        // D308-150 V9 (vol.2 legacy bridge, read only): the old membrane prefab of a ward letter and the profile's formation / fade / height, so the bridge
+        // raises the same body without activating a ward (no protection, no ink, no state here changes).
+        public GameObject PresentationPrefab308(char letter)
+        {
+            int index="구누무수우".IndexOf(letter);
+            return index>=0&&profile.PresentationPrefabs!=null&&index<profile.PresentationPrefabs.Length?profile.PresentationPrefabs[index]:null;
+        }
+        public EAWardProfileSO Profile308 => profile;
         public EAWardRuntime(EAWardProfileSO profile, PlayerVitals vitals, CombatLoopWiring wiring, Func<float> clock = null)
         {
             if(profile==null || !profile.Valid || vitals==null || wiring==null)throw new ArgumentException("Valid ward owners required");

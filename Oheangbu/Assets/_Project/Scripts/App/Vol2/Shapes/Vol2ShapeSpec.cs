@@ -27,6 +27,20 @@ namespace Oheangbu.App
         public float PushSeconds = 0.25f;
         /// <summary>TE-S3-5: height above the caster's feet of the path's wall check ray.</summary>
         public float ChestHeight = 1.1f;
+        /// <summary>TE-S3-6 (D308-150 V9, TEST switch - the user decides on return): launch a 한 번 path / fan at the swing's apex instead of at the commit, like the old route
+        /// (SPEC-SPELL-SWING-308: single 0.28 s, area 0.53 s in the live swing profile). OFF by default; the spell lab scope turns it on (Vol2ShapeRuntime.CreateForScope).
+        /// Only the emitter's start moves: the shape, the budget and the damage are the same and the damage still lands at the shape's actual contact.</summary>
+        public bool LaunchAtApex;
+        /// <summary>TE-S3-6: seconds from the commit to the apex for a 한 번 path (the old single shot) and a 한 번 fan (the old area cast). Filled from the swing profile.</summary>
+        public float PathApexSeconds = 0.28f, FanApexSeconds = 0.53f;
+
+        /// <summary>TE-S3-6: the launch delay of a cast of this frame and verb (0 = launch at the commit).</summary>
+        public long LaunchDelayUs(Frame frame, Verb verb)
+        {
+            if (!LaunchAtApex || verb != Verb.Once) return 0;
+            float s = frame == Frame.Path ? PathApexSeconds : frame == Frame.Fan ? FanApexSeconds : 0f;
+            return s > 0f ? (long)Math.Round(s * 1000000.0) : 0;
+        }
     }
 
     /// <summary>Frame geometry. Horizontal (x, z) plane only: the old area judgement ignores height too ([TEST], AreaGeometry); a body that

@@ -158,6 +158,9 @@ namespace Oheangbu.App
         /// <summary>NB20: a successful parry landed while this cast's window was open (the combat wiring's ParryResolved, relayed by the scope on the scope clock).</summary>
         public virtual bool OnParried(Vol2VfxInstance inst, Vector3 point, long nowUs) => false;
         public virtual void Update(Vol2VfxInstance inst, long nowUs) { }
+        /// <summary>D308-150 V9: the instance left the model (its look is over, the lab reset aborted it, or the model was disposed). The legacy bridge lets go of its
+        /// Unity body here; the ink recipes have nothing to do (their view is pooled by the presenter).</summary>
+        public virtual void OnRetired(Vol2VfxInstance inst, bool aborted) { }
         /// <summary>The path head (metres from the cast point) the shader reveals the line up to.</summary>
         public virtual float Head(Vol2VfxInstance inst, long nowUs) => inst.HeadAlong(nowUs);
         /// <summary>The rigid offset of the parts with role RigidOffset (the loop riding the head).</summary>
@@ -189,17 +192,18 @@ namespace Oheangbu.App
         public static Vol2VfxRecipeRegistry CreateDefault()
         {
             var reg = new Vol2VfxRecipeRegistry();
-            // stroke20 (D308-150 V7, "앞잡 한 획을 작게"): the 20 no-batchim spells P0 / A0 / F0 / R0 are the scaled-down 앞잡 brush strokes. The slice 9a P0 (Vol2PathOneHitRecipe) and the
-            // NB20 recipes (Vol2Nb20*) are kept in the code, unregistered: a capture / fixture swaps them in with Set for comparison
-            reg.Add(new Vol2StrokePathRecipe());        // P0 (stroke20)
+            // D308-150 V9 (2026-10-25, the user: "기존 투사체 방식이 전부 낫다"): the 20 no-batchim spells P0 / A0 / F0 / R0 play the OLD main game's visuals of each glyph
+            // through the legacy bridge (Vol2LegacyRecipes + Vol2LegacyStage). The rejected looks stay in the code, unregistered, for comparison (a capture / fixture
+            // swaps them in with Set): stroke20 (Vol2Stroke*, V7 / V8), NB20 (Vol2Nb20*, V6), slice 9a P0 (Vol2PathOneHitRecipe, V5)
+            reg.Add(new Vol2LegacyPathRecipe());        // P0 (legacy bridge)
             reg.Add(new Vol2PathLeaveRecipe());         // P1
             reg.Add(new Vol2PathSpreadRecipe());        // P2
             reg.Add(new Vol2PathSeedRecipe());          // P3
             reg.Add(new Vol2PathSplitRecipe());         // P4
             reg.Add(new Vol2PathReturnRecipe());        // P5
-            reg.Add(new Vol2StrokeAttachRecipe());      // A0 (stroke20)
-            reg.Add(new Vol2StrokeFanRecipe());         // F0 (stroke20)
-            reg.Add(new Vol2StrokeRingRecipe());        // R0 (stroke20)
+            reg.Add(new Vol2LegacyAttachRecipe());      // A0 (legacy bridge)
+            reg.Add(new Vol2LegacyFanRecipe());         // F0 (legacy bridge)
+            reg.Add(new Vol2LegacyRingRecipe());        // R0 (legacy bridge)
             return reg;
         }
     }
@@ -226,6 +230,8 @@ namespace Oheangbu.App
         public int CapExceeded { get; private set; }
         /// <summary>NB20: where the player's brush tip and grip are now (the view binds it to the great brush of the scene; null in a fixture: the recipes fall back to the caster's hand height).</summary>
         public Func<Vector3?> BrushTip, BrushGrip;
+        /// <summary>D308-150 V9: the Unity side of the legacy bridge (the view binds Vol2LegacyStage; a fixture binds a recording fake; null = the bridge recipes only keep their bookkeeping).</summary>
+        public IVol2LegacyStage Legacy;
         public int ParriesDrawn { get; private set; }
 
         /// <summary>NB20: a successful parry at <paramref name="point"/> - every live ㅓ instance whose parry window is open at <paramref name="nowUs"/> draws its splash. A plain call
@@ -257,7 +263,7 @@ namespace Oheangbu.App
             _disposed = true;
             _c.CastBegan -= OnBegan; _c.CastEnded -= OnEnded; _c.ContactResolved -= OnContact;
             _c.Materials.Created -= OnCreated; _c.Materials.Changed -= OnChanged; _c.Materials.Ended -= OnMaterialEnded;
-            foreach (var i in _list) { i.Retired = true; Retired?.Invoke(i); }
+            foreach (var i in _list) { i.Retired = true; try { i.Recipe.OnRetired(i, true); } catch (Exception e) { Debug.LogException(e); } Retired?.Invoke(i); }
             _list.Clear(); _byCast.Clear();
         }
 
@@ -364,6 +370,7 @@ namespace Oheangbu.App
         {
             inst.Retired = true; RetiredCount++; if (aborted) AbortedCount++;
             _byCast.Remove(inst.Cast.Value);
+            try { inst.Recipe.OnRetired(inst, aborted); } catch (Exception e) { Debug.LogException(e); }
             Retired?.Invoke(inst);
         }
     }

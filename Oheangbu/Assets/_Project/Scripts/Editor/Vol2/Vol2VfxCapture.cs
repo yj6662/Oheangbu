@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Oheangbu.App;
+using Oheangbu.BrushRender;
 using Oheangbu.Combat;
 using Oheangbu.Core.Domain;
 using Oheangbu.EditorTools.WorldMacro;
@@ -98,6 +100,31 @@ namespace Oheangbu.EditorTools.Vol2
         // (with / without the VFX / without the enemy body) and writes rules.csv + m_NNNNN.png masks (R = VFX pixels, G = enemy body pixels) for the machine checks, dist=3/6/12 adds P0 jobs
         // with the body at those distances; p0=9a swaps the kept slice 9a P0 back in
         static float _videoPitch = 15f; static bool _rules, _p09a, _legacy; static int _legacyFrames; static Vol2WiringCaster _legacyCaster; static readonly List<float> Dists = new List<float>();
+        // D308-150 V9 (legacy bridge): legacy=2 = the Legacy308 route WITH the old glyph bodies. The old route presents a glyph's body through the stroke adapter
+        // (BrushStrokeFeedAdapter.SpawnPattern), which needs the drawn letter's strokes - a lab letter raised on the channel has none, so legacy=1 showed the swing,
+        // the brush-tip ink and the wards but no projectile / area / guard body. legacy=2 (LAB-ONLY, editor capture) feeds the REAL SpawnPattern at the moment
+        // the old route plans the cast (CastPlanned at the apex; CastAccepted for a parry) with one synthetic stroke at the adapter's drawing-surface centre and
+        // the pending hit context the wiring computed (target, flight, area plan). apex=0|1 sets the vol.2 TE-S3-6 launch switch for the run (restored at the end).
+        static bool _legacyFeed, _wardBand; static bool? _apex; static bool _apexSaved; static Vol2ShapeTuning _apexTuning; static int _fed, _fedMissing;
+        static readonly List<EnemyVitals> LegacyTargets = new List<EnemyVitals>(); static LockOn LegacyLock;
+
+        /// <summary>D308-150 V9: the end of a job of the bridge comparison: every old body still running its own life (Vfx120Effect destroys itself only when its life is over)
+        /// and the dummies the old route was given are taken away, so nothing of one glyph shows in the next one's frames. LAB-ONLY.</summary>
+        static void ClearOldBodies(Ctx c)
+        {
+            int n = 0;
+            foreach (var fx in Object.FindObjectsByType<Oheangbu.App.SpellVFX120.Vfx120Effect>(FindObjectsSortMode.None)) if (fx != null && fx.gameObject.scene.IsValid()) { Object.Destroy(fx.gameObject); n++; }
+            c?.Presenter?.Legacy?.Sweep();
+            if (LegacyTargets.Count > 0 && c != null && c.Wiring != null)
+            {
+                var list = typeof(CombatLoopWiring).GetField("_targets", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(c.Wiring) as List<EnemyVitals>;
+                if (list != null) foreach (var v in LegacyTargets) list.Remove(v);
+            }
+            LegacyTargets.Clear();
+            if (LegacyLock != null) { typeof(LockOn).GetField("_locked", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(LegacyLock, false); typeof(LockOn).GetField("_target", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(LegacyLock, null); LegacyLock = null; }
+            if (n > 0) _note = "cleared " + n + " old bodies";
+        }
+        static Action<CastPlan> _onLegacyPlanned; static Action<SpellCast, Vector3, Vector3> _onLegacyAccepted;
         static StreamWriter _rulesCsv; static RenderTexture _rtB, _rtC; static Texture2D _texB, _texC, _mask;
         static Oheangbu.App.World.LookDriver308 _lookDriver; static Oheangbu.Data.World.LookProfile308 _lookSaved; static bool _lookSwapped;
         static Vector3? _realmEye;
@@ -160,6 +187,7 @@ namespace Oheangbu.EditorTools.Vol2
             var templates = new List<string>();
             foreach (string t in parts[0].Split(',')) { if (t == "all") templates.AddRange(new[] { "P0", "P1", "P2", "P3", "P4", "P5" }); else if (t == "nb20") templates.AddRange(new[] { "P0", "A0", "F0", "R0" }); else templates.Add(t.Trim()); }
             _out = "9a_r2"; _mainLook = false; _p0Nb20 = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _rules = false; _p09a = false; _legacy = false; Dists.Clear();
+            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
             {
@@ -176,7 +204,9 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "p0") { _p0Nb20 = v.Trim() == "nb20"; _p09a = v.Trim() == "9a"; }
                 else if (k == "pitch") _videoPitch = float.Parse(v, Inv);
                 else if (k == "rules") _rules = v == "1";
-                else if (k == "legacy") _legacy = v == "1";
+                else if (k == "legacy") { _legacy = v == "1" || v == "2"; _legacyFeed = v == "2"; }
+                else if (k == "apex") _apex = v.Trim() == "1";
+                else if (k == "wardband") _wardBand = v.Trim() == "1";
                 else if (k == "dist") Dists.AddRange(v.Split('/').Select(x => float.Parse(x, Inv)));
                 else if (k == "p0" && v.Trim() == "9a") _p09a = true;
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
@@ -264,7 +294,15 @@ namespace Oheangbu.EditorTools.Vol2
                     break;
                 default: j.MaxAge = 1.5; j.MinAge = 1.2; break;
             }
-            if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : 1.6; j.Variant = "legacy"; }
+            if (_legacy) { j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.2 : 1.6; j.Variant = _legacyFeed ? "old" : "legacy"; }
+            // D308-150 V9: the old visuals live longer than the vol.2 ink looks (windup + flight + impact): both sides of the legacy bridge comparison record the same full
+            // length (no early stop), with no lab-simulated parry (the old route only shows a parry's success on a real enemy impact)
+            if (template == "P0" || template == "A0" || template == "F0" || template == "R0")
+                if (_legacyFeed || (!_p0Nb20 && !_p09a))
+                {
+                    j.Steps.Clear(); j.MaxAge = template == "A0" ? 1.6 : 2.2; j.MinAge = j.MaxAge;
+                    if (!_legacy) j.Variant = _apex == true ? "bridge_apex" : "bridge";
+                }
             return j;
         }
 
@@ -361,6 +399,12 @@ namespace Oheangbu.EditorTools.Vol2
                     if (_lookDriver != null && prof != null) { _lookSaved = _lookDriver.Profile; _lookDriver.Profile = prof; _lookSwapped = true; Finished.Add("look=main: LookDriver308 profile -> " + prof.name + " (runtime only)"); }
                 }
                 Finished.Add("legacy=1: the Legacy308 route (the main game's SpellResolver and the old 120 effects), letters raised on the same channel");
+                if (_legacyFeed)
+                {
+                    w.CastPlanned += _onLegacyPlanned = plan => { if (plan != null) FeedOld(w, plan.Cast.Letter, plan, false); };
+                    w.CastAccepted += _onLegacyAccepted = (cast, o, f) => { if (cast.Kind == Oheangbu.Spellcraft.SpellKind.Parry) FeedOld(w, cast.Letter, null, true); };
+                    Finished.Add("legacy=2: LAB-ONLY body feed - the real BrushStrokeFeedAdapter.SpawnPattern is called at the old route's plan (apex) / parry accept with one synthetic stroke at the adapter's drawing-surface centre (a lab letter has no drawn strokes)");
+                }
                 _st = St.Idle;
                 return;
             }
@@ -385,6 +429,12 @@ namespace Oheangbu.EditorTools.Vol2
             // calibration options (runtime only; Finish puts everything back)
             if (_p0Nb20) p.Model.Recipes.Set(new Vol2Nb20PathRecipe());
             if (_p09a) p.Model.Recipes.Set(new Vol2PathOneHitRecipe());
+            // D308-150 V9: apex=0|1 = the TE-S3-6 launch switch for this run (the lab scope's own value is put back by Finish)
+            _apexTuning = p.Coordinator.Tuning; _apexSaved = _apexTuning.LaunchAtApex;
+            if (_apex.HasValue) _apexTuning.LaunchAtApex = _apex.Value;
+            if (p.Legacy != null) p.Legacy.WardOnRingBand = _wardBand;
+            Finished.Add("TE-S3-6 LaunchAtApex = " + _apexTuning.LaunchAtApex + " (scope default " + _apexSaved + ", path " + _apexTuning.PathApexSeconds.ToString("0.00", Inv) + " s, fan " + _apexTuning.FanApexSeconds.ToString("0.00", Inv) + " s)"
+                + " | bridge stage " + (p.Legacy != null ? "bound" : "MISSING"));
             _lookDriver = Object.FindFirstObjectByType<Oheangbu.App.World.LookDriver308>();
             if (_mainLook)
             {
@@ -548,6 +598,54 @@ namespace Oheangbu.EditorTools.Vol2
             catch (Exception e) { Problems.Add("legacy refill: " + e.Message); }
         }
 
+        /// <summary>legacy=2 (LAB-ONLY): the old route's body, through the REAL stroke adapter. At the old route's plan (CastPlanned, raised inside the apex dispatch after
+        /// SwingInk308 pinned the brush tip's stem) or its parry accept, the adapter's pending hit context is set to what the wiring pushes in the game (target + flight for a
+        /// single shot, the area plan for an area cast, a guard for a parry; config guard clock) and its private SpawnPattern runs with one synthetic stroke at the centre of
+        /// its drawing surface - what a drawn letter would hand it. The synthetic stroke is destroyed at once (no letter is shown).</summary>
+        static void FeedOld(CombatLoopWiring w, char letter, CastPlan plan, bool parry)
+        {
+            if (!_running || _job == null || (_st != St.Record && _st != St.Settle) || letter != _job.Letter) return;      // a parry is accepted inside the raise itself (Settle -> CastNow)
+            try
+            {
+                var adapter = w.BrushAdapter308; var set = w.VisualSet308; var cam = Camera.main;
+                if (adapter == null || set == null || cam == null || !set.TryGet(letter, out var visual) || visual.FxPrefab == null)
+                { _fedMissing++; Problems.Add("legacy=2: no adapter / visual set / camera / body for " + letter); return; }
+                const BindingFlags Hidden = BindingFlags.NonPublic | BindingFlags.Instance;
+                void Set(string field, object value)
+                {
+                    var fi = typeof(BrushStrokeFeedAdapter).GetField(field, Hidden);
+                    if (fi == null) throw new MissingFieldException("BrushStrokeFeedAdapter." + field);
+                    fi.SetValue(adapter, value);
+                }
+                Transform target = null; float duration = 0f; AreaImpactPlan area = plan != null ? plan.Area : null;
+                if (plan != null && plan.Hits.Count > 0 && plan.Hits[0].Target != null)
+                {
+                    if (area == null) { target = plan.Hits[0].Target.transform; duration = Mathf.Max(0f, plan.Hits[0].ImpactTime - Time.time); }
+                    else if (area.Shape != AreaShape.Cone) target = plan.Hits[0].Target.transform;     // the wiring aims a circle / path / volley body at its target, a cone at nothing
+                }
+                Set("_pendingFxPrefab", visual.FxPrefab); Set("_pendingFxScaleMul", visual.ScaleMul > 0f ? visual.ScaleMul : 1f); Set("_pendingFxArcHeight", Mathf.Max(0f, visual.ArcHeight));
+                Set("_pendingAttack", !parry); Set("_pendingParry", parry); Set("_pendingSummon", false); Set("_pendingSummonExternal", false); Set("_pendingFieldExternal", false);
+                Set("_pendingAttackTarget", target); Set("_pendingAttackDuration", duration); Set("_pendingAreaPlan", area);
+                Set("_pendingGuardDuration", 0f); Set("_pendingGuardWindow", 0f);
+                Vector3 centre = cam.transform.position + cam.transform.forward * adapter.EffectiveSurfaceDistance(cam);
+                var go = new GameObject("Vol2VfxOldLetter") { hideFlags = HideFlags.HideAndDontSave };
+                try
+                {
+                    var stroke = go.AddComponent<BrushStrokeRenderer>();
+                    stroke.Data.Add(new BrushStrokePoint(centre - cam.transform.right * 0.2f, 0.02f, 1f, 0f));
+                    stroke.Data.Add(new BrushStrokePoint(centre + cam.transform.right * 0.2f, 0.02f, 1f, 0f));
+                    var groupType = typeof(BrushStrokeFeedAdapter).GetNestedType("FadingGroup", BindingFlags.NonPublic);
+                    object group = Activator.CreateInstance(groupType, true);
+                    ((System.Collections.IList)groupType.GetField("Strokes").GetValue(group)).Add(stroke);
+                    groupType.GetField("FlashColor").SetValue(group, Color.white);
+                    typeof(BrushStrokeFeedAdapter).GetMethod("SpawnPattern", Hidden).Invoke(adapter, new[] { group });
+                    _fed++; _note = "OLD BODY FED (" + letter + (parry ? " guard" : area != null ? " " + area.Shape : " single") + ")";
+                }
+                finally { Object.Destroy(go); }
+            }
+            catch (Exception e) { _fedMissing++; Problems.Add("legacy=2 feed " + letter + ": " + (e.InnerException ?? e).Message); }
+        }
+
         /// <summary>legacy=1: the same ground, enemy, distances and camera as the vol.2 jobs, around the player of the Legacy308 lab (no vol.2 registry: the old route finds the enemy itself).</summary>
         static void SetupLegacy(Ctx c, Job j)
         {
@@ -584,6 +682,20 @@ namespace Oheangbu.EditorTools.Vol2
                 c.Dummies.Add(go);
             }
             Physics.SyncTransforms();
+            // legacy=2: the dummies are enemies of THIS encounter for the old route too (its lock-on / free aim / scheduled hits read the wiring's own target list, filled at
+            // Awake from the scene - a dummy made later is not in it, so the old shots of legacy=1 flew to the free-aim point in the air). LAB-ONLY, taken out at teardown.
+            if (_legacyFeed)
+            {
+                var list = typeof(CombatLoopWiring).GetField("_targets", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(c.Wiring) as List<EnemyVitals>;
+                if (list == null) Problems.Add("legacy=2: the wiring's target list was not found (the old route has no target)");
+                else foreach (var d in c.Dummies) { var v = d.GetComponentInChildren<EnemyVitals>(true); if (v != null && !list.Contains(v)) { list.Add(v); LegacyTargets.Add(v); } }
+                // the old main game's duel: the caster is locked on the first dummy (LockOn private state set here, LAB-ONLY; the free aim reads the lab's game camera, which
+                // does not look at the capture's dummies). Unlocked again at teardown.
+                var lockOn = typeof(CombatLoopWiring).GetField("_lockOn", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(c.Wiring) as LockOn;
+                var first = c.Dummies.Count > 0 ? c.Dummies[0].GetComponentInChildren<EnemyVitals>(true) : null;
+                if (lockOn == null || first == null) Problems.Add("legacy=2: no LockOn on the wiring (the old shots aim by free aim)");
+                else { typeof(LockOn).GetField("_target", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(lockOn, first); typeof(LockOn).GetField("_locked", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(lockOn, true); LegacyLock = lockOn; }
+            }
             c.Log = null; _note = "";
             _folder = Path.Combine(OutRoot, "frames", j.Name);
             if (Directory.Exists(_folder)) foreach (var f in Directory.GetFiles(_folder)) File.Delete(f);
@@ -868,7 +980,9 @@ namespace Oheangbu.EditorTools.Vol2
             {
                 try { _index?.Dispose(); } catch (Exception) { }
                 _index = null;
-                Finished.Add(j.Name + " | legacy letter " + j.Letter + " | frames " + _frames + " | keys " + _keys);
+                Finished.Add(j.Name + " | legacy letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (_legacyFeed ? " | old bodies fed " + _fed + " missing " + _fedMissing : ""));
+                _fed = 0; _fedMissing = 0;
+                ClearOldBodies(c);
                 foreach (var d in c.Dummies) if (d != null) Object.Destroy(d);
                 c.Dummies.Clear();
                 if (c.Backdrop != null) Object.Destroy(c.Backdrop);
@@ -886,7 +1000,13 @@ namespace Oheangbu.EditorTools.Vol2
             string summary = j.Name + " | letter " + j.Letter + " | frames " + _frames + " | keys " + _keys + (c.Log != null ? " | cast " + c.Log.Status + " contacts " + c.Log.Contacts.Count + " materials " + c.Log.Materials.Count : " | NO CAST");
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : ""));
             _rip?.CancelAll(); _ripSlot = null;
-            c.Coordinator.AbortAll(); c.Presenter.ClearAll();
+            var stage = c.Presenter.Legacy;
+            string bridge = stage != null ? " | bridge begun " + stage.Begun + " missing " + stage.Missing + " swings " + stage.SwingsShown + " tip-ink " + stage.InkShown + " stems " + stage.StemsShown
+                + " last body " + stage.LastPrefab + " live-before-reset " + stage.LiveCount : "";
+            c.Coordinator.AbortAll(); c.Presenter.Model.Tick(c.Services.Clock.NowUs); c.Presenter.ClearAll();
+            if (stage != null) bridge += " live-after-reset " + stage.LiveCount + " profile copies " + stage.CopiesMade + "/" + stage.CopiesFreed + " freed";
+            if (bridge.Length > 0) Finished[Finished.Count - 1] += bridge;
+            ClearOldBodies(c);
             foreach (var d in c.Dummies) { if (d != null) { c.Shapes.Registry.RemoveExtra(d.GetComponentInChildren<EnemyVitals>(true)); Object.Destroy(d); } }
             c.Dummies.Clear();
             if (c.Backdrop != null) Object.Destroy(c.Backdrop);
@@ -918,6 +1038,7 @@ namespace Oheangbu.EditorTools.Vol2
                     if (_onBegan != null && _ctx.Coordinator != null) _ctx.Coordinator.CastBegan -= _onBegan;
                     if (_legacy)
                     {
+                        ClearOldBodies(_ctx);
                         foreach (var d in _ctx.Dummies) if (d != null) Object.DestroyImmediate(d);
                         if (_ctx.Backdrop != null) Object.DestroyImmediate(_ctx.Backdrop);
                         foreach (var go in _ctx.HiddenLab) if (go != null) go.SetActive(true);
@@ -941,7 +1062,17 @@ namespace Oheangbu.EditorTools.Vol2
             _rip = null; _ripSlot = null;
             if (_lookSwapped && _lookDriver != null) _lookDriver.Profile = _lookSaved;
             _lookSwapped = false; _lookSaved = null; _realmEye = null;
-            if (_p0Nb20 || _p09a) { var pres = Object.FindFirstObjectByType<Vol2VfxPresenter>(); if (pres != null && pres.Model != null) pres.Model.Recipes.Set(new Vol2StrokePathRecipe()); }
+            if (_p0Nb20 || _p09a) { var pres = Object.FindFirstObjectByType<Vol2VfxPresenter>(); if (pres != null && pres.Model != null) pres.Model.Recipes.Set(new Vol2LegacyPathRecipe()); }
+            // D308-150 V9: the legacy feed listeners leave, the launch switch goes back to what the scope had
+            try
+            {
+                var lw = Object.FindFirstObjectByType<CombatLoopWiring>();
+                if (lw != null && _onLegacyPlanned != null) lw.CastPlanned -= _onLegacyPlanned;
+                if (lw != null && _onLegacyAccepted != null) lw.CastAccepted -= _onLegacyAccepted;
+                if (_apexTuning != null) _apexTuning.LaunchAtApex = _apexSaved;
+            }
+            catch (Exception) { }
+            _onLegacyPlanned = null; _onLegacyAccepted = null; _apexTuning = null;
             try { _rulesCsv?.Dispose(); } catch (Exception) { }
             _rulesCsv = null;
             DestroyCamera();
