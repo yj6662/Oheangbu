@@ -73,10 +73,33 @@ namespace Oheangbu.App
             return new Bounds(new Vector3(b.center.x, bottom + ext.y, b.center.z), ext * 2f);
         }
 
+        /// <summary>batch 2: the brush's grip now (the sleeve end of the shaft), else the caster's hand height.</summary>
+        protected Vector3 Grip()
+        {
+            var f = Inst.Model.BrushGrip;
+            var p = f != null ? f() : null;
+            return p ?? Inst.Origin + Vector3.up * 1.1f + Inst.Forward * 0.3f + Inst.Right * 0.25f;
+        }
+
+        // batch 2 (2026-10-26): the batch 1 "a struck body was destroyed -> hide at once" rule for every look (batch 0 나 / 고 / 각 too). A look registers the
+        // bodies it is drawn on; the recipe asks before every tick (the lab capture's teardown destroys the bodies but leaves the presenter's instances alive).
+        readonly List<Transform> _watched = new List<Transform>();
+        public bool BodyGone { get; private set; }
+        protected void Watch(Transform t) { if (t != null && !_watched.Contains(t)) _watched.Add(t); }
+        public bool CheckBodyGone()
+        {
+            if (BodyGone) return true;
+            foreach (var w in _watched)
+                if (w == null) { BodyGone = true; if (Root != null) Root.SetActive(false); Note += " | body gone"; return true; }
+            return false;
+        }
+
         public virtual void Began(long nowUs) { }
         public virtual void Contact(Vol2ContactRecord rec) { }
         public virtual void MaterialCreated(Vol2Material m) { }
         public virtual void MaterialEnded(Vol2Material m, Vol2MaterialEnd why) { }
+        /// <summary>batch 2 (ㅓ): a successful parry landed while this cast's window was open (the combat wiring's ParryResolved, relayed by the scope). true = drawn.</summary>
+        public virtual bool Parried(Vector3 point, long nowUs) => false;
         public abstract void Tick(long nowUs);
         public abstract bool Done(long nowUs);
 
@@ -142,10 +165,13 @@ namespace Oheangbu.App
             if (legacy != null)
             {
                 float toApex = Mathf.Max(Vol2LegacyRecipeBase.MinToApex, (float)((Vol2LegacyRecipeBase.LaunchUs(inst) - inst.StartUs) / 1000000.0));
+                // batch 2: the guard (ㅓ) and the ward (ㅜ) motions of the bridge, from the clip's start (as Vol2LegacyRecipeBase plays them)
+                var frame = inst.Log.Glyph.Frame;
+                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
                 legacy.Swing(new Vol2LegacySwing
                 {
-                    Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = inst.Log.Glyph.Frame == Frame.Fan ? Vol2LegacyKind.Area : Vol2LegacyKind.Single,
-                    ToApex = toApex, FromClipStart = false, Distance = 4.6f,
+                    Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = kind,
+                    ToApex = toApex, FromClipStart = kind == Vol2LegacyKind.Guard || kind == Vol2LegacyKind.Ward, Distance = kind == Vol2LegacyKind.Guard || kind == Vol2LegacyKind.Ward ? 0f : 4.6f,
                 });
             }
             try { run.Began(inst.StartUs); } catch (Exception e) { Debug.LogException(e); }
@@ -163,11 +189,20 @@ namespace Oheangbu.App
         public override void OnMaterialEnded(Vol2VfxInstance inst, Vol2Material m, Vol2MaterialEnd why)
         { if (_runs.TryGetValue(inst, out var r)) { try { r.MaterialEnded(m, why); } catch (Exception e) { Debug.LogException(e); } } else Inner.OnMaterialEnded(inst, m, why); }
 
-        public override bool OnParried(Vol2VfxInstance inst, Vector3 point, long nowUs) => Mine(inst) ? false : Inner.OnParried(inst, point, nowUs);
+        public override bool OnParried(Vol2VfxInstance inst, Vector3 point, long nowUs)
+        {
+            if (!_runs.TryGetValue(inst, out var r)) return Inner.OnParried(inst, point, nowUs);
+            try { return r.Parried(point, nowUs); } catch (Exception e) { Debug.LogException(e); return false; }
+        }
 
         public override void Update(Vol2VfxInstance inst, long nowUs)
         {
-            if (_runs.TryGetValue(inst, out var r)) { inst.Dirty = false; try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; } catch (Exception e) { Debug.LogException(e); } }
+            if (_runs.TryGetValue(inst, out var r))
+            {
+                inst.Dirty = false;
+                if (r.CheckBodyGone()) { LastNote = inst.Log.Glyph.Letter + ": " + r.Note; return; }
+                try { r.Tick(nowUs); LastNote = inst.Log.Glyph.Letter + ": " + r.Note; } catch (Exception e) { Debug.LogException(e); }
+            }
             else Inner.Update(inst, nowUs);
         }
 
@@ -184,6 +219,7 @@ namespace Oheangbu.App
         public override bool IsFinished(Vol2VfxInstance inst, long nowUs)
         {
             if (!_runs.TryGetValue(inst, out var r)) return Inner.IsFinished(inst, nowUs);
+            if (r.BodyGone) return true;
             if (!inst.CastIsEnded && !inst.Log.Finished) return false;
             try { return r.Done(nowUs); } catch (Exception e) { Debug.LogException(e); return true; }
         }

@@ -28,6 +28,10 @@ namespace Oheangbu.EditorTools.Vol2
                     case "auto": Vol2FreeShowcaseInstaller.Mode = Vol2FreeShowcaseMode.Auto; Ensure(); return "free showcase: Auto " + Status();
                     case "status": return Status();
                     case "play": return Vol2VfxCommands.Run("play");
+                    // batch 2 (LAB-ONLY): the scripted enemy blow on the ㅓ guard, judged by the real vol.2 parry rules (Vol2FsEnemyStrike)
+                    case "strike:on": return Vol2FsEnemyStrike.Arm(true);
+                    case "strike:off": return Vol2FsEnemyStrike.Arm(false);
+                    case "strike:status": return Vol2FsEnemyStrike.Status();
                 }
                 if (c.StartsWith("run:", StringComparison.Ordinal))
                 {
@@ -37,7 +41,7 @@ namespace Oheangbu.EditorTools.Vol2
                     if (inst.Kit == null || !inst.Kit.Ok) return "REFUSED free:run: kit not ok: " + (inst.Kit != null ? inst.Kit.Problem : "null");
                     return Vol2VfxCommands.Run("run:" + c.Substring(4)) + " | " + Status();
                 }
-                return "REFUSED free: on | off | auto | status | play | run:<vfx9a spec>";
+                return "REFUSED free: on | off | auto | status | play | strike:on|off|status | run:<vfx9a spec>";
             }
             catch (Exception e) { return "REFUSED free:" + c + ": " + e.GetType().Name + " " + e.Message; }
         }
@@ -53,6 +57,7 @@ namespace Oheangbu.EditorTools.Vol2
         {
             var inst = EditorApplication.isPlaying ? Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>() : null;
             string s = "mode=" + Vol2FreeShowcaseInstaller.Mode + " playing=" + EditorApplication.isPlaying + " lab=" + Vol2FreeShowcaseInstaller.LabLoaded();
+            s += " | " + Vol2FsEnemyStrike.Status();
             if (inst == null) return s + " installer=none";
             s += " installer on=" + inst.On + " views=" + inst.Installed + " kit=" + (inst.Kit != null && inst.Kit.Ok ? "ok" : inst.Kit != null ? inst.Kit.Problem : "null");
             s += " recipes=[" + string.Join(", ", inst.Recipes.Select(r => r.Kind + "{" + string.Join(" ", r.Glyphs.Select(g => g + ":" + r.ShownOf(g))) + "} shown " + r.Shown + (r.LastNote != "" ? " (" + r.LastNote + ")" : ""))) + "]";

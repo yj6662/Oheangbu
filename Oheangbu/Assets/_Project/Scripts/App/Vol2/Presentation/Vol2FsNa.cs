@@ -53,6 +53,7 @@ namespace Oheangbu.App
             if (_hasTarget)
             {
                 _target = TargetTransform(_targetId);
+                Watch(_target);              // batch 2: the struck body destroyed (capture teardown) -> the look hides at once
                 var t = Target(_targetId);
                 _bounds = BodyBounds(_target, cue.TargetPoint, t != null ? t.Radius : 0.5f);
                 _to = _bounds.center + Vector3.up * _bounds.extents.y * 0.15f;

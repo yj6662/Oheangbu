@@ -120,6 +120,7 @@ namespace Oheangbu.App
             var t = Target(rec.TargetId); var tr = TargetTransform(rec.TargetId);
             if (t == null) return;
             var sn = new Snare { Id = rec.TargetId, T = tr, Feet = t.Position, B = BodyBounds(tr, t.Position, t.Radius) };
+            Watch(tr);                       // batch 2: the snared body destroyed (capture teardown) -> the look hides at once
             // the snare starts when the sweep passes the body's angle (presentation only; the contact already happened)
             Vector3 d = t.Position - _apex; d.y = 0f;
             float ang = Vector3.SignedAngle(_fwd, d, Vector3.up) * Mathf.Deg2Rad * _sweepSign;

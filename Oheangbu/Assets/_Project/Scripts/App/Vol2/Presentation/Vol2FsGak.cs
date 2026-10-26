@@ -97,6 +97,7 @@ namespace Oheangbu.App
             if (!rec.BudgetAccepted || rec.Kind != "Instant" || _cageAt >= 0f) return;
             var t = Target(rec.TargetId);
             _cageId = rec.TargetId; _cageT = TargetTransform(rec.TargetId);
+            Watch(_cageT);                   // batch 2: the caged body destroyed (capture teardown) -> the look hides at once
             _cageFeet = t != null ? t.Position : Inst.Origin + Fwd * rec.Along;
             _cageB = BodyBounds(_cageT, _cageFeet, t != null ? t.Radius : 0.5f);
             _cageAt = Inst.Rel(rec.NowUs);

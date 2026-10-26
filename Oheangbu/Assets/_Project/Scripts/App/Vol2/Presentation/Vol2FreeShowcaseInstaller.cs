@@ -62,6 +62,9 @@ namespace Oheangbu.App
                 Wrap(model, Vol2Recipe.PathOneHit, p.transform, ('나', () => new Vol2FsNa()), ('가', () => new Vol2FsGa()), ('마', () => new Vol2FsMa()), ('사', () => new Vol2FsSa()), ('아', () => new Vol2FsA()));
                 Wrap(model, Vol2Recipe.FanOnce, p.transform, ('고', () => new Vol2FsGo()), ('노', () => new Vol2FsNo()), ('모', () => new Vol2FsMo()), ('소', () => new Vol2FsSo()), ('오', () => new Vol2FsO()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Leave).Kind, p.transform, ('각', () => new Vol2FsGak()));
+                // batch 2 (2026-10-26): A0 거 너 머 서 어 (the guard on the brush, its parry reaction) · R0 구 누 무 수 우 (the instant ring)
+                Wrap(model, Vol2Recipe.AttachOnce, p.transform, ('거', () => new Vol2FsGeo()), ('너', () => new Vol2FsNeo()), ('머', () => new Vol2FsMeo()), ('서', () => new Vol2FsSeo()), ('어', () => new Vol2FsEo()));
+                Wrap(model, Vol2Recipe.RingOnce, p.transform, ('구', () => new Vol2FsGu()), ('누', () => new Vol2FsNu()), ('무', () => new Vol2FsMu()), ('수', () => new Vol2FsSu()), ('우', () => new Vol2FsU()));
             }
         }
 

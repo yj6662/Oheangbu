@@ -28,10 +28,27 @@ B1_SPELLS = [
     ('so', 'F0_bridge_Metal_', ['so_a.png'], '소 · 금 · ㅗ 면 · 한 번 — 부챗살 칼날 다발이 부채꼴을 훑어 안의 적을 벤다, 끝에서 쨍 하고 부서진다'),
     ('o', 'F0_bridge_Water_', ['o_a.png'], '오 · 수 · ㅗ 면 · 한 번 — 말려 오르는 물결이 부채꼴을 덮쳐 안의 적을 적신다(4초), 땅이 젖는다'),
 ]
+# batch 2 (2026-10-26, D308-150 V12): --batch b2 -> free_showcase/batch2/<round>/ (A0 ㅓ guard with the lab-scripted enemy blow, R0 ㅜ ring)
+B2_SPELLS = [
+    ('geo', 'A0_bridge_Wood_', ['geo_b.png'], '거 · 목 · ㅓ 부착 · 한 번 — 붓대에 덩굴과 대나무 십자가 서서 곰의 앞발을 받아치고 덩굴로 붙든다, 끝에 잔뿌리로 풀림'),
+    ('neo', 'A0_bridge_Fire_', ['neo_a.png'], '너 · 화 · ㅓ 부착 · 한 번 — 붓대에 불 바퀴가 돌다 받아치는 순간 불꽃 모란이 핀다, 꽃잎이 끝부터 재로 날림'),
+    ('meo', 'A0_bridge_Earth_', ['meo_a.png'], '머 · 토 · ㅓ 부착 · 한 번 — 앞에 돌 판벽이 솟아 앞발을 받고 흙먼지 고리, 가라앉으며 둘레 땅이 판으로 들림'),
+    ('seo', 'A0_bridge_Metal_', ['seo_a.png'], '서 · 금 · ㅓ 부착 · 한 번 — 붓대에 강철 초승달 날이 서서 받아치면 불꽃이 옆으로 솟고, 쨍 하고 부서져 파편이 옆으로'),
+    ('eo', 'A0_bridge_Water_', ['eo_a.png'], '어 · 수 · ㅓ 부착 · 한 번 — 붓 앞에 물 소용돌이 원반이 돌다 받아치면 물보라 왕관, 물이 아래로 흘러내림'),
+    ('gu', 'R0_bridge_Wood_', ['gu_a.png'], '구 · 목 · ㅜ 둘레 · 한 번 — 2 m 고리의 빛나는 균열에서 가시 덩굴 관이 솟아 고리 위 적을 붙든다, 잔뿌리로 풀림'),
+    ('nu', 'R0_bridge_Fire_', ['nu_a.png'], '누 · 화 · ㅜ 둘레 · 한 번 — 달아오른 고리 선에서 불의 벽이 솟고 먹 연기가 오른다, 고리 위 적이 탄다, 끝부터 재로'),
+    ('mu', 'R0_bridge_Earth_', ['mu_a.png'], '무 · 토 · ㅜ 둘레 · 한 번 — 땅이 둥근 물결 둔덕으로 솟아 굴러 나가며 고리 위 적을 민다, 흙먼지 도넛, 둘레 땅이 판으로 들림'),
+    ('su', 'R0_bridge_Metal_', ['su_a.png'], '수 · 금 · ㅜ 둘레 · 한 번 — 칼날 고리가 톱처럼 돌며 고리 위 적을 벤다(바닥에 KCISA 톱니 고리), 쨍 하고 부서져 파편이 옆으로'),
+    ('u', 'R0_bridge_Water_', ['u_b.png'], '우 · 수 · ㅜ 둘레 · 한 번 — 고리를 따라 물기둥이 솟아 먹 리본이 감기고, 고리 위 적에게 쏟아져 적신다, 땅으로 흘러내림'),
+]
 if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b1':
     BASE = BASE / 'batch1'
     CONCEPTS = BASE / 'concepts'
     SPELLS = B1_SPELLS
+if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] == 'b2':
+    BASE = BASE / 'batch2'
+    CONCEPTS = BASE / 'concepts'
+    SPELLS = B2_SPELLS
 W, H = 1280, 720
 FONT = 'C:/Windows/Fonts/malgunbd.ttf'
 
@@ -161,7 +178,7 @@ def main():
         write_mp4(BASE / rnd / f'{key}_1x_then_half.mp4', one + half)
         combined += title(concepts[0], text) + one + half
     if combined:
-        write_mp4(BASE / rnd / ('free_showcase_batch1_all.mp4' if SPELLS is B1_SPELLS else 'free_showcase_all.mp4'), combined)
+        write_mp4(BASE / rnd / ('free_showcase_batch2_all.mp4' if SPELLS is B2_SPELLS else 'free_showcase_batch1_all.mp4' if SPELLS is B1_SPELLS else 'free_showcase_all.mp4'), combined)
 
 
 if __name__ == '__main__':

@@ -116,8 +116,38 @@ def b1():
     save('fs_vine.png', np.dstack([tone * 0.62, tone * 0.85, tone * 0.45]))
 
 
+def b2():
+    """batch 2 (2026-10-26: 거 너 머 서 어 · 구 누 무 수 우): the KCISA saw-toothed ring (Pattern_79, read only - its inner signs masked away: only the toothed band
+    under 수's blade whirl), a water swirl (어's vortex disc), a flame petal (너's peony). Only these are written (--b2)."""
+    from PIL import Image as _I
+    _I.MAX_IMAGE_PIXELS = None
+    src = REPO / 'Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_79.png'
+    im = _I.open(src).convert('RGBA').resize((1024, 1024), _I.LANCZOS)
+    a = np.asarray(im).astype(np.float64)[..., 3] / 255.0
+    x, y = grid(1024); r = np.sqrt(x * x + y * y)
+    band = np.clip((r - 0.74) * 40, 0, 1)            # the toothed ring only (the pattern's ring sits at ~.78 - 1 of its radius)
+    save('fs_kcisa79.png', rgba(np.clip(a * band, 0, 1)))
+    # ---- water swirl (a disc: spiral arms of water, denser rim, a calm eye) ----
+    S = 512
+    x, y = grid(S); r = np.sqrt(x * x + y * y); ang = np.arctan2(y, x)
+    arms = 0.5 + 0.5 * np.sin(ang * 3 + r * 9 + fbm(S, 6, 3, 2101) * 3)
+    rim = np.clip((1 - r) * 6, 0, 1) * np.clip((r - 0.08) * 5, 0, 1)
+    save('fs_swirl.png', rgba(np.clip(rim * (0.35 + 0.65 * arms ** 2) * (0.8 + 0.4 * fbm(S, 16, 3, 2102)), 0, 1)))
+    # ---- flame petal (u across, v along: a teardrop petal, hot core line, frayed tip) ----
+    P = 256
+    x, y = grid(P); v = (y + 1) * 0.5
+    width = np.sin(np.clip(v, 0, 1) * np.pi) ** 0.8 * (0.85 - 0.35 * v)
+    fray = 0.08 * (fbm(P, 8, 3, 2111) - 0.5)
+    body = np.clip((width + fray - np.abs(x)) * 8, 0, 1)
+    core = np.exp(-(x / (0.12 + 0.2 * width)) ** 2) * 0.6
+    save('fs_petal.png', rgba(np.clip(body * (0.55 + core) * (0.75 + 0.5 * fbm(P, 10, 3, 2112)), 0, 1)))
+
+
 if '--b1' in __import__('sys').argv:
     b1()
+    raise SystemExit(0)
+if '--b2' in __import__('sys').argv:
+    b2()
     raise SystemExit(0)
 
 # ---- noise (R: fbm low, G: fbm high, B: ridged) ----

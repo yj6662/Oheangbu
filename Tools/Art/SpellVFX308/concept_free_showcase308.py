@@ -98,6 +98,64 @@ B1_VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 2 (2026-10-26, D308-150 V12): A0 거 너 머 서 어 (ㅓ attach: ink on the brush shaft / sleeve, parry window 0.5 s, reacts when an enemy blow is parried)
+# + R0 구 누 무 수 우 (ㅜ ring: one instant hit on a hollow band r ~2 m round the caster).
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b2 [--run] [ids]
+# Picture 1 = the real pitch-0 gameplay frame of the template's own capture (batch2/r0 f_00000: A0 bear 1.6 m ahead, R0 bear 1.85 m ahead on the band).
+B2_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch2/concepts'
+B2_GAME = {'A0': REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch2/r0/frames/A0_bridge_Wood_red/f_00000.jpg',
+           'R0': REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch2/r0/frames/R0_bridge_Wood_red/f_00000.jpg'}
+B2_REF = {
+    'A0': """--- THE ATTACHED PICTURES ---
+Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, and one real enemy (a dark matted bear with crusted crystal growths on its back) VERY close, about 1.6 metres ahead, right in front of the caster, rearing to strike. Paint the concept ON THIS VIEW: keep this camera height, angle and framing, the same ground, sky and bear. Ignore any small coloured blob on the caster or the bear in picture 1 (capture artefacts). The scene keeps its muted Korean ink-wash painted look.""",
+    'R0': """--- THE ATTACHED PICTURES ---
+Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, and one real enemy (a dark matted bear with crusted crystal growths on its back) close, about 2 metres ahead and a little to the right - exactly on the ring that the spell strikes. Paint the concept ON THIS VIEW: keep this camera height, angle and framing (you may raise the camera a little so the ring around the caster reads), the same ground, sky and bear. Ignore any small coloured blob in picture 1 (capture artefacts). The scene keeps its muted Korean ink-wash painted look.""",
+}
+B2_A0 = "It is a PARRY / GUARD spell: the element wraps the great brush's shaft and the caster's sleeve for half a second as a guard; the moment the bear's heavy paw strike lands on that guard it is parried (the caster takes no damage) and the guard answers with its own reaction burst at the point of contact, throwing the paw back. Show THE MOMENT OF THE PARRY: the bear's paw meeting the guard, the guard on the brush clearly visible, the reaction exploding at the contact point."
+B2_R0 = "It is a RING spell: ONE instant strike on a hollow circular band about 2 metres around the caster (a ring, not a filled disc - the caster stands in the empty middle, untouched); the bear standing on the band is struck. It must read at a glance as a CIRCLE around the caster (the near half behind the camera may be cut off, the front half and the sides must show). Show THE INSTANT OF THE STRIKE."
+B2_SPELLS = {
+    'geo': ('A0', "THE SPELL 거 (WOOD guard): " + B2_A0 + " WOOD: living vines, thorns, bark and fresh leaves; on the parry the vines catch and bind the striking paw. NOT fire, stone, steel or water."),
+    'neo': ('A0', "THE SPELL 너 (FIRE guard): " + B2_A0 + " FIRE: roaring orange-vermilion flame and burning black ink; on the parry the fire blasts back and scorches the paw, embers and ash fly up. NOT wood, stone, steel or water."),
+    'meo': ('A0', "THE SPELL 머 (EARTH guard): " + B2_A0 + " EARTH: rough stone, packed soil and dust, heavy and weighty; on the parry the stone takes the blow with a heavy dust shock and the ground around lifts as plates. NOT fire, vines, steel or glowing water."),
+    'seo': ('A0', "THE SPELL 서 (METAL guard): " + B2_A0 + " METAL: polished steel edges, white-silver and pale gold light, razor-thin lines; on the parry the steel rings out with a bright flash and sparks, shards fly SIDEWAYS. NOT fire, rock, vines or water."),
+    'eo': ('A0', "THE SPELL 어 (WATER guard): " + B2_A0 + " WATER: clear heavy blue-green water with black ink swirling inside, white foam; on the parry the water splashes the blow aside and runs down. NOT fire, ice, rock or steel."),
+    'gu': ('R0', "THE SPELL 구 (WOOD ring): " + B2_R0 + " WOOD: living vines, thorns, roots and leaves; the bear on the band is snared and held (slowed). It ends unravelling into rootlets that reach forward. NOT fire, stone, steel or water, and NOT a fan of bamboo shoots in front."),
+    'nu': ('R0', "THE SPELL 누 (FIRE ring): " + B2_R0 + " FIRE: roaring orange-vermilion flame with burning black ink; the bear on the band is scorched and keeps burning. It burns out from its tips into ash rising upward. NOT wood, stone, steel or water."),
+    'mu': ('R0', "THE SPELL 무 (EARTH ring): " + B2_R0 + " EARTH: heavy rock, soil and dust; the bear on the band is SHOVED outward hard (knockback). Afterwards it sinks and the ground around lifts as plates. NOT fire, vines, steel or glowing; NOT a fan of slabs in front (another spell owns that)."),
+    'su': ('R0', "THE SPELL 수 (METAL ring): " + B2_R0 + " METAL: polished steel blades, white-silver and pale gold light, razor-thin lines; the bear on the band is CUT once, fast. It ends snapping with a bright ringing flash, shards flying out sideways. NOT fire, rock, vines or water."),
+    'u': ('R0', "THE SPELL 우 (WATER ring): " + B2_R0 + " WATER: clear heavy blue-green water with black ink swirling inside, white foam; the bear on the band is DRENCHED (soaked for 4 seconds, water running down). It ends flowing down onto the ground. NOT fire, ice, rock or steel."),
+}
+B2_VARIANTS = {
+    'geo_a': ('geo', "VARIANT A - wicker vine shield: thick thorned vines have burst out of the brush shaft and woven, in an instant, into a round living shield of vines and bark (about 1.3 m) held in front of the caster's sleeve; the bear's paw has slammed into it and the vines have whipped forward and coiled around the paw and forearm, binding it, leaves and splinters bursting from the contact, a faint jade light pulsing in the weave."),
+    'geo_b': ('geo', "VARIANT B - bamboo cross guard: the brush shaft and the caster's forearm are wrapped in spiralling green bamboo and vine, and two bamboo stalks have shot out crosswise from the shaft like a staff block; the bear's paw strikes the crossing point and is caught: bamboo splinters, torn leaves and black ink spray outward in a big burst, root tendrils snap around the paw."),
+    'neo_a': ('neo', "VARIANT A - fire wheel: a blazing wheel of fire spins around the brush shaft like a pinwheel of flame and burning ink in front of the caster's sleeve; the bear's paw has struck it and the wheel answers with a huge fire PEONY bursting open at the contact - layered petals of flame and black ink blooming outward, scorching the paw, embers and ash rising."),
+    'neo_b': ('neo', "VARIANT B - flame sleeve wing: the caster's sleeve and the brush are wreathed in a long ribbon of flame like a burning silk sleeve; the bear's paw hits it and the flame flares into a great wing of fire sweeping up and back across the bear's arm, a ring of fire shock at the contact, sparks and black smoke."),
+    'meo_a': ('meo', "VARIANT A - stone slab wall: as the paw comes down a heavy upright slab of rough stone has torn up out of the red ground in front of the caster's guard (the stone crust also runs up the brush shaft and the sleeve like a bracer); the paw slams into the slab: a heavy shock ring of dust, cracks across the stone, the ground around lifting into tilted earth plates, soil clods flying."),
+    'meo_b': ('meo', "VARIANT B - stone gauntlet: the caster's forearm and the brush shaft are encased in a rugged gauntlet of stone and packed earth; the bear's paw hits it and bounces off with a dense explosion of dust and rock fragments, a dust shock ring on the ground, the earth around the caster's feet cracking into lifted plates."),
+    'seo_a': ('seo', "VARIANT A - steel crescent guard: a long polished steel crescent edge has formed along the brush shaft like a halberd guard; the paw has struck the steel: a brilliant white-gold flash and a great FOUNTAIN of sparks bursts sideways from the contact, razor-thin light lines and steel shards flying out to the sides, the paw thrown back."),
+    'seo_b': ('seo', "VARIANT B - fan of blades: a half-circle of floating steel blades has fanned open around the caster's forearm like a folding fan shield; the paw clangs against it: a ring-shaped flash of white light and sparks, two blades snapping into glittering shards that spray sideways, fine black ink lines like cut threads."),
+    'eo_a': ('eo', "VARIANT A - water vortex shield: a spinning disc of clear water swirls around the brush shaft in front of the caster like a whirlpool shield, ink spiralling inside it; the paw strikes the whirlpool and is swept aside, a huge crown splash erupting at the contact, sheets of spray and foam, water running down the caster's sleeve."),
+    'eo_b': ('eo', "VARIANT B - water mirror: a curved membrane of clear water stretches from the brush like a rippling mirror; the paw hits it and the water ripples out in rings and bursts into a heavy splash that wraps the paw and pours down onto the ground, droplets catching the light."),
+    'gu_a': ('gu', "VARIANT A - crown of thorns: a full circle of thick thorned vines has whipped up out of the ground on the 2 m ring around the caster, leaning outward like a crown of thorns, waist to head high; on the right of the ring the bear is caught, the vines coiling round its legs and body; leaves, splinters and ink spray fly up along the whole circle."),
+    'gu_b': ('gu', "VARIANT B - root ring snare: the ground has split in a perfect circle around the caster and a ring of dark roots and young shoots has lashed up out of the crack, curling inward and outward like a closing snare; the bear on the ring is wrapped by roots; soil and leaves burst along the circle, a faint jade light along the crack."),
+    'nu_a': ('nu', "VARIANT A - ring of fire wall: a roaring circular WALL of flame has erupted on the 2 m ring around the caster, flames leaning outward, black ink smoke rolling off its crest; the caster stands untouched in the empty middle; the bear on the ring is engulfed and burning; embers and ash rise from the whole circle, the ground glows along the ring."),
+    'nu_b': ('nu', "VARIANT B - fire lotus: a ring of giant flame petals has burst open around the caster like a lotus of fire opening outward, each petal a tongue of flame edged with burning black ink; the bear on the ring is struck by a petal and catches fire; the petals' tips burn into rising ash."),
+    'mu_a': ('mu', "VARIANT A - earth shock ring: the ground has heaved up in a thick rolling circular ridge of soil and rock all around the caster, like a stone ripple bursting outward from a dropped weight; the bear on the ring is thrown outward by it; a huge donut of dust rolls out, rocks fly, and behind the ridge the ground cracks into lifted plates."),
+    'mu_b': ('mu', "VARIANT B - standing stones burst: a circle of massive angular stone pillars has burst up out of the ground on the 2 m ring around the caster in an instant, all leaning outward like a broken henge; one pillar has rammed the bear and is shoving it backwards; dust, clods and black ink spray off the stones."),
+    'su_a': ('su', "VARIANT A - blade whirl: a whirling ring of dozens of long steel blades spins around the caster at waist height on the 2 m ring, like a circular saw of knives, each blade leaving a razor-thin bright silver streak, the whole ring a blur of light; the bear on the ring is slashed, a bright cut line across it and sparks; at the edge the blades snap into shards flying sideways."),
+    'su_b': ('su', "VARIANT B - halo of swords: a circle of upright steel swords has pierced up out of the ground on the 2 m ring around the caster, points up, with a bright ring of light running along the ground connecting them; the bear on the ring is pierced and cut, sparks and an X-shaped flash; the swords' tips snap with a ringing flash."),
+    'u_a': ('u', "VARIANT A - ring wave: a circular WAVE of clear blue-green water has risen out of the ground all around the caster on the 2 m ring and is rolling outward, its white foamy crest curling over; the caster stands dry in the middle; the bear on the ring is hit by the wave and drenched; spray and mist hang in the air, the ground under the ring is dark and wet."),
+    'u_b': ('u', "VARIANT B - water ring geyser: a ring of geyser jets of water shoots up out of the ground on the 2 m ring around the caster like a fountain crown, ink swirling in the columns; the bear on the ring is soaked as the water crashes down on it; puddles and foam spread on the ground."),
+}
+
+
+def prompt_b2(vid):
+    spell, var = B2_VARIANTS[vid]
+    tmpl, text = B2_SPELLS[spell]
+    return '\n\n'.join([HEAD, B2_REF[tmpl] + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B2_OUT / f'{vid}.png')])
+
+
 def prompt_b1(vid):
     spell, var = B1_VARIANTS[vid]
     tmpl, text = B1_SPELLS[spell]
@@ -105,6 +163,8 @@ def prompt_b1(vid):
 
 
 def prompt(vid):
+    if vid in B2_VARIANTS:
+        return prompt_b2(vid)
     if vid in B1_VARIANTS:
         return prompt_b1(vid)
     spell, var = VARIANTS[vid]
@@ -115,10 +175,12 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def out_of(vid):
-    return B1_OUT if vid in B1_VARIANTS else OUT
+    return B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
 
 
 def game_of(vid):
+    if vid in B2_VARIANTS:
+        return B2_GAME[B2_SPELLS[B2_VARIANTS[vid][0]][0]]
     return B1_GAME[B1_SPELLS[B1_VARIANTS[vid][0]][0]] if vid in B1_VARIANTS else GAME
 
 
@@ -148,7 +210,7 @@ def recover(vid, started):
 def main():
     batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
     args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
-    pool = B1_VARIANTS if batch == 'b1' else VARIANTS
+    pool = B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
     vids = [v for v in pool if not args or v in args]
     for v in vids:
         out_of(v).mkdir(parents=True, exist_ok=True)
