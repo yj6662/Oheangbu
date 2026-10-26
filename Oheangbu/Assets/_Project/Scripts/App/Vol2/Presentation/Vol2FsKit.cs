@@ -527,6 +527,9 @@ namespace Oheangbu.App
         {
             int n = pts.Count;
             if (n < 2) return;
+            // batch 6: a strip with a non-finite point is skipped whole (the lab's bodies can report non-finite renderer bounds for a frame: the mesh's AABB
+            // assert then fired every frame - 12 088 "Converting invalid MinMaxAABB" in the lab run 20261027_082713)
+            for (int k = 0; k < n; k++) { var q = pts[k]; float wq = widths[k]; if (float.IsNaN(q.x + q.y + q.z + wq) || float.IsInfinity(q.x + q.y + q.z + wq)) return; }
             int b = _v.Count;
             for (int k = 0; k < n; k++)
             {

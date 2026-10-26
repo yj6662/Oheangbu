@@ -158,6 +158,8 @@ namespace Oheangbu.EditorTools.Vol2
             public bool FanNeighbours;
             /// <summary>batch 4 (spread=1, 눈): stage wood materials before the cast (LAB-SIMULATED).</summary>
             public bool PlantWood;
+            /// <summary>batch 6 (split=1): LAB-SIMULATED earth walls (ahead, side, radius) staged before the cast as another cast's Disc materials.</summary>
+            public readonly List<(float ahead, float side, float r)> Walls = new List<(float, float, float)>();
             public readonly List<Step> Steps = new List<Step>();
             public List<(float ahead, float side)> Dummies = new List<(float, float)>();
             public string Name => Template + "_" + Variant + "_" + Body + "_" + Back;
@@ -211,6 +213,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
             _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; _spreadB4 = false; _seedB5 = ""; _seedHold = false; AdapterBodies.Clear(); BridgeBodies.Clear();
+            _splitB6 = false;
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
@@ -237,6 +240,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "spread") _spreadB4 = v.Trim() == "1";       // batch 4 (opt-in): the 번진다 rows P2 / A2 / R2 with a third neighbour / 넌's second swing / 눈's staged wood (see Step4Job)
                 else if (k == "seed") _seedB5 = v.Trim() == "1" ? "show" : v.Trim() == "expire" ? "expire" : "";    // batch 5 (opt-in): the 심는다 rows with a visible wait / the expiry branch (see Step4Job)
                 else if (k == "seedhold") _seedHold = v.Trim() == "1";      // batch 5 (opt-in): LAB-SIMULATED drawing for 0.8 s mid-wait (信)
+                else if (k == "split") _splitB6 = v.Trim() == "1";         // batch 6 (opt-in): the 가른다 rows with LAB-SIMULATED stand-in walls to cut, 삿's row of three, 솟's walker (see Step4Job)
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
@@ -487,6 +491,106 @@ namespace Oheangbu.EditorTools.Vol2
                 }
                 if (_seedHold) { Step(1.0, "LAB-SIMULATED: a letter is being drawn (信 holds the waiting seeds)", c => SeedHold(c, true)); Step(1.8, "LAB-SIMULATED: the drawing ends", c => SeedHold(c, false)); j.Variant += "h"; }
             }
+            // batch 6 free showcase (2026-10-27, opt-in split=1, defaults unchanged): the 가른다 rows P4 / A4 / F4 / R4 with LAB-SIMULATED earth walls where the executor
+            // cuts them (another cast's Disc materials - Vol2SplitLab plants them the same way), 삿's three bodies in a row (it strips three) and a wall between the second
+            // and third, 섯's walls beside its swing and behind the caster (its front and back cut), 솟's walker into the metal it leaves. The walls stand as
+            // Vol2FsB6.WallProxy (the look parts the same halves); a wall's proxy is hidden the frame the executor splits its material.
+            if (_splitB6 && v == 4)
+            {
+                switch (f)
+                {
+                    // r3: the walls stand RIGHT of the caster (r1: the wall hid the first body; r2: left of the line of sight they stood right behind the caster's own back
+                    // from the shoulder camera, which sits 0.7 m to the right)
+                    case 'P':
+                        j.Walls.Add((2.4f, 0.65f, 0.6f));
+                        if (j.Letter == '삿') { j.Dummies.Add((6.6f, 0.45f)); j.Dummies.Add((8.6f, -0.45f)); j.Walls.Add((7.6f, 0f, 0.6f)); }
+                        break;
+                    case 'A':
+                        j.Walls.Add((0.5f, 0.6f, 0.5f));
+                        if (j.Letter == '섯') { j.Walls.Add((1.15f, 0.95f, 0.5f)); j.Walls.Add((-1.0f, -0.8f, 0.45f)); }
+                        break;
+                    case 'F':
+                        j.Walls.Add((2.6f, 1.5f, 0.6f));
+                        if (j.Letter == '솟')
+                        {
+                            j.Dummies.Add((6.6f, -2.6f)); int walker = j.Dummies.Count - 1;
+                            Step(1.0, "LAB-SIMULATED: a body walks into the metal (솟's residue)", c => MoveDummy(c, walker, 4.4f, -1.4f));
+                        }
+                        break;
+                    default:
+                        j.Walls.Add((1.55f, -1.25f, 0.7f));
+                        // r2: the second body crosses the band ahead-right (1.2, 1.65) instead of right behind the first one (r1: the two stood in one line from the camera)
+                        if (j.Steps.RemoveAll(s => s.Name.StartsWith("LAB-SIMULATED: a body crosses", StringComparison.Ordinal)) > 0)
+                            Step(1.0, "LAB-SIMULATED: a body crosses onto the band (stripped)", c => MoveDummy(c, 1, 1.2f, 1.65f));
+                        break;
+                }
+                j.Variant += "_b6";
+            }
+        }
+
+        // batch 6 (split=1): see Step4Job
+        static bool _splitB6;
+        static readonly List<(Vol2Material M, GameObject Go)> Walls = new List<(Vol2Material, GameObject)>();
+        static Vol2FsKit _ownKit;
+
+        /// <summary>batch 6 (split=1, LAB-SIMULATED): earth walls staged before the cast as another cast's Disc materials (World faction), each shown by Vol2FsB6.WallProxy -
+        /// the whole wall built from the two halves the 가른다 look parts. The cut line is the executor's: the path / fan / ㅓ forward, the ring's radius.</summary>
+        static void PlaceWalls(Ctx c, Job j)
+        {
+            var installer = Object.FindFirstObjectByType<Vol2FreeShowcaseInstaller>();
+            var kit = installer != null && installer.Kit != null && installer.Kit.Ok ? installer.Kit : (_ownKit ?? (_ownKit = new Vol2FsKit()));
+            var mats = c.Coordinator.Materials; long now = c.Services.Clock.NowUs; long life = Vol2Time.FromSeconds(14.0);
+            Vector3 right = Vector3.Cross(Vector3.up, c.Forward);
+            int n = 0;
+            foreach (var w in j.Walls)
+            {
+                Vector3 at = c.Origin + c.Forward * w.ahead + right * w.side;
+                var m = mats.Create(new CastId(98101 + n), '막', Body.Earth, Vol2MaterialKind.Residue, 0.9m, life, Vol2Footprint.Disc(at, w.r), 1, Vol2Faction.World, true, now, 0, 0, "lab-wall");
+                if (m == null) { Problems.Add(j.Name + ": wall " + n + " not made"); n++; continue; }
+                Vector3 cut = j.Template[0] == 'R' ? Vol2ShapeGeometry.FlatUnit(at - c.Origin) : c.Forward;
+                GameObject go = kit.Ok ? Vol2FsB6.WallProxy(kit, "Vol2VfxWall_" + n, new Vector3(at.x, c.Origin.y, at.z), Vector3.Cross(Vector3.up, cut), w.r, m.Id.Value) : null;
+                Walls.Add((m, go)); n++;
+            }
+            Finished.Add("  " + j.Name + ": LAB-SIMULATED walls staged: " + Walls.Count + " earth Disc materials of another cast (World) - proxies " + Walls.Count(x => x.Go != null));
+        }
+
+        /// <summary>split=1: a wall's proxy goes the frame its material is split (the look's halves stand there) or ends.</summary>
+        static void UpdateWalls()
+        {
+            foreach (var w in Walls)
+                if (w.Go != null && w.Go.activeSelf && (w.M == null || w.M.Splits > 0 || !w.M.Alive)) w.Go.SetActive(false);
+        }
+
+        static void ClearWalls(Ctx c)
+        {
+            if (c != null && c.Coordinator != null)
+                foreach (var m in c.Coordinator.Materials.AliveSnapshot()) if (m.Tag == "lab-wall") c.Coordinator.Materials.TryEnd(m.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
+            foreach (var w in Walls) if (w.Go != null) Object.Destroy(w.Go);
+            Walls.Clear();
+        }
+
+        /// <summary>split=1: the executor's facts of the cast for the capture text - contacts, the splits (parent -> halves, where, when), the strip book, the 날붓, the field notes.</summary>
+        static string SplitFacts(Ctx c)
+        {
+            string Rel(long us) => ((us - c.Log.StartUs) / 1e6).ToString("0.00", Inv);
+            string Who(string n) => (n ?? "").Replace("Vol2VfxDummy_", "");
+            var sb = new StringBuilder();
+            sb.Append(" | contacts ").Append(string.Join(" ", c.Log.Contacts.Select(x => x.Kind + ":" + Who(x.TargetName) + ":" + x.Amount.ToString("0.###", Inv) + "@" + Rel(x.NowUs) + (x.BudgetAccepted ? "" : "(refused " + x.BudgetReason + ")") + (x.BodyEffect.Length > 0 ? "[" + x.BodyEffect + "]" : ""))));
+            if (c.Coordinator.Verbs.TryGet(Verb.Split, out var ex) && ex is Vol2SplitExecutor split)
+            {
+                var d = split.DataOf(c.Log.Cast);
+                if (d != null)
+                {
+                    sb.Append(" | splits ").Append(string.Join(" ; ", d.Splits.Select(s => s.Parent.Id + "[" + s.Parent.Tag + "] by " + s.Where + " @" + Rel(s.AtUs) + " " + s.Before.ToString("0.###", Inv) + "->" + s.Parent.Remaining.ToString("0.###", Inv) + "+" + string.Join("+", s.Children.Select(k => k.Remaining.ToString("0.###", Inv))) + " end " + s.Parent.End)));
+                    sb.Append(" | strips ").Append(string.Join(" ; ", d.Strips.Select(s => Who(s.TargetName) + (s.Restrip ? "(again)" : "") + " @" + Rel(s.AtUs) + " until " + Rel(s.UntilUs) + (s.Value > 0m ? " val " + s.Value.ToString("0.###", Inv) : "") + " [" + s.PortNote + "]")));
+                    if (d.Blades.Count > 0) sb.Append(" | blades ").Append(string.Join(" ; ", d.Blades.Select(b => Who(b.TargetName) + " " + b.Kind + " " + b.Result)));
+                    sb.Append(" | rear " + d.RearHits + " swingsCut " + d.SwingsCut + " capped " + d.SwingsCapped);
+                }
+            }
+            if (c.Log.FieldNotes.Count > 0) sb.Append(" | field ").Append(string.Join(" / ", c.Log.FieldNotes));
+            sb.Append(" | materials ").Append(string.Join(" ", c.Log.Materials.Select(m => m.Kind + ":" + m.Initial.ToString("0.###", Inv) + ":" + (m.Alive ? "alive" : m.End + "@" + Rel(m.EndedUs)))));
+            sb.Append(" | status " + c.Log.Status + " end @" + (c.Log.EndUs > 0 ? Rel(c.Log.EndUs) : "-"));
+            return sb.ToString();
         }
 
         // batch 5 (seed=1|expire, seedhold=1): see Step4Job
@@ -1057,6 +1161,7 @@ namespace Oheangbu.EditorTools.Vol2
             }
             Physics.SyncTransforms();
             if (j.PlantWood) PlantWood(c);
+            if (j.Walls.Count > 0) PlaceWalls(c, j);
             if (!MeasuredGround.Contains(j.Back)) MeasureGround(c, j.Back);
             c.Log = null; _beganLog = null; _lastDecision = null; _note = ""; _lastJumpAge = -1f; _describe = 0;
             foreach (var s in _job.Steps) s.Done = false;
@@ -1212,6 +1317,7 @@ namespace Oheangbu.EditorTools.Vol2
             bool keyWindow = j.Keys && ((age >= 0.065 && age <= 0.10) || (age >= 0.165 && age <= 0.20) || (age >= 0.285 && age <= 0.315));
             if (Batchim(j.Template) && c.Presenter.Legacy != null && (_describe == 0 && age >= 1.0 || _describe == 1 && age >= 2.2)) { _describe++; Finished.Add("  parts at " + age.ToString("0.00", Inv) + " s: " + c.Presenter.Legacy.Describe()); }
             bool lateKey = j.Keys && j.Template == "P1" && j.Body == Body.Wood && age >= 1.70 && age <= 1.74;       // 각 cages its body for 1.5 s: the residue stands after that
+            if (Walls.Count > 0) UpdateWalls();
             if (j.Video || keyWindow || lateKey) SaveFrame(c, age, stepUs, j.Video, keyWindow || lateKey);
             _note = "";
             bool retired = !c.Presenter.Model.TryGet(c.Log.Cast, out _);
@@ -1320,9 +1426,12 @@ namespace Oheangbu.EditorTools.Vol2
                 if (hub != null) summary += " | seed facts " + string.Join(" ; ", hub.RecordsOf(c.Log.Cast).Select(r => r.ToString())) + " | paused " + (hub.PausedUsOf(c.Log.Cast) / 1e6).ToString("0.00", Inv) + "s";
                 summary += " | materials " + string.Join(" ", c.Log.Materials.Select(m => m.Kind + "/" + m.Tag + ":" + (m.Alive ? "alive" : m.End + "@" + ((m.EndedUs - c.Log.StartUs) / 1e6).ToString("0.00", Inv))));
             }
+            // batch 6 (split=): the executor's facts of this cast (contacts, splits, strip book, 날붓, field notes)
+            if (_splitB6 && c.Log != null) summary += SplitFacts(c);
             if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }
             foreach (var m in Planted) if (m != null && m.Alive) c.Coordinator.Materials.TryEnd(m.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
             Planted.Clear();
+            ClearWalls(c);
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : "") + (_strokeFeed ? BodyCount() : ""));
             _rip?.CancelAll(); _ripSlot = null;
             var stage = c.Presenter.Legacy;
@@ -1385,6 +1494,8 @@ namespace Oheangbu.EditorTools.Vol2
                 }
                 catch (Exception) { }
             }
+            try { ClearWalls(_ctx); } catch (Exception) { Walls.Clear(); }
+            _ownKit?.Dispose(); _ownKit = null;
             _ctx = null; _onDecided = null; _onBegan = null;
             if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }      // batch 5 seedhold: never leave the scope "drawing"
             Time.captureFramerate = _savedCaptureRate;

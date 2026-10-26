@@ -79,6 +79,11 @@ namespace Oheangbu.App
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Seed).Kind, p.transform, ('검', () => new Vol2FsGeom()), ('넘', () => new Vol2FsNeom()), ('멈', () => new Vol2FsMeom()), ('섬', () => new Vol2FsSeom()), ('엄', () => new Vol2FsEom()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Seed).Kind, p.transform, ('곰', () => new Vol2FsGom()), ('놈', () => new Vol2FsNom()), ('몸', () => new Vol2FsMom()), ('솜', () => new Vol2FsSom()), ('옴', () => new Vol2FsOm()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Seed).Kind, p.transform, ('굼', () => new Vol2FsGum()), ('눔', () => new Vol2FsNum()), ('뭄', () => new Vol2FsMum()), ('숨', () => new Vol2FsSum()), ('움', () => new Vol2FsUm()));
+                // batch 6 (2026-10-27): 가른다 - P4 갓 낫 맛 삿 앗 · A4 것 넛 멋 섯 엇 · F4 곳 놋 못 솟 옷 · R4 굿 눗 뭇 숫 웃 (Vol2FsCut: the executor's splits / strip book, 솟's metal)
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Split).Kind, p.transform, ('갓', () => new Vol2FsGat()), ('낫', () => new Vol2FsNat()), ('맛', () => new Vol2FsMatt()), ('삿', () => new Vol2FsSat()), ('앗', () => new Vol2FsAt()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Split).Kind, p.transform, ('것', () => new Vol2FsGeot()), ('넛', () => new Vol2FsNeot()), ('멋', () => new Vol2FsMeot()), ('섯', () => new Vol2FsSeot()), ('엇', () => new Vol2FsEot()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Split).Kind, p.transform, ('곳', () => new Vol2FsGot()), ('놋', () => new Vol2FsNot()), ('못', () => new Vol2FsMot()), ('솟', () => new Vol2FsSot()), ('옷', () => new Vol2FsOt()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Split).Kind, p.transform, ('굿', () => new Vol2FsGut()), ('눗', () => new Vol2FsNut()), ('뭇', () => new Vol2FsMut()), ('숫', () => new Vol2FsSut()), ('웃', () => new Vol2FsUt()));
                 if (_view == null) _view = p;
             }
             BindRecovery();

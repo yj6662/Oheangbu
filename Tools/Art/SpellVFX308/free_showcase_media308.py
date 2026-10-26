@@ -121,10 +121,37 @@ B5_SPELLS = [
 ]
 
 
+# batch 6 (2026-10-27, D308-150 V12): --batch b6 -> free_showcase/batch6/<round>/ (가른다: the cut, the walls in two, the strips 3 s to their end).
+# Same streamed writer (cast 1x -> 0.5x -> the rest 1x with the JUMPs labelled); the capture folders carry the opt-in split=1 suffix (_b6).
+_B6_T = {'P': 'ㅏ 경로', 'A': 'ㅓ 부착', 'F': 'ㅗ 면', 'R': 'ㅜ 둘레'}
+B6_SPELLS = [
+    ('gat', 'P4_bridge4_b6_Wood_red', ['gat_b.png'], '갓 · 목 · ㅏ 경로 · 가른다 — 비취 칼잎이 경로를 가르며 솟아 달린다: 벽(잔존물)을 둘로, 첫 적의 가드 · 갑주를 3초 벗기고 벗긴 자리를 붙든다(2초)'),
+    ('nat', 'P4_bridge4_b6_Fire_red', ['nat_b.png'], '낫 · 화 · ㅏ 경로 · 가른다 — 백열 불줄이 땅을 녹여 가른다: 벽을 둘로(녹은 단면), 첫 적의 갑주를 3초 벗기고 벗긴 자리를 데운다(2초)'),
+    ('mat', 'P4_bridge4_b6_Earth_red', ['mat_b.png'], '맛 · 토 · ㅏ 경로 · 가른다 — 점판암 바퀴가 땅을 파며 굴러 간다: 벽을 둘로, 첫 적의 갑주를 3초 벗기고 민다'),
+    ('sat', 'P4_bridge4_b6_Metal_red', ['sat_a.png'], '삿 · 금 · ㅏ 경로 · 가른다 극치 — 한 줄 빛이 적 셋을 꿰뚫는다(관통 셋 · 첫 적만 벰 ×1.5): 셋 모두 갑주 3초 벗김, 벽 둘을 둘로'),
+    ('at', 'P4_bridge4_b6_Water_red', ['at_b.png'], '앗 · 수 · ㅏ 경로 · 가른다 — 물 초승달 칼날이 경로를 가른다: 벽을 둘로(단면에 물), 첫 적의 갑주를 3초 벗기고 적신다(4초)'),
+    ('geot', 'A4_bridge4_b6_Wood_red', ['geot_a.png'], '것 · 목 · ㅓ 부착 · 가른다 — 붓이 가시 톱날이 된다(6초): 발밑 턱을 둘로, 휘두르기에 닿은 적의 갑주를 3초 벗기고 붙든다'),
+    ('neot', 'A4_bridge4_b6_Fire_red', ['neot_a.png'], '넛 · 화 · ㅓ 부착 · 가른다 — 붓이 불꽃 검이 된다(6초): 발밑 턱을 둘로, 휘두르기에 닿은 적의 갑주를 3초 벗기고 데운다'),
+    ('meot', 'A4_bridge4_b6_Earth_red', ['meot_a.png'], '멋 · 토 · ㅓ 부착 · 가른다 — 붓이 돌 대검이 된다(6초): 발밑 턱을 둘로, 휘두르기에 닿은 적의 갑주를 3초 벗기고 민다'),
+    ('seot', 'A4_bridge4_b6_Metal_red', ['seot_a.png'], '섯 · 금 · ㅓ 부착 · 가른다 극치 — 붓 양끝에 강철 날(6초): 휘두르기 두 번, 각각 앞 · 뒤를 함께 가른다(뒤 ×0.5), 앞 · 옆 · 뒤 턱을 둘로'),
+    ('eot', 'A4_bridge4_b6_Water_red', ['eot_b.png'], '엇 · 수 · ㅓ 부착 · 가른다 — 붓끝의 물 채찍날(6초): 발밑 턱을 둘로, 휘두르기에 닿은 적의 갑주를 3초 벗기고 적신다'),
+    ('got', 'F4_bridge4_b6_Wood_red', ['got_b.png'], '곳 · 목 · ㅗ 면 · 가른다 — 비취 채찍 부채가 앞을 가른다: 벽을 둘로, 안의 적 모두 갑주 3초 벗김 · 붙듦'),
+    ('not', 'F4_bridge4_b6_Fire_red', ['not_a.png'], '놋 · 화 · ㅗ 면 · 가른다 — 불 발톱 다섯이 앞을 긁는다: 벽을 둘로, 안의 적 모두 갑주 3초 벗김 · 데움'),
+    ('mot', 'F4_bridge4_b6_Earth_red', ['mot_b.png'], '못 · 토 · ㅗ 면 · 가른다 — 점판암 카드 부채가 앞을 가른다: 벽을 둘로, 안의 적 모두 갑주 3초 벗김 · 밀침'),
+    ('sot', 'F4_bridge4_b6_Metal_red', ['sot_c.png'], '솟 · 금 · ㅗ 면 · 가른다 극치 — 가른 균열마다 강철 날이 솟아 남는다(금 재료 4초): 들어온 적을 한 번 벤다'),
+    ('ot', 'F4_bridge4_b6_Water_red', ['ot_a.png'], '옷 · 수 · ㅗ 면 · 가른다 — 물 낫이 앞을 쓸어 가른다: 벽을 둘로, 안의 적 모두 갑주 3초 벗김 · 적심'),
+    ('gut', 'R4_bridge4_b6_Wood_red', ['gut_a.png'], '굿 · 목 · ㅜ 둘레 · 가른다 — 가시 덩굴 고리가 10초 선다: 고리 위 벽을 둘로, 넘는 적의 갑주 3초 벗김 · 붙듦'),
+    ('nut', 'R4_bridge4_b6_Fire_red', ['nut_b.png'], '눗 · 화 · ㅜ 둘레 · 가른다 — 녹은 고리 홈 위 백열 철사(10초): 고리 위 벽을 둘로, 넘는 적의 갑주 3초 벗김 · 데움'),
+    ('mut', 'R4_bridge4_b6_Earth_red', ['mut_b.png'], '뭇 · 토 · ㅜ 둘레 · 가른다 — 모래 · 먹 회전 띠(10초): 고리 위 벽을 둘로, 넘는 적의 갑주 3초 벗김 · 밀침'),
+    ('sut', 'R4_bridge4_b6_Metal_red', ['sut_a.png'], '숫 · 금 · ㅜ 둘레 · 가른다 극치 — 거울 강철 고리 칼날(10초): 넘는 적 갑주 4.5초 벗김, 비전투에선 바위 · 쇠문을 가른다(관문 = 실험실 없음)'),
+    ('ut', 'R4_bridge4_b6_Water_red', ['ut_b.png'], '웃 · 수 · ㅜ 둘레 · 가른다 — 고리 물길을 달리는 물(10초): 고리 위 벽을 둘로, 넘는 적의 갑주 3초 벗김 · 적심'),
+]
+
+
 def b3_main(rnd, ages, cuts, only, batch='b3'):
     import imageio_ffmpeg
-    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
-    spells = B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
+    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch6' if batch == 'b6' else 'batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
+    spells = B6_SPELLS if batch == 'b6' else B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
     if batch == 'b5' and '--demo' in sys.argv:
         # the expiry demos (seed=expire): the same glyphs, the _b5x folders, keys + 'x'
         spells = [(k + 'x', f.replace('_b5_', '_b5x_'), c, t.split(' — ')[0] + ' — 작동 없이 수명 끝(시연: 조건이 오지 않음)') for k, f, c, t in B5_SPELLS]
@@ -138,7 +165,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
         g.send(None)
         return g
 
-    combined_name = ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
+    combined_name = 'free_showcase_batch6_all.mp4' if batch == 'b6' else ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
     combined = None if only else open_writer(base / rnd / combined_name)
     for key, folder, cons, text in spells:
         if only and key not in only:
@@ -150,7 +177,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
             rs = [r for r in csv.DictReader(f) if r.get('video') == '1' and (d / ('f_%05d.jpg' % int(r['frame']))).exists()]
         if not rs:
             print('NO VIDEO FRAMES', key); continue
-        cut = cuts.get(key, 1.1 if batch == 'b5' else 1.8)
+        cut = cuts.get(key, 1.1 if batch == 'b5' else 1.0 if batch == 'b6' else 1.8)
         name = text.split(' — ')[0]
         # side by side at the asked ages
         for i, age in enumerate(ages.get(key, [1.2])):
@@ -195,7 +222,8 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
                 jumped, jump_note, jump_left = True, note, 75
             sub = 't = %s s' % r['ageSec']
             if jumped:
-                sub += ('   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
+                b6msg = '   [시간 건너뜀: 실험실 대기 생략 → ' + ('고리 선 끝' if 'ring line' in jump_note or 'attachment' in jump_note else '벗김 끝') + ' 1.4 초 전부터]'
+                sub += (b6msg if batch == 'b6' else '   [시간 건너뜀: 실험실 대기 생략 → 자국 만료 1.4 초 전부터]' if batch == 'b4' else '   [시간 건너뜀: 실험실 긴 대기 생략 → 만료 1.4 초 전부터]') if jump_left > 0 else '   [시간 건너뜀 뒤]'
                 jump_left -= 1
             if 'LAB-SIMULATED' in note:
                 sub += '   [' + note.replace('LAB-SIMULATED: ', '실험실 연출: ')[:60] + ']'
@@ -207,7 +235,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
                 phase = (' · 작동 0.5×' if slow else ' · 작동 뒤 1×') if fired else ' · 씨앗 대기 1×'
                 send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + phase, sub), 2 if slow else 1)
                 continue
-            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
+            send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 벗김 · 남은 것 1×' if batch == 'b6' else ' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
         one.close()
         print('mp4', key, len(cast), 'cast frames +', len(rest), 'lasting frames')
     if combined is not None:
@@ -346,7 +374,7 @@ def title(concept, text, seconds=1.5, fps=60):
 
 
 def main():
-    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5'):
+    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5', 'b6'):
         b3_entry()
         return
     rnd = sys.argv[1]

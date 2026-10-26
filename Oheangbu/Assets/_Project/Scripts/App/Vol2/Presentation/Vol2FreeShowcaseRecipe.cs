@@ -63,8 +63,11 @@ namespace Oheangbu.App
             // the body's own skinned meshes only (r1: a bear's full renderer bounds were ~5 m tall - the cage / snare grew into the sky)
             foreach (var r in t.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
-                if (r == null || !r.enabled || r.bounds.size.y > 3f || r.bounds.size.x > 4f) continue;
-                if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+                if (r == null || !r.enabled) continue;
+                var rb = r.bounds;
+                // batch 6: a renderer whose bounds are not finite this frame is skipped (NaN passed the size tests below and poisoned every mesh built on it)
+                if (!(rb.size.y <= 3f && rb.size.x <= 4f) || float.IsNaN(rb.center.x + rb.center.y + rb.center.z) || float.IsInfinity(rb.center.x + rb.center.y + rb.center.z)) continue;
+                if (!any) { b = rb; any = true; } else b.Encapsulate(rb);
             }
             // clamp to a believable body (a dummy / bear is 0.6 - 1.6 m tall, 0.3 - 1.0 m half width)
             Vector3 ext = b.extents;
@@ -238,7 +241,8 @@ namespace Oheangbu.App
                 var frame = inst.Log.Glyph.Frame;
                 // batch 4: the ㅓ 번진다 dresses the caster for its 6 s attachment and swings like 남긴다 (Self), as the bridge's own LegacyKind for an attachment
                 // batch 5: the ㅓ 심는다 plants its seed on the caster's own body (no parry window): Self too
-                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread || inst.Log.Glyph.Verb == Verb.Seed) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
+                // batch 6: the ㅓ 가른다 puts a 6 s blade on the caster (its swings cut; no parry window): Self too
+                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread || inst.Log.Glyph.Verb == Verb.Seed || inst.Log.Glyph.Verb == Verb.Split) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
                 legacy.Swing(new Vol2LegacySwing
                 {
                     Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = kind,

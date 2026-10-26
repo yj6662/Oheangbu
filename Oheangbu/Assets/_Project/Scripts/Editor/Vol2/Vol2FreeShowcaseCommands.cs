@@ -64,7 +64,8 @@ namespace Oheangbu.EditorTools.Vol2
             s += " recipes=[" + string.Join(", ", inst.Recipes.Select(r => r.Kind + "{" + string.Join(" ", r.Glyphs.Select(g => g + ":" + r.ShownOf(g))) + "} shown " + r.Shown + (r.LastNote != "" ? " (" + r.LastNote + ")" : ""))) + "]";
             // batch 4: every glyph's last note (the spread looks note their hops / marks / ends)
             // batch 5: + the 심는다 20 (plant / fire / strike / end reasons)
-            var notes = inst.Recipes.SelectMany(r => r.Notes).Where(kv => "간난만산안건넌먼선언곤논몬손온군눈문순운감남맘삼암검넘멈섬엄곰놈몸솜옴굼눔뭄숨움".IndexOf(kv.Key) >= 0).Select(kv => kv.Key + ": " + kv.Value);
+            // batch 6: + the 가른다 20 (contacts / splits / strips / 솟's metal)
+            var notes = inst.Recipes.SelectMany(r => r.Notes).Where(kv => "간난만산안건넌먼선언곤논몬손온군눈문순운감남맘삼암검넘멈섬엄곰놈몸솜옴굼눔뭄숨움갓낫맛삿앗것넛멋섯엇곳놋못솟옷굿눗뭇숫웃".IndexOf(kv.Key) >= 0).Select(kv => kv.Key + ": " + kv.Value);
             if (notes.Any()) s += "\nnotes:\n" + string.Join("\n", notes);
             return s;
         }

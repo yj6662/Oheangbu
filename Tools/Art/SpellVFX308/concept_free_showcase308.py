@@ -424,6 +424,116 @@ B5_VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 6 (2026-10-27, D308-150 V12, the user's order "쇼케이스 방향이 낫다. 이 방식으로 다른 술식도 만들어 가자." / "잘 진행해둬"): the ㅅ book 가른다 - the element
+# becomes a cutting edge: what it passes (a standing wall / residue) is CUT IN TWO, a body it cuts is NOT cut in two but its guard and armour are STRIPPED for
+# 3 s (the seam stays open), the cut leaves a crack line gouged down into the ground. P4 갓 낫 맛 삿 앗 · A4 것 넛 멋 섯 엇 · F4 곳 놋 못 솟 옷 · R4 굿 눗 뭇 숫 웃
+# (peaks 삿 섯 솟 숫 = metal). Picture 1 = the real gameplay frame of the template's own capture (batch6/r0 f_00000, cast camera A on, capture option split=1:
+# the lab's stand-in stone walls where the executor cuts them; the metal peaks use their own job's frame - 삿's three bears, 섯's extra walls, 솟's walker).
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b6 [--run] [--wave 6] [ids]
+B6_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch6/concepts'
+_B6_FRAME = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch6/r0/frames/{t}_bridge4_b6_{b}_red/f_00000.jpg'
+_B6_SCENE = """Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, %s. Paint the concept ON THIS VIEW: keep this camera height, angle and framing (you may raise the camera a little so the cut line on the ground reads), the same ground and sky, the bears and the stone walls at the places described. Picture 1 may already show bright white flash discs, dark flying shards or a thin line at the bears and the walls: capture artefacts of a placeholder effect - remove them and paint the bears and the walls clean and whole before your own spell. The scene keeps its muted Korean ink-wash painted look."""
+B6_REF = {
+    'P4': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "ONE real enemy (a dark matted bear with crusted crystal growths on its back) about 4.6 metres straight ahead, and between the caster and the bear, about 2.4 metres ahead and a little right, a waist-high rough stone wall (about 1.6 metres wide) standing ACROSS the spell's path",
+    'P4m': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "THREE real enemies (dark matted bears with crusted crystal growths on their backs) in a loose line straight ahead along the spell's path (about 4.6, 6.6 and 8.6 metres away, a little left / right of each other), a waist-high rough stone wall about 2.4 metres ahead standing ACROSS the path, and a second low stone wall between the second and the third bear",
+    'A4': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "a real enemy (a dark matted bear with crusted crystal growths on its back) VERY close, about 1.2 metres ahead and a little right, and right in front of the caster's feet a low rough stone sill (knee-high, about 1 metre wide) standing across the caster's way",
+    'A4m': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "a real enemy (a dark matted bear with crusted crystal growths on its back) VERY close, about 1.2 metres ahead and a little right; a low rough stone sill right in front of the caster's feet, another low stone block ahead-right beside the swing and a third one BEHIND the caster on the left (half seen at the lower left)",
+    'F4': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs): one about 3.4 metres ahead, partly hidden behind the caster's left side, the other about 4.3 metres ahead on the right; and about 2.3 metres ahead on the right a waist-high rough stone wall (about 1.4 metres wide) standing inside the area in front",
+    'F4m': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs) in the area in front (about 3.4 metres ahead left and 4.3 metres ahead right), a waist-high rough stone wall about 2.3 metres ahead on the right, and a THIRD bear farther out on the left that is WALKING IN toward the area",
+    'R4': '--- THE ATTACHED PICTURES ---\n' + _B6_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs): one about 2 metres ahead and a little right, standing ON the 2-metre ring around the caster; the other farther out ahead-right that STEPS OVER the ring; and on the ring ahead-left a waist-high rough stone wall (about 1.4 metres wide) standing on the ring line",
+}
+_SPLIT = ("It is a 'CUTS' spell (가른다): the element becomes a razor CUTTING EDGE and slices along its shape, fast and sharp. Three things must read AT A GLANCE in one picture: "
+          "(1) the stone wall in its way is CUT CLEAN IN TWO - the two halves sliding apart either side of a bright fresh cut, the cut faces glowing, chips and sparks flying; "
+          "(2) the bear it cuts is NOT cut in two - instead its GUARD AND ARMOUR are STRIPPED: the crusted crystal plates on its body crack and fly off in shards, a bright open seam is left slashed across its body, and it stands EXPOSED (the seam glows for 3 seconds before the armour grows back); "
+          "(3) the cut leaves a line GOUGED DOWN INTO THE GROUND - a sunken, sharp-edged crack line along the whole cut. "
+          "Style of the motion (like a modern wuxia action game): an extremely fast thin-to-wide blade stroke, a frozen instant of impact, sparks at the contact, a faint afterimage of the stroke lingering. "
+          "Then the element's own effect lands on the exposed seam. NOT a slow wave, NOT a blob or an explosion cloud - a CUT.")
+B6_P4 = "It cuts along a narrow straight PATH from the brush tip to the bear: the cutting edge races along the ground, slices the stone wall in two on its way and strips the bear. " + _SPLIT
+B6_P4M = ("THE PEAK: it cuts along the path and goes ON THROUGH the bears - it pierces THROUGH all three bears in the line, stripping the armour of each in turn (the first one takes the hardest cut), and cuts both stone walls in two on its way. " + _SPLIT)
+B6_A4 = ("The element becomes a BLADE ON THE CASTER'S GREAT BRUSH for 6 seconds (the brush is now a weapon, nothing on the ground at first); the caster's swing cuts: the stone sill at the caster's feet is cut in two and the very close bear is stripped. " + _SPLIT)
+B6_A4M = ("THE PEAK: STEEL EDGES ON BOTH SIDES of the caster's great brush for 6 seconds (a double-ended blade); every swing cuts FRONT AND BACK at once - one crescent ahead and a mirrored crescent behind the caster - so the sill at the feet, the block ahead-right and the block BEHIND the caster are all cut in two, and the close bear is stripped. " + _SPLIT)
+B6_F4 = ("It sweeps a fan-shaped area in front of the caster (5 m deep, about 4 m wide at its far edge): ONE sweeping cut across the whole fan, the stone wall in it cut in two, both bears in it stripped; several gouged crack lines fan out across the ground. " + _SPLIT)
+B6_F4M = ("THE PEAK: it sweeps the fan (5 m deep, about 4 m wide at its far edge), cuts the wall in two and strips both bears - AND along the gouged crack lines STEEL BLADES are left STANDING upright out of the ground for 4 seconds; the third bear walking in is cut by them. " + _SPLIT)
+B6_R4 = ("It cuts a thin LINE on a hollow circular ring about 2 metres around the caster (a ring, not a filled disc - the caster stands in the empty middle) and the cutting line STAYS there for 10 seconds; the stone wall standing on the ring is cut in two; every bear that is on it or STEPS OVER it is stripped. " + _SPLIT)
+B6_R4M = ("THE PEAK: a perfect circle about 2 metres around the caster is CUT DEEP into the ground and stays as a razor ring (10 s); outside battle it can cut a great boulder or an iron gate, here the stone wall on the ring is cut in two; every bear that crosses it is stripped for even longer (4.5 s). " + _SPLIT)
+B6_SPELLS = {
+    'gat': ('P4', "THE SPELL 갓 (WOOD, path, cuts): " + B6_P4 + " WOOD: a living cutting edge - razor leaf blades, a whip-thin serrated vine, sharpened bamboo, jade light; on the exposed seam vines BIND the bear (it is held and slowed). NOT a thorn harpoon, NOT vine arches between bears, NOT a burr seed (other spells own those)."),
+    'nat': ('P4', "THE SPELL 낫 (FIRE, path, cuts): " + B6_P4 + " FIRE: a white-hot cutting flame, a molten edge, burning ink; the cut faces of the wall glow molten red; the exposed seam BURNS (the bear keeps burning 2 s). NOT a fireball or comet, NOT a fire bird, NOT a fire seal (other spells own those)."),
+    'mat': ('P4', "THE SPELL 맛 (EARTH, path, cuts): " + B6_P4 + " EARTH: an edge of rock, a stone blade, compressed sand, dust and grit; on the exposed seam the bear is SHOVED back hard. NOT a rolling boulder, NOT a running zig-zag fault line with standing seams, NOT a falling slab (other spells own those)."),
+    'sat': ('P4m', "THE SPELL 삿 (METAL, path, cuts - the PEAK of this book): " + B6_P4M + " METAL: mirror steel and white-gold light, sparks; each bear it passes is cut once, fast. NOT a thrown sword, NOT forked steel lightning, NOT a blade dropping from above (other spells own those)."),
+    'at': ('P4', "THE SPELL 앗 (WATER, path, cuts): " + B6_P4 + " WATER: a high-pressure jet or thin blade of clear blue-green water with ink swirling in it, spray fanning off the cut; the exposed bear is SOAKED (dripping). NOT a water orb, NOT water rope arches, NOT a droplet seed (other spells own those)."),
+    'geot': ('A4', "THE SPELL 것 (WOOD, on the brush, cuts): " + B6_A4 + " WOOD: a living blade - serrated thorny wood, razor leaves, sharpened bamboo along the brush, jade light; on the exposed seam vines BIND the bear. NOT a bamboo cross guard, NOT a vine whirl round the brush, NOT a seed pod (other spells own those)."),
+    'neot': ('A4', "THE SPELL 넛 (FIRE, on the brush, cuts): " + B6_A4 + " FIRE: a blade of white-hot flame, a red-hot iron edge, burning ink; the cut faces glow molten; the exposed seam BURNS. NOT a fire wheel or peony, NOT a torch brush with three flames, NOT embers in the sleeve hem (other spells own those)."),
+    'meot': ('A4', "THE SPELL 멋 (EARTH, on the brush, cuts): " + B6_A4 + " EARTH: a blade of rock, flint or volcanic glass, grit; the swing SHOVES the exposed bear back hard. NOT a stone slab wall in front, NOT a stone mace or gauntlet, NOT orbiting pebbles, NOT stone skin (other spells own those)."),
+    'seot': ('A4m', "THE SPELL 섯 (METAL, on the brush, cuts - the PEAK of this book): " + B6_A4M + " METAL: mirror steel and white-gold light, sparks. NOT a single crescent blade on the shaft, NOT a chakram, NOT a steel lotus (other spells own those)."),
+    'eot': ('A4', "THE SPELL 엇 (WATER, on the brush, cuts): " + B6_A4 + " WATER: a blade of rushing clear blue-green water along the brush, its edge a thin bright film, spray; the exposed bear is SOAKED. NOT a whirlpool disc shield, NOT water simply flowing down the shaft, NOT water beads (other spells own those)."),
+    'got': ('F4', "THE SPELL 곳 (WOOD, fan, cuts): " + B6_F4 + " WOOD: razor grass, reeds, leaf blades, thin whipping vines, jade light; on the exposed seams vines BIND the bears. NOT a forest of bamboo shoots, NOT creeping roots, NOT seed pods (other spells own those)."),
+    'not': ('F4', "THE SPELL 놋 (FIRE, fan, cuts): " + B6_F4 + " FIRE: white-hot cutting flame, molten gouges, burning ink; the exposed seams BURN. NOT a dragon-breath cone of flame, NOT a spilling flame tide, NOT fire seals on the ground (other spells own those)."),
+    'mot': ('F4', "THE SPELL 못 (EARTH, fan, cuts): " + B6_F4 + " EARTH: a sweeping edge of compressed sand, slate, flint, grit; the exposed bears are SHOVED back. NOT a wave of rising slabs, NOT plough furrows, NOT a rising earth giant (other spells own those)."),
+    'sot': ('F4m', "THE SPELL 솟 (METAL, fan, cuts - the PEAK of this book): " + B6_F4M + " METAL: mirror steel, white-gold light, sparks. NOT a fan of flying knives, NOT small curved blades springing out of seeds, NOT a cloud of metal dust (other spells own those)."),
+    'ot': ('F4', "THE SPELL 옷 (WATER, fan, cuts): " + B6_F4 + " WATER: a thin sweeping sheet or jets of clear blue-green water with ink in it, spray; the exposed bears are SOAKED. NOT a curling wave, NOT a spilling flood, NOT dew beads (other spells own those)."),
+    'gut': ('R4', "THE SPELL 굿 (WOOD, ring, cuts): " + B6_R4 + " WOOD: a living cutting ring - taut razor vine, leaf blades, thorns, jade light; on the exposed seams vines BIND the bears. NOT a crown of thorns rising, NOT roots racing outward, NOT a circle of seeds (other spells own those)."),
+    'nut': ('R4', "THE SPELL 눗 (FIRE, ring, cuts): " + B6_R4 + " FIRE: a white-hot molten line of cutting flame, heat shimmer, burning ink; the exposed seams BURN. NOT a wall of fire, NOT a fuse running along vines, NOT a circle of embers (other spells own those)."),
+    'mut': ('R4', "THE SPELL 뭇 (EARTH, ring, cuts): " + B6_R4 + " EARTH: a sharp circular edge of rock, flint, grit and sand; the exposed bears are SHOVED back. NOT a rolling earth mound ring, NOT radial fissures, NOT a stone rampart platform (other spells own those)."),
+    'sut': ('R4', "THE SPELL 숫 (METAL, ring, cuts - the PEAK of this book): " + B6_R4M + " METAL: mirror steel, white-gold light, sparks. NOT a spinning saw of knives, NOT a thin thread just above the ground, NOT spokes of light shooting outward (other spells own those)."),
+    'ut': ('R4', "THE SPELL 웃 (WATER, ring, cuts): " + B6_R4 + " WATER: a thin cutting curtain or racing line of clear blue-green water with ink in it, spray; the exposed bears are SOAKED. NOT geyser pillars, NOT outward ripples, NOT water beads (other spells own those)."),
+}
+B6_GAME = {'P4': 'Fire', 'P4m': 'Metal', 'A4': 'Fire', 'A4m': 'Metal', 'F4': 'Fire', 'F4m': 'Metal', 'R4': 'Fire'}
+B6_VARIANTS = {
+    'gat_a': ('gat', "VARIANT A - razor vine whip: a whip-thin serrated vine with leaf-blade edges cracks along the path low over the ground like a lash, the stone wall falls apart in two halves where it passed, and at the bear it coils and rips the crystal plates off its chest and back; jade vines dig into the open seam and bind its legs."),
+    'gat_b': ('gat', "VARIANT B - bamboo blade run: a row of sharpened bamboo blades bursts up out of the ground one after another along the path like a running saw, the wall split down the middle by them, the last blade slicing up across the bear and flinging its armour off; vines wrap the exposed seam."),
+    'nat_a': ('nat', "VARIANT A - fire sickle: a huge thin crescent sickle of white-hot fire skims low along the path, the wall's two halves glowing molten red at the cut, the sickle hooks across the bear and tears its crystal armour off in burning shards; the open seam on its body keeps burning."),
+    'nat_b': ('nat', "VARIANT B - cutting torch line: a razor-thin white-hot line of flame races along the ground like a cutting torch, leaving a glowing molten gouge, slicing the wall in two (molten cut faces, dripping) and flaring up the bear's front, its armour bursting off; the seam burns."),
+    'mat_a': ('mat', "VARIANT A - stone cleaver: a giant flat blade of grey rock rises edge-up out of the ground and sweeps along the path like a cleaver, splitting the wall in two with a burst of grit, then smashes up under the bear, its armour plates blasting off and the bear shoved back hard."),
+    'mat_b': ('mat', "VARIANT B - skimming stone disc: a spinning flat disc of slate skims along the ground on edge, gouging a deep straight trench, slicing through the wall in a spray of grit, and slamming into the bear: its crystal armour shatters off and it is shoved back."),
+    'sat_a': ('sat', "VARIANT A - one line of light: a single needle-thin line of white-gold steel light pierces straight through the wall and all three bears at once, frozen in the instant: each bear's crystal armour bursting off in turn along the line (the first one the most violently), sparks streaming from every contact, the second wall split in two."),
+    'sat_b': ('sat', "VARIANT B - mirror lance: a long mirror-steel lance of light thrusts along the path and runs the three bears through like a skewer of light, their armour peeling off in a chain of sparks, both walls split, a fading afterimage of the thrust trailing back to the brush tip."),
+    'sat_c': ('sat', "VARIANT C - shearing wind: a long horizontal crescent of steel shears along the path through everything in it, the walls and the three bears' armour sliced in sequence, a long thin afterimage of the crescent lingering."),
+    'at_a': ('at', "VARIANT A - waterjet: a high-pressure jet of water, thin as a wire, shoots along the path like an industrial waterjet cutter, slicing the wall in two with spray fanning off both cut edges, and blasting the bear's crystal armour off in a burst of water; the bear stands soaked and exposed."),
+    'at_b': ('at', "VARIANT B - water crescent: a thin crescent blade of clear water flung from the brush skims along the path, cutting the wall in two (water sheeting down the cut faces) and slashing across the bear, its armour flying off in a splash; it drips, soaked."),
+    'geot_a': ('geot', "VARIANT A - thorn saw: a serrated saw of living thorny wood grows along the brush shaft; the caster's swing rips through the sill at the feet (two halves falling apart) and across the bear, tearing its crystal plates off, jade vines snaking into the seam and binding it."),
+    'geot_b': ('geot', "VARIANT B - leaf glaive: huge razor leaf-blades sprout at the brush head like a glaive of leaves; the swing leaves a long jade crescent, the sill split in two, the bear's armour sheared off and vines binding it."),
+    'neot_a': ('neot', "VARIANT A - flame sword: the brush becomes a long blade of white-hot flame with a burning ink edge; the swing leaves a molten crescent, the sill sliced in two with glowing molten faces, the bear's armour flung off in burning shards, its seam burning."),
+    'neot_b': ('neot', "VARIANT B - red-hot edge: the brush head glows like red-hot iron fresh from the forge with a thin white edge, trailing sparks; the swing cuts the sill (the halves glowing at the cut) and the bear's armour bursts off, the seam smouldering."),
+    'meot_a': ('meot', "VARIANT A - stone greatsword: rock crusts the brush into a massive jagged stone cleaver; the swing smashes through the sill in a burst of grit (two halves toppling apart) and strikes the bear, its armour plates blasting off as it is shoved back."),
+    'meot_b': ('meot', "VARIANT B - obsidian edge: a thin blade of black volcanic glass with a sharp amber-lit edge grows along the brush; the swing leaves a dark glassy crescent, cuts the sill clean, the bear's crystal armour shatters off and it is thrown back."),
+    'seot_a': ('seot', "VARIANT A - twin-ended blade: mirror-steel blades jut from BOTH ends of the great brush; the caster spins it and two crescents slash at once, one ahead (the sill and the block ahead-right cut in two, the bear's armour flying off) and one behind (the block behind cut in two), sparks everywhere."),
+    'seot_b': ('seot', "VARIANT B - mirrored strokes: one swing of a steel-edged brush leaves a white-gold crescent ahead AND a mirrored steel crescent behind the caster at the same instant, like an X seen from above; every block on both sides falls apart and the bear's armour peels off."),
+    'seot_c': ('seot', "VARIANT C - spinning steel: the caster whirls the double-bladed brush in a full circle, a ring-shaped afterimage of steel around the caster, every block in reach split and the bear's armour sheared away."),
+    'eot_a': ('eot', "VARIANT A - water blade: a blade of rushing clear water runs along the brush, its edge a thin bright film; the swing flings a crescent sheet of water that slices the sill in two and tears the bear's armour off in a splash; it is soaked."),
+    'eot_b': ('eot', "VARIANT B - water whip-blade: a long thin ribbon of high-pressure water lashes from the brush tip like a whip with a cutting edge, the sill split, the bear's armour blasted off, spray everywhere."),
+    'got_a': ('got', "VARIANT A - scything grass: with one swing a wave of razor-sharp grass and reed blades scythes across the whole fan, leaving several parallel gouged lines in the ground, the wall cut in two, both bears' armour shredded off and green vines binding them."),
+    'got_b': ('got', "VARIANT B - fan of lashes: a fan of whip-thin jade vines lashes out from the brush across the fan, each lash leaving a gouge in the ground, the wall cut through, both bears stripped and bound."),
+    'not_a': ('not', "VARIANT A - fire claw rake: five parallel claw slashes of white-hot flame rake across the fan, each leaving a molten glowing gouge in the ground, the wall cut into glowing halves, both bears' armour torn off in burning shards."),
+    'not_b': ('not', "VARIANT B - burning crescent sweep: one wide thin crescent of flame sweeps across the fan like a scythe, a molten gouge following it, the wall sliced, both bears' armour burned and flung off."),
+    'mot_a': ('mot', "VARIANT A - sand scythe: a sweeping crescent blade of compressed sand and grit cuts across the fan, the ground gouged in a long arc, the wall split in two in a burst of dust, both bears' armour blasted off and the bears shoved back."),
+    'mot_b': ('mot', "VARIANT B - slate fan: a fan of thin slate blades is flung low across the area like a thrown hand of cards, each one gouging the ground, the wall sliced through, the bears' armour shattering off as they are shoved back."),
+    'sot_a': ('sot', "VARIANT A - palisade of swords: the sweep cuts the fan and along each gouged crack line a row of tall straight mirror-steel sword blades stands up out of the ground like a palisade (they stay, glinting); the wall is in two halves, both bears' armour sheared off, and the third bear walking in is being cut by the standing blades, sparks."),
+    'sot_b': ('sot', "VARIANT B - steel fins: the sweep cuts the fan and huge curved steel fins rise out of the gouged cracks like the backs of steel fish breaching the ground; the wall is cut in two, the bears stripped, the walking bear sliced by a fin."),
+    'sot_c': ('sot', "VARIANT C - standing edge lines: every gouged crack line across the fan is lined with a thin upright razor edge of white-gold steel standing knee-high out of the ground, a field of glinting lines; the wall cut, the bears stripped, the walker cut as it steps in."),
+    'ot_a': ('ot', "VARIANT A - water scythe: a broad thin sheet of water sweeps across the whole fan like a scythe blade, cutting a long arc into the ground, the wall sliced (water sheeting off the cut faces), both bears' armour washed off in a burst of spray, soaked."),
+    'ot_b': ('ot', "VARIANT B - water needles: a fan of high-pressure needle-thin water jets fires across the area, each jet scoring a line in the ground, the wall cut into halves, the bears' armour blasted off, spray and mist."),
+    'gut_a': ('gut', "VARIANT A - barbed vine ring: a taut ring of living razor thorn-vine stretched just above the ground circles the caster like barbed wire, glinting jade; the bear stepping over it is lashed, its crystal armour shredded off and vines whipping round its legs; the stone wall on the ring is cut in two."),
+    'gut_b': ('gut', "VARIANT B - leaf-blade ring: a circle of upright razor leaf blades stands along the ring; the bear crossing it is shredded of its armour and bound by tendrils; the wall on the ring is split."),
+    'nut_a': ('nut', "VARIANT A - molten ring cut: a perfect circle is burned into the ground as a thin white-hot molten line with heat shimmer above it; the bear stepping over it flares up, its armour bursting off in burning shards, its seam burning; the wall on the ring is cut into two glowing halves."),
+    'nut_b': ('nut', "VARIANT B - fire wire: a thin taut wire of white-hot flame hangs knee-high round the caster; the bear crossing it is sliced, its armour flung off burning; the wall on the ring is cut through."),
+    'mut_a': ('mut', "VARIANT A - flint ring: a sharp circular lip of flint and grey rock rises knee-high out of a gouged circular trench round the caster like a stone knife edge; the bear stepping over it is cut, its armour shattering off, shoved back; the wall on the ring split in two."),
+    'mut_b': ('mut', "VARIANT B - sand ring blade: a thin standing ring of whirling compressed sand cuts round the caster like a grinding blade; the crossing bear's armour is ground off and it is thrown back; the wall on the ring cut."),
+    'sut_a': ('sut', "VARIANT A - buried blade ring: a perfect circle is cut deep into the ground and a mirror-steel edge stands up out of it all the way round like a giant ring blade buried edge-up; the wall on the ring is sheared in two, the crossing bear's armour stripped in a shower of sparks."),
+    'sut_b': ('sut', "VARIANT B - falling halo: a huge circular blade of white-gold steel light descends from above like a halo and cuts its circle into the ground round the caster, shearing the wall in two; the bear crossing the ring is stripped bare."),
+    'sut_c': ('sut', "VARIANT C - guillotine ring: a ring of tall thin upright steel plates stands round the caster like a circle of guillotine blades, glinting; the wall on the ring cut, the crossing bear's armour sheared."),
+    'ut_a': ('ut', "VARIANT A - water curtain ring: a thin standing curtain of rushing water knee-high circles the caster like a circular blade; the bear stepping through it has its armour washed and sheared off, soaked; the wall on the ring is cut in two, water sheeting down the cut faces."),
+    'ut_b': ('ut', "VARIANT B - racing water line: a thin line of water races round the ring at high speed, cutting a channel into the ground; the bear crossing it is slashed by a spray of water, its armour blasted off; the wall cut through."),
+}
+
+
+def prompt_b6(vid):
+    spell, var = B6_VARIANTS[vid]
+    tmpl, text = B6_SPELLS[spell]
+    return '\n\n'.join([HEAD, B6_REF[tmpl] + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B6_OUT / f'{vid}.png')])
+
+
 def prompt_b5(vid):
     spell, var = B5_VARIANTS[vid]
     tmpl, text = B5_SPELLS[spell]
@@ -455,6 +565,8 @@ def prompt_b1(vid):
 
 
 def prompt(vid):
+    if vid in B6_VARIANTS:
+        return prompt_b6(vid)
     if vid in B5_VARIANTS:
         return prompt_b5(vid)
     if vid in B4_VARIANTS:
@@ -473,10 +585,13 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def out_of(vid):
-    return B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
+    return B6_OUT if vid in B6_VARIANTS else B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
 
 
 def game_of(vid):
+    if vid in B6_VARIANTS:
+        tmpl = B6_SPELLS[B6_VARIANTS[vid][0]][0]
+        return Path(str(_B6_FRAME).format(t=tmpl[:2], b=B6_GAME[tmpl]))
     if vid in B5_VARIANTS:
         return B5_GAME[B5_SPELLS[B5_VARIANTS[vid][0]][0]]
     if vid in B4_VARIANTS:
@@ -501,7 +616,7 @@ def recover(vid, started):
             if p.exists():
                 cand.append(p)
     # batch 5: never the newest-file guess (batch 4's son_a / nun_b took another variant's picture) - only a path this variant's own log printed
-    if not cand and GEN.exists() and vid not in B5_VARIANTS:
+    if not cand and GEN.exists() and vid not in B5_VARIANTS and vid not in B6_VARIANTS:
         cand = sorted([p for p in GEN.rglob('*.png') if p.stat().st_mtime >= started], key=lambda p: p.stat().st_mtime)[-1:]
         if cand:
             print('WARN newest-file recovery for', vid, cand[-1])
@@ -515,7 +630,7 @@ def recover(vid, started):
 def main():
     batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
     args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
-    pool = B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
+    pool = B6_VARIANTS if batch == 'b6' else B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
     vids = [v for v in pool if not args or v in args]
     for v in vids:
         out_of(v).mkdir(parents=True, exist_ok=True)
