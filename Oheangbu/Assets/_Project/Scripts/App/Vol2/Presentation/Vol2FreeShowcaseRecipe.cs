@@ -237,7 +237,8 @@ namespace Oheangbu.App
                 // batch 2: the guard (ㅓ) and the ward (ㅜ) motions of the bridge, from the clip's start (as Vol2LegacyRecipeBase plays them)
                 var frame = inst.Log.Glyph.Frame;
                 // batch 4: the ㅓ 번진다 dresses the caster for its 6 s attachment and swings like 남긴다 (Self), as the bridge's own LegacyKind for an attachment
-                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
+                // batch 5: the ㅓ 심는다 plants its seed on the caster's own body (no parry window): Self too
+                var kind = frame == Frame.Fan ? Vol2LegacyKind.Area : frame == Frame.Attachment && (inst.Log.Glyph.Verb == Verb.Leave || inst.Log.Glyph.Verb == Verb.Spread || inst.Log.Glyph.Verb == Verb.Seed) ? Vol2LegacyKind.Self : frame == Frame.Attachment ? Vol2LegacyKind.Guard : frame == Frame.Ring ? Vol2LegacyKind.Ward : Vol2LegacyKind.Single;
                 legacy.Swing(new Vol2LegacySwing
                 {
                     Letter = inst.Log.Glyph.Letter, Body = inst.Log.Glyph.Body, Kind = kind,

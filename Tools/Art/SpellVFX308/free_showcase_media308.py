@@ -94,10 +94,42 @@ B4_SPELLS = [
 ]
 
 
+# batch 5 (2026-10-27, D308-150 V12): --batch b5 -> free_showcase/batch5/<round>/ (심는다: the cast, the seed waiting, the trigger, the exits by end reason).
+# Same streamed writer; the trigger (the capture's LAB-SIMULATED step: a follow-up hit / the player hit / a walk-in / a crossing / the caster on the band)
+# is replayed at 0.5x from 0.15 s before to 0.9 s after it. Folders carry seed=1 (_b5) or the expiry demo seed=expire (_b5x). Keys ending in 'x' = the demo.
+B5_SPELLS = [
+    ('gam', 'P3_bridge4_b5_Wood_red', ['gam_a.png'], '감 · 목 · ㅏ 경로 · 심는다 — 지나는 적 셋에 덩굴 씨앗(8초 대기), 후속 직접 명중 · 갈무리에 작동해 붙든다, 아니면 시든다'),
+    ('nam', 'P3_bridge4_b5_Fire_red', ['nam_b.png'], '남 · 화 · ㅏ 경로 · 심는다 — 지나는 적 셋에 불 씨앗(8초 대기), 후속 직접 명중 · 갈무리에 작동해 데운다(2초 화상), 아니면 재로'),
+    ('mam', 'P3_bridge4_b5_Earth_red', ['mam_c.png'], '맘 · 토 · ㅏ 경로 · 심는다 극치 — 흙 씨앗이 후속 직접 명중 · 갈무리에 작동해 적을 땅에 짓누른다(이동 불가 1.5초 + 대피해)'),
+    ('sam', 'P3_bridge4_b5_Metal_red', ['sam_b.png'], '삼 · 금 · ㅏ 경로 · 심는다 — 지나는 적 셋에 쇠날 씨앗(8초 대기), 후속 직접 명중 · 갈무리에 작동해 벤다, 아니면 쨍 끊김'),
+    ('am', 'P3_bridge4_b5_Water_red', ['am_b.png'], '암 · 수 · ㅏ 경로 · 심는다 — 지나는 적 셋에 물 씨앗(8초 대기), 후속 직접 명중 · 갈무리에 작동해 적신다(4초), 아니면 흘러내림'),
+    ('geom', 'A3_bridge4_b5_Wood_red', ['geom_a.png'], '검 · 목 · ㅓ 부착 · 심는다 — 내 몸에 덩굴 씨앗(8초), 내가 맞으면 작동해 둘레 2 m를 붙든다(피해는 그대로)'),
+    ('neom', 'A3_bridge4_b5_Fire_red', ['neom_a.png'], '넘 · 화 · ㅓ 부착 · 심는다 — 내 몸에 불 씨앗(8초), 내가 맞으면 작동해 둘레 2 m를 데운다(피해는 그대로)'),
+    ('meom', 'A3_bridge4_b5_Earth_red', ['meom_b.png'], '멈 · 토 · ㅓ 부착 · 심는다 극치 — 내 몸의 흙 씨앗이 내가 맞을 때 작동: 둘레 2 m 흙 솟음 밀침 + 그 피격의 경직 면제'),
+    ('seom', 'A3_bridge4_b5_Metal_red', ['seom_b.png'], '섬 · 금 · ㅓ 부착 · 심는다 — 내 몸에 쇠날 씨앗(8초), 내가 맞으면 작동해 둘레 2 m를 벤다(피해는 그대로)'),
+    ('eom', 'A3_bridge4_b5_Water_red', ['eom_a.png'], '엄 · 수 · ㅓ 부착 · 심는다 — 내 몸에 물 씨앗(8초), 내가 맞으면 작동해 둘레 2 m를 적신다(피해는 그대로)'),
+    ('gom', 'F3_bridge4_b5_Wood_red', ['gom_b.png'], '곰 · 목 · ㅗ 면 · 심는다 — 앞 부채꼴에 덩굴 씨앗(8초), 적이 들어오면 작동해 안의 적을 붙든다'),
+    ('nom', 'F3_bridge4_b5_Fire_red', ['nom_b.png'], '놈 · 화 · ㅗ 면 · 심는다 — 앞 부채꼴에 불 씨앗(8초), 적이 들어오면 작동해 안의 적을 데운다'),
+    ('mom', 'F3_bridge4_b5_Earth_red', ['mom_a.png'], '몸 · 토 · ㅗ 면 · 심는다 극치 — 흙 거인이 웅크려 기다리다(8초) 적이 오면 한 번 내려찍고 무너져 토 재료 면(10초)이 된다'),
+    ('som', 'F3_bridge4_b5_Metal_red', ['som_a.png'], '솜 · 금 · ㅗ 면 · 심는다 — 앞 부채꼴에 쇠날 씨앗(8초), 적이 들어오면 작동해 안의 적을 벤다'),
+    ('om', 'F3_bridge4_b5_Water_red', ['om_a.png'], '옴 · 수 · ㅗ 면 · 심는다 — 앞 부채꼴에 물 씨앗(8초), 적이 들어오면 작동해 안의 적을 적신다'),
+    ('gum', 'R3_bridge4_b5_Wood_red', ['gum_a.png'], '굼 · 목 · ㅜ 둘레 · 심는다 — 2 m 고리에 덩굴 씨앗(8초), 적이 고리를 넘으면 작동해 붙든다'),
+    ('num', 'R3_bridge4_b5_Fire_red', ['num_a.png'], '눔 · 화 · ㅜ 둘레 · 심는다 — 2 m 고리에 불 씨앗(8초), 적이 고리를 넘으면 작동해 데운다'),
+    ('mum', 'R3_bridge4_b5_Earth_red', ['mum_b.png'], '뭄 · 토 · ㅜ 둘레 · 심는다 극치 — 고리의 흙 씨앗이 내가 올라서면 땅으로 굳는다(8초): 고리 안 적 돌진 · 도약 차단'),
+    ('sum', 'R3_bridge4_b5_Metal_red', ['sum_b.png'], '숨 · 금 · ㅜ 둘레 · 심는다 — 2 m 고리에 쇠날 씨앗(8초), 적이 고리를 넘으면 작동해 벤다'),
+    ('um', 'R3_bridge4_b5_Water_red', ['um_a.png'], '움 · 수 · ㅜ 둘레 · 심는다 — 2 m 고리에 물 씨앗(8초), 적이 고리를 넘으면 작동해 적신다'),
+]
+
+
 def b3_main(rnd, ages, cuts, only, batch='b3'):
     import imageio_ffmpeg
-    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch4' if batch == 'b4' else 'batch3'))
-    spells = B4_SPELLS if batch == 'b4' else B3_SPELLS
+    base = REPO / ('Art/SpellVFX308/Vol2Vfx/free_showcase/' + ('batch5' if batch == 'b5' else 'batch4' if batch == 'b4' else 'batch3'))
+    spells = B5_SPELLS if batch == 'b5' else B4_SPELLS if batch == 'b4' else B3_SPELLS
+    if batch == 'b5' and '--demo' in sys.argv:
+        # the expiry demos (seed=expire): the same glyphs, the _b5x folders, keys + 'x'
+        spells = [(k + 'x', f.replace('_b5_', '_b5x_'), c, t.split(' — ')[0] + ' — 작동 없이 수명 끝(시연: 조건이 오지 않음)') for k, f, c, t in B5_SPELLS]
+        # + the 信 demo (seedhold=1): a letter drawn mid-wait holds the waiting seeds (the hub's own pause; their expiry moves out by it)
+        spells += [(k + 'h', f.replace('_b5_', '_b5h_'), c, t.split(' — ')[0] + ' — 信: 글자를 쓰는 동안 대기 시계 멈춤(시연)') for k, f, c, t in B5_SPELLS]
     concepts = base / 'concepts'
     frames_root = base / rnd / 'frames'
 
@@ -106,7 +138,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
         g.send(None)
         return g
 
-    combined_name = 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
+    combined_name = ('free_showcase_batch5_demo_all.mp4' if '--demo' in sys.argv else 'free_showcase_batch5_all.mp4') if batch == 'b5' else 'free_showcase_batch4_all.mp4' if batch == 'b4' else 'free_showcase_batch3_all.mp4'
     combined = None if only else open_writer(base / rnd / combined_name)
     for key, folder, cons, text in spells:
         if only and key not in only:
@@ -118,7 +150,7 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
             rs = [r for r in csv.DictReader(f) if r.get('video') == '1' and (d / ('f_%05d.jpg' % int(r['frame']))).exists()]
         if not rs:
             print('NO VIDEO FRAMES', key); continue
-        cut = cuts.get(key, 1.8)
+        cut = cuts.get(key, 1.1 if batch == 'b5' else 1.8)
         name = text.split(' — ')[0]
         # side by side at the asked ages
         for i, age in enumerate(ages.get(key, [1.2])):
@@ -149,6 +181,14 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
         for r in cast:
             send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + ' · 시전 0.5×', 't = %s s' % r['ageSec']), 2)
         jumped, jump_note, jump_left = False, '', 0
+        # batch 5: the trigger step's age (the first LAB-SIMULATED step that is not the 信 drawing) - replayed at 0.5x around it
+        trig = None
+        if batch == 'b5':
+            for r in rs:
+                n = r.get('note', '') or ''
+                if 'LAB-SIMULATED' in n and 'drawn' not in n and 'drawing' not in n and 'JUMP' not in n:
+                    trig = float(r['ageSec']); break
+        fired = False
         for r in rest:
             note = r.get('note', '') or ''
             if 'JUMP' in note:
@@ -159,6 +199,14 @@ def b3_main(rnd, ages, cuts, only, batch='b3'):
                 jump_left -= 1
             if 'LAB-SIMULATED' in note:
                 sub += '   [' + note.replace('LAB-SIMULATED: ', '실험실 연출: ')[:60] + ']'
+            age = float(r['ageSec'])
+            if batch == 'b5':
+                if trig is not None and age >= trig - 0.15:
+                    fired = True
+                slow = trig is not None and trig - 0.15 <= age <= trig + 0.9 and not jumped
+                phase = (' · 작동 0.5×' if slow else ' · 작동 뒤 1×') if fired else ' · 씨앗 대기 1×'
+                send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + phase, sub), 2 if slow else 1)
+                continue
             send(label(Image.open(d / ('f_%05d.jpg' % int(r['frame']))).resize((W, H)), name + (' · 번짐 · 자국 1×' if batch == 'b4' else ' · 남은 것 1×'), sub))
         one.close()
         print('mp4', key, len(cast), 'cast frames +', len(rest), 'lasting frames')
@@ -298,7 +346,7 @@ def title(concept, text, seconds=1.5, fps=60):
 
 
 def main():
-    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4'):
+    if '--batch' in sys.argv and sys.argv[sys.argv.index('--batch') + 1] in ('b3', 'b4', 'b5'):
         b3_entry()
         return
     rnd = sys.argv[1]

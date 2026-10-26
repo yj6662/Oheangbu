@@ -234,6 +234,21 @@ def mat_pass():
         print('preview', out)
 
 
+def b5():
+    """batch 5 (2026-10-27: 심는다): two KCISA seal stamps for the waiting seeds (read only, whole pattern - both are bold solid motifs that read as a
+    seal / 낙관): Pattern_25 (a square fret 亞-like seal in a circle) -> fs_seal25, Pattern_8 (a bold round floral seal) -> fs_seal8. Only these are written (--b5)."""
+    from PIL import Image as _I
+    _I.MAX_IMAGE_PIXELS = None
+    for n in (25, 8):
+        src = REPO / f'Oheangbu/Assets/KoreanTraditionalPattern_Effect/Textures/TraditionalTexture/Pattern_{n}.png'
+        im = _I.open(src).convert('RGBA').resize((512, 512), _I.LANCZOS)
+        a = np.asarray(im).astype(np.float64)[..., 3] / 255.0
+        save(f'fs_seal{n}.png', rgba(np.clip(a, 0, 1)))
+
+
+if '--b5' in __import__('sys').argv:
+    b5()
+    raise SystemExit(0)
 if '--mat' in __import__('sys').argv:
     mat_pass()
     raise SystemExit(0)

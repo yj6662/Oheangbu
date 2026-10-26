@@ -327,6 +327,109 @@ B4_VARIANTS = {
 }
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+# batch 5 (2026-10-27, D308-150 V12, the user's order of 10-26: "...그다음 글자별 폴리싱, 그다음 묶음 5로 가자."): the ㅁ book 심는다 - nothing is struck at the
+# cast: a dormant SEED of the element is planted and WAITS (8 s), works ONCE when its own condition comes (then bursts), or withers when it never comes.
+# P3 감 남 맘 삼 암 · A3 검 넘 멈 섬 엄 · F3 곰 놈 몸 솜 옴 · R3 굼 눔 뭄 숨 움 (peaks: 맘 멈 몸 뭄 = earth).
+#   python Tools/Art/SpellVFX308/concept_free_showcase308.py --batch b5 [--run] [--wave 6] [ids]
+# Picture 1 = the real gameplay frame of the template's own capture (batch5/r0 f_00000, cast camera A on, capture option seed=1).
+B5_OUT = REPO / 'Art/SpellVFX308/Vol2Vfx/free_showcase/batch5/concepts'
+B5_GAME = {t: REPO / f'Art/SpellVFX308/Vol2Vfx/free_showcase/batch5/r0/frames/{t}_bridge4_b5_Fire_red/f_00000.jpg' for t in ('P3', 'A3', 'F3', 'R3')}
+_B5_SCENE = """Picture 1 is a REAL frame of the game at its real gameplay camera: third-person, low, right behind the caster's back (the caster stands at the bottom centre, back to us, holding the great brush), a flat dark red-brown earth ground (the region 적로), a pale paper-beige misty sky, and %s. Paint the concept ON THIS VIEW: keep this camera height, angle and framing (you may raise the camera a little so the waiting seeds read), the same ground and sky, the bears at the places described. Picture 1 may have a dark ink-smoke cloud or a reddish blob in front of the caster: capture artefacts of another spell - remove them and paint the bears clean. The scene keeps its muted Korean ink-wash painted look."""
+B5_REF = {
+    'P3': '--- THE ATTACHED PICTURES ---\n' + _B5_SCENE % "THREE real enemies (dark matted bears with crusted crystal growths on their backs) in a loose line straight ahead along the spell's path: the FIRST about 4.6 metres ahead (just above the caster's head, it is hidden behind the smoke artefact in picture 1), the second about 6.6 metres ahead a little to the right, the third about 8.6 metres ahead a little to the left",
+    'A3': '--- THE ATTACHED PICTURES ---\n' + _B5_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs) VERY close: one about 1.2 metres ahead and a little to the right (rearing to strike the caster), one about 1.6 metres ahead on the left",
+    'F3': '--- THE ATTACHED PICTURES ---\n' + _B5_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs): one about 3.4 metres ahead, partly hidden behind the caster's left side, already standing in the fan; the other is the one that WALKS IN - in the picture it should be stepping into the fan from about 4 metres ahead on the right",
+    'R3': '--- THE ATTACHED PICTURES ---\n' + _B5_SCENE % "TWO real enemies (dark matted bears with crusted crystal growths on their backs): one about 2 metres ahead and a little to the right, already standing on the ring; the other is the one that CROSSES the ring - in the picture it should be stepping over the ring ahead-right, about 2 metres from the caster",
+}
+_SEED = ("It is a 'PLANTS A SEED' spell (심는다): NOTHING is struck when it is cast. Instead a small DORMANT SEED of the element is planted and WAITS (up to 8 seconds): it sits quietly, pulsing like a heartbeat or burning down like an incense fuse, so a player sees it is a primed thing that is counting down. It works ONCE, the instant its own condition comes - and then it BURSTS, the burst much bigger than the little seed. "
+         "If the condition never comes the seed just withers away. The seed is small and dormant; it is NOT a big standing structure left on the ground (other spells own those), NOT a mark left at the feet after a hit (other spells own those). "
+         "The picture must show at a glance BOTH the dormant waiting seed(s) AND the moment of the trigger.")
+B5_P3 = ("It flies along a narrow straight PATH through the bears in a line ahead and plants a seed ON each of the first three bears (lodged in the fur of its back or shoulder, small, glowing faintly, pulsing). " + _SEED +
+         " A bear's seed works when the caster's NEXT direct hit lands on THAT bear. Show the moment of that follow-up hit on the FIRST bear: its seed BURSTS open on it (the burst is clearly the seed's own, far bigger than the follow-up hit), while the seeds on the two farther bears are still dormant, pulsing, waiting.")
+B5_A3 = ("The seed is planted ON THE CASTER'S OWN BODY (the sleeve, the forearm and the brush shaft) - nothing in the world. " + _SEED +
+         " It works the next time the caster is really HIT and takes damage (not a parry, not a dodge): it bursts OUTWARD from the caster over a 2-metre circle and strikes every enemy that close. Show that moment: the very close bear's paw has just hit the caster (the caster takes the blow) and the seed on the caster's sleeve and brush BURSTS outward all around the caster, striking both close bears; fragments of the spent seed fly off the sleeve.")
+B5_F3 = ("The seed is planted over a fan-shaped area of ground in front of the caster (5 m deep, about 4 m wide at its far edge) as a scatter of small dormant seeds lying in the ground, waiting. " + _SEED +
+         " It works the instant an enemy WALKS INTO the fan: the whole fan bursts at once and strikes every enemy inside it. Show the moment the second bear steps into the fan: the eruption is spreading across the fan from where it stepped in, both bears inside are being struck; a few seeds at the far side are just about to burst.")
+B5_R3 = ("The seed is planted on a hollow circular band about 2 metres around the caster (a ring, not a filled disc - the caster stands in the empty middle) as a circle of small dormant seeds on the ground, waiting. " + _SEED +
+         " It works the instant an enemy CROSSES the band: the whole ring bursts at once and strikes every enemy on it. Show the moment the second bear steps over the ring: the eruption is racing round the ring from where it crossed, both bears on the ring are being struck.")
+B5_SPELLS = {
+    'gam': ('P3', "THE SPELL 감 (WOOD, path, plants): " + B5_P3 + " WOOD: a living seed - a burr, a bud, a seed pod with curled tendrils, jade light; the burst SNARES the bear (vines whip round its legs and hold it, slowed to half speed). NOT a thorn harpoon, NOT a branch cage around the legs, NOT vine arches between bears (other spells own those)."),
+    'nam': ('P3', "THE SPELL 남 (FIRE, path, plants): " + B5_P3 + " FIRE: an ember, a smouldering coal of burning ink, a small fire seal; the burst SCORCHES the bear (a heavy hit and it keeps burning 2 s). NOT a fire spear, NOT fire birds, NOT a burning charcoal tree (other spells own those)."),
+    'mam': ('P3', "THE SPELL 맘 (EARTH, path, plants - the PEAK of this book): " + B5_P3 + " BUT this is the peak: when the seed works, the bear is PRESSED INTO THE GROUND - an enormous weight of earth slams it down, the ground caves around its legs, it is pinned in place unable to move (1.5 s) and takes a heavy blow. EARTH: a heavy stone pebble, packed soil, dust, cracks; weighty. NOT a rolling boulder, NOT a crag of rock branches, NOT a running fault line (other spells own those)."),
+    'sam': ('P3', "THE SPELL 삼 (METAL, path, plants): " + B5_P3 + " METAL: a steel seed - needles, a tiny blade, a glinting shard, white-silver and pale gold light; the burst CUTS the bear once, fast (bright cut lines, sparks). NOT a thrown sword, NOT a thornbush of blades, NOT forked steel lightning (other spells own those)."),
+    'am': ('P3', "THE SPELL 암 (WATER, path, plants): " + B5_P3 + " WATER: a trembling droplet or bead of clear blue-green water with black ink swirling inside; the burst DRENCHES the bear (soaked 4 s, water pouring down). NOT a water orb that becomes a dome, NOT a coral fountain, NOT water rope arches (other spells own those)."),
+    'geom': ('A3', "THE SPELL 검 (WOOD, on my body, plants): " + B5_A3 + " WOOD: seed pods, buds and curled tendrils on the sleeve and shaft, jade light; the burst SNARES the close bears (vines whip out and bind them). NOT a bamboo cross guard, NOT a sapling embracing the caster, NOT a vine whirl on the brush (other spells own those)."),
+    'neom': ('A3', "THE SPELL 넘 (FIRE, on my body, plants): " + B5_A3 + " FIRE: smouldering embers and coals of burning ink seeded in the sleeve and shaft; the burst SCORCHES the close bears (they keep burning 2 s). NOT a fire wheel or peony, NOT a torch brush, NOT a burning sleeve that lasts (other spells own those)."),
+    'meom': ('A3', "THE SPELL 멈 (EARTH, on my body, plants - the PEAK of this book): " + B5_A3 + " BUT this is the peak: when it works, earth bursts up out of the ground in a 2-metre ring around the caster and SHOVES the close bears away, AND the caster does NOT flinch from the blow - for that one hit the caster's body is like stone (stone skin, feet rooted in the ground) and stands firm while still taking the damage. EARTH: stone, packed soil, dust, heavy. NOT a stone slab wall in front, NOT a stone mace or gauntlet (other spells own those)."),
+    'seom': ('A3', "THE SPELL 섬 (METAL, on my body, plants): " + B5_A3 + " METAL: fine steel needles or thin hidden blades glinting in the sleeve and along the shaft; the burst CUTS the close bears once, fast (a circle of bright slashes, sparks). NOT a crescent blade on the shaft, NOT a glaive of blades, NOT a chakram (other spells own those)."),
+    'eom': ('A3', "THE SPELL 엄 (WATER, on my body, plants): " + B5_A3 + " WATER: beads and a trembling film of clear blue-green water with ink swirling inside on the sleeve and shaft; the burst DRENCHES the close bears (soaked 4 s). NOT a whirlpool disc shield, NOT a water whip, NOT water flowing down the shaft (other spells own those)."),
+    'gom': ('F3', "THE SPELL 곰 (WOOD, fan, plants): " + B5_F3 + " WOOD: dormant seeds, buds, sprouts and curled tendrils in the ground, jade glints; the burst SNARES every bear in the fan (vines whip up and bind them). NOT a forest of bamboo shoots, NOT a growing grove that stays, NOT creeping runners (other spells own those)."),
+    'nom': ('F3', "THE SPELL 놈 (FIRE, fan, plants): " + B5_F3 + " FIRE: smouldering embers and coals of burning ink half-buried in the ground; the burst SCORCHES every bear in the fan (they keep burning 2 s). NOT a dragon-breath fan of flame, NOT a field of burning reeds, NOT a flame tide (other spells own those)."),
+    'mom': ('F3', "THE SPELL 몸 (EARTH, fan, plants - the PEAK of this book, the ONE summon): the seed planted in the fan is a GIANT: an earth giant (a hulking 3 to 4 metre golem of rock, packed soil and black ink, faint ember light in its cracks) crouches DORMANT in the fan like a mound of earth, waiting (up to 8 s). When an enemy comes near it rises and SMASHES DOWN ONCE with a huge fist (a heavy blow on every bear in the fan), then crumbles into a field of rubble that stays. Show the moment of the smash: the giant risen out of the ground in the fan, its fist slamming down on the bears, dust and rock exploding. EARTH: rock, soil, dust, heavy. NOT a wave of slabs, NOT basalt columns, NOT a plough of furrows (other spells own those)."),
+    'som': ('F3', "THE SPELL 솜 (METAL, fan, plants): " + B5_F3 + " METAL: glinting steel seeds - caltrops, needles, thin taut threads hidden in the ground, white-silver and pale gold light; the burst CUTS every bear in the fan once, fast. NOT a fan of flying knives, NOT a field of stakes with taut lines, NOT a cloud of metal dust (other spells own those)."),
+    'om': ('F3', "THE SPELL 옴 (WATER, fan, plants): " + B5_F3 + " WATER: dormant beads and little pools of clear blue-green water with ink swirling inside lying in the ground; the burst DRENCHES every bear in the fan (soaked 4 s). NOT a curling wave, NOT a marsh of twisting water pillars, NOT a spilling flood (other spells own those)."),
+    'gum': ('R3', "THE SPELL 굼 (WOOD, ring, plants): " + B5_R3 + " WOOD: a circle of dormant seeds, buds and curled sprouts in the ground, jade glints; the burst SNARES the bears on the ring (vines whip up and bind them). NOT a crown of thorns that rises at the cast, NOT tree pillars, NOT roots racing outward (other spells own those)."),
+    'num': ('R3', "THE SPELL 눔 (FIRE, ring, plants): " + B5_R3 + " FIRE: a circle of smouldering embers and coals of burning ink in the ground; the burst SCORCHES the bears on the ring (they keep burning 2 s). NOT a wall of fire on the ring, NOT torches standing on the ring, NOT a fuse running out along vines (other spells own those)."),
+    'mum': ('R3', "THE SPELL 뭄 (EARTH, ring, plants - the PEAK of this book): " + B5_R3.replace("It works the instant an enemy CROSSES the band: the whole ring bursts at once and strikes every enemy on it. Show the moment the second bear steps over the ring: the eruption is racing round the ring from where it crossed, both bears on the ring are being struck.", "") +
+            " BUT this is the peak: the seed does NOT work on an enemy - it works the instant the CASTER steps onto the ring: the ring HARDENS into solid ground for 8 seconds (a raised circular rampart and platform of stone the caster stands on), and the enemies inside it can no longer dash or jump (their feet are locked by stone, heavy stone rings or shackles on the ground round their paws). Show the moment the caster steps onto the ring and it turns to stone. EARTH: stone, packed soil, dust, heavy. NOT a rolling earth mound ring, NOT standing stones, NOT radial fissures (other spells own those)."),
+    'sum': ('R3', "THE SPELL 숨 (METAL, ring, plants): " + B5_R3 + " METAL: a circle of glinting steel seeds - needles, tiny blades, a thin taut thread just above the ground, white-silver and pale gold light; the burst CUTS the bears on the ring once, fast. NOT a spinning saw of knives, NOT swords planted in a circle, NOT spokes of light (other spells own those)."),
+    'um': ('R3', "THE SPELL 움 (WATER, ring, plants): " + B5_R3 + " WATER: a circle of dormant beads of clear blue-green water with ink swirling inside on the ground; the burst DRENCHES the bears on the ring (soaked 4 s). NOT geyser pillars standing round the ring, NOT a river flowing round the ring, NOT outward ripples (other spells own those)."),
+}
+B5_VARIANTS = {
+    'gam_a': ('gam', "VARIANT A - thorn burr: each bear carries a small thorny burr-seed caught in its fur, curled tendrils slowly uncurling and a faint jade pulse like a heartbeat; on the first bear the burr has exploded into a snare of whipping vines and leaves that coil round its legs and pin it, while the burrs on the two farther bears still pulse quietly."),
+    'gam_b': ('gam', "VARIANT B - fuse sprout: each bear has a glowing jade seed with a little sprout on it whose leaves close one by one like a clock; on the first bear the seed has burst into a knot of roots that lash down into the ground and tie the bear's legs to it, leaves and green sparks bursting; the seeds on the farther bears still sprout quietly."),
+    'nam_a': ('nam', "VARIANT A - ember in the fur: each bear carries a smouldering ember of burning black ink in the fur of its back, thin smoke threads rising and a slow orange glow breathing in it; on the first bear the ember has detonated into a column of roaring flame and burning ink that engulfs it, while the embers on the two farther bears still smoulder."),
+    'nam_b': ('nam', "VARIANT B - fire seal: a small round seal of fire (like a red seal stamp burning in the air) is pressed on each bear's flank, its rim burning down like incense; on the first bear the seal has burst into a blossom of flame and black ink petals, while the seals on the two farther bears still burn down slowly."),
+    'mam_a': ('mam', "VARIANT A - stone weight: each bear carries a small heavy dark pebble on its back with dust trickling upward from it; on the first bear the pebble has become an invisible crushing weight: the bear is slammed down flat, the ground caved into a crater around it, cracks and dust exploding outward, the bear pinned to its knees; the pebbles on the two farther bears still sit there, trembling."),
+    'mam_b': ('mam', "VARIANT B - earth hand: each bear has a small stone seed lodged on it; on the first bear a gigantic hand of earth and rock has burst out of the ground beneath it and closed over its back, pressing it down into the ground up to its legs, dust and soil bursting; the stone seeds on the two farther bears still sit, pulsing faintly."),
+    'mam_c': ('mam', "VARIANT C - falling slab: above each bear a small rough stone hangs in the air, slowly turning; above the first bear it has grown in an instant into a huge flat slab of rock that has slammed down on the bear and pressed it into the ground, the ground cracking into a ring of tilted plates, dust blasting out; the small stones above the two farther bears still hang there."),
+    'sam_a': ('sam', "VARIANT A - needle seeds: a cluster of fine steel needles is stuck in each bear, glinting in a slow rhythm; on the first bear the needles erupt into a starburst of thin bright blades slicing outward from inside the bear, white cut lines and a fountain of sparks; the needles on the two farther bears still glint quietly."),
+    'sam_b': ('sam', "VARIANT B - hovering blade: a small steel blade hovers vertically above each bear like a sword of judgement, slowly spinning; above the first bear it has dropped like lightning and cut the bear with a bright X-shaped slash, sparks and shards flying sideways; the blades above the two farther bears still hover and spin."),
+    'am_a': ('am', "VARIANT A - trembling droplet: a trembling droplet of clear water with black ink swirling inside clings to each bear's back; on the first bear it has burst into a heavy deluge, a crown of splash and water pouring down over the bear, soaking it; the droplets on the two farther bears still tremble."),
+    'am_b': ('am', "VARIANT B - bubble: a small floating bubble of water with ink inside drifts over each bear; over the first bear it has swollen and burst into a falling sheet of water that crashes over it, spray and foam everywhere; the bubbles over the two farther bears still float."),
+    'geom_a': ('geom', "VARIANT A - seed in the sleeve: a seed pod sits on the caster's sleeve with tendrils winding up the brush shaft; at the hit, the pod bursts and a ring of vines whips out across the ground in a 2 m circle and coils up both close bears' legs, leaves and splinters flying, pod husks falling off the sleeve."),
+    'geom_b': ('geom', "VARIANT B - bramble bracer: a bracer of buds and curled thorn sprouts wraps the caster's forearm and brush; at the hit it explodes outward as a burst of thorned vines lashing in every direction around the caster, snaring both close bears."),
+    'neom_a': ('neom', "VARIANT A - ember hem: smouldering embers are seeded along the caster's sleeve hem and brush shaft, glowing in a slow pulse; at the hit, they blast outward as a ring of fire around the caster (2 m), scorching both close bears, burning ink and embers flying."),
+    'neom_b': ('neom', "VARIANT B - fire charm: a small burning talisman of ink and fire is tied to the brush shaft, its edge burning down; at the hit it bursts into a nova of flame expanding from the caster, both bears caught in the fire blast."),
+    'meom_a': ('meom', "VARIANT A - stone skin: a small dormant stone seed sits on the caster's chest and arm; at the hit, the caster's skin and coat turn to grey stone for an instant (the blow lands and the caster stands rock-still, unflinching) and the ground around bursts up in a ring of earth that shoves both bears back; dust and rock everywhere."),
+    'meom_b': ('meom', "VARIANT B - rooted stance: the caster's feet are seeded with stone; at the hit, stone roots lock the caster's feet into the ground (the caster does not stagger) and a ring of jagged earth spikes bursts out around the caster, shoving the bears away."),
+    'meom_c': ('meom', "VARIANT C - stone shell: stone plates lie dormant on the caster's back and shoulders; at the hit they snap shut around the caster like armour (the caster stands firm) and the ground explodes outward in a heavy shockwave of soil and rock that hurls the bears back."),
+    'seom_a': ('seom', "VARIANT A - hidden blades: thin steel blades glint hidden in the caster's sleeve and along the shaft; at the hit, a circle of blades bursts out around the caster and slashes in a full 2 m ring, bright cut lines across both bears, sparks fanning out."),
+    'seom_b': ('seom', "VARIANT B - steel lotus: a closed bud of steel petals sits on the brush shaft; at the hit it opens in an instant into a lotus of razor steel petals around the caster, slicing both close bears, sparks and shards."),
+    'eom_a': ('eom', "VARIANT A - water bead: a bead of clear water with ink swirling inside rides on the brush shaft; at the hit it bursts into a ring wave of water racing out from the caster's feet, crashing over both close bears, spray everywhere."),
+    'eom_b': ('eom', "VARIANT B - water film: a trembling film of water coats the caster's sleeve; at the hit it explodes outward into a sphere of splash and spray around the caster, drenching both close bears, water pouring down."),
+    'gom_a': ('gom', "VARIANT A - seed bed: dozens of small dormant seeds and curled sprouts lie half-buried over the fan with faint jade glints; the bear stepping in has set them off: vines erupt across the fan in a wave from its feet, coiling round both bears, leaves bursting."),
+    'gom_b': ('gom', "VARIANT B - spore pods: round green pods lie dormant over the fan like closed buds; where the bear stepped in they burst open in a chain, each pod flinging out snaring tendrils and leaves, the chain racing across the fan to the other bear."),
+    'nom_a': ('nom', "VARIANT A - buried embers: smouldering embers lie half-buried over the fan, breathing orange; the bear stepping in has set them off: a carpet of flame erupts across the fan from its feet like a minefield going off, both bears engulfed."),
+    'nom_b': ('nom', "VARIANT B - fire seals: small round seals of fire are stamped over the fan ground like burning seal marks, rims burning down; where the bear stepped in they detonate one after another into geysers of fire and ink racing across the fan."),
+    'mom_a': ('mom', "VARIANT A - crouching giant: in the fan, an earth giant has risen from where it crouched dormant like a mound - a hulking figure of rock and soil with glowing cracks - and is bringing a huge fist down on the two bears, the ground exploding in rock and dust under the blow."),
+    'mom_b': ('mom', "VARIANT B - giant from the ground: the giant's torso and arms burst up out of the ground of the fan as if waking from earth, and its two-handed hammer blow comes down on the bears, cracking the fan into tilted plates."),
+    'mom_c': ('mom', "VARIANT C - ink and earth golem: a golem made of packed soil bound with thick black ink strokes stands up in the fan, one arm raised high, and smashes down on the bears, a shockwave of dust and black ink rolling out."),
+    'som_a': ('som', "VARIANT A - caltrops: tiny steel caltrops and needle seeds glint all over the fan; where the bear stepped in, a field of thin blades springs up out of the ground in a wave across the fan, slicing both bears, sparks spraying."),
+    'som_b': ('som', "VARIANT B - tripwires: razor-thin steel threads lie invisible over the fan, only glinting now and then; the bear has tripped them: the threads snap taut and whip up across the fan in bright lines, cutting both bears."),
+    'om_a': ('om', "VARIANT A - dew beads: beads of water with ink inside lie over the fan like dew; where the bear stepped in they burst upward into a chain of splashing jets racing across the fan, both bears drenched."),
+    'om_b': ('om', "VARIANT B - hidden pool: the fan ground glistens like a thin dark mirror of water; when the bear steps in, the water surges up out of the ground in a heaving swell that drenches both bears, spray and foam."),
+    'gum_a': ('gum', "VARIANT A - seed circle: a circle of dormant seeds and curled sprouts lies on the ring; where the bear stepped over it, vines lash up out of the ring and race round the circle, coiling round both bears on the ring."),
+    'gum_b': ('gum', "VARIANT B - root snare: a faint circle of roots lies just under the ground; the bear stepping over it has sprung it: the roots whip up into a snare that closes round the bears' legs, soil and leaves flying along the whole ring."),
+    'num_a': ('num', "VARIANT A - ember circle: a circle of smouldering embers lies on the ring, breathing orange; where the bear stepped over it, the embers erupt into a burst of fire fountains racing round the ring, scorching both bears on it."),
+    'num_b': ('num', "VARIANT B - fire mines: small fire seals sit on the ring like mines; the bear set one off and a chain of fire bursts runs round the circle, each one a spray of flame and burning ink, both bears on the ring scorched."),
+    'mum_a': ('mum', "VARIANT A - stone rampart: as the caster steps onto the ring, the ring rises into a low circular rampart of stone under the caster's feet; the bear inside is locked by stone rings that close round its paws, it cannot dash or jump."),
+    'mum_b': ('mum', "VARIANT B - stone platform: as the caster steps onto the ring, the whole ring and its inside harden and lift into a round stone platform, its rim carved like a seal; the bears inside are held by heavy stone shackles on the ground."),
+    'mum_c': ('mum', "VARIANT C - petrifying ground: as the caster steps onto the ring, a wave of hardening stone races round it, the soft earth turning to grey stone with glowing seams; the bear on it is frozen in place, stone creeping up its legs."),
+    'sum_a': ('sum', "VARIANT A - needle circle: a circle of fine steel needles stands in the ground on the ring, glinting; where the bear stepped over it, the needles spring up into a ring of blades that slashes round the circle, bright cut lines on both bears, sparks."),
+    'sum_b': ('sum', "VARIANT B - thread ring: a razor-thin steel thread hangs just above the ground round the ring, glinting; the bear tripped it and the thread snaps taut and whips up, cutting both bears with bright lines and sparks."),
+    'um_a': ('um', "VARIANT A - bead circle: a circle of trembling water beads with ink inside lies on the ring; where the bear stepped over it, the beads burst upward into a ring of splashes racing round the circle, both bears drenched."),
+    'um_b': ('um', "VARIANT B - water snare: a thin bright line of water lies on the ring; the bear crossed it and the water leaps up into a sheet that crashes over the bears from both sides, spray and foam round the circle."),
+}
+
+
+def prompt_b5(vid):
+    spell, var = B5_VARIANTS[vid]
+    tmpl, text = B5_SPELLS[spell]
+    return '\n\n'.join([HEAD, B5_REF[tmpl] + '\n' + B1_REF_TAIL, STYLE, '--- THE PICTURE ---\n' + text + '\n' + var, TAIL % (B5_OUT / f'{vid}.png')])
+
+
 def prompt_b4(vid):
     spell, var = B4_VARIANTS[vid]
     tmpl, text = B4_SPELLS[spell]
@@ -352,6 +455,8 @@ def prompt_b1(vid):
 
 
 def prompt(vid):
+    if vid in B5_VARIANTS:
+        return prompt_b5(vid)
     if vid in B4_VARIANTS:
         return prompt_b4(vid)
     if vid in B3_VARIANTS:
@@ -368,10 +473,12 @@ PNG_RE = re.compile(r'generated_images[\\/]+([0-9a-f-]+)[\\/]+([^\\/\'"\s]+?\.pn
 
 
 def out_of(vid):
-    return B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
+    return B5_OUT if vid in B5_VARIANTS else B4_OUT if vid in B4_VARIANTS else B3_OUT if vid in B3_VARIANTS else B2_OUT if vid in B2_VARIANTS else B1_OUT if vid in B1_VARIANTS else OUT
 
 
 def game_of(vid):
+    if vid in B5_VARIANTS:
+        return B5_GAME[B5_SPELLS[B5_VARIANTS[vid][0]][0]]
     if vid in B4_VARIANTS:
         return B4_GAME[B4_SPELLS[B4_VARIANTS[vid][0]][0]]
     if vid in B3_VARIANTS:
@@ -393,7 +500,8 @@ def recover(vid, started):
             p = GEN / m.group(1) / m.group(2)
             if p.exists():
                 cand.append(p)
-    if not cand and GEN.exists():
+    # batch 5: never the newest-file guess (batch 4's son_a / nun_b took another variant's picture) - only a path this variant's own log printed
+    if not cand and GEN.exists() and vid not in B5_VARIANTS:
         cand = sorted([p for p in GEN.rglob('*.png') if p.stat().st_mtime >= started], key=lambda p: p.stat().st_mtime)[-1:]
         if cand:
             print('WARN newest-file recovery for', vid, cand[-1])
@@ -407,7 +515,7 @@ def recover(vid, started):
 def main():
     batch = sys.argv[sys.argv.index('--batch') + 1] if '--batch' in sys.argv else None
     args = [a for i, a in enumerate(sys.argv[1:], 1) if not a.startswith('--') and not (i > 1 and sys.argv[i - 1] in ('--batch', '--wave'))]
-    pool = B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
+    pool = B5_VARIANTS if batch == 'b5' else B4_VARIANTS if batch == 'b4' else B3_VARIANTS if batch == 'b3' else B2_VARIANTS if batch == 'b2' else B1_VARIANTS if batch == 'b1' else VARIANTS
     vids = [v for v in pool if not args or v in args]
     for v in vids:
         out_of(v).mkdir(parents=True, exist_ok=True)

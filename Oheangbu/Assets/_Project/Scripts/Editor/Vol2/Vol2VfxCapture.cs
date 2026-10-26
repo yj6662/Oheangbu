@@ -210,7 +210,7 @@ namespace Oheangbu.EditorTools.Vol2
                 else templates.Add(t.Trim());
             }
             _out = "capture"; _mainLook = false; _realmMode = "lab"; MeasuredGround.Clear(); _videoPitch = 15f; _legacy = false;
-            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; _spreadB4 = false; AdapterBodies.Clear(); BridgeBodies.Clear();
+            _legacyFeed = false; _apex = null; _fed = 0; _fedMissing = 0; _wardBand = false; _pitch2 = 0f; _strokeFeed = false; _lasting = null; _walkIn = false; _endWith = Vol2MaterialEnd.None; _spreadB4 = false; _seedB5 = ""; _seedHold = false; AdapterBodies.Clear(); BridgeBodies.Clear();
             _burstCount = 0; _burstEvery = 0.65;
             var bodies = Bodies.ToList(); var backs = new List<string> { "red", "green" }; bool videoOnRed = true, videoAll = false; string variantOnly = null;
             for (int i = 1; i < parts.Length; i++)
@@ -235,6 +235,8 @@ namespace Oheangbu.EditorTools.Vol2
                 else if (k == "walkin") _walkIn = v.Trim() == "1";          // batch 3 (opt-in): a body walks onto the 남긴다 residue at 1.6 s (P1 / F1 / R1)
                 else if (k == "endwith") _endWith = (Vol2MaterialEnd)Enum.Parse(typeof(Vol2MaterialEnd), v.Trim(), true);   // batch 3 (opt-in): end the residue for this reason instead of the expiry jump
                 else if (k == "spread") _spreadB4 = v.Trim() == "1";       // batch 4 (opt-in): the 번진다 rows P2 / A2 / R2 with a third neighbour / 넌's second swing / 눈's staged wood (see Step4Job)
+                else if (k == "seed") _seedB5 = v.Trim() == "1" ? "show" : v.Trim() == "expire" ? "expire" : "";    // batch 5 (opt-in): the 심는다 rows with a visible wait / the expiry branch (see Step4Job)
+                else if (k == "seedhold") _seedHold = v.Trim() == "1";      // batch 5 (opt-in): LAB-SIMULATED drawing for 0.8 s mid-wait (信)
                 else if (k == "enemy") EnemyPrefab = "Assets/_Project/Art/Characters/Creatures308/PF_Creature308_" + v + ".prefab";
                 else if (k == "burst") { var nb = v.Split('/'); _burstCount = int.Parse(nb[0], Inv); if (nb.Length > 1) _burstEvery = double.Parse(nb[1], Inv); }
             }
@@ -450,6 +452,66 @@ namespace Oheangbu.EditorTools.Vol2
                 }
                 j.Variant += "_b4";
             }
+            // batch 5 free showcase (2026-10-27, opt-in seed=1|expire, defaults unchanged): the 심는다 rows P3 / A3 / F3 / R3 with a visible wait before the trigger,
+            // three bodies on the P3 path (the cap is three seeds: the two the follow-up does not reach wait to their expiry), or no trigger at all (the expiry branch)
+            if (_seedB5 != "" && v == 3)
+            {
+                bool expire = _seedB5 == "expire";
+                const double TriggerAt = 2.0;
+                var trigger = j.Steps.Find(s => s.Name.StartsWith("LAB-SIMULATED", StringComparison.Ordinal));
+                j.Steps.RemoveAll(s => s.Name.StartsWith("JUMP", StringComparison.Ordinal));
+                // the three bodies on the path stand a little left / right of each other so each seed is seen (the path still crosses them: half width + body radius)
+                if (f == 'P') { j.Dummies.Add((6.6f, 0.5f)); j.Dummies.Add((8.6f, -0.5f)); }
+                // ages include the JUMPs (the scope clock skips the long wait): the seed lives the cast's 8 s, 몸's rubble 10 s and 뭄's ground 8 s from the trigger
+                if (expire)
+                {
+                    j.Steps.RemoveAll(s => s.Name.StartsWith("LAB-SIMULATED", StringComparison.Ordinal));
+                    JumpMat(1.8); j.MaxAge = 10.2; j.MinAge = 9.0;
+                    j.Variant += "_b5x";
+                }
+                else
+                {
+                    if (trigger != null) trigger.At = TriggerAt;
+                    // P3: the follow-up 한 번 (a whole second showcase cast) buried the seed's own burst in r1 - the other trigger of the row is used instead:
+                    // 갈무리, the kit's real swing report through the wiring (as Vol2SeedLab does), on the first body; no second spell look on the frame
+                    if (f == 'P' && trigger != null)
+                    {
+                        j.Steps.Remove(trigger);
+                        Step(TriggerAt, "LAB-SIMULATED: 갈무리 on the first body (the kit's swing report through the wiring) works its seed", c => { Gather(c, 0); return true; });
+                    }
+                    if (j.Letter == '몸') { JumpMat(TriggerAt + 1.4); j.MaxAge = 14.0; j.MinAge = 12.5; }
+                    else if (j.Letter == '뭄') { JumpMat(TriggerAt + 1.4); j.MaxAge = 12.0; j.MinAge = 10.5; }
+                    else if (f == 'P') { JumpMat(TriggerAt + 1.3); j.MaxAge = 10.2; j.MinAge = 9.0; }      // the seeds the follow-up did not reach: their warning and expiry
+                    else { j.MaxAge = 5.0; j.MinAge = 3.4; }
+                    j.Variant += "_b5";
+                }
+                if (_seedHold) { Step(1.0, "LAB-SIMULATED: a letter is being drawn (信 holds the waiting seeds)", c => SeedHold(c, true)); Step(1.8, "LAB-SIMULATED: the drawing ends", c => SeedHold(c, false)); j.Variant += "h"; }
+            }
+        }
+
+        // batch 5 (seed=1|expire, seedhold=1): see Step4Job
+        static string _seedB5 = ""; static bool _seedHold; static Vol2SeedHub _heldHub;
+        /// <summary>LAB-SIMULATED (seed=1, P3): the 갈무리 swing's first hit reported on a body through the wiring (Vol2SeedLab's own step) - the seed hub hears
+        /// the gather service's Activate contact and the seed on that body works (trigger "gather").</summary>
+        static void Gather(Ctx c, int index)
+        {
+            try
+            {
+                var v = index < c.Dummies.Count && c.Dummies[index] != null ? c.Dummies[index].GetComponentInChildren<EnemyVitals>(true) : null;
+                if (v == null || c.Wiring == null) { Problems.Add(_job.Name + ": 갈무리 - no body / wiring"); return; }
+                if (c.Wiring.Vol2Defence != null) Vol2SeedWiring.Bind(c.Coordinator, c.Wiring.Vol2Defence, Object.FindFirstObjectByType<PlayerVitals>() ?? c.Wiring.Vol2Player);
+                var rec = c.Wiring.ReportVol2SwingFirstHit(v, new SwingId(c.Services.Ids.NextSwing().Value));
+                Finished.Add("  " + _job.Name + ": 갈무리 on " + v.name + " -> " + rec.Reason);
+            }
+            catch (Exception e) { Problems.Add(_job.Name + " gather: " + e.Message); }
+        }
+
+        static bool SeedHold(Ctx c, bool on)
+        {
+            var hub = Vol2SeedExecutor.HubOf(c.Coordinator);
+            if (hub == null) { Problems.Add(_job.Name + ": no seed hub (seedhold)"); return true; }
+            hub.DrawingSimulated = on; _heldHub = on ? hub : null;
+            return true;
         }
 
         /// <summary>batch 4 (spread=1, 눈 only, LAB-SIMULATED): wood materials staged before the cast as the fixture S8 plants them - one on the band ahead-left, one under
@@ -1251,6 +1313,14 @@ namespace Oheangbu.EditorTools.Vol2
                 summary += " | materials " + string.Join(" ", c.Log.Materials.Select(m => m.Kind + ":" + m.Initial.ToString("0.###", Inv) + ":" + (m.Alive ? "alive" : m.End.ToString())));
                 if (c.Log.Burned.Count > 0) summary += " | burned " + string.Join(" ", c.Log.Burned);
             }
+            // batch 5 (seed=): the seed hub's facts of this cast (Plant / Activate / Expired / Exempt / Ground / Collapse ...) and every material's end
+            if (_seedB5 != "" && c.Log != null)
+            {
+                var hub = Vol2SeedExecutor.HubOf(c.Coordinator);
+                if (hub != null) summary += " | seed facts " + string.Join(" ; ", hub.RecordsOf(c.Log.Cast).Select(r => r.ToString())) + " | paused " + (hub.PausedUsOf(c.Log.Cast) / 1e6).ToString("0.00", Inv) + "s";
+                summary += " | materials " + string.Join(" ", c.Log.Materials.Select(m => m.Kind + "/" + m.Tag + ":" + (m.Alive ? "alive" : m.End + "@" + ((m.EndedUs - c.Log.StartUs) / 1e6).ToString("0.00", Inv))));
+            }
+            if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }
             foreach (var m in Planted) if (m != null && m.Alive) c.Coordinator.Materials.TryEnd(m.Id, Vol2MaterialEnd.Aborted, c.Services.Clock.NowUs);
             Planted.Clear();
             Finished.Add(summary + (j.Template == "AJ" && _ripSlot != null ? " | riposte pierced=" + _ripSlot.HasImpact + " at " + _ripSlot.ImpactT.ToString("0.000", Inv) + " s" : "") + (_strokeFeed ? BodyCount() : ""));
@@ -1316,6 +1386,7 @@ namespace Oheangbu.EditorTools.Vol2
                 catch (Exception) { }
             }
             _ctx = null; _onDecided = null; _onBegan = null;
+            if (_heldHub != null) { _heldHub.DrawingSimulated = false; _heldHub = null; }      // batch 5 seedhold: never leave the scope "drawing"
             Time.captureFramerate = _savedCaptureRate;
             // the calibration options are runtime only: put back what was changed
             try { if (_rip != null) _rip.Dispose(!EditorApplication.isPlaying); } catch (Exception) { }

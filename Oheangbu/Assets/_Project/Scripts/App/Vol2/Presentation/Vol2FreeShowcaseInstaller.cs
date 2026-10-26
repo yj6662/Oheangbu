@@ -74,6 +74,11 @@ namespace Oheangbu.App
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Spread).Kind, p.transform, ('건', () => new Vol2FsGeon()), ('넌', () => new Vol2FsNeon()), ('먼', () => new Vol2FsMeon()), ('선', () => new Vol2FsSeon()), ('언', () => new Vol2FsEon()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Spread).Kind, p.transform, ('곤', () => new Vol2FsGon()), ('논', () => new Vol2FsNon()), ('몬', () => new Vol2FsMon()), ('손', () => new Vol2FsSon()), ('온', () => new Vol2FsOn()));
                 Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Spread).Kind, p.transform, ('군', () => new Vol2FsGun()), ('눈', () => new Vol2FsNun()), ('문', () => new Vol2FsMun()), ('순', () => new Vol2FsSun()), ('운', () => new Vol2FsUn()));
+                // batch 5 (2026-10-27): 심는다 - P3 감 남 맘 삼 암 · A3 검 넘 멈 섬 엄 · F3 곰 놈 몸 솜 옴 · R3 굼 눔 뭄 숨 움 (Vol2FsSeed: plant / wait / trigger / exits, 몸's rubble, 뭄's ground)
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Path, Verb.Seed).Kind, p.transform, ('감', () => new Vol2FsGam()), ('남', () => new Vol2FsNam()), ('맘', () => new Vol2FsMam()), ('삼', () => new Vol2FsSam()), ('암', () => new Vol2FsAm()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Attachment, Verb.Seed).Kind, p.transform, ('검', () => new Vol2FsGeom()), ('넘', () => new Vol2FsNeom()), ('멈', () => new Vol2FsMeom()), ('섬', () => new Vol2FsSeom()), ('엄', () => new Vol2FsEom()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Fan, Verb.Seed).Kind, p.transform, ('곰', () => new Vol2FsGom()), ('놈', () => new Vol2FsNom()), ('몸', () => new Vol2FsMom()), ('솜', () => new Vol2FsSom()), ('옴', () => new Vol2FsOm()));
+                Wrap(model, new Vol2LegacyVerbRecipe(Frame.Ring, Verb.Seed).Kind, p.transform, ('굼', () => new Vol2FsGum()), ('눔', () => new Vol2FsNum()), ('뭄', () => new Vol2FsMum()), ('숨', () => new Vol2FsSum()), ('움', () => new Vol2FsUm()));
                 if (_view == null) _view = p;
             }
             BindRecovery();
